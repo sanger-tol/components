@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2022 Genome Research Ltd.
+#
+# SPDX-License-Identifier: MIT
+
+include:
+  - project: 'tol/tol-core'
+    ref: main
+    file: '/gitlab/main.yml'
+
+stages:
+  - lint
+  - deploy
+
+deploy-package:
+  stage: deploy
+  image: node:12-alpine
+  script:
+    - |
+      {
+        echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
+        echo "${CI_API_V4_URL#https?}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
+      } | tee -a .npmrc
+    - yarn install
+    - yarn build
+    - yarn publish
+  only:
+    - production
+  when: manual
