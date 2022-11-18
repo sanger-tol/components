@@ -13,7 +13,7 @@ stages:
 
 deploy-package:
   stage: deploy
-  image: node:12-alpine
+  image: node:14-alpine
   script:
     - |
       {

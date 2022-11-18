@@ -16,7 +16,7 @@ function Footer() {
           <p className="m-0 text-center text-white small">Maintained by
             <a href="https://sanger.ac.uk"> Wellcome Sanger Institute</a>
             , <a href="https://www.sanger.ac.uk/programme/tree-of-life/">Tree of Life Programme</a>
-            , <a href="mailto:tol-platforms@sanger.ac.uk">Enabling Platforms Team</a>
+            , <a href="https://www.sanger.ac.uk/group/tree-of-life-enabling-platforms/">Enabling Platforms Team</a>
           </p>
         </Container>
       </footer>
