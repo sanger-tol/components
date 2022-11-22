@@ -12,12 +12,19 @@ import HeaderButton from "../models/HeaderButton";
 
 export interface Props {
   title: String,
-  buttons: HeaderButton[]
+  sub_title?: String,
+  buttons?: HeaderButton[]
 }
 
 class Header extends React.Component<Props> {
+  buttons: HeaderButton[] = [];
+
   constructor(props: Props) {
     super(props);
+    
+    if (props.buttons !== undefined) {
+      this.buttons = props.buttons
+    }
   }
 
   render() {
@@ -27,8 +34,8 @@ class Header extends React.Component<Props> {
           <div className="masthead-content">
             <Container>
               <h1 className="masthead-heading mb-0">{this.props.title}</h1>
-              <h2 className="masthead-subheading mb-0">Tree of Life</h2>
-              {this.props.buttons.map(button => (
+              <h2 className="masthead-subheading mb-0">{this.props.sub_title}</h2>
+              {this.buttons.map(button => (
                 <Link to={button.href} className="btn btn-primary btn-xl rounded-pill mt-5" key={button.text}>{button.text}</Link>
               ))}
             </Container>
