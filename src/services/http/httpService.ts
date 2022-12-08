@@ -20,7 +20,7 @@ function wrapClientWithContext(
   client: AxiosInstance,
   accessToken = '',
 ) {
-  const authHeader = accessToken ? { "api-key": `${accessToken}` } : {};
+  const authHeader = accessToken ? { "Token": `${accessToken}` } : {};
   const defaultOption = {
     headers: {
       ...CONFIG.headers,
