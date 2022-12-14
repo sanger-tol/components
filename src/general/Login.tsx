@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useAuth } from '../contexts/auth.context';
 import { getUrlLogin } from '../services/auth/authService';

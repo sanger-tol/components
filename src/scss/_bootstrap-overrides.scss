@@ -9,8 +9,8 @@
 }
 
 .btn-primary {
-  background-color: $primary;
-  border-color: $primary;
+  background-color: $primary !important;
+  border-color: $primary !important;
   &:active,
   &:focus,
   &:hover {
@@ -23,8 +23,8 @@
 }
 
 .btn-secondary {
-  background-color: $secondary;
-  border-color: $secondary;
+  background-color: $secondary !important;
+  border-color: $secondary !important;
   &:active,
   &:focus,
   &:hover {
@@ -34,4 +34,22 @@
   &:focus {
     box-shadow: 0 0 0 0.2rem fade-out($secondary, 0.5);
   }
+}
+
+// react-bootstrap-table-next overrides
+.react-bootstrap-table-page-btns-ul {
+  float: right;
+}
+
+.page-item.active .page-link {
+	background-color: $primary;
+	border-color: $primary;
+}
+
+.page-link {
+	color: $primary
+}
+
+.page-link:hover {
+	color: $primary
 }
