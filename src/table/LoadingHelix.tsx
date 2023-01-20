@@ -4,11 +4,8 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import '../../../src/scss/_loading-helix.scss';
-
-
 const LoadingHelix = () => (
-  <div className="d-flex justify-content-center p-4">
+  <div className="d-flex justify-content-center p-5">
     <div className="loader">
       <div className="dna-circle dna-circle1"><i></i></div>
       <div className="dna-circle dna-circle2"><i></i></div>

@@ -9,7 +9,9 @@ export { default as TolApp } from "./TolApp";
 export { default as Header } from "./general/Header";
 export { default as CentreContents } from "./general/CentreContents";
 export { default as Alert } from "./general/Alert";
-export { default as AutoTable } from "./general/AutoTable";
+
+// Table
+export { default as AutoTable } from "./table/AutoTable";
 
 // React-Bootstrap pass-through
 export { Container };

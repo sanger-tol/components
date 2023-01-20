@@ -14,10 +14,11 @@ import { AuthProvider } from './contexts/auth.context';
 import { Redirect } from 'react-router-dom';
 import Footer from './general/Footer'
 import Page from "./models/Page";
-import convertToPath from "./general/Utils";
+import { convertToPath } from "./general/Utils";
 import { api_version } from './general/Env'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import '../../src/scss/tol-styling.scss';
 
 

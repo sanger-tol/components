@@ -15,7 +15,7 @@ import {
 } from '../services/localStorage/localStorageService';
 import Login from './Login';
 import Page from "../models/Page";
-import convertToPath from "./Utils";
+import { convertToPath } from "./Utils";
 import { api_version } from './Env'
 
 

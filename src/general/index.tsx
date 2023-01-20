@@ -11,6 +11,3 @@ export { default as CentreContents } from "./CentreContents";
 export { default as Login } from "./Login";
 export { default as Navigation } from "./Navigation";
 export { default as Alert } from "./Alert";
-export { default as LoadingHelix } from "./LoadingHelix";
-export { default as Table } from "./Table";
-export { default as AutoTable } from "./AutoTable";

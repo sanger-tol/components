@@ -8,6 +8,7 @@
   background-color: $primary !important;
 }
 
+#pageDropDown,
 .btn-primary {
   background-color: $primary !important;
   border-color: $primary !important;
@@ -34,22 +35,4 @@
   &:focus {
     box-shadow: 0 0 0 0.2rem fade-out($secondary, 0.5);
   }
-}
-
-// react-bootstrap-table-next overrides
-.react-bootstrap-table-page-btns-ul {
-  float: right;
-}
-
-.page-item.active .page-link {
-	background-color: $primary;
-	border-color: $primary;
-}
-
-.page-link {
-	color: $primary
-}
-
-.page-link:hover {
-	color: $primary
 }
