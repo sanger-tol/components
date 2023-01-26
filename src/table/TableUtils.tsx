@@ -26,14 +26,14 @@ function normaliseCaps(title: string, requiredAttributes?: object) {
 function checkAndConvertLink(url: string) {
   try {
     new URL(url) // fails if not link
-    const linkRegEx = /^.*:\/\/www./
+    const linkRegEx = /^https?:\/\/([^\/]*).*/
     const imgRegEx = /.*\.(?:png|jpg|jpeg)/i
     if (imgRegEx.test(url.toLowerCase())) {
       return <a href={ url } target="_blank" rel="noopener noreferrer">
         <img src={ url } alt={ url } width="30%"/>
       </a>
     }
-    const uiUrl = url.replace(linkRegEx, '');
+    const uiUrl = url.replace(linkRegEx, '$1');
     return <a href={url} target="_blank" rel="noopener noreferrer">
       {uiUrl}
     </a>
