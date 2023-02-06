@@ -9,20 +9,22 @@ import { httpClient } from '../services/http/httpClient'
 import Table from "./Table";
 import LoadingHelix from "./LoadingHelix";
 import NoDataAlert from "./NoDataAlert";
-import NoDbAlert from "./NoDbAlert";
+import TableErrorAlert from './TableErrorAlert';
 import { convertTableData,
          convertHeadingData,
+         structureFieldData,
          switchFilterVisability } from "./TableUtils"
 
 
 export interface Props {
   endpoint: string,
-  requiredAttributes?: object
+  requiredFields?: object
 }
 
 export interface State {
   tableData: any[],
   headings: any[],
+  relationships: any,
   page: number,
   sizePerPage: number,
   totalSize: number,
@@ -31,13 +33,15 @@ export interface State {
 
 class AutoTable extends React.Component<Props, State> {
   constructor(props: Props) {
+    const headings_default = [{
+      dataField: '',
+      text: ''
+    }]
     super(props);
     this.state = {
       tableData: [],
-      headings: [{
-        dataField: "",
-        text: ""
-      }],
+      headings: headings_default,
+      relationships: {},
       page: 1,
       sizePerPage: 50,
       totalSize: -1,
@@ -61,18 +65,18 @@ class AutoTable extends React.Component<Props, State> {
     sortOrder?: string,
     sortField?: string
   }) => {
-    let searchFilters: string = "";
+    let searchFilters: string = '';
 
     // filtering
-    if (type === "filter") {
-      searchFilters = "["
+    if (type === 'filter') {
+      searchFilters = '['
       for (const dataField in filters) {
         const filterVal: string = filters[dataField]['filterVal'];
-        searchFilters += dataField + "=='" + filterVal + "',"
+        searchFilters += dataField + '==\'' + filterVal + '\','
       }
       searchFilters = searchFilters.slice(0, -1)
       if (searchFilters.length !== 0) {
-        searchFilters += "]"
+        searchFilters += ']'
       }
     }
 
@@ -82,7 +86,7 @@ class AutoTable extends React.Component<Props, State> {
     }
 
     // get data and update state
-    httpClient().get("/" + this.props.endpoint, { 
+    httpClient().get('/' + this.props.endpoint, { 
       params: {
         page: page,
         page_size: sizePerPage,
@@ -91,20 +95,39 @@ class AutoTable extends React.Component<Props, State> {
       }
       })
       .then((res: any) => {
-        let data = res.data.data
-        let meta = res.data.meta
+        const data = res.data.data
+        const meta = res.data.meta
         this.setState({
-          tableData: convertTableData(data),
           page: page,
           sizePerPage: sizePerPage,
-          totalSize: meta.total
+          totalSize: meta.total,
+          error: false,
         })
-        try {
-          const headings = Object.keys(data[0].attributes)
+
+        // check if any data is returned
+        if (typeof data[0] !== 'undefined') {
+          let fieldMeta = {};
+
+          // checking if the fields have been defined
+          if (typeof this.props.requiredFields !== 'undefined') {
+            fieldMeta = structureFieldData(this.props.requiredFields)
+          } else {
+            if ('attributes' in data[0]) {
+              const attributes = structureFieldData(data[0].attributes,
+                                                    'attribute')
+              fieldMeta = Object.assign(fieldMeta, attributes)
+            }
+            if ('relationships' in data[0]) {
+              const relationships = structureFieldData(data[0].relationships,
+                                                       'relationship')
+              fieldMeta = Object.assign(fieldMeta, relationships)
+            }
+          }
           this.setState({
-            headings: convertHeadingData(headings, this.props.requiredAttributes)
+            tableData: convertTableData(data, fieldMeta),
+            headings: convertHeadingData(fieldMeta)
           })
-        } catch (error) {}
+        }
       })
       .catch((error: any) => {
         console.error(error)
@@ -127,11 +150,13 @@ class AutoTable extends React.Component<Props, State> {
         {(() => {
           let noDataIndication: JSX.Element;
           if (error) {
-            noDataIndication = <NoDbAlert />
+            noDataIndication = <TableErrorAlert />
           } else if (totalSize === 0) {
             noDataIndication = <NoDataAlert />
           } else {
-            noDataIndication = <LoadingHelix />
+            noDataIndication = <div className='p-5'>
+                <LoadingHelix />
+              </div>
           }
           return (
             <Table

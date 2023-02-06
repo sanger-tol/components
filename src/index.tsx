@@ -9,6 +9,7 @@ export { default as TolApp } from "./TolApp";
 export { default as Header } from "./general/Header";
 export { default as CentreContents } from "./general/CentreContents";
 export { default as Alert } from "./general/Alert";
+export { default as InfoTooltip } from "./general/InfoTooltip";
 
 // Table
 export { default as AutoTable } from "./table/AutoTable";

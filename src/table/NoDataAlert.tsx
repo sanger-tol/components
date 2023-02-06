@@ -1,17 +1,18 @@
 /*
-SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
-import { Alert } from 'react-bootstrap';
+import { Alert } from '../index';
 
 
 const NoDataAlert = () => (
   <div className="d-flex justify-content-center p-5">
-    <Alert key="warning" variant="warning">
-      No data found
-    </Alert>
+    <Alert 
+      type="warning"
+      message="No data found"
+    />
   </div>
 )
 

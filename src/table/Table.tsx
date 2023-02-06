@@ -53,7 +53,6 @@ function Table ({
           <BootstrapTable
             { ...paginationTableProps }
             remote
-            striped
             keyField='id'
             data={ data }
             columns={ columns }

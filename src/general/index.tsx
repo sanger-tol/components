@@ -11,3 +11,5 @@ export { default as CentreContents } from "./CentreContents";
 export { default as Login } from "./Login";
 export { default as Navigation } from "./Navigation";
 export { default as Alert } from "./Alert";
+export { default as InfoTooltip } from "./InfoTooltip";
+export { default as TooltipOverlay } from "./TooltipOverlay";

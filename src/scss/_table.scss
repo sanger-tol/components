@@ -110,3 +110,35 @@ button svg {
 .table-bordered td, .table-bordered th {
   width: 1% !important;
 }
+
+// relationship link
+.relationship-box {
+	background-color: lighten($primary, 50%) !important;;
+	padding: 10px;
+	border-style: solid;
+	border-color: lighten($primary, 45%) !important;
+}
+
+.relationship-box:hover {
+	background-color: lighten($primary, 45%) !important;
+	cursor: pointer;
+}
+
+// tooltip
+.relationship-tooltip {
+	margin: 5px;
+}
+
+.tooltip-key {
+	margin-right: 5px;
+	font-size: small;
+	font-weight: bold;
+}
+
+.tooltip-value {
+	font-size: small;
+}
+
+.tooltip-icon-wrapper {
+	display: inline-block;
+}

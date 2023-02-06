@@ -5,21 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import { textFilter } from 'react-bootstrap-table2-filter';
+import RelationshipLink from './RelationshipLink';
 
 
-function normaliseCaps(title: string, requiredAttributes?: object) {
-  try {
-    const attribute = requiredAttributes![title]
-    if (attribute !== '' && attribute !== null) {
-      return attribute
-    }
-  } catch {}
-
-  const words = title.split("_");
-  for (let i = 0; i < words.length; i++) {
-    words[i] = words[i][0].toUpperCase() + words[i].substring(1);
+export function normaliseCaps(fieldName: string) {
+  const words = fieldName.split('_');
+  for (let count = 0; count < words.length; count++) {
+    words[count] = words[count][0].toUpperCase() + words[count].substring(1);
   }
-  return words.join(" ");
+  return words.join(' ');
 }
 
 // will need improving...
@@ -42,86 +36,150 @@ function checkAndConvertLink(url: string) {
   }
 }
 
-function formatData(data: object) {
+function formatAttributeData(data: object) {
   const updatedData: object = {}
-  for (let [key, value] of Object.entries(data)) {
+  for (const [key, value] of Object.entries(data)) {
     updatedData[key] = checkAndConvertLink(value)
   }
   return updatedData
 }
 
-function checkIfRequiredAttribute(heading: string, requiredAttributes?: object) {
-  try {
-    return Object.keys(requiredAttributes!).includes(heading)
-  } catch {
-    return true
+function splitRelationshipKeys(fieldMeta: object) {
+  const relationshipKeys = {};
+  for (let key of Object.keys(fieldMeta)) {
+    if (fieldMeta[key]['type'] === 'relationship') {
+      const splitKey: string[] = key.split('.')
+      relationshipKeys[key] = splitKey
+    }
   }
+  return relationshipKeys
 }
 
-function reorderHeadings(headings: string[], requiredAttributes?: object) {
-  if (typeof requiredAttributes === 'undefined') {
-    return headings
-  }
-  try {
-    const reorderedHeadings: string[] = []
-    for (let attribute of Object.keys(requiredAttributes!)) {
-      if (!headings.includes(attribute)) {
-        console.warn('Warning: ' + attribute + 
-                     ' does not link to any \'actual\' attributes.')
-      }
-      reorderedHeadings.push(attribute)
+function formatRelationshipData(data: object, fieldMeta: object) {
+  const updatedData: object = {}
+  const relationshipKeys: object = splitRelationshipKeys(fieldMeta)
+  for (const [key, splitKey] of Object.entries(relationshipKeys)) {
+    const currentObject = splitKey[0]
+    // checking relationship object is correct
+    if (typeof data[currentObject] === 'undefined') {
+      throw Error('\'' + key + '\' is not a correct relationship object. ' +
+                  'Please check your spelling and pluralisation.')
     }
-    return reorderedHeadings
-  } catch(error: any) {
-    console.error('Warning: Headings could not be ordered. ' + error)
-    return headings
+    // ignoring one-to-many relationships
+    if ('data' in data[currentObject]) {
+      const headingId = splitKey.join('.')
+      updatedData[headingId] = <RelationshipLink
+                                 initialEndpoint={ data[currentObject].links.related }
+                                 relationships={ splitKey }
+                               />
+    } else {
+      throw Error(key + ' not in API data call')
+    }
   }
+  return updatedData
 }
 
 function searchFilter(heading: string) { 
   return textFilter({
-    className: "filter-search-input-hide",
+    className: 'filter-search-input-hide',
     placeholder: heading
   })
 }
 
-export function convertHeadingData(headings: string[], requiredAttributes?: object) {
+export function convertHeadingData(fieldMeta: object) {
   const headerSortingStyle = { backgroundColor: '#edffec' };
-  const headerStyling = (width: string) => { return { minWidth: width } }
+  const headerStyling = (width: string) => { return { minWidth: width, backgroundColor: '#f2f2f2' } }
+  const updatedHeadings: object[] = []
 
-  const updatedHeadings: object[] = [{
-    dataField: "id",
-    text: "ID",
-    sort: true,
-    headerSortingStyle,
-    headerStyle: headerStyling("100px")
-  }]
-  
-  headings = reorderHeadings(headings, requiredAttributes)
-  headings.forEach(heading => {
-    if (checkIfRequiredAttribute(heading, requiredAttributes)) {
-      const capsHeading = normaliseCaps(heading, requiredAttributes)
+  for (const [key, meta] of Object.entries(fieldMeta)) {
+    let capsHeading = ''
+    let headerWidth = '200px'
+    let hidden = false
 
+    if (meta.rename === '') {
+      capsHeading = normaliseCaps(key)
+    } else {
+      capsHeading = meta.rename
+    }
+
+    if (meta.type === 'attribute') {
+      if (key === 'id') {
+        headerWidth = '100px'
+        hidden = true
+      }
       updatedHeadings.push({
-        dataField: heading,
+        dataField: key,
         text: capsHeading,
         sort: true,
         headerSortingStyle,
         filter: searchFilter(capsHeading),
-        headerStyle: headerStyling("200px")
+        headerStyle: headerStyling(headerWidth),
+        hidden: hidden
+      });
+    } else if (meta.type === 'relationship') {
+      updatedHeadings.push({
+        dataField: key,
+        text: capsHeading,
+        headerSortingStyle,
+        headerStyle: headerStyling(headerWidth)
       });
     }
-  });
+  }
   return updatedHeadings
 }
 
-export function convertTableData(data: any[]) {
+export function convertTableData(data: any[], fieldMeta: object) {
   const updatedData: any[] = []
   data.forEach(row => {
-    const attributes = formatData(row.attributes)
-    updatedData.push(Object.assign({}, { "id": row.id }, attributes))
+    let fieldData = { 'id': row.id }
+    if ('attributes' in row) {
+      const attributes = formatAttributeData(row.attributes)
+      fieldData = Object.assign(fieldData, attributes)
+    }
+    if ('relationships' in row) {
+      const relationships = formatRelationshipData(row.relationships, fieldMeta)
+      fieldData = Object.assign(fieldData, relationships)
+    }
+    updatedData.push(fieldData)
   });
   return updatedData;
+}
+
+export function structureFieldData(apiFields: object, type?: string) {
+  const fields = {}
+  if (typeof type === 'undefined') {
+    for (let [key, rename] of Object.entries(apiFields)) {
+      fields[key] = {
+        'rename': rename
+      }
+      if (key.includes('.')) {
+        if (rename === '') {
+          throw Error('Relationship field \'' + key + '\' requires a rename')
+        }
+        fields[key]['type'] = 'relationship'
+      } else {
+        fields[key]['type'] = 'attribute'
+      }
+    }
+  } else {
+    fields['id'] = {
+      'rename': 'ID',
+      'type': 'attribute'
+    }
+    for (let [key, data] of Object.entries(apiFields)) {
+      // ignoring one-to-many relationships
+      if (type === 'relationship' && !('data' in data)) {
+        console.warn('\'' + key + '\' is on the many side of the relationship' + 
+                     ' - therefore it is being ignored.')
+        continue
+      }
+      fields[key] = {
+        'rename': '',
+        'type': type
+      }
+    }
+  }
+  return fields
 }
 
 export function switchFilterVisability() {
