@@ -5,7 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import { textFilter } from 'react-bootstrap-table2-filter';
+import { format } from 'date-fns'
 import RelationshipLink from './RelationshipLink';
+import CellTooltip from './CellTooltip';
 
 
 export function normaliseCaps(fieldName: string) {
@@ -16,30 +18,44 @@ export function normaliseCaps(fieldName: string) {
   return words.join(' ');
 }
 
+function checkAndConvertDate(text: string) {
+  let date = new Date(text)
+  if (date.toLocaleDateString("en-US") === 'Invalid Date') {
+    return text
+  } else {
+    const dateText = format(date, 'dd/MM/yyyy')
+    const dateContents = format(date, 'dd/MM/yyyy HH:mm')
+    return <CellTooltip
+      text={ dateText }
+      contents={ dateContents }
+    />
+  }
+}
+
 // will need improving...
-function checkAndConvertLink(url: string) {
+function checkAndConvertText(text: any) {
   try {
-    new URL(url) // fails if not link
+    new URL(text) // fails if not link
     const linkRegEx = /^https?:\/\/([^\/]*).*/
     const imgRegEx = /.*\.(?:png|jpg|jpeg)/i
-    if (imgRegEx.test(url.toLowerCase())) {
-      return <a href={ url } target="_blank" rel="noopener noreferrer">
-        <img src={ url } alt={ url } width="30%"/>
+    if (imgRegEx.test(text.toLowerCase())) {
+      return <a href={ text } target="_blank" rel="noopener noreferrer">
+        <img src={ text } alt={ text } width="30%"/>
       </a>
     }
-    const uiUrl = url.replace(linkRegEx, '$1');
-    return <a href={url} target="_blank" rel="noopener noreferrer">
+    const uiUrl = text.replace(linkRegEx, '$1');
+    return <a href={text} target="_blank" rel="noopener noreferrer">
       {uiUrl}
     </a>
   } catch {
-    return url
+    return checkAndConvertDate(text)
   }
 }
 
 function formatAttributeData(data: object) {
   const updatedData: object = {}
   for (const [key, value] of Object.entries(data)) {
-    updatedData[key] = checkAndConvertLink(value)
+    updatedData[key] = checkAndConvertText(value)
   }
   return updatedData
 }

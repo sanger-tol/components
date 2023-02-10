@@ -5,26 +5,27 @@ SPDX-License-Identifier: MIT
 */
 
 import React from 'react';
-import { InfoIcon } from './Icons';
-import ToolTipOverlay from './TooltipOverlay';
+import ToolTipOverlay from '../general/TooltipOverlay';
 
 
 export interface Props {
+  text: string, 
   contents: string
 }
 
-class InfoTooltip extends React.Component<Props> {
+class CellTooltip extends React.Component<Props> {
   render() {
+    const { text, contents } = this.props;
     return (
       <ToolTipOverlay
-        contents={ this.props.contents }
+        contents={ contents }
       >
         <div className='tooltip-wrapper'>
-          <InfoIcon />
+          { text }
         </div>
       </ToolTipOverlay>
     );
   }
 }
 
-export default InfoTooltip;
+export default CellTooltip;
