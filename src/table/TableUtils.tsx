@@ -104,7 +104,7 @@ function searchFilter(heading: string) {
 
 export function convertHeadingData(fieldMeta: object) {
   const headerSortingStyle = { backgroundColor: '#edffec' };
-  const headerStyling = (width: string) => { return { minWidth: width, backgroundColor: '#f2f2f2' } }
+  const headerStyling = (width: string) => { return { minWidth: width } }
   const updatedHeadings: object[] = []
 
   for (const [key, meta] of Object.entries(fieldMeta)) {

@@ -13,6 +13,8 @@ import paginationFactory, { PaginationProvider,
                             SizePerPageDropdownStandalone,
                             PaginationTotalStandalone } from 'react-bootstrap-table2-paginator';
 
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+
 
 function Table ({ 
   data,

@@ -17,11 +17,6 @@ import Page from "./models/Page";
 import { convertToPath } from "./general/Utils";
 import { api_version } from './general/Env'
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import '../../src/scss/tol-styling.scss';
-
-
 export interface AppProps {
   brand: string | JSX.Element,
   home_page: JSX.Element,
