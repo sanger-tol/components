@@ -16,12 +16,13 @@ import {
 import Login from './Login';
 import Page from "../models/Page";
 import { convertToPath } from "./Utils";
-import { api_version } from './Env'
+import { apiVersion } from './Env'
 
 
 interface NavProps extends RouteComponentProps {
   brand: string | JSX.Element,
-  pages: Page[]
+  pages: Page[],
+  login: boolean
 }
 
 interface Environment {
@@ -34,7 +35,7 @@ const assumeProduction = (): string => {
 }
 
 const fetchEnvironment = (): Promise<string> => {
-  return fetch('/api/v' +  api_version + '/environment')
+  return fetch('/api/v' +  apiVersion + '/environment')
       .then(res => {
           if (res.ok) {
               return res.json() as Promise<Environment>;
@@ -112,20 +113,20 @@ function Navigation(props: NavProps) {
             <Nav className="ml-auto">
               {props.pages.map(page => {
                 let path = convertToPath(page.name)
-                if(page.auth_required && page.admin_only && token && !tokenHasExpired(token) && user && user.roles && user.roles.some(role => role.role === "admin")) {
+                if(page.authRequired && page.adminOnly && token && !tokenHasExpired(token) && user && user.roles && user.roles.some(role => role.role === "admin")) {
                     return <Nav.Link className="nav-link" href={"/" + path} key={page.name}>{page.name}</Nav.Link>
-                } else if(page.auth_required && !page.admin_only && token && !tokenHasExpired(token)) {
+                } else if(page.authRequired && !page.adminOnly && token && !tokenHasExpired(token)) {
                     return <Nav.Link className="nav-link" href={"/" + path} key={page.name}>{page.name}</Nav.Link>
-                } else if(!page.auth_required) {
+                } else if(!page.authRequired) {
                   return <Nav.Link className="nav-link" href={"/" + path} key={page.name}>{page.name}</Nav.Link>
                 }
               })}
-              {(!token || tokenHasExpired(token)) &&
+              {(!token || tokenHasExpired(token)) && props.login &&
                 <Nav.Link className="nav-link" key="Login">
                   <Login environment={environment}/>
                 </Nav.Link>
               }
-              {token && !tokenHasExpired(token) &&
+              {token && !tokenHasExpired(token) && props.login &&
                 <Nav.Link onClick={logout} className="nav-link" href="/" key="Logout">
                   Logout
                 </Nav.Link>

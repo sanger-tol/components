@@ -11,7 +11,7 @@ import HeaderButton from "../models/HeaderButton";
 
 export interface Props {
   title: String,
-  sub_title?: String,
+  subTitle?: String,
   buttons?: HeaderButton[]
 }
 
@@ -34,7 +34,7 @@ class Header extends React.Component<Props> {
             <Container>
               <div className='navbar-filler'/>
               <h1 className="masthead-heading mb-0">{this.props.title}</h1>
-              <h2 className="masthead-subheading mb-0">{this.props.sub_title}</h2>
+              <h2 className="masthead-subheading mb-0">{this.props.subTitle}</h2>
               {this.buttons.map(button => (
                 <a href={button.href} className="btn btn-primary btn-xl rounded-pill mt-5" key={button.text}>{button.text}</a>
               ))}

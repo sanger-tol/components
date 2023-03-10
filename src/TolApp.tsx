@@ -15,22 +15,29 @@ import { Redirect } from 'react-router-dom';
 import Footer from './general/Footer'
 import Page from "./models/Page";
 import { convertToPath } from "./general/Utils";
-import { api_version } from './general/Env'
+import { apiVersion } from './general/Env'
 
 export interface AppProps {
   brand: string | JSX.Element,
-  home_page: JSX.Element,
-  pages: Page[]
+  homePage: JSX.Element,
+  pages: Page[],
+  login: boolean
 }
 
 function TolApp(props: AppProps) {
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
 
-  if (api_version === undefined) {
+  // show login button as default
+  let login = props.login
+  if (login === undefined) {
+    login = true
+  }
+
+  if (apiVersion === undefined) {
     return (
       <div>
-        <h3>Please add 'REACT_APP_API_VERSION' as an environment variable (e.g. REACT_APP_API_VERSION=1).</h3>
+        <h3>Please add 'REACT_APP_apiVersion' as an environment variable (e.g. REACT_APP_apiVersion=1).</h3>
       </div>
     )
   }
@@ -49,16 +56,17 @@ function TolApp(props: AppProps) {
           <Navigation 
             brand={props.brand}
             pages={props.pages}
+            login={login}
           />
           <Switch>
-            <Route path="/" exact component={() => props.home_page} />
+            <Route path="/" exact component={() => props.homePage} />
             <Route path="/callback" exact><Callback /></Route>
             {props.pages.map(page => {
               let path = convertToPath(page.name)
-              if(page.auth_required) {
-                return <Route path={"/" + path} key={page.name} exact>{(token && !tokenHasExpired(token)) ? page.ui_element : <Redirect to="/" />}</Route>
+              if(page.authRequired) {
+                return <Route path={"/" + path} key={page.name} exact>{(token && !tokenHasExpired(token)) ? page.uiElement : <Redirect to="/" />}</Route>
               } else {
-                return <Route path={"/" + path} key={page.name} exact>{page.ui_element}</Route>
+                return <Route path={"/" + path} key={page.name} exact>{page.uiElement}</Route>
               }
             })}
           </Switch>
