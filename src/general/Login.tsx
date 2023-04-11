@@ -10,22 +10,9 @@ import { useAuth } from '../contexts/auth.context';
 import { getUrlLogin } from '../services/auth/authService';
 import { getTokenFromLocalStorage, tokenHasExpired } from '../services/localStorage/localStorageService';
 import { LoginIcon } from './Icons';
-import '../../../src/scss/_login.scss';
 
 
-interface LoginProps {
-  environment: string;
-}
-
-const getLoginClass = (environment: string): string => {
-  switch (environment) {
-    case "production" || "":
-      return "login-light"
-  }
-  return "login-dark";
-}
-
-function Login(props: LoginProps) {
+function Login() {
   const { token, setToken } = useAuth();
   useEffect(()=> {
     if(!getTokenFromLocalStorage()){
@@ -41,7 +28,7 @@ function Login(props: LoginProps) {
   }, []);
 
   return (!token || tokenHasExpired(token)) ? (
-    LoginIcon(login, getLoginClass(props.environment))
+    LoginIcon(login)
   ) : (
     <Redirect to="/" />
   );

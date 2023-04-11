@@ -21,7 +21,7 @@ export interface AppProps {
   brand: string | JSX.Element,
   homePage: JSX.Element,
   pages: Page[],
-  login: boolean
+  login?: boolean
 }
 
 function TolApp(props: AppProps) {

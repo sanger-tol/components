@@ -123,7 +123,7 @@ function Navigation(props: NavProps) {
               })}
               {(!token || tokenHasExpired(token)) && props.login &&
                 <Nav.Link className="nav-link" key="Login">
-                  <Login environment={environment}/>
+                  <Login/>
                 </Nav.Link>
               }
               {token && !tokenHasExpired(token) && props.login &&

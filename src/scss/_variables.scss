@@ -4,8 +4,21 @@
  * SPDX-License-Identifier: MIT
  */
 
-// Variables
+// --SASS-- //
+// Required Variables
+// (override if required in project)
+$primary: #0d6efd !default;
+$secondary: #004b84 !default;
 
-// Please override in project
-$primary: #ff0000 !default;
-$secondary: #0800ff !default;
+// Hover
+$grey: #808080 !default;
+$primary-opaque: rgba($primary, 0.1);
+$grey-hover: rgba($grey, 0.1);
+
+// --CSS VARS-- //
+:root {
+  --primary: #{$primary};
+  --secondary: #{$secondary};
+  --primary-opaque: #{$primary-opaque};
+  --grey-hover: #{$grey-hover};
+}
