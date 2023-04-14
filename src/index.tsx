@@ -10,6 +10,7 @@ export { default as Header } from "./general/Header";
 export { default as CentreContents } from "./general/CentreContents";
 export { default as Alert } from "./general/Alert";
 export { default as InfoTooltip } from "./general/InfoTooltip";
+export { default as LoadingHelix, MiniLoadingHelix } from "./general/LoadingHelix";
 
 // Table
 export { default as AutoTable } from "./table/AutoTable";

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import React from "react";
 import { httpClient } from '../services/http/httpClient'
 import Table from "./Table";
-import LoadingHelix from "./LoadingHelix";
+import LoadingHelix from "../general/LoadingHelix";
 import NoDataAlert from "./NoDataAlert";
 import TableErrorAlert from './TableErrorAlert';
 import { Fields } from "./Field";
@@ -21,6 +21,7 @@ import { convertTableData,
 
 
 export interface Props {
+  debug?: boolean,
   endpoint: string,
   fields?: Fields,
   fixedFilter?: object,
@@ -143,11 +144,41 @@ class AutoTable extends React.Component<Props, State> {
               const relationships = structureFieldsAuto(
                 apiData[0].relationships,
                 apiMeta.types,
-                false
+                false,
+                this.props.debug
               )
               fieldMeta = Object.assign(fieldMeta, relationships)
             }
           }
+
+          // debug logs - this will be moved to a func soon
+          if (this.props.debug === true) {
+            try {
+              let fieldPossibilities: any = {
+                'attributes': [],
+                'relationships': []
+              }
+              const apiDataInstance = apiData[0]
+              if ('attributes' in apiDataInstance) {
+                for (let key of Object.keys(apiDataInstance.attributes)) {
+                  fieldPossibilities['attributes'].push(key)
+                }
+              }
+              const relationships: object = apiDataInstance.relationships
+              if ('relationships' in apiDataInstance) {
+                for (let [key, value] of Object.entries(relationships)) {
+                  // ignoring one-to-many relationships
+                  if ('data' in value) {
+                    fieldPossibilities['relationships'].push(key)
+                  }
+                }
+              }
+              console.log('Field Possibilities', fieldPossibilities)
+              console.log('Api Response Data', apiData)
+              console.log('Field Meta', fieldMeta)
+            } catch(e) {}
+          }
+
           // only updating heading state on first load
           if (!this.state.initialLoad) {
             this.setState({
@@ -160,8 +191,10 @@ class AutoTable extends React.Component<Props, State> {
           })
         }
       })
-      .catch((error: any) => {
-        console.error(error)
+      // @ts-ignore
+      .catch((_: any) => {
+        console.warn('Please ensure the db has been restored')
+        console.warn('Please ensure the \'endpoint\' prop is correct and pluralised')
         this.setState({
           error: true
         })

@@ -39,7 +39,11 @@ export function formatDateRange(dateRange: string[]) {
 export function normaliseCaps(fieldName: string) {
   const words = fieldName.split('_');
   for (let count = 0; count < words.length; count++) {
-    words[count] = words[count][0].toUpperCase() + words[count].substring(1);
+    if (words[count] === 'id') {
+      words[count] = 'ID'
+    } else {
+      words[count] = words[count][0].toUpperCase() + words[count].substring(1); 
+    }
   }
   return words.join(' ');
 }
@@ -125,10 +129,17 @@ function formatRelationshipData(data: object, fieldMeta: object) {
     // ignoring one-to-many relationships
     if ('data' in data[currentObject]) {
       const headingId = splitKey.join('.')
-      updatedData[headingId] = <RelationshipLink
-        initialEndpoint={ data[currentObject].links.related }
-        relationships={ splitKey }
-      />
+      // checking there is 'data' via the link existing
+      if ('links' in data[currentObject]) {
+        updatedData[headingId] = <RelationshipLink
+          initialEndpoint={ data[currentObject].links.related }
+          relationships={ splitKey }
+          relationshipBox={ fieldMeta[key]['relationshipBox'] }
+        />
+      } else if(data[currentObject].data === null) {
+        // updatedData[headingId] = <span className="none-value">None</span>
+        // might put 'None' in future? - same for attributes
+      }
     } else {
       throw Error(key + ' not in API data call')
     }
@@ -176,9 +187,6 @@ export function convertHeadingData(fieldMeta: object) {
           heading['filterRenderer'] = (onFilter: any, column: any) =>
             <DatePicker onFilter={ onFilter } column={ column } />
         } else {
-          if (meta.type === null) {
-            console.log(key)
-          }
           heading['filterRenderer'] = (onFilter: any, column: any) => 
             <TextInput type={ meta.type } onFilter={ onFilter } column={ column } />
         }
@@ -255,7 +263,8 @@ export function structureFieldsUsingProp(fields: object, apiFieldMeta: object) {
 export function structureFieldsAuto(
   apiFields: object,
   apiFieldMeta: object,
-  isAttribute: boolean
+  isAttribute: boolean,
+  debug?: boolean
 ) {
   const fields = {}
   // adding internal ID to row
@@ -267,12 +276,15 @@ export function structureFieldsAuto(
   for (let [key, data] of Object.entries(apiFields)) {
     // ignoring one-to-many relationships
     if (!isAttribute && !('data' in data)) {
-      console.warn('\'' + key + '\' is on the many side of the relationship' + 
-                    ' - therefore it is being ignored.')
+      if (debug === true) {
+        console.warn('\'' + key + '\' is on the many side of the relationship' + 
+                      ' - therefore it is being ignored.')
+      }
       continue
     }
     fields[key] = addFieldDefaults({
-      'isAttribute': isAttribute
+      'isAttribute': isAttribute,
+      'relationshipBox': true
     })
     // meta field type is 'data' for attributes
     if (isAttribute) {
