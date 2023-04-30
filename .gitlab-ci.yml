@@ -4,11 +4,12 @@
 
 include:
   - project: 'tol/tol-core'
-    ref: main
+    ref: v1.3.6
     file: '/gitlab/main.yml'
 
 stages:
   - lint
+  - scan
   - deploy
 
 deploy-package:
