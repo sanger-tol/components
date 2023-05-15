@@ -5,12 +5,11 @@
 include:
   - project: 'tol/tol-core'
     ref: v1.3.6
-    file: '/gitlab/main.yml'
+    file: '/gitlab/app.yml'
 
-stages:
-  - lint
-  - scan
-  - deploy
+variables:
+  APP_NAME: components
+  DISABLE_REVIEW_APPS: "true"
 
 deploy-package:
   stage: deploy
@@ -21,9 +20,8 @@ deploy-package:
         echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
         echo "${CI_API_V4_URL#https?}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
       } | tee -a .npmrc
+    - cd components-ui/app/src/tol-ui
     - yarn install
     - yarn build
     - yarn publish
-  only:
-    - production
   when: manual

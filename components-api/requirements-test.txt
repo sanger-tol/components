@@ -1,0 +1,6 @@
+# SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+#
+# SPDX-License-Identifier: MIT
+
+flask_testing==0.8.1
+pytest==7.3.1

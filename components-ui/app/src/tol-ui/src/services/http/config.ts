@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { apiVersion } from './../../general/Env'
+import { apiVersion } from '../../general/Env'
 
 export const CONFIG = {
   baseURL: '/api/v' + apiVersion,

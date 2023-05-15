@@ -111,7 +111,7 @@ function Navigation(props: NavProps) {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
-              {props.pages.map(page => {
+              {props.pages.map(page => { // eslint-disable-next-line
                 let path = convertToPath(page.name)
                 if(page.authRequired && page.adminOnly && token && !tokenHasExpired(token) && user && user.roles && user.roles.some(role => role.role === "admin")) {
                     return <Nav.Link className="nav-link" href={"/" + path} key={page.name}>{page.name}</Nav.Link>
