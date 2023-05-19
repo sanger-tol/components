@@ -10,7 +10,7 @@ import TextInput from './TextInput';
 import { format } from 'date-fns'
 import RelationshipLink from './RelationshipLink';
 import CellTooltip from './CellTooltip';
-import { addFieldDefaults } from './Field';
+import { addFieldDefaults, CellRenderer } from './Field';
 
 
 function isEmptyOrNull(option: string) {
@@ -90,12 +90,29 @@ function createLink(text: any, url: string) {
   </a>
 }
 
+function createCellRenderer(cellRenderer: CellRenderer, data: object) {
+  const propPointers: object = {}
+  for (const [prop, requiredColumn] of Object.entries(cellRenderer.propPointers)) {
+    propPointers[prop] = data[requiredColumn]
+  }
+  return <cellRenderer.element {...propPointers}/>
+}
+
 function formatAttributeData(data: object, fieldMeta: object) {
   const updatedData: object = {}
   for (const [key, value] of Object.entries(data)) {
     if (fieldMeta[key] !== undefined) {
-      if (fieldMeta[key].link !== null) {
-        const linkField = fieldMeta[key].link
+      const linkField = fieldMeta[key].link
+      const cellRendererField = fieldMeta[key].cellRenderer
+
+      // if there is a cellRenderer defined
+      if (cellRendererField !== null) {
+        updatedData[key] = createCellRenderer(cellRendererField, data)
+        continue
+      }
+
+      // if there is a link defined and not a cellRenderer
+      if (linkField !== null) {
         updatedData[key] = createLink(value, data[linkField])
         continue
       }

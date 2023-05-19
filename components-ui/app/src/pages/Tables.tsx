@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { CentreContents, AutoTable } from '../tol-ui/src'
+import TempStatusExample from '../tol-ui/src/sandbox/TempStatusExample'
 
 
 function Tables() {
@@ -12,11 +13,17 @@ function Tables() {
     <div className="tables">
       <CentreContents>
       <AutoTable
-      debug
         endpoint="samples"
         fields={{
           "id": {rename: "Row ID"},
-          "tube_id": {},
+          "tube_id": {
+            cellRenderer: {
+              element: TempStatusExample,
+              propPointers: {
+                tube_id: "tube_id"
+              }
+            }
+          },
           "specimens.tolid": {rename: "ToL ID Prefix"},
           "specimens.species.name": {rename: "Species"},
           "created_at": {

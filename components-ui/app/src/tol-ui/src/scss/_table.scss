@@ -177,6 +177,11 @@
     cursor: pointer;
   }
 
+  // statuses using alert format
+  .alert {
+    margin-bottom: 0;
+  }
+
   // This is here because react-table uses Bootstrap 4 classes
   .sr-only {
     @extend .visually-hidden

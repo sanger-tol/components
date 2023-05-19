@@ -1,10 +1,13 @@
 <!--
-SPDX-FileCopyrightText: 2022 Genome Research Ltd.
+SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 -->
 
-# ToL UI
+# Components - ToL UI
+'Components' is an environment to develop and test new react components for the ToL UI package.
 
-An npm components package for ToL systems. This is very much a work in progress and is not ready for anyone outside ToL Platforms to use yet.
+Please find the ToL UI docs [here](https://ssg-confluence.internal.sanger.ac.uk/display/TOL/ToL+UI+Library).
 
+### Building and running the application locally
+[Tol developer documentation](https://ssg-confluence.internal.sanger.ac.uk/display/TOL/Building+and+running+any+ToL+Platforms+app+locally)
