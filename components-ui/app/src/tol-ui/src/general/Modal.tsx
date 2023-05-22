@@ -11,7 +11,7 @@ export interface Props {
   size: string,
   open: boolean,
   setOpen: React.Dispatch<React.SetStateAction<any>>,
-  children: React.ReactNode
+  children: JSX.Element
 }
 
 const Modal = (props: Props) => {

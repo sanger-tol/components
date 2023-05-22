@@ -14,6 +14,8 @@ import paginationFactory, { PaginationProvider,
                             PaginationTotalStandalone } from 'react-bootstrap-table2-paginator';
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import { useState } from 'react';
+import { Modal } from '../index';
 
 
 function Table ({ 
@@ -33,6 +35,9 @@ function Table ({
     sizePerPage, 
     totalSize 
   }
+
+  const [open, setOpen] = useState(false);
+  
   return (
     <PaginationProvider
       pagination={ paginationFactory(options) }
@@ -45,9 +50,24 @@ function Table ({
         <div className='tol-table'>
           {includeNav &&
             <div>
-              <Button className="tol-table-filter-button" variant="primary" onClick={ () => {console.log('this is a test')}}>
+              <Button className="tol-table-filter-button" variant="primary" onClick={ () => {
+                setOpen(true)
+              }}>
                 Toggle
               </Button>
+              {open ? 
+                <Modal
+                open={open}
+                size={'sm'}
+                setOpen={setOpen}
+                >
+                  <h2>Toggle Columns</h2>
+                  {console.log(columns)}
+                  {}
+                </Modal>
+              :
+              <></>
+              }
               <Button className="tol-table-filter-button" variant="primary" onClick={ onFilterButton }>
                 <SearchIcon />
                 Filter

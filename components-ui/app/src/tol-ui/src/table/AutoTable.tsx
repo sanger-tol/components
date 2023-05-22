@@ -17,7 +17,8 @@ import { convertTableData,
          initialiseFilterDict,
          structureFieldsAuto,
          structureFieldsUsingProp,
-         switchFilterVisability } from "./TableUtils"
+         switchFilterVisability, 
+         openToggleModal} from "./TableUtils"
 
 
 export interface Props {
@@ -239,6 +240,7 @@ class AutoTable extends React.Component<Props, State> {
               totalSize={ totalSize }
               includeNav={ includeNav }
               noDataIndication={ noDataIndication }
+              toggleModal = { openToggleModal }
             />
           )
         })()}

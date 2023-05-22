@@ -11,6 +11,7 @@ import { format } from 'date-fns'
 import RelationshipLink from './RelationshipLink';
 import CellTooltip from './CellTooltip';
 import { addFieldDefaults, CellRenderer } from './Field';
+import Modal from '../general/Modal'
 
 
 function isEmptyOrNull(option: string) {
@@ -320,10 +321,4 @@ export function switchFilterVisability() {
     filterVisability = 'block'
   }
   document.documentElement.style.setProperty('--filter-visability', filterVisability);
-}
-
-export function openToggleModal() {
-  return (
-    <Modal></Modal>
-  )
 }
