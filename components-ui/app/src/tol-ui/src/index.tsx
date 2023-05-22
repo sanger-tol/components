@@ -12,6 +12,7 @@ export { default as Alert } from "./general/Alert";
 export { default as InfoTooltip } from "./general/InfoTooltip";
 export { default as LoadingHelix, MiniLoadingHelix } from "./general/LoadingHelix";
 export { default as AutoComplete } from "./general/AutoComplete";
+export { default as Status } from "./general/Status";
 
 // Table
 export { default as AutoTable } from "./table/AutoTable";

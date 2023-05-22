@@ -5,14 +5,14 @@ SPDX-License-Identifier: MIT
 */
 
 import React from 'react';
-import { Tooltip, Whisper } from 'rsuite';
+import { Popover, Whisper } from 'rsuite';
 
 
 function renderTooltip(contents: JSX.Element|string) {
   return(
-    <Tooltip>
+    <Popover>
       { contents }
-    </Tooltip>
+    </Popover>
   );
 }
 
@@ -22,14 +22,9 @@ export interface Props {
   children: JSX.Element
 }
 
-export interface State {
-}
-
-class ToolTipOverlay extends React.Component<Props, State> {
+class HoverOverlay extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-    }
   }
 
   render() {
@@ -41,9 +36,10 @@ class ToolTipOverlay extends React.Component<Props, State> {
       <Whisper
         // @ts-ignore
         placement={ placement }
-        controlId="hover-id-click"
+        controlId="control-id-hover-enterable"
         trigger="hover"
         speaker={ renderTooltip(this.props.contents) }
+        enterable
       >
         { this.props.children }
       </Whisper>
@@ -51,4 +47,4 @@ class ToolTipOverlay extends React.Component<Props, State> {
   }
 }
 
-export default ToolTipOverlay;
+export default HoverOverlay;

@@ -26,9 +26,7 @@ function Tables() {
           },
           "specimens.tolid": {rename: "ToL ID Prefix"},
           "specimens.species.name": {rename: "Species"},
-          "created_at": {
-            rename: "Created At"
-          },
+          "created_at": {rename: "Created At"},
           "creator.name": {
             rename: "Creator",
             relationshipBox: true

@@ -1,34 +1,43 @@
 /*
-SPDX-FileCopyrightText: 2022 Genome Research Ltd.
+SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
-import { Alert } from '../index';
+import { Status } from '../index';
 
+
+function setStatusType(firstNum: number) {
+  switch(firstNum) {
+    case 1:
+    case 2:
+    case 3:
+      return 'green';
+    case 4:
+    case 5:
+      return 'amber';
+    case 6:
+    case 7:
+      return 'blue';
+    default:
+      return 'red';
+  }
+}
 
 interface Props {
-  tube_id: string,
+  tube_id: string
 }
 
 function TempStatusExample(props: Props) {
   const tube_id = props.tube_id
+  const firstNum = parseInt(tube_id.charAt(0))
 
-  if (parseInt(tube_id.charAt(0)) < 5) {
-    return (
-      <Alert
-        type="success"
-        message={props.tube_id}
-      />
-      );
-  } else {
-    return (
-      <Alert
-        type="danger"
-        message={props.tube_id}
-      />
-    );
-  }
+  return (
+    <Status
+      text={props.tube_id}
+      status={setStatusType(firstNum)}
+    />
+  );
 }
 
 export default TempStatusExample;

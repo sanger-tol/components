@@ -12,4 +12,5 @@ export { default as Login } from "./Login";
 export { default as Navigation } from "./Navigation";
 export { default as Alert } from "./Alert";
 export { default as InfoTooltip } from "./InfoTooltip";
-export { default as TooltipOverlay } from "./TooltipOverlay";
+export { default as HoverOverlay } from "./HoverOverlay";
+export { default as Status } from "./Status";

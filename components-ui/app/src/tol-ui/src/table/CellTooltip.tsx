@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import React from 'react';
-import ToolTipOverlay from '../general/TooltipOverlay';
+import HoverOverlay from '../general/HoverOverlay';
 
 
 export interface Props {
@@ -17,13 +17,13 @@ class CellTooltip extends React.Component<Props> {
   render() {
     const { text, contents } = this.props;
     return (
-      <ToolTipOverlay
+      <HoverOverlay
         contents={ contents }
       >
         <div className='tooltip-wrapper'>
           { text }
         </div>
-      </ToolTipOverlay>
+      </HoverOverlay>
     );
   }
 }

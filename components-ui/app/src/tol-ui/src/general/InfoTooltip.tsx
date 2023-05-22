@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import React from 'react';
 import { InfoIcon } from './Icons';
-import ToolTipOverlay from './TooltipOverlay';
+import HoverOverlay from './HoverOverlay';
 
 
 export interface Props {
@@ -16,13 +16,13 @@ export interface Props {
 class InfoTooltip extends React.Component<Props> {
   render() {
     return (
-      <ToolTipOverlay
+      <HoverOverlay
         contents={ this.props.contents }
       >
         <div className='tooltip-wrapper'>
           <InfoIcon />
         </div>
-      </ToolTipOverlay>
+      </HoverOverlay>
     );
   }
 }
