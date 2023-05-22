@@ -5,8 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import ReactDOM from "react-dom";
-import { Home, Tables } from "./pages";
-// import { Sandbox } from "./pages";
+import { Home, Miscellaneous, Tables } from "./pages";
+//import { Sandbox } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page } from "@tol/tol-ui"
 import "./scss/styling.scss";
@@ -18,14 +18,20 @@ const tables: Page = {
   uiElement: <Tables />
 }
 
-/*
-const sandbox: Page = {
-  name: "Sandbox",
+//const sandbox: Page = {
+//  name: "Sandbox",
+//  authRequired: false,
+//  adminOnly: false,
+//  uiElement: <Sandbox />
+//}
+
+const miscellaneous: Page = {
+  name: "Miscellaneous",
   authRequired: false,
   adminOnly: false,
-  uiElement: <Sandbox />
+  uiElement: <Miscellaneous />
 }
-*/
+
 
 ReactDOM.render(
   <TolApp
@@ -33,7 +39,8 @@ ReactDOM.render(
     homePage={ <Home /> }
     pages={[
       tables,
-      // sandbox
+      //sandbox,
+      miscellaneous
     ]}
     login={ true }
   />,
