@@ -321,3 +321,9 @@ export function switchFilterVisability() {
   }
   document.documentElement.style.setProperty('--filter-visability', filterVisability);
 }
+
+export function openToggleModal() {
+  return (
+    <Modal></Modal>
+  )
+}

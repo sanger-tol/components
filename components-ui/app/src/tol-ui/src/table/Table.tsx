@@ -45,6 +45,9 @@ function Table ({
         <div className='tol-table'>
           {includeNav &&
             <div>
+              <Button className="tol-table-filter-button" variant="primary" onClick={ () => {console.log('this is a test')}}>
+                Toggle
+              </Button>
               <Button className="tol-table-filter-button" variant="primary" onClick={ onFilterButton }>
                 <SearchIcon />
                 Filter
