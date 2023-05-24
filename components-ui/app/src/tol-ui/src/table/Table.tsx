@@ -27,7 +27,7 @@ function Table ({
   sizePerPage,
   totalSize,
   includeNav,
-  noDataIndication
+  noDataIndication,
 }) {
   const options = {
     custom: true,
@@ -50,25 +50,29 @@ function Table ({
         <div className='tol-table'>
           {includeNav &&
             <div>
-              <Button className="tol-table-filter-button" variant="primary" onClick={ () => {
-                setOpen(true)
-              }}>
+              <Button 
+                className="tol-table-button"
+                variant="primary" 
+                onClick={ () => {
+                  setOpen(true)
+                }}
+              >
                 Toggle
               </Button>
               {open ? 
                 <Modal
                 open={open}
-                size={'sm'}
+                size='sm'
                 setOpen={setOpen}
                 >
-                  <h2>Toggle Columns</h2>
-                  {console.log(columns)}
-                  {}
+                  <>
+                    <h2>Toggle Columns</h2>
+                  </>
                 </Modal>
               :
               <></>
               }
-              <Button className="tol-table-filter-button" variant="primary" onClick={ onFilterButton }>
+              <Button className="tol-table-button" variant="primary" onClick={ onFilterButton }>
                 <SearchIcon />
                 Filter
               </Button>

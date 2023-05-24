@@ -154,9 +154,6 @@ function formatRelationshipData(data: object, fieldMeta: object) {
           relationships={ splitKey }
           relationshipBox={ fieldMeta[key]['relationshipBox'] }
         />
-      } else if(data[currentObject].data === null) {
-        // updatedData[headingId] = <span className="none-value">None</span>
-        // might put 'None' in future? - same for attributes
       }
     } else {
       throw Error(key + ' not in API data call')
@@ -171,53 +168,55 @@ export function convertHeadingData(fieldMeta: object) {
   const updatedHeadings: object[] = []
 
   for (const [key, meta] of Object.entries(fieldMeta)) {
-    let capsHeading = ''
-    let headerWidth = meta.width.toString() + 'px'
-    let hidden = false
+    if (!meta.hidden) {
+      let capsHeading = ''
+      let headerWidth = meta.width.toString() + 'px'
+      let hidden = false
 
-    // rename via override or normalise a field name
-    if (isEmptyOrNull(meta.rename)) {
-      capsHeading = normaliseCaps(key)
-    } else {
-      capsHeading = meta.rename
-    }
+      // rename via override or normalise a field name
+      if (isEmptyOrNull(meta.rename)) {
+        capsHeading = normaliseCaps(key)
+      } else {
+        capsHeading = meta.rename
+      }
 
-    if (meta.isAttribute === true) {
-      if (key === 'id') {
-        headerWidth = '100px'
-        hidden = true
-      }
-      let heading = {
-        dataField: key,
-        text: capsHeading,
-        headerSortingClasses,
-        headerStyle: headerStyling(headerWidth),
-        hidden: hidden
-      }
-      if (meta.sort === true) {
-        heading['sort'] = true
-      }
-      if (meta.filter === true) {
-        heading['filter'] = customFilter({
-          type: meta.filterType
-        })
-        if (meta.filterType === 'RANGE') {
-          heading['filterRenderer'] = (onFilter: any, column: any) =>
-            <DatePicker onFilter={ onFilter } column={ column } />
-        } else {
-          heading['filterRenderer'] = (onFilter: any, column: any) => 
-            <TextInput type={ meta.type } onFilter={ onFilter } column={ column } />
+      if (meta.isAttribute === true) {
+        if (key === 'id') {
+          headerWidth = '100px'
+          hidden = true
         }
+        let heading = {
+          dataField: key,
+          text: capsHeading,
+          headerSortingClasses,
+          headerStyle: headerStyling(headerWidth),
+          hidden: hidden
+        }
+        if (meta.sort === true) {
+          heading['sort'] = true
+        }
+        if (meta.filter === true) {
+          heading['filter'] = customFilter({
+            type: meta.filterType
+          })
+          if (meta.filterType === 'RANGE') {
+            heading['filterRenderer'] = (onFilter: any, column: any) =>
+              <DatePicker onFilter={ onFilter } column={ column } />
+          } else {
+            heading['filterRenderer'] = (onFilter: any, column: any) => 
+              <TextInput type={ meta.type } onFilter={ onFilter } column={ column } />
+          }
+        }
+        updatedHeadings.push(heading);
+      
+      // if heading is a relationship
+      } else if (meta.isAttribute === false) {
+        updatedHeadings.push({
+          dataField: key,
+          text: capsHeading,
+          headerStyle: headerStyling(headerWidth)
+        });
       }
-      updatedHeadings.push(heading);
-    
-    // if heading is a relationship
-    } else if (meta.isAttribute === false) {
-      updatedHeadings.push({
-        dataField: key,
-        text: capsHeading,
-        headerStyle: headerStyling(headerWidth)
-      });
     }
   }
   return updatedHeadings
@@ -277,37 +276,64 @@ export function structureFieldsUsingProp(fields: object, apiFieldMeta: object) {
   return fields
 }
 
+function defineFieldMeta(
+  isAttribute: boolean,
+  hidden: boolean,
+  type: string
+) {
+  let field = addFieldDefaults({
+    'isAttribute': isAttribute,
+    'relationshipBox': !isAttribute,
+    'hidden': hidden
+  })
+  // meta field type is 'data' for attributes
+  if (isAttribute) {
+    field['type'] = type
+    field['filterType'] = convertTypeToDefaultFilter(type)
+  }
+  return field
+}
+
 // structure fields using the json-api spec
 export function structureFieldsAuto(
   apiFields: object,
-  apiFieldMeta: object,
+  apiMeta: object,
+  fieldMeta: object,
   isAttribute: boolean,
+  fieldPropDefined: boolean,
   debug?: boolean
 ) {
   const fields = {}
-  // adding internal ID to row
-  fields['id'] = addFieldDefaults({
-    'rename': 'ID',
-    'isAttribute': true,
-    'type': 'int'
-  })
+
+  // id is seperate from attributes, so it needs to be added
+  if(isAttribute) {
+    apiFields = Object.assign({'id': null}, apiFields)
+  }
+
   for (let [key, data] of Object.entries(apiFields)) {
     // ignoring one-to-many relationships
     if (!isAttribute && !('data' in data)) {
-      if (debug === true) {
+      if (debug) {
         console.warn('\'' + key + '\' is on the many side of the relationship' + 
-                      ' - therefore it is being ignored.')
+                     ' - therefore it is being ignored.')
       }
       continue
     }
-    fields[key] = addFieldDefaults({
-      'isAttribute': isAttribute,
-      'relationshipBox': true
-    })
-    // meta field type is 'data' for attributes
-    if (isAttribute) {
-      fields[key]['type'] = apiFieldMeta[key]
-      fields[key]['filterType'] = convertTypeToDefaultFilter(apiFieldMeta[key])
+
+    // adding hidden fields if not defined in fields prop
+    const type = apiMeta[key]
+    if (!fieldPropDefined) {
+      fields[key] = defineFieldMeta(
+        isAttribute,
+        false,
+        type
+      )
+    } else if (!(key in fieldMeta)) {
+      fields[key] = defineFieldMeta(
+        isAttribute,
+        true,
+        type
+      )
     }
   }
   return fields

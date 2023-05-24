@@ -13,6 +13,7 @@ function Tables() {
     <div className="tables">
       <CentreContents>
       <AutoTable
+        debug
         endpoint="samples"
         fields={{
           "id": {rename: "Row ID"},

@@ -17,8 +17,7 @@ import { convertTableData,
          initialiseFilterDict,
          structureFieldsAuto,
          structureFieldsUsingProp,
-         switchFilterVisability, 
-         openToggleModal} from "./TableUtils"
+         switchFilterVisability} from "./TableUtils"
 
 
 export interface Props {
@@ -128,28 +127,34 @@ class AutoTable extends React.Component<Props, State> {
         // check if any data is returned
         if (apiData[0] !== undefined) {
           let fieldMeta = {};
+          let fieldPropDefined = this.props.fields !== undefined;
 
           // checking if 'fields' has been defined
           if (this.props.fields !== undefined) {
             fieldMeta = structureFieldsUsingProp(this.props.fields, apiMeta.types)
-          } else {
-            if ('attributes' in apiData[0]) {
-              const attributes = structureFieldsAuto(
-                apiData[0].attributes,
-                apiMeta.types,
-                true
-              )
-              fieldMeta = Object.assign(fieldMeta, attributes)
-            }
-            if ('relationships' in apiData[0]) {
-              const relationships = structureFieldsAuto(
-                apiData[0].relationships,
-                apiMeta.types,
-                false,
-                this.props.debug
-              )
-              fieldMeta = Object.assign(fieldMeta, relationships)
-            }
+          }
+
+          // auto add all fields in api call - if fields specified, extras are hidden
+          if ('attributes' in apiData[0]) {
+            const attributes = structureFieldsAuto(
+              apiData[0].attributes,
+              apiMeta.types,
+              fieldMeta,
+              true,
+              fieldPropDefined
+            )
+            fieldMeta = Object.assign(fieldMeta, attributes)
+          }
+          if ('relationships' in apiData[0]) {
+            const relationships = structureFieldsAuto(
+              apiData[0].relationships,
+              apiMeta.types,
+              fieldMeta,
+              false,
+              fieldPropDefined,
+              this.props.debug
+            )
+            fieldMeta = Object.assign(fieldMeta, relationships)
           }
 
           // debug logs - this will be moved to a func soon
@@ -240,7 +245,6 @@ class AutoTable extends React.Component<Props, State> {
               totalSize={ totalSize }
               includeNav={ includeNav }
               noDataIndication={ noDataIndication }
-              toggleModal = { openToggleModal }
             />
           )
         })()}

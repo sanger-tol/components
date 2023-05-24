@@ -29,8 +29,8 @@
 
   // darken various buttons
   #pageDropDown:hover,
-  .tol-table-filter-button:hover,
-  .tol-table-filter-button:active,
+  .tol-table-button:hover,
+  .tol-table-button:active,
   .active.page-item .page-link:hover {
     background-color: darken($primary, 10%) !important;
     border-color: darken($primary, 10%) !important;
@@ -137,13 +137,13 @@
   }
 
   // filter button
-  .tol-table-filter-button,
-  .tol-table-filter-button:active {
+  .tol-table-button,
+  .tol-table-button:active {
     color: white;
     fill: white;
   }
 
-  .tol-table-filter-button svg {
+  .tol-table-button svg {
     margin-right: 8px;
   }
 
