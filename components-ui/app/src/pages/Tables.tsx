@@ -15,7 +15,7 @@ function Tables() {
       <AutoTable
         endpoint="samples"
         fields={{
-          "id": {rename: "Row ID"}
+          "id": {rename: "Row ID"},
           "tube_id": {
             cellRenderer: {
               element: TempStatusExample,
