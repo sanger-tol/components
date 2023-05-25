@@ -336,10 +336,17 @@ export function structureFieldsAuto(
   return fields
 }
 
+export function isColumnVisible(column: object) {
+  if (!('hidden' in column) || !column['hidden']) {
+    return true
+  }
+  return false
+}
+
 export function pruneHiddenColumns(columns: object[]) {
   const visibleColumns: object[] = []
   for (const column of columns) {
-    if (!('hidden' in column) || !column['hidden']) {
+    if (isColumnVisible(column)) {
       visibleColumns.push(column)
     }
   }

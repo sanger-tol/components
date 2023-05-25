@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Button } from '../index'
+import TableModal from './TableModal'
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory from 'react-bootstrap-table2-filter';
 import paginationFactory, { PaginationProvider,
@@ -14,7 +15,6 @@ import paginationFactory, { PaginationProvider,
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import { useState } from 'react';
-import { Modal } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSliders } from '@fortawesome/free-solid-svg-icons';
 import { pruneHiddenColumns } from "./TableUtils"
@@ -61,15 +61,11 @@ function Table ({
                 <FontAwesomeIcon icon={faSliders} size="sm" />
               </Button>
               {open ? 
-                <Modal
-                open={open}
-                size='sm'
-                setOpen={setOpen}
-                >
-                  <>
-                    <h2>Toggle Columns</h2>
-                  </>
-                </Modal>
+                <TableModal
+                  columns={columns}
+                  open={open}
+                  setOpen={setOpen}
+                />
               :
               <></>
               }
