@@ -130,8 +130,8 @@ class AutoTable extends React.Component<Props, State> {
           let fieldPropDefined = this.props.fields !== undefined;
 
           // checking if 'fields' has been defined
-          if (this.props.fields !== undefined) {
-            fieldMeta = structureFieldsUsingProp(this.props.fields, apiMeta.types)
+          if (fieldPropDefined) {
+            fieldMeta = structureFieldsUsingProp(this.props.fields!, apiMeta.types)
           }
 
           // auto add all fields in api call - if fields specified, extras are hidden

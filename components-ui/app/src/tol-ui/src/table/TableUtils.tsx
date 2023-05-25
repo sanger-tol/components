@@ -11,7 +11,6 @@ import { format } from 'date-fns'
 import RelationshipLink from './RelationshipLink';
 import CellTooltip from './CellTooltip';
 import { addFieldDefaults, CellRenderer } from './Field';
-import Modal from '../general/Modal'
 
 
 function isEmptyOrNull(option: string) {
@@ -168,10 +167,8 @@ export function convertHeadingData(fieldMeta: object) {
   const updatedHeadings: object[] = []
 
   for (const [key, meta] of Object.entries(fieldMeta)) {
-    if (!meta.hidden) {
       let capsHeading = ''
       let headerWidth = meta.width.toString() + 'px'
-      let hidden = false
 
       // rename via override or normalise a field name
       if (isEmptyOrNull(meta.rename)) {
@@ -183,14 +180,13 @@ export function convertHeadingData(fieldMeta: object) {
       if (meta.isAttribute === true) {
         if (key === 'id') {
           headerWidth = '100px'
-          hidden = true
         }
         let heading = {
           dataField: key,
           text: capsHeading,
           headerSortingClasses,
           headerStyle: headerStyling(headerWidth),
-          hidden: hidden
+          hidden: meta.hidden
         }
         if (meta.sort === true) {
           heading['sort'] = true
@@ -214,10 +210,11 @@ export function convertHeadingData(fieldMeta: object) {
         updatedHeadings.push({
           dataField: key,
           text: capsHeading,
-          headerStyle: headerStyling(headerWidth)
+          headerStyle: headerStyling(headerWidth),
+          hidden: meta.hidden
         });
       }
-    }
+    
   }
   return updatedHeadings
 }
@@ -337,6 +334,16 @@ export function structureFieldsAuto(
     }
   }
   return fields
+}
+
+export function pruneHiddenColumns(columns: object[]) {
+  const visibleColumns: object[] = []
+  for (const column of columns) {
+    if (!('hidden' in column) || !column['hidden']) {
+      visibleColumns.push(column)
+    }
+  }
+  return visibleColumns
 }
 
 export function switchFilterVisability() {

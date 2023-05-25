@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { Button } from '../index'
-import { SearchIcon } from '../general/Icons';
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory from 'react-bootstrap-table2-filter';
 import paginationFactory, { PaginationProvider,
@@ -16,6 +15,9 @@ import paginationFactory, { PaginationProvider,
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import { useState } from 'react';
 import { Modal } from '../index';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter, faSliders } from '@fortawesome/free-solid-svg-icons';
+import { pruneHiddenColumns } from "./TableUtils"
 
 
 function Table ({ 
@@ -27,7 +29,7 @@ function Table ({
   sizePerPage,
   totalSize,
   includeNav,
-  noDataIndication,
+  noDataIndication
 }) {
   const options = {
     custom: true,
@@ -35,7 +37,6 @@ function Table ({
     sizePerPage, 
     totalSize 
   }
-
   const [open, setOpen] = useState(false);
   
   return (
@@ -57,7 +58,7 @@ function Table ({
                   setOpen(true)
                 }}
               >
-                Toggle
+                <FontAwesomeIcon icon={faSliders} size="sm" />
               </Button>
               {open ? 
                 <Modal
@@ -73,8 +74,7 @@ function Table ({
               <></>
               }
               <Button className="tol-table-button" variant="primary" onClick={ onFilterButton }>
-                <SearchIcon />
-                Filter
+                <FontAwesomeIcon icon={faFilter} size="sm" />
               </Button>
               <SizePerPageDropdownStandalone
                 { ...paginationProps }
@@ -89,7 +89,7 @@ function Table ({
             remote
             keyField='id'
             data={ data }
-            columns={ columns }
+            columns={ pruneHiddenColumns(columns) }
             onTableChange={ onTableChange }
             pagination={ paginationFactory(options) }
             filter={ filterFactory() }
