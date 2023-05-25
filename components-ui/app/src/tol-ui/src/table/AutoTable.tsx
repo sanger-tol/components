@@ -31,6 +31,7 @@ export interface Props {
 export interface State {
   tableData: any[],
   headings: any[],
+  fieldMeta: object,
   page: number,
   sizePerPage: number,
   totalSize: number,
@@ -48,6 +49,7 @@ class AutoTable extends React.Component<Props, State> {
     this.state = {
       tableData: [],
       headings: headingsDefault,
+      fieldMeta: {},
       page: 1,
       sizePerPage: 50,
       totalSize: -1,
@@ -189,6 +191,7 @@ class AutoTable extends React.Component<Props, State> {
           if (!this.state.initialLoad) {
             this.setState({
               headings: convertHeadingData(fieldMeta),
+              fieldMeta: fieldMeta,
               initialLoad: true
             })
           }
@@ -213,7 +216,7 @@ class AutoTable extends React.Component<Props, State> {
   }
 
   render() {
-    const { tableData, headings, page, sizePerPage, totalSize, error } = this.state;
+    const { tableData, headings, fieldMeta, page, sizePerPage, totalSize, error } = this.state;
     
     // show nav as default
     let includeNav = this.props.includeNav;
@@ -238,6 +241,7 @@ class AutoTable extends React.Component<Props, State> {
             <Table
               data={ tableData }
               columns={ headings }
+              fieldMeta={ fieldMeta }
               onTableChange={ this.handleTableChange }
               onFilterButton={ switchFilterVisability }
               page={ page }

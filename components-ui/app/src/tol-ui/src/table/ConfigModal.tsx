@@ -10,13 +10,13 @@ import { isColumnVisible } from "./TableUtils"
 
 
 export interface Props {
-  columns: object[],
+  fieldMeta: object[],
   open: boolean,
   setOpen: React.Dispatch<React.SetStateAction<any>>
 }
 
-function TableModal(props: Props) {
-  const { columns, open, setOpen } = props;
+function ConfigModal(props: Props) {
+  const { fieldMeta, open, setOpen } = props;
 
   return (
     <Modal
@@ -25,18 +25,10 @@ function TableModal(props: Props) {
       setOpen={setOpen}
     >
       <>
-        <h2>Toggle Columns</h2>
-        {console.log(columns)}
-        {columns.map(column => {
-          if (isColumnVisible(column)) {
-            return <li>{column['text']}</li>
-          } else {
-            return <li>{column['text']}__HIDDEN</li>
-          }
-        })}
+      
       </>
     </Modal>
   );
 };
 
-export default TableModal;
+export default ConfigModal;

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Button } from '../index'
-import TableModal from './TableModal'
+import ConfigModal from './ConfigModal'
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory from 'react-bootstrap-table2-filter';
 import paginationFactory, { PaginationProvider,
@@ -23,6 +23,7 @@ import { pruneHiddenColumns } from "./TableUtils"
 function Table ({ 
   data,
   columns,
+  fieldMeta,
   onTableChange,
   onFilterButton,
   page,
@@ -61,8 +62,8 @@ function Table ({
                 <FontAwesomeIcon icon={faSliders} size="sm" />
               </Button>
               {open ? 
-                <TableModal
-                  columns={columns}
+                <ConfigModal
+                  fieldMeta={fieldMeta}
                   open={open}
                   setOpen={setOpen}
                 />
