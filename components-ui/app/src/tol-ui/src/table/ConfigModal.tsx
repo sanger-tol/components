@@ -25,7 +25,8 @@ function ConfigModal(props: Props) {
       setOpen={setOpen}
     >
       <>
-      
+        <h2>Toggle and Order Columns</h2>
+        {console.log(fieldMeta)}
       </>
     </Modal>
   );
