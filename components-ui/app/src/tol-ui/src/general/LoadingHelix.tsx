@@ -25,4 +25,12 @@ export const MiniLoadingHelix = () => {
   )
 }
 
+export const RelationshipLoadingHelix = () => {
+  return (
+    <div className='relationship-mini-loader'>
+      <MiniLoadingHelix />
+    </div>
+  )
+}
+
 export default LoadingHelix;

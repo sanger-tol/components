@@ -25,19 +25,22 @@ function setStatusType(firstNum: number) {
 }
 
 interface Props {
-  tube_id: string
+  param: string
 }
 
-function TempStatusExample(props: Props) {
-  const tube_id = props.tube_id
-  const firstNum = parseInt(tube_id.charAt(0))
+function StatusExample(props: Props) {
+  const param = props.param
+  if (param === null) {
+    return <></>
+  }
+  const firstNum = parseInt(param.charAt(0))
 
   return (
     <Status
-      text={props.tube_id}
+      text={props.param}
       status={setStatusType(firstNum)}
     />
   );
 }
 
-export default TempStatusExample;
+export default StatusExample;

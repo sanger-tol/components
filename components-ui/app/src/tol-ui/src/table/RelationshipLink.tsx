@@ -8,27 +8,32 @@ import React from 'react';
 import { httpClient } from '../services/http/httpClient'
 import HoverOverlay from '../general/HoverOverlay';
 import FormatRelationshipTooltip from './FormatRelationshipTooltip';
-import { normaliseCaps } from './TableUtils'
-import { MiniLoadingHelix } from '../general/LoadingHelix'
+import { normaliseCaps,
+         createCellRenderer,
+         isEmptyObj } from './TableUtils'
+import { RelationshipLoadingHelix } from '../general/LoadingHelix'
 
 
 export interface Props {
   initialEndpoint: string,
   relationships: string[],
-  relationshipBox: boolean
+  attributes: object,
+  fieldMeta: object
 }
 
 export interface State {
   text: JSX.Element|string,
-  contents: object
+  contents: object,
+  tableData: object
 }
 
 class RelationshipLink extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      text: <MiniLoadingHelix />,
-      contents: {}
+      text: <RelationshipLoadingHelix />,
+      contents: {},
+      tableData: this.props.attributes
     }
   }
 
@@ -49,7 +54,7 @@ class RelationshipLink extends React.Component<Props, State> {
       await httpClient().get(endpoint)
       .then((res: any) => { // eslint-disable-line no-loop-func
         const data = res.data.data
-        const attributes = Object.assign({'id': data.id}, data.attributes)
+        const currentAttributes = Object.assign({'id': data.id}, data.attributes)
         // if endpoint is the last relationship, set state
         if (count === relationshipTotal-1) {
           // if no requiredFields are set, there is no attribute
@@ -57,21 +62,27 @@ class RelationshipLink extends React.Component<Props, State> {
           if (attribute === '') {
             displayText = normaliseCaps(data.type) + ': ' + data.id
           } else {
-            displayText = attributes[attribute]
+            displayText = currentAttributes[attribute]
           }
           // if defined attribute is incorrect, raise warning
           if (displayText === undefined) {
             this.setState({
               text: 'ERROR: See console',
-              contents: { ERROR: 'See console' }
+              contents: { ERROR: 'See console' },
+              tableData: { ERROR: 'See console' }
             })
             throw Error('Attribute \'' + attribute + '\' cannot be found in \'' +
                         relationships[count] + '\'')
           }
+
+          // please note that the object used is passed by reference
+          this.state.tableData[relationships[count]] = currentAttributes
+
           this.setState({
             text: displayText,
-            contents: attributes
+            contents: currentAttributes
           })
+          
         } else {
           // assign detail endpoint where relationship title is
           const regex = /^\/([^]*)\/.*/
@@ -89,7 +100,12 @@ class RelationshipLink extends React.Component<Props, State> {
     return (
       <div>
         {(() => {
-          if (this.props.relationshipBox) {
+          const fieldMeta = this.props.fieldMeta
+          if (fieldMeta['cellRenderer'] !== null && !isEmptyObj(this.state.contents)) {
+            const cellRendererField = fieldMeta['cellRenderer']
+            return createCellRenderer(cellRendererField, this.state.tableData)
+          // relationshipBox rendered if true or for 'auto generated' AutoTable
+          } else if (fieldMeta['relationshipBox']) {
             return (
               <HoverOverlay
                 placement='autoHorizontalStart'
@@ -100,6 +116,7 @@ class RelationshipLink extends React.Component<Props, State> {
                 </div>
               </HoverOverlay>
             )
+          // basic text or loading wheel
           } else {
             return <div>{ this.state.text }</div>
           }

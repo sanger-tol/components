@@ -13,15 +13,19 @@ import CellTooltip from './CellTooltip';
 import { addFieldDefaults, CellRenderer } from './Field';
 
 
-function isEmptyOrNull(option: string) {
-  return option === '' || option === null
+function isEmptyOrNull(x: string) {
+  return x === '' || x === null;
+}
+
+export function isEmptyObj(x: object) {
+  return Object.keys(x).length === 0;
 }
 
 export function initialiseFilterDict(apiFilters: object, filterType: string) {
   if (!(filterType in apiFilters)) {
     apiFilters[filterType] = {}
   }
-  return apiFilters
+  return apiFilters;
 }
 
 export function formatDateRange(dateRange: string[]) {
@@ -90,10 +94,17 @@ function createLink(text: any, url: string) {
   </a>
 }
 
-function createCellRenderer(cellRenderer: CellRenderer, data: object) {
+export function createCellRenderer(cellRenderer: CellRenderer, data: object) {
   const propPointers: object = {}
   for (const [prop, requiredColumn] of Object.entries(cellRenderer.propPointers)) {
-    propPointers[prop] = data[requiredColumn]
+    if (requiredColumn.includes('.')) {
+      const splitKey = requiredColumn.split('.')
+      const relationship = splitKey[splitKey.length-2]
+      const attribute = splitKey[splitKey.length-1]
+      propPointers[prop] = data[relationship][attribute]
+    } else {
+      propPointers[prop] = data[requiredColumn]
+    }
   }
   return <cellRenderer.element {...propPointers}/>
 }
@@ -133,27 +144,28 @@ function splitRelationshipKeys(fieldMeta: object) {
   return relationshipKeys
 }
 
-function formatRelationshipData(data: object, fieldMeta: object) {
+function formatRelationshipData(relationships: object, attributes: object, fieldMeta: object) {
   const updatedData: object = {}
   const relationshipKeys: object = splitRelationshipKeys(fieldMeta)
   for (const [key, splitKey] of Object.entries(relationshipKeys)) {
     const currentObject = splitKey[0]
     // checking relationship object is correct
-    if (data[currentObject] === undefined) {
+    if (relationships[currentObject] === undefined) {
       throw Error('\'' + key + '\' is not a correct relationship object. ' +
                   'Please check your spelling and pluralisation.')
     }
     // ignoring one-to-many relationships
-    if ('data' in data[currentObject]) {
+    if ('data' in relationships[currentObject]) {
       const headingId = splitKey.join('.')
       // checking there is 'data' via the link existing
-      if ('links' in data[currentObject]) {
+      if ('links' in relationships[currentObject]) {
         updatedData[headingId] = <RelationshipLink
-          initialEndpoint={ data[currentObject].links.related }
+          initialEndpoint={ relationships[currentObject].links.related }
           relationships={ splitKey }
-          relationshipBox={ fieldMeta[key]['relationshipBox'] }
+          attributes={ attributes }
+          fieldMeta={ fieldMeta[key] }
         />
-      } else if(data[currentObject].data === null) {
+      } else if (relationships[currentObject].data === null) {
         // updatedData[headingId] = <span className="none-value">None</span>
         // might put 'None' in future? - same for attributes
       }
@@ -172,7 +184,6 @@ export function convertHeadingData(fieldMeta: object) {
   for (const [key, meta] of Object.entries(fieldMeta)) {
     let capsHeading = ''
     let headerWidth = meta.width.toString() + 'px'
-    let hidden = false
 
     // rename via override or normalise a field name
     if (isEmptyOrNull(meta.rename)) {
@@ -184,14 +195,12 @@ export function convertHeadingData(fieldMeta: object) {
     if (meta.isAttribute === true) {
       if (key === 'id') {
         headerWidth = '100px'
-        hidden = true
       }
       let heading = {
         dataField: key,
         text: capsHeading,
         headerSortingClasses,
         headerStyle: headerStyling(headerWidth),
-        hidden: hidden
       }
       if (meta.sort === true) {
         heading['sort'] = true
@@ -225,13 +234,20 @@ export function convertHeadingData(fieldMeta: object) {
 export function convertTableData(data: any[], fieldMeta: object) {
   const updatedData: any[] = []
   data.forEach(row => {
-    let fieldData = { 'id': row.id }
+    let fieldData = {'id': row.id}
     if ('attributes' in row) {
-      const attributes = formatAttributeData(row.attributes, fieldMeta)
+      const attributes = formatAttributeData(
+        row.attributes,
+        fieldMeta
+      )
       fieldData = Object.assign(fieldData, attributes)
     }
     if ('relationships' in row) {
-      const relationships = formatRelationshipData(row.relationships, fieldMeta)
+      const relationships = formatRelationshipData(
+        row.relationships,
+        Object.assign({'id': row.id}, row.attributes),
+        fieldMeta
+      )
       fieldData = Object.assign(fieldData, relationships)
     }
     updatedData.push(fieldData)
@@ -310,6 +326,35 @@ export function structureFieldsAuto(
     }
   }
   return fields
+}
+
+export function debug(apiData: object, fieldMeta: object, debug?: boolean) {
+  if (debug) {
+    try {
+      let fieldPossibilities: any = {
+        'attributes': ['id'],
+        'relationships': []
+      }
+      const apiDataInstance = apiData[0]
+      if ('attributes' in apiDataInstance) {
+        for (let key of Object.keys(apiDataInstance.attributes)) {
+          fieldPossibilities['attributes'].push(key)
+        }
+      }
+      const relationships: object = apiDataInstance.relationships
+      if ('relationships' in apiDataInstance) {
+        for (let [key, value] of Object.entries(relationships)) {
+          // ignoring one-to-many relationships
+          if ('data' in value) {
+            fieldPossibilities['relationships'].push(key)
+          }
+        }
+      }
+      console.log('Field Possibilities', fieldPossibilities)
+      console.log('Api Response Data', apiData)
+      console.log('Field Meta', fieldMeta)
+    } catch(e) {}
+  }
 }
 
 export function switchFilterVisability() {

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { CentreContents, AutoTable } from '../tol-ui/src'
-import TempStatusExample from '../tol-ui/src/sandbox/TempStatusExample'
+import StatusExample from '../tol-ui/src/sandbox/StatusExample'
 
 
 function Tables() {
@@ -18,18 +18,23 @@ function Tables() {
           "id": {rename: "Row ID"},
           "tube_id": {
             cellRenderer: {
-              element: TempStatusExample,
+              element: StatusExample,
               propPointers: {
-                tube_id: "tube_id"
+                param: "tube_id"
               }
             }
           },
           "specimens.tolid": {rename: "ToL ID Prefix"},
           "specimens.species.name": {rename: "Species"},
           "created_at": {rename: "Created At"},
-          "creator.name": {
-            rename: "Creator",
-            relationshipBox: true
+          "specimens.species.scientific_name": {
+            rename: "Species Tag",
+            cellRenderer: {
+              element: StatusExample,
+              propPointers: {
+                param: "specimens.species.id"
+              }
+            }
           }
         }}
       />

@@ -13,6 +13,7 @@ import TableErrorAlert from './TableErrorAlert';
 import { Fields } from "./Field";
 import { convertTableData,
          convertHeadingData,
+         debug,
          formatDateRange,
          initialiseFilterDict,
          structureFieldsAuto,
@@ -151,33 +152,12 @@ class AutoTable extends React.Component<Props, State> {
             }
           }
 
-          // debug logs - this will be moved to a func soon
-          if (this.props.debug === true) {
-            try {
-              let fieldPossibilities: any = {
-                'attributes': [],
-                'relationships': []
-              }
-              const apiDataInstance = apiData[0]
-              if ('attributes' in apiDataInstance) {
-                for (let key of Object.keys(apiDataInstance.attributes)) {
-                  fieldPossibilities['attributes'].push(key)
-                }
-              }
-              const relationships: object = apiDataInstance.relationships
-              if ('relationships' in apiDataInstance) {
-                for (let [key, value] of Object.entries(relationships)) {
-                  // ignoring one-to-many relationships
-                  if ('data' in value) {
-                    fieldPossibilities['relationships'].push(key)
-                  }
-                }
-              }
-              console.log('Field Possibilities', fieldPossibilities)
-              console.log('Api Response Data', apiData)
-              console.log('Field Meta', fieldMeta)
-            } catch(e) {}
-          }
+          // debug logs if prop defined
+          debug(
+            apiData,
+            fieldMeta,
+            this.props.debug
+          )
 
           // only updating heading state on first load
           if (!this.state.initialLoad) {
