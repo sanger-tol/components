@@ -62,7 +62,7 @@ class TextInput extends React.Component<Props, State> {
   
   render() {
     return (
-      <span onClick={ stopPropagation } className='tol-filter-input filter-search-input-hide' id="tol-filter-input">
+      <span onClick={ stopPropagation } className="filter-input-hide" id="tol-filter-input">
         <InputGroup inside>
           <Input
             onChange={ this.filter }

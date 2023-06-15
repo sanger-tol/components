@@ -8,7 +8,7 @@ import { Alert } from '../index';
 
 
 const NoDataAlert = () => (
-  <div className="d-flex justify-content-center p-5">
+  <div className="d-flex justify-content-center p-5 m-5">
     <Alert 
       type="warning"
       message="No data found"

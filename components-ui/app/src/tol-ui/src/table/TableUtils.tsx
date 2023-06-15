@@ -10,6 +10,8 @@ import TextInput from './TextInput';
 import { format } from 'date-fns'
 import RelationshipLink from './RelationshipLink';
 import CellTooltip from './CellTooltip';
+import NoDataAlert from "./NoDataAlert";
+import TableErrorAlert from './TableErrorAlert';
 import { addFieldDefaults, CellRenderer } from './Field';
 
 
@@ -21,14 +23,14 @@ export function isEmptyObj(x: object) {
   return Object.keys(x).length === 0;
 }
 
-export function initialiseFilterDict(apiFilters: object, filterType: string) {
+function initialiseFilterDict(apiFilters: object, filterType: string) {
   if (!(filterType in apiFilters)) {
     apiFilters[filterType] = {}
   }
   return apiFilters;
 }
 
-export function formatDateRange(dateRange: string[]) {
+function formatDateRange(dateRange: string[]) {
   let from = new Date(dateRange[0])
   let to = new Date(dateRange[1])
   // ensure a whole day is selected
@@ -328,6 +330,23 @@ export function structureFieldsAuto(
   return fields
 }
 
+export function generateFilter(apiFilters: object, filters?: object) {
+  if (filters !== undefined) {
+    for (let [key, meta] of Object.entries(filters)) {
+      if (meta['filterType'] === 'CONTAINS') {
+        apiFilters = initialiseFilterDict(apiFilters, 'contains')
+        apiFilters['contains'][key] = meta['filterVal']
+      } else if (meta['filterType'] === 'RANGE') {
+        apiFilters = initialiseFilterDict(apiFilters, 'range')
+        apiFilters['range'][key] = formatDateRange(meta['filterVal'])
+      } else if (meta['filterType'] === 'EXACT') {
+        apiFilters = initialiseFilterDict(apiFilters, 'exact')
+        apiFilters['exact'][key] = meta['filterVal']
+      }
+    }
+  }
+}
+
 export function debug(apiData: object, fieldMeta: object, debug?: boolean) {
   if (debug) {
     try {
@@ -357,12 +376,34 @@ export function debug(apiData: object, fieldMeta: object, debug?: boolean) {
   }
 }
 
-export function switchFilterVisability() {
-  let filterVisability = getComputedStyle(document.documentElement).getPropertyValue('--filter-visability')
-  if (filterVisability === 'block') {
-    filterVisability = 'none'
+export function tableStatusIndicator(error: boolean) {
+  if (error) {
+    return <TableErrorAlert />
   } else {
-    filterVisability = 'block'
+    return <NoDataAlert />
   }
-  document.documentElement.style.setProperty('--filter-visability', filterVisability);
+}
+
+export function switchFilterVisibility(tableId: string) {
+  const table = document.getElementById(tableId)
+  if (table?.hasChildNodes) {
+    const headers = table.childNodes[0].childNodes[0].childNodes
+
+    for (let x = 0; x < headers.length; x++) {
+      const header = headers[x]
+      if (header.childNodes.length > 1) {
+        const elements = header.childNodes
+        const filter = elements[elements.length-1]
+        // @ts-ignore
+        if (filter.className === "filter-input-hide") {
+          // @ts-ignore
+          filter.className = "filter-input-show"
+        } else {
+          // @ts-ignore
+          filter.className = "filter-input-hide"
+        }
+        
+      }
+    }
+  }
 }

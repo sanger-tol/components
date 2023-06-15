@@ -7,9 +7,9 @@
 
 body {
   @include body-font;
-  --bs-dropdown-link-hover-bg: var(--grey-hover);
-  --bs-link-hover-color: var(--grey-hover);
-  --bs-pagination-hover-bg: var(--grey-hover);
+  --bs-dropdown-link-hover-bg: var(--grey-opaque);
+  --bs-link-hover-color: var(--grey-opaque);
+  --bs-pagination-hover-bg: var(--grey-opaque);
 
   // dropzone
   --rs-uploader-dnd-bg: var(--bs-body-bg);
@@ -66,3 +66,4 @@ a:hover {
   text-decoration: none;
   color: darken($primary, 10%);
 }
+

@@ -15,7 +15,7 @@ function Tables() {
       <AutoTable
         endpoint="samples"
         fields={{
-          "id": {rename: "Row ID"},
+          "id": {rename: "Row ID", sort: false},
           "tube_id": {
             cellRenderer: {
               element: StatusExample,
@@ -37,6 +37,9 @@ function Tables() {
             }
           }
         }}
+      />
+      <AutoTable
+        endpoint="samples"
       />
       </CentreContents>
     </div>

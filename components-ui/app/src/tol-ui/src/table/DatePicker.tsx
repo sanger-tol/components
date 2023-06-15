@@ -34,7 +34,7 @@ class DatePicker extends React.Component<Props, State> {
   
   render() {
     return (
-      <span onClick={ stopPropagation } className='tol-filter-input filter-search-input-hide'>
+      <span onClick={ stopPropagation } className="filter-input-hide" id="tol-filter-input">
         <DateRangePicker
           block
           onChange={ this.filter }

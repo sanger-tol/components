@@ -19,7 +19,10 @@
   --rs-listbox-option-hover-text: var(--primary);
 
   --rs-calendar-range-bg: var(--primary-opaque);
-  --rs-listbox-option-hover-bg: var(--grey-hover);
+  --rs-listbox-option-hover-bg: var(--grey-opaque);
+
+  // paragraph placeholder
+  --rs-placeholder: var(--grey-opaque);
 
   // filtering inputs
   .rs-picker-default .rs-picker-toggle,
@@ -88,5 +91,4 @@
   .rs-modal-body {
     margin-top: 0;
   }
-
 }

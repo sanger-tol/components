@@ -8,7 +8,7 @@ import { Alert } from '../index'
 
 
 const TableErrorAlert = () => (
-  <div className="d-flex justify-content-center p-5">
+  <div className="d-flex justify-content-center p-5 m-5">
     <Alert 
       type="danger"
       message="See console for errors"

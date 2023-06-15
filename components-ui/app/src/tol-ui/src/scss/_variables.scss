@@ -4,21 +4,47 @@
  * SPDX-License-Identifier: MIT
  */
 
-// --SASS-- //
-// Required Variables
-// (override if required in project)
+/*
+// Strict Theme //
+The following have sass and css variables
+- primary = main colour used for buttons and accents - can be overidden
+- secondary = faded version of primary but can be overidden
+- grey = used for table borders/headers etc
+- primary-opaque = used for subtle selected items
+- grey-opaque = used for hovering on table cells etc
+
+The following have sass and css variables
+- bs-body-bg = background of website
+- bs-body-color = used for text
+- bs-emphasis-color = bold text for titles
+*/
+
+// GENERAL
 $primary: #0d6efd !default;
 $secondary: darken($primary, 10%) !default;
+$bs-body-bg: var(--bs-body-bg) !default;
+$bs-body-color: var(--bs-body-color) !default;
+$bs-emphasis-color: var(--bs-emphasis-color) !default;
 
-// Hover
+// HOVER
 $grey: #808080 !default;
+$grey-opaque: rgba($grey, 0.1);
 $primary-opaque: rgba($primary, 0.1);
-$grey-hover: rgba($grey, 0.1);
 
-// --CSS VARS-- //
+// SASS -> CSS VARS //
 :root {
   --primary: #{$primary};
   --secondary: #{$secondary};
+  --grey: #{$grey};
+  --grey-opaque: #{$grey-opaque};
   --primary-opaque: #{$primary-opaque};
-  --grey-hover: #{$grey-hover};
 }
+
+/*
+// DARK MODE //
+@media (prefers-color-scheme: dark) {
+  :root {
+    --example: red;
+  }
+}
+*/

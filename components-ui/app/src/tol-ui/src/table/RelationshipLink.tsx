@@ -11,7 +11,7 @@ import FormatRelationshipTooltip from './FormatRelationshipTooltip';
 import { normaliseCaps,
          createCellRenderer,
          isEmptyObj } from './TableUtils'
-import { RelationshipLoadingHelix } from '../general/LoadingHelix'
+import { Placeholder } from 'rsuite';
 
 
 export interface Props {
@@ -31,7 +31,7 @@ class RelationshipLink extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      text: <RelationshipLoadingHelix />,
+      text: <Placeholder />,
       contents: {},
       tableData: this.props.attributes
     }

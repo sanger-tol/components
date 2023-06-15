@@ -7,18 +7,16 @@ SPDX-License-Identifier: MIT
 import React from "react";
 import { httpClient } from '../services/http/httpClient'
 import Table from "./Table";
-import LoadingHelix from "../general/LoadingHelix";
-import NoDataAlert from "./NoDataAlert";
-import TableErrorAlert from './TableErrorAlert';
 import { Fields } from "./Field";
+import { tableStatusIndicator } from './TableUtils';
+import TableEmpty from "./TableEmpty";
+import { v4 as uuid } from 'uuid';
 import { convertTableData,
          convertHeadingData,
          debug,
-         formatDateRange,
-         initialiseFilterDict,
+         generateFilter,
          structureFieldsAuto,
-         structureFieldsUsingProp,
-         switchFilterVisability } from "./TableUtils"
+         structureFieldsUsingProp } from "./TableUtils"
 
 
 export interface Props {
@@ -35,15 +33,17 @@ export interface State {
   page: number,
   sizePerPage: number,
   totalSize: number,
+  loading: boolean,
   error: boolean,
-  initialLoad: boolean
+  renderTimes: number
 }
 
 class AutoTable extends React.Component<Props, State> {
+  id = "tol-table-" + uuid()
   constructor(props: Props) {
     const headingsDefault = [{
       dataField: '',
-      text: ''
+      text: '‎'
     }]
     super(props);
     this.state = {
@@ -53,7 +53,8 @@ class AutoTable extends React.Component<Props, State> {
       sizePerPage: 50,
       totalSize: -1,
       error: false,
-      initialLoad: false
+      loading: false,
+      renderTimes: 0
     }
   }
 
@@ -66,13 +67,20 @@ class AutoTable extends React.Component<Props, State> {
     this.refreshPagination()
   }
 
-  handleTableChange = (type: string, { page, sizePerPage, filters, sortOrder, sortField } : {
+  handleTableChange = (_type: string, { page, sizePerPage, filters, sortOrder, sortField } : {
     page: number,
     sizePerPage: number,
     filters?: object,
     sortOrder?: string,
     sortField?: string
   }) => {
+    // used to update the table state indicator
+    if (this.state.renderTimes >= 1) {
+      this.setState({
+        renderTimes: 2,
+        loading: true
+      })
+    }
     let apiFilters: object = {};
 
     // always on filtering - (contains, exact, range)
@@ -81,20 +89,7 @@ class AutoTable extends React.Component<Props, State> {
     }
 
     // column specific filtering
-    if (type === 'filter' && filters !== undefined) {
-      for (let [key, meta] of Object.entries(filters)) {
-        if (meta['filterType'] === 'CONTAINS') {
-          apiFilters = initialiseFilterDict(apiFilters, 'contains')
-          apiFilters['contains'][key] = meta['filterVal']
-        } else if (meta['filterType'] === 'RANGE') {
-          apiFilters = initialiseFilterDict(apiFilters, 'range')
-          apiFilters['range'][key] = formatDateRange(meta['filterVal'])
-        } else if (meta['filterType'] === 'EXACT') {
-          apiFilters = initialiseFilterDict(apiFilters, 'exact')
-          apiFilters['exact'][key] = meta['filterVal']
-        }
-      }
-    }
+    generateFilter(apiFilters, filters)
 
     // sorting
     if (sortOrder === 'desc') {
@@ -102,7 +97,7 @@ class AutoTable extends React.Component<Props, State> {
     }
 
     // get data and update state
-    httpClient().get('/' + this.props.endpoint, { 
+    httpClient().get('/' + this.props.endpoint, {
       params: {
         page: page,
         page_size: sizePerPage,
@@ -117,13 +112,18 @@ class AutoTable extends React.Component<Props, State> {
           page: page,
           sizePerPage: sizePerPage,
           totalSize: apiMeta.total,
-          error: false,
+          error: false
         })
         
         // error if endpoint doesn't return 200
         if (res.status !== 200) {
           throw Error()
         }
+
+        this.setState(() => ({
+          tableData: [],
+          loading: false
+        }));
 
         // check if any data is returned
         if (apiData[0] !== undefined) {
@@ -160,10 +160,10 @@ class AutoTable extends React.Component<Props, State> {
           )
 
           // only updating heading state on first load
-          if (!this.state.initialLoad) {
+          if (this.state.renderTimes === 0) {
             this.setState({
               headings: convertHeadingData(fieldMeta),
-              initialLoad: true
+              renderTimes: 1
             })
           }
           this.setState({
@@ -176,18 +176,24 @@ class AutoTable extends React.Component<Props, State> {
         console.warn('Please ensure the db has been restored')
         console.warn('Please ensure the \'endpoint\' prop is correct and pluralised')
         this.setState({
-          error: true
+          loading: false,
+          error: true,
+          tableData: []
         })
       }
     )
-    this.setState(() => ({
-      tableData: [],
-      totalSize: this.state.totalSize
-    }));
   }
 
   render() {
-    const { tableData, headings, page, sizePerPage, totalSize, error } = this.state;
+    const { tableData,
+            headings,
+            page,
+            sizePerPage,
+            totalSize,
+            renderTimes,
+            loading,
+            error
+          } = this.state;
     
     // show nav as default
     let includeNav = this.props.includeNav;
@@ -195,30 +201,29 @@ class AutoTable extends React.Component<Props, State> {
       includeNav = true
     }
 
+    // need to be blank on first render
+    let tableStatusIndicatorOrBlank: JSX.Element;
+    if (renderTimes === 0) {
+      tableStatusIndicatorOrBlank = <TableEmpty />
+    } else {
+      tableStatusIndicatorOrBlank = tableStatusIndicator(error)
+    }
+
     return (
       <div>
         {(() => {
-          let noDataIndication: JSX.Element;
-          if (error) {
-            noDataIndication = <TableErrorAlert />
-          } else if (totalSize === 0) {
-            noDataIndication = <NoDataAlert />
-          } else {
-            noDataIndication = <div className='p-5'>
-              <LoadingHelix />
-            </div>
-          }
           return (
             <Table
+              id={ this.id }
               data={ tableData }
               columns={ headings }
               onTableChange={ this.handleTableChange }
-              onFilterButton={ switchFilterVisability }
               page={ page }
               sizePerPage={ sizePerPage }
               totalSize={ totalSize }
               includeNav={ includeNav }
-              noDataIndication={ noDataIndication }
+              loading={ loading }
+              tableStatusIndicator={ tableStatusIndicatorOrBlank }
             />
           )
         })()}

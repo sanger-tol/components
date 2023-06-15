@@ -4,9 +4,29 @@
  * SPDX-License-Identifier: MIT
  */
 
- .tol-table {
-  th {
-    background-color: $primary-opaque;
+.tol-table {
+  .table {
+    border-style: solid;
+    border-width: 1px;
+  }
+
+  thead {
+    background-color: var(--bs-secondary-bg);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border: var(--bs-secondary-bg);
+    color: var(--bs-emphasis-color);
+  }
+
+  // remove row borders
+  thead, tbody, tfoot, tr, td, th {
+    border-style: none;
+  }
+
+  // add row borders to rows only
+  .tol-row {
+    border-style: solid;
   }
 
   td:hover {
@@ -19,7 +39,7 @@
   li.dropdown-item:hover,
   li.dropdown-item:active,
   .page-link:hover {
-    background-color: $grey-hover;
+    background-color: $grey-opaque;
   }
 
   .page-link {
@@ -62,16 +82,12 @@
   }
 
   .sorting-active-colour {
-    background-color: $grey-hover;
+    color: var(--bs-success-text);
   }
 
   // hide or show filter search
   .filter-search-input-show {
     display: flex;
-  }
-
-  .filter-search-input-hide {
-    display: none;
   }
 
   // table filtering
@@ -132,8 +148,12 @@
   }
 
   // filter visability
-  .filter-search-input-hide {
-    display: var(--filter-visability, none);
+  .filter-input-hide {
+    display: none;
+  }
+
+  .filter-input-show {
+    display: block;
   }
 
   // filter button
@@ -157,10 +177,18 @@
     overflow: auto;
     display: block;
     table-layout: auto;
+    height: 700px;
+    overflow-y: scroll;
   }
 
+  // ensure columns fill div
   .table-bordered td, .table-bordered th {
     width: 1% !important;
+  }
+
+  // remove second border
+  .table-bordered > :not(caption) > * > * {
+    border-width: 0;
   }
 
   // link box (e.g. relationship)
@@ -178,8 +206,14 @@
   }
 
   // statuses using alert format
-  .alert {
+  td .alert {
     margin-bottom: 0;
+    padding: 5px 10px 5px 10px;
+  }
+
+  // acting as the same space as an alert for when the table loads
+  .table-empty {
+    height: 58px;
   }
 
   // This is here because react-table uses Bootstrap 4 classes

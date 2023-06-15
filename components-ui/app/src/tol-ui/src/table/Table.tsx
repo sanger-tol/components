@@ -6,8 +6,10 @@ SPDX-License-Identifier: MIT
 
 import { Button } from '../index'
 import { SearchIcon } from '../general/Icons';
+import TableLoadingHelix from './TableLoadingHelix';
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory from 'react-bootstrap-table2-filter';
+import { switchFilterVisibility } from './TableUtils';
 import paginationFactory, { PaginationProvider,
                             PaginationListStandalone,
                             SizePerPageDropdownStandalone,
@@ -16,16 +18,17 @@ import paginationFactory, { PaginationProvider,
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
 
-function Table ({ 
+function Table ({
+  id,
   data,
   columns,
   onTableChange,
-  onFilterButton,
   page,
   sizePerPage,
   totalSize,
   includeNav,
-  noDataIndication
+  loading,
+  tableStatusIndicator
 }) {
   const options = {
     custom: true,
@@ -45,7 +48,11 @@ function Table ({
         <div className='tol-table'>
           {includeNav &&
             <div>
-              <Button className="tol-table-filter-button" variant="primary" onClick={ onFilterButton }>
+              <Button
+                className="tol-table-filter-button"
+                variant="primary"
+                onClick={ () => switchFilterVisibility(id) }
+              >
                 <SearchIcon />
                 Filter
               </Button>
@@ -57,8 +64,12 @@ function Table ({
               />
             </div>
           }
+          {loading &&
+            <TableLoadingHelix />
+          }
           <BootstrapTable
             { ...paginationTableProps }
+            id={ id }
             remote
             keyField='id'
             data={ data }
@@ -66,7 +77,8 @@ function Table ({
             onTableChange={ onTableChange }
             pagination={ paginationFactory(options) }
             filter={ filterFactory() }
-            noDataIndication={ () => noDataIndication }
+            noDataIndication={ tableStatusIndicator }
+            rowClasses='tol-row'
           />
           {includeNav &&
             <PaginationTotalStandalone
