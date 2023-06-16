@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Button } from '../tol-ui/src'
-import { CentreContents, Modal } from '../tol-ui/src';
+import { CentreContents, Modal, RemoteAutoComplete } from '../tol-ui/src';
 import { useState } from 'react';
 
 function Miscellaneous() {
@@ -29,6 +29,12 @@ function Miscellaneous() {
                  Donec at ultricies velit.</p>
             </Modal>
             <Button onClick = {() => setOpen(true)}>Click Here</Button>
+            <h2>AutoComplete input</h2>
+            <RemoteAutoComplete 
+              endpoint='species'
+              filter_by='name'
+              display={['family', 'genus']}
+            />
         </CentreContents>
       </div>
     );
