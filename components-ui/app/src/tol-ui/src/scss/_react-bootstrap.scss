@@ -5,15 +5,10 @@
  */
 
  :root {
-    --rs-text-primary: var(--bg-body-color);
-    .tol-input .rs-input {
-        border-top-color: var(--bs-border-color) !important;
-        border-right-color: var(--bs-border-color)  !important;
-        border-bottom-color: var(--bs-border-color)  !important;
-        border-left-color: var(--bs-border-color)  !important;
-        font-size: 1rem;
-        color: var(--bs-body-color);
-    };
+    --bs-dropdown-link-hover-bg: var(--grey-opaque);
+    --bs-link-hover-color: var(--grey-opaque);
+    --bs-pagination-hover-bg: var(--grey-opaque);
+
     .form-control:focus {
         box-shadow: none;
         border-color: $primary;
@@ -22,10 +17,15 @@
         border-color: $primary;
     }
 
-    .centered-mini-loader {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%)
+    .btn-xl {
+      text-transform: uppercase;
+      padding: 1.5rem 3rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.1rem;
+    }
+      
+    .rounded-pill {
+      border-radius: 5rem;
     }
 }

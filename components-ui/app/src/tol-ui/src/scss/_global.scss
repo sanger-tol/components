@@ -7,9 +7,6 @@
 
 body {
   @include body-font;
-  --bs-dropdown-link-hover-bg: var(--grey-opaque);
-  --bs-link-hover-color: var(--grey-opaque);
-  --bs-pagination-hover-bg: var(--grey-opaque);
 
   // dropzone
   --rs-uploader-dnd-bg: var(--bs-body-bg);
@@ -43,18 +40,6 @@ h4,
 h5,
 h6 {
   @include heading-font;
-}
-
-.btn-xl {
-  text-transform: uppercase;
-  padding: 1.5rem 3rem;
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.1rem;
-}
-
-.rounded-pill {
-  border-radius: 5rem;
 }
 
 a {

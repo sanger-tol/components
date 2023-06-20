@@ -15,6 +15,7 @@ export { default as RemoteAutoComplete } from "./general/RemoteAutoComplete";
 export { default as AutoComplete } from "./general/AutoComplete";
 export { default as Status } from "./general/Status";
 export { default as Modal } from "./general/Modal"
+export { default as MultipleSelectDropdown } from "./general/MultipleSelectDropdown"
 
 // Table
 export { default as AutoTable } from "./table/AutoTable";

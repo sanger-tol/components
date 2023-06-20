@@ -4,12 +4,14 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button } from '../tol-ui/src'
-import { CentreContents, Modal, RemoteAutoComplete } from '../tol-ui/src';
+import { Button, Form } from '../tol-ui/src'
+import { CentreContents, Modal, RemoteAutoComplete, MultipleSelectDropdown } from '../tol-ui/src';
 import { useState } from 'react';
+
 
 function Miscellaneous() {
     const [open, setOpen] = useState(false)
+    const [value, setValue] = useState(['test2'])
     return (
       <div>
         <CentreContents>
@@ -35,6 +37,21 @@ function Miscellaneous() {
               filter_by='name'
               display={['family', 'genus']}
             />
+            <br/>
+            <h2>Multiple Select Dropdown</h2>
+            <MultipleSelectDropdown data={['test1','test2','test3']} setValue={setValue} value={value} placeholder="Select"/>
+            <br/>
+            <h2>Bootstrap Form</h2>
+            <Form>
+              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                <Form.Label>Email address</Form.Label>
+                <Form.Control type="email" placeholder="name@example.com" />
+              </Form.Group>
+              <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                <Form.Label>Example textarea</Form.Label>
+                <Form.Control as="textarea" rows={3} />
+              </Form.Group>
+            </Form>
         </CentreContents>
       </div>
     );

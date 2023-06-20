@@ -41,6 +41,13 @@
 	right: -6px;
 }
 
+.centered-mini-loader {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%)
+}
+
 .dna-circle {
 	position: relative;
 	flex: 1;

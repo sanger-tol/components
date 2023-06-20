@@ -60,8 +60,58 @@
   }
 
   .rs-picker-toggle-read-only {
-    opacity: unset;
+    opacity: 0;
     color: $primary;
+  }
+
+  --rs-text-primary: var(--bg-body-color);
+  .tol-input .rs-input {
+      border-top-color: var(--bs-border-color) !important;
+      border-right-color: var(--bs-border-color)  !important;
+      border-bottom-color: var(--bs-border-color)  !important;
+      border-left-color: var(--bs-border-color)  !important;
+      font-size: 1rem;
+      color: var(--bs-body-color);
+  };
+
+  .tol-input .rs-input:hover {
+    border-top-color: $primary !important;
+    border-right-color: $primary  !important;
+    border-bottom-color: $primary  !important;
+    border-left-color: $primary  !important;
+  };
+
+  .tol-input .rs-input:focus {
+    border-top-color: $primary !important;
+    border-right-color: $primary  !important;
+    border-bottom-color: $primary  !important;
+    border-left-color: $primary  !important;
+  };
+
+  .tol-input .rs-picker-default {
+    border: 1px solid var(--bs-border-color) !important;
+    font-size: 1rem;
+  }
+
+  .tol-input .rs-picker-default:hover {
+    border: 1px solid $primary !important;
+  }
+
+  .tol-input .rs-picker-default:focus {
+    border: 1px solid $primary !important;
+  }
+
+  .rs-picker-menu .rs-picker-search-bar .rs-picker-search-bar-input {
+    border: 1px solid var(--bs-border-color) !important;
+  }
+
+  .rs-picker-menu .rs-picker-search-bar .rs-picker-search-bar-input:hover {
+    border: 1px solid $primary !important;
+  }
+
+  .rs-picker-menu .rs-picker-search-bar .rs-picker-search-bar-input:focus {
+    outline: none;
+    border: 1px solid $primary !important;
   }
 
   // icons in filters
@@ -72,6 +122,18 @@
 
   .rs-input-group-addon .rs-icon {
     margin-top: 3px !important;
+  }
+
+  .rs-picker-menu .rs-picker-search-bar .rs-picker-search-bar-search-icon {
+    color: var(--bs-border-color);
+  }
+
+  .rs-picker-toggle .rs-picker-toggle-placeholder {
+    font-size: 1rem;
+  }
+
+  .rs-picker-value-item {
+    font-size: 1rem;
   }
 
   // placeholders
