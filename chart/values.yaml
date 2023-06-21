@@ -112,7 +112,12 @@ tolcore:
       tag: ""
   api:
     fullname: "components-api"
-    probe_url: '/api/v1/ui'
+    probe_url: '/api/v1/species'
+    extra_env:
+      ELASTIC_URI: elastic.uri
+      ELASTIC_USER: elastic.user
+      ELASTIC_PASSWORD: elastic.password
+      ELASTIC_INDEX_PREFIX: elastic.index_prefix
   flask:
     env: ""
   ui:

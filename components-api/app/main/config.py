@@ -18,7 +18,4 @@ def _get_environment_env():
 
 def set_config(app, encoder):
     app.config['DEPLOYMENT_ENVIRONMENT'] = _get_environment_env()
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DB_URI']
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['RESTX_JSON'] = {'cls': encoder}
     app.config['PROPAGATE_EXCEPTIONS'] = True

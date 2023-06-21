@@ -7,13 +7,13 @@ version: '3.1'
 
 services:
   components-db:
-    image: postgres:12
+    image: elasticsearch:7.17.10
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
     ports:
-      - 5441:5432
+      - 9203:9200
 
   components-api:
     build:
@@ -21,7 +21,7 @@ services:
       dockerfile: Dockerfile.dev
     image: components-api
     # force amd64 on M1 MacOS
-    #platform: linux/amd64
+    # platform: linux/amd64
     environment:
       - DB_URI
       - PARTNER_PORTAL_URL
@@ -36,6 +36,11 @@ services:
       - MAIL_HOST
       - MAIL_PORT
       - ENVIRONMENT
+      - ELASTIC_URI
+      - ELASTIC_USER
+      - ELASTIC_PASSWORD
+      - ELASTIC_INDEX_PREFIX
+
     ports:
       - 8088:80
     volumes:

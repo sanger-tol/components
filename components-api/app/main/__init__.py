@@ -4,22 +4,20 @@
 #
 # SPDX-License-Identifier: MIT
 
+import os
+
 from flask import Flask
 
-from main.config import set_config
-from main.encoder import JSONEncoder
-from main.model import db
-from main.route import init_blueprints
-
-from tol.api_base.error.handler import blueprint as error_handler
+from tol.api_base2 import data_blueprint
+from tol.elastic import ElasticDataSource
 
 
 def application():
     app = Flask(__name__)
-    set_config(app, JSONEncoder)
-    blueprint = init_blueprints(app)
-    app.register_blueprint(blueprint)
-    app.register_blueprint(error_handler)
-    app.json_encoder = JSONEncoder
-    db.init_app(app)
+    eds = ElasticDataSource({'uri': os.getenv('ELASTIC_URI'),
+                             'user': os.getenv('ELASTIC_USER'),
+                             'password': os.getenv('ELASTIC_PASSWORD'),
+                             'index_prefix': os.getenv('ELASTIC_INDEX_PREFIX')})
+    blueprint = data_blueprint(eds)
+    app.register_blueprint(blueprint, url_prefix='/api/v1')
     return app

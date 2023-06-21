@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { CentreContents, AutoTable } from '../tol-ui/src'
-import StatusExample from '../tol-ui/src/sandbox/StatusExample'
+// import StatusExample from '../tol-ui/src/sandbox/StatusExample'
 
 
 function Tables() {
@@ -13,33 +13,7 @@ function Tables() {
     <div className="tables">
       <CentreContents>
       <AutoTable
-        endpoint="samples"
-        fields={{
-          "id": {rename: "Row ID", sort: false},
-          "tube_id": {
-            cellRenderer: {
-              element: StatusExample,
-              propPointers: {
-                param: "tube_id"
-              }
-            }
-          },
-          "specimens.tolid": {rename: "ToL ID Prefix"},
-          "specimens.species.name": {rename: "Species"},
-          "created_at": {rename: "Created At"},
-          "specimens.species.scientific_name": {
-            rename: "Species Tag",
-            cellRenderer: {
-              element: StatusExample,
-              propPointers: {
-                param: "specimens.species.id"
-              }
-            }
-          }
-        }}
-      />
-      <AutoTable
-        endpoint="samples"
+        endpoint="treeofsex_species"
       />
       </CentreContents>
     </div>
@@ -47,3 +21,32 @@ function Tables() {
 }
 
 export default Tables;
+
+/*
+<AutoTable
+  endpoint="samples"
+  fields={{
+    "id": {rename: "Row ID", sort: false},
+    "tube_id": {
+      cellRenderer: {
+        element: StatusExample,
+        propPointers: {
+          param: "tube_id"
+        }
+      }
+    },
+    "specimens.tolid": {rename: "ToL ID Prefix"},
+    "specimens.species.name": {rename: "Species"},
+    "created_at": {rename: "Created At"},
+    "specimens.species.scientific_name": {
+      rename: "Species Tag",
+      cellRenderer: {
+        element: StatusExample,
+        propPointers: {
+          param: "specimens.species.id"
+        }
+      }
+    }
+  }}
+/>
+*/
