@@ -14,4 +14,5 @@ export { default as Alert } from "./Alert";
 export { default as InfoTooltip } from "./InfoTooltip";
 export { default as HoverOverlay } from "./HoverOverlay";
 export { default as Status } from "./Status";
-export { default as MultipleSelectDropdown } from "./Status";
+export { default as MultipleSelect } from "./MultipleSelect";
+export { default as MultipleSelectFilters } from "./MultipleSelectFilters";

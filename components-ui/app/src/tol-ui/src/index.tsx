@@ -14,8 +14,9 @@ export { default as LoadingHelix, MiniLoadingHelix } from "./general/LoadingHeli
 export { default as RemoteAutoComplete } from "./general/RemoteAutoComplete";
 export { default as AutoComplete } from "./general/AutoComplete";
 export { default as Status } from "./general/Status";
-export { default as Modal } from "./general/Modal"
-export { default as MultipleSelectDropdown } from "./general/MultipleSelectDropdown"
+export { default as Modal } from "./general/Modal";
+export { default as MultipleSelect } from "./general/MultipleSelect";
+export { default as MultipleSelectFilters } from "./general/MultipleSelectFilters";
 
 // Table
 export { default as AutoTable } from "./table/AutoTable";

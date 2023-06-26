@@ -1,5 +1,5 @@
 /*
-SPDX-FileCopyrightText: 2022 Genome Research Ltd.
+SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
@@ -23,4 +23,8 @@ export function formatDate(text: string) {
 
 export function stopPropagation(e: { stopPropagation: () => any; }) {
   e.stopPropagation();
+}
+
+export function isPropDefined(prop){
+  return prop !== undefined
 }

@@ -4,14 +4,32 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, Form } from '../tol-ui/src'
-import { CentreContents, Modal, RemoteAutoComplete, MultipleSelectDropdown } from '../tol-ui/src';
+import { Button, Form, CentreContents, Modal, RemoteAutoComplete, MultipleSelect, MultipleSelectFilters } from '../tol-ui/src';
 import { useState } from 'react';
 
 
 function Miscellaneous() {
     const [open, setOpen] = useState(false)
     const [value, setValue] = useState(['test2'])
+    const [globalFilters, setGlobalFilters] = useState<object>({})
+    const [choices1, setChoices1] = useState<any[]>([])
+    const [choices2, setChoices2] = useState<any[]>([])
+
+    const filters = [
+      {
+        name: 'test filter 1',
+        choices: ['t1', 't2', 't3'],
+        selected: choices1,
+        setChoices: setChoices1
+      },
+      {
+        name: 'test filter 2',
+        choices: ['t1', 't2', 't3'],
+        selected: choices2,
+        setChoices: setChoices2
+      }
+  ];
+
     return (
       <div>
         <CentreContents>
@@ -38,8 +56,8 @@ function Miscellaneous() {
               display={['family', 'genus']}
             />
             <br/>
-            <h2>Multiple Select Dropdown</h2>
-            <MultipleSelectDropdown data={['test1','test2','test3']} setValue={setValue} value={value} placeholder="Select"/>
+            <h2>Multiple Select</h2>
+            <MultipleSelect data={['test1','test2','test3']} setValue={setValue} value={value} placeholder="Select"/>
             <br/>
             <h2>Bootstrap Form</h2>
             <Form>
@@ -52,6 +70,9 @@ function Miscellaneous() {
                 <Form.Control as="textarea" rows={3} />
               </Form.Group>
             </Form>
+            <br/>
+            <h2>Global filters</h2>
+            <MultipleSelectFilters value={globalFilters} setValue={setGlobalFilters} filters={filters}/>
         </CentreContents>
       </div>
     );

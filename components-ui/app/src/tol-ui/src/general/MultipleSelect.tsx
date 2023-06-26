@@ -6,16 +6,20 @@ SPDX-License-Identifier: MIT
 
 import React from 'react';
 import { Checkbox, CheckPicker as RSCheckPicker } from 'rsuite';
+import { isPropDefined } from './Utils';
 
 interface Props {
+    block?: boolean
     data: string[]
     placeholder?: string
     value: string[]
     setValue:React.Dispatch<React.SetStateAction<string[]>>
 }
 
-const MultipleSelectDropdown = (props: Props) => {
+const MultipleSelect = (props: Props) => {
     const {data, placeholder, value, setValue} = props
+    const block = isPropDefined(props.block)
+
     const formattedData = data.map(item => 
         ({ label: item, value: item })
     )
@@ -29,6 +33,7 @@ const MultipleSelectDropdown = (props: Props) => {
     return (
         <div className='tol-input'>
           <RSCheckPicker
+            block={block}
             value={value}
             onChange={setValue}
             data={formattedData}
@@ -49,4 +54,4 @@ const MultipleSelectDropdown = (props: Props) => {
     );
   };
 
-export default MultipleSelectDropdown;
+export default MultipleSelect;
