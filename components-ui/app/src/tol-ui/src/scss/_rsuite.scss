@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 
- :root {
-  --rs-tooltip-bg: var(--bs-body-bg);
+:root {
+  --rs-uploader-dnd-bg: var(--bs-body-bg);
+
+  --rs-tooltip-bg: var(--bs-emphasis-color);
   --rs-bg-overlay: var(--bs-body-bg);
   --rs-input-bg: var(--bs-body-bg);
 
@@ -66,12 +68,12 @@
 
   --rs-text-primary: var(--bg-body-color);
   .tol-input .rs-input {
-      border-top-color: var(--bs-border-color) !important;
-      border-right-color: var(--bs-border-color)  !important;
-      border-bottom-color: var(--bs-border-color)  !important;
-      border-left-color: var(--bs-border-color)  !important;
-      font-size: 1rem;
-      color: var(--bs-body-color);
+    border-top-color: var(--bs-border-color) !important;
+    border-right-color: var(--bs-border-color)  !important;
+    border-bottom-color: var(--bs-border-color)  !important;
+    border-left-color: var(--bs-border-color)  !important;
+    font-size: 1rem;
+    color: var(--bs-body-color);
   };
 
   .tol-input .rs-input:hover {
@@ -152,5 +154,29 @@
   // modal
   .rs-modal-body {
     margin-top: 0;
+  }
+
+  // tooltip
+  --tol-tooltip-colour: black;
+
+  .rs-popover {
+    background-color: var(--tol-tooltip-colour);
+    color: white;
+  }
+
+  .rs-popover[class*=placement-left] > .rs-popover-arrow::after {
+    border-left-color: var(--tol-tooltip-colour);
+  }
+
+  .rs-popover[class*=placement-top] > .rs-popover-arrow::after {
+    border-top-color: var(--tol-tooltip-colour);
+  }
+
+  .rs-popover[class*=placement-right] > .rs-popover-arrow::after {
+    border-right-color: var(--tol-tooltip-colour);
+  }
+
+  .rs-popover[class*=placement-bottom] > .rs-popover-arrow::after {
+    border-bottom-color: var(--tol-tooltip-colour);
   }
 }

@@ -25,6 +25,20 @@ export function stopPropagation(e: { stopPropagation: () => any; }) {
   e.stopPropagation();
 }
 
-export function isPropDefined(prop){
+export function isPropDefined(prop: any){
   return prop !== undefined
+}
+
+export function normaliseCaps(fieldName: string) {
+  const words = fieldName.split('_');
+  for (let count = 0; count < words.length; count++) {
+    if (words[count] === 'id') {
+      words[count] = 'ID'
+    } else if (words[count] === 'uid') {
+      words[count] = 'UID'
+    } else {
+      words[count] = words[count][0].toUpperCase() + words[count].substring(1); 
+    }
+  }
+  return words.join(' ');
 }

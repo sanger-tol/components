@@ -8,9 +8,9 @@ import React from 'react';
 import { httpClient } from '../services/http/httpClient'
 import HoverOverlay from '../general/HoverOverlay';
 import FormatRelationshipTooltip from './FormatRelationshipTooltip';
-import { normaliseCaps,
-         createCellRenderer,
+import { createCellRenderer,
          isEmptyObj } from './TableUtils'
+import { normaliseCaps } from '../general/Utils'
 import { Placeholder } from 'rsuite';
 
 

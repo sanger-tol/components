@@ -33,8 +33,9 @@ export interface State {
   page: number,
   sizePerPage: number,
   totalSize: number,
-  loading: boolean,
+  fixedFilter: object|undefined,
   error: boolean,
+  loading: boolean,
   renderTimes: number
 }
 
@@ -52,6 +53,7 @@ class AutoTable extends React.Component<Props, State> {
       page: 1,
       sizePerPage: 50,
       totalSize: -1,
+      fixedFilter: this.props.fixedFilter,
       error: false,
       loading: false,
       renderTimes: 0
@@ -61,6 +63,7 @@ class AutoTable extends React.Component<Props, State> {
   refreshPagination = () => {
     const { page, sizePerPage } = this.state;
     this.handleTableChange('pagination', { page: page, sizePerPage: sizePerPage })
+    console.log("refreshPagination")
   }
 
   componentDidMount() {
@@ -74,6 +77,7 @@ class AutoTable extends React.Component<Props, State> {
     sortOrder?: string,
     sortField?: string
   }) => {
+    console.log("handleTableChange")
     // used to update the table state indicator
     if (this.state.renderTimes >= 1) {
       this.setState({
@@ -85,7 +89,7 @@ class AutoTable extends React.Component<Props, State> {
 
     // always on filtering - (contains, exact, range)
     if (this.props.fixedFilter !== undefined) {
-      apiFilters = Object.assign(apiFilters, this.props.fixedFilter)
+      apiFilters = Object.assign(apiFilters, this.state.fixedFilter)
     }
 
     // column specific filtering
@@ -192,8 +196,7 @@ class AutoTable extends React.Component<Props, State> {
             totalSize,
             renderTimes,
             loading,
-            error
-          } = this.state;
+            error } = this.state;
     
     // show nav as default
     let includeNav = this.props.includeNav;

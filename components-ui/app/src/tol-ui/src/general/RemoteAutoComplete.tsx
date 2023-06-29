@@ -68,7 +68,7 @@ function RemoteAutoComplete(props: Props) {
     return (arrayToReturn)
   }
 
-  if (response == ''){
+  if (response === ''){
     return (
       <div>
         {isLoading ?

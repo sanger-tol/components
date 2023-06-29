@@ -21,6 +21,11 @@ export { default as MultipleSelectFilters } from "./general/MultipleSelectFilter
 // Table
 export { default as AutoTable } from "./table/AutoTable";
 
+// Charts
+export { default as BarChart } from "./charts/BarChart";
+export { default as RemoteBarChart } from "./charts/RemoteBarChart";
+export { default as RemoteBarChartTable } from "./charts/RemoteBarChartTable";
+
 // React-Bootstrap pass-through
 export { Container };
 export { Row };

@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { CentreContents, AutoTable } from '../tol-ui/src'
+import { CentreContents, AutoTable, InfoTooltip } from '../tol-ui/src'
 // import StatusExample from '../tol-ui/src/sandbox/StatusExample'
 
 
@@ -12,6 +12,9 @@ function Tables() {
   return (
     <div className="tables">
       <CentreContents>
+      <InfoTooltip
+        contents="This is an example tooltip"
+      />
       <AutoTable
         endpoint="treeofsex_species"
       />

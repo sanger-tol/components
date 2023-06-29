@@ -12,6 +12,7 @@ import RelationshipLink from './RelationshipLink';
 import CellTooltip from './CellTooltip';
 import NoDataAlert from "./NoDataAlert";
 import TableErrorAlert from './TableErrorAlert';
+import { normaliseCaps } from '../general/Utils'
 import { addFieldDefaults, CellRenderer } from './Field';
 
 
@@ -40,18 +41,6 @@ function formatDateRange(dateRange: string[]) {
     from: from,
     to: to
   }
-}
-
-export function normaliseCaps(fieldName: string) {
-  const words = fieldName.split('_');
-  for (let count = 0; count < words.length; count++) {
-    if (words[count] === 'id') {
-      words[count] = 'ID'
-    } else {
-      words[count] = words[count][0].toUpperCase() + words[count].substring(1); 
-    }
-  }
-  return words.join(' ');
 }
 
 function checkAndConvertDate(text: string) {
