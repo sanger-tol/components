@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import ReactDOM from "react-dom";
-import { Home, Charts, Miscellaneous, Tables } from "./pages";
+import { Home, Charts, Miscellaneous, Tables, Forms } from "./pages";
 //import { Sandbox } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page } from "@tol/tol-ui"
@@ -17,13 +17,6 @@ const charts: Page = {
   authRequired: false,
   adminOnly: false,
   uiElement: <Charts />
-}
-
-const miscellaneous: Page = {
-  name: "Miscellaneous",
-  authRequired: false,
-  adminOnly: false,
-  uiElement: <Miscellaneous />
 }
 
 const tables: Page = {
@@ -40,6 +33,21 @@ const tables: Page = {
 //  uiElement: <Sandbox />
 //}
 
+const miscellaneous: Page = {
+  name: "Miscellaneous",
+  authRequired: false,
+  adminOnly: false,
+  uiElement: <Miscellaneous />
+}
+
+const forms: Page = {
+  name: "Forms",
+  authRequired: false,
+  adminOnly: false,
+  uiElement: <Forms />
+}
+
+
 ReactDOM.render(
   <TolApp
     brand="Components"
@@ -47,8 +55,9 @@ ReactDOM.render(
     pages={[
       charts,
       tables,
+      //sandbox,
       miscellaneous,
-      //sandbox
+      forms
     ]}
     login={ true }
   />,

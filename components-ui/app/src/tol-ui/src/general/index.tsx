@@ -16,3 +16,5 @@ export { default as HoverOverlay } from "./HoverOverlay";
 export { default as Status } from "./Status";
 export { default as MultipleSelect } from "./MultipleSelect";
 export { default as MultipleSelectFilters } from "./MultipleSelectFilters";
+export { default as RemoteMultipleSelectFilters } from "./RemoteMultipleSelectFilters";
+export { default as GlobalMultipleSelect } from "./GlobalMultipleSelect";
