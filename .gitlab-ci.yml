@@ -5,7 +5,7 @@
 include:
   - project: 'tol/tol-core'
     ref: v1.3.6
-    file: '/gitlab/app.yml'
+    file: '/gitlab/main.yml'
 
 variables:
   APP_NAME: components
