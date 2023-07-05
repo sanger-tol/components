@@ -2,14 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
-include:
-  - project: 'tol/tol-core'
-    ref: v1.3.6
-    file: '/gitlab/main.yml'
-
 variables:
   APP_NAME: components
-  DISABLE_REVIEW_APPS: "true"
 
 deploy-package:
   stage: deploy
