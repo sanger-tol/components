@@ -16,11 +16,9 @@ import {
   Legend,
 } from "chart.js";
 import { Bar, getElementAtEvent, getDatasetAtEvent } from "react-chartjs-2";
-import { getColourFromCssVar,
-         getFadedColourFromCssVar,
+import { getChartColour,
          getCssVarColour,
-         initialiseDatasets,
-         bsColours } from "./ChartUtils"
+         initialiseDatasets } from "./ChartUtils"
 
 
 ChartJS.register(
@@ -37,7 +35,7 @@ interface Props {
   title: string,
   labels: string[],
   datasets: any[],
-  setBarData?: React.Dispatch<React.SetStateAction<any>>|null
+  setBarData?: React.Dispatch<React.SetStateAction<any>>
 }
 
 function BarChart(props: Props) {
@@ -74,9 +72,9 @@ function BarChart(props: Props) {
           });
           const index = datasets.indexOf(legendItem.text);
           if (legend.chart.isDatasetVisible(index) === true) {
-            legend.chart.hide(index);
+            // legend.chart.hide(index);
           } else {
-            legend.chart.show(index)
+            // legend.chart.show(index);
           }
         },
         labels: {
@@ -94,7 +92,7 @@ function BarChart(props: Props) {
               (dataset: any, index: any) => {
                 return {
                   text: dataset.label,
-                  fillStyle: getColourFromCssVar(bsColours[index]),
+                  fillStyle: getChartColour(index),
                   fontColor: labelsAndGridColour,
                   hidden: visibility[index]
                 }
@@ -110,20 +108,21 @@ function BarChart(props: Props) {
       if (!chartElement.length) {
         // reset bar colours when clicking other part of chart
         for (let index = 0; index < chart.data.datasets.length; index++) {
-          const solidColour = getColourFromCssVar(bsColours[index])
+          const solidColour = getChartColour(index)
+          const fadedColour = getChartColour(index, 0.75)
           chart.data.datasets[index]["backgroundColor"] = []
           chart.data.datasets[index]["hoverBackgroundColor"] = []
           const dataLength = chart.data.datasets[index].data.length
           for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
             chart.data.datasets[index]["backgroundColor"].push(solidColour)
-            chart.data.datasets[index]["hoverBackgroundColor"].push(solidColour)
+            chart.data.datasets[index]["hoverBackgroundColor"].push(fadedColour)
           }
         }
       } else {
         // fade non-clicked bars
         for (let index = 0; index < chart.data.datasets.length; index++) {
-          const solidColour = getColourFromCssVar(bsColours[index])
-          const fadedColour = getFadedColourFromCssVar(bsColours[index])
+          const solidColour = getChartColour(index)
+          const fadedColour = getChartColour(index, 0.25)
           chart.data.datasets[index]["backgroundColor"] = []
           chart.data.datasets[index]["hoverBackgroundColor"] = []
           const dataLength = chart.data.datasets[index].data.length
@@ -134,7 +133,7 @@ function BarChart(props: Props) {
         }
         // setting clicked bar as its original colour
         const { datasetIndex, index } = chartElement[0];
-        const originalColour = getColourFromCssVar(bsColours[datasetIndex])
+        const originalColour = getChartColour(datasetIndex)
         chart.data.datasets[datasetIndex].backgroundColor[index] = originalColour
         chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = originalColour
       }
@@ -199,10 +198,14 @@ function BarChart(props: Props) {
     const barData = getBarData(event);
     if (barData !== undefined) {
       // sets 'clicked' bar data
-      props.setBarData!(barData)
+      props.setBarData!({
+        "bucket": barData[2],
+        "value": barData[1],
+        "xKey": barData[0]
+      })
     } else {
       // clears 'clicked' bar data
-      props.setBarData!(null)
+      props.setBarData!({})
     }
   }
 

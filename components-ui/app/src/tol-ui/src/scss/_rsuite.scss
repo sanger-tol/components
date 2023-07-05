@@ -116,6 +116,19 @@
     border: 1px solid $primary !important;
   }
 
+  // datetime picker inner borders
+  .rs-picker-daterange-header {
+    border-bottom: 1px solid var(--grey);
+  }
+
+  .rs-picker-daterange-menu .rs-calendar:first-child {
+    border-right: 1px solid var(--grey);
+  }
+
+  .rs-picker-toolbar {
+    border-top: 1px solid var(--grey);
+  }
+
   // icons in filters
   .rs-input-group-addon .rs-icon,
   .rs-picker-toggle-caret.rs-icon {

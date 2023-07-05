@@ -8,7 +8,7 @@ import { useState } from "react";
 import { CentreContents,
          BarChart, 
          RemoteBarChart, 
-         RemoteBarChartTable,
+         RemoteDateChartTable,
          Button } from '../tol-ui/src'
 
 
@@ -116,7 +116,7 @@ const d2 = [
 
 function Charts() {
   const [datasets, setDatasests] = useState(d1)
-  const [bar, setBar] = useState([])
+  const [bar, setBar] = useState({})
 
   const aggs = {
     "aggs": {
@@ -126,13 +126,13 @@ function Charts() {
           "order": {
             "_count": "desc"
           },
-          "size": 3
+          "size": 50
         },
         "aggs": {
           "1": {
             "date_histogram": {
               "field": "mlwh_complete_date",
-              "calendar_interval": "1w",
+              "calendar_interval": "1M",
               "time_zone": "Europe/London"
             }
           }
@@ -145,28 +145,25 @@ function Charts() {
     <div className="charts">
       <CentreContents>
         <h2>Remote Bar Chart & Table</h2>
-        {bar !== null ?
-          <h5 className="m-1">Bar Data: {bar[0]} {bar[1]} {bar[2]}</h5>
-          :
-          <h5 className="m-1">Bar Data: {bar}</h5>
-        }
-        <RemoteBarChartTable
+        <RemoteDateChartTable
           stacked
-          endpoint="run_data"
-          aggs={ aggs }
           title="Run Data"
-          barData={ bar }
-          setBarData={ setBar }
+          endpoint="run_data"
+          buckets="mlwh_platform_type"
+          xKey="mlwh_start_date"
+          interval="M"
         />
         <h2 className="mt-5">Remote Bar Chart</h2>
         <RemoteBarChart
           stacked
+          title="Run Data"
           endpoint="run_data"
           aggs={ aggs }
-          title="Run Data"
+          interval="M"
           setBarData={ setBar }
         />
-        <h2 className="mt-5">Stacked Bar Chart</h2>
+        <h2 className="mt-5">Bar Chart</h2>
+        <h5>This is the 'Bar' data: {bar["bucket"]} {bar["xKey"]} {bar["value"]}</h5>
         <Button className="m-1" onClick={()=>{setDatasests(d1)}}>Change d1</Button>
         <Button className="m-1" onClick={()=>{setDatasests(d2)}}>Change d2</Button>
         <BarChart

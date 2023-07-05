@@ -18,6 +18,14 @@ import paginationFactory, { PaginationProvider,
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
 
+function addPlus(totalSize: number) {
+  // add a plus for elastic search (results cap at 10,000)
+  if (totalSize === 10000) {
+    return "+"
+  }
+  return ""
+}
+
 function Table ({
   id,
   data,
@@ -34,7 +42,12 @@ function Table ({
     custom: true,
     page,
     sizePerPage, 
-    totalSize 
+    totalSize,
+    sizePerPageList: [
+      { text: '25', value: 25 },
+      { text: '50', value: 50 },
+      { text: '100', value: 100 }
+    ]
   }
   return (
     <PaginationProvider
@@ -81,9 +94,12 @@ function Table ({
             rowClasses='tol-row'
           />
           {includeNav &&
-            <PaginationTotalStandalone
-              { ...paginationProps }
-            />
+            <>
+              <PaginationTotalStandalone
+                { ...paginationProps }
+              />
+              { addPlus(totalSize) }
+            </>            
           }
         </div>
       )

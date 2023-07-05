@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState, useEffect } from "react";
 import BarChart from "./BarChart";
 import { httpClient } from '../services/http/httpClient'
-import { aggsToChartData } from "./ChartUtils";
+import { DateInterval, aggsToChartData } from "./ChartUtils";
 import { isPropDefined } from "../general/Utils";
 
 
@@ -16,14 +16,12 @@ interface Props {
   endpoint: string,
   aggs: object,
   title: string,
-  setBarData: React.Dispatch<React.SetStateAction<any>>|null
+  interval?: DateInterval,
+  setBarData: React.Dispatch<React.SetStateAction<any>>
 }
 
-// currently under construction...
 function RemoteBarChart(props: Props) {
-  const { endpoint, aggs, title, setBarData } = props;
-  const stacked = isPropDefined(props.stacked)
-
+  const { endpoint, aggs, interval } = props;
   const [labels, setLabels] = useState([])
   const [datasets, setDatasets] = useState([])
 
@@ -31,23 +29,26 @@ function RemoteBarChart(props: Props) {
     httpClient().post('/' + endpoint + ":aggregations", aggs, {})
       .then((res: any) => {
         let aggs = res.data.meta.aggregations
-        aggs = aggsToChartData(aggs)
-        setDatasets(aggs.datasets)
-        setLabels(aggs.labels)
+        // check if a datetime chart
+        if (isPropDefined(interval)) {
+          aggs = aggsToChartData(aggs, interval!)
+          setDatasets(aggs.datasets)
+          setLabels(aggs.labels)
+        } else {
+          throw Error("interval prop currently needs to be set")
+        }
       })
       .catch((error: any) => {
-        console.log(error.message)
+        console.error(error.message)
       })
   }, []);
   
   return (
     <div>
       <BarChart
-        stacked={ stacked }
-        title={ title }
+        {...props}
         labels={ labels }
         datasets={ datasets }
-        setBarData={ setBarData }
       />
     </div>
   )

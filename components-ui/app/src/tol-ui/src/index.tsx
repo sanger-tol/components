@@ -26,7 +26,8 @@ export { default as AutoTable } from "./table/AutoTable";
 // Charts
 export { default as BarChart } from "./charts/BarChart";
 export { default as RemoteBarChart } from "./charts/RemoteBarChart";
-export { default as RemoteBarChartTable } from "./charts/RemoteBarChartTable";
+export { default as RemoteChartTable } from "./charts/RemoteChartTable";
+export { default as RemoteDateChartTable } from "./charts/RemoteDateChartTable";
 
 // React-Bootstrap pass-through
 export { Container };
