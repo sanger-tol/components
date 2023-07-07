@@ -8,7 +8,10 @@ import os
 
 from flask import Flask
 
-from tol.api_base2 import data_blueprint
+from tol.api_base2 import (
+    data_blueprint,
+    system_blueprint
+)
 from tol.core import core_data_object
 from tol.elastic import ElasticDataSource
 
@@ -21,6 +24,8 @@ def application():
                              'index_prefix': os.getenv('ELASTIC_INDEX_PREFIX')})
     datasources = [eds]
     core_data_object(*datasources)
-    blueprint = data_blueprint(eds)
-    app.register_blueprint(blueprint, url_prefix='/api/v1')
+    blueprint_data = data_blueprint(eds)
+    app.register_blueprint(blueprint_data, url_prefix='/api/v1')
+    blueprint_system = system_blueprint(eds)
+    app.register_blueprint(blueprint_system, url_prefix='/api/v1/system')
     return app

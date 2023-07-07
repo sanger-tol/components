@@ -112,7 +112,7 @@ tolcore:
       tag: ""
   api:
     fullname: "components-api"
-    probe_url: '/api/v1/species'
+    probe_url: '/api/v1/system/healthz'
     extra_env:
       ELASTIC_URI: elastic.uri
       ELASTIC_USER: elastic.user

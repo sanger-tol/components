@@ -9,7 +9,6 @@ include:
 
 variables:
   APP_NAME: components
-  DISABLE_REVIEW_APPS: "true"
 
 deploy-package:
   stage: deploy
