@@ -43,3 +43,6 @@ export { default as ErrorMessage } from "./models/ErrorMessage";
 
 // Services
 export { httpClient } from "./services/http/httpClient";
+
+// Variables
+export { env } from './variables/config';

@@ -25,7 +25,7 @@ def application():
     datasources = [eds]
     core_data_object(*datasources)
     blueprint_data = data_blueprint(eds)
-    app.register_blueprint(blueprint_data, url_prefix='/api/v1')
+    app.register_blueprint(blueprint_data, url_prefix=os.getenv('API_PATH'))
     blueprint_system = system_blueprint(eds)
-    app.register_blueprint(blueprint_system, url_prefix='/api/v1/system')
+    app.register_blueprint(blueprint_system, url_prefix=os.getenv('API_PATH') + '/system')
     return app

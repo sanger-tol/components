@@ -15,7 +15,7 @@ import { Redirect } from 'react-router-dom';
 import Footer from './general/Footer'
 import Page from "./models/Page";
 import { convertToPath } from "./general/Utils";
-import { apiVersion } from './general/Env'
+import { env } from './variables/config'
 
 export interface AppProps {
   brand: string | JSX.Element,
@@ -34,10 +34,10 @@ function TolApp(props: AppProps) {
     login = true
   }
 
-  if (apiVersion === undefined) {
+  if (!("API_PATH" in env)) {
     return (
       <div>
-        <h3>Please add 'REACT_APP_apiVersion' as an environment variable (e.g. REACT_APP_apiVersion=1).</h3>
+        <h3>Please add 'REACT_APP_API_PATH' as an environment variable (e.g. REACT_APP_API_PATH=/api/v1).</h3>
       </div>
     )
   }

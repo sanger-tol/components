@@ -19,14 +19,9 @@ RUN yarn build
 
 
 # Stage 2
-FROM nginx:alpine
-
-COPY nginx.conf /etc/nginx/
-
-## Remove default nginx index page
-RUN rm -rf /var/www/components-ui/*
+FROM gitlab-registry.internal.sanger.ac.uk/tol/tol-core/web-base:1.0.2
 
 # Copy from the stage 1
-COPY --from=builder /workspace/build/ /var/www/components-ui/
+COPY --from=builder /workspace/build/ /var/www/
 
 EXPOSE 80

@@ -113,7 +113,9 @@ tolcore:
   api:
     fullname: "components-api"
     probe_url: '/api/v1/system/healthz'
+    path: '/api/v1'
     extra_env:
+      API_PATH: api.path
       ELASTIC_URI: elastic.uri
       ELASTIC_USER: elastic.user
       ELASTIC_PASSWORD: elastic.password
@@ -123,9 +125,10 @@ tolcore:
   ui:
     fullname: "components-ui"
     probe_url: '/'
-    api_version: '1'
     extra_env:
-      REACT_APP_API_VERSION: ui.api_version
+      REACT_APP_API_PATH: api.path
+      REACT_APP_PORTAL_URL: portal.url
+      REACT_APP_PORTAL_API_PATH: portal.api_path
   s3:
     uri: ""
     access_key: ""
@@ -136,5 +139,8 @@ tolcore:
     schedule: ""
   restore:
     prefix: ""
+  portal:
+    url: ""
+    api_path: ""
   alembic:
     enabled: false  # disable alembic (no DB to migrate)

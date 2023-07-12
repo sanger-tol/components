@@ -16,7 +16,7 @@ import {
 import Login from './Login';
 import Page from "../models/Page";
 import { convertToPath } from "./Utils";
-import { apiVersion } from './Env'
+import { env } from '../variables/config'
 
 
 interface NavProps extends RouteComponentProps {
@@ -35,7 +35,7 @@ const assumeProduction = (): string => {
 }
 
 const fetchEnvironment = (): Promise<string> => {
-  return fetch('/api/v' +  apiVersion + '/environment')
+  return fetch(env.API_PATH + '/system/environment')
       .then(res => {
           if (res.ok) {
               return res.json() as Promise<Environment>;

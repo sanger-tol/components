@@ -22,6 +22,7 @@ import { convertTableData,
 export interface Props {
   debug?: boolean,
   endpoint: string,
+  baseUrl?: string,
   fields?: Fields,
   fixedFilter?: object,
   includeNav?: boolean
@@ -109,7 +110,8 @@ class AutoTable extends React.Component<Props, State> {
         page_size: sizePerPage,
         filter: apiFilters,
         sort_by: sortField
-      }
+      },
+      baseURL: this.props.baseUrl
       })
       .then((res: any) => {
         const apiData = res.data.data

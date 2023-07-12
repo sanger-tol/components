@@ -13,6 +13,7 @@ import { Container, Row } from "react-bootstrap";
 interface Props {
   stacked?: boolean,
   endpoint: string,
+  baseUrl?: string,
   aggs: object,
   title: string,
   interval: DateInterval,

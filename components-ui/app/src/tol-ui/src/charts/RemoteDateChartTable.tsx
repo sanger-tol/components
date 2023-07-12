@@ -13,6 +13,7 @@ interface Props {
   stacked?: boolean,
   title: string,
   endpoint: string,
+  baseUrl?: string,
   buckets: string,
   xKey: string,
   interval: DateInterval,

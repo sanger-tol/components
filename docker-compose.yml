@@ -25,6 +25,7 @@ services:
     environment:
       - DB_URI
       - PARTNER_PORTAL_URL
+      - API_PATH
       - ELIXIR_CLIENT_ID
       - ELIXIR_CLIENT_SECRET
       - ELIXIR_REDIRECT_URI
@@ -42,7 +43,7 @@ services:
       - ELASTIC_INDEX_PREFIX
 
     ports:
-      - 8088:80
+      - 8089:80
     volumes:
       - './components-api/app/main:/app/main'
       - '../tol-sdk:/packages/tol-sdk:rw'
@@ -57,7 +58,9 @@ services:
     stdin_open: true
     environment:
       - NODE_ENV=development
-      - REACT_APP_API_VERSION
+      - REACT_APP_API_PATH=${API_PATH}
+      - REACT_APP_PORTAL_URL=${PORTAL_URL}
+      - REACT_APP_PORTAL_API_PATH=${PORTAL_API_PATH}
     ports:
       - 3010:3000
     volumes:

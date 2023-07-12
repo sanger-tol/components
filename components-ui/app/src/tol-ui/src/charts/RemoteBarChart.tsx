@@ -14,6 +14,7 @@ import { isPropDefined } from "../general/Utils";
 interface Props {
   stacked?: boolean,
   endpoint: string,
+  baseUrl?: string,
   aggs: object,
   title: string,
   interval?: DateInterval,
@@ -21,12 +22,12 @@ interface Props {
 }
 
 function RemoteBarChart(props: Props) {
-  const { endpoint, aggs, interval } = props;
+  const { endpoint, aggs, interval, baseUrl } = props;
   const [labels, setLabels] = useState([])
   const [datasets, setDatasets] = useState([])
 
   useEffect(() => {
-    httpClient().post('/' + endpoint + ":aggregations", aggs, {})
+    httpClient().post('/' + endpoint + ":aggregations", aggs, {baseURL: baseUrl})
       .then((res: any) => {
         let aggs = res.data.meta.aggregations
         // check if a datetime chart

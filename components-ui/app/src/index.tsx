@@ -8,7 +8,7 @@ import ReactDOM from "react-dom";
 import { Home, Charts, Miscellaneous, Tables, Forms } from "./pages";
 //import { Sandbox } from "./pages";
 import reportWebVitals from "./reportWebVitals";
-import { TolApp, Page } from "@tol/tol-ui"
+import { TolApp, Page } from './tol-ui/src'
 import "./scss/styling.scss";
 
 
