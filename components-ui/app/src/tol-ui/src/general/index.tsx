@@ -14,7 +14,4 @@ export { default as Alert } from "./Alert";
 export { default as InfoTooltip } from "./InfoTooltip";
 export { default as HoverOverlay } from "./HoverOverlay";
 export { default as Status } from "./Status";
-export { default as MultipleSelect } from "../forms/MultipleSelect";
-export { default as MultipleSelectFilters } from "../forms/MultipleSelectFilters";
-export { default as RemoteMultipleSelectFilters } from "../forms/RemoteMultipleSelectFilters";
-export { default as GlobalMultipleSelect } from "../forms/GlobalMultipleSelect";
+export { default as BubbleMap } from "./BubbleMap";

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import ReactDOM from "react-dom";
-import { Home, Charts, Miscellaneous, Tables, Forms } from "./pages";
+import { Home, Charts, Miscellaneous, Tables, Forms, Maps } from "./pages";
 //import { Sandbox } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page } from './tol-ui/src'
@@ -24,6 +24,13 @@ const forms: Page = {
   authRequired: false,
   adminOnly: false,
   uiElement: <Forms />
+}
+
+const maps: Page = {
+  name: "Maps",
+  authRequired: false,
+  adminOnly: false,
+  uiElement: <Maps />
 }
 
 const miscellaneous: Page = {
@@ -56,6 +63,7 @@ ReactDOM.render(
     pages={[
       charts,
       forms,
+      maps,
       miscellaneous,
       tables
       // sandbox

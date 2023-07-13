@@ -13,6 +13,7 @@ export { default as InfoTooltip } from "./general/InfoTooltip";
 export { default as LoadingHelix, MiniLoadingHelix } from "./general/LoadingHelix";
 export { default as Status } from "./general/Status";
 export { default as Modal } from "./general/Modal";
+export { default as BubbleMap } from "./general/BubbleMap";
 
 // Forms
 export { default as AutoComplete } from "./forms/AutoComplete";

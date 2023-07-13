@@ -30,7 +30,13 @@
     "@fortawesome/react-fontawesome": "0.2.0",
     "uuid": "9.0.0",
     "chart.js": "4.2.1",
-    "react-chartjs-2": "5.2.0"
+    "react-chartjs-2": "5.2.0",
+    "babel-runtime": "6.26.0",
+    "react-leaflet": "4.2.1",
+    "@types/leaflet": "1.9.3",
+    "leaflet": "1.9.4",
+    "react-leaflet-cluster": "2.1.0",
+    "react-leaflet-enhanced-marker": "1.0.21"
   },
   "scripts": {
     "build": "yarn build:esm && yarn build:cjs",
