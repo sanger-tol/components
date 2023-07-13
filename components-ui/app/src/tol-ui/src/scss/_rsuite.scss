@@ -192,4 +192,14 @@
   .rs-popover[class*=placement-bottom] > .rs-popover-arrow::after {
     border-bottom-color: var(--tol-tooltip-colour);
   }
+
+  // input box
+  .tol-input .rs-input {
+    border-top-color: var(--bs-border-color) !important;
+    border-right-color: var(--bs-border-color)  !important;
+    border-bottom-color: var(--bs-border-color)  !important;
+    border-left-color: var(--bs-border-color)  !important;
+    font-size: 1rem;
+    color: var(--bs-body-color);
+  }
 }

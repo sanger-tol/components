@@ -4,21 +4,29 @@
  * SPDX-License-Identifier: MIT
  */
 
- .navbar-custom {
+.navbar-custom {
   padding-top: 1rem;
   padding-bottom: 1rem;
   background-color: fade-out($black, 0.3);
+
   .navbar-brand {
     text-transform: uppercase;
     font-size: 1rem;
     letter-spacing: 0.1rem;
-    font-weight: 700;
+    font-weight: 1000;
   }
+
   .nav-link {
     text-transform: uppercase;
     font-size: 0.8rem;
     font-weight: 700;
     letter-spacing: 0.1rem;
+  }
+
+  .nav-link:hover,
+  .nav-link:active,
+  .nav-link:focus {
+    color: $primary
   }
 }
 
@@ -27,19 +35,75 @@
   color: var(--bs-navbar-brand-color);
 }
 
+.navbar-filler {
+	height: 75px;
+	width: 300px;
+}
+
 .navigation {
   padding-bottom: 80px;
 }
 
+// remove border around mobile nav
+.navbar-toggler {
+  border: none;
+}
+
+// makes bottom sticky footer
+.tol-app {
+  min-height: calc(100vh - 270px);
+}
+
 .footer {
-  padding-top: 50px;
-}
-
-.footer-contents {
+  height: 150px;
+  margin-top: 40px;
+  padding: 48px;
   background-color: black;
+  color: white;
 }
 
-.navbar-filler {
-	height: 75px;
-	width: 300px;
+.footer-text {
+  text-align: right;
+  vertical-align: middle;
+  margin-bottom: 0;
+}
+
+
+@media (max-width: 575px) {
+  .footer-text {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+  .footer {
+    height: 250px;
+  }
+}
+
+// sanger footer logo
+.sanger-logo {
+  width: 150px;
+}
+
+.sanger-logo:hover {
+  cursor: pointer;
+
+  .st1 {
+    fill:#6680BA;
+  }
+  
+  .st2 {
+    fill:#2E3B87;
+  }
+  
+  .st3 {
+    fill:#B2C9D4;
+  }  
+}
+
+.st0, // #242642
+.st1,
+.st2,
+.st3 {
+  fill: white;
 }

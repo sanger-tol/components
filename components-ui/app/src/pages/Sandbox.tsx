@@ -19,7 +19,7 @@ function Sandbox() {
         open={open}
         setOpen={setOpen}
       >
-        <p>this is a test</p>
+        <p>This is just a basic test</p>
       </Modal>
       <Button onClick = {() => setOpen(true)}>Open</Button>
     </div>

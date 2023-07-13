@@ -365,7 +365,7 @@ export function debug(apiData: object, fieldMeta: object, debug?: boolean) {
   }
 }
 
-export function tableStatusIndicator(error: boolean) {
+export function getTableStatusIndicator(error: boolean) {
   if (error) {
     return <TableErrorAlert />
   } else {

@@ -62,7 +62,7 @@ services:
       - REACT_APP_PORTAL_URL=${PORTAL_URL}
       - REACT_APP_PORTAL_API_PATH=${PORTAL_API_PATH}
     ports:
-      - 3010:3000
+      - 3011:3000
     volumes:
       - './components-ui/app:/usr/src/app'
       - '/usr/src/app/node_modules'

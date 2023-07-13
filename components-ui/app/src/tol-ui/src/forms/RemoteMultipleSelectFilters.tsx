@@ -113,7 +113,7 @@ function RemoteMultipleSelectFilters(props: Props) {
         </Row>
         <Row>
           <Status
-            status='red'
+            status="danger"
             text={errorMessage}
           />
         </Row>

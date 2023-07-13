@@ -12,15 +12,15 @@ function setStatusType(firstNum: number) {
     case 1:
     case 2:
     case 3:
-      return 'green';
+      return 'success';
     case 4:
     case 5:
-      return 'amber';
+      return 'warning';
     case 6:
     case 7:
-      return 'blue';
+      return 'primary';
     default:
-      return 'red';
+      return 'danger';
   }
 }
 

@@ -49,5 +49,12 @@ a {
 
 a:hover {
   text-decoration: none;
-  color: darken($primary, 10%);
+  color: $primary-hover;
+}
+
+.centre {
+  position: relative;
+	display: flex;
+	justify-content: center;
+	align-content: center;
 }

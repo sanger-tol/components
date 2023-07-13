@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Form, CentreContents, RemoteAutoComplete, MultipleSelect, MultipleSelectFilters,
-    RemoteMultipleSelectFilters } from '../tol-ui/src';
+    RemoteMultipleSelectFilters, Dropzone } from '../tol-ui/src';
     import { useState } from 'react';
     
     
@@ -35,7 +35,7 @@ function Forms() {
   return (
     <div>
       <CentreContents>
-        <h2>AutoComplete input</h2>
+        <h2>AutoComplete Input</h2>
         <RemoteAutoComplete 
           endpoint='species'
           filter_by='name'
@@ -62,6 +62,13 @@ function Forms() {
         <br/>
         <h2>Remote Multiple Select Filters</h2>
         <RemoteMultipleSelectFilters endpoint='run_data' fields={['mlwh_platform_type','mlwh_run_status']} globalFilters={remoteFilters} setGlobalFilters={setRemoteFilters}/>
+        <br/>
+        <h2>Dropzone</h2>
+        <Dropzone
+          endpoint='this-is-fake'
+          fileType='.csv'
+          generateMessages={() => {return []}}
+        />
       </CentreContents>
     </div>
   );

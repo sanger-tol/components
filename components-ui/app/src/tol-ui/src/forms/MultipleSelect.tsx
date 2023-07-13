@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import React from 'react';
 import { Checkbox, CheckPicker as RSCheckPicker } from 'rsuite';
-import { isPropDefined } from './Utils';
+import { isPropDefined } from '../general/Utils';
 
 interface Props {
     block?: boolean

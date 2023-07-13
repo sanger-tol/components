@@ -52,8 +52,8 @@
   .tol-table-filter-button:hover,
   .tol-table-filter-button:active,
   .active.page-item .page-link:hover {
-    background-color: darken($primary, 10%) !important;
-    border-color: darken($primary, 10%) !important;
+    background-color: $primary-hover !important;
+    border-color: $primary-hover !important;
     text-decoration: none;
   }
 

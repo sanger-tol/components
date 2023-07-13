@@ -19,19 +19,12 @@ const charts: Page = {
   uiElement: <Charts />
 }
 
-const tables: Page = {
-  name: "Tables",
+const forms: Page = {
+  name: "Forms",
   authRequired: false,
   adminOnly: false,
-  uiElement: <Tables />
+  uiElement: <Forms />
 }
-
-//const sandbox: Page = {
-//  name: "Sandbox",
-//  authRequired: false,
-//  adminOnly: false,
-//  uiElement: <Sandbox />
-//}
 
 const miscellaneous: Page = {
   name: "Miscellaneous",
@@ -40,13 +33,21 @@ const miscellaneous: Page = {
   uiElement: <Miscellaneous />
 }
 
-const forms: Page = {
-  name: "Forms",
+const tables: Page = {
+  name: "Tables",
   authRequired: false,
   adminOnly: false,
-  uiElement: <Forms />
+  uiElement: <Tables />
 }
 
+/*
+const sandbox: Page = {
+  name: "Sandbox",
+  authRequired: false,
+  adminOnly: false,
+  uiElement: <Sandbox />
+}
+*/
 
 ReactDOM.render(
   <TolApp
@@ -54,12 +55,12 @@ ReactDOM.render(
     homePage={ <Home /> }
     pages={[
       charts,
-      tables,
-      //sandbox,
+      forms,
       miscellaneous,
-      forms
+      tables
+      // sandbox
     ]}
-    login={ true }
+    login={ false }
   />,
   document.getElementById("root")
 );

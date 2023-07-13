@@ -110,7 +110,7 @@ function RemoteAutoComplete(props: Props) {
         </div>
         <div>
           <Status
-            status={'red'}
+            status="danger"
             text={response}
           />
         </div>

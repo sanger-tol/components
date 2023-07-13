@@ -9,7 +9,7 @@ import { CentreContents,
          BarChart, 
          RemoteBarChart, 
          RemoteDateChartTable,
-         Button, env } from '../tol-ui/src'
+         Button } from '../tol-ui/src'
 
 
 // fake data for BarChart component
@@ -149,7 +149,6 @@ function Charts() {
           stacked
           title="Run Data"
           endpoint="run_data"
-          baseUrl={`${env.PORTAL_URL}${env.PORTAL_API_PATH}`}
           buckets="mlwh_platform_type"
           xKey="mlwh_start_date"
           interval="M"
@@ -159,7 +158,6 @@ function Charts() {
           stacked
           title="Run Data"
           endpoint="run_data"
-          baseUrl={`${env.PORTAL_URL}${env.PORTAL_API_PATH}`}
           aggs={ aggs }
           interval="M"
           setBarData={ setBar }

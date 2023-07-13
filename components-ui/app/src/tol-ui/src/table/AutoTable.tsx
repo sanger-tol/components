@@ -8,7 +8,7 @@ import React from "react";
 import { httpClient } from '../services/http/httpClient'
 import Table from "./Table";
 import { Fields } from "./Field";
-import { tableStatusIndicator } from './TableUtils';
+import { getTableStatusIndicator } from './TableUtils';
 import TableEmpty from "./TableEmpty";
 import { v4 as uuid } from 'uuid';
 import { convertTableData,
@@ -186,7 +186,8 @@ class AutoTable extends React.Component<Props, State> {
         this.setState({
           loading: false,
           error: true,
-          tableData: []
+          tableData: [],
+          renderTimes: 1
         })
       }
     )
@@ -209,11 +210,11 @@ class AutoTable extends React.Component<Props, State> {
     }
 
     // need to be blank on first render
-    let tableStatusIndicatorOrBlank: JSX.Element;
+    let tableStatusIndicator: JSX.Element;
     if (renderTimes === 0) {
-      tableStatusIndicatorOrBlank = <TableEmpty />
+      tableStatusIndicator = <TableEmpty />
     } else {
-      tableStatusIndicatorOrBlank = tableStatusIndicator(error)
+      tableStatusIndicator = getTableStatusIndicator(error)
     }
 
     return (
@@ -230,7 +231,7 @@ class AutoTable extends React.Component<Props, State> {
               totalSize={ totalSize }
               includeNav={ includeNav }
               loading={ loading }
-              tableStatusIndicator={ tableStatusIndicatorOrBlank }
+              tableStatusIndicator={ tableStatusIndicator }
             />
           )
         })()}

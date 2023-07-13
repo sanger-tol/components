@@ -19,7 +19,7 @@ header.masthead {
     z-index: 1;
     position: relative;
     .masthead-heading {
-      font-size: 4rem;
+      font-size: 3rem;
     }
     .masthead-subheading {
       font-size: 2rem;
@@ -57,7 +57,7 @@ header.masthead {
   }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 800px) {
   header.masthead {
     padding-top: calc(55px);
     padding-bottom: 3rem;

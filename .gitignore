@@ -19,4 +19,4 @@ values-*.yaml
 *.tgz
 chart/charts/
 .DS_Store
-
+inject.js

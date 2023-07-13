@@ -5,18 +5,8 @@
 # This is used for local development only.
 FROM gitlab-registry.internal.sanger.ac.uk/tol/tol-core/web-base-dev:1.0.3
 
-WORKDIR /usr/src/app
-
-ENV PATH /usr/src/app/node_modules/.bin:$PATH
-
-VOLUME ["/packages"]
-
 COPY ./app/package.json ./
 
 RUN yarn install
 
 COPY ./app/ ./
-
-RUN yarn global add yalc;
-
-CMD /create_inject_file.sh; if [ -d /packages/tol-ui ] ; then cd /packages/tol-ui; yarn build; yalc push --scripts --update --replace; cd /usr/src/app; yalc link @tol/tol-ui; yarn install; fi; yarn start

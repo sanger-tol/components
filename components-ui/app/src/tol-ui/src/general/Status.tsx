@@ -9,40 +9,29 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faMinus, faXmark, faInfo } from '@fortawesome/free-solid-svg-icons';
 
 
-function getTypeFromStatus(status: string) {
-  switch(status) {
-    case 'green':
-      return 'success';
-    case 'amber':
-      return 'warning';
-    case 'red':
-      return 'danger';
-    default:
-      return 'primary';
-  }
+type Status = 'success'|'warning'|'danger'|'primary'
+
+interface Props {
+  text: string,
+  status: Status
 }
 
 function getIconFromStatus(status: string) {
   switch(status) {
-    case 'green':
+    case 'success':
       return faCheck;
-    case 'amber':
+    case 'warning':
       return faMinus;
-    case 'red':
+    case 'danger':
       return faXmark;
     default:
       return faInfo;
   }
 }
 
-interface Props {
-  text: string,
-  status: 'green'|'amber'|'red'|'blue'
-}
-
 function Status(props: Props) {
   const { text, status } = props;
-  const type = getTypeFromStatus(status);
+  const type = status;
   const icon = getIconFromStatus(status);
 
   return (
