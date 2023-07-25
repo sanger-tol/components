@@ -14,6 +14,7 @@ export { default as LoadingHelix, MiniLoadingHelix } from "./general/LoadingHeli
 export { default as Status } from "./general/Status";
 export { default as Modal } from "./general/Modal";
 export { default as BubbleMap } from "./general/BubbleMap";
+export { default as RemoteBubbleMap } from "./general/RemoteBubbleMap";
 
 // Forms
 export { default as AutoComplete } from "./forms/AutoComplete";

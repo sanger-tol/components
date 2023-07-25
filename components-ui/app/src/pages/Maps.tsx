@@ -4,11 +4,12 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BubbleMap, CentreContents } from "../tol-ui/src";
+import { BubbleMap, CentreContents, RemoteBubbleMap } from "../tol-ui/src";
 
     
 function Maps() {
 
+  // fake data for BubbleMapp component
   const points = [[51.508530, -0.076132],[51.510357, -0.116773],[51.507359, -0.136439],[53.958332, -1.080278],
                   [52.192001,-2.220000],[51.063202, -1.308000]]
 
@@ -22,11 +23,17 @@ function Maps() {
 
   return (
     <CentreContents>
-      <h2>Bubble Map</h2>
+      <h2 className="mt-5">Bubble Map</h2>
       <BubbleMap points={points} height={400}/>
+      <h2 className="mt-5">Remote Bubble Map</h2>
+      <RemoteBubbleMap
+        endpoint="map_objs"
+        longitudeKey="ene_map_test_longitude"
+        latitudeKey="ene_map_test_latitude"
+        height={400}
+      />
     </CentreContents>
   );
 }
 
 export default Maps;
-    
