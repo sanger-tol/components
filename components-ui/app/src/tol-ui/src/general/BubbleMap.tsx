@@ -13,8 +13,8 @@ import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
 
 interface Props {
-    points: number[][],
-    height: number
+  points: number[][],
+  height: number
 }
 
 function BubbleMap(props: Props) {

@@ -8,14 +8,25 @@
   .table {
     border-style: solid;
     border-width: 1px;
+    border-radius: 6px;
+
+    // keep placeholder text the same for datetime picker on table
+    #tol-filter-input .rs-picker-toggle .rs-picker-toggle-placeholder {
+      font-size: 14px;
+      color: var(--grey);
+    }
+
+    #tol-filter-input .rs-picker-value-item {
+      font-size: 14px;
+    }
   }
 
   thead {
-    background-color: var(--bs-secondary-bg);
+    background-color: var(--bs-grey);
     position: sticky;
     top: 0;
     z-index: 1;
-    border: var(--bs-secondary-bg);
+    border: var(--bs-grey);
     color: var(--bs-emphasis-color);
   }
 

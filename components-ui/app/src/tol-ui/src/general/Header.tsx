@@ -31,6 +31,16 @@ class Header extends React.Component<Props> {
       <div className="header">
         <header className="masthead text-center text-white">
           <div className="masthead-content">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
             <Container>
               <div className='navbar-filler'/>
               <h1 className="masthead-heading mb-0">{this.props.title}</h1>
@@ -40,10 +50,6 @@ class Header extends React.Component<Props> {
               ))}
             </Container>
           </div>
-          <div className="bg-circle-1 bg-circle"></div>
-          <div className="bg-circle-2 bg-circle"></div>
-          <div className="bg-circle-3 bg-circle"></div>
-          <div className="bg-circle-4 bg-circle"></div>
         </header>
       </div>
     );

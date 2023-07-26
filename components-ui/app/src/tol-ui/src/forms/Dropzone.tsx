@@ -55,7 +55,6 @@ function Dropzone(props: Props) {
             }
         })
         .then((res: any) => {
-            console.log(res)
             setIsLoading(false)
             setHasLoaded(true)
             setMessages(generateMessages(res))

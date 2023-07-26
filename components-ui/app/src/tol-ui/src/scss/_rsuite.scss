@@ -5,8 +5,6 @@
  */
 
 :root {
-  --rs-uploader-dnd-bg: var(--bs-body-bg);
-
   --rs-tooltip-bg: var(--bs-emphasis-color);
   --rs-bg-overlay: var(--bs-body-bg);
   --rs-input-bg: var(--bs-body-bg);
@@ -25,6 +23,19 @@
 
   // paragraph placeholder
   --rs-placeholder: var(--grey-opaque);
+
+  // multiple select tags
+  --rs-picker-value: var(--primary);
+  --rs-picker-count-bg: var(--primary);
+
+  // date picker extras
+  --rs-checkbox-checked-bg: var(--primary);
+  --rs-input-focus-border: var(--primary);
+  --rs-btn-link-text: var(--primary);
+  --rs-text-active: var(--primary);
+  --rs-btn-link-hover-text: var(--primary-hover);
+  --rs-btn-link-active-text: var(--primary-hover);
+  --rs-border-primary: var(--bs-grey);
 
   // filtering inputs
   .rs-picker-default .rs-picker-toggle,
@@ -118,21 +129,21 @@
 
   // datetime picker inner borders
   .rs-picker-daterange-header {
-    border-bottom: 1px solid var(--grey);
+    border-bottom: 1px solid var(--bs-grey);
   }
 
   .rs-picker-daterange-menu .rs-calendar:first-child {
-    border-right: 1px solid var(--grey);
+    border-right: 1px solid var(--bs-grey);
   }
 
   .rs-picker-toolbar {
-    border-top: 1px solid var(--grey);
+    border-top: 1px solid var(--bs-grey);
   }
 
   // icons in filters
   .rs-input-group-addon .rs-icon,
   .rs-picker-toggle-caret.rs-icon {
-    fill: $grey !important;
+    fill: var(--grey) !important;
   }
 
   .rs-input-group-addon .rs-icon {
@@ -201,5 +212,10 @@
     border-left-color: var(--bs-border-color)  !important;
     font-size: 1rem;
     color: var(--bs-body-color);
+  }
+
+  // form loading placeholder
+  .tol-input-placeholder {
+    height: 40px
   }
 }

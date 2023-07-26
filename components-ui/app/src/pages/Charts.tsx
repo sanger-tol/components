@@ -144,25 +144,7 @@ function Charts() {
   return (
     <div className="charts">
       <CentreContents>
-        <h2>Remote Bar Chart & Table</h2>
-        <RemoteDateChartTable
-          stacked
-          title="Run Data"
-          endpoint="run_data"
-          buckets="mlwh_platform_type"
-          xKey="mlwh_start_date"
-          interval="M"
-        />
-        <h2 className="mt-5">Remote Bar Chart</h2>
-        <RemoteBarChart
-          stacked
-          title="Run Data"
-          endpoint="run_data"
-          aggs={ aggs }
-          interval="M"
-          setBarData={ setBar }
-        />
-        <h2 className="mt-5">Bar Chart</h2>
+        <h2>Bar Chart</h2>
         <h5>This is the 'Bar' data: {bar["bucket"]} {bar["xKey"]} {bar["value"]}</h5>
         <Button className="m-1" onClick={()=>{setDatasests(d1)}}>Change d1</Button>
         <Button className="m-1" onClick={()=>{setDatasests(d2)}}>Change d2</Button>
@@ -172,6 +154,24 @@ function Charts() {
           labels={ labels }
           datasets={ datasets }
           setBarData={ setBar }
+        />
+        <h2 className="mt-5">Remote Bar Chart</h2>
+        <RemoteBarChart
+          stacked
+          title="Run Data"
+          endpoint="run_data"
+          aggs={ aggs }
+          interval="M"
+        />
+        <h2 className="mt-5 mb-2">Remote Bar Chart & Table</h2>
+        <RemoteDateChartTable
+          stacked
+          title="Run Data"
+          endpoint="run_data"
+          buckets="mlwh_platform_type"
+          xKey="mlwh_start_date"
+          interval="M"
+          filterInputFields={['mlwh_platform_type', 'tester']}
         />
       </CentreContents>
     </div>

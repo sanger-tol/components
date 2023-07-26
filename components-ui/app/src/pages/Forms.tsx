@@ -4,10 +4,14 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Form, CentreContents, RemoteAutoComplete, MultipleSelect, MultipleSelectFilters,
-    RemoteMultipleSelectFilters, Dropzone } from '../tol-ui/src';
-    import { useState } from 'react';
-    
+import { useState } from 'react';
+import { Form,
+         CentreContents,
+         RemoteAutoComplete,
+         MultipleSelect,
+         MultipleSelectFilters,
+         RemoteMultipleSelectFilters,
+         Dropzone } from '../tol-ui/src';    
     
 function Forms() {
   const [value, setValue] = useState(['test2'])
@@ -61,7 +65,12 @@ function Forms() {
         <MultipleSelectFilters value={globalFilters} setValue={setGlobalFilters} filters={filters}/>
         <br/>
         <h2>Remote Multiple Select Filters</h2>
-        <RemoteMultipleSelectFilters endpoint='run_data' fields={['mlwh_platform_type','mlwh_run_status']} globalFilters={remoteFilters} setGlobalFilters={setRemoteFilters}/>
+        <RemoteMultipleSelectFilters
+          endpoint='run_data'
+          fields={['mlwh_platform_type', 'mlwh_run_status']}
+          globalFilters={remoteFilters}
+          setGlobalFilters={setRemoteFilters}
+        />
         <br/>
         <h2>Dropzone</h2>
         <Dropzone

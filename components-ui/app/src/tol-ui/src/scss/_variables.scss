@@ -27,6 +27,7 @@ $bs-body-color: var(--bs-body-color) !default;
 $bs-emphasis-color: var(--bs-emphasis-color) !default;
 
 // HOVER
+$bs-grey: var(--bs-secondary-bg);
 $grey: #808080 !default;
 $grey-opaque: rgba($grey, 0.1) !default;
 $primary-opaque: rgba($primary, 0.1) !default;
@@ -36,6 +37,7 @@ $primary-hover: lighten($primary, 10%) !default;
 :root {
   --primary: #{$primary};
   --secondary: #{$secondary};
+  --bs-grey: var(--bs-secondary-bg);
   --grey: #{$grey};
   --grey-opaque: #{$grey-opaque};
   --primary-opaque: #{$primary-opaque};

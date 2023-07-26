@@ -10,21 +10,22 @@ import { formatDateRangeWithInterval, DateInterval } from "./ChartUtils";
 
         
 interface Props {
-  stacked?: boolean,
   title: string,
   endpoint: string,
-  baseUrl?: string,
   buckets: string,
   xKey: string,
   interval: DateInterval,
+  filterInputFields: string[],
   fields?: any,
   debug?: boolean
+  stacked?: boolean,
+  baseUrl?: string,
 }
 
 function RemoteDateChartTable(props: Props) {
   const { buckets, xKey, interval } = props
   const [bar, setBar] = useState({})
- 
+
   // datetime aggregation
   const aggs = {
     "aggs": {
@@ -53,13 +54,17 @@ function RemoteDateChartTable(props: Props) {
     "exact": {},
     "range": {}
   }
-  filter["exact"][buckets] = bar["bucket"]
 
-  // providing a date the range filtering recognizes
+  if (bar["bucket"] !== undefined) {
+    filter["exact"][buckets] = bar["bucket"]
+  }
+
+  // providing a date the range filtering recognizes for month
   let barXKey = bar["xKey"]
   if (interval === "M") {
     barXKey = "01 " + barXKey
   }
+
   // formatting the date range for filtering
   const dateRange = formatDateRangeWithInterval(barXKey, interval)
   if (dateRange) {
@@ -67,12 +72,14 @@ function RemoteDateChartTable(props: Props) {
   }
 
   return (
-    <RemoteChartTable
-      {...props}
-      aggs={ aggs }
-      tableFilter={ filter }
-      setBarData={ setBar }
-    />
+    <div>
+      <RemoteChartTable
+        {...props}
+        aggs={ aggs }
+        filter={ filter }
+        setBarData={ setBar }
+      />
+    </div>
   )
 }
 
