@@ -211,3 +211,43 @@ export function formatDateRangeWithInterval(date: string, interval: string) {
   }
   return {from: from, to: to}
 }
+
+export function updateBarColours(chart: any, resetColours: boolean, fadedOpacity: number) {
+  for (let index = 0; index < chart.data.datasets.length; index++) {
+    const solidColour = getChartColour(index)
+    const fadedColour = getChartColour(index, fadedOpacity)
+    chart.data.datasets[index]["backgroundColor"] = []
+    chart.data.datasets[index]["hoverBackgroundColor"] = []
+    const dataLength = chart.data.datasets[index].data.length
+    for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
+      if (resetColours) {
+        chart.data.datasets[index]["backgroundColor"].push(solidColour)
+        chart.data.datasets[index]["hoverBackgroundColor"].push(fadedColour)
+      } else {
+        chart.data.datasets[index]["backgroundColor"].push(fadedColour)
+        chart.data.datasets[index]["hoverBackgroundColor"].push(solidColour)
+      }
+    }
+  }
+}
+
+export function setBarFilled(chart: any, chartElement: any) {
+  const { datasetIndex, index } = chartElement[0]
+  const originalColour = getChartColour(datasetIndex)
+  chart.data.datasets[datasetIndex].backgroundColor[index] = originalColour
+  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = originalColour
+}
+
+export function generateLabels(chart: any, titleColour: any) {
+  return chart.data.datasets.map(
+    (dataset: any, index: any) => {
+      return {
+        text: dataset.label,
+        fillStyle: getChartColour(index),
+        fontColor: titleColour,
+        pointStyle: 'rectRounded',
+        lineWidth: 0
+      }
+    }
+  )
+}
