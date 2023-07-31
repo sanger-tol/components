@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import BubbleMap from "./BubbleMap";
 import Status from "./Status";
 import { httpClient } from "../services/http/httpClient";
+import { Placeholder } from 'rsuite';
 
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
     longitudeKey: string
     latitudeKey: string
     height: number
+    filter?: object
 }
 
 /* converts elastic data format to points parameter BubbleMap accepts */
@@ -39,22 +41,37 @@ function elasticToChartData(
 }
 
 function RemoteBubbleMap(props: Props) {
-    const { endpoint, baseUrl, longitudeKey, latitudeKey } = props;
+    const { endpoint, baseUrl, longitudeKey, latitudeKey, filter, height } = props;
     const [ points, setPoints ] = useState<number[][]>([]);
     const [ errorMessage, setErrorMessage ] = useState<string>('')
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        httpClient().get('/' + endpoint, {baseURL: baseUrl})
+        setLoading(true)
+        httpClient().get('/' + endpoint, {
+            baseURL: baseUrl, 
+            params: {
+                filter: filter
+        }})
         .then((res: any) => {
             const coordinate_data = res.data.data
             const convertedData = elasticToChartData(coordinate_data, longitudeKey, latitudeKey)
             setPoints(convertedData)
+            setLoading(false)
         })
         .catch((error: any) => {
             console.error(error.message)
             setErrorMessage(error.message)
         })
-    }, []);
+    }, [filter]);
+
+    if (loading) {
+        return (
+          <div style={{height: height.toString() + 'px'}}>
+            <Placeholder.Graph active/>
+          </div>
+        )
+      }
 
     if( errorMessage === ''){
         return (

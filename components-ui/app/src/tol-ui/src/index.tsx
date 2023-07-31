@@ -15,6 +15,7 @@ export { default as Status } from "./general/Status";
 export { default as Modal } from "./general/Modal";
 export { default as BubbleMap } from "./general/BubbleMap";
 export { default as RemoteBubbleMap } from "./general/RemoteBubbleMap";
+export { default as RemoteBubbleMapFilter } from "./general/RemoteBubbleMapFilter";
 
 // Forms
 export { default as AutoComplete } from "./forms/AutoComplete";

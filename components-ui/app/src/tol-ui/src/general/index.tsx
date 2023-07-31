@@ -15,3 +15,4 @@ export { default as InfoTooltip } from "./InfoTooltip";
 export { default as HoverOverlay } from "./HoverOverlay";
 export { default as Status } from "./Status";
 export { default as BubbleMap } from "./BubbleMap";
+export { default as RemoteBubbleMapFilter } from "./RemoteBubbleMapFilter";
