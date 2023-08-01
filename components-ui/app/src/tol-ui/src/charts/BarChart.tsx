@@ -39,11 +39,12 @@ interface Props {
   title: string,
   labels: string[],
   datasets: any[],
-  setBarData?: React.Dispatch<React.SetStateAction<any>>
+  setBarData?: React.Dispatch<React.SetStateAction<any[]>>
+  barDataPoints?: any[]
 }
 
 function BarChart(props: Props) {
-  const { title, datasets, labels, setBarData } = props
+  const { title, datasets, labels, setBarData, barDataPoints } = props
   const stacked = isPropDefined(props.stacked)
   const data = {
     labels: labels,
@@ -175,11 +176,14 @@ function BarChart(props: Props) {
     if (isPropDefined(setBarData)) {
       if (barData !== undefined) {
         // sets 'clicked' bar data
-        setBarData!({
-          "bucket": barData[2],
-          "value": barData[1],
-          "xKey": barData[0]
-        })
+        setBarData!((barDataPoints) => [
+          ...barDataPoints,
+          {
+            "bucket": barData[2], // dataset name (id)
+            "value": barData[1], // data value
+            "xKey": barData[0] // label
+          }
+        ])
       } else {
         // clears 'clicked' bar data
         setBarData!({})

@@ -116,7 +116,7 @@ const d2 = [
 
 function Charts() {
   const [datasets, setDatasests] = useState(d1)
-  const [bar, setBar] = useState({})
+  const [bar, setBar] = useState<any[]>([])
 
   const aggs = {
     "aggs": {
@@ -154,6 +154,7 @@ function Charts() {
           labels={ labels }
           datasets={ datasets }
           setBarData={ setBar }
+          barDataPoints={ bar }
         />
         <h2 className="mt-5">Remote Bar Chart</h2>
         <RemoteBarChart
