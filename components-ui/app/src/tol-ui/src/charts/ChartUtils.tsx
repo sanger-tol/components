@@ -128,7 +128,7 @@ function getSortedAggData(buckets: object) {
     }
   }
   return {
-    keys: Array.from(keys).sort(),
+    keys: Array.from(keys).sort((a: any, b: any) => {return a-b}),
     aggs: aggs
   } as AggData
 }
