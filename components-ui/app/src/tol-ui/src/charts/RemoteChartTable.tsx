@@ -18,7 +18,8 @@ interface Props {
   title: string,
   interval: DateInterval,
   filterInputFields: string[],
-  setBarData: React.Dispatch<React.SetStateAction<any>>,
+  setBarData: React.Dispatch<React.SetStateAction<any[]>>,
+  barDataPoints?: any[],
   filter: object,
   fields?: any,
   debug?: boolean

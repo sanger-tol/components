@@ -24,7 +24,7 @@ interface Props {
 
 function RemoteDateChartTable(props: Props) {
   const { buckets, xKey, interval } = props
-  const [bar, setBar] = useState({})
+  const [bar, setBar] = useState<any[]>([])
 
   // datetime aggregation
   const aggs = {
@@ -78,6 +78,7 @@ function RemoteDateChartTable(props: Props) {
         aggs={ aggs }
         filter={ filter }
         setBarData={ setBar }
+        barDataPoints={ bar }
       />
     </div>
   )

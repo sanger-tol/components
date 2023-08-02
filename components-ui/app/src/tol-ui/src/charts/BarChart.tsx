@@ -171,22 +171,32 @@ function BarChart(props: Props) {
     return elementData
   }
 
+  function dataPointExists(dataPoints, targetDataPoint) {
+    return dataPoints.some((dataPoint) =>
+      dataPoint.bucket === targetDataPoint.bucket &&
+      dataPoint.value === targetDataPoint.value &&
+      dataPoint.xKey === targetDataPoint.xKey
+    );
+  }
+
   const onPlaneClick = (event: MouseEvent<HTMLCanvasElement>) => {
     const barData = getBarData(event);
     if (isPropDefined(setBarData)) {
       if (barData !== undefined) {
+        const newDataPoint = {
+          "bucket": barData[2], // dataset name (id)
+          "value": barData[1], // data value
+          "xKey": barData[0] // label
+        }
         // sets 'clicked' bar data
-        setBarData!((barDataPoints) => [
-          ...barDataPoints,
-          {
-            "bucket": barData[2], // dataset name (id)
-            "value": barData[1], // data value
-            "xKey": barData[0] // label
-          }
-        ])
+        if (!dataPointExists(barDataPoints, newDataPoint)) {
+          setBarData!((barDataPoints) => [
+            ...barDataPoints, newDataPoint
+          ])
+        }
       } else {
         // clears 'clicked' bar data
-        setBarData!({})
+        setBarData!([{}])
       }
     }
   }
