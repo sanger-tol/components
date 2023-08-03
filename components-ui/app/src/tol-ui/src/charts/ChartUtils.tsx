@@ -251,3 +251,17 @@ export function generateLabels(chart: any, titleColour: any) {
     }
   )
 }
+
+// returns true if object already exists in array
+export function objectExists(existingObjects: any, object: any): boolean {
+  return existingObjects.some((obj) => {
+    for (const key in object) {
+      if (object.hasOwnProperty(key)) {
+        if (obj[key] !== object[key]) {
+          return false; // mismatch found
+        }
+      }
+    }
+    return true; // all properties match
+  });
+}

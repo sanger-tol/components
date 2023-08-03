@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useState } from "react";
 import { MouseEvent, useRef } from "react";
 import type { InteractionItem } from "chart.js";
 import {
@@ -21,7 +22,8 @@ import { getChartColour,
          initialiseDatasets,
          updateBarColours,
          setBarFilled, 
-         generateLabels } from "./ChartUtils"
+         generateLabels,
+         objectExists } from "./ChartUtils"
 import { isPropDefined } from "../general/Utils";
 
 
@@ -50,6 +52,8 @@ function BarChart(props: Props) {
     labels: labels,
     datasets: initialiseDatasets(datasets)
   }
+  // initialise the state for selected chartElements
+  const [chartElements, setChartElements] = useState<any[]>([])
 
   // colours
   const titleColour = getCssVarColour("--bs-emphasis-color")
@@ -98,6 +102,14 @@ function BarChart(props: Props) {
     onClick: (event: any, chartElement: any, chart: any, item: any) => {
       if (item !== undefined) {
         return
+      }
+
+      if (chartElement.length === 0) {
+        setChartElements!([])
+      } else if (!objectExists(chartElements, chartElement[0])) {
+        const updatedChartElements = [...chartElements]
+        updatedChartElements.push(chartElement[0])
+        setChartElements(updatedChartElements)
       }
 
       // only clickable if setBarData is defined
@@ -171,14 +183,6 @@ function BarChart(props: Props) {
     return elementData
   }
 
-  function dataPointExists(dataPoints, targetDataPoint) {
-    return dataPoints.some((dataPoint) =>
-      dataPoint.bucket === targetDataPoint.bucket &&
-      dataPoint.value === targetDataPoint.value &&
-      dataPoint.xKey === targetDataPoint.xKey
-    );
-  }
-
   const onPlaneClick = (event: MouseEvent<HTMLCanvasElement>) => {
     const barData = getBarData(event);
     if (isPropDefined(setBarData)) {
@@ -189,7 +193,7 @@ function BarChart(props: Props) {
           "xKey": barData[0] // label
         }
         // sets 'clicked' bar data
-        if (!dataPointExists(barDataPoints, newDataPoint)) {
+        if (!objectExists(barDataPoints, newDataPoint)) {
           setBarData!((barDataPoints) => [
             ...barDataPoints, newDataPoint
           ])
