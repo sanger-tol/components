@@ -9,5 +9,6 @@ export { default as Tables } from "./Tables";
 export { default as Sandbox } from "./Sandbox";
 export { default as Miscellaneous } from "./Miscellaneous";
 export { default as Forms } from "./Forms";
-export { default as Charts } from "./Charts";
+export { default as BarCharts } from "./BarCharts";
 export { default as Maps } from "./Maps";
+export { default as Sunbursts } from "./Sunbursts";

@@ -22,7 +22,7 @@ import { getChartColour,
          initialiseDatasets,
          updateBarColours,
          setBarFilled, 
-         generateLabels,
+         generateBarLabels,
          objectExists } from "./ChartUtils"
 import { isPropDefined } from "../general/Utils";
 
@@ -41,13 +41,20 @@ interface Props {
   title: string,
   labels: string[],
   datasets: any[],
-  setBarData?: React.Dispatch<React.SetStateAction<any[]>>
+  setBarData?: React.Dispatch<React.SetStateAction<any[]>>,
+  delay?: number
   barDataPoints?: any[]
 }
 
 function BarChart(props: Props) {
   const { title, datasets, labels, setBarData, barDataPoints } = props
   const stacked = isPropDefined(props.stacked)
+
+  // delays default
+  let delay = 0
+  if (props.delay !== undefined) {
+    delay = props.delay
+  }
   const data = {
     labels: labels,
     datasets: initialiseDatasets(datasets)
@@ -62,6 +69,9 @@ function BarChart(props: Props) {
 
   // chart options
   const options = {
+    animation: {
+      delay: delay,
+    },
     plugins: {
       title: {
         display: true,
@@ -92,7 +102,7 @@ function BarChart(props: Props) {
         labels: {
           usePointStyle: true,
           generateLabels: (chart: any) => {
-            return generateLabels(chart, titleColour)
+            return generateBarLabels(chart, titleColour)
           }
         }
       }
@@ -207,6 +217,7 @@ function BarChart(props: Props) {
 
   return (
     <Bar
+      responsive="true"
       id="tol-bar-chart"
       className="tol-bar-chart"
       datasetIdKey="id"

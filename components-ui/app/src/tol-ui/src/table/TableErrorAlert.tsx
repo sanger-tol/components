@@ -7,11 +7,11 @@ SPDX-License-Identifier: MIT
 import { Alert } from '../index'
 
 
-const TableErrorAlert = () => (
+const TableErrorAlert = (props: {error: string}) => (
   <div className="d-flex justify-content-center p-5 m-5">
     <Alert 
       type="danger"
-      message="See console for errors"
+      message={props.error}
     />
   </div>
 )
