@@ -238,11 +238,14 @@ export function updateBarColours(chart: any, resetColours: boolean, fadedOpacity
   }
 }
 
-export function setBarFilled(chart: any, chartElement: any) {
-  const { datasetIndex, index } = chartElement[0]
-  const originalColour = getChartColour(datasetIndex)
-  chart.data.datasets[datasetIndex].backgroundColor[index] = originalColour
-  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = originalColour
+export function setBarFilled(chart: any, chartElements: any) {
+  for (const chartElement of chartElements) {
+    const datasetIndex = chartElement.datasetIndex
+    const index = chartElement.index
+    const originalColour = getChartColour(datasetIndex)
+    chart.data.datasets[datasetIndex].backgroundColor[index] = originalColour
+    chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = originalColour
+  }
 }
 
 export function generateBarLabels(chart: any, titleColour: any) {

@@ -113,15 +113,14 @@ function BarChart(props: Props) {
       if (item !== undefined) {
         return
       }
-
+      let updatedChartElements: any[] = []
       if (chartElement.length === 0) {
         setChartElements!([])
       } else if (!objectExists(chartElements, chartElement[0])) {
-        const updatedChartElements = [...chartElements]
+        updatedChartElements = [...chartElements]
         updatedChartElements.push(chartElement[0])
         setChartElements(updatedChartElements)
       }
-
       // only clickable if setBarData is defined
       if (isPropDefined(setBarData)) {
         if (!chartElement.length) {
@@ -131,11 +130,12 @@ function BarChart(props: Props) {
           // fade non-clicked bars
           updateBarColours(chart, false, 0.25)
           // setting clicked bar as its original colour
-          setBarFilled(chart, chartElement)
+          setBarFilled(chart, updatedChartElements)
         }
         chart.update();
       }
     },
+
     onHover: (event: any, chartElement: any) => {
       if (isPropDefined(setBarData)) {
         if (chartElement.length === 1) {
