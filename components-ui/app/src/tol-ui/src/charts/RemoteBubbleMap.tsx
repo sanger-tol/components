@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState, useEffect } from "react";
 import BubbleMap from "./BubbleMap";
-import Status from "./Status";
+import Status from "../general/Status";
 import { httpClient } from "../services/http/httpClient";
 import { Placeholder } from 'rsuite';
 

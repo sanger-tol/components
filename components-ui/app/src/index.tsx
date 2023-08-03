@@ -5,18 +5,18 @@ SPDX-License-Identifier: MIT
 */
 
 import ReactDOM from "react-dom";
-import { Home, Charts, Miscellaneous, Tables, Forms, Maps } from "./pages";
-//import { Sandbox } from "./pages";
+import { Home, BarCharts, Miscellaneous, Tables, Forms, Maps, Sunbursts } from "./pages";
+// import { Sandbox } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page } from './tol-ui/src'
 import "./scss/styling.scss";
 
 
-const charts: Page = {
-  name: "Charts",
+const barCharts: Page = {
+  name: "BarCharts",
   authRequired: false,
   adminOnly: false,
-  uiElement: <Charts />
+  uiElement: <BarCharts />
 }
 
 const forms: Page = {
@@ -47,6 +47,13 @@ const tables: Page = {
   uiElement: <Tables />
 }
 
+const sunbursts: Page = {
+  name: "Sunbursts",
+  authRequired: false,
+  adminOnly: false,
+  uiElement: <Sunbursts />
+}
+
 /*
 const sandbox: Page = {
   name: "Sandbox",
@@ -61,12 +68,12 @@ ReactDOM.render(
     brand="Components"
     homePage={ <Home /> }
     pages={[
-      charts,
+      barCharts,
       forms,
       maps,
       miscellaneous,
-      tables
-      // sandbox
+      tables,
+      sunbursts
     ]}
     login={ false }
   />,

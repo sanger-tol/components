@@ -34,7 +34,7 @@ export interface State {
   page: number,
   sizePerPage: number,
   totalSize: number,
-  error: boolean,
+  error: string,
   loading: boolean,
   renderTimes: number
 }
@@ -53,7 +53,7 @@ class AutoTable extends React.Component<Props, State> {
       page: 1,
       sizePerPage: 50,
       totalSize: -1,
-      error: false,
+      error: 'false',
       loading: false,
       renderTimes: 0
     }
@@ -120,7 +120,7 @@ class AutoTable extends React.Component<Props, State> {
           page: page,
           sizePerPage: sizePerPage,
           totalSize: apiMeta.total,
-          error: false
+          error: ''
         })
         
         // error if endpoint doesn't return 200
@@ -180,12 +180,13 @@ class AutoTable extends React.Component<Props, State> {
         }
       })
       // @ts-ignore
-      .catch((_: any) => {
+      .catch((error: any) => {
+        console.warn(error.message)
         console.warn('Please ensure the db has been restored')
         console.warn('Please ensure the \'endpoint\' prop is correct and pluralised')
         this.setState({
           loading: false,
-          error: true,
+          error: error.message,
           tableData: [],
           renderTimes: 1
         })

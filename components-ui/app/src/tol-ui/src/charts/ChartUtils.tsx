@@ -7,21 +7,15 @@ SPDX-License-Identifier: MIT
 import { format } from 'date-fns'
 
 
+// ------------------//
+//      GENERAL      //
+// ------------------//
+
 interface Rgb {
   [key: string]: number,
   r: number,
   g: number,
   b: number
-}
-
-interface ChartData {
-  datasets: object[],
-  labels: string[]
-}
-
-interface AggData {
-  keys: any[],
-  aggs: object[]
 }
 
 export type DateInterval = "d"|"w"|"M"|"y"
@@ -92,6 +86,20 @@ export function getColourFromCssVar(cssVar: string, opacity?: number) {
   );
 }
 
+// ------------------//
+//      BARCHART     //
+// ------------------//
+
+interface ChartData {
+  datasets: object[],
+  labels: string[]
+}
+
+interface AggData {
+  keys: any[],
+  aggs: object[]
+}
+
 export function getChartColour(index: number, opacity?: number) {
   if (opacity === undefined) {
     opacity = 1
@@ -114,7 +122,6 @@ export function initialiseDatasets(datasets: any[]) {
   }
   return datasets
 }
-
 
 function getSortedAggData(buckets: object) {
   const keys = new Set()
@@ -238,11 +245,125 @@ export function setBarFilled(chart: any, chartElement: any) {
   chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = originalColour
 }
 
-export function generateLabels(chart: any, titleColour: any) {
+export function generateBarLabels(chart: any, titleColour: any) {
   return chart.data.datasets.map(
     (dataset: any, index: any) => {
       return {
         text: dataset.label,
+        fillStyle: getChartColour(index),
+        fontColor: titleColour,
+        pointStyle: 'rectRounded',
+        lineWidth: 0
+      }
+    }
+  )
+}
+
+// ------------------//
+//      SUNBURST     //
+// ------------------//
+
+interface SunburstData {
+  key: string,
+  value: number,
+  child?: object
+}
+
+interface DoughnutDataCJS {
+  data: number[],
+  total: number,
+  percentages: string[]
+  label: string,
+  labels: string[],
+  backgroundColor: string[],
+  hoverBackgroundColor: string[],
+  borderColor: string,
+  borderWidth: number,
+  hoverOffset: number
+}
+
+export function convertSunburstDatasets(
+  datasets: object,
+  outputData?: DoughnutDataCJS[],
+  colourIndex?: number,
+  depth?: number
+) {
+
+  // set defaults if undefined
+  if (outputData === undefined) outputData = []
+  if (colourIndex === undefined) colourIndex = 0
+  if (depth === undefined) {
+    depth = 0
+  } else {
+    depth++
+  }
+  // key of what the doughnut is sliced by
+  const key = Object.keys(datasets)[0]
+  // the data of the slices
+  const buckets: SunburstData[] = datasets[key]
+  // only append the origin dict on the first iteration
+  initialiseOriginDataset(outputData, key, colourIndex, depth)
+
+  for (const bucket of buckets) {
+    const colour = getChartColour(colourIndex)
+    const hoverColour = getChartColour(colourIndex, 0.5)
+    outputData![depth].data.push(bucket.value)
+    outputData![depth].total += bucket.value
+    outputData![depth].backgroundColor.push(colour)
+    outputData![depth].hoverBackgroundColor.push(hoverColour)
+    outputData![depth].labels.push(bucket.key)
+    if (bucket.child) {
+      outputData = convertSunburstDatasets(bucket.child, outputData, colourIndex, depth)
+    }
+    // keep colour the same for children
+    if (depth === 0) {
+      colourIndex++
+    }
+  }
+  // reverse final output (chartJS requires inner doughnut to be end of list)
+  if (depth === 0) return addPercentages(outputData!.reverse())
+  return outputData
+}
+
+function initialiseOriginDataset(
+  outputData: DoughnutDataCJS[],
+  key: string,
+  colourIndex: number,
+  depth: number
+) {
+  if (colourIndex === 0 && outputData.length === depth) {
+    outputData.push({
+      data: [],
+      total: 0,
+      percentages: [],
+      label: key,
+      labels: [],
+      backgroundColor: [],
+      hoverBackgroundColor: [],
+      borderColor: getCssVarColour("--bs-body-bg"),
+      borderWidth: 1.5,
+      hoverOffset: 0
+    })
+  }
+}
+
+function addPercentages(outputData: DoughnutDataCJS[]) {
+  for (const entry of outputData) {
+    for (const dataPoint of entry.data) {
+      const percentage = (dataPoint/entry.total)*100
+      entry.percentages.push(percentage.toFixed(1))
+    }
+  }
+  return outputData
+}
+
+export function generateSunburstLabels(chart: any, titleColour: any) {
+  // parent is end of list due to chartJS oddities
+  const parentIndex = chart.data.datasets.length-1
+  return chart.data.datasets[parentIndex].labels.map(
+    (label: any, index: any) => {
+      return {
+        text: label,
         fillStyle: getChartColour(index),
         fontColor: titleColour,
         pointStyle: 'rectRounded',

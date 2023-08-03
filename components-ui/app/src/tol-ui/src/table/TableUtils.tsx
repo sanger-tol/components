@@ -365,11 +365,11 @@ export function debug(apiData: object, fieldMeta: object, debug?: boolean) {
   }
 }
 
-export function getTableStatusIndicator(error: boolean) {
-  if (error) {
-    return <TableErrorAlert />
-  } else {
+export function getTableStatusIndicator(errorMessage: string) {
+  if (errorMessage === '') {
     return <NoDataAlert />
+  } else {
+    return <TableErrorAlert error={errorMessage}/>
   }
 }
 

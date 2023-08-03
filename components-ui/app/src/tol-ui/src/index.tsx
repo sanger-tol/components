@@ -13,9 +13,6 @@ export { default as InfoTooltip } from "./general/InfoTooltip";
 export { default as LoadingHelix, MiniLoadingHelix } from "./general/LoadingHelix";
 export { default as Status } from "./general/Status";
 export { default as Modal } from "./general/Modal";
-export { default as BubbleMap } from "./general/BubbleMap";
-export { default as RemoteBubbleMap } from "./general/RemoteBubbleMap";
-export { default as RemoteBubbleMapFilter } from "./general/RemoteBubbleMapFilter";
 
 // Forms
 export { default as AutoComplete } from "./forms/AutoComplete";
@@ -34,6 +31,10 @@ export { default as BarChart } from "./charts/BarChart";
 export { default as RemoteBarChart } from "./charts/RemoteBarChart";
 export { default as RemoteChartTable } from "./charts/RemoteChartTable";
 export { default as RemoteDateChartTable } from "./charts/RemoteDateChartTable";
+export { default as BubbleMap } from "./charts/BubbleMap";
+export { default as RemoteBubbleMap } from "./charts/RemoteBubbleMap";
+export { default as RemoteBubbleMapFilter } from "./charts/RemoteBubbleMapFilter";
+export { default as Sunburst } from "./charts/Sunburst";
 
 // React-Bootstrap pass-through
 export { Container };

@@ -114,7 +114,7 @@ const d2 = [
   }
 ]
 
-function Charts() {
+function BarCharts() {
   const [datasets, setDatasests] = useState(d1)
   const [bar, setBar] = useState({})
 
@@ -178,4 +178,4 @@ function Charts() {
   );
 }
 
-export default Charts;
+export default BarCharts;
