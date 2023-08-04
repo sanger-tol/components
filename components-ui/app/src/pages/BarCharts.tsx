@@ -159,7 +159,6 @@ function BarCharts() {
           labels={ labels }
           datasets={ datasets }
           setBarData={ setBar }
-          barDataPoints={ bar }
         />
         <h2 className="mt-5">Remote Bar Chart</h2>
         <RemoteBarChart

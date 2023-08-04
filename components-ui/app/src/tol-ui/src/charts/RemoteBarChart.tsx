@@ -21,7 +21,6 @@ interface Props {
   title: string,
   interval: DateInterval,
   setBarData?: React.Dispatch<React.SetStateAction<any[]>>
-  barDataPoints?: any[]
 }
 
 function RemoteBarChart(props: Props) {

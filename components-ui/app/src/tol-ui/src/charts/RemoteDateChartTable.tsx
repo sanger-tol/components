@@ -78,7 +78,6 @@ function RemoteDateChartTable(props: Props) {
         aggs={ aggs }
         filter={ filter }
         setBarData={ setBar }
-        barDataPoints={ bar }
       />
     </div>
   )

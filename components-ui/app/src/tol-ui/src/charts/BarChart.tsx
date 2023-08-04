@@ -43,11 +43,10 @@ interface Props {
   datasets: any[],
   setBarData?: React.Dispatch<React.SetStateAction<any[]>>,
   delay?: number
-  barDataPoints?: any[]
 }
 
 function BarChart(props: Props) {
-  const { title, datasets, labels, setBarData, barDataPoints } = props
+  const { title, datasets, labels, setBarData } = props
   const stacked = isPropDefined(props.stacked)
 
   // delays default
@@ -61,6 +60,7 @@ function BarChart(props: Props) {
   }
   // initialise the state for selected chartElements
   const [chartElements, setChartElements] = useState<any[]>([])
+  const [barDataPoints, setBarDataPoints] = useState<any[]>([])
 
   // colours
   const titleColour = getCssVarColour("--bs-emphasis-color")
@@ -195,6 +195,7 @@ function BarChart(props: Props) {
 
   const onPlaneClick = (event: MouseEvent<HTMLCanvasElement>) => {
     const barData = getBarData(event);
+
     if (isPropDefined(setBarData)) {
       if (barData !== undefined) {
         const newDataPoint = {
@@ -203,14 +204,17 @@ function BarChart(props: Props) {
           "xKey": barData[0] // label
         }
         // sets 'clicked' bar data
+        let updatedBarDataPoints: any[] = []
         if (!objectExists(barDataPoints, newDataPoint)) {
-          setBarData!((barDataPoints) => [
-            ...barDataPoints, newDataPoint
-          ])
+          updatedBarDataPoints = [...barDataPoints]
+          updatedBarDataPoints.push(newDataPoint)
+          setBarDataPoints(updatedBarDataPoints)
+          setBarData!(updatedBarDataPoints)
         }
       } else {
         // clears 'clicked' bar data
         setBarData!([{}])
+        setBarDataPoints([])
       }
     }
   }

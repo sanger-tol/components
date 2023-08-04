@@ -11,7 +11,7 @@ import { DateInterval } from "./ChartUtils";
 import { Container, Row } from "react-bootstrap";
 import { useEffect, useState } from 'react';
 
-        
+
 interface Props {
   endpoint: string,
   aggs: object,
@@ -19,7 +19,6 @@ interface Props {
   interval: DateInterval,
   filterInputFields: string[],
   setBarData: React.Dispatch<React.SetStateAction<any[]>>,
-  barDataPoints?: any[],
   filter: object,
   fields?: any,
   debug?: boolean
