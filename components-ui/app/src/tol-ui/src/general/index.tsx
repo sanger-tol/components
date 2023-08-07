@@ -14,3 +14,4 @@ export { default as Alert } from "./Alert";
 export { default as InfoTooltip } from "./InfoTooltip";
 export { default as HoverOverlay } from "./HoverOverlay";
 export { default as Status } from "./Status";
+export { default as PageNotFound } from "./PageNotFound";

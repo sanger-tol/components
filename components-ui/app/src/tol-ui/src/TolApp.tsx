@@ -5,13 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { Navigation, Callback } from "./general/index";
+import { BrowserRouter as Router,
+         Route,
+         Switch,
+         Redirect } from "react-router-dom";
+import { Navigation, Callback, PageNotFound } from "./general/index";
 import { getTokenFromLocalStorage,
   getUserFromLocalStorage, 
   tokenHasExpired} from './services/localStorage/localStorageService';
 import { AuthProvider } from './contexts/auth.context';
-import { Redirect } from 'react-router-dom';
 import Footer from './general/Footer'
 import Page from "./models/Page";
 import { convertToPath } from "./general/Utils";
@@ -65,12 +67,13 @@ function TolApp(props: Props) {
               <Route path="/callback" exact><Callback /></Route>
               {props.pages.map(page => {
                 let path = convertToPath(page.name)
-                if(page.authRequired) {
+                if (page.authRequired) {
                   return <Route path={"/" + path} key={page.name} exact>{(token && !tokenHasExpired(token)) ? page.uiElement : <Redirect to="/" />}</Route>
                 } else {
                   return <Route path={"/" + path} key={page.name} exact>{page.uiElement}</Route>
                 }
               })}
+              <Route path="*" component={() => <PageNotFound/>} />
             </Switch>
           </div>
           <Footer />
