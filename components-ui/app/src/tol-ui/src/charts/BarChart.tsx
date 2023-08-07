@@ -58,7 +58,7 @@ function BarChart(props: Props) {
     labels: labels,
     datasets: initialiseDatasets(datasets)
   }
-  // initialise the state for selected chartElements
+  // initialise the state for onClick and onPlaneClick functions
   const [chartElements, setChartElements] = useState<any[]>([])
   const [barDataPoints, setBarDataPoints] = useState<any[]>([])
 
@@ -113,14 +113,15 @@ function BarChart(props: Props) {
       if (item !== undefined) {
         return
       }
-      let updatedChartElements: any[] = []
+      
+      let updatedChartElements = [...chartElements]
       if (chartElement.length === 0) {
         setChartElements!([])
       } else if (!objectExists(chartElements, chartElement[0])) {
-        updatedChartElements = [...chartElements]
         updatedChartElements.push(chartElement[0])
         setChartElements(updatedChartElements)
       }
+      
       // only clickable if setBarData is defined
       if (isPropDefined(setBarData)) {
         if (!chartElement.length) {
@@ -204,9 +205,8 @@ function BarChart(props: Props) {
           "xKey": barData[0] // label
         }
         // sets 'clicked' bar data
-        let updatedBarDataPoints: any[] = []
+        let updatedBarDataPoints = [...barDataPoints]
         if (!objectExists(barDataPoints, newDataPoint)) {
-          updatedBarDataPoints = [...barDataPoints]
           updatedBarDataPoints.push(newDataPoint)
           setBarDataPoints(updatedBarDataPoints)
           setBarData!(updatedBarDataPoints)
