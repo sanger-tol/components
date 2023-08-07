@@ -14,6 +14,8 @@ import paginationFactory, { PaginationProvider,
                             PaginationListStandalone,
                             SizePerPageDropdownStandalone,
                             PaginationTotalStandalone } from 'react-bootstrap-table2-paginator';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter, faSliders } from '@fortawesome/free-solid-svg-icons';
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
@@ -61,13 +63,12 @@ function Table ({
         <div className='tol-table'>
           {includeNav &&
             <div>
-              <Button
-                className="tol-table-filter-button"
+              <Button 
+                className="tol-table-button"
                 variant="primary"
                 onClick={ () => switchFilterVisibility(id) }
               >
-                <SearchIcon />
-                Filter
+                <FontAwesomeIcon icon={faFilter} size="sm" />
               </Button>
               <SizePerPageDropdownStandalone
                 { ...paginationProps }

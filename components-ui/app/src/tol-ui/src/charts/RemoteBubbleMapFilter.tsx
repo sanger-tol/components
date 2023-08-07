@@ -11,12 +11,12 @@ import { Container, Row } from 'react-bootstrap';
 
 
 interface Props {
-    endpoint: string,
-    baseUrl?: string,
-    longitudeKey: string,
-    latitudeKey: string,
-    height: number,
-    filterInputFields: string[]
+  endpoint: string,
+  baseUrl?: string,
+  longitudeKey: string,
+  latitudeKey: string,
+  height: number,
+  filterInputFields: string[]
 }
 
 function RemoteBubbleMapFilter(props: Props) {
