@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { Button } from '../index'
-import { SearchIcon } from '../general/Icons';
 import TableLoadingHelix from './TableLoadingHelix';
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory from 'react-bootstrap-table2-filter';
@@ -15,7 +14,7 @@ import paginationFactory, { PaginationProvider,
                             SizePerPageDropdownStandalone,
                             PaginationTotalStandalone } from 'react-bootstrap-table2-paginator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter, faSliders } from '@fortawesome/free-solid-svg-icons';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
