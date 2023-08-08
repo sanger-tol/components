@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import RemoteChartTableFilter from "./RemoteChartTableFilter";
+import RemoteChartTableFilter from "./RemoteChartTableDateFilter";
 import { formatDateRangeWithInterval, DateInterval } from "./ChartUtils";
 
         
