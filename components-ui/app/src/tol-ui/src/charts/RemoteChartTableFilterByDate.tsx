@@ -5,24 +5,30 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import RemoteChartTable from "./RemoteChartTable";
+import RemoteChartTableFilter from "./RemoteChartTableFilter";
 import { formatDateRangeWithInterval, DateInterval } from "./ChartUtils";
 
         
 interface Props {
-  title: string,
   endpoint: string,
+  baseUrl?: string
+
+  // chart specific 
+  title: string,
   buckets: string,
   xKey: string,
-  interval: DateInterval,
-  filterInputFields: string[],
-  fields?: any,
-  debug?: boolean
   stacked?: boolean,
-  baseUrl?: string,
+  interval: DateInterval
+
+  // table specific
+  fields?: any,
+  debug?: boolean,
+
+  // input fields for global filters
+  filterInputFields: string[]
 }
 
-function RemoteDateChartTable(props: Props) {
+function RemoteChartTableFilterByDate(props: Props) {
   const { buckets, xKey, interval } = props
   const [bar, setBar] = useState({})
 
@@ -73,14 +79,14 @@ function RemoteDateChartTable(props: Props) {
 
   return (
     <div>
-      <RemoteChartTable
+      <RemoteChartTableFilter
         {...props}
         aggs={ aggs }
-        filter={ filter }
+        barClickFilters={ filter }
         setBarData={ setBar }
       />
     </div>
   )
 }
 
-export default RemoteDateChartTable;
+export default RemoteChartTableFilterByDate;

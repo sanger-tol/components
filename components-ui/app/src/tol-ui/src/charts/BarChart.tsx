@@ -39,19 +39,13 @@ interface Props {
   title: string,
   labels: string[],
   datasets: any[],
-  setBarData?: React.Dispatch<React.SetStateAction<any>>,
-  delay?: number
+  setBarData?: React.Dispatch<React.SetStateAction<any>>
 }
 
 function BarChart(props: Props) {
   const { title, datasets, labels, setBarData } = props
   const stacked = isPropDefined(props.stacked)
 
-  // delays default
-  let delay = 0
-  if (props.delay !== undefined) {
-    delay = props.delay
-  }
   const data = {
     labels: labels,
     datasets: initialiseDatasets(datasets)
@@ -64,9 +58,6 @@ function BarChart(props: Props) {
 
   // chart options
   const options = {
-    animation: {
-      delay: delay,
-    },
     plugins: {
       title: {
         display: true,

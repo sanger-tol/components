@@ -8,7 +8,7 @@ import { useState } from "react";
 import { CentreContents,
          BarChart, 
          RemoteBarChart, 
-         RemoteDateChartTable,
+         RemoteChartTableFilterByDate,
          Button } from '../tol-ui/src'
 
 
@@ -164,7 +164,7 @@ function BarCharts() {
           interval="M"
         />
         <h2 className="mt-5 mb-2">Remote Bar Chart & Table</h2>
-        <RemoteDateChartTable
+        <RemoteChartTableFilterByDate
           stacked
           title="Run Data"
           endpoint="run_data"

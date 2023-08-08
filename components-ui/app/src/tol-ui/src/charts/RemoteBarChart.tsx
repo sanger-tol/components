@@ -73,7 +73,6 @@ function RemoteBarChart(props: Props) {
         {...props}
         labels={ labels }
         datasets={ datasets }
-        delay={1500}
       />
     </div>
   )

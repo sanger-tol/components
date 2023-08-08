@@ -11,6 +11,7 @@ export { default as RemoteBubbleMapFilter } from "./RemoteBubbleMapFilter";
 export { default as BarChart } from "./BubbleMap";
 export { default as RemoteBarChart } from "./RemoteBarChart";
 export { default as RemoteChartTable } from "./RemoteChartTable";
-export { default as RemoteDateChartTable } from "./RemoteDateChartTable";
+export { default as RemoteChartTableFilter } from "./RemoteChartTableFilter";
+export { default as RemoteDateChartTableFilterByDate} from "./RemoteChartTableFilterByDate";
 
 export { default as Sunburst } from "./Sunburst";

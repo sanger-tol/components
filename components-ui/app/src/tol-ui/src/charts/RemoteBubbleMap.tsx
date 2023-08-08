@@ -20,30 +20,29 @@ interface Props {
     filter?: object
 }
 
-/* converts elastic data format to points parameter BubbleMap accepts */
+// converts elastic data format to points parameter BubbleMap accepts
 function elasticToChartData(
     elasticData: any, 
     longitudeKey: string, 
     latitudeKey: string
-    ): number[][] {
-        /**
-         * @param longitudeKey the key used to represent longitude values in elastic data
-         * @param latitudeKey the key used to represent latitude values in elastic data
-         */
-        const points: number[][] = [];
+): number[][] {
+    /**
+     * @param longitudeKey the key used to represent longitude values in elastic data
+     * @param latitudeKey the key used to represent latitude values in elastic data
+     */
+    const points: number[][] = [];
     elasticData.forEach((item) => {
         const longitude = parseFloat(item.attributes[longitudeKey]);
         const latitude = parseFloat(item.attributes[latitudeKey])
         points.push([longitude, latitude])
-        }
-    )
+    })
     return points
 }
 
 function RemoteBubbleMap(props: Props) {
     const { endpoint, baseUrl, longitudeKey, latitudeKey, filter, height } = props;
-    const [ points, setPoints ] = useState<number[][]>([]);
-    const [ errorMessage, setErrorMessage ] = useState<string>('')
+    const [points, setPoints] = useState<number[][]>([]);
+    const [errorMessage, setErrorMessage] = useState<string>('')
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
