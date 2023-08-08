@@ -15,7 +15,7 @@ const home: HeaderButton = {
 function PageNotFound() {
   return (
     <Header
-      title="Page Not Found"
+      title="Oops! You seem to be lost."
       buttons={[home]}
     />
   )
