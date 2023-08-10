@@ -55,20 +55,23 @@ function RemoteDateChartTable(props: Props) {
     "range": {}
   }
 
-  if (bar["bucket"] !== undefined) {
-    filter["exact"][buckets] = bar["bucket"]
+  // if there's a selected bar with a bucket, filter["exact"] 
+  // should be populated with the selected bucket
+  if (bar.length > 0) {
+    filter["exact"][buckets] = bar[0]["bucket"]
   }
 
   // providing a date the range filtering recognizes for month
-  let barXKey = bar["xKey"]
-  if (interval === "M") {
-    barXKey = "01 " + barXKey
-  }
-
-  // formatting the date range for filtering
-  const dateRange = formatDateRangeWithInterval(barXKey, interval)
-  if (dateRange) {
-    filter["range"][xKey] = dateRange
+  if (bar.length > 0) {
+    let barXKey = bar[0]["xKey"]
+    if (interval === "M") {
+      barXKey = "01 " + barXKey
+    }
+    // formatting the date range for filtering
+    const dateRange = formatDateRangeWithInterval(barXKey, interval)
+    if (dateRange) {
+      filter["range"][xKey] = dateRange
+    }
   }
 
   return (
