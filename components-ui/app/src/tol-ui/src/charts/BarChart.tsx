@@ -93,7 +93,45 @@ function BarChart(props: Props) {
         }
       },
       legend: {
-        onClick: null,
+        // onClick: (event: any, legendItem: any, legend: any) => {
+        //   if (isPropDefined(setBarData)) {
+        //     // find the index of the selected dataset
+        //     const ci = legend.chart
+        //     const index = ci.data.datasets.findIndex(obj => obj.label === legendItem.text)
+        //     console.log(legendItem)
+
+        //     // if index is clicked on
+        //     if (ci.isDatasetVisible(index)) {
+        //       ci.hide(index)
+        //       legendItem.hidden = true
+        //     } else {
+        //       ci.show(index)
+        //       legendItem.hidden = false
+        //     }
+
+        //   }
+        // },
+
+        onClick: (event: any, legendItem: any, legend: any) => {
+          console.log(legend)
+          debugger
+          const legendIndex = legend.chart.data.datasets.findIndex(obj => obj.label === legendItem.text)
+
+          legend.chart.data.datasets.forEach((dataset, index) => {
+            if (index === legendIndex) {
+              console.log('no change to ', dataset);
+            } else {
+              // dataset.backgroundColor.forEach((color, colorIndex, colors) => {
+              //   color = color.replace(/[\d.]+\)$/g, '0.15)')
+              dataset.backgroundColor = dataset.backgroundColor.map((color) => {
+                return color.replace(/[\d.]+\)$/g, '0.20)')
+              })
+            }
+          })
+          legend.chart.update()
+          console.log(legend.chart.data)
+        },
+
         labels: {
           usePointStyle: true,
           generateLabels: (chart: any) => {
