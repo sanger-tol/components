@@ -73,7 +73,8 @@ function TolApp(props: Props) {
                   return <Route path={"/" + path} key={page.name} exact>{page.uiElement}</Route>
                 }
               })}
-              <Route path="*" component={() => <PageNotFound/>} />
+              <Route path="/page-not-found" component={() => <PageNotFound/>} />
+              <Route path="*"><Redirect to="/page-not-found" /></Route>
             </Switch>
           </div>
           <Footer />
