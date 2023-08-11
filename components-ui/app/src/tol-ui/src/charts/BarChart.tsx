@@ -21,7 +21,8 @@ import { getChartColour,
          initialiseDatasets,
          updateBarColours,
          setBarFilled, 
-         generateBarLabels } from "./ChartUtils"
+         generateBarLabels,
+         updateOpacity } from "./ChartUtils"
 import { isPropDefined } from "../general/Utils";
 
 
@@ -98,14 +99,9 @@ function BarChart(props: Props) {
 
           legend.chart.data.datasets.forEach((dataset, index) => {
             if (index === legendIndex) {
-              dataset.backgroundColor = dataset.backgroundColor.map((color) => {
-                // regex to replace the alpha channel value - put into a function later
-                return color.replace(/[\d.]+\)$/g, '1)')
-              })
+              dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '1')
             } else {
-              dataset.backgroundColor = dataset.backgroundColor.map((color) => {
-                return color.replace(/[\d.]+\)$/g, '0.20)')
-              })
+              dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '0.20')
             }
           })
           legend.chart.update()
@@ -115,14 +111,9 @@ function BarChart(props: Props) {
 
           legend.chart.data.datasets.forEach((dataset, index) => {
             if (index === legendIndex) {
-              dataset.backgroundColor = dataset.backgroundColor.map((color) => {
-                // regex to replace the alpha channel value - put into a function later
-                return color.replace(/[\d.]+\)$/g, '1)')
-              })
+              dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '1')
             } else {
-              dataset.backgroundColor = dataset.backgroundColor.map((color) => {
-                return color.replace(/[\d.]+\)$/g, '0.20)')
-              })
+              dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '0.20')
             }
           })
           legend.chart.update()
@@ -131,9 +122,7 @@ function BarChart(props: Props) {
         // this will remove the alpha channel from the background colours
         onLeave: (event: any, legendItem: any, legend: any) => {
           legend.chart.data.datasets.forEach((dataset) => {
-            dataset.backgroundColor = dataset.backgroundColor.map((color) => {
-              return color.replace(/[\d.]+\)$/g, '1)')
-            })
+            dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '1')
           })
           legend.chart.update()
         },

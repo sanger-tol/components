@@ -259,6 +259,12 @@ export function generateBarLabels(chart: any, titleColour: any) {
   )
 }
 
+export function updateOpacity(colors: string[], alpha: string) {
+  return colors.map((color) => {
+    return color.replace(/[\d.]+\)$/g, alpha + ')')
+  })
+}
+
 // ------------------//
 //      SUNBURST     //
 // ------------------//
