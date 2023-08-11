@@ -110,6 +110,33 @@ function BarChart(props: Props) {
           })
           legend.chart.update()
         },
+        onHover: (event: any, legendItem: any, legend: any) => {
+          const legendIndex = legend.chart.data.datasets.findIndex(obj => obj.label === legendItem.text)
+
+          legend.chart.data.datasets.forEach((dataset, index) => {
+            if (index === legendIndex) {
+              dataset.backgroundColor = dataset.backgroundColor.map((color) => {
+                // regex to replace the alpha channel value - put into a function later
+                return color.replace(/[\d.]+\)$/g, '1)')
+              })
+            } else {
+              dataset.backgroundColor = dataset.backgroundColor.map((color) => {
+                return color.replace(/[\d.]+\)$/g, '0.20)')
+              })
+            }
+          })
+          legend.chart.update()
+        },
+
+        // this will remove the alpha channel from the background colours
+        onLeave: (event: any, legendItem: any, legend: any) => {
+          legend.chart.data.datasets.forEach((dataset) => {
+            dataset.backgroundColor = dataset.backgroundColor.map((color) => {
+              return color.replace(/[\d.]+\)$/g, '1)')
+            })
+          })
+          legend.chart.update()
+        },
 
         labels: {
           usePointStyle: true,
