@@ -17,12 +17,11 @@ import {
 } from "chart.js";
 import { Bar, getElementAtEvent, getDatasetAtEvent } from "react-chartjs-2";
 import { getChartColour,
-         getCssVarColour,
          initialiseDatasets,
          updateBarColours,
          setBarFilled, 
          generateBarLabels } from "./ChartUtils"
-import { isPropDefined } from "../general/Utils";
+import { isPropDefined, getCssVarValue } from "../general/Utils";
 
 
 ChartJS.register(
@@ -39,11 +38,13 @@ interface Props {
   title: string,
   labels: string[],
   datasets: any[],
-  setBarData?: React.Dispatch<React.SetStateAction<any>>
+  height: number,
+  setBarData?: React.Dispatch<React.SetStateAction<any>>,
+  delay?: number
 }
 
 function BarChart(props: Props) {
-  const { title, datasets, labels, setBarData } = props
+  const { title, datasets, labels, height, setBarData } = props
   const stacked = isPropDefined(props.stacked)
 
   const data = {
@@ -52,12 +53,16 @@ function BarChart(props: Props) {
   }
 
   // colours
-  const titleColour = getCssVarColour("--bs-emphasis-color")
-  const labelsAndGridColour = getCssVarColour("--bs-body-color")
-  const gridLineColour = getCssVarColour("--bs-secondary-bg")
+  const titleColour = getCssVarValue("--bs-emphasis-color")
+  const labelsAndGridColour = getCssVarValue("--bs-body-color")
+  const gridLineColour = getCssVarValue("--bs-secondary-bg")
 
   // chart options
   const options = {
+    maintainAspectRatio: false,
+    animation: {
+      delay: delay,
+    },
     plugins: {
       title: {
         display: true,
@@ -86,11 +91,19 @@ function BarChart(props: Props) {
       legend: {
         onClick: null,
         labels: {
+          padding: 15,
           usePointStyle: true,
           generateLabels: (chart: any) => {
             return generateBarLabels(chart, titleColour)
           }
         }
+      }
+    },
+    layout: {
+      padding: {
+        left: 10,
+        right: 10,
+        bottom: 10
       }
     },
     // changing the bar colours to faded or back to solid
@@ -189,18 +202,20 @@ function BarChart(props: Props) {
   }
 
   return (
-    <Bar
-      responsive="true"
-      id="tol-bar-chart"
-      className="tol-bar-chart"
-      datasetIdKey="id"
-      // @ts-ignore
-      options={ options }
-      data={ data }
-      // @ts-ignore
-      ref={ chartRef }
-      onClick={ onPlaneClick }
-    />
+    <div style={{height: height.toString() + 'px'}}>
+      <Bar
+        responsive="true"
+        id="tol-bar-chart"
+        className="tol-bar-chart"
+        datasetIdKey="id"
+        // @ts-ignore
+        options={ options }
+        data={ data }
+        // @ts-ignore
+        ref={ chartRef }
+        onClick={ onPlaneClick }
+      />
+    </div>
   )
 }
 

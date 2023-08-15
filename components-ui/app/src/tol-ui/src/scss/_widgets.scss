@@ -1,0 +1,41 @@
+/*
+ * SPDX-FileCopyrightText: 2022 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+.tol-widget {
+  background-color: var(--bs-body-bg);
+  border-radius: 6px;
+  padding: 18px;
+  margin: 18px;
+  box-shadow: 0px 0px 10px 0px rgba(black, 0.1);
+
+  h2, p {
+    margin: 0;
+  }
+}
+
+.tol-placeholder-rect {
+  background-color: var(--bs-grey);
+  position: relative !important;
+  height: auto !important;
+  min-height: 100% !important;
+  border-radius: 6px;
+}
+
+.tol-placeholder-doughnut {
+  border: 100px solid var(--bs-body-bg);
+  border-radius: 100%;
+  aspect-ratio: 1 / 1;
+  width: 50%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.widget-title {
+  margin-bottom: 0;
+}

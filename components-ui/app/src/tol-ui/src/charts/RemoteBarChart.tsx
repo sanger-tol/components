@@ -7,9 +7,9 @@ SPDX-License-Identifier: MIT
 import { useState, useEffect } from "react";
 import BarChart from "./BarChart";
 import { httpClient } from '../services/http/httpClient'
-import { DateInterval, aggsToChartData } from "./ChartUtils";
+import { DateInterval, aggsToBarChartData } from "./ChartUtils";
 import { isPropDefined } from "../general/Utils";
-import { Placeholder } from 'rsuite';
+import Placeholder from "../general/Placeholder";
 
 
 interface Props {
@@ -20,11 +20,12 @@ interface Props {
   filter?: object,
   title: string,
   interval: DateInterval,
+  height: number,
   setBarData?: React.Dispatch<React.SetStateAction<any>>
 }
 
 function RemoteBarChart(props: Props) {
-  const { endpoint, aggs, interval, filter, baseUrl } = props;
+  const { endpoint, aggs, interval, filter, baseUrl, height } = props;
   const [labels, setLabels] = useState([])
   const [datasets, setDatasets] = useState([])
   const [initialLoad, setInitialLoad] = useState(true)
@@ -42,7 +43,7 @@ function RemoteBarChart(props: Props) {
       let aggs = res.data.meta.aggregations
       // check if a datetime chart
       if (isPropDefined(interval)) {
-        aggs = aggsToChartData(aggs, interval!)
+        aggs = aggsToBarChartData(aggs, interval!)
         setDatasets(aggs.datasets)
         setLabels(aggs.labels)
         setLoading(false)
@@ -58,23 +59,18 @@ function RemoteBarChart(props: Props) {
   
   if (loading) {
     if (initialLoad) {
-      return (
-        <div className="tol-bar-chart">
-          <Placeholder.Graph active/>
-        </div>
-      )
+      return <Placeholder height={height} />
     }
-    return <div className="tol-bar-chart" />
+    return <Placeholder empty height={height} />
   }
 
   return (
-    <div>
-      <BarChart
-        {...props}
-        labels={ labels }
-        datasets={ datasets }
-      />
-    </div>
+    <BarChart
+      {...props}
+      labels={ labels }
+      datasets={ datasets }
+      delay={1000}
+    />
   )
 }
 

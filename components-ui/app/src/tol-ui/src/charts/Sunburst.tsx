@@ -11,9 +11,9 @@ import {
   Legend } from 'chart.js';
 
 import { Doughnut } from "react-chartjs-2";
-import { getCssVarColour,
-         generateSunburstLabels, 
+import { generateSunburstLabels, 
          convertSunburstDatasets } from "./ChartUtils"
+import { getCssVarValue } from "../general/Utils"
 
 
 ChartJS.register(
@@ -35,10 +35,11 @@ function Sunburst(props: Props) {
   }
 
   // colours
-  const titleColour = getCssVarColour("--bs-emphasis-color")
+  const titleColour = getCssVarValue("--bs-emphasis-color")
 
   // sunburst options
   const options = {
+    maintainAspectRatio: false,
     cutout: "20%",
     plugins: {
       title: {
@@ -79,8 +80,10 @@ function Sunburst(props: Props) {
         }
       },
       legend: {
+        position: "bottom",
         onClick: null,
         labels: {
+          padding: 15,
           usePointStyle: true,
           generateLabels: (chart: any) => {
             return generateSunburstLabels(chart, titleColour)
@@ -91,8 +94,10 @@ function Sunburst(props: Props) {
   }
 
   return (
-    <div className="centre" style={{height: height.toString() + 'px'}}>
+    <div style={{height: height.toString() + 'px'}}>
       <Doughnut
+        responsive="true"
+        maintainAspectRatio={false}
         id="tol-sunburst"
         className="tol-sunburst"
         datasetIdKey="id"

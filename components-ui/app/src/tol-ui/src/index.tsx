@@ -13,6 +13,8 @@ export { default as InfoTooltip } from "./general/InfoTooltip";
 export { default as LoadingHelix, MiniLoadingHelix } from "./general/LoadingHelix";
 export { default as Status } from "./general/Status";
 export { default as Modal } from "./general/Modal";
+export { default as Placeholder } from "./general/Placeholder";
+export { default as Widgets } from "./general/Widgets";
 
 // Forms
 export { default as AutoComplete } from "./forms/AutoComplete";
@@ -36,6 +38,7 @@ export { default as BubbleMap } from "./charts/BubbleMap";
 export { default as RemoteBubbleMap } from "./charts/RemoteBubbleMap";
 export { default as RemoteBubbleMapFilter } from "./charts/RemoteBubbleMapFilter";
 export { default as Sunburst } from "./charts/Sunburst";
+export { default as RemoteSunburst } from "./charts/RemoteSunburst";
 
 // React-Bootstrap pass-through
 export { Container };

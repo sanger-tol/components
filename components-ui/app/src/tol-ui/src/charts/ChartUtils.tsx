@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from 'date-fns'
+import { normaliseCaps, getCssVarValue } from '../general/Utils'
 
 
 // ------------------//
@@ -18,29 +19,66 @@ interface Rgb {
   b: number
 }
 
-export type DateInterval = "d"|"w"|"M"|"y"
+/*
+useful for creating rgb colours based on hsl
+https://www.rapidtables.com/convert/color/hsl-to-rgb.html
+{r: one, g: two, b: two}, // 0
+{r: one, g: three, b: two}, // 30
+{r: one, g: one, b: two}, // 60
+{r: three, g: one, b: two}, // 90
+{r: two, g: one, b: two}, // 120
+{r: two, g: one, b: three}, // 150
+{r: two, g: one, b: one}, // 180
+{r: two, g: three, b: one}, // 210
+{r: two, g: two, b: one}, // 240
+{r: three, g: two, b: one}, // 270
+{r: one, g: two, b: one}, // 300
+{r: one, g: two, b: three}, // 330
+*/
+
 
 export const colours = [
-  {r: 50, g: 150, b: 233}, // light blue
-  {r: 111, g: 72, b: 192}, // light purple
-  {r: 199, g: 90, b: 144}, // light pink
-  {r: 194, g: 63, b: 58}, // light red
-  {r: 231, g: 125, b: 26}, // light orange
-  {r: 240, g: 190, b: 30}, // light yellow
-  {r: 84, g: 146, b: 109}, // light green
-  {r: 120, g: 214, b: 240}, // cyan
-  {r: 165, g: 171, b: 180}, // grey
+  // 90/70 - 247, 110, 179
+  // {r: 110, g: 247, b: 247}, // 180
+  {r: 110, g: 179, b: 247}, // 210
+  // {r: 110, g: 110, b: 247}, // 240
+  {r: 179, g: 110, b: 247}, // 270
+  // {r: 247, g: 110, b: 247}, // 300
+  {r: 247, g: 110, b: 179}, // 330
+  // {r: 247, g: 110, b: 110}, // 0
+  {r: 247, g: 179, b: 110}, // 30
+  // {r: 247, g: 247, b: 110}, // 60
+  {r: 179, g: 247, b: 110}, // 90
+  // {r: 110, g: 247, b: 110}, // 120
+  {r: 110, g: 247, b: 179}, // 150
 
-  {r: 28, g: 28, b: 28}, // dark grey
+  // 85/75 - 245, 137, 191
+  {r: 137, g: 245, b: 245}, // 180
+  {r: 137, g: 191, b: 245}, // 210
+  {r: 137, g: 137, b: 245}, // 240
+  {r: 191, g: 137, b: 245}, // 270
+  {r: 245, g: 137, b: 245}, // 300
+  {r: 245, g: 137, b: 191}, // 330
+  {r: 245, g: 137, b: 137}, // 0
+  {r: 245, g: 191, b: 137}, // 30
+  {r: 245, g: 245, b: 137}, // 60
+  {r: 191, g: 245, b: 137}, // 90
+  {r: 137, g: 245, b: 137}, // 120
+  {r: 137, g: 245, b: 191}, // 150
 
-  {r: 30, g: 45, b: 120}, // dark blue
-  {r: 36, g: 20, b: 75}, // dark purple
-  {r: 119, g: 26, b: 68}, // dark pink
-  {r: 120, g: 0, b: 5}, // dark red
-  {r: 60, g: 30, b: 0}, // dark orange
-  {r: 100, g: 90, b: 20}, // dark yellow
-  {r: 0, g: 37, b: 10}, // dark green
-  {r: 17, g: 35, b: 40}, // dark cyan
+  // 80/80 - 245, 163, 204
+  {r: 163, g: 245, b: 245}, // 180
+  {r: 163, g: 204, b: 245}, // 210
+  {r: 163, g: 163, b: 245}, // 240
+  {r: 204, g: 163, b: 245}, // 270
+  {r: 245, g: 163, b: 245}, // 300
+  {r: 245, g: 163, b: 204}, // 330
+  {r: 245, g: 163, b: 163}, // 0
+  {r: 245, g: 204, b: 163}, // 30
+  {r: 245, g: 245, b: 163}, // 60
+  {r: 204, g: 245, b: 163}, // 90
+  {r: 163, g: 245, b: 163}, // 120
+  {r: 137, g: 245, b: 191}, // 150
 ]
 
 function hexToRgb(hex: string) {
@@ -67,23 +105,21 @@ function rgbToString(rgb: Rgb, opacity: number) {
   return "rgba(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ", " + opacity.toString() + ")"
 }
 
-export function getCssVarColour(variable: string) {
-  return getComputedStyle(
-    document.documentElement
-  ).getPropertyValue(
-    variable
-  );
-}
-
 export function getColourFromCssVar(cssVar: string, opacity?: number) {
   if (opacity === undefined) {
     opacity = 1
   }
-  return rgbToString(
-    hexToRgb(
-      getCssVarColour(cssVar)
-    ), opacity
-  );
+  return hexToRgb(
+    getCssVarValue(cssVar)
+  )
+}
+
+export function getChartColour(index: number, opacity?: number) {
+  if (opacity === undefined) {
+    opacity = 1
+  }
+  const rgb = colours[index]
+  return rgbToString(rgb, opacity)
 }
 
 // ------------------//
@@ -100,13 +136,7 @@ interface AggData {
   aggs: object[]
 }
 
-export function getChartColour(index: number, opacity?: number) {
-  if (opacity === undefined) {
-    opacity = 1
-  }
-  const rgb = colours[index]
-  return rgbToString(rgb, opacity)
-}
+export type DateInterval = "d"|"w"|"M"|"y"
 
 export function initialiseDatasets(datasets: any[]) {
   for (let index = 0; index < datasets.length; index++) {
@@ -165,7 +195,7 @@ function formatLabels(labels: string[], interval: DateInterval) {
 }
 
 // would need adapting for multiple aggs in 1 api call
-export function aggsToChartData(aggs: object, interval: DateInterval): ChartData {
+export function aggsToBarChartData(aggs: object, interval: DateInterval): ChartData {
   const datasets: object[] = []
   const buckets: object = aggs["agg"]["buckets"]
   const sortedAggs: AggData = getSortedAggData(buckets)
@@ -266,7 +296,7 @@ export function generateBarLabels(chart: any, titleColour: any) {
 interface SunburstData {
   key: string,
   value: number,
-  child?: object
+  child?: SunburstData
 }
 
 interface DoughnutDataCJS {
@@ -279,6 +309,7 @@ interface DoughnutDataCJS {
   hoverBackgroundColor: string[],
   borderColor: string,
   borderWidth: number,
+  borderAlign: string,
   hoverOffset: number
 }
 
@@ -288,6 +319,10 @@ export function convertSunburstDatasets(
   colourIndex?: number,
   depth?: number
 ) {
+  // return empty if no data
+  if (Object.keys(datasets).length === 0) {
+    return [{}]
+  }
 
   // set defaults if undefined
   if (outputData === undefined) outputData = []
@@ -304,9 +339,10 @@ export function convertSunburstDatasets(
   // only append the origin dict on the first iteration
   initialiseOriginDataset(outputData, key, colourIndex, depth)
 
+  // create output data with colours etc
   for (const bucket of buckets) {
     const colour = getChartColour(colourIndex)
-    const hoverColour = getChartColour(colourIndex, 0.5)
+    const hoverColour = getChartColour(colourIndex, 0.75)
     outputData![depth].data.push(bucket.value)
     outputData![depth].total += bucket.value
     outputData![depth].backgroundColor.push(colour)
@@ -340,9 +376,10 @@ function initialiseOriginDataset(
       labels: [],
       backgroundColor: [],
       hoverBackgroundColor: [],
-      borderColor: getCssVarColour("--bs-body-bg"),
-      borderWidth: 1.5,
-      hoverOffset: 0
+      borderColor: getCssVarValue("--bs-body-bg"),
+      borderWidth: 1,
+      borderAlign: 'centre',
+      hoverOffset: 10
     })
   }
 }
@@ -351,13 +388,17 @@ function addPercentages(outputData: DoughnutDataCJS[]) {
   for (const entry of outputData) {
     for (const dataPoint of entry.data) {
       const percentage = (dataPoint/entry.total)*100
-      entry.percentages.push(percentage.toFixed(1))
+      entry.percentages.push(percentage.toFixed(2)) // 2dp
     }
   }
   return outputData
 }
 
 export function generateSunburstLabels(chart: any, titleColour: any) {
+  // return if no data
+  if (chart.data.datasets.length === 1) {
+    return
+  }
   // parent is end of list due to chartJS oddities
   const parentIndex = chart.data.datasets.length-1
   return chart.data.datasets[parentIndex].labels.map(
@@ -371,4 +412,121 @@ export function generateSunburstLabels(chart: any, titleColour: any) {
       }
     }
   )
+}
+
+function getMaxDataSizeByDepth(depth: number) {
+  switch(depth) {
+    case 0: // most inner ring (parent)
+      return 25
+    case 1: // 2nd ring
+      return 10
+    default: // 3rd ring onwards
+      return 5
+  }
+}
+
+function initialiseOrIncrementDepth(depth: number|undefined) {
+  if (depth === undefined) {
+    return 0
+  }
+  return depth + 1
+}
+
+export function createAggsViaSliceBy(endpoint: string, sliceBy: string[], depth?: number) {
+  depth = initialiseOrIncrementDepth(depth)
+
+  let terms = {}
+  terms[sliceBy[depth]] = {
+    "terms": {
+      "field": `${sliceBy[depth]}.keyword`,
+      "order": {
+        "_count": "desc"
+      },
+      "size": getMaxDataSizeByDepth(depth)
+    }
+  }
+
+  if (depth < sliceBy.length-1) {
+    terms[sliceBy[depth]]["aggs"] = createAggsViaSliceBy(endpoint, sliceBy, depth)
+  }
+
+  // create agg via parent
+  if (depth === 0) {
+    return {"aggs": terms}
+  } else {
+    return terms
+  }
+}
+
+// works by changing the reference of 'buckets'
+export function addOtherDocCount(buckets: object[], docCount: number, sliceBy: string[], depth: number) {
+  // ignore when it tries to work on the new 'other' bucket
+  if (docCount !== undefined) {
+    // ensure 'other' depth matches the actual values depth
+    if (depth < sliceBy.length) {
+      buckets.push({
+        doc_count: docCount,
+        key: "Other"
+      })
+
+      // if child required
+      if (depth < sliceBy.length-1) {
+        const childKey = sliceBy[depth+1]
+        const minus1 = buckets.length-1
+
+        // get last added object and 
+        buckets[minus1][childKey] = {
+          "buckets": []
+        }
+
+        // recursively add 'other'
+        addOtherDocCount(
+          buckets[minus1][childKey]["buckets"],
+          docCount,
+          sliceBy,
+          depth+1
+        )
+      }
+    }
+  }
+}
+
+export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: number) {
+  depth = initialiseOrIncrementDepth(depth)
+
+  // sliceBy keys
+  const key = sliceBy[depth]
+  const childKey = sliceBy[depth+1]
+  const normalisedKey = normaliseCaps(key)
+
+  // elastic bucket data
+  const agg: SunburstData[] = aggsRes[key]
+  const buckets = agg["buckets"]
+
+  // temp 'other' fix
+  addOtherDocCount(
+    buckets,
+    agg["sum_other_doc_count"],
+    sliceBy,
+    depth
+  )
+
+  // initialising object and arrays required
+  const outputData = {}
+  outputData[normalisedKey] = []
+
+  for (const bucket of buckets) {
+    const dataPoint = {
+      key: bucket.key,
+      value: bucket.doc_count
+    }
+    // this means the bucket has a child
+    if (childKey) {
+      const child = {}
+      child[childKey] = bucket[childKey]
+      dataPoint["child"] = aggsToSunburstData(child, sliceBy, depth)
+    }
+    outputData[normalisedKey].push(dataPoint)
+  }
+  return outputData
 }

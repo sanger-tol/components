@@ -16,7 +16,7 @@ import { getTokenFromLocalStorage,
 import { AuthProvider } from './contexts/auth.context';
 import Footer from './general/Footer'
 import Page from "./models/Page";
-import { convertToPath } from "./general/Utils";
+import { convertToPath, falseIfUndefined } from "./general/Utils";
 import { env } from './variables/config'
 
 
@@ -46,7 +46,7 @@ function TolApp(props: Props) {
   }
 
   return (
-    <div>
+    <div id="tol-app-background">
       <AuthProvider
         value={{
           token,
@@ -67,7 +67,9 @@ function TolApp(props: Props) {
               <Route path="/callback" exact><Callback /></Route>
               {props.pages.map(page => {
                 let path = convertToPath(page.name)
-                if (page.authRequired) {
+                const authRequired = falseIfUndefined(page.authRequired)
+
+                if(authRequired) {
                   return <Route path={"/" + path} key={page.name} exact>{(token && !tokenHasExpired(token)) ? page.uiElement : <Redirect to="/" />}</Route>
                 } else {
                   return <Route path={"/" + path} key={page.name} exact>{page.uiElement}</Route>

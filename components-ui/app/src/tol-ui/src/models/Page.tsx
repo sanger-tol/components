@@ -8,5 +8,6 @@ export default interface Page {
   name: string;
   authRequired?: boolean;
   adminOnly?: boolean;
+  hidden?: boolean
   uiElement: JSX.Element;
 }

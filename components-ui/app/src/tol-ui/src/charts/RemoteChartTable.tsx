@@ -7,7 +7,8 @@ SPDX-License-Identifier: MIT
 import AutoTable from "../table/AutoTable";
 import RemoteBarChart from "./RemoteBarChart";
 import { DateInterval } from "./ChartUtils";
-import { Container, Row } from "react-bootstrap";
+import { Row } from "react-bootstrap";
+import { useEffect, useState } from 'react';
 
         
 interface Props {
@@ -34,11 +35,12 @@ function RemoteChartTable(props: Props) {
   const { globalFilters, combinedFilters } = props
 
   return (
-    <Container>
+    <div>
       <Row className="mb-4">
         <RemoteBarChart
           {...props}
           filter={globalFilters}
+          height={700}
         />
       </Row>
       <Row>
@@ -47,7 +49,7 @@ function RemoteChartTable(props: Props) {
           fixedFilter={combinedFilters}
         />
       </Row>
-    </Container>
+    </div>
   )
 }
 
