@@ -29,16 +29,42 @@ export function isPropDefined(prop: any){
   return prop !== undefined
 }
 
+export function falseIfUndefined(prop: any){
+  if (prop) {
+    return true
+  }
+  return false
+}
+
 export function normaliseCaps(fieldName: string) {
   const words = fieldName.split('_');
   for (let count = 0; count < words.length; count++) {
-    if (words[count] === 'id') {
-      words[count] = 'ID'
-    } else if (words[count] === 'uid') {
-      words[count] = 'UID'
-    } else {
-      words[count] = words[count][0].toUpperCase() + words[count].substring(1); 
-    }
+    words[count] = normaliseWords(words[count])
   }
   return words.join(' ');
+}
+
+function normaliseWords(word: string) {
+  switch(word) {
+    case "id":
+      return "ID"
+    case "uid":
+      return "UID"
+    case "sts":
+      return "STS"
+    case "tolqc":
+      return "ToLQC"
+    case "tolid":
+      return "ToLID"
+    default:
+      return word[0].toUpperCase() + word.substring(1); 
+  }
+}
+
+export function getCssVarValue(variable: string) {
+  return getComputedStyle(
+    document.documentElement
+  ).getPropertyValue(
+    variable
+  );
 }

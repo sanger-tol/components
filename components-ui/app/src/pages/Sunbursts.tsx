@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { CentreContents, Sunburst } from '../tol-ui/src'
+import { CentreContents, RemoteSunburst, Sunburst } from '../tol-ui/src'
 
 function Sunbursts() {
   const datasets = {
@@ -115,8 +115,16 @@ function Sunbursts() {
   return (
     <div className="sunbursts">
       <CentreContents>
+        <h2>Remote Sunburst</h2>
+        <RemoteSunburst
+          title="Order of remote..."
+          endpoint="species"
+          sliceBy={["sts_order_group", "sts_family", "sts_genus"]}
+          height={800}
+        />
+        <h2 className="mt-5">Sunburst</h2>
         <Sunburst
-          title="Order of ..."
+          title="Order of..."
           datasets={datasets}
           height={800}
         />

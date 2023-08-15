@@ -14,3 +14,5 @@ export { default as Alert } from "./Alert";
 export { default as InfoTooltip } from "./InfoTooltip";
 export { default as HoverOverlay } from "./HoverOverlay";
 export { default as Status } from "./Status";
+export { default as Placeholder } from "./Placeholder";
+export { default as Widgets } from "./Widgets";

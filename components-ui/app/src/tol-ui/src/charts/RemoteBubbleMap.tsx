@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import BubbleMap from "./BubbleMap";
 import Status from "../general/Status";
 import { httpClient } from "../services/http/httpClient";
-import { Placeholder } from 'rsuite';
+import Placeholder from "../general/Placeholder";
 
 
 interface Props {
@@ -68,7 +68,7 @@ function RemoteBubbleMap(props: Props) {
     if (loading) {
         return (
           <div style={{height: height.toString() + 'px'}}>
-            <Placeholder.Graph active/>
+            <Placeholder height={height}/>
           </div>
         )
       }

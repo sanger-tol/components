@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react';
 import  { GlobalMultipleSelect, Status } from '../index'
 import { httpClient } from '../services/http/httpClient';
 import { Container, Col, Row } from 'react-bootstrap';
-import { Placeholder } from 'rsuite';
+import Placeholder from "../general/Placeholder";
 
 
 interface Props {
@@ -100,9 +100,7 @@ function RemoteMultipleSelectFilters(props: Props) {
           {fields.map((field) => {
             return (
               <Col key={`${field}-filter-placeholder`}>
-                <div className='tol-input-placeholder'>
-                  <Placeholder.Graph active/>
-                </div>
+                <Placeholder height={37}/>
               </Col>
             )
           })}

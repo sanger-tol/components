@@ -15,7 +15,7 @@ import {
 } from '../services/localStorage/localStorageService';
 import Login from './Login';
 import Page from "../models/Page";
-import { convertToPath } from "./Utils";
+import { convertToPath, falseIfUndefined } from "./Utils";
 import { env } from '../variables/config'
 
 
@@ -112,13 +112,20 @@ function Navigation(props: NavProps) {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
               {props.pages.map(page => { // eslint-disable-next-line
-                let path = convertToPath(page.name)
-                if(page.authRequired && page.adminOnly && token && !tokenHasExpired(token) && user && user.roles && user.roles.some(role => role.role === "admin")) {
-                    return <Nav.Link className="nav-link" href={"/" + path} key={page.name}>{page.name}</Nav.Link>
-                } else if(page.authRequired && !page.adminOnly && token && !tokenHasExpired(token)) {
-                    return <Nav.Link className="nav-link" href={"/" + path} key={page.name}>{page.name}</Nav.Link>
-                } else if(!page.authRequired) {
-                  return <Nav.Link className="nav-link" href={"/" + path} key={page.name}>{page.name}</Nav.Link>
+                const pageName = page.name
+                const path = convertToPath(pageName)
+                const authRequired = falseIfUndefined(page.authRequired)
+                const adminOnly = falseIfUndefined(page.adminOnly)
+                const hidden = falseIfUndefined(page.hidden)
+
+                if (!hidden) {
+                  if(authRequired && adminOnly && token && !tokenHasExpired(token) && user && user.roles && user.roles.some(role => role.role === "admin")) {
+                      return <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>
+                  } else if(authRequired && !adminOnly && token && !tokenHasExpired(token)) {
+                      return <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>
+                  } else if(!authRequired) {
+                    return <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>
+                  }
                 }
               })}
               {(!token || tokenHasExpired(token)) && props.login &&

@@ -8,7 +8,7 @@ import AutoTable from "../table/AutoTable";
 import RemoteMultipleSelectFilters from "../forms/RemoteMultipleSelectFilters";
 import RemoteBarChart from "./RemoteBarChart";
 import { DateInterval } from "./ChartUtils";
-import { Container, Row } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import { useEffect, useState } from 'react';
 
         
@@ -48,7 +48,7 @@ function RemoteChartTable(props: Props) {
   }, [globalFilters])
 
   return (
-    <Container>
+    <div>
       <Row className="mb-4">
         <RemoteMultipleSelectFilters
           {...props}
@@ -61,6 +61,7 @@ function RemoteChartTable(props: Props) {
         <RemoteBarChart
           {...props}
           filter={globalFilters}
+          height={700}
         />
       </Row>
       <Row>
@@ -69,7 +70,7 @@ function RemoteChartTable(props: Props) {
           fixedFilter={combinedFilters}
         />
       </Row>
-    </Container>
+    </div>
   )
 }
 

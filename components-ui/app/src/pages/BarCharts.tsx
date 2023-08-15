@@ -126,7 +126,7 @@ function BarCharts() {
           "order": {
             "_count": "desc"
           },
-          "size": 50
+          "size": 25
         },
         "aggs": {
           "1": {
@@ -154,6 +154,7 @@ function BarCharts() {
           labels={ labels }
           datasets={ datasets }
           setBarData={ setBar }
+          height={ 600 }
         />
         <h2 className="mt-5">Remote Bar Chart</h2>
         <RemoteBarChart
@@ -162,6 +163,7 @@ function BarCharts() {
           endpoint="run_data"
           aggs={ aggs }
           interval="M"
+          height={ 600 }
         />
         <h2 className="mt-5 mb-2">Remote Bar Chart & Table</h2>
         <RemoteDateChartTable
