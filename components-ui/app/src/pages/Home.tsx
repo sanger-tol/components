@@ -19,6 +19,7 @@ function Home() {
         title="Components"
         subTitle="Tree of Life UI"
         buttons={[docs]}
+        pageEmpty
       />
     </div>
   );

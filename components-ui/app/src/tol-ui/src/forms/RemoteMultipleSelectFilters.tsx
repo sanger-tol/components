@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import React, { useState, useEffect } from 'react';
 import  { GlobalMultipleSelect, Status } from '../index'
 import { httpClient } from '../services/http/httpClient';
-import { Container, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import Placeholder from "../general/Placeholder";
 
 
@@ -76,7 +76,7 @@ function RemoteMultipleSelectFilters(props: Props) {
 
   if (errorMessage !== '') {
     return (
-      <Container className='global-filters'>
+      <div className='global-filters'>
         <Row>
           {fields.map((field) => {
             return (
@@ -89,13 +89,13 @@ function RemoteMultipleSelectFilters(props: Props) {
             )
           })}
         </Row>
-      </Container>
+      </div>
     )
   }
 
   if (loading) {
     return (
-      <Container className='global-filters'>
+      <div className='global-filters'>
         <Row>
           {fields.map((field) => {
             return (
@@ -105,12 +105,12 @@ function RemoteMultipleSelectFilters(props: Props) {
             )
           })}
         </Row>
-      </Container>
+      </div>
     )
   }
 
   return (
-    <Container className='global-filters'>
+    <div className='global-filters'>
       <Row>
         {dataToPass.map((filter) => {
           return (
@@ -127,7 +127,7 @@ function RemoteMultipleSelectFilters(props: Props) {
           )
         })}
       </Row>
-    </Container>
+    </div>
   )
 }
   

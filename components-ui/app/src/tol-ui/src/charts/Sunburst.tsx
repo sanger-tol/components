@@ -97,7 +97,6 @@ function Sunburst(props: Props) {
     <div style={{height: height.toString() + 'px'}}>
       <Doughnut
         responsive="true"
-        maintainAspectRatio={false}
         id="tol-sunburst"
         className="tol-sunburst"
         datasetIdKey="id"

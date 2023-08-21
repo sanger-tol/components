@@ -4,72 +4,65 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
-import BarChart from "./BarChart";
-import { httpClient } from '../services/http/httpClient'
-import { DateInterval, aggsToBarChartData } from "./ChartUtils";
-import { isPropDefined } from "../general/Utils";
-import Placeholder from "../general/Placeholder";
+import RemoteAggBarChart from "./RemoteAggBarChart";
+import { generateDateAgg, generateDateFilterFromBarData, DateInterval } from "./ChartUtils";
+import { useState, useEffect } from 'react'
 
 
 interface Props {
-  stacked?: boolean,
-  endpoint: string,
-  baseUrl?: string,
-  aggs: object,
-  filter?: object,
   title: string,
+  endpoint: string,
+  breakDownBy: string,
+  xKey: string,
   interval: DateInterval,
+  type: 'date',
+
+  // 'filter' is usually referred to as globalFilters when using combinedFilters
+  filter?: object,
+  setCombinedFilters?: React.Dispatch<React.SetStateAction<any>>,
+
+  // config
   height: number,
-  setBarData?: React.Dispatch<React.SetStateAction<any>>
+  stacked?: boolean,
+  baseUrl?: string
 }
 
 function RemoteBarChart(props: Props) {
-  const { endpoint, aggs, interval, filter, baseUrl, height } = props;
-  const [labels, setLabels] = useState([])
-  const [datasets, setDatasets] = useState([])
-  const [initialLoad, setInitialLoad] = useState(true)
-  const [loading, setLoading] = useState(true)
+  // @ts-ignore
+  const { breakDownBy, xKey, interval, type, filter, setCombinedFilters } = props
+  const [ barData, setBarData ] = useState<object>({})
 
+  // these can be swapped for other barchart types (type prop will be used)
+  const aggs = generateDateAgg(breakDownBy, xKey, interval)
+  const localFilters = generateDateFilterFromBarData(barData, breakDownBy, xKey, interval)
+
+  // combine local and globalGilters
   useEffect(() => {
-    setLoading(true)
-    httpClient().post('/' + endpoint + ":aggregations", aggs, {
-      baseURL: baseUrl,
-      params: {
-        filter: filter
+    async function combine() {
+      if (setCombinedFilters !== undefined) {
+        setCombinedFilters(Object.assign({}, filter, localFilters))
       }
-    })
-    .then((res: any) => {
-      let aggs = res.data.meta.aggregations
-      // check if a datetime chart
-      if (isPropDefined(interval)) {
-        aggs = aggsToBarChartData(aggs, interval!)
-        setDatasets(aggs.datasets)
-        setLabels(aggs.labels)
-        setLoading(false)
-        setInitialLoad(false)
-      } else {
-        throw Error("interval prop currently needs to be set")
-      }
-    })
-    .catch((error: any) => {
-      console.error(error.message)
-    })
-  }, [filter]);
-  
-  if (loading) {
-    if (initialLoad) {
-      return <Placeholder height={height} />
     }
-    return <Placeholder empty height={height} />
-  }
+    combine()
+
+  }, [barData])
+
+  // reset localGilters when globalFilters are updated
+  useEffect(() => {
+    async function resetCombined() {
+      if (setCombinedFilters !== undefined) {
+        setCombinedFilters(Object.assign({}, filter))
+      }
+    }
+    resetCombined()
+  }, [filter])
 
   return (
-    <BarChart
+    <RemoteAggBarChart
       {...props}
-      labels={ labels }
-      datasets={ datasets }
-      delay={1000}
+      aggs={ aggs }
+      filter={ filter }
+      setBarData={ setBarData }
     />
   )
 }

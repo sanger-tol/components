@@ -226,7 +226,7 @@ export function aggsToBarChartData(aggs: object, interval: DateInterval): ChartD
   } as ChartData
 }
 
-export function formatDateRangeWithInterval(date: string, interval: string) {
+function formatDateRangeWithInterval(date: string, interval: string) {
   const from = new Date(date)
   const to = new Date(date)
   switch(interval) {
@@ -287,6 +287,65 @@ export function generateBarLabels(chart: any, titleColour: any) {
       }
     }
   )
+}
+
+// ------------------//
+//   DATE BARCHART   //
+// ------------------//
+
+export function generateDateAgg(breakDownBy: string, xKey: string, interval: DateInterval) {
+  return {
+    "aggs": {
+      "agg": {
+        "terms": {
+          "field": breakDownBy + ".keyword",
+          "order": {
+            "_count": "desc"
+          },
+          "size": 25
+        },
+        "aggs": {
+          "1": {
+            "date_histogram": {
+              "field": xKey,
+              "calendar_interval": "1" + interval,
+              "time_zone": "Europe/London"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+export function generateDateFilterFromBarData(
+  barData: object,
+  breakDownBy: string,
+  xKey: string,
+  interval: DateInterval
+) {
+  // initialise filter generated from bar clicks
+  const localFilters = {
+    "exact": {},
+    "range": {}
+  }
+  
+  if (barData["bucket"] !== undefined) {
+    localFilters["exact"][breakDownBy] = barData["bucket"]
+  }
+
+  // providing a date the range filtering recognizes for month
+  let barXKey = barData["xKey"]
+  if (interval === "M") {
+    barXKey = "01 " + barXKey
+  }
+
+  // formatting the date range for filtering
+  const dateRange = formatDateRangeWithInterval(barXKey, interval)
+  if (dateRange) {
+    localFilters["range"][xKey] = dateRange
+  }
+  return localFilters
 }
 
 // ------------------//
@@ -379,7 +438,7 @@ function initialiseOriginDataset(
       borderColor: getCssVarValue("--bs-body-bg"),
       borderWidth: 1,
       borderAlign: 'centre',
-      hoverOffset: 10
+      hoverOffset: 0
     })
   }
 }

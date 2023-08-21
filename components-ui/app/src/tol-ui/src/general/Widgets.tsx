@@ -16,12 +16,22 @@ interface Props {
 }
 
 // fill div if only 1 widget
-const getLgWidgetSize = (componentsLength: number) => {
+const getHalfScreenWidgetSize = (componentsLength: number) => {
   switch(componentsLength) {
     case 1:
       return 12
     default:
       return 6
+  }
+}
+
+// fill div if only 1 widget
+const getThirdScreenWidgetSize = (componentsLength: number) => {
+  switch(componentsLength) {
+    case 1:
+      return 12
+    default:
+      return 4
   }
 }
 
@@ -37,13 +47,15 @@ function Widgets(props: Props) {
   }, []);
 
   // fill div if only 1 widget
-  const lgWidgetSize = getLgWidgetSize(components.length)
+  const halfSize = getHalfScreenWidgetSize(components.length)
+  // @ts-ignore/no-unused-vars
+  const thirdSize = getThirdScreenWidgetSize(components.length)
 
   return (
     <>
       {isPropDefined(title) || isPropDefined(description) ? 
-        <Row sm={1} md={1} lg={1} style={{ marginLeft: 0, marginRight: 0, paddingLeft: 12, paddingRight: 12}}>
-          <Col sm={12} md={12} lg={12} style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <Row style={{ marginLeft: 0, marginRight: 0, paddingLeft: 12, paddingRight: 12}}>
+          <Col style={{ paddingLeft: 0, paddingRight: 0 }}>
             <div className="tol-widget">
               <h2 className="widget-title">{title}</h2>
               <p>{description}</p>
@@ -56,7 +68,12 @@ function Widgets(props: Props) {
       <Row style={{ marginLeft: 0, marginRight: 0, paddingLeft: 12, paddingRight: 12}}>
         {components.map((component, index) => {
           return (
-            <Col key={`tol-widget-${index}`} sm={12} md={12} lg={lgWidgetSize} style={{ paddingLeft: 0, paddingRight: 0 }}>
+            <Col
+              key={`tol-widget-${index}`}
+              lg={12}
+              xl={halfSize}
+              style={{ paddingLeft: 0, paddingRight: 0 }}
+            >
               <div className="tol-widget">
                 {component}
               </div>

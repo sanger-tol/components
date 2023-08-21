@@ -7,8 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { CentreContents,
          BarChart, 
-         RemoteBarChart, 
-         RemoteDateChartTable,
+         RemoteAggBarChart, 
          Button } from '../tol-ui/src'
 
 
@@ -157,23 +156,13 @@ function BarCharts() {
           height={ 600 }
         />
         <h2 className="mt-5">Remote Bar Chart</h2>
-        <RemoteBarChart
+        <RemoteAggBarChart
           stacked
           title="Run Data"
           endpoint="run_data"
           aggs={ aggs }
           interval="M"
           height={ 600 }
-        />
-        <h2 className="mt-5 mb-2">Remote Bar Chart & Table</h2>
-        <RemoteDateChartTable
-          stacked
-          title="Run Data"
-          endpoint="run_data"
-          buckets="mlwh_platform_type"
-          xKey="mlwh_start_date"
-          interval="M"
-          filterInputFields={['mlwh_platform_type', 'tester']}
         />
       </CentreContents>
     </div>

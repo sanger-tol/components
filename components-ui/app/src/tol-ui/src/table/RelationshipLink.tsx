@@ -104,7 +104,7 @@ class RelationshipLink extends React.Component<Props, State> {
           if (fieldMeta['cellRenderer'] !== null && !isEmptyObj(this.state.contents)) {
             const cellRendererField = fieldMeta['cellRenderer']
             return createCellRenderer(cellRendererField, this.state.tableData)
-          // relationshipBox rendered if true or for 'auto generated' AutoTable
+          // relationshipBox rendered if true or for 'auto generated' RemoteTable
           } else if (fieldMeta['relationshipBox']) {
             return (
               <HoverOverlay

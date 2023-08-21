@@ -24,7 +24,7 @@ export interface Props {
   endpoint: string,
   baseUrl?: string,
   fields?: Fields,
-  fixedFilter?: object,
+  filter?: object,
   includeNav?: boolean
 }
 
@@ -39,7 +39,7 @@ export interface State {
   renderTimes: number
 }
 
-class AutoTable extends React.Component<Props, State> {
+class RemoteTable extends React.Component<Props, State> {
   id = "tol-table-" + uuid()
   constructor(props: Props) {
     const headingsDefault = [{
@@ -69,7 +69,7 @@ class AutoTable extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Readonly<Props>) {
-    if (prevProps.fixedFilter !== this.props.fixedFilter) {
+    if (prevProps.filter !== this.props.filter) {
       this.refreshPagination()
     }
   }
@@ -91,8 +91,8 @@ class AutoTable extends React.Component<Props, State> {
     let apiFilters: object = {};
 
     // always on filtering - (contains, exact, range)
-    if (this.props.fixedFilter !== undefined) {
-      apiFilters = Object.assign(apiFilters, this.props.fixedFilter)
+    if (this.props.filter !== undefined) {
+      apiFilters = Object.assign(apiFilters, this.props.filter)
     }
 
     // column specific filtering
@@ -241,4 +241,4 @@ class AutoTable extends React.Component<Props, State> {
   }
 }
 
-export default AutoTable;
+export default RemoteTable;

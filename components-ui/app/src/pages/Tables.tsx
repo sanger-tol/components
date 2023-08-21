@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { CentreContents, AutoTable } from '../tol-ui/src'
+import { CentreContents, RemoteTable } from '../tol-ui/src'
 // import StatusExample from '../tol-ui/src/sandbox/StatusExample'
 
 
@@ -12,8 +12,8 @@ function Tables() {
   return (
     <div className="tables">
       <CentreContents>
-      <AutoTable
-        endpoint="treeofsex_species"
+      <RemoteTable
+        endpoint="run_data"
       />
       </CentreContents>
     </div>
@@ -23,7 +23,7 @@ function Tables() {
 export default Tables;
 
 /*
-<AutoTable
+<RemoteTable
   endpoint="samples"
   fields={{
     "id": {rename: "Row ID", sort: false},

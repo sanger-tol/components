@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import React, { useEffect } from 'react';
 import  { MultipleSelect } from '../index'
-import { Container, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 
 interface Props {
     filters: Filters[]
@@ -39,23 +39,23 @@ function MultipleSelectFilters(props: Props) {
       }
 
     return (
-        <Container className='global-filters'>
+        <div className='global-filters'>
             <Row>
-            {filters.map((filter) => {
+            {filters.map((filter, index) => {
                 return (
-                    <Col>
-                    <MultipleSelect
-                        block
-                        data={filter.choices} 
-                        placeholder={filter.name} 
-                        value={filter.selected}
-                        setValue={filter.setChoices}    
-                    />
+                    <Col key={`tol-multiple-select-${index}`}>
+                        <MultipleSelect
+                            block
+                            data={filter.choices} 
+                            placeholder={filter.name} 
+                            value={filter.selected}
+                            setValue={filter.setChoices}    
+                        />
                     </Col>
                 )
             })}
             </Row>
-        </Container>
+        </div>
     );
   }
   

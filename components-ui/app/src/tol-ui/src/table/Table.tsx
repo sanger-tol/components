@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { Button } from '../index'
-import { SearchIcon } from '../general/Icons';
 import TableLoadingHelix from './TableLoadingHelix';
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory from 'react-bootstrap-table2-filter';
@@ -14,6 +13,8 @@ import paginationFactory, { PaginationProvider,
                             PaginationListStandalone,
                             SizePerPageDropdownStandalone,
                             PaginationTotalStandalone } from 'react-bootstrap-table2-paginator';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
@@ -62,12 +63,11 @@ function Table ({
           {includeNav &&
             <div>
               <Button
-                className="tol-table-filter-button"
+                className="tol-table-button"
                 variant="primary"
                 onClick={ () => switchFilterVisibility(id) }
               >
-                <SearchIcon />
-                Filter
+                <FontAwesomeIcon icon={faFilter} size="sm" />
               </Button>
               <SizePerPageDropdownStandalone
                 { ...paginationProps }

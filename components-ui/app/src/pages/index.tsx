@@ -12,3 +12,5 @@ export { default as Forms } from "./Forms";
 export { default as BarCharts } from "./BarCharts";
 export { default as Maps } from "./Maps";
 export { default as Sunbursts } from "./Sunbursts";
+export { default as ChartTables } from "./ChartTables";
+export { default as Widgets } from "./Widgets";

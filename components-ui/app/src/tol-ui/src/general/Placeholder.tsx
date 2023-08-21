@@ -4,14 +4,39 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChartColumn, faChartPie } from '@fortawesome/free-solid-svg-icons';
+
+
 interface Props {
-  circle?: boolean,
+  bar?: boolean,
+  pie?: boolean,
   empty?: boolean,
   height?: number
 }
 
+function getPlaceholderIcon(bar: boolean|undefined, pie: boolean|undefined) {
+  if(bar) {
+    return <FontAwesomeIcon icon={faChartColumn} size="8x" />
+  } else if (pie) {
+    return <FontAwesomeIcon icon={faChartPie} size="8x" />
+  } else {
+    return <></>
+  }
+}
+
+function getPlaceholder(icon: JSX.Element) {
+  return (
+    <div className="tol-placeholder">
+      <div className="tol-placeholder-icons">
+        {icon}
+      </div>
+    </div>
+  )
+}
+
 function Placeholder(props: Props) {
-  const { circle, empty, height } = props
+  const { bar, pie, empty, height } = props
 
   // setting height of placeholder if set - default fits to parent div
   let heightCss = {}
@@ -24,29 +49,17 @@ function Placeholder(props: Props) {
     return <div style={heightCss}/>
   }
 
+  const icon = getPlaceholderIcon(bar, pie)
+
   // set parent div for height
   if (height !== undefined) {
     return (
       <div style={heightCss}>
-        <div className="tol-placeholder-rect">
-          {circle ?
-            <div className="tol-placeholder-doughnut" />
-          :
-            <></>
-          }
-        </div>
+        {getPlaceholder(icon)}
       </div>
     )
   } else {
-    return (
-      <div className="tol-placeholder-rect">
-        {circle ?
-          <div className="tol-placeholder-doughnut" />
-        :
-          <></>
-        }
-      </div>
-    )
+    return getPlaceholder(icon)
   }
 }
 

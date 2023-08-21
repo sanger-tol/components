@@ -46,7 +46,7 @@ function RemoteSunburst(props: Props) {
   
   if (loading) {
     if (initialLoad) {
-      return <Placeholder circle height={height} />
+      return <Placeholder pie height={height} />
     }
     return <Placeholder empty height={height} />
   }

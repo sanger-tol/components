@@ -102,7 +102,13 @@ export function createCellRenderer(cellRenderer: CellRenderer, data: object) {
 
 function formatAttributeData(data: object, fieldMeta: object) {
   const updatedData: object = {}
-  for (const [key, value] of Object.entries(data)) {
+  for (let [key, value] of Object.entries(data)) {
+
+    // temp deal with relationship objects
+    if(typeof value === "object" && value !== null) {
+      value = value['id']
+    }
+
     if (fieldMeta[key] !== undefined) {
       const linkField = fieldMeta[key].link
       const cellRendererField = fieldMeta[key].cellRenderer

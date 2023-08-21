@@ -50,7 +50,7 @@ function RemoteAutoComplete(props: Props) {
         setData(dropdown_data)
       })
       .catch((error: any) => {
-        console.log(error.message)
+        console.error(error.message)
         setResponse(error.message)
       })
     setIsLoading(false)

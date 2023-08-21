@@ -16,7 +16,7 @@
   }
 }
 
-.tol-placeholder-rect {
+.tol-placeholder {
   background-color: var(--bs-grey);
   position: relative !important;
   height: auto !important;
@@ -24,16 +24,19 @@
   border-radius: 6px;
 }
 
-.tol-placeholder-doughnut {
-  border: 100px solid var(--bs-body-bg);
-  border-radius: 100%;
-  aspect-ratio: 1 / 1;
-  width: 50%;
+.tol-placeholder-icons {
   position: absolute;
   left: 50%;
   top: 50%;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
+
+  .fa-chart-pie,
+  .fa-chart-column {
+    path {
+      fill: var(--bs-body-bg)
+    }
+  }
 }
 
 .widget-title {

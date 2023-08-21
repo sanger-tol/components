@@ -26,18 +26,21 @@ export { default as GlobalMultipleSelect } from "./forms/GlobalMultipleSelect";
 export { default as Dropzone } from "./forms/Dropzone";
 
 // Table
-export { default as AutoTable } from "./table/AutoTable";
+export { default as RemoteTable } from "./table/RemoteTable";
 
 // Charts
 export { default as BarChart } from "./charts/BarChart";
+export { default as RemoteAggBarChart } from "./charts/RemoteAggBarChart";
 export { default as RemoteBarChart } from "./charts/RemoteBarChart";
-export { default as RemoteChartTable } from "./charts/RemoteChartTable";
-export { default as RemoteDateChartTable } from "./charts/RemoteDateChartTable";
+export { default as RemoteBarChartTable } from "./charts/RemoteBarChartTable";
+
 export { default as BubbleMap } from "./charts/BubbleMap";
 export { default as RemoteBubbleMap } from "./charts/RemoteBubbleMap";
-export { default as RemoteBubbleMapFilter } from "./charts/RemoteBubbleMapFilter";
+
 export { default as Sunburst } from "./charts/Sunburst";
 export { default as RemoteSunburst } from "./charts/RemoteSunburst";
+
+export { default as RemoteBubbleMapFilter } from "./charts/RemoteBubbleMapFilter";
 
 // React-Bootstrap pass-through
 export { Container };
