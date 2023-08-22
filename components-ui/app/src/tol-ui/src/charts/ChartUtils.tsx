@@ -122,6 +122,12 @@ export function getChartColour(index: number, opacity?: number) {
   return rgbToString(rgb, opacity)
 }
 
+export function updateOpacity(colors: string[], alpha: string) {
+  return colors.map((color) => {
+    return color.replace(/[\d.]+\)$/g, alpha + ')')
+  })
+}
+
 // ------------------//
 //      BARCHART     //
 // ------------------//

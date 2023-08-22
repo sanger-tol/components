@@ -20,7 +20,8 @@ import { getChartColour,
          initialiseDatasets,
          updateBarColours,
          setBarFilled, 
-         generateBarLabels } from "./ChartUtils"
+         generateBarLabels,
+         updateOpacity } from "./ChartUtils"
 import { isPropDefined, getCssVarValue } from "../general/Utils";
 
 
@@ -56,6 +57,38 @@ function BarChart(props: Props) {
   const labelsAndGridColour = getCssVarValue("--bs-body-color")
   const gridLineColour = getCssVarValue("--bs-secondary-bg")
 
+  // functions for options
+  function handleHover(event) {
+    if (isPropDefined(setBarData)) {
+      event.native.target.style.cursor = 'pointer'
+    }
+  }
+
+  function handleClick(event, legendItem, legend) {
+    if (isPropDefined(setBarData)) {
+      const legendIndex = event.chart.data.datasets.findIndex(obj => obj.label === legendItem.text)
+      let selectedBucket = null
+
+      legend.chart.data.datasets.forEach((dataset, index) => {
+        if (index === legendIndex) {
+          dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '1')
+          selectedBucket = dataset.id
+        } else {
+          dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '0.20')
+        }
+      })
+      
+      // sets the bar data to the selected legend
+      setBarData!({
+        "bucket": selectedBucket,
+        "value": null,
+        "xKey": null
+      })
+
+      legend.chart.update()
+    }
+  }
+
   // chart options
   const options = {
     maintainAspectRatio: false,
@@ -85,7 +118,8 @@ function BarChart(props: Props) {
         }
       },
       legend: {
-        onClick: null,
+        onHover: handleHover,
+        onClick: handleClick,
         labels: {
           padding: 15,
           usePointStyle: true,
