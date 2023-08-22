@@ -13,7 +13,7 @@ interface Props {
   title: string,
   endpoint: string,
   breakDownBy: string,
-  xKey: string,
+  xAxis: string,
   interval: DateInterval,
   type: 'date',
 
@@ -29,12 +29,12 @@ interface Props {
 
 function RemoteBarChart(props: Props) {
   // @ts-ignore
-  const { breakDownBy, xKey, interval, type, filter, setCombinedFilters } = props
+  const { breakDownBy, xAxis, interval, type, filter, setCombinedFilters } = props
   const [ barData, setBarData ] = useState<object>({})
 
   // these can be swapped for other barchart types (type prop will be used)
-  const aggs = generateDateAgg(breakDownBy, xKey, interval)
-  const localFilters = generateDateFilterFromBarData(barData, breakDownBy, xKey, interval)
+  const aggs = generateDateAgg(breakDownBy, xAxis, interval)
+  const localFilters = generateDateFilterFromBarData(barData, breakDownBy, xAxis, interval)
 
   // combine local and globalGilters
   useEffect(() => {
@@ -57,14 +57,26 @@ function RemoteBarChart(props: Props) {
     resetCombined()
   }, [filter])
 
-  return (
-    <RemoteAggBarChart
-      {...props}
-      aggs={ aggs }
-      filter={ filter }
-      setBarData={ setBarData }
-    />
-  )
+  // chart does not show pointer if setCombinedFilters undefined
+  if (setCombinedFilters == undefined) {
+    return (
+      <RemoteAggBarChart
+        {...props}
+        aggs={ aggs }
+        filter={ filter }
+      />
+    )
+  } else {
+    return (
+      <RemoteAggBarChart
+        {...props}
+        aggs={ aggs }
+        filter={ filter }
+        setBarData={ setBarData }
+      />
+    )
+
+  }
 }
 
 export default RemoteBarChart;

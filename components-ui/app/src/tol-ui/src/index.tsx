@@ -32,7 +32,7 @@ export { default as RemoteTable } from "./table/RemoteTable";
 export { default as BarChart } from "./charts/BarChart";
 export { default as RemoteAggBarChart } from "./charts/RemoteAggBarChart";
 export { default as RemoteBarChart } from "./charts/RemoteBarChart";
-export { default as RemoteBarChartTable } from "./charts/RemoteBarChartTable";
+export { default as RemoteChartTable } from "./charts/RemoteChartTable";
 
 export { default as BubbleMap } from "./charts/BubbleMap";
 export { default as RemoteBubbleMap } from "./charts/RemoteBubbleMap";

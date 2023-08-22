@@ -28,7 +28,6 @@ function RemoteAggBarChart(props: Props) {
   const { endpoint, aggs, interval, filter, baseUrl, height } = props;
   const [labels, setLabels] = useState([])
   const [datasets, setDatasets] = useState([])
-  const [initialLoad, setInitialLoad] = useState(true)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -47,7 +46,6 @@ function RemoteAggBarChart(props: Props) {
         setDatasets(aggs.datasets)
         setLabels(aggs.labels)
         setLoading(false)
-        setInitialLoad(false)
       } else {
         throw Error("interval prop currently needs to be set")
       }
@@ -58,10 +56,7 @@ function RemoteAggBarChart(props: Props) {
   }, [filter]);
   
   if (loading) {
-    if (initialLoad) {
-      return <Placeholder bar height={height} />
-    }
-    return <Placeholder empty height={height} />
+    return <Placeholder bar height={height} />
   }
 
   return (

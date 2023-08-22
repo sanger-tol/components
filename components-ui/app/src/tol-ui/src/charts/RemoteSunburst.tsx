@@ -15,40 +15,39 @@ interface Props {
   endpoint: string,
   title: string,
   sliceBy: string[],
+  filter?: object,
   height: number,
   baseUrl?: string
 }
 
 function RemoteSunburst(props: Props) {
-  const { endpoint, sliceBy, baseUrl, height } = props;
+  const { endpoint, filter, sliceBy, baseUrl, height } = props;
   const [datasets, setDatasets] = useState({})
-  const [initialLoad, setInitialLoad] = useState(true)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     setLoading(true)
     const aggs = createAggsViaSliceBy(endpoint, sliceBy)
     httpClient().post('/' + endpoint + ":aggregations", aggs, {
-      baseURL: baseUrl
+      baseURL: baseUrl,
+      params: {
+        filter: filter
+      }
     })
     .then((res: any) => {
-      let aggs = res.data.meta.aggregations
+      const aggs = res.data.meta.aggregations
       // check if a datetime chart
-      let data = aggsToSunburstData(aggs, sliceBy)
+      const data = aggsToSunburstData(aggs, sliceBy)
       setDatasets(data)
       setLoading(false)
-      setInitialLoad(false)
     })
     .catch((error: any) => {
       console.error(error.message)
     })
-  }, []);
+  }, [filter]);
   
   if (loading) {
-    if (initialLoad) {
-      return <Placeholder pie height={height} />
-    }
-    return <Placeholder empty height={height} />
+    return <Placeholder pie height={height} />
   }
 
   return (

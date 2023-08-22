@@ -16,7 +16,7 @@ interface Props {
   title: string,
   endpoint: string,
   breakDownBy: string,
-  xKey: string,
+  xAxis: string,
   interval: DateInterval,
 
   // config
@@ -31,7 +31,7 @@ interface Props {
   debug?: boolean
 }
 
-function RemoteBarChartTable(props: Props) {
+function RemoteChartTable(props: Props) {
   const { filterInputFields } = props
   const [ globalFilters, setGlobalFilters ] = useState<object>({})
   const [ combinedFilters, setCombinedFilters ] = useState<object>({})
@@ -52,7 +52,7 @@ function RemoteBarChartTable(props: Props) {
           filter={globalFilters}
           setCombinedFilters={setCombinedFilters}
           type='date'
-          height={700}
+          height={500}
         />
       </Row>
       <Row>
@@ -65,4 +65,4 @@ function RemoteBarChartTable(props: Props) {
   )
 }
 
-export default RemoteBarChartTable;
+export default RemoteChartTable;

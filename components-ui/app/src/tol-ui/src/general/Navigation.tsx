@@ -30,7 +30,7 @@ interface Environment {
 }
 
 const assumeProduction = (): string => {
-  console.log("Error fetching environment. Assuming production.");
+  console.warn("Error fetching environment. Assuming production.");
   return "production";
 }
 

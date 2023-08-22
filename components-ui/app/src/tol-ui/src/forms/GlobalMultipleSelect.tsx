@@ -45,7 +45,6 @@ const GlobalMultipleSelect = (props: Props) => {
     if (globalFilters.in_list[name] && value.length === allValues.length) {
       delete globalFilters.in_list[name]
       setValue([])
-      console.log(globalFilters)
     } else {
       // if no results found - make it so you cannot click
       if (allValues.length !== 0) {

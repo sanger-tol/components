@@ -299,7 +299,7 @@ export function generateBarLabels(chart: any, titleColour: any) {
 //   DATE BARCHART   //
 // ------------------//
 
-export function generateDateAgg(breakDownBy: string, xKey: string, interval: DateInterval) {
+export function generateDateAgg(breakDownBy: string, xAxis: string, interval: DateInterval) {
   return {
     "aggs": {
       "agg": {
@@ -313,7 +313,7 @@ export function generateDateAgg(breakDownBy: string, xKey: string, interval: Dat
         "aggs": {
           "1": {
             "date_histogram": {
-              "field": xKey,
+              "field": xAxis,
               "calendar_interval": "1" + interval,
               "time_zone": "Europe/London"
             }
@@ -327,7 +327,7 @@ export function generateDateAgg(breakDownBy: string, xKey: string, interval: Dat
 export function generateDateFilterFromBarData(
   barData: object,
   breakDownBy: string,
-  xKey: string,
+  xAxis: string,
   interval: DateInterval
 ) {
   // initialise filter generated from bar clicks
@@ -349,7 +349,7 @@ export function generateDateFilterFromBarData(
   // formatting the date range for filtering
   const dateRange = formatDateRangeWithInterval(barXKey, interval)
   if (dateRange) {
-    localFilters["range"][xKey] = dateRange
+    localFilters["range"][xAxis] = dateRange
   }
   return localFilters
 }
@@ -460,10 +460,6 @@ function addPercentages(outputData: DoughnutDataCJS[]) {
 }
 
 export function generateSunburstLabels(chart: any, titleColour: any) {
-  // return if no data
-  if (chart.data.datasets.length === 1) {
-    return
-  }
   // parent is end of list due to chartJS oddities
   const parentIndex = chart.data.datasets.length-1
   return chart.data.datasets[parentIndex].labels.map(
@@ -569,12 +565,16 @@ export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: numb
   const buckets = agg["buckets"]
 
   // temp 'other' fix
-  addOtherDocCount(
-    buckets,
-    agg["sum_other_doc_count"],
-    sliceBy,
-    depth
-  )
+  const otherCount = agg["sum_other_doc_count"]
+  // other doesn't exist if bucket isn't a value
+  if (otherCount !== 0 && otherCount !== undefined) {
+    addOtherDocCount(
+      buckets,
+      otherCount,
+      sliceBy,
+      depth
+    )
+  }
 
   // initialising object and arrays required
   const outputData = {}

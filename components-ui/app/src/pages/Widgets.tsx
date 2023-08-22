@@ -13,7 +13,7 @@ const chartOne = (
     title="Run Data"
     endpoint="run_data"
     breakDownBy="mlwh_platform_type"
-    xKey="mlwh_start_date"
+    xAxis="mlwh_start_date"
     type="date"
     interval="M"
     height={ 500 }
@@ -24,7 +24,7 @@ const chartTwo = (
   <RemoteSunburst
     title="Order of remote..."
     endpoint="species"
-    sliceBy={ ["sts_order_group", "sts_family", "sts_genus"] }
+    sliceBy={ ["sts_order_group"] }
     height={ 500 }
   />
 )
