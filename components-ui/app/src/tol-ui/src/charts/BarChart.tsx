@@ -48,7 +48,7 @@ function BarChart(props: Props) {
   const stacked = isPropDefined(props.stacked)
 
   // for keeping track of the legends click and order
-  const [prevOrder, setPrevOrder] = useState(0)
+  const [prevOrder, setPrevOrder] = useState(null)
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null)
 
   const data = {
@@ -64,30 +64,33 @@ function BarChart(props: Props) {
   // functions for options
   function handleLegendClick(event: any, legendItem: any, legend: any) {
     if (isPropDefined(setBarData)) {
-      const legendIndex = event.chart.data.datasets.findIndex(obj => obj.label === legendItem.text)
+      const legendIndex = event.chart.data.datasets.findIndex((obj: any) => obj.label === legendItem.text)
       let selectedBucket = null
 
-      legend.chart.data.datasets.forEach((dataset, index) => {
-        if (index === legendIndex) {
-          dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '1')
-          setPrevOrder(dataset.order)
-          setPrevLegendItemIndex(index)
-          dataset.order = -1
-          selectedBucket = dataset.id
-        } else {
-          dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '0.25')
-          // reset prev item's order
-          if (prevLegendItemIndex === index) {
-            dataset.order = prevOrder
+      // cannot keep clicking on the same legend item
+      if (prevLegendItemIndex !== legendIndex) {
+        legend.chart.data.datasets.forEach((dataset: any, index: any) => {
+          if (index === legendIndex) {
+            dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '1')
+            setPrevOrder(dataset.order)
+            setPrevLegendItemIndex(index)
+            dataset.order = -1
+            selectedBucket = dataset.id
+          } else {
+            dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '0.25')
+            // reset prev item's order
+            if (prevLegendItemIndex === index) {
+              dataset.order = prevOrder
+            }
           }
-        }
-      })
-      // sets the bar data to the selected legend
-      setBarData!({
-        "bucket": selectedBucket,
-        "value": null,
-        "xKey": null
-      })
+        })
+        // sets the bar data to the selected legend
+        setBarData!({
+          "bucket": selectedBucket,
+          "value": null,
+          "xKey": null
+        })
+      }
       legend.chart.update()
     }
   }
@@ -107,7 +110,7 @@ function BarChart(props: Props) {
     // reset order on 'plane reset click'
     if (prevLegendItemIndex !== null) {
       chart.data.datasets[prevLegendItemIndex].order = prevOrder
-      setPrevOrder(0)
+      setPrevOrder(null)
       setPrevLegendItemIndex(null)
     }
 
