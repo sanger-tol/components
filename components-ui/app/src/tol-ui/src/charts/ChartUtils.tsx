@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from 'date-fns'
-import { normaliseCaps, getCssVarValue } from '../general/Utils'
+import { normaliseCaps, getCssVarValue, isPropDefined } from '../general/Utils'
 
 
 // ------------------//
@@ -150,6 +150,8 @@ export function initialiseDatasets(datasets: any[]) {
     const fadedColour = getChartColour(index, 0.75)
     datasets[index]["backgroundColor"] = []
     datasets[index]["hoverBackgroundColor"] = []
+    datasets[index]["order"] = index
+    datasets[index]["colourIndex"] = index
     const dataLength = datasets[index].data.length
     for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
       datasets[index]["backgroundColor"].push(bgColour)
@@ -257,8 +259,9 @@ function formatDateRangeWithInterval(date: string, interval: string) {
 
 export function updateBarColours(chart: any, resetColours: boolean, fadedOpacity: number) {
   for (let index = 0; index < chart.data.datasets.length; index++) {
-    const solidColour = getChartColour(index)
-    const fadedColour = getChartColour(index, fadedOpacity)
+    const colourIndex = chart.data.datasets[index]["colourIndex"]
+    const solidColour = getChartColour(colourIndex)
+    const fadedColour = getChartColour(colourIndex, fadedOpacity)
     chart.data.datasets[index]["backgroundColor"] = []
     chart.data.datasets[index]["hoverBackgroundColor"] = []
     const dataLength = chart.data.datasets[index].data.length
@@ -274,11 +277,31 @@ export function updateBarColours(chart: any, resetColours: boolean, fadedOpacity
   }
 }
 
-export function setBarFilled(chart: any, chartElement: any) {
+export function setBarClickedDataAndColour(chart: any, chartElement: any, setBarData?: React.Dispatch<any>) {
   const { datasetIndex, index } = chartElement[0]
+  // setting the colour of the clicked bar
   const originalColour = getChartColour(datasetIndex)
   chart.data.datasets[datasetIndex].backgroundColor[index] = originalColour
   chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = originalColour
+
+  // setting the 'bar' value
+  const bucket = chart.data.datasets[datasetIndex].id
+  const value = chart.data.datasets[datasetIndex].data[index]
+  const xKey = chart.data.labels[index]
+
+  if (isPropDefined(setBarData)) {
+    setBarData!({
+      "bucket": bucket,
+      "value": value,
+      "xKey": xKey
+    })
+  }
+}
+
+export function resetBarClickedData(setBarData?: React.Dispatch<any>) {
+  if (isPropDefined(setBarData)) {
+    setBarData!({})
+  }
 }
 
 export function generateBarLabels(chart: any, titleColour: any) {

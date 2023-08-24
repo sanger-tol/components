@@ -4,8 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { MouseEvent, useRef } from "react";
-import type { InteractionItem } from "chart.js";
+import { useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -15,13 +14,14 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Bar, getElementAtEvent, getDatasetAtEvent } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { getChartColour,
          initialiseDatasets,
          updateBarColours,
-         setBarFilled, 
+         setBarClickedDataAndColour, 
          generateBarLabels,
-         updateOpacity } from "./ChartUtils"
+         updateOpacity,
+         resetBarClickedData } from "./ChartUtils"
 import { isPropDefined, getCssVarValue } from "../general/Utils";
 
 
@@ -47,6 +47,10 @@ function BarChart(props: Props) {
   const { title, datasets, labels, height, setBarData } = props
   const stacked = isPropDefined(props.stacked)
 
+  // for keeping track of the legends click and order
+  const [prevOrder, setPrevOrder] = useState(0)
+  const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null)
+
   const data = {
     labels: labels,
     datasets: initialiseDatasets(datasets)
@@ -58,13 +62,7 @@ function BarChart(props: Props) {
   const gridLineColour = getCssVarValue("--bs-secondary-bg")
 
   // functions for options
-  function handleHover(event) {
-    if (isPropDefined(setBarData)) {
-      event.native.target.style.cursor = 'pointer'
-    }
-  }
-
-  function handleClick(event, legendItem, legend) {
+  function handleLegendClick(event: any, legendItem: any, legend: any) {
     if (isPropDefined(setBarData)) {
       const legendIndex = event.chart.data.datasets.findIndex(obj => obj.label === legendItem.text)
       let selectedBucket = null
@@ -72,20 +70,70 @@ function BarChart(props: Props) {
       legend.chart.data.datasets.forEach((dataset, index) => {
         if (index === legendIndex) {
           dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '1')
+          setPrevOrder(dataset.order)
+          setPrevLegendItemIndex(index)
+          dataset.order = -1
           selectedBucket = dataset.id
         } else {
-          dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '0.20')
+          dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '0.25')
+          // reset prev item's order
+          if (prevLegendItemIndex === index) {
+            dataset.order = prevOrder
+          }
         }
       })
-      
       // sets the bar data to the selected legend
       setBarData!({
         "bucket": selectedBucket,
         "value": null,
         "xKey": null
       })
-
       legend.chart.update()
+    }
+  }
+
+  function handleLegendHover(event: any) {
+    if (isPropDefined(setBarData)) {
+      event.native.target.style.cursor = 'pointer'
+    }
+  }
+
+  // @ts-ignore
+  function handlePlaneClick(event: any, chartElement: any, chart: any, item: any) {
+    if (item !== undefined) {
+      return
+    }
+
+    // reset order on 'plane reset click'
+    if (prevLegendItemIndex !== null) {
+      chart.data.datasets[prevLegendItemIndex].order = prevOrder
+      setPrevOrder(0)
+      setPrevLegendItemIndex(null)
+    }
+
+    // only clickable if setBarData is defined
+    if (isPropDefined(setBarData)) {
+      if (!chartElement.length) {
+        // reset bar colours when clicking other any part of chart
+        updateBarColours(chart, true, 0.5)
+        resetBarClickedData(setBarData)
+      } else {
+        // fade non-clicked bars
+        updateBarColours(chart, false, 0.25)
+        // setting clicked bar as its original colour
+        setBarClickedDataAndColour(chart, chartElement, setBarData)
+      }
+      chart.update();
+    }
+  }
+
+  function handlePlaneHover (event: any, chartElement: any) {
+    if (isPropDefined(setBarData)) {
+      if (chartElement.length === 1) {
+        event.native.target.style.cursor = "pointer";
+      } else if (chartElement.length === 0) {
+        event.native.target.style.cursor = "default";
+      }
     }
   }
 
@@ -118,8 +166,8 @@ function BarChart(props: Props) {
         }
       },
       legend: {
-        onHover: handleHover,
-        onClick: handleClick,
+        onHover: handleLegendHover,
+        onClick: handleLegendClick,
         labels: {
           padding: 15,
           usePointStyle: true,
@@ -138,34 +186,8 @@ function BarChart(props: Props) {
     },
     // changing the bar colours to faded or back to solid
     // @ts-ignore
-    onClick: (event: any, chartElement: any, chart: any, item: any) => {
-      if (item !== undefined) {
-        return
-      }
-
-      // only clickable if setBarData is defined
-      if (isPropDefined(setBarData)) {
-        if (!chartElement.length) {
-          // reset bar colours when clicking other any part of chart
-          updateBarColours(chart, true, 0.5)
-        } else {
-          // fade non-clicked bars
-          updateBarColours(chart, false, 0.25)
-          // setting clicked bar as its original colour
-          setBarFilled(chart, chartElement)
-        }
-        chart.update();
-      }
-    },
-    onHover: (event: any, chartElement: any) => {
-      if (isPropDefined(setBarData)) {
-        if (chartElement.length === 1) {
-          event.native.target.style.cursor = "pointer";
-        } else if (chartElement.length === 0) {
-          event.native.target.style.cursor = "default";
-        }
-      }
-    },
+    onClick: handlePlaneClick,
+    onHover: handlePlaneHover,
     scales: {
       x: {
         stacked: stacked,
@@ -189,48 +211,6 @@ function BarChart(props: Props) {
     responsive: true
   }
 
-  // making chart "clickable"
-  const chartRef = useRef<ChartJS>();
-
-  const getBarDataAtEvent = (element: InteractionItem[]) => {
-    if (!element.length) return;
-    const { datasetIndex, index } = element[0];
-    return [data.labels[index], data.datasets[datasetIndex].data[index]];
-  }
-
-  const getDatasetNameAtEvent = (dataset: InteractionItem[]) => {
-    if (!dataset.length) return;
-    const datasetIndex = dataset[0].datasetIndex;
-    return data.datasets[datasetIndex].id;
-  };
-
-  const getBarData = (event: MouseEvent<HTMLCanvasElement>) => {
-    let elementData = getBarDataAtEvent(
-      getElementAtEvent(chartRef.current!, event)
-    );
-    elementData?.push(getDatasetNameAtEvent(
-      getDatasetAtEvent(chartRef.current!, event)
-    ));
-    return elementData
-  }
-
-  const onPlaneClick = (event: MouseEvent<HTMLCanvasElement>) => {
-    const barData = getBarData(event);
-    if (isPropDefined(setBarData)) {
-      if (barData !== undefined) {
-        // sets 'clicked' bar data
-        setBarData!({
-          "bucket": barData[2],
-          "value": barData[1],
-          "xKey": barData[0]
-        })
-      } else {
-        // clears 'clicked' bar data
-        setBarData!({})
-      }
-    }
-  }
-
   return (
     <div style={{height: height.toString() + 'px'}}>
       <Bar
@@ -241,9 +221,6 @@ function BarChart(props: Props) {
         // @ts-ignore
         options={ options }
         data={ data }
-        // @ts-ignore
-        ref={ chartRef }
-        onClick={ onPlaneClick }
       />
     </div>
   )

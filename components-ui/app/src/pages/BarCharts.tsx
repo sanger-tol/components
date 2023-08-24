@@ -67,48 +67,48 @@ const d2 = [
     data: [100, 133, 100, 100, 200, 44, 100]
   },
   {
-    id: 'species_g',
-    label: 'Species G',
+    id: 'species_h',
+    label: 'Species H',
     data: [100, 133, 100, 100, 200, 44, 100]
   },
   {
-    id: 'species_g',
-    label: 'Species G',
+    id: 'species_i',
+    label: 'Species I',
     data: [100, 133, 100, 100, 200, 44, 100]
   },
   {
-    id: 'species_g',
-    label: 'Species G',
+    id: 'species_j',
+    label: 'Species J',
     data: [100, 133, 100, 100, 200, 44, 100]
   }
   ,
   {
-    id: 'species_g',
-    label: 'Species G',
+    id: 'species_k',
+    label: 'Species K',
     data: [100, 133, 100, 100, 200, 44, 100]
   }
   ,
   {
-    id: 'species_g',
-    label: 'Species G',
+    id: 'species_l',
+    label: 'Species L',
     data: [100, 133, 100, 100, 200, 44, 100]
   }
   ,
   {
-    id: 'species_g',
-    label: 'Species G',
+    id: 'species_m',
+    label: 'Species M',
     data: [100, 133, 100, 100, 200, 44, 100]
   }
   ,
   {
-    id: 'species_g',
-    label: 'Species G',
+    id: 'species_n',
+    label: 'Species N',
     data: [100, 133, 100, 100, 200, 44, 100]
   }
   ,
   {
-    id: 'species_g',
-    label: 'Species G',
+    id: 'species_o',
+    label: 'Species O',
     data: [100, 133, 100, 100, 200, 44, 100]
   }
 ]

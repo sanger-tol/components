@@ -21,7 +21,8 @@ def application():
     eds = ElasticDataSource({'uri': os.getenv('ELASTIC_URI'),
                              'user': os.getenv('ELASTIC_USER'),
                              'password': os.getenv('ELASTIC_PASSWORD'),
-                             'index_prefix': os.getenv('ELASTIC_INDEX_PREFIX')})
+                             'index_prefix': os.getenv('ELASTIC_INDEX_PREFIX'),
+                             'relationship_cfg': {}})
     datasources = [eds]
     core_data_object(*datasources)
     blueprint_data = data_blueprint(eds)

@@ -59,8 +59,12 @@ class RemoteTable extends React.Component<Props, State> {
     }
   }
 
-  refreshPagination = () => {
-    const { page, sizePerPage } = this.state;
+  refreshPagination = (pageNumber?: number) => {
+    let { page, sizePerPage } = this.state;
+    // reset to a set page
+    if (pageNumber !== undefined) {
+      page = pageNumber
+    }
     this.handleTableChange('pagination', { page: page, sizePerPage: sizePerPage })
   }
 
@@ -70,7 +74,7 @@ class RemoteTable extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Readonly<Props>) {
     if (prevProps.filter !== this.props.filter) {
-      this.refreshPagination()
+      this.refreshPagination(1)
     }
   }
 
