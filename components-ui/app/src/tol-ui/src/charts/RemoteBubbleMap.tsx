@@ -32,10 +32,13 @@ function elasticToChartData(
          */
         const points: number[][] = [];
     elasticData.forEach((item) => {
-        const longitude = parseFloat(item.attributes[longitudeKey]);
+        const longitude = parseFloat(item.attributes[longitudeKey])
         const latitude = parseFloat(item.attributes[latitudeKey])
-        points.push([longitude, latitude])
+        // Skips item if no long or lat value is provided
+        if (!isNaN(longitude) && !isNaN(latitude)){
+            points.push([longitude, latitude])
         }
+    }
     )
     return points
 }
@@ -45,15 +48,18 @@ function RemoteBubbleMap(props: Props) {
     const [ points, setPoints ] = useState<number[][]>([]);
     const [ errorMessage, setErrorMessage ] = useState<string>('')
     const [loading, setLoading] = useState(true)
+    const [totalPoints, setTotalPoints] = useState<number>(0)
 
     useEffect(() => {
         setLoading(true)
         httpClient().get('/' + endpoint, {
             baseURL: baseUrl, 
             params: {
-                filter: filter
+                filter: filter,
+                page_size: 10000
         }})
         .then((res: any) => {
+            setTotalPoints(res.data.meta.total)
             const coordinate_data = res.data.data
             const convertedData = elasticToChartData(coordinate_data, longitudeKey, latitudeKey)
             setPoints(convertedData)
@@ -68,17 +74,28 @@ function RemoteBubbleMap(props: Props) {
     if (loading) {
         return (
           <div style={{height: height.toString() + 'px'}}>
-            <Placeholder height={height}/>
+            <Placeholder map height={height}/>
           </div>
         )
-      }
+    }
 
+    if (totalPoints >= 10000) {
+        return (
+            <div style={{ position: 'relative' }}>
+                <div style={{ position: 'absolute', zIndex: 1000, width: '100%' }}>
+                    <Placeholder height={height} message={'Please add more filters to visualise map...'} opacity={0.8} />
+                </div>
+                <BubbleMap {...props} points={[]} />
+            </div>
+        );
+    }
+    
     if( errorMessage === ''){
         return (
             <div>
                 <BubbleMap
                     {...props}
-                    points={ points}
+                    points={points}
                 />
             </div>
         );
@@ -96,6 +113,7 @@ function RemoteBubbleMap(props: Props) {
             </div>
         )
     }
+
 }
 
 export default RemoteBubbleMap;

@@ -32,10 +32,14 @@
   transform: translate(-50%, -50%);
 
   .fa-chart-pie,
+  .fa-map-location-dot,
   .fa-chart-column {
     path {
       fill: var(--bs-body-bg)
     }
+  }
+  .placeholder-text{
+    color: white;
   }
 }
 

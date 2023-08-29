@@ -27,9 +27,9 @@ function Maps() {
       <BubbleMap points={points} height={400}/>
       <h2 className="mt-5">Remote Bubble Map</h2>
       <RemoteBubbleMap
-        endpoint="map_objs"
-        longitudeKey="ene_map_test_longitude"
-        latitudeKey="ene_map_test_latitude"
+        endpoint="sample"
+        longitudeKey="sts_latitude"
+        latitudeKey="sts_longitude"
         height={400}
       />
       <h2 className="mt-5">Remote Bubble Map with Filters</h2>
