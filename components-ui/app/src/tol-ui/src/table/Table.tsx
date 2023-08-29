@@ -8,7 +8,7 @@ import { Button } from '../index'
 import TableLoadingHelix from './TableLoadingHelix';
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory from 'react-bootstrap-table2-filter';
-import { switchFilterVisibility } from './TableUtils';
+import { switchFilterVisibility, setTableHeight } from './TableUtils';
 import paginationFactory, { PaginationProvider,
                             PaginationListStandalone,
                             SizePerPageDropdownStandalone,
@@ -37,7 +37,8 @@ function Table ({
   totalSize,
   includeNav,
   loading,
-  tableStatusIndicator
+  tableStatusIndicator,
+  height
 }) {
   const options = {
     custom: true,
@@ -50,6 +51,10 @@ function Table ({
       { text: '100', value: 100 }
     ]
   }
+
+  // keep previously set table height
+  setTableHeight(id, height)
+
   return (
     <PaginationProvider
       pagination={ paginationFactory(options) }

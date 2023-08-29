@@ -16,7 +16,8 @@ import { convertTableData,
          debug,
          generateFilter,
          structureFieldsAuto,
-         structureFieldsUsingProp } from "./TableUtils"
+         structureFieldsUsingProp,
+         setTableHeight } from "./TableUtils"
 
 
 export interface Props {
@@ -25,7 +26,8 @@ export interface Props {
   baseUrl?: string,
   fields?: Fields,
   filter?: object,
-  includeNav?: boolean
+  includeNav?: boolean,
+  height?: number
 }
 
 export interface State {
@@ -70,6 +72,9 @@ class RemoteTable extends React.Component<Props, State> {
 
   componentDidMount() {
     this.refreshPagination()
+
+    // setting static height on first load
+    setTableHeight(this.id, this.props.height)
   }
 
   componentDidUpdate(prevProps: Readonly<Props>) {
@@ -237,6 +242,7 @@ class RemoteTable extends React.Component<Props, State> {
               includeNav={ includeNav }
               loading={ loading }
               tableStatusIndicator={ tableStatusIndicator }
+              height={ this.props.height }
             />
           )
         })()}

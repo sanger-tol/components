@@ -190,9 +190,6 @@ export function convertHeadingData(fieldMeta: object) {
     }
 
     if (meta.isAttribute === true) {
-      if (key === 'id') {
-        headerWidth = '100px'
-      }
       let heading = {
         dataField: key,
         text: capsHeading,
@@ -399,6 +396,16 @@ export function switchFilterVisibility(tableId: string) {
         }
         
       }
+    }
+  }
+}
+
+export function setTableHeight(tableId: string, height?: number) {
+  if (height !== undefined) {
+    const table = document.getElementById(tableId)
+    if (table !== null) {
+      height = height - 76 // removing the height of the buttons
+      table.style.height = height.toString() + 'px';
     }
   }
 }

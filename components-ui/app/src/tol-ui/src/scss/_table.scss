@@ -10,6 +10,7 @@
     border-width: 1px;
     border-radius: 6px;
     font-size: 14px;
+    margin-bottom: 8px;
 
     // keep placeholder text the same for datetime picker on table
     #tol-filter-input .rs-picker-toggle .rs-picker-toggle-placeholder {
@@ -114,6 +115,7 @@
     float: right;
     margin: 6px;
     margin-right: 0;
+    margin-top: 0;
     background-color: $primary;
     border-color: $primary;
   }
@@ -127,6 +129,7 @@
     float: right;
     margin: 6px;
     margin-right: 0;
+    margin-top: 0;
   }
 
   .active.page-item .page-link {
@@ -157,6 +160,11 @@
 
   li.dropdown-item {
     padding: 4px !important;
+  }
+
+  // page size total indicator
+  .react-bootstrap-table-pagination-total {
+    font-size: 14px;
   }
 
   // filter visability
