@@ -71,6 +71,7 @@ function RemoteMultipleSelectFilters(props: Props) {
       })
       .catch((error: any) => {
         setErrorMessage(error.message)
+        console.error(error.message)
       })
   }
 

@@ -23,7 +23,7 @@ function Maps() {
 
   return (
     <CentreContents>
-      <h2 className="mt-5">Bubble Map</h2>
+      <h2>Bubble Map</h2>
       <BubbleMap points={points} height={400}/>
       <h2 className="mt-5">Remote Bubble Map</h2>
       <RemoteBubbleMap

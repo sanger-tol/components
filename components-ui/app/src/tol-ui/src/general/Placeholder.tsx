@@ -6,7 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartColumn, faChartPie, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
-import { getCssVarValue } from "./Utils";
+import LoadingHelix from "./LoadingHelix";
+import Status from "./Status";
 
 
 interface Props {
@@ -14,86 +15,114 @@ interface Props {
   pie?: boolean,
   map?: boolean,
   empty?: boolean,
-  height?: number,
+  loader?: boolean,
   opacity?: number,
-  message?: string
+  message?: string,
+  errorMessage?: string,
+  backing?: JSX.Element,
+  height: number
 }
 
 function getPlaceholderIcon(
   bar?: boolean,
   pie?: boolean,
   map?: boolean,
-  message?: string
+  loader?: boolean,
+  message?: string,
+  errorMessage?: string
 ) {
-  if(bar) {
+  if (bar) {
     return <FontAwesomeIcon icon={faChartColumn} size="8x" />
   } else if (pie) {
     return <FontAwesomeIcon icon={faChartPie} size="8x" />
   } else if (map) {
     return <FontAwesomeIcon icon={faMapLocationDot} size="8x"/>
+  } else if (loader) {
+    return <LoadingHelix/>
   } else if (message !== undefined){
-    return <h4 className="placeholder-text">{message}</h4>
+    return <h5>{message}</h5>
+  } else if (errorMessage !== undefined) {
+    return <Status status="danger" text={errorMessage} />
   } else {
     return <></>
   }
 }
 
-function getPlaceholder(icon: JSX.Element, opacity?: number) {
-  if (!opacity){
+function getPlaceholder(
+  height: number,
+  icon: JSX.Element,
+  backing?: JSX.Element,
+  opacity?: number
+) {
+  let style = {}
+  if (opacity) {
+    style = {
+      opacity: opacity
+    }
+  }
+
+  // default placeholder
+  if (backing === undefined) {
     return (
-      <div className="tol-placeholder">
-        <div className="tol-placeholder-icons">
-          {icon}
-        </div>
-      </div>
-    )
-  } else {
-    return (
-      <div className="tol-placeholder" style={{backgroundColor: getCssVarValue('--grey')}}>
-        <div className="tol-placeholder-icons">
-          {icon}
+      <div style={{height: height.toString() + 'px'}}>
+        <div className="tol-placeholder" style={style}>
+          <div className="tol-placeholder-icons">
+            {icon}
+          </div>
         </div>
       </div>
     )
   }
+
+  // adding a faded background to the backing contents (e.g. map behind loading)
+  return (
+    <div className="overlay-outer">
+      <div className="overlay-top" style={{zIndex: 1002}}>
+        <div style={{height: height.toString() + 'px'}}>
+          <div className="tol-placeholder-empty">
+            <div className="tol-placeholder-icons">
+              {icon}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="overlay-top" style={{zIndex: 1001}}>
+        <div style={{height: height.toString() + 'px'}}>
+          <div className="tol-placeholder" style={style} />
+        </div>
+      </div>
+      {backing}
+    </div>
+  )
 }
 
 function Placeholder(props: Props) {
-  const { bar, pie, map, empty, height, opacity, message } = props
+  const { bar,
+          pie,
+          map,
+          empty,
+          loader,
+          opacity,
+          message,
+          errorMessage,
+          backing,
+          height } = props
 
-  // setting height of placeholder if set - default fits to parent div
-  let heightCss = {}
-  if (height !== undefined) {
-    heightCss = {height: height.toString() + 'px'}
-  }
-
-  // setting the opacity of the placeholder
-  if (opacity !== undefined) {
-    heightCss['opacity'] = opacity
-  }
-
-
-  // this temporarily fills a gap on load
+  // this temporarily fills a gap - used for on load
   if (empty) {
-    return <div style={heightCss}/>
+    return <div style={{height: height.toString() + 'px'}}/>
   }
 
-  const icon = getPlaceholderIcon(bar, pie, map, message)
+  const icon = getPlaceholderIcon(
+    bar,
+    pie,
+    map,
+    loader,
+    message,
+    errorMessage
+  )
 
-  // set parent div for height
-  if (height !== undefined) {
-    return (
-      <div style={heightCss}>
-        {getPlaceholder(icon, opacity)}
-      </div>
-    )
-  } else {
-    return getPlaceholder(icon, opacity)
-  }
-
+  return getPlaceholder(height, icon, backing, opacity)
 }
 
-
-
 export default Placeholder;
-

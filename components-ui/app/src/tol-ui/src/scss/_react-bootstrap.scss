@@ -41,3 +41,15 @@
   --bs-btn-active-bg: var(--primary-hover);
   --bs-btn-active-border-color: var(--primary-hover);
 }
+
+// statuses made from bootstrap alerts
+.tol-status {
+  .alert {
+    margin-bottom: 0;
+    padding: 5px 10px 5px 10px;
+  }
+  
+  .status-text {
+    margin-left: 10px;
+  }
+}

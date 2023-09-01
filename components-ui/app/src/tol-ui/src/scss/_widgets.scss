@@ -24,6 +24,13 @@
   border-radius: 6px;
 }
 
+.tol-placeholder-empty {
+  position: relative !important;
+  height: auto !important;
+  min-height: 100% !important;
+  border-radius: 6px;
+}
+
 .tol-placeholder-icons {
   position: absolute;
   left: 50%;
@@ -38,9 +45,18 @@
       fill: var(--bs-body-bg)
     }
   }
-  .placeholder-text{
-    color: white;
+  h5 {
+    text-align: center;
   }
+}
+
+.overlay-outer {
+  position: relative;
+}
+
+.overlay-top {
+  position: absolute;
+  width: 100%;
 }
 
 .widget-title {

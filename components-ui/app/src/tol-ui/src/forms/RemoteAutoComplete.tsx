@@ -79,7 +79,7 @@ function RemoteAutoComplete(props: Props) {
               onChange={handleOnChange}
               renderMenuItem={() => {
                 return (
-                  <div className='centered-mini-loader'>
+                  <div className='centered-loader'>
                     <MiniLoadingHelix/>
                   </div>
                 );

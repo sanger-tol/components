@@ -29,6 +29,7 @@ function RemoteAggBarChart(props: Props) {
   const [labels, setLabels] = useState([])
   const [datasets, setDatasets] = useState([])
   const [loading, setLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     setLoading(true)
@@ -39,6 +40,7 @@ function RemoteAggBarChart(props: Props) {
       }
     })
     .then((res: any) => {
+      setErrorMessage('')
       let aggs = res.data.meta.aggregations
       // check if a datetime chart
       if (isPropDefined(interval)) {
@@ -52,8 +54,18 @@ function RemoteAggBarChart(props: Props) {
     })
     .catch((error: any) => {
       console.error(error.message)
+      setErrorMessage(error.message)
     })
   }, [filter]);
+
+  if (errorMessage !== ''){
+    return (
+        <Placeholder
+            errorMessage={errorMessage}
+            height={height}
+        />
+    );
+  }
   
   if (loading) {
     return <Placeholder bar height={height} />

@@ -6,18 +6,18 @@ SPDX-License-Identifier: MIT
 
 import { useState, useEffect } from "react";
 import BubbleMap from "./BubbleMap";
-import Status from "../general/Status";
 import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
 
 
 interface Props {
     endpoint: string,
-    baseUrl?: string,
-    longitudeKey: string
-    latitudeKey: string
-    height: number
-    filter?: object
+    longitudeKey: string,
+    latitudeKey: string,
+    height: number,
+    pageSize?: number,
+    filter?: object,
+    baseUrl?: string
 }
 
 /* converts elastic data format to points parameter BubbleMap accepts */
@@ -34,7 +34,7 @@ function elasticToChartData(
     elasticData.forEach((item) => {
         const longitude = parseFloat(item.attributes[longitudeKey])
         const latitude = parseFloat(item.attributes[latitudeKey])
-        // Skips item if no long or lat value is provided
+        // skips item if no long or lat value is provided
         if (!isNaN(longitude) && !isNaN(latitude)){
             points.push([longitude, latitude])
         }
@@ -47,8 +47,14 @@ function RemoteBubbleMap(props: Props) {
     const { endpoint, baseUrl, longitudeKey, latitudeKey, filter, height } = props;
     const [ points, setPoints ] = useState<number[][]>([]);
     const [ errorMessage, setErrorMessage ] = useState<string>('')
-    const [loading, setLoading] = useState(true)
-    const [totalPoints, setTotalPoints] = useState<number>(0)
+    const [ loading, setLoading ] = useState(true)
+    const [ totalPoints, setTotalPoints ] = useState<number>(0)
+
+    // providing a pageSize default
+    let pageSize = 2000
+    if (props.pageSize !== undefined) {
+        pageSize = props.pageSize
+    }
 
     useEffect(() => {
         setLoading(true)
@@ -56,9 +62,11 @@ function RemoteBubbleMap(props: Props) {
             baseURL: baseUrl, 
             params: {
                 filter: filter,
-                page_size: 10000
-        }})
+                page_size: pageSize
+            }
+        })
         .then((res: any) => {
+            setErrorMessage('')
             setTotalPoints(res.data.meta.total)
             const coordinate_data = res.data.data
             const convertedData = elasticToChartData(coordinate_data, longitudeKey, latitudeKey)
@@ -71,49 +79,40 @@ function RemoteBubbleMap(props: Props) {
         })
     }, [filter]);
 
+    const emptyMap = <BubbleMap {...props} points={[]} />
+    
+    if (errorMessage !== ''){
+        return (
+            <Placeholder
+                errorMessage={errorMessage}
+                height={height}
+            />
+        );
+    }
+
     if (loading) {
         return (
-          <div style={{height: height.toString() + 'px'}}>
-            <Placeholder map height={height}/>
-          </div>
-        )
-    }
-
-    if (totalPoints >= 10000) {
-        return (
-            <div style={{ position: 'relative' }}>
-                <div style={{ position: 'absolute', zIndex: 1000, width: '100%' }}>
-                    <Placeholder height={height} message={'Please add more filters to visualise map...'} opacity={0.8} />
-                </div>
-                <BubbleMap {...props} points={[]} />
-            </div>
-        );
-    }
-    
-    if( errorMessage === ''){
-        return (
-            <div>
-                <BubbleMap
-                    {...props}
-                    points={points}
-                />
-            </div>
-        );
-    }else{
-        return (
-            <div>
-                <Status
-                status="danger"
-                text={errorMessage}
+            <Placeholder
+                loader
+                opacity={0.85}
+                backing={emptyMap}
+                height={height}
             />
-                <BubbleMap
-                    {...props}
-                    points={ points}
-                />
-            </div>
-        )
+        );
     }
 
+    if (totalPoints >= pageSize) {
+        return (
+            <Placeholder
+                message={'Please add additional filters to visualise map...'}
+                opacity={0.85}
+                backing={emptyMap}
+                height={height}
+            />
+        );
+    }
+
+    return <BubbleMap {...props} points={points} />
 }
 
 export default RemoteBubbleMap;

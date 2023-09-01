@@ -24,6 +24,7 @@ function RemoteSunburst(props: Props) {
   const { endpoint, filter, sliceBy, baseUrl, height } = props;
   const [datasets, setDatasets] = useState({})
   const [loading, setLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     setLoading(true)
@@ -35,6 +36,7 @@ function RemoteSunburst(props: Props) {
       }
     })
     .then((res: any) => {
+      setErrorMessage('')
       const aggs = res.data.meta.aggregations
       // check if a datetime chart
       const data = aggsToSunburstData(aggs, sliceBy)
@@ -42,9 +44,19 @@ function RemoteSunburst(props: Props) {
       setLoading(false)
     })
     .catch((error: any) => {
+      setErrorMessage(error.message)
       console.error(error.message)
     })
   }, [filter]);
+
+  if (errorMessage !== ''){
+    return (
+        <Placeholder
+            errorMessage={errorMessage}
+            height={height}
+        />
+    );
+  }
   
   if (loading) {
     return <Placeholder pie height={height} />

@@ -4,10 +4,14 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Widgets, RemoteBarChart, RemoteSunburst, RemoteTable } from '../tol-ui/src'
+import { Widgets,
+         RemoteBarChart,
+         RemoteSunburst,
+         RemoteTable,
+         RemoteBubbleMap } from '../tol-ui/src'
 
 
-const chartOne = (
+const chart = (
   <RemoteBarChart
     stacked
     title="Run Data"
@@ -20,7 +24,7 @@ const chartOne = (
   />
 )
 
-const chartTwo = (
+const sunburst = (
   <RemoteSunburst
     title="Order of remote..."
     endpoint="species"
@@ -53,13 +57,23 @@ const table = (
   />
 )
 
+const map = (
+  <RemoteBubbleMap
+    endpoint="sample"
+    longitudeKey="sts_latitude"
+    latitudeKey="sts_longitude"
+    height={ 500 }
+    pageSize={ 10000 }
+  />
+)
+
 function Sandbox() {
   return (
     <div className="sandbox">
       <Widgets
         title="Run Data"
         description="Hello this a test desc..."
-        components={[chartOne, chartTwo, table, chartOne]}
+        components={[chart, sunburst, table, map]}
       />
     </div>
   );

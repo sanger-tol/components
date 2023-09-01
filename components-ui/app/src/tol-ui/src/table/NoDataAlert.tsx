@@ -4,14 +4,14 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Alert } from '../index';
+import { Status } from '../index';
 
 
 const NoDataAlert = () => (
   <div className="d-flex justify-content-center p-5 m-5">
-    <Alert 
-      type="warning"
-      message="No data found"
+    <Status 
+      status="warning"
+      text="No data found"
     />
   </div>
 )

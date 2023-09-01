@@ -35,13 +35,15 @@ function Status(props: Props) {
   const icon = getIconFromStatus(status);
 
   return (
-    <Alert
-      key={type}
-      variant={type}
-    >
-      <FontAwesomeIcon icon={icon} size="sm" />
-      <span className="m-3">{text}</span>
-    </Alert>
+    <div className='tol-status'>
+      <Alert
+        key={type}
+        variant={type}
+      >
+        <FontAwesomeIcon icon={icon} size="sm" />
+        <span className="status-text">{text}</span>
+      </Alert>
+    </div>
   );
 }
 
