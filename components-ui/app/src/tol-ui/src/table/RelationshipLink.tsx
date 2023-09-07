@@ -24,7 +24,8 @@ export interface Props {
 export interface State {
   text: JSX.Element|string,
   contents: object,
-  tableData: object
+  tableData: object,
+  error: boolean
 }
 
 class RelationshipLink extends React.Component<Props, State> {
@@ -33,7 +34,8 @@ class RelationshipLink extends React.Component<Props, State> {
     this.state = {
       text: <Placeholder />,
       contents: {},
-      tableData: this.props.attributes
+      tableData: this.props.attributes,
+      error: false
     }
   }
 
@@ -92,6 +94,7 @@ class RelationshipLink extends React.Component<Props, State> {
       })
       .catch((error: any) => {
         console.error(error)
+        this.setState({error: true})
       })
     }
   }
@@ -99,28 +102,34 @@ class RelationshipLink extends React.Component<Props, State> {
   render() {
     return (
       <div>
-        {(() => {
-          const fieldMeta = this.props.fieldMeta
-          if (fieldMeta['cellRenderer'] !== null && !isEmptyObj(this.state.contents)) {
-            const cellRendererField = fieldMeta['cellRenderer']
-            return createCellRenderer(cellRendererField, this.state.tableData)
-          // relationshipBox rendered if true or for 'auto generated' RemoteTable
-          } else if (fieldMeta['relationshipBox']) {
-            return (
-              <HoverOverlay
-                placement='autoHorizontalStart'
-                contents={ <FormatRelationshipTooltip contents={ this.state.contents } /> }
-              >
-                <div className='link-box' key={ this.props.initialEndpoint }>
-                  { this.state.text }
-                </div>
-              </HoverOverlay>
-            )
-          // basic text or loading wheel
-          } else {
-            return <div>{ this.state.text }</div>
-          }
-        })()}
+        {this.state.error ?
+          <></>
+        :
+        <>
+          {(() => {
+            const fieldMeta = this.props.fieldMeta
+            if (fieldMeta['cellRenderer'] !== null && !isEmptyObj(this.state.contents)) {
+              const cellRendererField = fieldMeta['cellRenderer']
+              return createCellRenderer(cellRendererField, this.state.tableData)
+            // relationshipBox rendered if true or for 'auto generated' RemoteTable
+            } else if (fieldMeta['relationshipBox']) {
+              return (
+                <HoverOverlay
+                  placement='autoHorizontalStart'
+                  contents={ <FormatRelationshipTooltip contents={ this.state.contents } /> }
+                >
+                  <div className='link-box' key={ this.props.initialEndpoint }>
+                    { this.state.text }
+                  </div>
+                </HoverOverlay>
+              )
+            // basic text or loading wheel
+            } else {
+              return <div>{ this.state.text }</div>
+            }
+          })()}
+        </>
+        }
       </div>
     );
   }

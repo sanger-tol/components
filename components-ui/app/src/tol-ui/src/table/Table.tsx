@@ -35,6 +35,7 @@ function Table ({
   page,
   sizePerPage,
   totalSize,
+  defaultSort,
   includeNav,
   loading,
   tableStatusIndicator,
@@ -51,6 +52,11 @@ function Table ({
       { text: '100', value: 100 }
     ]
   }
+
+  const defaultSorted = [{
+    dataField: defaultSort,
+    order: 'asc'
+  }];
 
   // keep previously set table height
   setTableHeight(id, height)
@@ -95,6 +101,8 @@ function Table ({
             onTableChange={ onTableChange }
             pagination={ paginationFactory(options) }
             filter={ filterFactory() }
+            // @ts-ignore
+            defaultSorted={ defaultSort ? defaultSorted : null }
             noDataIndication={ tableStatusIndicator }
             rowClasses='tol-row'
           />

@@ -154,20 +154,19 @@ function formatRelationshipData(relationships: object, attributes: object, field
     // ignoring one-to-many relationships
     if ('data' in relationships[currentObject]) {
       const headingId = splitKey.join('.')
-      // checking there is 'data' via the link existing
-      if ('links' in relationships[currentObject]) {
-        updatedData[headingId] = <RelationshipLink
-          initialEndpoint={ relationships[currentObject].links.related }
+
+      // creating the link
+      const relData = relationships[currentObject].data
+      const relLink = "/" + relData.type + "/" + relData.id.toString()
+
+      updatedData[headingId] = (
+        <RelationshipLink
+          initialEndpoint={ relLink }
           relationships={ splitKey }
           attributes={ attributes }
           fieldMeta={ fieldMeta[key] }
         />
-      } else if (relationships[currentObject].data === null) {
-        // updatedData[headingId] = <span className="none-value">None</span>
-        // might put 'None' in future? - same for attributes
-      }
-    } else {
-      throw Error(key + ' not in API data call')
+      )
     }
   }
   return updatedData
@@ -404,7 +403,7 @@ export function setTableHeight(tableId: string, height?: number) {
   if (height !== undefined) {
     const table = document.getElementById(tableId)
     if (table !== null) {
-      height = height - 76 // removing the height of the buttons
+      height = height - 73 // removing the height of the buttons
       table.style.height = height.toString() + 'px';
     }
   }

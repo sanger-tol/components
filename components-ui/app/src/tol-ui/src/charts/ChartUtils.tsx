@@ -40,7 +40,7 @@ https://www.rapidtables.com/convert/color/hsl-to-rgb.html
 export const colours = [
   // 90/70 - 247, 110, 179
   // {r: 110, g: 247, b: 247}, // 180
-  {r: 110, g: 179, b: 247}, // 210
+  {r: 3, g: 155, b: 229}, // 210 >> {r: 110, g: 179, b: 247}
   // {r: 110, g: 110, b: 247}, // 240
   {r: 179, g: 110, b: 247}, // 270
   // {r: 247, g: 110, b: 247}, // 300
@@ -122,10 +122,39 @@ export function getChartColour(index: number, opacity?: number) {
   return rgbToString(rgb, opacity)
 }
 
-export function updateOpacity(colors: string[], alpha: string) {
+function updateOpacity(color: string, alpha: string) {
+  return color.replace(/[\d.]+\)$/g, alpha + ')')
+}
+
+export function updateOpacitys(colors: string[], alpha: string) {
   return colors.map((color) => {
-    return color.replace(/[\d.]+\)$/g, alpha + ')')
+    return updateOpacity(color, alpha)
   })
+}
+
+export function resetItemClickedData(setItemData?: React.Dispatch<any>) {
+  if (isPropDefined(setItemData)) {
+    setItemData!({})
+  }
+}
+
+export function setClickedColourToSolid(chart: any, chartElement: any) {
+  const { datasetIndex, index } = chartElement[0]
+  const originalColour = chart.data.datasets[datasetIndex].backgroundColor[index]
+  chart.data.datasets[datasetIndex].backgroundColor[index] = updateOpacity(originalColour, "1")
+  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = updateOpacity(originalColour, "1")
+}
+
+export function updateChartColours(chart: any, resetColours: boolean, fadedOpacity: number) {
+  for (const dataset of chart.data.datasets) {
+    if (resetColours) {
+      dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1')
+      dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString())
+    } else {
+      dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString())
+      dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, '1')
+    }
+  }
 }
 
 // ------------------//
@@ -257,50 +286,20 @@ function formatDateRangeWithInterval(date: string, interval: string) {
   return {from: from, to: to}
 }
 
-export function updateBarColours(chart: any, resetColours: boolean, fadedOpacity: number) {
-  for (let index = 0; index < chart.data.datasets.length; index++) {
-    const colourIndex = chart.data.datasets[index]["colourIndex"]
-    const solidColour = getChartColour(colourIndex)
-    const fadedColour = getChartColour(colourIndex, fadedOpacity)
-    chart.data.datasets[index]["backgroundColor"] = []
-    chart.data.datasets[index]["hoverBackgroundColor"] = []
-    const dataLength = chart.data.datasets[index].data.length
-    for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
-      if (resetColours) {
-        chart.data.datasets[index]["backgroundColor"].push(solidColour)
-        chart.data.datasets[index]["hoverBackgroundColor"].push(fadedColour)
-      } else {
-        chart.data.datasets[index]["backgroundColor"].push(fadedColour)
-        chart.data.datasets[index]["hoverBackgroundColor"].push(solidColour)
-      }
-    }
-  }
-}
-
-export function setBarClickedDataAndColour(chart: any, chartElement: any, setBarData?: React.Dispatch<any>) {
+export function setBarClickedData(chart: any, chartElement: any, setBarData?: React.Dispatch<any>) {
   const { datasetIndex, index } = chartElement[0]
-  // setting the colour of the clicked bar
-  const originalColour = getChartColour(datasetIndex)
-  chart.data.datasets[datasetIndex].backgroundColor[index] = originalColour
-  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = originalColour
 
   // setting the 'bar' value
   const bucket = chart.data.datasets[datasetIndex].id
   const value = chart.data.datasets[datasetIndex].data[index]
-  const xKey = chart.data.labels[index]
+  const clickKey = chart.data.labels[index]
 
   if (isPropDefined(setBarData)) {
     setBarData!({
       "bucket": bucket,
       "value": value,
-      "xKey": xKey
+      "clickKey": clickKey
     })
-  }
-}
-
-export function resetBarClickedData(setBarData?: React.Dispatch<any>) {
-  if (isPropDefined(setBarData)) {
-    setBarData!({})
   }
 }
 
@@ -364,7 +363,7 @@ export function generateDateFilterFromBarData(
   }
 
   // providing a date the range filtering recognizes for month
-  let barXKey = barData["xKey"]
+  let barXKey = barData["clickKey"]
   if (interval === "M") {
     barXKey = "01 " + barXKey
   }
@@ -388,6 +387,7 @@ interface SunburstData {
 }
 
 interface DoughnutDataCJS {
+  id: string,
   data: number[],
   total: number,
   percentages: string[]
@@ -457,6 +457,7 @@ function initialiseOriginDataset(
 ) {
   if (colourIndex === 0 && outputData.length === depth) {
     outputData.push({
+      id: key,
       data: [],
       total: 0,
       percentages: [],
@@ -617,4 +618,21 @@ export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: numb
     outputData[normalisedKey].push(dataPoint)
   }
   return outputData
+}
+
+export function setSliceClickedData(chart: any, chartElement: any, setSliceData?: React.Dispatch<any>) {
+  const { datasetIndex, index } = chartElement[0]
+
+  // setting the 'bar' value
+  const bucket = chart.data.datasets[datasetIndex].label
+  const value = chart.data.datasets[datasetIndex].data[index]
+  const clickKey = chart.data.datasets[datasetIndex].labels[index]
+
+  if (isPropDefined(setSliceData)) {
+    setSliceData!({
+      "bucket": bucket,
+      "value": value,
+      "clickKey": clickKey
+    })
+  }
 }

@@ -8,12 +8,15 @@ import {
   Chart as ChartJS,
   ArcElement,
   Tooltip,
-  Legend } from 'chart.js';
-
+  Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { generateSunburstLabels, 
-         convertSunburstDatasets } from "./ChartUtils"
-import { getCssVarValue } from "../general/Utils"
+         convertSunburstDatasets,
+         resetItemClickedData,
+         updateChartColours,
+         setClickedColourToSolid,
+         setSliceClickedData } from "./ChartUtils"
+import { isPropDefined, getCssVarValue } from "../general/Utils";
 
 
 ChartJS.register(
@@ -25,11 +28,12 @@ ChartJS.register(
 interface Props {
   title: string,
   datasets: object,
-  height: number
+  height: number,
+  setSliceData?: React.Dispatch<React.SetStateAction<any>>
 }
 
 function Sunburst(props: Props) {
-  const { title, datasets, height } = props
+  const { title, datasets, height, setSliceData } = props
   const data = {
     datasets: convertSunburstDatasets(datasets)
   }
@@ -37,9 +41,39 @@ function Sunburst(props: Props) {
   // colours
   const titleColour = getCssVarValue("--bs-emphasis-color")
 
+  // @ts-ignore
+  function handlePlaneClick(event: any, chartElement: any, chart: any, item: any) {
+    if (item !== undefined) {
+      return
+    }
+
+    // only clickable if setBarData is defined
+    if (isPropDefined(setSliceData)) {
+      if (!chartElement.length) {
+        // reset bar colours when clicking other any part of chart
+        updateChartColours(chart, true, 0.5)
+        resetItemClickedData(setSliceData)
+      } else {
+        // fade non-clicked bars
+        updateChartColours(chart, false, 0.25)
+        // setting clicked bar as its original colour
+        setClickedColourToSolid(chart, chartElement)
+        setSliceClickedData(chart, chartElement, setSliceData)
+      }
+      chart.update();
+    }
+  }
+
+  function handlePlaneHover (event: any, chartElement: any) {
+    if (isPropDefined(setSliceData)) {
+      event.native.target.style.cursor = chartElement[0] ? "pointer" : "default"
+    }
+  }
+
   // sunburst options
   const options = {
     maintainAspectRatio: false,
+    responsive: true,
     cutout: "20%",
     plugins: {
       title: {
@@ -90,7 +124,9 @@ function Sunburst(props: Props) {
           }
         }
       }
-    }
+    },
+    onClick: handlePlaneClick,
+    onHover: handlePlaneHover
   }
 
   return (

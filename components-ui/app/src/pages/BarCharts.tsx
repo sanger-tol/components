@@ -144,7 +144,7 @@ function BarCharts() {
     <div className="charts">
       <CentreContents>
         <h2>Bar Chart</h2>
-        <h5>This is the 'Bar' data: {bar["bucket"]} {bar["xKey"]} {bar["value"]}</h5>
+        <h5>This is the 'Bar' data: {bar["bucket"]} {bar["clickKey"]} {bar["value"]}</h5>
         <Button className="m-1" onClick={()=>{setDatasests(d1)}}>Change d1</Button>
         <Button className="m-1" onClick={()=>{setDatasests(d2)}}>Change d2</Button>
         <BarChart

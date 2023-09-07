@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import React, { useState } from 'react';
 import { Checkbox, CheckPicker as RSCheckPicker } from 'rsuite';
-import { isPropDefined } from '../general/Utils';
+import { isPropDefined, normaliseCaps } from '../general/Utils';
 
 
 interface Props {
@@ -78,7 +78,7 @@ const GlobalMultipleSelect = (props: Props) => {
         value={value}
         onChange={handleOnChange}
         data={formattedData}
-        placeholder={name}
+        placeholder={normaliseCaps(name)}
         renderExtraFooter={() => (
           <div>
             <Checkbox

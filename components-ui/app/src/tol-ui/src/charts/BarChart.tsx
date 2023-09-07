@@ -12,16 +12,16 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend,
-} from "chart.js";
+  Legend } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { getChartColour,
          initialiseDatasets,
-         updateBarColours,
-         setBarClickedDataAndColour, 
+         updateChartColours,
+         setClickedColourToSolid,
+         setBarClickedData,
          generateBarLabels,
-         updateOpacity,
-         resetBarClickedData } from "./ChartUtils"
+         updateOpacitys,
+         resetItemClickedData } from "./ChartUtils"
 import { isPropDefined, getCssVarValue } from "../general/Utils";
 
 
@@ -71,13 +71,13 @@ function BarChart(props: Props) {
       if (prevLegendItemIndex !== legendIndex) {
         legend.chart.data.datasets.forEach((dataset: any, index: any) => {
           if (index === legendIndex) {
-            dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '1')
+            dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1')
             setPrevOrder(dataset.order)
             setPrevLegendItemIndex(index)
             dataset.order = -1
             selectedBucket = dataset.id
           } else {
-            dataset.backgroundColor = updateOpacity(dataset.backgroundColor, '0.25')
+            dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '0.25')
             // reset prev item's order
             if (prevLegendItemIndex === index) {
               dataset.order = prevOrder
@@ -88,7 +88,7 @@ function BarChart(props: Props) {
         setBarData!({
           "bucket": selectedBucket,
           "value": null,
-          "xKey": null
+          "clickKey": null
         })
       }
       legend.chart.update()
@@ -118,13 +118,14 @@ function BarChart(props: Props) {
     if (isPropDefined(setBarData)) {
       if (!chartElement.length) {
         // reset bar colours when clicking other any part of chart
-        updateBarColours(chart, true, 0.5)
-        resetBarClickedData(setBarData)
+        updateChartColours(chart, true, 0.5)
+        resetItemClickedData(setBarData)
       } else {
         // fade non-clicked bars
-        updateBarColours(chart, false, 0.25)
+        updateChartColours(chart, false, 0.25)
         // setting clicked bar as its original colour
-        setBarClickedDataAndColour(chart, chartElement, setBarData)
+        setClickedColourToSolid(chart, chartElement)
+        setBarClickedData(chart, chartElement, setBarData)
       }
       chart.update();
     }
@@ -132,17 +133,14 @@ function BarChart(props: Props) {
 
   function handlePlaneHover (event: any, chartElement: any) {
     if (isPropDefined(setBarData)) {
-      if (chartElement.length === 1) {
-        event.native.target.style.cursor = "pointer";
-      } else if (chartElement.length === 0) {
-        event.native.target.style.cursor = "default";
-      }
+      event.native.target.style.cursor = chartElement[0] ? "pointer" : "default"
     }
   }
 
   // chart options
   const options = {
     maintainAspectRatio: false,
+    responsive: true,
     plugins: {
       title: {
         display: true,
@@ -187,8 +185,6 @@ function BarChart(props: Props) {
         bottom: 10
       }
     },
-    // changing the bar colours to faded or back to solid
-    // @ts-ignore
     onClick: handlePlaneClick,
     onHover: handlePlaneHover,
     scales: {
@@ -210,8 +206,7 @@ function BarChart(props: Props) {
           color: labelsAndGridColour
         }
       },
-    },
-    responsive: true
+    }
   }
 
   return (

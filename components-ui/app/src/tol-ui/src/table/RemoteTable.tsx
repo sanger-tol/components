@@ -26,6 +26,7 @@ export interface Props {
   baseUrl?: string,
   fields?: Fields,
   filter?: object,
+  defaultSort?: string,
   includeNav?: boolean,
   height?: number
 }
@@ -239,6 +240,7 @@ class RemoteTable extends React.Component<Props, State> {
               page={ page }
               sizePerPage={ sizePerPage }
               totalSize={ totalSize }
+              defaultSort={ this.props.defaultSort }
               includeNav={ includeNav }
               loading={ loading }
               tableStatusIndicator={ tableStatusIndicator }
