@@ -18,7 +18,8 @@ export interface Props {
   initialEndpoint: string,
   relationships: string[],
   attributes: object,
-  fieldMeta: object
+  fieldMeta: object,
+  baseUrl?: string
 }
 
 export interface State {
@@ -44,7 +45,7 @@ class RelationshipLink extends React.Component<Props, State> {
   }
 
   handleRelationshipLoading = async ()  => {
-    const { initialEndpoint, relationships } = this.props;
+    const { initialEndpoint, relationships, baseUrl } = this.props;
     let attribute = '';
     if (relationships.length !== 1) {
       attribute = relationships.pop()!
@@ -53,7 +54,7 @@ class RelationshipLink extends React.Component<Props, State> {
     let endpoint = initialEndpoint
 
     for (let count = 0; count < relationshipTotal; count++) {
-      await httpClient().get(endpoint)
+      await httpClient().get(endpoint, {baseURL: baseUrl})
       .then((res: any) => { // eslint-disable-line no-loop-func
         const data = res.data.data
         const currentAttributes = Object.assign({'id': data.id}, data.attributes)

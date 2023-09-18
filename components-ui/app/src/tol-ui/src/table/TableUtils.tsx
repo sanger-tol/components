@@ -147,7 +147,7 @@ function splitRelationshipKeys(fieldMeta: object) {
   return relationshipKeys
 }
 
-function formatRelationshipData(relationships: object, attributes: object, fieldMeta: object) {
+function formatRelationshipData(relationships: object, attributes: object, fieldMeta: object, baseUrl?: string) {
   const updatedData: object = {}
   const relationshipKeys: object = splitRelationshipKeys(fieldMeta)
   for (const [key, splitKey] of Object.entries(relationshipKeys)) {
@@ -171,6 +171,7 @@ function formatRelationshipData(relationships: object, attributes: object, field
           relationships={ splitKey }
           attributes={ attributes }
           fieldMeta={ fieldMeta[key] }
+          baseUrl={ baseUrl }
         />
       )
     }
@@ -232,7 +233,7 @@ export function convertHeadingData(fieldMeta: object) {
   return updatedHeadings
 }
 
-export function convertTableData(data: any[], fieldMeta: object) {
+export function convertTableData(data: any[], fieldMeta: object, baseUrl?: string) {
   const updatedData: any[] = []
   data.forEach(row => {
     let fieldData = {'id': row.id}
@@ -247,7 +248,8 @@ export function convertTableData(data: any[], fieldMeta: object) {
       const relationships = formatRelationshipData(
         row.relationships,
         Object.assign({'id': row.id}, row.attributes),
-        fieldMeta
+        fieldMeta,
+        baseUrl
       )
       fieldData = Object.assign(fieldData, relationships)
     }

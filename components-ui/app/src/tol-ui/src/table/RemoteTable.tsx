@@ -211,7 +211,7 @@ class RemoteTable extends React.Component<Props, State> {
           }
           this.setState({
             headings: convertHeadingData(fieldMeta),
-            tableData: convertTableData(apiData, fieldMeta)
+            tableData: convertTableData(apiData, fieldMeta, this.props.baseUrl)
           })
         }
       })
