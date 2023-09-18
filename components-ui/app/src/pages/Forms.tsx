@@ -11,7 +11,8 @@ import { Form,
          MultipleSelect,
          MultipleSelectFilters,
          RemoteMultipleSelectFilters,
-         Dropzone } from '../tol-ui/src';    
+         Dropzone,
+         env } from '../tol-ui/src';    
     
 function Forms() {
   const [value, setValue] = useState(['test2'])
@@ -70,6 +71,7 @@ function Forms() {
           fields={['mlwh_platform_type', 'mlwh_run_status']}
           globalFilters={remoteFilters}
           setGlobalFilters={setRemoteFilters}
+          baseUrl={ env.TOL_DATA }
         />
         <br/>
         <h2>Dropzone</h2>

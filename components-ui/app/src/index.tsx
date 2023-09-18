@@ -21,14 +21,14 @@ import { TolApp, Page } from './tol-ui/src'
 import "./scss/styling.scss";
 
 
-const chartTables: Page = {
-  name: "ChartTables",
-  uiElement: <ChartTables />
-}
-
 const barCharts: Page = {
   name: "BarCharts",
   uiElement: <BarCharts />
+}
+
+const chartTables: Page = {
+  name: "ChartTables",
+  uiElement: <ChartTables />
 }
 
 const forms: Page = {
@@ -72,8 +72,8 @@ ReactDOM.render(
     brand="Components"
     homePage={ <Home /> }
     pages={[
-      chartTables,
       barCharts,
+      chartTables,
       forms,
       maps,
       miscellaneous,

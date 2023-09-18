@@ -2,21 +2,27 @@
 #
 # SPDX-License-Identifier: MIT
 
-from tol.api_base.model import Base, db, setup_model
+from typing import List
+
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from .base import Base
 
 
-@setup_model
 class Specimen(Base):
     __tablename__ = 'specimen'
 
-    class Meta:
-        type_ = 'specimens'
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa A003
+    tolid: Mapped[str] = mapped_column()
+    is_complex: Mapped[bool] = mapped_column()
+    ready: Mapped[bool] = mapped_column()
 
-    id = db.Column(db.Integer(), primary_key=True)  # noqa A003
-    tolid = db.Column(db.String())
-    is_complex = db.Column(db.Boolean())
-    ready = db.Column(db.Boolean())
-    species_id = db.Column(db.Integer(), db.ForeignKey('species.id'))
-    species = db.relationship('Species', back_populates='specimen',
-                              foreign_keys=[species_id])
-    sample = db.relationship('Sample', back_populates='specimen')
+    samples: Mapped[List['Sample']] = relationship(back_populates='specimen')  # noqa F821
+
+    species_id: Mapped[int] = mapped_column(
+        ForeignKey('species.id'),
+        nullable=False
+    )
+    species: Mapped['Species'] \
+        = relationship(back_populates='specimens') # noqa F821

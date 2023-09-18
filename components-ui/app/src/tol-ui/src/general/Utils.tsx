@@ -56,6 +56,16 @@ function normaliseWords(word: string) {
       return "ToLQC"
     case "tolid":
       return "ToLID"
+    case "tol":
+      return "ToL"
+    case "eln":
+      return "ELN"
+    case "dna":
+      return "DNA"
+    case "rna":
+      return "RNA"
+    case "mlwh":
+      return "MLWH"
     default:
       return word[0].toUpperCase() + word.substring(1); 
   }

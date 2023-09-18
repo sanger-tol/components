@@ -27,7 +27,8 @@ export interface Props {
   fields?: Fields,
   filter?: object,
   defaultSort?: string,
-  includeNav?: boolean,
+  noNav?: boolean,
+  noConfigModal?: boolean,
   height?: number
 }
 
@@ -39,7 +40,8 @@ export interface State {
   totalSize: number,
   error: string,
   loading: boolean,
-  renderTimes: number
+  renderTimes: number,
+  fieldMeta: object
 }
 
 class RemoteTable extends React.Component<Props, State> {
@@ -54,11 +56,12 @@ class RemoteTable extends React.Component<Props, State> {
       tableData: [],
       headings: headingsDefault,
       page: 1,
-      sizePerPage: 50,
+      sizePerPage: 100,
       totalSize: -1,
       error: 'false',
       loading: false,
-      renderTimes: 0
+      renderTimes: 0,
+      fieldMeta: {}
     }
   }
 
@@ -68,13 +71,14 @@ class RemoteTable extends React.Component<Props, State> {
     if (pageNumber !== undefined) {
       page = pageNumber
     }
-    this.handleTableChange('pagination', { page: page, sizePerPage: sizePerPage })
+    this.handleTableChange('pagination', {
+      page: page,
+      sizePerPage: sizePerPage,
+    })
   }
 
   componentDidMount() {
     this.refreshPagination()
-
-    // setting static height on first load
     setTableHeight(this.id, this.props.height)
   }
 
@@ -82,6 +86,17 @@ class RemoteTable extends React.Component<Props, State> {
     if (prevProps.filter !== this.props.filter) {
       this.refreshPagination(1)
     }
+    // ensure the table size doesn't change - slight workaround
+    if (this.state.renderTimes < 2) {
+      setTableHeight(this.id, this.props.height)
+    }
+  }
+
+  modalOnSave = (fieldMeta: object) => {
+    this.setState({
+      fieldMeta: fieldMeta
+    })
+    this.refreshPagination(1)
   }
 
   handleTableChange = (_type: string, { page, sizePerPage, filters, sortOrder, sortField } : {
@@ -91,6 +106,10 @@ class RemoteTable extends React.Component<Props, State> {
     sortOrder?: string,
     sortField?: string
   }) => {
+    // allow default sort
+    if (sortField === undefined || sortField === null) {
+      sortField = this.props.defaultSort
+    }
     // used to update the table state indicator
     if (this.state.renderTimes >= 1) {
       this.setState({
@@ -146,28 +165,34 @@ class RemoteTable extends React.Component<Props, State> {
         // check if any data is returned
         if (apiData[0] !== undefined) {
           let fieldMeta = {};
+          let fieldPropDefined = this.props.fields !== undefined;
 
           // checking if 'fields' has been defined
-          if (this.props.fields !== undefined) {
-            fieldMeta = structureFieldsUsingProp(this.props.fields, apiMeta.types)
-          } else {
-            if ('attributes' in apiData[0]) {
-              const attributes = structureFieldsAuto(
-                apiData[0].attributes,
-                apiMeta.types,
-                true
-              )
-              fieldMeta = Object.assign(fieldMeta, attributes)
-            }
-            if ('relationships' in apiData[0]) {
-              const relationships = structureFieldsAuto(
-                apiData[0].relationships,
-                apiMeta.types,
-                false,
-                this.props.debug
-              )
-              fieldMeta = Object.assign(fieldMeta, relationships)
-            }
+          if (fieldPropDefined) {
+            fieldMeta = structureFieldsUsingProp(this.props.fields!, apiMeta.types)
+          }
+
+          // auto add all fields in api call - if fields specified, extras are hidden
+          if ('attributes' in apiData[0]) {
+            const attributes = structureFieldsAuto(
+              apiData[0].attributes,
+              apiMeta.types,
+              fieldMeta,
+              true,
+              fieldPropDefined
+            )
+            fieldMeta = Object.assign(fieldMeta, attributes)
+          }
+          if ('relationships' in apiData[0]) {
+            const relationships = structureFieldsAuto(
+              apiData[0].relationships,
+              apiMeta.types,
+              fieldMeta,
+              false,
+              fieldPropDefined,
+              this.props.debug
+            )
+            fieldMeta = Object.assign(fieldMeta, relationships)
           }
 
           // debug logs if prop defined
@@ -177,14 +202,15 @@ class RemoteTable extends React.Component<Props, State> {
             this.props.debug
           )
 
-          // only updating heading state on first load
+          // only setting fieldMeta state on first load
           if (this.state.renderTimes === 0) {
             this.setState({
-              headings: convertHeadingData(fieldMeta),
+              fieldMeta: fieldMeta,
               renderTimes: 1
             })
           }
           this.setState({
+            headings: convertHeadingData(fieldMeta),
             tableData: convertTableData(apiData, fieldMeta)
           })
         }
@@ -208,17 +234,12 @@ class RemoteTable extends React.Component<Props, State> {
     const { tableData,
             headings,
             page,
+            fieldMeta,
             sizePerPage,
             totalSize,
             renderTimes,
             loading,
             error } = this.state;
-    
-    // show nav as default
-    let includeNav = this.props.includeNav;
-    if (includeNav === undefined) {
-      includeNav = true
-    }
 
     // need to be blank on first render
     let tableStatusIndicator: JSX.Element;
@@ -229,27 +250,22 @@ class RemoteTable extends React.Component<Props, State> {
     }
 
     return (
-      <div>
-        {(() => {
-          return (
-            <Table
-              id={ this.id }
-              data={ tableData }
-              columns={ headings }
-              onTableChange={ this.handleTableChange }
-              page={ page }
-              sizePerPage={ sizePerPage }
-              totalSize={ totalSize }
-              defaultSort={ this.props.defaultSort }
-              includeNav={ includeNav }
-              loading={ loading }
-              tableStatusIndicator={ tableStatusIndicator }
-              height={ this.props.height }
-            />
-          )
-        })()}
-      </div>
-    );
+      <Table
+        id={ this.id }
+        data={ tableData }
+        columns={ headings }
+        fieldMeta={fieldMeta}
+        onTableChange={ this.handleTableChange }
+        page={ page }
+        sizePerPage={ sizePerPage }
+        totalSize={ totalSize }
+        noNav={ this.props.noNav }
+        noConfigModal={ this.props.noConfigModal }
+        loading={ loading }
+        tableStatusIndicator={ tableStatusIndicator }
+        modalOnSave={ this.modalOnSave }
+      />
+    )
   }
 }
 

@@ -2,4 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-from .api import init_blueprints # noqa
+from tol.sql import model_base
+
+Base = model_base()

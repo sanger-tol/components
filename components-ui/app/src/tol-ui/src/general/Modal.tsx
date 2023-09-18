@@ -4,29 +4,43 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Modal as RSModal, Button } from 'rsuite';
 import React from 'react';
+import { Button } from 'react-bootstrap';
+import { Modal as RSModal } from 'rsuite';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons';
+
 
 export interface Props {
   size: string,
   open: boolean,
   setOpen: React.Dispatch<React.SetStateAction<any>>,
-  children: React.ReactNode
+  children: JSX.Element | JSX.Element[],
+  actionButton?: JSX.Element,
 }
 
 const Modal = (props: Props) => {
-  const handleClose = () => props.setOpen(false);
+  const {size, open, setOpen, children, actionButton} = props
+  const handleClose = () => {
+    setOpen(false)
+  }
+
   return (
     <>
       {/* @ts-ignore */}
-      <RSModal open={props.open} onClose={handleClose} size={props.size}>
+      <RSModal open={open} onClose={handleClose} size={size}>
         <RSModal.Body>
-          {props.children}
+          {children}
         </RSModal.Body>
         <RSModal.Footer>
-          <Button onClick={handleClose} appearance="primary">
-            Close
+          <Button variant="danger" onClick={handleClose}>
+            <FontAwesomeIcon icon={faXmark} size="sm" />
           </Button>
+          {actionButton &&
+            <span style={{margin: "6px"}}>
+              {actionButton}
+            </span>
+          }
         </RSModal.Footer>
       </RSModal>
     </>

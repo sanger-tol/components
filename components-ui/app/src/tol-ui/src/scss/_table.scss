@@ -42,17 +42,17 @@
     border-style: solid;
   }
 
-  td:hover {
-    background-color: var(--bs-body-bg);
-  }
-
   // hover effects
-  tr th:hover,
-  tbody tr:hover,
   li.dropdown-item:hover,
   li.dropdown-item:active,
   .page-link:hover {
     background-color: $grey-opaque;
+  }
+
+  // row/cell hover effecrs
+  tr th:hover,
+  tbody tr:hover {
+    background-color: $primary-opaque;
   }
 
   .page-link {
@@ -181,10 +181,6 @@
   .tol-table-button:active {
     color: white;
     fill: white;
-  }
-
-  .tol-table-filter-button svg {
-    margin-right: 8px;
   }
 
   // align header titles at top

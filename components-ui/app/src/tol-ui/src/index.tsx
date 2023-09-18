@@ -28,6 +28,9 @@ export { default as Dropzone } from "./forms/Dropzone";
 // Table
 export { default as RemoteTable } from "./table/RemoteTable";
 
+// Drag & Drop
+export { default as DnD } from "./dnd/DnD";
+
 // Charts
 export { default as BarChart } from "./charts/BarChart";
 export { default as RemoteAggBarChart } from "./charts/RemoteAggBarChart";

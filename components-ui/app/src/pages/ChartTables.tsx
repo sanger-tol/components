@@ -5,7 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { CentreContents,
-         RemoteChartTable } from '../tol-ui/src'
+         RemoteChartTable,
+         env } from '../tol-ui/src'
 
 
 function ChartTables() {
@@ -20,6 +21,7 @@ function ChartTables() {
           xAxis="mlwh_start_date"
           interval="M"
           filterInputFields={['mlwh_platform_type', 'tester']}
+          baseUrl={ env.TOL_DATA }
         />
       </CentreContents>
     </div>

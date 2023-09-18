@@ -7,13 +7,13 @@ version: '3.1'
 
 services:
   components-db:
-    image: elasticsearch:7.17.10
+    image: postgres:12
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
     ports:
-      - 9203:9200
+      - 5442:5432
 
   components-api:
     build:
@@ -30,17 +30,7 @@ services:
       - ELIXIR_CLIENT_SECRET
       - ELIXIR_REDIRECT_URI
       - ELIXIR_JWK
-      - MAIL_SENDER
-      - MAIL_SENDER_NAME
-      - MAIL_USERNAME_SMTP
-      - MAIL_PASSWORD_SMTP
-      - MAIL_HOST
-      - MAIL_PORT
       - ENVIRONMENT
-      - ELASTIC_URI
-      - ELASTIC_USER
-      - ELASTIC_PASSWORD
-      - ELASTIC_INDEX_PREFIX
 
     ports:
       - 8089:80
@@ -79,12 +69,6 @@ services:
       - ELIXIR_CLIENT_SECRET
       - ELIXIR_REDIRECT_URI
       - ELIXIR_JWK
-      - MAIL_SENDER
-      - MAIL_SENDER_NAME
-      - MAIL_USERNAME_SMTP
-      - MAIL_PASSWORD_SMTP
-      - MAIL_HOST
-      - MAIL_PORT
       - POSTGRES_USER
       - POSTGRES_PASSWORD
     depends_on:

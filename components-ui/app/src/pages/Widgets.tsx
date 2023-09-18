@@ -8,7 +8,8 @@ import { Widgets,
          RemoteBarChart,
          RemoteSunburst,
          RemoteTable,
-         RemoteBubbleMap } from '../tol-ui/src'
+         RemoteBubbleMap,
+         env } from '../tol-ui/src'
 
 
 const chart = (
@@ -21,6 +22,7 @@ const chart = (
     type="date"
     interval="M"
     height={ 500 }
+    baseUrl={ env.TOL_DATA }
   />
 )
 
@@ -30,6 +32,7 @@ const sunburst = (
     endpoint="species"
     sliceBy={ ["sts_order_group"] }
     height={ 500 }
+    baseUrl={ env.TOL_DATA }
   />
 )
 
@@ -54,6 +57,7 @@ const table = (
         rename: "ToLID prefix"
       },
     }}
+    baseUrl={ env.TOL_DATA }
   />
 )
 
@@ -64,6 +68,7 @@ const map = (
     latitudeKey="sts_longitude"
     height={ 500 }
     pageSize={ 10000 }
+    baseUrl={ env.TOL_DATA }
   />
 )
 

@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { CentreContents, RemoteTable } from '../tol-ui/src'
+import { CentreContents, RemoteTable, env} from '../tol-ui/src'
 // import StatusExample from '../tol-ui/src/sandbox/StatusExample'
 
 
@@ -14,6 +14,7 @@ function Tables() {
       <CentreContents>
       <RemoteTable
         endpoint="run_data"
+        baseUrl={ env.TOL_DATA }
       />
       </CentreContents>
     </div>

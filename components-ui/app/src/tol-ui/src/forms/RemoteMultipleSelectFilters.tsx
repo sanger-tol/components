@@ -15,7 +15,8 @@ interface Props {
   endpoint: string,
   fields: string[],
   globalFilters: object,
-  setGlobalFilters: React.Dispatch<React.SetStateAction<object>>
+  setGlobalFilters: React.Dispatch<React.SetStateAction<object>>,
+  baseUrl?: string
 }
 
 interface FilterObject {
@@ -52,7 +53,7 @@ function RemoteMultipleSelectFilters(props: Props) {
   const [dataToPass, setDataToPass] = useState<FilterObject[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState(true)
-  const {endpoint, fields, globalFilters, setGlobalFilters} = props
+  const {endpoint, fields, globalFilters, setGlobalFilters, baseUrl} = props
 
   useEffect(() => {
     fetchData()
@@ -62,7 +63,9 @@ function RemoteMultipleSelectFilters(props: Props) {
   const aggs = FormattingFieldsToAggregations(fields)
 
   const fetchData = () => {
-    httpClient().post('/' + endpoint + ':aggregations', aggs, {})
+    httpClient().post('/' + endpoint + ':aggregations', aggs, {
+      baseURL: baseUrl
+    })
       .then((res: any) => {
         setDataToPass(
           FormattingAggregationsToFilters(res.data.meta.aggregations)

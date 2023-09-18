@@ -44,7 +44,6 @@ function RemoteBarChart(props: Props) {
       }
     }
     combine()
-
   }, [barData])
 
   // reset localGilters when globalFilters are updated

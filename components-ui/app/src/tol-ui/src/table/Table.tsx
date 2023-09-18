@@ -4,62 +4,82 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button } from '../index'
+import { useState } from 'react';
+import { Button } from '../index';
 import TableLoadingHelix from './TableLoadingHelix';
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory from 'react-bootstrap-table2-filter';
-import { switchFilterVisibility, setTableHeight } from './TableUtils';
+import { switchFilterVisibility, addPlus } from './TableUtils';
 import paginationFactory, { PaginationProvider,
                             PaginationListStandalone,
                             SizePerPageDropdownStandalone,
                             PaginationTotalStandalone } from 'react-bootstrap-table2-paginator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faSliders } from '@fortawesome/free-solid-svg-icons';
+import ConfigModal from './ConfigModal';
+import { pruneHiddenColumns } from "./TableUtils";
 
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 
 
-function addPlus(totalSize: number) {
-  // add a plus for elastic search (results cap at 10,000)
-  if (totalSize === 10000) {
-    return "+"
-  }
-  return ""
+interface Props {
+  id: string,
+  data: any,
+  columns: any,
+  fieldMeta: any,
+  onTableChange: any,
+  page: number,
+  sizePerPage: number,
+  totalSize: number,
+  noNav?: boolean,
+  noConfigModal?: boolean,
+  loading: boolean,
+  tableStatusIndicator: any,
+  modalOnSave: Function,
+  height?: number
 }
 
-function Table ({
-  id,
-  data,
-  columns,
-  onTableChange,
-  page,
-  sizePerPage,
-  totalSize,
-  defaultSort,
-  includeNav,
-  loading,
-  tableStatusIndicator,
-  height
-}) {
+function Table (props: Props) {
+  let {
+    id,
+    data,
+    columns,
+    fieldMeta,
+    onTableChange,
+    page,
+    sizePerPage,
+    totalSize,
+    noNav,
+    noConfigModal,
+    loading,
+    tableStatusIndicator,
+    modalOnSave
+  } = props;
+  const [open, setOpen] = useState(false)
+
+  // show nav and configModal as default
+  if (noNav === undefined) {
+    noNav = true
+  } else {
+    noNav = false
+  }
+  if (noConfigModal === undefined) {
+    noConfigModal = true
+  } else {
+    noConfigModal = false
+  }
+
   const options = {
     custom: true,
     page,
     sizePerPage, 
     totalSize,
     sizePerPageList: [
-      { text: '25', value: 25 },
       { text: '50', value: 50 },
-      { text: '100', value: 100 }
+      { text: '100', value: 100 },
+      { text: '200', value: 200 }
     ]
   }
-
-  const defaultSorted = [{
-    dataField: defaultSort,
-    order: 'asc'
-  }];
-
-  // keep previously set table height
-  setTableHeight(id, height)
 
   return (
     <PaginationProvider
@@ -71,8 +91,25 @@ function Table ({
         paginationTableProps
       }) => (
         <div className='tol-table'>
-          {includeNav &&
+          {noNav &&
             <div>
+              {false && // temp excluded
+                <Button 
+                  className="tol-table-button"
+                  variant="primary" 
+                  onClick={ () => {setOpen(true)} }
+                >
+                  <FontAwesomeIcon icon={faSliders} size="sm" />
+                </Button>
+              }
+              {open &&
+                <ConfigModal
+                  fieldMeta={fieldMeta}
+                  open={open}
+                  setOpen={setOpen}
+                  modalOnSave={modalOnSave}
+                />
+              }
               <Button
                 className="tol-table-button"
                 variant="primary"
@@ -97,16 +134,16 @@ function Table ({
             remote
             keyField='id'
             data={ data }
-            columns={ columns }
+            // @ts-ignore
+            columns={ pruneHiddenColumns(columns) }
             onTableChange={ onTableChange }
             pagination={ paginationFactory(options) }
             filter={ filterFactory() }
             // @ts-ignore
-            defaultSorted={ defaultSort ? defaultSorted : null }
             noDataIndication={ tableStatusIndicator }
             rowClasses='tol-row'
           />
-          {includeNav &&
+          {noNav &&
             <>
               <PaginationTotalStandalone
                 { ...paginationProps }

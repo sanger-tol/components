@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BubbleMap, CentreContents, RemoteBubbleMap, RemoteBubbleMapFilter } from "../tol-ui/src";
+import { BubbleMap, CentreContents, RemoteBubbleMap, RemoteBubbleMapFilter, env } from "../tol-ui/src";
 
     
 function Maps() {
@@ -31,6 +31,7 @@ function Maps() {
         longitudeKey="sts_latitude"
         latitudeKey="sts_longitude"
         height={400}
+        baseUrl={ env.TOL_DATA }
       />
       <h2 className="mt-5">Remote Bubble Map with Filters</h2>
       <RemoteBubbleMapFilter
@@ -39,6 +40,7 @@ function Maps() {
         latitudeKey="ene_map_test_latitude"
         height={400}
         filterInputFields={['ene_map_test_checksum']}
+        baseUrl={ env.TOL_DATA }
       />
     </CentreContents>
   );

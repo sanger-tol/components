@@ -2,21 +2,24 @@
 #
 # SPDX-License-Identifier: MIT
 
-from tol.api_base.model import LogBase, db, setup_model
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from .base import Base
 
 
-@setup_model
-class Sample(LogBase):
+class Sample(Base):
     __tablename__ = 'sample'
 
-    class Meta:
-        type_ = 'samples'
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa A003
+    tube_id: Mapped[str] = mapped_column()
+    acceptance_status: Mapped[str] = mapped_column()
+    risk_status: Mapped[str] = mapped_column()
+    shipping_status: Mapped[str] = mapped_column()
 
-    id = db.Column(db.Integer(), primary_key=True)  # noqa A003
-    tube_id = db.Column(db.String())
-    acceptance_status = db.Column(db.String())
-    risk_status = db.Column(db.String())
-    shipping_status = db.Column(db.String())
-    specimen_id = db.Column(db.Integer(), db.ForeignKey('specimen.id'))
-    specimen = db.relationship('Specimen', back_populates='sample',
-                               foreign_keys=[specimen_id])
+    specimen_id: Mapped[int] = mapped_column(
+        ForeignKey('specimen.id'),
+        nullable=False
+    )
+    specimen: Mapped['Specimen'] \
+        = relationship(back_populates='samples') # noqa F821

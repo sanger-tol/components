@@ -8,7 +8,8 @@ import { useState } from "react";
 import { CentreContents,
          BarChart, 
          RemoteAggBarChart, 
-         Button } from '../tol-ui/src'
+         Button,
+         env } from '../tol-ui/src'
 
 
 // fake data for BarChart component
@@ -163,6 +164,7 @@ function BarCharts() {
           aggs={ aggs }
           interval="M"
           height={ 600 }
+          baseUrl={ env.TOL_DATA }
         />
       </CentreContents>
     </div>

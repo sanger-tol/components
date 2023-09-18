@@ -16,6 +16,12 @@ import { normaliseCaps } from '../general/Utils'
 import { addFieldDefaults, CellRenderer } from './Field';
 
 
+export function addPlus(totalSize: number) {
+  // add a plus for elastic search (results cap at 10,000)
+  if (totalSize === 10000) return "+"
+  return ""
+}
+
 function isEmptyOrNull(x: string) {
   return x === '' || x === null;
 }
@@ -194,6 +200,7 @@ export function convertHeadingData(fieldMeta: object) {
         text: capsHeading,
         headerSortingClasses,
         headerStyle: headerStyling(headerWidth),
+        hidden: meta.hidden
       }
       if (meta.sort === true) {
         heading['sort'] = true
@@ -217,7 +224,8 @@ export function convertHeadingData(fieldMeta: object) {
       updatedHeadings.push({
         dataField: key,
         text: capsHeading,
-        headerStyle: headerStyling(headerWidth)
+        headerStyle: headerStyling(headerWidth),
+        hidden: meta.hidden
       });
     }
   }
@@ -285,37 +293,64 @@ export function structureFieldsUsingProp(fields: object, apiFieldMeta: object) {
   return fields
 }
 
+function defineFieldMeta(
+  isAttribute: boolean,
+  hidden: boolean,
+  type: string
+) {
+  let field = addFieldDefaults({
+    'isAttribute': isAttribute,
+    'relationshipBox': !isAttribute,
+    'hidden': hidden
+  })
+  // meta field type is 'data' for attributes
+  if (isAttribute) {
+    field['type'] = type
+    field['filterType'] = convertTypeToDefaultFilter(type)
+  }
+  return field
+}
+
 // structure fields using the json-api spec
 export function structureFieldsAuto(
   apiFields: object,
-  apiFieldMeta: object,
+  apiMeta: object,
+  fieldMeta: object,
   isAttribute: boolean,
+  fieldPropDefined: boolean,
   debug?: boolean
 ) {
   const fields = {}
-  // adding internal ID to row
-  fields['id'] = addFieldDefaults({
-    'rename': 'ID',
-    'isAttribute': true,
-    'type': 'int'
-  })
+
+  // id is seperate from attributes, so it needs to be added
+  if(isAttribute) {
+    apiFields = Object.assign({'id': null}, apiFields)
+  }
+
   for (let [key, data] of Object.entries(apiFields)) {
     // ignoring one-to-many relationships
     if (!isAttribute && !('data' in data)) {
-      if (debug === true) {
+      if (debug) {
         console.warn('\'' + key + '\' is on the many side of the relationship' + 
-                      ' - therefore it is being ignored.')
+                     ' - therefore it is being ignored.')
       }
       continue
     }
-    fields[key] = addFieldDefaults({
-      'isAttribute': isAttribute,
-      'relationshipBox': true
-    })
-    // meta field type is 'data' for attributes
-    if (isAttribute) {
-      fields[key]['type'] = apiFieldMeta[key]
-      fields[key]['filterType'] = convertTypeToDefaultFilter(apiFieldMeta[key])
+
+    // adding hidden fields if not defined in fields prop
+    const type = apiMeta[key]
+    if (!fieldPropDefined) {
+      fields[key] = defineFieldMeta(
+        isAttribute,
+        false,
+        type
+      )
+    } else if (!(key in fieldMeta)) {
+      fields[key] = defineFieldMeta(
+        isAttribute,
+        true,
+        type
+      )
     }
   }
   return fields
@@ -373,6 +408,23 @@ export function getTableStatusIndicator(errorMessage: string) {
   } else {
     return <TableErrorAlert error={errorMessage}/>
   }
+}
+
+export function isColumnVisible(column: object) {
+  if (!('hidden' in column) || !column['hidden']) {
+    return true
+  }
+  return false
+}
+
+export function pruneHiddenColumns(columns: object[]) {
+  const visibleColumns: object[] = []
+  for (const column of columns) {
+    if (isColumnVisible(column)) {
+      visibleColumns.push(column)
+    }
+  }
+  return visibleColumns
 }
 
 export function switchFilterVisibility(tableId: string) {
