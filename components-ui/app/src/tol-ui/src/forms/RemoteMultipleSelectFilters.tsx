@@ -14,6 +14,7 @@ import Placeholder from "../general/Placeholder";
 interface Props {
   endpoint: string,
   fields: string[],
+  renamed_fields?: object
   globalFilters: object,
   setGlobalFilters: React.Dispatch<React.SetStateAction<object>>,
   baseUrl?: string
@@ -53,7 +54,7 @@ function RemoteMultipleSelectFilters(props: Props) {
   const [dataToPass, setDataToPass] = useState<FilterObject[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState(true)
-  const {endpoint, fields, globalFilters, setGlobalFilters, baseUrl} = props
+  const {endpoint, fields, renamed_fields, globalFilters, setGlobalFilters, baseUrl} = props
 
   useEffect(() => {
     fetchData()
@@ -121,7 +122,7 @@ function RemoteMultipleSelectFilters(props: Props) {
             <Col key={filter.name}>
               <GlobalMultipleSelect
                 block
-                name={filter.name}
+                name={(renamed_fields && renamed_fields[filter.name]) || filter.name}
                 data={filter.choices}
                 // @ts-ignore
                 globalFilters={globalFilters}
