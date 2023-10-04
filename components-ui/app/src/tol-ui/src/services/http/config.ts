@@ -6,9 +6,13 @@ import { env } from '../../variables/config'
 
 const serializeParam = (k, v) => {
   const sK = encodeURIComponent(k);
-  const sV = encodeURIComponent(
-    JSON.stringify(v)
-  );
+  if (typeof(v) == "string"){
+    var sV = encodeURIComponent(v)
+  }else{
+    var sV = encodeURIComponent(
+      JSON.stringify(v)
+    );
+  }
   return `${sK}=${sV}`
 }
 
