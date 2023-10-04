@@ -31,15 +31,32 @@ function elasticToChartData(
          * @param latitudeKey the key used to represent latitude values in elastic data
          */
         const points: number[][] = [];
-    elasticData.forEach((item) => {
-        const longitude = parseFloat(item.attributes[longitudeKey])
-        const latitude = parseFloat(item.attributes[latitudeKey])
-        // skips item if no long or lat value is provided
-        if (!isNaN(longitude) && !isNaN(latitude)){
-            points.push([longitude, latitude])
+    if (latitudeKey.includes('.')  || longitudeKey.includes('.')){
+        const relationship_name = latitudeKey.split('.')[0]
+        const lat_attribute_name = latitudeKey.split('.')[1]
+        const long_attribute_name  = longitudeKey.split('.')[1]
+        elasticData.forEach((item) => {
+            if (item.relationships[relationship_name].data){
+                const longitude = parseFloat(item.relationships[relationship_name].data.attributes[long_attribute_name])
+                const latitude = parseFloat(item.relationships[relationship_name].data.attributes[lat_attribute_name])
+                // skips item if no long or lat value is provided
+                if (!isNaN(longitude) && !isNaN(latitude)){
+                    points.push([latitude, longitude])
+                }
+            }
         }
+        )
+    }else{
+        elasticData.forEach((item) => {
+            const longitude = parseFloat(item.attributes[longitudeKey])
+            const latitude = parseFloat(item.attributes[latitudeKey])
+            // skips item if no long or lat value is provided
+            if (!isNaN(longitude) && !isNaN(latitude)){
+                points.push([latitude, longitude])
+            }
+        }
+        )
     }
-    )
     return points
 }
 

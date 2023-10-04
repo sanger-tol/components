@@ -12,6 +12,7 @@ import { isPropDefined, normaliseCaps } from '../general/Utils';
 interface Props {
   block?: boolean,
   data: string[],
+  display_name: string,
   name: string,
   globalFilters: {
     in_list: { [key: string]: string[] }
@@ -21,7 +22,7 @@ interface Props {
 
 const GlobalMultipleSelect = (props: Props) => {
   const [value, setValue] = useState<any[]>([])
-  const {data, name, globalFilters, setGlobalFilters} = props
+  const {data, name, globalFilters, setGlobalFilters, display_name} = props
   const block = isPropDefined(props.block)
 
   const formattedData = data.map(item => (
@@ -78,7 +79,7 @@ const GlobalMultipleSelect = (props: Props) => {
         value={value}
         onChange={handleOnChange}
         data={formattedData}
-        placeholder={normaliseCaps(name)}
+        placeholder={normaliseCaps(display_name)}
         renderExtraFooter={() => (
           <div>
             <Checkbox

@@ -68,6 +68,7 @@ function RemoteMultipleSelectFilters(props: Props) {
       baseURL: baseUrl
     })
       .then((res: any) => {
+        console.log(res)
         setDataToPass(
           FormattingAggregationsToFilters(res.data.meta.aggregations)
         )
@@ -122,7 +123,8 @@ function RemoteMultipleSelectFilters(props: Props) {
             <Col key={filter.name}>
               <GlobalMultipleSelect
                 block
-                name={(renamed_fields && renamed_fields[filter.name]) || filter.name}
+                name={filter.name}
+                display_name={(renamed_fields && renamed_fields[filter.name]) || filter.name}
                 data={filter.choices}
                 // @ts-ignore
                 globalFilters={globalFilters}
