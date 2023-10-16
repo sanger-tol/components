@@ -8,7 +8,8 @@ import React from 'react';
 import { httpClient } from '../services/http/httpClient'
 import HoverOverlay from '../general/HoverOverlay';
 import FormatRelationshipTooltip from './FormatRelationshipTooltip';
-import { createCellRenderer,
+import { checkAndAutoConvertText,
+         createCellRenderer,
          isEmptyObj } from './TableUtils'
 import { normaliseCaps } from '../general/Utils'
 import { Placeholder } from 'rsuite';
@@ -126,7 +127,7 @@ class RelationshipLink extends React.Component<Props, State> {
               )
             // basic text or loading wheel
             } else {
-              return <div>{ this.state.text }</div>
+              return <div>{ checkAndAutoConvertText(this.state.text) }</div>
             }
           })()}
         </>

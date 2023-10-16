@@ -14,8 +14,9 @@ import Placeholder from "../general/Placeholder";
 interface Props {
   endpoint: string,
   fields: string[],
-  renamed_fields?: object
+  renamedFields?: object,
   globalFilters: object,
+  dependentFilters?: boolean,
   setGlobalFilters: React.Dispatch<React.SetStateAction<object>>,
   baseUrl?: string
 }
@@ -50,34 +51,104 @@ function FormattingAggregationsToFilters(aggregation: any) {
   return filterData
 }
 
+function OrderData(data, fields: string[]){
+  const ordered_data: FilterObject[] = []
+  fields.map((field) => {
+    for (let i=0; i<data.length; i++){
+      if (field == data[i].name){
+        ordered_data.push(data[i])
+      }
+    }
+  })
+  return ordered_data
+}
+
+function ConfigFilters(index: number, filtersList, globalFilters){
+  const return_obj = {in_list: {}}
+  if (globalFilters.in_list){
+    const filtersToApply = filtersList.slice(0,[index])
+    filtersToApply.forEach((filter) => {
+      if (globalFilters.in_list[filter]){
+        return_obj.in_list[filter] = globalFilters.in_list[filter]
+      }
+    })
+    return return_obj
+  } else {
+    return return_obj
+  }
+}
+
+function ApplyFilteredOptions(data: FilterObject[], fieldName: string){
+  let fieldItem: FilterObject = {name:"", choices:[]}
+  data.forEach((field) => {
+    if (field.name == fieldName){
+      fieldItem = field
+    }
+  })
+  return fieldItem
+}
+
 function RemoteMultipleSelectFilters(props: Props) {
   const [dataToPass, setDataToPass] = useState<FilterObject[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState(true)
-  const {endpoint, fields, renamed_fields, globalFilters, setGlobalFilters, baseUrl} = props
+  const {endpoint, fields, renamedFields, globalFilters,
+         setGlobalFilters, baseUrl, dependentFilters} = props
+
+  useEffect(() => {
+    setGlobalFilters({in_list: {}})
+    fetchData()
+  }, [])
 
   useEffect(() => {
     fetchData()
-    setGlobalFilters({in_list:  {}})
-  }, [])
+  }, [globalFilters])
 
   const aggs = FormattingFieldsToAggregations(fields)
 
   const fetchData = () => {
-    httpClient().post('/' + endpoint + ':aggregations', aggs, {
-      baseURL: baseUrl
-    })
-      .then((res: any) => {
-        console.log(res)
-        setDataToPass(
-          FormattingAggregationsToFilters(res.data.meta.aggregations)
-        )
-        setLoading(false)
+    if (!dependentFilters){
+      httpClient().post('/' + endpoint + ':aggregations', aggs, {
+        baseURL: baseUrl
       })
-      .catch((error: any) => {
-        setErrorMessage(error.message)
-        console.error(error.message)
+        .then((res: any) => {
+          const data = (
+            FormattingAggregationsToFilters(res.data.meta.aggregations)
+          )
+          const ordered_data = OrderData(data, fields)
+          setDataToPass(ordered_data)
+          setLoading(false)
+        })
+        .catch((error: any) => {
+          setErrorMessage(error.message)
+          console.error(error.message)
+        })
+    } else {
+      const dataToOrder: FilterObject[] = [];
+      fields.map((field, index) => {
+        const filter = ConfigFilters(index, fields, globalFilters)
+        httpClient().post('/' + endpoint + ':aggregations', aggs, {
+          baseURL: baseUrl,
+          params: {
+            filter: filter
+          }
+        })
+          .then((res: any) => {
+            const data = (
+              FormattingAggregationsToFilters(res.data.meta.aggregations)
+            )
+            const filterItem = ApplyFilteredOptions(data, field)
+            dataToOrder.push(filterItem)
+            const ordered_data = OrderData(dataToOrder, fields)
+            setDataToPass(ordered_data)
+          })
+          .catch((error: any) => {
+            setErrorMessage(error.message)
+            console.error(error.message)
+          })
       })
+      setLoading(false)
+    }
   }
 
   if (errorMessage !== '') {
@@ -124,7 +195,7 @@ function RemoteMultipleSelectFilters(props: Props) {
               <GlobalMultipleSelect
                 block
                 name={filter.name}
-                display_name={(renamed_fields && renamed_fields[filter.name]) || filter.name}
+                display_name={(renamedFields && renamedFields[filter.name]) || filter.name}
                 data={filter.choices}
                 // @ts-ignore
                 globalFilters={globalFilters}

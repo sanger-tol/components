@@ -65,7 +65,7 @@ function checkAndConvertDate(text: string) {
   }
 }
 
-function checkAndAutoConvertText(text: any) {
+export function checkAndAutoConvertText(text: any) {
   try {
     new URL(text) // fails if not link
     // eslint-disable-next-line

@@ -29,11 +29,14 @@ interface Props {
   title: string,
   datasets: object,
   height: number,
+  legendPosition?: string,
+  noLabel?: boolean,
   setSliceData?: React.Dispatch<React.SetStateAction<any>>
 }
 
 function Sunburst(props: Props) {
-  const { title, datasets, height, setSliceData } = props
+  const { title, datasets, height, setSliceData, legendPosition, noLabel } = props
+
   const data = {
     datasets: convertSunburstDatasets(datasets)
   }
@@ -94,6 +97,9 @@ function Sunburst(props: Props) {
             return `${labels[dataPointIndex]}: ${value} (${percentages[dataPointIndex]}%)`
           },
           label: (context: any) => {
+            if (noLabel){
+              return null
+            }
             const label = context.dataset.label
             return " " + label
           },
@@ -114,7 +120,7 @@ function Sunburst(props: Props) {
         }
       },
       legend: {
-        position: "bottom",
+        position: legendPosition,
         onClick: null,
         labels: {
           padding: 15,

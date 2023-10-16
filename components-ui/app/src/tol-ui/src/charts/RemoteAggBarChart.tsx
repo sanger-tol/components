@@ -21,11 +21,12 @@ interface Props {
   title: string,
   interval: DateInterval,
   height: number,
+  shortDate?: boolean,
   setBarData?: React.Dispatch<React.SetStateAction<any>>
 }
 
 function RemoteAggBarChart(props: Props) {
-  const { endpoint, aggs, interval, filter, baseUrl, height } = props;
+  const { endpoint, aggs, interval, filter, baseUrl, height, shortDate } = props;
   const [labels, setLabels] = useState([])
   const [datasets, setDatasets] = useState([])
   const [loading, setLoading] = useState(true)
@@ -44,7 +45,7 @@ function RemoteAggBarChart(props: Props) {
       let aggs = res.data.meta.aggregations
       // check if a datetime chart
       if (isPropDefined(interval)) {
-        aggs = aggsToBarChartData(aggs, interval!)
+        aggs = aggsToBarChartData(aggs, interval!, shortDate)
         setDatasets(aggs.datasets)
         setLabels(aggs.labels)
         setLoading(false)

@@ -16,6 +16,7 @@ interface Props {
   xAxis: string,
   interval: DateInterval,
   type: 'date',
+  shortDate?: boolean
 
   // 'filter' is usually referred to as globalFilters when using combinedFilters
   filter?: object,
@@ -29,7 +30,7 @@ interface Props {
 
 function RemoteBarChart(props: Props) {
   // @ts-ignore
-  const { breakDownBy, xAxis, interval, type, filter, setCombinedFilters } = props
+  const { breakDownBy, xAxis, interval, type, shortDate, filter, setCombinedFilters } = props
   const [ barData, setBarData ] = useState<object>({})
 
   // these can be swapped for other barchart types (type prop will be used)

@@ -207,20 +207,35 @@ function getSortedAggData(buckets: object) {
   } as AggData
 }
 
-function formatLabels(labels: string[], interval: DateInterval) {
+function formatLabels(labels: string[], interval: DateInterval, shortDate?: boolean) {
   const formattedLabels: string[] = []
   let dateFormat: string
-  switch(interval) {
-    case "d":
-    case "w":
-      dateFormat = "dd LLLL yyyy"
-      break
-    case "M":
-      dateFormat = "LLLL yyyy"
-      break
-    case "y":
-      dateFormat = "yyyy"
-      break
+  if (!shortDate){
+    switch(interval) {
+      case "d":
+      case "w":
+        dateFormat = "dd LLLL yyyy"
+        break
+      case "M":
+        dateFormat = "LLLL yyyy"
+        break
+      case "y":
+        dateFormat = "yyyy"
+        break
+    }
+  } else {
+    switch(interval) {
+      case "d":
+      case "w":
+        dateFormat = "dd MMM yy"
+        break
+      case "M":
+        dateFormat = "MMM yy"
+        break
+      case "y":
+        dateFormat = "yy"
+        break
+    }
   }
   for (const label of labels) {
     const date = new Date(label)
@@ -232,7 +247,7 @@ function formatLabels(labels: string[], interval: DateInterval) {
 }
 
 // would need adapting for multiple aggs in 1 api call
-export function aggsToBarChartData(aggs: object, interval: DateInterval): ChartData {
+export function aggsToBarChartData(aggs: object, interval: DateInterval, shortDate?: boolean): ChartData {
   const datasets: object[] = []
   const buckets: object = aggs["agg"]["buckets"]
   const sortedAggs: AggData = getSortedAggData(buckets)
@@ -259,7 +274,7 @@ export function aggsToBarChartData(aggs: object, interval: DateInterval): ChartD
 
   return {
     datasets: datasets,
-    labels: formatLabels(labels, interval)
+    labels: formatLabels(labels, interval, shortDate)
   } as ChartData
 }
 

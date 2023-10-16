@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Checkbox, CheckPicker as RSCheckPicker } from 'rsuite';
 import { isPropDefined, normaliseCaps } from '../general/Utils';
 
@@ -20,17 +20,35 @@ interface Props {
   setGlobalFilters: React.Dispatch<React.SetStateAction<object>>
 }
 
+function setCheckedValues(globalFilters, setValue){
+  let values = []
+  for (const field in globalFilters.in_list){
+    values = (globalFilters.in_list[field])
+  }
+  setValue(values)
+}
+
 const GlobalMultipleSelect = (props: Props) => {
   const [value, setValue] = useState<any[]>([])
   const {data, name, globalFilters, setGlobalFilters, display_name} = props
-  const block = isPropDefined(props.block)
 
+  // Resets the selected boxes if global filters is empty
+  useEffect(() => {
+    if (Object.keys(globalFilters.in_list).length == 0){
+      setValue([])
+    } else {
+      setCheckedValues(globalFilters, setValue)
+    }
+  }, [globalFilters])
+  
+  const block = isPropDefined(props.block)
+  
   const formattedData = data.map(item => (
     { label: item, value: item }
   ))
 
   const allValues = formattedData.map(item => item.value);
-    
+  
   const handleOnChange = (filterValues: any) => {
     setValue(filterValues)
     // removes global filter if no values

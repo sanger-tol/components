@@ -17,7 +17,9 @@ interface Props {
   sliceBy: string[],
   filter?: object,
   height: number,
-  baseUrl?: string
+  baseUrl?: string,
+  legendPosition?: string,
+  noLabel?: boolean
 }
 
 function RemoteSunburst(props: Props) {

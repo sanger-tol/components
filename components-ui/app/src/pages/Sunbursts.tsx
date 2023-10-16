@@ -4,7 +4,12 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { CentreContents, Sunburst, Button } from '../tol-ui/src'
+import { 
+  CentreContents,
+  Sunburst,
+  Button,
+  RemoteSunburst,
+  env } from '../tol-ui/src'
 import { useState } from 'react';
 
 
@@ -127,6 +132,16 @@ function Sunbursts() {
           datasets={datasets}
           height={800}
           setSliceData={setSliceData}
+          legendPosition="left"
+        />
+        <RemoteSunburst
+          title="BIOSCAN sunburst of specimens"
+          endpoint="barcoding_run_data"
+          sliceBy={["bioscan_o_primary","bioscan_f_primary", "bioscan_g_primary", "bioscan_s_primary"]}
+          height={600}
+          baseUrl={ env.TOL_DATA }
+          legendPosition="right"
+          noLabel
         />
       </CentreContents>
     </div>

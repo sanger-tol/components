@@ -69,7 +69,7 @@ function Forms() {
         <RemoteMultipleSelectFilters
           endpoint='run_data'
           fields={['mlwh_platform_type', 'mlwh_run_status', 'mlwh_instrument_model']}
-          renamed_fields={{'mlwh_platform_type':'test1', 'mlwh_run_status':'test2', 'mlwh_instrument_model':'test3'}}
+          renamedFields={{'mlwh_platform_type':'test1', 'mlwh_run_status':'test2', 'mlwh_instrument_model':'test3'}}
           globalFilters={remoteFilters}
           setGlobalFilters={setRemoteFilters}
           baseUrl={ env.TOL_DATA }

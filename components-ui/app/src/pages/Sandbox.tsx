@@ -4,27 +4,68 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { RemoteTable,
+import { RemoteBarChart,
+         RemoteTable,
+         RemoteMultipleSelectFilters,
          Widgets,
+         Button,
          env } from '../tol-ui/src/index'
 import { useState } from 'react'
 
 function Sandbox() {
-  const [ globalFilters, setGlobalFilters ] = useState<object>({})
 
-  setGlobalFilters({})
+  const [ globalFilters, setGlobalFilters ] = useState<object>({})
+  const [ combinedFilters, setCombinedFilters ] = useState<object>({})
+
+  const filters = (
+    <RemoteMultipleSelectFilters
+      endpoint="barcoding_run_data"
+      fields={[
+        "bioscan_o_primary","bioscan_f_primary",
+        "bioscan_g_primary", "bioscan_s_primary","sts_sample.sts_gal"
+      ]}
+      renamedFields={{"sts_sample.sts_gal": "Partner", "bioscan_o_primary": " Order",
+        "bioscan_g_primary": "Genus", "bioscan_f_primary": "Family",
+        "bioscan_s_primary": "Scientific Name"
+      }}
+      globalFilters={globalFilters}
+      setGlobalFilters={setGlobalFilters}
+      baseUrl={ env.TOL_DATA }
+      dependentFilters
+    />
+  )
+
+  const chart = (
+    <RemoteBarChart
+      stacked
+      title=""
+      endpoint="barcoding_run_data"
+      breakDownBy="bioscan_o_primary"
+      xAxis="sts_sample.sts_col_date"
+      interval="M"
+      filter={globalFilters}
+      setCombinedFilters={setCombinedFilters}
+      type='date'
+      height={500}
+      baseUrl={ env.TOL_DATA }
+      shortDate
+    />
+  )
 
   const table = (
     <RemoteTable
       endpoint="barcoding_run_data"
-      filter={globalFilters}
-      // defaultSort="sts_sample.sts_col_date"
+      filter={combinedFilters}
+      defaultSort="sts_sample.sts_col_date"
       fields={{
-        "bioscan_f_primary": {
-          rename: "Family"
+        "sts_specimen.id": {
+          rename: "Specimen ID"
         },
         "bioscan_o_primary": {
-          rename: "Order Group"
+          rename: "Order"
+        },
+        "bioscan_f_primary": {
+          rename: "Family"
         },
         "bioscan_g_primary": {
           rename: "Genus"
@@ -42,11 +83,18 @@ function Sandbox() {
     />
   )
 
+  const resetFiltersButton = (
+    <Button className="m-1" onClick={()=>{setGlobalFilters({in_list:  {}})}}>Reset Filters</Button>
+  )
+
   return (
     <div className="bioscan-report-card">
       <Widgets
+        components={[resetFiltersButton]}
+      />
+      <Widgets
         title="Report Card"
-        components={[table]}
+        components={[filters, chart, table]}
       />
     </div>
   );
