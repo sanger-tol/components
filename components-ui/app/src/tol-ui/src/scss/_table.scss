@@ -193,8 +193,8 @@
     overflow: auto;
     display: block;
     table-layout: auto;
-    height: 700px;
-    overflow-y: scroll;
+    height: 700px; // only a deafult size
+    overflow-y: auto;
   }
 
   // ensure columns fill div
@@ -258,4 +258,14 @@
 .tooltip-wrapper {
   display: inline-block;
   fill: var(--bs-body-color);
+}
+
+// config modal
+.clear-saved-config.btn.btn-warning {
+  color: white !important;
+  fill: white !important;
+
+  svg {
+    margin-left: 6px;
+  }
 }

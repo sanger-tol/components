@@ -7,10 +7,12 @@ SPDX-License-Identifier: MIT
 import React from "react";
 import { httpClient } from '../services/http/httpClient'
 import Table from "./Table";
-import { Fields } from "./Field";
-import { getTableStatusIndicator } from './TableUtils';
+import { FieldMetaData, FieldMeta, initialiseFieldMeta } from "./FieldMeta";
+import { getFieldMetaAttributeFromStorage,
+         getTableStatusIndicator,
+         setFieldMetaAttributeInStorage,
+         setFilterVisibility } from './TableUtils';
 import TableEmpty from "./TableEmpty";
-import { v4 as uuid } from 'uuid';
 import { convertTableData,
          convertHeadingData,
          debug,
@@ -21,15 +23,20 @@ import { convertTableData,
 
 
 export interface Props {
-  debug?: boolean,
+  id: string,
   endpoint: string,
   baseUrl?: string,
-  fields?: Fields,
+
+  fields?: FieldMetaData,
   filter?: object,
   defaultSort?: string,
-  noNav?: boolean,
+
+  noFilter?: boolean,
+  noPagination?: boolean,
   noConfigModal?: boolean,
+
   height?: number
+  debug?: boolean,
 }
 
 export interface State {
@@ -41,27 +48,29 @@ export interface State {
   error: string,
   loading: boolean,
   renderTimes: number,
-  fieldMeta: object
+  fieldMeta: FieldMeta | null
 }
 
 class RemoteTable extends React.Component<Props, State> {
-  id = "tol-table-" + uuid()
   constructor(props: Props) {
     const headingsDefault = [{
       dataField: '',
       text: '‎'
     }]
     super(props);
+
+    const storedFieldMeta = getFieldMetaAttributeFromStorage(props.id)
+
     this.state = {
       tableData: [],
       headings: headingsDefault,
       page: 1,
-      sizePerPage: 100,
+      sizePerPage: (storedFieldMeta !== null) ? storedFieldMeta.pageSize : 50,
       totalSize: -1,
       error: 'false',
       loading: false,
       renderTimes: 0,
-      fieldMeta: {}
+      fieldMeta: storedFieldMeta
     }
   }
 
@@ -79,7 +88,7 @@ class RemoteTable extends React.Component<Props, State> {
 
   componentDidMount() {
     this.refreshPagination()
-    setTableHeight(this.id, this.props.height)
+    setTableHeight(this.props.id, this.props.height)
   }
 
   componentDidUpdate(prevProps: Readonly<Props>) {
@@ -88,15 +97,17 @@ class RemoteTable extends React.Component<Props, State> {
     }
     // ensure the table size doesn't change - slight workaround
     if (this.state.renderTimes < 2) {
-      setTableHeight(this.id, this.props.height)
+      setTableHeight(this.props.id, this.props.height)
     }
   }
 
-  modalOnSave = (fieldMeta: object) => {
+  modalOnSave = (fieldMeta: FieldMeta) => {
     this.setState({
       fieldMeta: fieldMeta
     })
     this.refreshPagination(1)
+    setFieldMetaAttributeInStorage(this.props.id, fieldMeta.data, 'data')
+    setFieldMetaAttributeInStorage(this.props.id, fieldMeta.order, 'order')
   }
 
   handleTableChange = (_type: string, { page, sizePerPage, filters, sortOrder, sortField } : {
@@ -162,39 +173,44 @@ class RemoteTable extends React.Component<Props, State> {
           loading: false
         }));
 
+        let fieldMeta: FieldMeta = initialiseFieldMeta()
         // check if any data is returned
         if (apiData[0] !== undefined) {
-          let fieldMeta = {};
           let fieldPropDefined = this.props.fields !== undefined;
 
-          // checking if 'fields' has been defined
-          if (fieldPropDefined) {
-            fieldMeta = structureFieldsUsingProp(this.props.fields!, apiMeta.types)
-          }
+          if (this.state.fieldMeta === null) {
+            // checking if 'fields' has been defined
+            if (fieldPropDefined) {
+              fieldMeta = structureFieldsUsingProp(this.props.fields!, apiMeta.types)
+            }
 
-          // auto add all fields in api call - if fields specified, extras are hidden
-          if ('attributes' in apiData[0]) {
-            const attributes = structureFieldsAuto(
-              apiData[0].attributes,
-              apiMeta.types,
-              fieldMeta,
-              true,
-              fieldPropDefined
-            )
-            fieldMeta = Object.assign(fieldMeta, attributes)
+            // auto add all fields in api call - if fields specified, extras are hidden
+            if ('attributes' in apiData[0]) {
+              const attributes = structureFieldsAuto(
+                apiData[0].attributes,
+                apiMeta.types,
+                fieldMeta,
+                true,
+                fieldPropDefined
+              )
+              fieldMeta = Object.assign(fieldMeta, attributes)
+            }
+            if ('relationships' in apiData[0]) {
+              const relationships = structureFieldsAuto(
+                apiData[0].relationships,
+                apiMeta.types,
+                fieldMeta,
+                false,
+                fieldPropDefined,
+                this.props.debug
+              )
+              fieldMeta = Object.assign(fieldMeta, relationships)
+            }
+            setFieldMetaAttributeInStorage(this.props.id, fieldMeta)
+          } else {
+            fieldMeta = getFieldMetaAttributeFromStorage(this.props.id)
           }
-          if ('relationships' in apiData[0]) {
-            const relationships = structureFieldsAuto(
-              apiData[0].relationships,
-              apiMeta.types,
-              fieldMeta,
-              false,
-              fieldPropDefined,
-              this.props.debug
-            )
-            fieldMeta = Object.assign(fieldMeta, relationships)
-          }
-
+        
           // debug logs if prop defined
           debug(
             apiData,
@@ -202,17 +218,27 @@ class RemoteTable extends React.Component<Props, State> {
             this.props.debug
           )
 
-          // only setting fieldMeta state on first load
+          // middle load wheel on first load
           if (this.state.renderTimes === 0) {
             this.setState({
               fieldMeta: fieldMeta,
               renderTimes: 1
             })
           }
+
+          // setting data using fieldMeta
           this.setState({
             headings: convertHeadingData(fieldMeta),
-            tableData: convertTableData(apiData, fieldMeta, this.props.baseUrl)
+            tableData: convertTableData(
+              apiData,
+              fieldMeta,
+              this.props.baseUrl
+            ),
+            sizePerPage: fieldMeta.pageSize
           })
+
+          // setting filter visibility
+          setFilterVisibility(this.props.id)
         }
       })
       // @ts-ignore
@@ -251,7 +277,7 @@ class RemoteTable extends React.Component<Props, State> {
 
     return (
       <Table
-        id={ this.id }
+        id={ this.props.id }
         data={ tableData }
         columns={ headings }
         fieldMeta={fieldMeta}
@@ -259,7 +285,8 @@ class RemoteTable extends React.Component<Props, State> {
         page={ page }
         sizePerPage={ sizePerPage }
         totalSize={ totalSize }
-        noNav={ this.props.noNav }
+        noPagination={ this.props.noPagination }
+        noFilter={ this.props.noFilter }
         noConfigModal={ this.props.noConfigModal }
         loading={ loading }
         tableStatusIndicator={ tableStatusIndicator }

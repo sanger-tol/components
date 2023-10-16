@@ -15,6 +15,7 @@ function ChartTables() {
       <CentreContents>
         <RemoteChartTable
           stacked
+          id="run-data-1"
           title="Run Data"
           endpoint="run_data"
           breakDownBy="mlwh_platform_type"

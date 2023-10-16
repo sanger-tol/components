@@ -16,19 +16,25 @@ export interface Props {
   open: boolean,
   setOpen: React.Dispatch<React.SetStateAction<any>>,
   children: JSX.Element | JSX.Element[],
+  overflow?: boolean,
   actionButton?: JSX.Element,
 }
 
 const Modal = (props: Props) => {
-  const {size, open, setOpen, children, actionButton} = props
+  const {size, open, setOpen, children, overflow, actionButton} = props
   const handleClose = () => {
     setOpen(false)
+  }
+
+  let rsOverflow = true
+  if (overflow === false) {
+    rsOverflow = false
   }
 
   return (
     <>
       {/* @ts-ignore */}
-      <RSModal open={open} onClose={handleClose} size={size}>
+      <RSModal overflow={rsOverflow} open={open} onClose={handleClose} size={size}>
         <RSModal.Body>
           {children}
         </RSModal.Body>

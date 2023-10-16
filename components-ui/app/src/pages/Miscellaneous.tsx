@@ -10,7 +10,8 @@ import { useState } from 'react';
 
 function Miscellaneous() {
   const [modalOpen, setModalOpen] = useState(false)
-  const [compareOpen, setCompareOpen] = useState(false)
+  const [contents, setContents] = useState()
+  console.log(contents)
 
   return (
     <div>
@@ -33,17 +34,23 @@ function Miscellaneous() {
             </p>
           </Modal>
           <Button onClick = {() => setModalOpen(true)}>Example Modal</Button>
-          <Modal
-            size='full'
-            open={compareOpen}
-            setOpen={setCompareOpen}
-          >
-            <DnD
-              leftList={['item 1', 'item 2', 'item 3']}
-              rightList={['item 4', 'item 5', 'item 6']}
-            />
-          </Modal>
-          <Button style={{marginLeft: 6}} onClick = {() => setCompareOpen(true)}>Compare Drag & Drop</Button>
+          <h2 className='mt-5'>Drag & Drop</h2>
+          <h5>DnD Contents: </h5>
+          <DnD
+            elements={{
+              one: [
+                {id: 'hello-div', element: <div className='tol-dnd-item'>Hello</div>},
+                {id: 'bye-div', element: <div className='tol-dnd-item'>Bye</div>},
+                {id: 'test-div', element: <div className='tol-dnd-item'>Test</div>}
+              ],
+              two: [
+                {id: 'dog-div', element: <div className='tol-dnd-item'>Dog</div>},
+                {id: 'cat-div', element: <div className='tol-dnd-item'>Cat</div>},
+                {id: 'mouse-div', element: <div className='tol-dnd-item'>Mouse</div>}
+              ]
+            }}
+            setContents={setContents}
+          />
       </CentreContents>
     </div>
   );

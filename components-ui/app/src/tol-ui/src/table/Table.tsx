@@ -9,7 +9,9 @@ import { Button } from '../index';
 import TableLoadingHelix from './TableLoadingHelix';
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory from 'react-bootstrap-table2-filter';
-import { switchFilterVisibility, addPlus } from './TableUtils';
+import { switchFilterVisibility,
+         addPlus,
+         setFieldMetaAttributeInStorage } from './TableUtils';
 import paginationFactory, { PaginationProvider,
                             PaginationListStandalone,
                             SizePerPageDropdownStandalone,
@@ -31,7 +33,8 @@ interface Props {
   page: number,
   sizePerPage: number,
   totalSize: number,
-  noNav?: boolean,
+  noPagination?: boolean,
+  noFilter?: boolean,
   noConfigModal?: boolean,
   loading: boolean,
   tableStatusIndicator: any,
@@ -49,7 +52,8 @@ function Table (props: Props) {
     page,
     sizePerPage,
     totalSize,
-    noNav,
+    noPagination,
+    noFilter,
     noConfigModal,
     loading,
     tableStatusIndicator,
@@ -57,17 +61,14 @@ function Table (props: Props) {
   } = props;
   const [open, setOpen] = useState(false)
 
-  // show nav and configModal as default
-  if (noNav === undefined) {
-    noNav = true
-  } else {
-    noNav = false
+  // show certain components as default
+  const showAsDefault = (noComponent?: boolean) => {
+    if (noComponent === undefined) return true
+    return false
   }
-  if (noConfigModal === undefined) {
-    noConfigModal = true
-  } else {
-    noConfigModal = false
-  }
+  noPagination = showAsDefault(noPagination)
+  noFilter = showAsDefault(noFilter)
+  noConfigModal = showAsDefault(noConfigModal)
 
   const options = {
     custom: true,
@@ -75,10 +76,14 @@ function Table (props: Props) {
     sizePerPage, 
     totalSize,
     sizePerPageList: [
+      { text: '25', value: 25 },
       { text: '50', value: 50 },
       { text: '100', value: 100 },
-      { text: '200', value: 200 }
-    ]
+      { text: '250', value: 250 }
+    ],
+    onSizePerPageChange: (sizePerPage: number) => {
+      setFieldMetaAttributeInStorage(id, sizePerPage, 'pageSize')
+    }
   }
 
   return (
@@ -91,39 +96,42 @@ function Table (props: Props) {
         paginationTableProps
       }) => (
         <div className='tol-table'>
-          {noNav &&
-            <div>
-              {false && // temp excluded
-                <Button 
-                  className="tol-table-button"
-                  variant="primary" 
-                  onClick={ () => {setOpen(true)} }
-                >
-                  <FontAwesomeIcon icon={faSliders} size="sm" />
-                </Button>
-              }
-              {open &&
-                <ConfigModal
-                  fieldMeta={fieldMeta}
-                  open={open}
-                  setOpen={setOpen}
-                  modalOnSave={modalOnSave}
-                />
-              }
-              <Button
-                className="tol-table-button"
-                variant="primary"
-                onClick={ () => switchFilterVisibility(id) }
-              >
-                <FontAwesomeIcon icon={faFilter} size="sm" />
-              </Button>
+          {noConfigModal &&
+            <Button 
+              className="tol-table-button"
+              variant="primary"
+              onClick={ () => {setOpen(true)} }
+            >
+              <FontAwesomeIcon icon={faSliders} size="sm" />
+            </Button>
+          }
+          {open &&
+            <ConfigModal
+              tableId={id}
+              fieldMeta={fieldMeta}
+              open={open}
+              setOpen={setOpen}
+              modalOnSave={modalOnSave}
+            />
+          }
+          {noFilter &&
+            <Button
+              className="tol-table-button"
+              variant="primary"
+              onClick={ () => switchFilterVisibility(id) }
+            >
+              <FontAwesomeIcon icon={faFilter} size="sm" />
+            </Button>
+          }
+          {noPagination &&
+            <>
               <SizePerPageDropdownStandalone
                 { ...paginationProps }
               />
               <PaginationListStandalone
                 { ...paginationProps }
               />
-            </div>
+            </>
           }
           {loading &&
             <TableLoadingHelix />
@@ -143,7 +151,7 @@ function Table (props: Props) {
             noDataIndication={ tableStatusIndicator }
             rowClasses='tol-row'
           />
-          {noNav &&
+          {noPagination &&
             <>
               <PaginationTotalStandalone
                 { ...paginationProps }

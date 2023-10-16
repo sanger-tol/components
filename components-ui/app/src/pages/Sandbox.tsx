@@ -10,7 +10,7 @@ import { RemoteBarChart,
          Widgets,
          Button,
          env } from '../tol-ui/src/index'
-import { useState } from 'react'
+
 
 function Sandbox() {
 
@@ -67,19 +67,12 @@ function Sandbox() {
         "bioscan_f_primary": {
           rename: "Family"
         },
-        "bioscan_g_primary": {
-          rename: "Genus"
-        },
-        "bioscan_s_primary": {
-          rename: "Scientific Name"
-        },
-        "sts_sample.sts_col_date": {
-          rename: "Sample Collection Date",
-          sort: true
+        "benchling_species.sts_scientific_name": {
+          rename: "Benchling Species",
+          relationshipBox: true
         }
       }}
       height={500}
-      baseUrl={ env.TOL_DATA }
     />
   )
 
@@ -88,7 +81,7 @@ function Sandbox() {
   )
 
   return (
-    <div className="bioscan-report-card">
+    <div className="sequencing-runs">
       <Widgets
         components={[resetFiltersButton]}
       />

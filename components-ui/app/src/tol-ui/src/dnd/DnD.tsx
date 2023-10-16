@@ -4,40 +4,56 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
-import DnDColumn from "./Column"
+import { Row } from "../index";
+import { useState, useEffect } from "react";
+import Column from "./Column"
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
-export interface Props {
-  leftList: string[],
-  rightList: string[]
+
+export interface Element {
+  id: string,
+  element: JSX.Element
 }
 
-function CompareDnD(props: Props) {
-  const { leftList, rightList } = props;
-  const initialColumns = {
-    left: {
-      id: 'left',
-      list: leftList
-    },
-    right: {
-      id: 'right',
-      list: rightList
+interface Columns {
+  [key: string]: Element[]
+}
+
+interface Props {
+  elements: object,
+  setContents?: React.Dispatch<React.SetStateAction<any>>,
+  editMode?: boolean,
+  dealWithContents?: Function
+}
+
+function convertElementsData(columns: Columns) {
+  const cols = {}
+  for (const [key, elements] of Object.entries(columns)) {
+    cols[key] = {
+      id: key,
+      list: elements
     }
   }
-  const [columns, setColumns] = useState(initialColumns)
-  console.log(columns)
+  return cols
+}
+
+function DnD(props: Props) {
+  const { elements, setContents, dealWithContents } = props
+  const [columns, setColumns] = useState<object>(
+    convertElementsData(elements as Columns)
+  )
+  let editMode = true
+  if (props.editMode === false) editMode = false
 
   const onDragEnd = ({ source, destination }: DropResult) => {
     // make sure we have a valid destination
     if (destination === undefined || destination === null) return null
 
     // make sure we're actually moving the item
-    if (
-      source.droppableId === destination.droppableId &&
-      destination.index === source.index
-    )
+    if (source.droppableId === destination.droppableId &&
+        destination.index === source.index) {
       return null
+    }
 
     // set start and end variables
     const start = columns[source.droppableId]
@@ -62,7 +78,6 @@ function CompareDnD(props: Props) {
 
       // update the state
       setColumns(state => ({ ...state, [newCol.id]: newCol }))
-      return null
     } else {
       // ff start is different from end, we need to update multiple columns
       // filter the start list like before
@@ -74,6 +89,12 @@ function CompareDnD(props: Props) {
       const newStartCol = {
         id: start.id,
         list: newStartList
+      }
+
+      // stop on drop with custom function
+      if (dealWithContents !== undefined) {
+        // false = don't allow drop
+        if (!dealWithContents(newStartCol)) return null
       }
 
       // make a new end list array
@@ -94,18 +115,31 @@ function CompareDnD(props: Props) {
         [newStartCol.id]: newStartCol,
         [newEndCol.id]: newEndCol
       }))
-      return null
     }
+    return null
   }
+
+  useEffect(() => {
+    // accessing the data outside of the component
+    if (setContents !== undefined) {
+      setContents(columns)
+    }
+  }, [columns]);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="tol-dnd-section">
+      <Row style={{
+        marginLeft: 0,
+        marginRight: 0,
+        paddingLeft: 0,
+        paddingRight: 0,
+      }}>
         {Object.values(columns).map(col => (
-          <DnDColumn col={col} key={col.id} />
+          <Column col={col} key={col.id} editMode={editMode} />
         ))}
-      </div>
+      </Row>
     </DragDropContext>
   )
 }
-export default CompareDnD;
+
+export default DnD;

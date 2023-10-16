@@ -13,6 +13,7 @@ function Tables() {
     <div className="tables">
       <CentreContents>
       <RemoteTable
+        id="run-data-1"
         endpoint="run_data"
         baseUrl={ env.TOL_DATA }
       />

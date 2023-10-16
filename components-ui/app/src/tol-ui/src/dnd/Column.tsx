@@ -4,35 +4,49 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Col } from '../index'
+import { Element } from './DnD'
 import Item from './Item'
 import { Droppable } from 'react-beautiful-dnd'
 
 
+interface Col {
+  id: string
+  list: Element[]
+}
+
 interface Props {
-  col: {
-    id: string
-    list: string[]
-  }
+  col: Col,
+  editMode: boolean
 }
 
 function Column(props: Props) {
-  const { col } = props
+  const { col, editMode } = props
   
   return (
-    <Droppable droppableId={col.id}>
-      {provided => (
-        <div className='tol-dnd-column'>
-          <h2>{col.id}</h2>
-          <div {...provided.droppableProps} ref={provided.innerRef}>
-            {col.list.map((text, index) => (
-              <Item key={text} text={text} index={index} />
-            ))}
-            {provided.placeholder}
+    <Col
+      key={`tol-widget-${col.id}`}
+      sm={12}
+      lg={6}
+      style={{ paddingLeft: 0, paddingRight: 0 }}
+    >
+      <h5 className='tol-dnd-column-title'>{col.id}</h5>
+      <Droppable droppableId={col.id}>
+        {(provided, snapshot) => (
+          <div className={snapshot.isDraggingOver ? 'tol-dnd-column-drop' : 'tol-dnd-column'} >
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {col.list.map((item, index) => (
+                <Item key={item.id} item={item} index={index} editMode={editMode} />
+              ))}
+              {provided.placeholder}
+            </div>
           </div>
-        </div>
-      )}
-    </Droppable>
+        )}
+      </Droppable>
+    </Col>
   )
 }
 
 export default Column;
+
+// snapshot.isDraggingOver (provided, snapshot)

@@ -38,6 +38,7 @@ const sunburst = (
 
 const table = (
   <RemoteTable
+    id="species-1"
     endpoint="species"
     height={ 500 }
     fields={{

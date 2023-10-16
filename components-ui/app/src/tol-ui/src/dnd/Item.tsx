@@ -4,31 +4,45 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Element } from './DnD'
 import { Draggable } from 'react-beautiful-dnd'
 
 
-interface ItemProps {
-  text: string
-  index: number
+interface Props {
+  item: Element,
+  index: number,
+  editMode: boolean
 }
 
-function Item(props: ItemProps) {
-  const { text, index } = props
+function Item(props: Props) {
+  const { item, index, editMode } = props
 
-  return (
-    <Draggable draggableId={text} index={index}>
-      {provided => (
-        <div
-          className="tol-dnd-item"
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-        >
-          {text}
-        </div>
-      )}
-    </Draggable>
-  )
+  if (editMode) {
+    return (
+      // @ts-ignore
+      <Draggable style={{top: "auto", left: "auto"}} draggableId={item.id} index={index}>
+        {(provided, snapshot) => {
+          if (snapshot.isDragging) {
+            // @ts-ignore
+            provided.draggableProps.style.left = provided.draggableProps.style.offsetLeft;
+            // @ts-ignore
+            provided.draggableProps.style.top = provided.draggableProps.style.offsetTop;
+          }
+          return (
+            <div
+              ref={provided.innerRef}
+              {...provided.draggableProps}
+              {...provided.dragHandleProps}
+            >
+              {item.element}
+              {provided['placeholder']}
+            </div>
+          )
+        }}
+      </Draggable>
+    )
+  }
+  return item.element
 }
 
 export default Item

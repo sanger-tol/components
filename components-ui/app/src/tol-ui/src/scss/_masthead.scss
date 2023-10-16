@@ -14,7 +14,7 @@ header.masthead {
   background: linear-gradient(0deg, darken($primary, 20%) 0%, darken($primary, 10%) 100%);
   background-repeat: no-repeat;
   background-position: center center;
-  background-attachment: scroll;
+  background-attachment: auto;
   background-size: cover;
 
   .masthead-content {

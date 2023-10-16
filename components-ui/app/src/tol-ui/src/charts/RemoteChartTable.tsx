@@ -13,6 +13,7 @@ import { useState } from 'react';
 
         
 interface Props {
+  id: string,
   title: string,
   endpoint: string,
   breakDownBy: string,

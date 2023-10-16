@@ -12,9 +12,13 @@ import RelationshipLink from './RelationshipLink';
 import CellTooltip from './CellTooltip';
 import NoDataAlert from "./NoDataAlert";
 import TableErrorAlert from './TableErrorAlert';
-import { normaliseCaps } from '../general/Utils'
-import { addFieldDefaults, CellRenderer } from './Field';
+import { addFieldDefaults,
+         CellRenderer,
+         FieldMeta,
+         initialiseFieldMeta } from './FieldMeta';
 
+
+export const fieldMetaVersion = "field-meta-v1"
 
 export function addPlus(totalSize: number) {
   // add a plus for elastic search (results cap at 10,000)
@@ -147,9 +151,9 @@ function splitRelationshipKeys(fieldMeta: object) {
   return relationshipKeys
 }
 
-function formatRelationshipData(relationships: object, attributes: object, fieldMeta: object, baseUrl?: string) {
+function formatRelationshipData(relationships: object, attributes: object, fieldMetaData: object, baseUrl?: string) {
   const updatedData: object = {}
-  const relationshipKeys: object = splitRelationshipKeys(fieldMeta)
+  const relationshipKeys: object = splitRelationshipKeys(fieldMetaData)
   for (const [key, splitKey] of Object.entries(relationshipKeys)) {
     const currentObject = splitKey[0]
     // checking relationship object is correct
@@ -170,7 +174,7 @@ function formatRelationshipData(relationships: object, attributes: object, field
           initialEndpoint={ relLink }
           relationships={ splitKey }
           attributes={ attributes }
-          fieldMeta={ fieldMeta[key] }
+          fieldMeta={ fieldMetaData[key] }
           baseUrl={ baseUrl }
         />
       )
@@ -179,68 +183,65 @@ function formatRelationshipData(relationships: object, attributes: object, field
   return updatedData
 }
 
-export function convertHeadingData(fieldMeta: object) {
+export function convertHeadingData(fieldMeta: FieldMeta) {
   const headerSortingClasses = () => ('sorting-active-colour');
   const headerStyling = (width: string) => { return { minWidth: width } }
   const updatedHeadings: object[] = []
 
-  for (const [key, meta] of Object.entries(fieldMeta)) {
-    let capsHeading = ''
-    let headerWidth = meta.width.toString() + 'px'
+  const dealWithHeadingOrder = (isActive: string) => {
+    for (const key of fieldMeta.order[isActive]) {
+      const meta = fieldMeta.data[key]
+      let headerWidth = meta.width!.toString() + 'px'
 
-    // rename via override or normalise a field name
-    if (isEmptyOrNull(meta.rename)) {
-      capsHeading = normaliseCaps(key)
-    } else {
-      capsHeading = meta.rename
-    }
-
-    if (meta.isAttribute === true) {
-      let heading = {
-        dataField: key,
-        text: capsHeading,
-        headerSortingClasses,
-        headerStyle: headerStyling(headerWidth),
-        hidden: meta.hidden
-      }
-      if (meta.sort === true) {
-        heading['sort'] = true
-      }
-      if (meta.filter === true) {
-        heading['filter'] = customFilter({
-          type: meta.filterType
-        })
-        if (meta.filterType === 'RANGE') {
-          heading['filterRenderer'] = (onFilter: any, column: any) =>
-            <DatePicker onFilter={ onFilter } column={ column } />
-        } else {
-          heading['filterRenderer'] = (onFilter: any, column: any) => 
-            <TextInput type={ meta.type } onFilter={ onFilter } column={ column } />
+      if (meta.isAttribute === true) {
+        let heading = {
+          dataField: key,
+          text: meta.rename,
+          headerSortingClasses,
+          headerStyle: headerStyling(headerWidth),
+          hidden: meta.hidden
         }
+        if (meta.sort === true) {
+          heading['sort'] = true
+        }
+        if (meta.filter === true) {
+          heading['filter'] = customFilter({
+            type: meta.filterType!
+          })
+          if (meta.filterType === 'RANGE') {
+            heading['filterRenderer'] = (onFilter: any, column: any) =>
+              <DatePicker onFilter={ onFilter } column={ column } />
+          } else {
+            heading['filterRenderer'] = (onFilter: any, column: any) => 
+              <TextInput type={ meta.type! } onFilter={ onFilter } column={ column } />
+          }
+        }
+        updatedHeadings.push(heading);
+      
+      // if heading is a relationship
+      } else if (meta.isAttribute === false) {
+        updatedHeadings.push({
+          dataField: key,
+          text: meta.rename,
+          headerStyle: headerStyling(headerWidth),
+          hidden: meta.hidden
+        });
       }
-      updatedHeadings.push(heading);
-    
-    // if heading is a relationship
-    } else if (meta.isAttribute === false) {
-      updatedHeadings.push({
-        dataField: key,
-        text: capsHeading,
-        headerStyle: headerStyling(headerWidth),
-        hidden: meta.hidden
-      });
     }
   }
+  dealWithHeadingOrder('active')
+  dealWithHeadingOrder('inactive')
   return updatedHeadings
 }
 
-export function convertTableData(data: any[], fieldMeta: object, baseUrl?: string) {
+export function convertTableData(data: any[], fieldMeta: FieldMeta, baseUrl?: string) {
   const updatedData: any[] = []
   data.forEach(row => {
     let fieldData = {'id': row.id}
     if ('attributes' in row) {
       const attributes = formatAttributeData(
         row.attributes,
-        fieldMeta
+        fieldMeta.data
       )
       fieldData = Object.assign(fieldData, attributes)
     }
@@ -248,7 +249,7 @@ export function convertTableData(data: any[], fieldMeta: object, baseUrl?: strin
       const relationships = formatRelationshipData(
         row.relationships,
         Object.assign({'id': row.id}, row.attributes),
-        fieldMeta,
+        fieldMeta.data,
         baseUrl
       )
       fieldData = Object.assign(fieldData, relationships)
@@ -273,34 +274,37 @@ function convertTypeToDefaultFilter(type: string) {
 
 // structure fields via the prop 'fields'
 export function structureFieldsUsingProp(fields: object, apiFieldMeta: object) {
+  const fieldMeta = initialiseFieldMeta()
   for (let [key, meta] of Object.entries(fields)) {
-    fields[key] = addFieldDefaults(meta)
+    fieldMeta.order.active.push(key)
+    fieldMeta.data[key] = addFieldDefaults(key, meta!)
     // if key is a relationship
     if (key.includes('.')) {
       if (isEmptyOrNull(meta.rename)) {
         throw Error('Relationship field \'' + key + '\' requires a rename')
       }
-      fields[key]['isAttribute'] = false
+      fieldMeta.data[key]['isAttribute'] = false
     } else {
-      fields[key]['isAttribute'] = true
-      fields[key]['type'] = apiFieldMeta[key]
+      fieldMeta.data[key]['isAttribute'] = true
+      fieldMeta.data[key]['type'] = apiFieldMeta[key]
       // you can currently only override with 'exact' filtering
-      if (fields[key]['filterType'] === 'EXACT') {
-        fields[key]['filterType'] = 'EXACT'
+      if (fieldMeta.data[key]['filterType'] === 'EXACT') {
+        fieldMeta.data[key]['filterType'] = 'EXACT'
       } else {
-        fields[key]['filterType'] = convertTypeToDefaultFilter(apiFieldMeta[key])
+        fieldMeta.data[key]['filterType'] = convertTypeToDefaultFilter(apiFieldMeta[key])
       }
     }
   }
-  return fields
+  return fieldMeta
 }
 
 function defineFieldMeta(
+  key: string,
   isAttribute: boolean,
   hidden: boolean,
   type: string
 ) {
-  let field = addFieldDefaults({
+  let field = addFieldDefaults(key, {
     'isAttribute': isAttribute,
     'relationshipBox': !isAttribute,
     'hidden': hidden
@@ -317,15 +321,13 @@ function defineFieldMeta(
 export function structureFieldsAuto(
   apiFields: object,
   apiMeta: object,
-  fieldMeta: object,
+  fieldMeta: FieldMeta,
   isAttribute: boolean,
   fieldPropDefined: boolean,
   debug?: boolean
 ) {
-  const fields = {}
-
   // id is seperate from attributes, so it needs to be added
-  if(isAttribute) {
+  if (isAttribute) {
     apiFields = Object.assign({'id': null}, apiFields)
   }
 
@@ -339,23 +341,20 @@ export function structureFieldsAuto(
       continue
     }
 
-    // adding hidden fields if not defined in fields prop
-    const type = apiMeta[key]
-    if (!fieldPropDefined) {
-      fields[key] = defineFieldMeta(
+    // ignore if key already in fieldMeta
+    if (!(key in fieldMeta.data)) {
+      // adding to order depending on field prop being defined
+      const isActive = fieldPropDefined ? 'inactive' : 'active'
+      fieldMeta.order[isActive].push(key)
+      fieldMeta.data[key] = defineFieldMeta(
+        key,
         isAttribute,
-        false,
-        type
-      )
-    } else if (!(key in fieldMeta)) {
-      fields[key] = defineFieldMeta(
-        isAttribute,
-        true,
-        type
+        fieldPropDefined, // hidden as default, overridden by field prop
+        apiMeta[key] // python data type
       )
     }
   }
-  return fields
+  return fieldMeta
 }
 
 export function generateFilter(apiFilters: object, filters?: object) {
@@ -434,8 +433,9 @@ export function switchFilterVisibility(tableId: string) {
   if (table?.hasChildNodes) {
     const headers = table.childNodes[0].childNodes[0].childNodes
 
-    for (let x = 0; x < headers.length; x++) {
-      const header = headers[x]
+    let visible = false
+    for (let index = 0; index < headers.length; index++) {
+      const header = headers[index]
       if (header.childNodes.length > 1) {
         const elements = header.childNodes
         const filter = elements[elements.length-1]
@@ -443,11 +443,31 @@ export function switchFilterVisibility(tableId: string) {
         if (filter.className === "filter-input-hide") {
           // @ts-ignore
           filter.className = "filter-input-show"
+          visible = true
         } else {
           // @ts-ignore
           filter.className = "filter-input-hide"
         }
-        
+      }
+    }
+    setFieldMetaAttributeInStorage(tableId, visible, "filterVisibility")
+  }
+}
+
+export function setFilterVisibility(tableId: string) {
+  if (getFieldMetaAttributeFromStorage(tableId, "filterVisibility")) {
+    const table = document.getElementById(tableId)
+    if (table?.hasChildNodes) {
+      const headers = table.childNodes[0].childNodes[0].childNodes
+  
+      for (let index = 0; index < headers.length; index++) {
+        const header = headers[index]
+        if (header.childNodes.length > 1) {
+          const elements = header.childNodes
+          const filter = elements[elements.length-1]
+          // @ts-ignore
+          filter.className = "filter-input-show"
+        }
       }
     }
   }
@@ -461,4 +481,31 @@ export function setTableHeight(tableId: string, height?: number) {
       table.style.height = height.toString() + 'px';
     }
   }
+}
+
+export function setFieldMetaAttributeInStorage(tableId: string, value: any, attribute?: string) {
+  if (attribute === undefined) {
+    localStorage.setItem(`${tableId}-${fieldMetaVersion}`, JSON.stringify(value))
+  } else {
+    const fieldMeta = JSON.parse(localStorage.getItem(`${tableId}-${fieldMetaVersion}`)!)
+    fieldMeta[attribute] = value
+    localStorage.setItem(`${tableId}-${fieldMetaVersion}`, JSON.stringify(fieldMeta))
+  }
+}
+
+export function getFieldMetaAttributeFromStorage(tableId: string, attribute?: string) {
+  const data = localStorage.getItem(`${tableId}-${fieldMetaVersion}`)
+  if (data !== null) {
+    let fieldMeta = JSON.parse(data)
+    if (attribute !== undefined) {
+      return fieldMeta[attribute]
+    }
+    return fieldMeta
+  }
+  return null
+}
+
+export function deleteFieldMetaFromStorage(tableId: string) {
+  localStorage.removeItem(`${tableId}-${fieldMetaVersion}`)
+  window.location.reload()
 }
