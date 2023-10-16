@@ -47,6 +47,8 @@ export interface FieldMeta {
 }
 
 const fieldDefaults = (key: string) => {
+  const rename = (key === 'uid') ? 'ID' : normaliseCaps(key)
+
   return {
     cellRenderer: null,
     filter: true,
@@ -55,7 +57,7 @@ const fieldDefaults = (key: string) => {
     isAttribute: null,
     link: null,
     relationshipBox: false,
-    rename: normaliseCaps(key),
+    rename: rename,
     sort: true,
     type: null,
     width: 200

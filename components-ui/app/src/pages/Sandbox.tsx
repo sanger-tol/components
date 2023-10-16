@@ -11,6 +11,7 @@ import { RemoteBarChart,
          Button,
          env } from '../tol-ui/src/index'
 
+import { useState } from 'react'
 
 function Sandbox() {
 
@@ -54,6 +55,7 @@ function Sandbox() {
 
   const table = (
     <RemoteTable
+      id='sandbox-table-1'
       endpoint="barcoding_run_data"
       filter={combinedFilters}
       defaultSort="sts_sample.sts_col_date"

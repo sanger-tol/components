@@ -21,10 +21,25 @@ function Maps() {
     points.push([lat, long])
   }
 
+  // create the marker objects from the fake data that the bubblemap receives
+  function createMapObjectsFromCoordinates(coordinatesArray) {
+    const mapObjects = coordinatesArray.map(coordinates => {
+      return {
+        geometry: {
+          coordinates: coordinates
+        },
+        properties: {}
+      }
+    })
+    return mapObjects
+  }
+
+  const mapObjects = createMapObjectsFromCoordinates(points)
+
   return (
     <CentreContents>
       <h2>Bubble Map</h2>
-      <BubbleMap points={points} height={400}/>
+      <BubbleMap markers={mapObjects} height={400}/>
       <h2 className="mt-5">Remote Bubble Map</h2>
       <RemoteBubbleMap
         endpoint="sample"
@@ -40,6 +55,7 @@ function Maps() {
         latitudeKey="ene_map_test_latitude"
         height={400}
         filterInputFields={['ene_map_test_checksum']}
+        attributeKeys="ene_map_test_tol_updated_at"
         baseUrl={ env.TOL_DATA }
       />
     </CentreContents>

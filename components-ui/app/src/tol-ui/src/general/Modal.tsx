@@ -27,9 +27,7 @@ const Modal = (props: Props) => {
   }
 
   let rsOverflow = true
-  if (overflow === false) {
-    rsOverflow = false
-  }
+  if (overflow === false) rsOverflow = false
 
   return (
     <>

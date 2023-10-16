@@ -115,7 +115,7 @@ function formatAttributeData(data: object, fieldMeta: object) {
   for (let [key, value] of Object.entries(data)) {
 
     // temp deal with relationship objects
-    if(typeof value === "object" && value !== null) {
+    if (typeof value === "object" && value !== null) {
       value = value['id']
     }
 
@@ -326,9 +326,15 @@ export function structureFieldsAuto(
   fieldPropDefined: boolean,
   debug?: boolean
 ) {
-  // id is seperate from attributes, so it needs to be added
   if (isAttribute) {
-    apiFields = Object.assign({'id': null}, apiFields)
+    if (!('uid' in apiFields)) {
+      // id is seperate from attributes, so it needs to be added
+      // only added if uid does not exist
+      apiFields = Object.assign({'id': null}, apiFields)
+    } else if (!('uid' in fieldMeta.data)) {
+      // uid is automatically first on initial load
+      fieldMeta.order.active.push('uid')
+    }
   }
 
   for (let [key, data] of Object.entries(apiFields)) {
@@ -345,7 +351,10 @@ export function structureFieldsAuto(
     if (!(key in fieldMeta.data)) {
       // adding to order depending on field prop being defined
       const isActive = fieldPropDefined ? 'inactive' : 'active'
-      fieldMeta.order[isActive].push(key)
+
+      // uid is automatically first on initial load
+      if (key !== 'uid') fieldMeta.order[isActive].push(key)
+
       fieldMeta.data[key] = defineFieldMeta(
         key,
         isAttribute,

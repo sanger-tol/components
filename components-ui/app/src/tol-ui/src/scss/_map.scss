@@ -10,11 +10,20 @@
     width: 100%;
     border-radius: 6px;
   }
-  
-.tol-map-pointer-icon {
-  color: $primary;
-}
 
 .marker-cluster {
   color: black
+}
+
+.tol-map-popup .leaflet-popup-content-wrapper {
+  background-color: black !important;
+  border: none !important;
+  color: white !important;
+  opacity: 0.8 !important;
+}
+
+.tol-map-popup .leaflet-popup-tip {
+  background: black !important;
+  border: none !important;
+  opacity: 0.8 !important;
 }

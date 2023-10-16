@@ -4,21 +4,30 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { MapContainer, TileLayer } from 'react-leaflet';
-import Marker from "react-leaflet-enhanced-marker";
+import { MapContainer, TileLayer, Popup, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import MarkerClusterGroup from "react-leaflet-cluster";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import Leaflet from 'leaflet';
+import icon from 'leaflet/dist/images/marker-icon.png';
+import { normaliseCaps } from '../general/Utils';
 
 
 interface Props {
-  points: number[][],
+  markers: any[],
   height: number
 }
 
+let DefaultIcon = Leaflet.icon({
+  iconUrl: icon,
+  iconSize: [20,35],
+  iconAnchor: [12,41],
+  popupAnchor: [-2, -36]
+});
+
+Leaflet.Marker.prototype.options.icon = DefaultIcon;
+
 function BubbleMap(props: Props) {
-  const { points, height } = props;
+  const { markers, height } = props;
 
   return (
     <div style={{height: height.toString() + 'px'}}>
@@ -28,14 +37,31 @@ function BubbleMap(props: Props) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        <MarkerClusterGroup chunkedLoading>
-          {points.map((point, index) => {
+       <MarkerClusterGroup chunkedLoading>
+          {markers.map((marker, index) => {
             return(
               <Marker
                 key={index}
-                position={point}
-                icon={<FontAwesomeIcon icon={faLocationDot} size="3x" className='tol-map-pointer-icon'/>}
-              />
+                position={marker.geometry.coordinates}
+              >
+                {Object.keys(marker.properties).length > 0 && (
+                  <Popup className='tol-map-popup'>
+                  <div>
+                    {Object.keys(marker.properties).length > 0 && (
+                      <div>
+                        <ul>
+                          {Object.entries(marker.properties).map(([key, value]) => (
+                            <li key={key}>
+                              {normaliseCaps(key)}: {value}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </Popup>
+                )}
+              </Marker>
             )
           })}
         </MarkerClusterGroup>
