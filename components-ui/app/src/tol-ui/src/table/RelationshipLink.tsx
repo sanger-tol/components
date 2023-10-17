@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import React from 'react';
 import { httpClient } from '../services/http/httpClient'
 import HoverOverlay from '../general/HoverOverlay';
-import FormatRelationshipTooltip from './FormatRelationshipTooltip';
+import FormatTooltip from '../general/FormatTooltip';
 import { checkAndAutoConvertText,
          createCellRenderer,
          isEmptyObj } from './TableUtils'
@@ -118,7 +118,7 @@ class RelationshipLink extends React.Component<Props, State> {
               return (
                 <HoverOverlay
                   placement='autoHorizontalStart'
-                  contents={ <FormatRelationshipTooltip contents={ this.state.contents } /> }
+                  contents={ <FormatTooltip contents={ this.state.contents } /> }
                 >
                   <div className='link-box' key={ this.props.initialEndpoint }>
                     { this.state.text }

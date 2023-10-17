@@ -55,7 +55,7 @@ function Maps() {
         latitudeKey="ene_map_test_latitude"
         height={400}
         filterInputFields={['ene_map_test_checksum']}
-        attributeKeys="ene_map_test_tol_updated_at"
+        attributeKeys="ene_map_test_tol_updated_at, ene_map_test_longitude"
         baseUrl={ env.TOL_DATA }
       />
     </CentreContents>

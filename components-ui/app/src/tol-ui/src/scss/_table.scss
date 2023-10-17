@@ -240,7 +240,7 @@
 }
 
 // tooltip
-.relationship-tooltip {
+.formatted-tooltip {
   margin: 5px;
 }
 
@@ -248,6 +248,10 @@
   margin-right: 5px;
   font-size: small;
   font-weight: 1000;
+}
+
+.tooltip-value {
+  font-size: small;
 }
 
 .tooltip-value-none {

@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { formatDate, normaliseCaps } from '../general/Utils'
+import { formatDate, normaliseCaps } from './Utils'
 
 
 const updateContents = (contents: object) => {
@@ -31,11 +31,11 @@ interface Props {
   contents: object
 }
 
-function FormatRelationshipTooltip(props: Props) {
+function FormatTooltip(props: Props) {
   return (
     <div>
       {Object.entries(updateContents(props.contents)).map(([key, value]) => (
-        <div className='relationship-tooltip' key={ key }>
+        <div className='formatted-tooltip' key={ key }>
           <span className='tooltip-key'>{ normaliseCaps(key) }:</span>
           <span className='tooltip-value'>{ value }</span>
         </div>
@@ -44,4 +44,4 @@ function FormatRelationshipTooltip(props: Props) {
   );
 }
 
-export default FormatRelationshipTooltip;
+export default FormatTooltip;

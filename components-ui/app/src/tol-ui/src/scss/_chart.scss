@@ -21,3 +21,29 @@
   height: auto !important;
   min-height: 100% !important;
 }
+
+// map tooltip (popup) related
+.leaflet-popup .leaflet-popup-content-wrapper {
+  font-size: 14px;
+  opacity: 1 !important;
+  border-radius: 6px;
+
+  .leaflet-popup-content {
+    margin: 12px
+  }
+
+  .tol-map-popup .leaflet-popup-tip {
+    opacity: 1 !important;
+  }
+}
+
+.leaflet-popup-tip-container {
+  width: 20px !important;
+  height: 10px !important;
+  margin-left: -10px !important;
+  opacity: 1 !important;
+}
+
+.tol-map-popup .leaflet-popup-tip {
+  opacity: 1 !important;
+}

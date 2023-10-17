@@ -196,6 +196,7 @@
   .rs-popover {
     background-color: var(--tol-tooltip-colour);
     color: white;
+    border-radius: 6px;
   }
 
   .rs-popover[class*=placement-left] > .rs-popover-arrow::after {

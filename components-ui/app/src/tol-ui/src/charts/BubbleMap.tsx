@@ -8,7 +8,7 @@ import { MapContainer, TileLayer, Popup, Marker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import MarkerClusterGroup from "react-leaflet-cluster";
 import Leaflet from 'leaflet';
-import { normaliseCaps } from '../general/Utils';
+import { FormatTooltip } from '../general';
 //@ts-ignore
 import icon from 'leaflet/dist/images/marker-icon.png';
 
@@ -47,20 +47,8 @@ function BubbleMap(props: Props) {
               >
                 {Object.keys(marker.properties).length > 0 && (
                   <Popup className='tol-map-popup'>
-                  <div>
-                    {Object.keys(marker.properties).length > 0 && (
-                      <div>
-                        <ul>
-                          {Object.entries(marker.properties).map(([key, value]: any) => (
-                            <li key={key}>
-                              {normaliseCaps(key)}: {value}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </Popup>
+                    <FormatTooltip contents={ marker.properties } />
+                  </Popup>
                 )}
               </Marker>
             )
