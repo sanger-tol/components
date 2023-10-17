@@ -1,3 +1,5 @@
+Sandbox
+
 /*
  * SPDX-FileCopyrightText: 2023 Genome Research Ltd.
  *
@@ -55,7 +57,7 @@ function Sandbox() {
 
   const table = (
     <RemoteTable
-      id='sandbox-table-1'
+      id="sandbox-3"
       endpoint="barcoding_run_data"
       filter={combinedFilters}
       defaultSort="sts_sample.sts_col_date"
@@ -69,12 +71,19 @@ function Sandbox() {
         "bioscan_f_primary": {
           rename: "Family"
         },
-        "benchling_species.sts_scientific_name": {
-          rename: "Benchling Species",
-          relationshipBox: true
+        "bioscan_g_primary": {
+          rename: "Genus"
+        },
+        "bioscan_s_primary": {
+          rename: "Scientific Name"
+        },
+        "sts_sample.sts_col_date": {
+          rename: "Sample Collection Date",
+          sort: true
         }
       }}
       height={500}
+      baseUrl={ env.TOL_DATA }
     />
   )
 
@@ -95,3 +104,4 @@ function Sandbox() {
   );
 }
 export default Sandbox;
+

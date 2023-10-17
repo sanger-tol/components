@@ -1,3 +1,5 @@
+RemoteMultipleSelect
+
 /*
 SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 
@@ -63,18 +65,29 @@ function OrderData(data, fields: string[]){
   return ordered_data
 }
 
+// Stops the filters filtering themselves
 function ConfigFilters(index: number, filtersList, globalFilters){
-  const return_obj = {in_list: {}}
+  const returnObj = {in_list: {}}
+  const valuesToRemove: string[] = []
   if (globalFilters.in_list){
-    const filtersToApply = filtersList.slice(0,[index])
-    filtersToApply.forEach((filter) => {
+    const slicedFilters = filtersList.slice(0,[index])
+    slicedFilters.forEach((filter) => {
       if (globalFilters.in_list[filter]){
-        return_obj.in_list[filter] = globalFilters.in_list[filter]
+        let filtersToApply = globalFilters.in_list[filter]
+        // Prevents filters being added to every field
+        for (const f in valuesToRemove){
+          if (filtersToApply.includes(valuesToRemove[f])){
+            const indexOfRemoval = filtersToApply.indexOf(valuesToRemove[f])
+            filtersToApply.splice(indexOfRemoval,1)
+          }
+        }
+        returnObj.in_list[filter] = filtersToApply
+        valuesToRemove.push(...globalFilters.in_list[filter])
       }
     })
-    return return_obj
+    return returnObj
   } else {
-    return return_obj
+    return returnObj
   }
 }
 
@@ -94,6 +107,8 @@ function RemoteMultipleSelectFilters(props: Props) {
   const [loading, setLoading] = useState(true)
   const {endpoint, fields, renamedFields, globalFilters,
          setGlobalFilters, baseUrl, dependentFilters} = props
+
+  console.log(globalFilters)
 
   useEffect(() => {
     setGlobalFilters({in_list: {}})

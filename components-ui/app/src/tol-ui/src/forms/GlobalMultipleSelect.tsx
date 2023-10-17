@@ -1,3 +1,5 @@
+GlobalMultiple
+
 /*
 SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 
@@ -21,9 +23,9 @@ interface Props {
 }
 
 function setCheckedValues(globalFilters, setValue){
-  let values = []
+  let values: string[] = []
   for (const field in globalFilters.in_list){
-    values = (globalFilters.in_list[field])
+    values.push(...globalFilters.in_list[field])
   }
   setValue(values)
 }
