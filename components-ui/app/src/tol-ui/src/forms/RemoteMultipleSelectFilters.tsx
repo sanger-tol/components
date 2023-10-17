@@ -1,5 +1,3 @@
-RemoteMultipleSelect
-
 /*
 SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 
@@ -73,6 +71,7 @@ function ConfigFilters(index: number, filtersList, globalFilters){
     const slicedFilters = filtersList.slice(0,[index])
     slicedFilters.forEach((filter) => {
       if (globalFilters.in_list[filter]){
+        console.log(globalFilters.in_list)
         let filtersToApply = globalFilters.in_list[filter]
         // Prevents filters being added to every field
         for (const f in valuesToRemove){

@@ -1,5 +1,3 @@
-Sandbox
-
 /*
  * SPDX-FileCopyrightText: 2023 Genome Research Ltd.
  *
