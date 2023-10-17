@@ -18,7 +18,7 @@ interface Props {
   baseUrl?: string,
   aggs: object,
   filter?: object,
-  title: string,
+  title?: string,
   interval: DateInterval,
   height: number,
   shortDate?: boolean,

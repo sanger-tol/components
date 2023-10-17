@@ -10,8 +10,8 @@ import HeaderButton from "../models/HeaderButton";
 
 
 export interface Props {
-  title: String,
-  subTitle?: String,
+  title?: string,
+  subTitle?: string,
   buttons?: HeaderButton[]
   pageEmpty?: boolean
 }

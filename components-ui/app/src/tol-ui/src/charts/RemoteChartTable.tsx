@@ -14,7 +14,7 @@ import { useState } from 'react';
         
 interface Props {
   id: string,
-  title: string,
+  title?: string,
   endpoint: string,
   breakDownBy: string,
   xAxis: string,

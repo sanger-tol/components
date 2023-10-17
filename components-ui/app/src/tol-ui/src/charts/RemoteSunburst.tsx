@@ -13,7 +13,7 @@ import Placeholder from "../general/Placeholder";
 
 interface Props {
   endpoint: string,
-  title: string,
+  title?: string,
   sliceBy: string[],
   filter?: object,
   height: number,

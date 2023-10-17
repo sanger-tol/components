@@ -36,7 +36,7 @@ ChartJS.register(
 
 interface Props {
   stacked?: boolean,
-  title: string,
+  title?: string,
   labels: string[],
   datasets: any[],
   height: number,
@@ -143,7 +143,7 @@ function BarChart(props: Props) {
     responsive: true,
     plugins: {
       title: {
-        display: true,
+        display: title !== undefined,
         text: title,
         color: titleColour
       },

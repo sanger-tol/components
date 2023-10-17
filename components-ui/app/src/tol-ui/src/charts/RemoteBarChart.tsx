@@ -10,7 +10,7 @@ import { useState, useEffect } from 'react'
 
 
 interface Props {
-  title: string,
+  title?: string,
   endpoint: string,
   breakDownBy: string,
   xAxis: string,

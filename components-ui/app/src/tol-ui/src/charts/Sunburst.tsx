@@ -26,7 +26,7 @@ ChartJS.register(
 );
 
 interface Props {
-  title: string,
+  title?: string,
   datasets: object,
   height: number,
   legendPosition?: string,
@@ -80,7 +80,7 @@ function Sunburst(props: Props) {
     cutout: "20%",
     plugins: {
       title: {
-        display: true,
+        display: title !== undefined,
         text: title,
         color: titleColour
       },

@@ -37,6 +37,18 @@ interface MarkerObject {
  * @param {string} attributeKeys - (optional) comma-separated keys for fields to be included in the marker popup
  * @returns {MarkerObject[]} an array of map markers containing coordinate and attribute information
  */
+
+function formattingAttributeKeys(attributeKeysArray, item, marker){
+    attributeKeysArray.forEach((key) => {
+        // check if the attribute key exists in item.attributes
+        if (item.attributes.hasOwnProperty(key)) {
+            // add the attribute key and it's value to properties
+            marker.properties[key] = item.attributes[key]
+        }
+    })
+    return marker
+}
+
 function createMapMarkers(
     elasticData: any,
     latitudeKey: string,
@@ -46,34 +58,55 @@ function createMapMarkers(
     const markers: MarkerObject[] = []
     const attributeKeysArray = attributeKeys ? attributeKeys.split(',').map(key => key.trim()) : [];
 
-    for (const item of elasticData) {
-        const latitude = parseFloat(item.attributes[latitudeKey])
-        const longitude = parseFloat(item.attributes[longitudeKey])
+    if (latitudeKey.includes('.')  || longitudeKey.includes('.')){
+        const relationship_name = latitudeKey.split('.')[0]
+        const lat_attribute_name = latitudeKey.split('.')[1]
+        const long_attribute_name  = longitudeKey.split('.')[1]
+        elasticData.forEach((item) => {
+            if (item.relationships[relationship_name].data){
+                const longitude = parseFloat(item.relationships[relationship_name].data.attributes[long_attribute_name])
+                const latitude = parseFloat(item.relationships[relationship_name].data.attributes[lat_attribute_name])
+                // skips item if no long or lat value is provided
+                if (!isNaN(longitude) && !isNaN(latitude)){
+                    let marker: MarkerObject = {
+                        geometry: {
+                            coordinates: [latitude, longitude]
+                        },
+                        properties: {}
+                    }
 
-        // if latitute and longitude are not provided, skip the current iteration
-        if (isNaN(latitude) || isNaN(longitude)) {
-            continue
-        }
-
-        // create a marker with coordinate information
-        const marker: MarkerObject = {
-            geometry: {
-                coordinates: [latitude, longitude]
-            },
-            properties: {}
-        }
-
-        // if attributeKeys are given, add them to properties
-        if (attributeKeys) {
-            attributeKeysArray.forEach((key) => {
-                // check if the attribute key exists in item.attributes
-                if (item.attributes.hasOwnProperty(key)) {
-                    // add the attribute key and it's value to properties
-                    marker.properties[key] = item.attributes[key]
+                    if (attributeKeys) {
+                        marker = formattingAttributeKeys(attributeKeysArray, item, marker)
+                    }
+                    markers.push(marker)
                 }
-            })
+            }
         }
-        markers.push(marker)
+        )
+    } else {
+      for (const item of elasticData) {
+          const latitude = parseFloat(item.attributes[latitudeKey])
+          const longitude = parseFloat(item.attributes[longitudeKey])
+  
+          // if latitute and longitude are not provided, skip the current iteration
+          if (isNaN(latitude) || isNaN(longitude)) {
+              continue
+          }
+  
+          // create a marker with coordinate information
+          let marker: MarkerObject = {
+              geometry: {
+                  coordinates: [latitude, longitude]
+              },
+              properties: {}
+          }
+  
+          // if attributeKeys are given, add them to properties
+          if (attributeKeys) {
+              marker = formattingAttributeKeys(attributeKeysArray, item, marker)
+          }
+          markers.push(marker)
+      }
     }
     return markers
 }
