@@ -9,30 +9,21 @@ import { Row, Col } from "../index"
 import { getCssVarValue, isPropDefined } from "./Utils";
 
 
+type Size = 'sm' | 'md' | 'lg'
+
+interface Component {
+  element: JSX.Element,
+  size: Size
+}
+
+interface Components {
+  [key: string]: Component
+}
+
 interface Props {
   title?: string,
   description?: string,
-  components: any[]
-}
-
-// fill div if only 1 widget
-const getHalfScreenWidgetSize = (componentsLength: number) => {
-  switch(componentsLength) {
-    case 1:
-      return 12
-    default:
-      return 6
-  }
-}
-
-// fill div if only 1 widget
-const getThirdScreenWidgetSize = (componentsLength: number) => {
-  switch(componentsLength) {
-    case 1:
-      return 12
-    default:
-      return 4
-  }
+  components: Components
 }
 
 function Widgets(props: Props) {
@@ -46,10 +37,16 @@ function Widgets(props: Props) {
     } catch {}
   }, []);
 
-  // fill div if only 1 widget
-  const halfSize = getHalfScreenWidgetSize(components.length)
-  // @ts-ignore/no-unused-vars
-  const thirdSize = getThirdScreenWidgetSize(components.length)
+  const sizeToColSize = (size: Size, xl?: boolean) => {
+    switch(size) {
+      case "sm":
+        return xl ? 3 : 6
+      case "md":
+        return xl ? 6 : 12
+      case "lg":
+        return 12
+    }
+  }
 
   return (
     <>
@@ -66,16 +63,16 @@ function Widgets(props: Props) {
         <></>
       }
       <Row style={{ marginLeft: 0, marginRight: 0, paddingLeft: 12, paddingRight: 12}}>
-        {components.map((component, index) => {
+        {Object.keys(components).map(key => {
           return (
             <Col
-              key={`tol-widget-${index}`}
-              lg={12}
-              xl={halfSize}
+              key={`tol-widget-${key}`}
+              lg={sizeToColSize(components[key].size)}
+              xl={sizeToColSize(components[key].size, true)}
               style={{ paddingLeft: 0, paddingRight: 0 }}
             >
               <div className="tol-widget">
-                {component}
+                {components[key].element}
               </div>
             </Col>
           )

@@ -21,7 +21,7 @@ const chart = (
     xAxis="mlwh_start_date"
     type="date"
     interval="M"
-    height={ 500 }
+    height={ 250 }
     baseUrl={ env.TOL_DATA }
   />
 )
@@ -31,8 +31,9 @@ const sunburst = (
     title="Order of remote..."
     endpoint="species"
     sliceBy={ ["sts_order_group"] }
-    height={ 500 }
+    height={ 250 }
     baseUrl={ env.TOL_DATA }
+    legendPosition='right'
   />
 )
 
@@ -79,7 +80,24 @@ function Sandbox() {
       <Widgets
         title="Run Data"
         description="Hello this a test desc..."
-        components={[chart, sunburst, table, map]}
+        components={{
+          "chart-1": {
+            element: chart,
+            size: 'sm'
+          },
+          "sunburst-1": {
+            element: sunburst,
+            size: 'sm'
+          },
+          "table-1": {
+            element: table,
+            size: 'md'
+          },
+          "map-1": {
+            element: map,
+            size: 'md'
+          },
+        }}
       />
     </div>
   );
