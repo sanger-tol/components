@@ -26,6 +26,7 @@ services:
       - DB_URI
       - PARTNER_PORTAL_URL
       - API_PATH
+      - API_TOKEN
       - ELIXIR_CLIENT_ID
       - ELIXIR_CLIENT_SECRET
       - ELIXIR_REDIRECT_URI

@@ -32,7 +32,7 @@ def application():
     core_data_object(sql_datasource)
 
     # Data endpoints
-    authenticator = quick_and_dirty_auth(omnipotent_token='needToKnow87654335')
+    authenticator = quick_and_dirty_auth(omnipotent_token=os.getenv('API_TOKEN'))
     blueprint_data_local = data_blueprint(sql_datasource, authenticator=authenticator)
     app.register_blueprint(blueprint_data_local, name='local',
                            url_prefix=os.getenv('API_PATH'))
