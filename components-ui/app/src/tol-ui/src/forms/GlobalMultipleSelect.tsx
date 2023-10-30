@@ -20,7 +20,7 @@ interface Props {
   setGlobalFilters: React.Dispatch<React.SetStateAction<object>>
 }
 
-function setCheckedValues(globalFilters, setValue){
+function setCheckedValues(globalFilters: any, setValue: any){
   let values = []
   for (const field in globalFilters.in_list){
     values = (globalFilters.in_list[field])
@@ -32,7 +32,7 @@ const GlobalMultipleSelect = (props: Props) => {
   const [value, setValue] = useState<any[]>([])
   const {data, name, globalFilters, setGlobalFilters, display_name} = props
 
-  // Resets the selected boxes if global filters is empty
+  // resets the selected boxes if global filters is empty
   useEffect(() => {
     if (Object.keys(globalFilters.in_list).length == 0){
       setValue([])

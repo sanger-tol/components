@@ -11,16 +11,6 @@ import { Col, Row } from 'react-bootstrap';
 import Placeholder from "../general/Placeholder";
 
 
-interface Props {
-  endpoint: string,
-  fields: string[],
-  renamedFields?: object,
-  globalFilters: object,
-  dependentFilters?: boolean,
-  setGlobalFilters: React.Dispatch<React.SetStateAction<object>>,
-  baseUrl?: string
-}
-
 interface FilterObject {
   name: string,
   choices: string[]
@@ -51,35 +41,35 @@ function FormattingAggregationsToFilters(aggregation: any) {
   return filterData
 }
 
-function OrderData(data, fields: string[]){
-  const ordered_data: FilterObject[] = []
+function orderData(data: any, fields: string[]){
+  const orderedData: FilterObject[] = []
   fields.map((field) => {
-    for (let i=0; i<data.length; i++){
+    for (let i = 0; i < data.length; i++){
       if (field == data[i].name){
-        ordered_data.push(data[i])
+        orderedData.push(data[i])
       }
     }
   })
-  return ordered_data
+  return orderedData
 }
 
-function ConfigFilters(index: number, filtersList, globalFilters){
-  const return_obj = {in_list: {}}
+function configFilters(index: number, filtersList: any, globalFilters: any){
+  const updatedFilters = {in_list: {}}
   if (globalFilters.in_list){
     const filtersToApply = filtersList.slice(0,[index])
-    filtersToApply.forEach((filter) => {
+    filtersToApply.forEach((filter: any) => {
       if (globalFilters.in_list[filter]){
-        return_obj.in_list[filter] = globalFilters.in_list[filter]
+        updatedFilters.in_list[filter] = globalFilters.in_list[filter]
       }
     })
-    return return_obj
-  } else {
-    return return_obj
   }
+  return updatedFilters
 }
 
 function ApplyFilteredOptions(data: FilterObject[], fieldName: string){
-  let fieldItem: FilterObject = {name:"", choices:[]}
+  let fieldItem: FilterObject = {
+    name: "", choices: []
+  }
   data.forEach((field) => {
     if (field.name == fieldName){
       fieldItem = field
@@ -88,17 +78,29 @@ function ApplyFilteredOptions(data: FilterObject[], fieldName: string){
   return fieldItem
 }
 
+interface Props {
+  endpoint: string,
+  fields: string[],
+  renamedFields?: object,
+  globalFilters: object,
+  dependentFilters?: boolean,
+  setGlobalFilters: React.Dispatch<React.SetStateAction<object>>,
+  baseUrl?: string
+}
+
 function RemoteMultipleSelectFilters(props: Props) {
   const [dataToPass, setDataToPass] = useState<FilterObject[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState(true)
-  const {endpoint, fields, renamedFields, globalFilters,
-         setGlobalFilters, baseUrl, dependentFilters} = props
-
-  useEffect(() => {
-    setGlobalFilters({in_list: {}})
-    fetchData()
-  }, [])
+  const { 
+    endpoint,
+    fields,
+    renamedFields, 
+    globalFilters,
+    setGlobalFilters,
+    baseUrl,
+    dependentFilters
+  } = props
 
   useEffect(() => {
     fetchData()
@@ -115,8 +117,8 @@ function RemoteMultipleSelectFilters(props: Props) {
           const data = (
             FormattingAggregationsToFilters(res.data.meta.aggregations)
           )
-          const ordered_data = OrderData(data, fields)
-          setDataToPass(ordered_data)
+          const orderedData = orderData(data, fields)
+          setDataToPass(orderedData)
           setLoading(false)
         })
         .catch((error: any) => {
@@ -126,7 +128,7 @@ function RemoteMultipleSelectFilters(props: Props) {
     } else {
       const dataToOrder: FilterObject[] = [];
       fields.map((field, index) => {
-        const filter = ConfigFilters(index, fields, globalFilters)
+        const filter = configFilters(index, fields, globalFilters)
         httpClient().post('/' + endpoint + ':aggregations', aggs, {
           baseURL: baseUrl,
           params: {
@@ -139,7 +141,7 @@ function RemoteMultipleSelectFilters(props: Props) {
             )
             const filterItem = ApplyFilteredOptions(data, field)
             dataToOrder.push(filterItem)
-            const ordered_data = OrderData(dataToOrder, fields)
+            const ordered_data = orderData(dataToOrder, fields)
             setDataToPass(ordered_data)
           })
           .catch((error: any) => {

@@ -123,7 +123,6 @@ function ConfigModal(props: Props) {
             variant="warning"
             onClick={ () => {
               deleteFieldMetaFromStorage(tableId)
-              saveConfig()
             }}
           >
             Clear Saved Configuration

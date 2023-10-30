@@ -18,10 +18,9 @@ import { useState } from 'react';
 
 
 function ReportCard() {
-  const [ globalFilters, setGlobalFilters ] = useState<object>({})
+  // come back to this...
+  const [ globalFilters, setGlobalFilters ] = useState<object>({in_list: {}})
   const [ combinedFilters, setCombinedFilters ] = useState<object>({})
-
-  console.log(globalFilters)
 
   const filters = (
     <RemoteMultipleSelectFilters
@@ -58,13 +57,19 @@ function ReportCard() {
 
   const table = (
     <RemoteTable
-      id="report-card-v1"
+      id="report-card-v2"
       endpoint="barcoding_run_data"
       filter={combinedFilters}
       defaultSort="sts_sample.sts_col_date"
       fields={{
-        "sts_specimen.id": {
+        "bioscan_specimen.id": {
           rename: "Specimen ID"
+        },
+        "sts_sample.sts_gal": {
+          rename: "Partner"
+        },
+        "sts_sample.sts_col_date": {
+          rename: "Sample Collection Date"
         },
         "bioscan_o_primary": {
           rename: "Order"
@@ -78,9 +83,11 @@ function ReportCard() {
         "bioscan_s_primary": {
           rename: "Scientific Name"
         },
-        "sts_sample.sts_col_date": {
-          rename: "Sample Collection Date",
-          sort: true
+        "sts_sample.sts_latitude": {
+          rename: "Latitude"
+        },
+        "sts_sample.sts_longitude": {
+          rename: "Longitude"
         }
       }}
       height={500}
@@ -97,7 +104,7 @@ function ReportCard() {
       filter={combinedFilters}
       height={500}
       baseUrl={ env.TOL_DATA }
-      attributeKeys="bioscan_p_primary, bioscan_f_primary"
+      attributeKeys="bioscan_s_primary"
     />
   )
 

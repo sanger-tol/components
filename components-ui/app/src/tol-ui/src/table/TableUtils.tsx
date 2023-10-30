@@ -8,7 +8,7 @@ import { customFilter } from 'react-bootstrap-table2-filter';
 import DatePicker from './DatePicker';
 import TextInput from './TextInput';
 import { format } from 'date-fns'
-import RelationshipLink from './RelationshipLink';
+import Relationship from './Relationship';
 import CellTooltip from './CellTooltip';
 import NoDataAlert from "./NoDataAlert";
 import TableErrorAlert from './TableErrorAlert';
@@ -58,7 +58,7 @@ function checkAndConvertDate(text: string) {
   // if num - return text as a num can be converted to date incorrectly
   if (date.toLocaleDateString("en-US") === 'Invalid Date' ||
       !isNaN(Number(text))) {
-    return text
+    return <>{text}</>
   } else {
     const dateText = format(date, 'dd/MM/yyyy')
     const dateContents = format(date, 'dd/MM/yyyy HH:mm')
@@ -151,32 +151,86 @@ function splitRelationshipKeys(fieldMeta: object) {
   return relationshipKeys
 }
 
-function formatRelationshipData(relationships: object, attributes: object, fieldMetaData: object, baseUrl?: string) {
+function getRelationData(
+  relationships: object,
+  key: string,
+  splitKey: string[],
+  relation: string,
+  attributes: object,
+  fieldMetaData: object,
+  count: number,
+  baseUrl?: string
+) {
+  // creating the link
+  const relData = relationships[relation].data
+  const relLink = "/" + relData.type + "/" + relData.id.toString()
+
+  // only the attribute part if one exists
+  const attribute = splitKey[splitKey.length-1]
+
+  // relationship box boolean
+  const relationshipBox = fieldMetaData[key].relationshipBox
+
+  if (!relationshipBox) {
+    try {
+      const relationAttributes = relationships[relation].data.attributes
+      if (attribute in relationAttributes) {
+        return checkAndAutoConvertText(
+          relationAttributes[attribute]
+        )
+      }
+    } catch (error: any) {
+      console.warn("Error occured getting '" + attribute + "'")
+    }
+  }
+
+  // id is returned on the relationship part of the json-api
+  if (attribute === 'id' && !relationshipBox) {
+    return relData.id
+  } else {
+    return (
+      <Relationship
+        initialEndpoint={ relLink }
+        relationships={ splitKey }
+        attributes={ attributes }
+        fieldMeta={ fieldMetaData[key] }
+        baseUrl={ baseUrl }
+        delay={ count }
+      />
+    )
+  }
+}
+
+function formatRelationshipData(
+  relationships: object,
+  attributes: object,
+  fieldMetaData: object,
+  count: number,
+  baseUrl?: string
+) {
   const updatedData: object = {}
   const relationshipKeys: object = splitRelationshipKeys(fieldMetaData)
   for (const [key, splitKey] of Object.entries(relationshipKeys)) {
-    const currentObject = splitKey[0]
+    // current object 
+    const relation = splitKey[0]
     // checking relationship object is correct
-    if (relationships[currentObject] === undefined) {
+    if (relationships[relation] === undefined) {
       throw Error('\'' + key + '\' is not a correct relationship object. ' +
                   'Please check your spelling and pluralisation.')
     }
     // ignoring one-to-many relationships
-    if ('data' in relationships[currentObject]) {
+    if ('data' in relationships[relation]) {
       const headingId = splitKey.join('.')
 
-      // creating the link
-      const relData = relationships[currentObject].data
-      const relLink = "/" + relData.type + "/" + relData.id.toString()
-
-      updatedData[headingId] = (
-        <RelationshipLink
-          initialEndpoint={ relLink }
-          relationships={ splitKey }
-          attributes={ attributes }
-          fieldMeta={ fieldMetaData[key] }
-          baseUrl={ baseUrl }
-        />
+      updatedData[headingId] = getRelationData(
+        relationships,
+        key,
+        splitKey,
+        relation,
+        attributes,
+        fieldMetaData,
+        count,
+        baseUrl
       )
     }
   }
@@ -236,6 +290,7 @@ export function convertHeadingData(fieldMeta: FieldMeta) {
 
 export function convertTableData(data: any[], fieldMeta: FieldMeta, baseUrl?: string) {
   const updatedData: any[] = []
+  let count = 0
   data.forEach(row => {
     let fieldData = {'id': row.id}
     if ('attributes' in row) {
@@ -250,11 +305,13 @@ export function convertTableData(data: any[], fieldMeta: FieldMeta, baseUrl?: st
         row.relationships,
         Object.assign({'id': row.id}, row.attributes),
         fieldMeta.data,
+        count,
         baseUrl
       )
       fieldData = Object.assign(fieldData, relationships)
     }
     updatedData.push(fieldData)
+    count++
   });
   return updatedData;
 }
@@ -383,7 +440,7 @@ export function generateFilter(apiFilters: object, filters?: object) {
   }
 }
 
-export function debug(apiData: object, fieldMeta: object, debug?: boolean) {
+export function tableDebug(apiData: object, fieldMeta: object, debug?: boolean) {
   if (debug) {
     try {
       let fieldPossibilities: any = {
@@ -415,9 +472,8 @@ export function debug(apiData: object, fieldMeta: object, debug?: boolean) {
 export function getTableStatusIndicator(errorMessage: string) {
   if (errorMessage === '') {
     return <NoDataAlert />
-  } else {
-    return <TableErrorAlert error={errorMessage}/>
   }
+  return <TableErrorAlert error={errorMessage}/>
 }
 
 export function isColumnVisible(column: object) {

@@ -14,6 +14,7 @@ import { LoginIcon } from './Icons';
 
 function Login() {
   const { token, setToken } = useAuth();
+
   useEffect(()=> {
     if(!getTokenFromLocalStorage()){
       setToken('');

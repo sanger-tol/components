@@ -10,25 +10,13 @@ import LoadingHelix from "./LoadingHelix";
 import Status from "./Status";
 
 
-interface Props {
-  bar?: boolean,
-  pie?: boolean,
-  map?: boolean,
-  empty?: boolean,
-  loader?: boolean,
-  opacity?: number,
-  message?: string,
-  errorMessage?: string,
-  backing?: JSX.Element,
-  height: number
-}
-
 function getPlaceholderIcon(
   bar?: boolean,
   pie?: boolean,
   map?: boolean,
   loader?: boolean,
   message?: string,
+  warningMessage?: string,
   errorMessage?: string
 ) {
   if (bar) {
@@ -41,6 +29,8 @@ function getPlaceholderIcon(
     return <LoadingHelix/>
   } else if (message !== undefined){
     return <h5>{message}</h5>
+  } else if (warningMessage !== undefined) {
+    return <Status status="warning" text={warningMessage} />
   } else if (errorMessage !== undefined) {
     return <Status status="danger" text={errorMessage} />
   } else {
@@ -96,6 +86,20 @@ function getPlaceholder(
   )
 }
 
+interface Props {
+  bar?: boolean,
+  pie?: boolean,
+  map?: boolean,
+  empty?: boolean,
+  loader?: boolean,
+  opacity?: number,
+  message?: string,
+  warningMessage?: string,
+  errorMessage?: string,
+  backing?: JSX.Element,
+  height: number
+}
+
 function Placeholder(props: Props) {
   const { bar,
           pie,
@@ -104,6 +108,7 @@ function Placeholder(props: Props) {
           loader,
           opacity,
           message,
+          warningMessage,
           errorMessage,
           backing,
           height } = props
@@ -119,6 +124,7 @@ function Placeholder(props: Props) {
     map,
     loader,
     message,
+    warningMessage,
     errorMessage
   )
 

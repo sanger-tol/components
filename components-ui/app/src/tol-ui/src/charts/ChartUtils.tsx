@@ -157,6 +157,12 @@ export function updateChartColours(chart: any, resetColours: boolean, fadedOpaci
   }
 }
 
+export function isChartDataEmpty(aggs: any) {
+  const data = Object.values(aggs)[0]!["buckets"]
+  if (data.length === 0) return "No data found"
+  return ''
+}
+
 // ------------------//
 //      BARCHART     //
 // ------------------//

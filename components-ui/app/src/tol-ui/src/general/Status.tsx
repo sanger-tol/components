@@ -13,7 +13,7 @@ type Status = 'success'|'warning'|'danger'|'primary'
 
 interface Props {
   text: string,
-  status: Status
+  status: Status | string
 }
 
 function getIconFromStatus(status: string) {

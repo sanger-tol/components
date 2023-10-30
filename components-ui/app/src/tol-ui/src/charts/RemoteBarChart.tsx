@@ -6,7 +6,8 @@ SPDX-License-Identifier: MIT
 
 import RemoteAggBarChart from "./RemoteAggBarChart";
 import { generateDateAgg, generateDateFilterFromBarData, DateInterval } from "./ChartUtils";
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useEffectUpdate } from "../hooks/useEffectUpdate";
 
 
 interface Props {
@@ -37,8 +38,8 @@ function RemoteBarChart(props: Props) {
   const aggs = generateDateAgg(breakDownBy, xAxis, interval)
   const localFilters = generateDateFilterFromBarData(barData, breakDownBy, xAxis, interval)
 
-  // combine local and globalGilters
-  useEffect(() => {
+  // combine local and globalFilters
+  useEffectUpdate(() => {
     async function combine() {
       if (setCombinedFilters !== undefined) {
         setCombinedFilters(Object.assign({}, filter, localFilters))
@@ -47,8 +48,8 @@ function RemoteBarChart(props: Props) {
     combine()
   }, [barData])
 
-  // reset localGilters when globalFilters are updated
-  useEffect(() => {
+  // reset localFilters when globalFilters are updated
+  useEffectUpdate(() => {
     async function resetCombined() {
       if (setCombinedFilters !== undefined) {
         setCombinedFilters(Object.assign({}, filter))
@@ -58,7 +59,7 @@ function RemoteBarChart(props: Props) {
   }, [filter])
 
   // chart does not show pointer if setCombinedFilters undefined
-  if (setCombinedFilters == undefined) {
+  if (setCombinedFilters === undefined) {
     return (
       <RemoteAggBarChart
         {...props}
@@ -66,17 +67,16 @@ function RemoteBarChart(props: Props) {
         filter={ filter }
       />
     )
-  } else {
-    return (
-      <RemoteAggBarChart
-        {...props}
-        aggs={ aggs }
-        filter={ filter }
-        setBarData={ setBarData }
-      />
-    )
-
   }
+
+  return (
+    <RemoteAggBarChart
+      {...props}
+      aggs={ aggs }
+      filter={ filter }
+      setBarData={ setBarData }
+    />
+  )
 }
 
 export default RemoteBarChart;

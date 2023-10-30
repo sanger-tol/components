@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { Uploader } from 'rsuite';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { LoadingHelix, httpClient, Alert } from '../index';
+import { LoadingHelix, httpClient, Status } from '../index';
 
 
 interface WaitingUpload {
@@ -108,7 +108,7 @@ function Dropzone(props: Props) {
         {hasLoaded ?
             <div className='mt-3'>
                 {messages.map((message: Message, index: number) => {
-                    return <Alert key={index} type={message.type} message={message.message} />
+                    return <Status key={index} status={message.type} text={message.message} />
                 })}
             </div>
         : <></>}

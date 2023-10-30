@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState, useEffect } from "react";
 import BarChart from "./BarChart";
 import { httpClient } from '../services/http/httpClient'
-import { DateInterval, aggsToBarChartData } from "./ChartUtils";
+import { DateInterval, aggsToBarChartData, isChartDataEmpty } from "./ChartUtils";
 import { isPropDefined } from "../general/Utils";
 import Placeholder from "../general/Placeholder";
 
@@ -30,6 +30,7 @@ function RemoteAggBarChart(props: Props) {
   const [labels, setLabels] = useState([])
   const [datasets, setDatasets] = useState([])
   const [loading, setLoading] = useState(true)
+  const [warningMessage, setWarningMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
@@ -41,8 +42,9 @@ function RemoteAggBarChart(props: Props) {
       }
     })
     .then((res: any) => {
-      setErrorMessage('')
       let aggs = res.data.meta.aggregations
+      setErrorMessage('')
+      setWarningMessage(isChartDataEmpty(aggs))
       // check if a datetime chart
       if (isPropDefined(interval)) {
         aggs = aggsToBarChartData(aggs, interval!, shortDate)
@@ -61,10 +63,19 @@ function RemoteAggBarChart(props: Props) {
 
   if (errorMessage !== ''){
     return (
-        <Placeholder
-            errorMessage={errorMessage}
-            height={height}
-        />
+      <Placeholder
+        errorMessage={errorMessage}
+        height={height}
+      />
+    );
+  }
+
+  if (warningMessage !== ''){
+    return (
+      <Placeholder
+        warningMessage={warningMessage}
+        height={height}
+      />
     );
   }
   

@@ -78,3 +78,7 @@ export function getCssVarValue(variable: string) {
     variable
   );
 }
+
+export function timeout(delay: number) {
+  return new Promise( res => setTimeout(res, delay) );
+}

@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState, useEffect } from "react";
 import { httpClient } from '../services/http/httpClient'
-import { aggsToSunburstData, createAggsViaSliceBy } from "./ChartUtils";
+import { aggsToSunburstData, createAggsViaSliceBy, isChartDataEmpty } from "./ChartUtils";
 import Sunburst from "./Sunburst";
 import Placeholder from "../general/Placeholder";
 
@@ -26,6 +26,7 @@ function RemoteSunburst(props: Props) {
   const { endpoint, filter, sliceBy, baseUrl, height } = props;
   const [datasets, setDatasets] = useState({})
   const [loading, setLoading] = useState(true)
+  const [warningMessage, setWarningMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
@@ -38,9 +39,10 @@ function RemoteSunburst(props: Props) {
       }
     })
     .then((res: any) => {
-      setErrorMessage('')
       const aggs = res.data.meta.aggregations
-      // check if a datetime chart
+      setErrorMessage('')
+      setWarningMessage(isChartDataEmpty(aggs))
+
       const data = aggsToSunburstData(aggs, sliceBy)
       setDatasets(data)
       setLoading(false)
@@ -54,10 +56,19 @@ function RemoteSunburst(props: Props) {
   if (errorMessage !== ''){
     return (
         <Placeholder
-            errorMessage={errorMessage}
-            height={height}
+          errorMessage={errorMessage}
+          height={height}
         />
     );
+  }
+
+  if (warningMessage !== '') {
+    return (
+      <Placeholder
+        warningMessage={warningMessage}
+        height={height}
+      />
+    )
   }
   
   if (loading) {

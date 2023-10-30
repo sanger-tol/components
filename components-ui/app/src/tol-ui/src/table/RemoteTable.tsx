@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React from "react";
+import { useEffect, useState } from "react";
 import { httpClient } from '../services/http/httpClient'
 import Table from "./Table";
 import { FieldMetaData, FieldMeta, initialiseFieldMeta } from "./FieldMeta";
@@ -15,14 +15,22 @@ import { getFieldMetaAttributeFromStorage,
 import TableEmpty from "./TableEmpty";
 import { convertTableData,
          convertHeadingData,
-         debug,
+         tableDebug,
          generateFilter,
          structureFieldsAuto,
          structureFieldsUsingProp,
          setTableHeight } from "./TableUtils"
 
 
-export interface Props {
+interface TableStateInfo {
+  page: number,
+  sizePerPage: number,
+  filters?: object,
+  sortOrder?: string,
+  sortField?: string
+}
+
+interface Props {
   id: string,
   endpoint: string,
   baseUrl?: string,
@@ -39,100 +47,80 @@ export interface Props {
   debug?: boolean,
 }
 
-export interface State {
-  tableData: any[],
-  headings: any[],
-  page: number,
-  sizePerPage: number,
-  totalSize: number,
-  error: string,
-  loading: boolean,
-  renderTimes: number,
-  fieldMeta: FieldMeta | null
-}
+function RemoteTable(props: Props) {
+  const {
+    id,
+    endpoint,
+    baseUrl,
+    fields,
+    filter,
+    defaultSort,
+    noFilter,
+    noPagination,
+    noConfigModal,
+    height,
+    debug
+  } = props
 
-class RemoteTable extends React.Component<Props, State> {
-  constructor(props: Props) {
-    const headingsDefault = [{
-      dataField: '',
-      text: '‎'
-    }]
-    super(props);
+  // debug clears all storage
+  if (debug) localStorage.clear()
 
-    const storedFieldMeta = getFieldMetaAttributeFromStorage(props.id)
+  // retrieve saved field meta
+  const storedFieldMeta = getFieldMetaAttributeFromStorage(props.id)
 
-    this.state = {
-      tableData: [],
-      headings: headingsDefault,
-      page: 1,
-      sizePerPage: (storedFieldMeta !== null) ? storedFieldMeta.pageSize : 50,
-      totalSize: -1,
-      error: 'false',
-      loading: false,
-      renderTimes: 0,
-      fieldMeta: storedFieldMeta
-    }
-  }
+  const [tableData, setTableData] = useState<any[]>([])
+  const [headings, setHeadings] = useState<any[]>([{
+    dataField: '',
+    text: '‎'
+  }])
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta|null>(storedFieldMeta)
+  const [page, setPage] = useState<number>(1)
+  const [sizePerPage, setSizePerPage] = useState<number>(
+    (storedFieldMeta !== null) ? storedFieldMeta.pageSize : 50
+  )
+  const [totalSize, setTotalSize] = useState<number>(-1)
+  const [error, setError] = useState<string>('false')
+  const [loading, setLoading] = useState<boolean>(false)
+  const [renderCount, setRenderCount] = useState<number>(0)
 
-  refreshPagination = (pageNumber?: number) => {
-    let { page, sizePerPage } = this.state;
-    // reset to a set page
-    if (pageNumber !== undefined) {
-      page = pageNumber
-    }
-    this.handleTableChange('pagination', {
-      page: page,
+  const renderTable = (pageNumber?: number) => {
+    handleTableChange('pagination', {
+      page: (pageNumber !== undefined) ? pageNumber : page,
       sizePerPage: sizePerPage,
     })
   }
 
-  componentDidMount() {
-    this.refreshPagination()
-    setTableHeight(this.props.id, this.props.height)
+  useEffect(() => {
+    if (renderCount < 2) setTableHeight(id, height)
+  })
+
+  useEffect(() => {
+    renderTable()
+  }, [filter])
+
+  const modalOnSave = (fieldMeta: FieldMeta) => {
+    setFieldMeta(fieldMeta)
+    renderTable(1)
+    setFieldMetaAttributeInStorage(id, fieldMeta.data, 'data')
+    setFieldMetaAttributeInStorage(id, fieldMeta.order, 'order')
   }
 
-  componentDidUpdate(prevProps: Readonly<Props>) {
-    if (prevProps.filter !== this.props.filter) {
-      this.refreshPagination(1)
-    }
-    // ensure the table size doesn't change - slight workaround
-    if (this.state.renderTimes < 2) {
-      setTableHeight(this.props.id, this.props.height)
-    }
-  }
-
-  modalOnSave = (fieldMeta: FieldMeta) => {
-    this.setState({
-      fieldMeta: fieldMeta
-    })
-    this.refreshPagination(1)
-    setFieldMetaAttributeInStorage(this.props.id, fieldMeta.data, 'data')
-    setFieldMetaAttributeInStorage(this.props.id, fieldMeta.order, 'order')
-  }
-
-  handleTableChange = (_type: string, { page, sizePerPage, filters, sortOrder, sortField } : {
-    page: number,
-    sizePerPage: number,
-    filters?: object,
-    sortOrder?: string,
-    sortField?: string
-  }) => {
+  const handleTableChange = (_type: string, { page, sizePerPage, filters, sortOrder, sortField }: TableStateInfo) => {
     // allow default sort
     if (sortField === undefined || sortField === null) {
-      sortField = this.props.defaultSort
+      sortField = defaultSort
     }
-    // used to update the table state indicator
-    if (this.state.renderTimes >= 1) {
-      this.setState({
-        renderTimes: 2,
-        loading: true
-      })
-    }
-    let apiFilters: object = {};
 
+    // used to update the table state indicator
+    if (renderCount >= 1) {
+      setRenderCount(2)
+      setLoading(true)
+    }
+  
     // always on filtering - (contains, exact, range)
-    if (this.props.filter !== undefined) {
-      apiFilters = Object.assign(apiFilters, this.props.filter)
+    let apiFilters: object = {};
+    if (filter !== undefined) {
+      apiFilters = Object.assign(apiFilters, filter)
     }
 
     // column specific filtering
@@ -144,156 +132,127 @@ class RemoteTable extends React.Component<Props, State> {
     }
 
     // get data and update state
-    httpClient().get('/' + this.props.endpoint, {
+    httpClient().get('/' + endpoint, {
       params: {
         page: page,
         page_size: sizePerPage,
         filter: apiFilters,
         sort_by: sortField
       },
-      baseURL: this.props.baseUrl
-      })
-      .then((res: any) => {
-        const apiData = res.data.data
-        const apiMeta = res.data.meta
-        this.setState({
-          page: page,
-          sizePerPage: sizePerPage,
-          totalSize: apiMeta.total,
-          error: ''
-        })
-        
-        // error if endpoint doesn't return 200
-        if (res.status !== 200) {
-          throw Error()
+      baseURL: baseUrl
+    }).then((res: any) => {
+      const apiData = res.data.data
+      const apiMeta = res.data.meta
+
+      setPage(page)
+      setSizePerPage(sizePerPage)
+      setTotalSize(apiMeta.total)
+      setError('')
+      
+      // error if endpoint doesn't return 200
+      if (res.status !== 200) throw Error()
+
+      setTableData([])
+      setLoading(false)
+
+      let initialFieldMeta: FieldMeta = initialiseFieldMeta()
+      // check if any data is returned
+      if (apiData[0] !== undefined) {
+        let isFieldPropDefined = fields !== undefined;
+
+        if (fieldMeta === null) {
+          // checking if 'fields' has been defined
+          if (isFieldPropDefined) {
+            initialFieldMeta = structureFieldsUsingProp(fields!, apiMeta.types)
+          }
+
+          // auto add all fields in api call - if fields specified, extras are hidden
+          if ('attributes' in apiData[0]) {
+            const attributes = structureFieldsAuto(
+              apiData[0].attributes,
+              apiMeta.types,
+              initialFieldMeta,
+              true,
+              isFieldPropDefined
+            )
+            initialFieldMeta = Object.assign(initialFieldMeta, attributes)
+          }
+          if ('relationships' in apiData[0]) {
+            const relationships = structureFieldsAuto(
+              apiData[0].relationships,
+              apiMeta.types,
+              initialFieldMeta,
+              false,
+              isFieldPropDefined,
+              debug
+            )
+            initialFieldMeta = Object.assign(initialFieldMeta, relationships)
+          }
+          setFieldMetaAttributeInStorage(id, initialFieldMeta)
+        } else {
+          initialFieldMeta = getFieldMetaAttributeFromStorage(id)
+        }
+      
+        // debug logs if prop defined
+        tableDebug(
+          apiData,
+          initialFieldMeta,
+          debug
+        )
+
+        // middle load wheel on first load
+        if (renderCount === 0) {
+          setFieldMeta(initialFieldMeta)
+          setRenderCount(1)
         }
 
-        this.setState(() => ({
-          tableData: [],
-          loading: false
-        }));
-
-        let fieldMeta: FieldMeta = initialiseFieldMeta()
-        // check if any data is returned
-        if (apiData[0] !== undefined) {
-          let fieldPropDefined = this.props.fields !== undefined;
-
-          if (this.state.fieldMeta === null) {
-            // checking if 'fields' has been defined
-            if (fieldPropDefined) {
-              fieldMeta = structureFieldsUsingProp(this.props.fields!, apiMeta.types)
-            }
-
-            // auto add all fields in api call - if fields specified, extras are hidden
-            if ('attributes' in apiData[0]) {
-              const attributes = structureFieldsAuto(
-                apiData[0].attributes,
-                apiMeta.types,
-                fieldMeta,
-                true,
-                fieldPropDefined
-              )
-              fieldMeta = Object.assign(fieldMeta, attributes)
-            }
-            if ('relationships' in apiData[0]) {
-              const relationships = structureFieldsAuto(
-                apiData[0].relationships,
-                apiMeta.types,
-                fieldMeta,
-                false,
-                fieldPropDefined,
-                this.props.debug
-              )
-              fieldMeta = Object.assign(fieldMeta, relationships)
-            }
-            setFieldMetaAttributeInStorage(this.props.id, fieldMeta)
-          } else {
-            fieldMeta = getFieldMetaAttributeFromStorage(this.props.id)
-          }
-        
-          // debug logs if prop defined
-          debug(
+        // setting data using fieldMeta state
+        setSizePerPage(initialFieldMeta.pageSize)
+        setHeadings(convertHeadingData(initialFieldMeta))
+        setTableData(
+          convertTableData(
             apiData,
-            fieldMeta,
-            this.props.debug
+            initialFieldMeta,
+            baseUrl
           )
+        )
 
-          // middle load wheel on first load
-          if (this.state.renderTimes === 0) {
-            this.setState({
-              fieldMeta: fieldMeta,
-              renderTimes: 1
-            })
-          }
-
-          // setting data using fieldMeta
-          this.setState({
-            headings: convertHeadingData(fieldMeta),
-            tableData: convertTableData(
-              apiData,
-              fieldMeta,
-              this.props.baseUrl
-            ),
-            sizePerPage: fieldMeta.pageSize
-          })
-
-          // setting filter visibility
-          setFilterVisibility(this.props.id)
-        }
-      })
-      // @ts-ignore
-      .catch((error: any) => {
-        console.warn(error.message)
-        console.warn('Please ensure the db has been restored')
-        console.warn('Please ensure the \'endpoint\' prop is correct and pluralised')
-        this.setState({
-          loading: false,
-          error: error.message,
-          tableData: [],
-          renderTimes: 1
-        })
+        // setting filter visibility
+        setFilterVisibility(id)
       }
-    )
+    }).catch((error: any) => {
+      console.warn(error.message)
+      console.warn('Please ensure the db has been restored')
+      console.warn('Please ensure the \'endpoint\' prop is correct and pluralised')
+      setLoading(false)
+      setError(error.message)
+      setTableData([])
+      setRenderCount(1)
+    })
   }
 
-  render() {
-    const { tableData,
-            headings,
-            page,
-            fieldMeta,
-            sizePerPage,
-            totalSize,
-            renderTimes,
-            loading,
-            error } = this.state;
+  // need to be blank on first render
+  let tableStatusIndicator: JSX.Element = getTableStatusIndicator(error)
+  if (renderCount === 0) tableStatusIndicator = <TableEmpty />
 
-    // need to be blank on first render
-    let tableStatusIndicator: JSX.Element;
-    if (renderTimes === 0) {
-      tableStatusIndicator = <TableEmpty />
-    } else {
-      tableStatusIndicator = getTableStatusIndicator(error)
-    }
-
-    return (
-      <Table
-        id={ this.props.id }
-        data={ tableData }
-        columns={ headings }
-        fieldMeta={fieldMeta}
-        onTableChange={ this.handleTableChange }
-        page={ page }
-        sizePerPage={ sizePerPage }
-        totalSize={ totalSize }
-        noPagination={ this.props.noPagination }
-        noFilter={ this.props.noFilter }
-        noConfigModal={ this.props.noConfigModal }
-        loading={ loading }
-        tableStatusIndicator={ tableStatusIndicator }
-        modalOnSave={ this.modalOnSave }
-      />
-    )
-  }
+  return (
+    <Table
+      id={ id }
+      data={ tableData }
+      columns={ headings }
+      fieldMeta={fieldMeta}
+      onTableChange={ handleTableChange }
+      page={ page }
+      sizePerPage={ sizePerPage }
+      totalSize={ totalSize }
+      noPagination={ noPagination }
+      noFilter={ noFilter }
+      noConfigModal={ noConfigModal }
+      loading={ loading }
+      tableStatusIndicator={ tableStatusIndicator }
+      modalOnSave={ modalOnSave }
+    />
+  )
 }
 
 export default RemoteTable;
