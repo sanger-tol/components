@@ -18,7 +18,7 @@ import { RemoteTable,
 import { useState } from 'react'
 
 function Sandbox() {
-  const [ globalFilters, setGlobalFilters ] = useState<object>({})
+  const [ globalFilters, setGlobalFilters ] = useState<object>({in_list:{}})
   const [ combinedFilters, setCombinedFilters ] = useState<object>({})
 
   console.log(globalFilters)
@@ -37,6 +37,7 @@ function Sandbox() {
       globalFilters={globalFilters}
       setGlobalFilters={setGlobalFilters}
       baseUrl={ env.TOL_DATA }
+      dependentFilters
     />
   )
 

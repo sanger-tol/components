@@ -67,11 +67,13 @@ function OrderData(data, fields: string[]){
 function ConfigFilters(index: number, filtersList, globalFilters){
   const returnObj = {in_list: {}}
   const valuesToRemove: string[] = []
-  if (globalFilters.in_list){
+  let indexBefore = 0
+  if (index>0){indexBefore = index-1}
+  // Line below checks if there is any filters set and also if this specific field has the above filter set already
+  if (globalFilters.in_list && globalFilters.in_list[filtersList[indexBefore]]){
     const slicedFilters = filtersList.slice(0,[index])
     slicedFilters.forEach((filter) => {
       if (globalFilters.in_list[filter]){
-        console.log(globalFilters.in_list)
         let filtersToApply = globalFilters.in_list[filter]
         // Prevents filters being added to every field
         for (const f in valuesToRemove){
@@ -107,8 +109,6 @@ function RemoteMultipleSelectFilters(props: Props) {
   const {endpoint, fields, renamedFields, globalFilters,
          setGlobalFilters, baseUrl, dependentFilters} = props
 
-  console.log(globalFilters)
-
   useEffect(() => {
     setGlobalFilters({in_list: {}})
     fetchData()
@@ -141,6 +141,7 @@ function RemoteMultipleSelectFilters(props: Props) {
       const dataToOrder: FilterObject[] = [];
       fields.map((field, index) => {
         const filter = ConfigFilters(index, fields, globalFilters)
+        console.log(filter)
         httpClient().post('/' + endpoint + ':aggregations', aggs, {
           baseURL: baseUrl,
           params: {
