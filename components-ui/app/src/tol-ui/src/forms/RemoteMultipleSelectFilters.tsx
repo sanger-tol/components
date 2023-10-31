@@ -86,9 +86,10 @@ function ConfigFilters(index: number, filtersList, globalFilters){
         valuesToRemove.push(...globalFilters.in_list[filter])
       }
     })
-    return returnObj
+    return {returnObj: returnObj, lastFilter: false}
   } else {
-    return returnObj
+    console.log('need to get rid of')
+    return {returnObj: returnObj, lastFilter: true}
   }
 }
 
@@ -140,12 +141,17 @@ function RemoteMultipleSelectFilters(props: Props) {
     } else {
       const dataToOrder: FilterObject[] = [];
       fields.map((field, index) => {
-        const filter = ConfigFilters(index, fields, globalFilters)
-        console.log(filter)
+        const configFilters = ConfigFilters(index, fields, globalFilters)
+        if (configFilters.lastFilter){
+          var filtersToUse = {in_list:{}}
+        }else{
+          var filtersToUse = configFilters.returnObj
+        }
+        console.log(filtersToUse)
         httpClient().post('/' + endpoint + ':aggregations', aggs, {
           baseURL: baseUrl,
           params: {
-            filter: filter
+            filter: filtersToUse
           }
         })
           .then((res: any) => {
