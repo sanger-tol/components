@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router,
          Route,
          Switch,
@@ -16,7 +16,7 @@ import { getTokenFromLocalStorage,
 import { AuthProvider } from './contexts/auth.context';
 import Footer from './general/Footer'
 import Page from "./models/Page";
-import { convertToPath, falseIfUndefined } from "./general/Utils";
+import { convertToPath, falseIfUndefined, matomoAnalytics } from "./general/Utils";
 import { env } from './variables/config'
 
 
@@ -30,6 +30,11 @@ export interface Props {
 function TolApp(props: Props) {
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
+
+  useEffect(() => {
+    const siteId = env.MATOMO_SITE_ID 
+    matomoAnalytics(siteId)
+  }, [])
 
   // show login button as default
   let login = props.login
