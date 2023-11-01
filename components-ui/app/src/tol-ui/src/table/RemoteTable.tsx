@@ -66,7 +66,7 @@ function RemoteTable(props: Props) {
   if (debug) localStorage.clear()
 
   // retrieve saved field meta
-  const storedFieldMeta = getFieldMetaAttributeFromStorage(props.id)
+  const storedFieldMeta = getFieldMetaAttributeFromStorage(props.id, fields)
 
   const [tableData, setTableData] = useState<any[]>([])
   const [headings, setHeadings] = useState<any[]>([{
@@ -190,7 +190,7 @@ function RemoteTable(props: Props) {
           }
           setFieldMetaAttributeInStorage(id, initialFieldMeta)
         } else {
-          initialFieldMeta = getFieldMetaAttributeFromStorage(id)
+          initialFieldMeta = getFieldMetaAttributeFromStorage(id, fields)
         }
       
         // debug logs if prop defined

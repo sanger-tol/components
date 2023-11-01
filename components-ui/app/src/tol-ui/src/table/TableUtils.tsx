@@ -15,10 +15,11 @@ import TableErrorAlert from './TableErrorAlert';
 import { addFieldDefaults,
          CellRenderer,
          FieldMeta,
+         FieldMetaData,
          initialiseFieldMeta } from './FieldMeta';
 
 
-export const fieldMetaVersion = "field-meta-v1"
+export const fieldMetaVersion = "field-meta-v2"
 
 export function addPlus(totalSize: number) {
   // add a plus for elastic search (results cap at 10,000)
@@ -520,7 +521,7 @@ export function switchFilterVisibility(tableId: string) {
 }
 
 export function setFilterVisibility(tableId: string) {
-  if (getFieldMetaAttributeFromStorage(tableId, "filterVisibility")) {
+  if (getFieldMetaAttributeFromStorage(tableId, undefined, "filterVisibility")) {
     const table = document.getElementById(tableId)
     if (table?.hasChildNodes) {
       const headers = table.childNodes[0].childNodes[0].childNodes
@@ -558,16 +559,27 @@ export function setFieldMetaAttributeInStorage(tableId: string, value: any, attr
   }
 }
 
-export function getFieldMetaAttributeFromStorage(tableId: string, attribute?: string) {
+export function getFieldMetaAttributeFromStorage(tableId: string, fields?: FieldMetaData, attribute?: string) {
   const data = localStorage.getItem(`${tableId}-${fieldMetaVersion}`)
   if (data !== null) {
     let fieldMeta = JSON.parse(data)
     if (attribute !== undefined) {
       return fieldMeta[attribute]
+    } else if (fields !== undefined) {
+      fieldMeta = fieldMetaToCellRenderer(fields, fieldMeta)
     }
     return fieldMeta
   }
   return null
+}
+
+export function fieldMetaToCellRenderer(fields: FieldMetaData, fieldMeta) {
+  for (const field in fields){
+    if (fields[field].cellRenderer){
+      fieldMeta.data[field].cellRenderer = fields[field].cellRenderer
+    }
+  }
+  return fieldMeta
 }
 
 export function deleteFieldMetaFromStorage(tableId: string) {
