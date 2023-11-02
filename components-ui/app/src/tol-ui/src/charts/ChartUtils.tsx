@@ -564,40 +564,61 @@ export function createAggsViaSliceBy(endpoint: string, sliceBy: string[], depth?
   }
 }
 
+function calcBucketDocCountTotal(buckets: any[]) {
+  let count = 0
+  for (const bucket of Object.values(buckets)) {
+    count += bucket.doc_count
+  }
+  return count
+}
+
 // works by changing the reference of 'buckets'
-export function addOtherDocCount(buckets: object[], docCount: number, sliceBy: string[], depth: number) {
+function addExtraDocCount(type: string, buckets: object[], sliceBy: string[], depth: number, count: number, parentCount?: number) {
   // ignore when it tries to work on the new 'other' bucket
-  if (docCount !== undefined) {
+  if (count !== undefined) {
     // ensure 'other' depth matches the actual values depth
     if (depth < sliceBy.length) {
-      buckets.push({
-        doc_count: docCount,
-        key: "Other"
-      })
+
+      if (type === 'Unknown') {
+        if (parentCount! > count) {
+          buckets.push({
+            doc_count: parentCount! - count, // example
+            key: type
+          })
+        } else {
+          // if data is correct, return
+          return
+        }
+      } else if (type === 'Other') {
+        buckets.push({
+          doc_count: count,
+          key: type
+        })
+      }
 
       // if child required
       if (depth < sliceBy.length-1) {
         const childKey = sliceBy[depth+1]
-        const minus1 = buckets.length-1
-
-        // get last added object and 
-        buckets[minus1][childKey] = {
+        const lastIndex = buckets.length-1
+        // get last added object 
+        buckets[lastIndex][childKey] = {
           "buckets": []
         }
-
-        // recursively add 'other'
-        addOtherDocCount(
-          buckets[minus1][childKey]["buckets"],
-          docCount,
+        // recursively add 'other' or 'unknown'
+        addExtraDocCount(
+          type,
+          buckets[lastIndex][childKey]["buckets"],
           sliceBy,
-          depth+1
+          depth+1,
+          count,
+          parentCount
         )
       }
     }
   }
 }
 
-export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: number) {
+export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: number, parentDocCount?: number) {
   depth = initialiseOrIncrementDepth(depth)
 
   // sliceBy keys
@@ -613,15 +634,29 @@ export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: numb
   const otherCount = agg["sum_other_doc_count"]
   // other doesn't exist if bucket isn't a value
   if (otherCount !== 0 && otherCount !== undefined) {
-    addOtherDocCount(
+    addExtraDocCount(
+      'Other',
       buckets,
-      otherCount,
       sliceBy,
-      depth
+      depth,
+      otherCount
     )
   }
 
-  // initialising object and arrays required
+  // adding an 'unknown' bucket where parent > sum of children
+  if (parentDocCount !== 0 && parentDocCount !== undefined) {
+    const bucketsDocCount = calcBucketDocCountTotal(buckets)
+    addExtraDocCount(
+      'Unknown',
+      buckets,
+      sliceBy,
+      depth,
+      bucketsDocCount,
+      parentDocCount
+    )
+  }
+
+  // initialising variables required
   const outputData = {}
   outputData[normalisedKey] = []
 
@@ -630,11 +665,12 @@ export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: numb
       key: bucket.key,
       value: bucket.doc_count
     }
+
     // this means the bucket has a child
     if (childKey) {
       const child = {}
       child[childKey] = bucket[childKey]
-      dataPoint["child"] = aggsToSunburstData(child, sliceBy, depth)
+      dataPoint["child"] = aggsToSunburstData(child, sliceBy, depth, bucket.doc_count)
     }
     outputData[normalisedKey].push(dataPoint)
   }
