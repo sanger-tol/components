@@ -32,4 +32,4 @@ VOLUME ["/packages"]
 
 COPY ./app /app
 COPY ./migrations /migrations
-CMD if [ -d /packages/tol-sdk/src ] ; then pip3 install --editable /packages/tol-sdk[api_base]; fi; python run.py
+CMD if [ -d /packages/tol-sdk/src ] ; then pip3 install --editable /packages/tol-sdk; fi; python run.py

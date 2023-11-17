@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { Container, Row, Col, Button, Form } from 'react-bootstrap';
+import { Container, Row, Col, Button, Form, Spinner } from 'react-bootstrap';
 
 // General
 export { default as TolApp } from "./TolApp";
@@ -51,6 +51,7 @@ export { Row };
 export { Col };
 export { Form };
 export { Button };
+export { Spinner };
 
 // Models
 export { default as HeaderButton } from "./models/HeaderButton";

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from 'react';
-import { Button } from '../index';
+import { Button, Spinner, httpClient } from '../index';
 import TableLoadingHelix from './TableLoadingHelix';
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory from 'react-bootstrap-table2-filter';
@@ -17,7 +17,7 @@ import paginationFactory, { PaginationProvider,
                             SizePerPageDropdownStandalone,
                             PaginationTotalStandalone } from 'react-bootstrap-table2-paginator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter, faSliders } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faSliders, faDownload } from '@fortawesome/free-solid-svg-icons';
 import ConfigModal from './ConfigModal';
 import { pruneHiddenColumns } from "./TableUtils";
 
@@ -36,10 +36,12 @@ interface Props {
   noPagination?: boolean,
   noFilter?: boolean,
   noConfigModal?: boolean,
+  noDownload?: boolean,
   loading: boolean,
   tableStatusIndicator: any,
   modalOnSave: Function,
-  height?: number
+  height?: number,
+  attributesForDownload: any
 }
 
 function Table (props: Props) {
@@ -55,11 +57,14 @@ function Table (props: Props) {
     noPagination,
     noFilter,
     noConfigModal,
+    noDownload,
     loading,
     tableStatusIndicator,
-    modalOnSave
+    modalOnSave,
+    attributesForDownload
   } = props;
   const [open, setOpen] = useState(false)
+  const [downloading, setDownloading] = useState(false)
 
   // show certain components as default
   const showAsDefault = (noComponent?: boolean) => {
@@ -69,6 +74,7 @@ function Table (props: Props) {
   noPagination = showAsDefault(noPagination)
   noFilter = showAsDefault(noFilter)
   noConfigModal = showAsDefault(noConfigModal)
+  noDownload = showAsDefault(noDownload)
 
   const options = {
     custom: true,
@@ -85,6 +91,45 @@ function Table (props: Props) {
     }
   }
 
+  // function for the download onClick
+  function exportTable(filters : any ) {
+    setDownloading(true)
+
+    const updatedColumnParams = columns.map(obj => ({
+      text: obj.text,
+      dataField: obj.dataField,
+      hidden: obj.hidden
+    }))
+
+    httpClient().post('/' + filters.endpoint + ':export', { data: updatedColumnParams }, {
+      params: {
+        page: 1,
+        page_size: 5000,
+        filter: filters.apiFilters,
+        sort_by: filters.sortField,
+      },
+      baseURL: filters.baseUrl,
+      responseType: 'blob'
+    })
+    .then((res: any) => {
+      // temporary URL for the blob
+      const tempUrl = window.URL.createObjectURL(res.data)
+
+      // Trigger the download with an anchor element
+      const a = document.createElement('a')
+      a.href = tempUrl
+      a.download = 'download_table.xlsx'
+      a.click()
+
+      // Release the URL
+      window.URL.revokeObjectURL(tempUrl)
+      setDownloading(false)
+
+      if (res.status !== 200) throw Error()
+      setDownloading(false)
+    }
+  )}
+
   return (
     <PaginationProvider
       pagination={ paginationFactory(options) }
@@ -95,6 +140,26 @@ function Table (props: Props) {
         paginationTableProps
       }) => (
         <div className='tol-table'>
+          {noDownload && 
+            <Button 
+              className="tol-table-button"
+              variant="primary"
+              onClick={ () => exportTable(attributesForDownload) }
+              disabled={ totalSize > 5000 }
+            >
+              { downloading ? (
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+              ) : (
+                <FontAwesomeIcon icon={faDownload} size="sm" />
+              )}
+            </Button>
+          }
           {noConfigModal &&
             <Button 
               className="tol-table-button"

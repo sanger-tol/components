@@ -42,6 +42,7 @@ interface Props {
   noFilter?: boolean,
   noPagination?: boolean,
   noConfigModal?: boolean,
+  noDownload?: boolean,
 
   height?: number
   debug?: boolean,
@@ -58,6 +59,7 @@ function RemoteTable(props: Props) {
     noFilter,
     noPagination,
     noConfigModal,
+    noDownload,
     height,
     debug
   } = props
@@ -82,6 +84,7 @@ function RemoteTable(props: Props) {
   const [error, setError] = useState<string>('false')
   const [loading, setLoading] = useState<boolean>(false)
   const [renderCount, setRenderCount] = useState<number>(0)
+  const [attributesForDownload, setAttributesForDownload] = useState({});
 
   const renderTable = (pageNumber?: number) => {
     handleTableChange('pagination', {
@@ -116,7 +119,7 @@ function RemoteTable(props: Props) {
       setRenderCount(2)
       setLoading(true)
     }
-  
+
     // always on filtering - (contains, exact, range)
     let apiFilters: object = {};
     if (filter !== undefined) {
@@ -130,6 +133,8 @@ function RemoteTable(props: Props) {
     if (sortOrder === 'desc') {
       sortField = '-' + sortField
     }
+
+    setAttributesForDownload({endpoint, sortField: sortField, apiFilters, baseUrl})
 
     // get data and update state
     httpClient().get('/' + endpoint, {
@@ -248,9 +253,11 @@ function RemoteTable(props: Props) {
       noPagination={ noPagination }
       noFilter={ noFilter }
       noConfigModal={ noConfigModal }
+      noDownload={ noDownload }
       loading={ loading }
       tableStatusIndicator={ tableStatusIndicator }
       modalOnSave={ modalOnSave }
+      attributesForDownload={ attributesForDownload }
     />
   )
 }
