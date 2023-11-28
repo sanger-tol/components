@@ -8,7 +8,13 @@ import os
 
 from flask import Flask
 
+from tol.api_base2.sql.model import (
+    Auth,
+    User,
+    State
+)
 from tol.api_base2 import (
+    auth_blueprint,
     data_blueprint,
     system_blueprint
 )
@@ -26,7 +32,7 @@ def application():
 
     # Set up datasource
     sql_datasource = create_sql_datasource(
-        models=[Species, Specimen, Sample],
+        models=[Species, Specimen, Sample, Auth, User, State],
         db_uri=os.getenv('DB_URI')
     )
     core_data_object(sql_datasource)
@@ -40,5 +46,9 @@ def application():
     # The system endpoints
     blueprint_system = system_blueprint(sql_datasource)
     app.register_blueprint(blueprint_system, url_prefix=os.getenv('API_PATH') + '/system')
+    
+    # The auth endpoints
+    blueprint_auth = auth_blueprint(sql_datasource)
+    app.register_blueprint(blueprint_auth, url_prefix=os.getenv('API_PATH') + '/auth')
 
     return app

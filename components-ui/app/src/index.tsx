@@ -82,7 +82,6 @@ ReactDOM.render(
       sunbursts,
       widgets
     ]}
-    login={ false }
   />,
   document.getElementById("root")
 );
