@@ -8,7 +8,7 @@ import os
 
 from flask import Flask
 
-from tol.api_base2.sql.model import (
+from tol.sql.models import (
     Auth,
     User,
     State
