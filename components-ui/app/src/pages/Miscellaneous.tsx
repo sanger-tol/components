@@ -80,7 +80,7 @@ function Miscellaneous() {
           <Button onClick = {() => setModalOpen(true)}>Example Modal</Button>
 
           <h2 className='mt-5'>Object Detail</h2>
-          <ObjectDetail data={jsonData}/>
+          <ObjectDetail data={jsonData.attributes}/>
 
           <h2 className='mt-5'>Drag & Drop</h2>
           <h5>DnD Contents: </h5>
