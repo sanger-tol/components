@@ -13,13 +13,15 @@ const updateContents = (contents: object) => {
       if (typeof value === 'string' && value.includes('GMT')) {
         contents[key] = formatDate(value)
       }
+      if (typeof value === 'boolean') {
+        contents[key] = value.toString()
+      }
     }
     return contents
   }
 
 export interface Props {
     data: object
-    // fields?: FieldMetaData
 }
 
 const ObjectDetail = (props: Props) => {
