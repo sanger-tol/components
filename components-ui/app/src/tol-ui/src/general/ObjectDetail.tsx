@@ -7,6 +7,10 @@ SPDX-License-Identifier: MIT
 import { formatDate, normaliseCaps } from './Utils'
 
 
+export interface Props {
+  data: object
+}
+
 const updateContents = (contents: object) => {
     for (const [key, value] of Object.entries(contents)) {
       // remove or format some content
@@ -19,10 +23,6 @@ const updateContents = (contents: object) => {
     }
     return contents
   }
-
-export interface Props {
-    data: object
-}
 
 const ObjectDetail = (props: Props) => {
     const { data } = props
