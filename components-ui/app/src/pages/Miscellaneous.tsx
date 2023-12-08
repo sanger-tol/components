@@ -10,15 +10,12 @@ import ObjectDetail from '../tol-ui/src/general/ObjectDetail';
 import RemoteObjectDetail from '../tol-ui/src/general/RemoteObjectDetail';
 
 const jsonData = {
-      "sts_common_name": "",
-      "sts_family": "Lamiaceae",
-      "sts_genus": "Galeopsis",
-      "sts_order_group": "Lamiales",
-      "sts_scientific_name": "Galeopsis tetrahit",
+      "common_name": "Humans",
+      "family": "Hominidae",
+      "genus": "Homo",
+      "order": "Primates",
+      "scientific_name": "Homo sapiens",
       "sts_species_id": 5443,
-      "sts_tissue_depleted": false,
-      "sts_tol_updated_at": "Tue, 05 Dec 2023 01:55:03 GMT",
-      "uid": "1000418"
 }
 
 
