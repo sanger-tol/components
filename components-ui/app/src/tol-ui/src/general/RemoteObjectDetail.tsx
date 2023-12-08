@@ -39,10 +39,14 @@ const RemoteObjectDetail = (props: Props) => {
         })
         .then((res: any) => {
             const data = res.data.data[0].attributes
-            setObjectData(data)
+
+            const selectedFields = fields ? Object.fromEntries(
+                Object.entries(data).filter(([key]) => fields.includes(key))
+            )
+            : data
+            setObjectData(selectedFields)
         })
     }, [endpoint, filter, baseUrl])
-    console.log(objectData)
 
     return (
         <ObjectDetail 

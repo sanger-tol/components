@@ -57,7 +57,7 @@ function Miscellaneous() {
             endpoint='species'
             baseUrl={ env.TOL_DATA }
             filter={{uid: "1000418"}}
-            // fields={['sts_common_name', 'sts_order_group', 'sts_family', 'sts_genus', 'sts_tol_updated_at']}
+            fields={['sts_common_name', 'sts_order_group', 'sts_family', 'sts_genus', 'sts_tol_updated_at']}
             />
 
           <h2 className='mt-5'>Drag & Drop</h2>
