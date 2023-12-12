@@ -22,6 +22,7 @@ const jsonData = {
 function Miscellaneous() {
   const [modalOpen, setModalOpen] = useState(false)
   const [contents, setContents] = useState()
+  const [filter, setFilter] = useState({contains: {uid: '1000418'}})
   console.log(contents)
 
   return (
@@ -53,7 +54,7 @@ function Miscellaneous() {
           <RemoteObjectDetail
             endpoint='species'
             baseUrl={ env.TOL_DATA }
-            filter={{uid: "1000418"}}
+            filter={ filter }
             fields={['sts_common_name', 'sts_order_group', 'sts_family', 'sts_genus',
              'sts_tol_updated_at', 'sts_prefix', 'sts_tissue_depleted', 'uid']}
             />

@@ -16,16 +16,6 @@ interface Props {
     fields?: any[]
 }
 
-function generateFilter(filter?: object | null): object | null {
-    if (filter !== undefined && filter !== null) {
-        return {
-            contains: filter
-        }
-    } else {
-        return null
-    }
-}
-
 const RemoteObjectDetail = (props: Props) => {
     const { endpoint, filter, baseUrl, fields } = props
     const [ objectData, setObjectData ] = useState<any[]>([]);
@@ -34,16 +24,16 @@ const RemoteObjectDetail = (props: Props) => {
         httpClient().get('/' + endpoint, {
             baseURL: baseUrl,
             params: {
-                filter: generateFilter(filter) || undefined
+                filter: filter
             }
         })
         .then((res: any) => {
-            const data = res.data.data[0].attributes
+            const data = res.data.data[0]
 
             const selectedFields = fields ? Object.fromEntries(
-                Object.entries(data).filter(([key]) => fields.includes(key))
+                Object.entries(data.attributes).filter(([key]) => fields.includes(key))
             )
-            : data
+            : data.attributes
             setObjectData(selectedFields)
         })
     }, [endpoint, filter, baseUrl])
