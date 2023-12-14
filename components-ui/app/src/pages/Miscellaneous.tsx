@@ -24,6 +24,7 @@ function Miscellaneous() {
   const [contents, setContents] = useState()
   const [filter, setFilter] = useState({contains: {uid: '1000418'}})
   console.log(contents)
+  console.log(filter)
 
   return (
     <div>
@@ -55,8 +56,22 @@ function Miscellaneous() {
             endpoint='species'
             baseUrl={ env.TOL_DATA }
             filter={ filter }
-            fields={['sts_common_name', 'sts_order_group', 'sts_family', 'sts_genus',
-             'sts_tol_updated_at', 'sts_prefix', 'sts_tissue_depleted', 'uid']}
+            fields={{
+              "uid": {
+                rename: "Taxonomy ID"
+              },
+              "sts_common_name": {
+                rename: "Common Name"
+              },
+              "sts_family": {
+                rename: "Family"
+              },
+              "sts_order_group": {
+              },
+              "sts_prefix": {
+                rename: "ToLID prefix"
+              },
+            }}
             />
 
           <h2 className='mt-5'>Drag & Drop</h2>
