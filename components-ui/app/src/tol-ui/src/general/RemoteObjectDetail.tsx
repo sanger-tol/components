@@ -18,7 +18,7 @@ interface Props {
     fields: FieldMetaData
 }
 
-const updateContents = (contents: object) => {
+const formatContents = (contents: object) => {
     const updatedContents: any = {}
 
     for (const [key, value] of Object.entries(contents)) {
@@ -58,20 +58,24 @@ const RemoteObjectDetail = (props: Props) => {
                 Object.entries(fields).forEach(([fieldKey, fieldValues]) => {
                     if (fieldKey in data.attributes) {
                         let value = data.attributes[fieldKey]
+                        // rename the field if rename value provided
                         if (fieldValues.rename !== undefined && fieldValues.rename !== null) {
                             selectedFields[fieldValues.rename] = value
                         } else {
                             selectedFields[fieldKey] = value
                         }
+                    } else {
+                        throw new Error(`Field '${fieldKey}' is missing in the data attributes.`)
                     }
                 })
-                selectedFields = updateContents(selectedFields)
+                selectedFields = formatContents(selectedFields)
                 setObjectData(selectedFields)
             }
         }).catch((error: any) => {
             console.warn(error.message)
             console.warn('Please ensure the db has been restored')
             console.warn('Please ensure the \'endpoint\' prop is correct and pluralised')
+            console.warn('Please ensure the provide the \'fields\' prop')
         })
     }, [endpoint, filter, baseUrl])
 
