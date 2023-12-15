@@ -71,6 +71,9 @@ function Miscellaneous() {
               "sts_prefix": {
                 rename: "ToLID prefix"
               },
+              "sts_pacbio_submitted_date": {
+                rename: "Pacbio Submission Date"
+              }
             }}
             />
 

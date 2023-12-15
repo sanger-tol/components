@@ -8,14 +8,36 @@ import { useState, useEffect } from "react";
 import { httpClient } from '../services/http/httpClient'
 import ObjectDetail from "./ObjectDetail";
 import { FieldMetaData } from "src/table/FieldMeta";
+import { formatDate, normaliseCaps } from "./Utils";
 
 interface Props {
     endpoint: string,
     filter?: object,
     baseUrl?: string,
 
-    fields?: FieldMetaData
+    fields: FieldMetaData
 }
+
+const updateContents = (contents: object) => {
+    const updatedContents: any = {}
+
+    for (const [key, value] of Object.entries(contents)) {
+      // remove or format some content
+      if (typeof value === 'string' && value.includes('GMT')) {
+        updatedContents[key] = formatDate(value)
+      }
+      if (typeof value === 'boolean') {
+        updatedContents[key] = value.toString()
+      }
+      const formattedKey = normaliseCaps(key)
+      if (formattedKey !== key) {
+        updatedContents[formattedKey] = value
+      } else {
+        updatedContents[key] = value
+      }
+    }
+    return updatedContents
+  }
 
 const RemoteObjectDetail = (props: Props) => {
     const { endpoint, filter, baseUrl, fields } = props
@@ -31,21 +53,20 @@ const RemoteObjectDetail = (props: Props) => {
         .then((res: any) => {
             const data = res.data.data[0]
             let selectedFields: any = {}
+
             if (data !== undefined) {
-                // if fields are defined
-                if (fields !== undefined) {
-                    Object.entries(fields).forEach(([fieldKey, fieldValues]) => {
-                        if (fieldKey in data.attributes) {
-                            let value = data.attributes[fieldKey]
-                            if (fieldValues.rename !== undefined && fieldValues.rename !== null) {
-                                selectedFields[fieldValues.rename] = value
-                            } else {
-                                selectedFields[fieldKey] = value
-                            }
+                Object.entries(fields).forEach(([fieldKey, fieldValues]) => {
+                    if (fieldKey in data.attributes) {
+                        let value = data.attributes[fieldKey]
+                        if (fieldValues.rename !== undefined && fieldValues.rename !== null) {
+                            selectedFields[fieldValues.rename] = value
+                        } else {
+                            selectedFields[fieldKey] = value
                         }
-                    })
+                    }
+                })
+                selectedFields = updateContents(selectedFields)
                 setObjectData(selectedFields)
-                }
             }
         }).catch((error: any) => {
             console.warn(error.message)
