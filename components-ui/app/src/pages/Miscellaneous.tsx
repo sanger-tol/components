@@ -23,6 +23,8 @@ function Miscellaneous() {
   const [modalOpen, setModalOpen] = useState(false)
   const [contents, setContents] = useState()
   const [filter, setFilter] = useState({contains: {uid: '1000418'}})
+
+  const _ = setFilter
   console.log(contents)
   console.log(filter)
 
