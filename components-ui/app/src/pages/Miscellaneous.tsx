@@ -22,11 +22,9 @@ const jsonData = {
 function Miscellaneous() {
   const [modalOpen, setModalOpen] = useState(false)
   const [contents, setContents] = useState()
-  const [filter, setFilter] = useState({contains: {uid: '1000418'}})
+  const [filter] = useState({contains: {uid: '1000418'}})
 
-  const _ = setFilter
   console.log(contents)
-  console.log(filter)
 
   return (
     <div>
@@ -59,7 +57,7 @@ function Miscellaneous() {
             baseUrl={ env.TOL_DATA }
             filter={ filter }
             fields={{
-              "uid": {
+              "uidd": {
                 rename: "Taxonomy ID"
               },
               "sts_common_name": {

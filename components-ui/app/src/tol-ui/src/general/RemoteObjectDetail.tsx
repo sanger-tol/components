@@ -22,20 +22,21 @@ const formatContents = (contents: object) => {
     const updatedContents: any = {}
 
     for (const [key, value] of Object.entries(contents)) {
-      // remove or format some content
+        //   format keys
+      const formattedKey = normaliseCaps(key)
+
+        //   format values if date or boolean
+      let formattedValue = value
       if (typeof value === 'string' && value.includes('GMT')) {
-        updatedContents[key] = formatDate(value)
+        formattedValue = formatDate(value)
       }
       if (typeof value === 'boolean') {
-        updatedContents[key] = value.toString()
+        formattedValue = value.toString()
       }
-      const formattedKey = normaliseCaps(key)
-      if (formattedKey !== key) {
-        updatedContents[formattedKey] = value
-      } else {
-        updatedContents[key] = value
-      }
+
+      updatedContents[formattedKey] = formattedValue
     }
+    console.log(updatedContents)
     return updatedContents
   }
 
@@ -75,7 +76,7 @@ const RemoteObjectDetail = (props: Props) => {
             console.warn(error.message)
             console.warn('Please ensure the db has been restored')
             console.warn('Please ensure the \'endpoint\' prop is correct and pluralised')
-            console.warn('Please ensure the provide the \'fields\' prop')
+            console.warn('Please ensure the \'fields\' prop is provided')
         })
     }, [endpoint, filter, baseUrl])
 
