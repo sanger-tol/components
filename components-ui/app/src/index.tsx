@@ -14,7 +14,8 @@ import { Home,
          Maps,
          Sandbox,
          Sunbursts,
-         Widgets } from "./pages";
+         Widgets,
+         Detail } from "./pages";
 // import { Sandbox } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page } from './tol-ui/src'
@@ -67,6 +68,11 @@ const widgets: Page = {
   uiElement: <Widgets />,
 }
 
+const detail: Page = {
+  name: "Detail",
+  uiElement: <Detail />,
+}
+
 ReactDOM.render(
   <TolApp
     brand="Components"
@@ -80,7 +86,8 @@ ReactDOM.render(
       tables,
       sandbox,
       sunbursts,
-      widgets
+      widgets,
+      detail
     ]}
     login={ false }
   />,

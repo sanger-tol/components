@@ -10,4 +10,5 @@ export default interface Page {
   adminOnly?: boolean;
   hidden?: boolean
   uiElement: JSX.Element;
+  detailElement?: JSX.Element;
 }
