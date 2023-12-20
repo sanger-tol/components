@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState, useEffect } from "react";
 import { httpClient } from '../services/http/httpClient'
 import ObjectDetail from "./ObjectDetail";
-import { FieldMetaData } from "src/table/FieldMeta";
+import { FieldMetaData } from "../table/FieldMeta";
 import { formatDate, normaliseCaps } from "./Utils";
 
 interface Props {
