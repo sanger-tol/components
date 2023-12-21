@@ -102,13 +102,10 @@ function TolApp(props: Props) {
                       : page.detailElement}
                   </Route>
                 );
-              const routes = [regularRoute, detailRoute]
-              console.log(routes)
               return [regularRoute, detailRoute];
               })}
 
               <Route path="/page-not-found" component={() => <PageNotFound/>} />
-              <Route path="/species/*"></Route>
             </Switch>
           </div>
           <Footer /> 
