@@ -70,7 +70,9 @@ function TolApp(props: Props) {
             <Switch>
               <Route path="/" exact component={() => props.homePage} />
               <Route path="/callback" exact><Callback /></Route>
-              {props.pages.map(page => {
+
+              {/* {props.pages.map(page => {
+                // debugger
                 let path = convertToPath(page.name)
                 const authRequired = falseIfUndefined(page.authRequired)
 
@@ -79,20 +81,32 @@ function TolApp(props: Props) {
                 } else {
                   return <Route path={"/" + path} key={page.name} exact>{page.uiElement}</Route>
                 }
-              })}
-              
-              {props.pages.map(page => {
-                let path = convertToPath(page.name)
-                const authRequired = falseIfUndefined(page.authRequired)
+              })} */}
 
-                if (page.detailElement !== undefined) {
-                  if (authRequired) {
-                    return <Route path={"/" + path + "/:id"} key={page.name} exact>{(token && !tokenHasExpired(token)) ? page.uiElement : <Redirect to="/" />}</Route>
-                  } else {
-                    return <Route path={"/" + path + "/:id"} key={page.name} exact>{page.uiElement}</Route>
-                  }
-                }
+              {props.pages.map(page => {
+                let path = convertToPath(page.name);
+                const authRequired = falseIfUndefined(page.authRequired);
+
+                // Regular page route
+                const regularRoute = (
+                  <Route path={`/${path}`} key={page.name} exact>
+                    {authRequired ? (token && !tokenHasExpired(token)) ? page.uiElement : <Redirect to="/" />
+                      : page.uiElement}
+                  </Route>
+                );
+
+                // Detail page route
+                const detailRoute = page.detailElement && (
+                  <Route path={`/${path}/:id`} key={`${page.name}-detail`} exact>
+                    {authRequired ? (token && !tokenHasExpired(token)) ? page.detailElement : <Redirect to="/" />
+                      : page.detailElement}
+                  </Route>
+                );
+              const routes = [regularRoute, detailRoute]
+              console.log(routes)
+              return [regularRoute, detailRoute];
               })}
+
               <Route path="/page-not-found" component={() => <PageNotFound/>} />
               <Route path="/species/*"></Route>
             </Switch>

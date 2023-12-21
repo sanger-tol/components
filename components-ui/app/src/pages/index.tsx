@@ -14,4 +14,4 @@ export { default as Maps } from "./Maps";
 export { default as Sunbursts } from "./Sunbursts";
 export { default as ChartTables } from "./ChartTables";
 export { default as Widgets } from "./Widgets";
-export { default as Detail } from "./Detail"
+export { default as Detail } from "./Detail";

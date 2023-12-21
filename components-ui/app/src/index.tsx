@@ -20,6 +20,7 @@ import { Home,
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page } from './tol-ui/src'
 import "./scss/styling.scss";
+import DetailInfo from "./pages/DetailInfo";
 
 
 const barCharts: Page = {
@@ -71,6 +72,7 @@ const widgets: Page = {
 const detail: Page = {
   name: "Detail",
   uiElement: <Detail />,
+  detailElement: <DetailInfo/>
 }
 
 ReactDOM.render(
