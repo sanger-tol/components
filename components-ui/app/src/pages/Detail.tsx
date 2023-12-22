@@ -16,10 +16,12 @@ const detail = {
     "id2": 1230140
 }
 
+// TODO use widgets here
 function Detail() {
     return (
         <div>
             <CentreContents>
+                <h2>Species Detail</h2>
                 <div style={buttonStyle}>
                     <Link to={'detail/' + detail.id1}>
                         <Button>Get Graphomya maculata</Button>

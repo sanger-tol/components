@@ -4,14 +4,15 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { CentreContents, RemoteObjectDetail, env, Widgets } from '../tol-ui/src';
+import { CentreContents, RemoteObjectDetail, env } from '../tol-ui/src';
 import { useParams } from 'react-router-dom'
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 function DetailInfo() {
     const { id } = useParams()
     const [filter] = useState({ contains: { uid: id } })
 
+    // TODO use widgets to display object detail and tables here
     return (
         <div>
             <CentreContents>

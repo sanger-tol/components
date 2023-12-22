@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { formatDate, normaliseCaps } from './Utils'
 
-
+// TODO add title prop which will be populated with scientific name in remote component
 export interface Props {
   data: object
 }
