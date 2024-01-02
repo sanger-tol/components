@@ -20,23 +20,21 @@ interface Props {
 
 const formatContents = (contents: object) => {
     const updatedContents: any = {}
-
     for (const [key, value] of Object.entries(contents)) {
         //   format keys
-      const formattedKey = normaliseCaps(key)
+        const formattedKey = normaliseCaps(key)
 
         //   format values if date or boolean
-      let formattedValue = value
-      if (typeof value === 'string' && value.includes('GMT')) {
-        formattedValue = formatDate(value)
-      }
-      if (typeof value === 'boolean') {
-        formattedValue = value.toString()
-      }
-
-      updatedContents[formattedKey] = formattedValue
+        let formattedValue = value
+        if (typeof value === 'string' && value.includes('GMT')) {
+            formattedValue = formatDate(value)
+        }
+        if (typeof value === 'boolean') {
+            formattedValue = value.toString()
+        }
+    
+        updatedContents[formattedKey] = formattedValue
     }
-    console.log(updatedContents)
     return updatedContents
   }
 
@@ -59,6 +57,7 @@ const RemoteObjectDetail = (props: Props) => {
                 Object.entries(fields).forEach(([fieldKey, fieldValues]) => {
                     if (fieldKey in data.attributes) {
                         let value = data.attributes[fieldKey]
+                        
                         // rename the field if rename value provided
                         if (fieldValues.rename !== undefined && fieldValues.rename !== null) {
                             selectedFields[fieldValues.rename] = value
@@ -66,7 +65,7 @@ const RemoteObjectDetail = (props: Props) => {
                             selectedFields[fieldKey] = value
                         }
                     } else {
-                        throw new Error(`Field '${fieldKey}' is missing in the data attributes.`)
+                        console.warn(`Field '${fieldKey}' is missing in the data attributes.`)
                     }
                 })
                 selectedFields = formatContents(selectedFields)

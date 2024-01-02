@@ -4,18 +4,16 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, CentreContents, Modal, DnD, env } from '../tol-ui/src';
+import { Button, CentreContents, Modal, DnD, env, ObjectDetail, RemoteObjectDetail } from '../tol-ui/src';
 import { useState } from 'react';
-import ObjectDetail from '../tol-ui/src/general/ObjectDetail';
-import RemoteObjectDetail from '../tol-ui/src/general/RemoteObjectDetail';
 
 const jsonData = {
-      "common_name": "Humans",
-      "family": "Hominidae",
-      "genus": "Homo",
-      "order": "Primates",
-      "scientific_name": "Homo sapiens",
-      "sts_species_id": 5443,
+      "Common name": "Human",
+      "Family": "Hominidae",
+      "Genus": "Homo",
+      "Order": "Primates",
+      "Scientific Name": "Homo sapiens",
+      "STS Species ID": 5443,
 }
 
 
@@ -57,7 +55,7 @@ function Miscellaneous() {
             baseUrl={ env.TOL_DATA }
             filter={ filter }
             fields={{
-              "uidd": {
+              "uid": {
                 rename: "Taxonomy ID"
               },
               "sts_common_name": {

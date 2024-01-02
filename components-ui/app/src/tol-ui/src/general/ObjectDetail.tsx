@@ -4,21 +4,20 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-interface Props {
+export interface Props {
   data: object
 }
 
 const ObjectDetail = (props: Props) => {
-    const { data } = props
-    return (
-        <div className='tol-object-detail'>
-            <h2 className='mb-2'>Info</h2>
-            {Object.entries(data).map(([key, value]) =>
-            <p key={key}>
-                <strong>{key}:</strong> {value}
-            </p>)}
-        </div>
-        )
+  const { data } = props
+  return (
+    <div className='tol-object-detail'>
+      {Object.entries(data).map(([key, value]) =>
+        <p key={key}>
+          <strong>{key}:</strong> {value}
+        </p>)}
+    </div>
+  )
 }
 
 export default ObjectDetail;
