@@ -12,19 +12,18 @@ import { formatDate, normaliseCaps } from "./Utils";
 
 interface Props {
     endpoint: string,
+    fields: FieldMetaData
     filter?: object,
     baseUrl?: string,
-
-    fields: FieldMetaData
 }
 
 const formatContents = (contents: object) => {
     const updatedContents: any = {}
     for (const [key, value] of Object.entries(contents)) {
-        //   format keys
+        // format keys
         const formattedKey = normaliseCaps(key)
 
-        //   format values if date or boolean
+        // format values if date or boolean
         let formattedValue = value
         if (typeof value === 'string' && value.includes('GMT')) {
             formattedValue = formatDate(value)
