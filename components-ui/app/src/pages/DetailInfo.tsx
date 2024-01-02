@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom'
 import { useState } from 'react';
 
 function DetailInfo() {
-    const { id } = useParams()
+    let { id } = useParams<({id: string})>();
     const [filter] = useState({ contains: { uid: id } })
 
     // TODO use widgets to display object detail and tables here
@@ -42,7 +42,7 @@ function DetailInfo() {
                 }}
             />
             </CentreContents>
-            </div>
+        </div>
     );
 }
 
