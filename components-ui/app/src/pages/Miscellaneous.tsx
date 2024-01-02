@@ -4,13 +4,24 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, CentreContents, Modal, DnD } from '../tol-ui/src';
+import { Button, CentreContents, Modal, DnD, env, ObjectDetail, RemoteObjectDetail } from '../tol-ui/src';
 import { useState } from 'react';
+
+const jsonData = {
+      "Common name": "Human",
+      "Family": "Hominidae",
+      "Genus": "Homo",
+      "Order": "Primates",
+      "Scientific Name": "Homo sapiens",
+      "STS Species ID": 5443,
+}
 
 
 function Miscellaneous() {
   const [modalOpen, setModalOpen] = useState(false)
   const [contents, setContents] = useState()
+  const [filter] = useState({contains: {uid: '1000418'}})
+
   console.log(contents)
 
   return (
@@ -34,6 +45,35 @@ function Miscellaneous() {
             </p>
           </Modal>
           <Button onClick = {() => setModalOpen(true)}>Example Modal</Button>
+          
+          <h2 className='mt-5'>Object Detail</h2>
+          <ObjectDetail data={jsonData}/>
+
+          <h2 className='mt-5'>Remote Object Detail</h2>
+          <RemoteObjectDetail
+            endpoint='species'
+            baseUrl={ env.TOL_DATA }
+            filter={ filter }
+            fields={{
+              "uid": {
+                rename: "Taxonomy ID"
+              },
+              "sts_common_name": {
+                rename: "Common Name"
+              },
+              "sts_family": {
+                rename: "Family"
+              },
+              "sts_order_group": {
+              },
+              "sts_prefix": {
+                rename: "ToLID prefix"
+              },
+              "sts_pacbio_submitted_date": {
+                rename: "Pacbio Submission Date"
+              }
+            }}
+            />
 
           <h2 className='mt-5'>Drag & Drop</h2>
           <h5>DnD Contents: </h5>

@@ -15,6 +15,7 @@ export { default as Status } from "./general/Status";
 export { default as Modal } from "./general/Modal";
 export { default as Placeholder } from "./general/Placeholder";
 export { default as Widgets } from "./general/Widgets";
+export { default as ObjectDetail } from "./general/ObjectDetail"
 export { default as RemoteObjectDetail } from "./general/RemoteObjectDetail"
 
 // Forms
