@@ -12,7 +12,7 @@ function DetailInfo() {
     let { id } = useParams<({id: string})>();
     const [filter] = useState({ contains: { uid: id } })
     const [data, setData] = useState('')
-    
+
     const objectInfo = (
         <RemoteObjectDetail
             endpoint='species'
