@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, React } from "react";
 import { httpClient } from '../services/http/httpClient'
 import ObjectDetail from "./ObjectDetail";
 import { FieldMetaData } from "../table/FieldMeta";
@@ -15,6 +15,7 @@ interface Props {
     fields: FieldMetaData
     filter?: object,
     baseUrl?: string,
+    setData?: React.Dispatch<React.SetStateAction<any>>
 }
 
 const formatContents = (contents: object) => {
@@ -38,7 +39,7 @@ const formatContents = (contents: object) => {
   }
 
 const RemoteObjectDetail = (props: Props) => {
-    const { endpoint, filter, baseUrl, fields } = props
+    const { endpoint, filter, baseUrl, fields, setData } = props
     const [ objectData, setObjectData ] = useState<any[]>([]);
 
     useEffect(() => {
@@ -51,12 +52,15 @@ const RemoteObjectDetail = (props: Props) => {
         .then((res: any) => {
             const data = res.data.data[0]
             let selectedFields: any = {}
-
+            // if specified, set data to all that's been returned by the call
             if (data !== undefined) {
+                if (setData) {
+                    setData(data)
+                }
+                // set the state with all returned data
                 Object.entries(fields).forEach(([fieldKey, fieldValues]) => {
                     if (fieldKey in data.attributes) {
                         let value = data.attributes[fieldKey]
-                        
                         // rename the field if rename value provided
                         if (fieldValues.rename !== undefined && fieldValues.rename !== null) {
                             selectedFields[fieldValues.rename] = value

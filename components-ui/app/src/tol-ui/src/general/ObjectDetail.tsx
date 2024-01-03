@@ -8,7 +8,7 @@ export interface Props {
   data: object
 }
 
-const ObjectDetail = (props: Props) => {
+function ObjectDetail(props: Props) {
   const { data } = props
   return (
     <div className='tol-object-detail'>

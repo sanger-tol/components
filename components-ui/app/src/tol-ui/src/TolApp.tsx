@@ -71,18 +71,6 @@ function TolApp(props: Props) {
               <Route path="/" exact component={() => props.homePage} />
               <Route path="/callback" exact><Callback /></Route>
 
-              {/* {props.pages.map(page => {
-                // debugger
-                let path = convertToPath(page.name)
-                const authRequired = falseIfUndefined(page.authRequired)
-
-                if (authRequired) {
-                  return <Route path={"/" + path} key={page.name} exact>{(token && !tokenHasExpired(token)) ? page.uiElement : <Redirect to="/" />}</Route>
-                } else {
-                  return <Route path={"/" + path} key={page.name} exact>{page.uiElement}</Route>
-                }
-              })} */}
-
               {props.pages.map(page => {
                 let path = convertToPath(page.name);
                 const authRequired = falseIfUndefined(page.authRequired);

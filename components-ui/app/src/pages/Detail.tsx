@@ -8,7 +8,7 @@ import { Button, CentreContents } from '../tol-ui/src';
 import { Link } from "react-router-dom"
 
 const buttonStyle = {
-    marginBottom: '10px', // Adjust the value based on your preferred spacing
+    marginBottom: '10px'
 }
 
 const detail = {
@@ -16,20 +16,19 @@ const detail = {
     "id2": 1230140
 }
 
-// TODO use widgets here
 function Detail() {
     return (
         <div>
             <CentreContents>
-                <h2>Species Detail</h2>
+                <h2 className='my-5'>Mock Species</h2>
                 <div style={buttonStyle}>
                     <Link to={'detail/' + detail.id1}>
-                        <Button>Get Graphomya maculata</Button>
+                        <Button>Get detail for Graphomya maculata</Button>
                     </Link>
                 </div>
                 <div style={buttonStyle}>
                     <Link to={'detail/' + detail.id2}>
-                        <Button>Get Hebecnema nigra</Button>
+                        <Button>Get detail for Hebecnema nigra</Button>
                     </Link>
                 </div>
             </CentreContents>
