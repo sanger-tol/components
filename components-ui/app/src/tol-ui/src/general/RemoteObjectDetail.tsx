@@ -4,7 +4,8 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect, React } from "react";
+import React from 'react';
+import { useState, useEffect } from 'react';
 import { httpClient } from '../services/http/httpClient'
 import ObjectDetail from "./ObjectDetail";
 import { FieldMetaData } from "../table/FieldMeta";

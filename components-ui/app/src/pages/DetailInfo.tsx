@@ -5,13 +5,20 @@ SPDX-License-Identifier: MIT
 */
 
 import { RemoteObjectDetail, Widgets, env } from '../tol-ui/src';
-import { useParams } from 'react-router-dom'
-import { useState } from 'react';
+import { useParams, Redirect } from 'react-router-dom'
+import { useState, useEffect } from 'react';
 
 function DetailInfo() {
     let { id } = useParams<({id: string})>();
     const [filter] = useState({ contains: { uid: id } })
-    const [data, setData] = useState('')
+    const [data, setData] = useState()
+
+    // useEffect(() => {
+    //     if (data === undefined) {
+    //         return <Redirect to="/page-not-found"/>
+    //     }
+    //     console.log(data)
+    // }, [data])
 
     const objectInfo = (
         <RemoteObjectDetail
@@ -44,7 +51,7 @@ function DetailInfo() {
     return (
         <div className='detail-info-display'>
             <Widgets
-                title={data && data.attributes.sts_scientific_name}
+                title={data?.attributes.sts_scientific_name ?? 'Information'}
                 components={[objectInfo]}
             />
         </div>

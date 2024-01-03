@@ -77,7 +77,7 @@ function TolApp(props: Props) {
 
                 // Regular page route
                 const regularRoute = (
-                  <Route path={`/${path}`} key={page.name} exact>
+                  <Route exact path={`/${path}`} key={page.name} >
                     {authRequired ? (token && !tokenHasExpired(token)) ? page.uiElement : <Redirect to="/" />
                       : page.uiElement}
                   </Route>
@@ -85,15 +85,15 @@ function TolApp(props: Props) {
 
                 // Detail page route
                 const detailRoute = page.detailElement && (
-                  <Route path={`/${path}/:id`} key={`${page.name}-detail`} exact>
+                  <Route exact path={`/${path}/:id`} key={`${page.name}-detail`} >
                     {authRequired ? (token && !tokenHasExpired(token)) ? page.detailElement : <Redirect to="/" />
                       : page.detailElement}
                   </Route>
                 );
               return [regularRoute, detailRoute];
               })}
-
-              <Route path="/page-not-found" component={() => <PageNotFound/>} />
+              <Route path="/page-not-found" component={() => <PageNotFound />} />
+              <Redirect from="*" to="/page-not-found" />
             </Switch>
           </div>
           <Footer /> 
