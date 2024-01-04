@@ -4,19 +4,23 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useState } from 'react';
 import { CentreContents, RemoteTable, env} from '../tol-ui/src'
-// import StatusExample from '../tol-ui/src/sandbox/StatusExample'
 
 
 function Tables() {
+  const [filter, setFilter] = useState<object>({})
+
   return (
     <div className="tables">
       <CentreContents>
-      <RemoteTable
-        id="run-data-1"
-        endpoint="run_data"
-        baseUrl={ env.TOL_DATA }
-      />
+        <RemoteTable
+          id="samples-v1"
+          endpoint="sample"
+          filter={filter}
+          setFilter={setFilter}
+          baseUrl={env.TOL_DATA}
+        />
       </CentreContents>
     </div>
   );
@@ -25,6 +29,8 @@ function Tables() {
 export default Tables;
 
 /*
+import StatusExample from '../tol-ui/src/sandbox/StatusExample'
+
 <RemoteTable
   endpoint="samples"
   fields={{

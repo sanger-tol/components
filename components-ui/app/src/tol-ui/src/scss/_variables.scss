@@ -9,7 +9,7 @@
 The following have sass and css variables
 - primary = main colour used for buttons and accents - can be overidden
 - secondary = faded version of primary but can be overidden
-- grey = used for table borders/headers etc
+- greys = used for table borders/headers etc
 - primary-opaque = used for subtle selected items
 - grey-opaque = used for hovering on table cells etc
 
@@ -28,24 +28,27 @@ $bs-emphasis-color: var(--bs-emphasis-color) !default;
 $bs-body-widget-bg: var(--bs-body-widget-bg) !default;
 
 // HOVER
-$bs-grey: var(--bs-secondary-bg);
-$grey: #808080 !default;
-$grey-opaque: rgba($grey, 0.1) !default;
+$grey-subtle: var(--bs-secondary-bg);
+$grey-emphasis: var(--bs-border-color) !default; // #808080
+$grey-opaque: rgba($grey-emphasis, 0.1) !default;
 $primary-opaque: rgba($primary, 0.1) !default;
 $primary-hover: lighten($primary, 10%) !default;
+
+$placeholder: var(--rs-text-secondary) !default;
 
 // SASS -> CSS VARS //
 :root {
   --primary: #{$primary};
   --secondary: #{$secondary};
-  --bs-grey: var(--bs-secondary-bg);
-  --grey: #{$grey};
+  --grey-subtle: var(--bs-secondary-bg);
+  --grey-emphasis: var(--bs-border-color);
   --grey-opaque: #{$grey-opaque};
   --primary-opaque: #{$primary-opaque};
   --primary-hover: #{$primary-hover};
+  --placeholder: #{$placeholder};
 
   // light mode variant
-  --bs-body-widget-bg: var(--bs-grey);
+  --bs-body-widget-bg: var(--grey-subtle);
 }
 
 // dark mode variant
@@ -54,13 +57,3 @@ $primary-hover: lighten($primary, 10%) !default;
     --bs-body-widget-bg: #121618;
   }
 }
-
-
-/*
-// DARK MODE //
-@media (prefers-color-scheme: dark) {
-  :root {
-    --example: red;
-  }
-}
-*/

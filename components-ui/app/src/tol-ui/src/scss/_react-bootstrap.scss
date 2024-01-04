@@ -46,10 +46,41 @@
 .tol-status {
   .alert {
     margin-bottom: 0;
-    padding: 5px 10px 5px 10px;
   }
   
   .status-text {
     margin-left: 10px;
+  }
+}
+
+.tol-pop-up-message {
+  animation: fade ease 10s;
+  position: fixed;
+  z-index: 10000000;
+  width: 60%;
+  min-width: 250px;
+  top: 110px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  .tol-status {
+    .alert {
+      margin-bottom: 0;
+    }
+  }
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }

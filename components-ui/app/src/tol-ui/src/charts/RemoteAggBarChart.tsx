@@ -22,7 +22,7 @@ interface Props {
   interval: DateInterval,
   height: number,
   shortDate?: boolean,
-  setBarData?: React.Dispatch<React.SetStateAction<any>>
+  setBarData?: Function
 }
 
 function RemoteAggBarChart(props: Props) {

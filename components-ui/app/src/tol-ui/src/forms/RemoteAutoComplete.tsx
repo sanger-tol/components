@@ -11,13 +11,14 @@ import { MiniLoadingHelix, Status } from '../index';
 
 
 interface Props {
-  endpoint: string
-  filter_by: string
-  display: string[]
+  endpoint: string,
+  filter_by: string,
+  display: string[],
+  baseUrl?: string
 }
 
 function RemoteAutoComplete(props: Props) {
-  const { endpoint, filter_by, display } = props;
+  const { endpoint, filter_by, display, baseUrl } = props;
   const [value, setValue] = useState('')
   const [timeout, setTimeDelay] = useState(undefined)
   const [data, setData] = useState([''])
@@ -43,7 +44,8 @@ function RemoteAutoComplete(props: Props) {
     httpClient().get('/' + endpoint, {
       params: {
         filter: {"contains": {[filter_by]: value}}
-      }
+      },
+      baseURL: baseUrl
       })
       .then((res: any) => {
         const dropdown_data = convertForDropdown(res.data.data)
@@ -98,7 +100,7 @@ function RemoteAutoComplete(props: Props) {
         }
       </div>
     );
-  }else{
+  } else {
     return(
       <div>
         <div className='tol-input'>

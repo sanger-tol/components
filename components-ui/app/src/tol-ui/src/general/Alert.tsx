@@ -4,18 +4,18 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Alert as AlertBootstrap } from "react-bootstrap";
+import { Alert as AlertBS } from "react-bootstrap";
 
-export interface AlertProps {
+interface Props {
   type: string
   message: string
 }
 
-function Alert(props: AlertProps) {
+function Alert(props: Props) {
   return (
-    <AlertBootstrap key={props.type} variant={props.type}>
+    <AlertBS key={props.type} variant={props.type}>
       {props.message}
-    </AlertBootstrap>
+    </AlertBS>
   );
 }
 

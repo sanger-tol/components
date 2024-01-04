@@ -16,7 +16,7 @@ export interface CellRenderer {
   propPointers: ElementPropPointers
 }
 
-interface Field {
+export interface Field {
   cellRenderer?: CellRenderer|null,
   filter?: boolean,
   filterType?: string|null,
@@ -46,8 +46,8 @@ export interface FieldMeta {
   pageSize: number
 }
 
-const fieldDefaults = (key: string) => {
-  const rename = (key === 'uid') ? 'ID' : normaliseCaps(key)
+const fieldDefaults = (key: string, endpoint?: string) => {
+  const rename = normaliseCaps(key, endpoint)
 
   return {
     cellRenderer: null,
@@ -64,9 +64,9 @@ const fieldDefaults = (key: string) => {
   }
 }
 
-export function addFieldDefaults(key: string, field: Field) {
+export function addFieldDefaults(key: string, field: Field, endpoint?: string) {
   return {
-    ...fieldDefaults(key),
+    ...fieldDefaults(key, endpoint),
     ...field
   }
 }

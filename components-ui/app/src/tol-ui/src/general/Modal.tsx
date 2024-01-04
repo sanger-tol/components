@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React from 'react';
 import { Button } from 'react-bootstrap';
 import { Modal as RSModal } from 'rsuite';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,7 +13,7 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 export interface Props {
   size: string,
   open: boolean,
-  setOpen: React.Dispatch<React.SetStateAction<any>>,
+  setOpen: Function,
   children: JSX.Element | JSX.Element[],
   overflow?: boolean,
   actionButton?: JSX.Element,

@@ -31,7 +31,7 @@ interface Props {
   height: number,
   legendPosition?: string,
   noLabel?: boolean,
-  setSliceData?: React.Dispatch<React.SetStateAction<any>>
+  setSliceData?: any
 }
 
 function Sunburst(props: Props) {

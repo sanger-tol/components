@@ -4,202 +4,95 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { RemoteTable,
-         RemoteMultipleSelectFilters,
-         RemoteBarChart,
-         RemoteBubbleMap,
-         RemoteSunburst,
-         Button,
-         Widgets,
-         Row,
-         Col,
-         env } from '../tol-ui/src'
 import { useState } from 'react';
+import { env, RemoteTable, Widgets } from '../tol-ui/src'
+import Filter from '../tol-ui/src/general/Filter';
 
 
-function ReportCard() {
-  // initial state for global filters is temporary
-  const [ globalFilters, setGlobalFilters ] = useState<object>({in_list: {}})
-  const [ combinedFilters, setCombinedFilters ] = useState<object>({})
+function Sandbox() {
+  //const [filter, setFilter] = useState<object>({'contains': {'sts_common_name': 'Pink'}})
+  const [filter, setFilter] = useState<object>({})
 
-  const filters = (
-    <RemoteMultipleSelectFilters
-      endpoint="barcoding_run_data"
-      fields={[
-        "bioscan_o_primary",
-        "bioscan_f_primary",
-        "bioscan_g_primary",
-        "bioscan_s_primary",
-        "sts_sample.sts_gal"
-      ]}
-      renamedFields={{
-        "sts_sample.sts_gal": "Partner",
-        "bioscan_o_primary": "Order",
-        "bioscan_g_primary": "Genus",
-        "bioscan_f_primary": "Family",
-        "bioscan_s_primary": "Scientific Name"
-      }}
-      globalFilters={globalFilters}
-      setGlobalFilters={setGlobalFilters}
-      baseUrl={env.TOL_DATA}
-    />
-  )
-
-  const chart = (
-    <RemoteBarChart
-      stacked
-      endpoint="barcoding_run_data"
-      breakDownBy="bioscan_o_primary"
-      xAxis="sts_sample.sts_col_date"
-      interval="M"
-      filter={globalFilters}
-      setCombinedFilters={setCombinedFilters}
-      type='date'
-      height={500}
-      baseUrl={ env.TOL_DATA }
-      shortDate
-    />
-  )
-
-  const table = (
+  /*
+  const table1 = (
     <RemoteTable
-      id="report-card-v3"
-      endpoint="barcoding_run_data"
-      filter={combinedFilters}
-      defaultSort="sts_sample.sts_col_date"
+      id="tester12"
+      endpoint="extraction"
+      height={500}
+      baseUrl={env.TOL_DATA}
+      filter={filter}
+      setFilter={setFilter}
+    />
+  )
+  */
+
+  const table2 = (
+    <RemoteTable
+      id="run-data-table-v2"
+      endpoint="run_data"
+      baseUrl={env.TOL_DATA}
+      filter={filter}
+      setFilter={setFilter}
+      height={500}
       fields={{
-        "sts_sample.sts_gal": {
-          rename: "Partner"
+        "tolqc_run_id": {
+          rename: "Run ID",
+          width: 100
         },
-        "bioscan_run_primary": {
-          rename: "Batch"
+        "tolqc_species.sts_scientific_name": {
+          rename: "Species"
         },
-        "bioscan_specimen.id": {
-          rename: "Specimen ID"
+        "tolqc_sequencing_request.id": {
+          rename: "Sequencing Request",
+          relationshipBox: true
         },
-        "bioscan_read_count": {
-          rename: "Reads"
+        "mlwh_complete_date": {
+          rename: "Complete Date"
         },
-        "bioscan_reads_in_contigs": {
-          rename: "Read in Contigs"
+        "mlwh_platform_type": {
+          rename: "Platform"
         },
-        "bioscan_contigs_produced": {
-          rename: "Contigs"
+        "mlwh_instrument_model": {
+          rename: "Instrument"
         },
-        "bioscan_otu_primary": {
-          rename: "Classification"
+        "tolqc_position": {
+          rename: "Position"
         },
-        "bioscan_rep_count_primary": {
-          rename: "Reads in BIN"
-        },
-        "bioscan_id_similarity_primary": {
-          rename: "% Match to BIN"
-        },
-        "bioscan_pred_tax": {
-          rename: "Predicted Taxonomy"
-        },
-        "bioscan_o_primary": {
-          rename: "Primary Order (BOLD)"
-        },
-        "bioscan_other_orders": {
-          rename: "Other Orders"
-        },
-        "bioscan_match": {
-          rename: "Taxonomy Mismatch"
-        },
-        "bioscan_conservation_status": {
-          rename: "Pantheon Conservation Status"
+        "tolqc_tag_index": {
+          rename: "Tag"
         }
       }}
-      height={500}
-      baseUrl={env.TOL_DATA}
-      noConfigModal
     />
   )
-
-  const map = (
-    <RemoteBubbleMap
-      endpoint="barcoding_run_data"
-      longitudeKey="sts_sample.sts_longitude.keyword"
-      latitudeKey="sts_sample.sts_latitude.keyword"
-      filter={combinedFilters}
-      height={500}
-      baseUrl={env.TOL_DATA}
-      attributeKeys="bioscan_s_primary"
-    />
-  )
-
-  const sunburst = (
-    <span>
-      <h6>
-        BIOSCAN Sunburst of Specimens:
-      </h6>
-      <p className="mb-3">
-        Subset to different taxonomic levels or Partners by using the menu above.
-        This will also subset the barchart, map, and table below.
-      </p>
-      <RemoteSunburst
-        endpoint="barcoding_run_data"
-        sliceBy={[
-          "bioscan_o_primary",
-          "bioscan_f_primary",
-          "bioscan_g_primary",
-          "bioscan_s_primary"
-        ]}
-        filter={combinedFilters}
-        height={600}
-        baseUrl={env.TOL_DATA}
-        legendPosition="right"
-        noLabel
-      />
-    </span>
-  )
-
-  const resetFiltersButton = (
-    <Button
-      className="m-1"
-      style={{float: 'right'}}
-      onClick={()=>{setGlobalFilters({in_list:  {}})}}
-    >
-      Reset Filters
-    </Button>
-  )
-
-  const title = (
-    <span>
-      <h2>Report Card</h2>
-    </span>
-  )
-
-  const intro = (
-    <Row>
-      <Col xs={12} sm={8}>{title}</Col>
-      <Col xs={12} sm={4}>{resetFiltersButton}</Col>
-    </Row>
-  )
-
+  
   return (
-    <div className="bioscan-report-card">
-      <Widgets
-        components={[intro]}
+    <>
+      <Filter
+        id='sts_tol_updated_at'
+        rename='sts_tol_updated_at'
+        type='datetime'
+        filter={filter}
+        setFilter={setFilter}
+      />
+      <Filter
+        id='sts_species_id'
+        rename='sts_species_id'
+        type='int'
+        filter={filter}
+        setFilter={setFilter}
+      />
+      <Filter
+        id='sts_ready'
+        rename='sts_ready'
+        type='boolean'
+        filter={filter}
+        setFilter={setFilter}
       />
       <Widgets
-        components={[filters]}
+        components={[table2]}
       />
-      <Widgets
-        components={[sunburst]}
-      />
-      <Widgets
-        components={[chart]}
-      />
-      <Widgets
-        components={[map]}
-      />
-      <Widgets
-        components={[table]}
-      />
-    </div>
+    </>
   );
 }
 
-export default ReportCard;
+export default Sandbox;

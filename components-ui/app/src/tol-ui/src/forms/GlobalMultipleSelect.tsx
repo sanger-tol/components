@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Checkbox, CheckPicker as RSCheckPicker } from 'rsuite';
 import { isPropDefined, normaliseCaps } from '../general/Utils';
 
@@ -17,7 +17,7 @@ interface Props {
   globalFilters: {
     in_list: { [key: string]: string[] }
   }
-  setGlobalFilters: React.Dispatch<React.SetStateAction<object>>
+  setGlobalFilters: Function
 }
 
 function setCheckedValues(globalFilters: any, setValue: any){

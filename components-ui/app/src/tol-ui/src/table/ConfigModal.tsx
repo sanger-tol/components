@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { DnD } from '../index';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Modal } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faDiagramProject, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FieldMeta, initialiseFieldMeta } from './FieldMeta';
+import { FieldMeta, initialiseFieldMeta } from './Field';
 import { Row, Button, Col } from 'react-bootstrap';
 import { deleteFieldMetaFromStorage } from './TableUtils';
 
@@ -18,7 +18,7 @@ export interface Props {
   tableId: string,
   fieldMeta: FieldMeta,
   open: boolean,
-  setOpen: React.Dispatch<React.SetStateAction<any>>,
+  setOpen: Function,
   modalOnSave: Function
 }
 
@@ -121,7 +121,7 @@ function ConfigModal(props: Props) {
             className="clear-saved-config"
             style={{float: "right"}}
             variant="warning"
-            onClick={ () => {
+            onClick={() => {
               deleteFieldMetaFromStorage(tableId)
             }}
           >

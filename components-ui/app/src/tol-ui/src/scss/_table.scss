@@ -4,213 +4,210 @@
  * SPDX-License-Identifier: MIT
  */
 
-.tol-table {
-  .table {
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 6px;
-    font-size: 14px;
-    margin-bottom: 8px;
+:root {
+  // pagination
+  --rs-btn-ghost-text: var(--primary);
+  --rs-btn-ghost-border: var(--primary);
+  --rs-btn-ghost-hover-text: var(--primary);
+  --rs-btn-ghost-hover-border: var(--primary);
+  --rs-btn-ghost-hover-border: var(--primary);
+  --rs-btn-ghost-active-border: var(--primary);
+  --rs-btn-ghost-active-text: var(--primary);
+  --rs-btn-subtle-active-bg: var(--primary);
+  
+  --rs-btn-subtle-hover-text: var(--bs-bg-color);
+  --rs-btn-subtle-hover-bg: var(--grey-opaque);
 
-    // keep placeholder text the same for datetime picker on table
-    #tol-filter-input .rs-picker-toggle .rs-picker-toggle-placeholder {
-      font-size: 14px;
-      color: var(--grey);
-    }
-
-    #tol-filter-input .rs-picker-value-item {
-      font-size: 14px;
-    }
-  }
-
-  thead {
-    background-color: var(--bs-grey);
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    border: var(--bs-grey);
-    color: var(--bs-emphasis-color);
-  }
-
-  // remove row borders
-  thead, tbody, tfoot, tr, td, th {
-    border-style: none;
-  }
-
-  // add row borders to rows only
-  .tol-row {
-    border-style: solid;
-  }
-
-  // hover effects
-  li.dropdown-item:hover,
-  li.dropdown-item:active,
-  .page-link:hover {
-    background-color: $grey-opaque;
-  }
-
-  // row/cell hover effecrs
-  tr th:hover,
-  tbody tr:hover {
-    background-color: $primary-opaque;
-  }
-
-  .page-link {
-    background-color: none;
-    text-decoration: none;
-  }
-
-  // darken various buttons
-  #pageDropDown:hover,
-  .tol-table-button:hover,
-  .tol-table-button:active,
-  .active.page-item .page-link:hover {
-    background-color: $primary-hover !important;
-    border-color: $primary-hover !important;
-    text-decoration: none;
-  }
-
-  // table sorting arrows
-  button span .caret { // hides duplicate page size dropdown arrow
-    display: none;
-  }
-
-  .caret {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    margin-left: 2px;
-    vertical-align: middle;
-    border-top: 4px dashed;
-    border-top: 4px solid \9;
-    border-right: 4px solid transparent;
-    border-left: 4px solid transparent;
-  }
-
-  .dropup .caret, .navbar-fixed-bottom .dropdown .caret {
-    border-top: 0;
-    border-bottom: 4px dashed;
-    border-bottom: 4px solid \9;
-    content: "";
-  }
-
-  .sorting-active-colour {
-    color: var(--bs-success-text);
-  }
-
-  // hide or show filter search
-  .filter-search-input-show {
-    display: flex;
-  }
-
-  // table filtering
-  .filter-label {
-    display: flex;
-    margin: 0;
-  }
-
-  // pagination buttons
-  #pageDropDown {
-    color: white;
-    float: right;
-    margin: 6px;
-    margin-right: 0;
-    margin-top: 0;
-    background-color: $primary;
-    border-color: $primary;
-  }
-
-  .dropdown-toggle {
-    color: white;
-  }
-
-  .btn.btn-primary,
-  .react-bootstrap-table-page-btns-ul {
-    float: right;
-    margin: 6px;
-    margin-right: 0;
-    margin-top: 0;
-  }
-
-  .active.page-item .page-link {
-    color: white;
-  }
-
-  .page-item .page-link {
-    color: $primary;
+  // page size
+  span.rs-picker-select-menu-item-active.rs-picker-select-menu-item-focus {
+    background-color: var(--grey-opaque) !important;
+    color: var(--primary) !important;
+    font-weight: normal;
   }
 
   // page size dropdown
-  span.open.show.react-bs-table-sizePerPage-dropdown.dropdown {
-    float: right;
+  .rs-picker-select-menu-item:hover {
+    background-color: var(--grey-subtle) !important;
   }
 
-  ul.dropdown-menu.open.show {
-    min-width: 0;
-    position: absolute;
-    top: 50px;
-    right: 3px;
+  .tol-pagination {
+    margin-top: -2px;
+    margin-bottom: 10px;
+    float: left;
+  
+    .rs-pagination-btn {
+      border: 1px solid var(--bs-body-bg);
+    }
+    .rs-pagination-btn.rs-pagination-btn-active {
+      border: 1px solid var(--grey-emphasis);
+    }
+  
+    .rs-pagination-btn.rs-pagination-btn-active:hover,
+    .rs-pagination-btn.rs-pagination-btn-active:focus {
+      border: 1px solid var(--primary);
+      box-shadow: none;
+    }
+
+    .rs-pagination-btn:disabled {
+      border: none;
+      box-shadow: none;
+    }
   }
 
-  li.dropdown-item a {
-    color: $primary;
-    text-decoration: none;
-    padding: 10px !important;
-  }
+  .tol-table {
+    // field name titles
+    p {
+      margin: 0;
+      margin-bottom: 4px;
+    }
 
-  li.dropdown-item {
-    padding: 4px !important;
-  }
+    // whole table
+    .rs-table {
+      border-radius: 6px;
+      border: 1px solid var(--grey-subtle);
+    }
 
-  // page size total indicator
-  .react-bootstrap-table-pagination-total {
+    .rs-table-cell {
+      border-bottom: transparent;
+    }
+
+    .rs-table-cell-content {
+      border-bottom: 1px solid var(--grey-subtle);
+    }
+
+    // text properties
     font-size: 14px;
-  }
+    color: var(--bs-body-color);
 
-  // filter visability
-  .filter-input-hide {
-    display: none;
-  }
+    // cells
+    .rs-table-body-row-wrapper .rs-table-cell {
+      font-size: 14px;
+      color: var(--bs-body-color);
+      background-color: var(--bs-bg-color);
+    }
 
-  .filter-input-show {
-    display: block;
-  }
+    .rs-table-cell-full-text:hover {
+      -webkit-box-shadow: none;
+      box-shadow: none;
+    }
 
-  // filter button
-  .tol-table-button,
-  .tol-table-button:active {
-    color: white;
-    fill: white;
-  }
+    .rs-table-cell.rs-table-cell-full-text {
+      background-color: $bs-body-bg;
+    }
 
-  // align header titles at top
-  .table thead th {
-    vertical-align: top;
-  }
+    .rs-table-cell-content:hover {
+      border: 1px dashed var(--bs-body-color) !important;
+      border-radius: 6px;
+    }
 
-  // make table scrollable and auto-resize
-  .table {
-    overflow: auto;
-    display: block;
-    table-layout: auto;
-    height: 700px; // only a deafult size
-    overflow-y: auto;
-  }
+    // header
+    .rs-table-header-row-wrapper {
+      font-size: 14px;
+      font-weight: bolder;
+      color: var(--bs-emphasis-color);
+    }
 
-  // ensure columns fill div
-  .table-bordered td, .table-bordered th {
-    width: 1% !important;
-  }
+    .tol-header-text {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    
+    // header color
+    .rs-table-cell-header .rs-table-cell-content,
+    .rs-table-header-row-wrapper .rs-table-row.rs-table-row-header {
+      background-color: $grey-subtle !important;
 
-  // remove second border
-  .table-bordered > :not(caption) > * > * {
-    border-width: 0;
+      .rs-table-cell {
+        background-color: transparent !important;
+      }
+    }
+
+    // buttons
+    .tol-table-button {
+      float: right;
+      color: var(--primary);
+      fill: var(--primary);
+      background-color: transparent;
+      border-color: var(--grey-emphasis);
+      padding: 0;
+      height: 30px;
+      width: 30px;
+      margin-left: 6px;
+    }
+
+    .tol-table-button:hover,
+    .tol-table-button:active {
+      border-color: var(--primary) !important;
+      text-decoration: none;
+      color: var(--primary);
+      fill: var(--primary);
+    }
+
+    .tol-table-button:disabled {
+      background-color: var(--grey-emphasis) !important;
+      color: var(--bs-body-bg) !important;
+      fill: var(--bs-body-bg) !important;
+      background-color: transparent;
+    }
+
+    // number of rows total
+    .tol-total {
+      float: left;
+      margin-top: 3px;
+      margin-left: 4px;
+      margin-right: 12px;
+    }
+
+    // rows per page
+    .tol-page-size {
+      float: left;
+      margin-top: -2px;
+    }
+
+    // filter show and hide
+    .tol-filter {
+      margin-top: 5px;
+    }
+
+    .tol-filter-hide {
+      display: none;
+    }
+
+    // row hover
+    --rs-state-hover-bg: var(--grey-opaque);
+
+    // row resize
+    --rs-row-resize: var(--primary);
+    --rs-table-resize: var(--primary);
+
+    // sort arrows
+    --rs-table-sort: var(--primary);
+
+    // scroll bar
+    --rs-table-scrollbar-track: none;
+    --rs-table-scrollbar-vertical-track: none;
+
+    // sort arrows
+    .rs-table-cell-header-sort-wrapper {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    // inner table loader
+    .tol-placeholder-icons .loader {
+      top: -150px
+    }
   }
 
   // link box (e.g. relationship)
   .link-box {
     border-radius: 6px;
     background-color: rgba($primary, 0.1) !important;
+  }
+
+  .link-box {
     padding: 10px;
   }
 
@@ -220,22 +217,6 @@
 
   .link-box.clickable {
     cursor: pointer;
-  }
-
-  // statuses using alert format
-  td .alert {
-    margin-bottom: 0;
-    padding: 5px 10px 5px 10px;
-  }
-
-  // acting as the same space as an alert for when the table loads
-  .table-empty {
-    height: 58px;
-  }
-
-  // This is here because react-table uses Bootstrap 4 classes
-  .sr-only {
-    @extend .visually-hidden
   }
 }
 
@@ -255,7 +236,7 @@
 }
 
 .tooltip-value-none {
-  color: $grey;
+  color: var(--grey-emphasis);
   font-weight: 400;
 }
 
@@ -271,5 +252,23 @@
 
   svg {
     margin-left: 6px;
+  }
+}
+
+// pagination buttons on smaller devices
+@media (max-width: 992px) {
+  .tol-table .tol-table-button {
+    float: left !important;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 700px) {
+  .tol-pagination {
+    margin-top: 4px !important;
+  }
+
+  .tol-skip .tol-pagination {
+    margin-top: -2px !important;
   }
 }

@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT
 
 import ReactDOM from "react-dom";
 import { Home,
-         ChartTables,
          BarCharts,
+         Combinations,
          Miscellaneous,
          Tables,
          Forms,
@@ -26,9 +26,9 @@ const barCharts: Page = {
   uiElement: <BarCharts />
 }
 
-const chartTables: Page = {
-  name: "ChartTables",
-  uiElement: <ChartTables />
+const combinations: Page = {
+  name: "Combinations",
+  uiElement: <Combinations />
 }
 
 const forms: Page = {
@@ -73,7 +73,7 @@ ReactDOM.render(
     homePage={ <Home /> }
     pages={[
       barCharts,
-      chartTables,
+      combinations,
       forms,
       maps,
       miscellaneous,

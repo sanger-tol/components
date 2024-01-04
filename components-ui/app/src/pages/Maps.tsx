@@ -6,9 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { BubbleMap, CentreContents, RemoteBubbleMap, RemoteBubbleMapFilter, env } from "../tol-ui/src";
 
-    
-function Maps() {
 
+function Maps() {
   // fake data for BubbleMapp component
   const points = [[51.508530, -0.076132],[51.510357, -0.116773],[51.507359, -0.136439],[53.958332, -1.080278],
                   [52.192001,-2.220000],[51.063202, -1.308000]]

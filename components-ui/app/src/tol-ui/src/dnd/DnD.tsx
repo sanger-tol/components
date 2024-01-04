@@ -21,7 +21,7 @@ interface Columns {
 
 interface Props {
   elements: object,
-  setContents?: React.Dispatch<React.SetStateAction<any>>,
+  setContents?: Function,
   editMode?: boolean,
   dealWithContents?: Function
 }

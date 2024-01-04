@@ -163,7 +163,7 @@ function RemoteBubbleMap(props: Props) {
     return (
       <Placeholder
         warningMessage={warningMessage}
-        opacity={0.85}
+        opacity={0.8}
         backing={emptyMap}
         height={height}
       />
@@ -174,7 +174,7 @@ function RemoteBubbleMap(props: Props) {
     return (
       <Placeholder
         loader
-        opacity={0.85}
+        opacity={0.8}
         backing={emptyMap}
         height={height}
       />
@@ -185,7 +185,7 @@ function RemoteBubbleMap(props: Props) {
     return (
       <Placeholder
         message={'Please add additional filters to visualise map...'}
-        opacity={0.85}
+        opacity={0.8}
         backing={emptyMap}
         height={height}
       />

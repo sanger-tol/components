@@ -12,14 +12,16 @@ import { Form,
          MultipleSelectFilters,
          RemoteMultipleSelectFilters,
          Dropzone,
+         Filter,
          env } from '../tol-ui/src';    
     
 function Forms() {
-  const [value, setValue] = useState(['test2'])
-  const [globalFilters, setGlobalFilters] = useState<object>({})
+  const [value, setValue] = useState([])
+  const [globalFilters, setGlobalFilters] = useState<object>({in_list: {}})
   const [choices1, setChoices1] = useState<any[]>([])
   const [choices2, setChoices2] = useState<any[]>([])
-  const [remoteFilters, setRemoteFilters ] = useState<object>({})
+  const [remoteFilters, setRemoteFilters] = useState<object>({in_list: {}})
+  const [filter, setFilter] = useState<object>({})
 
   // Used as data for the MultipleSelectFilters
   const filters = [
@@ -40,6 +42,28 @@ function Forms() {
   return (
     <div>
       <CentreContents>
+        <h2>Filters</h2>
+        <Filter
+          id='sts_tol_updated_at'
+          rename='sts_tol_updated_at'
+          type='datetime'
+          filter={filter}
+          setFilter={setFilter}
+        />
+        <Filter
+          id='sts_species_id'
+          rename='sts_species_id'
+          type='int'
+          filter={filter}
+          setFilter={setFilter}
+        />
+        <Filter
+          id='sts_ready'
+          rename='sts_ready'
+          type='boolean'
+          filter={filter}
+          setFilter={setFilter}
+        />
         <h2>AutoComplete Input</h2>
         <RemoteAutoComplete 
           endpoint='species'
@@ -48,7 +72,11 @@ function Forms() {
         />
         <br/>
         <h2>Multiple Select</h2>
-        <MultipleSelect data={['test1','test2','test3']} setValue={setValue} value={value} placeholder="Select"/>
+        <MultipleSelect
+          placeholder="Select"
+          data={['test1','test2','test3']}
+          value={value}
+          setValue={setValue}/>
         <br/>
         <h2>Bootstrap Form</h2>
         <Form>

@@ -1,51 +1,42 @@
 /*
-SPDX-FileCopyrightText: 2022 Genome Research Ltd.
+SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
 import { httpClient } from '../services/http/httpClient'
-import Table from "./Table";
-import { FieldMetaData, FieldMeta, initialiseFieldMeta } from "./FieldMeta";
-import { getFieldMetaAttributeFromStorage,
-         getTableStatusIndicator,
-         setFieldMetaAttributeInStorage,
-         setFilterVisibility } from './TableUtils';
-import TableEmpty from "./TableEmpty";
+import { FieldMetaData, FieldMeta, initialiseFieldMeta } from "./Field";
+import { createSort,
+         getFieldMetaAttributeFromStorage,
+         getTypesMeta,
+         setFieldMetaAttributeInStorage } from './TableUtils';
 import { convertTableData,
-         convertHeadingData,
          tableDebug,
-         generateFilter,
-         structureFieldsAuto,
-         structureFieldsUsingProp,
-         setTableHeight } from "./TableUtils"
+         structureFieldMeta } from "./TableUtils"
+import Table from "./Table";
+import { Placeholder } from "../index";
+import { useEffectUpdate } from "../hooks/useEffectUpdate";
 
-
-interface TableStateInfo {
-  page: number,
-  sizePerPage: number,
-  filters?: object,
-  sortOrder?: string,
-  sortField?: string
-}
 
 interface Props {
   id: string,
   endpoint: string,
   baseUrl?: string,
-
   fields?: FieldMetaData,
+  height?: number,
+
   filter?: object,
+  setFilter?: Function,
   defaultSort?: string,
 
   noFilter?: boolean,
   noPagination?: boolean,
+  noSorting?: boolean
   noConfigModal?: boolean,
   noDownload?: boolean,
 
-  height?: number
-  debug?: boolean,
+  debug?: boolean
 }
 
 function RemoteTable(props: Props) {
@@ -55,148 +46,123 @@ function RemoteTable(props: Props) {
     baseUrl,
     fields,
     filter,
+    setFilter,
     defaultSort,
     noFilter,
     noPagination,
+    noSorting,
     noConfigModal,
     noDownload,
-    height,
     debug
   } = props
+  const height = (props.height !== undefined) ? props.height : 600
 
   // debug clears all storage
   if (debug) localStorage.clear()
 
   // retrieve saved field meta
-  const storedFieldMeta = getFieldMetaAttributeFromStorage(props.id, fields)
+  const storedFieldMeta = getFieldMetaAttributeFromStorage(id, fields)
 
-  const [tableData, setTableData] = useState<any[]>([])
-  const [headings, setHeadings] = useState<any[]>([{
-    dataField: '',
-    text: '‎'
-  }])
+  // data and field information
+  const [data, setData] = useState<any[]>([])
   const [fieldMeta, setFieldMeta] = useState<FieldMeta|null>(storedFieldMeta)
+
+  // pagination
   const [page, setPage] = useState<number>(1)
-  const [sizePerPage, setSizePerPage] = useState<number>(
+  const [pageSize, setPageSize] = useState<number>(
     (storedFieldMeta !== null) ? storedFieldMeta.pageSize : 50
   )
-  const [totalSize, setTotalSize] = useState<number>(-1)
-  const [error, setError] = useState<string>('false')
-  const [loading, setLoading] = useState<boolean>(false)
-  const [renderCount, setRenderCount] = useState<number>(0)
-  const [attributesForDownload, setAttributesForDownload] = useState({});
+  const [totalSize, setTotalSize] = useState<number>(0)
 
-  const renderTable = (pageNumber?: number) => {
-    handleTableChange('pagination', {
-      page: (pageNumber !== undefined) ? pageNumber : page,
-      sizePerPage: sizePerPage,
-    })
+  // sorting
+  const [sortColumn, setSortColumn] = useState<string>('')
+  const [sortType, setSortType] = useState<string>('asc')
+
+  // loading, error and warning info
+  const [loading, setLoading] = useState<boolean>(true)
+  const [initialLoad, setInitialLoad] = useState<boolean>(true) 
+  const [error, setError] = useState<string>('')
+
+  const handleSortColumn = (sortColumn: any, sortType: any) => {
+    setSortColumn(sortColumn)
+    setSortType(sortType)
   }
 
   useEffect(() => {
-    if (renderCount < 2) setTableHeight(id, height)
-  })
-
-  useEffect(() => {
     renderTable()
-  }, [filter])
+  }, [page, sortColumn, sortType])
+
+  useEffectUpdate(() => {
+    setFieldMetaAttributeInStorage(id, pageSize, 'pageSize')
+  }, [pageSize])
+
+  useEffectUpdate(() => {
+    if (page === 1) renderTable()
+    // setting page then triggers renderTable in useEffect above
+    setPage(1)
+  }, [filter, pageSize])
 
   const modalOnSave = (fieldMeta: FieldMeta) => {
     setFieldMeta(fieldMeta)
-    renderTable(1)
+    // setting page then triggers renderTable in useEffect above
+    setPage(1)
     setFieldMetaAttributeInStorage(id, fieldMeta.data, 'data')
     setFieldMetaAttributeInStorage(id, fieldMeta.order, 'order')
   }
 
-  const handleTableChange = (_type: string, { page, sizePerPage, filters, sortOrder, sortField }: TableStateInfo) => {
-    // allow default sort
-    if (sortField === undefined || sortField === null) {
-      sortField = defaultSort
+  const renderTable = async () => {
+    setLoading(true)
+
+    // generating query params
+    const params = {
+      page: page,
+      page_size: pageSize,
+      filter: filter
     }
 
-    // used to update the table state indicator
-    if (renderCount >= 1) {
-      setRenderCount(2)
-      setLoading(true)
+    // deal with sorting
+    if (sortColumn !== '') {
+      params['sort_by'] = createSort(sortColumn, sortType)
+    } else if (defaultSort !== undefined) {
+      params['sort_by'] = defaultSort
     }
 
-    // always on filtering - (contains, exact, range)
-    let apiFilters: object = {};
-    if (filter !== undefined) {
-      apiFilters = Object.assign(apiFilters, filter)
-    }
-
-    // column specific filtering
-    generateFilter(apiFilters, filters)
-
-    // sorting
-    if (sortOrder === 'desc') {
-      sortField = '-' + sortField
-    }
-
-    setAttributesForDownload({endpoint, sortField: sortField, apiFilters, baseUrl})
+    // get attribute types and relationship links
+    const typesMeta = await getTypesMeta(baseUrl)
 
     // get data and update state
     httpClient().get('/' + endpoint, {
-      params: {
-        page: page,
-        page_size: sizePerPage,
-        filter: apiFilters,
-        sort_by: sortField
-      },
+      params: params,
       baseURL: baseUrl
     }).then((res: any) => {
       const apiData = res.data.data
       const apiMeta = res.data.meta
 
       setPage(page)
-      setSizePerPage(sizePerPage)
       setTotalSize(apiMeta.total)
       setError('')
       
       // error if endpoint doesn't return 200
       if (res.status !== 200) throw Error()
 
-      setTableData([])
-      setLoading(false)
-
       let initialFieldMeta: FieldMeta = initialiseFieldMeta()
       // check if any data is returned
       if (apiData[0] !== undefined) {
-        let isFieldPropDefined = fields !== undefined;
-
+        // only setting fieldMeta on first load
         if (fieldMeta === null) {
-          // checking if 'fields' has been defined
-          if (isFieldPropDefined) {
-            initialFieldMeta = structureFieldsUsingProp(fields!, apiMeta.types)
-          }
-
-          // auto add all fields in api call - if fields specified, extras are hidden
-          if ('attributes' in apiData[0]) {
-            const attributes = structureFieldsAuto(
-              apiData[0].attributes,
-              apiMeta.types,
-              initialFieldMeta,
-              true,
-              isFieldPropDefined
-            )
-            initialFieldMeta = Object.assign(initialFieldMeta, attributes)
-          }
-          if ('relationships' in apiData[0]) {
-            const relationships = structureFieldsAuto(
-              apiData[0].relationships,
-              apiMeta.types,
-              initialFieldMeta,
-              false,
-              isFieldPropDefined,
-              debug
-            )
-            initialFieldMeta = Object.assign(initialFieldMeta, relationships)
-          }
+          initialFieldMeta = structureFieldMeta(
+            endpoint,
+            initialFieldMeta,
+            typesMeta,
+            fields
+          )
           setFieldMetaAttributeInStorage(id, initialFieldMeta)
         } else {
           initialFieldMeta = getFieldMetaAttributeFromStorage(id, fields)
         }
+
+        // setting fieldMeta only on first load
+        setFieldMeta(initialFieldMeta)
       
         // debug logs if prop defined
         tableDebug(
@@ -205,61 +171,79 @@ function RemoteTable(props: Props) {
           debug
         )
 
-        // middle load wheel on first load
-        if (renderCount === 0) {
-          setFieldMeta(initialFieldMeta)
-          setRenderCount(1)
-        }
-
         // setting data using fieldMeta state
-        setSizePerPage(initialFieldMeta.pageSize)
-        setHeadings(convertHeadingData(initialFieldMeta))
-        setTableData(
+        setPageSize(initialFieldMeta.pageSize)
+        setData(
           convertTableData(
             apiData,
             initialFieldMeta,
             baseUrl
           )
         )
-
-        // setting filter visibility
-        setFilterVisibility(id)
+        setLoading(false)
+        setInitialLoad(false)
+      } else {
+        setData([])
+        setLoading(false)
+        setInitialLoad(false)
       }
     }).catch((error: any) => {
       console.warn(error.message)
       console.warn('Please ensure the db has been restored')
       console.warn('Please ensure the \'endpoint\' prop is correct and pluralised')
       setLoading(false)
+      setInitialLoad(false)
       setError(error.message)
-      setTableData([])
-      setRenderCount(1)
+      setData([])
     })
   }
 
-  // need to be blank on first render
-  let tableStatusIndicator: JSX.Element = getTableStatusIndicator(error)
-  if (renderCount === 0) tableStatusIndicator = <TableEmpty />
+  if (error !== ''){
+    return (
+      <Placeholder
+        errorMessage={error}
+        height={height}
+      />
+    );
+  }
+  
+  if (initialLoad) {
+    return <Placeholder loader height={height} />
+  }
 
   return (
     <Table
-      id={ id }
-      data={ tableData }
-      columns={ headings }
-      fieldMeta={fieldMeta}
-      onTableChange={ handleTableChange }
-      page={ page }
-      sizePerPage={ sizePerPage }
-      totalSize={ totalSize }
-      noPagination={ noPagination }
-      noFilter={ noFilter }
-      noConfigModal={ noConfigModal }
-      noDownload={ noDownload }
-      loading={ loading }
-      tableStatusIndicator={ tableStatusIndicator }
-      modalOnSave={ modalOnSave }
-      attributesForDownload={ attributesForDownload }
+      id={id}
+      data={data}
+      fieldMeta={fieldMeta!}
+      height={height}
+      loading={loading}
+
+      endpoint={endpoint}
+      baseUrl={baseUrl}
+
+      page={page}
+      setPage={setPage}
+      pageSize={pageSize}
+      setPageSize={setPageSize}
+      totalSize={totalSize}
+
+      sortColumn={sortColumn}
+      sortType={sortType}
+      handleSortColumn={handleSortColumn}
+
+      filter={filter}
+      setFilter={setFilter}
+
+      modalOnSave={modalOnSave}
+
+      noFilter={noFilter}
+      noPagination={noPagination}
+      noSorting={noSorting}
+      noConfigModal={noConfigModal}
+      noDownload={noDownload}
     />
-  )
+  );
 }
 
 export default RemoteTable;
