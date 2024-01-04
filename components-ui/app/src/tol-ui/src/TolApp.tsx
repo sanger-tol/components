@@ -71,8 +71,8 @@ function TolApp(props: Props) {
               <Route path="/" exact component={() => props.homePage} />
               <Route path="/callback" exact><Callback /></Route>
               {props.pages.map(page => {
-                let path = convertToPath(page.name);
-                const authRequired = falseIfUndefined(page.authRequired);
+                let path = convertToPath(page.name)
+                const authRequired = falseIfUndefined(page.authRequired)
 
                 // Regular page route
                 const regularRoute = (
@@ -80,7 +80,7 @@ function TolApp(props: Props) {
                     {authRequired ? (token && !tokenHasExpired(token)) ? page.uiElement : <Redirect to="/" />
                       : page.uiElement}
                   </Route>
-                );
+                )
 
                 // Detail page route
                 const detailRoute = page.detailElement && (
@@ -88,7 +88,7 @@ function TolApp(props: Props) {
                     {authRequired ? (token && !tokenHasExpired(token)) ? page.detailElement : <Redirect to="/" />
                       : page.detailElement}
                   </Route>
-                );
+                )
               return [regularRoute, detailRoute];
               })}
               <Route path="/page-not-found" component={() => <PageNotFound />} />
