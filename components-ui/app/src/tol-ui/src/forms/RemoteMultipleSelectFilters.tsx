@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import  { GlobalMultipleSelect, Status } from '../index'
 import { httpClient } from '../services/http/httpClient';
 import { Col, Row } from 'react-bootstrap';
@@ -66,7 +66,7 @@ function configFilters(index: number, filtersList: any, globalFilters: any){
   return updatedFilters
 }
 
-function ApplyFilteredOptions(data: FilterObject[], fieldName: string){
+function applyFilteredOptions(data: FilterObject[], fieldName: string){
   let fieldItem: FilterObject = {
     name: "", choices: []
   }
@@ -84,7 +84,7 @@ interface Props {
   renamedFields?: object,
   globalFilters: object,
   dependentFilters?: boolean,
-  setGlobalFilters: React.Dispatch<React.SetStateAction<object>>,
+  setGlobalFilters: Function,
   baseUrl?: string
 }
 
@@ -139,7 +139,7 @@ function RemoteMultipleSelectFilters(props: Props) {
             const data = (
               FormattingAggregationsToFilters(res.data.meta.aggregations)
             )
-            const filterItem = ApplyFilteredOptions(data, field)
+            const filterItem = applyFilteredOptions(data, field)
             dataToOrder.push(filterItem)
             const ordered_data = orderData(dataToOrder, fields)
             setDataToPass(ordered_data)

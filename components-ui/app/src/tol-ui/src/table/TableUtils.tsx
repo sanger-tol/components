@@ -4,54 +4,52 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { customFilter } from 'react-bootstrap-table2-filter';
-import DatePicker from './DatePicker';
-import TextInput from './TextInput';
 import { format } from 'date-fns'
-import Relationship from './Relationship';
 import CellTooltip from './CellTooltip';
-import NoDataAlert from "./NoDataAlert";
-import TableErrorAlert from './TableErrorAlert';
+import { httpClient } from '../services/http/httpClient';
 import { addFieldDefaults,
          CellRenderer,
+         // Field,
          FieldMeta,
-         FieldMetaData,
-         initialiseFieldMeta } from './FieldMeta';
+         FieldMetaData } from './Field';
+import { getConfig } from "../general/Utils";
 
 
-export const fieldMetaVersion = "field-meta-v2"
+export const fieldMetaVersion = "field-meta-v3"
+let idField = '' // id or uid
 
-export function addPlus(totalSize: number) {
+// types meta
+interface Attributes {
+  [id: string]: object
+}
+
+interface Relationships {
+  [id: string]: Relationship
+}
+
+interface Relationship {
+  one?: Values,
+  many?: Values,
+  foreign_keys?: Values
+}
+
+interface Values {
+  [id: string]: string
+}
+
+interface TypesMeta {
+  attributes: Attributes,
+  relationships: Relationships
+}
+
+export function addTotalText(totalSize: number) {
+  if (totalSize === 1) {
+    return "1 Row"
   // add a plus for elastic search (results cap at 10,000)
-  if (totalSize === 10000) return "+"
-  return ""
-}
-
-function isEmptyOrNull(x: string) {
-  return x === '' || x === null;
-}
-
-export function isEmptyObj(x: object) {
-  return Object.keys(x).length === 0;
-}
-
-function initialiseFilterDict(apiFilters: object, filterType: string) {
-  if (!(filterType in apiFilters)) {
-    apiFilters[filterType] = {}
+  } else if (totalSize === 10000) {
+    return "10000+ Rows"
   }
-  return apiFilters;
-}
-
-function formatDateRange(dateRange: string[]) {
-  let from = new Date(dateRange[0])
-  let to = new Date(dateRange[1])
-  // ensure a whole day is selected
-  from.setHours(0, 0, 0, 0);
-  to.setHours(23, 59, 59, 999);
-  return {
-    from: from,
-    to: to
-  }
+  return totalSize.toString() + " Rows"
 }
 
 function checkAndConvertDate(text: string) {
@@ -70,7 +68,9 @@ function checkAndConvertDate(text: string) {
   }
 }
 
-export function checkAndAutoConvertText(text: any) {
+export function checkAndAutoConvertText(text: any, type?: string) {
+  // stringify booleans
+  if (type === 'boolean') return text ? 'True' : !text ? 'False' : ''
   try {
     new URL(text) // fails if not link
     // eslint-disable-next-line
@@ -111,36 +111,33 @@ export function createCellRenderer(cellRenderer: CellRenderer, data: object) {
   return <cellRenderer.element {...propPointers}/>
 }
 
-function formatAttributeData(data: object, fieldMeta: object) {
+export async function getTypesMeta(baseUrl?: string) {
+  return {
+    attributes: await getConfig('attribute_types', baseUrl),
+    relationships: await getConfig('relationships', baseUrl)
+  } as TypesMeta
+}
+
+function formatAttributeData(data: object, fieldMetaData: object) {
   const updatedData: object = {}
   for (let [key, value] of Object.entries(data)) {
+    if (fieldMetaData[key] !== undefined) {
+      const linkField = fieldMetaData[key].link
+      const cellRendererField = fieldMetaData[key].cellRenderer
 
-    // temp deal with relationship objects
-    if (typeof value === "object" && value !== null) {
-      value = value['id']
-    }
-
-    if (fieldMeta[key] !== undefined) {
-      const linkField = fieldMeta[key].link
-      const cellRendererField = fieldMeta[key].cellRenderer
-
-      // if there is a cellRenderer defined
       if (cellRendererField !== null) {
         updatedData[key] = createCellRenderer(cellRendererField, data)
-        continue
-      }
-
-      // if there is a link defined and not a cellRenderer
-      if (linkField !== null) {
+      } else if (linkField !== null) {
         updatedData[key] = createLink(value, data[linkField])
-        continue
+      } else {
+        updatedData[key] = checkAndAutoConvertText(value, fieldMetaData[key].type)
       }
     }
-    updatedData[key] = checkAndAutoConvertText(value)
   }
   return updatedData
 }
 
+/*
 function splitRelationshipKeys(fieldMeta: object) {
   const relationshipKeys = {};
   for (let key of Object.keys(fieldMeta)) {
@@ -156,14 +153,13 @@ function getRelationData(
   relationships: object,
   key: string,
   splitKey: string[],
-  relation: string,
+  firstRelation: string,
   attributes: object,
   fieldMetaData: object,
-  count: number,
   baseUrl?: string
 ) {
   // creating the link
-  const relData = relationships[relation].data
+  const relData = relationships[firstRelation].data
   const relLink = "/" + relData.type + "/" + relData.id.toString()
 
   // only the attribute part if one exists
@@ -172,9 +168,10 @@ function getRelationData(
   // relationship box boolean
   const relationshipBox = fieldMetaData[key].relationshipBox
 
+  // 
   if (!relationshipBox) {
     try {
-      const relationAttributes = relationships[relation].data.attributes
+      const relationAttributes = relationships[firstRelation].data.attributes
       if (attribute in relationAttributes) {
         return checkAndAutoConvertText(
           relationAttributes[attribute]
@@ -184,6 +181,8 @@ function getRelationData(
       console.warn("Error occured getting '" + attribute + "'")
     }
   }
+
+  return relData.id
 
   // id is returned on the relationship part of the json-api
   if (attribute === 'id' && !relationshipBox) {
@@ -196,7 +195,6 @@ function getRelationData(
         attributes={ attributes }
         fieldMeta={ fieldMetaData[key] }
         baseUrl={ baseUrl }
-        delay={ count }
       />
     )
   }
@@ -206,92 +204,40 @@ function formatRelationshipData(
   relationships: object,
   attributes: object,
   fieldMetaData: object,
-  count: number,
   baseUrl?: string
 ) {
   const updatedData: object = {}
   const relationshipKeys: object = splitRelationshipKeys(fieldMetaData)
   for (const [key, splitKey] of Object.entries(relationshipKeys)) {
-    // current object 
-    const relation = splitKey[0]
+    // current object
+    const firstRelation = splitKey[0]
     // checking relationship object is correct
-    if (relationships[relation] === undefined) {
+    if (relationships[firstRelation] === undefined) {
       throw Error('\'' + key + '\' is not a correct relationship object. ' +
                   'Please check your spelling and pluralisation.')
     }
     // ignoring one-to-many relationships
-    if ('data' in relationships[relation]) {
+    if ('data' in relationships[firstRelation]) {
       const headingId = splitKey.join('.')
 
       updatedData[headingId] = getRelationData(
         relationships,
         key,
         splitKey,
-        relation,
+        firstRelation,
         attributes,
         fieldMetaData,
-        count,
         baseUrl
       )
     }
   }
   return updatedData
 }
+*/
 
-export function convertHeadingData(fieldMeta: FieldMeta) {
-  const headerSortingClasses = () => ('sorting-active-colour');
-  const headerStyling = (width: string) => { return { minWidth: width } }
-  const updatedHeadings: object[] = []
-
-  const dealWithHeadingOrder = (isActive: string) => {
-    for (const key of fieldMeta.order[isActive]) {
-      const meta = fieldMeta.data[key]
-      let headerWidth = meta.width!.toString() + 'px'
-
-      if (meta.isAttribute === true) {
-        let heading = {
-          dataField: key,
-          text: meta.rename,
-          headerSortingClasses,
-          headerStyle: headerStyling(headerWidth),
-          hidden: meta.hidden
-        }
-        if (meta.sort === true) {
-          heading['sort'] = true
-        }
-        if (meta.filter === true) {
-          heading['filter'] = customFilter({
-            type: meta.filterType!
-          })
-          if (meta.filterType === 'RANGE') {
-            heading['filterRenderer'] = (onFilter: any, column: any) =>
-              <DatePicker onFilter={ onFilter } column={ column } />
-          } else {
-            heading['filterRenderer'] = (onFilter: any, column: any) => 
-              <TextInput type={ meta.type! } onFilter={ onFilter } column={ column } />
-          }
-        }
-        updatedHeadings.push(heading);
-      
-      // if heading is a relationship
-      } else if (meta.isAttribute === false) {
-        updatedHeadings.push({
-          dataField: key,
-          text: meta.rename,
-          headerStyle: headerStyling(headerWidth),
-          hidden: meta.hidden
-        });
-      }
-    }
-  }
-  dealWithHeadingOrder('active')
-  dealWithHeadingOrder('inactive')
-  return updatedHeadings
-}
-
+// @ts-ignore
 export function convertTableData(data: any[], fieldMeta: FieldMeta, baseUrl?: string) {
   const updatedData: any[] = []
-  let count = 0
   data.forEach(row => {
     let fieldData = {'id': row.id}
     if ('attributes' in row) {
@@ -301,18 +247,19 @@ export function convertTableData(data: any[], fieldMeta: FieldMeta, baseUrl?: st
       )
       fieldData = Object.assign(fieldData, attributes)
     }
+
+    /*
     if ('relationships' in row) {
       const relationships = formatRelationshipData(
         row.relationships,
-        Object.assign({'id': row.id}, row.attributes),
+        fieldData, // attributes
         fieldMeta.data,
-        count,
         baseUrl
       )
       fieldData = Object.assign(fieldData, relationships)
     }
+    */
     updatedData.push(fieldData)
-    count++
   });
   return updatedData;
 }
@@ -322,121 +269,108 @@ function convertTypeToDefaultFilter(type: string) {
     case 'str':
     case 'int':
     case 'float':
-      return 'CONTAINS';
+      return 'contains';
     case 'datetime':
-      return 'RANGE';
+      return 'range';
     default:
       return null;
   }
 }
 
-// structure fields via the prop 'fields'
-export function structureFieldsUsingProp(fields: object, apiFieldMeta: object) {
-  const fieldMeta = initialiseFieldMeta()
-  for (let [key, meta] of Object.entries(fields)) {
-    fieldMeta.order.active.push(key)
-    fieldMeta.data[key] = addFieldDefaults(key, meta!)
-    // if key is a relationship
-    if (key.includes('.')) {
-      if (isEmptyOrNull(meta.rename)) {
-        throw Error('Relationship field \'' + key + '\' requires a rename')
-      }
-      fieldMeta.data[key]['isAttribute'] = false
-    } else {
-      fieldMeta.data[key]['isAttribute'] = true
-      fieldMeta.data[key]['type'] = apiFieldMeta[key]
-      // you can currently only override with 'exact' filtering
-      if (fieldMeta.data[key]['filterType'] === 'EXACT') {
-        fieldMeta.data[key]['filterType'] = 'EXACT'
-      } else {
-        fieldMeta.data[key]['filterType'] = convertTypeToDefaultFilter(apiFieldMeta[key])
-      }
-    }
-  }
-  return fieldMeta
-}
-
-function defineFieldMeta(
+function defineField(
   key: string,
-  isAttribute: boolean,
   hidden: boolean,
-  type: string
+  type: string,
+  endpoint?: string
 ) {
-  let field = addFieldDefaults(key, {
-    'isAttribute': isAttribute,
-    'relationshipBox': !isAttribute,
-    'hidden': hidden
-  })
-  // meta field type is 'data' for attributes
-  if (isAttribute) {
-    field['type'] = type
-    field['filterType'] = convertTypeToDefaultFilter(type)
-  }
+  let field = addFieldDefaults(
+    key,
+    {
+      isAttribute: !key.includes('.'),
+      hidden: hidden,
+      type: type,
+      filterType: convertTypeToDefaultFilter(type)
+    },
+    endpoint
+  )
   return field
 }
 
-// structure fields using the json-api spec
-export function structureFieldsAuto(
-  apiFields: object,
-  apiMeta: object,
-  fieldMeta: FieldMeta,
-  isAttribute: boolean,
-  fieldPropDefined: boolean,
-  debug?: boolean
-) {
-  if (isAttribute) {
-    if (!('uid' in apiFields)) {
-      // id is seperate from attributes, so it needs to be added
-      // only added if uid does not exist
-      apiFields = Object.assign({'id': null}, apiFields)
-    } else if (!('uid' in fieldMeta.data)) {
-      // uid is automatically first on initial load
-      fieldMeta.order.active.push('uid')
-    }
+export function structureFieldMeta(endpoint: string, fieldMeta: FieldMeta, typesMeta: TypesMeta, fields?: FieldMetaData) {
+  const fieldPropExists = fields !== undefined
+  const isActive = fieldPropExists ? 'inactive' : 'active'
+  if (fieldPropExists) {
+    structureFieldMetaUsingProp(endpoint, fieldMeta, fields)
   }
 
-  for (let [key, data] of Object.entries(apiFields)) {
-    // ignoring one-to-many relationships
-    if (!isAttribute && !('data' in data)) {
-      if (debug) {
-        console.warn('\'' + key + '\' is on the many side of the relationship' + 
-                     ' - therefore it is being ignored.')
-      }
-      continue
-    }
+  /*
+  --- dealing with id/uid ---
+  - id is seperate from attributes, so it needs to be added
+  - only added if uid does not exist
+  - value can be null, as only the key is used in this instance
+  */
+  idField = ('uid' in typesMeta.attributes[endpoint]) ? 'uid' : 'id'
+  typesMeta.attributes[endpoint][idField] = 'str'
 
-    // ignore if key already in fieldMeta
-    if (!(key in fieldMeta.data)) {
-      // adding to order depending on field prop being defined
-      const isActive = fieldPropDefined ? 'inactive' : 'active'
-
-      // uid is automatically first on initial load
-      if (key !== 'uid') fieldMeta.order[isActive].push(key)
-
-      fieldMeta.data[key] = defineFieldMeta(
-        key,
-        isAttribute,
-        fieldPropDefined, // hidden as default, overridden by field prop
-        apiMeta[key] // python data type
-      )
-    }
+  if (!(idField in fieldMeta.data) || !fieldPropExists) {
+    // id shoud be first in the order - only initial load
+    fieldMeta.order[isActive].push(idField)
   }
+
+  addRelationshipsAttributes(endpoint, typesMeta)
+  structureFieldMetaAuto(endpoint, fieldMeta, typesMeta, fieldPropExists, isActive)
   return fieldMeta
 }
 
-export function generateFilter(apiFilters: object, filters?: object) {
-  if (filters !== undefined) {
-    for (let [key, meta] of Object.entries(filters)) {
-      if (meta['filterType'] === 'CONTAINS') {
-        apiFilters = initialiseFilterDict(apiFilters, 'contains')
-        apiFilters['contains'][key] = meta['filterVal']
-      } else if (meta['filterType'] === 'RANGE') {
-        apiFilters = initialiseFilterDict(apiFilters, 'range')
-        apiFilters['range'][key] = formatDateRange(meta['filterVal'])
-      } else if (meta['filterType'] === 'EXACT') {
-        apiFilters = initialiseFilterDict(apiFilters, 'exact')
-        apiFilters['exact'][key] = meta['filterVal']
+function structureFieldMetaUsingProp(endpoint: string, fieldMeta: FieldMeta, fields: FieldMetaData) {
+  for (let [key, meta] of Object.entries(fields)) {
+    fieldMeta.order.active.push(key)
+    fieldMeta.data[key] = addFieldDefaults(key, meta, endpoint)
+    fieldMeta.data[key].isAttribute = !key.includes('.')
+  }
+}
+
+function structureFieldMetaAuto(
+  endpoint: string,
+  fieldMeta: FieldMeta,
+  typesMeta: TypesMeta,
+  fieldPropExists: boolean,
+  isActive: string
+) {
+  for (const [key, type] of Object.entries(typesMeta.attributes[endpoint])) {
+    // only add extra fields coming from the api if field prop is defined
+    if (key in fieldMeta.data) {
+      fieldMeta.data[key].type = type
+      fieldMeta.data[key].filterType = convertTypeToDefaultFilter(type)
+    } else {
+      if (key !== idField) fieldMeta.order[isActive].push(key)
+
+      fieldMeta.data[key] = defineField(
+        key,
+        fieldPropExists, // hidden as default, overridden by field prop
+        type, // python data type
+        endpoint
+      )
+    }
+  }
+}
+
+function addRelationshipsAttributes(endpoint: string, typesMeta: TypesMeta) {
+  const relationExists: string[] = []
+  // checking if there is 'one' relations
+  if ("one" in typesMeta.relationships[endpoint]) {
+    for (const relation of Object.values(typesMeta.relationships[endpoint].one!)) {
+      // relations are mentioned multiple times due to different data origins
+      if (relationExists.includes(relation)) {
+        // add idField
+        typesMeta.attributes[endpoint][relation + "." + idField] = 'str'
+        for (const [key, types] of Object.entries(typesMeta.attributes[relation])) {
+          // add the relations attribute and its type
+          const relationKey = relation + "." + key
+          typesMeta.attributes[endpoint][relationKey] = types
+        }
       }
+      relationExists.push(relation)
     }
   }
 }
@@ -470,83 +404,11 @@ export function tableDebug(apiData: object, fieldMeta: object, debug?: boolean) 
   }
 }
 
-export function getTableStatusIndicator(errorMessage: string) {
-  if (errorMessage === '') {
-    return <NoDataAlert />
+export function createSort(sortColumn: string, sortType: string) {
+  if (sortType === 'desc') {
+    return "-" + sortColumn
   }
-  return <TableErrorAlert error={errorMessage}/>
-}
-
-export function isColumnVisible(column: object) {
-  if (!('hidden' in column) || !column['hidden']) {
-    return true
-  }
-  return false
-}
-
-export function pruneHiddenColumns(columns: object[]) {
-  const visibleColumns: object[] = []
-  for (const column of columns) {
-    if (isColumnVisible(column)) {
-      visibleColumns.push(column)
-    }
-  }
-  return visibleColumns
-}
-
-export function switchFilterVisibility(tableId: string) {
-  const table = document.getElementById(tableId)
-  if (table?.hasChildNodes) {
-    const headers = table.childNodes[0].childNodes[0].childNodes
-
-    let visible = false
-    for (let index = 0; index < headers.length; index++) {
-      const header = headers[index]
-      if (header.childNodes.length > 1) {
-        const elements = header.childNodes
-        const filter = elements[elements.length-1]
-        // @ts-ignore
-        if (filter.className === "filter-input-hide") {
-          // @ts-ignore
-          filter.className = "filter-input-show"
-          visible = true
-        } else {
-          // @ts-ignore
-          filter.className = "filter-input-hide"
-        }
-      }
-    }
-    setFieldMetaAttributeInStorage(tableId, visible, "filterVisibility")
-  }
-}
-
-export function setFilterVisibility(tableId: string) {
-  if (getFieldMetaAttributeFromStorage(tableId, undefined, "filterVisibility")) {
-    const table = document.getElementById(tableId)
-    if (table?.hasChildNodes) {
-      const headers = table.childNodes[0].childNodes[0].childNodes
-  
-      for (let index = 0; index < headers.length; index++) {
-        const header = headers[index]
-        if (header.childNodes.length > 1) {
-          const elements = header.childNodes
-          const filter = elements[elements.length-1]
-          // @ts-ignore
-          filter.className = "filter-input-show"
-        }
-      }
-    }
-  }
-}
-
-export function setTableHeight(tableId: string, height?: number) {
-  if (height !== undefined) {
-    const table = document.getElementById(tableId)
-    if (table !== null) {
-      height = height - 73 // removing the height of the buttons
-      table.style.height = height.toString() + 'px';
-    }
-  }
+  return sortColumn
 }
 
 export function setFieldMetaAttributeInStorage(tableId: string, value: any, attribute?: string) {
@@ -573,8 +435,13 @@ export function getFieldMetaAttributeFromStorage(tableId: string, fields?: Field
   return null
 }
 
-export function fieldMetaToCellRenderer(fields: FieldMetaData, fieldMeta) {
-  for (const field in fields){
+export function deleteFieldMetaFromStorage(tableId: string) {
+  localStorage.removeItem(`${tableId}-${fieldMetaVersion}`)
+  window.location.reload()
+}
+
+export function fieldMetaToCellRenderer(fields: FieldMetaData, fieldMeta: FieldMeta) {
+  for (const field in fields) {
     if (fields[field].cellRenderer){
       fieldMeta.data[field].cellRenderer = fields[field].cellRenderer
     }
@@ -582,7 +449,61 @@ export function fieldMetaToCellRenderer(fields: FieldMetaData, fieldMeta) {
   return fieldMeta
 }
 
-export function deleteFieldMetaFromStorage(tableId: string) {
-  localStorage.removeItem(`${tableId}-${fieldMetaVersion}`)
-  window.location.reload()
+export function exportTableToSpreadsheet(
+  endpoint: string,
+  fieldMetaData: FieldMetaData,
+  filter: object,
+  sortColumn: string,
+  sortType: string,
+  setSuccess: Function,
+  setError: Function,
+  setDownloading: Function,
+  baseUrl?: string
+) {
+  setDownloading(true)
+
+  const columns = Object.keys(fieldMetaData).map((key: string) => ({
+    text: key,
+    dataField: fieldMetaData[key].rename,
+    hidden: fieldMetaData[key].hidden
+  }))
+
+  const params = {
+    page: -1,
+    page_size: 5000,
+    filter: filter
+  }
+
+  if (sortColumn !== '') {
+    params['sort_by'] = createSort(sortColumn, sortType)
+  }
+
+  httpClient().post('/' + endpoint + ':export',
+    { data: columns }, {
+    params: params,
+    baseURL: baseUrl,
+    responseType: 'blob'
+  })
+  .then((res: any) => {
+    // temporary URL for the blob
+    const tempUrl = window.URL.createObjectURL(res.data)
+
+    // Trigger the download with an anchor element
+    const a = document.createElement('a')
+    a.href = tempUrl
+    a.download = 'table_download.xlsx'
+    a.click()
+
+    // Release the URL
+    window.URL.revokeObjectURL(tempUrl)
+    setDownloading(false)
+
+    if (res.status !== 200) throw Error()
+
+    setDownloading(false)
+    setSuccess('Download Completed')
+  }).catch((error: any) => {
+    setDownloading(false)
+    setError("Download Failed: " + error.message)
+  })
 }

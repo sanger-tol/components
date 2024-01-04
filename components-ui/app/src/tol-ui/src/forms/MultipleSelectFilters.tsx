@@ -4,21 +4,21 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useEffect } from 'react';
-import  { MultipleSelect } from '../index'
+import { useEffect } from 'react';
+import { MultipleSelect } from '../index'
 import { Col, Row } from 'react-bootstrap';
 
 interface Props {
     filters: Filters[]
     value: object
-    setValue: React.Dispatch<React.SetStateAction<object>>
+    setValue: Function
 }
 
 interface Filters {
     name: string
     choices: string[]
     selected: string[]
-    setChoices: React.Dispatch<React.SetStateAction<string[]>>
+    setChoices: Function
 }
 
 function MultipleSelectFilters(props: Props) {

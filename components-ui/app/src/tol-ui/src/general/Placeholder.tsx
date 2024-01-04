@@ -42,14 +42,12 @@ function getPlaceholder(
   height: number,
   icon: JSX.Element,
   backing?: JSX.Element,
-  opacity?: number
+  opacity?: number,
+  squareCorners?: boolean
 ) {
   let style = {}
-  if (opacity) {
-    style = {
-      opacity: opacity
-    }
-  }
+  if (opacity) style["opacity"] = opacity
+  if (squareCorners !== true) style["borderRadius"] = 6
 
   // default placeholder
   if (backing === undefined) {
@@ -93,6 +91,7 @@ interface Props {
   empty?: boolean,
   loader?: boolean,
   opacity?: number,
+  squareCorners?: boolean,
   message?: string,
   warningMessage?: string,
   errorMessage?: string,
@@ -107,6 +106,7 @@ function Placeholder(props: Props) {
           empty,
           loader,
           opacity,
+          squareCorners,
           message,
           warningMessage,
           errorMessage,
@@ -128,7 +128,13 @@ function Placeholder(props: Props) {
     errorMessage
   )
 
-  return getPlaceholder(height, icon, backing, opacity)
+  return getPlaceholder(
+    height,
+    icon,
+    backing,
+    opacity,
+    squareCorners
+  )
 }
 
 export default Placeholder;

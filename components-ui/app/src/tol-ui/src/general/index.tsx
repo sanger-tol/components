@@ -18,3 +18,5 @@ export { default as Placeholder } from "./Placeholder";
 export { default as Widgets } from "./Widgets";
 export { default as PageNotFound } from "./PageNotFound";
 export { default as FormatTooltip } from "./FormatTooltip";
+export { default as PopUpMessage } from "./PopUpMessage";
+export { default as Filter } from "./Filter";

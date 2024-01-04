@@ -21,7 +21,7 @@ interface Props {
 
   // 'filter' is usually referred to as globalFilters when using combinedFilters
   filter?: object,
-  setCombinedFilters?: React.Dispatch<React.SetStateAction<any>>,
+  setCombinedFilters?: Function,
 
   // config
   height: number,

@@ -15,6 +15,8 @@ export { default as Status } from "./general/Status";
 export { default as Modal } from "./general/Modal";
 export { default as Placeholder } from "./general/Placeholder";
 export { default as Widgets } from "./general/Widgets";
+export { default as PopUpMessage } from "./general/PopUpMessage";
+export { default as Filter } from "./general/Filter";
 export { default as ObjectDetail } from "./general/ObjectDetail"
 export { default as RemoteObjectDetail } from "./general/RemoteObjectDetail"
 
@@ -37,7 +39,6 @@ export { default as DnD } from "./dnd/DnD";
 export { default as BarChart } from "./charts/BarChart";
 export { default as RemoteAggBarChart } from "./charts/RemoteAggBarChart";
 export { default as RemoteBarChart } from "./charts/RemoteBarChart";
-export { default as RemoteChartTable } from "./charts/RemoteChartTable";
 
 export { default as BubbleMap } from "./charts/BubbleMap";
 export { default as RemoteBubbleMap } from "./charts/RemoteBubbleMap";
@@ -45,6 +46,7 @@ export { default as RemoteBubbleMap } from "./charts/RemoteBubbleMap";
 export { default as Sunburst } from "./charts/Sunburst";
 export { default as RemoteSunburst } from "./charts/RemoteSunburst";
 
+// Charts Miscellaneous
 export { default as RemoteBubbleMapFilter } from "./charts/RemoteBubbleMapFilter";
 
 // React-Bootstrap pass-through

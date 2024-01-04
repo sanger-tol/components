@@ -9,9 +9,8 @@ import { httpClient } from '../services/http/httpClient'
 import HoverOverlay from '../general/HoverOverlay';
 import FormatTooltip from '../general/FormatTooltip';
 import { checkAndAutoConvertText,
-         createCellRenderer,
-         isEmptyObj } from './TableUtils'
-import { normaliseCaps } from '../general/Utils'
+         createCellRenderer } from './TableUtils'
+import { normaliseCaps, isEmptyObject } from '../general/Utils'
 import Placeholder from '../general/Placeholder';
 import Status from '../general/Status'
 import { timeout } from '../general/Utils';
@@ -23,11 +22,10 @@ export interface Props {
   attributes: object,
   fieldMeta: object,
   baseUrl?: string,
-  delay: number
 }
 
 function Relationship(props: Props) {
-  const { initialEndpoint, relationships, attributes, fieldMeta, baseUrl, delay } = props;
+  const { initialEndpoint, relationships, attributes, fieldMeta, baseUrl } = props;
 
   const [text, setText] = useState<JSX.Element|string>(
     <Placeholder height={22}/>
@@ -49,7 +47,7 @@ function Relationship(props: Props) {
     let endpoint = initialEndpoint
 
     for (let count = 0; count < relationshipTotal; count++) {
-      await timeout(delay * 50)
+      await timeout(50)
       httpClient().get(endpoint, {baseURL: baseUrl})
       .then((res: any) => { // eslint-disable-line no-loop-func
         const data = res.data.data
@@ -106,18 +104,18 @@ function Relationship(props: Props) {
     return <Status status="danger" text="Network Error" />
   }
 
-  if (fieldMeta['cellRenderer'] !== null && !isEmptyObj(contents)) {
+  if (fieldMeta['cellRenderer'] !== null && !isEmptyObject(contents)) {
     const cellRendererField = fieldMeta['cellRenderer']
     return createCellRenderer(cellRendererField, tableData)
 
   } else if (fieldMeta['relationshipBox']) {
     return (
       <HoverOverlay
-        placement='autoHorizontalStart'
+        placement='autoVertical'
         contents={ <FormatTooltip contents={ contents } /> }
       >
-        <div className='link-box' key={ initialEndpoint }>
-          { text }
+        <div id={attributes['uid']} className='link-box' key={ initialEndpoint }>
+          {text}
         </div>
       </HoverOverlay>
     )

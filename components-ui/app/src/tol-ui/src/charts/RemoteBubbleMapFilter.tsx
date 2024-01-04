@@ -22,7 +22,7 @@ interface Props {
 
 function RemoteBubbleMapFilter(props: Props) {
   const { filterInputFields } = props;
-  const [globalFilters, setGlobalFilters] = useState<object>({})
+  const [globalFilters, setGlobalFilters] = useState<object>({in_list: {}})
 
   return (
     <Container>

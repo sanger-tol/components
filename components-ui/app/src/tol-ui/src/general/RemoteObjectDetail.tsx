@@ -8,7 +8,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { httpClient } from '../services/http/httpClient'
 import ObjectDetail from "./ObjectDetail";
-import { FieldMetaData } from "../table/FieldMeta";
+import { FieldMetaData } from "../table/Field";
 import { formatDate, normaliseCaps } from "./Utils";
 
 interface Props {

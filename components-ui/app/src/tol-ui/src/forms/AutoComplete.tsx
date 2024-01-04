@@ -4,14 +4,13 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React from 'react';
 import { AutoComplete as RSAutoComplete } from 'rsuite';
 
 
 interface Props {
   data: string[]
   value: string
-  onChange?: React.Dispatch<React.SetStateAction<any>>
+  onChange?: any
 }
 
 function AutoComplete(props: Props) {

@@ -40,7 +40,7 @@ interface Props {
   labels: string[],
   datasets: any[],
   height: number,
-  setBarData?: React.Dispatch<React.SetStateAction<any>>
+  setBarData?: any
 }
 
 function BarChart(props: Props) {

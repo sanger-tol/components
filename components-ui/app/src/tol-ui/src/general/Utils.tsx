@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from 'date-fns'
+import { httpClient } from '../services/http/httpClient';
 
 
 export function convertToPath(name: string) {
@@ -36,8 +37,20 @@ export function falseIfUndefined(prop: any){
   return false
 }
 
-export function normaliseCaps(fieldName: string) {
-  const words = fieldName.split('_');
+export function isEmptyObject(x: object) {
+  return Object.keys(x).length === 0;
+}
+
+export function normaliseCaps(name: string, endpoint?: string) {
+  // make object ids clear (for auto load)
+  if (endpoint !== undefined) {
+    if (name === "id" || name === "uid") {
+      return normaliseCaps(endpoint) + " ID"
+    }
+  }
+  // replace relationship '.' with underscore ready to split
+  name = name.replace('.', '_');
+  const words = name.split('_');
   for (let count = 0; count < words.length; count++) {
     words[count] = normaliseWords(words[count])
   }
@@ -46,10 +59,9 @@ export function normaliseCaps(fieldName: string) {
 
 function normaliseWords(word: string) {
   switch(word) {
+    case "uid":
     case "id":
       return "ID"
-    case "uid":
-      return "UID"
     case "sts":
       return "STS"
     case "tolqc":
@@ -66,6 +78,12 @@ function normaliseWords(word: string) {
       return "RNA"
     case "mlwh":
       return "MLWH"
+    case "api":
+      return "API"
+    case "gal":
+      return "GAL"
+    case "qc":
+      return "QC"
     default:
       return word[0].toUpperCase() + word.substring(1); 
   }
@@ -97,4 +115,14 @@ export function matomoAnalytics(siteId: number){
       g.async=true; g.src=u+'matomo.js'; s.parentNode!.insertBefore(g,s);
     })();
   }
+}
+
+export async function getConfig(endpoint: string, baseUrl?: string) {
+  return await httpClient().get('/_config/' + endpoint, {
+    baseURL: baseUrl
+  }).then((res: any) => {
+    return res.data
+  }).catch((error: any) => {
+    throw error
+  })
 }
