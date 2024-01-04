@@ -8,10 +8,16 @@ import { RemoteObjectDetail, Widgets, env } from '../tol-ui/src';
 import { useParams } from 'react-router-dom'
 import { useState } from 'react';
 
+interface Data {
+    attributes: {
+        sts_scientific_name?: string;
+    };
+}
+
 function DetailInfo() {
     let { id } = useParams<({id: string})>();
     const [filter] = useState({ contains: { uid: id } })
-    const [data, setData] = useState()
+    const [data, setData] = useState<Data | undefined>()
 
     const objectInfo = (
         <RemoteObjectDetail
