@@ -70,7 +70,6 @@ function TolApp(props: Props) {
             <Switch>
               <Route path="/" exact component={() => props.homePage} />
               <Route path="/callback" exact><Callback /></Route>
-
               {props.pages.map(page => {
                 let path = convertToPath(page.name);
                 const authRequired = falseIfUndefined(page.authRequired);
