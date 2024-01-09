@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+
 const LoadingHelix = () => (
   <div className="loader">
     <div className="dna-circle dna-circle1"><i></i></div>
@@ -13,22 +14,22 @@ const LoadingHelix = () => (
     <div className="dna-circle dna-circle5"><i></i></div>
     <div className="dna-circle dna-circle6"><i></i></div>
   </div>
-)
+);
 
 export const MiniLoadingHelix = () => {
   return (
     <div className='mini-loader'>
       <LoadingHelix />
     </div>
-  )
-}
+  );
+};
 
 export const RelationshipLoadingHelix = () => {
   return (
     <div className='relationship-mini-loader'>
       <MiniLoadingHelix />
     </div>
-  )
-}
+  );
+};
 
 export default LoadingHelix;

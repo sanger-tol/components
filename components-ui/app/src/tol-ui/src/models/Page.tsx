@@ -10,4 +10,4 @@ export default interface Page {
   adminOnly?: boolean;
   hidden?: boolean
   uiElement: JSX.Element;
-}
+} // eslint-disable-line

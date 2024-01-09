@@ -6,22 +6,22 @@ SPDX-License-Identifier: MIT
 
 import { useState } from 'react';
 import { Form,
-         CentreContents,
-         RemoteAutoComplete,
-         MultipleSelect,
-         MultipleSelectFilters,
-         RemoteMultipleSelectFilters,
-         Dropzone,
-         Filter,
-         env } from '../tol-ui/src';    
+  CentreContents,
+  RemoteAutoComplete,
+  MultipleSelect,
+  MultipleSelectFilters,
+  RemoteMultipleSelectFilters,
+  Dropzone,
+  Filter,
+  env } from '../tol-ui/src';    
     
 function Forms() {
-  const [value, setValue] = useState([])
-  const [globalFilters, setGlobalFilters] = useState<object>({in_list: {}})
-  const [choices1, setChoices1] = useState<any[]>([])
-  const [choices2, setChoices2] = useState<any[]>([])
-  const [remoteFilters, setRemoteFilters] = useState<object>({in_list: {}})
-  const [filter, setFilter] = useState<object>({})
+  const [value, setValue] = useState([]);
+  const [globalFilters, setGlobalFilters] = useState<object>({in_list: {}});
+  const [choices1, setChoices1] = useState<any[]>([]);
+  const [choices2, setChoices2] = useState<any[]>([]);
+  const [remoteFilters, setRemoteFilters] = useState<object>({in_list: {}});
+  const [filter, setFilter] = useState<object>({});
 
   // Used as data for the MultipleSelectFilters
   const filters = [
@@ -107,7 +107,9 @@ function Forms() {
         <Dropzone
           endpoint='this-is-fake'
           fileType='.csv'
-          generateMessages={() => {return []}}
+          generateMessages={() => {
+            return [];
+          }}
         />
       </CentreContents>
     </div>

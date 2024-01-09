@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { Widgets,
-         RemoteBarChart,
-         RemoteSunburst,
-         RemoteTable,
-         RemoteBubbleMap,
-         env } from '../tol-ui/src'
+  RemoteBarChart,
+  RemoteSunburst,
+  RemoteTable,
+  RemoteBubbleMap,
+  env } from '../tol-ui/src';
 
 
 const chart = (
@@ -24,7 +24,7 @@ const chart = (
     height={ 500 }
     baseUrl={ env.TOL_DATA }
   />
-)
+);
 
 const sunburst = (
   <RemoteSunburst
@@ -34,7 +34,7 @@ const sunburst = (
     height={ 500 }
     baseUrl={ env.TOL_DATA }
   />
-)
+);
 
 const table = (
   <RemoteTable
@@ -60,7 +60,7 @@ const table = (
     }}
     baseUrl={ env.TOL_DATA }
   />
-)
+);
 
 const map = (
   <RemoteBubbleMap
@@ -71,7 +71,7 @@ const map = (
     pageSize={ 10000 }
     baseUrl={ env.TOL_DATA }
   />
-)
+);
 
 function Sandbox() {
   return (

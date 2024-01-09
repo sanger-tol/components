@@ -17,8 +17,8 @@ export { default as Placeholder } from "./general/Placeholder";
 export { default as Widgets } from "./general/Widgets";
 export { default as PopUpMessage } from "./general/PopUpMessage";
 export { default as Filter } from "./general/Filter";
-export { default as ObjectDetail } from "./general/ObjectDetail"
-export { default as RemoteObjectDetail } from "./general/RemoteObjectDetail"
+export { default as ObjectDetail } from "./general/ObjectDetail";
+export { default as RemoteObjectDetail } from "./general/RemoteObjectDetail";
 
 // Forms
 export { default as AutoComplete } from "./forms/AutoComplete";

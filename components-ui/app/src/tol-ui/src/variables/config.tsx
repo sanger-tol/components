@@ -11,5 +11,5 @@ const env: any = {
   ...(typeof injectedEnv === 'object' ? injectedEnv : {}),
 };
 
-env['TOL_DATA'] = env.PORTAL_URL + env.PORTAL_API_PATH
+env['TOL_DATA'] = env.PORTAL_URL + env.PORTAL_API_PATH;
 export { env };

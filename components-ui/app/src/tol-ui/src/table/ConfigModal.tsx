@@ -18,41 +18,41 @@ export interface Props {
   tableId: string,
   fieldMeta: FieldMeta,
   open: boolean,
-  setOpen: Function,
-  modalOnSave: Function
+  setOpen: Function, // eslint-disable-line
+  modalOnSave: (fieldMeta: FieldMeta) => void
 }
 
 function ConfigModal(props: Props) {
   const { tableId, fieldMeta, open, setOpen, modalOnSave } = props;
-  const [contents, setContents] = useState({})
+  const [contents, setContents] = useState({});
 
   const updateMeta = (list: object[], updatedFieldMeta: FieldMeta, hidden: boolean) => {
     for (const element of Object.values(list)) {
-      const id = element!['id']
-      const isActive = hidden ? 'inactive' : 'active'
-      updatedFieldMeta.order[isActive].push(id)
+      const id = element!['id'];
+      const isActive = hidden ? 'inactive' : 'active';
+      updatedFieldMeta.order[isActive].push(id);
       // make a copy and update visability
-      updatedFieldMeta.data[id] = fieldMeta.data[id]
-      updatedFieldMeta.data[id].hidden = hidden
+      updatedFieldMeta.data[id] = fieldMeta.data[id];
+      updatedFieldMeta.data[id].hidden = hidden;
     }
-  }
+  };
 
   const fieldMetaUpdatedByContents = () => {
-    const updatedFieldMeta: FieldMeta = initialiseFieldMeta()
+    const updatedFieldMeta: FieldMeta = initialiseFieldMeta();
     // loop through columns and set active/inactive
     for (const column of Object.values(contents)) {
-      const id = column!['id']
-      const list = column!['list']
+      const id = column!['id'];
+      const list = column!['list'];
       if (id === 'Active') {
-        updateMeta(list, updatedFieldMeta, false)
+        updateMeta(list, updatedFieldMeta, false);
       } else if (id === 'Inactive') {
-        updateMeta(list, updatedFieldMeta, true)
+        updateMeta(list, updatedFieldMeta, true);
       }
     }
     // sort order of inactive alphabetically
-    updatedFieldMeta.order.inactive = updatedFieldMeta.order.inactive.sort()
-    return updatedFieldMeta
-  }
+    updatedFieldMeta.order.inactive = updatedFieldMeta.order.inactive.sort();
+    return updatedFieldMeta;
+  };
 
   const uiElement = (key: string, meta: object) => {
     return (
@@ -61,47 +61,47 @@ function ConfigModal(props: Props) {
         {!meta['isAttribute'] && <FontAwesomeIcon className='icon' icon={faDiagramProject} size="xs" />}
         <div className='info'>{key}</div>
       </div>
-    )
-  }
+    );
+  };
 
   const fieldMetaItemToElement = (isActive: string) => {
-    const items: object[] = []
+    const items: object[] = [];
     for (const key of fieldMeta.order[isActive]) {
       items.push({
         id: key,
         element: uiElement(key, fieldMeta.data[key])
-      })
+      });
     }
-    return items
-  }
+    return items;
+  };
 
   const fieldMetaToElements = () => {
-    const elements: object = {}
-    elements['Active'] = fieldMetaItemToElement('active')
-    elements['Inactive'] = fieldMetaItemToElement('inactive')
-    return elements
-  }
+    const elements: object = {};
+    elements['Active'] = fieldMetaItemToElement('active');
+    elements['Inactive'] = fieldMetaItemToElement('inactive');
+    return elements;
+  };
 
   const dealWithContents = (column: object) => {
     if (column['id'] === "Active") {
       if (column['list'].length === 0) {
-        return false
+        return false;
       }
     }
-    return true
-  }
+    return true;
+  };
 
   const saveConfig = () => {
-    const updatedFieldMeta = fieldMetaUpdatedByContents()
-    modalOnSave(updatedFieldMeta)
-    setOpen(false)
-  }
+    const updatedFieldMeta = fieldMetaUpdatedByContents();
+    modalOnSave(updatedFieldMeta);
+    setOpen(false);
+  };
 
   const saveButton = (
     <Button variant="success" onClick={saveConfig}>
       <FontAwesomeIcon icon={faFloppyDisk} size="sm" />
     </Button>
-  )
+  );
 
   return (
     <Modal
@@ -117,17 +117,17 @@ function ConfigModal(props: Props) {
             <h2>Table Settings</h2>
           </Col>
           <Col sm={6} style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <Button
-            className="clear-saved-config"
-            style={{float: "right"}}
-            variant="warning"
-            onClick={() => {
-              deleteFieldMetaFromStorage(tableId)
-            }}
-          >
+            <Button
+              className="clear-saved-config"
+              style={{float: "right"}}
+              variant="warning"
+              onClick={() => {
+                deleteFieldMetaFromStorage(tableId);
+              }}
+            >
             Clear Saved Configuration
-            <FontAwesomeIcon icon={faTrash} size="sm" />
-          </Button>
+              <FontAwesomeIcon icon={faTrash} size="sm" />
+            </Button>
           </Col>
         </Row>
         <hr></hr>
@@ -139,6 +139,6 @@ function ConfigModal(props: Props) {
       </>
     </Modal>
   );
-};
+}
 
 export default ConfigModal;

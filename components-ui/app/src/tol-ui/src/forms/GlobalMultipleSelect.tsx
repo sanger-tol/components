@@ -17,78 +17,78 @@ interface Props {
   globalFilters: {
     in_list: { [key: string]: string[] }
   }
-  setGlobalFilters: Function
+  setGlobalFilters: Function // eslint-disable-line
 }
 
 function setCheckedValues(globalFilters: any, setValue: any){
-  let values = []
+  let values = [];
   for (const field in globalFilters.in_list){
-    values = (globalFilters.in_list[field])
+    values = (globalFilters.in_list[field]);
   }
-  setValue(values)
+  setValue(values);
 }
 
 const GlobalMultipleSelect = (props: Props) => {
-  const [value, setValue] = useState<any[]>([])
-  const {data, name, globalFilters, setGlobalFilters, display_name} = props
+  const [value, setValue] = useState<any[]>([]);
+  const {data, name, globalFilters, setGlobalFilters, display_name} = props;
 
   // resets the selected boxes if global filters is empty
   useEffect(() => {
-    if (Object.keys(globalFilters.in_list).length == 0){
-      setValue([])
+    if (Object.keys(globalFilters.in_list).length === 0){
+      setValue([]);
     } else {
-      setCheckedValues(globalFilters, setValue)
+      setCheckedValues(globalFilters, setValue);
     }
-  }, [globalFilters])
+  }, [globalFilters]);
   
-  const block = isPropDefined(props.block)
+  const block = isPropDefined(props.block);
   
   const formattedData = data.map(item => (
     { label: item, value: item }
-  ))
+  ));
 
   const allValues = formattedData.map(item => item.value);
   
   const handleOnChange = (filterValues: any) => {
-    setValue(filterValues)
+    setValue(filterValues);
     // removes global filter if no values
     if (filterValues.length === 0) {
-      delete globalFilters.in_list[name]
+      delete globalFilters.in_list[name];
     } else {
-      globalFilters.in_list[name] = filterValues
+      globalFilters.in_list[name] = filterValues;
     }
-    setGlobalFilters({...globalFilters})
-  }
+    setGlobalFilters({...globalFilters});
+  };
 
   const handleCheckAll = () => {
     if (globalFilters.in_list[name] && value.length === allValues.length) {
-      delete globalFilters.in_list[name]
-      setValue([])
+      delete globalFilters.in_list[name];
+      setValue([]);
     } else {
       // if no results found - make it so you cannot click
       if (allValues.length !== 0) {
-        globalFilters.in_list[name] = allValues
-        setValue(allValues)
+        globalFilters.in_list[name] = allValues;
+        setValue(allValues);
       }
     }
-    setGlobalFilters({...globalFilters})
-  }
+    setGlobalFilters({...globalFilters});
+  };
 
   const isChecked = () => {
     if (globalFilters.in_list[name]) {
       if (globalFilters.in_list[name].length === allValues.length) {
-        return true
+        return true;
       }
     }
-    return false
-  }
+    return false;
+  };
 
   const isIndeterminate = () => {
     return globalFilters.in_list[name] && (
       globalFilters.in_list[name].length > 0 &&
       globalFilters.in_list[name].length < allValues.length
-    )
-  }  
+    );
+  };  
 
   return (
     <div className='tol-input'>

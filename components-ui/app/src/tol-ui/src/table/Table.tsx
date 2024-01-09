@@ -8,12 +8,12 @@ import { useState } from 'react';
 import { Button, Row, Col, Spinner, Placeholder } from '../index';
 import { Table as RSTable, Pagination, SelectPicker } from "rsuite";
 import { addTotalText, 
-         setFieldMetaAttributeInStorage } from './TableUtils';
+  setFieldMetaAttributeInStorage } from './TableUtils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSliders, faDownload } from '@fortawesome/free-solid-svg-icons';
 import ConfigModal from './ConfigModal';
 import { exportTableToSpreadsheet } from "./TableUtils";
-import Filter, { FilterType } from '../general/Filter'
+import Filter, { FilterType } from '../general/Filter';
 import { PopUpMessage } from '../general';
 import { FieldMeta } from './Field';
 
@@ -53,6 +53,7 @@ interface Props {
 function Table (props: Props) {
   const { Column, HeaderCell, Cell } = RSTable;
   let {
+    /* eslint-disable */
     id,
     data,
     fieldMeta,
@@ -82,30 +83,31 @@ function Table (props: Props) {
     noSorting,
     noConfigModal,
     noDownload
+    /* eslint-enable */
   } = props;
 
-  const [open, setOpen] = useState(false)
-  const [downloading, setDownloading] = useState(false)
-  const [filterVisible, setFilterVisible] = useState(fieldMeta.filterVisibility)
-  const [success, setSuccess] = useState('')
-  const [error, setError] = useState('')
+  const [open, setOpen] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [filterVisible, setFilterVisible] = useState(fieldMeta.filterVisibility);
+  const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
 
   // show certain components as default
   const showAsDefault = (noComponent?: boolean) => {
-    if (noComponent === undefined) return false
-    return true
-  }
+    if (noComponent === undefined) return false;
+    return true;
+  };
 
-  noFilter = showAsDefault(noFilter)
-  noPagination = showAsDefault(noPagination)
-  noSorting = showAsDefault(noSorting)
-  noConfigModal = showAsDefault(noConfigModal)
-  noDownload = showAsDefault(noDownload)
+  noFilter = showAsDefault(noFilter);
+  noPagination = showAsDefault(noPagination);
+  noSorting = showAsDefault(noSorting);
+  noConfigModal = showAsDefault(noConfigModal);
+  noDownload = showAsDefault(noDownload);
 
   const toggleFilterVisability = (visability: boolean) => {
-    setFilterVisible(visability)
-    setFieldMetaAttributeInStorage(id, visability, "filterVisibility")
-  }
+    setFilterVisible(visability);
+    setFieldMetaAttributeInStorage(id, visability, "filterVisibility");
+  };
 
   /*
   const resizeColumnWidth = (columnWidth?: number, dataKey?: string) => {
@@ -142,8 +144,8 @@ function Table (props: Props) {
                   cleanable={false}
                   searchable={false}
                   data={[{ label: "25", value: 25 },
-                        { label: "50", value: 50 },
-                        { label: "100", value: 100 }]}
+                    { label: "50", value: 50 },
+                    { label: "100", value: 100 }]}
                 />
               </span>
               <span className='tol-skip'>
@@ -183,7 +185,9 @@ function Table (props: Props) {
             <Button 
               className="tol-table-button"
               variant="primary"
-              onClick={ () => {setOpen(true)} }
+              onClick={ () => {
+                setOpen(true);
+              } }
             >
               <FontAwesomeIcon icon={faSliders} size="sm" />
             </Button>
@@ -261,10 +265,10 @@ function Table (props: Props) {
         }
       >
         {fieldMeta!.order.active.map((key: string) => {
-          const field = fieldMeta.data[key]
-          const flexGrow = fieldMeta.order.active.length < 6 ? 2 : undefined
-          let sort = noSorting ? false : field.sort
-          if (!field.isAttribute) sort = false // relationships cannot currently be sorted
+          const field = fieldMeta.data[key];
+          const flexGrow = fieldMeta.order.active.length < 6 ? 2 : undefined;
+          let sort = noSorting ? false : field.sort;
+          if (!field.isAttribute) sort = false; // relationships cannot currently be sorted
           return (
             <Column
               key={key}
@@ -291,11 +295,11 @@ function Table (props: Props) {
               </HeaderCell>
               <Cell dataKey={key} />
             </Column>
-          )
+          );
         })}
       </RSTable>
     </div>
-  )
+  );
 }
 
 export default Table;

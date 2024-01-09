@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from 'react';
-import { CentreContents, RemoteTable, env} from '../tol-ui/src'
+import { CentreContents, RemoteTable, env} from '../tol-ui/src';
 
 
 function Tables() {
-  const [filter, setFilter] = useState<object>({})
+  const [filter, setFilter] = useState<object>({});
 
   return (
     <div className="tables">

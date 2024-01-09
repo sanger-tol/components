@@ -6,17 +6,17 @@ SPDX-License-Identifier: MIT
 
 import { useState } from 'react';
 import { RemoteTable,
-         RemoteMultipleSelectFilters,
-         RemoteBarChart,
-         Row,
-         CentreContents,
-         env } from '../tol-ui/src'
+  RemoteMultipleSelectFilters,
+  RemoteBarChart,
+  Row,
+  CentreContents,
+  env } from '../tol-ui/src';
 
 
 function Combinations() {
   // initial state for global filters is temporary
-  const [ globalFilters, setGlobalFilters ] = useState<object>({in_list: {}})
-  const [ combinedFilters, setCombinedFilters ] = useState<object>({})
+  const [globalFilters, setGlobalFilters] = useState<object>({in_list: {}});
+  const [combinedFilters, setCombinedFilters] = useState<object>({});
 
   return (
     <CentreContents>
@@ -55,7 +55,7 @@ function Combinations() {
         />
       </Row>
     </CentreContents>
-  )
+  );
 }
 
 export default Combinations;

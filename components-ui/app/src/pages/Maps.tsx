@@ -10,14 +10,14 @@ import { BubbleMap, CentreContents, RemoteBubbleMap, RemoteBubbleMapFilter, env 
 function Maps() {
   // fake data for BubbleMapp component
   const points = [[51.508530, -0.076132],[51.510357, -0.116773],[51.507359, -0.136439],[53.958332, -1.080278],
-                  [52.192001,-2.220000],[51.063202, -1.308000]]
+    [52.192001,-2.220000],[51.063202, -1.308000]];
 
-  let lat = 51.063202
-  let long = -1.308000
+  let lat = 51.063202;
+  let long = -1.308000;
   for (let i=0; i<20; i++){
-    lat += 0.0001
-    long += 0.0001
-    points.push([lat, long])
+    lat += 0.0001;
+    long += 0.0001;
+    points.push([lat, long]);
   }
 
   // create the marker objects from the fake data that the bubblemap receives
@@ -28,12 +28,12 @@ function Maps() {
           coordinates: coordinates
         },
         properties: {}
-      }
-    })
-    return mapObjects
+      };
+    });
+    return mapObjects;
   }
 
-  const mapObjects = createMapObjectsFromCoordinates(points)
+  const mapObjects = createMapObjectsFromCoordinates(points);
 
   return (
     <CentreContents>

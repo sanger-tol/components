@@ -6,6 +6,6 @@ SPDX-License-Identifier: MIT
 
 export default interface ErrorMessage {
   detail: string;
-  title: string
-}
+  title: string;
+} // eslint-disable-line
 

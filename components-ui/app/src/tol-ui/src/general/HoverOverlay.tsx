@@ -28,9 +28,9 @@ class HoverOverlay extends React.Component<Props> {
   }
 
   render() {
-    let placement = 'auto'
+    let placement = 'auto';
     if (this.props.placement !== undefined) {
-      placement = this.props.placement
+      placement = this.props.placement;
     }
     return (
       <Whisper

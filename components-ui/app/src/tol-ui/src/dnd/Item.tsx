@@ -4,8 +4,8 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Element } from './DnD'
-import { Draggable } from 'react-beautiful-dnd'
+import { Element } from './DnD';
+import { Draggable } from 'react-beautiful-dnd';
 
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 }
 
 function Item(props: Props) {
-  const { item, index, editMode } = props
+  const { item, index, editMode } = props;
 
   if (editMode) {
     return (
@@ -37,12 +37,12 @@ function Item(props: Props) {
               {item.element}
               {provided['placeholder']}
             </div>
-          )
+          );
         }}
       </Draggable>
-    )
+    );
   }
-  return item.element
+  return item.element;
 }
 
-export default Item
+export default Item;

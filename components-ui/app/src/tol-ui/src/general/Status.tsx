@@ -18,14 +18,14 @@ interface Props {
 
 function getIconFromStatus(status: string) {
   switch(status) {
-    case 'success':
-      return faCheck;
-    case 'warning':
-      return faMinus;
-    case 'danger':
-      return faXmark;
-    default:
-      return faInfo;
+  case 'success':
+    return faCheck;
+  case 'warning':
+    return faMinus;
+  case 'danger':
+    return faXmark;
+  default:
+    return faInfo;
   }
 }
 

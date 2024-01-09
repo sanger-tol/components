@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import RemoteAggBarChart from "./RemoteAggBarChart";
 import { generateDateAgg, generateDateFilterFromBarData, DateInterval } from "./ChartUtils";
-import { useState } from 'react'
+import { useState } from 'react';
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 
 
@@ -21,7 +21,7 @@ interface Props {
 
   // 'filter' is usually referred to as globalFilters when using combinedFilters
   filter?: object,
-  setCombinedFilters?: Function,
+  setCombinedFilters?: Function, // eslint-disable-line
 
   // config
   height: number,
@@ -31,32 +31,32 @@ interface Props {
 
 function RemoteBarChart(props: Props) {
   // @ts-ignore
-  const { breakDownBy, xAxis, interval, type, shortDate, filter, setCombinedFilters } = props
-  const [ barData, setBarData ] = useState<object>({})
+  const { breakDownBy, xAxis, interval, type, shortDate, filter, setCombinedFilters } = props; // eslint-disable-line
+  const [barData, setBarData] = useState<object>({});
 
   // these can be swapped for other barchart types (type prop will be used)
-  const aggs = generateDateAgg(breakDownBy, xAxis, interval)
-  const localFilters = generateDateFilterFromBarData(barData, breakDownBy, xAxis, interval)
+  const aggs = generateDateAgg(breakDownBy, xAxis, interval);
+  const localFilters = generateDateFilterFromBarData(barData, breakDownBy, xAxis, interval);
 
   // combine local and globalFilters
   useEffectUpdate(() => {
     async function combine() {
       if (setCombinedFilters !== undefined) {
-        setCombinedFilters(Object.assign({}, filter, localFilters))
+        setCombinedFilters(Object.assign({}, filter, localFilters));
       }
     }
-    combine()
-  }, [barData])
+    combine();
+  }, [barData]);
 
   // reset localFilters when globalFilters are updated
   useEffectUpdate(() => {
     async function resetCombined() {
       if (setCombinedFilters !== undefined) {
-        setCombinedFilters(Object.assign({}, filter))
+        setCombinedFilters(Object.assign({}, filter));
       }
     }
-    resetCombined()
-  }, [filter])
+    resetCombined();
+  }, [filter]);
 
   // chart does not show pointer if setCombinedFilters undefined
   if (setCombinedFilters === undefined) {
@@ -66,7 +66,7 @@ function RemoteBarChart(props: Props) {
         aggs={ aggs }
         filter={ filter }
       />
-    )
+    );
   }
 
   return (
@@ -76,7 +76,7 @@ function RemoteBarChart(props: Props) {
       filter={ filter }
       setBarData={ setBarData }
     />
-  )
+  );
 }
 
 export default RemoteBarChart;

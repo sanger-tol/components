@@ -20,21 +20,21 @@ function getPlaceholderIcon(
   errorMessage?: string
 ) {
   if (bar) {
-    return <FontAwesomeIcon icon={faChartColumn} size="8x" />
+    return <FontAwesomeIcon icon={faChartColumn} size="8x" />;
   } else if (pie) {
-    return <FontAwesomeIcon icon={faChartPie} size="8x" />
+    return <FontAwesomeIcon icon={faChartPie} size="8x" />;
   } else if (map) {
-    return <FontAwesomeIcon icon={faMapLocationDot} size="8x"/>
+    return <FontAwesomeIcon icon={faMapLocationDot} size="8x"/>;
   } else if (loader) {
-    return <LoadingHelix/>
+    return <LoadingHelix/>;
   } else if (message !== undefined){
-    return <h5>{message}</h5>
+    return <h5>{message}</h5>;
   } else if (warningMessage !== undefined) {
-    return <Status status="warning" text={warningMessage} />
+    return <Status status="warning" text={warningMessage} />;
   } else if (errorMessage !== undefined) {
-    return <Status status="danger" text={errorMessage} />
+    return <Status status="danger" text={errorMessage} />;
   } else {
-    return <></>
+    return <></>;
   }
 }
 
@@ -45,9 +45,9 @@ function getPlaceholder(
   opacity?: number,
   squareCorners?: boolean
 ) {
-  let style = {}
-  if (opacity) style["opacity"] = opacity
-  if (squareCorners !== true) style["borderRadius"] = 6
+  const style = {};
+  if (opacity) style["opacity"] = opacity;
+  if (squareCorners !== true) style["borderRadius"] = 6;
 
   // default placeholder
   if (backing === undefined) {
@@ -59,7 +59,7 @@ function getPlaceholder(
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // adding a faded background to the backing contents (e.g. map behind loading)
@@ -81,7 +81,7 @@ function getPlaceholder(
       </div>
       {backing}
     </div>
-  )
+  );
 }
 
 interface Props {
@@ -101,21 +101,21 @@ interface Props {
 
 function Placeholder(props: Props) {
   const { bar,
-          pie,
-          map,
-          empty,
-          loader,
-          opacity,
-          squareCorners,
-          message,
-          warningMessage,
-          errorMessage,
-          backing,
-          height } = props
+    pie,
+    map,
+    empty,
+    loader,
+    opacity,
+    squareCorners,
+    message,
+    warningMessage,
+    errorMessage,
+    backing,
+    height } = props;
 
   // this temporarily fills a gap - used for on load
   if (empty) {
-    return <div style={{height: height.toString() + 'px'}}/>
+    return <div style={{height: height.toString() + 'px'}}/>;
   }
 
   const icon = getPlaceholderIcon(
@@ -126,7 +126,7 @@ function Placeholder(props: Props) {
     message,
     warningMessage,
     errorMessage
-  )
+  );
 
   return getPlaceholder(
     height,
@@ -134,7 +134,7 @@ function Placeholder(props: Props) {
     backing,
     opacity,
     squareCorners
-  )
+  );
 }
 
 export default Placeholder;

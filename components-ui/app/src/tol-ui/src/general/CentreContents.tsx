@@ -15,7 +15,7 @@ function CentreContents(props: any) {
             {props.children}
           </div>
         </Col>
-        </Row>
+      </Row>
     </Container>
   );
 }

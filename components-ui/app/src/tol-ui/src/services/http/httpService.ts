@@ -29,13 +29,13 @@ function wrapClientWithContext(
   };
 
   return {
-    get<TResponse = any>(endPoint: string, options: AxiosRequestConfig = {}) {
+    get<TResponse>(endPoint: string, options: AxiosRequestConfig = {}) {
       return client.get<TResponse>(endPoint, {
         ...defaultOption,
         ...options,
       });
     },
-    post<TResponse = any>(
+    post<TResponse>(
       endPoint: string,
       data: unknown,
       options: AxiosRequestConfig = {},

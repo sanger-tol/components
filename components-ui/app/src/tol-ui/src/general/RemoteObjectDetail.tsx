@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect } from "react";
-import { httpClient } from '../services/http/httpClient'
+import { httpClient } from '../services/http/httpClient';
 import ObjectDetail from "./ObjectDetail";
 import { FieldMetaData } from "../table/Field";
 import { formatDate, normaliseCaps } from "./Utils";
@@ -18,71 +18,71 @@ interface Props {
 }
 
 const formatContents = (contents: object) => {
-    const updatedContents: any = {}
-    for (const [key, value] of Object.entries(contents)) {
-        // format keys
-        const formattedKey = normaliseCaps(key)
+  const updatedContents: any = {};
+  for (const [key, value] of Object.entries(contents)) {
+    // format keys
+    const formattedKey = normaliseCaps(key);
 
-        // format values if date or boolean
-        let formattedValue = value
-        if (typeof value === 'string' && value.includes('GMT')) {
-            formattedValue = formatDate(value)
-        }
-        if (typeof value === 'boolean') {
-            formattedValue = value.toString()
-        }
-    
-        updatedContents[formattedKey] = formattedValue
+    // format values if date or boolean
+    let formattedValue = value;
+    if (typeof value === 'string' && value.includes('GMT')) {
+      formattedValue = formatDate(value);
     }
-    return updatedContents
+    if (typeof value === 'boolean') {
+      formattedValue = value.toString();
+    }
+    
+    updatedContents[formattedKey] = formattedValue;
   }
+  return updatedContents;
+};
 
 const RemoteObjectDetail = (props: Props) => {
-    const { endpoint, filter, baseUrl, fields } = props
-    const [ objectData, setObjectData ] = useState<any[]>([]);
+  const { endpoint, filter, baseUrl, fields } = props;
+  const [objectData, setObjectData] = useState<any[]>([]);
 
-    useEffect(() => {
-        httpClient().get('/' + endpoint, {
-            baseURL: baseUrl,
-            params: {
-                filter: filter
-            }
-        })
-        .then((res: any) => {
-            const data = res.data.data[0]
-            let selectedFields: any = {}
+  useEffect(() => {
+    httpClient().get('/' + endpoint, {
+      baseURL: baseUrl,
+      params: {
+        filter: filter
+      }
+    })
+      .then((res: any) => {
+        const data = res.data.data[0];
+        let selectedFields: any = {};
 
-            if (data !== undefined) {
-                Object.entries(fields).forEach(([fieldKey, fieldValues]) => {
-                    if (fieldKey in data.attributes) {
-                        let value = data.attributes[fieldKey]
+        if (data !== undefined) {
+          Object.entries(fields).forEach(([fieldKey, fieldValues]) => {
+            if (fieldKey in data.attributes) {
+              const value = data.attributes[fieldKey];
                         
-                        // rename the field if rename value provided
-                        if (fieldValues.rename !== undefined && fieldValues.rename !== null) {
-                            selectedFields[fieldValues.rename] = value
-                        } else {
-                            selectedFields[fieldKey] = value
-                        }
-                    } else {
-                        console.warn(`Field '${fieldKey}' is missing in the data attributes.`)
-                    }
-                })
-                selectedFields = formatContents(selectedFields)
-                setObjectData(selectedFields)
+              // rename the field if rename value provided
+              if (fieldValues.rename !== undefined && fieldValues.rename !== null) {
+                selectedFields[fieldValues.rename] = value;
+              } else {
+                selectedFields[fieldKey] = value;
+              }
+            } else {
+              console.warn(`Field '${fieldKey}' is missing in the data attributes.`);
             }
-        }).catch((error: any) => {
-            console.warn(error.message)
-            console.warn('Please ensure the db has been restored')
-            console.warn('Please ensure the \'endpoint\' prop is correct and pluralised')
-            console.warn('Please ensure the \'fields\' prop is provided')
-        })
-    }, [endpoint, filter, baseUrl])
+          });
+          selectedFields = formatContents(selectedFields);
+          setObjectData(selectedFields);
+        }
+      }).catch((error: any) => {
+        console.warn(error.message);
+        console.warn('Please ensure the db has been restored');
+        console.warn('Please ensure the \'endpoint\' prop is correct and pluralised');
+        console.warn('Please ensure the \'fields\' prop is provided');
+      });
+  }, [endpoint, filter, baseUrl]);
 
-    return (
-        <ObjectDetail 
-        data={ objectData }
-        />
-    )
-}
+  return (
+    <ObjectDetail 
+      data={ objectData }
+    />
+  );
+};
 
 export default RemoteObjectDetail;

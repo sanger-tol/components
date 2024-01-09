@@ -6,10 +6,11 @@ import { env } from '../../variables/config'
 
 const serializeParam = (k, v) => {
   const sK = encodeURIComponent(k);
+  let sV;
   if (typeof(v) == "string"){
-    var sV = encodeURIComponent(v)
+    sV = encodeURIComponent(v)
   }else{
-    var sV = encodeURIComponent(
+    sV = encodeURIComponent(
       JSON.stringify(v)
     );
   }
@@ -17,7 +18,7 @@ const serializeParam = (k, v) => {
 }
 
 const serializeParams = params => Object.entries(params).filter(
-  ([_, v]) => v !== undefined
+  ([_, v]) => v !== undefined // eslint-disable-line
 ).map(
   ([k, v]) => serializeParam(k, v)
 ).join('&');

@@ -5,15 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { httpClient } from '../services/http/httpClient'
+import { httpClient } from '../services/http/httpClient';
 import { FieldMetaData, FieldMeta, initialiseFieldMeta } from "./Field";
 import { createSort,
-         getFieldMetaAttributeFromStorage,
-         getTypesMeta,
-         setFieldMetaAttributeInStorage } from './TableUtils';
+  getFieldMetaAttributeFromStorage,
+  getTypesMeta,
+  setFieldMetaAttributeInStorage } from './TableUtils';
 import { convertTableData,
-         tableDebug,
-         structureFieldMeta } from "./TableUtils"
+  tableDebug,
+  structureFieldMeta } from "./TableUtils";
 import Table from "./Table";
 import { Placeholder } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
@@ -27,7 +27,7 @@ interface Props {
   height?: number,
 
   filter?: object,
-  setFilter?: Function,
+  setFilter?: Function, // eslint-disable-line
   defaultSort?: string,
 
   noFilter?: boolean,
@@ -54,98 +54,98 @@ function RemoteTable(props: Props) {
     noConfigModal,
     noDownload,
     debug
-  } = props
-  const height = (props.height !== undefined) ? props.height : 600
+  } = props;
+  const height = (props.height !== undefined) ? props.height : 600;
 
   // debug clears all storage
-  if (debug) localStorage.clear()
+  if (debug) localStorage.clear();
 
   // retrieve saved field meta
-  const storedFieldMeta = getFieldMetaAttributeFromStorage(id, fields)
+  const storedFieldMeta = getFieldMetaAttributeFromStorage(id, fields);
 
   // data and field information
-  const [data, setData] = useState<any[]>([])
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta|null>(storedFieldMeta)
+  const [data, setData] = useState<any[]>([]);
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta|null>(storedFieldMeta);
 
   // pagination
-  const [page, setPage] = useState<number>(1)
+  const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(
     (storedFieldMeta !== null) ? storedFieldMeta.pageSize : 50
-  )
-  const [totalSize, setTotalSize] = useState<number>(0)
+  );
+  const [totalSize, setTotalSize] = useState<number>(0);
 
   // sorting
-  const [sortColumn, setSortColumn] = useState<string>('')
-  const [sortType, setSortType] = useState<string>('asc')
+  const [sortColumn, setSortColumn] = useState<string>('');
+  const [sortType, setSortType] = useState<string>('asc');
 
   // loading, error and warning info
-  const [loading, setLoading] = useState<boolean>(true)
-  const [initialLoad, setInitialLoad] = useState<boolean>(true) 
-  const [error, setError] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(true);
+  const [initialLoad, setInitialLoad] = useState<boolean>(true); 
+  const [error, setError] = useState<string>('');
 
   const handleSortColumn = (sortColumn: any, sortType: any) => {
-    setSortColumn(sortColumn)
-    setSortType(sortType)
-  }
+    setSortColumn(sortColumn);
+    setSortType(sortType);
+  };
 
   useEffect(() => {
-    renderTable()
-  }, [page, sortColumn, sortType])
+    renderTable();
+  }, [page, sortColumn, sortType]);
 
   useEffectUpdate(() => {
-    setFieldMetaAttributeInStorage(id, pageSize, 'pageSize')
-  }, [pageSize])
+    setFieldMetaAttributeInStorage(id, pageSize, 'pageSize');
+  }, [pageSize]);
 
   useEffectUpdate(() => {
-    if (page === 1) renderTable()
+    if (page === 1) renderTable();
     // setting page then triggers renderTable in useEffect above
-    setPage(1)
-  }, [filter, pageSize])
+    setPage(1);
+  }, [filter, pageSize]);
 
   const modalOnSave = (fieldMeta: FieldMeta) => {
-    setFieldMeta(fieldMeta)
+    setFieldMeta(fieldMeta);
     // setting page then triggers renderTable in useEffect above
-    setPage(1)
-    setFieldMetaAttributeInStorage(id, fieldMeta.data, 'data')
-    setFieldMetaAttributeInStorage(id, fieldMeta.order, 'order')
-  }
+    setPage(1);
+    setFieldMetaAttributeInStorage(id, fieldMeta.data, 'data');
+    setFieldMetaAttributeInStorage(id, fieldMeta.order, 'order');
+  };
 
   const renderTable = async () => {
-    setLoading(true)
+    setLoading(true);
 
     // generating query params
     const params = {
       page: page,
       page_size: pageSize,
       filter: filter
-    }
+    };
 
     // deal with sorting
     if (sortColumn !== '') {
-      params['sort_by'] = createSort(sortColumn, sortType)
+      params['sort_by'] = createSort(sortColumn, sortType);
     } else if (defaultSort !== undefined) {
-      params['sort_by'] = defaultSort
+      params['sort_by'] = defaultSort;
     }
 
     // get attribute types and relationship links
-    const typesMeta = await getTypesMeta(baseUrl)
+    const typesMeta = await getTypesMeta(baseUrl);
 
     // get data and update state
     httpClient().get('/' + endpoint, {
       params: params,
       baseURL: baseUrl
     }).then((res: any) => {
-      const apiData = res.data.data
-      const apiMeta = res.data.meta
+      const apiData = res.data.data;
+      const apiMeta = res.data.meta;
 
-      setPage(page)
-      setTotalSize(apiMeta.total)
-      setError('')
+      setPage(page);
+      setTotalSize(apiMeta.total);
+      setError('');
       
       // error if endpoint doesn't return 200
-      if (res.status !== 200) throw Error()
+      if (res.status !== 200) throw Error();
 
-      let initialFieldMeta: FieldMeta = initialiseFieldMeta()
+      let initialFieldMeta: FieldMeta = initialiseFieldMeta();
       // check if any data is returned
       if (apiData[0] !== undefined) {
         // only setting fieldMeta on first load
@@ -155,48 +155,48 @@ function RemoteTable(props: Props) {
             initialFieldMeta,
             typesMeta,
             fields
-          )
-          setFieldMetaAttributeInStorage(id, initialFieldMeta)
+          );
+          setFieldMetaAttributeInStorage(id, initialFieldMeta);
         } else {
-          initialFieldMeta = getFieldMetaAttributeFromStorage(id, fields)
+          initialFieldMeta = getFieldMetaAttributeFromStorage(id, fields);
         }
 
         // setting fieldMeta only on first load
-        setFieldMeta(initialFieldMeta)
+        setFieldMeta(initialFieldMeta);
       
         // debug logs if prop defined
         tableDebug(
           apiData,
           initialFieldMeta,
           debug
-        )
+        );
 
         // setting data using fieldMeta state
-        setPageSize(initialFieldMeta.pageSize)
+        setPageSize(initialFieldMeta.pageSize);
         setData(
           convertTableData(
             apiData,
             initialFieldMeta,
             baseUrl
           )
-        )
-        setLoading(false)
-        setInitialLoad(false)
+        );
+        setLoading(false);
+        setInitialLoad(false);
       } else {
-        setData([])
-        setLoading(false)
-        setInitialLoad(false)
+        setData([]);
+        setLoading(false);
+        setInitialLoad(false);
       }
     }).catch((error: any) => {
-      console.warn(error.message)
-      console.warn('Please ensure the db has been restored')
-      console.warn('Please ensure the \'endpoint\' prop is correct and pluralised')
-      setLoading(false)
-      setInitialLoad(false)
-      setError(error.message)
-      setData([])
-    })
-  }
+      console.warn(error.message);
+      console.warn('Please ensure the db has been restored');
+      console.warn('Please ensure the \'endpoint\' prop is correct and pluralised');
+      setLoading(false);
+      setInitialLoad(false);
+      setError(error.message);
+      setData([]);
+    });
+  };
 
   if (error !== ''){
     return (
@@ -208,7 +208,7 @@ function RemoteTable(props: Props) {
   }
   
   if (initialLoad) {
-    return <Placeholder loader height={height} />
+    return <Placeholder loader height={height} />;
   }
 
   return (

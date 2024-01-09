@@ -6,5 +6,5 @@ SPDX-License-Identifier: MIT
 
 export default interface Role {
   role: string;
-}
+} // eslint-disable-line
 

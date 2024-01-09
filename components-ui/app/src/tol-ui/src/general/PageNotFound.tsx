@@ -10,7 +10,7 @@ import { Header, HeaderButton } from "../index";
 const home: HeaderButton = {
   href: "/",
   text: "Go back home"
-}
+};
 
 function PageNotFound() {
   return (
@@ -19,7 +19,7 @@ function PageNotFound() {
       buttons={[home]}
       pageEmpty
     />
-  )
+  );
 }
 
 export default PageNotFound;

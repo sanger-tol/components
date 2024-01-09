@@ -18,16 +18,16 @@ export interface Props {
 
 class Header extends React.Component<Props> {
   buttons: HeaderButton[] = [];
-  pageEmpty = true
+  pageEmpty = true;
 
   constructor(props: Props) {
     super(props);
     
     if (props.buttons !== undefined) {
-      this.buttons = props.buttons
+      this.buttons = props.buttons;
     }
     if (props.pageEmpty === undefined) {
-      this.pageEmpty = false
+      this.pageEmpty = false;
     }
   }
 
@@ -60,7 +60,7 @@ class Header extends React.Component<Props> {
         </div>
         {this.pageEmpty ?
           <h6>‎</h6>
-        :
+          :
           <></>
         }
       </div>

@@ -6,10 +6,10 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { CentreContents,
-         BarChart, 
-         RemoteAggBarChart, 
-         Button,
-         env } from '../tol-ui/src'
+  BarChart, 
+  RemoteAggBarChart, 
+  Button,
+  env } from '../tol-ui/src';
 
 
 // fake data for BarChart component
@@ -30,7 +30,7 @@ const d1 = [
     label: 'Species 3',
     data: [100, 200, 100, 400, 110, 600, 100]
   }
-]
+];
 const d2 = [
   {
     id: 'species_a',
@@ -112,11 +112,11 @@ const d2 = [
     label: 'Species O',
     data: [100, 133, 100, 100, 200, 44, 100]
   }
-]
+];
 
 function BarCharts() {
-  const [datasets, setDatasests] = useState(d1)
-  const [bar, setBar] = useState({})
+  const [datasets, setDatasests] = useState(d1);
+  const [bar, setBar] = useState({});
 
   const aggs = {
     "aggs": {
@@ -139,15 +139,19 @@ function BarCharts() {
         }
       }
     }
-  }
+  };
   
   return (
     <div className="charts">
       <CentreContents>
         <h2>Bar Chart</h2>
-        <h5>This is the 'Bar' data: {bar["bucket"]} {bar["clickKey"]} {bar["value"]}</h5>
-        <Button className="m-1" onClick={()=>{setDatasests(d1)}}>Change d1</Button>
-        <Button className="m-1" onClick={()=>{setDatasests(d2)}}>Change d2</Button>
+        <h5>This is the &apos;Bar&apos; data: {bar["bucket"]} {bar["clickKey"]} {bar["value"]}</h5>
+        <Button className="m-1" onClick={()=>{
+          setDatasests(d1);
+        }}>Change d1</Button>
+        <Button className="m-1" onClick={()=>{
+          setDatasests(d2);
+        }}>Change d2</Button>
         <BarChart
           stacked
           title="Interactive monthly comparison of unique species & DNA clusters found per order"
