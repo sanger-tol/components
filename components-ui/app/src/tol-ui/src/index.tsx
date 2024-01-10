@@ -2,65 +2,64 @@
 //
 // SPDX-License-Identifier: MIT
 
+// React-Bootstrap pass-through
 import { Container, Row, Col, Button, Form, Spinner } from 'react-bootstrap';
+export { Container, Row, Col, Form, Button, Spinner };
 
 // General
 export { default as TolApp } from "./TolApp";
-export { default as Header } from "./general/Header";
-export { default as CentreContents } from "./general/CentreContents";
-export { default as Alert } from "./general/Alert";
-export { default as InfoTooltip } from "./general/InfoTooltip";
-export { default as LoadingHelix, MiniLoadingHelix } from "./general/LoadingHelix";
-export { default as Status } from "./general/Status";
-export { default as Modal } from "./general/Modal";
-export { default as Placeholder } from "./general/Placeholder";
-export { default as Widgets } from "./general/Widgets";
-export { default as PopUpMessage } from "./general/PopUpMessage";
-export { default as Filter } from "./general/Filter";
-export { default as ObjectDetail } from "./general/ObjectDetail";
-export { default as RemoteObjectDetail } from "./general/RemoteObjectDetail";
+export { 
+  Header,
+  CentreContents,
+  Alert,
+  InfoTooltip,
+  LoadingHelix,
+  MiniLoadingHelix,
+  Status,
+  Modal,
+  Placeholder,
+  Widgets,
+  PopUpMessage,
+  Filter,
+  RemoteGet,
+  ObjectDetail,
+  formatDate
+} from "./general";
 
 // Forms
-export { default as AutoComplete } from "./forms/AutoComplete";
-export { default as RemoteAutoComplete } from "./forms/RemoteAutoComplete";
-export { default as MultipleSelect } from "./forms/MultipleSelect";
-export { default as MultipleSelectFilters } from "./forms/MultipleSelectFilters";
-export { default as RemoteMultipleSelectFilters } from "./forms/RemoteMultipleSelectFilters";
-export { default as GlobalMultipleSelect } from "./forms/GlobalMultipleSelect";
-export { default as Dropzone } from "./forms/Dropzone";
+export {
+  AutoComplete,
+  RemoteAutoComplete,
+  MultipleSelect,
+  MultipleSelectFilters,
+  RemoteMultipleSelectFilters,
+  GlobalMultipleSelect,
+  Dropzone
+} from "./forms";
 
 // Table
-export { default as RemoteTable } from "./table/RemoteTable";
+export { RemoteTable } from "./table";
 
 // Drag & Drop
-export { default as DnD } from "./dnd/DnD";
+export { DnD } from "./dnd";
 
 // Charts
-export { default as BarChart } from "./charts/BarChart";
-export { default as RemoteAggBarChart } from "./charts/RemoteAggBarChart";
-export { default as RemoteBarChart } from "./charts/RemoteBarChart";
-
-export { default as BubbleMap } from "./charts/BubbleMap";
-export { default as RemoteBubbleMap } from "./charts/RemoteBubbleMap";
-
-export { default as Sunburst } from "./charts/Sunburst";
-export { default as RemoteSunburst } from "./charts/RemoteSunburst";
-
-// Charts Miscellaneous
-export { default as RemoteBubbleMapFilter } from "./charts/RemoteBubbleMapFilter";
-
-// React-Bootstrap pass-through
-export { Container };
-export { Row };
-export { Col };
-export { Form };
-export { Button };
-export { Spinner };
+export {
+  BarChart,
+  RemoteAggBarChart,
+  RemoteBarChart,
+  BubbleMap,
+  RemoteBubbleMap,
+  Sunburst,
+  RemoteSunburst
+} from "./charts";
 
 // Models
-export { default as HeaderButton } from "./models/HeaderButton";
-export { default as Page } from "./models/Page";
-export { default as ErrorMessage } from "./models/ErrorMessage";
+export {
+  HeaderButton,
+  Page,
+  ErrorMessage
+} from "./models";
 
 // Services
 export { httpClient } from "./services/http/httpClient";

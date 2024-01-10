@@ -7,7 +7,9 @@ SPDX-License-Identifier: MIT
 import ReactDOM from 'react-dom';
 import { Home,
   BarCharts,
-  Combinations,
+  Combo,
+  Detail,
+  DetailInfo,
   Miscellaneous,
   Tables,
   Forms,
@@ -26,9 +28,9 @@ const barCharts: Page = {
   uiElement: <BarCharts />
 };
 
-const combinations: Page = {
-  name: "Combinations",
-  uiElement: <Combinations />
+const combo: Page = {
+  name: "Combo",
+  uiElement: <Combo />
 };
 
 const forms: Page = {
@@ -67,20 +69,27 @@ const widgets: Page = {
   uiElement: <Widgets />,
 };
 
+const detail: Page = {
+  name: "Detail",
+  uiElement: <Detail />,
+  detailElement: <DetailInfo/>
+};
+
 ReactDOM.render( // eslint-disable-line
   <TolApp
     brand="Components"
     homePage={ <Home /> }
     pages={[
       barCharts,
-      combinations,
+      combo,
       forms,
       maps,
       miscellaneous,
       tables,
       sandbox,
       sunbursts,
-      widgets
+      widgets,
+      detail
     ]}
     login={ false }
   />,

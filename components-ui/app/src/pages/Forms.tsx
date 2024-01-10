@@ -50,6 +50,7 @@ function Forms() {
           filter={filter}
           setFilter={setFilter}
         />
+        <div style={{height: 5}} />
         <Filter
           id='sts_species_id'
           rename='sts_species_id'
@@ -57,6 +58,7 @@ function Forms() {
           filter={filter}
           setFilter={setFilter}
         />
+        <div style={{height: 5}} />
         <Filter
           id='sts_ready'
           rename='sts_ready'
@@ -64,7 +66,7 @@ function Forms() {
           filter={filter}
           setFilter={setFilter}
         />
-        <h2>AutoComplete Input</h2>
+        <h2 className='mt-3'>AutoComplete Input</h2>
         <RemoteAutoComplete 
           endpoint='species'
           filter_by='name'

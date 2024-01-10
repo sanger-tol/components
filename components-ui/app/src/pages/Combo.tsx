@@ -13,7 +13,7 @@ import { RemoteTable,
   env } from '../tol-ui/src';
 
 
-function Combinations() {
+function Combo() {
   // initial state for global filters is temporary
   const [globalFilters, setGlobalFilters] = useState<object>({in_list: {}});
   const [combinedFilters, setCombinedFilters] = useState<object>({});
@@ -46,7 +46,7 @@ function Combinations() {
       </Row>
       <Row>
         <RemoteTable
-          id="combinations-table"
+          id="combo-table"
           endpoint="run_data"
           filter={combinedFilters}
           setFilter={setCombinedFilters}
@@ -58,4 +58,4 @@ function Combinations() {
   );
 }
 
-export default Combinations;
+export default Combo;

@@ -6,8 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from 'react';
 import { AutoComplete as RSAutoComplete } from 'rsuite';
-import { httpClient } from '../services/http/httpClient';
-import { MiniLoadingHelix, Status } from '../index';
+import { Status, MiniLoadingHelix, httpClient } from '../index';
 
 
 interface Props {

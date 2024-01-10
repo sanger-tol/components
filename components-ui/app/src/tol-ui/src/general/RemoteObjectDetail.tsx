@@ -4,7 +4,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+// Currently not in use
+
+import { useState, useEffect } from 'react';
 import { httpClient } from '../services/http/httpClient';
 import ObjectDetail from "./ObjectDetail";
 import { FieldMetaData } from "../table/Field";
@@ -12,9 +14,10 @@ import { formatDate, normaliseCaps } from "./Utils";
 
 interface Props {
     endpoint: string,
-    fields: FieldMetaData
-    filter?: object,
+    id: string,
+    fields: FieldMetaData,
     baseUrl?: string,
+    setData?: Function // eslint-disable-line
 }
 
 const formatContents = (contents: object) => {
@@ -38,25 +41,25 @@ const formatContents = (contents: object) => {
 };
 
 const RemoteObjectDetail = (props: Props) => {
-  const { endpoint, filter, baseUrl, fields } = props;
+  const { endpoint, id, baseUrl, fields, setData } = props;
   const [objectData, setObjectData] = useState<any[]>([]);
 
   useEffect(() => {
-    httpClient().get('/' + endpoint, {
-      baseURL: baseUrl,
-      params: {
-        filter: filter
-      }
+    httpClient().get('/' + endpoint + '/' + id, {
+      baseURL: baseUrl
     })
       .then((res: any) => {
-        const data = res.data.data[0];
+        const data = res.data.data;
         let selectedFields: any = {};
-
+        // if specified, set data to all that's been returned by the call
         if (data !== undefined) {
+          if (setData !== undefined) {
+            setData(data);
+          }
+          // set the state with all returned data
           Object.entries(fields).forEach(([fieldKey, fieldValues]) => {
             if (fieldKey in data.attributes) {
               const value = data.attributes[fieldKey];
-                        
               // rename the field if rename value provided
               if (fieldValues.rename !== undefined && fieldValues.rename !== null) {
                 selectedFields[fieldValues.rename] = value;
@@ -76,7 +79,7 @@ const RemoteObjectDetail = (props: Props) => {
         console.warn('Please ensure the \'endpoint\' prop is correct and pluralised');
         console.warn('Please ensure the \'fields\' prop is provided');
       });
-  }, [endpoint, filter, baseUrl]);
+  }, [endpoint, id, baseUrl]);
 
   return (
     <ObjectDetail 

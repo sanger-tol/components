@@ -6,9 +6,8 @@ SPDX-License-Identifier: MIT
 
 export { default as BubbleMap } from "./BubbleMap";
 export { default as RemoteBubbleMap } from "./RemoteBubbleMap";
-export { default as RemoteBubbleMapFilter } from "./RemoteBubbleMapFilter";
 
-export { default as BarChart } from "./BubbleMap";
+export { default as BarChart } from "./BarChart";
 export { default as RemoteAggBarChart } from "./RemoteAggBarChart";
 export { default as RemoteBarChart } from "./RemoteBarChart";
 

@@ -74,17 +74,28 @@ function TolApp(props: Props) {
                 const path = convertToPath(page.name);
                 const authRequired = falseIfUndefined(page.authRequired);
 
-                if(authRequired) {
-                  return <Route path={"/" + path} key={page.name} exact>{(token && !tokenHasExpired(token)) ? page.uiElement : <Redirect to="/" />}</Route>;
-                } else {
-                  return <Route path={"/" + path} key={page.name} exact>{page.uiElement}</Route>;
-                }
+                // Regular page route
+                const regularRoute = (
+                  <Route exact path={`/${path}`} key={page.name} >
+                    {authRequired ? (token && !tokenHasExpired(token)) ? page.uiElement : <Redirect to="/" />
+                      : page.uiElement}
+                  </Route>
+                );
+
+                // Detail page route
+                const detailRoute = page.detailElement && (
+                  <Route exact path={`/${path}/:id`} key={`${page.name}-detail`} >
+                    {authRequired ? (token && !tokenHasExpired(token)) ? page.detailElement : <Redirect to="/" />
+                      : page.detailElement}
+                  </Route>
+                );
+                return [regularRoute, detailRoute];
               })}
               <Route path="/page-not-found" component={() => <PageNotFound/>} />
               <Route path="*"><Redirect to="/page-not-found" /></Route>
             </Switch>
           </div>
-          <Footer />
+          <Footer/>
         </Router>
       </AuthProvider>
     </div>

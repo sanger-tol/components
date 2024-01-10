@@ -12,5 +12,7 @@ export { default as Forms } from "./Forms";
 export { default as BarCharts } from "./BarCharts";
 export { default as Maps } from "./Maps";
 export { default as Sunbursts } from "./Sunbursts";
-export { default as Combinations } from "./Combinations";
+export { default as Combo } from "./Combo";
 export { default as Widgets } from "./Widgets";
+export { default as Detail } from "./Detail";
+export { default as DetailInfo } from "./DetailInfo";
