@@ -5,13 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from 'react';
-import { env, RemoteTable, Widgets } from '../tol-ui/src'
+import { env, RemoteTable, Widgets } from '../tol-ui/src';
 import Filter from '../tol-ui/src/general/Filter';
 
 
 function Sandbox() {
   //const [filter, setFilter] = useState<object>({'contains': {'sts_common_name': 'Pink'}})
-  const [filter, setFilter] = useState<object>({})
+  const [filter, setFilter] = useState<object>({});
 
   /*
   const table1 = (
@@ -63,7 +63,7 @@ function Sandbox() {
         }
       }}
     />
-  )
+  );
   
   return (
     <>

@@ -6,18 +6,18 @@ SPDX-License-Identifier: MIT
 
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router,
-         Route,
-         Switch,
-         Redirect } from "react-router-dom";
+  Route,
+  Switch,
+  Redirect } from "react-router-dom";
 import { Navigation, Callback, PageNotFound } from "./general/index";
 import { getTokenFromLocalStorage,
   getUserFromLocalStorage, 
   tokenHasExpired} from './services/localStorage/localStorageService';
 import { AuthProvider } from './contexts/auth.context';
-import Footer from './general/Footer'
+import Footer from './general/Footer';
 import Page from "./models/Page";
 import { convertToPath, falseIfUndefined, matomoAnalytics } from "./general/Utils";
-import { env } from './variables/config'
+import { env } from './variables/config';
 
 
 export interface Props {
@@ -32,22 +32,22 @@ function TolApp(props: Props) {
   const [user, setUser] = useState(getUserFromLocalStorage);
 
   useEffect(() => {
-    const siteId = env.MATOMO_SITE_ID 
-    matomoAnalytics(siteId)
-  }, [])
+    const siteId = env.MATOMO_SITE_ID; 
+    matomoAnalytics(siteId);
+  }, []);
 
   // show login button as default
-  let login = props.login
+  let login = props.login;
   if (login === undefined) {
-    login = true
+    login = true;
   }
 
   if (!("API_PATH" in env)) {
     return (
       <div>
-        <h3>Please add 'API_PATH' as an environment variable (e.g. API_PATH=/api/v1).</h3>
+        <h3>Please add &apos;API_PATH&apos; as an environment variable (e.g. API_PATH=/api/v1).</h3>
       </div>
-    )
+    );
   }
 
   return (
@@ -71,8 +71,8 @@ function TolApp(props: Props) {
               <Route path="/" exact component={() => props.homePage} />
               <Route path="/callback" exact><Callback /></Route>
               {props.pages.map(page => {
-                let path = convertToPath(page.name)
-                const authRequired = falseIfUndefined(page.authRequired)
+                const path = convertToPath(page.name);
+                const authRequired = falseIfUndefined(page.authRequired);
 
                 // Regular page route
                 const regularRoute = (
@@ -80,7 +80,7 @@ function TolApp(props: Props) {
                     {authRequired ? (token && !tokenHasExpired(token)) ? page.uiElement : <Redirect to="/" />
                       : page.uiElement}
                   </Route>
-                )
+                );
 
                 // Detail page route
                 const detailRoute = page.detailElement && (
@@ -88,14 +88,14 @@ function TolApp(props: Props) {
                     {authRequired ? (token && !tokenHasExpired(token)) ? page.detailElement : <Redirect to="/" />
                       : page.detailElement}
                   </Route>
-                )
-              return [regularRoute, detailRoute];
+                );
+                return [regularRoute, detailRoute];
               })}
               <Route path="/page-not-found" component={() => <PageNotFound />} />
               <Redirect from="*" to="/page-not-found" />
             </Switch>
           </div>
-          <Footer /> 
+          <Footer/>
         </Router>
       </AuthProvider>
     </div>

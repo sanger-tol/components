@@ -4,7 +4,7 @@
 
 import axios, { AxiosInstance } from 'axios';
 
-export function createAxiosInstance(options: any): AxiosInstance {
+export function createAxiosInstance(options: any): AxiosInstance { // eslint-disable-line
   const axiosInstance = axios.create(
     options
   );

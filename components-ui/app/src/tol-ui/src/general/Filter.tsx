@@ -32,35 +32,35 @@ interface Props {
   rename: string,
   type: FilterType,
   filter: object,
-  setFilter: Function
+  setFilter: Function // eslint-disable-line
 }
 
 function Filter(props: Props) {
-  const { type } = props
+  const { type } = props;
   switch(type) {
-    case 'str':
-    case 'int':
-    case 'float':
-      return (
-        <FilterTextInput
-          {...props}
-          type={type}
-        />
-      )
-    case 'datetime':
-      return (
-        <FilterDatePicker
-          {...props}
-        />
-      )
-    case 'boolean':
-      return (
-        <FilterBooleanPicker
-          {...props}
-        />
-      )
+  case 'str':
+  case 'int':
+  case 'float':
+    return (
+      <FilterTextInput
+        {...props}
+        type={type}
+      />
+    );
+  case 'datetime':
+    return (
+      <FilterDatePicker
+        {...props}
+      />
+    );
+  case 'boolean':
+    return (
+      <FilterBooleanPicker
+        {...props}
+      />
+    );
   }
-  return <></>
+  return <></>;
 }
 
 export default Filter;

@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState, useEffect } from "react";
 import BarChart from "./BarChart";
-import { httpClient } from '../services/http/httpClient'
+import { httpClient } from '../services/http/httpClient';
 import { DateInterval, aggsToBarChartData, isChartDataEmpty } from "./ChartUtils";
 import { isPropDefined } from "../general/Utils";
 import Placeholder from "../general/Placeholder";
@@ -22,43 +22,43 @@ interface Props {
   interval: DateInterval,
   height: number,
   shortDate?: boolean,
-  setBarData?: Function
+  setBarData?: Function // eslint-disable-line
 }
 
 function RemoteAggBarChart(props: Props) {
   const { endpoint, aggs, interval, filter, baseUrl, height, shortDate } = props;
-  const [labels, setLabels] = useState([])
-  const [datasets, setDatasets] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [warningMessage, setWarningMessage] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
+  const [labels, setLabels] = useState([]);
+  const [datasets, setDatasets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [warningMessage, setWarningMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     httpClient().post('/' + endpoint + ":aggregations", aggs, {
       baseURL: baseUrl,
       params: {
         filter: filter
       }
     })
-    .then((res: any) => {
-      let aggs = res.data.meta.aggregations
-      setErrorMessage('')
-      setWarningMessage(isChartDataEmpty(aggs))
-      // check if a datetime chart
-      if (isPropDefined(interval)) {
-        aggs = aggsToBarChartData(aggs, interval!, shortDate)
-        setDatasets(aggs.datasets)
-        setLabels(aggs.labels)
-        setLoading(false)
-      } else {
-        throw Error("interval prop currently needs to be set")
-      }
-    })
-    .catch((error: any) => {
-      console.error(error.message)
-      setErrorMessage(error.message)
-    })
+      .then((res: any) => {
+        let aggs = res.data.meta.aggregations;
+        setErrorMessage('');
+        setWarningMessage(isChartDataEmpty(aggs));
+        // check if a datetime chart
+        if (isPropDefined(interval)) {
+          aggs = aggsToBarChartData(aggs, interval!, shortDate);
+          setDatasets(aggs.datasets);
+          setLabels(aggs.labels);
+          setLoading(false);
+        } else {
+          throw Error("interval prop currently needs to be set");
+        }
+      })
+      .catch((error: any) => {
+        console.error(error.message);
+        setErrorMessage(error.message);
+      });
   }, [filter]);
 
   if (errorMessage !== ''){
@@ -80,7 +80,7 @@ function RemoteAggBarChart(props: Props) {
   }
   
   if (loading) {
-    return <Placeholder bar height={height} />
+    return <Placeholder bar height={height} />;
   }
 
   return (
@@ -89,7 +89,7 @@ function RemoteAggBarChart(props: Props) {
       labels={ labels }
       datasets={ datasets }
     />
-  )
+  );
 }
 
 export default RemoteAggBarChart;

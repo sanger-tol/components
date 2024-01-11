@@ -7,6 +7,6 @@ import { getTokenFromLocalStorage } from '../localStorage/localStorageService';
 
 export function httpClient() {
   const token = getTokenFromLocalStorage();
-  const { client, ...http } = httpServices(token);
+  const { client, ...http } = httpServices(token); // eslint-disable-line
   return http;
 }

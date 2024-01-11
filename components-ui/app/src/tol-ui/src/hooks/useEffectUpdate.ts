@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 
 
 // ignores the initial load update
-export function useEffectUpdate(fn: Function, dependencies: any[]) {
+export function useEffectUpdate(fn: Function, dependencies: any[]) { // eslint-disable-line
   const isMountingRef = useRef(false);
 
   useEffect(() => {

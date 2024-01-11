@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { normaliseCaps } from "../general/Utils"
+import { normaliseCaps } from "../general/Utils";
 
 
 interface ElementPropPointers {
@@ -12,7 +12,7 @@ interface ElementPropPointers {
 }
 
 export interface CellRenderer {
-  element: Function,
+  element: Function, // eslint-disable-line
   propPointers: ElementPropPointers
 }
 
@@ -47,7 +47,7 @@ export interface FieldMeta {
 }
 
 const fieldDefaults = (key: string, endpoint?: string) => {
-  const rename = normaliseCaps(key, endpoint)
+  const rename = normaliseCaps(key, endpoint);
 
   return {
     cellRenderer: null,
@@ -61,19 +61,19 @@ const fieldDefaults = (key: string, endpoint?: string) => {
     sort: true,
     type: null,
     width: 200
-  }
-}
+  };
+};
 
 export function addFieldDefaults(key: string, field: Field, endpoint?: string) {
   return {
     ...fieldDefaults(key, endpoint),
     ...field
-  }
+  };
 }
 
 export function initialiseFieldMeta(filterVisibility?: boolean, pageSize?: number) {
-  if (filterVisibility === undefined) filterVisibility = false
-  if (pageSize === undefined) pageSize = 50
+  if (filterVisibility === undefined) filterVisibility = false;
+  if (pageSize === undefined) pageSize = 50;
 
   return {
     data: {},
@@ -83,5 +83,5 @@ export function initialiseFieldMeta(filterVisibility?: boolean, pageSize?: numbe
     },
     filterVisibility: filterVisibility,
     pageSize: pageSize
-  } as FieldMeta
+  } as FieldMeta;
 }

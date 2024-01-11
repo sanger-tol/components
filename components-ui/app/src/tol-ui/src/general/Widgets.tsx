@@ -4,52 +4,42 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect } from "react"
-import { Row, Col } from "../index"
+import { useEffect } from "react";
+import { Row, Col } from "../index";
 import { getCssVarValue, isPropDefined } from "./Utils";
 
 
 interface Props {
   title?: string,
   description?: string,
-  components: any[]
+  components: JSX.Element[]
 }
 
 // fill div if only 1 widget
 const getHalfScreenWidgetSize = (componentsLength: number) => {
   switch(componentsLength) {
-    case 1:
-      return 12
-    default:
-      return 6
+  case 1:
+    return 12;
+  default:
+    return 6;
   }
-}
-
-// fill div if only 1 widget
-const getThirdScreenWidgetSize = (componentsLength: number) => {
-  switch(componentsLength) {
-    case 1:
-      return 12
-    default:
-      return 4
-  }
-}
+};
 
 function Widgets(props: Props) {
-  const { title, description, components } = props
+  const { title, description, components } = props;
 
   // change the background colour behind the widgets
   useEffect(() => {
     try {
-      const backing = document.getElementById("tol-app-background")
-      backing!.style.backgroundColor = getCssVarValue("--bs-body-widget-bg")
-    } catch {}
+      const backing = document.getElementById("tol-app-background");
+      backing!.style.backgroundColor = getCssVarValue("--bs-body-widget-bg");
+    } catch {
+      return;
+    }
   }, []);
 
   // fill div if only 1 widget
-  const halfSize = getHalfScreenWidgetSize(components.length)
-  // @ts-ignore/no-unused-vars
-  const thirdSize = getThirdScreenWidgetSize(components.length)
+  const halfSize = getHalfScreenWidgetSize(components.length);
 
   return (
     <>
@@ -78,7 +68,7 @@ function Widgets(props: Props) {
                 {component}
               </div>
             </Col>
-          )
+          );
         })}
       </Row>
     </>

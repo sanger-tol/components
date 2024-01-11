@@ -7,4 +7,4 @@ SPDX-License-Identifier: MIT
 export default interface HeaderButton {
   href: string;
   text: string;
-}
+} // eslint-disable-line

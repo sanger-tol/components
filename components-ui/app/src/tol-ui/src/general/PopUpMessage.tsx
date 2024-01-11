@@ -10,32 +10,32 @@ import Status from "./Status";
 export interface Props {
   type: string,
   message: string,
-  setMessage: Function
+  setMessage: Function // eslint-disable-line
 }
 
 function PopUpMessage(props: Props) {
-  const { type, message, setMessage } = props
-  const [timeoutValue, setTimeoutValue] = useState<any>(null)
+  const { type, message, setMessage } = props;
+  const [timeoutValue, setTimeoutValue] = useState<any>(null);
 
   const clearMessage = (timeout: number) => {
-    clearTimeout(timeoutValue!)
+    clearTimeout(timeoutValue!);
     setTimeoutValue(setTimeout(() => {
-      setMessage('')
-    }, timeout))
-  }
+      setMessage('');
+    }, timeout));
+  };
 
   useEffect(() => {
-    clearMessage(10000)
-  }, [message])
+    clearMessage(10000);
+  }, [message]);
 
-  if (message === '') return <></>
+  if (message === '') return <></>;
 
   return (
     // onClick clears pop-up
     <span onClick={() => clearMessage(0)} className="tol-pop-up-message">
       <Status status={type} text={message} />
     </span>
-  )
+  );
 }
 
 export default PopUpMessage;

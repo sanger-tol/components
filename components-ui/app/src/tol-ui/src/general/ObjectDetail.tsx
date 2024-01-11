@@ -9,7 +9,7 @@ export interface Props {
 }
 
 function ObjectDetail(props: Props) {
-  const { data } = props
+  const { data } = props;
   return (
     <div className='tol-object-detail'>
       {Object.entries(data).map(([key, value]) =>
@@ -17,7 +17,7 @@ function ObjectDetail(props: Props) {
           <strong>{key}:</strong> {value}
         </p>)}
     </div>
-  )
+  );
 }
 
 export default ObjectDetail;

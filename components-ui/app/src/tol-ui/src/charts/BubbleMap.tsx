@@ -18,7 +18,7 @@ interface Props {
   height: number
 }
 
-let DefaultIcon = Leaflet.icon({
+const DefaultIcon = Leaflet.icon({
   iconUrl: icon,
   iconSize: [20,35],
   iconAnchor: [12,41],
@@ -38,7 +38,7 @@ function BubbleMap(props: Props) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-       <MarkerClusterGroup chunkedLoading>
+        <MarkerClusterGroup chunkedLoading>
           {markers.map((marker, index) => {
             return(
               <Marker
@@ -51,7 +51,7 @@ function BubbleMap(props: Props) {
                   </Popup>
                 )}
               </Marker>
-            )
+            );
           })}
         </MarkerClusterGroup>
 

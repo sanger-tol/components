@@ -29,17 +29,17 @@ export function Callback() {
           setTokenToLocalStorage(data.access_token);
           setToken(data.access_token);
           getProfile(data.access_token)
-          .then((data2: any) => {
-            setUserToLocalStorage(data2.data);
-            setUser(data2.data);
-          })
-          .finally(() => {
-            let targetUrl = localStorage.getItem('returnUrl') || '';
-            if (!targetUrl || targetUrl === 'index') {
-              targetUrl = '/';
-            }
-            history.replace(targetUrl);
-          });
+            .then((data2: any) => {
+              setUserToLocalStorage(data2.data);
+              setUser(data2.data);
+            })
+            .finally(() => {
+              let targetUrl = localStorage.getItem('returnUrl') || '';
+              if (!targetUrl || targetUrl === 'index') {
+                targetUrl = '/';
+              }
+              history.replace(targetUrl);
+            });
         })
         .catch(() => { 
           history.replace('/login');
@@ -51,4 +51,4 @@ export function Callback() {
   return null;
 }
 
-export default Callback
+export default Callback;

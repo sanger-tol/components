@@ -9,7 +9,7 @@ import {
   Sunburst,
   Button,
   RemoteSunburst,
-  env } from '../tol-ui/src'
+  env } from '../tol-ui/src';
 import { useState } from 'react';
 
 
@@ -116,17 +116,19 @@ const datasets = {
       }
     }
   ]
-}
+};
 
 function Sunbursts() {
-  const [sliceData, setSliceData] = useState({})
+  const [sliceData, setSliceData] = useState({});
 
   return (
     <div className="sunbursts">
       <CentreContents>
         <h2 className="mt-5">Sunburst</h2>
-        <Button className="m-1" onClick={()=>{setSliceData({bucket: "hello"})}}>setSliceData</Button>
-        <h5>This is the 'slice' data: {sliceData["bucket"]} {sliceData["clickKey"]} {sliceData["value"]}</h5>
+        <Button className="m-1" onClick={()=>{
+          setSliceData({bucket: "hello"});
+        }}>setSliceData</Button>
+        <h5>This is the &apos;slice&apos; data: {sliceData["bucket"]} {sliceData["clickKey"]} {sliceData["value"]}</h5>
         <Sunburst
           title="Order of..."
           datasets={datasets}

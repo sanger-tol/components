@@ -15,13 +15,13 @@ import {
   Legend } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { getChartColour,
-         initialiseDatasets,
-         updateChartColours,
-         setClickedColourToSolid,
-         setBarClickedData,
-         generateBarLabels,
-         updateOpacitys,
-         resetItemClickedData } from "./ChartUtils"
+  initialiseDatasets,
+  updateChartColours,
+  setClickedColourToSolid,
+  setBarClickedData,
+  generateBarLabels,
+  updateOpacitys,
+  resetItemClickedData } from "./ChartUtils";
 import { isPropDefined, getCssVarValue } from "../general/Utils";
 
 
@@ -44,88 +44,88 @@ interface Props {
 }
 
 function BarChart(props: Props) {
-  const { title, datasets, labels, height, setBarData } = props
-  const stacked = isPropDefined(props.stacked)
+  const { title, datasets, labels, height, setBarData } = props;
+  const stacked = isPropDefined(props.stacked);
 
   // for keeping track of the legends click and order
-  const [prevOrder, setPrevOrder] = useState(null)
-  const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null)
+  const [prevOrder, setPrevOrder] = useState(null);
+  const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
 
   const data = {
     labels: labels,
     datasets: initialiseDatasets(datasets)
-  }
+  };
 
   // colours
-  const titleColour = getCssVarValue("--bs-emphasis-color")
-  const labelsAndGridColour = getCssVarValue("--bs-body-color")
-  const gridLineColour = getCssVarValue("--bs-secondary-bg")
+  const titleColour = getCssVarValue("--bs-emphasis-color");
+  const labelsAndGridColour = getCssVarValue("--bs-body-color");
+  const gridLineColour = getCssVarValue("--bs-secondary-bg");
 
   // functions for options
   function handleLegendClick(event: any, legendItem: any, legend: any) {
     if (isPropDefined(setBarData)) {
-      const legendIndex = event.chart.data.datasets.findIndex((obj: any) => obj.label === legendItem.text)
-      let selectedBucket = null
+      const legendIndex = event.chart.data.datasets.findIndex((obj: any) => obj.label === legendItem.text);
+      let selectedBucket = null;
 
       // cannot keep clicking on the same legend item
       if (prevLegendItemIndex !== legendIndex) {
         legend.chart.data.datasets.forEach((dataset: any, index: any) => {
           if (index === legendIndex) {
-            dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1')
-            setPrevOrder(dataset.order)
-            setPrevLegendItemIndex(index)
-            dataset.order = -1
-            selectedBucket = dataset.id
+            dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
+            setPrevOrder(dataset.order);
+            setPrevLegendItemIndex(index);
+            dataset.order = -1;
+            selectedBucket = dataset.id;
           } else {
-            dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '0.25')
+            dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '0.25');
             // reset prev item's order
             if (prevLegendItemIndex === index) {
-              dataset.order = prevOrder
+              dataset.order = prevOrder;
             }
           }
-        })
+        });
         // sets the bar data to the selected legend
         setBarData!({
           "bucket": selectedBucket,
           "value": null,
           "clickKey": null
-        })
+        });
       }
-      legend.chart.update()
+      legend.chart.update();
     }
   }
 
   function handleLegendHover(event: any) {
     if (isPropDefined(setBarData)) {
-      event.native.target.style.cursor = 'pointer'
+      event.native.target.style.cursor = 'pointer';
     }
   }
 
   // @ts-ignore
   function handlePlaneClick(event: any, chartElement: any, chart: any, item: any) {
     if (item !== undefined) {
-      return
+      return;
     }
 
     // reset order on 'plane reset click'
     if (prevLegendItemIndex !== null) {
-      chart.data.datasets[prevLegendItemIndex].order = prevOrder
-      setPrevOrder(null)
-      setPrevLegendItemIndex(null)
+      chart.data.datasets[prevLegendItemIndex].order = prevOrder;
+      setPrevOrder(null);
+      setPrevLegendItemIndex(null);
     }
 
     // only clickable if setBarData is defined
     if (isPropDefined(setBarData)) {
       if (!chartElement.length) {
         // reset bar colours when clicking other any part of chart
-        updateChartColours(chart, true, 0.5)
-        resetItemClickedData(setBarData)
+        updateChartColours(chart, true, 0.5);
+        resetItemClickedData(setBarData);
       } else {
         // fade non-clicked bars
-        updateChartColours(chart, false, 0.25)
+        updateChartColours(chart, false, 0.25);
         // setting clicked bar as its original colour
-        setClickedColourToSolid(chart, chartElement)
-        setBarClickedData(chart, chartElement, setBarData)
+        setClickedColourToSolid(chart, chartElement);
+        setBarClickedData(chart, chartElement, setBarData);
       }
       chart.update();
     }
@@ -133,7 +133,7 @@ function BarChart(props: Props) {
 
   function handlePlaneHover (event: any, chartElement: any) {
     if (isPropDefined(setBarData)) {
-      event.native.target.style.cursor = chartElement[0] ? "pointer" : "default"
+      event.native.target.style.cursor = chartElement[0] ? "pointer" : "default";
     }
   }
 
@@ -155,10 +155,10 @@ function BarChart(props: Props) {
             return {
               pointStyle: 'rectRounded',
               rotation: 0
-            }
+            };
           },
           labelColor: (context: any) => {
-            const colour = getChartColour(context.datasetIndex)
+            const colour = getChartColour(context.datasetIndex);
             return {
               backgroundColor: colour,
               borderColor: colour
@@ -173,7 +173,7 @@ function BarChart(props: Props) {
           padding: 15,
           usePointStyle: true,
           generateLabels: (chart: any) => {
-            return generateBarLabels(chart, titleColour)
+            return generateBarLabels(chart, titleColour);
           }
         }
       }
@@ -207,7 +207,7 @@ function BarChart(props: Props) {
         }
       },
     }
-  }
+  };
 
   return (
     <div style={{height: height.toString() + 'px'}}>
@@ -221,7 +221,7 @@ function BarChart(props: Props) {
         data={ data }
       />
     </div>
-  )
+  );
 }
 
 export default BarChart;

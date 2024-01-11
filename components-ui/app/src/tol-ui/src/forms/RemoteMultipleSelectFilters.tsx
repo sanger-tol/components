@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect } from 'react';
-import  { GlobalMultipleSelect, Status } from '../index'
+import  { GlobalMultipleSelect, Status } from '../index';
 import { httpClient } from '../services/http/httpClient';
 import { Col, Row } from 'react-bootstrap';
 import Placeholder from "../general/Placeholder";
@@ -17,65 +17,65 @@ interface FilterObject {
 }
 
 function FormattingFieldsToAggregations(fields: any) {
-  const aggregation = {aggs:{}}
+  const aggregation = {aggs:{}};
   fields.map((field: any) => {
-      aggregation.aggs[field] = {
-        "terms" : { "field" : `${field}.keyword`,  "size" : 99999 }
-      }
-  })
-  return aggregation
+    aggregation.aggs[field] = {
+      "terms" : { "field" : `${field}.keyword`,  "size" : 99999 }
+    };
+  });
+  return aggregation;
 }
 
 function FormattingAggregationsToFilters(aggregation: any) {
   const filterData: FilterObject[] = [];
 
   for (const field in aggregation) {
-    const filterObject = {} as FilterObject
-    filterObject.name = field
-    filterObject.choices = []
+    const filterObject = {} as FilterObject;
+    filterObject.name = field;
+    filterObject.choices = [];
     aggregation[field].buckets.forEach((bucket: any) => {
-      filterObject.choices.push(bucket.key)
+      filterObject.choices.push(bucket.key);
     });
-    filterData.push(filterObject)
+    filterData.push(filterObject);
   }
-  return filterData
+  return filterData;
 }
 
 function orderData(data: any, fields: string[]){
-  const orderedData: FilterObject[] = []
+  const orderedData: FilterObject[] = [];
   fields.map((field) => {
     for (let i = 0; i < data.length; i++){
-      if (field == data[i].name){
-        orderedData.push(data[i])
+      if (field === data[i].name){
+        orderedData.push(data[i]);
       }
     }
-  })
-  return orderedData
+  });
+  return orderedData;
 }
 
 function configFilters(index: number, filtersList: any, globalFilters: any){
-  const updatedFilters = {in_list: {}}
+  const updatedFilters = {in_list: {}};
   if (globalFilters.in_list){
-    const filtersToApply = filtersList.slice(0,[index])
+    const filtersToApply = filtersList.slice(0,[index]);
     filtersToApply.forEach((filter: any) => {
       if (globalFilters.in_list[filter]){
-        updatedFilters.in_list[filter] = globalFilters.in_list[filter]
+        updatedFilters.in_list[filter] = globalFilters.in_list[filter];
       }
-    })
+    });
   }
-  return updatedFilters
+  return updatedFilters;
 }
 
 function applyFilteredOptions(data: FilterObject[], fieldName: string){
   let fieldItem: FilterObject = {
     name: "", choices: []
-  }
+  };
   data.forEach((field) => {
-    if (field.name == fieldName){
-      fieldItem = field
+    if (field.name === fieldName){
+      fieldItem = field;
     }
-  })
-  return fieldItem
+  });
+  return fieldItem;
 }
 
 interface Props {
@@ -84,14 +84,14 @@ interface Props {
   renamedFields?: object,
   globalFilters: object,
   dependentFilters?: boolean,
-  setGlobalFilters: Function,
+  setGlobalFilters: Function, // eslint-disable-line
   baseUrl?: string
 }
 
 function RemoteMultipleSelectFilters(props: Props) {
   const [dataToPass, setDataToPass] = useState<FilterObject[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
   const { 
     endpoint,
     fields,
@@ -100,13 +100,13 @@ function RemoteMultipleSelectFilters(props: Props) {
     setGlobalFilters,
     baseUrl,
     dependentFilters
-  } = props
+  } = props;
 
   useEffect(() => {
-    fetchData()
-  }, [globalFilters])
+    fetchData();
+  }, [globalFilters]);
 
-  const aggs = FormattingFieldsToAggregations(fields)
+  const aggs = FormattingFieldsToAggregations(fields);
 
   const fetchData = () => {
     if (!dependentFilters){
@@ -116,19 +116,19 @@ function RemoteMultipleSelectFilters(props: Props) {
         .then((res: any) => {
           const data = (
             FormattingAggregationsToFilters(res.data.meta.aggregations)
-          )
-          const orderedData = orderData(data, fields)
-          setDataToPass(orderedData)
-          setLoading(false)
+          );
+          const orderedData = orderData(data, fields);
+          setDataToPass(orderedData);
+          setLoading(false);
         })
         .catch((error: any) => {
-          setErrorMessage(error.message)
-          console.error(error.message)
-        })
+          setErrorMessage(error.message);
+          console.error(error.message);
+        });
     } else {
       const dataToOrder: FilterObject[] = [];
       fields.map((field, index) => {
-        const filter = configFilters(index, fields, globalFilters)
+        const filter = configFilters(index, fields, globalFilters);
         httpClient().post('/' + endpoint + ':aggregations', aggs, {
           baseURL: baseUrl,
           params: {
@@ -138,20 +138,20 @@ function RemoteMultipleSelectFilters(props: Props) {
           .then((res: any) => {
             const data = (
               FormattingAggregationsToFilters(res.data.meta.aggregations)
-            )
-            const filterItem = applyFilteredOptions(data, field)
-            dataToOrder.push(filterItem)
-            const ordered_data = orderData(dataToOrder, fields)
-            setDataToPass(ordered_data)
+            );
+            const filterItem = applyFilteredOptions(data, field);
+            dataToOrder.push(filterItem);
+            const ordered_data = orderData(dataToOrder, fields);
+            setDataToPass(ordered_data);
           })
           .catch((error: any) => {
-            setErrorMessage(error.message)
-            console.error(error.message)
-          })
-      })
-      setLoading(false)
+            setErrorMessage(error.message);
+            console.error(error.message);
+          });
+      });
+      setLoading(false);
     }
-  }
+  };
 
   if (errorMessage !== '') {
     return (
@@ -165,11 +165,11 @@ function RemoteMultipleSelectFilters(props: Props) {
                   text={errorMessage}
                 />
               </Col>
-            )
+            );
           })}
         </Row>
       </div>
-    )
+    );
   }
 
   if (loading) {
@@ -181,11 +181,11 @@ function RemoteMultipleSelectFilters(props: Props) {
               <Col key={`${field}-filter-placeholder`}>
                 <Placeholder height={37}/>
               </Col>
-            )
+            );
           })}
         </Row>
       </div>
-    )
+    );
   }
 
   return (
@@ -204,11 +204,11 @@ function RemoteMultipleSelectFilters(props: Props) {
                 setGlobalFilters={setGlobalFilters}
               />
             </Col>
-          )
+          );
         })}
       </Row>
     </div>
-  )
+  );
 }
   
 export default RemoteMultipleSelectFilters;

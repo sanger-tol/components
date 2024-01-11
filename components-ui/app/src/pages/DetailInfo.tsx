@@ -4,57 +4,57 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { RemoteObjectDetail, Widgets, env } from '../tol-ui/src';
-import { useParams } from 'react-router-dom'
+import { Header, ObjectDetail, RemoteGet, Widgets, env, formatDate } from '../tol-ui/src';
+import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 
-interface Data {
-    attributes: {
-        sts_scientific_name?: string;
-    };
-}
 
 function DetailInfo() {
-    let { id } = useParams<({id: string})>();
-    const [filter] = useState({ contains: { uid: id } })
-    const [data, setData] = useState<Data | undefined>()
+  const { id } = useParams<({id: string})>();
+  const [response, setResponse] = useState();
 
-    const objectInfo = (
-        <RemoteObjectDetail
-            endpoint='species'
-            baseUrl={ env.TOL_DATA }
-            filter={ filter }
-            fields={{
-                "uid": {
-                    rename: "Taxonomy ID"
-                },
-                "sts_common_name": {
-                    rename: "Common Name"
-                },
-                "sts_family": {
-                    rename: "Family"
-                },
-                "sts_order_group": {
-                },
-                "sts_prefix": {
-                    rename: "ToLID prefix"
-                },
-                "sts_pacbio_submitted_date": {
-                    rename: "Pacbio Submission Date"
-                }
-            }}
-        setData={setData}
-        />
-    )
+  if (response === null) {
+    return (
+      <Header
+        title="Species not found."
+        pageEmpty
+      />
+    );
+  }
+
+  if (response === undefined) {
+    return (
+      <RemoteGet
+        endpoint={'species/' + id}
+        baseUrl={env.TOL_DATA}
+        response={response}
+        setResponse={setResponse}
+      />
+    );
+  } else {
+    const attributes = response!['data']['data']['attributes'];
+    const detail = (
+      <ObjectDetail
+        data={{
+          "Taxonomy ID": attributes['uid'],
+          "Common Name": attributes['sts_common_name'],
+          "Family": attributes['sts_family'],
+          "Order Group": attributes['sts_order_group'],
+          "ToLID Prefix": attributes['sts_prefix'],
+          "Pacbio Submission Date": formatDate(attributes['sts_pacbio_submitted_date'])
+        }}
+      />
+    );
 
     return (
-        <div className='detail-info-display'>
-            <Widgets
-                title={data?.attributes.sts_scientific_name ?? 'Information'}
-                components={[objectInfo]}
-            />
-        </div>
+      <div className='detail-info'>
+        <Widgets
+          title={attributes['sts_scientific_name']}
+          components={[detail]}
+        />
+      </div>
     );
+  }
 }
 
 export default DetailInfo;

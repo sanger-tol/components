@@ -4,8 +4,8 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { format } from 'date-fns'
-import { normaliseCaps, getCssVarValue, isPropDefined } from '../general/Utils'
+import { format } from 'date-fns';
+import { normaliseCaps, getCssVarValue, isPropDefined } from '../general/Utils';
 
 
 // ------------------//
@@ -79,88 +79,88 @@ export const colours = [
   {r: 204, g: 245, b: 163}, // 90
   {r: 163, g: 245, b: 163}, // 120
   {r: 137, g: 245, b: 191}, // 150
-]
+];
 
 function hexToRgb(hex: string) {
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return {
     r: parseInt(result![1], 16),
     g: parseInt(result![2], 16),
     b: parseInt(result![3], 16)
-  }
+  };
 }
 
 export function incrementRgbColour(rgb: Rgb) {
   for (const [key, value] of Object.entries(rgb)) {
     if (value > 255) {
-      rgb[key] = 255
+      rgb[key] = 255;
     } else {
-      rgb[key] = value + 75
+      rgb[key] = value + 75;
     }
   }
-  return rgb
+  return rgb;
 }
 
 function rgbToString(rgb: Rgb, opacity: number) {
-  return "rgba(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ", " + opacity.toString() + ")"
+  return "rgba(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ", " + opacity.toString() + ")";
 }
 
 export function getColourFromCssVar(cssVar: string, opacity?: number) {
   if (opacity === undefined) {
-    opacity = 1
+    opacity = 1;
   }
   return hexToRgb(
     getCssVarValue(cssVar)
-  )
+  );
 }
 
 export function getChartColour(index: number, opacity?: number) {
   if (opacity === undefined) {
-    opacity = 1
+    opacity = 1;
   }
-  const rgb = colours[index]
-  return rgbToString(rgb, opacity)
+  const rgb = colours[index];
+  return rgbToString(rgb, opacity);
 }
 
 function updateOpacity(color: string, alpha: string) {
-  return color.replace(/[\d.]+\)$/g, alpha + ')')
+  return color.replace(/[\d.]+\)$/g, alpha + ')');
 }
 
 export function updateOpacitys(colors: string[], alpha: string) {
   return colors.map((color) => {
-    return updateOpacity(color, alpha)
-  })
+    return updateOpacity(color, alpha);
+  });
 }
 
 export function resetItemClickedData(setItemData?: React.Dispatch<any>) {
   if (isPropDefined(setItemData)) {
-    setItemData!({})
+    setItemData!({});
   }
 }
 
 export function setClickedColourToSolid(chart: any, chartElement: any) {
-  const { datasetIndex, index } = chartElement[0]
-  const originalColour = chart.data.datasets[datasetIndex].backgroundColor[index]
-  chart.data.datasets[datasetIndex].backgroundColor[index] = updateOpacity(originalColour, "1")
-  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = updateOpacity(originalColour, "1")
+  const { datasetIndex, index } = chartElement[0];
+  const originalColour = chart.data.datasets[datasetIndex].backgroundColor[index];
+  chart.data.datasets[datasetIndex].backgroundColor[index] = updateOpacity(originalColour, "1");
+  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = updateOpacity(originalColour, "1");
 }
 
 export function updateChartColours(chart: any, resetColours: boolean, fadedOpacity: number) {
   for (const dataset of chart.data.datasets) {
     if (resetColours) {
-      dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1')
-      dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString())
+      dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
+      dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString());
     } else {
-      dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString())
-      dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, '1')
+      dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString());
+      dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, '1');
     }
   }
 }
 
 export function isChartDataEmpty(aggs: any) {
-  const data = Object.values(aggs)[0]!["buckets"]
-  if (data.length === 0) return "No data found"
-  return ''
+  const data = Object.values(aggs)[0]!["buckets"];
+  if (data.length === 0) return "No data found";
+  return '';
 }
 
 // ------------------//
@@ -181,146 +181,148 @@ export type DateInterval = "d"|"w"|"M"|"y"
 
 export function initialiseDatasets(datasets: any[]) {
   for (let index = 0; index < datasets.length; index++) {
-    const bgColour = getChartColour(index)
-    const fadedColour = getChartColour(index, 0.75)
-    datasets[index]["backgroundColor"] = []
-    datasets[index]["hoverBackgroundColor"] = []
-    datasets[index]["order"] = index
-    datasets[index]["colourIndex"] = index
-    const dataLength = datasets[index].data.length
+    const bgColour = getChartColour(index);
+    const fadedColour = getChartColour(index, 0.75);
+    datasets[index]["backgroundColor"] = [];
+    datasets[index]["hoverBackgroundColor"] = [];
+    datasets[index]["order"] = index;
+    datasets[index]["colourIndex"] = index;
+    const dataLength = datasets[index].data.length;
     for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
-      datasets[index]["backgroundColor"].push(bgColour)
-      datasets[index]["hoverBackgroundColor"].push(fadedColour)
+      datasets[index]["backgroundColor"].push(bgColour);
+      datasets[index]["hoverBackgroundColor"].push(fadedColour);
     }
   }
-  return datasets
+  return datasets;
 }
 
 function getSortedAggData(buckets: object) {
-  const keys = new Set()
-  const aggs = {}
+  const keys = new Set();
+  const aggs = {};
   for (const bucket of Object.values(buckets)) {
-    aggs[bucket["key"]] = {}
-    const data: object[] = bucket["1"]["buckets"]
+    aggs[bucket["key"]] = {};
+    const data: object[] = bucket["1"]["buckets"];
     for (const datapoint of data) {
-      keys.add(datapoint["key"])
-      aggs[bucket["key"]][datapoint["key"]] = datapoint["doc_count"]
+      keys.add(datapoint["key"]);
+      aggs[bucket["key"]][datapoint["key"]] = datapoint["doc_count"];
     }
   }
   return {
-    keys: Array.from(keys).sort((a: any, b: any) => {return a-b}),
+    keys: Array.from(keys).sort((a: any, b: any) => {
+      return a-b;
+    }),
     aggs: aggs
-  } as AggData
+  } as AggData;
 }
 
 function formatLabels(labels: string[], interval: DateInterval, shortDate?: boolean) {
-  const formattedLabels: string[] = []
-  let dateFormat: string
+  const formattedLabels: string[] = [];
+  let dateFormat: string;
   if (!shortDate){
     switch(interval) {
-      case "d":
-      case "w":
-        dateFormat = "dd LLLL yyyy"
-        break
-      case "M":
-        dateFormat = "LLLL yyyy"
-        break
-      case "y":
-        dateFormat = "yyyy"
-        break
+    case "d":
+    case "w":
+      dateFormat = "dd LLLL yyyy";
+      break;
+    case "M":
+      dateFormat = "LLLL yyyy";
+      break;
+    case "y":
+      dateFormat = "yyyy";
+      break;
     }
   } else {
     switch(interval) {
-      case "d":
-      case "w":
-        dateFormat = "dd MMM yy"
-        break
-      case "M":
-        dateFormat = "MMM yy"
-        break
-      case "y":
-        dateFormat = "yy"
-        break
+    case "d":
+    case "w":
+      dateFormat = "dd MMM yy";
+      break;
+    case "M":
+      dateFormat = "MMM yy";
+      break;
+    case "y":
+      dateFormat = "yy";
+      break;
     }
   }
   for (const label of labels) {
-    const date = new Date(label)
+    const date = new Date(label);
     formattedLabels.push(
       format(date, dateFormat)
-    )
+    );
   }
-  return formattedLabels
+  return formattedLabels;
 }
 
 // would need adapting for multiple aggs in 1 api call
 export function aggsToBarChartData(aggs: object, interval: DateInterval, shortDate?: boolean): ChartData {
-  const datasets: object[] = []
-  const buckets: object = aggs["agg"]["buckets"]
-  const sortedAggs: AggData = getSortedAggData(buckets)
-  const labels = sortedAggs.keys
+  const datasets: object[] = [];
+  const buckets: object = aggs["agg"]["buckets"];
+  const sortedAggs: AggData = getSortedAggData(buckets);
+  const labels = sortedAggs.keys;
 
-  for (let [bucket, agg] of Object.entries(sortedAggs.aggs)) {
-    const data: number[] = []
+  for (const [bucket, agg] of Object.entries(sortedAggs.aggs)) {
+    const data: number[] = [];
 
     // create datapoint list - must be in the order of the labels
     for (const key of sortedAggs.keys) {
       if (key in agg) {
-        data.push(agg[key])
+        data.push(agg[key]);
       } else {
-        data.push(0)
+        data.push(0);
       }
     }
     const dataset = {
       id: bucket,
       label: bucket,
       data: data
-    }
-    datasets.push(dataset)
+    };
+    datasets.push(dataset);
   }
 
   return {
     datasets: datasets,
     labels: formatLabels(labels, interval, shortDate)
-  } as ChartData
+  } as ChartData;
 }
 
 function formatDateRangeWithInterval(date: string, interval: string) {
-  const from = new Date(date)
-  const to = new Date(date)
+  const from = new Date(date);
+  const to = new Date(date);
   switch(interval) {
-    case "d":
-      to.setDate(to.getDate() + 1)
-      break
-    case "w":
-      to.setDate(to.getDate() + 7)
-      break
-    case "M":
-      to.setMonth(to.getMonth() + 1)
-      break
-    case "y":
-      to.setFullYear(to.getFullYear() + 1)
-      break
+  case "d":
+    to.setDate(to.getDate() + 1);
+    break;
+  case "w":
+    to.setDate(to.getDate() + 7);
+    break;
+  case "M":
+    to.setMonth(to.getMonth() + 1);
+    break;
+  case "y":
+    to.setFullYear(to.getFullYear() + 1);
+    break;
   }
   if (from.toString() === 'Invalid Date') {
-    return false
+    return false;
   }
-  return {from: from, to: to}
+  return {from: from, to: to};
 }
 
 export function setBarClickedData(chart: any, chartElement: any, setBarData?: React.Dispatch<any>) {
-  const { datasetIndex, index } = chartElement[0]
+  const { datasetIndex, index } = chartElement[0];
 
   // setting the 'bar' value
-  const bucket = chart.data.datasets[datasetIndex].id
-  const value = chart.data.datasets[datasetIndex].data[index]
-  const clickKey = chart.data.labels[index]
+  const bucket = chart.data.datasets[datasetIndex].id;
+  const value = chart.data.datasets[datasetIndex].data[index];
+  const clickKey = chart.data.labels[index];
 
   if (isPropDefined(setBarData)) {
     setBarData!({
       "bucket": bucket,
       "value": value,
       "clickKey": clickKey
-    })
+    });
   }
 }
 
@@ -333,9 +335,9 @@ export function generateBarLabels(chart: any, titleColour: any) {
         fontColor: titleColour,
         pointStyle: 'rectRounded',
         lineWidth: 0
-      }
+      };
     }
-  )
+  );
 }
 
 // ------------------//
@@ -364,7 +366,7 @@ export function generateDateAgg(breakDownBy: string, xAxis: string, interval: Da
         }
       }
     }
-  }
+  };
 }
 
 export function generateDateFilterFromBarData(
@@ -377,24 +379,24 @@ export function generateDateFilterFromBarData(
   const localFilters = {
     "exact": {},
     "range": {}
-  }
+  };
   
   if (barData["bucket"] !== undefined) {
-    localFilters["exact"][breakDownBy] = barData["bucket"]
+    localFilters["exact"][breakDownBy] = barData["bucket"];
   }
 
   // providing a date the range filtering recognizes for month
-  let barXKey = barData["clickKey"]
+  let barXKey = barData["clickKey"];
   if (interval === "M") {
-    barXKey = "01 " + barXKey
+    barXKey = "01 " + barXKey;
   }
 
   // formatting the date range for filtering
-  const dateRange = formatDateRangeWithInterval(barXKey, interval)
+  const dateRange = formatDateRangeWithInterval(barXKey, interval);
   if (dateRange) {
-    localFilters["range"][xAxis] = dateRange
+    localFilters["range"][xAxis] = dateRange;
   }
-  return localFilters
+  return localFilters;
 }
 
 // ------------------//
@@ -430,44 +432,44 @@ export function convertSunburstDatasets(
 ) {
   // return empty if no data
   if (Object.keys(datasets).length === 0) {
-    return [{}]
+    return [{}];
   }
 
   // set defaults if undefined
-  if (outputData === undefined) outputData = []
-  if (colourIndex === undefined) colourIndex = 0
+  if (outputData === undefined) outputData = [];
+  if (colourIndex === undefined) colourIndex = 0;
   if (depth === undefined) {
-    depth = 0
+    depth = 0;
   } else {
-    depth++
+    depth++;
   }
   // key of what the doughnut is sliced by
-  const key = Object.keys(datasets)[0]
+  const key = Object.keys(datasets)[0];
   // the data of the slices
-  const buckets: SunburstData[] = datasets[key]
+  const buckets: SunburstData[] = datasets[key];
   // only append the origin dict on the first iteration
-  initialiseOriginDataset(outputData, key, colourIndex, depth)
+  initialiseOriginDataset(outputData, key, colourIndex, depth);
 
   // create output data with colours etc
   for (const bucket of buckets) {
-    const colour = getChartColour(colourIndex)
-    const hoverColour = getChartColour(colourIndex, 0.75)
-    outputData![depth].data.push(bucket.value)
-    outputData![depth].total += bucket.value
-    outputData![depth].backgroundColor.push(colour)
-    outputData![depth].hoverBackgroundColor.push(hoverColour)
-    outputData![depth].labels.push(bucket.key)
+    const colour = getChartColour(colourIndex);
+    const hoverColour = getChartColour(colourIndex, 0.75);
+    outputData![depth].data.push(bucket.value);
+    outputData![depth].total += bucket.value;
+    outputData![depth].backgroundColor.push(colour);
+    outputData![depth].hoverBackgroundColor.push(hoverColour);
+    outputData![depth].labels.push(bucket.key);
     if (bucket.child) {
-      outputData = convertSunburstDatasets(bucket.child, outputData, colourIndex, depth)
+      outputData = convertSunburstDatasets(bucket.child, outputData, colourIndex, depth);
     }
     // keep colour the same for children
     if (depth === 0) {
-      colourIndex++
+      colourIndex++;
     }
   }
   // reverse final output (chartJS requires inner doughnut to be end of list)
-  if (depth === 0) return addPercentages(outputData!.reverse())
-  return outputData
+  if (depth === 0) return addPercentages(outputData!.reverse());
+  return outputData;
 }
 
 function initialiseOriginDataset(
@@ -490,23 +492,23 @@ function initialiseOriginDataset(
       borderWidth: 1,
       borderAlign: 'centre',
       hoverOffset: 0
-    })
+    });
   }
 }
 
 function addPercentages(outputData: DoughnutDataCJS[]) {
   for (const entry of outputData) {
     for (const dataPoint of entry.data) {
-      const percentage = (dataPoint/entry.total)*100
-      entry.percentages.push(percentage.toFixed(2)) // 2dp
+      const percentage = (dataPoint/entry.total)*100;
+      entry.percentages.push(percentage.toFixed(2)); // 2dp
     }
   }
-  return outputData
+  return outputData;
 }
 
 export function generateSunburstLabels(chart: any, titleColour: any) {
   // parent is end of list due to chartJS oddities
-  const parentIndex = chart.data.datasets.length-1
+  const parentIndex = chart.data.datasets.length-1;
   return chart.data.datasets[parentIndex].labels.map(
     (label: any, index: any) => {
       return {
@@ -515,33 +517,33 @@ export function generateSunburstLabels(chart: any, titleColour: any) {
         fontColor: titleColour,
         pointStyle: 'rectRounded',
         lineWidth: 0
-      }
+      };
     }
-  )
+  );
 }
 
 function getMaxDataSizeByDepth(depth: number) {
   switch(depth) {
-    case 0: // most inner ring (parent)
-      return 25
-    case 1: // 2nd ring
-      return 10
-    default: // 3rd ring onwards
-      return 5
+  case 0: // most inner ring (parent)
+    return 25;
+  case 1: // 2nd ring
+    return 10;
+  default: // 3rd ring onwards
+    return 5;
   }
 }
 
 function initialiseOrIncrementDepth(depth: number|undefined) {
   if (depth === undefined) {
-    return 0
+    return 0;
   }
-  return depth + 1
+  return depth + 1;
 }
 
 export function createAggsViaSliceBy(endpoint: string, sliceBy: string[], depth?: number) {
-  depth = initialiseOrIncrementDepth(depth)
+  depth = initialiseOrIncrementDepth(depth);
 
-  let terms = {}
+  const terms = {};
   terms[sliceBy[depth]] = {
     "terms": {
       "field": `${sliceBy[depth]}.keyword`,
@@ -550,26 +552,26 @@ export function createAggsViaSliceBy(endpoint: string, sliceBy: string[], depth?
       },
       "size": getMaxDataSizeByDepth(depth)
     }
-  }
+  };
 
   if (depth < sliceBy.length-1) {
-    terms[sliceBy[depth]]["aggs"] = createAggsViaSliceBy(endpoint, sliceBy, depth)
+    terms[sliceBy[depth]]["aggs"] = createAggsViaSliceBy(endpoint, sliceBy, depth);
   }
 
   // create agg via parent
   if (depth === 0) {
-    return {"aggs": terms}
+    return {"aggs": terms};
   } else {
-    return terms
+    return terms;
   }
 }
 
 function calcBucketDocCountTotal(buckets: any[]) {
-  let count = 0
+  let count = 0;
   for (const bucket of Object.values(buckets)) {
-    count += bucket.doc_count
+    count += bucket.doc_count;
   }
-  return count
+  return count;
 }
 
 // works by changing the reference of 'buckets'
@@ -584,26 +586,26 @@ function addExtraDocCount(type: string, buckets: object[], sliceBy: string[], de
           buckets.push({
             doc_count: parentCount! - count, // example
             key: type
-          })
+          });
         } else {
           // if data is correct, return
-          return
+          return;
         }
       } else if (type === 'Other') {
         buckets.push({
           doc_count: count,
           key: type
-        })
+        });
       }
 
       // if child required
       if (depth < sliceBy.length-1) {
-        const childKey = sliceBy[depth+1]
-        const lastIndex = buckets.length-1
+        const childKey = sliceBy[depth+1];
+        const lastIndex = buckets.length-1;
         // get last added object 
         buckets[lastIndex][childKey] = {
           "buckets": []
-        }
+        };
         // recursively add 'other' or 'unknown'
         addExtraDocCount(
           type,
@@ -612,26 +614,26 @@ function addExtraDocCount(type: string, buckets: object[], sliceBy: string[], de
           depth+1,
           count,
           parentCount
-        )
+        );
       }
     }
   }
 }
 
 export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: number, parentDocCount?: number) {
-  depth = initialiseOrIncrementDepth(depth)
+  depth = initialiseOrIncrementDepth(depth);
 
   // sliceBy keys
-  const key = sliceBy[depth]
-  const childKey = sliceBy[depth+1]
-  const normalisedKey = normaliseCaps(key)
+  const key = sliceBy[depth];
+  const childKey = sliceBy[depth+1];
+  const normalisedKey = normaliseCaps(key);
 
   // elastic bucket data
-  const agg: SunburstData[] = aggsRes[key]
-  const buckets = agg["buckets"]
+  const agg: SunburstData[] = aggsRes[key];
+  const buckets = agg["buckets"];
 
   // temp 'other' fix
-  const otherCount = agg["sum_other_doc_count"]
+  const otherCount = agg["sum_other_doc_count"];
   // other doesn't exist if bucket isn't a value
   if (otherCount !== 0 && otherCount !== undefined) {
     addExtraDocCount(
@@ -640,12 +642,12 @@ export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: numb
       sliceBy,
       depth,
       otherCount
-    )
+    );
   }
 
   // adding an 'unknown' bucket where parent > sum of children
   if (parentDocCount !== 0 && parentDocCount !== undefined) {
-    const bucketsDocCount = calcBucketDocCountTotal(buckets)
+    const bucketsDocCount = calcBucketDocCountTotal(buckets);
     addExtraDocCount(
       'Unknown',
       buckets,
@@ -653,43 +655,43 @@ export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: numb
       depth,
       bucketsDocCount,
       parentDocCount
-    )
+    );
   }
 
   // initialising variables required
-  const outputData = {}
-  outputData[normalisedKey] = []
+  const outputData = {};
+  outputData[normalisedKey] = [];
 
   for (const bucket of buckets) {
     const dataPoint = {
       key: bucket.key,
       value: bucket.doc_count
-    }
+    };
 
     // this means the bucket has a child
     if (childKey) {
-      const child = {}
-      child[childKey] = bucket[childKey]
-      dataPoint["child"] = aggsToSunburstData(child, sliceBy, depth, bucket.doc_count)
+      const child = {};
+      child[childKey] = bucket[childKey];
+      dataPoint["child"] = aggsToSunburstData(child, sliceBy, depth, bucket.doc_count);
     }
-    outputData[normalisedKey].push(dataPoint)
+    outputData[normalisedKey].push(dataPoint);
   }
-  return outputData
+  return outputData;
 }
 
 export function setSliceClickedData(chart: any, chartElement: any, setSliceData?: React.Dispatch<any>) {
-  const { datasetIndex, index } = chartElement[0]
+  const { datasetIndex, index } = chartElement[0];
 
   // setting the 'bar' value
-  const bucket = chart.data.datasets[datasetIndex].label
-  const value = chart.data.datasets[datasetIndex].data[index]
-  const clickKey = chart.data.datasets[datasetIndex].labels[index]
+  const bucket = chart.data.datasets[datasetIndex].label;
+  const value = chart.data.datasets[datasetIndex].data[index];
+  const clickKey = chart.data.datasets[datasetIndex].labels[index];
 
   if (isPropDefined(setSliceData)) {
     setSliceData!({
       "bucket": bucket,
       "value": value,
       "clickKey": clickKey
-    })
+    });
   }
 }

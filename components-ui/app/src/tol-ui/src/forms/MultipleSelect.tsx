@@ -17,19 +17,19 @@ interface Props {
 }
 
 const MultipleSelect = (props: Props) => {
-  const {data, placeholder, value, setValue} = props
-  const block = isPropDefined(props.block)
+  const {data, placeholder, value, setValue} = props;
+  const block = isPropDefined(props.block);
 
   const formattedData = data.map(item => 
     ({ label: item, value: item })
-  )
+  );
 
   const allValues = formattedData.map(item => item.value);
 
   const handleCheckAll = () => {
     setValue(value.length === allValues.length ? [] : allValues);
   };
-
+  
   return (
     <div className='tol-input'>
       <RSCheckPicker
@@ -51,7 +51,7 @@ const MultipleSelect = (props: Props) => {
         )}
       />
     </div>
-  )
-}
+  );
+};
 
 export default MultipleSelect;

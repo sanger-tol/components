@@ -11,5 +11,5 @@ export default interface User {
   name: string;
   organisation: string;
   roles: Role[];
-}
+} // eslint-disable-line
 

@@ -6,22 +6,22 @@ SPDX-License-Identifier: MIT
 
 import { useState } from 'react';
 import { Form,
-         CentreContents,
-         RemoteAutoComplete,
-         MultipleSelect,
-         MultipleSelectFilters,
-         RemoteMultipleSelectFilters,
-         Dropzone,
-         Filter,
-         env } from '../tol-ui/src';    
+  CentreContents,
+  RemoteAutoComplete,
+  MultipleSelect,
+  MultipleSelectFilters,
+  RemoteMultipleSelectFilters,
+  Dropzone,
+  Filter,
+  env } from '../tol-ui/src';    
     
 function Forms() {
-  const [value, setValue] = useState([])
-  const [globalFilters, setGlobalFilters] = useState<object>({in_list: {}})
-  const [choices1, setChoices1] = useState<any[]>([])
-  const [choices2, setChoices2] = useState<any[]>([])
-  const [remoteFilters, setRemoteFilters] = useState<object>({in_list: {}})
-  const [filter, setFilter] = useState<object>({})
+  const [value, setValue] = useState([]);
+  const [globalFilters, setGlobalFilters] = useState<object>({in_list: {}});
+  const [choices1, setChoices1] = useState<any[]>([]);
+  const [choices2, setChoices2] = useState<any[]>([]);
+  const [remoteFilters, setRemoteFilters] = useState<object>({in_list: {}});
+  const [filter, setFilter] = useState<object>({});
 
   // Used as data for the MultipleSelectFilters
   const filters = [
@@ -50,6 +50,7 @@ function Forms() {
           filter={filter}
           setFilter={setFilter}
         />
+        <div style={{height: 5}} />
         <Filter
           id='sts_species_id'
           rename='sts_species_id'
@@ -57,6 +58,7 @@ function Forms() {
           filter={filter}
           setFilter={setFilter}
         />
+        <div style={{height: 5}} />
         <Filter
           id='sts_ready'
           rename='sts_ready'
@@ -64,7 +66,7 @@ function Forms() {
           filter={filter}
           setFilter={setFilter}
         />
-        <h2>AutoComplete Input</h2>
+        <h2 className='mt-3'>AutoComplete Input</h2>
         <RemoteAutoComplete 
           endpoint='species'
           filter_by='name'
@@ -107,7 +109,9 @@ function Forms() {
         <Dropzone
           endpoint='this-is-fake'
           fileType='.csv'
-          generateMessages={() => {return []}}
+          generateMessages={() => {
+            return [];
+          }}
         />
       </CentreContents>
     </div>

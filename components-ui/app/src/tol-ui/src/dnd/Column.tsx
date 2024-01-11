@@ -4,10 +4,10 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Col } from '../index'
-import { Element } from './DnD'
-import Item from './Item'
-import { Droppable } from 'react-beautiful-dnd'
+import { Col } from '../index';
+import { Element } from './DnD';
+import Item from './Item';
+import { Droppable } from 'react-beautiful-dnd';
 
 
 interface Col {
@@ -21,7 +21,7 @@ interface Props {
 }
 
 function Column(props: Props) {
-  const { col, editMode } = props
+  const { col, editMode } = props;
   
   return (
     <Col
@@ -44,7 +44,7 @@ function Column(props: Props) {
         )}
       </Droppable>
     </Col>
-  )
+  );
 }
 
 export default Column;
