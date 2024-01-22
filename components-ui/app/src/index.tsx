@@ -91,7 +91,6 @@ ReactDOM.render( // eslint-disable-line
       widgets,
       detail
     ]}
-    login={ false }
   />,
   document.getElementById('root')
 );
