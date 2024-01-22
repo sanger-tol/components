@@ -4,92 +4,84 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
-import { env, RemoteTable, Widgets } from '../tol-ui/src';
-import Filter from '../tol-ui/src/general/Filter';
+import { Widgets,
+  RemoteBarChart,
+  RemoteSunburst,
+  RemoteTable,
+  RemoteBubbleMap,
+  env, CountWidget} from '../tol-ui/src';
 
+
+const chart = (
+  <RemoteBarChart
+    stacked
+    title="Run Data"
+    endpoint="run_data"
+    breakDownBy="mlwh_platform_type"
+    xAxis="mlwh_start_date"
+    type="date"
+    interval="M"
+    height={ 500 }
+    baseUrl={ env.TOL_DATA }
+  />
+);
+
+const sunburst = (
+  <RemoteSunburst
+    title="Order of remote..."
+    endpoint="species"
+    sliceBy={ ["sts_order_group"] }
+    height={ 500 }
+    baseUrl={ env.TOL_DATA }
+  />
+);
+
+const table = (
+  <RemoteTable
+    id="species-1"
+    endpoint="species"
+    height={ 500 }
+    fields={{
+      "id": {
+        rename: "Taxonomy ID"
+      },
+      "sts_scientific_name": {
+        rename: "Scientific Name"
+      },
+      "sts_family": {
+        rename: "Family"
+      },
+      "sts_order_group": {
+        rename: "Order"
+      },
+      "tolid_prefix": {
+        rename: "ToLID prefix"
+      },
+    }}
+    baseUrl={ env.TOL_DATA }
+  />
+);
+
+const map = (
+  <RemoteBubbleMap
+    endpoint="sample"
+    longitudeKey="sts_latitude"
+    latitudeKey="sts_longitude"
+    height={ 500 }
+    pageSize={ 10000 }
+    baseUrl={ env.TOL_DATA }
+  />
+);
 
 function Sandbox() {
-  //const [filter, setFilter] = useState<object>({'contains': {'sts_common_name': 'Pink'}})
-  const [filter, setFilter] = useState<object>({});
-
-  /*
-  const table1 = (
-    <RemoteTable
-      id="tester12"
-      endpoint="extraction"
-      height={500}
-      baseUrl={env.TOL_DATA}
-      filter={filter}
-      setFilter={setFilter}
-    />
-  )
-  */
-
-  const table2 = (
-    <RemoteTable
-      id="run-data-table-v2"
-      endpoint="run_data"
-      baseUrl={env.TOL_DATA}
-      filter={filter}
-      setFilter={setFilter}
-      height={500}
-      fields={{
-        "tolqc_run_id": {
-          rename: "Run ID",
-          width: 100
-        },
-        "tolqc_species.sts_scientific_name": {
-          rename: "Species"
-        },
-        "tolqc_sequencing_request.id": {
-          rename: "Sequencing Request",
-          relationshipBox: true
-        },
-        "mlwh_complete_date": {
-          rename: "Complete Date"
-        },
-        "mlwh_platform_type": {
-          rename: "Platform"
-        },
-        "mlwh_instrument_model": {
-          rename: "Instrument"
-        },
-        "tolqc_position": {
-          rename: "Position"
-        },
-        "tolqc_tag_index": {
-          rename: "Tag"
-        }
-      }}
-    />
-  );
-  
+  const test = <CountWidget endpoint='run_data' filter={{}} baseUrl={env.TOL_DATA} title='test widget count'/>;
   return (
     <>
-      <Filter
-        id='sts_tol_updated_at'
-        rename='sts_tol_updated_at'
-        type='datetime'
-        filter={filter}
-        setFilter={setFilter}
-      />
-      <Filter
-        id='sts_species_id'
-        rename='sts_species_id'
-        type='int'
-        filter={filter}
-        setFilter={setFilter}
-      />
-      <Filter
-        id='sts_ready'
-        rename='sts_ready'
-        type='boolean'
-        filter={filter}
-        setFilter={setFilter}
+      <Widgets
+        components={[test]}
       />
       <Widgets
-        components={[table2]}
+        components={[sunburst, chart, table, map]}
       />
     </>
   );

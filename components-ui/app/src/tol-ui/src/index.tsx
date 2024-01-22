@@ -23,7 +23,8 @@ export {
   Filter,
   RemoteGet,
   ObjectDetail,
-  formatDate
+  formatDate, 
+  CountWidget
 } from "./general";
 
 // Forms
