@@ -4,13 +4,14 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useState } from 'react';
 import { Widgets,
+  RemoteMultipleSelectFilters,
   RemoteBarChart,
   RemoteSunburst,
   RemoteTable,
   RemoteBubbleMap,
   env, CountWidget} from '../tol-ui/src';
-
 
 const chart = (
   <RemoteBarChart
@@ -74,14 +75,24 @@ const map = (
 );
 
 function Sandbox() {
-  const test = <CountWidget endpoint='run_data' filter={{}} baseUrl={env.TOL_DATA} title='test widget count'/>;
+  const [globalFilters, setGlobalFilters] = useState<object>({in_list: {}});
+  console.log(globalFilters)
+  const defaultFilter = {"in_list": {"mlwh_platform_type": ["Illumina"]}}
+  const filters = ( <RemoteMultipleSelectFilters
+    endpoint="run_data"
+    fields={['mlwh_platform_type', 'tester']}
+    globalFilters={globalFilters}
+    setGlobalFilters={setGlobalFilters}
+    baseUrl={ env.TOL_DATA }
+    />)
+  const test = <CountWidget endpoint='run_data' defaultFilter={defaultFilter} globalFilters={globalFilters} baseUrl={env.TOL_DATA} title='test widget count'/>;
   return (
     <>
       <Widgets
-        components={[test]}
+        components={[filters]}
       />
       <Widgets
-        components={[sunburst, chart, table, map]}
+        components={[test, sunburst, chart, table, map]}
       />
     </>
   );

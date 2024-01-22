@@ -11,17 +11,19 @@ import { httpClient } from '../services/http/httpClient';
 interface Props {
     endpoint: string,
     baseUrl: string,
-    filter: object,
-    title: string
+    defaultFilter: object,
+    title: string,
+    globalFilters?: object
   }
 
 function CountWidget(props: Props){
   const [count, setCount] = useState(0);
-  const { endpoint, baseUrl, filter, title } = props;
+  const { endpoint, baseUrl, defaultFilter, title, globalFilters } = props;
+  const filters = Object.assign({}, globalFilters, defaultFilter)
   httpClient().get('/' + endpoint + ":count", {
     baseURL: baseUrl,
     params: {
-      filter: filter
+      filter: filters
     }
   })
     .then((res: any) => {
