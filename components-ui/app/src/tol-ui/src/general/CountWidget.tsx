@@ -28,7 +28,6 @@ function CountWidget(props: Props){
   })
     .then((res: any) => {
       const total = res.data.meta.total;
-      console.log(total);
       setCount(total);
     });
 
