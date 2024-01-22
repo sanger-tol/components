@@ -85,14 +85,17 @@ function Sandbox() {
     setGlobalFilters={setGlobalFilters}
     baseUrl={ env.TOL_DATA }
   />);
-  const test = <CountWidget endpoint='run_data' defaultFilter={defaultFilter} globalFilters={globalFilters} baseUrl={env.TOL_DATA} title='test widget count'/>;
+  const test = <CountWidget endpoint='run_data' defaultFilter={defaultFilter} filter={globalFilters} baseUrl={env.TOL_DATA} title='test widget count'/>;
   return (
     <>
       <Widgets
         components={[filters]}
       />
       <Widgets
-        components={[test, sunburst, chart, table, map]}
+        components={[test]}
+      />
+      <Widgets
+        components={[sunburst, chart, table, map]}
       />
     </>
   );
