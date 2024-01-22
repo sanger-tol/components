@@ -76,15 +76,15 @@ const map = (
 
 function Sandbox() {
   const [globalFilters, setGlobalFilters] = useState<object>({in_list: {}});
-  console.log(globalFilters)
-  const defaultFilter = {"in_list": {"mlwh_platform_type": ["Illumina"]}}
+  console.log(globalFilters);
+  const defaultFilter = {"in_list": {"mlwh_platform_type": ["Illumina"]}};
   const filters = ( <RemoteMultipleSelectFilters
     endpoint="run_data"
     fields={['mlwh_platform_type', 'tester']}
     globalFilters={globalFilters}
     setGlobalFilters={setGlobalFilters}
     baseUrl={ env.TOL_DATA }
-    />)
+  />);
   const test = <CountWidget endpoint='run_data' defaultFilter={defaultFilter} globalFilters={globalFilters} baseUrl={env.TOL_DATA} title='test widget count'/>;
   return (
     <>

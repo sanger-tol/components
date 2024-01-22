@@ -19,7 +19,7 @@ interface Props {
 function CountWidget(props: Props){
   const [count, setCount] = useState(0);
   const { endpoint, baseUrl, defaultFilter, title, globalFilters } = props;
-  const filters = Object.assign({}, globalFilters, defaultFilter)
+  const filters = Object.assign({}, globalFilters, defaultFilter);
   httpClient().get('/' + endpoint + ":count", {
     baseURL: baseUrl,
     params: {
