@@ -84,6 +84,10 @@ function normaliseWords(word: string) {
     return "GAL";
   case "qc":
     return "QC";
+  case "bnt":
+    return "BnT";
+  case "tubeid":
+    return "Tube ID";
   default:
     return word[0].toUpperCase() + word.substring(1); 
   }

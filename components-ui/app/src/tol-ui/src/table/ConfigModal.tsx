@@ -31,7 +31,7 @@ function ConfigModal(props: Props) {
       const id = element!['id'];
       const isActive = hidden ? 'inactive' : 'active';
       updatedFieldMeta.order[isActive].push(id);
-      // make a copy and update visability
+      // make a copy and update visibility
       updatedFieldMeta.data[id] = fieldMeta.data[id];
       updatedFieldMeta.data[id].hidden = hidden;
     }

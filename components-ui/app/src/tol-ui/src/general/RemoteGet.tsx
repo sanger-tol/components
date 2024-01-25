@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect } from 'react';
 import { httpClient } from '../services/http/httpClient';
-import LoadingHelix from './LoadingHelix';
+import { Loader } from '../index';
 
 interface Props {
   endpoint: string,
@@ -15,7 +15,7 @@ interface Props {
   setResponse: Function // eslint-disable-line
 }
 
-const RemoteGet = (props: Props) => {
+function RemoteGet(props: Props) {
   const { endpoint, baseUrl, response, setResponse } = props;
 
   useEffect(() => {
@@ -34,12 +34,12 @@ const RemoteGet = (props: Props) => {
   if (response === undefined) {
     return (
       <div className='page-centered-loader'>
-        <LoadingHelix />
+        <Loader />
       </div>
     );
   }
 
   return <></>;
-};
+}
 
 export default RemoteGet;

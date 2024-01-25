@@ -21,7 +21,7 @@ const chart = (
     xAxis="mlwh_start_date"
     type="date"
     interval="M"
-    height={ 500 }
+    height={ 600 }
     baseUrl={ env.TOL_DATA }
   />
 );
@@ -31,33 +31,16 @@ const sunburst = (
     title="Order of remote..."
     endpoint="species"
     sliceBy={ ["sts_order_group"] }
-    height={ 500 }
+    height={ 600 }
     baseUrl={ env.TOL_DATA }
   />
 );
 
 const table = (
   <RemoteTable
-    id="species-1"
-    endpoint="species"
-    height={ 500 }
-    fields={{
-      "id": {
-        rename: "Taxonomy ID"
-      },
-      "sts_scientific_name": {
-        rename: "Scientific Name"
-      },
-      "sts_family": {
-        rename: "Family"
-      },
-      "sts_order_group": {
-        rename: "Order"
-      },
-      "tolid_prefix": {
-        rename: "ToLID prefix"
-      },
-    }}
+    id="sample"
+    endpoint="sample"
+    height={ 600 }
     baseUrl={ env.TOL_DATA }
   />
 );
@@ -67,7 +50,7 @@ const map = (
     endpoint="sample"
     longitudeKey="sts_latitude"
     latitudeKey="sts_longitude"
-    height={ 500 }
+    height={ 600 }
     pageSize={ 10000 }
     baseUrl={ env.TOL_DATA }
   />

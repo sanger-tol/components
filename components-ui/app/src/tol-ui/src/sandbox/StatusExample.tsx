@@ -25,15 +25,22 @@ function setStatusType(firstNum: number) {
 }
 
 interface Props {
-  param: string
+  param: string,
+  rowData: any
 }
 
 function StatusExample(props: Props) {
-  const param = props.param;
-  if (param === null) {
-    return <></>;
+  const { param } = props;
+  if (param === null) return <></>;
+
+  let firstNum: number;
+  try {
+    firstNum = parseInt(param.charAt(0));
+  } catch(e: any) {
+    firstNum = 7;
   }
-  const firstNum = parseInt(param.charAt(0));
+
+  console.log(props);
 
   return (
     <Status

@@ -55,25 +55,57 @@
   }
 
   .tol-table {
+    display: flex;
+    flex-direction: column;
+  
+    .tol-table-inner {
+      flex: 1;
+      position: relative;
+    
+      .rs-table {
+        border-radius: 6px;
+        border: 1px solid var(--grey-subtle);
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+      }
+    }
+
     // field name titles
     p {
       margin: 0;
       margin-bottom: 4px;
     }
 
-    // whole table
-    .rs-table {
-      border-radius: 6px;
-      border: 1px solid var(--grey-subtle);
-    }
-
     .rs-table-cell {
       border-bottom: transparent;
     }
 
-    .rs-table-cell-content {
+    .rs-table-row {
       border-bottom: 1px solid var(--grey-subtle);
     }
+
+    /*
+    // dealing with automatic rows
+    .rs-table-row:not(.rs-table-row.rs-table-row-header) {
+      background-color: red;
+      height: auto !important;
+      display: table !important;
+      //border-bottom: 1px solid var(--grey-subtle);
+
+      .rs-table-cell-group,
+      .rs-table-cell,
+      .rs-table-cell-content {
+        display: table-row !important;
+        background-color: darkblue;
+        height: 200px !important;
+        overflow: auto;
+      }
+    }
+    */
 
     // text properties
     font-size: 14px;
@@ -95,8 +127,9 @@
       background-color: $bs-body-bg;
     }
 
-    .rs-table-cell-content:hover {
-      border: 1px dashed var(--bs-body-color) !important;
+    .rs-table-cell:hover {
+      outline: 1px dashed var(--bs-body-color) !important;
+      outline-offset: -2px;
       border-radius: 6px;
     }
 
@@ -199,6 +232,11 @@
     .tol-placeholder-icons .loader {
       top: -150px
     }
+
+    // slim down statuses
+    .tol-status .alert {
+      padding: 5px 10px;
+    }
   }
 
   // link box (e.g. relationship)
@@ -208,7 +246,8 @@
   }
 
   .link-box {
-    padding: 10px;
+    padding: 5px 10px;
+    border: 1px solid rgba($primary, 0.2);
   }
 
   .link-box:hover {
@@ -233,6 +272,7 @@
 
 .tooltip-value {
   font-size: small;
+  padding-right: 10px;
 }
 
 .tooltip-value-none {

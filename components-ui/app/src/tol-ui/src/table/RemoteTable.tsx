@@ -106,6 +106,7 @@ function RemoteTable(props: Props) {
     setFieldMeta(fieldMeta);
     // setting page then triggers renderTable in useEffect above
     setPage(1);
+    if (page === 1) renderTable();
     setFieldMetaAttributeInStorage(id, fieldMeta.data, 'data');
     setFieldMetaAttributeInStorage(id, fieldMeta.order, 'order');
   };
@@ -135,15 +136,15 @@ function RemoteTable(props: Props) {
       params: params,
       baseURL: baseUrl
     }).then((res: any) => {
+      // error if endpoint doesn't return 200
+      if (res.status !== 200) throw Error();
+
       const apiData = res.data.data;
       const apiMeta = res.data.meta;
 
       setPage(page);
       setTotalSize(apiMeta.total);
       setError('');
-      
-      // error if endpoint doesn't return 200
-      if (res.status !== 200) throw Error();
 
       let initialFieldMeta: FieldMeta = initialiseFieldMeta();
       // check if any data is returned
@@ -188,13 +189,13 @@ function RemoteTable(props: Props) {
         setInitialLoad(false);
       }
     }).catch((error: any) => {
+      setError("Please try again... " + error.message);
+      setLoading(false);
+      setInitialLoad(false);
+      setData([]);
       console.warn(error.message);
       console.warn('Please ensure the db has been restored');
       console.warn('Please ensure the \'endpoint\' prop is correct and pluralised');
-      setLoading(false);
-      setInitialLoad(false);
-      setError(error.message);
-      setData([]);
     });
   };
 

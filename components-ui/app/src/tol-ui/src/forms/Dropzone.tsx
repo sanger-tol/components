@@ -8,22 +8,22 @@ import { useState, useEffect } from 'react';
 import { Uploader } from 'rsuite';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { LoadingHelix, httpClient, Status } from '../index';
+import { Loader, httpClient, Status } from '../index';
 
 
 interface WaitingUpload {
-    message: string
+  message: string
 }
 
 interface Message {
-    type: string,
-    message: string
+  type: string,
+  message: string
 }
 
 export interface Props {
-    endpoint: string,
-    fileType: string,
-    generateMessages: (apiRes: any) => Message[]
+  endpoint: string,
+  fileType: string,
+  generateMessages: (apiRes: any) => Message[]
 }
 
 function Dropzone(props: Props) {
@@ -94,7 +94,7 @@ function Dropzone(props: Props) {
         <div>
           {isLoading ?
             <div className='dropzone-container'>
-              <LoadingHelix/>
+              <Loader />
             </div>
             :
             <div>

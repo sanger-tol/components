@@ -43,8 +43,7 @@ function Sandbox() {
           rename: "Species"
         },
         "tolqc_sequencing_request.id": {
-          rename: "Sequencing Request",
-          relationshipBox: true
+          rename: "Sequencing Request"
         },
         "mlwh_complete_date": {
           rename: "Complete Date"

@@ -32,7 +32,7 @@ interface Props {
   rename: string,
   type: FilterType,
   filter: object,
-  setFilter: Function // eslint-disable-line
+  setFilter: any
 }
 
 function Filter(props: Props) {

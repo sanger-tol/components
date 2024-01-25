@@ -4,12 +4,11 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React from 'react';
 import { Popover, Whisper } from 'rsuite';
 
 
 function renderTooltip(contents: JSX.Element|string) {
-  return(
+  return (
     <Popover>
       { contents }
     </Popover>
@@ -18,33 +17,30 @@ function renderTooltip(contents: JSX.Element|string) {
 
 export interface Props {
   contents: JSX.Element|string,
+  children: JSX.Element,
   placement?: string,
-  children: JSX.Element
+  delay?: number,
+  onHover?: any
 }
 
-class HoverOverlay extends React.Component<Props> {
-  constructor(props: Props) {
-    super(props);
-  }
+function HoverOverlay(props: Props) {
+  const {contents, children, delay, onHover} = props;
+  const placement = props.placement === undefined ? 'auto' : props.placement;
 
-  render() {
-    let placement = 'auto';
-    if (this.props.placement !== undefined) {
-      placement = this.props.placement;
-    }
-    return (
-      <Whisper
-        // @ts-ignore
-        placement={ placement }
-        controlId="control-id-hover-enterable"
-        trigger="hover"
-        speaker={ renderTooltip(this.props.contents) }
-        enterable
-      >
-        { this.props.children }
-      </Whisper>
-    );
-  }
+  return (
+    <Whisper
+      // @ts-ignore
+      placement={ placement }
+      controlId="control-id-hover-enterable"
+      trigger="hover"
+      speaker={renderTooltip(contents)}
+      enterable
+      onEntering={onHover !== undefined ? onHover : () => {}}
+      delay={delay}
+    >
+      {children}
+    </Whisper>
+  );
 }
 
 export default HoverOverlay;

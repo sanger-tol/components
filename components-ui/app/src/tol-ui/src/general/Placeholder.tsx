@@ -6,8 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartColumn, faChartPie, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
-import LoadingHelix from "./LoadingHelix";
-import Status from "./Status";
+import { Loader, Status } from '../index';
 
 
 function getPlaceholderIcon(
@@ -26,7 +25,7 @@ function getPlaceholderIcon(
   } else if (map) {
     return <FontAwesomeIcon icon={faMapLocationDot} size="8x"/>;
   } else if (loader) {
-    return <LoadingHelix/>;
+    return <Loader />;
   } else if (message !== undefined){
     return <h5>{message}</h5>;
   } else if (warningMessage !== undefined) {

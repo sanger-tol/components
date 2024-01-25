@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from 'react';
 import { AutoComplete as RSAutoComplete } from 'rsuite';
-import { Status, MiniLoadingHelix, httpClient } from '../index';
+import { Loader, Status, httpClient } from '../index';
 
 
 interface Props {
@@ -64,7 +64,7 @@ function RemoteAutoComplete(props: Props) {
       for (let i=0; i<display.length; i++){
         displayed_fields += item.attributes[display[i]] + ' ';
       }
-      arrayToReturn.push(item.attributes[filter_by]+displayed_fields);
+      arrayToReturn.push(item.attributes[filter_by] + displayed_fields);
     });
     return (arrayToReturn);
   };
@@ -81,7 +81,12 @@ function RemoteAutoComplete(props: Props) {
               renderMenuItem={() => {
                 return (
                   <div className='centered-loader'>
-                    <MiniLoadingHelix/>
+                    <Loader
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    />
                   </div>
                 );
               }}

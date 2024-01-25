@@ -5,56 +5,57 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from 'react';
-import { CentreContents, RemoteTable, env} from '../tol-ui/src';
+import { RemoteTable, Widgets, env} from '../tol-ui/src';
 
 
 function Tables() {
   const [filter, setFilter] = useState<object>({});
 
+  const table = (
+    <RemoteTable
+      id="run-data-table-v2"
+      endpoint="run_data"
+      filter={filter}
+      setFilter={setFilter}
+      height={500}
+      fields={{
+        "mlwh_run_id": {
+          rename: "Run ID"
+        },
+        "mlwh_species.sts_scientific_name": {
+          rename: "Species",
+          cellRenderer: "relationshipDetail"
+        },
+        "mlwh_sequencing_request.id": {
+          rename: "Sequencing Request"
+        },
+        "mlwh_run_complete": {
+          rename: "Complete Date"
+        },
+        "mlwh_platform_type": {
+          rename: "Platform"
+        },
+        "mlwh_instrument_model": {
+          rename: "Instrument"
+        },
+        "mlwh_position": {
+          rename: "Position"
+        },
+        "mlwh_tag_index": {
+          rename: "Tag"
+        }
+      }}
+      baseUrl={env.TOL_DATA}
+    />
+  );
+
   return (
     <div className="tables">
-      <CentreContents>
-        <RemoteTable
-          id="samples-v1"
-          endpoint="sample"
-          filter={filter}
-          setFilter={setFilter}
-          baseUrl={env.TOL_DATA}
-        />
-      </CentreContents>
+      <Widgets
+        components={[table]}
+      />
     </div>
   );
 }
 
 export default Tables;
-
-/*
-import StatusExample from '../tol-ui/src/sandbox/StatusExample'
-
-<RemoteTable
-  endpoint="samples"
-  fields={{
-    "id": {rename: "Row ID", sort: false},
-    "tube_id": {
-      cellRenderer: {
-        element: StatusExample,
-        propPointers: {
-          param: "tube_id"
-        }
-      }
-    },
-    "specimens.tolid": {rename: "ToL ID Prefix"},
-    "specimens.species.name": {rename: "Species"},
-    "created_at": {rename: "Created At"},
-    "specimens.species.scientific_name": {
-      rename: "Species Tag",
-      cellRenderer: {
-        element: StatusExample,
-        propPointers: {
-          param: "specimens.species.id"
-        }
-      }
-    }
-  }}
-/>
-*/

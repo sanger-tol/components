@@ -11,19 +11,21 @@ interface ElementPropPointers {
   [prop: string]: string
 }
 
-export interface CellRenderer {
+interface CustomCellRenderer {
   element: Function, // eslint-disable-line
-  propPointers: ElementPropPointers
+  propPointers?: ElementPropPointers
 }
+
+export type CellRenderer = CustomCellRenderer|'relationship'|'relationshipDetail'|'datetime'|'boolean'|'image'
 
 export interface Field {
   cellRenderer?: CellRenderer|null,
   filter?: boolean,
   filterType?: string|null,
+  fixed?: boolean,
   hidden?: boolean,
   isAttribute?: boolean|null,
   link?: string|null,
-  relationshipBox?: boolean,
   rename?: string|null,
   sort?: boolean,
   type?: string|null,
@@ -53,10 +55,10 @@ const fieldDefaults = (key: string, endpoint?: string) => {
     cellRenderer: null,
     filter: true,
     filterType: null,
+    fixed: false,
     hidden: false,
     isAttribute: null,
     link: null,
-    relationshipBox: false,
     rename: rename,
     sort: true,
     type: null,
@@ -64,7 +66,7 @@ const fieldDefaults = (key: string, endpoint?: string) => {
   };
 };
 
-export function addFieldDefaults(key: string, field: Field, endpoint?: string) {
+export function addFieldDefaults(field: Field, key: string, endpoint?: string) {
   return {
     ...fieldDefaults(key, endpoint),
     ...field

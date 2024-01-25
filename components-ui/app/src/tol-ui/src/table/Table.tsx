@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from 'react';
-import { Button, Row, Col, Spinner, Placeholder } from '../index';
+import { Button, Row, Col, Placeholder, Loader } from '../index';
 import { Table as RSTable, Pagination, SelectPicker } from "rsuite";
 import { addTotalText, 
   setFieldMetaAttributeInStorage } from './TableUtils';
@@ -104,9 +104,9 @@ function Table (props: Props) {
   noConfigModal = showAsDefault(noConfigModal);
   noDownload = showAsDefault(noDownload);
 
-  const toggleFilterVisability = (visability: boolean) => {
-    setFilterVisible(visability);
-    setFieldMetaAttributeInStorage(id, visability, "filterVisibility");
+  const toggleFilterVisibility = (visibility: boolean) => {
+    setFilterVisible(visibility);
+    setFieldMetaAttributeInStorage(id, visibility, "filterVisibility");
   };
 
   /*
@@ -118,7 +118,7 @@ function Table (props: Props) {
   */
 
   return (
-    <div className='tol-table'>
+    <div style={{height: height}} className='tol-table'>
       <PopUpMessage
         type='success'
         message={success}
@@ -130,7 +130,7 @@ function Table (props: Props) {
         setMessage={setError}
       />
       <Row>
-        <Col md={12} lg={10}>
+        <Col md={12} lg={9}>
           {!noPagination &&
             <>
               <span className='tol-total'>
@@ -180,7 +180,7 @@ function Table (props: Props) {
             </>
           }
         </Col>
-        <Col md={12} lg={2}>
+        <Col md={12} lg={3}>
           {!noConfigModal &&
             <Button 
               className="tol-table-button"
@@ -205,7 +205,7 @@ function Table (props: Props) {
             <Button
               className="tol-table-button"
               variant="primary"
-              onClick={ () => toggleFilterVisability(!filterVisible) }
+              onClick={ () => toggleFilterVisibility(!filterVisible) }
             >
               <FontAwesomeIcon icon={faFilter} size="sm" />
             </Button>
@@ -225,10 +225,10 @@ function Table (props: Props) {
                 setDownloading,
                 baseUrl
               )}
-              disabled={totalSize > 5000 || totalSize < 1}
+              disabled={true} // totalSize > 10000 || totalSize < 1
             >
               {downloading ? (
-                <Spinner
+                <Loader
                   as="span"
                   animation="border"
                   size="sm"
@@ -242,62 +242,65 @@ function Table (props: Props) {
           }
         </Col>
       </Row>
-      <RSTable
-        bordered
-        // remove default nav size
-        height={height - 40}
-        data={data}
-        headerHeight={filterVisible ? 85 : 45}
-        loading={loading}
-        sortColumn={sortColumn}
-        sortType={sortType}
-        onSortColumn={handleSortColumn!}
-        wordWrap="break-word"
-        renderLoading={
-          () => (
-            <Placeholder
-              loader
-              height={height}
-              opacity={0.8}
-              squareCorners
-            />
-          )
-        }
-      >
-        {fieldMeta!.order.active.map((key: string) => {
-          const field = fieldMeta.data[key];
-          const flexGrow = fieldMeta.order.active.length < 6 ? 2 : undefined;
-          let sort = noSorting ? false : field.sort;
-          if (!field.isAttribute) sort = false; // relationships cannot currently be sorted
-          return (
-            <Column
-              key={key}
-              width={field.width}
-              flexGrow={flexGrow}
-              sortable={sort}
-              // resizable
-              // onResize={resizeColumnWidth}
-            >
-              <HeaderCell>
-                <p className='tol-header-text'>
-                  {field.rename}
-                </p>
-                <span className={filterVisible ? "tol-filter" : "tol-filter-hide"}>
-                  <Filter
-                    {...props}
-                    id={key}
-                    rename={field.rename!}
-                    type={field.type as FilterType}
-                    filter={filter!}
-                    setFilter={setFilter!}
-                  />
-                </span>
-              </HeaderCell>
-              <Cell dataKey={key} />
-            </Column>
-          );
-        })}
-      </RSTable>
+      <div className='tol-table-inner'>
+        <RSTable
+          bordered
+          data={data}
+          headerHeight={filterVisible ? 85 : 45}
+          loading={loading}
+          sortColumn={sortColumn}
+          sortType={sortType}
+          onSortColumn={handleSortColumn!}
+          //autoHeight
+          fillHeight
+          wordWrap
+          renderLoading={
+            () => (
+              <Placeholder
+                loader
+                height={height - 80}
+                opacity={0.8}
+                squareCorners
+              />
+            )
+          }
+        >
+          {fieldMeta!.order.active.map((key: string) => {
+            const field = fieldMeta.data[key];
+            const sortable = noSorting ? false : field.sort;
+            const filterable = noFilter ? false : field.filter;
+            return (
+              <Column
+                key={key}
+                width={field.width}
+                sortable={sortable}
+                fixed={field.fixed}
+                // resizable
+                // onResize={resizeColumnWidth}
+              >
+                <HeaderCell>
+                  <p className='tol-header-text'>
+                    {field.rename}
+                  </p>
+                  {filterable &&
+                    <span className={filterVisible ? "tol-filter" : "tol-filter-hide"}>
+                      <Filter
+                        {...props}
+                        id={key}
+                        rename={field.rename!}
+                        type={field.type as FilterType}
+                        filter={filter!}
+                        setFilter={setFilter!}
+                      />
+                    </span>
+                  }
+                </HeaderCell>
+                <Cell dataKey={key} />
+              </Column>
+            );
+          })}
+        </RSTable>
+      </div>
     </div>
   );
 }

@@ -2,9 +2,11 @@
 //
 // SPDX-License-Identifier: MIT
 
-// React-Bootstrap pass-through
+// Direct package pass-throughs
 import { Container, Row, Col, Button, Form, Spinner } from 'react-bootstrap';
-export { Container, Row, Col, Form, Button, Spinner };
+export { Container, Row, Col, Form, Button, Spinner as Loader };
+import { Link } from "react-router-dom";
+export { Link };
 
 // General
 export { default as TolApp } from "./TolApp";
@@ -13,8 +15,6 @@ export {
   CentreContents,
   Alert,
   InfoTooltip,
-  LoadingHelix,
-  MiniLoadingHelix,
   Status,
   Modal,
   Placeholder,

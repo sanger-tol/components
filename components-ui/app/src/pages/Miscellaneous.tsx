@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, CentreContents, Modal, DnD, ObjectDetail } from '../tol-ui/src';
+import { Button, CentreContents, Modal, DnD, ObjectDetail, InfoTooltip } from '../tol-ui/src';
 import { useState } from 'react';
 
 const jsonData = {
@@ -45,6 +45,9 @@ function Miscellaneous() {
         </Modal>
         <Button onClick = {() => setModalOpen(true)}>Example Modal</Button>
           
+        <h2 className='mt-5'>Info Tooltip</h2>
+        <InfoTooltip contents="This is some information!" />
+
         <h2 className='mt-5'>Object Detail</h2>
         <ObjectDetail data={jsonData}/>
 
