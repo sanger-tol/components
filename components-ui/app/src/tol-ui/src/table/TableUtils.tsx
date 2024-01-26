@@ -72,10 +72,9 @@ function createRelationshipBox(key: string, data: any, baseUrl?: string, detail?
       const relationData = data['relationships'][relationship]['data'];
       // need to create attributes for id to be added to if it doesn't exist
       if (!('attributes' in relationData)) {
-        relationData['attributes'] = {
-          id: relationData['id']
-        };
+        relationData['attributes'] = {};
       }
+      relationData['attributes']['id'] = relationData['id'];
       // try & use attribute, if not use ID
       let displayedAttribute = 'id';
       if (attribute in relationData['attributes']) {
