@@ -306,6 +306,7 @@ function formatDateRangeWithInterval(date: string, interval: string) {
   if (from.toString() === 'Invalid Date') {
     return false;
   }
+  to.setTime(to.getTime() - 1); // minus 1 millisecond
   return {from: from, to: to};
 }
 

@@ -1,97 +1,96 @@
 /*
-SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+ * SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
 
-SPDX-License-Identifier: MIT
-*/
-
+import { RemoteTable,
+  RemoteMultipleSelectFilters,
+  RemoteBarChart,
+  Widgets,
+  env } from '../tol-ui/src';
 import { useState } from 'react';
-import { env, RemoteTable, Widgets } from '../tol-ui/src';
-import Filter from '../tol-ui/src/general/Filter';
 
 
 function Sandbox() {
-  //const [filter, setFilter] = useState<object>({'contains': {'sts_common_name': 'Pink'}})
-  const [filter, setFilter] = useState<object>({});
+  const [globalFilters, setGlobalFilters] = useState<object>({in_list: {}});
+  const [combinedFilters, setCombinedFilters] = useState<object>({});
 
-  /*
-  const table1 = (
-    <RemoteTable
-      id="tester12"
-      endpoint="extraction"
-      height={500}
+  const filters = (
+    <RemoteMultipleSelectFilters
+      endpoint="sequencing_request"
+      fields={["benchling_source"]}
+      globalFilters={globalFilters}
+      setGlobalFilters={setGlobalFilters}
       baseUrl={env.TOL_DATA}
-      filter={filter}
-      setFilter={setFilter}
     />
-  )
-  */
+  );
 
-  const table2 = (
-    <RemoteTable
-      id="run-data-table-v2"
-      endpoint="run_data"
-      baseUrl={env.TOL_DATA}
-      filter={filter}
-      setFilter={setFilter}
+  const chart = (
+    <RemoteBarChart
+      stacked
+      title="Submission from Benchling to SciOps"
+      endpoint="sequencing_request"
+      breakDownBy="benchling_source"
+      xAxis="benchling_completion_date"
+      interval="M"
+      filter={globalFilters}
+      setCombinedFilters={setCombinedFilters}
+      type='date'
       height={500}
+      baseUrl={env.TOL_DATA}
+    />
+  );
+
+  const table = (
+    <RemoteTable
+      id="sequencing-request-table-v2"
+      endpoint="sequencing_request"
+      filter={combinedFilters}
+      setFilter={setCombinedFilters}
+      defaultSort="mlwh_species.sts_scientific_name"
       fields={{
-        "tolqc_run_id": {
-          rename: "Run ID",
-          width: 100
+        "uid": {
+          rename: "Sample Ref"
         },
-        "tolqc_species.sts_scientific_name": {
-          rename: "Species"
+        "benchling_sequencing_platform": {
+          rename: "Platform (Benchling)",
         },
-        "tolqc_sequencing_request.id": {
-          rename: "Sequencing Request"
+        "mlwh_species.sts_scientific_name": {
+          rename: "Species",
+          cellRenderer: "relationshipDetail"
         },
-        "mlwh_complete_date": {
-          rename: "Complete Date"
+        "benchling_tolid.id": {
+          rename: "ToLID (Benchling)"
         },
-        "mlwh_platform_type": {
-          rename: "Platform"
+        "benchling_source": {
+          rename: "Source (Benchling)"
         },
-        "mlwh_instrument_model": {
-          rename: "Instrument"
+        "benchling_completion_date": {
+          rename: "Completion Date (Benchling)"
         },
-        "tolqc_position": {
-          rename: "Position"
-        },
-        "tolqc_tag_index": {
-          rename: "Tag"
+        "portaldb_date_sent_to_sciops": {
+          rename: "Date Sent To SciOps"
         }
       }}
+      height={500}
+      baseUrl={env.TOL_DATA}
     />
   );
-  
+
   return (
-    <>
-      <Filter
-        id='sts_tol_updated_at'
-        rename='sts_tol_updated_at'
-        type='datetime'
-        filter={filter}
-        setFilter={setFilter}
-      />
-      <Filter
-        id='sts_species_id'
-        rename='sts_species_id'
-        type='int'
-        filter={filter}
-        setFilter={setFilter}
-      />
-      <Filter
-        id='sts_ready'
-        rename='sts_ready'
-        type='boolean'
-        filter={filter}
-        setFilter={setFilter}
+    <div className="sequencing-requests">
+      <Widgets
+        title="Sequencing Requests"
+        components={[filters]}
       />
       <Widgets
-        components={[table2]}
+        components={[chart]}
       />
-    </>
+      <Widgets
+        components={[table]}
+      />
+    </div>
   );
 }
-
 export default Sandbox;
