@@ -4,37 +4,49 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { RemoteTable,
-  RemoteMultipleSelectFilters,
+import {
   RemoteBarChart,
+  RemoteSunburst,
   Widgets,
   env } from '../tol-ui/src';
 import { useState } from 'react';
 
 
 function Sandbox() {
-  const [globalFilters, setGlobalFilters] = useState<object>({in_list: {}});
+
   const [combinedFilters, setCombinedFilters] = useState<object>({});
 
-  const filters = (
-    <RemoteMultipleSelectFilters
-      endpoint="sequencing_request"
-      fields={["benchling_source"]}
-      globalFilters={globalFilters}
-      setGlobalFilters={setGlobalFilters}
-      baseUrl={env.TOL_DATA}
-    />
-  );
+  //const filters = (
+  //  <RemoteMultipleSelectFilters
+  //    endpoint="barcoding_run_data"
+  //    fields={[
+  //      "bioscan_o_primary",
+  //      "bioscan_f_primary",
+  //      "bioscan_g_primary",
+  //      "bioscan_s_primary",
+  //      "sts_sample.sts_gal"
+  //    ]}
+  //    renamedFields={{
+  //      "sts_sample.sts_gal": "Partner",
+  //      "bioscan_o_primary": "Order",
+  //      "bioscan_g_primary": "Genus",
+  //      "bioscan_f_primary": "Family",
+  //      "bioscan_s_primary": "Scientific Name"
+  //    }}
+  //    globalFilters={globalFilters}
+  //    setGlobalFilters={setGlobalFilters}
+  //    baseUrl={env.TOL_DATA}
+  //  />
+  //)
 
   const chart = (
     <RemoteBarChart
       stacked
-      title="Submission from Benchling to SciOps"
-      endpoint="sequencing_request"
-      breakDownBy="benchling_source"
-      xAxis="benchling_completion_date"
+      title="Samples Recieved"
+      endpoint='sample'
+      breakDownBy="sts_ac_status"
+      xAxis="benchling_date_sample_received_at_sanger"
       interval="M"
-      filter={globalFilters}
       setCombinedFilters={setCombinedFilters}
       type='date'
       height={500}
@@ -42,53 +54,39 @@ function Sandbox() {
     />
   );
 
-  const table = (
-    <RemoteTable
-      id="sequencing-request-table-v2"
-      endpoint="sequencing_request"
-      filter={combinedFilters}
-      setFilter={setCombinedFilters}
-      defaultSort="mlwh_species.sts_scientific_name"
-      fields={{
-        "uid": {
-          rename: "Sample Ref"
-        },
-        "benchling_sequencing_platform": {
-          rename: "Platform (Benchling)",
-        },
-        "mlwh_species.sts_scientific_name": {
-          rename: "Species",
-          cellRenderer: "relationshipDetail"
-        },
-        "benchling_tolid.id": {
-          rename: "ToLID (Benchling)"
-        },
-        "benchling_source": {
-          rename: "Source (Benchling)"
-        },
-        "benchling_completion_date": {
-          rename: "Completion Date (Benchling)"
-        },
-        "portaldb_date_sent_to_sciops": {
-          rename: "Date Sent To SciOps"
-        }
-      }}
-      height={500}
-      baseUrl={env.TOL_DATA}
-    />
+  const sunburst = (
+    <span>
+      <h6>
+        BIOSCAN Sunburst of Specimens:
+      </h6>
+      <p className="mb-3">
+        Subset to different taxonomic levels or Partners by using the menu above.
+        This will also subset the barchart, map, and table below.
+      </p>
+      <RemoteSunburst
+        endpoint="barcoding_run_data"
+        sliceBy={[
+          "bioscan_o_primary",
+          "bioscan_f_primary",
+          "bioscan_g_primary",
+          "bioscan_s_primary"
+        ]}
+        filter={combinedFilters}
+        height={600}
+        baseUrl={env.TOL_DATA}
+        legendPosition="right"
+        noLabel
+      />
+    </span>
   );
 
   return (
-    <div className="sequencing-requests">
-      <Widgets
-        title="Sequencing Requests"
-        components={[filters]}
-      />
+    <div className="bioscan-report-card">
       <Widgets
         components={[chart]}
       />
       <Widgets
-        components={[table]}
+        components={[sunburst]}
       />
     </div>
   );

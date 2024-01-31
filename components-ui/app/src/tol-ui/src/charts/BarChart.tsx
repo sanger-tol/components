@@ -50,6 +50,9 @@ function BarChart(props: Props) {
   // for keeping track of the legends click and order
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
+  // Used to change the height of the y-axis when selecting a legend
+  const [maxHeight, setMaxHeight] = useState<number | null>(null); 
+
 
   const data = {
     labels: labels,
@@ -76,6 +79,9 @@ function BarChart(props: Props) {
             setPrevLegendItemIndex(index);
             dataset.order = -1;
             selectedBucket = dataset.id;
+            const maxValue = Math.max(...dataset.data);
+            const maxValuePercentage = Math.round(maxValue + (maxValue*0.1));
+            setMaxHeight(maxValuePercentage);
           } else {
             dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '0.25');
             // reset prev item's order
@@ -87,6 +93,20 @@ function BarChart(props: Props) {
         // sets the bar data to the selected legend
         setBarData!({
           "bucket": selectedBucket,
+          "value": null,
+          "clickKey": null
+        });
+      } else {
+        setMaxHeight(null);
+        legend.chart.data.datasets.forEach((dataset: any, index: any) => {
+          dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
+          setPrevOrder(null);
+          setPrevLegendItemIndex(null);
+          dataset.order = index;
+        });
+        // sets the bar data to the selected legend
+        setBarData!({
+          "bucket": null,
           "value": null,
           "clickKey": null
         });
@@ -103,6 +123,7 @@ function BarChart(props: Props) {
 
   // @ts-ignore
   function handlePlaneClick(event: any, chartElement: any, chart: any, item: any) {
+    setMaxHeight(null);
     if (item !== undefined) {
       return;
     }
@@ -199,6 +220,7 @@ function BarChart(props: Props) {
       },
       y: {
         stacked: stacked,
+        max: maxHeight,
         grid: {
           color: gridLineColour
         },
