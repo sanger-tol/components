@@ -7,13 +7,17 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import { httpClient } from '../services/http/httpClient';
 import { FieldMetaData, FieldMeta, initialiseFieldMeta } from "./Field";
-import { createSort,
+import {
+  createSort,
   getFieldMetaAttributeFromStorage,
   getTypesMeta,
-  setFieldMetaAttributeInStorage } from './TableUtils';
-import { convertTableData,
+  setFieldMetaAttributeInStorage
+} from './TableUtils';
+import { 
+  convertTableData,
   tableDebug,
-  structureFieldMeta } from "./TableUtils";
+  structureFieldMeta
+} from "./TableUtils";
 import Table from "./Table";
 import { Placeholder } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
@@ -27,7 +31,6 @@ interface Props {
   height?: number,
 
   filter?: object,
-  setFilter?: Function, // eslint-disable-line
   defaultSort?: string,
 
   noFilter?: boolean,
@@ -46,7 +49,6 @@ function RemoteTable(props: Props) {
     baseUrl,
     fields,
     filter,
-    setFilter,
     defaultSort,
     noFilter,
     noPagination,
@@ -74,7 +76,10 @@ function RemoteTable(props: Props) {
   );
   const [totalSize, setTotalSize] = useState<number>(0);
 
-  // sorting
+  // filtering/sorting
+  const [localFilter, setLocalFilter] = useState(
+    filter !== undefined ? filter : {}
+  );
   const [sortColumn, setSortColumn] = useState<string>('');
   const [sortType, setSortType] = useState<string>('asc');
 
@@ -100,7 +105,14 @@ function RemoteTable(props: Props) {
     if (page === 1) renderTable();
     // setting page then triggers renderTable in useEffect above
     setPage(1);
-  }, [filter, pageSize]);
+  }, [localFilter, pageSize]);
+
+  // set local filter when incoming change
+  useEffectUpdate(() => {
+    if (filter !== undefined) {
+      setLocalFilter(filter);
+    }
+  }, [filter]);
 
   const modalOnSave = (fieldMeta: FieldMeta) => {
     setFieldMeta(fieldMeta);
@@ -118,7 +130,7 @@ function RemoteTable(props: Props) {
     const params = {
       page: page,
       page_size: pageSize,
-      filter: filter
+      filter: localFilter
     };
 
     // deal with sorting
@@ -231,10 +243,11 @@ function RemoteTable(props: Props) {
 
       sortColumn={sortColumn}
       sortType={sortType}
+      defaultSort={defaultSort}
       handleSortColumn={handleSortColumn}
 
-      filter={filter}
-      setFilter={setFilter}
+      filter={localFilter}
+      setFilter={setLocalFilter}
 
       modalOnSave={modalOnSave}
 

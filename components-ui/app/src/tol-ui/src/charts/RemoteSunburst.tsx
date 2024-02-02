@@ -6,28 +6,40 @@ SPDX-License-Identifier: MIT
 
 import { useState, useEffect } from "react";
 import { httpClient } from '../services/http/httpClient';
-import { aggsToSunburstData, createAggsViaSliceBy, isChartDataEmpty } from "./ChartUtils";
+import {
+  aggsToSunburstData,
+  createAggsViaSliceBy,
+  isChartDataEmpty,
+  generateFilterFromSunburstClick
+} from "./ChartUtils";
 import Sunburst from "./Sunburst";
 import Placeholder from "../general/Placeholder";
+import { useEffectUpdate } from "../hooks/useEffectUpdate";
 
 
 interface Props {
   endpoint: string,
   title?: string,
   sliceBy: string[],
-  filter?: object,
   height: number,
   baseUrl?: string,
   legendPosition?: string,
   noLabel?: boolean
+
+  // 'filter' is usually referred to as globalFilters when using combinedFilters
+  filter?: object,
+  setCombinedFilters?: Function, // eslint-disable-line
 }
 
 function RemoteSunburst(props: Props) {
-  const { endpoint, filter, sliceBy, baseUrl, height } = props;
+  const { endpoint, sliceBy, baseUrl, height, filter, setCombinedFilters } = props;
   const [datasets, setDatasets] = useState({});
   const [loading, setLoading] = useState(true);
   const [warningMessage, setWarningMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [sliceData, setSliceData] = useState<object>({});
+
+  const localFilter = generateFilterFromSunburstClick(sliceData);
 
   useEffect(() => {
     setLoading(true);
@@ -51,6 +63,26 @@ function RemoteSunburst(props: Props) {
         setErrorMessage(error.message);
         console.error(error.message);
       });
+  }, [filter]);
+
+  // combine local and globalFilters
+  useEffectUpdate(() => {
+    async function combine() {
+      if (setCombinedFilters !== undefined) {
+        setCombinedFilters(Object.assign({}, filter, localFilter));
+      }
+    }
+    combine();
+  }, [sliceData]);
+
+  // reset localFilters when globalFilters are updated
+  useEffectUpdate(() => {
+    async function resetCombined() {
+      if (setCombinedFilters !== undefined) {
+        setCombinedFilters(Object.assign({}, filter));
+      }
+    }
+    resetCombined();
   }, [filter]);
 
   if (errorMessage !== ''){
@@ -79,6 +111,9 @@ function RemoteSunburst(props: Props) {
     <Sunburst
       {...props}
       datasets={datasets}
+      setSliceData={
+        setCombinedFilters === undefined ? undefined : setSliceData
+      }
     />
   );
 }

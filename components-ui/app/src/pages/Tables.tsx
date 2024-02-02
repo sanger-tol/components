@@ -4,19 +4,14 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
-import { RemoteTable, Widgets, env} from '../tol-ui/src';
+import { RemoteTable, Widgets, env } from '../tol-ui/src';
 
 
 function Tables() {
-  const [filter, setFilter] = useState<object>({});
-
   const table = (
     <RemoteTable
       id="run-data-table-v2"
       endpoint="run_data"
-      filter={filter}
-      setFilter={setFilter}
       height={500}
       fields={{
         "mlwh_run_id": {

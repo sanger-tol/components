@@ -57,7 +57,7 @@ const datasets = {
             }
           },
           {
-            "key": "Other",
+            "key": "More",
             "value": 21,
             "child": {
               "outer_tester": [

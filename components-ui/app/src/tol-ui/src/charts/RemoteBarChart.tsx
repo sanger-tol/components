@@ -58,23 +58,14 @@ function RemoteBarChart(props: Props) {
     resetCombined();
   }, [filter]);
 
-  // chart does not show pointer if setCombinedFilters undefined
-  if (setCombinedFilters === undefined) {
-    return (
-      <RemoteAggBarChart
-        {...props}
-        aggs={ aggs }
-        filter={ filter }
-      />
-    );
-  }
-
   return (
     <RemoteAggBarChart
       {...props}
       aggs={ aggs }
       filter={ filter }
-      setBarData={ setBarData }
+      setBarData={
+        setCombinedFilters === undefined ? undefined : setBarData
+      }
     />
   );
 }

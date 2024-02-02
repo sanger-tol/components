@@ -131,7 +131,7 @@ function BarCharts() {
         "aggs": {
           "1": {
             "date_histogram": {
-              "field": "mlwh_complete_date",
+              "field": "mlwh_run_complete",
               "calendar_interval": "1M",
               "time_zone": "Europe/London"
             }

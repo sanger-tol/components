@@ -12,17 +12,23 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend } from "chart.js";
+  Legend
+} from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { getChartColour,
+import { Button } from '../index';
+import {
+  getChartColour,
   initialiseDatasets,
   updateChartColours,
   setClickedColourToSolid,
   setBarClickedData,
   generateBarLabels,
   updateOpacitys,
-  resetItemClickedData } from "./ChartUtils";
+  resetItemClickedData
+} from "./ChartUtils";
 import { isPropDefined, getCssVarValue } from "../general/Utils";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUndo } from '@fortawesome/free-solid-svg-icons';
 
 
 ChartJS.register(
@@ -44,20 +50,15 @@ interface Props {
 }
 
 function BarChart(props: Props) {
-  const { title, datasets, labels, height, setBarData } = props;
+  const { title, labels, height, setBarData } = props;
   const stacked = isPropDefined(props.stacked);
-
+  const originDatasets = initialiseDatasets(props.datasets);
+  const [datasets, setDatasets] = useState(originDatasets);
   // for keeping track of the legends click and order
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
   // Used to change the height of the y-axis when selecting a legend
   const [maxHeight, setMaxHeight] = useState<number | null>(null); 
-
-
-  const data = {
-    labels: labels,
-    datasets: initialiseDatasets(datasets)
-  };
 
   // colours
   const titleColour = getCssVarValue("--bs-emphasis-color");
@@ -138,7 +139,7 @@ function BarChart(props: Props) {
     // only clickable if setBarData is defined
     if (isPropDefined(setBarData)) {
       if (!chartElement.length) {
-        // reset bar colours when clicking other any part of chart
+        // reset bar colours when clicking any other part of chart
         updateChartColours(chart, true, 0.5);
         resetItemClickedData(setBarData);
       } else {
@@ -150,6 +151,8 @@ function BarChart(props: Props) {
       }
       chart.update();
     }
+    // workaround for when 'datasets' reset
+    setDatasets(chart.data.datasets);
   }
 
   function handlePlaneHover (event: any, chartElement: any) {
@@ -233,6 +236,20 @@ function BarChart(props: Props) {
 
   return (
     <div style={{height: height.toString() + 'px'}}>
+      <div className="tol-chart-buttons">
+        {isPropDefined(setBarData) &&
+          <Button
+            className="config-button"
+            variant="primary"
+            onClick={() => {
+              resetItemClickedData(setBarData);
+              setDatasets(originDatasets);
+            }}
+          >
+            <FontAwesomeIcon icon={faUndo} size="sm" />
+          </Button>
+        }
+      </div>
       <Bar
         responsive="true"
         id="tol-bar-chart"
@@ -240,7 +257,10 @@ function BarChart(props: Props) {
         datasetIdKey="id"
         // @ts-ignore
         options={ options }
-        data={ data }
+        data={{
+          labels: labels,
+          datasets: datasets
+        }}
       />
     </div>
   );

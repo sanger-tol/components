@@ -7,8 +7,10 @@ SPDX-License-Identifier: MIT
 import { useState } from 'react';
 import { Button, Row, Col, Placeholder, Loader } from '../index';
 import { Table as RSTable, Pagination, SelectPicker } from "rsuite";
-import { addTotalText, 
-  setFieldMetaAttributeInStorage } from './TableUtils';
+import {
+  addTotalText, 
+  setFieldMetaAttributeInStorage
+} from './TableUtils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSliders, faDownload } from '@fortawesome/free-solid-svg-icons';
 import ConfigModal from './ConfigModal';
@@ -36,6 +38,7 @@ interface Props {
 
   sortColumn: string,
   sortType: any,
+  defaultSort?: string,
   handleSortColumn: any,
 
   filter?: object,
@@ -71,6 +74,7 @@ function Table (props: Props) {
 
     sortColumn,
     sortType,
+    defaultSort,
     handleSortColumn,
   
     filter,
@@ -183,7 +187,7 @@ function Table (props: Props) {
         <Col md={12} lg={3}>
           {!noConfigModal &&
             <Button 
-              className="tol-table-button"
+              className="config-button"
               variant="primary"
               onClick={ () => {
                 setOpen(true);
@@ -203,7 +207,7 @@ function Table (props: Props) {
           }
           {!noFilter &&
             <Button
-              className="tol-table-button"
+              className="config-button"
               variant="primary"
               onClick={ () => toggleFilterVisibility(!filterVisible) }
             >
@@ -212,7 +216,7 @@ function Table (props: Props) {
           }
           {!noDownload &&
             <Button 
-              className="tol-table-button"
+              className="config-button"
               variant="primary"
               onClick={() => exportTableToSpreadsheet(
                 endpoint,
@@ -223,9 +227,10 @@ function Table (props: Props) {
                 setSuccess,
                 setError,
                 setDownloading,
+                defaultSort,
                 baseUrl
               )}
-              disabled={true} // totalSize > 10000 || totalSize < 1
+              disabled={totalSize < 1}
             >
               {downloading ? (
                 <Loader
@@ -251,7 +256,6 @@ function Table (props: Props) {
           sortColumn={sortColumn}
           sortType={sortType}
           onSortColumn={handleSortColumn!}
-          //autoHeight
           fillHeight
           wordWrap
           renderLoading={

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from 'date-fns';
-import { normaliseCaps, getCssVarValue, isPropDefined } from '../general/Utils';
+import { getCssVarValue, isPropDefined } from '../general/Utils';
 
 
 // ------------------//
@@ -122,7 +122,7 @@ export function getChartColour(index: number, opacity?: number) {
   return rgbToString(rgb, opacity);
 }
 
-function updateOpacity(color: string, alpha: string) {
+export function updateOpacity(color: string, alpha: string) {
   return color.replace(/[\d.]+\)$/g, alpha + ')');
 }
 
@@ -577,9 +577,9 @@ function calcBucketDocCountTotal(buckets: any[]) {
 
 // works by changing the reference of 'buckets'
 function addExtraDocCount(type: string, buckets: object[], sliceBy: string[], depth: number, count: number, parentCount?: number) {
-  // ignore when it tries to work on the new 'other' bucket
+  // ignore when it tries to work on the new 'more' bucket
   if (count !== undefined) {
-    // ensure 'other' depth matches the actual values depth
+    // ensure 'more' depth matches the actual values depth
     if (depth < sliceBy.length) {
 
       if (type === 'Unknown') {
@@ -592,7 +592,7 @@ function addExtraDocCount(type: string, buckets: object[], sliceBy: string[], de
           // if data is correct, return
           return;
         }
-      } else if (type === 'Other') {
+      } else if (type === 'More') {
         buckets.push({
           doc_count: count,
           key: type
@@ -607,7 +607,7 @@ function addExtraDocCount(type: string, buckets: object[], sliceBy: string[], de
         buckets[lastIndex][childKey] = {
           "buckets": []
         };
-        // recursively add 'other' or 'unknown'
+        // recursively add 'more' or 'unknown'
         addExtraDocCount(
           type,
           buckets[lastIndex][childKey]["buckets"],
@@ -627,22 +627,21 @@ export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: numb
   // sliceBy keys
   const key = sliceBy[depth];
   const childKey = sliceBy[depth+1];
-  const normalisedKey = normaliseCaps(key);
 
   // elastic bucket data
   const agg: SunburstData[] = aggsRes[key];
   const buckets = agg["buckets"];
 
-  // temp 'other' fix
-  const otherCount = agg["sum_other_doc_count"];
-  // other doesn't exist if bucket isn't a value
-  if (otherCount !== 0 && otherCount !== undefined) {
+  // temp 'more' fix
+  const moreCount = agg["sum_other_doc_count"];
+  // 'more' doesn't exist if bucket isn't a value
+  if (moreCount !== 0 && moreCount !== undefined) {
     addExtraDocCount(
-      'Other',
+      'More',
       buckets,
       sliceBy,
       depth,
-      otherCount
+      moreCount
     );
   }
 
@@ -661,7 +660,7 @@ export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: numb
 
   // initialising variables required
   const outputData = {};
-  outputData[normalisedKey] = [];
+  outputData[key] = [];
 
   for (const bucket of buckets) {
     const dataPoint = {
@@ -675,7 +674,7 @@ export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: numb
       child[childKey] = bucket[childKey];
       dataPoint["child"] = aggsToSunburstData(child, sliceBy, depth, bucket.doc_count);
     }
-    outputData[normalisedKey].push(dataPoint);
+    outputData[key].push(dataPoint);
   }
   return outputData;
 }
@@ -695,4 +694,13 @@ export function setSliceClickedData(chart: any, chartElement: any, setSliceData?
       "clickKey": clickKey
     });
   }
+}
+
+export function generateFilterFromSunburstClick(sliceData: any) {  
+  if (sliceData["bucket"] !== undefined) {
+    const localFilters = {"exact": {}};
+    localFilters["exact"][sliceData["bucket"]] = sliceData["clickKey"];
+    return localFilters;
+  }
+  return {};
 }

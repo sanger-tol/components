@@ -156,34 +156,6 @@
       }
     }
 
-    // buttons
-    .tol-table-button {
-      float: right;
-      color: var(--primary);
-      fill: var(--primary);
-      background-color: transparent;
-      border-color: var(--grey-emphasis);
-      padding: 0;
-      height: 30px;
-      width: 30px;
-      margin-left: 6px;
-    }
-
-    .tol-table-button:hover,
-    .tol-table-button:active {
-      border-color: var(--primary) !important;
-      text-decoration: none;
-      color: var(--primary);
-      fill: var(--primary);
-    }
-
-    .tol-table-button:disabled {
-      background-color: var(--grey-emphasis) !important;
-      color: var(--bs-body-bg) !important;
-      fill: var(--bs-body-bg) !important;
-      background-color: transparent;
-    }
-
     // number of rows total
     .tol-total {
       float: left;
@@ -297,7 +269,7 @@
 
 // pagination buttons on smaller devices
 @media (max-width: 992px) {
-  .tol-table .tol-table-button {
+  .tol-table .config-button {
     float: left !important;
     margin-bottom: 10px;
   }

@@ -436,13 +436,14 @@ export function exportTableToSpreadsheet(
   setSuccess: Function, // eslint-disable-line
   setError: Function, // eslint-disable-line
   setDownloading: Function, // eslint-disable-line
+  defaultSort?: string,
   baseUrl?: string
 ) {
   setDownloading(true);
 
   const columns = Object.keys(fieldMetaData).map((key: string) => ({
-    text: key,
-    dataField: fieldMetaData[key].rename,
+    key: key,
+    display_name: fieldMetaData[key].rename,
     hidden: fieldMetaData[key].hidden
   }));
 
@@ -451,8 +452,11 @@ export function exportTableToSpreadsheet(
     filter: filter
   };
 
+  // deal with sorting
   if (sortColumn !== '') {
     params['sort_by'] = createSort(sortColumn, sortType);
+  } else if (defaultSort !== undefined) {
+    params['sort_by'] = defaultSort;
   }
 
   httpClient().post('/' + endpoint + ':export',
@@ -468,7 +472,7 @@ export function exportTableToSpreadsheet(
       // Trigger the download with an anchor element
       const a = document.createElement('a');
       a.href = tempUrl;
-      a.download = 'table_download.xlsx';
+      a.download = endpoint + '_table.xlsx';
       a.click();
 
       // Release the URL
