@@ -226,3 +226,9 @@
     padding-top: 0;
   }
 }
+
+// ensure checkbox dropdowns are on top & are only as big as the content
+.rs-anim-fade.rs-anim-in.rs-picker-check-menu.rs-picker-menu.placement-bottom-start {
+  z-index: 1003;
+  min-width: 0 !important;
+}

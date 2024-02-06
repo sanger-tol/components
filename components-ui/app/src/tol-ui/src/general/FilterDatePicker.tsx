@@ -84,6 +84,7 @@ function FilterDatePicker(props: Props) {
         value={ value }
         placeholder={ rename }
         format="dd/MM/yyyy"
+        preventOverflow
       />
     </span>
   );

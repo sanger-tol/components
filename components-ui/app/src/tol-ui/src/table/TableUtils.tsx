@@ -16,7 +16,7 @@ import Relationship from './Relationship';
 import { Status } from '../general';
 
 
-export const fieldMetaVersion = "field-meta-v4";
+export const fieldMetaVersion = "field-meta-v5";
 let idField = ''; // id or uid
 
 // types meta

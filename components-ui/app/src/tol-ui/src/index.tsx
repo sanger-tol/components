@@ -66,3 +66,6 @@ export { httpClient } from "./services/http/httpClient";
 
 // Variables
 export { env } from './variables/config';
+
+// useEffect that ignores first load
+export { useEffectUpdate } from './hooks/useEffectUpdate';
