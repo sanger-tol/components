@@ -152,7 +152,7 @@ export function updateChartColours(chart: any, resetColours: boolean, fadedOpaci
       dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString());
     } else {
       dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString());
-      dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, '1');
+      dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, '0.75');
     }
   }
 }
@@ -425,6 +425,18 @@ interface DoughnutDataCJS {
   hoverOffset: number
 }
 
+// removing single rings to show as much detail as possible
+function removeSingleDatasets(datasets: object) {
+  // key of what the doughnut is sliced by
+  const key = Object.keys(datasets)[0];
+  if (datasets[key].length === 1) {
+    if (datasets[key][0]["child"] !== undefined) {
+      datasets = removeSingleDatasets(datasets[key][0]["child"]);
+    }
+  }
+  return datasets
+}
+
 export function convertSunburstDatasets(
   datasets: object,
   outputData?: DoughnutDataCJS[],
@@ -441,6 +453,7 @@ export function convertSunburstDatasets(
   if (colourIndex === undefined) colourIndex = 0;
   if (depth === undefined) {
     depth = 0;
+    datasets = removeSingleDatasets(datasets)
   } else {
     depth++;
   }

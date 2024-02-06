@@ -18,7 +18,7 @@ import {
   resetItemClickedData,
   updateChartColours,
   setClickedColourToSolid,
-  setSliceClickedData, 
+  setSliceClickedData,
   updateOpacity
 } from "./ChartUtils";
 import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/Utils";
@@ -179,8 +179,8 @@ function Sunburst(props: Props) {
         className="tol-sunburst"
         datasetIdKey="id"
         // @ts-ignore
-        options={ options }
-        data={ {datasets: datasets} }
+        options={options}
+        data={{datasets: datasets}}
       />
     </div>
   );
