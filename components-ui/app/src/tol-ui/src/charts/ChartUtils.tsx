@@ -142,7 +142,7 @@ export function setClickedColourToSolid(chart: any, chartElement: any) {
   const { datasetIndex, index } = chartElement[0];
   const originalColour = chart.data.datasets[datasetIndex].backgroundColor[index];
   chart.data.datasets[datasetIndex].backgroundColor[index] = updateOpacity(originalColour, "1");
-  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = updateOpacity(originalColour, "1");
+  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = updateOpacity(originalColour, "0.75");
 }
 
 export function updateChartColours(chart: any, resetColours: boolean, fadedOpacity: number) {
@@ -434,7 +434,7 @@ function removeSingleDatasets(datasets: object) {
       datasets = removeSingleDatasets(datasets[key][0]["child"]);
     }
   }
-  return datasets
+  return datasets;
 }
 
 export function convertSunburstDatasets(
@@ -453,7 +453,7 @@ export function convertSunburstDatasets(
   if (colourIndex === undefined) colourIndex = 0;
   if (depth === undefined) {
     depth = 0;
-    datasets = removeSingleDatasets(datasets)
+    datasets = removeSingleDatasets(datasets);
   } else {
     depth++;
   }
