@@ -521,6 +521,8 @@ function addPercentages(outputData: DoughnutDataCJS[]) {
 }
 
 export function generateSunburstLabels(chart: any, titleColour: any) {
+  // return empty if it doesn't exist
+  if (chart.data.datasets[0].data.length === 0) return;
   // parent is end of list due to chartJS oddities
   const parentIndex = chart.data.datasets.length-1;
   return chart.data.datasets[parentIndex].labels.map(
@@ -541,7 +543,7 @@ function getMaxDataSizeByDepth(depth: number) {
   case 0: // most inner ring (parent)
     return 25;
   case 1: // 2nd ring
-    return 10;
+    return 100;
   default: // 3rd ring onwards
     return 5;
   }
@@ -699,12 +701,16 @@ export function setSliceClickedData(chart: any, chartElement: any, setSliceData?
   const bucket = chart.data.datasets[datasetIndex].label;
   const value = chart.data.datasets[datasetIndex].data[index];
   const clickKey = chart.data.datasets[datasetIndex].labels[index];
+  // depth inner ring to outer
+  const depth = chart.data.datasets.length - datasetIndex
 
   if (isPropDefined(setSliceData)) {
     setSliceData!({
-      "bucket": bucket,
-      "value": value,
-      "clickKey": clickKey
+      bucket: bucket,
+      value: value,
+      clickKey: clickKey,
+      datasetIndex: datasetIndex,
+      depth: depth
     });
   }
 }
@@ -716,4 +722,11 @@ export function generateFilterFromSunburstClick(sliceData: any) {
     return localFilters;
   }
   return {};
+}
+
+export function removeSliceBySingles(sliceBy: string[], depth: number) {
+  for (let x = 0; x <= depth-1; x++) {
+    sliceBy.shift()
+  }
+  return sliceBy
 }

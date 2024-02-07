@@ -10,11 +10,13 @@ import {
   aggsToSunburstData,
   createAggsViaSliceBy,
   isChartDataEmpty,
-  generateFilterFromSunburstClick
+  generateFilterFromSunburstClick,
+  removeSliceBySingles
 } from "./ChartUtils";
 import Sunburst from "./Sunburst";
 import Placeholder from "../general/Placeholder";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
+import { isEmptyObject, normaliseCaps } from "../general/Utils";
 
 
 interface Props {
@@ -24,7 +26,8 @@ interface Props {
   height: number,
   baseUrl?: string,
   legendPosition?: string,
-  noLabel?: boolean
+  noLabel?: boolean,
+  noMini?: boolean,
 
   // 'filter' is usually referred to as globalFilters when using combinedFilters
   filter?: object,
@@ -32,16 +35,27 @@ interface Props {
 }
 
 function RemoteSunburst(props: Props) {
-  const { endpoint, sliceBy, baseUrl, height, filter, setCombinedFilters } = props;
+  const {
+    endpoint,
+    sliceBy,
+    baseUrl,
+    height,
+    legendPosition,
+    noLabel,
+    noMini,
+    filter, 
+    setCombinedFilters
+  } = props;
   const [datasets, setDatasets] = useState({});
+  const [subDatasets, setSubDatasets] = useState({});
   const [loading, setLoading] = useState(true);
   const [warningMessage, setWarningMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [sliceData, setSliceData] = useState<object>({});
-
   const localFilter = generateFilterFromSunburstClick(sliceData);
 
   useEffect(() => {
+    console.log('filter')
     setLoading(true);
     const aggs = createAggsViaSliceBy(endpoint, sliceBy);
     httpClient().post('/' + endpoint + ":aggregations", aggs, {
@@ -50,19 +64,19 @@ function RemoteSunburst(props: Props) {
         filter: filter
       }
     })
-      .then((res: any) => {
-        const aggs = res.data.meta.aggregations;
-        setErrorMessage('');
-        setWarningMessage(isChartDataEmpty(aggs));
+    .then((res: any) => {
+      const aggs = res.data.meta.aggregations;
+      setErrorMessage('');
+      setWarningMessage(isChartDataEmpty(aggs));
 
-        const data = aggsToSunburstData(aggs, sliceBy);
-        setDatasets(data);
-        setLoading(false);
-      })
-      .catch((error: any) => {
-        setErrorMessage(error.message);
-        console.error(error.message);
-      });
+      const data = aggsToSunburstData(aggs, sliceBy);
+      setDatasets(data);
+      setLoading(false);
+    })
+    .catch((error: any) => {
+      setErrorMessage(error.message);
+      console.error(error.message);
+    });
   }, [filter]);
 
   // combine local and globalFilters
@@ -84,6 +98,35 @@ function RemoteSunburst(props: Props) {
     }
     resetCombined();
   }, [filter]);
+
+  // for mini sunburst updates
+  useEffectUpdate(() => {
+    console.log('sliceData')
+    setLoading(true);
+    const aggs = createAggsViaSliceBy(
+      endpoint,
+      removeSliceBySingles(sliceBy, sliceData["depth"])
+    );
+    httpClient().post('/' + endpoint + ":aggregations", aggs, {
+      baseURL: baseUrl,
+      params: {
+        filter: Object.assign({}, filter, localFilter)
+      }
+    })
+    .then((res: any) => {
+      const aggs = res.data.meta.aggregations;
+      setErrorMessage('');
+      setWarningMessage(isChartDataEmpty(aggs));
+
+      const data = aggsToSunburstData(aggs, sliceBy);
+      setSubDatasets(data);
+      setLoading(false);
+    })
+    .catch((error: any) => {
+      setErrorMessage(error.message);
+      console.error(error.message);
+    });
+  }, [sliceData]);
 
   if (errorMessage !== ''){
     return (
@@ -107,14 +150,34 @@ function RemoteSunburst(props: Props) {
     return <Placeholder pie height={height} />;
   }
 
+  //const selector = setCombinedFilters === undefined ? undefined : setSliceData
+  //const miniSelector = 
+
   return (
-    <Sunburst
-      {...props}
-      datasets={datasets}
-      setSliceData={
-        setCombinedFilters === undefined ? undefined : setSliceData
+    <div style={{height: height.toString() + 'px'}}>
+      <Sunburst
+        {...props}
+        height={isEmptyObject(sliceData) ? height : height*0.3}
+        width={isEmptyObject(sliceData) ? undefined : height*0.5}
+        datasets={datasets}
+        noLegend={!isEmptyObject(sliceData)}
+        setSliceData={
+          setCombinedFilters === undefined ? undefined : setSliceData
+        }
+      />
+      {!noMini && !isEmptyObject(sliceData) &&
+        <Sunburst
+          title={normaliseCaps(sliceData["clickKey"])}
+          datasets={subDatasets}
+          height={height*0.7}
+          legendPosition={legendPosition}
+          noLabel={noLabel}
+          setSliceData={
+            setCombinedFilters === undefined ? undefined : setSliceData
+          }
+        />
       }
-    />
+    </div>
   );
 }
 

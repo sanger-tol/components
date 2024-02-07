@@ -37,13 +37,15 @@ interface Props {
   title?: string,
   datasets: object,
   height: number,
+  width?: number,
   legendPosition?: string,
+  noLegend?: boolean,
   noLabel?: boolean,
   setSliceData?: any
 }
 
 function Sunburst(props: Props) {
-  const {title, height, setSliceData, legendPosition, noLabel} = props;
+  const {title, height, width, setSliceData, legendPosition, noLegend, noLabel} = props;
   const originDatasets = convertSunburstDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
 
@@ -142,6 +144,7 @@ function Sunburst(props: Props) {
         }
       },
       legend: {
+        display: noLegend ? false : true,
         position: legendPosition,
         onClick: null,
         labels: {
@@ -157,8 +160,12 @@ function Sunburst(props: Props) {
     onHover: handlePlaneHover
   };
 
+  // adding component sizing
+  const style = {height: height.toString() + 'px'}
+  if (width !== undefined) style["width"] = width.toString() + 'px'
+
   return (
-    <div style={{height: height.toString() + 'px'}}>
+    <div style={style}>
       <div className="tol-chart-buttons">
         {isPropDefined(setSliceData) &&
           <Button
