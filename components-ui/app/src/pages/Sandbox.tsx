@@ -20,7 +20,7 @@ import { useState } from 'react';
 
 
 function Sandbox() {
-  // initial state for global filters is temporary
+  // initial state for 'global filters' is temporary
   const [globalFilter, setGlobalFilter] = useState<object>({in_list: {}});
   const [combinedFilter, setCombinedFilter] = useState<object>({});
 
