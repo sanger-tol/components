@@ -94,13 +94,11 @@ tolcore:
   deployment:
     environment: "dev"
   db:
+    enabled: true
     fullname: "components-db"
-    user: ""
-    password: ""
-    name: ""
-    host: ""
-    port: "" # specify as a string
-    create_local: ""
+    user: "components"
+    password: "components"
+    name: "components"
   dbutils:
     image:
       repository: ""
