@@ -16,7 +16,8 @@ import { Home,
   Maps,
   Sandbox,
   Sunbursts,
-  Widgets } from "./pages";
+  Widgets,
+  UserId } from "./pages";
 // import { Sandbox } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page } from './tol-ui/src';
@@ -75,6 +76,12 @@ const detail: Page = {
   detailElement: <DetailInfo/>
 };
 
+const userId: Page = {
+  name: 'UserId',
+  authRequired: true,
+  uiElement: <UserId />
+};
+
 ReactDOM.render( // eslint-disable-line
   <TolApp
     brand="Components"
@@ -89,9 +96,9 @@ ReactDOM.render( // eslint-disable-line
       sandbox,
       sunbursts,
       widgets,
-      detail
+      detail,
+      userId
     ]}
-    login={ false }
   />,
   document.getElementById('root')
 );

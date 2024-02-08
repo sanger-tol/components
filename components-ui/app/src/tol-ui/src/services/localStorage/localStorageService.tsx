@@ -26,14 +26,17 @@ export function getUserFromLocalStorage() {
   return JSON.parse(userString);
 }
 
-export function tokenHasExpired(token: string) {
+export function tokenHasExpired() {
+  const token = getTokenFromLocalStorage();
+  if (!token) return true;
+
   try {
-    const token_decoded = JSON.parse(atob(token.split('.')[1]));
-    if (token_decoded.exp  * 1000 < Date.now()) {
-      return true;
-    }
+    const user = getUserFromLocalStorage();
+    const expires_at = Date.parse(user.expires_at);
+
+    return expires_at < Date.now();
+
   } catch (e) {
     return true;
   }
-  return false;
 }

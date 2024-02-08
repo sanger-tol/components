@@ -18,7 +18,7 @@ export function Callback() {
   const [tokenCode] = useState(useQuery().get('code') || undefined);
 
   useEffect(() => {
-    if (!token || tokenHasExpired(token)) {
+    if (!token || tokenHasExpired()) {
       const stateToken = {
         state,
         code: tokenCode,

@@ -131,18 +131,17 @@ tolcore:
       REACT_APP_PORTAL_URL: portal.url
       REACT_APP_PORTAL_API_PATH: portal.api_path
       REACT_APP_MATOMO_SITE_ID: ui.matomo_site_id
-  s3:
+  backup:
+    schedule: ""
     uri: ""
     access_key: ""
     secret_key: ""
     bucket: ""
     secure: ""
-  backup:
-    schedule: ""
   restore:
     prefix: ""
   portal:
     url: ""
     api_path: ""
-  alembic:
-    enabled: false  # disable alembic (no DB to migrate)
+  oidc:
+    enabled: true

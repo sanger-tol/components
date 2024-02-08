@@ -17,22 +17,22 @@ services:
 
   components-api:
     build:
-      context: components-api/.
-      dockerfile: Dockerfile.dev
+      context: ../
+      dockerfile: components/components-api/Dockerfile.dev
     image: components-api
-    # force amd64 on M1 MacOS
-    # platform: linux/amd64
     environment:
       - DB_URI
       - PARTNER_PORTAL_URL
       - API_PATH
       - API_TOKEN
-      - ELIXIR_CLIENT_ID
-      - ELIXIR_CLIENT_SECRET
-      - ELIXIR_REDIRECT_URI
-      - ELIXIR_JWK
+      - OIDC_CLIENT_ID
+      - OIDC_CLIENT_SECRET
+      - OIDC_REDIRECT_URI
+      - OIDC_AUTH_URL
+      - OIDC_USER_INFO_URL
+      - OIDC_TOKEN_URL
+      - OIDC_REVOKE_TOKEN_URL
       - ENVIRONMENT
-
     ports:
       - 8089:80
     volumes:
@@ -44,8 +44,6 @@ services:
       context: components-ui/.
       dockerfile: Dockerfile.dev
     image: components-ui
-    # force amd64 on M1 MacOS
-    platform: linux/amd64
     stdin_open: true
     environment:
       - NODE_ENV=development
@@ -61,16 +59,12 @@ services:
     
   components-api-test:
     image: components-api
-    command: dockerize
-        -wait tcp://components-db:5432 -timeout 10s
-        bash -c "pytest -v"
     environment:
       - DB_URI
       - PARTNER_PORTAL_URL
-      - ELIXIR_CLIENT_ID
-      - ELIXIR_CLIENT_SECRET
-      - ELIXIR_REDIRECT_URI
-      - ELIXIR_JWK
+      - OIDC_CLIENT_ID
+      - OIDC_CLIENT_SECRET
+      - OIDC_REDIRECT_URI
       - POSTGRES_USER
       - POSTGRES_PASSWORD
     depends_on:

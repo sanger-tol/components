@@ -9,6 +9,7 @@ import { withRouter, useHistory, RouteComponentProps } from "react-router-dom";
 import { Container, Navbar, Nav } from 'react-bootstrap';
 import { useAuth } from '../contexts/auth.context';
 import {
+  getTokenFromLocalStorage,
   setTokenToLocalStorage,
   setUserToLocalStorage,
   tokenHasExpired
@@ -82,7 +83,19 @@ function Navigation(props: NavProps) {
     return environment === "production";
   };
 
+  const revokeOicd = (token: string) => {
+    fetch(
+      env.API_PATH + '/auth/logout', {
+        body: JSON.stringify({token: token}),
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'}
+      }
+    );
+  };
+
   const logout = function() {
+    const token = getTokenFromLocalStorage();
+    if (token) revokeOicd(token);
     setTokenToLocalStorage('');
     setUserToLocalStorage(null);
     setToken('');
@@ -119,21 +132,21 @@ function Navigation(props: NavProps) {
                 const hidden = falseIfUndefined(page.hidden);
 
                 if (!hidden) {
-                  if(authRequired && adminOnly && token && !tokenHasExpired(token) && user && user.roles && user.roles.some(role => role.role === "admin")) {
+                  if(authRequired && adminOnly && token && !tokenHasExpired() && user && user.roles && user.roles.some(role => role.role === "admin")) {
                     return <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
-                  } else if(authRequired && !adminOnly && token && !tokenHasExpired(token)) {
+                  } else if(authRequired && !adminOnly && token && !tokenHasExpired()) {
                     return <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
                   } else if(!authRequired) {
                     return <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
                   }
                 }
               })}
-              {(!token || tokenHasExpired(token)) && props.login &&
+              {(!token || tokenHasExpired()) && props.login &&
                 <Nav.Link className="nav-link" key="Login">
                   <Login/>
                 </Nav.Link>
               }
-              {token && !tokenHasExpired(token) && props.login &&
+              {token && !tokenHasExpired() && props.login &&
                 <Nav.Link onClick={logout} className="nav-link" href="/" key="Logout">
                   Logout
                 </Nav.Link>

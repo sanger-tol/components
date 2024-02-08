@@ -28,7 +28,7 @@ function Login() {
     });
   }, []);
 
-  return (!token || tokenHasExpired(token)) ? (
+  return (!token || tokenHasExpired()) ? (
     LoginIcon(login)
   ) : (
     <Redirect to="/" />
