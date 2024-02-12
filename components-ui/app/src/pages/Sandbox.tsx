@@ -65,6 +65,7 @@ function Sandbox() {
           "bioscan_s_primary"
         ]}
         filter={globalFilter}
+        setCombinedFilters={setCombinedFilter}
         height={600}
         baseUrl={env.TOL_DATA}
         legendPosition="right"
@@ -80,8 +81,7 @@ function Sandbox() {
       breakDownBy="bioscan_o_primary"
       xAxis="sts_sample.sts_col_date"
       interval="M"
-      filter={globalFilter}
-      setCombinedFilters={setCombinedFilter}
+      filter={combinedFilter}
       type='date'
       height={500}
       baseUrl={env.TOL_DATA}

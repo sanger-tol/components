@@ -119,6 +119,7 @@ export function getChartColour(index: number, opacity?: number) {
     opacity = 1;
   }
   const rgb = colours[index];
+  if (rgb === undefined) return "rgba(0, 0, 0, 1)";
   return rgbToString(rgb, opacity);
 }
 
@@ -143,6 +144,41 @@ export function setClickedColourToSolid(chart: any, chartElement: any) {
   const originalColour = chart.data.datasets[datasetIndex].backgroundColor[index];
   chart.data.datasets[datasetIndex].backgroundColor[index] = updateOpacity(originalColour, "1");
   chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = updateOpacity(originalColour, "0.75");
+}
+
+export function setClickedSectionToSolid(chart: any, chartElement: any) {
+  const { datasetIndex, index } = chartElement[0];
+  // fill the clicked section
+  const originalColour = chart.data.datasets[datasetIndex].backgroundColor[index];
+  chart.data.datasets[datasetIndex].backgroundColor[index] = updateOpacity(originalColour, "1");
+  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = updateOpacity(originalColour, "0.75");
+
+  // only if section has childen
+  if (datasetIndex !== 0) {
+    let solidStart = 0;
+    let solidEnd = 0;
+    for (let depth = datasetIndex; depth > -1; depth--) {
+      // find at what start and end values the bars should be solid (first iteration)
+      let currentAddedTotal = 0;
+      // first iteration: find the start and end of the solid section using the data
+      if (depth === datasetIndex) {
+        for (let i = 0; i <= index; i++) {
+          // start doesn't need adding on first iteration
+          if (i !== 0) solidStart = solidEnd;
+          solidEnd += chart.data.datasets[datasetIndex].data[i];
+        }
+      // other iterations: make the childen colours solid
+      } else {
+        for (let i = 0; currentAddedTotal < solidEnd; i++) {
+          if (currentAddedTotal >= solidStart && currentAddedTotal < solidEnd) {
+            chart.data.datasets[depth].backgroundColor[i] = updateOpacity(originalColour, "1");
+            chart.data.datasets[depth].hoverBackgroundColor[i] = updateOpacity(originalColour, "0.75");
+          }
+          currentAddedTotal += chart.data.datasets[depth].data[i];
+        }
+      }
+    }
+  }
 }
 
 export function updateChartColours(chart: any, resetColours: boolean, fadedOpacity: number) {
@@ -521,6 +557,8 @@ function addPercentages(outputData: DoughnutDataCJS[]) {
 }
 
 export function generateSunburstLabels(chart: any, titleColour: any) {
+  // return empty if it doesn't exist
+  if (chart.data.datasets[0].data.length === 0) return;
   // parent is end of list due to chartJS oddities
   const parentIndex = chart.data.datasets.length-1;
   return chart.data.datasets[parentIndex].labels.map(
@@ -534,17 +572,6 @@ export function generateSunburstLabels(chart: any, titleColour: any) {
       };
     }
   );
-}
-
-function getMaxDataSizeByDepth(depth: number) {
-  switch(depth) {
-  case 0: // most inner ring (parent)
-    return 25;
-  case 1: // 2nd ring
-    return 10;
-  default: // 3rd ring onwards
-    return 5;
-  }
 }
 
 function initialiseOrIncrementDepth(depth: number|undefined) {
@@ -564,7 +591,7 @@ export function createAggsViaSliceBy(endpoint: string, sliceBy: string[], depth?
       "order": {
         "_count": "desc"
       },
-      "size": getMaxDataSizeByDepth(depth)
+      "size": 25
     }
   };
 
@@ -699,12 +726,16 @@ export function setSliceClickedData(chart: any, chartElement: any, setSliceData?
   const bucket = chart.data.datasets[datasetIndex].label;
   const value = chart.data.datasets[datasetIndex].data[index];
   const clickKey = chart.data.datasets[datasetIndex].labels[index];
+  // depth inner ring to outer
+  const depth = chart.data.datasets.length - datasetIndex;
 
   if (isPropDefined(setSliceData)) {
     setSliceData!({
-      "bucket": bucket,
-      "value": value,
-      "clickKey": clickKey
+      bucket: bucket,
+      value: value,
+      clickKey: clickKey,
+      datasetIndex: datasetIndex,
+      depth: depth
     });
   }
 }
@@ -716,4 +747,10 @@ export function generateFilterFromSunburstClick(sliceData: any) {
     return localFilters;
   }
   return {};
+}
+
+// note: had issues with .slice()
+export function removeSliceBySingles(sliceBy: string[], depth: number) {
+  for (let x = 0; x <= depth-1; x++) sliceBy.shift();
+  return sliceBy;
 }

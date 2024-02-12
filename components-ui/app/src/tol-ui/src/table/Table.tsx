@@ -230,7 +230,7 @@ function Table (props: Props) {
                 defaultSort,
                 baseUrl
               )}
-              disabled={totalSize < 1}
+              disabled={totalSize < 1 || totalSize >= 10000}
             >
               {downloading ? (
                 <Loader
