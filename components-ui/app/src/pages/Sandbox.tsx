@@ -11,8 +11,14 @@ import {
 
 function Sandbox() {
 
+  const title = (
+    <span>
+      <h2>Report Card</h2>
+    </span>
+  );
+
   return (
-    <ResponsiveWidget/>
+    <ResponsiveWidget components={[title]}/>
   );
 }
 
