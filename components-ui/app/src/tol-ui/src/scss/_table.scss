@@ -232,6 +232,11 @@
 }
 
 // tooltip
+.tooltip-contents {
+  overflow: auto;
+  max-height: 200px;
+}
+
 .formatted-tooltip {
   margin: 5px;
 }
@@ -270,7 +275,6 @@
 // pagination buttons on smaller devices
 @media (max-width: 992px) {
   .tol-table .config-button {
-    float: left !important;
     margin-bottom: 10px;
   }
 }

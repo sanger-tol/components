@@ -20,9 +20,10 @@ import { useState } from 'react';
 
 
 function Sandbox() {
-  // initial state for 'global filters' is temporary
-  const [globalFilter, setGlobalFilter] = useState<object>({in_list: {}});
-  const [combinedFilter, setCombinedFilter] = useState<object>({});
+  // initial state for 'global filters' filter1 is temporary
+  const [filter1, setFilter1] = useState<object>({in_list: {}});
+  const [filter2, setFilter2] = useState<object>({});
+  const [filter3, setFilter3] = useState<object>({});
 
   const filters = (
     <RemoteMultipleSelectFilters
@@ -41,8 +42,8 @@ function Sandbox() {
         "bioscan_f_primary": "Family",
         "bioscan_s_primary": "Scientific Name"
       }}
-      globalFilters={globalFilter}
-      setGlobalFilters={setGlobalFilter}
+      globalFilters={filter1}
+      setGlobalFilters={setFilter1}
       baseUrl={env.TOL_DATA}
     />
   );
@@ -64,8 +65,8 @@ function Sandbox() {
           "bioscan_g_primary",
           "bioscan_s_primary"
         ]}
-        filter={globalFilter}
-        setCombinedFilters={setCombinedFilter}
+        filter={filter1}
+        setCombinedFilters={setFilter2}
         height={600}
         baseUrl={env.TOL_DATA}
         legendPosition="right"
@@ -81,7 +82,8 @@ function Sandbox() {
       breakDownBy="bioscan_o_primary"
       xAxis="sts_sample.sts_col_date"
       interval="M"
-      filter={combinedFilter}
+      filter={filter2}
+      setCombinedFilters={setFilter3}
       type='date'
       height={500}
       baseUrl={env.TOL_DATA}
@@ -94,7 +96,7 @@ function Sandbox() {
       endpoint="barcoding_run_data"
       longitudeKey="sts_sample.sts_longitude.keyword"
       latitudeKey="sts_sample.sts_latitude.keyword"
-      filter={combinedFilter}
+      filter={filter3}
       height={500}
       baseUrl={env.TOL_DATA}
       attributeKeys="bioscan_s_primary"
@@ -105,7 +107,7 @@ function Sandbox() {
     <RemoteTable
       id="report-card-v3"
       endpoint="barcoding_run_data"
-      filter={combinedFilter}
+      filter={filter3}
       defaultSort="sts_sample.sts_col_date"
       height={500}
       baseUrl={env.TOL_DATA}
@@ -161,8 +163,7 @@ function Sandbox() {
       className="m-1"
       style={{float: 'right'}}
       onClick={()=>{
-        setGlobalFilter({in_list: {}});
-        setCombinedFilter({});
+        setFilter1({in_list: {}});
       }}
     >
       Reset Filters

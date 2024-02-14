@@ -17,6 +17,7 @@ import Sunburst from "./Sunburst";
 import Placeholder from "../general/Placeholder";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { isEmptyObject, normaliseCaps } from "../general/Utils";
+import { mergeFilters } from "../general/Filter";
 
 
 interface Props {
@@ -81,22 +82,19 @@ function RemoteSunburst(props: Props) {
 
   // combine local and globalFilters
   useEffectUpdate(() => {
-    async function combine() {
-      if (setCombinedFilters !== undefined) {
-        setCombinedFilters(Object.assign({}, filter, localFilter));
-      }
+    if (setCombinedFilters !== undefined) {
+      setCombinedFilters(
+        mergeFilters(filter, localFilter)
+      );
     }
-    combine();
   }, [sliceData]);
 
   // reset localFilters when globalFilters are updated
   useEffectUpdate(() => {
-    async function resetCombined() {
-      if (setCombinedFilters !== undefined) {
-        setCombinedFilters(Object.assign({}, filter));
-      }
+    if (setCombinedFilters !== undefined) {
+      setCombinedFilters(Object.assign({}, filter));
+      setMiniDatasets({});
     }
-    resetCombined();
   }, [filter]);
 
   // for mini sunburst updates

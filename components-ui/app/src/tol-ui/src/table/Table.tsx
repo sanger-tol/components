@@ -18,6 +18,7 @@ import { exportTableToSpreadsheet } from "./TableUtils";
 import Filter, { FilterType } from '../general/Filter';
 import { PopUpMessage } from '../general';
 import { FieldMeta } from './Field';
+import HoverOverlay from '../general/HoverOverlay';
 
 
 interface Props {
@@ -121,6 +122,38 @@ function Table (props: Props) {
   }
   */
 
+  const downloadBtn = (
+    <Button 
+      className="config-button"
+      variant="primary"
+      onClick={() => exportTableToSpreadsheet(
+        endpoint,
+        fieldMeta.data,
+        filter!,
+        sortColumn,
+        sortType,
+        setSuccess,
+        setError,
+        setDownloading,
+        defaultSort,
+        baseUrl
+      )}
+      disabled={totalSize < 1 || totalSize >= 10000}
+    >
+      {downloading ? (
+        <Loader
+          as="span"
+          animation="border"
+          size="sm"
+          role="status"
+          aria-hidden="true"
+        />
+      ) : (
+        <FontAwesomeIcon icon={faDownload} size="sm" />
+      )}
+    </Button>
+  );
+
   return (
     <div style={{height: height}} className='tol-table'>
       <PopUpMessage
@@ -215,35 +248,22 @@ function Table (props: Props) {
             </Button>
           }
           {!noDownload &&
-            <Button 
-              className="config-button"
-              variant="primary"
-              onClick={() => exportTableToSpreadsheet(
-                endpoint,
-                fieldMeta.data,
-                filter!,
-                sortColumn,
-                sortType,
-                setSuccess,
-                setError,
-                setDownloading,
-                defaultSort,
-                baseUrl
-              )}
-              disabled={totalSize < 1 || totalSize >= 10000}
-            >
-              {downloading ? (
-                <Loader
-                  as="span"
-                  animation="border"
-                  size="sm"
-                  role="status"
-                  aria-hidden="true"
-                />
-              ) : (
-                <FontAwesomeIcon icon={faDownload} size="sm" />
-              )}
-            </Button>
+            <>
+              {totalSize >= 10000 ? 
+                <div className="config-position-wrapper">
+                  <HoverOverlay
+                    contents="Only 10,000 results can currently be downloaded."
+                    followCursor
+                  >
+                    <div className="tooltip-wrapper">
+                      {downloadBtn}
+                    </div>
+                  </HoverOverlay>
+                </div>
+                :
+                <>{downloadBtn}</>
+              }
+            </>
           }
         </Col>
       </Row>

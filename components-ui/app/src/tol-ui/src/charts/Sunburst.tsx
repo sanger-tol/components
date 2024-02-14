@@ -61,10 +61,7 @@ function Sunburst(props: Props) {
 
     // only clickable if setBarData is defined
     if (isPropDefined(setSliceData)) {
-      if (!chartElement.length) {
-        // reset bar colours when clicking any other part of chart
-        updateChartColours(chart, true, 0.5);
-      } else {
+      if (chartElement.length) {
         const { datasetIndex, index } = chartElement[0];
         const clickKey = chart.data.datasets[datasetIndex].labels[index];
         if (clickKey !== "More" && clickKey !== "Unknown") {

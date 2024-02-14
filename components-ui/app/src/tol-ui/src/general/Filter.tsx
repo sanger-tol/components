@@ -7,7 +7,25 @@ SPDX-License-Identifier: MIT
 import FilterTextInput from "./FilterTextInput";
 import FilterDatePicker from "./FilterDatePicker";
 import FilterBooleanPicker from "./FilterBooleanPicker";
+import { isEmptyObject } from "./Utils";
 
+
+function mergeFilterType(output: object, filterType: string, target?: object, source?: object) {
+  const targetOut = (target !== undefined && filterType in target) ? target[filterType] : {};
+  const sourceOut = (source !== undefined && filterType in source) ? source[filterType] : {};
+  if (!isEmptyObject(targetOut) || !isEmptyObject(sourceOut)) {
+    output[filterType] = Object.assign(targetOut, sourceOut);
+  }
+}
+
+export function mergeFilters(target?: object, source?: object) {
+  const output = {};
+  mergeFilterType(output, 'exact', target, source);
+  mergeFilterType(output, 'contains', target, source);
+  mergeFilterType(output, 'range', target, source);
+  mergeFilterType(output, 'in_list', target, source);
+  return output;
+}
 
 export interface FromAndTo {
   from: string,

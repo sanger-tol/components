@@ -8,6 +8,7 @@ import RemoteAggBarChart from "./RemoteAggBarChart";
 import { generateDateAgg, generateDateFilterFromBarData, DateInterval } from "./ChartUtils";
 import { useState } from 'react';
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
+import { mergeFilters } from "../general/Filter";
 
 
 interface Props {
@@ -36,26 +37,22 @@ function RemoteBarChart(props: Props) {
 
   // these can be swapped for other barchart types (type prop will be used)
   const aggs = generateDateAgg(breakDownBy, xAxis, interval);
-  const localFilters = generateDateFilterFromBarData(barData, breakDownBy, xAxis, interval);
+  const localFilter = generateDateFilterFromBarData(barData, breakDownBy, xAxis, interval);
 
   // combine local and globalFilters
   useEffectUpdate(() => {
-    async function combine() {
-      if (setCombinedFilters !== undefined) {
-        setCombinedFilters(Object.assign({}, filter, localFilters));
-      }
+    if (setCombinedFilters !== undefined) {
+      setCombinedFilters(
+        mergeFilters(filter, localFilter)
+      );
     }
-    combine();
   }, [barData]);
 
   // reset localFilters when globalFilters are updated
   useEffectUpdate(() => {
-    async function resetCombined() {
-      if (setCombinedFilters !== undefined) {
-        setCombinedFilters(Object.assign({}, filter));
-      }
+    if (setCombinedFilters !== undefined) {
+      setCombinedFilters(Object.assign({}, filter));
     }
-    resetCombined();
   }, [filter]);
 
   return (
