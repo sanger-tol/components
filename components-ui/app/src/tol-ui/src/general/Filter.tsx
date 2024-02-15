@@ -24,6 +24,7 @@ export function mergeFilters(target?: object, source?: object) {
   mergeFilterType(output, 'contains', target, source);
   mergeFilterType(output, 'range', target, source);
   mergeFilterType(output, 'in_list', target, source);
+  mergeFilterType(output, '_and', target, source);
   return output;
 }
 
