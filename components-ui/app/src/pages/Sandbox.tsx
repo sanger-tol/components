@@ -22,8 +22,10 @@ import { useState } from 'react';
 function Sandbox() {
   const defaultFilter = {
     in_list: {},
-    and_: {"sts_sample.id": [{op: "exists"}]},
-    range: {"sts_sample.sts_col_date": {from: "2013-01-01T00:00:00", to: "3000-01-01T00:00:00"}}
+    and_: {
+      "sts_sample.id": [{op: "exists"}],
+      "sts_sample.sts_gal_name": [{op: "eq", negate: true, value: "UNIVERSITY OF LODZ"}]
+    }
   };
   // initial state for 'global filters' filter1 is temporary
   const [filter1, setFilter1] = useState<object>(defaultFilter);
