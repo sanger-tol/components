@@ -20,27 +20,32 @@ import { useState } from 'react';
 
 
 function Sandbox() {
+  const defaultFilter = {
+    in_list: {},
+    and_: {"sts_sample.id": [{op: "exists"}]},
+    range: {"sts_sample.sts_col_date": {from: "2013-01-01T00:00:00", to: "3000-01-01T00:00:00"}}
+  };
   // initial state for 'global filters' filter1 is temporary
-  const [filter1, setFilter1] = useState<object>({in_list: {}});
-  const [filter2, setFilter2] = useState<object>({});
-  const [filter3, setFilter3] = useState<object>({});
+  const [filter1, setFilter1] = useState<object>(defaultFilter);
+  const [filter2, setFilter2] = useState<object>(defaultFilter);
+  const [filter3, setFilter3] = useState<object>(defaultFilter);
 
   const filters = (
     <RemoteMultipleSelectFilters
       endpoint="barcoding_run_data"
       fields={[
-        "bioscan_o_primary",
-        "bioscan_f_primary",
-        "bioscan_g_primary",
-        "bioscan_s_primary",
+        "bioscan_o",
+        "bioscan_f",
+        "bioscan_g",
+        "bioscan_s",
         "sts_sample.sts_gal_name"
       ]}
       renamedFields={{
         "sts_sample.sts_gal_name": "Partner",
-        "bioscan_o_primary": "Order",
-        "bioscan_g_primary": "Genus",
-        "bioscan_f_primary": "Family",
-        "bioscan_s_primary": "Scientific Name"
+        "bioscan_o": "Order",
+        "bioscan_g": "Genus",
+        "bioscan_f": "Family",
+        "bioscan_s": "Scientific Name"
       }}
       globalFilters={filter1}
       setGlobalFilters={setFilter1}
@@ -60,10 +65,10 @@ function Sandbox() {
       <RemoteSunburst
         endpoint="barcoding_run_data"
         sliceBy={[
-          "bioscan_o_primary",
-          "bioscan_f_primary",
-          "bioscan_g_primary",
-          "bioscan_s_primary"
+          "bioscan_o",
+          "bioscan_f",
+          "bioscan_g",
+          "bioscan_s"
         ]}
         filter={filter1}
         setCombinedFilters={setFilter2}
@@ -79,7 +84,7 @@ function Sandbox() {
     <RemoteBarChart
       stacked
       endpoint="barcoding_run_data"
-      breakDownBy="bioscan_o_primary"
+      breakDownBy="bioscan_o"
       xAxis="sts_sample.sts_col_date"
       interval="M"
       filter={filter2}
@@ -99,61 +104,81 @@ function Sandbox() {
       filter={filter3}
       height={500}
       baseUrl={env.TOL_DATA}
-      attributeKeys="bioscan_s_primary"
+      attributeKeys="bioscan_s"
     />
   );
 
   const table = (
     <RemoteTable
-      id="report-card-v3"
+      id="report-card-v4"
       endpoint="barcoding_run_data"
       filter={filter3}
-      defaultSort="sts_sample.sts_col_date"
+      defaultSort="bioscan_specimen.id"
       height={500}
       baseUrl={env.TOL_DATA}
       fields={{
-        "sts_sample.sts_gal_name": {
-          rename: "Partner"
-        },
-        "bioscan_run_primary": {
-          rename: "Batch"
-        },
         "bioscan_specimen.id": {
-          rename: "Specimen ID"
+          rename: "Specimen ID",
+          cellRenderer: null
         },
-        "bioscan_read_count": {
-          rename: "Reads"
+        "sts_sample.id": {
+          rename: "Sample",
+          width: 150,
+          cellRenderer: null
         },
-        "bioscan_reads_in_contigs": {
-          rename: "Read in Contigs"
+        "bioscan_c": {
+          rename: "Class",
         },
-        "bioscan_contigs_produced": {
-          rename: "Contigs"
+        "bioscan_o": {
+          rename: "Order"
         },
-        "bioscan_otu_primary": {
-          rename: "Classification"
+        "bioscan_f": {
+          rename: "Family"
         },
-        "bioscan_rep_count_primary": {
-          rename: "Reads in BIN"
+        "bioscan_g": {
+          rename: "Genus"
         },
-        "bioscan_id_similarity_primary": {
-          rename: "% Match to BIN"
+        "bioscan_s": {
+          rename: "Scientific Name"
         },
-        "bioscan_pred_tax": {
-          rename: "Predicted Taxonomy"
+        "bioscan_id_similarity": {
+          rename: "Percent ID Similarity"
         },
-        "bioscan_o_primary": {
-          rename: "Primary Order (BOLD)"
+        "bioscan_rep_count": {
+          rename: "n_reads",
+          width: 150
         },
-        "bioscan_other_orders": {
-          rename: "Other Orders"
+        "sts_sample.sts_latitude": {
+          rename: "Latitude",
+          type: "str",
+          filterType: "str",
+          width: 150
         },
-        "bioscan_match": {
-          rename: "Taxonomy Mismatch"
+        "sts_sample.sts_longitude": {
+          rename: "Longitude",
+          type: "str",
+          filterType: "str",
+          width: 150
         },
-        "bioscan_conservation_status": {
-          rename: "Pantheon Conservation Status"
-        }
+        "sts_sample.sts_col_date": {
+          rename: "Collection Date",
+          cellRenderer: "datetime",
+          type: "datetime",
+          filterType: "datetime"
+        },
+        "sts_sample.sts_PREDICTED_ORDER_OR_GROUP": {
+          rename: "Predicted Order Or Group",
+          type: "str",
+          filterType: "str"
+        },
+        "bioscan_run": {
+          rename: "Run",
+          hidden: true
+        },
+        "bioscan_sequence": {
+          rename: "Sequence",
+          hidden: true
+        },
       }}
     />
   );
@@ -163,7 +188,9 @@ function Sandbox() {
       className="m-1"
       style={{float: 'right'}}
       onClick={()=>{
-        setFilter1({in_list: {}});
+        setFilter1(defaultFilter);
+        setFilter2(defaultFilter);
+        setFilter3(defaultFilter);
       }}
     >
       Reset Filters

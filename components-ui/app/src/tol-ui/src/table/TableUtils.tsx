@@ -7,10 +7,12 @@ SPDX-License-Identifier: MIT
 import { format } from 'date-fns';
 import CellTooltip from './CellTooltip';
 import { httpClient } from '../services/http/httpClient';
-import { addFieldDefaults,
+import {
+  addFieldDefaults,
   CellRenderer,
   FieldMeta,
-  FieldMetaData } from './Field';
+  FieldMetaData
+} from './Field';
 import { getConfig } from "../general/Utils";
 import Relationship from './Relationship';
 import { Status } from '../general';
@@ -18,6 +20,7 @@ import { Status } from '../general';
 
 export const fieldMetaVersion = "field-meta-v5";
 let idField = ''; // id or uid
+let hiddenFields = false;
 
 // types meta
 interface Attributes {
@@ -147,6 +150,8 @@ function createCellRenderer(cellRenderer: CellRenderer, key: string, value: any,
     return createBoolean(value);
   } else if (cellRenderer === 'image') {
     return createImage(value);
+  } else if (cellRenderer === null) {
+    return value;
   }
   
 
@@ -172,9 +177,9 @@ function formatAttributeData(row: object, fieldMetaData: object, rowOutput: obje
   const attributes = row["attributes"];
   for (const [key, value] of Object.entries(attributes)) {
     if (fieldMetaData[key] !== undefined) {
-      if (fieldMetaData[key].cellRenderer !== null) {
+      if (fieldMetaData[key].cellRenderer !== undefined) {
         rowOutput[key] = createCellRenderer(fieldMetaData[key].cellRenderer, key, value, row, baseUrl);
-      } else if (fieldMetaData[key].link !== null) {
+      } else if (fieldMetaData[key].link !== undefined) {
         rowOutput[key] = createLink(attributes[key], attributes[fieldMetaData[key].link]);
       } else {
         rowOutput[key] = value;
@@ -241,7 +246,7 @@ function typeToDefaultFilter(type: string) {
   case 'datetime':
     return 'range';
   default:
-    return null;
+    return undefined;
   }
 }
 
@@ -250,21 +255,21 @@ function addDefaultCellRenderer(key: string, type: string) {
   if (isRelationship(key) && key.split('.')[1] === 'id') {
     return 'relationship';
   }
-
   switch(type) {
   case 'datetime':
   case 'boolean':
     return type;
-  default:
-    return null;
   }
+  return undefined;
 }
 
 function structureFieldMetaUsingProp(endpoint: string, fieldMeta: FieldMeta, fields: FieldMetaData) {
   for (const [key, meta] of Object.entries(fields)) {
-    fieldMeta.order.active.push(key);
+    const isActive = (meta.hidden) ? 'inactive' : 'active';
+    fieldMeta.order[isActive].push(key);
     fieldMeta.data[key] = addFieldDefaults(meta, key, endpoint);
     fieldMeta.data[key].isAttribute = !isRelationship(key);
+    if (fieldMeta.data[key].hidden) hiddenFields = true;
   }
 }
 
@@ -300,7 +305,7 @@ function structureFieldMetaAuto(
     let isActive = hidden ? 'inactive' : 'active';
     const type = meta['python_type'];
     // auto add field that are not yet in fieldMeta
-    if (!(key in fieldMeta.data)) {
+    if (!hiddenFields && !(key in fieldMeta.data)) {
       // relationship attributes are hidden by default
       if (isRelationship(key) && key.split('.')[1] !== 'id') {
         hidden = true;
@@ -314,17 +319,20 @@ function structureFieldMetaAuto(
         endpoint
       );
     }
-    // add extra field info
-    fieldMeta.data[key].type = type;
-    fieldMeta.data[key].filterType = typeToDefaultFilter(type);
-    if (fieldMeta.data[key].cellRenderer === null) {
-      fieldMeta.data[key].cellRenderer = addDefaultCellRenderer(key, type);
+    // field needs to exist in fieldMeta at this point
+    if (key in fieldMeta.data) {
+      // add extra field info
+      fieldMeta.data[key].type = type;
+      fieldMeta.data[key].filterType = typeToDefaultFilter(type);
+      if (fieldMeta.data[key].cellRenderer === undefined) {
+        fieldMeta.data[key].cellRenderer = addDefaultCellRenderer(key, type);
+      }
     }
   }
   // ensure fields are easy to find
   fieldMeta.order.inactive.sort();
-  // id shoud be first in the order - only initial load
-  if (!idFieldDefinedPreviously) {
+  // id shoud be first in the order (initial load) and no hidden fields defined
+  if (!idFieldDefinedPreviously && !hiddenFields) {
     const isActive = fieldPropExists ? 'inactive' : 'active';
     fieldMeta.order[isActive].unshift(idField);
   }
