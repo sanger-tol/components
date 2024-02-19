@@ -10,7 +10,9 @@ import {
   ResponsiveWidget,
   RemoteBarChart,
   RemoteTable,
-  env
+  env,
+  Button,
+  Widgets
 } from '../tol-ui/src';
 
 
@@ -18,6 +20,7 @@ function Sandbox() {
 
   const [combinedFilters, setCombinedFilters] = useState<object>({});
   const [tableFilter, setTableFilter] = useState<object>({});
+  const [draggable, setDraggable] = useState(false)
   const [globalFilters, setGlobalFilters] = useState<object>({
     in_list: {}
   });
@@ -84,11 +87,60 @@ function Sandbox() {
     />
   );
 
+  const table2 = (
+    <RemoteTable
+      id="report-card-v3"
+      endpoint="barcoding_run_data"
+      filter={tableFilter}
+      defaultSort="sts_sample.sts_col_date"
+      height={200}
+      baseUrl={env.TOL_DATA}
+      fields={{
+        "sts_sample.sts_gal_name": {
+          rename: "Partner"
+        },
+        "bioscan_run_primary": {
+          rename: "Batch"
+        },
+        "bioscan_specimen.id": {
+          rename: "Specimen ID"
+        },
+        "bioscan_read_count": {
+          rename: "Reads"
+        },
+        "bioscan_reads_in_contigs": {
+          rename: "Read in Contigs"
+        },
+        "bioscan_contigs_produced": {
+          rename: "Contigs"
+        },
+        "bioscan_rep_count_primary": {
+          rename: "Reads in BIN"
+        },
+        "bioscan_id_similarity_primary": {
+          rename: "% Match to BIN"
+        },
+        "bioscan_pred_tax": {
+          rename: "Predicted Taxonomy"
+        }
+      }}
+    />
+  );
+
+  const DraggableButton = (
+    <Button
+      className="m-2"
+      style={{float: 'right'}}
+      onClick={()=>{
+        setDraggable(!draggable);
+      }}
+    >
+      Re-arrange
+    </Button>
+  );
+
+
   const components = [
-    {
-     'component': title,
-     'type': 'bar'
-    },
     {
      'component': chart,
      'type': 'bar'
@@ -97,10 +149,17 @@ function Sandbox() {
      'component': table,
      'type': 'table'
     },
+    {
+     'component': table2,
+     'type': 'table'
+    }
   ]
 
   return (
-    <ResponsiveWidget components={components}/>
+    <div>
+      <Widgets components={[DraggableButton]}/>
+      <ResponsiveWidget components={components} draggable={draggable}/>
+    </div>
   );
 }
 
