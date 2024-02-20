@@ -53,7 +53,7 @@ function Sandbox() {
       endpoint="barcoding_run_data"
       filter={tableFilter}
       defaultSort="sts_sample.sts_col_date"
-      height={500}
+      height={600}
       baseUrl={env.TOL_DATA}
       fields={{
         "sts_sample.sts_gal_name": {
@@ -143,15 +143,15 @@ function Sandbox() {
   const components = [
     {
      'component': chart,
-     'type': 'bar'
+     'width': 4
     },
     {
      'component': table,
-     'type': 'table'
+     'width': 4
     },
     {
      'component': table2,
-     'type': 'table'
+     'width': 4
     }
   ]
 
