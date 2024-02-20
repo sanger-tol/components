@@ -12,7 +12,9 @@ import {
   RemoteTable,
   env,
   Button,
-  Widgets
+  Widgets,
+  Row,
+  Col
 } from '../tol-ui/src';
 
 
@@ -25,12 +27,6 @@ function Sandbox() {
     in_list: {}
   });
 
-  const title = (
-    <span>
-      <h2>Report Card</h2>
-    </span>
-  );
-
   const chart = (
     <RemoteBarChart
       stacked
@@ -41,7 +37,7 @@ function Sandbox() {
       filter={globalFilters}
       setCombinedFilters={setCombinedFilters}
       type='date'
-      height={500}
+      height={600}
       baseUrl={ env.TOL_DATA }
       shortDate
     />
@@ -143,21 +139,34 @@ function Sandbox() {
   const components = [
     {
      'component': chart,
-     'width': 4
+     'width': 3
     },
     {
      'component': table,
-     'width': 4
+     'width': 1
     },
     {
      'component': table2,
-     'width': 4
+     'width': 1
     }
   ]
 
+  const title = (
+    <span>
+      <h2>Report Card</h2>
+    </span>
+  );
+
+  const intro = (
+    <Row>
+      <Col xs={12} sm={8}>{title}</Col>
+      <Col xs={12} sm={4}>{DraggableButton}</Col>
+    </Row>
+  );
+
   return (
     <div>
-      <Widgets components={[DraggableButton]}/>
+      <Widgets components={[intro]}/>
       <ResponsiveWidget components={components} draggable={draggable}/>
     </div>
   );

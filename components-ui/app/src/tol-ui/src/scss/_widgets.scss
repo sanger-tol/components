@@ -16,6 +16,11 @@
   }
 }
 
+.tol-grid-item {
+  @extend .tol-widget;
+  margin: 0px;
+}
+
 .tol-placeholder {
   background-color: var(--grey-subtle);
   position: relative !important;

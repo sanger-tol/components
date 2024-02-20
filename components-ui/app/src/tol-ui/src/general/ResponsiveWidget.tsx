@@ -15,7 +15,6 @@ interface Components {
 interface Props {
   components: Components[],
   items?: number
-  cols?: 4,
   rowheight?: 30
   draggable?: boolean
 }
@@ -26,6 +25,16 @@ function CalculateHeight(height){
     return (height/600) + 0.06
   }else{
     return 1.06
+  }
+}
+
+function calculateX(width: number, nextX: number): number[] {
+  if ((width+nextX)>4){
+    return [0, width]
+  }else if((width+nextX) === 4){
+    return [nextX, 0]
+  }else{
+    return [nextX, (width+nextX)];
   }
 }
 
@@ -40,13 +49,19 @@ function ResponsiveWidget(props:Props){
     }
   }
 
+  let pre = 0
   // Define layouts for different breakpoints
-  const layouts: Layout[] = components.map((component, index) => ({
-    i: `item${index + 1}`,
-    x: (index * 2) % 4,//CalculateXPosForWidget(index, prevX, setPrevX), // Adjust x position based on index
-    y: Math.floor(index / 4) * 2, // Adjust y position based on index
-    w: component.width, // Width of each component
-  }));
+  const layouts: Layout[] = components.map((component, index) => {
+    // xValues contains 2 values, the x cord for the item and the next starting position for the next item
+    const xValues = calculateX(component.width, pre);
+    pre = xValues[1]
+    return {
+      i: `item${index + 1}`,
+      x: xValues[0],
+      y: Math.floor(index / 4) * 2,
+      w: component.width,
+    };
+  });
 
   return (
     <div>
@@ -54,7 +69,7 @@ function ResponsiveWidget(props:Props){
       className="layout"
       layout={layouts}
       cols={4}
-      width={window.innerWidth - 52} // Need to adjust for the padding on widgets
+      width={window.innerWidth - 9} // Need to adjust for the padding on widgets
       isDraggable={draggable}
       rowHeight={600}
       margin={[36,36]}
@@ -64,7 +79,7 @@ function ResponsiveWidget(props:Props){
         const convertedH = CalculateHeight(componentToRender.props.height)
         layouts[index].h = convertedH
         return (
-          <div key={`item${index+1}`} className='tol-widget'>
+          <div key={`item${index+1}`} className='tol-grid-item'>
             {componentToRender}
           </div>
         )
