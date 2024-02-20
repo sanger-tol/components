@@ -24,7 +24,6 @@ function RemoteGet(props: Props) {
     })
       .then((res: any) => {
         setResponse(res);
-        console.log(res);
       }).catch((error: any) => {
         setResponse(null);
         console.error(error.message);

@@ -11,7 +11,8 @@ import {
   addFieldDefaults,
   CellRenderer,
   FieldMeta,
-  FieldMetaData
+  FieldMetaData,
+  initialiseFieldMeta
 } from './Field';
 import { getConfig } from "../general/Utils";
 import Relationship from './Relationship';
@@ -19,7 +20,8 @@ import { Status } from '../general';
 
 
 export const fieldMetaVersion = "field-meta-v5";
-let idField = ''; // id or uid
+let idField: string; // id or uid
+let idFieldDefinedPreviously = false;
 let hiddenFields = false;
 
 // types meta
@@ -78,19 +80,16 @@ function createRelationshipBox(key: string, data: any, baseUrl?: string, detail?
         relationData['attributes'] = {};
       }
       relationData['attributes']['id'] = relationData['id'];
-      // try & use attribute, if not use ID
-      let displayedAttribute = 'id';
       if (attribute in relationData['attributes']) {
-        displayedAttribute = attribute;
+        return (
+          <Relationship
+            attribute={attribute}
+            data={relationData}
+            detail={detail}
+            baseUrl={baseUrl}
+          />
+        );
       }
-      return (
-        <Relationship
-          attribute={displayedAttribute}
-          data={relationData}
-          detail={detail}
-          baseUrl={baseUrl}
-        />
-      );
     }
   }
   return "";
@@ -215,6 +214,8 @@ function addRelationshipFieldsToAttributes(row: object, fieldMetaData: FieldMeta
 }
 
 export function convertTableData(data: any[], fieldMeta: FieldMeta, baseUrl?: string) {
+  if (data[0] === undefined) return [];
+  
   const updatedData: any[] = [];
   data.forEach(row => {
     if ('relationships' in row) {
@@ -263,7 +264,7 @@ function addDefaultCellRenderer(key: string, type: string) {
   return undefined;
 }
 
-function structureFieldMetaUsingProp(endpoint: string, fieldMeta: FieldMeta, fields: FieldMetaData) {
+function structureFieldMetaViaProp(endpoint: string, fieldMeta: FieldMeta, fields: FieldMetaData) {
   for (const [key, meta] of Object.entries(fields)) {
     const isActive = (meta.hidden) ? 'inactive' : 'active';
     fieldMeta.order[isActive].push(key);
@@ -274,32 +275,34 @@ function structureFieldMetaUsingProp(endpoint: string, fieldMeta: FieldMeta, fie
 }
 
 function addRelationshipsAttributes(endpoint: string, typesMeta: TypesMeta) {
-  // checking if there is 'one' relations
-  if ("one" in typesMeta.relationships[endpoint]) {
-    for (const [relationship, objectType] of Object.entries(typesMeta.relationships[endpoint].one!)) {
-      typesMeta.attributes[endpoint][relationship + ".id"] = {
-        available_on_relationships: true,
-        python_type: "str"
-      };
-      // relations are mentioned multiple times due to different data origins
-      for (const [key, meta] of Object.entries(typesMeta.attributes[objectType])) {
-        // add the relations attribute and its type
-        if (meta["available_on_relationships"]) {
-          const relationKey = relationship + "." + key;
-          typesMeta.attributes[endpoint][relationKey] = meta;
+  // checking if current object and one relations exist
+  if (endpoint in typesMeta.relationships) {
+    if ("one" in typesMeta.relationships[endpoint]) {
+      for (const [relationship, objectType] of Object.entries(typesMeta.relationships[endpoint].one!)) {
+        typesMeta.attributes[endpoint][relationship + ".id"] = {
+          available_on_relationships: true,
+          python_type: "str"
+        };
+        // relations are mentioned multiple times due to different data origins
+        for (const [key, meta] of Object.entries(typesMeta.attributes[objectType])) {
+          // add the relations attribute and its type
+          if (meta["available_on_relationships"]) {
+            const relationKey = relationship + "." + key;
+            typesMeta.attributes[endpoint][relationKey] = meta;
+          }
         }
       }
     }
   }
 }
 
-function structureFieldMetaAuto(
+function addRemoteTypesAndExtraColumns(
   endpoint: string,
   fieldMeta: FieldMeta,
   typesMeta: TypesMeta,
   fieldPropExists: boolean
 ) {
-  const idFieldDefinedPreviously = idField in fieldMeta.data;
+  idFieldDefinedPreviously = idField in fieldMeta.data;
   for (const [key, meta] of Object.entries(typesMeta.attributes[endpoint])) {
     let hidden = fieldPropExists;
     let isActive = hidden ? 'inactive' : 'active';
@@ -319,45 +322,53 @@ function structureFieldMetaAuto(
         endpoint
       );
     }
-    // field needs to exist in fieldMeta at this point
-    if (key in fieldMeta.data) {
-      // add extra field info
-      fieldMeta.data[key].type = type;
-      fieldMeta.data[key].filterType = typeToDefaultFilter(type);
-      if (fieldMeta.data[key].cellRenderer === undefined) {
-        fieldMeta.data[key].cellRenderer = addDefaultCellRenderer(key, type);
-      }
+    // add type to all fields
+    if (key in fieldMeta.data) fieldMeta.data[key].type = type;
+  }
+}
+
+function addDefaultMeta(
+  fieldMeta: FieldMeta,
+  fieldPropExists: boolean
+) {
+  // add defaults
+  for (const [key, meta] of Object.entries(fieldMeta.data)) {
+    meta.filterType = typeToDefaultFilter(meta.type!);
+    if (fieldMeta.data[key].cellRenderer === undefined) {
+      fieldMeta.data[key].cellRenderer = addDefaultCellRenderer(key, meta.type!);
     }
   }
   // ensure fields are easy to find
   fieldMeta.order.inactive.sort();
   // id shoud be first in the order (initial load) and no hidden fields defined
-  if (!idFieldDefinedPreviously && !hiddenFields) {
+  if (idField !== undefined && !idFieldDefinedPreviously && !hiddenFields) {
     const isActive = fieldPropExists ? 'inactive' : 'active';
     fieldMeta.order[isActive].unshift(idField);
   }
 }
 
-export function structureFieldMeta(endpoint: string, fieldMeta: FieldMeta, typesMeta: TypesMeta, fields?: FieldMetaData) {
+export function structureFieldMeta(endpoint: string, typesMeta?: TypesMeta, fields?: FieldMetaData) {
+  const fieldMeta = initialiseFieldMeta();
   const fieldPropExists = fields !== undefined;
   if (fieldPropExists) {
-    structureFieldMetaUsingProp(endpoint, fieldMeta, fields);
+    structureFieldMetaViaProp(endpoint, fieldMeta, fields);
   }
-
   /*
   --- dealing with id/uid ---
   - id is seperate from attributes, so it needs to be added
   - only added if uid does not exist
   - value can be null, as only the key is used in this instance
   */
-  idField = ('uid' in typesMeta.attributes[endpoint]) ? 'uid' : 'id';
-  typesMeta.attributes[endpoint][idField] = {
-    available_on_relationships: true,
-    python_type: "str"
-  };
-
-  addRelationshipsAttributes(endpoint, typesMeta);
-  structureFieldMetaAuto(endpoint, fieldMeta, typesMeta, fieldPropExists);
+  if (typesMeta !== undefined) {
+    idField = ('uid' in typesMeta.attributes[endpoint]) ? 'uid' : 'id';
+    typesMeta.attributes[endpoint][idField] = {
+      available_on_relationships: true,
+      python_type: "str"
+    };
+    addRelationshipsAttributes(endpoint, typesMeta);
+    addRemoteTypesAndExtraColumns(endpoint, fieldMeta, typesMeta, fieldPropExists);
+  }
+  addDefaultMeta(fieldMeta, fieldPropExists);
   return fieldMeta;
 }
 

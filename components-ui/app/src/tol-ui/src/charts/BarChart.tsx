@@ -58,7 +58,7 @@ function BarChart(props: Props) {
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
   // Used to change the height of the y-axis when selecting a legend
-  const [maxHeight, setMaxHeight] = useState<number | null>(null); 
+  const [maxHeight, setMaxHeight] = useState<number|null>(null);
 
   // colours
   const titleColour = getCssVarValue("--bs-emphasis-color");
@@ -113,6 +113,7 @@ function BarChart(props: Props) {
         });
       }
       legend.chart.update();
+      setDatasets(legend.chart.data.datasets);
     }
   }
 
@@ -151,7 +152,6 @@ function BarChart(props: Props) {
       }
       chart.update();
     }
-    // workaround for when 'datasets' reset
     setDatasets(chart.data.datasets);
   }
 
@@ -243,6 +243,7 @@ function BarChart(props: Props) {
             variant="primary"
             onClick={() => {
               resetItemClickedData(setBarData);
+              setMaxHeight(null);
               setDatasets(originDatasets);
             }}
           >
