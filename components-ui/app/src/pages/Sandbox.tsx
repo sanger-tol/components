@@ -14,7 +14,8 @@ import {
   Button,
   Widgets,
   Row,
-  Col
+  Col,
+  RemoteSunburst
 } from '../tol-ui/src';
 
 
@@ -37,7 +38,49 @@ function Sandbox() {
       filter={globalFilters}
       setCombinedFilters={setCombinedFilters}
       type='date'
-      height={600}
+      height={150}
+      baseUrl={ env.TOL_DATA }
+      shortDate
+    />
+  );
+
+  const sunburst = (
+    <span>
+      <h6>
+        BIOSCAN Sunburst of Specimens:
+      </h6>
+      <p className="mb-3">
+        Subset to different taxonomic levels or Partners by using the menu above.
+        This will also subset the barchart, map, and table below.
+      </p>
+      <RemoteSunburst
+        endpoint="barcoding_run_data"
+        sliceBy={[
+          "bioscan_o_primary",
+          "bioscan_f_primary",
+          "bioscan_g_primary",
+          "bioscan_s_primary"
+        ]}
+        filter={combinedFilters}
+        height={600}
+        baseUrl={env.TOL_DATA}
+        legendPosition="right"
+        noLabel
+      />
+    </span>
+  );
+
+  const chart2 = (
+    <RemoteBarChart
+      stacked
+      endpoint="barcoding_run_data"
+      breakDownBy="bioscan_o_primary"
+      xAxis="sts_sample.sts_col_date"
+      interval="M"
+      filter={globalFilters}
+      setCombinedFilters={setCombinedFilters}
+      type='date'
+      height={150}
       baseUrl={ env.TOL_DATA }
       shortDate
     />
@@ -49,7 +92,7 @@ function Sandbox() {
       endpoint="barcoding_run_data"
       filter={tableFilter}
       defaultSort="sts_sample.sts_col_date"
-      height={600}
+      height={150}
       baseUrl={env.TOL_DATA}
       fields={{
         "sts_sample.sts_gal_name": {
@@ -89,7 +132,7 @@ function Sandbox() {
       endpoint="barcoding_run_data"
       filter={tableFilter}
       defaultSort="sts_sample.sts_col_date"
-      height={200}
+      height={150}
       baseUrl={env.TOL_DATA}
       fields={{
         "sts_sample.sts_gal_name": {
@@ -138,45 +181,33 @@ function Sandbox() {
 
   const components = [
     {
-      'component': table2,
-      'width': 4
-    },
-    {
-      'component': table,
-      'width': 4
-    },
-    {
-      'component': table2,
-      'width': 2
-    },
-    //{
-    //  'component': chart,
-    //  'width': 2
-    // },
-    {
-      'component': table2,
-      'width': 2
-    },
-    //{
-    // 'component': table2,
-    // 'width': 2
-    //},
-    {
       'component': chart,
-      'width': 4
-    },
-    {
-      'component': table2,
-      'width': 3
-    },
-    {
-      'component': table2,
-      'width': 3
+      'width': 1
     },
     {
       'component': table,
       'width': 1
-    }
+    },
+    {
+      'component': chart2,
+      'width': 1
+    },
+    {
+      'component': table2,
+      'width': 1
+    },
+    {
+      'component': sunburst,
+      'width': 4
+    },
+    //{
+    //  'component': table2,
+    //  'width': 2
+    //},
+    //{
+    //  'component': table,
+    //  'width': 4
+    //}
   ];
 
   const title = (

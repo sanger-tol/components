@@ -41,7 +41,6 @@ function ResponsiveWidget(props:Props){
   const { components, draggable } = props;
 
   let pre = 0;
-  // Define layouts for different breakpoints
   const layouts: Layout[] = components.map((component, index) => {
     // xValues contains 2 values, the x cord for the item and the next starting position for the next item (pre)
     const xValues = calculateX(component.width, pre);
@@ -49,12 +48,10 @@ function ResponsiveWidget(props:Props){
     return {
       i: `item${index + 1}`,
       x: xValues[0],
-      y: index,//Math.floor(index / 2) * 2,
+      y: index,
       w: component.width,
     };
   });
-
-  // For every 100 after the first, it adds 36 for padding (margin prop)
 
   return (
     <div>
@@ -70,7 +67,6 @@ function ResponsiveWidget(props:Props){
         {components.map((component, index)=> {
           const componentToRender = component.component;
           const convertedH = CalculateHeight(componentToRender.props.height);
-          console.log(convertedH);
           layouts[index].h = convertedH;
           return (
             <div key={`item${index+1}`} className='tol-grid-item'>
