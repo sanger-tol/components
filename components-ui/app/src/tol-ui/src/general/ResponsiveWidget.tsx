@@ -41,24 +41,16 @@ function calculateX(width: number, nextX: number): number[] {
 function ResponsiveWidget(props:Props){
   const { components, draggable } = props;
 
-  let totalHeight = 0;
-  const rowHeights: number[] = components.map(component => component.component.props.height);
-  for (let i=0;i<rowHeights.length;i++){
-    if (rowHeights[i]){
-      totalHeight = totalHeight + rowHeights[i]
-    }
-  }
-
   let pre = 0
   // Define layouts for different breakpoints
   const layouts: Layout[] = components.map((component, index) => {
-    // xValues contains 2 values, the x cord for the item and the next starting position for the next item
+    // xValues contains 2 values, the x cord for the item and the next starting position for the next item (pre)
     const xValues = calculateX(component.width, pre);
     pre = xValues[1]
     return {
       i: `item${index + 1}`,
       x: xValues[0],
-      y: Math.floor(index / 4) * 2,
+      y: Math.floor(index / 2) * 2,
       w: component.width,
     };
   });
