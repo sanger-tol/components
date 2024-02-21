@@ -47,10 +47,11 @@ function ResponsiveWidget(props:Props){
     // xValues contains 2 values, the x cord for the item and the next starting position for the next item (pre)
     const xValues = calculateX(component.width, pre);
     pre = xValues[1]
+    console.log(Math.floor(index / 2) * 2)
     return {
       i: `item${index + 1}`,
       x: xValues[0],
-      y: Math.floor(index / 2) * 2,
+      y: index,//Math.floor(index / 2) * 2,
       w: component.width,
     };
   });

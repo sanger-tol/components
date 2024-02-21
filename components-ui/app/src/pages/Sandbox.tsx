@@ -153,13 +153,33 @@ function Sandbox() {
      'component': table2,
      'width': 2
     },
-    {
-      'component': chart,
-      'width': 2
-     },
+    //{
+    //  'component': chart,
+    //  'width': 2
+    // },
     {
      'component': table2,
      'width': 2
+    },
+    //{
+    // 'component': table2,
+    // 'width': 2
+    //},
+    {
+     'component': chart,
+     'width': 4
+    },
+    {
+     'component': table2,
+     'width': 3
+    },
+    {
+      'component': table2,
+      'width': 3
+     },
+    {
+      'component': table,
+      'width': 1
     }
   ]
 
