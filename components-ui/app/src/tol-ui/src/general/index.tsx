@@ -24,4 +24,4 @@ export { default as Filter } from "./Filter";
 export { default as RemoteGet } from "./RemoteGet";
 export { default as ObjectDetail } from "./ObjectDetail";
 export { formatDate } from "./Utils";
-export { default as ResponsiveWidget } from "./ResponsiveWidget"
+export { default as ResponsiveWidget } from "./ResponsiveWidget";

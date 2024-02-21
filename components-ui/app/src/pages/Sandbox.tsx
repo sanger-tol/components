@@ -20,10 +20,10 @@ import {
 
 function Sandbox() {
 
-  const [combinedFilters, setCombinedFilters] = useState<object>({});
-  const [tableFilter, setTableFilter] = useState<object>({});
-  const [draggable, setDraggable] = useState(false)
-  const [globalFilters, setGlobalFilters] = useState<object>({
+  const [combinedFilters, setCombinedFilters] = useState<object>({}); // eslint-disable-line
+  const [tableFilter, setTableFilter] = useState<object>({});// eslint-disable-line
+  const [draggable, setDraggable] = useState(false);
+  const [globalFilters, setGlobalFilters] = useState<object>({// eslint-disable-line
     in_list: {}
   });
 
@@ -138,50 +138,46 @@ function Sandbox() {
 
   const components = [
     {
-     'component': chart,
-     'width': 3
+      'component': table2,
+      'width': 4
     },
     {
-     'component': table,
-     'width': 1
+      'component': table,
+      'width': 4
     },
     {
-     'component': table2,
-     'width': 4
-    },
-    {
-     'component': table2,
-     'width': 2
+      'component': table2,
+      'width': 2
     },
     //{
     //  'component': chart,
     //  'width': 2
     // },
     {
-     'component': table2,
-     'width': 2
+      'component': table2,
+      'width': 2
     },
     //{
     // 'component': table2,
     // 'width': 2
     //},
     {
-     'component': chart,
-     'width': 4
-    },
-    {
-     'component': table2,
-     'width': 3
+      'component': chart,
+      'width': 4
     },
     {
       'component': table2,
       'width': 3
-     },
+    },
+    {
+      'component': table2,
+      'width': 3
+    },
     {
       'component': table,
       'width': 1
     }
-  ]
+  ];
 
   const title = (
     <span>
