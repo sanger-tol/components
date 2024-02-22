@@ -42,6 +42,7 @@ function ResponsiveWidget(props:Props){
   const { components, draggable } = props;
 
   let pre = 0;
+  // @ts-ignore
   const layouts: Layout[] = components.map((component, index) => {
     // xValues contains 2 values, the x cord for the item and the next starting position for the next item (pre)
     const xValues = calculateX(component.width, pre);

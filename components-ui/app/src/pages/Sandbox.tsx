@@ -21,9 +21,11 @@ import {
 
 function Sandbox() {
 
-  const [combinedFilters, setCombinedFilters] = useState<object>({}); // eslint-disable-line
+  const [combinedFilters, setCombinedFilters] = useState<object>({});
+  // @ts-ignore
   const [tableFilter, setTableFilter] = useState<object>({});// eslint-disable-line
   const [draggable, setDraggable] = useState(false);
+  // @ts-ignore
   const [globalFilters, setGlobalFilters] = useState<object>({// eslint-disable-line
     in_list: {}
   });
