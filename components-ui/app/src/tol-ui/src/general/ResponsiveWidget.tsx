@@ -41,6 +41,11 @@ function calculateX(width: number, nextX: number): number[] {
 function ResponsiveWidget(props:Props){
   const { components, draggable } = props;
 
+  let draggableValue = draggable
+  if (draggable === undefined){
+    draggableValue = false
+  }
+
   let pre = 0;
   // @ts-ignore
   const layouts: Layout[] = components.map((component, index) => {
@@ -62,7 +67,7 @@ function ResponsiveWidget(props:Props){
         layout={layouts}
         cols={4}
         width={window.innerWidth - 9} // Need to adjust for the padding on widgets
-        isDraggable={draggable}
+        isDraggable={draggableValue}
         rowHeight={600}
         margin={[18,18]}
       >
