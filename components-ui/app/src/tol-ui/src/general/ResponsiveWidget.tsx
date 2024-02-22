@@ -41,9 +41,9 @@ function calculateX(width: number, nextX: number): number[] {
 function ResponsiveWidget(props:Props){
   const { components, draggable } = props;
 
-  let draggableValue = draggable
+  let draggableValue = draggable;
   if (draggable === undefined){
-    draggableValue = false
+    draggableValue = false;
   }
 
   let pre = 0;
