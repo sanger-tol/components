@@ -54,13 +54,25 @@ function Sandbox() {
     />
   );
 
+  const sunburst2 = (
+    <RemoteSunburst
+          title="BIOSCAN sunburst of specimens"
+          endpoint="barcoding_run_data"
+          sliceBy={["bioscan_o_primary","bioscan_f_primary", "bioscan_g_primary", "bioscan_s_primary"]}
+          height={564}
+          baseUrl={ env.TOL_DATA }
+          legendPosition="right"
+          noLabel
+        />
+  )
+
   const table = (
     <RemoteTable
       id="report-card-v3"
       endpoint="barcoding_run_data"
       filter={tableFilter}
       defaultSort="sts_sample.sts_col_date"
-      height={150}
+      height={114}
       baseUrl={env.TOL_DATA}
       fields={{
         "sts_sample.sts_gal_name": {
@@ -96,41 +108,10 @@ function Sandbox() {
 
   const table2 = (
     <RemoteTable
-      id="report-card-v3"
-      endpoint="barcoding_run_data"
-      filter={tableFilter}
-      defaultSort="sts_sample.sts_col_date"
-      height={150}
-      baseUrl={env.TOL_DATA}
-      fields={{
-        "sts_sample.sts_gal_name": {
-          rename: "Partner"
-        },
-        "bioscan_run_primary": {
-          rename: "Batch"
-        },
-        "bioscan_specimen.id": {
-          rename: "Specimen ID"
-        },
-        "bioscan_read_count": {
-          rename: "Reads"
-        },
-        "bioscan_reads_in_contigs": {
-          rename: "Read in Contigs"
-        },
-        "bioscan_contigs_produced": {
-          rename: "Contigs"
-        },
-        "bioscan_rep_count_primary": {
-          rename: "Reads in BIN"
-        },
-        "bioscan_id_similarity_primary": {
-          rename: "% Match to BIN"
-        },
-        "bioscan_pred_tax": {
-          rename: "Predicted Taxonomy"
-        }
-      }}
+      id="sample"
+      endpoint="sample"
+      height={ 150}
+      baseUrl={ env.TOL_DATA }
     />
   );
 
@@ -149,25 +130,49 @@ function Sandbox() {
 
   const components = [
     {
-      'component': sunburst,
+      'component': table,
+      'width': 3
+    },
+    {
+      'component': sunburst2,
       'width': 1
     },
     {
       'component': table,
-      'width': 1
+      'width': 3
     },
     {
-      'component': sunburst,
-      'width': 1
+      'component': table,
+      'width': 3
     },
     {
-      'component': table2,
-      'width': 1
+      'component': table,
+      'width': 3
     },
-    {
-      'component': chart,
-      'width': 4
-    },
+    //{
+    //  'component': table2,
+    //  'width': 2
+    //},
+    //{
+    //  'component': chart,
+    //  'width': 2
+    //},
+    //{
+    //  'component': table2,
+    //  'width': 2
+    //},
+    //{
+    //  'component': table2,
+    //  'width': 2
+    //},
+    //{
+    //  'component': table2,
+    //  'width': 2
+    //},
+    //{
+    //  'component': sunburst2,
+    //  'width': 4
+    //},
   ];
 
   const title = (

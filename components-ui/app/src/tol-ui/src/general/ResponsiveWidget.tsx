@@ -15,16 +15,16 @@ interface Components {
 interface Props {
   components: Components[],
   items?: number
-  rowheight?: 30
   draggable?: boolean
 }
 
 function CalculateHeight(height:number){
-  // Add 0.06 as it accounts for the padding added using the widget styling
+  // Add 0.08 as it accounts for the padding added using the widget styling
   if (height){
-    return (height/600) + 0.12;
+
+    return (height/600) + 0.08;
   }else{
-    return 1.06;
+    return 1.08;
   }
 }
 
@@ -54,8 +54,8 @@ function ResponsiveWidget(props:Props){
     pre = xValues[1];
     return {
       i: `item${index + 1}`,
-      x: xValues[0],
-      y: index,
+      x: xValues[0],//(index * 2) % 4,
+      y: Math.floor(index / 6), //(index * 2) + 1,
       w: component.width,
     };
   });
@@ -66,13 +66,15 @@ function ResponsiveWidget(props:Props){
         className="layout"
         layout={layouts}
         cols={4}
-        width={window.innerWidth - 9} // Need to adjust for the padding on widgets
+        width={window.innerWidth - 18} // Need to adjust for the padding on widgets
         isDraggable={draggableValue}
         rowHeight={600}
-        margin={[18,18]}
+        margin={[0,9]}
       >
         {components.map((component, index)=> {
           const componentToRender = component.component;
+          console.log(component.component.props.height)
+          //component.component.props.height = component.component.props.height - 36
           const convertedH = CalculateHeight(componentToRender.props.height);
           layouts[index].h = convertedH;
           return (
