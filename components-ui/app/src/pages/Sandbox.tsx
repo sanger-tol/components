@@ -44,47 +44,47 @@ function Sandbox() {
     />
   );
 
-  const sunburst = (
-    <span>
-      <h6>
-        BIOSCAN Sunburst of Specimens:
-      </h6>
-      <p className="mb-3">
-        Subset to different taxonomic levels or Partners by using the menu above.
-        This will also subset the barchart, map, and table below.
-      </p>
-      <RemoteSunburst
-        endpoint="barcoding_run_data"
-        sliceBy={[
-          "bioscan_o_primary",
-          "bioscan_f_primary",
-          "bioscan_g_primary",
-          "bioscan_s_primary"
-        ]}
-        filter={combinedFilters}
-        height={600}
-        baseUrl={env.TOL_DATA}
-        legendPosition="right"
-        noLabel
-      />
-    </span>
-  );
+  //const sunburst = (
+  //  <span>
+  //    <h6>
+  //      BIOSCAN Sunburst of Specimens:
+  //    </h6>
+  //    <p className="mb-3">
+  //      Subset to different taxonomic levels or Partners by using the menu above.
+  //      This will also subset the barchart, map, and table below.
+  //    </p>
+  //    <RemoteSunburst
+  //      endpoint="barcoding_run_data"
+  //      sliceBy={[
+  //        "bioscan_o_primary",
+  //        "bioscan_f_primary",
+  //        "bioscan_g_primary",
+  //        "bioscan_s_primary"
+  //      ]}
+  //      filter={combinedFilters}
+  //      height={600}
+  //      baseUrl={env.TOL_DATA}
+  //      legendPosition="right"
+  //      noLabel
+  //    />
+  //  </span>
+  //);
 
   const sunburst2 = (
-      <RemoteSunburst
-        endpoint="barcoding_run_data"
-        sliceBy={[
-          "bioscan_o_primary",
-          "bioscan_f_primary",
-          "bioscan_g_primary",
-          "bioscan_s_primary"
-        ]}
-        filter={combinedFilters}
-        height={600}
-        baseUrl={env.TOL_DATA}
-        legendPosition="right"
-        noLabel
-      />
+    <RemoteSunburst
+      endpoint="barcoding_run_data"
+      sliceBy={[
+        "bioscan_o_primary",
+        "bioscan_f_primary",
+        "bioscan_g_primary",
+        "bioscan_s_primary"
+      ]}
+      filter={combinedFilters}
+      height={600}
+      baseUrl={env.TOL_DATA}
+      legendPosition="right"
+      noLabel
+    />
   );
 
   const chart2 = (
