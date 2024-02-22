@@ -16,6 +16,7 @@ function CellTooltip(props: Props) {
   const { text, contents } = props;
   return (
     <HoverOverlay
+      followCursor
       contents={ contents }
     >
       <div className='tooltip-wrapper'>

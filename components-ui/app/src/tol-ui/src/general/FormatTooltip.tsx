@@ -33,7 +33,7 @@ interface Props {
 
 function FormatTooltip(props: Props) {
   return (
-    <div>
+    <div className='tooltip-contents'>
       {Object.entries(updateContents(props.contents)).map(([key, value]) => (
         <div className='formatted-tooltip' key={ key }>
           <span className='tooltip-key'>{ normaliseCaps(key) }:</span>

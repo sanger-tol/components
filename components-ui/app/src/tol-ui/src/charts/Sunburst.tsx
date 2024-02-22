@@ -17,7 +17,7 @@ import {
   convertSunburstDatasets,
   resetItemClickedData,
   updateChartColours,
-  setClickedColourToSolid,
+  setClickedSectionToSolid,
   setSliceClickedData,
   updateOpacity
 } from "./ChartUtils";
@@ -37,13 +37,16 @@ interface Props {
   title?: string,
   datasets: object,
   height: number,
+  width?: number,
   legendPosition?: string,
+  noLegend?: boolean,
   noLabel?: boolean,
+  noRefresh?: boolean,
   setSliceData?: any
 }
 
 function Sunburst(props: Props) {
-  const {title, height, setSliceData, legendPosition, noLabel} = props;
+  const {title, height, width, setSliceData, legendPosition, noLegend, noLabel, noRefresh} = props;
   const originDatasets = convertSunburstDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
 
@@ -58,18 +61,14 @@ function Sunburst(props: Props) {
 
     // only clickable if setBarData is defined
     if (isPropDefined(setSliceData)) {
-      if (!chartElement.length) {
-        // reset bar colours when clicking any other part of chart
-        updateChartColours(chart, true, 0.5);
-        resetItemClickedData(setSliceData);
-      } else {
+      if (chartElement.length) {
         const { datasetIndex, index } = chartElement[0];
         const clickKey = chart.data.datasets[datasetIndex].labels[index];
         if (clickKey !== "More" && clickKey !== "Unknown") {
           // fade non-clicked bars
           updateChartColours(chart, false, 0.25);
           // setting clicked bar as its original colour
-          setClickedColourToSolid(chart, chartElement);
+          setClickedSectionToSolid(chart, chartElement);
           setSliceClickedData(chart, chartElement, setSliceData);
         }
       }
@@ -142,6 +141,7 @@ function Sunburst(props: Props) {
         }
       },
       legend: {
+        display: noLegend ? false : true,
         position: legendPosition,
         onClick: null,
         labels: {
@@ -157,10 +157,14 @@ function Sunburst(props: Props) {
     onHover: handlePlaneHover
   };
 
+  // adding component sizing
+  const style = {height: height.toString() + 'px'};
+  if (width !== undefined) style["width"] = width.toString() + 'px';
+
   return (
-    <div style={{height: height.toString() + 'px'}}>
+    <div style={style}>
       <div className="tol-chart-buttons">
-        {isPropDefined(setSliceData) &&
+        {isPropDefined(setSliceData) && noRefresh === undefined &&
           <Button
             className="config-button"
             variant="primary"

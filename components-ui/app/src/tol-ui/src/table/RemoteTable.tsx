@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { httpClient } from '../services/http/httpClient';
-import { FieldMetaData, FieldMeta, initialiseFieldMeta } from "./Field";
+import { FieldMetaData, FieldMeta } from "./Field";
 import {
   createSort,
   getFieldMetaAttributeFromStorage,
@@ -29,6 +29,7 @@ interface Props {
   baseUrl?: string,
   fields?: FieldMetaData,
   height?: number,
+  basic?: boolean,
 
   filter?: object,
   defaultSort?: string,
@@ -48,6 +49,7 @@ function RemoteTable(props: Props) {
     endpoint,
     baseUrl,
     fields,
+    basic,
     filter,
     defaultSort,
     noFilter,
@@ -62,18 +64,13 @@ function RemoteTable(props: Props) {
   // debug clears all storage
   if (debug) localStorage.clear();
 
-  // retrieve saved field meta
-  const storedFieldMeta = getFieldMetaAttributeFromStorage(id, fields);
-
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta|null>(storedFieldMeta);
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta|null>(null);
 
   // pagination
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(
-    (storedFieldMeta !== null) ? storedFieldMeta.pageSize : 50
-  );
+  const [pageSize, setPageSize] = useState<number>(50);
   const [totalSize, setTotalSize] = useState<number>(0);
 
   // filtering/sorting
@@ -116,14 +113,13 @@ function RemoteTable(props: Props) {
 
   const modalOnSave = (fieldMeta: FieldMeta) => {
     setFieldMeta(fieldMeta);
-    // setting page then triggers renderTable in useEffect above
-    setPage(1);
-    if (page === 1) renderTable();
+    // setting localFilter then triggers renderTable in useEffect above
+    setLocalFilter((filter !== undefined) ? filter : {});
     setFieldMetaAttributeInStorage(id, fieldMeta.data, 'data');
     setFieldMetaAttributeInStorage(id, fieldMeta.order, 'order');
   };
 
-  const renderTable = async () => {
+  const renderTable = () => {
     setLoading(true);
 
     // generating query params
@@ -140,66 +136,53 @@ function RemoteTable(props: Props) {
       params['sort_by'] = defaultSort;
     }
 
-    // get attribute types and relationship links
-    const typesMeta = await getTypesMeta(baseUrl);
-
     // get data and update state
     httpClient().get('/' + endpoint, {
       params: params,
       baseURL: baseUrl
-    }).then((res: any) => {
+    }).then(async (res: any) => {
       // error if endpoint doesn't return 200
       if (res.status !== 200) throw Error();
-
       const apiData = res.data.data;
       const apiMeta = res.data.meta;
+
+      // get attribute types and relationship links
+      const typesMeta = (basic !== true && initialLoad) ? await getTypesMeta(baseUrl) : undefined;
 
       setPage(page);
       setTotalSize(apiMeta.total);
       setError('');
 
-      let initialFieldMeta: FieldMeta = initialiseFieldMeta();
-      // check if any data is returned
-      if (apiData[0] !== undefined) {
-        // only setting fieldMeta on first load
-        if (fieldMeta === null) {
-          initialFieldMeta = structureFieldMeta(
-            endpoint,
-            initialFieldMeta,
-            typesMeta,
-            fields
-          );
-          setFieldMetaAttributeInStorage(id, initialFieldMeta);
-        } else {
-          initialFieldMeta = getFieldMetaAttributeFromStorage(id, fields);
-        }
-
-        // setting fieldMeta only on first load
-        setFieldMeta(initialFieldMeta);
-      
-        // debug logs if prop defined
-        tableDebug(
-          apiData,
-          initialFieldMeta,
-          debug
+      // setting fieldMeta on first load
+      let savedFieldMeta: FieldMeta|null = getFieldMetaAttributeFromStorage(id, fields);
+      if (savedFieldMeta === null) {
+        savedFieldMeta = structureFieldMeta(
+          endpoint,
+          typesMeta,
+          fields
         );
-
-        // setting data using fieldMeta state
-        setPageSize(initialFieldMeta.pageSize);
-        setData(
-          convertTableData(
-            apiData,
-            initialFieldMeta,
-            baseUrl
-          )
-        );
-        setLoading(false);
-        setInitialLoad(false);
-      } else {
-        setData([]);
-        setLoading(false);
-        setInitialLoad(false);
+        setFieldMetaAttributeInStorage(id, savedFieldMeta);
       }
+      setFieldMeta(savedFieldMeta);
+      setPageSize(savedFieldMeta.pageSize);
+    
+      // debug logs if prop defined
+      tableDebug(
+        apiData,
+        savedFieldMeta,
+        debug
+      );
+
+      // setting data using fieldMeta
+      setData(
+        convertTableData(
+          apiData,
+          savedFieldMeta,
+          baseUrl
+        )
+      );
+      setLoading(false);
+      setInitialLoad(false);
     }).catch((error: any) => {
       setError("Please try again... " + error.message);
       setLoading(false);

@@ -20,11 +20,12 @@ export interface Props {
   children: JSX.Element,
   placement?: string,
   delay?: number,
-  onHover?: any
+  onHover?: any,
+  followCursor?: boolean
 }
 
 function HoverOverlay(props: Props) {
-  const {contents, children, delay, onHover} = props;
+  const {contents, children, delay, onHover, followCursor} = props;
   const placement = props.placement === undefined ? 'auto' : props.placement;
 
   return (
@@ -34,7 +35,8 @@ function HoverOverlay(props: Props) {
       controlId="control-id-hover-enterable"
       trigger="hover"
       speaker={renderTooltip(contents)}
-      enterable
+      enterable={followCursor ? false : true}
+      followCursor={followCursor ? true : false}
       onEntering={onHover !== undefined ? onHover : () => {}}
       delay={delay}
     >

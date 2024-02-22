@@ -16,19 +16,19 @@ interface CustomCellRenderer {
   propPointers?: ElementPropPointers
 }
 
-export type CellRenderer = CustomCellRenderer|'relationship'|'relationshipDetail'|'datetime'|'boolean'|'image'
+export type CellRenderer = CustomCellRenderer|'relationship'|'relationshipDetail'|'datetime'|'boolean'|'image'|null
 
 export interface Field {
-  cellRenderer?: CellRenderer|null,
+  cellRenderer?: CellRenderer,
   filter?: boolean,
-  filterType?: string|null,
+  filterType?: string,
   fixed?: boolean,
   hidden?: boolean,
-  isAttribute?: boolean|null,
-  link?: string|null,
-  rename?: string|null,
+  isAttribute?: boolean,
+  link?: string,
+  rename?: string,
   sort?: boolean,
-  type?: string|null,
+  type?: string,
   width?: number
 }
 
@@ -52,16 +52,16 @@ const fieldDefaults = (key: string, endpoint?: string) => {
   const rename = normaliseCaps(key, endpoint);
 
   return {
-    cellRenderer: null,
+    cellRenderer: undefined,
     filter: true,
-    filterType: null,
+    filterType: undefined,
     fixed: false,
     hidden: false,
-    isAttribute: null,
-    link: null,
+    isAttribute: undefined,
+    link: undefined,
     rename: rename,
     sort: true,
-    type: null,
+    type: undefined,
     width: 200
   };
 };

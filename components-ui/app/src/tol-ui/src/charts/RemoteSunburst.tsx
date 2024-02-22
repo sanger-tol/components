@@ -10,11 +10,14 @@ import {
   aggsToSunburstData,
   createAggsViaSliceBy,
   isChartDataEmpty,
-  generateFilterFromSunburstClick
+  generateFilterFromSunburstClick,
+  removeSliceBySingles
 } from "./ChartUtils";
 import Sunburst from "./Sunburst";
 import Placeholder from "../general/Placeholder";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
+import { isEmptyObject, normaliseCaps } from "../general/Utils";
+import { mergeFilters } from "../general/Filter";
 
 
 interface Props {
@@ -24,7 +27,8 @@ interface Props {
   height: number,
   baseUrl?: string,
   legendPosition?: string,
-  noLabel?: boolean
+  noLabel?: boolean,
+  noMini?: boolean,
 
   // 'filter' is usually referred to as globalFilters when using combinedFilters
   filter?: object,
@@ -32,13 +36,24 @@ interface Props {
 }
 
 function RemoteSunburst(props: Props) {
-  const { endpoint, sliceBy, baseUrl, height, filter, setCombinedFilters } = props;
+  const {
+    endpoint,
+    sliceBy,
+    baseUrl,
+    height,
+    legendPosition,
+    noLabel,
+    noMini,
+    filter, 
+    setCombinedFilters
+  } = props;
   const [datasets, setDatasets] = useState({});
+  const [miniDatasets, setMiniDatasets] = useState({});
   const [loading, setLoading] = useState(true);
+  const [miniLoading, setMiniLoading] = useState(true);
   const [warningMessage, setWarningMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [sliceData, setSliceData] = useState<object>({});
-
   const localFilter = generateFilterFromSunburstClick(sliceData);
 
   useEffect(() => {
@@ -67,23 +82,54 @@ function RemoteSunburst(props: Props) {
 
   // combine local and globalFilters
   useEffectUpdate(() => {
-    async function combine() {
-      if (setCombinedFilters !== undefined) {
-        setCombinedFilters(Object.assign({}, filter, localFilter));
-      }
+    if (setCombinedFilters !== undefined) {
+      setCombinedFilters(
+        mergeFilters(filter, localFilter)
+      );
     }
-    combine();
   }, [sliceData]);
 
   // reset localFilters when globalFilters are updated
   useEffectUpdate(() => {
-    async function resetCombined() {
-      if (setCombinedFilters !== undefined) {
-        setCombinedFilters(Object.assign({}, filter));
-      }
+    if (setCombinedFilters !== undefined) {
+      setCombinedFilters(Object.assign({}, filter));
+      setMiniDatasets({});
     }
-    resetCombined();
   }, [filter]);
+
+  // for mini sunburst updates
+  useEffectUpdate(() => {
+    // clear mini sunburst
+    if (isEmptyObject(sliceData)) {
+      setMiniDatasets({});
+    // go deeper into the sunburst if not outer ring
+    } else if (sliceData["datasetIndex"] !== 0) {
+      setMiniLoading(true);
+      const aggs = createAggsViaSliceBy(
+        endpoint,
+        removeSliceBySingles(sliceBy, sliceData["depth"])
+      );
+      httpClient().post('/' + endpoint + ":aggregations", aggs, {
+        baseURL: baseUrl,
+        params: {
+          filter: Object.assign({}, filter, localFilter)
+        }
+      })
+        .then((res: any) => {
+          const aggs = res.data.meta.aggregations;
+          setErrorMessage('');
+          setWarningMessage(isChartDataEmpty(aggs));
+
+          const data = aggsToSunburstData(aggs, sliceBy);
+          setMiniDatasets(data);
+          setMiniLoading(false);
+        })
+        .catch((error: any) => {
+          setErrorMessage(error.message);
+          console.error(error.message);
+        });
+    }
+  }, [sliceData]);
 
   if (errorMessage !== ''){
     return (
@@ -107,14 +153,37 @@ function RemoteSunburst(props: Props) {
     return <Placeholder pie height={height} />;
   }
 
+  const miniActive = noMini === true ? false : !isEmptyObject(miniDatasets);
+  const setter = (setCombinedFilters === undefined) ? undefined : setSliceData;
+
   return (
-    <Sunburst
-      {...props}
-      datasets={datasets}
-      setSliceData={
-        setCombinedFilters === undefined ? undefined : setSliceData
+    <div style={{height: height.toString() + 'px'}}>
+      <Sunburst
+        {...props}
+        height={miniActive ? height*0.25 : height}
+        width={miniActive ? height*0.5 : undefined}
+        datasets={datasets}
+        noLegend={miniActive}
+        setSliceData={setter}
+      />
+      {miniActive && 
+        <div>
+          {miniLoading ?
+            <Placeholder loader clear height={height*0.75} />
+            :
+            <Sunburst
+              title={normaliseCaps(sliceData["clickKey"])}
+              height={height*0.75}
+              datasets={miniDatasets}
+              legendPosition={legendPosition}
+              noLabel={noLabel}
+              noRefresh
+              setSliceData={setter}
+            />
+          }
+        </div>
       }
-    />
+    </div>
   );
 }
 

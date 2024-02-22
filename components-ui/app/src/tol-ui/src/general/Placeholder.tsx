@@ -42,6 +42,7 @@ function getPlaceholder(
   icon: JSX.Element,
   backing?: JSX.Element,
   opacity?: number,
+  clear?: boolean,
   squareCorners?: boolean
 ) {
   const style = {};
@@ -52,7 +53,7 @@ function getPlaceholder(
   if (backing === undefined) {
     return (
       <div style={{height: height.toString() + 'px'}}>
-        <div className="tol-placeholder" style={style}>
+        <div className={clear ? 'tol-placeholder-empty' : "tol-placeholder"} style={style}>
           <div className="tol-placeholder-icons">
             {icon}
           </div>
@@ -90,6 +91,7 @@ interface Props {
   empty?: boolean,
   loader?: boolean,
   opacity?: number,
+  clear?: boolean,
   squareCorners?: boolean,
   message?: string,
   warningMessage?: string,
@@ -105,6 +107,7 @@ function Placeholder(props: Props) {
     empty,
     loader,
     opacity,
+    clear,
     squareCorners,
     message,
     warningMessage,
@@ -132,6 +135,7 @@ function Placeholder(props: Props) {
     icon,
     backing,
     opacity,
+    clear,
     squareCorners
   );
 }

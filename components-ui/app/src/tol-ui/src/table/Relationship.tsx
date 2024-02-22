@@ -18,8 +18,7 @@ export interface Props {
 }
 
 function Relationship(props: Props) {
-  const { attribute, data, baseUrl } = props;
-  const [detail, setDetail] = useState(props.detail);
+  const { attribute, data, detail, baseUrl } = props;
   const [contents, setContents] = useState<JSX.Element|string>(
     <Loader size="sm" />
   );
@@ -42,7 +41,6 @@ function Relationship(props: Props) {
       );
     }).catch((error: any) => {
       setContents('Object cannot be found: ' + error.message);
-      setDetail(false);
     });
   };
 

@@ -8,7 +8,7 @@ import { RemoteTable, Widgets, env } from '../tol-ui/src';
 
 
 function Tables() {
-  const table = (
+  const table1 = (
     <RemoteTable
       id="run-data-table-v2"
       endpoint="run_data"
@@ -44,10 +44,33 @@ function Tables() {
     />
   );
 
+  const table2 = (
+    <RemoteTable
+      basic
+      id="species-basic-v1"
+      endpoint="species"
+      height={500}
+      fields={{
+        uid: {
+          type: "str"
+        },
+        sts_genus: {
+          type: "str"
+        }
+      }}
+      baseUrl={env.TOL_DATA}
+    />
+  );
+
   return (
     <div className="tables">
       <Widgets
-        components={[table]}
+        title='RemoteTable'
+        components={[table1]}
+      />
+      <Widgets
+        title='Basic RemoteTable'
+        components={[table2]}
       />
     </div>
   );

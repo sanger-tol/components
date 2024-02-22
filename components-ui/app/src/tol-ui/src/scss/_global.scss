@@ -71,9 +71,14 @@ a:hover {
 
 .config-button:disabled {
   background-color: var(--grey-emphasis) !important;
+  border-color: var(--grey-emphasis);
   color: var(--bs-body-bg) !important;
   fill: var(--bs-body-bg) !important;
   background-color: transparent;
+}
+
+.config-position-wrapper {
+  float: right;
 }
 
 /*
