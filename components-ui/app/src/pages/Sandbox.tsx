@@ -70,6 +70,23 @@ function Sandbox() {
     </span>
   );
 
+  const sunburst2 = (
+      <RemoteSunburst
+        endpoint="barcoding_run_data"
+        sliceBy={[
+          "bioscan_o_primary",
+          "bioscan_f_primary",
+          "bioscan_g_primary",
+          "bioscan_s_primary"
+        ]}
+        filter={combinedFilters}
+        height={600}
+        baseUrl={env.TOL_DATA}
+        legendPosition="right"
+        noLabel
+      />
+  );
+
   const chart2 = (
     <RemoteBarChart
       stacked
@@ -197,9 +214,13 @@ function Sandbox() {
       'width': 1
     },
     {
-      'component': sunburst,
+      'component': sunburst2,
       'width': 4
     },
+    //{
+    //  'component': sunburst,
+    //  'width': 4
+    //},
     //{
     //  'component': table2,
     //  'width': 2

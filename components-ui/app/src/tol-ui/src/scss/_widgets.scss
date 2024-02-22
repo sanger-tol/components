@@ -16,8 +16,8 @@
   }
 }
 
-.tol-grid-item {
-  @extend .tol-widget;
+.tol-grid-item .tol-widget {
+  //@extend .tol-widget;
   margin: 0px;
 }
 

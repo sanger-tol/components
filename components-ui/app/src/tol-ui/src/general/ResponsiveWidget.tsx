@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import  GridLayout,{ Layout } from 'react-grid-layout';
+import Widgets from './Widgets';
 
 interface Components {
   component: JSX.Element,
@@ -21,7 +22,7 @@ interface Props {
 function CalculateHeight(height:number){
   // Add 0.06 as it accounts for the padding added using the widget styling
   if (height){
-    return (height/600) + 0.06;
+    return (height/600) + 0.12;
   }else{
     return 1.06;
   }
@@ -62,7 +63,7 @@ function ResponsiveWidget(props:Props){
         width={window.innerWidth - 9} // Need to adjust for the padding on widgets
         isDraggable={draggable}
         rowHeight={600}
-        margin={[36,36]}
+        margin={[18,18]}
       >
         {components.map((component, index)=> {
           const componentToRender = component.component;
@@ -70,7 +71,7 @@ function ResponsiveWidget(props:Props){
           layouts[index].h = convertedH;
           return (
             <div key={`item${index+1}`} className='tol-grid-item'>
-              {componentToRender}
+              <Widgets components={[componentToRender]}/>
             </div>
           );
         })}
