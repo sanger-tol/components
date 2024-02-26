@@ -8,19 +8,20 @@ import HoverOverlay from '../general/HoverOverlay';
 
 
 interface Props {
-  text: string, 
-  contents: string
+  value: any,
+  contents: any,
+  followCursor?: boolean
 }
 
 function CellTooltip(props: Props) {
-  const { text, contents } = props;
+  const { value, contents } = props;
   return (
     <HoverOverlay
-      followCursor
+      {...props}
       contents={ contents }
     >
       <div className='tooltip-wrapper'>
-        { text }
+        { value }
       </div>
     </HoverOverlay>
   );

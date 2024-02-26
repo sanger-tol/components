@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect } from "react";
 import { Row, Col } from "../index";
 import { getCssVarValue, isPropDefined } from "./Utils";
+import themeListener from "../hooks/themeListener";
 
 
 interface Props {
@@ -28,15 +28,14 @@ const getHalfScreenWidgetSize = (componentsLength: number) => {
 function Widgets(props: Props) {
   const { title, description, components } = props;
 
-  // change the background colour behind the widgets
-  useEffect(() => {
+  themeListener(() => {
     try {
       const backing = document.getElementById("tol-app-background");
-      backing!.style.backgroundColor = getCssVarValue("--bs-body-widget-bg");
+      backing!.style.backgroundColor = getCssVarValue("--bs-body-darker");
     } catch {
       return;
     }
-  }, []);
+  });
 
   // fill div if only 1 widget
   const halfSize = getHalfScreenWidgetSize(components.length);

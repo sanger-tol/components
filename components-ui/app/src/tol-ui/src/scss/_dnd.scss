@@ -12,7 +12,7 @@
 }
 
 .tol-dnd-column {
-  background-color: var(--bs-body-widget-bg);
+  background-color: var(--bs-body-darker);
   margin: 10px;
   border-radius: 6px;
   padding: 1px;
@@ -48,7 +48,7 @@
   color: var(--bs-emphasis-color);
   overflow: auto;
   font-weight: bold;
-  border: 2px solid var(--bs-body-widget-bg);
+  border: 2px solid var(--bs-body-darker);
 
   .info {
     color: var(--grey-emphasis);

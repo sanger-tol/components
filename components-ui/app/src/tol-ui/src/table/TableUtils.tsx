@@ -17,6 +17,8 @@ import {
 import { getConfig } from "../general/Utils";
 import Relationship from './Relationship';
 import { Status } from '../general';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
 
 export const fieldMetaVersion = "field-meta-v5";
@@ -96,13 +98,13 @@ function createRelationshipBox(key: string, data: any, baseUrl?: string, detail?
 }
 
 function createDate(value: string) {
-  if (value === null || value === undefined) return "";
   const date = new Date(value);
   const dateText = format(date, 'dd/MM/yyyy');
   const dateContents = format(date, 'dd/MM/yyyy HH:mm');
   return (
     <CellTooltip
-      text={ dateText }
+      followCursor
+      value={ dateText }
       contents={ dateContents }
     />
   );
@@ -130,7 +132,6 @@ function createBoolean(value: boolean) {
 }
 
 function createImage(value: string) {
-  if (value === null || value === undefined) return "";
   return (
     <a href={ value } target="_blank" rel="noopener noreferrer">
       <img src={ value } alt={ value } width="30%"/>
@@ -138,7 +139,44 @@ function createImage(value: string) {
   );
 }
 
+function createFormattedList(list: any[]) {
+  return (
+    <div className='simple-tag-container'>
+      {list.map((value: any) => {
+        return (
+          <div className='simple-tag' key={value}>
+            {value}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function createExpander(value: string) {
+  const shortValue = (
+    <div className="copy-icon">
+      {value.substring(0, 32) + "..."}
+      <FontAwesomeIcon
+        icon={faCopy}
+        size="sm"
+        onClick={() => {
+          navigator.clipboard.writeText(value);
+        }}
+      />
+    </div>
+  );
+
+  return (
+    <CellTooltip
+      value={shortValue}
+      contents={value}
+    />
+  );
+}
+
 function createCellRenderer(cellRenderer: CellRenderer, key: string, value: any, data: object, baseUrl?: string) {
+  if (value === null || value === undefined) return "";
   if (cellRenderer === 'relationship') {
     return createRelationshipBox(key, data, baseUrl);
   } else if (cellRenderer === 'relationshipDetail') {
@@ -149,6 +187,10 @@ function createCellRenderer(cellRenderer: CellRenderer, key: string, value: any,
     return createBoolean(value);
   } else if (cellRenderer === 'image') {
     return createImage(value);
+  } else if (cellRenderer === 'list') {
+    return createFormattedList(value);
+  } else if (cellRenderer === 'expander') {
+    return createExpander(value);
   } else if (cellRenderer === null) {
     return value;
   }
@@ -172,10 +214,23 @@ export async function getTypesMeta(baseUrl?: string) {
   } as TypesMeta;
 }
 
+function setValueBasedCellRenderer(key: string, value: any, fieldMetaData: object) {
+  if (fieldMetaData[key].cellRenderer === undefined) {
+    if (value !== null && value !== undefined) {
+      if (Array.isArray(value)) {
+        fieldMetaData[key].cellRenderer = 'list';
+      } else if (value.length > 32) {
+        fieldMetaData[key].cellRenderer = 'expander';
+      }
+    }
+  }
+}
+
 function formatAttributeData(row: object, fieldMetaData: object, rowOutput: object, baseUrl?: string) {
   const attributes = row["attributes"];
   for (const [key, value] of Object.entries(attributes)) {
     if (fieldMetaData[key] !== undefined) {
+      setValueBasedCellRenderer(key, value, fieldMetaData);
       if (fieldMetaData[key].cellRenderer !== undefined) {
         rowOutput[key] = createCellRenderer(fieldMetaData[key].cellRenderer, key, value, row, baseUrl);
       } else if (fieldMetaData[key].link !== undefined) {

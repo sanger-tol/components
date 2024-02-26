@@ -25,7 +25,7 @@ $secondary: darken($primary, 12%) !default;
 $bs-body-bg: var(--bs-body-bg) !default;
 $bs-body-color: var(--bs-body-color) !default;
 $bs-emphasis-color: var(--bs-emphasis-color) !default;
-$bs-body-widget-bg: var(--bs-body-widget-bg) !default;
+$bs-body-darker: var(--bs-body-darker) !default;
 
 // HOVER
 $grey-subtle: var(--bs-secondary-bg);
@@ -48,12 +48,12 @@ $placeholder: var(--rs-text-secondary) !default;
   --placeholder: #{$placeholder};
 
   // light mode variant
-  --bs-body-widget-bg: var(--grey-subtle);
+  --bs-body-darker: var(--grey-subtle);
 }
 
 // dark mode variant
 @media (prefers-color-scheme: dark) {
   :root {
-    --bs-body-widget-bg: #121618;
+    --bs-body-darker: #121618;
   }
 }

@@ -16,7 +16,17 @@ interface CustomCellRenderer {
   propPointers?: ElementPropPointers
 }
 
-export type CellRenderer = CustomCellRenderer|'relationship'|'relationshipDetail'|'datetime'|'boolean'|'image'|null
+export type CellRenderer = (
+  CustomCellRenderer|
+  'relationship'|
+  'relationshipDetail'|
+  'datetime'|
+  'boolean'|
+  'image'|
+  'list'|
+  'expander'|
+  null
+)
 
 export interface Field {
   cellRenderer?: CellRenderer,

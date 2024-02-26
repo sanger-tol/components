@@ -29,6 +29,7 @@ import {
 import { isPropDefined, getCssVarValue } from "../general/Utils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUndo } from '@fortawesome/free-solid-svg-icons';
+import themeListener from "../hooks/themeListener";
 
 
 ChartJS.register(
@@ -61,9 +62,14 @@ function BarChart(props: Props) {
   const [maxHeight, setMaxHeight] = useState<number|null>(null);
 
   // colours
-  const titleColour = getCssVarValue("--bs-emphasis-color");
-  const labelsAndGridColour = getCssVarValue("--bs-body-color");
-  const gridLineColour = getCssVarValue("--bs-secondary-bg");
+  const [titleColour, setTitleColour] = useState('');
+  const [labelColour, setLabelColour] = useState('');
+  const [gridColour, setGridColour] = useState('');
+  themeListener(() => {
+    setTitleColour(getCssVarValue("--bs-emphasis-color"));
+    setLabelColour(getCssVarValue("--bs-body-color"));
+    setGridColour(getCssVarValue("--bs-secondary-bg"));
+  });
 
   // functions for options
   function handleLegendClick(event: any, legendItem: any, legend: any) {
@@ -218,17 +224,17 @@ function BarChart(props: Props) {
           display: false
         },
         ticks: { // x labels
-          color: labelsAndGridColour
+          color: labelColour
         }
       },
       y: {
         stacked: stacked,
         max: maxHeight,
         grid: {
-          color: gridLineColour
+          color: gridColour
         },
         ticks: { // y labels
-          color: labelsAndGridColour
+          color: labelColour
         }
       },
     }

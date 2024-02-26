@@ -19,12 +19,14 @@ import {
   updateChartColours,
   setClickedSectionToSolid,
   setSliceClickedData,
+  setBorderColour,
   updateOpacity
 } from "./ChartUtils";
 import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/Utils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUndo } from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
+import themeListener from "../hooks/themeListener";
 
 
 ChartJS.register(
@@ -51,7 +53,19 @@ function Sunburst(props: Props) {
   const [datasets, setDatasets] = useState(originDatasets);
 
   // colours
-  const titleColour = getCssVarValue("--bs-emphasis-color");
+  const [titleColour, setTitleColour] = useState('');
+  themeListener(() => {
+    setTitleColour(getCssVarValue("--bs-emphasis-color"));
+    // border update doesn't trigger chartjs re-render
+    const savedDatasets = datasets;
+    setDatasets([{}]);
+    setDatasets(
+      setBorderColour(
+        savedDatasets,
+        getCssVarValue("--bs-body-bg")
+      )
+    );
+  });
 
   // @ts-ignore
   function handlePlaneClick(event: any, chartElement: any, chart: any, item: any) {

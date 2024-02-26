@@ -193,6 +193,13 @@ export function updateChartColours(chart: any, resetColours: boolean, fadedOpaci
   }
 }
 
+export function setBorderColour(datasets: any, borderColour: string) {
+  for (const data of datasets) {
+    data["borderColor"] = borderColour;
+  }
+  return datasets;
+}
+
 export function isChartDataEmpty(aggs: any) {
   const data = Object.values(aggs)[0]!["buckets"];
   if (data.length === 0) return "No data found";

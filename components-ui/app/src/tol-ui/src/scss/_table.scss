@@ -229,6 +229,35 @@
   .link-box.clickable {
     cursor: pointer;
   }
+
+  // list cellRenderer
+  .simple-tag {
+    background-color: var(--bs-body-darker);
+    color: var(--bs-emphasis-color);
+    border-radius: 6px;
+    padding: 4px 6px;
+    margin: 2px;
+    float: left;
+    display: table-cell;
+  }
+
+  .rs-table-cell-wrap,
+  .simple-tag-container {
+    display: table-cell;
+  }
+
+  // expander cellRenderer
+  .copy-icon {
+    svg {
+      margin: 0px 10px;
+      color: var(--grey-emphasis) !important;
+    }
+
+    svg:hover {
+      color: var(--primary) !important;
+      cursor: pointer;
+    }
+  }
 }
 
 // tooltip

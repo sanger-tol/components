@@ -178,6 +178,7 @@
 
   .rs-popover-content {
     overflow: auto;
+    overflow-wrap: break-word;
   }
 
   .rs-popover[class*=placement-left] > .rs-popover-arrow::after {
