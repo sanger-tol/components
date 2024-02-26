@@ -16,9 +16,11 @@
   }
 }
 
-.tol-grid-item .tol-widget {
-  //@extend .tol-widget;
+.tol-grid-item {
+  @extend .tol-widget;
   margin: 0px;
+  //margin-left: 18px;
+  //margin-right: 18px;
 }
 
 .tol-placeholder {

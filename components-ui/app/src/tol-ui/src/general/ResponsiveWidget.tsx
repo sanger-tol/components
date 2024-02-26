@@ -22,9 +22,9 @@ function CalculateHeight(height:number){
   // Add 0.08 as it accounts for the padding added using the widget styling
   if (height){
 
-    return (height/600) + 0.08;
+    return (height/600) + 0.06;
   }else{
-    return 1.08;
+    return 1.06;
   }
 }
 
@@ -69,7 +69,7 @@ function ResponsiveWidget(props:Props){
         width={window.innerWidth - 18} // Need to adjust for the padding on widgets
         isDraggable={draggableValue}
         rowHeight={600}
-        margin={[0,9]}
+        margin={[18,18]}
       >
         {components.map((component, index)=> {
           const componentToRender = component.component;
@@ -79,7 +79,7 @@ function ResponsiveWidget(props:Props){
           layouts[index].h = convertedH;
           return (
             <div key={`item${index+1}`} className='tol-grid-item'>
-              <Widgets components={[componentToRender]}/>
+              {componentToRender}
             </div>
           );
         })}

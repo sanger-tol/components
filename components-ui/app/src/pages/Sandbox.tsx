@@ -59,7 +59,7 @@ function Sandbox() {
           title="BIOSCAN sunburst of specimens"
           endpoint="barcoding_run_data"
           sliceBy={["bioscan_o_primary","bioscan_f_primary", "bioscan_g_primary", "bioscan_s_primary"]}
-          height={564}
+          height={600}
           baseUrl={ env.TOL_DATA }
           legendPosition="right"
           noLabel
