@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState, useEffect } from "react";
 import { withRouter, useHistory, RouteComponentProps } from "react-router-dom";
-import { Container, Navbar, Nav } from 'react-bootstrap';
+import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { useAuth } from '../contexts/auth.context';
 import {
   getTokenFromLocalStorage,
@@ -15,7 +15,7 @@ import {
   tokenHasExpired
 } from '../services/localStorage/localStorageService';
 import Login from './Login';
-import Page from "../models/Page";
+import Page from "../models/Nav";
 import { convertToPath, falseIfUndefined } from "./Utils";
 import { env } from '../variables/config';
 
@@ -124,6 +124,10 @@ function Navigation(props: NavProps) {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ml-auto">
+              <NavDropdown title="Dropdown">
+                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+              </NavDropdown>
               {props.pages.map(page => { // eslint-disable-next-line
                 const pageName = page.name
                 const path = convertToPath(pageName);
@@ -132,12 +136,13 @@ function Navigation(props: NavProps) {
                 const hidden = falseIfUndefined(page.hidden);
 
                 if (!hidden) {
-                  if(authRequired && adminOnly && token && !tokenHasExpired() && user && user.roles && user.roles.some(role => role.role === "admin")) {
-                    return <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
-                  } else if(authRequired && !adminOnly && token && !tokenHasExpired()) {
-                    return <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
-                  } else if(!authRequired) {
-                    return <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
+                  const navLink = <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
+                  if (authRequired && adminOnly && token && !tokenHasExpired() && user && user.roles && user.roles.some(role => role.role === "admin")) {
+                    return navLink;
+                  } else if (authRequired && !adminOnly && token && !tokenHasExpired()) {
+                    return navLink;
+                  } else if (!authRequired) {
+                    return navLink;
                   }
                 }
               })}

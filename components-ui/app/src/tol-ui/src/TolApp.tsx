@@ -15,15 +15,15 @@ import { getTokenFromLocalStorage,
   tokenHasExpired} from './services/localStorage/localStorageService';
 import { AuthProvider } from './contexts/auth.context';
 import Footer from './general/Footer';
-import Page from "./models/Page";
+import Page from "./models/Nav";
 import { convertToPath, falseIfUndefined, matomoAnalytics } from "./general/Utils";
 import { env } from './variables/config';
 
 
 export interface Props {
   brand: string | JSX.Element,
-  homePage: JSX.Element,
-  pages: Page[],
+  home: JSX.Element,
+  pages: (Dropdown|Page)[],
   login?: boolean
 }
 
