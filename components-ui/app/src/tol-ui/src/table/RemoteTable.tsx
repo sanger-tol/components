@@ -39,6 +39,7 @@ interface Props {
   noSorting?: boolean
   noConfigModal?: boolean,
   noDownload?: boolean,
+  noCheckbox?: boolean,
 
   debug?: boolean
 }
@@ -57,6 +58,7 @@ function RemoteTable(props: Props) {
     noSorting,
     noConfigModal,
     noDownload,
+    noCheckbox,
     debug
   } = props;
   const height = (props.height !== undefined) ? props.height : 600;
@@ -239,6 +241,7 @@ function RemoteTable(props: Props) {
       noSorting={noSorting}
       noConfigModal={noConfigModal}
       noDownload={noDownload}
+      noCheckbox={noCheckbox}
     />
   );
 }

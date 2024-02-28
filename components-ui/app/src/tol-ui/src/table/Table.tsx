@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from 'react';
 import { Button, Row, Col, Placeholder, Loader } from '../index';
-import { Table as RSTable, Pagination, SelectPicker } from "rsuite";
+import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import {
   addTotalText, 
   setFieldMetaAttributeInStorage
@@ -51,7 +51,8 @@ interface Props {
   noPagination?: boolean,
   noSorting?: boolean,
   noConfigModal?: boolean,
-  noDownload?: boolean
+  noDownload?: boolean,
+  noCheckbox?: boolean
 }
 
 function Table (props: Props) {
@@ -87,15 +88,22 @@ function Table (props: Props) {
     noPagination,
     noSorting,
     noConfigModal,
-    noDownload
+    noDownload,
+    noCheckbox
     /* eslint-enable */
   } = props;
 
+  console.log(data)
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [filterVisible, setFilterVisible] = useState(fieldMeta.filterVisibility);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [checkedKeys, setCheckedKeys] = useState([]);
+  const [disabled, setDisabled] = useState(false)
+  let checked = false;
+  let indeterminate = false;
+  console.log(checkedKeys)
 
   // show certain components as default
   const showAsDefault = (noComponent?: boolean) => {
@@ -108,6 +116,7 @@ function Table (props: Props) {
   noSorting = showAsDefault(noSorting);
   noConfigModal = showAsDefault(noConfigModal);
   noDownload = showAsDefault(noDownload);
+  noCheckbox = showAsDefault(noCheckbox);
 
   const toggleFilterVisibility = (visibility: boolean) => {
     setFilterVisible(visibility);
@@ -121,6 +130,35 @@ function Table (props: Props) {
     setFieldMetaAttributeInStorage(id, storedFieldMeta)
   }
   */
+
+  if (checkedKeys.length === data.length) {
+    checked = true;
+  } else if (checkedKeys.length === 0) {
+    checked = false;
+  } else if (checkedKeys.length > 0 && checkedKeys.length < data.length) {
+    indeterminate = true;
+  }
+
+  const handleCheckAll = (value, checked) => {
+    const keys = checked ? data.map(item => item.id) : [];
+    setCheckedKeys(keys);
+  };
+  const handleCheck = (value, checked) => {
+    const keys = checked ? [...checkedKeys, value] : checkedKeys.filter(item => item !== value);
+    setCheckedKeys(keys);
+  };
+
+  const CheckCell = ({ rowData, disabled, onChange, checkedKeys, dataKey, ...props }) => (
+    <Cell {...props} className='tol-checkbox'>
+        <Checkbox
+          value={rowData[dataKey]}
+          inline
+          disabled={disabled}
+          onChange={onChange}
+          checked={checkedKeys.some(item => item === rowData[dataKey])}
+        />
+    </Cell>
+  );
 
   const downloadBtn = (
     <Button 
@@ -168,6 +206,24 @@ function Table (props: Props) {
       />
       <Row>
         <Col md={12} lg={9}>
+        {!noCheckbox &&
+          <>
+            <Button 
+              className="tol-bulk-select"
+              variant="primary"
+              onClick={() => {
+                if (!checked){
+                  handleCheckAll([], true)
+                } else if (checked){
+                  handleCheckAll([], false)
+                }
+                setDisabled(!disabled)
+              }}
+            >
+              <FontAwesomeIcon icon={faSliders} size="sm" />
+            </Button>
+          </>
+          }
           {!noPagination &&
             <>
               <span className='tol-total'>
@@ -288,7 +344,21 @@ function Table (props: Props) {
               />
             )
           }
-        >
+        >{!noCheckbox &&
+          <Column>
+            <HeaderCell>
+              <Checkbox
+                inline
+                disabled={disabled}
+                checked={checked}
+                indeterminate={indeterminate}
+                onChange={handleCheckAll}
+                className='tol-header-checkbox'
+              />
+            </HeaderCell>
+            <CheckCell dataKey="id" checkedKeys={checkedKeys} disabled={disabled} onChange={handleCheck} />
+          </Column>
+          }
           {fieldMeta!.order.active.map((key: string) => {
             const field = fieldMeta.data[key];
             const sortable = noSorting ? false : field.sort;

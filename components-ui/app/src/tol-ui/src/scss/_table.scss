@@ -156,6 +156,14 @@
       }
     }
 
+    // bulk select button
+    .tol-bulk-select {
+      float: left;
+      margin-bottom: 10px;
+      margin-left: 4px;
+      margin-right: 12px;
+    }
+    
     // number of rows total
     .tol-total {
       float: left;
@@ -299,6 +307,10 @@
   svg {
     margin-left: 6px;
   }
+}
+
+.tol-table .tol-header-checkbox {
+  margin-bottom: 10px;
 }
 
 // pagination buttons on smaller devices

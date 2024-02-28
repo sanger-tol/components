@@ -55,6 +55,11 @@ a:hover {
   margin-left: 6px;
 }
 
+.tol-bulk-select {
+  @extend .config-button;
+  float: left;
+}
+
 .config-button:hover {
   border-color: var(--primary) !important;
   text-decoration: none;
