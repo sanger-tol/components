@@ -180,7 +180,7 @@ function Sunburst(props: Props) {
       <div className="tol-chart-buttons">
         {isPropDefined(setSliceData) && noRefresh === undefined &&
           <Button
-            className="config-button"
+            className="config-button-right"
             variant="primary"
             onClick={() => {
               resetItemClickedData(setSliceData);

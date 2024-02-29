@@ -154,7 +154,7 @@ function Table (props: Props) {
 
   const downloadBtn = (
     <Button 
-      className="config-button"
+      className="config-button-right"
       variant="primary"
       onClick={() => exportTableToSpreadsheet(
         endpoint,
@@ -201,7 +201,7 @@ function Table (props: Props) {
         {checkbox &&
           <>
             <Button 
-              className="tol-bulk-select"
+              className="config-button-left"
               variant="primary"
               onClick={() => {
                 if (!checked){
@@ -270,7 +270,7 @@ function Table (props: Props) {
         <Col md={12} lg={3}>
           {!noConfigModal &&
             <Button 
-              className="config-button"
+              className="config-button-right"
               variant="primary"
               onClick={ () => {
                 setOpen(true);
@@ -290,7 +290,7 @@ function Table (props: Props) {
           }
           {!noFilter &&
             <Button
-              className="config-button"
+              className="config-button-right"
               variant="primary"
               onClick={ () => toggleFilterVisibility(!filterVisible) }
             >
@@ -348,6 +348,7 @@ function Table (props: Props) {
                 indeterminate={indeterminate}
                 onChange={handleCheckAll}
                 className='tol-header-checkbox'
+                defaultChecked={disabled}
               />
             </HeaderCell>
             <CheckCell dataKey="id" checkedKeys={checkedKeys} disabled={disabled} onChange={handleCheck} />

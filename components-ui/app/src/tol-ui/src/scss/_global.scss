@@ -44,7 +44,6 @@ a:hover {
 
 // buttons
 .config-button {
-  float: right;
   color: var(--primary);
   fill: var(--primary);
   background-color: transparent;
@@ -52,12 +51,18 @@ a:hover {
   padding: 0;
   height: 30px;
   width: 30px;
-  margin-left: 6px;
 }
 
-.tol-bulk-select {
+.config-button-left {
   @extend .config-button;
   float: left;
+  margin-right: 6px;
+}
+
+.config-button-right {
+  @extend .config-button;
+  float: right;
+  margin-left: 6px;
 }
 
 .config-button:hover {

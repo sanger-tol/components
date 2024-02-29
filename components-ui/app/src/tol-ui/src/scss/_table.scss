@@ -303,7 +303,7 @@
 
 .tol-table .tol-header-checkbox {
   position: relative;
-  top: -7px;
+  top: -6px;
 }
 
 .rs-checkbox-checker {
@@ -314,6 +314,17 @@
   background-color: var(--primary);
   border-color: var(--primary);
 }
+
+//.rs-checkbox-disabled .rs-checkbox-wrapper .rs-checkbox-inner::before{
+//  background-color: red;
+//  opacity: 0.2;
+//  // un-do the not here
+//}
+
+//.rs-checkbox-disabled:not(.rs-checkbox-checked):not(.rs-checkbox-indeterminate) .rs-checkbox-wrapper .rs-checkbox-inner::before{
+//  @extend .rs-checkbox-disabled;
+//  background-color: aqua;
+//}
 
 // pagination buttons on smaller devices
 @media (max-width: 992px) {
