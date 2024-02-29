@@ -19,6 +19,7 @@ import Relationship from './Relationship';
 import { Status } from '../general';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import { Table as RSTable, Checkbox } from "rsuite";
 
 
 export const fieldMetaVersion = "field-meta-v5";
@@ -561,4 +562,20 @@ export function exportTableToSpreadsheet(
       setDownloading(false);
       setError("Download Failed: " + error.message);
     });
+}
+
+export function CheckCell({ rowData, disabled, onChange, checkedKeys, dataKey, ...props }){
+  const { Cell } = RSTable;
+  return(
+  <Cell {...props}>
+      <Checkbox
+        className='tol-checkbox'
+        value={rowData[dataKey]}
+        inline
+        disabled={disabled}
+        onChange={onChange}
+        checked={checkedKeys.some(item => item === rowData[dataKey])}
+      />
+  </Cell>
+  )
 }

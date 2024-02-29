@@ -155,14 +155,6 @@
         background-color: transparent !important;
       }
     }
-
-    // bulk select button
-    .tol-bulk-select {
-      float: left;
-      margin-bottom: 10px;
-      margin-left: 4px;
-      margin-right: 12px;
-    }
     
     // number of rows total
     .tol-total {
@@ -310,7 +302,17 @@
 }
 
 .tol-table .tol-header-checkbox {
-  margin-bottom: 10px;
+  position: relative;
+  top: -7px;
+}
+
+.rs-checkbox-checker {
+  left: -8px;
+}
+
+.rs-checkbox-checked .rs-checkbox-wrapper .rs-checkbox-inner::before {
+  background-color: var(--primary);
+  border-color: var(--primary);
 }
 
 // pagination buttons on smaller devices

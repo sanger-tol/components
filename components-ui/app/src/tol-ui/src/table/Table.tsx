@@ -9,10 +9,11 @@ import { Button, Row, Col, Placeholder, Loader } from '../index';
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import {
   addTotalText, 
-  setFieldMetaAttributeInStorage
+  setFieldMetaAttributeInStorage,
+  CheckCell
 } from './TableUtils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter, faSliders, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faSliders, faDownload, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import ConfigModal from './ConfigModal';
 import { exportTableToSpreadsheet } from "./TableUtils";
 import Filter, { FilterType } from '../general/Filter';
@@ -52,7 +53,7 @@ interface Props {
   noSorting?: boolean,
   noConfigModal?: boolean,
   noDownload?: boolean,
-  noCheckbox?: boolean
+  checkbox?: boolean
 }
 
 function Table (props: Props) {
@@ -89,11 +90,10 @@ function Table (props: Props) {
     noSorting,
     noConfigModal,
     noDownload,
-    noCheckbox
+    checkbox
     /* eslint-enable */
   } = props;
 
-  console.log(data)
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [filterVisible, setFilterVisible] = useState(fieldMeta.filterVisibility);
@@ -101,9 +101,10 @@ function Table (props: Props) {
   const [error, setError] = useState('');
   const [checkedKeys, setCheckedKeys] = useState([]);
   const [disabled, setDisabled] = useState(false)
+  const [editable, setEditable] = useState<[]|string>([])
   let checked = false;
   let indeterminate = false;
-  console.log(checkedKeys)
+  console.log(editable)
 
   // show certain components as default
   const showAsDefault = (noComponent?: boolean) => {
@@ -116,7 +117,7 @@ function Table (props: Props) {
   noSorting = showAsDefault(noSorting);
   noConfigModal = showAsDefault(noConfigModal);
   noDownload = showAsDefault(noDownload);
-  noCheckbox = showAsDefault(noCheckbox);
+  checkbox = showAsDefault(checkbox);
 
   const toggleFilterVisibility = (visibility: boolean) => {
     setFilterVisible(visibility);
@@ -131,6 +132,7 @@ function Table (props: Props) {
   }
   */
 
+
   if (checkedKeys.length === data.length) {
     checked = true;
   } else if (checkedKeys.length === 0) {
@@ -142,23 +144,13 @@ function Table (props: Props) {
   const handleCheckAll = (value, checked) => {
     const keys = checked ? data.map(item => item.id) : [];
     setCheckedKeys(keys);
+    setEditable(keys)
   };
   const handleCheck = (value, checked) => {
     const keys = checked ? [...checkedKeys, value] : checkedKeys.filter(item => item !== value);
     setCheckedKeys(keys);
+    setEditable(keys)
   };
-
-  const CheckCell = ({ rowData, disabled, onChange, checkedKeys, dataKey, ...props }) => (
-    <Cell {...props} className='tol-checkbox'>
-        <Checkbox
-          value={rowData[dataKey]}
-          inline
-          disabled={disabled}
-          onChange={onChange}
-          checked={checkedKeys.some(item => item === rowData[dataKey])}
-        />
-    </Cell>
-  );
 
   const downloadBtn = (
     <Button 
@@ -206,7 +198,7 @@ function Table (props: Props) {
       />
       <Row>
         <Col md={12} lg={9}>
-        {!noCheckbox &&
+        {checkbox &&
           <>
             <Button 
               className="tol-bulk-select"
@@ -214,13 +206,15 @@ function Table (props: Props) {
               onClick={() => {
                 if (!checked){
                   handleCheckAll([], true)
+                  setEditable('all')
                 } else if (checked){
                   handleCheckAll([], false)
+                  setEditable([])
                 }
                 setDisabled(!disabled)
               }}
             >
-              <FontAwesomeIcon icon={faSliders} size="sm" />
+              <FontAwesomeIcon icon={faPenToSquare} size="sm" />
             </Button>
           </>
           }
@@ -344,8 +338,8 @@ function Table (props: Props) {
               />
             )
           }
-        >{!noCheckbox &&
-          <Column>
+        >{checkbox &&
+          <Column width={60}>
             <HeaderCell>
               <Checkbox
                 inline

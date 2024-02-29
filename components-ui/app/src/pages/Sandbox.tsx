@@ -10,7 +10,7 @@ import { useState } from 'react';
 function Sandbox() {
 
   const table = (
-    <RemoteTable id='table' endpoint='species' baseUrl={env.TOL_DATA}/>
+    <RemoteTable id='table' endpoint='species' baseUrl={env.TOL_DATA} checkbox/>
   )
 
   return (
