@@ -205,12 +205,13 @@ function Table (props: Props) {
               variant="primary"
               onClick={() => {
                 if (!checked){
-                  handleCheckAll([], true)
+                  handleCheckAll([], false)
                   setEditable('all')
                 } else if (checked){
                   handleCheckAll([], false)
                   setEditable([])
                 }
+
                 setDisabled(!disabled)
               }}
             >
@@ -348,7 +349,6 @@ function Table (props: Props) {
                 indeterminate={indeterminate}
                 onChange={handleCheckAll}
                 className='tol-header-checkbox'
-                defaultChecked={disabled}
               />
             </HeaderCell>
             <CheckCell dataKey="id" checkedKeys={checkedKeys} disabled={disabled} onChange={handleCheck} />

@@ -573,7 +573,6 @@ export function CheckCell({ rowData, disabled, onChange, checkedKeys, dataKey, .
         value={rowData[dataKey]}
         inline
         disabled={disabled}
-        defaultChecked={disabled}
         onChange={onChange}
         checked={checkedKeys.some(item => item === rowData[dataKey])}
       />
