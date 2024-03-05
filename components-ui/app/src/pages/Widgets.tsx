@@ -4,12 +4,15 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Widgets,
+import {
+  Widgets as W,
   RemoteBarChart,
   RemoteSunburst,
   RemoteTable,
   RemoteBubbleMap,
-  env } from '../tol-ui/src';
+  env,
+  RemoteCount
+} from '../tol-ui/src';
 
 
 const chart = (
@@ -21,7 +24,6 @@ const chart = (
     xAxis="mlwh_run_complete"
     type="date"
     interval="M"
-    height={ 600 }
     baseUrl={ env.TOL_DATA }
   />
 );
@@ -31,16 +33,14 @@ const sunburst = (
     title="Order of remote..."
     endpoint="species"
     sliceBy={ ["sts_order_group"] }
-    height={ 600 }
     baseUrl={ env.TOL_DATA }
   />
 );
 
 const table = (
   <RemoteTable
-    id="sample"
-    endpoint="sample"
-    height={ 600 }
+    id="run_data_1"
+    endpoint="run_data"
     baseUrl={ env.TOL_DATA }
   />
 );
@@ -50,22 +50,74 @@ const map = (
     endpoint="sample"
     longitudeKey="sts_latitude"
     latitudeKey="sts_longitude"
-    height={ 600 }
     pageSize={ 10000 }
     baseUrl={ env.TOL_DATA }
   />
 );
 
-function Sandbox() {
+const count1 = (
+  <RemoteCount
+    title='Run Data'
+    endpoint='run_data'
+    baseUrl={ env.TOL_DATA }
+  />
+);
+
+const count2 = (
+  <RemoteCount
+    title='Species'
+    endpoint='species'
+    baseUrl={ env.TOL_DATA }
+  />
+);
+
+const components = [
+  {
+    component: <h2>Example data</h2>,
+    type: 'full'
+  },
+  {
+    component: count1,
+    type: 'sm'
+  },
+  {
+    component: count2,
+    type: 'sm'
+  },
+  {
+    component: count1,
+    type: 'sm'
+  },
+  {
+    component: count2,
+    type: 'sm'
+  },
+  {
+    component: chart,
+    type: 'md'
+  },
+  {
+    component: sunburst,
+    type: 'md'
+  },
+  {
+    component: map,
+    type: 'lg'
+  },
+  {
+    component: table,
+    type: 'xl'
+  }
+];
+
+function Widgets() {
   return (
-    <div className="sandbox">
-      <Widgets
-        title="Run Data"
-        description="Hello this a test desc..."
-        components={[chart, sunburst, table, map]}
+    <div className="widgets">
+      <W
+        components={components}
       />
     </div>
   );
 }
 
-export default Sandbox;
+export default Widgets;

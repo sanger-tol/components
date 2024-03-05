@@ -24,7 +24,7 @@ interface Props {
   endpoint: string,
   title?: string,
   sliceBy: string[],
-  height: number,
+  height?: any,
   baseUrl?: string,
   legendPosition?: string,
   noLabel?: boolean,
@@ -40,13 +40,13 @@ function RemoteSunburst(props: Props) {
     endpoint,
     sliceBy,
     baseUrl,
-    height,
     legendPosition,
     noLabel,
     noMini,
     filter, 
     setCombinedFilters
   } = props;
+  const height = (props.height !== undefined) ? props.height : "100%";
   const [datasets, setDatasets] = useState({});
   const [miniDatasets, setMiniDatasets] = useState({});
   const [loading, setLoading] = useState(true);
@@ -64,20 +64,18 @@ function RemoteSunburst(props: Props) {
       params: {
         filter: filter
       }
-    })
-      .then((res: any) => {
-        const aggs = res.data.meta.aggregations;
-        setErrorMessage('');
-        setWarningMessage(isChartDataEmpty(aggs));
+    }).then((res: any) => {
+      const aggs = res.data.meta.aggregations;
+      setErrorMessage('');
+      setWarningMessage(isChartDataEmpty(aggs));
 
-        const data = aggsToSunburstData(aggs, sliceBy);
-        setDatasets(data);
-        setLoading(false);
-      })
-      .catch((error: any) => {
-        setErrorMessage(error.message);
-        console.error(error.message);
-      });
+      const data = aggsToSunburstData(aggs, sliceBy);
+      setDatasets(data);
+      setLoading(false);
+    }).catch((error: any) => {
+      setErrorMessage(error.message);
+      console.error(error.message);
+    });
   }, [filter]);
 
   // combine local and globalFilters
@@ -157,7 +155,7 @@ function RemoteSunburst(props: Props) {
   const setter = (setCombinedFilters === undefined) ? undefined : setSliceData;
 
   return (
-    <div style={{height: height.toString() + 'px'}}>
+    <div style={{height: height}}>
       <Sunburst
         {...props}
         height={miniActive ? height*0.25 : height}

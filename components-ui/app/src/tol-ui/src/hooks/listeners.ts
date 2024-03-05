@@ -5,7 +5,7 @@
 import { useEffect } from "react"
 
 
-export default function themeListener(fn: Function) { // eslint-disable-line
+export function themeListener(fn: Function) { // eslint-disable-line
   useEffect(() => {
     fn()
   }, [])
@@ -13,4 +13,13 @@ export default function themeListener(fn: Function) { // eslint-disable-line
   .addEventListener('change', () => {
     return fn()
   })
+}
+
+export function windowSizeListener(fn: Function) { // eslint-disable-line
+  useEffect(() => {
+    fn()
+  }, [])
+  window.addEventListener('resize', () => {
+    return fn()
+  }, true)
 }

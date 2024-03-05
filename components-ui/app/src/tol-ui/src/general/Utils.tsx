@@ -131,3 +131,7 @@ export async function getConfig(endpoint: string, baseUrl?: string) {
     throw error;
   });
 }
+
+export function numberWithSpaces(num: number) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}

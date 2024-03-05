@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BubbleMap, CentreContents, RemoteBubbleMap, env } from "../tol-ui/src";
+import { BubbleMap, RemoteBubbleMap, Widgets, env } from "../tol-ui/src";
 
 
 function Maps() {
@@ -35,27 +35,47 @@ function Maps() {
 
   const mapObjects = createMapObjectsFromCoordinates(points);
 
+  const map = (
+    <BubbleMap markers={mapObjects} height={400}/>
+  );
+
+  const remoteMap = (h: any) => (
+    <RemoteBubbleMap
+      endpoint="sample"
+      longitudeKey="sts_latitude"
+      latitudeKey="sts_longitude"
+      baseUrl={env.TOL_DATA}
+      height={h}
+    />
+  );
+
+  const components = [
+    {
+      component: <h2>Bubble Map</h2>,
+      type: 'full'
+    },
+    {
+      component: map,
+      type: 'full'
+    },
+    {
+      component: <h2>Remote Bubble Map</h2>,
+      type: 'full'
+    },
+    {
+      component: remoteMap(400),
+      type: 'sm'
+    },
+    {
+      component: remoteMap("100%"),
+      type: 'lg'
+    },
+  ];
+
   return (
-    <CentreContents>
-      <h2>Bubble Map</h2>
-      <BubbleMap markers={mapObjects} height={400}/>
-      <h2 className="mt-5">Remote Bubble Map</h2>
-      <RemoteBubbleMap
-        endpoint="map_objs"
-        longitudeKey="ene_map_test_longitude"
-        latitudeKey="ene_map_test_latitude"
-        height={400}
-        baseUrl={ env.TOL_DATA }
-      />
-      <div style={{height: 15}} />
-      <RemoteBubbleMap
-        endpoint="sample"
-        longitudeKey="sts_latitude"
-        latitudeKey="sts_longitude"
-        height={400}
-        baseUrl={ env.TOL_DATA }
-      />
-    </CentreContents>
+    <Widgets
+      components={components}
+    />
   );
 }
 

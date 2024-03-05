@@ -29,7 +29,7 @@ import {
 import { isPropDefined, getCssVarValue } from "../general/Utils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUndo } from '@fortawesome/free-solid-svg-icons';
-import themeListener from "../hooks/themeListener";
+import { themeListener } from "../hooks/listeners";
 
 
 ChartJS.register(
@@ -46,12 +46,13 @@ interface Props {
   title?: string,
   labels: string[],
   datasets: any[],
-  height: number,
+  height?: any,
   setBarData?: any
 }
 
 function BarChart(props: Props) {
-  const { title, labels, height, setBarData } = props;
+  const { title, labels, setBarData } = props;
+  const height = (props.height !== undefined) ? props.height : "100%";
   const stacked = isPropDefined(props.stacked);
   const originDatasets = initialiseDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
@@ -87,7 +88,7 @@ function BarChart(props: Props) {
             dataset.order = -1;
             selectedBucket = dataset.id;
             const maxValue = Math.max(...dataset.data);
-            const maxValuePercentage = Math.round(maxValue + (maxValue*0.1));
+            const maxValuePercentage = Math.ceil(maxValue*1.1);
             setMaxHeight(maxValuePercentage);
           } else {
             dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '0.25');
@@ -241,7 +242,7 @@ function BarChart(props: Props) {
   };
 
   return (
-    <div style={{height: height.toString() + 'px'}}>
+    <div style={{height: height}}>
       <div className="tol-chart-buttons">
         {isPropDefined(setBarData) &&
           <Button

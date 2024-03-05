@@ -5,28 +5,21 @@ SPDX-License-Identifier: MIT
 */
 
 import { Row, Col } from "../index";
-import { getCssVarValue, isPropDefined } from "./Utils";
-import themeListener from "../hooks/themeListener";
+import { getCssVarValue } from "./Utils";
+import { themeListener } from "../hooks/listeners";
 
 
-interface Props {
-  title?: string,
-  description?: string,
-  components: JSX.Element[]
+interface Component {
+  component: JSX.Element,
+  type: string
 }
 
-// fill div if only 1 widget
-const getHalfScreenWidgetSize = (componentsLength: number) => {
-  switch(componentsLength) {
-  case 1:
-    return 12;
-  default:
-    return 6;
-  }
-};
+interface Props {
+  components: Component[]
+}
 
 function Widgets(props: Props) {
-  const { title, description, components } = props;
+  const { components } = props;
 
   themeListener(() => {
     try {
@@ -37,40 +30,71 @@ function Widgets(props: Props) {
     }
   });
 
-  // fill div if only 1 widget
-  const halfSize = getHalfScreenWidgetSize(components.length);
+  const getSm = (type: string) => {
+    switch(type) {
+    case 'sm':
+      return 6;
+    default:
+      return 12;
+    }
+  };
+
+  const getLg = (type: string) => {
+    switch(type) {
+    case 'sm':
+      return 3;
+    case 'md':
+      return 6;
+    default:
+      return 12;
+    }
+  };
+
+  const getHeight = (type: string) => {
+    switch(type) {
+    case 'sm':
+      return 150;
+    case 'md':
+      return 450;
+    case 'lg':
+      return 450;
+    case 'xl':
+      return 600;
+    }
+  };
+
+  const rowStyle = {
+    marginLeft: 0,
+    marginRight: 0,
+    paddingLeft: 12,
+    paddingRight: 12,
+    marginBottom: -16
+  };
+
+  const colStyle = {
+    paddingLeft: 0,
+    paddingRight: 0
+  };
 
   return (
-    <>
-      {isPropDefined(title) || isPropDefined(description) ? 
-        <Row style={{ marginLeft: 0, marginRight: 0, paddingLeft: 12, paddingRight: 12}}>
-          <Col style={{ paddingLeft: 0, paddingRight: 0 }}>
-            <div className="tol-widget">
-              <h2 className="widget-title">{title}</h2>
-              <p>{description}</p>
-            </div>
-          </Col>
-        </Row>
-        :
-        <></>
-      }
-      <Row style={{ marginLeft: 0, marginRight: 0, paddingLeft: 12, paddingRight: 12}}>
-        {components.map((component, index) => {
+    <div>
+      <Row style={rowStyle}>
+        {components.map((item, index) => {
           return (
             <Col
               key={`tol-widget-${index}`}
-              lg={12}
-              xl={halfSize}
-              style={{ paddingLeft: 0, paddingRight: 0 }}
+              sm={getSm(item.type)}
+              lg={getLg(item.type)}
+              style={colStyle}
             >
-              <div className="tol-widget">
-                {component}
+              <div className="tol-widget" style={{height: getHeight(item.type)}}>
+                {item.component}
               </div>
             </Col>
           );
         })}
       </Row>
-    </>
+    </div>
   );
 }
 

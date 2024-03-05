@@ -25,7 +25,7 @@ interface Props {
   id: string,
   data: any,
   fieldMeta: FieldMeta,
-  height: number,
+  height: any,
   loading: boolean,
 
   endpoint: string,

@@ -25,7 +25,7 @@ interface Props {
   setCombinedFilters?: Function, // eslint-disable-line
 
   // config
-  height: number,
+  height?: any,
   stacked?: boolean,
   baseUrl?: string
 }

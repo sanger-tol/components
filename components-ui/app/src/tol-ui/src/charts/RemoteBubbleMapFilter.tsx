@@ -16,7 +16,7 @@ interface Props {
   longitudeKey: string,
   latitudeKey: string,
   attributeKeys?: string,
-  height: number,
+  height: any,
   filterInputFields: string[]
 }
 

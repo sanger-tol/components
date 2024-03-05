@@ -49,8 +49,10 @@ function DetailInfo() {
     return (
       <div className='detail-info'>
         <Widgets
-          title={attributes['sts_scientific_name']}
-          components={[detail]}
+          components={[{
+            component: detail,
+            type: 'full'
+          }]}
         />
       </div>
     );

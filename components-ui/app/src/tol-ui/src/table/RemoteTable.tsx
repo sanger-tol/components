@@ -28,7 +28,7 @@ interface Props {
   endpoint: string,
   baseUrl?: string,
   fields?: FieldMetaData,
-  height?: number,
+  height?: any,
   basic?: boolean,
 
   filter?: object,
@@ -59,7 +59,7 @@ function RemoteTable(props: Props) {
     noDownload,
     debug
   } = props;
-  const height = (props.height !== undefined) ? props.height : 600;
+  const height = (props.height !== undefined) ? props.height : "100%";
 
   // debug clears all storage
   if (debug) localStorage.clear();
@@ -184,7 +184,7 @@ function RemoteTable(props: Props) {
       setLoading(false);
       setInitialLoad(false);
     }).catch((error: any) => {
-      setError("Please try again... " + error.message);
+      setError(error.message);
       setLoading(false);
       setInitialLoad(false);
       setData([]);

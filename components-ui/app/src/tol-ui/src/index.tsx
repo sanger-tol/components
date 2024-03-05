@@ -23,6 +23,7 @@ export {
   Filter,
   RemoteGet,
   ObjectDetail,
+  RemoteCount,
   formatDate
 } from "./general";
 

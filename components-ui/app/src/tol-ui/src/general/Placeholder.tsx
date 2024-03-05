@@ -38,7 +38,7 @@ function getPlaceholderIcon(
 }
 
 function getPlaceholder(
-  height: number,
+  height: any,
   icon: JSX.Element,
   backing?: JSX.Element,
   opacity?: number,
@@ -52,7 +52,7 @@ function getPlaceholder(
   // default placeholder
   if (backing === undefined) {
     return (
-      <div style={{height: height.toString() + 'px'}}>
+      <div style={{height: height}}>
         <div className={clear ? 'tol-placeholder-empty' : "tol-placeholder"} style={style}>
           <div className="tol-placeholder-icons">
             {icon}
@@ -66,7 +66,7 @@ function getPlaceholder(
   return (
     <div className="overlay-outer">
       <div className="overlay-top" style={{zIndex: 1002}}>
-        <div style={{height: height.toString() + 'px'}}>
+        <div style={{height: height}}>
           <div className="tol-placeholder-empty">
             <div className="tol-placeholder-icons">
               {icon}
@@ -75,7 +75,7 @@ function getPlaceholder(
         </div>
       </div>
       <div className="overlay-top" style={{zIndex: 1001}}>
-        <div style={{height: height.toString() + 'px'}}>
+        <div style={{height: height}}>
           <div className="tol-placeholder" style={style} />
         </div>
       </div>
@@ -97,7 +97,7 @@ interface Props {
   warningMessage?: string,
   errorMessage?: string,
   backing?: JSX.Element,
-  height: number
+  height?: any
 }
 
 function Placeholder(props: Props) {
@@ -112,12 +112,12 @@ function Placeholder(props: Props) {
     message,
     warningMessage,
     errorMessage,
-    backing,
-    height } = props;
+    backing } = props;
+  const height = (props.height !== undefined) ? props.height : "100%";
 
   // this temporarily fills a gap - used for on load
   if (empty) {
-    return <div style={{height: height.toString() + 'px'}}/>;
+    return <div style={{height: height}}/>;
   }
 
   const icon = getPlaceholderIcon(

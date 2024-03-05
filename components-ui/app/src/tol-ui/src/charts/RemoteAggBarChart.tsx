@@ -20,13 +20,14 @@ interface Props {
   filter?: object,
   title?: string,
   interval: DateInterval,
-  height: number,
+  height?: any,
   shortDate?: boolean,
   setBarData?: Function // eslint-disable-line
 }
 
 function RemoteAggBarChart(props: Props) {
-  const { endpoint, aggs, interval, filter, baseUrl, height, shortDate } = props;
+  const { endpoint, aggs, interval, filter, baseUrl, shortDate } = props;
+  const height = (props.height !== undefined) ? props.height : "100%";
   const [labels, setLabels] = useState([]);
   const [datasets, setDatasets] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -26,7 +26,7 @@ import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/Utils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUndo } from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
-import themeListener from "../hooks/themeListener";
+import { themeListener } from "../hooks/listeners";
 
 
 ChartJS.register(
@@ -38,7 +38,7 @@ ChartJS.register(
 interface Props {
   title?: string,
   datasets: object,
-  height: number,
+  height: any,
   width?: number,
   legendPosition?: string,
   noLegend?: boolean,
@@ -48,7 +48,8 @@ interface Props {
 }
 
 function Sunburst(props: Props) {
-  const {title, height, width, setSliceData, legendPosition, noLegend, noLabel, noRefresh} = props;
+  const {title, width, setSliceData, legendPosition, noLegend, noLabel, noRefresh} = props;
+  const height = (props.height !== undefined) ? props.height : "100%";
   const originDatasets = convertSunburstDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
 
@@ -172,7 +173,7 @@ function Sunburst(props: Props) {
   };
 
   // adding component sizing
-  const style = {height: height.toString() + 'px'};
+  const style = {height: height};
   if (width !== undefined) style["width"] = width.toString() + 'px';
 
   return (

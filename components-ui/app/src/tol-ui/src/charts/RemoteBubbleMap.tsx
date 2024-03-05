@@ -15,7 +15,7 @@ interface Props {
   longitudeKey: string,
   latitudeKey: string,
   attributeKeys?: string
-  height: number,
+  height?: any,
   pageSize?: number,
   filter?: object,
   baseUrl?: string
@@ -111,49 +111,67 @@ function createMapMarkers(
 }
 
 function RemoteBubbleMap(props: Props) {
-  const { endpoint, baseUrl, longitudeKey, latitudeKey, attributeKeys, filter, height } = props;
+  const { endpoint, baseUrl, longitudeKey, latitudeKey, attributeKeys, filter } = props;
+  const height = (props.height !== undefined) ? props.height : "100%";
   const [markers, setMarkers] = useState<object[]>([]);
   const [warningMessage, setWarningMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState(true);
-  const [totalMarkers, setTotalMarkers] = useState<number>(0);
+  const [count, setCount] = useState<number|undefined>(undefined);
 
   // providing a pageSize default
-  let pageSize = 2000;
+  let pageSize = 2500;
   if (props.pageSize !== undefined) {
     pageSize = props.pageSize;
   }
-
+  
   useEffect(() => {
     setLoading(true);
-    httpClient().get('/' + endpoint, {
-      baseURL: baseUrl, 
+    httpClient().get('/' + endpoint + ":count", {
+      baseURL: baseUrl,
       params: {
-        filter: filter,
-        page_size: pageSize
+        filter: filter
       }
-    })
-      .then((res: any) => {
-        setErrorMessage('');
-        setTotalMarkers(res.data.meta.total);
-        const data = res.data.data;
-        const markers = createMapMarkers(data, latitudeKey, longitudeKey, attributeKeys);
-        setMarkers(markers);
-        setWarningMessage(markers.length === 0 ? 'No Data Found' : '');
+    }).then((res: any) => {
+      if (res.data.meta.total <= pageSize) {
+        setCount(res.data.meta.total);
+        httpClient().get('/' + endpoint, {
+          baseURL: baseUrl, 
+          params: {
+            filter: filter,
+            page_size: pageSize
+          }
+        }).then((res: any) => {
+          const data = res.data.data;
+          const markers = createMapMarkers(data, latitudeKey, longitudeKey, attributeKeys);
+          setMarkers(markers);
+          setWarningMessage(markers.length === 0 ? 'No Data Found' : '');
+          setLoading(false);
+        }).catch((error: any) => {
+          throw error;
+        });
+      } else {
+        setMarkers([]);
+        setCount(undefined);
         setLoading(false);
-      })
-      .catch((error: any) => {
-        console.error(error.message);
-        setErrorMessage(error.message);
-      });
+      }
+    }).catch((error: any) => {
+      setMarkers([]);
+      setCount(undefined);
+      setLoading(false);
+      setErrorMessage(error.message);
+      console.error(error.message);
+    });
   }, [filter]);
 
-  const emptyMap = <BubbleMap {...props} markers={[]} />;
+  const map = <BubbleMap {...props} markers={markers} />;
   
   if (errorMessage !== ''){
     return (
       <Placeholder
         errorMessage={errorMessage}
+        opacity={0.8}
+        backing={map}
         height={height}
       />
     );
@@ -164,7 +182,7 @@ function RemoteBubbleMap(props: Props) {
       <Placeholder
         warningMessage={warningMessage}
         opacity={0.8}
-        backing={emptyMap}
+        backing={map}
         height={height}
       />
     );
@@ -175,18 +193,18 @@ function RemoteBubbleMap(props: Props) {
       <Placeholder
         loader
         opacity={0.8}
-        backing={emptyMap}
+        backing={map}
         height={height}
       />
     );
   }
 
-  if (totalMarkers >= pageSize) {
+  if (count === undefined) {
     return (
       <Placeholder
         message={'Please add additional filters to visualise map...'}
         opacity={0.8}
-        backing={emptyMap}
+        backing={map}
         height={height}
       />
     );

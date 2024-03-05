@@ -12,7 +12,6 @@ function Tables() {
     <RemoteTable
       id="run-data-table-v2"
       endpoint="run_data"
-      height={500}
       fields={{
         "mlwh_run_id": {
           rename: "Run ID"
@@ -62,15 +61,21 @@ function Tables() {
     />
   );
 
+  const components = [
+    {
+      component: table1,
+      type: 'lg'
+    },
+    {
+      component: table2,
+      type: 'full'
+    }
+  ];
+
   return (
-    <div className="tables">
+    <div>
       <Widgets
-        title='RemoteTable'
-        components={[table1]}
-      />
-      <Widgets
-        title='Basic RemoteTable'
-        components={[table2]}
+        components={components}
       />
     </div>
   );
