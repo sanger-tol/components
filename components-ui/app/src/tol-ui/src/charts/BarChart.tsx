@@ -86,8 +86,9 @@ function BarChart(props: Props) {
             setPrevLegendItemIndex(index);
             dataset.order = -1;
             selectedBucket = dataset.id;
+            // Adds 10%
             const maxValue = Math.max(...dataset.data);
-            const maxValuePercentage = Math.round(maxValue + (maxValue*0.1));
+            const maxValuePercentage = Math.round(maxValue*1.05);
             setMaxHeight(maxValuePercentage);
           } else {
             dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '0.25');
