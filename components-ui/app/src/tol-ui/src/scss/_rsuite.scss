@@ -96,6 +96,11 @@
     z-index: 1000;
   }
 
+  // dropdown
+  .rs-picker-menu {
+    border: 1px solid var(--grey-emphasis);
+  }
+
   .rs-picker-menu .rs-picker-search-bar .rs-picker-search-bar-input {
     border: 1px solid var(--grey-emphasis) !important;
   }

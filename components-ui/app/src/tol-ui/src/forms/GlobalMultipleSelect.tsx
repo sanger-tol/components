@@ -30,7 +30,8 @@ function setCheckedValues(globalFilters: any, setValue: any){
 
 const GlobalMultipleSelect = (props: Props) => {
   const [value, setValue] = useState<any[]>([]);
-  const {data, name, globalFilters, setGlobalFilters, display_name} = props;
+  const {name, globalFilters, setGlobalFilters, display_name} = props;
+  const data = props.data.sort();
 
   // resets the selected boxes if global filters is empty
   useEffect(() => {

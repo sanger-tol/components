@@ -18,6 +18,7 @@ import {
 } from '../tol-ui/src';
 import { useState } from 'react';
 
+
 function Sandbox() {
   const defaultFilter = {
     in_list: {},
@@ -72,10 +73,10 @@ function Sandbox() {
         ]}
         filter={filter1}
         setCombinedFilters={setFilter2}
-        height={600}
         baseUrl={env.TOL_DATA}
         legendPosition="right"
         noLabel
+        height={450}
       />
     </span>
   );
@@ -90,7 +91,6 @@ function Sandbox() {
       filter={filter2}
       setCombinedFilters={setFilter3}
       type='date'
-      height={500}
       baseUrl={env.TOL_DATA}
       shortDate
     />
@@ -102,7 +102,6 @@ function Sandbox() {
       longitudeKey="sts_sample.sts_longitude.keyword"
       latitudeKey="sts_sample.sts_latitude.keyword"
       filter={filter3}
-      height={500}
       baseUrl={env.TOL_DATA}
       attributeKeys="bioscan_s"
     />
@@ -114,7 +113,6 @@ function Sandbox() {
       endpoint="barcoding_run_data"
       filter={filter3}
       defaultSort="bioscan_specimen.id"
-      height={500}
       baseUrl={env.TOL_DATA}
       fields={{
         "bioscan_specimen.id": {
@@ -225,15 +223,15 @@ function Sandbox() {
     },
     {
       component: chart,
-      type: 'full'
+      type: 'lg'
     },
     {
       component: map,
-      type: 'full'
+      type: 'lg'
     },
     {
       component: table,
-      type: 'full'
+      type: 'lg'
     },
   ];
 
@@ -245,4 +243,5 @@ function Sandbox() {
     </div>
   );
 }
+
 export default Sandbox;
