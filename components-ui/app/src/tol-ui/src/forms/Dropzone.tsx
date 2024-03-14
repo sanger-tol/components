@@ -23,11 +23,12 @@ interface Message {
 export interface Props {
   endpoint: string,
   fileType: string,
-  generateMessages: (apiRes: any) => Message[]
+  generateMessages: (apiRes: any) => Message[],
+  setResponse?: Function // eslint-disable-line
 }
 
 function Dropzone(props: Props) {
-  const { endpoint, fileType, generateMessages } = props;
+  const { endpoint, fileType, generateMessages, setResponse } = props;
   const [fileList, setFileList] = useState<any[]>([]);
   const [validate, setValidate] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -55,6 +56,9 @@ function Dropzone(props: Props) {
       }
     })
       .then((res: any) => {
+        if (setResponse){
+          setResponse(res);
+        }
         setIsLoading(false);
         setHasLoaded(true);
         setMessages(generateMessages(res));
