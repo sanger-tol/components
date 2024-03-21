@@ -123,35 +123,33 @@ function Navigation(props: NavProps) {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ml-auto">
-              {props.pages.map(page => { // eslint-disable-next-line
-                const pageName = page.name
-                const path = convertToPath(pageName);
-                const authRequired = falseIfUndefined(page.authRequired);
-                const adminOnly = falseIfUndefined(page.adminOnly);
-                const hidden = falseIfUndefined(page.hidden);
+            {props.pages.map(page => { // eslint-disable-next-line
+              const pageName = page.name
+              const path = convertToPath(pageName);
+              const authRequired = falseIfUndefined(page.authRequired);
+              const adminOnly = falseIfUndefined(page.adminOnly);
+              const hidden = falseIfUndefined(page.hidden);
 
-                if (!hidden) {
-                  if(authRequired && adminOnly && token && !tokenHasExpired() && user && user.roles && user.roles.some(role => role.role === "admin")) {
-                    return <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
-                  } else if(authRequired && !adminOnly && token && !tokenHasExpired()) {
-                    return <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
-                  } else if(!authRequired) {
-                    return <Nav.Link className="nav-link" href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
-                  }
+              if (!hidden) {
+                if(authRequired && adminOnly && token && !tokenHasExpired() && user && user.roles && user.roles.some(role => role.role === "admin")) {
+                  return <Nav.Link href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
+                } else if(authRequired && !adminOnly && token && !tokenHasExpired()) {
+                  return <Nav.Link href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
+                } else if(!authRequired) {
+                  return <Nav.Link href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
                 }
-              })}
-              {(!token || tokenHasExpired()) && props.login &&
-                <Nav.Link className="nav-link" key="Login">
-                  <Login/>
-                </Nav.Link>
               }
-              {token && !tokenHasExpired() && props.login &&
-                <Nav.Link onClick={logout} className="nav-link" href="/" key="Logout">
-                  Logout
-                </Nav.Link>
-              }
-            </Nav>
+            })}
+            {(!token || tokenHasExpired()) && props.login &&
+              <Nav.Link className="nav-right" key="Login">
+                <Login/>
+              </Nav.Link>
+            }
+            {token && !tokenHasExpired() && props.login &&
+              <Nav.Link onClick={logout} className="nav-right" href="/" key="Logout">
+                Logout
+              </Nav.Link>
+            }
           </Navbar.Collapse>
         </Container>
       </Navbar>

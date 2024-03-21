@@ -101,7 +101,8 @@ interface Props {
 }
 
 function Placeholder(props: Props) {
-  const { bar,
+  const {
+    bar,
     pie,
     map,
     empty,
@@ -112,7 +113,8 @@ function Placeholder(props: Props) {
     message,
     warningMessage,
     errorMessage,
-    backing } = props;
+    backing
+  } = props;
   const height = (props.height !== undefined) ? props.height : "100%";
 
   // this temporarily fills a gap - used for on load

@@ -282,7 +282,7 @@ function Table (props: Props) {
             () => (
               <Placeholder
                 loader
-                height={height - 80}
+                height={height}
                 opacity={0.8}
                 squareCorners
               />
@@ -293,6 +293,7 @@ function Table (props: Props) {
             const field = fieldMeta.data[key];
             const sortable = noSorting ? false : field.sort;
             const filterable = noFilter ? false : field.filter;
+            const type = field.type === 'double' ? 'float' : field.type;
             return (
               <Column
                 key={key}
@@ -312,7 +313,7 @@ function Table (props: Props) {
                         {...props}
                         id={key}
                         rename={field.rename!}
-                        type={field.type as FilterType}
+                        type={type as FilterType}
                         filter={filter!}
                         setFilter={setFilter!}
                       />

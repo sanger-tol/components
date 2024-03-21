@@ -14,7 +14,7 @@ import {
   FieldMetaData,
   initialiseFieldMeta
 } from './Field';
-import { getConfig } from "../general/Utils";
+import { getConfig, isFloat } from "../general/Utils";
 import Relationship from './Relationship';
 import { Status } from '../general';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -175,6 +175,16 @@ function createExpander(value: string) {
   );
 }
 
+function createFloat(value: any) {
+  return (
+    <CellTooltip
+      followCursor
+      value={ value.toFixed(2) }
+      contents={ value }
+    />
+  );
+}
+
 function createCellRenderer(cellRenderer: CellRenderer, key: string, value: any, data: object, baseUrl?: string) {
   if (value === null || value === undefined) return "";
   if (cellRenderer === 'relationship') {
@@ -191,10 +201,11 @@ function createCellRenderer(cellRenderer: CellRenderer, key: string, value: any,
     return createFormattedList(value);
   } else if (cellRenderer === 'expander') {
     return createExpander(value);
+  } else if (cellRenderer === 'float') {
+    return createFloat(value);
   } else if (cellRenderer === null) {
     return value;
   }
-  
 
   const propPointers: object = {};
   if (cellRenderer.propPointers !== undefined) {
@@ -221,6 +232,8 @@ function setValueBasedCellRenderer(key: string, value: any, fieldMetaData: objec
         fieldMetaData[key].cellRenderer = 'list';
       } else if (value.length > 32) {
         fieldMetaData[key].cellRenderer = 'expander';
+      } else if (isFloat(value)) {
+        fieldMetaData[key].cellRenderer = 'float';
       }
     }
   }

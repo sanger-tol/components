@@ -135,3 +135,11 @@ export async function getConfig(endpoint: string, baseUrl?: string) {
 export function numberWithSpaces(num: number) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
+
+export function isInt(n: any){
+  return Number(n) === n && n % 1 === 0;
+}
+
+export function isFloat(n: any) {
+  return Number(n) === n && n % 1 !== 0;
+}

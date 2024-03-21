@@ -39,7 +39,7 @@ function Maps() {
     <BubbleMap markers={mapObjects} height={400}/>
   );
 
-  const remoteMap = (h: any) => (
+  const remoteMap = (h?: any) => (
     <RemoteBubbleMap
       endpoint="sample"
       longitudeKey="sts_latitude"
@@ -63,11 +63,7 @@ function Maps() {
       type: 'full'
     },
     {
-      component: remoteMap(400),
-      type: 'sm'
-    },
-    {
-      component: remoteMap("100%"),
+      component: remoteMap(),
       type: 'lg'
     },
   ];

@@ -12,7 +12,7 @@ interface ElementPropPointers {
 }
 
 interface CustomCellRenderer {
-  element: Function, // eslint-disable-line
+  element: any,
   propPointers?: ElementPropPointers
 }
 
@@ -25,6 +25,7 @@ export type CellRenderer = (
   'image'|
   'list'|
   'expander'|
+  'float'|
   null
 )
 
