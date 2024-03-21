@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import RemoteBubbleMap from "./RemoteBubbleMap";
+import RemoteMap from "./RemoteMap";
 import RemoteMultipleSelectFilters from "../forms/RemoteMultipleSelectFilters";
 import { Container, Row } from 'react-bootstrap';
 
@@ -35,7 +35,7 @@ function RemoteBubbleMapFilter(props: Props) {
         />
       </Row>
       <Row className="mb-4">
-        <RemoteBubbleMap
+        <RemoteMap
           { ...props }
           filter={globalFilters}
         />

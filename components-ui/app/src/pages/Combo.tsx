@@ -10,7 +10,7 @@ import {
   RemoteMultipleSelectFilters,
   RemoteBarChart,
   RemoteSunburst,
-  RemoteBubbleMap,
+  RemoteMap,
   Widgets,
   env
 } from '../tol-ui/src';
@@ -112,7 +112,7 @@ function Combo() {
         baseUrl={ env.TOL_DATA }
       />
       <div className="mb-4" />
-      <RemoteBubbleMap
+      <RemoteMap
         endpoint="sample"
         longitudeKey="sts_longitude"
         latitudeKey="sts_latitude"

@@ -49,8 +49,8 @@ export {
   BarChart,
   RemoteAggBarChart,
   RemoteBarChart,
-  BubbleMap,
-  RemoteBubbleMap,
+  Map,
+  RemoteMap,
   Sunburst,
   RemoteSunburst
 } from "./charts";

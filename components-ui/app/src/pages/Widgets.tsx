@@ -9,7 +9,7 @@ import {
   RemoteBarChart,
   RemoteSunburst,
   RemoteTable,
-  RemoteBubbleMap,
+  RemoteMap,
   env,
   RemoteCount
 } from '../tol-ui/src';
@@ -46,7 +46,8 @@ const table = (
 );
 
 const map = (
-  <RemoteBubbleMap
+  <RemoteMap
+    bubble
     endpoint="sample"
     longitudeKey="sts_latitude"
     latitudeKey="sts_longitude"

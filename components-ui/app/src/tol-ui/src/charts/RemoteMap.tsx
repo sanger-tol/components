@@ -5,12 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect } from "react";
-import BubbleMap from "./BubbleMap";
+import BubbleMap from "./Map";
 import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
 
 
 interface Props {
+  bubble?: boolean,
   endpoint: string,
   longitudeKey: string,
   latitudeKey: string,
@@ -110,7 +111,7 @@ function createMapMarkers(
   return markers;
 }
 
-function RemoteBubbleMap(props: Props) {
+function RemoteMap(props: Props) {
   const { endpoint, baseUrl, longitudeKey, latitudeKey, attributeKeys, filter } = props;
   const height = (props.height !== undefined) ? props.height : "100%";
   const [markers, setMarkers] = useState<object[]>([]);
@@ -213,4 +214,4 @@ function RemoteBubbleMap(props: Props) {
   return <BubbleMap {...props} markers={markers} />;
 }
 
-export default RemoteBubbleMap;
+export default RemoteMap;

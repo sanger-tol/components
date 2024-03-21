@@ -1,6 +1,6 @@
 {
   "name": "@tol/tol-ui",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "An npm components package for ToL systems",
   "dependencies": {
     "sass": "^1.58.3",
