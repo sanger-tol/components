@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { 
-  CentreContents,
   Sunburst,
-  Button,
   RemoteSunburst,
-  env } from '../tol-ui/src';
+  Widgets,
+  env
+} from '../tol-ui/src';
 import { useState } from 'react';
 
 
@@ -121,31 +121,53 @@ const datasets = {
 function Sunbursts() {
   const [sliceData, setSliceData] = useState({});
 
+  const basicSunburst = (
+    <div>
+      <h2>Sunburst</h2>
+      <p style={{marginTop: 4}}>This is the &apos;slice&apos; data: {sliceData["bucket"]} {sliceData["clickKey"]} {sliceData["value"]}</p>
+      <Sunburst
+        id="basic-sunburst"
+        title="Order of..."
+        datasets={datasets}
+        height={800}
+        setSliceData={setSliceData}
+        legendPosition="left"
+      />
+    </div>
+  );
+
+  const remoteSunburst = (
+    <div>
+      <h2>Remote Sunburst</h2>
+      <RemoteSunburst
+        id="basic-sunburst"
+        title="BIOSCAN sunburst of specimens"
+        endpoint="barcoding_run_data"
+        sliceBy={["bioscan_o","bioscan_f", "bioscan_g", "bioscan_s"]}
+        height={600}
+        baseUrl={ env.TOL_DATA }
+        legendPosition="right"
+        noLabel
+      />
+    </div>
+  );
+
+  const components = [
+    {
+      component: basicSunburst,
+      type: 'full'
+    },
+    {
+      component: remoteSunburst,
+      type: 'full'
+    }
+  ];
+
   return (
-    <div className="sunbursts">
-      <CentreContents>
-        <h2 className="mt-5">Sunburst</h2>
-        <Button className="m-1" onClick={()=>{
-          setSliceData({bucket: "hello"});
-        }}>setSliceData</Button>
-        <h5>This is the &apos;slice&apos; data: {sliceData["bucket"]} {sliceData["clickKey"]} {sliceData["value"]}</h5>
-        <Sunburst
-          title="Order of..."
-          datasets={datasets}
-          height={800}
-          setSliceData={setSliceData}
-          legendPosition="left"
-        />
-        <RemoteSunburst
-          title="BIOSCAN sunburst of specimens"
-          endpoint="barcoding_run_data"
-          sliceBy={["bioscan_o_primary","bioscan_f_primary", "bioscan_g_primary", "bioscan_s_primary"]}
-          height={600}
-          baseUrl={ env.TOL_DATA }
-          legendPosition="right"
-          noLabel
-        />
-      </CentreContents>
+    <div className="barcharts">
+      <Widgets
+        components={components}
+      />
     </div>
   );
 }

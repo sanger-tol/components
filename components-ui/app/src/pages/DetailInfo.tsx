@@ -46,15 +46,17 @@ function DetailInfo() {
       />
     );
 
+    const components = [
+      {
+        component: detail,
+        type: 'full'
+      }
+    ];
+
     return (
-      <div className='detail-info'>
-        <Widgets
-          components={[{
-            component: detail,
-            type: 'full'
-          }]}
-        />
-      </div>
+      <Widgets
+        components={components}
+      />
     );
   }
 }

@@ -21,6 +21,7 @@ import { mergeFilters } from "../general/Filter";
 
 
 interface Props {
+  id: string,
   endpoint: string,
   title?: string,
   sliceBy: string[],
@@ -37,6 +38,7 @@ interface Props {
 
 function RemoteSunburst(props: Props) {
   const {
+    id,
     endpoint,
     sliceBy,
     baseUrl,
@@ -158,6 +160,7 @@ function RemoteSunburst(props: Props) {
     <div style={{height: height}}>
       <Sunburst
         {...props}
+        id={miniActive ? id + '-mini' : id}
         height={miniActive ? height*0.25 : height}
         width={miniActive ? height*0.5 : undefined}
         datasets={datasets}
@@ -170,6 +173,7 @@ function RemoteSunburst(props: Props) {
             <Placeholder loader clear height={height*0.75} />
             :
             <Sunburst
+              id={id}
               title={normaliseCaps(sliceData["clickKey"])}
               height={height*0.75}
               datasets={miniDatasets}

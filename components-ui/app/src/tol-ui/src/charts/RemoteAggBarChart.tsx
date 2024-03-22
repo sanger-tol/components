@@ -13,6 +13,7 @@ import Placeholder from "../general/Placeholder";
 
 
 interface Props {
+  id: string,
   stacked?: boolean,
   endpoint: string,
   baseUrl?: string,

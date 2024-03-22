@@ -12,6 +12,7 @@ import { mergeFilters } from "../general/Filter";
 
 
 interface Props {
+  id: string,
   title?: string,
   endpoint: string,
   breakDownBy: string,

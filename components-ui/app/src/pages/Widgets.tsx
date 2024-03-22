@@ -17,6 +17,7 @@ import {
 
 const chart = (
   <RemoteBarChart
+    id="widget-chart"
     stacked
     title="Run Data"
     endpoint="run_data"
@@ -30,6 +31,7 @@ const chart = (
 
 const sunburst = (
   <RemoteSunburst
+    id="widget-sunburst"
     title="Order of remote..."
     endpoint="species"
     sliceBy={ ["sts_order_group"] }

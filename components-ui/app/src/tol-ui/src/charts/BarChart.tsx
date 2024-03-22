@@ -42,6 +42,7 @@ ChartJS.register(
 );
 
 interface Props {
+  id: string,
   stacked?: boolean,
   title?: string,
   labels: string[],
@@ -51,7 +52,7 @@ interface Props {
 }
 
 function BarChart(props: Props) {
-  const { title, labels, setBarData } = props;
+  const { id, title, labels, setBarData } = props;
   const height = (props.height !== undefined) ? props.height : "100%";
   const stacked = isPropDefined(props.stacked);
   const originDatasets = initialiseDatasets(props.datasets);
@@ -259,8 +260,8 @@ function BarChart(props: Props) {
         }
       </div>
       <Bar
+        id={id}
         responsive="true"
-        id="tol-bar-chart"
         className="tol-bar-chart"
         datasetIdKey="id"
         // @ts-ignore

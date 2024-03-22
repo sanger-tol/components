@@ -36,36 +36,51 @@ function Maps() {
   const mapObjects = createMapObjectsFromCoordinates(points);
 
   const map = (
-    <Map bubble markers={mapObjects} height={400}/>
+    <div>
+      <h2 style={{marginBottom: 10}}>
+        Map
+      </h2>
+      <Map markers={mapObjects} height={400}/>
+    </div>
   );
 
-  const remoteMap = (h?: any) => (
-    <RemoteMap
-      bubble
-      endpoint="sample"
-      longitudeKey="sts_latitude"
-      latitudeKey="sts_longitude"
-      baseUrl={env.TOL_DATA}
-      height={h}
-    />
+  const bubble = (
+    <div>
+      <h2 style={{marginBottom: 10}}>
+        Bubble Map
+      </h2>
+      <Map bubble markers={mapObjects} height={400}/>
+    </div>
+  );
+
+  const remoteBubble = (
+    <div>
+      <h2 style={{marginBottom: 10}}>
+        Remote Bubble Map
+      </h2>
+      <RemoteMap
+        bubble
+        endpoint="sample"
+        longitudeKey="sts_latitude"
+        latitudeKey="sts_longitude"
+        baseUrl={env.TOL_DATA}
+        height={400}
+      />
+    </div>
   );
 
   const components = [
-    {
-      component: <h2>Bubble Map</h2>,
-      type: 'full'
-    },
     {
       component: map,
       type: 'full'
     },
     {
-      component: <h2>Remote Bubble Map</h2>,
+      component: bubble,
       type: 'full'
     },
     {
-      component: remoteMap(),
-      type: 'lg'
+      component: remoteBubble,
+      type: 'full'
     },
   ];
 

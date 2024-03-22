@@ -34,6 +34,7 @@ function Combo() {
       />
       <div className="mb-4" />
       <RemoteBarChart
+        id="combo-bar-1"
         stacked
         title="Run Data"
         endpoint="run_data"
@@ -60,13 +61,14 @@ function Combo() {
   const sunburstCombo = (
     <div>
       <RemoteSunburst
+        id="combo-sunburst"
         title="Species"
         endpoint="species"
         sliceBy={["sts_order_group", "sts_family"]}
         setCombinedFilters={setSunburstFilter}
         height={400}
         legendPosition="left"
-        baseUrl={ env.TOL_DATA }
+        baseUrl={env.TOL_DATA}
       />
       <div className="mb-4" />
       <RemoteTable
@@ -92,7 +94,7 @@ function Combo() {
             rename: "ToLID Prefix"
           },
         }}
-        baseUrl={ env.TOL_DATA }
+        baseUrl={env.TOL_DATA}
       />
     </div>
   );
@@ -100,6 +102,7 @@ function Combo() {
   const mapCombo = (
     <div>
       <RemoteBarChart
+        id="combo-bar-2"
         stacked
         title="Samples Recieved"
         endpoint="sample"
@@ -108,8 +111,8 @@ function Combo() {
         interval="M"
         setCombinedFilters={setMapFilter}
         type='date'
-        height={300}
-        baseUrl={ env.TOL_DATA }
+        height={400}
+        baseUrl={env.TOL_DATA}
       />
       <div className="mb-4" />
       <RemoteMap
@@ -119,7 +122,7 @@ function Combo() {
         filter={mapFilter}
         attributeKeys="sts_public_name, sts_biosample_accession"
         height={300}
-        baseUrl={ env.TOL_DATA }
+        baseUrl={env.TOL_DATA}
       />
     </div>
   );

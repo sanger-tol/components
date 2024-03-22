@@ -36,6 +36,7 @@ ChartJS.register(
 );
 
 interface Props {
+  id: string,
   title?: string,
   datasets: object,
   height: any,
@@ -48,7 +49,7 @@ interface Props {
 }
 
 function Sunburst(props: Props) {
-  const {title, width, setSliceData, legendPosition, noLegend, noLabel, noRefresh} = props;
+  const {id, title, width, setSliceData, legendPosition, noLegend, noLabel, noRefresh} = props;
   const height = (props.height !== undefined) ? props.height : "100%";
   const originDatasets = convertSunburstDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
@@ -193,8 +194,8 @@ function Sunburst(props: Props) {
         }
       </div>
       <Doughnut
+        id={id}
         responsive="true"
-        id="tol-sunburst"
         className="tol-sunburst"
         datasetIdKey="id"
         // @ts-ignore

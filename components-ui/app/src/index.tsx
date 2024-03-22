@@ -36,7 +36,8 @@ const combo: Page = {
 
 const forms: Page = {
   name: "Forms",
-  uiElement: <Forms />
+  uiElement: <Forms />,
+  hidden: true
 };
 
 const maps: Page = {
@@ -46,7 +47,8 @@ const maps: Page = {
 
 const miscellaneous: Page = {
   name: "Miscellaneous",
-  uiElement: <Miscellaneous />
+  uiElement: <Miscellaneous />,
+  hidden: true
 };
 
 const tables: Page = {
