@@ -1,9 +1,70 @@
 // SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 //
 // SPDX-License-Identifier: MIT
-import {expect, test} from '@jest/globals';
-import {isPropDefined} from '../tol-ui/src/general/Utils'
 
-test('checks isPropDefined function', () => {
-    expect(isPropDefined(undefined)).toBe(false);
+import {expect, test, jest} from '@jest/globals';
+import {
+  isPropDefined,
+  falseIfUndefined,
+  isEmptyObject,
+  normaliseCaps,
+  timeout,
+  numberWithSpaces,
+  isInt,
+  isFloat
+} from '../tol-ui/src/general/Utils'
+
+test('isPropDefined function', () => {
+  expect(isPropDefined(undefined)).toBe(false);
+  expect(isPropDefined(true)).toBe(true)
 });
+
+test('falseIfUndefined function', () => {
+  expect(falseIfUndefined(undefined)).toBe(false);
+  expect(falseIfUndefined(true)).toBe(true);
+})
+
+test('isEmptyObject function', () => {
+  const empty = {}
+  const not_empty = {'value': true}
+  expect(isEmptyObject(empty)).toBe(true);
+  expect(isEmptyObject(not_empty)).toBe(false);
+})
+
+test('normailseCaps function', () => {
+  expect(normaliseCaps()).toBe("");
+  expect(normaliseCaps('id', 'species')).toBe("Species ID");
+  expect(normaliseCaps('test.relationship')).toBe('Test Relationship')
+  expect(normaliseCaps('uid')).toBe('ID')
+  expect(normaliseCaps('sts')).toBe('STS')
+  expect(normaliseCaps('tolid')).toBe('ToLID')
+})
+
+test('timeout function', () => {
+  jest.useFakeTimers()
+  jest.spyOn(global, 'setTimeout')
+  timeout(1)
+  expect(setTimeout).toHaveBeenCalledTimes(1)
+})
+
+test('numberWithSpaces Function',() => {
+  expect(numberWithSpaces(5)).toBe('5')
+  expect(numberWithSpaces(100)).toBe('100')
+  expect(numberWithSpaces(1000)).toBe('1 000')
+  expect(numberWithSpaces(10101)).toBe('10 101')
+})
+
+test('isInt Function',() => {
+  expect(isInt(1)).toBe(true)
+  expect(isInt(1000)).toBe(true)
+  expect(isInt(1.5)).toBe(false)
+  expect(isInt('number')).toBe(false)
+})
+
+test('isFloat Function',() => {
+  expect(isFloat(1.5)).toBe(true)
+  expect(isFloat(1.555555)).toBe(true)
+  expect(isFloat(1)).toBe(false)
+  expect(isFloat(1000)).toBe(false)
+  expect(isFloat('number')).toBe(false)
+})
