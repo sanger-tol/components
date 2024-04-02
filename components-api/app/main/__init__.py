@@ -29,9 +29,12 @@ def __user_id_blueprint(api_path: str) -> None:
 
     @user_bp.get('')
     def get():
-        user_id = default_ctx_getter().user_id
+        ctx = default_ctx_getter()
 
-        return {'userId': user_id}, 200
+        return {
+            'userId': ctx.user_id,
+            'roles': ctx.roles
+        }, 200
 
     return user_bp
 
