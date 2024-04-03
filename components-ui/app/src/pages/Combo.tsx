@@ -67,7 +67,7 @@ function Combo() {
         sliceBy={["sts_order_group", "sts_family"]}
         setCombinedFilters={setSunburstFilter}
         height={400}
-        legendPosition="left"
+        legendPosition="right"
         baseUrl={env.TOL_DATA}
       />
       <div className="mb-4" />

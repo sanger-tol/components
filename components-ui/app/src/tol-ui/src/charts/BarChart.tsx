@@ -15,7 +15,7 @@ import {
   Legend
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { Button } from '../index';
+import { Button, Row, Col } from '../index';
 import {
   getChartColour,
   initialiseDatasets,
@@ -24,12 +24,14 @@ import {
   setBarClickedData,
   generateBarLabels,
   updateOpacitys,
-  resetItemClickedData
+  resetItemClickedData,
+  downloadItem
 } from "./ChartUtils";
 import { isPropDefined, getCssVarValue } from "../general/Utils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUndo } from '@fortawesome/free-solid-svg-icons';
+import { faUndo, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { themeListener } from "../hooks/listeners";
+
 
 
 ChartJS.register(
@@ -44,7 +46,8 @@ ChartJS.register(
 interface Props {
   id: string,
   stacked?: boolean,
-  title?: string,
+  title: string,
+  downloadName?: string,
   labels: string[],
   datasets: any[],
   height?: any,
@@ -61,7 +64,7 @@ function BarChart(props: Props) {
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
   // Used to change the height of the y-axis when selecting a legend
-  const [maxHeight, setMaxHeight] = useState<number|null>(null);
+  const [maxHeight, setMaxHeight] = useState<number | null>(null);
 
   // colours
   const [titleColour, setTitleColour] = useState('');
@@ -89,7 +92,7 @@ function BarChart(props: Props) {
             dataset.order = -1;
             selectedBucket = dataset.id;
             const maxValue = Math.max(...dataset.data);
-            const maxValuePercentage = Math.ceil(maxValue*1.1);
+            const maxValuePercentage = Math.ceil(maxValue * 1.1);
             setMaxHeight(maxValuePercentage);
           } else {
             dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '0.25');
@@ -163,7 +166,7 @@ function BarChart(props: Props) {
     setDatasets(chart.data.datasets);
   }
 
-  function handlePlaneHover (event: any, chartElement: any) {
+  function handlePlaneHover(event: any, chartElement: any) {
     if (isPropDefined(setBarData)) {
       event.native.target.style.cursor = chartElement[0] ? "pointer" : "default";
     }
@@ -174,11 +177,7 @@ function BarChart(props: Props) {
     maintainAspectRatio: false,
     responsive: true,
     plugins: {
-      title: {
-        display: title !== undefined,
-        text: title,
-        color: titleColour
-      },
+      title: {},
       tooltip: {
         usePointStyle: true,
         backgroundColor: "black",
@@ -242,30 +241,49 @@ function BarChart(props: Props) {
     }
   };
 
+  const downloadName = props.downloadName !== undefined ? props.downloadName : title;
+
   return (
-    <div style={{height: height}}>
-      <div className="tol-chart-buttons">
-        {isPropDefined(setBarData) &&
-          <Button
-            className="config-button"
-            variant="primary"
-            onClick={() => {
-              resetItemClickedData(setBarData);
-              setMaxHeight(null);
-              setDatasets(originDatasets);
-            }}
-          >
-            <FontAwesomeIcon icon={faUndo} size="sm" />
-          </Button>
-        }
-      </div>
+    <div style={{ height: height, paddingBottom: '20px' }}>
+      <Row>
+        <Col xs={6}>
+          <div className="chart-header-text">{title}</div>
+        </Col>
+        <Col xs={6}>
+          <div className="tol-chart-buttons">
+            {isPropDefined(setBarData) &&
+              <Button
+                className="config-button"
+                variant="primary"
+                onClick={() => {
+                  resetItemClickedData(setBarData);
+                  setMaxHeight(null);
+                  setDatasets(originDatasets);
+                }}
+              >
+                <FontAwesomeIcon icon={faUndo} size="sm" />
+              </Button>
+            }
+            <Button
+              className="config-button"
+              variant="primary"
+              onClick={() => {
+                downloadItem(props.id, downloadName);
+              }}>
+              <FontAwesomeIcon icon={faDownload} size="sm" />
+            </Button>
+          </div>
+        </Col>
+      </Row>
+
+
       <Bar
         id={id}
         responsive="true"
         className="tol-bar-chart"
         datasetIdKey="id"
         // @ts-ignore
-        options={ options }
+        options={options}
         data={{
           labels: labels,
           datasets: datasets

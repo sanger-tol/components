@@ -23,7 +23,7 @@ import { mergeFilters } from "../general/Filter";
 interface Props {
   id: string,
   endpoint: string,
-  title?: string,
+  title: string,
   sliceBy: string[],
   height?: any,
   baseUrl?: string,
@@ -164,6 +164,7 @@ function RemoteSunburst(props: Props) {
         height={miniActive ? height*0.25 : height}
         width={miniActive ? height*0.5 : undefined}
         datasets={datasets}
+        downloadName={normaliseCaps(endpoint)}
         noLegend={miniActive}
         setSliceData={setter}
       />
@@ -174,10 +175,13 @@ function RemoteSunburst(props: Props) {
             :
             <Sunburst
               id={id}
-              title={normaliseCaps(sliceData["clickKey"])}
+              title={''}
               height={height*0.75}
               datasets={miniDatasets}
               legendPosition={legendPosition}
+              downloadName={
+                normaliseCaps(endpoint) + " - " + normaliseCaps(sliceData["clickKey"])
+              }
               noLabel={noLabel}
               noRefresh
               setSliceData={setter}

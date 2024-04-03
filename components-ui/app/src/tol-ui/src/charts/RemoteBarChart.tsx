@@ -9,11 +9,13 @@ import { generateDateAgg, generateDateFilterFromBarData, DateInterval } from "./
 import { useState } from 'react';
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { mergeFilters } from "../general/Filter";
+import { normaliseCaps } from "../general/Utils";
+
 
 
 interface Props {
   id: string,
-  title?: string,
+  title: string,
   endpoint: string,
   breakDownBy: string,
   xAxis: string,
@@ -40,6 +42,11 @@ function RemoteBarChart(props: Props) {
   const aggs = generateDateAgg(breakDownBy, xAxis, interval);
   const localFilter = generateDateFilterFromBarData(barData, breakDownBy, xAxis, interval);
 
+  // create alternate title based on title - sequencer - month/year
+  const alternateTitle = (normaliseCaps(props.title === undefined ? "" : props.title) 
+    + " - " + normaliseCaps(barData["bucket"]) 
+    + " - " + normaliseCaps(barData["clickKey"]));
+
   // combine local and globalFilters
   useEffectUpdate(() => {
     if (setCombinedFilters !== undefined) {
@@ -59,6 +66,7 @@ function RemoteBarChart(props: Props) {
   return (
     <RemoteAggBarChart
       {...props}
+      downloadName={barData["clickKey"] === undefined ? props.title : alternateTitle}
       aggs={ aggs }
       filter={ filter }
       setBarData={

@@ -35,6 +35,8 @@ const d1 = [
 
 function BarCharts() {
   const [bar, setBar] = useState({});
+  const barChartTitle = "Interactive monthly comparison of unique species & DNA clusters found per order";
+  const remoteBarChartTitle = "Run Data";
 
   const aggs = {
     "aggs": {
@@ -66,7 +68,7 @@ function BarCharts() {
       <BarChart
         id="basic-stacked"
         stacked
-        title="Interactive monthly comparison of unique species & DNA clusters found per order"
+        title={barChartTitle}
         labels={labels}
         datasets={d1}
         setBarData={setBar}
@@ -81,7 +83,7 @@ function BarCharts() {
       <RemoteAggBarChart
         id="agg-chart"
         stacked
-        title="Run Data"
+        title={remoteBarChartTitle}
         endpoint="run_data"
         aggs={aggs}
         interval="M"

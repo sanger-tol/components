@@ -48,7 +48,9 @@
   opacity: 1 !important;
 }
 
-.tol-chart-buttons .config-button {
-  position: absolute;
-  right: 32px;
+.chart-header-text {
+  font-size: 14px;
+  font-weight: bolder;
+  overflow: hidden;
+  white-space: nowrap;
 }

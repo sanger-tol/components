@@ -761,3 +761,45 @@ export function removeSliceBySingles(sliceBy: string[], depth: number) {
   for (let x = 0; x <= depth-1; x++) sliceBy.shift();
   return sliceBy;
 }
+
+export function downloadItem( chartId: string, chartTitle: string) {
+  // use light/dark mode background color to determine background color of item
+  const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  const bodyColor = getComputedStyle(document.body).backgroundColor;
+  const bgColor = darkModeQuery.matches ? bodyColor : '#ffffff';
+
+  // create link element and  get chart by id
+  const canvasLink = document.createElement('a');
+  const canvas = document.getElementById(chartId) as HTMLCanvasElement;
+
+  if (canvas) {
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // Create temporary canvas to draw background
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = width;
+    tempCanvas.height = height;
+
+    // Create temporary context
+    const tempContext = tempCanvas.getContext('2d');
+
+    if (tempContext) {
+      tempContext.fillStyle = bgColor;
+      tempContext.fillRect(0, 0, width, height);
+      tempContext.drawImage(canvas, 0, 0);
+
+      // Convert temporary canvas to base64 image
+      tempCanvas.toBlob(blob => {
+        if (blob) {
+          const url = URL.createObjectURL(blob);
+          canvasLink.href = url;
+          canvasLink.download = chartTitle + '.png';
+          canvasLink.click();
+          URL.revokeObjectURL(url); // Clean up
+        }
+      }, 'image/png');
+    }
+  }
+
+}
