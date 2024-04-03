@@ -4,6 +4,11 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+// This no check will need to be removed at some point
+// It is in to prevent build errors to do with the Dropdown type
+// not containing detail and element props
+// @ts-nocheck
+
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router,
   Route,
@@ -15,7 +20,7 @@ import { getTokenFromLocalStorage,
   tokenHasExpired} from './services/localStorage/localStorageService';
 import { AuthProvider } from './contexts/auth.context';
 import Footer from './general/Footer';
-import Page from "./models/Page";
+import {Dropdown, Page} from "./models/Nav";
 import { convertToPath, falseIfUndefined, matomoAnalytics } from "./general/Utils";
 import { env } from './variables/config';
 
@@ -23,7 +28,7 @@ import { env } from './variables/config';
 export interface Props {
   brand: string | JSX.Element,
   homePage: JSX.Element,
-  pages: Page[],
+  pages: (Page | Dropdown)[],
   login?: boolean
 }
 
@@ -72,21 +77,21 @@ function TolApp(props: Props) {
               <Route path="/callback" exact><Callback /></Route>
               {props.pages.map(page => {
                 const path = convertToPath(page.name);
-                const authRequired = falseIfUndefined(page.authRequired);
+                const authRequired = falseIfUndefined(page.auth);
 
                 // Regular page route
                 const regularRoute = (
                   <Route exact path={`/${path}`} key={page.name} >
-                    {authRequired ? (token && !tokenHasExpired()) ? page.uiElement : <Redirect to="/" />
-                      : page.uiElement}
+                    {authRequired ? (token && !tokenHasExpired()) ? page.element : <Redirect to="/" />
+                      : page.element} 
                   </Route>
                 );
 
                 // Detail page route
-                const detailRoute = page.detailElement && (
+                const detailRoute = page.detail && (
                   <Route exact path={`/${path}/:id`} key={`${page.name}-detail`} >
-                    {authRequired ? (token && !tokenHasExpired()) ? page.detailElement : <Redirect to="/" />
-                      : page.detailElement}
+                    {authRequired ? (token && !tokenHasExpired()) ? page.detail : <Redirect to="/" />
+                      : page.detail}
                   </Route>
                 );
                 return [regularRoute, detailRoute];

@@ -6,8 +6,9 @@ SPDX-License-Identifier: MIT
 
 import { useState, useEffect } from "react";
 import { withRouter, useHistory, RouteComponentProps } from "react-router-dom";
-import { Container, Navbar, Nav } from 'react-bootstrap';
+import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { useAuth } from '../contexts/auth.context';
+import { httpClient } from "../services/http/httpClient";
 import {
   getTokenFromLocalStorage,
   setTokenToLocalStorage,
@@ -15,14 +16,15 @@ import {
   tokenHasExpired
 } from '../services/localStorage/localStorageService';
 import Login from './Login';
-import Page from "../models/Page";
+import Dropdown from "../models/Nav";
+import Page from "../models/Nav";
 import { convertToPath, falseIfUndefined } from "./Utils";
 import { env } from '../variables/config';
 
 
-interface NavProps extends RouteComponentProps {
+interface Props extends RouteComponentProps {
   brand: string | JSX.Element,
-  pages: Page[],
+  pages: (Page | Dropdown)[],
   login: boolean
 }
 
@@ -68,15 +70,25 @@ const getBackgroundClass = (environment: string): string => {
   return "";
 };
 
-function Navigation(props: NavProps) {
+function Navigation(props: Props) {
   const { token, setToken, user, setUser } = useAuth();
   const history = useHistory();
   const [environment, setEnvironment] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
     fetchEnvironment()
       .then((fetchedEnvironment: string) => {
         setEnvironment(fetchedEnvironment);
       });
+    
+    httpClient().get('/user_id').then(
+      (res: any) => {
+        const roles: string[] = res.data.roles;
+        setIsAdmin(roles.includes('admin'));
+      }
+    ).catch(
+      (error: any) => console.error(error.message)
+    );
   }, []);
 
   const isProduction = () => {
@@ -103,6 +115,52 @@ function Navigation(props: NavProps) {
     history.replace("/");
   };
 
+  function checkAuth(authRequired: boolean, adminOnly: boolean, user: any, token: any){
+    if(authRequired && adminOnly && token && !tokenHasExpired() && user && isAdmin) {
+      return true;
+    } else if(authRequired && !adminOnly && token && !tokenHasExpired()) {
+      return true;
+    } else if(!authRequired) {
+      return true;
+    }
+  }
+
+  function addPage(page: Page){
+    const pageName = page.name;
+    const path = convertToPath(pageName);
+    const authRequired = falseIfUndefined(page.auth);
+    const adminOnly = falseIfUndefined(page.admin);
+    const hidden = falseIfUndefined(page.hidden);
+    if (!hidden) {
+      const authorized = checkAuth(authRequired, adminOnly, user, token);
+      if (authorized) {
+        return <Nav.Link key={pageName} href={"/" + path}>{pageName}</Nav.Link>;
+      }
+    }
+  }
+
+  function addDropdown(dropdown: Dropdown){
+    const dropdownAuthRequired = falseIfUndefined(dropdown.auth);
+    const dropdownAdminOnly = falseIfUndefined(dropdown.admin);
+    const dropdownHidden = falseIfUndefined(dropdown.hidden);
+    if (dropdown.pages && !dropdownHidden){
+      const authorized = checkAuth(dropdownAuthRequired, dropdownAdminOnly, user, token);
+      if(authorized) {
+        return (
+          <NavDropdown title={dropdown.name}>
+            {dropdown.pages.map((page: Page) => {
+              return (// eslint-disable-next-line
+                <div className="nav-dropdown-box">
+                  {addPage(page)}
+                </div>
+              );
+            })}
+          </NavDropdown>
+        );
+      }
+    }
+  }
+
   return (
     <div className="navigation">
       <Navbar
@@ -123,21 +181,14 @@ function Navigation(props: NavProps) {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            {props.pages.map(page => { // eslint-disable-next-line
-              const pageName = page.name
-              const path = convertToPath(pageName);
-              const authRequired = falseIfUndefined(page.authRequired);
-              const adminOnly = falseIfUndefined(page.adminOnly);
-              const hidden = falseIfUndefined(page.hidden);
-
-              if (!hidden) {
-                if(authRequired && adminOnly && token && !tokenHasExpired() && user && user.roles && user.roles.some(role => role.role === "admin")) {
-                  return <Nav.Link href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
-                } else if(authRequired && !adminOnly && token && !tokenHasExpired()) {
-                  return <Nav.Link href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
-                } else if(!authRequired) {
-                  return <Nav.Link href={"/" + path} key={pageName}>{pageName}</Nav.Link>;
-                }
+            {props.pages.map(page => {
+              // @ts-ignore
+              if (page.pages !== undefined){
+                return (
+                  addDropdown(page)
+                );
+              } else {
+                return addPage(page);
               }
             })}
             {(!token || tokenHasExpired()) && props.login &&

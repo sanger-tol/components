@@ -59,6 +59,7 @@ export {
 export {
   HeaderButton,
   Page,
+  Dropdown,
   ErrorMessage
 } from "./models";
 

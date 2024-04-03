@@ -20,68 +20,75 @@ import { Home,
   UserId } from "./pages";
 // import { Sandbox } from "./pages";
 import reportWebVitals from "./reportWebVitals";
-import { TolApp, Page } from './tol-ui/src';
+import { TolApp, Page, Dropdown } from './tol-ui/src';
 import "./scss/styling.scss";
 
 
 const barCharts: Page = {
   name: "BarCharts",
-  uiElement: <BarCharts />
+  element: <BarCharts />
 };
 
 const combo: Page = {
   name: "Combo",
-  uiElement: <Combo />
+  element: <Combo />
 };
 
 const forms: Page = {
   name: "Forms",
-  uiElement: <Forms />,
+  element: <Forms />,
   hidden: true
 };
 
 const maps: Page = {
   name: "Maps",
-  uiElement: <Maps />
+  element: <Maps />
 };
 
 const miscellaneous: Page = {
   name: "Miscellaneous",
-  uiElement: <Miscellaneous />,
+  element: <Miscellaneous />,
   hidden: true
 };
 
 const tables: Page = {
   name: "Tables",
-  uiElement: <Tables />
+  element: <Tables />
 };
 
 const sandbox: Page = {
   name: "Sandbox",
-  uiElement: <Sandbox />,
+  element: <Sandbox />,
   hidden: true
 };
 
 const sunbursts: Page = {
   name: "Sunbursts",
-  uiElement: <Sunbursts />
+  element: <Sunbursts />
 };
 
 const widgets: Page = {
   name: "Widgets",
-  uiElement: <Widgets />,
+  element: <Widgets />,
 };
 
 const detail: Page = {
   name: "Detail",
-  uiElement: <Detail />,
-  detailElement: <DetailInfo/>
+  element: <Detail />,
+  detail: <DetailInfo/>
 };
 
 const userId: Page = {
   name: 'UserId',
-  authRequired: true,
-  uiElement: <UserId />
+  auth: true,
+  element: <UserId />
+};
+
+const dropdown: Dropdown = {
+  name: 'Dropdown',
+  pages: [widgets, sunbursts],
+  auth: true,
+  admin: true
 };
 
 ReactDOM.render( // eslint-disable-line
@@ -89,6 +96,7 @@ ReactDOM.render( // eslint-disable-line
     brand="Components"
     homePage={ <Home /> }
     pages={[
+      dropdown,
       barCharts,
       combo,
       forms,
