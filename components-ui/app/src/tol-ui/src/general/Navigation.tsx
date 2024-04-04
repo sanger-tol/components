@@ -125,13 +125,13 @@ function Navigation(props: Props) {
     }
   }
 
-  function addPage(page: Page){
+  function addPage(page: Page, isDropdown?: boolean){
     const pageName = page.name;
     const path = convertToPath(pageName);
     const authRequired = falseIfUndefined(page.auth);
     const adminOnly = falseIfUndefined(page.admin);
     const hidden = falseIfUndefined(page.hidden);
-    if (!hidden) {
+    if (!hidden || isDropdown) {
       const authorized = checkAuth(authRequired, adminOnly, user, token);
       if (authorized) {
         return <Nav.Link key={pageName} href={"/" + path}>{pageName}</Nav.Link>;
@@ -151,7 +151,7 @@ function Navigation(props: Props) {
             {dropdown.pages.map((page: Page) => {
               return (// eslint-disable-next-line
                 <div className="nav-dropdown-box">
-                  {addPage(page)}
+                  {addPage(page, true)}
                 </div>
               );
             })}

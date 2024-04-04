@@ -64,12 +64,14 @@ const sandbox: Page = {
 
 const sunbursts: Page = {
   name: "Sunbursts",
-  element: <Sunbursts />
+  element: <Sunbursts />,
+  hidden: true
 };
 
 const widgets: Page = {
   name: "Widgets",
   element: <Widgets />,
+  hidden: true
 };
 
 const detail: Page = {
@@ -87,8 +89,8 @@ const userId: Page = {
 const dropdown: Dropdown = {
   name: 'Dropdown',
   pages: [widgets, sunbursts],
-  auth: true,
-  admin: true
+  //auth: true,
+  //admin: true
 };
 
 ReactDOM.render( // eslint-disable-line
