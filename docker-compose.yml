@@ -17,8 +17,8 @@ services:
 
   components-api:
     build:
-      context: ../
-      dockerfile: components/components-api/Dockerfile.dev
+      context: components-api
+      dockerfile: Dockerfile.dev
     image: components-api
     environment:
       - DB_URI
