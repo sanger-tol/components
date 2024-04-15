@@ -1,6 +1,9 @@
-import styleGuide from "eslint-config-standard";
+// SPDX-FileCopyrightText: 2024 Genome Research Ltd.
+// 
+// SPDX-License-Identifier: MIT
 
 
 export default [
-  ...[].concat(styleGuide),
+  {
+  }
 ];
