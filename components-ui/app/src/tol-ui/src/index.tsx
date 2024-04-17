@@ -24,6 +24,7 @@ export {
   RemoteGet,
   ObjectDetail,
   RemoteCount,
+  RemoteStats,
   formatDate
 } from "./general";
 

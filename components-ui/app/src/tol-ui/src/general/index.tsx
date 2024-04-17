@@ -24,4 +24,5 @@ export { default as Filter } from "./Filter";
 export { default as RemoteGet } from "./RemoteGet";
 export { default as ObjectDetail } from "./ObjectDetail";
 export { default as RemoteCount } from "./RemoteCount";
+export { default as RemoteStats } from "./RemoteStats";
 export { formatDate } from "./Utils";
