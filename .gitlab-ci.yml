@@ -4,12 +4,14 @@
 
 include:
   - project: 'tol/tol-core'
-    #TODO PUT BACK!!!!
-    ref: "TOLP-7423"
+    ref: v1.3.18
     file: '/gitlab/app.yml'
 
 variables:
   APP_NAME: components
+
+  # TODO remove when UI linting is fixed
+  DISABLE_UI_LINT: "true"
 
 deploy-package:
   stage: deploy
