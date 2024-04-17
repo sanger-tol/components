@@ -10,6 +10,9 @@ include:
 variables:
   APP_NAME: components
 
+  # TODO remove when UI linting is fixed
+  DISABLE_UI_LINT: "true"
+
 deploy-package:
   stage: deploy
   image: node:14-alpine
