@@ -27,4 +27,4 @@ VOLUME ["/packages"]
 COPY app /app
 COPY migrations /migrations
 
-CMD if [ -d /packages/tol-sdk/src ] ; then pip3 install --editable /packages/tol-sdk[api_base2]; fi; flask --app run run --debugger --port 80 --host 0.0.0.0
+CMD if [ -d /packages/tol-sdk/src ] ; then pip3 install --editable /packages/tol-sdk[api_base2,postgresql]; fi; flask --app run run --debugger --port 80 --host 0.0.0.0
