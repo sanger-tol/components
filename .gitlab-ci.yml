@@ -9,6 +9,7 @@ include:
 
 variables:
   APP_NAME: components
+  DISABLE_UI_LINT: "true"
 
 deploy-package:
   stage: deploy

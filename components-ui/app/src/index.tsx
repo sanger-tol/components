@@ -17,8 +17,9 @@ import { Home,
   Sandbox,
   Sunbursts,
   Widgets,
-  UserId } from "./pages";
-// import { Sandbox } from "./pages";
+  UserId,
+  Timelines } from "./pages";
+//import { Sandbox } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown } from './tol-ui/src';
 import "./scss/styling.scss";
@@ -86,6 +87,11 @@ const userId: Page = {
   element: <UserId />
 };
 
+const timelines: Page = {
+  name: 'Timelines',
+  element: <Timelines />
+};
+
 const dropdown: Dropdown = {
   name: 'Dropdown',
   pages: [widgets, sunbursts],
@@ -109,7 +115,8 @@ ReactDOM.render( // eslint-disable-line
       sunbursts,
       widgets,
       detail,
-      userId
+      userId,
+      timelines
     ]}
   />,
   document.getElementById('root')

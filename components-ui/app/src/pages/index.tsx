@@ -17,3 +17,4 @@ export { default as Widgets } from "./Widgets";
 export { default as Detail } from "./Detail";
 export { default as DetailInfo } from "./DetailInfo";
 export { default as UserId } from "./UserId";
+export { default as Timelines } from "./Timelines";

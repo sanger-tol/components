@@ -55,6 +55,9 @@ export {
   RemoteSunburst
 } from "./charts";
 
+// Timelines
+export { Timeline } from "./timeline";
+
 // Models
 export {
   HeaderButton,

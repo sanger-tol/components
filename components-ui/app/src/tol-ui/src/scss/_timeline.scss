@@ -1,0 +1,23 @@
+/*
+SPDX-FileCopyrightText: 2022 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+.timeline-header-text {
+    font-size: 14px;
+    font-weight: bolder;
+}
+
+.timeline-item-header-text {
+    font-size: 14px;
+    font-weight: bolder;
+}
+
+@media screen and (max-width: 768px) {
+    .timeline-wrapper {
+        margin-left: -1.5rem;
+        padding-top: 0.75rem;
+        padding-bottom: 0.5rem;
+    }
+}
