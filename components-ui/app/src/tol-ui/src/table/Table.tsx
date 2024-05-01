@@ -10,15 +10,17 @@ import { Table as RSTable, Pagination, SelectPicker } from "rsuite";
 import {
   addTotalText, 
   setFieldMetaAttributeInStorage
-} from './TableUtils';
+} from './Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSliders, faDownload } from '@fortawesome/free-solid-svg-icons';
 import ConfigModal from './ConfigModal';
-import { exportTableToSpreadsheet } from "./TableUtils";
-import Filter, { FilterType } from '../general/Filter';
+import { exportTableToSpreadsheet } from "./Utils";
+import Filter, { FilterType } from '../filtering/Filter';
 import { PopUpMessage } from '../general';
 import { FieldMeta } from './Field';
 import HoverOverlay from '../general/HoverOverlay';
+import { Zone } from '../board';
+import { generateFilter } from '../filtering/Utils';
 
 
 interface Props {
@@ -42,8 +44,8 @@ interface Props {
   defaultSort?: string,
   handleSortColumn: any,
 
-  filter?: object,
-  setFilter?: any,
+  zone: Zone,
+  setZone: any,
 
   modalOnSave: any,
 
@@ -78,8 +80,8 @@ function Table (props: Props) {
     defaultSort,
     handleSortColumn,
   
-    filter,
-    setFilter,
+    zone,
+    setZone,
 
     modalOnSave,
 
@@ -114,14 +116,6 @@ function Table (props: Props) {
     setFieldMetaAttributeInStorage(id, visibility, "filterVisibility");
   };
 
-  /*
-  const resizeColumnWidth = (columnWidth?: number, dataKey?: string) => {
-    const storedFieldMeta = getFieldMetaAttributeFromStorage(id)
-    storedFieldMeta.data[dataKey!].width = columnWidth
-    setFieldMetaAttributeInStorage(id, storedFieldMeta)
-  }
-  */
-
   const downloadBtn = (
     <Button 
       className="config-button"
@@ -129,7 +123,7 @@ function Table (props: Props) {
       onClick={() => exportTableToSpreadsheet(
         endpoint,
         fieldMeta.data,
-        filter!,
+        generateFilter(id, zone),
         sortColumn,
         sortType,
         setSuccess,
@@ -180,9 +174,11 @@ function Table (props: Props) {
                   size="sm"
                   cleanable={false}
                   searchable={false}
-                  data={[{ label: "25", value: 25 },
+                  data={[
+                    { label: "25", value: 25 },
                     { label: "50", value: 50 },
-                    { label: "100", value: 100 }]}
+                    { label: "100", value: 100 }
+                  ]}
                 />
               </span>
               <span className='tol-skip'>
@@ -310,12 +306,12 @@ function Table (props: Props) {
                   {filterable &&
                     <span className={filterVisible ? "tol-filter" : "tol-filter-hide"}>
                       <Filter
-                        {...props}
-                        id={key}
+                        attribute={key}
                         rename={field.rename!}
                         type={type as FilterType}
-                        filter={filter!}
-                        setFilter={setFilter!}
+                        componentId={id}
+                        zone={zone}
+                        setZone={setZone}
                       />
                     </span>
                   }

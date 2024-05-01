@@ -11,16 +11,19 @@ import {
   createSort,
   getFieldMetaAttributeFromStorage,
   getTypesMeta,
-  setFieldMetaAttributeInStorage
-} from './TableUtils';
-import { 
+  setFieldMetaAttributeInStorage,
   convertTableData,
   tableDebug,
   structureFieldMeta
-} from "./TableUtils";
+} from "./Utils";
 import Table from "./Table";
 import { Placeholder } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
+import { Zone } from "../board";
+import {
+  generateFilter,
+  filterHasUpdated
+} from "../filtering/Utils";
 
 
 interface Props {
@@ -31,7 +34,8 @@ interface Props {
   height?: any,
   basic?: boolean,
 
-  filter?: object,
+  zone: object,
+  setZone: any,
   defaultSort?: string,
 
   noFilter?: boolean,
@@ -50,7 +54,8 @@ function RemoteTable(props: Props) {
     baseUrl,
     fields,
     basic,
-    filter,
+    zone,
+    setZone,
     defaultSort,
     noFilter,
     noPagination,
@@ -69,14 +74,16 @@ function RemoteTable(props: Props) {
   const [fieldMeta, setFieldMeta] = useState<FieldMeta|null>(null);
 
   // pagination
+  const getPageSize = () => {
+    const size = getFieldMetaAttributeFromStorage(id, fields, 'pageSize');
+    return size === null ? 50 : size;
+  };
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(50);
+  const [pageSize, setPageSize] = useState<number>(getPageSize());
   const [totalSize, setTotalSize] = useState<number>(0);
 
   // filtering/sorting
-  const [localFilter, setLocalFilter] = useState(
-    filter !== undefined ? filter : {}
-  );
+  const [filter, setFilter] = useState({});
   const [sortColumn, setSortColumn] = useState<string>('');
   const [sortType, setSortType] = useState<string>('asc');
 
@@ -91,30 +98,26 @@ function RemoteTable(props: Props) {
   };
 
   useEffect(() => {
+    const compoundedFilter = generateFilter(id, zone);
+    // will trigger [filter] useEffect if update has occured
+    filterHasUpdated(filter, compoundedFilter, setFilter);
+    // resetFiltersBelow({id: id, zone: zone!}); occurs in <Filter />: onFilter()
+  }, [zone]);
+
+  useEffectUpdate(() => {
     renderTable();
-  }, [page, sortColumn, sortType]);
+  }, [page, sortColumn, sortType, filter]);
 
   useEffectUpdate(() => {
     setFieldMetaAttributeInStorage(id, pageSize, 'pageSize');
-  }, [pageSize]);
-
-  useEffectUpdate(() => {
     if (page === 1) renderTable();
     // setting page then triggers renderTable in useEffect above
     setPage(1);
-  }, [localFilter, pageSize]);
-
-  // set local filter when incoming change
-  useEffectUpdate(() => {
-    if (filter !== undefined) {
-      setLocalFilter(filter);
-    }
-  }, [filter]);
+  }, [pageSize]);
 
   const modalOnSave = (fieldMeta: FieldMeta) => {
     setFieldMeta(fieldMeta);
     // setting localFilter then triggers renderTable in useEffect above
-    setLocalFilter((filter !== undefined) ? filter : {});
     setFieldMetaAttributeInStorage(id, fieldMeta.data, 'data');
     setFieldMetaAttributeInStorage(id, fieldMeta.order, 'order');
   };
@@ -126,7 +129,7 @@ function RemoteTable(props: Props) {
     const params = {
       page: page,
       page_size: pageSize,
-      filter: localFilter
+      filter: filter
     };
 
     // deal with sorting
@@ -229,8 +232,8 @@ function RemoteTable(props: Props) {
       defaultSort={defaultSort}
       handleSortColumn={handleSortColumn}
 
-      filter={localFilter}
-      setFilter={setLocalFilter}
+      zone={zone as Zone}
+      setZone={setZone}
 
       modalOnSave={modalOnSave}
 

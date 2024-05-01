@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faDiagramProject, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FieldMeta, initialiseFieldMeta } from './Field';
 import { Row, Button, Col } from 'react-bootstrap';
-import { deleteFieldMetaFromStorage } from './TableUtils';
+import { deleteFieldMetaFromStorage } from './Utils';
 
 
 export interface Props {

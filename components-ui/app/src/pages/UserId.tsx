@@ -1,5 +1,5 @@
 /*
-SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
@@ -15,31 +15,28 @@ const UserId = () => {
 
   const loggedInRender = () => userId !== -1 ? (
     <div className="userId">
-            Your user ID is &quot;{ userId }&quot;!
+      Your user ID is &quot;{ userId }&quot;!
       <br></br>
-            You are {isAdmin ? '' : <i>not </i> }an admin
+      You are {isAdmin ? '' : <i>not </i> }an admin
     </div>
   ) : (
     <div className="userId">
-            Just checking your user ID!
+      Just checking your user ID!
     </div>
   );
 
-  useEffect(
-    () => {
-      httpClient().get('/user_id').then(
-        (res: any) => {
-          setUserId(res.data.userId);
+  useEffect(() => {
+    httpClient().get('/user_id').then(
+      (res: any) => {
+        setUserId(res.data.userId);
 
-          const roles: string[] = res.data.roles;
-          setIsAdmin(roles.includes('admin'));
-        }
-      ).catch(
-        (error: any) => console.error(error.message)
-      );
-    },
-    []
-  );
+        const roles: string[] = res.data.roles;
+        setIsAdmin(roles.includes('admin'));
+      }
+    ).catch(
+      (error: any) => console.error(error.message)
+    );
+  }, []);
 
   return loggedInRender();
 };

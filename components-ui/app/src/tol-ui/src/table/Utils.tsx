@@ -520,9 +520,9 @@ export function exportTableToSpreadsheet(
   filter: object,
   sortColumn: string,
   sortType: string,
-  setSuccess: Function, // eslint-disable-line
-  setError: Function, // eslint-disable-line
-  setDownloading: Function, // eslint-disable-line
+  setSuccess: any,
+  setError: any,
+  setDownloading: any,
   defaultSort?: string,
   baseUrl?: string
 ) {

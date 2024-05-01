@@ -6,9 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { 
   Sunburst,
-  RemoteSunburst,
-  Widgets,
-  env
+  Widgets
 } from '../tol-ui/src';
 import { useState } from 'react';
 
@@ -121,7 +119,6 @@ const datasets = {
 function Sunbursts() {
   const [sliceData, setSliceData] = useState({});
   const sunburstTitle = "Order of...";
-  const remoteSunburstTitle = "BIOSCAN sunburst of specimens";
 
   const basicSunburst = (
     <div>
@@ -138,29 +135,9 @@ function Sunbursts() {
     </div>
   );
 
-  const remoteSunburst = (
-    <div>
-      <h2>Remote Sunburst</h2>
-      <RemoteSunburst
-        id="remote-sunburst"
-        title={remoteSunburstTitle}
-        endpoint="barcoding_run_data"
-        sliceBy={["bioscan_o","bioscan_f", "bioscan_g", "bioscan_s"]}
-        height={600}
-        baseUrl={ env.TOL_DATA }
-        legendPosition="right"
-        noLabel
-      />
-    </div>
-  );
-
   const components = [
     {
       component: basicSunburst,
-      type: 'full'
-    },
-    {
-      component: remoteSunburst,
       type: 'full'
     }
   ];

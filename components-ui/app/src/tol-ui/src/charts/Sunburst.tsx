@@ -22,12 +22,12 @@ import {
   setBorderColour,
   updateOpacity,
   downloadItem
-} from "./ChartUtils";
+} from "./Utils";
 import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/Utils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUndo, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
-import { themeListener } from "../hooks/listeners";
+import { resizeListener, themeListener } from "../hooks/listeners";
 
 
 ChartJS.register(
@@ -51,10 +51,25 @@ interface Props {
 }
 
 function Sunburst(props: Props) {
-  const { id, title, width, setSliceData, legendPosition, noLegend, noLabel, noRefresh } = props;
+  const { id, title, width, setSliceData, legendPosition, noLabel, noRefresh } = props;
   const height = (props.height !== undefined) ? props.height : "100%";
   const originDatasets = convertSunburstDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
+
+  // show legend depending on width
+  const getLegend = () => {
+    const width = document.getElementById(id)?.offsetWidth;
+    return (
+      props.noLegend !== true &&
+      width !== undefined &&
+      width > 650
+    );
+  };
+  const [showLegend, setShowLegend] = useState(getLegend());
+
+  resizeListener(() => {
+    setShowLegend(getLegend());
+  });
 
   // colours
   const [titleColour, setTitleColour] = useState('');
@@ -154,8 +169,8 @@ function Sunburst(props: Props) {
         }
       },
       legend: {
-        display: noLegend ? false : true,
-        position: legendPosition,
+        display: showLegend,
+        position: legendPosition === undefined ? 'right' : legendPosition,
         onClick: null,
         labels: {
           padding: 15,

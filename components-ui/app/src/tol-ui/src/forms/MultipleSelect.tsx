@@ -31,26 +31,24 @@ const MultipleSelect = (props: Props) => {
   };
   
   return (
-    <div className='tol-input'>
-      <RSCheckPicker
-        block={block}
-        value={value}
-        onChange={setValue}
-        data={formattedData}
-        placeholder={placeholder}
-        renderExtraFooter={() => (
-          <div>
-            <Checkbox
-              indeterminate={value.length > 0 && value.length < allValues.length}
-              checked={value.length === allValues.length}
-              onChange={handleCheckAll}
-            >
-              Select all
-            </Checkbox>
-          </div>
-        )}
-      />
-    </div>
+    <RSCheckPicker
+      block={block}
+      value={value}
+      onChange={setValue}
+      data={formattedData}
+      placeholder={placeholder}
+      renderExtraFooter={() => (
+        <div>
+          <Checkbox
+            indeterminate={value.length > 0 && value.length < allValues.length}
+            checked={value.length === allValues.length}
+            onChange={handleCheckAll}
+          >
+            Select all
+          </Checkbox>
+        </div>
+      )}
+    />
   );
 };
 

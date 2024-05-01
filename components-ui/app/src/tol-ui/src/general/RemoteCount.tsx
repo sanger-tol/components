@@ -8,22 +8,41 @@ import { useEffect, useState } from "react";
 import { httpClient } from '../services/http/httpClient';
 import { numberWithSpaces } from "./Utils";
 import Placeholder from "./Placeholder";
+import {
+  generateFilter,
+  filterHasUpdated,
+  resetFiltersBelow
+} from "../filtering/Utils";
+import { useEffectUpdate } from "../hooks";
 
 
 interface Props {
+  id: string,
   title: string,
   endpoint: string,
   baseUrl?: string,
-  filter?: object
+  zone: object
+  setZone: any
 }
 
-function RemoteCount(props: Props){
+function RemoteCount(props: Props) {
+  const { id, endpoint, baseUrl, title, zone, setZone } = props;
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { endpoint, baseUrl, title, filter } = props;
+  const [filter, setFilter] = useState({});
 
   useEffect(() => {
+    const compoundedFilter = generateFilter(id, zone);
+    // will trigger [filter] useEffect if update has occured
+    if (filterHasUpdated(filter, compoundedFilter, setFilter)) {
+      resetFiltersBelow({id: id, zone: zone!});
+      setZone({...zone});
+    }
+  }, [zone]);
+
+  useEffectUpdate(() => {
+    setLoading(true);
     httpClient().get('/' + endpoint + ":count", {
       baseURL: baseUrl,
       params: {
@@ -38,24 +57,23 @@ function RemoteCount(props: Props){
       setError(error.message);
       console.error(error.message);
     });
-  }, []);
+  }, [filter]);
 
-  if (error !== ''){
+
+  if (error !== '') {
     return (
       <Placeholder
         errorMessage={error}
       />
     );
   }
-    
-  
+
   if (loading) {
     return <Placeholder loader />;
   }
 
-
   return (
-    <div className="tol-count">
+    <div id={id} className="tol-count">
       <p>{title}</p>
       <h1 className="count">{numberWithSpaces(count)}</h1>
       <div className="faded">

@@ -14,6 +14,7 @@ import icon from 'leaflet/dist/images/marker-icon.png';
 
 
 interface Props {
+  id: string,
   markers: any[],
   height?: any,
   bubble?: boolean
@@ -29,17 +30,16 @@ const DefaultIcon = Leaflet.icon({
 Leaflet.Marker.prototype.options.icon = DefaultIcon;
 
 function Map(props: Props) {
-  const { markers, bubble } = props;
+  const { id, markers, bubble } = props;
   const height = (props.height !== undefined) ? props.height : "100%";
 
   return (
-    <div style={{height: height}}>
+    <div id={id} style={{height: height}}>
       <MapContainer center={[51.510357, -0.116773]} zoom={6} scrollWheelZoom className="tol-map">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-
         {bubble ?
           <MarkerClusterGroup chunkedLoading>
             {markers.map((marker, index) => {

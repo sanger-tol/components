@@ -4,70 +4,57 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { RemoteTable, Widgets, env } from '../tol-ui/src';
+import { RemoteTable, Widgets, env, useZone } from '../tol-ui/src';
 
 
 function Tables() {
-  const table1 = (
-    <RemoteTable
-      id="run-data-table-v2"
-      endpoint="run_data"
-      fields={{
-        "mlwh_run_id": {
-          rename: "Run ID"
-        },
-        "mlwh_species.sts_scientific_name": {
-          rename: "Species",
-          cellRenderer: "relationshipDetail"
-        },
-        "mlwh_sequencing_request.id": {
-          rename: "Sequencing Request"
-        },
-        "mlwh_run_complete": {
-          rename: "Complete Date"
-        },
-        "mlwh_platform_type": {
-          rename: "Platform"
-        },
-        "mlwh_instrument_model": {
-          rename: "Instrument"
-        },
-        "mlwh_position": {
-          rename: "Position"
-        },
-        "mlwh_tag_index": {
-          rename: "Tag"
-        }
-      }}
-      baseUrl={env.TOL_DATA}
-    />
-  );
+  const runData = useZone({
+    endpoint: 'run_data',
+    baseUrl: env.TOL_DATA,
+    components: [{attribute: 'table-example'}]
+  });
 
-  const table2 = (
-    <RemoteTable
-      basic
-      id="species-basic-v1"
-      endpoint="species"
-      height={500}
-      fields={{
-        uid: {
-          type: "str"
-        },
-        sts_genus: {
-          type: "str"
-        }
-      }}
-      baseUrl={env.TOL_DATA}
-    />
+  const table = (
+    <div>
+      <h2 style={{marginBottom: 12}}>Tables</h2>
+      <RemoteTable
+        id="table-example"
+        fields={{
+          "mlwh_run_id": {
+            rename: "Run ID"
+          },
+          "mlwh_species.sts_scientific_name": {
+            rename: "Species",
+            cellRenderer: "relationshipDetail"
+          },
+          "mlwh_sequencing_request.id": {
+            rename: "Sequencing Request"
+          },
+          "mlwh_run_complete": {
+            rename: "Complete Date"
+          },
+          "mlwh_platform_type": {
+            rename: "Platform"
+          },
+          "mlwh_instrument_model": {
+            rename: "Instrument"
+          },
+          "mlwh_position": {
+            rename: "Position"
+          },
+          "mlwh_tag_index": {
+            rename: "Tag"
+          }
+        }}
+        height={500}
+        {...runData}
+      />
+    </div>
   );
 
   const components = [
     {
-      component: table1,
-      type: 'lg'
-    },
-    {
-      component: table2,
+      component: table,
       type: 'full'
     }
   ];

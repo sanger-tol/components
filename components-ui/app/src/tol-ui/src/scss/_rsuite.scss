@@ -39,11 +39,12 @@
   --rs-text-active: var(--primary);
   --rs-btn-link-hover-text: var(--primary-hover);
   --rs-btn-link-active-text: var(--primary-hover);
+  --rs-input-disabled-bg: var(--grey-subtle);
 
   .rs-input,
   .rs-input-group {
     background-color: var(--bs-body-bg) !important;
-    color: var(--primary);
+    color: var(--primary) !important;
     font-family: 'Lato' !important;
     font-weight: 400 !important;
     font-size: 14px !important;
@@ -80,6 +81,12 @@
     border-left-color: $primary  !important;
   }
 
+  .rs-input:disabled,
+  .rs-input-group:disabled {
+    background-color: var(--grey-subtle) !important;
+    color: var(--placeholder) !important;
+  }
+
   .rs-input-group:not(.rs-input-group-disabled).rs-input-group-focus,
   .rs-input-group:focus-within,
   .rs-input:focus,
@@ -100,7 +107,7 @@
   }
 
   // dropdown
-  .rs-picker-menu {
+  .rs-picker-menu, .rs-dropdown-menu {
     border: 1px solid var(--grey-emphasis);
   }
 
@@ -161,9 +168,24 @@
     color: var(--placeholder) !important;
   }
 
+  input:disabled::-webkit-input-placeholder {
+    color: var(--bs-body-darker) !important;
+  }
+
+  input:disabled:-moz-placeholder {
+    color: var(--bs-body-darker) !important;
+  }
+
   // modal
   .rs-modal {
     margin: 30px auto 30px auto;
+
+    // stop blue box showing on modal opening
+    *:focus {
+      outline: 0 !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
   }
 
   .rs-modal-body {

@@ -1,0 +1,215 @@
+/*
+SPDX-FileCopyrightText: 2024 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+import { useEffect } from 'react';
+import { Zone, Filter, defineComponent } from '../board/Utils';
+import { deepCopy, isEmptyObject } from '../general/Utils';
+
+
+function getComponentsAbove(id: string, list: string[]) {
+  const index = list.indexOf(id);
+  return list.slice(0, index + 1);
+}
+
+function getComponentsBelow(id: string, list: string[]) {
+  const index = list.indexOf(id);
+  return index === -1 ? [] : list.slice(index, list.length);
+}
+
+export function getNextComponentId(id: string, list: string[], indexOffset: number) {
+  const index = list.indexOf(id);
+  return list[index + indexOffset];
+}
+
+export function filterHasUpdated(exisitingFilter: object, incomingFilter: object, setFilter: any) {
+  const exisiting = JSON.stringify(exisitingFilter);
+  const incoming = JSON.stringify(incomingFilter);
+  const hasUpdated = exisiting !== incoming;
+  if (hasUpdated) setFilter(deepCopy(incomingFilter));
+  return hasUpdated;
+}
+
+export function mergeAndFilters(target: object, incoming: object) {
+  const output = deepCopy(target);
+  for (const id in incoming) {
+    const currentOut = id in output ? output[id] : {};
+    const currentIn = id in incoming ? incoming[id] : {};
+    output[id] = Object.assign(currentOut, currentIn);
+  }
+  return output as Filter;
+}
+
+export function generateFilter(id: string, zone: object) {
+  const z = zone as Zone;
+  const aboveComponents = getComponentsAbove(id, z.order);
+  let compoundedFilter = {};
+  // loop through above components
+  for (const currentId of aboveComponents) {
+    const currentFilter = z.components[currentId].data.filter.and_;
+    compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
+  }
+  return {
+    and_: compoundedFilter
+  };
+}
+
+// insert a value in a list after an id located
+function addValueBelow(id: string, value: string, list: string[]) {
+  const idIndex = list.indexOf(id);
+  list.splice(idIndex+1, 0, value);
+  return list;
+}
+
+function addComponentBelow(id: string, newId: string, zone: Zone) {
+  defineComponent({attribute: newId}, zone);
+  zone.order = addValueBelow(id, newId, zone.order);
+}
+
+export function resetFiltersBelow(params: {
+  id: string,
+  zone: object,
+  indexOffset?: number
+}) {
+  const {zone, indexOffset} = params;
+  let id = params.id;
+  const z = zone as Zone;
+  if (indexOffset !== undefined) id = getNextComponentId(id, z.order, indexOffset);
+  for (const currentId of getComponentsBelow(id, z.order)) {
+    z.components[currentId].data.filter = deepCopy(z.components[currentId].data.defaultFilter);
+  }
+}
+
+export function updateFilter(params: {
+  // and_ filter attributes
+  operator: string,
+  value: any,
+  negate: boolean,
+  // filter location
+  attribute: string,
+  componentId: string,
+  // filter state
+  zone: object,
+  // differentials
+  empty: any
+}) {
+  const {operator, value, negate, attribute, componentId, zone, empty} = params;
+  const z = zone as Zone;
+  const and_ = z.components[componentId].data.filter.and_;
+  resetFiltersBelow({id: componentId, zone: z, indexOffset: 1});
+
+  if (value !== empty) {
+    and_[attribute] = {
+      ...and_[attribute],
+      [operator]: { value, negate }
+    };
+  } else {
+    if (operator in (and_[attribute] || {})) {
+      delete and_[attribute][operator];
+    }
+    if (isEmptyObject(and_[attribute])) {
+      delete and_[attribute];
+    }
+  }
+}
+
+export function filterListener(params: {
+  // filter location
+  attribute: string,
+  componentId: string,
+  operators: string[],
+  // filter state
+  zone: Zone,
+  setValue: any,
+  emptyValue: any,
+  setDisabled: any,
+  zoneToValue: (filterValue: any, exisitingValue?: any) => any
+}, dependencies: any[]) {
+  const {attribute, componentId, operators, zone, setValue, setDisabled, zoneToValue} = params;
+
+  useEffect(() => {
+    const aboveComponents = getComponentsAbove(componentId, zone.order);
+    let isDisabled = false;
+    let readyToBreak = 0;
+    let value = params.emptyValue;
+  
+    for (const currentId of aboveComponents) {
+      const and_ = zone.components[currentId].data.filter.and_;
+      if (and_ && attribute in and_) {
+        for (const op of operators) {
+          if (op in and_[attribute]) {
+            const filter = and_[attribute][op];
+            isDisabled = (currentId !== componentId);
+            value = zoneToValue(filter.value, value);
+            // break if all operators have been checked
+            if (readyToBreak === operators.length-1) break;
+            readyToBreak++;
+          }
+        }
+      }
+    }
+  
+    setValue(value);
+    setDisabled(isDisabled);
+  }, dependencies);
+}
+
+export function addSubFilter(params: {
+  id: string,
+  subId: string,
+  filter: object,
+  zone: object
+}) {
+  const {id, subId, filter, zone} = params;
+  const z = zone as Zone;
+  const f = filter as Filter;
+  // only add if newId doesn't exist
+  if (!z.order.includes(subId)) {
+    addComponentBelow(id, subId, z);
+  }
+  resetFiltersBelow({id: subId, zone: zone!});
+  z.components[subId].data.filter = f;
+}
+
+export function operatorListener(params: {
+  // filter location
+  attribute: string,
+  componentId: string,
+  operator: string,
+  // filter state
+  zone: Zone,
+  setValue: any,
+  setDisabled: any,
+  // type
+  type: string
+}, dependencies: any[]) {
+  const {attribute, componentId, operator, zone, setValue, setDisabled, type} = params;
+
+  useEffect(() => {
+    if (type !== 'contains') {
+      const aboveComponents = getComponentsAbove(componentId, zone.order);
+      let isDisabled = false;
+      let value = '';
+    
+      for (const currentId of aboveComponents) {
+        const and_ = zone.components[currentId].data.filter.and_;
+        if (and_ && attribute in and_) {
+          if (attribute === 'benchling_sequencing_request_count') console.log(and_[attribute]);
+          if (operator in and_[attribute]) {
+            const filter = and_[attribute][operator];
+            isDisabled = (currentId !== componentId);
+            value = filter.value;
+            break;
+          }
+        }
+      }
+
+      if (attribute === 'benchling_sequencing_request_count') console.log(value);
+
+      setValue(value);
+      setDisabled(isDisabled);
+    }
+  }, dependencies);
+}

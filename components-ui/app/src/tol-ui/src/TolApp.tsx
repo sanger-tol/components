@@ -10,17 +10,21 @@ SPDX-License-Identifier: MIT
 // @ts-nocheck
 
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router,
+import { 
+  BrowserRouter as Router,
   Route,
   Switch,
-  Redirect } from "react-router-dom";
-import { Navigation, Callback, PageNotFound } from "./general/index";
-import { getTokenFromLocalStorage,
+  Redirect
+} from "react-router-dom";
+import { Navigation, Callback, PageNotFound } from "./nav";
+import { 
+  getTokenFromLocalStorage,
   getUserFromLocalStorage, 
-  tokenHasExpired} from './services/localStorage/localStorageService';
+  tokenHasExpired
+} from './services/localStorage/localStorageService';
 import { AuthProvider } from './contexts/auth.context';
 import Footer from './general/Footer';
-import {Dropdown, Page} from "./models/Nav";
+import { Dropdown, Page } from "./models/Nav";
 import { convertToPath, falseIfUndefined, matomoAnalytics } from "./general/Utils";
 import { env } from './variables/config';
 
@@ -79,7 +83,7 @@ function TolApp(props: Props) {
                 const path = convertToPath(page.name);
                 const authRequired = falseIfUndefined(page.auth);
 
-                // Regular page route
+                // regular page route
                 const regularRoute = (
                   <Route exact path={`/${path}`} key={page.name} >
                     {authRequired ? (token && !tokenHasExpired()) ? page.element : <Redirect to="/" />
@@ -87,7 +91,7 @@ function TolApp(props: Props) {
                   </Route>
                 );
 
-                // Detail page route
+                // detail page route
                 const detailRoute = page.detail && (
                   <Route exact path={`/${path}/:id`} key={`${page.name}-detail`} >
                     {authRequired ? (token && !tokenHasExpired()) ? page.detail : <Redirect to="/" />

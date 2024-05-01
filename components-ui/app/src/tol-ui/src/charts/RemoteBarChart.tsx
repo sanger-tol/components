@@ -4,74 +4,151 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import RemoteAggBarChart from "./RemoteAggBarChart";
-import { generateDateAgg, generateDateFilterFromBarData, DateInterval } from "./ChartUtils";
-import { useState } from 'react';
+import BarChart from "./BarChart";
+import {
+  generateChartAgg,
+  generateChartFilterFromBar,
+  DateInterval,
+  aggsToBarChartData,
+  isChartDataEmpty
+} from "./Utils";
+import { useEffect, useState } from 'react';
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
-import { mergeFilters } from "../general/Filter";
 import { normaliseCaps } from "../general/Utils";
-
+import { httpClient } from '../services/http/httpClient';
+import Placeholder from "../general/Placeholder";
+import {
+  addSubFilter,
+  filterHasUpdated,
+  generateFilter,
+  resetFiltersBelow
+} from "../filtering/Utils";
 
 
 interface Props {
   id: string,
   title: string,
   endpoint: string,
+  baseUrl?: string
   breakDownBy: string,
   xAxis: string,
-  interval: DateInterval,
-  type: 'date',
+  type: DateInterval,
   shortDate?: boolean
-
-  // 'filter' is usually referred to as globalFilters when using combinedFilters
-  filter?: object,
-  setCombinedFilters?: Function, // eslint-disable-line
-
-  // config
+  zone: any,
+  setZone: any,
   height?: any,
   stacked?: boolean,
-  baseUrl?: string
 }
 
 function RemoteBarChart(props: Props) {
-  // @ts-ignore
-  const { breakDownBy, xAxis, interval, type, shortDate, filter, setCombinedFilters } = props; // eslint-disable-line
+  const {
+    id,
+    endpoint,
+    baseUrl,
+    breakDownBy,
+    xAxis,
+    type,
+    shortDate,
+    zone,
+    setZone
+  } = props;
+  const subId = 'tol-sub-chart-' + id;
+  const height = (props.height !== undefined) ? props.height : "100%";
+  const [labels, setLabels] = useState([]);
+  const [datasets, setDatasets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [warningMessage, setWarningMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [barData, setBarData] = useState<object>({});
-
-  // these can be swapped for other barchart types (type prop will be used)
-  const aggs = generateDateAgg(breakDownBy, xAxis, interval);
-  const localFilter = generateDateFilterFromBarData(barData, breakDownBy, xAxis, interval);
+  const [filter, setFilter] = useState({});
 
   // create alternate title based on title - sequencer - month/year
   const alternateTitle = (normaliseCaps(props.title === undefined ? "" : props.title) 
     + " - " + normaliseCaps(barData["bucket"]) 
     + " - " + normaliseCaps(barData["clickKey"]));
 
-  // combine local and globalFilters
-  useEffectUpdate(() => {
-    if (setCombinedFilters !== undefined) {
-      setCombinedFilters(
-        mergeFilters(filter, localFilter)
-      );
+  useEffect(() => {
+    const compoundedFilter = generateFilter(id, zone);
+    // will trigger [filter] useEffect if update has occured
+    if (filterHasUpdated(filter, compoundedFilter, setFilter)) {
+      resetFiltersBelow({id: id, zone: zone!});
+      setZone({...zone});
     }
-  }, [barData]);
+  }, [zone]);
 
-  // reset localFilters when globalFilters are updated
   useEffectUpdate(() => {
-    if (setCombinedFilters !== undefined) {
-      setCombinedFilters(Object.assign({}, filter));
-    }
+    setLoading(true);
+    const aggs = generateChartAgg(breakDownBy, xAxis, type);
+    httpClient().post('/' + endpoint + ":aggregations", aggs, {
+      baseURL: baseUrl,
+      params: {
+        filter: filter
+      }
+    })
+      .then((res: any) => {
+        let aggs = res.data.meta.aggregations;
+        setErrorMessage('');
+        setWarningMessage(isChartDataEmpty(aggs));
+        aggs = aggsToBarChartData(aggs, type, shortDate);
+        setDatasets(aggs.datasets);
+        setLabels(aggs.labels);
+        setLoading(false);
+      })
+      .catch((error: any) => {
+        console.error(error.message);
+        setErrorMessage(error.message);
+      });
   }, [filter]);
 
+  // for bar click updates
+  useEffectUpdate(() => {
+    const localFilter = generateChartFilterFromBar(
+      barData,
+      breakDownBy,
+      xAxis,
+      type
+    );
+    // this also resets components below
+    addSubFilter({
+      id: id,
+      subId: subId,
+      filter: localFilter,
+      zone: zone
+    });
+    setZone({...zone});
+  }, [barData]);
+
+  if (errorMessage !== ''){
+    return (
+      <Placeholder
+        errorMessage={errorMessage}
+        height={height}
+      />
+    );
+  }
+
+  if (warningMessage !== ''){
+    return (
+      <Placeholder
+        warningMessage={warningMessage}
+        height={height}
+      />
+    );
+  }
+  
+  if (loading) {
+    return <Placeholder bar height={height} />;
+  }
+
+  const setter = (setZone === undefined) ? undefined : setBarData;
+
   return (
-    <RemoteAggBarChart
-      {...props}
+    <BarChart
       downloadName={barData["clickKey"] === undefined ? props.title : alternateTitle}
-      aggs={ aggs }
-      filter={ filter }
-      setBarData={
-        setCombinedFilters === undefined ? undefined : setBarData
-      }
+      {...props}
+      labels={labels}
+      datasets={datasets}
+      setBarData={setter}
     />
   );
 }

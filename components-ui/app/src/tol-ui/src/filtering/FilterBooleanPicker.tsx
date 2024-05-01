@@ -5,9 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { isEmptyObject, stopPropagation } from './Utils';
-import { DateRangePicker } from 'rsuite';
-import { FromAndTo } from "./Filter";
+import { isEmptyObject, stopPropagation } from '../general/Utils';
+import MultipleSelect from "../forms/MultipleSelect";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 
 
@@ -18,48 +17,51 @@ export interface Props {
   setFilter: Function // eslint-disable-line
 }
 
-function FilterDatePicker(props: Props) {
+function FilterBooleanPicker(props: Props) {
   const { id, rename, filter, setFilter } = props;
-  const filterType: string = 'range';
-  const [value, setValue] = useState<any>();
+  const filterType: string = 'in_list';
+  const [value, setValue] = useState<any>([]);
 
   // altering filter value if the attribute is filtered on else where
   useEffectUpdate(() => {
     if (filterType in filter && id in filter[filterType]) {
       // needs converting back to value state (how rsuite wants it)
-      const filterValue = filterToValue(filter[filterType][id]);
+      const filterValue = convertValues(filter[filterType][id]);
       if (JSON.stringify(value) !== JSON.stringify(filterValue)) {
         setValue(filterValue);
       }
     } else {
-      setValue(null);
+      setValue([]);
     }
   }, [filter]);
 
-  const filterToValue = (dateRange: FromAndTo) => {
-    return [
-      new Date(dateRange.from),
-      new Date(dateRange.to)
-    ];
-  };
-
-  const valueToFilter = (dateRange: string[]) => {
-    const from = new Date(dateRange[0]);
-    const to = new Date(dateRange[1]);
-    // ensure a whole day is selected
-    from.setHours(0, 0, 0, 0);
-    to.setHours(23, 59, 59, 999);
-    return {
-      from: from,
-      to: to
-    };
+  // opposites are used as this func is used in 2 places
+  const convertValues = (values: string[]) => {
+    const convertedValues: string[] = [];
+    for (const value of values) {
+      switch(value) {
+      case "True":
+        convertedValues.push("true");
+        continue;
+      case "true":
+        convertedValues.push("True");
+        continue;
+      case "False":
+        convertedValues.push("false");
+        continue;
+      case "false":
+        convertedValues.push("False");
+        continue;
+      }
+    }
+    return convertedValues;
   };
 
   const onFilter = (input: string[]) => {
-    // update date input value
+    // update input value
     setValue(input);
     // input removed
-    if (input === null) {
+    if (input.length === 0) {
       delete filter[filterType][id];
       // delete filter type if object is empty
       if (isEmptyObject(filter[filterType])) {
@@ -70,24 +72,22 @@ function FilterDatePicker(props: Props) {
       if (!(filterType in filter)) {
         filter[filterType] = {};
       }
-      filter[filterType][id] = valueToFilter(input);
+      filter[filterType][id] = convertValues(input);
     }
     setFilter({...filter});
   };
   
   return (
     <span onClick={ stopPropagation }>
-      <DateRangePicker
+      <MultipleSelect
         block
-        // @ts-ignore
-        onChange={ onFilter }
-        value={ value }
-        placeholder={ rename }
-        format="dd/MM/yyyy"
-        preventOverflow
+        data={['True', 'False']}
+        placeholder={rename}
+        value={value}
+        setValue={onFilter}
       />
     </span>
   );
 }
 
-export default FilterDatePicker;
+export default FilterBooleanPicker;

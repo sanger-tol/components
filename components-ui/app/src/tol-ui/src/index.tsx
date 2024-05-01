@@ -8,8 +8,43 @@ export { Container, Row, Col, Form, Button, Spinner as Loader };
 import { Link } from "react-router-dom";
 export { Link };
 
+// dashboard
+export {
+  useZone
+} from "./board";
+
+// Charts
+export {
+  BarChart,
+  RemoteBarChart,
+  Map,
+  RemoteMap,
+  Sunburst,
+  RemoteSunburst
+} from "./charts";
+
+// Deprecated
+export {
+  RemoteAutoComplete,
+  MultipleSelect,
+  MultipleSelectFilters,
+  RemoteMultipleSelectFilters,
+  GlobalMultipleSelect
+} from "./deprecated";
+
+// Drag & Drop
+export { DnD } from "./dnd";
+
+// Filter
+export { Filter } from "./filtering";
+
+// Forms
+export {
+  AutoComplete,
+  Dropzone
+} from "./forms";
+
 // General
-export { default as TolApp } from "./TolApp";
 export { 
   Header,
   CentreContents,
@@ -20,43 +55,19 @@ export {
   Placeholder,
   Widgets,
   PopUpMessage,
-  Filter,
   RemoteGet,
   ObjectDetail,
   RemoteCount,
   formatDate
 } from "./general";
 
-// Forms
+// hooks
 export {
-  AutoComplete,
-  RemoteAutoComplete,
-  MultipleSelect,
-  MultipleSelectFilters,
-  RemoteMultipleSelectFilters,
-  GlobalMultipleSelect,
-  Dropzone
-} from "./forms";
-
-// Table
-export { RemoteTable } from "./table";
-
-// Drag & Drop
-export { DnD } from "./dnd";
-
-// Charts
-export {
-  BarChart,
-  RemoteAggBarChart,
-  RemoteBarChart,
-  Map,
-  RemoteMap,
-  Sunburst,
-  RemoteSunburst
-} from "./charts";
-
-// Timelines
-export { Timeline } from "./timeline";
+  useEffectUpdate,
+  themeListener,
+  resizeListener,
+  useQuery
+} from "./hooks";
 
 // Models
 export {
@@ -66,11 +77,24 @@ export {
   ErrorMessage
 } from "./models";
 
+// Nav
+export {
+  Callback,
+  Login,
+  Navigation
+} from "./nav";
+
 // Services
-export { httpClient } from "./services/http/httpClient";
+export { httpClient } from "./services";
+
+// Table
+export { RemoteTable } from "./table";
+
+// Timelines
+export { Timeline } from "./timeline";
+
+// ToL App
+export { default as TolApp } from "./TolApp";
 
 // Variables
-export { env } from './variables/config';
-
-// useEffect that ignores first load
-export { useEffectUpdate } from './hooks/useEffectUpdate';
+export { env } from './variables';

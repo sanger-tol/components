@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Map, RemoteMap, Widgets, env } from "../tol-ui/src";
+import { Map, Widgets } from "../tol-ui/src";
 
 
 function Maps() {
@@ -40,7 +40,7 @@ function Maps() {
       <h2 style={{marginBottom: 10}}>
         Map
       </h2>
-      <Map markers={mapObjects} height={400}/>
+      <Map id='1' markers={mapObjects} height={400}/>
     </div>
   );
 
@@ -49,23 +49,7 @@ function Maps() {
       <h2 style={{marginBottom: 10}}>
         Bubble Map
       </h2>
-      <Map bubble markers={mapObjects} height={400}/>
-    </div>
-  );
-
-  const remoteBubble = (
-    <div>
-      <h2 style={{marginBottom: 10}}>
-        Remote Bubble Map
-      </h2>
-      <RemoteMap
-        bubble
-        endpoint="sample"
-        longitudeKey="sts_latitude"
-        latitudeKey="sts_longitude"
-        baseUrl={env.TOL_DATA}
-        height={400}
-      />
+      <Map id='2' bubble markers={mapObjects} height={400}/>
     </div>
   );
 
@@ -77,11 +61,7 @@ function Maps() {
     {
       component: bubble,
       type: 'full'
-    },
-    {
-      component: remoteBubble,
-      type: 'full'
-    },
+    }
   ];
 
   return (

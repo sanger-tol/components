@@ -143,3 +143,10 @@ export function isInt(n: any){
 export function isFloat(n: any) {
   return Number(n) === n && n % 1 !== 0;
 }
+
+export function deepCopy(o: object) {
+  if (o === undefined) return {};
+  return JSON.parse(
+    JSON.stringify(o)
+  );
+}

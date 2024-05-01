@@ -18,7 +18,7 @@ import {
 import Login from './Login';
 import Dropdown from "../models/Nav";
 import Page from "../models/Nav";
-import { convertToPath, falseIfUndefined } from "./Utils";
+import { convertToPath, falseIfUndefined } from "../general/Utils";
 import { env } from '../variables/config';
 
 

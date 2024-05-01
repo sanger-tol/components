@@ -23,7 +23,6 @@ function Relationship(props: Props) {
     <Loader size="sm" />
   );
   const endpoint = '/' + data['type'] + '/' + data['id'];
-  //console.log(data['attributes'], data['type'])
 
   const loadRelationship = () => {
     httpClient().get(endpoint, {

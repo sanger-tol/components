@@ -12,12 +12,17 @@ import {
   isChartDataEmpty,
   generateFilterFromSunburstClick,
   removeSliceBySingles
-} from "./ChartUtils";
+} from "./Utils";
 import Sunburst from "./Sunburst";
 import Placeholder from "../general/Placeholder";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { isEmptyObject, normaliseCaps } from "../general/Utils";
-import { mergeFilters } from "../general/Filter";
+import {
+  generateFilter,
+  addSubFilter,
+  filterHasUpdated,
+  resetFiltersBelow
+} from "../filtering/Utils";
 
 
 interface Props {
@@ -28,12 +33,11 @@ interface Props {
   height?: any,
   baseUrl?: string,
   legendPosition?: string,
+  noLegend?: boolean,
   noLabel?: boolean,
   noMini?: boolean,
-
-  // 'filter' is usually referred to as globalFilters when using combinedFilters
-  filter?: object,
-  setCombinedFilters?: Function, // eslint-disable-line
+  zone: object,
+  setZone: any
 }
 
 function RemoteSunburst(props: Props) {
@@ -42,23 +46,31 @@ function RemoteSunburst(props: Props) {
     endpoint,
     sliceBy,
     baseUrl,
-    legendPosition,
-    noLabel,
     noMini,
-    filter, 
-    setCombinedFilters
+    zone,
+    setZone
   } = props;
+  const subId = 'tol-sub-sunburst-' + id;
   const height = (props.height !== undefined) ? props.height : "100%";
   const [datasets, setDatasets] = useState({});
-  const [miniDatasets, setMiniDatasets] = useState({});
+  const [subDatasets, setSubDatasets] = useState({});
   const [loading, setLoading] = useState(true);
-  const [miniLoading, setMiniLoading] = useState(true);
+  const [subLoading, setSubLoading] = useState(true);
   const [warningMessage, setWarningMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [sliceData, setSliceData] = useState<object>({});
-  const localFilter = generateFilterFromSunburstClick(sliceData);
+  const [sliceData, setSliceData] = useState({});
+  const [filter, setFilter] = useState({});
 
   useEffect(() => {
+    const compoundedFilter = generateFilter(id, zone);
+    // will trigger [filter] useEffect if update has occured
+    if (filterHasUpdated(filter, compoundedFilter, setFilter)) {
+      resetFiltersBelow({id: id, zone: zone!});
+      setZone({...zone});
+    }
+  }, [zone]);
+
+  useEffectUpdate(() => {
     setLoading(true);
     const aggs = createAggsViaSliceBy(endpoint, sliceBy);
     httpClient().post('/' + endpoint + ":aggregations", aggs, {
@@ -70,7 +82,6 @@ function RemoteSunburst(props: Props) {
       const aggs = res.data.meta.aggregations;
       setErrorMessage('');
       setWarningMessage(isChartDataEmpty(aggs));
-
       const data = aggsToSunburstData(aggs, sliceBy);
       setDatasets(data);
       setLoading(false);
@@ -80,31 +91,23 @@ function RemoteSunburst(props: Props) {
     });
   }, [filter]);
 
-  // combine local and globalFilters
+  // for sub sunburst updates
   useEffectUpdate(() => {
-    if (setCombinedFilters !== undefined) {
-      setCombinedFilters(
-        mergeFilters(filter, localFilter)
-      );
-    }
-  }, [sliceData]);
-
-  // reset localFilters when globalFilters are updated
-  useEffectUpdate(() => {
-    if (setCombinedFilters !== undefined) {
-      setCombinedFilters(Object.assign({}, filter));
-      setMiniDatasets({});
-    }
-  }, [filter]);
-
-  // for mini sunburst updates
-  useEffectUpdate(() => {
-    // clear mini sunburst
+    const localFilter = generateFilterFromSunburstClick(sliceData);
+    // this also resets components below
+    addSubFilter({
+      id: id,
+      subId: subId,
+      filter: localFilter,
+      zone: zone
+    });
+    setZone({...zone});
+    // clear sub sunburst
     if (isEmptyObject(sliceData)) {
-      setMiniDatasets({});
+      setSubDatasets({});
     // go deeper into the sunburst if not outer ring
     } else if (sliceData["datasetIndex"] !== 0) {
-      setMiniLoading(true);
+      setSubLoading(true);
       const aggs = createAggsViaSliceBy(
         endpoint,
         removeSliceBySingles(sliceBy, sliceData["depth"])
@@ -112,22 +115,19 @@ function RemoteSunburst(props: Props) {
       httpClient().post('/' + endpoint + ":aggregations", aggs, {
         baseURL: baseUrl,
         params: {
-          filter: Object.assign({}, filter, localFilter)
+          filter: generateFilter(subId, zone)
         }
-      })
-        .then((res: any) => {
-          const aggs = res.data.meta.aggregations;
-          setErrorMessage('');
-          setWarningMessage(isChartDataEmpty(aggs));
-
-          const data = aggsToSunburstData(aggs, sliceBy);
-          setMiniDatasets(data);
-          setMiniLoading(false);
-        })
-        .catch((error: any) => {
-          setErrorMessage(error.message);
-          console.error(error.message);
-        });
+      }).then((res: any) => {
+        const aggs = res.data.meta.aggregations;
+        setErrorMessage('');
+        setWarningMessage(isChartDataEmpty(aggs));
+        const data = aggsToSunburstData(aggs, sliceBy);
+        setSubDatasets(data);
+        setSubLoading(false);
+      }).catch((error: any) => {
+        setErrorMessage(error.message);
+        console.error(error.message);
+      });
     }
   }, [sliceData]);
 
@@ -153,14 +153,14 @@ function RemoteSunburst(props: Props) {
     return <Placeholder pie height={height} />;
   }
 
-  const miniActive = noMini === true ? false : !isEmptyObject(miniDatasets);
-  const setter = (setCombinedFilters === undefined) ? undefined : setSliceData;
+  const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
+  const setter = (setZone === undefined) ? undefined : setSliceData;
 
   return (
     <div style={{height: height}}>
       <Sunburst
         {...props}
-        id={miniActive ? id + '-mini' : id}
+        id={miniActive ? subId : id}
         height={miniActive ? height*0.25 : height}
         width={miniActive ? height*0.5 : undefined}
         datasets={datasets}
@@ -170,19 +170,14 @@ function RemoteSunburst(props: Props) {
       />
       {miniActive && 
         <div>
-          {miniLoading ?
+          {subLoading ?
             <Placeholder loader clear height={height*0.75} />
             :
             <Sunburst
-              id={id}
-              title={''}
+              {...props}
+              title={normaliseCaps(sliceData["clickKey"])}
               height={height*0.75}
-              datasets={miniDatasets}
-              legendPosition={legendPosition}
-              downloadName={
-                normaliseCaps(endpoint) + " - " + normaliseCaps(sliceData["clickKey"])
-              }
-              noLabel={noLabel}
+              datasets={subDatasets}
               noRefresh
               setSliceData={setter}
             />

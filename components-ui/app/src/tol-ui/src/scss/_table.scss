@@ -30,6 +30,11 @@
     background-color: var(--grey-subtle) !important;
   }
 
+  // dropdown box shadow
+  .rs-dropdown.rs-dropdown-menu {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1), 0 4px 4px rgba(255, 255, 255, 0.12) !important;
+  }
+
   .tol-pagination {
     margin-top: -2px;
     margin-bottom: 10px;

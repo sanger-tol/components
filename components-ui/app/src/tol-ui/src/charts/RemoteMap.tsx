@@ -8,19 +8,8 @@ import { useState, useEffect } from "react";
 import BubbleMap from "./Map";
 import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
+import { generateFilter } from "../filtering/Utils";
 
-
-interface Props {
-  bubble?: boolean,
-  endpoint: string,
-  longitudeKey: string,
-  latitudeKey: string,
-  attributeKeys?: string
-  height?: any,
-  pageSize?: number,
-  filter?: object,
-  baseUrl?: string
-}
 
 interface MarkerObject {
   geometry: {
@@ -59,7 +48,7 @@ function createMapMarkers(
   const markers: MarkerObject[] = [];
   const attributeKeysArray = attributeKeys ? attributeKeys.split(',').map(key => key.trim()) : [];
 
-  if (latitudeKey.includes('.')  || longitudeKey.includes('.')){
+  if (latitudeKey.includes('.')  || longitudeKey.includes('.')) {
     const relationshipName = latitudeKey.split('.')[0];
     const latAttribute = latitudeKey.split('.')[1];
     const longAttribute  = longitudeKey.split('.')[1];
@@ -111,8 +100,21 @@ function createMapMarkers(
   return markers;
 }
 
+interface Props {
+  id: string,
+  bubble?: boolean,
+  endpoint: string,
+  longitudeKey: string,
+  latitudeKey: string,
+  attributeKeys?: string
+  height?: any,
+  pageSize?: number,
+  zone: object,
+  baseUrl?: string
+}
+
 function RemoteMap(props: Props) {
-  const { endpoint, baseUrl, longitudeKey, latitudeKey, attributeKeys, filter } = props;
+  const { id, endpoint, baseUrl, longitudeKey, latitudeKey, attributeKeys, zone } = props;
   const height = (props.height !== undefined) ? props.height : "100%";
   const [markers, setMarkers] = useState<object[]>([]);
   const [warningMessage, setWarningMessage] = useState('');
@@ -131,7 +133,7 @@ function RemoteMap(props: Props) {
     httpClient().get('/' + endpoint + ":count", {
       baseURL: baseUrl,
       params: {
-        filter: filter
+        filter: generateFilter(id, zone)
       }
     }).then((res: any) => {
       if (res.data.meta.total <= pageSize) {
@@ -139,7 +141,7 @@ function RemoteMap(props: Props) {
         httpClient().get('/' + endpoint, {
           baseURL: baseUrl, 
           params: {
-            filter: filter,
+            filter: generateFilter(id, zone),
             page_size: pageSize
           }
         }).then((res: any) => {
@@ -163,7 +165,7 @@ function RemoteMap(props: Props) {
       setErrorMessage(error.message);
       console.error(error.message);
     });
-  }, [filter]);
+  }, [zone]);
 
   const map = <BubbleMap {...props} markers={markers} />;
   

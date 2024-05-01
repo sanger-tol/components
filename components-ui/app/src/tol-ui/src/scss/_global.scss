@@ -35,13 +35,6 @@ a:hover {
 	align-content: center;
 }
 
-// stop blue box showing on modal opening
-*:focus {
-  outline: 0 !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-
 // buttons
 .config-button {
   float: right;
@@ -111,8 +104,6 @@ a:hover {
   background-color: var(--grey-emphasis);
 }
 
-/*
 #webpack-dev-server-client-overlay {
   position: unset !important;
 }
-*/

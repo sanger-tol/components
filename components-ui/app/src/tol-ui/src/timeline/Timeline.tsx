@@ -20,29 +20,29 @@ interface Props {
 }
 
 function Timeline(props: Props) {
-    const { id, timelineTitle, endless, timelineData } = props;
+  const { id, timelineTitle, endless, timelineData } = props;
 
-    return (
-        <Col>
-            <div>
-                <Row>
-                    <p className="timeline-header-text">{timelineTitle}</p>
-                </Row>
-                <Row>
-                    <TL endless={endless} className="timeline-wrapper" id={id}>
-                        {timelineData.map((item) => (
-                            <TL.Item key={item.date} time={item.date}>
-                                <p className="timeline-item-header-text">{item.title}</p>
-                                <p>{item.desc}</p>
-                            </TL.Item>
-                        ))
-                        }
-                    </TL>
-                </Row>
-            </div>
-        </Col>
+  return (
+    <Col>
+      <div>
+        <Row>
+          <p className="timeline-header-text">{timelineTitle}</p>
+        </Row>
+        <Row>
+          <TL endless={endless} className="timeline-wrapper" id={id}>
+            {timelineData.map((item) => (
+              <TL.Item key={item.date} time={item.date}>
+                <p className="timeline-item-header-text">{item.title}</p>
+                <p>{item.desc}</p>
+              </TL.Item>
+            ))
+            }
+          </TL>
+        </Row>
+      </div>
+    </Col>
 
-    );
+  );
 }
 
 export default Timeline;

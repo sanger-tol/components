@@ -329,7 +329,7 @@ export function aggsToBarChartData(aggs: object, interval: DateInterval, shortDa
   } as ChartData;
 }
 
-function formatDateRangeWithInterval(date: string, interval: string) {
+function formatDateRangeWithInterval(date: string, interval: DateInterval) {
   const from = new Date(date);
   const to = new Date(date);
   switch(interval) {
@@ -350,7 +350,7 @@ function formatDateRangeWithInterval(date: string, interval: string) {
     return false;
   }
   to.setTime(to.getTime() - 1); // minus 1 millisecond
-  return {from: from, to: to};
+  return {gte: {value: from}, lt: {value: to}};
 }
 
 export function setBarClickedData(chart: any, chartElement: any, setBarData?: React.Dispatch<any>) {
@@ -388,7 +388,7 @@ export function generateBarLabels(chart: any, titleColour: any) {
 //   DATE BARCHART   //
 // ------------------//
 
-export function generateDateAgg(breakDownBy: string, xAxis: string, interval: DateInterval) {
+export function generateChartAgg(breakDownBy: string, xAxis: string, interval: DateInterval) {
   return {
     "aggs": {
       "agg": {
@@ -413,32 +413,31 @@ export function generateDateAgg(breakDownBy: string, xAxis: string, interval: Da
   };
 }
 
-export function generateDateFilterFromBarData(
+export function generateChartFilterFromBar(
   barData: object,
   breakDownBy: string,
   xAxis: string,
-  interval: DateInterval
+  type: DateInterval
 ) {
   // initialise filter generated from bar clicks
-  const localFilters = {
-    "exact": {},
-    "range": {}
-  };
+  const localFilters = {"and_": {}};
   
   if (barData["bucket"] !== undefined) {
-    localFilters["exact"][breakDownBy] = barData["bucket"];
+    localFilters["and_"][breakDownBy] = {
+      eq: {value: barData["bucket"]}
+    };
   }
 
   // providing a date the range filtering recognizes for month
   let barXKey = barData["clickKey"];
-  if (interval === "M") {
+  if (type === "M") {
     barXKey = "01 " + barXKey;
   }
 
   // formatting the date range for filtering
-  const dateRange = formatDateRangeWithInterval(barXKey, interval);
+  const dateRange = formatDateRangeWithInterval(barXKey, type);
   if (dateRange) {
-    localFilters["range"][xAxis] = dateRange;
+    localFilters["and_"][xAxis] = dateRange;
   }
   return localFilters;
 }
@@ -749,9 +748,10 @@ export function setSliceClickedData(chart: any, chartElement: any, setSliceData?
 
 export function generateFilterFromSunburstClick(sliceData: any) {  
   if (sliceData["bucket"] !== undefined) {
-    const localFilters = {"exact": {}};
-    localFilters["exact"][sliceData["bucket"]] = sliceData["clickKey"];
-    return localFilters;
+    const filter = {};
+    filter[sliceData["bucket"]] = {};
+    filter[sliceData["bucket"]]['eq'] = {value: sliceData["clickKey"]};
+    return {"and_": filter};
   }
   return {};
 }

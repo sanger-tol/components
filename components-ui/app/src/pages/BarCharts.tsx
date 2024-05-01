@@ -7,9 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import {
   BarChart, 
-  RemoteAggBarChart, 
-  Widgets,
-  env
+  Widgets
 } from '../tol-ui/src';
 
 
@@ -35,31 +33,6 @@ const d1 = [
 
 function BarCharts() {
   const [bar, setBar] = useState({});
-  const barChartTitle = "Interactive monthly comparison of unique species & DNA clusters found per order";
-  const remoteBarChartTitle = "Run Data";
-
-  const aggs = {
-    "aggs": {
-      "agg": {
-        "terms": {
-          "field": "mlwh_platform_type.keyword",
-          "order": {
-            "_count": "desc"
-          },
-          "size": 25
-        },
-        "aggs": {
-          "1": {
-            "date_histogram": {
-              "field": "mlwh_run_complete",
-              "calendar_interval": "1M",
-              "time_zone": "Europe/London"
-            }
-          }
-        }
-      }
-    }
-  };
   
   const basicChart = (
     <div>
@@ -68,7 +41,7 @@ function BarCharts() {
       <BarChart
         id="basic-stacked"
         stacked
-        title={barChartTitle}
+        title="Basic Stacked Bar Chart"
         labels={labels}
         datasets={d1}
         setBarData={setBar}
@@ -77,29 +50,9 @@ function BarCharts() {
     </div>
   );
 
-  const remoteChart = (
-    <div>
-      <h2>Remote Bar Chart</h2>
-      <RemoteAggBarChart
-        id="agg-chart"
-        stacked
-        title={remoteBarChartTitle}
-        endpoint="run_data"
-        aggs={aggs}
-        interval="M"
-        height={500 }
-        baseUrl={env.TOL_DATA}
-      />
-    </div>
-  );
-
   const components = [
     {
       component: basicChart,
-      type: 'full'
-    },
-    {
-      component: remoteChart,
       type: 'full'
     }
   ];

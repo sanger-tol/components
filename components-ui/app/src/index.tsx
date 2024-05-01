@@ -5,45 +5,69 @@ SPDX-License-Identifier: MIT
 */
 
 import ReactDOM from 'react-dom';
-import { Home,
+import {
+  Home,
   BarCharts,
-  Combo,
   Detail,
   DetailInfo,
-  Miscellaneous,
-  Tables,
+  Filters,
   Forms,
+  Miscellaneous,
   Maps,
+  Tables,
+  Timelines,
   Sandbox,
   Sunbursts,
   Widgets,
-  UserId,
-  Timelines } from "./pages";
-//import { Sandbox } from "./pages";
+  UserId
+} from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown } from './tol-ui/src';
 import "./scss/styling.scss";
 
 
+// main data-driven components
 const barCharts: Page = {
   name: "BarCharts",
   element: <BarCharts />
 };
 
-const combo: Page = {
-  name: "Combo",
-  element: <Combo />
+const sunbursts: Page = {
+  name: "Sunbursts",
+  element: <Sunbursts />
 };
 
-const forms: Page = {
-  name: "Forms",
-  element: <Forms />,
-  hidden: true
+const tables: Page = {
+  name: "Tables",
+  element: <Tables />
+};
+
+const filters: Page = {
+  name: "Filters",
+  element: <Filters />
 };
 
 const maps: Page = {
   name: "Maps",
   element: <Maps />
+};
+
+const timelines: Page = {
+  name: 'Timelines',
+  element: <Timelines />
+};
+
+const widgets: Page = {
+  name: "Widgets",
+  element: <Widgets />
+};
+
+// other
+const detail: Page = {
+  name: "Detail",
+  element: <Detail />,
+  detail: <DetailInfo/>,
+  hidden: true
 };
 
 const miscellaneous: Page = {
@@ -52,51 +76,29 @@ const miscellaneous: Page = {
   hidden: true
 };
 
-const tables: Page = {
-  name: "Tables",
-  element: <Tables />
-};
-
-const sandbox: Page = {
-  name: "Sandbox",
-  element: <Sandbox />,
+const forms: Page = {
+  name: "Forms",
+  element: <Forms />,
   hidden: true
 };
 
-const sunbursts: Page = {
-  name: "Sunbursts",
-  element: <Sunbursts />,
-  hidden: true
+const otherDropdown: Dropdown = {
+  name: 'Other',
+  pages: [detail, miscellaneous, forms]
 };
 
-const widgets: Page = {
-  name: "Widgets",
-  element: <Widgets />,
-  hidden: true
-};
-
-const detail: Page = {
-  name: "Detail",
-  element: <Detail />,
-  detail: <DetailInfo/>
-};
-
-const userId: Page = {
+// auth
+const user: Page = {
   name: 'UserId',
   auth: true,
   element: <UserId />
 };
 
-const timelines: Page = {
-  name: 'Timelines',
-  element: <Timelines />
-};
-
-const dropdown: Dropdown = {
-  name: 'Dropdown',
-  pages: [widgets, sunbursts],
-  //auth: true,
-  //admin: true
+// dev sandbox
+const sandbox: Page = {
+  name: "Sandbox",
+  element: <Sandbox />,
+  hidden: true
 };
 
 ReactDOM.render( // eslint-disable-line
@@ -104,19 +106,19 @@ ReactDOM.render( // eslint-disable-line
     brand="Components"
     homePage={ <Home /> }
     pages={[
-      dropdown,
       barCharts,
-      combo,
-      forms,
-      maps,
-      miscellaneous,
-      tables,
-      sandbox,
       sunbursts,
+      tables,
+      filters,
+      maps,
+      timelines,
       widgets,
+      otherDropdown,
       detail,
-      userId,
-      timelines
+      miscellaneous,
+      forms,
+      user,
+      sandbox
     ]}
   />,
   document.getElementById('root')

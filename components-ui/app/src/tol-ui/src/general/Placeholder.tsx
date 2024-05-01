@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartColumn, faChartPie, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { faChartColumn, faChartPie, faMapLocationDot, faUpDownLeftRight } from '@fortawesome/free-solid-svg-icons';
 import { Loader, Status } from '../index';
 
 
@@ -13,6 +13,7 @@ function getPlaceholderIcon(
   bar?: boolean,
   pie?: boolean,
   map?: boolean,
+  drag?: boolean,
   loader?: boolean,
   message?: string,
   warningMessage?: string,
@@ -23,7 +24,15 @@ function getPlaceholderIcon(
   } else if (pie) {
     return <FontAwesomeIcon icon={faChartPie} size="8x" />;
   } else if (map) {
-    return <FontAwesomeIcon icon={faMapLocationDot} size="8x"/>;
+    return <FontAwesomeIcon icon={faMapLocationDot} size="8x" />;
+  } else if (drag) {
+    return (
+      <div>
+        <FontAwesomeIcon icon={faUpDownLeftRight} size="6x" />
+        <br/>
+        <h5>{message}</h5>
+      </div>
+    );
   } else if (loader) {
     return <Loader />;
   } else if (message !== undefined){
@@ -88,6 +97,7 @@ interface Props {
   bar?: boolean,
   pie?: boolean,
   map?: boolean,
+  drag?: boolean,
   empty?: boolean,
   loader?: boolean,
   opacity?: number,
@@ -105,6 +115,7 @@ function Placeholder(props: Props) {
     bar,
     pie,
     map,
+    drag,
     empty,
     loader,
     opacity,
@@ -126,6 +137,7 @@ function Placeholder(props: Props) {
     bar,
     pie,
     map,
+    drag,
     loader,
     message,
     warningMessage,

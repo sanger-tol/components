@@ -1,0 +1,47 @@
+/*
+ * SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+.tol-table {
+  .tol-text-filter .rs-dropdown-toggle.rs-dropdown-toggle-no-caret.rs-btn.rs-btn-default {
+    top: -1px !important;
+  }
+}
+
+.tol-text-filter {
+  .rs-dropdown-toggle.rs-dropdown-toggle-no-caret.rs-btn.rs-btn-default {
+    background-color: var(--bs-body-bg) !important;
+    border: 1px solid var(--rs-border-primary) !important;
+    color: var(--placeholder);
+    height: 36px;
+    width: 28px;
+    margin-right: 4px;
+    padding: 6px;
+    top: -1px !important;
+  }
+
+  .rs-dropdown-toggle.rs-dropdown-toggle-no-caret.rs-btn.rs-btn-default:hover,
+  .rs-dropdown-toggle.rs-dropdown-toggle-no-caret.rs-btn.rs-btn-default:focus {
+    border: 1px solid var(--primary) !important;
+  }
+
+  .rs-dropdown-item-focus {
+    background-color: var(--grey-subtle) !important;
+    color: var(--primary) !important;
+  }
+
+  .rs-input-group.rs-input-group-inside {
+    display: inline-block !important;
+    width: 100% !important;
+  }
+}
+
+.tol-num-filter {
+  @extend .tol-text-filter;
+
+  .rs-input-group.rs-input-group-inside {
+    width: calc(100% - 32px) !important;
+  }
+}

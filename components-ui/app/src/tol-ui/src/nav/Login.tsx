@@ -9,7 +9,7 @@ import { Redirect } from 'react-router-dom';
 import { useAuth } from '../contexts/auth.context';
 import { getUrlLogin } from '../services/auth/authService';
 import { getTokenFromLocalStorage, tokenHasExpired } from '../services/localStorage/localStorageService';
-import { LoginIcon } from './Icons';
+import { LoginIcon } from '../general/Icons';
 
 
 function Login() {

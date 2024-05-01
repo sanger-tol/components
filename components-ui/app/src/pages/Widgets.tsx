@@ -4,111 +4,56 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import {
-  Widgets as W,
-  RemoteBarChart,
-  RemoteSunburst,
-  RemoteTable,
-  RemoteMap,
-  env,
-  RemoteCount
-} from '../tol-ui/src';
+import { Widgets as W } from '../tol-ui/src';
 
 
-const chart = (
-  <RemoteBarChart
-    id="widget-chart"
-    stacked
-    title="Run Data"
-    endpoint="run_data"
-    breakDownBy="mlwh_platform_type"
-    xAxis="mlwh_run_complete"
-    type="date"
-    interval="M"
-    baseUrl={ env.TOL_DATA }
-  />
-);
+const randomColour = () => "#" + ((1 << 24) * Math.random() | 0).toString(16).padStart(6, "0");
 
-const sunburst = (
-  <RemoteSunburst
-    id="widget-sunburst"
-    title="Order of remote..."
-    endpoint="species"
-    sliceBy={ ["sts_order_group"] }
-    baseUrl={ env.TOL_DATA }
-  />
-);
-
-const table = (
-  <RemoteTable
-    id="run_data_1"
-    endpoint="run_data"
-    baseUrl={ env.TOL_DATA }
-  />
-);
-
-const map = (
-  <RemoteMap
-    bubble
-    endpoint="sample"
-    longitudeKey="sts_latitude"
-    latitudeKey="sts_longitude"
-    pageSize={ 10000 }
-    baseUrl={ env.TOL_DATA }
-  />
-);
-
-const count1 = (
-  <RemoteCount
-    title='Run Data'
-    endpoint='run_data'
-    baseUrl={ env.TOL_DATA }
-  />
-);
-
-const count2 = (
-  <RemoteCount
-    title='Species'
-    endpoint='species'
-    baseUrl={ env.TOL_DATA }
-  />
-);
+const getDiv = () => {
+  return (
+    <div style={{
+      backgroundColor: randomColour(),
+      height: '100%',
+      borderRadius: 6
+    }}/>
+  );
+};
 
 const components = [
   {
-    component: <h2>Example data</h2>,
+    component: <h2>Widget Sizes</h2>,
     type: 'full'
   },
   {
-    component: count1,
+    component: getDiv(),
     type: 'sm'
   },
   {
-    component: count2,
+    component: getDiv(),
     type: 'sm'
   },
   {
-    component: count1,
+    component: getDiv(),
     type: 'sm'
   },
   {
-    component: count2,
+    component: getDiv(),
     type: 'sm'
   },
   {
-    component: chart,
+    component: getDiv(),
     type: 'md'
   },
   {
-    component: sunburst,
+    component: getDiv(),
     type: 'md'
   },
   {
-    component: map,
+    component: getDiv(),
     type: 'lg'
   },
   {
-    component: table,
+    component: getDiv(),
     type: 'xl'
   }
 ];

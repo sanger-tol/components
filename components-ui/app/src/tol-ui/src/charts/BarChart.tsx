@@ -26,7 +26,7 @@ import {
   updateOpacitys,
   resetItemClickedData,
   downloadItem
-} from "./ChartUtils";
+} from "./Utils";
 import { isPropDefined, getCssVarValue } from "../general/Utils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUndo, faDownload } from '@fortawesome/free-solid-svg-icons';
@@ -117,11 +117,7 @@ function BarChart(props: Props) {
           dataset.order = index;
         });
         // sets the bar data to the selected legend
-        setBarData!({
-          "bucket": null,
-          "value": null,
-          "clickKey": null
-        });
+        setBarData!({});
       }
       legend.chart.update();
       setDatasets(legend.chart.data.datasets);

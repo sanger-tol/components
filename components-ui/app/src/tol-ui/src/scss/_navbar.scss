@@ -28,6 +28,14 @@
     color: var(--bs-navbar-brand-color);
     opacity: 0.6;
   }
+
+  .nav-link {
+    font-size: 14px;
+    font-weight: bolder;
+    padding: 6px 8px;
+    color: var(--bs-navbar-brand-color);
+    opacity: 0.6;
+  }
   
   .nav-link:hover,
   .nav-link:active,
@@ -44,6 +52,19 @@
   // login hover
   svg:hover path.navbar-item-colour {
     fill: var(--primary);
+  }
+
+  .nav-right {
+    margin-left: auto;
+  }
+
+  .dropdown-item {
+    font-size: 14px;
+  }
+
+  // remove box around dropdown on focus
+  .navbar-toggler:focus {
+    box-shadow: none;
   }
 
   .nav-right {
