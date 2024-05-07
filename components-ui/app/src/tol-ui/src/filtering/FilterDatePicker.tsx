@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { DateRangePicker } from 'rsuite';
 import { stopPropagation } from '../general/Utils';
 import { Filter } from './Filter';
-import { updateFilter, filterListener } from './Utils';
+import { setFilter, filterListener } from './Utils';
 
 
 function FilterDatePicker(props: Filter) {
@@ -36,7 +36,7 @@ function FilterDatePicker(props: Filter) {
     if (from !== null) from.setHours(0, 0, 0, 0);
     if (to !== null) to.setHours(23, 59, 59, 999);
     setValue(input);
-    updateFilter({
+    setFilter({
       operator: 'gte',
       value: from,
       negate: false,
@@ -45,7 +45,7 @@ function FilterDatePicker(props: Filter) {
       zone: zone,
       empty: null
     });
-    updateFilter({
+    setFilter({
       operator: 'lt',
       value: to,
       negate: false,

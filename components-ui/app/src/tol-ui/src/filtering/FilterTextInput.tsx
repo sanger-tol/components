@@ -9,7 +9,7 @@ import { Input, InputGroup, Dropdown } from 'rsuite';
 import SearchIcon from '@rsuite/icons/Search';
 import { stopPropagation } from '../general/Utils';
 import { Filter } from './Filter';
-import { updateFilter, filterListener, operatorListener } from './Utils';
+import { setFilter, filterListener } from './Utils';
 
 
 function FilterTextInput(props: Filter) {
@@ -19,6 +19,8 @@ function FilterTextInput(props: Filter) {
   const [disabled, setDisabled] = useState(false);
   const [operator, setOperator] = useState(type === 'str' ? '' : '=');
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
+  const operators = ['=', '<', '>', '≤', '≥'];
+  const isNum = type === 'int' || type === 'float';
 
   const getOperator = (operator: string) => {
     switch(operator) {
@@ -41,16 +43,6 @@ function FilterTextInput(props: Filter) {
   const isNegated = (operator: string) => {
     return operator === '≠';
   };
-
-  operatorListener({
-    attribute: attribute,
-    componentId: componentId,
-    operator: getOperator(operator),
-    zone: zone,
-    setValue: setValue,
-    setDisabled: setDisabled,
-    type: type
-  }, [operator]);
 
   filterListener({
     attribute: attribute,
@@ -84,7 +76,7 @@ function FilterTextInput(props: Filter) {
     if (!(input === '-' || input === '.')) {
       clearTimeout(timeoutValue!);
       setTimeoutValue(setTimeout(() => {
-        updateFilter({
+        setFilter({
           operator: getOperator(operator),
           value: input,
           negate: isNegated(operator),
@@ -99,31 +91,37 @@ function FilterTextInput(props: Filter) {
   };
 
   const onOperator = (op: string) => {
-    setOperator(op);
-    updateFilter({
-      operator: getOperator(op),
-      value: value,
+    // reset value and old operator when changing operator
+    setValue('');
+    setFilter({
+      operator: getOperator(operator), // previous operator
+      value: '', // resets value
       negate: isNegated(op),
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      empty: '',
+      empty: ''
     });
+    setOperator(op);
     setZone({...zone});
-    console.log('setZone', zone);
   };
 
-  const isNum = type === 'int' || type === 'float';
   return (
     <span className={isNum ? 'tol-num-filter' : 'tol-text-filter'} onClick={ stopPropagation }>
       {isNum ?
         <Dropdown title={operator} noCaret>
-          <Dropdown.Item onSelect={() => onOperator('=')}>{'='}</Dropdown.Item>
-          <Dropdown.Item onSelect={() => onOperator('≠')}>{'≠'}</Dropdown.Item>
-          <Dropdown.Item onSelect={() => onOperator('<')}>{'<'}</Dropdown.Item>
-          <Dropdown.Item onSelect={() => onOperator('≤')}>{'≤'}</Dropdown.Item>
-          <Dropdown.Item onSelect={() => onOperator('>')}>{'>'}</Dropdown.Item>
-          <Dropdown.Item onSelect={() => onOperator('≥')}>{'≥'}</Dropdown.Item>
+          {operators.map((op, i) => {
+            if (op !== operator) {
+              return (
+                <Dropdown.Item
+                  key={i}
+                  onClick={() => onOperator(op)}
+                >
+                  {op}
+                </Dropdown.Item>
+              );
+            }
+          })}
         </Dropdown>
         :
         <></>

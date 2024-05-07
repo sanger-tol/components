@@ -148,9 +148,9 @@ function Navigation(props: Props) {
       if(authorized) {
         return (
           <NavDropdown title={dropdown.name}>
-            {dropdown.pages.map((page: Page) => {
+            {dropdown.pages.map((page: Page, index) => {
               return (// eslint-disable-next-line
-                <div className="nav-dropdown-box">
+                <div className="nav-dropdown-box" key={index}>
                   {addPage(page, true)}
                 </div>
               );
@@ -181,14 +181,20 @@ function Navigation(props: Props) {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            {props.pages.map(page => {
+            {props.pages.map((page, index) => {
               // @ts-ignore
               if (page.pages !== undefined){
                 return (
-                  addDropdown(page)
+                  <span key={index}>
+                    {addDropdown(page)}
+                  </span>
                 );
               } else {
-                return addPage(page);
+                return (
+                  <span key={index}>
+                    {addPage(page)}
+                  </span>
+                );
               }
             })}
             {(!token || tokenHasExpired()) && props.login &&

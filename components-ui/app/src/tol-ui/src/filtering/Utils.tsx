@@ -82,7 +82,7 @@ export function resetFiltersBelow(params: {
   }
 }
 
-export function updateFilter(params: {
+export function setFilter(params: {
   // and_ filter attributes
   operator: string,
   value: any,
@@ -109,7 +109,7 @@ export function updateFilter(params: {
     if (operator in (and_[attribute] || {})) {
       delete and_[attribute][operator];
     }
-    if (isEmptyObject(and_[attribute])) {
+    if (attribute in and_ && isEmptyObject(and_[attribute])) {
       delete and_[attribute];
     }
   }
@@ -150,7 +150,6 @@ export function filterListener(params: {
         }
       }
     }
-  
     setValue(value);
     setDisabled(isDisabled);
   }, dependencies);
@@ -171,45 +170,4 @@ export function addSubFilter(params: {
   }
   resetFiltersBelow({id: subId, zone: zone!});
   z.components[subId].data.filter = f;
-}
-
-export function operatorListener(params: {
-  // filter location
-  attribute: string,
-  componentId: string,
-  operator: string,
-  // filter state
-  zone: Zone,
-  setValue: any,
-  setDisabled: any,
-  // type
-  type: string
-}, dependencies: any[]) {
-  const {attribute, componentId, operator, zone, setValue, setDisabled, type} = params;
-
-  useEffect(() => {
-    if (type !== 'contains') {
-      const aboveComponents = getComponentsAbove(componentId, zone.order);
-      let isDisabled = false;
-      let value = '';
-    
-      for (const currentId of aboveComponents) {
-        const and_ = zone.components[currentId].data.filter.and_;
-        if (and_ && attribute in and_) {
-          if (attribute === 'benchling_sequencing_request_count') console.log(and_[attribute]);
-          if (operator in and_[attribute]) {
-            const filter = and_[attribute][operator];
-            isDisabled = (currentId !== componentId);
-            value = filter.value;
-            break;
-          }
-        }
-      }
-
-      if (attribute === 'benchling_sequencing_request_count') console.log(value);
-
-      setValue(value);
-      setDisabled(isDisabled);
-    }
-  }, dependencies);
 }

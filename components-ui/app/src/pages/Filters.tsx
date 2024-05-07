@@ -102,11 +102,11 @@ function Filters() {
           sts_family: {
             rename: 'Family'
           },
-          benchling_extraction_benchling_completion_date_min: {
-            rename: 'Benchling Extraction Min Date'
+          benchling_sequencing_request_count: {
+            rename: 'Request Count'
           }
         }}
-        height={250}
+        height={300}
         {...species}
       />
       <p style={{marginTop: 15, marginBottom: 10}}>Filter Level 4:</p>
@@ -120,7 +120,7 @@ function Filters() {
             rename: 'Name'
           }
         }}
-        height={250}
+        height={300}
         {...species}
       />
       <p style={{marginTop: 10}}>Filter Level 5:</p>
