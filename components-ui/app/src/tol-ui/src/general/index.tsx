@@ -20,4 +20,3 @@ export { default as RemoteGet } from "./RemoteGet";
 export { default as ObjectDetail } from "./ObjectDetail";
 export { default as RemoteCount } from "./RemoteCount";
 export { formatDate } from "./Utils";
-export { default as ResponsiveWidget } from "./ResponsiveWidget";

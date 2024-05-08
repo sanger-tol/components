@@ -10,7 +10,10 @@ export { Link };
 
 // dashboard
 export {
-  useZone
+  useZone,
+  ZoneGrid,
+  ResponsiveWidget,
+  ComponentModal
 } from "./board";
 
 // Charts
@@ -41,7 +44,8 @@ export { Filter } from "./filtering";
 // Forms
 export {
   AutoComplete,
-  Dropzone
+  Dropzone,
+  SingleSelect
 } from "./forms";
 
 // General
@@ -58,7 +62,7 @@ export {
   RemoteGet,
   ObjectDetail,
   RemoteCount,
-  formatDate
+  formatDate,
 } from "./general";
 
 // hooks

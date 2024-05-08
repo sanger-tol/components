@@ -5,10 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import { WidthProvider, Responsive, Layouts } from 'react-grid-layout';
-import { getCssVarValue } from "./Utils";
+import { getCssVarValue } from "../general/Utils";
 import { themeListener } from "../hooks/listeners";
-import Placeholder from "./Placeholder";
-import { useState, useRef } from 'react';
+import Placeholder from "../general/Placeholder";
+import { useState, useRef, useEffect } from 'react';
 
 
 interface Component {
@@ -72,6 +72,13 @@ function ResponsiveWidget(props: Props) {
   const [layoutsState, setLayouts] = useState<Layouts>(generateLayout(widgets));
   const internalLayouts = useRef(generateLayout(widgets));
 
+
+  useEffect(() => {
+    const newLayout = generateLayout(widgets);
+    setLayouts(newLayout);
+    internalLayouts.current = newLayout;
+  }, [widgets])
+
   function onLayoutChange(layout) {
     //saveToLS("layouts", layouts, id);
 
@@ -116,18 +123,18 @@ function ResponsiveWidget(props: Props) {
       const widget = components.components[id];
       ['lg', 'md', 'sm'].forEach(size => {
         const { w, h } = types[widget.type][size];
-  
+      
         // if the widget won't fit on the current row, move it to the next row
         if (x[size] + w > (size === 'lg' ? 4 : size === 'md' ? 2 : 1)) {
           y[size] += h;
           x[size] = 0;
         }
-  
+      
         layout[size].push({ i: id, x: x[size], y: y[size], w, h });
         x[size] += w;
       });
     });
-  
+    
     return layout;
   }
 
@@ -149,7 +156,7 @@ function ResponsiveWidget(props: Props) {
         onLayoutChange={onLayoutChange}
         onBreakpointChange={onBreakpointChange}
       >
-        {widgets.order.map((key)=> { // Need to adjust
+        {widgets.order.map((key)=> {
           if (!draggable) {
             return (
               <div key={key} className='tol-responsive-widget'>
