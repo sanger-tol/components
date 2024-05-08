@@ -17,10 +17,9 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
   open: boolean,
-  setOpen: Function,
-  setComponent: Function,
+  setOpen: any,
+  setComponent: any,
 }
-
 
 function ComponentModal(props: Props) {
   const { open, setOpen, setComponent } = props;
@@ -33,7 +32,7 @@ function ComponentModal(props: Props) {
       id: id,
       chartType: chartType,
       chartSize: chartSize
-    })
+    });
     setOpen(false);
   };
 
@@ -53,25 +52,25 @@ function ComponentModal(props: Props) {
       overflow={false}
     >
       <>
-      <SingleSelect
-        data={['Table','BarChart','Map', 'Sunburst', 'Count']}
-        placeholder='Component'
-        value={chartType}
-        setValue={setChartType}
-      />
-      <SingleSelect
-        data={['large','medium','small']}
-        placeholder='Size'
-        value={chartSize}
-        setValue={setChartSize}
-      />
-      <Input 
-        placeholder='ID'
-        onChange={(value) => setID(value)}
-      />
+        <SingleSelect
+          data={['Table','BarChart','Map', 'Sunburst', 'Count']}
+          placeholder='Component'
+          value={chartType}
+          setValue={setChartType}
+        />
+        <SingleSelect
+          data={['large','medium','small']}
+          placeholder='Size'
+          value={chartSize}
+          setValue={setChartSize}
+        />
+        <Input 
+          placeholder='ID'
+          onChange={(value) => setID(value)}
+        />
       </>
     </Modal>
-  )
-  }
+  );
+}
   
-  export default ComponentModal;
+export default ComponentModal;

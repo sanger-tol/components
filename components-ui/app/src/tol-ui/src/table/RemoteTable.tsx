@@ -10,7 +10,6 @@ import { FieldMetaData, FieldMeta } from "./Field";
 import {
   createSort,
   getFieldMetaAttributeFromStorage,
-  getTypesMeta,
   setFieldMetaAttributeInStorage,
   convertTableData,
   tableDebug,
@@ -24,6 +23,7 @@ import {
   generateFilter,
   filterHasUpdated
 } from "../filtering/Utils";
+import { getTypesMeta } from '../general/Utils'; 
 
 
 interface Props {

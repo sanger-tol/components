@@ -122,16 +122,6 @@ export function matomoAnalytics(siteId: number){
   }
 }
 
-export async function getConfig(endpoint: string, baseUrl?: string) {
-  return await httpClient().get('/_config/' + endpoint, {
-    baseURL: baseUrl
-  }).then((res: any) => {
-    return res.data;
-  }).catch((error: any) => {
-    throw error;
-  });
-}
-
 export function numberWithSpaces(num: number) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
@@ -149,4 +139,75 @@ export function deepCopy(o: object) {
   return JSON.parse(
     JSON.stringify(o)
   );
+}
+
+// types meta
+interface Attributes {
+  [id: string]: object
+}
+
+interface Relationships {
+  [id: string]: RelationshipInfo
+}
+
+interface RelationshipInfo {
+  one?: Values,
+  many?: Values,
+  foreign_keys?: Values
+}
+
+interface Values {
+  [id: string]: string
+}
+
+export interface TypesMeta {
+  attributes: Attributes,
+  relationships: Relationships
+}
+
+async function getConfig(endpoint: string, baseUrl?: string) {
+  return await httpClient().get('/_config/' + endpoint, {
+    baseURL: baseUrl
+  }).then((res: any) => {
+    return res.data;
+  }).catch((error: any) => {
+    throw error;
+  });
+}
+
+const pendingPromises: { [key: string]: Promise<TypesMeta> } = {};
+
+export async function getTypesMeta(baseUrl: string = ''): Promise<TypesMeta> {
+  if (!pendingPromises[baseUrl]) {
+    pendingPromises[baseUrl] = (async () => {
+      const key = 'typesMeta-' + baseUrl;
+      let savedTypesMeta = JSON.parse(localStorage.getItem(key) || 'null');
+      const expiry = savedTypesMeta === null ? null : new Date(savedTypesMeta['expiry']);
+
+      // setting now and an hour from now
+      const now = new Date();
+      const anHourFromNow = new Date(now);
+      anHourFromNow.setHours(now.getHours() + 1);
+
+      // check if typesMeta exists and is not expired
+      if (expiry === null || now > expiry) {
+        const attributes = await getConfig('attribute_metadata', baseUrl);
+        const relationships = await getConfig('relationships', baseUrl);
+        savedTypesMeta = {
+          expiry: anHourFromNow,
+          data: {
+            attributes,
+            relationships
+          }
+        };
+        localStorage.setItem(key, JSON.stringify(savedTypesMeta));
+      }
+
+      return savedTypesMeta.data as TypesMeta;
+    })().finally(() => {
+      delete pendingPromises[baseUrl];
+    });
+  }
+
+  return pendingPromises[baseUrl];
 }

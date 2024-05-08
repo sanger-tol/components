@@ -77,7 +77,7 @@ function ResponsiveWidget(props: Props) {
     const newLayout = generateLayout(widgets);
     setLayouts(newLayout);
     internalLayouts.current = newLayout;
-  }, [widgets])
+  }, [widgets]);
 
   function onLayoutChange(layout) {
     //saveToLS("layouts", layouts, id);

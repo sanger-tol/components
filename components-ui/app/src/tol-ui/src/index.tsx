@@ -77,8 +77,7 @@ export {
 export {
   HeaderButton,
   Page,
-  Dropdown,
-  ErrorMessage
+  Dropdown
 } from "./models";
 
 // Nav

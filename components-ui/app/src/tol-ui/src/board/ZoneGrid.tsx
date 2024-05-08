@@ -44,16 +44,16 @@ interface Props {
 
 function getComponent(componentToAdd, zone) {
   switch (componentToAdd.chartType) {
-    case 'Count':
-      return <RemoteCount id={componentToAdd.id} title={componentToAdd.id} {...zone} />;
-    case 'BarChart':
-      return <RemoteBarChart id={componentToAdd.id} title={componentToAdd.id} type='M' breakDownBy='sts_family' stacked xAxis='sts_dna_extracted_date' {...zone} />;
-    case 'Table':
-      return <RemoteTable id={componentToAdd.id} title={componentToAdd.id} {...zone} />;
-    case 'Map':
-      return ;
-    case 'Sunburst':
-      return <RemoteSunburst id={componentToAdd.id} title={componentToAdd.id} sliceBy={["sts_order_group", "sts_family"]} {...zone} />;
+  case 'Count':
+    return <RemoteCount id={componentToAdd.id} title={componentToAdd.id} {...zone} />;
+  case 'BarChart':
+    return <RemoteBarChart id={componentToAdd.id} title={componentToAdd.id} type='M' breakDownBy='sts_family' stacked xAxis='sts_dna_extracted_date' {...zone} />;
+  case 'Table':
+    return <RemoteTable id={componentToAdd.id} title={componentToAdd.id} {...zone} />;
+  case 'Map':
+    return;
+  case 'Sunburst':
+    return <RemoteSunburst id={componentToAdd.id} title={componentToAdd.id} sliceBy={["sts_order_group", "sts_family"]} {...zone} />;
   }
 }
 
@@ -69,16 +69,16 @@ function ZoneGrid(props: Props) {
     endpoint: object_type,
     baseUrl: env.TOL_DATA,
     components: []
-  })
+  });
 
   useEffect(() => {
-    console.log(currentWidgets)
+    console.log(currentWidgets);
   }, [currentWidgets]);
   
   useEffect(() => {
     if (componentToAdd) {
       console.log(componentToAdd);
-      const component = getComponent(componentToAdd, speciesZone)
+      const component = getComponent(componentToAdd, speciesZone);
       setCurrentWidgets({
         // @ts-ignore
         components: {

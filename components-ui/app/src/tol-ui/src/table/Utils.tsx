@@ -14,7 +14,7 @@ import {
   FieldMetaData,
   initialiseFieldMeta
 } from './Field';
-import { getConfig, isFloat } from "../general/Utils";
+import { isFloat, TypesMeta } from "../general/Utils";
 import Relationship from './Relationship';
 import { Status } from '../general';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -25,30 +25,6 @@ export const fieldMetaVersion = "field-meta-v5";
 let idField: string; // id or uid
 let idFieldDefinedPreviously = false;
 let hiddenFields = false;
-
-// types meta
-interface Attributes {
-  [id: string]: object
-}
-
-interface Relationships {
-  [id: string]: RelationshipInfo
-}
-
-interface RelationshipInfo {
-  one?: Values,
-  many?: Values,
-  foreign_keys?: Values
-}
-
-interface Values {
-  [id: string]: string
-}
-
-interface TypesMeta {
-  attributes: Attributes,
-  relationships: Relationships
-}
 
 export function isRelationship(key: string) {
   return key.includes('.');
@@ -216,13 +192,6 @@ function createCellRenderer(cellRenderer: CellRenderer, key: string, value: any,
   // all row data always passed to use in a cellRenderer component via a rowData prop
   propPointers["rowData"] = data;
   return <cellRenderer.element {...propPointers}/>;
-}
-
-export async function getTypesMeta(baseUrl?: string) {
-  return {
-    attributes: await getConfig('attribute_metadata', baseUrl),
-    relationships: await getConfig('relationships', baseUrl)
-  } as TypesMeta;
 }
 
 function setValueBasedCellRenderer(key: string, value: any, fieldMetaData: object) {
