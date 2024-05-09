@@ -13,7 +13,9 @@ export {
   useZone,
   ZoneGrid,
   ResponsiveWidget,
-  ComponentModal
+  ComponentModal,
+  Dashboard,
+  ZoneModal
 } from "./board";
 
 // Charts

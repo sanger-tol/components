@@ -7,7 +7,7 @@
 
 
 import {
-  ZoneGrid,
+  Dashboard,
 } from '../tol-ui/src';
 
 
@@ -15,7 +15,7 @@ function Sandbox() {
 
   return (
     <div>
-      <ZoneGrid id='sandbox-zone' object_type='species'/>
+      <Dashboard id='sandbox-zone'/>
     </div>
   );
 }

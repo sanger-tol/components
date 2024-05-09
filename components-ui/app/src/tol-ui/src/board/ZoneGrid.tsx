@@ -40,6 +40,8 @@ interface Props {
   id: string,
   widgets?: Widgets,
   object_type: string,
+  onZoneReorder: any,
+  deleteZone: any
 }
 
 function getComponent(componentToAdd, zone) {
@@ -59,7 +61,7 @@ function getComponent(componentToAdd, zone) {
 
 
 function ZoneGrid(props: Props) {
-  const { id, object_type, widgets } = props;
+  const { id, object_type, widgets, onZoneReorder, deleteZone } = props;
   const [draggable, setDraggable] = useState(false);
   const [currentWidgets, setCurrentWidgets] = useState<Widgets>(widgets || {components: {}, order: []});
   const [componentToAdd, setComponentToAdd] = useState<ComponentToAdd>();
@@ -72,12 +74,10 @@ function ZoneGrid(props: Props) {
   });
 
   useEffect(() => {
-    console.log(currentWidgets);
   }, [currentWidgets]);
   
   useEffect(() => {
     if (componentToAdd) {
-      console.log(componentToAdd);
       const component = getComponent(componentToAdd, speciesZone);
       setCurrentWidgets({
         // @ts-ignore
@@ -117,11 +117,44 @@ function ZoneGrid(props: Props) {
       Add
     </Button>
   );
+
+  const deleteButton = (
+    <Button
+      onClick={() => {
+        deleteZone(id);
+      }}
+    >
+      Delete
+    </Button>
+  );
+
+  const upButton = (
+    <Button
+      onClick={() => {
+        onZoneReorder(id, 'up');
+      }}
+    >
+      Up
+    </Button>
+  );
   
-  const intro = (
+  const downButton = (
+    <Button
+      onClick={() => {
+        onZoneReorder(id, 'down');
+      }}
+    >
+      Down
+    </Button>
+  );
+
+  const buttons = (
     <Row>
       <Col xs={12} sm={4}>{moveButton}</Col>
       <Col xs={12} sm={4}>{addButton}</Col>
+      <Col xs={12} sm={4}>{upButton}</Col>
+      <Col xs={12} sm={4}>{downButton}</Col>
+      <Col xs={12} sm={4}>{deleteButton}</Col>
       <Col xs={12} sm={4}>{open && 
         <ComponentModal open={open} setOpen={setOpen} setComponent={setComponentToAdd}/>
       }</Col>
@@ -130,7 +163,7 @@ function ZoneGrid(props: Props) {
 
   return (
     <div className='tol-zone'>
-      {intro}
+      {buttons}
       <ResponsiveWidget id={id} widgets={currentWidgets} draggable={draggable} />
     </div>
   );

@@ -16,22 +16,6 @@
   }
 }
 
-.tol-responsive-widget {
-  @extend .tol-widget;
-  margin: 0;
-}
-
-.tol-draggable-widget:hover {
-  cursor: move;
-}
-
-.tol-responsive-grid {
-  background-color:blue;
-  margin: 16px;
-  border-radius: 6px;
-  position: relative;
-}
-
 .tol-placeholder {
   background-color: var(--grey-subtle);
   position: relative !important;
