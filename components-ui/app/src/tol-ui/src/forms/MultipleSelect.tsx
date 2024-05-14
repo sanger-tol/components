@@ -9,15 +9,34 @@ import { isPropDefined } from '../general/Utils';
 
 
 interface Props {
-  block?: boolean
-  data: string[]
-  placeholder?: string
-  value: string[]
-  setValue: any
+  block?: boolean,
+  data: string[],
+  value: string[],
+  setValue: any,
+  placeholder?: string,
+  disabled?: boolean,
+  loading?: boolean,
+  open?: boolean,
+  onOpen?: any,
+  onEntering?: any,
+  onClose?: any,
+  onClick?: any
 }
 
 const MultipleSelect = (props: Props) => {
-  const {data, placeholder, value, setValue} = props;
+  const {
+    data,
+    value,
+    setValue,
+    placeholder,
+    disabled,
+    loading,
+    open,
+    onOpen,
+    onEntering,
+    onClose,
+    onClick
+  } = props;
   const block = isPropDefined(props.block);
 
   const formattedData = data.map(item => 
@@ -29,26 +48,40 @@ const MultipleSelect = (props: Props) => {
   const handleCheckAll = () => {
     setValue(value.length === allValues.length ? [] : allValues);
   };
+
+  const selectAll = () => {
+    if (data.length === 0) return undefined;
+    return (
+      <div>
+        <Checkbox
+          indeterminate={value.length > 0 && value.length < allValues.length}
+          checked={value.length === allValues.length}
+          onChange={handleCheckAll}
+        >
+          Select all
+        </Checkbox>
+      </div>
+    );
+  };
   
   return (
-    <RSCheckPicker
-      block={block}
-      value={value}
-      onChange={setValue}
-      data={formattedData}
-      placeholder={placeholder}
-      renderExtraFooter={() => (
-        <div>
-          <Checkbox
-            indeterminate={value.length > 0 && value.length < allValues.length}
-            checked={value.length === allValues.length}
-            onChange={handleCheckAll}
-          >
-            Select all
-          </Checkbox>
-        </div>
-      )}
-    />
+    <span onClick={onClick}>
+      <RSCheckPicker
+        countable
+        block={block}
+        value={value}
+        data={formattedData}
+        placeholder={placeholder}
+        disabled={disabled}
+        onChange={setValue}
+        loading={loading}
+        open={open}
+        onOpen={onOpen}
+        onEntering={onEntering}
+        onClose={onClose}
+        renderExtraFooter={selectAll}
+      />
+    </span>
   );
 };
 

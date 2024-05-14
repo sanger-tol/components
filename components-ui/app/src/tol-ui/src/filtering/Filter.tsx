@@ -7,8 +7,8 @@ SPDX-License-Identifier: MIT
 import { Zone } from "../board";
 import FilterTextInput from "./FilterTextInput";
 import FilterDatePicker from "./FilterDatePicker";
+import FilterMultiSelect from "./FilterMultiSelect";
 //import FilterBooleanPicker from "./FilterBooleanPicker";
-//import { isEmptyObject } from "../general/Utils";
 
 
 export type FilterType = 'str'|'int'|'float'|'datetime'|'boolean'|'multi'
@@ -19,7 +19,10 @@ export interface Filter {
   type: FilterType,
   componentId: string,
   zone: Zone,
-  setZone: any
+  setZone: any,
+
+  endpoint: string,
+  baseUrl?: string
 }
 
 function Filter(props: Filter) {
@@ -35,6 +38,12 @@ function Filter(props: Filter) {
   case 'datetime':
     return (
       <FilterDatePicker
+        {...props}
+      />
+    );
+  case 'multi':
+    return (
+      <FilterMultiSelect
         {...props}
       />
     );

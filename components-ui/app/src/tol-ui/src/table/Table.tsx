@@ -81,8 +81,6 @@ function Table (props: Props) {
     handleSortColumn,
   
     zone,
-    setZone,
-
     modalOnSave,
 
     noFilter,
@@ -289,7 +287,6 @@ function Table (props: Props) {
             const field = fieldMeta.data[key];
             const sortable = noSorting ? false : field.sort;
             const filterable = noFilter ? false : field.filter;
-            const type = field.type === 'double' ? 'float' : field.type;
             return (
               <Column
                 key={key}
@@ -308,10 +305,9 @@ function Table (props: Props) {
                       <Filter
                         attribute={key}
                         rename={field.rename!}
-                        type={type as FilterType}
+                        type={field.filterType as FilterType}
                         componentId={id}
-                        zone={zone}
-                        setZone={setZone}
+                        {...props}
                       />
                     </span>
                   }

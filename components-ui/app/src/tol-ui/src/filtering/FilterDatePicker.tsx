@@ -26,7 +26,10 @@ function FilterDatePicker(props: Filter) {
     emptyValue: null,
     zoneToValue: (filterValue: any, exisitingValue: any) => {
       if (exisitingValue === null) return filterValue; // first iteration
-      return [exisitingValue, filterValue]; // second iteration
+      return [
+        new Date(exisitingValue), 
+        new Date(filterValue)
+      ]; // second iteration
     }
   }, [zone]);
 
@@ -43,7 +46,7 @@ function FilterDatePicker(props: Filter) {
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      empty: null
+      valueExists: from !== null
     });
     setFilter({
       operator: 'lt',
@@ -52,7 +55,7 @@ function FilterDatePicker(props: Filter) {
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      empty: null
+      valueExists: to !== null
     });
     setZone({...zone});
   };

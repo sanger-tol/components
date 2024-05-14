@@ -31,6 +31,7 @@
   // multiple select tags
   --rs-picker-value: var(--primary);
   --rs-picker-count-bg: var(--primary);
+  .rs-picker-value-item {font-size: 14px !important;}
 
   // date picker extras
   --rs-checkbox-checked-bg: var(--primary);
@@ -43,7 +44,7 @@
 
   .rs-input,
   .rs-input-group {
-    background-color: var(--bs-body-bg) !important;
+    background-color: var(--bs-body-bg);
     color: var(--primary) !important;
     font-family: 'Lato' !important;
     font-weight: 400 !important;
@@ -75,16 +76,20 @@
     font-family: 'Lato' !important;
     font-weight: 400 !important;
     font-size: 14px !important;
-    border-top-color: $primary !important;
-    border-right-color: $primary  !important;
-    border-bottom-color: $primary  !important;
-    border-left-color: $primary  !important;
+    border-top-color: $primary;
+    border-right-color: $primary;
+    border-bottom-color: $primary;
+    border-left-color: $primary;
   }
 
   .rs-input:disabled,
   .rs-input-group:disabled {
-    background-color: var(--grey-subtle) !important;
-    color: var(--placeholder) !important;
+    background-color: var(--rs-input-disabled-bg) !important;
+  }
+
+  .rs-picker-disabled {
+    opacity: 0.6;
+    filter: grayscale(100%);
   }
 
   .rs-input-group:not(.rs-input-group-disabled).rs-input-group-focus,
@@ -122,6 +127,27 @@
   .rs-picker-menu .rs-picker-search-bar .rs-picker-search-bar-input:focus {
     outline: none;
     border: 1px solid $primary !important;
+  }
+
+  .rs-picker-menu .rs-picker-search-bar {
+    padding: 6px 6px 6px 6px;
+  }
+
+  .rs-picker-menu.rs-picker-select-menu, .rs-picker-menu.rs-picker-check-menu {
+    padding-top: 0;
+  }
+
+  .rs-picker-menu .rs-picker-search-bar .rs-picker-search-bar-search-icon {
+    top: 14px;
+    right: 18px;
+  }
+
+  // loading wheel
+  --rs-loader-rotor: var(--rs-text-secondary);
+
+  // loading wheel backing
+  .rs-loader-spin::before {
+    border: 0;
   }
 
   // datetime picker inner borders

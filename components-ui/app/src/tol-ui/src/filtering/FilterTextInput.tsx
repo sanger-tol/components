@@ -83,7 +83,7 @@ function FilterTextInput(props: Filter) {
           attribute: attribute,
           componentId: componentId,
           zone: zone,
-          empty: '',
+          valueExists: input !== '',
         });
         setZone({...zone});
       }, 800));
@@ -100,7 +100,7 @@ function FilterTextInput(props: Filter) {
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      empty: ''
+      valueExists: false
     });
     setOperator(op);
     setZone({...zone});
@@ -126,12 +126,11 @@ function FilterTextInput(props: Filter) {
         :
         <></>
       }
-      <InputGroup inside>
+      <InputGroup className={disabled ? 'rs-picker-disabled' : ''} disabled={disabled} inside>
         <Input
           onChange={onFilter}
           value={value}
           placeholder={rename}
-          disabled={disabled}
         />
         <InputGroup.Addon>
           <SearchIcon />

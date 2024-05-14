@@ -93,14 +93,14 @@ export function setFilter(params: {
   // filter state
   zone: object,
   // differentials
-  empty: any
+  valueExists: any
 }) {
-  const {operator, value, negate, attribute, componentId, zone, empty} = params;
+  const {operator, value, negate, attribute, componentId, zone, valueExists} = params;
   const z = zone as Zone;
   const and_ = z.components[componentId].data.filter.and_;
   resetFiltersBelow({id: componentId, zone: z, indexOffset: 1});
 
-  if (value !== empty) {
+  if (valueExists) {
     and_[attribute] = {
       ...and_[attribute],
       [operator]: { value, negate }

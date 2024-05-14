@@ -8,11 +8,11 @@ import { SelectPicker } from 'rsuite';
 
 
 interface Props {
-    data: string[]
-    placeholder?: string
-    value: string
-    setValue: any
-  }
+  data: string[]
+  placeholder?: string
+  value: string
+  setValue: any
+}
   
 const SingleSelect = (props: Props) => {
   const {data, placeholder, setValue, value} = props;

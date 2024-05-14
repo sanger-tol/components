@@ -5,12 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
+import ReactDOM from 'react-dom';
 import Status from "./Status";
 
 export interface Props {
   type: string,
   message: string,
-  setMessage: Function // eslint-disable-line
+  setMessage: any
 }
 
 function PopUpMessage(props: Props) {
@@ -30,11 +31,18 @@ function PopUpMessage(props: Props) {
 
   if (message === '') return <></>;
 
-  return (
+  return ReactDOM.createPortal(
     // onClick clears pop-up
-    <span onClick={() => clearMessage(0)} className="tol-pop-up-message">
+    <span onClick={
+      (e) => {
+        clearMessage(0);
+        e.stopPropagation();
+      }} 
+    className="tol-pop-up-message"
+    >
       <Status status={type} text={message} />
-    </span>
+    </span>,
+    document.body
   );
 }
 

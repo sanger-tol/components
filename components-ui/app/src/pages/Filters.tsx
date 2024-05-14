@@ -37,6 +37,19 @@ function Filters() {
               contains: {
                 value: 'Rh'
               }
+            },
+            'benchling_extraction_benchling_completion_date_min': {
+              gte: {
+                value: '2021-01-01'
+              },
+              lt: {
+                value: '2024-01-01'
+              }
+            },
+            'goat_taxon_rank': {
+              in_list: {
+                value: ['species', 'genus']
+              }
             }
           }
         }
@@ -78,6 +91,14 @@ function Filters() {
       />
       <div style={{height: 6}}/>
       <Filter
+        attribute='goat_taxon_rank'
+        rename='Taxon Rank'
+        type='multi'
+        componentId='filter-one'
+        {...species}
+      />
+      <div style={{height: 6}}/>
+      <Filter
         attribute='benchling_sequencing_request_count'
         rename='Request Count'
         type='int'
@@ -104,6 +125,12 @@ function Filters() {
           },
           benchling_sequencing_request_count: {
             rename: 'Request Count'
+          },
+          benchling_extraction_benchling_completion_date_min: {
+            rename: 'Benchling Ex. Min Date'
+          },
+          goat_taxon_rank: {
+            rename: 'Taxon Rank'
           }
         }}
         height={300}

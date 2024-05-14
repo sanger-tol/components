@@ -21,7 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
 
-export const fieldMetaVersion = "field-meta-v5";
+export const fieldMetaVersion = "field-meta-v6";
 let idField: string; // id or uid
 let idFieldDefinedPreviously = false;
 let hiddenFields = false;
@@ -275,19 +275,6 @@ export function convertTableData(data: any[], fieldMeta: FieldMeta, baseUrl?: st
   return updatedData;
 }
 
-function typeToDefaultFilter(type: string) {
-  switch(type) {
-  case 'str':
-  case 'int':
-  case 'float':
-    return 'contains';
-  case 'datetime':
-    return 'range';
-  default:
-    return undefined;
-  }
-}
-
 function addDefaultCellRenderer(key: string, type: string) {
   // relationship ids have relationship boxes by default
   if (isRelationship(key) && key.split('.')[1] === 'id') {
@@ -333,6 +320,12 @@ function addRelationshipsAttributes(endpoint: string, typesMeta: TypesMeta) {
   }
 }
 
+function addDefaultFilterType(type: string, cardinality: number) {
+  if (cardinality < 20 && (type === 'str' || type === 'boolean')) return 'multi';
+  if (type === 'double') return 'float';
+  return type;
+}
+
 function addRemoteTypesAndExtraColumns(
   endpoint: string,
   fieldMeta: FieldMeta,
@@ -344,6 +337,8 @@ function addRemoteTypesAndExtraColumns(
     let hidden = fieldPropExists;
     let isActive = hidden ? 'inactive' : 'active';
     const type = meta['python_type'];
+    const filterType = addDefaultFilterType(type, meta['cardinality']);
+
     // auto add field that are not yet in fieldMeta
     if (!hiddenFields && !(key in fieldMeta.data)) {
       // relationship attributes are hidden by default
@@ -360,7 +355,10 @@ function addRemoteTypesAndExtraColumns(
       );
     }
     // add type to all fields
-    if (key in fieldMeta.data) fieldMeta.data[key].type = type;
+    if (key in fieldMeta.data) {
+      fieldMeta.data[key].type = type;
+      fieldMeta.data[key].filterType = filterType;
+    }
   }
 }
 
@@ -370,7 +368,6 @@ function addDefaultMeta(
 ) {
   // add defaults
   for (const [key, meta] of Object.entries(fieldMeta.data)) {
-    meta.filterType = typeToDefaultFilter(meta.type!);
     if (fieldMeta.data[key].cellRenderer === undefined) {
       fieldMeta.data[key].cellRenderer = addDefaultCellRenderer(key, meta.type!);
     }
