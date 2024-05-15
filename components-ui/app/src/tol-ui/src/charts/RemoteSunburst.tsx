@@ -36,8 +36,8 @@ interface Props {
   noLegend?: boolean,
   noLabel?: boolean,
   noMini?: boolean,
-  zone: object,
-  setZone: any
+  zone?: object,
+  setZone?: any
 }
 
 function RemoteSunburst(props: Props) {
@@ -59,12 +59,12 @@ function RemoteSunburst(props: Props) {
   const [warningMessage, setWarningMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [sliceData, setSliceData] = useState({});
-  const [filter, setFilter] = useState({});
+  const [filter, setFilter] = useState<object|undefined>({});
 
   useEffect(() => {
     const compoundedFilter = generateFilter(id, zone);
     // will trigger [filter] useEffect if update has occured
-    if (filterHasUpdated(filter, compoundedFilter, setFilter)) {
+    if (filterHasUpdated(setFilter, filter, compoundedFilter)) {
       resetFiltersBelow({id: id, zone: zone!});
       setZone({...zone});
     }
@@ -99,7 +99,7 @@ function RemoteSunburst(props: Props) {
       id: id,
       subId: subId,
       filter: localFilter,
-      zone: zone
+      zone: zone!
     });
     setZone({...zone});
     // clear sub sunburst
@@ -115,7 +115,7 @@ function RemoteSunburst(props: Props) {
       httpClient().post('/' + endpoint + ":aggregations", aggs, {
         baseURL: baseUrl,
         params: {
-          filter: generateFilter(subId, zone)
+          filter: generateFilter(subId, zone!)
         }
       }).then((res: any) => {
         const aggs = res.data.meta.aggregations;

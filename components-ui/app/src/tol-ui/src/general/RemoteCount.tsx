@@ -21,8 +21,8 @@ interface Props {
   title: string,
   endpoint: string,
   baseUrl?: string,
-  zone: object
-  setZone: any
+  zone?: object
+  setZone?: any
 }
 
 function RemoteCount(props: Props) {
@@ -30,12 +30,12 @@ function RemoteCount(props: Props) {
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [filter, setFilter] = useState({});
+  const [filter, setFilter] = useState<object|undefined>({});
 
   useEffect(() => {
     const compoundedFilter = generateFilter(id, zone);
     // will trigger [filter] useEffect if update has occured
-    if (filterHasUpdated(filter, compoundedFilter, setFilter)) {
+    if (filterHasUpdated(setFilter, filter, compoundedFilter)) {
       resetFiltersBelow({id: id, zone: zone!});
       setZone({...zone});
     }

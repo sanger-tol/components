@@ -24,7 +24,12 @@ export function getNextComponentId(id: string, list: string[], indexOffset: numb
   return list[index + indexOffset];
 }
 
-export function filterHasUpdated(exisitingFilter: object, incomingFilter: object, setFilter: any) {
+export function filterHasUpdated(setFilter: any, exisitingFilter?: object, incomingFilter?: object) {
+  // force setFilter update if zone is not defined - this only occurs on initial load
+  if (incomingFilter === undefined) {
+    setFilter(undefined);
+    return false;
+  }
   const exisiting = JSON.stringify(exisitingFilter);
   const incoming = JSON.stringify(incomingFilter);
   const hasUpdated = exisiting !== incoming;
@@ -42,7 +47,8 @@ export function mergeAndFilters(target: object, incoming: object) {
   return output as Filter;
 }
 
-export function generateFilter(id: string, zone: object) {
+export function generateFilter(id: string, zone?: object) {
+  if (zone === undefined) return undefined;
   const z = zone as Zone;
   const aboveComponents = getComponentsAbove(id, z.order);
   let compoundedFilter = {};
@@ -64,13 +70,13 @@ function addValueBelow(id: string, value: string, list: string[]) {
 }
 
 function addComponentBelow(id: string, newId: string, zone: Zone) {
-  defineComponent({attribute: newId}, zone);
+  defineComponent({id: newId}, zone);
   zone.order = addValueBelow(id, newId, zone.order);
 }
 
 export function resetFiltersBelow(params: {
   id: string,
-  zone: object,
+  zone?: object,
   indexOffset?: number
 }) {
   const {zone, indexOffset} = params;

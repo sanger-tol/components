@@ -23,7 +23,7 @@ function Filters() {
     baseUrl: env.TOL_DATA,
     components: [
       {
-        attribute: 'filter-one',
+        id: 'filter-one',
         filter: {
           and_: {
             'sts_family': {
@@ -54,10 +54,10 @@ function Filters() {
           }
         }
       },
-      {attribute: 'filter-two'},
-      {attribute: 'table-1'},
-      {attribute: 'table-2'},
-      {attribute: 'count'},
+      {id: 'filter-two'},
+      {id: 'table-1'},
+      {id: 'table-2'},
+      {id: 'count'},
     ]
   });
 
@@ -166,7 +166,7 @@ function Filters() {
     baseUrl: env.TOL_DATA,
     components: [
       {
-        attribute: 'map-filter',
+        id: 'map-filter',
         filter: {
           and_: {
             'sts_sample.id': {
@@ -175,7 +175,7 @@ function Filters() {
           }
         }
       },
-      {attribute: 'map'}
+      {id: 'map'}
     ]
   });
 
@@ -207,7 +207,7 @@ function Filters() {
     baseUrl: env.TOL_DATA,
     components: [
       {
-        attribute: 'sunburst-filter',
+        id: 'sunburst-filter',
         filter: {
           and_: {
             'sts_sample.id': {
@@ -221,8 +221,7 @@ function Filters() {
           }
         }
       },
-      {attribute: 'sunburst'},
-      {attribute: 'sunburst-table'}
+      {id: 'sunburst-table'}
     ]
   });
 
@@ -238,7 +237,9 @@ function Filters() {
       />
       <div style={{height: 20}}/>
       <RemoteSunburst
-        title="Example Sunburst"
+        title="Missing example: NOT PART OF ZONE STATE"
+        endpoint='barcoding_run_data'
+        baseUrl={env.TOL_DATA}
         id="sunburst"
         sliceBy={[
           "bioscan_o",
@@ -247,7 +248,6 @@ function Filters() {
           "bioscan_s"
         ]}
         height={500}
-        {...runDataSunburst}
       />
       <div style={{height: 30}}/>
       <RemoteTable
@@ -284,8 +284,8 @@ function Filters() {
     endpoint: 'run_data',
     baseUrl: env.TOL_DATA,
     components: [
-      {attribute: 'chart'},
-      {attribute: 'chart-table'}
+      {id: 'chart'},
+      {id: 'chart-table'}
     ]
   });
 

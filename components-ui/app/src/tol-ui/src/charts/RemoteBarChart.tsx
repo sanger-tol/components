@@ -34,8 +34,8 @@ interface Props {
   xAxis: string,
   type: DateInterval,
   shortDate?: boolean
-  zone: any,
-  setZone: any,
+  zone?: any,
+  setZone?: any,
   height?: any,
   stacked?: boolean,
 }
@@ -60,7 +60,7 @@ function RemoteBarChart(props: Props) {
   const [warningMessage, setWarningMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [barData, setBarData] = useState<object>({});
-  const [filter, setFilter] = useState({});
+  const [filter, setFilter] = useState<object|undefined>({});
 
   // create alternate title based on title - sequencer - month/year
   const alternateTitle = (normaliseCaps(props.title === undefined ? "" : props.title) 
@@ -70,7 +70,7 @@ function RemoteBarChart(props: Props) {
   useEffect(() => {
     const compoundedFilter = generateFilter(id, zone);
     // will trigger [filter] useEffect if update has occured
-    if (filterHasUpdated(filter, compoundedFilter, setFilter)) {
+    if (filterHasUpdated(setFilter, filter, compoundedFilter)) {
       resetFiltersBelow({id: id, zone: zone!});
       setZone({...zone});
     }

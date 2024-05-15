@@ -88,7 +88,7 @@ export const exampleBoard: Board = {
 
 // Defining a zone for filtering against
 interface ComponentFilter {
-  attribute: string,
+  id: string, // referred to 'attribute' in the zone code
   filter?: Filter
 }
 
@@ -96,7 +96,7 @@ export function defineComponent(component: ComponentFilter, zone: Zone) {
   // setting default as empty if no filter provided
   const empty = {and_: {}};
   const filter = component.filter === undefined ? empty : component.filter;
-  zone.components[component.attribute] = {
+  zone.components[component.id] = {
     data: {
       filter: deepCopy(filter),
       defaultFilter: deepCopy(filter)
@@ -112,7 +112,7 @@ function defineZone(objectType: string, components: ComponentFilter[]) {
   };
   for (const component of components) {
     defineComponent(component, zone);
-    zone.order.push(component.attribute);
+    zone.order.push(component.id);
   }
   return zone;
 }

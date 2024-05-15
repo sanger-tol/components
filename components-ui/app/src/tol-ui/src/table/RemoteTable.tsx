@@ -83,7 +83,7 @@ function RemoteTable(props: Props) {
   const [totalSize, setTotalSize] = useState<number>(0);
 
   // filtering/sorting
-  const [filter, setFilter] = useState({});
+  const [filter, setFilter] = useState<object|undefined>({});
   const [sortColumn, setSortColumn] = useState<string>('');
   const [sortType, setSortType] = useState<string>('asc');
 
@@ -100,7 +100,7 @@ function RemoteTable(props: Props) {
   useEffect(() => {
     const compoundedFilter = generateFilter(id, zone);
     // will trigger [filter] useEffect if update has occured
-    filterHasUpdated(filter, compoundedFilter, setFilter);
+    filterHasUpdated(setFilter, filter, compoundedFilter);
     // resetFiltersBelow({id: id, zone: zone!}); occurs in <Filter />: onFilter()
   }, [zone]);
 

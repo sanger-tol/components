@@ -11,7 +11,7 @@ function Tables() {
   const runData = useZone({
     endpoint: 'run_data',
     baseUrl: env.TOL_DATA,
-    components: [{attribute: 'table-example'}]
+    components: [{id: 'table-example'}]
   });
 
   const table = (
