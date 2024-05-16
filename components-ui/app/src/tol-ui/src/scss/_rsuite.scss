@@ -51,12 +51,13 @@
     font-size: 14px !important;
     border-radius: 6px;
     border-top-color: var(--grey-emphasis) !important;
-    border-right-color: var(--grey-emphasis)  !important;
-    border-bottom-color: var(--grey-emphasis)  !important;
-    border-left-color: var(--grey-emphasis)  !important;
+    border-right-color: var(--grey-emphasis) !important;
+    border-bottom-color: var(--grey-emphasis) !important;
+    border-left-color: var(--grey-emphasis) !important;
     font-size: 1rem;
     color: var(--bs-body-color);
   }
+
   --rs-border-primary: var(--grey-emphasis);
 
   .rs-input:hover,
@@ -65,9 +66,9 @@
     font-weight: 400 !important;
     font-size: 14px !important;
     border-top-color: $primary !important;
-    border-right-color: $primary  !important;
-    border-bottom-color: $primary  !important;
-    border-left-color: $primary  !important;
+    border-right-color: $primary !important;
+    border-bottom-color: $primary !important;
+    border-left-color: $primary !important;
   }
 
   .rs-input:focus,
@@ -237,22 +238,22 @@
     overflow-wrap: break-word;
   }
 
-  .rs-popover[class*=placement-left] > .rs-popover-arrow::after {
+  .rs-popover[class*=placement-left]>.rs-popover-arrow::after {
     border-left-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 
-  .rs-popover[class*=placement-top] > .rs-popover-arrow::after {
+  .rs-popover[class*=placement-top]>.rs-popover-arrow::after {
     border-top-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 
-  .rs-popover[class*=placement-right] > .rs-popover-arrow::after {
+  .rs-popover[class*=placement-right]>.rs-popover-arrow::after {
     border-right-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 
-  .rs-popover[class*=placement-bottom] > .rs-popover-arrow::after {
+  .rs-popover[class*=placement-bottom]>.rs-popover-arrow::after {
     border-bottom-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
@@ -265,6 +266,7 @@
   min-height: calc(600px - 60px);
   // max-height: calc(2000px - 60px);
   width: calc(100% - 60px);
+
   .rs-modal-dialog,
   .rs-modal-content,
   .rs-modal-body {
@@ -282,7 +284,7 @@
     height: auto !important;
   }
 
-  .rs-modal-full .rs-modal-footer{
+  .rs-modal-full .rs-modal-footer {
     padding-top: 0;
   }
 }
@@ -291,4 +293,36 @@
 .rs-anim-fade.rs-anim-in.rs-picker-check-menu.rs-picker-menu.placement-bottom-start {
   z-index: 1003;
   min-width: 0 !important;
+}
+
+// custom timeline icons
+.rs-timeline-item-time {
+  margin-left: -40px;
+}
+
+.rs-timeline-with-time.rs-timeline-align-left .rs-timeline-item-content {
+  padding-left: 60px;
+}
+
+.rs-timeline-item-custom-dot .svg-inline--fa {
+  height: 20px;
+  width: 20px;
+  border: 3px solid #ddd;
+  border-radius: 50%;
+  font-size: 18px;
+  justify-content: center;
+  padding: 8px;
+  color: #999;
+  left: calc(50%);
+  top: -8px;
+}
+
+@media screen and (max-width: 768px) {
+  .rs-timeline-item-time {
+    margin-left: -30px;
+  }
+
+  .rs-timeline-with-time.rs-timeline-align-left .rs-timeline-item-content {
+    padding-left: 50px;
+  }
 }

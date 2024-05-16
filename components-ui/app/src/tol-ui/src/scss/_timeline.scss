@@ -14,6 +14,20 @@ SPDX-License-Identifier: MIT
     font-weight: bolder;
 }
 
+.timeline-custom-icon-background-color {
+    display: flex;
+    border-radius: 50%;
+    left: -16px;
+    position: relative;
+    top: -8px;
+}
+
+.timeline-custom-dot-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
 @media screen and (max-width: 768px) {
     .timeline-wrapper {
         margin-left: -1.5rem;
