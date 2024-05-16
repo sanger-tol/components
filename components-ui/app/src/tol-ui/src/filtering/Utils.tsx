@@ -54,6 +54,10 @@ export function generateFilter(id: string, zone?: object) {
   let compoundedFilter = {};
   // loop through above components
   for (const currentId of aboveComponents) {
+    // exclude pass throughs except self
+    if (z.components[currentId].data.filterPassThrough && id !== currentId) {
+      continue;
+    }
     const currentFilter = z.components[currentId].data.filter.and_;
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
@@ -70,7 +74,10 @@ function addValueBelow(id: string, value: string, list: string[]) {
 }
 
 function addComponentBelow(id: string, newId: string, zone: Zone) {
-  defineComponent({id: newId}, zone);
+  defineComponent({
+    id: newId,
+    filterPassThrough: zone.components[id].data.filterPassThrough
+  }, zone);
   zone.order = addValueBelow(id, newId, zone.order);
 }
 

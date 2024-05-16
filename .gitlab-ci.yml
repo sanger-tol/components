@@ -25,3 +25,4 @@ deploy-package:
     - yarn build
     - yarn publish
   when: manual
+  needs: []

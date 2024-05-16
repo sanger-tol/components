@@ -33,7 +33,7 @@ function FilterTextInput(props: Filter) {
     if (!fetched) {
       setLoading(true);
       const aggs = {aggs: {}};
-      aggs["aggs"][attribute] = {"terms" : {"field" : `${attribute}.keyword`, "size": 100 }};
+      aggs["aggs"][attribute] = {"terms" : {"field" : `${attribute}.keyword`, "size": 500 }};
       httpClient().post('/' + endpoint + ':aggregations', aggs, {
         baseURL: baseUrl
       })

@@ -1,4 +1,3 @@
-
 /*
  * SPDX-FileCopyrightText: 2023 Genome Research Ltd.
  *
@@ -15,7 +14,7 @@ function Sandbox() {
 
   return (
     <div>
-      <Dashboard id='sandbox-dashboard'/>
+      <Dashboard id='sandbox-zone'/>
     </div>
   );
 }

@@ -177,10 +177,12 @@ async function getConfig(endpoint: string, baseUrl?: string) {
 
 const pendingPromises: { [key: string]: Promise<TypesMeta> } = {};
 
-export async function getTypesMeta(baseUrl: string = ''): Promise<TypesMeta> {
-  if (!pendingPromises[baseUrl]) {
-    pendingPromises[baseUrl] = (async () => {
-      const key = 'typesMeta-' + baseUrl;
+export async function getTypesMeta(baseUrl?: string): Promise<TypesMeta> {
+  const baseUrlKey = baseUrl || 'default';
+
+  if (!pendingPromises[baseUrlKey]) {
+    pendingPromises[baseUrlKey] = (async () => {
+      const key = 'typesMeta-' + baseUrlKey;
       let savedTypesMeta = JSON.parse(localStorage.getItem(key) || 'null');
       const expiry = savedTypesMeta === null ? null : new Date(savedTypesMeta['expiry']);
 
@@ -205,9 +207,9 @@ export async function getTypesMeta(baseUrl: string = ''): Promise<TypesMeta> {
 
       return savedTypesMeta.data as TypesMeta;
     })().finally(() => {
-      delete pendingPromises[baseUrl];
+      delete pendingPromises[baseUrlKey];
     });
   }
 
-  return pendingPromises[baseUrl];
+  return pendingPromises[baseUrlKey];
 }

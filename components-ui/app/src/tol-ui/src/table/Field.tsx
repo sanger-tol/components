@@ -85,7 +85,7 @@ export function addFieldDefaults(field: Field, key: string, endpoint?: string) {
 }
 
 export function initialiseFieldMeta(filterVisibility?: boolean, pageSize?: number) {
-  if (filterVisibility === undefined) filterVisibility = false;
+  if (filterVisibility === undefined) filterVisibility = true;
   if (pageSize === undefined) pageSize = 50;
 
   return {

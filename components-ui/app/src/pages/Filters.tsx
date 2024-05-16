@@ -57,7 +57,7 @@ function Filters() {
       {id: 'filter-two'},
       {id: 'table-1'},
       {id: 'table-2'},
-      {id: 'count'},
+      {id: 'count'}
     ]
   });
 

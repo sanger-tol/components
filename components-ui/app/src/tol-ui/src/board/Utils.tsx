@@ -27,6 +27,7 @@ export interface Component {
   data: {
     filter: Filter
     defaultFilter: Filter
+    filterPassThrough?: boolean
   }
 }
 
@@ -89,7 +90,8 @@ export const exampleBoard: Board = {
 // Defining a zone for filtering against
 interface ComponentFilter {
   id: string, // referred to 'attribute' in the zone code
-  filter?: Filter
+  filter?: Filter,
+  filterPassThrough?: boolean
 }
 
 export function defineComponent(component: ComponentFilter, zone: Zone) {
@@ -99,7 +101,8 @@ export function defineComponent(component: ComponentFilter, zone: Zone) {
   zone.components[component.id] = {
     data: {
       filter: deepCopy(filter),
-      defaultFilter: deepCopy(filter)
+      defaultFilter: deepCopy(filter),
+      filterPassThrough: component.filterPassThrough
     }
   };
 }

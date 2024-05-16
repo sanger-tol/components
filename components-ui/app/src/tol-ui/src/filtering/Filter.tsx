@@ -47,14 +47,6 @@ function Filter(props: Filter) {
         {...props}
       />
     );
-  /*
-  case 'boolean':
-    return (
-      <FilterBooleanPicker
-        {...props}
-      />
-    );
-  */
   }
   return <></>;
 }
