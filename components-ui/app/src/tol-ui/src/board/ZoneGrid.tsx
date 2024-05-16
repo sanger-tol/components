@@ -18,6 +18,14 @@ import {
   RemoteSunburst,
   RemoteTable
 } from '../index';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faTrash,
+  faPlus,
+  faArrowUp,
+  faArrowDown,
+  faPenToSquare
+} from '@fortawesome/free-solid-svg-icons';
 
 
 interface Component {
@@ -52,8 +60,6 @@ function getComponent(componentToAdd, zone) {
     return <RemoteBarChart id={componentToAdd.id} title={componentToAdd.id} type='M' breakDownBy='sts_family' stacked xAxis='sts_dna_extracted_date' {...zone} />;
   case 'Table':
     return <RemoteTable id={componentToAdd.id} title={componentToAdd.id} {...zone} />;
-  case 'Map':
-    return;
   case 'Sunburst':
     return <RemoteSunburst id={componentToAdd.id} title={componentToAdd.id} sliceBy={["sts_order_group", "sts_family"]} {...zone} />;
   }
@@ -65,6 +71,7 @@ function ZoneGrid(props: Props) {
   const [draggable, setDraggable] = useState(false);
   const [currentWidgets, setCurrentWidgets] = useState<Widgets>(widgets || {components: {}, order: []});
   const [componentToAdd, setComponentToAdd] = useState<ComponentToAdd>();
+  const [deleteWarning, setDeleteWarning] = useState(false);
   const [open, setOpen] = useState(false);
 
   const speciesZone = useZone({
@@ -94,17 +101,32 @@ function ZoneGrid(props: Props) {
   }, [componentToAdd]);
 
 
+  useEffect(() => {
+    const handleMouseDown = (event) => {
+      if (event.target.closest('.tol-delete-warning')) {
+        return;
+      }
+      setDeleteWarning(false);
+    };
+    document.addEventListener('mousedown', handleMouseDown);
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown);
+    };
+  }, []);
+
+
   function onAddComponent() {
     setOpen(true);
   }
 
-  const moveButton = (
+  const editButton = (
     <Button
       onClick={() => {
         setDraggable(!draggable);
       }}
+      className='zone-edit-button'
     >
-      Re-arrange
+      <FontAwesomeIcon icon={faPenToSquare} size="sm" />
     </Button>
   );
 
@@ -113,18 +135,30 @@ function ZoneGrid(props: Props) {
       onClick={() => {
         onAddComponent();
       }}
+      className='zone-config-button'
+      variant="success"
     >
-      Add
+      <FontAwesomeIcon icon={faPlus} size="sm" />
     </Button>
   );
 
   const deleteButton = (
     <Button
       onClick={() => {
+        if (!deleteWarning) {
+          setDeleteWarning(true);
+          return;
+        }
         deleteZone(id);
       }}
+      className={deleteWarning ? 'tol-delete-warning' : 'zone-config-button'}
+      variant="danger"
     >
-      Delete
+      {!deleteWarning ? 
+        <FontAwesomeIcon icon={faTrash} size="sm" />
+        :
+        <p>Are you sure?</p>
+      }
     </Button>
   );
 
@@ -133,8 +167,9 @@ function ZoneGrid(props: Props) {
       onClick={() => {
         onZoneReorder(id, 'up');
       }}
+      className='zone-config-button'
     >
-      Up
+      <FontAwesomeIcon icon={faArrowUp} size="sm" />
     </Button>
   );
   
@@ -143,28 +178,40 @@ function ZoneGrid(props: Props) {
       onClick={() => {
         onZoneReorder(id, 'down');
       }}
+      className='zone-config-button'
     >
-      Down
+      <FontAwesomeIcon icon={faArrowDown} size="sm" />
     </Button>
   );
 
   const buttons = (
-    <Row>
-      <Col xs={12} sm={4}>{moveButton}</Col>
-      <Col xs={12} sm={4}>{addButton}</Col>
-      <Col xs={12} sm={4}>{upButton}</Col>
-      <Col xs={12} sm={4}>{downButton}</Col>
-      <Col xs={12} sm={4}>{deleteButton}</Col>
-      <Col xs={12} sm={4}>{open && 
-        <ComponentModal open={open} setOpen={setOpen} setComponent={setComponentToAdd}/>
-      }</Col>
-    </Row>
+    <div className='tol-zone-bar'>
+      <Row>
+        <Col>
+          <h6>
+            {id}
+            {deleteButton}
+            {addButton}
+            {editButton}
+            {downButton}
+            {upButton}
+          </h6>
+          <ComponentModal open={open} setOpen={setOpen} setComponent={setComponentToAdd} />
+        </Col>
+      </Row>
+    </div>
   );
 
   return (
     <div className='tol-zone'>
       {buttons}
-      <ResponsiveWidget id={id} widgets={currentWidgets} draggable={draggable} />
+      {currentWidgets.order.length > 0 ?
+        <ResponsiveWidget id={id} widgets={currentWidgets} setWidgets={setCurrentWidgets} draggable={draggable} />
+      :
+        <div className='tol-zone-empty'>
+          <p>Click the + button to add a Component</p>
+        </div>
+      }
     </div>
   );
     

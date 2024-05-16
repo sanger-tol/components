@@ -38,6 +38,7 @@ function ZoneModal(props: Props) {
       ]);
     setOpen(false);
     setObjectType('');
+    setID('');
   };
 
   const plusButton = (
@@ -50,18 +51,22 @@ function ZoneModal(props: Props) {
   return(
     <Modal
       open={open}
-      size='full'
+      size='sm'
       setOpen={setOpen}
       actionButton={plusButton}
       overflow={false}
     >
       <>
+        <h6>Select Object Type</h6>
         <SingleSelect
           data={['species','sample','specimen', 'extraction', 'sequencing_request', 'run_data']}
           placeholder='Object Type'
           value={objectType}
           setValue={setObjectType}
+          block
         />
+        <br/>
+        <h6>Enter ID</h6>
         <Input 
           placeholder='ID'
           onChange={(value) => setID(value)}

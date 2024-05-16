@@ -8,8 +8,12 @@ import { useEffect, useState } from 'react';
 import {
   ZoneGrid,
   Button,
-  ZoneModal
+  ZoneModal,
+  Row,
+  Col
 } from '../index';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 interface ZoneObject {
   id: string,
@@ -28,7 +32,6 @@ function Dashboard(props: Props) {
   const [open, setOpen] = useState(false);
   
   function addZone() {
-    console.log('addDashboard');
     setOpen(true);
   }
 
@@ -51,25 +54,54 @@ function Dashboard(props: Props) {
   }
 
   useEffect(() => {
-    console.log(zones);
   }, [zones]);
+
+  const addButton = (
+    <Button
+      onClick={() => {
+        addZone();
+      }}
+      variant='success'
+      className='zone-config-button'
+    >
+      <FontAwesomeIcon icon={faPlus} size='sm' />
+    </Button>
+  );
+
+  const buttons = (
+    <div className='tol-dashboard-bar'>
+      <Row>
+        <Col>
+          <h5>
+            {id}
+            {addButton}
+          </h5>
+        </Col>
+      </Row>
+    </div>
+  );
 
   return (
     <div className='tol-dashboard'>
-      <Button onClick={() => {
-        addZone();
-      }}>Add Zone</Button>
+      {buttons}
       <ZoneModal open={open} setOpen={setOpen} setZones={setZones} zones={zones}/>
-      {zones.map((zone) => {
-        console.log(zone);
-        return <ZoneGrid
-          key={zone.id}
-          id={zone.id}
-          object_type={zone.objectType}
-          onZoneReorder={onZoneReorder}
-          deleteZone={deleteZone}
-        />;
-      })}
+      {zones.length > 0 ?
+      <>
+        {zones.map((zone) => {
+          return <ZoneGrid
+            key={zone.id}
+            id={zone.id}
+            object_type={zone.objectType}
+            onZoneReorder={onZoneReorder}
+            deleteZone={deleteZone}
+          />;
+        })}
+        </>
+      :
+        <div className='tol-zone-empty'>
+          <p>Click the + button to add a Zone</p>
+        </div>
+      }
     </div>
   );
 }

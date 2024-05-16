@@ -8,6 +8,17 @@
 .tol-responsive-widget {
   @extend .tol-widget;
   margin: 0;
+  position: relative;
+}
+
+.widget-delete-btn {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  padding: 0;
+  top: 0;
+  right: 0;
+  margin: 6px;
 }
 
 .tol-draggable-widget:hover {
@@ -15,12 +26,163 @@
 }
 
 .tol-responsive-grid {
-  background-color:blue;
-  margin: 16px;
+  margin: 0px;
   border-radius: 6px;
   position: relative;
 }
 
 .tol-dashboard {
-  padding: 10px;
+  padding: 1px;
+}
+
+.tol-zone {
+  background-color: var(--bs-body-darker);
+  padding: 8px;
+  margin: 10px;
+  border-radius: 6px;
+}
+
+.inverted-config-button {
+  float: right;
+  padding: 0;
+  height: 30px;
+  width: 30px;
+  margin-left: 6px;
+
+  border-color: var(--primary) !important;
+  text-decoration: none;
+  color: white;
+  fill: white;
+}
+
+.inverted-config-button:hover {
+  color: var(--primary);
+  fill: var(--primary);
+  background-color: transparent;
+  border-color: var(--grey-emphasis);
+}
+
+.inverted-config-button:active {
+  background-color: var(--grey-emphasis) !important;
+  border-color: var(--grey-emphasis);
+  color: var(--bs-body-bg) !important;
+  fill: var(--bs-body-bg) !important;
+  background-color: transparent;
+}
+
+.config-button:disabled {
+  border-color: var(--primary) !important;
+  text-decoration: none;
+  color: var(--primary);
+  fill: var(--primary);
+}
+
+.zone-config-button {
+  float: right;
+  padding: 0;
+  height: 30px;
+  width: 30px;
+  margin-left: 6px;
+}
+
+.tol-zone-bar {
+  background-color: var(--bs-body-bg);
+  padding: 8px;
+  margin: 0;
+  border-radius: 6px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+.tol-dashboard-bar {
+  @extend .tol-zone-bar;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.tol-delete-warning {
+  @extend .zone-config-button;
+  width: auto;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 2px;
+  
+  p {
+    font-size: 14px;
+    font-weight: bolder;
+  }
+}
+
+.zone-edit-button {
+  @extend .zone-config-button;
+  background-color: darkmagenta;
+  border-color: darken(darkmagenta, 10%);
+}
+
+.zone-edit-button:hover {
+  background-color: darken(darkmagenta, 5%);
+  border-color: darken(darkmagenta, 10%);
+}
+
+.zone-edit-button:active {
+  background-color: darken(darkmagenta, 5%) !important;
+  border-color: darken(darkmagenta, 10%) !important;
+  fill: darken(darkmagenta, 10%) !important;
+}
+
+.tol-button-col {
+  margin-bottom: 15px;
+}
+
+.tol-component-modal-bttn {
+  cursor: pointer;
+  width: auto;
+  border-radius: 6px;
+  text-align: center;
+  background-color: var(--grey-subtle);
+  position: relative !important;
+  height: auto !important;
+  min-height: 100% !important;
+  padding: 15px;
+  border-width: 2px;
+
+  h6 {
+    margin-top: 10px;
+  }
+}
+
+.tol-component-modal-bttn:hover {
+  background-color: var(--grey-emphasis);
+}
+
+.tol-component-modal-bttn-clicked {
+  @extend .tol-component-modal-bttn;
+  background-color: var(--bs-body-bg);
+  border-color: var(--primary) !important;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.tol-zone .tol-placeholder {
+  background-color: var(--bs-body-bg);
+}
+
+.tol-zone-empty {
+  text-align: center;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    font-size: 14px;
+    font-weight: bolder;
+  }
+}
+
+.tol-placeholder {
+  h5 {
+    margin-top: 5px;
+  }
 }

@@ -5,11 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import { WidthProvider, Responsive, Layouts } from 'react-grid-layout';
-import { getCssVarValue } from "../general/Utils";
-import { themeListener } from "../hooks/listeners";
-import Placeholder from "../general/Placeholder";
+import { Button, Placeholder } from '../index'
 import { useState, useRef, useEffect } from 'react';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 interface Component {
   type: string,
@@ -25,6 +24,7 @@ interface Props {
   id: string,
   widgets: Widgets,
   draggable: boolean,
+  setWidgets?: any,
   setOrder?: any
 }
 
@@ -68,16 +68,26 @@ function getWidgetOrder(layout, widgets) {
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 function ResponsiveWidget(props: Props) {
-  const { widgets, draggable, setOrder } = props;
+  const { widgets, draggable, setOrder, setWidgets } = props;
   const [layoutsState, setLayouts] = useState<Layouts>(generateLayout(widgets));
   const internalLayouts = useRef(generateLayout(widgets));
-
 
   useEffect(() => {
     const newLayout = generateLayout(widgets);
     setLayouts(newLayout);
     internalLayouts.current = newLayout;
   }, [widgets]);
+
+  const deleteWidget = (id: string) => {
+    const newComponents = Object.keys(widgets.components)
+    .filter(key => key !== id)
+    .reduce((obj, key) => {
+      obj[key] = widgets.components[key];
+      return obj;
+    }, {});
+    const newOrder = widgets.order.filter(key => key !== id);
+    setWidgets({ components: newComponents, order: newOrder });
+  };
 
   function onLayoutChange(layout) {
     //saveToLS("layouts", layouts, id);
@@ -98,15 +108,6 @@ function ResponsiveWidget(props: Props) {
       setLayouts(internalLayouts.current);
     }
   };
-
-  themeListener(() => {
-    try {
-      const backing = document.getElementById("tol-app-background");
-      backing!.style.backgroundColor = getCssVarValue("--bs-body-darker");
-    } catch {
-      return;
-    }
-  });
 
   function generateLayout(components) {
     const types = { 
@@ -155,6 +156,7 @@ function ResponsiveWidget(props: Props) {
         rowHeight={150}
         onLayoutChange={onLayoutChange}
         onBreakpointChange={onBreakpointChange}
+        draggableCancel='.widget-delete-btn'
       >
         {widgets.order.map((key)=> {
           if (!draggable) {
@@ -167,6 +169,9 @@ function ResponsiveWidget(props: Props) {
             return (
               <div key={key} className='tol-draggable-widget'>
                 <Placeholder opacity={0.7} drag message={key}/>
+                <Button onClick={() => {deleteWidget(key)}} variant='danger' className='widget-delete-btn'>
+                  <FontAwesomeIcon icon={faTrash} size='sm'/>
+                </Button>
               </div>
             );
           }

@@ -15,7 +15,7 @@ function Sandbox() {
 
   return (
     <div>
-      <Dashboard id='sandbox-zone'/>
+      <Dashboard id='sandbox-dashboard'/>
     </div>
   );
 }

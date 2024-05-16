@@ -11,11 +11,12 @@ interface Props {
   data: string[]
   placeholder?: string
   value: string
-  setValue: any
+  setValue: any,
+  block?: boolean
 }
   
 const SingleSelect = (props: Props) => {
-  const {data, placeholder, setValue, value} = props;
+  const {data, placeholder, setValue, value, block} = props;
   
   const convertedData = data.map(
     item => ({ label: item, value: item })
@@ -28,6 +29,7 @@ const SingleSelect = (props: Props) => {
       value={value}
       onChange={setValue}
       placeholder={placeholder}
+      block={block}
     />
   );
 };
