@@ -221,6 +221,7 @@ function Filters() {
           }
         }
       },
+      {id: 'sunburst'},
       {id: 'sunburst-table'}
     ]
   });
@@ -237,17 +238,16 @@ function Filters() {
       />
       <div style={{height: 20}}/>
       <RemoteSunburst
-        title="Missing example: NOT PART OF ZONE STATE"
-        endpoint='barcoding_run_data'
-        baseUrl={env.TOL_DATA}
+        title="Example"
         id="sunburst"
+        height={500}
         sliceBy={[
           "bioscan_o",
           "bioscan_f",
           "bioscan_g",
           "bioscan_s"
         ]}
-        height={500}
+        {...runDataSunburst}
       />
       <div style={{height: 30}}/>
       <RemoteTable

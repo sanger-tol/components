@@ -11,11 +11,12 @@ import {
   createAggsViaSliceBy,
   isChartDataEmpty,
   generateFilterFromSunburstClick,
-  removeSliceBySingles
+  removeSliceBySingles,
+  downloadItem
 } from "./Utils";
 import Sunburst from "./Sunburst";
 import Placeholder from "../general/Placeholder";
-import { useEffectUpdate } from "../hooks/useEffectUpdate";
+import { useEffectUpdate, resizeListener } from "../hooks";
 import { isEmptyObject, normaliseCaps } from "../general/Utils";
 import {
   generateFilter,
@@ -23,6 +24,9 @@ import {
   filterHasUpdated,
   resetFiltersBelow
 } from "../filtering/Utils";
+import { Button, Col, Row } from '../index';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUndo, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 
 interface Props {
@@ -33,9 +37,9 @@ interface Props {
   height?: any,
   baseUrl?: string,
   legendPosition?: string,
-  noLegend?: boolean,
   noLabel?: boolean,
   noMini?: boolean,
+  noDownload?: boolean,
   zone?: object,
   setZone?: any
 }
@@ -44,22 +48,32 @@ function RemoteSunburst(props: Props) {
   const {
     id,
     endpoint,
+    title,
     sliceBy,
     baseUrl,
     noMini,
+    noDownload,
     zone,
     setZone
   } = props;
   const subId = 'tol-sub-sunburst-' + id;
+  const wrapperId = 'tol-sunburst-wrapper-' + id; // gets width on mount
   const height = (props.height !== undefined) ? props.height : "100%";
   const [datasets, setDatasets] = useState({});
   const [subDatasets, setSubDatasets] = useState({});
+  const [resetChart, setResetChart] = useState(false);
   const [loading, setLoading] = useState(true);
   const [subLoading, setSubLoading] = useState(true);
   const [warningMessage, setWarningMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [sliceData, setSliceData] = useState({});
   const [filter, setFilter] = useState<object|undefined>({});
+  const [noLegend, setNoLegend] = useState(false);
+
+  resizeListener(() => {
+    const width = document.getElementById(wrapperId)?.offsetWidth;
+    if (width !== undefined) setNoLegend(width < 768);
+  });
 
   useEffect(() => {
     const compoundedFilter = generateFilter(id, zone);
@@ -125,6 +139,7 @@ function RemoteSunburst(props: Props) {
         setSubDatasets(data);
         setSubLoading(false);
       }).catch((error: any) => {
+        // forces an error in the main sunburst
         setErrorMessage(error.message);
         console.error(error.message);
       });
@@ -150,40 +165,94 @@ function RemoteSunburst(props: Props) {
   }
   
   if (loading) {
-    return <Placeholder pie height={height} />;
+    return (
+      <div id={wrapperId} style={{height: height}}>
+        <Placeholder pie />
+      </div>
+    );
   }
 
-  const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
-  const setter = (setZone === undefined) ? undefined : setSliceData;
-
-  return (
-    <div style={{height: height}}>
-      <Sunburst
-        {...props}
-        id={miniActive ? subId : id}
-        height={miniActive ? height*0.25 : height}
-        width={miniActive ? height*0.5 : undefined}
-        datasets={datasets}
-        downloadName={normaliseCaps(endpoint)}
-        noLegend={miniActive}
-        setSliceData={setter}
-      />
-      {miniActive && 
-        <div>
-          {subLoading ?
-            <Placeholder loader clear height={height*0.75} />
-            :
-            <Sunburst
-              {...props}
-              title={normaliseCaps(sliceData["clickKey"])}
-              height={height*0.75}
-              datasets={subDatasets}
-              noRefresh
-              setSliceData={setter}
-            />
+  const configBar = (
+    <Row>
+      <Col xs={6}>
+        <p className="chart-header-text">{title}</p>
+      </Col>
+      <Col xs={6}>
+        <div className="tol-chart-buttons">
+          <div>
+            <Button
+              className="config-button"
+              variant="primary"
+              onClick={() => {
+                setSubDatasets({});
+                setResetChart(!resetChart);
+              }}
+            >
+              <FontAwesomeIcon icon={faUndo} size="sm" />
+            </Button>
+          </div>
+          {!noDownload &&
+            <div>
+              <Button
+                className="config-button"
+                variant="primary"
+                onClick={() => {
+                  downloadItem(props.id, normaliseCaps(endpoint));
+                }}>
+                <FontAwesomeIcon icon={faDownload} size="sm" />
+              </Button>
+            </div>
           }
         </div>
-      }
+      </Col>
+    </Row>
+  );
+
+  const headerPadding = 37;
+  const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
+  const setter = (setZone === undefined) ? undefined : setSliceData;
+  const mainPlacement = noLegend ? {paddingTop: 150 - headerPadding} : {paddingLeft: 150};
+  mainPlacement['paddingBottom'] = headerPadding;
+
+  return (
+    <div id={wrapperId} style={{height: height, position: miniActive ? 'relative' : undefined}}>
+      {configBar}
+      {miniActive ? (
+        <div className='sunburst-sub' style={mainPlacement}>
+          {subLoading ? (
+            <Placeholder clear loader />
+          ) : (
+            <Sunburst
+              {...props}
+              id={id}
+              noRefresh
+              noDownload
+              title={undefined} // have to be explicit when auto passing props
+              datasets={subDatasets}
+              setSliceData={setter}
+              noLegend={noLegend}
+              height="100%"
+            />
+          )}
+        </div>
+      ) : null}
+      <div 
+        className={miniActive ? 'sunburst-mini' : ''} 
+        style={miniActive ? {paddingTop: headerPadding} : {height: height, paddingBottom: headerPadding}}
+      >
+        <Sunburst
+          {...props}
+          noRefresh
+          noDownload
+          title={undefined} // have to be explicit when auto passing props
+          datasets={datasets}
+          downloadName={miniActive ? normaliseCaps(endpoint) : undefined}
+          setSliceData={setter}
+          noLegend={miniActive ? true : noLegend}
+          resetChart={resetChart}
+          height="100%"
+        />
+      </div>
     </div>
   );
 }

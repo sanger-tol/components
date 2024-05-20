@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { WidthProvider, Responsive, Layouts } from 'react-grid-layout';
-import { Button, Placeholder } from '../index'
+import { Button, Placeholder } from '../index';
 import { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -80,11 +80,11 @@ function ResponsiveWidget(props: Props) {
 
   const deleteWidget = (id: string) => {
     const newComponents = Object.keys(widgets.components)
-    .filter(key => key !== id)
-    .reduce((obj, key) => {
-      obj[key] = widgets.components[key];
-      return obj;
-    }, {});
+      .filter(key => key !== id)
+      .reduce((obj, key) => {
+        obj[key] = widgets.components[key];
+        return obj;
+      }, {});
     const newOrder = widgets.order.filter(key => key !== id);
     setWidgets({ components: newComponents, order: newOrder });
   };
@@ -169,7 +169,9 @@ function ResponsiveWidget(props: Props) {
             return (
               <div key={key} className='tol-draggable-widget'>
                 <Placeholder opacity={0.7} drag message={key}/>
-                <Button onClick={() => {deleteWidget(key)}} variant='danger' className='widget-delete-btn'>
+                <Button onClick={() => {
+                  deleteWidget(key);
+                }} variant='danger' className='widget-delete-btn'>
                   <FontAwesomeIcon icon={faTrash} size='sm'/>
                 </Button>
               </div>

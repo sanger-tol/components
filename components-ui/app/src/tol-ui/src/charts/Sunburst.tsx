@@ -11,7 +11,7 @@ import {
   Legend
 } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { Button, Col, Row } from '../index';
+import { Button, Col, Row, useEffectUpdate } from '../index';
 import {
   generateSunburstLabels,
   convertSunburstDatasets,
@@ -27,7 +27,7 @@ import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/Utils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUndo, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
-import { resizeListener, themeListener } from "../hooks/listeners";
+import { themeListener } from "../hooks/listeners";
 
 
 ChartJS.register(
@@ -38,38 +38,30 @@ ChartJS.register(
 
 interface Props {
   id: string,
-  title: string,
+  title?: string,
   datasets: object,
-  height: any,
-  width?: number,
+  height?: any,
   legendPosition?: string,
   downloadName?: string,
+  noDownload?: boolean,
   noLegend?: boolean,
   noLabel?: boolean,
   noRefresh?: boolean,
-  setSliceData?: any
+  setSliceData?: any,
+  resetChart?: boolean // a change in this prop will reset the chart
 }
 
 function Sunburst(props: Props) {
-  const { id, title, width, setSliceData, legendPosition, noLabel, noRefresh } = props;
-  const height = (props.height !== undefined) ? props.height : "100%";
+  const { id, title, setSliceData, legendPosition, noDownload, noLabel, noRefresh, resetChart } = props;
+  const height = props.height ? props.height : "100%";
   const originDatasets = convertSunburstDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
 
-  // show legend depending on width
-  const getLegend = () => {
-    const width = document.getElementById(id)?.offsetWidth;
-    return (
-      props.noLegend !== true &&
-      width !== undefined &&
-      width > 650
-    );
-  };
-  const [showLegend, setShowLegend] = useState(getLegend());
-
-  resizeListener(() => {
-    setShowLegend(getLegend());
-  });
+  // resets chart on any change
+  useEffectUpdate(() => {
+    resetItemClickedData(setSliceData);
+    setDatasets(originDatasets);
+  }, [resetChart]);
 
   // colours
   const [titleColour, setTitleColour] = useState('');
@@ -143,9 +135,7 @@ function Sunburst(props: Props) {
             return `${labels[dataPointIndex]}: ${value} (${percentages[dataPointIndex]}%)`;
           },
           label: (context: any) => {
-            if (noLabel) {
-              return null;
-            }
+            if (noLabel) return null;
             const label = context.dataset.label;
             return " " + normaliseCaps(label);
           },
@@ -169,7 +159,7 @@ function Sunburst(props: Props) {
         }
       },
       legend: {
-        display: showLegend,
+        display: props.noLegend ? false : true,
         position: legendPosition === undefined ? 'right' : legendPosition,
         onClick: null,
         labels: {
@@ -185,49 +175,52 @@ function Sunburst(props: Props) {
     onHover: handlePlaneHover
   };
 
-  // adding component sizing
-  const paddingBottom = id.includes('-mini') ? "5px" : "30px";
-  const style = { height: height, paddingBottom: paddingBottom };
-  if (width !== undefined) style["width"] = width.toString() + 'px';
+  const downloadName = props.downloadName !== undefined ? props.downloadName : 'sunburst';
+  const showConfigBar = props.title || !noDownload || !noRefresh;
 
-  const downloadName = props.downloadName !== undefined ? props.downloadName : title;
+  // adding component sizing
+  const paddingBottom = showConfigBar ? "37px" : "0";
+  const style = {height: height, paddingBottom: paddingBottom};
 
   return (
     <div style={style}>
-      <Row>
-        <Col xs={6}>
-          <p className="chart-header-text">{props.title}</p>
-        </Col>
-        <Col xs={6}>
-          <div className="tol-chart-buttons">
-            {isPropDefined(setSliceData) && noRefresh === undefined &&
-              <div>
-                <Button
-                  className="config-button"
-                  variant="primary"
-                  onClick={() => {
-                    resetItemClickedData(setSliceData);
-                    setDatasets(originDatasets);
-                  }}>
-                  <FontAwesomeIcon icon={faUndo} size="sm" />
-                </Button>
-              </div>
-            }
-            {!props.id.includes('-mini') &&
-              <div>
-                <Button
-                  className="config-button"
-                  variant="primary"
-                  onClick={() => {
-                    downloadItem(props.id, downloadName);
-                  }}>
-                  <FontAwesomeIcon icon={faDownload} size="sm" />
-                </Button>
-              </div>
-            }
-          </div>
-        </Col>
-      </Row>
+      {showConfigBar &&
+        <Row>
+          <Col xs={6}>
+            <p className="chart-header-text">{title}</p>
+          </Col>
+          <Col xs={6}>
+            <div className="tol-chart-buttons">
+              {isPropDefined(setSliceData) && !noRefresh &&
+                <div>
+                  <Button
+                    className="config-button"
+                    variant="primary"
+                    onClick={() => {
+                      resetItemClickedData(setSliceData);
+                      setDatasets(originDatasets);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faUndo} size="sm" />
+                  </Button>
+                </div>
+              }
+              {!noDownload &&
+                <div>
+                  <Button
+                    className="config-button"
+                    variant="primary"
+                    onClick={() => {
+                      downloadItem(props.id, downloadName);
+                    }}>
+                    <FontAwesomeIcon icon={faDownload} size="sm" />
+                  </Button>
+                </div>
+              }
+            </div>
+          </Col>
+        </Row>
+      }
       <Doughnut
         id={id}
         responsive="true"

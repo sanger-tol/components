@@ -86,18 +86,18 @@ function Dashboard(props: Props) {
       {buttons}
       <ZoneModal open={open} setOpen={setOpen} setZones={setZones} zones={zones}/>
       {zones.length > 0 ?
-      <>
-        {zones.map((zone) => {
-          return <ZoneGrid
-            key={zone.id}
-            id={zone.id}
-            object_type={zone.objectType}
-            onZoneReorder={onZoneReorder}
-            deleteZone={deleteZone}
-          />;
-        })}
+        <>
+          {zones.map((zone) => {
+            return <ZoneGrid
+              key={zone.id}
+              id={zone.id}
+              object_type={zone.objectType}
+              onZoneReorder={onZoneReorder}
+              deleteZone={deleteZone}
+            />;
+          })}
         </>
-      :
+        :
         <div className='tol-zone-empty'>
           <p>Click the + button to add a Zone</p>
         </div>

@@ -126,9 +126,9 @@ function Sunbursts() {
       <p style={{marginTop: 4}}>This is the &apos;slice&apos; data: {sliceData["bucket"]} {sliceData["clickKey"]} {sliceData["value"]}</p>
       <Sunburst
         id="basic-sunburst"
-        title={sunburstTitle}
         datasets={datasets}
-        height={800}
+        title={sunburstTitle}
+        height={500}
         setSliceData={setSliceData}
         legendPosition="left"
       />

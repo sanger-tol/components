@@ -53,4 +53,18 @@
   font-weight: bolder;
   overflow: hidden;
   white-space: nowrap;
+  color: var(--bs-emphasis-color);
+}
+
+.sunburst-mini {
+  height: 150px;
+  width: 150px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.sunburst-sub {
+  height: 100%;
+  width: 100%;
 }

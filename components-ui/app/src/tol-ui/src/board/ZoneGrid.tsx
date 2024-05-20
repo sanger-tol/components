@@ -207,7 +207,7 @@ function ZoneGrid(props: Props) {
       {buttons}
       {currentWidgets.order.length > 0 ?
         <ResponsiveWidget id={id} widgets={currentWidgets} setWidgets={setCurrentWidgets} draggable={draggable} />
-      :
+        :
         <div className='tol-zone-empty'>
           <p>Click the + button to add a Component</p>
         </div>
