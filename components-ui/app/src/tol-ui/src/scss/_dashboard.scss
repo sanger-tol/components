@@ -71,7 +71,7 @@
 }
 
 .config-button:disabled {
-  border-color: var(--primary) !important;
+  border-color: unset !important;
   text-decoration: none;
   color: var(--primary);
   fill: var(--primary);
