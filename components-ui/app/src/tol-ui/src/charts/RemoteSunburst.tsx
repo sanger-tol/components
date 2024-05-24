@@ -97,7 +97,7 @@ function RemoteSunburst(props: Props) {
       setWarningMessage(isChartDataEmpty(aggs));
       const data = aggsToSunburstData(aggs, sliceBy);
       setDatasets(data);
-      setSliceData({});
+      if (setZone) setSliceData({});
       setLoading(false);
     }).catch((error: any) => {
       setErrorMessage(error.message);
