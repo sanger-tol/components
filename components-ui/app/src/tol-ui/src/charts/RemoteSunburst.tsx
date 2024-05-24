@@ -56,7 +56,6 @@ function RemoteSunburst(props: Props) {
     zone,
     setZone
   } = props;
-  const subId = 'tol-sub-sunburst-' + id;
   const wrapperId = 'tol-sunburst-wrapper-' + id; // gets width on mount
   const height = (props.height !== undefined) ? props.height : "100%";
   const [datasets, setDatasets] = useState({});
@@ -72,7 +71,7 @@ function RemoteSunburst(props: Props) {
 
   resizeListener(() => {
     const width = document.getElementById(wrapperId)?.offsetWidth;
-    if (width !== undefined) setNoLegend(width < 768);
+    if (width !== undefined) setNoLegend(width < 578);
   });
 
   useEffect(() => {
@@ -98,6 +97,7 @@ function RemoteSunburst(props: Props) {
       setWarningMessage(isChartDataEmpty(aggs));
       const data = aggsToSunburstData(aggs, sliceBy);
       setDatasets(data);
+      setSliceData({});
       setLoading(false);
     }).catch((error: any) => {
       setErrorMessage(error.message);
@@ -111,7 +111,6 @@ function RemoteSunburst(props: Props) {
     // this also resets components below
     addSubFilter({
       id: id,
-      subId: subId,
       filter: localFilter,
       zone: zone!
     });
@@ -129,7 +128,7 @@ function RemoteSunburst(props: Props) {
       httpClient().post('/' + endpoint + ":aggregations", aggs, {
         baseURL: baseUrl,
         params: {
-          filter: generateFilter(subId, zone!)
+          filter: generateFilter(id, zone!, true)
         }
       }).then((res: any) => {
         const aggs = res.data.meta.aggregations;
@@ -246,7 +245,7 @@ function RemoteSunburst(props: Props) {
           noDownload
           title={undefined} // have to be explicit when auto passing props
           datasets={datasets}
-          downloadName={miniActive ? normaliseCaps(endpoint) : undefined}
+          downloadName={normaliseCaps(endpoint)}
           setSliceData={setter}
           noLegend={miniActive ? true : noLegend}
           resetChart={resetChart}

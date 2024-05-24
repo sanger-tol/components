@@ -118,12 +118,14 @@ function Sunburst(props: Props) {
 
   // sunburst options
   const options = {
+    animation: false,
     maintainAspectRatio: false,
     responsive: true,
     cutout: "20%",
     plugins: {
       // tooltip styling
       tooltip: {
+        animation: false,
         usePointStyle: true,
         backgroundColor: "black",
         callbacks: {

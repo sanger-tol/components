@@ -12,7 +12,7 @@ import { httpClient } from '../services';
 import { PopUpMessage } from '../general';
 
 
-function FilterTextInput(props: Filter) {
+function FilterMultiSelect(props: Filter) {
   const { attribute, componentId, rename, zone, setZone, endpoint, baseUrl } = props;
   const [data, setData] = useState<string[]>([]);
   const [values, setValues] = useState<string[]>([]);
@@ -42,6 +42,7 @@ function FilterTextInput(props: Filter) {
           setData(aggValues.map(item => item.key));
           setLoading(false);
           setFetched(true);
+          updateDropdownText('No results found');
         })
         .catch((error: any) => {
           setErrorMessage(
@@ -51,7 +52,7 @@ function FilterTextInput(props: Filter) {
           console.error(error.message);
           setLoading(false);
           setFetched(true);
-          updateDropdownText('Error fetching values.');
+          updateDropdownText('Error fetching values');
         });
     }
   };
@@ -94,7 +95,7 @@ function FilterTextInput(props: Filter) {
 
   const setDropdownText = () => {
     if (!fetched) updateDropdownText('Loading values...');
-    else if (errorMessage !== '') updateDropdownText('Error fetching values.');
+    else if (errorMessage !== '') updateDropdownText('Error fetching values');
   };
 
   return (
@@ -122,4 +123,4 @@ function FilterTextInput(props: Filter) {
   );
 }
 
-export default FilterTextInput;
+export default FilterMultiSelect;

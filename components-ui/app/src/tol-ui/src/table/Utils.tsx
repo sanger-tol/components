@@ -21,7 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
 
-export const fieldMetaVersion = "field-meta-v6";
+export const fieldMetaVersion = "field-meta-v7";
 let idField: string; // id or uid
 let idFieldDefinedPreviously = false;
 let hiddenFields = false;
@@ -321,7 +321,7 @@ function addRelationshipsAttributes(endpoint: string, typesMeta: TypesMeta) {
 }
 
 function addDefaultFilterType(type: string, cardinality: number) {
-  if (cardinality < 20 && (type === 'str' || type === 'boolean')) return 'multi';
+  if (cardinality < 20 && type === 'str') return 'multi';
   if (type === 'double') return 'float';
   return type;
 }

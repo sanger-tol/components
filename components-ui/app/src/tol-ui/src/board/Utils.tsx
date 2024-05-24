@@ -24,11 +24,18 @@ export interface Filter {
 }
 
 export interface Component {
-  data: {
-    filter: Filter
-    defaultFilter: Filter
-    filterPassThrough?: boolean
-  }
+  data: ComponentData
+}
+
+export interface ComponentData {
+  id?: string, // the dict key in most cases
+  filter?: Filter
+  defaultFilter?: Filter,
+  subFilter?: Filter,
+  filterPassThrough?: boolean,
+  type?: string, // component type e.g. table
+  size?: string // component size e.g. sm
+  props?: object // component props
 }
 
 export interface Components {
@@ -87,27 +94,20 @@ export const exampleBoard: Board = {
   order: ['zoneIdOne']
 };
 
-// Defining a zone for filtering against
-interface ComponentFilter {
-  id: string, // referred to 'attribute' in the zone code
-  filter?: Filter,
-  filterPassThrough?: boolean
-}
-
-export function defineComponent(component: ComponentFilter, zone: Zone) {
+export function defineComponent(component: ComponentData, zone: Zone) {
   // setting default as empty if no filter provided
   const empty = {and_: {}};
   const filter = component.filter === undefined ? empty : component.filter;
-  zone.components[component.id] = {
+  zone.components[component.id!] = {
     data: {
       filter: deepCopy(filter),
       defaultFilter: deepCopy(filter),
-      filterPassThrough: component.filterPassThrough
+      ...component
     }
   };
 }
 
-function defineZone(objectType: string, components: ComponentFilter[]) {
+function defineZone(objectType: string, components: ComponentData[]) {
   const zone: Zone = {
     components: {},
     order: [],
@@ -115,7 +115,7 @@ function defineZone(objectType: string, components: ComponentFilter[]) {
   };
   for (const component of components) {
     defineComponent(component, zone);
-    zone.order.push(component.id);
+    zone.order.push(component.id!);
   }
   return zone;
 }
@@ -127,7 +127,7 @@ export function useZone(params: {
 }) {
   const {endpoint, baseUrl, components} = params;
   const [zone, setZone] = useState(
-    defineZone(endpoint, components as ComponentFilter[])
+    defineZone(endpoint, components as ComponentData[])
   );
   return {
     endpoint: endpoint,

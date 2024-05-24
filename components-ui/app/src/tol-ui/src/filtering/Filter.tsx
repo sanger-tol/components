@@ -8,7 +8,7 @@ import { Zone } from "../board";
 import FilterTextInput from "./FilterTextInput";
 import FilterDatePicker from "./FilterDatePicker";
 import FilterMultiSelect from "./FilterMultiSelect";
-//import FilterBooleanPicker from "./FilterBooleanPicker";
+import FilterBoolean from "./FilterBoolean";
 
 
 export type FilterType = 'str'|'int'|'float'|'datetime'|'boolean'|'multi'
@@ -41,6 +41,12 @@ function Filter(props: Filter) {
         {...props}
       />
     );
+  case 'boolean':
+    return (
+      <FilterBoolean
+        {...props}
+      />
+    );
   case 'multi':
     return (
       <FilterMultiSelect
@@ -48,7 +54,6 @@ function Filter(props: Filter) {
       />
     );
   }
-  return <></>;
 }
 
 export default Filter;

@@ -27,6 +27,7 @@ function DetailInfo() {
       <RemoteGet
         endpoint={'species/' + id}
         baseUrl={env.TOL_DATA}
+        loadingMessage='Loading species...'
         response={response}
         setResponse={setResponse}
       />

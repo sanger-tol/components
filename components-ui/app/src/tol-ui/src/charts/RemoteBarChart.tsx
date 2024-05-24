@@ -52,7 +52,6 @@ function RemoteBarChart(props: Props) {
     zone,
     setZone
   } = props;
-  const subId = 'tol-sub-chart-' + id;
   const height = (props.height !== undefined) ? props.height : "100%";
   const [labels, setLabels] = useState([]);
   const [datasets, setDatasets] = useState([]);
@@ -61,11 +60,6 @@ function RemoteBarChart(props: Props) {
   const [errorMessage, setErrorMessage] = useState('');
   const [barData, setBarData] = useState<object>({});
   const [filter, setFilter] = useState<object|undefined>({});
-
-  // create alternate title based on title - sequencer - month/year
-  const alternateTitle = (normaliseCaps(props.title === undefined ? "" : props.title) 
-    + " - " + normaliseCaps(barData["bucket"]) 
-    + " - " + normaliseCaps(barData["clickKey"]));
 
   useEffect(() => {
     const compoundedFilter = generateFilter(id, zone);
@@ -111,7 +105,6 @@ function RemoteBarChart(props: Props) {
     // this also resets components below
     addSubFilter({
       id: id,
-      subId: subId,
       filter: localFilter,
       zone: zone
     });
@@ -144,8 +137,8 @@ function RemoteBarChart(props: Props) {
 
   return (
     <BarChart
-      downloadName={barData["clickKey"] === undefined ? props.title : alternateTitle}
       {...props}
+      downloadName={normaliseCaps(endpoint)}
       labels={labels}
       datasets={datasets}
       setBarData={setter}

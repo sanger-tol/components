@@ -50,6 +50,11 @@ function Filters() {
               in_list: {
                 value: ['species', 'genus']
               }
+            },
+            'sts_ready': {
+              in_list: {
+                value: ['true']
+              }
             }
           }
         }
@@ -105,6 +110,14 @@ function Filters() {
         componentId='filter-one'
         {...species}
       />
+      <div style={{height: 6}}/>
+      <Filter
+        attribute='sts_ready'
+        rename='STS Ready'
+        type='boolean'
+        componentId='filter-one'
+        {...species}
+      />
       <p style={{marginTop: 10, marginBottom: 3}}>Filter Level 2:</p>
       <Filter
         attribute='sts_family'
@@ -131,6 +144,9 @@ function Filters() {
           },
           goat_taxon_rank: {
             rename: 'Taxon Rank'
+          },
+          sts_ready: {
+            rename: 'STS Ready'
           }
         }}
         height={300}

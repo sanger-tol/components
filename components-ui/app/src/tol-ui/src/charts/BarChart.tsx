@@ -170,11 +170,13 @@ function BarChart(props: Props) {
 
   // chart options
   const options = {
+    animation: false,
     maintainAspectRatio: false,
     responsive: true,
     plugins: {
       title: {},
       tooltip: {
+        animation: false,
         usePointStyle: true,
         backgroundColor: "black",
         callbacks: {
@@ -237,7 +239,7 @@ function BarChart(props: Props) {
     }
   };
 
-  const downloadName = props.downloadName !== undefined ? props.downloadName : title;
+  const downloadName = props.downloadName !== undefined ? props.downloadName : 'barchart';
 
   return (
     <div style={{ height: height, paddingBottom: '20px' }}>

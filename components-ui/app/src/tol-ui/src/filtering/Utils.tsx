@@ -47,7 +47,7 @@ export function mergeAndFilters(target: object, incoming: object) {
   return output as Filter;
 }
 
-export function generateFilter(id: string, zone?: object) {
+export function generateFilter(id: string, zone?: object, useSubFilter?: boolean) {
   if (zone === undefined) return undefined;
   const z = zone as Zone;
   const aboveComponents = getComponentsAbove(id, z.order);
@@ -58,7 +58,12 @@ export function generateFilter(id: string, zone?: object) {
     if (z.components[currentId].data.filterPassThrough && id !== currentId) {
       continue;
     }
-    const currentFilter = z.components[currentId].data.filter.and_;
+    let currentFilter: any = z.components[currentId].data.filter!.and_;
+    // include sub filter if required
+    const subFilter = z.components[currentId].data.subFilter;
+    if ((currentId !== id || useSubFilter) && subFilter) {
+      currentFilter = mergeAndFilters(currentFilter, subFilter.and_);
+    }
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
   return {
@@ -73,7 +78,7 @@ function addValueBelow(id: string, value: string, list: string[]) {
   return list;
 }
 
-function addComponentBelow(id: string, newId: string, zone: Zone) {
+export function addComponentBelow(id: string, newId: string, zone: Zone) {
   defineComponent({
     id: newId,
     filterPassThrough: zone.components[id].data.filterPassThrough
@@ -91,7 +96,15 @@ export function resetFiltersBelow(params: {
   const z = zone as Zone;
   if (indexOffset !== undefined) id = getNextComponentId(id, z.order, indexOffset);
   for (const currentId of getComponentsBelow(id, z.order)) {
-    z.components[currentId].data.filter = deepCopy(z.components[currentId].data.defaultFilter);
+    z.components[currentId].data.filter = deepCopy(z.components[currentId].data.defaultFilter!);
+    z.components[currentId].data.subFilter = undefined;
+  }
+}
+
+export function resetAllFilters(zone: Zone) {
+  for (const currentId of zone.order) {
+    zone.components[currentId].data.filter = deepCopy(zone.components[currentId].data.defaultFilter!);
+    zone.components[currentId].data.subFilter = undefined;
   }
 }
 
@@ -110,7 +123,7 @@ export function setFilter(params: {
 }) {
   const {operator, value, negate, attribute, componentId, zone, valueExists} = params;
   const z = zone as Zone;
-  const and_ = z.components[componentId].data.filter.and_;
+  const and_ = z.components[componentId].data.filter!.and_;
   resetFiltersBelow({id: componentId, zone: z, indexOffset: 1});
 
   if (valueExists) {
@@ -149,7 +162,7 @@ export function filterListener(params: {
     let value = params.emptyValue;
   
     for (const currentId of aboveComponents) {
-      const and_ = zone.components[currentId].data.filter.and_;
+      const and_ = zone.components[currentId].data.filter!.and_;
       if (and_ && attribute in and_) {
         for (const op of operators) {
           if (op in and_[attribute]) {
@@ -170,17 +183,12 @@ export function filterListener(params: {
 
 export function addSubFilter(params: {
   id: string,
-  subId: string,
   filter: object,
   zone: object
 }) {
-  const {id, subId, filter, zone} = params;
+  const {id, filter, zone} = params;
   const z = zone as Zone;
   const f = filter as Filter;
-  // only add if newId doesn't exist
-  if (!z.order.includes(subId)) {
-    addComponentBelow(id, subId, z);
-  }
-  resetFiltersBelow({id: subId, zone: zone!});
-  z.components[subId].data.filter = f;
+  resetFiltersBelow({id: id, zone: z!});
+  z.components[id].data.subFilter = f;
 }

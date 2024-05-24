@@ -20,7 +20,10 @@ interface Props {
   onOpen?: any,
   onEntering?: any,
   onClose?: any,
-  onClick?: any
+  onClick?: any,
+  renderMenuItem?: any,
+  renderValue?: any,
+  noSearch?: boolean
 }
 
 const MultipleSelect = (props: Props) => {
@@ -35,7 +38,10 @@ const MultipleSelect = (props: Props) => {
     onOpen,
     onEntering,
     onClose,
-    onClick
+    onClick,
+    renderMenuItem,
+    renderValue,
+    noSearch
   } = props;
   const block = isPropDefined(props.block);
 
@@ -67,6 +73,7 @@ const MultipleSelect = (props: Props) => {
   return (
     <span onClick={onClick}>
       <RSCheckPicker
+        searchable={!noSearch}
         countable
         block={block}
         value={value}
@@ -80,6 +87,8 @@ const MultipleSelect = (props: Props) => {
         onEntering={onEntering}
         onClose={onClose}
         renderExtraFooter={selectAll}
+        renderMenuItem={renderMenuItem}
+        renderValue={renderValue}
       />
     </span>
   );

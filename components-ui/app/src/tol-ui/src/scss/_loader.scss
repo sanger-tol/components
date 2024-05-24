@@ -21,9 +21,26 @@
 	transform: translate(-50%, -50%)
 }
 
-.page-centered-loader {
-	position: absolute;
-	top: calc(50% - 150px);
-	left: 50%;
-	transform: translate(-50%, -50%)
+.fixed-full-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--grey);
+  opacity: 0.5;
+
+  .fixed-centered-loader {
+    position: absolute;
+    top: calc(50% - 100px);
+    left: 50%;
+    transform: translate(-50%, -50%)
+  }
+
+  .fixed-centered-text {
+    position: absolute;
+    top: calc(50% - 60px);
+    left: 50%;
+    transform: translate(-50%, -50%)
+  }
 }

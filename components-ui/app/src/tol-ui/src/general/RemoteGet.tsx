@@ -11,12 +11,13 @@ import { Loader } from '../index';
 interface Props {
   endpoint: string,
   baseUrl?: string,
+  loadingMessage?: string,
   response: any,
   setResponse: Function // eslint-disable-line
 }
 
 function RemoteGet(props: Props) {
-  const { endpoint, baseUrl, response, setResponse } = props;
+  const { endpoint, baseUrl, loadingMessage, response, setResponse } = props;
 
   useEffect(() => {
     httpClient().get('/' + endpoint, {
@@ -32,8 +33,13 @@ function RemoteGet(props: Props) {
 
   if (response === undefined) {
     return (
-      <div className='page-centered-loader'>
-        <Loader />
+      <div className='fixed-full-page'>
+        <div className='fixed-centered-loader'>
+          <Loader />
+        </div>
+        <div className='fixed-centered-text'>
+          {loadingMessage}
+        </div>
       </div>
     );
   }
