@@ -16,7 +16,7 @@ export type FilterType = 'str'|'int'|'float'|'datetime'|'boolean'|'multi'
 export interface Filter {
   attribute: string,
   rename: string,
-  type: FilterType,
+  type?: FilterType,
   componentId: string,
   zone: Zone,
   setZone: any,
@@ -54,6 +54,8 @@ function Filter(props: Filter) {
       />
     );
   }
+  console.log('Cannot retrieve filter type: ' + props.attribute)
+  return <></>
 }
 
 export default Filter;

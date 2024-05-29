@@ -108,6 +108,11 @@ export function resetAllFilters(zone: Zone) {
   }
 }
 
+export function removeComponent(id: string, zone: Zone) {
+  delete zone.components[id];
+  zone.order = zone.order.filter((currentId) => currentId !== id);
+};
+
 export function setFilter(params: {
   // and_ filter attributes
   operator: string,

@@ -42,7 +42,7 @@ export function isEmptyObject(x: object) {
 }
 
 export function normaliseCaps(name: string, endpoint?: string) {
-  if (name === undefined) return "";
+  if (!name) return "";
   // make object ids clear (for auto load)
   if (endpoint !== undefined) {
     if (name === "id" || name === "uid") {

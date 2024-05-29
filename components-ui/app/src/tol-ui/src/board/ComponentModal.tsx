@@ -1,5 +1,5 @@
 /*
-SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
@@ -14,29 +14,34 @@ import {
 import { Input } from 'rsuite';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faChartColumn, faChartPie, faTable, faHashtag } from '@fortawesome/free-solid-svg-icons';
+import { Zone, defineComponent } from './Utils';
 
 
 interface Props {
   open: boolean,
   setOpen: any,
-  setComponent: any,
+  zone: Zone,
+  setZone: any
 }
 
 function ComponentModal(props: Props) {
-  const { open, setOpen, setComponent } = props;
+  const { open, setOpen, zone, setZone } = props;
   const [chartType, setChartType] = useState('');
   const [chartSize, setChartSize] = useState('');
-  const [id, setID] = useState('');
+  const [id, setId] = useState('');
 
   const addComponent = () => {
-    setComponent({
+    defineComponent({
       id: id,
-      chartType: chartType,
-      chartSize: chartSize
-    });
+      size: chartSize,
+      type: chartType,
+    }, zone)
+    zone.order = [...zone.order, id];
+    setZone({...zone});
     setOpen(false);
     setChartType('');
     setChartSize('');
+    setId('');
   };
 
   const plusButton = (
@@ -59,8 +64,8 @@ function ComponentModal(props: Props) {
         <Row>
           <Col lg={3} md={6} sm={12} className='tol-button-col'>
             <div
-              className={chartType !== 'BarChart' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => setChartType('BarChart')}
+              className={chartType !== 'barchart' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
+              onClick={() => setChartType('barchart')}
             >
               <FontAwesomeIcon icon={faChartColumn} size="6x" />
               <h6>Bar Chart</h6>
@@ -68,8 +73,8 @@ function ComponentModal(props: Props) {
           </Col>
           <Col lg={3} md={6} sm={12} className='tol-button-col'>
             <div
-              className={chartType !== 'Sunburst' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => setChartType('Sunburst')}
+              className={chartType !== 'sunburst' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
+              onClick={() => setChartType('sunburst')}
             >
               <FontAwesomeIcon icon={faChartPie} size="6x" />
               <h6>Sunburst</h6>
@@ -77,8 +82,8 @@ function ComponentModal(props: Props) {
           </Col>
           <Col lg={3} md={6} sm={12} className='tol-button-col'>
             <div
-              className={chartType !== 'Table' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => setChartType('Table')}
+              className={chartType !== 'table' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
+              onClick={() => setChartType('table')}
             >
               <FontAwesomeIcon icon={faTable} size="6x" />
               <h6>Table</h6>
@@ -86,8 +91,8 @@ function ComponentModal(props: Props) {
           </Col>
           <Col lg={3} md={6} sm={12} className='tol-button-col'>
             <div
-              className={chartType !== 'Count' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'} 
-              onClick={() => setChartType('Count')}
+              className={chartType !== 'count' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'} 
+              onClick={() => setChartType('count')}
             >
               <FontAwesomeIcon icon={faHashtag} size="6x" />
               <h6>Count</h6>
@@ -126,7 +131,7 @@ function ComponentModal(props: Props) {
         <h6>Enter ID</h6>
         <Input
           placeholder='ID'
-          onChange={(value) => setID(value)}
+          onChange={(value) => setId(value)}
         />
       </>
     </Modal>

@@ -32,6 +32,7 @@ function RemoteCount(props: Props) {
   const [error, setError] = useState('');
   const [filter, setFilter] = useState<object|undefined>({});
 
+
   useEffect(() => {
     const compoundedFilter = generateFilter(id, zone);
     // will trigger [filter] useEffect if update has occured
@@ -76,7 +77,7 @@ function RemoteCount(props: Props) {
     <div id={id} className="tol-count">
       <p>{title}</p>
       <h1 className="count">{numberWithSpaces(count)}</h1>
-      <div className="faded">
+      <div className="faded" aria-hidden="true">
         <h1>{count}</h1>
       </div>
     </div>

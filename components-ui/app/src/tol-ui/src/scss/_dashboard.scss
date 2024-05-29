@@ -21,6 +21,11 @@
   margin: 6px;
 }
 
+.tol-draggable-widget {
+  background-color: var(--bs-body-bg);
+  border-radius: 6px;
+}
+
 .tol-draggable-widget:hover {
   cursor: move;
 }
@@ -37,8 +42,8 @@
 
 .tol-zone {
   background-color: var(--bs-body-darker);
-  padding: 8px;
-  margin: 10px;
+  padding: 1px;
+  margin: 8px;
   border-radius: 6px;
 }
 
@@ -106,7 +111,7 @@
   width: auto;
   padding-left: 5px;
   padding-right: 5px;
-  padding-top: 2px;
+  padding-top: 3px;
   
   p {
     font-size: 14px;
@@ -162,10 +167,6 @@
   border-color: var(--primary) !important;
   border-width: 2px;
   border-style: solid;
-}
-
-.tol-zone .tol-placeholder {
-  background-color: var(--bs-body-bg);
 }
 
 .tol-zone-empty {

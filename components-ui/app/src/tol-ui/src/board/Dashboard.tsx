@@ -1,10 +1,10 @@
 /*
-SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   ZoneGrid,
   Button,
@@ -15,6 +15,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
+
 interface ZoneObject {
   id: string,
   objectType: string
@@ -24,9 +25,7 @@ interface Props {
   id: string 
 }
 
-
 function Dashboard(props: Props) {
-  // @ts-ignore
   const { id } = props;
   const [zones, setZones] = useState<ZoneObject[]>([]);
   const [open, setOpen] = useState(false);
@@ -52,9 +51,6 @@ function Dashboard(props: Props) {
 
     setZones([...zones]);
   }
-
-  useEffect(() => {
-  }, [zones]);
 
   const addButton = (
     <Button
@@ -86,16 +82,16 @@ function Dashboard(props: Props) {
       {buttons}
       <ZoneModal open={open} setOpen={setOpen} setZones={setZones} zones={zones}/>
       {zones.length > 0 ?
-        <>
-          {zones.map((zone) => {
-            return <ZoneGrid
-              key={zone.id}
-              id={zone.id}
-              object_type={zone.objectType}
-              onZoneReorder={onZoneReorder}
-              deleteZone={deleteZone}
-            />;
-          })}
+      <>
+        {zones.map((zone) => {
+          return <ZoneGrid
+            key={zone.id}
+            id={zone.id}
+            objectType={zone.objectType}
+            onZoneReorder={onZoneReorder}
+            deleteZone={deleteZone}
+          />;
+        })}
         </>
         :
         <div className='tol-zone-empty'>

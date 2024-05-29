@@ -1,5 +1,5 @@
 /*
-SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
@@ -16,7 +16,8 @@ import {
   ComponentModal,
   RemoteBarChart,
   RemoteSunburst,
-  RemoteTable
+  RemoteTable,
+  useEffectUpdate
 } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -29,7 +30,7 @@ import {
 
 
 interface Component {
-  type: string,
+  size: string,
   element: JSX.Element
 }
 
@@ -38,68 +39,85 @@ interface Widgets {
   order: string[]
 }
 
-interface ComponentToAdd {
-  id: string,
-  chartType: string,
-  chartSize: string
-}
-
 interface Props {
   id: string,
   widgets?: Widgets,
-  object_type: string,
+  objectType: string,
   onZoneReorder: any,
   deleteZone: any
 }
 
-function getComponent(componentToAdd, zone) {
-  switch (componentToAdd.chartType) {
-  case 'Count':
-    return <RemoteCount id={componentToAdd.id} title={componentToAdd.id} {...zone} />;
-  case 'BarChart':
-    return <RemoteBarChart id={componentToAdd.id} title={componentToAdd.id} type='M' breakDownBy='sts_family' stacked xAxis='sts_dna_extracted_date' {...zone} />;
-  case 'Table':
-    return <RemoteTable id={componentToAdd.id} title={componentToAdd.id} {...zone} />;
-  case 'Sunburst':
-    return <RemoteSunburst id={componentToAdd.id} title={componentToAdd.id} sliceBy={["sts_order_group", "sts_family"]} {...zone} />;
-  }
-}
-
-
 function ZoneGrid(props: Props) {
-  const { id, object_type, widgets, onZoneReorder, deleteZone } = props;
+  const { id, objectType, widgets, onZoneReorder, deleteZone } = props;
   const [draggable, setDraggable] = useState(false);
   const [currentWidgets, setCurrentWidgets] = useState<Widgets>(widgets || {components: {}, order: []});
-  const [componentToAdd, setComponentToAdd] = useState<ComponentToAdd>();
   const [deleteWarning, setDeleteWarning] = useState(false);
   const [open, setOpen] = useState(false);
-
-  const speciesZone = useZone({
-    endpoint: object_type,
+  const z = useZone({
+    endpoint: objectType,
     baseUrl: env.TOL_DATA,
     components: []
   });
 
-  useEffect(() => {
-  }, [currentWidgets]);
-  
-  useEffect(() => {
-    if (componentToAdd) {
-      const component = getComponent(componentToAdd, speciesZone);
-      setCurrentWidgets({
-        // @ts-ignore
-        components: {
-          ...currentWidgets.components,
-          [componentToAdd.id]: {
-            type: componentToAdd.chartSize,
-            element: component
-          }
-        },
-        order: [...currentWidgets.order, componentToAdd.id]
-      });
-    }
-  }, [componentToAdd]);
+  const getComponent = (id: string, type: string, props: any) => {
+    switch (type) {
+      case 'count':
+        return (
+          <RemoteCount
+            {...props}
+            id={id}
+            title={id}
+          />
+        );
+      case 'barchart':
+        return (
+          <RemoteBarChart
+            {...props}
+            id={id}
+            title={id}
+            stacked
 
+            // temporary static
+            type='M'
+            breakDownBy='sts_family'
+            xAxis='sts_dna_extracted_date' />
+        );
+      case 'table':
+        return (
+          <RemoteTable
+            {...props}
+            id={id}
+          />
+        );
+      case 'sunburst':
+        return (
+          <RemoteSunburst
+            {...props}
+            id={id}
+            title={id}
+
+            // temporary static
+            sliceBy={["sts_order_group", "sts_family"]}
+          />
+        );
+    }
+  }
+
+  const getWidgetsUsingZone = () => {
+    const newWidgets = {components: {}, order: [] as string[]};
+    for (const [id, component] of Object.entries(z.zone.components)) {
+      newWidgets.components[id] = {
+        size: component.data.size,
+        element: getComponent(id, component.data.type!, z)
+      };
+    }
+    newWidgets.order = z.zone.order;
+    return newWidgets;
+  }
+
+  useEffectUpdate(() => {
+    setCurrentWidgets(getWidgetsUsingZone());
+  }, [z.zone]);
 
   useEffect(() => {
     const handleMouseDown = (event) => {
@@ -115,7 +133,7 @@ function ZoneGrid(props: Props) {
   }, []);
 
 
-  function onAddComponent() {
+  const onAddComponent = () => {
     setOpen(true);
   }
 
@@ -196,7 +214,7 @@ function ZoneGrid(props: Props) {
             {downButton}
             {upButton}
           </h6>
-          <ComponentModal open={open} setOpen={setOpen} setComponent={setComponentToAdd} />
+          <ComponentModal open={open} setOpen={setOpen} {...z} />
         </Col>
       </Row>
     </div>
@@ -206,7 +224,14 @@ function ZoneGrid(props: Props) {
     <div className='tol-zone'>
       {buttons}
       {currentWidgets.order.length > 0 ?
-        <ResponsiveWidget id={id} widgets={currentWidgets} setWidgets={setCurrentWidgets} draggable={draggable} />
+        <ResponsiveWidget
+          id={id}
+          widgets={currentWidgets}
+          setWidgets={setCurrentWidgets}
+          draggable={draggable}
+          zone={z.zone}
+          setZone={z.setZone}
+        />
         :
         <div className='tol-zone-empty'>
           <p>Click the + button to add a Component</p>

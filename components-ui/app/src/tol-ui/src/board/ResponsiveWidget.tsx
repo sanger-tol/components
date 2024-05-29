@@ -9,9 +9,11 @@ import { Button, Placeholder } from '../index';
 import { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Zone } from './Utils';
+import { resetAllFilters, removeComponent } from '../filtering/Utils';
 
 interface Component {
-  type: string,
+  size: string,
   element: JSX.Element
 }
 
@@ -25,32 +27,10 @@ interface Props {
   widgets: Widgets,
   draggable: boolean,
   setWidgets?: any,
-  setOrder?: any
+  setOrder?: any,
+  zone: Zone,
+  setZone: any
 }
-
-//function getFromLS(key, id) {
-//  let ls = {};
-//  if (global.localStorage) {
-//    try {
-//      // @ts-ignore
-//      ls = JSON.parse(global.localStorage.getItem(id)) || {};
-//    } catch (e) {
-//      /*Ignore*/
-//    }
-//  }
-//  return ls[key];
-//}
-
-//function saveToLS(key, value, id) {
-//  if (global.localStorage) {
-//    global.localStorage.setItem(
-//      id,
-//      JSON.stringify({
-//        [key]: value
-//      })
-//    );
-//  }
-//}
 
 function getWidgetOrder(layout, widgets) {
   // Sort the layout array by the 'y' property (and 'x' property in case of a tie)
@@ -68,7 +48,7 @@ function getWidgetOrder(layout, widgets) {
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 function ResponsiveWidget(props: Props) {
-  const { widgets, draggable, setOrder, setWidgets } = props;
+  const { widgets, draggable, setOrder, setWidgets, zone } = props;
   const [layoutsState, setLayouts] = useState<Layouts>(generateLayout(widgets));
   const internalLayouts = useRef(generateLayout(widgets));
 
@@ -87,6 +67,9 @@ function ResponsiveWidget(props: Props) {
       }, {});
     const newOrder = widgets.order.filter(key => key !== id);
     setWidgets({ components: newComponents, order: newOrder });
+    // Going to have to make it remove it from the zone and then set the zone again to fire off the useEffect in the ZoneGrid
+    removeComponent(id, zone);
+    resetAllFilters(zone);
   };
 
   function onLayoutChange(layout) {
@@ -96,6 +79,7 @@ function ResponsiveWidget(props: Props) {
     if (setOrder) {
       setOrder(order);
     }
+    zone.order = order.order;
     const newLayout = generateLayout(order);
 
     if (JSON.stringify(newLayout) !== JSON.stringify(layoutsState)) {
@@ -119,31 +103,28 @@ function ResponsiveWidget(props: Props) {
     const layout = { lg: [], md: [], sm: [] };
     const y = { lg: 0, md: 0, sm: 0 };
     const x = { lg: 0, md: 0, sm: 0 };
-  
+    
     components.order.forEach((id) => {
       const widget = components.components[id];
-      ['lg', 'md', 'sm'].forEach(size => {
-        const { w, h } = types[widget.type][size];
+      if (!widget) {
+        return;
+      }
+      ['lg', 'md', 'sm'].forEach(breakpoint => {
+        const { w, h } = types[widget.size][breakpoint];
       
         // if the widget won't fit on the current row, move it to the next row
-        if (x[size] + w > (size === 'lg' ? 4 : size === 'md' ? 2 : 1)) {
-          y[size] += h;
-          x[size] = 0;
+        if (x[breakpoint] + w > (breakpoint === 'lg' ? 4 : breakpoint === 'md' ? 2 : 1)) {
+          y[breakpoint] += h;
+          x[breakpoint] = 0;
         }
       
-        layout[size].push({ i: id, x: x[size], y: y[size], w, h });
-        x[size] += w;
+        layout[breakpoint].push({ i: id, x: x[breakpoint], y: y[breakpoint], w, h });
+        x[breakpoint] += w;
       });
     });
     
     return layout;
   }
-
-  //if (!getFromLS('layouts', id)){
-  //  ls = generateLayout();
-  //} else {
-  //  ls = (getFromLS('layouts', id));
-  //}
 
   return (
     <div className='tol-responsive-grid'>
@@ -159,6 +140,10 @@ function ResponsiveWidget(props: Props) {
         draggableCancel='.widget-delete-btn'
       >
         {widgets.order.map((key)=> {
+          // Check if there is a component that matches the ids
+          if (!widgets.components[key]) {
+            return null;
+          }
           if (!draggable) {
             return (
               <div key={key} className='tol-responsive-widget'>
