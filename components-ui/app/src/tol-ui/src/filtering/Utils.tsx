@@ -116,33 +116,45 @@ export function removeComponent(id: string, zone: Zone) {
 export function setFilter(params: {
   // and_ filter attributes
   operator: string,
-  value: any,
+  value?: any,
   negate: boolean,
+  exists?: boolean,
   // filter location
   attribute: string,
   componentId: string,
   // filter state
   zone: object,
   // differentials
-  valueExists: any
+  valueExists?: any
 }) {
-  const {operator, value, negate, attribute, componentId, zone, valueExists} = params;
+  const {operator, value, negate, exists, attribute, componentId, zone, valueExists} = params;
   const z = zone as Zone;
   const and_ = z.components[componentId].data.filter!.and_;
   resetFiltersBelow({id: componentId, zone: z, indexOffset: 1});
 
-  if (valueExists) {
-    and_[attribute] = {
-      ...and_[attribute],
-      [operator]: { value, negate }
-    };
+  if (valueExists || exists) {
+    // exists filter removed if value is already set
+    if ('exists' in (and_[attribute] || {})) {
+      delete and_[attribute]['exists'];
+    }
+    // setting just an exists filter if exists is true
+    if (exists) {
+      and_[attribute] = {}
+      and_[attribute]['exists'] = { negate: negate };
+    // setting a value filter from an input
+    } else {
+      and_[attribute] = {
+        ...and_[attribute],
+        [operator]: { value, negate }
+      };
+    }
   } else {
     if (operator in (and_[attribute] || {})) {
       delete and_[attribute][operator];
     }
-    if (attribute in and_ && isEmptyObject(and_[attribute])) {
-      delete and_[attribute];
-    }
+  }
+  if (attribute in and_ && isEmptyObject(and_[attribute])) {
+    delete and_[attribute];
   }
 }
 
@@ -154,35 +166,50 @@ export function filterListener(params: {
   // filter state
   zone: Zone,
   setValue: any,
+  setExists?: any,
+  setNegate?: any,
   emptyValue: any,
   setDisabled: any,
   zoneToValue: (filterValue: any, exisitingValue?: any) => any
 }, dependencies: any[]) {
-  const {attribute, componentId, operators, zone, setValue, setDisabled, zoneToValue} = params;
+  const {attribute, componentId, operators, zone, setValue, setDisabled, setNegate, setExists, zoneToValue} = params;
 
   useEffect(() => {
     const aboveComponents = getComponentsAbove(componentId, zone.order);
-    let isDisabled = false;
+    let disabled = false;
     let readyToBreak = 0;
     let value = params.emptyValue;
+    let negate = false;
+    let exists = false;
   
     for (const currentId of aboveComponents) {
       const and_ = zone.components[currentId].data.filter!.and_;
       if (and_ && attribute in and_) {
-        for (const op of operators) {
-          if (op in and_[attribute]) {
-            const filter = and_[attribute][op];
-            isDisabled = (currentId !== componentId);
-            value = zoneToValue(filter.value, value);
-            // break if all operators have been checked
-            if (readyToBreak === operators.length-1) break;
-            readyToBreak++;
+        // checks setExists as only used for text input filters
+        if (setExists && 'exists' in and_[attribute]) {
+          exists = true
+          disabled = (currentId !== componentId);
+          negate = and_[attribute]['exists'].negate || negate;
+          break;
+        } else {
+          for (const op of operators) {
+            if (op in and_[attribute]) {
+              const filter = and_[attribute][op];
+              disabled = (currentId !== componentId);
+              negate = filter.negate || negate;
+              value = zoneToValue(filter.value, value);
+              // break if all operators have been checked
+              if (readyToBreak === operators.length-1) break;
+              readyToBreak++;
+            }
           }
         }
       }
     }
     setValue(value);
-    setDisabled(isDisabled);
+    setDisabled(disabled);
+    if (setExists) setExists(exists);
+    if (setNegate) setNegate(negate);
   }, dependencies);
 }
 
@@ -196,4 +223,10 @@ export function addSubFilter(params: {
   const f = filter as Filter;
   resetFiltersBelow({id: id, zone: z!});
   z.components[id].data.subFilter = f;
+}
+
+export function resetZone(params: {zone: Zone, setZone: any}) {
+  const {zone, setZone} = params;
+  resetAllFilters(zone)
+  setZone({...zone})
 }

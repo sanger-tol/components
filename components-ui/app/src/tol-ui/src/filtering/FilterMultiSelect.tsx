@@ -10,6 +10,7 @@ import { setFilter, filterListener } from './Utils';
 import { MultipleSelect } from '../forms';
 import { httpClient } from '../services';
 import { PopUpMessage } from '../general';
+import FilterToggle from './FilterToggle';
 
 
 function FilterMultiSelect(props: Filter) {
@@ -17,6 +18,8 @@ function FilterMultiSelect(props: Filter) {
   const [data, setData] = useState<string[]>([]);
   const [values, setValues] = useState<string[]>([]);
   const [disabled, setDisabled] = useState(false);
+  const [exists, setExists] = useState<boolean>(false);
+  const [negate, setNegate] = useState<boolean>(false);
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(false);
@@ -63,6 +66,8 @@ function FilterMultiSelect(props: Filter) {
     operators: [operator],
     zone: zone,
     setValue: setValues,
+    setExists: setExists,
+    setNegate: setNegate,
     setDisabled: setDisabled,
     emptyValue: [],
     zoneToValue: (filterValue: any) => {
@@ -78,7 +83,7 @@ function FilterMultiSelect(props: Filter) {
       setFilter({
         operator: operator,
         value: input,
-        negate: false,
+        negate: negate,
         attribute: attribute,
         componentId: componentId,
         zone: zone,
@@ -86,6 +91,35 @@ function FilterMultiSelect(props: Filter) {
       });
       setZone({...zone});
     }, 1000));
+  };
+  
+  const onExists = (ex: boolean) => {
+    setExists(!ex);
+    setValues([]);
+    setFilter({
+      operator: 'exists',
+      negate: negate,
+      exists: !ex,
+      attribute: attribute,
+      componentId: componentId,
+      zone: zone
+    });
+    setZone({...zone});
+  };
+
+  const onNegate = (ng: boolean) => {
+    setNegate(!ng);
+    setFilter({
+      operator: (exists) ? 'exists' : operator,
+      value: values,
+      negate: !ng,
+      exists: exists,
+      attribute: attribute,
+      componentId: componentId,
+      zone: zone,
+      valueExists: values.length !== 0
+    });
+    setZone({...zone});
   };
 
   const updateDropdownText = (text: string) => {
@@ -99,7 +133,7 @@ function FilterMultiSelect(props: Filter) {
   };
 
   return (
-    <span>
+    <div className="tol-multi-filter">
       <PopUpMessage
         type='danger'
         message={errorMessage}
@@ -119,7 +153,14 @@ function FilterMultiSelect(props: Filter) {
           fetchValues();
         }}
       />
-    </span>
+      <FilterToggle
+        negate={negate}
+        onNegate={onNegate}
+        exists={exists}
+        onExists={onExists}
+        disabled={disabled}
+      />
+    </div>
   );
 }
 

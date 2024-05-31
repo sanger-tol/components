@@ -13,7 +13,13 @@
   }
 }
 
-.tol-text-filter {
+.rs-input-group.rs-input-group-inside .rs-input {
+  padding-right: 0;   
+}
+
+.tol-text-filter,
+.tol-date-filter,
+.tol-multi-filter {
   // reduce padding on dropdown items
   .rs-dropdown-item {
     padding: 2px 10px !important;
@@ -22,10 +28,10 @@
   .rs-dropdown-toggle.rs-dropdown-toggle-no-caret.rs-btn.rs-btn-default {
     background-color: var(--bs-body-bg) !important;
     border: 1px solid var(--rs-border-primary) !important;
+    border-right: none !important;
     color: var(--primary);
     height: 36px;
     width: 28px;
-    margin-right: 4px;
     padding: 6px;
   }
 
@@ -39,9 +45,21 @@
     color: var(--primary) !important;
   }
 
-  .rs-input-group.rs-input-group-inside {
+  .rs-input-group.rs-input-group-inside,
+  .rs-picker.rs-picker-daterange,
+  .rs-picker.rs-picker-check {
     display: inline-block !important;
-    width: 100% !important;
+    width: calc(100% - 18px) !important;
+  }
+
+  .rs-input,
+  .rs-input-group,
+  .rs-picker-toggle {
+    border-radius: 6px 0 0 6px;
+  }
+
+  input:disabled::placeholder {
+    color: var(--bs-body-bg) !important;
   }
 }
 
@@ -49,13 +67,97 @@
   @extend .tol-text-filter;
 
   // re-position dropdown toggle inline with input
-  .rs-dropdown-toggle.rs-dropdown-toggle-no-caret.rs-btn.rs-btn-default {
+  .rs-dropdown {
     top: -2px !important;
   }
 
   .rs-input-group.rs-input-group-inside {
-    width: calc(100% - 32px) !important;
+    width: calc(100% - 46px) !important;
   }
+
+  .rs-btn {
+    border-radius: 6px 0px 0px 6px;
+  }
+
+  .rs-input, .rs-input-group {
+    border-radius: 0;
+  }
+}
+
+// filter buttons
+.tol-filter-button-group {
+  float: right;
+  width: 18px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+}
+
+.tol-filter-button {
+  float: right;
+  margin: 0;
+  padding: 0;
+  height: 18px;
+  width: 18px;
+  border-radius: 0;
+  background-color: var(--bs-body-bg);
+  border-color: var(--grey-emphasis);
+  color: var(--placeholder);
+
+  .icon {
+    margin: -1px !important;
+  }
+
+  --bs-btn-line-height: 0px !important;
+  --bs-btn-font-size: 14px !important;
+}
+
+.tol-filter-button.negate {
+  border-bottom-right-radius: 6px;
+  border-left: none;
+  border-top: none;
+
+}
+
+.tol-filter-button.exists {
+  border-top-right-radius: 6px;
+  border-left: none;
+}
+
+.tol-filter-button.negate:hover,
+.tol-filter-button.negate.btn.active {
+  @extend .tol-filter-button;
+  border-color: var(--bs-danger) !important;
+  background-color: var(--bs-danger) !important;
+  color: white !important;
+}
+
+.tol-filter-button.exists:hover,
+.tol-filter-button.exists.btn.active {
+  @extend .tol-filter-button;
+  border-color: var(--bs-success) !important;
+  background-color: var(--bs-success) !important;
+  color: white !important;
+}
+
+.tol-filter-button.negate:disabled,
+.tol-filter-button.exists:disabled {
+  @extend .tol-filter-button;
+  opacity: 0.5;
+  // filter: grayscale(100%);
+  background-color: var(--rs-input-disabled-bg);
+  cursor: not-allowed;
+  pointer-events: all !important;
+}
+
+.tol-filter-button.negate.active:disabled {
+  filter: none !important;
+  background-color: var(--bs-danger) !important;
+}
+
+.tol-filter-button.exists.active:disabled {
+  filter: none !important;
+  background-color: var(--bs-success) !important;
 }
 
 // boolean filters
@@ -79,8 +181,9 @@
   padding-top: 4px;
 }
 
-// values shown in input box
-.tol-boolean-filter:has(.tol-status) {
+// statuses in the filters and table
+.tol-boolean-filter:has(.tol-status),
+.rs-table-cell:has(.tol-status) {
   .tol-status .alert {
     padding: 2px 10px;
     margin: 2px;

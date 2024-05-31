@@ -6,10 +6,10 @@ SPDX-License-Identifier: MIT
 
 import { useState } from 'react';
 import { Input, InputGroup, Dropdown } from 'rsuite';
-import SearchIcon from '@rsuite/icons/Search';
 import { stopPropagation } from '../general/Utils';
 import { Filter } from './Filter';
 import { setFilter, filterListener } from './Utils';
+import FilterToggle from './FilterToggle';
 
 
 function FilterTextInput(props: Filter) {
@@ -18,6 +18,8 @@ function FilterTextInput(props: Filter) {
   const [value, setValue] = useState('');
   const [disabled, setDisabled] = useState(false);
   const [operator, setOperator] = useState(type === 'str' ? '' : '=');
+  const [exists, setExists] = useState<boolean>(false);
+  const [negate, setNegate] = useState<boolean>(false);
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
   const operators = ['=', '<', '>', '≤', '≥'];
   const isNum = type === 'int' || type === 'float';
@@ -40,10 +42,6 @@ function FilterTextInput(props: Filter) {
     }
   };
 
-  const isNegated = (operator: string) => {
-    return operator === '≠';
-  };
-
   filterListener({
     attribute: attribute,
     componentId: componentId,
@@ -51,6 +49,8 @@ function FilterTextInput(props: Filter) {
     zone: zone,
     setValue: setValue,
     setDisabled: setDisabled,
+    setExists: setExists,
+    setNegate: setNegate,
     emptyValue: '',
     zoneToValue: (filterValue: any) => {
       return filterValue;
@@ -72,6 +72,7 @@ function FilterTextInput(props: Filter) {
       return;
     }
     setValue(input);
+    setExists(false);
     // can start with minus or period but won't call endpoint
     if (!(input === '-' || input === '.')) {
       clearTimeout(timeoutValue!);
@@ -79,7 +80,7 @@ function FilterTextInput(props: Filter) {
         setFilter({
           operator: getOperator(operator),
           value: input,
-          negate: isNegated(operator),
+          negate: negate,
           attribute: attribute,
           componentId: componentId,
           zone: zone,
@@ -96,7 +97,7 @@ function FilterTextInput(props: Filter) {
     setFilter({
       operator: getOperator(operator), // previous operator
       value: '', // resets value
-      negate: isNegated(op),
+      negate: negate,
       attribute: attribute,
       componentId: componentId,
       zone: zone,
@@ -106,8 +107,38 @@ function FilterTextInput(props: Filter) {
     setZone({...zone});
   };
 
+  const onExists = (ex: boolean) => {
+    setExists(!ex);
+    setValue('');
+    setFilter({
+      operator: 'exists',
+      negate: negate,
+      exists: !ex,
+      attribute: attribute,
+      componentId: componentId,
+      zone: zone
+    });
+    setZone({...zone});
+  };
+
+  const onNegate = (ng: boolean) => {
+    setNegate(!ng);
+    const op = (exists) ? 'exists' : getOperator(operator);
+    setFilter({
+      operator: op,
+      value: value,
+      negate: !ng,
+      exists: exists,
+      attribute: attribute,
+      componentId: componentId,
+      zone: zone,
+      valueExists: value !== ''
+    });
+    setZone({...zone});
+  };
+
   return (
-    <span className={isNum ? 'tol-num-filter' : 'tol-text-filter'} onClick={ stopPropagation }>
+    <div className={isNum ? 'tol-num-filter' : 'tol-text-filter'} onClick={ stopPropagation }>
       {isNum ?
         <Dropdown title={operator} noCaret>
           {operators.map((op, i) => {
@@ -132,11 +163,15 @@ function FilterTextInput(props: Filter) {
           value={value}
           placeholder={rename}
         />
-        <InputGroup.Addon>
-          <SearchIcon />
-        </InputGroup.Addon>
       </InputGroup>
-    </span>
+      <FilterToggle
+        negate={negate}
+        onNegate={onNegate}
+        exists={exists}
+        onExists={onExists}
+        disabled={disabled}
+      />
+    </div>
   );
 }
 

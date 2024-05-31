@@ -5,6 +5,7 @@
  */
 
 import {
+  Button,
   RemoteCount,
   RemoteMap,
   Filter,
@@ -13,12 +14,13 @@ import {
   RemoteBarChart,
   Widgets,
   env,
-  useZone
+  useZone,
+  resetZone
 } from '../tol-ui/src';
 
 
 function Filters() {
-  const species = useZone({
+  const speciesZone = useZone({
     endpoint: 'species',
     baseUrl: env.TOL_DATA,
     components: [
@@ -27,13 +29,9 @@ function Filters() {
         filter: {
           and_: {
             'sts_family': {
-              exists: {},
-              contains: {
-                value: 'Diplonemidae'
-              }
+              exists: {}
             },
             'sts_scientific_name': {
-              exists: {},
               contains: {
                 value: 'Rh'
               }
@@ -69,14 +67,15 @@ function Filters() {
   const table = (
     <div>
       <h5>Table Example</h5>
-      <p style={{marginBottom: 10}}>A default filter has been applied; the input is pre-populated.</p>
+      <p style={{marginBottom: 5}}>A default filter has been applied; the input is pre-populated.</p>
+      <Button style={{marginBottom: 5}} onClick={() => resetZone(speciesZone)}>Reset</Button>
       <p style={{marginBottom: 3}}>Filter Level 1:</p>
       <Filter
         attribute='sts_family'
         rename='Family'
         type='str'
         componentId='filter-one'
-        {...species}
+        {...speciesZone}
       />
       <div style={{height: 6}}/>
       <Filter
@@ -84,7 +83,7 @@ function Filters() {
         rename='Scientific Name'
         type='str'
         componentId='filter-one'
-        {...species}
+        {...speciesZone}
       />
       <div style={{height: 6}}/>
       <Filter
@@ -92,7 +91,7 @@ function Filters() {
         rename='Benchling Extraction Min Date'
         type='datetime'
         componentId='filter-one'
-        {...species}
+        {...speciesZone}
       />
       <div style={{height: 6}}/>
       <Filter
@@ -100,7 +99,7 @@ function Filters() {
         rename='Taxon Rank'
         type='multi'
         componentId='filter-one'
-        {...species}
+        {...speciesZone}
       />
       <div style={{height: 6}}/>
       <Filter
@@ -108,7 +107,7 @@ function Filters() {
         rename='Request Count'
         type='int'
         componentId='filter-one'
-        {...species}
+        {...speciesZone}
       />
       <div style={{height: 6}}/>
       <Filter
@@ -116,7 +115,7 @@ function Filters() {
         rename='STS Ready'
         type='boolean'
         componentId='filter-one'
-        {...species}
+        {...speciesZone}
       />
       <p style={{marginTop: 10, marginBottom: 3}}>Filter Level 2:</p>
       <Filter
@@ -124,7 +123,7 @@ function Filters() {
         rename='Family Two'
         type='str'
         componentId='filter-two'
-        {...species}
+        {...speciesZone}
       />
       <p style={{marginTop: 15, marginBottom: 10}}>Filter Level 3:</p>
       <RemoteTable
@@ -150,7 +149,7 @@ function Filters() {
           }
         }}
         height={300}
-        {...species}
+        {...speciesZone}
       />
       <p style={{marginTop: 15, marginBottom: 10}}>Filter Level 4:</p>
       <RemoteTable
@@ -164,14 +163,14 @@ function Filters() {
           }
         }}
         height={300}
-        {...species}
+        {...speciesZone}
       />
       <p style={{marginTop: 10}}>Filter Level 5:</p>
       <div style={{height: 110, marginTop: 20}}>
         <RemoteCount
           id="count"
           title="Total Species"
-          {...species}
+          {...speciesZone}
         />
       </div>
     </div>

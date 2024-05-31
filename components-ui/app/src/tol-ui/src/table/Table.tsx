@@ -265,7 +265,7 @@ function Table (props: Props) {
         <RSTable
           bordered
           data={data}
-          headerHeight={filterVisible ? 85 : 45}
+          headerHeight={filterVisible ? 85 : 42}
           loading={loading}
           sortColumn={sortColumn}
           sortType={sortType}

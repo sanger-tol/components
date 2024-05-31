@@ -5,3 +5,4 @@ SPDX-License-Identifier: MIT
 */
 
 export { default as Filter } from "./Filter";
+export { resetZone } from "./Utils";

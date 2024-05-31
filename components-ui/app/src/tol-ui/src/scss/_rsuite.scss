@@ -88,9 +88,9 @@
     background-color: var(--rs-input-disabled-bg) !important;
   }
 
-  .rs-picker-disabled {
-    opacity: 0.6;
-    filter: grayscale(100%);
+  .rs-picker-disabled, .filter-disabled {
+    opacity: 0.5;
+    // filter: grayscale(100%);
   }
 
   .rs-input-group:not(.rs-input-group-disabled).rs-input-group-focus,

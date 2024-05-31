@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 // Direct package pass-throughs
-import { Container, Row, Col, Button, Form, Spinner } from 'react-bootstrap';
-export { Container, Row, Col, Form, Button, Spinner as Loader };
+import { Container, Row, Col, Button, ButtonGroup, Form, Spinner } from 'react-bootstrap';
+export { Container, Row, Col, Form, Button, ButtonGroup, Spinner as Loader };
 import { Link } from "react-router-dom";
 export { Link };
 
@@ -41,7 +41,10 @@ export {
 export { DnD } from "./dnd";
 
 // Filter
-export { Filter } from "./filtering";
+export {
+  Filter,
+  resetZone
+} from "./filtering";
 
 // Forms
 export {
@@ -64,6 +67,7 @@ export {
   RemoteGet,
   ObjectDetail,
   RemoteCount,
+  HoverOverlay,
   formatDate,
 } from "./general";
 
