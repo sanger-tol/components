@@ -9,7 +9,7 @@ import { Button, Placeholder } from '../index';
 import { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { Zone } from './Utils';
+import { Zone, getWidgetOrder } from './Utils';
 import { resetAllFilters, removeComponent } from '../filtering/Utils';
 
 interface Component {
@@ -30,19 +30,6 @@ interface Props {
   setOrder?: any,
   zone: Zone,
   setZone: any
-}
-
-function getWidgetOrder(layout, widgets) {
-  // Sort the layout array by the 'y' property (and 'x' property in case of a tie)
-  layout.sort((a, b) => a.y - b.y || a.x - b.x);
-
-  // Map the sorted layout array to an array of widget objects
-  const widgetOrder = layout.map(item => item.i);
-
-  return {
-    components: widgets['components'],
-    order: widgetOrder
-  };
 }
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);

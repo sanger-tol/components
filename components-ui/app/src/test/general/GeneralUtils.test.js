@@ -12,7 +12,7 @@ import {
   numberWithSpaces,
   isInt,
   isFloat
-} from '../tol-ui/src/general/Utils'
+} from '../../tol-ui/src/general/Utils'
 
 test('isPropDefined function', () => {
   expect(isPropDefined(undefined)).toBe(false);

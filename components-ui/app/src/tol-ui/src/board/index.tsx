@@ -10,8 +10,8 @@ export type {
   Component,
 } from "./Utils";
 export { useZone } from "./Utils";
-export { default as ResponsiveWidget } from "./ResponsiveWidget";
+export { default as Dashboard } from "./Dashboard";
 export { default as ZoneGrid } from "./ZoneGrid";
 export { default as ComponentModal } from "./ComponentModal";
-export { default as Dashboard } from "./Dashboard";
 export { default as ZoneModal } from "./ZoneModal";
+export { default as ResponsiveWidget } from "./ResponsiveWidget";

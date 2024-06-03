@@ -187,3 +187,13 @@
     margin-top: 5px;
   }
 }
+
+.dashboard-modal-input.form-control {
+  font-size: 14px;
+  color: var(--primary);
+}
+
+.tol-modal-error {
+  color: var(--bs-danger);
+  font-size: 14px;
+}

@@ -107,7 +107,7 @@ export function defineComponent(component: ComponentData, zone: Zone) {
   };
 }
 
-function defineZone(objectType: string, components: ComponentData[]) {
+export function defineZone(objectType: string, components: ComponentData[]) {
   const zone: Zone = {
     components: {},
     order: [],
@@ -134,5 +134,18 @@ export function useZone(params: {
     baseUrl: baseUrl,
     zone: zone,
     setZone: setZone
+  };
+}
+
+export function getWidgetOrder(layout, widgets) {
+  // Sort the layout array by the 'y' property (and 'x' property in case of a tie)
+  layout.sort((a, b) => a.y - b.y || a.x - b.x);
+
+  // Map the sorted layout array to an array of widget objects
+  const widgetOrder = layout.map(item => item.i);
+
+  return {
+    components: widgets['components'],
+    order: widgetOrder
   };
 }
