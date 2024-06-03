@@ -54,8 +54,8 @@ function Filter(props: Filter) {
       />
     );
   }
-  console.log('Cannot retrieve filter type: ' + props.attribute)
-  return <></>
+  console.log('Cannot retrieve filter type: ' + props.attribute);
+  return <></>;
 }
 
 export default Filter;

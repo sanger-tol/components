@@ -173,6 +173,7 @@ function BarChart(props: Props) {
     animation: false,
     maintainAspectRatio: false,
     responsive: true,
+    devicePixelRatio: 2,
     plugins: {
       title: {},
       tooltip: {

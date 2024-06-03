@@ -61,47 +61,47 @@ function ZoneGrid(props: Props) {
 
   const getComponent = (id: string, type: string, props: any) => {
     switch (type) {
-      case 'count':
-        return (
-          <RemoteCount
-            {...props}
-            id={id}
-            title={id}
-          />
-        );
-      case 'barchart':
-        return (
-          <RemoteBarChart
-            {...props}
-            id={id}
-            title={id}
-            stacked
+    case 'count':
+      return (
+        <RemoteCount
+          {...props}
+          id={id}
+          title={id}
+        />
+      );
+    case 'barchart':
+      return (
+        <RemoteBarChart
+          {...props}
+          id={id}
+          title={id}
+          stacked
 
-            // temporary static
-            type='M'
-            breakDownBy='sts_family'
-            xAxis='sts_dna_extracted_date' />
-        );
-      case 'table':
-        return (
-          <RemoteTable
-            {...props}
-            id={id}
-          />
-        );
-      case 'sunburst':
-        return (
-          <RemoteSunburst
-            {...props}
-            id={id}
-            title={id}
+          // temporary static
+          type='M'
+          breakDownBy='sts_family'
+          xAxis='sts_dna_extracted_date' />
+      );
+    case 'table':
+      return (
+        <RemoteTable
+          {...props}
+          id={id}
+        />
+      );
+    case 'sunburst':
+      return (
+        <RemoteSunburst
+          {...props}
+          id={id}
+          title={id}
 
-            // temporary static
-            sliceBy={["sts_order_group", "sts_family"]}
-          />
-        );
+          // temporary static
+          sliceBy={["sts_order_group", "sts_family"]}
+        />
+      );
     }
-  }
+  };
 
   const getWidgetsUsingZone = () => {
     const newWidgets = {components: {}, order: [] as string[]};
@@ -113,7 +113,7 @@ function ZoneGrid(props: Props) {
     }
     newWidgets.order = z.zone.order;
     return newWidgets;
-  }
+  };
 
   useEffectUpdate(() => {
     setCurrentWidgets(getWidgetsUsingZone());
@@ -135,7 +135,7 @@ function ZoneGrid(props: Props) {
 
   const onAddComponent = () => {
     setOpen(true);
-  }
+  };
 
   const editButton = (
     <Button

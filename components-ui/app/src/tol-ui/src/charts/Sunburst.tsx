@@ -122,6 +122,7 @@ function Sunburst(props: Props) {
     maintainAspectRatio: false,
     responsive: true,
     cutout: "20%",
+    devicePixelRatio: 2,
     plugins: {
       // tooltip styling
       tooltip: {

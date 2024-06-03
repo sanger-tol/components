@@ -35,7 +35,7 @@ function ComponentModal(props: Props) {
       id: id,
       size: chartSize,
       type: chartType,
-    }, zone)
+    }, zone);
     zone.order = [...zone.order, id];
     setZone({...zone});
     setOpen(false);

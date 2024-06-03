@@ -111,7 +111,7 @@ export function resetAllFilters(zone: Zone) {
 export function removeComponent(id: string, zone: Zone) {
   delete zone.components[id];
   zone.order = zone.order.filter((currentId) => currentId !== id);
-};
+}
 
 export function setFilter(params: {
   // and_ filter attributes
@@ -139,7 +139,7 @@ export function setFilter(params: {
     }
     // setting just an exists filter if exists is true
     if (exists) {
-      and_[attribute] = {}
+      and_[attribute] = {};
       and_[attribute]['exists'] = { negate: negate };
     // setting a value filter from an input
     } else {
@@ -183,19 +183,22 @@ export function filterListener(params: {
     let exists = false;
   
     for (const currentId of aboveComponents) {
-      const and_ = zone.components[currentId].data.filter!.and_;
-      if (and_ && attribute in and_) {
+      const componentData = zone.components[currentId].data;
+      const and_ = componentData.filter!.and_;
+      // ignore pass throughs
+      if (and_ && attribute in and_ && !componentData.filterPassThrough) {
+        const disableCondition = (currentId !== componentId);
         // checks setExists as only used for text input filters
         if (setExists && 'exists' in and_[attribute]) {
-          exists = true
-          disabled = (currentId !== componentId);
+          exists = true;
+          disabled = disableCondition;
           negate = and_[attribute]['exists'].negate || negate;
           break;
         } else {
           for (const op of operators) {
             if (op in and_[attribute]) {
               const filter = and_[attribute][op];
-              disabled = (currentId !== componentId);
+              disabled = disableCondition;
               negate = filter.negate || negate;
               value = zoneToValue(filter.value, value);
               // break if all operators have been checked
@@ -227,6 +230,6 @@ export function addSubFilter(params: {
 
 export function resetZone(params: {zone: Zone, setZone: any}) {
   const {zone, setZone} = params;
-  resetAllFilters(zone)
-  setZone({...zone})
+  resetAllFilters(zone);
+  setZone({...zone});
 }

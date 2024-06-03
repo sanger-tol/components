@@ -59,7 +59,7 @@
   }
 
   input:disabled::placeholder {
-    color: var(--bs-body-bg) !important;
+    color: var(--placeholder) !important;
   }
 }
 
@@ -68,11 +68,12 @@
 
   // re-position dropdown toggle inline with input
   .rs-dropdown {
-    top: -2px !important;
+    position: absolute;
   }
 
   .rs-input-group.rs-input-group-inside {
     width: calc(100% - 46px) !important;
+    margin-left: 28px;
   }
 
   .rs-btn {
