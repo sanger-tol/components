@@ -142,6 +142,9 @@ export function setFilter(params: {
       and_[attribute] = {};
       and_[attribute]['exists'] = { negate: negate };
     // setting a value filter from an input
+    } else if (operator === 'in_list') {
+      and_[attribute] = {};
+      and_[attribute]['in_list'] = { value: value, negate: negate };
     } else {
       and_[attribute] = {
         ...and_[attribute],

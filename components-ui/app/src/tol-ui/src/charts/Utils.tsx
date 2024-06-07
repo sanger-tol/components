@@ -746,6 +746,31 @@ export function setSliceClickedData(chart: any, chartElement: any, setSliceData?
   }
 }
 
+// will be required for the 'MORE' filter
+export function getAllBucketsOfRing(bucket: string, datasets: any): string[] {
+  const keys: any = [];
+
+  for (const key in datasets) {
+    if (key === bucket) {
+      keys.push(...datasets[key].map((item: any) => {
+        if (item.key !== 'More' && item.key !== 'Unknown') {
+          return item.key;
+        }
+      }).filter(Boolean));
+    }
+
+    if (Array.isArray(datasets[key])) {
+      datasets[key].forEach((item: any) => {
+        if (item.child) {
+          keys.push(...getAllBucketsOfRing(bucket, item.child));
+        }
+      });
+    }
+  }
+
+  return keys;
+}
+
 export function generateFilterFromSunburstClick(sliceData: any) {  
   if (sliceData["bucket"] !== undefined) {
     const filter = {};

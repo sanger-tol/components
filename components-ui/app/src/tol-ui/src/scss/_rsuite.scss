@@ -77,10 +77,10 @@
     font-family: 'Lato' !important;
     font-weight: 400 !important;
     font-size: 14px !important;
-    border-top-color: $primary;
-    border-right-color: $primary;
-    border-bottom-color: $primary;
-    border-left-color: $primary;
+    border-top-color: $primary !important;
+    border-right-color: $primary !important;
+    border-bottom-color: $primary !important;
+    border-left-color: $primary !important;
   }
 
   .rs-input:disabled,
@@ -204,8 +204,13 @@
   }
 
   // modal
+  .rs-modal-wrapper{
+    display: flex;
+    align-items: center;
+  }
+
   .rs-modal {
-    margin: 30px auto 30px auto;
+    margin: 0 auto 50px auto;
 
     // stop blue box showing on modal opening
     *:focus {

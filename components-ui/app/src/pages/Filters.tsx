@@ -29,7 +29,10 @@ function Filters() {
         filter: {
           and_: {
             'sts_family': {
-              exists: {}
+              in_list: {
+                value: ['Hylocomiaceae', 'Crabronidae'],
+                negate: true
+              }
             },
             'sts_scientific_name': {
               contains: {

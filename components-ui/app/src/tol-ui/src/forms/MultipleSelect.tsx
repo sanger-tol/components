@@ -26,7 +26,7 @@ interface Props {
   noSearch?: boolean
 }
 
-const MultipleSelect = (props: Props) => {
+function MultipleSelect(props: Props) {
   const {
     data,
     value,
@@ -92,6 +92,6 @@ const MultipleSelect = (props: Props) => {
       />
     </span>
   );
-};
+}
 
 export default MultipleSelect;

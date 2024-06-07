@@ -14,13 +14,14 @@ export interface Props {
   size: string,
   open: boolean,
   setOpen: Function, // eslint-disable-line
-  children: JSX.Element | JSX.Element[],
+  children?: JSX.Element | JSX.Element[],
   overflow?: boolean,
   actionButton?: JSX.Element,
+  className?: string
 }
 
 const Modal = (props: Props) => {
-  const {size, open, setOpen, children, overflow, actionButton} = props;
+  const {size, open, setOpen, children, overflow, actionButton, className} = props;
   const handleClose = () => {
     setOpen(false);
   };
@@ -31,7 +32,14 @@ const Modal = (props: Props) => {
   return (
     <>
       {/* @ts-ignore */}
-      <RSModal overflow={rsOverflow} open={open} onClose={handleClose} size={size}>
+      <RSModal
+        overflow={rsOverflow}
+        open={open}
+        onClose={handleClose}
+        /* @ts-ignore */
+        size={size}
+        className={className}
+      >
         <RSModal.Body>
           {children}
         </RSModal.Body>
