@@ -11,6 +11,7 @@ import { MultipleSelect } from '../forms';
 import { httpClient } from '../services';
 import { PopUpMessage } from '../general';
 import FilterToggle from './FilterToggle';
+import { stopPropagation } from '../general/Utils';
 
 
 function FilterMultiSelect(props: Filter) {
@@ -133,7 +134,7 @@ function FilterMultiSelect(props: Filter) {
   };
 
   return (
-    <div className="tol-multi-filter">
+    <div className="tol-multi-filter" onClick={ stopPropagation }>
       <PopUpMessage
         type='danger'
         message={errorMessage}
