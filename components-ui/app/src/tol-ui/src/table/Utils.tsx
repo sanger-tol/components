@@ -321,7 +321,7 @@ function addRelationshipsAttributes(endpoint: string, typesMeta: TypesMeta) {
 }
 
 function addDefaultFilterType(type: string, cardinality: number) {
-  if (cardinality < 20 && type === 'str') return 'multi';
+  if (cardinality && cardinality < 20 && type === 'str') return 'multi';
   if (type === 'double') return 'float';
   return type;
 }

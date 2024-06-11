@@ -204,13 +204,8 @@
   }
 
   // modal
-  .rs-modal-wrapper{
-    display: flex;
-    align-items: center;
-  }
-
   .rs-modal {
-    margin: 0 auto 50px auto;
+    margin: 30px auto 30px auto;
 
     // stop blue box showing on modal opening
     *:focus {
