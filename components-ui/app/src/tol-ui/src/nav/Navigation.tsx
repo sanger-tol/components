@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 import { withRouter, useHistory, RouteComponentProps } from "react-router-dom";
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { useAuth } from '../contexts/auth.context';
-import { httpClient } from "../services/http/httpClient";
 import {
   getTokenFromLocalStorage,
   setTokenToLocalStorage,
@@ -74,21 +73,11 @@ function Navigation(props: Props) {
   const { token, setToken, user, setUser } = useAuth();
   const history = useHistory();
   const [environment, setEnvironment] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
     fetchEnvironment()
-      .then((fetchedEnvironment: string) => {
-        setEnvironment(fetchedEnvironment);
-      });
-    
-    httpClient().get('/user_id').then(
-      (res: any) => {
-        const roles: string[] = res.data.roles;
-        setIsAdmin(roles.includes('admin'));
-      }
-    ).catch(
-      (error: any) => console.error(error.message)
-    );
+    .then((fetchedEnvironment: string) => {
+      setEnvironment(fetchedEnvironment);
+    });
   }, []);
 
   const isProduction = () => {
@@ -116,7 +105,7 @@ function Navigation(props: Props) {
   };
 
   function checkAuth(authRequired: boolean, adminOnly: boolean, user: any, token: any){
-    if(authRequired && adminOnly && token && !tokenHasExpired() && user && isAdmin) {
+    if(authRequired && adminOnly && token && !tokenHasExpired() && user /*&& isAdmin*/) {
       return true;
     } else if(authRequired && !adminOnly && token && !tokenHasExpired()) {
       return true;

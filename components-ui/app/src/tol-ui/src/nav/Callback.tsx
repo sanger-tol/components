@@ -7,7 +7,8 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../contexts/auth.context';
-import {getProfile, getToken} from '../services/auth/authService';
+import { Loader } from '../index';
+import {getProfile, getRoles, getToken} from '../services/auth/authService';
 import { useQuery } from '../hooks/useQuery';
 import { setTokenToLocalStorage, setUserToLocalStorage, tokenHasExpired } from '../services/localStorage/localStorageService';
 
@@ -25,13 +26,16 @@ export function Callback() {
       };
       getToken(stateToken)
         .then((res: any) => {
-          const data = res.data;
-          setTokenToLocalStorage(data.access_token);
-          setToken(data.access_token);
-          getProfile(data.access_token)
-            .then((data2: any) => {
-              setUserToLocalStorage(data2.data);
-              setUser(data2.data);
+          const tokenData = res.data;
+          setTokenToLocalStorage(tokenData.access_token);
+          setToken(tokenData.access_token);
+          getProfile(tokenData.access_token)
+            .then((profileData: any) => {
+              getRoles().then((rolesData: any) => {
+                const userData = { ...profileData.data, ...rolesData.data };
+                setUserToLocalStorage(userData);
+                setUser(userData);
+              });
             })
             .finally(() => {
               let targetUrl = localStorage.getItem('returnUrl') || '';
@@ -48,7 +52,16 @@ export function Callback() {
     // eslint-disable-next-line
   }, []);
 
-  return null;
+  return (
+    <div className='fixed-full-page'>
+      <div className='fixed-centered-loader'>
+        <Loader />
+      </div>
+      <div className='fixed-centered-text'>
+        Logging in...
+      </div>
+    </div>
+  );
 }
 
 export default Callback;

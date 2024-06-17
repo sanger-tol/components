@@ -30,9 +30,3 @@ export const CONFIG = {
   },
   paramsSerializer: serializeParams,
 };
-
-export const END_POINT = {
-  authUrlLogin: '/auth/login',
-  authToken: '/auth/token',
-  authProfile: '/auth/profile'
-};

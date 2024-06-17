@@ -89,7 +89,7 @@ const otherDropdown: Dropdown = {
 
 // auth
 const user: Page = {
-  name: 'UserId',
+  name: 'User',
   auth: true,
   element: <UserId />
 };
