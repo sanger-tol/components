@@ -23,7 +23,7 @@ import {
   generateFilter,
   filterHasUpdated
 } from "../filtering/Utils";
-import { getTypesMeta } from '../general/Utils'; 
+import { getTypesMeta } from '../general/Utils';
 
 
 interface Props {
@@ -43,6 +43,7 @@ interface Props {
   noSorting?: boolean
   noConfigModal?: boolean,
   noDownload?: boolean,
+  rowSelection?: boolean,
 
   debug?: boolean
 }
@@ -62,6 +63,7 @@ function RemoteTable(props: Props) {
     noSorting,
     noConfigModal,
     noDownload,
+    rowSelection,
     debug
   } = props;
   const height = (props.height !== undefined) ? props.height : "100%";
@@ -234,6 +236,7 @@ function RemoteTable(props: Props) {
 
       zone={zone as Zone}
       setZone={setZone}
+      filter={filter}
 
       modalOnSave={modalOnSave}
 
@@ -242,6 +245,7 @@ function RemoteTable(props: Props) {
       noSorting={noSorting}
       noConfigModal={noConfigModal}
       noDownload={noDownload}
+      rowSelection={rowSelection}
     />
   );
 }

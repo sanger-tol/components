@@ -17,8 +17,9 @@ import {
 import Login from './Login';
 import Dropdown from "../models/Nav";
 import Page from "../models/Nav";
-import { convertToPath, falseIfUndefined } from "../general/Utils";
+import { convertToPath } from "../general/Utils";
 import { env } from '../variables/config';
+import { confirmAuthorised } from '../services/auth/authService';
 
 
 interface Props extends RouteComponentProps {
@@ -75,9 +76,9 @@ function Navigation(props: Props) {
   const [environment, setEnvironment] = useState("");
   useEffect(() => {
     fetchEnvironment()
-    .then((fetchedEnvironment: string) => {
-      setEnvironment(fetchedEnvironment);
-    });
+      .then((fetchedEnvironment: string) => {
+        setEnvironment(fetchedEnvironment);
+      });
   }, []);
 
   const isProduction = () => {
@@ -94,7 +95,7 @@ function Navigation(props: Props) {
     );
   };
 
-  const logout = function() {
+  const logout = () => {
     const token = getTokenFromLocalStorage();
     if (token) revokeOicd(token);
     setTokenToLocalStorage('');
@@ -104,43 +105,37 @@ function Navigation(props: Props) {
     history.replace("/");
   };
 
-  function checkAuth(authRequired: boolean, adminOnly: boolean, user: any, token: any){
-    if(authRequired && adminOnly && token && !tokenHasExpired() && user /*&& isAdmin*/) {
-      return true;
-    } else if(authRequired && !adminOnly && token && !tokenHasExpired()) {
-      return true;
-    } else if(!authRequired) {
-      return true;
-    }
-  }
-
-  function addPage(page: Page, isDropdown?: boolean){
-    const pageName = page.name;
-    const path = convertToPath(pageName);
-    const authRequired = falseIfUndefined(page.auth);
-    const adminOnly = falseIfUndefined(page.admin);
-    const hidden = falseIfUndefined(page.hidden);
-    if (!hidden || isDropdown) {
-      const authorized = checkAuth(authRequired, adminOnly, user, token);
-      if (authorized) {
-        return <Nav.Link key={pageName} href={"/" + path}>{pageName}</Nav.Link>;
+  const addPage = (page: Page) => {
+    if (!page.hidden) {
+      const authorised = confirmAuthorised(user, page.admin, page.auth);
+      if (authorised) {
+        return (
+          <Nav.Link key={page.name} href={convertToPath(page.name)}>
+            {page.name}
+          </Nav.Link>
+        );
       }
     }
-  }
+  };
 
-  function addDropdown(dropdown: Dropdown){
-    const dropdownAuthRequired = falseIfUndefined(dropdown.auth);
-    const dropdownAdminOnly = falseIfUndefined(dropdown.admin);
-    const dropdownHidden = falseIfUndefined(dropdown.hidden);
-    if (dropdown.pages && !dropdownHidden){
-      const authorized = checkAuth(dropdownAuthRequired, dropdownAdminOnly, user, token);
-      if(authorized) {
+  const addDropdown = (dropdown: Dropdown) => {
+    if (!dropdown.hidden){
+      const authorised = confirmAuthorised(user, dropdown.admin, dropdown.auth);
+      if (authorised) {
         return (
           <NavDropdown title={dropdown.name}>
-            {dropdown.pages.map((page: Page, index) => {
-              return (// eslint-disable-next-line
+            {dropdown.pages && dropdown.pages.map((page: Page, index) => {
+              return ( // eslint-disable-next-line
                 <div className="nav-dropdown-box" key={index}>
-                  {addPage(page, true)}
+                  <Nav.Link
+                    key={page.name}
+                    href={
+                      convertToPath(dropdown.name)
+                      + convertToPath(page.name)
+                    }
+                  >
+                    {page.name}
+                  </Nav.Link>
                 </div>
               );
             })}
@@ -148,7 +143,7 @@ function Navigation(props: Props) {
         );
       }
     }
-  }
+  };
 
   return (
     <div className="navigation">

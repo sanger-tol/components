@@ -5,14 +5,14 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from 'react';
-import { Button, Row, Col, Placeholder, Loader } from '../index';
-import { Table as RSTable, Pagination, SelectPicker } from "rsuite";
+import { Button, Row, Col, Placeholder, Loader, useEffectUpdate } from '../index';
+import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import {
   addTotalText, 
   setFieldMetaAttributeInStorage
 } from './Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter, faSliders, faDownload } from '@fortawesome/free-solid-svg-icons';
+import { faFilter, faSliders, faDownload, faCheckDouble } from '@fortawesome/free-solid-svg-icons';
 import ConfigModal from './ConfigModal';
 import { exportTableToSpreadsheet } from "./Utils";
 import Filter, { FilterType } from '../filtering/Filter';
@@ -46,6 +46,7 @@ interface Props {
 
   zone: Zone,
   setZone: any,
+  filter: any,
 
   modalOnSave: any,
 
@@ -53,7 +54,8 @@ interface Props {
   noPagination?: boolean,
   noSorting?: boolean,
   noConfigModal?: boolean,
-  noDownload?: boolean
+  noDownload?: boolean,
+  rowSelection?: boolean
 }
 
 function Table (props: Props) {
@@ -82,12 +84,14 @@ function Table (props: Props) {
   
     zone,
     modalOnSave,
+    filter,
 
     noFilter,
     noPagination,
     noSorting,
     noConfigModal,
-    noDownload
+    noDownload,
+    rowSelection
     /* eslint-enable */
   } = props;
 
@@ -114,9 +118,39 @@ function Table (props: Props) {
     setFieldMetaAttributeInStorage(id, visibility, "filterVisibility");
   };
 
+  // row selection
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [bulkSelect, setBulkSelect] = useState(false);
+  let checked = false;
+  let indeterminate = false;
+
+  if (selectedRows.length === data.length || bulkSelect) {
+    checked = true;
+  } else if (selectedRows.length === 0) {
+    checked = false;
+  } else if (selectedRows.length > 0 && selectedRows.length < data.length) {
+    indeterminate = true;
+  }
+
+  // @ts-ignore
+  const handleCheckAll = (value: any, checked: boolean) => {
+    const keys = checked ? data.map(item => item.id) : [];
+    setSelectedRows(keys);
+  };
+
+  const handleCheck = (value: any, checked: boolean) => {
+    const keys = checked ? [...selectedRows, value] : selectedRows.filter(item => item !== value);
+    setSelectedRows(keys);
+  };
+
+  useEffectUpdate(() => {
+    checked = false;
+    setSelectedRows([]);
+  }, [page, pageSize, filter, sortColumn, sortType]);
+
   const downloadBtn = (
     <Button 
-      className="config-button"
+      className="config-button-right"
       variant="primary"
       onClick={() => exportTableToSpreadsheet(
         endpoint,
@@ -160,6 +194,21 @@ function Table (props: Props) {
       />
       <Row>
         <Col md={12} lg={9}>
+          {rowSelection &&
+            <>
+              <Button 
+                className="config-button-left"
+                variant="primary"
+                active={bulkSelect}
+                onClick={() => {
+                  handleCheckAll(null, !bulkSelect);
+                  setBulkSelect(!bulkSelect);
+                }}
+              >
+                <FontAwesomeIcon icon={faCheckDouble} size="sm" />
+              </Button>
+            </>
+          }
           {!noPagination &&
             <>
               <span className='tol-total'>
@@ -214,11 +263,11 @@ function Table (props: Props) {
         <Col md={12} lg={3}>
           {!noConfigModal &&
             <Button 
-              className="config-button"
+              className="config-button-right"
               variant="primary"
-              onClick={ () => {
+              onClick={() => {
                 setOpen(true);
-              } }
+              }}
             >
               <FontAwesomeIcon icon={faSliders} size="sm" />
             </Button>
@@ -234,7 +283,8 @@ function Table (props: Props) {
           }
           {!noFilter &&
             <Button
-              className="config-button"
+              className="config-button-right"
+              active={filterVisible}
               variant="primary"
               onClick={ () => toggleFilterVisibility(!filterVisible) }
             >
@@ -270,6 +320,16 @@ function Table (props: Props) {
           sortColumn={sortColumn}
           sortType={sortType}
           onSortColumn={handleSortColumn!}
+          rowClassName={(rowData: any) => {
+            if (rowData) {
+              if (bulkSelect) {
+                return 'tol-selected-row disabled';
+              } else if (selectedRows.some(item => item === rowData.id)) {
+                return 'tol-selected-row';
+              }
+            }
+            return '';
+          }}
           fillHeight
           wordWrap
           renderLoading={
@@ -283,6 +343,32 @@ function Table (props: Props) {
             )
           }
         >
+          {rowSelection &&
+          <Column key="rowSelection" width={60}>
+            <HeaderCell>
+              <Checkbox
+                className="tol-row-selection"
+                checked={checked}
+                indeterminate={indeterminate}
+                disabled={bulkSelect}
+                onChange={handleCheckAll}
+              />
+            </HeaderCell>
+            <Cell dataKey="id">
+              {(rowData: {id: any}) => {
+                return (
+                  <Checkbox
+                    className="tol-row-selection"
+                    value={rowData.id}
+                    checked={bulkSelect || selectedRows.some(item => item === rowData.id)}
+                    disabled={bulkSelect}
+                    onChange={handleCheck}
+                  />
+                );
+              }}
+            </Cell>
+          </Column>
+          }
           {fieldMeta!.order.active.map((key: string) => {
             const field = fieldMeta.data[key];
             const sortable = noSorting ? false : field.sort;
@@ -293,8 +379,6 @@ function Table (props: Props) {
                 width={field.width}
                 sortable={sortable}
                 fixed={field.fixed}
-                // resizable
-                // onResize={resizeColumnWidth}
               >
                 <HeaderCell>
                   <p className='tol-header-text'>

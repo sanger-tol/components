@@ -252,7 +252,7 @@ function BarChart(props: Props) {
           <div className="tol-chart-buttons">
             {isPropDefined(setBarData) &&
               <Button
-                className="config-button"
+                className="config-button-right"
                 variant="primary"
                 onClick={() => {
                   resetItemClickedData(setBarData);
@@ -264,7 +264,7 @@ function BarChart(props: Props) {
               </Button>
             }
             <Button
-              className="config-button"
+              className="config-button-right"
               variant="primary"
               onClick={() => {
                 downloadItem(props.id, downloadName);

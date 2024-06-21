@@ -197,7 +197,7 @@ function Sunburst(props: Props) {
               {isPropDefined(setSliceData) && !noRefresh &&
                 <div>
                   <Button
-                    className="config-button"
+                    className="config-button-right"
                     variant="primary"
                     onClick={() => {
                       resetItemClickedData(setSliceData);
@@ -211,7 +211,7 @@ function Sunburst(props: Props) {
               {!noDownload &&
                 <div>
                   <Button
-                    className="config-button"
+                    className="config-button-right"
                     variant="primary"
                     onClick={() => {
                       downloadItem(props.id, downloadName);

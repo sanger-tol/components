@@ -180,7 +180,7 @@ function RemoteSunburst(props: Props) {
         <div className="tol-chart-buttons">
           <div>
             <Button
-              className="config-button"
+              className="config-button-right"
               variant="primary"
               onClick={() => {
                 setSubDatasets({});
@@ -193,7 +193,7 @@ function RemoteSunburst(props: Props) {
           {!noDownload &&
             <div>
               <Button
-                className="config-button"
+                className="config-button-right"
                 variant="primary"
                 onClick={() => {
                   downloadItem(props.id, normaliseCaps(endpoint));

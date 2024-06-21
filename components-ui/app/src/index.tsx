@@ -66,20 +66,17 @@ const widgets: Page = {
 const detail: Page = {
   name: "Detail",
   element: <Detail />,
-  detail: <DetailInfo/>,
-  hidden: true
+  detail: <DetailInfo/>
 };
 
 const miscellaneous: Page = {
   name: "Miscellaneous",
-  element: <Miscellaneous />,
-  hidden: true
+  element: <Miscellaneous />
 };
 
 const forms: Page = {
   name: "Forms",
-  element: <Forms />,
-  hidden: true
+  element: <Forms />
 };
 
 const otherDropdown: Dropdown = {
@@ -90,8 +87,8 @@ const otherDropdown: Dropdown = {
 // auth
 const user: Page = {
   name: 'User',
-  auth: true,
-  element: <UserId />
+  element: <UserId />,
+  auth: true
 };
 
 // dev sandbox
@@ -114,9 +111,6 @@ ReactDOM.render( // eslint-disable-line
       timelines,
       widgets,
       otherDropdown,
-      detail,
-      miscellaneous,
-      forms,
       user,
       sandbox
     ]}

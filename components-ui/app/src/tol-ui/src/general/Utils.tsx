@@ -10,7 +10,7 @@ import { httpClient } from '../services/http/httpClient';
 
 export function convertToPath(name: string) {
   const path = name.toLowerCase();
-  return path.replace(/\s+/g, '-');
+  return "/" + path.replace(/\s+/g, '-');
 }
 
 export function formatDate(text: string) {

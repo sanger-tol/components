@@ -41,16 +41,16 @@ function ComponentModal(props: Props) {
   }
 
   function checkStates() {
-    setIdError(false)
+    setIdError(false);
     setFieldError(false);
     let validId = true;
     let validField = true;
     if (id === '' || zone.components[id] !== undefined) {
-      setIdError(true)
+      setIdError(true);
       validId = false;
     }
     if (chartType === '' || chartSize === '') {
-      setFieldError(true)
+      setFieldError(true);
       validField = false;
     }
     return validId && validField;
@@ -92,7 +92,7 @@ function ComponentModal(props: Props) {
       overflow={false}
     >
       <>
-      <h6>Select Component <span style={{color: 'red'}}>*</span></h6>
+        <h6>Select Component <span style={{color: 'red'}}>*</span></h6>
         <Row>
           <Col lg={3} md={6} sm={12} className='tol-button-col'>
             <div
@@ -163,12 +163,12 @@ function ComponentModal(props: Props) {
         <h6>Enter ID <span style={{color: 'red'}}>*</span></h6>
         <Form>
           <InputGroup>
-           <Form.Control
+            <Form.Control
               className='dashboard-modal-input'
               placeholder='ID'
               onChange={(e) => setID(e.target.value)}
               isInvalid={idError}
-           />
+            />
           </InputGroup>
         </Form>
         {idError ? <p className='tol-modal-error'>ID cannot be blank or already exist</p> : null}

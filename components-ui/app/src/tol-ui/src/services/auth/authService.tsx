@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { httpClient } from '../http/httpClient';
+import { tokenHasExpired } from '../localStorage/localStorageService';
 
 
 export function getUrlLogin() {
@@ -21,4 +22,10 @@ export function getProfile(token: string) {
 
 export function getRoles() {
   return httpClient().get('/auth/roles');
+}
+
+export function confirmAuthorised(user: any, adminOnly?: boolean, authRequired?: boolean) {
+  if (adminOnly) return user && user.roles.includes("admin") && !tokenHasExpired();
+  if (authRequired) return user && !tokenHasExpired();
+  return true;
 }

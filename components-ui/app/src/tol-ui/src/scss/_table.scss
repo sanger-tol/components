@@ -13,7 +13,7 @@
   --rs-btn-ghost-hover-border: var(--primary);
   --rs-btn-ghost-active-border: var(--primary);
   --rs-btn-ghost-active-text: var(--primary);
-  --rs-btn-subtle-active-bg: var(--primary);
+  --rs-btn-subtle-active-bg: initial;
   
   --rs-btn-subtle-hover-text: var(--bs-bg-color);
   --rs-btn-subtle-hover-bg: var(--grey-opaque);
@@ -214,6 +214,11 @@
     .tol-status .alert {
       padding: 5px 10px;
     }
+
+    // re-position the checkboxes
+    .tol-row-selection .rs-checkbox-checker {
+      margin-top: -6px;
+    }
   }
 
   // link box (e.g. relationship)
@@ -301,6 +306,19 @@
   svg {
     margin-left: 6px;
   }
+}
+
+// row selection
+.tol-selected-row {
+  background-color: var(--primary-opaque);
+}
+
+.tol-selected-row.disabled {
+  filter: grayscale(100%);
+}
+
+.tol-selected-row:hover {
+  background-color: var(--primary-opaque) !important;
 }
 
 // pagination buttons on smaller devices

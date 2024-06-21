@@ -16,6 +16,6 @@ function UserId() {
       You are {isAdmin ? '' : <i>not </i> }an admin
     </div>
   );
-};
+}
 
 export default UserId;

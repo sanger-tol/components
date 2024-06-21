@@ -19,13 +19,13 @@ import {
 import { Navigation, Callback, PageNotFound } from "./nav";
 import { 
   getTokenFromLocalStorage,
-  getUserFromLocalStorage, 
-  tokenHasExpired
+  getUserFromLocalStorage
 } from './services/localStorage/localStorageService';
+import { confirmAuthorised } from './services/auth/authService';
 import { AuthProvider } from './contexts/auth.context';
 import Footer from './general/Footer';
 import { Dropdown, Page } from "./models/Nav";
-import { convertToPath, falseIfUndefined, matomoAnalytics } from "./general/Utils";
+import { convertToPath, matomoAnalytics } from "./general/Utils";
 import { env } from './variables/config';
 
 
@@ -81,24 +81,49 @@ function TolApp(props: Props) {
               <Route path="/callback" exact><Callback /></Route>
               {props.pages.map(page => {
                 const path = convertToPath(page.name);
-                const authRequired = falseIfUndefined(page.auth);
+                const routes = [];
+                const authorised = confirmAuthorised(user, page.admin, page.auth);
 
-                // regular page route
-                const regularRoute = (
-                  <Route exact path={`/${path}`} key={page.name} >
-                    {authRequired ? (token && !tokenHasExpired()) ? page.element : <Redirect to="/" />
-                      : page.element} 
-                  </Route>
-                );
+                // dropdown routes
+                if (page.pages) {
+                  page.pages.forEach((dropdownPage: Page) => {
+                    const dropdownPath = convertToPath(page.name) + convertToPath(dropdownPage.name);
 
-                // detail page route
-                const detailRoute = page.detail && (
-                  <Route exact path={`/${path}/:id`} key={`${page.name}-detail`} >
-                    {authRequired ? (token && !tokenHasExpired()) ? page.detail : <Redirect to="/" />
-                      : page.detail}
-                  </Route>
-                );
-                return [regularRoute, detailRoute];
+                    // dropdown page route
+                    routes.push(
+                      <Route exact path={dropdownPath} key={dropdownPath} >
+                        {authorised ? dropdownPage.element : <Redirect to="/"/>}
+                      </Route>
+                    );
+
+                    // dropdown detail page route
+                    if (dropdownPage.detail) {
+                      routes.push(
+                        <Route exact path={`${dropdownPath}/:id`} key={`${dropdownPath}-detail`} >
+                          {authorised ? dropdownPage.detail : <Redirect to="/"/>}
+                        </Route>
+                      );
+                    }
+                  });
+                } else {
+                  // regular page route
+                  routes.push(
+                    <Route exact path={path} key={page.name} >
+                      {authorised ? page.element : <Redirect to="/" />}
+                    </Route>
+                  );
+
+                  // detail page route
+                  if (page.detail) {
+                    routes.push(
+                      <Route exact path={`${path}/:id`} key={`${page.name}-detail`} >
+                        {authorised ? page.detail : <Redirect to="/"/>}
+                      </Route>
+                    );
+                  }
+                }
+
+                return routes;
               })}
               <Route path="/page-not-found" component={() => <PageNotFound/>} />
               <Route path="*"><Redirect to="/page-not-found" /></Route>

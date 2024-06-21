@@ -19,6 +19,7 @@ function Tables() {
       <h2 style={{marginBottom: 12}}>Tables</h2>
       <RemoteTable
         id="table-example"
+        rowSelection
         fields={{
           "mlwh_run_id": {
             rename: "Run ID"

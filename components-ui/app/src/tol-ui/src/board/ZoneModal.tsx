@@ -39,17 +39,17 @@ function ZoneModal(props: Props) {
   }
 
   function checkStates() {
-    setIdError(false)
+    setIdError(false);
     setFieldError(false);
     let validId = true;
     let validField = true;
     // @ts-ignore
     if (id === '' || zones.some(zone => zone.id === id)) {
-      setIdError(true)
+      setIdError(true);
       validId = false;
     }
     if (objectType === '' || objectType === null) {
-      setFieldError(true)
+      setFieldError(true);
       validField = false;
     }
     return validId && validField;
@@ -104,12 +104,12 @@ function ZoneModal(props: Props) {
         <h6>Enter ID <span style={{color: 'red'}}>*</span></h6>
         <Form>
           <InputGroup>
-           <Form.Control
+            <Form.Control
               className='dashboard-modal-input'
               placeholder='ID'
               onChange={(e) => setID(e.target.value)}
               isInvalid={idError}
-           />
+            />
           </InputGroup>
         </Form>
         {idError ? <p className='tol-modal-error'>ID cannot be blank or already exist</p> : null}

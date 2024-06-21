@@ -326,3 +326,8 @@
     padding-left: 50px;
   }
 }
+
+// checkboxes
+.rs-checkbox.rs-checkbox-disabled.rs-checkbox-checked {
+  filter: grayscale(100%);
+}
