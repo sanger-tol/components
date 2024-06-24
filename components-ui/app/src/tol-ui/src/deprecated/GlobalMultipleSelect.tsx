@@ -17,7 +17,7 @@ interface Props {
   globalFilters: {
     in_list: { [key: string]: string[] }
   }
-  setGlobalFilters: Function // eslint-disable-line
+  setGlobalFilters: any
 }
 
 function setCheckedValues(globalFilters: any, setValue: any){

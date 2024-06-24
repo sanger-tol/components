@@ -24,7 +24,7 @@ export interface Props {
   endpoint: string,
   fileType: string,
   generateMessages: (apiRes: any) => Message[],
-  setResponse?: Function // eslint-disable-line
+  setResponse?: any
 }
 
 function Dropzone(props: Props) {

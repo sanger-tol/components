@@ -31,8 +31,7 @@ export type CellRenderer = (
 
 export interface Field {
   cellRenderer?: CellRenderer,
-  filter?: boolean,
-  filterType?: string,
+  filter?: string|null,
   fixed?: boolean,
   hidden?: boolean,
   isAttribute?: boolean,
@@ -61,18 +60,10 @@ export interface FieldMeta {
 
 const fieldDefaults = (key: string, endpoint?: string) => {
   const rename = normaliseCaps(key, endpoint);
-
   return {
-    cellRenderer: undefined,
-    filter: true,
-    filterType: undefined,
     fixed: false,
     hidden: false,
-    isAttribute: undefined,
-    link: undefined,
     rename: rename,
-    sort: true,
-    type: undefined,
     width: 200
   };
 };

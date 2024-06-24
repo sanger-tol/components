@@ -13,7 +13,7 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 export interface Props {
   size: string,
   open: boolean,
-  setOpen: Function, // eslint-disable-line
+  setOpen: any
   children?: JSX.Element | JSX.Element[],
   overflow?: boolean,
   actionButton?: JSX.Element,

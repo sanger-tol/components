@@ -389,7 +389,7 @@ function Table (props: Props) {
                       <Filter
                         attribute={key}
                         rename={field.rename!}
-                        type={field.filterType as FilterType}
+                        type={field.filter as FilterType}
                         componentId={id}
                         {...props}
                       />

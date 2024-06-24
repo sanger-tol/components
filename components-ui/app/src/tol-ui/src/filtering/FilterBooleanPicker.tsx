@@ -14,7 +14,7 @@ export interface Props {
   id: string,
   rename: string,
   filter: object,
-  setFilter: Function // eslint-disable-line
+  setFilter: any
 }
 
 function FilterBooleanPicker(props: Props) {

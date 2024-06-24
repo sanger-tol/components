@@ -7,6 +7,15 @@ SPDX-License-Identifier: MIT
 import { RemoteTable, Widgets, env, useZone } from '../tol-ui/src';
 
 
+interface exampleProps {
+  mlwhTag: string
+}
+
+function exampleElement(props: exampleProps) {
+  const { mlwhTag } = props;
+  return 'CUSTOM FIELD: ' + mlwhTag;
+}
+
 function Tables() {
   const runData = useZone({
     endpoint: 'run_data',
@@ -26,7 +35,7 @@ function Tables() {
           },
           "mlwh_species.sts_scientific_name": {
             rename: "Species",
-            cellRenderer: "relationshipDetail"
+            cellRenderer: null
           },
           "mlwh_sequencing_request.id": {
             rename: "Sequencing Request"
@@ -41,10 +50,22 @@ function Tables() {
             rename: "Instrument"
           },
           "mlwh_position": {
-            rename: "Position"
+            rename: "Position",
+            filter: 'boolean'
           },
           "mlwh_tag_index": {
-            rename: "Tag"
+            rename: "Tag",
+            filter: null,
+            sort: false
+          },
+          "custom_field": {
+            rename: "Custom Field",
+            cellRenderer: {
+              element: exampleElement,
+              propPointers: {
+                mlwhTag: "mlwh_tag_index"
+              }
+            }
           }
         }}
         height={500}

@@ -18,7 +18,7 @@ export interface Props {
   tableId: string,
   fieldMeta: FieldMeta,
   open: boolean,
-  setOpen: Function, // eslint-disable-line
+  setOpen: any
   modalOnSave: (fieldMeta: FieldMeta) => void
 }
 

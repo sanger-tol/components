@@ -21,7 +21,7 @@ interface Columns {
 
 interface Props {
   elements: object,
-  setContents?: Function, // eslint-disable-line
+  setContents?: any
   editMode?: boolean,
   dealWithContents?: (column: object) => boolean
 }

@@ -13,11 +13,11 @@ import { FieldMetaData } from "../table/Field";
 import { formatDate, normaliseCaps } from "./Utils";
 
 interface Props {
-    endpoint: string,
-    id: string,
-    fields: FieldMetaData,
-    baseUrl?: string,
-    setData?: Function // eslint-disable-line
+  endpoint: string,
+  id: string,
+  fields: FieldMetaData,
+  baseUrl?: string,
+  setData?: any
 }
 
 const formatContents = (contents: object) => {

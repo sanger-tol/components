@@ -9,16 +9,16 @@ import { MultipleSelect } from '../index';
 import { Col, Row } from 'react-bootstrap';
 
 interface Props {
-    filters: Filters[]
-    value: object
-    setValue: Function // eslint-disable-line
+  filters: Filters[]
+  value: object
+  setValue: any
 }
 
 interface Filters {
     name: string
     choices: string[]
     selected: string[]
-    setChoices: Function // eslint-disable-line
+    setChoices: any
 }
 
 function MultipleSelectFilters(props: Props) {

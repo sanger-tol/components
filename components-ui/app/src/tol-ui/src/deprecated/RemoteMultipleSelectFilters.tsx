@@ -84,7 +84,7 @@ interface Props {
   renamedFields?: object,
   globalFilters: object,
   dependentFilters?: boolean,
-  setGlobalFilters: Function, // eslint-disable-line
+  setGlobalFilters: any
   baseUrl?: string
 }
 

@@ -162,31 +162,36 @@ function createFloat(value: any) {
 }
 
 function createCellRenderer(cellRenderer: CellRenderer, key: string, value: any, data: object, baseUrl?: string) {
-  if (value === null || value === undefined) return "";
-  if (cellRenderer === 'relationship') {
-    return createRelationshipBox(key, data, baseUrl);
-  } else if (cellRenderer === 'relationshipDetail') {
-    return createRelationshipBox(key, data, baseUrl, true);
-  } else if (cellRenderer === 'datetime') {
-    return createDate(value);
-  } else if (cellRenderer === 'boolean') {
-    return createBoolean(value);
-  } else if (cellRenderer === 'image') {
-    return createImage(value);
-  } else if (cellRenderer === 'list') {
-    return createFormattedList(value);
-  } else if (cellRenderer === 'expander') {
-    return createExpander(value);
-  } else if (cellRenderer === 'float') {
-    return createFloat(value);
-  } else if (cellRenderer === null) {
-    return value;
+  if (cellRenderer === null) return value;
+  if (typeof cellRenderer === 'string') {
+    if (value === null || value === undefined) return "";
+    if (cellRenderer === 'relationship') {
+      return createRelationshipBox(key, data, baseUrl);
+    } else if (cellRenderer === 'relationshipDetail') {
+      return createRelationshipBox(key, data, baseUrl, true);
+    } else if (cellRenderer === 'datetime') {
+      return createDate(value);
+    } else if (cellRenderer === 'boolean') {
+      return createBoolean(value);
+    } else if (cellRenderer === 'image') {
+      return createImage(value);
+    } else if (cellRenderer === 'list') {
+      return createFormattedList(value);
+    } else if (cellRenderer === 'expander') {
+      return createExpander(value);
+    } else if (cellRenderer === 'float') {
+      return createFloat(value);
+    }
   }
 
   const propPointers: object = {};
   if (cellRenderer.propPointers !== undefined) {
     for (const [prop, requiredField] of Object.entries(cellRenderer.propPointers)) {
-      propPointers[prop] = data["attributes"][requiredField];
+      if (requiredField === 'id') {
+        propPointers['id'] = data['id'];
+      } else {
+        propPointers[prop] = data["attributes"][requiredField];
+      }
     }
   }
   // all row data always passed to use in a cellRenderer component via a rowData prop
@@ -208,8 +213,19 @@ function setValueBasedCellRenderer(key: string, value: any, fieldMetaData: objec
   }
 }
 
+function addCustomCellRendererData(fieldMetaData: any, attributes: any) {
+  for (const key of Object.keys(fieldMetaData)) {
+    if (typeof fieldMetaData[key].cellRenderer === 'object' && fieldMetaData[key].cellRenderer !== null) {
+      attributes[key] = 'CUSTOM_FIELD';
+    }
+  }
+  return attributes;
+}
+
 function formatAttributeData(row: object, fieldMetaData: object, rowOutput: object, baseUrl?: string) {
   const attributes = row["attributes"];
+  // add non-null value for a custom field to allow cellRenderer to display
+  addCustomCellRendererData(fieldMetaData, attributes);
   for (const [key, value] of Object.entries(attributes)) {
     if (fieldMetaData[key] !== undefined) {
       setValueBasedCellRenderer(key, value, fieldMetaData);
@@ -320,7 +336,7 @@ function addRelationshipsAttributes(endpoint: string, typesMeta: TypesMeta) {
   }
 }
 
-function addDefaultFilterType(type: string, cardinality: number) {
+function addRemoteFilterType(type: string, cardinality: number) {
   if (cardinality && cardinality < 20 && type === 'str') return 'multi';
   if (type === 'double') return 'float';
   return type;
@@ -337,7 +353,7 @@ function addRemoteTypesAndExtraColumns(
     let hidden = fieldPropExists;
     let isActive = hidden ? 'inactive' : 'active';
     const type = meta['python_type'];
-    const filterType = addDefaultFilterType(type, meta['cardinality']);
+    const filterType = addRemoteFilterType(type, meta['cardinality']);
 
     // auto add field that are not yet in fieldMeta
     if (!hiddenFields && !(key in fieldMeta.data)) {
@@ -354,10 +370,17 @@ function addRemoteTypesAndExtraColumns(
         endpoint
       );
     }
-    // add type to all fields
+    // add deafults to type/filter/sort fields
     if (key in fieldMeta.data) {
-      fieldMeta.data[key].type = type;
-      fieldMeta.data[key].filterType = filterType;
+      if (fieldMeta.data[key].type === undefined) {
+        fieldMeta.data[key].type = type;
+      }
+      if (fieldMeta.data[key].filter === undefined) {
+        fieldMeta.data[key].filter = filterType;
+      }
+      if (fieldMeta.data[key].sort === undefined) {
+        fieldMeta.data[key].sort = true;
+      }
     }
   }
 }

@@ -13,7 +13,7 @@ interface Props {
   baseUrl?: string,
   loadingMessage?: string,
   response: any,
-  setResponse: Function // eslint-disable-line
+  setResponse: any
 }
 
 function RemoteGet(props: Props) {
