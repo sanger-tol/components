@@ -188,7 +188,7 @@ function createCellRenderer(cellRenderer: CellRenderer, key: string, value: any,
   if (cellRenderer.propPointers !== undefined) {
     for (const [prop, requiredField] of Object.entries(cellRenderer.propPointers)) {
       if (requiredField === 'id') {
-        propPointers['id'] = data['id'];
+        propPointers[prop] = data['id'];
       } else {
         propPointers[prop] = data["attributes"][requiredField];
       }
