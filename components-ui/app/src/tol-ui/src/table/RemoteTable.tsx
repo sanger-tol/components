@@ -33,6 +33,7 @@ interface Props {
   fields?: FieldMetaData,
   height?: any,
   basic?: boolean,
+  forceUpdate?: boolean,
 
   zone: object,
   setZone: any,
@@ -55,6 +56,7 @@ function RemoteTable(props: Props) {
     baseUrl,
     fields,
     basic,
+    forceUpdate,
     zone,
     setZone,
     defaultSort,
@@ -108,7 +110,7 @@ function RemoteTable(props: Props) {
 
   useEffectUpdate(() => {
     renderTable();
-  }, [page, sortColumn, sortType, filter]);
+  }, [page, sortColumn, sortType, filter, forceUpdate]);
 
   useEffectUpdate(() => {
     setFieldMetaAttributeInStorage(id, pageSize, 'pageSize');

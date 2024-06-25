@@ -317,6 +317,20 @@
   top: -8px;
 }
 
+// radio buttons
+.rs-radio.rs-radio-checked .rs-radio-inner::before {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
+.rs-radio-wrapper::before {
+  border-color: var(--primary) !important;
+}
+
+.rs-radio:hover .rs-radio-inner::before {
+  border-color: var(--primary) !important;
+}
+
 @media screen and (max-width: 768px) {
   .rs-timeline-item-time {
     margin-left: -30px;

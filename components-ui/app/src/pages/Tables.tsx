@@ -4,7 +4,8 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { RemoteTable, Widgets, env, useZone } from '../tol-ui/src';
+import { useState } from 'react';
+import { Button, RemoteTable, Widgets, env, useZone } from '../tol-ui/src';
 
 
 interface exampleProps {
@@ -17,6 +18,8 @@ function exampleElement(props: exampleProps) {
 }
 
 function Tables() {
+  const [forceUpdate, setForceUpdate] = useState(false)
+
   const runData = useZone({
     endpoint: 'run_data',
     baseUrl: env.TOL_DATA,
@@ -26,9 +29,16 @@ function Tables() {
   const table = (
     <div>
       <h2 style={{marginBottom: 12}}>Tables</h2>
+      <Button
+        style={{marginBottom: 12}}
+        onClick={() => setForceUpdate(!forceUpdate)}
+      >
+        Force Update
+      </Button>
       <RemoteTable
         id="table-example"
         rowSelection
+        forceUpdate={forceUpdate}
         fields={{
           "mlwh_run_id": {
             rename: "Run ID"
@@ -82,11 +92,9 @@ function Tables() {
   ];
 
   return (
-    <div>
-      <Widgets
-        components={components}
-      />
-    </div>
+    <Widgets
+      components={components}
+    />
   );
 }
 
