@@ -7,13 +7,14 @@ SPDX-License-Identifier: MIT
 import { normaliseCaps } from "../general/Utils";
 
 
-interface ElementPropPointers {
+interface ElementProps {
   [prop: string]: string
 }
 
 interface CustomCellRenderer {
   element: any,
-  propPointers?: ElementPropPointers
+  propPointers?: ElementProps,
+  props?: ElementProps
 }
 
 export type CellRenderer = (

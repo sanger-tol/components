@@ -184,19 +184,22 @@ function createCellRenderer(cellRenderer: CellRenderer, key: string, value: any,
     }
   }
 
-  const propPointers: object = {};
+  const props: object = {};
   if (cellRenderer.propPointers !== undefined) {
     for (const [prop, requiredField] of Object.entries(cellRenderer.propPointers)) {
       if (requiredField === 'id') {
-        propPointers[prop] = data['id'];
+        props[prop] = data['id'];
       } else {
-        propPointers[prop] = data["attributes"][requiredField];
+        props[prop] = data["attributes"][requiredField];
       }
     }
   }
+  if (cellRenderer.props !== undefined) {
+    Object.assign(props, cellRenderer.props);
+  }
   // all row data always passed to use in a cellRenderer component via a rowData prop
-  propPointers["rowData"] = data;
-  return <cellRenderer.element {...propPointers}/>;
+  props["rowData"] = data;
+  return <cellRenderer.element {...props}/>;
 }
 
 function setValueBasedCellRenderer(key: string, value: any, fieldMetaData: object) {
