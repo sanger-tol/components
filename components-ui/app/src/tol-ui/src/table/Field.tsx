@@ -32,6 +32,7 @@ export type CellRenderer = (
 
 export interface Field {
   cellRenderer?: CellRenderer,
+  custom: boolean,
   filter?: string|null,
   fixed?: boolean,
   hidden?: boolean,

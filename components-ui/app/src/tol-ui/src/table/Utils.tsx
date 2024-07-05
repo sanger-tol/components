@@ -216,16 +216,16 @@ function setValueBasedCellRenderer(key: string, value: any, fieldMetaData: objec
   }
 }
 
-function addCustomCellRendererData(fieldMetaData: any, attributes: any) {
+function addCustomCellRendererData(fieldMetaData: FieldMetaData, attributes: any) {
   for (const key of Object.keys(fieldMetaData)) {
-    if (typeof fieldMetaData[key].cellRenderer === 'object' && fieldMetaData[key].cellRenderer !== null) {
+    if (fieldMetaData[key].custom) {
       attributes[key] = 'CUSTOM_FIELD';
     }
   }
   return attributes;
 }
 
-function formatAttributeData(row: object, fieldMetaData: object, rowOutput: object, baseUrl?: string) {
+function formatAttributeData(row: object, fieldMetaData: FieldMetaData, rowOutput: object, baseUrl?: string) {
   const attributes = row["attributes"];
   // add non-null value for a custom field to allow cellRenderer to display
   addCustomCellRendererData(fieldMetaData, attributes);
@@ -233,7 +233,7 @@ function formatAttributeData(row: object, fieldMetaData: object, rowOutput: obje
     if (fieldMetaData[key] !== undefined) {
       setValueBasedCellRenderer(key, value, fieldMetaData);
       if (fieldMetaData[key].cellRenderer !== undefined) {
-        rowOutput[key] = createCellRenderer(fieldMetaData[key].cellRenderer, key, value, row, baseUrl);
+        rowOutput[key] = createCellRenderer(fieldMetaData[key].cellRenderer!, key, value, row, baseUrl);
       } else if (fieldMetaData[key].link !== undefined) {
         rowOutput[key] = createLink(attributes[key], attributes[fieldMetaData[key].link]);
       } else {
