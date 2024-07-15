@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from 'react';
 import { deepCopy } from '../general/Utils';
+import { httpClient } from '../services/http/httpClient';
 
 
 export interface AndFilter {
@@ -148,4 +149,20 @@ export function getWidgetOrder(layout, widgets) {
     components: widgets['components'],
     order: widgetOrder
   };
+}
+
+async function getObjectTypes(baseUrl: string) {
+  try {
+    const res = await httpClient().get('/_config/attribute_types', {
+      baseURL: baseUrl
+    });
+    // @ts-ignore
+    return Object.keys(res.data);
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function fetchObjectTypes(baseUrl: string) {
+  return await getObjectTypes(baseUrl);
 }

@@ -97,7 +97,7 @@ function ComponentModal(props: Props) {
           <Col lg={3} md={6} sm={12} className='tol-button-col'>
             <div
               className={chartType !== 'barchart' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => setChartType('barchart')}
+              onClick={() => console.log('unavailable')}
             >
               <FontAwesomeIcon icon={faChartColumn} size="6x" />
               <h6>Bar Chart</h6>
@@ -106,7 +106,7 @@ function ComponentModal(props: Props) {
           <Col lg={3} md={6} sm={12} className='tol-button-col'>
             <div
               className={chartType !== 'sunburst' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => setChartType('sunburst')}
+              onClick={() => console.log('unavailable')}
             >
               <FontAwesomeIcon icon={faChartPie} size="6x" />
               <h6>Sunburst</h6>
@@ -124,7 +124,7 @@ function ComponentModal(props: Props) {
           <Col lg={3} md={6} sm={12} className='tol-button-col'>
             <div
               className={chartType !== 'count' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'} 
-              onClick={() => setChartType('count')}
+              onClick={() => console.log('unavailable')}
             >
               <FontAwesomeIcon icon={faHashtag} size="6x" />
               <h6>Count</h6>

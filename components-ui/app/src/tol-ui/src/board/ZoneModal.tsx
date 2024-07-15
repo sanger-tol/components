@@ -1,5 +1,3 @@
-
-
 /*
 SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 
@@ -11,10 +9,13 @@ import {
   Button, 
   Modal,
   SingleSelect,
+  env,
 } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Form, InputGroup } from 'react-bootstrap';
+import { fetchObjectTypes } from './Utils';
+
 
 interface Props {
   open: boolean,
@@ -30,6 +31,7 @@ function ZoneModal(props: Props) {
   const [id, setID] = useState('');
   const [idError, setIdError] = useState(false);
   const [fieldError, setFieldError] = useState(false);
+  const [objectTypesList, setObjectTypesList] = useState<string[]>([]);
 
   function reset() {
     setObjectType('');
@@ -55,11 +57,25 @@ function ZoneModal(props: Props) {
     return validId && validField;
   }
 
+  async function getObjectTypes() {
+    try {
+      const ret = (await fetchObjectTypes(env.TOL_DATA))
+      setObjectTypesList(ret);
+      return ret;
+    } catch (error) {
+    }
+  }
+
   useEffect(() => {
+    console.log(open)
     if (!open) {
       reset();
     }
   }, [open]);
+
+  useEffect(() => {
+    getObjectTypes();
+  }, []);
 
   const addZone = () => {
     if (checkStates()) {
@@ -81,7 +97,6 @@ function ZoneModal(props: Props) {
     </Button>
   );
 
-
   return(
     <Modal
       open={open}
@@ -94,7 +109,7 @@ function ZoneModal(props: Props) {
       <>
         <h6>Select Object Type <span style={{color: 'red'}}>*</span></h6>
         <SingleSelect
-          data={['species','sample','specimen', 'extraction', 'sequencing_request', 'run_data']}
+          data={objectTypesList}
           placeholder='Object Type'
           value={objectType}
           setValue={setObjectType}
