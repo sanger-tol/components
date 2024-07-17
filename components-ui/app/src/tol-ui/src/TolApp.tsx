@@ -59,7 +59,7 @@ function TolApp(props: Props) {
     );
   }
 
-  getDropdownRoutes = (dropdownPage: Dropdown, authorised: boolean): Route[] => {
+  const getDropdownRoutes = (dropdownPage: Dropdown, authorised: boolean): Route[] => {
     return page.pages.map(
       (dropdownPage: Page) => {
         const dropdownPath = convertToPath(page.name) + convertToPath(dropdownPage.name);
@@ -82,7 +82,7 @@ function TolApp(props: Props) {
     ).flat();
   }
 
-  getPageRoutes = (page: Page, path: string, authorised: boolean): Route[] => {
+  const getPageRoutes = (page: Page, path: string, authorised: boolean): Route[] => {
     const pageRoute = (
       <Route exact path={path} key={page.name} >
         {authorised ? page.element : <Redirect to="/" />}
@@ -101,16 +101,16 @@ function TolApp(props: Props) {
     }
   }
 
-  getRoutes = (): Route[] => {
+  const getRoutes = (): Route[] => {
     const nested: Route[][] = props.pages.map(
       (page: Page|Dropdown) => {
         const authorised = confirmAuthorised(user, page.auth);
         // dropdown
-        if (page.pages) return this.getDropdownRoutes(page, authorised);
+        if (page.pages) return getDropdownRoutes(page, authorised);
         // regular page
         else {
           const path = convertToPath(page.name);
-          return this.getPageRoutes(page, path, authorised);
+          return getPageRoutes(page, path, authorised);
         }
       }
     );
