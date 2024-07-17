@@ -102,15 +102,16 @@ function TolApp(props: Props) {
   }
 
   getRoutes = (): Route[] => {
-    const path = convertToPath(page.name);
-    const authorised = confirmAuthorised(user, page.auth);
-
-    const nested = props.pages.map(
-      page => {
+    const nested: Route[][] = props.pages.map(
+      (page: Page|Dropdown) => {
+        const authorised = confirmAuthorised(user, page.auth);
         // dropdown
-        if (page.pages) return getDropdownRoutes(page);
+        if (page.pages) return this.getDropdownRoutes(page, authorised);
         // regular page
-        else return getPageRoutes(page);
+        else {
+          const path = convertToPath(page.name);
+          return this.getPageRoutes(page, path, authorised);
+        }
       }
     );
 
