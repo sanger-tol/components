@@ -82,7 +82,9 @@ function TolApp(props: Props) {
     ).flat();
   }
 
-  const getPageRoutes = (page: Page, path: string, authorised: boolean): Route[] => {
+  const getPageRoutes = (page: Page, authorised: boolean): Route[] => {
+    const path = convertToPath(page.name);
+
     const pageRoute = (
       <Route exact path={path} key={page.name} >
         {authorised ? page.element : <Redirect to="/" />}
@@ -109,8 +111,7 @@ function TolApp(props: Props) {
         if (page.pages) return getDropdownRoutes(page, authorised);
         // regular page
         else {
-          const path = convertToPath(page.name);
-          return getPageRoutes(page, path, authorised);
+          return getPageRoutes(page, authorised);
         }
       }
     );
