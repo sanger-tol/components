@@ -59,6 +59,64 @@ function TolApp(props: Props) {
     );
   }
 
+  getDropdownRoutes = (dropdownPage: Dropdown, authorised: boolean): Route[] => {
+    return page.pages.map(
+      (dropdownPage: Page) => {
+        const dropdownPath = convertToPath(page.name) + convertToPath(dropdownPage.name);
+        const dropdownPageRoute = (
+          <Route exact path={dropdownPath} key={dropdownPath} >
+            {authorised ? dropdownPage.element : <Redirect to="/"/>}
+          </Route>
+        );
+        if (dropdownPage.detail) {
+          const dropdownDetailRoute = (
+            <Route exact path={`${dropdownPath}/:id`} key={`${dropdownPath}-detail`} >
+              {authorised ? dropdownPage.detail : <Redirect to="/"/>}
+            </Route>
+          );
+          return [dropdownPageRoute, dropdownDetailRoute];
+        } else {
+          return [dropdownPageRoute];
+        }
+      }
+    ).flat();
+  }
+
+  getPageRoutes = (page: Page, path: string, authorised: boolean): Route[] => {
+    const pageRoute = (
+      <Route exact path={path} key={page.name} >
+        {authorised ? page.element : <Redirect to="/" />}
+      </Route>
+    );
+
+    if (page.detail) {
+      const detailRoute = (
+        <Route exact path={`${path}/:id`} key={`${page.name}-detail`} >
+          {authorised ? page.detail : <Redirect to="/"/>}
+        </Route>
+      );
+      return [pageRoute, detailRoute]
+    } else {
+      return [pageRoute]
+    }
+  }
+
+  getRoutes = (): Route[] => {
+    const path = convertToPath(page.name);
+    const authorised = confirmAuthorised(user, page.auth);
+
+    const nested = props.pages.map(
+      page => {
+        // dropdown
+        if (page.pages) return getDropdownRoutes(page);
+        // regular page
+        else return getPageRoutes(page);
+      }
+    );
+
+    return nested.flat();
+  }
+
   return (
     <div id="tol-app-background">
       <AuthProvider
@@ -79,52 +137,7 @@ function TolApp(props: Props) {
             <Switch>
               <Route path="/" exact component={() => props.homePage} />
               <Route path="/callback" exact><Callback /></Route>
-              {props.pages.map(page => {
-                const path = convertToPath(page.name);
-                const routes = [];
-                const authorised = confirmAuthorised(user, page.auth);
-
-                // dropdown routes
-                if (page.pages) {
-                  page.pages.forEach((dropdownPage: Page) => {
-                    const dropdownPath = convertToPath(page.name) + convertToPath(dropdownPage.name);
-
-                    // dropdown page route
-                    routes.push(
-                      <Route exact path={dropdownPath} key={dropdownPath} >
-                        {authorised ? dropdownPage.element : <Redirect to="/"/>}
-                      </Route>
-                    );
-
-                    // dropdown detail page route
-                    if (dropdownPage.detail) {
-                      routes.push(
-                        <Route exact path={`${dropdownPath}/:id`} key={`${dropdownPath}-detail`} >
-                          {authorised ? dropdownPage.detail : <Redirect to="/"/>}
-                        </Route>
-                      );
-                    }
-                  });
-                } else {
-                  // regular page route
-                  routes.push(
-                    <Route exact path={path} key={page.name} >
-                      {authorised ? page.element : <Redirect to="/" />}
-                    </Route>
-                  );
-
-                  // detail page route
-                  if (page.detail) {
-                    routes.push(
-                      <Route exact path={`${path}/:id`} key={`${page.name}-detail`} >
-                        {authorised ? page.detail : <Redirect to="/"/>}
-                      </Route>
-                    );
-                  }
-                }
-
-                return routes;
-              })}
+              {getRoutes()}
               <Route path="/page-not-found" component={() => <PageNotFound/>} />
               <Route path="*"><Redirect to="/page-not-found" /></Route>
             </Switch>
