@@ -18,7 +18,7 @@ function exampleElement(props: exampleProps) {
 }
 
 function Tables() {
-  const [forceUpdate, setForceUpdate] = useState(false)
+  const [forceUpdate, setForceUpdate] = useState(false);
 
   const runData = useZone({
     endpoint: 'run_data',
@@ -84,9 +84,28 @@ function Tables() {
     </div>
   );
 
+  const db = useZone({
+    endpoint: 'singular',
+    components: [{id: 'db-table'}]
+  });
+
+  const dbTable = (
+    <div>
+      <RemoteTable
+        id="db-table"
+        height={500}
+        {...db}
+      />
+    </div>
+  );
+
   const components = [
     {
       component: table,
+      type: 'full'
+    },
+    {
+      component: dbTable,
       type: 'full'
     }
   ];

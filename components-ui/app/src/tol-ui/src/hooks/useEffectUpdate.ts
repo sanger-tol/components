@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 
 
 // ignores the initial load update
-export function useEffectUpdate(fn: any, dependencies: any[]) {
+export function useEffectUpdate(fn, dependencies) {
   const isMountingRef = useRef(false);
 
   useEffect(() => {

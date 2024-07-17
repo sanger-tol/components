@@ -21,7 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 
 
-export const fieldMetaVersion = "field-meta-v7";
+export const fieldMetaVersion = "field-meta-v8";
 let idField: string; // id or uid
 let idFieldDefinedPreviously = false;
 let hiddenFields = false;
@@ -251,20 +251,18 @@ function addRelationshipFieldsToAttributes(row: object, fieldMetaData: FieldMeta
     if (!meta.isAttribute) {
       const [relationship, attribute] = key.split('.');
       // cannot assume relationship exists
-      if (relationship in rowRelationships) {
+      if (relationship in rowRelationships && rowRelationships[relationship]) {
         if ("data" in rowRelationships[relationship]) {
           const instanceData = rowRelationships[relationship]["data"];
           if (attribute === "id") {
             rowAttributes[key] = instanceData["id"];
-            continue;
           } else if ("attributes" in instanceData && attribute in instanceData["attributes"]) {
             rowAttributes[key] = instanceData["attributes"][attribute];
-            continue;
           }
         }
       }
       // if row doesn't have the fields data, default to null
-      rowAttributes[key] = null;
+      if (!rowAttributes[key]) rowAttributes[key] = null;
     }
   }
 }
@@ -274,6 +272,8 @@ export function convertTableData(data: any[], fieldMeta: FieldMeta, baseUrl?: st
   
   const updatedData: any[] = [];
   data.forEach(row => {
+    // create empty attributes if they don't exist
+    if (!('attributes' in row)) row['attributes'] = {};
     if ('relationships' in row) {
       addRelationshipFieldsToAttributes(
         row,
@@ -408,6 +408,7 @@ function addDefaultMeta(
 }
 
 export function structureFieldMeta(endpoint: string, typesMeta?: TypesMeta, fields?: FieldMetaData) {
+  endpoint = endpoint.split('/').pop() as string;
   const fieldMeta = initialiseFieldMeta();
   const fieldPropExists = fields !== undefined;
   if (fieldPropExists) {

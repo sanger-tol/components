@@ -6,3 +6,4 @@ from .base import Base  # noqa
 from .sample import Sample  # noqa
 from .species import Species  # noqa
 from .specimen import Specimen  # noqa
+from .singular import Singular  # noqa

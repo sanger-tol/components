@@ -6,8 +6,7 @@ SPDX-License-Identifier: MIT
 
 export interface Default {
   name: string;
-  auth?: boolean;
-  admin?: boolean;
+  auth?: boolean|string[];
   hidden?: boolean;
 }
 

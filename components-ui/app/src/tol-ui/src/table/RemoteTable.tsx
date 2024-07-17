@@ -30,6 +30,9 @@ interface Props {
   id: string,
   endpoint: string,
   baseUrl?: string,
+  attributeMetadataUrl?: string,
+  relationshipsUrl?: string,
+
   fields?: FieldMetaData,
   height?: any,
   basic?: boolean,
@@ -54,6 +57,8 @@ function RemoteTable(props: Props) {
     id,
     endpoint,
     baseUrl,
+    attributeMetadataUrl,
+    relationshipsUrl,
     fields,
     basic,
     forceUpdate,
@@ -69,9 +74,6 @@ function RemoteTable(props: Props) {
     debug
   } = props;
   const height = (props.height !== undefined) ? props.height : "100%";
-
-  // debug clears all storage
-  if (debug) localStorage.clear();
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
@@ -154,7 +156,9 @@ function RemoteTable(props: Props) {
       const apiMeta = res.data.meta;
 
       // get attribute types and relationship links
-      const typesMeta = (basic !== true && initialLoad) ? await getTypesMeta(baseUrl) : undefined;
+      const typesMeta = (basic !== true && initialLoad)
+        ? await getTypesMeta(baseUrl, attributeMetadataUrl, relationshipsUrl)
+        : undefined;
 
       setPage(page);
       setTotalSize(apiMeta.total);
@@ -191,11 +195,11 @@ function RemoteTable(props: Props) {
       setLoading(false);
       setInitialLoad(false);
     }).catch((error: any) => {
-      setError(error.message);
+      setError('Apologies, an error occurred');
       setLoading(false);
       setInitialLoad(false);
       setData([]);
-      console.warn(error.message);
+      console.warn(error);
       console.warn('Please ensure the db has been restored');
       console.warn('Please ensure the \'endpoint\' prop is correct and pluralised');
     });

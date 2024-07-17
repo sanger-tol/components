@@ -59,15 +59,16 @@ function ZoneModal(props: Props) {
 
   async function getObjectTypes() {
     try {
-      const ret = (await fetchObjectTypes(env.TOL_DATA))
+      const ret = (await fetchObjectTypes(env.TOL_DATA));
       setObjectTypesList(ret);
       return ret;
     } catch (error) {
+      console.error(error);
     }
   }
 
   useEffect(() => {
-    console.log(open)
+    console.log(open);
     if (!open) {
       reset();
     }

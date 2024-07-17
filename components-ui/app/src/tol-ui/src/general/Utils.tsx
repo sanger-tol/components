@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from 'date-fns';
-import { httpClient } from '../services/http/httpClient';
+import { fetchData } from '../services/http/data';
 
 
 export function convertToPath(name: string) {
@@ -165,19 +165,13 @@ export interface TypesMeta {
   relationships: Relationships
 }
 
-async function getConfig(endpoint: string, baseUrl?: string) {
-  return await httpClient().get('/_config/' + endpoint, {
-    baseURL: baseUrl
-  }).then((res: any) => {
-    return res.data;
-  }).catch((error: any) => {
-    throw error;
-  });
-}
-
 const pendingPromises: { [key: string]: Promise<TypesMeta> } = {};
 
-export async function getTypesMeta(baseUrl?: string): Promise<TypesMeta> {
+export async function getTypesMeta(
+  baseUrl?: string,
+  attributeMetadataUrl?: string,
+  relationshipsUrl?: string
+): Promise<TypesMeta> {
   const baseUrlKey = baseUrl || 'default';
 
   if (!pendingPromises[baseUrlKey]) {
@@ -193,8 +187,14 @@ export async function getTypesMeta(baseUrl?: string): Promise<TypesMeta> {
 
       // check if typesMeta exists and is not expired
       if (expiry === null || now > expiry) {
-        const attributes = await getConfig('attribute_metadata', baseUrl);
-        const relationships = await getConfig('relationships', baseUrl);
+        const attributes = await fetchData(
+          attributeMetadataUrl ? attributeMetadataUrl : '/_config/attribute_metadata',
+          baseUrl
+        );
+        const relationships = await fetchData(
+          relationshipsUrl ? relationshipsUrl : '/_config/relationships',
+          baseUrl
+        );
         savedTypesMeta = {
           expiry: anHourFromNow,
           data: {

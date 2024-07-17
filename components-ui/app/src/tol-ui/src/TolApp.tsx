@@ -82,7 +82,7 @@ function TolApp(props: Props) {
               {props.pages.map(page => {
                 const path = convertToPath(page.name);
                 const routes = [];
-                const authorised = confirmAuthorised(user, page.admin, page.auth);
+                const authorised = confirmAuthorised(user, page.auth);
 
                 // dropdown routes
                 if (page.pages) {

@@ -17,7 +17,7 @@ from tol.core import core_data_object
 from tol.sql import create_sql_datasource
 from tol.sql.auth import db_auth_blueprint
 
-from .model import Base, Sample, Species, Specimen
+from .model import Base, Sample, Singular, Species, Specimen
 
 
 def __user_id_blueprint(api_path: str) -> None:
@@ -44,7 +44,7 @@ def application():
 
     # Set up datasource
     sql_datasource = create_sql_datasource(
-        models=[Species, Specimen, Sample],
+        models=[Species, Specimen, Sample, Singular],
         db_uri=os.getenv('DB_URI')
     )
     core_data_object(sql_datasource)

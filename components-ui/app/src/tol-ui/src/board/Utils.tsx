@@ -152,15 +152,12 @@ export function getWidgetOrder(layout, widgets) {
 }
 
 async function getObjectTypes(baseUrl: string) {
-  try {
-    const res = await httpClient().get('/_config/attribute_types', {
-      baseURL: baseUrl
-    });
-    // @ts-ignore
-    return Object.keys(res.data);
-  } catch (error) {
-    throw error;
-  }
+  const res = await httpClient().get('/_config/attribute_types', {
+    baseURL: baseUrl
+  });
+  // @ts-ignore
+  return Object.keys(res.data);
+
 }
 
 export async function fetchObjectTypes(baseUrl: string) {

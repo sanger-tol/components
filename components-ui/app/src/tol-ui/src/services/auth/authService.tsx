@@ -24,8 +24,18 @@ export function getRoles() {
   return httpClient().get('/auth/roles');
 }
 
-export function confirmAuthorised(user: any, adminOnly?: boolean, authRequired?: boolean) {
-  if (adminOnly) return user && user.roles.includes("admin") && !tokenHasExpired();
-  if (authRequired) return user && !tokenHasExpired();
-  return true;
+export function confirmAuthorised(user: any, auth?: boolean|string[]) {
+  if (!user || tokenHasExpired()) {
+    return false;
+  }
+
+  if (typeof auth === 'boolean') {
+    return auth;
+  }
+
+  if (Array.isArray(auth)) {
+    return auth.some(role => user.roles.includes(role));
+  }
+
+  return true; // no auth required
 }
