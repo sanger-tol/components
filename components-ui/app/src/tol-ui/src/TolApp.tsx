@@ -59,10 +59,10 @@ function TolApp(props: Props) {
     );
   }
 
-  const getDropdownRoutes = (dropdownPage: Dropdown, authorised: boolean): Route[] => {
-    return page.pages.map(
+  const getDropdownRoutes = (dropdown: Dropdown, authorised: boolean): Route[] => {
+    return dropdown.pages.map(
       (dropdownPage: Page) => {
-        const dropdownPath = convertToPath(page.name) + convertToPath(dropdownPage.name);
+        const dropdownPath = convertToPath(dropdown.name) + convertToPath(dropdownPage.name);
         const dropdownPageRoute = (
           <Route exact path={dropdownPath} key={dropdownPath} >
             {authorised ? dropdownPage.element : <Redirect to="/"/>}
