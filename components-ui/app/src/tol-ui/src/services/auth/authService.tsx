@@ -25,17 +25,18 @@ export function getRoles() {
 }
 
 export function confirmAuthorised(user: any, auth?: boolean|string[]) {
-  if (!user || tokenHasExpired()) {
+  if (typeof auth === 'boolean') {
+    return auth && user && !tokenHasExpired();
+  }
+  if (auth) {
+    if (user && !tokenHasExpired()) {
+      for (const role in auth) {
+        if (user.roles.includes(role)) {
+          return true;
+        }
+      }
+    }
     return false;
   }
-
-  if (typeof auth === 'boolean') {
-    return auth;
-  }
-
-  if (Array.isArray(auth)) {
-    return auth.some(role => user.roles.includes(role));
-  }
-
   return true; // no auth required
 }
