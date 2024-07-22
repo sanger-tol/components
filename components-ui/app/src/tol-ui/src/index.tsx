@@ -96,7 +96,12 @@ export {
 } from "./nav";
 
 // Services
-export { httpClient } from "./services";
+export {
+  httpClient,
+  fetchData,
+  fetchDetail,
+  DetailAttribute
+} from "./services";
 
 // Table
 export { RemoteTable } from "./table";
