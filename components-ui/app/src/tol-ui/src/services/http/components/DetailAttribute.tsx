@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Loader } from '../../../index';
 import { useState } from 'react';
-import { fetchDetail } from '../data';
+import { Detail } from '../tsDataSource';
 
 
 interface Props {
@@ -21,7 +21,7 @@ function DetailAttribute(props: Props) {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
 
-  fetchDetail(
+  Detail.fetchDetail(
     id,
     endpoint,
     baseUrl

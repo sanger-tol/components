@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from 'date-fns';
-import { fetchData } from '../services/http/data';
+import { fetchData } from '../services/http/tsDataSource';
 
 
 export function convertToPath(name: string) {

@@ -9,22 +9,8 @@ import { deepCopy } from '../general/Utils';
 import { httpClient } from '../services/http/httpClient';
 import { generateFilter, resetAllFilters } from '../filtering/Utils';
 import { useEffectUpdate } from '../hooks';
+import { Filter } from '../models/Filter';
 
-
-export interface AndFilter {
-  [operator: string]: {
-    value?: any,
-    negate?: boolean
-  }
-}
-
-export interface And {
-  [attribute: string]: AndFilter
-}
-
-export interface Filter {
-  and_: And
-}
 
 export interface Component {
   data: ComponentData

@@ -3,6 +3,6 @@
 // SPDX-License-Identifier: MIT
 
 export { httpClient } from "./http/httpClient";
-export { fetchData } from "./http/data";
-export { fetchDetail } from "./http/data";
+export { fetchData } from "./http/tsDataSource";
+export { fetchDetail } from "./http/tsDataSource";
 export { default as DetailAttribute } from "./http/components/DetailAttribute";
