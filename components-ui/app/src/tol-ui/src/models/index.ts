@@ -8,3 +8,5 @@ export type { HeaderButton } from "./HeaderButton";
 export type { Page } from "./Nav";
 export type { Dropdown } from "./Nav";
 export type { User } from "./User";
+export type { Filter } from "./Filter";
+export type { EntityMeta } from "./EntityMeta";
