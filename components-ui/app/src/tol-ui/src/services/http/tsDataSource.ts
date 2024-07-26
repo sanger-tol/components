@@ -4,26 +4,36 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Filter, EntityMeta } from '../../models';
+import { Filter, EntityConfig } from '../../models';
 import { httpClient } from './httpClient';
 
-const entityMetaPromises: {
-  [baseUrl: string]: Promise<EntityMeta>
+const entityConfigPromises: {
+  [baseUrl: string]: Promise<EntityConfig>
 } = {};
 
-const objectTypePromises: {
+const promises: {
   [objectType: string]: Promise<object>
 } = {};
 
-const detailCache: {
+const cache: {
   [objectType: string]: {
     [id: string]: number
   }
 } = {};
 
+interface DataSource {
+  baseUrl?: string,
+  client?: any
+}
+
 interface GetById {
   objectType: string,
   id: string
+}
+
+interface GetByIds {
+  objectType: string,
+  ids: string[]
 }
 
 interface GetList {
@@ -36,24 +46,35 @@ interface GetList {
 
 interface DataObject {
   objectType: string,
-  id: string | null
+  id: string,
+  attributes?: object,
+  relationships?: object
 }
 
 export class TsDataSource {
-  entityMeta: Promise<EntityMeta>;
+  private client: any;
+  private baseUrl: string|undefined;
+  private entityMeta: Promise<EntityConfig>;
 
-  constructor(
-    private baseUrl?: string
-  ) {
+  constructor({baseUrl, client}: DataSource) {
+    this.client = client ?? httpClient;
     this.baseUrl = baseUrl;
-    this.entityMeta = this.getEntityMeta();
+    this.entityMeta = this.getEntityConfig();
   }
-  
-  private async getEntityMeta(): Promise<EntityMeta> {
+
+  private dataObjectHandler = {
+    get: (target: any, key: string) => {
+      if (key === 'objectType') return target.type;
+      if (key === 'id') return target.id;
+      return target.attributes[key];
+    }
+  }
+
+  private async getEntityConfig(): Promise<EntityConfig> {
     const baseUrlKey = this.baseUrl || 'default';
   
-    if (!entityMetaPromises[baseUrlKey]) {
-      entityMetaPromises[baseUrlKey] = (async () => {
+    if (!entityConfigPromises[baseUrlKey]) {
+      entityConfigPromises[baseUrlKey] = (async () => {
         const key = 'typesMeta-' + baseUrlKey;
         let savedTypesMeta = JSON.parse(localStorage.getItem(key) || 'null');
         const expiry = savedTypesMeta === null ? null : new Date(savedTypesMeta['expiry']);
@@ -65,11 +86,11 @@ export class TsDataSource {
   
         // check if typesMeta exists and is not expired
         if (expiry === null || now > expiry) {
-          const attributes = await httpClient().get(
+          const attributes = await this.client().get(
             '/_config/attribute_metadata',
             {baseURL: this.baseUrl}
           );
-          const relationships = await httpClient().get(
+          const relationships = await this.client().get(
             '/_config/relationships',
             {baseURL: this.baseUrl}
           );
@@ -83,32 +104,45 @@ export class TsDataSource {
           localStorage.setItem(key, JSON.stringify(savedTypesMeta));
         }
 
-        return savedTypesMeta.data as EntityMeta;
+        return savedTypesMeta.data as EntityConfig;
       })().finally(() => {
-        delete entityMetaPromises[baseUrlKey];
+        delete entityConfigPromises[baseUrlKey];
       });
     }
-    return entityMetaPromises[baseUrlKey];
+    return entityConfigPromises[baseUrlKey];
   }
 
   public async getById({
     objectType,
     id
-  }: GetById) : Promise<DataObject|null> {
-    if (!objectTypePromises[objectType]) {
-      objectTypePromises[objectType] = Promise.resolve({});
-    }
-    objectTypePromises[objectType] = objectTypePromises[objectType].then(async () => {
-      if (!(objectType in detailCache)) detailCache[objectType] = {};
-      if (id in detailCache[objectType]) return detailCache[objectType][id];
-      const retrievedData = await httpClient().get(
+  }: GetById) : Promise<DataObject> {
+    promises[objectType] = promises[objectType] || Promise.resolve({});
+    promises[objectType] = promises[objectType].then(async () => {
+      if (!(objectType in cache)) cache[objectType] = {};
+      if (id in cache[objectType]) return cache[objectType][id];
+      const retrievedData = await this.client().get(
         `/${objectType}/${id}`,
-        {baseUrl: this.baseUrl}
+        {baseURL: this.baseUrl}
       )
-      detailCache[objectType][id] = retrievedData;
+      cache[objectType][id] = retrievedData;
       return retrievedData;
     });
-    return objectTypePromises[objectType] as Promise<DataObject>;
+    return new Proxy(
+      await promises[objectType],
+      this.dataObjectHandler
+    ) as Promise<DataObject>;
+  }
+
+  public async getByIds({
+    objectType,
+    ids
+  }: GetByIds) : Promise<DataObject[]> {
+    const dataObjects: DataObject[] = [];
+    for (const id of ids) {
+      const dataObject = await this.getById({ objectType, id });
+      dataObjects.push(dataObject);
+    }
+    return dataObjects;
   }
 
   public async getList({
@@ -118,43 +152,15 @@ export class TsDataSource {
     filter,
     sortBy
   }: GetList) : Promise<DataObject[]> {
-    const x = await httpClient().get(
+    return await this.client().get(
       `/${objectType}`,
       {
-        baseUrl: this.baseUrl,
+        baseURL: this.baseUrl,
         page: page,
         page_size: pageSize,
         filter: filter,
         sort_by: sortBy
       }
     )
-    return x
   }
 }
-
-/*
-// in :
-const transfer = {
-  type: "species",
-  id: '9606',
-  attributes: {
-    ...
-  }
-}
-
-// out:
-{
-  objectType: "species",
-  id: '9606',
-  ...attributes
-}
-
-
-// I'd do it (ed) like this:
-// 1. make a proxy based on the transfer
-// 2. with a getter override/intercept
-// 3. (for now) don't worry about relationships
-// 4. if key == id -> transfer.id
-// 5. objectType -> transfer.type
-// 6. other keys (k) .... k -> transfer.attributes.k
-*/

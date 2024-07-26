@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { Loader } from '../../../index';
 import { useState } from 'react';
-import { Detail } from '../tsDataSource';
 
 
 interface Props {
@@ -17,10 +16,11 @@ interface Props {
 }
 
 function DetailAttribute(props: Props) {
-  const { id, endpoint, baseUrl, attribute } = props;
+  //const { id, endpoint, baseUrl, attribute } = props;
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
 
+  /*
   Detail.fetchDetail(
     id,
     endpoint,
@@ -40,6 +40,7 @@ function DetailAttribute(props: Props) {
     }
     setLoading(false);
   });
+  */
 
   return (
     <div className='loading-cell'>

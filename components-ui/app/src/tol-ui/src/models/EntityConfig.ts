@@ -22,7 +22,7 @@ interface Values {
 	[id: string]: string
 }
 
-export interface EntityMeta {
+export default interface EntityConfig {
 	attributes: Attributes,
 	relationships: Relationships
 }

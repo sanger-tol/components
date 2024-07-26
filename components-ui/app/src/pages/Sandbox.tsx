@@ -5,27 +5,25 @@
  */
 
 import {
-  RemoteTable,
-  RemoteBarChart,
-  RemoteMap,
-  RemoteSunburst,
-  Button,
-  Filter,
-  Widgets,
-  Row,
-  Col,
-  env,
-  useZone,
-  resetZone
+  env
 } from '../tol-ui/src';
+import { TsDataSource } from '../tol-ui/src/services/http/tsDataSource';
 
 
 function Sandbox() {
+
+  const ds = new TsDataSource({
+    baseUrl: env.TOL_DATA
+  });
+
+  ds.getList({
+    objectType: 'species'
+  }).then((dataObject) => {
+    console.log(dataObject);
+  });
+
   return (
-    <div className="bioscan-report-card">
-      <Widgets
-        components={components}
-      />
+    <div>
     </div>
   );
 }
