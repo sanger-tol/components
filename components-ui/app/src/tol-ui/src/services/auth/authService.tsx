@@ -30,7 +30,7 @@ export function confirmAuthorised(user: any, auth?: boolean|string[]) {
   }
   if (auth) {
     if (user && !tokenHasExpired()) {
-      for (const role in auth) {
+      for (const role of auth) {
         if (user.roles.includes(role)) {
           return true;
         }
