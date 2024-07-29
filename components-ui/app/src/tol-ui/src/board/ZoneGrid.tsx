@@ -59,6 +59,8 @@ function ZoneGrid(props: Props) {
     components: []
   });
 
+  console.log(z);
+
   const getComponent = (id: string, type: string, props: any) => {
     switch (type) {
     case 'count':

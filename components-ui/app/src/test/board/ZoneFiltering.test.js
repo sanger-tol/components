@@ -3,19 +3,19 @@
 // SPDX-License-Identifier: MIT
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import ResponsiveWidget from './ResponsiveWidget';
+import { render, screen, fireEvent, expect, test, describe } from '@jest/globals';
+import { ResponsiveWidget } from '../../tol-ui/src';
 import { Zone, getWidgetOrder } from './Utils';
 import { resetAllFilters, removeComponent } from '../filtering/Utils';
 
-jest.mock('./Utils', () => ({
-  ...jest.requireActual('./Utils'),
+
+jest.mock('../../tol-ui/src/board/Utils', () => ({
+  ...jest.requireActual('../../tol-ui/src/board/Utils'),
   getWidgetOrder: jest.fn(),
 }));
 
-jest.mock('../filtering/Utils', () => ({
-  ...jest.requireActual('../filtering/Utils'),
+jest.mock('../../tol-ui/src/filtering/Utils', () => ({
+  ...jest.requireActual('../../tol-ui/src/filtering/Utils'),
   resetAllFilters: jest.fn(),
   removeComponent: jest.fn(),
 }));
@@ -25,12 +25,12 @@ const initialWidgets = {
     widget1: { size: 'small', element: <div>Widget 1</div> },
     widget2: { size: 'medium', element: <div>Widget 2</div> },
   },
-  order: ['widget1', 'widget2'],
+  order: ['widget1', 'widget2']
 };
 
 const zoneMock = {
-  order: [],
   components: {},
+  order: []
 };
 
 describe('ResponsiveWidget', () => {
