@@ -72,10 +72,10 @@ export class TsDataSource {
 
   private dataObjectHandler = {
     get: (target: any, key: string) => {
-      const data = target.data.data;
-      if (key === 'objectType') return data.type;
-      if (key === 'id') return data.id;
-      return data.attributes[key];
+      if (!target) return null;
+      if (key === 'objectType') return target.type;
+      if (key === 'id') return target.id;
+      return target.attributes[key];
     }
   }
 
@@ -131,15 +131,20 @@ export class TsDataSource {
     id
   }: GetById) : Promise<DataObjectOrNull> {
     this.initializeCacheAndPromises(objectType);
-    const data = await promises[objectType].then(async () => {
-      if (id in cache[objectType]) return cache[objectType][id];
-      const retrievedData = await this.client().get(
-        `/${objectType}/${id}`,
-        {baseURL: this.baseUrl}
-      )
-      cache[objectType][id] = retrievedData;
-      return retrievedData;
-    });
+    const data = await promises[objectType]
+      .then(async () => {
+        if (id in cache[objectType]) return cache[objectType][id];
+        const retrievedData = await this.client().get(
+          `/${objectType}/${id}`,
+          {baseURL: this.baseUrl}
+        )
+        cache[objectType][id] = retrievedData.data.data;
+        return retrievedData.data.data;
+      })
+      .catch((error) => {
+        if (error.response.status === 404) return null;
+        throw error;
+      });
     return new Proxy(data, this.dataObjectHandler);
   }
 
