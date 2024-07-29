@@ -16,10 +16,20 @@ function Sandbox() {
     baseUrl: env.TOL_DATA
   });
 
-  ds.getList({
-    objectType: 'species'
+  ds.getById({
+    objectType: 'species',
+    id: '9606'
   }).then((dataObject) => {
-    console.log(dataObject);
+    console.log(dataObject!.sts_scientific_name);
+  });
+
+  ds.getByIds({
+    objectType: 'species',
+    ids: ['9606', '10090']
+  }).then((dataObjects) => {
+    dataObjects.forEach((dataObject) => {
+      console.log(dataObject!.sts_scientific_name);
+    })
   });
 
   return (

@@ -7,19 +7,26 @@ SPDX-License-Identifier: MIT
 import { Filter, EntityConfig } from '../../models';
 import { httpClient } from './httpClient';
 
-const entityConfigPromises: {
-  [baseUrl: string]: Promise<EntityConfig>
-} = {};
 
-const promises: {
-  [objectType: string]: Promise<object>
-} = {};
-
-const cache: {
+interface Cache {
   [objectType: string]: {
     [id: string]: number
   }
-} = {};
+}
+
+interface Promises {
+  [objectType: string]: Promise<object>;
+}
+
+interface EntityConfigPromises {
+  [baseUrl: string]: Promise<EntityConfig>;
+}
+
+const promises: Promises = {};
+
+const cache: Cache = {};
+
+const entityConfigPromises: EntityConfigPromises = {};
 
 interface DataSource {
   baseUrl?: string,
@@ -47,9 +54,10 @@ interface GetList {
 interface DataObject {
   objectType: string,
   id: string,
-  attributes?: object,
-  relationships?: object
+  [attribute: string]: any
 }
+
+type DataObjectOrNull = DataObject | null;
 
 export class TsDataSource {
   private client: any;
@@ -64,10 +72,16 @@ export class TsDataSource {
 
   private dataObjectHandler = {
     get: (target: any, key: string) => {
-      if (key === 'objectType') return target.type;
-      if (key === 'id') return target.id;
-      return target.attributes[key];
+      const data = target.data.data;
+      if (key === 'objectType') return data.type;
+      if (key === 'id') return data.id;
+      return data.attributes[key];
     }
+  }
+
+  private initializeCacheAndPromises(objectType: string) {
+    cache[objectType] = cache[objectType] ?? {};
+    promises[objectType] = promises[objectType] ?? Promise.resolve();
   }
 
   private async getEntityConfig(): Promise<EntityConfig> {
@@ -115,10 +129,9 @@ export class TsDataSource {
   public async getById({
     objectType,
     id
-  }: GetById) : Promise<DataObject> {
-    promises[objectType] = promises[objectType] || Promise.resolve({});
-    promises[objectType] = promises[objectType].then(async () => {
-      if (!(objectType in cache)) cache[objectType] = {};
+  }: GetById) : Promise<DataObjectOrNull> {
+    this.initializeCacheAndPromises(objectType);
+    const data = await promises[objectType].then(async () => {
       if (id in cache[objectType]) return cache[objectType][id];
       const retrievedData = await this.client().get(
         `/${objectType}/${id}`,
@@ -127,22 +140,16 @@ export class TsDataSource {
       cache[objectType][id] = retrievedData;
       return retrievedData;
     });
-    return new Proxy(
-      await promises[objectType],
-      this.dataObjectHandler
-    ) as Promise<DataObject>;
+    return new Proxy(data, this.dataObjectHandler);
   }
 
   public async getByIds({
     objectType,
     ids
-  }: GetByIds) : Promise<DataObject[]> {
-    const dataObjects: DataObject[] = [];
-    for (const id of ids) {
-      const dataObject = await this.getById({ objectType, id });
-      dataObjects.push(dataObject);
-    }
-    return dataObjects;
+  }: GetByIds) : Promise<DataObjectOrNull[]> {
+    this.initializeCacheAndPromises(objectType);
+    const promiseBulk = ids.map(id => this.getById({ objectType, id }));
+    return await Promise.all(promiseBulk);
   }
 
   public async getList({
