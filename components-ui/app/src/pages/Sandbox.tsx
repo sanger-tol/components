@@ -16,20 +16,35 @@ function Sandbox() {
     baseUrl: env.TOL_DATA
   });
 
+  /*
   ds.getById({
     objectType: 'species',
     id: '9606'
   }).then((dataObject) => {
-    console.log(dataObject!.sts_scientific_name);
+    console.log(dataObject?.sts_scientific_name);
   });
 
   ds.getByIds({
     objectType: 'species',
-    ids: ['9606', '10090']
+    ids: ['9606', 'abc', '9606']
   }).then((dataObjects) => {
-    dataObjects.forEach((dataObject) => {
-      console.log(dataObject!.sts_scientific_name);
-    })
+    console.log(dataObjects);
+  });
+  */
+
+  ds.getListPage({
+    objectType: 'species',
+    pageSize: 50,
+    page: 3,
+    sortBy: 'sts_scientific_name'
+  }).then((dataObjects) => {
+    console.log(dataObjects);
+    ds.getById({
+      objectType: 'species',
+      id: '644'
+    }).then((dataObject) => {
+      console.log(dataObject?.sts_scientific_name);
+    });
   });
 
   return (

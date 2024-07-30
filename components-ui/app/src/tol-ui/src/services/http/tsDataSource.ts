@@ -58,6 +58,7 @@ interface DataObject {
 }
 
 type DataObjectOrNull = DataObject | null;
+type DataObjectListOrNull = DataObject[] | null;
 
 export class TsDataSource {
   private client: any;
@@ -72,7 +73,6 @@ export class TsDataSource {
 
   private dataObjectHandler = {
     get: (target: any, key: string) => {
-      if (!target) return null;
       if (key === 'objectType') return target.type;
       if (key === 'id') return target.id;
       return target.attributes[key];
@@ -129,50 +129,67 @@ export class TsDataSource {
   public async getById({
     objectType,
     id
-  }: GetById) : Promise<DataObjectOrNull> {
+  }: GetById): Promise<DataObjectOrNull> {
     this.initializeCacheAndPromises(objectType);
-    const data = await promises[objectType]
-      .then(async () => {
-        if (id in cache[objectType]) return cache[objectType][id];
-        const retrievedData = await this.client().get(
-          `/${objectType}/${id}`,
-          {baseURL: this.baseUrl}
-        )
-        cache[objectType][id] = retrievedData.data.data;
-        return retrievedData.data.data;
+    if (id in cache[objectType]) { // if object is in cache, return it
+      return new Proxy(cache[objectType][id], this.dataObjectHandler);
+    }
+    if (!(id in promises[objectType])) {
+      promises[objectType][id] = this.client().get(
+        `/${objectType}/${id}`,
+        {baseURL: this.baseUrl}
+      )
+      .then((response: any) => {
+        cache[objectType][id] = response.data.data;
+        return new Proxy(response.data.data, this.dataObjectHandler);
       })
-      .catch((error) => {
+      .catch((error: any) => {
         if (error.response.status === 404) return null;
         throw error;
       });
-    return new Proxy(data, this.dataObjectHandler);
+    }
+    return promises[objectType][id];
   }
 
   public async getByIds({
     objectType,
     ids
-  }: GetByIds) : Promise<DataObjectOrNull[]> {
+  }: GetByIds): Promise<DataObjectOrNull[]> {
     this.initializeCacheAndPromises(objectType);
     const promiseBulk = ids.map(id => this.getById({ objectType, id }));
     return await Promise.all(promiseBulk);
   }
 
-  public async getList({
+  public async getListPage({
     objectType,
     page,
     pageSize,
     filter,
     sortBy
-  }: GetList) : Promise<DataObject[]> {
+  }: GetList): Promise<DataObjectListOrNull[]> {
     return await this.client().get(
       `/${objectType}`,
       {
         baseURL: this.baseUrl,
-        page: page,
-        page_size: pageSize,
-        filter: filter,
-        sort_by: sortBy
+        params: {
+          page: page,
+          page_size: pageSize,
+          filter: filter,
+          sort_by: sortBy
+        }
       }
     )
+    .then((response: any) => {
+      cache[objectType] = cache[objectType] || {};
+      console.log(cache);
+      return response.data.data.map((object: any) => {
+        cache[objectType][object.id] = object;
+        return new Proxy(object, this.dataObjectHandler);
+      });
+    })
+    .catch((error: any) => {
+      if (error.response.status === 404) return null;
+      throw error;
+    });
   }
 }
