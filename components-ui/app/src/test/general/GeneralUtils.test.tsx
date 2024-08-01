@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import {expect, test, jest} from '@jest/globals';
+import {expect, test, vitest} from 'vitest';
 import {
   isPropDefined,
   falseIfUndefined,
@@ -41,8 +41,8 @@ test('normailseCaps function', () => {
 })
 
 test('timeout function', () => {
-  jest.useFakeTimers()
-  jest.spyOn(global, 'setTimeout')
+  vitest.useFakeTimers()
+  vitest.spyOn(global, 'setTimeout')
   timeout(1)
   expect(setTimeout).toHaveBeenCalledTimes(1)
 })

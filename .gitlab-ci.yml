@@ -10,7 +10,6 @@ include:
 variables:
   APP_NAME: components
   DISABLE_UI_LINT: "true"
-  DISABLE_UI_TEST: "true"
 
 deploy-package:
   stage: deploy
