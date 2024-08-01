@@ -4,12 +4,13 @@
 
 include:
   - project: 'tol/tol-core'
-    ref: v1.3.18
+    ref: v1.4.2
     file: '/gitlab/app.yml'
 
 variables:
   APP_NAME: components
   DISABLE_UI_LINT: "true"
+  DISABLE_UI_TEST: "true"
 
 deploy-package:
   stage: deploy

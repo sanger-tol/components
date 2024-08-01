@@ -107,7 +107,7 @@ function Tables() {
     {
       component: dbTable,
       type: 'full'
-    }
+    },
   ];
 
   return (

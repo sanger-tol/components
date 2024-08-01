@@ -10,12 +10,12 @@ export interface Default {
   hidden?: boolean;
 }
 
-export default interface Page extends Default {
+export interface Page extends Default {
   element?: JSX.Element;
   detail?: JSX.Element;
 } // eslint-disable-line
 
-export default interface Dropdown extends Default {
+export interface Dropdown extends Default {
   // dropdown attributes override those from the page's
   pages?: Page[];
 } // eslint-disable-line

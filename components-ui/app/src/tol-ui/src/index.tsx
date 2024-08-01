@@ -80,7 +80,7 @@ export {
 } from "./hooks";
 
 // Models
-export {
+export type {
   HeaderButton,
   Page,
   Dropdown
