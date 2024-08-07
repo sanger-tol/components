@@ -49,7 +49,8 @@ export interface Components {
 export interface Zone {
   components: Components,
   order: string[],
-  filter?: Filter, // global zone filter
+  filter?: Filter,
+  defaultFilter?: Filter,
   type?: string
 }
 
@@ -115,7 +116,9 @@ export function defineZone(objectType: string, components: ComponentData[]) {
   const zone: Zone = {
     components: {},
     order: [],
-    type: objectType
+    type: objectType,
+    filter: undefined,
+    defaultFilter: undefined
   };
   for (const component of components) {
     defineComponent(component, zone);
@@ -149,38 +152,41 @@ export function useZone(params: {
   } as ZoneMeta;
 }
 
+export function generateTranslatedFilter(
+  source: ZoneMeta,
+  translations: {
+    [sourceAttribute: string]: string
+  }
+) {
+  const sourceFilter = generateFilter(source.zone);
+  const translatedFilter = {and_: {}};
+  Object.entries(translations).map(([sourceAttribute, targetAttribute]) => {
+    if (sourceAttribute in sourceFilter!.and_) {
+      translatedFilter.and_[targetAttribute] = sourceFilter!.and_[sourceAttribute]
+    }
+  });
+  return translatedFilter;
+}
+
 export function useTranslator(params: {
-  source: ZoneMeta, // source zone
-  target: ZoneMeta, // target zone
+  source: ZoneMeta,
+  target: ZoneMeta,
   translations: {
     [sourceAttribute: string]: string
   }
 }) {
-  /*
   const {source, target, translations} = params;
-  const prevFilter = useRef(undefined);
+  const prevFilter: any = useRef({and_: {}});
 
   useEffectUpdate(() => {
-    const sourceFilter = generateFilter(source.zone);
-    console.log(JSON.stringify(sourceFilter), JSON.stringify(prevFilter.current));
-    if (JSON.stringify(sourceFilter) !== JSON.stringify(prevFilter.current)) {
+    const translatedFilter = generateTranslatedFilter(source, translations);
+    if (JSON.stringify(translatedFilter) !== JSON.stringify(prevFilter.current)) {
       resetAllFilters(target.zone);
-      Object.entries(translations).map(([sourceAttribute, targetAttribute]) => {
-        if (sourceAttribute in sourceFilter!.and_) {
-          if (!target.zone.filter) target.zone.filter = {and_: {}};
-          // merge filter with new key
-          target.zone.filter.and_ = mergeAndFilters(
-            target.zone.filter.and_,
-            {[targetAttribute]: sourceFilter!.and_[sourceAttribute]}
-          );
-        }
-      });
+      target.zone.filter = translatedFilter;
       target.setZone({...target.zone});
-      prevFilter.current = sourceFilter;
+      prevFilter.current = translatedFilter;
     }
   }, [source.zone]);
-  */
-  return {and_: {}};
 }
 
 export function getWidgetOrder(layout, widgets) {
