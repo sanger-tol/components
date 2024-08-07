@@ -121,7 +121,7 @@ function RemoteMap(props: Props) {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState<number|undefined>(undefined);
-  const filter = zone !== undefined ? generateFilter(id, zone) : {};
+  const filter = zone !== undefined ? generateFilter(zone, id) : {};
 
   // providing a pageSize default
   let pageSize = 2500;
@@ -137,7 +137,8 @@ function RemoteMap(props: Props) {
         filter: filter
       }
     }).then((res: any) => {
-      if (res.data.meta.total <= pageSize) {
+      const count = res.data.meta.total;
+      if (count <= pageSize) {
         setCount(res.data.meta.total);
         httpClient().get('/' + endpoint, {
           baseURL: baseUrl, 

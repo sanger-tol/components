@@ -141,18 +141,6 @@ export function deepCopy(o: object) {
   );
 }
 
-export function changeKey(o: any, oldKey: string, newKey: string) {
-  if (oldKey !== newKey && o[oldKey]) {
-    Object.defineProperty(
-      o,
-      newKey,
-      o[oldKey]
-    );
-    delete o[oldKey];
-  }
-  return o;
-}
-
 // types meta
 interface Attributes {
   [id: string]: object

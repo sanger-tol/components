@@ -9,7 +9,7 @@ export type {
   Zone,
   Component,
 } from "./Utils";
-export { useZone } from "./Utils";
+export { useZone, useTranslator } from "./Utils";
 export { default as Dashboard } from "./Dashboard";
 export { default as ZoneGrid } from "./ZoneGrid";
 export { default as ComponentModal } from "./ComponentModal";

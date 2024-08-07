@@ -4,9 +4,11 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { deepCopy } from '../general/Utils';
 import { httpClient } from '../services/http/httpClient';
+import { generateFilter, mergeAndFilters, resetAllFilters } from '../filtering/Utils';
+import { useEffectUpdate } from '../hooks';
 
 
 export interface AndFilter {
@@ -47,6 +49,7 @@ export interface Components {
 export interface Zone {
   components: Components,
   order: string[],
+  filter?: Filter, // global zone filter
   type?: string
 }
 
@@ -121,10 +124,18 @@ export function defineZone(objectType: string, components: ComponentData[]) {
   return zone;
 }
 
+interface ZoneMeta {
+  endpoint: string,
+  baseUrl?: string,
+  zone: Zone,
+  setZone: any
+}
+
 export function useZone(params: {
   endpoint: string,
   baseUrl?: string,
-  components: object[]
+  components: object[],
+  filter?: Filter
 }) {
   const {endpoint, baseUrl, components} = params;
   const [zone, setZone] = useState(
@@ -135,7 +146,41 @@ export function useZone(params: {
     baseUrl: baseUrl,
     zone: zone,
     setZone: setZone
-  };
+  } as ZoneMeta;
+}
+
+export function useTranslator(params: {
+  source: ZoneMeta, // source zone
+  target: ZoneMeta, // target zone
+  translations: {
+    [sourceAttribute: string]: string
+  }
+}) {
+  /*
+  const {source, target, translations} = params;
+  const prevFilter = useRef(undefined);
+
+  useEffectUpdate(() => {
+    const sourceFilter = generateFilter(source.zone);
+    console.log(JSON.stringify(sourceFilter), JSON.stringify(prevFilter.current));
+    if (JSON.stringify(sourceFilter) !== JSON.stringify(prevFilter.current)) {
+      resetAllFilters(target.zone);
+      Object.entries(translations).map(([sourceAttribute, targetAttribute]) => {
+        if (sourceAttribute in sourceFilter!.and_) {
+          if (!target.zone.filter) target.zone.filter = {and_: {}};
+          // merge filter with new key
+          target.zone.filter.and_ = mergeAndFilters(
+            target.zone.filter.and_,
+            {[targetAttribute]: sourceFilter!.and_[sourceAttribute]}
+          );
+        }
+      });
+      target.setZone({...target.zone});
+      prevFilter.current = sourceFilter;
+    }
+  }, [source.zone]);
+  */
+  return {and_: {}};
 }
 
 export function getWidgetOrder(layout, widgets) {
