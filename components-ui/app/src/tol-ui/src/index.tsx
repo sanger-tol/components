@@ -11,6 +11,7 @@ export { Link };
 // dashboard
 export {
   useZone,
+  useTranslator,
   ZoneGrid,
   ResponsiveWidget,
   ComponentModal,

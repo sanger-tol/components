@@ -75,7 +75,7 @@ function RemoteSunburst(props: Props) {
   });
 
   useEffect(() => {
-    const compoundedFilter = generateFilter(id, zone);
+    const compoundedFilter = generateFilter(zone, id);
     // will trigger [filter] useEffect if update has occured
     if (filterHasUpdated(setFilter, filter, compoundedFilter)) {
       resetFiltersBelow({id: id, zone: zone!});
@@ -128,7 +128,7 @@ function RemoteSunburst(props: Props) {
       httpClient().post('/' + endpoint + ":aggregations", aggs, {
         baseURL: baseUrl,
         params: {
-          filter: generateFilter(id, zone!, true)
+          filter: generateFilter(zone, id, true)
         }
       }).then((res: any) => {
         const aggs = res.data.meta.aggregations;

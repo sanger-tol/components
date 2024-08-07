@@ -5,6 +5,7 @@
  */
 
 
+import { useEffect } from 'react';
 import {
   Filter,
   RemoteMap,
@@ -31,16 +32,28 @@ function Sandbox() {
     baseUrl: env.TOL_DATA,
     components: [
       {id: 'map-1'}
-    ]
+    ],
+    filter: useTranslator({
+      source: speciesZone,
+      translations: {
+        goat_family_name: 'sts_species.sts_family'
+      }
+    })
   });
 
+  /*
   useTranslator({
     source: speciesZone,
     target: sampleZone,
     translations: {
-      goat_family_name: 'sts_species.sts_family_name'
+      goat_family_name: 'sts_species.sts_family'
     }
   })
+  */
+
+  useEffect(() => {
+    console.log('sampleZone', sampleZone.zone, 'speciesZone', speciesZone.zone);
+  }, [sampleZone.zone]);
 
   const speciesComponent = (
     <div>
@@ -68,8 +81,8 @@ function Sandbox() {
   const sampleComponent = (
     <RemoteMap
       id='map-1'
-      longitudeKey="sts_sample.sts_longitude.keyword"
-      latitudeKey="sts_sample.sts_latitude.keyword"
+      longitudeKey="sts_longitude"
+      latitudeKey="sts_latitude"
       {...sampleZone}
     />
   );
