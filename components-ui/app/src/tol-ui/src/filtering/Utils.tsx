@@ -102,6 +102,7 @@ export function resetFiltersBelow(params: {
 }
 
 export function resetAllFilters(zone: Zone) {
+  zone.filter = deepCopy(zone.defaultFilter!);
   for (const currentId of zone.order) {
     zone.components[currentId].data.filter = deepCopy(zone.components[currentId].data.defaultFilter!);
     zone.components[currentId].data.subFilter = undefined;

@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-
-import { useEffect } from 'react';
 import {
   Filter,
   RemoteMap,
@@ -32,28 +30,17 @@ function Sandbox() {
     baseUrl: env.TOL_DATA,
     components: [
       {id: 'map-1'}
-    ],
-    filter: useTranslator({
-      source: speciesZone,
-      translations: {
-        goat_family_name: 'sts_species.sts_family'
-      }
-    })
+    ]
   });
 
-  /*
   useTranslator({
     source: speciesZone,
     target: sampleZone,
     translations: {
-      goat_family_name: 'sts_species.sts_family'
+      goat_family_name: 'sts_species.sts_family',
+      goat_genus_name: 'sts_species.sts_genus'
     }
   })
-  */
-
-  useEffect(() => {
-    console.log('sampleZone', sampleZone.zone, 'speciesZone', speciesZone.zone);
-  }, [sampleZone.zone]);
 
   const speciesComponent = (
     <div>
