@@ -173,10 +173,11 @@ export function useTranslator(params: {
   target: ZoneMeta,
   translations: {
     [sourceAttribute: string]: string
-  }
+  },
+  defaultFilter?: Filter
 }) {
-  const {source, target, translations} = params;
-  const prevFilter: any = useRef({and_: {}});
+  const {source, target, translations, defaultFilter} = params;
+  const prevFilter: any = useRef(defaultFilter ? defaultFilter : {and_: {}});
 
   useEffectUpdate(() => {
     const translatedFilter = generateTranslatedFilter(source, translations);

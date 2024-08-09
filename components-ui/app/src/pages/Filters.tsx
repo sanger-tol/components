@@ -15,7 +15,8 @@ import {
   Widgets,
   env,
   useZone,
-  resetZone
+  resetZone,
+  useTranslator
 } from '../tol-ui/src';
 
 
@@ -328,6 +329,63 @@ function Filters() {
     </div>
   );
 
+  const speciesTranslatorZone = useZone({
+    endpoint: 'species',
+    baseUrl: env.TOL_DATA,
+    components: [
+      {id: 'filter-1'},
+      {id: 'sunburst-1'}
+    ]
+  });
+
+  const sampleTranslatorZone = useZone({
+    endpoint: 'sample',
+    baseUrl: env.TOL_DATA,
+    components: [
+      {id: 'map-1'}
+    ]
+  });
+
+  useTranslator({
+    source: speciesTranslatorZone,
+    target: sampleTranslatorZone,
+    translations: {
+      goat_family_name: 'sts_species.sts_family',
+      goat_genus_name: 'sts_species.sts_genus'
+    }
+  })
+
+  const translatorComponent = (
+    <div>
+      <Filter
+        attribute='goat_family_name'
+        rename='Family Name'
+        type='str'
+        componentId='filter-1'
+        {...speciesTranslatorZone}
+      />
+      <div style={{height: 10}}/>
+      <RemoteSunburst
+        title="Example Sunburst"
+        id="sunburst-1"
+        sliceBy={[
+          "goat_family_name",
+          "goat_genus_name"
+        ]}
+        height={400}
+        {...speciesTranslatorZone}
+      />
+      <div style={{height: 30}}/>
+      <RemoteMap
+        id='map-1'
+        longitudeKey="sts_longitude"
+        latitudeKey="sts_latitude"
+        height={400}
+        {...sampleTranslatorZone}
+      />
+    </div>
+  );
+
   const components = [
     {
       component: <h2>Filters</h2>,
@@ -347,6 +405,10 @@ function Filters() {
     },
     {
       component: chart,
+      type: 'full'
+    },
+    {
+      component: translatorComponent,
       type: 'full'
     }
   ];
