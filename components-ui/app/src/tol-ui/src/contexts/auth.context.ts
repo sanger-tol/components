@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import { createContext, useContext } from 'react';
-import User from '../models/User'
+import { User } from '../models/User'
 
 interface AuthContextValue {
   token: string;
