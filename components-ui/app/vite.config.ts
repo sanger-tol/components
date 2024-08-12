@@ -5,10 +5,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
-import basicSsl from '@vitejs/plugin-basic-ssl'
+import fs from 'fs';
 
 export default defineConfig({
-    plugins: [react(), viteTsconfigPaths(), basicSsl()],
+    plugins: [react(), viteTsconfigPaths()],
     build: {
         emptyOutDir: true,
         outDir: 'build',
@@ -16,7 +16,10 @@ export default defineConfig({
     server: {
         host: '0.0.0.0',
         port: 3000,
-        https: true
+        https: {
+            key: fs.readFileSync('/localhost.key'),
+            cert: fs.readFileSync('/localhost.crt'),
+          }
     },
     test: {
         environment: 'jsdom',

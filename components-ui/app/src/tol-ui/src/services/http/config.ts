@@ -24,7 +24,7 @@ const serializeParams = params => Object.entries(params).filter(
 ).join('&');
 
 export const CONFIG = {
-  baseURL: env.API_PATH,
+  baseURL: env.API_PATH + (env.API_DATA_PATH || '/data'),
   headers: {
     'Content-Type': 'application/json',
   },

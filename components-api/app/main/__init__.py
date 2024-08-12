@@ -52,16 +52,18 @@ def application():
     # Data endpoints
     blueprint_data_local = data_blueprint(sql_datasource)
     app.register_blueprint(blueprint_data_local, name='local',
-                           url_prefix=os.getenv('API_PATH'))
+                           url_prefix=os.getenv('API_PATH') + os.getenv('API_DATA_PATH', ''))
 
     # The system endpoints
     blueprint_system = system_blueprint(sql_datasource)
-    app.register_blueprint(blueprint_system, url_prefix=os.getenv('API_PATH') + '/system')
+    app.register_blueprint(
+        blueprint_system,
+        url_prefix=os.getenv('API_PATH') + os.getenv('API_SYSTEM_PATH', ''))
 
     auth_bp = db_auth_blueprint(
         Base,
         os.environ['DB_URI'],
-        url_prefix=os.getenv('API_PATH') + '/auth',
+        url_prefix=os.getenv('API_PATH') + os.getenv('API_AUTH_PATH', ''),
         oidc_id_target='id'
     )
     app.register_blueprint(auth_bp)
