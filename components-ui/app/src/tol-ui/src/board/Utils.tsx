@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState, useRef } from 'react';
 import { deepCopy } from '../general/Utils';
 import { httpClient } from '../services/http/httpClient';
-import { generateFilter, mergeAndFilters, resetAllFilters } from '../filtering/Utils';
+import { generateFilter, resetAllFilters } from '../filtering/Utils';
 import { useEffectUpdate } from '../hooks';
 
 
