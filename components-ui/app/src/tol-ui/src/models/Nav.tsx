@@ -4,18 +4,18 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export interface Default {
+type Default = {
   name: string;
   auth?: boolean|string[];
   hidden?: boolean;
 }
 
-export interface Page extends Default {
+export type Page = Default & {
   element?: JSX.Element;
   detail?: JSX.Element;
-} // eslint-disable-line
+};
 
-export interface Dropdown extends Default {
+export type Dropdown = Default & {
   // dropdown attributes override those from the page's
   pages?: Page[];
 } // eslint-disable-line

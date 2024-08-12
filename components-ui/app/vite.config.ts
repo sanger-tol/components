@@ -7,6 +7,17 @@ import react from '@vitejs/plugin-react'
 import viteTsconfigPaths from 'vite-tsconfig-paths'
 import fs from 'fs';
 
+// Paths to the key and certificate files
+const keyPath = '/localhost.key';
+const certPath = '/localhost.crt';
+
+// Check if both the key and certificate files exist
+const httpsConfig = fs.existsSync(keyPath) && fs.existsSync(certPath) ? {
+  key: fs.readFileSync(keyPath),
+  cert: fs.readFileSync(certPath),
+} : false;
+
+
 export default defineConfig({
     plugins: [react(), viteTsconfigPaths()],
     build: {
@@ -16,10 +27,7 @@ export default defineConfig({
     server: {
         host: '0.0.0.0',
         port: 3000,
-        https: {
-            key: fs.readFileSync('/localhost.key'),
-            cert: fs.readFileSync('/localhost.crt'),
-          }
+        https: httpsConfig, // Apply the HTTPS configuration conditionally
     },
     test: {
         environment: 'jsdom',
