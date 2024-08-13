@@ -131,6 +131,8 @@ function RemoteMap(props: Props) {
   
   useEffect(() => {
     setLoading(true);
+    setWarningMessage('');
+    setErrorMessage('');
     httpClient().get('/' + endpoint + ":count", {
       baseURL: baseUrl,
       params: {
