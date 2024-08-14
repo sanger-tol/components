@@ -17,8 +17,8 @@ services:
 
   components-api:
     build:
-      context: ../
-      dockerfile: components/components-api/Dockerfile.dev
+      context: components-api
+      dockerfile: Dockerfile.dev
     image: components-api
     environment:
       - DB_URI
@@ -73,8 +73,10 @@ services:
 
   components-ui-test:
     image: components-ui
+    build:
+      context: components-ui/.
+      dockerfile: Dockerfile.dev
     command: yarn test
-    stdin_open: true
     environment:
       - NODE_ENV=development
     volumes:

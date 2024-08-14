@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export { default as HeaderButton } from "./HeaderButton";
-export { default as Page } from "./Nav";
-export { default as Dropdown } from "./Nav";
-export { default as User } from "./User";
+export type { HeaderButton } from "./HeaderButton";
+export type { Page } from "./Nav";
+export type { Dropdown } from "./Nav";
+export type { User } from "./User";

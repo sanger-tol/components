@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import {expect, test, describe} from '@jest/globals';
+import {expect, test, describe} from 'vitest';
 import { deepCopy } from '../../tol-ui/src/general/Utils'
 import {
     defineComponent,
