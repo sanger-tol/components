@@ -1,6 +1,6 @@
 {
   "name": "components-ui",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "private": true,
   "proxy": "http://components-api:80",
   "dependencies": {
@@ -50,7 +50,6 @@
   },
   "devDependencies": {
     "vitest": "2.0.5",
-    "@vitejs/plugin-basic-ssl": "1.1.0",
     "@testing-library/react": "14.2.0",
     "@testing-library/user-event": "14.5.2"
   },

@@ -104,7 +104,7 @@ function RemoteTable(props: Props) {
   };
 
   useEffect(() => {
-    const compoundedFilter = generateFilter(id, zone);
+    const compoundedFilter = generateFilter(zone, id);
     // will trigger [filter] useEffect if update has occured
     filterHasUpdated(setFilter, filter, compoundedFilter);
     // resetFiltersBelow({id: id, zone: zone!}); occurs in <Filter />: onFilter()

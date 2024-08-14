@@ -11,7 +11,6 @@ import {
 
 
 function Sandbox() {
-
   return (
     <div>
       <Dashboard id='sandbox-zone'/>

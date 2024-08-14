@@ -545,7 +545,7 @@ function initialiseOriginDataset(
       backgroundColor: [],
       hoverBackgroundColor: [],
       borderColor: getCssVarValue("--bs-body-bg"),
-      borderWidth: 1,
+      borderWidth: 0.2,
       borderAlign: 'centre',
       hoverOffset: 0
     });

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect } from 'react';
-import { Zone, Filter, defineComponent } from '../board/Utils';
+import { Zone, Filter, defineComponent, And } from '../board/Utils';
 import { deepCopy, isEmptyObject } from '../general/Utils';
 
 
@@ -44,31 +44,31 @@ export function mergeAndFilters(target: object, incoming: object) {
     const currentIn = id in incoming ? incoming[id] : {};
     output[id] = Object.assign(currentOut, currentIn);
   }
-  return output as Filter;
+  return output as And;
 }
 
-export function generateFilter(id: string, zone?: object, useSubFilter?: boolean) {
+export function generateFilter(zone?: object, id?: string, includeSubFilter?: boolean) {
   if (zone === undefined) return undefined;
   const z = zone as Zone;
-  const aboveComponents = getComponentsAbove(id, z.order);
-  let compoundedFilter = {};
+  const aboveComponents = id ? getComponentsAbove(id, z.order) : z.order;
+  let compoundedFilter: And = z.filter ? z.filter.and_ : {};
   // loop through above components
   for (const currentId of aboveComponents) {
     // exclude pass throughs except self
     if (z.components[currentId].data.filterPassThrough && id !== currentId) {
       continue;
     }
-    let currentFilter: any = z.components[currentId].data.filter!.and_;
+    let currentFilter: And = z.components[currentId].data.filter!.and_;
     // include sub filter if required
     const subFilter = z.components[currentId].data.subFilter;
-    if ((currentId !== id || useSubFilter) && subFilter) {
+    if ((currentId !== id || includeSubFilter) && subFilter) {
       currentFilter = mergeAndFilters(currentFilter, subFilter.and_);
     }
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
   return {
     and_: compoundedFilter
-  };
+  } as Filter;
 }
 
 // insert a value in a list after an id located
@@ -102,6 +102,7 @@ export function resetFiltersBelow(params: {
 }
 
 export function resetAllFilters(zone: Zone) {
+  zone.filter = deepCopy(zone.defaultFilter!);
   for (const currentId of zone.order) {
     zone.components[currentId].data.filter = deepCopy(zone.components[currentId].data.defaultFilter!);
     zone.components[currentId].data.subFilter = undefined;

@@ -155,7 +155,7 @@ function Table (props: Props) {
       onClick={() => exportTableToSpreadsheet(
         endpoint,
         fieldMeta.data,
-        generateFilter(id, zone)!,
+        generateFilter(zone, id)!,
         sortColumn,
         sortType,
         setSuccess,
