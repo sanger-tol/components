@@ -828,3 +828,113 @@ export function downloadItem( chartId: string, chartTitle: string) {
   }
 
 }
+
+// ------------------//
+//        Map        //
+// ------------------//
+
+interface MarkerObject {
+  geometry: {
+    coordinates: number[]
+  },
+  properties: {
+    [key: string]: any
+  },
+  colour?: string
+}
+
+export function formattingAttributeKeys(attributeKeysArray, item, marker){
+  attributeKeysArray.forEach((key) => {
+    // check if the attribute key exists in item.attributes
+    if (item.attributes.hasOwnProperty(key)) { //eslint-disable-line
+      // add the attribute key and it's value to properties
+      marker.properties[key] = item.attributes[key];
+    }
+  });
+  return marker;
+}
+
+export function createMapMarkers(
+  elasticData: any,
+  latitudeKey: string,
+  longitudeKey: string,
+  legendKey: object[],
+  setLegendKey: Function,
+  attributeKeys?: string,
+  markerRenderer?: Function,
+): MarkerObject[] {
+  const markers: MarkerObject[] = [];
+  const attributeKeysArray = attributeKeys ? attributeKeys.split(',').map(key => key.trim()) : [];
+
+  if (latitudeKey.includes('.')  || longitudeKey.includes('.')) {
+    const relationshipName = latitudeKey.split('.')[0];
+    const latAttribute = latitudeKey.split('.')[1];
+    const longAttribute  = longitudeKey.split('.')[1];
+    elasticData.forEach((item: any) => {
+      if (item.relationships[relationshipName].data){
+        const longitude = parseFloat(item.relationships[relationshipName].data.attributes[longAttribute]);
+        const latitude = parseFloat(item.relationships[relationshipName].data.attributes[latAttribute]);
+        // skips item if no long or lat value is provided
+        if (!isNaN(longitude) && !isNaN(latitude)){
+          let marker: MarkerObject = {
+            geometry: {
+              coordinates: [latitude, longitude]
+            },
+            properties: {}
+          };
+
+          if (attributeKeys) {
+            marker = formattingAttributeKeys(attributeKeysArray, item, marker);
+          }
+          
+          if (markerRenderer) {
+            const returnedValue = markerRenderer(item);
+            marker.colour = returnedValue.colour;
+            const isInLegendKey = legendKey.some(legendItem => JSON.stringify(legendItem) === JSON.stringify(returnedValue));
+            // Add the object to legendKey if it is not already in there
+            if (!isInLegendKey) {
+              legendKey.push(returnedValue);
+            }
+            setLegendKey(legendKey);
+
+          }
+          markers.push(marker);
+        }
+      }
+    });
+  } else {
+    for (const item of elasticData) {
+      const latitude = parseFloat(item.attributes[latitudeKey]);
+      const longitude = parseFloat(item.attributes[longitudeKey]);
+
+      // if latitute and longitude are not provided, skip the current iteration
+      if (isNaN(latitude) || isNaN(longitude)) {
+        continue;
+      }
+
+      // create a marker with coordinate information
+      let marker: MarkerObject = {
+        geometry: {
+          coordinates: [latitude, longitude]
+        },
+        properties: {}
+      };
+
+      // if attributeKeys are given, add them to properties
+      if (attributeKeys) {
+        marker = formattingAttributeKeys(attributeKeysArray, item, marker);
+      }
+      if (markerRenderer) {
+        const returnedValue = markerRenderer(item);
+        marker.colour = returnedValue.colour;
+        const isInLegendKey = legendKey.some(legendItem => legendItem === returnedValue);
+        if (!isInLegendKey) {
+          legendKey.push(returnedValue);
+        }
+        setLegendKey(legendKey);
+      }
+      markers.push(marker);
+    }
+  }
+  return markers;
+}

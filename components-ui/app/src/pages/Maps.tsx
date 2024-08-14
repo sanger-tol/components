@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Map, Widgets } from "../tol-ui/src";
+import { Map, Widgets, RemoteMap, env, useZone } from "../tol-ui/src";
 
 
 function Maps() {
@@ -53,6 +53,51 @@ function Maps() {
     </div>
   );
 
+
+  const cardZone = useZone({
+    endpoint: 'barcoding_run_data',
+    baseUrl: env.TOL_DATA,
+    components: [
+      { 
+        id: 'report-card-map-v1',
+        filter: {
+          and_: {
+            "bioscan_o": { eq: { value: "Polydesmida", negate: false } }
+          }
+        }
+       },
+    ]
+  });
+
+  const activeChecker = (rowData) => {
+    if (rowData.attributes.bioscan_o === 'Polydesmida') {
+      return {
+        'colour':'blue',
+        'key': 'active'
+      }
+    } else {
+      return {
+        'colour':'grey',
+        'key': 'inactive'
+      }
+    }
+  }
+
+  const remoteMap = (
+    <div>
+    <RemoteMap
+      id="report-card-map-v1"
+      bubble
+      longitudeKey="sts_sample.sts_longitude.keyword"
+      latitudeKey="sts_sample.sts_latitude.keyword"
+      attributeKeys="bioscan_s"
+      markerRenderer={activeChecker}
+      height={400}
+      {...cardZone}
+    />
+    </div>
+  );
+
   const components = [
     {
       component: map,
@@ -60,6 +105,10 @@ function Maps() {
     },
     {
       component: bubble,
+      type: 'full'
+    },
+    {
+      component: remoteMap,
       type: 'full'
     }
   ];

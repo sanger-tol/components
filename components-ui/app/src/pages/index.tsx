@@ -18,3 +18,4 @@ export { default as Detail } from "./Detail";
 export { default as DetailInfo } from "./DetailInfo";
 export { default as UserId } from "./UserId";
 export { default as Timelines } from "./Timelines";
+export { default as DashboardPage } from "./DashboardPage";

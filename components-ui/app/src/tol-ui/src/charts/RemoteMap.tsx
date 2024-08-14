@@ -5,100 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect } from "react";
-import BubbleMap from "./Map";
+import Map from "./Map";
 import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
 import { generateFilter } from "../filtering/Utils";
+import { createMapMarkers } from "./Utils";
 
-
-interface MarkerObject {
-  geometry: {
-    coordinates: number[]
-  }
-  properties: {
-    [key: string]: any
-  }
-}
-
-/** creates an array of map marker objects with sample information
- * @param {any} elasticData - data returned from elastic endpoint
- * @param {string} latitudeKey - key for the latitude field in elastic data
- * @param {string} longitudeKey - key for the longitude field in elastic data
- * @param {string} attributeKeys - (optional) comma-separated keys for fields to be included in the marker popup
- * @returns {MarkerObject[]} an array of map markers containing coordinate and attribute information
- */
-
-function formattingAttributeKeys(attributeKeysArray, item, marker){
-  attributeKeysArray.forEach((key) => {
-    // check if the attribute key exists in item.attributes
-    if (item.attributes.hasOwnProperty(key)) { //eslint-disable-line
-      // add the attribute key and it's value to properties
-      marker.properties[key] = item.attributes[key];
-    }
-  });
-  return marker;
-}
-
-function createMapMarkers(
-  elasticData: any,
-  latitudeKey: string,
-  longitudeKey: string,
-  attributeKeys?: string
-): MarkerObject[] {
-  const markers: MarkerObject[] = [];
-  const attributeKeysArray = attributeKeys ? attributeKeys.split(',').map(key => key.trim()) : [];
-
-  if (latitudeKey.includes('.')  || longitudeKey.includes('.')) {
-    const relationshipName = latitudeKey.split('.')[0];
-    const latAttribute = latitudeKey.split('.')[1];
-    const longAttribute  = longitudeKey.split('.')[1];
-    elasticData.forEach((item: any) => {
-      if (item.relationships[relationshipName].data){
-        const longitude = parseFloat(item.relationships[relationshipName].data.attributes[longAttribute]);
-        const latitude = parseFloat(item.relationships[relationshipName].data.attributes[latAttribute]);
-        // skips item if no long or lat value is provided
-        if (!isNaN(longitude) && !isNaN(latitude)){
-          let marker: MarkerObject = {
-            geometry: {
-              coordinates: [latitude, longitude]
-            },
-            properties: {}
-          };
-
-          if (attributeKeys) {
-            marker = formattingAttributeKeys(attributeKeysArray, item, marker);
-          }
-          markers.push(marker);
-        }
-      }
-    });
-  } else {
-    for (const item of elasticData) {
-      const latitude = parseFloat(item.attributes[latitudeKey]);
-      const longitude = parseFloat(item.attributes[longitudeKey]);
-
-      // if latitute and longitude are not provided, skip the current iteration
-      if (isNaN(latitude) || isNaN(longitude)) {
-        continue;
-      }
-
-      // create a marker with coordinate information
-      let marker: MarkerObject = {
-        geometry: {
-          coordinates: [latitude, longitude]
-        },
-        properties: {}
-      };
-
-      // if attributeKeys are given, add them to properties
-      if (attributeKeys) {
-        marker = formattingAttributeKeys(attributeKeysArray, item, marker);
-      }
-      markers.push(marker);
-    }
-  }
-  return markers;
-}
 
 interface Props {
   id: string,
@@ -110,18 +22,20 @@ interface Props {
   height?: any,
   pageSize?: number,
   zone?: object,
-  baseUrl?: string
+  baseUrl?: string,
+  markerRenderer?: Function // Used to apply custom legend keys based on whats is returned, must return an object in format {key: string, colour: string}
 }
 
 function RemoteMap(props: Props) {
-  const { id, endpoint, baseUrl, longitudeKey, latitudeKey, attributeKeys, zone } = props;
+  const { id, endpoint, baseUrl, longitudeKey, latitudeKey, attributeKeys, zone, markerRenderer } = props;
   const height = (props.height !== undefined) ? props.height : "100%";
   const [markers, setMarkers] = useState<object[]>([]);
   const [warningMessage, setWarningMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState<number|undefined>(undefined);
-  const filter = zone !== undefined ? generateFilter(zone, id) : {};
+  const [legendKey, setLegendKey] = useState<object[]>([]);
+  const filter = zone !== undefined ? generateFilter(id, zone) : {};
 
   // providing a pageSize default
   let pageSize = 2500;
@@ -150,7 +64,7 @@ function RemoteMap(props: Props) {
           }
         }).then((res: any) => {
           const data = res.data.data;
-          const markers = createMapMarkers(data, latitudeKey, longitudeKey, attributeKeys);
+          const markers = createMapMarkers(data, latitudeKey, longitudeKey, legendKey, setLegendKey, attributeKeys, markerRenderer);
           setMarkers(markers);
           setWarningMessage(markers.length === 0 ? 'No Data Found' : '');
           setLoading(false);
@@ -171,7 +85,7 @@ function RemoteMap(props: Props) {
     });
   }, [zone]);
 
-  const map = <BubbleMap {...props} markers={markers} />;
+  const map = <Map {...props} markers={markers} />;
   
   if (errorMessage !== ''){
     return (
@@ -217,7 +131,7 @@ function RemoteMap(props: Props) {
     );
   }
 
-  return <BubbleMap {...props} markers={markers} />;
+  return <Map {...props} legend={legendKey} markers={markers} />;
 }
 
 export default RemoteMap;

@@ -25,6 +25,7 @@ export {
   RemoteBarChart,
   Map,
   RemoteMap,
+  MapLegend,
   Sunburst,
   RemoteSunburst
 } from "./charts";

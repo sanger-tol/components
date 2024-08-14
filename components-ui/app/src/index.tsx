@@ -19,7 +19,8 @@ import {
   Sandbox,
   Sunbursts,
   Widgets,
-  UserId
+  UserId,
+  DashboardPage
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown } from './tol-ui/src';
@@ -60,6 +61,11 @@ const timelines: Page = {
 const widgets: Page = {
   name: "Widgets",
   element: <Widgets />
+};
+
+const dashboardPage: Page = {
+  name: 'Dashboard',
+  element: <DashboardPage />
 };
 
 // other
@@ -110,6 +116,7 @@ ReactDOM.render( // eslint-disable-line
       maps,
       timelines,
       widgets,
+      dashboardPage,
       otherDropdown,
       user,
       sandbox
