@@ -15,7 +15,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 //@ts-ignore
 import ReactDOMServer from 'react-dom/server';
-import '../../src/scss/tol-styling.scss';
 
 
 interface Props {

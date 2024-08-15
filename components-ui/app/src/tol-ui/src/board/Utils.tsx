@@ -156,9 +156,10 @@ export function generateTranslatedFilter(
   source: ZoneMeta,
   translations: {
     [sourceAttribute: string]: string
-  }
+  },
+  excludeAfterId?: string
 ) {
-  const sourceFilter = generateFilter(source.zone);
+  const sourceFilter = generateFilter(source.zone, excludeAfterId, true);
   const translatedFilter = {and_: {}};
   Object.entries(translations).map(([sourceAttribute, targetAttribute]) => {
     if (sourceAttribute in sourceFilter!.and_) {
@@ -174,13 +175,14 @@ export function useTranslator(params: {
   translations: {
     [sourceAttribute: string]: string
   },
+  excludeAfterId?: string,
   defaultFilter?: Filter
 }) {
-  const {source, target, translations, defaultFilter} = params;
+  const {source, target, translations, defaultFilter, excludeAfterId} = params;
   const prevFilter: any = useRef(defaultFilter ? defaultFilter : {and_: {}});
 
   useEffectUpdate(() => {
-    const translatedFilter = generateTranslatedFilter(source, translations);
+    const translatedFilter = generateTranslatedFilter(source, translations, excludeAfterId);
     if (JSON.stringify(translatedFilter) !== JSON.stringify(prevFilter.current)) {
       resetAllFilters(target.zone);
       target.zone.filter = translatedFilter;

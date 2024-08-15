@@ -333,8 +333,8 @@ function Filters() {
     endpoint: 'species',
     baseUrl: env.TOL_DATA,
     components: [
-      {id: 'filter-1'},
-      {id: 'sunburst-1'}
+      {id: 'sunburst-1'},
+      {id: 'filter-1'}
     ]
   });
 
@@ -347,6 +347,7 @@ function Filters() {
   });
 
   useTranslator({
+    excludeAfterId: 'sunburst-1',
     source: speciesTranslatorZone,
     target: sampleTranslatorZone,
     translations: {
@@ -357,14 +358,6 @@ function Filters() {
 
   const translatorComponent = (
     <div>
-      <Filter
-        attribute='goat_family_name'
-        rename='Family Name'
-        type='str'
-        componentId='filter-1'
-        {...speciesTranslatorZone}
-      />
-      <div style={{height: 10}}/>
       <RemoteSunburst
         title="Example Sunburst"
         id="sunburst-1"
@@ -382,6 +375,14 @@ function Filters() {
         latitudeKey="sts_latitude"
         height={400}
         {...sampleTranslatorZone}
+      />
+      <div style={{height: 10}}/>
+      <Filter
+        attribute='goat_family_name'
+        rename='Family Name'
+        type='str'
+        componentId='filter-1'
+        {...speciesTranslatorZone}
       />
     </div>
   );

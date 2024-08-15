@@ -35,7 +35,7 @@ function RemoteMap(props: Props) {
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState<number|undefined>(undefined);
   const [legendKey, setLegendKey] = useState<object[]>([]);
-  const filter = zone !== undefined ? generateFilter(id, zone) : {};
+  const filter = zone !== undefined ? generateFilter(zone, id) : {};
 
   // providing a pageSize default
   let pageSize = 2500;

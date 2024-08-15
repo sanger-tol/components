@@ -23,7 +23,7 @@ function MapLegend (props: Props){
   // Need to figure out why this is not logging
 
   useEffect(() => {
-    const legend = Leaflet.control({ position: 'bottomright' });
+    const legend = (Leaflet.control as any)({ position: 'bottomright' });
 
     legend.onAdd = function () {
       const div = Leaflet.DomUtil.create('div', 'info legend');
