@@ -33,6 +33,10 @@ interface DataSource {
   client?: any
 }
 
+interface GetEntityMeta {
+  objectType: string
+}
+
 interface GetById {
   objectType: string,
   id: string
@@ -82,7 +86,31 @@ export default class TsDataSource {
     promises[objectType] = promises[objectType] ?? Promise.resolve();
   }
 
-  public async getEntityMeta(): Promise<EntityMeta> {
+  private addRelationshipsAttributes(objectType: string, typesMeta: EntityMeta) {
+    // checking if current object and one relations exist
+    if (objectType in typesMeta.relationships) {
+      if ("one" in typesMeta.relationships[objectType]) {
+        for (const [relationship, objType] of Object.entries(typesMeta.relationships[objectType].one!)) {
+          typesMeta.attributes[objectType][relationship + ".id"] = {
+            available_on_relationships: true,
+            python_type: "str"
+          };
+          // relations are mentioned multiple times due to different data origins
+          for (const [key, meta] of Object.entries(typesMeta.attributes[objType])) {
+            // add the relations attribute and its type
+            if (meta["available_on_relationships"]) {
+              const relationKey = relationship + "." + key;
+              typesMeta.attributes[objectType][relationKey] = meta;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  public async getEntityMeta({
+    objectType
+  }: GetEntityMeta): Promise<EntityMeta> {
     const baseUrlKey = this.baseUrl || 'default';
   
     if (!entityMetaPromises[baseUrlKey]) {
@@ -109,12 +137,13 @@ export default class TsDataSource {
           savedEntityMeta = {
             expiry: anHourFromNow,
             data: {
-              attributes,
-              relationships
+              attributes: attributes.data,
+              relationships: relationships.data
             }
           };
           localStorage.setItem(key, JSON.stringify(savedEntityMeta));
         }
+        this.addRelationshipsAttributes(objectType, savedEntityMeta.data);
         return savedEntityMeta.data as EntityMeta;
       })().finally(() => {
         delete entityMetaPromises[baseUrlKey];

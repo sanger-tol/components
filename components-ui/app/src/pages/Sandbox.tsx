@@ -16,7 +16,9 @@ function Sandbox() {
     baseUrl: env.TOL_DATA
   });
 
-  ds.getEntityMeta().then((dataObject) => {
+  ds.getEntityMeta({
+    objectType: 'species'
+  }).then((dataObject) => {
     console.log(dataObject);
   });
 
