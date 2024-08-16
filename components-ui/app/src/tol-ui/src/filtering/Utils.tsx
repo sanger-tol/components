@@ -9,12 +9,12 @@ import { Zone, Filter, defineComponent, And } from '../board/Utils';
 import { deepCopy, isEmptyObject } from '../general/Utils';
 
 
-function getComponentsAbove(id: string, list: string[]) {
+export function getComponentsAbove(id: string, list: string[]) {
   const index = list.indexOf(id);
   return list.slice(0, index + 1);
 }
 
-function getComponentsBelow(id: string, list: string[]) {
+export function getComponentsBelow(id: string, list: string[]) {
   const index = list.indexOf(id);
   return index === -1 ? [] : list.slice(index, list.length);
 }
@@ -72,7 +72,7 @@ export function generateFilter(zone?: object, id?: string, includeSubFilter?: bo
 }
 
 // insert a value in a list after an id located
-function addValueBelow(id: string, value: string, list: string[]) {
+export function addValueBelow(id: string, value: string, list: string[]) {
   const idIndex = list.indexOf(id);
   list.splice(idIndex+1, 0, value);
   return list;
@@ -132,7 +132,6 @@ export function setFilter(params: {
   const z = zone as Zone;
   const and_ = z.components[componentId].data.filter!.and_;
   resetFiltersBelow({id: componentId, zone: z, indexOffset: 1});
-
   if (valueExists || exists) {
     // exists filter removed if value is already set
     if ('exists' in (and_[attribute] || {})) {
@@ -185,7 +184,6 @@ export function filterListener(params: {
     let value = params.emptyValue;
     let negate = false;
     let exists = false;
-  
     for (const currentId of aboveComponents) {
       const componentData = zone.components[currentId].data;
       const and_ = componentData.filter!.and_;
