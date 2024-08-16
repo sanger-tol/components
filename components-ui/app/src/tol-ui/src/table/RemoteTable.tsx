@@ -21,7 +21,8 @@ import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { Zone } from "../board";
 import {
   generateFilter,
-  filterHasUpdated
+  filterHasUpdated,
+  resetFiltersBelow
 } from "../filtering/Utils";
 import { getTypesMeta } from '../general/Utils';
 
@@ -123,6 +124,12 @@ function RemoteTable(props: Props) {
 
   const modalOnSave = (fieldMeta: FieldMeta) => {
     setFieldMeta(fieldMeta);
+    resetFiltersBelow({
+      id: id, zone:
+      zone as Zone,
+      indexOffset: -1
+    });
+    setZone({...zone});
     // setting localFilter then triggers renderTable in useEffect above
     setFieldMetaAttributeInStorage(id, fieldMeta.data, 'data');
     setFieldMetaAttributeInStorage(id, fieldMeta.order, 'order');

@@ -11,7 +11,6 @@ import { useState } from 'react';
 import {
   getComponentsAbove,
   getComponentsBelow,
-  getNextComponentId,
   filterHasUpdated,
   mergeAndFilters,
   generateFilter,
@@ -46,38 +45,16 @@ describe ('Testing getComponentsAbove function', () => {
 describe ('Testing getComponentsBelow function', () => {
   test('Returns correct values below', () => {
     const testCall1 = getComponentsBelow('id', ['id', 'id2', 'id3', 'id4', 'id5'])
-    expect(testCall1).toEqual(['id','id2', 'id3', 'id4', 'id5'])
+    expect(testCall1).toEqual(['id2', 'id3', 'id4', 'id5'])
     const testCall2 = getComponentsBelow('id3', ['id', 'id2', 'id3', 'id4', 'id5'])
-    expect(testCall2).toEqual(['id3','id4', 'id5'])
-    const testCall3 = getComponentsBelow('id5', ['id', 'id2', 'id3', 'id4', 'id5'])
+    expect(testCall2).toEqual(['id4', 'id5'])
+    const testCall3 = getComponentsBelow('id5', ['id', 'id2', 'id3', 'id4', 'id5'], -1)
     expect(testCall3).toEqual(['id5'])
   })
 
   test('Returns empty array if id not found', () => {
     const testCall1 = getComponentsBelow('id6', ['id', 'id2', 'id3', 'id4', 'id5'])
     expect(testCall1).toEqual([])
-  })
-})
-
-describe ('Testing getNextComponentId function', () => {
-  test('Returns correct next component id with offset 1', () => {
-    const testCall1 = getNextComponentId('id', ['id', 'id2', 'id3', 'id4', 'id5'], 1)
-    expect(testCall1).toEqual('id2')
-    const testCall2 = getNextComponentId('id3', ['id', 'id2', 'id3', 'id4', 'id5'], 1)
-    expect(testCall2).toEqual('id4')
-    const testCall3 = getNextComponentId('id5', ['id', 'id2', 'id3', 'id4', 'id5'], 1)
-    expect(testCall3).toEqual(undefined)
-  })
-
-  test('Returns correct next component id with offset other than 1', () => {
-    const testCall1 = getNextComponentId('id', ['id', 'id2', 'id3', 'id4', 'id5'], 2)
-    expect(testCall1).toEqual('id3')
-    const testCall2 = getNextComponentId('id', ['id', 'id2', 'id3', 'id4', 'id5'], 4)
-    expect(testCall2).toEqual('id5')
-    const testCall3 = getNextComponentId('id', ['id', 'id2', 'id3', 'id4', 'id5'], 6)
-    expect(testCall3).toEqual(undefined)
-    const testCall4 = getNextComponentId('id', ['id', 'id2', 'id3', 'id4', 'id5'], 0)
-    expect(testCall4).toEqual('id')
   })
 })
 

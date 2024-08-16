@@ -14,14 +14,9 @@ export function getComponentsAbove(id: string, list: string[]) {
   return list.slice(0, index + 1);
 }
 
-export function getComponentsBelow(id: string, list: string[]) {
+export function getComponentsBelow(id: string, list: string[], indexOffset: number = 0) {
   const index = list.indexOf(id);
-  return index === -1 ? [] : list.slice(index, list.length);
-}
-
-export function getNextComponentId(id: string, list: string[], indexOffset: number) {
-  const index = list.indexOf(id);
-  return list[index + indexOffset];
+  return index === -1 ? [] : list.slice(index + indexOffset + 1); // adding 1, as by default we want the next component
 }
 
 export function filterHasUpdated(setFilter: any, exisitingFilter?: object, incomingFilter?: object) {
@@ -94,8 +89,7 @@ export function resetFiltersBelow(params: {
   const {zone, indexOffset} = params;
   let id = params.id;
   const z = zone as Zone;
-  if (indexOffset !== undefined) id = getNextComponentId(id, z.order, indexOffset);
-  for (const currentId of getComponentsBelow(id, z.order)) {
+  for (const currentId of getComponentsBelow(id, z.order, indexOffset)) {
     z.components[currentId].data.filter = deepCopy(z.components[currentId].data.defaultFilter!);
     z.components[currentId].data.subFilter = undefined;
   }
@@ -131,7 +125,8 @@ export function setFilter(params: {
   const {operator, value, negate, exists, attribute, componentId, zone, valueExists} = params;
   const z = zone as Zone;
   const and_ = z.components[componentId].data.filter!.and_;
-  resetFiltersBelow({id: componentId, zone: z, indexOffset: 1});
+  resetFiltersBelow({id: componentId, zone: z});
+
   if (valueExists || exists) {
     // exists filter removed if value is already set
     if ('exists' in (and_[attribute] || {})) {
