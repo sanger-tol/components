@@ -927,7 +927,7 @@ export function createMapMarkers(
       if (markerRenderer) {
         const returnedValue = markerRenderer(item);
         marker.colour = returnedValue.colour;
-        const isInLegendKey = legendKey.some(legendItem => legendItem === returnedValue);
+        const isInLegendKey = legendKey.some(legendItem => JSON.stringify(legendItem) === JSON.stringify(returnedValue));
         if (!isInLegendKey) {
           legendKey.push(returnedValue);
         }

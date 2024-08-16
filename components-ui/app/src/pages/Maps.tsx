@@ -62,7 +62,7 @@ function Maps() {
         id: 'report-card-map-v1',
         filter: {
           and_: {
-            "bioscan_o": { eq: { value: "Polydesmida", negate: false } }
+            "bioscan_o": { "in_list": { value: ["Polydesmida", "Pseudoscorpiones"], negate: false } }
           }
         }
        },

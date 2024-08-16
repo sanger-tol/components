@@ -20,8 +20,6 @@ interface Props {
 
 function MapLegend (props: Props){
   const { map, config } = props;
-  // Need to figure out why this is not logging
-
   useEffect(() => {
     const legend = (Leaflet.control as any)({ position: 'bottomright' });
 
