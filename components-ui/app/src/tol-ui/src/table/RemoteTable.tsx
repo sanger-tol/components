@@ -24,7 +24,7 @@ import {
   filterHasUpdated,
   resetFiltersBelow
 } from "../filtering/Utils";
-import { getTypesMeta } from '../general/Utils';
+//import { getTypesMeta } from '../general/Utils';
 
 
 interface Props {
@@ -162,6 +162,7 @@ function RemoteTable(props: Props) {
       const apiData = res.data.data;
       const apiMeta = res.data.meta;
 
+      /*
       // get attribute types and relationship links
       const typesMeta = (basic !== true && initialLoad)
         ? await getTypesMeta(baseUrl, attributeMetadataUrl, relationshipsUrl)
@@ -170,6 +171,8 @@ function RemoteTable(props: Props) {
       setPage(page);
       setTotalSize(apiMeta.total);
       setError('');
+      */
+      const typesMeta = '';
 
       // setting fieldMeta on first load
       let savedFieldMeta: FieldMeta|null = getFieldMetaAttributeFromStorage(id, fields);

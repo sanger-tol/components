@@ -98,8 +98,7 @@ export {
 // Services
 export {
   httpClient,
-  fetchData,
-  fetchDetail,
+  TsDataSource,
   DetailAttribute
 } from "./services";
 

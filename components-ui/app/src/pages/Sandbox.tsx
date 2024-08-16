@@ -7,13 +7,17 @@
 import {
   env
 } from '../tol-ui/src';
-import { TsDataSource } from '../tol-ui/src/services/http/tsDataSource';
+import TsDataSource from '../tol-ui/src/services/http/tsDataSource';
 
 
 function Sandbox() {
 
   const ds = new TsDataSource({
     baseUrl: env.TOL_DATA
+  });
+
+  ds.getEntityMeta().then((dataObject) => {
+    console.log(dataObject);
   });
 
   /*
@@ -30,7 +34,6 @@ function Sandbox() {
   }).then((dataObjects) => {
     console.log(dataObjects);
   });
-  */
 
   ds.getListPage({
     objectType: 'species',
@@ -46,6 +49,7 @@ function Sandbox() {
       console.log(dataObject?.sts_scientific_name);
     });
   });
+  */
 
   return (
     <div>

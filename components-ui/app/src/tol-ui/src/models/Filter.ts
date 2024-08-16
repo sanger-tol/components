@@ -15,6 +15,6 @@ export interface And {
   [attribute: string]: AndFilter
 }
 
-export default interface Filter {
+export interface Filter {
   and_: And
 }

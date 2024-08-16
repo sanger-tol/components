@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Filter, EntityConfig } from '../../models';
+import { Filter, EntityMeta } from '../../models';
 import { httpClient } from './httpClient';
 
 
@@ -18,15 +18,15 @@ interface Promises {
   [objectType: string]: Promise<object>;
 }
 
-interface EntityConfigPromises {
-  [baseUrl: string]: Promise<EntityConfig>;
+interface EntityMetaPromises {
+  [baseUrl: string]: Promise<EntityMeta>;
 }
 
 const promises: Promises = {};
 
 const cache: Cache = {};
 
-const entityConfigPromises: EntityConfigPromises = {};
+const entityMetaPromises: EntityMetaPromises = {};
 
 interface DataSource {
   baseUrl?: string,
@@ -60,15 +60,13 @@ interface DataObject {
 type DataObjectOrNull = DataObject | null;
 type DataObjectListOrNull = DataObject[] | null;
 
-export class TsDataSource {
+export default class TsDataSource {
   private client: any;
   private baseUrl: string|undefined;
-  private entityMeta: Promise<EntityConfig>;
 
   constructor({baseUrl, client}: DataSource) {
     this.client = client ?? httpClient;
     this.baseUrl = baseUrl;
-    this.entityMeta = this.getEntityConfig();
   }
 
   private dataObjectHandler = {
@@ -84,14 +82,14 @@ export class TsDataSource {
     promises[objectType] = promises[objectType] ?? Promise.resolve();
   }
 
-  private async getEntityConfig(): Promise<EntityConfig> {
+  public async getEntityMeta(): Promise<EntityMeta> {
     const baseUrlKey = this.baseUrl || 'default';
   
-    if (!entityConfigPromises[baseUrlKey]) {
-      entityConfigPromises[baseUrlKey] = (async () => {
-        const key = 'typesMeta-' + baseUrlKey;
-        let savedTypesMeta = JSON.parse(localStorage.getItem(key) || 'null');
-        const expiry = savedTypesMeta === null ? null : new Date(savedTypesMeta['expiry']);
+    if (!entityMetaPromises[baseUrlKey]) {
+      entityMetaPromises[baseUrlKey] = (async () => {
+        const key = 'entityMeta-' + baseUrlKey;
+        let savedEntityMeta = JSON.parse(localStorage.getItem(key) || 'null');
+        const expiry = savedEntityMeta === null ? null : new Date(savedEntityMeta['expiry']);
   
         // setting now and an hour from now
         const now = new Date();
@@ -108,22 +106,21 @@ export class TsDataSource {
             '/_config/relationships',
             {baseURL: this.baseUrl}
           );
-          savedTypesMeta = {
+          savedEntityMeta = {
             expiry: anHourFromNow,
             data: {
               attributes,
               relationships
             }
           };
-          localStorage.setItem(key, JSON.stringify(savedTypesMeta));
+          localStorage.setItem(key, JSON.stringify(savedEntityMeta));
         }
-
-        return savedTypesMeta.data as EntityConfig;
+        return savedEntityMeta.data as EntityMeta;
       })().finally(() => {
-        delete entityConfigPromises[baseUrlKey];
+        delete entityMetaPromises[baseUrlKey];
       });
     }
-    return entityConfigPromises[baseUrlKey];
+    return entityMetaPromises[baseUrlKey];
   }
 
   public async getById({

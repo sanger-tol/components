@@ -197,7 +197,6 @@ async function getObjectTypes(baseUrl: string) {
   });
   // @ts-ignore
   return Object.keys(res.data);
-
 }
 
 export async function fetchObjectTypes(baseUrl: string) {

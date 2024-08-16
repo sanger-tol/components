@@ -8,5 +8,5 @@ export { HeaderButton } from "./HeaderButton";
 export { Page } from "./Nav";
 export { Dropdown } from "./Nav";
 export { User } from "./User";
-export { default as Filter } from "./Filter";
-export { default as EntityConfig } from "./EntityConfig";
+export { Filter } from "./Filter";
+export { EntityMeta } from "./EntityMeta";
