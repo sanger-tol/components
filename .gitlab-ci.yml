@@ -2,27 +2,11 @@
 #
 # SPDX-License-Identifier: MIT
 
-include:
-  - project: 'tol/tol-core'
-    ref: v1.4.2
-    file: '/gitlab/app.yml'
+stages:
+  - na
 
-variables:
-  APP_NAME: components
-  DISABLE_UI_LINT: "true"
-
-deploy-package:
-  stage: deploy
-  image: node:18-alpine
+just-pull:
+  stage: na
+  image: node:18.16.0-alpine
   script:
-    - |
-      {
-        echo "@${CI_PROJECT_ROOT_NAMESPACE}:registry=${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/npm/"
-        echo "${CI_API_V4_URL#https?}/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=\${CI_JOB_TOKEN}"
-      } | tee -a .npmrc
-    - cd components-ui/app/src/tol-ui
-    - yarn install
-    - yarn build
-    - yarn publish
-  when: manual
-  needs: []
+    - echo "hello world"
