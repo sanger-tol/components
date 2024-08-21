@@ -4,10 +4,9 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useEffect, useState } from "react";
 import Timeline, { DataPoint, TimelineItem } from './Timeline'
-import React, { useEffect, useState } from "react";
 import { Placeholder, httpClient, env } from '../index';
-
 
 interface Props {
   endpoint: string,
