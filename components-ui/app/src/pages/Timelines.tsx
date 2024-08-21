@@ -1,157 +1,171 @@
 /*
-SPDX-FileCopyrightText: 2022 Genome Research Ltd.
+SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
-import { Timeline, Widgets } from "../tol-ui/src";
+import { Timeline, RemoteTimeline, Widgets } from "../tol-ui/src";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faCheck, faTruck, faExclamation } from "@fortawesome/free-solid-svg-icons";
+import { DataPoint } from "../tol-ui/src/timeline/Timeline";
+
+// Test Remote Timeline Data
+const aRemoteTimeline: DataPoint = {
+  "sts_sample_sts_submit_date_min": { title: 'Compliance in Progress' },
+  "sts_sample_sts_accept_date_min": { title: 'Approved to Ship' },
+  "sts_sample_sts_receive_date_min": { title: 'Arrived at Sanger' },
+  "sts_sample_benchling_date_assigned_to_lab_min": { title: 'Released to Lab' },
+  "grit_curation_grit_open_date_min": { title: 'Assembly Complete' },
+  "grit_curation_grit_done_date_min": { title: 'Curation' },
+  "grit_curation_grit_in_submission_date_min": { title: 'ToLA / Grit Submission' },
+  "benchling_sequencing_request_benchling_completion_date_pacbio_min": { title: 'PacBio Submission' },
+  "mlwh_run_data_mlwh_run_complete_pacbio_min": { title: 'PacBio Extracted' },
+  "benchling_sequencing_request_benchling_completion_date_rnaseq_min": { title: 'RNASeq Submission' },
+  "mlwh_run_data_mlwh_run_complete_rnaseq_min": { title: 'RNASeq Extracted' },
+  "benchling_sequencing_request_benchling_completion_date_hic_min": { title: 'HiC Submission' }
+}
+
+const bRemoteTimeline: DataPoint = {
+  "sts_sample_sts_submit_date_min": {
+    title: 'Compliance in Progress',
+    icon: <FontAwesomeIcon icon={faUser} style={{ color: "#fff" }} />,
+    color: "#1E555C",
+    desc: "Compliance is currently in progress..."
+  },
+  "sts_sample_sts_accept_date_min": {
+    title: 'Approved to Ship',
+    icon: 'dot',
+    desc: "This is an example of a timeline item without custom icon"
+  },
+  "sts_sample_sts_receive_date_min": {
+    title: 'Arrived at Sanger',
+    icon: <FontAwesomeIcon icon={faTruck} />,
+    desc: "Sample has arrived on site and is ready to be released to lab"
+  },
+}
 
 // Test timeline data
-const aTimeline = [
-  {
-    date: "2021-07-02",
-    title: "Sample Arrived",
-    desc: "Sample arrived on site",
-    type: "dot",
+const aTimeline: DataPoint = {
+  "Sample Arrived": {
+    date: new Date("2021-07-02"),
+    icon: "dot",
+    desc: "Sample has arrived on site"
   },
-  {
-    date: "2021-08-03",
-    title: "Released to Lab",
-    desc: "Sample has been released to lab",
-    type: "dot",
+  "Released to Lab": {
+    date: new Date("2021-08-03"),
+    icon: "dot",
+    desc: "Sample has been released to lab"
   },
-  {
-    date: "2021-08-15",
-    title: "Active event",
-    desc: "Active event description...",
-    type: "active-dot",
+  "Active event": {
+    date: new Date("2021-08-15"),
+    icon: "active-dot",
+    desc: "This event is currently in progress"
   },
-  {
-    date: "2021-09-01",
-    title: "Event not in progress",
-    desc: "Event description...",
-    type: "dot",
+  "Event not in progress": {
+    date: new Date("2021-09-01"),
+    icon: "dot",
+    desc: "This event is not currently in progress"
   }
-];
+};
 
-const bTimeline = [
-  {
-    date: "2021-07-02",
-    title: "Sample Arrived",
-    desc: "Sample has arrived on site",
-    type: <FontAwesomeIcon icon={faTruck} />,
+const bTimeline: DataPoint = {
+  "Sample Arrived": {
+    date: new Date("2021-07-02"),
+    icon: <FontAwesomeIcon icon={faTruck} />,
+    desc: "Sample has arrived on site"
   },
-  {
-    date: "2021-08-03",
-    title: "Released to Lab",
-    desc: "Sample has been released to lab",
-    type: <FontAwesomeIcon icon={faUser} style={{ color: "#fff" }} />,
+  "Released to Lab": {
+    date: new Date("2021-08-03"),
+    icon: <FontAwesomeIcon icon={faUser} style={{ color: "#fff" }} />,
     color: "#1E555C",
+    desc: "Sample has been released to lab"
   },
-  {
-    date: "2021-08-15",
-    title: "Error!",
-    desc: "Oh no...",
-    type: <FontAwesomeIcon icon={faExclamation} style={{ color: "#fff" }} />,
-    color: "#FF0000"
+  "Error!": {
+    date: new Date("2021-08-15"),
+    icon: <FontAwesomeIcon icon={faExclamation} style={{ color: "#fff" }} />,
+    color: "#FF0000",
+    desc: "Oh no..."
   },
-  {
-    date: "2021-09-01",
-    title: "Less Important",
-    desc: "Slightly less important event...",
-    type: "dot",
+  "Less Important": {
+    date: new Date("2021-09-01"),
+    icon: "dot",
+    desc: "Slightly less important event..."
   },
-  {
-    date: "2021-09-04",
-    title: "Sequencing Complete",
-    desc: "Sequencing is complete...",
-    type: <FontAwesomeIcon icon={faCheck} style={{ color: "#fff" }} />,
+  "Sequencing Complete": {
+    date: new Date("2021-09-04"),
+    icon: <FontAwesomeIcon icon={faCheck} style={{ color: "#fff" }} />,
     color: "#15b215",
+    desc: "Sequencing is complete..."
   }
-];
+};
 
-const cTimeline = [
-  {
-    date: "2021-07-02",
-    title: "Sample Arrived",
-    desc: "Sample has arrived on site",
-    type: <FontAwesomeIcon icon={faCheck} style={{ color: "#42A5F5", borderColor: "#42A5F5" }} />,
+const cTimeline: DataPoint = {
+  "Sample Arrived": {
+    date: new Date("2021-07-02"),
+    icon: <FontAwesomeIcon icon={faCheck} style={{ color: "#42A5F5", borderColor: "#42A5F5" }} />,
+    desc: "Sample has arrived on site"
   },
-  {
-    date: "2021-08-03",
-    title: "Released to Lab",
-    desc: "Sample has been released to lab",
-    type: <FontAwesomeIcon icon={faCheck} style={{ color: "#42A5F5", borderColor: "#42A5F5" }} />,
+  "Released to Lab": {
+    date: new Date("2021-08-03"),
+    icon: <FontAwesomeIcon icon={faCheck} style={{ color: "#42A5F5", borderColor: "#42A5F5" }} />,
+    desc: "Sample has been released to lab"
   },
-  {
-    date: "2021-08-15",
-    title: "Error!",
-    desc: "Oh no...",
-    type: <FontAwesomeIcon icon={faCheck} style={{ color: "#42A5F5", borderColor: "#42A5F5" }} />,
+  "Error!": {
+    date: new Date("2021-08-15"),
+    icon: <FontAwesomeIcon icon={faCheck} style={{ color: "#42A5F5", borderColor: "#42A5F5" }} />,
+    desc: "Oh no..."
   },
-  {
-    date: "2021-09-01",
-    title: "Less Important",
-    desc: "Slightly less important event...",
-    type: <FontAwesomeIcon icon={faCheck} style={{ color: "#42A5F5", borderColor: "#42A5F5" }} />,
+  "Less Important": {
+    date: new Date("2021-09-01"),
+    icon: <FontAwesomeIcon icon={faCheck} style={{ color: "#42A5F5", borderColor: "#42A5F5" }} />,
+    desc: "Slightly less important event..."
   },
-  {
-    date: "2021-09-04",
-    title: "Sequencing Complete",
-    desc: "Sequencing is complete...",
-    type: <FontAwesomeIcon icon={faCheck} />,
+  "Sequencing Complete": {
+    date: new Date("2021-09-04"),
+    icon: <FontAwesomeIcon icon={faCheck} />,
+    desc: "Sequencing is complete..."
   }
-];
-
-const dTimeline = [
-  {
-    date: "2021-07-02",
-    title: "Event 1",
-    desc: "Event 1 description",
-    type: <FontAwesomeIcon icon={faCheck} style={{ color: "#15b215", borderColor: "#15b215" }} />,
-  },
-  {
-    date: "2021-08-03",
-    title: "Event 2",
-    desc: "Event 2 description",
-    type: "dot"
-  },
-  {
-    date: "2021-08-15",
-    title: "Event 3",
-    desc: "Event 3 description",
-    type: "dot"
-  },
-  {
-    date: "2021-09-01",
-    title: "Event 4",
-    desc: "Event 4 description",
-    type: "dot"
-  },
-  {
-    date: "2021-09-04",
-    title: "Event 5",
-    desc: "Event 5 description",
-    type: "dot"
-  }
-];
+};
 
 function Timelines() {
   const aTimelineTitle = "Timeline of events for sample...";
   const bTimelineTitle = "Nice looking timeline for species [Rando Specicus], sample [#83882.94]";
   const cTimelineTitle = "Timeline of events using ticks...";
-  const dTimelineTitle = "This timeline uses a single tick to determine current stage...";
+
+  const remoteTimelineA = (
+    <div>
+      <h4>Remote Timeline with Default Dots</h4>
+      <RemoteTimeline
+        endpoint="species"
+        id="71285"
+        data={aRemoteTimeline}
+        titleDataPoint="sts_scientific_name"
+        defaultIcon
+        dateWithDay
+      />
+    </div>
+  )
+
+  const remoteTimelineB = (
+    <div>
+      <h4>Remote Timeline with Custom Dots</h4>
+      <RemoteTimeline
+        endpoint="species"
+        id="572802"
+        data={bRemoteTimeline}
+        titleDataPoint="Random Name"
+      />
+    </div>
+  );
 
   const incompleteTimeline = (
     <div>
       <h4>Incomplete Timeline</h4>
       <Timeline
-        timelineTitle={aTimelineTitle}
+        title={aTimelineTitle}
         id="basic-timeline"
         endless
-        timelineData={aTimeline}
+        data={aTimeline}
       />
     </div>
   );
@@ -160,9 +174,9 @@ function Timelines() {
     <div>
       <h4>Completed Timeline</h4>
       <Timeline
-        timelineTitle={bTimelineTitle}
+        title={bTimelineTitle}
         id="basic-timeline"
-        timelineData={bTimeline}
+        data={bTimeline}
       />
     </div>
   );
@@ -171,25 +185,22 @@ function Timelines() {
     <div>
       <h4>Tick Mark Timeline</h4>
       <Timeline
-        timelineTitle={cTimelineTitle}
+        title={cTimelineTitle}
         id="tick-timeline"
-        timelineData={cTimeline}
-      />
-    </div>
-  );
-
-  const singleTickTimeline = (
-    <div>
-      <h4>Single Tick Timeline</h4>
-      <Timeline
-        timelineTitle={dTimelineTitle}
-        id="single-tick-timeline"
-        timelineData={dTimeline}
+        data={cTimeline}
       />
     </div>
   );
 
   const components = [
+    {
+      component: remoteTimelineA,
+      type: "full"
+    },
+    {
+      component: remoteTimelineB,
+      type: "full"
+    },
     {
       component: incompleteTimeline,
       type: "full"
@@ -202,10 +213,6 @@ function Timelines() {
       component: tickTimeline,
       type: "full"
     },
-    {
-      component: singleTickTimeline,
-      type: "full"
-    }
   ];
 
   return (
