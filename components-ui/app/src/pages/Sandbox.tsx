@@ -27,9 +27,10 @@ function Sandbox() {
     objectType: 'species',
     id: '9606'
   }).then((dataObject) => {
-    console.log(dataObject?.sts_scientific_name);
+    console.log(dataObject);
   });
 
+  
   ds.getByIds({
     objectType: 'species',
     ids: ['9606', 'abc', '9606']
@@ -37,6 +38,7 @@ function Sandbox() {
     console.log(dataObjects);
   });
 
+*/
   ds.getListPage({
     objectType: 'species',
     pageSize: 50,
@@ -51,7 +53,6 @@ function Sandbox() {
       console.log(dataObject?.sts_scientific_name);
     });
   });
-  */
 
   return (
     <div>

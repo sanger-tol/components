@@ -207,7 +207,6 @@ export default class TsDataSource {
     )
     .then((response: any) => {
       cache[objectType] = cache[objectType] || {};
-      console.log(cache);
       return response.data.data.map((object: any) => {
         cache[objectType][object.id] = object;
         return new Proxy(object, this.dataObjectHandler);
