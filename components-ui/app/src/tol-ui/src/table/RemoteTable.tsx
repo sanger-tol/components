@@ -15,7 +15,7 @@ import {
   tableDebug,
   structureFieldMeta
 } from "./Utils";
-import Table from "./Table";
+import Table, { NumRows } from "./Table";
 import { Placeholder } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { Zone } from "../board";
@@ -42,6 +42,7 @@ interface Props {
   zone: object,
   setZone: any,
   defaultSort?: string,
+  pageSize?: NumRows,
 
   noFilter?: boolean,
   noPagination?: boolean,
@@ -78,25 +79,25 @@ function RemoteTable(props: Props) {
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta|null>(null);
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta | null>(null);
 
   // pagination
   const getPageSize = () => {
     const size = getFieldMetaAttributeFromStorage(id, fields, 'pageSize');
-    return size === null ? 50 : size;
+    return size ?? props.pageSize ?? 50;
   };
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(getPageSize());
   const [totalSize, setTotalSize] = useState<number>(0);
 
   // filtering/sorting
-  const [filter, setFilter] = useState<object|undefined>({});
+  const [filter, setFilter] = useState<object | undefined>({});
   const [sortColumn, setSortColumn] = useState<string>('');
   const [sortType, setSortType] = useState<string>('asc');
 
   // loading, error and warning info
   const [loading, setLoading] = useState<boolean>(true);
-  const [initialLoad, setInitialLoad] = useState<boolean>(true); 
+  const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
 
   const handleSortColumn = (sortColumn: any, sortType: any) => {
@@ -126,10 +127,10 @@ function RemoteTable(props: Props) {
     setFieldMeta(fieldMeta);
     resetFiltersBelow({
       id: id, zone:
-      zone as Zone,
+        zone as Zone,
       indexOffset: -1
     });
-    setZone({...zone});
+    setZone({ ...zone });
     // setting localFilter then triggers renderTable in useEffect above
     setFieldMetaAttributeInStorage(id, fieldMeta.data, 'data');
     setFieldMetaAttributeInStorage(id, fieldMeta.order, 'order');
@@ -137,7 +138,6 @@ function RemoteTable(props: Props) {
 
   const renderTable = () => {
     setLoading(true);
-
     // generating query params
     const params = {
       page: page,
@@ -172,18 +172,19 @@ function RemoteTable(props: Props) {
       setError('');
 
       // setting fieldMeta on first load
-      let savedFieldMeta: FieldMeta|null = getFieldMetaAttributeFromStorage(id, fields);
+      let savedFieldMeta: FieldMeta | null = getFieldMetaAttributeFromStorage(id, fields);
       if (savedFieldMeta === null) {
         savedFieldMeta = structureFieldMeta(
           endpoint,
           typesMeta,
-          fields
+          fields,
+          props.pageSize
         );
         setFieldMetaAttributeInStorage(id, savedFieldMeta);
       }
       setFieldMeta(savedFieldMeta);
       setPageSize(savedFieldMeta.pageSize);
-    
+
       // debug logs if prop defined
       tableDebug(
         apiData,
@@ -212,7 +213,7 @@ function RemoteTable(props: Props) {
     });
   };
 
-  if (error !== ''){
+  if (error !== '') {
     return (
       <Placeholder
         errorMessage={error}
@@ -220,7 +221,7 @@ function RemoteTable(props: Props) {
       />
     );
   }
-  
+
   if (initialLoad) {
     return <Placeholder loader height={height} />;
   }

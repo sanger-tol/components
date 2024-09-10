@@ -22,6 +22,7 @@ import HoverOverlay from '../general/HoverOverlay';
 import { Zone } from '../board';
 import { generateFilter } from '../filtering/Utils';
 
+export type NumRows = 25 | 50 | 100 | 1000;
 
 interface Props {
   id: string,
@@ -35,7 +36,7 @@ interface Props {
 
   page: number,
   setPage: any,
-  pageSize: number,
+  pageSize: NumRows,
   setPageSize: any,
   totalSize: number,
 
@@ -277,6 +278,7 @@ function Table (props: Props) {
               tableId={id}
               fieldMeta={fieldMeta}
               open={open}
+              pageSize={pageSize}
               setOpen={setOpen}
               modalOnSave={modalOnSave}
             />

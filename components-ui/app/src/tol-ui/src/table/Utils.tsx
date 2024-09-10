@@ -407,9 +407,9 @@ function addDefaultMeta(
   }
 }
 
-export function structureFieldMeta(endpoint: string, typesMeta?: TypesMeta, fields?: FieldMetaData) {
+export function structureFieldMeta(endpoint: string, typesMeta?: TypesMeta, fields?: FieldMetaData, pageSize?: number) {
   endpoint = endpoint.split('/').pop() as string;
-  const fieldMeta = initialiseFieldMeta();
+  const fieldMeta = initialiseFieldMeta(pageSize);
   const fieldPropExists = fields !== undefined;
   if (fieldPropExists) {
     structureFieldMetaViaProp(endpoint, fieldMeta, fields);
