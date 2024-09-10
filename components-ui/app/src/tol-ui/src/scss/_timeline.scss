@@ -14,6 +14,14 @@ SPDX-License-Identifier: MIT
     font-weight: bolder;
 }
 
+.rs-timeline-item-last {
+    margin-bottom: 20px;
+}
+
+.rs-timeline-item:not(:last-child) {
+    margin-bottom: 12px;
+}
+
 .timeline-custom-icon-background-color {
     display: flex;
     border-radius: 50%;
@@ -22,10 +30,23 @@ SPDX-License-Identifier: MIT
     top: -8px;
 }
 
+.rs-timeline-item-tail {
+    width: 2px;
+    height: 80px;
+}
+
 .timeline-custom-dot-color {
     width: 10px;
     height: 10px;
     border-radius: 50%;
+}
+
+.rs-timeline-item-dot {
+    top: 0;
+}
+
+.timeline-wrapper {
+    margin-top: 20px;
 }
 
 @media screen and (max-width: 768px) {

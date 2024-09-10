@@ -106,7 +106,7 @@ export {
 export { RemoteTable } from "./table";
 
 // Timelines
-export { Timeline } from "./timeline";
+export { Timeline, RemoteTimeline } from "./timeline";
 
 // ToL App
 export { default as TolApp } from "./TolApp";

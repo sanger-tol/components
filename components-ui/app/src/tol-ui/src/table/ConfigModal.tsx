@@ -18,12 +18,13 @@ export interface Props {
   tableId: string,
   fieldMeta: FieldMeta,
   open: boolean,
-  setOpen: any
+  setOpen: any,
+  pageSize?: number,
   modalOnSave: (fieldMeta: FieldMeta) => void
 }
 
 function ConfigModal(props: Props) {
-  const { tableId, fieldMeta, open, setOpen, modalOnSave } = props;
+  const { tableId, fieldMeta, open, setOpen, modalOnSave, pageSize } = props;
   const [contents, setContents] = useState({});
 
   const updateMeta = (list: object[], updatedFieldMeta: FieldMeta, hidden: boolean) => {
@@ -37,8 +38,8 @@ function ConfigModal(props: Props) {
     }
   };
 
-  const fieldMetaUpdatedByContents = () => {
-    const updatedFieldMeta: FieldMeta = initialiseFieldMeta();
+  const fieldMetaUpdatedByContents = (pageSize?: number) => {
+    const updatedFieldMeta: FieldMeta = initialiseFieldMeta(pageSize);
     // loop through columns and set active/inactive
     for (const column of Object.values(contents)) {
       const id = column!['id'];
@@ -92,7 +93,7 @@ function ConfigModal(props: Props) {
   };
 
   const saveConfig = () => {
-    const updatedFieldMeta = fieldMetaUpdatedByContents();
+    const updatedFieldMeta = fieldMetaUpdatedByContents(pageSize);
     modalOnSave(updatedFieldMeta);
     setOpen(false);
   };

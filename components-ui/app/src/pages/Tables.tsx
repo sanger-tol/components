@@ -38,6 +38,7 @@ function Tables() {
       <RemoteTable
         id="table-example"
         rowSelection
+        pageSize={100}
         forceUpdate={forceUpdate}
         fields={{
           "mlwh_run_id": {

@@ -5,3 +5,4 @@ SPDX-License-Identifier: MIT
 */
 
 export { default as Timeline } from "./Timeline";
+export { default as RemoteTimeline } from "./RemoteTimeline";

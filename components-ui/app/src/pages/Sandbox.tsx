@@ -5,7 +5,14 @@
  */
 
 import {
-  env
+  env,
+  RemoteTable,
+  RemoteBarChart,
+  RemoteMap,
+  RemoteSunburst,
+  Button,
+  Filter,
+  Widgets
 } from '../tol-ui/src';
 import TsDataSource from '../tol-ui/src/services/http/tsDataSource';
 
