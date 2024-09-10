@@ -4,12 +4,8 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-interface Attributes {
-	[id: string]: object
-}
-
-interface Relationships {
-	[id: string]: Relationship
+interface Values {
+	[id: string]: string
 }
 
 interface Relationship {
@@ -18,8 +14,12 @@ interface Relationship {
 	foreign_keys?: Values
 }
 
-interface Values {
-	[id: string]: string
+export interface Attributes {
+	[objectType: string]: object
+}
+
+export interface Relationships {
+	[objectType: string]: Relationship
 }
 
 export interface EntityMeta {

@@ -12,14 +12,42 @@ import TsDataSource from '../tol-ui/src/services/http/tsDataSource';
 
 function Sandbox() {
 
-  const ds = new TsDataSource({
+  const ds1 = new TsDataSource({
     baseUrl: env.TOL_DATA
   });
 
-  ds.getEntityMeta({
-    objectType: 'species'
-  }).then((dataObject) => {
-    console.log(dataObject);
+  const ds2 = new TsDataSource({
+    baseUrl: env.TOL_DATA
+  });
+
+  ds1.attributeMetadata().then(data => {
+    console.log('Attribute Metadata:', data);
+  }).catch(error => {
+    console.error('Error fetching attribute metadata:', error);
+  });
+
+  ds1.relationshipConfig().then(data => {
+    console.log('Relationship Config:', data);
+  }).catch(error => {
+    console.error('Error fetching relationship config:', error);
+  });
+
+  ds2.attributeMetadata().then(data => {
+    console.log('Attribute Metadata:', data);
+  }).catch(error => {
+    console.error('Error fetching attribute metadata:', error);
+  });
+
+  ds2.attributeMetadata().then(data => {
+    console.log('Attribute Metadata:', data);
+  }).catch(error => {
+    console.error('Error fetching attribute metadata:', error);
+  });
+
+  ds2.getEntityMeta().then(data => {
+    console.log('Entity Metadata:', data);
+  }).catch(error => {
+    console.error('Error fetching entity metadata:', error);
   });
 
   /*
