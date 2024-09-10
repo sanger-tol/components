@@ -36,7 +36,7 @@ interface Props {
 
   page: number,
   setPage: any,
-  pageSize: NumRows,
+  pageSize: NumRows | number,
   setPageSize: any,
   totalSize: number,
 

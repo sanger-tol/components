@@ -42,7 +42,7 @@ interface Props {
   zone: object,
   setZone: any,
   defaultSort?: string,
-  pageSize?: NumRows,
+  pageSize?: NumRows | number,
 
   noFilter?: boolean,
   noPagination?: boolean,
