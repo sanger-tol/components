@@ -6,15 +6,8 @@
 
 import {
   env,
-  RemoteTable,
-  RemoteBarChart,
-  RemoteMap,
-  RemoteSunburst,
-  Button,
-  Filter,
-  Widgets
+  TsDataSource
 } from '../tol-ui/src';
-import TsDataSource from '../tol-ui/src/services/http/tsDataSource';
 
 
 function Sandbox() {
