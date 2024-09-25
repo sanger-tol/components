@@ -213,3 +213,7 @@ export async function getTypesMeta(
 
   return pendingPromises[baseUrlKey];
 }
+
+export function capitaliseFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
