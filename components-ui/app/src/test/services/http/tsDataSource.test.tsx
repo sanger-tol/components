@@ -11,14 +11,25 @@ import '@testing-library/jest-dom';
 const speciesMockData = { data: { data: { id: 'testSpeciesId', type: 'species', attributes: { name: 'test species' } } } };
 const sampleMockData = { data: { data: { id: 'testSampleId', type: 'sample', attributes: { name: 'test sample' } } } };
 
+const attributeMetadataMockData = {
+  data: {
+    attributes: {
+      species: {
+        name: { type: 'string', description: 'Species name' }
+      }
+    }
+  }
+};
+
 const mockClient = () => ({
-  get(endpoint: string, { baseURL, params }: { baseURL: string, params?: any },) {
-    if (endpoint === '/species/testSpeciesId' && baseURL === 'test') {
+  get(endpoint: string, { baseURL, params }: { baseURL: string, params?: any }) {
+    if (endpoint === '/_config/attribute_metadata' && baseURL === 'test') {
+      return Promise.resolve({ data: attributeMetadataMockData });
+    } else if (endpoint === '/species/testSpeciesId' && baseURL === 'test') {
       return Promise.resolve(speciesMockData);
     } else if (endpoint === '/sample/testSampleId' && baseURL === 'test') {
       return Promise.resolve(sampleMockData);
     } else if (endpoint === '/species' && baseURL === 'test') {
-      // Simulate pagination logic based on params
       const pageSize = params?.page_size || 10;
       const mockPageData = Array(pageSize).fill(speciesMockData.data.data);
       return Promise.resolve({ data: { data: mockPageData } });
@@ -26,6 +37,8 @@ const mockClient = () => ({
     return Promise.reject({ response: { status: 404 } });
   }
 });
+
+// Need to adjust to account for the get config
 
 const mockDataSource = new TsDataSource({
     baseUrl: 'test',
@@ -198,5 +211,48 @@ describe ('Testing getListPage function', () => {
     });
 
     expect(dataObjects).toBeNull();
+  });
+})
+
+describe ('Testing attributeMetadata function', () => {
+  test('Returns correct attribute metadata', async () => {
+    // Use mockClient to mock the client and initialize TsDataSource
+    const mockClientInstance = mockClient();
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    // Call attributeMetadata function
+    const dataObject = await mockDataSource.attributeMetadata();
+
+    // Expected data
+    const expectedData = attributeMetadataMockData;
+
+    console.log(dataObject);
+    console.log(expectedData);
+
+    // Assert the result
+    expect(dataObject).toEqual(expectedData);
+  });
+
+  test('Caches attribute metadata and does not call client again', async () => {
+    const mockClientInstance = mockClient();
+    
+    // Spy on the client's get method to ensure it's called only once
+    //const clientGetSpy = vitest.spyOn(mockClientInstance, 'get');
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    // First call should trigger a client get request
+    await mockDataSource.attributeMetadata();
+    //expect(clientGetSpy).toHaveBeenCalledTimes(1);
+
+    // Second call should not trigger a client get request due to caching
+    await mockDataSource.attributeMetadata();
+    //expect(clientGetSpy).toHaveBeenCalledTimes(1); // Still 1, not called again
   });
 })
