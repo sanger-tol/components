@@ -130,12 +130,9 @@ export default class TsDataSource {
     const key = this.getLocalStorageKey(endpoint);
     const savedConfig = this.getSavedConfig(key);
 
-    console.log('savedConfig:', savedConfig);
-
     if (savedConfig && !this.isConfigExpired(savedConfig.expiry)) {
       return Promise.resolve(savedConfig.data);
     } else {
-      console.log('fetching config');
       return this.fetchAndSaveConfig(endpoint, key);
     }
   }

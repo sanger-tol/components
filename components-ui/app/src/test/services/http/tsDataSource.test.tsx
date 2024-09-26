@@ -12,12 +12,31 @@ const speciesMockData = { data: { data: { id: 'testSpeciesId', type: 'species', 
 const sampleMockData = { data: { data: { id: 'testSampleId', type: 'sample', attributes: { name: 'test sample' } } } };
 
 const attributeMetadataMockData = {
-  data: {
-    attributes: {
-      species: {
-        name: { type: 'string', description: 'Species name' }
+  "barcoding_run_data": {
+      "bioscan_c": {
+          "authoritative": null,
+          "available_on_relationships": null,
+          "cardinality": 5,
+          "description": null,
+          "display_name": null,
+          "python_type": "str"
+      },
+      "bioscan_c_count": {
+          "authoritative": null,
+          "available_on_relationships": null,
+          "cardinality": 12,
+          "description": null,
+          "display_name": null,
+          "python_type": "int"
+      },
+      "bioscan_checksum": {
+          "authoritative": null,
+          "available_on_relationships": null,
+          "cardinality": 81124,
+          "description": null,
+          "display_name": null,
+          "python_type": "str"
       }
-    }
   }
 };
 
@@ -67,7 +86,7 @@ const mockClient = () => ({
       const mockPageData = Array(pageSize).fill(speciesMockData.data.data);
       return Promise.resolve({ data: { data: mockPageData } });
     } else if (endpoint === '/_config/relationships' && baseURL === 'test') {
-      return Promise.resolve(relationshipConfigMockData);
+      return Promise.resolve({ data: relationshipConfigMockData });
     }
     return Promise.reject({ response: { status: 404 } });
   }
@@ -294,8 +313,10 @@ describe ('Testing relationshipConfig function', () => {
       baseUrl: 'test',
       client: () => mockClientInstance,
     });
+    const expectedData = relationshipConfigMockData;
 
-    await mockDataSource.relationshipConfig();
+    const dataObject = await mockDataSource.relationshipConfig();
+    expect(dataObject).toEqual(expectedData);
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
   });
 
