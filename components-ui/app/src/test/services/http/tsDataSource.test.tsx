@@ -21,6 +21,39 @@ const attributeMetadataMockData = {
   }
 };
 
+const relationshipConfigMockData = {
+  "species": {
+      "foreign_keys": {
+          "benchling_samples": "benchling_species.id",
+          "benchling_tissue_preps": "benchling_species.id",
+          "grit_curations": "grit_species.id",
+          "sts_samples": "sts_species.id"
+      },
+      "many": {
+          "benchling_samples": "sample",
+          "benchling_tissue_preps": "tissue_prep",
+          "grit_curations": "curation",
+          "sts_samples": "sample"
+      }
+  },
+  "specimen": {
+      "foreign_keys": {
+          "benchling_extractions": "benchling_specimen.id",
+          "benchling_samples": "benchling_specimen.id",
+          "benchling_sequencing_request": "benchling_specimen.id",
+          "mlwh_sequencing_request": "mlwh_specimen.id",
+          "sts_samples": "sts_specimen.id"
+      },
+      "many": {
+          "benchling_extractions": "extraction",
+          "benchling_samples": "sample",
+          "benchling_sequencing_request": "sequencing_request",
+          "mlwh_sequencing_request": "sequencing_request",
+          "sts_samples": "sample"
+      }
+  },
+};
+
 const mockClient = () => ({
   get(endpoint: string, { baseURL, params }: { baseURL: string, params?: any }) {
     if (endpoint === '/_config/attribute_metadata' && baseURL === 'test') {
@@ -33,6 +66,8 @@ const mockClient = () => ({
       const pageSize = params?.page_size || 10;
       const mockPageData = Array(pageSize).fill(speciesMockData.data.data);
       return Promise.resolve({ data: { data: mockPageData } });
+    } else if (endpoint === '/_config/relationships' && baseURL === 'test') {
+      return Promise.resolve(relationshipConfigMockData);
     }
     return Promise.reject({ response: { status: 404 } });
   }
@@ -218,6 +253,7 @@ describe ('Testing attributeMetadata function', () => {
   test('Returns correct attribute metadata', async () => {
     // Use mockClient to mock the client and initialize TsDataSource
     const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, 'get');
     const mockDataSource = new TsDataSource({
       baseUrl: 'test',
       client: () => mockClientInstance,
@@ -229,30 +265,50 @@ describe ('Testing attributeMetadata function', () => {
     // Expected data
     const expectedData = attributeMetadataMockData;
 
-    console.log(dataObject);
-    console.log(expectedData);
-
     // Assert the result
     expect(dataObject).toEqual(expectedData);
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
   });
 
   test('Caches attribute metadata and does not call client again', async () => {
     const mockClientInstance = mockClient();
-    
-    // Spy on the client's get method to ensure it's called only once
-    //const clientGetSpy = vitest.spyOn(mockClientInstance, 'get');
+    const clientGetSpy = vitest.spyOn(mockClientInstance, 'get');
 
     const mockDataSource = new TsDataSource({
       baseUrl: 'test',
       client: () => mockClientInstance,
     });
 
-    // First call should trigger a client get request
     await mockDataSource.attributeMetadata();
-    //expect(clientGetSpy).toHaveBeenCalledTimes(1);
+    expect(clientGetSpy).toHaveBeenCalledTimes(0);
+  });
+})
 
-    // Second call should not trigger a client get request due to caching
-    await mockDataSource.attributeMetadata();
-    //expect(clientGetSpy).toHaveBeenCalledTimes(1); // Still 1, not called again
+describe ('Testing relationshipConfig function', () => {
+  test('Returns correct attribute metadata', async () => {
+    // Use mockClient to mock the client and initialize TsDataSource
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, 'get');
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    await mockDataSource.relationshipConfig();
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test('Caches relationship config and does not call client again', async () => {
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, 'get');
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    await mockDataSource.relationshipConfig();
+    expect(clientGetSpy).toHaveBeenCalledTimes(0);
   });
 })
