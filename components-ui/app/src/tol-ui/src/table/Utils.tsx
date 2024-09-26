@@ -22,7 +22,7 @@ import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { EntityMeta } from '../models';
 
 
-export const fieldMetaVersion = "field-meta-v8";
+export const fieldMetaVersion = "field-meta-v9";
 let idField: string; // id or uid
 let idFieldDefinedPreviously = false;
 let hiddenFields = false;
