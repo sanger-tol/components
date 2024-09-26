@@ -14,11 +14,12 @@ import {
   FieldMetaData,
   initialiseFieldMeta
 } from './Field';
-import { isFloat, TypesMeta } from "../general/Utils";
+import { isFloat, normaliseCaps } from "../general/Utils";
 import Relationship from './Relationship';
 import { Status } from '../general';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import { EntityMeta } from '../models';
 
 
 export const fieldMetaVersion = "field-meta-v8";
@@ -307,35 +308,13 @@ function addDefaultCellRenderer(key: string, type: string) {
   return undefined;
 }
 
-function structureFieldMetaViaProp(endpoint: string, fieldMeta: FieldMeta, fields: FieldMetaData) {
+function structureFieldMetaViaProp(fieldMeta: FieldMeta, fields: FieldMetaData) {
   for (const [key, meta] of Object.entries(fields)) {
     const isActive = (meta.hidden) ? 'inactive' : 'active';
     fieldMeta.order[isActive].push(key);
-    fieldMeta.data[key] = addFieldDefaults(meta, key, endpoint);
+    fieldMeta.data[key] = addFieldDefaults(meta);
     fieldMeta.data[key].isAttribute = !isRelationship(key);
     if (fieldMeta.data[key].hidden) hiddenFields = true;
-  }
-}
-
-function addRelationshipsAttributes(endpoint: string, typesMeta: TypesMeta) {
-  // checking if current object and one relations exist
-  if (endpoint in typesMeta.relationships) {
-    if ("one" in typesMeta.relationships[endpoint]) {
-      for (const [relationship, objectType] of Object.entries(typesMeta.relationships[endpoint].one!)) {
-        typesMeta.attributes[endpoint][relationship + ".id"] = {
-          available_on_relationships: true,
-          python_type: "str"
-        };
-        // relations are mentioned multiple times due to different data origins
-        for (const [key, meta] of Object.entries(typesMeta.attributes[objectType])) {
-          // add the relations attribute and its type
-          if (meta["available_on_relationships"]) {
-            const relationKey = relationship + "." + key;
-            typesMeta.attributes[endpoint][relationKey] = meta;
-          }
-        }
-      }
-    }
   }
 }
 
@@ -348,14 +327,16 @@ function addRemoteFilterType(type: string, cardinality: number) {
 function addRemoteTypesAndExtraColumns(
   endpoint: string,
   fieldMeta: FieldMeta,
-  typesMeta: TypesMeta,
+  entityMeta: EntityMeta,
   fieldPropExists: boolean
 ) {
   idFieldDefinedPreviously = idField in fieldMeta.data;
-  for (const [key, meta] of Object.entries(typesMeta.attributes[endpoint])) {
+  for (const [key, meta] of Object.entries(entityMeta.flatAttributes[endpoint])) {
     let hidden = fieldPropExists;
     let isActive = hidden ? 'inactive' : 'active';
     const type = meta['python_type'];
+    const rename = meta['display_name'];
+    const description = meta['description'];
     const filterType = addRemoteFilterType(type, meta['cardinality']);
 
     // auto add field that are not yet in fieldMeta
@@ -368,22 +349,16 @@ function addRemoteTypesAndExtraColumns(
       if (key !== idField) fieldMeta.order[isActive].push(key);
       fieldMeta.data[key] = addFieldDefaults(
         // hidden as default, overridden by field prop
-        {isAttribute: !isRelationship(key), hidden: hidden},
-        key,
-        endpoint
+        {isAttribute: !isRelationship(key), hidden: hidden}
       );
     }
-    // add deafults to type/filter/sort fields
+    // add deafults to fields fields
     if (key in fieldMeta.data) {
-      if (fieldMeta.data[key].type === undefined) {
-        fieldMeta.data[key].type = type;
-      }
-      if (fieldMeta.data[key].filter === undefined) {
-        fieldMeta.data[key].filter = filterType;
-      }
-      if (fieldMeta.data[key].sort === undefined) {
-        fieldMeta.data[key].sort = true;
-      }
+      fieldMeta.data[key].type = fieldMeta.data[key].type || type;
+      fieldMeta.data[key].filter = fieldMeta.data[key].filter || filterType;
+      fieldMeta.data[key].sort = fieldMeta.data[key].sort || true;
+      fieldMeta.data[key].rename = fieldMeta.data[key].rename || rename || normaliseCaps(key, endpoint);
+      fieldMeta.data[key].description = fieldMeta.data[key].description || description;
     }
   }
 }
@@ -407,12 +382,12 @@ function addDefaultMeta(
   }
 }
 
-export function structureFieldMeta(endpoint: string, typesMeta?: TypesMeta, fields?: FieldMetaData, pageSize?: number) {
+export function structureFieldMeta(endpoint: string, entityMeta?: EntityMeta, fields?: FieldMetaData, pageSize?: number) {
   endpoint = endpoint.split('/').pop() as string;
   const fieldMeta = initialiseFieldMeta(pageSize);
   const fieldPropExists = fields !== undefined;
   if (fieldPropExists) {
-    structureFieldMetaViaProp(endpoint, fieldMeta, fields);
+    structureFieldMetaViaProp(fieldMeta, fields);
   }
   /*
   --- dealing with id/uid ---
@@ -420,14 +395,9 @@ export function structureFieldMeta(endpoint: string, typesMeta?: TypesMeta, fiel
   - only added if uid does not exist
   - value can be null, as only the key is used in this instance
   */
-  if (typesMeta !== undefined) {
-    idField = ('uid' in typesMeta.attributes[endpoint]) ? 'uid' : 'id';
-    typesMeta.attributes[endpoint][idField] = {
-      available_on_relationships: true,
-      python_type: "str"
-    };
-    addRelationshipsAttributes(endpoint, typesMeta);
-    addRemoteTypesAndExtraColumns(endpoint, fieldMeta, typesMeta, fieldPropExists);
+  if (entityMeta !== undefined) {
+    idField = ('uid' in entityMeta.flatAttributes[endpoint]) ? 'uid' : 'id';
+    addRemoteTypesAndExtraColumns(endpoint, fieldMeta, entityMeta, fieldPropExists);
   }
   addDefaultMeta(fieldMeta, fieldPropExists);
   return fieldMeta;

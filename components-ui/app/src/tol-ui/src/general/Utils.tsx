@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from 'date-fns';
-import { fetchData } from '../services/http/data';
 
 
 export function convertToPath(name: string) {
@@ -139,79 +138,6 @@ export function deepCopy(o: object) {
   return JSON.parse(
     JSON.stringify(o)
   );
-}
-
-// types meta
-interface Attributes {
-  [id: string]: object
-}
-
-interface Relationships {
-  [id: string]: RelationshipInfo
-}
-
-interface RelationshipInfo {
-  one?: Values,
-  many?: Values,
-  foreign_keys?: Values
-}
-
-interface Values {
-  [id: string]: string
-}
-
-export interface TypesMeta {
-  attributes: Attributes,
-  relationships: Relationships
-}
-
-const pendingPromises: { [key: string]: Promise<TypesMeta> } = {};
-
-export async function getTypesMeta(
-  baseUrl?: string,
-  attributeMetadataUrl?: string,
-  relationshipsUrl?: string
-): Promise<TypesMeta> {
-  const baseUrlKey = baseUrl || 'default';
-
-  if (!pendingPromises[baseUrlKey]) {
-    pendingPromises[baseUrlKey] = (async () => {
-      const key = 'typesMeta-' + baseUrlKey;
-      let savedTypesMeta = JSON.parse(localStorage.getItem(key) || 'null');
-      const expiry = savedTypesMeta === null ? null : new Date(savedTypesMeta['expiry']);
-
-      // setting now and an hour from now
-      const now = new Date();
-      const anHourFromNow = new Date(now);
-      anHourFromNow.setHours(now.getHours() + 1);
-
-      // check if typesMeta exists and is not expired
-      if (expiry === null || now > expiry) {
-        const attributes = await fetchData(
-          attributeMetadataUrl ? attributeMetadataUrl : '/_config/attribute_metadata',
-          baseUrl
-        );
-        const relationships = await fetchData(
-          relationshipsUrl ? relationshipsUrl : '/_config/relationships',
-          baseUrl
-        );
-        savedTypesMeta = {
-          expiry: anHourFromNow,
-          data: {
-            attributes,
-            relationships
-          }
-        };
-        localStorage.setItem(key, JSON.stringify(savedTypesMeta));
-      }
-
-      return savedTypesMeta.data as TypesMeta;
-    })().finally(() => {
-      delete pendingPromises[baseUrlKey];
-    });
-  }
-
-  return pendingPromises[baseUrlKey];
 }
 
 export function capitaliseFirstLetter(string: string) {

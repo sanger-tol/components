@@ -4,24 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import {
-  RemoteTable,
-  RemoteBarChart,
-  RemoteMap,
-  RemoteSunburst,
-  Button,
-  Filter,
-  Widgets,
-
-} from '../tol-ui/src';
-
-
 function Sandbox() {
   return (
-    <div className="bioscan-report-card">
-      <Widgets
-        components={components}
-      />
+    <div className="sandbox">
+      This is a coding sandbox.
     </div>
   );
 }

@@ -145,10 +145,23 @@
       color: var(--bs-emphasis-color);
     }
 
+    .tol-table-header {
+      height: 28px;
+    }
+
     .tol-header-text {
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
+      padding-right: 30px;
+      width: 100%;
+    }
+
+    .tol-header-info {
+      position: absolute;
+      right: 0;
+      padding-right: 18px;
+      margin-top: -2px;
     }
     
     // header color
@@ -264,6 +277,15 @@
       color: var(--primary) !important;
       cursor: pointer;
     }
+  }
+}
+
+// cell loader
+.loading-cell {
+  height: 32px;
+
+  .spinner-border.spinner-border-sm {
+    margin: 8px;
   }
 }
 

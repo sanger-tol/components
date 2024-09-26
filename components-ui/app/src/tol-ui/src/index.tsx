@@ -104,7 +104,11 @@ export {
 } from "./nav";
 
 // Services
-export { httpClient } from "./services";
+export {
+  httpClient,
+  TsDataSource,
+  DetailAttribute
+} from "./services";
 
 // Table
 export { RemoteTable } from "./table";

@@ -4,9 +4,6 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { normaliseCaps } from "../general/Utils";
-
-
 interface ElementProps {
   [prop: string]: string
 }
@@ -41,7 +38,8 @@ export interface Field {
   rename?: string,
   sort?: boolean,
   type?: string,
-  width?: number
+  width?: number,
+  description?: string
 }
 
 export interface FieldMetaData {
@@ -60,19 +58,15 @@ export interface FieldMeta {
   pageSize: number
 }
 
-const fieldDefaults = (key: string, endpoint?: string) => {
-  const rename = normaliseCaps(key, endpoint);
+const fieldDefaults = () => {
   return {
-    fixed: false,
-    hidden: false,
-    rename: rename,
     width: 200
   };
 };
 
-export function addFieldDefaults(field: Field, key: string, endpoint?: string) {
+export function addFieldDefaults(field: Field) {
   return {
-    ...fieldDefaults(key, endpoint),
+    ...fieldDefaults(),
     ...field
   };
 }

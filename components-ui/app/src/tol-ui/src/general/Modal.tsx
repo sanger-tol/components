@@ -15,19 +15,20 @@ export interface Props {
   open: boolean,
   setOpen: any
   children?: JSX.Element | JSX.Element[],
+  header?: JSX.Element,
   overflow?: boolean,
+  closeButton?: boolean,
   actionButton?: JSX.Element,
   className?: string
 }
 
 const Modal = (props: Props) => {
-  const {size, open, setOpen, children, overflow, actionButton, className} = props;
+  const {size, open, setOpen, children, header, actionButton, className} = props;
+  const closeButton = props.closeButton || true;
+  const rsOverflow = props.overflow !== false;
   const handleClose = () => {
     setOpen(false);
   };
-
-  let rsOverflow = true;
-  if (overflow === false) rsOverflow = false;
 
   return (
     <>
@@ -40,13 +41,19 @@ const Modal = (props: Props) => {
         size={size}
         className={className}
       >
+        <RSModal.Header closeButton={false}>
+          {header}
+        </RSModal.Header>
+
         <RSModal.Body>
           {children}
         </RSModal.Body>
         <RSModal.Footer>
-          <Button variant="danger" onClick={handleClose}>
-            <FontAwesomeIcon icon={faXmark} size="sm" />
-          </Button>
+          {closeButton &&
+            <Button variant="danger" onClick={handleClose}>
+              <FontAwesomeIcon icon={faXmark} size="sm" />
+            </Button>
+          }
           {actionButton &&
             <span style={{margin: "6px"}}>
               {actionButton}

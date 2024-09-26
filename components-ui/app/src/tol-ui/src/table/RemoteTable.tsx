@@ -16,7 +16,7 @@ import {
   structureFieldMeta
 } from "./Utils";
 import Table, { NumRows } from "./Table";
-import { Placeholder } from "../index";
+import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { Zone } from "../board";
 import {
@@ -24,7 +24,6 @@ import {
   filterHasUpdated,
   resetFiltersBelow
 } from "../filtering/Utils";
-import { getTypesMeta } from '../general/Utils';
 
 
 interface Props {
@@ -59,8 +58,6 @@ function RemoteTable(props: Props) {
     id,
     endpoint,
     baseUrl,
-    attributeMetadataUrl,
-    relationshipsUrl,
     fields,
     basic,
     forceUpdate,
@@ -75,6 +72,7 @@ function RemoteTable(props: Props) {
     rowSelection,
     debug
   } = props;
+  const ds = new TsDataSource({baseUrl});
   const height = (props.height !== undefined) ? props.height : "100%";
 
   // data and field information
@@ -163,8 +161,8 @@ function RemoteTable(props: Props) {
       const apiMeta = res.data.meta;
 
       // get attribute types and relationship links
-      const typesMeta = (basic !== true && initialLoad)
-        ? await getTypesMeta(baseUrl, attributeMetadataUrl, relationshipsUrl)
+      const entityMeta = (basic !== true && initialLoad)
+        ? await ds.getEntityMeta()
         : undefined;
 
       setPage(page);
@@ -176,7 +174,7 @@ function RemoteTable(props: Props) {
       if (savedFieldMeta === null) {
         savedFieldMeta = structureFieldMeta(
           endpoint,
-          typesMeta,
+          entityMeta,
           fields,
           props.pageSize
         );
