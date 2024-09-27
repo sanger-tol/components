@@ -139,3 +139,7 @@ export function deepCopy(o: object) {
     JSON.stringify(o)
   );
 }
+
+export function capitaliseFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

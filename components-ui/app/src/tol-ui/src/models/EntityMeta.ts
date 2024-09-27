@@ -23,6 +23,6 @@ export interface Relationships {
 }
 
 export interface EntityMeta {
-	attributes: Attributes,
+	flatAttributes: Attributes,
 	relationships: Relationships
 }

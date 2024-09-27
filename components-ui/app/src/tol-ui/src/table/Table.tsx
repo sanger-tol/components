@@ -16,7 +16,7 @@ import { faFilter, faSliders, faDownload, faCheckDouble } from '@fortawesome/fre
 import ConfigModal from './ConfigModal';
 import { exportTableToSpreadsheet } from "./Utils";
 import Filter, { FilterType } from '../filtering/Filter';
-import { PopUpMessage } from '../general';
+import { InfoTooltip, PopUpMessage } from '../general';
 import { FieldMeta } from './Field';
 import HoverOverlay from '../general/HoverOverlay';
 import { Zone } from '../board';
@@ -383,6 +383,11 @@ function Table (props: Props) {
                 fixed={field.fixed}
               >
                 <HeaderCell>
+                  {field.description &&
+                    <div className='tol-header-info'>
+                      <InfoTooltip contents={field.description} />
+                    </div>
+                  }
                   <p className='tol-header-text'>
                     {field.rename}
                   </p>

@@ -16,6 +16,9 @@ const jsonData = {
   "STS Species ID": 5443,
 };
 
+const markdownString = `# Observe a heading!!!
+
+_This_ is some **information**!`
 
 function Miscellaneous() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -46,7 +49,10 @@ function Miscellaneous() {
         <Button onClick = {() => setModalOpen(true)}>Example Modal</Button>
           
         <h2 className='mt-5'>Info Tooltip</h2>
-        <InfoTooltip contents="This is some information!" />
+        <InfoTooltip contents={markdownString}/>
+          
+        <h2 className='mt-5'>Tooltip (with markdown disabled)</h2>
+        <InfoTooltip contents={markdownString} disableMarkdown={true}/>
 
         <h2 className='mt-5'>Object Detail</h2>
         <ObjectDetail data={jsonData}/>

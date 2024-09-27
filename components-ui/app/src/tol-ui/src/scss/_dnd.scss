@@ -50,7 +50,15 @@
   font-weight: bold;
   border: 2px solid var(--bs-body-darker);
 
-  .info {
+  // info icon in settings
+  .info .tooltip-wrapper {
+    padding-right: 6px;
+    svg {
+      margin-top: -3px;
+    }
+  }
+
+  .field-name-origin {
     color: var(--grey-emphasis);
     font-size: 12px;
     font-weight: normal;

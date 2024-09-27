@@ -28,6 +28,14 @@ export default defineConfig({
         host: '0.0.0.0',
         port: 3000,
         https: httpsConfig, // Apply the HTTPS configuration conditionally
+        proxy: {
+            '/api': {
+                target: 'http://components-api:80',
+                secure: false,
+                changeOrigin: true,
+                ws: true
+            }
+        }
     },
     test: {
         environment: 'jsdom',

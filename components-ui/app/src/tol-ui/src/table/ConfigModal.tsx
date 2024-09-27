@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { DnD } from '../index';
+import { DnD, InfoTooltip } from '../index';
 import { useState } from 'react';
 import { Modal } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -58,9 +58,14 @@ function ConfigModal(props: Props) {
   const uiElement = (key: string, meta: object) => {
     return (
       <div className='tol-dnd-item'>
+        {meta['description'] &&
+          <span className='info'>
+            <InfoTooltip contents={meta['description']} />
+          </span>
+        }
         {meta['rename']}
         {!meta['isAttribute'] && <FontAwesomeIcon className='icon' icon={faDiagramProject} size="xs" />}
-        <div className='info'>{key}</div>
+        <div className='field-name-origin'>{key}</div>
       </div>
     );
   };
@@ -104,40 +109,43 @@ function ConfigModal(props: Props) {
     </Button>
   );
 
+  const header = (
+    <>
+      <Row style={{ marginLeft: 0, marginRight: 0, paddingLeft: 0, paddingRight: 0}}>
+        <Col sm={6} style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <h2>Table Settings</h2>
+        </Col>
+        <Col sm={6} style={{ paddingLeft: 0, paddingRight: 0 }}>
+          <Button
+            className="clear-saved-config"
+            style={{float: "right"}}
+            variant="warning"
+            onClick={() => {
+              deleteFieldMetaFromStorage(tableId);
+            }}
+          >
+            Clear Saved Configuration
+            <FontAwesomeIcon icon={faTrash} size="sm" />
+          </Button>
+        </Col>
+      </Row>
+      <hr/>
+    </>
+  )
+
   return (
     <Modal
       open={open}
       size='full'
       setOpen={setOpen}
+      header={header}
       actionButton={saveButton}
-      overflow={false}
     >
-      <>
-        <Row style={{ marginLeft: 0, marginRight: 0, paddingLeft: 0, paddingRight: 0}}>
-          <Col sm={6} style={{ paddingLeft: 0, paddingRight: 0 }}>
-            <h2>Table Settings</h2>
-          </Col>
-          <Col sm={6} style={{ paddingLeft: 0, paddingRight: 0 }}>
-            <Button
-              className="clear-saved-config"
-              style={{float: "right"}}
-              variant="warning"
-              onClick={() => {
-                deleteFieldMetaFromStorage(tableId);
-              }}
-            >
-            Clear Saved Configuration
-              <FontAwesomeIcon icon={faTrash} size="sm" />
-            </Button>
-          </Col>
-        </Row>
-        <hr></hr>
-        <DnD
-          elements={fieldMetaToElements()}
-          setContents={setContents}
-          dealWithContents={dealWithContents}
-        />
-      </>
+      <DnD
+        elements={fieldMetaToElements()}
+        setContents={setContents}
+        dealWithContents={dealWithContents}
+      />
     </Modal>
   );
 }

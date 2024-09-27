@@ -20,11 +20,13 @@ import {
   Sunbursts,
   Widgets,
   UserId,
-  DashboardPage
+  DashboardPage,
+  Messages
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown } from './tol-ui/src';
 import "./scss/styling.scss";
+import DataSource from './pages/DataSource';
 
 
 // main data-driven components
@@ -75,19 +77,30 @@ const detail: Page = {
   detail: <DetailInfo/>
 };
 
-const miscellaneous: Page = {
-  name: "Miscellaneous",
-  element: <Miscellaneous />
-};
-
 const forms: Page = {
   name: "Forms",
   element: <Forms />
 };
 
+const messages: Page = {
+  name: "Messages",
+  element: <Messages />
+};
+
+
+const miscellaneous: Page = {
+  name: "Miscellaneous",
+  element: <Miscellaneous />
+};
+
+const dataSource: Page = {
+  name: "TsDataSource",
+  element: <DataSource />
+}
+
 const otherDropdown: Dropdown = {
   name: 'Other',
-  pages: [detail, miscellaneous, forms]
+  pages: [detail, forms, messages, miscellaneous, dataSource]
 };
 
 // auth

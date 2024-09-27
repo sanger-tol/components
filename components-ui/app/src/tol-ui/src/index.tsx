@@ -7,6 +7,8 @@ import { Container, Row, Col, Button, ButtonGroup, Form, Spinner } from 'react-b
 export { Container, Row, Col, Form, Button, ButtonGroup, Spinner as Loader };
 import { Link } from "react-router-dom";
 export { Link };
+import { useToaster as Toaster } from 'rsuite'
+export { Toaster };
 
 // dashboard
 export {
@@ -55,8 +57,14 @@ export {
   SingleSelect
 } from "./forms";
 
+// Messaging
+export {
+  Message,
+  Notification
+} from "./messaging";
+
 // General
-export { 
+export {
   Header,
   CentreContents,
   Alert,

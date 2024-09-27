@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Loader } from '../../../index';
+import { Loader, TsDataSource } from '../../../index';
 import { useState } from 'react';
 
 
@@ -16,31 +16,18 @@ interface Props {
 }
 
 function DetailAttribute(props: Props) {
-  //const { id, endpoint, baseUrl, attribute } = props;
+  const { id, endpoint, baseUrl, attribute } = props;
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
+  const ds = new TsDataSource({baseUrl: baseUrl});
 
-  /*
-  Detail.fetchDetail(
-    id,
-    endpoint,
-    baseUrl
-  ).then((res: any) => {
-    if ('data' in res
-      && 'data' in res.data
-      && 'attributes' in res.data.data
-    ) {
-      if (attribute === 'id') {
-        setText(res.data.data.id);
-      } else {
-        setText(res.data.data.attributes[attribute]);
-      }
-    } else {
-      setText('');
-    }
+  ds.getOne({
+    objectType: endpoint,
+    id: id
+  }).then((res: any) => {
+    setText(res[attribute] || '');
     setLoading(false);
   });
-  */
 
   return (
     <div className='loading-cell'>
