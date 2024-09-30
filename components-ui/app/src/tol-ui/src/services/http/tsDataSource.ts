@@ -10,20 +10,24 @@ import { httpClient } from './httpClient';
 
 
 interface DetailCache {
-  [objectType: string]: {
-    [id: string]: number
+  [baseUrl: string]: {
+    [objectType: string]: {
+      [id: string]: number
+    }
   }
 }
 const detailCache: DetailCache = {};
 
 interface DetailPromises {
-  [objectType: string]: Promise<object>;
+  [baseUrl: string]: {
+    [objectType: string]: Promise<object>;
+  }
 }
 const detailPromises: DetailPromises = {};
 
 // CONFIG //
 interface ConfigPromises {
-  [key: string]: Promise<object>;
+  [baseUrl: string]: Promise<object>;
 }
 const configPromises: ConfigPromises = {};
 
@@ -38,7 +42,7 @@ interface DataSource {
   client?: any
 }
 
-interface GetById {
+interface GetOne {
   objectType: string,
   id: string
 }
@@ -48,7 +52,7 @@ interface GetByIds {
   ids: string[]
 }
 
-interface GetList {
+interface GetListPage {
   objectType: string,
   page?: number,
   pageSize?: number,
@@ -70,7 +74,7 @@ export default class TsDataSource {
   private baseUrl: string|undefined;
   private baseUrlKey: string;
 
-  constructor({baseUrl, client}: DataSource) {
+  constructor({baseUrl, client}: DataSource = {}) {
     this.client = client ?? httpClient;
     this.baseUrl = baseUrl;
     this.baseUrlKey = this.baseUrl || 'default';
@@ -85,8 +89,11 @@ export default class TsDataSource {
   }
 
   private initializeDetailCacheAndPromises(objectType: string) {
-    detailCache[objectType] = detailCache[objectType] ?? {};
-    detailPromises[objectType] = detailPromises[objectType] ?? Promise.resolve();
+    detailCache[this.baseUrlKey] = detailCache[this.baseUrlKey] ?? {};
+    detailCache[this.baseUrlKey][objectType] = detailCache[this.baseUrlKey][objectType] ?? {};
+    
+    detailPromises[this.baseUrlKey] = detailPromises[this.baseUrlKey] ?? {};
+    detailPromises[this.baseUrlKey][objectType] = detailPromises[this.baseUrlKey][objectType] ?? Promise.resolve();
   }
 
   private getLocalStorageKey(o: string): string {
@@ -145,7 +152,23 @@ export default class TsDataSource {
     return this.getConfig('/_config/relationships');
   }
 
+  private addIds(attributes: Attributes) {
+    for (const objectType of Object.values(attributes)) {
+      if (!objectType.hasOwnProperty('uid')) {
+        objectType['id'] = {
+          "authoritative": null,
+          "available_on_relationships": null,
+          "cardinality": 99999,
+          "description": null,
+          "display_name": null,
+          "python_type": "str"
+        }
+      }
+    }
+  }
+
   private flattenAttributes(attributes: Attributes, relationships: Relationships) {
+    this.addIds(attributes);
     for (const entity in relationships) {
       // just deal with one-side relationships
       const oneRelationships = relationships[entity]?.one;
@@ -180,8 +203,8 @@ export default class TsDataSource {
   
         // check if entityMeta exists and is not expired
         if (expiry === null || now > expiry) {
-          const attributes = await this.getConfig('/_config/attribute_metadata');
-          const relationships = await this.getConfig('/_config/relationships');
+          const attributes = await this.attributeMetadata();
+          const relationships = await this.relationshipConfig();
           savedEntityMeta = {
             expiry: anHourFromNow,
             data: {
@@ -202,29 +225,32 @@ export default class TsDataSource {
     return entityMetaPromises[this.baseUrlKey];
   }
 
-  public async getById({
+  public async getOne({
     objectType,
     id
-  }: GetById): Promise<DataObjectOrNull> {
+  }: GetOne): Promise<DataObjectOrNull> {
     this.initializeDetailCacheAndPromises(objectType);
-    if (id in detailCache[objectType]) { // if object is in cache, return it
-      return new Proxy(detailCache[objectType][id], this.dataObjectHandler);
+    if (id in detailCache[this.baseUrlKey][objectType]) { // if object is in cache, return it
+      return new Proxy(detailCache[this.baseUrlKey][objectType][id], this.dataObjectHandler);
     }
-    if (!(id in detailCache[objectType])) {
-      detailPromises[objectType][id] = this.client().get(
+    if (!(id in detailPromises[this.baseUrlKey][objectType])) { // if promise is not in progress, start a new one
+      detailPromises[this.baseUrlKey][objectType][id] = this.client().get(
         `/${objectType}/${id}`,
         {baseURL: this.baseUrl}
       )
       .then((response: any) => {
-        detailCache[objectType][id] = response.data.data;
+        detailCache[this.baseUrlKey][objectType][id] = response.data.data;
         return new Proxy(response.data.data, this.dataObjectHandler);
       })
       .catch((error: any) => {
         if (error.response.status === 404) return null;
         throw error;
+      })
+      .finally(() => {
+        delete detailPromises[this.baseUrlKey][objectType][id]; // remove promise from in-progress list when it's done
       });
     }
-    return detailPromises[objectType][id];
+    return detailPromises[this.baseUrlKey][objectType][id]; // return existing promise if it's in progress
   }
 
   public async getByIds({
@@ -232,17 +258,16 @@ export default class TsDataSource {
     ids
   }: GetByIds): Promise<DataObjectOrNull[]> {
     this.initializeDetailCacheAndPromises(objectType);
-    const promiseBulk = ids.map(id => this.getById({ objectType, id }));
+    const promiseBulk = ids.map(id => this.getOne({ objectType, id }));
     return await Promise.all(promiseBulk);
   }
-
   public async getListPage({
     objectType,
     page,
     pageSize,
     filter,
     sortBy
-  }: GetList): Promise<DataObjectListOrNull[]> {
+  }: GetListPage): Promise<DataObjectListOrNull[]> {
     return await this.client().get(
       `/${objectType}`,
       {
@@ -256,10 +281,10 @@ export default class TsDataSource {
       }
     )
     .then((response: any) => {
-      detailCache[objectType] = detailCache[objectType] || {};
+      detailCache[this.baseUrlKey][objectType] = detailCache[this.baseUrlKey][objectType] || {};
       return response.data.data.map((object: any) => {
-        detailCache[objectType][object.id] = object;
-        return new Proxy(object, this.dataObjectHandler);
+        detailCache[this.baseUrlKey][objectType][object.id] = detailCache[this.baseUrlKey][objectType][object.id] || object;
+        return new Proxy(detailCache[this.baseUrlKey][objectType][object.id], this.dataObjectHandler);
       });
     })
     .catch((error: any) => {
