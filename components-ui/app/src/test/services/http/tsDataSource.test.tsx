@@ -100,11 +100,11 @@ const mockDataSource = new TsDataSource({
   });
 
 
-describe ('Testing getById function', () => {
+describe ('Testing getOne function', () => {
   test('ID does not exist in promise', async () => {
 
-    // Call getById function
-    const dataObject = await mockDataSource.getById({
+    // Call getOne function
+    const dataObject = await mockDataSource.getOne({
       objectType: 'species',
       id: 'testSpeciesId',
     });
@@ -128,7 +128,7 @@ describe ('Testing getById function', () => {
     const clientGetSpy = vitest.spyOn(mockClientInstance, 'get');
   
     // Second call should trigger an HTTP request
-    const dataObject = await mockDataSource.getById({
+    const dataObject = await mockDataSource.getOne({
       objectType: 'species',
       id: 'testSpeciesId',
     });
@@ -153,7 +153,7 @@ describe ('Testing getById function', () => {
       client: () => mockClientInstance,
     });
 
-    const dataObject = await mockDataSource.getById({
+    const dataObject = await mockDataSource.getOne({
       objectType: 'sample',
       id: 'testSampleId',
     });
@@ -179,7 +179,7 @@ describe ('Testing getById function', () => {
       client: () => mockClientInstance,
     });
 
-    const dataObject = await mockDataSource.getById({
+    const dataObject = await mockDataSource.getOne({
       objectType: 'fail',
       id: 'fail',
     });
