@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faDiagramProject, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FieldMeta, initialiseFieldMeta } from './Field';
 import { Row, Button, Col } from 'react-bootstrap';
-import { deleteFieldMetaFromStorage } from './Utils';
+import { deleteFieldMetaFromStorage, sortFieldsByRename } from './Utils';
 
 
 export interface Props {
@@ -51,7 +51,7 @@ function ConfigModal(props: Props) {
       }
     }
     // sort order of inactive alphabetically
-    updatedFieldMeta.order.inactive = updatedFieldMeta.order.inactive.sort();
+    updatedFieldMeta.order.inactive = sortFieldsByRename(updatedFieldMeta);
     return updatedFieldMeta;
   };
 
@@ -113,7 +113,7 @@ function ConfigModal(props: Props) {
     <>
       <Row style={{ marginLeft: 0, marginRight: 0, paddingLeft: 0, paddingRight: 0}}>
         <Col sm={6} style={{ paddingLeft: 0, paddingRight: 0 }}>
-          <h2>Table Settings</h2>
+          <h2>Table Configuration</h2>
         </Col>
         <Col sm={6} style={{ paddingLeft: 0, paddingRight: 0 }}>
           <Button
@@ -124,7 +124,7 @@ function ConfigModal(props: Props) {
               deleteFieldMetaFromStorage(tableId);
             }}
           >
-            Clear Saved Configuration
+            Clear and Reset
             <FontAwesomeIcon icon={faTrash} size="sm" />
           </Button>
         </Col>

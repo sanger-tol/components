@@ -22,9 +22,7 @@ import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { EntityMeta } from '../models';
 
 
-export const fieldMetaVersion = "field-meta-v9";
-let idField: string; // id or uid
-let idFieldDefinedPreviously = false;
+export const fieldMetaVersion = "field-meta-v10";
 let hiddenFields = false;
 
 export function isRelationship(key: string) {
@@ -310,8 +308,11 @@ function addDefaultCellRenderer(key: string, type: string) {
 
 function structureFieldMetaViaProp(fieldMeta: FieldMeta, fields: FieldMetaData) {
   for (const [key, meta] of Object.entries(fields)) {
-    const isActive = (meta.hidden) ? 'inactive' : 'active';
-    fieldMeta.order[isActive].push(key);
+    // only adding field if it is new or first load
+    if (!(key in fieldMeta.data)) {
+      const isActive = (meta.hidden) ? 'inactive' : 'active';
+      fieldMeta.order[isActive].push(key);
+    }
     fieldMeta.data[key] = addFieldDefaults(meta);
     fieldMeta.data[key].isAttribute = !isRelationship(key);
     if (fieldMeta.data[key].hidden) hiddenFields = true;
@@ -324,35 +325,27 @@ function addRemoteFilterType(type: string, cardinality: number) {
   return type;
 }
 
-function addRemoteTypesAndExtraColumns(
+function addEntityMetaFields(
   endpoint: string,
   fieldMeta: FieldMeta,
-  entityMeta: EntityMeta,
-  fieldPropExists: boolean
+  entityMeta: EntityMeta
 ) {
-  idFieldDefinedPreviously = idField in fieldMeta.data;
   for (const [key, meta] of Object.entries(entityMeta.flatAttributes[endpoint])) {
-    let hidden = fieldPropExists;
-    let isActive = hidden ? 'inactive' : 'active';
+    // initialising
     const type = meta['python_type'];
     const rename = meta['display_name'];
     const description = meta['description'];
     const filterType = addRemoteFilterType(type, meta['cardinality']);
 
-    // auto add field that are not yet in fieldMeta
+    // auto add field that are not yet in fieldMeta & hidden not enabled
     if (!hiddenFields && !(key in fieldMeta.data)) {
-      // relationship attributes are hidden by default
-      if (isRelationship(key) && key.split('.')[1] !== 'id') {
-        hidden = true;
-        isActive = 'inactive';
-      }
-      if (key !== idField) fieldMeta.order[isActive].push(key);
+      fieldMeta.order['inactive'].push(key);
       fieldMeta.data[key] = addFieldDefaults(
-        // hidden as default, overridden by field prop
-        {isAttribute: !isRelationship(key), hidden: hidden}
+        // hides any new (not defined as a prop) fields
+        {isAttribute: !isRelationship(key), hidden: true}
       );
     }
-    // add deafults to fields fields
+    // add defaults to fields
     if (key in fieldMeta.data) {
       fieldMeta.data[key].type = fieldMeta.data[key].type || type;
       fieldMeta.data[key].filter = fieldMeta.data[key].filter || filterType;
@@ -363,9 +356,18 @@ function addRemoteTypesAndExtraColumns(
   }
 }
 
+export function sortFieldsByRename(fieldMeta: FieldMeta) {
+  return fieldMeta.order.inactive.sort((a, b) => {
+    const fieldA = fieldMeta.data[a];
+    const fieldB = fieldMeta.data[b];
+    if (fieldA.rename! < fieldB.rename!) return -1;
+    if (fieldA.rename! > fieldB.rename!) return 1;
+    return 0;
+  });
+}
+
 function addDefaultMeta(
-  fieldMeta: FieldMeta,
-  fieldPropExists: boolean
+  fieldMeta: FieldMeta
 ) {
   // add defaults
   for (const [key, meta] of Object.entries(fieldMeta.data)) {
@@ -374,32 +376,30 @@ function addDefaultMeta(
     }
   }
   // ensure fields are easy to find
-  fieldMeta.order.inactive.sort();
-  // id shoud be first in the order (initial load) and no hidden fields defined
-  if (idField !== undefined && !idFieldDefinedPreviously && !hiddenFields) {
-    const isActive = fieldPropExists ? 'inactive' : 'active';
-    fieldMeta.order[isActive].unshift(idField);
-  }
+  fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
 }
 
-export function structureFieldMeta(endpoint: string, entityMeta?: EntityMeta, fields?: FieldMetaData, pageSize?: number) {
+export function structureFieldMeta(
+  endpoint: string,
+  savedFieldMeta?: FieldMeta,
+  entityMeta?: EntityMeta,
+  fields?: FieldMetaData,
+  pageSize?: number
+) {
   endpoint = endpoint.split('/').pop() as string;
-  const fieldMeta = initialiseFieldMeta(pageSize);
+  const fieldMeta = savedFieldMeta ? savedFieldMeta : initialiseFieldMeta(pageSize);  
   const fieldPropExists = fields !== undefined;
-  if (fieldPropExists) {
-    structureFieldMetaViaProp(fieldMeta, fields);
-  }
+  if (fieldPropExists) structureFieldMetaViaProp(fieldMeta, fields);
   /*
   --- dealing with id/uid ---
   - id is seperate from attributes, so it needs to be added
   - only added if uid does not exist
   - value can be null, as only the key is used in this instance
   */
-  if (entityMeta !== undefined) {
-    idField = ('uid' in entityMeta.flatAttributes[endpoint]) ? 'uid' : 'id';
-    addRemoteTypesAndExtraColumns(endpoint, fieldMeta, entityMeta, fieldPropExists);
+  if (entityMeta) {
+    addEntityMetaFields(endpoint, fieldMeta, entityMeta);
   }
-  addDefaultMeta(fieldMeta, fieldPropExists);
+  addDefaultMeta(fieldMeta);
   return fieldMeta;
 }
 
@@ -460,7 +460,6 @@ export function getFieldMetaAttributeFromStorage(tableId: string, fields?: Field
     }
     return fieldMeta;
   }
-  return null;
 }
 
 export function deleteFieldMetaFromStorage(tableId: string) {

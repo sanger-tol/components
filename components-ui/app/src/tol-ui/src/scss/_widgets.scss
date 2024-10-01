@@ -44,8 +44,11 @@
     }
   }
 
-  h5 {
+  p {
     text-align: center;
+    font-size: 14px;
+    font-weight: bolder;
+    color: var(--bs-emphasis-color);
   }
 }
 

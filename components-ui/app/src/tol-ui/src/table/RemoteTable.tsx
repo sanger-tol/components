@@ -169,17 +169,15 @@ function RemoteTable(props: Props) {
       setTotalSize(apiMeta.total);
       setError('');
 
-      // setting fieldMeta on first load
-      let savedFieldMeta: FieldMeta | null = getFieldMetaAttributeFromStorage(id, fields);
-      if (savedFieldMeta === null) {
-        savedFieldMeta = structureFieldMeta(
-          endpoint,
-          entityMeta,
-          fields,
-          props.pageSize
-        );
-        setFieldMetaAttributeInStorage(id, savedFieldMeta);
-      }
+      // updating fieldMeta
+      const savedFieldMeta = structureFieldMeta(
+        endpoint,
+        getFieldMetaAttributeFromStorage(id, fields),
+        entityMeta,
+        fields,
+        props.pageSize
+      );
+      setFieldMetaAttributeInStorage(id, savedFieldMeta);
       setFieldMeta(savedFieldMeta);
       setPageSize(savedFieldMeta.pageSize);
 
@@ -201,7 +199,7 @@ function RemoteTable(props: Props) {
       setLoading(false);
       setInitialLoad(false);
     }).catch((error: any) => {
-      setError('Apologies, an error occurred');
+      setError(error.message);
       setLoading(false);
       setInitialLoad(false);
       setData([]);

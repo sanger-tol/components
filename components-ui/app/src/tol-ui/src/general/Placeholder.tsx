@@ -15,7 +15,7 @@ function getPlaceholderIcon(
   map?: boolean,
   drag?: boolean,
   loader?: boolean,
-  message?: string,
+  message?: string|JSX.Element,
   warningMessage?: string,
   errorMessage?: string
 ) {
@@ -36,7 +36,7 @@ function getPlaceholderIcon(
   } else if (loader) {
     return <Loader />;
   } else if (message !== undefined){
-    return <h5>{message}</h5>;
+    return <p>{message}</p>;
   } else if (warningMessage !== undefined) {
     return <Status status="warning" text={warningMessage} />;
   } else if (errorMessage !== undefined) {
@@ -103,7 +103,7 @@ interface Props {
   opacity?: number,
   clear?: boolean,
   squareCorners?: boolean,
-  message?: string,
+  message?: string|JSX.Element,
   warningMessage?: string,
   errorMessage?: string,
   backing?: JSX.Element,

@@ -313,102 +313,119 @@ function Table (props: Props) {
           }
         </Col>
       </Row>
-      <div className='tol-table-inner'>
-        <RSTable
-          bordered
-          data={data}
-          headerHeight={!noFilter && filterVisible ? 85 : 42}
-          loading={loading}
-          sortColumn={sortColumn}
-          sortType={sortType}
-          onSortColumn={handleSortColumn!}
-          rowClassName={(rowData: any) => {
-            if (rowData) {
-              if (bulkSelect) {
-                return 'tol-selected-row disabled';
-              } else if (selectedRows.some(item => item === rowData.id)) {
-                return 'tol-selected-row';
+      {fieldMeta.order.active.length === 0 ?
+        <Placeholder
+          message={
+            <>
+            Please add a field to get started. Click
+            <FontAwesomeIcon
+              icon={faSliders}
+              size="lg"
+              style={{padding: "0 10"}}
+            />
+            to configure.
+            </>
+          }
+          height={height}
+        />
+      :
+        <div className='tol-table-inner'>
+          <RSTable
+            bordered
+            data={data}
+            headerHeight={!noFilter && filterVisible ? 85 : 42}
+            loading={loading}
+            sortColumn={sortColumn}
+            sortType={sortType}
+            onSortColumn={handleSortColumn!}
+            rowClassName={(rowData: any) => {
+              if (rowData) {
+                if (bulkSelect) {
+                  return 'tol-selected-row disabled';
+                } else if (selectedRows.some(item => item === rowData.id)) {
+                  return 'tol-selected-row';
+                }
               }
+              return '';
+            }}
+            fillHeight
+            wordWrap
+            renderLoading={
+              () => (
+                <Placeholder
+                  loader
+                  height={height}
+                  opacity={0.8}
+                  squareCorners
+                />
+              )
             }
-            return '';
-          }}
-          fillHeight
-          wordWrap
-          renderLoading={
-            () => (
-              <Placeholder
-                loader
-                height={height}
-                opacity={0.8}
-                squareCorners
-              />
-            )
-          }
-        >
-          {rowSelection &&
-          <Column key="rowSelection" width={60}>
-            <HeaderCell>
-              <Checkbox
-                className="tol-row-selection"
-                checked={checked}
-                indeterminate={indeterminate}
-                disabled={bulkSelect}
-                onChange={handleCheckAll}
-              />
-            </HeaderCell>
-            <Cell dataKey="id">
-              {(rowData: {id: any}) => {
-                return (
-                  <Checkbox
-                    className="tol-row-selection"
-                    value={rowData.id}
-                    checked={bulkSelect || selectedRows.some(item => item === rowData.id)}
-                    disabled={bulkSelect}
-                    onChange={handleCheck}
-                  />
-                );
-              }}
-            </Cell>
-          </Column>
-          }
-          {fieldMeta!.order.active.map((key: string) => {
-            const field = fieldMeta.data[key];
-            const sortable = noSorting ? false : field.sort;
-            const filterable = noFilter ? false : field.filter;
-            return (
-              <Column
-                key={key}
-                width={field.width}
-                sortable={sortable}
-                fixed={field.fixed}
-              >
-                <HeaderCell>
-                  {field.description &&
-                    <div className='tol-header-info'>
-                      <InfoTooltip contents={field.description} />
-                    </div>
-                  }
-                  <p className='tol-header-text'>
-                    {field.rename}
-                  </p>
-                  {filterable &&
-                    <span className={filterVisible ? "tol-filter" : "tol-filter-hide"}>
-                      <Filter
-                        attribute={key}
-                        rename={field.rename!}
-                        type={field.filter as FilterType}
-                        componentId={id}
-                        {...props}
-                      />
-                    </span>
-                  }
-                </HeaderCell>
-                <Cell dataKey={key} />
-              </Column>
-            );
-          })}
-        </RSTable>
-      </div>
+          >
+            {rowSelection &&
+            <Column key="rowSelection" width={60}>
+              <HeaderCell>
+                <Checkbox
+                  className="tol-row-selection"
+                  checked={checked}
+                  indeterminate={indeterminate}
+                  disabled={bulkSelect}
+                  onChange={handleCheckAll}
+                />
+              </HeaderCell>
+              <Cell dataKey="id">
+                {(rowData: {id: any}) => {
+                  return (
+                    <Checkbox
+                      className="tol-row-selection"
+                      value={rowData.id}
+                      checked={bulkSelect || selectedRows.some(item => item === rowData.id)}
+                      disabled={bulkSelect}
+                      onChange={handleCheck}
+                    />
+                  );
+                }}
+              </Cell>
+            </Column>
+            }
+            {fieldMeta!.order.active.map((key: string) => {
+              const field = fieldMeta.data[key];
+              const sortable = noSorting ? false : field.sort;
+              const filterable = noFilter ? false : field.filter;
+              return (
+                <Column
+                  key={key}
+                  width={field.width}
+                  sortable={sortable}
+                  fixed={field.fixed}
+                >
+                  <HeaderCell>
+                    {field.description &&
+                      <div className='tol-header-info'>
+                        <InfoTooltip contents={field.description} />
+                      </div>
+                    }
+                    <p className='tol-header-text'>
+                      {field.rename}
+                    </p>
+                    {filterable &&
+                      <span className={filterVisible ? "tol-filter" : "tol-filter-hide"}>
+                        <Filter
+                          attribute={key}
+                          rename={field.rename!}
+                          type={field.filter as FilterType}
+                          componentId={id}
+                          {...props}
+                        />
+                      </span>
+                    }
+                  </HeaderCell>
+                  <Cell dataKey={key} />
+                </Column>
+              );
+            })}
+          </RSTable>
+        </div>
+      }
     </div>
   );
 }

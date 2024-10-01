@@ -20,21 +20,23 @@ function exampleElement(props: exampleProps) {
 function Tables() {
   const [forceUpdate, setForceUpdate] = useState(false);
 
+  const title = <h2>Tables</h2>;
+
   const runData = useZone({
     endpoint: 'run_data',
     baseUrl: env.TOL_DATA,
     components: [{id: 'table-example'}]
   });
 
-  const table = (
+  const table1 = (
     <div>
-      <h2 style={{marginBottom: 12}}>Tables</h2>
       <Button
         style={{marginBottom: 12}}
         onClick={() => setForceUpdate(!forceUpdate)}
       >
         Force Update
       </Button>
+      <h5 style={{marginBottom: 12}}>Remote Table</h5>
       <RemoteTable
         id="table-example"
         rowSelection
@@ -85,6 +87,24 @@ function Tables() {
     </div>
   );
 
+  const sample = useZone({
+    endpoint: 'sample',
+    baseUrl: env.TOL_DATA,
+    components: [{id: 'table-example-2'}]
+  });
+
+  const table2 = (
+    <div>
+      <h5 style={{marginBottom: 12}}>Remote Table Empty On Load</h5>
+      <RemoteTable
+        id="table-example-2"
+        height={500}
+        {...sample}
+      />
+    </div>
+  );
+
+
   const db = useZone({
     endpoint: 'singular',
     components: [{id: 'db-table'}]
@@ -92,6 +112,7 @@ function Tables() {
 
   const dbTable = (
     <div>
+      <h5 style={{marginBottom: 12}}>Remote Table Local Database</h5>
       <RemoteTable
         id="db-table"
         height={500}
@@ -102,7 +123,15 @@ function Tables() {
 
   const components = [
     {
-      component: table,
+      component: title,
+      type: 'full'
+    },
+    {
+      component: table1,
+      type: 'full'
+    },
+    {
+      component: table2,
       type: 'full'
     },
     {
