@@ -1,6 +1,6 @@
 {
   "name": "components-ui",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "private": true,
   "proxy": "http://components-api:80",
   "dependencies": {
@@ -36,7 +36,7 @@
     "babel-runtime": "6.26.0",
     "react-leaflet": "4.2.1",
     "@types/leaflet": "1.9.3",
-    "rsuite": "5.28.3",
+    "rsuite": "5.71.0",
     "leaflet": "1.9.4",
     "react-leaflet-cluster": "2.1.0",
     "react-leaflet-enhanced-marker": "1.0.21",
