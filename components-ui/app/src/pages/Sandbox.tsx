@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { TsDataSource, env } from "../tol-ui/src";
+
 function Sandbox() {
 
   const ds1 = new TsDataSource({
