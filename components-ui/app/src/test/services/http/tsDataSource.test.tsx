@@ -11,21 +11,88 @@ import '@testing-library/jest-dom';
 const speciesMockData = { data: { data: { id: 'testSpeciesId', type: 'species', attributes: { name: 'test species' } } } };
 const sampleMockData = { data: { data: { id: 'testSampleId', type: 'sample', attributes: { name: 'test sample' } } } };
 
+const attributeMetadataMockData = {
+  "barcoding_run_data": {
+      "bioscan_c": {
+          "authoritative": null,
+          "available_on_relationships": null,
+          "cardinality": 5,
+          "description": null,
+          "display_name": null,
+          "python_type": "str"
+      },
+      "bioscan_c_count": {
+          "authoritative": null,
+          "available_on_relationships": null,
+          "cardinality": 12,
+          "description": null,
+          "display_name": null,
+          "python_type": "int"
+      },
+      "bioscan_checksum": {
+          "authoritative": null,
+          "available_on_relationships": null,
+          "cardinality": 81124,
+          "description": null,
+          "display_name": null,
+          "python_type": "str"
+      }
+  }
+};
+
+const relationshipConfigMockData = {
+  "species": {
+      "foreign_keys": {
+          "benchling_samples": "benchling_species.id",
+          "benchling_tissue_preps": "benchling_species.id",
+          "grit_curations": "grit_species.id",
+          "sts_samples": "sts_species.id"
+      },
+      "many": {
+          "benchling_samples": "sample",
+          "benchling_tissue_preps": "tissue_prep",
+          "grit_curations": "curation",
+          "sts_samples": "sample"
+      }
+  },
+  "specimen": {
+      "foreign_keys": {
+          "benchling_extractions": "benchling_specimen.id",
+          "benchling_samples": "benchling_specimen.id",
+          "benchling_sequencing_request": "benchling_specimen.id",
+          "mlwh_sequencing_request": "mlwh_specimen.id",
+          "sts_samples": "sts_specimen.id"
+      },
+      "many": {
+          "benchling_extractions": "extraction",
+          "benchling_samples": "sample",
+          "benchling_sequencing_request": "sequencing_request",
+          "mlwh_sequencing_request": "sequencing_request",
+          "sts_samples": "sample"
+      }
+  },
+};
+
 const mockClient = () => ({
-  get(endpoint: string, { baseURL, params }: { baseURL: string, params?: any },) {
-    if (endpoint === '/species/testSpeciesId' && baseURL === 'test') {
+  get(endpoint: string, { baseURL, params }: { baseURL: string, params?: any }) {
+    if (endpoint === '/_config/attribute_metadata' && baseURL === 'test') {
+      return Promise.resolve({ data: attributeMetadataMockData });
+    } else if (endpoint === '/species/testSpeciesId' && baseURL === 'test') {
       return Promise.resolve(speciesMockData);
     } else if (endpoint === '/sample/testSampleId' && baseURL === 'test') {
       return Promise.resolve(sampleMockData);
     } else if (endpoint === '/species' && baseURL === 'test') {
-      // Simulate pagination logic based on params
       const pageSize = params?.page_size || 10;
       const mockPageData = Array(pageSize).fill(speciesMockData.data.data);
       return Promise.resolve({ data: { data: mockPageData } });
+    } else if (endpoint === '/_config/relationships' && baseURL === 'test') {
+      return Promise.resolve({ data: relationshipConfigMockData });
     }
     return Promise.reject({ response: { status: 404 } });
   }
 });
+
+// Need to adjust to account for the get config
 
 const mockDataSource = new TsDataSource({
     baseUrl: 'test',
@@ -33,10 +100,10 @@ const mockDataSource = new TsDataSource({
   });
 
 
-describe ('Testing getById function', () => {
+describe ('Testing getOne function', () => {
   test('ID does not exist in promise', async () => {
 
-    // Call getById function
+    // Call getOne function
     const dataObject = await mockDataSource.getOne({
       objectType: 'species',
       id: 'testSpeciesId',
@@ -198,5 +265,71 @@ describe ('Testing getListPage function', () => {
     });
 
     expect(dataObjects).toBeNull();
+  });
+})
+
+describe ('Testing attributeMetadata function', () => {
+  test('Returns correct attribute metadata', async () => {
+    // Use mockClient to mock the client and initialize TsDataSource
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, 'get');
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    // Call attributeMetadata function
+    const dataObject = await mockDataSource.attributeMetadata();
+
+    // Expected data
+    const expectedData = attributeMetadataMockData;
+
+    // Assert the result
+    expect(dataObject).toEqual(expectedData);
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test('Caches attribute metadata and does not call client again', async () => {
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, 'get');
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    await mockDataSource.attributeMetadata();
+    expect(clientGetSpy).toHaveBeenCalledTimes(0);
+  });
+})
+
+describe ('Testing relationshipConfig function', () => {
+  test('Returns correct attribute metadata', async () => {
+    // Use mockClient to mock the client and initialize TsDataSource
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, 'get');
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+    const expectedData = relationshipConfigMockData;
+
+    const dataObject = await mockDataSource.relationshipConfig();
+    expect(dataObject).toEqual(expectedData);
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test('Caches relationship config and does not call client again', async () => {
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, 'get');
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    await mockDataSource.relationshipConfig();
+    expect(clientGetSpy).toHaveBeenCalledTimes(0);
   });
 })
