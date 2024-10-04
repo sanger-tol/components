@@ -334,7 +334,7 @@ function addEntityMetaFields(
     // initialising
     const type = meta['python_type'];
     const rename = meta['display_name'];
-    const description = meta['description'];
+    const description = meta['description'] || undefined;
     const filterType = addRemoteFilterType(type, meta['cardinality']);
 
     // auto add field that are not yet in fieldMeta & hidden not enabled
@@ -449,7 +449,7 @@ export function setFieldMetaAttributeInStorage(tableId: string, value: any, attr
   }
 }
 
-export function getFieldMetaAttributeFromStorage(tableId: string, fields?: FieldMetaData, attribute?: string) {
+export function getFieldMetaFromStorage(tableId: string, fields?: FieldMetaData, attribute?: string) {
   const data = localStorage.getItem(`${tableId}-${fieldMetaVersion}`);
   if (data !== null) {
     let fieldMeta = JSON.parse(data);
@@ -493,7 +493,7 @@ export function exportTableToSpreadsheet(
   const columns = Object.keys(fieldMetaData).map((key: string) => ({
     key: key,
     display_name: fieldMetaData[key].rename,
-    hidden: fieldMetaData[key].hidden
+    hidden: fieldMetaData[key].hidden || false
   }));
 
   const params = {

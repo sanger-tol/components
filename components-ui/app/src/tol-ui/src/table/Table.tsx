@@ -362,30 +362,35 @@ function Table (props: Props) {
             }
           >
             {rowSelection &&
-            <Column key="rowSelection" width={60}>
-              <HeaderCell>
-                <Checkbox
-                  className="tol-row-selection"
-                  checked={checked}
-                  indeterminate={indeterminate}
-                  disabled={bulkSelect}
-                  onChange={handleCheckAll}
-                />
-              </HeaderCell>
-              <Cell dataKey="id">
-                {(rowData: {id: any}) => {
-                  return (
-                    <Checkbox
-                      className="tol-row-selection"
-                      value={rowData.id}
-                      checked={bulkSelect || selectedRows.some(item => item === rowData.id)}
-                      disabled={bulkSelect}
-                      onChange={handleCheck}
-                    />
-                  );
-                }}
-              </Cell>
-            </Column>
+              <Column key="rowSelection" width={60}>
+                <HeaderCell>
+                  <Checkbox
+                    className="tol-row-selection"
+                    checked={checked}
+                    indeterminate={indeterminate}
+                    disabled={bulkSelect || data.length === 0}
+                    onChange={handleCheckAll}
+                    style={
+                      data.length === 0
+                      ? {display: 'none'}
+                      : {}
+                    }
+                  />
+                </HeaderCell>
+                <Cell dataKey="id">
+                  {(rowData: {id: any}) => {
+                    return (
+                      <Checkbox
+                        className="tol-row-selection"
+                        value={rowData.id}
+                        checked={bulkSelect || selectedRows.some(item => item === rowData.id)}
+                        disabled={bulkSelect}
+                        onChange={handleCheck}
+                      />
+                    );
+                  }}
+                </Cell>
+              </Column>
             }
             {fieldMeta!.order.active.map((key: string) => {
               const field = fieldMeta.data[key];

@@ -9,7 +9,7 @@ import { httpClient } from '../services/http/httpClient';
 import { FieldMetaData, FieldMeta } from "./Field";
 import {
   createSort,
-  getFieldMetaAttributeFromStorage,
+  getFieldMetaFromStorage,
   setFieldMetaAttributeInStorage,
   convertTableData,
   tableDebug,
@@ -81,7 +81,7 @@ function RemoteTable(props: Props) {
 
   // pagination
   const getPageSize = () => {
-    const size = getFieldMetaAttributeFromStorage(id, fields, 'pageSize');
+    const size = getFieldMetaFromStorage(id, fields, 'pageSize');
     return size ?? props.pageSize ?? 50;
   };
   const [page, setPage] = useState<number>(1);
@@ -161,7 +161,7 @@ function RemoteTable(props: Props) {
       const apiMeta = res.data.meta;
 
       // get attribute types and relationship links
-      const entityMeta = (basic !== true && initialLoad)
+      const entityMeta = (basic !== true)
         ? await ds.getEntityMeta()
         : undefined;
 
@@ -170,14 +170,17 @@ function RemoteTable(props: Props) {
       setError('');
 
       // updating fieldMeta
-      const savedFieldMeta = structureFieldMeta(
-        endpoint,
-        getFieldMetaAttributeFromStorage(id, fields),
-        entityMeta,
-        fields,
-        props.pageSize
-      );
-      setFieldMetaAttributeInStorage(id, savedFieldMeta);
+      let savedFieldMeta = getFieldMetaFromStorage(id, fields) as FieldMeta;
+      if (initialLoad) {
+        savedFieldMeta = structureFieldMeta(
+          endpoint,
+          getFieldMetaFromStorage(id, fields),
+          entityMeta,
+          fields,
+          props.pageSize
+        );
+        setFieldMetaAttributeInStorage(id, savedFieldMeta);
+      }
       setFieldMeta(savedFieldMeta);
       setPageSize(savedFieldMeta.pageSize);
 
