@@ -24,7 +24,7 @@ function Logout() {
     };
   }, []);
 
-  return "Logout";
+  return <>Logout</>;
 }
 
 export default Logout;

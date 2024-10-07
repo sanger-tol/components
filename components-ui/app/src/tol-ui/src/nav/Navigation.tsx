@@ -72,7 +72,7 @@ const getBackgroundClass = (environment: string): string => {
 };
 
 function Navigation(props: Props) {
-  const { token, setToken, user, setUser } = useAuth();
+  const { setToken, user, setUser } = useAuth();
   const history = useHistory();
   const [environment, setEnvironment] = useState("");
 

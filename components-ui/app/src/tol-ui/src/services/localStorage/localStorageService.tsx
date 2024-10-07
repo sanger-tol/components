@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { deepCopy } from 'src/general/Utils';
 import { User } from '../../models/User';
 
 export function setTokenToLocalStorage(token: string) {
