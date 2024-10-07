@@ -8,18 +8,15 @@ import { useCallback, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useAuth } from '../contexts/auth.context';
 import { getUrlLogin } from '../services/auth/authService';
-import { getTokenFromLocalStorage, tokenHasExpired } from '../services/localStorage/localStorageService';
+import { tokenHasExpired } from '../services/localStorage/localStorageService';
 import { LoginIcon } from '../general/Icons';
 
 
 function Login() {
-  const { token, setToken } = useAuth();
+  const { setToken } = useAuth();
 
-  useEffect(()=> {
-    if(!getTokenFromLocalStorage()){
-      setToken('');
-    }
-    // eslint-disable-next-line
+  useEffect(() => {
+    if (tokenHasExpired()) setToken('');
   }, []);
 
   const login = useCallback(() => {
@@ -28,7 +25,7 @@ function Login() {
     });
   }, []);
 
-  return (!token || tokenHasExpired()) ? (
+  return (tokenHasExpired()) ? (
     LoginIcon(login)
   ) : (
     <Redirect to="/" />

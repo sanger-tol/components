@@ -46,10 +46,7 @@ function TolApp(props: Props) {
   }, []);
 
   // show login button as default
-  let login = props.login;
-  if (login === undefined) {
-    login = true;
-  }
+  const login = props.login || true;
 
   if (!("API_PATH" in env)) {
     return (

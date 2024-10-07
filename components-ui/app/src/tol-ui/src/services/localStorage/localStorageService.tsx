@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { deepCopy } from 'src/general/Utils';
 import { User } from '../../models/User';
 
 export function setTokenToLocalStorage(token: string) {
@@ -25,17 +26,14 @@ export function getUserFromLocalStorage() {
   const userString = localStorage.getItem('user') || '{"roles": []}';
   return JSON.parse(userString);
 }
-
 export function tokenHasExpired() {
   const token = getTokenFromLocalStorage();
   if (!token) return true;
-
   try {
     const user = getUserFromLocalStorage();
-    const expires_at = Date.parse(user.expires_at);
-
-    return expires_at < Date.now();
-
+    const expiryUTC = user.token_expires_at;
+    const nowUTC = new Date().toISOString();
+    return nowUTC >= expiryUTC;
   } catch (e) {
     return true;
   }

@@ -15,6 +15,7 @@ import {
   tokenHasExpired
 } from '../services/localStorage/localStorageService';
 import Login from './Login';
+import Logout from './Logout';
 import { Dropdown } from "../models/Nav";
 import { Page } from "../models/Nav";
 import { convertToPath } from "../general/Utils";
@@ -74,6 +75,7 @@ function Navigation(props: Props) {
   const { token, setToken, user, setUser } = useAuth();
   const history = useHistory();
   const [environment, setEnvironment] = useState("");
+
   useEffect(() => {
     fetchEnvironment()
       .then((fetchedEnvironment: string) => {
@@ -181,14 +183,13 @@ function Navigation(props: Props) {
                 );
               }
             })}
-            {(!token || tokenHasExpired()) && props.login &&
+            {props.login && tokenHasExpired() ?
               <Nav.Link className="nav-right" key="Login">
-                <Login/>
+                <Login />
               </Nav.Link>
-            }
-            {token && !tokenHasExpired() && props.login &&
+              :
               <Nav.Link onClick={logout} className="nav-right" href="/" key="Logout">
-                Logout
+                <Logout />
               </Nav.Link>
             }
           </Navbar.Collapse>
