@@ -4,26 +4,27 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Checkbox, CheckPicker as RSCheckPicker } from 'rsuite';
-import { isPropDefined } from '../general/Utils';
-
+import { Checkbox, CheckPicker as RSCheckPicker } from "rsuite";
+import { isPropDefined } from "../general/Utils";
+import { RSForm } from "../index";
 
 interface Props {
-  block?: boolean,
-  data: string[],
-  value: string[],
-  setValue: any,
-  placeholder?: string,
-  disabled?: boolean,
-  loading?: boolean,
-  open?: boolean,
-  onOpen?: any,
-  onEntering?: any,
-  onClose?: any,
-  onClick?: any,
-  renderMenuItem?: any,
-  renderValue?: any,
-  noSearch?: boolean
+  block?: boolean;
+  data: string[];
+  value: string[];
+  setValue: any;
+  placeholder?: string;
+  disabled?: boolean;
+  loading?: boolean;
+  open?: boolean;
+  onOpen?: any;
+  onEntering?: any;
+  onClose?: any;
+  onClick?: any;
+  renderMenuItem?: any;
+  renderValue?: any;
+  noSearch?: boolean;
+  label?: string;
 }
 
 function MultipleSelect(props: Props) {
@@ -41,15 +42,14 @@ function MultipleSelect(props: Props) {
     onClick,
     renderMenuItem,
     renderValue,
-    noSearch
+    noSearch,
+    label,
   } = props;
   const block = isPropDefined(props.block);
 
-  const formattedData = data.map(item => 
-    ({ label: item, value: item })
-  );
+  const formattedData = data.map((item) => ({ label: item, value: item }));
 
-  const allValues = formattedData.map(item => item.value);
+  const allValues = formattedData.map((item) => item.value);
 
   const handleCheckAll = () => {
     setValue(value.length === allValues.length ? [] : allValues);
@@ -69,28 +69,31 @@ function MultipleSelect(props: Props) {
       </div>
     );
   };
-  
+
   return (
-    <span onClick={onClick}>
-      <RSCheckPicker
-        searchable={!noSearch}
-        countable
-        block={block}
-        value={value}
-        data={formattedData}
-        placeholder={placeholder}
-        disabled={disabled}
-        onChange={setValue}
-        loading={loading}
-        open={open}
-        onOpen={onOpen}
-        onEntering={onEntering}
-        onClose={onClose}
-        renderExtraFooter={selectAll}
-        renderMenuItem={renderMenuItem}
-        renderValue={renderValue}
-      />
-    </span>
+    <>
+      {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
+      <span onClick={onClick}>
+        <RSCheckPicker
+          searchable={!noSearch}
+          countable
+          block={block}
+          value={value}
+          data={formattedData}
+          placeholder={placeholder}
+          disabled={disabled}
+          onChange={setValue}
+          loading={loading}
+          open={open}
+          onOpen={onOpen}
+          onEntering={onEntering}
+          onClose={onClose}
+          renderExtraFooter={selectAll}
+          renderMenuItem={renderMenuItem}
+          renderValue={renderValue}
+        />
+      </span>
+    </>
   );
 }
 

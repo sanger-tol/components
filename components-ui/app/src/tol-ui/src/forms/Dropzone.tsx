@@ -4,27 +4,26 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from 'react';
-import { Uploader } from 'rsuite';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileArrowUp } from '@fortawesome/free-solid-svg-icons';
-import { Loader, httpClient, Status } from '../index';
-
+import { useState, useEffect } from "react";
+import { Uploader } from "rsuite";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { Loader, httpClient, Status } from "../index";
 
 interface WaitingUpload {
-  message: string
+  message: string;
 }
 
 interface Message {
-  type: string,
-  message: string
+  type: string;
+  message: string;
 }
 
 export interface Props {
-  endpoint: string,
-  fileType: string,
-  generateMessages: (apiRes: any) => Message[],
-  setResponse?: any
+  endpoint: string;
+  fileType: string;
+  generateMessages: (apiRes: any) => Message[];
+  setResponse?: any;
 }
 
 function Dropzone(props: Props) {
@@ -37,7 +36,7 @@ function Dropzone(props: Props) {
   const [fail, setFail] = useState(false);
 
   useEffect(() => {
-    if (fileList.length > 0){
+    if (fileList.length > 0) {
       setIsLoading(true);
       setHasLoaded(false);
       setMessages([]);
@@ -48,15 +47,20 @@ function Dropzone(props: Props) {
 
   const validateFile = () => {
     const formData = new FormData();
-    formData.set("file", fileList[fileList.length -1].blobFile, fileList[fileList.length -1].name);
+    formData.set(
+      "file",
+      fileList[fileList.length - 1].blobFile,
+      fileList[fileList.length - 1].name
+    );
 
-    httpClient().post("/" + endpoint, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      }
-    })
+    httpClient()
+      .post("/" + endpoint, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
       .then((res: any) => {
-        if (setResponse){
+        if (setResponse) {
           setResponse(res);
         }
         setIsLoading(false);
@@ -72,15 +76,23 @@ function Dropzone(props: Props) {
   };
 
   const WaitingUpload = (props: WaitingUpload) => {
-    return <div className='dropzone-container'>
-      <FontAwesomeIcon className="file-upload" icon={faFileArrowUp} size="8x" />
-      <p>{props.message}</p>
-      {fileList.length > 0 ?
-        <p className='file-name'>{String(fileList[fileList.length -1].name)}</p>
-        : 
-        <p></p>
-      }
-    </div>;
+    return (
+      <div className="dropzone-container">
+        <FontAwesomeIcon
+          className="file-upload"
+          icon={faFileArrowUp}
+          size="8x"
+        />
+        <p>{props.message}</p>
+        {fileList.length > 0 ? (
+          <p className="file-name">
+            {String(fileList[fileList.length - 1].name)}
+          </p>
+        ) : (
+          <p></p>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -96,28 +108,36 @@ function Dropzone(props: Props) {
         }}
       >
         <div>
-          {isLoading ?
-            <div className='dropzone-container'>
+          {isLoading ? (
+            <div className="dropzone-container">
               <Loader />
             </div>
-            :
+          ) : (
             <div>
-              {fail ?
-                <WaitingUpload message="Unexpected error, please try again"/>
-                :
-                <WaitingUpload message="Click or drag file to this area to upload"/>
-              }
+              {fail ? (
+                <WaitingUpload message="Unexpected error, please try again" />
+              ) : (
+                <WaitingUpload message="Click or drag file to this area to upload" />
+              )}
             </div>
-          }
+          )}
         </div>
       </Uploader>
-      {hasLoaded ?
-        <div className='mt-3'>
+      {hasLoaded ? (
+        <div className="mt-3">
           {messages.map((message: Message, index: number) => {
-            return <Status key={index} status={message.type} text={message.message} />;
+            return (
+              <Status
+                key={index}
+                status={message.type}
+                text={message.message}
+              />
+            );
           })}
         </div>
-        : <></>}
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

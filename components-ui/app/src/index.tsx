@@ -20,8 +20,8 @@ import {
   Sunbursts,
   Widgets,
   UserId,
-  DashboardPage,
-  Messages
+  Messages,
+  DashboardPage
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown } from './tol-ui/src';
@@ -65,16 +65,16 @@ const widgets: Page = {
   element: <Widgets />
 };
 
-const dashboardPage: Page = {
-  name: 'Dashboard',
-  element: <DashboardPage />
-};
-
 // other
 const detail: Page = {
   name: "Detail",
   element: <Detail />,
   detail: <DetailInfo/>
+};
+
+const dashboardPage: Page = {
+  name: 'Dashboard',
+  element: <DashboardPage />
 };
 
 const forms: Page = {
