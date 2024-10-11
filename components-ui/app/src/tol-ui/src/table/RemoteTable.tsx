@@ -244,7 +244,6 @@ function RemoteTable(props: Props) {
       fieldMeta={fieldMeta!}
       height={height}
       loading={loading}
-      ref={tableRef}
       endpoint={endpoint}
       baseUrl={baseUrl}
       page={page}

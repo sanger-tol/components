@@ -12,7 +12,7 @@ interface Props {
   id: string;
   name: string;
   label: string;
-  accepter?: React.Element; // Allows custom elements to be passed in
+  accepter?: React.ReactNode; // Allows custom elements to be passed in
   helpText?: string;
   placeholder?: string;
   value?: string;
