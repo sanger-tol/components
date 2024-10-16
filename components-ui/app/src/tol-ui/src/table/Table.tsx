@@ -7,10 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from 'react';
 import { Button, Row, Col, Placeholder, Loader, useEffectUpdate } from '../index';
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
-import {
-  addTotalText, 
-  setFieldMetaAttributeInStorage
-} from './Utils';
+import { setFieldMetaAttributeInStorage } from './Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSliders, faDownload, faCheckDouble } from '@fortawesome/free-solid-svg-icons';
 import ConfigModal from './ConfigModal';
@@ -20,7 +17,8 @@ import { InfoTooltip, PopUpMessage } from '../general';
 import { FieldMeta } from './Field';
 import HoverOverlay from '../general/HoverOverlay';
 import { Zone } from '../board';
-import { generateFilter } from '../filtering/Utils';
+import RowTotal from './RowTotal';
+
 
 export type NumRows = 25 | 50 | 100 | 1000;
 
@@ -83,7 +81,6 @@ function Table (props: Props) {
     defaultSort,
     handleSortColumn,
   
-    zone,
     modalOnSave,
     filter,
 
@@ -156,7 +153,7 @@ function Table (props: Props) {
       onClick={() => exportTableToSpreadsheet(
         endpoint,
         fieldMeta.data,
-        generateFilter(zone, id)!,
+        filter!,
         sortColumn,
         sortType,
         setSuccess,
@@ -212,9 +209,7 @@ function Table (props: Props) {
           }
           {!noPagination &&
             <>
-              <span className='tol-total'>
-                {addTotalText(totalSize)}
-              </span>
+              <RowTotal {...props} />
               <span className='tol-page-size'>
                 <SelectPicker
                   value={pageSize}

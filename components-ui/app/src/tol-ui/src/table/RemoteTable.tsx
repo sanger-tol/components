@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { httpClient } from "../services/http/httpClient";
 import { FieldMetaData, FieldMeta } from "./Field";
 import {
@@ -132,20 +132,6 @@ function RemoteTable(props: Props) {
     setFieldMetaAttributeInStorage(id, fieldMeta.data, "data");
     setFieldMetaAttributeInStorage(id, fieldMeta.order, "order");
   };
-
-  // Deal with table not returning to position when data changes
-  const tableRef = useRef<any>(null);
-
-  const getScrollPosition = () => {
-    if (tableRef.current) {
-      return tableRef.current.scrollLeft;
-    }
-    return 0;
-  };
-
-  useEffect(() => {
-    console.log(getScrollPosition());
-  }, [data]);
 
   const renderTable = () => {
     setLoading(true);
