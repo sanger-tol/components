@@ -12,11 +12,17 @@ import {getProfile, getRoles, getToken} from '../services/auth/authService';
 import { useQuery } from '../hooks/useQuery';
 import { setTokenToLocalStorage, setUserToLocalStorage, tokenHasExpired } from '../services/localStorage/localStorageService';
 
-export function Callback() {
+interface Props {
+  customCallbackUrl?: string;
+}
+
+export function Callback(props: Props) {
   const history = useHistory();
   const { setToken, token, setUser } = useAuth();
   const [state] = useState(useQuery().get('state') || undefined);
   const [tokenCode] = useState(useQuery().get('code') || undefined);
+
+  const { customCallbackUrl } = props;
 
   useEffect(() => {
     if (!token || tokenHasExpired()) {
@@ -40,7 +46,7 @@ export function Callback() {
             .finally(() => {
               let targetUrl = localStorage.getItem('returnUrl') || '';
               if (!targetUrl || targetUrl === 'index') {
-                targetUrl = '/';
+                targetUrl = customCallbackUrl ? `/${customCallbackUrl}` : '/' ;
               }
               history.replace(targetUrl);
             });

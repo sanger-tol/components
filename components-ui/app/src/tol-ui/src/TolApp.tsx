@@ -34,6 +34,7 @@ export interface Props {
   homePage: JSX.Element,
   pages: (Page | Dropdown)[],
   login?: boolean
+  customCallbackUrl?: string
 }
 
 function TolApp(props: Props) {
@@ -47,6 +48,7 @@ function TolApp(props: Props) {
 
   // show login button as default
   const login = props.login || true;
+  const customCallbackUrl = props.customCallbackUrl || '';
 
   if (!("API_PATH" in env)) {
     return (
@@ -75,7 +77,7 @@ function TolApp(props: Props) {
           <div className="tol-app">
             <Switch>
               <Route path="/" exact component={() => props.homePage} />
-              <Route path="/callback" exact><Callback /></Route>
+              <Route path="/callback" exact><Callback customCallbackUrl={customCallbackUrl}/></Route>
               {props.pages.map(page => {
                 const path = convertToPath(page.name);
                 const routes = [];
