@@ -17,7 +17,6 @@ import { InfoTooltip, PopUpMessage } from '../general';
 import { FieldMeta } from './Field';
 import HoverOverlay from '../general/HoverOverlay';
 import { Zone } from '../board';
-import RowTotal from './RowTotal';
 
 
 export type NumRows = 25 | 50 | 100 | 1000;
@@ -37,6 +36,7 @@ interface Props {
   pageSize: NumRows | number,
   setPageSize: any,
   totalSize: number,
+  rowCounter?: JSX.Element,
 
   sortColumn: string,
   sortType: any,
@@ -75,6 +75,7 @@ function Table (props: Props) {
     pageSize,
     setPageSize,
     totalSize,
+    rowCounter,
 
     sortColumn,
     sortType,
@@ -209,7 +210,7 @@ function Table (props: Props) {
           }
           {!noPagination &&
             <>
-              <RowTotal {...props} />
+              {rowCounter ? rowCounter : totalSize}
               <span className='tol-page-size'>
                 <SelectPicker
                   value={pageSize}

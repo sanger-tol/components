@@ -24,6 +24,7 @@ import {
   filterHasUpdated,
   resetFiltersBelow,
 } from "../filtering/Utils";
+import RemoteRowCounter from "./RemoteRowCounter";
 
 interface Props {
   id: string;
@@ -237,6 +238,9 @@ function RemoteTable(props: Props) {
       pageSize={pageSize}
       setPageSize={setPageSize}
       totalSize={totalSize}
+      rowCounter={
+        <RemoteRowCounter totalSize={totalSize} {...props}/>
+      }
       sortColumn={sortColumn}
       sortType={sortType}
       defaultSort={defaultSort}

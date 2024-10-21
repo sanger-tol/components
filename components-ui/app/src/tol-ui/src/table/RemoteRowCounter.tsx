@@ -16,9 +16,9 @@ interface Props {
   filter?: Zone
 }
 
-function RowTotal(props: Props) {
+function RemoteRowCounter(props: Props) {
   const { totalSize, endpoint, baseUrl, filter } = props;
-  const [count, setCount]= useState(props.totalSize);
+  const [count, setCount] = useState<number | string>('');
 
   const fetchRowTotal = () => {
     httpClient()
@@ -29,18 +29,22 @@ function RowTotal(props: Props) {
       baseURL: baseUrl,
     })
     .then((res: any) => {
-      setCount(res.data.meta.total)
+      setCount(res.data.meta.total);
     })
   }
   
   useEffect(() => {
-    setCount(totalSize);
-    if (totalSize >= 10000) {
+    console.log('fitler');
+    setCount('');
+    if (totalSize === 10000) {
       fetchRowTotal();
+    } else {
+      setCount(totalSize);
     }
-  }, [totalSize]);
+  }, [filter]);
 
   const addTotalText = () => {
+    if (!count) return;
     if (count === 1) {
       return "1 Row";
     // add a plus for elastic search default (results cap at 10,000)
@@ -57,4 +61,4 @@ function RowTotal(props: Props) {
   );
 }
 
-export default RowTotal;
+export default RemoteRowCounter;
