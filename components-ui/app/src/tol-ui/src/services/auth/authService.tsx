@@ -49,5 +49,5 @@ export function confirmAuthorised(user: any, auth?: boolean|string[], noAuth?: b
 }
 
 export function getElement(loggedIn: boolean, page: Page) {
-  return loggedIn ? page.authElement : page.element;
+  return loggedIn && page.authElement ? page.authElement : page.element;
 }
