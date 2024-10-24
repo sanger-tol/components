@@ -109,7 +109,7 @@ function Navigation(props: Props) {
 
   const addPage = (page: Page) => {
     if (!page.hidden) {
-      const authorised = confirmAuthorised(user, page.auth);
+      const authorised = confirmAuthorised(user, page.auth, page.removeOnAuth);
       if (authorised) {
         return (
           <Nav.Link key={page.name} href={convertToPath(page.name)}>
@@ -122,7 +122,7 @@ function Navigation(props: Props) {
 
   const addDropdown = (dropdown: Dropdown) => {
     if (!dropdown.hidden){
-      const authorised = confirmAuthorised(user, dropdown.auth);
+      const authorised = confirmAuthorised(user, dropdown.auth, dropdown.removeOnAuth);
       if (authorised) {
         return (
           <NavDropdown title={dropdown.name}>

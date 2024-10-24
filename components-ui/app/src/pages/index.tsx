@@ -20,4 +20,6 @@ export { default as UserId } from "./UserId";
 export { default as Timelines } from "./Timelines";
 export { default as Messages } from "./Messages";
 export { default as DashboardPage } from "./DashboardPage";
+export { default as AuthPageExample } from "./AuthPageExample";
+export { default as NoAuthPageExample } from "./NoAuthPageExample";
 

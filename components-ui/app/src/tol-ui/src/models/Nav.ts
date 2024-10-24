@@ -8,11 +8,13 @@ export interface Default {
   name: string;
   auth?: boolean|string[];
   hidden?: boolean;
+  removeOnAuth?: boolean;
 }
 
 export interface Page extends Default {
   element?: JSX.Element;
   detail?: JSX.Element;
+  authElement?: JSX.Element;
 } // eslint-disable-line
 
 export interface Dropdown extends Default {

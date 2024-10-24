@@ -19,9 +19,10 @@ import {
 import { Navigation, Callback, PageNotFound } from "./nav";
 import { 
   getTokenFromLocalStorage,
-  getUserFromLocalStorage
+  getUserFromLocalStorage,
+  tokenHasExpired
 } from './services/localStorage/localStorageService';
-import { confirmAuthorised } from './services/auth/authService';
+import { confirmAuthorised, getElement } from './services/auth/authService';
 import { AuthProvider } from './contexts/auth.context';
 import Footer from './general/Footer';
 import { Dropdown, Page } from "./models/Nav";
@@ -79,7 +80,8 @@ function TolApp(props: Props) {
               {props.pages.map(page => {
                 const path = convertToPath(page.name);
                 const routes = [];
-                const authorised = confirmAuthorised(user, page.auth);
+                const loggedIn = user && !tokenHasExpired();
+                const authorised = confirmAuthorised(user, page.auth, page.removeOnAuth);
 
                 // dropdown routes
                 if (page.pages) {
@@ -89,7 +91,7 @@ function TolApp(props: Props) {
                     // dropdown page route
                     routes.push(
                       <Route exact path={dropdownPath} key={dropdownPath} >
-                        {authorised ? dropdownPage.element : <Redirect to="/"/>}
+                        {authorised ? getElement(loggedIn, dropdownPage) : <Redirect to="/"/>}
                       </Route>
                     );
 
@@ -106,7 +108,7 @@ function TolApp(props: Props) {
                   // regular page route
                   routes.push(
                     <Route exact path={path} key={page.name} >
-                      {authorised ? page.element : <Redirect to="/" />}
+                      {authorised ? getElement(loggedIn, page) : <Redirect to="/" />}
                     </Route>
                   );
 
