@@ -6,19 +6,20 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { httpClient } from "../services/http/httpClient";
-import { Zone } from "../board";
+import { Filter } from "../models";
 
 
 interface Props {
   totalSize: number,
   endpoint: string,
   baseUrl?: string,
-  filter?: Zone
+  filter?: Filter,
+  loading: boolean
 }
 
 function RemoteRowCounter(props: Props) {
-  const { totalSize, endpoint, baseUrl, filter } = props;
-  const [count, setCount] = useState<number | string>('');
+  const { totalSize, endpoint, baseUrl, filter, loading } = props;
+  const [count, setCount] = useState<number|null>(null);
 
   const fetchRowTotal = () => {
     httpClient()
@@ -34,29 +35,31 @@ function RemoteRowCounter(props: Props) {
   }
   
   useEffect(() => {
-    console.log('fitler');
-    setCount('');
-    if (totalSize === 10000) {
-      fetchRowTotal();
-    } else {
-      setCount(totalSize);
+    if (!loading) {
+      console.log("RemoteRowCounter useEffect", totalSize);
+      if (totalSize === 10000) {
+        fetchRowTotal();
+      } else {
+        setCount(totalSize);
+      }
     }
-  }, [filter]);
+  }, [loading]);
 
-  const addTotalText = () => {
-    if (!count) return;
-    if (count === 1) {
+  const addTotalText = (total: number) => {
+    if (total === 1) {
       return "1 Row";
     // add a plus for elastic search default (results cap at 10,000)
-    } else if (count === 10000) {
+    } else if (total === 10000) {
       return "10,000+ Rows";
     }
-    return count.toLocaleString() + " Rows";
+    return total.toLocaleString() + " Rows";
   }
+
+  if (count === null) return <></>
 
   return (
     <span className='tol-total'>
-      {addTotalText()}
+      {addTotalText(count)}
     </span>
   );
 }
