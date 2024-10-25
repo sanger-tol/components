@@ -36,7 +36,6 @@ function RemoteRowCounter(props: Props) {
   
   useEffect(() => {
     if (!loading) {
-      console.log("RemoteRowCounter useEffect", totalSize);
       if (totalSize === 10000) {
         fetchRowTotal();
       } else {
