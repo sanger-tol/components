@@ -21,7 +21,9 @@ import {
   Widgets,
   UserId,
   Messages,
-  DashboardPage
+  DashboardPage,
+  NoAuthPageExample,
+  AuthPageExample
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown } from './tol-ui/src';
@@ -98,9 +100,15 @@ const dataSource: Page = {
   element: <DataSource />
 }
 
+const noAuthPage: Page = {
+  name: "AuthPage",
+  element: <NoAuthPageExample />,
+  authElement: <AuthPageExample />,
+}
+
 const otherDropdown: Dropdown = {
   name: 'Other',
-  pages: [detail, forms, messages, miscellaneous, dataSource]
+  pages: [detail, forms, messages, miscellaneous, dataSource, noAuthPage]
 };
 
 // auth

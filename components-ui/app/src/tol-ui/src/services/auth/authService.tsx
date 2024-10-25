@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Page } from 'src/models';
 import { httpClient } from '../http/httpClient';
 import { tokenHasExpired } from '../localStorage/localStorageService';
 
@@ -24,10 +25,16 @@ export function getRoles() {
   return httpClient().get('/auth/roles');
 }
 
-export function confirmAuthorised(user: any, auth?: boolean|string[]) {
+export function confirmAuthorised(user: any, auth?: boolean|string[], noAuth?: boolean) {
+  // If a user is logged in and the page is set to hide when logged in
+  if (noAuth && user) {
+    return false
+  }
+  // Check if the user is logged in and the token has not expired if the page requires auth
   if (typeof auth === 'boolean') {
     return auth && user && !tokenHasExpired();
   }
+  // Checks if the user has the correct role
   if (auth) {
     if (user && !tokenHasExpired()) {
       for (const role of auth) {
@@ -39,4 +46,8 @@ export function confirmAuthorised(user: any, auth?: boolean|string[]) {
     return false;
   }
   return true; // no auth required
+}
+
+export function getElement(loggedIn: boolean, page: Page) {
+  return loggedIn && page.authElement ? page.authElement : page.element;
 }
