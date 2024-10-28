@@ -220,7 +220,7 @@ interface AggData {
   aggs: object[]
 }
 
-export type DateInterval = "d"|"w"|"M"|"y"
+export type HistogramGrouping = "d"|"w"|"M"|"y"|"categorical" ;
 
 export function initialiseDatasets(datasets: any[]) {
   for (let index = 0; index < datasets.length; index++) {
@@ -258,47 +258,67 @@ function getSortedAggData(buckets: object) {
   } as AggData;
 }
 
-function formatLabels(labels: string[], interval: DateInterval, shortDate?: boolean) {
+function isDateString(label: string): boolean {
+  const date = new Date(label);
+  return !isNaN(date.getTime()); // Checks if date is valid
+}
+
+function formatLabels(labels: string[], grouping: HistogramGrouping, shortDate?: boolean) {
+  if (grouping === 'categorical') return labels;
+  
   const formattedLabels: string[] = [];
   let dateFormat: string;
-  if (!shortDate){
-    switch(interval) {
-    case "d":
-    case "w":
-      dateFormat = "dd LLLL yyyy";
-      break;
-    case "M":
-      dateFormat = "LLLL yyyy";
-      break;
-    case "y":
-      dateFormat = "yyyy";
-      break;
+  
+  // Define date format based on interval and shortDate
+  if (!shortDate) {
+    switch (grouping) {
+      case "d":
+      case "w":
+        dateFormat = "dd LLLL yyyy";
+        break;
+      case "M":
+        dateFormat = "LLLL yyyy";
+        break;
+      case "y":
+        dateFormat = "yyyy";
+        break;
+      default:
+        dateFormat = "";
     }
   } else {
-    switch(interval) {
-    case "d":
-    case "w":
-      dateFormat = "dd MMM yy";
-      break;
-    case "M":
-      dateFormat = "MMM yy";
-      break;
-    case "y":
-      dateFormat = "yy";
-      break;
+    switch (grouping) {
+      case "d":
+      case "w":
+        dateFormat = "dd MMM yy";
+        break;
+      case "M":
+        dateFormat = "MMM yy";
+        break;
+      case "y":
+        dateFormat = "yy";
+        break;
+      default:
+        dateFormat = "";
     }
   }
-  for (const label of labels) {
-    const date = new Date(label);
-    formattedLabels.push(
-      format(date, dateFormat)
-    );
+
+  const labelIsDate = isDateString(labels[0]);
+
+  if (labelIsDate) {
+    for (const label of labels) {
+      const date = new Date(label);
+      formattedLabels.push(format(date, dateFormat));
+    }
+  } else {
+    for (const label of labels) {
+      formattedLabels.push(label); // Push as raw label
+    }
   }
   return formattedLabels;
 }
 
 // would need adapting for multiple aggs in 1 api call
-export function aggsToBarChartData(aggs: object, interval: DateInterval, shortDate?: boolean): ChartData {
+export function aggsToBarChartData(aggs: object, grouping : HistogramGrouping, shortDate?: boolean): ChartData {
   const datasets: object[] = [];
   const buckets: object = aggs["agg"]["buckets"];
   const sortedAggs: AggData = getSortedAggData(buckets);
@@ -325,14 +345,14 @@ export function aggsToBarChartData(aggs: object, interval: DateInterval, shortDa
 
   return {
     datasets: datasets,
-    labels: formatLabels(labels, interval, shortDate)
+    labels: formatLabels(labels, grouping, shortDate)
   } as ChartData;
 }
 
-function formatDateRangeWithInterval(date: string, interval: DateInterval) {
+function formatDateRangeWithInterval(date: string, grouping: HistogramGrouping) {
   const from = new Date(date);
   const to = new Date(date);
-  switch(interval) {
+  switch(grouping) {
   case "d":
     to.setDate(to.getDate() + 1);
     break;
@@ -384,29 +404,58 @@ export function generateBarLabels(chart: any, titleColour: any) {
   );
 }
 
-// ------------------//
-//   DATE BARCHART   //
-// ------------------//
+// ---------------------------------//
+//   DATE & CATEGORICAL BARCHART   //
+// -------------------------------//
 
-export function generateChartAgg(breakDownBy: string, xAxis: string, interval: DateInterval) {
+function appendKeywordIfNeeded(field: string): string {
+  return field.startsWith("calc_") 
+  ? field : `${field}.keyword`;
+}
+
+export function generateChartAgg(
+  breakDownBy: string, 
+  xAxis: string, 
+  grouping: HistogramGrouping, 
+) {
+  const baseAgg = {
+    "terms": {
+      "field": appendKeywordIfNeeded(breakDownBy), 
+      "order": {
+        "_count": "desc"
+      },
+      "size": 25
+    }
+  };
+
+  let innerAgg;
+
+  if (grouping === "categorical") {
+    innerAgg = {
+      "terms": {
+        "field": appendKeywordIfNeeded(xAxis),
+        "order": {
+          "_key": "asc"
+        },
+        "size": 25
+      }
+    };
+  } else {
+    innerAgg = {
+      "date_histogram": {
+        "field": xAxis,
+        "calendar_interval": "1" + grouping,
+        "time_zone": "Europe/London"
+      }
+    };
+  }
+
   return {
     "aggs": {
       "agg": {
-        "terms": {
-          "field": breakDownBy + ".keyword",
-          "order": {
-            "_count": "desc"
-          },
-          "size": 25
-        },
+        ...baseAgg,
         "aggs": {
-          "1": {
-            "date_histogram": {
-              "field": xAxis,
-              "calendar_interval": "1" + interval,
-              "time_zone": "Europe/London"
-            }
-          }
+          "1": innerAgg
         }
       }
     }
@@ -417,7 +466,7 @@ export function generateChartFilterFromBar(
   barData: object,
   breakDownBy: string,
   xAxis: string,
-  type: DateInterval
+  type: HistogramGrouping
 ) {
   // initialise filter generated from bar clicks
   const localFilters = {"and_": {}};

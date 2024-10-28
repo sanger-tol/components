@@ -8,7 +8,7 @@ import BarChart from "./BarChart";
 import {
   generateChartAgg,
   generateChartFilterFromBar,
-  DateInterval,
+  HistogramGrouping,
   aggsToBarChartData,
   isChartDataEmpty
 } from "./Utils";
@@ -32,7 +32,7 @@ interface Props {
   baseUrl?: string
   breakDownBy: string,
   xAxis: string,
-  type: DateInterval,
+  type: HistogramGrouping,
   shortDate?: boolean
   zone?: any,
   setZone?: any,
