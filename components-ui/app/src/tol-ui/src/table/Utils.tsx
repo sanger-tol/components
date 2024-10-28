@@ -29,16 +29,6 @@ export function isRelationship(key: string) {
   return key.includes('.');
 }
 
-export function addTotalText(totalSize: number) {
-  if (totalSize === 1) {
-    return "1 Row";
-  // add a plus for elastic search (results cap at 10,000)
-  } else if (totalSize === 10000) {
-    return "10000+ Rows";
-  }
-  return totalSize.toString() + " Rows";
-}
-
 function createLink(text: any, url: string) {
   return <a href={url} target="_blank" rel="noopener noreferrer">
     {text}

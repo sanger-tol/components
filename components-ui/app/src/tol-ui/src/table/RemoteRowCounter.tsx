@@ -1,0 +1,66 @@
+/*
+SPDX-FileCopyrightText: 2024 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+import { useEffect, useState } from "react";
+import { httpClient } from "../services/http/httpClient";
+import { Filter } from "../models";
+
+
+interface Props {
+  totalSize: number,
+  endpoint: string,
+  baseUrl?: string,
+  filter?: Filter,
+  loading: boolean
+}
+
+function RemoteRowCounter(props: Props) {
+  const { totalSize, endpoint, baseUrl, filter, loading } = props;
+  const [count, setCount] = useState<number|null>(null);
+
+  const fetchRowTotal = () => {
+    httpClient()
+    .get("/" + endpoint + ":count", {
+      params: {
+        filter: filter,
+      },
+      baseURL: baseUrl,
+    })
+    .then((res: any) => {
+      setCount(res.data.meta.total);
+    })
+  }
+  
+  useEffect(() => {
+    if (!loading) {
+      if (totalSize === 10000) {
+        fetchRowTotal();
+      } else {
+        setCount(totalSize);
+      }
+    }
+  }, [loading]);
+
+  const addTotalText = (total: number) => {
+    if (total === 1) {
+      return "1 Row";
+    // add a plus for elastic search default (results cap at 10,000)
+    } else if (total === 10000) {
+      return "10,000+ Rows";
+    }
+    return total.toLocaleString() + " Rows";
+  }
+
+  if (count === null) return <></>
+
+  return (
+    <span className='tol-total'>
+      {addTotalText(count)}
+    </span>
+  );
+}
+
+export default RemoteRowCounter;

@@ -333,3 +333,26 @@ describe ('Testing relationshipConfig function', () => {
     expect(clientGetSpy).toHaveBeenCalledTimes(0);
   });
 })
+
+describe('Testing config functions retry on error', () => {
+  test('Retries getConfig function 3 times on error', async () => {
+    // Use mockClient to mock the client and initialize TsDataSource
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, 'get').mockImplementation(() => {
+      throw new Error('simulated error');
+    });
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    try {
+      await mockDataSource.getConfig('errored-url');
+    } catch (error) {
+      // expected to throw after 3 retries
+    }
+
+    expect(clientGetSpy).toHaveBeenCalledTimes(3);
+  });
+});

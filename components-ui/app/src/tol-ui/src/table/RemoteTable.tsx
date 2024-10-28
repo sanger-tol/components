@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { httpClient } from "../services/http/httpClient";
 import { FieldMetaData, FieldMeta } from "./Field";
 import {
@@ -24,6 +24,8 @@ import {
   filterHasUpdated,
   resetFiltersBelow,
 } from "../filtering/Utils";
+import RemoteRowCounter from "./RemoteRowCounter";
+import { Filter } from "../models";
 
 interface Props {
   id: string;
@@ -88,7 +90,7 @@ function RemoteTable(props: Props) {
   const [totalSize, setTotalSize] = useState<number>(0);
 
   // filtering/sorting
-  const [filter, setFilter] = useState<object | undefined>({});
+  const [filter, setFilter] = useState<Filter | undefined>({});
   const [sortColumn, setSortColumn] = useState<string>("");
   const [sortType, setSortType] = useState<string>("asc");
 
@@ -132,20 +134,6 @@ function RemoteTable(props: Props) {
     setFieldMetaAttributeInStorage(id, fieldMeta.data, "data");
     setFieldMetaAttributeInStorage(id, fieldMeta.order, "order");
   };
-
-  // Deal with table not returning to position when data changes
-  const tableRef = useRef<any>(null);
-
-  const getScrollPosition = () => {
-    if (tableRef.current) {
-      return tableRef.current.scrollLeft;
-    }
-    return 0;
-  };
-
-  useEffect(() => {
-    console.log(getScrollPosition());
-  }, [data]);
 
   const renderTable = () => {
     setLoading(true);
@@ -251,6 +239,14 @@ function RemoteTable(props: Props) {
       pageSize={pageSize}
       setPageSize={setPageSize}
       totalSize={totalSize}
+      rowCounter={
+        <RemoteRowCounter
+          totalSize={totalSize}
+          filter={filter}
+          loading={loading}
+          {...props}
+        />
+      }
       sortColumn={sortColumn}
       sortType={sortType}
       defaultSort={defaultSort}

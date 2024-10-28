@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import { Attributes, Relationships } from 'src/models/EntityMeta';
 import { Filter, EntityMeta } from '../../models';
 import { httpClient } from './httpClient';
+import retry from './Retry';
 
 
 interface DetailCache {
@@ -133,6 +134,7 @@ export default class TsDataSource {
     return configPromises[key];
   }
 
+  @retry(3)
   public getConfig(endpoint: string): Promise<object> {
     const key = this.getLocalStorageKey(endpoint);
     const savedConfig = this.getSavedConfig(key);
