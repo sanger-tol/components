@@ -98,13 +98,13 @@ export function defineComponent(component: ComponentData, zone: Zone) {
   };
 }
 
-export function defineZone(objectType: string, components: ComponentData[]) {
+export function defineZone(objectType: string, components: ComponentData[], filter?: Filter) {
   const zone: Zone = {
     components: {},
     order: [],
     type: objectType,
-    filter: undefined,
-    defaultFilter: undefined
+    filter: deepCopy(filter),
+    defaultFilter: deepCopy(filter)
   };
   for (const component of components) {
     defineComponent(component, zone);
@@ -126,9 +126,9 @@ export function useZone(params: {
   components: object[],
   filter?: Filter
 }) {
-  const {endpoint, baseUrl, components} = params;
+  const {endpoint, baseUrl, components, filter} = params;
   const [zone, setZone] = useState(
-    defineZone(endpoint, components as ComponentData[])
+    defineZone(endpoint, components as ComponentData[], filter)
   );
   return {
     endpoint: endpoint,

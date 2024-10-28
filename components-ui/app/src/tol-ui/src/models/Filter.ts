@@ -16,5 +16,5 @@ export interface And {
 }
 
 export interface Filter {
-  and_?: And
+  and_: And
 }

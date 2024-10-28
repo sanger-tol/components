@@ -7,7 +7,9 @@ SPDX-License-Identifier: MIT
 
 export default function retry(retries: number) {
   return function (
+    // @ts-ignore
     target: any,
+    // @ts-ignore
     propertyKey: string,
     descriptor: PropertyDescriptor
   ) {

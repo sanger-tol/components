@@ -6,14 +6,13 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { httpClient } from "../services/http/httpClient";
-import { Filter } from "../models";
 
 
 interface Props {
   totalSize: number,
   endpoint: string,
   baseUrl?: string,
-  filter?: Filter,
+  filter?: object,
   loading: boolean
 }
 

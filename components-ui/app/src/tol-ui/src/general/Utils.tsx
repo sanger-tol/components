@@ -133,8 +133,8 @@ export function isFloat(n: any) {
   return Number(n) === n && n % 1 !== 0;
 }
 
-export function deepCopy(o: object) {
-  if (o === undefined) return {};
+export function deepCopy(o?: object) {
+  if (!o) return {};
   return JSON.parse(
     JSON.stringify(o)
   );
