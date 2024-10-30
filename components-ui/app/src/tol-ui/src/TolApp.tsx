@@ -21,6 +21,7 @@ import {
   getTokenFromLocalStorage,
   getUserFromLocalStorage,
   tokenHasExpired,
+  setReturnUrlFromLocalStorage
 } from "./services/localStorage/localStorageService";
 import { confirmAuthorised, getElement } from "./services/auth/authService";
 import { AuthProvider } from "./contexts/auth.context";
@@ -28,10 +29,10 @@ import Footer from "./general/Footer";
 import { Dropdown, Page } from "./models/Nav";
 import {
   convertToPath,
-  matomoAnalytics,
-  setLocalStorageReturnUrl,
+  matomoAnalytics
 } from "./general/Utils";
 import { env } from "./variables/config";
+
 
 export interface Props {
   brand: string | JSX.Element;
@@ -49,14 +50,9 @@ function TolApp(props: Props) {
   const [user, setUser] = useState(getUserFromLocalStorage);
 
   useEffect(() => {
+    setReturnUrlFromLocalStorage(window.location.pathname);
     const siteId = env.MATOMO_SITE_ID;
     matomoAnalytics(siteId);
-  }, []);
-
-  useEffect(() => {
-    if (user && !tokenHasExpired()) {
-      setLocalStorageReturnUrl(window.location.pathname);
-    }
   }, []);
 
   // show login button as default
@@ -105,7 +101,7 @@ function TolApp(props: Props) {
                 path="/callback"
                 exact
               >
-                <Callback /> // add callback url to here
+                <Callback />
               </Route>
               {props.pages.map((page) => {
                 const path = convertToPath(page.name);

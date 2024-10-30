@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect } from "react";
-import { withRouter, useHistory, RouteComponentProps } from "react-router-dom";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { useAuth } from "../contexts/auth.context";
 import {
@@ -78,7 +78,6 @@ const getBackgroundClass = (environment: string): string => {
 function Navigation(props: Props) {
 
   const { setToken, user, setUser } = useAuth();
-  const history = useHistory();
   const [environment, setEnvironment] = useState("");
 
   useEffect(() => {
@@ -106,7 +105,6 @@ function Navigation(props: Props) {
     setUserToLocalStorage(null);
     setToken("");
     setUser(null);
-    history.replace("/");
   };
 
   const addPage = (page: Page) => {
