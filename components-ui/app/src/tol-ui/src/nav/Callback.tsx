@@ -39,8 +39,9 @@ export function Callback() {
             })
             .finally(() => {
               let targetUrl = localStorage.getItem('returnUrl') || '';
+              console.log("history", history);
               if (!targetUrl || targetUrl === 'index') {
-                targetUrl = '/';
+                targetUrl = '/maps';
               }
               history.replace(targetUrl);
             });

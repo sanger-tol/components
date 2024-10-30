@@ -143,3 +143,7 @@ export function deepCopy(o?: object) {
 export function capitaliseFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+
+export const setLocalStorageReturnUrl = (url: string) => {
+  localStorage.setItem('returnUrl', url);
+}
