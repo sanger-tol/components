@@ -191,7 +191,7 @@ function Navigation(props: Props) {
                 className="nav-right"
                 key="Register"
               >
-                //@ts-ignore
+                {/* @ts-ignore */}
                 <Login buttonIcon={RegisterIcon} returnUrl={props.customCallbackUrl ?? "/"}/>
               </Nav.Link>
             ) : null}
@@ -201,7 +201,7 @@ function Navigation(props: Props) {
                 key="Login"
                 style={{ marginLeft: props.register === true ? "0px" : "40px" }}
               >
-                //@ts-ignore
+                {/* @ts-ignore */}
                 <Login buttonIcon={LoginIcon} />
               </Nav.Link>
             ) : (
