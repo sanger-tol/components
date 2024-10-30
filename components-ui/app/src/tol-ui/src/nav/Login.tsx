@@ -11,7 +11,7 @@ import { getUrlLogin } from "../services/auth/authService";
 import { tokenHasExpired } from "../services/localStorage/localStorageService";
 import { setLocalStorageReturnUrl } from "../general/Utils";
 interface Props {
-  buttonIcon: JSX.Element;
+  buttonIcon: React.ReactNode;
   returnUrl?: string;
 }
 
