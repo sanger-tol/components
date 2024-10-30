@@ -30,7 +30,7 @@ function Login(props: Props) {
       window.location.href = data.data.loginUrl;
     });
   }, []);
-
+  // @ts-ignore
   return tokenHasExpired() ? buttonIcon(login) : <Redirect to="/" />;
 }
 
