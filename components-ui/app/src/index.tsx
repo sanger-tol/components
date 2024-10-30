@@ -123,12 +123,6 @@ const sandbox: Page = {
   hidden: true,
 };
 
-// const customNavButtons = {
-//   customNavButtons: [
-//     { callbackUrl: "/profile", buttonElement: registerButton() }
-//   ],
-// };
-
 ReactDOM.render(
   // eslint-disable-line
   <TolApp
@@ -147,7 +141,6 @@ ReactDOM.render(
       user,
       sandbox,
     ]}
-    // customNavButtons={customNavButtons}
   />,
   document.getElementById("root")
 );

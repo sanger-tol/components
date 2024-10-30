@@ -39,19 +39,12 @@ export interface Props {
   pages: (Page | Dropdown)[];
   login?: boolean;
   register?: boolean;
-  customNavButtons?: CustomNavButtons;
-}
-
-interface CustomNavButton {
-  callbackUrl: string;
-  buttonElement: JSX.Element;
-}
-
-export interface CustomNavButtons {
-  customNavButtons: CustomNavButton[];
+  customCallbackUrl?: string;
 }
 
 function TolApp(props: Props) {
+  const {customCallbackUrl} = props;
+
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
 
@@ -68,7 +61,9 @@ function TolApp(props: Props) {
 
   // show login button as default
   const login = props.login || true;
-  const register = props.register || true;
+
+  // hide register button by default
+  const register = props.register || false;
 
   if (!("API_PATH" in env)) {
     return (
@@ -97,7 +92,7 @@ function TolApp(props: Props) {
             pages={props.pages}
             login={login}
             register={register}
-            customNavButtons={props.customNavButtons}
+            customCallbackUrl={customCallbackUrl}
           />
           <div className="tol-app">
             <Switch>
@@ -121,15 +116,6 @@ function TolApp(props: Props) {
                   page.auth,
                   page.removeOnAuth
                 );
-
-                // if (authorised && page.auth) {
-                //   const currentPath =
-                //     localStorage.getItem("returnUrl") ??
-                //     window.location.pathname;
-                //   if (currentPath !== "/callback") {
-                //     setLocalStorageReturnUrl(currentPath);
-                //   }
-                // }
 
                 // dropdown routes
                 if (page.pages) {

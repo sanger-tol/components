@@ -21,7 +21,6 @@ import { Page } from "../models/Nav";
 import { convertToPath } from "../general/Utils";
 import { env } from "../variables/config";
 import { confirmAuthorised } from "../services/auth/authService";
-import { CustomNavButtons } from "../TolApp";
 import { LoginIcon, RegisterIcon } from "../general/Icons";
 
 interface Props extends RouteComponentProps {
@@ -29,7 +28,7 @@ interface Props extends RouteComponentProps {
   pages: (Page | Dropdown)[];
   login: boolean;
   register: boolean;
-  customNavButtons?: CustomNavButtons;
+  customCallbackUrl?: string;
 }
 
 interface Environment {
@@ -77,7 +76,6 @@ const getBackgroundClass = (environment: string): string => {
 // on page change update returnUrl to page route
 
 function Navigation(props: Props) {
-  const { customNavButtons } = props;
 
   const { setToken, user, setUser } = useAuth();
   const history = useHistory();
@@ -192,9 +190,8 @@ function Navigation(props: Props) {
               <Nav.Link
                 className="nav-right"
                 key="Register"
-                style={{ marginLeft: customNavButtons ? "0px" : null }}
               >
-                <Login buttonIcon={RegisterIcon} returnUrl={"/profile"}/>
+                <Login buttonIcon={RegisterIcon} returnUrl={props.customCallbackUrl ?? "/"}/>
               </Nav.Link>
             ) : null}
             {props.login && tokenHasExpired() ? (
