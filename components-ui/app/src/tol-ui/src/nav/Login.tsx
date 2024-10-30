@@ -33,6 +33,7 @@ function Login(props: Props) {
     });
   }, []);
 
+  // @ts-ignore
   return tokenHasExpired() ? buttonIcon(login) : <Redirect to={getReturnUrlFromLocalStorage()} />;
 }
 
