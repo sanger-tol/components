@@ -11,7 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faDiagramProject, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FieldMeta, initialiseFieldMeta } from './Field';
 import { Row, Button, Col } from 'react-bootstrap';
-import { deleteFieldMetaFromStorage, sortFieldsByRename } from './Utils';
+import { deleteFieldMetaFromStorage, getSourceColour, sortFieldsByRename } from './Utils';
+import { normaliseCaps } from 'src/general/Utils';
 
 
 export interface Props {
@@ -20,11 +21,12 @@ export interface Props {
   open: boolean,
   setOpen: any,
   pageSize?: number,
+  displaySource?: boolean,
   modalOnSave: (fieldMeta: FieldMeta) => void
 }
 
 function ConfigModal(props: Props) {
-  const { tableId, fieldMeta, open, setOpen, modalOnSave, pageSize } = props;
+  const { tableId, fieldMeta, open, setOpen, modalOnSave, pageSize, displaySource } = props;
   const [contents, setContents] = useState({});
 
   const updateMeta = (list: object[], updatedFieldMeta: FieldMeta, hidden: boolean) => {
@@ -56,6 +58,7 @@ function ConfigModal(props: Props) {
   };
 
   const uiElement = (key: string, meta: object) => {
+    const sourceColour = getSourceColour(meta['source']);
     return (
       <div className='tol-dnd-item'>
         {meta['description'] &&
@@ -64,6 +67,14 @@ function ConfigModal(props: Props) {
           </span>
         }
         {meta['rename']}
+        {displaySource ? (
+          <div className='config-source'
+            // @ts-ignore
+            style={{ '--config-source-bg-color': sourceColour }}
+          >
+            {normaliseCaps(meta['source'])}
+          </div>
+        ) : null}
         {!meta['isAttribute'] && <FontAwesomeIcon className='icon' icon={faDiagramProject} size="xs" />}
         <div className='field-name-origin'>{key}</div>
       </div>

@@ -163,7 +163,8 @@ export default class TsDataSource {
           "cardinality": 99999,
           "description": null,
           "display_name": null,
-          "python_type": "str"
+          "python_type": "str",
+          "source": null
         }
       }
     }
@@ -202,7 +203,6 @@ export default class TsDataSource {
         const now = new Date();
         const anHourFromNow = new Date(now);
         anHourFromNow.setHours(now.getHours() + 1);
-  
         // check if entityMeta exists and is not expired
         if (expiry === null || now > expiry) {
           const attributes = await this.attributeMetadata();

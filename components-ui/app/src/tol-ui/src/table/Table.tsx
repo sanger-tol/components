@@ -37,6 +37,7 @@ interface Props {
   setPageSize: any,
   totalSize: number,
   rowCounter?: JSX.Element,
+  displaySource?: boolean,
 
   sortColumn: string,
   sortType: any,
@@ -76,6 +77,7 @@ function Table (props: Props) {
     setPageSize,
     totalSize,
     rowCounter,
+    displaySource,
 
     sortColumn,
     sortType,
@@ -277,6 +279,7 @@ function Table (props: Props) {
               pageSize={pageSize}
               setOpen={setOpen}
               modalOnSave={modalOnSave}
+              displaySource={displaySource}
             />
           }
           {!noFilter &&

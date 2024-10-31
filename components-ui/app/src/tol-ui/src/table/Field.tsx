@@ -39,7 +39,8 @@ export interface Field {
   sort?: boolean,
   type?: string,
   width?: number,
-  description?: string
+  description?: string,
+  source?: string
 }
 
 export interface FieldMetaData {

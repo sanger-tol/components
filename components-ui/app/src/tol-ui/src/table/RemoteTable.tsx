@@ -42,6 +42,7 @@ interface Props {
   setZone: any;
   defaultSort?: string;
   pageSize?: NumRows | number;
+  displaySource?: boolean;
 
   noFilter?: boolean;
   noPagination?: boolean;
@@ -64,6 +65,7 @@ function RemoteTable(props: Props) {
     zone,
     setZone,
     defaultSort,
+    displaySource,
     noFilter,
     noPagination,
     noSorting,
@@ -246,6 +248,7 @@ function RemoteTable(props: Props) {
           {...props}
         />
       }
+      displaySource={displaySource}
       sortColumn={sortColumn}
       sortType={sortType}
       defaultSort={defaultSort}

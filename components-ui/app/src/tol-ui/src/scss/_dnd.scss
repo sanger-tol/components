@@ -58,12 +58,24 @@
     }
   }
 
+  .config-source {
+    font-size: 12px;
+    font-weight: normal;
+    margin-left: 6px;
+    overflow: auto;
+    float: right;
+    background-color: var(--config-source-bg-color);
+    color: var(--bs-body-color);
+    padding-left: 3px;
+    padding-right: 3px;
+    border-radius: 4px;
+  }
+
   .field-name-origin {
     color: var(--grey-emphasis);
     font-size: 12px;
     font-weight: normal;
-    margin: 0;
-    overflow: auto;
+    margin-left: 6px;
     float: right;
   }
 
