@@ -12,7 +12,7 @@ import { faFloppyDisk, faDiagramProject, faTrash } from '@fortawesome/free-solid
 import { FieldMeta, initialiseFieldMeta } from './Field';
 import { Row, Button, Col } from 'react-bootstrap';
 import { deleteFieldMetaFromStorage, getSourceColour, sortFieldsByRename } from './Utils';
-import { normaliseCaps } from 'src/general/Utils';
+import { normaliseCaps } from '../general/Utils';
 
 
 export interface Props {
