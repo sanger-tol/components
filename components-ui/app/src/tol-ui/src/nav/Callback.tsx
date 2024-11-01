@@ -49,7 +49,8 @@ export function Callback() {
               });
             })
             .finally(() => {
-              setLoading(false);
+              let targetUrl = localStorage.getItem('returnUrl') || '';
+              window.location.href = targetUrl ?? "/";
             });
         })
     }

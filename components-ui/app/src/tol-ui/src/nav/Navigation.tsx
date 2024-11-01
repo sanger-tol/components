@@ -76,7 +76,6 @@ const getBackgroundClass = (environment: string): string => {
 // on page change update returnUrl to page route
 
 function Navigation(props: Props) {
-
   const { setToken, user, setUser } = useAuth();
   const [environment, setEnvironment] = useState("");
 
@@ -190,7 +189,10 @@ function Navigation(props: Props) {
                 key="Register"
               >
                 {/* @ts-ignore */}
-                <Login buttonIcon={RegisterIcon} returnUrl={props.customCallbackUrl ?? "/"}/>
+                <Login
+                  buttonIcon={RegisterIcon}
+                  returnUrl={props.customCallbackUrl ?? "/"}
+                />
               </Nav.Link>
             ) : null}
             {props.login && tokenHasExpired() ? (
