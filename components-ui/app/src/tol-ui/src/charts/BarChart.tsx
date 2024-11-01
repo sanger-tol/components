@@ -51,7 +51,21 @@ interface Props {
   labels: string[],
   datasets: any[],
   height?: any,
-  setBarData?: any
+  setBarData?: any,
+  cumulative?: boolean
+}
+
+function getCumulativeData(datasets: any[]) {
+  return datasets.map((dataset) => {
+    let cumulativeSum = 0;
+    return {
+      ...dataset,
+      data: dataset.data.map((value: number) => {
+        cumulativeSum += value;
+        return cumulativeSum;
+      }),
+    };
+  });
 }
 
 function BarChart(props: Props) {
@@ -285,7 +299,7 @@ function BarChart(props: Props) {
         options={options}
         data={{
           labels: labels,
-          datasets: datasets
+          datasets: props.cumulative ? getCumulativeData(datasets) : datasets,
         }}
       />
     </div>
