@@ -188,8 +188,8 @@ function Navigation(props: Props) {
                 className="nav-right"
                 key="Register"
               >
-                {/* @ts-ignore */}
                 <Login
+                  /* @ts-ignore */
                   buttonIcon={RegisterIcon}
                   returnUrl={props.customCallbackUrl ?? "/"}
                 />

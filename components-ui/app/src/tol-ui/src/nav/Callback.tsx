@@ -51,6 +51,7 @@ export function Callback() {
             .finally(() => {
               let targetUrl = localStorage.getItem('returnUrl') || '';
               window.location.href = targetUrl ?? "/";
+              setLoading(false);
             });
         })
     }
