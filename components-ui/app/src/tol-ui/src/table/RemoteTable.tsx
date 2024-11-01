@@ -25,7 +25,6 @@ import {
   resetFiltersBelow,
 } from "../filtering/Utils";
 import RemoteRowCounter from "./RemoteRowCounter";
-import { Filter } from "../models";
 
 interface Props {
   id: string;
@@ -43,6 +42,7 @@ interface Props {
   setZone: any;
   defaultSort?: string;
   pageSize?: NumRows | number;
+  displaySource?: boolean;
 
   noFilter?: boolean;
   noPagination?: boolean;
@@ -65,6 +65,7 @@ function RemoteTable(props: Props) {
     zone,
     setZone,
     defaultSort,
+    displaySource,
     noFilter,
     noPagination,
     noSorting,
@@ -90,7 +91,7 @@ function RemoteTable(props: Props) {
   const [totalSize, setTotalSize] = useState<number>(0);
 
   // filtering/sorting
-  const [filter, setFilter] = useState<Filter | undefined>({});
+  const [filter, setFilter] = useState<object | undefined>({});
   const [sortColumn, setSortColumn] = useState<string>("");
   const [sortType, setSortType] = useState<string>("asc");
 
@@ -247,6 +248,7 @@ function RemoteTable(props: Props) {
           {...props}
         />
       }
+      displaySource={displaySource}
       sortColumn={sortColumn}
       sortType={sortType}
       defaultSort={defaultSort}

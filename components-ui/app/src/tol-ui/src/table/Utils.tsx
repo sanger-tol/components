@@ -22,11 +22,35 @@ import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { EntityMeta } from '../models';
 
 
+interface Rgb {
+  [key: string]: number,
+  r: number,
+  g: number,
+  b: number
+}
+
 export const fieldMetaVersion = "field-meta-v10";
 let hiddenFields = false;
 
 export function isRelationship(key: string) {
   return key.includes('.');
+}
+
+const sourceColours = {
+  'sts': {r: 6, g: 11, b: 163},
+  'benchling': {r: 25, g: 143, b: 31},
+  'mlwh': {r: 32, g: 155, b: 240},
+  'grit': {r: 213, g: 26, b: 54},
+  'goat': {r: 203, g: 107, b: 12},
+  'informatics': {r: 0, g: 0, b: 0},
+  'bold': {r: 134, g: 186, b: 1},
+  'treeofsex': {r: 153, g: 0, b: 199},
+  'tolid': {r: 199, g: 0, b: 83},
+  'tolqc': {r: 17, g: 93, b: 10},
+  'tolqclegacy': {r: 181, g: 178, b: 22},
+  'portaldb': {r: 234, g: 34, b: 181},
+  'pantheon': {r: 190, g: 190, b: 190},
+  'calculated': {r: 0, g: 207, b: 131},
 }
 
 function createLink(text: any, url: string) {
@@ -326,6 +350,7 @@ function addEntityMetaFields(
     const rename = meta['display_name'];
     const description = meta['description'] || undefined;
     const filterType = addRemoteFilterType(type, meta['cardinality']);
+    const source = meta['source'];
 
     // auto add field that are not yet in fieldMeta & hidden not enabled
     if (!hiddenFields && !(key in fieldMeta.data)) {
@@ -342,6 +367,7 @@ function addEntityMetaFields(
       fieldMeta.data[key].sort = fieldMeta.data[key].sort || true;
       fieldMeta.data[key].rename = fieldMeta.data[key].rename || rename || normaliseCaps(key, endpoint);
       fieldMeta.data[key].description = fieldMeta.data[key].description || description;
+      fieldMeta.data[key].source = fieldMeta.data[key].source || source;
     }
   }
 }
@@ -377,7 +403,7 @@ export function structureFieldMeta(
   pageSize?: number
 ) {
   endpoint = endpoint.split('/').pop() as string;
-  const fieldMeta = savedFieldMeta ? savedFieldMeta : initialiseFieldMeta(pageSize);  
+  const fieldMeta = savedFieldMeta ? savedFieldMeta : initialiseFieldMeta(pageSize); 
   const fieldPropExists = fields !== undefined;
   if (fieldPropExists) structureFieldMetaViaProp(fieldMeta, fields);
   /*
@@ -526,4 +552,14 @@ export function exportTableToSpreadsheet(
       setDownloading(false);
       setError("Download Failed: " + error.message);
     });
+}
+
+function rgbToString(rgb: Rgb, opacity: number) {
+  return "rgba(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ", " + opacity.toString() + ")";
+}
+
+export function getSourceColour(sourceName: string) {
+  const rgb = sourceColours[sourceName];
+  if (rgb === undefined) return rgbToString({r: 77, g: 77, b: 77}, 1);
+  return rgbToString(rgb, 1);
 }
