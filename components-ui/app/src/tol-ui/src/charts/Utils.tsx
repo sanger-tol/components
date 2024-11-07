@@ -476,46 +476,46 @@ export function generateChartFilterFromBar(
   ) {
     const localFilters = { "and_": {} };
   
-    // Set the breakdown filter if a bucket is present
-    if (barData["bucket"] !== undefined) {
-      localFilters["and_"][breakDownBy] = { eq: { value: barData["bucket"] } };
-    }
-  
-    // Handle categorical and date-based filtering
-    if (barData["clickKey"] !== undefined) {
-      if (type === "categorical") {
-        setCategoricalFilter(localFilters, xAxis, barData["clickKey"]);
-      } else {
-        setDateRangeFilter(localFilters, xAxis, barData["clickKey"], type);
-      }
-    }
-    
-    return localFilters;
+  // Set the breakdown filter if a bucket is present
+  if (barData["bucket"] !== undefined) {
+    localFilters["and_"][breakDownBy] = { eq: { value: barData["bucket"] } };
   }
-  
-  // Helper function to handle categorical filtering
-  function setCategoricalFilter(localFilters: any, xAxis: string, clickKey: any) {
-    if (clickKey === null) {
-      // For when legend is clicked, since categorical data depends on x-axis
-      localFilters["and_"][xAxis] = { exists: {}};
+
+  // Handle categorical and date-based filtering
+  if (barData["clickKey"] !== undefined) {
+    if (type === "categorical") {
+      setCategoricalFilter(localFilters, xAxis, barData["clickKey"]);
     } else {
-      // If clickKey is defined, use eq to match the specific value
-      localFilters["and_"][xAxis] = { eq: { value: clickKey } };
+      setDateRangeFilter(localFilters, xAxis, barData["clickKey"], type);
     }
   }
   
-  // Helper function to handle date range filtering
-  function setDateRangeFilter(localFilters: any, xAxis: string, clickKey: any, type: HistogramGrouping) {
-    let barXKey = clickKey;
-    if (type === "M") {
-      barXKey = "01 " + barXKey; // Adjust date format for month-based grouping
-    }
-    
-    const dateRange = formatDateRangeWithInterval(barXKey, type);
-    if (dateRange) {
-      localFilters["and_"][xAxis] = dateRange;
-    }
+  return localFilters;
+}
+  
+// Helper function to handle categorical filtering
+function setCategoricalFilter(localFilters: any, xAxis: string, clickKey: any) {
+  if (clickKey === null) {
+    // For when legend is clicked, since categorical data depends on x-axis
+    localFilters["and_"][xAxis] = { exists: {}};
+  } else {
+    // If clickKey is defined, use eq to match the specific value
+    localFilters["and_"][xAxis] = { eq: { value: clickKey } };
   }
+}
+
+// Helper function to handle date range filtering
+function setDateRangeFilter(localFilters: any, xAxis: string, clickKey: any, type: HistogramGrouping) {
+  let barXKey = clickKey;
+  if (type === "M") {
+    barXKey = "01 " + barXKey; // Adjust date format for month-based grouping
+  }
+  
+  const dateRange = formatDateRangeWithInterval(barXKey, type);
+  if (dateRange) {
+    localFilters["and_"][xAxis] = dateRange;
+  }
+}
   
 
 // ------------------//
