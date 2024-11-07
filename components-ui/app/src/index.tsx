@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import ReactDOM from 'react-dom';
+import ReactDOM from "react-dom";
 import {
   Home,
   BarCharts,
@@ -23,112 +23,111 @@ import {
   Messages,
   DashboardPage,
   NoAuthPageExample,
-  AuthPageExample
+  AuthPageExample,
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
-import { TolApp, Page, Dropdown } from './tol-ui/src';
+import { TolApp, Page, Dropdown } from "./tol-ui/src";
 import "./scss/styling.scss";
-import DataSource from './pages/DataSource';
-
+import DataSource from "./pages/DataSource";
 
 // main data-driven components
 const barCharts: Page = {
   name: "BarCharts",
-  element: <BarCharts />
+  element: <BarCharts />,
 };
 
 const sunbursts: Page = {
   name: "Sunbursts",
-  element: <Sunbursts />
+  element: <Sunbursts />,
 };
 
 const tables: Page = {
   name: "Tables",
-  element: <Tables />
+  element: <Tables />,
 };
 
 const filters: Page = {
   name: "Filters",
-  element: <Filters />
+  element: <Filters />,
 };
 
 const maps: Page = {
   name: "Maps",
-  element: <Maps />
+  element: <Maps />,
 };
 
 const timelines: Page = {
-  name: 'Timelines',
-  element: <Timelines />
+  name: "Timelines",
+  element: <Timelines />,
 };
 
 const widgets: Page = {
   name: "Widgets",
-  element: <Widgets />
+  element: <Widgets />,
 };
 
 // other
 const detail: Page = {
   name: "Detail",
   element: <Detail />,
-  detail: <DetailInfo/>
+  detail: <DetailInfo />,
 };
 
 const dashboardPage: Page = {
-  name: 'Dashboard',
-  element: <DashboardPage />
+  name: "Dashboard",
+  element: <DashboardPage />,
 };
 
 const forms: Page = {
   name: "Forms",
-  element: <Forms />
+  element: <Forms />,
 };
 
 const messages: Page = {
   name: "Messages",
-  element: <Messages />
+  element: <Messages />,
 };
-
 
 const miscellaneous: Page = {
   name: "Miscellaneous",
-  element: <Miscellaneous />
+  element: <Miscellaneous />,
 };
 
 const dataSource: Page = {
   name: "TsDataSource",
-  element: <DataSource />
-}
+  element: <DataSource />,
+};
 
 const noAuthPage: Page = {
   name: "AuthPage",
   element: <NoAuthPageExample />,
   authElement: <AuthPageExample />,
-}
+};
 
 const otherDropdown: Dropdown = {
-  name: 'Other',
-  pages: [detail, forms, messages, miscellaneous, dataSource, noAuthPage]
+  name: "Other",
+  pages: [detail, forms, messages, miscellaneous, dataSource, noAuthPage],
 };
 
 // auth
 const user: Page = {
-  name: 'User',
+  name: "User",
   element: <UserId />,
-  auth: true
+  auth: true,
 };
 
 // dev sandbox
 const sandbox: Page = {
   name: "Sandbox",
   element: <Sandbox />,
-  hidden: true
+  hidden: true,
 };
 
-ReactDOM.render( // eslint-disable-line
+ReactDOM.render(
+  // eslint-disable-line
   <TolApp
     brand="Components"
-    homePage={ <Home /> }
+    homePage={<Home />}
     pages={[
       barCharts,
       sunbursts,
@@ -140,10 +139,10 @@ ReactDOM.render( // eslint-disable-line
       dashboardPage,
       otherDropdown,
       user,
-      sandbox
+      sandbox,
     ]}
   />,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

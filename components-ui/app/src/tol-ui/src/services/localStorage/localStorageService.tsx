@@ -37,3 +37,13 @@ export function tokenHasExpired() {
     return true;
   }
 }
+
+export const setReturnUrlFromLocalStorage = (url: string) => {
+  if (url !== '/callback') {
+    localStorage.setItem('returnUrl', url);
+  }
+}
+
+export const getReturnUrlFromLocalStorage = () => {
+  return localStorage.getItem('returnUrl') || '/';
+}
