@@ -38,7 +38,6 @@ interface Props {
   setZone?: any,
   height?: any,
   stacked?: boolean,
-  cumulative?: boolean
 }
 
 function RemoteBarChart(props: Props) {
@@ -84,22 +83,7 @@ function RemoteBarChart(props: Props) {
         let aggs = res.data.meta.aggregations;
         setErrorMessage('');
         setWarningMessage(isChartDataEmpty(aggs));
-
         aggs = aggsToBarChartData(aggs, type, shortDate);
-
-        if (props.cumulative) {
-          aggs.datasets = aggs.datasets.map((dataset: any) => {
-            let cumulativeSum = 0;
-            return {
-              ...dataset,
-              data: dataset.data.map((value: number) => {
-                cumulativeSum += value;
-                return cumulativeSum;
-              }),
-            };
-          });
-        }
-
         setDatasets(aggs.datasets);
         setLabels(aggs.labels);
         setLoading(false);
@@ -158,7 +142,6 @@ function RemoteBarChart(props: Props) {
       labels={labels}
       datasets={datasets}
       setBarData={setter}
-      
     />
   );
 }
