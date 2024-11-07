@@ -264,8 +264,6 @@ function isDateString(label: string): boolean {
 }
 
 function formatLabels(labels: string[], grouping: HistogramGrouping, shortDate?: boolean) {
-  if (grouping === 'categorical') return labels;
-  
   const formattedLabels: string[] = [];
   let dateFormat: string;
   
@@ -343,9 +341,17 @@ export function aggsToBarChartData(aggs: object, grouping : HistogramGrouping, s
     datasets.push(dataset);
   }
 
+  function getFormattedLabels(labels, grouping, shortDate) {
+    if (grouping === 'categorical') {
+      return labels;
+    } else {
+      return formatLabels(labels, grouping, shortDate);
+    }
+  }
+
   return {
     datasets: datasets,
-    labels: formatLabels(labels, grouping, shortDate)
+    labels: getFormattedLabels(labels, grouping, shortDate)
   } as ChartData;
 }
 
@@ -414,16 +420,16 @@ function appendKeywordIfNeeded(field: string): string {
 }
 
 export function generateChartAgg(
-  breakDownBy: string, 
+  breakDownBy?: string, 
   xAxis: string, 
   grouping: HistogramGrouping, 
 ) {
   const baseAgg = {
     "terms": {
       "field": appendKeywordIfNeeded(breakDownBy), 
-      "order": {
-        "_count": "desc"
-      },
+      // "order": {
+      //   "_count": "desc"
+      // },
       "size": 25
     }
   };
@@ -463,33 +469,54 @@ export function generateChartAgg(
 }
 
 export function generateChartFilterFromBar(
-  barData: object,
-  breakDownBy: string,
-  xAxis: string,
-  type: HistogramGrouping
-) {
-  // initialise filter generated from bar clicks
-  const localFilters = {"and_": {}};
+    barData: object,
+    breakDownBy: string,
+    xAxis: string,
+    type: HistogramGrouping
+  ) {
+    const localFilters = { "and_": {} };
   
-  if (barData["bucket"] !== undefined) {
-    localFilters["and_"][breakDownBy] = {
-      eq: {value: barData["bucket"]}
-    };
+    // Set the breakdown filter if a bucket is present
+    if (barData["bucket"] !== undefined) {
+      localFilters["and_"][breakDownBy] = { eq: { value: barData["bucket"] } };
+    }
+  
+    // Handle categorical and date-based filtering
+    if (barData["clickKey"] !== undefined) {
+      if (type === "categorical") {
+        setCategoricalFilter(localFilters, xAxis, barData["clickKey"]);
+      } else {
+        setDateRangeFilter(localFilters, xAxis, barData["clickKey"], type);
+      }
+    }
+    
+    return localFilters;
   }
-
-  // providing a date the range filtering recognizes for month
-  let barXKey = barData["clickKey"];
-  if (type === "M") {
-    barXKey = "01 " + barXKey;
+  
+  // Helper function to handle categorical filtering
+  function setCategoricalFilter(localFilters: any, xAxis: string, clickKey: any) {
+    if (clickKey === null) {
+      // For when legend is clicked, since categorical data depends on x-axis
+      localFilters["and_"][xAxis] = { exists: {}};
+    } else {
+      // If clickKey is defined, use eq to match the specific value
+      localFilters["and_"][xAxis] = { eq: { value: clickKey } };
+    }
   }
-
-  // formatting the date range for filtering
-  const dateRange = formatDateRangeWithInterval(barXKey, type);
-  if (dateRange) {
-    localFilters["and_"][xAxis] = dateRange;
+  
+  // Helper function to handle date range filtering
+  function setDateRangeFilter(localFilters: any, xAxis: string, clickKey: any, type: HistogramGrouping) {
+    let barXKey = clickKey;
+    if (type === "M") {
+      barXKey = "01 " + barXKey; // Adjust date format for month-based grouping
+    }
+    
+    const dateRange = formatDateRangeWithInterval(barXKey, type);
+    if (dateRange) {
+      localFilters["and_"][xAxis] = dateRange;
+    }
   }
-  return localFilters;
-}
+  
 
 // ------------------//
 //      SUNBURST     //
@@ -640,9 +667,10 @@ export function createAggsViaSliceBy(endpoint: string, sliceBy: string[], depth?
   depth = initialiseOrIncrementDepth(depth);
 
   const terms = {};
+  const field = sliceBy[depth];
   terms[sliceBy[depth]] = {
     "terms": {
-      "field": `${sliceBy[depth]}.keyword`,
+      "field": appendKeywordIfNeeded(field),
       "order": {
         "_count": "desc"
       },
