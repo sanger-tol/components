@@ -420,16 +420,13 @@ function appendKeywordIfNeeded(field: string): string {
 }
 
 export function generateChartAgg(
-  breakDownBy?: string, 
+  breakDownBy: string, 
   xAxis: string, 
   grouping: HistogramGrouping, 
 ) {
   const baseAgg = {
     "terms": {
       "field": appendKeywordIfNeeded(breakDownBy), 
-      // "order": {
-      //   "_count": "desc"
-      // },
       "size": 25
     }
   };
@@ -493,7 +490,6 @@ export function generateChartFilterFromBar(
   return localFilters;
 }
   
-// Helper function to handle categorical filtering
 function setCategoricalFilter(localFilters: any, xAxis: string, clickKey: any) {
   if (clickKey === null) {
     // For when legend is clicked, since categorical data depends on x-axis
@@ -504,11 +500,10 @@ function setCategoricalFilter(localFilters: any, xAxis: string, clickKey: any) {
   }
 }
 
-// Helper function to handle date range filtering
 function setDateRangeFilter(localFilters: any, xAxis: string, clickKey: any, type: HistogramGrouping) {
   let barXKey = clickKey;
   if (type === "M") {
-    barXKey = "01 " + barXKey; // Adjust date format for month-based grouping
+    barXKey = "01 " + barXKey;
   }
   
   const dateRange = formatDateRangeWithInterval(barXKey, type);
