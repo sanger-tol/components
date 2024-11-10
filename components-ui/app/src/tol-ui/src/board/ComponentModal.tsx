@@ -29,14 +29,14 @@ function ComponentModal(props: Props) {
   const { open, setOpen, zone, setZone } = props;
   const [chartType, setChartType] = useState('');
   const [chartSize, setChartSize] = useState('');
-  const [id, setID] = useState('');
+  const [id, setId] = useState('');
   const [idError, setIdError] = useState(false);
   const [fieldError, setFieldError] = useState(false);
 
   function reset() {
     setChartType('');
     setChartSize('');
-    setID('');
+    setId('');
     setIdError(false);
   }
 
@@ -166,7 +166,7 @@ function ComponentModal(props: Props) {
             <Form.Control
               className='dashboard-modal-input'
               placeholder='ID'
-              onChange={(e) => setID(e.target.value)}
+              onChange={(e) => setId(e.target.value)}
               isInvalid={idError}
             />
           </InputGroup>
