@@ -281,7 +281,8 @@
   .rs-modal-dialog,
   .rs-modal-content,
   .rs-modal-body {
-    height: 100% !important;
+    height: auto !important;
+    overflow: hidden !important;
   }
 
   // temporary

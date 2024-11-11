@@ -210,7 +210,7 @@ function Table (props: Props) {
               </Button>
             </>
           }
-          {!noPagination &&
+          {(!noPagination && fieldMeta.order.active.length > 0) &&
             <>
               {rowCounter ? rowCounter : totalSize}
               <span className='tol-page-size'>
@@ -288,6 +288,7 @@ function Table (props: Props) {
               active={filterVisible}
               variant="primary"
               onClick={ () => toggleFilterVisibility(!filterVisible) }
+              disabled={fieldMeta.order.active.length === 0}
             >
               <FontAwesomeIcon icon={faFilter} size="sm" />
             </Button>
@@ -314,6 +315,7 @@ function Table (props: Props) {
       </Row>
       {fieldMeta.order.active.length === 0 ?
         <Placeholder
+          table
           message={
             <>
             Please add a field to get started. Click

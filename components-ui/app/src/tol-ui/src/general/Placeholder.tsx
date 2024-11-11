@@ -5,13 +5,20 @@ SPDX-License-Identifier: MIT
 */
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartColumn, faChartPie, faMapLocationDot, faUpDownLeftRight } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faChartColumn,
+  faChartPie,
+  faMapLocationDot,
+  faUpDownLeftRight,
+  faTable
+} from '@fortawesome/free-solid-svg-icons';
 import { Loader, Status } from '../index';
 
 
 function getPlaceholderIcon(
   bar?: boolean,
   pie?: boolean,
+  table?: boolean,
   map?: boolean,
   drag?: boolean,
   loader?: boolean,
@@ -19,31 +26,32 @@ function getPlaceholderIcon(
   warningMessage?: string,
   errorMessage?: string
 ) {
+  let icon: JSX.Element | null = null;
+
   if (bar) {
-    return <FontAwesomeIcon icon={faChartColumn} size="8x" />;
+    icon = <FontAwesomeIcon icon={faChartColumn} size="8x" />;
   } else if (pie) {
-    return <FontAwesomeIcon icon={faChartPie} size="8x" />;
+    icon = <FontAwesomeIcon icon={faChartPie} size="8x" />;
+  } else if (table) {
+    icon = <FontAwesomeIcon icon={faTable} size="8x" />;
   } else if (map) {
-    return <FontAwesomeIcon icon={faMapLocationDot} size="8x" />;
+    icon = <FontAwesomeIcon icon={faMapLocationDot} size="8x" />;
   } else if (drag) {
-    return (
-      <div>
-        <FontAwesomeIcon icon={faUpDownLeftRight} size="6x" />
-        <br/>
-        <h5>{message}</h5>
-      </div>
-    );
+    icon = <FontAwesomeIcon icon={faUpDownLeftRight} size="6x" />;
   } else if (loader) {
-    return <Loader />;
-  } else if (message !== undefined){
-    return <p>{message}</p>;
+    icon = <Loader />;
   } else if (warningMessage !== undefined) {
-    return <Status status="warning" text={warningMessage} />;
+    icon = <Status status="warning" text={warningMessage} />;
   } else if (errorMessage !== undefined) {
-    return <Status status="danger" text={errorMessage} />;
-  } else {
-    return <></>;
+    icon = <Status status="danger" text={errorMessage} />;
   }
+
+  return (
+    <div>
+      {icon}
+      {message && <p className='tol-placeholder-message'>{message}</p>}
+    </div>
+  );
 }
 
 function getPlaceholder(
@@ -96,6 +104,7 @@ function getPlaceholder(
 interface Props {
   bar?: boolean,
   pie?: boolean,
+  table?: boolean,
   map?: boolean,
   drag?: boolean,
   empty?: boolean,
@@ -114,6 +123,7 @@ function Placeholder(props: Props) {
   const {
     bar,
     pie,
+    table,
     map,
     drag,
     empty,
@@ -136,6 +146,7 @@ function Placeholder(props: Props) {
   const icon = getPlaceholderIcon(
     bar,
     pie,
+    table,
     map,
     drag,
     loader,

@@ -37,6 +37,7 @@
   transform: translate(-50%, -50%);
 
   .fa-chart-pie,
+  .fa-table,
   .fa-map-location-dot,
   .fa-chart-column {
     path {
@@ -50,6 +51,15 @@
     font-weight: bolder;
     color: var(--bs-emphasis-color);
   }
+}
+
+.tol-placeholder-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  white-space: nowrap;
 }
 
 .overlay-outer {
