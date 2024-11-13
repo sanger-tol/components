@@ -294,4 +294,21 @@ export default class TsDataSource {
       throw error;
     });
   }
+  
+  public async deleteByID({
+    objectType,
+    id
+  }: GetOne): Promise<void> {
+    this.initializeDetailCacheAndPromises(objectType);
+    return await this.client().delete(
+      `/${objectType}/${id}`,
+      {baseURL: this.baseUrl}
+    ).then(() => {
+      delete detailCache[this.baseUrlKey][objectType][id];
+    }
+    ).catch((error: any) => {
+      if (error.response.status === 404) return null;
+      throw error;
+    });
+  }
 }

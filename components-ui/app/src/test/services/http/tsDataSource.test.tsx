@@ -89,6 +89,12 @@ const mockClient = () => ({
       return Promise.resolve({ data: relationshipConfigMockData });
     }
     return Promise.reject({ response: { status: 404 } });
+  },
+  delete(endpoint: string, { baseURL }: { baseURL: string, params?: any }) {
+    if (endpoint === '/species/testSpeciesId' && baseURL === 'test') {
+      return Promise.resolve(null);
+    }
+    return Promise.reject({ response: { status: 404 } });
   }
 });
 
@@ -354,5 +360,27 @@ describe('Testing config functions retry on error', () => {
     }
 
     expect(clientGetSpy).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe('Testing delete method', () => {
+  test('Delete correctly removes value', async () => {
+    // Use mockClient to mock the client and initialize TsDataSource
+    const mockClientInstance = mockClient();
+    const clientDeleteSpy = vitest.spyOn(mockClientInstance, 'delete');
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    const dataObject = await mockDataSource.deleteByID({
+      objectType: 'species',
+      id: 'testSpeciesId',
+    });
+
+    expect(dataObject).toBeUndefined();
+    expect(clientDeleteSpy).toHaveBeenCalledTimes(1);
+
   });
 });

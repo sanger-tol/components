@@ -67,6 +67,13 @@ function DataSource() {
     console.error('Error fetching entityMeta:', error);
   });
 
+ //ds2.deleteByID({
+ //  objectType: 'species',
+ //  id: '1'
+ //}).catch(error => {
+ //  console.error('Error fetching entityMeta:', error);
+ //});
+
   const dataSource = (
     <h5>See console for TSDataSource examples...</h5>
   );
