@@ -197,3 +197,14 @@
   color: var(--bs-danger);
   font-size: 14px;
 }
+
+.title-read-mode:hover {
+  padding: 2px 6px;       
+  border-radius: 4px;         
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  color: var(--primary);
+}
+
+.title-edit-mode {
+  color: var(--primary);
+}
