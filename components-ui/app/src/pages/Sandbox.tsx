@@ -75,9 +75,7 @@ function Sandbox() {
   ];
 
   return (
-    <Widgets
-      components={components}
-    />
+    <p>{id}</p>
   );
 }
 

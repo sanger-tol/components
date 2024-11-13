@@ -11,7 +11,8 @@ import {
   timeout,
   numberWithSpaces,
   isInt,
-  isFloat
+  isFloat,
+  generateID
 } from '../../tol-ui/src/general/Utils'
 
 test('isPropDefined function', () => {
@@ -67,4 +68,15 @@ test('isFloat Function',() => {
   expect(isFloat(1)).toBe(false)
   expect(isFloat(1000)).toBe(false)
   expect(isFloat('number')).toBe(false)
+})
+
+test('generateID Function',() => {
+  const prefix = 'test'
+  const id = generateID(prefix)
+  const id2 = generateID(prefix)
+  expect(id).toContain(prefix + '_')
+  expect(id).toHaveLength(17)
+  expect(id2).toContain(prefix + '_')
+  expect(id2).toHaveLength(17)
+  expect(id).not.toBe(id2)
 })

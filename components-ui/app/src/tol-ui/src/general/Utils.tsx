@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from 'date-fns';
+import { customAlphabet } from 'nanoid';
 
 
 export function convertToPath(name: string) {
@@ -142,4 +143,12 @@ export function deepCopy(o?: object) {
 
 export function capitaliseFirstLetter(string: string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+export function generateID(prefix: string) {
+  // Does not include special characters
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'; 
+  const nanoid = customAlphabet(alphabet, 12);
+
+  return `${prefix}_${nanoid()}`;
 }
