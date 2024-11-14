@@ -33,7 +33,6 @@ import { faUndo, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { themeListener } from "../hooks/listeners";
 
 
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -52,15 +51,16 @@ interface Props {
   datasets: any[],
   height?: any,
   setBarData?: any
+  cumulative?: boolean;
 }
 
 function BarChart(props: Props) {
-  const { id, title, labels, setBarData } = props;
+  const { id, title, labels, setBarData, cumulative } = props;
   const height = (props.height !== undefined) ? props.height : "100%";
   const stacked = isPropDefined(props.stacked);
   const originDatasets = initialiseDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
-  // for keeping track of the legends click and order
+  
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
   // Used to change the height of the y-axis when selecting a legend
@@ -76,9 +76,12 @@ function BarChart(props: Props) {
     setGridColour(getCssVarValue("--bs-secondary-bg"));
   });
 
+  //making sure legendclick is disabled when cumulative toggle is on
+  const isInteractive = !cumulative && isPropDefined(setBarData); 
+
   // functions for options
   function handleLegendClick(event: any, legendItem: any, legend: any) {
-    if (isPropDefined(setBarData)) {
+    if (isInteractive) {
       const legendIndex = event.chart.data.datasets.findIndex((obj: any) => obj.label === legendItem.text);
       let selectedBucket = null;
 

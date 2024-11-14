@@ -38,6 +38,7 @@ interface Props {
   setZone?: any,
   height?: any,
   stacked?: boolean,
+  cumulative?: boolean
 }
 
 function RemoteBarChart(props: Props) {
@@ -50,7 +51,8 @@ function RemoteBarChart(props: Props) {
     type,
     shortDate,
     zone,
-    setZone
+    setZone,
+    cumulative, 
   } = props;
   const height = (props.height !== undefined) ? props.height : "100%";
   const [labels, setLabels] = useState([]);
@@ -60,10 +62,10 @@ function RemoteBarChart(props: Props) {
   const [errorMessage, setErrorMessage] = useState('');
   const [barData, setBarData] = useState<object>({});
   const [filter, setFilter] = useState<object|undefined>({});
-
+  
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
-    // will trigger [filter] useEffect if update has occured
+    
     if (filterHasUpdated(setFilter, filter, compoundedFilter)) {
       resetFiltersBelow({id: id, zone: zone!});
       setZone({...zone});
@@ -83,7 +85,7 @@ function RemoteBarChart(props: Props) {
         let aggs = res.data.meta.aggregations;
         setErrorMessage('');
         setWarningMessage(isChartDataEmpty(aggs));
-        aggs = aggsToBarChartData(aggs, type, shortDate);
+        aggs = aggsToBarChartData(aggs, type, shortDate, cumulative); 
         setDatasets(aggs.datasets);
         setLabels(aggs.labels);
         setLoading(false);
@@ -92,9 +94,9 @@ function RemoteBarChart(props: Props) {
         console.error(error.message);
         setErrorMessage(error.message);
       });
-  }, [filter]);
+    }, [filter, cumulative]); 
 
-  // for bar click updates
+  
   useEffectUpdate(() => {
     const localFilter = generateChartFilterFromBar(
       barData,
@@ -102,7 +104,7 @@ function RemoteBarChart(props: Props) {
       xAxis,
       type
     );
-    // this also resets components below
+    
     addSubFilter({
       id: id,
       filter: localFilter,
@@ -133,7 +135,8 @@ function RemoteBarChart(props: Props) {
     return <Placeholder bar height={height} />;
   }
 
-  const setter = (setZone === undefined) ? undefined : setBarData;
+  //cumulative and undefined setzone negates setBarData
+  const setter = (cumulative || setZone === undefined) ? undefined : setBarData;
 
   return (
     <BarChart
