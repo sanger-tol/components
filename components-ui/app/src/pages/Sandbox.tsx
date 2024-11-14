@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { RemoteTable, Widgets, env, useZone } from '../tol-ui/src';
+import { RemoteTable, Widgets, env, useZone, EditableTitle } from '../tol-ui/src';
 
 
 function Sandbox() {
@@ -15,9 +15,13 @@ function Sandbox() {
     components: [{id: 'table-example'}]
   });
 
+  const title = <h1><EditableTitle title = "Tables"/></h1>;
+
   const table1 = (
     <div>
-      <h5 style={{marginBottom: 12}}>Remote Table</h5>
+      <h5 >
+        <EditableTitle title = "Remote Table"/>
+        </h5>
       <RemoteTable
         id="table-example"
         rowSelection
@@ -60,6 +64,10 @@ function Sandbox() {
   );
 
   const components = [
+    {
+      component: title,
+      type: 'full'
+    },
     {
       component: table1,
       type: 'full'
