@@ -19,5 +19,4 @@ export { default as PopUpMessage } from "./PopUpMessage";
 export { default as RemoteGet } from "./RemoteGet";
 export { default as ObjectDetail } from "./ObjectDetail";
 export { default as RemoteCount } from "./RemoteCount";
-export { default as EditableTitle } from "./EditableTitle";
 export { formatDate } from "./Utils";
