@@ -9,6 +9,7 @@ import '@testing-library/jest-dom';
 
 
 const speciesMockData = { data: { data: { id: 'testSpeciesId', type: 'species', attributes: { name: 'test species' } } } };
+const speciesUpsertMockData = { data: { data: { id: 'newTestSpeciesId', type: 'species', attributes: { name: 'test species' } } } };
 const sampleMockData = { data: { data: { id: 'testSampleId', type: 'sample', attributes: { name: 'test sample' } } } };
 
 const attributeMetadataMockData = {
@@ -93,6 +94,12 @@ const mockClient = () => ({
   delete(endpoint: string, { baseURL }: { baseURL: string, params?: any }) {
     if (endpoint === '/species/testSpeciesId' && baseURL === 'test') {
       return Promise.resolve(null);
+    }
+    return Promise.reject({ response: { status: 404 } });
+  },
+  post(endpoint: string, { baseURL }: { baseURL: string, params?: any }) {
+    if (endpoint === '/species:upsert' && baseURL === 'test') {
+      return Promise.resolve(speciesUpsertMockData);
     }
     return Promise.reject({ response: { status: 404 } });
   }
@@ -381,6 +388,29 @@ describe('Testing delete method', () => {
 
     expect(dataObject).toBeUndefined();
     expect(clientDeleteSpy).toHaveBeenCalledTimes(1);
+
+  });
+});
+
+describe('Testing upsert method', () => {
+  test('Upserts value correctly', async () => {
+    const mockClientInstance = mockClient();
+    const clientPostSpy = vitest.spyOn(mockClientInstance, 'post');
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    const dataObject = await mockDataSource.upsert({
+      objectType: 'species',
+      attributes: {
+        name: 'test',
+      }
+    });
+
+    expect(dataObject).toEqual({id: 'newTestSpeciesId'});
+    expect(clientPostSpy).toHaveBeenCalledTimes(1);
 
   });
 });

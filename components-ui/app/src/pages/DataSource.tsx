@@ -67,12 +67,24 @@ function DataSource() {
     console.error('Error fetching entityMeta:', error);
   });
 
- //ds2.deleteByID({
- //  objectType: 'species',
- //  id: '1'
- //}).catch(error => {
- //  console.error('Error fetching entityMeta:', error);
- //});
+  /*
+  ds2.deleteByID({
+    objectType: 'species',
+    id: '1'
+  }).catch(error => {
+    console.error('Error fetching entityMeta:', error);
+  });
+  */
+
+  ds2.upsert({
+    objectType: 'species',
+    attributes: {
+      name: "test",
+      scientific_name: "test",
+      genus: "test",
+      family: "test",
+    }
+  })
 
   const dataSource = (
     <h5>See console for TSDataSource examples...</h5>

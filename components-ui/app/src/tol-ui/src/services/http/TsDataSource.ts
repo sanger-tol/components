@@ -48,6 +48,11 @@ interface GetOne {
   id: string
 }
 
+interface Upsert {
+  objectType: string,
+  attributes: object
+}
+
 interface GetByIds {
   objectType: string,
   ids: string[]
@@ -116,7 +121,6 @@ export default class TsDataSource {
   private fetchAndSaveConfig(endpoint: string, key: string): Promise<object> {
     const anHourFromNow = new Date();
     anHourFromNow.setHours(anHourFromNow.getHours() + 1);
-
     if (!configPromises[key]) {
       configPromises[key] = this.client().get(endpoint, {baseURL: this.baseUrl})
         .then(config => {
@@ -305,6 +309,31 @@ export default class TsDataSource {
       {baseURL: this.baseUrl}
     ).then(() => {
       delete detailCache[this.baseUrlKey][objectType][id];
+    }
+    ).catch((error: any) => {
+      if (error.response.status === 404) return null;
+      throw error;
+    });
+  }
+
+  public async upsert({
+    objectType,
+    attributes
+  }: Upsert): Promise<void> {
+    this.initializeDetailCacheAndPromises(objectType);
+    const upsertData = {
+      type: objectType,
+      attributes: attributes
+    }
+    return await this.client().post(
+      `/${objectType}:upsert`,
+      {
+        baseURL: this.baseUrl,
+        data: [upsertData]
+      }
+    ).then((response: any) => {
+      detailCache[this.baseUrlKey][objectType][response.data.data.id] = response.data.data;
+      return new Proxy(response.data.data, this.dataObjectHandler);
     }
     ).catch((error: any) => {
       if (error.response.status === 404) return null;
