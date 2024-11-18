@@ -38,6 +38,7 @@ services:
     volumes:
       - './components-api/app/main:/app/main'
       - '../tol-sdk:/packages/tol-sdk:rw'
+      - ./components-api/migrations/alembic/versions:/migrations/alembic/versions
 
   components-ui:
     build:
@@ -109,3 +110,4 @@ services:
     working_dir: /migrations
     volumes:
       - ./components-api/migrations/alembic/versions:/migrations/alembic/versions
+      - '../tol-sdk:/packages/tol-sdk:rw'
