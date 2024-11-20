@@ -22,7 +22,7 @@ def upgrade():
     # Create table `component`
     op.create_table(
         'component',
-        sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
+        sa.Column('id', sa.String, primary_key=True),
         sa.Column('title', sa.String, nullable=False),
         sa.Column('object_type', sa.String, nullable=False),
         sa.Column('base_url', sa.String, nullable=True),
@@ -36,7 +36,7 @@ def upgrade():
     # Create table `zone`
     op.create_table(
         'zone',
-        sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
+        sa.Column('id', sa.String, primary_key=True),
         sa.Column('title', sa.String, nullable=False),
         sa.Column('object_type', sa.String, nullable=False),
         sa.Column('base_url', sa.String, nullable=True),
@@ -47,7 +47,7 @@ def upgrade():
     # Create table `view`
     op.create_table(
         'view',
-        sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
+        sa.Column('id', sa.String, primary_key=True),
         sa.Column('title', sa.String, nullable=False),
         sa.Column('filter', JSONB, nullable=False, default={}, server_default='{}'),
         sa.Column('user_id', sa.Integer, sa.ForeignKey('user.id'), nullable=False)
@@ -56,7 +56,7 @@ def upgrade():
     # Create table `board`
     op.create_table(
         'board',
-        sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
+        sa.Column('id', sa.String, primary_key=True),
         sa.Column('title', sa.String, nullable=False),
         sa.Column('filter', JSONB, nullable=False, default={}, server_default='{}'),
         sa.Column('user_id', sa.Integer, sa.ForeignKey('user.id'), nullable=False)
