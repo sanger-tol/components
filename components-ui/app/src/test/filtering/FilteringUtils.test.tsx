@@ -23,7 +23,8 @@ import {
   setFilter,
   filterListener
 } from '../../tol-ui/src/filtering/Utils'
-import { Filter, Zone } from '../../tol-ui/src/board/Utils';
+import { Zone } from '../../tol-ui/src/board/Utils';
+import { Filter } from '../../tol-ui/src/models/Filter';
 
 
 describe ('Testing getComponentsAbove function', () => {

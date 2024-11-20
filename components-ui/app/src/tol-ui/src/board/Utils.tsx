@@ -17,14 +17,13 @@ export interface Component {
 }
 
 export interface ComponentData {
-  id?: string, // the dict key in most cases
+  id?: string,
   filter?: Filter
   defaultFilter?: Filter,
   subFilter?: Filter,
   filterPassThrough?: boolean,
   type?: string, // component type e.g. table
   size?: string // component size e.g. sm
-  props?: object // component props
 }
 
 export interface Components {
@@ -44,46 +43,64 @@ export interface Zones {
   [id: string]: Zone
 }
 
-export interface Board {
+export interface View {
   zones: Zones,
   order: string[]
 }
 
+export interface Views {
+  [id: string]: View
+}
+
+export interface Board {
+  views: Views,
+  order: string[]
+}
+
+/*
+example layout of a board:
+
 export const exampleBoard: Board = {
-  zones: {
-    'zoneIdOne': {
-      components: {
-        'componentIdOne': {
-          data: {
-            filter: {
-              and_: {
-                'attributeId': {
-                  eq: {
-                    value: 'hello',
-                    negate: true
+  views: {
+    'viewIdOne': {
+      zones: {
+        'zoneIdOne': {
+          components: {
+            'componentIdOne': {
+              data: {
+                filter: {
+                  and_: {
+                    'attributeId': {
+                      eq: {
+                        value: 'hello',
+                        negate: true
+                      }
+                    }
+                  }
+                },
+                defaultFilter: {
+                  and_: {
+                    'attributeId': {
+                      eq: {
+                        value: 'hello',
+                        negate: true
+                      }
+                    }
                   }
                 }
-              }
-            },
-            defaultFilter: {
-              and_: {
-                'attributeId': {
-                  eq: {
-                    value: 'hello',
-                    negate: true
-                  }
-                }
-              }
+              },
             }
           },
+          order: ['componentIdOne'],
+          type: 'species'
         }
       },
-      order: ['componentIdOne'],
-      type: 'species'
-    },
+      order: ['zoneIdOne']
+    }
   },
-  order: ['zoneIdOne']
+  order: ['viewIdOne']
 };
+*/
 
 export function defineComponent(component: ComponentData, zone: Zone) {
   // setting default as empty if no filter provided
