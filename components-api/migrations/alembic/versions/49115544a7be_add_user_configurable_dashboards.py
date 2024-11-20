@@ -67,8 +67,8 @@ def upgrade():
         'component_zone',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
         sa.Column('order', sa.Integer, nullable=False),
-        sa.Column('component_id', sa.Integer, sa.ForeignKey('component.id'), nullable=False),
-        sa.Column('zone_id', sa.Integer, sa.ForeignKey('zone.id'), nullable=False)
+        sa.Column('component_id', sa.String, sa.ForeignKey('component.id'), nullable=False),
+        sa.Column('zone_id', sa.String, sa.ForeignKey('zone.id'), nullable=False)
     )
 
     # Create table `zone_view`
@@ -76,8 +76,8 @@ def upgrade():
         'zone_view',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
         sa.Column('order', sa.Integer, nullable=False),
-        sa.Column('zone_id', sa.Integer, sa.ForeignKey('zone.id'), nullable=False),
-        sa.Column('view_id', sa.Integer, sa.ForeignKey('view.id'), nullable=False)
+        sa.Column('zone_id', sa.String, sa.ForeignKey('zone.id'), nullable=False),
+        sa.Column('view_id', sa.String, sa.ForeignKey('view.id'), nullable=False)
     )
 
     # Create table `view_board`
@@ -85,8 +85,8 @@ def upgrade():
         'view_board',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
         sa.Column('order', sa.Integer, nullable=False),
-        sa.Column('view_id', sa.Integer, sa.ForeignKey('view.id'), nullable=False),
-        sa.Column('board_id', sa.Integer, sa.ForeignKey('board.id'), nullable=False)
+        sa.Column('view_id', sa.String, sa.ForeignKey('view.id'), nullable=False),
+        sa.Column('board_id', sa.String, sa.ForeignKey('board.id'), nullable=False)
     )
 
     # add order uniqueness constraints
