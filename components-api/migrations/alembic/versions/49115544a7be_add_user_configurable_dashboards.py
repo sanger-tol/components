@@ -25,10 +25,11 @@ def upgrade():
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
         sa.Column('title', sa.String, nullable=False),
         sa.Column('object_type', sa.String, nullable=False),
-        sa.Column('base_url', sa.String, nullable=False),
+        sa.Column('base_url', sa.String, nullable=True),
         sa.Column('component_type', sa.String, nullable=False),
         sa.Column('widget_type', sa.String, nullable=False),
         sa.Column('config', JSONB, nullable=False),
+        sa.Column('filter', JSONB, nullable=False, default={}, server_default='{}'),
         sa.Column('user_id', sa.Integer, sa.ForeignKey('user.id'), nullable=False)
     )
 
@@ -38,6 +39,8 @@ def upgrade():
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
         sa.Column('title', sa.String, nullable=False),
         sa.Column('object_type', sa.String, nullable=False),
+        sa.Column('base_url', sa.String, nullable=True),
+        sa.Column('filter', JSONB, nullable=False, default={}, server_default='{}'),
         sa.Column('user_id', sa.Integer, sa.ForeignKey('user.id'), nullable=False)
     )
 
@@ -46,6 +49,7 @@ def upgrade():
         'view',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
         sa.Column('title', sa.String, nullable=False),
+        sa.Column('filter', JSONB, nullable=False, default={}, server_default='{}'),
         sa.Column('user_id', sa.Integer, sa.ForeignKey('user.id'), nullable=False)
     )
 
@@ -54,6 +58,7 @@ def upgrade():
         'board',
         sa.Column('id', sa.Integer, primary_key=True, autoincrement=True),
         sa.Column('title', sa.String, nullable=False),
+        sa.Column('filter', JSONB, nullable=False, default={}, server_default='{}'),
         sa.Column('user_id', sa.Integer, sa.ForeignKey('user.id'), nullable=False)
     )
 
