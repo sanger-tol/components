@@ -5,7 +5,7 @@
  */
 
 
-.tol-responsive-widget {
+ .tol-responsive-widget {
   @extend .tol-widget;
   margin: 0;
   position: relative;
@@ -198,24 +198,71 @@
   font-size: 14px;
 }
 
-.title-read-mode {
-  padding: 7px 11px;
+
+.editable-title {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  resize: none; 
+  box-sizing: border-box;
 }
 
-.title-read-mode:hover {
-  padding: 1px 10px;       
-  border: 1px solid var(--grey-emphasis);    
-  border-radius: 6px;   
+.editable-title-read-mode {
+  display: block;
+  width: 100%;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
+  font-weight: bolder !important; 
+  transition: color 0.3s ease; 
+}
+
+.editable-title-read-mode:hover {
   color: var(--primary);
 }
 
-.title-edit-mode.rs-inline-edit input{
-  color: var(--grey-opaque)!important;
+.editable-title textarea {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  outline: none;
+  resize: none; 
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap; 
+  font-weight: bolder !important;
 }
 
-.title-edit-mode.rs-inline-edit input:focus{
-  padding: 1px 10px !important;       
-  border: 1px solid var(--grey-emphasis) !important;    
-  border-radius: 6px !important;
-  color: var(--grey-opaque) !important; 
+.title-size-sm {
+  font-size: 16px;
+  font-weight: bolder !important;
+}
+
+.title-size-md {
+  font-size: 24px;
+  font-weight: bolder !important;
+}
+
+.title-size-lg {
+  font-size: 32px;
+  font-weight: bolder !important;
+}
+
+.character-counter {
+  position: absolute;
+  bottom: -20px;
+  right: 12px;
+  font-size: 12px;
+  color: var(--rs-text-secondary);
+  background: var(--bs-body-bg);
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.character-counter-warning {
+  color: var(--rs-form-errormessage-text);
 }

@@ -83,7 +83,8 @@ export {
   ObjectDetail,
   RemoteCount,
   HoverOverlay,
-  formatDate
+  formatDate,
+  EditableTitle
 } from "./general";
 
 // hooks
