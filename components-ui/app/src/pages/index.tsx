@@ -22,4 +22,5 @@ export { default as Messages } from "./Messages";
 export { default as DashboardPage } from "./DashboardPage";
 export { default as AuthPageExample } from "./AuthPageExample";
 export { default as NoAuthPageExample } from "./NoAuthPageExample";
+export { default as MyBoards } from "./MyBoards";
 

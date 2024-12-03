@@ -24,6 +24,7 @@ import {
   DashboardPage,
   NoAuthPageExample,
   AuthPageExample,
+  MyBoards,
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown } from "./tol-ui/src";
@@ -104,6 +105,16 @@ const noAuthPage: Page = {
   authElement: <AuthPageExample />,
 };
 
+const myBoards: Page = {
+  name: "My Boards",
+  element: <MyBoards />,
+};
+
+const dashboarding: Dropdown = {
+  name: "Dashboarding",
+  pages: [dashboardPage, myBoards],
+};
+
 const otherDropdown: Dropdown = {
   name: "Other",
   pages: [detail, forms, messages, miscellaneous, dataSource, noAuthPage],
@@ -136,7 +147,7 @@ ReactDOM.render(
       maps,
       timelines,
       widgets,
-      dashboardPage,
+      dashboarding,
       otherDropdown,
       user,
       sandbox,

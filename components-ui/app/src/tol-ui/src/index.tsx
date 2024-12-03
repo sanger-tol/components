@@ -18,8 +18,14 @@ export {
   ResponsiveWidget,
   ComponentModal,
   Dashboard,
-  ZoneModal
+  ZoneModal,
 } from "./board";
+
+// Dashboard Components
+export {
+  DropdownButtons,
+  MyBoardsHeader
+} from "./board/components";
 
 // Charts
 export {

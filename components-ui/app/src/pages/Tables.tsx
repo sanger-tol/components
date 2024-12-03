@@ -111,7 +111,7 @@ function Tables() {
   });
 
   const dbTable = (
-    <div>
+    <div id="dbTable1">
       <h5 style={{marginBottom: 12}}>Remote Table Local Database</h5>
       <RemoteTable
         id="db-table"
