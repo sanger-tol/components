@@ -112,7 +112,8 @@ export type {
 export {
   Callback,
   Login,
-  Navigation
+  Navigation,
+  ProfileDropdown
 } from "./nav";
 
 // Services

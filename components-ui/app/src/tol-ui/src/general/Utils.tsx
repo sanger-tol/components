@@ -13,6 +13,14 @@ export function convertToPath(name: string) {
   return "/" + path.replace(/\s+/g, '-');
 }
 
+export function convertToName(path: string) {
+  const name = path
+    .replace(/^\//, '') // Remove leading slash
+    .replace(/-/g, ' ') // Replace hyphens with spaces
+    .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize first letter of each word
+  return name;
+}
+
 export function formatDate(text: string) {
   try {
     const date = new Date(text);

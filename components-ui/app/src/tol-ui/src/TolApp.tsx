@@ -39,6 +39,7 @@ export interface Props {
   login?: boolean;
   register?: boolean;
   customCallbackUrl?: string;
+  profileLinks?: string[];
 }
 
 function TolApp(props: Props) {
@@ -86,6 +87,7 @@ function TolApp(props: Props) {
             login={login}
             register={register}
             customCallbackUrl={customCallbackUrl}
+            profileLinks={props.profileLinks}
           />
           <div className="tol-app">
             <Switch>

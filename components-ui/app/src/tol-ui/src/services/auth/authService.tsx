@@ -10,7 +10,14 @@ import { tokenHasExpired } from '../localStorage/localStorageService';
 
 
 export function getUrlLogin() {
-  return httpClient().get('/auth/login');
+  return httpClient().get('/auth/login').then(response => {
+    return {
+      loginUrl: response.data.loginUrl,
+      userData: {
+        name: response.data.name,
+      }
+    };
+  });
 }
 
 export function getToken(dataPost: any) {

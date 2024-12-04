@@ -10,6 +10,7 @@ import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { useAuth } from "../contexts/auth.context";
 import {
   getReturnUrlFromLocalStorage,
+  setReturnUrlFromLocalStorage,
   getTokenFromLocalStorage,
   setTokenToLocalStorage,
   setUserToLocalStorage,
@@ -23,6 +24,7 @@ import { convertToPath } from "../general/Utils";
 import { env } from "../variables/config";
 import { confirmAuthorised } from "../services/auth/authService";
 import { LoginIcon, RegisterIcon } from "../general/Icons";
+import ProfileDropdown from "./ProfileDropdown";
 
 interface Props extends RouteComponentProps {
   brand: string | JSX.Element;
@@ -30,6 +32,7 @@ interface Props extends RouteComponentProps {
   login: boolean;
   register: boolean;
   customCallbackUrl?: string;
+  profileLinks?: string[];
 }
 
 interface Environment {
@@ -80,7 +83,7 @@ function Navigation(props: Props) {
 
   const { setToken, user, setUser } = useAuth();
   const [environment, setEnvironment] = useState("");
-
+  
   useEffect(() => {
     fetchEnvironment().then((fetchedEnvironment: string) => {
       setEnvironment(fetchedEnvironment);
@@ -100,6 +103,7 @@ function Navigation(props: Props) {
   };
 
   const logout = () => {
+    setReturnUrlFromLocalStorage(window.location.pathname);
     const token = getTokenFromLocalStorage();
     if (token) revokeOicd(token);
     setTokenToLocalStorage("");
@@ -202,21 +206,22 @@ function Navigation(props: Props) {
                 {/* @ts-ignore */}
                 <Login buttonIcon={LoginIcon} returnUrl={getReturnUrlFromLocalStorage()}/>
               </Nav.Link>
-            ) : (
-              <Nav.Link
-                onClick={logout}
-                className="nav-right"
-                href="/"
-                key="Logout"
-              >
-                <Logout />
-              </Nav.Link>
-            )}
+            ) : user ? (
+              <div className="nav-right">
+                <ProfileDropdown
+                  user={user}
+                  profileLinks={props.profileLinks}
+                  onLogout={logout}
+                />
+              </div>
+            ) : null}
           </Navbar.Collapse>
         </Container>
       </Navbar>
     </div>
   );
 }
+
+
 
 export default withRouter(Navigation);

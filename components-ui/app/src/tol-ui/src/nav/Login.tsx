@@ -16,8 +16,7 @@ interface Props {
 
 function Login(props: Props) {
   const {buttonIcon, returnUrl} = props;
-
-  const { setToken } = useAuth();
+  const { setToken, setUser } = useAuth();
 
   useEffect(() => {
     if (tokenHasExpired()) setToken("");
@@ -25,8 +24,9 @@ function Login(props: Props) {
 
   const login = useCallback(() => {
     setReturnUrlFromLocalStorage(returnUrl || window.location.pathname);
-    getUrlLogin().then((data: any) => {
-      window.location.href = data.data.loginUrl;
+    getUrlLogin().then((data) => {
+      setUser(data.userData);
+      window.location.href = data.loginUrl;
     });
   }, []);
   // @ts-ignore

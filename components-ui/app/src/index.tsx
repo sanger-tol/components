@@ -152,6 +152,7 @@ ReactDOM.render(
       user,
       sandbox,
     ]}
+    profileLinks={['/dashboarding/my-boards']}
   />,
   document.getElementById("root")
 );
