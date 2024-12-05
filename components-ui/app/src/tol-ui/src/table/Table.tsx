@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button, Row, Col, Placeholder, Loader, useEffectUpdate } from '../index';
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { setFieldMetaAttributeInStorage } from './Utils';
@@ -38,6 +38,9 @@ interface Props {
   totalSize: number,
   rowCounter?: JSX.Element,
   displaySource?: boolean,
+
+  selectedRows?: any,
+  setSelectedRows?: any,
 
   sortColumn: string,
   sortType: any,
@@ -78,6 +81,9 @@ function Table (props: Props) {
     totalSize,
     rowCounter,
     displaySource,
+
+    selectedRows,
+    setSelectedRows,
 
     sortColumn,
     sortType,
@@ -120,7 +126,6 @@ function Table (props: Props) {
   };
 
   // row selection
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [bulkSelect, setBulkSelect] = useState(false);
   let checked = false;
   let indeterminate = false;
@@ -134,15 +139,15 @@ function Table (props: Props) {
   }
 
   // @ts-ignore
-  const handleCheckAll = (value: any, checked: boolean) => {
+  const handleCheckAll = useCallback((value: any, checked: boolean) => {
     const keys = checked ? data.map(item => item.id) : [];
     setSelectedRows(keys);
-  };
+  },[selectedRows]);
 
-  const handleCheck = (value: any, checked: boolean) => {
+  const handleCheck = useCallback((value: any, checked: boolean) => {
     const keys = checked ? [...selectedRows, value] : selectedRows.filter(item => item !== value);
     setSelectedRows(keys);
-  };
+  }, [selectedRows]);
 
   useEffectUpdate(() => {
     checked = false;

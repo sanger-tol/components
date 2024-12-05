@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, RemoteTable, Widgets, env, useZone } from '../tol-ui/src';
 
 
@@ -95,6 +95,12 @@ function Tables() {
 
   const table2 = (
     <div>
+      <Button
+        style={{marginBottom: 12}}
+        onClick={() => console.log(selectedRows)}
+      >
+        Get Remote Table Ids
+      </Button>
       <h5 style={{marginBottom: 12}}>Remote Table Empty On Load</h5>
       <RemoteTable
         id="table-example-2"

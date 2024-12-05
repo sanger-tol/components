@@ -39,6 +39,9 @@ interface Props {
   basic?: boolean;
   forceUpdate?: boolean;
 
+  selectedRows?: any,
+  setSelectedRows?: any,
+
   zone: object;
   setZone: any;
   defaultSort?: string;
@@ -81,6 +84,7 @@ function RemoteTable(props: Props) {
   // data and field information
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<FieldMeta | null>(null);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   // pagination
   const getPageSize = () => {
@@ -264,6 +268,8 @@ function RemoteTable(props: Props) {
       noConfigModal={noConfigModal}
       noDownload={noDownload}
       rowSelection={rowSelection}
+      selectedRows={props.selectedRows ?? selectedRows}
+      setSelectedRows={props.setSelectedRows ?? setSelectedRows}
     />
   );
 }
