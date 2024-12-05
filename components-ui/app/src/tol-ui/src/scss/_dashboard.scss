@@ -67,6 +67,14 @@
   border-color: var(--grey-emphasis);
 }
 
+.dashboard-component-modal-full {
+  .rs-modal-content 
+    .rs-modal-body {
+    height: auto !important;
+    overflow: hidden !important;
+    }
+  }
+
 .inverted-config-button:active {
   background-color: var(--grey-emphasis) !important;
   border-color: var(--grey-emphasis);

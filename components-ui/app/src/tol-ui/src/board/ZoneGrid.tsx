@@ -214,7 +214,9 @@ function ZoneGrid(props: Props) {
             {downButton}
             {upButton}
           </h6>
+          <div id={"component-modal"}>
           <ComponentModal open={open} setOpen={setOpen} {...z} />
+          </div>
         </Col>
       </Row>
     </div>

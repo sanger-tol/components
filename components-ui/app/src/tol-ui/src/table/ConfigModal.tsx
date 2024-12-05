@@ -151,6 +151,8 @@ function ConfigModal(props: Props) {
       setOpen={setOpen}
       header={header}
       actionButton={saveButton}
+      className={"config-modal-overflow-fix"}
+      overflow={true}
     >
       <DnD
         elements={fieldMetaToElements()}

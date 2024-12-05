@@ -59,6 +59,16 @@
     }
   }
 
+  .config-modal-overflow-fix {
+    max-height: 80vh;
+    .rs-modal-body {
+      max-height: 58vh;
+    }
+    .rs-modal-footer {
+      padding-top: 25px !important;
+    }
+  }
+
   .tol-table {
     display: flex;
     flex-direction: column;

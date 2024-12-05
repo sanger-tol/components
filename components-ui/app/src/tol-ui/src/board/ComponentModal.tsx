@@ -90,6 +90,7 @@ function ComponentModal(props: Props) {
       setOpen={setOpen}
       actionButton={plusButton}
       overflow={false}
+      className={"dashboard-component-modal-full"}
     >
       <>
         <h6>Select Component <span style={{color: 'red'}}>*</span></h6>
