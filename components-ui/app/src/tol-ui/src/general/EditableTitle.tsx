@@ -19,10 +19,7 @@ function EditableTitle({ title, size = 'md', onSave, onChange }: Props) {
   const [editedTitle, setEditedTitle] = useState(title);
   const [prevTitle, setPrevTitle] = useState(title);
   const [errorMessage, setErrorMessage] = useState('');
-
-  const maxLength = 64; //max title characters
-  const warningThreshold = 10;
-  const remainingCharacters = maxLength - editedTitle.length;
+  
 
   const toaster = Toaster();
   const toastMessage = (
@@ -66,33 +63,35 @@ function EditableTitle({ title, size = 'md', onSave, onChange }: Props) {
         showControls
         className="editable-title"
       >
-        {(props, ref) => {
-          const { value, plaintext, ...rest } = props;
+        {
+        // (props: any, ref: any) => {
+        //   const { value, plaintext, ...rest } = props;
 
-          return plaintext ? (
-            <span className="editable-title-read-mode">
-              {value}
-            </span>
-          ) : (
-            <>
-              <textarea
-                {...rest}
-                ref={ref}
-                value={value}
-                maxLength={maxLength}
-                rows={1}
-                onChange={(e) => setEditedTitle(e.target.value)}
-                className="editable-title-text-area"
-              />
-              {/* Show character counter only in edit mode */}
-              {remainingCharacters <= warningThreshold && (
-                <div className={`character-counter ${remainingCharacters < 0 ? 'warning' : ''}`}>
-                  {remainingCharacters} characters remaining
-                </div>
-              )}
-            </>
-          );
-        }}
+        //   return plaintext ? (
+        //     <span className="editable-title-read-mode">
+        //       {value}
+        //     </span>
+        //   ) : (
+        //     <>
+        //       <textarea
+        //         {...rest}
+        //         ref={ref}
+        //         value={value}
+        //         maxLength={maxLength}
+        //         rows={1}
+        //         onChange={(e) => setEditedTitle(e.target.value)}
+        //         className="editable-title-text-area"
+        //       />
+        //       {/* Show character counter only in edit mode */}
+        //       {remainingCharacters <= warningThreshold && (
+        //         <div className={`character-counter ${remainingCharacters < 0 ? 'warning' : ''}`}>
+        //           {remainingCharacters} characters remaining
+        //         </div>
+        //       )}
+        //     </>
+        //   );
+        // }
+        }
       </InlineEdit>
     </div>
   );

@@ -9,5 +9,6 @@ export interface User {
   name: string;
   organisation: string;
   roles: string[];
+  oidc_id: string;
 } // eslint-disable-line
 

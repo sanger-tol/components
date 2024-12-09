@@ -15,7 +15,7 @@ interface Props {
   subTitle?: string;
   containerStyle?: object;
   menuStyle?: object;
-  dropdownButtons?: DropdownButtonProps[] | DropdownButtonProps;
+  dropdownButtons?: DropdownButtonProps[]; // | DropdownButtonProps;
   dropdownMainIcon?: DropdownMainIconProps;
   globalDisabled?: boolean;
   placement?: string;

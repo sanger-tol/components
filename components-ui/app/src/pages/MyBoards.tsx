@@ -28,7 +28,7 @@ const containerStyle = {
 
 const getBoardDetails = async (id: string, setErrorMessage: any) => {
   try {
-    const res = await httpClient().get("/board", {
+    const res: any = await httpClient().get("/board", {
       params: {
         filter: {
           and_: {

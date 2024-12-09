@@ -25,13 +25,12 @@ interface Props {
   placement?: string;
   menuStyle?: object;
   globalDisabled?: boolean;
-  dropdownButtons: DropdownButtonProps[] | DropdownButtonProps;
+  dropdownButtons: DropdownButtonProps[];// | DropdownButtonProps;
 }
 
 function DropdownButtons(props: Props) {
   const {
     mainButtonIcon,
-    placement,
     menuStyle,
     globalDisabled,
     dropdownButtons,
@@ -53,7 +52,7 @@ function DropdownButtons(props: Props) {
   return (
     <Dropdown
       renderToggle={renderButton}
-      placement={placement}
+      //placement={placement}
       menuStyle={menuStyle}
       disabled={globalDisabled}
     >
