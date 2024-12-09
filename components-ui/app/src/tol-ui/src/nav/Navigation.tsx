@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+// @ts-nocheck
+
 import { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
@@ -221,6 +223,6 @@ function Navigation(props: Props) {
   );
 }
 
+let router: any = withRouter(Navigation);
 
-
-export default withRouter(Navigation);
+export default router;

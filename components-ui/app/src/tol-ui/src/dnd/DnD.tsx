@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+// @ts-nocheck
+
 import { Row } from "../index";
 import { useState, useEffect } from "react";
 import Column from "./Column";

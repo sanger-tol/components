@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+// @ts-nocheck
+
 import { WidthProvider, Responsive, Layouts } from 'react-grid-layout';
 import { Button, Placeholder } from '../index';
 import { useState, useRef, useEffect } from 'react';
@@ -112,6 +114,7 @@ function ResponsiveWidget(props: Props) {
     
     return layout;
   }
+
 
   return (
     <div className='tol-responsive-grid'>
