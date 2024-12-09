@@ -48,6 +48,12 @@ interface GetOne {
   id: string
 }
 
+interface GetToOneRelation {
+  objectType: string,
+  id: string,
+  relation: string
+}
+
 interface Upsert {
   objectType: string,
   attributes: object
@@ -69,7 +75,15 @@ interface GetListPage {
 interface DataObject {
   objectType: string,
   id: string,
-  [attribute: string]: any
+  [attribute: string]: any,
+  relationships: {
+    [key: string]: Promise<DataObject>
+  }
+}
+
+interface SourceDataObject extends DataObject {
+  __sourceType: string,
+  __sourceId: string,
 }
 
 type DataObjectOrNull = DataObject | null;
@@ -86,18 +100,46 @@ export default class TsDataSource {
     this.baseUrlKey = this.baseUrl || 'default';
   }
 
+  private relationshipHandler = {
+    get: async (target: SourceDataObject, key: string) => {
+      const targetValue = target?.[key];
+
+      if (targetValue === null) return null;
+
+      if (targetValue !== undefined) return new Proxy(targetValue.data, this.dataObjectHandler);
+
+      return await this.getToOneRelation(
+        {
+          objectType: target.__sourceType,
+          id: target.__sourceId,
+          relation: key
+        }
+      );
+    }
+  }
+
   private dataObjectHandler = {
     get: (target: any, key: string) => {
       if (key === 'objectType') return target.type;
       if (key === 'id') return target.id;
-      return target.attributes[key];
+
+      if (key === 'relationships') {
+        const relationshipsTarget: SourceDataObject = {
+          ...(target?.relationships ?? {}),
+          __sourceType: target.type,
+          __sourceId: target.id
+        }
+        return new Proxy(relationshipsTarget, this.relationshipHandler);
+      }
+
+      return target.attributes?.[key];
     }
   }
 
   private initializeDetailCacheAndPromises(objectType: string) {
     detailCache[this.baseUrlKey] = detailCache[this.baseUrlKey] ?? {};
     detailCache[this.baseUrlKey][objectType] = detailCache[this.baseUrlKey][objectType] ?? {};
-    
+
     detailPromises[this.baseUrlKey] = detailPromises[this.baseUrlKey] ?? {};
     detailPromises[this.baseUrlKey][objectType] = detailPromises[this.baseUrlKey][objectType] ?? Promise.resolve();
   }
@@ -257,6 +299,24 @@ export default class TsDataSource {
       });
     }
     return detailPromises[this.baseUrlKey][objectType][id]; // return existing promise if it's in progress
+  }
+
+  public async getToOneRelation({
+    objectType,
+    id,
+    relation
+  }: GetToOneRelation): Promise<DataObjectOrNull> {
+    return await this.client().get(
+      `/${objectType}:to-one/${id}/${relation}`,
+      {baseURL: this.baseUrl}
+    )
+    .then((response: any) => {
+      return new Proxy(response.data.data, this.dataObjectHandler);
+    })
+    .catch((error: any) => {
+      if (error.response.status === 404) return null;
+      throw error;
+    })
   }
 
   public async getByIds({

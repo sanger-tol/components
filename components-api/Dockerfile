@@ -14,7 +14,7 @@ RUN apt-get install -y python3-pip python3-setuptools
 COPY app/requirements.txt /app
 COPY app/setup.py /app
 
-RUN pip3 install --upgrade setuptools
+RUN pip3 install --upgrade setuptools pip
 RUN python3 setup.py install
 
 RUN pip3 --no-cache-dir install -r requirements.txt

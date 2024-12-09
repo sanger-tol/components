@@ -12,6 +12,36 @@ const speciesMockData = { data: { data: { id: 'testSpeciesId', type: 'species', 
 const speciesUpsertMockData = { data: { data: { id: 'newTestSpeciesId', type: 'species', attributes: { name: 'test species' } } } };
 const sampleMockData = { data: { data: { id: 'testSampleId', type: 'sample', attributes: { name: 'test sample' } } } };
 
+const specimenMockData = {
+  data: {
+    data: {
+      id: 'testSpecimenId',
+      type: 'specimen',
+      relationships: {
+        present_species: {
+          data: {
+            id: 'present',
+            type: 'species'
+          }
+        },
+        none_species: null
+      }
+    }
+  }
+};
+
+const toOneSpeciesMockData = {
+  data: {
+    data: {
+      id: 'lazy',
+      type: 'species',
+      attributes: {
+        'lazy': true
+      }
+    }
+  }
+};
+
 const attributeMetadataMockData = {
   "barcoding_run_data": {
       "bioscan_c": {
@@ -64,6 +94,11 @@ const relationshipConfigMockData = {
           "mlwh_sequencing_request": "mlwh_specimen.id",
           "sts_samples": "sts_specimen.id"
       },
+      "one": {
+          "present_species": "species",
+          "none_species": "species",
+          "lazy_species": "species",
+      },
       "many": {
           "benchling_extractions": "extraction",
           "benchling_samples": "sample",
@@ -80,12 +115,16 @@ const mockClient = () => ({
       return Promise.resolve({ data: attributeMetadataMockData });
     } else if (endpoint === '/species/testSpeciesId' && baseURL === 'test') {
       return Promise.resolve(speciesMockData);
+    } else if (endpoint === '/specimen/testSpecimenId' && baseURL === 'test') {
+      return Promise.resolve(specimenMockData);
     } else if (endpoint === '/sample/testSampleId' && baseURL === 'test') {
       return Promise.resolve(sampleMockData);
     } else if (endpoint === '/species' && baseURL === 'test') {
       const pageSize = params?.page_size || 10;
       const mockPageData = Array(pageSize).fill(speciesMockData.data.data);
       return Promise.resolve({ data: { data: mockPageData } });
+    } else if (endpoint === '/specimen:to-one/testSpecimenId/lazy_species' && baseURL === 'test') {
+      return Promise.resolve(toOneSpeciesMockData);
     } else if (endpoint === '/_config/relationships' && baseURL === 'test') {
       return Promise.resolve({ data: relationshipConfigMockData });
     }
@@ -412,5 +451,59 @@ describe('Testing upsert method', () => {
     expect(dataObject).toEqual({id: 'newTestSpeciesId'});
     expect(clientPostSpy).toHaveBeenCalledTimes(1);
 
+  });
+});
+
+describe('Testing relationship getting', () => {
+  test('Do not fetch explicit null', async () => {
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, 'get');
+  
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    const specimen = await mockDataSource.getOne({objectType: 'specimen', id: 'testSpecimenId'});
+    expect(specimen).not.toBeNull();
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
+
+    expect(await specimen.relationships.none_species).toBeNull();
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test('Do not fetch provided relation', async () => {
+    const mockClientInstance = mockClient();
+  
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    const specimen = await mockDataSource.getOne({objectType: 'specimen', id: 'testSpecimenId'});
+    expect(specimen).not.toBeNull();
+
+    const presentSpecies = await specimen.relationships.present_species;
+    expect(presentSpecies.id).toEqual('present');
+    expect(presentSpecies.objectType).toEqual('species');
+  });
+
+  test('Lazily fetch missing relation', async () => {
+    const mockClientInstance = mockClient();
+  
+    const mockDataSource = new TsDataSource({
+      baseUrl: 'test',
+      client: () => mockClientInstance,
+    });
+
+    const specimen = await mockDataSource.getOne({objectType: 'specimen', id: 'testSpecimenId'});
+    expect(specimen).not.toBeNull();
+
+    const lazySpecies = await specimen.relationships.lazy_species;
+    console.log(lazySpecies)
+
+    expect(lazySpecies.id).toEqual('lazy');
+    expect(lazySpecies.objectType).toEqual('species');
+    expect(lazySpecies.lazy).toEqual(true);
   });
 });
