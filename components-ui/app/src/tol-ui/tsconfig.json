@@ -21,7 +21,8 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "strict": false
   },
   "include": ["src", "assets"],
   "exclude": ["node_modules", "lib"]
