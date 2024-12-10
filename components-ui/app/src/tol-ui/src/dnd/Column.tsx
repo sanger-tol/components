@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useRef } from 'react';
 import { Col } from '../index';
 import { Element } from './DnD';
 import Item from './Item';
@@ -22,6 +23,7 @@ interface Props {
 
 function Column(props: Props) {
   const { col, editMode } = props;
+  const ref = useRef<any>(null);
   
   return (
     <Col
@@ -29,6 +31,7 @@ function Column(props: Props) {
       sm={12}
       lg={6}
       style={{ paddingLeft: 0, paddingRight: 0 }}
+      ref={ref}
     >
       <h5 className='tol-dnd-column-title'>{col.id}</h5>
       <Droppable droppableId={col.id}>

@@ -43,6 +43,7 @@ function ResponsiveWidget(props: Props) {
   const [layoutsState, setLayouts] = useState<Layouts>(generateLayout(widgets));
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const internalLayouts = useRef(generateLayout(widgets));
+  const ref = useRef<any>(null);
 
   useEffect(() => {
     const newLayout = generateLayout(widgets);
@@ -148,6 +149,7 @@ function ResponsiveWidget(props: Props) {
         onLayoutChange={onLayoutChange}
         onBreakpointChange={onBreakpointChange}
         draggableCancel='.widget-delete-btn'
+        ref={ref}
       >
         {widgets.order.map((key)=> {
           // Check if there is a component that matches the ids
