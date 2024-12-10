@@ -66,7 +66,7 @@ function EditableTitle({ title, size = 'md', onSave, onChange }: Props) {
         showControls
         className="editable-title"
       >
-        {(props, ref) => {
+        {(props: any, ref: any) => {
           const { value, plaintext, ...rest } = props;
 
           return plaintext ? (
