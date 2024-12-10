@@ -7,11 +7,11 @@
 import React from "react";
 import { Button, Dropdown } from "rsuite";
 
-
 export interface DropdownButtonProps {
   dropdownButtonName: string;
   dropdownButtonIcon?: string;
   disabled?: boolean;
+  icon?: Element;
   action: (context?: Record<string, any>) => void;
   context?: Record<string, any>;
 }
@@ -68,6 +68,7 @@ function DropdownButtons(props: Props) {
           key={index}
           onClick={() => button.action(button.context)}
           disabled={button.disabled}
+          icon={button.icon}
         >
           {button.dropdownButtonName}
         </Dropdown.Item>
