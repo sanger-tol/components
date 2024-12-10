@@ -10,12 +10,20 @@ import { Page } from 'src/models';
 import { httpClient } from '../http/httpClient';
 import { tokenHasExpired } from '../localStorage/localStorageService';
 
+interface ResponseLoginUrl {
+  loginUrl: string;
+}
+
+interface ResponseName {
+  name: string;
+}
+
 export function getUrlLogin() {
   return httpClient().get('/auth/login').then(response => {
     return {
-      loginUrl: response!.data!.loginUrl,
+      loginUrl: response.data.loginUrl as ResponseLoginUrl,
       userData: {
-        name: response!.data!.name,
+        name: response.data.name as ResponseName,
       }
     };
   });
