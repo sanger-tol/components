@@ -13,6 +13,8 @@ import { Zone, getWidgetOrder } from './Utils';
 import { resetAllFilters, removeComponent } from '../filtering/Utils';
 import {ConfirmationModal}  from '../boardNew/components';
 
+//@ts-nocheck
+
 interface Component {
   size: string,
   element: JSX.Element

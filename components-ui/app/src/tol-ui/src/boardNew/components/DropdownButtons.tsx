@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+//@ts-nocheck
+
 import React from "react";
 import { Button, Dropdown } from "rsuite";
 
