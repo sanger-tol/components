@@ -128,7 +128,7 @@ function DnD(props: Props) {
   }, [columns]);
 
   return (
-    <DragDropContext onDragEnd={onDragEnd} ref={ref}>
+    <DragDropContext onDragEnd={onDragEnd} refs={ref}>
       <Row style={{
         marginLeft: 0,
         marginRight: 0,
