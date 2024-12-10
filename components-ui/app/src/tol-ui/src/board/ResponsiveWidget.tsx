@@ -149,7 +149,7 @@ function ResponsiveWidget(props: Props) {
         onLayoutChange={onLayoutChange}
         onBreakpointChange={onBreakpointChange}
         draggableCancel='.widget-delete-btn'
-        ref={ref}
+        refs={ref}
       >
         {widgets.order.map((key)=> {
           // Check if there is a component that matches the ids

@@ -31,7 +31,7 @@ function Column(props: Props) {
       sm={12}
       lg={6}
       style={{ paddingLeft: 0, paddingRight: 0 }}
-      ref={ref}
+      refs={ref}
     >
       <h5 className='tol-dnd-column-title'>{col.id}</h5>
       <Droppable droppableId={col.id}>
