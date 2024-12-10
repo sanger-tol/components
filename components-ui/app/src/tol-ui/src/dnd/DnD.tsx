@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Row } from "../index";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Column from "./Column";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
@@ -42,7 +42,6 @@ function DnD(props: Props) {
   const [columns, setColumns] = useState<object>(
     convertElementsData(elements as Columns)
   );
-  const ref = useRef<any>(null);
   let editMode = true;
   if (props.editMode === false) editMode = false;
 
@@ -128,7 +127,8 @@ function DnD(props: Props) {
   }, [columns]);
 
   return (
-    <DragDropContext onDragEnd={onDragEnd} refs={ref}>
+    //@ts-ignore
+    <DragDropContext onDragEnd={onDragEnd}>
       <Row style={{
         marginLeft: 0,
         marginRight: 0,
