@@ -59,7 +59,7 @@ function ProfileDropdown (props: Props) {
       {customLinks}
       <Dropdown.Separator />
       <Dropdown.Item 
-      className = "logout" 
+      className={"logout"}
       onClick={onLogout}
       >Logout</Dropdown.Item>
     </>

@@ -75,7 +75,7 @@ function FormAllInOne(props: Props) {
   const [formId, _] = useState<any>(() => crypto.randomUUID());
   const hasUnsavedChanges = useRef(false);
 
-  const formRef = useRef<any>();
+  const formRef = useRef<any>(null);
   const toaster = Toaster();
 
   useEffect(() => {

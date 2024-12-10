@@ -26,7 +26,9 @@ function Login(props: Props) {
   const login = useCallback(() => {
     setReturnUrlFromLocalStorage(returnUrl || window.location.pathname);
     getUrlLogin().then((data) => {
+      //@ts-ignore
       setUser(data.userData);
+      //@ts-ignore
       window.location.href = data.loginUrl;
     });
   }, []);
