@@ -17,7 +17,6 @@ import {
   tokenHasExpired,
 } from "../services/localStorage/localStorageService";
 import Login from "./Login";
-import Logout from "./Logout";
 import { Dropdown } from "../models/Nav";
 import { Page } from "../models/Nav";
 import { convertToPath } from "../general/Utils";

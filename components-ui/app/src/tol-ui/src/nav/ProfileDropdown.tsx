@@ -31,7 +31,7 @@ function ProfileDropdown (props: Props) {
   useEffect(() => {
     if (user?.oidc_id) {
       const orcidId = user.oidc_id.split('/').pop();
-      fetchOrcidProfile(orcidId).then(data => {
+      fetchOrcidProfile(orcidId!).then(data => {
         const fullName = `${data.person.name['given-names'].value} ${data.person.name['family-name'].value}`;
         setProfileData({
           name: fullName
@@ -48,7 +48,7 @@ function ProfileDropdown (props: Props) {
       key={link}
       onClick={() => history.push(link)}
     >
-      {convertToName(lastPathSegment)}
+      {convertToName(lastPathSegment!)}
     </Dropdown.Item>
   )
 })
