@@ -78,7 +78,7 @@ const getBackgroundClass = (environment: string): string => {
 
 // on page change update returnUrl to page route
 
-function Navigation(props: Props) {
+function Navigation(props: Props): React.FC<Props> {
 
   const { setToken, user, setUser } = useAuth();
   const [environment, setEnvironment] = useState("");
