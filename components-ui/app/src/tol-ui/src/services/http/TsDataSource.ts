@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Attributes, Relationships } from 'src/models/EntityMeta';
+import { Attributes, Relationships } from '../../models/EntityMeta';
 import { Filter, EntityMeta } from '../../models';
 import { httpClient } from './httpClient';
 import retry from './Retry';
@@ -53,6 +53,7 @@ interface GetToOneRelation {
   id: string,
   relation: string
 }
+
 
 interface Upsert {
   objectType: string,
@@ -140,7 +141,7 @@ export default class TsDataSource {
   private initializeDetailCacheAndPromises(objectType: string) {
     detailCache[this.baseUrlKey] = detailCache[this.baseUrlKey] ?? {};
     detailCache[this.baseUrlKey][objectType] = detailCache[this.baseUrlKey][objectType] ?? {};
-
+    
     detailPromises[this.baseUrlKey] = detailPromises[this.baseUrlKey] ?? {};
     detailPromises[this.baseUrlKey][objectType] = detailPromises[this.baseUrlKey][objectType] ?? Promise.resolve();
   }
@@ -179,6 +180,21 @@ export default class TsDataSource {
         });
     }
     return configPromises[key];
+  }
+
+  public async customEndpoint(
+    endpoint: string,
+    body?: any
+): Promise<any> {
+    return this.client().post(
+      endpoint,
+      {
+        baseUrl: this.baseUrl,
+        data: body
+      }
+    ).catch(
+      (error: any) => console.log(error)
+    )
   }
 
   @retry(3)
@@ -335,7 +351,8 @@ export default class TsDataSource {
     pageSize,
     filter,
     sortBy
-  }: GetListPage): Promise<DataObjectListOrNull[]> {
+  }: GetListPage): Promise<DataObjectListOrNull> {
+    this.initializeDetailCacheAndPromises(objectType);
     return await this.client().get(
       `/${objectType}`,
       {
