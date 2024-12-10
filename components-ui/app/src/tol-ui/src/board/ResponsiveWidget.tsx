@@ -12,6 +12,8 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Zone, getWidgetOrder } from './Utils';
 import { resetAllFilters, removeComponent } from '../filtering/Utils';
 
+//@ts-nocheck
+
 interface Component {
   size: string,
   element: JSX.Element

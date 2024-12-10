@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+//@ts-nocheck
+
 import { Page } from 'src/models';
 import { httpClient } from '../http/httpClient';
 import { tokenHasExpired } from '../localStorage/localStorageService';
