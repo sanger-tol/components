@@ -67,7 +67,7 @@ function ProfileDropdown(props: Props) {
     } else {
       if (user?.oidc_id) {
         const orcidId = user.oidc_id.split('/').pop();
-        fetchOrcidProfile(orcidId);
+        fetchOrcidProfile(orcidId!);
       } else {
         setUserName(user.name || '');
         setPhotoUrl(null);
@@ -84,15 +84,15 @@ function ProfileDropdown(props: Props) {
 
   const customLinks = profileLinks?.map((link) => {
     const lastPathSegment = link.split('/').pop();
-    return (
-      <Dropdown.Item
-        key={link}
-        onClick={() => history.push(link)}
-      >
-        {convertToName(lastPathSegment)}
-      </Dropdown.Item>
-    );
-  });
+  return (
+    <Dropdown.Item 
+      key={link}
+      onClick={() => history.push(link)}
+    >
+      {convertToName(lastPathSegment!)}
+    </Dropdown.Item>
+  )
+})
 
   const dropdownItems = (
     <>
