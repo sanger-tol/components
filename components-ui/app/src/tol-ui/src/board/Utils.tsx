@@ -10,6 +10,7 @@ import { httpClient } from '../services/http/httpClient';
 import { generateFilter, resetAllFilters } from '../filtering/Utils';
 import { useEffectUpdate } from '../hooks';
 import { Filter } from '../models/Filter';
+import { TsDataSource } from '../services';
 
 
 export interface Component {
@@ -218,4 +219,14 @@ async function getObjectTypes(baseUrl: string) {
 
 export async function fetchObjectTypes(baseUrl: string) {
   return await getObjectTypes(baseUrl);
+}
+
+export async function upsertComponentConfig(ds: TsDataSource, componentId: string, config: object) {
+  return await ds.upsert({
+    objectType: 'component',
+    id: componentId,
+    attributes: {
+      config: config
+    }
+  })
 }

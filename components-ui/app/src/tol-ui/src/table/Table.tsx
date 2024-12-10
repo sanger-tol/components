@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { useState } from 'react';
 import { Button, Row, Col, Placeholder, Loader, useEffectUpdate } from '../index';
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
-import { setFieldMetaAttributeInStorage } from './Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSliders, faDownload, faCheckDouble } from '@fortawesome/free-solid-svg-icons';
 import ConfigModal from './ConfigModal';
@@ -39,6 +38,9 @@ interface Props {
   rowCounter?: JSX.Element,
   displaySource?: boolean,
 
+  filterVisibility?: boolean,
+  setFilterVisibility?: any,
+
   sortColumn: string,
   sortType: any,
   defaultSort?: string,
@@ -48,7 +50,7 @@ interface Props {
   setZone: any,
   filter: any,
 
-  modalOnSave: any,
+  onModalSave: any
 
   noFilter?: boolean,
   noPagination?: boolean,
@@ -79,12 +81,15 @@ function Table (props: Props) {
     rowCounter,
     displaySource,
 
+    filterVisibility,
+    setFilterVisibility,
+
     sortColumn,
     sortType,
     defaultSort,
     handleSortColumn,
   
-    modalOnSave,
+    onModalSave,
     filter,
 
     noFilter,
@@ -98,26 +103,9 @@ function Table (props: Props) {
 
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const [filterVisible, setFilterVisible] = useState(fieldMeta.filterVisibility);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
-
-  // show certain components as default
-  const showAsDefault = (noComponent?: boolean) => {
-    if (noComponent === undefined) return false;
-    return true;
-  };
-
-  noFilter = showAsDefault(noFilter);
-  noPagination = showAsDefault(noPagination);
-  noSorting = showAsDefault(noSorting);
-  noConfigModal = showAsDefault(noConfigModal);
-  noDownload = showAsDefault(noDownload);
-
-  const toggleFilterVisibility = (visibility: boolean) => {
-    setFilterVisible(visibility);
-    setFieldMetaAttributeInStorage(id, visibility, "filterVisibility");
-  };
+  noFilter = !!noFilter;
 
   // row selection
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -278,16 +266,16 @@ function Table (props: Props) {
               open={open}
               pageSize={pageSize}
               setOpen={setOpen}
-              modalOnSave={modalOnSave}
+              onModalSave={onModalSave}
               displaySource={displaySource}
             />
           }
           {!noFilter &&
             <Button
               className="config-button-right"
-              active={filterVisible}
+              active={filterVisibility}
               variant="primary"
-              onClick={ () => toggleFilterVisibility(!filterVisible) }
+              onClick={ () => setFilterVisibility(!filterVisibility) }
               disabled={fieldMeta.order.active.length === 0}
             >
               <FontAwesomeIcon icon={faFilter} size="sm" />
@@ -334,7 +322,7 @@ function Table (props: Props) {
           <RSTable
             bordered
             data={data}
-            headerHeight={!noFilter && filterVisible ? 85 : 42}
+            headerHeight={!noFilter && filterVisibility ? 85 : 42}
             loading={loading}
             sortColumn={sortColumn}
             sortType={sortType}
@@ -414,7 +402,7 @@ function Table (props: Props) {
                       {field.rename}
                     </p>
                     {filterable &&
-                      <span className={filterVisible ? "tol-filter" : "tol-filter-hide"}>
+                      <span className={filterVisibility ? "tol-filter" : "tol-filter-hide"}>
                         <Filter
                           attribute={key}
                           rename={field.rename!}

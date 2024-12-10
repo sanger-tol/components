@@ -5,18 +5,47 @@
  */
 
 
+import { useState } from 'react';
 import {
-    Dashboard,
-  } from '../tol-ui/src';
+  Dashboard,
+  Visualisation,
+  Widgets,
+  useZone,
+  env
+} from '../tol-ui/src';
   
   
-  function DashboardPage() {
-  
-    return (
-      <div>
-        <Dashboard id='sandbox-zone'/>
-      </div>
-    );
-  }
-  
-  export default DashboardPage;
+function DashboardPage() {
+  const z = useZone({
+    endpoint: 'species',
+    baseUrl: env.TOL_DATA,
+    components: [
+      {id: 'c_N281dwdg86xx'}
+    ]
+  });
+
+  const table = (
+    <Visualisation
+      id='c_N281dwdg86xx'
+      setWidgetType={() => {}}
+      {...z}
+    />
+  )
+
+  const components = [
+    {
+      component: table,
+      type: 'lg'
+    }
+  ];
+
+  return (
+    <div className="datasource">
+      <Widgets
+        components={components}
+      />
+    </div>
+  );
+}
+
+export default DashboardPage;

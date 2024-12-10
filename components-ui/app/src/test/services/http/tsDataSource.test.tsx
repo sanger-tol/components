@@ -450,7 +450,6 @@ describe('Testing upsert method', () => {
 
     expect(dataObject).toEqual({id: 'newTestSpeciesId'});
     expect(clientPostSpy).toHaveBeenCalledTimes(1);
-
   });
 });
 

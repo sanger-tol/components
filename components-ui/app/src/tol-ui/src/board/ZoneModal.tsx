@@ -68,7 +68,6 @@ function ZoneModal(props: Props) {
   }
 
   useEffect(() => {
-    console.log(open);
     if (!open) {
       reset();
     }

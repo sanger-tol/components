@@ -29,7 +29,7 @@ interface Rgb {
   b: number
 }
 
-export const fieldMetaVersion = "field-meta-v10";
+export const tableVersion = "table-v12";
 let hiddenFields = false;
 
 export function isRelationship(key: string) {
@@ -399,11 +399,10 @@ export function structureFieldMeta(
   endpoint: string,
   savedFieldMeta?: FieldMeta,
   entityMeta?: EntityMeta,
-  fields?: FieldMetaData,
-  pageSize?: number
+  fields?: FieldMetaData
 ) {
   endpoint = endpoint.split('/').pop() as string;
-  const fieldMeta = savedFieldMeta ? savedFieldMeta : initialiseFieldMeta(pageSize); 
+  const fieldMeta = savedFieldMeta || initialiseFieldMeta();
   const fieldPropExists = fields !== undefined;
   if (fieldPropExists) structureFieldMetaViaProp(fieldMeta, fields);
   /*
@@ -455,31 +454,22 @@ export function createSort(sortColumn: string, sortType: string) {
   return sortColumn;
 }
 
-export function setFieldMetaAttributeInStorage(tableId: string, value: any, attribute?: string) {
-  if (attribute === undefined) {
-    localStorage.setItem(`${tableId}-${fieldMetaVersion}`, JSON.stringify(value));
-  } else {
-    const fieldMeta = JSON.parse(localStorage.getItem(`${tableId}-${fieldMetaVersion}`)!);
-    fieldMeta[attribute] = value;
-    localStorage.setItem(`${tableId}-${fieldMetaVersion}`, JSON.stringify(fieldMeta));
-  }
+export function setTableConfigLocalStorage(tableId: string, key: string, value: any) {
+  localStorage.setItem(`${key}-${tableId}-${tableVersion}`, JSON.stringify(value));
 }
 
-export function getFieldMetaFromStorage(tableId: string, fields?: FieldMetaData, attribute?: string) {
-  const data = localStorage.getItem(`${tableId}-${fieldMetaVersion}`);
-  if (data !== null) {
-    let fieldMeta = JSON.parse(data);
-    if (attribute !== undefined) {
-      return fieldMeta[attribute];
-    } else if (fields !== undefined) {
-      fieldMeta = fieldMetaToCellRenderer(fields, fieldMeta);
-    }
-    return fieldMeta;
-  }
+export function getTableConfigLocalStorage(tableId: string, key: string) {
+  const data = localStorage.getItem(`${key}-${tableId}-${tableVersion}`);
+  if (data) return JSON.parse(data);
 }
 
-export function deleteFieldMetaFromStorage(tableId: string) {
-  localStorage.removeItem(`${tableId}-${fieldMetaVersion}`);
+export function getFieldMetaLocalStorage(tableId: string, fields?: FieldMetaData) {
+  const data = localStorage.getItem(`fieldMeta-${tableId}-${tableVersion}`);
+  if (data) return fieldMetaToCellRenderer(fields || {}, JSON.parse(data));
+}
+
+export function deleteFieldMetaLocalStorage(tableId: string) {
+  localStorage.removeItem(`${tableId}-${tableVersion}`);
   window.location.reload();
 }
 

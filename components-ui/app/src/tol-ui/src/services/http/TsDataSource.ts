@@ -56,6 +56,7 @@ interface GetToOneRelation {
 
 interface Upsert {
   objectType: string,
+  id?: string,
   attributes: object
 }
 
@@ -327,6 +328,7 @@ export default class TsDataSource {
     const promiseBulk = ids.map(id => this.getOne({ objectType, id }));
     return await Promise.all(promiseBulk);
   }
+
   public async getListPage({
     objectType,
     page,
@@ -347,6 +349,7 @@ export default class TsDataSource {
       }
     )
     .then((response: any) => {
+      detailCache[this.baseUrlKey] = detailCache[this.baseUrlKey] ?? {};
       detailCache[this.baseUrlKey][objectType] = detailCache[this.baseUrlKey][objectType] || {};
       return response.data.data.map((object: any) => {
         detailCache[this.baseUrlKey][objectType][object.id] = detailCache[this.baseUrlKey][objectType][object.id] || object;
@@ -378,13 +381,15 @@ export default class TsDataSource {
 
   public async upsert({
     objectType,
-    attributes
+    attributes,
+    id
   }: Upsert): Promise<void> {
     this.initializeDetailCacheAndPromises(objectType);
     const upsertData = {
       type: objectType,
       attributes: attributes
     }
+    if (id) upsertData['id'] = id;
     return await this.client().post(
       `/${objectType}:upsert`,
       {

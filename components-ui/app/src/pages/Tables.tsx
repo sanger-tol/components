@@ -40,7 +40,7 @@ function Tables() {
       <RemoteTable
         id="table-example"
         rowSelection
-        pageSize={100}
+        //pageSize={100}
         forceUpdate={forceUpdate}
         fields={{
           "mlwh_run_id": {
@@ -129,15 +129,7 @@ function Tables() {
     {
       component: table1,
       type: 'full'
-    },
-    {
-      component: table2,
-      type: 'full'
-    },
-    {
-      component: dbTable,
-      type: 'full'
-    },
+    }
   ];
 
   return (

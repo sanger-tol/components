@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk, faDiagramProject, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FieldMeta, initialiseFieldMeta } from './Field';
 import { Row, Button, Col } from 'react-bootstrap';
-import { deleteFieldMetaFromStorage, getSourceColour, sortFieldsByRename } from './Utils';
+import { deleteFieldMetaLocalStorage, getSourceColour, sortFieldsByRename } from './Utils';
 import { normaliseCaps } from '../general/Utils';
 
 
@@ -22,11 +22,11 @@ export interface Props {
   setOpen: any,
   pageSize?: number,
   displaySource?: boolean,
-  modalOnSave: (fieldMeta: FieldMeta) => void
+  onModalSave: (fieldMeta: FieldMeta) => void
 }
 
 function ConfigModal(props: Props) {
-  const { tableId, fieldMeta, open, setOpen, modalOnSave, pageSize, displaySource } = props;
+  const { tableId, fieldMeta, open, setOpen, onModalSave, pageSize, displaySource } = props;
   const [contents, setContents] = useState({});
 
   const updateMeta = (list: object[], updatedFieldMeta: FieldMeta, hidden: boolean) => {
@@ -40,8 +40,8 @@ function ConfigModal(props: Props) {
     }
   };
 
-  const fieldMetaUpdatedByContents = (pageSize?: number) => {
-    const updatedFieldMeta: FieldMeta = initialiseFieldMeta(pageSize);
+  const fieldMetaUpdatedByContents = () => {
+    const updatedFieldMeta: FieldMeta = initialiseFieldMeta();
     // loop through columns and set active/inactive
     for (const column of Object.values(contents)) {
       const id = column!['id'];
@@ -109,8 +109,8 @@ function ConfigModal(props: Props) {
   };
 
   const saveConfig = () => {
-    const updatedFieldMeta = fieldMetaUpdatedByContents(pageSize);
-    modalOnSave(updatedFieldMeta);
+    const updatedFieldMeta = fieldMetaUpdatedByContents();
+    onModalSave(updatedFieldMeta);
     setOpen(false);
   };
 
@@ -129,10 +129,10 @@ function ConfigModal(props: Props) {
         <Col sm={6} style={{ paddingLeft: 0, paddingRight: 0 }}>
           <Button
             className="clear-saved-config"
-            style={{float: "right"}}
+            style={{float: "right", display: "none"}} // hidden for now
             variant="warning"
             onClick={() => {
-              deleteFieldMetaFromStorage(tableId);
+              deleteFieldMetaLocalStorage(tableId);
             }}
           >
             Clear and Reset

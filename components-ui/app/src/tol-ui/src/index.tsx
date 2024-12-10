@@ -10,7 +10,7 @@ export { Link };
 import { useToaster as Toaster, Form as RSForm } from 'rsuite'
 export { Toaster, RSForm };
 
-// dashboard
+// board
 export {
   useZone,
   useTranslator,
@@ -19,15 +19,16 @@ export {
   ComponentModal,
   Dashboard,
   ZoneModal,
+  Visualisation
 } from "./board";
 
-// Dashboard Components
+// board components
 export {
   DropdownButtons,
   MyBoardsHeader
 } from "./board/components";
 
-// Charts
+// charts
 export {
   BarChart,
   RemoteBarChart,
@@ -38,7 +39,7 @@ export {
   RemoteSunburst
 } from "./charts";
 
-// Deprecated
+// deprecated
 export {
   RemoteAutoComplete,
   MultipleSelect,
@@ -47,16 +48,16 @@ export {
   GlobalMultipleSelect
 } from "./deprecated";
 
-// Drag & Drop
+// drag & drop
 export { DnD } from "./dnd";
 
-// Filter
+// filter
 export {
   Filter,
   resetZone
 } from "./filtering";
 
-// Forms
+// forms
 export {
   AutoComplete,
   Dropzone,
@@ -68,13 +69,13 @@ export {
   FormCheckboxes
 } from "./forms";
 
-// Messaging
+// messaging
 export {
   Message,
   Notification
 } from "./messaging";
 
-// General
+// general
 export {
   Header,
   CentreContents,
@@ -101,14 +102,14 @@ export {
   useQuery
 } from "./hooks";
 
-// Models
+// models
 export type {
   HeaderButton,
   Page,
   Dropdown
 } from "./models";
 
-// Nav
+// nav
 export {
   Callback,
   Login,
@@ -116,21 +117,24 @@ export {
   ProfileDropdown
 } from "./nav";
 
-// Services
+// services
 export {
   httpClient,
   TsDataSource,
   DetailAttribute
 } from "./services";
 
-// Table
-export { RemoteTable } from "./table";
+// table
+export {
+  RemoteTable,
+  BoardTable
+} from "./table";
 
-// Timelines
+// timelines
 export { Timeline, RemoteTimeline } from "./timeline";
 
-// ToL App
+// toL app
 export { default as TolApp } from "./TolApp";
 
-// Variables
+// variables
 export { env } from './variables';

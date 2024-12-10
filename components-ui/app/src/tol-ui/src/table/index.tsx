@@ -5,3 +5,4 @@ SPDX-License-Identifier: MIT
 */
 
 export { default as RemoteTable } from "./RemoteTable";
+export { default as BoardTable } from "./BoardTable";

@@ -55,8 +55,6 @@ export interface FieldMetaOrder {
 export interface FieldMeta {
   data: FieldMetaData,
   order: FieldMetaOrder
-  filterVisibility: boolean,
-  pageSize: number
 }
 
 const fieldDefaults = () => {
@@ -72,17 +70,12 @@ export function addFieldDefaults(field: Field) {
   };
 }
 
-export function initialiseFieldMeta(pageSize?: number, filterVisibility?: boolean) {
-  if (filterVisibility === undefined) filterVisibility = true;
-  if (pageSize === undefined) pageSize = 50;
-
+export function initialiseFieldMeta() {
   return {
     data: {},
     order: {
       active: [],
       inactive: []
-    },
-    filterVisibility: filterVisibility,
-    pageSize: pageSize
+    }
   } as FieldMeta;
 }

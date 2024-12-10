@@ -12,7 +12,7 @@ import {
   numberWithSpaces,
   isInt,
   isFloat,
-  generateID
+  generateId
 } from '../../tol-ui/src/general/Utils'
 
 test('isPropDefined function', () => {
@@ -70,10 +70,10 @@ test('isFloat Function',() => {
   expect(isFloat('number')).toBe(false)
 })
 
-test('generateID Function',() => {
+test('generateId Function',() => {
   const prefix = 'test'
-  const id = generateID(prefix)
-  const id2 = generateID(prefix)
+  const id = generateId(prefix)
+  const id2 = generateId(prefix)
   expect(id).toContain(prefix + '_')
   expect(id).toHaveLength(17)
   expect(id2).toContain(prefix + '_')
