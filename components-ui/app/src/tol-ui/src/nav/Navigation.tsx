@@ -222,5 +222,5 @@ function Navigation(props: Props) {
 }
 
 
-
+//@ts-ignore
 export default withRouter(Navigation);

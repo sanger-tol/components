@@ -40,7 +40,6 @@ function ResponsiveWidget(props: Props) {
   const { widgets, draggable, setOrder, setWidgets, zone } = props;
   const [layoutsState, setLayouts] = useState<Layouts>(generateLayout(widgets));
   const internalLayouts = useRef(generateLayout(widgets));
-  const ref = useRef<any>(null);
 
   useEffect(() => {
     const newLayout = generateLayout(widgets);
@@ -118,6 +117,7 @@ function ResponsiveWidget(props: Props) {
 
   return (
     <div className='tol-responsive-grid'>
+      {/*@ts-ignore*/}
       <ResponsiveReactGridLayout
         layouts={layoutsState}
         breakpoints={{ lg: 992, md: 576, sm: 0 }}
@@ -128,7 +128,6 @@ function ResponsiveWidget(props: Props) {
         onLayoutChange={onLayoutChange}
         onBreakpointChange={onBreakpointChange}
         draggableCancel='.widget-delete-btn'
-        refs={ref}
       >
         {widgets.order.map((key)=> {
           // Check if there is a component that matches the ids
