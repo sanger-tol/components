@@ -26,7 +26,7 @@ export interface Props {
 }
 
 function ConfigModal(props: Props) {
-  const { tableId, fieldMeta, open, setOpen, onModalSave, pageSize, displaySource } = props;
+  const { tableId, fieldMeta, open, setOpen, onModalSave, displaySource } = props;
   const [contents, setContents] = useState({});
 
   const updateMeta = (list: object[], updatedFieldMeta: FieldMeta, hidden: boolean) => {
