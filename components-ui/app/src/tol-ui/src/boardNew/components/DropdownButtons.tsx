@@ -9,11 +9,11 @@
 import React from "react";
 import { Button, Dropdown } from "rsuite";
 
+
 export interface DropdownButtonProps {
   dropdownButtonName: string;
   dropdownButtonIcon?: string;
   disabled?: boolean;
-  icon?: Element;
   action: (context?: Record<string, any>) => void;
   context?: Record<string, any>;
 }
