@@ -40,6 +40,7 @@ function ResponsiveWidget(props: Props) {
   const { widgets, draggable, setOrder, setWidgets, zone } = props;
   const [layoutsState, setLayouts] = useState<Layouts>(generateLayout(widgets));
   const internalLayouts = useRef(generateLayout(widgets));
+  const ref = useRef<any>(null);
 
   useEffect(() => {
     const newLayout = generateLayout(widgets);
@@ -127,6 +128,7 @@ function ResponsiveWidget(props: Props) {
         onLayoutChange={onLayoutChange}
         onBreakpointChange={onBreakpointChange}
         draggableCancel='.widget-delete-btn'
+        ref={ref}
       >
         {widgets.order.map((key)=> {
           // Check if there is a component that matches the ids
