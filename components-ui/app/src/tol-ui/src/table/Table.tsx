@@ -5,10 +5,24 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from 'react';
-import { Button, Row, Col, Placeholder, Loader, useEffectUpdate } from '../index';
+import { 
+  Button, 
+  Row, 
+  Col, 
+  Placeholder, 
+  Loader, 
+  useEffectUpdate, 
+  DropdownButtons 
+} from '../index';
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter, faSliders, faDownload, faCheckDouble } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faFilter, 
+  faSliders, 
+  faDownload, 
+  faCheckDouble, 
+  faArrowUpRightFromSquare 
+} from '@fortawesome/free-solid-svg-icons';
 import ConfigModal from './ConfigModal';
 import { exportTableToSpreadsheet } from "./Utils";
 import Filter, { FilterType } from '../filtering/Filter';
@@ -16,6 +30,7 @@ import { InfoTooltip, PopUpMessage } from '../general';
 import { FieldMeta } from './Field';
 import HoverOverlay from '../general/HoverOverlay';
 import { Zone } from '../board';
+import { DropdownButtonProps } from 'src/board/components/DropdownButtons';
 
 
 export type NumRows = 25 | 50 | 100 | 1000;
@@ -58,6 +73,7 @@ interface Props {
   noConfigModal?: boolean,
   noDownload?: boolean,
   rowSelection?: boolean
+  dropdownButtons?: DropdownButtonProps[],
 }
 
 function Table (props: Props) {
@@ -97,7 +113,8 @@ function Table (props: Props) {
     noSorting,
     noConfigModal,
     noDownload,
-    rowSelection
+    rowSelection,
+    dropdownButtons,
     /* eslint-enable */
   } = props;
 
@@ -169,6 +186,34 @@ function Table (props: Props) {
     </Button>
   );
 
+  const dropdownButtonsWithContext = dropdownButtons?.map((button) => ({
+    ...button,
+    context: {
+      selectedRows,
+      filter
+    }
+  }))
+
+  const actionButtons = (
+    <div style={{float: "left"}}>
+      {dropdownButtons && dropdownButtons.length > 0 &&
+        <DropdownButtons
+          mainButtonIcon={{
+            mainIcon: <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />,
+            variant: "primary",
+            className: "config-button-left",
+            style: {
+              marginLeft: "0px", 
+              border: "1px solid var(--grey-emphasis"},
+              disabled: (selectedRows.length === 0),
+          }}
+          dropdownButtons={dropdownButtonsWithContext}
+          placement={"rightStart"}
+        />
+      }
+    </div>
+  )
+
   return (
     <div style={{height: height}} className='tol-table'>
       <PopUpMessage
@@ -198,6 +243,7 @@ function Table (props: Props) {
               </Button>
             </>
           }
+          {dropdownButtons && actionButtons}
           {(!noPagination && fieldMeta.order.active.length > 0) &&
             <>
               {rowCounter ? rowCounter : totalSize}
