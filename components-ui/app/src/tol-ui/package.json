@@ -36,7 +36,9 @@
     "react-select-country-list": "2.2.3",
     "vitest": "2.0.5",
     "react-markdown": "8.0.6",
-    "nanoid": "3.1.23"
+    "nanoid": "3.1.23",
+    "@types/react": "^17.0.14",
+    "@types/react-dom": "17.0.14"
   },
   "scripts": {
     "build": "yarn build:esm && yarn build:cjs",

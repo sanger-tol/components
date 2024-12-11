@@ -13,6 +13,8 @@ import { Zone, getWidgetOrder } from './Utils';
 import { resetAllFilters, removeComponent } from '../filtering/Utils';
 import {ConfirmationModal}  from './components';
 
+//@ts-nocheck
+
 interface Component {
   size: string,
   element: JSX.Element
@@ -136,6 +138,7 @@ function ResponsiveWidget(props: Props) {
 
   return (
     <div className='tol-responsive-grid'>
+      {/*@ts-ignore*/}
       <ResponsiveReactGridLayout
         layouts={layoutsState}
         breakpoints={{ lg: 992, md: 576, sm: 0 }}

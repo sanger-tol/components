@@ -127,6 +127,7 @@ function DnD(props: Props) {
   }, [columns]);
 
   return (
+    //@ts-ignore
     <DragDropContext onDragEnd={onDragEnd}>
       <Row style={{
         marginLeft: 0,
