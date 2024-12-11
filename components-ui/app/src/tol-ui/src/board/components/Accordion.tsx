@@ -190,7 +190,7 @@ function Accordion(props: BoardsAccordionProps) {
       <FontAwesomeIcon
         icon={faEllipsisVertical}
         size={"lg"}
-        style={{ color: "#fff" }}
+        style={{ color: "#fff" }} // TODO: fix this for light mode
       />
     ),
     style: { background: "transparent" },
@@ -229,7 +229,6 @@ function Accordion(props: BoardsAccordionProps) {
     <DropdownButtons
       mainButtonIcon={boardOptionsButton}
       placement="leftStart"
-      globalDisabled={false}
       dropdownButtons={dropdownButtons}
       menuStyle={{
         position: "absolute",
