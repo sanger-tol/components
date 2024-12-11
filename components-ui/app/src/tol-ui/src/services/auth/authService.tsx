@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 //@ts-nocheck
 
-import { Page } from 'src/models';
+import { Page } from '../../models';
 import { httpClient } from '../http/httpClient';
 import { tokenHasExpired } from '../localStorage/localStorageService';
 
