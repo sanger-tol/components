@@ -15,6 +15,8 @@ import {ConfirmationModal}  from './components';
 
 //@ts-nocheck
 
+//@ts-nocheck
+
 interface Component {
   size: string,
   element: JSX.Element

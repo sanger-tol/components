@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { Dropdown, Avatar } from 'rsuite';
 import { useHistory } from "react-router-dom";
 import { User } from '../models';
-import { convertToName } from 'src/general/Utils';
+import { convertToName } from '../general/Utils';
 
 interface Props {
     user: User;
