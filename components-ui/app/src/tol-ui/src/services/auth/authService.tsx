@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 //@ts-nocheck
 
-//@ts-nocheck
-
 import { Page } from '../../models';
 import { httpClient } from '../http/httpClient';
 import { tokenHasExpired } from '../localStorage/localStorageService';
@@ -15,9 +13,9 @@ import { tokenHasExpired } from '../localStorage/localStorageService';
 export function getUrlLogin() {
   return httpClient().get('/auth/login').then(response => {
     return {
-      loginUrl: response!!.data!!.loginUrl,
+      loginUrl: response!.data!.loginUrl,
       userData: {
-        name: response!!.data!!.name,
+        name: response!.data!.name,
       }
     };
   });
