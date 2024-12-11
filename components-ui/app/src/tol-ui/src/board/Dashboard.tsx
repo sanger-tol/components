@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ZoneGrid,
   Button,
@@ -14,6 +14,7 @@ import {
 } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { useParams } from 'react-router-dom';
 
 
 interface ZoneObject {
@@ -27,12 +28,19 @@ interface Props {
 
 function Dashboard(props: Props) {
   const { id } = props;
+  const {boardId, viewId} = useParams<{boardId: string, viewId: string}>();
   const [zones, setZones] = useState<ZoneObject[]>([]);
   const [open, setOpen] = useState(false);
   
   function addZone() {
     setOpen(true);
   }
+
+  //TODO Remove after testing
+  useEffect(() => {
+    console.log("Board ID:", boardId);
+    console.log("View ID:", viewId);
+  }, [boardId, viewId]);
 
   const deleteZone = (id: string) => {
     const newZones = zones.filter(zone => zone.id !== id);

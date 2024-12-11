@@ -31,6 +31,7 @@ import {
   matomoAnalytics,
 } from "./general/Utils";
 import { env } from "./variables/config";
+import { Dashboard } from "./board";
 
 export interface Props {
   brand: string | JSX.Element;
@@ -40,10 +41,11 @@ export interface Props {
   register?: boolean;
   customCallbackUrl?: string;
   profileLinks?: string[];
+  boardRouting?: boolean;
 }
 
 function TolApp(props: Props) {
-  const {customCallbackUrl} = props;
+  const {customCallbackUrl, boardRouting} = props;
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
@@ -183,6 +185,12 @@ function TolApp(props: Props) {
 
                 return routes;
               })}
+              {boardRouting && (
+                <Route
+                  path="/board/:boardId/view/:viewId"
+                  component={Dashboard}
+                />
+              )}
               <Route
                 path="/page-not-found"
                 component={() => <PageNotFound />}

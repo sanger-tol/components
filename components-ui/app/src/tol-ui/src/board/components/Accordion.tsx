@@ -173,238 +173,255 @@ const useItemData = <T,>(
   return { itemData, loading };
 };
 
-const boardOptionsButton: DropdownMainIconProps = {
-  mainIcon: (
-    <FontAwesomeIcon
-      icon={faEllipsisVertical}
-      size={"lg"}
-      style={{ color: "#fff" }}
-    />
-  ),
-  style: { background: "transparent" },
-};
+function Accordion(props: BoardsAccordionProps) {
+  const { boardDetails } = props;
+  const history = useHistory();
 
-// Dummy actions and buttons at the moment, can be changed to the
-// real ones once the decision has been made
-const dropdownButtons: DropdownButtonProps[] = [
-  {
-    dropdownButtonName: "View",
-    action: () => {
-      console.log("View Item (will need to get item and board ID)");
-    },
-  },
-  {
-    dropdownButtonName: "Rename",
-    action: () => {
-      console.log("Rename Item (Still think this is a good idea)");
-    },
-  },
-  {
-    dropdownButtonName: "Share",
-    action: () => {
-      console.log("Share Item (Oh Yes!)");
-    },
-  },
-  {
-    dropdownButtonName: "Delete",
-    action: () => {
-      console.log("Helpful!");
-    },
-  },
-];
-
-const boardOptionsDropdownButton = (
-  <DropdownButtons
-    mainButtonIcon={boardOptionsButton}
-    placement="leftStart"
-    globalDisabled={false}
-    dropdownButtons={dropdownButtons}
-    menuStyle={{
-      position: "absolute",
-      zIndex: "1050",
-      top: "100%",
-      display: "inline-block",
-    }}
-  />
-);
-
-const AccordionBase = (props: AccordionBaseProps) => {
-  const {
-    id,
-    itemType,
-    filterItem,
-    endpointUrl,
-    title,
-    subHeader,
-    renderChildren,
-    infoText,
-  } = props;
-
-  const [childIds, setChildIds] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-
-  const handleExpand = async () => {
-    if (!expanded) {
-      setLoading(true);
-      const ids = await fetchSubItemId(id, endpointUrl, filterItem, itemType);
-      setChildIds(ids.map((id: any) => id.id));
-      setLoading(false);
-      setExpanded(true);
-    }
+  const goToBoard = (id: string) => {
+    history.push(`/board/${id}/view/1`);
   };
 
-  return (
-    <Acc
-      bordered
-      style={{ flex: "1", overflow: "visible" }}
-      onClick={handleExpand}
-    >
-      <Acc.Panel
-        style={{ overflow: "visible", flex: "1" }}
-        header={
-          <div>
-            <AccordionHeader
-              header={title}
-              subHeader={subHeader}
-              infoText={infoText || `ID: ${id}`}
-            />
-          </div>
-        }
-      >
-        {loading ? <div>Loading...</div> : renderChildren(childIds)}
-      </Acc.Panel>
-    </Acc>
+  const goToView = (boardId: string, viewId: string) => {
+    history.push(`/board/${boardId}/view/${viewId}`);
+  };
+
+  const boardOptionsButton: DropdownMainIconProps = {
+    mainIcon: (
+      <FontAwesomeIcon
+        icon={faEllipsisVertical}
+        size={"lg"}
+        style={{ color: "#fff" }}
+      />
+    ),
+    style: { background: "transparent" },
+  };
+
+  // Dummy actions and buttons at the moment, can be changed to the
+  // real ones once the decision has been made
+  const dropdownButtons: DropdownButtonProps[] = [
+    {
+      dropdownButtonName: "View",
+      action: () => {
+        console.log("View Item (will need to get item and board ID)");
+      },
+    },
+    {
+      dropdownButtonName: "Rename",
+      action: () => {
+        console.log("Rename Item (Still think this is a good idea)");
+      },
+    },
+    {
+      dropdownButtonName: "Share",
+      action: () => {
+        console.log("Share Item (Oh Yes!)");
+      },
+    },
+    {
+      dropdownButtonName: "Delete",
+      action: () => {
+        console.log("Helpful!");
+      },
+    },
+  ];
+
+  const boardOptionsDropdownButton = (
+    <DropdownButtons
+      mainButtonIcon={boardOptionsButton}
+      placement="leftStart"
+      globalDisabled={false}
+      dropdownButtons={dropdownButtons}
+      menuStyle={{
+        position: "absolute",
+        zIndex: "1050",
+        top: "100%",
+        display: "inline-block",
+      }}
+    />
   );
-};
 
-const Components = (props: ComponentsProps) => {
-  const { componentIds } = props;
-  const history = useHistory();
-  const { itemData: componentData, loading } = useItemData(
-    componentIds,
-    returnComponentInfo
-  );
+  const AccordionBase = (props: AccordionBaseProps) => {
+    const {
+      id,
+      itemType,
+      filterItem,
+      endpointUrl,
+      title,
+      subHeader,
+      renderChildren,
+      infoText,
+    } = props;
 
-  if (!componentIds?.length) return null;
-  if (loading) return <div style={{textAlign: "center"}}>Loading views...</div>;
+    const [childIds, setChildIds] = useState<string[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [expanded, setExpanded] = useState(false);
 
-  const componentTitle = (title: any, componentType: string) => {
+    const handleExpand = async () => {
+      if (!expanded) {
+        setLoading(true);
+        const ids = await fetchSubItemId(id, endpointUrl, filterItem, itemType);
+        setChildIds(ids.map((id: any) => id.id));
+        setLoading(false);
+        setExpanded(true);
+      }
+    };
+
     return (
-      <div
-        onClick={() => {
-          history.push("/tables");
-          setTimeout(() => {
-            document
-              .getElementById("dbTable1")
-              ?.scrollIntoView({ behavior: "smooth" });
-          }, 100);
-        }}
+      <Acc
+        bordered
+        style={{ flex: "1", overflow: "visible" }}
+        onClick={handleExpand}
       >
-        <span
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
+        <Acc.Panel
+          style={{ overflow: "visible", flex: "1" }}
+          header={
+            <div>
+              <AccordionHeader
+                header={title}
+                subHeader={subHeader}
+                infoText={infoText || `ID: ${id}`}
+              />
+            </div>
+          }
+        >
+          {loading ? <div>Loading...</div> : renderChildren(childIds)}
+        </Acc.Panel>
+      </Acc>
+    );
+  };
+
+  const Components = (props: ComponentsProps) => {
+    const { componentIds } = props;
+    const { itemData: componentData, loading } = useItemData(
+      componentIds,
+      returnComponentInfo
+    );
+
+    if (!componentIds?.length) return null;
+    if (loading)
+      return <div style={{ textAlign: "center" }}>Loading views...</div>;
+
+    const componentTitle = (title: any, componentType: string) => {
+      return (
+        <div
+          onClick={() => {
+            history.push("/tables");
+            setTimeout(() => {
+              document
+                .getElementById("dbTable1")
+                ?.scrollIntoView({ behavior: "smooth" });
+            }, 100);
           }}
         >
-          <FontAwesomeIcon
-            icon={componentType === "chart" ? faChartSimple : faTable}
-          />
-          <p style={{ marginLeft: "20px" }}>{title}</p>
-        </span>
+          <span
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <FontAwesomeIcon
+              icon={componentType === "chart" ? faChartSimple : faTable}
+            />
+            <p style={{ marginLeft: "20px" }}>{title}</p>
+          </span>
+        </div>
+      );
+    };
+
+    return (
+      <div>
+        <p style={{ marginBottom: "10px" }}>Zone Components:</p>
+        {componentIds.map((componentId) => {
+          const component = componentData[componentId][0];
+          return (
+            <div key={componentId} style={{ marginTop: "5px" }}>
+              {componentTitle(component.title, component.componentType)}
+            </div>
+          );
+        })}
       </div>
     );
   };
 
-  return (
-    <div>
-      <p style={{ marginBottom: "10px" }}>Zone Components:</p>
-      {componentIds.map((componentId) => {
-        const component = componentData[componentId][0];
-        return (
-          <div key={componentId} style={{ marginTop: "5px" }}>
-            {componentTitle(component.title, component.componentType)}
-          </div>
-        );
-      })}
-    </div>
-  );
-};
+  const ZonesAccordion = (props: ZonesAccordionProps) => {
+    const { zoneIds } = props;
+    const { itemData: zoneData, loading } = useItemData(
+      zoneIds,
+      returnZoneInfo
+    );
 
-const ZonesAccordion = (props: ZonesAccordionProps) => {
-  const { zoneIds } = props;
-  const { itemData: zoneData, loading } = useItemData(zoneIds, returnZoneInfo);
+    if (!zoneIds?.length) return null;
+    if (loading)
+      return <div style={{ textAlign: "center" }}>Loading views...</div>;
 
-  if (!zoneIds?.length) return null;
-  if (loading) return <div style={{textAlign: "center"}}>Loading views...</div>;
-
-  return (
-    <div>
-      {zoneIds.map((zoneId) => {
-        return (
-          <div key={zoneId} style={{ marginTop: "15px" }}>
-            <AccordionBase
-              id={zoneId}
-              endpointUrl={"component_zone"}
-              filterItem={"zone.id"}
-              itemType={"component"}
-              title={zoneData[zoneId][0].title || ""}
-              subHeader={zoneData[zoneId][0].objectType}
-              renderChildren={(componentIds) => (
-                <Components componentIds={componentIds} />
-              )}
-            />
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-const ViewsAccordion = (props: ViewsAccordionProps) => {
-  const { viewIds } = props;
-  const { itemData: viewData, loading } = useItemData(viewIds, returnViewInfo);
-
-  if (!viewIds?.length) return null; 
-  if (loading) return <div style={{textAlign: "center"}}>Loading views...</div>;
-
-  return (
-    <div>
-      {viewIds.map((viewId) => {
-        return (
-          <div key={viewId} style={{ marginTop: "15px", display: "flex" }}>
-            <div style={{ flex: "1" }}>
+    return (
+      <div>
+        {zoneIds.map((zoneId) => {
+          return (
+            <div key={zoneId} style={{ marginTop: "15px" }}>
               <AccordionBase
-                id={viewId}
-                title={viewData[viewId] || ""}
-                endpointUrl={"zone_view"}
-                filterItem={"view.id"}
-                itemType={"zone"}
-                renderChildren={(zoneIds) => (
-                  <ZonesAccordion zoneIds={zoneIds} />
+                id={zoneId}
+                endpointUrl={"component_zone"}
+                filterItem={"zone.id"}
+                itemType={"component"}
+                title={zoneData[zoneId][0].title || ""}
+                subHeader={zoneData[zoneId][0].objectType}
+                renderChildren={(componentIds) => (
+                  <Components componentIds={componentIds} />
                 )}
               />
             </div>
-            <div
-              style={{
-                top: "0",
-                marginLeft: "10px",
-                marginRight: "5px",
-                marginTop: "15px",
-              }}
-            >
-              {boardOptionsDropdownButton}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
+          );
+        })}
+      </div>
+    );
+  };
 
-function Accordion(props: BoardsAccordionProps) {
-  const { boardDetails } = props;
+  const ViewsAccordion = (props: ViewsAccordionProps) => {
+    const { viewIds } = props;
+    const { itemData: viewData, loading } = useItemData(
+      viewIds,
+      returnViewInfo
+    );
+
+    if (!viewIds?.length) return null;
+    if (loading)
+      return <div style={{ textAlign: "center" }}>Loading views...</div>;
+
+    return (
+      <div>
+        {viewIds.map((viewId) => {
+          return (
+            <div key={viewId} style={{ marginTop: "15px", display: "flex" }}>
+              <div style={{ flex: "1" }}>
+                <AccordionBase
+                  id={viewId}
+                  title={viewData[viewId] || ""}
+                  endpointUrl={"zone_view"}
+                  filterItem={"view.id"}
+                  itemType={"zone"}
+                  renderChildren={(zoneIds) => (
+                    <ZonesAccordion zoneIds={zoneIds} />
+                  )}
+                />
+              </div>
+              <div
+                style={{
+                  top: "0",
+                  marginLeft: "10px",
+                  marginRight: "5px",
+                  marginTop: "15px",
+                }}
+              >
+                {boardOptionsDropdownButton}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <div>

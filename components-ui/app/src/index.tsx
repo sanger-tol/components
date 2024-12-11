@@ -153,6 +153,7 @@ ReactDOM.render(
       sandbox,
     ]}
     profileLinks={['/dashboarding/my-boards']}
+    boardRouting={true}
   />,
   document.getElementById("root")
 );
