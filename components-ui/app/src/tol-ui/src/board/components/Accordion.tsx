@@ -8,7 +8,7 @@ import React, { useState, useEffect } from "react";
 import { Accordion as Acc } from "rsuite";
 import { AccordionHeader, DropdownButtons } from "./index";
 import { DropdownButtonProps, DropdownMainIconProps } from "./DropdownButtons";
-import { httpClient } from "src/services";
+import { httpClient } from "../../services";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEllipsisVertical,
