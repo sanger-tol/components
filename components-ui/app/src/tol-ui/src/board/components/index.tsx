@@ -8,3 +8,4 @@ export { default as DropdownButtons } from "./DropdownButtons";
 export { default as MyBoardsHeader } from "./MyBoardsHeader";
 export { default as AccordionHeader } from "./AccordionHeader";
 export { default as Accordion } from "./Accordion";
+export { default as ConfirmationModal } from "./ConfirmationModal";

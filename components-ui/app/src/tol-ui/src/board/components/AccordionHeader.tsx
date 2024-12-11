@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React from "react";
-
 interface Props {
   header: string;
   subHeader?: string;

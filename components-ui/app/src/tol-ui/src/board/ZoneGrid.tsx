@@ -4,111 +4,116 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from 'react';
-import { 
-  Row, 
-  Col, 
-  Button, 
-  useZone, 
-  ResponsiveWidget, 
-  env, 
-  RemoteCount, 
+import { useState } from "react";
+import {
+  Row,
+  Col,
+  Button,
+  useZone,
+  ResponsiveWidget,
+  env,
+  RemoteCount,
   ComponentModal,
   RemoteBarChart,
   RemoteSunburst,
   RemoteTable,
-  useEffectUpdate
-} from '../index';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+  useEffectUpdate,
+} from "../index";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTrash,
   faPlus,
   faArrowUp,
   faArrowDown,
-  faPenToSquare
-} from '@fortawesome/free-solid-svg-icons';
-
+  faPenToSquare,
+  faCheck,
+  faUpDownLeftRight,
+} from "@fortawesome/free-solid-svg-icons";
+import { ConfirmationModal } from "./components";
 
 interface Component {
-  size: string,
-  element: JSX.Element
+  size: string;
+  element: JSX.Element;
 }
 
 interface Widgets {
-  components: Record<string, Component>,
-  order: string[]
+  components: Record<string, Component>;
+  order: string[];
 }
 
 interface Props {
-  id: string,
-  widgets?: Widgets,
-  objectType: string,
-  onZoneReorder: any,
-  deleteZone: any
+  id: string;
+  widgets?: Widgets;
+  objectType: string;
+  onZoneReorder: any;
+  deleteZone: any;
 }
 
 function ZoneGrid(props: Props) {
   const { id, objectType, widgets, onZoneReorder, deleteZone } = props;
   const [draggable, setDraggable] = useState(false);
-  const [currentWidgets, setCurrentWidgets] = useState<Widgets>(widgets || {components: {}, order: []});
-  const [deleteWarning, setDeleteWarning] = useState(false);
+  const [currentWidgets, setCurrentWidgets] = useState<Widgets>(
+    widgets || { components: {}, order: [] }
+  );
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
+  const [editBtnsVisible, setEditBtnsVisible] = useState(false);
   const z = useZone({
     endpoint: objectType,
     baseUrl: env.TOL_DATA,
-    components: []
+    components: [],
   });
+
+  const handleSetDraggable = () => {
+    setDraggable(!draggable);
+  };
+
+  const handleOpenModal = () => {
+    setConfirmationModalOpen(true);
+  };
+
+  const handleBtnsVisible = () => {
+    setEditBtnsVisible(!editBtnsVisible);
+  };
 
   const getComponent = (id: string, type: string, props: any) => {
     switch (type) {
-    case 'count':
-      return (
-        <RemoteCount
-          {...props}
-          id={id}
-          title={id}
-        />
-      );
-    case 'barchart':
-      return (
-        <RemoteBarChart
-          {...props}
-          id={id}
-          title={id}
-          stacked
-
-          // temporary static
-          type='M'
-          breakDownBy='sts_family'
-          xAxis='sts_dna_extracted_date' />
-      );
-    case 'table':
-      return (
-        <RemoteTable
-          {...props}
-          id={id}
-        />
-      );
-    case 'sunburst':
-      return (
-        <RemoteSunburst
-          {...props}
-          id={id}
-          title={id}
-
-          // temporary static
-          sliceBy={["sts_order_group", "sts_family"]}
-        />
-      );
+      case "count":
+        return <RemoteCount {...props} id={id} title={id} />;
+      case "barchart":
+        return (
+          <RemoteBarChart
+            {...props}
+            id={id}
+            title={id}
+            stacked
+            // temporary static
+            type="M"
+            breakDownBy="sts_family"
+            xAxis="sts_dna_extracted_date"
+          />
+        );
+      case "table":
+        return <RemoteTable {...props} id={id} />;
+      case "sunburst":
+        return (
+          <RemoteSunburst
+            {...props}
+            id={id}
+            title={id}
+            // temporary static
+            sliceBy={["sts_order_group", "sts_family"]}
+          />
+        );
     }
   };
 
   const getWidgetsUsingZone = () => {
-    const newWidgets = {components: {}, order: [] as string[]};
+    const newWidgets = { components: {}, order: [] as string[] };
     for (const [id, component] of Object.entries(z.zone.components)) {
       newWidgets.components[id] = {
         size: component.data.size,
-        element: getComponent(id, component.data.type!, z)
+        element: getComponent(id, component.data.type!, z),
       };
     }
     newWidgets.order = z.zone.order;
@@ -119,19 +124,14 @@ function ZoneGrid(props: Props) {
     setCurrentWidgets(getWidgetsUsingZone());
   }, [z.zone]);
 
-  useEffect(() => {
-    const handleMouseDown = (event) => {
-      if (event.target.closest('.tol-delete-warning')) {
-        return;
-      }
-      setDeleteWarning(false);
-    };
-    document.addEventListener('mousedown', handleMouseDown);
-    return () => {
-      document.removeEventListener('mousedown', handleMouseDown);
-    };
-  }, []);
-
+  const confirmationModal = (
+    <ConfirmationModal
+      setOpen={setConfirmationModalOpen}
+      open={confirmationModalOpen}
+      onConfirmClick={() => deleteZone(id)}
+      itemType={"zone"}
+    />
+  );
 
   const onAddComponent = () => {
     setOpen(true);
@@ -142,9 +142,10 @@ function ZoneGrid(props: Props) {
       onClick={() => {
         setDraggable(!draggable);
       }}
-      className='zone-edit-button'
+      disabled={currentWidgets.order.length < 1}
+      className="zone-edit-button"
     >
-      <FontAwesomeIcon icon={faPenToSquare} size="sm" />
+      <FontAwesomeIcon icon={faUpDownLeftRight} size="sm" />
     </Button>
   );
 
@@ -153,7 +154,7 @@ function ZoneGrid(props: Props) {
       onClick={() => {
         onAddComponent();
       }}
-      className='zone-config-button'
+      className="zone-config-button"
       variant="success"
     >
       <FontAwesomeIcon icon={faPlus} size="sm" />
@@ -163,56 +164,74 @@ function ZoneGrid(props: Props) {
   const deleteButton = (
     <Button
       onClick={() => {
-        if (!deleteWarning) {
-          setDeleteWarning(true);
-          return;
-        }
-        deleteZone(id);
+        handleOpenModal();
       }}
-      className={deleteWarning ? 'tol-delete-warning' : 'zone-config-button'}
+      className={"zone-config-button"}
       variant="danger"
     >
-      {!deleteWarning ? 
-        <FontAwesomeIcon icon={faTrash} size="sm" />
-        :
-        <p>Are you sure?</p>
-      }
+      <FontAwesomeIcon icon={faTrash} size="sm" />
     </Button>
   );
 
   const upButton = (
     <Button
       onClick={() => {
-        onZoneReorder(id, 'up');
+        onZoneReorder(id, "up");
       }}
-      className='zone-config-button'
+      className="zone-config-button"
     >
       <FontAwesomeIcon icon={faArrowUp} size="sm" />
     </Button>
   );
-  
+
+  const showEditButtons = (
+    <Button
+      onClick={() => {
+        handleBtnsVisible();
+      }}
+      variant="primary"
+      className="zone-config-button"
+      style={{
+        width: "60px",
+        backgroundColor: editBtnsVisible ? "green" : "orange",
+        borderColor: editBtnsVisible ? "green" : "orange",
+      }}
+    >
+      {editBtnsVisible ? (
+        <FontAwesomeIcon icon={faCheck} size="sm" />
+      ) : (
+        <FontAwesomeIcon icon={faPenToSquare} size="sm" />
+      )}
+    </Button>
+  );
+
   const downButton = (
     <Button
       onClick={() => {
-        onZoneReorder(id, 'down');
+        onZoneReorder(id, "down");
       }}
-      className='zone-config-button'
+      className="zone-config-button"
     >
       <FontAwesomeIcon icon={faArrowDown} size="sm" />
     </Button>
   );
 
   const buttons = (
-    <div className='tol-zone-bar'>
+    <div className="tol-zone-bar">
       <Row>
         <Col>
           <h6>
             {id}
-            {deleteButton}
-            {addButton}
-            {editButton}
-            {downButton}
-            {upButton}
+            {showEditButtons}
+            {editBtnsVisible ? (
+              <>
+                {deleteButton}
+                {addButton}
+                {editButton}
+                {downButton}
+                {upButton}
+              </>
+            ) : null}
           </h6>
           <div id={"component-modal"}>
           <ComponentModal open={open} setOpen={setOpen} {...z} />
@@ -223,9 +242,9 @@ function ZoneGrid(props: Props) {
   );
 
   return (
-    <div className='tol-zone'>
+    <div className="tol-zone">
       {buttons}
-      {currentWidgets.order.length > 0 ?
+      {currentWidgets.order.length > 0 ? (
         <ResponsiveWidget
           id={id}
           widgets={currentWidgets}
@@ -233,15 +252,24 @@ function ZoneGrid(props: Props) {
           draggable={draggable}
           zone={z.zone}
           setZone={z.setZone}
+          setDraggable={handleSetDraggable}
         />
-        :
-        <div className='tol-zone-empty'>
-          <p>Click the + button to add a Component</p>
+      ) : (
+        <div className="tol-zone-empty">
+          {!editBtnsVisible ? (
+            <p>
+              Click the {"   "}
+              {<FontAwesomeIcon icon={faPenToSquare} size="sm" />} to get
+              started.
+            </p>
+          ) : (
+            <p>Click the + to add a new component.</p>
+          )}
         </div>
-      }
+      )}
+      {confirmationModal}
     </div>
   );
-    
 }
 
 export default ZoneGrid;

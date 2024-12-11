@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Zone, getWidgetOrder } from './Utils';
 import { resetAllFilters, removeComponent } from '../filtering/Utils';
+import {ConfirmationModal}  from './components';
 
 interface Component {
   size: string,
@@ -29,14 +30,16 @@ interface Props {
   setWidgets?: any,
   setOrder?: any,
   zone: Zone,
-  setZone: any
+  setZone: any,
+  setDraggable: () => void,
 }
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 function ResponsiveWidget(props: Props) {
-  const { widgets, draggable, setOrder, setWidgets, zone } = props;
+  const { widgets, draggable, setOrder, setWidgets, zone, setDraggable } = props;
   const [layoutsState, setLayouts] = useState<Layouts>(generateLayout(widgets));
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const internalLayouts = useRef(generateLayout(widgets));
 
   useEffect(() => {
@@ -59,6 +62,10 @@ function ResponsiveWidget(props: Props) {
     resetAllFilters(zone);
   };
 
+  const handleDraggable = () => {
+    setDraggable();
+  }
+
   function onLayoutChange(layout) {
     //saveToLS("layouts", layouts, id);
 
@@ -79,6 +86,20 @@ function ResponsiveWidget(props: Props) {
       setLayouts(internalLayouts.current);
     }
   };
+
+  const handleOpenModal = () => {
+    setConfirmationModalOpen(true);
+  }
+
+  const confirmationModal = (key) => (
+    <ConfirmationModal 
+    setOpen={setConfirmationModalOpen} 
+    open={confirmationModalOpen}
+    onConfirmClick={() => {deleteWidget(key), handleDraggable()}}
+    itemType={"widget"}
+    
+    />
+  )
 
   function generateLayout(components) {
     const types = { 
@@ -142,10 +163,11 @@ function ResponsiveWidget(props: Props) {
               <div key={key} className='tol-draggable-widget'>
                 <Placeholder opacity={0.7} drag message={key}/>
                 <Button onClick={() => {
-                  deleteWidget(key);
+                  handleOpenModal();
                 }} variant='danger' className='widget-delete-btn'>
-                  <FontAwesomeIcon icon={faTrash} size='sm'/>
+                  <FontAwesomeIcon icon={faTrash} size='sm' />
                 </Button>
+                {confirmationModal(key)}
               </div>
             );
           }

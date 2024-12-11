@@ -24,7 +24,7 @@ export interface Props {
 
 const Modal = (props: Props) => {
   const {size, open, setOpen, children, header, actionButton, className} = props;
-  const closeButton = props.closeButton || true;
+  const closeButton = props.closeButton ?? true;
   const rsOverflow = props.overflow !== false;
   const handleClose = () => {
     setOpen(false);
