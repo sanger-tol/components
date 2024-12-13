@@ -33,6 +33,7 @@ interface BoardsAccordionProps {
 }
 
 interface ViewsAccordionProps {
+  boardId?: string;
   viewIds: string[];
 }
 
@@ -176,12 +177,15 @@ const useItemData = <T,>(
 function Accordion(props: BoardsAccordionProps) {
   const { boardDetails } = props;
   const history = useHistory();
+  const [firstViewId, setFirstViewId] = useState<string>("");
 
-  const goToBoard = (id: string) => {
-    history.push(`/board/${id}/view/1`);
+  const goToBoard = (boardId: string) => {
+    console.log("hit board: ", boardId);
+    history.push(`/board/${boardId}/view/1`);
   };
 
   const goToView = (boardId: string, viewId: string) => {
+    console.log("hit view:", boardId, viewId);
     history.push(`/board/${boardId}/view/${viewId}`);
   };
 
@@ -196,40 +200,33 @@ function Accordion(props: BoardsAccordionProps) {
     style: { background: "transparent" },
   };
 
+  useEffect(() => {
+    console.log(boardDetails);
+  }, [boardDetails]);
+
   // Dummy actions and buttons at the moment, can be changed to the
   // real ones once the decision has been made
-  const dropdownButtons: DropdownButtonProps[] = [
+  const dropdownButtons = (
+    boardId: string,
+    viewId?: string
+  ): DropdownButtonProps[] => [
     {
       dropdownButtonName: "View",
-      action: () => {
-        console.log("View Item (will need to get item and board ID)");
+      action: (context: any) => {
+        console.log(context);
+        context.viewId !== undefined
+          ? goToView(context.boardId, context.viewId)
+          : goToBoard(context.boardId);
       },
-    },
-    {
-      dropdownButtonName: "Rename",
-      action: () => {
-        console.log("Rename Item (Still think this is a good idea)");
-      },
-    },
-    {
-      dropdownButtonName: "Share",
-      action: () => {
-        console.log("Share Item (Oh Yes!)");
-      },
-    },
-    {
-      dropdownButtonName: "Delete",
-      action: () => {
-        console.log("Helpful!");
-      },
+      context: { boardId, viewId },
     },
   ];
 
-  const boardOptionsDropdownButton = (
+  const boardOptionsDropdownButton = (boardId: string, viewId?: string) => (
     <DropdownButtons
       mainButtonIcon={boardOptionsButton}
       placement="leftStart"
-      dropdownButtons={dropdownButtons}
+      dropdownButtons={dropdownButtons(boardId, viewId)}
       menuStyle={{
         position: "absolute",
         zIndex: "1050",
@@ -378,7 +375,7 @@ function Accordion(props: BoardsAccordionProps) {
   };
 
   const ViewsAccordion = (props: ViewsAccordionProps) => {
-    const { viewIds } = props;
+    const { boardId, viewIds } = props;
     const { itemData: viewData, loading } = useItemData(
       viewIds,
       returnViewInfo
@@ -413,7 +410,7 @@ function Accordion(props: BoardsAccordionProps) {
                   marginTop: "15px",
                 }}
               >
-                {boardOptionsDropdownButton}
+                {boardOptionsDropdownButton(boardId!, viewId)}
               </div>
             </div>
           );
@@ -433,7 +430,9 @@ function Accordion(props: BoardsAccordionProps) {
               endpointUrl={"view_board"}
               filterItem={"board.id"}
               itemType={"view"}
-              renderChildren={(viewIds) => <ViewsAccordion viewIds={viewIds} />}
+              renderChildren={(viewIds) => (
+                <ViewsAccordion boardId={board.id} viewIds={viewIds} />
+              )}
             />
           </div>
           <div
@@ -444,7 +443,7 @@ function Accordion(props: BoardsAccordionProps) {
               marginTop: "15px",
             }}
           >
-            {boardOptionsDropdownButton}
+            {boardOptionsDropdownButton(board.id, undefined)}
           </div>
         </div>
       ))}
