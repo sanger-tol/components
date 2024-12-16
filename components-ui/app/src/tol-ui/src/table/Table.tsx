@@ -21,7 +21,7 @@ import {
   faSliders, 
   faDownload, 
   faCheckDouble, 
-  faArrowUpRightFromSquare 
+  faPaperPlane 
 } from '@fortawesome/free-solid-svg-icons';
 import ConfigModal from './ConfigModal';
 import { exportTableToSpreadsheet } from "./Utils";
@@ -73,7 +73,7 @@ interface Props {
   noConfigModal?: boolean,
   noDownload?: boolean,
   rowSelection?: boolean
-  dropdownButtons?: DropdownButtonProps[],
+  actions?: DropdownButtonProps[],
 }
 
 function Table (props: Props) {
@@ -114,7 +114,7 @@ function Table (props: Props) {
     noConfigModal,
     noDownload,
     rowSelection,
-    dropdownButtons,
+    actions,
     /* eslint-enable */
   } = props;
 
@@ -186,20 +186,17 @@ function Table (props: Props) {
     </Button>
   );
 
-  const dropdownButtonsWithContext = dropdownButtons?.map((button) => ({
+  const actionDropDownButtons = actions?.map((button) => ({
     ...button,
-    context: {
-      selectedRows,
-      filter
-    }
+    action: () => button.action(selectedRows, filter)
   }))
 
   const actionButtons = (
     <div style={{float: "left"}}>
-      {dropdownButtons && dropdownButtons.length > 0 &&
+      {actions && actions.length > 0 &&
         <DropdownButtons
           mainButtonIcon={{
-            mainIcon: <FontAwesomeIcon icon={faArrowUpRightFromSquare} size="sm" />,
+            mainIcon: <FontAwesomeIcon icon={faPaperPlane} size="sm" />,
             variant: "primary",
             className: "config-button-left",
             style: {
@@ -207,7 +204,7 @@ function Table (props: Props) {
               border: "1px solid var(--grey-emphasis"},
               disabled: (selectedRows.length === 0),
           }}
-          dropdownButtons={dropdownButtonsWithContext}
+          dropdownButtons={actionDropDownButtons}
           placement={"rightStart"}
         />
       }
@@ -243,7 +240,7 @@ function Table (props: Props) {
               </Button>
             </>
           }
-          {dropdownButtons && actionButtons}
+          {actionButtons}
           {(!noPagination && fieldMeta.order.active.length > 0) &&
             <>
               {rowCounter ? rowCounter : totalSize}

@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useState } from 'react';
 import { Button, RemoteTable, Widgets, env, useZone } from '../tol-ui/src';
-import { DropdownButtonProps } from '../tol-ui/src/board/components/DropdownButtons';
 
 interface exampleProps {
   mlwhTag: string
@@ -34,24 +33,18 @@ function Tables() {
   }
 
   // Example of passing context to table dropdown buttons
-  const dropdownButtons: DropdownButtonProps[] = [
+  const actions = [
     {
-      dropdownButtonName: "Log Rows",
-      action: (context) => {
-        outputTableData(context!.selectedRows, undefined);
-      }
+      dropdownButtonName: "Log 1",
+      action: outputTableData
     },
     {
-      dropdownButtonName: "Log Filter",
-      action: (context) => {
-        outputTableData(undefined, context!.filter);
-      }
+      dropdownButtonName: "Log 2",
+      action: outputTableData
     },
     {
-      dropdownButtonName: "Log Both",
-      action: (context) => {
-        outputTableData(context!.selectedRows, context!.filter);
-      }
+      dropdownButtonName: "Log 3",
+      action: outputTableData
     }
   ]
 
@@ -69,7 +62,7 @@ function Tables() {
         rowSelection
         //pageSize={100}
         forceUpdate={forceUpdate}
-        dropdownButtons={dropdownButtons}
+        actions={actions}
         fields={{
           "mlwh_run_id": {
             rename: "Run ID"

@@ -26,7 +26,7 @@ import {
   resetFiltersBelow,
 } from "../filtering/Utils";
 import RemoteRowCounter from "./RemoteRowCounter";
-import { DropdownButtonProps as buttonProps } from '../board/components/DropdownButtons';
+import { DropdownButtonProps } from '../board/components/DropdownButtons';
 
 
 interface Props {
@@ -59,7 +59,7 @@ interface Props {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
-  dropdownButtons?: buttonProps[];
+  actions?: DropdownButtonProps[] | any[];
 
   debug?: boolean;
 }
@@ -85,7 +85,7 @@ function RemoteTable(props: Props) {
     noDownload,
     rowSelection,
     debug,
-    dropdownButtons,
+    actions,
   } = props;
   const ds = new TsDataSource({ baseUrl });
   const height = props.height !== undefined ? props.height : "100%";
@@ -298,7 +298,7 @@ function RemoteTable(props: Props) {
       noConfigModal={noConfigModal}
       noDownload={noDownload}
       rowSelection={rowSelection}
-      dropdownButtons={dropdownButtons}
+      actions={actions}
     />
   );
 }

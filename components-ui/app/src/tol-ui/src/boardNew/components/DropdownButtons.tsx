@@ -14,8 +14,7 @@ export interface DropdownButtonProps {
   dropdownButtonIcon?: string;
   disabled?: boolean;
   icon?: Element;
-  action: (context?: Record<string, any>) => void;
-  context?: Record<string, any>;
+  action: (...args: any[]) => void;
 }
 
 export interface DropdownMainIconProps {
@@ -68,7 +67,7 @@ function DropdownButtons(props: Props) {
       {dropdownButtons.map((button, index) => (
         <Dropdown.Item
           key={index}
-          onClick={() => button.action(button.context)}
+          onClick={button.action}
           disabled={button.disabled}
           icon={button.icon}
         >
