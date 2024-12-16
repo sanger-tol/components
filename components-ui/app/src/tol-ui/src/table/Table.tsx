@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter, faSliders, faDownload, faCheckDouble } from '@fortawesome/free-solid-svg-icons';
 import ConfigModal from './ConfigModal';
 import { exportTableToSpreadsheet } from "./Utils";
-import Filter, { FilterType } from '../filtering/Filter';
+import Filter, { IFilter } from '../filtering/Filter';
 import { InfoTooltip, PopUpMessage } from '../general';
 import { FieldMeta } from './Field';
 import HoverOverlay from '../general/HoverOverlay';
@@ -406,7 +406,7 @@ function Table (props: Props) {
                         <Filter
                           attribute={key}
                           rename={field.rename!}
-                          type={field.filter as FilterType}
+                          type={field.filter as IFilter}
                           componentId={id}
                           {...props}
                         />

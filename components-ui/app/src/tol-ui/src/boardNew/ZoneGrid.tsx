@@ -4,22 +4,18 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
-import {
-  Row,
-  Col,
-  Button,
-  useZone,
-  ResponsiveWidget,
+import { useEffect, useState } from 'react';
+import { 
+  Row, 
+  Col, 
+  Button, 
+  useZone, 
+  ResponsiveWidget, 
   env,
-  RemoteCount,
   ComponentModal,
-  RemoteBarChart,
-  RemoteSunburst,
-  RemoteTable,
-  useEffectUpdate,
-} from "../index";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+  EditableTitle,
+} from '../index';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faTrash,
   faPlus,
@@ -28,40 +24,40 @@ import {
   faPenToSquare,
   faCheck,
   faUpDownLeftRight,
-} from "@fortawesome/free-solid-svg-icons";
-import { ConfirmationModal } from "../boardNew/components";
-
-interface Component {
-  size: string;
-  element: JSX.Element;
-}
+} from '@fortawesome/free-solid-svg-icons';
+import {
+  getComponents,
+  onTitleSave
+} from './Utils';
+import { ConfirmationModal } from './components';
 
 interface Widgets {
-  components: Record<string, Component>;
-  order: string[];
+  componentId: string,
+  order: string,
+  componentZoneId: string,
+  componentType: string,
 }
 
 interface Props {
-  id: string;
-  widgets?: Widgets;
-  objectType: string;
-  onZoneReorder: any;
-  deleteZone: any;
+  id: string,
+  title: string,
+  objectType: string,
+  onZoneReorder: any,
+  deleteZone: any,
+  ds: any
 }
 
 function ZoneGrid(props: Props) {
-  const { id, objectType, widgets, onZoneReorder, deleteZone } = props;
+  const { id, objectType, onZoneReorder, deleteZone, ds } = props;
   const [draggable, setDraggable] = useState(false);
-  const [currentWidgets, setCurrentWidgets] = useState<Widgets>(
-    widgets || { components: {}, order: [] }
-  );
+  const [currentWidgets, setCurrentWidgets] = useState<Widgets[]>([]);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [editBtnsVisible, setEditBtnsVisible] = useState(false);
   const z = useZone({
     endpoint: objectType,
     baseUrl: env.TOL_DATA,
-    components: [],
+    components: []
   });
 
   const handleSetDraggable = () => {
@@ -76,53 +72,9 @@ function ZoneGrid(props: Props) {
     setEditBtnsVisible(!editBtnsVisible);
   };
 
-  const getComponent = (id: string, type: string, props: any) => {
-    switch (type) {
-      case "count":
-        return <RemoteCount {...props} id={id} title={id} />;
-      case "barchart":
-        return (
-          <RemoteBarChart
-            {...props}
-            id={id}
-            title={id}
-            stacked
-            // temporary static
-            type="M"
-            breakDownBy="sts_family"
-            xAxis="sts_dna_extracted_date"
-          />
-        );
-      case "table":
-        return <RemoteTable {...props} id={id} />;
-      case "sunburst":
-        return (
-          <RemoteSunburst
-            {...props}
-            id={id}
-            title={id}
-            // temporary static
-            sliceBy={["sts_order_group", "sts_family"]}
-          />
-        );
-    }
-  };
-
-  const getWidgetsUsingZone = () => {
-    const newWidgets = { components: {}, order: [] as string[] };
-    for (const [id, component] of Object.entries(z.zone.components)) {
-      newWidgets.components[id] = {
-        size: component.data.size,
-        element: getComponent(id, component.data.type!, z),
-      };
-    }
-    newWidgets.order = z.zone.order;
-    return newWidgets;
-  };
-
-  useEffectUpdate(() => {
-    setCurrentWidgets(getWidgetsUsingZone());
-  }, [z.zone]);
+  //useEffectUpdate(() => {
+  //  setCurrentWidgets(getWidgetsUsingZone());
+  //}, [z.zone]);
 
   const confirmationModal = (
     <ConfirmationModal
@@ -133,6 +85,23 @@ function ZoneGrid(props: Props) {
     />
   );
 
+  useEffect(() => {
+    getComponents(id, ds).then((res: any) => {
+      setCurrentWidgets(res);
+      res.forEach((widget) => {
+        z.zone.components[widget.componentId] = {
+          data: {
+            defaultFilter: {and_: {}},
+            filter: {and_: {}},
+            id: widget.componentId,
+          }
+        };
+        z.zone.order.push(widget.componentId);
+      })
+    })
+  }, []);
+
+
   const onAddComponent = () => {
     setOpen(true);
   };
@@ -142,7 +111,7 @@ function ZoneGrid(props: Props) {
       onClick={() => {
         setDraggable(!draggable);
       }}
-      disabled={currentWidgets.order.length < 1}
+      disabled={currentWidgets.length < 1}
       className="zone-edit-button"
     >
       <FontAwesomeIcon icon={faUpDownLeftRight} size="sm" />
@@ -154,7 +123,7 @@ function ZoneGrid(props: Props) {
       onClick={() => {
         onAddComponent();
       }}
-      className="zone-config-button"
+      className='zone-config-button'
       variant="success"
     >
       <FontAwesomeIcon icon={faPlus} size="sm" />
@@ -166,7 +135,7 @@ function ZoneGrid(props: Props) {
       onClick={() => {
         handleOpenModal();
       }}
-      className={"zone-config-button"}
+      className={'zone-config-button'}
       variant="danger"
     >
       <FontAwesomeIcon icon={faTrash} size="sm" />
@@ -175,12 +144,23 @@ function ZoneGrid(props: Props) {
 
   const upButton = (
     <Button
-      onClick={() => {
-        onZoneReorder(id, "up");
+      onClick={async () => {
+        await onZoneReorder(id, 'up');
       }}
-      className="zone-config-button"
+      className='zone-config-button'
     >
       <FontAwesomeIcon icon={faArrowUp} size="sm" />
+    </Button>
+  );
+  
+  const downButton = (
+    <Button
+      onClick={async () => {
+        await onZoneReorder(id, 'down');
+      }}
+      className='zone-config-button'
+    >
+      <FontAwesomeIcon icon={faArrowDown} size="sm" />
     </Button>
   );
 
@@ -205,23 +185,14 @@ function ZoneGrid(props: Props) {
     </Button>
   );
 
-  const downButton = (
-    <Button
-      onClick={() => {
-        onZoneReorder(id, "down");
-      }}
-      className="zone-config-button"
-    >
-      <FontAwesomeIcon icon={faArrowDown} size="sm" />
-    </Button>
-  );
-
   const buttons = (
-    <div className="tol-zone-bar">
+    <div className='tol-zone-bar'>
       <Row>
         <Col>
+          <EditableTitle title={props.title} onSave={(newTitle) => onTitleSave(newTitle, ds, id, 'zone')} size="sm"/>
+        </Col>
+        <Col>
           <h6>
-            {id}
             {showEditButtons}
             {editBtnsVisible ? (
               <>
@@ -233,8 +204,8 @@ function ZoneGrid(props: Props) {
               </>
             ) : null}
           </h6>
-          <div id={"component-modal"}>
-          <ComponentModal open={open} setOpen={setOpen} {...z} />
+          <div id={'component-modal'}>
+            <ComponentModal open={open} setOpen={setOpen} {...z} />
           </div>
         </Col>
       </Row>
@@ -242,12 +213,12 @@ function ZoneGrid(props: Props) {
   );
 
   return (
-    <div className="tol-zone">
+    <div className='tol-zone'>
       {buttons}
-      {currentWidgets.order.length > 0 ? (
+      {currentWidgets.length > 0 ? (
         <ResponsiveWidget
           id={id}
-          widgets={currentWidgets}
+          widgets={currentWidgets!}
           setWidgets={setCurrentWidgets}
           draggable={draggable}
           zone={z.zone}
@@ -270,6 +241,7 @@ function ZoneGrid(props: Props) {
       {confirmationModal}
     </div>
   );
+    
 }
 
 export default ZoneGrid;

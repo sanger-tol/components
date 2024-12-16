@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect } from 'react';
 import { httpClient } from '../services/http/httpClient';
-import { Loader } from '../index';
+import { LoadingContent } from '../index';
 
 interface Props {
   endpoint: string,
@@ -33,14 +33,7 @@ function RemoteGet(props: Props) {
 
   if (response === undefined) {
     return (
-      <div className='fixed-full-page'>
-        <div className='fixed-centered-loader'>
-          <Loader />
-        </div>
-        <div className='fixed-centered-text'>
-          {loadingMessage}
-        </div>
-      </div>
+      <LoadingContent text={loadingMessage} />
     );
   }
 

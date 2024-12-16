@@ -13,7 +13,7 @@ import {
   Toaster,
   Loader
 } from "../tol-ui/src";
-import { Accordion } from "../tol-ui/src/board/components";
+import { Accordion } from "../tol-ui/src/boardNew/components";
 import { getUserFromLocalStorage } from "../tol-ui/src/services/localStorage/localStorageService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";

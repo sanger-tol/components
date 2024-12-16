@@ -4,8 +4,8 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Attributes, Relationships } from '../../models/EntityMeta';
-import { Filter, EntityMeta } from '../../models';
+import { Attributes, Relationships } from 'src/models/EntityMeta';
+import { IFilter, EntityMeta } from '../../models';
 import { httpClient } from './httpClient';
 import retry from './Retry';
 
@@ -56,8 +56,13 @@ interface GetToOneRelation {
 
 
 interface Upsert {
-  objectType: string,
-  id?: string,
+  payload: UpsertData[],
+  objectType: string
+}
+
+interface UpsertData {
+  type: string,
+  id: any,
   attributes: object
 }
 
@@ -70,7 +75,7 @@ interface GetListPage {
   objectType: string,
   page?: number,
   pageSize?: number,
-  filter?: Filter,
+  filter?: IFilter,
   sortBy?: string
 }
 
@@ -397,26 +402,14 @@ export default class TsDataSource {
   }
 
   public async upsert({
-    objectType,
-    attributes,
-    id
+    payload,
+    objectType
   }: Upsert): Promise<void> {
     this.initializeDetailCacheAndPromises(objectType);
-    const upsertData = {
-      type: objectType,
-      attributes: attributes
-    }
-    if (id) upsertData['id'] = id;
     return await this.client().post(
       `/${objectType}:upsert`,
-      {
-        baseURL: this.baseUrl,
-        data: [upsertData]
-      }
-    ).then((response: any) => {
-      detailCache[this.baseUrlKey][objectType][response.data.data.id] = response.data.data;
-      return new Proxy(response.data.data, this.dataObjectHandler);
-    }
+      {data: payload},
+      {baseURL: this.baseUrl}
     ).catch((error: any) => {
       if (error.response.status === 404) return null;
       throw error;

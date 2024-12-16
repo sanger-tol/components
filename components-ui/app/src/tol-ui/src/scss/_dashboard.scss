@@ -108,10 +108,15 @@
   margin-top: 10px;
 }
 
-.tol-dashboard-bar {
+.tol-view-bar {
   @extend .tol-zone-bar;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-left: 18px;
+  margin-right: 18px;
+  margin-top: 0px;
+}
+
+.tol-board-title {
+  margin-bottom: 28px;
 }
 
 .tol-delete-warning {

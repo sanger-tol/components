@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect } from 'react';
 import { Zone, defineComponent } from '../board/Utils';
-import { Filter, And } from '../models/Filter';
+import { IFilter, And } from '../models/Filter';
 import { deepCopy, isEmptyObject } from '../general/Utils';
 
 
@@ -64,7 +64,7 @@ export function generateFilter(zone?: object, id?: string, includeSubFilter?: bo
   }
   return {
     and_: compoundedFilter
-  } as Filter;
+  } as IFilter;
 }
 
 // insert a value in a list after an id located

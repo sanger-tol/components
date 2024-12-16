@@ -5,11 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useRef } from 'react';
-import { deepCopy } from '../general/Utils';
+import { deepCopy, generateId } from '../general/Utils';
 import { httpClient } from '../services/http/httpClient';
 import { generateFilter, resetAllFilters } from '../filtering/Utils';
 import { useEffectUpdate } from '../hooks';
 import { IFilter } from '../models/Filter';
+import { getUserFromLocalStorage } from 'src/services/localStorage/localStorageService';
 
 
 export interface Component {
@@ -43,13 +44,13 @@ export interface Zones {
   [id: string]: Zone
 }
 
-export interface View {
+export interface IView {
   zones: Zones,
   order: string[]
 }
 
 export interface Views {
-  [id: string]: View
+  [id: string]: IView
 }
 
 export interface Board {
@@ -220,13 +221,206 @@ export async function fetchObjectTypes(baseUrl: string) {
   return await getObjectTypes(baseUrl);
 }
 
-export async function upsertComponentConfig(ds: TsDataSource, componentId: string, config: object) {
-  return await ds.upsert({
-    objectType: 'component',
+export async function getBoard(id: string, ds: any, user: any) {
+  const res = await ds.getOne({
+    objectType: 'board',
+    id: id,
+    user_id: user.id
+  }).then(async(res: any) => {
+    const views = await getViews(res.id, ds)
+    return {
+      boardTitle: res.title,
+      boardFilter: res.filter,
+      views: views
+    }
+  });
+  return res;
+}
+
+async function getViews(id: string, ds: any) {
+  return await httpClient().get('/view_board',{
+    params: {
+      filter: {
+        and_: {
+          'board.id': { 'eq': {'value': id} }
+        }
+      }
+    }
+  }).then((res: any) => {
+    const ids = res.data.data.map((view: any) => view.relationships.view.data.id); // Fix Proxy
+    return getViewsData(ids, ds);
+  });
+}
+
+async function getViewsData(ids: string[], ds: any) {
+  return await ds.getListPage({
+    objectType: 'view',
+    filter: {
+      and_: {
+        'id': { 'in_list': { 'value': ids } }
+      }
+    }
+  }).then((res: any) => {
+    return res;
+  })
+}
+
+export async function getZones(viewID: string, ds: any) {
+  return await httpClient().get('/zone_view',{
+    params: {
+      filter: {
+        and_: {
+          'view_id': { 'eq': { 'value': viewID } }
+        }
+      }
+    }
+  }).then(async(res: any) => {
+    // Removes duplicate values
+    const ids: string[] = Array.from(new Set(res.data.data.map((zone: any) => zone.relationships.zone.data.id)));
+    const zoneData = await getZoneData(ids, ds);
+    return {
+      order: FormatZoneOrders(res.data.data),
+      zones: zoneData,
+    }
+  });
+}
+
+function FormatZoneOrders(data: any) {
+  const formattedData = data.map((zone: any) => {
+    return {
+      zoneId: zone.relationships.zone.data.id,
+      order: zone.attributes.order,
+      zoneViewId: zone.id
+    }
+  });
+  return formattedData;
+}
+
+function FormatComponentOrders(data: any) {
+  const formattedData = data.map((component: any) => {
+    return {
+      componentId: component.relationships.component.data.id,
+      order: component.attributes.order,
+      componentZoneId: component.id
+    }
+  });
+  return formattedData;
+}
+
+async function getZoneData(ids: string[], ds: any) {
+  return await ds.getListPage({
+    objectType: 'zone',
+    filter: {
+      and_: {
+        'id': { 'in_list': { 'value': ids } }
+      }
+    }
+  }).then((res: any) => {
+    return res;
+  })
+}
+
+export function onTitleSave(title: string, ds: any, id: string, objectType: string) {
+  ds.upsert({
+    objectType: objectType,
     payload: [{
-      type: 'component',
-      id: componentId,
-      attributes: {config: config}
+      type: objectType,
+      id: id,
+      attributes: {
+        title: title,
+      },
     }]
+  })
+}
+
+export async function getComponents(zoneId: string, ds: any) {
+  return await httpClient().get('/component_zone',{
+    params: {
+      filter: {
+        and_: {
+          'zone_id': { 'eq': { 'value': zoneId } }
+        }
+      }
+    }
+  }).then(async(res: any) => {
+    // Removes duplicate values
+    return FormatComponentOrders(res.data.data)
+  });
+}
+
+async function getComponentData(ids: string[], ds: any) {
+  return await ds.getListPage({
+    objectType: 'component',
+    filter: {
+      and_: {
+        'id': { 'in_list': { 'value': ids } }
+      }
+    }
+  }).then((res: any) => {
+    return res;
+  })
+}
+
+export const generateLayout = (components) => {
+
+  const types = { 
+    sm: { lg: { w: 1, h: 1 }, md: { w: 1, h: 1 }, sm: { w: 1, h: 1 } }, 
+    md: { lg: { w: 2, h: 2 }, md: { w: 2, h: 2 }, sm: { w: 1, h: 2 } }, 
+    lg: { lg: { w: 4, h: 2 }, md: { w: 2, h: 2 }, sm: { w: 1, h: 2 } } 
+  };
+
+  const layout = { lg: [], md: [], sm: [] };
+  const y = { lg: 0, md: 0, sm: 0 };
+  const x = { lg: 0, md: 0, sm: 0 };
+  
+  components.forEach((component) => {
+    ['lg', 'md', 'sm'].forEach(breakpoint => {
+      const { w, h } = types['lg'][breakpoint];
+      // if the widget won't fit on the current row, move it to the next row
+      if (x[breakpoint] + w > (breakpoint === 'lg' ? 4 : breakpoint === 'md' ? 2 : 1)) {
+        y[breakpoint] += h;
+        x[breakpoint] = 0;
+      }
+
+      layout[breakpoint].push({ i: component.componentId, x: x[breakpoint], y: y[breakpoint], w, h });
+      x[breakpoint] += w;
+    });
+  });
+
+  return layout;
+}
+
+export async function addZone(ds: any, objectType: string, title: string, nextOrder: number, viewId: string) {
+  const user = getUserFromLocalStorage()
+  const newId = generateId('z');
+  await ds.upsert({
+    objectType: 'zone',
+    payload: [{
+      type: 'zone',
+      id: newId,
+      attributes: {
+        title: title,
+        filter: {},
+        object_type: objectType,
+        user_id: user.id,
+      },
+    }]
+  });
+
+  return await ds.upsert({
+    objectType: 'zone_view',
+    payload: [{
+      type: 'zone_view',
+      attributes: {
+        order: nextOrder,
+        zone_id: newId,
+        view_id: viewId
+      },
+    }]
+  }).then((res) => {
+    return {
+      newZoneId: newId,
+      newZoneViewId: res.data.data[0].id
+    }
   })
 }

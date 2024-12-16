@@ -24,7 +24,7 @@ import {
   filterListener
 } from '../../tol-ui/src/filtering/Utils'
 import { Zone } from '../../tol-ui/src/board/Utils';
-import { Filter } from '../../tol-ui/src/models/Filter';
+import { IFilter } from '../../tol-ui/src/models/Filter';
 
 
 describe ('Testing getComponentsAbove function', () => {
@@ -168,7 +168,7 @@ describe ('Testing mergeAndFilters function', () => {
 describe ('Testing generateFilter function', () => {
   test('Generates filter correctly', () => {
 
-    const filterValue1: Filter = {
+    const filterValue1: IFilter = {
       and_: {
         attribute1: {
           op1: {
@@ -179,7 +179,7 @@ describe ('Testing generateFilter function', () => {
       }
     }
 
-    const filterValue2: Filter = {
+    const filterValue2: IFilter = {
       and_: {
         attribute1: {
           op2: {
@@ -207,7 +207,7 @@ describe ('Testing generateFilter function', () => {
       type: 'dashboard'
     };
 
-    const expectedCombined: Filter = {
+    const expectedCombined: IFilter = {
       and_: {
         attribute1: {
           op1: {
@@ -231,7 +231,7 @@ describe ('Testing generateFilter function', () => {
 
   test('Generates filter correctly including subFilter', () => {
 
-    const subFilterValue: Filter = {
+    const subFilterValue: IFilter = {
       and_: {
         attribute2: {
           operator2: {
@@ -242,7 +242,7 @@ describe ('Testing generateFilter function', () => {
       }
     }
 
-    const filterValue: Filter = {
+    const filterValue: IFilter = {
       and_: {
         attribute1: {
           operator1: {
@@ -253,7 +253,7 @@ describe ('Testing generateFilter function', () => {
       }
     }
 
-    const combinedFilterValue: Filter = {
+    const combinedFilterValue: IFilter = {
       and_: {
         attribute1: {
           operator1: {
@@ -324,7 +324,7 @@ describe ('Testing addComponentBelow function', () => {
 
 describe ('Testing resetAllFilters function', () => {
 
-  const expectedFilterValue: Filter = {
+  const expectedFilterValue: IFilter = {
     and_: {
       attribute1: {
         operator1: {
@@ -345,7 +345,7 @@ describe ('Testing resetAllFilters function', () => {
     }
   }
 
-  const expectedDefaultFilterValue: Filter = {
+  const expectedDefaultFilterValue: IFilter = {
     and_: {
       DefaultAttribute: {
         operator1: {
@@ -441,7 +441,7 @@ describe ('Testing addSubFilter function', () => {
       type: 'dashboard'
     };
 
-    const filterValue: Filter = {
+    const filterValue: IFilter = {
       and_: {
         attribute1: {
           operator1: {
@@ -498,7 +498,7 @@ describe ('Testing setFilter function', () => {
       type: 'dashboard'
     };
 
-    const filterValue: Filter = {
+    const filterValue: IFilter = {
       and_: {
         attribute1: {
           in_list: {
@@ -564,7 +564,7 @@ describe ('Testing setFilter function', () => {
       type: 'dashboard'
     };
 
-    const filterValue2: Filter = {
+    const filterValue2: IFilter = {
       and_: {
         attribute1: {
           test_operator: {
@@ -603,7 +603,7 @@ describe ('Testing setFilter function', () => {
       type: 'dashboard'
     };
 
-    const filterValue: Filter = {
+    const filterValue: IFilter = {
       and_: {
         attribute1: {
           exists: {

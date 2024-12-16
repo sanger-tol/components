@@ -24,9 +24,8 @@ function BoardTable(props: Props) {
   const {
     id,
     objectType,
-    baseUrl
   } = props;
-  const ds = new TsDataSource({baseUrl: baseUrl});
+  const ds = new TsDataSource();
   const [config, setConfig] = useState<any>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
 
@@ -48,6 +47,7 @@ function BoardTable(props: Props) {
     setConfig({...config});
     upsertComponentConfig(ds, id, config);
   }
+
 
   return (
     <RemoteTable

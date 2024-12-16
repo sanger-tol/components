@@ -5,47 +5,28 @@
  */
 
 
-import { useState } from 'react';
 import {
-  Dashboard,
-  Visualisation,
-  Widgets,
-  useZone,
-  env
-} from '../tol-ui/src';
+    Board,
+    env,
+    useZone,
+    Visualisation,
+    Widgets
+  } from '../tol-ui/src';
+  import { getUserFromLocalStorage } from "../tol-ui/src/services/localStorage/localStorageService";
   
+  interface Props {
+    user: any,
+    boardId: string
+  }
   
-function DashboardPage() {
-  const z = useZone({
-    endpoint: 'species',
-    baseUrl: env.TOL_DATA,
-    components: [
-      {id: 'c_N281dwdg86xx'}
-    ]
-  });
+  function DashboardPage() {
 
-  const table = (
-    <Visualisation
-      id='c_N281dwdg86xx'
-      setWidgetType={() => {}}
-      {...z}
-    />
-  )
-
-  const components = [
-    {
-      component: table,
-      type: 'lg'
-    }
-  ];
-
-  return (
-    <div className="datasource">
-      <Widgets
-        components={components}
-      />
-    </div>
-  );
-}
-
-export default DashboardPage;
+    const user = getUserFromLocalStorage();
+    return (
+      <div>
+        <Board id='b_GxvtjQLJ4IIN' baseUrl={env.API_PATH} user={user}/>
+      </div>
+    );
+  }
+  
+  export default DashboardPage;

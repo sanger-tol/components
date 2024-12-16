@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../contexts/auth.context";
-import { Loader } from "../index";
+import { LoadingContent } from "../index";
 import { getProfile, getRoles, getToken } from "../services/auth/authService";
 import { useQuery } from "../hooks/useQuery";
 import {
@@ -51,12 +51,7 @@ export function Callback() {
   }, []);
 
   return (
-    <div className="fixed-full-page">
-      <div className="fixed-centered-loader">
-        <Loader />
-      </div>
-      <div className="fixed-centered-text">Logging in...</div>
-    </div>
+    <LoadingContent text="Logging in..."/>
   );
 }
 

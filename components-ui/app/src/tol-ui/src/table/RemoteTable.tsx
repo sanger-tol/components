@@ -86,7 +86,7 @@ function RemoteTable(props: Props) {
   } = props;
   const ds = new TsDataSource({ baseUrl });
   const height = props.height !== undefined ? props.height : "100%";
-
+  
   // data and field information
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<FieldMeta|undefined>(props.fieldMeta);

@@ -17,16 +17,18 @@ export {
   ZoneGrid,
   ResponsiveWidget,
   ComponentModal,
-  Dashboard,
   ZoneModal,
-  Visualisation
-} from "./board";
+  Visualisation,
+  View,
+  Board,
+} from "./boardNew";
+
 
 // board components
 export {
   DropdownButtons,
   MyBoardsHeader
-} from "./board/components";
+} from "./boardNew/components";
 
 // charts
 export {
@@ -91,7 +93,8 @@ export {
   RemoteCount,
   HoverOverlay,
   formatDate,
-  EditableTitle
+  EditableTitle,
+  LoadingContent
 } from "./general";
 
 // hooks
@@ -106,7 +109,8 @@ export {
 export type {
   HeaderButton,
   Page,
-  Dropdown
+  Dropdown,
+  IFilter
 } from "./models";
 
 // nav

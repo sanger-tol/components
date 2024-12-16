@@ -11,12 +11,12 @@ import FilterMultiSelect from "./FilterMultiSelect";
 import FilterBoolean from "./FilterBoolean";
 
 
-export type FilterType = 'str'|'int'|'float'|'datetime'|'boolean'|'multi'
+export type IFilter = 'str'|'int'|'float'|'datetime'|'boolean'|'multi'
 
 export interface Filter {
   attribute: string,
   rename: string,
-  type?: FilterType,
+  type?: IFilter,
   componentId: string,
   zone: Zone,
   setZone: any,
