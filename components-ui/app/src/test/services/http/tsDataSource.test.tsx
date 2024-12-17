@@ -136,8 +136,8 @@ const mockClient = () => ({
     }
     return Promise.reject({ response: { status: 404 } });
   },
-  post(endpoint: string, { baseURL }: { baseURL: string, params?: any }) {
-    if (endpoint === '/species:upsert' && baseURL === 'test') {
+  post(endpoint: string, payload: { data: any }, config: { baseURL: string }) {
+    if (endpoint === '/species:upsert' && config.baseURL === 'test') {
       return Promise.resolve(speciesUpsertMockData);
     }
     return Promise.reject({ response: { status: 404 } });
@@ -443,12 +443,15 @@ describe('Testing upsert method', () => {
 
     const dataObject = await mockDataSource.upsert({
       objectType: 'species',
-      attributes: {
-        name: 'test',
-      }
+      payload: [{
+        type: 'species',
+        id: 'newTestSpeciesId',
+        attributes: {
+          name: 'test species'
+        },
+      }]
     });
-
-    expect(dataObject).toEqual({id: 'newTestSpeciesId'});
+    expect(dataObject.data.data.id).toEqual('newTestSpeciesId');
     expect(clientPostSpy).toHaveBeenCalledTimes(1);
   });
 });

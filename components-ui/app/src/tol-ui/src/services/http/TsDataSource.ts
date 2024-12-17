@@ -62,7 +62,7 @@ interface Upsert {
 
 interface UpsertData {
   type: string,
-  id: any,
+  id?: any,
   attributes: object
 }
 
