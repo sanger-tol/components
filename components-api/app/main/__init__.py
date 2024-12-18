@@ -18,7 +18,6 @@ from tol.api_base2 import (
 )
 from tol.api_base2.misc import default_ctx_getter
 from tol.core import (
-    DataObject,
     DataSource,
     OperableDataSource,
     core_data_object
