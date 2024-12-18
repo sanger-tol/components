@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: MIT
 
 import json
+import logging
 import os
-from typing import Iterable
 from unittest.mock import create_autospec
 
 from flask import Blueprint, Flask
@@ -62,19 +62,20 @@ def __mock_prefect_ds() -> OperableDataSource:
         spec_set=True
     )
 
-    def __insert(
+    def __factory(
         __type: str,
-        objs: Iterable[DataObject],
+        id_=None,
+        attributes={},
         **kwargs
     ) -> None:
 
-        for obj in objs:
-            print('type:', obj.type)
-            attributes = json.dumps(obj.attributes, indent=2)
-            print('attributes:', attributes)
+        logging.info(
+            'attributes:',
+            json.dumps(attributes, indent=2)
+        )
 
     prefect_ds.supported_types = ['flow_run']
-    prefect_ds.insert.side_effect = __insert
+    prefect_ds.data_object_factory.side_effect = __factory
 
     return prefect_ds
 

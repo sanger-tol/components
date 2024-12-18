@@ -266,13 +266,13 @@ function RemoteTable(props: Props) {
     {
       ids: ids,
       action_name: action_name,
-      object_type: 'tolid'
+      object_type: endpoint
     }
   );
 
-  const convertStringAction = (action: string): DropdownButtonProps => ({
-    dropdownButtonName: action,
-    action: (ids: string[], filter?: any) => runAction(action, ids)
+  const convertStringAction = (name: string): DropdownButtonProps => ({
+    dropdownButtonName: name,
+    action: (ids: string[], filter?: any) => runAction(name, ids)
   } as DropdownButtonProps);
 
   const convertAction = (action: string | DropdownButtonProps): DropdownButtonProps => (
@@ -280,6 +280,8 @@ function RemoteTable(props: Props) {
   );
 
   const convertedActions = actions?.map(convertAction);
+
+  console.log(convertedActions)
 
   return (
     <Table

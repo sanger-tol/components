@@ -21,12 +21,13 @@ function Actions() {
       dropdownButtonName: 'say... hello',
       action: () => alert('hello'),
     },
-    'super fun flow EXPORT',
+    'super fun EXPORT',
     {
       dropdownButtonName: 'bounce back :)',
       action: (ids: any, filter: any) => {
         console.log('ids', ids);
         console.log('filter', filter);
+        alert('check your console :D')
       },
     },
   ];
