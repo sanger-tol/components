@@ -9,12 +9,14 @@
 import React from "react";
 import { Button, Dropdown } from "rsuite";
 
+import { Toaster, Message } from '../../index.tsx';
+
 export interface DropdownButtonProps {
   dropdownButtonName: string;
   dropdownButtonIcon?: string;
   disabled?: boolean;
   icon?: Element;
-  action: (...args: any[]) => void;
+  action: (...args: any[]) => Promise<void>;
 }
 
 export interface DropdownMainIconProps {
@@ -42,6 +44,42 @@ function DropdownButtons(props: Props) {
     dropdownButtons,
   } = props;
 
+  const toaster = Toaster();
+
+  const pushMessage = (message: string, type: string = 'info') => {
+    toaster.push(
+      <Message
+        children={message}
+        type={type}
+        showIcon={true}
+      />,
+      { duration: 4000 }
+    );
+  };
+
+  const pushSuccess = (actionName: string) => pushMessage(
+    `Action "${actionName}" dispatched successfully.`
+  );
+
+  const pushFailure = (actionName: string) => pushMessage(
+    `Action "${actionName}" failed.`,
+    'error'
+  );
+
+  const wrapAction = (action: DropdownButtonProps) => {
+    const name = action.dropdownButtonName;
+    const fn = action.action;
+
+    return async (...args) => {
+      try {
+        await fn(...args);
+        pushSuccess(name);
+      } catch {
+        pushFailure(name);
+      }
+    }
+  }
+
   const renderButton = (props: any, ref: any) => {
     return (
       <Button
@@ -67,7 +105,7 @@ function DropdownButtons(props: Props) {
       {dropdownButtons.map((button, index) => (
         <Dropdown.Item
           key={index}
-          onClick={button.action}
+          onClick={wrapAction(button)}
           disabled={button.disabled}
           icon={button.icon}
         >

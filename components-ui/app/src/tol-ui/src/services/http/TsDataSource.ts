@@ -190,15 +190,13 @@ export default class TsDataSource {
   public async customEndpoint(
     endpoint: string,
     body?: any
-): Promise<any> {
+  ): Promise<any> {
     return this.client().post(
       endpoint,
       {
         baseUrl: this.baseUrl,
         data: body
       }
-    ).catch(
-      (error: any) => console.log(error)
     )
   }
 

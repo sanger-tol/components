@@ -272,7 +272,7 @@ function RemoteTable(props: Props) {
 
   const convertStringAction = (name: string): DropdownButtonProps => ({
     dropdownButtonName: name,
-    action: (ids: string[], filter?: any) => runAction(name, ids)
+    action: async (ids: string[], filter?: any) => await runAction(name, ids)
   } as DropdownButtonProps);
 
   const convertAction = (action: string | DropdownButtonProps): DropdownButtonProps => (
