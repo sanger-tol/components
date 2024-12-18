@@ -9,6 +9,7 @@ import os
 from flask import Blueprint, Flask
 
 from tol.api_base2 import (
+    action_blueprint,
     data_blueprint,
     system_blueprint
 )
