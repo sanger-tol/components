@@ -69,8 +69,8 @@ def __mock_prefect_ds() -> OperableDataSource:
         **kwargs
     ) -> None:
 
-        logging.info(
-            'attributes:',
+        # this needs to be `error()` to appear in the server logs
+        logging.error(
             json.dumps(attributes, indent=2)
         )
 

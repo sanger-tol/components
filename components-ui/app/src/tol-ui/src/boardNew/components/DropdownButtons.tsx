@@ -74,8 +74,9 @@ function DropdownButtons(props: Props) {
       try {
         await fn(...args);
         pushSuccess(name);
-      } catch {
+      } catch (e: any) {
         pushFailure(name);
+        console.error(e);
       }
     }
   }
