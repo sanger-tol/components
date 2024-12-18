@@ -25,6 +25,7 @@ import {
   NoAuthPageExample,
   AuthPageExample,
   MyBoards,
+  Actions,
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown } from "./tol-ui/src";
@@ -134,6 +135,12 @@ const sandbox: Page = {
   hidden: true,
 };
 
+const actions: Page = {
+  name: "Actions",
+  element: <Actions />,
+  auth: true,
+}
+
 ReactDOM.render(
   // eslint-disable-line
   <TolApp
@@ -151,6 +158,7 @@ ReactDOM.render(
       otherDropdown,
       user,
       sandbox,
+      actions,
     ]}
     profileLinks={['/dashboarding/my-boards']}
   />,

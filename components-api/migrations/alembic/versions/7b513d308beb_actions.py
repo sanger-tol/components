@@ -7,6 +7,7 @@ Create Date: 2024-12-18 14:51:58.808538
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.orm import Session
 from sqlalchemy.dialects.postgresql import JSONB
 
 from datetime import datetime
@@ -45,6 +46,18 @@ def upgrade() -> None:
             ('action_id',),
             ['action.id'],
         ),
+    )
+
+    connection = op.get_bind()
+    session = Session(bind=connection)
+
+    session.execute(
+        sa.text(
+            '''INSERT INTO action (name, object_type, flow_name, params) 
+            VALUES
+                ('super fun EXPORT', 'sample', 'action_example', '{"please": 42}'::JSONB);
+            '''
+        )
     )
 
 

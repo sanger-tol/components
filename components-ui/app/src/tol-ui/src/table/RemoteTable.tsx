@@ -59,7 +59,7 @@ interface Props {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
-  actions?: DropdownButtonProps[] | any[];
+  actions?: (string | DropdownButtonProps)[];
 
   debug?: boolean;
 }
@@ -87,6 +87,7 @@ function RemoteTable(props: Props) {
     debug,
     actions,
   } = props;
+
   const ds = new TsDataSource({ baseUrl });
   const height = props.height !== undefined ? props.height : "100%";
   
@@ -259,6 +260,27 @@ function RemoteTable(props: Props) {
     );
   }
 
+  //@ts-ignore
+  const runAction = async (action_name: string, ids: string[]) => await ds.customEndpoint(
+    '/run-action',
+    {
+      ids: ids,
+      action_name: action_name,
+      object_type: 'tolid'
+    }
+  );
+
+  const convertStringAction = (action: string): DropdownButtonProps => ({
+    dropdownButtonName: action,
+    action: (ids: string[], filter?: any) => runAction(action, ids)
+  } as DropdownButtonProps);
+
+  const convertAction = (action: string | DropdownButtonProps): DropdownButtonProps => (
+    (typeof action === 'string') ? convertStringAction(action) : action
+  );
+
+  const convertedActions = actions?.map(convertAction);
+
   return (
     <Table
       id={id}
@@ -298,7 +320,7 @@ function RemoteTable(props: Props) {
       noConfigModal={noConfigModal}
       noDownload={noDownload}
       rowSelection={rowSelection}
-      actions={actions}
+      actions={convertedActions}
     />
   );
 }
