@@ -35,6 +35,7 @@ services:
       - ENVIRONMENT
     ports:
       - 8089:80
+    restart: always
     volumes:
       - './components-api/app/main:/app/main'
       - '../tol-sdk:/packages/tol-sdk:rw'

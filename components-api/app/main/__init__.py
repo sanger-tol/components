@@ -4,7 +4,10 @@
 #
 # SPDX-License-Identifier: MIT
 
+import json
 import os
+from typing import Iterable
+from unittest.mock import create_autospec
 
 from flask import Blueprint, Flask
 
@@ -14,15 +17,21 @@ from tol.api_base2 import (
     system_blueprint
 )
 from tol.api_base2.misc import default_ctx_getter
-from tol.core import core_data_object
+from tol.core import (
+    DataObject,
+    DataSource,
+    OperableDataSource,
+    core_data_object
+)
+from tol.core.operator import Inserter
 from tol.sql import Model, create_sql_datasource
 from tol.sql.auth import db_auth_blueprint
 from tol.sql.board import create_board_models
 
-from .model import Base, Sample, Singular, Species, Specimen
+from .model import Base, MODELS, UserMixin
 
 
-def __user_id_blueprint(api_path: str) -> None:
+def __user_id_blueprint(api_path: str) -> Blueprint:
     user_bp = Blueprint(
         'user_id',
         __name__,
@@ -41,6 +50,35 @@ def __user_id_blueprint(api_path: str) -> None:
     return user_bp
 
 
+def __mock_prefect_ds() -> OperableDataSource:
+    _PrefectDS = type(  # noqa
+        '',
+        (DataSource, Inserter),
+        {}
+    )
+
+    prefect_ds: _PrefectDS = create_autospec(
+        _PrefectDS,
+        spec_set=True
+    )
+
+    def __insert(
+        __type: str,
+        objs: Iterable[DataObject],
+        **kwargs
+    ) -> None:
+
+        for obj in objs:
+            print('type:', obj.type)
+            attributes = json.dumps(obj.attributes, indent=2)
+            print('attributes:', attributes)
+
+    prefect_ds.supported_types = ['flow_run']
+    prefect_ds.insert.side_effect = __insert
+
+    return prefect_ds
+
+
 def __get_board_models(
     base_model: type[Model],
 ) -> tuple[list[type[Model]], type[Model]]:
@@ -54,7 +92,14 @@ def application():
     app = Flask(__name__)
 
     # the user-configurable dashboards
-    board_models, user_mixin_class = __get_board_models(Base)
+    board_models, _board_user_mixin = __get_board_models(Base)
+
+    # the user Mixin
+    user_mixin_class = type(
+        '',
+        (UserMixin, _board_user_mixin),
+        {}
+    )
 
     # authentication and authorisation
     auth_bp = db_auth_blueprint(
@@ -68,10 +113,7 @@ def application():
     auth_bp.register_authenticator(app)
 
     models = [
-        Species,
-        Specimen,
-        Sample,
-        Singular,
+        *MODELS,
         auth_bp.models.user_class,
         *board_models
     ]
@@ -92,7 +134,19 @@ def application():
     blueprint_system = system_blueprint()
     app.register_blueprint(blueprint_system, url_prefix=os.getenv('API_PATH') + '/system')
 
+    # user ID
     user_id_bp = __user_id_blueprint(os.environ['API_PATH'])
     app.register_blueprint(user_id_bp)
+
+    # actions
+    actions_bp = action_blueprint(
+        sql_datasource,
+        __mock_prefect_ds(),
+        role=None
+    )
+    app.register_blueprint(
+        actions_bp,
+        url_prefix=os.environ['API_PATH'] + '/run-action'
+    )
 
     return app
