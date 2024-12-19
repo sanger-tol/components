@@ -16,7 +16,7 @@ export interface DropdownButtonProps {
   dropdownButtonIcon?: string;
   disabled?: boolean;
   icon?: Element;
-  action: () => void;
+  action: (selectedRows: string[], filter: any) => void;
 }
 
 export interface DropdownMainIconProps {
