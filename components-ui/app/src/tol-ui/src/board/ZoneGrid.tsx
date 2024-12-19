@@ -6,30 +6,14 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  Row,
-  Col,
-  Button,
   useZone,
-  ResponsiveWidget,
   env,
   RemoteCount,
-  ComponentModal,
   RemoteBarChart,
   RemoteSunburst,
   RemoteTable,
   useEffectUpdate,
 } from "../index";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faTrash,
-  faPlus,
-  faArrowUp,
-  faArrowDown,
-  faPenToSquare,
-  faCheck,
-  faUpDownLeftRight,
-} from "@fortawesome/free-solid-svg-icons";
-import { ConfirmationModal } from "../boardNew/components";
 
 interface Component {
   size: string;
@@ -50,31 +34,15 @@ interface Props {
 }
 
 function ZoneGrid(props: Props) {
-  const { id, objectType, widgets, onZoneReorder, deleteZone } = props;
-  const [draggable, setDraggable] = useState(false);
-  const [currentWidgets, setCurrentWidgets] = useState<Widgets>(
+  const { objectType, widgets } = props;
+  const [_, setCurrentWidgets] = useState<Widgets>(
     widgets || { components: {}, order: [] }
   );
-  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [editBtnsVisible, setEditBtnsVisible] = useState(false);
   const z = useZone({
     endpoint: objectType,
     baseUrl: env.TOL_DATA,
     components: [],
   });
-
-  const handleSetDraggable = () => {
-    setDraggable(!draggable);
-  };
-
-  const handleOpenModal = () => {
-    setConfirmationModalOpen(true);
-  };
-
-  const handleBtnsVisible = () => {
-    setEditBtnsVisible(!editBtnsVisible);
-  };
 
   const getComponent = (id: string, type: string, props: any) => {
     switch (type) {
@@ -124,150 +92,9 @@ function ZoneGrid(props: Props) {
     setCurrentWidgets(getWidgetsUsingZone());
   }, [z.zone]);
 
-  const confirmationModal = (
-    <ConfirmationModal
-      setOpen={setConfirmationModalOpen}
-      open={confirmationModalOpen}
-      onConfirmClick={() => deleteZone(id)}
-      itemType={"zone"}
-    />
-  );
-
-  const onAddComponent = () => {
-    setOpen(true);
-  };
-
-  const editButton = (
-    <Button
-      onClick={() => {
-        setDraggable(!draggable);
-      }}
-      disabled={currentWidgets.order.length < 1}
-      className="zone-edit-button"
-    >
-      <FontAwesomeIcon icon={faUpDownLeftRight} size="sm" />
-    </Button>
-  );
-
-  const addButton = (
-    <Button
-      onClick={() => {
-        onAddComponent();
-      }}
-      className="zone-config-button"
-      variant="success"
-    >
-      <FontAwesomeIcon icon={faPlus} size="sm" />
-    </Button>
-  );
-
-  const deleteButton = (
-    <Button
-      onClick={() => {
-        handleOpenModal();
-      }}
-      className={"zone-config-button"}
-      variant="danger"
-    >
-      <FontAwesomeIcon icon={faTrash} size="sm" />
-    </Button>
-  );
-
-  const upButton = (
-    <Button
-      onClick={() => {
-        onZoneReorder(id, "up");
-      }}
-      className="zone-config-button"
-    >
-      <FontAwesomeIcon icon={faArrowUp} size="sm" />
-    </Button>
-  );
-
-  const showEditButtons = (
-    <Button
-      onClick={() => {
-        handleBtnsVisible();
-      }}
-      variant="primary"
-      className="zone-config-button"
-      style={{
-        width: "60px",
-        backgroundColor: editBtnsVisible ? "green" : "orange",
-        borderColor: editBtnsVisible ? "green" : "orange",
-      }}
-    >
-      {editBtnsVisible ? (
-        <FontAwesomeIcon icon={faCheck} size="sm" />
-      ) : (
-        <FontAwesomeIcon icon={faPenToSquare} size="sm" />
-      )}
-    </Button>
-  );
-
-  const downButton = (
-    <Button
-      onClick={() => {
-        onZoneReorder(id, "down");
-      }}
-      className="zone-config-button"
-    >
-      <FontAwesomeIcon icon={faArrowDown} size="sm" />
-    </Button>
-  );
-
-  const buttons = (
-    <div className="tol-zone-bar">
-      <Row>
-        <Col>
-          <h6>
-            {id}
-            {showEditButtons}
-            {editBtnsVisible ? (
-              <>
-                {deleteButton}
-                {addButton}
-                {editButton}
-                {downButton}
-                {upButton}
-              </>
-            ) : null}
-          </h6>
-          <div id={"component-modal"}>
-          <ComponentModal open={open} setOpen={setOpen} {...z} />
-          </div>
-        </Col>
-      </Row>
-    </div>
-  );
 
   return (
     <div className="tol-zone">
-      {buttons}
-      {currentWidgets.order.length > 0 ? (
-        <ResponsiveWidget
-          id={id}
-          widgets={currentWidgets}
-          setWidgets={setCurrentWidgets}
-          draggable={draggable}
-          zone={z.zone}
-          setZone={z.setZone}
-          setDraggable={handleSetDraggable}
-        />
-      ) : (
-        <div className="tol-zone-empty">
-          {!editBtnsVisible ? (
-            <p>
-              Click the {"   "}
-              {<FontAwesomeIcon icon={faPenToSquare} size="sm" />} to get
-              started.
-            </p>
-          ) : (
-            <p>Click the + to add a new component.</p>
-          )}
-        </div>
-      )}
-      {confirmationModal}
     </div>
   );
 }
