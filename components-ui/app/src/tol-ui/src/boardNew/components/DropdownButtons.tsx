@@ -9,7 +9,7 @@
 import React from "react";
 import { Button, Dropdown } from "rsuite";
 
-import { Toaster, Message } from '../../index.tsx';
+import { Toaster, Message } from '../../index';
 
 export interface DropdownButtonProps {
   dropdownButtonName: string;
