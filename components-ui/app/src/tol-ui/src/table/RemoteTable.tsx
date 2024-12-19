@@ -281,8 +281,6 @@ function RemoteTable(props: Props) {
 
   const convertedActions = actions?.map(convertAction);
 
-  console.log(convertedActions)
-
   return (
     <Table
       id={id}
