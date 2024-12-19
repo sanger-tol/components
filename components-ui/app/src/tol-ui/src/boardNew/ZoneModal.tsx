@@ -32,12 +32,11 @@ interface Props {
   setOpen: any,
   setZones: any,
   zones: object[],
-  setZoneOrder: any,
-  zoneOrder: OrderObject[],
+  setZoneOrder?: any,
+  zoneOrder?: OrderObject[],
   ds: any,
-  viewId: string
+  viewId?: string
 }
-
 
 function ZoneModal(props: Props) {
   const { open, setOpen, setZones, zones, zoneOrder, setZoneOrder, ds, viewId } = props;
@@ -93,11 +92,11 @@ function ZoneModal(props: Props) {
 
   const onAddZone = async() => {
     if (checkStates()) {
-      const orders = zoneOrder.map((zone) => {
+      const orders = zoneOrder!.map((zone) => {
         return zone.order
       })
       const nextOrder = Math.max(...orders) + 1;
-      const newZone: INewZone = await addZone(ds, objectType, title, nextOrder, viewId);
+      const newZone: INewZone = await addZone(ds, objectType, title, nextOrder, viewId!);
       setZones(
         [...zones,
           {
@@ -107,7 +106,7 @@ function ZoneModal(props: Props) {
           }
         ]);
       setZoneOrder(
-        [...zoneOrder,
+        [...zoneOrder!,
           {
             zoneId: newZone.newZoneId,
             order: nextOrder,
