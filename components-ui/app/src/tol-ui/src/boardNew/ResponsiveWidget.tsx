@@ -91,20 +91,6 @@ function ResponsiveWidget(props: Props) {
     setConfirmationModalOpen(true);
   }
 
-  const confirmationModal = (key) => (
-    <ConfirmationModal 
-    setOpen={setConfirmationModalOpen} 
-    open={confirmationModalOpen}
-    onConfirmClick={() => {deleteWidget(key), handleDraggable()}}
-    itemType={"widget"}
-    
-    />
-  )
-
-  const setWidgetType= (componentId: string, widgetType: string) => {
-    //console.log(layoutsState);
-  }
-
   return (
     <div className='tol-responsive-grid'>
       <ResponsiveReactGridLayout
@@ -128,7 +114,6 @@ function ResponsiveWidget(props: Props) {
                   id={id}
                   zone={zone}
                   setZone={setZone}
-                  setWidgetType={setWidgetType}
                 />
               </div>
             );

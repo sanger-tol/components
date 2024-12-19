@@ -16,7 +16,7 @@ interface Props {
   id: string;
   zone: object;
   setZone: any;
-  setWidgetType: any;
+  setWidgetType?: any;
 
   // only passed on creation
   objectType?: string;
@@ -84,7 +84,9 @@ function Visualisation(props: Props) {
         title={title}
       />
     );
-  }
+  } else return (
+    <div></div>
+  )
 }
 
 export default Visualisation;
