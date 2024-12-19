@@ -26,7 +26,7 @@ import {
   resetFiltersBelow,
 } from "../filtering/Utils";
 import RemoteRowCounter from "./RemoteRowCounter";
-import { DropdownButtonProps } from '../board/components/DropdownButtons';
+import { DropdownButtonProps } from '../boardNew/components/DropdownButtons';
 
 
 interface Props {
