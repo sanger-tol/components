@@ -40,11 +40,11 @@ interface Widgets {
 
 interface Props {
   id: string,
-  title: string,
+  title?: string,
   objectType: string,
   onZoneReorder: any,
   deleteZone: any,
-  ds: any
+  ds?: any
 }
 
 function ZoneGrid(props: Props) {
@@ -189,7 +189,7 @@ function ZoneGrid(props: Props) {
     <div className='tol-zone-bar'>
       <Row>
         <Col>
-          <EditableTitle title={props.title} onSave={(newTitle) => onTitleSave(newTitle, ds, id, 'zone')} size="sm"/>
+          <EditableTitle title={props.title!} onSave={(newTitle) => onTitleSave(newTitle, ds, id, 'zone')} size="sm"/>
         </Col>
         <Col>
           <h6>

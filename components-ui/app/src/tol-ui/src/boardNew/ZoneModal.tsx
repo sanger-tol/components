@@ -34,7 +34,7 @@ interface Props {
   zones: object[],
   setZoneOrder?: any,
   zoneOrder?: OrderObject[],
-  ds: any,
+  ds?: any,
   viewId?: string
 }
 
