@@ -10,7 +10,7 @@ import { httpClient } from '../services/http/httpClient';
 import { generateFilter, resetAllFilters } from '../filtering/Utils';
 import { useEffectUpdate } from '../hooks';
 import { IFilter } from '../models/Filter';
-import { getUserFromLocalStorage } from 'src/services/localStorage/localStorageService';
+import { getUserFromLocalStorage } from '../services/localStorage/localStorageService';
 
 
 export interface Component {
