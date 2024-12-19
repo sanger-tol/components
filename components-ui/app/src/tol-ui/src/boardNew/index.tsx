@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 export type {
-  ViewType,
   Zone,
   Component,
 } from "./Utils";
