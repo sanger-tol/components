@@ -5,10 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { WidthProvider, Responsive, Layouts } from 'react-grid-layout';
-import { Button, Placeholder, Visualisation } from '../index';
 import { useState, useRef, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Zone, getWidgetOrder, generateLayout } from './Utils';
 
 interface Widgets {
@@ -34,7 +31,6 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 function ResponsiveWidget(props: Props) {
   const { widgets, draggable, setOrder, zone } = props;
   const [layoutsState, setLayouts] = useState<Layouts>(generateLayout(widgets));
-  const [_, setConfirmationModalOpen] = useState(false);
   const internalLayouts = useRef(generateLayout(widgets));
   //console.log(zone)
 
@@ -81,10 +77,6 @@ function ResponsiveWidget(props: Props) {
       setLayouts(internalLayouts.current);
     }
   };
-
-  const handleOpenModal = () => {
-    setConfirmationModalOpen(true);
-  }
 
   return (
     <div className='tol-responsive-grid'>
