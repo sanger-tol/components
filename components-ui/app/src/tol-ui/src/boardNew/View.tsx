@@ -130,8 +130,8 @@ function View(props: Props) {
 
     // Reorder the zones state based on the updated zoneOrder
     const updatedZones = [...zones].sort((a, b) => {
-      const orderA = updatedZoneOrder.find(zone => zone.id === a.id)?.order || 0;
-      const orderB = updatedZoneOrder.find(zone => zone.id === b.id)?.order || 0;
+      const orderA = updatedZoneOrder.find(zone => zone.zoneId === a.id)?.order || 0;
+      const orderB = updatedZoneOrder.find(zone => zone.zoneId === b.id)?.order || 0;
       return orderA - orderB;
     });
   
