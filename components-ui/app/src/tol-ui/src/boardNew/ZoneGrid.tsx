@@ -86,7 +86,7 @@ function ZoneGrid(props: Props) {
   );
 
   useEffect(() => {
-    getComponents(id, ds).then((res: any) => {
+    getComponents(id).then((res: any) => {
       setCurrentWidgets(res);
       res.forEach((widget) => {
         z.zone.components[widget.componentId] = {
@@ -218,6 +218,7 @@ function ZoneGrid(props: Props) {
       {currentWidgets.length > 0 ? (
         <ResponsiveWidget
           id={id}
+          //@ts-ignore
           widgets={currentWidgets!}
           setWidgets={setCurrentWidgets}
           draggable={draggable}
