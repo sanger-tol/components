@@ -11,6 +11,24 @@ variables:
   APP_NAME: components
   DISABLE_UI_LINT: "true"
 
+build-package-dummy:
+  # prevents the accumulation of errors on `yarn build`
+  stage: deploy
+  image: node:18-alpine
+  script:
+    - cd components-ui/app/src/tol-ui
+    - yarn install
+    - yarn build
+  except:
+    - qa
+    - staging
+    - production
+  needs:
+    - job: review_app
+      optional: true
+    - job: build-ui-dev
+      optional: true
+
 deploy-package:
   stage: deploy
   image: node:18-alpine

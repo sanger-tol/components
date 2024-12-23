@@ -20,3 +20,6 @@ values-*.yaml
 chart/charts/
 .DS_Store
 inject.js
+/.virtualenv/
+lib/
+yarn.lock

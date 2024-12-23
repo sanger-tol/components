@@ -32,21 +32,21 @@ function Tables() {
     filter && console.log("Filter:", filter);
   }
 
-  // Example of passing context to table dropdown buttons
   const actions = [
+    'auth-required-flow',
     {
-      dropdownButtonName: "Log 1",
-      action: outputTableData
+      dropdownButtonName: 'succeed',
+      action: (selectedRows: string[]) => {
+        console.log(selectedRows);
+      }
     },
     {
-      dropdownButtonName: "Log 2",
-      action: outputTableData
+      dropdownButtonName: 'fail... deliberately',
+      action: () => {
+        throw 'this is an example error in the console.'
+      }
     },
-    {
-      dropdownButtonName: "Log 3",
-      action: outputTableData
-    }
-  ]
+  ];
 
   const table1 = (
     <div>
@@ -62,7 +62,6 @@ function Tables() {
         rowSelection
         //pageSize={100}
         forceUpdate={forceUpdate}
-        actions={actions}
         fields={{
           "mlwh_run_id": {
             rename: "Run ID"
@@ -103,6 +102,7 @@ function Tables() {
           }
         }}
         height={500}
+        actions={actions}
         {...runData}
       />
     </div>
