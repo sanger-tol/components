@@ -26,7 +26,7 @@ export interface ComponentData {
   filterPassThrough?: boolean,
   type?: string, // component type e.g. table
   size?: string // component size e.g. sm
-  order: number
+  order?: number
 }
 
 export interface Components {
@@ -474,4 +474,17 @@ export async function addComponent(
       newComponentZoneId: res.data.data[0].id
     }
   })
+}
+
+export async function upsertComponentConfig(ds: TsDataSource, componentId: string, config: object) {
+  return await ds.upsert({
+    objectType: 'component',
+    payload: [{
+      type: 'component',
+      id: componentId,
+      attributes: {
+        config: config
+      }
+    }]
+  });
 }

@@ -1,0 +1,19 @@
+/*
+ * SPDX-FileCopyrightText: 2024 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+.rs-drawer-header {
+  padding: 20px;
+}
+
+.rs-drawer-body {
+  padding: 30px;
+}
+
+// remove close button
+button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-btn-subtle.rs-btn-sm {
+  //float: right;
+  display: none;
+}

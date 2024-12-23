@@ -1,0 +1,107 @@
+/*
+SPDX-FileCopyrightText: 2024 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+import { useEffect, useState } from "react";
+import { Zone } from "../board";
+import RemoteFilters from "./RemoteFilters";
+import { Drawer } from "../general";
+import { generateFilter } from "./Utils";
+import { deepCopy } from "../general/Utils";
+import { Button, TsDataSource } from "..";
+
+
+export interface Props {
+  id?: string, // id only exists for a component
+  zone: Zone,
+  setZone: any,
+  entityType: string, // e.g. component type or zone
+  endpoint: string,
+  baseUrl?: string
+}
+
+function BoardFilters(props: Props) {
+  const { id, zone, setZone, entityType, endpoint } = props;
+  const [open, setOpen] = useState(false);
+
+  // the fixed filter present on the component
+  const [filter, setFilter] = useState(
+    deepCopy(
+      entityType === 'zone' ? zone.defaultFilter : zone.components[id!].data.defaultFilter
+    )
+  );
+
+  const removeCurrentEntityFiltersForDisabledFilters = (source: object, remove?: object) => {
+    const keysToRemove = new Set(Object.keys(remove || {}));
+    return Object.fromEntries(
+      Object.entries(source).filter(([key]) => !keysToRemove.has(key))
+    );
+  }
+
+  // getting the disabled filter values (currently all other entity filters)
+  const [disabledFilterValues, setDisabledFilterValues] = useState(
+    removeCurrentEntityFiltersForDisabledFilters(
+      generateFilter(zone, undefined, true)?.and_!,
+      filter?.and_!
+    )
+  );
+
+  useEffect(() => {
+    setFilter(
+      deepCopy(
+        entityType === 'zone' ? zone.defaultFilter : zone.components[id!].data.defaultFilter
+      )
+    );
+    setDisabledFilterValues(
+      removeCurrentEntityFiltersForDisabledFilters(
+        generateFilter(zone, undefined, true)?.and_!,
+        filter?.and_!
+      )
+    );
+  }, [open])
+
+  const onSave = (filter: any) => {
+    // id exists only if component (not zone)
+    if (entityType === 'zone') {
+      zone.filter = deepCopy(filter);
+      zone.defaultFilter = deepCopy(filter);
+    } else {
+      zone.components[id!].data.filter = deepCopy(filter);
+      zone.components[id!].data.defaultFilter = deepCopy(filter);
+    }
+    setZone({...zone})
+    setOpen(false);
+
+    new TsDataSource().upsert({
+      objectType: entityType,
+      id: id,
+      attributes: {
+        filter: filter
+      }
+    })
+  }
+
+  return (
+    <div>
+      <Button onClick={() => setOpen(true)}>
+        {entityType}
+      </Button>
+      <Drawer
+        title={`Filtering on a ${endpoint} ${entityType}`}
+        open={open}
+        setOpen={setOpen}
+      >
+        <RemoteFilters
+          {...props}
+          filters={filter}
+          onSave={onSave}
+          disabledFilterValues={disabledFilterValues}
+        />
+      </Drawer>
+    </div>
+  )
+}
+
+export default BoardFilters;

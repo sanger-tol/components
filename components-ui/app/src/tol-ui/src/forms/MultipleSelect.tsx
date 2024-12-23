@@ -8,9 +8,16 @@ import { Checkbox, CheckPicker as RSCheckPicker } from "rsuite";
 import { isPropDefined } from "../general/Utils";
 import { RSForm } from "../index";
 
+
+interface Data {
+  label: string,
+  value: string
+}
+
 interface Props {
+  sticky?: boolean;
   block?: boolean;
-  data: string[];
+  data: string[]|Data[];
   value: string[];
   setValue: any;
   placeholder?: string;
@@ -24,11 +31,15 @@ interface Props {
   renderMenuItem?: any;
   renderValue?: any;
   noSearch?: boolean;
+  noSelectAll?: boolean;
   label?: string;
+  disabledItemValues?: string[];
+  searchBy?: (keyword: string, label: any, item: any) => boolean;
 }
 
 function MultipleSelect(props: Props) {
   const {
+    sticky,
     data,
     value,
     setValue,
@@ -43,11 +54,16 @@ function MultipleSelect(props: Props) {
     renderMenuItem,
     renderValue,
     noSearch,
+    noSelectAll,
     label,
+    disabledItemValues,
+    searchBy
   } = props;
   const block = isPropDefined(props.block);
 
-  const formattedData = data.map((item) => ({ label: item, value: item }));
+  const formattedData = data.length > 0 && typeof data[0] === "string"
+    ? data.map((i) => ({ label: i, value: i }))
+    : data;
 
   const allValues = formattedData.map((item) => item.value);
 
@@ -75,6 +91,7 @@ function MultipleSelect(props: Props) {
       {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
       <span onClick={onClick}>
         <RSCheckPicker
+          sticky={sticky}
           searchable={!noSearch}
           countable
           block={block}
@@ -88,9 +105,11 @@ function MultipleSelect(props: Props) {
           onOpen={onOpen}
           onEntering={onEntering}
           onClose={onClose}
-          renderExtraFooter={selectAll}
+          renderExtraFooter={noSelectAll ? undefined : selectAll}
           renderMenuItem={renderMenuItem}
           renderValue={renderValue}
+          disabledItemValues={disabledItemValues}
+          searchBy={searchBy}
         />
       </span>
     </>

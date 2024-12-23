@@ -101,7 +101,7 @@
 
   .rs-picker-disabled, .filter-disabled {
     opacity: 0.5;
-    // filter: grayscale(100%);
+    filter: grayscale(100%);
   }
 
   .rs-input-group:not(.rs-input-group-disabled).rs-input-group-focus,
@@ -351,8 +351,8 @@
   border-color: var(--primary) !important;
 }
 
-  // messages (default looks worse due to earlier version of rsuite)
-  // once updated these should be able to be removed
+// messages (default looks worse due to earlier version of rsuite)
+// once updated these should be able to be removed
 .rs-message-warning {
   .rs-message-icon-wrapper .rs-icon {
     fill: #000;
@@ -384,7 +384,25 @@
   }
 }
 
-// checkboxes
+// checkboxes on table
 .rs-checkbox.rs-checkbox-disabled.rs-checkbox-checked {
   filter: grayscale(100%);
+}
+
+// checkboxes on pickers
+.rs-checkbox-disabled:not(.rs-checkbox-checked):not(.rs-checkbox-indeterminate) .rs-checkbox-control .rs-checkbox-inner::before {
+  background-color: var(--rs-input-disabled-bg) !important;
+  border-color: var(--rs-input-disabled-bg) !important;
+}
+
+// highlighting inside multiselect search
+.rs-highlight-mark {
+  background-color: var(--bs-highlight-bg);
+}
+
+// drawer on mobile
+@media (max-width: 575px) {
+  .rs-drawer {
+    width: 100% !important;
+  }
 }

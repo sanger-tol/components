@@ -56,6 +56,8 @@ export { DnD } from "./dnd";
 // filter
 export {
   Filter,
+  RemoteFilters,
+  BoardFilters,
   resetZone
 } from "./filtering";
 
@@ -94,6 +96,7 @@ export {
   HoverOverlay,
   formatDate,
   EditableTitle,
+  Drawer,
   LoadingContent
 } from "./general";
 

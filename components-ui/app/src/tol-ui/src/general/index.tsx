@@ -20,5 +20,6 @@ export { default as RemoteGet } from "./RemoteGet";
 export { default as ObjectDetail } from "./ObjectDetail";
 export { default as RemoteCount } from "./RemoteCount";
 export { default as EditableTitle } from "./EditableTitle";
-export { formatDate } from "./Utils";
+export { default as Drawer } from "./Drawer";
 export { default as LoadingContent } from "./LoadingContent";
+export { formatDate } from "./Utils";

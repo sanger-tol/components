@@ -272,3 +272,32 @@
     padding-right: 8px;
   }
 }
+
+.tol-filters {
+  .filter {
+    margin: 4px 0 12px 0;
+    display: inline-block;
+    width: calc(100% - 40px);
+  }
+
+  .remove-filter-button {
+    float: right;
+    height: 30px;
+    width: 30px;
+    padding: 0;
+    margin: 7px 0;
+  }
+}
+
+.close-button {
+  position: absolute;
+  right: 0;
+  height: 30px;
+  width: 30px;
+  padding: 0;
+  margin: 0 20px 0 0;
+}
+
+.tol-filters-selector {
+  margin: 0 0 30px 0;
+}

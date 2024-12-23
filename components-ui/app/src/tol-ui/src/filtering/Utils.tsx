@@ -10,6 +10,11 @@ import { IFilter, And } from '../models/Filter';
 import { deepCopy, isEmptyObject } from '../general/Utils';
 
 
+export function getComponentAbove(id: string, list: string[]) {
+  const index = list.indexOf(id);
+  return list[index - 1];
+}
+
 export function getComponentsAbove(id: string, list: string[]) {
   const index = list.indexOf(id);
   return list.slice(0, index + 1);
@@ -48,7 +53,7 @@ export function generateFilter(zone?: object, id?: string, includeSubFilter?: bo
   const z = zone as Zone;
   const aboveComponents = id ? getComponentsAbove(id, z.order) : z.order;
   let compoundedFilter: And = z.filter ? z.filter.and_ : {};
-  // loop through above components
+  // loop through 'above' components
   for (const currentId of aboveComponents) {
     // exclude pass throughs except self
     if (z.components[currentId].data.filterPassThrough && id !== currentId) {

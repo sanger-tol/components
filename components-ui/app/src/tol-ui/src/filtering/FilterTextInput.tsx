@@ -34,7 +34,6 @@ function FilterTextInput(props: Filter) {
   const getOperator = (operator: string) => {
     switch(operator) {
     case '=':
-    case '≠':
       return 'eq';
     case '<':
       return 'lt';
