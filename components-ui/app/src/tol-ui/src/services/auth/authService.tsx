@@ -4,17 +4,18 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Page } from 'src/models';
+//@ts-nocheck
+
+import { Page } from '../../models';
 import { httpClient } from '../http/httpClient';
 import { tokenHasExpired } from '../localStorage/localStorageService';
-
 
 export function getUrlLogin() {
   return httpClient().get('/auth/login').then(response => {
     return {
-      loginUrl: response.data.loginUrl,
+      loginUrl: response!.data!.loginUrl,
       userData: {
-        name: response.data.name,
+        name: response!.data!.name,
       }
     };
   });

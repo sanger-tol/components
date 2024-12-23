@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { useState } from 'react';
 import { Button, RemoteTable, Widgets, env, useZone } from '../tol-ui/src';
 
-
 interface exampleProps {
   mlwhTag: string
 }
@@ -28,6 +27,27 @@ function Tables() {
     components: [{id: 'table-example'}]
   });
 
+  const outputTableData = (rows?: string[], filter?: any) => {
+    rows && console.log("Selected rows:", rows);
+    filter && console.log("Filter:", filter);
+  }
+
+  // Example of passing context to table dropdown buttons
+  const actions = [
+    {
+      dropdownButtonName: "Log 1",
+      action: outputTableData
+    },
+    {
+      dropdownButtonName: "Log 2",
+      action: outputTableData
+    },
+    {
+      dropdownButtonName: "Log 3",
+      action: outputTableData
+    }
+  ]
+
   const table1 = (
     <div>
       <Button
@@ -42,6 +62,7 @@ function Tables() {
         rowSelection
         //pageSize={100}
         forceUpdate={forceUpdate}
+        actions={actions}
         fields={{
           "mlwh_run_id": {
             rename: "Run ID"

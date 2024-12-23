@@ -19,13 +19,14 @@ import {
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
-import { Zone } from "../board";
+import { Zone } from "../boardNew";
 import {
   generateFilter,
   filterHasUpdated,
   resetFiltersBelow,
 } from "../filtering/Utils";
 import RemoteRowCounter from "./RemoteRowCounter";
+import { DropdownButtonProps } from '../boardNew/components/DropdownButtons';
 
 
 interface Props {
@@ -58,6 +59,7 @@ interface Props {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
+  actions?: DropdownButtonProps[] | any[];
 
   debug?: boolean;
 }
@@ -83,6 +85,7 @@ function RemoteTable(props: Props) {
     noDownload,
     rowSelection,
     debug,
+    actions,
   } = props;
   const ds = new TsDataSource({ baseUrl });
   const height = props.height !== undefined ? props.height : "100%";
@@ -295,6 +298,7 @@ function RemoteTable(props: Props) {
       noConfigModal={noConfigModal}
       noDownload={noDownload}
       rowSelection={rowSelection}
+      actions={actions}
     />
   );
 }

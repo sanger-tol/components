@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { Dropdown, Avatar } from 'rsuite';
 import { useHistory } from "react-router-dom";
 import { User } from '../models';
-import { convertToName } from 'src/general/Utils';
+import { convertToName } from '../general/Utils';
 
 interface Props {
   user: User;
@@ -67,7 +67,7 @@ function ProfileDropdown(props: Props) {
     } else {
       if (user?.oidc_id) {
         const orcidId = user.oidc_id.split('/').pop();
-        fetchOrcidProfile(orcidId);
+        fetchOrcidProfile(orcidId!);
       } else {
         setUserName(user.name || '');
         setPhotoUrl(null);
@@ -89,7 +89,7 @@ function ProfileDropdown(props: Props) {
         key={link}
         onClick={() => history.push(link)}
       >
-        {convertToName(lastPathSegment)}
+        {convertToName(lastPathSegment!)}
       </Dropdown.Item>
     );
   });

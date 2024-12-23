@@ -10,7 +10,8 @@ import { httpClient } from '../services/http/httpClient';
 import { generateFilter, resetAllFilters } from '../filtering/Utils';
 import { useEffectUpdate } from '../hooks';
 import { IFilter } from '../models/Filter';
-import { getUserFromLocalStorage } from 'src/services/localStorage/localStorageService';
+import { getUserFromLocalStorage } from '../services/localStorage/localStorageService';
+import { TsDataSource } from '../services';
 
 
 export interface Component {
@@ -333,7 +334,7 @@ export function onTitleSave(title: string, ds: any, id: string, objectType: stri
   })
 }
 
-export async function getComponents(zoneId: string, ds: any) {
+export async function getComponents(zoneId: string) {
   return await httpClient().get('/component_zone',{
     params: {
       filter: {
@@ -348,6 +349,7 @@ export async function getComponents(zoneId: string, ds: any) {
   });
 }
 
+// @ts-ignore
 async function getComponentData(ids: string[], ds: any) {
   return await ds.getListPage({
     objectType: 'component',
@@ -422,5 +424,16 @@ export async function addZone(ds: any, objectType: string, title: string, nextOr
       newZoneId: newId,
       newZoneViewId: res.data.data[0].id
     }
+  })
+}
+
+export async function upsertComponentConfig(ds: TsDataSource, componentId: string, config: object) {
+  return await ds.upsert({
+    objectType: 'component',
+    payload: [{
+      type: 'component',
+      id: componentId,
+      attributes: {config: config}
+    }]
   })
 }

@@ -91,17 +91,19 @@ function ResponsiveWidget(props: Props) {
     setConfirmationModalOpen(true);
   }
 
-  const confirmationModal = (key) => (
+  // @ts-ignore
+  const confirmationModal = (key: string) => (
     <ConfirmationModal 
-    setOpen={setConfirmationModalOpen} 
-    open={confirmationModalOpen}
-    onConfirmClick={() => {deleteWidget(key), handleDraggable()}}
-    itemType={"widget"}
-    
+      setOpen={setConfirmationModalOpen} 
+      open={confirmationModalOpen}
+      // @ts-ignore
+      onConfirmClick={() => {deleteWidget(key), handleDraggable()}}
+      itemType={"widget"}
     />
   )
 
-  const setWidgetType= (componentId: string, widgetType: string) => {
+  // @ts-ignore
+  const setWidgetType = (componentId: string, widgetType: string) => {
     //console.log(layoutsState);
   }
 

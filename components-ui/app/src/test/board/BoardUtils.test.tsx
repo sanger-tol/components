@@ -7,28 +7,32 @@ SPDX-License-Identifier: MIT
 import {expect, test, describe} from 'vitest';
 import { deepCopy } from '../../tol-ui/src/general/Utils'
 import {
-    defineComponent,
-    defineZone,
-    getWidgetOrder
-} from '../../tol-ui/src/board/Utils'
+  ComponentData,
+  defineComponent,
+  defineZone,
+  getWidgetOrder
+} from '../../tol-ui/src/boardNew/Utils'
 
 describe ('defineComponent function', () => {
 
   test('should add a component to the zone', () => {
-    const mockComponent = {
-      id: 1,
-      filter: { and_: { field: 'value' } }
+    const mockComponent: ComponentData = {
+      id: "1",
+      filter: { 
+        and_: {}
+      }
     }
     const mockZone = {
-      components: {}
-  }
+      components: {},
+      order: []
+    }
 
     // Act
     defineComponent(mockComponent, mockZone);
 
     // Assert
     expect(mockZone.components).toHaveProperty(String(mockComponent.id));
-    const addedComponent = mockZone.components[mockComponent.id];
+    const addedComponent = mockZone.components[mockComponent.id!];
     expect(addedComponent).toBeDefined();
     expect(addedComponent.data.filter).toEqual(deepCopy(mockComponent.filter));
     expect(addedComponent.data.defaultFilter).toEqual(deepCopy(mockComponent.filter));
@@ -37,7 +41,8 @@ describe ('defineComponent function', () => {
   test('should use an empty filter if none is provided', () => {
     // Arrange
     const mockZone = {
-      components: {}
+      components: {},
+      order: []
     };
     const mockComponent = {
       id: 'testId'
@@ -60,12 +65,12 @@ describe ('defineZone function', () => {
 
   test('should create a zone', () => {
     // Arrange
-    const mockComponents = [
+    const mockComponents: ComponentData[] = [
       {
-        id: 1
+        id: "1"
       },
       {
-        id: 2
+        id: "2"
       }
     ];
 
@@ -79,7 +84,7 @@ describe ('defineZone function', () => {
     expect(zone.order).toEqual(mockComponents.map(c => c.id));
     for (const component of mockComponents) {
       expect(zone.components).toHaveProperty(String(component.id));
-      const addedComponent = zone.components[component.id];
+      const addedComponent = zone.components[component.id!];
       expect(addedComponent).toBeDefined();
     }
   })

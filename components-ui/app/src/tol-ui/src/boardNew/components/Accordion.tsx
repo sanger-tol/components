@@ -8,7 +8,7 @@ import React, { useState, useEffect } from "react";
 import { Accordion as Acc } from "rsuite";
 import { AccordionHeader, DropdownButtons } from "./index";
 import { DropdownButtonProps, DropdownMainIconProps } from "./DropdownButtons";
-import { httpClient } from "src/services";
+import { httpClient } from "../../services";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEllipsisVertical,
@@ -48,7 +48,7 @@ interface ComponentsProps {
 // When all MRs have been merged into dev
 const returnViewInfo = async (viewId: string) => {
   try {
-    const res = await httpClient().get(`/view`, {
+    const res: any = await httpClient().get(`/view`, {
       params: {
         filter: {
           and_: {
@@ -66,7 +66,7 @@ const returnViewInfo = async (viewId: string) => {
 
 const returnZoneInfo = async (zoneId: string) => {
   try {
-    const res = await httpClient().get(`/zone`, {
+    const res: any = await httpClient().get(`/zone`, {
       params: {
         filter: {
           and_: {
@@ -87,7 +87,7 @@ const returnZoneInfo = async (zoneId: string) => {
 
 const returnComponentInfo = async (componentId: string) => {
   try {
-    const res = await httpClient().get(`/component`, {
+    const res: any = await httpClient().get(`/component`, {
       params: {
         filter: {
           and_: {
@@ -113,7 +113,7 @@ const fetchSubItemId = async (
   itemType?: any
 ) => {
   try {
-    const res = await httpClient().get(`/${endpointUrl}`, {
+    const res: any = await httpClient().get(`/${endpointUrl}`, {
       params: {
         filter: {
           and_: {

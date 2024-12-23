@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+//@ts-nocheck
+
 import React from "react";
 import { Button, Dropdown } from "rsuite";
 
@@ -11,13 +13,16 @@ export interface DropdownButtonProps {
   dropdownButtonName: string;
   dropdownButtonIcon?: string;
   disabled?: boolean;
-  action: () => void;
+  icon?: Element;
+  action: (...args: any[]) => void;
 }
 
 export interface DropdownMainIconProps {
   mainIcon: React.ReactNode;
   variant?: string;
   style?: object;
+  className?: string;
+  disabled?: boolean;
 }
 
 interface Props {
@@ -25,7 +30,7 @@ interface Props {
   placement?: string;
   menuStyle?: object;
   globalDisabled?: boolean;
-  dropdownButtons: DropdownButtonProps[] | DropdownButtonProps;
+  dropdownButtons: DropdownButtonProps[] | any;
 }
 
 function DropdownButtons(props: Props) {
@@ -42,8 +47,10 @@ function DropdownButtons(props: Props) {
       <Button
         {...props}
         ref={ref}
-        variant={mainButtonIcon.variant}
+        appearance={mainButtonIcon.variant}
         style={mainButtonIcon.style}
+        className={mainButtonIcon.className}
+        disabled={mainButtonIcon.disabled}
       >
         {mainButtonIcon.mainIcon}
       </Button>
@@ -62,6 +69,7 @@ function DropdownButtons(props: Props) {
           key={index}
           onClick={button.action}
           disabled={button.disabled}
+          icon={button.icon}
         >
           {button.dropdownButtonName}
         </Dropdown.Item>

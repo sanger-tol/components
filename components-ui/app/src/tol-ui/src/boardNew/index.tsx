@@ -5,9 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 export type {
-  ViewType,
   Zone,
-  Component,
+  Component
 } from "./Utils";
 export { useZone, useTranslator } from "./Utils";
 export { default as View } from "./View";

@@ -9,4 +9,4 @@ export { Page } from "./Nav";
 export { Dropdown } from "./Nav";
 export { User } from "./User";
 export { IFilter } from "./Filter";
-export { EntityMeta } from "./EntityMeta";
+export { EntityMeta, Attributes, Relationships } from "./EntityMeta";

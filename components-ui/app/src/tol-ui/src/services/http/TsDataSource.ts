@@ -4,8 +4,12 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Attributes, Relationships } from 'src/models/EntityMeta';
-import { IFilter, EntityMeta } from '../../models';
+import {
+  IFilter,
+  EntityMeta,
+  Attributes,
+  Relationships
+} from '../../models';
 import { httpClient } from './httpClient';
 import retry from './Retry';
 

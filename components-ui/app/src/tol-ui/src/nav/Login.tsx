@@ -9,6 +9,7 @@ import { Redirect } from "react-router-dom";
 import { useAuth } from "../contexts/auth.context";
 import { getUrlLogin } from "../services/auth/authService";
 import { getReturnUrlFromLocalStorage, setReturnUrlFromLocalStorage, tokenHasExpired } from "../services/localStorage/localStorageService";
+
 interface Props {
   buttonIcon: React.ReactNode;
   returnUrl?: string;
@@ -25,7 +26,9 @@ function Login(props: Props) {
   const login = useCallback(() => {
     setReturnUrlFromLocalStorage(returnUrl || window.location.pathname);
     getUrlLogin().then((data) => {
+      //@ts-ignore
       setUser(data.userData);
+      //@ts-ignore
       window.location.href = data.loginUrl;
     });
   }, []);

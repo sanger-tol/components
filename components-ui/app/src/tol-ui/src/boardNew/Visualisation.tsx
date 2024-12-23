@@ -85,6 +85,8 @@ function Visualisation(props: Props) {
       />
     );
   }
+
+  return <></>;
 }
 
 export default Visualisation;

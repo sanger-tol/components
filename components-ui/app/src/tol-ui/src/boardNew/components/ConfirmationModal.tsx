@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Modal from "src/general/Modal";
+import Modal from "../../general/Modal";
 import { Button } from "rsuite";
 
 interface Props {
