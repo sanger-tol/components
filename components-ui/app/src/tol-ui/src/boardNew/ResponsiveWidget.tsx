@@ -5,12 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { WidthProvider, Responsive, Layouts } from 'react-grid-layout';
-import { Button, Placeholder, Visualisation } from '../index';
 import { useState, useRef, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Zone, getWidgetOrder, generateLayout } from './Utils';
-import { ConfirmationModal } from './components';
 
 interface Widgets {
   componentId: string,
@@ -21,7 +17,7 @@ interface Widgets {
 
 interface Props {
   id: string,
-  widgets: Widgets[],
+  widgets: Widgets,
   draggable: boolean,
   setWidgets?: any,
   setOrder?: any,
@@ -33,15 +29,10 @@ interface Props {
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 function ResponsiveWidget(props: Props) {
-  const { widgets, draggable, setOrder, zone, setZone, setDraggable } = props;
+  const { widgets, draggable, setOrder, zone } = props;
   const [layoutsState, setLayouts] = useState<Layouts>(generateLayout(widgets));
-  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const internalLayouts = useRef(generateLayout(widgets));
   //console.log(zone)
-
-  const handleDraggable = () => {
-    setDraggable();
-  }
 
   useEffect(() => {
     const newLayout = generateLayout(widgets);
@@ -87,24 +78,6 @@ function ResponsiveWidget(props: Props) {
     }
   };
 
-  const handleOpenModal = () => {
-    setConfirmationModalOpen(true);
-  }
-
-  const confirmationModal = (key) => (
-    <ConfirmationModal 
-    setOpen={setConfirmationModalOpen} 
-    open={confirmationModalOpen}
-    onConfirmClick={() => {deleteWidget(key), handleDraggable()}}
-    itemType={"widget"}
-    
-    />
-  )
-
-  const setWidgetType= (componentId: string, widgetType: string) => {
-    //console.log(layoutsState);
-  }
-
   return (
     <div className='tol-responsive-grid'>
       <ResponsiveReactGridLayout
@@ -118,33 +91,6 @@ function ResponsiveWidget(props: Props) {
         onBreakpointChange={onBreakpointChange}
         draggableCancel='.widget-delete-btn'
       >
-        {widgets.map((key)=> {
-          // Check if there is a component that matches the ids
-          const id = key.componentId;
-          if (!draggable) {
-            return (
-              <div key={id} className='tol-responsive-widget'>
-                <Visualisation
-                  id={id}
-                  zone={zone}
-                  setZone={setZone}
-                  setWidgetType={setWidgetType}
-                />
-              </div>
-            );
-          } else {
-            return (
-              <div key={id} className='tol-draggable-widget'>
-                <Placeholder opacity={0.7} drag message={id}/>
-                <Button onClick={() => {
-                  handleOpenModal();
-                }} variant='danger' className='widget-delete-btn'>
-                  <FontAwesomeIcon icon={faTrash} size='sm'/>
-                </Button>
-              </div>
-            );
-          }
-        })}
       </ResponsiveReactGridLayout>
     </div>
   );

@@ -221,7 +221,7 @@ export function addSubFilter(params: {
 }) {
   const {id, filter, zone} = params;
   const z = zone as Zone;
-  const f = filter as Filter;
+  const f = filter as IFilter;
   resetFiltersBelow({id: id, zone: z!});
   z.components[id].data.subFilter = f;
 }

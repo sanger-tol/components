@@ -30,7 +30,7 @@ import { InfoTooltip, PopUpMessage } from '../general';
 import { FieldMeta } from './Field';
 import HoverOverlay from '../general/HoverOverlay';
 import { Zone } from '../board';
-import { DropdownButtonProps } from '../board/components/DropdownButtons';
+import { DropdownButtonProps } from '../boardNew/components/DropdownButtons';
 
 
 export type NumRows = 25 | 50 | 100 | 1000;

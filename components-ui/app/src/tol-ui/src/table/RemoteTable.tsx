@@ -26,7 +26,7 @@ import {
   resetFiltersBelow,
 } from "../filtering/Utils";
 import RemoteRowCounter from "./RemoteRowCounter";
-import { DropdownButtonProps } from '../board/components/DropdownButtons';
+import { DropdownButtonProps } from '../boardNew/components/DropdownButtons';
 
 
 interface Props {
@@ -272,7 +272,7 @@ function RemoteTable(props: Props) {
 
   const convertStringAction = (name: string): DropdownButtonProps => ({
     dropdownButtonName: name,
-    action: (ids: string[], filter?: any) => runAction(name, ids)
+    action: (ids: string[]) => runAction(name, ids)
   } as DropdownButtonProps);
 
   const convertAction = (action: string | DropdownButtonProps): DropdownButtonProps => (
@@ -280,8 +280,6 @@ function RemoteTable(props: Props) {
   );
 
   const convertedActions = actions?.map(convertAction);
-
-  console.log(convertedActions)
 
   return (
     <Table
