@@ -14,6 +14,7 @@ import {
   env,
   ComponentModal,
   EditableTitle,
+  useEffectUpdate
 } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -24,6 +25,7 @@ import {
   faPenToSquare,
   faCheck,
   faUpDownLeftRight,
+  faFloppyDisk
 } from '@fortawesome/free-solid-svg-icons';
 import {
   getComponents,
@@ -54,6 +56,7 @@ function ZoneGrid(props: Props) {
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [editBtnsVisible, setEditBtnsVisible] = useState(false);
+  const [saveLayout, setSaveLayout] = useState(false);
   const z = useZone({
     endpoint: objectType,
     baseUrl: env.TOL_DATA,
@@ -72,10 +75,6 @@ function ZoneGrid(props: Props) {
     setEditBtnsVisible(!editBtnsVisible);
   };
 
-  //useEffectUpdate(() => {
-  //  setCurrentWidgets(getWidgetsUsingZone());
-  //}, [z.zone]);
-
   const confirmationModal = (
     <ConfirmationModal
       setOpen={setConfirmationModalOpen}
@@ -86,14 +85,17 @@ function ZoneGrid(props: Props) {
   );
 
   useEffect(() => {
-    getComponents(id).then((res: any) => {
+    getComponents(id, ds).then((res: any) => {
+    // Sort the widgets based on the order value
+    const sortedWidgets = res.sort((a, b) => a.order - b.order);
       setCurrentWidgets(res);
-      res.forEach((widget) => {
+      sortedWidgets.forEach((widget) => {
         z.zone.components[widget.componentId] = {
           data: {
             defaultFilter: {and_: {}},
             filter: {and_: {}},
             id: widget.componentId,
+            order: widget.order,
           }
         };
         z.zone.order.push(widget.componentId);
@@ -164,6 +166,20 @@ function ZoneGrid(props: Props) {
     </Button>
   );
 
+  const saveButton = (
+    <Button
+      onClick={() => {
+        setDraggable(!draggable);
+        setSaveLayout(true);
+        setDraggable(false)
+      }}
+      className='zone-config-button'
+      variant="success"
+    >
+      <FontAwesomeIcon icon={faFloppyDisk} size="sm" />
+    </Button>
+  );
+
   const showEditButtons = (
     <Button
       onClick={() => {
@@ -193,6 +209,8 @@ function ZoneGrid(props: Props) {
         </Col>
         <Col>
           <h6>
+          {!draggable ? (
+            <>
             {showEditButtons}
             {editBtnsVisible ? (
               <>
@@ -203,9 +221,23 @@ function ZoneGrid(props: Props) {
                 {upButton}
               </>
             ) : null}
+            </>
+          ) : 
+            <>
+              {saveButton}
+            </>
+          }
           </h6>
           <div id={'component-modal'}>
-            <ComponentModal open={open} setOpen={setOpen} {...z} />
+            <ComponentModal 
+              open={open}
+              setOpen={setOpen}
+              zoneId={id}
+              ds={ds}
+              currentWidgets={currentWidgets}
+              setCurrentWidgets={setCurrentWidgets}
+              {...z}
+            />
           </div>
         </Col>
       </Row>
@@ -224,6 +256,9 @@ function ZoneGrid(props: Props) {
           zone={z.zone}
           setZone={z.setZone}
           setDraggable={handleSetDraggable}
+          saveLayout={saveLayout}
+          setSaveLayout={setSaveLayout}
+          ds={ds}
         />
       ) : (
         <div className="tol-zone-empty">

@@ -15,28 +15,32 @@ import {
 import { Form, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faChartColumn, faChartPie, faTable, faHashtag } from '@fortawesome/free-solid-svg-icons';
-import { Zone, defineComponent } from './Utils';
+import { Zone, addComponent, defineComponent } from './Utils';
 
 
 interface Props {
   open: boolean,
   setOpen: any,
   zone: Zone,
-  setZone: any
+  setZone: any,
+  zoneId: string,
+  ds: any,
+  currentWidgets: any,
+  setCurrentWidgets: any
 }
 
 function ComponentModal(props: Props) {
-  const { open, setOpen, zone, setZone } = props;
+  const { open, setOpen, zone, setZone, zoneId, ds, currentWidgets, setCurrentWidgets } = props;
   const [componentType, setComponentType] = useState('');
   const [widgetType, setWidgetType] = useState('');
-  const [id, setId] = useState('');
+  const [title, setTitle] = useState('');
   const [idError, setIdError] = useState(false);
   const [fieldError, setFieldError] = useState(false);
 
   function reset() {
     setComponentType('');
     setWidgetType('');
-    setId('');
+    setTitle('');
     setIdError(false);
   }
 
@@ -45,7 +49,7 @@ function ComponentModal(props: Props) {
     setFieldError(false);
     let validId = true;
     let validField = true;
-    if (id === '' || zone.components[id] !== undefined) {
+    if (title === '') {
       setIdError(true);
       validId = false;
     }
@@ -62,14 +66,39 @@ function ComponentModal(props: Props) {
     }
   }, [open]);
 
-  const addComponent = () => {
+  const onAddComponent = async () => {
     if (checkStates()) {
+
+      const highestOrder = Object.values(zone.components).reduce((max, component) => {
+        return component.data.order > max ? component.data.order : max;
+      }, 0);
+      const nextOrder = highestOrder + 1;
+
+      //All components added are set with portal as baseUrl
+      const newComponent = await addComponent(
+        ds,
+        zone.type,
+        title,
+        nextOrder,
+        componentType,
+        widgetType,
+        zoneId
+      );
+      //This adds the component to the zone
       defineComponent({
-        id: id,
+        id: newComponent.newComponentId,
         size: widgetType,
         type: componentType,
+        order: nextOrder,
       }, zone);
-      zone.order = [...zone.order, id];
+      zone.order = [...zone.order, newComponent.newComponentId];
+      // This adds the component to the currentWidgets to be rendered
+      setCurrentWidgets([...currentWidgets, {
+        componentId: newComponent.newComponentId,
+        order: nextOrder,
+        componentZoneId: newComponent.newComponentZoneId,
+      }]);
+
       setZone({...zone});
       setOpen(false);
       reset();
@@ -77,7 +106,7 @@ function ComponentModal(props: Props) {
   };
 
   const plusButton = (
-    <Button variant="success" onClick={addComponent}>
+    <Button variant="success" onClick={onAddComponent}>
       <FontAwesomeIcon icon={faPlus} size="sm" />
     </Button>
   );
@@ -137,42 +166,42 @@ function ComponentModal(props: Props) {
         <Row>
           <Col lg={4} md={4} sm={12} className='tol-button-col'>
             <div
-              className={widgetType !== 'small' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => setWidgetType('small')}
+              className={widgetType !== 'sm' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
+              onClick={() => console.log('unavailable')}
             >
               <h5>Small</h5>
             </div>
           </Col>
           <Col lg={4} md={4} sm={12} className='tol-button-col'>
             <div
-              className={widgetType !== 'medium' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => setWidgetType('medium')}
+              className={widgetType !== 'md' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
+              onClick={() => console.log('unavailable')}
             >
               <h5>Medium</h5>
             </div>
           </Col>
           <Col lg={4} md={4} sm={12} className='tol-button-col'>
             <div
-              className={widgetType !== 'large' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => setWidgetType('large')}
+              className={widgetType !== 'lg' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
+              onClick={() => setWidgetType('lg')}
             >
               <h5>Large</h5>
             </div>
           </Col>
         </Row>
         <br/>
-        <h6>Enter ID <span style={{color: 'red'}}>*</span></h6>
+        <h6>Enter Title <span style={{color: 'red'}}>*</span></h6>
         <Form>
           <InputGroup>
             <Form.Control
               className='dashboard-modal-input'
               placeholder='ID'
-              onChange={(e) => setId(e.target.value)}
+              onChange={(e) => setTitle(e.target.value)}
               isInvalid={idError}
             />
           </InputGroup>
         </Form>
-        {idError ? <p className='tol-modal-error'>ID cannot be blank or already exist</p> : null}
+        {idError ? <p className='tol-modal-error'>Title cannot be blank</p> : null}
         {fieldError ? <p className='tol-modal-error'>Please ensure all mandatory fields are filled</p> : null}
       </>
     </Modal>

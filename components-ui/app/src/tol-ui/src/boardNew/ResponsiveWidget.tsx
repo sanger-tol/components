@@ -24,30 +24,59 @@ interface Props {
   widgets: Widgets[],
   draggable: boolean,
   setWidgets?: any,
-  setOrder?: any,
   zone: Zone,
   setZone: any,
-  setDraggable: () => void
+  setDraggable: () => void,
+  saveLayout: boolean,
+  setSaveLayout: any,
+  ds: any
 }
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 function ResponsiveWidget(props: Props) {
-  const { widgets, draggable, setOrder, zone, setZone, setDraggable } = props;
-  const [layoutsState, setLayouts] = useState<Layouts>(generateLayout(widgets));
+  const { widgets, setWidgets, draggable, zone, setZone, setDraggable, saveLayout, setSaveLayout, ds } = props;
+  const [layoutsState, setLayouts] = useState<Layouts>();
+  // newLayout is used to store the layout when the user is dragging widgets, and is emtptied once a user saves
+  const [newLayout, setNewLayout] = useState(undefined);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [elements, setElements] = useState<JSX.Element[]>([]);
   const internalLayouts = useRef(generateLayout(widgets));
-  //console.log(zone)
 
   const handleDraggable = () => {
     setDraggable();
   }
 
   useEffect(() => {
+    // Generating the visualisations from the widgets
+    const elementsFromWidgets = widgets.map((widget) => {
+      return (
+        <div key={widget.componentId} className='tol-responsive-widget'>
+          <Visualisation
+            id={widget.componentId}
+            zone={zone}
+            setZone={setZone}
+            setWidgetType={setWidgetType}
+          />
+        </div>
+      )
+    })
+    setElements(elementsFromWidgets);
+
     const newLayout = generateLayout(widgets);
     setLayouts(newLayout);
     internalLayouts.current = newLayout;
   }, [widgets]);
+
+  const setWidgetType = (id: string, widgetType: string) => {
+    const newWidgets = widgets.map(widget => {
+      if (widget.componentId === id) {
+        widget.componentType = widgetType;
+      }
+      return widget;
+    });
+    setWidgets(newWidgets);
+  }
 
   /* THIS WILL NEED REPLACING WHEN CUSTOM ENDPOINTS ARE FINISHED
   const deleteWidget = (id: string) => {
@@ -65,20 +94,39 @@ function ResponsiveWidget(props: Props) {
   };
    */
 
-  // This function needs adapting slightly, taking in widgets rather than order
-  // Also needs to account for the way order is stored in the DB
-  function onLayoutChange(layout) {
-
-    const order = getWidgetOrder(layout, widgets);
-    if (setOrder) {
-      setOrder(order);
+  useEffect(() => {
+    if (saveLayout) {
+      onLayoutSave(newLayout)
     }
-    zone.order = order.order;
-    //const newLayout = generateLayout(order);
+  }, [saveLayout]);
 
-    //if (JSON.stringify(newLayout) !== JSON.stringify(layoutsState)) {
-    //  internalLayouts.current = newLayout;
-    //}
+  const onLayoutSave = async(layout) => {
+    // Gets the order based off of the layout on screen
+    const order = getWidgetOrder(layout, widgets);
+
+    // Finds the highest order value in the current widgets, based off the db
+    const orderValues = widgets.map(widget => Number(widget.order))
+    const highestPreviousOrder = Math.max(...orderValues);
+    
+    // Maps through the order and upserts based off of the componentId
+    const payloadData = order.order.map((componentId, index) => {
+      const widget = widgets.find(widget => widget.componentId === componentId);
+      widget!.order = highestPreviousOrder + 1 + index;
+      return {
+        type: 'component_zone',
+        id: widget!.componentZoneId,
+        attributes: {
+          order: highestPreviousOrder + index + 1
+        }
+      };
+    });
+    await ds.upsert({
+      objectType: 'component_zone',
+      payload: payloadData
+    })
+    setSaveLayout(false);
+    zone.order = order.order;
+    setWidgets(widgets)
   }
 
   const onBreakpointChange = () => {
@@ -102,11 +150,6 @@ function ResponsiveWidget(props: Props) {
     />
   )
 
-  // @ts-ignore
-  const setWidgetType = (componentId: string, widgetType: string) => {
-    //console.log(layoutsState);
-  }
-
   return (
     <div className='tol-responsive-grid'>
       <ResponsiveReactGridLayout
@@ -116,28 +159,18 @@ function ResponsiveWidget(props: Props) {
         isDraggable={draggable}
         compactType='vertical'
         rowHeight={150}
-        onLayoutChange={onLayoutChange}
+        onLayoutChange={(layout) => setNewLayout(layout)}
         onBreakpointChange={onBreakpointChange}
         draggableCancel='.widget-delete-btn'
       >
-        {widgets.map((key)=> {
+        {elements.map((element)=> {
           // Check if there is a component that matches the ids
-          const id = key.componentId;
           if (!draggable) {
-            return (
-              <div key={id} className='tol-responsive-widget'>
-                <Visualisation
-                  id={id}
-                  zone={zone}
-                  setZone={setZone}
-                  setWidgetType={setWidgetType}
-                />
-              </div>
-            );
+            return element;
           } else {
             return (
-              <div key={id} className='tol-draggable-widget'>
-                <Placeholder opacity={0.7} drag message={id}/>
+              <div className='tol-draggable-widget'>
+                <Placeholder opacity={0.7} drag message={element.props.children.props.id}/>
                 <Button onClick={() => {
                   handleOpenModal();
                 }} variant='danger' className='widget-delete-btn'>

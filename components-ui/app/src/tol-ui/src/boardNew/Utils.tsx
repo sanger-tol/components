@@ -26,6 +26,7 @@ export interface ComponentData {
   filterPassThrough?: boolean,
   type?: string, // component type e.g. table
   size?: string // component size e.g. sm
+  order: number
 }
 
 export interface Components {
@@ -205,7 +206,6 @@ export function getWidgetOrder(layout, widgets) {
   const widgetOrder = layout.map(item => item.i);
 
   return {
-    components: widgets['components'],
     order: widgetOrder
   };
 }
@@ -376,8 +376,9 @@ export const generateLayout = (components) => {
   const x = { lg: 0, md: 0, sm: 0 };
   
   components.forEach((component) => {
+    const type = component.componentType || 'sm';
     ['lg', 'md', 'sm'].forEach(breakpoint => {
-      const { w, h } = types['lg'][breakpoint];
+      const { w, h } = types[type][breakpoint];
       // if the widget won't fit on the current row, move it to the next row
       if (x[breakpoint] + w > (breakpoint === 'lg' ? 4 : breakpoint === 'md' ? 2 : 1)) {
         y[breakpoint] += h;
@@ -427,13 +428,50 @@ export async function addZone(ds: any, objectType: string, title: string, nextOr
   })
 }
 
-export async function upsertComponentConfig(ds: TsDataSource, componentId: string, config: object) {
-  return await ds.upsert({
+export async function addComponent(
+  ds: any,
+  objectType: string,
+  title: string,
+  nextOrder: number,
+  componentType: string,
+  widgetType: string,
+  zoneId: string,
+  baseUrl?: string
+) {
+  const user = getUserFromLocalStorage()
+  const newId = generateId('c');
+  await ds.upsert({
     objectType: 'component',
     payload: [{
       type: 'component',
-      id: componentId,
-      attributes: {config: config}
+      id: newId,
+      attributes: {
+        title: title,
+        object_type: objectType,
+        component_type: componentType,
+        widget_type: widgetType,
+        filter: {},
+        config: {},
+        base_url: baseUrl || 'https://portal.tol.sanger.ac.uk/api/v1',
+        user_id: user.id,
+      },
     }]
+  });
+
+  return await ds.upsert({
+    objectType: 'component_zone',
+    payload: [{
+      type: 'component_zone',
+      attributes: {
+        order: nextOrder,
+        component_id: newId,
+        zone_id: zoneId
+      },
+    }]
+  }).then((res) => {
+    return {
+      newComponentId: newId,
+      newComponentZoneId: res.data.data[0].id
+    }
   })
 }

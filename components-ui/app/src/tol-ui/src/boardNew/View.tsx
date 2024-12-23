@@ -49,7 +49,7 @@ function View(props: Props) {
       const initialZones = res.zones.map((zone: any) => {
         return {
           id: zone.id,
-          objectType: zone.objectType,
+          objectType: zone.object_type,
           title: zone.title
         };
       });
