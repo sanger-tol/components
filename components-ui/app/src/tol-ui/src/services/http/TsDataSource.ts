@@ -13,6 +13,15 @@ import {
 import { httpClient } from './httpClient';
 import retry from './Retry';
 
+const EXCLUDED_DETAIL_CACHE_OBJECTS = [
+  'component',
+  'zone',
+  'board',
+  'view',
+  'component_zone',
+  'zone_view',
+  'view_board'
+];
 
 interface DetailCache {
   [baseUrl: string]: {
@@ -155,6 +164,16 @@ export default class TsDataSource {
     detailPromises[this.baseUrlKey][objectType] = detailPromises[this.baseUrlKey][objectType] ?? Promise.resolve();
   }
 
+  private updateDetailCache(response: any, objectType: string) {
+    if (objectType in EXCLUDED_DETAIL_CACHE_OBJECTS) return;
+    detailCache[this.baseUrlKey] = detailCache[this.baseUrlKey] ?? {};
+      detailCache[this.baseUrlKey][objectType] = detailCache[this.baseUrlKey][objectType] || {};
+      return response.data.data.map((object: any) => {
+        detailCache[this.baseUrlKey][objectType][object.id] = detailCache[this.baseUrlKey][objectType][object.id] || object;
+        return new Proxy(detailCache[this.baseUrlKey][objectType][object.id], this.dataObjectHandler);
+      });
+  }
+
   private getLocalStorageKey(o: string): string {
     return `${o}-${this.baseUrlKey}`;
   }
@@ -191,19 +210,32 @@ export default class TsDataSource {
     return configPromises[key];
   }
 
-  public async customEndpoint(
+  public async custom(
     endpoint: string,
+    method: string,
     body?: any
 ): Promise<any> {
-    return this.client().post(
-      endpoint,
-      {
-        baseUrl: this.baseUrl,
-        data: body
-      }
-    ).catch(
-      (error: any) => console.log(error)
-    )
+    switch (method) {
+      case 'POST':
+        return this.client().post(
+          endpoint,
+          {
+            baseUrl: this.baseUrl,
+            data: body
+          }
+        ).catch(
+          (error: any) => console.log(error)
+        )
+      case 'DELETE':
+        return this.client().delete(
+          endpoint,
+          {
+            baseUrl: this.baseUrl
+          }
+        ).catch(
+          (error: any) => console.log(error)
+        )
+    }
   }
 
   @retry(3)
@@ -313,7 +345,9 @@ export default class TsDataSource {
         {baseURL: this.baseUrl}
       )
       .then((response: any) => {
-        detailCache[this.baseUrlKey][objectType][id] = response.data.data;
+        if (!EXCLUDED_DETAIL_CACHE_OBJECTS.includes(objectType)) {
+          detailCache[this.baseUrlKey][objectType][id] = response.data.data;
+        }
         return new Proxy(response.data.data, this.dataObjectHandler);
       })
       .catch((error: any) => {
@@ -375,12 +409,7 @@ export default class TsDataSource {
       }
     )
     .then((response: any) => {
-      detailCache[this.baseUrlKey] = detailCache[this.baseUrlKey] ?? {};
-      detailCache[this.baseUrlKey][objectType] = detailCache[this.baseUrlKey][objectType] || {};
-      return response.data.data.map((object: any) => {
-        detailCache[this.baseUrlKey][objectType][object.id] = detailCache[this.baseUrlKey][objectType][object.id] || object;
-        return new Proxy(detailCache[this.baseUrlKey][objectType][object.id], this.dataObjectHandler);
-      });
+      this.updateDetailCache(response, objectType);
     })
     .catch((error: any) => {
       if (error.response.status === 404) return null;
@@ -397,7 +426,9 @@ export default class TsDataSource {
       `/${objectType}/${id}`,
       {baseURL: this.baseUrl}
     ).then(() => {
-      delete detailCache[this.baseUrlKey][objectType][id];
+      if (id in detailCache[this.baseUrlKey][objectType]){
+        delete detailCache[this.baseUrlKey][objectType][id];
+      }
     }
     ).catch((error: any) => {
       if (error.response.status === 404) return null;
@@ -414,6 +445,10 @@ export default class TsDataSource {
       `/${objectType}:upsert`,
       {data: payload},
       {baseURL: this.baseUrl}
+    ).then(
+      (response: any) => {
+        this.updateDetailCache(response, objectType);
+      }
     ).catch((error: any) => {
       if (error.response.status === 404) return null;
       throw error;
