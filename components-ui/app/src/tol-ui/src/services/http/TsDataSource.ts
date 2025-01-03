@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { deepCopy } from '../../general/Utils';
 import {
   IFilter,
   EntityMeta,
@@ -276,6 +277,7 @@ export default class TsDataSource {
 
   private flattenAttributes(attributes: Attributes, relationships: Relationships) {
     this.addIds(attributes);
+    console.log(deepCopy(attributes));
     for (const entity in relationships) {
       // just deal with one-side relationships
       const oneRelationships = relationships[entity]?.one;
@@ -409,7 +411,7 @@ export default class TsDataSource {
       }
     )
     .then((response: any) => {
-      this.updateDetailCache(response, objectType);
+      return this.updateDetailCache(response, objectType);
     })
     .catch((error: any) => {
       if (error.response.status === 404) return null;
@@ -447,7 +449,7 @@ export default class TsDataSource {
       {baseURL: this.baseUrl}
     ).then(
       (response: any) => {
-        this.updateDetailCache(response, objectType);
+        return this.updateDetailCache(response, objectType);
       }
     ).catch((error: any) => {
       if (error.response.status === 404) return null;
