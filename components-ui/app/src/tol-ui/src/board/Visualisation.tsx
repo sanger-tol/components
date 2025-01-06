@@ -37,7 +37,6 @@ function Visualisation(props: Props) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Need to look a how baseUrl is set as it is calling the wrong endpoint on upsert
   const ds = new TsDataSource();
 
   useEffect(() => {
@@ -85,8 +84,6 @@ function Visualisation(props: Props) {
       />
     );
   }
-
-  return <></>;
 }
 
 export default Visualisation;
