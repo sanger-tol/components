@@ -218,7 +218,7 @@ export default class TsDataSource {
 ): Promise<any> {
     switch (method) {
       case 'POST':
-        return this.client().post(
+        return await this.client().post(
           endpoint,
           {
             baseUrl: this.baseUrl,
@@ -228,7 +228,7 @@ export default class TsDataSource {
           (error: any) => console.log(error)
         )
       case 'DELETE':
-        return this.client().delete(
+        return await this.client().delete(
           endpoint,
           {
             baseUrl: this.baseUrl
@@ -277,7 +277,6 @@ export default class TsDataSource {
 
   private flattenAttributes(attributes: Attributes, relationships: Relationships) {
     this.addIds(attributes);
-    console.log(deepCopy(attributes));
     for (const entity in relationships) {
       // just deal with one-side relationships
       const oneRelationships = relationships[entity]?.one;

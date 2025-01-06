@@ -64,10 +64,9 @@ function View(props: Props) {
 
   const deleteZone = (id: string) => {
     const newZones = zones.filter(zone => zone.id !== id);
-    // This call needs fixing
     ds.custom(
+      `boards/zone/${id}`,
       'DELETE',
-      `boards/zone/${id}`
     )
     setZones(newZones);
   };
