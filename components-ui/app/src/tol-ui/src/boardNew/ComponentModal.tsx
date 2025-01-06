@@ -74,6 +74,7 @@ function ComponentModal(props: Props) {
       }, 0);
       const nextOrder = highestOrder + 1;
 
+      console.log(zone.type)
       //All components added are set with portal as baseUrl
       const newComponent = await addComponent(
         ds,
@@ -100,8 +101,8 @@ function ComponentModal(props: Props) {
       }]);
 
       setZone({...zone});
-      setOpen(false);
       reset();
+      setOpen(false);
     }
   };
 

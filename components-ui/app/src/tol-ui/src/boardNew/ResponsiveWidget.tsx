@@ -153,7 +153,6 @@ function ResponsiveWidget(props: Props) {
         draggableCancel='.widget-delete-btn'
       >
         {elements.map((element)=> {
-          console.log(element)
           // Check if there is a component that matches the ids
           if (!draggable) {
             return element;

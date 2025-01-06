@@ -469,9 +469,10 @@ export async function addComponent(
       },
     }]
   }).then((res) => {
+    console.log(res)
     return {
       newComponentId: newId,
-      newComponentZoneId: res.data.data[0].id
+      newComponentZoneId: res.id
     }
   })
 }
