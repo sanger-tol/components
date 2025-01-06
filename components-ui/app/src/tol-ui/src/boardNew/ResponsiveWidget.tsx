@@ -80,6 +80,10 @@ function ResponsiveWidget(props: Props) {
 
   const deleteWidget = (id: string) => {
     const newWidgets = widgets.filter(widget => widget.componentId !== id);
+    ds.custom(
+      `boards/component/${id}`,
+      'DELETE',
+    )
     setWidgets(newWidgets);
   };
 
@@ -165,6 +169,7 @@ function ResponsiveWidget(props: Props) {
                 }} variant='danger' className='widget-delete-btn'>
                   <FontAwesomeIcon icon={faTrash} size='sm'/>
                 </Button>
+                {confirmationModal(element.props.children.props.id)}
               </div>
             );
           }

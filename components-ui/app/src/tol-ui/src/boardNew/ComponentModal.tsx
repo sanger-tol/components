@@ -73,8 +73,6 @@ function ComponentModal(props: Props) {
         return component.data.order > max ? component.data.order : max;
       }, 0);
       const nextOrder = highestOrder + 1;
-
-      console.log(zone.type)
       //All components added are set with portal as baseUrl
       const newComponent = await addComponent(
         ds,
