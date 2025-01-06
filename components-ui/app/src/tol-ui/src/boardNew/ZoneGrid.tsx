@@ -85,7 +85,7 @@ function ZoneGrid(props: Props) {
   );
 
   useEffect(() => {
-    getComponents(id, ds).then((res: any) => {
+    getComponents(id).then((res: any) => {
     // Sort the widgets based on the order value
     const sortedWidgets = res.sort((a, b) => a.order - b.order);
       setCurrentWidgets(res);

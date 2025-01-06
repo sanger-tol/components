@@ -20,7 +20,6 @@ import {
   }
   
   function DashboardPage() {
-
     const user = getUserFromLocalStorage();
     return (
       <div>

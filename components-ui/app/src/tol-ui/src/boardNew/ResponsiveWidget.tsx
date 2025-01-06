@@ -78,21 +78,10 @@ function ResponsiveWidget(props: Props) {
     setWidgets(newWidgets);
   }
 
-  /* THIS WILL NEED REPLACING WHEN CUSTOM ENDPOINTS ARE FINISHED
   const deleteWidget = (id: string) => {
-    const newComponents = Object.keys(widgets.components)
-      .filter(key => key !== id)
-      .reduce((obj, key) => {
-        obj[key] = widgets.components[key];
-        return obj;
-      }, {});
-    const newOrder = widgets.order.filter(key => key !== id);
-    setWidgets({ components: newComponents, order: newOrder });
-    // Going to have to make it remove it from the zone and then set the zone again to fire off the useEffect in the ZoneGrid
-    removeComponent(id, zone);
-    resetAllFilters(zone);
+    const newWidgets = widgets.filter(widget => widget.componentId !== id);
+    setWidgets(newWidgets);
   };
-   */
 
   useEffect(() => {
     if (saveLayout) {
