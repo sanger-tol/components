@@ -29,8 +29,8 @@ import Filter, { IFilter } from '../filtering/Filter';
 import { InfoTooltip, PopUpMessage } from '../general';
 import { FieldMeta } from './Field';
 import HoverOverlay from '../general/HoverOverlay';
-import { Zone } from '../boardNew';
-import { DropdownButtonProps } from '../boardNew/components/DropdownButtons';
+import { Zone } from '../board';
+import { DropdownButtonProps } from '../board/components/DropdownButtons';
 
 
 export type NumRows = 25 | 50 | 100 | 1000;

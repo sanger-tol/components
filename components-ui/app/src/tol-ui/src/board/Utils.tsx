@@ -423,7 +423,7 @@ export async function addZone(ds: any, objectType: string, title: string, nextOr
   }).then((res) => {
     return {
       newZoneId: newId,
-      newZoneViewId: res.data.data[0].id
+      newZoneViewId: res[0].id
     }
   })
 }
@@ -469,10 +469,9 @@ export async function addComponent(
       },
     }]
   }).then((res) => {
-    console.log(res)
     return {
       newComponentId: newId,
-      newComponentZoneId: res.id
+      newComponentZoneId: res[0].id
     }
   })
 }

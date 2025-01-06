@@ -194,7 +194,7 @@ function ComponentModal(props: Props) {
           <InputGroup>
             <Form.Control
               className='dashboard-modal-input'
-              placeholder='ID'
+              placeholder='Title'
               onChange={(e) => setTitle(e.target.value)}
               isInvalid={idError}
             />

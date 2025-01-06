@@ -96,7 +96,7 @@ function ZoneModal(props: Props) {
       const orders = zoneOrder.map((zone) => {
         return zone.order
       })
-      const nextOrder = Math.max(...orders) + 1;
+      const nextOrder = orders.length > 0 ? Math.max(...orders) + 1 : 1;
       const newZone: INewZone = await addZone(ds, objectType, title, nextOrder, viewId);
       setZones(
         [...zones,
@@ -114,8 +114,8 @@ function ZoneModal(props: Props) {
             zoneViewId: newZone.newZoneViewId
           }
         ]);
-      setOpen(false);
       reset();
+      setOpen(false);
     }
   };
 

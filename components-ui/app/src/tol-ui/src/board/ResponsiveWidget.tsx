@@ -42,6 +42,7 @@ function ResponsiveWidget(props: Props) {
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [elements, setElements] = useState<JSX.Element[]>([]);
   const internalLayouts = useRef(generateLayout(widgets));
+  //console.log(widgets)
 
   const handleDraggable = () => {
     setDraggable();

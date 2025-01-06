@@ -23,7 +23,7 @@ import {
   setFilter,
   filterListener
 } from '../../tol-ui/src/filtering/Utils'
-import { Zone } from '../../tol-ui/src/boardNew/Utils';
+import { Zone } from '../../tol-ui/src/board/Utils';
 import { IFilter } from '../../tol-ui/src/models/Filter';
 
 

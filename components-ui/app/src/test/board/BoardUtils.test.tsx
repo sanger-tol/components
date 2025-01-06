@@ -11,7 +11,7 @@ import {
   defineComponent,
   defineZone,
   getWidgetOrder
-} from '../../tol-ui/src/boardNew/Utils'
+} from '../../tol-ui/src/board/Utils'
 
 describe ('defineComponent function', () => {
 
