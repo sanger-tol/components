@@ -153,12 +153,13 @@ function ResponsiveWidget(props: Props) {
         draggableCancel='.widget-delete-btn'
       >
         {elements.map((element)=> {
+          console.log(element)
           // Check if there is a component that matches the ids
           if (!draggable) {
             return element;
           } else {
             return (
-              <div className='tol-draggable-widget'>
+              <div className='tol-draggable-widget' key={element.props.children.props.id}>
                 <Placeholder opacity={0.7} drag message={element.props.children.props.id}/>
                 <Button onClick={() => {
                   handleOpenModal();
