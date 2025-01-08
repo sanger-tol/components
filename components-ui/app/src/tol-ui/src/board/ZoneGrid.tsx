@@ -65,10 +65,6 @@ function ZoneGrid(props: Props) {
     components: []
   });
 
-  const handleSetDraggable = () => {
-    setDraggable(!draggable);
-  };
-
   const handleOpenModal = () => {
     setConfirmationModalOpen(true);
   };
@@ -268,7 +264,6 @@ function ZoneGrid(props: Props) {
           draggable={draggable}
           zone={z.zone}
           setZone={z.setZone}
-          setDraggable={handleSetDraggable}
           saveLayout={saveLayout}
           setSaveLayout={setSaveLayout}
           ds={ds}

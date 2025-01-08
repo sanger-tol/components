@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Zone, getWidgetOrder, generateLayout } from './Utils';
 import { ConfirmationModal } from './components';
+import { deepCopy } from 'src/general/Utils';
 
 interface Widgets {
   componentId: string,
@@ -26,7 +27,6 @@ interface Props {
   setWidgets?: any,
   zone: Zone,
   setZone: any,
-  setDraggable: () => void,
   saveLayout: boolean,
   setSaveLayout: any,
   ds: any
@@ -35,17 +35,14 @@ interface Props {
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 function ResponsiveWidget(props: Props) {
-  const { widgets, setWidgets, draggable, zone, setZone, setDraggable, saveLayout, setSaveLayout, ds } = props;
+  const { widgets, setWidgets, draggable, zone, setZone, saveLayout, setSaveLayout, ds } = props;
   const [layoutsState, setLayouts] = useState<Layouts>();
   // newLayout is used to store the layout when the user is dragging widgets, and is emtptied once a user saves
   const [newLayout, setNewLayout] = useState(undefined);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [elements, setElements] = useState<JSX.Element[]>([]);
+  const [widgetToDelete, setWidgetToDelete] = useState<string | null>(null);
   const internalLayouts = useRef(generateLayout(widgets));
-
-  const handleDraggable = () => {
-    setDraggable();
-  }
 
   useEffect(() => {
     // Generating the visualisations from the widgets
@@ -66,7 +63,7 @@ function ResponsiveWidget(props: Props) {
     const newLayout = generateLayout(widgets);
     setLayouts(newLayout);
     internalLayouts.current = newLayout;
-  }, [widgets]);
+  }, [widgets, zone]);
 
   const setWidgetType = (id: string, widgetType: string) => {
     const newWidgets = widgets.map(widget => {
@@ -78,21 +75,14 @@ function ResponsiveWidget(props: Props) {
     setWidgets(newWidgets);
   }
 
-  /* THIS WILL NEED REPLACING WHEN CUSTOM ENDPOINTS ARE FINISHED
   const deleteWidget = (id: string) => {
-    const newComponents = Object.keys(widgets.components)
-      .filter(key => key !== id)
-      .reduce((obj, key) => {
-        obj[key] = widgets.components[key];
-        return obj;
-      }, {});
-    const newOrder = widgets.order.filter(key => key !== id);
-    setWidgets({ components: newComponents, order: newOrder });
-    // Going to have to make it remove it from the zone and then set the zone again to fire off the useEffect in the ZoneGrid
-    removeComponent(id, zone);
-    resetAllFilters(zone);
+    const newWidgets = widgets.filter(widget => widget.componentId !== id);
+    ds.custom(
+      `boards/component/${id}`,
+      'DELETE',
+    )
+    setWidgets(newWidgets);
   };
-   */
 
   useEffect(() => {
     if (saveLayout) {
@@ -135,20 +125,29 @@ function ResponsiveWidget(props: Props) {
     }
   };
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (key: string) => {
+    setWidgetToDelete(key);
     setConfirmationModalOpen(true);
   }
 
   // @ts-ignore
-  const confirmationModal = (key: string) => (
+  const confirmationModal = () => (
     <ConfirmationModal 
       setOpen={setConfirmationModalOpen} 
       open={confirmationModalOpen}
       // @ts-ignore
-      onConfirmClick={() => {deleteWidget(key), handleDraggable()}}
+      onConfirmClick={handleConfirmDeleteComponent}
       itemType={"widget"}
     />
   )
+
+  const handleConfirmDeleteComponent = () => {
+    if (widgetToDelete) {
+      deleteWidget(widgetToDelete);
+      setWidgetToDelete(null);
+    }
+    setConfirmationModalOpen(false);
+  }
 
   return (
     <div className='tol-responsive-grid'>
@@ -169,13 +168,14 @@ function ResponsiveWidget(props: Props) {
             return element;
           } else {
             return (
-              <div className='tol-draggable-widget'>
+              <div className='tol-draggable-widget' key={element.props.children.props.id}>
                 <Placeholder opacity={0.7} drag message={element.props.children.props.id}/>
                 <Button onClick={() => {
-                  handleOpenModal();
+                  handleOpenModal(element.props.children.props.id);
                 }} variant='danger' className='widget-delete-btn'>
                   <FontAwesomeIcon icon={faTrash} size='sm'/>
                 </Button>
+                {confirmationModal()}
               </div>
             );
           }

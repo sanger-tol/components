@@ -17,6 +17,7 @@ from tol.api_base2 import (
     system_blueprint
 )
 from tol.api_base2.misc import default_ctx_getter
+from tol.board import board_blueprint
 from tol.core import (
     DataSource,
     OperableDataSource,
@@ -147,6 +148,13 @@ def application():
     app.register_blueprint(
         actions_bp,
         url_prefix=os.environ['API_PATH'] + '/run-action'
+    )
+
+    # dashboards
+    boards_bp = board_blueprint(sql_datasource)
+    app.register_blueprint(
+        boards_bp,
+        url_prefix=os.environ['API_PATH'] + '/boards'
     )
 
     return app

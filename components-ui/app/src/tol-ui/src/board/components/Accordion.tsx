@@ -446,4 +446,3 @@ function Accordion(props: BoardsAccordionProps) {
 }
 
 export default Accordion;
-

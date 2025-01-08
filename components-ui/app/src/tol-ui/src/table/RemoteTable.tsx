@@ -260,8 +260,9 @@ function RemoteTable(props: Props) {
   }
  
   //@ts-ignore
-  const runAction = async (action_name: string, ids: string[]) => await ds.customEndpoint(
+  const runAction = async (action_name: string, ids: string[]) => await ds.custom(
     '/run-action',
+    'POST',
     {
       ids: ids,
       action_name: action_name,

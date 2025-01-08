@@ -76,15 +76,15 @@ function DataSource() {
   });
   */
 
-  ds2.upsert({
-    objectType: 'species',
-    attributes: {
-      name: "test",
-      scientific_name: "test",
-      genus: "test",
-      family: "test",
-    }
-  })
+  //ds2.upsert({
+  //  objectType: 'species',
+  //  attributes: {
+  //    name: "test",
+  //    scientific_name: "test",
+  //    genus: "test",
+  //    family: "test",
+  //  }
+  //})
 
   const dataSource = (
     <h5>See console for TSDataSource examples...</h5>

@@ -476,7 +476,7 @@ export async function addZone(ds: TsDataSource, objectType: string, title: strin
   }).then((res) => {
     return {
       newZoneId: newId,
-      newZoneViewId: res.data.data[0].id
+      newZoneViewId: res[0].id
     }
   })
 }
@@ -524,7 +524,7 @@ export async function addComponent(
   }).then((res) => {
     return {
       newComponentId: newId,
-      newComponentZoneId: res.data.data[0].id
+      newComponentZoneId: res[0].id
     }
   })
 }
