@@ -12,18 +12,19 @@ import {
   Message,
   Toaster,
   Loader
-} from "../tol-ui/src";
-import { Accordion } from "../tol-ui/src/boardNew/components";
-import { getUserFromLocalStorage } from "../tol-ui/src/services/localStorage/localStorageService";
+} from "..";
+import { Accordion } from "./components";
+import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 const containerStyle = {
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  marginTop: "20px",
   position: "relative",
+  paddingLeft: "10px",
+  paddingRight: "10px"
 };
 
 const getBoardDetails = async (id: string, setErrorMessage: any) => {
@@ -49,7 +50,7 @@ const getBoardDetails = async (id: string, setErrorMessage: any) => {
   }
 }
 
-const MyBoards = () => {
+function MyBoards() {
 
   const [boardDetails, setBoardDetails] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -101,9 +102,9 @@ const MyBoards = () => {
       <div style={{ marginTop: "60px" }}>
         <span>
           <FontAwesomeIcon
-            icon={faTriangleExclamation}
+            icon={faCircleInfo}
             size="3x"
-            style={{ color: "#EBDE6B" }}
+            style={{ color: "#C2D3CD" }}
           />
           <p style={{ marginTop: "5px", fontSize: "16px" }}>
             You have no boards yet. Click the button to create or import a new
@@ -115,8 +116,7 @@ const MyBoards = () => {
   );
 
   const myBoards = (
-    <div style={{ paddingLeft: "80px", paddingRight: "80px" }}>
-      <MyBoardsHeader containerStyle={containerStyle} />
+    <div className="my-boards-container">
       {!loading ? (
         boardDetails && boardDetails.length > 0 ? (
           <Accordion boardDetails={boardDetails} />
@@ -134,7 +134,15 @@ const MyBoards = () => {
     </div>
   );
 
+  const myBoardsHeader = (
+    <MyBoardsHeader containerStyle={containerStyle} />
+  )
+
   const components = [
+    {
+      component: myBoardsHeader,
+      type: "full",
+    },
     {
       component: myBoards,
       type: "full",

@@ -159,7 +159,7 @@ function ResponsiveWidget(props: Props) {
         isDraggable={draggable}
         compactType='vertical'
         rowHeight={150}
-        onLayoutChange={(layout) => setNewLayout(layout)}
+        onLayoutChange={(layout: any) => setNewLayout(layout)}
         onBreakpointChange={onBreakpointChange}
         draggableCancel='.widget-delete-btn'
       >

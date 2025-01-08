@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { TsDataSource } from "../services";
-import { Zone } from "../boardNew";
-import { defineZone } from "../boardNew/Utils";
+import { Zone } from "../board";
+import { defineZone } from "../board/Utils";
 import Filter from "./Filter";
 import { IFilter } from "../models";
 import { Button, InfoTooltip, useEffectUpdate } from "..";
@@ -100,7 +100,7 @@ function RemoteFilters(props: Props) {
   };
 
   const renderValue = (values: string[]) => {
-    const numPopulatedFilter = Object.keys(filterZone.components[filterComponentId].data.filter?.and_!).length
+    const numPopulatedFilter = Object.keys(filterZone.components[filterComponentId].data.filter?.and_!).length;
     return (`
       ${values.length} ${values.length === 1 ? "filter": "filters"} selected;
       ${numPopulatedFilter} ${numPopulatedFilter === 1 ? "filter": "filters"} populated.

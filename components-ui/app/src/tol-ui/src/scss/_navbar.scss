@@ -44,6 +44,10 @@
     opacity: 1;
   }
 
+  .logout.nav-link:hover {
+    color: var(--bs-danger);
+  }
+
   // login
   .nav-right.nav-link {
     opacity: 1;
@@ -96,7 +100,7 @@
 }
 
 .navigation {
-  padding-bottom: 80px;
+  padding-bottom: 78px;
 
   a:active,
   a:focus {
@@ -111,7 +115,6 @@
 
 // makes bottom sticky footer
 .tol-app {
-  max-width: 1920px;
   margin: auto;
   min-height: calc(100vh - 270px);
 }
@@ -171,50 +174,13 @@
 }
 
 .profile-dropdown {
-
-  min-width: 140px;
-
-  .rs-dropdown-item {
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: bolder;
-    padding: 6px 8px;
-    
-    &:hover {
-      color: var(--primary);
-      background-color: transparent;
-    }
-  }
-
-  .rs-dropdown-menu {
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  }
-  
-  .rs-dropdown-toggle {
-  background: transparent;
-  
-    .rs-avatar {
-      opacity: 1;
-    }
-
-    .rs-dropdown-toggle-caret {
-      color: var(--bs-navbar-brand-color);
-    }
-
-    &:hover {
-      background: transparent;
-      .rs-dropdown-toggle-caret {
-        color: var(--primary);
-      }
-    }
-  }
-
   .profile-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 10px 12px;
+    font-size: 14px;
+    color: white;
   }
 
   .profile-details {
@@ -223,29 +189,25 @@
     .user-name {
       font-size: 14px;
       display: block;
-      //margin-bottom: 4px;
+      margin-bottom: 4px;
+      font-weight: bolder;
     }
     
     .email {
-      font-size: 0.9rem;
       color: var(--rs-text-secondary);
     }
   }
 
-  .signed-in-label {
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 10px;
+  // circle initials override
+  .rs-avatar.rs-avatar-sm.rs-avatar-circle,
+  .initials-avatar {
+    color: var(--bs-emphasis-color);
+    background-color: var(--grey-subtle) !important;
   }
-  
-  .rs-dropdown-item:hover {
-    background: var(--bs-body-bg);
-  }
-}
 
-.logout {
-  padding: 8px 16px;
-  font-size: 12px;
-  font-weight: bolder;
-  padding: 6px 8px;
+  @media(min-width: 992px) {
+    .dropdown-menu {
+      left: -100px
+    }
+  }
 }

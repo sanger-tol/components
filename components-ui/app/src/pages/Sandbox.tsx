@@ -52,7 +52,7 @@ function Sandbox() {
 
   return (
     <>
-      <BoardFilters
+      {/* <BoardFilters
         entityType="zone"
         {...z}
       />
@@ -65,7 +65,7 @@ function Sandbox() {
         id="c_N281dwdg86xx"
         entityType="component"
         {...z}
-      />
+      /> */}
     </>
   );
 }

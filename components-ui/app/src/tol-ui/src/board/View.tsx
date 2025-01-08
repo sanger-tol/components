@@ -9,12 +9,9 @@ import {
   ZoneGrid,
   Button,
   ZoneModal,
-  Row,
-  Col,
-  EditableTitle,
   IFilter
 } from '../index';
-import { getZones, onTitleSave } from "./Utils";
+import { getZones } from "./Utils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
@@ -33,13 +30,13 @@ interface OrderObject {
 
 interface Props {
   id: string,
-  title: string,
+  // title: string,
   ds: any,
   defaultFilter?: IFilter
 }
 
 function View(props: Props) {
-  const { id, title, ds } = props;
+  const { id, ds } = props;
   const [zones, setZones] = useState<ZoneObject[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<OrderObject[]>([]);
@@ -57,10 +54,6 @@ function View(props: Props) {
       setZones(initialZones);
     });
   }, []);
-  
-  function addZone() {
-    setOpen(true);
-  }
 
   const deleteZone = (id: string) => {
     const newZones = zones.filter(zone => zone.id !== id);
@@ -72,8 +65,7 @@ function View(props: Props) {
     setZones(newZones);
   };
 
-  async function onZoneReorder(id: string, direction: string) {
-
+  const onZoneReorder = async (id: string, direction: string) => {
     // Sort a copy of zoneOrder array by order
     const updatedZoneOrder = [...zoneOrder]
     updatedZoneOrder.sort((a, b) => a.order - b.order);
@@ -143,26 +135,14 @@ function View(props: Props) {
   const addButton = (
     <Button
       onClick={() => {
-        addZone();
+        setOpen(true)
       }}
       variant='success'
-      className='zone-config-button'
+      className='add-zone-button' // temp placement
+      style={open ? {display: "none"} : {}} // to hide strange placement
     >
       <FontAwesomeIcon icon={faPlus} size='sm' />
     </Button>
-  );
-
-  const buttons = (
-    <div className='tol-view-bar'>
-      <Row>
-        <Col xs={11}>
-          <EditableTitle title={title} onSave={(newTitle) => onTitleSave(newTitle, ds, id, 'view')} size="md"/>
-        </Col>
-        <Col xs={1}>
-          {addButton}
-        </Col>
-      </Row>
-    </div>
   );
 
   const getSortedZones = () => {
@@ -174,9 +154,11 @@ function View(props: Props) {
   };
 
   return (
-    <div className='tol-dashboard'>
-      {buttons}
-      <ZoneModal 
+    <div className='tol-view'>
+      <div className='tol-view-bar'>
+      {addButton}
+      </div>
+      <ZoneModal
         open={open}
         setOpen={setOpen}
         setZones={setZones}

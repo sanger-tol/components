@@ -25,6 +25,7 @@ export function getUserFromLocalStorage() {
   const userString = localStorage.getItem('user') || '{"roles": []}';
   return JSON.parse(userString);
 }
+
 export function tokenHasExpired() {
   const token = getTokenFromLocalStorage();
   if (!token) return true;

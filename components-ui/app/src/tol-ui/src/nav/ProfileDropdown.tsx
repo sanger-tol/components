@@ -5,20 +5,19 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from 'react';
-import { Dropdown, Avatar } from 'rsuite';
-import { useHistory } from "react-router-dom";
-import { User } from '../models';
-import { convertToName } from '../general/Utils';
+import { Avatar } from 'rsuite';
+import { Page, User } from '../models';
+import { convertToPath } from '../general/Utils';
+import { Nav, NavDropdown } from "react-bootstrap";
 
 interface Props {
   user: User;
-  profileLinks?: string[];
+  pages?: Page[];
   onLogout: () => void;
 };
 
 function ProfileDropdown(props: Props) {
-  const { user, profileLinks, onLogout } = props;
-  const history = useHistory();
+  const { user, pages, onLogout } = props;
 
   const [userName, setUserName] = useState<string>('');
   const [photoUrl, setPhotoUrl] = useState<string | null>(null); 
@@ -76,64 +75,59 @@ function ProfileDropdown(props: Props) {
     }
   }, [user]);
 
-  const avatarContent = loading
-    ? <div className="initials-avatar">{getInitials(userName)}</div>
-    : photoUrl
-    ? <img src={photoUrl} alt="Profile" className="profile-photo" />
-    : <div className="initials-avatar">{getInitials(userName)}</div>;
+  const avatarContent = (
+    loading ? <div className="initials-avatar">{getInitials(userName)}</div>
+    : photoUrl ? <img src={photoUrl} alt="Profile" className="profile-photo" />
+    : <div className="initials-avatar">{getInitials(userName)}</div>
+  );
 
-  const customLinks = profileLinks?.map((link) => {
-    const lastPathSegment = link.split('/').pop();
+  const dropdownPages = pages?.map((page) => {
+    const link = convertToPath(page.name)
     return (
-      <Dropdown.Item
-        key={link}
-        onClick={() => history.push(link)}
+      <Nav.Link
+        key={page.name}
+        href={link}
       >
-        {convertToName(lastPathSegment!)}
-      </Dropdown.Item>
+        {page.name}
+      </Nav.Link>
     );
   });
-
-  const dropdownItems = (
-    <>
-      {customLinks}
-      <Dropdown.Separator />
-      <Dropdown.Item
-        className="logout"
-        onClick={() => {
-          sessionStorage.removeItem('userName'); 
-          sessionStorage.removeItem('photoUrl'); 
-          onLogout();
-        }}
-      >
-        Logout
-      </Dropdown.Item>
-    </>
+  
+  const dropdownContents = (
+    <div
+      className="nav-dropdown-box"
+    >
+      {dropdownPages}
+      <Nav.Link
+          className='logout'
+          key='logout'
+          onClick={() => {
+            sessionStorage.removeItem('userName'); 
+            sessionStorage.removeItem('photoUrl'); 
+            onLogout();
+          }}
+        >
+          Logout
+      </Nav.Link>
+    </div>
   );
 
   return (
-    <Dropdown
+    <NavDropdown
       className="profile-dropdown"
       title={<Avatar size="sm" circle>{avatarContent}</Avatar>}
       placement="bottomEnd"
     >
       {userName && (
-        <>
-          <Dropdown.Item panel>
-            <div className="profile-container">
-              <div className="signed-in-label">
-                <p>Signed in as</p>
-              </div>
-              <div className="profile-details">
-                <strong className="user-name">{userName}</strong>
-              </div>
-            </div>
-          </Dropdown.Item>
-          <Dropdown.Separator />
-        </>
+        <div className="profile-container">
+          <p>Signed in as</p>
+          <div className="profile-details">
+            <p className="user-name">{userName}</p>
+          </div>
+        </div>
       )}
-      {dropdownItems}
-    </Dropdown>
+      {dropdownContents}
+    </NavDropdown>
   );
 };
 

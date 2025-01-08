@@ -4,11 +4,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { DropdownButtons } from "./index";
+import { useState } from "react";
+import { DropdownButtons, NewBoardModal } from "./index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { DropdownButtonProps, DropdownMainIconProps } from "./DropdownButtons";
 import { useHistory } from "react-router-dom";
+import { createBoardAndView } from "../Utils";
+import { TsDataSource } from "../../index";
 
 interface Props {
   title?: string;
@@ -24,23 +27,57 @@ interface Props {
 
 const DEFAULT_TITLE = "My Boards";
 const DEFAULT_SUB_TITLE =
-  "Here you can view, share, rename and delete your boards, views and components.";
+  "Here you can view and delete your boards, along with viewing board hierarchy and components of each zone.";
 
 function MyBoardsHeader(props: Props) {
+  const [newBoardModalOpen, setNewBoardModalOpen] = useState(false);
+  const [modalError, setModalError] = useState("");
+
+  const history = useHistory();
+  const ds = new TsDataSource();
+
   const defaultDropdownButtons: DropdownButtonProps[] = [
     {
       dropdownButtonName: "Create New Board",
-      action: () => {
-        history.push("/dashboarding/dashboard");
-      },
-    },
-    {
-      dropdownButtonName: "Import Board",
-      action: () => {
-        console.log("Import Board");
-      },
+      action: () => handleOpenModal(),
     },
   ];
+
+  const handleNewBoardCreate = async (
+    boardId: string,
+    viewId: string,
+    boardTitle: string,
+    viewTitle: string
+  ) => {
+    try {
+      createBoardAndView(ds, boardId, boardTitle, viewId, viewTitle);
+    } catch {
+      setModalError("Failed to create board, please try again.");
+    } finally {
+      if (modalError === "") {
+        setTimeout(() => {
+        history.push(`/board/${boardId}/view/${viewId}`);
+        }, 200)
+      }
+    }
+  };
+
+  const handleOpenModal = () => {
+    setNewBoardModalOpen(true);
+  };
+
+  const newBoardModal = () => (
+    <NewBoardModal
+      setOpen={setNewBoardModalOpen}
+      open={newBoardModalOpen}
+      onConfirmClick={(
+        boardId: string,
+        viewId: string,
+        boardTitle: string,
+        viewTitle: string
+      ) => handleNewBoardCreate(boardId, viewId, boardTitle, viewTitle)}
+    />
+  );
 
   const defaultDropdownMainIcon = {
     mainIcon: <FontAwesomeIcon icon={faPlus} size="lg" />,
@@ -58,8 +95,6 @@ function MyBoardsHeader(props: Props) {
     customClass = "",
   } = props;
 
-  const history = useHistory();
-
   return (
     <div style={containerStyle} className={customClass}>
       <div>
@@ -72,7 +107,9 @@ function MyBoardsHeader(props: Props) {
         globalDisabled={globalDisabled}
         dropdownButtons={dropdownButtons}
         menuStyle={menuStyle}
+        showMessages={false}
       />
+      {newBoardModalOpen && newBoardModal()}
     </div>
   );
 }

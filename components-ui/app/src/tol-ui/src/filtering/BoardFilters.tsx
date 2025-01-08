@@ -20,11 +20,12 @@ export interface Props {
   entityType: string, // e.g. component type or zone
   endpoint: string,
   baseUrl?: string
+  open: boolean,
+  setOpen: any
 }
 
 function BoardFilters(props: Props) {
-  const { id, zone, setZone, entityType, endpoint } = props;
-  const [open, setOpen] = useState(false);
+  const { id, zone, setZone, entityType, endpoint, open, setOpen } = props;
 
   // the fixed filter present on the component
   const [filter, setFilter] = useState(
@@ -33,12 +34,14 @@ function BoardFilters(props: Props) {
     )
   );
 
-  const removeCurrentEntityFiltersForDisabledFilters = (source: object, remove?: object) => {
+  const removeCurrentEntityFiltersForDisabledFilters = (source: object = {}, remove?: object) => {
     const keysToRemove = new Set(Object.keys(remove || {}));
-    return Object.fromEntries(
+    const x = Object.fromEntries(
       Object.entries(source).filter(([key]) => !keysToRemove.has(key))
     );
-  }
+    //console.log(x)
+    return x;
+  };
 
   // getting the disabled filter values (currently all other entity filters)
   const [disabledFilterValues, setDisabledFilterValues] = useState(
@@ -76,18 +79,18 @@ function BoardFilters(props: Props) {
 
     new TsDataSource().upsert({
       objectType: entityType,
-      id: id,
-      attributes: {
-        filter: filter
-      }
+      payload: [{
+        type: entityType,
+        id: id,
+        attributes: {
+          filter: filter
+        }
+      }]
     })
   }
 
   return (
     <div>
-      <Button onClick={() => setOpen(true)}>
-        {entityType}
-      </Button>
       <Drawer
         title={`Filtering on a ${endpoint} ${entityType}`}
         open={open}

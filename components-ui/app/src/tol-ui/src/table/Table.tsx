@@ -17,7 +17,7 @@ import {
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
-  faFilter, 
+  faEyeSlash, 
   faSliders, 
   faDownload, 
   faCheckDouble, 
@@ -29,8 +29,8 @@ import Filter, { IFilter } from '../filtering/Filter';
 import { InfoTooltip, PopUpMessage } from '../general';
 import { FieldMeta } from './Field';
 import HoverOverlay from '../general/HoverOverlay';
-import { Zone } from '../boardNew';
-import { DropdownButtonProps } from '../boardNew/components/DropdownButtons';
+import { Zone } from '../board';
+import { DropdownButtonProps } from '../board/components/DropdownButtons';
 
 
 export type NumRows = 25 | 50 | 100 | 1000;
@@ -129,6 +129,7 @@ function Table (props: Props) {
   const [bulkSelect, setBulkSelect] = useState(false);
   let checked = false;
   let indeterminate = false;
+  const noFieldsSelected = fieldMeta.order.active.length === 0;
 
   if (selectedRows.length === data.length || bulkSelect) {
     checked = true;
@@ -170,7 +171,7 @@ function Table (props: Props) {
         defaultSort,
         baseUrl
       )}
-      disabled={totalSize < 1 || totalSize >= 10000}
+      disabled={totalSize < 1 || totalSize >= 10000 || noFieldsSelected}
     >
       {downloading ? (
         <Loader
@@ -223,7 +224,7 @@ function Table (props: Props) {
         message={error}
         setMessage={setError}
       />
-      <Row>
+      <Row className="tol-table-bar">
         <Col md={12} lg={9}>
           {rowSelection &&
             <>
@@ -319,14 +320,14 @@ function Table (props: Props) {
               active={filterVisibility}
               variant="primary"
               onClick={ () => setFilterVisibility(!filterVisibility) }
-              disabled={fieldMeta.order.active.length === 0}
+              disabled={noFieldsSelected}
             >
-              <FontAwesomeIcon icon={faFilter} size="sm" />
+              <FontAwesomeIcon icon={faEyeSlash} size="sm" />
             </Button>
           }
           {!noDownload &&
             <>
-              {totalSize >= 10000 ? 
+              {totalSize >= 10000 ?
                 <div className="config-position-wrapper">
                   <HoverOverlay
                     contents="Only 10,000 results can currently be downloaded."
@@ -344,9 +345,8 @@ function Table (props: Props) {
           }
         </Col>
       </Row>
-      {fieldMeta.order.active.length === 0 ?
+      {noFieldsSelected ?
         <Placeholder
-          table
           message={
             <>
             Please add a field to get started. Click

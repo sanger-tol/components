@@ -249,7 +249,7 @@ function BarChart(props: Props) {
     <div style={{ height: height, paddingBottom: '20px' }}>
       <Row>
         <Col xs={6}>
-          <div className="chart-header-text">{title}</div>
+          <div className="header-text">{title}</div>
         </Col>
         <Col xs={6}>
           <div className="tol-chart-buttons">

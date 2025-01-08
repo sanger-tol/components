@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Zone } from "../boardNew";
+import { Zone } from "../board";
 import FilterTextInput from "./FilterTextInput";
 import FilterDatePicker from "./FilterDatePicker";
 import FilterMultiSelect from "./FilterMultiSelect";

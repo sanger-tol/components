@@ -9,3 +9,4 @@ export { default as MyBoardsHeader } from "./MyBoardsHeader";
 export { default as AccordionHeader } from "./AccordionHeader";
 export { default as Accordion } from "./Accordion";
 export { default as ConfirmationModal } from "./ConfirmationModal";
+export { default as NewBoardModal } from "./NewBoardModal";

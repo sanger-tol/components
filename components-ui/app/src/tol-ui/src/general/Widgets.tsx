@@ -66,8 +66,8 @@ function Widgets(props: Props) {
   const rowStyle = {
     marginLeft: 0,
     marginRight: 0,
-    paddingLeft: 12,
-    paddingRight: 12,
+    paddingLeft: 0,
+    paddingRight: 0,
     marginBottom: -16
   };
 

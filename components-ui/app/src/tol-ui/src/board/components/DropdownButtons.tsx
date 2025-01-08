@@ -33,6 +33,7 @@ interface Props {
   menuStyle?: object;
   globalDisabled?: boolean;
   dropdownButtons: DropdownButtonProps[] | any;
+  showMessages?: boolean;
 }
 
 function DropdownButtons(props: Props) {
@@ -42,6 +43,7 @@ function DropdownButtons(props: Props) {
     menuStyle,
     globalDisabled,
     dropdownButtons,
+    showMessages
   } = props;
 
   const toaster = Toaster();
@@ -73,9 +75,9 @@ function DropdownButtons(props: Props) {
     return async (...args) => {
       try {
         await fn(...args);
-        pushSuccess(name);
+        showMessages ?? pushSuccess(name);
       } catch (e: any) {
-        pushFailure(name);
+        showMessages ?? pushFailure(name);
         console.error(e);
       }
     }

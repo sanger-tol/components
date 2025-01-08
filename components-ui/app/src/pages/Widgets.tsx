@@ -4,8 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ResponsiveWidget, Widgets as W, env } from '../tol-ui/src';
-import { useZone } from '../tol-ui/src';
+import { Widgets as W } from '../tol-ui/src';
 
 
 const randomColour = () => "#" + ((1 << 24) * Math.random() | 0).toString(16).padStart(6, "0");
@@ -94,19 +93,11 @@ const components2 = {
 };
 
 function Widgets() {
-
-  const widgetsZone = useZone({
-    endpoint: 'species',
-    baseUrl: env.TOL_DATA,
-    components: []
-  });
-
   return (
     <div className="widgets">
       <W
         components={components}
       />
-      <ResponsiveWidget id='widgets-page' widgets={components2} draggable={true} {...widgetsZone}/>
     </div>
   );
 }

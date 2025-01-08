@@ -35,9 +35,11 @@
     box-shadow: 0 0 10px rgba(255, 255, 255, 1), 0 4px 4px rgba(255, 255, 255, 0.12) !important;
   }
 
+  .tol-table-bar {
+    margin-bottom: 6px;
+  }
+
   .tol-pagination {
-    margin-top: -2px;
-    margin-bottom: 10px;
     float: left;
   
     .rs-pagination-btn {

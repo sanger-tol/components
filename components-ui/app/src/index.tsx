@@ -20,11 +20,7 @@ import {
   Sunbursts,
   Widgets,
   UserId,
-  Messages,
-  DashboardPage,
-  NoAuthPageExample,
-  AuthPageExample,
-  MyBoards,
+  Messages
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown } from "./tol-ui/src";
@@ -62,21 +58,11 @@ const timelines: Page = {
   element: <Timelines />,
 };
 
-const widgets: Page = {
-  name: "Widgets",
-  element: <Widgets />,
-};
-
 // other
 const detail: Page = {
   name: "Detail",
   element: <Detail />,
   detail: <DetailInfo />,
-};
-
-const dashboardPage: Page = {
-  name: "Dashboard",
-  element: <DashboardPage />,
 };
 
 const forms: Page = {
@@ -94,40 +80,22 @@ const miscellaneous: Page = {
   element: <Miscellaneous />,
 };
 
-const dataSource: Page = {
+const tsds: Page = {
   name: "TsDataSource",
   element: <DataSource />,
 };
 
-const noAuthPage: Page = {
-  name: "AuthPage",
-  element: <NoAuthPageExample />,
-  authElement: <AuthPageExample />,
-};
-
-const myBoards: Page = {
-  name: "My Boards",
-  element: <MyBoards />,
-};
-
-const dashboarding: Dropdown = {
-  name: "Dashboarding",
-  pages: [dashboardPage, myBoards],
+const widgets: Page = {
+  name: "Widgets",
+  element: <Widgets />,
 };
 
 const otherDropdown: Dropdown = {
   name: "Other",
-  pages: [detail, forms, messages, miscellaneous, dataSource, noAuthPage],
+  pages: [detail, forms, messages, miscellaneous, tsds, widgets],
 };
 
-// auth
-const user: Page = {
-  name: "User",
-  element: <UserId />,
-  auth: true,
-};
-
-// dev sandbox
+// dev sandbox - change element if needed
 const sandbox: Page = {
   name: "Sandbox",
   element: <Sandbox />,
@@ -137,6 +105,7 @@ const sandbox: Page = {
 ReactDOM.render(
   // eslint-disable-line
   <TolApp
+    boards
     brand="Components"
     homePage={<Home />}
     pages={[
@@ -146,13 +115,9 @@ ReactDOM.render(
       filters,
       maps,
       timelines,
-      widgets,
-      dashboarding,
       otherDropdown,
-      user,
       sandbox,
     ]}
-    profileLinks={['/dashboarding/my-boards']}
   />,
   document.getElementById("root")
 );

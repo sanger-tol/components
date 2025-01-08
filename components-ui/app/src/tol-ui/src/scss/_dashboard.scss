@@ -4,8 +4,12 @@
  * SPDX-License-Identifier: MIT
  */
 
+// layout of the grid
+.tol-responsive-grid {
+  padding: 2px
+}
 
- .tol-responsive-widget {
+.tol-responsive-widget {
   @extend .tol-widget;
   margin: 0;
   position: relative;
@@ -30,23 +34,23 @@
   cursor: move;
 }
 
-.tol-responsive-grid {
-  margin: 0px;
-  border-radius: 6px;
-  position: relative;
+.tol-board-bar {
+  @extend .tol-widget;
+  margin-bottom: 10px;
+
+  .inline-edit {
+    color: var(--primary)
+  }
 }
 
-.tol-dashboard {
-  padding: 1px;
+.tol-zone-bar {
+  @extend .tol-widget;
+  border-radius: 0;
+  margin: 0;
+  padding: 12px 24px
 }
 
-.tol-zone {
-  background-color: var(--bs-body-darker);
-  padding: 1px;
-  margin: 8px;
-  border-radius: 6px;
-}
-
+// buttons and modals etc
 .inverted-config-button {
   float: right;
   padding: 0;
@@ -90,7 +94,15 @@
   fill: var(--primary);
 }
 
-.zone-config-button {
+// temp
+.add-zone-button {
+  @extend .edit-config-button;
+  position: absolute;
+  right: 24px;
+  top: 98px;
+}
+
+.edit-config-button {
   float: right;
   padding: 0;
   height: 30px;
@@ -98,29 +110,8 @@
   margin-left: 6px;
 }
 
-.tol-zone-bar {
-  background-color: var(--bs-body-bg);
-  padding: 8px;
-  margin: 0;
-  border-radius: 6px;
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-top: 10px;
-}
-
-.tol-view-bar {
-  @extend .tol-zone-bar;
-  margin-left: 18px;
-  margin-right: 18px;
-  margin-top: 0px;
-}
-
-.tol-board-title {
-  margin-bottom: 28px;
-}
-
 .tol-delete-warning {
-  @extend .zone-config-button;
+  @extend .edit-config-button;
   width: auto;
   padding-left: 5px;
   padding-right: 5px;
@@ -132,8 +123,21 @@
   }
 }
 
+.my-boards-container {
+  padding-left: 10px;
+  padding-right: 10px;
+  overflow: auto;
+  height: calc(100vh - 432px);
+}
+
+.my-boards-dropdown-buttons {
+  @media(prefers-color-scheme: dark) {
+    color: #fff;
+  }
+}
+
 .zone-edit-button {
-  @extend .zone-config-button;
+  @extend .edit-config-button;
   background-color: darkmagenta;
   border-color: darken(darkmagenta, 10%);
 }
@@ -211,55 +215,7 @@
   font-size: 14px;
 }
 
-
-.editable-title {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  resize: none; 
-  box-sizing: border-box;
-}
-
-.editable-title-read-mode {
-  display: block;
-  width: 100%;
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis;
-  font-weight: bolder !important; 
-  transition: color 0.3s ease; 
-}
-
-.editable-title-read-mode:hover {
-  color: var(--primary);
-}
-
-.editable-title textarea {
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-  border: none;
-  outline: none;
-  resize: none; 
-  box-sizing: border-box;
-  overflow: hidden;
-  white-space: nowrap; 
-  font-weight: bolder !important;
-}
-
-.title-size-sm {
-  font-size: 16px;
-  font-weight: bolder !important;
-}
-
-.title-size-md {
-  font-size: 24px;
-  font-weight: bolder !important;
-}
-
-.title-size-lg {
-  font-size: 32px;
+.inline-edit {
   font-weight: bolder !important;
 }
 

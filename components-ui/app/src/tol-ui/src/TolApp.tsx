@@ -31,19 +31,22 @@ import {
   matomoAnalytics,
 } from "./general/Utils";
 import { env } from "./variables/config";
+import { MyBoards, Board} from "./board";
+
 
 export interface Props {
   brand: string | JSX.Element;
   homePage: JSX.Element;
   pages: (Page | Dropdown)[];
+  profilePages?: Page[];
   login?: boolean;
+  boards?: boolean;
   register?: boolean;
   customCallbackUrl?: string;
-  profileLinks?: string[];
 }
 
 function TolApp(props: Props) {
-  const {customCallbackUrl} = props;
+  const { boards, customCallbackUrl } = props;
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
@@ -70,6 +73,18 @@ function TolApp(props: Props) {
     );
   }
 
+  // dealing with pages
+  let profilePages = props.profilePages;
+  if (boards) {
+    profilePages = [{
+      name: "My Boards",
+      element: <MyBoards />,
+      auth: true
+    }, ...(profilePages ?? [])]
+  }
+  const allPages = [...props.pages, ...(profilePages ?? [])]
+  const loggedIn = user && !tokenHasExpired();
+
   return (
     <div id="tol-app-background">
       <AuthProvider
@@ -84,10 +99,10 @@ function TolApp(props: Props) {
           <Navigation
             brand={props.brand}
             pages={props.pages}
+            profilePages={profilePages}
             login={login}
             register={register}
             customCallbackUrl={customCallbackUrl}
-            profileLinks={props.profileLinks}
           />
           <div className="tol-app">
             <Switch>
@@ -102,10 +117,25 @@ function TolApp(props: Props) {
               >
                 <Callback />
               </Route>
-              {props.pages.map((page) => {
+              {boards && loggedIn ? (
+                <Route
+                  path="/board/:boardId"
+                  component={Board}
+                />
+              ) : (
+                <Redirect to="/" />
+              )}
+              {boards && loggedIn ? (
+                <Route
+                  path="/board/:boardId/view/:viewId"
+                  component={Board}
+                />
+              ) : (
+                <Redirect to="/" />
+              )}
+              {allPages.map((page) => {
                 const path = convertToPath(page.name);
                 const routes = [];
-                const loggedIn = user && !tokenHasExpired();
                 const authorised = confirmAuthorised(
                   user,
                   page.auth,

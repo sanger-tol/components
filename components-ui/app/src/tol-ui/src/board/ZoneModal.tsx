@@ -94,9 +94,10 @@ function ZoneModal(props: Props) {
   const onAddZone = async() => {
     if (checkStates()) {
       const orders = zoneOrder.map((zone) => {
-        return zone.order
+        console.log(zone.order);
+        return zone.order;
       })
-      const nextOrder = Math.max(...orders) + 1;
+      const nextOrder = orders.length === 0 ? 1 : Math.max(...orders) + 1;
       const newZone: INewZone = await addZone(ds, objectType, title, nextOrder, viewId);
       setZones(
         [...zones,

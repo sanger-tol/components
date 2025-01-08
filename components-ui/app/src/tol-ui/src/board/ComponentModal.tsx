@@ -70,14 +70,14 @@ function ComponentModal(props: Props) {
     if (checkStates()) {
 
       const highestOrder = Object.values(zone.components).reduce((max, component) => {
-        return component.data.order > max ? component.data.order : max;
+        return component.data.order! > max ? component.data.order : max;
       }, 0);
-      const nextOrder = highestOrder + 1;
+      const nextOrder = highestOrder! + 1;
 
       //All components added are set with portal as baseUrl
       const newComponent = await addComponent(
         ds,
-        zone.type,
+        zone.type!,
         title,
         nextOrder,
         componentType,

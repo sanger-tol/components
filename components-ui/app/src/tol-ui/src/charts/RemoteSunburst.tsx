@@ -174,7 +174,7 @@ function RemoteSunburst(props: Props) {
   const configBar = (
     <Row>
       <Col xs={6}>
-        <p className="chart-header-text">{title}</p>
+        <p className="header-text">{title}</p>
       </Col>
       <Col xs={6}>
         <div className="tol-chart-buttons">

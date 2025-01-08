@@ -13,8 +13,8 @@ import {
   ResponsiveWidget, 
   env,
   ComponentModal,
-  EditableTitle,
-  useEffectUpdate
+  InlineEdit,
+  BoardFilters
 } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -24,12 +24,13 @@ import {
   faArrowDown,
   faPenToSquare,
   faCheck,
+  faFilter,
   faUpDownLeftRight,
   faFloppyDisk
 } from '@fortawesome/free-solid-svg-icons';
 import {
   getComponents,
-  onTitleSave
+  saveTitle
 } from './Utils';
 import { ConfirmationModal } from './components';
 
@@ -55,6 +56,7 @@ function ZoneGrid(props: Props) {
   const [currentWidgets, setCurrentWidgets] = useState<Widgets[]>([]);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openFilters, setOpenFilters] = useState(false);
   const [editBtnsVisible, setEditBtnsVisible] = useState(false);
   const [saveLayout, setSaveLayout] = useState(false);
   const z = useZone({
@@ -85,7 +87,7 @@ function ZoneGrid(props: Props) {
   );
 
   useEffect(() => {
-    getComponents(id, ds).then((res: any) => {
+    getComponents(id).then((res: any) => {
     // Sort the widgets based on the order value
     const sortedWidgets = res.sort((a, b) => a.order - b.order);
       setCurrentWidgets(res);
@@ -125,7 +127,7 @@ function ZoneGrid(props: Props) {
       onClick={() => {
         onAddComponent();
       }}
-      className='zone-config-button'
+      className='edit-config-button'
       variant="success"
     >
       <FontAwesomeIcon icon={faPlus} size="sm" />
@@ -137,7 +139,7 @@ function ZoneGrid(props: Props) {
       onClick={() => {
         handleOpenModal();
       }}
-      className={'zone-config-button'}
+      className='edit-config-button'
       variant="danger"
     >
       <FontAwesomeIcon icon={faTrash} size="sm" />
@@ -149,7 +151,7 @@ function ZoneGrid(props: Props) {
       onClick={async () => {
         await onZoneReorder(id, 'up');
       }}
-      className='zone-config-button'
+      className='edit-config-button'
     >
       <FontAwesomeIcon icon={faArrowUp} size="sm" />
     </Button>
@@ -160,7 +162,7 @@ function ZoneGrid(props: Props) {
       onClick={async () => {
         await onZoneReorder(id, 'down');
       }}
-      className='zone-config-button'
+      className='edit-config-button'
     >
       <FontAwesomeIcon icon={faArrowDown} size="sm" />
     </Button>
@@ -173,10 +175,20 @@ function ZoneGrid(props: Props) {
         setSaveLayout(true);
         setDraggable(false)
       }}
-      className='zone-config-button'
+      className='edit-config-button'
       variant="success"
     >
       <FontAwesomeIcon icon={faFloppyDisk} size="sm" />
+    </Button>
+  );
+
+  const filtersButton = (
+    <Button
+      onClick={() => setOpenFilters(true)}
+      className='edit-config-button'
+      disabled
+    >
+      <FontAwesomeIcon icon={faFilter} size="sm" />
     </Button>
   );
 
@@ -186,7 +198,7 @@ function ZoneGrid(props: Props) {
         handleBtnsVisible();
       }}
       variant="primary"
-      className="zone-config-button"
+      className="edit-config-button"
       style={{
         width: "60px",
         backgroundColor: editBtnsVisible ? "green" : "orange",
@@ -205,7 +217,7 @@ function ZoneGrid(props: Props) {
     <div className='tol-zone-bar'>
       <Row>
         <Col>
-          <EditableTitle title={props.title} onSave={(newTitle) => onTitleSave(newTitle, ds, id, 'zone')} size="sm"/>
+          <InlineEdit title={props.title} onSave={(newTitle) => saveTitle(newTitle, ds, id, 'zone')} size="md"/>
         </Col>
         <Col>
           <h6>
@@ -219,6 +231,7 @@ function ZoneGrid(props: Props) {
                 {editButton}
                 {downButton}
                 {upButton}
+                {filtersButton}
               </>
             ) : null}
             </>
@@ -262,18 +275,36 @@ function ZoneGrid(props: Props) {
         />
       ) : (
         <div className="tol-zone-empty">
-          {!editBtnsVisible ? (
+          {editBtnsVisible ?
             <p>
-              Click the {"   "}
-              {<FontAwesomeIcon icon={faPenToSquare} size="sm" />} to get
-              started.
+              Click the
+              <FontAwesomeIcon
+                icon={faPlus}
+                size="lg"
+                style={{padding: "0 8"}}
+              />
+              to add a new Component to the Zone.
             </p>
-          ) : (
-            <p>Click the + to add a new component.</p>
-          )}
+          :
+            <p>
+              Click the
+              <FontAwesomeIcon
+                icon={faPenToSquare}
+                size="lg"
+                style={{padding: "0 8"}}
+              />
+              to start editing the Zone.
+            </p>
+          }
         </div>
       )}
       {confirmationModal}
+      <BoardFilters
+        entityType="zone"
+        open={openFilters}
+        setOpen={setOpenFilters}
+        {...z}
+      />
     </div>
   );
     

@@ -25,13 +25,14 @@ import { confirmAuthorised } from "../services/auth/authService";
 import { LoginIcon, RegisterIcon } from "../general/Icons";
 import ProfileDropdown from "./ProfileDropdown";
 
+
 interface Props extends RouteComponentProps {
   brand: string | JSX.Element;
   pages: (Page | Dropdown)[];
+  profilePages?: Page[];
   login: boolean;
   register: boolean;
   customCallbackUrl?: string;
-  profileLinks?: string[];
 }
 
 interface Environment {
@@ -77,9 +78,7 @@ const getBackgroundClass = (environment: string): string => {
 };
 
 // on page change update returnUrl to page route
-
 function Navigation(props: Props) {
-
   const { setToken, user, setUser } = useAuth();
   const [environment, setEnvironment] = useState("");
   
@@ -209,7 +208,7 @@ function Navigation(props: Props) {
               <div className="nav-right">
                 <ProfileDropdown
                   user={user}
-                  profileLinks={props.profileLinks}
+                  pages={props.profilePages}
                   onLogout={logout}
                 />
               </div>

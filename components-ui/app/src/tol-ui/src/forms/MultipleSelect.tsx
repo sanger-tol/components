@@ -61,7 +61,7 @@ function MultipleSelect(props: Props) {
   } = props;
   const block = isPropDefined(props.block);
 
-  const formattedData = data.length > 0 && typeof data[0] === "string"
+  const formattedData: any = data.length > 0 && typeof data[0] === "string"
     ? data.map((i) => ({ label: i, value: i }))
     : data;
 

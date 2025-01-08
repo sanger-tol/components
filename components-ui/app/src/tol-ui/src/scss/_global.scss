@@ -29,6 +29,14 @@ a:hover {
   color: $primary-hover;
 }
 
+.header-text {
+  font-size: 14px;
+  font-weight: bolder;
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--bs-emphasis-color);
+}
+
 .centre {
   position: relative;
 	display: flex;
@@ -38,6 +46,7 @@ a:hover {
 
 .config-position-wrapper {
   float: right;
+  height: 25px;
 }
 
 // custom scrollbar

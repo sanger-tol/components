@@ -19,8 +19,7 @@ export { default as DetailInfo } from "./DetailInfo";
 export { default as UserId } from "./UserId";
 export { default as Timelines } from "./Timelines";
 export { default as Messages } from "./Messages";
-export { default as DashboardPage } from "./DashboardPage";
 export { default as AuthPageExample } from "./AuthPageExample";
 export { default as NoAuthPageExample } from "./NoAuthPageExample";
-export { default as MyBoards } from "./MyBoards";
+export { default as MyBoards } from "../tol-ui/src/board/MyBoards";
 

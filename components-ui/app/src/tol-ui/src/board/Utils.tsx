@@ -198,7 +198,7 @@ export function useTranslator(params: {
   }, [source.zone]);
 }
 
-export function getWidgetOrder(layout, widgets) {
+export function getWidgetOrder(layout: any) {
   // Sort the layout array by the 'y' property (and 'x' property in case of a tie)
   layout.sort((a, b) => a.y - b.y || a.x - b.x);
 
@@ -239,7 +239,7 @@ export async function getBoard(id: string, ds: any, user: any) {
 }
 
 async function getViews(id: string, ds: any) {
-  return await httpClient().get('/view_board',{
+  return await httpClient().get('/view_board', {
     params: {
       filter: {
         and_: {
@@ -280,13 +280,13 @@ export async function getZones(viewID: string, ds: any) {
     const ids: string[] = Array.from(new Set(res.data.data.map((zone: any) => zone.relationships.zone.data.id)));
     const zoneData = await getZoneData(ids, ds);
     return {
-      order: FormatZoneOrders(res.data.data),
+      order: formatZoneOrders(res.data.data),
       zones: zoneData,
     }
   });
 }
 
-function FormatZoneOrders(data: any) {
+function formatZoneOrders(data: any) {
   const formattedData = data.map((zone: any) => {
     return {
       zoneId: zone.relationships.zone.data.id,
@@ -297,7 +297,7 @@ function FormatZoneOrders(data: any) {
   return formattedData;
 }
 
-function FormatComponentOrders(data: any) {
+function formatComponentOrders(data: any) {
   const formattedData = data.map((component: any) => {
     return {
       componentId: component.relationships.component.data.id,
@@ -321,7 +321,7 @@ async function getZoneData(ids: string[], ds: any) {
   })
 }
 
-export function onTitleSave(title: string, ds: any, id: string, objectType: string) {
+export function saveTitle(title: string, ds: any, id: string, objectType: string) {
   ds.upsert({
     objectType: objectType,
     payload: [{
@@ -345,7 +345,7 @@ export async function getComponents(zoneId: string) {
     }
   }).then(async(res: any) => {
     // Removes duplicate values
-    return FormatComponentOrders(res.data.data)
+    return formatComponentOrders(res.data.data)
   });
 }
 
@@ -393,7 +393,60 @@ export const generateLayout = (components) => {
   return layout;
 }
 
-export async function addZone(ds: any, objectType: string, title: string, nextOrder: number, viewId: string) {
+export async function createBoardAndView(ds: TsDataSource, id: string, title: string, viewId: string, viewTitle: string) {
+  const user = getUserFromLocalStorage();
+  const boardId = id ?? generateId("b");
+  await ds.upsert({
+    objectType: 'board',
+    payload: [{
+      type: 'board',
+      id: boardId,
+      attributes: {
+        title: title,
+        filter: {},
+        user_id: user.id
+      },
+    }]
+  }).then(async () => {
+    return addView(ds, viewId, viewTitle);
+  }).then(async () => {
+    await ds.upsert({
+      objectType: 'view_board',
+      payload: [{
+        type: 'view_board',
+        attributes: {
+          order: 1,
+          board_id: boardId,
+          view_id: viewId
+        }
+      }]
+    }).catch((err: any) => {
+      console.error(err);
+    });
+  })
+}
+
+export async function addView(ds: TsDataSource, id: string, title: string) {
+  const user = getUserFromLocalStorage();
+  const viewId = id ?? generateId("v");
+  await ds.upsert({
+    objectType: 'view',
+    payload: [{
+      type: 'view',
+      id: viewId,
+      attributes: {
+        title: title,
+        filter: {},
+        user_id: user.id,
+      },
+    }]
+  }).catch((err: any) => {
+    console.error(err);
+  });
+}
+
+
+export async function addZone(ds: TsDataSource, objectType: string, title: string, nextOrder: number, viewId: string) {
   const user = getUserFromLocalStorage()
   const newId = generateId('z');
   await ds.upsert({
