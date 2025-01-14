@@ -10,6 +10,12 @@ export { Link };
 import { useToaster as Toaster, Form as RSForm } from 'rsuite'
 export { Toaster, RSForm };
 
+// FontAwesome icons
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+// Add icons to the library
+library.add(fas);
+
 // board
 export {
   useZone,
@@ -97,7 +103,9 @@ export {
   formatDate,
   InlineEdit,
   Drawer,
-  LoadingContent
+  LoadingContent,
+  Icon,
+  TolLoader
 } from "./general";
 
 // hooks

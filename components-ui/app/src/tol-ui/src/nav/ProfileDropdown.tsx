@@ -116,7 +116,7 @@ function ProfileDropdown(props: Props) {
     <NavDropdown
       className="profile-dropdown"
       title={<Avatar size="sm" circle>{avatarContent}</Avatar>}
-      placement="bottomEnd"
+      placement="bottom-end"
     >
       {userName && (
         <div className="profile-container">

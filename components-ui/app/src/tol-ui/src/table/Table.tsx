@@ -9,8 +9,8 @@ import {
   Button, 
   Row, 
   Col, 
-  Placeholder, 
-  Loader, 
+  Placeholder,
+  Loader,
   useEffectUpdate, 
   DropdownButtons 
 } from '../index';

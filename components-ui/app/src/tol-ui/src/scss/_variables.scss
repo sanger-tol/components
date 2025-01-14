@@ -27,6 +27,28 @@ $bs-body-color: var(--bs-body-color) !default;
 $bs-emphasis-color: var(--bs-emphasis-color) !default;
 $bs-body-darker: var(--bs-body-darker) !default;
 
+// TOL COLOURS (These are equivilant to the bootstrap colours)
+// (https://getbootstrap.com/docs/5.1/customize/css-variables/)
+$tol-primary: $primary !default;
+$tol-error: #dc3545 !default;
+$tol-success: #198754 !default;
+$tol-warning: #ffc107 !default;
+$tol-edit: #6f42c1 !default;
+
+// Lightened versions
+$primary-light: lighten($primary, 5%) !default;
+$tol-error-light: lighten($tol-error, 5%) !default;
+$tol-success-light: lighten($tol-success, 5%) !default;
+$tol-warning-light: lighten($tol-warning, 5%) !default;
+$tol-edit-light: lighten($tol-edit, 5%) !default;
+
+// Darkened versions
+$primary-dark: darken($primary, 10%) !default;
+$tol-error-dark: darken($tol-error, 10%) !default;
+$tol-success-dark: darken($tol-success, 10%) !default;
+$tol-warning-dark: darken($tol-warning, 10%) !default;
+$tol-edit-dark: darken($tol-edit, 10%) !default;
+
 // HOVER
 $grey-subtle: var(--bs-secondary-bg);
 $grey-emphasis: var(--bs-border-color) !default; // #808080
@@ -46,6 +68,20 @@ $placeholder: var(--rs-text-secondary) !default;
   --primary-opaque: #{$primary-opaque};
   --primary-hover: #{$primary-hover};
   --placeholder: #{$placeholder};
+  --tol-error: #{$tol-error};
+  --tol-success: #{$tol-success};
+  --tol-warning: #{$tol-warning};
+  --tol-edit: #{$tol-edit};
+  --primary-light: #{$primary-light};
+  --tol-error-light: #{$tol-error-light};
+  --tol-success-light: #{$tol-success-light};
+  --tol-warning-light: #{$tol-warning-light};
+  --tol-edit-light: #{$tol-edit-light};
+  --primary-dark: #{$primary-dark};
+  --tol-error-dark: #{$tol-error-dark};
+  --tol-success-dark: #{$tol-success-dark};
+  --tol-warning-dark: #{$tol-warning-dark};
+  --tol-edit-dark: #{$tol-edit-dark};
 
   // light mode variant
   --bs-body-darker: var(--grey-subtle);
