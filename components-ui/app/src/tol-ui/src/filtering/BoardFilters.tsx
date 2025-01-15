@@ -26,6 +26,7 @@ export interface Props {
 
 function BoardFilters(props: Props) {
   const { id, zone, setZone, entityType, endpoint, open, setOpen } = props;
+  const ds = new TsDataSource();
 
   // the fixed filter present on the component
   const [filter, setFilter] = useState(
@@ -36,11 +37,9 @@ function BoardFilters(props: Props) {
 
   const removeCurrentEntityFiltersForDisabledFilters = (source: object = {}, remove?: object) => {
     const keysToRemove = new Set(Object.keys(remove || {}));
-    const x = Object.fromEntries(
+    return Object.fromEntries(
       Object.entries(source).filter(([key]) => !keysToRemove.has(key))
     );
-    //console.log(x)
-    return x;
   };
 
   // getting the disabled filter values (currently all other entity filters)
@@ -77,7 +76,7 @@ function BoardFilters(props: Props) {
     setZone({...zone})
     setOpen(false);
 
-    new TsDataSource().upsert({
+    ds.upsert({
       objectType: entityType,
       payload: [{
         type: entityType,

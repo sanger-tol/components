@@ -59,6 +59,7 @@ function ZoneGrid(props: Props) {
   const [openFilters, setOpenFilters] = useState(false);
   const [editBtnsVisible, setEditBtnsVisible] = useState(false);
   const [saveLayout, setSaveLayout] = useState(false);
+
   const z = useZone({
     endpoint: objectType,
     baseUrl: env.TOL_DATA,
@@ -180,10 +181,9 @@ function ZoneGrid(props: Props) {
 
   const filtersButton = (
     <Button
-      onClick={() => setOpenFilters(true)}
-      className='edit-config-button'
-      disabled
-    >
+        onClick={() => setOpenFilters(true)}
+        className='edit-config-button'
+      >
       <FontAwesomeIcon icon={faFilter} size="sm" />
     </Button>
   );
@@ -213,17 +213,17 @@ function ZoneGrid(props: Props) {
     <div className='tol-zone-bar'>
       <Row>
         <Col>
-          <InlineEdit title={props.title} onSave={(newTitle) => saveTitle(newTitle, ds, id, 'zone')} size="md"/>
+          <InlineEdit title={props.title} onSave={(newTitle) => saveTitle(newTitle, ds, id, 'zone')}/>
         </Col>
         <Col>
           <h6>
           {!draggable ? (
             <>
+            {addButton}
             {showEditButtons}
             {editBtnsVisible ? (
               <>
                 {deleteButton}
-                {addButton}
                 {editButton}
                 {downButton}
                 {upButton}
