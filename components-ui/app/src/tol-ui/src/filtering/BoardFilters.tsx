@@ -10,7 +10,7 @@ import RemoteFilters from "./RemoteFilters";
 import { Drawer } from "../general";
 import { generateFilter } from "./Utils";
 import { deepCopy } from "../general/Utils";
-import { Button, TsDataSource } from "..";
+import { TsDataSource } from "..";
 
 
 export interface Props {

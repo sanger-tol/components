@@ -38,7 +38,8 @@ const getBoardDetails = async (id: string, setErrorMessage: any) => {
         },
       },
     });
-    const boardDetails = res.data.data.map((board: any) => ({
+    // @ts-ignore
+    const boardDetails: any = res!.data!.data!.map((board: any) => ({
         id: board.id,
         title: board.attributes.title,
     }));

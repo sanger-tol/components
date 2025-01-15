@@ -213,7 +213,7 @@ function ZoneGrid(props: Props) {
     <div className='tol-zone-bar'>
       <Row>
         <Col>
-          <InlineEdit title={props.title} onSave={(newTitle) => saveTitle(newTitle, ds, id, 'zone')} size="md"/>
+          <InlineEdit title={props.title} onSave={(newTitle) => saveTitle(newTitle, ds, id, 'zone')} />
         </Col>
         <Col>
           <h6>
