@@ -19,7 +19,6 @@ import {
   Sandbox,
   Sunbursts,
   Widgets,
-  UserId,
   Messages
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";

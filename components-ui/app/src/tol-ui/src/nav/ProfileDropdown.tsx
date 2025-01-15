@@ -28,7 +28,7 @@ function ProfileDropdown(props: Props) {
     const nameParts = name.split(' ');
     return nameParts.length >= 2
       ? `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase()
-      : name[0]?.toUpperCase() || '';
+      : name.substring(0,2)?.toUpperCase() || '';
   };
 
   const fetchOrcidProfile = async (orcidId: string) => {
@@ -65,8 +65,12 @@ function ProfileDropdown(props: Props) {
       setLoading(false); 
     } else {
       if (user?.oidc_id) {
-        const orcidId = user.oidc_id.split('/').pop();
-        fetchOrcidProfile(orcidId!);
+        if(user.oidc_id.includes('/')) {
+          const orcidId = user.oidc_id.split('/').pop();
+          fetchOrcidProfile(orcidId!);
+        } else {
+          setUserName(user.oidc_id.split('@').shift() || '');
+        }
       } else {
         setUserName(user.name || '');
         setPhotoUrl(null);
