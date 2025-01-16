@@ -20,6 +20,7 @@ function Sandbox() {
       text='TEST'
       size='md'
       outline
+      disabled
     />
   );
 }

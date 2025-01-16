@@ -4,10 +4,8 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button } from 'react-bootstrap';
+import { Button } from '..'
 import { Modal as RSModal } from 'rsuite';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons';
 
 
 export interface Props {
@@ -49,15 +47,18 @@ const Modal = (props: Props) => {
           {children}
         </RSModal.Body>
         <RSModal.Footer>
-          {closeButton &&
-            <Button variant="danger" onClick={handleClose}>
-              <FontAwesomeIcon icon={faXmark} size="sm" />
-            </Button>
-          }
           {actionButton &&
             <span style={{margin: "6px"}}>
               {actionButton}
             </span>
+          }
+          {closeButton &&
+            <Button
+              type="error"
+              onClick={handleClose}
+              icon='xmark'
+              position='right'
+            />
           }
         </RSModal.Footer>
       </RSModal>

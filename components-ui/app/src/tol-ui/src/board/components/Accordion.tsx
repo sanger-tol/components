@@ -11,7 +11,6 @@ import { DropdownButtonProps, DropdownMainIconProps } from "./DropdownButtons";
 import { httpClient } from "../../services";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEllipsisVertical,
   faChartSimple,
   faTable,
 } from "@fortawesome/free-solid-svg-icons";
@@ -188,14 +187,10 @@ function Accordion(props: BoardsAccordionProps) {
   };
 
   const boardOptionsButton: DropdownMainIconProps = {
-    mainIcon: (
-      <FontAwesomeIcon
-        icon={faEllipsisVertical}
-        size={"lg"}
-        className="my-boards-dropdown-buttons"
-      />
-    ),
-    style: { background: "transparent" },
+    outline: true,
+    type: "primary",
+    icon: 'ellipsis-v',
+    className:"my-boards-dropdown-buttons"
   };
 
   const dropdownButtons = (

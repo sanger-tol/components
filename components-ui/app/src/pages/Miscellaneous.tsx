@@ -46,7 +46,7 @@ function Miscellaneous() {
               Donec at ultricies velit.
           </p>
         </Modal>
-        <Button onClick = {() => setModalOpen(true)}>Example Modal</Button>
+        <Button onClick = {() => setModalOpen(true)} text='Example Modal'/>
           
         <h2 className='mt-5'>Info Tooltip</h2>
         <InfoTooltip contents={markdownString}/>

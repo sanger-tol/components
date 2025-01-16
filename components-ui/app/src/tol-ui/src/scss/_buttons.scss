@@ -8,50 +8,6 @@
 button.btn {
   font-size: 14px;
 }
-  
-.config-button {
-  color: var(--primary);
-  fill: var(--primary);
-  background-color: transparent;
-  border-color: var(--grey-emphasis);
-  padding: 0;
-  height: 30px;
-  width: 30px;
-}
-
-.config-button-left {
-  @extend .config-button;
-  float: left;
-  margin-right: 6px;
-}
-
-.config-button-right {
-  @extend .config-button;
-  float: right;
-  margin-left: 6px;
-}
-
-.config-button:hover {
-  border-color: var(--primary) !important;
-  text-decoration: none;
-  color: white;
-  fill: white;
-}
-
-.config-button:active {
-  border-color: var(--primary) !important;
-  text-decoration: none;
-  color: var(--primary);
-  fill: var(--primary);
-}
-
-.config-button:disabled {
-  background-color: var(--grey-emphasis) !important;
-  border-color: unset !important;
-  color: var(--bs-body-bg) !important;
-  fill: var(--bs-body-bg) !important;
-  background-color: transparent;
-}
 
 // This is used to generate the classes for the different types of icon buttons
 // Define the types and their specific background colors
@@ -66,8 +22,8 @@ $types: (
 
 // Define sizes and their specific dimensions
 $sizes: (
-  'md': (height: 32px),
-  'lg': (height: 38px)
+  'md': (height: 30px, min-width: 30px),
+  'lg': (height: 36px, min-width: 36px),
 );
 
 // Loop through the types and sizes
@@ -81,7 +37,7 @@ $sizes: (
       }
       border-style: solid !important;
       border-width: 1px;
-      border-color: var($color) !important;
+      border-color: var($color);
       background-color: var($color) !important;
       color: white;
 
@@ -144,6 +100,13 @@ $sizes: (
         } @else {
           padding: 9px;
         }
+      }
+      &.rs-btn.rs-btn-disabled {
+        background-color: var(--grey-emphasis) !important;
+        border-color: var(--grey-emphasis) !important;
+        color: var(--bs-body-bg) !important;
+        fill: var(--bs-body-bg) !important;
+        background-color: transparent;
       }
 
     }

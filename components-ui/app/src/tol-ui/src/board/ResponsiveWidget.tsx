@@ -7,8 +7,6 @@ SPDX-License-Identifier: MIT
 import { WidthProvider, Responsive, Layouts } from 'react-grid-layout';
 import { Button, Placeholder, Visualisation } from '../index';
 import { useState, useRef, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Zone, getWidgetOrder, generateLayout } from './Utils';
 import { ConfirmationModal } from './components';
 
@@ -173,11 +171,14 @@ function ResponsiveWidget(props: Props) {
             return (
               <div className='tol-draggable-widget' key={element.props.children.props.id}>
                 <Placeholder opacity={0.7} drag message={element.props.children.props.id}/>
-                <Button onClick={() => {
+                <Button 
+                onClick={() => {
                   handleOpenModal(element.props.children.props.id);
-                }} variant='danger' className='widget-delete-btn'>
-                  <FontAwesomeIcon icon={faTrash} size='sm'/>
-                </Button>
+                }} 
+                type='error' 
+                className='widget-delete-btn'
+                icon='trash'
+                />
                 {confirmationModal()}
               </div>
             );

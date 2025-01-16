@@ -7,9 +7,9 @@
 //@ts-nocheck
 
 import React from "react";
-import { Button, Dropdown } from "rsuite";
+import { Dropdown } from "rsuite";
 
-import { Toaster, Message } from '../../index';
+import { Toaster, Message, Button } from '../../index';
 
 export interface DropdownButtonProps {
   dropdownButtonName: string;
@@ -20,11 +20,13 @@ export interface DropdownButtonProps {
 }
 
 export interface DropdownMainIconProps {
-  mainIcon: React.ReactNode;
-  variant?: string;
+  icon: string;
+  type?: string;
   style?: object;
   className?: string;
   disabled?: boolean;
+  position?: string;
+  outline?: boolean;
 }
 
 interface Props {
@@ -87,14 +89,13 @@ function DropdownButtons(props: Props) {
     return (
       <Button
         {...props}
-        ref={ref}
-        appearance={mainButtonIcon.variant}
-        style={mainButtonIcon.style}
+        type={mainButtonIcon.type}
         className={mainButtonIcon.className}
         disabled={mainButtonIcon.disabled}
-      >
-        {mainButtonIcon.mainIcon}
-      </Button>
+        icon={mainButtonIcon.icon}
+        position={mainButtonIcon.position}
+        outline={mainButtonIcon.outline}
+      />
     );
   };
 

@@ -11,8 +11,6 @@ import { defineZone } from "../board/Utils";
 import Filter from "./Filter";
 import { IFilter } from "../models";
 import { Button, InfoTooltip, useEffectUpdate } from "..";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import MultipleSelect from "../forms/MultipleSelect";
 import { normaliseCaps } from "../general/Utils";
 
@@ -155,17 +153,19 @@ function RemoteFilters(props: Props) {
             <Button
               onClick={() => removeFilter(attribute)}
               className="remove-filter-button"
-              variant="danger"
-            >
-              <FontAwesomeIcon icon={faTrash} size="sm" />
-            </Button>
+              type="error"
+              icon="trash"
+            />
           </div>
         )
       })}
-      <Button disabled={disabledApplyButton} style={{marginTop: 30}} variant="success" onClick={() => onSave(filterZone?.components?.[filterComponentId]?.data?.filter)}>
-        Apply Filters
-        <FontAwesomeIcon style={{marginLeft: 6}} icon={faFloppyDisk} size="sm" />
-      </Button>
+      <Button 
+        disabled={disabledApplyButton}
+        type="success"
+        onClick={() => onSave(filterZone?.components?.[filterComponentId]?.data?.filter)}
+        text="Apply Filters"
+        icon="floppy-disk"
+      />
       
     </div>
   )

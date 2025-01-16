@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 // Direct package pass-throughs
-import { Container, Row, Col, Button, ButtonGroup, Form, Spinner } from 'react-bootstrap';
-export { Container, Row, Col, Form, Button, ButtonGroup, Spinner as Loader };
+import { Container, Row, Col, ButtonGroup, Form, Spinner } from 'react-bootstrap';
+export { Container, Row, Col, Form, ButtonGroup, Spinner as Loader };
 import { Link } from "react-router-dom";
 export { Link };
 import { useToaster as Toaster, Form as RSForm } from 'rsuite'
@@ -104,6 +104,7 @@ export {
   InlineEdit,
   Drawer,
   LoadingContent,
+  Button,
   Icon,
   TolLoader
 } from "./general";

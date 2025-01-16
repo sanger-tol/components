@@ -12,8 +12,6 @@ import {
   IFilter
 } from '../index';
 import { getZones } from "./Utils";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 
 interface ZoneObject {
@@ -132,16 +130,17 @@ function View(props: Props) {
   }
 
   const addButton = (
+    <div>
     <Button
       onClick={() => {
         setOpen(true)
       }}
-      variant='success'
+      type='success'
       className='add-zone-button' // temp placement
-      style={open ? {display: "none"} : {}} // to hide strange placement
-    >
-      <FontAwesomeIcon icon={faPlus} size='sm' />
-    </Button>
+      icon='plus'
+      position='right'
+    />
+    </div>
   );
 
   const getSortedZones = () => {

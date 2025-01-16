@@ -28,8 +28,6 @@ import {
   downloadItem
 } from "./Utils";
 import { isPropDefined, getCssVarValue } from "../general/Utils";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUndo, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { themeListener } from "../hooks/listeners";
 
 
@@ -255,25 +253,26 @@ function BarChart(props: Props) {
           <div className="tol-chart-buttons">
             {isPropDefined(setBarData) &&
               <Button
-                className="config-button-right"
-                variant="primary"
+                outline
+                position="right"
+                type="primary"
                 onClick={() => {
                   resetItemClickedData(setBarData);
                   setMaxHeight(null);
                   setDatasets(originDatasets);
                 }}
-              >
-                <FontAwesomeIcon icon={faUndo} size="sm" />
-              </Button>
+                icon="undo"
+              />
             }
             <Button
-              className="config-button-right"
-              variant="primary"
+              outline
+              position="right"
+              type="primary"
               onClick={() => {
                 downloadItem(props.id, downloadName);
-              }}>
-              <FontAwesomeIcon icon={faDownload} size="sm" />
-            </Button>
+              }}
+              icon="download"
+            />
           </div>
         </Col>
       </Row>

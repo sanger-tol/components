@@ -11,8 +11,6 @@ import {
   SingleSelect,
   env,
 } from '../index';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Form, InputGroup } from 'react-bootstrap';
 import { fetchObjectTypes, addZone } from './Utils';
 
@@ -121,9 +119,12 @@ function ZoneModal(props: Props) {
   };
 
   const plusButton = (
-    <Button variant="success" onClick={onAddZone}>
-      <FontAwesomeIcon icon={faPlus} size="sm" />
-    </Button>
+    <Button
+      position='right'
+      type="success"
+      onClick={onAddZone}
+      icon='plus'
+    />
   );
 
   return(

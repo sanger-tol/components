@@ -10,7 +10,7 @@ import { TolLoader, HoverOverlay, Icon } from '../index';
 
 interface Props {
   icon?: string,
-  onClick: () => void,
+  onClick?: () => void,
   className?: string,
   text?: string,
   disabled?: boolean,
@@ -22,7 +22,6 @@ interface Props {
   disabledTooltip?: string,
   loading?: boolean,
   outline?: boolean,
-  children?: React.ReactNode
 }
 
 function Button(props: Props) {
@@ -39,7 +38,7 @@ function Button(props: Props) {
     tooltip,
     disabledTooltip,
     loading,
-    outline
+    outline,
   } = props;
 
   const outlineClass = outline ? '-outline' : '';
@@ -55,15 +54,17 @@ function Button(props: Props) {
       onClick={onClick}
       disabled={disabled || loading}
       active={active}
-      className={`icon-button-${type || 'config'}-${size || 'md'}${outlineClass} ${className}`}
+      className={`icon-button-${type || 'primary'}-${size || 'md'}${outlineClass} ${className}`}
     >
       {loading ? (
       loader
     ) : (
       <>
-        <div style={{ marginRight: '5px' }}>
-          <Icon icon={icon} size={size} />
-        </div>
+      {icon && (
+        <div className='bttn-icon-div'>
+        <Icon icon={icon} size={size} />
+      </div>
+      )}
         {text}
       </>
     )}
@@ -77,7 +78,7 @@ function Button(props: Props) {
     style={{ 
       float: position,
       marginLeft: position === 'right' ? '6px' : '0px', 
-      marginRight: position === 'left' ? '6px' : '0px' 
+      marginRight: position === 'left' ? '6px' : '0px'
     }}
     >
       {contents ? (

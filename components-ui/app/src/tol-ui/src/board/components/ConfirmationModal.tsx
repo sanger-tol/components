@@ -5,7 +5,7 @@
  */
 
 import Modal from "../../general/Modal";
-import { Button } from "rsuite";
+import { Button } from '../../index';
 
 interface Props {
   setOpen: any;
@@ -16,21 +16,23 @@ interface Props {
 
 function ConfirmationModal(props: Props) {
   const { setOpen, open, onConfirmClick, itemType } = props;
-
+ 
   const actionButtons = (
-    <div>
+    <div style={{paddingBottom: '35px'}}>
       <Button
-        color={"green"}
-        appearance={"ghost"}
+        position="right"
+        type='success'
         onClick={() => {
           setOpen(false), onConfirmClick();
         }}
-      >
-        Confirm
-      </Button>
-      <Button color={"red"} appearance={"ghost"} onClick={() => setOpen(false)}>
-        Cancel
-      </Button>
+        text="Confirm"
+      />
+      <Button
+        position="right"
+        type='error'
+        onClick={() => setOpen(false)}
+        text="Cancel"
+      />
     </div>
   );
 

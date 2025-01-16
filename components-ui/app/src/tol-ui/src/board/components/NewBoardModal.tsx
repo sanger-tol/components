@@ -6,10 +6,9 @@
 
 import { useEffect, useState } from "react";
 import Modal from "../../general/Modal";
-import { Button } from "rsuite";
 import { generateId } from "../../general/Utils";
 import { FormTextField } from "../../forms";
-import { RSForm } from "../../index";
+import { RSForm, Button } from "../../index";
 
 interface Props {
   setOpen: any;
@@ -30,20 +29,22 @@ function NewBoardModal(props: Props) {
   }, []);
 
   const actionButtons = (
-    <div>
+    <div className="new-board-modal-bttns">
       <Button
-        color={"green"}
-        appearance={"ghost"}
+        type="success"
+        outline
         disabled={boardTitle === "" || viewTitle === ""}
         onClick={() => {
           setOpen(false), onConfirmClick(boardId, viewId, boardTitle, viewTitle);
         }}
-      >
-        Confirm
-      </Button>
-      <Button color={"red"} appearance={"ghost"} onClick={() => setOpen(false)}>
-        Cancel
-      </Button>
+        text="Confirm"
+      />
+      <Button
+        type="error"
+        outline
+        onClick={() => setOpen(false)}
+        text="Cancel"
+      />
     </div>
   );
 

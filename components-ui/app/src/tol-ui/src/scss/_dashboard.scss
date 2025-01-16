@@ -96,8 +96,8 @@
 
 // temp
 .add-zone-button {
-  @extend .edit-config-button;
-  position: absolute;
+  //@extend .edit-config-button;
+  position: fixed;
   right: 24px;
   top: 98px;
 }
@@ -217,6 +217,11 @@
 
 .inline-edit {
   font-weight: bolder !important;
+}
+
+.new-board-modal-bttns {
+  display: flex;
+  align-items: center;
 }
 
 .character-counter {

@@ -77,7 +77,13 @@ function Filters() {
         entityType="zone"
         {...speciesZone}
       />
-      <Button style={{margin: "10px 0 10px 0"}} onClick={() => resetZone(speciesZone)}>Reset</Button>
+      <div style={{margin: "10px 0 10px 0"}}>
+        <Button
+          type='primary'
+          onClick={() => resetZone(speciesZone)}
+          text='Reset'
+        />
+      </div>
       <p style={{marginBottom: 3}}>Filter Level 1:</p>
       <Filter
         attribute='sts_family'

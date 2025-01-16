@@ -18,15 +18,8 @@ import {
 } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTrash,
   faPlus,
-  faArrowUp,
-  faArrowDown,
   faPenToSquare,
-  faCheck,
-  faFilter,
-  faUpDownLeftRight,
-  faFloppyDisk
 } from '@fortawesome/free-solid-svg-icons';
 import {
   getComponents,
@@ -108,84 +101,88 @@ function ZoneGrid(props: Props) {
 
   const editButton = (
     <Button
+      outline
       onClick={() => {
         setDraggable(!draggable);
       }}
       disabled={currentWidgets.length < 1}
-      className="zone-edit-button"
-    >
-      <FontAwesomeIcon icon={faUpDownLeftRight} size="sm" />
-    </Button>
+      type='edit'
+      icon='up-down-left-right'
+      position='right'
+    />
   );
 
   const addButton = (
     <Button
+      outline
       onClick={() => {
         onAddComponent();
       }}
-      className='edit-config-button'
-      variant="success"
-    >
-      <FontAwesomeIcon icon={faPlus} size="sm" />
-    </Button>
+      type="success"
+      icon='plus'
+      position='right'
+    />
   );
 
   const deleteButton = (
     <Button
+      outline
       onClick={() => {
         handleOpenModal();
       }}
-      className='edit-config-button'
-      variant="danger"
-    >
-      <FontAwesomeIcon icon={faTrash} size="sm" />
-    </Button>
+      type="error"
+      icon='trash'
+      position='right'
+    />
   );
 
   const upButton = (
     <Button
+      outline
       onClick={async () => {
         await onZoneReorder(id, 'up');
       }}
-      className='edit-config-button'
-    >
-      <FontAwesomeIcon icon={faArrowUp} size="sm" />
-    </Button>
+      type='primary'
+      icon='arrow-up'
+      position='right'
+    />
   );
   
   const downButton = (
     <Button
+      outline
       onClick={async () => {
         await onZoneReorder(id, 'down');
       }}
-      className='edit-config-button'
-    >
-      <FontAwesomeIcon icon={faArrowDown} size="sm" />
-    </Button>
+      type='primary'
+      icon='arrow-down'
+      position='right'
+    />
   );
 
   const saveButton = (
     <Button
+      outline
       onClick={() => {
         setDraggable(!draggable);
         setSaveLayout(true);
         setDraggable(false)
       }}
-      className='edit-config-button'
-      variant="success"
-    >
-      <FontAwesomeIcon icon={faFloppyDisk} size="sm" />
-    </Button>
+      type="success"
+      icon='floppy-disk'
+      position='right'
+    />
   );
 
   const filtersButton = (
     <Button
+      outline
       onClick={() => setOpenFilters(true)}
-      className='edit-config-button'
       disabled
-    >
-      <FontAwesomeIcon icon={faFilter} size="sm" />
-    </Button>
+      type='primary'
+      icon='filter'
+      position='right'
+    />
   );
 
   const showEditButtons = (
@@ -193,20 +190,10 @@ function ZoneGrid(props: Props) {
       onClick={() => {
         handleBtnsVisible();
       }}
-      variant="primary"
-      className="edit-config-button"
-      style={{
-        width: "60px",
-        backgroundColor: editBtnsVisible ? "green" : "orange",
-        borderColor: editBtnsVisible ? "green" : "orange",
-      }}
-    >
-      {editBtnsVisible ? (
-        <FontAwesomeIcon icon={faCheck} size="sm" />
-      ) : (
-        <FontAwesomeIcon icon={faPenToSquare} size="sm" />
-      )}
-    </Button>
+      type={editBtnsVisible ? "success" : "warning"}
+      icon={editBtnsVisible ? 'check' : 'pen-to-square'}
+      position='right'
+    />
   );
 
   const buttons = (

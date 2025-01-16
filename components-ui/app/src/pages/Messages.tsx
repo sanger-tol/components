@@ -126,8 +126,11 @@ function Messages() {
           placeholder="Select a type for the toast..."
           setValue={setToastType}
         />
-        <Button style={{ margin: "auto", width: "30%" }} variant={"success"}
-          onClick={() => toaster.push(toastMessage, { placement: toastPosition, duration: 5000 })}>Show Toast/Alert</Button>
+        <Button 
+          type={"success"}
+          onClick={() => toaster.push(toastMessage, { placement: toastPosition, duration: 5000 })}
+          text='Show Toast'
+        />
       </div>
     </div>
   );
@@ -207,8 +210,10 @@ function Messages() {
         onChange={setValue}
         value={value}
       />
-      <Button style={{ margin: "auto", width: "30%", display: "flex", justifyContent: "center", marginTop: "20px" }} variant={"success"}
-        onClick={() => sendNotification(value)}>Send Notification</Button>
+      <div style={{ margin: "auto", width: "30%", display: "flex", justifyContent: "center", marginTop: "20px" }}>
+      <Button type={"success"}
+        onClick={() => sendNotification(value)} text='Send Notification'/>
+      </div>
     </div>
   );
 

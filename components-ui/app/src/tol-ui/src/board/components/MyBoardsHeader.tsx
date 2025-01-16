@@ -6,8 +6,6 @@
 
 import { useState } from "react";
 import { DropdownButtons, NewBoardModal } from "./index";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { DropdownButtonProps, DropdownMainIconProps } from "./DropdownButtons";
 import { useHistory } from "react-router-dom";
 import { createBoardAndView } from "../Utils";
@@ -80,7 +78,8 @@ function MyBoardsHeader(props: Props) {
   );
 
   const defaultDropdownMainIcon = {
-    mainIcon: <FontAwesomeIcon icon={faPlus} size="lg" />,
+    icon: 'plus',
+    type: 'success'
   };
 
   const {
