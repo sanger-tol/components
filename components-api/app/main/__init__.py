@@ -151,7 +151,7 @@ def application():
         actions_bp,
         url_prefix=os.environ['API_PATH'] + '/run-action'
     )
-    
+
     # dashboards
     boards_bp = board_blueprint(sql_datasource)
     app.register_blueprint(
