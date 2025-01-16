@@ -73,7 +73,7 @@ function ZoneModal(props: Props) {
 
   async function getObjectTypes() {
     try {
-      const ret = (await fetchObjectTypes(env.TOL_DATA));
+      const ret = (await fetchObjectTypes());
       setObjectTypesList(ret);
       return ret;
     } catch (error) {

@@ -210,16 +210,14 @@ export function getWidgetOrder(layout: any) {
   };
 }
 
-async function getObjectTypes(baseUrl?: string) {
-  const res = await httpClient().get('/_config/attribute_types', {
-    baseURL: baseUrl ?? ""
-  });
+async function getObjectTypes() {
+  const res = await httpClient().get('/_config/attribute_types');
   // @ts-ignore
   return Object.keys(res.data);
 }
 
-export async function fetchObjectTypes(baseUrl?: string) {
-  return await getObjectTypes(baseUrl);
+export async function fetchObjectTypes() {
+  return await getObjectTypes();
 }
 
 export async function getBoard(id: string, ds: any, user: any) {
