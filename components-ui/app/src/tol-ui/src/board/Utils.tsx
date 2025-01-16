@@ -13,7 +13,6 @@ import { IFilter } from '../models/Filter';
 import { getUserFromLocalStorage } from '../services/localStorage/localStorageService';
 import { TsDataSource } from '../services';
 
-
 export interface Component {
   data: ComponentData
 }
@@ -104,6 +103,9 @@ export const exampleBoard: Board = {
   order: ['viewIdOne']
 };
 */
+
+const BOARD_ENDPOINTS = ['board', 'view', 'zone', 'component', 'view_board', 'component_zone', 'zone_view'];
+const MISC_ENDPOINTS = ['user', 'user_action', 'action', 'singular']
 
 export function defineComponent(component: ComponentData, zone: Zone) {
   // setting default as empty if no filter provided
@@ -211,9 +213,11 @@ export function getWidgetOrder(layout: any) {
 }
 
 async function getObjectTypes() {
-  const res = await httpClient().get('/_config/attribute_types');
+  const res = await httpClient().get('/_config/attribute_types', {
+    params: {}
+  });
   // @ts-ignore
-  return Object.keys(res.data);
+  return Object.keys(res.data).filter(key => ![...BOARD_ENDPOINTS, ...MISC_ENDPOINTS].includes(key) );
 }
 
 export async function fetchObjectTypes() {
