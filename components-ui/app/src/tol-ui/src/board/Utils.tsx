@@ -214,7 +214,6 @@ export function getWidgetOrder(layout: any) {
 
 async function getObjectTypes() {
   const res = await httpClient().get('/_config/attribute_types', {
-    params: {}
   });
   // @ts-ignore
   return Object.keys(res.data).filter(key => ![...BOARD_ENDPOINTS, ...MISC_ENDPOINTS].includes(key) );
