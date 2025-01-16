@@ -9,7 +9,6 @@ import {
   Button, 
   Modal,
   SingleSelect,
-  env,
 } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
