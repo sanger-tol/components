@@ -127,9 +127,11 @@ def application():
     core_data_object(sql_datasource)
 
     # Data endpoints
-    blueprint_data_local = data_blueprint(sql_datasource)
-    app.register_blueprint(blueprint_data_local, name='local',
-                           url_prefix=os.getenv('API_PATH'))
+    blueprint_data_local = data_blueprint(
+        sql_datasource,
+        url_prefix=os.getenv('API_PATH'),
+    )
+    app.register_blueprint(blueprint_data_local, name='local')
 
     # The system endpoints
     blueprint_system = system_blueprint()
