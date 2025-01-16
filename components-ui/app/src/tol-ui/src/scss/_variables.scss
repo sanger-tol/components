@@ -4,108 +4,209 @@
  * SPDX-License-Identifier: MIT
  */
 
-/*
-If you need to make variable colour changes, please only change the
-values marked 'VALUE CAN BE MODIFIED' and not the actual variables.
-*/
-
-// colours
-$tol-primary: #039be5 !default; // VALUE CAN BE MODIFIED
+// ToL Vaiables
+$tol-primary: #039be5 !default;
 $tol-primary-opaque: rgba($tol-primary, 0.1) !default;
-$tol-primary-light: lighten($tol-primary, 10%) !default;
-$tol-primary-dark: darken($tol-primary, 10%) !default;
+$tol-primary-light: lighten($tol-primary, 15%) !default;
+$tol-primary-dark: darken($tol-primary, 15%) !default;
 
-$tol-info: $tol-primary !default; // VALUE CAN BE MODIFIED
+$tol-info: $tol-primary !default;
 $tol-info-opaque: rgba($tol-info, 0.1) !default;
-$tol-info-light: lighten($tol-info, 10%) !default;
-$tol-info-dark: darken($tol-info, 10%) !default;
+$tol-info-light: lighten($tol-info, 15%) !default;
+$tol-info-dark: darken($tol-info, 15%) !default;
 
-$tol-success: green !default; // VALUE CAN BE MODIFIED
+$tol-success: green !default;
 $tol-success-opaque: rgba($tol-success, 0.1) !default;
-$tol-success-light: lighten($tol-success, 10%) !default;
-$tol-success-dark: darken($tol-success, 10%) !default;
+$tol-success-light: lighten($tol-success, 15%) !default;
+$tol-success-dark: darken($tol-success, 15%) !default;
 
-$tol-warning: orange !default; // VALUE CAN BE MODIFIED
+$tol-warning: orange !default;
 $tol-warning-opaque: rgba($tol-warning, 0.1) !default;
-$tol-warning-light: lighten($tol-warning, 10%) !default;
-$tol-warning-dark: darken($tol-warning, 10%) !default;
+$tol-warning-light: lighten($tol-warning, 15%) !default;
+$tol-warning-dark: darken($tol-warning, 15%) !default;
 
-$tol-error: red !default; // VALUE CAN BE MODIFIED
-$tol-error-opaque: rgba($tol-error, 0.1) !default;
-$tol-error-light: lighten($tol-error, 10%) !default;
-$tol-error-dark: darken($tol-error, 10%) !default;
+$tol-danger: red !default;
+$tol-danger-opaque: rgba($tol-danger, 0.1) !default;
+$tol-danger-light: lighten($tol-danger, 15%) !default;
+$tol-danger-dark: darken($tol-danger, 15%) !default;
 
-$tol-royal: purple !default; // VALUE CAN BE MODIFIED
-$tol-royal-opaque: rgba($tol-royal, 0.1) !default;
-$tol-royal-light: lighten($tol-royal, 10%) !default;
-$tol-royal-dark: darken($tol-royal, 10%) !default;
-
-$tol-grey: grey !default; // VALUE CAN BE MODIFIED
+$tol-grey: grey !default;
 $tol-grey-opaque: rgba($tol-grey, 0.1) !default;
-$tol-grey-light: lighten($tol-grey, 10%) !default;
-$tol-grey-dark: darken($tol-grey, 10%) !default;
+$tol-grey-light: lighten($tol-grey, 15%) !default;
+$tol-grey-dark: darken($tol-grey, 15%) !default;
 
-// general
-$tol-bg: white !default; // VALUE CAN BE MODIFIED
-$tol-bg-dark: #e7eaed !default; // VALUE CAN BE MODIFIED
-$tol-text: #212529 !default; // VALUE CAN BE MODIFIED
-$tol-emphasis: black !default; // VALUE CAN BE MODIFIED
+$tol-royal: purple !default;
+$tol-royal-opaque: rgba($tol-royal, 0.1) !default;
+$tol-royal-light: lighten($tol-royal, 15%) !default;
+$tol-royal-dark: darken($tol-royal, 15%) !default;
 
-@media (prefers-color-scheme: dark) {
-  $tol-bg: #192234 !default; // VALUE CAN BE MODIFIED
-  $tol-bg-dark: #020c12 !default; // VALUE CAN BE MODIFIED
-  $tol-text: #dee1e5 !default; // VALUE CAN BE MODIFIED
-  $tol-emphasis: white !default; // VALUE CAN BE MODIFIED
-}
+$tol-bg: white !default;
+$tol-bg-dark: #e7eaed !default;
+$tol-text: #212529 !default;
+$tol-emphasis: black !default;
 
-// css variable conversion
+// ToL CSS Variable Conversion
 :root {
-  --primary: #{$tol-primary};
-  --primary-opaque: #{$tol-primary-opaque};
-  --primary-light: #{$tol-primary-light};
-  --primary-dark: #{$tol-primary-dark};
+  --tol-primary: #{$tol-primary};
+  --tol-primary-opaque: #{$tol-primary-opaque};
+  --tol-primary-light: #{$tol-primary-light};
+  --tol-primary-dark: #{$tol-primary-dark};
 
-  --info: #{$tol-info};
-  --info-opaque: #{$tol-info-opaque};
-  --info-light: #{$tol-info-light};
-  --info-dark: #{$tol-info-dark};
+  --tol-info: #{$tol-info};
+  --tol-info-opaque: #{$tol-info-opaque};
+  --tol-info-light: #{$tol-info-light};
+  --tol-info-dark: #{$tol-info-dark};
 
-  --success: #{$tol-success};
-  --success-opaque: #{$tol-success-opaque};
-  --success-light: #{$tol-success-light};
-  --success-dark: #{$tol-success-dark};
+  --tol-success: #{$tol-success};
+  --tol-success-opaque: #{$tol-success-opaque};
+  --tol-success-light: #{$tol-success-light};
+  --tol-success-dark: #{$tol-success-dark};
 
-  --warning: #{$tol-warning};
-  --warning-opaque: #{$tol-warning-opaque};
-  --warning-light: #{$tol-warning-light};
-  --warning-dark: #{$tol-warning-dark};
+  --tol-warning: #{$tol-warning};
+  --tol-warning-opaque: #{$tol-warning-opaque};
+  --tol-warning-light: #{$tol-warning-light};
+  --tol-warning-dark: #{$tol-warning-dark};
 
-  --error: #{$tol-error};
-  --error-opaque: #{$tol-error-opaque};
-  --error-light: #{$tol-error-light};
-  --error-dark: #{$tol-error-dark};
+  --tol-danger: #{$tol-danger};
+  --tol-danger-opaque: #{$tol-danger-opaque};
+  --tol-danger-light: #{$tol-danger-light};
+  --tol-danger-dark: #{$tol-danger-dark};
 
-  --grey: #{$tol-grey};
-  --grey-opaque: #{$tol-grey-opaque};
-  --grey-light: #{$tol-grey-light};
-  --grey-dark: #{$tol-grey-dark};
+  --tol-grey: #{$tol-grey};
+  --tol-grey-opaque: #{$tol-grey-opaque};
+  --tol-grey-light: #{$tol-grey-light};
+  --tol-grey-dark: #{$tol-grey-dark};
 
-  --royal: #{$tol-royal};
-  --royal-opaque: #{$tol-royal-opaque};
-  --royal-light: #{$tol-royal-light};
-  --royal-dark: #{$tol-royal-dark};
+  --tol-royal: #{$tol-royal};
+  --tol-royal-opaque: #{$tol-royal-opaque};
+  --tol-royal-light: #{$tol-royal-light};
+  --tol-royal-dark: #{$tol-royal-dark};
 
-  --bg: #{$tol-bg};
-  --bg-dark: #{$tol-bg-dark};
-  --text: #{$tol-text};
-  --emphasis: #{$tol-emphasis};
+  --tol-bg: #{$tol-bg};
+  --tol-bg-dark: #{$tol-bg-dark};
+  --tol-text: #{$tol-text};
+  --tol-emphasis: #{$tol-emphasis};
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #{$tol-bg};
-    --bg-dark: #{$tol-bg-dark};
-    --text: #{$tol-text};
-    --emphasis: #{$tol-emphasis};
+    --tol-bg: #1d222b;
+    --tol-bg-dark: #13151a;
+    --tol-text: #dee1e5;
+    --tol-emphasis: white;
   }
+}
+
+// React Bootstrap Main Override Variables
+$primary: $tol-primary !default;
+$secondary: $tol-primary !default;
+$success: $tol-success !default;
+$info: $tol-primary !default;
+$warning: $tol-warning !default;
+$danger: $tol-danger !default;
+
+:root {
+  --bs-body-bg: var(--tol-bg) !important;
+  --bs-body-color: var(--tol-text) !important;
+  --bs-emphasis-color: var(--tol-emphasis) !important;
+}
+
+// RSuite Main Override Variables
+:root {
+  --rs-primary-50: var(--tol-primary-light) !important;
+  --rs-primary-100: var(--tol-primary-light) !important;
+  --rs-primary-200: var(--tol-primary-light) !important;
+  --rs-primary-300: var(--tol-primary) !important;
+  --rs-primary-400: var(--tol-primary) !important;
+  --rs-primary-500: var(--tol-primary) !important;
+  --rs-primary-600: var(--tol-primary) !important;
+  --rs-primary-700: var(--tol-primary-dark) !important;
+  --rs-primary-800: var(--tol-primary-dark) !important;
+  --rs-primary-900: var(--tol-primary-dark) !important;
+
+  --rs-red-50: var(--tol-danger-light) !important;
+  --rs-red-100: var(--tol-danger-light) !important;
+  --rs-red-200: var(--tol-danger-light) !important;
+  --rs-red-300: var(--tol-danger) !important;
+  --rs-red-400: var(--tol-danger) !important;
+  --rs-red-500: var(--tol-danger) !important;
+  --rs-red-600: var(--tol-danger) !important;
+  --rs-red-700: var(--tol-danger-dark) !important;
+  --rs-red-800: var(--tol-danger-dark) !important;
+  --rs-red-900: var(--tol-danger-dark) !important;
+
+  --rs-orange-50: var(--tol-warning-light) !important;
+  --rs-orange-100: var(--tol-warning-light) !important;
+  --rs-orange-200: var(--tol-warning-light) !important;
+  --rs-orange-300: var(--tol-warning) !important;
+  --rs-orange-400: var(--tol-warning) !important;
+  --rs-orange-500: var(--tol-warning) !important;
+  --rs-orange-600: var(--tol-warning) !important;
+  --rs-orange-700: var(--tol-warning-dark) !important;
+  --rs-orange-800: var(--tol-warning-dark) !important;
+  --rs-orange-900: var(--tol-warning-dark) !important;
+
+  --rs-yellow-50: var(--tol-warning-light) !important;
+  --rs-yellow-100: var(--tol-warning-light) !important;
+  --rs-yellow-200: var(--tol-warning-light) !important;
+  --rs-yellow-300: var(--tol-warning) !important;
+  --rs-yellow-400: var(--tol-warning) !important;
+  --rs-yellow-500: var(--tol-warning) !important;
+  --rs-yellow-600: var(--tol-warning) !important;
+  --rs-yellow-700: var(--tol-warning-dark) !important;
+  --rs-yellow-800: var(--tol-warning-dark) !important;
+  --rs-yellow-900: var(--tol-warning-dark) !important;
+
+  --rs-green-50: var(--tol-success-light) !important;
+  --rs-green-100: var(--tol-success-light) !important;
+  --rs-green-200: var(--tol-success-light) !important;
+  --rs-green-300: var(--tol-success) !important;
+  --rs-green-400: var(--tol-success) !important;
+  --rs-green-500: var(--tol-success) !important;
+  --rs-green-600: var(--tol-success) !important;
+  --rs-green-700: var(--tol-success-dark) !important;
+  --rs-green-800: var(--tol-success-dark) !important;
+  --rs-green-900: var(--tol-success-dark) !important;
+
+  --rs-cyan-50: var(--tol-primary-light) !important;
+  --rs-cyan-100: var(--tol-primary-light) !important;
+  --rs-cyan-200: var(--tol-primary-light) !important;
+  --rs-cyan-300: var(--tol-primary) !important;
+  --rs-cyan-400: var(--tol-primary) !important;
+  --rs-cyan-500: var(--tol-primary) !important;
+  --rs-cyan-600: var(--tol-primary) !important;
+  --rs-cyan-700: var(--tol-primary-dark) !important;
+  --rs-cyan-800: var(--tol-primary-dark) !important;
+  --rs-cyan-900: var(--tol-primary-dark) !important;
+
+  --rs-blue-50: var(--tol-primary-light) !important;
+  --rs-blue-100: var(--tol-primary-light) !important;
+  --rs-blue-200: var(--tol-primary-light) !important;
+  --rs-blue-300: var(--tol-primary) !important;
+  --rs-blue-400: var(--tol-primary) !important;
+  --rs-blue-500: var(--tol-primary) !important;
+  --rs-blue-600: var(--tol-primary) !important;
+  --rs-blue-700: var(--tol-primary-dark) !important;
+  --rs-blue-800: var(--tol-primary-dark) !important;
+  --rs-blue-900: var(--tol-primary-dark) !important;
+
+  --rs-violet-50: var(--tol-royal-light) !important;
+  --rs-violet-100: var(--tol-royal-light) !important;
+  --rs-violet-200: var(--tol-royal-light) !important;
+  --rs-violet-300: var(--tol-royal) !important;
+  --rs-violet-400: var(--tol-royal) !important;
+  --rs-violet-500: var(--tol-royal) !important;
+  --rs-violet-600: var(--tol-royal) !important;
+  --rs-violet-700: var(--tol-royal-dark) !important;
+  --rs-violet-800: var(--tol-royal-dark) !important;
+  --rs-violet-900: var(--tol-royal-dark) !important;
+
+  // Spectrum
+  --rs-color-red: var(--tol-danger) !important;
+  --rs-color-orange: var(--tol-warning) !important;
+  --rs-color-yellow: var(--tol-warning) !important;
+  --rs-color-green: var(--tol-success) !important;
+  --rs-color-cyan: var(--tol-primary) !important;
+  --rs-color-blue: var(--tol-primary) !important;
+  --rs-color-violet: var(--tol-royal) !important;
 }
