@@ -11,7 +11,7 @@ header.masthead {
   overflow: hidden;
   padding-top: calc(72px);
   padding-bottom: 3rem;
-  background: linear-gradient(0deg, darken($primary, 20%) 0%, darken($primary, 10%) 100%);
+  background: linear-gradient(0deg, darken($tol-primary, 20%) 0%, darken($tol-primary, 10%) 100%);
   background-repeat: no-repeat;
   background-position: center center;
   background-attachment: auto;
@@ -54,7 +54,7 @@ header.masthead {
   list-style: none;
   width: 20px;
   height: 20px;
-  background: rgba($primary, 0.5);
+  background: rgba(var(--tol-primary), 0.5);
   animation: animate 25s linear infinite;
   bottom: -200px;
   border-radius: 20%;

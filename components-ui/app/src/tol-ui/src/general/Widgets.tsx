@@ -24,7 +24,7 @@ function Widgets(props: Props) {
   themeListener(() => {
     try {
       const backing = document.getElementById("tol-app-background");
-      backing!.style.backgroundColor = getCssVarValue("--bs-body-darker");
+      backing!.style.backgroundColor = getCssVarValue("--tol-bg-dark");
     } catch {
       return;
     }

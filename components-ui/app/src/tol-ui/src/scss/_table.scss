@@ -141,7 +141,7 @@
     }
 
     .rs-table-cell.rs-table-cell-full-text {
-      background-color: $bs-body-bg;
+      background-color: var(--bs-body-bg);
     }
 
     .rs-table-cell:hover {
@@ -179,7 +179,7 @@
     // header color
     .rs-table-cell-header .rs-table-cell-content,
     .rs-table-header-row-wrapper .rs-table-row.rs-table-row-header {
-      background-color: $grey-subtle !important;
+      background-color: var(--grey-subtle) !important;
 
       .rs-table-cell {
         background-color: transparent !important;
@@ -249,13 +249,13 @@
   // link box (e.g. relationship)
   .link-box {
     border-radius: 6px;
-    background-color: rgba($primary, 0.1) !important;
+    background-color: rgba(var(--tol-primary), 0.1) !important;
     padding: 5px 10px;
-    border: 1px solid rgba($primary, 0.2);
+    border: 1px solid rgba(var(--tol-primary), 0.2);
   }
 
   .link-box:hover {
-    background-color: rgba($primary, 0.2) !important;
+    background-color: rgba(var(--tol-primary), 0.2) !important;
   }
 
   .link-box.clickable {
