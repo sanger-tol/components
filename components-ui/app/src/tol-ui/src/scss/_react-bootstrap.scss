@@ -3,3 +3,145 @@
  *
  * SPDX-License-Identifier: MIT
  */
+
+:root {
+  --rs-text-primary: var(--bg-body-color);
+
+  --bs-dropdown-link-hover-bg: var(--grey-opaque);
+  --bs-link-hover-color: var(--grey-opaque);
+  --bs-pagination-hover-bg: var(--grey-opaque);
+
+  .form-control:focus {
+    box-shadow: none;
+    border-color: var(--tol-primary);
+  }
+
+  .form-control:hover {
+    border-color: var(--tol-primary);
+  }
+
+  .btn-xl {
+    padding: 1rem 3rem;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05rem;
+  }
+}
+
+// button text colour and hover/active
+.btn-primary {
+  --bs-btn-color: white;
+  --bs-btn-hover-color: white;
+  --bs-btn-active-color: white;
+  --bs-btn-disabled-color: white;
+
+  --bs-btn-border-color: var(--primary);
+  --bs-btn-hover-bg: var(--primary-hover);
+  --bs-btn-hover-border-color: var(--primary-hover);
+  --bs-btn-active-bg: var(--primary-hover);
+  --bs-btn-active-border-color: var(--primary-hover);
+}
+
+// statuses made from bootstrap alerts
+.tol-status {
+  .alert {
+    margin-bottom: 0;
+  }
+  
+  .status-text {
+    margin-left: 10px;
+  }
+}
+
+.tol-pop-up-message {
+  animation: fade ease 10s;
+  position: fixed;
+  z-index: 10000000;
+  width: 60%;
+  min-width: 250px;
+  top: 110px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  .tol-status {
+    .alert {
+      margin-bottom: 0;
+    }
+  }
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+// buttons
+button.btn {
+  font-size: 14px;
+}
+
+.config-button {
+  color: var(--primary);
+  fill: var(--primary);
+  background-color: transparent;
+  border-color: var(--grey-emphasis);
+  padding: 0;
+  height: 30px;
+  width: 30px;
+}
+
+.config-button-left {
+  @extend .config-button;
+  float: left;
+  margin-right: 6px;
+}
+
+.config-button-right {
+  @extend .config-button;
+  float: right;
+  margin-left: 6px;
+}
+
+.config-button:hover {
+  border-color: var(--primary) !important;
+  text-decoration: none;
+  color: white;
+  fill: white;
+}
+
+.config-button:active {
+  border-color: var(--primary) !important;
+  text-decoration: none;
+  color: var(--primary);
+  fill: var(--primary);
+}
+
+.config-button:disabled {
+  background-color: var(--grey-emphasis) !important;
+  border-color: unset !important;
+  color: var(--bs-body-bg) !important;
+  fill: var(--bs-body-bg) !important;
+  background-color: transparent;
+}
+
+// modal icon buttons
+.rs-modal-wrapper .rs-modal-footer .btn:has(svg) {
+  padding: 0;
+  height: 30px;
+  width: 30px;
+}
+
+// dropdown color
+.dropdown-menu.show {
+  background-color: black
+}
