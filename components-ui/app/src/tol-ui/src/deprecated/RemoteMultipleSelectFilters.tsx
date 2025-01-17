@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect } from 'react';
-import  { GlobalMultipleSelect, Status } from '../index';
+import  { GlobalMultipleSelect, StatusMessage } from '../index';
 import { httpClient } from '../services/http/httpClient';
 import { Col, Row } from 'react-bootstrap';
 import Placeholder from "../general/Placeholder";
@@ -160,9 +160,9 @@ function RemoteMultipleSelectFilters(props: Props) {
           {fields.map((field) => {
             return (
               <Col key={`${field}-filter-placeholder`}>
-                <Status
-                  status="danger"
-                  text={errorMessage}
+                <StatusMessage
+                  status="error"
+                  message={errorMessage}
                 />
               </Col>
             );

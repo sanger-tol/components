@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from 'react';
 import { AutoComplete as RSAutoComplete } from 'rsuite';
-import { Loader, Status, httpClient } from '../index';
+import { Loader, StatusMessage, httpClient } from '../index';
 
 
 interface Props {
@@ -115,9 +115,9 @@ function RemoteAutoComplete(props: Props) {
           />
         </div>
         <div>
-          <Status
-            status="danger"
-            text={response}
+          <StatusMessage
+            status="error"
+            message={response}
           />
         </div>
       </div>

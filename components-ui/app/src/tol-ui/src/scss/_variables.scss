@@ -58,6 +58,15 @@ $primary-hover: lighten($primary, 10%) !default;
 
 $placeholder: var(--rs-text-secondary) !default;
 
+// MESSAGES
+$tol-info-message: $primary !default;
+$tol-error-message: #dc3545 !default;
+$tol-success-message: #198754 !default;
+$tol-warning-message: #ffc107 !default;
+
+$tol-message-text-light: #fff !default;
+$tol-message-text-dark: #000 !default;
+
 // SASS -> CSS VARS //
 :root {
   --primary: #{$primary};

@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   Button, 
   Row, 
@@ -21,7 +21,8 @@ import {
 import ConfigModal from './ConfigModal';
 import { exportTableToSpreadsheet } from "./Utils";
 import Filter, { IFilter } from '../filtering/Filter';
-import { InfoTooltip, PopUpMessage } from '../general';
+import { InfoTooltip } from '../general';
+import { PopUpMessage } from '../index';
 import { FieldMeta } from './Field';
 import { Zone } from '../board';
 import { DropdownButtonProps } from '../board/components/DropdownButtons';
@@ -115,7 +116,7 @@ function Table (props: Props) {
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [success, setSuccess] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState('!');
   noFilter = !!noFilter;
 
   // row selection
@@ -143,6 +144,20 @@ function Table (props: Props) {
     const keys = checked ? [...selectedRows, value] : selectedRows.filter(item => item !== value);
     setSelectedRows(keys);
   };
+
+  useEffect(() => {
+    success && PopUpMessage({
+      message: success,
+      type: 'success',
+    })
+  }, [success]);
+
+  useEffect(() => {
+    error && error !== '!' && PopUpMessage({
+      message: error,
+      type: 'error',
+    })
+  }, [error]);
 
   useEffectUpdate(() => {
     checked = false;
@@ -197,16 +212,6 @@ function Table (props: Props) {
 
   return (
     <div style={{height: height}} className='tol-table'>
-      <PopUpMessage
-        type='success'
-        message={success}
-        setMessage={setSuccess}
-      />
-      <PopUpMessage
-        type='danger'
-        message={error}
-        setMessage={setError}
-      />
       <Row className="tol-table-bar">
         <Col md={12} lg={9}>
           {rowSelection &&

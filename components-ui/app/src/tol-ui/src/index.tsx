@@ -53,7 +53,10 @@ export {
   MultipleSelect,
   MultipleSelectFilters,
   RemoteMultipleSelectFilters,
-  GlobalMultipleSelect
+  GlobalMultipleSelect,
+  Status,
+  PopUpMessage as AlertPopUp,
+  Alert
 } from "./deprecated";
 
 // drag & drop
@@ -82,20 +85,20 @@ export {
 // messaging
 export {
   Message,
-  Notification
+  Notification,
+  StaticMessage,
+  StatusMessage,
+  PopUpMessage
 } from "./messaging";
 
 // general
 export {
   Header,
   CentreContents,
-  Alert,
   InfoTooltip,
-  Status,
   Modal,
   Placeholder,
   Widgets,
-  PopUpMessage,
   RemoteGet,
   ObjectDetail,
   RemoteCount,

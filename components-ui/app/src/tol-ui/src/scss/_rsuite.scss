@@ -42,17 +42,6 @@
   --rs-btn-link-active-text: var(--primary-hover);
   --rs-input-disabled-bg: var(--grey-subtle);
 
-  // messages (default looks worse due to earlier version of rsuite)
-  // once updated these should be able to be removed
-  --rs-message-success-bg: #58b15b;
-  --rs-message-error-bg: #f04f43;
-  --rs-message-info-bg: #1499ef;
-  --rs-message-warning-bg: #ffc757;
-
-  .rs-notification-title {
-    color: var(--rs-text-primary) !important;
-  } 
-
   .rs-input,
   .rs-input-group {
     background-color: var(--bs-body-bg);
@@ -364,29 +353,6 @@
 
 .rs-radio:hover .rs-radio-inner::before {
   border-color: var(--primary) !important;
-}
-
-// messages (default looks worse due to earlier version of rsuite)
-// once updated these should be able to be removed
-.rs-message-warning {
-  .rs-message-icon-wrapper .rs-icon {
-    fill: #000;
-  }
-  .rs-message-body, .rs-message-header, .rs-btn-close {
-    color: #000 !important;
-  }
-}
-
-.rs-message-icon > .rs-icon {
-  color: #fff !important;
-}
-
-.rs-message-icon-wrapper .rs-icon {
-  fill: #fff;
-}
-
-.rs-message-body, .rs-message-header, .rs-btn-close {
-  color: #fff !important;
 }
 
 @media screen and (max-width: 768px) {

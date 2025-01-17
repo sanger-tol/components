@@ -16,10 +16,10 @@ import {
 } from './Field';
 import { isFloat, normaliseCaps } from "../general/Utils";
 import Relationship from './Relationship';
-import { Status } from '../general';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { EntityMeta } from '../models';
+import { StatusMessage } from '../messaging';
 
 
 interface Rgb {
@@ -103,16 +103,16 @@ function createBoolean(value: boolean) {
   switch (value) {
   case true:
     return (
-      <Status
-        text="True"
+      <StatusMessage
+        message="True"
         status="success"
       />
     );
   case false:
     return (
-      <Status
-        text="False"
-        status="danger"
+      <StatusMessage
+        message="False"
+        status="error"
       />
     );
   default:

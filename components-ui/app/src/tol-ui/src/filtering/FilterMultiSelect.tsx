@@ -9,9 +9,9 @@ import { Filter } from './Filter';
 import { setFilter, filterListener } from './Utils';
 import { MultipleSelect } from '../forms';
 import { httpClient } from '../services';
-import { PopUpMessage } from '../general';
 import FilterToggle from './FilterToggle';
 import { stopPropagation } from '../general/Utils';
+import { PopUpMessage } from '../index';
 
 
 function FilterMultiSelect(props: Filter) {
@@ -32,6 +32,10 @@ function FilterMultiSelect(props: Filter) {
       fetchValues();
     }
   }, [values]);
+
+  useEffect(() => {
+    errorMessage && PopUpMessage({message: errorMessage, type: 'error'});
+  }, [errorMessage]);
 
   const fetchValues = () => {
     if (!fetched) {
@@ -135,11 +139,6 @@ function FilterMultiSelect(props: Filter) {
 
   return (
     <div className="tol-multi-filter" onClick={ stopPropagation }>
-      <PopUpMessage
-        type='danger'
-        message={errorMessage}
-        setMessage={setErrorMessage}
-      />
       <MultipleSelect
         block
         data={data}

@@ -8,16 +8,18 @@ import React from "react";
 import { Message as RSMessage } from "rsuite";
 import { capitaliseFirstLetter } from "../general/Utils";
 
-export type type = "success" | "info" | "warning" | "error";
+export type messageType = "success" | "info" | "warning" | "error";
 
 interface Props {
   children: React.ReactNode;
   showIcon: boolean;
-  type: type;
+  type?: messageType;
   closable?: boolean;
   header?: React.ReactNode;
   onClose?: () => void;
   styles?: React.CSSProperties;
+  hidePrefix?: boolean;
+  bordered?: boolean;
 }
 
 const Message = React.forwardRef<HTMLDivElement, Props>(
@@ -30,23 +32,23 @@ const Message = React.forwardRef<HTMLDivElement, Props>(
       header,
       onClose,
       styles,
+      hidePrefix,
+      bordered,
       ...rest
     } = props;
 
     return (
-      <div
-        ref={ref}
-        style={{ ...styles, marginBottom: "4px" }}
-      >
+      <div ref={ref} style={{ ...styles, marginBottom: "4px" }}>
         <RSMessage
           closable={closable}
           showIcon={showIcon}
           type={type}
           header={header}
+          bordered={bordered}
           onClose={onClose}
           {...rest}
         >
-          {typeof children === "string" && (
+          {typeof children === "string" && type && !hidePrefix &&(
             <strong>{capitaliseFirstLetter(type)}! </strong>
           )}
           {children}
