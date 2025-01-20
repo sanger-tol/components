@@ -240,6 +240,7 @@ function addCustomCellRendererData(fieldMetaData: FieldMetaData, attributes: any
 
 function formatAttributeData(row: object, fieldMetaData: FieldMetaData, rowOutput: object, baseUrl?: string) {
   const attributes = row["attributes"];
+
   // add non-null value for a custom field to allow cellRenderer to display
   addCustomCellRendererData(fieldMetaData, attributes);
   for (const [key, value] of Object.entries(attributes)) {
@@ -275,14 +276,13 @@ function addRelationshipFieldsToAttributes(row: object, fieldMetaData: FieldMeta
         }
       }
       // if row doesn't have the fields data, default to null
-      if (!rowAttributes[key]) rowAttributes[key] = null;
+      if (rowAttributes[key] === undefined) rowAttributes[key] = null;
     }
   }
 }
 
 export function convertTableData(data: any[], fieldMeta: FieldMeta, baseUrl?: string) {
   if (data[0] === undefined) return [];
-  
   const updatedData: any[] = [];
   data.forEach(row => {
     // create empty attributes if they don't exist
