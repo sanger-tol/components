@@ -120,7 +120,7 @@ function MyBoards() {
     <div className="my-boards-container">
       {!loading ? (
         boardDetails && boardDetails.length > 0 ? (
-          <Accordion boardDetails={boardDetails} />
+          <Accordion boardDetails={boardDetails} setBoardDetails={setBoardDetails}/>
         ) : (
           <div>{noBoards}</div>
         )

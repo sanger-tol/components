@@ -99,6 +99,10 @@ function MyBoardsHeader(props: Props) {
       <div>
         <h1>{title}</h1>
         <p>{subTitle}</p>
+        <p style={{color:'red'}}>
+          Warning: Dashboards are still in development so existing 
+          boards or views may be removed at any point
+        </p>
       </div>
       <DropdownButtons
         mainButtonIcon={dropdownMainIcon}

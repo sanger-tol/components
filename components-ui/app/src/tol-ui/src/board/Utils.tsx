@@ -419,6 +419,7 @@ export async function createBoardAndView(ds: TsDataSource, id: string, title: st
   })
 }
 
+//@ts-ignore
 export async function addView(ds: TsDataSource, id: string, title: string) {
   const user = getUserFromLocalStorage();
   const viewId = id ?? generateId("v");
@@ -428,7 +429,7 @@ export async function addView(ds: TsDataSource, id: string, title: string) {
       type: 'view',
       id: viewId,
       attributes: {
-        title: title,
+        title: 'Untitled View', // title
         filter: {and_: {}},
         user_id: user.id,
       },

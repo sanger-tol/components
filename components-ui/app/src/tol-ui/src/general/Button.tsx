@@ -65,7 +65,12 @@ function Button(props: Props) {
         <Icon icon={icon} size={size} />
       </div>
       )}
-        {text}
+      {text && (
+        <span style={{marginLeft: icon ? '5px': '0px'}}>
+          {text}
+        </span>
+      ) 
+      }
       </>
     )}
     </RsButton>

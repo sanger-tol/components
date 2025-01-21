@@ -298,15 +298,6 @@
   }
 }
 
-.confirm-delete-modal {
-  top: 15%;
-  .rs-modal-content{
-    .rs-modal-footer {
-      margin-bottom: -20px !important
-    }
-  }
-}
-
 @media (max-width: 992px) {
   .tol-dnd-column {
     height: auto !important;

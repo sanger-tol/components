@@ -111,26 +111,39 @@ function ZoneModal(props: Props) {
     }
   };
 
-  const plusButton = (
+  const actionButtons = (
+    <div>
     <Button
       position='right'
       type="success"
       onClick={onAddZone}
       icon='plus'
+      text='Add Zone'
     />
+    <Button
+      position='right'
+      type="error"
+      onClick={() => setOpen(false)}
+      icon='times'
+      text='Cancel'
+    />
+    </div>
   );
 
   return(
+    <div className='confirm-delete-buttons'>
     <Modal
       open={open}
-      size='sm'
+      size='xs'
       setOpen={setOpen}
-      actionButton={plusButton}
+      actionButton={actionButtons}
+      closeButton={false}
       overflow={false}
       data-testid="zoneModal"
     >
-      <>
-        <h6>Select Object Type <span style={{color: 'red'}}>*</span></h6>
+      <div style={{marginTop: '10px'}}>
+        <h4>Add New Zone</h4>
+        <p className='zone-modal-labels'>Select Object Type <span style={{color: 'red'}}>*</span></p>
         <SingleSelect
           data={objectTypesList}
           placeholder='Object Type'
@@ -139,7 +152,7 @@ function ZoneModal(props: Props) {
           block
         />
         <br/>
-        <h6>Enter Title <span style={{color: 'red'}}>*</span></h6>
+        <p className='zone-modal-labels'>Enter Title <span style={{color: 'red'}}>*</span></p>
         <Form>
           <InputGroup>
             <Form.Control
@@ -152,8 +165,9 @@ function ZoneModal(props: Props) {
         </Form>
         {titleError ? <p className='tol-modal-error'>Title cannot be blank</p> : null}
         {fieldError ? <p className='tol-modal-error'>Please ensure all mandatory fields are filled</p> : null}
-      </>
+      </div>
     </Modal>
+    </div>
   );
 }
   

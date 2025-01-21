@@ -64,7 +64,6 @@ function ConfirmationModal(props: Props) {
         closeButton={false}
         header={header}
         actionButton={actionButtons}
-        className={"confirm-delete-modal"}
       />
     </div>
   );

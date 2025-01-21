@@ -6,7 +6,8 @@
 
 // layout of the grid
 .tol-responsive-grid {
-  padding: 2px
+  padding: 2px;
+  position: relative;
 }
 
 .tol-responsive-widget {
@@ -97,7 +98,7 @@
 // temp
 .add-zone-button {
   //@extend .edit-config-button;
-  position: fixed;
+  position: absolute;
   right: 24px;
   top: 98px;
 }
@@ -219,11 +220,6 @@
   font-weight: bolder !important;
 }
 
-.new-board-modal-bttns {
-  display: flex;
-  align-items: center;
-}
-
 .character-counter {
   position: absolute;
   bottom: -20px;
@@ -239,4 +235,12 @@
 
 .character-counter-warning {
   color: var(--rs-form-errormessage-text);
+}
+
+.new-board-inputs .rs-input {
+  width: 360px;
+}
+
+.zone-modal-labels {
+  margin-bottom: 5px !important;
 }

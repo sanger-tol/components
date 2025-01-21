@@ -6,9 +6,9 @@
 
 import React, { useState, useEffect } from "react";
 import { Accordion as Acc } from "rsuite";
-import { AccordionHeader, DropdownButtons } from "./index";
+import { AccordionHeader, DropdownButtons, ConfirmationModal } from "./index";
 import { DropdownButtonProps, DropdownMainIconProps } from "./DropdownButtons";
-import { httpClient } from "../../services";
+import { httpClient, TsDataSource } from "../../services";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChartSimple,
@@ -30,6 +30,7 @@ interface AccordionBaseProps {
 
 interface BoardsAccordionProps {
   boardDetails: string[];
+  setBoardDetails: any;
 }
 
 interface ViewsAccordionProps {
@@ -175,8 +176,10 @@ const useItemData = <T,>(
 };
 
 function Accordion(props: BoardsAccordionProps) {
-  const { boardDetails } = props;
+  const { boardDetails, setBoardDetails } = props;
   const history = useHistory();
+  const [openDelete, setOpenDelete] = useState(false);
+  const [boardIdToDelete, setBoardIdToDelete] = useState<string | null>(null);
 
   const goToBoard = (boardId: string) => {
     history.push(`/board/${boardId}`);
@@ -184,6 +187,34 @@ function Accordion(props: BoardsAccordionProps) {
 
   const goToView = (boardId: string, viewId: string) => {
     history.push(`/board/${boardId}/view/${viewId}`);
+  };
+
+  // @ts-ignore
+  const deleteConfirmationModal = () => (
+    <ConfirmationModal 
+      setOpen={setOpenDelete}
+      open={openDelete}
+      // @ts-ignore
+      onConfirmClick={deleteBoard}
+      itemType={"board"}
+    />
+  )
+
+  const deleteBoard = () => {
+    if (boardIdToDelete === null) return;
+    const deletedBoard = boardDetails.filter((board: any) => board.id !== boardIdToDelete);
+    setBoardDetails(deletedBoard);
+    const ds = new TsDataSource();
+    ds.custom(
+      `boards/board/${boardIdToDelete}`,
+      'DELETE',
+    )
+    setBoardIdToDelete(null);
+  };
+
+  const handleDelete = (id: string) => {
+    setBoardIdToDelete(id);
+    setOpenDelete(true);
   };
 
   const boardOptionsButton: DropdownMainIconProps = {
@@ -205,6 +236,12 @@ function Accordion(props: BoardsAccordionProps) {
           : goToBoard(boardId);
       },
     },
+    {
+      dropdownButtonName: "Delete",
+      action: () => {
+        handleDelete(boardId);
+      },
+    }
   ];
 
   const boardOptionsDropdownButton = (boardId: string, viewId?: string) => (
@@ -249,6 +286,7 @@ function Accordion(props: BoardsAccordionProps) {
     };
 
     return (
+      <>
       <Acc
         bordered
         style={{ flex: "1", overflow: "visible" }}
@@ -269,6 +307,7 @@ function Accordion(props: BoardsAccordionProps) {
           {loading ? <div>Loading...</div> : renderChildren(childIds)}
         </Acc.Panel>
       </Acc>
+      </>
     );
   };
 
@@ -434,6 +473,7 @@ function Accordion(props: BoardsAccordionProps) {
           >
             {boardOptionsDropdownButton(board.id, undefined)}
           </div>
+          {deleteConfirmationModal()}
         </div>
       ))}
     </div>
