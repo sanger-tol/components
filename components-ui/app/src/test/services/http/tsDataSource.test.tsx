@@ -9,7 +9,7 @@ import '@testing-library/jest-dom';
 
 
 const speciesMockData = { data: { data: { id: 'testSpeciesId', type: 'species', attributes: { name: 'test species' } } } };
-const speciesUpsertMockData = { data: { data: { id: 'newTestSpeciesId', type: 'species', attributes: { name: 'test species' } } } };
+const speciesUpsertMockData = { data: { data: [{ id: 'newTestSpeciesId', type: 'species', attributes: { name: 'test species' } }] } };
 const sampleMockData = { data: { data: { id: 'testSampleId', type: 'sample', attributes: { name: 'test sample' } } } };
 
 const specimenMockData = {
@@ -451,7 +451,7 @@ describe('Testing upsert method', () => {
         },
       }]
     });
-    expect(dataObject.data.data.id).toEqual('newTestSpeciesId');
+    expect(dataObject[0].id).toEqual('newTestSpeciesId');
     expect(clientPostSpy).toHaveBeenCalledTimes(1);
   });
 });
@@ -502,7 +502,6 @@ describe('Testing relationship getting', () => {
     expect(specimen).not.toBeNull();
 
     const lazySpecies = await specimen.relationships.lazy_species;
-    console.log(lazySpecies)
 
     expect(lazySpecies.id).toEqual('lazy');
     expect(lazySpecies.objectType).toEqual('species');

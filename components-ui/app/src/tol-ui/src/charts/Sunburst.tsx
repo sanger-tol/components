@@ -24,8 +24,6 @@ import {
   downloadItem
 } from "./Utils";
 import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/Utils";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUndo, faDownload } from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
 import { themeListener } from "../hooks/listeners";
 
@@ -197,27 +195,28 @@ function Sunburst(props: Props) {
               {isPropDefined(setSliceData) && !noRefresh &&
                 <div>
                   <Button
-                    className="config-button-right"
-                    variant="primary"
+                    outline
+                    position="right"
+                    type="primary"
                     onClick={() => {
                       resetItemClickedData(setSliceData);
                       setDatasets(originDatasets);
                     }}
-                  >
-                    <FontAwesomeIcon icon={faUndo} size="sm" />
-                  </Button>
+                    icon="undo"
+                  />
                 </div>
               }
               {!noDownload &&
                 <div>
                   <Button
-                    className="config-button-right"
-                    variant="primary"
+                    outline
+                    position="right"
+                    type="primary"
                     onClick={() => {
                       downloadItem(props.id, downloadName);
-                    }}>
-                    <FontAwesomeIcon icon={faDownload} size="sm" />
-                  </Button>
+                    }}
+                    icon="download"
+                  />
                 </div>
               }
             </div>

@@ -7,22 +7,25 @@ SPDX-License-Identifier: MIT
 import { WidthProvider, Responsive, Layouts } from 'react-grid-layout';
 import { Button, Placeholder, Visualisation } from '../index';
 import { useState, useRef, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Zone, getWidgetOrder, generateLayout } from './Utils';
 import { ConfirmationModal } from './components';
-import { deepCopy } from 'src/general/Utils';
 
-interface Widgets {
+
+export interface IWidgets {
   componentId: string,
-  order: string,
+  order: string, // placement in the order array
   componentZoneId: string
-  componentType: string
+  componentType: string,
+  filter: any,
+  title: string,
+  objectType: string,
+  baseUrl: string,
+  config: any
 }
 
 interface Props {
   id: string,
-  widgets: Widgets[],
+  widgets: IWidgets[],
   draggable: boolean,
   setWidgets?: any,
   zone: Zone,
@@ -47,33 +50,31 @@ function ResponsiveWidget(props: Props) {
   useEffect(() => {
     // Generating the visualisations from the widgets
     const elementsFromWidgets = widgets.map((widget) => {
+      const visualisation: JSX.Element = (
+        /* @ts-ignore */
+        <Visualisation
+          id={widget.componentId}
+          zone={zone}
+          setZone={setZone}
+          componentType={widget.componentType}
+          objectType={widget.objectType}
+          baseUrl={widget.baseUrl}
+          config={widget.config}
+          title={widget.title}
+        />
+      );
       return (
         <div key={widget.componentId} className='tol-responsive-widget'>
-          <Visualisation
-            id={widget.componentId}
-            zone={zone}
-            setZone={setZone}
-            setWidgetType={setWidgetType}
-          />
+          {visualisation || null}
         </div>
-      )
-    })
+      );
+    });
     setElements(elementsFromWidgets);
 
     const newLayout = generateLayout(widgets);
     setLayouts(newLayout);
     internalLayouts.current = newLayout;
   }, [widgets, zone]);
-
-  const setWidgetType = (id: string, widgetType: string) => {
-    const newWidgets = widgets.map(widget => {
-      if (widget.componentId === id) {
-        widget.componentType = widgetType;
-      }
-      return widget;
-    });
-    setWidgets(newWidgets);
-  }
 
   const deleteWidget = (id: string) => {
     const newWidgets = widgets.filter(widget => widget.componentId !== id);
@@ -92,7 +93,7 @@ function ResponsiveWidget(props: Props) {
 
   const onLayoutSave = async(layout) => {
     // Gets the order based off of the layout on screen
-    const order = getWidgetOrder(layout, widgets);
+    const order = getWidgetOrder(layout);
 
     // Finds the highest order value in the current widgets, based off the db
     const orderValues = widgets.map(widget => Number(widget.order))
@@ -170,11 +171,14 @@ function ResponsiveWidget(props: Props) {
             return (
               <div className='tol-draggable-widget' key={element.props.children.props.id}>
                 <Placeholder opacity={0.7} drag message={element.props.children.props.id}/>
-                <Button onClick={() => {
+                <Button 
+                onClick={() => {
                   handleOpenModal(element.props.children.props.id);
-                }} variant='danger' className='widget-delete-btn'>
-                  <FontAwesomeIcon icon={faTrash} size='sm'/>
-                </Button>
+                }} 
+                type='error' 
+                className='widget-delete-btn'
+                icon='trash'
+                />
                 {confirmationModal()}
               </div>
             );

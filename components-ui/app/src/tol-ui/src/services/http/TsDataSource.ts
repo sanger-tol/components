@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { deepCopy } from '../../general/Utils';
 import {
   IFilter,
   EntityMeta,

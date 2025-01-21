@@ -49,14 +49,16 @@ function Tables() {
   ];
 
   const table1 = (
+    <>
+    <div style={{paddingBottom: '12px'}}>
+        <Button
+          type='primary'
+          onClick={() => setForceUpdate(!forceUpdate)}
+          text='Force Update'
+        />
+        <h5 style={{marginBottom: 12}}>Remote Table</h5>
+      </div>
     <div>
-      <Button
-        style={{marginBottom: 12}}
-        onClick={() => setForceUpdate(!forceUpdate)}
-      >
-        Force Update
-      </Button>
-      <h5 style={{marginBottom: 12}}>Remote Table</h5>
       <RemoteTable
         id="table-example"
         rowSelection
@@ -106,6 +108,7 @@ function Tables() {
         {...runData}
       />
     </div>
+    </>
   );
 
   const sample = useZone({

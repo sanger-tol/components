@@ -10,11 +10,11 @@ import RemoteFilters from "./RemoteFilters";
 import { Drawer } from "../general";
 import { generateFilter } from "./Utils";
 import { deepCopy } from "../general/Utils";
-import { Button, TsDataSource } from "..";
+import { TsDataSource } from "..";
 
 
 export interface Props {
-  id?: string, // id only exists for a component
+  id: string,
   zone: Zone,
   setZone: any,
   entityType: string, // e.g. component type or zone
@@ -29,9 +29,9 @@ function BoardFilters(props: Props) {
   const ds = new TsDataSource();
 
   // the fixed filter present on the component
-  const [filter, setFilter] = useState(
+  const [filters, setFilters] = useState(
     deepCopy(
-      entityType === 'zone' ? zone.defaultFilter : zone.components[id!].data.defaultFilter
+      entityType === 'zone' ? zone.defaultFilter : zone.components[id].data.defaultFilter
     )
   );
 
@@ -46,20 +46,20 @@ function BoardFilters(props: Props) {
   const [disabledFilterValues, setDisabledFilterValues] = useState(
     removeCurrentEntityFiltersForDisabledFilters(
       generateFilter(zone, undefined, true)?.and_!,
-      filter?.and_!
+      filters?.and_!
     )
   );
 
   useEffect(() => {
-    setFilter(
+    setFilters(
       deepCopy(
-        entityType === 'zone' ? zone.defaultFilter : zone.components[id!].data.defaultFilter
+        entityType === 'zone' ? zone.defaultFilter : zone.components[id].data.defaultFilter
       )
     );
     setDisabledFilterValues(
       removeCurrentEntityFiltersForDisabledFilters(
         generateFilter(zone, undefined, true)?.and_!,
-        filter?.and_!
+        filters?.and_!
       )
     );
   }, [open])
@@ -70,8 +70,8 @@ function BoardFilters(props: Props) {
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
     } else {
-      zone.components[id!].data.filter = deepCopy(filter);
-      zone.components[id!].data.defaultFilter = deepCopy(filter);
+      zone.components[id].data.filter = deepCopy(filter);
+      zone.components[id].data.defaultFilter = deepCopy(filter);
     }
     setZone({...zone})
     setOpen(false);
@@ -97,7 +97,7 @@ function BoardFilters(props: Props) {
       >
         <RemoteFilters
           {...props}
-          filters={filter}
+          filters={filters}
           onSave={onSave}
           disabledFilterValues={disabledFilterValues}
         />

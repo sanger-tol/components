@@ -6,10 +6,9 @@
 
 import { useEffect, useState } from "react";
 import Modal from "../../general/Modal";
-import { Button } from "rsuite";
 import { generateId } from "../../general/Utils";
 import { FormTextField } from "../../forms";
-import { RSForm } from "../../index";
+import { RSForm, Button } from "../../index";
 
 interface Props {
   setOpen: any;
@@ -22,6 +21,7 @@ function NewBoardModal(props: Props) {
   const [boardId, setBoardId] = useState("");
   const [viewId, setViewId] = useState("");
   const [boardTitle, setBoardTitle] = useState("");
+  // @ts-ignore
   const [viewTitle, setViewTitle] = useState("");
 
   useEffect(() => {
@@ -32,18 +32,22 @@ function NewBoardModal(props: Props) {
   const actionButtons = (
     <div>
       <Button
-        color={"green"}
-        appearance={"ghost"}
-        disabled={boardTitle === "" || viewTitle === ""}
+        position="right"
+        type="success"
+        disabled={boardTitle === "" /*|| viewTitle === ""*/} // Views will be 'Untitled View' for now
         onClick={() => {
           setOpen(false), onConfirmClick(boardId, viewId, boardTitle, viewTitle);
         }}
-      >
-        Confirm
-      </Button>
-      <Button color={"red"} appearance={"ghost"} onClick={() => setOpen(false)}>
-        Cancel
-      </Button>
+        text="Confirm"
+        icon='plus'
+      />
+      <Button
+        position="right"
+        type="error"
+        onClick={() => setOpen(false)}
+        text="Cancel"
+        icon="xmark"
+      />
     </div>
   );
 
@@ -54,7 +58,7 @@ function NewBoardModal(props: Props) {
   );
 
   const body = (
-    <div>
+    <div className="new-board-inputs">
       <RSForm>
         <FormTextField
           id="board-title"
@@ -64,6 +68,7 @@ function NewBoardModal(props: Props) {
           placeholder={`Id: ${boardId}`}
           label="Create a title for your board:"
         />
+        {/* 
         <FormTextField
           id="board-title"
           value={viewTitle}
@@ -72,6 +77,7 @@ function NewBoardModal(props: Props) {
           placeholder={`Id: ${viewId}`}
           label="Create a title for your first board view:"
         />
+        */}
       </RSForm>
     </div>
   );
@@ -86,7 +92,6 @@ function NewBoardModal(props: Props) {
         closeButton={false}
         header={header}
         actionButton={actionButtons}
-        className={"confirm-delete-modal"}
       />
     </div>
   );

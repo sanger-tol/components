@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { 
+import {
   View,
   TsDataSource,
   LoadingContent,
@@ -20,7 +20,7 @@ import { getCssVarValue } from "../general/Utils";
 
 function Board() {
   const ds = new TsDataSource();
-  const { boardId, viewId } = useParams();
+  const { boardId, viewId } = useParams<any>();
 
   const [user, setUser] = useState<any>(null);
   const [boardData, setBoardData] = useState<any>({});

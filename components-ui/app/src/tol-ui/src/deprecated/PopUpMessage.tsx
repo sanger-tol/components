@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import ReactDOM from 'react-dom';
-import Status from "./Status";
+import Status from "../deprecated/Status";
 
 export interface Props {
   type: string,

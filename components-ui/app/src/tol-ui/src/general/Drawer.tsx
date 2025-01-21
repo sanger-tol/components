@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { Drawer as RSDrawer } from 'rsuite';
 import { Button } from '..';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
   open: boolean,
@@ -34,10 +32,9 @@ function Drawer(props: Props) {
       <Button
         onClick={handleClose}
         className="close-button"
-        variant="danger"
-      >
-        <FontAwesomeIcon icon={faXmark} size="sm" />
-      </Button>
+        type="error"
+        icon='xmark'
+      />
     </Header>
     <Body>
       {children}

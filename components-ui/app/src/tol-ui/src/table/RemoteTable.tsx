@@ -59,7 +59,9 @@ interface Props {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
+
   actions?: (string | DropdownButtonProps)[];
+  configButtons?: JSX.Element[];
 
   debug?: boolean;
 }
@@ -84,8 +86,9 @@ function RemoteTable(props: Props) {
     noConfigModal,
     noDownload,
     rowSelection,
-    debug,
     actions,
+    configButtons,
+    debug
   } = props;
   const ds = new TsDataSource({ baseUrl });
   const height = props.height !== undefined ? props.height : "100%";
@@ -321,6 +324,7 @@ function RemoteTable(props: Props) {
       noDownload={noDownload}
       rowSelection={rowSelection}
       actions={convertedActions}
+      configButtons={configButtons}
     />
   );
 }

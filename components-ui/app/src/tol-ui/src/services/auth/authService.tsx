@@ -56,6 +56,6 @@ export function confirmAuthorised(user: any, auth?: boolean|string[], noAuth?: b
   return true; // no auth required
 }
 
-export function getElement(loggedIn: boolean, page: Page) {
+export function getElementDependingOnAuthStatus(loggedIn: boolean, page: Page) {
   return loggedIn && page.authElement ? page.authElement : page.element;
 }

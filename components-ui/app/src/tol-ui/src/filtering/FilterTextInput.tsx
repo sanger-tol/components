@@ -6,13 +6,14 @@ SPDX-License-Identifier: MIT
 
 import { useState } from 'react';
 import { Input, InputGroup, Dropdown } from 'rsuite';
+import { Button as BSButton } from 'react-bootstrap';
 import { Button } from '..';
 import { stopPropagation } from '../general/Utils';
 import { Filter } from './Filter';
 import { setFilter, filterListener } from './Utils';
 import FilterToggle from './FilterToggle';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faList } from '@fortawesome/free-solid-svg-icons';
 import MultipleSelect from '../forms/MultipleSelect';
 import Modal from '../general/Modal';
 
@@ -212,12 +213,12 @@ function FilterTextInput(props: Filter) {
 
   const plusButton = (
     <Button
-      variant="success"
+      type="success"
       onClick={onSaveInList}
       disabled={splitValues(listValue).length <= 1}
-    >
-      <FontAwesomeIcon icon={faPlus} size="sm" />
-    </Button>
+      icon='plus'
+      position='right'
+    />
   );
 
   return (
@@ -239,13 +240,13 @@ function FilterTextInput(props: Filter) {
         </Dropdown>
       }
       {type === 'str' && values.length <= 1 &&
-        <Button
-          className="tol-in-list-button"
-          disabled={disabled}
-          onClick={onOpenInListModal}
-        >
-          <FontAwesomeIcon icon={faList} size="sm" />
-        </Button>
+        <BSButton
+        className="tol-in-list-button"
+        disabled={disabled}
+        onClick={onOpenInListModal}
+      >
+        <FontAwesomeIcon icon={faList} size="sm" />
+      </BSButton>
       }
       {type === 'str' && values.length > 1 ?
         <span className="tol-multi-filter">

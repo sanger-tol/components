@@ -12,7 +12,7 @@ import {
   faUpDownLeftRight,
   faTable
 } from '@fortawesome/free-solid-svg-icons';
-import { Loader, Status } from '../index';
+import { Loader, StatusMessage } from '../index';
 
 
 function getPlaceholderIcon(
@@ -41,9 +41,9 @@ function getPlaceholderIcon(
   } else if (loader) {
     icon = <Loader />;
   } else if (warningMessage !== undefined) {
-    icon = <Status status="warning" text={warningMessage} />;
+    icon = <StatusMessage status="warning" message={warningMessage} bordered />;
   } else if (errorMessage !== undefined) {
-    icon = <Status status="danger" text={errorMessage} />;
+    icon = <StatusMessage status="error" message={errorMessage} bordered/>;
   }
 
   return (

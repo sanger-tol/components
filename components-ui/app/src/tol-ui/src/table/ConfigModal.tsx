@@ -4,13 +4,12 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { DnD, InfoTooltip } from '../index';
+import { Button, DnD, InfoTooltip, Modal } from '../index';
 import { useState } from 'react';
-import { Modal } from '../index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFloppyDisk, faDiagramProject, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faDiagramProject } from '@fortawesome/free-solid-svg-icons';
 import { FieldMeta, initialiseFieldMeta } from './Field';
-import { Row, Button, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import { deleteFieldMetaLocalStorage, getSourceColour, sortFieldsByRename } from './Utils';
 import { normaliseCaps } from '../general/Utils';
 
@@ -115,9 +114,7 @@ function ConfigModal(props: Props) {
   };
 
   const saveButton = (
-    <Button variant="success" onClick={saveConfig}>
-      <FontAwesomeIcon icon={faFloppyDisk} size="sm" />
-    </Button>
+    <Button type="success" onClick={saveConfig} icon='floppy-disk' position='right'/>
   );
 
   const header = (
@@ -127,17 +124,17 @@ function ConfigModal(props: Props) {
           <h2>Table Configuration</h2>
         </Col>
         <Col sm={6} style={{ paddingLeft: 0, paddingRight: 0 }}>
+        <div style={{float: "right", display: "none"}} /* Hidden for now */>
           <Button
             className="clear-saved-config"
-            style={{float: "right", display: "none"}} // hidden for now
-            variant="warning"
+            type="error"
             onClick={() => {
               deleteFieldMetaLocalStorage(tableId);
             }}
-          >
-            Clear and Reset
-            <FontAwesomeIcon icon={faTrash} size="sm" />
-          </Button>
+            text='Clear and Reset'
+            icon='trash'
+          />
+        </div>
         </Col>
       </Row>
       <hr/>

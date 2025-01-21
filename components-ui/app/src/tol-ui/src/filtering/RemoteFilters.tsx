@@ -11,8 +11,6 @@ import { defineZone } from "../board/Utils";
 import Filter from "./Filter";
 import { IFilter } from "../models";
 import { Button, InfoTooltip, useEffectUpdate } from "..";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import MultipleSelect from "../forms/MultipleSelect";
 import { normaliseCaps } from "../general/Utils";
 
@@ -30,7 +28,7 @@ function RemoteFilters(props: Props) {
   const ds = new TsDataSource({baseUrl});
 
   // zone component id pointer
-  const filterComponentId = 'filters-component';
+  const filterComponentId = 'remote-filters-component';
 
   // just keeps track of the filter ids and their order
   const [filters, setFilters] = useState(Object.keys(props.filters?.and_ || {}));
@@ -42,7 +40,7 @@ function RemoteFilters(props: Props) {
   // repurposed zone so filters correctly interact with the state
   const [filterZone, setFilterZone] = useState<Zone>(
     defineZone(
-      'filter',
+      'dummy-object-for-remote-filters',
       [{id: filterComponentId, filter: props.filters}]
     )
   );
@@ -98,7 +96,7 @@ function RemoteFilters(props: Props) {
   };
 
   const renderValue = (values: string[]) => {
-    const numPopulatedFilter = Object.keys(filterZone.components[filterComponentId].data.filter?.and_!).length;
+    const numPopulatedFilter = Object.keys(filterZone.components[filterComponentId].data.filter?.and_ || {}).length;
     return (`
       ${values.length} ${values.length === 1 ? "filter": "filters"} selected;
       ${numPopulatedFilter} ${numPopulatedFilter === 1 ? "filter": "filters"} populated.
@@ -155,17 +153,19 @@ function RemoteFilters(props: Props) {
             <Button
               onClick={() => removeFilter(attribute)}
               className="remove-filter-button"
-              variant="danger"
-            >
-              <FontAwesomeIcon icon={faTrash} size="sm" />
-            </Button>
+              type="error"
+              icon="trash"
+            />
           </div>
         )
       })}
-      <Button disabled={disabledApplyButton} style={{marginTop: 30}} variant="success" onClick={() => onSave(filterZone?.components?.[filterComponentId]?.data?.filter)}>
-        Apply Filters
-        <FontAwesomeIcon style={{marginLeft: 6}} icon={faFloppyDisk} size="sm" />
-      </Button>
+      <Button 
+        disabled={disabledApplyButton}
+        type="success"
+        onClick={() => onSave(filterZone?.components?.[filterComponentId]?.data?.filter)}
+        text="Apply Filters"
+        icon="floppy-disk"
+      />
       
     </div>
   )

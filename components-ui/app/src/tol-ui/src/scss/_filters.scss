@@ -81,6 +81,7 @@
       fill: white;
       color: white;
     }
+    padding-right: 12px;
   }
 
   .tol-in-list-button.btn {
@@ -157,7 +158,7 @@
   width: 18px;
   border-radius: 0;
   background-color: var(--bs-body-bg);
-  border-color: var(--grey-emphasis);
+  border-color: var(--grey-emphasis) !important;
   color: var(--placeholder);
 
   .icon {
@@ -172,7 +173,6 @@
   border-bottom-right-radius: 6px;
   border-left: none;
   border-top: none;
-
 }
 
 .tol-filter-button.exists {
@@ -183,16 +183,16 @@
 .tol-filter-button.negate:hover,
 .tol-filter-button.negate.btn.active {
   @extend .tol-filter-button;
-  border-color: var(--bs-danger) !important;
-  background-color: var(--bs-danger) !important;
+  border-color: var(--tol-error) !important;
+  background-color: var(--tol-error) !important;
   color: white !important;
 }
 
 .tol-filter-button.exists:hover,
 .tol-filter-button.exists.btn.active {
   @extend .tol-filter-button;
-  border-color: var(--bs-success) !important;
-  background-color: var(--bs-success) !important;
+  border-color: var(--tol-success) !important;
+  background-color: var(--tol-success) !important;
   color: white !important;
 }
 
@@ -255,6 +255,11 @@
     padding: 2px;
     height: 36px;
   }
+}
+
+.tol-status {
+  margin-left: 10px;
+  padding-top: 2px !important;
 }
 
 .tol-in-list-modal {

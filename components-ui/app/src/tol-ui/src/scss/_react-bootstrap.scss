@@ -85,55 +85,6 @@
   }
 }
 
-// buttons
-button.btn {
-  font-size: 14px;
-}
-
-.config-button {
-  color: var(--primary);
-  fill: var(--primary);
-  background-color: transparent;
-  border-color: var(--grey-emphasis);
-  padding: 0;
-  height: 30px;
-  width: 30px;
-}
-
-.config-button-left {
-  @extend .config-button;
-  float: left;
-  margin-right: 6px;
-}
-
-.config-button-right {
-  @extend .config-button;
-  float: right;
-  margin-left: 6px;
-}
-
-.config-button:hover {
-  border-color: var(--primary) !important;
-  text-decoration: none;
-  color: white;
-  fill: white;
-}
-
-.config-button:active {
-  border-color: var(--primary) !important;
-  text-decoration: none;
-  color: var(--primary);
-  fill: var(--primary);
-}
-
-.config-button:disabled {
-  background-color: var(--grey-emphasis) !important;
-  border-color: unset !important;
-  color: var(--bs-body-bg) !important;
-  fill: var(--bs-body-bg) !important;
-  background-color: transparent;
-}
-
 // modal icon buttons
 .rs-modal-wrapper .rs-modal-footer .btn:has(svg) {
   padding: 0;

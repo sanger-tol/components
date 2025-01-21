@@ -14,7 +14,7 @@ import {
 } from '../index';
 import { Form, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faChartColumn, faChartPie, faTable, faHashtag } from '@fortawesome/free-solid-svg-icons';
+import { faChartColumn, faChartPie, faTable, faHashtag } from '@fortawesome/free-solid-svg-icons';
 import { Zone, addComponent, defineComponent } from './Utils';
 
 
@@ -105,9 +105,12 @@ function ComponentModal(props: Props) {
   };
 
   const plusButton = (
-    <Button variant="success" onClick={onAddComponent}>
-      <FontAwesomeIcon icon={faPlus} size="sm" />
-    </Button>
+    <Button
+      type="success"
+      onClick={onAddComponent}
+      icon='plus'
+      position='right'
+    />
   );
 
 

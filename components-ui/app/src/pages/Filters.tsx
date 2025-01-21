@@ -16,8 +16,7 @@ import {
   env,
   useZone,
   resetZone,
-  useTranslator,
-  BoardFilters
+  useTranslator
 } from '../tol-ui/src';
 
 
@@ -73,11 +72,13 @@ function Filters() {
     <div>
       <h5>Table Example</h5>
       <p style={{marginBottom: 5}}>A default filter has been applied; the input is pre-populated.</p>
-      <BoardFilters
-        entityType="zone"
-        {...speciesZone}
-      />
-      <Button style={{margin: "10px 0 10px 0"}} onClick={() => resetZone(speciesZone)}>Reset</Button>
+      <div style={{margin: "10px 0 10px 0"}}>
+        <Button
+          type='primary'
+          onClick={() => resetZone(speciesZone)}
+          text='Reset'
+        />
+      </div>
       <p style={{marginBottom: 3}}>Filter Level 1:</p>
       <Filter
         attribute='sts_family'

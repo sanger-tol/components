@@ -4,31 +4,26 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   Button, 
   Row, 
   Col, 
-  Placeholder, 
-  Loader, 
+  Placeholder,
   useEffectUpdate, 
-  DropdownButtons 
+  DropdownButtons,
 } from '../index';
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faEyeSlash, 
-  faSliders, 
-  faDownload, 
-  faCheckDouble, 
-  faPaperPlane 
+import {  
+  faSliders,
 } from '@fortawesome/free-solid-svg-icons';
 import ConfigModal from './ConfigModal';
 import { exportTableToSpreadsheet } from "./Utils";
 import Filter, { IFilter } from '../filtering/Filter';
-import { InfoTooltip, PopUpMessage } from '../general';
+import { InfoTooltip } from '../general';
+import { PopUpMessage } from '../index';
 import { FieldMeta } from './Field';
-import HoverOverlay from '../general/HoverOverlay';
 import { Zone } from '../board';
 import { DropdownButtonProps } from '../board/components/DropdownButtons';
 
@@ -74,6 +69,7 @@ interface Props {
   noDownload?: boolean,
   rowSelection?: boolean
   actions?: DropdownButtonProps[],
+  configButtons?: JSX.Element[]
 }
 
 function Table (props: Props) {
@@ -115,13 +111,14 @@ function Table (props: Props) {
     noDownload,
     rowSelection,
     actions,
+    configButtons
     /* eslint-enable */
   } = props;
 
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [success, setSuccess] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState('!');
   noFilter = !!noFilter;
 
   // row selection
@@ -150,42 +147,24 @@ function Table (props: Props) {
     setSelectedRows(keys);
   };
 
+  useEffect(() => {
+    success && PopUpMessage({
+      message: success,
+      type: 'success',
+    })
+  }, [success]);
+
+  useEffect(() => {
+    error && error !== '!' && PopUpMessage({
+      message: error,
+      type: 'error',
+    })
+  }, [error]);
+
   useEffectUpdate(() => {
     checked = false;
     setSelectedRows([]);
   }, [page, pageSize, filter, sortColumn, sortType]);
-
-  const downloadBtn = (
-    <Button 
-      className="config-button-right"
-      variant="primary"
-      onClick={() => exportTableToSpreadsheet(
-        endpoint,
-        fieldMeta.data,
-        filter!,
-        sortColumn,
-        sortType,
-        setSuccess,
-        setError,
-        setDownloading,
-        defaultSort,
-        baseUrl
-      )}
-      disabled={totalSize < 1 || totalSize >= 10000 || noFieldsSelected}
-    >
-      {downloading ? (
-        <Loader
-          as="span"
-          animation="border"
-          size="sm"
-          role="status"
-          aria-hidden="true"
-        />
-      ) : (
-        <FontAwesomeIcon icon={faDownload} size="sm" />
-      )}
-    </Button>
-  );
 
   const actionDropDownButtons = actions?.map((button) => ({
     ...button,
@@ -197,13 +176,10 @@ function Table (props: Props) {
       {actions && actions.length > 0 &&
         <DropdownButtons
           mainButtonIcon={{
-            mainIcon: <FontAwesomeIcon icon={faPaperPlane} size="sm" />,
-            variant: "primary",
-            className: "config-button-left",
-            style: {
-              marginLeft: "0px", 
-              border: "1px solid var(--grey-emphasis"},
-              disabled: (selectedRows.length === 0),
+            icon: 'paper-plane',
+            type: "primary",
+            position: "left",
+            disabled: (selectedRows.length === 0),
           }}
           dropdownButtons={actionDropDownButtons}
           placement={"rightStart"}
@@ -214,31 +190,21 @@ function Table (props: Props) {
 
   return (
     <div style={{height: height}} className='tol-table'>
-      <PopUpMessage
-        type='success'
-        message={success}
-        setMessage={setSuccess}
-      />
-      <PopUpMessage
-        type='danger'
-        message={error}
-        setMessage={setError}
-      />
       <Row className="tol-table-bar">
         <Col md={12} lg={9}>
           {rowSelection &&
             <>
               <Button 
-                className="config-button-left"
-                variant="primary"
+                position='left'
+                type="primary"
                 active={bulkSelect}
                 onClick={() => {
                   handleCheckAll(null, !bulkSelect);
                   setBulkSelect(!bulkSelect);
                 }}
-              >
-                <FontAwesomeIcon icon={faCheckDouble} size="sm" />
-              </Button>
+                icon='check-double'
+                outline
+              />
             </>
           }
           {actionButtons}
@@ -259,18 +225,16 @@ function Table (props: Props) {
                   ]}
                 />
               </span>
-              <span className='tol-skip'>
-                <Pagination
-                  className="tol-pagination"
-                  size="sm"
-                  layout={['skip']}
-                  total={totalSize}
-                  activePage={page}
-                  onChangePage={setPage}
-                  limit={pageSize}
-                  onChangeLimit={setPageSize}
-                />
-              </span>
+              <Pagination
+                className="tol-pagination"
+                size="sm"
+                layout={['skip']}
+                total={totalSize}
+                activePage={page}
+                onChangePage={setPage}
+                limit={pageSize}
+                onChangeLimit={setPageSize}
+              />
               <Pagination
                 className="tol-pagination"
                 prev
@@ -294,14 +258,14 @@ function Table (props: Props) {
         <Col md={12} lg={3}>
           {!noConfigModal &&
             <Button 
-              className="config-button-right"
-              variant="primary"
+              position='right'
+              type="primary"
               onClick={() => {
                 setOpen(true);
               }}
-            >
-              <FontAwesomeIcon icon={faSliders} size="sm" />
-            </Button>
+              icon='sliders'
+              outline
+            />
           }
           {open &&
             <ConfigModal
@@ -316,33 +280,39 @@ function Table (props: Props) {
           }
           {!noFilter &&
             <Button
-              className="config-button-right"
+              position='right'
               active={filterVisibility}
-              variant="primary"
+              type="primary"
               onClick={ () => setFilterVisibility(!filterVisibility) }
               disabled={noFieldsSelected}
-            >
-              <FontAwesomeIcon icon={faEyeSlash} size="sm" />
-            </Button>
+              icon='eye-slash'
+              outline
+            />
           }
           {!noDownload &&
-            <>
-              {totalSize >= 10000 ?
-                <div className="config-position-wrapper">
-                  <HoverOverlay
-                    contents="Only 10,000 results can currently be downloaded."
-                    followCursor
-                  >
-                    <div className="tooltip-wrapper">
-                      {downloadBtn}
-                    </div>
-                  </HoverOverlay>
-                </div>
-                :
-                <>{downloadBtn}</>
-              }
-            </>
+            <Button
+              position='right'
+              type="primary"
+              onClick={() => exportTableToSpreadsheet(
+                endpoint,
+                fieldMeta.data,
+                filter!,
+                sortColumn,
+                sortType,
+                setSuccess,
+                setError,
+                setDownloading,
+                defaultSort,
+                baseUrl
+              )}
+              disabled={totalSize < 1 || totalSize >= 10000 || noFieldsSelected}
+              loading={downloading}
+              icon='download'
+              disabledTooltip={totalSize >= 10000 ? 'Only 10,000 results can currently be downloaded.' : undefined}
+              outline
+            />
           }
+          {configButtons}
         </Col>
       </Row>
       {noFieldsSelected ?

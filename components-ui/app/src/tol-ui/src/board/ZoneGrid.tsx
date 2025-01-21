@@ -10,23 +10,16 @@ import {
   Col, 
   Button, 
   useZone, 
-  ResponsiveWidget, 
   env,
   ComponentModal,
   InlineEdit,
   BoardFilters
 } from '../index';
+import ResponsiveWidget, { IWidgets } from './ResponsiveWidget';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faTrash,
   faPlus,
-  faArrowUp,
-  faArrowDown,
   faPenToSquare,
-  faCheck,
-  faFilter,
-  faUpDownLeftRight,
-  faFloppyDisk
 } from '@fortawesome/free-solid-svg-icons';
 import {
   getComponents,
@@ -34,26 +27,21 @@ import {
 } from './Utils';
 import { ConfirmationModal } from './components';
 
-interface Widgets {
-  componentId: string,
-  order: string,
-  componentZoneId: string,
-  componentType: string,
-}
 
 interface Props {
   id: string,
   title: string,
   objectType: string,
+  filter: any,
   onZoneReorder: any,
   deleteZone: any,
   ds: any
 }
 
 function ZoneGrid(props: Props) {
-  const { id, objectType, onZoneReorder, deleteZone, ds } = props;
+  const { id, objectType, filter, onZoneReorder, deleteZone, ds } = props;
   const [draggable, setDraggable] = useState(false);
-  const [currentWidgets, setCurrentWidgets] = useState<Widgets[]>([]);
+  const [currentWidgets, setCurrentWidgets] = useState<IWidgets[]>([]);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
@@ -63,6 +51,7 @@ function ZoneGrid(props: Props) {
   const z = useZone({
     endpoint: objectType,
     baseUrl: env.TOL_DATA,
+    filter: filter,
     components: []
   });
 
@@ -84,21 +73,22 @@ function ZoneGrid(props: Props) {
   );
 
   useEffect(() => {
-    getComponents(id).then((res: any) => {
-    // Sort the widgets based on the order value
-    const sortedWidgets = res.sort((a, b) => a.order - b.order);
-      setCurrentWidgets(res);
+    getComponents(id, ds).then((components: any) => {
+      setCurrentWidgets(components);
+      // sort the widgets based on the order value
+      const sortedWidgets = components.sort((a, b) => a.order - b.order);
       sortedWidgets.forEach((widget) => {
         z.zone.components[widget.componentId] = {
           data: {
-            defaultFilter: {and_: {}},
-            filter: {and_: {}},
+            defaultFilter: widget.filter,
+            filter: widget.filter,
             id: widget.componentId,
-            order: widget.order,
+            order: widget.order
           }
         };
         z.zone.order.push(widget.componentId);
       })
+      z.setZone({...z.zone});
     })
   }, []);
 
@@ -109,83 +99,87 @@ function ZoneGrid(props: Props) {
 
   const editButton = (
     <Button
+      outline
       onClick={() => {
         setDraggable(!draggable);
       }}
       disabled={currentWidgets.length < 1}
-      className="zone-edit-button"
-    >
-      <FontAwesomeIcon icon={faUpDownLeftRight} size="sm" />
-    </Button>
+      type='edit'
+      icon='up-down-left-right'
+      position='right'
+    />
   );
 
   const addButton = (
     <Button
+      outline
       onClick={() => {
         onAddComponent();
       }}
-      className='edit-config-button'
-      variant="success"
-    >
-      <FontAwesomeIcon icon={faPlus} size="sm" />
-    </Button>
+      type="success"
+      icon='plus'
+      position='right'
+    />
   );
 
   const deleteButton = (
     <Button
+      outline
       onClick={() => {
         handleOpenModal();
       }}
-      className='edit-config-button'
-      variant="danger"
-    >
-      <FontAwesomeIcon icon={faTrash} size="sm" />
-    </Button>
+      type="error"
+      icon='trash'
+      position='right'
+    />
   );
 
   const upButton = (
     <Button
+      outline
       onClick={async () => {
         await onZoneReorder(id, 'up');
       }}
-      className='edit-config-button'
-    >
-      <FontAwesomeIcon icon={faArrowUp} size="sm" />
-    </Button>
+      type='primary'
+      icon='arrow-up'
+      position='right'
+    />
   );
   
   const downButton = (
     <Button
+      outline
       onClick={async () => {
         await onZoneReorder(id, 'down');
       }}
-      className='edit-config-button'
-    >
-      <FontAwesomeIcon icon={faArrowDown} size="sm" />
-    </Button>
+      type='primary'
+      icon='arrow-down'
+      position='right'
+    />
   );
 
   const saveButton = (
     <Button
+      outline
       onClick={() => {
         setDraggable(!draggable);
         setSaveLayout(true);
         setDraggable(false)
       }}
-      className='edit-config-button'
-      variant="success"
-    >
-      <FontAwesomeIcon icon={faFloppyDisk} size="sm" />
-    </Button>
+      type="success"
+      icon='floppy-disk'
+      position='right'
+    />
   );
 
   const filtersButton = (
     <Button
-        onClick={() => setOpenFilters(true)}
-        className='edit-config-button'
-      >
-      <FontAwesomeIcon icon={faFilter} size="sm" />
-    </Button>
+      outline
+      onClick={() => setOpenFilters(true)}
+      type='primary'
+      icon='filter'
+      position='right'
+    />
   );
 
   const showEditButtons = (
@@ -193,27 +187,17 @@ function ZoneGrid(props: Props) {
       onClick={() => {
         handleBtnsVisible();
       }}
-      variant="primary"
-      className="edit-config-button"
-      style={{
-        width: "60px",
-        backgroundColor: editBtnsVisible ? "green" : "orange",
-        borderColor: editBtnsVisible ? "green" : "orange",
-      }}
-    >
-      {editBtnsVisible ? (
-        <FontAwesomeIcon icon={faCheck} size="sm" />
-      ) : (
-        <FontAwesomeIcon icon={faPenToSquare} size="sm" />
-      )}
-    </Button>
+      type={editBtnsVisible ? "success" : "warning"}
+      icon={editBtnsVisible ? 'check' : 'pen-to-square'}
+      position='right'
+    />
   );
 
   const buttons = (
     <div className='tol-zone-bar'>
       <Row>
         <Col>
-          <InlineEdit title={props.title} onSave={(newTitle) => saveTitle(newTitle, ds, id, 'zone')}/>
+          <InlineEdit title={props.title} onSave={(newTitle) => saveTitle(newTitle, ds, id, 'zone')} />
         </Col>
         <Col>
           <h6>
@@ -295,6 +279,7 @@ function ZoneGrid(props: Props) {
       )}
       {confirmationModal}
       <BoardFilters
+        id={id}
         entityType="zone"
         open={openFilters}
         setOpen={setOpenFilters}

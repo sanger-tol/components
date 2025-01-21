@@ -25,8 +25,6 @@ import {
   resetFiltersBelow
 } from "../filtering/Utils";
 import { Button, Col, Row } from '../index';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUndo, faDownload } from '@fortawesome/free-solid-svg-icons';
 
 
 interface Props {
@@ -180,26 +178,27 @@ function RemoteSunburst(props: Props) {
         <div className="tol-chart-buttons">
           <div>
             <Button
-              className="config-button-right"
-              variant="primary"
+              outline
+              position="right"
+              type="primary"
               onClick={() => {
                 setSubDatasets({});
                 setResetChart(!resetChart);
               }}
-            >
-              <FontAwesomeIcon icon={faUndo} size="sm" />
-            </Button>
+              icon="undo"
+            />
           </div>
           {!noDownload &&
             <div>
               <Button
-                className="config-button-right"
-                variant="primary"
+                outline
+                position="right"
+                type="primary"
                 onClick={() => {
                   downloadItem(props.id, normaliseCaps(endpoint));
-                }}>
-                <FontAwesomeIcon icon={faDownload} size="sm" />
-              </Button>
+                }}
+                icon="download"
+              />
             </div>
           }
         </div>

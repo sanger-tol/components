@@ -8,7 +8,8 @@ import { useState, useEffect } from "react";
 import { Uploader } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { Loader, httpClient, Status } from "../index";
+import { Loader, httpClient, StatusMessage } from "../index";
+import { messageType } from "../messaging/Message";
 
 interface WaitingUpload {
   message: string;
@@ -16,7 +17,7 @@ interface WaitingUpload {
 
 interface Message {
   type: string;
-  message: string;
+  message: messageType;
 }
 
 export interface Props {
@@ -127,10 +128,10 @@ function Dropzone(props: Props) {
         <div className="mt-3">
           {messages.map((message: Message, index: number) => {
             return (
-              <Status
+              <StatusMessage
                 key={index}
-                status={message.type}
-                text={message.message}
+                status={message.type as messageType}
+                message={message.message}
               />
             );
           })}

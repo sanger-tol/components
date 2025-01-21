@@ -3,19 +3,23 @@
 // SPDX-License-Identifier: MIT
 
 // Direct package pass-throughs
-import { Container, Row, Col, Button, ButtonGroup, Form, Spinner } from 'react-bootstrap';
-export { Container, Row, Col, Form, Button, ButtonGroup, Spinner as Loader };
+import { Container, Row, Col, ButtonGroup, Form, Spinner } from 'react-bootstrap';
+export { Container, Row, Col, Form, ButtonGroup, Spinner as Loader };
 import { Link } from "react-router-dom";
 export { Link };
 import { useToaster as Toaster, Form as RSForm } from 'rsuite'
 export { Toaster, RSForm };
 
+// FontAwesome icons
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+// Add icons to the library
+library.add(fas);
+
 // board
 export {
   useZone,
   useTranslator,
-  ZoneGrid,
-  ResponsiveWidget,
   ComponentModal,
   ZoneModal,
   Visualisation,
@@ -47,7 +51,10 @@ export {
   MultipleSelect,
   MultipleSelectFilters,
   RemoteMultipleSelectFilters,
-  GlobalMultipleSelect
+  GlobalMultipleSelect,
+  Status,
+  PopUpMessage as AlertPopUp,
+  Alert
 } from "./deprecated";
 
 // drag & drop
@@ -76,20 +83,20 @@ export {
 // messaging
 export {
   Message,
-  Notification
+  Notification,
+  StaticMessage,
+  StatusMessage,
+  PopUpMessage
 } from "./messaging";
 
 // general
 export {
   Header,
   CentreContents,
-  Alert,
   InfoTooltip,
-  Status,
   Modal,
   Placeholder,
   Widgets,
-  PopUpMessage,
   RemoteGet,
   ObjectDetail,
   RemoteCount,
@@ -97,7 +104,10 @@ export {
   formatDate,
   InlineEdit,
   Drawer,
-  LoadingContent
+  LoadingContent,
+  Button,
+  Icon,
+  TolLoader
 } from "./general";
 
 // hooks

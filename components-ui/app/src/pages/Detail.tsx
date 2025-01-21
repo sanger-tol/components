@@ -27,34 +27,34 @@ function Detail() {
       <h2 style={{ marginBottom: 10 }}>Mock Species</h2>
       <div style={buttonStyle}>
         <Link to={'detail/' + detail.id1}>
-          <Button>Get detail for Graphomya maculata</Button>
+          <Button text='Get detail for Graphomya maculata' type='primary'/>
         </Link>
       </div>
       <div style={buttonStyle}>
         <Link to={'detail/' + detail.id2}>
-          <Button>Get detail for Hebecnema nigra</Button>
+          <Button text='Get detail for Hebecnema nigra' type='primary'/>
         </Link>
       </div>
       <div style={buttonStyle}>
-        <Link to={'detail/' + detail.id3}>
-          <Button>Bos taurus</Button>
-        </Link>
-      </div>
-      <div style={buttonStyle}>
-        <Link to={'detail/' + detail.id4}>
-          <Button>Get detail for Abax parallelepipedus</Button>
-        </Link>
-      </div>
-      <div style={buttonStyle}>
-        <Link to={'detail/' + detail.id5}>
-          <Button>Get detail for Acleris holmaina</Button>
-        </Link>
-      </div>
-      <div style={buttonStyle}>
-        <Link to={'detail/' + detail.id6}>
-          <Button>Get detail for Limenitis camilla</Button>
-        </Link>
-      </div>
+      <Link to={'detail/' + detail.id3}>
+        <Button text='Get detail for Bos taurus' type='primary'/>
+      </Link>
+    </div>
+    <div style={buttonStyle}>
+      <Link to={'detail/' + detail.id4}>
+        <Button text='Get detail for Abax parallelepipedus' type='primary'/>
+      </Link>
+    </div>
+    <div style={buttonStyle}>
+      <Link to={'detail/' + detail.id5}>
+        <Button text='Get detail for Acleris holmaina' type='primary'/>
+      </Link>
+    </div>
+    <div style={buttonStyle}>
+      <Link to={'detail/' + detail.id6}>
+        <Button text='Get detail for Limenitis camilla' type='primary'/>
+      </Link>
+    </div>
     </div>
   );
 

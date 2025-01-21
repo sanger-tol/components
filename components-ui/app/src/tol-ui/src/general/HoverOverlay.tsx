@@ -43,6 +43,6 @@ function HoverOverlay(props: Props) {
       {children}
     </Whisper>
   );
-}
+};
 
 export default HoverOverlay;

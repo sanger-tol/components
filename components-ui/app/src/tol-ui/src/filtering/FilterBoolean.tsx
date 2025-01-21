@@ -4,12 +4,11 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Filter } from './Filter';
 import { setFilter, filterListener } from './Utils';
 import { MultipleSelect } from '../forms';
-import { PopUpMessage } from '../general';
-import { Status } from '../general';
+import { StatusMessage, PopUpMessage } from '../index';
 
 
 function FilterBoolean(props: Filter) {
@@ -17,8 +16,12 @@ function FilterBoolean(props: Filter) {
   const [values, setValues] = useState<string[]>([]);
   const [disabled, setDisabled] = useState(false);
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, _] = useState('');
   const operator = 'in_list';
+
+  useEffect(() => {
+    errorMessage && PopUpMessage({message: errorMessage, type: 'error'});
+  }, [errorMessage]);
 
   const flipValues = (val: string[]) => {
     const convertedValues: string[] = [];
@@ -76,16 +79,16 @@ function FilterBoolean(props: Filter) {
     switch (label) {
     case 'True':
       return (
-        <Status
-          text="True"
+        <StatusMessage
+          message="True"
           status="success"
         />
       );
     case 'False':
       return (
-        <Status
-          text="False"
-          status="danger"
+        <StatusMessage
+          message="False"
+          status="error"
         />
       );
     }
@@ -103,11 +106,6 @@ function FilterBoolean(props: Filter) {
 
   return (
     <span className='tol-boolean-filter'>
-      <PopUpMessage
-        type='danger'
-        message={errorMessage}
-        setMessage={setErrorMessage}
-      />
       <MultipleSelect
         block
         noSearch

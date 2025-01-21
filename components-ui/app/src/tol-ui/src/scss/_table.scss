@@ -197,7 +197,6 @@
     // rows per page
     .tol-page-size {
       float: left;
-      margin-top: -2px;
     }
 
     // filter show and hide
@@ -365,9 +364,5 @@
 @media (max-width: 700px) {
   .tol-pagination {
     margin-top: 4px !important;
-  }
-
-  .tol-skip .tol-pagination {
-    margin-top: -2px !important;
   }
 }

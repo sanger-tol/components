@@ -22,7 +22,7 @@ import {
   getUserFromLocalStorage,
   tokenHasExpired,
 } from "./services/localStorage/localStorageService";
-import { confirmAuthorised, getElement } from "./services/auth/authService";
+import { confirmAuthorised, getElementDependingOnAuthStatus } from "./services/auth/authService";
 import { AuthProvider } from "./contexts/auth.context";
 import Footer from "./general/Footer";
 import { Dropdown, Page } from "./models/Nav";
@@ -57,7 +57,7 @@ function TolApp(props: Props) {
   }, []);
 
   // show login button as default
-  const login = props.login || true;
+  const login = props.login ?? true;
 
   // hide register button by default
   const register = props.register || false;
@@ -84,7 +84,6 @@ function TolApp(props: Props) {
   }
   const allPages = [...props.pages, ...(profilePages ?? [])]
   const loggedIn = user && !tokenHasExpired();
-
   return (
     <div id="tol-app-background">
       <AuthProvider
@@ -117,22 +116,22 @@ function TolApp(props: Props) {
               >
                 <Callback />
               </Route>
-              {boards && loggedIn ? (
-                <Route
-                  path="/board/:boardId"
-                  component={Board}
-                />
-              ) : (
-                <Redirect to="/" />
-              )}
-              {boards && loggedIn ? (
-                <Route
-                  path="/board/:boardId/view/:viewId"
-                  component={Board}
-                />
-              ) : (
-                <Redirect to="/" />
-              )}
+              <Route
+                path="/board/:boardId"
+              >
+                {boards && loggedIn
+                  ? <Board />
+                  : <Redirect to="/" />
+                }
+              </Route>
+              <Route
+                path="/board/:boardId/view/:viewId"
+              >
+                {boards && loggedIn
+                  ? <Board />
+                  : <Redirect to="/" />
+                }
+              </Route>
               {allPages.map((page) => {
                 const path = convertToPath(page.name);
                 const routes = [];
@@ -157,7 +156,7 @@ function TolApp(props: Props) {
                         key={dropdownPath}
                       >
                         {authorised ? (
-                          getElement(loggedIn, dropdownPage)
+                          getElementDependingOnAuthStatus(loggedIn, dropdownPage)
                         ) : (
                           <Redirect to="/" />
                         )}
@@ -190,7 +189,7 @@ function TolApp(props: Props) {
                       key={page.name}
                     >
                       {authorised ? (
-                        getElement(loggedIn, page)
+                        getElementDependingOnAuthStatus(loggedIn, page)
                       ) : (
                         <Redirect to="/" />
                       )}

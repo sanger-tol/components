@@ -38,7 +38,8 @@ const getBoardDetails = async (id: string, setErrorMessage: any) => {
         },
       },
     });
-    const boardDetails = res.data.data.map((board: any) => ({
+    // @ts-ignore
+    const boardDetails: any = res!.data!.data!.map((board: any) => ({
         id: board.id,
         title: board.attributes.title,
     }));
@@ -119,7 +120,7 @@ function MyBoards() {
     <div className="my-boards-container">
       {!loading ? (
         boardDetails && boardDetails.length > 0 ? (
-          <Accordion boardDetails={boardDetails} />
+          <Accordion boardDetails={boardDetails} setBoardDetails={setBoardDetails}/>
         ) : (
           <div>{noBoards}</div>
         )
