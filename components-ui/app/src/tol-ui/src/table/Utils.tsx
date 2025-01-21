@@ -20,6 +20,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { EntityMeta } from '../models';
 import { StatusMessage } from '../messaging';
+import { colours } from 'src/charts/Utils';
 
 
 interface Rgb {
@@ -37,20 +38,20 @@ export function isRelationship(key: string) {
 }
 
 const sourceColours = {
-  'sts': {r: 6, g: 11, b: 163},
-  'benchling': {r: 25, g: 143, b: 31},
-  'mlwh': {r: 32, g: 155, b: 240},
-  'grit': {r: 213, g: 26, b: 54},
-  'goat': {r: 203, g: 107, b: 12},
-  'informatics': {r: 0, g: 0, b: 0},
-  'bold': {r: 134, g: 186, b: 1},
-  'treeofsex': {r: 153, g: 0, b: 199},
-  'tolid': {r: 199, g: 0, b: 83},
-  'tolqc': {r: 17, g: 93, b: 10},
-  'tolqclegacy': {r: 181, g: 178, b: 22},
-  'portaldb': {r: 234, g: 34, b: 181},
-  'pantheon': {r: 190, g: 190, b: 190},
-  'calculated': {r: 0, g: 207, b: 131},
+  'sts': colours[0],
+  'benchling': colours[1],
+  'mlwh': colours[2],
+  'grit': colours[3],
+  'goat': colours[4],
+  'informatics': colours[5],
+  'bold': colours[6],
+  'treeofsex': colours[7],
+  'tolid': colours[8],
+  'tolqc': colours[9],
+  'tolqclegacy': colours[10],
+  'portaldb': colours[11],
+  'pantheon': colours[12],
+  'calculated': colours[13]
 }
 
 function createLink(text: any, url: string) {

@@ -6,18 +6,19 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from 'react';
 import {
-  ZoneGrid,
   Button,
   ZoneModal,
   IFilter
 } from '../index';
 import { getZones } from "./Utils";
+import ZoneGrid from './ZoneGrid';
 
 
 interface ZoneObject {
   id: string,
   objectType: string,
-  title: string
+  title: string,
+  filter: IFilter
 }
 
 interface OrderObject {
@@ -45,7 +46,8 @@ function View(props: Props) {
         return {
           id: zone.id,
           objectType: zone.object_type,
-          title: zone.title
+          title: zone.title,
+          filter: zone.filter
         };
       });
       setZoneOrder(res.order);
@@ -129,20 +131,6 @@ function View(props: Props) {
     setZones(updatedZones);
   }
 
-  const addButton = (
-    <div>
-    <Button
-      onClick={() => {
-        setOpen(true)
-      }}
-      type='success'
-      className='add-zone-button' // temp placement
-      icon='plus'
-      position='right'
-    />
-    </div>
-  );
-
   const getSortedZones = () => {
     return [...zones].sort((a, b) => {
       const orderA = zoneOrder.find(zone => zone.zoneId === a.id)?.order || 0;
@@ -154,7 +142,15 @@ function View(props: Props) {
   return (
     <div className='tol-view'>
       <div className='tol-view-bar'>
-      {addButton}
+        <Button
+          onClick={() => {
+            setOpen(true)
+          }}
+          type='success'
+          className='add-zone-button' // temp placement
+          icon='plus'
+          position='right'
+        />
       </div>
       <ZoneModal
         open={open}
@@ -169,15 +165,18 @@ function View(props: Props) {
       {zones.length > 0 ?
         <>
           {getSortedZones().map((zone) => {
-            return <ZoneGrid
-              key={zone.id}
-              id={zone.id}
-              title={zone.title}
-              objectType={zone.objectType}
-              onZoneReorder={onZoneReorder}
-              deleteZone={deleteZone}
-              ds={ds}
-            />;
+            return (
+              <ZoneGrid
+                key={zone.id}
+                id={zone.id}
+                title={zone.title}
+                objectType={zone.objectType}
+                filter={zone.filter}
+                onZoneReorder={onZoneReorder}
+                deleteZone={deleteZone}
+                ds={ds}
+              />
+            )
           })}
         </>
         :

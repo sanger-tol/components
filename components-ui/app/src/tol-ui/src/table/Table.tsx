@@ -69,6 +69,7 @@ interface Props {
   noDownload?: boolean,
   rowSelection?: boolean
   actions?: DropdownButtonProps[],
+  configButtons?: JSX.Element[]
 }
 
 function Table (props: Props) {
@@ -110,6 +111,7 @@ function Table (props: Props) {
     noDownload,
     rowSelection,
     actions,
+    configButtons
     /* eslint-enable */
   } = props;
 
@@ -163,30 +165,6 @@ function Table (props: Props) {
     checked = false;
     setSelectedRows([]);
   }, [page, pageSize, filter, sortColumn, sortType]);
-
-  const downloadBtn = (
-    <Button
-      position='right'
-      type="primary"
-      onClick={() => exportTableToSpreadsheet(
-        endpoint,
-        fieldMeta.data,
-        filter!,
-        sortColumn,
-        sortType,
-        setSuccess,
-        setError,
-        setDownloading,
-        defaultSort,
-        baseUrl
-      )}
-      disabled={totalSize < 1 || totalSize >= 10000 || noFieldsSelected}
-      loading={downloading}
-      icon='download'
-      disabledTooltip={totalSize >= 10000 ? 'Only 10,000 results can currently be downloaded.' : undefined}
-      outline
-    />
-  );
 
   const actionDropDownButtons = actions?.map((button) => ({
     ...button,
@@ -312,10 +290,29 @@ function Table (props: Props) {
             />
           }
           {!noDownload &&
-            <>
-              {downloadBtn}
-            </>
+            <Button
+              position='right'
+              type="primary"
+              onClick={() => exportTableToSpreadsheet(
+                endpoint,
+                fieldMeta.data,
+                filter!,
+                sortColumn,
+                sortType,
+                setSuccess,
+                setError,
+                setDownloading,
+                defaultSort,
+                baseUrl
+              )}
+              disabled={totalSize < 1 || totalSize >= 10000 || noFieldsSelected}
+              loading={downloading}
+              icon='download'
+              disabledTooltip={totalSize >= 10000 ? 'Only 10,000 results can currently be downloaded.' : undefined}
+              outline
+            />
           }
+          {configButtons}
         </Col>
       </Row>
       {noFieldsSelected ?

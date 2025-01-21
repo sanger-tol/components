@@ -20,8 +20,6 @@ library.add(fas);
 export {
   useZone,
   useTranslator,
-  ZoneGrid,
-  ResponsiveWidget,
   ComponentModal,
   ZoneModal,
   Visualisation,

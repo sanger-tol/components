@@ -10,16 +10,22 @@ import { useState, useRef, useEffect } from 'react';
 import { Zone, getWidgetOrder, generateLayout } from './Utils';
 import { ConfirmationModal } from './components';
 
-interface Widgets {
+
+export interface IWidgets {
   componentId: string,
-  order: string,
+  order: string, // placement in the order array
   componentZoneId: string
-  componentType: string
+  componentType: string,
+  filter: any,
+  title: string,
+  objectType: string,
+  baseUrl: string,
+  config: any
 }
 
 interface Props {
   id: string,
-  widgets: Widgets[],
+  widgets: IWidgets[],
   draggable: boolean,
   setWidgets?: any,
   zone: Zone,
@@ -47,11 +53,15 @@ function ResponsiveWidget(props: Props) {
       const visualisation: JSX.Element = (
         /* @ts-ignore */
         <Visualisation
-        id={widget.componentId}
-        zone={zone}
-        setZone={setZone}
-        setWidgetType={setWidgetType}
-      />
+          id={widget.componentId}
+          zone={zone}
+          setZone={setZone}
+          componentType={widget.componentType}
+          objectType={widget.objectType}
+          baseUrl={widget.baseUrl}
+          config={widget.config}
+          title={widget.title}
+        />
       );
       return (
         <div key={widget.componentId} className='tol-responsive-widget'>
@@ -65,16 +75,6 @@ function ResponsiveWidget(props: Props) {
     setLayouts(newLayout);
     internalLayouts.current = newLayout;
   }, [widgets, zone]);
-
-  const setWidgetType = (id: string, widgetType: string) => {
-    const newWidgets = widgets.map(widget => {
-      if (widget.componentId === id) {
-        widget.componentType = widgetType;
-      }
-      return widget;
-    });
-    setWidgets(newWidgets);
-  }
 
   const deleteWidget = (id: string) => {
     const newWidgets = widgets.filter(widget => widget.componentId !== id);

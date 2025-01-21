@@ -28,7 +28,7 @@ function RemoteFilters(props: Props) {
   const ds = new TsDataSource({baseUrl});
 
   // zone component id pointer
-  const filterComponentId = 'filters-component';
+  const filterComponentId = 'remote-filters-component';
 
   // just keeps track of the filter ids and their order
   const [filters, setFilters] = useState(Object.keys(props.filters?.and_ || {}));
@@ -40,7 +40,7 @@ function RemoteFilters(props: Props) {
   // repurposed zone so filters correctly interact with the state
   const [filterZone, setFilterZone] = useState<Zone>(
     defineZone(
-      'filter',
+      'dummy-object-for-remote-filters',
       [{id: filterComponentId, filter: props.filters}]
     )
   );
@@ -98,7 +98,7 @@ function RemoteFilters(props: Props) {
   };
 
   const renderValue = (values: string[]) => {
-    const numPopulatedFilter = Object.keys(filterZone.components[filterComponentId].data.filter?.and_!).length;
+    const numPopulatedFilter = Object.keys(filterZone.components[filterComponentId].data.filter?.and_ || {}).length;
     return (`
       ${values.length} ${values.length === 1 ? "filter": "filters"} selected;
       ${numPopulatedFilter} ${numPopulatedFilter === 1 ? "filter": "filters"} populated.
@@ -110,7 +110,7 @@ function RemoteFilters(props: Props) {
     const kw = keyword.toLowerCase();
     return name.includes(kw);
   }
-  
+
   return (
     <div>
       <div className="tol-filters-selector">

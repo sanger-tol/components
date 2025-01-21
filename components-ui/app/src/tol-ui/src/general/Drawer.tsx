@@ -33,7 +33,7 @@ function Drawer(props: Props) {
         onClick={handleClose}
         className="close-button"
         type="error"
-        icon='x-mark'
+        icon='xmark'
       />
     </Header>
     <Body>

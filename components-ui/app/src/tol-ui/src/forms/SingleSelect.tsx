@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useEffect, useState } from "react";
 import { SelectPicker } from "rsuite";
 
 interface Props {
@@ -15,13 +16,16 @@ interface Props {
 }
 
 const SingleSelect = (props: Props) => {
-  const { data, placeholder, setValue, value, block } = props;
+  const { placeholder, setValue, value, block } = props;
+  const [data, setData] = useState([{}]);
 
-  const convertedData = data.map((item) => ({ label: item, value: item }));
+  useEffect(() => {
+    setData(props.data.map((item) => ({ label: item, value: item })));
+  }, [props.data]);
 
   return (
     <SelectPicker
-      data={convertedData}
+      data={data}
       searchable={false}
       value={value}
       onChange={setValue}

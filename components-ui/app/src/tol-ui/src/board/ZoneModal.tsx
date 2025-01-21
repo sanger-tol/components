@@ -9,10 +9,12 @@ import {
   Button, 
   Modal,
   SingleSelect,
+  TsDataSource,
   env,
 } from '../index';
 import { Form, InputGroup } from 'react-bootstrap';
-import { fetchObjectTypes, addZone } from './Utils';
+import { addZone } from './Utils';
+
 
 interface OrderObject {
   zoneId: string,
@@ -35,7 +37,6 @@ interface Props {
   ds: any,
   viewId: string
 }
-
 
 function ZoneModal(props: Props) {
   const { open, setOpen, setZones, zones, zoneOrder, setZoneOrder, ds, viewId } = props;
@@ -69,16 +70,6 @@ function ZoneModal(props: Props) {
     return validId && validField;
   }
 
-  async function getObjectTypes() {
-    try {
-      const ret = (await fetchObjectTypes(env.TOL_DATA));
-      setObjectTypesList(ret);
-      return ret;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   useEffect(() => {
     if (!open) {
       reset();
@@ -86,13 +77,15 @@ function ZoneModal(props: Props) {
   }, [open]);
 
   useEffect(() => {
-    getObjectTypes();
+    const tempDs = new TsDataSource({baseUrl: env.TOL_DATA});
+    tempDs.attributeMetadata().then(am => {
+      setObjectTypesList(Object.keys(am));
+    });
   }, []);
 
   const onAddZone = async() => {
     if (checkStates()) {
       const orders = zoneOrder.map((zone) => {
-        console.log(zone.order);
         return zone.order;
       })
       const nextOrder = orders.length > 0 ? Math.max(...orders) + 1 : 1;

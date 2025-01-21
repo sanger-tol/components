@@ -5,9 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import { FieldMeta, initialiseFieldMeta } from "./Field";
-import { RemoteTable, TsDataSource } from "../index";
+import { BoardFilters, Button, RemoteTable, TsDataSource } from "../index";
 import { useState } from "react";
-import { upsertComponentConfig } from "../board/Utils";
+import { upsertComponentConfig, Zone } from "../board/Utils";
 
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
   baseUrl?: string;
   title: string;
   config: any;
-  zone: object;
+  zone: Zone;
   setZone: any;
 }
 
@@ -28,6 +28,7 @@ function BoardTable(props: Props) {
   const ds = new TsDataSource();
   const [config, setConfig] = useState<any>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
+  const [openFilters, setOpenFilters] = useState(false);
 
   const onModalSave = (fm: FieldMeta) => {
     config['fieldMeta'] = fm;
@@ -48,9 +49,28 @@ function BoardTable(props: Props) {
     upsertComponentConfig(ds, id, config);
   }
 
+  const configButtons = [
+    <span key='board-table-filter'>
+      <Button
+        outline
+        position='right'
+        type="primary"
+        onClick={() => setOpenFilters(true)}
+        icon='filter'
+      />
+      <BoardFilters
+        endpoint={objectType}
+        entityType="component"
+        open={openFilters}
+        setOpen={setOpenFilters}
+        {...props}
+      />
+    </span>
+  ]
 
   return (
     <RemoteTable
+      displaySource
       endpoint={objectType}
       fieldMeta={config.fieldMeta || initialiseFieldMeta()}
       pageSize={config.pageSize || 50}
@@ -60,6 +80,7 @@ function BoardTable(props: Props) {
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
       forceUpdate={forceUpdate}
+      configButtons={configButtons}
       {...props}
     />
   );

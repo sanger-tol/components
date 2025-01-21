@@ -55,7 +55,7 @@ function MyBoardsHeader(props: Props) {
       if (modalError === "") {
         setTimeout(() => {
         history.push(`/board/${boardId}/view/${viewId}`);
-        }, 200)
+        }, 400)
       }
     }
   };

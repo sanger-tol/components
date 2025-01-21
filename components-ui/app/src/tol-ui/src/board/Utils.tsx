@@ -11,7 +11,7 @@ import { generateFilter, resetAllFilters } from '../filtering/Utils';
 import { useEffectUpdate } from '../hooks';
 import { IFilter } from '../models/Filter';
 import { getUserFromLocalStorage } from '../services/localStorage/localStorageService';
-import { TsDataSource } from '../services';
+import { TsDataSource, DataObject } from '../services';
 
 
 export interface Component {
@@ -107,24 +107,24 @@ export const exampleBoard: Board = {
 
 export function defineComponent(component: ComponentData, zone: Zone) {
   // setting default as empty if no filter provided
-  const empty = {and_: {}};
-  const filter = component.filter === undefined ? empty : component.filter;
+  const f = component.filter === undefined ? {and_: {}} : component.filter;
   zone.components[component.id!] = {
     data: {
-      filter: deepCopy(filter),
-      defaultFilter: deepCopy(filter),
+      filter: deepCopy(f),
+      defaultFilter: deepCopy(f),
       ...component
     }
   };
 }
 
 export function defineZone(objectType: string, components: ComponentData[], filter?: IFilter) {
+  const f = filter === undefined ? {and_: {}} : filter;
   const zone: Zone = {
     components: {},
     order: [],
     type: objectType,
-    filter: deepCopy(filter),
-    defaultFilter: deepCopy(filter)
+    filter: deepCopy(f),
+    defaultFilter: deepCopy(f)
   };
   for (const component of components) {
     defineComponent(component, zone);
@@ -210,18 +210,6 @@ export function getWidgetOrder(layout: any) {
   };
 }
 
-async function getObjectTypes(baseUrl: string) {
-  const res = await httpClient().get('/_config/attribute_types', {
-    baseURL: baseUrl
-  });
-  // @ts-ignore
-  return Object.keys(res.data);
-}
-
-export async function fetchObjectTypes(baseUrl: string) {
-  return await getObjectTypes(baseUrl);
-}
-
 export async function getBoard(id: string, ds: any, user: any) {
   const res = await ds.getOne({
     objectType: 'board',
@@ -297,17 +285,6 @@ function formatZoneOrders(data: any) {
   return formattedData;
 }
 
-function formatComponentOrders(data: any) {
-  const formattedData = data.map((component: any) => {
-    return {
-      componentId: component.relationships.component.data.id,
-      order: component.attributes.order,
-      componentZoneId: component.id
-    }
-  });
-  return formattedData;
-}
-
 async function getZoneData(ids: string[], ds: any) {
   return await ds.getListPage({
     objectType: 'zone',
@@ -334,8 +311,31 @@ export function saveTitle(title: string, ds: any, id: string, objectType: string
   })
 }
 
-export async function getComponents(zoneId: string) {
-  return await httpClient().get('/component_zone',{
+export async function getComponents(zoneId: string, ds: TsDataSource) {
+  const componentZoneData = await getComponentZoneData(zoneId);
+  const componentIds = componentZoneData.data.data.map((component: any) => component.relationships.component.data.id);
+  const componentData = await getComponentData(componentIds, ds);
+
+  return componentZoneData.data.data.map((component: any) => {
+    const componentId = component.relationships.component.data.id;
+    const componentDetails = componentData.find((data: any) => data.id === componentId);
+    return {
+      componentId: componentId,
+      order: component.attributes.order,
+      componentZoneId: component.id,
+      componentType: componentDetails.component_type,
+      filter: componentDetails.filter,
+      title: componentDetails.title,
+      objectType: componentDetails.object_type,
+      baseUrl: componentDetails.base_url,
+      config: componentDetails.config,
+      widgetType: componentDetails.widget_type
+    };
+  });
+}
+
+async function getComponentZoneData(zoneId: string) {
+  return await httpClient().get('/component_zone', {
     params: {
       filter: {
         and_: {
@@ -343,28 +343,21 @@ export async function getComponents(zoneId: string) {
         }
       }
     }
-  }).then(async(res: any) => {
-    // Removes duplicate values
-    return formatComponentOrders(res.data.data)
   });
 }
 
-// @ts-ignore
-async function getComponentData(ids: string[], ds: any) {
+async function getComponentData(componentIds: string[], ds: TsDataSource): Promise<DataObject> {
   return await ds.getListPage({
     objectType: 'component',
     filter: {
       and_: {
-        'id': { 'in_list': { 'value': ids } }
+        'id': { 'in_list': { 'value': componentIds } }
       }
     }
-  }).then((res: any) => {
-    return res;
-  })
+  });
 }
 
 export const generateLayout = (components) => {
-
   const types = { 
     sm: { lg: { w: 1, h: 1 }, md: { w: 1, h: 1 }, sm: { w: 1, h: 1 } }, 
     md: { lg: { w: 2, h: 2 }, md: { w: 2, h: 2 }, sm: { w: 1, h: 2 } }, 
@@ -376,7 +369,7 @@ export const generateLayout = (components) => {
   const x = { lg: 0, md: 0, sm: 0 };
   
   components.forEach((component) => {
-    const type = component.componentType || 'sm';
+    const type = component.widgetType || 'sm';
     ['lg', 'md', 'sm'].forEach(breakpoint => {
       const { w, h } = types[type][breakpoint];
       // if the widget won't fit on the current row, move it to the next row
@@ -403,7 +396,7 @@ export async function createBoardAndView(ds: TsDataSource, id: string, title: st
       id: boardId,
       attributes: {
         title: title,
-        filter: {},
+        filter: {and_: {}},
         user_id: user.id
       },
     }]
@@ -436,7 +429,7 @@ export async function addView(ds: TsDataSource, id: string, title: string) {
       id: viewId,
       attributes: {
         title: title,
-        filter: {},
+        filter: {and_: {}},
         user_id: user.id,
       },
     }]
@@ -456,7 +449,7 @@ export async function addZone(ds: TsDataSource, objectType: string, title: strin
       id: newId,
       attributes: {
         title: title,
-        filter: {},
+        filter: {and_: {}},
         object_type: objectType,
         user_id: user.id,
       },
@@ -503,7 +496,7 @@ export async function addComponent(
         object_type: objectType,
         component_type: componentType,
         widget_type: widgetType,
-        filter: {},
+        filter: {and_: {}},
         config: {},
         base_url: baseUrl || 'https://portal.tol.sanger.ac.uk/api/v1',
         user_id: user.id,

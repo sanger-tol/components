@@ -10,12 +10,12 @@ import {
   Col, 
   Button, 
   useZone, 
-  ResponsiveWidget, 
   env,
   ComponentModal,
   InlineEdit,
   BoardFilters
 } from '../index';
+import ResponsiveWidget, { IWidgets } from './ResponsiveWidget';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlus,
@@ -27,26 +27,21 @@ import {
 } from './Utils';
 import { ConfirmationModal } from './components';
 
-interface Widgets {
-  componentId: string,
-  order: string,
-  componentZoneId: string,
-  componentType: string,
-}
 
 interface Props {
   id: string,
   title: string,
   objectType: string,
+  filter: any,
   onZoneReorder: any,
   deleteZone: any,
   ds: any
 }
 
 function ZoneGrid(props: Props) {
-  const { id, objectType, onZoneReorder, deleteZone, ds } = props;
+  const { id, objectType, filter, onZoneReorder, deleteZone, ds } = props;
   const [draggable, setDraggable] = useState(false);
-  const [currentWidgets, setCurrentWidgets] = useState<Widgets[]>([]);
+  const [currentWidgets, setCurrentWidgets] = useState<IWidgets[]>([]);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
@@ -55,6 +50,7 @@ function ZoneGrid(props: Props) {
   const z = useZone({
     endpoint: objectType,
     baseUrl: env.TOL_DATA,
+    filter: filter,
     components: []
   });
 
@@ -76,21 +72,22 @@ function ZoneGrid(props: Props) {
   );
 
   useEffect(() => {
-    getComponents(id).then((res: any) => {
-    // Sort the widgets based on the order value
-    const sortedWidgets = res.sort((a, b) => a.order - b.order);
-      setCurrentWidgets(res);
+    getComponents(id, ds).then((components: any) => {
+      setCurrentWidgets(components);
+      // sort the widgets based on the order value
+      const sortedWidgets = components.sort((a, b) => a.order - b.order);
       sortedWidgets.forEach((widget) => {
         z.zone.components[widget.componentId] = {
           data: {
-            defaultFilter: {and_: {}},
-            filter: {and_: {}},
+            defaultFilter: widget.filter,
+            filter: widget.filter,
             id: widget.componentId,
-            order: widget.order,
+            order: widget.order
           }
         };
         z.zone.order.push(widget.componentId);
       })
+      z.setZone({...z.zone});
     })
   }, []);
 
@@ -178,7 +175,6 @@ function ZoneGrid(props: Props) {
     <Button
       outline
       onClick={() => setOpenFilters(true)}
-      disabled
       type='primary'
       icon='filter'
       position='right'
@@ -282,6 +278,7 @@ function ZoneGrid(props: Props) {
       )}
       {confirmationModal}
       <BoardFilters
+        id={id}
         entityType="zone"
         open={openFilters}
         setOpen={setOpenFilters}
