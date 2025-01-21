@@ -4,62 +4,55 @@
  * SPDX-License-Identifier: MIT
  */
 
-$tol-info-message-transparent: rgba($tol-info-message, 0.93) !default;
-$tol-error-message-transparent: rgba($tol-error-message, 0.9) !default;
-$tol-success-message-transparent: rgba($tol-success-message, 0.9) !default;
-$tol-warning-message-transparent: rgba($tol-warning-message, 0.78) !default;
+$tol-info-message-transparent: rgba($tol-info, 0.93) !default;
+$tol-danger-message-transparent: rgba($tol-danger, 0.9) !default;
+$tol-success-message-transparent: rgba($tol-success, 0.9) !default;
+$tol-warning-message-transparent: rgba($tol-warning, 0.78) !default;
 
-$tol-info-message-dark: darken($tol-info-message, 8%) !default;
-$tol-error-message-dark: darken($tol-error-message, 12%) !default;
-$tol-success-message-dark: darken($tol-success-message, 8%) !default;
-$tol-warning-message-dark: darken($tol-warning-message, 5%) !default;
+$tol-info-message-dark: darken($tol-info, 8%) !default;
+$tol-danger-message-dark: darken($tol-danger, 12%) !default;
+$tol-success-message-dark: darken($tol-success, 8%) !default;
+$tol-warning-message-dark: darken($tol-warning, 5%) !default;
 
 :root {
-  --tol-info-message: #{$tol-info-message};
-  --tol-error-message: #{$tol-error-message};
-  --tol-success-message: #{$tol-success-message};
-  --tol-warning-message: #{$tol-warning-message};
-
-  --tol-message-text-light: #{$tol-message-text-light};
-  --tol-message-text-dark: #{$tol-message-text-dark};
-
+  // conversions
   --tol-info-message-transparent: #{$tol-info-message-transparent};
-  --tol-error-message-transparent: #{$tol-error-message-transparent};
+  --tol-danger-message-transparent: #{$tol-danger-message-transparent};
   --tol-success-message-transparent: #{$tol-success-message-transparent};
   --tol-warning-message-transparent: #{$tol-warning-message-transparent};
 
-  --tol-error-message-dark: #{$tol-error-message-dark};
+  --tol-danger-message-dark: #{$tol-danger-message-dark};
   --tol-info-message-dark: #{$tol-info-message-dark};
   --tol-success-message-dark: #{$tol-success-message-dark};
   --tol-warning-message-dark: #{$tol-warning-message-dark};
 
   --rs-message-success-bg: var(--tol-success-message-transparent);
   --rs-message-success-border: var(--tol-success-message-dark);
-  --rs-message-success-icon-border: var(--tol-success-message);
-  --rs-message-success-header: var(--tol-message-text-light);
-  --rs-message-success-text: var(--tol-message-text-light);
-  --rs-message-success-icon: var(--tol-message-text-light);
+  --rs-message-success-icon-border: var(--tol-success);
+  --rs-message-success-header: var(--tol-light);
+  --rs-message-success-text: var(--tol-light);
+  --rs-message-success-icon: var(--tol-light);
 
-  --rs-message-error-bg: var(--tol-error-message-transparent);
-  --rs-message-error-border: var(--tol-error-message-dark);
-  --rs-message-error-icon-border: var(--tol-error-message);
-  --rs-message-error-header: var(--tol-message-text-light);
-  --rs-message-error-text: var(--tol-message-text-light);
-  --rs-message-error-icon: var(--tol-message-text-light);
+  --rs-message-error-bg: var(--tol-danger-message-transparent);
+  --rs-message-error-border: var(--tol-danger-message-dark);
+  --rs-message-error-icon-border: var(--tol-danger);
+  --rs-message-error-header: var(--tol-light);
+  --rs-message-error-text: var(--tol-light);
+  --rs-message-error-icon: var(--tol-light);
 
   --rs-message-info-bg: var(--tol-info-message-transparent);
   --rs-message-info-border: var(--tol-info-message-dark);
-  --rs-message-info-icon-border: var(--tol-info-message);
-  --rs-message-info-header: var(--tol-message-text-light);
-  --rs-message-info-text: var(--tol-message-text-light);
-  --rs-message-info-icon: var(--tol-message-text-light);
+  --rs-message-info-icon-border: var(--tol-info);
+  --rs-message-info-header: var(--tol-light);
+  --rs-message-info-text: var(--tol-light);
+  --rs-message-info-icon: var(--tol-light);
 
   --rs-message-warning-bg: var(--tol-warning-message-transparent);
   --rs-message-warning-border: var(--tol-warning-message-dark);
-  --rs-message-warning-icon-border: var(--tol-warning-message);
-  --rs-message-warning-header: var(--tol-message-text-dark);
-  --rs-message-warning-text: var(--tol-message-text-dark);
-  --rs-message-warning-icon: var(--tol-message-text-light);
+  --rs-message-warning-icon-border: var(--tol-warning);
+  --rs-message-warning-header: var(--tol-dark);
+  --rs-message-warning-text: var(--tol-dark);
+  --rs-message-warning-icon: var(--tol-light);
 
   .tol-status {
     .rs-message-container {

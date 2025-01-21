@@ -40,6 +40,9 @@ $tol-royal-opaque: rgba($tol-royal, 0.1) !default;
 $tol-royal-light: lighten($tol-royal, 15%) !default;
 $tol-royal-dark: darken($tol-royal, 15%) !default;
 
+$tol-light: white !default;
+$tol-dark: black !default;
+
 $tol-bg: white !default;
 $tol-bg-dark: #e7eaed !default;
 $tol-text: #212529 !default;
@@ -81,6 +84,9 @@ $tol-emphasis: black !default;
   --tol-royal-opaque: #{$tol-royal-opaque};
   --tol-royal-light: #{$tol-royal-light};
   --tol-royal-dark: #{$tol-royal-dark};
+
+  --tol-light: #{$tol-light};
+  --tol-dark: #{$tol-dark};
 
   --tol-bg: #{$tol-bg};
   --tol-bg-dark: #{$tol-bg-dark};
