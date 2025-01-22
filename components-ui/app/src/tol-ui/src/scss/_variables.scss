@@ -5,6 +5,31 @@
  */
 
 // ToL Vaiables
+$tol-light: white !default;
+$tol-dark: black !default;
+
+// ToL Backings
+$tol-bg-LIGHT: white !default;
+$tol-bg-dark-LIGHT: darken($tol-bg-LIGHT, 10%) !default;
+$tol-text-LIGHT: #212529 !default;
+$tol-emphasis-LIGHT: $tol-dark !default;
+
+$tol-bg-DARK: #212529 !default;
+$tol-bg-dark-DARK: darken($tol-bg-DARK, 10%) !default;
+$tol-text-DARK: #dee1e5 !default;
+$tol-emphasis-DARK: $tol-light !default;
+
+$tol-grey-LIGHT: #e8ebee !default;
+$tol-grey-opaque-LIGHT: rgba($tol-grey-LIGHT, 0.1) !default;
+$tol-grey-light-LIGHT: lighten($tol-grey-LIGHT, 10%) !default;
+$tol-grey-dark-LIGHT: darken($tol-grey-LIGHT, 10%) !default;
+
+$tol-grey-DARK: #333a40 !default;
+$tol-grey-opaque-DARK: rgba($tol-grey-DARK, 0.1) !default;
+$tol-grey-light-DARK: lighten($tol-grey-DARK, 10%) !default;
+$tol-grey-dark-DARK: darken($tol-grey-DARK, 10%) !default;
+
+// ToL Colours
 $tol-primary: #039be5 !default;
 $tol-primary-opaque: rgba($tol-primary, 0.1) !default;
 $tol-primary-light: lighten($tol-primary, 15%) !default;
@@ -30,26 +55,38 @@ $tol-danger-opaque: rgba($tol-danger, 0.1) !default;
 $tol-danger-light: lighten($tol-danger, 15%) !default;
 $tol-danger-dark: darken($tol-danger, 15%) !default;
 
-$tol-grey: grey !default;
-$tol-grey-opaque: rgba($tol-grey, 0.1) !default;
-$tol-grey-light: lighten($tol-grey, 15%) !default;
-$tol-grey-dark: darken($tol-grey, 15%) !default;
-
 $tol-royal: purple !default;
 $tol-royal-opaque: rgba($tol-royal, 0.1) !default;
 $tol-royal-light: lighten($tol-royal, 15%) !default;
 $tol-royal-dark: darken($tol-royal, 15%) !default;
 
-$tol-light: white !default;
-$tol-dark: black !default;
-
-$tol-bg: white !default;
-$tol-bg-dark: #e7eaed !default;
-$tol-text: #212529 !default;
-$tol-emphasis: black !default;
-
 // ToL CSS Variable Conversion
 :root {
+  --tol-light: #{$tol-light};
+  --tol-dark: #{$tol-dark};
+
+  --tol-bg: #{$tol-bg-LIGHT};
+  --tol-bg-dark: #{$tol-bg-dark-LIGHT};
+  --tol-text: #{$tol-text-LIGHT};
+  --tol-emphasis: #{$tol-emphasis-LIGHT};
+
+  --tol-grey: #{$tol-grey-LIGHT};
+  --tol-grey-opaque: #{$tol-grey-opaque-LIGHT};
+  --tol-grey-light: #{$tol-grey-light-LIGHT};
+  --tol-grey-dark: #{$tol-grey-dark-LIGHT};
+
+  @media (prefers-color-scheme: dark) {
+    --tol-bg: #{$tol-bg-DARK};
+    --tol-bg-dark: #{$tol-bg-dark-DARK};
+    --tol-text: #{$tol-text-DARK};
+    --tol-emphasis: #{$tol-emphasis-DARK};
+
+    --tol-grey: #{$tol-grey-DARK};
+    --tol-grey-opaque: #{$tol-grey-opaque-DARK};
+    --tol-grey-light: #{$tol-grey-light-DARK};
+    --tol-grey-dark: #{$tol-grey-dark-DARK};
+  }
+
   --tol-primary: #{$tol-primary};
   --tol-primary-opaque: #{$tol-primary-opaque};
   --tol-primary-light: #{$tol-primary-light};
@@ -75,32 +112,10 @@ $tol-emphasis: black !default;
   --tol-danger-light: #{$tol-danger-light};
   --tol-danger-dark: #{$tol-danger-dark};
 
-  --tol-grey: #{$tol-grey};
-  --tol-grey-opaque: #{$tol-grey-opaque};
-  --tol-grey-light: #{$tol-grey-light};
-  --tol-grey-dark: #{$tol-grey-dark};
-
   --tol-royal: #{$tol-royal};
   --tol-royal-opaque: #{$tol-royal-opaque};
   --tol-royal-light: #{$tol-royal-light};
   --tol-royal-dark: #{$tol-royal-dark};
-
-  --tol-light: #{$tol-light};
-  --tol-dark: #{$tol-dark};
-
-  --tol-bg: #{$tol-bg};
-  --tol-bg-dark: #{$tol-bg-dark};
-  --tol-text: #{$tol-text};
-  --tol-emphasis: #{$tol-emphasis};
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --tol-bg: #1d222b;
-    --tol-bg-dark: #13151a;
-    --tol-text: #dee1e5;
-    --tol-emphasis: white;
-  }
 }
 
 // React Bootstrap Main Override Variables

@@ -69,8 +69,8 @@ function BarChart(props: Props) {
   const [labelColour, setLabelColour] = useState('');
   const [gridColour, setGridColour] = useState('');
   themeListener(() => {
-    setTitleColour(getCssVarValue("--bs-emphasis-color"));
-    setLabelColour(getCssVarValue("--bs-body-color"));
+    setTitleColour(getCssVarValue("--tol-emphasis"));
+    setLabelColour(getCssVarValue("--tol-bg"));
     setGridColour(getCssVarValue("--bs-secondary-bg"));
   });
 

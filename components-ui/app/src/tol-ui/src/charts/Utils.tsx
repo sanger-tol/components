@@ -622,7 +622,7 @@ function initialiseOriginDataset(
       labels: [],
       backgroundColor: [],
       hoverBackgroundColor: [],
-      borderColor: getCssVarValue("--bs-body-bg"),
+      borderColor: getCssVarValue("--tol-bg"),
       borderWidth: 0.2,
       borderAlign: 'centre',
       hoverOffset: 0
