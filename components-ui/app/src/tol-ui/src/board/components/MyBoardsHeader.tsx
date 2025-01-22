@@ -54,8 +54,8 @@ function MyBoardsHeader(props: Props) {
     } finally {
       if (modalError === "") {
         setTimeout(() => {
-        history.push(`/board/${boardId}`);
-        }, 400)
+          history.push(`/board/${boardId}`);
+        }, 400);
       }
     }
   };
@@ -78,8 +78,8 @@ function MyBoardsHeader(props: Props) {
   );
 
   const defaultDropdownMainIcon = {
-    icon: 'plus',
-    type: 'success'
+    icon: "plus",
+    type: "success",
   };
 
   const {
@@ -95,25 +95,21 @@ function MyBoardsHeader(props: Props) {
   } = props;
 
   return (
-    <div style={containerStyle} className={customClass}>
-      <div>
-        <h1>{title}</h1>
-        <p>{subTitle}</p>
-        <p style={{color:'red'}}>
-          Warning: Dashboards are still in development so existing 
-          boards or views may be removed at any point
-        </p>
+      <div style={containerStyle} className={customClass}>
+        <div>
+          <h1>{title}</h1>
+          <p>{subTitle}</p>
+        </div>
+        <DropdownButtons
+          mainButtonIcon={dropdownMainIcon}
+          placement={placement}
+          globalDisabled={globalDisabled}
+          dropdownButtons={dropdownButtons}
+          menuStyle={menuStyle}
+          showMessages={false}
+        />
+        {newBoardModalOpen && newBoardModal()}
       </div>
-      <DropdownButtons
-        mainButtonIcon={dropdownMainIcon}
-        placement={placement}
-        globalDisabled={globalDisabled}
-        dropdownButtons={dropdownButtons}
-        menuStyle={menuStyle}
-        showMessages={false}
-      />
-      {newBoardModalOpen && newBoardModal()}
-    </div>
   );
 }
 
