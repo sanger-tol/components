@@ -312,10 +312,12 @@ export function saveTitle(title: string, ds: any, id: string, objectType: string
 }
 
 export async function getComponents(zoneId: string, ds: TsDataSource) {
-  const componentZoneData: any = await getComponentZoneData(zoneId);
+  const componentZoneData = await getComponentZoneData(zoneId);
+  // @ts-ignore
   const componentIds = componentZoneData.data.data.map((component: any) => component.relationships.component.data.id);
   const componentData = await getComponentData(componentIds, ds);
 
+  // @ts-ignore
   return componentZoneData.data.data.map((component: any) => {
     const componentId = component.relationships.component.data.id;
     const componentDetails = componentData.find((data: any) => data.id === componentId);
