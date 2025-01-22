@@ -10,6 +10,7 @@ import { generateId } from "../../general/Utils";
 import { FormTextField } from "../../forms";
 import { RSForm, Button } from "../../index";
 
+
 interface Props {
   setOpen: any;
   open: any;
@@ -38,7 +39,7 @@ function NewBoardModal(props: Props) {
         onClick={() => {
           setOpen(false), onConfirmClick(boardId, viewId, boardTitle, viewTitle);
         }}
-        text="Confirm"
+        text="Create"
         icon='plus'
       />
       <Button
