@@ -9,8 +9,7 @@ import {
   Button, 
   Modal,
   SingleSelect,
-  TsDataSource,
-  env,
+  TsDataSource
 } from '../index';
 import { Form, InputGroup } from 'react-bootstrap';
 import { addZone } from './Utils';
