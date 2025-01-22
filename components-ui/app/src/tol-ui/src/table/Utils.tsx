@@ -20,7 +20,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
 import { EntityMeta } from '../models';
 import { StatusMessage } from '../messaging';
-import { colours } from 'src/charts/Utils';
+import { colours } from '../charts/Utils';
 
 
 interface Rgb {
