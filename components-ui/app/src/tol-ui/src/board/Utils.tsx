@@ -11,7 +11,7 @@ import { generateFilter, resetAllFilters } from '../filtering/Utils';
 import { useEffectUpdate } from '../hooks';
 import { IFilter } from '../models/Filter';
 import { getUserFromLocalStorage } from '../services/localStorage/localStorageService';
-import { TsDataSource, DataObject } from '../services';
+import { TsDataSource } from '../services';
 
 
 export interface Component {
@@ -346,7 +346,7 @@ async function getComponentZoneData(zoneId: string) {
   });
 }
 
-async function getComponentData(componentIds: string[], ds: TsDataSource): Promise<DataObject> {
+async function getComponentData(componentIds: string[], ds: TsDataSource): Promise<any> {
   return await ds.getListPage({
     objectType: 'component',
     filter: {
@@ -499,7 +499,7 @@ export async function addComponent(
         widget_type: widgetType,
         filter: {and_: {}},
         config: {},
-        base_url: baseUrl || 'https://portal.tol.sanger.ac.uk/api/v1',
+        base_url: baseUrl,
         user_id: user.id,
       },
     }]

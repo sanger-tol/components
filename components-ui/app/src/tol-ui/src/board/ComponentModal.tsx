@@ -11,6 +11,8 @@ import {
   Modal,
   Row,
   Col,
+  env,
+  TsDataSource
 } from '../index';
 import { Form, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,7 +26,7 @@ interface Props {
   zone: Zone,
   setZone: any,
   zoneId: string,
-  ds: any,
+  ds: TsDataSource,
   currentWidgets: any,
   setCurrentWidgets: any
 }
@@ -81,7 +83,8 @@ function ComponentModal(props: Props) {
         nextOrder,
         componentType,
         widgetType,
-        zoneId
+        zoneId,
+        env.TOL_DATA
       );
       //This adds the component to the zone
       defineComponent({
@@ -96,6 +99,14 @@ function ComponentModal(props: Props) {
         componentId: newComponent.newComponentId,
         order: nextOrder,
         componentZoneId: newComponent.newComponentZoneId,
+
+        componentType: componentType,
+        filter: {and_: {}},
+        title: title,
+        objectType: zone.type,
+        baseUrl: env.TOL_DATA,
+        config: {},
+        widgetType: widgetType
       }]);
 
       setZone({...zone});
