@@ -38,6 +38,9 @@ interface Props {
   viewId: string
 }
 
+const BOARD_ENDPOINTS = ['board', 'view', 'zone', 'component', 'view_board', 'component_zone', 'zone_view'];
+const MISC_ENDPOINTS = ['user', 'user_action', 'action', 'singular']
+
 function ZoneModal(props: Props) {
   const { open, setOpen, setZones, zones, zoneOrder, setZoneOrder, ds, viewId } = props;
   const [objectType, setObjectType] = useState('');
@@ -77,9 +80,9 @@ function ZoneModal(props: Props) {
   }, [open]);
 
   useEffect(() => {
-    const tempDs = new TsDataSource({baseUrl: env.TOL_DATA});
+    const tempDs = new TsDataSource();
     tempDs.attributeMetadata().then(am => {
-      setObjectTypesList(Object.keys(am));
+      setObjectTypesList(Object.keys(am).filter(key => ![...BOARD_ENDPOINTS, ...MISC_ENDPOINTS].includes(key)));
     });
   }, []);
 
