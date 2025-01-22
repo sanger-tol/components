@@ -248,13 +248,13 @@
   // link box (e.g. relationship)
   .link-box {
     border-radius: 6px;
-    background-color: rgba(var(--tol-primary), 0.1) !important;
+    background-color: rgba($tol-primary, 0.1) !important;
     padding: 5px 10px;
-    border: 1px solid rgba(var(--tol-primary), 0.2);
+    border: 1px solid rgba($tol-primary, 0.2);
   }
 
   .link-box:hover {
-    background-color: rgba(var(--tol-primary), 0.2) !important;
+    background-color: rgba($tol-primary, 0.2) !important;
   }
 
   .link-box.clickable {

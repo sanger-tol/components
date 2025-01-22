@@ -13,11 +13,11 @@
 
   .form-control:focus {
     box-shadow: none;
-    border-color: var(--tol-primary);
+    border-color: $tol-primary;
   }
 
   .form-control:hover {
-    border-color: var(--tol-primary);
+    border-color: $tol-primary;
   }
 
   .btn-xl {
