@@ -47,6 +47,7 @@ function ZoneGrid(props: Props) {
   const [openFilters, setOpenFilters] = useState(false);
   const [editBtnsVisible, setEditBtnsVisible] = useState(false);
   const [saveLayout, setSaveLayout] = useState(false);
+  const [title, setTitle] = useState(props.title);
   const z = useZone({
     endpoint: objectType,
     baseUrl: dataUrl,
@@ -106,6 +107,8 @@ function ZoneGrid(props: Props) {
       type='edit'
       icon='up-down-left-right'
       position='right'
+      tooltip="Edit Widgets"
+      tooltipPosition='top'
     />
   );
 
@@ -118,6 +121,8 @@ function ZoneGrid(props: Props) {
       type="success"
       icon='plus'
       position='right'
+      tooltip="Add Widget"
+      tooltipPosition='bottom'
     />
   );
 
@@ -130,6 +135,8 @@ function ZoneGrid(props: Props) {
       type="error"
       icon='trash'
       position='right'
+      tooltip="Delete Zone"
+      tooltipPosition='top'
     />
   );
 
@@ -142,6 +149,8 @@ function ZoneGrid(props: Props) {
       type='primary'
       icon='arrow-up'
       position='right'
+      tooltip="Move Zone Up"
+      tooltipPosition='top'
     />
   );
   
@@ -154,6 +163,8 @@ function ZoneGrid(props: Props) {
       type='primary'
       icon='arrow-down'
       position='right'
+      tooltip="Move Zone Down"
+      tooltipPosition='top'
     />
   );
 
@@ -168,6 +179,8 @@ function ZoneGrid(props: Props) {
       type="success"
       icon='floppy-disk'
       position='right'
+      tooltip="Save Layout"
+      tooltipPosition='top'
     />
   );
 
@@ -178,6 +191,8 @@ function ZoneGrid(props: Props) {
       type='primary'
       icon='filter'
       position='right'
+      tooltip="Add/Remove Filters"
+      tooltipPosition='top'
     />
   );
 
@@ -189,6 +204,8 @@ function ZoneGrid(props: Props) {
       type={editBtnsVisible ? "success" : "warning"}
       icon={editBtnsVisible ? 'check' : 'pen-to-square'}
       position='right'
+      tooltip={editBtnsVisible ? "Save Changes" : "Edit Zone"}
+      tooltipPosition='top'
     />
   );
 
@@ -196,17 +213,25 @@ function ZoneGrid(props: Props) {
     <div className='tol-zone-bar'>
       <Row>
         <Col>
-          <InlineEdit title={props.title} onSave={(newTitle) => saveTitle(newTitle, ds, id, 'zone')} />
+          <InlineEdit 
+          title={title} 
+          onSave={(newTitle) => {
+            if (newTitle !== title) {
+              saveTitle(newTitle, ds, id, 'zone');
+              setTitle(newTitle);
+            }
+          }} 
+          />
         </Col>
         <Col>
           <h6>
           {!draggable ? (
             <>
+            {addButton}
             {showEditButtons}
             {editBtnsVisible ? (
               <>
                 {deleteButton}
-                {addButton}
                 {editButton}
                 {downButton}
                 {upButton}

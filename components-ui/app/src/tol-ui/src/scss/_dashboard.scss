@@ -37,8 +37,9 @@
 
 .tol-board-bar {
   @extend .tol-widget;
-  margin-bottom: 10px;
-  margin: 0 !important;
+  margin: 0;
+  margin-bottom: 10px !important;
+  border-radius: 0;
 
   .inline-edit {
     color: var(--primary)
@@ -47,9 +48,12 @@
 
 .tol-zone-bar {
   @extend .tol-widget;
-  // margin-left: 10px;
-  // margin-right: 10px;
-  padding: 12px 24px
+  margin: 0;
+
+}
+
+.tol-zone-bar>div {
+  padding-right: 12px;
 }
 
 // buttons and modals etc
@@ -96,9 +100,7 @@
   fill: var(--primary);
 }
 
-// temp
 .add-zone-button {
-  //@extend .edit-config-button;
   position: absolute;
   right: 24px;
   top: 98px;
@@ -109,7 +111,7 @@
   padding: 0;
   height: 30px;
   width: 30px;
-  margin-left: 6px;
+  margin-right: 12px;
 }
 
 .tol-delete-warning {
@@ -130,6 +132,11 @@
   padding-right: 10px;
   overflow: auto;
   height: calc(100vh - 432px);
+}
+
+.my-boards-dropdown-buttons{
+  border: 0px !important;
+  font-size: 20px !important;
 }
 
 .my-boards-dropdown-buttons {

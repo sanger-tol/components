@@ -18,6 +18,7 @@ import { Accordion } from "./components";
 import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { BOARD_ENDPOINTS } from "../constants/api.constants";
 
 const containerStyle = {
   display: "flex",
@@ -33,7 +34,7 @@ const DASHBOARD_WARNING =
 
 const getBoardDetails = async (id: string, setErrorMessage: any) => {
   try {
-    const res = await httpClient().get("board-data/board", {
+    const res = await httpClient().get(BOARD_ENDPOINTS.BOARD, {
       params: {
         filter: {
           and_: {
