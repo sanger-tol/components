@@ -17,8 +17,12 @@ import { Redirect, useParams } from 'react-router-dom';
 import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
 import { getCssVarValue } from "../general/Utils";
 
+interface Props {
+  dataUrl?: string;
+}
 
-function Board() {
+function Board(props: Props) {
+  const { dataUrl } = props;
   const ds = new TsDataSource();
   const { boardId, viewId } = useParams<any>();
 
@@ -81,6 +85,7 @@ function Board() {
         id={boardData.views[0].id}
         ds={ds}
         defaultFilter={boardData.views[0].filter}
+        dataUrl={dataUrl}
       />
     </div>
   )

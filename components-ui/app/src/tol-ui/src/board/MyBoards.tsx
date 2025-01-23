@@ -143,7 +143,7 @@ function MyBoards() {
     </div>
   );
 
-  const myBoardsHeader = <MyBoardsHeader containerStyle={containerStyle} />;
+  const myBoardsHeader = <MyBoardsHeader containerStyle={containerStyle}/>;
 
   const myBoardsWarning = (
     <div style={{padding: "0px 10px"}}>

@@ -34,13 +34,17 @@ import { env } from "./variables/config";
 import { MyBoards, Board} from "./board";
 
 
+interface BoardsObject {
+  dataUrl?: object;
+}
+
 export interface Props {
   brand: string | JSX.Element;
   homePage: JSX.Element;
   pages: (Page | Dropdown)[];
   profilePages?: Page[];
   login?: boolean;
-  boards?: boolean;
+  boards?: BoardsObject;
   register?: boolean;
   customCallbackUrl?: string;
 }
@@ -78,7 +82,7 @@ function TolApp(props: Props) {
   if (boards) {
     profilePages = [{
       name: "My Boards",
-      element: <MyBoards />,
+      element: <MyBoards dataUrl={boards.dataUrl}/>,
       auth: true
     }, ...(profilePages ?? [])]
   }
@@ -120,7 +124,7 @@ function TolApp(props: Props) {
                 path="/board/:boardId"
               >
                 {boards && loggedIn
-                  ? <Board />
+                  ? <Board dataUrl={boards.dataUrl}/>
                   : <Redirect to="/" />
                 }
               </Route>
