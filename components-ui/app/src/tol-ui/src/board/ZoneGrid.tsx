@@ -49,7 +49,7 @@ function ZoneGrid(props: Props) {
   const [saveLayout, setSaveLayout] = useState(false);
   const z = useZone({
     endpoint: objectType,
-    baseUrl: env.TOL_DATA,
+    // baseUrl: env.TOL_DATA,
     filter: filter,
     components: []
   });
