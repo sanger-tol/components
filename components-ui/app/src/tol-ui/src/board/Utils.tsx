@@ -213,7 +213,7 @@ export function getWidgetOrder(layout: any) {
 
 export async function getBoard(id: string, ds: any, user: any) {
   const res = await ds.getOne({
-    objectType: BOARD_ENDPOINTS.GET_BOARD,
+    objectType: BOARD_ENDPOINTS.BOARD,
     id: id,
     user_id: user.id
   }).then(async(res: any) => {
@@ -228,7 +228,7 @@ export async function getBoard(id: string, ds: any, user: any) {
 }
 
 async function getViews(id: string, ds: any) {
-  return await httpClient().get(`/${BOARD_ENDPOINTS.GET_BOARD_VIEWS}`, {
+  return await httpClient().get(`/${BOARD_ENDPOINTS.BOARD_VIEWS}`, {
     params: {
       filter: {
         and_: {
@@ -244,7 +244,7 @@ async function getViews(id: string, ds: any) {
 
 async function getViewsData(ids: string[], ds: any) {
   return await ds.getListPage({
-    objectType: BOARD_ENDPOINTS.GET_VIEW,
+    objectType: BOARD_ENDPOINTS.VIEW,
     filter: {
       and_: {
         'id': { 'in_list': { 'value': ids } }
@@ -256,7 +256,7 @@ async function getViewsData(ids: string[], ds: any) {
 }
 
 export async function getZones(viewID: string, ds: any) {
-  return await httpClient().get(`/${BOARD_ENDPOINTS.GET_VIEW_ZONES}`,{
+  return await httpClient().get(`/${BOARD_ENDPOINTS.VIEW_ZONES}`,{
     params: {
       filter: {
         and_: {
@@ -288,7 +288,7 @@ function formatZoneOrders(data: any) {
 
 async function getZoneData(ids: string[], ds: any) {
   return await ds.getListPage({
-    objectType: BOARD_ENDPOINTS.GET_ZONE,
+    objectType: BOARD_ENDPOINTS.ZONE,
     filter: {
       and_: {
         'id': { 'in_list': { 'value': ids } }
@@ -338,7 +338,7 @@ export async function getComponents(zoneId: string, ds: TsDataSource) {
 }
 
 async function getComponentZoneData(zoneId: string) {
-  return await httpClient().get(`/${BOARD_ENDPOINTS.GET_ZONE_COMPONENTS}`, {
+  return await httpClient().get(`/${BOARD_ENDPOINTS.ZONE_COMPONENTS}`, {
     params: {
       filter: {
         and_: {
@@ -351,7 +351,7 @@ async function getComponentZoneData(zoneId: string) {
 
 async function getComponentData(componentIds: string[], ds: TsDataSource): Promise<any> {
   return await ds.getListPage({
-    objectType: BOARD_ENDPOINTS.GET_COMPONENT,
+    objectType: BOARD_ENDPOINTS.COMPONENT,
     filter: {
       and_: {
         'id': { 'in_list': { 'value': componentIds } }
@@ -393,7 +393,7 @@ export async function createBoardAndView(ds: TsDataSource, id: string, title: st
   const user = getUserFromLocalStorage();
   const boardId = id ?? generateId("b");
   await ds.upsert({
-    objectType: BOARD_ENDPOINTS.GET_BOARD,
+    objectType: BOARD_ENDPOINTS.BOARD,
     payload: [{
       type: BoardObjectTypes.BOARD as string,
       id: boardId,
@@ -407,7 +407,7 @@ export async function createBoardAndView(ds: TsDataSource, id: string, title: st
     return addView(ds, viewId, viewTitle);
   }).then(async () => {
     await ds.upsert({
-      objectType: BOARD_ENDPOINTS.GET_BOARD_VIEWS,
+      objectType: BOARD_ENDPOINTS.BOARD_VIEWS,
       payload: [{
         type: BoardObjectTypes.VIEW_BOARD as string,
         attributes: {
@@ -427,7 +427,7 @@ export async function addView(ds: TsDataSource, id: string, title: string) {
   const user = getUserFromLocalStorage();
   const viewId = id ?? generateId("v");
   await ds.upsert({
-    objectType: BOARD_ENDPOINTS.GET_VIEW,
+    objectType: BOARD_ENDPOINTS.VIEW,
     payload: [{
       type: BoardObjectTypes.VIEW as string,
       id: viewId,
@@ -447,7 +447,7 @@ export async function addZone(ds: TsDataSource, objectType: string, title: strin
   const user = getUserFromLocalStorage()
   const newId = generateId('z');
   await ds.upsert({
-    objectType: BOARD_ENDPOINTS.GET_ZONE,
+    objectType: BOARD_ENDPOINTS.ZONE,
     payload: [{
       type: BoardObjectTypes.ZONE as string,
       id: newId,
@@ -461,7 +461,7 @@ export async function addZone(ds: TsDataSource, objectType: string, title: strin
   });
 
   return await ds.upsert({
-    objectType: BOARD_ENDPOINTS.GET_VIEW_ZONES,
+    objectType: BOARD_ENDPOINTS.VIEW_ZONES,
     payload: [{
       type: BoardObjectTypes.ZONE_VIEW as string,
       attributes: {
@@ -491,7 +491,7 @@ export async function addComponent(
   const user = getUserFromLocalStorage()
   const newId = generateId('c');
   await ds.upsert({
-    objectType: BOARD_ENDPOINTS.GET_COMPONENT,
+    objectType: BOARD_ENDPOINTS.COMPONENT,
     payload: [{
       type: BoardObjectTypes.COMPONENT as string,
       id: newId,
@@ -509,7 +509,7 @@ export async function addComponent(
   });
 
   return await ds.upsert({
-    objectType: BOARD_ENDPOINTS.GET_ZONE_COMPONENTS,
+    objectType: BOARD_ENDPOINTS.ZONE_COMPONENTS,
     payload: [{
       type: BoardObjectTypes.COMPONENT_ZONE as string,
       attributes: {
@@ -528,7 +528,7 @@ export async function addComponent(
 
 export async function upsertComponentConfig(ds: TsDataSource, componentId: string, config: object) {
   return await ds.upsert({
-    objectType: BOARD_ENDPOINTS.GET_COMPONENT,
+    objectType: BOARD_ENDPOINTS.COMPONENT,
     payload: [{
       type: BoardObjectTypes.COMPONENT as string,
       id: componentId,

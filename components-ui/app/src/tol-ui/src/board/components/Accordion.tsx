@@ -15,6 +15,7 @@ import {
   faTable,
 } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
+import { BOARD_ENDPOINTS, BoardObjectTypes } from "../../constants";
 
 interface AccordionBaseProps {
   id: string;
@@ -206,7 +207,7 @@ function Accordion(props: BoardsAccordionProps) {
     setBoardDetails(deletedBoard);
     const ds = new TsDataSource();
     ds.custom(
-      `boards/board/${boardIdToDelete}`,
+      `${BOARD_ENDPOINTS.DELETE_BOARD}/${boardIdToDelete}`,
       'DELETE',
     )
     setBoardIdToDelete(null);
@@ -383,9 +384,9 @@ function Accordion(props: BoardsAccordionProps) {
             <div key={zoneId} style={{ marginTop: "15px" }}>
               <AccordionBase
                 id={zoneId}
-                endpointUrl={"component_zone"}
+                endpointUrl={BOARD_ENDPOINTS.ZONE_COMPONENTS}
                 filterItem={"zone.id"}
-                itemType={"component"}
+                itemType={BoardObjectTypes.ZONE as string}
                 title={zoneData[zoneId][0].title || ""}
                 subHeader={zoneData[zoneId][0].objectType}
                 clickable={false}
@@ -420,9 +421,9 @@ function Accordion(props: BoardsAccordionProps) {
                 <AccordionBase
                   id={viewId}
                   title={viewData[viewId] || ""}
-                  endpointUrl={"zone_view"}
+                  endpointUrl={BOARD_ENDPOINTS.VIEW_ZONES}
                   filterItem={"view.id"}
-                  itemType={"zone"}
+                  itemType={BoardObjectTypes.VIEW as string}
                   clickable={false}
                   renderChildren={(zoneIds) => (
                     <ZonesAccordion zoneIds={zoneIds} />
@@ -454,9 +455,9 @@ function Accordion(props: BoardsAccordionProps) {
             <AccordionBase
               id={board.id}
               title={board.title}
-              endpointUrl={"view_board"}
+              endpointUrl={BOARD_ENDPOINTS.BOARD_VIEWS}
               filterItem={"board.id"}
-              itemType={"view"}
+              itemType={BoardObjectTypes.BOARD as string}
               clickable={true}
               renderChildren={(viewIds) => (
                 <ViewsAccordion boardId={board.id} viewIds={viewIds} />

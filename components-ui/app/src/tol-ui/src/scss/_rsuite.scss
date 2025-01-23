@@ -281,10 +281,8 @@
 // temporary - will need changing for scrollable columns 
 // full modal height changes
 .rs-modal-full {
-  //height: calc(100% - 60px);
   height: auto;
   min-height: calc(600px - 60px);
-  // max-height: calc(2000px - 60px);
   width: calc(100% - 60px);
 
   .rs-modal-dialog,

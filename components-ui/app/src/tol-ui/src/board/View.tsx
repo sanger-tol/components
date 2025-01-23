@@ -12,6 +12,7 @@ import {
 } from '../index';
 import { getZones } from "./Utils";
 import ZoneGrid from './ZoneGrid';
+import { BOARD_ENDPOINTS, BoardObjectTypes } from '../constants';
 
 
 interface ZoneObject {
@@ -58,7 +59,7 @@ function View(props: Props) {
   const deleteZone = (id: string) => {
     const newZones = zones.filter(zone => zone.id !== id);
     ds.custom(
-      `boards/zone/${id}`,
+      `${BOARD_ENDPOINTS.DELETE_ZONE}/${id}`,
       'DELETE',
     )
     setZones(newZones);
@@ -104,7 +105,7 @@ function View(props: Props) {
     
     const payloadData = updatedZoneOrder.map((zone) => {
       return {
-        type: 'zone_view',
+        type: BOARD_ENDPOINTS.VIEW_ZONES,
         id: zone.zoneViewId,
         attributes: {
           order: zone.order
@@ -113,7 +114,7 @@ function View(props: Props) {
     })
 
     await ds.upsert({
-      objectType: 'zone_view',
+      objectType: BoardObjectTypes.ZONE_VIEW as string,
       payload: payloadData
     })
 
@@ -151,6 +152,7 @@ function View(props: Props) {
           icon='plus'
           position='right'
           tooltip='Add Zone'
+          tooltipPosition='left'
         />
       </div>
       <ZoneModal

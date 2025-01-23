@@ -4,7 +4,8 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export const BOARD_URL_PREFIX = "board-data"
+export const BOARD_URL_PREFIX = "board-data";
+export const BOARD_DELETE_URL_PREFIX = "board";
 
 export enum BoardObjectTypes {
     BOARD = "board",
@@ -17,11 +18,17 @@ export enum BoardObjectTypes {
 }
 
 export const BOARD_ENDPOINTS = {
-    GET_BOARD: `${BOARD_URL_PREFIX}/${BoardObjectTypes.BOARD}`,
-    GET_BOARD_VIEWS: `${BOARD_URL_PREFIX}/${BoardObjectTypes.VIEW_BOARD}`,
-    GET_VIEW: `${BOARD_URL_PREFIX}/${BoardObjectTypes.VIEW}`,
-    GET_VIEW_ZONES: `${BOARD_URL_PREFIX}/${BoardObjectTypes.ZONE_VIEW}`,
-    GET_ZONE: `${BOARD_URL_PREFIX}/${BoardObjectTypes.ZONE}`,
-    GET_ZONE_COMPONENTS: `${BOARD_URL_PREFIX}/${BoardObjectTypes.COMPONENT_ZONE}`,
-    GET_COMPONENT: `${BOARD_URL_PREFIX}/${BoardObjectTypes.COMPONENT}`,
+    // Standard endpoints
+    BOARD: `${BOARD_URL_PREFIX}/${BoardObjectTypes.BOARD}`,
+    BOARD_VIEWS: `${BOARD_URL_PREFIX}/${BoardObjectTypes.VIEW_BOARD}`,
+    VIEW: `${BOARD_URL_PREFIX}/${BoardObjectTypes.VIEW}`,
+    VIEW_ZONES: `${BOARD_URL_PREFIX}/${BoardObjectTypes.ZONE_VIEW}`,
+    ZONE: `${BOARD_URL_PREFIX}/${BoardObjectTypes.ZONE}`,
+    ZONE_COMPONENTS: `${BOARD_URL_PREFIX}/${BoardObjectTypes.COMPONENT_ZONE}`,
+    COMPONENT: `${BOARD_URL_PREFIX}/${BoardObjectTypes.COMPONENT}`,
+
+    // Delete endpoints
+    DELETE_BOARD: `${BOARD_DELETE_URL_PREFIX}/${BoardObjectTypes.BOARD}`,
+    DELETE_ZONE: `${BOARD_DELETE_URL_PREFIX}/${BoardObjectTypes.ZONE}`,
+    DELETE_COMPONENT: `${BOARD_DELETE_URL_PREFIX}/${BoardObjectTypes.COMPONENT}`,
 }

@@ -39,7 +39,6 @@
   @extend .tol-widget;
   margin: 0;
   margin-bottom: 10px !important;
-  // margin-bottom: 10px;
   border-radius: 0;
 
   .inline-edit {
@@ -49,7 +48,6 @@
 
 .tol-zone-bar {
   @extend .tol-widget;
-  // margin-top: 10px;
   margin: 0;
 
 }
@@ -102,9 +100,7 @@
   fill: var(--primary);
 }
 
-// temp
 .add-zone-button {
-  //@extend .edit-config-button;
   position: absolute;
   right: 24px;
   top: 98px;
