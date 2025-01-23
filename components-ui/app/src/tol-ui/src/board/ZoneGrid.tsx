@@ -10,7 +10,6 @@ import {
   Col, 
   Button, 
   useZone, 
-  env,
   ComponentModal,
   InlineEdit,
   BoardFilters
