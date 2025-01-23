@@ -99,7 +99,7 @@ function ComponentModal(props: Props) {
         componentId: newComponent.newComponentId,
         order: nextOrder,
         componentZoneId: newComponent.newComponentZoneId,
-
+        baseUrl: dataUrl,
         componentType: componentType,
         filter: {and_: {}},
         title: title,
