@@ -80,6 +80,8 @@ function MyBoardsHeader(props: Props) {
   const defaultDropdownMainIcon = {
     icon: "plus",
     type: "success",
+    tooltip: "Create Board",
+    tooltipPosition: "bottom",
   };
 
   const {

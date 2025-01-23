@@ -150,6 +150,7 @@ function View(props: Props) {
           className='add-zone-button' // temp placement
           icon='plus'
           position='right'
+          tooltip='Add Zone'
         />
       </div>
       <ZoneModal
