@@ -21,6 +21,7 @@ interface Props {
   globalDisabled?: boolean;
   placement?: string;
   customClass?: string;
+  dataUrl?: string;
 }
 
 const DEFAULT_TITLE = "My Boards";

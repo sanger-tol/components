@@ -31,11 +31,12 @@ interface Props {
   zoneId: string,
   ds: TsDataSource,
   currentWidgets: any,
-  setCurrentWidgets: any
+  setCurrentWidgets: any,
+  dataUrl?: string
 }
 
 function ComponentModal(props: Props) {
-  const { open, setOpen, zone, setZone, zoneId, ds, currentWidgets, setCurrentWidgets } = props;
+  const { open, setOpen, zone, setZone, zoneId, ds, currentWidgets, setCurrentWidgets, dataUrl } = props;
   const [componentType, setComponentType] = useState('');
   const [widgetType, setWidgetType] = useState('');
   const [title, setTitle] = useState('');
@@ -87,6 +88,7 @@ function ComponentModal(props: Props) {
         componentType,
         widgetType,
         zoneId,
+        dataUrl
       );
       //This adds the component to the zone
       defineComponent({
@@ -101,7 +103,7 @@ function ComponentModal(props: Props) {
         componentId: newComponent.newComponentId,
         order: nextOrder,
         componentZoneId: newComponent.newComponentZoneId,
-
+        baseUrl: dataUrl,
         componentType: componentType,
         filter: {and_: {}},
         title: title,

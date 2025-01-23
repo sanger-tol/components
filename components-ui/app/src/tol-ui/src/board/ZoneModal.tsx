@@ -34,14 +34,15 @@ interface Props {
   setZoneOrder: any,
   zoneOrder: OrderObject[],
   ds: any,
-  viewId: string
+  viewId: string,
+  dataUrl?: string;
 }
 
 const BOARD_ENDPOINTS = ['board', 'view', 'zone', 'component', 'view_board', 'component_zone', 'zone_view'];
 const MISC_ENDPOINTS = ['user', 'user_action', 'action', 'singular']
 
 function ZoneModal(props: Props) {
-  const { open, setOpen, setZones, zones, zoneOrder, setZoneOrder, ds, viewId } = props;
+  const { open, setOpen, setZones, zones, zoneOrder, setZoneOrder, ds, viewId, dataUrl } = props;
   const [objectType, setObjectType] = useState('');
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState(false);
@@ -79,7 +80,7 @@ function ZoneModal(props: Props) {
   }, [open]);
 
   useEffect(() => {
-    const tempDs = new TsDataSource();
+    const tempDs = new TsDataSource({baseUrl: dataUrl});
     tempDs.attributeMetadata().then(am => {
       setObjectTypesList(Object.keys(am).filter(key => ![...BOARD_ENDPOINTS, ...MISC_ENDPOINTS].includes(key)));
     });
@@ -91,7 +92,7 @@ function ZoneModal(props: Props) {
         return zone.order;
       })
       const nextOrder = orders.length > 0 ? Math.max(...orders) + 1 : 1;
-      const newZone: INewZone = await addZone(ds, objectType, title, nextOrder, viewId);
+      const newZone: INewZone = await addZone(ds, objectType, title, nextOrder, viewId, dataUrl);
       setZones(
         [...zones,
           {
