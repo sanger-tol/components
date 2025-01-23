@@ -34,11 +34,12 @@ interface Props {
   filter: any,
   onZoneReorder: any,
   deleteZone: any,
-  ds: any
+  ds: any,
+  dataUrl?: string
 }
 
 function ZoneGrid(props: Props) {
-  const { id, objectType, filter, onZoneReorder, deleteZone, ds } = props;
+  const { id, objectType, filter, onZoneReorder, deleteZone, ds, dataUrl } = props;
   const [draggable, setDraggable] = useState(false);
   const [currentWidgets, setCurrentWidgets] = useState<IWidgets[]>([]);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
@@ -48,7 +49,7 @@ function ZoneGrid(props: Props) {
   const [saveLayout, setSaveLayout] = useState(false);
   const z = useZone({
     endpoint: objectType,
-    // baseUrl: env.TOL_DATA,
+    baseUrl: dataUrl,
     filter: filter,
     components: []
   });
@@ -227,6 +228,7 @@ function ZoneGrid(props: Props) {
               ds={ds}
               currentWidgets={currentWidgets}
               setCurrentWidgets={setCurrentWidgets}
+              dataUrl={dataUrl}
               {...z}
             />
           </div>

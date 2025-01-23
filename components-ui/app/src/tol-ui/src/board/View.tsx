@@ -32,10 +32,11 @@ interface Props {
   // title: string,
   ds: any,
   defaultFilter?: IFilter
+  dataUrl?: string;
 }
 
 function View(props: Props) {
-  const { id, ds } = props;
+  const { id, ds, dataUrl } = props;
   const [zones, setZones] = useState<ZoneObject[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<OrderObject[]>([]);
@@ -161,6 +162,7 @@ function View(props: Props) {
         setZoneOrder={setZoneOrder}
         ds={ds}
         viewId={id}
+        dataUrl={dataUrl}
       />
       {zones.length > 0 ?
         <>
@@ -175,6 +177,7 @@ function View(props: Props) {
                 onZoneReorder={onZoneReorder}
                 deleteZone={deleteZone}
                 ds={ds}
+                dataUrl={dataUrl}
               />
             )
           })}

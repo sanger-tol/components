@@ -35,7 +35,7 @@ import { MyBoards, Board} from "./board";
 
 
 interface BoardsObject {
-  dataUrl?: object;
+  dataUrl?: string;
 }
 
 export interface Props {
@@ -82,7 +82,7 @@ function TolApp(props: Props) {
   if (boards) {
     profilePages = [{
       name: "My Boards",
-      element: <MyBoards dataUrl={boards.dataUrl}/>,
+      element: <MyBoards/>,
       auth: true
     }, ...(profilePages ?? [])]
   }

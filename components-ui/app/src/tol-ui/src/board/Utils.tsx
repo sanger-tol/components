@@ -442,7 +442,14 @@ export async function addView(ds: TsDataSource, id: string, title: string) {
 }
 
 
-export async function addZone(ds: TsDataSource, objectType: string, title: string, nextOrder: number, viewId: string) {
+export async function addZone(
+  ds: TsDataSource,
+  objectType: string,
+  title: string,
+  nextOrder: number,
+  viewId: string,
+  dataUrl?: string
+) {
   const user = getUserFromLocalStorage()
   const newId = generateId('z');
   await ds.upsert({
@@ -455,6 +462,7 @@ export async function addZone(ds: TsDataSource, objectType: string, title: strin
         filter: {and_: {}},
         object_type: objectType,
         user_id: user.id,
+        base_url: dataUrl
       },
     }]
   });
@@ -485,7 +493,7 @@ export async function addComponent(
   componentType: string,
   widgetType: string,
   zoneId: string,
-  baseUrl?: string
+  dataUrl?: string
 ) {
   const user = getUserFromLocalStorage()
   const newId = generateId('c');
@@ -501,7 +509,7 @@ export async function addComponent(
         widget_type: widgetType,
         filter: {and_: {}},
         config: {},
-        base_url: baseUrl,
+        base_url: dataUrl,
         user_id: user.id,
       },
     }]
