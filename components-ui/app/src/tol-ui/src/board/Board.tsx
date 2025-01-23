@@ -69,7 +69,12 @@ function Board() {
       <div className="tol-board-bar">
         <InlineEdit
           title={boardData.boardTitle}
-          onSave={(newTitle: any) => saveTitle(newTitle, ds, boardId, 'board')}
+          onSave={(newTitle: any) => {
+            if (newTitle !== boardData.boardTitle) {
+              saveTitle(newTitle, ds, boardId, 'board');
+            }
+          }
+        }
         />
       </div>
       <View
