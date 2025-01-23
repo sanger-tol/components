@@ -18,7 +18,7 @@
   }
 
   .navbar-brand:hover {
-    color: var(--primary);
+    color: var(--tol-primary);
   }
 
   .nav-link {
@@ -45,7 +45,7 @@
   }
 
   .logout.nav-link:hover {
-    color: var(--bs-danger);
+    color: var(--tol-danger);
   }
 
   // login
@@ -55,7 +55,7 @@
 
   // login hover
   svg:hover path.navbar-item-colour {
-    fill: var(--primary);
+    fill: var(--tol-primary);
   }
 
   .nav-right {
@@ -201,8 +201,8 @@
   // circle initials override
   .rs-avatar.rs-avatar-sm.rs-avatar-circle,
   .initials-avatar {
-    color: var(--bs-emphasis-color);
-    background-color: var(--grey-subtle) !important;
+    color: var(--tol-emphasis);
+    background-color: var(--tol-grey-light) !important;
   }
 
   @media(min-width: 992px) {

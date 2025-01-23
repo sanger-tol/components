@@ -13,10 +13,10 @@ button.btn {
 // Define the types and their specific background colors
 // These colours correlate to the tol-colours (bs-colours) set in the variables.scss
 $types: (
-  'primary': --primary,
+  'primary': --tol-primary,
   'success': --tol-success,
-  'error': --tol-error,
-  'edit': --tol-edit,
+  'error': --tol-danger,
+  'edit': --tol-royal,
   'warning': --tol-warning
 );
 
@@ -63,10 +63,10 @@ $sizes: (
         color: white !important;
       }
       &.rs-btn.rs-btn-disabled {
-        background-color: var(--grey-emphasis) !important;
-        border-color: var(--grey-emphasis) !important;
-        color: var(--bs-body-bg) !important;
-        fill: var(--bs-body-bg) !important;
+        background-color: var(--tol-grey-dark) !important;
+        border-color: var(--tol-grey-dark) !important;
+        color: var(--tol-bg) !important;
+        fill: var(--tol-bg) !important;
         background-color: transparent;
       }
 
@@ -76,7 +76,7 @@ $sizes: (
       @extend .icon-button-#{$type}-#{$size};
       background-color: transparent !important;
       color: var($color) !important;
-      border-color: var(--grey-emphasis) !important;
+      border-color: var(--tol-grey-dark) !important;
       box-sizing: border-box;
       //border: 2px solid transparent;
       &:hover, &:active {
@@ -102,10 +102,10 @@ $sizes: (
         }
       }
       &.rs-btn.rs-btn-disabled {
-        background-color: var(--grey-emphasis) !important;
-        border-color: var(--grey-emphasis) !important;
-        color: var(--bs-body-bg) !important;
-        fill: var(--bs-body-bg) !important;
+        background-color: var(--tol-grey-dark) !important;
+        border-color: var(--tol-grey-dark) !important;
+        color: var(--tol-bg) !important;
+        fill: var(--tol-bg) !important;
         background-color: transparent;
       }
 

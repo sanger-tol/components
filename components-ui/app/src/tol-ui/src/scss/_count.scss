@@ -12,7 +12,7 @@
     font-weight: bolder;
     position: relative;
     z-index: 1;
-    color: var(--bs-emphasis-color);
+    color: var(--tol-emphasis);
   }
 
   h1.count {
@@ -33,7 +33,7 @@
     overflow: hidden;
 
     h1 {
-      color: var(--bs-body-darker) !important;
+      color: var(--tol-bg-dark) !important;
       opacity: 0.4;
       font-size: 200px;
       white-space: nowrap;

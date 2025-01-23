@@ -5,7 +5,7 @@
  */
 
 .tol-widget {
-  background-color: var(--bs-body-bg);
+  background-color: var(--tol-bg);
   border-radius: 6px;
   padding: 12px;
   margin: 8px 12px;
@@ -18,7 +18,7 @@
 }
 
 .tol-placeholder {
-  background-color: var(--grey-subtle);
+  background-color: var(--tol-grey-light);
   position: relative !important;
   height: auto !important;
   min-height: 100% !important;
@@ -42,7 +42,7 @@
   .fa-map-location-dot,
   .fa-chart-column {
     path {
-      fill: var(--bs-body-bg)
+      fill: var(--tol-bg)
     }
   }
 
@@ -50,7 +50,7 @@
     text-align: center;
     font-size: 14px;
     font-weight: bolder;
-    color: var(--bs-emphasis-color);
+    color: var(--tol-emphasis);
   }
 }
 

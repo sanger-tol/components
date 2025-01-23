@@ -21,5 +21,4 @@ export { default as Timelines } from "./Timelines";
 export { default as Messages } from "./Messages";
 export { default as AuthPageExample } from "./AuthPageExample";
 export { default as NoAuthPageExample } from "./NoAuthPageExample";
-export { default as MyBoards } from "../tol-ui/src/board/MyBoards";
-
+export { default as Colours } from "./Colours";

@@ -54,10 +54,10 @@
 
   .tol-in-list-button,
   .rs-dropdown-toggle.rs-dropdown-toggle-no-caret.rs-btn.rs-btn-default {
-    background-color: var(--bs-body-bg) !important;
+    background-color: var(--tol-bg) !important;
     border: 1px solid var(--rs-border-primary) !important;
     border-right: none !important;
-    color: var(--primary);
+    color: var(--tol-primary);
     height: 36px;
     width: 20px;
     padding: 6px;
@@ -71,12 +71,12 @@
 
   .rs-dropdown-toggle.rs-dropdown-toggle-no-caret.rs-btn.rs-btn-default:hover,
   .rs-dropdown-toggle.rs-dropdown-toggle-no-caret.rs-btn.rs-btn-default:focus {
-    border: 1px solid var(--primary) !important;
+    border: 1px solid var(--tol-primary) !important;
   }
 
   .tol-in-list-button:hover {
-    border-color: var(--primary) !important;
-    background-color: var(--primary) !important;
+    border-color: var(--tol-primary) !important;
+    background-color: var(--tol-primary) !important;
     svg {
       fill: white;
       color: white;
@@ -85,12 +85,12 @@
   }
 
   .tol-in-list-button.btn {
-    color: var(--placeholder) !important;
+    color: var(--tol-grey-light) !important;
   }
 
   .rs-dropdown-item-focus {
-    background-color: var(--grey-subtle) !important;
-    color: var(--primary) !important;
+    background-color: var(--tol-grey-light) !important;
+    color: var(--tol-primary) !important;
   }
 
   .rs-input-group.rs-input-group-inside:not(.rs-picker-input-group) {
@@ -115,7 +115,7 @@
   }
 
   input:disabled::placeholder {
-    color: var(--placeholder) !important;
+    color: var(--tol-grey-light) !important;
   }
 }
 
@@ -157,9 +157,9 @@
   height: 18px;
   width: 18px;
   border-radius: 0;
-  background-color: var(--bs-body-bg);
-  border-color: var(--grey-emphasis) !important;
-  color: var(--placeholder);
+  background-color: var(--tol-bg);
+  border-color: var(--tol-grey-dark) !important;
+  color: var(--tol-grey-light);
 
   .icon {
     margin: -1px !important;
@@ -183,8 +183,8 @@
 .tol-filter-button.negate:hover,
 .tol-filter-button.negate.btn.active {
   @extend .tol-filter-button;
-  border-color: var(--tol-error) !important;
-  background-color: var(--tol-error) !important;
+  border-color: var(--tol-danger) !important;
+  background-color: var(--tol-danger) !important;
   color: white !important;
 }
 
@@ -214,12 +214,12 @@
 
 .tol-filter-button.negate.active:disabled {
   filter: none !important;
-  background-color: var(--bs-danger) !important;
+  background-color: var(--tol-danger) !important;
 }
 
 .tol-filter-button.exists.active:disabled {
   filter: none !important;
-  background-color: var(--bs-success) !important;
+  background-color: var(--tol-success) !important;
 }
 
 // boolean filters

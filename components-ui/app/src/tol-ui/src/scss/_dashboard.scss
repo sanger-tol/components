@@ -27,7 +27,7 @@
 }
 
 .tol-draggable-widget {
-  background-color: var(--bs-body-bg);
+  background-color: var(--tol-bg);
   border-radius: 6px;
 }
 
@@ -40,7 +40,7 @@
   margin-bottom: 10px;
 
   .inline-edit {
-    color: var(--primary)
+    color: var(--tol-primary)
   }
 }
 
@@ -59,17 +59,17 @@
   width: 30px;
   margin-left: 6px;
 
-  border-color: var(--primary) !important;
+  border-color: var(--tol-primary) !important;
   text-decoration: none;
   color: white;
   fill: white;
 }
 
 .inverted-config-button:hover {
-  color: var(--primary);
-  fill: var(--primary);
+  color: var(--tol-primary);
+  fill: var(--tol-primary);
   background-color: transparent;
-  border-color: var(--grey-emphasis);
+  border-color: var(--tol-grey-dark);
 }
 
 .dashboard-component-modal-full {
@@ -81,18 +81,18 @@
   }
 
 .inverted-config-button:active {
-  background-color: var(--grey-emphasis) !important;
-  border-color: var(--grey-emphasis);
-  color: var(--bs-body-bg) !important;
-  fill: var(--bs-body-bg) !important;
+  background-color: var(--tol-grey-dark) !important;
+  border-color: var(--tol-grey-dark);
+  color: var(--tol-bg) !important;
+  fill: var(--tol-bg) !important;
   background-color: transparent;
 }
 
 .config-button:disabled {
   border-color: unset !important;
   text-decoration: none;
-  color: var(--primary);
-  fill: var(--primary);
+  color: var(--tol-primary);
+  fill: var(--tol-primary);
 }
 
 // temp
@@ -163,7 +163,7 @@
   width: auto;
   border-radius: 6px;
   text-align: center;
-  background-color: var(--grey-subtle);
+  background-color: var(--tol-grey-light);
   position: relative !important;
   height: auto !important;
   min-height: 100% !important;
@@ -176,13 +176,13 @@
 }
 
 .tol-component-modal-bttn:hover {
-  background-color: var(--grey-emphasis);
+  background-color: var(--tol-grey-dark);
 }
 
 .tol-component-modal-bttn-clicked {
   @extend .tol-component-modal-bttn;
-  background-color: var(--bs-body-bg);
-  border-color: var(--primary) !important;
+  background-color: var(--tol-bg);
+  border-color: var(--tol-primary) !important;
   border-width: 2px;
   border-style: solid;
 }
@@ -208,11 +208,11 @@
 
 .dashboard-modal-input.form-control {
   font-size: 14px;
-  color: var(--primary);
+  color: var(--tol-primary);
 }
 
 .tol-modal-error {
-  color: var(--bs-danger);
+  color: var(--tol-danger);
   font-size: 14px;
 }
 
@@ -226,7 +226,7 @@
   right: 12px;
   font-size: 12px;
   color: var(--rs-text-secondary);
-  background: var(--bs-body-bg);
+  background: var(--tol-bg);
   padding: 4px 8px;
   border-radius: 4px;
   box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
