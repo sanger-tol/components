@@ -38,6 +38,7 @@
 .tol-board-bar {
   @extend .tol-widget;
   margin-bottom: 10px;
+  margin: 0 !important;
 
   .inline-edit {
     color: var(--primary)
@@ -46,8 +47,8 @@
 
 .tol-zone-bar {
   @extend .tol-widget;
-  border-radius: 0;
-  margin: 0;
+  // margin-left: 10px;
+  // margin-right: 10px;
   padding: 12px 24px
 }
 

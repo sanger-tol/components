@@ -33,7 +33,7 @@ const DASHBOARD_WARNING =
 
 const getBoardDetails = async (id: string, setErrorMessage: any) => {
   try {
-    const res = await httpClient().get("/board", {
+    const res = await httpClient().get("board-data/board", {
       params: {
         filter: {
           and_: {
