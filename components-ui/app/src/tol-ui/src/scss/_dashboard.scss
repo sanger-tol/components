@@ -175,6 +175,14 @@
   }
 }
 
+// Temporary class as only table is useable
+.tol-component-modal-bttn-disabled {
+  @extend .tol-component-modal-bttn;
+  background-color: var(--grey-emphasis);
+  cursor: not-allowed;
+  color: var(--grey-subtle);
+}
+
 .tol-component-modal-bttn:hover {
   background-color: var(--grey-emphasis);
 }
