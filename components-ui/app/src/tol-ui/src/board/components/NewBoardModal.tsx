@@ -10,7 +10,6 @@ import { generateId } from "../../general/Utils";
 import { FormTextField } from "../../forms";
 import { RSForm, Button } from "../../index";
 
-
 interface Props {
   setOpen: any;
   open: any;
