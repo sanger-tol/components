@@ -9,25 +9,25 @@ $tol-light: white !default;
 $tol-dark: black !default;
 
 // ToL Backings
-$tol-bg-LIGHT: white !default;
-$tol-bg-dark-LIGHT: darken($tol-bg-LIGHT, 10%) !default;
-$tol-text-LIGHT: #212529 !default;
-$tol-emphasis-LIGHT: $tol-dark !default;
+$tol-bg-LIGHT-MODE: white !default;
+$tol-bg-dark-LIGHT-MODE: darken($tol-bg-LIGHT-MODE, 8%) !default;
+$tol-text-LIGHT-MODE: #212529 !default;
+$tol-emphasis-LIGHT-MODE: $tol-dark !default;
 
-$tol-bg-DARK: #212529 !default;
-$tol-bg-dark-DARK: darken($tol-bg-DARK, 10%) !default;
-$tol-text-DARK: #dee1e5 !default;
-$tol-emphasis-DARK: $tol-light !default;
+$tol-bg-DARK-MODE: #212529 !default;
+$tol-bg-dark-DARK-MODE: darken($tol-bg-DARK-MODE, 8%) !default;
+$tol-text-DARK-MODE: #dee1e5 !default;
+$tol-emphasis-DARK-MODE: $tol-light !default;
 
-$tol-grey-LIGHT: #e8ebee !default;
-$tol-grey-opaque-LIGHT: rgba($tol-grey-LIGHT, 0.1) !default;
-$tol-grey-light-LIGHT: lighten($tol-grey-LIGHT, 10%) !default;
-$tol-grey-dark-LIGHT: darken($tol-grey-LIGHT, 10%) !default;
+$tol-grey-LIGHT-MODE: #e8ebee !default;
+$tol-grey-opaque-LIGHT-MODE: rgba($tol-grey-LIGHT-MODE, 0.5) !default;
+$tol-grey-light-LIGHT-MODE: lighten($tol-grey-LIGHT-MODE, 5%) !default;
+$tol-grey-dark-LIGHT-MODE: darken($tol-grey-LIGHT-MODE, 5%) !default;
 
-$tol-grey-DARK: #333a40 !default;
-$tol-grey-opaque-DARK: rgba($tol-grey-DARK, 0.1) !default;
-$tol-grey-light-DARK: lighten($tol-grey-DARK, 10%) !default;
-$tol-grey-dark-DARK: darken($tol-grey-DARK, 10%) !default;
+$tol-grey-DARK-MODE: #333a40 !default;
+$tol-grey-opaque-DARK-MODE: rgba($tol-grey-DARK-MODE, 0.5) !default;
+$tol-grey-light-DARK-MODE: darken($tol-grey-DARK-MODE, 5%) !default;
+$tol-grey-dark-DARK-MODE: lighten($tol-grey-DARK-MODE, 5%) !default;
 
 // ToL Colours
 $tol-primary: #039be5 !default;
@@ -65,27 +65,15 @@ $tol-royal-dark: darken($tol-royal, 15%) !default;
   --tol-light: #{$tol-light};
   --tol-dark: #{$tol-dark};
 
-  --tol-bg: #{$tol-bg-LIGHT};
-  --tol-bg-dark: #{$tol-bg-dark-LIGHT};
-  --tol-text: #{$tol-text-LIGHT};
-  --tol-emphasis: #{$tol-emphasis-LIGHT};
+  --tol-bg: #{$tol-bg-LIGHT-MODE};
+  --tol-bg-dark: #{$tol-bg-dark-LIGHT-MODE};
+  --tol-text: #{$tol-text-LIGHT-MODE};
+  --tol-emphasis: #{$tol-emphasis-LIGHT-MODE};
 
-  --tol-grey: #{$tol-grey-LIGHT};
-  --tol-grey-opaque: #{$tol-grey-opaque-LIGHT};
-  --tol-grey-light: #{$tol-grey-light-LIGHT};
-  --tol-grey-dark: #{$tol-grey-dark-LIGHT};
-
-  @media (prefers-color-scheme: dark) {
-    --tol-bg: #{$tol-bg-DARK};
-    --tol-bg-dark: #{$tol-bg-dark-DARK};
-    --tol-text: #{$tol-text-DARK};
-    --tol-emphasis: #{$tol-emphasis-DARK};
-
-    --tol-grey: #{$tol-grey-DARK};
-    --tol-grey-opaque: #{$tol-grey-opaque-DARK};
-    --tol-grey-light: #{$tol-grey-light-DARK};
-    --tol-grey-dark: #{$tol-grey-dark-DARK};
-  }
+  --tol-grey: #{$tol-grey-LIGHT-MODE};
+  --tol-grey-opaque: #{$tol-grey-opaque-LIGHT-MODE};
+  --tol-grey-light: #{$tol-grey-light-LIGHT-MODE};
+  --tol-grey-dark: #{$tol-grey-dark-LIGHT-MODE};
 
   --tol-primary: #{$tol-primary};
   --tol-primary-opaque: #{$tol-primary-opaque};
@@ -118,6 +106,20 @@ $tol-royal-dark: darken($tol-royal, 15%) !default;
   --tol-royal-dark: #{$tol-royal-dark};
 }
 
+@media (prefers-color-scheme: dark) {
+  :root{
+    --tol-bg: #{$tol-bg-DARK-MODE};
+    --tol-bg-dark: #{$tol-bg-dark-DARK-MODE};
+    --tol-text: #{$tol-text-DARK-MODE};
+    --tol-emphasis: #{$tol-emphasis-DARK-MODE};
+  
+    --tol-grey: #{$tol-grey-DARK-MODE};
+    --tol-grey-opaque: #{$tol-grey-opaque-DARK-MODE};
+    --tol-grey-light: #{$tol-grey-light-DARK-MODE};
+    --tol-grey-dark: #{$tol-grey-dark-DARK-MODE};
+  }
+}
+
 // React Bootstrap Main Override Variables
 $primary: $tol-primary !default;
 $secondary: $tol-primary !default;
@@ -134,6 +136,18 @@ $danger: $tol-danger !default;
 
 // RSuite Main Override Variables
 :root {
+  --rs-gray-0: var(--tol-bg) !important;
+  --rs-gray-50: var(--tol-grey-light) !important;
+  --rs-gray-100: var(--tol-grey-light) !important;
+  --rs-gray-200: var(--tol-grey-light) !important;
+  --rs-gray-300: var(--tol-grey) !important;
+  --rs-gray-400: var(--tol-grey) !important;
+  --rs-gray-500: var(--tol-grey) !important;
+  --rs-gray-600: var(--tol-grey) !important;
+  --rs-gray-700: var(--tol-grey-dark) !important;
+  --rs-gray-800: var(--tol-grey-dark) !important;
+  --rs-gray-900: var(--tol-grey-dark) !important;
+  
   --rs-primary-50: var(--tol-primary-light) !important;
   --rs-primary-100: var(--tol-primary-light) !important;
   --rs-primary-200: var(--tol-primary-light) !important;
@@ -231,3 +245,48 @@ $danger: $tol-danger !default;
   --rs-color-blue: var(--tol-primary) !important;
   --rs-color-violet: var(--tol-royal) !important;
 }
+
+// Variable classes for test page
+.tol-light { background-color: var(--tol-light) !important; }
+.tol-dark { background-color: var(--tol-dark) !important; }
+
+.tol-bg { background-color: var(--tol-bg) !important; }
+.tol-bg-dark { background-color: var(--tol-bg-dark) !important; }
+
+.tol-text { background-color: var(--tol-text) !important; }
+.tol-emphasis { background-color: var(--tol-emphasis) !important; }
+
+.tol-grey { background-color: var(--tol-grey) !important; }
+.tol-grey-opaque { background-color: var(--tol-grey-opaque) !important; }
+.tol-grey-light { background-color: var(--tol-grey-light) !important; }
+.tol-grey-dark { background-color: var(--tol-grey-dark) !important; }
+
+.tol-primary { background-color: var(--tol-primary) !important; }
+.tol-primary-opaque { background-color: var(--tol-primary-opaque) !important; }
+.tol-primary-light { background-color: var(--tol-primary-light) !important; }
+.tol-primary-dark { background-color: var(--tol-primary-dark) !important; }
+
+.tol-info { background-color: var(--tol-info) !important; }
+.tol-info-opaque { background-color: var(--tol-info-opaque) !important; }
+.tol-info-light { background-color: var(--tol-info-light) !important; }
+.tol-info-dark { background-color: var(--tol-info-dark) !important; }
+
+.tol-success { background-color: var(--tol-success) !important; }
+.tol-success-opaque { background-color: var(--tol-success-opaque) !important; }
+.tol-success-light { background-color: var(--tol-success-light) !important; }
+.tol-success-dark { background-color: var(--tol-success-dark) !important; }
+
+.tol-warning { background-color: var(--tol-warning) !important; }
+.tol-warning-opaque { background-color: var(--tol-warning-opaque) !important; }
+.tol-warning-light { background-color: var(--tol-warning-light) !important; }
+.tol-warning-dark { background-color: var(--tol-warning-dark) !important; }
+
+.tol-danger { background-color: var(--tol-danger) !important; }
+.tol-danger-opaque { background-color: var(--tol-danger-opaque) !important; }
+.tol-danger-light { background-color: var(--tol-danger-light) !important; }
+.tol-danger-dark { background-color: var(--tol-danger-dark) !important; }
+
+.tol-royal { background-color: var(--tol-royal) !important; }
+.tol-royal-opaque { background-color: var(--tol-royal-opaque) !important; }
+.tol-royal-light { background-color: var(--tol-royal-light) !important; }
+.tol-royal-dark { background-color: var(--tol-royal-dark) !important; }
