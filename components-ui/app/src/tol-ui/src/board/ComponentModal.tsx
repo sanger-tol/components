@@ -84,7 +84,6 @@ function ComponentModal(props: Props) {
         componentType,
         widgetType,
         zoneId,
-        env.TOL_DATA
       );
       //This adds the component to the zone
       defineComponent({
@@ -104,7 +103,6 @@ function ComponentModal(props: Props) {
         filter: {and_: {}},
         title: title,
         objectType: zone.type,
-        baseUrl: env.TOL_DATA,
         config: {},
         widgetType: widgetType
       }]);
