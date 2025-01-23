@@ -11,7 +11,6 @@ import {
   Modal,
   Row,
   Col,
-  env,
   TsDataSource
 } from '../index';
 import { Form, InputGroup } from 'react-bootstrap';
