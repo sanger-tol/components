@@ -21,7 +21,7 @@
 }
 
 .tol-dnd-column-drop {
-  background-color: var(--tol-primary-opaque);
+  background-color: var(--tol-primary-translucent);
   margin: 10px;
   border-radius: 6px;
   padding: 1px;
@@ -72,7 +72,7 @@
   }
 
   .field-name-origin {
-    color: var(--tol-grey-dark);
+    color: var(--tol-grey);
     font-size: 12px;
     font-weight: normal;
     margin-left: 6px;

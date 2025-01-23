@@ -19,11 +19,11 @@
   --rs-bg-active: var(--tol-primary);
   --rs-listbox-option-hover-text: var(--tol-primary);
 
-  --rs-calendar-range-bg: var(--tol-primary-opaque);
-  --rs-listbox-option-hover-bg: var(--tol-grey-opaque);
+  --rs-calendar-range-bg: var(--tol-primary-translucent);
+  --rs-listbox-option-hover-bg: var(--tol-grey-translucent);
 
   // paragraph placeholder
-  --rs-placeholder: var(--tol-grey-light);
+  --rs-placeholder: var(--tol-grey);
 
   // timeline dot
   --rs-timeline-indicator-active-bg: var(--tol-primary);
@@ -40,7 +40,7 @@
   --rs-text-active: var(--tol-primary);
   --rs-btn-link-hover-text: var(--tol-primary-hover);
   --rs-btn-link-active-text: var(--tol-primary-hover);
-  --rs-input-disabled-bg: var(--tol-grey-light);
+  --rs-input-disabled-bg: var(--tol-grey);
 
   .rs-input,
   .rs-input-group {
@@ -50,14 +50,14 @@
     font-weight: 400 !important;
     font-size: 14px !important;
     border-radius: 6px;
-    border-top-color: var(--tol-grey-dark) !important;
-    border-right-color: var(--tol-grey-dark) !important;
-    border-bottom-color: var(--tol-grey-dark) !important;
-    border-left-color: var(--tol-grey-dark) !important;
+    border-top-color: var(--tol-grey) !important;
+    border-right-color: var(--tol-grey) !important;
+    border-bottom-color: var(--tol-grey) !important;
+    border-left-color: var(--tol-grey) !important;
     font-size: 1rem;
     color: var(--tol-bg);
   }
-  --rs-border-primary: var(--tol-grey-dark);
+  --rs-border-primary: var(--tol-grey);
 
   .rs-input:hover,
   .rs-input-group:hover {
@@ -101,7 +101,7 @@
   }
 
   .rs-picker-toggle-placeholder {
-    color: var(--tol-grey-light);
+    color: var(--tol-grey);
     font-family: 'Lato' !important;
     font-weight: 400 !important;
     font-size: 14px !important;
@@ -113,7 +113,7 @@
   }
 
   .rs-inline-edit .rs-plaintext:hover {
-    background-color: var(--tol-grey-light) !important;
+    background-color: var(--tol-grey) !important;
     border: 1px solid transparent !important;
   }
 
@@ -127,7 +127,7 @@
 
   // dropdown
   .rs-picker-menu, .rs-dropdown-menu {
-    border: 1px solid var(--tol-grey-dark);
+    border: 1px solid var(--tol-grey);
     background: var(--tol-bg) !important;
   }
 
@@ -136,7 +136,7 @@
   }
 
   .rs-picker-menu .rs-picker-search-bar .rs-picker-search-bar-input {
-    border: 1px solid var(--tol-grey-dark) !important;
+    border: 1px solid var(--tol-grey) !important;
   }
 
   .rs-picker-menu .rs-picker-search-bar .rs-picker-search-bar-input:hover {
@@ -171,25 +171,25 @@
 
   // datetime picker inner borders
   .rs-picker-daterange-header {
-    border-bottom: 1px solid var(--tol-grey-dark);
+    border-bottom: 1px solid var(--tol-grey);
   }
 
   .rs-picker-daterange-menu .rs-calendar:first-child {
-    border-right: 1px solid var(--tol-grey-dark);
+    border-right: 1px solid var(--tol-grey);
   }
 
   .rs-picker-toolbar {
-    border-top: 1px solid var(--tol-grey-dark);
+    border-top: 1px solid var(--tol-grey);
   }
 
   // icons in filters
   .rs-input-group-addon .rs-icon,
   .rs-picker-toggle-caret.rs-icon {
-    fill: var(--tol-grey-light) !important;
+    fill: var(--tol-grey) !important;
   }
 
   .rs-picker-menu .rs-picker-search-bar .rs-picker-search-bar-search-icon {
-    color: var(--tol-grey-light);
+    color: var(--tol-grey);
   }
 
   .rs-picker-toggle .rs-picker-toggle-placeholder {

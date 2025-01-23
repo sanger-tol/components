@@ -62,4 +62,8 @@ $tol-warning-message-dark: darken($tol-warning, 5%) !default;
       align-items: center;
     }
   }
+
+  .rs-message-content {
+    margin-right: 10px;
+  }
 }

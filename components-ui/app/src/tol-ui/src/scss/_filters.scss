@@ -85,11 +85,11 @@
   }
 
   .tol-in-list-button.btn {
-    color: var(--tol-grey-light) !important;
+    color: var(--tol-grey) !important;
   }
 
   .rs-dropdown-item-focus {
-    background-color: var(--tol-grey-light) !important;
+    background-color: var(--tol-grey) !important;
     color: var(--tol-primary) !important;
   }
 
@@ -115,7 +115,7 @@
   }
 
   input:disabled::placeholder {
-    color: var(--tol-grey-light) !important;
+    color: var(--tol-grey) !important;
   }
 }
 
@@ -158,8 +158,8 @@
   width: 18px;
   border-radius: 0;
   background-color: var(--tol-bg);
-  border-color: var(--tol-grey-dark) !important;
-  color: var(--tol-grey-light);
+  border-color: var(--tol-grey) !important;
+  color: var(--tol-grey);
 
   .icon {
     margin: -1px !important;
@@ -258,7 +258,7 @@
 }
 
 .tol-status {
-  margin-left: 10px;
+  margin-left: 2px;
   padding-top: 2px !important;
 }
 

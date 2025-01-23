@@ -69,7 +69,7 @@
   color: var(--tol-primary);
   fill: var(--tol-primary);
   background-color: transparent;
-  border-color: var(--tol-grey-dark);
+  border-color: var(--tol-grey);
 }
 
 .dashboard-component-modal-full {
@@ -81,8 +81,8 @@
   }
 
 .inverted-config-button:active {
-  background-color: var(--tol-grey-dark) !important;
-  border-color: var(--tol-grey-dark);
+  background-color: var(--tol-grey) !important;
+  border-color: var(--tol-grey);
   color: var(--tol-bg) !important;
   fill: var(--tol-bg) !important;
   background-color: transparent;
@@ -163,7 +163,7 @@
   width: auto;
   border-radius: 6px;
   text-align: center;
-  background-color: var(--tol-grey-light);
+  background-color: var(--tol-grey);
   position: relative !important;
   height: auto !important;
   min-height: 100% !important;
@@ -176,7 +176,7 @@
 }
 
 .tol-component-modal-bttn:hover {
-  background-color: var(--tol-grey-dark);
+  background-color: var(--tol-grey);
 }
 
 .tol-component-modal-bttn-clicked {

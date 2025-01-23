@@ -15,18 +15,18 @@
   --rs-btn-ghost-active-text: var(--tol-primary);
   --rs-btn-subtle-active-bg: initial;
   
-  --rs-btn-subtle-hover-bg: var(--tol-grey-opaque);
+  --rs-btn-subtle-hover-bg: var(--tol-grey-translucent);
 
   // page size
   span.rs-picker-select-menu-item-active.rs-picker-select-menu-item-focus {
-    background-color: var(--tol-grey-opaque) !important;
+    background-color: var(--tol-grey-translucent) !important;
     color: var(--tol-primary) !important;
     font-weight: normal;
   }
 
   // page size dropdown
   .rs-picker-select-menu-item:hover {
-    background-color: var(--tol-grey-light) !important;
+    background-color: var(--tol-grey) !important;
   }
 
   // dropdown box shadow
@@ -45,7 +45,7 @@
       border: 1px solid var(--tol-bg);
     }
     .rs-pagination-btn.rs-pagination-btn-active {
-      border: 1px solid var(--tol-grey-dark);
+      border: 1px solid var(--tol-grey);
     }
   
     .rs-pagination-btn.rs-pagination-btn-active:hover,
@@ -80,7 +80,7 @@
     
       .rs-table {
         border-radius: 6px;
-        border: 1px solid var(--tol-grey-light);
+        border: 1px solid var(--tol-grey);
 
         position: absolute;
         top: 0;
@@ -101,27 +101,8 @@
     }
 
     .rs-table-row {
-      border-bottom: 1px solid var(--tol-grey-light);
+      border-bottom: 1px solid var(--tol-grey);
     }
-
-    /*
-    // dealing with automatic rows
-    .rs-table-row:not(.rs-table-row.rs-table-row-header) {
-      background-color: red;
-      height: auto !important;
-      display: table !important;
-      //border-bottom: 1px solid var(--tol-grey-light);
-
-      .rs-table-cell-group,
-      .rs-table-cell,
-      .rs-table-cell-content {
-        display: table-row !important;
-        background-color: darkblue;
-        height: 200px !important;
-        overflow: auto;
-      }
-    }
-    */
 
     // text properties
     font-size: 14px;
@@ -144,7 +125,7 @@
     }
 
     .rs-table-cell:hover {
-      outline: 1px dashed var(--tol-bg) !important;
+      outline: 1px dashed var(--tol-text) !important;
       outline-offset: -2px;
       border-radius: 6px;
     }
@@ -154,10 +135,6 @@
       font-size: 14px;
       font-weight: bolder;
       color: var(--tol-emphasis);
-    }
-
-    .tol-table-header {
-      height: 28px;
     }
 
     .tol-header-text {
@@ -178,6 +155,7 @@
     // header color
     .rs-table-cell-header .rs-table-cell-content,
     .rs-table-header-row-wrapper .rs-table-row.rs-table-row-header {
+      background-color: var(--tol-grey-subtle) !important;
 
       .rs-table-cell {
         background-color: transparent !important;
@@ -207,7 +185,7 @@
     }
 
     // row hover
-    --rs-state-hover-bg: var(--tol-grey-opaque);
+    --rs-state-hover-bg: none;
 
     // row resize
     --rs-row-resize: var(--tol-primary);
@@ -279,7 +257,7 @@
   .copy-icon {
     svg {
       margin: 0px 10px;
-      color: var(--tol-grey-dark) !important;
+      color: var(--tol-grey) !important;
     }
 
     svg:hover {
@@ -320,13 +298,13 @@
 }
 
 .tooltip-value-none {
-  color: var(--tol-grey-dark);
+  color: var(--tol-grey);
   font-weight: 400;
 }
 
 .tooltip-wrapper {
   display: inline-block;
-  fill: var(--tol-bg);
+  fill: var(--tol-text);
 }
 
 // config modal
@@ -341,7 +319,7 @@
 
 // row selection
 .tol-selected-row {
-  background-color: var(--tol-primary-opaque);
+  background-color: var(--tol-primary-translucent);
 }
 
 .tol-selected-row.disabled {
@@ -349,7 +327,7 @@
 }
 
 .tol-selected-row:hover {
-  background-color: var(--tol-primary-opaque) !important;
+  background-color: var(--tol-primary-translucent) !important;
 }
 
 // pagination buttons on smaller devices

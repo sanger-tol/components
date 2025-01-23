@@ -5,9 +5,9 @@
  */
 
 :root {
-  --bs-dropdown-link-hover-bg: var(--tol-grey-opaque);
-  --bs-link-hover-color: var(--tol-grey-opaque);
-  --bs-pagination-hover-bg: var(--tol-grey-opaque);
+  --bs-dropdown-link-hover-bg: var(--tol-grey-translucent);
+  --bs-link-hover-color: var(--tol-grey-translucent);
+  --bs-pagination-hover-bg: var(--tol-grey-translucent);
 
   .form-control:focus {
     box-shadow: none;

@@ -63,8 +63,8 @@ $sizes: (
         color: white !important;
       }
       &.rs-btn.rs-btn-disabled {
-        background-color: var(--tol-grey-dark) !important;
-        border-color: var(--tol-grey-dark) !important;
+        background-color: var(--tol-grey) !important;
+        border-color: var(--tol-grey) !important;
         color: var(--tol-bg) !important;
         fill: var(--tol-bg) !important;
         background-color: transparent;
@@ -76,7 +76,7 @@ $sizes: (
       @extend .icon-button-#{$type}-#{$size};
       background-color: transparent !important;
       color: var($color) !important;
-      border-color: var(--tol-grey-dark) !important;
+      border-color: var(--tol-grey) !important;
       box-sizing: border-box;
       //border: 2px solid transparent;
       &:hover, &:active {
@@ -102,8 +102,8 @@ $sizes: (
         }
       }
       &.rs-btn.rs-btn-disabled {
-        background-color: var(--tol-grey-dark) !important;
-        border-color: var(--tol-grey-dark) !important;
+        background-color: var(--tol-grey) !important;
+        border-color: var(--tol-grey) !important;
         color: var(--tol-bg) !important;
         fill: var(--tol-bg) !important;
         background-color: transparent;

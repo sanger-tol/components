@@ -39,16 +39,16 @@ const ColourBoxes = ({ title, colourClasses }: { title: string, colourClasses: s
 function Colours() {
   const basicColourClasses = [
     'tol-bg', 'tol-bg-dark', 'tol-text', 'tol-emphasis',
-    'tol-grey', 'tol-grey-opaque', 'tol-grey-light', 'tol-grey-dark'
+    'tol-grey', 'tol-grey-translucent', 'tol-grey-subtle'
   ];
 
   const actualColourClasses = [
-    'tol-primary', 'tol-primary-opaque', 'tol-primary-light', 'tol-primary-dark',
-    'tol-info', 'tol-info-opaque', 'tol-info-light', 'tol-info-dark',
-    'tol-success', 'tol-success-opaque', 'tol-success-light', 'tol-success-dark',
-    'tol-warning', 'tol-warning-opaque', 'tol-warning-light', 'tol-warning-dark',
-    'tol-danger', 'tol-danger-opaque', 'tol-danger-light', 'tol-danger-dark',
-    'tol-royal', 'tol-royal-opaque', 'tol-royal-light', 'tol-royal-dark'
+    'tol-primary', 'tol-primary-translucent', 'tol-primary-light', 'tol-primary-dark',
+    'tol-info', 'tol-info-translucent', 'tol-info-light', 'tol-info-dark',
+    'tol-success', 'tol-success-translucent', 'tol-success-light', 'tol-success-dark',
+    'tol-warning', 'tol-warning-translucent', 'tol-warning-light', 'tol-warning-dark',
+    'tol-danger', 'tol-danger-translucent', 'tol-danger-light', 'tol-danger-dark',
+    'tol-royal', 'tol-royal-translucent', 'tol-royal-light', 'tol-royal-dark'
   ];
 
   const components = [
