@@ -186,8 +186,9 @@ function Accordion(props: BoardsAccordionProps) {
     history.push(`/board/${boardId}`);
   };
 
+  // @ts-ignore
   const goToView = (boardId: string, viewId: string) => {
-    history.push(`/board/${boardId}/view/${viewId}`);
+    history.push(`/board/${boardId}`);
   };
 
   // @ts-ignore
@@ -323,29 +324,18 @@ function Accordion(props: BoardsAccordionProps) {
 
     const componentTitle = (title: any, componentType: string) => {
       return (
-        <div
-          onClick={() => {
-            history.push("/tables");
-            setTimeout(() => {
-              document
-                .getElementById("dbTable1")
-                ?.scrollIntoView({ behavior: "smooth" });
-            }, 100);
+        <span
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
           }}
         >
-          <span
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <FontAwesomeIcon
-              icon={componentType === "chart" ? faChartSimple : faTable}
-            />
-            <p style={{ marginLeft: "20px" }}>{title}</p>
-          </span>
-        </div>
+          <FontAwesomeIcon
+            icon={componentType === "chart" ? faChartSimple : faTable}
+          />
+          <p style={{ marginLeft: "20px" }}>{title}</p>
+        </span>
       );
     };
 
@@ -407,8 +397,7 @@ function Accordion(props: BoardsAccordionProps) {
     );
 
     if (!viewIds?.length) return null;
-    if (loading)
-      return <div style={{ textAlign: "center" }}>Loading views...</div>;
+    if (loading) return <div style={{ textAlign: "center" }}>Loading views...</div>;
 
     return (
       <div>

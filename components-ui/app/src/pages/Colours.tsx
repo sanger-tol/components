@@ -20,6 +20,7 @@ const ColourBox = ({ colourClass }: { colourClass: string }) => (
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
+        borderRadius: 6
       }}
     ></div>
   </div>
