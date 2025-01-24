@@ -70,8 +70,8 @@ function BarChart(props: Props) {
   const [gridColour, setGridColour] = useState('');
   themeListener(() => {
     setTitleColour(getCssVarValue("--tol-emphasis"));
-    setLabelColour(getCssVarValue("--tol-bg"));
-    setGridColour(getCssVarValue("--bs-secondary-bg"));
+    setLabelColour(getCssVarValue("--tol-text"));
+    setGridColour(getCssVarValue("--tol-grey"));
   });
 
   //making sure legendclick is disabled when cumulative toggle is on
