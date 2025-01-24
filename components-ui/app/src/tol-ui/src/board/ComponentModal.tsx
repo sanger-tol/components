@@ -16,6 +16,8 @@ import {
   TsDataSource
 } from '../index';
 import { Form, InputGroup } from 'react-bootstrap';
+import { FormTextField } from '../forms';
+import { RSForm } from '../index';
 import { Zone, addComponent, defineComponent } from './Utils';
 
 
@@ -236,16 +238,18 @@ function ComponentModal(props: Props) {
         </Row>
         <br/>
         <h6>Enter Title <span style={{color: 'red'}}>*</span></h6>
-        <Form>
-          <InputGroup>
-            <Form.Control
-              className='dashboard-modal-input'
-              placeholder='Title'
-              onChange={(e) => setTitle(e.target.value)}
-              isInvalid={idError}
-            />
-          </InputGroup>
-        </Form>
+        <div className='new-component-inputs'>
+        <RSForm>
+        <FormTextField
+          id="component-title"
+          onChange={(value: any) => setTitle(value)}
+          name="Board Title"
+          placeholder={`Title`}
+          label=''
+        />
+        </RSForm>
+        </div>
+
         {idError ? <p className='tol-modal-error'>Title cannot be blank</p> : null}
         {fieldError ? <p className='tol-modal-error'>Please ensure all mandatory fields are filled</p> : null}
       </>

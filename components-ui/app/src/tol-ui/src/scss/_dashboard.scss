@@ -254,7 +254,11 @@
 }
 
 .new-board-inputs .rs-input {
-  width: 360px;
+  min-width: 360px;
+}
+
+.new-component-inputs .rs-input {
+  min-width: 1027px;
 }
 
 .zone-modal-labels {
