@@ -244,3 +244,9 @@
 .zone-modal-labels {
   margin-bottom: 5px !important;
 }
+
+// temp - accordion header hover
+.rs-panel-btn:hover, .rs-panel-btn:focus, .rs-panel-btn:active {
+  background-color: var(--tol-grey-translucent);
+  color: var(--tol-primary);
+}

@@ -20,11 +20,11 @@ $tol-text-DARK-MODE: #dee1e5 !default;
 $tol-emphasis-DARK-MODE: $tol-light !default;
 
 $tol-grey-LIGHT-MODE: #c2c8cd !default;
-$tol-grey-translucent-LIGHT-MODE: rgba($tol-grey-LIGHT-MODE, 0.5) !default;
+$tol-grey-translucent-LIGHT-MODE: rgba($tol-grey-LIGHT-MODE, 0.2) !default;
 $tol-grey-subtle-LIGHT-MODE: lighten($tol-grey-LIGHT-MODE, 15%) !default;
 
 $tol-grey-DARK-MODE: #424b52 !default;
-$tol-grey-translucent-DARK-MODE: rgba($tol-grey-DARK-MODE, 0.5) !default;
+$tol-grey-translucent-DARK-MODE: rgba($tol-grey-DARK-MODE, 0.3) !default;
 $tol-grey-subtle-DARK-MODE: darken($tol-grey-DARK-MODE, 8%) !default;
 
 // ToL Colours
