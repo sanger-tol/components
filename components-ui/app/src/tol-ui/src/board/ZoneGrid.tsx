@@ -122,7 +122,7 @@ function ZoneGrid(props: Props) {
       icon='plus'
       position='right'
       tooltip="Add Widget"
-      tooltipPosition='bottom'
+      tooltipPosition='auto'
     />
   );
 
