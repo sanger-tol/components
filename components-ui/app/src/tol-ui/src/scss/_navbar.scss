@@ -7,7 +7,7 @@
 .navbar-custom {
   padding-top: 1rem;
   padding-bottom: 1rem;
-  background-color: fade-out($black, 0.3);
+  background-color: fade-out(black, 0.3);
   backdrop-filter: blur(8px);
 
   .navbar-brand {
@@ -18,7 +18,7 @@
   }
 
   .navbar-brand:hover {
-    color: var(--primary);
+    color: var(--tol-primary);
   }
 
   .nav-link {
@@ -40,12 +40,12 @@
   .nav-link:hover,
   .nav-link:active,
   .nav-link:focus {
-    color: $primary;
+    color: var(--tol-primary);
     opacity: 1;
   }
 
   .logout.nav-link:hover {
-    color: var(--bs-danger);
+    color: var(--tol-danger);
   }
 
   // login
@@ -55,7 +55,7 @@
 
   // login hover
   svg:hover path.navbar-item-colour {
-    fill: var(--primary);
+    fill: var(--tol-primary);
   }
 
   .nav-right {
@@ -201,8 +201,8 @@
   // circle initials override
   .rs-avatar.rs-avatar-sm.rs-avatar-circle,
   .initials-avatar {
-    color: var(--bs-emphasis-color);
-    background-color: var(--grey-subtle) !important;
+    color: var(--tol-emphasis);
+    background-color: var(--tol-grey) !important;
   }
 
   @media(min-width: 992px) {

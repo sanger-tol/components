@@ -27,6 +27,7 @@ export interface Props {
 
 function BoardFilters(props: Props) {
   const { id, zone, setZone, entityType, endpoint, open, setOpen } = props;
+  const ds = new TsDataSource();
 
   // the fixed filter present on the component
   const [filters, setFilters] = useState(
@@ -76,7 +77,7 @@ function BoardFilters(props: Props) {
     setZone({...zone})
     setOpen(false);
 
-    new TsDataSource().upsert({
+    ds.upsert({
       objectType: `${BOARD_URL_PREFIX}/${entityType}`,
       payload: [{
         type: entityType,

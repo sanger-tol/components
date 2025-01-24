@@ -34,7 +34,7 @@ const generateIcon = (marker) => {
   
   let pointerColour = marker.colour
   if (!marker.colour) {
-    pointerColour = getCssVarValue("--primary")
+    pointerColour = getCssVarValue("--tol-primary")
   }
 
   return Leaflet.divIcon({

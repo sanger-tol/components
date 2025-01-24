@@ -432,7 +432,7 @@ export async function addView(ds: TsDataSource, id: string, title: string) {
       type: BoardObjectTypes.VIEW as string,
       id: viewId,
       attributes: {
-        title: 'Untitled View', // title
+        title: 'View 1',
         filter: {and_: {}},
         user_id: user.id,
       },

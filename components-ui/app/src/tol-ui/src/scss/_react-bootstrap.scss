@@ -5,19 +5,17 @@
  */
 
 :root {
-  --rs-text-primary: var(--bg-body-color);
-
-  --bs-dropdown-link-hover-bg: var(--grey-opaque);
-  --bs-link-hover-color: var(--grey-opaque);
-  --bs-pagination-hover-bg: var(--grey-opaque);
+  --bs-dropdown-link-hover-bg: var(--tol-grey-translucent);
+  --bs-link-hover-color: var(--tol-grey-translucent);
+  --bs-pagination-hover-bg: var(--tol-grey-translucent);
 
   .form-control:focus {
     box-shadow: none;
-    border-color: $primary;
+    border-color: $tol-primary;
   }
 
   .form-control:hover {
-    border-color: $primary;
+    border-color: $tol-primary;
   }
 
   .btn-xl {
@@ -35,11 +33,11 @@
   --bs-btn-active-color: white;
   --bs-btn-disabled-color: white;
 
-  --bs-btn-border-color: var(--primary);
-  --bs-btn-hover-bg: var(--primary-hover);
-  --bs-btn-hover-border-color: var(--primary-hover);
-  --bs-btn-active-bg: var(--primary-hover);
-  --bs-btn-active-border-color: var(--primary-hover);
+  --bs-btn-border-color: var(--tol-primary);
+  --bs-btn-hover-bg: var(--tol-primary-hover);
+  --bs-btn-hover-border-color: var(--tol-primary-hover);
+  --bs-btn-active-bg: var(--tol-primary-hover);
+  --bs-btn-active-border-color: var(--tol-primary-hover);
 }
 
 // statuses made from bootstrap alerts

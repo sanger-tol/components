@@ -144,7 +144,7 @@ function ZoneModal(props: Props) {
       overflow={false}
       data-testid="zoneModal"
     >
-      <div style={{marginTop: '10px'}}>
+      <div>
         <h4>Add New Zone</h4>
         <p className='zone-modal-labels'>Select Object Type <span style={{color: 'red'}}>*</span></p>
         <SingleSelect

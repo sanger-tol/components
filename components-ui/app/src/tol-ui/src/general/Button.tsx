@@ -68,7 +68,7 @@ function Button(props: Props) {
       </div>
       )}
       {text && (
-        <span style={{marginLeft: icon ? '5px': '0px'}}>
+        <span style={{marginLeft: icon ? '6px': '0px'}}>
           {text}
         </span>
       ) 

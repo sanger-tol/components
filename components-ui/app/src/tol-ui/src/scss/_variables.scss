@@ -4,101 +4,284 @@
  * SPDX-License-Identifier: MIT
  */
 
-/*
-// Strict Theme //
-The following have sass and css variables
-- primary = main colour used for buttons and accents - can be overidden
-- secondary = faded version of primary but can be overidden
-- greys = used for table borders/headers etc
-- primary-opaque = used for subtle selected items
-- grey-opaque = used for hovering on table cells etc
+// ToL Vaiables
+$tol-light: white !default;
+$tol-dark: black !default;
 
-The following have sass and css variables
-- bs-body-bg = background of website
-- bs-body-color = used for text
-- bs-emphasis-color = bold text for titles
-*/
+// ToL Backings
+$tol-bg-LIGHT-MODE: white !default;
+$tol-bg-dark-LIGHT-MODE: darken($tol-bg-LIGHT-MODE, 8%) !default;
+$tol-text-LIGHT-MODE: #212529 !default;
+$tol-emphasis-LIGHT-MODE: $tol-dark !default;
 
-// GENERAL
-$primary: #039be5 !default; // 0d6efd
-$secondary: darken($primary, 12%) !default;
-$bs-body-bg: var(--bs-body-bg) !default;
-$bs-body-color: var(--bs-body-color) !default;
-$bs-emphasis-color: var(--bs-emphasis-color) !default;
-$bs-body-darker: var(--bs-body-darker) !default;
+$tol-bg-DARK-MODE: #212529 !default;
+$tol-bg-dark-DARK-MODE: darken($tol-bg-DARK-MODE, 8%) !default;
+$tol-text-DARK-MODE: #dee1e5 !default;
+$tol-emphasis-DARK-MODE: $tol-light !default;
 
-// TOL COLOURS (These are equivilant to the bootstrap colours)
-// (https://getbootstrap.com/docs/5.1/customize/css-variables/)
-$tol-primary: $primary !default;
-$tol-error: #dc3545 !default;
-$tol-success: #198754 !default;
-$tol-warning: #ffc107 !default;
-$tol-edit: #6f42c1 !default;
+$tol-grey-LIGHT-MODE: #c2c8cd !default;
+$tol-grey-translucent-LIGHT-MODE: rgba($tol-grey-LIGHT-MODE, 0.2) !default;
+$tol-grey-subtle-LIGHT-MODE: lighten($tol-grey-LIGHT-MODE, 15%) !default;
 
-// Lightened versions
-$primary-light: lighten($primary, 5%) !default;
-$tol-error-light: lighten($tol-error, 5%) !default;
-$tol-success-light: lighten($tol-success, 5%) !default;
-$tol-warning-light: lighten($tol-warning, 5%) !default;
-$tol-edit-light: lighten($tol-edit, 5%) !default;
+$tol-grey-DARK-MODE: #424b52 !default;
+$tol-grey-translucent-DARK-MODE: rgba($tol-grey-DARK-MODE, 0.3) !default;
+$tol-grey-subtle-DARK-MODE: darken($tol-grey-DARK-MODE, 8%) !default;
 
-// Darkened versions
-$primary-dark: darken($primary, 10%) !default;
-$tol-error-dark: darken($tol-error, 10%) !default;
-$tol-success-dark: darken($tol-success, 10%) !default;
-$tol-warning-dark: darken($tol-warning, 10%) !default;
-$tol-edit-dark: darken($tol-edit, 10%) !default;
+// ToL Colours
+$tol-primary: #039be5 !default;
+$tol-primary-translucent: rgba($tol-primary, 0.1) !default;
+$tol-primary-light: lighten($tol-primary, 15%) !default;
+$tol-primary-dark: darken($tol-primary, 15%) !default;
 
-// HOVER
-$grey-subtle: var(--bs-secondary-bg);
-$grey-emphasis: var(--bs-border-color) !default; // #808080
-$grey-opaque: rgba($grey-emphasis, 0.1) !default;
-$primary-opaque: rgba($primary, 0.07) !default;
-$primary-hover: lighten($primary, 10%) !default;
+$tol-info: $tol-primary !default;
+$tol-info-translucent: rgba($tol-info, 0.1) !default;
+$tol-info-light: lighten($tol-info, 15%) !default;
+$tol-info-dark: darken($tol-info, 15%) !default;
 
-$placeholder: var(--rs-text-secondary) !default;
+$tol-success: green !default;
+$tol-success-translucent: rgba($tol-success, 0.1) !default;
+$tol-success-light: lighten($tol-success, 15%) !default;
+$tol-success-dark: darken($tol-success, 15%) !default;
 
-// MESSAGES
-$tol-info-message: $primary !default;
-$tol-error-message: #dc3545 !default;
-$tol-success-message: #198754 !default;
-$tol-warning-message: #ffc107 !default;
+$tol-warning: orange !default;
+$tol-warning-translucent: rgba($tol-warning, 0.1) !default;
+$tol-warning-light: lighten($tol-warning, 15%) !default;
+$tol-warning-dark: darken($tol-warning, 15%) !default;
 
-$tol-message-text-light: #fff !default;
-$tol-message-text-dark: #000 !default;
+$tol-danger: red !default;
+$tol-danger-translucent: rgba($tol-danger, 0.1) !default;
+$tol-danger-light: lighten($tol-danger, 15%) !default;
+$tol-danger-dark: darken($tol-danger, 15%) !default;
 
-// SASS -> CSS VARS //
+$tol-royal: purple !default;
+$tol-royal-translucent: rgba($tol-royal, 0.1) !default;
+$tol-royal-light: lighten($tol-royal, 15%) !default;
+$tol-royal-dark: darken($tol-royal, 15%) !default;
+
+// ToL CSS Variable Conversion
 :root {
-  --primary: #{$primary};
-  --secondary: #{$secondary};
-  --grey-subtle: var(--bs-secondary-bg);
-  --grey-emphasis: var(--bs-border-color);
-  --grey-opaque: #{$grey-opaque};
-  --primary-opaque: #{$primary-opaque};
-  --primary-hover: #{$primary-hover};
-  --placeholder: #{$placeholder};
-  --tol-error: #{$tol-error};
-  --tol-success: #{$tol-success};
-  --tol-warning: #{$tol-warning};
-  --tol-edit: #{$tol-edit};
-  --primary-light: #{$primary-light};
-  --tol-error-light: #{$tol-error-light};
-  --tol-success-light: #{$tol-success-light};
-  --tol-warning-light: #{$tol-warning-light};
-  --tol-edit-light: #{$tol-edit-light};
-  --primary-dark: #{$primary-dark};
-  --tol-error-dark: #{$tol-error-dark};
-  --tol-success-dark: #{$tol-success-dark};
-  --tol-warning-dark: #{$tol-warning-dark};
-  --tol-edit-dark: #{$tol-edit-dark};
+  --tol-light: #{$tol-light};
+  --tol-dark: #{$tol-dark};
 
-  // light mode variant
-  --bs-body-darker: var(--grey-subtle);
+  --tol-bg: #{$tol-bg-LIGHT-MODE};
+  --tol-bg-dark: #{$tol-bg-dark-LIGHT-MODE};
+  --tol-text: #{$tol-text-LIGHT-MODE};
+  --tol-emphasis: #{$tol-emphasis-LIGHT-MODE};
+
+  --tol-grey: #{$tol-grey-LIGHT-MODE};
+  --tol-grey-translucent: #{$tol-grey-translucent-LIGHT-MODE};
+  --tol-grey-subtle: #{$tol-grey-subtle-LIGHT-MODE};
+
+  --tol-primary: #{$tol-primary};
+  --tol-primary-translucent: #{$tol-primary-translucent};
+  --tol-primary-light: #{$tol-primary-light};
+  --tol-primary-dark: #{$tol-primary-dark};
+
+  --tol-info: #{$tol-info};
+  --tol-info-translucent: #{$tol-info-translucent};
+  --tol-info-light: #{$tol-info-light};
+  --tol-info-dark: #{$tol-info-dark};
+
+  --tol-success: #{$tol-success};
+  --tol-success-translucent: #{$tol-success-translucent};
+  --tol-success-light: #{$tol-success-light};
+  --tol-success-dark: #{$tol-success-dark};
+
+  --tol-warning: #{$tol-warning};
+  --tol-warning-translucent: #{$tol-warning-translucent};
+  --tol-warning-light: #{$tol-warning-light};
+  --tol-warning-dark: #{$tol-warning-dark};
+
+  --tol-danger: #{$tol-danger};
+  --tol-danger-translucent: #{$tol-danger-translucent};
+  --tol-danger-light: #{$tol-danger-light};
+  --tol-danger-dark: #{$tol-danger-dark};
+
+  --tol-royal: #{$tol-royal};
+  --tol-royal-translucent: #{$tol-royal-translucent};
+  --tol-royal-light: #{$tol-royal-light};
+  --tol-royal-dark: #{$tol-royal-dark};
 }
 
-// dark mode variant
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bs-body-darker: #121618;
+  :root{
+    --tol-bg: #{$tol-bg-DARK-MODE};
+    --tol-bg-dark: #{$tol-bg-dark-DARK-MODE};
+    --tol-text: #{$tol-text-DARK-MODE};
+    --tol-emphasis: #{$tol-emphasis-DARK-MODE};
+  
+    --tol-grey: #{$tol-grey-DARK-MODE};
+    --tol-grey-translucent: #{$tol-grey-translucent-DARK-MODE};
+    --tol-grey-subtle: #{$tol-grey-subtle-DARK-MODE};
   }
 }
+
+// React Bootstrap Main Override Variables
+$primary: $tol-primary !default;
+$secondary: $tol-primary !default;
+$success: $tol-success !default;
+$info: $tol-primary !default;
+$warning: $tol-warning !default;
+$danger: $tol-danger !default;
+
+:root {
+  --bs-body-bg: var(--tol-bg) !important;
+  --bs-body-color: var(--tol-text) !important;
+  --bs-emphasis-color: var(--tol-emphasis) !important;
+}
+
+// RSuite Main Override Variables
+:root {
+  --rs-gray-0: var(--tol-bg) !important;
+  --rs-gray-50: var(--tol-grey-subtle) !important;
+  --rs-gray-100: var(--tol-grey-subtle) !important;
+  --rs-gray-200: var(--tol-grey) !important;
+  --rs-gray-300: var(--tol-grey) !important;
+  --rs-gray-400: var(--tol-grey) !important;
+  --rs-gray-500: var(--tol-grey) !important;
+  --rs-gray-600: var(--tol-grey) !important;
+  --rs-gray-700: var(--tol-grey) !important;
+  --rs-gray-800: var(--tol-grey) !important;
+  --rs-gray-900: var(--tol-grey) !important;
+  
+  --rs-primary-50: var(--tol-primary-light) !important;
+  --rs-primary-100: var(--tol-primary-light) !important;
+  --rs-primary-200: var(--tol-primary-light) !important;
+  --rs-primary-300: var(--tol-primary) !important;
+  --rs-primary-400: var(--tol-primary) !important;
+  --rs-primary-500: var(--tol-primary) !important;
+  --rs-primary-600: var(--tol-primary) !important;
+  --rs-primary-700: var(--tol-primary-dark) !important;
+  --rs-primary-800: var(--tol-primary-dark) !important;
+  --rs-primary-900: var(--tol-primary-dark) !important;
+
+  --rs-red-50: var(--tol-danger-light) !important;
+  --rs-red-100: var(--tol-danger-light) !important;
+  --rs-red-200: var(--tol-danger-light) !important;
+  --rs-red-300: var(--tol-danger) !important;
+  --rs-red-400: var(--tol-danger) !important;
+  --rs-red-500: var(--tol-danger) !important;
+  --rs-red-600: var(--tol-danger) !important;
+  --rs-red-700: var(--tol-danger-dark) !important;
+  --rs-red-800: var(--tol-danger-dark) !important;
+  --rs-red-900: var(--tol-danger-dark) !important;
+
+  --rs-orange-50: var(--tol-warning-light) !important;
+  --rs-orange-100: var(--tol-warning-light) !important;
+  --rs-orange-200: var(--tol-warning-light) !important;
+  --rs-orange-300: var(--tol-warning) !important;
+  --rs-orange-400: var(--tol-warning) !important;
+  --rs-orange-500: var(--tol-warning) !important;
+  --rs-orange-600: var(--tol-warning) !important;
+  --rs-orange-700: var(--tol-warning-dark) !important;
+  --rs-orange-800: var(--tol-warning-dark) !important;
+  --rs-orange-900: var(--tol-warning-dark) !important;
+
+  --rs-yellow-50: var(--tol-warning-light) !important;
+  --rs-yellow-100: var(--tol-warning-light) !important;
+  --rs-yellow-200: var(--tol-warning-light) !important;
+  --rs-yellow-300: var(--tol-warning) !important;
+  --rs-yellow-400: var(--tol-warning) !important;
+  --rs-yellow-500: var(--tol-warning) !important;
+  --rs-yellow-600: var(--tol-warning) !important;
+  --rs-yellow-700: var(--tol-warning-dark) !important;
+  --rs-yellow-800: var(--tol-warning-dark) !important;
+  --rs-yellow-900: var(--tol-warning-dark) !important;
+
+  --rs-green-50: var(--tol-success-light) !important;
+  --rs-green-100: var(--tol-success-light) !important;
+  --rs-green-200: var(--tol-success-light) !important;
+  --rs-green-300: var(--tol-success) !important;
+  --rs-green-400: var(--tol-success) !important;
+  --rs-green-500: var(--tol-success) !important;
+  --rs-green-600: var(--tol-success) !important;
+  --rs-green-700: var(--tol-success-dark) !important;
+  --rs-green-800: var(--tol-success-dark) !important;
+  --rs-green-900: var(--tol-success-dark) !important;
+
+  --rs-cyan-50: var(--tol-primary-light) !important;
+  --rs-cyan-100: var(--tol-primary-light) !important;
+  --rs-cyan-200: var(--tol-primary-light) !important;
+  --rs-cyan-300: var(--tol-primary) !important;
+  --rs-cyan-400: var(--tol-primary) !important;
+  --rs-cyan-500: var(--tol-primary) !important;
+  --rs-cyan-600: var(--tol-primary) !important;
+  --rs-cyan-700: var(--tol-primary-dark) !important;
+  --rs-cyan-800: var(--tol-primary-dark) !important;
+  --rs-cyan-900: var(--tol-primary-dark) !important;
+
+  --rs-blue-50: var(--tol-primary-light) !important;
+  --rs-blue-100: var(--tol-primary-light) !important;
+  --rs-blue-200: var(--tol-primary-light) !important;
+  --rs-blue-300: var(--tol-primary) !important;
+  --rs-blue-400: var(--tol-primary) !important;
+  --rs-blue-500: var(--tol-primary) !important;
+  --rs-blue-600: var(--tol-primary) !important;
+  --rs-blue-700: var(--tol-primary-dark) !important;
+  --rs-blue-800: var(--tol-primary-dark) !important;
+  --rs-blue-900: var(--tol-primary-dark) !important;
+
+  --rs-violet-50: var(--tol-royal-light) !important;
+  --rs-violet-100: var(--tol-royal-light) !important;
+  --rs-violet-200: var(--tol-royal-light) !important;
+  --rs-violet-300: var(--tol-royal) !important;
+  --rs-violet-400: var(--tol-royal) !important;
+  --rs-violet-500: var(--tol-royal) !important;
+  --rs-violet-600: var(--tol-royal) !important;
+  --rs-violet-700: var(--tol-royal-dark) !important;
+  --rs-violet-800: var(--tol-royal-dark) !important;
+  --rs-violet-900: var(--tol-royal-dark) !important;
+
+  // Spectrum
+  --rs-color-red: var(--tol-danger) !important;
+  --rs-color-orange: var(--tol-warning) !important;
+  --rs-color-yellow: var(--tol-warning) !important;
+  --rs-color-green: var(--tol-success) !important;
+  --rs-color-cyan: var(--tol-primary) !important;
+  --rs-color-blue: var(--tol-primary) !important;
+  --rs-color-violet: var(--tol-royal) !important;
+}
+
+// Variable classes for test page
+.tol-light { background-color: var(--tol-light) !important; }
+.tol-dark { background-color: var(--tol-dark) !important; }
+
+.tol-bg { background-color: var(--tol-bg) !important; }
+.tol-bg-dark { background-color: var(--tol-bg-dark) !important; }
+
+.tol-text { background-color: var(--tol-text) !important; }
+.tol-emphasis { background-color: var(--tol-emphasis) !important; }
+
+.tol-grey { background-color: var(--tol-grey) !important; }
+.tol-grey-translucent { background-color: var(--tol-grey-translucent) !important; }
+.tol-grey-subtle { background-color: var(--tol-grey-subtle) !important; }
+
+.tol-primary { background-color: var(--tol-primary) !important; }
+.tol-primary-translucent { background-color: var(--tol-primary-translucent) !important; }
+.tol-primary-light { background-color: var(--tol-primary-light) !important; }
+.tol-primary-dark { background-color: var(--tol-primary-dark) !important; }
+
+.tol-info { background-color: var(--tol-info) !important; }
+.tol-info-translucent { background-color: var(--tol-info-translucent) !important; }
+.tol-info-light { background-color: var(--tol-info-light) !important; }
+.tol-info-dark { background-color: var(--tol-info-dark) !important; }
+
+.tol-success { background-color: var(--tol-success) !important; }
+.tol-success-translucent { background-color: var(--tol-success-translucent) !important; }
+.tol-success-light { background-color: var(--tol-success-light) !important; }
+.tol-success-dark { background-color: var(--tol-success-dark) !important; }
+
+.tol-warning { background-color: var(--tol-warning) !important; }
+.tol-warning-translucent { background-color: var(--tol-warning-translucent) !important; }
+.tol-warning-light { background-color: var(--tol-warning-light) !important; }
+.tol-warning-dark { background-color: var(--tol-warning-dark) !important; }
+
+.tol-danger { background-color: var(--tol-danger) !important; }
+.tol-danger-translucent { background-color: var(--tol-danger-translucent) !important; }
+.tol-danger-light { background-color: var(--tol-danger-light) !important; }
+.tol-danger-dark { background-color: var(--tol-danger-dark) !important; }
+
+.tol-royal { background-color: var(--tol-royal) !important; }
+.tol-royal-translucent { background-color: var(--tol-royal-translucent) !important; }
+.tol-royal-light { background-color: var(--tol-royal-light) !important; }
+.tol-royal-dark { background-color: var(--tol-royal-dark) !important; }

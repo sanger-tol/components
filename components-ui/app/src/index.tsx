@@ -8,6 +8,7 @@ import ReactDOM from "react-dom";
 import {
   Home,
   BarCharts,
+  Colours,
   Detail,
   DetailInfo,
   Filters,
@@ -58,6 +59,11 @@ const timelines: Page = {
 };
 
 // other
+const colours: Page = {
+  name: "Colours",
+  element: <Colours />,
+};
+
 const detail: Page = {
   name: "Detail",
   element: <Detail />,
@@ -91,7 +97,7 @@ const widgets: Page = {
 
 const otherDropdown: Dropdown = {
   name: "Other",
-  pages: [detail, forms, messages, miscellaneous, tsds, widgets],
+  pages: [colours, detail, forms, messages, miscellaneous, tsds, widgets],
 };
 
 // dev sandbox - change element if needed

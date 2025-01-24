@@ -64,14 +64,14 @@ function Sunburst(props: Props) {
   // colours
   const [titleColour, setTitleColour] = useState('');
   themeListener(() => {
-    setTitleColour(getCssVarValue("--bs-emphasis-color"));
+    setTitleColour(getCssVarValue("--tol-emphasis"));
     // border update doesn't trigger chartjs re-render
     const savedDatasets = datasets;
     setDatasets([{}]);
     setDatasets(
       setBorderColour(
         savedDatasets,
-        getCssVarValue("--bs-body-bg")
+        getCssVarValue("--tol-bg")
       )
     );
   });

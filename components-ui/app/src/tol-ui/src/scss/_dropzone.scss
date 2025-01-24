@@ -5,9 +5,9 @@
  */
 
 :root {
-  --rs-uploader-dnd-bg: var(--bs-body-bg);
-  --rs-uploader-dnd-hover-border: var(--primary);
-  --rs-uploader-dnd-border: var(--grey-emphasis)
+  --rs-uploader-dnd-bg: var(--tol-bg);
+  --rs-uploader-dnd-hover-border: var(--tol-primary);
+  --rs-uploader-dnd-border: var(--tol-grey)
 }
 
 .tol-dropzone {
@@ -16,7 +16,7 @@
   }
 
   .file-name {
-    color: $primary;
+    color: var(--tol-primary);
   }
 
   .file-upload {

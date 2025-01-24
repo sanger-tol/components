@@ -73,8 +73,6 @@ function RemoteFilters(props: Props) {
     }
   }
 
-  if (loading) return <></>
-
   const getDisplayName = (attribute: string) => {
     return entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.display_name || normaliseCaps(attribute)
   }
@@ -111,6 +109,8 @@ function RemoteFilters(props: Props) {
     return name.includes(kw);
   }
 
+  if (loading) return <></>;
+  
   return (
     <div>
       <div className="tol-filters-selector">
@@ -118,7 +118,7 @@ function RemoteFilters(props: Props) {
           block
           noSelectAll
           data={Object.keys(entityMeta.flatAttributes[endpoint])}
-          placeholder="No filters applied, click here to add..."
+          placeholder="No filters applied, click here to add"
           value={filters}
           setValue={setFilters}
           renderMenuItem={renderMenuItem}
@@ -155,6 +155,8 @@ function RemoteFilters(props: Props) {
               className="remove-filter-button"
               type="error"
               icon="trash"
+              position="right"
+              outline
             />
           </div>
         )

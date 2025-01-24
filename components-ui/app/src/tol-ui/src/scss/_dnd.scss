@@ -12,7 +12,7 @@
 }
 
 .tol-dnd-column {
-  background-color: var(--bs-body-darker);
+  background-color: var(--tol-bg-dark);
   margin: 10px;
   border-radius: 6px;
   padding: 1px;
@@ -21,7 +21,7 @@
 }
 
 .tol-dnd-column-drop {
-  background-color: var(--primary-opaque);
+  background-color: var(--tol-primary-translucent);
   margin: 10px;
   border-radius: 6px;
   padding: 1px;
@@ -41,14 +41,14 @@
 }
 
 .tol-dnd-item {
-  background-color: var(--bs-body-bg);
+  background-color: var(--tol-bg);
   margin: 4px;
   border-radius: 6px;
   padding: 4px 10px 4px;
-  color: var(--bs-emphasis-color);
+  color: var(--tol-emphasis);
   overflow: auto;
   font-weight: bold;
-  border: 2px solid var(--bs-body-darker);
+  border: 2px solid var(--tol-bg-dark);
 
   // info icon in settings
   .info .tooltip-wrapper {
@@ -72,7 +72,7 @@
   }
 
   .field-name-origin {
-    color: var(--grey-emphasis);
+    color: var(--tol-grey);
     font-size: 12px;
     font-weight: normal;
     margin-left: 6px;
@@ -82,7 +82,7 @@
   .icon {
     margin-left: 6px;
     margin-top: 5px;
-    color: var(--bs-body-color);
+    color: var(--tol-bg);
     float: right;
   }
 }

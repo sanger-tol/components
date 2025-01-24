@@ -16,6 +16,7 @@ function AccordionHeader(props: Props) {
 
   return (
     <div
+      className="accordion-header"
       style={{
         display: "flex",
         justifyContent: "space-between",
