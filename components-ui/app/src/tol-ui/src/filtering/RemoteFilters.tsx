@@ -155,6 +155,8 @@ function RemoteFilters(props: Props) {
               className="remove-filter-button"
               type="error"
               icon="trash"
+              position="right"
+              outline
             />
           </div>
         )

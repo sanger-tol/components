@@ -58,6 +58,10 @@
       border: none;
       box-shadow: none;
     }
+
+    .rs-pagination-btn:hover, .rs-pagination-btn:focus {
+      background-color: var(--tol-grey-subtle);
+    }
   }
 
   .config-modal-overflow-fix {
@@ -98,10 +102,6 @@
 
     .rs-table-cell {
       border-bottom: transparent;
-    }
-
-    .rs-table-row {
-      border-bottom: 1px solid var(--tol-grey);
     }
 
     // text properties
