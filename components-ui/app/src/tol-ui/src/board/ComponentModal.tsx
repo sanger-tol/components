@@ -15,7 +15,6 @@ import {
   HoverOverlay,
   TsDataSource
 } from '../index';
-import { Form, InputGroup } from 'react-bootstrap';
 import { FormTextField } from '../forms';
 import { RSForm } from '../index';
 import { Zone, addComponent, defineComponent } from './Utils';
