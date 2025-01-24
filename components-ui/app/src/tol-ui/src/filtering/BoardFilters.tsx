@@ -11,6 +11,7 @@ import { Drawer } from "../general";
 import { generateFilter } from "./Utils";
 import { deepCopy } from "../general/Utils";
 import { TsDataSource } from "..";
+import { BOARD_URL_PREFIX } from "../constants";
 
 
 export interface Props {
@@ -76,7 +77,7 @@ function BoardFilters(props: Props) {
     setOpen(false);
 
     new TsDataSource().upsert({
-      objectType: entityType,
+      objectType: `${BOARD_URL_PREFIX}/${entityType}`,
       payload: [{
         type: entityType,
         id: id,
