@@ -237,8 +237,7 @@ function ComponentModal(props: Props) {
         </Row>
         <br/>
         <h6>Enter Title <span style={{color: 'red'}}>*</span></h6>
-        <div className='new-component-inputs'>
-        <RSForm>
+        <RSForm fluid>
         <FormTextField
           id="component-title"
           onChange={(value: any) => setTitle(value)}
@@ -247,7 +246,6 @@ function ComponentModal(props: Props) {
           label=''
         />
         </RSForm>
-        </div>
 
         {idError ? <p className='tol-modal-error'>Title cannot be blank</p> : null}
         {fieldError ? <p className='tol-modal-error'>Please ensure all mandatory fields are filled</p> : null}
