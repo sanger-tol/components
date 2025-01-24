@@ -58,8 +58,7 @@ function NewBoardModal(props: Props) {
   );
 
   const body = (
-    <div className="new-board-inputs">
-      <RSForm>
+      <RSForm fluid>
         <FormTextField
           id="board-title"
           value={boardTitle}
@@ -79,7 +78,6 @@ function NewBoardModal(props: Props) {
         />
         */}
       </RSForm>
-    </div>
   );
 
   return (

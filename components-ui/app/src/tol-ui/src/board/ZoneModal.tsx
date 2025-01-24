@@ -11,7 +11,8 @@ import {
   SingleSelect,
   TsDataSource
 } from '../index';
-import { Form, InputGroup } from 'react-bootstrap';
+import { FormTextField } from '../forms';
+import { RSForm } from '../index';
 import { addZone } from './Utils';
 
 
@@ -156,16 +157,15 @@ function ZoneModal(props: Props) {
         />
         <br/>
         <p className='zone-modal-labels'>Enter Title <span style={{color: 'red'}}>*</span></p>
-        <Form>
-          <InputGroup>
-            <Form.Control
-              className='dashboard-modal-input'
-              placeholder='Title'
-              onChange={(e) => setTitle(e.target.value)}
-              isInvalid={titleError}
-            />
-          </InputGroup>
-        </Form>
+        <RSForm fluid>
+        <FormTextField
+          id="zone-title"
+          onChange={(value: any) => setTitle(value)}
+          name="Zone Title"
+          placeholder={`Zone Title`}
+          label=""
+        />
+      </RSForm>
         {titleError ? <p className='tol-modal-error'>Title cannot be blank</p> : null}
         {fieldError ? <p className='tol-modal-error'>Please ensure all mandatory fields are filled</p> : null}
       </div>

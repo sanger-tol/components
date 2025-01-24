@@ -144,6 +144,7 @@ function View(props: Props) {
   return (
     <div className='tol-view'>
       <div className='tol-view-bar'>
+        <div style={open ? {display: 'none'} : {}}>
         <Button
           onClick={() => {
             setOpen(true)
@@ -153,6 +154,7 @@ function View(props: Props) {
           icon='plus'
           position='right'
         />
+        </div>
       </div>
       <ZoneModal
         open={open}
