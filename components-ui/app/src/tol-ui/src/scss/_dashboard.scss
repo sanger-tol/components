@@ -171,7 +171,7 @@
   width: auto;
   border-radius: 6px;
   text-align: center;
-  background-color: var(--tol-grey-subtle);
+  background-color: var(--tol-grey);
   position: relative !important;
   height: auto !important;
   min-height: 100% !important;
@@ -186,13 +186,13 @@
 // Temporary class as only table is useable
 .tol-component-modal-bttn-disabled {
   @extend .tol-component-modal-bttn;
-  background-color: var(--grey-emphasis);
+  background-color: var(--tol-grey-translucent);
   cursor: not-allowed;
   color: var(--grey-subtle);
 }
 
 .tol-component-modal-bttn:hover {
-  background-color: var(--tol-grey);
+  background-color: var(--tol-grey-translucent);
 }
 
 .tol-component-modal-bttn-clicked {
