@@ -34,7 +34,7 @@ function NewBoardModal(props: Props) {
       <Button
         position="right"
         type="success"
-        disabled={boardTitle === "" /*|| viewTitle === ""*/} // Views will be 'Untitled View' for now
+        disabled={boardTitle === "" /*|| viewTitle === ""*/} // Views will be 'View 1' for now
         onClick={() => {
           setOpen(false), onConfirmClick(boardId, viewId, boardTitle, viewTitle);
         }}

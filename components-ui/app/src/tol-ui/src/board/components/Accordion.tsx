@@ -286,7 +286,6 @@ function Accordion(props: BoardsAccordionProps) {
     };
 
     return (
-      <>
       <Acc
         bordered
         style={{ flex: "1", overflow: "visible" }}
@@ -307,7 +306,6 @@ function Accordion(props: BoardsAccordionProps) {
           {loading ? <div>Loading...</div> : renderChildren(childIds)}
         </Acc.Panel>
       </Acc>
-      </>
     );
   };
 
