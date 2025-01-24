@@ -290,15 +290,26 @@ function ZoneGrid(props: Props) {
               to add a new Component to the Zone.
             </p>
           :
-            <p>
+            <div>
+              <p style={{marginBottom: "0"}}>
+              Click the
+              <FontAwesomeIcon
+                icon={faPlus}
+                size="lg"
+                style={{padding: "0 8"}}
+              />
+              to add a new Component to the Zone.
+              </p>
+              <p>
               Click the
               <FontAwesomeIcon
                 icon={faPenToSquare}
                 size="lg"
                 style={{padding: "0 8"}}
               />
-              to start editing the Zone.
+              to edit the Zone.
             </p>
+            </div>
           }
         </div>
       )}

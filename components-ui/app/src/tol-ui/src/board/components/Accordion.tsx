@@ -51,7 +51,7 @@ interface ComponentsProps {
 // When all MRs have been merged into dev
 const returnViewInfo = async (viewId: string) => {
   try {
-    const res: any = await httpClient().get(`/view`, {
+    const res: any = await httpClient().get(`/${BOARD_ENDPOINTS.VIEW}`, {
       params: {
         filter: {
           and_: {
@@ -69,7 +69,7 @@ const returnViewInfo = async (viewId: string) => {
 
 const returnZoneInfo = async (zoneId: string) => {
   try {
-    const res: any = await httpClient().get(`/zone`, {
+    const res: any = await httpClient().get(`/${BOARD_ENDPOINTS.ZONE}`, {
       params: {
         filter: {
           and_: {
@@ -90,7 +90,7 @@ const returnZoneInfo = async (zoneId: string) => {
 
 const returnComponentInfo = async (componentId: string) => {
   try {
-    const res: any = await httpClient().get(`/component`, {
+    const res: any = await httpClient().get(`/${BOARD_ENDPOINTS.COMPONENT}`, {
       params: {
         filter: {
           and_: {
@@ -386,7 +386,7 @@ function Accordion(props: BoardsAccordionProps) {
                 id={zoneId}
                 endpointUrl={BOARD_ENDPOINTS.ZONE_COMPONENTS}
                 filterItem={"zone.id"}
-                itemType={BoardObjectTypes.ZONE as string}
+                itemType={BoardObjectTypes.COMPONENT as string}
                 title={zoneData[zoneId][0].title || ""}
                 subHeader={zoneData[zoneId][0].objectType}
                 clickable={false}
@@ -423,7 +423,7 @@ function Accordion(props: BoardsAccordionProps) {
                   title={viewData[viewId] || ""}
                   endpointUrl={BOARD_ENDPOINTS.VIEW_ZONES}
                   filterItem={"view.id"}
-                  itemType={BoardObjectTypes.VIEW as string}
+                  itemType={BoardObjectTypes.ZONE as string}
                   clickable={false}
                   renderChildren={(zoneIds) => (
                     <ZonesAccordion zoneIds={zoneIds} />
@@ -457,7 +457,7 @@ function Accordion(props: BoardsAccordionProps) {
               title={board.title}
               endpointUrl={BOARD_ENDPOINTS.BOARD_VIEWS}
               filterItem={"board.id"}
-              itemType={BoardObjectTypes.BOARD as string}
+              itemType={BoardObjectTypes.VIEW as string}
               clickable={true}
               renderChildren={(viewIds) => (
                 <ViewsAccordion boardId={board.id} viewIds={viewIds} />
