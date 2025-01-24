@@ -11,12 +11,8 @@ import {
   Modal,
   Row,
   Col,
-<<<<<<< HEAD
   Icon,
   HoverOverlay,
-  env,
-=======
->>>>>>> 5fadf99 (linting)
   TsDataSource
 } from '../index';
 import { Form, InputGroup } from 'react-bootstrap';
