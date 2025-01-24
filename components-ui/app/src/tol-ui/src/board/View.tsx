@@ -12,6 +12,7 @@ import {
 } from '../index';
 import { getZones } from "./Utils";
 import ZoneGrid from './ZoneGrid';
+import { BOARD_ENDPOINTS, BoardObjectTypes } from '../constants';
 
 
 interface ZoneObject {
@@ -32,10 +33,11 @@ interface Props {
   // title: string,
   ds: any,
   defaultFilter?: IFilter
+  dataUrl?: string;
 }
 
 function View(props: Props) {
-  const { id, ds } = props;
+  const { id, ds, dataUrl } = props;
   const [zones, setZones] = useState<ZoneObject[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<OrderObject[]>([]);
@@ -58,7 +60,7 @@ function View(props: Props) {
   const deleteZone = (id: string) => {
     const newZones = zones.filter(zone => zone.id !== id);
     ds.custom(
-      `boards/zone/${id}`,
+      `${BOARD_ENDPOINTS.DELETE_ZONE}/${id}`,
       'DELETE',
     )
     setZones(newZones);
@@ -104,7 +106,7 @@ function View(props: Props) {
     
     const payloadData = updatedZoneOrder.map((zone) => {
       return {
-        type: 'zone_view',
+        type: BOARD_ENDPOINTS.VIEW_ZONES,
         id: zone.zoneViewId,
         attributes: {
           order: zone.order
@@ -113,7 +115,7 @@ function View(props: Props) {
     })
 
     await ds.upsert({
-      objectType: 'zone_view',
+      objectType: BoardObjectTypes.ZONE_VIEW as string,
       payload: payloadData
     })
 
@@ -161,6 +163,7 @@ function View(props: Props) {
         setZoneOrder={setZoneOrder}
         ds={ds}
         viewId={id}
+        dataUrl={dataUrl}
       />
       {zones.length > 0 ?
         <>
@@ -175,6 +178,7 @@ function View(props: Props) {
                 onZoneReorder={onZoneReorder}
                 deleteZone={deleteZone}
                 ds={ds}
+                dataUrl={dataUrl}
               />
             )
           })}

@@ -38,7 +38,7 @@ function NewBoardModal(props: Props) {
         onClick={() => {
           setOpen(false), onConfirmClick(boardId, viewId, boardTitle, viewTitle);
         }}
-        text="Confirm"
+        text="Create"
         icon='plus'
       />
       <Button

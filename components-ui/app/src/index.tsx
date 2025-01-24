@@ -110,7 +110,7 @@ const sandbox: Page = {
 ReactDOM.render(
   // eslint-disable-line
   <TolApp
-    boards
+    boards={{dataUrl: 'https://portal.tol.sanger.ac.uk/api/v1/'}}
     brand="Components"
     homePage={<Home />}
     pages={[

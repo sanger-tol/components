@@ -157,4 +157,7 @@ def application():
         url_prefix=os.environ['API_PATH'] + '/boards'
     )
 
+    blueprint_board_data = data_blueprint(sql_datasource)
+    app.register_blueprint(blueprint_board_data, url_prefix=os.getenv('API_PATH') + '/board-data')
+
     return app

@@ -11,10 +11,11 @@ import {
   Modal,
   Row,
   Col,
+  Icon,
+  HoverOverlay,
+  TsDataSource
 } from '../index';
 import { Form, InputGroup } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartColumn, faChartPie, faTable, faHashtag } from '@fortawesome/free-solid-svg-icons';
 import { Zone, addComponent, defineComponent } from './Utils';
 
 
@@ -24,13 +25,14 @@ interface Props {
   zone: Zone,
   setZone: any,
   zoneId: string,
-  ds: any,
+  ds: TsDataSource,
   currentWidgets: any,
-  setCurrentWidgets: any
+  setCurrentWidgets: any,
+  dataUrl?: string
 }
 
 function ComponentModal(props: Props) {
-  const { open, setOpen, zone, setZone, zoneId, ds, currentWidgets, setCurrentWidgets } = props;
+  const { open, setOpen, zone, setZone, zoneId, ds, currentWidgets, setCurrentWidgets, dataUrl } = props;
   const [componentType, setComponentType] = useState('');
   const [widgetType, setWidgetType] = useState('');
   const [title, setTitle] = useState('');
@@ -81,7 +83,8 @@ function ComponentModal(props: Props) {
         nextOrder,
         componentType,
         widgetType,
-        zoneId
+        zoneId,
+        dataUrl
       );
       //This adds the component to the zone
       defineComponent({
@@ -96,6 +99,13 @@ function ComponentModal(props: Props) {
         componentId: newComponent.newComponentId,
         order: nextOrder,
         componentZoneId: newComponent.newComponentZoneId,
+        baseUrl: dataUrl,
+        componentType: componentType,
+        filter: {and_: {}},
+        title: title,
+        objectType: zone.type,
+        config: {},
+        widgetType: widgetType
       }]);
 
       setZone({...zone});
@@ -113,6 +123,47 @@ function ComponentModal(props: Props) {
     />
   );
 
+  const componentOptions = [
+    {
+      type: 'count',
+      icon: 'hashtag',
+      disabled: true
+    },
+    {
+      type: 'barchart',
+      icon: 'chart-column',
+      disabled: true
+    },
+    {
+      type: 'sunburst',
+      icon: 'chart-pie',
+      disabled: true
+    },
+    {
+      type: 'table',
+      icon: 'table',
+      disabled: false
+    }
+  ]
+
+  const sizeOptions = [
+    {
+      type: 'sm',
+      name: 'Small',
+      disabled: true
+    },
+    {
+      type: 'md',
+      name: 'Medium',
+      disabled: false
+    },
+    {
+      type: 'lg',
+      name: 'Large',
+      disabled: false
+    }
+  ]
+
 
   return(
     <Modal
@@ -126,70 +177,62 @@ function ComponentModal(props: Props) {
       <>
         <h6>Select Component <span style={{color: 'red'}}>*</span></h6>
         <Row>
-          <Col lg={3} md={6} sm={12} className='tol-button-col'>
-            <div
-              className={componentType !== 'barchart' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => console.log('unavailable')}
-            >
-              <FontAwesomeIcon icon={faChartColumn} size="6x" />
-              <h6>Bar Chart</h6>
-            </div>
-          </Col>
-          <Col lg={3} md={6} sm={12} className='tol-button-col'>
-            <div
-              className={componentType !== 'sunburst' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => console.log('unavailable')}
-            >
-              <FontAwesomeIcon icon={faChartPie} size="6x" />
-              <h6>Sunburst</h6>
-            </div>
-          </Col>
-          <Col lg={3} md={6} sm={12} className='tol-button-col'>
-            <div
-              className={componentType !== 'table' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => setComponentType('table')}
-            >
-              <FontAwesomeIcon icon={faTable} size="6x" />
-              <h6>Table</h6>
-            </div>
-          </Col>
-          <Col lg={3} md={6} sm={12} className='tol-button-col'>
-            <div
-              className={componentType !== 'count' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'} 
-              onClick={() => console.log('unavailable')}
-            >
-              <FontAwesomeIcon icon={faHashtag} size="6x" />
-              <h6>Count</h6>
-            </div>
-          </Col>
+          {componentOptions.map((option, index) => {
+            const content = (
+              <>
+                <Icon icon={option.icon} size="6x" />
+                <h6>{option.type}</h6>
+              </>
+            )
+            return (
+              <Col lg={3} md={6} sm={12} className='tol-button-col' key={index}>
+                {!option.disabled ?
+                 <div
+                  className={componentType !== option.type ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
+                  onClick={() => setComponentType(option.type)}
+                 >
+                  {content}
+                </div>
+                :
+                <HoverOverlay contents={'Coming Soon...'}>
+                  <div
+                    className={'tol-component-modal-bttn-disabled'}
+                    onClick={() => console.log('unavailable')}
+                   >
+                    {content}
+                  </div>
+                </HoverOverlay>
+                }
+              </Col>
+            )
+          })}
         </Row>
         <br/>
         <h6>Select Size <span style={{color: 'red'}}>*</span></h6>
         <Row>
-          <Col lg={4} md={4} sm={12} className='tol-button-col'>
-            <div
-              className={widgetType !== 'sm' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => console.log('unavailable')}
-            >
-              <h5>Small</h5>
-            </div>
-          </Col>
-          <Col lg={4} md={4} sm={12} className='tol-button-col'>
-            <div
-              className={widgetType !== 'md' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => console.log('unavailable')}
-            >
-              <h5>Medium</h5>
-            </div>
-          </Col>
-          <Col lg={4} md={4} sm={12} className='tol-button-col'>
-            <div
-              className={widgetType !== 'lg' ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
-              onClick={() => setWidgetType('lg')}
-            >
-              <h5>Large</h5>
-            </div>
-          </Col>
+          {sizeOptions.map((option, index) => {
+            return (
+              <Col lg={4} md={4} sm={12} className='tol-button-col' key={index}>
+                {!option.disabled ?
+                <div
+                  className={widgetType !== option.type ? 'tol-component-modal-bttn' : 'tol-component-modal-bttn-clicked'}
+                  onClick={() => setWidgetType(option.type)}
+                >
+                  <h5>{option.name}</h5>
+                </div>
+                :
+                <HoverOverlay contents={'Coming Soon...'}>
+                  <div
+                    className={'tol-component-modal-bttn-disabled'}
+                    onClick={() => console.log('unavailable')}
+                  >
+                    <h5>{option.name}</h5>
+                  </div>
+                </HoverOverlay>
+                }
+              </Col>
+            )
+          })}
         </Row>
         <br/>
         <h6>Enter Title <span style={{color: 'red'}}>*</span></h6>
