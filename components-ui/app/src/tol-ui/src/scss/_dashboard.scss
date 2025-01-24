@@ -48,8 +48,8 @@
 
 .tol-zone-bar {
   @extend .tol-widget;
+  border-radius: 0;
   margin: 0;
-
 }
 
 .tol-zone-bar>div {
@@ -103,7 +103,7 @@
 .add-zone-button {
   position: absolute;
   right: 24px;
-  top: 98px;
+  top: 92px;
 }
 
 .edit-config-button {
