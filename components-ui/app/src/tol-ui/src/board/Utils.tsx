@@ -11,7 +11,8 @@ import { generateFilter, resetAllFilters } from '../filtering/Utils';
 import { useEffectUpdate } from '../hooks';
 import { IFilter } from '../models/Filter';
 import { getUserFromLocalStorage } from '../services/localStorage/localStorageService';
-import { TsDataSource, DataObject } from '../services';
+import { TsDataSource } from '../services';
+import { BOARD_URL_PREFIX, BOARD_ENDPOINTS, BoardObjectTypes } from '../constants/api.constants';
 
 
 export interface Component {
@@ -212,7 +213,7 @@ export function getWidgetOrder(layout: any) {
 
 export async function getBoard(id: string, ds: any, user: any) {
   const res = await ds.getOne({
-    objectType: 'board',
+    objectType: BOARD_ENDPOINTS.BOARD,
     id: id,
     user_id: user.id
   }).then(async(res: any) => {
@@ -227,7 +228,7 @@ export async function getBoard(id: string, ds: any, user: any) {
 }
 
 async function getViews(id: string, ds: any) {
-  return await httpClient().get('/view_board', {
+  return await httpClient().get(`/${BOARD_ENDPOINTS.BOARD_VIEWS}`, {
     params: {
       filter: {
         and_: {
@@ -243,7 +244,7 @@ async function getViews(id: string, ds: any) {
 
 async function getViewsData(ids: string[], ds: any) {
   return await ds.getListPage({
-    objectType: 'view',
+    objectType: BOARD_ENDPOINTS.VIEW,
     filter: {
       and_: {
         'id': { 'in_list': { 'value': ids } }
@@ -255,7 +256,7 @@ async function getViewsData(ids: string[], ds: any) {
 }
 
 export async function getZones(viewID: string, ds: any) {
-  return await httpClient().get('/zone_view',{
+  return await httpClient().get(`/${BOARD_ENDPOINTS.VIEW_ZONES}`,{
     params: {
       filter: {
         and_: {
@@ -287,7 +288,7 @@ function formatZoneOrders(data: any) {
 
 async function getZoneData(ids: string[], ds: any) {
   return await ds.getListPage({
-    objectType: 'zone',
+    objectType: BOARD_ENDPOINTS.ZONE,
     filter: {
       and_: {
         'id': { 'in_list': { 'value': ids } }
@@ -300,7 +301,7 @@ async function getZoneData(ids: string[], ds: any) {
 
 export function saveTitle(title: string, ds: any, id: string, objectType: string) {
   ds.upsert({
-    objectType: objectType,
+    objectType: `${BOARD_URL_PREFIX}/${objectType}`,
     payload: [{
       type: objectType,
       id: id,
@@ -313,9 +314,11 @@ export function saveTitle(title: string, ds: any, id: string, objectType: string
 
 export async function getComponents(zoneId: string, ds: TsDataSource) {
   const componentZoneData = await getComponentZoneData(zoneId);
+  // @ts-ignore
   const componentIds = componentZoneData.data.data.map((component: any) => component.relationships.component.data.id);
   const componentData = await getComponentData(componentIds, ds);
 
+  // @ts-ignore
   return componentZoneData.data.data.map((component: any) => {
     const componentId = component.relationships.component.data.id;
     const componentDetails = componentData.find((data: any) => data.id === componentId);
@@ -335,7 +338,7 @@ export async function getComponents(zoneId: string, ds: TsDataSource) {
 }
 
 async function getComponentZoneData(zoneId: string) {
-  return await httpClient().get('/component_zone', {
+  return await httpClient().get(`/${BOARD_ENDPOINTS.ZONE_COMPONENTS}`, {
     params: {
       filter: {
         and_: {
@@ -346,9 +349,9 @@ async function getComponentZoneData(zoneId: string) {
   });
 }
 
-async function getComponentData(componentIds: string[], ds: TsDataSource): Promise<DataObject> {
+async function getComponentData(componentIds: string[], ds: TsDataSource): Promise<any> {
   return await ds.getListPage({
-    objectType: 'component',
+    objectType: BOARD_ENDPOINTS.COMPONENT,
     filter: {
       and_: {
         'id': { 'in_list': { 'value': componentIds } }
@@ -390,9 +393,9 @@ export async function createBoardAndView(ds: TsDataSource, id: string, title: st
   const user = getUserFromLocalStorage();
   const boardId = id ?? generateId("b");
   await ds.upsert({
-    objectType: 'board',
+    objectType: BOARD_ENDPOINTS.BOARD,
     payload: [{
-      type: 'board',
+      type: BoardObjectTypes.BOARD as string,
       id: boardId,
       attributes: {
         title: title,
@@ -404,9 +407,9 @@ export async function createBoardAndView(ds: TsDataSource, id: string, title: st
     return addView(ds, viewId, viewTitle);
   }).then(async () => {
     await ds.upsert({
-      objectType: 'view_board',
+      objectType: BOARD_ENDPOINTS.BOARD_VIEWS,
       payload: [{
-        type: 'view_board',
+        type: BoardObjectTypes.VIEW_BOARD as string,
         attributes: {
           order: 1,
           board_id: boardId,
@@ -424,9 +427,9 @@ export async function addView(ds: TsDataSource, id: string, title: string) {
   const user = getUserFromLocalStorage();
   const viewId = id ?? generateId("v");
   await ds.upsert({
-    objectType: 'view',
+    objectType: BOARD_ENDPOINTS.VIEW,
     payload: [{
-      type: 'view',
+      type: BoardObjectTypes.VIEW as string,
       id: viewId,
       attributes: {
         title: 'Untitled View', // title
@@ -440,27 +443,35 @@ export async function addView(ds: TsDataSource, id: string, title: string) {
 }
 
 
-export async function addZone(ds: TsDataSource, objectType: string, title: string, nextOrder: number, viewId: string) {
+export async function addZone(
+  ds: TsDataSource,
+  objectType: string,
+  title: string,
+  nextOrder: number,
+  viewId: string,
+  dataUrl?: string
+) {
   const user = getUserFromLocalStorage()
   const newId = generateId('z');
   await ds.upsert({
-    objectType: 'zone',
+    objectType: BOARD_ENDPOINTS.ZONE,
     payload: [{
-      type: 'zone',
+      type: BoardObjectTypes.ZONE as string,
       id: newId,
       attributes: {
         title: title,
         filter: {and_: {}},
         object_type: objectType,
         user_id: user.id,
+        base_url: dataUrl
       },
     }]
   });
 
   return await ds.upsert({
-    objectType: 'zone_view',
+    objectType: BOARD_ENDPOINTS.VIEW_ZONES,
     payload: [{
-      type: 'zone_view',
+      type: BoardObjectTypes.ZONE_VIEW as string,
       attributes: {
         order: nextOrder,
         zone_id: newId,
@@ -483,14 +494,14 @@ export async function addComponent(
   componentType: string,
   widgetType: string,
   zoneId: string,
-  baseUrl?: string
+  dataUrl?: string
 ) {
   const user = getUserFromLocalStorage()
   const newId = generateId('c');
   await ds.upsert({
-    objectType: 'component',
+    objectType: BOARD_ENDPOINTS.COMPONENT,
     payload: [{
-      type: 'component',
+      type: BoardObjectTypes.COMPONENT as string,
       id: newId,
       attributes: {
         title: title,
@@ -499,16 +510,16 @@ export async function addComponent(
         widget_type: widgetType,
         filter: {and_: {}},
         config: {},
-        base_url: baseUrl || 'https://portal.tol.sanger.ac.uk/api/v1',
+        base_url: dataUrl,
         user_id: user.id,
       },
     }]
   });
 
   return await ds.upsert({
-    objectType: 'component_zone',
+    objectType: BOARD_ENDPOINTS.ZONE_COMPONENTS,
     payload: [{
-      type: 'component_zone',
+      type: BoardObjectTypes.COMPONENT_ZONE as string,
       attributes: {
         order: nextOrder,
         component_id: newId,
@@ -525,9 +536,9 @@ export async function addComponent(
 
 export async function upsertComponentConfig(ds: TsDataSource, componentId: string, config: object) {
   return await ds.upsert({
-    objectType: 'component',
+    objectType: BOARD_ENDPOINTS.COMPONENT,
     payload: [{
-      type: 'component',
+      type: BoardObjectTypes.COMPONENT as string,
       id: componentId,
       attributes: {
         config: config

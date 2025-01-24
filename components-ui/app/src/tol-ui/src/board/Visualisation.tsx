@@ -30,6 +30,7 @@ function Visualisation(props: Props) {
       <BoardTable {...props} />
     );
   }
+  return <></>
 }
 
 export default Visualisation;

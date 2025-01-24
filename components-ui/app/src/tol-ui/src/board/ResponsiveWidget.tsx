@@ -9,6 +9,7 @@ import { Button, Placeholder, Visualisation } from '../index';
 import { useState, useRef, useEffect } from 'react';
 import { Zone, getWidgetOrder, generateLayout } from './Utils';
 import { ConfirmationModal } from './components';
+import { BOARD_ENDPOINTS, BoardObjectTypes } from '../constants';
 
 
 export interface IWidgets {
@@ -79,7 +80,7 @@ function ResponsiveWidget(props: Props) {
   const deleteWidget = (id: string) => {
     const newWidgets = widgets.filter(widget => widget.componentId !== id);
     ds.custom(
-      `boards/component/${id}`,
+      `${BOARD_ENDPOINTS.DELETE_COMPONENT}/${id}`,
       'DELETE',
     )
     setWidgets(newWidgets);
@@ -104,7 +105,7 @@ function ResponsiveWidget(props: Props) {
       const widget = widgets.find(widget => widget.componentId === componentId);
       widget!.order = highestPreviousOrder + 1 + index;
       return {
-        type: 'component_zone',
+        type: BoardObjectTypes.COMPONENT_ZONE as string,
         id: widget!.componentZoneId,
         attributes: {
           order: highestPreviousOrder + index + 1
@@ -112,7 +113,7 @@ function ResponsiveWidget(props: Props) {
       };
     });
     await ds.upsert({
-      objectType: 'component_zone',
+      objectType: BOARD_ENDPOINTS.ZONE_COMPONENTS,
       payload: payloadData
     })
     setSaveLayout(false);

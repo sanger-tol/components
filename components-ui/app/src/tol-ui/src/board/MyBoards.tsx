@@ -11,12 +11,14 @@ import {
   httpClient,
   Message,
   Toaster,
-  Loader
+  Loader,
+  StaticMessage,
 } from "..";
 import { Accordion } from "./components";
 import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { BOARD_ENDPOINTS } from "../constants/api.constants";
 
 const containerStyle = {
   display: "flex",
@@ -24,12 +26,15 @@ const containerStyle = {
   alignItems: "center",
   position: "relative",
   paddingLeft: "10px",
-  paddingRight: "10px"
+  paddingRight: "10px",
 };
+
+const DASHBOARD_WARNING =
+  "WARNING: Dashboards are still in development, so existing boards or views may be removed at any point";
 
 const getBoardDetails = async (id: string, setErrorMessage: any) => {
   try {
-    const res = await httpClient().get("/board", {
+    const res = await httpClient().get(`/${BOARD_ENDPOINTS.BOARD}`, {
       params: {
         filter: {
           and_: {
@@ -40,8 +45,8 @@ const getBoardDetails = async (id: string, setErrorMessage: any) => {
     });
     // @ts-ignore
     const boardDetails: any = res!.data!.data!.map((board: any) => ({
-        id: board.id,
-        title: board.attributes.title,
+      id: board.id,
+      title: board.attributes.title,
     }));
     return boardDetails;
   } catch (error) {
@@ -49,10 +54,9 @@ const getBoardDetails = async (id: string, setErrorMessage: any) => {
     setErrorMessage("Error fetching boards. Please reload and try again.");
     return [];
   }
-}
+};
 
 function MyBoards() {
-
   const [boardDetails, setBoardDetails] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -120,24 +124,33 @@ function MyBoards() {
     <div className="my-boards-container">
       {!loading ? (
         boardDetails && boardDetails.length > 0 ? (
-          <Accordion boardDetails={boardDetails} setBoardDetails={setBoardDetails}/>
+          <Accordion
+            boardDetails={boardDetails}
+            setBoardDetails={setBoardDetails}
+          />
         ) : (
           <div>{noBoards}</div>
         )
       ) : (
         <div className="fixed-full-page">
           <div className="fixed-centered-loader">
-            <span style={{display: "flex", justifyContent: "center"}}><Loader /></span>
-            <p style={{marginTop: "10px"}}>Loading Your Boards...</p>
+            <span style={{ display: "flex", justifyContent: "center" }}>
+              <Loader />
+            </span>
+            <p style={{ marginTop: "10px" }}>Loading Your Boards...</p>
           </div>
         </div>
       )}
     </div>
   );
 
-  const myBoardsHeader = (
-    <MyBoardsHeader containerStyle={containerStyle} />
-  )
+  const myBoardsHeader = <MyBoardsHeader containerStyle={containerStyle}/>;
+
+  const myBoardsWarning = (
+    <div style={{padding: "0px 10px"}}>
+      <StaticMessage message={DASHBOARD_WARNING} type={"warning"}/>
+    </div>
+  );
 
   const components = [
     {
@@ -150,7 +163,12 @@ function MyBoards() {
     },
   ];
 
-  return <Widgets components={components} />;
+  return (
+    <>
+      {myBoardsWarning}
+      <Widgets components={components} />
+    </>
+  );
 }
 
 export default MyBoards;
