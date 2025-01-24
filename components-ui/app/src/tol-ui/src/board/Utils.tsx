@@ -429,7 +429,7 @@ export async function addView(ds: TsDataSource, id: string, title: string) {
       type: 'view',
       id: viewId,
       attributes: {
-        title: 'View 1', // title
+        title: 'View 1',
         filter: {and_: {}},
         user_id: user.id,
       },
