@@ -103,14 +103,16 @@ function MyBoardsHeader(props: Props) {
           <h1>{title}</h1>
           <p>{subTitle}</p>
         </div>
-        <DropdownButtons
-          mainButtonIcon={dropdownMainIcon}
-          placement={placement}
-          globalDisabled={globalDisabled}
-          dropdownButtons={dropdownButtons}
-          menuStyle={menuStyle}
-          showMessages={false}
-        />
+        <div style={newBoardModalOpen ? {display: 'none'}: {}}>
+          <DropdownButtons
+            mainButtonIcon={dropdownMainIcon}
+            placement={placement}
+            globalDisabled={globalDisabled}
+            dropdownButtons={dropdownButtons}
+            menuStyle={menuStyle}
+            showMessages={false}
+          />
+        </div>
         {newBoardModalOpen && newBoardModal()}
       </div>
   );
