@@ -12,6 +12,8 @@ import {
 } from '../../models';
 import { httpClient } from './httpClient';
 import retry from './Retry';
+import { deepCopy } from '../../general/Utils';
+
 
 const EXCLUDED_DETAIL_CACHE_OBJECTS = [
   'component',
@@ -276,24 +278,25 @@ export default class TsDataSource {
 
   private flattenAttributes(attributes: Attributes, relationships: Relationships) {
     this.addIds(attributes);
+    const newAttributes: Attributes = deepCopy(attributes);
     for (const entity in relationships) {
       // just deal with one-side relationships
       const oneRelationships = relationships[entity]?.one;
       if (oneRelationships) {
         for (const [relationship, objType] of Object.entries(oneRelationships)) {
-          attributes[entity][`${relationship}.id`] = {
+          newAttributes[entity][`${relationship}.id`] = {
             available_on_relationships: true,
             python_type: "str"
           };
           for (const [key, meta] of Object.entries(attributes[objType])) {
             if (meta.available_on_relationships) {
-              attributes[entity][`${relationship}.${key}`] = meta;
+              newAttributes[entity][`${relationship}.${key}`] = meta;
             }
           }
         }
       }
     }
-    return attributes;
+    return newAttributes;
   }
 
   public async getEntityMeta(): Promise<EntityMeta> {
