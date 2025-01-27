@@ -20,7 +20,8 @@ import {
   Sandbox,
   Sunbursts,
   Widgets,
-  Messages
+  Messages,
+  StyleGuide,
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown } from "./tol-ui/src";
@@ -95,10 +96,20 @@ const widgets: Page = {
   element: <Widgets />,
 };
 
+const styleGuide: Page = {
+  name: "Dev Style Guide",
+  element: <StyleGuide />,
+};
+
 const otherDropdown: Dropdown = {
   name: "Other",
   pages: [colours, detail, forms, messages, miscellaneous, tsds, widgets],
 };
+
+const guideDropdown: Dropdown = {
+  name: "Guides",
+  pages: [styleGuide],
+}
 
 // dev sandbox - change element if needed
 const sandbox: Page = {
@@ -120,6 +131,7 @@ ReactDOM.render(
       filters,
       maps,
       timelines,
+      guideDropdown,
       otherDropdown,
       sandbox,
     ]}
