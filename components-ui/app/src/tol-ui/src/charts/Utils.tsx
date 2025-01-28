@@ -12,6 +12,10 @@ import { getCssVarValue, isPropDefined } from '../general/Utils';
 //      GENERAL      //
 // ------------------//
 
+const LINE_POINT_RADIUS = 3;
+const LINE_HOVER_POINT_RADIUS = 6;
+const LINE_SELECTED_POINT_RADIUS = 6;
+
 interface Rgb {
   [key: string]: number,
   r: number,
@@ -144,6 +148,7 @@ export function setClickedColourToSolid(chart: any, chartElement: any) {
   const originalColour = chart.data.datasets[datasetIndex].backgroundColor[index];
   chart.data.datasets[datasetIndex].backgroundColor[index] = updateOpacity(originalColour, "1");
   chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = updateOpacity(originalColour, "0.75");
+  chart.data.datasets[datasetIndex].pointRadius[index] = LINE_SELECTED_POINT_RADIUS;
 }
 
 export function setClickedSectionToSolid(chart: any, chartElement: any) {
@@ -185,11 +190,14 @@ export function updateChartColours(chart: any, resetColours: boolean, fadedOpaci
   for (const dataset of chart.data.datasets) {
     if (resetColours) {
       dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
+      dataset.borderColor = updateOpacitys(dataset.backgroundColor, '1');
       dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString());
     } else {
       dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString());
+      dataset.borderColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString());
       dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, '0.75');
     }
+    dataset.pointRadius = Array(dataset.data.length).fill(LINE_POINT_RADIUS);
   }
 }
 
@@ -220,23 +228,43 @@ interface AggData {
   aggs: object[]
 }
 
-export type HistogramGrouping = "d"|"w"|"M"|"y"|"categorical" ;
+export type HistogramGrouping = "d"|"w"|"M"|"y"|"categorical";
 
 export function initialiseDatasets(datasets: any[]) {
   for (let index = 0; index < datasets.length; index++) {
     const bgColour = getChartColour(index);
     const fadedColour = getChartColour(index, 0.75);
+    datasets[index]["borderColor"] = [];
     datasets[index]["backgroundColor"] = [];
     datasets[index]["hoverBackgroundColor"] = [];
+    datasets[index]["pointRadius"] = [];
+    datasets[index]["pointHoverRadius"] = [];
     datasets[index]["order"] = index;
     datasets[index]["colourIndex"] = index;
     const dataLength = datasets[index].data.length;
     for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
+      datasets[index]["borderColor"].push(bgColour);
       datasets[index]["backgroundColor"].push(bgColour);
       datasets[index]["hoverBackgroundColor"].push(fadedColour);
+      datasets[index]["pointRadius"].push(LINE_POINT_RADIUS);
+      datasets[index]["pointHoverRadius"].push(LINE_HOVER_POINT_RADIUS);
     }
   }
   return datasets;
+}
+
+export function getDefaultMaxHeight(datasets: any[]) {
+  const maxValue = Math.max(...datasets.flatMap(obj => obj.data));
+  const maxValuePercentage = Math.ceil(maxValue * 1.1);
+  return maxValuePercentage
+} 
+
+export function getDatasetMaxHeight(chart: any, chartElement: any) {
+  const { datasetIndex } = chartElement[0];
+  const values = chart.data.datasets[datasetIndex];
+  const maxValue = Math.max(...values.data);
+  const maxValuePercentage = Math.ceil(maxValue * 1.1);
+  return maxValuePercentage
 }
 
 function getSortedAggData(buckets: object) {

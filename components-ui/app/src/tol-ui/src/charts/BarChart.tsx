@@ -12,9 +12,13 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  LineController,
+  BarController,
+  PointElement,
+  LineElement
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Chart } from "react-chartjs-2";
 import { Button, Row, Col } from '../index';
 import {
   getChartColour,
@@ -25,7 +29,9 @@ import {
   generateBarLabels,
   updateOpacitys,
   resetItemClickedData,
-  downloadItem
+  downloadItem,
+  getDefaultMaxHeight,
+  getDatasetMaxHeight
 } from "./Utils";
 import { isPropDefined, getCssVarValue } from "../general/Utils";
 import { themeListener } from "../hooks/listeners";
@@ -37,7 +43,11 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  LineController,
+  BarController,
+  PointElement,
+  LineElement
 );
 
 interface Props {
@@ -62,7 +72,8 @@ function BarChart(props: Props) {
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
   // Used to change the height of the y-axis when selecting a legend
-  const [maxHeight, setMaxHeight] = useState<number | null>(null);
+  const defaultMaxHeight = getDefaultMaxHeight(datasets);
+  const [maxHeight, setMaxHeight] = useState<number | null>(defaultMaxHeight);
 
   // colours
   const [titleColour, setTitleColour] = useState('');
@@ -78,7 +89,7 @@ function BarChart(props: Props) {
   const isInteractive = !cumulative && isPropDefined(setBarData); 
 
   // functions for options
-  function handleLegendClick(event: any, legendItem: any, legend: any) {
+  const handleLegendClick = (event: any, legendItem: any, legend: any) => {
     if (isInteractive) {
       const legendIndex = event.chart.data.datasets.findIndex((obj: any) => obj.label === legendItem.text);
       let selectedBucket = null;
@@ -110,7 +121,7 @@ function BarChart(props: Props) {
           "clickKey": null
         });
       } else {
-        setMaxHeight(null);
+        setMaxHeight(defaultMaxHeight);
         legend.chart.data.datasets.forEach((dataset: any, index: any) => {
           dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
           setPrevOrder(null);
@@ -133,7 +144,7 @@ function BarChart(props: Props) {
 
   // @ts-ignore
   function handlePlaneClick(event: any, chartElement: any, chart: any, item: any) {
-    setMaxHeight(null);
+    setMaxHeight(defaultMaxHeight);
     if (item !== undefined) {
       return;
     }
@@ -156,6 +167,7 @@ function BarChart(props: Props) {
         updateChartColours(chart, false, 0.25);
         // setting clicked bar as its original colour
         setClickedColourToSolid(chart, chartElement);
+        setMaxHeight(getDatasetMaxHeight(chart, chartElement));
         setBarClickedData(chart, chartElement, setBarData);
       }
       chart.update();
@@ -258,7 +270,7 @@ function BarChart(props: Props) {
                 type="primary"
                 onClick={() => {
                   resetItemClickedData(setBarData);
-                  setMaxHeight(null);
+                  setMaxHeight(defaultMaxHeight);
                   setDatasets(originDatasets);
                 }}
                 icon="undo"
@@ -277,8 +289,7 @@ function BarChart(props: Props) {
         </Col>
       </Row>
 
-
-      <Bar
+      <Chart
         id={id}
         responsive="true"
         className="tol-bar-chart"

@@ -17,17 +17,20 @@ const d1 = [
   {
     id: 'species_1',
     label: 'Species 1',
-    data: [100, 10, 300, 340, 500, 200, 200]
+    data: [3, 10, 2, 6, 4, 3, 1],
+    type: 'line'
   },
   {
     id: 'species_2',
     label: 'Species 2',
-    data: [100, 200, 30, 153, 500, 600, 56]
+    data: [100, 200, 30, 153, 500, 600, 56],
+    type: 'line'
   },
   {
     id: 'species_3',
     label: 'Species 3',
-    data: [100, 200, 100, 400, 110, 600, 100]
+    data: [100, 200, 100, 400, 110, 600, 100],
+    type: 'bar'
   }
 ];
 
@@ -40,7 +43,6 @@ function BarCharts() {
       <p style={{marginTop: 4}}>This is the &apos;Bar&apos; data: {bar["bucket"]} {bar["clickKey"]} {bar["value"]}</p>
       <BarChart
         id="basic-stacked"
-        stacked
         title="Basic Stacked Bar Chart"
         labels={labels}
         datasets={d1}
