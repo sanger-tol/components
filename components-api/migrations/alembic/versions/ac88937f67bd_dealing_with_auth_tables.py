@@ -7,6 +7,7 @@ Create Date: 2024-06-12 12:38:14.696274
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.engine.reflection import Inspector
 
 
 # revision identifiers, used by Alembic.
@@ -17,7 +18,11 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.drop_table('state')
+    conn = op.get_bind()
+    inspector = Inspector.from_engine(conn)
+    tables = inspector.get_table_names()
+    if 'state' in tables:
+        op.drop_table('state')
     op.rename_table('oidc_token', 'token')
 
 
