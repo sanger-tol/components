@@ -16,10 +16,12 @@ services:
       - 5442:5432
 
   components-api:
-    build:
-      context: components-api
-      dockerfile: Dockerfile.dev
-    image: components-api
+    # build:
+    #   context: tol-portal-api/.
+    #   dockerfile: Dockerfile.dev
+    image: em29/tol-components-api:demo
+    # force amd64 on M1 MacOS
+    #platform: linux/amd64
     environment:
       - DB_URI
       - PARTNER_PORTAL_URL
@@ -86,7 +88,7 @@ services:
       - '/usr/src/app/node_modules'
   
   components-dbutils:
-    image: gitlab-registry.internal.sanger.ac.uk/tol/tol-core/dbutils:1.0.4
+    image: em29/tol-dbutils:1.0.4
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
