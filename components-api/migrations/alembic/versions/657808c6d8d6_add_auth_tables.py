@@ -7,6 +7,7 @@ Create Date: 2024-02-05 14:26:50.815023
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.engine.reflection import Inspector
 
 
 # revision identifiers, used by Alembic.
@@ -17,11 +18,18 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.drop_table('role')
-    op.drop_table('auth')
-    op.drop_constraint('sample_created_by_fkey', 'sample')
-    op.drop_constraint('sample_last_modified_by_fkey', 'sample')
-    op.drop_table('user')
+    conn = op.get_bind()
+    inspector = Inspector.from_engine(conn)
+    tables = inspector.get_table_names()
+    if 'role' in tables:
+        op.drop_table('role')
+    if 'auth' in tables:
+        op.drop_table('auth')
+    if 'user' in tables:
+        op.drop_constraint('sample_created_by_fkey', 'sample')
+        op.drop_constraint('sample_last_modified_by_fkey', 'sample')
+        op.drop_table('user')
+
 
     op.create_table(
         'oidc_state',
