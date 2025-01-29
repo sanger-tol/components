@@ -26,6 +26,8 @@ def upgrade() -> None:
     if 'auth' in tables:
         op.drop_table('auth')
     if 'user' in tables:
+        op.drop_constraint('sample_created_by_fkey', 'sample')
+        op.drop_constraint('sample_last_modified_by_fkey', 'sample')
         op.drop_table('user')
 
 
