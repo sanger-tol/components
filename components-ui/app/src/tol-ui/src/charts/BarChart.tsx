@@ -69,6 +69,7 @@ function BarChart(props: Props) {
   const stacked = isPropDefined(props.stacked);
   const originDatasets = initialiseDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
+  const [highlightedLegend, setHighlightedLegend] = useState(undefined);
   
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
@@ -91,17 +92,17 @@ function BarChart(props: Props) {
 
   // functions for options
   const handleLegendClick = (event: any, legendItem: any, legend: any) => {
-    console.log(legendItem)
-    legendItem.fillStyle = "rgb(31, 196, 92)";
     if (isInteractive) {
       const legendIndex = event.chart.data.datasets.findIndex((obj: any) => obj.label === legendItem.text);
       let selectedBucket = null;
 
       // cannot keep clicking on the same legend item
       if (prevLegendItemIndex !== legendIndex) {
+        setHighlightedLegend(legendIndex);
         legend.chart.data.datasets.forEach((dataset: any, index: any) => {
           dataset.pointRadius = LINE_POINT_RADIUS;
           if (index === legendIndex) {
+
             dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
             dataset.borderColor =  updateOpacitys(dataset.borderColor, '1');
             setPrevOrder(dataset.order);
@@ -113,7 +114,7 @@ function BarChart(props: Props) {
             setMaxHeight(maxValuePercentage);
           } else {
             dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '0.25');
-            dataset.borderColor  =updateOpacitys(dataset.borderColor, '0.25');
+            dataset.borderColor = updateOpacitys(dataset.borderColor, '0.25');
             // reset prev item's order
             if (prevLegendItemIndex === index) {
               dataset.order = prevOrder;
@@ -128,6 +129,7 @@ function BarChart(props: Props) {
         });
       } else {
         setMaxHeight(defaultMaxHeight);
+        setHighlightedLegend(undefined);
         legend.chart.data.datasets.forEach((dataset: any, index: any) => {
           dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
           dataset.borderColor = updateOpacitys(dataset.borderColor, '1');
@@ -139,6 +141,7 @@ function BarChart(props: Props) {
         // sets the bar data to the selected legend
         setBarData!({});
       }
+      
       legend.chart.update();
       setDatasets(legend.chart.data.datasets);
     }
@@ -153,6 +156,7 @@ function BarChart(props: Props) {
   // @ts-ignore
   function handlePlaneClick(event: any, chartElement: any, chart: any, item: any) {
     setMaxHeight(defaultMaxHeight);
+    setHighlightedLegend(undefined);
     if (item !== undefined) {
       return;
     }
@@ -224,7 +228,7 @@ function BarChart(props: Props) {
           padding: 15,
           usePointStyle: true,
           generateLabels: (chart: any) => {
-            return generateBarLabels(chart, titleColour);
+            return generateBarLabels(chart, titleColour, highlightedLegend);
           }
         }
       }

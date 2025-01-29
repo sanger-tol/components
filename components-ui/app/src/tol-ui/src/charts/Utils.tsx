@@ -99,10 +99,19 @@ export function incrementRgbColour(rgb: Rgb) {
     if (value > 255) {
       rgb[key] = 255;
     } else {
-      rgb[key] = value + 75;
+      rgb[key] = value + 30
     }
   }
   return rgb;
+}
+
+export function rgbStringToObject(rgbString: string) {
+  const result = rgbString.match(/\d+/g);
+  if (result) {
+    const [r, g, b] = result.map(Number);
+    return { r, g, b };
+  }
+  throw new Error("Invalid RGB string format");
 }
 
 function rgbToString(rgb: Rgb, opacity: number) {
@@ -440,12 +449,14 @@ export function setBarClickedData(chart: any, chartElement: any, setBarData?: Re
   }
 }
 
-export function generateBarLabels(chart: any, titleColour: any) {
+export function generateBarLabels(chart: any, titleColour: any, highlightedIndex?: number) {
+  
   return chart.data.datasets.map(
     (dataset: any, index: any) => {
+      const highlight = rgbToString(incrementRgbColour(rgbStringToObject(getChartColour(index, 1))), 1)
       return {
         text: dataset.label,
-        fillStyle: getChartColour(index),
+        fillStyle: highlightedIndex === index ? highlight : getChartColour(index, 1),
         fontColor: titleColour,
         pointStyle: 'rectRounded',
         lineWidth: 0
