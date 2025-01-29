@@ -18,7 +18,8 @@ const d1 = [
     id: 'species_1',
     label: 'Species 1',
     data: [3, 10, 2, 6, 4, 3, 1],
-    type: 'line'
+    type: 'line',
+    yAxisID: 'y1',
   },
   {
     id: 'species_2',

@@ -242,6 +242,13 @@ function BarChart(props: Props) {
       },
       y: {
         stacked: stacked,
+        title: {
+          display: true,
+          text: 'Revenue ($)',  // Y-axis label
+          font: {
+            size: 14
+          }
+        },
         max: maxHeight,
         grid: {
           color: gridColour
@@ -249,9 +256,32 @@ function BarChart(props: Props) {
         ticks: { // y labels
           color: labelColour
         }
-      },
+      }
     }
   };
+
+  datasets.forEach((dataset: any) => {
+    if (dataset.yAxisID && dataset.yAxisID !== 'y') {
+      options.scales[dataset.yAxisID] = {
+        stacked: stacked,
+        position: 'right',
+        title: {
+          display: true,
+          text: dataset.label,  // Customize as needed
+          font: {
+            size: 14
+          }
+        },
+        max: maxHeight,
+        grid: {
+          color: gridColour
+        },
+        ticks: { // y labels
+          color: labelColour
+        }
+      };
+    }
+  });
 
   const downloadName = props.downloadName !== undefined ? props.downloadName : 'barchart';
 
