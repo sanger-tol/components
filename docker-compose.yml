@@ -105,7 +105,7 @@ services:
       - BACKUP_SCHEDULE
   
   components-alembic:
-    image: components-api
+    image: em29/tol-components-api:demo
     container_name: components-alembic
     restart: always
     environment:
