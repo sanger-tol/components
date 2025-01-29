@@ -31,7 +31,8 @@ import {
   resetItemClickedData,
   downloadItem,
   getDefaultMaxHeight,
-  getDatasetMaxHeight
+  getDatasetMaxHeight,
+  LINE_POINT_RADIUS
 } from "./Utils";
 import { isPropDefined, getCssVarValue } from "../general/Utils";
 import { themeListener } from "../hooks/listeners";
@@ -72,7 +73,7 @@ function BarChart(props: Props) {
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
   // Used to change the height of the y-axis when selecting a legend
-  const defaultMaxHeight = getDefaultMaxHeight(datasets);
+  const defaultMaxHeight = getDefaultMaxHeight(datasets, stacked);
   const [maxHeight, setMaxHeight] = useState<number | null>(defaultMaxHeight);
 
   // colours
@@ -90,6 +91,8 @@ function BarChart(props: Props) {
 
   // functions for options
   const handleLegendClick = (event: any, legendItem: any, legend: any) => {
+    console.log(legendItem)
+    legendItem.fillStyle = "rgb(31, 196, 92)";
     if (isInteractive) {
       const legendIndex = event.chart.data.datasets.findIndex((obj: any) => obj.label === legendItem.text);
       let selectedBucket = null;
@@ -97,8 +100,10 @@ function BarChart(props: Props) {
       // cannot keep clicking on the same legend item
       if (prevLegendItemIndex !== legendIndex) {
         legend.chart.data.datasets.forEach((dataset: any, index: any) => {
+          dataset.pointRadius = LINE_POINT_RADIUS;
           if (index === legendIndex) {
             dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
+            dataset.borderColor =  updateOpacitys(dataset.borderColor, '1');
             setPrevOrder(dataset.order);
             setPrevLegendItemIndex(index);
             dataset.order = -1;
@@ -108,6 +113,7 @@ function BarChart(props: Props) {
             setMaxHeight(maxValuePercentage);
           } else {
             dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '0.25');
+            dataset.borderColor  =updateOpacitys(dataset.borderColor, '0.25');
             // reset prev item's order
             if (prevLegendItemIndex === index) {
               dataset.order = prevOrder;
@@ -124,6 +130,8 @@ function BarChart(props: Props) {
         setMaxHeight(defaultMaxHeight);
         legend.chart.data.datasets.forEach((dataset: any, index: any) => {
           dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
+          dataset.borderColor = updateOpacitys(dataset.borderColor, '1');
+          dataset.pointRadius = LINE_POINT_RADIUS;
           setPrevOrder(null);
           setPrevLegendItemIndex(null);
           dataset.order = index;
@@ -240,34 +248,17 @@ function BarChart(props: Props) {
           color: labelColour
         }
       },
-      y: {
-        stacked: stacked,
-        title: {
-          display: true,
-          text: 'Revenue ($)',  // Y-axis label
-          font: {
-            size: 14
-          }
-        },
-        max: maxHeight,
-        grid: {
-          color: gridColour
-        },
-        ticks: { // y labels
-          color: labelColour
-        }
-      }
     }
   };
 
-  datasets.forEach((dataset: any) => {
-    if (dataset.yAxisID && dataset.yAxisID !== 'y') {
+  datasets.forEach((dataset: any, index: number) => {
+    if (dataset.yAxisID) {
       options.scales[dataset.yAxisID] = {
-        stacked: stacked,
-        position: 'right',
+        stacked,
+        position: index % 2 === 0 ? 'left' : 'right',
         title: {
           display: true,
-          text: dataset.label,  // Customize as needed
+          text: dataset.label,
           font: {
             size: 14
           }

@@ -19,7 +19,6 @@ const d1 = [
     label: 'Species 1',
     data: [3, 10, 2, 6, 4, 3, 1],
     type: 'line',
-    yAxisID: 'y1',
   },
   {
     id: 'species_2',
@@ -31,7 +30,14 @@ const d1 = [
     id: 'species_3',
     label: 'Species 3',
     data: [100, 200, 100, 400, 110, 600, 100],
-    type: 'bar'
+    type: 'bar',
+    yAxisID: 'y'
+  },
+  {
+    id: 'species_4',
+    label: 'Species 4',
+    data: [100, 200, 100, 400, 110, 600, 100],
+    type: 'bar',
   }
 ];
 
@@ -49,6 +55,7 @@ function BarCharts() {
         datasets={d1}
         setBarData={setBar}
         height={500}
+        stacked
       />
     </div>
   );

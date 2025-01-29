@@ -12,7 +12,7 @@ import { getCssVarValue, isPropDefined } from '../general/Utils';
 //      GENERAL      //
 // ------------------//
 
-const LINE_POINT_RADIUS = 3;
+export const LINE_POINT_RADIUS = 3;
 const LINE_HOVER_POINT_RADIUS = 6;
 const LINE_SELECTED_POINT_RADIUS = 6;
 
@@ -253,11 +253,27 @@ export function initialiseDatasets(datasets: any[]) {
   return datasets;
 }
 
-export function getDefaultMaxHeight(datasets: any[]) {
-  const maxValue = Math.max(...datasets.flatMap(obj => obj.data));
-  const maxValuePercentage = Math.ceil(maxValue * 1.1);
-  return maxValuePercentage
+export function getDefaultMaxHeight(datasets: any[], stacked?: boolean) {
+  const secondMaxValue = function (arr: number[]) {
+      let max = Math.max.apply(null, arr), // get the max of the array
+          maxi = arr.indexOf(max);
+      arr[maxi] = -Infinity; // replace max in the array with -infinity
+      let secondMax = Math.max.apply(null, arr); // get the new max
+      arr[maxi] = max;
+      return secondMax;
+  };
+  let maxValuePercentage = 0;
+  if (stacked) {
+      const barDatasets = datasets.filter(ds => ds.type === 'bar')
+    const maxValue = Math.max(...barDatasets.flatMap(obj => obj.data));
+    maxValuePercentage = Math.ceil((maxValue + secondMaxValue(barDatasets.flatMap(obj => obj.data))) * 1.1);
+  } else {
+      const maxValue = Math.max(...datasets.flatMap(obj => obj.data));
+      maxValuePercentage = Math.ceil(maxValue * 1.1);
+  }
+return Math.ceil(maxValuePercentage / 10) * 10;
 } 
+
 
 export function getDatasetMaxHeight(chart: any, chartElement: any) {
   const { datasetIndex } = chartElement[0];
