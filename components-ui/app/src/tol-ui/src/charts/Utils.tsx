@@ -250,6 +250,9 @@ export function initialiseDatasets(datasets: any[]) {
     datasets[index]["pointHoverRadius"] = [];
     datasets[index]["order"] = index;
     datasets[index]["colourIndex"] = index;
+    if (datasets[index].type !== 'bar') {
+      datasets[index]["stack"] = datasets[index].id;
+    }
     const dataLength = datasets[index].data.length;
     for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
       datasets[index]["borderColor"].push(bgColour);
@@ -263,25 +266,31 @@ export function initialiseDatasets(datasets: any[]) {
 }
 
 export function getDefaultMaxHeight(datasets: any[], stacked?: boolean) {
-  const secondMaxValue = function (arr: number[]) {
-      let max = Math.max.apply(null, arr), // get the max of the array
-          maxi = arr.indexOf(max);
-      arr[maxi] = -Infinity; // replace max in the array with -infinity
-      let secondMax = Math.max.apply(null, arr); // get the new max
-      arr[maxi] = max;
-      return secondMax;
-  };
-  let maxValuePercentage = 0;
-  if (stacked) {
-      const barDatasets = datasets.filter(ds => ds.type === 'bar')
-    const maxValue = Math.max(...barDatasets.flatMap(obj => obj.data));
-    maxValuePercentage = Math.ceil((maxValue + secondMaxValue(barDatasets.flatMap(obj => obj.data))) * 1.1);
-  } else {
+  const maxDatasetLength = Math.max(...datasets.map(obj => obj.data.length));
+  // return max value for all dataset values 
+  if (!stacked) {
       const maxValue = Math.max(...datasets.flatMap(obj => obj.data));
-      maxValuePercentage = Math.ceil(maxValue * 1.1);
-  }
-return Math.ceil(maxValuePercentage / 10) * 10;
-} 
+      const maxValuePercentage = Math.ceil(maxValue * 1.1);
+      return Math.ceil(maxValuePercentage / 10) * 10;
+  };
+  // get max value for stacked bars and compare to line values, return max of comparison
+  const barDatasets = datasets.filter((dataset) => dataset.type === "bar");
+  const lineDatasets = datasets.filter((dataset) => dataset.type === "line");
+  const stackedBarData = new Array(maxDatasetLength).fill(0);
+  barDatasets.forEach((dataset) => {
+    dataset.data.forEach((value, index) => {
+      stackedBarData[index] += value;
+    });
+  });
+  const comparisonResults = stackedBarData.map((barValue, index) => {
+    const lineValuesAtIndex = lineDatasets.map(
+      (dataset) => dataset.data[index]
+    );
+    const maxLineValue = Math.max(...lineValuesAtIndex);
+    return maxLineValue > barValue ? maxLineValue : barValue;
+  });
+  return Math.ceil((Math.max(...comparisonResults) * 1.1) / 10) * 10; // add 10% and round to nearest 10
+}
 
 
 export function getDatasetMaxHeight(chart: any, chartElement: any) {
