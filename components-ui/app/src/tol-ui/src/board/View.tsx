@@ -106,7 +106,7 @@ function View(props: Props) {
     
     const payloadData = updatedZoneOrder.map((zone) => {
       return {
-        type: BOARD_ENDPOINTS.VIEW_ZONES,
+        type: BoardObjectTypes.ZONE_VIEW as string,
         id: zone.zoneViewId,
         attributes: {
           order: zone.order
@@ -115,7 +115,7 @@ function View(props: Props) {
     })
 
     await ds.upsert({
-      objectType: BoardObjectTypes.ZONE_VIEW as string,
+      objectType: BOARD_ENDPOINTS.VIEW_ZONES,
       payload: payloadData
     })
 
