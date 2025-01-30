@@ -161,10 +161,12 @@ function BarChart(props: Props) {
       return;
     }
 
-    setPrevOrder(chart.data.datasets[chartElement[0].datasetIndex].order);
-    setPrevLegendItemIndex(chartElement[0].datasetIndex);
-    chart.data.datasets[chartElement[0].datasetIndex].order = -1;
-
+    if (chartElement.length !== 0) {
+      setPrevOrder(chart.data.datasets[chartElement[0].datasetIndex].order);
+      setPrevLegendItemIndex(chartElement[0].datasetIndex);
+      chart.data.datasets[chartElement[0].datasetIndex].order = -1;
+    }
+    
     // reset order on 'plane reset click'
     if (prevLegendItemIndex !== null) {
       chart.data.datasets[prevLegendItemIndex].order = prevOrder;
@@ -178,7 +180,6 @@ function BarChart(props: Props) {
         // reset bar colours when clicking any other part of chart
         updateChartColours(chart, true, 0.5);
         resetItemClickedData(setBarData);
-        chart.data.datasets[chartElement[0].datasetIndex].order = -1;
       } else {
         chart.data.datasets[chartElement[0].datasetIndex].order = Math.min(prevOrder, -1);
         chart.data.datasets[chartElement[0].datasetIndex].pointRadius = LINE_POINT_RADIUS;

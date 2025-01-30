@@ -38,6 +38,8 @@ const d1 = [
     label: 'Species 4',
     data: [100, 200, 100, 400, 110, 600, 100],
     type: 'bar',
+    yAxisID: 'y1'
+
   }
 ];
 
