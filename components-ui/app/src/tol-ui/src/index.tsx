@@ -107,7 +107,8 @@ export {
   LoadingContent,
   Button,
   Icon,
-  TolLoader
+  TolLoader,
+  InfoTooltipEx
 } from "./general";
 
 // hooks

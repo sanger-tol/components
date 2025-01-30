@@ -9,7 +9,7 @@ import HoverOverlay from './HoverOverlay';
 import Markdown from './Markdown';
 
 
-export interface Props {
+interface Props {
   contents: string,
   disableMarkdown?: boolean
 }

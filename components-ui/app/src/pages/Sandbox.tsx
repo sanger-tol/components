@@ -4,8 +4,22 @@
  * SPDX-License-Identifier: MIT
  */
 
+import React from 'react';
+import { ButtonGroup, InfoTooltipEx } from "../tol-ui/src/general";
+
+
+
 function Sandbox() {
-  return <></>;
+  return (
+    <div>
+      <InfoTooltipEx
+        systemName="Mac"
+        sourceName="TOL"
+        typeData='string'
+        description="Something...."
+      />
+    </div>
+  );
 }
 
 export default Sandbox;
