@@ -160,12 +160,6 @@ function BarChart(props: Props) {
     if (item !== undefined) {
       return;
     }
-
-    if (chartElement.length !== 0) {
-      setPrevOrder(chart.data.datasets[chartElement[0].datasetIndex].order);
-      setPrevLegendItemIndex(chartElement[0].datasetIndex);
-      chart.data.datasets[chartElement[0].datasetIndex].order = -1;
-    }
     
     // reset order on 'plane reset click'
     if (prevLegendItemIndex !== null) {
@@ -181,6 +175,8 @@ function BarChart(props: Props) {
         updateChartColours(chart, true, 0.5);
         resetItemClickedData(setBarData);
       } else {
+        setPrevOrder(chart.data.datasets[chartElement[0].datasetIndex].order);
+        setPrevLegendItemIndex(chartElement[0].datasetIndex);
         chart.data.datasets[chartElement[0].datasetIndex].order = Math.min(prevOrder, -1);
         chart.data.datasets[chartElement[0].datasetIndex].pointRadius = LINE_POINT_RADIUS;
         // fade non-clicked bars
@@ -188,7 +184,7 @@ function BarChart(props: Props) {
         // setting clicked bar as its original colour
         setClickedColourToSolid(chart, chartElement);
         setMaxHeight(getDatasetMaxHeight(chart, chartElement));
-        setBarClickedData(chart, chartElement, setBarData);
+      setBarClickedData(chart, chartElement, setBarData);
       }
       chart.update();
     }
