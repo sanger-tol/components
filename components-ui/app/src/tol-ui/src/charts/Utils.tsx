@@ -252,6 +252,8 @@ export function initialiseDatasets(datasets: any[]) {
     datasets[index]["colourIndex"] = index;
     if (datasets[index].type !== 'bar') {
       datasets[index]["stack"] = datasets[index].id;
+    } else {
+      datasets[index]["yAxisID"] = 'y';
     }
     const dataLength = datasets[index].data.length;
     for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
@@ -406,7 +408,8 @@ export function aggsToBarChartData(aggs: object, grouping: HistogramGrouping, sh
     const dataset = {
       id: bucket,
       label: bucket,
-      data: data
+      data: data,
+      type: 'bar'
     };
     datasets.push(dataset);
   }
@@ -487,7 +490,8 @@ export function generateChartAgg(
   breakDownBy: string, 
   xAxis: string, 
   grouping: HistogramGrouping,
-  sumField?: string
+  aggType: string,
+  yAxis?: object
 ) {
   const baseAgg = {
     "terms": {
@@ -495,8 +499,6 @@ export function generateChartAgg(
       "size": 25
     }
   };
-
-  sumField = sumField ? sumField : "";
 
   let innerAgg;
 
@@ -509,13 +511,6 @@ export function generateChartAgg(
         },
         "size": 25
       },
-      "aggs": {
-        "sum_value": {
-          "sum": {
-            "field": sumField
-          }
-        }
-      }
     };
   } else {
     innerAgg = {
@@ -524,13 +519,6 @@ export function generateChartAgg(
         "calendar_interval": "1" + grouping,
         "time_zone": "Europe/London"
       },
-      "aggs": {
-        "sum_value": {
-          "sum": {
-            "field": sumField
-          }
-        }
-      }
     };
   }
 
@@ -539,7 +527,16 @@ export function generateChartAgg(
       "agg": {
         ...baseAgg,
         "aggs": {
-          "1": innerAgg
+          "1": {
+            ...innerAgg,
+            "aggs": {
+              "sum_value": {
+                "sum": {
+                  "field": yAxis.field
+                }
+              }
+            }
+          }
         }
       }
     }

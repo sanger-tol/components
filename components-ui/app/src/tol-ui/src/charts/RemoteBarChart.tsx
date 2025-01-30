@@ -32,13 +32,15 @@ interface Props {
   baseUrl?: string
   breakDownBy: string,
   xAxis: string,
+  yAxis?: object,
   type: HistogramGrouping,
   shortDate?: boolean
   zone?: any,
   setZone?: any,
   height?: any,
   stacked?: boolean,
-  cumulative?: boolean
+  cumulative?: boolean,
+  aggType?: 'sum' | 'count'
 }
 
 function RemoteBarChart(props: Props) {
@@ -52,7 +54,9 @@ function RemoteBarChart(props: Props) {
     shortDate,
     zone,
     setZone,
-    cumulative, 
+    cumulative,
+    aggType = 'count',
+    yAxis
   } = props;
   const height = (props.height !== undefined) ? props.height : "100%";
   const [labels, setLabels] = useState([]);
@@ -74,7 +78,7 @@ function RemoteBarChart(props: Props) {
 
   useEffectUpdate(() => {
     setLoading(true);
-    const aggs = generateChartAgg(breakDownBy, xAxis, type);
+    const aggs = generateChartAgg(breakDownBy, xAxis, type, aggType, yAxis);
     httpClient().post('/' + endpoint + ":aggregations", aggs, {
       baseURL: baseUrl,
       params: {
@@ -85,7 +89,8 @@ function RemoteBarChart(props: Props) {
         let aggs = res.data.meta.aggregations;
         setErrorMessage('');
         setWarningMessage(isChartDataEmpty(aggs));
-        aggs = aggsToBarChartData(aggs, type, shortDate, cumulative); 
+        aggs = aggsToBarChartData(aggs, type, shortDate, cumulative);
+        console.log(aggs)
         setDatasets(aggs.datasets);
         setLabels(aggs.labels);
         setLoading(false);

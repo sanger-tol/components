@@ -73,15 +73,21 @@ function Sandbox() {
     // />
 
     <RemoteBarChart
-      id="sequencing-runs-bar-chart-v1"
-      stacked
-      title="Run Complete Data"
-      breakDownBy="mlwh_instrument_model"
-      xAxis="mlwh_run_complete"
-      type='M'
-      endpoint="run_data"
-      baseUrl={env.TOL_DATA}
-    />
+        id="forecast-bar-chart"
+        stacked
+        title="Forecast lib/seq"
+        breakDownBy="demand_forecast_analysis_type"
+        xAxis="finance_period"
+        yAxis={{
+          field: 'finance_amount',
+          label: 'Finance Amount'
+        }}
+        type='categorical'
+        endpoint="forecast"
+        baseUrl="https://portal-staging.tol.sanger.ac.uk/api/v1"
+        height={500}
+        aggType="sum"
+      />
   );
 }
 
