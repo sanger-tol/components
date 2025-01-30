@@ -67,7 +67,7 @@ function ConfigModal(props: Props) {
         }
         {meta['rename']}
         {displaySource ? (
-          <div className='config-source'
+          <div className='customize-config-source'
             // @ts-ignore
             style={{ '--config-source-bg-color': sourceColour }}
           >

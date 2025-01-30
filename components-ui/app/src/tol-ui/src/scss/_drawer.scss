@@ -16,3 +16,20 @@
 button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-btn-subtle.rs-btn-sm {
   display: none;
 }
+
+.config-drawer-save-button {
+  margin-top: 10px;
+}
+
+.config-drawer-selected-column {
+  background-color: var(--tol-grey-translucent) !important;
+  border-radius: 6px;
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between;
+  padding: 10px 15px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border: 1px solid var(--tol-grey-subtle);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
