@@ -26,6 +26,7 @@ import { PopUpMessage } from '../index';
 import { FieldMeta } from './Field';
 import { Zone } from '../board';
 import { DropdownButtonProps } from '../board/components/DropdownButtons';
+import {ConfigDrawer} from '../components/index';
 
 
 export type NumRows = 25 | 50 | 100 | 1000;
@@ -119,6 +120,7 @@ function Table (props: Props) {
   const [downloading, setDownloading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('!');
+  const [attribute, setAttribute] = useState();
   noFilter = !!noFilter;
 
   // row selection
@@ -267,7 +269,7 @@ function Table (props: Props) {
               outline
             />
           }
-          {open &&
+          {/* {open &&
             <ConfigModal
               tableId={id}
               fieldMeta={fieldMeta}
@@ -277,7 +279,15 @@ function Table (props: Props) {
               onModalSave={onModalSave}
               displaySource={displaySource}
             />
-          }
+          } */}
+          {<ConfigDrawer 
+              open={open} 
+              setOpen={setOpen} 
+              title={"Add/Remove Table Columns"}
+              attribute={fieldMeta["order"]["active"]}
+              // setAttribute={setAttribute}
+            />}
+            {console.log(fieldMeta["order"]["active"])}
           {!noFilter &&
             <Button
               position='right'

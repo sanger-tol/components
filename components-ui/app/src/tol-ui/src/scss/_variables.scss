@@ -38,22 +38,22 @@ $tol-info-translucent: rgba($tol-info, 0.1) !default;
 $tol-info-light: lighten($tol-info, 15%) !default;
 $tol-info-dark: darken($tol-info, 15%) !default;
 
-$tol-success: green !default;
+$tol-success: #016E0B !default;
 $tol-success-translucent: rgba($tol-success, 0.1) !default;
 $tol-success-light: lighten($tol-success, 15%) !default;
 $tol-success-dark: darken($tol-success, 15%) !default;
 
-$tol-warning: orange !default;
+$tol-warning: #B78800 !default;
 $tol-warning-translucent: rgba($tol-warning, 0.1) !default;
 $tol-warning-light: lighten($tol-warning, 15%) !default;
 $tol-warning-dark: darken($tol-warning, 15%) !default;
 
-$tol-danger: red !default;
+$tol-danger: #BC0117 !default;
 $tol-danger-translucent: rgba($tol-danger, 0.1) !default;
 $tol-danger-light: lighten($tol-danger, 15%) !default;
 $tol-danger-dark: darken($tol-danger, 15%) !default;
 
-$tol-royal: purple !default;
+$tol-royal: #6C3BAA !default;
 $tol-royal-translucent: rgba($tol-royal, 0.1) !default;
 $tol-royal-light: lighten($tol-royal, 15%) !default;
 $tol-royal-dark: darken($tol-royal, 15%) !default;

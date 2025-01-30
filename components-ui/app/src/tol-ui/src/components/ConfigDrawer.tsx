@@ -84,15 +84,15 @@ function ConfigDrawer(props: IConfigDrawer) {
           )}
           <div
             className="active-column-remove-btn"
-            onClick={() => moveAttributeDown(index)}
-          >
-            <Icon icon="arrow-down" size="lg" />
-          </div>
-          <div
-            className="active-column-remove-btn"
             onClick={() => moveAttributeUp(index)}
           >
             <Icon icon="arrow-up" size="lg" />
+          </div>
+          <div
+            className="active-column-remove-btn"
+            onClick={() => moveAttributeDown(index)}
+          >
+            <Icon icon="arrow-down" size="lg" />
           </div>
           <div
             className="active-column-remove-btn"
@@ -110,13 +110,17 @@ function ConfigDrawer(props: IConfigDrawer) {
       <div>
         <AttributeSelector
           endpoint={"run_data"}
-          placeholder="Select columns to display"
+          placeholder="Select columns to display..."
           baseUrl={env.TOL_DATA} //TODO: REMOVE!
           attribute={attribute}
           setAttribute={setAttribute}
           disabledValues={null}
           numPopulatedFields={0}
           setEntityMeta={setEntityMeta}
+          populatedFieldType={"column"}
+          additionalPopulatedFieldData={"."}
+          authoratatativeFilterAvailable={true}
+          allowedTypes={["int"]}
         />
       </div>
       <div>

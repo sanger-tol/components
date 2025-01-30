@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Checkbox } from "rsuite";
 import { useEffect, useState } from "react";
 import { IAttributeSelector } from "./interfaces";
 import { TsDataSource, MultipleSelect, InfoTooltip } from "../index";
@@ -21,16 +22,20 @@ function AttributeSelector(props: IAttributeSelector) {
     attribute,
     setAttribute,
     tooltipContent,
+    populatedFieldType = "value",
+    additionalPopulatedFieldData,
+    authoratatativeFilterAvailable,
   } = props;
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
+  const [authoratativeOn, setAuthoratativeOn] = useState<boolean>(false);
 
   const ds = new TsDataSource({ baseUrl });
 
   useEffect(() => {
     ds.getEntityMeta().then((em) => {
       setEntityMeta(em);
-      props.setEntityMeta && props.setEntityMeta(em);
+      props.setEntityMeta && props.setEntityMeta(em); //TODO: umm what?
       setLoading(false);
     });
   }, []);
@@ -103,13 +108,16 @@ function AttributeSelector(props: IAttributeSelector) {
 
   const renderValue = (values: string[]) => {
     // This renders the total value of selected items
-    const numPopulatedFilter = props.numPopulatedFields || 0;
+    const numPopulatedFilter = values.length || 0;
     return `
-        ${values.length} ${values.length === 1 ? "filter" : "filters"} selected;
-        ${numPopulatedFilter} ${
-      numPopulatedFilter === 1 ? "filter" : "filters"
-    } populated.
-      `;
+        ${values.length} ${
+      values.length === 1 ? `${populatedFieldType}` : `${populatedFieldType}s`
+    } selected${
+      additionalPopulatedFieldData ||
+      `; ${numPopulatedFilter} ${
+        numPopulatedFilter === 1 ? "filter" : "filters"
+      } populated.`
+    }`;
   };
 
   if (loading) return <></>;
@@ -133,6 +141,20 @@ function AttributeSelector(props: IAttributeSelector) {
         disabledItemValues={disabledValues && [...Object.keys(disabledValues)]}
         searchBy={searchBy}
       />
+      {authoratatativeFilterAvailable && (
+        <div
+          style={{ marginTop: "10px", marginBottom: "-20px" }}
+        >
+          <Checkbox
+            onClick={() => {
+              setAuthoratativeOn(!authoratativeOn);
+            }}
+            checked={authoratativeOn}
+          >
+            Tick to show only authoratative properties
+          </Checkbox>
+        </div>
+      )}
     </div>
   );
 }
@@ -141,5 +163,5 @@ export default AttributeSelector;
 
 //TODO: Allow search by source, add sources across the top?
 //TODO: Add authoratative filter tick button
-//TODO: Change '% Filters selected; % filters populated' to generic term
 //TODO: set limit on number of selections
+//TODO: Add tooltip to what is authoratative data
