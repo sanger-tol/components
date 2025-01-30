@@ -13,7 +13,6 @@ export interface IConfigDrawer {
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
-  children: any;
 }
 
 export interface IAttributeSelector {
