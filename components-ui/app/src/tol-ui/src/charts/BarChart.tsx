@@ -259,21 +259,22 @@ function BarChart(props: Props) {
     }
   };
 
-  datasets.forEach((dataset: any, index: number) => {
-    if (dataset.yAxisID) {
+  datasets.forEach((dataset: any) => {
+    if (dataset.yAxisID && !options.scales[dataset.yAxisID]) {
       options.scales[dataset.yAxisID] = {
         stacked,
-        position: index % 2 === 0 ? 'left' : 'right',
+        position: dataset.type === 'bar' ? 'left' : 'right',
         title: {
-          display: true,
-          text: dataset.label,
+          display: dataset.yAxisLabel ? true : false,
+          text: dataset.yAxisLabel,
           font: {
             size: 14
           }
         },
         max: maxHeight,
         grid: {
-          color: gridColour
+          color: gridColour,
+          display: dataset.type === 'bar' ? true : false
         },
         ticks: { // y labels
           color: labelColour

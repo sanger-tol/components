@@ -486,7 +486,8 @@ function appendKeywordIfNeeded(field: string): string {
 export function generateChartAgg(
   breakDownBy: string, 
   xAxis: string, 
-  grouping: HistogramGrouping, 
+  grouping: HistogramGrouping,
+  sumField?: string
 ) {
   const baseAgg = {
     "terms": {
@@ -494,6 +495,8 @@ export function generateChartAgg(
       "size": 25
     }
   };
+
+  sumField = sumField ? sumField : "";
 
   let innerAgg;
 
@@ -505,6 +508,13 @@ export function generateChartAgg(
           "_key": "asc"
         },
         "size": 25
+      },
+      "aggs": {
+        "sum_value": {
+          "sum": {
+            "field": sumField
+          }
+        }
       }
     };
   } else {
@@ -513,6 +523,13 @@ export function generateChartAgg(
         "field": xAxis,
         "calendar_interval": "1" + grouping,
         "time_zone": "Europe/London"
+      },
+      "aggs": {
+        "sum_value": {
+          "sum": {
+            "field": sumField
+          }
+        }
       }
     };
   }

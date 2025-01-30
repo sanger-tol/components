@@ -19,6 +19,7 @@ import {
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { initialiseDatasets } from "../tol-ui/src/charts/Utils";
+import { RemoteBarChart, env } from "../tol-ui/src";
 
 
 ChartJS.register(
@@ -59,16 +60,27 @@ const d1 = [
 
 function Sandbox() {
   return (
-    <Chart
-      id='tester'
-      responsive="true"
-      className="tol-bar-chart"
-      datasetIdKey="id"
-      // @ts-ignore
-      data={{
-        labels: labels,
-        datasets: initialiseDatasets(d1)
-      }}
+    // <Chart
+    //   id='tester'
+    //   responsive="true"
+    //   className="tol-bar-chart"
+    //   datasetIdKey="id"
+    //   // @ts-ignore
+    //   data={{
+    //     labels: labels,
+    //     datasets: initialiseDatasets(d1)
+    //   }}
+    // />
+
+    <RemoteBarChart
+      id="sequencing-runs-bar-chart-v1"
+      stacked
+      title="Run Complete Data"
+      breakDownBy="mlwh_instrument_model"
+      xAxis="mlwh_run_complete"
+      type='M'
+      endpoint="run_data"
+      baseUrl={env.TOL_DATA}
     />
   );
 }
