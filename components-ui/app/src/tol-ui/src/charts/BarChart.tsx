@@ -260,13 +260,13 @@ function BarChart(props: Props) {
   };
 
   datasets.forEach((dataset: any) => {
-    if (dataset.yAxisID && !options.scales[dataset.yAxisID]) {
-      options.scales[dataset.yAxisID] = {
+    if (dataset.yAxis && !options.scales[dataset.yAxis.yAxisID]) {
+      options.scales[dataset.yAxis.yAxisID] = {
         stacked,
         position: dataset.type === 'bar' ? 'left' : 'right',
         title: {
-          display: dataset.yAxisLabel ? true : false,
-          text: dataset.yAxisLabel,
+          display: dataset.yAxis.yAxisLabel ? true : false,
+          text: dataset.yAxis.yAxisLabel,
           font: {
             size: 14
           }

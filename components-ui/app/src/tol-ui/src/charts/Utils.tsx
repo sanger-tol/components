@@ -23,6 +23,12 @@ interface Rgb {
   b: number
 }
 
+export interface IYAxis {
+  field: string,
+  yAxisLabel: string,
+  yAxisID: string
+}
+
 /*
 useful for creating rgb colours based on hsl
 https://www.rapidtables.com/convert/color/hsl-to-rgb.html
@@ -382,7 +388,13 @@ function formatLabels(labels: string[], grouping: HistogramGrouping, shortDate?:
 }
 
 // would need adapting for multiple aggs in 1 api call
-export function aggsToBarChartData(aggs: object, grouping: HistogramGrouping, shortDate?: boolean, cumulative?: boolean): ChartData {
+export function aggsToBarChartData(
+  aggs: object,
+  grouping: HistogramGrouping,
+  shortDate?: boolean,
+  cumulative?: boolean,
+  yAxis?: IYAxis
+): ChartData {
   const datasets: object[] = [];
   const buckets: object = aggs["agg"]["buckets"];
   const sortedAggs: AggData = getSortedAggData(buckets);
@@ -409,7 +421,8 @@ export function aggsToBarChartData(aggs: object, grouping: HistogramGrouping, sh
       id: bucket,
       label: bucket,
       data: data,
-      type: 'bar'
+      type: 'bar',
+      yAxis: yAxis
     };
     datasets.push(dataset);
   }
@@ -491,7 +504,7 @@ export function generateChartAgg(
   xAxis: string, 
   grouping: HistogramGrouping,
   aggType: string,
-  yAxis?: object
+  yAxis?: IYAxis
 ) {
   const baseAgg = {
     "terms": {
@@ -522,25 +535,29 @@ export function generateChartAgg(
     };
   }
 
-  return {
+  const aggs = {
     "aggs": {
       "agg": {
         ...baseAgg,
         "aggs": {
           "1": {
             ...innerAgg,
-            "aggs": {
-              "sum_value": {
-                "sum": {
-                  "field": yAxis.field
-                }
-              }
-            }
+            "aggs": {}
           }
         }
       }
     }
   };
+
+  if (aggType === 'sum' && yAxis) {
+    aggs.aggs.agg.aggs["1"].aggs["sum_value"] = {
+      "sum": {
+        "field": yAxis.field
+      }
+    };
+  }
+
+  return aggs;
 }
 
 export function generateChartFilterFromBar(

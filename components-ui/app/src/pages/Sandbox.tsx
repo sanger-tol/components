@@ -60,34 +60,40 @@ const d1 = [
 
 function Sandbox() {
   return (
-    // <Chart
-    //   id='tester'
-    //   responsive="true"
-    //   className="tol-bar-chart"
-    //   datasetIdKey="id"
-    //   // @ts-ignore
-    //   data={{
-    //     labels: labels,
-    //     datasets: initialiseDatasets(d1)
-    //   }}
-    // />
 
-    <RemoteBarChart
-        id="forecast-bar-chart"
-        stacked
-        title="Forecast lib/seq"
-        breakDownBy="demand_forecast_analysis_type"
-        xAxis="finance_period"
-        yAxis={{
-          field: 'finance_amount',
-          label: 'Finance Amount'
-        }}
-        type='categorical'
-        endpoint="forecast"
-        baseUrl="https://portal-staging.tol.sanger.ac.uk/api/v1"
-        height={500}
-        aggType="sum"
-      />
+     <div>
+      <RemoteBarChart
+      id="forecast-bar-chart"
+      stacked
+      title="Forecast lib/seq"
+      breakDownBy="demand_forecast_analysis_type"
+      xAxis="demand_forecast_date"
+      type='categorical'
+      endpoint="forecast"
+      baseUrl="https://portal-staging.tol.sanger.ac.uk/api/v1"
+      height={500}
+    />
+
+   <RemoteBarChart
+     id="cost-bar-chart"
+     stacked
+     breakDownBy="finance_project_cost_id"
+     title="Cost"
+     xAxis="finance_period"
+     yAxis={{
+       field: 'finance_study_id',
+       yAxisID: 'y1',
+       yAxisLabel: 'Finance Amount'
+     }}
+     type='categorical'
+     endpoint="cost"
+     baseUrl="https://portal-staging.tol.sanger.ac.uk/api/v1"
+     height={500}
+     aggType="sum"
+   />
+
+      
+  </div>
   );
 }
 

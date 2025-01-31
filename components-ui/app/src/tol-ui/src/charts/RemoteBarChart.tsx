@@ -10,7 +10,8 @@ import {
   generateChartFilterFromBar,
   HistogramGrouping,
   aggsToBarChartData,
-  isChartDataEmpty
+  isChartDataEmpty,
+  IYAxis
 } from "./Utils";
 import { useEffect, useState } from 'react';
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
@@ -32,7 +33,7 @@ interface Props {
   baseUrl?: string
   breakDownBy: string,
   xAxis: string,
-  yAxis?: object,
+  yAxis?: IYAxis,
   type: HistogramGrouping,
   shortDate?: boolean
   zone?: any,
@@ -87,10 +88,10 @@ function RemoteBarChart(props: Props) {
     })
       .then((res: any) => {
         let aggs = res.data.meta.aggregations;
+        console.log(aggs)
         setErrorMessage('');
         setWarningMessage(isChartDataEmpty(aggs));
-        aggs = aggsToBarChartData(aggs, type, shortDate, cumulative);
-        console.log(aggs)
+        aggs = aggsToBarChartData(aggs, type, shortDate, cumulative, yAxis);
         setDatasets(aggs.datasets);
         setLabels(aggs.labels);
         setLoading(false);
