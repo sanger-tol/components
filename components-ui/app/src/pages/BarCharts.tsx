@@ -22,7 +22,8 @@ const d1 = [
     yAxis: {
       yAxisID: 'y1',
       yAxisLabel: 'Species 1',
-      position: 'right'
+      position: 'right',
+      display: false
     },
   },
   {
@@ -39,7 +40,7 @@ const d1 = [
     yAxis: {
       yAxisID: 'y',
       yAxisLabel: 'Everything else',
-      position: 'left'
+      position: 'left',
     },
   },
   {

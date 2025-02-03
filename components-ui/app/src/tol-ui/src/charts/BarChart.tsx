@@ -75,7 +75,7 @@ function BarChart(props: Props) {
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
   // Used to change the height of the y-axis when selecting a legend
   const defaultMaxHeight = getDefaultMaxHeight(datasets, stacked);
-  const [maxHeight, setMaxHeight] = useState<number | null>(defaultMaxHeight);
+  const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined);
 
   // colours
   const [titleColour, setTitleColour] = useState('');
@@ -128,7 +128,7 @@ function BarChart(props: Props) {
           "clickKey": null
         });
       } else {
-        setMaxHeight(defaultMaxHeight);
+        setMaxHeight(undefined);
         setHighlightedLegend(undefined);
         legend.chart.data.datasets.forEach((dataset: any, index: any) => {
           dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
@@ -155,7 +155,7 @@ function BarChart(props: Props) {
 
   // @ts-ignore
   function handlePlaneClick(event: any, chartElement: any, chart: any, item: any) {
-    setMaxHeight(defaultMaxHeight);
+    setMaxHeight(undefined);
     setHighlightedLegend(undefined);
     if (item !== undefined) {
       return;
@@ -278,7 +278,7 @@ function BarChart(props: Props) {
         max: maxHeight,
         grid: {
           color: gridColour,
-          display: true
+          display: dataset.yAxis.display
         },
         ticks: { // y labels
           color: labelColour
