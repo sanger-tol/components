@@ -86,12 +86,12 @@ function RemoteFilters(props: Props) {
         setAttribute={setFilters}
         endpoint={endpoint}
         baseUrl={baseUrl}
+        populatedFieldType="filter"
         numPopulatedFields={
           Object.keys(
             filterZone.components[filterComponentId].data.filter?.and_ || {}
           ).length
         }
-        allowedTypes={["int"]}
         tooltipContent={TOOLTIPCONTENT}
       />
       {filters.map((attribute) => {

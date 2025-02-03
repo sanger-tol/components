@@ -4,18 +4,23 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { FieldMeta } from "../table/Field";
+
 export interface IFilterDrawer {
   open: boolean;
   setOpen: () => void;
 }
 
 export interface IConfigDrawer {
+  baseUrl?: string;
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
-  activeColumns?: string[];
-  attribute: string[];
-  setAttribute: (attribute: string[]) => void;
+  fieldMeta: FieldMeta;
+  displaySource?: boolean; // i.e. sts mlwh
+  onConfigSave: (fieldMeta: FieldMeta) => void; // save the fieldMeta
+  endpoint: string;
+  sticky?: boolean;
 }
 
 export interface IAttributeSelector {
@@ -23,7 +28,7 @@ export interface IAttributeSelector {
   placeholder: string;
   populatedFieldType?: string; // ie. "filter" or "column"
   baseUrl?: string;
-  allowedTypes?: string[];
+  allowedTypes?: string[]; // these need to be python types - 'int', 'str', etc...
   attribute: string[];
   setAttribute: (attribute: string[]) => void;
   disabledValues?: any;
@@ -31,5 +36,13 @@ export interface IAttributeSelector {
   tooltipContent?: string;
   setEntityMeta?: (entityMeta: any) => void;
   additionalPopulatedFieldData?: any;
-  authoratatativeFilterAvailable?: boolean;
+  recommendedFilterAvailable?: boolean;
+  displaySource?: boolean;
+  sticky?: boolean;
+  renderSearchBySource?: boolean;
+}
+
+export interface ISourceTag {
+    source: string;
+    className?: string;
 }

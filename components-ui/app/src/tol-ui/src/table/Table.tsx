@@ -284,8 +284,12 @@ function Table (props: Props) {
               open={open} 
               setOpen={setOpen} 
               title={"Add/Remove Table Columns"}
-              attribute={fieldMeta["order"]["active"]}
+              fieldMeta={fieldMeta}
               // setAttribute={setAttribute}
+              displaySource={displaySource}
+              onConfigSave={onModalSave}
+              baseUrl={baseUrl}
+              endpoint={endpoint}
             />}
             {console.log(fieldMeta["order"]["active"])}
           {!noFilter &&

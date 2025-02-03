@@ -1,5 +1,28 @@
 import { normaliseCaps } from "../general/Utils";
 
+export function getSourceData(
+  fieldMeta,
+  attribute: string
+) {
+  return fieldMeta?.data[attribute]["source"] || "";
+}
+
+export function getAttributeSources(entityMeta, endpoint) {
+  const sources = new Set<string>();
+  sources.add("all")
+  if (entityMeta && entityMeta.flatAttributes && entityMeta.flatAttributes[endpoint]) {
+    Object.keys(entityMeta.flatAttributes[endpoint]).forEach((att) => {
+      const attributeObject = entityMeta.flatAttributes[endpoint][att];
+      const source = attributeObject.source;
+      if (source) {
+        sources.add(source);
+      }
+    });
+    sources.add("undefined")
+  }
+  return Array.from(sources);
+}
+
 export function getFlattenedMetaData(
   entityMeta: any,
   endpoint: string,

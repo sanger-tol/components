@@ -4,26 +4,21 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Drawer } from "../general";
 import { IConfigDrawer } from "./interfaces";
-import { AttributeSelector } from "./index";
+import { AttributeSelector, SourceTag } from "./index";
 import { Button, Icon, env } from "../index";
 import { normaliseCaps } from "../general/Utils";
-import { getFlattenedMetaData } from "./Utils";
-import { getSourceColour } from "../table/Utils";
+import { getSourceData } from "./Utils";
 
 function ConfigDrawer(props: IConfigDrawer) {
-  const { open, setOpen, title } = props;
-  const [attribute, setAttribute] = useState<string[]>([]);
-  const [entityMeta, setEntityMeta] = useState<any>({});
+  const { baseUrl, open, setOpen, title, fieldMeta, endpoint } = props;
+  const [attribute, setAttribute] = useState<string[]>(
+    fieldMeta["order"]["active"]
+  );
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
-  // const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    console.log(attribute);
-  }, [attribute]);
 
   const moveAttributeUp = (index: number) => {
     if (index === 0) return;
@@ -58,30 +53,18 @@ function ConfigDrawer(props: IConfigDrawer) {
   };
 
   const selectedColumn = (att: string, index: number) => {
-    //TODO: Add endpoint instead of fixed type
-    const source = getFlattenedMetaData(entityMeta, "run_data", att)["source"];
-    const sourceColour = getSourceColour(source);
+    const source = getSourceData(fieldMeta, att) ?? "";
     return (
       <div
         className={`config-drawer-selected-column ${
           recentlyMoved === index ? "highlight" : ""
         } ${deletingIndex === index ? "deleting" : ""}`}
-        key={att}
+        key={`${att}-${index}`}
         style={{ transition: "all 0.3s ease" }}
       >
         {normaliseCaps(att)}
         <div style={{ display: "flex" }}>
-          {source && (
-            <div
-              className="customise-config-source-no-float"
-              // @ts-ignore
-              style={{
-                "--config-source-bg-color": sourceColour,
-              }}
-            >
-              {normaliseCaps(source)}
-            </div>
-          )}
+          {source && <SourceTag source={source} />}
           <div
             className="active-column-remove-btn"
             onClick={() => moveAttributeUp(index)}
@@ -109,18 +92,17 @@ function ConfigDrawer(props: IConfigDrawer) {
     <div>
       <div>
         <AttributeSelector
-          endpoint={"run_data"}
+          endpoint={endpoint}
           placeholder="Select columns to display..."
-          baseUrl={env.TOL_DATA} //TODO: REMOVE!
+          baseUrl={baseUrl || env.TOL_DATA} //TODO: REMOVE!
           attribute={attribute}
-          setAttribute={setAttribute}
+          setAttribute={setAttribute} // this is equal to fieldMeta['order']['active']
           disabledValues={null}
           numPopulatedFields={0}
-          setEntityMeta={setEntityMeta}
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
-          authoratatativeFilterAvailable={true}
-          allowedTypes={["int"]}
+          recommendedFilterAvailable={true}
+          renderSearchBySource={true}
         />
       </div>
       <div>
@@ -129,7 +111,7 @@ function ConfigDrawer(props: IConfigDrawer) {
         </h6>
         {attribute.map((att, index) => (
           <div
-            key={index}
+            key={`${att}-${index}`}
             style={{ display: "flex", justifyContent: "space-between" }}
           >
             {selectedColumn(att, index)}

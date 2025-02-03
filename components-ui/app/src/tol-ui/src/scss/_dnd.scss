@@ -57,6 +57,11 @@
 .customise-config-source-no-float {
   @extend .customise-config-source;
   float: none !important;
+
+}
+
+.customise-config-source-no-float.active {
+  border: 1px solid var(--tol-light);
 }
 
 .active-column-remove-btn{
