@@ -266,6 +266,7 @@ function BarChart(props: Props) {
     const defined = dataset.yAxis && dataset.yAxis.yAxisID;
     if (defined && !options.scales[dataset.yAxis.yAxisID]) {
       options.scales[dataset.yAxis.yAxisID] = {
+        beginAtZero: true,
         stacked,
         position: dataset.yAxis.position,
         title: {
@@ -281,7 +282,7 @@ function BarChart(props: Props) {
           display: dataset.yAxis.display
         },
         ticks: { // y labels
-          color: labelColour
+          color: labelColour,
         }
       };
     }
@@ -290,6 +291,7 @@ function BarChart(props: Props) {
   if (!hasYAxisID || !options.scales.y) {
     options.scales.y = {
       stacked,
+      beginAtZero: true,
       position: 'left',
       title: {
         display: false
@@ -299,7 +301,7 @@ function BarChart(props: Props) {
         display: true
       },
       ticks: { 
-        color: labelColour
+        color: labelColour,
       }
     };
   }
