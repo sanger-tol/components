@@ -169,9 +169,12 @@ function AttributeSelector(props: IAttributeSelector) {
               key={index}
               style={{ marginTop: "5px", cursor: "pointer" }}
             >
-              <SourceTag source={source} className={`${
-                selectedSources.includes(source) ? "active" : ""
-              }`}/>
+              <SourceTag
+                source={source}
+                className={`${
+                  selectedSources.includes(source) ? "active" : ""
+                }`}
+              />
             </div>
           ))}
         </div>
@@ -189,6 +192,7 @@ function AttributeSelector(props: IAttributeSelector) {
         data={Object.keys(getFlattenedMetaData(entityMeta, endpoint)).filter(
           (key) => {
             const meta = getFlattenedMetaData(entityMeta, endpoint)[key];
+            console.log(meta);
             const typeMatch =
               !allowedTypes || allowedTypes.includes(meta.python_type);
             const sourceMatch =
@@ -196,7 +200,9 @@ function AttributeSelector(props: IAttributeSelector) {
               (selectedSources.includes("undefined")
                 ? !sources.includes(meta.source)
                 : selectedSources.includes(meta.source));
-            return typeMatch && sourceMatch;
+            const recommendedMatch = meta.authoritative === true;
+        
+            return (recommendedOn ? recommendedMatch : true) && typeMatch && sourceMatch;
           }
         )}
         placeholder={placeholder}
@@ -238,3 +244,7 @@ export default AttributeSelector;
 //TODO: Add recommended filter tick button
 //TODO: set limit on number of selections
 //TODO: Add tooltip to what is recommended data
+//TODO: Make it so filter by source sources fade out when 
+// not selected and make them uniform with the other source tags
+// TODO: Move styles to stylesheet
+// TODO: add in source tag component

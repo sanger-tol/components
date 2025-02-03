@@ -1,16 +1,17 @@
 import { normaliseCaps } from "../general/Utils";
 
-export function getSourceData(
-  fieldMeta,
-  attribute: string
-) {
+export function getSourceData(fieldMeta, attribute: string) {
   return fieldMeta?.data[attribute]["source"] || "";
 }
 
 export function getAttributeSources(entityMeta, endpoint) {
   const sources = new Set<string>();
-  sources.add("all")
-  if (entityMeta && entityMeta.flatAttributes && entityMeta.flatAttributes[endpoint]) {
+  sources.add("all");
+  if (
+    entityMeta &&
+    entityMeta.flatAttributes &&
+    entityMeta.flatAttributes[endpoint]
+  ) {
     Object.keys(entityMeta.flatAttributes[endpoint]).forEach((att) => {
       const attributeObject = entityMeta.flatAttributes[endpoint][att];
       const source = attributeObject.source;
@@ -18,7 +19,7 @@ export function getAttributeSources(entityMeta, endpoint) {
         sources.add(source);
       }
     });
-    sources.add("undefined")
+    sources.add("undefined");
   }
   return Array.from(sources);
 }

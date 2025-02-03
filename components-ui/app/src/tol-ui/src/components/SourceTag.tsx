@@ -18,7 +18,6 @@ function SourceTag(props: ISourceTag) {
       // @ts-ignore
       style={{
         "--config-source-bg-color": sourceColour,
-        // ...(className?.includes("active") && { border: "1px solid var(--tol-primary-light)" })
       }}
     >
       {normaliseCaps(source)}

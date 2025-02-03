@@ -11,9 +11,11 @@ import { AttributeSelector, SourceTag } from "./index";
 import { Button, Icon, env } from "../index";
 import { normaliseCaps } from "../general/Utils";
 import { getSourceData } from "./Utils";
+import { FieldMeta, initialiseFieldMeta } from "../table/Field";
 
 function ConfigDrawer(props: IConfigDrawer) {
-  const { baseUrl, open, setOpen, title, fieldMeta, endpoint } = props;
+  const { baseUrl, open, setOpen, title, fieldMeta, endpoint, onConfigSave } =
+    props;
   const [attribute, setAttribute] = useState<string[]>(
     fieldMeta["order"]["active"]
   );
@@ -50,6 +52,39 @@ function ConfigDrawer(props: IConfigDrawer) {
       setAttribute(attribute.filter((_, i) => i !== index));
       setDeletingIndex(null);
     }, 300);
+  };
+
+  const updateMeta = (
+    id: string,
+    updatedFieldMeta: FieldMeta,
+    hidden: boolean
+  ) => {
+    const isActive = hidden ? "inactive" : "active";
+    updatedFieldMeta.order[isActive].push(id);
+    updatedFieldMeta.data[id] = fieldMeta.data[id];
+    updatedFieldMeta.data[id].hidden = hidden;
+  };
+
+  const fieldMetaUpdatedByContents = () => {
+    const updatedFieldMeta: FieldMeta = initialiseFieldMeta();
+
+    attribute.forEach((key) => {
+      updateMeta(key, updatedFieldMeta, false);
+    });
+
+    for (const key in fieldMeta.data) {
+      if (!attribute.includes(key)) {
+        updateMeta(key, updatedFieldMeta, true);
+      }
+    }
+
+    return updatedFieldMeta;
+  };
+
+  const saveConfig = () => {
+    const updatedFieldMeta = fieldMetaUpdatedByContents();
+    onConfigSave(updatedFieldMeta);
+    setOpen(!open);
   };
 
   const selectedColumn = (att: string, index: number) => {
@@ -121,7 +156,7 @@ function ConfigDrawer(props: IConfigDrawer) {
       <div>
         <Button
           text="Save Columns"
-          onClick={() => setOpen(!open)}
+          onClick={() => saveConfig()}
           type="success"
           className="config-drawer-save-button"
         />
