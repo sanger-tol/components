@@ -19,31 +19,34 @@ const d1 = [
     label: 'Species 1',
     data: [3, 10, 2, 6, 4, 3, 1],
     type: 'line',
-    yAxisID: 'y1',
-    yAxisLabel: 'y1 label'
-
+    yAxis: {
+      yAxisID: 'y1',
+      yAxisLabel: 'Species 1',
+      position: 'right'
+    },
   },
   {
     id: 'species_2',
     label: 'Species 2',
     data: [100, 200, 30, 153, 500, 600, 56],
     type: 'line',
-    yAxisID: 'y1',
   },
   {
     id: 'species_3',
     label: 'Species 3',
     data: [100, 200, 100, 400, 110, 600, 100],
     type: 'bar',
-    yAxisLabel: 'y2-label',
-    yAxisID: 'y2',
+    yAxis: {
+      yAxisID: 'y',
+      yAxisLabel: 'Everything else',
+      position: 'left'
+    },
   },
   {
     id: 'species_4',
     label: 'Species 4',
-    data: [100, 200, 100, 400, 110, 600, 100],
+    data: [10, 20, 10, 40, 10, 60, 10],
     type: 'bar',
-    yAxisID: 'y2',
   }
 ];
 

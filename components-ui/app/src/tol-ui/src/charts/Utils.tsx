@@ -256,8 +256,11 @@ export function initialiseDatasets(datasets: any[]) {
     datasets[index]["pointHoverRadius"] = [];
     datasets[index]["order"] = index;
     datasets[index]["colourIndex"] = index;
+    // NEED TO CHANGE THIS TO WORK FOR BOTH LINE AND BAR
+
     if (datasets[index].type !== 'bar') {
       datasets[index]["stack"] = datasets[index].id;
+      datasets[index]["yAxisID"] = datasets[index].yAxis && datasets[index].yAxis.yAxisID ? datasets[index].yAxis.yAxisID : 'y';
     } else {
       datasets[index]["yAxisID"] = 'y';
     }

@@ -64,7 +64,6 @@ function Sandbox() {
      <div>
       <RemoteBarChart
       id="forecast-bar-chart"
-      stacked
       title="Forecast lib/seq"
       breakDownBy="demand_forecast_analysis_type"
       xAxis="demand_forecast_date"
@@ -76,13 +75,12 @@ function Sandbox() {
 
    <RemoteBarChart
      id="cost-bar-chart"
-     stacked
      breakDownBy="finance_project_cost_id"
      title="Cost"
      xAxis="finance_period"
      yAxis={{
        field: 'finance_study_id',
-       yAxisID: 'y1',
+       yAxisID: 'y',
        yAxisLabel: 'Finance Amount'
      }}
      type='categorical'
@@ -90,6 +88,7 @@ function Sandbox() {
      baseUrl="https://portal-staging.tol.sanger.ac.uk/api/v1"
      height={500}
      aggType="sum"
+     stacked
    />
 
       

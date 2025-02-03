@@ -88,7 +88,6 @@ function RemoteBarChart(props: Props) {
     })
       .then((res: any) => {
         let aggs = res.data.meta.aggregations;
-        console.log(aggs)
         setErrorMessage('');
         setWarningMessage(isChartDataEmpty(aggs));
         aggs = aggsToBarChartData(aggs, type, shortDate, cumulative, yAxis);

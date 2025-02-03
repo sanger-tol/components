@@ -256,14 +256,18 @@ function BarChart(props: Props) {
           color: labelColour
         }
       },
+      
     }
   };
 
+  const hasYAxisID = datasets.some((dataset: any) => dataset.yAxis && dataset.yAxis.yAxisID);
+
   datasets.forEach((dataset: any) => {
-    if (dataset.yAxis && !options.scales[dataset.yAxis.yAxisID]) {
+    const defined = dataset.yAxis && dataset.yAxis.yAxisID;
+    if (defined && !options.scales[dataset.yAxis.yAxisID]) {
       options.scales[dataset.yAxis.yAxisID] = {
         stacked,
-        position: dataset.type === 'bar' ? 'left' : 'right',
+        position: dataset.yAxis.position,
         title: {
           display: dataset.yAxis.yAxisLabel ? true : false,
           text: dataset.yAxis.yAxisLabel,
@@ -274,7 +278,7 @@ function BarChart(props: Props) {
         max: maxHeight,
         grid: {
           color: gridColour,
-          display: dataset.type === 'bar' ? true : false
+          display: true
         },
         ticks: { // y labels
           color: labelColour
@@ -282,6 +286,25 @@ function BarChart(props: Props) {
       };
     }
   });
+
+  if (!hasYAxisID || !options.scales.y) {
+    options.scales.y = {
+      stacked,
+      position: 'left',
+      title: {
+        display: false
+      },
+      grid: {
+        color: gridColour,
+        display: true
+      },
+      ticks: { 
+        color: labelColour
+      }
+    };
+  }
+
+  console.log(options)
 
   const downloadName = props.downloadName !== undefined ? props.downloadName : 'barchart';
 
