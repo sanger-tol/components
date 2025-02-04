@@ -173,14 +173,12 @@ export function filterListener(params: {
   setExists?: any,
   setNegate?: any,
   emptyValue: any,
-  setDisabled: any,
   zoneToValue: (filterValue: any, exisitingValue?: any) => any
 }, dependencies: any[]) {
-  const {attribute, componentId, operators, zone, setValue, setDisabled, setNegate, setExists, zoneToValue} = params;
+  const {attribute, componentId, operators, zone, setValue, setNegate, setExists, zoneToValue} = params;
 
   useEffect(() => {
     const aboveComponents = getComponentsAbove(componentId, zone.order);
-    let disabled = false;
     let readyToBreak = 0;
     let value = params.emptyValue;
     let negate = false;
@@ -190,18 +188,15 @@ export function filterListener(params: {
       const and_ = componentData.filter!.and_;
       // ignore pass throughs
       if (and_ && attribute in and_ && !componentData.filterPassThrough) {
-        const disableCondition = (currentId !== componentId);
         // checks setExists as only used for text input filters
         if (setExists && 'exists' in and_[attribute]) {
           exists = true;
-          disabled = disableCondition;
           negate = and_[attribute]['exists'].negate || negate;
           break;
         } else {
           for (const op of operators) {
             if (op in and_[attribute]) {
               const filter = and_[attribute][op];
-              disabled = disableCondition;
               negate = filter.negate || negate;
               value = zoneToValue(filter.value, value);
               // break if all operators have been checked
@@ -213,7 +208,6 @@ export function filterListener(params: {
       }
     }
     setValue(value);
-    setDisabled(disabled);
     if (setExists) setExists(exists);
     if (setNegate) setNegate(negate);
   }, dependencies);

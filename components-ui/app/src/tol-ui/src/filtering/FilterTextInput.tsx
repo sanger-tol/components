@@ -22,7 +22,6 @@ function FilterTextInput(props: Filter) {
   const { attribute, componentId, rename, type, zone, setZone } = props;
   // contains filtering needs adding to specific datasources
   const [values, setValues] = useState(['']);
-  const [disabled, setDisabled] = useState(false);
   const [operator, setOperator] = useState(type === 'str' ? '' : '=');
   const [exists, setExists] = useState<boolean>(false);
   const [negate, setNegate] = useState<boolean>(false);
@@ -56,7 +55,6 @@ function FilterTextInput(props: Filter) {
     operators: ['in_list', getOperator(operator)],
     zone: zone,
     setValue: setValues,
-    setDisabled: setDisabled,
     setExists: setExists,
     setNegate: setNegate,
     emptyValue: [''],
@@ -190,13 +188,11 @@ function FilterTextInput(props: Filter) {
   };
 
   const onOpenInListModal = () => {
-    if (!disabled) {
-      setOpen(true);
-      if (values.length > 1) {
-        setListValue(values.join('\r\n'));
-      } else {
-        setListValue('');
-      }
+    setOpen(true);
+    if (values.length > 1) {
+      setListValue(values.join('\r\n'));
+    } else {
+      setListValue('');
     }
   };
 
@@ -241,12 +237,11 @@ function FilterTextInput(props: Filter) {
       }
       {type === 'str' && values.length <= 1 &&
         <BSButton
-        className="tol-in-list-button"
-        disabled={disabled}
-        onClick={onOpenInListModal}
-      >
-        <FontAwesomeIcon icon={faList} size="sm" />
-      </BSButton>
+          className="tol-in-list-button"
+          onClick={onOpenInListModal}
+        >
+          <FontAwesomeIcon icon={faList} size="sm" />
+        </BSButton>
       }
       {type === 'str' && values.length > 1 ?
         <span className="tol-multi-filter">
@@ -256,13 +251,12 @@ function FilterTextInput(props: Filter) {
             value={values}
             setValue={inListOnChange}
             placeholder={rename}
-            disabled={disabled}
             open={false}
             onClick={onOpenInListModal}
           />
         </span>
         :
-        <InputGroup className={disabled ? 'rs-picker-disabled' : ''} disabled={disabled} inside>
+        <InputGroup inside>
           <Input
             onChange={onFilter}
             value={values[0]}
@@ -275,7 +269,6 @@ function FilterTextInput(props: Filter) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
-        disabled={disabled}
       />
       <Modal
         size='md'

@@ -663,14 +663,12 @@ describe ('Testing filterListener function', () => {
 
   const TestComponent = (props) => {
     const [value, setValue] = useState(null);
-    const [disabled, setDisabled] = useState(false);
     const [exists, setExists] = useState(true);
     const [negate, setNegate] = useState(true);
 
     filterListener({
       ...props,
       setValue,
-      setDisabled,
       setExists,
       setNegate,
     }, [props.dependencies]);
@@ -678,7 +676,6 @@ describe ('Testing filterListener function', () => {
     return (
       <div>
         <div data-testid="value">{value}</div>
-        <div data-testid="disabled">{disabled.toString()}</div>
         <div data-testid="exists">{exists.toString()}</div>
         <div data-testid="negate">{negate.toString()}</div>
       </div>

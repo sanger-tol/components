@@ -403,14 +403,6 @@ function Filters() {
       type: 'full'
     },
     {
-      component: map,
-      type: 'full'
-    },
-    {
-      component: sunburst,
-      type: 'full'
-    },
-    {
       component: chart,
       type: 'full'
     },

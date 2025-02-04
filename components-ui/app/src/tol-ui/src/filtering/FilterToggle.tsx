@@ -12,16 +12,14 @@ interface Props {
   negate: boolean,
   onNegate: any,
   exists: boolean,
-  onExists: any,
-  disabled: boolean
+  onExists: any
 }
 
 function FilterToggle(props: Props) {
-  const { negate, onNegate, exists, onExists, disabled } = props;
+  const { negate, onNegate, exists, onExists } = props;
 
   const existsButton = (
     <Button
-      disabled={disabled}
       active={exists}
       className="tol-filter-button exists"
       onClick={() => onExists(exists)}
@@ -32,7 +30,6 @@ function FilterToggle(props: Props) {
 
   const negateButton = (
     <Button
-      disabled={disabled}
       active={negate}
       className="tol-filter-button negate"
       onClick={() => onNegate(negate)}
@@ -43,24 +40,18 @@ function FilterToggle(props: Props) {
 
   return (
     <div className='tol-filter-button-group'>
-      {!disabled ? 
-        <HoverOverlay
-          contents="Filter by values that exist. This will exclude empty/null values."
-          followCursor
-        >
-          {existsButton}
-        </HoverOverlay>
-        : existsButton
-      }
-      {!disabled ? 
-        <HoverOverlay
-          contents="Negate this filter."
-          followCursor
-        >
-          {negateButton}
-        </HoverOverlay>
-        : negateButton
-      }
+      <HoverOverlay
+        contents="Filter by values that exist. This will exclude empty/null values."
+        followCursor
+      >
+        {existsButton}
+      </HoverOverlay>
+      <HoverOverlay
+        contents="Negate this filter."
+        followCursor
+      >
+        {negateButton}
+      </HoverOverlay>
     </div>
   );
 }

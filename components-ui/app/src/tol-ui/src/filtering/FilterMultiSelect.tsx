@@ -18,7 +18,6 @@ function FilterMultiSelect(props: Filter) {
   const { attribute, componentId, rename, zone, setZone, endpoint, baseUrl } = props;
   const [data, setData] = useState<string[]>([]);
   const [values, setValues] = useState<string[]>([]);
-  const [disabled, setDisabled] = useState(false);
   const [exists, setExists] = useState<boolean>(false);
   const [negate, setNegate] = useState<boolean>(false);
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
@@ -73,7 +72,6 @@ function FilterMultiSelect(props: Filter) {
     setValue: setValues,
     setExists: setExists,
     setNegate: setNegate,
-    setDisabled: setDisabled,
     emptyValue: [],
     zoneToValue: (filterValue: any) => {
       return filterValue;
@@ -143,7 +141,6 @@ function FilterMultiSelect(props: Filter) {
         block
         data={data}
         placeholder={rename}
-        disabled={disabled}
         value={values}
         setValue={onFilter}
         loading={loading}
@@ -158,7 +155,6 @@ function FilterMultiSelect(props: Filter) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
-        disabled={disabled}
       />
     </div>
   );

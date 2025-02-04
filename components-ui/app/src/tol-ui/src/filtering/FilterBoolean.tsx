@@ -14,7 +14,6 @@ import { StatusMessage, PopUpMessage } from '../index';
 function FilterBoolean(props: Filter) {
   const { attribute, componentId, rename, zone, setZone } = props;
   const [values, setValues] = useState<string[]>([]);
-  const [disabled, setDisabled] = useState(false);
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
   const [errorMessage, _] = useState('');
   const operator = 'in_list';
@@ -50,7 +49,6 @@ function FilterBoolean(props: Filter) {
     operators: [operator],
     zone: zone,
     setValue: setValues,
-    setDisabled: setDisabled,
     emptyValue: [],
     zoneToValue: (filterValue: any) => {
       return flipValues(filterValue);
@@ -111,7 +109,6 @@ function FilterBoolean(props: Filter) {
         noSearch
         data={['True', 'False']}
         placeholder={rename}
-        disabled={disabled}
         value={values}
         setValue={onFilter}
         onClick={(e) => e.stopPropagation()}
