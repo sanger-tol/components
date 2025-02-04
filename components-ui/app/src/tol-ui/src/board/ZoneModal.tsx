@@ -83,7 +83,10 @@ function ZoneModal(props: Props) {
   useEffect(() => {
     const tempDs = new TsDataSource({baseUrl: dataUrl});
     tempDs.attributeMetadata().then(am => {
-      setObjectTypesList(Object.keys(am).filter(key => ![...BOARD_ENDPOINTS, ...MISC_ENDPOINTS].includes(key)));
+      setObjectTypesList(
+        Object.keys(am)
+        .filter(key => ![...BOARD_ENDPOINTS, ...MISC_ENDPOINTS].includes(key))
+      );
     });
   }, []);
 

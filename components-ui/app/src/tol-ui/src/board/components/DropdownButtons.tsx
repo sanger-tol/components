@@ -28,7 +28,6 @@ export interface DropdownMainIconProps {
   position?: string;
   outline?: boolean;
   tooltip?: string;
-  tooltipPosition?: string;
 }
 
 interface Props {
@@ -98,7 +97,6 @@ function DropdownButtons(props: Props) {
         position={mainButtonIcon.position}
         outline={mainButtonIcon.outline}
         tooltip={mainButtonIcon.tooltip}
-        tooltipPosition={mainButtonIcon.tooltipPosition}
       />
     );
   };

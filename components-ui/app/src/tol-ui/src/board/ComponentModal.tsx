@@ -131,7 +131,7 @@ function ComponentModal(props: Props) {
       disabled: true
     },
     {
-      type: 'barchart',
+      type: 'chart',
       icon: 'chart-column',
       disabled: true
     },
