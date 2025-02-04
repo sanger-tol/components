@@ -40,30 +40,6 @@
   margin-bottom: 0;
 }
 
-.customise-config-source {
-  font-size: 12px;
-  font-weight: normal;
-  margin-left: 6px;
-  overflow: auto;
-  float: right;
-  background-color: var(--config-source-bg-color);
-  color: black;
-  padding-left: 3px;
-  padding-right: 3px;
-  border-radius: 4px;
-  max-height: 20px;
-}
-
-.customise-config-source-no-float {
-  @extend .customise-config-source;
-  float: none !important;
-
-}
-
-.customise-config-source-no-float.active {
-  border: 1px solid var(--tol-light);
-}
-
 .active-column-remove-btn{
   margin-left: 5px;
   width: 20px;

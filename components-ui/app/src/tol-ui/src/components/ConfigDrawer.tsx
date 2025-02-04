@@ -95,7 +95,7 @@ function ConfigDrawer(props: IConfigDrawer) {
           recentlyMoved === index ? "highlight" : ""
         } ${deletingIndex === index ? "deleting" : ""}`}
         key={`${att}-${index}`}
-        style={{ transition: "all 0.3s ease" }}
+        style={{ transition: "all 0.3s ease" }} //TODO:
       >
         {normaliseCaps(att)}
         <div style={{ display: "flex" }}>
@@ -131,7 +131,7 @@ function ConfigDrawer(props: IConfigDrawer) {
           placeholder="Select columns to display..."
           baseUrl={baseUrl || env.TOL_DATA} //TODO: REMOVE!
           attribute={attribute}
-          setAttribute={setAttribute} // this is equal to fieldMeta['order']['active']
+          setAttribute={setAttribute}
           disabledValues={null}
           numPopulatedFields={0}
           populatedFieldType={"column"}
@@ -147,7 +147,7 @@ function ConfigDrawer(props: IConfigDrawer) {
         {attribute.map((att, index) => (
           <div
             key={`${att}-${index}`}
-            style={{ display: "flex", justifyContent: "space-between" }}
+            style={{ display: "flex", justifyContent: "space-between" }} //TODO:
           >
             {selectedColumn(att, index)}
           </div>
@@ -177,3 +177,6 @@ function ConfigDrawer(props: IConfigDrawer) {
 }
 
 export default ConfigDrawer;
+
+
+//TODO: if only one column remains, it has to stay.

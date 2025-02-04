@@ -1,0 +1,94 @@
+/*
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+.tol-attribute-selector {
+  margin: 0 0 30px 0;
+}
+
+.attribute-selector-menu-item-container {
+  display: flex;
+  align-items: center;
+
+  .attribute-selector-menu-item-inner-container {
+    display: flex;
+    flex-grow: 1;
+  }
+
+  .attribute-selector-tooltip {
+    margin-left: 3px;
+    margin-right: 6px;
+  }
+
+  .attribute-selector-display-name {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .attribute-selector-display-key {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    font-size: 12px;
+    color: var(--tol-grey);
+  }
+}
+
+.attribute-selector-search-by-source-container {
+  padding: 5px;
+
+  > p {
+    margin: 10px 0px 4px 6px !important;
+  }
+
+  .attribute-selector-sources {
+    display: flex;
+    padding-top: 5px;
+    flex-wrap: wrap;
+    gap: "3px";
+  }
+
+  .attribute-selector-sources-inner-container {
+    margin-top: 5px;
+    cursor: pointer;
+  }
+}
+
+.attribute-selector-checkbox {
+  margin-top: 10px !important;
+  margin-bottom: -20px !important;
+}
+
+.customise-config-source {
+  font-size: 12px;
+  font-weight: normal;
+  margin-left: 6px;
+  overflow: auto;
+  float: right;
+  background-color: var(--config-source-bg-color);
+  color: black;
+  padding-left: 3px;
+  padding-right: 3px;
+  border-radius: 4px;
+  height: 20px;
+}
+
+.customise-config-source-no-float {
+  @extend .customise-config-source;
+  float: none !important;
+}
+
+.customise-config-source-no-float.active {
+  border: 1px solid var(--tol-light);
+}
+
+.customise-config-source-no-float.faded {
+    opacity: 0.5;
+}
+
+.rs-drawer-open {
+  .rs-anim-fade.rs-anim-in.rs-picker-check-menu.rs-picker-popup.placement-bottom-start {
+    margin-right: 28px;
+  }
+}

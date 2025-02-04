@@ -17,8 +17,8 @@ export interface IConfigDrawer {
   setOpen: (open: boolean) => void;
   title: string;
   fieldMeta: FieldMeta;
-  displaySource?: boolean; // i.e. sts mlwh
-  onConfigSave: (fieldMeta: FieldMeta) => void; // save the fieldMeta
+  displaySource?: boolean;
+  onConfigSave: (fieldMeta: FieldMeta) => void;
   endpoint: string;
   sticky?: boolean;
 }
@@ -40,6 +40,7 @@ export interface IAttributeSelector {
   displaySource?: boolean;
   sticky?: boolean;
   renderSearchBySource?: boolean;
+  maxSelections?: number;
 }
 
 export interface ISourceTag {

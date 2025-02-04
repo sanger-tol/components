@@ -7,13 +7,19 @@ SPDX-License-Identifier: MIT
 import { Checkbox, CheckboxGroup } from "rsuite";
 import { useEffect, useState } from "react";
 import { IAttributeSelector } from "./interfaces";
-import { TsDataSource, MultipleSelect, InfoTooltip } from "../index";
-import { getSourceColour } from "../table/Utils";
+import {
+  TsDataSource,
+  MultipleSelect,
+  InfoTooltip,
+  Icon,
+  PopUpMessage,
+} from "../index";
 import { normaliseCaps } from "../general/Utils";
 import {
   getFlattenedMetaData,
   getDisplayName,
   getAttributeSources,
+  filterBySource,
 } from "./Utils";
 import SourceTag from "./SourceTag";
 
@@ -33,6 +39,7 @@ function AttributeSelector(props: IAttributeSelector) {
     numPopulatedFields,
     sticky,
     renderSearchBySource,
+    maxSelections,
   } = props;
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
@@ -59,71 +66,60 @@ function AttributeSelector(props: IAttributeSelector) {
   const searchBy = (keyword: string, label: any) => {
     const name = getDisplayName(entityMeta, endpoint, label).toLowerCase();
     const kw = keyword.toLowerCase();
+
     return name.includes(kw);
   };
 
-  const menuItem = (displayName: string, source: string, key: string) => {
-    const sourceColour = getSourceColour(source);
+  const menuItem = (
+    displayName: string,
+    source: string,
+    key: string,
+    authoritative: boolean
+  ) => {
     const disabled =
       disabledValues && Object.keys(disabledValues).includes(key);
     const tooltipContents = tooltipContent || "disabled";
+
     return (
-      <div key={key} style={{ display: "flex", alignItems: "center" }}>
-        <div style={{ display: "flex", flexGrow: 1 }}>
+      <div key={key} className="attribute-selector-menu-item-container">
+        <div className="attribute-selector-menu-item-inner-container">
           {disabled ? (
-            <span style={{ marginLeft: 3, marginRight: 6 }}>
-              tooltipContent &&{" "}
-              <InfoTooltip disableMarkdown contents={tooltipContents} />
+            <span className="attribute-selector-tooltip">
+              {tooltipContent && (
+                <InfoTooltip disableMarkdown contents={tooltipContents} />
+              )}
             </span>
           ) : (
             <></>
           )}
           <div>
-            <p style={{ marginTop: 0, marginBottom: 0 }}>{displayName}</p>
-            <p
-              style={{
-                marginTop: 0,
-                marginBottom: 0,
-                fontSize: "12px",
-                color: "grey",
-              }}
-            >
-              {key}
+            <p className="attribute-selector-display-name">{displayName}</p>
+            <p className="attribute-selector-display-key">
+              {authoritative === true && <Icon icon="star" />} {key}
             </p>
           </div>
         </div>
-        {source && (
-          <div
-            className="customise-config-source"
-            // @ts-ignore
-            style={{
-              "--config-source-bg-color": sourceColour,
-              marginLeft: "auto",
-            }}
-          >
-            {normaliseCaps(source)}
-          </div>
-        )}
+        {source && <SourceTag source={source} />}
       </div>
     );
   };
 
   const renderMenuItem = (l: any, index: number) => {
-    const label = l.props?.children || l; // changes form in some instances!
+    const label = l.props?.children || l;
+    const metaData = getFlattenedMetaData(entityMeta, endpoint, label);
     return (
       <div key={`${label}-${index}`}>
         {menuItem(
-          getFlattenedMetaData(entityMeta, endpoint, label)["display_name"] ??
-            normaliseCaps(label),
-          getFlattenedMetaData(entityMeta, endpoint, label)["source"],
-          label
+          metaData["display_name"] ?? normaliseCaps(label),
+          metaData["source"],
+          label,
+          metaData["authoritative"]
         )}
       </div>
     );
   };
 
-  const renderValue = (values: string[]) => {
-    // This renders the total value of selected items
+  const renderTotalSelectedItems = (values: string[]) => {
     return `
         ${values.length} ${
       values.length === 1 ? `${populatedFieldType}` : `${populatedFieldType}s`
@@ -135,44 +131,29 @@ function AttributeSelector(props: IAttributeSelector) {
     }`;
   };
 
-  const filterBySource = (source: string) => {
-    if (source === "all") {
-      setSelectedSources([]);
-    } else if (source === "undefined") {
-      setSelectedSources(["undefined"]);
-    } else if (selectedSources.includes(source)) {
-      setSelectedSources(selectedSources.filter((s) => s !== source));
-    } else {
-      setSelectedSources([...selectedSources, source]);
-    }
-  };
-
   const searchBySource = () => {
+    const hasActiveSource = selectedSources.length > 0;
+
     return (
-      <div>
-        <p
-          style={{ marginTop: "10px", marginLeft: "5px", marginBottom: "5px" }}
-        >
-          Filter by source:
-        </p>
-        <div
-          style={{
-            display: "flex",
-            paddingTop: "0px",
-            flexWrap: "wrap",
-            gap: "3px",
-          }}
-        >
-          {sources.map((source, index) => (
+      <div className="attribute-selector-search-by-source-container">
+        <p>Filter by source:</p>
+        <div className="attribute-selector-sources">
+          {sources.map((source: string, index: number) => (
             <div
-              onClick={() => filterBySource(source)}
               key={index}
-              style={{ marginTop: "5px", cursor: "pointer" }}
+              className="attribute-selector-sources-inner-container"
+              onClick={() =>
+                filterBySource(source, selectedSources, setSelectedSources)
+              }
             >
               <SourceTag
                 source={source}
                 className={`${
                   selectedSources.includes(source) ? "active" : ""
+                } ${
+                  hasActiveSource && !selectedSources.includes(source)
+                    ? "faded"
+                    : ""
                 }`}
               />
             </div>
@@ -182,17 +163,34 @@ function AttributeSelector(props: IAttributeSelector) {
     );
   };
 
+  const handleSetAttribute = (newAttribute: string[]) => {
+    if (maxSelections) {
+      if (newAttribute.length > maxSelections) {
+        PopUpMessage({
+          type: "warning",
+          message: `You can select a maximum of ${maxSelections} items.`,
+          placement: "topEnd",
+        });
+        return;
+      } else {
+        setAttribute(newAttribute);
+      }
+    } else {
+      setAttribute(newAttribute);
+    }
+  };
+
   if (loading) return <></>;
 
   return (
-    <div className="tol-filters-selector">
+    <div className="tol-attribute-selector">
       <MultipleSelect
+        className="tol-attribute-selector-select"
         block
         noSelectAll
         data={Object.keys(getFlattenedMetaData(entityMeta, endpoint)).filter(
           (key) => {
             const meta = getFlattenedMetaData(entityMeta, endpoint)[key];
-            console.log(meta);
             const typeMatch =
               !allowedTypes || allowedTypes.includes(meta.python_type);
             const sourceMatch =
@@ -201,15 +199,19 @@ function AttributeSelector(props: IAttributeSelector) {
                 ? !sources.includes(meta.source)
                 : selectedSources.includes(meta.source));
             const recommendedMatch = meta.authoritative === true;
-        
-            return (recommendedOn ? recommendedMatch : true) && typeMatch && sourceMatch;
+
+            return (
+              (recommendedOn ? recommendedMatch : true) &&
+              typeMatch &&
+              sourceMatch
+            );
           }
         )}
         placeholder={placeholder}
         value={attribute}
-        setValue={setAttribute}
+        setValue={handleSetAttribute}
         renderMenuItem={(l: any, index: number) => renderMenuItem(l, index)}
-        renderValue={renderValue}
+        renderValue={renderTotalSelectedItems}
         disabledItemValues={disabledValues && [...Object.keys(disabledValues)]}
         searchBy={searchBy}
         sticky={sticky}
@@ -217,19 +219,19 @@ function AttributeSelector(props: IAttributeSelector) {
       />
       {recommendedFilterAvailable && (
         <CheckboxGroup
-          style={{ marginTop: "10px", marginBottom: "-20px" }}
-          name="recommended-tick-filter"
           key="recommended-tick-filter"
+          className="attribute-selector-checkbox"
+          name="recommended-tick-filter"
         >
           {[
             <Checkbox
+              key="recommended-tick-filter"
               onClick={() => {
                 setRecommendedOn(!recommendedOn);
               }}
               checked={recommendedOn}
-              key="recommended-tick-filter"
             >
-              Tick to show only recommended properties.
+              Tick to show only recommended (authoritative) properties.
             </Checkbox>,
           ]}
         </CheckboxGroup>
@@ -239,12 +241,3 @@ function AttributeSelector(props: IAttributeSelector) {
 }
 
 export default AttributeSelector;
-
-//TODO: Allow search by source, add sources across the top?
-//TODO: Add recommended filter tick button
-//TODO: set limit on number of selections
-//TODO: Add tooltip to what is recommended data
-//TODO: Make it so filter by source sources fade out when 
-// not selected and make them uniform with the other source tags
-// TODO: Move styles to stylesheet
-// TODO: add in source tag component

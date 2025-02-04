@@ -37,6 +37,7 @@ interface Props {
   searchBy?: (keyword: string, label: any, item: any) => boolean;
   caretAs?: any;
   renderExtraFooter?: any;
+  className?: string;
 }
 
 function MultipleSelect(props: Props) {
@@ -61,7 +62,8 @@ function MultipleSelect(props: Props) {
     disabledItemValues,
     searchBy,
     caretAs,
-    renderExtraFooter
+    renderExtraFooter,
+    className,
   } = props;
   const block = isPropDefined(props.block);
 
@@ -119,6 +121,7 @@ function MultipleSelect(props: Props) {
           disabledItemValues={disabledItemValues}
           searchBy={searchBy}
           caretAs={caretAs}
+          className={className}
         />
       </span>
     </>

@@ -12,6 +12,7 @@ interface Props {
   type: messageType;
   message: string;
   header?: boolean;
+  placement?: string;
   onClose?: () => void;
 }
 
@@ -39,7 +40,7 @@ const getDuration = (type: Props["type"]) => {
 };
 
 const PopUpMessage = (props: Props) => {
-  const { type, message, header, onClose } = props;
+  const { type, message, placement = "bottomEnd", header, onClose } = props;
   toaster.push(
     <StaticMessage
       message={message}
@@ -50,7 +51,7 @@ const PopUpMessage = (props: Props) => {
     />,
     {
       duration: getDuration(type),
-      placement: "bottomEnd",
+      placement: placement,
     }
   );
 };

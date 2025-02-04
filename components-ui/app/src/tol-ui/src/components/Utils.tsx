@@ -40,3 +40,19 @@ export function getDisplayName(entityMeta: any, endpoint, attribute: string) {
     normaliseCaps(attribute)
   );
 }
+
+export function filterBySource(
+  source: string,
+  selectedSources: string[],
+  setSelectedSources: any
+) {
+  if (source === "all") {
+    setSelectedSources([]);
+  } else if (source === "undefined") {
+    setSelectedSources(["undefined"]);
+  } else if (selectedSources.includes(source)) {
+    setSelectedSources(selectedSources.filter((s) => s !== source));
+  } else {
+    setSelectedSources([...selectedSources, source]);
+  }
+}

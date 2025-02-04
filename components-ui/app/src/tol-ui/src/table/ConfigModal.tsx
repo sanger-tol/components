@@ -39,8 +39,6 @@ function ConfigModal(props: Props) {
     }
   };
 
-  console.log(fieldMeta);
-
   const fieldMetaUpdatedByContents = () => {
     const updatedFieldMeta: FieldMeta = initialiseFieldMeta();
     // loop through columns and set active/inactive
