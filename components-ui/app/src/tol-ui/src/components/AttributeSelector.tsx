@@ -74,27 +74,34 @@ function AttributeSelector(props: IAttributeSelector) {
     displayName: string,
     source: string,
     key: string,
-    authoritative: boolean
+    authoritative: boolean,
+    description: string
   ) => {
     const disabled =
       disabledValues && Object.keys(disabledValues).includes(key);
     const tooltipContents = tooltipContent || "disabled";
 
     return (
-      <div key={key} className="attribute-selector-menu-item-container">
-        <div className="attribute-selector-menu-item-inner-container">
-          {disabled ? (
-            <span className="attribute-selector-tooltip">
-              {tooltipContent && (
-                <InfoTooltip disableMarkdown contents={tooltipContents} />
-              )}
-            </span>
-          ) : (
-            <></>
-          )}
+      <div key={key} className="tol-attribute-selector-menu-item-container">
+        <div className="tol-attribute-selector-menu-item-inner-container">
           <div>
-            <p className="attribute-selector-display-name">{displayName}</p>
-            <p className="attribute-selector-display-key">
+            <p className="tol-attribute-selector-display-name">
+              {displayName}{" "}
+              {disabled ? (
+                <span className="tol-attribute-selector-tooltip">
+                  {tooltipContent && (
+                    <InfoTooltip disableMarkdown contents={tooltipContents} />
+                  )}
+                </span>
+              ) : description ? (
+                <span className="tol-attribute-selector-tooltip">
+                  <InfoTooltip disableMarkdown contents={description} />
+                </span>
+              ) : (
+                <></>
+              )}
+            </p>
+            <p className="tol-attribute-selector-display-key">
               {authoritative === true && <Icon icon="star" />} {key}
             </p>
           </div>
@@ -113,7 +120,8 @@ function AttributeSelector(props: IAttributeSelector) {
           metaData["display_name"] ?? normaliseCaps(label),
           metaData["source"],
           label,
-          metaData["authoritative"]
+          metaData["authoritative"],
+          metaData["description"]
         )}
       </div>
     );
@@ -135,13 +143,13 @@ function AttributeSelector(props: IAttributeSelector) {
     const hasActiveSource = selectedSources.length > 0;
 
     return (
-      <div className="attribute-selector-search-by-source-container">
+      <div className="tol-attribute-selector-search-by-source-container">
         <p>Filter by source:</p>
-        <div className="attribute-selector-sources">
+        <div className="tol-attribute-selector-sources">
           {sources.map((source: string, index: number) => (
             <div
               key={index}
-              className="attribute-selector-sources-inner-container"
+              className="tol-attribute-selector-sources-inner-container"
               onClick={() =>
                 filterBySource(source, selectedSources, setSelectedSources)
               }
@@ -196,7 +204,8 @@ function AttributeSelector(props: IAttributeSelector) {
             const sourceMatch =
               selectedSources.length === 0 ||
               (selectedSources.includes("undefined")
-                ? !sources.includes(meta.source)
+                ? !sources.includes(meta.source) ||
+                  selectedSources.includes(meta.source)
                 : selectedSources.includes(meta.source));
             const recommendedMatch = meta.authoritative === true;
 
@@ -220,7 +229,7 @@ function AttributeSelector(props: IAttributeSelector) {
       {recommendedFilterAvailable && (
         <CheckboxGroup
           key="recommended-tick-filter"
-          className="attribute-selector-checkbox"
+          className="tol-attribute-selector-checkbox"
           name="recommended-tick-filter"
         >
           {[

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Drawer } from "../general";
+import { Drawer, Modal } from "../general";
 import { IConfigDrawer } from "./interfaces";
 import { AttributeSelector, SourceTag } from "./index";
 import { Button, Icon, env } from "../index";
@@ -13,14 +13,22 @@ import { normaliseCaps } from "../general/Utils";
 import { getSourceData } from "./Utils";
 import { FieldMeta, initialiseFieldMeta } from "../table/Field";
 
+const TRANSITION_TIME: number = 300;
+
 function ConfigDrawer(props: IConfigDrawer) {
   const { baseUrl, open, setOpen, title, fieldMeta, endpoint, onConfigSave } =
     props;
   const [attribute, setAttribute] = useState<string[]>(
     fieldMeta["order"]["active"]
   );
+  const [initialAttributes, _] = useState<string[]>(
+    fieldMeta["order"]["active"]
+  );
+  const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
+
+  console.log(initialAttributes.length);
 
   const moveAttributeUp = (index: number) => {
     if (index === 0) return;
@@ -31,7 +39,7 @@ function ConfigDrawer(props: IConfigDrawer) {
     ];
     setAttribute(newAttributes);
     setRecentlyMoved(index - 1);
-    setTimeout(() => setRecentlyMoved(null), 300);
+    setTimeout(() => setRecentlyMoved(null), TRANSITION_TIME);
   };
 
   const moveAttributeDown = (index: number) => {
@@ -43,7 +51,7 @@ function ConfigDrawer(props: IConfigDrawer) {
     ];
     setAttribute(newAttributes);
     setRecentlyMoved(index + 1);
-    setTimeout(() => setRecentlyMoved(null), 300);
+    setTimeout(() => setRecentlyMoved(null), TRANSITION_TIME);
   };
 
   const removeAttribute = (index: number) => {
@@ -51,7 +59,7 @@ function ConfigDrawer(props: IConfigDrawer) {
     setTimeout(() => {
       setAttribute(attribute.filter((_, i) => i !== index));
       setDeletingIndex(null);
-    }, 300);
+    }, TRANSITION_TIME);
   };
 
   const updateMeta = (
@@ -91,29 +99,28 @@ function ConfigDrawer(props: IConfigDrawer) {
     const source = getSourceData(fieldMeta, att) ?? "";
     return (
       <div
-        className={`config-drawer-selected-column ${
+        key={`${att}-${index}`}
+        className={`tol-config-drawer-selected-column ${
           recentlyMoved === index ? "highlight" : ""
         } ${deletingIndex === index ? "deleting" : ""}`}
-        key={`${att}-${index}`}
-        style={{ transition: "all 0.3s ease" }} //TODO:
       >
         {normaliseCaps(att)}
-        <div style={{ display: "flex" }}>
+        <div className="tol-config-drawer-btn-array">
           {source && <SourceTag source={source} />}
           <div
-            className="active-column-remove-btn"
+            className={"tol-active-column-btn first"}
             onClick={() => moveAttributeUp(index)}
           >
             <Icon icon="arrow-up" size="lg" />
           </div>
           <div
-            className="active-column-remove-btn"
+            className={"tol-active-column-btn"}
             onClick={() => moveAttributeDown(index)}
           >
             <Icon icon="arrow-down" size="lg" />
           </div>
           <div
-            className="active-column-remove-btn"
+            className="tol-active-column-btn"
             onClick={() => removeAttribute(index)}
           >
             <Icon icon="close" size="lg" />
@@ -121,6 +128,98 @@ function ConfigDrawer(props: IConfigDrawer) {
         </div>
       </div>
     );
+  };
+
+  const unsavedChangesModal = () => {
+    return (
+      <div>
+        <Modal
+          open={openSaveModal}
+          setOpen={setOpenSaveModal}
+          size="sm"
+          children={modalContent}
+          closeButton={false}
+          actionButton={modalButtons}
+        />
+      </div>
+    );
+  };
+
+  const modalContent = (
+    <div>
+      <h3>Unsaved Changes</h3>
+      <p>
+        You have an unsaved configuration, are you sure you wish to close
+        without saving?
+      </p>
+    </div>
+  );
+
+  const cancelButton = (text?: string) => {
+    return (
+      <Button
+        text={text ?? "Cancel"}
+        type="error"
+        onClick={() => setOpenSaveModal(false)}
+      />
+    );
+  };
+
+  const discardButton = (text?: string) => {
+    return (
+      <Button
+        text={text ?? "Discard"}
+        type="warning"
+        onClick={() => confirmDiscard()}
+      />
+    );
+  };
+
+  const saveButton = (text?: string) => {
+    return (
+      <Button
+        text={text ?? "Save"}
+        type="success"
+        onClick={() => {
+          saveConfig(), setOpenSaveModal(false);
+        }}
+      />
+    );
+  };
+
+  const modalButtons = (
+    <div
+      className="tol-config-drawer-modal-btns"
+      style={{ justifyContent: "flex-end" }}
+    >
+      {cancelButton()}
+      {discardButton()}
+      {saveButton()}
+    </div>
+  );
+
+  const drawerButtons = (
+    <div
+      className="tol-config-drawer-modal-btns"
+      style={{ justifyContent: "space-between" }}
+    >
+      <div>{saveButton("Save and Close")}</div>
+      <div>{discardButton("Discard and Close")}</div>
+    </div>
+  );
+
+  const handleCloseDrawer = () => {
+    if (initialAttributes.length !== attribute.length) {
+      setOpenSaveModal(true);
+    } else {
+      setOpen(false);
+    }
+  };
+
+  const confirmDiscard = () => {
+    setAttribute(initialAttributes);
+    setOpenSaveModal(false);
+    setOpen(false);
   };
 
   const attSelector = (
@@ -141,42 +240,36 @@ function ConfigDrawer(props: IConfigDrawer) {
         />
       </div>
       <div>
-        <h6 style={{ borderBottom: "1px solid grey", paddingBottom: "5px" }}>
-          Active Columns:
-        </h6>
-        {attribute.map((att, index) => (
-          <div
-            key={`${att}-${index}`}
-            style={{ display: "flex", justifyContent: "space-between" }} //TODO:
-          >
-            {selectedColumn(att, index)}
-          </div>
-        ))}
+        <h6 className="tol-config-drawer-column-title">Active Columns:</h6>
+        <div className={"tol-config-drawer-column-container"}>
+          {attribute.map((att, index) => (
+            <div
+              key={`${att}-${index}`}
+              className="tol-config-drawer-column-contents"
+            >
+              {selectedColumn(att, index)}
+            </div>
+          ))}
+        </div>
       </div>
       <div>
-        <Button
-          text="Save Columns"
-          onClick={() => saveConfig()}
-          type="success"
-          className="config-drawer-save-button"
-        />
+        <div className="tol-config-drawer-save-button">{drawerButtons}</div>
       </div>
     </div>
   );
 
   return (
     <div>
+      {unsavedChangesModal()}
       <Drawer
         title={title}
         open={open}
         setOpen={setOpen}
         children={attSelector}
+        onClose={handleCloseDrawer}
       />
     </div>
   );
 }
 
 export default ConfigDrawer;
-
-
-//TODO: if only one column remains, it has to stay.

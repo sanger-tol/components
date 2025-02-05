@@ -38,6 +38,8 @@ interface Props {
   caretAs?: any;
   renderExtraFooter?: any;
   className?: string;
+  onExit?: any;
+  onExiting?: any;
 }
 
 function MultipleSelect(props: Props) {

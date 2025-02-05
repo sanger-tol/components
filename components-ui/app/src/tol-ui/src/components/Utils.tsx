@@ -49,10 +49,16 @@ export function filterBySource(
   if (source === "all") {
     setSelectedSources([]);
   } else if (source === "undefined") {
-    setSelectedSources(["undefined"]);
-  } else if (selectedSources.includes(source)) {
-    setSelectedSources(selectedSources.filter((s) => s !== source));
+    if (selectedSources.includes("undefined")) {
+      setSelectedSources(selectedSources.filter((s) => s !== "undefined"));
+    } else {
+      setSelectedSources([...selectedSources, "undefined"]);
+    }
   } else {
-    setSelectedSources([...selectedSources, source]);
+    if (selectedSources.includes(source)) {
+      setSelectedSources(selectedSources.filter((s) => s !== source));
+    } else {
+      setSelectedSources([...selectedSources, source]);
+    }
   }
 }

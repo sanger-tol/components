@@ -40,30 +40,6 @@
   margin-bottom: 0;
 }
 
-.active-column-remove-btn{
-  margin-left: 5px;
-  width: 20px;
-  height: 20px;
-  text-align: center;
-  cursor: pointer;
-}
-
-.config-drawer-selected-column {
-  transition: all 0.3s ease;
-}
-
-.config-drawer-selected-column.highlight {
-  border: 1px solid var(--tol-primary-light);
-}
-
-.config-drawer-selected-column.deleting {
-  opacity: 0;
-  height: 0;
-  margin: 0;
-  padding: 0;
-  transition: opacity 0.3s ease, height 0.3s ease, margin 0.3s ease, padding 0.3s ease;
-}
-
 .tol-dnd-item {
   background-color: var(--tol-bg);
   margin: 4px;

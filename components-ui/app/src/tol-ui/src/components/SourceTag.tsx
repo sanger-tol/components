@@ -14,7 +14,7 @@ function SourceTag(props: ISourceTag) {
 
   return (
     <div
-      className={`customise-config-source-no-float ${className}`}
+      className={`tol-customise-config-source-no-float ${className}`}
       // @ts-ignore
       style={{
         "--config-source-bg-color": sourceColour,
