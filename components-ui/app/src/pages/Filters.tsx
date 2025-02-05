@@ -24,17 +24,21 @@ function Filters() {
   const speciesZone = useZone({
     endpoint: 'species',
     baseUrl: env.TOL_DATA,
+    filter: {
+      and_: {
+        'sts_family': {
+          in_list: {
+            value: ['Hylocomiaceae', 'Crabronidae'],
+            negate: true
+          }
+        },
+      }
+    },
     components: [
       {
         id: 'filter-one',
         filter: {
           and_: {
-            'sts_family': {
-              in_list: {
-                value: ['Hylocomiaceae', 'Crabronidae'],
-                negate: true
-              }
-            },
             'sts_scientific_name': {
               contains: {
                 value: 'Rh'
