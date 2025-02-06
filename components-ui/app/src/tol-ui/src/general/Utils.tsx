@@ -196,7 +196,7 @@ export function getFlattenedMetaData(
     : entityMeta?.flatAttributes?.[endpoint];
 }
 
-export function getDisplayName(entityMeta: any, endpoint, attribute: string) {
+export function getDisplayName(entityMeta: any, endpoint: string, attribute: string) {
   return (
     entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.display_name ||
     normaliseCaps(attribute)

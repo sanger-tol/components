@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Drawer } from "../general";
-import {IFilterDrawer} from "./interfaces"
+import {IFilterDrawer} from "../models/table";
 
 function FilterDrawer(props: IFilterDrawer) {
   const { open, setOpen } = props;

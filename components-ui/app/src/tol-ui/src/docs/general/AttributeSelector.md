@@ -1,9 +1,11 @@
 # AttributeSelector Component
 
 ## Description
+
 The `AttributeSelector` component is a React component used to select attributes from a list of available options. It provides various customization options such as filtering by source, displaying tooltips, and handling multiple selections.
 
 ## Props
+
 The `AttributeSelector` component accepts the following props:
 
 - `additionalPopulatedFieldData` (any, optional): Additional data for populated fields.
@@ -24,6 +26,7 @@ The `AttributeSelector` component accepts the following props:
 - `tooltipContent` (string, optional): The content for the tooltip, if an item is disabled.
 
 ## Usage
+
 ```tsx
 import { AttributeSelector } from './path/to/AttributeSelector';
 
@@ -50,8 +53,9 @@ function MyComponent() {
 ```
 
 ## Implementation
-- The AttributeSelector component uses several hooks and utility functions to manage its state and behavior. 
-- It initializes with a loading state and fetches metadata from the provided endpoint. 
-- The component allows filtering attributes by source and supports multiple selections. 
-- It also provides options to display tooltips and handle additional populated field data. 
+
+- The AttributeSelector component uses several hooks and utility functions to manage its state and behavior.
+- It initializes with a loading state and fetches metadata from the provided endpoint.
+- The component allows filtering attributes by source and supports multiple selections.
+- It also provides options to display tooltips and handle additional populated field data.
 - The component's state includes loading status, entity metadata, recommended filter status, available sources, and selected sources.

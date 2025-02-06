@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { IColumnConfigDrawer } from "../interfaces/table";
+import { IColumnConfigDrawer } from "../models/table";
 import {
   Button,
   Icon,

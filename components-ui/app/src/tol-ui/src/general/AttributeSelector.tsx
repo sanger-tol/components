@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Checkbox, CheckboxGroup } from "rsuite";
 import { useEffect, useState } from "react";
-import { IAttributeSelector } from "../interfaces/general";
+import { IAttributeSelector } from "../models/general";
 import {
   TsDataSource,
   MultipleSelect,

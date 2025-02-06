@@ -1,9 +1,11 @@
 # ColumnConfigDrawer Component
 
 ## Description
+
 `ColumnConfigDrawer` is a React component that provides a user interface for configuring table columns. It allows users to reorder, remove, and save the configuration of table columns. It is opened via the `burger icon` button on the table and pulls out from the right side of the screen. It is used in the `Table` component. It also shows a modal if the user has unsaved data.
 
 ## Props
+
 - `baseUrl` (string, optional): The base URL for API requests.
 - `open` (boolean, `useState`): A flag indicating whether the drawer is open.
 - `setOpen` (function, `useState`): A function to set the open state of the drawer.
@@ -15,32 +17,33 @@
 - `sticky` (boolean, optional): A flag to make the selected items of the `AttributeSelector` sticky.
 
 ## Usage
+
 ```tsx
-import React, { useState } from 'react';
-import ColumnConfigDrawer from './ColumnConfigDrawer';
-import { FieldMeta } from '../table/Field';
+import React, { useState } from "react";
+import ColumnConfigDrawer from "./ColumnConfigDrawer";
+import { FieldMeta } from "../table/Field";
 
 // Example of field meta layout
 const fieldMeta: FieldMeta = {
   fields: {
-    name: { label: 'Name', type: 'string' },
-    age: { label: 'Age', type: 'number' },
-    email: { label: 'Email', type: 'string' },
-    address: { label: 'Address', type: 'string' },
-    phone: { label: 'Phone', type: 'string' }
+    name: { label: "Name", type: "string" },
+    age: { label: "Age", type: "number" },
+    email: { label: "Email", type: "string" },
+    address: { label: "Address", type: "string" },
+    phone: { label: "Phone", type: "string" },
   },
   order: {
-    active: ['name', 'age', 'email'],
-    inactive: ['address', 'phone']
-  }
+    active: ["name", "age", "email"],
+    inactive: ["address", "phone"],
+  },
 };
 
 // Example of ColumnConfigDrawer in a table
 function Table() {
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const handleConfigSave = (updatedFieldMeta: FieldMeta) => {
-    console.log('Configuration saved:', updatedFieldMeta);
+    console.log("Configuration saved:", updatedFieldMeta);
   };
 
   return (
@@ -55,7 +58,7 @@ function Table() {
         onConfigSave={handleConfigSave}
         endpoint="/save-config"
       />
-    </div> 
+    </div>
   );
 }
 
@@ -63,8 +66,9 @@ export default Table;
 ```
 
 ## Implementation
-- The `ColumnConfigDrawer` component manages the state of the table column configuration. 
-- These functions update the state and triggers animations using timeouts. 
+
+- The `ColumnConfigDrawer` component manages the state of the table column configuration.
+- These functions update the state and triggers animations using timeouts.
 - The component also includes a callback function to save the configuration when changes are made, and will update the table.
 - It uses React hooks to handle the state of attributes, the open state of the save modal and the indices of recently moved or deleted attributes.
-- The component provides functions to move attributes up or down in the list and to remove attributes. 
+- The component provides functions to move attributes up or down in the list and to remove attributes.
