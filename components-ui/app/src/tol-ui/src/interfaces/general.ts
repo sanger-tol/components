@@ -4,24 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { FieldMeta } from "../table/Field";
-
-export interface IFilterDrawer {
-  open: boolean;
-  setOpen: () => void;
-}
-
-export interface IConfigDrawer {
-  baseUrl?: string;
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  title: string;
-  fieldMeta: FieldMeta;
-  displaySource?: boolean;
-  onConfigSave: (fieldMeta: FieldMeta) => void;
-  endpoint: string;
-  sticky?: boolean;
-}
+// Keep in alphabetical order
 
 export interface IAttributeSelector {
   endpoint: string;
@@ -44,6 +27,6 @@ export interface IAttributeSelector {
 }
 
 export interface ISourceTag {
-    source: string;
-    className?: string;
+  source: string;
+  className?: string;
 }

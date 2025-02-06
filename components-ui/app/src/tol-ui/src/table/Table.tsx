@@ -25,8 +25,7 @@ import { PopUpMessage } from '../index';
 import { FieldMeta } from './Field';
 import { Zone } from '../board';
 import { DropdownButtonProps } from '../board/components/DropdownButtons';
-import {ConfigDrawer} from '../components/index';
-import ConfigModal from './ConfigModal';
+import ConfigDrawer  from './ConfigDrawer';
 
 
 export type NumRows = 25 | 50 | 100 | 1000;
@@ -268,17 +267,6 @@ function Table (props: Props) {
               outline
             />
           }
-          {/* {open &&
-            <ConfigModal
-              tableId={id}
-              fieldMeta={fieldMeta}
-              open={open}
-              pageSize={pageSize}
-              setOpen={setOpen}
-              onModalSave={onModalSave}
-              displaySource={displaySource}
-            />
-          } */}
           {<ConfigDrawer 
               open={open} 
               setOpen={setOpen} 

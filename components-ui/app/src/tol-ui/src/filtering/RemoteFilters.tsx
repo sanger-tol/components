@@ -11,8 +11,8 @@ import { defineZone } from "../board/Utils";
 import Filter from "./Filter";
 import { IFilter } from "../models";
 import { Button, useEffectUpdate } from "..";
-import { AttributeSelector } from "../components";
-import { getDisplayName } from "../components/Utils";
+import { AttributeSelector } from "../general";
+import { getDisplayName } from "../general/Utils";
 
 export interface Props {
   filters?: IFilter;

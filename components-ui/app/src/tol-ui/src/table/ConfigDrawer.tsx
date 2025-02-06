@@ -5,13 +5,18 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Drawer, Modal } from "../general";
-import { IConfigDrawer } from "./interfaces";
-import { AttributeSelector, SourceTag } from "./index";
-import { Button, Icon, env } from "../index";
-import { normaliseCaps } from "../general/Utils";
-import { getSourceData } from "./Utils";
-import { FieldMeta, initialiseFieldMeta } from "../table/Field";
+import { IConfigDrawer } from "../interfaces/table";
+import {
+  Button,
+  Icon,
+  env,
+  AttributeSelector,
+  SourceTag,
+  Drawer,
+  Modal,
+} from "../index";
+import { normaliseCaps, getSourceData } from "../general/Utils";
+import { FieldMeta, initialiseFieldMeta } from "./Field";
 
 const TRANSITION_TIME: number = 300;
 

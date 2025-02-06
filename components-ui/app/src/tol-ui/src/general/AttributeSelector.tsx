@@ -6,22 +6,22 @@ SPDX-License-Identifier: MIT
 
 import { Checkbox, CheckboxGroup } from "rsuite";
 import { useEffect, useState } from "react";
-import { IAttributeSelector } from "./interfaces";
+import { IAttributeSelector } from "../interfaces/general";
 import {
   TsDataSource,
   MultipleSelect,
   InfoTooltip,
   Icon,
   PopUpMessage,
+  SourceTag,
 } from "../index";
-import { normaliseCaps } from "../general/Utils";
 import {
   getFlattenedMetaData,
   getDisplayName,
   getAttributeSources,
   filterBySource,
+  normaliseCaps,
 } from "./Utils";
-import SourceTag from "./SourceTag";
 
 function AttributeSelector(props: IAttributeSelector) {
   const {
