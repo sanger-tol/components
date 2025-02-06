@@ -25,7 +25,7 @@ import { PopUpMessage } from '../index';
 import { FieldMeta } from './Field';
 import { Zone } from '../board';
 import { DropdownButtonProps } from '../board/components/DropdownButtons';
-import ConfigDrawer  from './ConfigDrawer';
+import ColumnConfigDrawer  from './ColumnConfigDrawer';
 
 
 export type NumRows = 25 | 50 | 100 | 1000;
@@ -267,7 +267,7 @@ function Table (props: Props) {
               outline
             />
           }
-          {<ConfigDrawer 
+          {<ColumnConfigDrawer 
               open={open} 
               setOpen={setOpen} 
               title={"Add/Remove Table Columns"}

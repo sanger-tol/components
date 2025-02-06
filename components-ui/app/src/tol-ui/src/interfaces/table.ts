@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { FieldMeta } from "../table/Field";
 
-export interface IConfigDrawer {
+export interface IColumnConfigDrawer {
   baseUrl?: string;
   open: boolean;
   setOpen: (open: boolean) => void;

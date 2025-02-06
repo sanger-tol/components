@@ -25,21 +25,22 @@ import {
 
 function AttributeSelector(props: IAttributeSelector) {
   const {
-    endpoint,
-    baseUrl,
-    disabledValues,
-    placeholder,
+    additionalPopulatedFieldData,
     allowedTypes,
     attribute,
-    setAttribute,
-    tooltipContent,
-    populatedFieldType = "value",
-    additionalPopulatedFieldData,
-    recommendedFilterAvailable,
+    baseUrl,
+    disabledValues,
+    displaySource,
+    endpoint,
     numPopulatedFields,
-    sticky,
-    renderSearchBySource,
     maxSelections,
+    placeholder,
+    populatedFieldType = "value",
+    recommendedFilterAvailable,
+    renderSearchBySource,
+    setAttribute,
+    sticky,
+    tooltipContent,
   } = props;
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
@@ -85,7 +86,7 @@ function AttributeSelector(props: IAttributeSelector) {
       <div key={key} className="tol-attribute-selector-menu-item-container">
         <div className="tol-attribute-selector-menu-item-inner-container">
           <div>
-            <p className="tol-attribute-selector-display-name">
+            <div className="tol-attribute-selector-display-name">
               {displayName}{" "}
               {disabled ? (
                 <span className="tol-attribute-selector-tooltip">
@@ -100,13 +101,13 @@ function AttributeSelector(props: IAttributeSelector) {
               ) : (
                 <></>
               )}
-            </p>
+            </div>
             <p className="tol-attribute-selector-display-key">
               {authoritative === true && <Icon icon="star" />} {key}
             </p>
           </div>
         </div>
-        {source && <SourceTag source={source} />}
+        {displaySource && (source && <SourceTag source={source} />)}
       </div>
     );
   };
@@ -228,7 +229,7 @@ function AttributeSelector(props: IAttributeSelector) {
       />
       {recommendedFilterAvailable && (
         <CheckboxGroup
-          key="recommended-tick-filter"
+          key="recommended-tick-filter-group"
           className="tol-attribute-selector-checkbox"
           name="recommended-tick-filter"
         >
@@ -240,8 +241,10 @@ function AttributeSelector(props: IAttributeSelector) {
               }}
               checked={recommendedOn}
             >
-              Tick to show only recommended (authoritative) properties.
-            </Checkbox>,
+              <span onClick={(e) => e.stopPropagation()}>
+                Tick to show only recommended (authoritative) properties.
+              </span>
+            </Checkbox>
           ]}
         </CheckboxGroup>
       )}

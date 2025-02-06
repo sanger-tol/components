@@ -9,7 +9,6 @@ import { IConfigDrawer } from "../interfaces/table";
 import {
   Button,
   Icon,
-  env,
   AttributeSelector,
   SourceTag,
   Drawer,
@@ -20,41 +19,39 @@ import { FieldMeta, initialiseFieldMeta } from "./Field";
 
 const TRANSITION_TIME: number = 300;
 
-function ConfigDrawer(props: IConfigDrawer) {
+function ColumnConfigDrawer(props: IConfigDrawer) {
   const { baseUrl, open, setOpen, title, fieldMeta, endpoint, onConfigSave } =
     props;
-  const [attribute, setAttribute] = useState<string[]>(
+  const [attributes, setAttributes] = useState<string[]>(
     fieldMeta["order"]["active"]
   );
-  const [initialAttributes, _] = useState<string[]>(
+  const [initialAttributes, setInitialAttributes] = useState<string[]>(
     fieldMeta["order"]["active"]
   );
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
 
-  console.log(initialAttributes.length);
-
   const moveAttributeUp = (index: number) => {
     if (index === 0) return;
-    const newAttributes = [...attribute];
+    const newAttributes = [...attributes];
     [newAttributes[index - 1], newAttributes[index]] = [
       newAttributes[index],
       newAttributes[index - 1],
     ];
-    setAttribute(newAttributes);
+    setAttributes(newAttributes);
     setRecentlyMoved(index - 1);
     setTimeout(() => setRecentlyMoved(null), TRANSITION_TIME);
   };
 
   const moveAttributeDown = (index: number) => {
-    if (index === attribute.length - 1) return;
-    const newAttributes = [...attribute];
+    if (index === attributes.length - 1) return;
+    const newAttributes = [...attributes];
     [newAttributes[index + 1], newAttributes[index]] = [
       newAttributes[index],
       newAttributes[index + 1],
     ];
-    setAttribute(newAttributes);
+    setAttributes(newAttributes);
     setRecentlyMoved(index + 1);
     setTimeout(() => setRecentlyMoved(null), TRANSITION_TIME);
   };
@@ -62,7 +59,7 @@ function ConfigDrawer(props: IConfigDrawer) {
   const removeAttribute = (index: number) => {
     setDeletingIndex(index);
     setTimeout(() => {
-      setAttribute(attribute.filter((_, i) => i !== index));
+      setAttributes(attributes.filter((_, i) => i !== index));
       setDeletingIndex(null);
     }, TRANSITION_TIME);
   };
@@ -81,12 +78,12 @@ function ConfigDrawer(props: IConfigDrawer) {
   const fieldMetaUpdatedByContents = () => {
     const updatedFieldMeta: FieldMeta = initialiseFieldMeta();
 
-    attribute.forEach((key) => {
+    attributes.forEach((key) => {
       updateMeta(key, updatedFieldMeta, false);
     });
 
     for (const key in fieldMeta.data) {
-      if (!attribute.includes(key)) {
+      if (!attributes.includes(key)) {
         updateMeta(key, updatedFieldMeta, true);
       }
     }
@@ -97,6 +94,7 @@ function ConfigDrawer(props: IConfigDrawer) {
   const saveConfig = () => {
     const updatedFieldMeta = fieldMetaUpdatedByContents();
     onConfigSave(updatedFieldMeta);
+    setInitialAttributes(attributes);
     setOpen(!open);
   };
 
@@ -214,7 +212,7 @@ function ConfigDrawer(props: IConfigDrawer) {
   );
 
   const handleCloseDrawer = () => {
-    if (initialAttributes.length !== attribute.length) {
+    if (initialAttributes.length !== attributes.length) {
       setOpenSaveModal(true);
     } else {
       setOpen(false);
@@ -222,7 +220,7 @@ function ConfigDrawer(props: IConfigDrawer) {
   };
 
   const confirmDiscard = () => {
-    setAttribute(initialAttributes);
+    setAttributes(initialAttributes);
     setOpenSaveModal(false);
     setOpen(false);
   };
@@ -233,9 +231,9 @@ function ConfigDrawer(props: IConfigDrawer) {
         <AttributeSelector
           endpoint={endpoint}
           placeholder="Select columns to display..."
-          baseUrl={baseUrl || env.TOL_DATA} //TODO: REMOVE!
-          attribute={attribute}
-          setAttribute={setAttribute}
+          baseUrl={baseUrl}
+          attribute={attributes}
+          setAttribute={setAttributes}
           disabledValues={null}
           numPopulatedFields={0}
           populatedFieldType={"column"}
@@ -247,7 +245,7 @@ function ConfigDrawer(props: IConfigDrawer) {
       <div>
         <h6 className="tol-config-drawer-column-title">Active Columns:</h6>
         <div className={"tol-config-drawer-column-container"}>
-          {attribute.map((att, index) => (
+          {attributes.map((att, index) => (
             <div
               key={`${att}-${index}`}
               className="tol-config-drawer-column-contents"
@@ -256,6 +254,11 @@ function ConfigDrawer(props: IConfigDrawer) {
             </div>
           ))}
         </div>
+        {attributes.length === 0 && (
+          <p>
+            <i>No active columns. Select columns to display...</i>
+          </p>
+        )}
       </div>
       <div>
         <div className="tol-config-drawer-save-button">{drawerButtons}</div>
@@ -277,4 +280,4 @@ function ConfigDrawer(props: IConfigDrawer) {
   );
 }
 
-export default ConfigDrawer;
+export default ColumnConfigDrawer;

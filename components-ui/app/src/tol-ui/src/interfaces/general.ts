@@ -7,26 +7,25 @@ SPDX-License-Identifier: MIT
 // Keep in alphabetical order
 
 export interface IAttributeSelector {
-  endpoint: string;
-  placeholder: string;
-  populatedFieldType?: string; // ie. "filter" or "column"
-  baseUrl?: string;
+  additionalPopulatedFieldData?: any;
   allowedTypes?: string[]; // these need to be python types - 'int', 'str', etc...
   attribute: string[];
-  setAttribute: (attribute: string[]) => void;
+  baseUrl?: string;
   disabledValues?: any;
-  numPopulatedFields?: number;
-  tooltipContent?: string;
-  setEntityMeta?: (entityMeta: any) => void;
-  additionalPopulatedFieldData?: any;
-  recommendedFilterAvailable?: boolean;
   displaySource?: boolean;
-  sticky?: boolean;
-  renderSearchBySource?: boolean;
+  endpoint: string;
   maxSelections?: number;
+  numPopulatedFields?: number;
+  placeholder: string;
+  populatedFieldType?: string; // ie. "filter" or "column"
+  recommendedFilterAvailable?: boolean;
+  renderSearchBySource?: boolean;
+  setAttribute: (attribute: string[]) => void;
+  sticky?: boolean;
+  tooltipContent?: string;
 }
 
 export interface ISourceTag {
-  source: string;
   className?: string;
+  source: string;
 }
