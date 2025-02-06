@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { IConfigDrawer } from "../interfaces/table";
+import { IColumnConfigDrawer } from "../interfaces/table";
 import {
   Button,
   Icon,
@@ -19,7 +19,7 @@ import { FieldMeta, initialiseFieldMeta } from "./Field";
 
 const TRANSITION_TIME: number = 300;
 
-function ColumnConfigDrawer(props: IConfigDrawer) {
+function ColumnConfigDrawer(props: IColumnConfigDrawer) {
   const { baseUrl, open, setOpen, title, fieldMeta, endpoint, onConfigSave } =
     props;
   const [attributes, setAttributes] = useState<string[]>(

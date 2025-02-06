@@ -8,7 +8,7 @@ SPDX-License-Identifier: MIT
 
 export interface IAttributeSelector {
   additionalPopulatedFieldData?: any;
-  allowedTypes?: string[]; // these need to be python types - 'int', 'str', etc...
+  allowedTypes?: string[];
   attribute: string[];
   baseUrl?: string;
   disabledValues?: any;
@@ -17,7 +17,7 @@ export interface IAttributeSelector {
   maxSelections?: number;
   numPopulatedFields?: number;
   placeholder: string;
-  populatedFieldType?: string; // ie. "filter" or "column"
+  populatedFieldType?: string;
   recommendedFilterAvailable?: boolean;
   renderSearchBySource?: boolean;
   setAttribute: (attribute: string[]) => void;
