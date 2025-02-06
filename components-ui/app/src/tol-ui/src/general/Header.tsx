@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import React from "react";
 import { Container } from "react-bootstrap";
 import { HeaderButton } from "../models/HeaderButton";
+import Button from "./Button";
 
 
 export interface Props {
@@ -52,7 +53,14 @@ class Header extends React.Component<Props> {
                 <h1 className="masthead-heading mb-0">{this.props.title}</h1>
                 <h2 className="masthead-subheading mb-0">{this.props.subTitle}</h2>
                 {this.buttons.map(button => (
-                  <a href={button.href} className="btn btn-primary btn-xl rounded-pill mt-5" key={button.text}>{button.text}</a>
+                  <div key={button.text} style={{marginTop: '30px'}}>
+                    <Button
+                      text={button.text}
+                      onClick={() => {
+                        window.location.href = button.href;
+                      }}
+                    />
+                  </div>
                 ))}
               </Container>
             </div>

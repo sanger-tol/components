@@ -82,7 +82,6 @@ function MyBoardsHeader(props: Props) {
     icon: "plus",
     type: "success",
     tooltip: "Create Board",
-    tooltipPosition: "bottom",
   };
 
   const {

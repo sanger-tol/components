@@ -284,7 +284,8 @@ function Messages() {
         value={value}
       />
       <div style={{ margin: "auto", width: "30%", display: "flex", justifyContent: "center", marginTop: "20px" }}>
-      <Button type={"success"}
+      <Button
+        type={"success"}
         onClick={() => sendNotification(value)} text='Send Notification'/>
       </div>
     </div>
