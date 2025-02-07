@@ -171,10 +171,11 @@ function filterListenerUpdater(params: {
   operators: string[],
   // filter state
   filterMeta: any,
+  disableCondition?: boolean,
   // differentials
   zoneToValue: (filterValue: any, exisitingValue?: any) => any
 }) {
-  let {filter, filterPassThrough, filterMeta, attribute, operators, zoneToValue} = params;
+  let {filter, filterPassThrough, filterMeta, attribute, operators, disableCondition, zoneToValue} = params;
 
   const and_ = filter!.and_;
   // ignore pass throughs
@@ -186,6 +187,7 @@ function filterListenerUpdater(params: {
       for (const op of operators) {
         if (op in and_[attribute]) {
           const filter = and_[attribute][op];
+          filterMeta.disabled = disableCondition;
           filterMeta.negate = filter.negate || filterMeta.negate;
           filterMeta.value = zoneToValue(filter.value, filterMeta.value);
         }
@@ -204,17 +206,19 @@ export function filterListener(params: {
   setValue: any,
   setExists?: any,
   setNegate?: any,
+  setDisabled?: any,
   emptyValue: any,
   zoneToValue: (filterValue: any, exisitingValue?: any) => any
 }, dependencies: any[]) {
-  const {attribute, componentId, operators, zone, setValue, setNegate, setExists, zoneToValue} = params;
+  const {attribute, componentId, operators, zone, setValue, setExists, setNegate, setDisabled, zoneToValue} = params;
 
   useEffect(() => {
     // initialise - use an object to take advantage of reference type
     const filterMeta = {
       value: params.emptyValue,
+      exists: false,
       negate: false,
-      exists: false
+      disabled: false
     }
 
     // do for the top level filter
@@ -223,6 +227,7 @@ export function filterListener(params: {
       attribute,
       operators,
       filterMeta,
+      disableCondition: true,
       zoneToValue
     });
 
@@ -235,12 +240,14 @@ export function filterListener(params: {
         attribute,
         operators,
         filterMeta,
+        disableCondition: (currentId !== componentId),
         zoneToValue
       });
     }
     setValue(filterMeta.value);
     if (setExists) setExists(filterMeta.exists);
     if (setNegate) setNegate(filterMeta.negate);
+    if (setDisabled) setDisabled(filterMeta.disabled);
   }, dependencies);
 }
 export function addSubFilter(params: {
