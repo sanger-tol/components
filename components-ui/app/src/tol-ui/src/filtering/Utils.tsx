@@ -177,7 +177,7 @@ function filterListenerUpdater(params: {
 }) {
   let {filter, filterPassThrough, filterMeta, attribute, operators, disableCondition, zoneToValue} = params;
 
-  const and_ = filter!.and_;
+  const and_ = filter?.and_;
   // ignore pass throughs
   if (and_ && attribute in and_ && !filterPassThrough) {
     if ('exists' in and_[attribute]) {
