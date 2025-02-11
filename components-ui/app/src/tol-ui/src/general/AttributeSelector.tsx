@@ -68,7 +68,7 @@ function AttributeSelector(props: IAttributeSelector) {
     const name = getDisplayName(entityMeta, endpoint, label).toLowerCase();
     const kw = keyword.toLowerCase();
 
-    return name.includes(kw);
+    return name.includes(kw) || label.includes(kw);
   };
 
   const menuItem = (

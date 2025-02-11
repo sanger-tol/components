@@ -94,6 +94,8 @@ function RemoteFilters(props: Props) {
         }
         tooltipContent={TOOLTIP_CONTENT}
         displaySource={true}
+        recommendedFilterAvailable={true}
+        renderSearchBySource={true}
       />
       {filters.map((attribute) => {
         const attributeMeta =
