@@ -79,6 +79,7 @@ export const colours = [
   {r: 204, g: 245, b: 163}, // 90
   {r: 163, g: 245, b: 163}, // 120
   {r: 137, g: 245, b: 191}, // 150
+  {r: 245, g: 245, b: 245}, // 30
 ];
 
 function hexToRgb(hex: string) {

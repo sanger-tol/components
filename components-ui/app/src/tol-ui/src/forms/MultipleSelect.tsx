@@ -35,6 +35,11 @@ interface Props {
   label?: string;
   disabledItemValues?: string[];
   searchBy?: (keyword: string, label: any, item: any) => boolean;
+  caretAs?: any;
+  renderExtraFooter?: any;
+  className?: string;
+  onExit?: any;
+  onExiting?: any;
 }
 
 function MultipleSelect(props: Props) {
@@ -57,7 +62,10 @@ function MultipleSelect(props: Props) {
     noSelectAll,
     label,
     disabledItemValues,
-    searchBy
+    searchBy,
+    caretAs,
+    renderExtraFooter,
+    className,
   } = props;
   const block = isPropDefined(props.block);
 
@@ -74,15 +82,19 @@ function MultipleSelect(props: Props) {
   const selectAll = () => {
     if (data.length === 0) return undefined;
     return (
-      <div>
-        <Checkbox
-          indeterminate={value.length > 0 && value.length < allValues.length}
-          checked={value.length === allValues.length}
-          onChange={handleCheckAll}
-        >
-          Select all
-        </Checkbox>
-      </div>
+        <>
+        {(!noSelectAll && <div>
+          <Checkbox
+            indeterminate={value.length > 0 && value.length < allValues.length}
+            checked={value.length === allValues.length}
+            onChange={handleCheckAll}
+          >
+            Select all
+          </Checkbox>
+        </div>)}
+        {(renderExtraFooter && <div>{renderExtraFooter}</div>)}
+        {(noSelectAll && !renderExtraFooter && undefined)}
+      </>
     );
   };
 
@@ -105,11 +117,13 @@ function MultipleSelect(props: Props) {
           onOpen={onOpen}
           onEntering={onEntering}
           onClose={onClose}
-          renderExtraFooter={noSelectAll ? undefined : selectAll}
+          renderExtraFooter={selectAll}
           renderMenuItem={renderMenuItem}
           renderValue={renderValue}
           disabledItemValues={disabledItemValues}
           searchBy={searchBy}
+          caretAs={caretAs}
+          className={className}
         />
       </span>
     </>

@@ -6,11 +6,9 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from 'react';
 import { 
-  Button, 
-  Row, 
-  Col, 
+  Button,
   Placeholder,
-  useEffectUpdate, 
+  useEffectUpdate,
   DropdownButtons,
 } from '../index';
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
@@ -18,7 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {  
   faSliders,
 } from '@fortawesome/free-solid-svg-icons';
-import ConfigModal from './ConfigModal';
+import ColumnConfigDrawer  from './ColumnConfigDrawer';
 import { exportTableToSpreadsheet } from "./Utils";
 import Filter, { IFilter } from '../filtering/Filter';
 import { InfoTooltip } from '../general';
@@ -190,6 +188,14 @@ function Table (props: Props) {
 
   return (
     <div style={{height: height}} className='tol-table'>
+      <ColumnConfigDrawer 
+        open={open} 
+        setOpen={setOpen} 
+        title={"Add/Remove Table Columns"}
+        displaySource={displaySource}
+        onConfigSave={onModalSave}
+        {...props}
+      />
       <div className="tol-table-bar">
         {rowSelection &&
           <>
@@ -262,17 +268,6 @@ function Table (props: Props) {
             }}
             icon='sliders'
             outline
-          />
-        }
-        {open &&
-          <ConfigModal
-            tableId={id}
-            fieldMeta={fieldMeta}
-            open={open}
-            pageSize={pageSize}
-            setOpen={setOpen}
-            onModalSave={onModalSave}
-            displaySource={displaySource}
           />
         }
         {!noFilter &&

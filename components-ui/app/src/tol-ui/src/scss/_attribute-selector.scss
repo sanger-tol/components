@@ -1,0 +1,102 @@
+/*
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+.tol-attribute-selector {
+  margin: 0 0 30px 0;
+}
+
+.rs-picker-check-menu::-webkit-scrollbar {
+  width: 10px;
+}
+
+.rs-picker-check-menu::-webkit-scrollbar-track {
+  background-color: var(--tol-grey);
+  border-radius: 5px;
+}
+
+.rs-picker-check-menu::-webkit-scrollbar-thumb {
+  background-color: var(--tol-grey-subtle);
+  border-radius: 5px;
+}
+
+.rs-picker-check-menu::-webkit-scrollbar-thumb:hover {
+  background-color: var(--tol-grey-subtle);
+}
+
+.tol-attribute-selector-menu-item-container {
+  display: flex;
+  align-items: center;
+
+  .tol-attribute-selector-menu-item-inner-container {
+    display: flex;
+    flex-grow: 1;
+  }
+
+  .tol-attribute-selector-tooltip {
+    margin-left: 3px;
+    margin-right: 6px;
+  }
+
+  .tol-attribute-selector-display-name {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .tol-attribute-selector-display-key {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    font-size: 12px;
+    color: var(--tol-grey);
+  }
+}
+
+.tol-attribute-selector-search-by-source-container {
+  padding: 5px;
+
+  > p {
+    margin: 10px 0px 4px 6px !important;
+  }
+
+  .tol-attribute-selector-sources {
+    display: flex;
+    padding-top: 5px;
+    flex-wrap: wrap;
+    gap: "3px";
+  }
+
+  .tol-attribute-selector-sources-inner-container {
+    margin-top: 5px;
+    cursor: pointer;
+  }
+}
+
+.tol-attribute-selector-checkbox {
+  margin-top: 10px !important;
+  margin-bottom: -20px !important;
+}
+
+.tol-customise-config-source-no-float {
+  font-size: 12px;
+  font-weight: normal;
+  margin-left: 6px;
+  overflow: auto;
+  float: right;
+  background-color: var(--config-source-bg-color);
+  color: black;
+  padding-left: 3px;
+  padding-right: 3px;
+  border-radius: 4px;
+  height: 20px;
+  float: none !important;
+}
+
+.tol-customise-config-source-no-float.active {
+  border: 1px solid var(--tol-light);
+}
+
+.tol-customise-config-source-no-float.faded {
+  opacity: 0.5;
+}

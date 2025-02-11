@@ -8,9 +8,9 @@ import { Button, DnD, InfoTooltip, Modal } from '../index';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiagramProject } from '@fortawesome/free-solid-svg-icons';
-import { FieldMeta, initialiseFieldMeta } from './Field';
+import { FieldMeta, initialiseFieldMeta } from '../table/Field';
 import { Row, Col } from 'react-bootstrap';
-import { deleteFieldMetaLocalStorage, getSourceColour, sortFieldsByRename } from './Utils';
+import { deleteFieldMetaLocalStorage, getSourceColour, sortFieldsByRename } from '../table/Utils';
 import { normaliseCaps } from '../general/Utils';
 
 
@@ -67,7 +67,7 @@ function ConfigModal(props: Props) {
         }
         {meta['rename']}
         {displaySource ? (
-          <div className='config-source'
+          <div className='customize-config-source'
             // @ts-ignore
             style={{ '--config-source-bg-color': sourceColour }}
           >

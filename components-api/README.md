@@ -39,12 +39,12 @@ Resources document HTTP methods on namespaces, such as GET, PATCH, and POST.
 There are two kinds:
 
 - **Detail Resources**
-    - Operate only on a single **DB model** instance (_via_ services)
-    - An ID must be supplied in the endpoint URL
-    - Provide GET, PATCH, and DELETE methods
+  - Operate only on a single **DB model** instance (_via_ services)
+  - An ID must be supplied in the endpoint URL
+  - Provide GET, PATCH, and DELETE methods
 - **List Resources**
-    - Do not require an ID in the endpoint URL
-    - Provide (bulk-) GET and POST methods
+  - Do not require an ID in the endpoint URL
+  - Provide (bulk-) GET and POST methods
 
 They originate from flask-restx (like namespaces).
 
@@ -75,12 +75,12 @@ New endpoints can easily be created.
 For a default endpoint, i.e. one that has all methods, all of which (except GET id/GET bulk) require auth, create:
 
 - A Model
-    - Add an ExtColumn (from .base) if you want optional extra fields
+  - Add an ExtColumn (from .base) if you want optional extra fields
 - A schema, inheriting from BaseSchema with a meta class inheriting from BaseSchema.BaseMeta
 - A swagger, inheriting from BaseSwagger
 - A service, inheriting from BaseService
 - A list and detail resource (or just a choice of one), inheriting from
-BaseListResource and BaseDetailResource respectively
+  BaseListResource and BaseDetailResource respectively
 
 Finally the entire api (from the resource file) should be added to the
 blueprint in route/api.py .
@@ -95,7 +95,7 @@ Bespoke endpoints do not need to (and probably shouldn't) inherit from the base 
 
 - Compound/composite keys are not supported
 - Model tablenames must be plural
-    - This is because the endpoint and "JSON:API Resource type" is equal to this
+  - This is because the endpoint and "JSON:API Resource type" is equal to this
 
 It is worth noting that these limitations can be overcome by hardcoding the various classes for an endpoint,
 instead of inheriting from the base classes and letting them dynamically generate the details.

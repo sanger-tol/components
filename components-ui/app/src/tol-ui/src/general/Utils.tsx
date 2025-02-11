@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { format } from 'date-fns';
 import { customAlphabet } from 'nanoid';
+import { FieldMeta } from '../table/Field';
 
 
 export function convertToPath(name: string) {
@@ -159,4 +160,67 @@ export function generateId(prefix: string) {
   const nanoid = customAlphabet(alphabet, 12);
 
   return `${prefix}_${nanoid()}`;
+}
+
+export function getSourceData(fieldMeta: FieldMeta, attribute: string) {
+  return fieldMeta?.data[attribute]["source"] || "";
+}
+
+export function getAttributeSources(entityMeta: any, endpoint: string) {
+  const sources = new Set<string>();
+  sources.add("all");
+  if (
+    entityMeta &&
+    entityMeta.flatAttributes &&
+    entityMeta.flatAttributes[endpoint]
+  ) {
+    Object.keys(entityMeta.flatAttributes[endpoint]).forEach((att) => {
+      const attributeObject = entityMeta.flatAttributes[endpoint][att];
+      const source = attributeObject.source;
+      if (source) {
+        sources.add(source);
+      }
+    });
+    sources.add("undefined");
+  }
+  return Array.from(sources);
+}
+
+export function getFlattenedMetaData(
+  entityMeta: any,
+  endpoint: string,
+  attribute?: string
+) {
+  return attribute
+    ? entityMeta?.flatAttributes?.[endpoint]?.[attribute]
+    : entityMeta?.flatAttributes?.[endpoint];
+}
+
+export function getDisplayName(entityMeta: any, endpoint: string, attribute: string) {
+  return (
+    entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.display_name ||
+    normaliseCaps(attribute)
+  );
+}
+
+export function filterBySource(
+  source: string,
+  selectedSources: string[],
+  setSelectedSources: any
+) {
+  if (source === "all") {
+    setSelectedSources([]);
+  } else if (source === "undefined") {
+    if (selectedSources.includes("undefined")) {
+      setSelectedSources(selectedSources.filter((s) => s !== "undefined"));
+    } else {
+      setSelectedSources([...selectedSources, "undefined"]);
+    }
+  } else {
+    if (selectedSources.includes(source)) {
+      setSelectedSources(selectedSources.filter((s) => s !== source));
+    } else {
+      setSelectedSources([...selectedSources, source]);
+    }
+  }
 }

@@ -12,8 +12,13 @@ import {
   numberWithSpaces,
   isInt,
   isFloat,
-  generateId
+  generateId,
+  getSourceData,
+  getAttributeSources,
+  getFlattenedMetaData,
+  getDisplayName
 } from '../../tol-ui/src/general/Utils'
+import { FieldMeta } from '../../tol-ui/src/table/Field';
 
 test('isPropDefined function', () => {
   expect(isPropDefined(undefined)).toBe(false);
@@ -80,3 +85,69 @@ test('generateId Function',() => {
   expect(id2).toHaveLength(17)
   expect(id).not.toBe(id2)
 })
+
+test('getSourceData Function', () => {
+  const fieldMeta: FieldMeta = {
+    data: {
+      attribute1: {source: 'source1'},
+      attribute2: {source: 'source2'},
+    },
+    order: {
+      active: ['attribute1', 'attribute2'],
+      inactive: []
+    }
+  };
+  expect(getSourceData(fieldMeta, 'attribute1')).toBe('source1');
+  expect(getSourceData(fieldMeta, 'attribute2')).toBe('source2');
+})
+
+test('getAttributeSources function', () => {
+  const entityMeta = {
+    flatAttributes: {
+      endpoint1: {
+        attribute1: {source: 'source1'},
+        attribute2: {source: 'source2'},
+      },
+      endpoint2: {
+        attribute3: {source: 'source3'},
+        attribute4: {source: 'source4'},
+      }
+    }
+  };
+  expect(getAttributeSources(entityMeta, 'endpoint1')).toEqual(['all', 'source1', 'source2', 'undefined']);
+  expect(getAttributeSources(entityMeta, 'endpoint2')).toEqual(['all', 'source3', 'source4', 'undefined']);
+  expect(getAttributeSources(entityMeta, 'endpoint3')).toEqual(['all']);
+})
+
+test('getFlattenedMetaData function', () => {
+  const entityMeta = {
+    flatAttributes: {
+      endpoint1: {
+        attr1: { data: 'data1' },
+        attr2: { data: 'data2' }
+      }
+    }
+  };
+  expect(getFlattenedMetaData(entityMeta, 'endpoint1')).toEqual({
+    attr1: { data: 'data1' },
+    attr2: { data: 'data2' }
+  });
+  expect(getFlattenedMetaData(entityMeta, 'endpoint1', 'attr1')).toEqual({ data: 'data1' });
+  expect(getFlattenedMetaData(entityMeta, 'endpoint1', 'attr3')).toBeUndefined();
+  expect(getFlattenedMetaData(entityMeta, 'endpoint2')).toBeUndefined();
+});
+
+test('getDisplayName function', () => {
+  const entityMeta = {
+    flatAttributes: {
+      endpoint1: {
+        attr1: { display_name: 'Display Name 1' },
+        attr2: { display_name: 'Display Name 2' }
+      }
+    }
+  };
+  expect(getDisplayName(entityMeta, 'endpoint1', 'attr1')).toBe('Display Name 1');
+  expect(getDisplayName(entityMeta, 'endpoint1', 'attr2')).toBe('Display Name 2');
+  expect(getDisplayName(entityMeta, 'endpoint1', 'attr3')).toBe('Attr3');
+  expect(getDisplayName(entityMeta, 'endpoint2', 'attr1')).toBe('Attr1');
+});
