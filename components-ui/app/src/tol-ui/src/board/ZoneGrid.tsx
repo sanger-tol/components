@@ -165,7 +165,6 @@ function ZoneGrid(props: Props) {
 
   const saveButton = (
     <Button
-      outline
       onClick={() => {
         setDraggable(!draggable);
         setSaveLayout(true);
@@ -185,7 +184,7 @@ function ZoneGrid(props: Props) {
       type='primary'
       icon='filter'
       position='right'
-      tooltip="Add/Remove Filters"
+      tooltip="Add filters to the Zone"
     />
   );
 
@@ -198,6 +197,7 @@ function ZoneGrid(props: Props) {
       icon={editBtnsVisible ? 'check' : 'pen-to-square'}
       position='right'
       tooltip={editBtnsVisible ? "Save Changes" : "Edit Zone"}
+      outline={!editBtnsVisible}
     />
   );
 
@@ -227,9 +227,9 @@ function ZoneGrid(props: Props) {
                 {editButton}
                 {downButton}
                 {upButton}
-                {filtersButton}
               </>
             ) : null}
+            {filtersButton}
             </>
           ) : 
             <>
