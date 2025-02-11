@@ -5,8 +5,6 @@
  */
 
 function Sandbox() {
-  return (
-    <></>
-  );
+  return <></>;
 }
 export default Sandbox;

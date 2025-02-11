@@ -23,7 +23,7 @@ export interface Props {
 }
 
 const PLACEHOLDER = "No filters applied, click here to add...";
-const TOOLTIPCONTENT = "A filter already exists in the filtering system. Please remove it before adding this filter."
+const TOOLTIP_CONTENT = "A filter already exists in the filtering system. Please remove it before adding this filter."
 function RemoteFilters(props: Props) {
   const { endpoint, baseUrl, onSave, disabledFilterValues } = props;
   const ds = new TsDataSource({ baseUrl });
@@ -92,7 +92,8 @@ function RemoteFilters(props: Props) {
             filterZone.components[filterComponentId].data.filter?.and_ || {}
           ).length
         }
-        tooltipContent={TOOLTIPCONTENT}
+        tooltipContent={TOOLTIP_CONTENT}
+        displaySource={true}
       />
       {filters.map((attribute) => {
         const attributeMeta =

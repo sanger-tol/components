@@ -178,7 +178,6 @@ function AttributeSelector(props: IAttributeSelector) {
         PopUpMessage({
           type: "warning",
           message: `You can select a maximum of ${maxSelections} items.`,
-          placement: "topEnd",
         });
         return;
       } else {

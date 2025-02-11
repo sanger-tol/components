@@ -240,6 +240,7 @@ function ColumnConfigDrawer(props: IColumnConfigDrawer) {
           additionalPopulatedFieldData={"."}
           recommendedFilterAvailable={true}
           renderSearchBySource={true}
+          displaySource={true}
         />
       </div>
       <div>
