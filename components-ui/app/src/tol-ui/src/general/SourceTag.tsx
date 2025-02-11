@@ -7,12 +7,12 @@ SPDX-License-Identifier: MIT
 import { getSourceColour } from "../table/Utils";
 import { normaliseCaps } from "./Utils";
 
-export interface ISourceTag {
+export interface Props {
   className?: string;
   source: string;
 }
 
-function SourceTag(props: ISourceTag) {
+function SourceTag(props: Props) {
   const { source, className } = props;
   const sourceColour = getSourceColour(source);
 

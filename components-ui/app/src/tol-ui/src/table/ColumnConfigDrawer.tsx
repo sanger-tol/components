@@ -18,7 +18,7 @@ import { FieldMeta, initialiseFieldMeta } from "./Field";
 
 const TRANSITION_TIME: number = 300;
 
-export interface IColumnConfigDrawer {
+export interface Props {
   baseUrl?: string;
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -30,7 +30,7 @@ export interface IColumnConfigDrawer {
   sticky?: boolean;
 }
 
-function ColumnConfigDrawer(props: IColumnConfigDrawer) {
+function ColumnConfigDrawer(props: Props) {
   const { baseUrl, open, setOpen, title, fieldMeta, endpoint, onConfigSave } =
     props;
   const [attributes, setAttributes] = useState<string[]>(

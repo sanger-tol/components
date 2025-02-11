@@ -22,7 +22,7 @@ import {
   normaliseCaps,
 } from "./Utils";
 
-export interface IAttributeSelector {
+export interface Props {
   additionalPopulatedFieldData?: any;
   allowedTypes?: string[];
   attribute: string[];
@@ -41,7 +41,7 @@ export interface IAttributeSelector {
   tooltipContent?: string;
 }
 
-function AttributeSelector(props: IAttributeSelector) {
+function AttributeSelector(props: Props) {
   const {
     additionalPopulatedFieldData,
     allowedTypes,

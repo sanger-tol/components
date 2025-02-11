@@ -6,12 +6,12 @@ SPDX-License-Identifier: MIT
 
 import { Drawer } from "../general";
 
-export interface IFilterDrawer {
+export interface Props {
   open: boolean;
   setOpen: () => void;
 }
 
-function FilterDrawer(props: IFilterDrawer) {
+function FilterDrawer(props: Props) {
   const { open, setOpen } = props;
   return (
     <div>
