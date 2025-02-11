@@ -61,7 +61,7 @@ function TolApp(props: Props) {
   }, []);
 
   // show login button as default
-  const login = props.login ?? true;
+  const login = props.login || true;
 
   // hide register button by default
   const register = props.register || false;

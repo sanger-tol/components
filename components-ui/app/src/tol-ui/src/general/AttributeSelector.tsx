@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { Checkbox, CheckboxGroup } from "rsuite";
 import { useEffect, useState } from "react";
-import { IAttributeSelector } from "../models/general";
 import {
   TsDataSource,
   MultipleSelect,
@@ -22,6 +21,25 @@ import {
   filterBySource,
   normaliseCaps,
 } from "./Utils";
+
+export interface IAttributeSelector {
+  additionalPopulatedFieldData?: any;
+  allowedTypes?: string[];
+  attribute: string[];
+  baseUrl?: string;
+  disabledValues?: any;
+  displaySource?: boolean;
+  endpoint: string;
+  maxSelections?: number;
+  numPopulatedFields?: number;
+  placeholder: string;
+  populatedFieldType?: string;
+  recommendedFilterAvailable?: boolean;
+  renderSearchBySource?: boolean;
+  setAttribute: (attribute: string[]) => void;
+  sticky?: boolean;
+  tooltipContent?: string;
+}
 
 function AttributeSelector(props: IAttributeSelector) {
   const {
@@ -54,15 +72,12 @@ function AttributeSelector(props: IAttributeSelector) {
     ds.getEntityMeta()
       .then((em) => {
         setEntityMeta(em);
+        setSources(getAttributeSources(em, endpoint));
       })
       .finally(() => {
         setLoading(false);
       });
   }, []);
-
-  useEffect(() => {
-    setSources(getAttributeSources(entityMeta, endpoint));
-  }, [entityMeta]);
 
   const searchBy = (keyword: string, label: any) => {
     const name = getDisplayName(entityMeta, endpoint, label).toLowerCase();

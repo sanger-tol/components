@@ -4,9 +4,13 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ISourceTag } from "../models/general";
 import { getSourceColour } from "../table/Utils";
 import { normaliseCaps } from "./Utils";
+
+export interface ISourceTag {
+  className?: string;
+  source: string;
+}
 
 function SourceTag(props: ISourceTag) {
   const { source, className } = props;

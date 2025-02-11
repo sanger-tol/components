@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { IColumnConfigDrawer } from "../models/table";
 import {
   Button,
   Icon,
@@ -18,6 +17,18 @@ import { normaliseCaps, getSourceData } from "../general/Utils";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
 
 const TRANSITION_TIME: number = 300;
+
+export interface IColumnConfigDrawer {
+  baseUrl?: string;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  title: string;
+  fieldMeta: FieldMeta;
+  displaySource?: boolean;
+  onConfigSave: (fieldMeta: FieldMeta) => void;
+  endpoint: string;
+  sticky?: boolean;
+}
 
 function ColumnConfigDrawer(props: IColumnConfigDrawer) {
   const { baseUrl, open, setOpen, title, fieldMeta, endpoint, onConfigSave } =
@@ -212,7 +223,7 @@ function ColumnConfigDrawer(props: IColumnConfigDrawer) {
   );
 
   const handleCloseDrawer = () => {
-    if (initialAttributes.length !== attributes.length) {
+    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes)) {
       setOpenSaveModal(true);
     } else {
       setOpen(false);
