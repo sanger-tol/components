@@ -200,9 +200,8 @@
 .tol-filter-button.negate:disabled,
 .tol-filter-button.exists:disabled {
   @extend .tol-filter-button;
-  background-color: var(--tol-grey-subtle) !important;
   border-color: var(--tol-grey) !important;
-  color: var(--tol-grey) !important;
+  color: var(--tol-grey-subtle) !important;
   cursor: not-allowed;
   pointer-events: all !important;
 }
