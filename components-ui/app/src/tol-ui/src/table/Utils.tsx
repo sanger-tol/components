@@ -51,7 +51,9 @@ const sourceColours = {
   'tolqclegacy': colours[10],
   'portaldb': colours[11],
   'pantheon': colours[12],
-  'calculated': colours[13]
+  'calculated': colours[13],
+  'undefined': colours[14],
+  'all': colours[30]
 }
 
 function createLink(text: any, url: string) {

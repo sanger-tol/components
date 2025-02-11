@@ -16,3 +16,98 @@
 button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-btn-subtle.rs-btn-sm {
   display: none;
 }
+
+.tol-config-drawer-save-button {
+  margin-top: 10px;
+}
+
+.tol-active-column-btn {
+  margin-left: 3px;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.tol-active-column-btn.first {
+  margin-left: 12px !important;
+}
+
+.tol-active-column-btn.hidden {
+  opacity: 0;
+  cursor: default !important;
+}
+
+.tol-config-drawer-btn-array {
+  display: flex;
+}
+
+.tol-config-drawer-column-contents {
+  display: "flex";
+  justify-content: "space-between";
+}
+
+.tol-config-drawer-column-container {
+  max-height: 51vh;
+  overflow: auto;
+  padding: 5px 10px 5px 0;
+}
+
+.tol-config-drawer-column-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.tol-config-drawer-column-container::-webkit-scrollbar-track {
+  background-color: var(--tol-grey);
+  border-radius: 5px;
+}
+
+.tol-config-drawer-column-container::-webkit-scrollbar-thumb {
+  background-color: var(--tol-grey-subtle); 
+  border-radius: 5px;
+}
+
+.tol-config-drawer-column-container::-webkit-scrollbar-thumb:hover {
+  background-color: var(--tol-grey-subtle)
+}
+
+.tol-config-drawer-column-title {
+  border-bottom: 1px solid var(--tol-grey);
+  padding-bottom: 5px;
+}
+
+.tol-config-drawer-modal-btns {
+  display: flex;
+  justify-content: "flex-end" !important;
+  gap: "8px";
+}
+
+.tol-config-drawer-selected-column {
+  background-color: var(--tol-grey-translucent) !important;
+  border-radius: 6px;
+  display: flex;
+  flex-grow: 1;
+  justify-content: space-between;
+  padding: 10px 15px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border: 1px solid var(--tol-grey-subtle);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tol-config-drawer-selected-column {
+  transition: all 0.3s ease;
+}
+
+.tol-config-drawer-selected-column.highlight {
+  border: 1px solid var(--tol-primary-light);
+}
+
+.tol-config-drawer-selected-column.deleting {
+  opacity: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  transition: opacity 0.3s ease, height 0.3s ease, margin 0.3s ease,
+    padding 0.3s ease;
+}

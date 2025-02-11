@@ -301,6 +301,12 @@
   background-color: var(--bs-highlight-bg);
 }
 
+.rs-drawer-open {
+  .rs-anim-fade.rs-anim-in.rs-picker-check-menu.rs-picker-popup.placement-bottom-start {
+    margin-right: 28px;
+  }
+}
+
 // drawer on mobile
 @media (max-width: 700px) {
   .rs-drawer {

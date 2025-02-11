@@ -18,7 +18,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {  
   faSliders,
 } from '@fortawesome/free-solid-svg-icons';
-import ConfigModal from './ConfigModal';
 import { exportTableToSpreadsheet } from "./Utils";
 import Filter, { IFilter } from '../filtering/Filter';
 import { InfoTooltip } from '../general';
@@ -26,6 +25,7 @@ import { PopUpMessage } from '../index';
 import { FieldMeta } from './Field';
 import { Zone } from '../board';
 import { DropdownButtonProps } from '../board/components/DropdownButtons';
+import ColumnConfigDrawer  from './ColumnConfigDrawer';
 
 
 export type NumRows = 25 | 50 | 100 | 1000;
@@ -267,17 +267,16 @@ function Table (props: Props) {
               outline
             />
           }
-          {open &&
-            <ConfigModal
-              tableId={id}
+          {<ColumnConfigDrawer 
+              open={open} 
+              setOpen={setOpen} 
+              title={"Add/Remove Table Columns"}
               fieldMeta={fieldMeta}
-              open={open}
-              pageSize={pageSize}
-              setOpen={setOpen}
-              onModalSave={onModalSave}
               displaySource={displaySource}
-            />
-          }
+              onConfigSave={onModalSave}
+              baseUrl={baseUrl}
+              endpoint={endpoint}
+            />}
           {!noFilter &&
             <Button
               position='right'
