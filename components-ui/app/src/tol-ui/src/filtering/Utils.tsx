@@ -48,6 +48,15 @@ export function mergeAndFilters(target: object, incoming: object) {
   return output as And;
 }
 
+export function removeSuperfluousExists(filter: And) {
+  Object.keys(filter).forEach(attribute => {
+    const operators = Object.keys(filter[attribute]);
+    if (operators.length >= 2 && 'exists' in filter[attribute]) {
+      delete filter[attribute]['exists'];
+    }
+  });
+}
+
 export function generateFilter(zone?: object, id?: string, includeSubFilter?: boolean) {
   if (zone === undefined) return undefined;
   const z = zone as Zone;
@@ -67,6 +76,7 @@ export function generateFilter(zone?: object, id?: string, includeSubFilter?: bo
     }
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
+  removeSuperfluousExists(compoundedFilter);
   return {
     and_: compoundedFilter
   } as IFilter;
@@ -180,18 +190,20 @@ function filterListenerUpdater(params: {
   const and_ = filter?.and_;
   // ignore pass throughs
   if (and_ && attribute in and_ && !filterPassThrough) {
-    if ('exists' in and_[attribute]) {
+    let operatorFound = false;
+    for (const op of operators) {
+      if (op in and_[attribute]) {
+        operatorFound = true;
+        const filter = and_[attribute][op];
+        filterMeta.disabled = disableCondition;
+        filterMeta.value = zoneToValue(filter.value, filterMeta.value);
+        filterMeta.exists = false;
+        filterMeta.negate = filter.negate || filterMeta.negate;
+      }
+    }
+    if (!operatorFound && 'exists' in and_[attribute]) {
       filterMeta.exists = true;
       filterMeta.negate = and_[attribute]['exists'].negate || filterMeta.negate;
-    } else {
-      for (const op of operators) {
-        if (op in and_[attribute]) {
-          const filter = and_[attribute][op];
-          filterMeta.disabled = disableCondition;
-          filterMeta.negate = filter.negate || filterMeta.negate;
-          filterMeta.value = zoneToValue(filter.value, filterMeta.value);
-        }
-      }
     }
   }
 }
