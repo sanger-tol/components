@@ -664,8 +664,8 @@ describe ('Testing filterListener function', () => {
   const TestComponent = (props) => {
     const [value, setValue] = useState(null);
     const [disabled, setDisabled] = useState(false);
-    const [exists, setExists] = useState(true);
-    const [negate, setNegate] = useState(true);
+    const [exists, setExists] = useState(false);
+    const [negate, setNegate] = useState(false);
 
     filterListener({
       ...props,
@@ -691,13 +691,15 @@ describe ('Testing filterListener function', () => {
         'component1': {
           data: {
             id: 'component1',
-            filter: {and_: {
-              attribute1: {
-                exists: {
-                  negate: true
+            filter: {
+              and_: {
+                attribute1: {
+                  exists: {
+                    negate: true
+                  }
                 }
               }
-            }}
+            }
           }
         }
       },
@@ -705,15 +707,19 @@ describe ('Testing filterListener function', () => {
       type: 'dashboard'
     };
 
-    const {rerender} = render(<TestComponent
-      attribute="attribute1"
-      componentId="component1"
-      operators={['exists']}
-      zone={mockZone}
-      emptyValue={null}
-      zoneToValue={(filterValue) => filterValue}
-      dependencies={[mockZone]}
-    />);
+    const {rerender} = render(
+      <TestComponent
+        attribute="attribute1"
+        componentId="component1"
+        operators={['contains']}
+        zone={mockZone}
+        emptyValue={null}
+        zoneToValue={(filterValue) => filterValue}
+        dependencies={[mockZone]}
+      />
+    );
+
+    console.log(screen)
 
     expect(screen.getByTestId('disabled')).toHaveTextContent('false');
     expect(screen.getByTestId('exists')).toHaveTextContent('true');
