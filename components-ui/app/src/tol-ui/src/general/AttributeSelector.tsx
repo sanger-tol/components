@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Checkbox, CheckboxGroup } from "rsuite";
+import { Toggle } from "rsuite";
 import { useEffect, useState } from "react";
 import {
   TsDataSource,
@@ -100,23 +100,21 @@ function AttributeSelector(props: Props) {
     return (
       <div key={key} className="tol-attribute-selector-menu-item-container">
         <div className="tol-attribute-selector-menu-item-inner-container">
-          <div>
             <div className="tol-attribute-selector-display-name">
-              {displayName}{" "}
-              {disabled ? (
-                <span className="tol-attribute-selector-tooltip">
-                  {tooltipContent && (
-                    <InfoTooltip disableMarkdown contents={tooltipContents} />
-                  )}
-                </span>
-              ) : description ? (
-                <span className="tol-attribute-selector-tooltip">
-                  <InfoTooltip disableMarkdown contents={description} />
-                </span>
-              ) : (
-                <></>
-              )}
-            </div>
+            {displayName}{" "}
+            {disabled ? (
+              <span className="tol-attribute-selector-tooltip">
+                {tooltipContent && (
+                  <InfoTooltip disableMarkdown contents={tooltipContents} />
+                )}
+              </span>
+            ) : description ? (
+              <span className="tol-attribute-selector-tooltip">
+                <InfoTooltip disableMarkdown contents={description} />
+              </span>
+            ) : (
+              <></>
+            )}
             <p className="tol-attribute-selector-display-key">
               {authoritative === true && <Icon icon="star" />} {key}
             </p>
@@ -242,25 +240,18 @@ function AttributeSelector(props: Props) {
         renderExtraFooter={renderSearchBySource && searchBySource()}
       />
       {recommendedFilterAvailable && (
-        <CheckboxGroup
-          key="recommended-tick-filter-group"
-          className="tol-attribute-selector-checkbox"
-          name="recommended-tick-filter"
-        >
-          {[
-            <Checkbox
-              key="recommended-tick-filter"
-              onClick={() => {
-                setRecommendedOn(!recommendedOn);
-              }}
-              checked={recommendedOn}
-            >
-              <span onClick={(e) => e.stopPropagation()}>
-                Tick to show only recommended (authoritative) properties.
-              </span>
-            </Checkbox>
-          ]}
-        </CheckboxGroup>
+        <div className="tol-attribute-selector-suggested-toggle">
+          <Toggle
+            key="recommended-tick-filter"
+            onClick={() => {
+              setRecommendedOn(!recommendedOn);
+            }}
+            checked={recommendedOn}
+          />
+          <span onClick={(e) => e.stopPropagation()}>
+            Toggle to only show recommended (authoritative) properties.
+          </span>
+        </div>
       )}
     </div>
   );
