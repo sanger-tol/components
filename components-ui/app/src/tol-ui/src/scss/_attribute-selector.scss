@@ -29,11 +29,12 @@ SPDX-License-Identifier: MIT
 .tol-attribute-selector-menu-item-container {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
   .tol-attribute-selector-menu-item-inner-container {
     display: flex;
     flex-grow: 1;
-    max-width: 300px; // LUKE
+    max-width: 300px;
   }
 
   .tol-attribute-selector-tooltip {
@@ -44,7 +45,7 @@ SPDX-License-Identifier: MIT
   .tol-attribute-selector-display-name {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
-    width: 100%; // LUKE
+    width: 100%;
   }
 
   .tol-attribute-selector-display-key {
@@ -52,7 +53,17 @@ SPDX-License-Identifier: MIT
     margin-bottom: 0 !important;
     font-size: 12px;
     color: var(--tol-grey);
-    width: 100%; // LUKE
+    width: 100%;
+    display: flex;
+    gap: 3px;
+
+    p {
+      margin-bottom: 0px !important;
+    }
+
+    svg {
+      margin-top: 3px;
+    }
   }
 }
 
@@ -105,4 +116,23 @@ SPDX-License-Identifier: MIT
 
 .tol-customise-config-source-no-float.faded {
   opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+
+  .rs-anim-fade.rs-anim-in.rs-picker-check-menu.rs-picker-popup.placement-bottom-start {
+    max-width: auto !important;
+  }
+
+  .tol-attribute-selector-menu-item-container {
+    .tol-customise-config-source-no-float {
+      flex: none !important;
+      margin-left: 20px !important;
+    }
+  }
+
+  .tol-attribute-selector-display-key,
+  .tol-attribute-selector-display-name {
+    overflow-wrap: anywhere !important;
+  }
 }

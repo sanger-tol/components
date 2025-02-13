@@ -100,7 +100,7 @@ function AttributeSelector(props: Props) {
     return (
       <div key={key} className="tol-attribute-selector-menu-item-container">
         <div className="tol-attribute-selector-menu-item-inner-container">
-            <div className="tol-attribute-selector-display-name">
+          <div className="tol-attribute-selector-display-name">
             {displayName}{" "}
             {disabled ? (
               <span className="tol-attribute-selector-tooltip">
@@ -115,12 +115,13 @@ function AttributeSelector(props: Props) {
             ) : (
               <></>
             )}
-            <p className="tol-attribute-selector-display-key">
-              {authoritative === true && <Icon icon="star" />} {key}
-            </p>
+            <div className="tol-attribute-selector-display-key">
+              {authoritative === true && <Icon icon="star" />}
+              <p>{key}</p>
+            </div>
           </div>
         </div>
-        {displaySource && (source && <SourceTag source={source} />)}
+        {displaySource && source && <SourceTag source={source} />}
       </div>
     );
   };
