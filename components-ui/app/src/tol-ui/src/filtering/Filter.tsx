@@ -22,7 +22,9 @@ export interface Filter {
   setZone: any,
 
   endpoint: string,
-  baseUrl?: string
+  baseUrl?: string,
+
+  delay?: number
 }
 
 function Filter(props: Filter) {

@@ -12,7 +12,7 @@ import { StatusMessage, PopUpMessage } from '../index';
 
 
 function FilterBoolean(props: Filter) {
-  const { attribute, componentId, rename, zone, setZone } = props;
+  const { attribute, componentId, rename, zone, setZone, delay } = props;
   const [values, setValues] = useState<string[]>([]);
   const [disabled, setDisabled] = useState(false);
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
@@ -72,7 +72,7 @@ function FilterBoolean(props: Filter) {
         valueExists: input.length !== 0,
       });
       setZone({...zone});
-    }, 800));
+    }, delay ?? 800));
   };
 
   const renderItem = (label: string) => {

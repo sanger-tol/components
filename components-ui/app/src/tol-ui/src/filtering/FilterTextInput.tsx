@@ -19,7 +19,7 @@ import Modal from '../general/Modal';
 
 
 function FilterTextInput(props: Filter) {
-  const { attribute, componentId, rename, type, zone, setZone } = props;
+  const { attribute, componentId, rename, type, zone, setZone, delay } = props;
   // contains filtering needs adding to specific datasources
   const [values, setValues] = useState(['']);
   const [disabled, setDisabled] = useState(false);
@@ -96,7 +96,7 @@ function FilterTextInput(props: Filter) {
           valueExists: input !== ''
         });
         setZone({...zone});
-      }, 800));
+      }, delay ?? 800));
     }
   };
 

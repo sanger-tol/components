@@ -131,6 +131,7 @@ function RemoteFilters(props: Props) {
                 setZone={setFilterZone}
                 endpoint={endpoint}
                 baseUrl={baseUrl}
+                delay={0}
               />
             </div>
             <span
