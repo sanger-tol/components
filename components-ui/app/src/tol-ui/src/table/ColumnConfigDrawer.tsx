@@ -13,7 +13,7 @@ import {
   Drawer,
   Modal,
 } from "../index";
-import { normaliseCaps, getSourceData } from "../general/Utils";
+import { getSourceData } from "../general/Utils";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
 
 const TRANSITION_TIME: number = 300;
