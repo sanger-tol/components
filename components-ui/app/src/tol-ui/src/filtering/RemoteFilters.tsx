@@ -5,13 +5,14 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
+import { Toggle } from "rsuite";
 import { TsDataSource } from "../services";
 import { Zone } from "../board";
 import { defineZone } from "../board/Utils";
 import Filter from "./Filter";
 import { IFilter } from "../models";
 import { Button, useEffectUpdate } from "..";
-import { AttributeSelector } from "../general";
+import { AttributeSelector, Icon } from "../general";
 import { getDisplayName } from "../general/Utils";
 
 export interface Props {
@@ -75,6 +76,16 @@ function RemoteFilters(props: Props) {
     }
   };
 
+  const onClean = () => {
+    if (filterZone.components[filterComponentId].data.filter) {
+      filterZone.components[filterComponentId].data.filter.and_ = {};
+    }
+    if (filterZone.components[filterComponentId].data.defaultFilter) {
+      filterZone.components[filterComponentId].data.defaultFilter.and_ = {};
+    }
+    setFilterZone({ ...filterZone });
+  };
+
   if (loading) return <></>;
 
   return (
@@ -96,6 +107,7 @@ function RemoteFilters(props: Props) {
         displaySource={true}
         recommendedFilterAvailable={true}
         renderSearchBySource={true}
+        onClean={onClean}
       />
       {filters.map((attribute) => {
         const attributeMeta =
@@ -122,14 +134,12 @@ function RemoteFilters(props: Props) {
                 baseUrl={baseUrl}
               />
             </div>
-            <Button
-              onClick={() => removeFilter(attribute)}
+            <span
               className="remove-filter-button"
-              type="error"
-              icon="trash"
-              position="right"
-              outline
-            />
+              onClick={() => removeFilter(attribute)}
+            >
+              <Icon icon="close" size="lg" />
+            </span>
           </div>
         );
       })}

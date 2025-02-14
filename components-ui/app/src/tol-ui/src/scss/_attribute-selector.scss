@@ -8,6 +8,11 @@ SPDX-License-Identifier: MIT
   margin: 0 0 30px 0;
 }
 
+// temporary fix for x overflow
+.rs-picker-check-menu:has(.tol-attribute-selector-menu-item-container) {
+  overflow-x: hidden;
+}
+
 .rs-picker-check-menu::-webkit-scrollbar {
   width: 10px;
 }

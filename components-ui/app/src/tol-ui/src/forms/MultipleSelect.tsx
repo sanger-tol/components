@@ -27,6 +27,7 @@ interface Props {
   onOpen?: any;
   onEntering?: any;
   onClose?: any;
+  onClean?: any;
   onClick?: any;
   renderMenuItem?: any;
   renderValue?: any;
@@ -55,6 +56,7 @@ function MultipleSelect(props: Props) {
     onOpen,
     onEntering,
     onClose,
+    onClean,
     onClick,
     renderMenuItem,
     renderValue,
@@ -117,6 +119,7 @@ function MultipleSelect(props: Props) {
           onOpen={onOpen}
           onEntering={onEntering}
           onClose={onClose}
+          onClean={onClean}
           renderExtraFooter={selectAll}
           renderMenuItem={renderMenuItem}
           renderValue={renderValue}

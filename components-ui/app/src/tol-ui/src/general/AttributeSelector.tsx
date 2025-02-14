@@ -37,6 +37,7 @@ export interface Props {
   recommendedFilterAvailable?: boolean;
   renderSearchBySource?: boolean;
   setAttribute: (attribute: string[]) => void;
+  onClean?: () => void;
   sticky?: boolean;
   tooltipContent?: string;
 }
@@ -57,6 +58,7 @@ function AttributeSelector(props: Props) {
     recommendedFilterAvailable,
     renderSearchBySource,
     setAttribute,
+    onClean,
     sticky,
     tooltipContent,
   } = props;
@@ -239,6 +241,7 @@ function AttributeSelector(props: Props) {
         searchBy={searchBy}
         sticky={sticky}
         renderExtraFooter={renderSearchBySource && searchBySource()}
+        onClean={onClean}
       />
       {recommendedFilterAvailable && (
         <div className="tol-attribute-selector-suggested-toggle">
