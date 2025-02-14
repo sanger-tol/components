@@ -207,6 +207,15 @@
   pointer-events: all !important;
 }
 
+.tol-filter-button.negate.active:disabled,
+.tol-filter-button.exists.active:disabled {
+  @extend .tol-filter-button;
+  border-color: var(--tol-grey) !important;
+  color: var(--tol-grey-subtle) !important;
+  cursor: not-allowed;
+  pointer-events: all !important;
+}
+
 .tol-in-list-button:disabled {
   background-color: var(--tol-grey-subtle) !important;
   cursor: not-allowed;
@@ -277,14 +286,12 @@
   .filter {
     margin: 4px 0 12px 0;
     display: inline-block;
-    width: calc(100% - 40px);
+    width: calc(100% - 22px);
   }
 
   .remove-filter-button {
-    height: 30px;
-    width: 30px;
-    padding: 0;
-    margin: 7px 0;
+    margin-left: 10px;
+    cursor: pointer;
   }
 }
 

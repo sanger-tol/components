@@ -6,11 +6,9 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from 'react';
 import { 
-  Button, 
-  Row, 
-  Col, 
+  Button,
   Placeholder,
-  useEffectUpdate, 
+  useEffectUpdate,
   DropdownButtons,
 } from '../index';
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
@@ -18,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {  
   faSliders,
 } from '@fortawesome/free-solid-svg-icons';
+import ColumnConfigDrawer  from './ColumnConfigDrawer';
 import { exportTableToSpreadsheet } from "./Utils";
 import Filter, { IFilter } from '../filtering/Filter';
 import { InfoTooltip } from '../general';
@@ -25,7 +24,6 @@ import { PopUpMessage } from '../index';
 import { FieldMeta } from './Field';
 import { Zone } from '../board';
 import { DropdownButtonProps } from '../board/components/DropdownButtons';
-import ColumnConfigDrawer  from './ColumnConfigDrawer';
 
 
 export type NumRows = 25 | 50 | 100 | 1000;
@@ -190,130 +188,124 @@ function Table (props: Props) {
 
   return (
     <div style={{height: height}} className='tol-table'>
-      <Row className="tol-table-bar">
-        <Col md={12} lg={9}>
-          {rowSelection &&
-            <>
-              <Button 
-                position='left'
-                type="primary"
-                active={bulkSelect}
-                onClick={() => {
-                  handleCheckAll(null, !bulkSelect);
-                  setBulkSelect(!bulkSelect);
-                }}
-                icon='check-double'
-                outline
-              />
-            </>
-          }
-          {actionButtons}
-          {(!noPagination && fieldMeta.order.active.length > 0) &&
-            <>
-              {rowCounter ? rowCounter : totalSize}
-              <span className='tol-page-size'>
-                <SelectPicker
-                  value={pageSize}
-                  onChange={setPageSize}
-                  size="sm"
-                  cleanable={false}
-                  searchable={false}
-                  data={[
-                    { label: "25", value: 25 },
-                    { label: "50", value: 50 },
-                    { label: "100", value: 100 }
-                  ]}
-                />
-              </span>
-              <Pagination
-                className="tol-pagination"
-                size="sm"
-                layout={['skip']}
-                total={totalSize}
-                activePage={page}
-                onChangePage={setPage}
-                limit={pageSize}
-                onChangeLimit={setPageSize}
-              />
-              <Pagination
-                className="tol-pagination"
-                prev
-                next
-                first
-                last
-                ellipsis
-                boundaryLinks
-                maxButtons={3}
-                size="sm"
-                layout={['pager']}
-                total={totalSize}
-                activePage={page}
-                onChangePage={setPage}
-                limit={pageSize}
-                onChangeLimit={setPageSize}
-              />
-            </>
-          }
-        </Col>
-        <Col md={12} lg={3}>
-          {!noConfigModal &&
+      <ColumnConfigDrawer 
+        open={open} 
+        setOpen={setOpen} 
+        title={"Add/Remove Table Columns"}
+        displaySource={displaySource}
+        onConfigSave={onModalSave}
+        {...props}
+      />
+      <div className="tol-table-bar">
+        {rowSelection &&
+          <>
             <Button 
-              position='right'
+              position='left'
               type="primary"
+              active={bulkSelect}
               onClick={() => {
-                setOpen(true);
+                handleCheckAll(null, !bulkSelect);
+                setBulkSelect(!bulkSelect);
               }}
-              icon='sliders'
+              icon='check-double'
               outline
             />
-          }
-          {<ColumnConfigDrawer 
-              open={open} 
-              setOpen={setOpen} 
-              title={"Add/Remove Table Columns"}
-              fieldMeta={fieldMeta}
-              displaySource={displaySource}
-              onConfigSave={onModalSave}
-              baseUrl={baseUrl}
-              endpoint={endpoint}
-            />}
-          {!noFilter &&
-            <Button
-              position='right'
-              active={filterVisibility}
-              type="primary"
-              onClick={ () => setFilterVisibility(!filterVisibility) }
-              disabled={noFieldsSelected}
-              icon='eye-slash'
-              outline
+          </>
+        }
+        {actionButtons}
+        {(!noPagination && fieldMeta.order.active.length > 0) &&
+          <>
+            {rowCounter ? rowCounter : totalSize}
+            <span className='tol-page-size'>
+              <SelectPicker
+                value={pageSize}
+                onChange={setPageSize}
+                size="sm"
+                cleanable={false}
+                searchable={false}
+                data={[
+                  { label: "25", value: 25 },
+                  { label: "50", value: 50 },
+                  { label: "100", value: 100 }
+                ]}
+              />
+            </span>
+            <Pagination
+              className="tol-pagination"
+              size="sm"
+              layout={['skip']}
+              total={totalSize}
+              activePage={page}
+              onChangePage={setPage}
+              limit={pageSize}
+              onChangeLimit={setPageSize}
             />
-          }
-          {!noDownload &&
-            <Button
-              position='right'
-              type="primary"
-              onClick={() => exportTableToSpreadsheet(
-                endpoint,
-                fieldMeta.data,
-                filter!,
-                sortColumn,
-                sortType,
-                setSuccess,
-                setError,
-                setDownloading,
-                defaultSort,
-                baseUrl
-              )}
-              disabled={totalSize < 1 || totalSize >= 10000 || noFieldsSelected}
-              loading={downloading}
-              icon='download'
-              disabledTooltip={totalSize >= 10000 ? 'Only 10,000 results can currently be downloaded.' : undefined}
-              outline
+            <Pagination
+              className="tol-pagination"
+              prev
+              next
+              first
+              last
+              ellipsis
+              boundaryLinks
+              maxButtons={3}
+              size="sm"
+              layout={['pager']}
+              total={totalSize}
+              activePage={page}
+              onChangePage={setPage}
+              limit={pageSize}
+              onChangeLimit={setPageSize}
             />
-          }
-          {configButtons}
-        </Col>
-      </Row>
+          </>
+        }
+        {!noConfigModal &&
+          <Button 
+            position='right'
+            type="primary"
+            onClick={() => {
+              setOpen(true);
+            }}
+            icon='sliders'
+            outline
+          />
+        }
+        {!noFilter &&
+          <Button
+            position='right'
+            active={filterVisibility}
+            type="primary"
+            onClick={ () => setFilterVisibility(!filterVisibility) }
+            disabled={noFieldsSelected}
+            icon='eye-slash'
+            outline
+          />
+        }
+        {!noDownload &&
+          <Button
+            position='right'
+            type="primary"
+            onClick={() => exportTableToSpreadsheet(
+              endpoint,
+              fieldMeta.data,
+              filter!,
+              sortColumn,
+              sortType,
+              setSuccess,
+              setError,
+              setDownloading,
+              defaultSort,
+              baseUrl
+            )}
+            disabled={totalSize < 1 || totalSize >= 10000 || noFieldsSelected}
+            loading={downloading}
+            icon='download'
+            disabledTooltip={totalSize >= 10000 ? 'Only 10,000 results can currently be downloaded.' : undefined}
+            outline
+          />
+        }
+        {configButtons}
+      </div>
       {noFieldsSelected ?
         <Placeholder
           message={

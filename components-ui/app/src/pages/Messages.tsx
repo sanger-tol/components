@@ -57,7 +57,7 @@ function Messages() {
         <StaticMessage message={"This is a warning alert"} type={"warning"} />
       </div>
       <Button
-        text={"Click me to see a pop up message"}
+        text="Click me to see a pop up message"
         onClick={() => {
           PopUpMessage({
             type: "success",
@@ -283,8 +283,11 @@ function Messages() {
         value={value}
       />
       <div style={{ margin: "auto", width: "30%", display: "flex", justifyContent: "center", marginTop: "20px" }}>
-      <Button type={"success"}
-        onClick={() => sendNotification(value)} text='Send Notification'/>
+      <Button
+        type={"success"}
+        onClick={() => sendNotification(value)}
+        text='Send Notification'
+      />
       </div>
     </div>
   );

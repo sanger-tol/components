@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Checkbox, CheckboxGroup } from "rsuite";
+import { Toggle } from "rsuite";
 import { useEffect, useState } from "react";
 import {
   TsDataSource,
@@ -37,6 +37,7 @@ export interface Props {
   recommendedFilterAvailable?: boolean;
   renderSearchBySource?: boolean;
   setAttribute: (attribute: string[]) => void;
+  onClean?: () => void;
   sticky?: boolean;
   tooltipContent?: string;
 }
@@ -57,6 +58,7 @@ function AttributeSelector(props: Props) {
     recommendedFilterAvailable,
     renderSearchBySource,
     setAttribute,
+    onClean,
     sticky,
     tooltipContent,
   } = props;
@@ -100,29 +102,28 @@ function AttributeSelector(props: Props) {
     return (
       <div key={key} className="tol-attribute-selector-menu-item-container">
         <div className="tol-attribute-selector-menu-item-inner-container">
-          <div>
-            <div className="tol-attribute-selector-display-name">
-              {displayName}{" "}
-              {disabled ? (
-                <span className="tol-attribute-selector-tooltip">
-                  {tooltipContent && (
-                    <InfoTooltip disableMarkdown contents={tooltipContents} />
-                  )}
-                </span>
-              ) : description ? (
-                <span className="tol-attribute-selector-tooltip">
-                  <InfoTooltip disableMarkdown contents={description} />
-                </span>
-              ) : (
-                <></>
-              )}
+          <div className="tol-attribute-selector-display-name">
+            {displayName}{" "}
+            {disabled ? (
+              <span className="tol-attribute-selector-tooltip">
+                {tooltipContent && (
+                  <InfoTooltip disableMarkdown contents={tooltipContents} />
+                )}
+              </span>
+            ) : description ? (
+              <span className="tol-attribute-selector-tooltip">
+                <InfoTooltip disableMarkdown contents={description} />
+              </span>
+            ) : (
+              <></>
+            )}
+            <div className="tol-attribute-selector-display-key">
+              {authoritative === true && <Icon icon="star" />}
+              <p>{key}</p>
             </div>
-            <p className="tol-attribute-selector-display-key">
-              {authoritative === true && <Icon icon="star" />} {key}
-            </p>
           </div>
         </div>
-        {displaySource && (source && <SourceTag source={source} />)}
+        {displaySource && source && <SourceTag source={source} />}
       </div>
     );
   };
@@ -240,27 +241,21 @@ function AttributeSelector(props: Props) {
         searchBy={searchBy}
         sticky={sticky}
         renderExtraFooter={renderSearchBySource && searchBySource()}
+        onClean={onClean}
       />
       {recommendedFilterAvailable && (
-        <CheckboxGroup
-          key="recommended-tick-filter-group"
-          className="tol-attribute-selector-checkbox"
-          name="recommended-tick-filter"
-        >
-          {[
-            <Checkbox
-              key="recommended-tick-filter"
-              onClick={() => {
-                setRecommendedOn(!recommendedOn);
-              }}
-              checked={recommendedOn}
-            >
-              <span onClick={(e) => e.stopPropagation()}>
-                Tick to show only recommended (authoritative) properties.
-              </span>
-            </Checkbox>
-          ]}
-        </CheckboxGroup>
+        <div className="tol-attribute-selector-suggested-toggle">
+          <Toggle
+            key="recommended-tick-filter"
+            onClick={() => {
+              setRecommendedOn(!recommendedOn);
+            }}
+            checked={recommendedOn}
+          />
+          <span onClick={(e) => e.stopPropagation()}>
+            Toggle to only show recommended (authoritative) properties.
+          </span>
+        </div>
       )}
     </div>
   );

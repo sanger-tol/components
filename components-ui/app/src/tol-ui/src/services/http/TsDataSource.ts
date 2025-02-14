@@ -225,8 +225,6 @@ export default class TsDataSource {
             baseUrl: this.baseUrl,
             data: body
           }
-        ).catch(
-          (error: any) => console.log(error)
         )
       case 'DELETE':
         return await this.client().delete(
@@ -234,8 +232,6 @@ export default class TsDataSource {
           {
             baseUrl: this.baseUrl
           }
-        ).catch(
-          (error: any) => console.log(error)
         )
     }
   }

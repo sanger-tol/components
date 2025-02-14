@@ -13,7 +13,7 @@ import {
   Drawer,
   Modal,
 } from "../index";
-import { normaliseCaps, getSourceData } from "../general/Utils";
+import { getSourceData } from "../general/Utils";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
 
 const TRANSITION_TIME: number = 300;
@@ -109,16 +109,18 @@ function ColumnConfigDrawer(props: Props) {
     setOpen(!open);
   };
 
-  const selectedColumn = (att: string, index: number) => {
-    const source = getSourceData(fieldMeta, att) ?? "";
+    const selectedColumn = (attr: string, index: number) => {
+    const source = getSourceData(fieldMeta, attr) ?? "";
+    const rename = fieldMeta.data[attr]?.rename ?? attr;
+  
     return (
       <div
-        key={`${att}-${index}`}
+        key={`${attr}-${index}`}
         className={`tol-config-drawer-selected-column ${
           recentlyMoved === index ? "highlight" : ""
         } ${deletingIndex === index ? "deleting" : ""}`}
       >
-        {normaliseCaps(att)}
+        {rename}
         <div className="tol-config-drawer-btn-array">
           {source && <SourceTag source={source} />}
           <div

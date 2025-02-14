@@ -82,7 +82,7 @@ function FilterMultiSelect(props: Filter) {
 
   const onFilter = (input: string[]) => {
     setValues(input);
-    const delay = (input.length === 0) ? 0 : 800;
+    const delay = (input.length === 0) ? 0 : props.delay;
     clearTimeout(timeoutValue!);
     setTimeoutValue(setTimeout(() => {
       setFilter({
@@ -95,7 +95,7 @@ function FilterMultiSelect(props: Filter) {
         valueExists: input.length !== 0,
       });
       setZone({...zone});
-    }, delay));
+    }, delay ?? 800));
   };
   
   const onExists = (ex: boolean) => {

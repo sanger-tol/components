@@ -48,6 +48,15 @@ export function mergeAndFilters(target: object, incoming: object) {
   return output as And;
 }
 
+export function removeSuperfluousExists(filter: And) {
+  Object.keys(filter).forEach(attribute => {
+    const operators = Object.keys(filter[attribute]);
+    if (operators.length >= 2 && 'exists' in filter[attribute]) {
+      delete filter[attribute]['exists'];
+    }
+  });
+}
+
 export function generateFilter(zone?: object, id?: string, includeSubFilter?: boolean) {
   if (zone === undefined) return undefined;
   const z = zone as Zone;
@@ -67,6 +76,7 @@ export function generateFilter(zone?: object, id?: string, includeSubFilter?: bo
     }
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
+  removeSuperfluousExists(compoundedFilter);
   return {
     and_: compoundedFilter
   } as IFilter;
@@ -162,6 +172,44 @@ export function setFilter(params: {
   }
 }
 
+function filterListenerUpdater(params: {
+  // whole filter data
+  filter: any,
+  filterPassThrough?: boolean,
+  // filter location
+  attribute: string,
+  operators: string[],
+  // filter state
+  filterMeta: any,
+  disableCondition?: boolean,
+  // differentials
+  zoneToValue: (filterValue: any, exisitingValue?: any) => any
+}) {
+  let {filter, filterPassThrough, filterMeta, attribute, operators, disableCondition, zoneToValue} = params;
+
+  const and_ = filter?.and_;
+  // ignore pass throughs
+  if (and_ && attribute in and_ && !filterPassThrough) {
+    let operatorFound = false;
+    for (const op of operators) {
+      if (op in and_[attribute]) {
+        operatorFound = true;
+        const filter = and_[attribute][op];
+        filterMeta.disabled = disableCondition;
+        filterMeta.value = zoneToValue(filter.value, filterMeta.value);
+        filterMeta.exists = false;
+        filterMeta.negate = filter.negate || filterMeta.negate;
+      }
+    }
+    if (!operatorFound && 'exists' in and_[attribute]) {
+      filterMeta.exists = true;
+      filterMeta.negate = and_[attribute]['exists'].negate || filterMeta.negate;
+      // only disables on exist filter if negate is true
+      filterMeta.disabled = filterMeta.negate ? disableCondition : false;
+    }
+  }
+}
+
 export function filterListener(params: {
   // filter location
   attribute: string,
@@ -172,53 +220,50 @@ export function filterListener(params: {
   setValue: any,
   setExists?: any,
   setNegate?: any,
+  setDisabled?: any,
   emptyValue: any,
-  setDisabled: any,
   zoneToValue: (filterValue: any, exisitingValue?: any) => any
 }, dependencies: any[]) {
-  const {attribute, componentId, operators, zone, setValue, setDisabled, setNegate, setExists, zoneToValue} = params;
+  const {attribute, componentId, operators, zone, setValue, setExists, setNegate, setDisabled, zoneToValue} = params;
 
   useEffect(() => {
+    // initialise - use an object to take advantage of reference type
+    const filterMeta = {
+      value: params.emptyValue,
+      exists: false,
+      negate: false,
+      disabled: false
+    }
+
+    // do for the top level filter
+    filterListenerUpdater({
+      filter: zone.filter,
+      attribute,
+      operators,
+      filterMeta,
+      disableCondition: true,
+      zoneToValue
+    });
+
     const aboveComponents = getComponentsAbove(componentId, zone.order);
-    let disabled = false;
-    let readyToBreak = 0;
-    let value = params.emptyValue;
-    let negate = false;
-    let exists = false;
     for (const currentId of aboveComponents) {
       const componentData = zone.components[currentId].data;
-      const and_ = componentData.filter!.and_;
-      // ignore pass throughs
-      if (and_ && attribute in and_ && !componentData.filterPassThrough) {
-        const disableCondition = (currentId !== componentId);
-        // checks setExists as only used for text input filters
-        if (setExists && 'exists' in and_[attribute]) {
-          exists = true;
-          disabled = disableCondition;
-          negate = and_[attribute]['exists'].negate || negate;
-          break;
-        } else {
-          for (const op of operators) {
-            if (op in and_[attribute]) {
-              const filter = and_[attribute][op];
-              disabled = disableCondition;
-              negate = filter.negate || negate;
-              value = zoneToValue(filter.value, value);
-              // break if all operators have been checked
-              if (readyToBreak === operators.length-1) break;
-              readyToBreak++;
-            }
-          }
-        }
-      }
+      filterListenerUpdater({
+        filter: componentData.filter,
+        filterPassThrough: componentData.filterPassThrough,
+        attribute,
+        operators,
+        filterMeta,
+        disableCondition: (currentId !== componentId),
+        zoneToValue
+      });
     }
-    setValue(value);
-    setDisabled(disabled);
-    if (setExists) setExists(exists);
-    if (setNegate) setNegate(negate);
+    setValue(filterMeta.value);
+    if (setExists) setExists(filterMeta.exists);
+    if (setNegate) setNegate(filterMeta.negate);
+    if (setDisabled) setDisabled(filterMeta.disabled);
   }, dependencies);
 }
-
 export function addSubFilter(params: {
   id: string,
   filter: object,

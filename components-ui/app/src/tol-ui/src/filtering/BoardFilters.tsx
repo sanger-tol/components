@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { Zone } from "../board";
 import RemoteFilters from "./RemoteFilters";
 import { Drawer } from "../general";
-import { generateFilter } from "./Utils";
+import { generateFilter, resetFiltersBelow } from "./Utils";
 import { deepCopy } from "../general/Utils";
 import { TsDataSource } from "..";
 import { BOARD_URL_PREFIX } from "../constants";
@@ -66,7 +66,6 @@ function BoardFilters(props: Props) {
   }, [open])
 
   const onSave = (filter: any) => {
-    // id exists only if component (not zone)
     if (entityType === 'zone') {
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
@@ -74,6 +73,7 @@ function BoardFilters(props: Props) {
       zone.components[id].data.filter = deepCopy(filter);
       zone.components[id].data.defaultFilter = deepCopy(filter);
     }
+    resetFiltersBelow({id: id, zone: zone});
     setZone({...zone})
     setOpen(false);
 

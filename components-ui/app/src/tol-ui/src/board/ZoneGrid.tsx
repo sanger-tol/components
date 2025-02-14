@@ -108,7 +108,6 @@ function ZoneGrid(props: Props) {
       icon='up-down-left-right'
       position='right'
       tooltip="Edit Widgets"
-      tooltipPosition='top'
     />
   );
 
@@ -122,7 +121,6 @@ function ZoneGrid(props: Props) {
       icon='plus'
       position='right'
       tooltip="Add Widget"
-      tooltipPosition='auto'
     />
   );
 
@@ -136,7 +134,6 @@ function ZoneGrid(props: Props) {
       icon='trash'
       position='right'
       tooltip="Delete Zone"
-      tooltipPosition='top'
     />
   );
 
@@ -150,7 +147,6 @@ function ZoneGrid(props: Props) {
       icon='arrow-up'
       position='right'
       tooltip="Move Zone Up"
-      tooltipPosition='top'
     />
   );
   
@@ -164,13 +160,11 @@ function ZoneGrid(props: Props) {
       icon='arrow-down'
       position='right'
       tooltip="Move Zone Down"
-      tooltipPosition='top'
     />
   );
 
   const saveButton = (
     <Button
-      outline
       onClick={() => {
         setDraggable(!draggable);
         setSaveLayout(true);
@@ -180,7 +174,6 @@ function ZoneGrid(props: Props) {
       icon='floppy-disk'
       position='right'
       tooltip="Save Layout"
-      tooltipPosition='top'
     />
   );
 
@@ -191,8 +184,7 @@ function ZoneGrid(props: Props) {
       type='primary'
       icon='filter'
       position='right'
-      tooltip="Add/Remove Filters"
-      tooltipPosition='top'
+      tooltip="Add filters to the Zone"
     />
   );
 
@@ -205,7 +197,7 @@ function ZoneGrid(props: Props) {
       icon={editBtnsVisible ? 'check' : 'pen-to-square'}
       position='right'
       tooltip={editBtnsVisible ? "Save Changes" : "Edit Zone"}
-      tooltipPosition='top'
+      outline={!editBtnsVisible}
     />
   );
 
@@ -235,9 +227,9 @@ function ZoneGrid(props: Props) {
                 {editButton}
                 {downButton}
                 {upButton}
-                {filtersButton}
               </>
             ) : null}
+            {filtersButton}
             </>
           ) : 
             <>

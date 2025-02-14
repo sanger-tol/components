@@ -22,7 +22,6 @@ interface Props {
   disabledTooltip?: string,
   loading?: boolean,
   outline?: boolean,
-  tooltipPosition?: string
 }
 
 function Button(props: Props) {
@@ -35,12 +34,11 @@ function Button(props: Props) {
     size,
     type,
     active,
-    position = 'left',
+    position = 'none',
     tooltip,
     disabledTooltip,
     loading,
-    outline,
-    tooltipPosition
+    outline
   } = props;
 
   const outlineClass = outline ? '-outline' : '';
@@ -89,7 +87,11 @@ function Button(props: Props) {
     }}
     >
       {contents ? (
-        <HoverOverlay contents={contents!} followCursor={disabled} placement={tooltipPosition ?? 'left'}>
+        <HoverOverlay
+          contents={contents!}
+          followCursor={disabled}
+          delay={disabled ? 300 : 800}
+        >
           <div className='tooltip-wrapper'>
             {button}
           </div>

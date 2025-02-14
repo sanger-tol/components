@@ -303,7 +303,7 @@ describe ('Testing getListPage function', () => {
       pageSize: 1,
     });
 
-    const dataObject = dataObjects[0];
+    const dataObject = dataObjects![0];
     expect(dataObject).toBeDefined();
     expect(dataObject?.id).toEqual('testSpeciesId');
     expect(dataObject?.objectType).toEqual('species');

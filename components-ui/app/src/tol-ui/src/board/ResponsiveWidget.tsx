@@ -164,21 +164,21 @@ function ResponsiveWidget(props: Props) {
         onBreakpointChange={onBreakpointChange}
         draggableCancel='.widget-delete-btn'
       >
-        {elements.map((element)=> {
+        {elements.map((element) => {
           // Check if there is a component that matches the ids
           if (!draggable) {
             return element;
           } else {
             return (
               <div className='tol-draggable-widget' key={element.props.children.props.id}>
-                <Placeholder opacity={0.7} drag message={element.props.children.props.id}/>
+                <Placeholder message={element.props.children.props.title}/>
                 <Button 
-                onClick={() => {
-                  handleOpenModal(element.props.children.props.id);
-                }} 
-                type='error' 
-                className='widget-delete-btn'
-                icon='trash'
+                  onClick={() => {
+                    handleOpenModal(element.props.children.props.id);
+                  }} 
+                  type='error' 
+                  className='widget-delete-btn'
+                  icon='trash'
                 />
                 {confirmationModal()}
               </div>
