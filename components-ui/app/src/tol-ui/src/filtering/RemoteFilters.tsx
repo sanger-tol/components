@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Toggle } from "rsuite";
 import { TsDataSource } from "../services";
 import { Zone } from "../board";
 import { defineZone } from "../board/Utils";
