@@ -14,10 +14,10 @@ import {
   Icon,
   HoverOverlay,
   TsDataSource
-} from '../index';
-import { FormTextField } from '../forms';
-import { RSForm } from '../index';
-import { Zone, addComponent, defineComponent } from './Utils';
+} from '../../index';
+import { FormTextField } from '../../forms';
+import { RSForm } from '../../index';
+import { Zone, addComponent, defineComponent } from '../Utils';
 
 
 interface Props {
@@ -32,7 +32,7 @@ interface Props {
   dataUrl?: string
 }
 
-function ComponentModal(props: Props) {
+function ComponentPickerModal(props: Props) {
   const { open, setOpen, zone, setZone, zoneId, ds, currentWidgets, setCurrentWidgets, dataUrl } = props;
   const [componentType, setComponentType] = useState('');
   const [widgetType, setWidgetType] = useState('');
@@ -254,4 +254,4 @@ function ComponentModal(props: Props) {
   );
 }
   
-export default ComponentModal;
+export default ComponentPickerModal;

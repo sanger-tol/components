@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Modal from "../../general/Modal";
-import { Button } from '../../index';
+import Modal from "../general/Modal";
+import { Button } from '../index';
 
 interface Props {
   setOpen: any;

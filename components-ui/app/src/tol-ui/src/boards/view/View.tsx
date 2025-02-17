@@ -9,10 +9,10 @@ import {
   Button,
   ZoneModal,
   IFilter
-} from '../index';
-import { getZones } from "./Utils";
-import ZoneGrid from './ZoneGrid';
-import { BOARD_ENDPOINTS, BoardObjectTypes } from '../constants';
+} from '../../index';
+import { getZones } from "../Utils";
+import ZoneGrid from '../Zone';
+import { BOARD_ENDPOINTS, BoardObjectTypes } from '../../constants';
 
 
 interface ZoneObject {

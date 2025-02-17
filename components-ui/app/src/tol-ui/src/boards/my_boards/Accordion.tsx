@@ -7,7 +7,7 @@
 import React, { useState, useEffect } from "react";
 import { Accordion as Acc } from "rsuite";
 import { AccordionHeader, DropdownButtons, ConfirmationModal } from "./index";
-import { DropdownButtonProps, DropdownMainIconProps } from "./DropdownButtons";
+import { DropdownButtonProps, DropdownMainIconProps } from "../../general/DropdownButtons";
 import { httpClient, TsDataSource } from "../../services";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {

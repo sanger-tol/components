@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT
 
 import {
   BoardTable
-} from "../index";
-import { Zone } from "./Utils";
+} from "../../index";
+import { Zone } from "../Utils";
 
 
 interface Props {

@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { WidthProvider, Responsive, Layouts } from 'react-grid-layout';
-import { Button, Placeholder, Visualisation } from '../index';
+import { Button, Placeholder, Visualisation } from '../../index';
 import { useState, useRef, useEffect } from 'react';
-import { Zone, getWidgetOrder, generateLayout } from './Utils';
+import { Zone, getWidgetOrder, generateLayout } from '../Utils';
 import { ConfirmationModal } from './components';
-import { BOARD_ENDPOINTS, BoardObjectTypes } from '../constants';
+import { BOARD_ENDPOINTS, BoardObjectTypes } from '../../constants';
 
 
 export interface IWidgets {

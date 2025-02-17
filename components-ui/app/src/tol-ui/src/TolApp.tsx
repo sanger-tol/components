@@ -31,7 +31,7 @@ import {
   matomoAnalytics,
 } from "./general/Utils";
 import { env } from "./variables/config";
-import { MyBoards, Board} from "./board";
+import { MyBoards, Board} from "./boards";
 
 
 interface BoardsObject {

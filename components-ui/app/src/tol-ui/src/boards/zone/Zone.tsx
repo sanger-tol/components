@@ -38,7 +38,7 @@ interface Props {
   dataUrl?: string
 }
 
-function ZoneGrid(props: Props) {
+function Zone(props: Props) {
   const { id, objectType, filter, onZoneReorder, deleteZone, ds, dataUrl } = props;
   const [draggable, setDraggable] = useState(false);
   const [currentWidgets, setCurrentWidgets] = useState<IWidgets[]>([]);
@@ -318,4 +318,4 @@ function ZoneGrid(props: Props) {
     
 }
 
-export default ZoneGrid;
+export default Zone;

@@ -25,14 +25,14 @@ export {
   Visualisation,
   View,
   Board,
-} from "./board";
+} from "./boards";
 
 
 // board components
 export {
   DropdownButtons,
   MyBoardsHeader
-} from "./board/components";
+} from "./boards/components";
 
 // charts
 export {

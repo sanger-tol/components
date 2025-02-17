@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { DropdownButtons, NewBoardModal } from "./index";
-import { DropdownButtonProps, DropdownMainIconProps } from "./DropdownButtons";
+import { DropdownButtonProps, DropdownMainIconProps } from "../../general/DropdownButtons";
 import { useHistory } from "react-router-dom";
 import { createBoardAndView } from "../Utils";
 import { TsDataSource } from "../../index";

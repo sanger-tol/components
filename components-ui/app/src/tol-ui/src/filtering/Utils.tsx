@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect } from 'react';
-import { Zone, defineComponent } from '../board/Utils';
+import { Zone, defineComponent } from '../boards/Utils';
 import { IFilter, And } from '../models/Filter';
 import { deepCopy, isEmptyObject } from '../general/Utils';
 

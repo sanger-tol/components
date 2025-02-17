@@ -19,14 +19,14 @@ import {
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
-import { Zone } from "../board";
+import { Zone } from "../boards";
 import {
   generateFilter,
   filterHasUpdated,
   resetFiltersBelow,
 } from "../filtering/Utils";
 import RemoteRowCounter from "./RemoteRowCounter";
-import { DropdownButtonProps } from '../board/components/DropdownButtons';
+import { DropdownButtonProps } from '../general/DropdownButtons';
 
 
 interface Props {

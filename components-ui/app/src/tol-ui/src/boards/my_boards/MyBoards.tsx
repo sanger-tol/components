@@ -13,12 +13,12 @@ import {
   Toaster,
   Loader,
   StaticMessage,
-} from "..";
-import { Accordion } from "./components";
-import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
+} from "../..";
+import { Accordion } from "../components";
+import { getUserFromLocalStorage } from "../../services/localStorage/localStorageService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import { BOARD_ENDPOINTS } from "../constants/api.constants";
+import { BOARD_ENDPOINTS } from "../../constants/api.constants";
 
 const containerStyle = {
   display: "flex",
