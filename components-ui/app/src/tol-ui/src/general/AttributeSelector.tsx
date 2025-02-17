@@ -93,7 +93,7 @@ function AttributeSelector(props: Props) {
     source: string,
     key: string,
     authoritative: boolean,
-    description: string
+    description: string,
   ) => {
     const disabled =
       disabledValues && Object.keys(disabledValues).includes(key);
@@ -138,7 +138,7 @@ function AttributeSelector(props: Props) {
           metaData["source"],
           label,
           metaData["authoritative"],
-          metaData["description"]
+          metaData["description"],
         )}
       </div>
     );
@@ -147,13 +147,15 @@ function AttributeSelector(props: Props) {
   const renderTotalSelectedItems = (values: string[]) => {
     return `
         ${values.length} ${
-      values.length === 1 ? `${populatedFieldType}` : `${populatedFieldType}s`
-    } selected${
-      additionalPopulatedFieldData ||
-      `; ${numPopulatedFields} ${
-        numPopulatedFields === 1 ? "filter" : "filters"
-      } populated.`
-    }`;
+          values.length === 1
+            ? `${populatedFieldType}`
+            : `${populatedFieldType}s`
+        } selected${
+          additionalPopulatedFieldData ||
+          `; ${numPopulatedFields} ${
+            numPopulatedFields === 1 ? "filter" : "filters"
+          } populated.`
+        }`;
   };
 
   const searchBySource = () => {
@@ -230,7 +232,7 @@ function AttributeSelector(props: Props) {
               typeMatch &&
               sourceMatch
             );
-          }
+          },
         )}
         placeholder={placeholder}
         value={attribute}

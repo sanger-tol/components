@@ -30,7 +30,9 @@
   // multiple select tags
   --rs-picker-value: var(--tol-primary);
   --rs-picker-count-bg: var(--tol-primary);
-  .rs-picker-value-item {font-size: 14px !important;}
+  .rs-picker-value-item {
+    font-size: 14px !important;
+  }
 
   // date picker extras
   --rs-checkbox-checked-bg: var(--tol-primary);
@@ -42,7 +44,7 @@
 
   .rs-input,
   .rs-input-group {
-    font-family: 'Lato' !important;
+    font-family: "Lato" !important;
     font-weight: 400 !important;
   }
 
@@ -51,13 +53,13 @@
   .rs-input:focus,
   .rs-input-group:focus,
   .rs-input-group:focus-within {
-    font-family: 'Lato' !important;
+    font-family: "Lato" !important;
     font-weight: 400 !important;
     font-size: 14px !important;
   }
 
   .rs-picker-toggle-placeholder {
-    font-family: 'Lato' !important;
+    font-family: "Lato" !important;
     font-weight: 400 !important;
     font-size: 14px !important;
   }
@@ -76,7 +78,8 @@
   }
 
   // dropdown
-  .rs-picker-menu, .rs-dropdown-menu {
+  .rs-picker-menu,
+  .rs-dropdown-menu {
     border: 1px solid var(--tol-grey);
     background: var(--tol-bg) !important;
   }
@@ -102,7 +105,8 @@
     padding: 6px 6px 6px 6px;
   }
 
-  .rs-picker-menu.rs-picker-select-menu, .rs-picker-menu.rs-picker-check-menu {
+  .rs-picker-menu.rs-picker-select-menu,
+  .rs-picker-menu.rs-picker-check-menu {
     padding-top: 0;
   }
 
@@ -142,12 +146,12 @@
 
   // placeholders
   input::-webkit-input-placeholder {
-    font-family: 'Lato' !important;
+    font-family: "Lato" !important;
     font-weight: 400 !important;
   }
 
   input:-moz-placeholder {
-    font-family: 'Lato' !important;
+    font-family: "Lato" !important;
     font-weight: 400 !important;
   }
 
@@ -186,28 +190,28 @@
     overflow-wrap: break-word;
   }
 
-  .rs-popover[class*=placement-left]>.rs-popover-arrow::after {
+  .rs-popover[class*="placement-left"] > .rs-popover-arrow::after {
     border-left-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 
-  .rs-popover[class*=placement-top]>.rs-popover-arrow::after {
+  .rs-popover[class*="placement-top"] > .rs-popover-arrow::after {
     border-top-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 
-  .rs-popover[class*=placement-right]>.rs-popover-arrow::after {
+  .rs-popover[class*="placement-right"] > .rs-popover-arrow::after {
     border-right-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 
-  .rs-popover[class*=placement-bottom]>.rs-popover-arrow::after {
+  .rs-popover[class*="placement-bottom"] > .rs-popover-arrow::after {
     border-bottom-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 }
 
-// temporary - will need changing for scrollable columns 
+// temporary - will need changing for scrollable columns
 // full modal height changes
 .rs-modal-full {
   height: auto;
@@ -291,7 +295,9 @@
 }
 
 // checkboxes on pickers
-.rs-checkbox-disabled:not(.rs-checkbox-checked):not(.rs-checkbox-indeterminate) .rs-checkbox-control .rs-checkbox-inner::before {
+.rs-checkbox-disabled:not(.rs-checkbox-checked):not(.rs-checkbox-indeterminate)
+  .rs-checkbox-control
+  .rs-checkbox-inner::before {
   background-color: var(--rs-input-disabled-bg) !important;
   border-color: var(--rs-input-disabled-bg) !important;
 }

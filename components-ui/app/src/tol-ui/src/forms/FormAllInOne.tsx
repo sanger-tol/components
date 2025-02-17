@@ -99,14 +99,9 @@ function FormAllInOne(props: Props) {
   }, []);
 
   const pushErrorMessage = (message: string) => {
-    toaster.push(
-      <Message
-        children={message}
-        type="error"
-        showIcon={true}
-      />,
-      { duration: 4000 }
-    );
+    toaster.push(<Message children={message} type="error" showIcon={true} />, {
+      duration: 4000,
+    });
   };
 
   useEffect(() => {
@@ -302,7 +297,7 @@ function FormAllInOne(props: Props) {
                     button.onClick(formData);
                   }}
                 />
-              )
+              ),
             )}
           </div>
         )}

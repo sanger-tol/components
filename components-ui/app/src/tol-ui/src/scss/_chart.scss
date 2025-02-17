@@ -9,9 +9,9 @@
   --rs-placeholder-active: var(--tol-bg);
 }
 
-.rs-placeholder-active .rs-placeholder-grid-col>p,
+.rs-placeholder-active .rs-placeholder-grid-col > p,
 .rs-placeholder-active .rs-placeholder-paragraph-graph-image,
-.rs-placeholder-active .rs-placeholder-paragraph-rows>p,
+.rs-placeholder-active .rs-placeholder-paragraph-rows > p,
 .rs-placeholder-active.rs-placeholder-graph {
   border-radius: 6px;
 }
@@ -29,7 +29,7 @@
   border-radius: 6px;
 
   .leaflet-popup-content {
-    margin: 12px
+    margin: 12px;
   }
 
   .tol-map-popup .leaflet-popup-tip {

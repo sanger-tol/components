@@ -2,8 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { useEffect, useRef } from 'react';
-
+import { useEffect, useRef } from "react";
 
 // ignores the initial load update
 export function useEffectUpdate(fn, dependencies) {

@@ -5,17 +5,18 @@ SPDX-License-Identifier: MIT
 */
 
 export interface Props {
-  data: object
+  data: object;
 }
 
 function ObjectDetail(props: Props) {
   const { data } = props;
   return (
-    <div className='tol-object-detail'>
-      {Object.entries(data).map(([key, value]) =>
+    <div className="tol-object-detail">
+      {Object.entries(data).map(([key, value]) => (
         <p key={key}>
           <strong>{key}:</strong> {value}
-        </p>)}
+        </p>
+      ))}
     </div>
   );
 }

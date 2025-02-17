@@ -4,14 +4,13 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-
 export default function retry(retries: number) {
   return function (
     // @ts-ignore
     target: any,
     // @ts-ignore
     propertyKey: string,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;
 

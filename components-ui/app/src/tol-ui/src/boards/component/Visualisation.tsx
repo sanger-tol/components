@@ -4,11 +4,8 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import {
-  BoardTable
-} from "../../index";
+import { BoardTable } from "../../index";
 import { Zone } from "../Utils";
-
 
 interface Props {
   id: string;
@@ -25,12 +22,10 @@ interface Props {
 function Visualisation(props: Props) {
   const { componentType } = props;
 
-  if (componentType === 'table') {
-    return (
-      <BoardTable {...props} />
-    );
+  if (componentType === "table") {
+    return <BoardTable {...props} />;
   }
-  return <></>
+  return <></>;
 }
 
 export default Visualisation;

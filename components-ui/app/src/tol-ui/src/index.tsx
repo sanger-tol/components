@@ -3,11 +3,18 @@
 // SPDX-License-Identifier: MIT
 
 // Direct package pass-throughs
-import { Container, Row, Col, ButtonGroup, Form, Spinner } from 'react-bootstrap';
+import {
+  Container,
+  Row,
+  Col,
+  ButtonGroup,
+  Form,
+  Spinner,
+} from "react-bootstrap";
 export { Container, Row, Col, Form, ButtonGroup, Spinner as Loader };
 import { Link } from "react-router-dom";
 export { Link };
-import { useToaster as Toaster, Form as RSForm } from 'rsuite'
+import { useToaster as Toaster, Form as RSForm } from "rsuite";
 export { Toaster, RSForm };
 
 // FontAwesome icons
@@ -27,12 +34,8 @@ export {
   Board,
 } from "./boards";
 
-
 // board components
-export {
-  DropdownButtons,
-  MyBoardsHeader
-} from "./boards/components";
+export { DropdownButtons, MyBoardsHeader } from "./boards/components";
 
 // charts
 export {
@@ -42,7 +45,7 @@ export {
   RemoteMap,
   MapLegend,
   Sunburst,
-  RemoteSunburst
+  RemoteSunburst,
 } from "./charts";
 
 // deprecated
@@ -54,19 +57,14 @@ export {
   GlobalMultipleSelect,
   Status,
   PopUpMessage as AlertPopUp,
-  Alert
+  Alert,
 } from "./deprecated";
 
 // drag & drop
 export { DnD } from "./dnd";
 
 // filter
-export {
-  Filter,
-  RemoteFilters,
-  BoardFilters,
-  resetZone
-} from "./filtering";
+export { Filter, RemoteFilters, BoardFilters, resetZone } from "./filtering";
 
 // forms
 export {
@@ -77,7 +75,7 @@ export {
   SingleSelectCustomOption,
   FormTextField,
   FormAllInOne,
-  FormCheckboxes
+  FormCheckboxes,
 } from "./forms";
 
 // messaging
@@ -86,7 +84,7 @@ export {
   Notification,
   StaticMessage,
   StatusMessage,
-  PopUpMessage
+  PopUpMessage,
 } from "./messaging";
 
 // general
@@ -117,37 +115,20 @@ export {
   useEffectUpdate,
   themeListener,
   resizeListener,
-  useQuery
+  useQuery,
 } from "./hooks";
 
 // models
-export type {
-  HeaderButton,
-  Page,
-  Dropdown,
-  IFilter
-} from "./models";
+export type { HeaderButton, Page, Dropdown, IFilter } from "./models";
 
 // nav
-export {
-  Callback,
-  Login,
-  Navigation,
-  ProfileDropdown
-} from "./nav";
+export { Callback, Login, Navigation, ProfileDropdown } from "./nav";
 
 // services
-export {
-  httpClient,
-  TsDataSource,
-  DetailAttribute
-} from "./services";
+export { httpClient, TsDataSource, DetailAttribute } from "./services";
 
 // table
-export {
-  RemoteTable,
-  BoardTable
-} from "./table";
+export { RemoteTable, BoardTable } from "./table";
 
 // timelines
 export { Timeline, RemoteTimeline } from "./timeline";
@@ -156,4 +137,4 @@ export { Timeline, RemoteTimeline } from "./timeline";
 export { default as TolApp } from "./TolApp";
 
 // variables
-export { env } from './variables';
+export { env } from "./variables";

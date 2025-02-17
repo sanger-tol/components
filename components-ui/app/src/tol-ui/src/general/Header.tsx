@@ -9,12 +9,11 @@ import { Container } from "react-bootstrap";
 import { HeaderButton } from "../models/HeaderButton";
 import Button from "./Button";
 
-
 export interface Props {
-  title?: string,
-  subTitle?: string,
-  buttons?: HeaderButton[]
-  pageEmpty?: boolean
+  title?: string;
+  subTitle?: string;
+  buttons?: HeaderButton[];
+  pageEmpty?: boolean;
 }
 
 class Header extends React.Component<Props> {
@@ -23,7 +22,7 @@ class Header extends React.Component<Props> {
 
   constructor(props: Props) {
     super(props);
-    
+
     if (props.buttons !== undefined) {
       this.buttons = props.buttons;
     }
@@ -49,11 +48,13 @@ class Header extends React.Component<Props> {
               <li></li>
               <li></li>
               <Container>
-                <div className='navbar-filler'/>
+                <div className="navbar-filler" />
                 <h1 className="masthead-heading mb-0">{this.props.title}</h1>
-                <h2 className="masthead-subheading mb-0">{this.props.subTitle}</h2>
-                {this.buttons.map(button => (
-                  <div key={button.text} style={{marginTop: '30px'}}>
+                <h2 className="masthead-subheading mb-0">
+                  {this.props.subTitle}
+                </h2>
+                {this.buttons.map((button) => (
+                  <div key={button.text} style={{ marginTop: "30px" }}>
                     <Button
                       text={button.text}
                       onClick={() => {
@@ -66,11 +67,7 @@ class Header extends React.Component<Props> {
             </div>
           </header>
         </div>
-        {this.pageEmpty ?
-          <h6>‎</h6>
-          :
-          <></>
-        }
+        {this.pageEmpty ? <h6>‎</h6> : <></>}
       </div>
     );
   }

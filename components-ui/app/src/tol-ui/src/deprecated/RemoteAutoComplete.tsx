@@ -4,34 +4,33 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
-import { AutoComplete as RSAutoComplete } from 'rsuite';
-import { Loader, StatusMessage, httpClient } from '../index';
-
+import { useState } from "react";
+import { AutoComplete as RSAutoComplete } from "rsuite";
+import { Loader, StatusMessage, httpClient } from "../index";
 
 interface Props {
-  endpoint: string,
-  filter_by: string,
-  display: string[],
-  baseUrl?: string
+  endpoint: string;
+  filter_by: string;
+  display: string[];
+  baseUrl?: string;
 }
 
 function RemoteAutoComplete(props: Props) {
   const { endpoint, filter_by, display, baseUrl } = props;
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
   const [timeout, setTimeDelay] = useState(undefined);
-  const [data, setData] = useState(['']);
+  const [data, setData] = useState([""]);
   const [isLoading, setIsLoading] = useState(false);
-  const [response, setResponse] = useState('');
+  const [response, setResponse] = useState("");
 
   const handleOnChange = (event: any) => {
-    setResponse('');
+    setResponse("");
     setData([]);
     setValue(event);
     clearTimeout(timeout);
     setIsLoading(true);
     const timeDelay = setTimeout(() => {
-      if (endpoint){
+      if (endpoint) {
         fetchData();
       }
     }, 800);
@@ -40,12 +39,13 @@ function RemoteAutoComplete(props: Props) {
   };
 
   const fetchData = () => {
-    httpClient().get('/' + endpoint, {
-      params: {
-        filter: {"contains": {[filter_by]: value}}
-      },
-      baseURL: baseUrl
-    })
+    httpClient()
+      .get("/" + endpoint, {
+        params: {
+          filter: { contains: { [filter_by]: value } },
+        },
+        baseURL: baseUrl,
+      })
       .then((res: any) => {
         const dropdown_data = convertForDropdown(res.data.data);
         setData(dropdown_data);
@@ -60,27 +60,27 @@ function RemoteAutoComplete(props: Props) {
   const convertForDropdown = (dataArray: any) => {
     const arrayToReturn: any = [];
     dataArray.map((item: any) => {
-      let displayed_fields = ' ';
-      for (let i=0; i<display.length; i++){
-        displayed_fields += item.attributes[display[i]] + ' ';
+      let displayed_fields = " ";
+      for (let i = 0; i < display.length; i++) {
+        displayed_fields += item.attributes[display[i]] + " ";
       }
       arrayToReturn.push(item.attributes[filter_by] + displayed_fields);
     });
-    return (arrayToReturn);
+    return arrayToReturn;
   };
 
-  if (response === ''){
+  if (response === "") {
     return (
       <div>
-        {isLoading ?
-          <div className='tol-input'>
+        {isLoading ? (
+          <div className="tol-input">
             <RSAutoComplete
               data={[value]}
               value={value}
               onChange={handleOnChange}
               renderMenuItem={() => {
                 return (
-                  <div className='centered-loader'>
+                  <div className="centered-loader">
                     <Loader
                       animation="border"
                       size="sm"
@@ -92,38 +92,30 @@ function RemoteAutoComplete(props: Props) {
               }}
             />
           </div>
-          :
-          <div className='tol-input'>
+        ) : (
+          <div className="tol-input">
             <RSAutoComplete
               data={data}
               value={value}
-              placeholder='Species Name'
-              onChange={handleOnChange} 
+              placeholder="Species Name"
+              onChange={handleOnChange}
             />
           </div>
-        }
+        )}
       </div>
     );
   } else {
-    return(
+    return (
       <div>
-        <div className='tol-input'>
-          <RSAutoComplete
-            data={[]}
-            value={value}
-            onChange={handleOnChange}
-          />
+        <div className="tol-input">
+          <RSAutoComplete data={[]} value={value} onChange={handleOnChange} />
         </div>
         <div>
-          <StatusMessage
-            status="error"
-            message={response}
-          />
+          <StatusMessage status="error" message={response} />
         </div>
       </div>
     );
   }
 }
-
 
 export default RemoteAutoComplete;

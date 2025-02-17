@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 # This is used for local development only
-version: '3.1'
+version: "3.1"
 
 services:
   components-db:
@@ -36,8 +36,8 @@ services:
     ports:
       - 8089:80
     volumes:
-      - './components-api/app/main:/app/main'
-      - '../tol-sdk:/packages/tol-sdk:rw'
+      - "./components-api/app/main:/app/main"
+      - "../tol-sdk:/packages/tol-sdk:rw"
       - ./components-api/migrations/alembic/versions:/migrations/alembic/versions
 
   components-ui:
@@ -55,10 +55,10 @@ services:
     ports:
       - 3011:3000
     volumes:
-      - './components-ui/app:/usr/src/app'
-      - '/usr/src/app/node_modules'
-      - '/usr/src/app/src/tol-ui/node_modules'
-    
+      - "./components-ui/app:/usr/src/app"
+      - "/usr/src/app/node_modules"
+      - "/usr/src/app/src/tol-ui/node_modules"
+
   components-api-test:
     image: components-api
     environment:
@@ -82,9 +82,9 @@ services:
     environment:
       - NODE_ENV=development
     volumes:
-      - './components-ui/app:/usr/src/app'
-      - '/usr/src/app/node_modules'
-  
+      - "./components-ui/app:/usr/src/app"
+      - "/usr/src/app/node_modules"
+
   components-dbutils:
     image: gitlab-registry.internal.sanger.ac.uk/tol/tol-core/dbutils:1.0.4
     environment:
@@ -101,7 +101,7 @@ services:
       - RESTORE_FILE_PREFIX
       - FLASK_ENV
       - BACKUP_SCHEDULE
-  
+
   components-alembic:
     image: components-api
     container_name: components-alembic
@@ -111,4 +111,4 @@ services:
     working_dir: /migrations
     volumes:
       - ./components-api/migrations/alembic/versions:/migrations/alembic/versions
-      - '../tol-sdk:/packages/tol-sdk:rw'
+      - "../tol-sdk:/packages/tol-sdk:rw"

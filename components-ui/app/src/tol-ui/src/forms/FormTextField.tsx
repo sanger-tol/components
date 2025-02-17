@@ -32,12 +32,7 @@ function FormTextField(props: Props) {
   return (
     <RSForm.Group controlId={`form-${id}-${capitaliseFirstLetter(name)}`}>
       <RSForm.ControlLabel>{label}</RSForm.ControlLabel>
-      <RSForm.Control
-        style={style}
-        name={name}
-        accepter={accepter}
-        {...rest}
-      />
+      <RSForm.Control style={style} name={name} accepter={accepter} {...rest} />
       {helpText && <RSForm.HelpText>{helpText}</RSForm.HelpText>}
     </RSForm.Group>
   );

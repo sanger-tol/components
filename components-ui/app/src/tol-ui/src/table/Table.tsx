@@ -4,73 +4,70 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from 'react';
-import { 
+import { useEffect, useState } from "react";
+import {
   Button,
   Placeholder,
   useEffectUpdate,
   DropdownButtons,
-} from '../index';
+} from "../index";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {  
-  faSliders,
-} from '@fortawesome/free-solid-svg-icons';
-import ColumnConfigDrawer  from './ColumnConfigDrawer';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSliders } from "@fortawesome/free-solid-svg-icons";
+import ColumnConfigDrawer from "./ColumnConfigDrawer";
 import { exportTableToSpreadsheet } from "./Utils";
-import Filter, { IFilter } from '../filtering/Filter';
-import { InfoTooltip } from '../general';
-import { PopUpMessage } from '../index';
-import { FieldMeta } from './Field';
-import { Zone } from '../boards';
-import { DropdownButtonProps } from '../general/DropdownButtons';
-
+import Filter, { IFilter } from "../filtering/Filter";
+import { InfoTooltip } from "../general";
+import { PopUpMessage } from "../index";
+import { FieldMeta } from "./Field";
+import { Zone } from "../boards";
+import { DropdownButtonProps } from "../general/DropdownButtons";
 
 export type NumRows = 25 | 50 | 100 | 1000;
 
 interface Props {
-  id: string,
-  data: any,
-  fieldMeta: FieldMeta,
-  height: any,
-  loading: boolean,
+  id: string;
+  data: any;
+  fieldMeta: FieldMeta;
+  height: any;
+  loading: boolean;
 
-  endpoint: string,
-  baseUrl?: string,
+  endpoint: string;
+  baseUrl?: string;
 
-  page: number,
-  setPage: any,
-  pageSize: NumRows | number,
-  setPageSize: any,
-  totalSize: number,
-  rowCounter?: JSX.Element,
-  displaySource?: boolean,
+  page: number;
+  setPage: any;
+  pageSize: NumRows | number;
+  setPageSize: any;
+  totalSize: number;
+  rowCounter?: JSX.Element;
+  displaySource?: boolean;
 
-  filterVisibility?: boolean,
-  setFilterVisibility?: any,
+  filterVisibility?: boolean;
+  setFilterVisibility?: any;
 
-  sortColumn: string,
-  sortType: any,
-  defaultSort?: string,
-  handleSortColumn: any,
+  sortColumn: string;
+  sortType: any;
+  defaultSort?: string;
+  handleSortColumn: any;
 
-  zone: Zone,
-  setZone: any,
-  filter: any,
+  zone: Zone;
+  setZone: any;
+  filter: any;
 
-  onModalSave: any
+  onModalSave: any;
 
-  noFilter?: boolean,
-  noPagination?: boolean,
-  noSorting?: boolean,
-  noConfigModal?: boolean,
-  noDownload?: boolean,
-  rowSelection?: boolean
-  actions?: DropdownButtonProps[],
-  configButtons?: JSX.Element[]
+  noFilter?: boolean;
+  noPagination?: boolean;
+  noSorting?: boolean;
+  noConfigModal?: boolean;
+  noDownload?: boolean;
+  rowSelection?: boolean;
+  actions?: DropdownButtonProps[];
+  configButtons?: JSX.Element[];
 }
 
-function Table (props: Props) {
+function Table(props: Props) {
   const { Column, HeaderCell, Cell } = RSTable;
   let {
     /* eslint-disable */
@@ -98,7 +95,7 @@ function Table (props: Props) {
     sortType,
     defaultSort,
     handleSortColumn,
-  
+
     onModalSave,
     filter,
 
@@ -109,14 +106,14 @@ function Table (props: Props) {
     noDownload,
     rowSelection,
     actions,
-    configButtons
+    configButtons,
     /* eslint-enable */
   } = props;
 
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const [success, setSuccess] = useState('');
-  const [error, setError] = useState('!');
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("!");
   noFilter = !!noFilter;
 
   // row selection
@@ -136,27 +133,32 @@ function Table (props: Props) {
 
   // @ts-ignore
   const handleCheckAll = (value: any, checked: boolean) => {
-    const keys = checked ? data.map(item => item.id) : [];
+    const keys = checked ? data.map((item) => item.id) : [];
     setSelectedRows(keys);
   };
 
   const handleCheck = (value: any, checked: boolean) => {
-    const keys = checked ? [...selectedRows, value] : selectedRows.filter(item => item !== value);
+    const keys = checked
+      ? [...selectedRows, value]
+      : selectedRows.filter((item) => item !== value);
     setSelectedRows(keys);
   };
 
   useEffect(() => {
-    success && PopUpMessage({
-      message: success,
-      type: 'success',
-    })
+    success &&
+      PopUpMessage({
+        message: success,
+        type: "success",
+      });
   }, [success]);
 
   useEffect(() => {
-    error && error !== '!' && PopUpMessage({
-      message: error,
-      type: 'error',
-    })
+    error &&
+      error !== "!" &&
+      PopUpMessage({
+        message: error,
+        type: "error",
+      });
   }, [error]);
 
   useEffectUpdate(() => {
@@ -166,57 +168,57 @@ function Table (props: Props) {
 
   const actionDropDownButtons = actions?.map((button) => ({
     ...button,
-    action: () => button.action(selectedRows, filter)
-  }))
+    action: () => button.action(selectedRows, filter),
+  }));
 
   const actionButtons = (
-    <div style={{float: "left"}}>
-      {actions && actions.length > 0 &&
+    <div style={{ float: "left" }}>
+      {actions && actions.length > 0 && (
         <DropdownButtons
           mainButtonIcon={{
-            icon: 'paper-plane',
+            icon: "paper-plane",
             type: "primary",
             position: "left",
-            disabled: (selectedRows.length === 0),
+            disabled: selectedRows.length === 0,
           }}
           dropdownButtons={actionDropDownButtons}
           placement={"rightStart"}
         />
-      }
+      )}
     </div>
-  )
+  );
 
   return (
-    <div style={{height: height}} className='tol-table'>
-      <ColumnConfigDrawer 
-        open={open} 
-        setOpen={setOpen} 
+    <div style={{ height: height }} className="tol-table">
+      <ColumnConfigDrawer
+        open={open}
+        setOpen={setOpen}
         title={"Add/Remove Table Columns"}
         displaySource={displaySource}
         onConfigSave={onModalSave}
         {...props}
       />
       <div className="tol-table-bar">
-        {rowSelection &&
+        {rowSelection && (
           <>
-            <Button 
-              position='left'
+            <Button
+              position="left"
               type="primary"
               active={bulkSelect}
               onClick={() => {
                 handleCheckAll(null, !bulkSelect);
                 setBulkSelect(!bulkSelect);
               }}
-              icon='check-double'
+              icon="check-double"
               outline
             />
           </>
-        }
+        )}
         {actionButtons}
-        {(!noPagination && fieldMeta.order.active.length > 0) &&
+        {!noPagination && fieldMeta.order.active.length > 0 && (
           <>
             {rowCounter ? rowCounter : totalSize}
-            <span className='tol-page-size'>
+            <span className="tol-page-size">
               <SelectPicker
                 value={pageSize}
                 onChange={setPageSize}
@@ -226,14 +228,14 @@ function Table (props: Props) {
                 data={[
                   { label: "25", value: 25 },
                   { label: "50", value: 50 },
-                  { label: "100", value: 100 }
+                  { label: "100", value: 100 },
                 ]}
               />
             </span>
             <Pagination
               className="tol-pagination"
               size="sm"
-              layout={['skip']}
+              layout={["skip"]}
               total={totalSize}
               activePage={page}
               onChangePage={setPage}
@@ -250,7 +252,7 @@ function Table (props: Props) {
               boundaryLinks
               maxButtons={3}
               size="sm"
-              layout={['pager']}
+              layout={["pager"]}
               total={totalSize}
               activePage={page}
               onChangePage={setPage}
@@ -258,71 +260,77 @@ function Table (props: Props) {
               onChangeLimit={setPageSize}
             />
           </>
-        }
-        {!noConfigModal &&
-          <Button 
-            position='right'
+        )}
+        {!noConfigModal && (
+          <Button
+            position="right"
             type="primary"
             onClick={() => {
               setOpen(true);
             }}
-            icon='sliders'
+            icon="sliders"
             outline
           />
-        }
-        {!noFilter &&
+        )}
+        {!noFilter && (
           <Button
-            position='right'
+            position="right"
             active={filterVisibility}
             type="primary"
-            onClick={ () => setFilterVisibility(!filterVisibility) }
+            onClick={() => setFilterVisibility(!filterVisibility)}
             disabled={noFieldsSelected}
-            icon='eye-slash'
+            icon="eye-slash"
             outline
           />
-        }
-        {!noDownload &&
+        )}
+        {!noDownload && (
           <Button
-            position='right'
+            position="right"
             type="primary"
-            onClick={() => exportTableToSpreadsheet(
-              endpoint,
-              fieldMeta.data,
-              filter!,
-              sortColumn,
-              sortType,
-              setSuccess,
-              setError,
-              setDownloading,
-              defaultSort,
-              baseUrl
-            )}
+            onClick={() =>
+              exportTableToSpreadsheet(
+                endpoint,
+                fieldMeta.data,
+                filter!,
+                sortColumn,
+                sortType,
+                setSuccess,
+                setError,
+                setDownloading,
+                defaultSort,
+                baseUrl,
+              )
+            }
             disabled={totalSize < 1 || totalSize >= 10000 || noFieldsSelected}
             loading={downloading}
-            icon='download'
-            disabledTooltip={totalSize >= 10000 ? 'Only 10,000 results can currently be downloaded.' : undefined}
+            icon="download"
+            disabledTooltip={
+              totalSize >= 10000
+                ? "Only 10,000 results can currently be downloaded."
+                : undefined
+            }
             outline
           />
-        }
+        )}
         {configButtons}
       </div>
-      {noFieldsSelected ?
+      {noFieldsSelected ? (
         <Placeholder
           message={
             <>
-            Please add a field to get started. Click
-            <FontAwesomeIcon
-              icon={faSliders}
-              size="lg"
-              style={{padding: "0 10"}}
-            />
-            to configure.
+              Please add a field to get started. Click
+              <FontAwesomeIcon
+                icon={faSliders}
+                size="lg"
+                style={{ padding: "0 10" }}
+              />
+              to configure.
             </>
           }
           height={height}
         />
-      :
-        <div className='tol-table-inner'>
+      ) : (
+        <div className="tol-table-inner">
           <RSTable
             bordered
             data={data}
@@ -334,27 +342,20 @@ function Table (props: Props) {
             rowClassName={(rowData: any) => {
               if (rowData) {
                 if (bulkSelect) {
-                  return 'tol-selected-row disabled';
-                } else if (selectedRows.some(item => item === rowData.id)) {
-                  return 'tol-selected-row';
+                  return "tol-selected-row disabled";
+                } else if (selectedRows.some((item) => item === rowData.id)) {
+                  return "tol-selected-row";
                 }
               }
-              return '';
+              return "";
             }}
             fillHeight
             wordWrap
-            renderLoading={
-              () => (
-                <Placeholder
-                  loader
-                  height={height}
-                  opacity={0.8}
-                  squareCorners
-                />
-              )
-            }
+            renderLoading={() => (
+              <Placeholder loader height={height} opacity={0.8} squareCorners />
+            )}
           >
-            {rowSelection &&
+            {rowSelection && (
               <Column key="rowSelection" width={60}>
                 <HeaderCell>
                   <Checkbox
@@ -363,20 +364,19 @@ function Table (props: Props) {
                     indeterminate={indeterminate}
                     disabled={bulkSelect || data.length === 0}
                     onChange={handleCheckAll}
-                    style={
-                      data.length === 0
-                      ? {display: 'none'}
-                      : {}
-                    }
+                    style={data.length === 0 ? { display: "none" } : {}}
                   />
                 </HeaderCell>
                 <Cell dataKey="id">
-                  {(rowData: {id: any}) => {
+                  {(rowData: { id: any }) => {
                     return (
                       <Checkbox
                         className="tol-row-selection"
                         value={rowData.id}
-                        checked={bulkSelect || selectedRows.some(item => item === rowData.id)}
+                        checked={
+                          bulkSelect ||
+                          selectedRows.some((item) => item === rowData.id)
+                        }
                         disabled={bulkSelect}
                         onChange={handleCheck}
                       />
@@ -384,7 +384,7 @@ function Table (props: Props) {
                   }}
                 </Cell>
               </Column>
-            }
+            )}
             {fieldMeta!.order.active.map((key: string) => {
               const field = fieldMeta.data[key];
               const sortable = noSorting ? false : field.sort;
@@ -397,16 +397,18 @@ function Table (props: Props) {
                   fixed={field.fixed}
                 >
                   <HeaderCell>
-                    {field.description &&
-                      <div className='tol-header-info'>
+                    {field.description && (
+                      <div className="tol-header-info">
                         <InfoTooltip contents={field.description} />
                       </div>
-                    }
-                    <p className='tol-header-text'>
-                      {field.rename}
-                    </p>
-                    {filterable &&
-                      <span className={filterVisibility ? "tol-filter" : "tol-filter-hide"}>
+                    )}
+                    <p className="tol-header-text">{field.rename}</p>
+                    {filterable && (
+                      <span
+                        className={
+                          filterVisibility ? "tol-filter" : "tol-filter-hide"
+                        }
+                      >
                         <Filter
                           attribute={key}
                           rename={field.rename!}
@@ -415,7 +417,7 @@ function Table (props: Props) {
                           {...props}
                         />
                       </span>
-                    }
+                    )}
                   </HeaderCell>
                   <Cell dataKey={key} />
                 </Column>
@@ -423,7 +425,7 @@ function Table (props: Props) {
             })}
           </RSTable>
         </div>
-      }
+      )}
     </div>
   );
 }

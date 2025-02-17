@@ -33,7 +33,7 @@ const StatusMessage = React.forwardRef<HTMLDivElement, Props>(
         />
       </div>
     );
-  }
+  },
 );
 
 export default StatusMessage;

@@ -8,7 +8,11 @@ import React, { useCallback, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import { useAuth } from "../contexts/auth.context";
 import { getUrlLogin } from "../services/auth/authService";
-import { getReturnUrlFromLocalStorage, setReturnUrlFromLocalStorage, tokenHasExpired } from "../services/localStorage/localStorageService";
+import {
+  getReturnUrlFromLocalStorage,
+  setReturnUrlFromLocalStorage,
+  tokenHasExpired,
+} from "../services/localStorage/localStorageService";
 
 interface Props {
   buttonIcon: React.ReactNode;
@@ -16,7 +20,7 @@ interface Props {
 }
 
 function Login(props: Props) {
-  const {buttonIcon, returnUrl} = props;
+  const { buttonIcon, returnUrl } = props;
   const { setToken, setUser } = useAuth();
 
   useEffect(() => {
@@ -33,7 +37,11 @@ function Login(props: Props) {
     });
   }, []);
   // @ts-ignore
-  return tokenHasExpired() ? buttonIcon(login) : <Redirect to={getReturnUrlFromLocalStorage() || "/"} />;
+  return tokenHasExpired() ? (
+    buttonIcon(login)
+  ) : (
+    <Redirect to={getReturnUrlFromLocalStorage() || "/"} />
+  );
 }
 
 export default Login;

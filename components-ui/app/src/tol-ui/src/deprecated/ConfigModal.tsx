@@ -4,34 +4,42 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, DnD, InfoTooltip, Modal } from '../index';
-import { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDiagramProject } from '@fortawesome/free-solid-svg-icons';
-import { FieldMeta, initialiseFieldMeta } from '../table/Field';
-import { Row, Col } from 'react-bootstrap';
-import { deleteFieldMetaLocalStorage, getSourceColour, sortFieldsByRename } from '../table/Utils';
-import { normaliseCaps } from '../general/Utils';
-
+import { Button, DnD, InfoTooltip, Modal } from "../index";
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDiagramProject } from "@fortawesome/free-solid-svg-icons";
+import { FieldMeta, initialiseFieldMeta } from "../table/Field";
+import { Row, Col } from "react-bootstrap";
+import {
+  deleteFieldMetaLocalStorage,
+  getSourceColour,
+  sortFieldsByRename,
+} from "../table/Utils";
+import { normaliseCaps } from "../general/Utils";
 
 export interface Props {
-  tableId: string,
-  fieldMeta: FieldMeta,
-  open: boolean,
-  setOpen: any,
-  pageSize?: number,
-  displaySource?: boolean,
-  onModalSave: (fieldMeta: FieldMeta) => void
+  tableId: string;
+  fieldMeta: FieldMeta;
+  open: boolean;
+  setOpen: any;
+  pageSize?: number;
+  displaySource?: boolean;
+  onModalSave: (fieldMeta: FieldMeta) => void;
 }
 
 function ConfigModal(props: Props) {
-  const { tableId, fieldMeta, open, setOpen, onModalSave, displaySource } = props;
+  const { tableId, fieldMeta, open, setOpen, onModalSave, displaySource } =
+    props;
   const [contents, setContents] = useState({});
 
-  const updateMeta = (list: object[], updatedFieldMeta: FieldMeta, hidden: boolean) => {
+  const updateMeta = (
+    list: object[],
+    updatedFieldMeta: FieldMeta,
+    hidden: boolean,
+  ) => {
     for (const element of Object.values(list)) {
-      const id = element!['id'];
-      const isActive = hidden ? 'inactive' : 'active';
+      const id = element!["id"];
+      const isActive = hidden ? "inactive" : "active";
       updatedFieldMeta.order[isActive].push(id);
       // make a copy and update visibility
       updatedFieldMeta.data[id] = fieldMeta.data[id];
@@ -43,11 +51,11 @@ function ConfigModal(props: Props) {
     const updatedFieldMeta: FieldMeta = initialiseFieldMeta();
     // loop through columns and set active/inactive
     for (const column of Object.values(contents)) {
-      const id = column!['id'];
-      const list = column!['list'];
-      if (id === 'Active') {
+      const id = column!["id"];
+      const list = column!["list"];
+      if (id === "Active") {
         updateMeta(list, updatedFieldMeta, false);
-      } else if (id === 'Inactive') {
+      } else if (id === "Inactive") {
         updateMeta(list, updatedFieldMeta, true);
       }
     }
@@ -57,25 +65,28 @@ function ConfigModal(props: Props) {
   };
 
   const uiElement = (key: string, meta: object) => {
-    const sourceColour = getSourceColour(meta['source']);
+    const sourceColour = getSourceColour(meta["source"]);
     return (
-      <div className='tol-dnd-item'>
-        {meta['description'] &&
-          <span className='info'>
-            <InfoTooltip contents={meta['description']} />
+      <div className="tol-dnd-item">
+        {meta["description"] && (
+          <span className="info">
+            <InfoTooltip contents={meta["description"]} />
           </span>
-        }
-        {meta['rename']}
+        )}
+        {meta["rename"]}
         {displaySource ? (
-          <div className='customize-config-source'
+          <div
+            className="customize-config-source"
             // @ts-ignore
-            style={{ '--config-source-bg-color': sourceColour }}
+            style={{ "--config-source-bg-color": sourceColour }}
           >
-            {normaliseCaps(meta['source'])}
+            {normaliseCaps(meta["source"])}
           </div>
         ) : null}
-        {!meta['isAttribute'] && <FontAwesomeIcon className='icon' icon={faDiagramProject} size="xs" />}
-        <div className='field-name-origin'>{key}</div>
+        {!meta["isAttribute"] && (
+          <FontAwesomeIcon className="icon" icon={faDiagramProject} size="xs" />
+        )}
+        <div className="field-name-origin">{key}</div>
       </div>
     );
   };
@@ -85,7 +96,7 @@ function ConfigModal(props: Props) {
     for (const key of fieldMeta.order[isActive]) {
       items.push({
         id: key,
-        element: uiElement(key, fieldMeta.data[key])
+        element: uiElement(key, fieldMeta.data[key]),
       });
     }
     return items;
@@ -93,14 +104,14 @@ function ConfigModal(props: Props) {
 
   const fieldMetaToElements = () => {
     const elements: object = {};
-    elements['Active'] = fieldMetaItemToElement('active');
-    elements['Inactive'] = fieldMetaItemToElement('inactive');
+    elements["Active"] = fieldMetaItemToElement("active");
+    elements["Inactive"] = fieldMetaItemToElement("inactive");
     return elements;
   };
 
   const dealWithContents = (column: object) => {
-    if (column['id'] === "Active") {
-      if (column['list'].length === 0) {
+    if (column["id"] === "Active") {
+      if (column["list"].length === 0) {
         return false;
       }
     }
@@ -114,37 +125,49 @@ function ConfigModal(props: Props) {
   };
 
   const saveButton = (
-    <Button type="success" onClick={saveConfig} icon='floppy-disk' position='right'/>
+    <Button
+      type="success"
+      onClick={saveConfig}
+      icon="floppy-disk"
+      position="right"
+    />
   );
 
   const header = (
     <>
-      <Row style={{ marginLeft: 0, marginRight: 0, paddingLeft: 0, paddingRight: 0}}>
+      <Row
+        style={{
+          marginLeft: 0,
+          marginRight: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+        }}
+      >
         <Col sm={6} style={{ paddingLeft: 0, paddingRight: 0 }}>
           <h2>Table Configuration</h2>
         </Col>
         <Col sm={6} style={{ paddingLeft: 0, paddingRight: 0 }}>
-        <div style={{float: "right", display: "none"}} /* Hidden for now */>
-          <Button
-            className="clear-saved-config"
-            type="error"
-            onClick={() => {
-              deleteFieldMetaLocalStorage(tableId);
-            }}
-            text='Clear and Reset'
-            icon='trash'
-          />
-        </div>
+          <div style={{ float: "right", display: "none" }} /* Hidden for now */>
+            <Button
+              className="clear-saved-config"
+              type="error"
+              onClick={() => {
+                deleteFieldMetaLocalStorage(tableId);
+              }}
+              text="Clear and Reset"
+              icon="trash"
+            />
+          </div>
         </Col>
       </Row>
-      <hr/>
+      <hr />
     </>
-  )
+  );
 
   return (
     <Modal
       open={open}
-      size='full'
+      size="full"
       setOpen={setOpen}
       header={header}
       actionButton={saveButton}

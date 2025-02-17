@@ -2,9 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-
+import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export function useQuery() {
   const location = useLocation();

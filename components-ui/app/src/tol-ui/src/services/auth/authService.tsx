@@ -6,40 +6,46 @@ SPDX-License-Identifier: MIT
 
 //@ts-nocheck
 
-import { Page } from '../../models';
-import { httpClient } from '../http/httpClient';
-import { tokenHasExpired } from '../localStorage/localStorageService';
+import { Page } from "../../models";
+import { httpClient } from "../http/httpClient";
+import { tokenHasExpired } from "../localStorage/localStorageService";
 
 export function getUrlLogin() {
-  return httpClient().get('/auth/login').then(response => {
-    return {
-      loginUrl: response!.data!.loginUrl,
-      userData: {
-        name: response!.data!.name,
-      }
-    };
-  });
+  return httpClient()
+    .get("/auth/login")
+    .then((response) => {
+      return {
+        loginUrl: response!.data!.loginUrl,
+        userData: {
+          name: response!.data!.name,
+        },
+      };
+    });
 }
 
 export function getToken(dataPost: any) {
-  return httpClient().post('/auth/token', dataPost);
+  return httpClient().post("/auth/token", dataPost);
 }
 
 export function getProfile(token: string) {
-  return httpClient().post('/auth/profile', {token});
+  return httpClient().post("/auth/profile", { token });
 }
 
 export function getRoles() {
-  return httpClient().get('/auth/roles');
+  return httpClient().get("/auth/roles");
 }
 
-export function confirmAuthorised(user: any, auth?: boolean|string[], noAuth?: boolean) {
+export function confirmAuthorised(
+  user: any,
+  auth?: boolean | string[],
+  noAuth?: boolean,
+) {
   // If a user is logged in and the page is set to hide when logged in
   if (noAuth && user) {
-    return false
+    return false;
   }
   // Check if the user is logged in and the token has not expired if the page requires auth
-  if (typeof auth === 'boolean') {
+  if (typeof auth === "boolean") {
     return auth && user && !tokenHasExpired();
   }
   // Checks if the user has the correct role

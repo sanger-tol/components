@@ -7,13 +7,13 @@
 import React, { useState, useEffect } from "react";
 import { Accordion as Acc } from "rsuite";
 import { AccordionHeader, DropdownButtons, ConfirmationModal } from "./index";
-import { DropdownButtonProps, DropdownMainIconProps } from "../../general/DropdownButtons";
+import {
+  DropdownButtonProps,
+  DropdownMainIconProps,
+} from "../../general/DropdownButtons";
 import { httpClient, TsDataSource } from "../../services";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faChartSimple,
-  faTable,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChartSimple, faTable } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
 import { BOARD_ENDPOINTS, BoardObjectTypes } from "../../constants";
 
@@ -113,7 +113,7 @@ const fetchSubItemId = async (
   id: string,
   endpointUrl?: string,
   filterItem?: string,
-  itemType?: any
+  itemType?: any,
 ) => {
   try {
     const res: any = await httpClient().get(`/${endpointUrl}`, {
@@ -137,7 +137,7 @@ const fetchSubItemId = async (
 
 const useItemData = <T,>(
   ids: string[],
-  fetchFunction: (id: string) => Promise<T> | T
+  fetchFunction: (id: string) => Promise<T> | T,
 ) => {
   const [itemData, setItemData] = useState<{ [key: string]: T }>({});
   const [loading, setLoading] = useState(true);
@@ -153,7 +153,7 @@ const useItemData = <T,>(
           ids.map(async (id) => {
             const data = await fetchFunction(id);
             return { [id]: data };
-          })
+          }),
         );
 
         if (mounted) {
@@ -193,24 +193,23 @@ function Accordion(props: BoardsAccordionProps) {
 
   // @ts-ignore
   const deleteConfirmationModal = () => (
-    <ConfirmationModal 
+    <ConfirmationModal
       setOpen={setOpenDelete}
       open={openDelete}
       // @ts-ignore
       onConfirmClick={deleteBoard}
       itemType={"board"}
     />
-  )
+  );
 
   const deleteBoard = () => {
     if (boardIdToDelete === null) return;
-    const deletedBoard = boardDetails.filter((board: any) => board.id !== boardIdToDelete);
+    const deletedBoard = boardDetails.filter(
+      (board: any) => board.id !== boardIdToDelete,
+    );
     setBoardDetails(deletedBoard);
     const ds = new TsDataSource();
-    ds.custom(
-      `${BOARD_ENDPOINTS.DELETE_BOARD}/${boardIdToDelete}`,
-      'DELETE',
-    )
+    ds.custom(`${BOARD_ENDPOINTS.DELETE_BOARD}/${boardIdToDelete}`, "DELETE");
     setBoardIdToDelete(null);
   };
 
@@ -222,20 +221,18 @@ function Accordion(props: BoardsAccordionProps) {
   const boardOptionsButton: DropdownMainIconProps = {
     outline: true,
     type: "primary",
-    icon: 'ellipsis-v',
-    className:"my-boards-dropdown-buttons"
+    icon: "ellipsis-v",
+    className: "my-boards-dropdown-buttons",
   };
 
   const dropdownButtons = (
     boardId: string,
-    viewId?: string
+    viewId?: string,
   ): DropdownButtonProps[] => [
     {
       dropdownButtonName: "View",
       action: () => {
-        viewId !== undefined
-          ? goToView(boardId, viewId!)
-          : goToBoard(boardId);
+        viewId !== undefined ? goToView(boardId, viewId!) : goToBoard(boardId);
       },
     },
     {
@@ -243,7 +240,7 @@ function Accordion(props: BoardsAccordionProps) {
       action: () => {
         handleDelete(boardId);
       },
-    }
+    },
   ];
 
   const boardOptionsDropdownButton = (boardId: string, viewId?: string) => (
@@ -315,7 +312,7 @@ function Accordion(props: BoardsAccordionProps) {
     const { componentIds } = props;
     const { itemData: componentData, loading } = useItemData(
       componentIds,
-      returnComponentInfo
+      returnComponentInfo,
     );
 
     if (!componentIds?.length) return null;
@@ -358,7 +355,7 @@ function Accordion(props: BoardsAccordionProps) {
     const { zoneIds } = props;
     const { itemData: zoneData, loading } = useItemData(
       zoneIds,
-      returnZoneInfo
+      returnZoneInfo,
     );
 
     if (!zoneIds?.length) return null;
@@ -393,11 +390,12 @@ function Accordion(props: BoardsAccordionProps) {
     const { boardId, viewIds } = props;
     const { itemData: viewData, loading } = useItemData(
       viewIds,
-      returnViewInfo
+      returnViewInfo,
     );
 
     if (!viewIds?.length) return null;
-    if (loading) return <div style={{ textAlign: "center" }}>Loading views...</div>;
+    if (loading)
+      return <div style={{ textAlign: "center" }}>Loading views...</div>;
 
     return (
       <div>

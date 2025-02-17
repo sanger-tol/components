@@ -25,7 +25,6 @@ import { confirmAuthorised } from "../services/auth/authService";
 import { LoginIcon, RegisterIcon } from "../general/Icons";
 import ProfileDropdown from "./ProfileDropdown";
 
-
 interface Props extends RouteComponentProps {
   brand: string | JSX.Element;
   pages: (Page | Dropdown)[];
@@ -81,7 +80,7 @@ const getBackgroundClass = (environment: string): string => {
 function Navigation(props: Props) {
   const { setToken, user, setUser } = useAuth();
   const [environment, setEnvironment] = useState("");
-  
+
   useEffect(() => {
     fetchEnvironment().then((fetchedEnvironment: string) => {
       setEnvironment(fetchedEnvironment);
@@ -115,10 +114,7 @@ function Navigation(props: Props) {
       const authorised = confirmAuthorised(user, page.auth, page.removeOnAuth);
       if (authorised) {
         return (
-          <Nav.Link
-            key={page.name}
-            href={convertToPath(page.name)}
-          >
+          <Nav.Link key={page.name} href={convertToPath(page.name)}>
             {page.name}
           </Nav.Link>
         );
@@ -131,7 +127,7 @@ function Navigation(props: Props) {
       const authorised = confirmAuthorised(
         user,
         dropdown.auth,
-        dropdown.removeOnAuth
+        dropdown.removeOnAuth,
       );
       if (authorised) {
         return (
@@ -140,10 +136,7 @@ function Navigation(props: Props) {
               dropdown.pages.map((page: Page, index) => {
                 return (
                   // eslint-disable-next-line
-                  <div
-                    className="nav-dropdown-box"
-                    key={index}
-                  >
+                  <div className="nav-dropdown-box" key={index}>
                     <Nav.Link
                       key={page.name}
                       href={
@@ -188,12 +181,12 @@ function Navigation(props: Props) {
               }
             })}
             {props.register && tokenHasExpired() ? (
-              <Nav.Link
-                className="nav-right"
-                key="Register"
-              >
+              <Nav.Link className="nav-right" key="Register">
                 {/* @ts-ignore */}
-                <Login buttonIcon={RegisterIcon} returnUrl={props.customCallbackUrl ?? "/"}/>
+                <Login
+                  buttonIcon={RegisterIcon}
+                  returnUrl={props.customCallbackUrl ?? "/"}
+                />
               </Nav.Link>
             ) : null}
             {props.login && tokenHasExpired() ? (
@@ -202,7 +195,10 @@ function Navigation(props: Props) {
                 key="Login"
               >
                 {/* @ts-ignore */}
-                <Login buttonIcon={LoginIcon} returnUrl={getReturnUrlFromLocalStorage()}/>
+                <Login
+                  buttonIcon={LoginIcon}
+                  returnUrl={getReturnUrlFromLocalStorage()}
+                />
               </Nav.Link>
             ) : user ? (
               <div className="nav-right">
@@ -219,7 +215,6 @@ function Navigation(props: Props) {
     </div>
   );
 }
-
 
 //@ts-ignore
 export default withRouter(Navigation);

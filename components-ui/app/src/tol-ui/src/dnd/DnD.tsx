@@ -9,21 +9,20 @@ import { useState, useEffect } from "react";
 import Column from "./Column";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
-
 export interface Element {
-  id: string,
-  element: JSX.Element
+  id: string;
+  element: JSX.Element;
 }
 
 interface Columns {
-  [key: string]: Element[]
+  [key: string]: Element[];
 }
 
 interface Props {
-  elements: object,
-  setContents?: any
-  editMode?: boolean,
-  dealWithContents?: (column: object) => boolean
+  elements: object;
+  setContents?: any;
+  editMode?: boolean;
+  dealWithContents?: (column: object) => boolean;
 }
 
 function convertElementsData(columns: Columns) {
@@ -31,7 +30,7 @@ function convertElementsData(columns: Columns) {
   for (const [key, elements] of Object.entries(columns)) {
     cols[key] = {
       id: key,
-      list: elements
+      list: elements,
     };
   }
   return cols;
@@ -40,7 +39,7 @@ function convertElementsData(columns: Columns) {
 function DnD(props: Props) {
   const { elements, setContents, dealWithContents } = props;
   const [columns, setColumns] = useState<object>(
-    convertElementsData(elements as Columns)
+    convertElementsData(elements as Columns),
   );
   let editMode = true;
   if (props.editMode === false) editMode = false;
@@ -50,8 +49,10 @@ function DnD(props: Props) {
     if (destination === undefined || destination === null) return null;
 
     // make sure we're actually moving the item
-    if (source.droppableId === destination.droppableId &&
-        destination.index === source.index) {
+    if (
+      source.droppableId === destination.droppableId &&
+      destination.index === source.index
+    ) {
       return null;
     }
 
@@ -64,7 +65,7 @@ function DnD(props: Props) {
       // move the item within the list
       // start by making a new list without the dragged item
       const newList = start.list.filter(
-        (_: any, idx: number) => idx !== source.index
+        (_: any, idx: number) => idx !== source.index,
       );
 
       // then insert the item at the right location
@@ -73,22 +74,22 @@ function DnD(props: Props) {
       // then create a new copy of the column object
       const newCol = {
         id: start.id,
-        list: newList
+        list: newList,
       };
 
       // update the state
-      setColumns(state => ({ ...state, [newCol.id]: newCol }));
+      setColumns((state) => ({ ...state, [newCol.id]: newCol }));
     } else {
       // ff start is different from end, we need to update multiple columns
       // filter the start list like before
       const newStartList = start.list.filter(
-        (_: any, idx: number) => idx !== source.index
+        (_: any, idx: number) => idx !== source.index,
       );
 
       // create a new start column
       const newStartCol = {
         id: start.id,
-        list: newStartList
+        list: newStartList,
       };
 
       // stop on drop with custom function
@@ -106,14 +107,14 @@ function DnD(props: Props) {
       // create a new end column
       const newEndCol = {
         id: end.id,
-        list: newEndList
+        list: newEndList,
       };
 
       // update the state
-      setColumns(state => ({
+      setColumns((state) => ({
         ...state,
         [newStartCol.id]: newStartCol,
-        [newEndCol.id]: newEndCol
+        [newEndCol.id]: newEndCol,
       }));
     }
     return null;
@@ -129,13 +130,15 @@ function DnD(props: Props) {
   return (
     //@ts-ignore
     <DragDropContext onDragEnd={onDragEnd}>
-      <Row style={{
-        marginLeft: 0,
-        marginRight: 0,
-        paddingLeft: 0,
-        paddingRight: 0,
-      }}>
-        {Object.values(columns).map(col => (
+      <Row
+        style={{
+          marginLeft: 0,
+          marginRight: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+        }}
+      >
+        {Object.values(columns).map((col) => (
           <Column col={col} key={col.id} editMode={editMode} />
         ))}
       </Row>

@@ -4,10 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export type {
-  Zone,
-  Component
-} from "./Utils";
+export type { Zone, Component } from "./Utils";
 export { useZone, useTranslator } from "./Utils";
 export { default as View } from "./view/View";
 export { default as Board } from "./board/Board";

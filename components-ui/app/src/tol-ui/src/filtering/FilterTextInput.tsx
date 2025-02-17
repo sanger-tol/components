@@ -4,74 +4,76 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
-import { Input, InputGroup, Dropdown } from 'rsuite';
-import { Button as BSButton } from 'react-bootstrap';
-import { Button } from '..';
-import { stopPropagation } from '../general/Utils';
-import { Filter } from './Filter';
-import { setFilter, filterListener } from './Utils';
-import FilterToggle from './FilterToggle';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList } from '@fortawesome/free-solid-svg-icons';
-import MultipleSelect from '../forms/MultipleSelect';
-import Modal from '../general/Modal';
-
+import { useState } from "react";
+import { Input, InputGroup, Dropdown } from "rsuite";
+import { Button as BSButton } from "react-bootstrap";
+import { Button } from "..";
+import { stopPropagation } from "../general/Utils";
+import { Filter } from "./Filter";
+import { setFilter, filterListener } from "./Utils";
+import FilterToggle from "./FilterToggle";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList } from "@fortawesome/free-solid-svg-icons";
+import MultipleSelect from "../forms/MultipleSelect";
+import Modal from "../general/Modal";
 
 function FilterTextInput(props: Filter) {
   const { attribute, componentId, rename, type, zone, setZone, delay } = props;
   // contains filtering needs adding to specific datasources
-  const [values, setValues] = useState(['']);
+  const [values, setValues] = useState([""]);
   const [disabled, setDisabled] = useState(false);
-  const [operator, setOperator] = useState(type === 'str' ? '' : '=');
+  const [operator, setOperator] = useState(type === "str" ? "" : "=");
   const [exists, setExists] = useState<boolean>(false);
   const [negate, setNegate] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const [listValue, setListValue] = useState<string>('');
+  const [listValue, setListValue] = useState<string>("");
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
-  const operators = ['=', '<', '>', '≤', '≥'];
-  const isNum = type === 'int' || type === 'float';
+  const operators = ["=", "<", ">", "≤", "≥"];
+  const isNum = type === "int" || type === "float";
 
   const getOperator = (operator: string) => {
-    switch(operator) {
-    case '=':
-      return 'eq';
-    case '<':
-      return 'lt';
-    case '≤':
-      return 'lte';
-    case '>':
-      return 'gt';
-    case '≥':
-      return 'gte';
-    default:
-      if (values.length > 1) return 'in_list';
-      return 'contains';
+    switch (operator) {
+      case "=":
+        return "eq";
+      case "<":
+        return "lt";
+      case "≤":
+        return "lte";
+      case ">":
+        return "gt";
+      case "≥":
+        return "gte";
+      default:
+        if (values.length > 1) return "in_list";
+        return "contains";
     }
   };
 
-  filterListener({
-    attribute: attribute,
-    componentId: componentId,
-    operators: ['in_list', getOperator(operator)],
-    zone: zone,
-    setValue: setValues,
-    setDisabled: setDisabled,
-    setExists: setExists,
-    setNegate: setNegate,
-    emptyValue: [''],
-    zoneToValue: (filterValue: any) => {
-      if (Array.isArray(filterValue)) return filterValue;
-      return [filterValue];
-    }
-  }, [zone]);
+  filterListener(
+    {
+      attribute: attribute,
+      componentId: componentId,
+      operators: ["in_list", getOperator(operator)],
+      zone: zone,
+      setValue: setValues,
+      setDisabled: setDisabled,
+      setExists: setExists,
+      setNegate: setNegate,
+      emptyValue: [""],
+      zoneToValue: (filterValue: any) => {
+        if (Array.isArray(filterValue)) return filterValue;
+        return [filterValue];
+      },
+    },
+    [zone],
+  );
 
   const validateInput = (input: string) => {
     const intRegex = /^[-]?[0-9\b]*$|^$/;
     const floatRegex = /^[-]?\d*(\.\d*)?$|^$/;
-    if (type === 'int' && !input.match(intRegex)) {
+    if (type === "int" && !input.match(intRegex)) {
       return true;
-    } else if (type === 'float' && !input.match(floatRegex)) {
+    } else if (type === "float" && !input.match(floatRegex)) {
       return true;
     }
   };
@@ -83,66 +85,68 @@ function FilterTextInput(props: Filter) {
     setValues([input]);
     setExists(false);
     // can start with minus or period but won't call endpoint
-    if (!(input === '-' || input === '.')) {
+    if (!(input === "-" || input === ".")) {
       clearTimeout(timeoutValue!);
-      setTimeoutValue(setTimeout(() => {
-        setFilter({
-          operator: getOperator(operator),
-          value: input,
-          negate: negate,
-          attribute: attribute,
-          componentId: componentId,
-          zone: zone,
-          valueExists: input !== ''
-        });
-        setZone({...zone});
-      }, delay ?? 800));
+      setTimeoutValue(
+        setTimeout(() => {
+          setFilter({
+            operator: getOperator(operator),
+            value: input,
+            negate: negate,
+            attribute: attribute,
+            componentId: componentId,
+            zone: zone,
+            valueExists: input !== "",
+          });
+          setZone({ ...zone });
+        }, delay ?? 800),
+      );
     }
   };
 
   const onOperator = (op: string) => {
     // reset value and old operator when changing operator
-    setValues(['']);
+    setValues([""]);
     setFilter({
       operator: getOperator(operator), // previous operator
-      value: '', // resets value
+      value: "", // resets value
       negate: negate,
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: false
+      valueExists: false,
     });
     setOperator(op);
-    setZone({...zone});
+    setZone({ ...zone });
   };
 
   const onExists = (ex: boolean) => {
     setExists(!ex);
-    setValues(['']);
+    setValues([""]);
     setFilter({
-      operator: 'exists',
+      operator: "exists",
       negate: negate,
       exists: !ex,
       attribute: attribute,
       componentId: componentId,
-      zone: zone
+      zone: zone,
     });
-    setZone({...zone});
+    setZone({ ...zone });
   };
 
   const onNegate = (ng: boolean) => {
     setNegate(!ng);
     setFilter({
-      operator: (exists) ? 'exists' : getOperator(operator),
-      value: (values.length > 1) ? values : values[0],
+      operator: exists ? "exists" : getOperator(operator),
+      value: values.length > 1 ? values : values[0],
       negate: !ng,
       exists: exists,
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: (values.length > 1) ? true : values[0] !== ''
+      valueExists: values.length > 1 ? true : values[0] !== "",
     });
-    setZone({...zone});
+    setZone({ ...zone });
   };
 
   const onSaveInList = () => {
@@ -151,13 +155,13 @@ function FilterTextInput(props: Filter) {
     setValues(input);
     if (input.length > 1) {
       setFilter({
-        operator: 'in_list',
+        operator: "in_list",
         value: input,
         negate: negate,
         attribute: attribute,
         componentId: componentId,
         zone: zone,
-        valueExists: true
+        valueExists: true,
       });
     } else {
       setFilter({
@@ -167,25 +171,25 @@ function FilterTextInput(props: Filter) {
         attribute: attribute,
         componentId: componentId,
         zone: zone,
-        valueExists: input[0] !== ''
+        valueExists: input[0] !== "",
       });
     }
-    setZone({...zone});
+    setZone({ ...zone });
   };
 
   const inListOnChange = (input: string[]) => {
     if (input.length === 0) {
-      setValues(['']);
+      setValues([""]);
       setFilter({
-        operator: 'in_list',
-        value: '', // resets value
+        operator: "in_list",
+        value: "", // resets value
         negate: negate,
         attribute: attribute,
         componentId: componentId,
         zone: zone,
-        valueExists: false
+        valueExists: false,
       });
-      setZone({...zone});
+      setZone({ ...zone });
     }
   };
 
@@ -193,9 +197,9 @@ function FilterTextInput(props: Filter) {
     if (!disabled) {
       setOpen(true);
       if (values.length > 1) {
-        setListValue(values.join('\r\n'));
+        setListValue(values.join("\r\n"));
       } else {
-        setListValue('');
+        setListValue("");
       }
     }
   };
@@ -206,7 +210,7 @@ function FilterTextInput(props: Filter) {
     // trims whitespace
     vals = vals.map((v) => v.trim());
     // removes 'falsy' values
-    vals = vals.filter(v => v);
+    vals = vals.filter((v) => v);
     // remove duplicates
     return Array.from(new Set(vals));
   };
@@ -216,39 +220,39 @@ function FilterTextInput(props: Filter) {
       type="success"
       onClick={onSaveInList}
       disabled={splitValues(listValue).length <= 1}
-      icon='plus'
-      position='right'
+      icon="plus"
+      position="right"
     />
   );
 
   return (
-    <div className={isNum ? 'tol-num-filter' : 'tol-text-filter'} onClick={ stopPropagation }>
-      {isNum &&
+    <div
+      className={isNum ? "tol-num-filter" : "tol-text-filter"}
+      onClick={stopPropagation}
+    >
+      {isNum && (
         <Dropdown title={operator} noCaret>
           {operators.map((op, i) => {
             if (op !== operator) {
               return (
-                <Dropdown.Item
-                  key={i}
-                  onClick={() => onOperator(op)}
-                >
+                <Dropdown.Item key={i} onClick={() => onOperator(op)}>
                   {op}
                 </Dropdown.Item>
               );
             }
           })}
         </Dropdown>
-      }
-      {type === 'str' && values.length <= 1 &&
+      )}
+      {type === "str" && values.length <= 1 && (
         <BSButton
-        className="tol-in-list-button"
-        disabled={disabled}
-        onClick={onOpenInListModal}
-      >
-        <FontAwesomeIcon icon={faList} size="sm" />
-      </BSButton>
-      }
-      {type === 'str' && values.length > 1 ?
+          className="tol-in-list-button"
+          disabled={disabled}
+          onClick={onOpenInListModal}
+        >
+          <FontAwesomeIcon icon={faList} size="sm" />
+        </BSButton>
+      )}
+      {type === "str" && values.length > 1 ? (
         <span className="tol-multi-filter">
           <MultipleSelect
             block
@@ -261,15 +265,15 @@ function FilterTextInput(props: Filter) {
             onClick={onOpenInListModal}
           />
         </span>
-        :
-        <InputGroup className={disabled ? 'rs-picker-disabled' : ''} disabled={disabled} inside>
-          <Input
-            onChange={onFilter}
-            value={values[0]}
-            placeholder={rename}
-          />
+      ) : (
+        <InputGroup
+          className={disabled ? "rs-picker-disabled" : ""}
+          disabled={disabled}
+          inside
+        >
+          <Input onChange={onFilter} value={values[0]} placeholder={rename} />
         </InputGroup>
-      }
+      )}
       <FilterToggle
         negate={negate}
         onNegate={onNegate}
@@ -278,14 +282,14 @@ function FilterTextInput(props: Filter) {
         disabled={disabled}
       />
       <Modal
-        size='md'
+        size="md"
         open={open}
         setOpen={setOpen}
         actionButton={plusButton}
         overflow={false}
-        className='tol-in-list-modal'
+        className="tol-in-list-modal"
       >
-        <h5 style={{marginBottom: 12}}>List Filter: {rename}</h5>
+        <h5 style={{ marginBottom: 12 }}>List Filter: {rename}</h5>
         <Input
           as="textarea"
           rows={16}

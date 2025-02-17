@@ -13,16 +13,15 @@ import { deepCopy } from "../general/Utils";
 import { TsDataSource } from "..";
 import { BOARD_URL_PREFIX } from "../constants";
 
-
 export interface Props {
-  id: string,
-  zone: Zone,
-  setZone: any,
-  entityType: string, // e.g. component type or zone
-  endpoint: string,
-  baseUrl?: string
-  open: boolean,
-  setOpen: any
+  id: string;
+  zone: Zone;
+  setZone: any;
+  entityType: string; // e.g. component type or zone
+  endpoint: string;
+  baseUrl?: string;
+  open: boolean;
+  setOpen: any;
 }
 
 function BoardFilters(props: Props) {
@@ -32,14 +31,19 @@ function BoardFilters(props: Props) {
   // the fixed filter present on the component
   const [filters, setFilters] = useState(
     deepCopy(
-      entityType === 'zone' ? zone.defaultFilter : zone.components[id].data.defaultFilter
-    )
+      entityType === "zone"
+        ? zone.defaultFilter
+        : zone.components[id].data.defaultFilter,
+    ),
   );
 
-  const removeCurrentEntityFiltersForDisabledFilters = (source: object = {}, remove?: object) => {
+  const removeCurrentEntityFiltersForDisabledFilters = (
+    source: object = {},
+    remove?: object,
+  ) => {
     const keysToRemove = new Set(Object.keys(remove || {}));
     return Object.fromEntries(
-      Object.entries(source).filter(([key]) => !keysToRemove.has(key))
+      Object.entries(source).filter(([key]) => !keysToRemove.has(key)),
     );
   };
 
@@ -47,47 +51,51 @@ function BoardFilters(props: Props) {
   const [disabledFilterValues, setDisabledFilterValues] = useState(
     removeCurrentEntityFiltersForDisabledFilters(
       generateFilter(zone, undefined, true)?.and_!,
-      filters?.and_!
-    )
+      filters?.and_!,
+    ),
   );
 
   useEffect(() => {
     setFilters(
       deepCopy(
-        entityType === 'zone' ? zone.defaultFilter : zone.components[id].data.defaultFilter
-      )
+        entityType === "zone"
+          ? zone.defaultFilter
+          : zone.components[id].data.defaultFilter,
+      ),
     );
     setDisabledFilterValues(
       removeCurrentEntityFiltersForDisabledFilters(
         generateFilter(zone, undefined, true)?.and_!,
-        filters?.and_!
-      )
+        filters?.and_!,
+      ),
     );
-  }, [open])
+  }, [open]);
 
   const onSave = (filter: any) => {
-    if (entityType === 'zone') {
+    if (entityType === "zone") {
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
     } else {
       zone.components[id].data.filter = deepCopy(filter);
       zone.components[id].data.defaultFilter = deepCopy(filter);
     }
-    resetFiltersBelow({id: id, zone: zone});
-    setZone({...zone})
+    resetFiltersBelow({ id: id, zone: zone });
+    setZone({ ...zone });
     setOpen(false);
 
     ds.upsert({
       objectType: `${BOARD_URL_PREFIX}/${entityType}`,
-      payload: [{
-        type: entityType,
-        id: id,
-        attributes: {
-          filter: filter
-        }
-      }]
-    })
-  }
+      payload: [
+        {
+          type: entityType,
+          id: id,
+          attributes: {
+            filter: filter,
+          },
+        },
+      ],
+    });
+  };
 
   return (
     <div>
@@ -104,7 +112,7 @@ function BoardFilters(props: Props) {
         />
       </Drawer>
     </div>
-  )
+  );
 }
 
 export default BoardFilters;

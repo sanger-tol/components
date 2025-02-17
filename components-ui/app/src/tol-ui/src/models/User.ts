@@ -11,4 +11,3 @@ export interface User {
   roles: string[];
   oidc_id?: string;
 } // eslint-disable-line
-
