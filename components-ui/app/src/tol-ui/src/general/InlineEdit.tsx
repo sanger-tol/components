@@ -4,21 +4,20 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
-import { InlineEdit as RSInlineEdit } from 'rsuite';
-import { Toaster, Message } from '../index';
-
+import { useState } from "react";
+import { InlineEdit as RSInlineEdit } from "rsuite";
+import { Toaster, Message } from "../index";
 
 interface Props {
   title: string;
-  onSave?: (value: string) => void; 
-  onChange?: (value: string) => void; 
+  onSave?: (value: string) => void;
+  onChange?: (value: string) => void;
 }
 
 function InlineEdit({ title, onSave, onChange }: Props) {
   const [editedTitle, setEditedTitle] = useState(title);
   const [prevTitle, setPrevTitle] = useState(title);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   const toaster = Toaster();
   const toastMessage = (
@@ -33,14 +32,13 @@ function InlineEdit({ title, onSave, onChange }: Props) {
 
   // Handles the save action
   const handleSave = () => {
-    if (editedTitle.trim() === '') {
-      toaster.push(
-        toastMessage, { 
-          placement: "topCenter", 
-          duration: 5000 }
-        )
-      setEditedTitle(prevTitle); 
-      return; 
+    if (editedTitle.trim() === "") {
+      toaster.push(toastMessage, {
+        placement: "topCenter",
+        duration: 5000,
+      });
+      setEditedTitle(prevTitle);
+      return;
     }
 
     onSave?.(editedTitle);
@@ -53,7 +51,7 @@ function InlineEdit({ title, onSave, onChange }: Props) {
         className="inline-edit"
         value={editedTitle}
         onChange={(newValue) => {
-          errorMessage && setErrorMessage(''); 
+          errorMessage && setErrorMessage("");
           setEditedTitle(newValue);
           onChange?.(newValue);
         }}

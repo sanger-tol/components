@@ -48,14 +48,14 @@ const Message = React.forwardRef<HTMLDivElement, Props>(
           onClose={onClose}
           {...rest}
         >
-          {typeof children === "string" && type && !hidePrefix &&(
+          {typeof children === "string" && type && !hidePrefix && (
             <strong>{capitaliseFirstLetter(type)}! </strong>
           )}
           {children}
         </RSMessage>
       </div>
     );
-  }
+  },
 );
 
 export default Message;

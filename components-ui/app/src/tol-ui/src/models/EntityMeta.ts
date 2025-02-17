@@ -5,24 +5,24 @@ SPDX-License-Identifier: MIT
 */
 
 interface Values {
-	[id: string]: string
+  [id: string]: string;
 }
 
 interface Relationship {
-	one?: Values,
-	many?: Values,
-	foreign_keys?: Values
+  one?: Values;
+  many?: Values;
+  foreign_keys?: Values;
 }
 
 export interface Attributes {
-	[objectType: string]: object
+  [objectType: string]: object;
 }
 
 export interface Relationships {
-	[objectType: string]: Relationship
+  [objectType: string]: Relationship;
 }
 
 export interface EntityMeta {
-	flatAttributes: Attributes,
-	relationships: Relationships
+  flatAttributes: Attributes;
+  relationships: Relationships;
 }

@@ -35,7 +35,7 @@ const StaticMessage = React.forwardRef<HTMLDivElement, Props>(
         />
       </div>
     );
-  }
+  },
 );
 
 export default StaticMessage;

@@ -4,13 +4,14 @@
  * SPDX-License-Identifier: MIT
  */
 
- .tol-object-detail {
-    h2, p {
-      margin: 0;
-    }
-
-    p {
-      margin-left: 5px;
-      margin-bottom: 5px;
-    }
+.tol-object-detail {
+  h2,
+  p {
+    margin: 0;
   }
+
+  p {
+    margin-left: 5px;
+    margin-bottom: 5px;
+  }
+}

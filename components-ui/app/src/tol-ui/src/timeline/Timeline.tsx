@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import React, { useState, useEffect } from "react";
 import { Timeline as RSTimeline } from "rsuite";
-import { Col, Row } from '../index';
+import { Col, Row } from "../index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
@@ -41,7 +41,7 @@ const DEFAULT_ICON_COLOR = "#15b215";
 const DEFAULT_NOT_DEFINED = "#fff";
 
 function Timeline(props: Props) {
-  const { id, title, endless, data, dateWithDay, defaultIcon, } = props;
+  const { id, title, endless, data, dateWithDay, defaultIcon } = props;
   const [sortedData, setSortedData] = useState<TimelineItem[]>([]);
 
   useEffect(() => {
@@ -59,7 +59,9 @@ function Timeline(props: Props) {
       let parsedDate: Date | null = null;
       if (typeof value.date === "string") {
         const dateString = value.date as string;
-        const date = new Date(dateString + (dateString.indexOf('Z') === -1 ? 'Z' : ''));
+        const date = new Date(
+          dateString + (dateString.indexOf("Z") === -1 ? "Z" : ""),
+        );
         if (!isNaN(date.getTime())) {
           parsedDate = date;
         }
@@ -72,8 +74,10 @@ function Timeline(props: Props) {
           title: value.title ?? key,
           date: parsedDate,
           color: value.color,
-          icon: value.icon || <FontAwesomeIcon icon={faCheck} style={{ color: "#fff" }} />,
-          desc: value.desc || ""
+          icon: value.icon || (
+            <FontAwesomeIcon icon={faCheck} style={{ color: "#fff" }} />
+          ),
+          desc: value.desc || "",
         });
       }
       return acc;
@@ -96,27 +100,38 @@ function Timeline(props: Props) {
         </Row>
         <Row>
           <RSTimeline endless={endless} className="timeline-wrapper" id={id}>
-            {sortedData.filter((item: TimelineItem) => item.date !== null).map((item: TimelineItem, index: Number) => (
-              <RSTimeline.Item
-                key={item.date!.toISOString()}
-                time={dateWithDay ? item.date!.toDateString() : item.date!.toDateString().split(' ').slice(1).join(' ')}
-                dot={
-                  (() => {
+            {sortedData
+              .filter((item: TimelineItem) => item.date !== null)
+              .map((item: TimelineItem, index: Number) => (
+                <RSTimeline.Item
+                  key={item.date!.toISOString()}
+                  time={
+                    dateWithDay
+                      ? item.date!.toDateString()
+                      : item.date!.toDateString().split(" ").slice(1).join(" ")
+                  }
+                  dot={(() => {
                     if (React.isValidElement(item.icon) || defaultIcon) {
                       return (
                         <div
                           className="timeline-custom-icon-background-color"
                           style={{
-                            backgroundColor: item.color !== undefined ?
-                              item.color : defaultIcon ?
-                                DEFAULT_ICON_COLOR : DEFAULT_NOT_DEFINED
+                            backgroundColor:
+                              item.color !== undefined
+                                ? item.color
+                                : defaultIcon
+                                  ? DEFAULT_ICON_COLOR
+                                  : DEFAULT_NOT_DEFINED,
                           }}
                         >
-                          {
-                            defaultIcon ?
-                              <FontAwesomeIcon icon={faCheck} style={{ color: "#fff" }} /> :
-                              item.icon
-                          }
+                          {defaultIcon ? (
+                            <FontAwesomeIcon
+                              icon={faCheck}
+                              style={{ color: "#fff" }}
+                            />
+                          ) : (
+                            item.icon
+                          )}
                         </div>
                       );
                     }
@@ -125,9 +140,10 @@ function Timeline(props: Props) {
                         <div
                           className="timeline-custom-dot-color"
                           style={{
-                            backgroundColor: item.icon === ACTIVE_DOT
-                              ? ACTIVE_DOT_DEFAULT || DOT_DEFAULT
-                              : item.color || DOT_DEFAULT,
+                            backgroundColor:
+                              item.icon === ACTIVE_DOT
+                                ? ACTIVE_DOT_DEFAULT || DOT_DEFAULT
+                                : item.color || DOT_DEFAULT,
                           }}
                         ></div>
                       );
@@ -136,11 +152,16 @@ function Timeline(props: Props) {
                       return (
                         <div
                           className="timeline-custom-dot-color"
-                          style={{ backgroundColor: ACTIVE_DOT_DEFAULT || DOT_DEFAULT }}
+                          style={{
+                            backgroundColor: ACTIVE_DOT_DEFAULT || DOT_DEFAULT,
+                          }}
                         ></div>
                       );
                     }
-                    if (index === sortedData.length - 1 && (item.icon === DOT || !defaultIcon)) {
+                    if (
+                      index === sortedData.length - 1 &&
+                      (item.icon === DOT || !defaultIcon)
+                    ) {
                       return (
                         <div
                           className="timeline-custom-dot-color"
@@ -149,18 +170,16 @@ function Timeline(props: Props) {
                       );
                     }
                     return undefined;
-                  })()
-                }
-              >
-                <p className="timeline-item-header-text">{item.title}</p>
-                <p>{item.desc}</p>
-              </RSTimeline.Item>
-            ))}
+                  })()}
+                >
+                  <p className="timeline-item-header-text">{item.title}</p>
+                  <p>{item.desc}</p>
+                </RSTimeline.Item>
+              ))}
           </RSTimeline>
         </Row>
       </div>
     </Col>
-
   );
 }
 

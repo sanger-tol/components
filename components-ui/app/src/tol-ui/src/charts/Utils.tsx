@@ -4,19 +4,18 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { format } from 'date-fns';
-import { getCssVarValue, isPropDefined } from '../general/Utils';
-
+import { format } from "date-fns";
+import { getCssVarValue, isPropDefined } from "../general/Utils";
 
 // ------------------//
 //      GENERAL      //
 // ------------------//
 
 interface Rgb {
-  [key: string]: number,
-  r: number,
-  g: number,
-  b: number
+  [key: string]: number;
+  r: number;
+  g: number;
+  b: number;
 }
 
 /*
@@ -36,50 +35,49 @@ https://www.rapidtables.com/convert/color/hsl-to-rgb.html
 {r: one, g: two, b: three}, // 330
 */
 
-
 export const colours = [
   // 90/70 - 247, 110, 179
   // {r: 110, g: 247, b: 247}, // 180
-  {r: 3, g: 155, b: 229}, // 210 >> {r: 110, g: 179, b: 247}
+  { r: 3, g: 155, b: 229 }, // 210 >> {r: 110, g: 179, b: 247}
   // {r: 110, g: 110, b: 247}, // 240
-  {r: 179, g: 110, b: 247}, // 270
+  { r: 179, g: 110, b: 247 }, // 270
   // {r: 247, g: 110, b: 247}, // 300
-  {r: 247, g: 110, b: 179}, // 330
+  { r: 247, g: 110, b: 179 }, // 330
   // {r: 247, g: 110, b: 110}, // 0
-  {r: 247, g: 179, b: 110}, // 30
+  { r: 247, g: 179, b: 110 }, // 30
   // {r: 247, g: 247, b: 110}, // 60
-  {r: 179, g: 247, b: 110}, // 90
+  { r: 179, g: 247, b: 110 }, // 90
   // {r: 110, g: 247, b: 110}, // 120
-  {r: 110, g: 247, b: 179}, // 150
+  { r: 110, g: 247, b: 179 }, // 150
 
   // 85/75 - 245, 137, 191
-  {r: 137, g: 245, b: 245}, // 180
-  {r: 137, g: 191, b: 245}, // 210
-  {r: 137, g: 137, b: 245}, // 240
-  {r: 191, g: 137, b: 245}, // 270
-  {r: 245, g: 137, b: 245}, // 300
-  {r: 245, g: 137, b: 191}, // 330
-  {r: 245, g: 137, b: 137}, // 0
-  {r: 245, g: 191, b: 137}, // 30
-  {r: 245, g: 245, b: 137}, // 60
-  {r: 191, g: 245, b: 137}, // 90
-  {r: 137, g: 245, b: 137}, // 120
-  {r: 137, g: 245, b: 191}, // 150
+  { r: 137, g: 245, b: 245 }, // 180
+  { r: 137, g: 191, b: 245 }, // 210
+  { r: 137, g: 137, b: 245 }, // 240
+  { r: 191, g: 137, b: 245 }, // 270
+  { r: 245, g: 137, b: 245 }, // 300
+  { r: 245, g: 137, b: 191 }, // 330
+  { r: 245, g: 137, b: 137 }, // 0
+  { r: 245, g: 191, b: 137 }, // 30
+  { r: 245, g: 245, b: 137 }, // 60
+  { r: 191, g: 245, b: 137 }, // 90
+  { r: 137, g: 245, b: 137 }, // 120
+  { r: 137, g: 245, b: 191 }, // 150
 
   // 80/80 - 245, 163, 204
-  {r: 163, g: 245, b: 245}, // 180
-  {r: 163, g: 204, b: 245}, // 210
-  {r: 163, g: 163, b: 245}, // 240
-  {r: 204, g: 163, b: 245}, // 270
-  {r: 245, g: 163, b: 245}, // 300
-  {r: 245, g: 163, b: 204}, // 330
-  {r: 245, g: 163, b: 163}, // 0
-  {r: 245, g: 204, b: 163}, // 30
-  {r: 245, g: 245, b: 163}, // 60
-  {r: 204, g: 245, b: 163}, // 90
-  {r: 163, g: 245, b: 163}, // 120
-  {r: 137, g: 245, b: 191}, // 150
-  {r: 245, g: 245, b: 245}, // 30
+  { r: 163, g: 245, b: 245 }, // 180
+  { r: 163, g: 204, b: 245 }, // 210
+  { r: 163, g: 163, b: 245 }, // 240
+  { r: 204, g: 163, b: 245 }, // 270
+  { r: 245, g: 163, b: 245 }, // 300
+  { r: 245, g: 163, b: 204 }, // 330
+  { r: 245, g: 163, b: 163 }, // 0
+  { r: 245, g: 204, b: 163 }, // 30
+  { r: 245, g: 245, b: 163 }, // 60
+  { r: 204, g: 245, b: 163 }, // 90
+  { r: 163, g: 245, b: 163 }, // 120
+  { r: 137, g: 245, b: 191 }, // 150
+  { r: 245, g: 245, b: 245 }, // 30
 ];
 
 function hexToRgb(hex: string) {
@@ -87,7 +85,7 @@ function hexToRgb(hex: string) {
   return {
     r: parseInt(result![1], 16),
     g: parseInt(result![2], 16),
-    b: parseInt(result![3], 16)
+    b: parseInt(result![3], 16),
   };
 }
 
@@ -103,16 +101,24 @@ export function incrementRgbColour(rgb: Rgb) {
 }
 
 function rgbToString(rgb: Rgb, opacity: number) {
-  return "rgba(" + rgb.r + ", " + rgb.g + ", " + rgb.b + ", " + opacity.toString() + ")";
+  return (
+    "rgba(" +
+    rgb.r +
+    ", " +
+    rgb.g +
+    ", " +
+    rgb.b +
+    ", " +
+    opacity.toString() +
+    ")"
+  );
 }
 
 export function getColourFromCssVar(cssVar: string, opacity?: number) {
   if (opacity === undefined) {
     opacity = 1;
   }
-  return hexToRgb(
-    getCssVarValue(cssVar)
-  );
+  return hexToRgb(getCssVarValue(cssVar));
 }
 
 export function getChartColour(index: number, opacity?: number) {
@@ -125,7 +131,7 @@ export function getChartColour(index: number, opacity?: number) {
 }
 
 export function updateOpacity(color: string, alpha: string) {
-  return color.replace(/[\d.]+\)$/g, alpha + ')');
+  return color.replace(/[\d.]+\)$/g, alpha + ")");
 }
 
 export function updateOpacitys(colors: string[], alpha: string) {
@@ -142,17 +148,31 @@ export function resetItemClickedData(setItemData?: React.Dispatch<any>) {
 
 export function setClickedColourToSolid(chart: any, chartElement: any) {
   const { datasetIndex, index } = chartElement[0];
-  const originalColour = chart.data.datasets[datasetIndex].backgroundColor[index];
-  chart.data.datasets[datasetIndex].backgroundColor[index] = updateOpacity(originalColour, "1");
-  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = updateOpacity(originalColour, "0.75");
+  const originalColour =
+    chart.data.datasets[datasetIndex].backgroundColor[index];
+  chart.data.datasets[datasetIndex].backgroundColor[index] = updateOpacity(
+    originalColour,
+    "1",
+  );
+  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = updateOpacity(
+    originalColour,
+    "0.75",
+  );
 }
 
 export function setClickedSectionToSolid(chart: any, chartElement: any) {
   const { datasetIndex, index } = chartElement[0];
   // fill the clicked section
-  const originalColour = chart.data.datasets[datasetIndex].backgroundColor[index];
-  chart.data.datasets[datasetIndex].backgroundColor[index] = updateOpacity(originalColour, "1");
-  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = updateOpacity(originalColour, "0.75");
+  const originalColour =
+    chart.data.datasets[datasetIndex].backgroundColor[index];
+  chart.data.datasets[datasetIndex].backgroundColor[index] = updateOpacity(
+    originalColour,
+    "1",
+  );
+  chart.data.datasets[datasetIndex].hoverBackgroundColor[index] = updateOpacity(
+    originalColour,
+    "0.75",
+  );
 
   // only if section has childen
   if (datasetIndex !== 0) {
@@ -168,12 +188,18 @@ export function setClickedSectionToSolid(chart: any, chartElement: any) {
           if (i !== 0) solidStart = solidEnd;
           solidEnd += chart.data.datasets[datasetIndex].data[i];
         }
-      // other iterations: make the childen colours solid
+        // other iterations: make the childen colours solid
       } else {
         for (let i = 0; currentAddedTotal < solidEnd; i++) {
           if (currentAddedTotal >= solidStart && currentAddedTotal < solidEnd) {
-            chart.data.datasets[depth].backgroundColor[i] = updateOpacity(originalColour, "1");
-            chart.data.datasets[depth].hoverBackgroundColor[i] = updateOpacity(originalColour, "0.75");
+            chart.data.datasets[depth].backgroundColor[i] = updateOpacity(
+              originalColour,
+              "1",
+            );
+            chart.data.datasets[depth].hoverBackgroundColor[i] = updateOpacity(
+              originalColour,
+              "0.75",
+            );
           }
           currentAddedTotal += chart.data.datasets[depth].data[i];
         }
@@ -182,14 +208,27 @@ export function setClickedSectionToSolid(chart: any, chartElement: any) {
   }
 }
 
-export function updateChartColours(chart: any, resetColours: boolean, fadedOpacity: number) {
+export function updateChartColours(
+  chart: any,
+  resetColours: boolean,
+  fadedOpacity: number,
+) {
   for (const dataset of chart.data.datasets) {
     if (resetColours) {
-      dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
-      dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString());
+      dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, "1");
+      dataset.hoverBackgroundColor = updateOpacitys(
+        dataset.backgroundColor,
+        fadedOpacity.toString(),
+      );
     } else {
-      dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, fadedOpacity.toString());
-      dataset.hoverBackgroundColor = updateOpacitys(dataset.backgroundColor, '0.75');
+      dataset.backgroundColor = updateOpacitys(
+        dataset.backgroundColor,
+        fadedOpacity.toString(),
+      );
+      dataset.hoverBackgroundColor = updateOpacitys(
+        dataset.backgroundColor,
+        "0.75",
+      );
     }
   }
 }
@@ -204,7 +243,7 @@ export function setBorderColour(datasets: any, borderColour: string) {
 export function isChartDataEmpty(aggs: any) {
   const data = Object.values(aggs)[0]!["buckets"];
   if (data.length === 0) return "No data found";
-  return '';
+  return "";
 }
 
 // ------------------//
@@ -212,16 +251,16 @@ export function isChartDataEmpty(aggs: any) {
 // ------------------//
 
 interface ChartData {
-  datasets: object[],
-  labels: string[]
+  datasets: object[];
+  labels: string[];
 }
 
 interface AggData {
-  keys: any[],
-  aggs: object[]
+  keys: any[];
+  aggs: object[];
 }
 
-export type HistogramGrouping = "d"|"w"|"M"|"y"|"categorical" ;
+export type HistogramGrouping = "d" | "w" | "M" | "y" | "categorical";
 
 export function initialiseDatasets(datasets: any[]) {
   for (let index = 0; index < datasets.length; index++) {
@@ -253,9 +292,9 @@ function getSortedAggData(buckets: object) {
   }
   return {
     keys: Array.from(keys).sort((a: any, b: any) => {
-      return a-b;
+      return a - b;
     }),
-    aggs: aggs
+    aggs: aggs,
   } as AggData;
 }
 
@@ -264,12 +303,16 @@ function isDateString(label: string): boolean {
   return !isNaN(date.getTime()); // Checks if date is valid
 }
 
-function formatLabels(labels: string[], grouping: HistogramGrouping, shortDate?: boolean) {
-  if (grouping === 'categorical') return labels;
+function formatLabels(
+  labels: string[],
+  grouping: HistogramGrouping,
+  shortDate?: boolean,
+) {
+  if (grouping === "categorical") return labels;
 
   const formattedLabels: string[] = [];
   let dateFormat: string;
-  
+
   // Define date format based on interval and shortDate
   if (!shortDate) {
     switch (grouping) {
@@ -319,7 +362,12 @@ function formatLabels(labels: string[], grouping: HistogramGrouping, shortDate?:
 }
 
 // would need adapting for multiple aggs in 1 api call
-export function aggsToBarChartData(aggs: object, grouping: HistogramGrouping, shortDate?: boolean, cumulative?: boolean): ChartData {
+export function aggsToBarChartData(
+  aggs: object,
+  grouping: HistogramGrouping,
+  shortDate?: boolean,
+  cumulative?: boolean,
+): ChartData {
   const datasets: object[] = [];
   const buckets: object = aggs["agg"]["buckets"];
   const sortedAggs: AggData = getSortedAggData(buckets);
@@ -345,42 +393,49 @@ export function aggsToBarChartData(aggs: object, grouping: HistogramGrouping, sh
     const dataset = {
       id: bucket,
       label: bucket,
-      data: data
+      data: data,
     };
     datasets.push(dataset);
   }
 
   return {
     datasets: datasets,
-    labels: formatLabels(labels, grouping, shortDate)
+    labels: formatLabels(labels, grouping, shortDate),
   } as ChartData;
 }
 
-function formatDateRangeWithInterval(date: string, grouping: HistogramGrouping) {
+function formatDateRangeWithInterval(
+  date: string,
+  grouping: HistogramGrouping,
+) {
   const from = new Date(date);
   const to = new Date(date);
-  switch(grouping) {
-  case "d":
-    to.setDate(to.getDate() + 1);
-    break;
-  case "w":
-    to.setDate(to.getDate() + 7);
-    break;
-  case "M":
-    to.setMonth(to.getMonth() + 1);
-    break;
-  case "y":
-    to.setFullYear(to.getFullYear() + 1);
-    break;
+  switch (grouping) {
+    case "d":
+      to.setDate(to.getDate() + 1);
+      break;
+    case "w":
+      to.setDate(to.getDate() + 7);
+      break;
+    case "M":
+      to.setMonth(to.getMonth() + 1);
+      break;
+    case "y":
+      to.setFullYear(to.getFullYear() + 1);
+      break;
   }
-  if (from.toString() === 'Invalid Date') {
+  if (from.toString() === "Invalid Date") {
     return false;
   }
   to.setTime(to.getTime() - 1); // minus 1 millisecond
-  return {gte: {value: from}, lt: {value: to}};
+  return { gte: { value: from }, lt: { value: to } };
 }
 
-export function setBarClickedData(chart: any, chartElement: any, setBarData?: React.Dispatch<any>) {
+export function setBarClickedData(
+  chart: any,
+  chartElement: any,
+  setBarData?: React.Dispatch<any>,
+) {
   const { datasetIndex, index } = chartElement[0];
 
   // setting the 'bar' value
@@ -390,25 +445,23 @@ export function setBarClickedData(chart: any, chartElement: any, setBarData?: Re
 
   if (isPropDefined(setBarData)) {
     setBarData!({
-      "bucket": bucket,
-      "value": value,
-      "clickKey": clickKey
+      bucket: bucket,
+      value: value,
+      clickKey: clickKey,
     });
   }
 }
 
 export function generateBarLabels(chart: any, titleColour: any) {
-  return chart.data.datasets.map(
-    (dataset: any, index: any) => {
-      return {
-        text: dataset.label,
-        fillStyle: getChartColour(index),
-        fontColor: titleColour,
-        pointStyle: 'rectRounded',
-        lineWidth: 0
-      };
-    }
-  );
+  return chart.data.datasets.map((dataset: any, index: any) => {
+    return {
+      text: dataset.label,
+      fillStyle: getChartColour(index),
+      fontColor: titleColour,
+      pointStyle: "rectRounded",
+      lineWidth: 0,
+    };
+  });
 }
 
 // ---------------------------------//
@@ -416,134 +469,137 @@ export function generateBarLabels(chart: any, titleColour: any) {
 // -------------------------------//
 
 function appendKeywordIfNeeded(field: string): string {
-  return field.startsWith("calc_") 
-  ? field : `${field}.keyword`;
+  return field.startsWith("calc_") ? field : `${field}.keyword`;
 }
 
 export function generateChartAgg(
-  breakDownBy: string, 
-  xAxis: string, 
-  grouping: HistogramGrouping, 
+  breakDownBy: string,
+  xAxis: string,
+  grouping: HistogramGrouping,
 ) {
   const baseAgg = {
-    "terms": {
-      "field": appendKeywordIfNeeded(breakDownBy), 
-      "size": 25
-    }
+    terms: {
+      field: appendKeywordIfNeeded(breakDownBy),
+      size: 25,
+    },
   };
 
   let innerAgg;
 
   if (grouping === "categorical") {
     innerAgg = {
-      "terms": {
-        "field": appendKeywordIfNeeded(xAxis),
-        "order": {
-          "_key": "asc"
+      terms: {
+        field: appendKeywordIfNeeded(xAxis),
+        order: {
+          _key: "asc",
         },
-        "size": 25
-      }
+        size: 25,
+      },
     };
   } else {
     innerAgg = {
-      "date_histogram": {
-        "field": xAxis,
-        "calendar_interval": "1" + grouping,
-        "time_zone": "Europe/London"
-      }
+      date_histogram: {
+        field: xAxis,
+        calendar_interval: "1" + grouping,
+        time_zone: "Europe/London",
+      },
     };
   }
 
   return {
-    "aggs": {
-      "agg": {
+    aggs: {
+      agg: {
         ...baseAgg,
-        "aggs": {
-          "1": innerAgg
-        }
-      }
-    }
+        aggs: {
+          "1": innerAgg,
+        },
+      },
+    },
   };
 }
 
 export function generateChartFilterFromBar(
-    barData: object,
-    breakDownBy: string,
-    xAxis: string,
-    type: HistogramGrouping
-  ) {
-    const localFilters = { "and_": {} };
-  
-    // Set the breakdown filter if a bucket is present
-    if (barData["bucket"] !== undefined) {
-      localFilters["and_"][breakDownBy] = { eq: { value: barData["bucket"] } };
-    }
-  
-    // Handle categorical and date-based filtering
-    if (barData["clickKey"] !== undefined) {
-      if (type === "categorical") {
-        setCategoricalFilter(localFilters, xAxis, barData["clickKey"]);
-      } else {
-        setDateRangeFilter(localFilters, xAxis, barData["clickKey"], type);
-      }
-    }
-    
-    return localFilters;
+  barData: object,
+  breakDownBy: string,
+  xAxis: string,
+  type: HistogramGrouping,
+) {
+  const localFilters = { and_: {} };
+
+  // Set the breakdown filter if a bucket is present
+  if (barData["bucket"] !== undefined) {
+    localFilters["and_"][breakDownBy] = { eq: { value: barData["bucket"] } };
   }
-  
-  // Helper function to handle categorical filtering
-  function setCategoricalFilter(localFilters: any, xAxis: string, clickKey: any) {
-    if (clickKey === null) {
-      // For when legend is clicked, since categorical data depends on x-axis
-      localFilters["and_"][xAxis] = { exists: {}};
+
+  // Handle categorical and date-based filtering
+  if (barData["clickKey"] !== undefined) {
+    if (type === "categorical") {
+      setCategoricalFilter(localFilters, xAxis, barData["clickKey"]);
     } else {
-      // If clickKey is defined, use eq to match the specific value
-      localFilters["and_"][xAxis] = { eq: { value: clickKey } };
+      setDateRangeFilter(localFilters, xAxis, barData["clickKey"], type);
     }
   }
-  
-  // Helper function to handle date range filtering
-  function setDateRangeFilter(localFilters: any, xAxis: string, clickKey: any, type: HistogramGrouping) {
-    if (clickKey === null) {
-      // For when legend is clicked, since categorical data depends on x-axis
-      localFilters["and_"][xAxis] = { exists: {}};
-    } else {
-      let barXKey = clickKey;
-      if (type === "M") {
-        barXKey = "01 " + barXKey; // Adjust date format for month-based grouping
-      }
-      
-      const dateRange = formatDateRangeWithInterval(barXKey, type);
-      if (dateRange) {
-        localFilters["and_"][xAxis] = dateRange;
-      }
+
+  return localFilters;
+}
+
+// Helper function to handle categorical filtering
+function setCategoricalFilter(localFilters: any, xAxis: string, clickKey: any) {
+  if (clickKey === null) {
+    // For when legend is clicked, since categorical data depends on x-axis
+    localFilters["and_"][xAxis] = { exists: {} };
+  } else {
+    // If clickKey is defined, use eq to match the specific value
+    localFilters["and_"][xAxis] = { eq: { value: clickKey } };
+  }
+}
+
+// Helper function to handle date range filtering
+function setDateRangeFilter(
+  localFilters: any,
+  xAxis: string,
+  clickKey: any,
+  type: HistogramGrouping,
+) {
+  if (clickKey === null) {
+    // For when legend is clicked, since categorical data depends on x-axis
+    localFilters["and_"][xAxis] = { exists: {} };
+  } else {
+    let barXKey = clickKey;
+    if (type === "M") {
+      barXKey = "01 " + barXKey; // Adjust date format for month-based grouping
+    }
+
+    const dateRange = formatDateRangeWithInterval(barXKey, type);
+    if (dateRange) {
+      localFilters["and_"][xAxis] = dateRange;
     }
   }
-  
+}
 
 // ------------------//
 //      SUNBURST     //
 // ------------------//
 
 interface SunburstData {
-  key: string,
-  value: number,
-  child?: SunburstData
+  key: string;
+  value: number;
+  child?: SunburstData;
 }
 
 interface DoughnutDataCJS {
-  id: string,
-  data: number[],
-  total: number,
-  percentages: string[]
-  label: string,
-  labels: string[],
-  backgroundColor: string[],
-  hoverBackgroundColor: string[],
-  borderColor: string,
-  borderWidth: number,
-  borderAlign: string,
-  hoverOffset: number
+  id: string;
+  data: number[];
+  total: number;
+  percentages: string[];
+  label: string;
+  labels: string[];
+  backgroundColor: string[];
+  hoverBackgroundColor: string[];
+  borderColor: string;
+  borderWidth: number;
+  borderAlign: string;
+  hoverOffset: number;
 }
 
 // removing single rings to show as much detail as possible
@@ -562,7 +618,7 @@ export function convertSunburstDatasets(
   datasets: object,
   outputData?: DoughnutDataCJS[],
   colourIndex?: number,
-  depth?: number
+  depth?: number,
 ) {
   // return empty if no data
   if (Object.keys(datasets).length === 0) {
@@ -595,7 +651,12 @@ export function convertSunburstDatasets(
     outputData![depth].hoverBackgroundColor.push(hoverColour);
     outputData![depth].labels.push(bucket.key);
     if (bucket.child) {
-      outputData = convertSunburstDatasets(bucket.child, outputData, colourIndex, depth);
+      outputData = convertSunburstDatasets(
+        bucket.child,
+        outputData,
+        colourIndex,
+        depth,
+      );
     }
     // keep colour the same for children
     if (depth === 0) {
@@ -611,7 +672,7 @@ function initialiseOriginDataset(
   outputData: DoughnutDataCJS[],
   key: string,
   colourIndex: number,
-  depth: number
+  depth: number,
 ) {
   if (colourIndex === 0 && outputData.length === depth) {
     outputData.push({
@@ -625,8 +686,8 @@ function initialiseOriginDataset(
       hoverBackgroundColor: [],
       borderColor: getCssVarValue("--tol-bg"),
       borderWidth: 0.2,
-      borderAlign: 'centre',
-      hoverOffset: 0
+      borderAlign: "centre",
+      hoverOffset: 0,
     });
   }
 }
@@ -634,7 +695,7 @@ function initialiseOriginDataset(
 function addPercentages(outputData: DoughnutDataCJS[]) {
   for (const entry of outputData) {
     for (const dataPoint of entry.data) {
-      const percentage = (dataPoint/entry.total)*100;
+      const percentage = (dataPoint / entry.total) * 100;
       entry.percentages.push(percentage.toFixed(2)); // 2dp
     }
   }
@@ -645,49 +706,57 @@ export function generateSunburstLabels(chart: any, titleColour: any) {
   // return empty if it doesn't exist
   if (chart.data.datasets[0].data.length === 0) return;
   // parent is end of list due to chartJS oddities
-  const parentIndex = chart.data.datasets.length-1;
+  const parentIndex = chart.data.datasets.length - 1;
   return chart.data.datasets[parentIndex].labels.map(
     (label: any, index: any) => {
       return {
         text: label,
         fillStyle: getChartColour(index),
         fontColor: titleColour,
-        pointStyle: 'rectRounded',
-        lineWidth: 0
+        pointStyle: "rectRounded",
+        lineWidth: 0,
       };
-    }
+    },
   );
 }
 
-function initialiseOrIncrementDepth(depth: number|undefined) {
+function initialiseOrIncrementDepth(depth: number | undefined) {
   if (depth === undefined) {
     return 0;
   }
   return depth + 1;
 }
 
-export function createAggsViaSliceBy(endpoint: string, sliceBy: string[], depth?: number) {
+export function createAggsViaSliceBy(
+  endpoint: string,
+  sliceBy: string[],
+  depth?: number,
+) {
   depth = initialiseOrIncrementDepth(depth);
 
   const terms = {};
   const field = sliceBy[depth];
   terms[sliceBy[depth]] = {
-    "terms": {
-      "field": appendKeywordIfNeeded(field),
-      "order": {
-        "_count": "desc"
+    terms: {
+      field: appendKeywordIfNeeded(field),
+      order: {
+        _count: "desc",
       },
-      "size": 25
-    }
+      size: 25,
+    },
   };
 
-  if (depth < sliceBy.length-1) {
-    terms[sliceBy[depth]]["aggs"] = createAggsViaSliceBy(endpoint, sliceBy, depth);
+  if (depth < sliceBy.length - 1) {
+    terms[sliceBy[depth]]["aggs"] = createAggsViaSliceBy(
+      endpoint,
+      sliceBy,
+      depth,
+    );
   }
 
   // create agg via parent
   if (depth === 0) {
-    return {"aggs": terms};
+    return { aggs: terms };
   } else {
     return terms;
   }
@@ -702,57 +771,68 @@ function calcBucketDocCountTotal(buckets: any[]) {
 }
 
 // works by changing the reference of 'buckets'
-function addExtraDocCount(type: string, buckets: object[], sliceBy: string[], depth: number, count: number, parentCount?: number) {
+function addExtraDocCount(
+  type: string,
+  buckets: object[],
+  sliceBy: string[],
+  depth: number,
+  count: number,
+  parentCount?: number,
+) {
   // ignore when it tries to work on the new 'more' bucket
   if (count !== undefined) {
     // ensure 'more' depth matches the actual values depth
     if (depth < sliceBy.length) {
-
-      if (type === 'Unknown') {
+      if (type === "Unknown") {
         if (parentCount! > count) {
           buckets.push({
             doc_count: parentCount! - count, // example
-            key: type
+            key: type,
           });
         } else {
           // if data is correct, return
           return;
         }
-      } else if (type === 'More') {
+      } else if (type === "More") {
         buckets.push({
           doc_count: count,
-          key: type
+          key: type,
         });
       }
 
       // if child required
-      if (depth < sliceBy.length-1) {
-        const childKey = sliceBy[depth+1];
-        const lastIndex = buckets.length-1;
-        // get last added object 
+      if (depth < sliceBy.length - 1) {
+        const childKey = sliceBy[depth + 1];
+        const lastIndex = buckets.length - 1;
+        // get last added object
         buckets[lastIndex][childKey] = {
-          "buckets": []
+          buckets: [],
         };
         // recursively add 'more' or 'unknown'
         addExtraDocCount(
           type,
           buckets[lastIndex][childKey]["buckets"],
           sliceBy,
-          depth+1,
+          depth + 1,
           count,
-          parentCount
+          parentCount,
         );
       }
     }
   }
 }
 
-export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: number, parentDocCount?: number) {
+export function aggsToSunburstData(
+  aggsRes: any,
+  sliceBy: string[],
+  depth?: number,
+  parentDocCount?: number,
+) {
   depth = initialiseOrIncrementDepth(depth);
 
   // sliceBy keys
   const key = sliceBy[depth];
-  const childKey = sliceBy[depth+1];
+  const childKey = sliceBy[depth + 1];
 
   // elastic bucket data
   const agg: SunburstData[] = aggsRes[key];
@@ -762,25 +842,19 @@ export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: numb
   const moreCount = agg["sum_other_doc_count"];
   // 'more' doesn't exist if bucket isn't a value
   if (moreCount !== 0 && moreCount !== undefined) {
-    addExtraDocCount(
-      'More',
-      buckets,
-      sliceBy,
-      depth,
-      moreCount
-    );
+    addExtraDocCount("More", buckets, sliceBy, depth, moreCount);
   }
 
   // adding an 'unknown' bucket where parent > sum of children
   if (parentDocCount !== 0 && parentDocCount !== undefined) {
     const bucketsDocCount = calcBucketDocCountTotal(buckets);
     addExtraDocCount(
-      'Unknown',
+      "Unknown",
       buckets,
       sliceBy,
       depth,
       bucketsDocCount,
-      parentDocCount
+      parentDocCount,
     );
   }
 
@@ -791,21 +865,30 @@ export function aggsToSunburstData(aggsRes: any, sliceBy: string[], depth?: numb
   for (const bucket of buckets) {
     const dataPoint = {
       key: bucket.key,
-      value: bucket.doc_count
+      value: bucket.doc_count,
     };
 
     // this means the bucket has a child
     if (childKey) {
       const child = {};
       child[childKey] = bucket[childKey];
-      dataPoint["child"] = aggsToSunburstData(child, sliceBy, depth, bucket.doc_count);
+      dataPoint["child"] = aggsToSunburstData(
+        child,
+        sliceBy,
+        depth,
+        bucket.doc_count,
+      );
     }
     outputData[key].push(dataPoint);
   }
   return outputData;
 }
 
-export function setSliceClickedData(chart: any, chartElement: any, setSliceData?: React.Dispatch<any>) {
+export function setSliceClickedData(
+  chart: any,
+  chartElement: any,
+  setSliceData?: React.Dispatch<any>,
+) {
   const { datasetIndex, index } = chartElement[0];
 
   // setting the 'bar' value
@@ -821,7 +904,7 @@ export function setSliceClickedData(chart: any, chartElement: any, setSliceData?
       value: value,
       clickKey: clickKey,
       datasetIndex: datasetIndex,
-      depth: depth
+      depth: depth,
     });
   }
 }
@@ -832,11 +915,15 @@ export function getAllBucketsOfRing(bucket: string, datasets: any): string[] {
 
   for (const key in datasets) {
     if (key === bucket) {
-      keys.push(...datasets[key].map((item: any) => {
-        if (item.key !== 'More' && item.key !== 'Unknown') {
-          return item.key;
-        }
-      }).filter(Boolean));
+      keys.push(
+        ...datasets[key]
+          .map((item: any) => {
+            if (item.key !== "More" && item.key !== "Unknown") {
+              return item.key;
+            }
+          })
+          .filter(Boolean),
+      );
     }
 
     if (Array.isArray(datasets[key])) {
@@ -851,30 +938,30 @@ export function getAllBucketsOfRing(bucket: string, datasets: any): string[] {
   return keys;
 }
 
-export function generateFilterFromSunburstClick(sliceData: any) {  
+export function generateFilterFromSunburstClick(sliceData: any) {
   if (sliceData["bucket"] !== undefined) {
     const filter = {};
     filter[sliceData["bucket"]] = {};
-    filter[sliceData["bucket"]]['eq'] = {value: sliceData["clickKey"]};
-    return {"and_": filter};
+    filter[sliceData["bucket"]]["eq"] = { value: sliceData["clickKey"] };
+    return { and_: filter };
   }
   return {};
 }
 
 // note: had issues with .slice()
 export function removeSliceBySingles(sliceBy: string[], depth: number) {
-  for (let x = 0; x <= depth-1; x++) sliceBy.shift();
+  for (let x = 0; x <= depth - 1; x++) sliceBy.shift();
   return sliceBy;
 }
 
-export function downloadItem( chartId: string, chartTitle: string) {
+export function downloadItem(chartId: string, chartTitle: string) {
   // use light/dark mode background color to determine background color of item
-  const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
   const bodyColor = getComputedStyle(document.body).backgroundColor;
-  const bgColor = darkModeQuery.matches ? bodyColor : '#ffffff';
+  const bgColor = darkModeQuery.matches ? bodyColor : "#ffffff";
 
   // create link element and  get chart by id
-  const canvasLink = document.createElement('a');
+  const canvasLink = document.createElement("a");
   const canvas = document.getElementById(chartId) as HTMLCanvasElement;
 
   if (canvas) {
@@ -882,12 +969,12 @@ export function downloadItem( chartId: string, chartTitle: string) {
     const height = canvas.height;
 
     // Create temporary canvas to draw background
-    const tempCanvas = document.createElement('canvas');
+    const tempCanvas = document.createElement("canvas");
     tempCanvas.width = width;
     tempCanvas.height = height;
 
     // Create temporary context
-    const tempContext = tempCanvas.getContext('2d');
+    const tempContext = tempCanvas.getContext("2d");
 
     if (tempContext) {
       tempContext.fillStyle = bgColor;
@@ -895,18 +982,17 @@ export function downloadItem( chartId: string, chartTitle: string) {
       tempContext.drawImage(canvas, 0, 0);
 
       // Convert temporary canvas to base64 image
-      tempCanvas.toBlob(blob => {
+      tempCanvas.toBlob((blob) => {
         if (blob) {
           const url = URL.createObjectURL(blob);
           canvasLink.href = url;
-          canvasLink.download = chartTitle + '.png';
+          canvasLink.download = chartTitle + ".png";
           canvasLink.click();
           URL.revokeObjectURL(url); // Clean up
         }
-      }, 'image/png');
+      }, "image/png");
     }
   }
-
 }
 
 // ------------------//
@@ -915,18 +1001,19 @@ export function downloadItem( chartId: string, chartTitle: string) {
 
 interface MarkerObject {
   geometry: {
-    coordinates: number[]
-  },
+    coordinates: number[];
+  };
   properties: {
-    [key: string]: any
-  },
-  colour?: string
+    [key: string]: any;
+  };
+  colour?: string;
 }
 
-export function formattingAttributeKeys(attributeKeysArray, item, marker){
+export function formattingAttributeKeys(attributeKeysArray, item, marker) {
   attributeKeysArray.forEach((key) => {
     // check if the attribute key exists in item.attributes
-    if (item.attributes.hasOwnProperty(key)) { //eslint-disable-line
+    if (item.attributes.hasOwnProperty(key)) {
+      //eslint-disable-line
       // add the attribute key and it's value to properties
       marker.properties[key] = item.attributes[key];
     }
@@ -944,39 +1031,47 @@ export function createMapMarkers(
   markerRenderer?: Function,
 ): MarkerObject[] {
   const markers: MarkerObject[] = [];
-  const attributeKeysArray = attributeKeys ? attributeKeys.split(',').map(key => key.trim()) : [];
+  const attributeKeysArray = attributeKeys
+    ? attributeKeys.split(",").map((key) => key.trim())
+    : [];
 
-  if (latitudeKey.includes('.')  || longitudeKey.includes('.')) {
-    const relationshipName = latitudeKey.split('.')[0];
-    const latAttribute = latitudeKey.split('.')[1];
-    const longAttribute  = longitudeKey.split('.')[1];
+  if (latitudeKey.includes(".") || longitudeKey.includes(".")) {
+    const relationshipName = latitudeKey.split(".")[0];
+    const latAttribute = latitudeKey.split(".")[1];
+    const longAttribute = longitudeKey.split(".")[1];
     elasticData.forEach((item: any) => {
-      if (item.relationships[relationshipName].data){
-        const longitude = parseFloat(item.relationships[relationshipName].data.attributes[longAttribute]);
-        const latitude = parseFloat(item.relationships[relationshipName].data.attributes[latAttribute]);
+      if (item.relationships[relationshipName].data) {
+        const longitude = parseFloat(
+          item.relationships[relationshipName].data.attributes[longAttribute],
+        );
+        const latitude = parseFloat(
+          item.relationships[relationshipName].data.attributes[latAttribute],
+        );
         // skips item if no long or lat value is provided
-        if (!isNaN(longitude) && !isNaN(latitude)){
+        if (!isNaN(longitude) && !isNaN(latitude)) {
           let marker: MarkerObject = {
             geometry: {
-              coordinates: [latitude, longitude]
+              coordinates: [latitude, longitude],
             },
-            properties: {}
+            properties: {},
           };
 
           if (attributeKeys) {
             marker = formattingAttributeKeys(attributeKeysArray, item, marker);
           }
-          
+
           if (markerRenderer) {
             const returnedValue = markerRenderer(item);
             marker.colour = returnedValue.colour;
-            const isInLegendKey = legendKey.some(legendItem => JSON.stringify(legendItem) === JSON.stringify(returnedValue));
+            const isInLegendKey = legendKey.some(
+              (legendItem) =>
+                JSON.stringify(legendItem) === JSON.stringify(returnedValue),
+            );
             // Add the object to legendKey if it is not already in there
             if (!isInLegendKey) {
               legendKey.push(returnedValue);
             }
             setLegendKey(legendKey);
-
           }
           markers.push(marker);
         }
@@ -995,9 +1090,9 @@ export function createMapMarkers(
       // create a marker with coordinate information
       let marker: MarkerObject = {
         geometry: {
-          coordinates: [latitude, longitude]
+          coordinates: [latitude, longitude],
         },
-        properties: {}
+        properties: {},
       };
 
       // if attributeKeys are given, add them to properties
@@ -1007,7 +1102,10 @@ export function createMapMarkers(
       if (markerRenderer) {
         const returnedValue = markerRenderer(item);
         marker.colour = returnedValue.colour;
-        const isInLegendKey = legendKey.some(legendItem => JSON.stringify(legendItem) === JSON.stringify(returnedValue));
+        const isInLegendKey = legendKey.some(
+          (legendItem) =>
+            JSON.stringify(legendItem) === JSON.stringify(returnedValue),
+        );
         if (!isInLegendKey) {
           legendKey.push(returnedValue);
         }

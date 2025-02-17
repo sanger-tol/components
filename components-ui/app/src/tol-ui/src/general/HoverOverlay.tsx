@@ -4,32 +4,27 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Popover, Whisper } from 'rsuite';
-
+import { Popover, Whisper } from "rsuite";
 
 export interface Props {
-  contents: JSX.Element|string,
-  children: JSX.Element,
-  placement?: string,
-  delay?: number,
-  onHover?: any,
-  followCursor?: boolean
+  contents: JSX.Element | string;
+  children: JSX.Element;
+  placement?: string;
+  delay?: number;
+  onHover?: any;
+  followCursor?: boolean;
 }
 
 function HoverOverlay(props: Props) {
-  const {contents, children, delay, onHover, followCursor} = props;
-  const placement = props.placement === undefined ? 'auto' : props.placement;
+  const { contents, children, delay, onHover, followCursor } = props;
+  const placement = props.placement === undefined ? "auto" : props.placement;
 
-  const renderTooltip = () => (
-    <Popover>
-      {contents}
-    </Popover>
-  )
+  const renderTooltip = () => <Popover>{contents}</Popover>;
 
   return (
     <Whisper
       // @ts-ignore
-      placement={ placement }
+      placement={placement}
       controlId="control-id-hover-enterable"
       trigger="hover"
       speaker={renderTooltip()}
@@ -41,6 +36,6 @@ function HoverOverlay(props: Props) {
       {children}
     </Whisper>
   );
-};
+}
 
 export default HoverOverlay;

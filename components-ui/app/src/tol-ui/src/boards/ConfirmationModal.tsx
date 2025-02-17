@@ -5,7 +5,7 @@
  */
 
 import Modal from "../general/Modal";
-import { Button } from '../index';
+import { Button } from "../index";
 
 interface Props {
   setOpen: any;
@@ -16,12 +16,12 @@ interface Props {
 
 function ConfirmationModal(props: Props) {
   const { setOpen, open, onConfirmClick, itemType } = props;
- 
+
   const actionButtons = (
-    <div style={{paddingBottom: '35px'}}>
+    <div style={{ paddingBottom: "35px" }}>
       <Button
         position="right"
-        type='success'
+        type="success"
         onClick={() => {
           setOpen(false), onConfirmClick();
         }}
@@ -29,7 +29,7 @@ function ConfirmationModal(props: Props) {
       />
       <Button
         position="right"
-        type='error'
+        type="error"
         onClick={() => setOpen(false)}
         text="Cancel"
       />
@@ -48,8 +48,8 @@ function ConfirmationModal(props: Props) {
         Are you sure you want to delete this {itemType ?? "item"}?
       </p>
       <p style={{ color: "#d62915" }}>
-        Warning: If you delete this {itemType ?? "item"}, you will not be able to retrieve it
-        later.
+        Warning: If you delete this {itemType ?? "item"}, you will not be able
+        to retrieve it later.
       </p>
     </div>
   );

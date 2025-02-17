@@ -22,17 +22,16 @@ import {
   getUserFromLocalStorage,
   tokenHasExpired,
 } from "./services/localStorage/localStorageService";
-import { confirmAuthorised, getElementDependingOnAuthStatus } from "./services/auth/authService";
+import {
+  confirmAuthorised,
+  getElementDependingOnAuthStatus,
+} from "./services/auth/authService";
 import { AuthProvider } from "./contexts/auth.context";
 import Footer from "./general/Footer";
 import { Dropdown, Page } from "./models/Nav";
-import {
-  convertToPath,
-  matomoAnalytics,
-} from "./general/Utils";
+import { convertToPath, matomoAnalytics } from "./general/Utils";
 import { env } from "./variables/config";
-import { MyBoards, Board} from "./boards";
-
+import { MyBoards, Board } from "./boards";
 
 interface BoardsObject {
   dataUrl?: string;
@@ -80,13 +79,16 @@ function TolApp(props: Props) {
   // dealing with pages
   let profilePages = props.profilePages;
   if (boards) {
-    profilePages = [{
-      name: "My Boards",
-      element: <MyBoards/>,
-      auth: true
-    }, ...(profilePages ?? [])]
+    profilePages = [
+      {
+        name: "My Boards",
+        element: <MyBoards />,
+        auth: true,
+      },
+      ...(profilePages ?? []),
+    ];
   }
-  const allPages = [...props.pages, ...(profilePages ?? [])]
+  const allPages = [...props.pages, ...(profilePages ?? [])];
   const loggedIn = user && !tokenHasExpired();
   return (
     <div id="tol-app-background">
@@ -109,32 +111,19 @@ function TolApp(props: Props) {
           />
           <div className="tol-app">
             <Switch>
-              <Route
-                path="/"
-                exact
-                component={() => props.homePage}
-              />
-              <Route
-                path="/callback"
-                exact
-              >
+              <Route path="/" exact component={() => props.homePage} />
+              <Route path="/callback" exact>
                 <Callback />
               </Route>
-              <Route
-                path="/board/:boardId"
-              >
-                {boards && loggedIn
-                  ? <Board dataUrl={boards.dataUrl}/>
-                  : <Redirect to="/" />
-                }
+              <Route path="/board/:boardId">
+                {boards && loggedIn ? (
+                  <Board dataUrl={boards.dataUrl} />
+                ) : (
+                  <Redirect to="/" />
+                )}
               </Route>
-              <Route
-                path="/board/:boardId/view/:viewId"
-              >
-                {boards && loggedIn
-                  ? <Board />
-                  : <Redirect to="/" />
-                }
+              <Route path="/board/:boardId/view/:viewId">
+                {boards && loggedIn ? <Board /> : <Redirect to="/" />}
               </Route>
               {allPages.map((page) => {
                 const path = convertToPath(page.name);
@@ -142,7 +131,7 @@ function TolApp(props: Props) {
                 const authorised = confirmAuthorised(
                   user,
                   page.auth,
-                  page.removeOnAuth
+                  page.removeOnAuth,
                 );
 
                 // dropdown routes
@@ -154,17 +143,16 @@ function TolApp(props: Props) {
 
                     // dropdown page route
                     routes.push(
-                      <Route
-                        exact
-                        path={dropdownPath}
-                        key={dropdownPath}
-                      >
+                      <Route exact path={dropdownPath} key={dropdownPath}>
                         {authorised ? (
-                          getElementDependingOnAuthStatus(loggedIn, dropdownPage)
+                          getElementDependingOnAuthStatus(
+                            loggedIn,
+                            dropdownPage,
+                          )
                         ) : (
                           <Redirect to="/" />
                         )}
-                      </Route>
+                      </Route>,
                     );
 
                     // dropdown detail page route
@@ -180,24 +168,20 @@ function TolApp(props: Props) {
                           ) : (
                             <Redirect to="/" />
                           )}
-                        </Route>
+                        </Route>,
                       );
                     }
                   });
                 } else {
                   // regular page route
                   routes.push(
-                    <Route
-                      exact
-                      path={path}
-                      key={page.name}
-                    >
+                    <Route exact path={path} key={page.name}>
                       {authorised ? (
                         getElementDependingOnAuthStatus(loggedIn, page)
                       ) : (
                         <Redirect to="/" />
                       )}
-                    </Route>
+                    </Route>,
                   );
 
                   // detail page route
@@ -209,7 +193,7 @@ function TolApp(props: Props) {
                         key={`${page.name}-detail`}
                       >
                         {authorised ? page.detail : <Redirect to="/" />}
-                      </Route>
+                      </Route>,
                     );
                   }
                 }

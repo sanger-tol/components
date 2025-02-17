@@ -20,11 +20,7 @@ function AutoComplete(props: Props) {
   return (
     <div>
       {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
-      <RSAutoComplete
-        data={data}
-        value={value}
-        onChange={onChange}
-      />
+      <RSAutoComplete data={data} value={value} onChange={onChange} />
     </div>
   );
 }

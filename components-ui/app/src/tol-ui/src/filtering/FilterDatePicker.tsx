@@ -4,13 +4,12 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
-import { DateRangePicker } from 'rsuite';
-import { stopPropagation } from '../general/Utils';
-import { Filter } from './Filter';
-import { setFilter, filterListener } from './Utils';
-import FilterToggle from './FilterToggle';
-
+import { useState } from "react";
+import { DateRangePicker } from "rsuite";
+import { stopPropagation } from "../general/Utils";
+import { Filter } from "./Filter";
+import { setFilter, filterListener } from "./Utils";
+import FilterToggle from "./FilterToggle";
 
 function FilterDatePicker(props: Filter) {
   const { attribute, componentId, rename, zone, setZone } = props;
@@ -19,24 +18,24 @@ function FilterDatePicker(props: Filter) {
   const [exists, setExists] = useState<boolean>(false);
   const [negate, setNegate] = useState<boolean>(false);
 
-  filterListener({
-    attribute: attribute,
-    componentId: componentId,
-    operators: ['gte', 'lt'],
-    zone: zone,
-    setValue: setValue,
-    setExists: setExists,
-    setNegate: setNegate,
-    setDisabled: setDisabled,
-    emptyValue: null,
-    zoneToValue: (filterValue: any, exisitingValue: any) => {
-      if (exisitingValue === null) return filterValue; // first iteration
-      return [
-        new Date(exisitingValue), 
-        new Date(filterValue)
-      ]; // second iteration
-    }
-  }, [zone]);
+  filterListener(
+    {
+      attribute: attribute,
+      componentId: componentId,
+      operators: ["gte", "lt"],
+      zone: zone,
+      setValue: setValue,
+      setExists: setExists,
+      setNegate: setNegate,
+      setDisabled: setDisabled,
+      emptyValue: null,
+      zoneToValue: (filterValue: any, exisitingValue: any) => {
+        if (exisitingValue === null) return filterValue; // first iteration
+        return [new Date(exisitingValue), new Date(filterValue)]; // second iteration
+      },
+    },
+    [zone],
+  );
 
   const onFilter = (input: string[]) => {
     const from = input !== null ? new Date(input[0]) : null;
@@ -45,38 +44,38 @@ function FilterDatePicker(props: Filter) {
     if (to !== null) to.setHours(23, 59, 59, 999);
     setValue(input);
     setFilter({
-      operator: 'gte',
+      operator: "gte",
       value: from,
       negate: negate,
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: from !== null
+      valueExists: from !== null,
     });
     setFilter({
-      operator: 'lt',
+      operator: "lt",
       value: to,
       negate: negate,
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: to !== null
+      valueExists: to !== null,
     });
-    setZone({...zone});
+    setZone({ ...zone });
   };
 
   const onExists = (ex: boolean) => {
     setExists(!ex);
     setValue(null);
     setFilter({
-      operator: 'exists',
+      operator: "exists",
       negate: negate,
       exists: !ex,
       attribute: attribute,
       componentId: componentId,
-      zone: zone
+      zone: zone,
     });
-    setZone({...zone});
+    setZone({ ...zone });
   };
 
   const onNegate = (ng: boolean) => {
@@ -86,39 +85,38 @@ function FilterDatePicker(props: Filter) {
     if (to !== null) to.setHours(23, 59, 59, 999);
     setNegate(!ng);
     setFilter({
-      operator: (exists) ? 'exists' : 'gte',
+      operator: exists ? "exists" : "gte",
       value: from,
       negate: !ng,
       exists: exists,
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: from !== null
+      valueExists: from !== null,
     });
     setFilter({
-      operator: (exists) ? 'exists' : 'lt',
+      operator: exists ? "exists" : "lt",
       value: to,
       negate: !ng,
       exists: exists,
       attribute: attribute,
       componentId: componentId,
       zone: zone,
-      valueExists: to !== null
+      valueExists: to !== null,
     });
-    setZone({...zone});
+    setZone({ ...zone });
   };
 
-
   return (
-    <div className="tol-date-filter" onClick={ stopPropagation }>
+    <div className="tol-date-filter" onClick={stopPropagation}>
       <DateRangePicker
         block
         // @ts-ignore
-        onChange={ onFilter }
-        value={ value }
-        placeholder={ rename }
+        onChange={onFilter}
+        value={value}
+        placeholder={rename}
         format="dd/MM/yyyy"
-        disabled={ disabled }
+        disabled={disabled}
         preventOverflow
       />
       <FilterToggle

@@ -6,19 +6,14 @@ SPDX-License-Identifier: MIT
 
 import { Header, HeaderButton } from "../index";
 
-
 const home: HeaderButton = {
   href: "/",
-  text: "Go back home"
+  text: "Go back home",
 };
 
 function PageNotFound() {
   return (
-    <Header
-      title="Oops! You seem to be lost."
-      buttons={[home]}
-      pageEmpty
-    />
+    <Header title="Oops! You seem to be lost." buttons={[home]} pageEmpty />
   );
 }
 

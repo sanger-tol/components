@@ -51,7 +51,7 @@ function Dropzone(props: Props) {
     formData.set(
       "file",
       fileList[fileList.length - 1].blobFile,
-      fileList[fileList.length - 1].name
+      fileList[fileList.length - 1].name,
     );
 
     httpClient()

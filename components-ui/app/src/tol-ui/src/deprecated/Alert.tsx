@@ -7,8 +7,8 @@ SPDX-License-Identifier: MIT
 import { Alert as AlertBS } from "react-bootstrap";
 
 interface Props {
-  type: string
-  message: string
+  type: string;
+  message: string;
 }
 
 function Alert(props: Props) {

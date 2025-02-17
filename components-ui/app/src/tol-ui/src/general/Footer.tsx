@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { Container, Row, Col } from "../index";
 import { SangerLogo } from "./Icons";
 
-
 function Footer() {
   return (
     <footer className="footer">
@@ -23,9 +22,13 @@ function Footer() {
           <Col sm={6} md={{ span: 4, offset: 4 }} lg={{ span: 3, offset: 6 }}>
             <div className="centre">
               <p className="footer-text">
-                <a href="https://www.sanger.ac.uk/programme/tree-of-life/">Tree of Life Programme</a>
+                <a href="https://www.sanger.ac.uk/programme/tree-of-life/">
+                  Tree of Life Programme
+                </a>
                 <br />
-                <a href="https://www.sanger.ac.uk/group/tree-of-life-enabling-platforms/">Enabling Platforms</a>
+                <a href="https://www.sanger.ac.uk/group/tree-of-life-enabling-platforms/">
+                  Enabling Platforms
+                </a>
               </p>
             </div>
           </Col>

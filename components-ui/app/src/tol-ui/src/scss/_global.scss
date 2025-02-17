@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-
 body {
   @include body-font;
   min-width: 350px;
@@ -39,9 +38,9 @@ a:hover {
 
 .centre {
   position: relative;
-	display: flex;
-	justify-content: center;
-	align-content: center;
+  display: flex;
+  justify-content: center;
+  align-content: center;
 }
 
 .config-position-wrapper {

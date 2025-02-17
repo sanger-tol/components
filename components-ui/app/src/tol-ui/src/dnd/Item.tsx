@@ -4,14 +4,13 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Element } from './DnD';
-import { Draggable } from 'react-beautiful-dnd';
-
+import { Element } from "./DnD";
+import { Draggable } from "react-beautiful-dnd";
 
 interface Props {
-  item: Element,
-  index: number,
-  editMode: boolean
+  item: Element;
+  index: number;
+  editMode: boolean;
 }
 
 function Item(props: Props) {
@@ -20,13 +19,19 @@ function Item(props: Props) {
   if (editMode) {
     return (
       // @ts-ignore
-      <Draggable style={{top: "auto", left: "auto"}} draggableId={item.id} index={index}>
+      <Draggable
+        style={{ top: "auto", left: "auto" }}
+        draggableId={item.id}
+        index={index}
+      >
         {(provided, snapshot) => {
           if (snapshot.isDragging) {
             // @ts-ignore
-            provided.draggableProps.style.left = provided.draggableProps.style.offsetLeft;
+            provided.draggableProps.style.left =
+              provided.draggableProps.style.offsetLeft;
             // @ts-ignore
-            provided.draggableProps.style.top = provided.draggableProps.style.offsetTop;
+            provided.draggableProps.style.top =
+              provided.draggableProps.style.offsetTop;
           }
           return (
             <div
@@ -35,7 +40,7 @@ function Item(props: Props) {
               {...provided.dragHandleProps}
             >
               {item.element}
-              {provided['placeholder']}
+              {provided["placeholder"]}
             </div>
           );
         }}

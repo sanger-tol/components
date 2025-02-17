@@ -25,11 +25,15 @@ function AccordionHeader(props: Props) {
       }}
     >
       <div>
-        <div style={{fontSize: "16px", fontWeight: "500"}}>{header}</div>
-        <div style={{fontSize: "14px", fontWeight: "300"}}>{subHeader}</div>
+        <div style={{ fontSize: "16px", fontWeight: "500" }}>{header}</div>
+        <div style={{ fontSize: "14px", fontWeight: "300" }}>{subHeader}</div>
       </div>
       <div style={{ flexDirection: "row" }}>
-        <span style={{ fontWeight: "300", fontSize: "14px", marginRight: "30px" }}>{infoText}</span>
+        <span
+          style={{ fontWeight: "300", fontSize: "14px", marginRight: "30px" }}
+        >
+          {infoText}
+        </span>
       </div>
     </div>
   );

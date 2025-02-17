@@ -4,16 +4,15 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
   faChartColumn,
   faChartPie,
   faMapLocationDot,
   faUpDownLeftRight,
-  faTable
-} from '@fortawesome/free-solid-svg-icons';
-import { Loader, StatusMessage } from '../index';
-
+  faTable,
+} from "@fortawesome/free-solid-svg-icons";
+import { Loader, StatusMessage } from "../index";
 
 function getPlaceholderIcon(
   bar?: boolean,
@@ -22,9 +21,9 @@ function getPlaceholderIcon(
   map?: boolean,
   drag?: boolean,
   loader?: boolean,
-  message?: string|JSX.Element,
+  message?: string | JSX.Element,
   warningMessage?: string,
-  errorMessage?: string
+  errorMessage?: string,
 ) {
   let icon: JSX.Element | null = null;
 
@@ -43,13 +42,13 @@ function getPlaceholderIcon(
   } else if (warningMessage !== undefined) {
     icon = <StatusMessage status="warning" message={warningMessage} bordered />;
   } else if (errorMessage !== undefined) {
-    icon = <StatusMessage status="error" message={errorMessage} bordered/>;
+    icon = <StatusMessage status="error" message={errorMessage} bordered />;
   }
 
   return (
     <div>
       {icon}
-      {message && <p className='tol-placeholder-message'>{message}</p>}
+      {message && <p className="tol-placeholder-message">{message}</p>}
     </div>
   );
 }
@@ -60,7 +59,7 @@ function getPlaceholder(
   backing?: JSX.Element,
   opacity?: number,
   clear?: boolean,
-  squareCorners?: boolean
+  squareCorners?: boolean,
 ) {
   const style = {};
   if (opacity) style["opacity"] = opacity;
@@ -69,11 +68,12 @@ function getPlaceholder(
   // default placeholder
   if (backing === undefined) {
     return (
-      <div style={{height: height}}>
-        <div className={clear ? 'tol-placeholder-empty' : "tol-placeholder"} style={style}>
-          <div className="tol-placeholder-icons">
-            {icon}
-          </div>
+      <div style={{ height: height }}>
+        <div
+          className={clear ? "tol-placeholder-empty" : "tol-placeholder"}
+          style={style}
+        >
+          <div className="tol-placeholder-icons">{icon}</div>
         </div>
       </div>
     );
@@ -82,17 +82,15 @@ function getPlaceholder(
   // adding a faded background to the backing contents (e.g. map behind loading)
   return (
     <div className="overlay-outer">
-      <div className="overlay-top" style={{zIndex: 1002}}>
-        <div style={{height: height}}>
+      <div className="overlay-top" style={{ zIndex: 1002 }}>
+        <div style={{ height: height }}>
           <div className="tol-placeholder-empty">
-            <div className="tol-placeholder-icons">
-              {icon}
-            </div>
+            <div className="tol-placeholder-icons">{icon}</div>
           </div>
         </div>
       </div>
-      <div className="overlay-top" style={{zIndex: 1001}}>
-        <div style={{height: height}}>
+      <div className="overlay-top" style={{ zIndex: 1001 }}>
+        <div style={{ height: height }}>
           <div className="tol-placeholder" style={style} />
         </div>
       </div>
@@ -102,21 +100,21 @@ function getPlaceholder(
 }
 
 interface Props {
-  bar?: boolean,
-  pie?: boolean,
-  table?: boolean,
-  map?: boolean,
-  drag?: boolean,
-  empty?: boolean,
-  loader?: boolean,
-  opacity?: number,
-  clear?: boolean,
-  squareCorners?: boolean,
-  message?: string|JSX.Element,
-  warningMessage?: string,
-  errorMessage?: string,
-  backing?: JSX.Element,
-  height?: any
+  bar?: boolean;
+  pie?: boolean;
+  table?: boolean;
+  map?: boolean;
+  drag?: boolean;
+  empty?: boolean;
+  loader?: boolean;
+  opacity?: number;
+  clear?: boolean;
+  squareCorners?: boolean;
+  message?: string | JSX.Element;
+  warningMessage?: string;
+  errorMessage?: string;
+  backing?: JSX.Element;
+  height?: any;
 }
 
 function Placeholder(props: Props) {
@@ -134,13 +132,13 @@ function Placeholder(props: Props) {
     message,
     warningMessage,
     errorMessage,
-    backing
+    backing,
   } = props;
-  const height = (props.height !== undefined) ? props.height : "100%";
+  const height = props.height !== undefined ? props.height : "100%";
 
   // this temporarily fills a gap - used for on load
   if (empty) {
-    return <div style={{height: height}}/>;
+    return <div style={{ height: height }} />;
   }
 
   const icon = getPlaceholderIcon(
@@ -152,17 +150,10 @@ function Placeholder(props: Props) {
     loader,
     message,
     warningMessage,
-    errorMessage
+    errorMessage,
   );
 
-  return getPlaceholder(
-    height,
-    icon,
-    backing,
-    opacity,
-    clear,
-    squareCorners
-  );
+  return getPlaceholder(height, icon, backing, opacity, clear, squareCorners);
 }
 
 export default Placeholder;

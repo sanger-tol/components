@@ -4,42 +4,36 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from 'react';
-import { 
-  Row, 
-  Col, 
-  Button, 
-  useZone, 
+import { useEffect, useState } from "react";
+import {
+  Row,
+  Col,
+  Button,
+  useZone,
   ComponentModal,
   InlineEdit,
-  BoardFilters
-} from '../index';
-import ResponsiveWidget, { IWidgets } from './ResponsiveWidget';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faPlus,
-  faPenToSquare,
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  getComponents,
-  saveTitle
-} from './Utils';
-import { ConfirmationModal } from './components';
-
+  BoardFilters,
+} from "../index";
+import ResponsiveWidget, { IWidgets } from "./ResponsiveWidget";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { getComponents, saveTitle } from "./Utils";
+import { ConfirmationModal } from "./components";
 
 interface Props {
-  id: string,
-  title: string,
-  objectType: string,
-  filter: any,
-  onZoneReorder: any,
-  deleteZone: any,
-  ds: any,
-  dataUrl?: string
+  id: string;
+  title: string;
+  objectType: string;
+  filter: any;
+  onZoneReorder: any;
+  deleteZone: any;
+  ds: any;
+  dataUrl?: string;
 }
 
 function Zone(props: Props) {
-  const { id, objectType, filter, onZoneReorder, deleteZone, ds, dataUrl } = props;
+  const { id, objectType, filter, onZoneReorder, deleteZone, ds, dataUrl } =
+    props;
   const [draggable, setDraggable] = useState(false);
   const [currentWidgets, setCurrentWidgets] = useState<IWidgets[]>([]);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
@@ -52,7 +46,7 @@ function Zone(props: Props) {
     endpoint: objectType,
     baseUrl: dataUrl,
     filter: filter,
-    components: []
+    components: [],
   });
 
   const handleOpenModal = () => {
@@ -83,15 +77,14 @@ function Zone(props: Props) {
             defaultFilter: widget.filter,
             filter: widget.filter,
             id: widget.componentId,
-            order: widget.order
-          }
+            order: widget.order,
+          },
         };
         z.zone.order.push(widget.componentId);
-      })
-      z.setZone({...z.zone});
-    })
+      });
+      z.setZone({ ...z.zone });
+    });
   }, []);
-
 
   const onAddComponent = () => {
     setOpen(true);
@@ -104,9 +97,9 @@ function Zone(props: Props) {
         setDraggable(!draggable);
       }}
       disabled={currentWidgets.length < 1}
-      type='edit'
-      icon='up-down-left-right'
-      position='right'
+      type="edit"
+      icon="up-down-left-right"
+      position="right"
       tooltip="Edit Widgets"
     />
   );
@@ -118,8 +111,8 @@ function Zone(props: Props) {
         onAddComponent();
       }}
       type="success"
-      icon='plus'
-      position='right'
+      icon="plus"
+      position="right"
       tooltip="Add Widget"
     />
   );
@@ -131,8 +124,8 @@ function Zone(props: Props) {
         handleOpenModal();
       }}
       type="error"
-      icon='trash'
-      position='right'
+      icon="trash"
+      position="right"
       tooltip="Delete Zone"
     />
   );
@@ -141,24 +134,24 @@ function Zone(props: Props) {
     <Button
       outline
       onClick={async () => {
-        await onZoneReorder(id, 'up');
+        await onZoneReorder(id, "up");
       }}
-      type='primary'
-      icon='arrow-up'
-      position='right'
+      type="primary"
+      icon="arrow-up"
+      position="right"
       tooltip="Move Zone Up"
     />
   );
-  
+
   const downButton = (
     <Button
       outline
       onClick={async () => {
-        await onZoneReorder(id, 'down');
+        await onZoneReorder(id, "down");
       }}
-      type='primary'
-      icon='arrow-down'
-      position='right'
+      type="primary"
+      icon="arrow-down"
+      position="right"
       tooltip="Move Zone Down"
     />
   );
@@ -168,11 +161,11 @@ function Zone(props: Props) {
       onClick={() => {
         setDraggable(!draggable);
         setSaveLayout(true);
-        setDraggable(false)
+        setDraggable(false);
       }}
       type="success"
-      icon='floppy-disk'
-      position='right'
+      icon="floppy-disk"
+      position="right"
       tooltip="Save Layout"
     />
   );
@@ -181,9 +174,9 @@ function Zone(props: Props) {
     <Button
       outline
       onClick={() => setOpenFilters(true)}
-      type='primary'
-      icon='filter'
-      position='right'
+      type="primary"
+      icon="filter"
+      position="right"
       tooltip="Add filters to the Zone"
     />
   );
@@ -194,51 +187,49 @@ function Zone(props: Props) {
         handleBtnsVisible();
       }}
       type={editBtnsVisible ? "success" : "warning"}
-      icon={editBtnsVisible ? 'check' : 'pen-to-square'}
-      position='right'
+      icon={editBtnsVisible ? "check" : "pen-to-square"}
+      position="right"
       tooltip={editBtnsVisible ? "Save Changes" : "Edit Zone"}
       outline={!editBtnsVisible}
     />
   );
 
   const buttons = (
-    <div className='tol-zone-bar'>
+    <div className="tol-zone-bar">
       <Row>
         <Col>
-          <InlineEdit 
-          title={title} 
-          onSave={(newTitle) => {
-            if (newTitle !== title) {
-              saveTitle(newTitle, ds, id, 'zone');
-              setTitle(newTitle);
-            }
-          }} 
+          <InlineEdit
+            title={title}
+            onSave={(newTitle) => {
+              if (newTitle !== title) {
+                saveTitle(newTitle, ds, id, "zone");
+                setTitle(newTitle);
+              }
+            }}
           />
         </Col>
         <Col>
           <h6>
-          {!draggable ? (
-            <>
-            {addButton}
-            {showEditButtons}
-            {editBtnsVisible ? (
+            {!draggable ? (
               <>
-                {deleteButton}
-                {editButton}
-                {downButton}
-                {upButton}
+                {addButton}
+                {showEditButtons}
+                {editBtnsVisible ? (
+                  <>
+                    {deleteButton}
+                    {editButton}
+                    {downButton}
+                    {upButton}
+                  </>
+                ) : null}
+                {filtersButton}
               </>
-            ) : null}
-            {filtersButton}
-            </>
-          ) : 
-            <>
-              {saveButton}
-            </>
-          }
+            ) : (
+              <>{saveButton}</>
+            )}
           </h6>
-          <div id={'component-modal'}>
-            <ComponentModal 
+          <div id={"component-modal"}>
+            <ComponentModal
               open={open}
               setOpen={setOpen}
               zoneId={id}
@@ -255,7 +246,7 @@ function Zone(props: Props) {
   );
 
   return (
-    <div className='tol-zone'>
+    <div className="tol-zone">
       {buttons}
       {currentWidgets.length > 0 ? (
         <ResponsiveWidget
@@ -271,38 +262,38 @@ function Zone(props: Props) {
         />
       ) : (
         <div className="tol-zone-empty">
-          {editBtnsVisible ?
+          {editBtnsVisible ? (
             <p>
               Click the
               <FontAwesomeIcon
                 icon={faPlus}
                 size="lg"
-                style={{padding: "0 8"}}
+                style={{ padding: "0 8" }}
               />
               to add a new Component to the Zone.
             </p>
-          :
+          ) : (
             <div>
-              <p style={{marginBottom: "0"}}>
-              Click the
-              <FontAwesomeIcon
-                icon={faPlus}
-                size="lg"
-                style={{padding: "0 8"}}
-              />
-              to add a new Component to the Zone.
+              <p style={{ marginBottom: "0" }}>
+                Click the
+                <FontAwesomeIcon
+                  icon={faPlus}
+                  size="lg"
+                  style={{ padding: "0 8" }}
+                />
+                to add a new Component to the Zone.
               </p>
               <p>
-              Click the
-              <FontAwesomeIcon
-                icon={faPenToSquare}
-                size="lg"
-                style={{padding: "0 8"}}
-              />
-              to edit the Zone.
-            </p>
+                Click the
+                <FontAwesomeIcon
+                  icon={faPenToSquare}
+                  size="lg"
+                  style={{ padding: "0 8" }}
+                />
+                to edit the Zone.
+              </p>
             </div>
-          }
+          )}
         </div>
       )}
       {confirmationModal}
@@ -315,7 +306,6 @@ function Zone(props: Props) {
       />
     </div>
   );
-    
 }
 
 export default Zone;

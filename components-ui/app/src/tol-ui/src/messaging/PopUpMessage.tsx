@@ -50,7 +50,7 @@ const PopUpMessage = (props: Props) => {
     />,
     {
       duration: getDuration(type),
-    }
+    },
   );
 };
 

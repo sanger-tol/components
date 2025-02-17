@@ -5,54 +5,54 @@ SPDX-License-Identifier: MIT
 */
 
 .timeline-header-text {
-    font-size: 14px;
-    font-weight: bolder;
+  font-size: 14px;
+  font-weight: bolder;
 }
 
 .timeline-item-header-text {
-    font-size: 14px;
-    font-weight: bolder;
+  font-size: 14px;
+  font-weight: bolder;
 }
 
 .rs-timeline-item-last {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .rs-timeline-item:not(:last-child) {
-    margin-bottom: 12px;
+  margin-bottom: 12px;
 }
 
 .timeline-custom-icon-background-color {
-    display: flex;
-    border-radius: 50%;
-    left: -16px;
-    position: relative;
-    top: -8px;
+  display: flex;
+  border-radius: 50%;
+  left: -16px;
+  position: relative;
+  top: -8px;
 }
 
 .rs-timeline-item-tail {
-    width: 2px;
-    height: 80px;
+  width: 2px;
+  height: 80px;
 }
 
 .timeline-custom-dot-color {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
 }
 
 .rs-timeline-item-dot {
-    top: 0;
+  top: 0;
 }
 
 .timeline-wrapper {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 @media screen and (max-width: 768px) {
-    .timeline-wrapper {
-        margin-left: -1.5rem;
-        padding-top: 0.75rem;
-        padding-bottom: 0.5rem;
-    }
+  .timeline-wrapper {
+    margin-left: -1.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.5rem;
+  }
 }

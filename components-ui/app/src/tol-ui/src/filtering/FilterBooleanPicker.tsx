@@ -5,21 +5,20 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { isEmptyObject, stopPropagation } from '../general/Utils';
+import { isEmptyObject, stopPropagation } from "../general/Utils";
 import MultipleSelect from "../forms/MultipleSelect";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 
-
 export interface Props {
-  id: string,
-  rename: string,
-  filter: object,
-  setFilter: any
+  id: string;
+  rename: string;
+  filter: object;
+  setFilter: any;
 }
 
 function FilterBooleanPicker(props: Props) {
   const { id, rename, filter, setFilter } = props;
-  const filterType: string = 'in_list';
+  const filterType: string = "in_list";
   const [value, setValue] = useState<any>([]);
 
   // altering filter value if the attribute is filtered on else where
@@ -39,19 +38,19 @@ function FilterBooleanPicker(props: Props) {
   const convertValues = (values: string[]) => {
     const convertedValues: string[] = [];
     for (const value of values) {
-      switch(value) {
-      case "True":
-        convertedValues.push("true");
-        continue;
-      case "true":
-        convertedValues.push("True");
-        continue;
-      case "False":
-        convertedValues.push("false");
-        continue;
-      case "false":
-        convertedValues.push("False");
-        continue;
+      switch (value) {
+        case "True":
+          convertedValues.push("true");
+          continue;
+        case "true":
+          convertedValues.push("True");
+          continue;
+        case "False":
+          convertedValues.push("false");
+          continue;
+        case "false":
+          convertedValues.push("False");
+          continue;
       }
     }
     return convertedValues;
@@ -74,14 +73,14 @@ function FilterBooleanPicker(props: Props) {
       }
       filter[filterType][id] = convertValues(input);
     }
-    setFilter({...filter});
+    setFilter({ ...filter });
   };
-  
+
   return (
-    <span onClick={ stopPropagation }>
+    <span onClick={stopPropagation}>
       <MultipleSelect
         block
-        data={['True', 'False']}
+        data={["True", "False"]}
         placeholder={rename}
         value={value}
         setValue={onFilter}

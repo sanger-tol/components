@@ -8,16 +8,15 @@ import { Checkbox, CheckPicker as RSCheckPicker } from "rsuite";
 import { isPropDefined } from "../general/Utils";
 import { RSForm } from "../index";
 
-
 interface Data {
-  label: string,
-  value: string
+  label: string;
+  value: string;
 }
 
 interface Props {
   sticky?: boolean;
   block?: boolean;
-  data: string[]|Data[];
+  data: string[] | Data[];
   value: string[];
   setValue: any;
   placeholder?: string;
@@ -71,9 +70,10 @@ function MultipleSelect(props: Props) {
   } = props;
   const block = isPropDefined(props.block);
 
-  const formattedData: any = data.length > 0 && typeof data[0] === "string"
-    ? data.map((i) => ({ label: i, value: i }))
-    : data;
+  const formattedData: any =
+    data.length > 0 && typeof data[0] === "string"
+      ? data.map((i) => ({ label: i, value: i }))
+      : data;
 
   const allValues = formattedData.map((item) => item.value);
 
@@ -84,18 +84,22 @@ function MultipleSelect(props: Props) {
   const selectAll = () => {
     if (data.length === 0) return undefined;
     return (
-        <>
-        {(!noSelectAll && <div>
-          <Checkbox
-            indeterminate={value.length > 0 && value.length < allValues.length}
-            checked={value.length === allValues.length}
-            onChange={handleCheckAll}
-          >
-            Select all
-          </Checkbox>
-        </div>)}
-        {(renderExtraFooter && <div>{renderExtraFooter}</div>)}
-        {(noSelectAll && !renderExtraFooter && undefined)}
+      <>
+        {!noSelectAll && (
+          <div>
+            <Checkbox
+              indeterminate={
+                value.length > 0 && value.length < allValues.length
+              }
+              checked={value.length === allValues.length}
+              onChange={handleCheckAll}
+            >
+              Select all
+            </Checkbox>
+          </div>
+        )}
+        {renderExtraFooter && <div>{renderExtraFooter}</div>}
+        {noSelectAll && !renderExtraFooter && undefined}
       </>
     );
   };

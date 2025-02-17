@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-
 button.btn {
   font-size: 14px;
 }
@@ -13,24 +12,30 @@ button.btn {
 // Define the types and their specific background colors
 // These colours correlate to the tol-colours (bs-colours) set in the variables.scss
 $types: (
-  'primary': --tol-primary,
-  'success': --tol-success,
-  'error': --tol-danger,
-  'edit': --tol-royal,
-  'warning': --tol-warning
+  "primary": --tol-primary,
+  "success": --tol-success,
+  "error": --tol-danger,
+  "edit": --tol-royal,
+  "warning": --tol-warning,
 );
 
 // Define sizes and their specific dimensions
 $sizes: (
-  'md': (height: 30px, min-width: 30px),
-  'lg': (height: 36px, min-width: 36px),
+  "md": (
+    height: 30px,
+    min-width: 30px,
+  ),
+  "lg": (
+    height: 36px,
+    min-width: 36px,
+  ),
 );
 
 // Loop through the types and sizes
 @each $type, $color in $types {
   @each $size, $dimensions in $sizes {
     .icon-button-#{$type}-#{$size} {
-      @if $size == 'md' {
+      @if $size == "md" {
         padding: 5px;
       } @else {
         padding: 10px;
@@ -47,7 +52,8 @@ $sizes: (
       }
 
       // Override the :hover state
-      &:hover, &:active {
+      &:hover,
+      &:active {
         border-color: var(#{$color}-light) !important;
         color: white;
       }
@@ -57,7 +63,7 @@ $sizes: (
       }
 
       // Override the rsuite button values for active and disabled
-      &.rs-btn.rs-btn-active{
+      &.rs-btn.rs-btn-active {
         background-color: var(#{$color}-dark) !important;
         border-color: var($color);
         color: white !important;
@@ -69,7 +75,6 @@ $sizes: (
         fill: var(--tol-bg) !important;
         background-color: transparent;
       }
-
     }
 
     .icon-button-#{$type}-#{$size}-outline {
@@ -78,23 +83,24 @@ $sizes: (
       color: var($color) !important;
       border-color: var(--tol-grey) !important;
       box-sizing: border-box;
-      &:hover, &:active {
+      &:hover,
+      &:active {
         border-color: var(#{$color}-dark) !important;
         color: var($color) !important;
         border-width: 2px;
-        @if $size == 'md' {
+        @if $size == "md" {
           padding: 4px;
         } @else {
           padding: 9px;
         }
       }
 
-      &.rs-btn.rs-btn-active{
+      &.rs-btn.rs-btn-active {
         background-color: transparent !important;
         border-color: var(#{$color}-dark) !important;
         border-width: 2px;
         color: var($color) !important;
-        @if $size == 'md' {
+        @if $size == "md" {
           padding: 4px;
         } @else {
           padding: 9px;
@@ -107,8 +113,6 @@ $sizes: (
         fill: var(--tol-bg) !important;
         background-color: transparent;
       }
-
     }
-
   }
 }

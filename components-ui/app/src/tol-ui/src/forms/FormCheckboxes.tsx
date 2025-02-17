@@ -61,10 +61,7 @@ function FormCheckboxes(props: Props) {
           inline={inline}
         >
           {checkboxConfig.fields.map((field, index) => (
-            <div
-              key={index}
-              style={field.style}
-            >
+            <div key={index} style={field.style}>
               <Checkbox
                 key={index}
                 value={field.value}

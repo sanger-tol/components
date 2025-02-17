@@ -4,52 +4,49 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from 'react';
-import { Checkbox, CheckPicker as RSCheckPicker } from 'rsuite';
-import { isPropDefined, normaliseCaps } from '../general/Utils';
-
+import { useState, useEffect } from "react";
+import { Checkbox, CheckPicker as RSCheckPicker } from "rsuite";
+import { isPropDefined, normaliseCaps } from "../general/Utils";
 
 interface Props {
-  block?: boolean,
-  data: string[],
-  display_name: string,
-  name: string,
+  block?: boolean;
+  data: string[];
+  display_name: string;
+  name: string;
   globalFilters: {
-    in_list: { [key: string]: string[] }
-  }
-  setGlobalFilters: any
+    in_list: { [key: string]: string[] };
+  };
+  setGlobalFilters: any;
 }
 
-function setCheckedValues(globalFilters: any, setValue: any){
+function setCheckedValues(globalFilters: any, setValue: any) {
   let values = [];
-  for (const field in globalFilters.in_list){
-    values = (globalFilters.in_list[field]);
+  for (const field in globalFilters.in_list) {
+    values = globalFilters.in_list[field];
   }
   setValue(values);
 }
 
 const GlobalMultipleSelect = (props: Props) => {
   const [value, setValue] = useState<any[]>([]);
-  const {name, globalFilters, setGlobalFilters, display_name} = props;
+  const { name, globalFilters, setGlobalFilters, display_name } = props;
   const data = props.data.sort();
 
   // resets the selected boxes if global filters is empty
   useEffect(() => {
-    if (Object.keys(globalFilters.in_list).length === 0){
+    if (Object.keys(globalFilters.in_list).length === 0) {
       setValue([]);
     } else {
       setCheckedValues(globalFilters, setValue);
     }
   }, [globalFilters]);
-  
-  const block = isPropDefined(props.block);
-  
-  const formattedData = data.map(item => (
-    { label: item, value: item }
-  ));
 
-  const allValues = formattedData.map(item => item.value);
-  
+  const block = isPropDefined(props.block);
+
+  const formattedData = data.map((item) => ({ label: item, value: item }));
+
+  const allValues = formattedData.map((item) => item.value);
+
   const handleOnChange = (filterValues: any) => {
     setValue(filterValues);
     // removes global filter if no values
@@ -58,7 +55,7 @@ const GlobalMultipleSelect = (props: Props) => {
     } else {
       globalFilters.in_list[name] = filterValues;
     }
-    setGlobalFilters({...globalFilters});
+    setGlobalFilters({ ...globalFilters });
   };
 
   const handleCheckAll = () => {
@@ -72,7 +69,7 @@ const GlobalMultipleSelect = (props: Props) => {
         setValue(allValues);
       }
     }
-    setGlobalFilters({...globalFilters});
+    setGlobalFilters({ ...globalFilters });
   };
 
   const isChecked = () => {
@@ -85,14 +82,15 @@ const GlobalMultipleSelect = (props: Props) => {
   };
 
   const isIndeterminate = () => {
-    return globalFilters.in_list[name] && (
+    return (
+      globalFilters.in_list[name] &&
       globalFilters.in_list[name].length > 0 &&
       globalFilters.in_list[name].length < allValues.length
     );
-  };  
+  };
 
   return (
-    <div className='tol-input'>
+    <div className="tol-input">
       <RSCheckPicker
         block={block}
         value={value}

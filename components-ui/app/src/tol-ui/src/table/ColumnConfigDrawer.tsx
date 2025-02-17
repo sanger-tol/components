@@ -34,10 +34,10 @@ function ColumnConfigDrawer(props: Props) {
   const { baseUrl, open, setOpen, title, fieldMeta, endpoint, onConfigSave } =
     props;
   const [attributes, setAttributes] = useState<string[]>(
-    fieldMeta["order"]["active"]
+    fieldMeta["order"]["active"],
   );
   const [initialAttributes, setInitialAttributes] = useState<string[]>(
-    fieldMeta["order"]["active"]
+    fieldMeta["order"]["active"],
   );
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
@@ -78,7 +78,7 @@ function ColumnConfigDrawer(props: Props) {
   const updateMeta = (
     id: string,
     updatedFieldMeta: FieldMeta,
-    hidden: boolean
+    hidden: boolean,
   ) => {
     const isActive = hidden ? "inactive" : "active";
     updatedFieldMeta.order[isActive].push(id);
@@ -109,10 +109,10 @@ function ColumnConfigDrawer(props: Props) {
     setOpen(!open);
   };
 
-    const selectedColumn = (attr: string, index: number) => {
+  const selectedColumn = (attr: string, index: number) => {
     const source = getSourceData(fieldMeta, attr) ?? "";
     const rename = fieldMeta.data[attr]?.rename ?? attr;
-  
+
     return (
       <div
         key={`${attr}-${index}`}

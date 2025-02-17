@@ -4,25 +4,25 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { User } from '../../models/User';
+import { User } from "../../models/User";
 
 export function setTokenToLocalStorage(token: string) {
-  localStorage.setItem('token', token);
+  localStorage.setItem("token", token);
 }
 
 export function getTokenFromLocalStorage() {
-  return localStorage.getItem('token') || '';
+  return localStorage.getItem("token") || "";
 }
 
-export function setUserToLocalStorage(user: User|null) {
+export function setUserToLocalStorage(user: User | null) {
   if (user === null) {
-    localStorage.setItem('user', '');
+    localStorage.setItem("user", "");
   }
-  localStorage.setItem('user', JSON.stringify(user));
+  localStorage.setItem("user", JSON.stringify(user));
 }
 
 export function getUserFromLocalStorage() {
-  const userString = localStorage.getItem('user') || '{"roles": []}';
+  const userString = localStorage.getItem("user") || '{"roles": []}';
   return JSON.parse(userString);
 }
 
@@ -40,11 +40,11 @@ export function tokenHasExpired() {
 }
 
 export const setReturnUrlFromLocalStorage = (url: string) => {
-  if (url !== '/callback') {
-    localStorage.setItem('returnUrl', url);
+  if (url !== "/callback") {
+    localStorage.setItem("returnUrl", url);
   }
-}
+};
 
 export const getReturnUrlFromLocalStorage = () => {
-  return localStorage.getItem('returnUrl') || '/';
-}
+  return localStorage.getItem("returnUrl") || "/";
+};

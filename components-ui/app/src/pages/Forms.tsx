@@ -49,7 +49,7 @@ const profileModel = Schema.Model({
   name: StringType()
     .minLength(
       20,
-      "If your name isn't at least 20 chars long, you're not cool."
+      "If your name isn't at least 20 chars long, you're not cool.",
     )
     .isRequired(REQUIRED_FIELD),
   email: StringType()
@@ -157,10 +157,7 @@ const testConfigProfileForm = {
             children: (
               <span>
                 I agree to the privacy policy
-                <a
-                  href="#"
-                  target="_blank"
-                >
+                <a href="#" target="_blank">
                   {" "}
                   here
                 </a>
@@ -321,7 +318,7 @@ function Forms() {
         header="Success"
         closable
       />,
-      { placement: "topEnd", duration: 4000 }
+      { placement: "topEnd", duration: 4000 },
     );
   };
 
@@ -368,18 +365,12 @@ function Forms() {
       />
       <br />
       <h4>Country Select</h4>
-      <CountrySelect
-        value={country}
-        setValue={setCountry}
-      />
+      <CountrySelect value={country} setValue={setCountry} />
       <br />
       <h4>Single Select With Custom Option</h4>
       <p>This must be inside a 'Form' component</p>
       <br />
-      <RSForm
-        fluid
-        id={"singleSelectCustomOptionForm"}
-      >
+      <RSForm fluid id={"singleSelectCustomOptionForm"}>
         <SingleSelectCustomOption
           id="testId1"
           data={["test1", "test2", "test3", "Other"]}

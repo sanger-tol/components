@@ -43,16 +43,14 @@ export function Callback() {
             setTimeout(() => {
               let targetUrl = getReturnUrlFromLocalStorage() || "";
               window.location.href = targetUrl;
-            }, 500)
+            }, 500);
           });
       });
     }
     // eslint-disable-next-line
   }, []);
 
-  return (
-    <LoadingContent text="Logging in..."/>
-  );
+  return <LoadingContent text="Logging in..." />;
 }
 
 export default Callback;

@@ -20,7 +20,7 @@ import {
   Sandbox,
   Sunbursts,
   Widgets,
-  Messages
+  Messages,
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown } from "./tol-ui/src";
@@ -110,7 +110,7 @@ const sandbox: Page = {
 ReactDOM.render(
   // eslint-disable-line
   <TolApp
-    boards={{dataUrl: 'https://portal.tol.sanger.ac.uk/api/v1/'}}
+    boards={{ dataUrl: "https://portal.tol.sanger.ac.uk/api/v1/" }}
     brand="Components"
     homePage={<Home />}
     pages={[
@@ -124,7 +124,7 @@ ReactDOM.render(
       sandbox,
     ]}
   />,
-  document.getElementById("root")
+  document.getElementById("root"),
 );
 
 // If you want to start measuring performance in your app, pass a function
