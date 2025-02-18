@@ -147,13 +147,15 @@ function AttributeSelector(props: Props) {
   const renderTotalSelectedItems = (values: string[]) => {
     return `
         ${values.length} ${
-      values.length === 1 ? `${populatedFieldType}` : `${populatedFieldType}s`
-    } selected${
-      additionalPopulatedFieldData ||
-      `; ${numPopulatedFields} ${
-        numPopulatedFields === 1 ? "filter" : "filters"
-      } populated.`
-    }`;
+          values.length === 1
+            ? `${populatedFieldType}`
+            : `${populatedFieldType}s`
+        } selected${
+          additionalPopulatedFieldData ||
+          `; ${numPopulatedFields} ${
+            numPopulatedFields === 1 ? "filter" : "filters"
+          } populated.`
+        }`;
   };
 
   const searchBySource = () => {
@@ -212,8 +214,8 @@ function AttributeSelector(props: Props) {
         className="tol-attribute-selector-select"
         block
         noSelectAll
-        data={Object.keys(getFlattenedMetaData(entityMeta, endpoint)).filter(
-          (key) => {
+        data={Object.keys(getFlattenedMetaData(entityMeta, endpoint))
+          .filter((key) => {
             const meta = getFlattenedMetaData(entityMeta, endpoint)[key];
             const typeMatch =
               !allowedTypes || allowedTypes.includes(meta.python_type);
@@ -230,8 +232,16 @@ function AttributeSelector(props: Props) {
               typeMatch &&
               sourceMatch
             );
-          }
-        )}
+          })
+          .sort((a, b) => {
+            const metaA = getFlattenedMetaData(entityMeta, endpoint)[a];
+            const metaB = getFlattenedMetaData(entityMeta, endpoint)[b];
+            if (metaA.source === null || metaA.source === undefined) return 1;
+            if (metaB.source === null || metaB.source === undefined) return -1;
+            if (metaA.source < metaB.source) return -1;
+            if (metaA.source > metaB.source) return 1;
+            return a.localeCompare(b);
+          })}
         placeholder={placeholder}
         value={attribute}
         setValue={handleSetAttribute}
@@ -253,8 +263,11 @@ function AttributeSelector(props: Props) {
             checked={recommendedOn}
           />
           <span onClick={(e) => e.stopPropagation()}>
-            Toggle to only show recommended (authoritative) properties.
-          </span>
+            Toggle to only show recommended properties.
+          </span>{" "}
+          <InfoTooltip
+            contents={"Recommended properties are indicated by a star icon"}
+          />
         </div>
       )}
     </div>

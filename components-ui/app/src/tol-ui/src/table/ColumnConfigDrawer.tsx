@@ -109,10 +109,10 @@ function ColumnConfigDrawer(props: Props) {
     setOpen(!open);
   };
 
-    const selectedColumn = (attr: string, index: number) => {
+  const selectedColumn = (attr: string, index: number) => {
     const source = getSourceData(fieldMeta, attr) ?? "";
     const rename = fieldMeta.data[attr]?.rename ?? attr;
-  
+
     return (
       <div
         key={`${attr}-${index}`}
@@ -183,11 +183,13 @@ function ColumnConfigDrawer(props: Props) {
 
   const discardButton = (text?: string) => {
     return (
-      <Button
-        text={text ?? "Discard"}
-        type="warning"
-        onClick={() => confirmDiscard()}
-      />
+      <div className="tol-config-drawer-modal-discard-btn">
+        <Button
+          text={text ?? "Discard"}
+          type="warning"
+          onClick={() => confirmDiscard()}
+        />
+      </div>
     );
   };
 
