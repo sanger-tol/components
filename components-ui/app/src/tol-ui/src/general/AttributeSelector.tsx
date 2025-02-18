@@ -40,6 +40,7 @@ export interface Props {
   onClean?: () => void;
   sticky?: boolean;
   tooltipContent?: string;
+  customAttributeSelection?: string[];
 }
 
 function AttributeSelector(props: Props) {
@@ -61,6 +62,7 @@ function AttributeSelector(props: Props) {
     onClean,
     sticky,
     tooltipContent,
+    customAttributeSelection,
   } = props;
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
@@ -230,7 +232,8 @@ function AttributeSelector(props: Props) {
             return (
               (recommendedOn ? recommendedMatch : true) &&
               typeMatch &&
-              sourceMatch
+              sourceMatch &&
+              (!customAttributeSelection || customAttributeSelection.includes(key))
             );
           })
           .sort((a, b) => {
@@ -266,7 +269,7 @@ function AttributeSelector(props: Props) {
             Toggle to only show recommended columns.
           </span>{" "}
           <InfoTooltip
-            contents={"Recommended properties are indicated by a star icon"}
+            contents={"Recommended properties are indicated by a star icon."}
           />
         </div>
       )}
