@@ -67,7 +67,8 @@ interface Props {
   noDownload?: boolean,
   rowSelection?: boolean
   actions?: DropdownButtonProps[],
-  configButtons?: JSX.Element[]
+  configButtons?: JSX.Element[],
+  customAttributeSelection?: string[] | undefined;
 }
 
 function Table (props: Props) {
@@ -109,7 +110,8 @@ function Table (props: Props) {
     noDownload,
     rowSelection,
     actions,
-    configButtons
+    configButtons,
+    customAttributeSelection
     /* eslint-enable */
   } = props;
 
@@ -193,6 +195,7 @@ function Table (props: Props) {
         setOpen={setOpen} 
         title={"Add/Remove Table Columns"}
         displaySource={displaySource}
+        customAttributeSelection={customAttributeSelection}
         onConfigSave={onModalSave}
         {...props}
       />

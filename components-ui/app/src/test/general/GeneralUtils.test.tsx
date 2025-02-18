@@ -116,7 +116,7 @@ test('getAttributeSources function', () => {
   };
   expect(getAttributeSources(entityMeta, 'endpoint1')).toEqual(['all', 'source1', 'source2', 'undefined']);
   expect(getAttributeSources(entityMeta, 'endpoint2')).toEqual(['all', 'source3', 'source4', 'undefined']);
-  expect(getAttributeSources(entityMeta, 'endpoint3')).toEqual(['all']);
+  expect(getAttributeSources(entityMeta, 'endpoint3')).toEqual(['all', 'undefined']);
 })
 
 test('getFlattenedMetaData function', () => {

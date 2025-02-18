@@ -168,7 +168,6 @@ export function getSourceData(fieldMeta: FieldMeta, attribute: string) {
 
 export function getAttributeSources(entityMeta: any, endpoint: string) {
   const sources = new Set<string>();
-  sources.add("all");
   if (
     entityMeta &&
     entityMeta.flatAttributes &&
@@ -181,9 +180,11 @@ export function getAttributeSources(entityMeta: any, endpoint: string) {
         sources.add(source);
       }
     });
-    sources.add("undefined");
   }
-  return Array.from(sources);
+  const sortedSources = Array.from(sources).sort((a, b) => a.localeCompare(b));
+  sortedSources.unshift("all");
+  sortedSources.push("undefined");
+  return sortedSources;
 }
 
 export function getFlattenedMetaData(

@@ -82,6 +82,11 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
   gap: "8px";
 }
 
+.tol-config-drawer-modal-discard-btn {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .tol-config-drawer-selected-column {
   background-color: var(--tol-grey-translucent) !important;
   border-radius: 6px;
