@@ -263,7 +263,7 @@ function AttributeSelector(props: Props) {
             checked={recommendedOn}
           />
           <span onClick={(e) => e.stopPropagation()}>
-            Toggle to only show recommended properties.
+            Toggle to only show recommended columns.
           </span>{" "}
           <InfoTooltip
             contents={"Recommended properties are indicated by a star icon"}
