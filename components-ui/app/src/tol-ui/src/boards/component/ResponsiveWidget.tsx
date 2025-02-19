@@ -7,8 +7,8 @@ SPDX-License-Identifier: MIT
 import { WidthProvider, Responsive, Layouts } from "react-grid-layout";
 import { Button, Placeholder, Visualisation } from "../../index";
 import { useState, useRef, useEffect } from "react";
-import { Zone, getWidgetOrder, generateLayout } from "../Utils";
-import { ConfirmationModal } from "./components";
+import { IZone, getWidgetOrder, generateLayout } from "../Utils";
+import ConfirmationModal from "../ConfirmationModal";
 import { BOARD_ENDPOINTS, BoardObjectTypes } from "../../constants";
 
 export interface IWidgets {
@@ -28,7 +28,7 @@ interface Props {
   widgets: IWidgets[];
   draggable: boolean;
   setWidgets?: any;
-  zone: Zone;
+  zone: IZone;
   setZone: any;
   saveLayout: boolean;
   setSaveLayout: any;

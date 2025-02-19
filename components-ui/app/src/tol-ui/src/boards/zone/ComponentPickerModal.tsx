@@ -16,12 +16,12 @@ import {
 } from "../../index";
 import { FormTextField } from "../../forms";
 import { RSForm } from "../../index";
-import { Zone, addComponent, defineComponent } from "../Utils";
+import { IZone, addComponent, defineComponent } from "../Utils";
 
 interface Props {
   open: boolean;
   setOpen: any;
-  zone: Zone;
+  zone: IZone;
   setZone: any;
   zoneId: string;
   ds: TsDataSource;

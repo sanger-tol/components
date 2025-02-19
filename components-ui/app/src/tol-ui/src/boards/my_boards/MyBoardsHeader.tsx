@@ -5,7 +5,8 @@
  */
 
 import { useState } from "react";
-import { DropdownButtons, NewBoardModal } from "./index";
+import DropdownButtons from "../../general/DropdownButtons";
+import NewBoardModal from "./NewBoardModal";
 import {
   DropdownButtonProps,
   DropdownMainIconProps,

@@ -18,11 +18,11 @@ import {
   BoardObjectTypes,
 } from "../constants/api.constants";
 
-export interface Component {
-  data: ComponentData;
+export interface IComponent {
+  data: IComponentData;
 }
 
-export interface ComponentData {
+export interface IComponentData {
   id?: string;
   filter?: IFilter;
   defaultFilter?: IFilter;
@@ -33,34 +33,34 @@ export interface ComponentData {
   order?: number;
 }
 
-export interface Components {
-  [id: string]: Component;
+export interface IComponents {
+  [id: string]: IComponent;
 }
 
 // filtering is at the zone level
-export interface Zone {
-  components: Components;
+export interface IZone {
+  components: IComponents;
   order: string[];
   filter?: IFilter;
   defaultFilter?: IFilter;
   type?: string;
 }
 
-export interface Zones {
-  [id: string]: Zone;
+export interface IZones {
+  [id: string]: IZone;
 }
 
 export interface IView {
-  zones: Zones;
+  zones: IZones;
   order: string[];
 }
 
-export interface Views {
+export interface IViews {
   [id: string]: IView;
 }
 
-export interface Board {
-  views: Views;
+export interface IBoard {
+  views: IViews;
   order: string[];
 }
 
@@ -109,7 +109,7 @@ export const exampleBoard: Board = {
 };
 */
 
-export function defineComponent(component: ComponentData, zone: Zone) {
+export function defineComponent(component: IComponentData, zone: Zone) {
   // setting default as empty if no filter provided
   const f = component.filter === undefined ? { and_: {} } : component.filter;
   zone.components[component.id!] = {
@@ -123,7 +123,7 @@ export function defineComponent(component: ComponentData, zone: Zone) {
 
 export function defineZone(
   objectType: string,
-  components: ComponentData[],
+  components: IComponentData[],
   filter?: IFilter,
 ) {
   const f = filter === undefined ? { and_: {} } : filter;
@@ -156,7 +156,7 @@ export function useZone(params: {
 }) {
   const { endpoint, baseUrl, components, filter } = params;
   const [zone, setZone] = useState(
-    defineZone(endpoint, components as ComponentData[], filter),
+    defineZone(endpoint, components as IComponentData[], filter),
   );
   return {
     endpoint: endpoint,

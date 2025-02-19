@@ -6,7 +6,9 @@
 
 import React, { useState, useEffect } from "react";
 import { Accordion as Acc } from "rsuite";
-import { AccordionHeader, DropdownButtons, ConfirmationModal } from "./index";
+import AccordionHeader from "./AccordionHeader";
+import DropdownButtons from "../../general/DropdownButtons";
+import ConfirmationModal from "../ConfirmationModal";
 import {
   DropdownButtonProps,
   DropdownMainIconProps,

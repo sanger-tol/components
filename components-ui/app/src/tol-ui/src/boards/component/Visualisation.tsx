@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { BoardTable } from "../../index";
-import { Zone } from "../Utils";
+import { IZone } from "../Utils";
 
 interface Props {
   id: string;
-  zone: Zone;
+  zone: IZone;
   setZone: any;
 
   objectType: string;

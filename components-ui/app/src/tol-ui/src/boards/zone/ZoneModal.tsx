@@ -5,10 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Button, Modal, SingleSelect, TsDataSource } from "../index";
-import { FormTextField } from "../forms";
-import { RSForm } from "../index";
-import { addZone } from "./Utils";
+import { Button, Modal, SingleSelect, TsDataSource } from "../..";
+import { FormTextField } from "../../forms";
+import { RSForm } from "../..";
+import { addZone } from "../Utils";
 
 interface OrderObject {
   zoneId: string;

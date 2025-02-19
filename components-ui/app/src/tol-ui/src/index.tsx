@@ -34,9 +34,6 @@ export {
   Board,
 } from "./boards";
 
-// board components
-export { DropdownButtons, MyBoardsHeader } from "./boards/components";
-
 // charts
 export {
   BarChart,
@@ -108,6 +105,7 @@ export {
   TolLoader,
   SourceTag,
   AttributeSelector,
+  DropdownButtons
 } from "./general";
 
 // hooks

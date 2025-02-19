@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import { Button, ZoneModal, IFilter } from "../../index";
 import { getZones } from "../Utils";
-import ZoneGrid from "../Zone";
+import Zone from "../zone/Zone";
 import { BOARD_ENDPOINTS, BoardObjectTypes } from "../../constants";
 
 interface ZoneObject {
@@ -165,7 +165,7 @@ function View(props: Props) {
         <>
           {getSortedZones().map((zone) => {
             return (
-              <ZoneGrid
+              <Zone
                 key={zone.id}
                 id={zone.id}
                 title={zone.title}

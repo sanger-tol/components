@@ -12,13 +12,13 @@ import {
   useZone,
   ComponentModal,
   InlineEdit,
-  BoardFilters,
-} from "../index";
-import ResponsiveWidget, { IWidgets } from "./ResponsiveWidget";
+  BoardFilters
+} from "../..";
+import ResponsiveWidget, { IWidgets } from "../component/ResponsiveWidget";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { getComponents, saveTitle } from "./Utils";
-import { ConfirmationModal } from "./components";
+import { getComponents, saveTitle } from "../Utils";
+import ConfirmationModal from "../ConfirmationModal";
 
 interface Props {
   id: string;
