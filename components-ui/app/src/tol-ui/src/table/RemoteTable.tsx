@@ -274,6 +274,7 @@ function RemoteTable(props: Props) {
     typeof action === "string" ? convertStringAction(action) : action;
 
   const convertedActions = actions?.map(convertAction);
+  const hasHiddenFields = fields ? Object.values(fields).some((field) => field.hidden === true) : false;
 
   return (
     <Table
@@ -316,6 +317,7 @@ function RemoteTable(props: Props) {
       rowSelection={rowSelection}
       actions={convertedActions}
       configButtons={configButtons}
+      customAttributeSelection={hasHiddenFields === true ? [...Object.keys(fields!)] : undefined}
     />
   );
 }

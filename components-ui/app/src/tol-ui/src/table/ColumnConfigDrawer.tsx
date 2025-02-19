@@ -28,11 +28,20 @@ export interface Props {
   onConfigSave: (fieldMeta: FieldMeta) => void;
   endpoint: string;
   sticky?: boolean;
+  customAttributeSelection?: string[] | undefined;
 }
 
 function ColumnConfigDrawer(props: Props) {
-  const { baseUrl, open, setOpen, title, fieldMeta, endpoint, onConfigSave } =
-    props;
+  const {
+    baseUrl,
+    open,
+    setOpen,
+    title,
+    fieldMeta,
+    endpoint,
+    onConfigSave,
+    customAttributeSelection,
+  } = props;
   const [attributes, setAttributes] = useState<string[]>(
     fieldMeta["order"]["active"],
   );
@@ -183,11 +192,13 @@ function ColumnConfigDrawer(props: Props) {
 
   const discardButton = (text?: string) => {
     return (
-      <Button
-        text={text ?? "Discard"}
-        type="warning"
-        onClick={() => confirmDiscard()}
-      />
+      <div className="tol-config-drawer-modal-discard-btn">
+        <Button
+          text={text ?? "Discard"}
+          type="warning"
+          onClick={() => confirmDiscard()}
+        />
+      </div>
     );
   };
 
@@ -254,6 +265,7 @@ function ColumnConfigDrawer(props: Props) {
           recommendedFilterAvailable={true}
           renderSearchBySource={true}
           displaySource={true}
+          customAttributeSelection={customAttributeSelection}
         />
       </div>
       <div>
