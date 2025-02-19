@@ -7,15 +7,15 @@ SPDX-License-Identifier: MIT
 import { expect, test, describe } from "vitest";
 import { deepCopy } from "../../tol-ui/src/general/Utils";
 import {
-  ComponentData,
   defineComponent,
   defineZone,
   getWidgetOrder,
-} from "../../tol-ui/src/board/Utils";
+} from "../../tol-ui/src/boards/Utils";
+import { IComponentData } from "../../tol-ui/src/boards/Utils";
 
 describe("defineComponent function", () => {
   test("should add a component to the zone", () => {
-    const mockComponent: ComponentData = {
+    const mockComponent: IComponentData = {
       id: "1",
       filter: {
         and_: {},
@@ -64,7 +64,7 @@ describe("defineComponent function", () => {
 describe("defineZone function", () => {
   test("should create a zone", () => {
     // Arrange
-    const mockComponents: ComponentData[] = [
+    const mockComponents: IComponentData[] = [
       {
         id: "1",
       },
