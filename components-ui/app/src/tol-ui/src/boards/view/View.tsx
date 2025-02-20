@@ -166,7 +166,6 @@ function View(props: Props) {
           {getSortedZones().map((zone) => {
             return (
               <Zone
-                key={zone.id}
                 id={zone.id}
                 title={zone.title}
                 objectType={zone.objectType}
