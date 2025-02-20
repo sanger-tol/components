@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 // const processEnv = typeof process !== 'undefined' ? process.env : {};
-const injectedEnv = window && 'injectedEnv' in window ? window.injectedEnv : {};
+const injectedEnv = window && "injectedEnv" in window ? window.injectedEnv : {};
 const env: any = {
-// ...processEnv,
-  ...(typeof injectedEnv === 'object' ? injectedEnv : {}),
+  // ...processEnv,
+  ...(typeof injectedEnv === "object" ? injectedEnv : {}),
 };
 
-env['TOL_DATA'] = (env.PORTAL_URL + env.PORTAL_API_PATH) || undefined;
+env["TOL_DATA"] = env.PORTAL_URL + env.PORTAL_API_PATH || undefined;
 export { env };

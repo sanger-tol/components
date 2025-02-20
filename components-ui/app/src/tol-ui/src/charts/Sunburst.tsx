@@ -4,14 +4,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { Button, Col, Row, useEffectUpdate } from '../index';
+import { Button, Col, Row, useEffectUpdate } from "../index";
 import {
   generateSunburstLabels,
   convertSunburstDatasets,
@@ -21,36 +16,40 @@ import {
   setSliceClickedData,
   setBorderColour,
   updateOpacity,
-  downloadItem
+  downloadItem,
 } from "./Utils";
 import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/Utils";
 import { useState } from "react";
 import { themeListener } from "../hooks/listeners";
 
-
-ChartJS.register(
-  ArcElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface Props {
-  id: string,
-  title?: string,
-  datasets: object,
-  height?: any,
-  legendPosition?: string,
-  downloadName?: string,
-  noDownload?: boolean,
-  noLegend?: boolean,
-  noLabel?: boolean,
-  noRefresh?: boolean,
-  setSliceData?: any,
-  resetChart?: boolean // a change in this prop will reset the chart
+  id: string;
+  title?: string;
+  datasets: object;
+  height?: any;
+  legendPosition?: string;
+  downloadName?: string;
+  noDownload?: boolean;
+  noLegend?: boolean;
+  noLabel?: boolean;
+  noRefresh?: boolean;
+  setSliceData?: any;
+  resetChart?: boolean; // a change in this prop will reset the chart
 }
 
 function Sunburst(props: Props) {
-  const { id, title, setSliceData, legendPosition, noDownload, noLabel, noRefresh, resetChart } = props;
+  const {
+    id,
+    title,
+    setSliceData,
+    legendPosition,
+    noDownload,
+    noLabel,
+    noRefresh,
+    resetChart,
+  } = props;
   const height = props.height ? props.height : "100%";
   const originDatasets = convertSunburstDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
@@ -62,22 +61,23 @@ function Sunburst(props: Props) {
   }, [resetChart]);
 
   // colours
-  const [titleColour, setTitleColour] = useState('');
+  const [titleColour, setTitleColour] = useState("");
   themeListener(() => {
     setTitleColour(getCssVarValue("--tol-emphasis"));
     // border update doesn't trigger chartjs re-render
     const savedDatasets = datasets;
     setDatasets([{}]);
-    setDatasets(
-      setBorderColour(
-        savedDatasets,
-        getCssVarValue("--tol-bg")
-      )
-    );
+    setDatasets(setBorderColour(savedDatasets, getCssVarValue("--tol-bg")));
   });
 
   // @ts-ignore
-  function handlePlaneClick(event: any, chartElement: any, chart: any, item: any) {
+  function handlePlaneClick(
+    // @ts-ignore
+    event: any,
+    chartElement: any,
+    chart: any,
+    item: any,
+  ) {
     if (item !== undefined) {
       return;
     }
@@ -103,13 +103,14 @@ function Sunburst(props: Props) {
 
   function handlePlaneHover(event: any, chartElement: any) {
     if (isPropDefined(setSliceData)) {
-      event.native.target.style.cursor = chartElement[0] ? "pointer" : "default";
+      event.native.target.style.cursor = chartElement[0]
+        ? "pointer"
+        : "default";
       if (chartElement[0]) {
         const { datasetIndex, index } = chartElement[0];
         const clickKey = event.chart.data.datasets[datasetIndex].labels[index];
-        event.native.target.style.cursor = (
-          clickKey !== "More" && clickKey !== "Unknown"
-        ) ? "pointer" : "default";
+        event.native.target.style.cursor =
+          clickKey !== "More" && clickKey !== "Unknown" ? "pointer" : "default";
       }
     }
   }
@@ -142,57 +143,58 @@ function Sunburst(props: Props) {
           },
           labelPointStyle: () => {
             return {
-              pointStyle: 'rectRounded',
-              rotation: 0
+              pointStyle: "rectRounded",
+              rotation: 0,
             };
           },
           labelColor: (context: any) => {
             const index = context.dataIndex;
             const colour = updateOpacity(
               context.dataset.backgroundColor[index],
-              '1'
+              "1",
             );
             return {
               backgroundColor: colour,
-              borderColor: colour
+              borderColor: colour,
             };
           },
-        }
+        },
       },
       legend: {
         display: props.noLegend ? false : true,
-        position: legendPosition === undefined ? 'right' : legendPosition,
+        position: legendPosition === undefined ? "right" : legendPosition,
         onClick: null,
         labels: {
           padding: 15,
           usePointStyle: true,
           generateLabels: (chart: any) => {
             return generateSunburstLabels(chart, titleColour);
-          }
-        }
-      }
+          },
+        },
+      },
     },
     onClick: handlePlaneClick,
-    onHover: handlePlaneHover
+    onHover: handlePlaneHover,
   };
 
-  const downloadName = props.downloadName !== undefined ? props.downloadName : 'sunburst';
+  const downloadName =
+    props.downloadName !== undefined ? props.downloadName : "sunburst";
   const showConfigBar = props.title || !noDownload || !noRefresh;
 
   // adding component sizing
   const paddingBottom = showConfigBar ? "37px" : "0";
-  const style = {height: height, paddingBottom: paddingBottom};
+  const style = { height: height, paddingBottom: paddingBottom };
 
   return (
     <div style={style}>
-      {showConfigBar &&
+      {showConfigBar && (
         <Row>
           <Col xs={6}>
             <p className="header-text">{title}</p>
           </Col>
           <Col xs={6}>
             <div className="tol-chart-buttons">
-              {isPropDefined(setSliceData) && !noRefresh &&
+              {isPropDefined(setSliceData) && !noRefresh && (
                 <div>
                   <Button
                     outline
@@ -205,8 +207,8 @@ function Sunburst(props: Props) {
                     icon="undo"
                   />
                 </div>
-              }
-              {!noDownload &&
+              )}
+              {!noDownload && (
                 <div>
                   <Button
                     outline
@@ -218,11 +220,11 @@ function Sunburst(props: Props) {
                     icon="download"
                   />
                 </div>
-              }
+              )}
             </div>
           </Col>
         </Row>
-      }
+      )}
       <Doughnut
         id={id}
         responsive="true"

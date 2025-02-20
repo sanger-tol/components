@@ -4,28 +4,27 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect } from 'react';
-import Leaflet from 'leaflet';
-
+import { useEffect } from "react";
+import Leaflet from "leaflet";
 
 interface LegendObject {
-  key: string,
-  colour: string
+  key: string;
+  colour: string;
 }
 
 interface Props {
-  map: Leaflet.Map,
-  config: object[]
+  map: Leaflet.Map;
+  config: object[];
 }
 
-function MapLegend (props: Props){
+function MapLegend(props: Props) {
   const { map, config } = props;
   useEffect(() => {
-    const legend = (Leaflet.control as any)({ position: 'bottomright' });
+    const legend = (Leaflet.control as any)({ position: "bottomright" });
 
     legend.onAdd = function () {
-      const div = Leaflet.DomUtil.create('div', 'info legend');
-      let htmlContent = '';
+      const div = Leaflet.DomUtil.create("div", "info legend");
+      let htmlContent = "";
 
       config.map((legendObject: LegendObject) => {
         htmlContent += `<i style="background: ${legendObject.colour}"></i> ${legendObject.key}<br>`;
@@ -43,6 +42,6 @@ function MapLegend (props: Props){
   }, [map]);
 
   return null;
-};
+}
 
 export default MapLegend;

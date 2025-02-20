@@ -6,19 +6,19 @@
 
 import { useState, useEffect } from "react";
 import {
-  MyBoardsHeader,
   Widgets,
   httpClient,
   Message,
   Toaster,
   Loader,
   StaticMessage,
-} from "..";
-import { Accordion } from "./components";
-import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
+} from "../..";
+import Accordion from "./Accordion";
+import MyBoardsHeader from "./MyBoardsHeader";
+import { getUserFromLocalStorage } from "../../services/localStorage/localStorageService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import { BOARD_ENDPOINTS } from "../constants/api.constants";
+import { BOARD_ENDPOINTS } from "../../constants/api.constants";
 
 const containerStyle = {
   display: "flex",
@@ -144,11 +144,11 @@ function MyBoards() {
     </div>
   );
 
-  const myBoardsHeader = <MyBoardsHeader containerStyle={containerStyle}/>;
+  const myBoardsHeader = <MyBoardsHeader containerStyle={containerStyle} />;
 
   const myBoardsWarning = (
-    <div style={{padding: "0px 10px"}}>
-      <StaticMessage message={DASHBOARD_WARNING} type={"warning"}/>
+    <div style={{ padding: "0px 10px" }}>
+      <StaticMessage message={DASHBOARD_WARNING} type={"warning"} />
     </div>
   );
 

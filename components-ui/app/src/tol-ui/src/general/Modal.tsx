@@ -4,24 +4,24 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button } from '..'
-import { Modal as RSModal } from 'rsuite';
-
+import { Button } from "..";
+import { Modal as RSModal } from "rsuite";
 
 export interface Props {
-  size: string,
-  open: boolean,
-  setOpen: any
-  children?: JSX.Element | JSX.Element[],
-  header?: JSX.Element,
-  overflow?: boolean,
-  closeButton?: boolean,
-  actionButton?: JSX.Element,
-  className?: string
+  size: string;
+  open: boolean;
+  setOpen: any;
+  children?: JSX.Element | JSX.Element[];
+  header?: JSX.Element;
+  overflow?: boolean;
+  closeButton?: boolean;
+  actionButton?: JSX.Element;
+  className?: string;
 }
 
 const Modal = (props: Props) => {
-  const {size, open, setOpen, children, header, actionButton, className} = props;
+  const { size, open, setOpen, children, header, actionButton, className } =
+    props;
   const closeButton = props.closeButton ?? true;
   const rsOverflow = props.overflow !== false;
   const handleClose = () => {
@@ -39,27 +39,21 @@ const Modal = (props: Props) => {
         size={size}
         className={className}
       >
-        <RSModal.Header closeButton={false}>
-          {header}
-        </RSModal.Header>
+        <RSModal.Header closeButton={false}>{header}</RSModal.Header>
 
-        <RSModal.Body>
-          {children}
-        </RSModal.Body>
+        <RSModal.Body>{children}</RSModal.Body>
         <RSModal.Footer>
-          {actionButton &&
-            <span style={{margin: "6px"}}>
-              {actionButton}
-            </span>
-          }
-          {closeButton &&
+          {actionButton && (
+            <span style={{ margin: "6px" }}>{actionButton}</span>
+          )}
+          {closeButton && (
             <Button
               type="error"
               onClick={handleClose}
-              icon='xmark'
-              position='right'
+              icon="xmark"
+              position="right"
             />
-          }
+          )}
         </RSModal.Footer>
       </RSModal>
     </>

@@ -95,7 +95,7 @@ function AttributeSelector(props: Props) {
     source: string,
     key: string,
     authoritative: boolean,
-    description: string
+    description: string,
   ) => {
     const disabled =
       disabledValues && Object.keys(disabledValues).includes(key);
@@ -140,7 +140,7 @@ function AttributeSelector(props: Props) {
           metaData["source"],
           label,
           metaData["authoritative"],
-          metaData["description"]
+          metaData["description"],
         )}
       </div>
     );

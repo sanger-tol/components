@@ -5,33 +5,36 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import Timeline, { DataPoint, TimelineItem } from './Timeline'
-import { Placeholder, httpClient, env } from '../index';
+import Timeline, { DataPoint, TimelineItem } from "./Timeline";
+import { Placeholder, httpClient, env } from "../index";
 
 interface Props {
-  endpoint: string,
-  id: string,
-  data: DataPoint,
-  dateWithDay?: boolean,
-  defaultIcon?: boolean,
-  titleDataPoint: string,
+  endpoint: string;
+  id: string;
+  data: DataPoint;
+  dateWithDay?: boolean;
+  defaultIcon?: boolean;
+  titleDataPoint: string;
 }
 
 function RemoteTimeline(props: Props) {
-  const { endpoint, id, data, dateWithDay, defaultIcon, titleDataPoint } = props;
+  const { endpoint, id, data, dateWithDay, defaultIcon, titleDataPoint } =
+    props;
 
   const [timelineData, setTimelineData] = useState<any>([]);
-  const [name, setName] = useState<string>('');
+  const [name, setName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     createTimelineData(endpoint, id);
   }, [endpoint, id]);
 
-  const parseValuesFromEndpoint = (endpointData: object, data: DataPoint): TimelineItem[] => {
+  const parseValuesFromEndpoint = (
+    endpointData: object,
+    data: DataPoint,
+  ): TimelineItem[] => {
     return Object.keys(data).reduce((acc: TimelineItem[], key) => {
       if (endpointData.hasOwnProperty(key)) {
-        
         const timelineItem: TimelineItem = {
           title: data[key].title,
           date: endpointData[key],
@@ -58,7 +61,7 @@ function RemoteTimeline(props: Props) {
 
   const createTimelineId = (id: string, endpoint: string): string => {
     return `timeline-${endpoint}-${id}`;
-  }
+  };
 
   const createTimelineData = async (endpoint: string, id: string) => {
     setLoading(true);
@@ -80,23 +83,24 @@ function RemoteTimeline(props: Props) {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <div>
-      {loading ?
+      {loading ? (
         <div style={{ minHeight: "20px", marginTop: "20px" }}>
           <Placeholder clear loader />
-        </div> :
-        (<Timeline
+        </div>
+      ) : (
+        <Timeline
           id={createTimelineId(id, endpoint)}
           title={createTitle(id, endpoint)}
           endless={false}
           data={timelineData}
           dateWithDay={dateWithDay}
           defaultIcon={defaultIcon}
-        />)
-      }
+        />
+      )}
     </div>
   );
 }

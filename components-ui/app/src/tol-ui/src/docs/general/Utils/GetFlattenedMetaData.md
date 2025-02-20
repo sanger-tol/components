@@ -43,8 +43,8 @@ const flattenedMetaData = getFlattenedMetaData(entityMeta, endpoint, attribute);
 console.log(flattenedMetaData); // Output: { source: 'source1', type: 'type1' }
 
 const allFlattenedMetaData = getFlattenedMetaData(entityMeta, endpoint);
-console.log(allFlattenedMetaData); // Output: { 
-// attribute1: { source: 'source1', type: 'type1' }, 
+console.log(allFlattenedMetaData); // Output: {
+// attribute1: { source: 'source1', type: 'type1' },
 // attribute2: { source: 'source2', type: 'type2' } }
 ```
 

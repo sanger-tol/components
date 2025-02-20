@@ -12,10 +12,10 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { Button, Row, Col } from '../index';
+import { Button, Row, Col } from "../index";
 import {
   getChartColour,
   initialiseDatasets,
@@ -25,11 +25,10 @@ import {
   generateBarLabels,
   updateOpacitys,
   resetItemClickedData,
-  downloadItem
+  downloadItem,
 } from "./Utils";
 import { isPropDefined, getCssVarValue } from "../general/Utils";
 import { themeListener } from "../hooks/listeners";
-
 
 ChartJS.register(
   CategoryScale,
@@ -37,37 +36,37 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 
 interface Props {
-  id: string,
-  stacked?: boolean,
-  title: string,
-  downloadName?: string,
-  labels: string[],
-  datasets: any[],
-  height?: any,
-  setBarData?: any
+  id: string;
+  stacked?: boolean;
+  title: string;
+  downloadName?: string;
+  labels: string[];
+  datasets: any[];
+  height?: any;
+  setBarData?: any;
   cumulative?: boolean;
 }
 
 function BarChart(props: Props) {
   const { id, title, labels, setBarData, cumulative } = props;
-  const height = (props.height !== undefined) ? props.height : "100%";
+  const height = props.height !== undefined ? props.height : "100%";
   const stacked = isPropDefined(props.stacked);
   const originDatasets = initialiseDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
-  
+
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
   // Used to change the height of the y-axis when selecting a legend
   const [maxHeight, setMaxHeight] = useState<number | null>(null);
 
   // colours
-  const [titleColour, setTitleColour] = useState('');
-  const [labelColour, setLabelColour] = useState('');
-  const [gridColour, setGridColour] = useState('');
+  const [titleColour, setTitleColour] = useState("");
+  const [labelColour, setLabelColour] = useState("");
+  const [gridColour, setGridColour] = useState("");
   themeListener(() => {
     setTitleColour(getCssVarValue("--tol-emphasis"));
     setLabelColour(getCssVarValue("--tol-text"));
@@ -75,19 +74,24 @@ function BarChart(props: Props) {
   });
 
   //making sure legendclick is disabled when cumulative toggle is on
-  const isInteractive = !cumulative && isPropDefined(setBarData); 
+  const isInteractive = !cumulative && isPropDefined(setBarData);
 
   // functions for options
   function handleLegendClick(event: any, legendItem: any, legend: any) {
     if (isInteractive) {
-      const legendIndex = event.chart.data.datasets.findIndex((obj: any) => obj.label === legendItem.text);
+      const legendIndex = event.chart.data.datasets.findIndex(
+        (obj: any) => obj.label === legendItem.text,
+      );
       let selectedBucket = null;
 
       // cannot keep clicking on the same legend item
       if (prevLegendItemIndex !== legendIndex) {
         legend.chart.data.datasets.forEach((dataset: any, index: any) => {
           if (index === legendIndex) {
-            dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
+            dataset.backgroundColor = updateOpacitys(
+              dataset.backgroundColor,
+              "1",
+            );
             setPrevOrder(dataset.order);
             setPrevLegendItemIndex(index);
             dataset.order = -1;
@@ -96,7 +100,10 @@ function BarChart(props: Props) {
             const maxValuePercentage = Math.ceil(maxValue * 1.1);
             setMaxHeight(maxValuePercentage);
           } else {
-            dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '0.25');
+            dataset.backgroundColor = updateOpacitys(
+              dataset.backgroundColor,
+              "0.25",
+            );
             // reset prev item's order
             if (prevLegendItemIndex === index) {
               dataset.order = prevOrder;
@@ -105,14 +112,17 @@ function BarChart(props: Props) {
         });
         // sets the bar data to the selected legend
         setBarData!({
-          "bucket": selectedBucket,
-          "value": null,
-          "clickKey": null
+          bucket: selectedBucket,
+          value: null,
+          clickKey: null,
         });
       } else {
         setMaxHeight(null);
         legend.chart.data.datasets.forEach((dataset: any, index: any) => {
-          dataset.backgroundColor = updateOpacitys(dataset.backgroundColor, '1');
+          dataset.backgroundColor = updateOpacitys(
+            dataset.backgroundColor,
+            "1",
+          );
           setPrevOrder(null);
           setPrevLegendItemIndex(null);
           dataset.order = index;
@@ -127,12 +137,17 @@ function BarChart(props: Props) {
 
   function handleLegendHover(event: any) {
     if (isPropDefined(setBarData)) {
-      event.native.target.style.cursor = 'pointer';
+      event.native.target.style.cursor = "pointer";
     }
   }
 
-  // @ts-ignore
-  function handlePlaneClick(event: any, chartElement: any, chart: any, item: any) {
+  function handlePlaneClick(
+    // @ts-ignore
+    event: any,
+    chartElement: any,
+    chart: any,
+    item: any,
+  ) {
     setMaxHeight(null);
     if (item !== undefined) {
       return;
@@ -165,7 +180,9 @@ function BarChart(props: Props) {
 
   function handlePlaneHover(event: any, chartElement: any) {
     if (isPropDefined(setBarData)) {
-      event.native.target.style.cursor = chartElement[0] ? "pointer" : "default";
+      event.native.target.style.cursor = chartElement[0]
+        ? "pointer"
+        : "default";
     }
   }
 
@@ -184,18 +201,18 @@ function BarChart(props: Props) {
         callbacks: {
           labelPointStyle: () => {
             return {
-              pointStyle: 'rectRounded',
-              rotation: 0
+              pointStyle: "rectRounded",
+              rotation: 0,
             };
           },
           labelColor: (context: any) => {
             const colour = getChartColour(context.datasetIndex);
             return {
               backgroundColor: colour,
-              borderColor: colour
+              borderColor: colour,
             };
           },
-        }
+        },
       },
       legend: {
         onHover: handleLegendHover,
@@ -205,16 +222,16 @@ function BarChart(props: Props) {
           usePointStyle: true,
           generateLabels: (chart: any) => {
             return generateBarLabels(chart, titleColour);
-          }
-        }
-      }
+          },
+        },
+      },
     },
     layout: {
       padding: {
         left: 10,
         right: 10,
-        bottom: 10
-      }
+        bottom: 10,
+      },
     },
     onClick: handlePlaneClick,
     onHover: handlePlaneHover,
@@ -222,36 +239,39 @@ function BarChart(props: Props) {
       x: {
         stacked: stacked,
         grid: {
-          display: false
+          display: false,
         },
-        ticks: { // x labels
-          color: labelColour
-        }
+        ticks: {
+          // x labels
+          color: labelColour,
+        },
       },
       y: {
         stacked: stacked,
         max: maxHeight,
         grid: {
-          color: gridColour
+          color: gridColour,
         },
-        ticks: { // y labels
-          color: labelColour
-        }
+        ticks: {
+          // y labels
+          color: labelColour,
+        },
       },
-    }
+    },
   };
 
-  const downloadName = props.downloadName !== undefined ? props.downloadName : 'barchart';
+  const downloadName =
+    props.downloadName !== undefined ? props.downloadName : "barchart";
 
   return (
-    <div style={{ height: height, paddingBottom: '20px' }}>
+    <div style={{ height: height, paddingBottom: "20px" }}>
       <Row>
         <Col xs={6}>
           <div className="header-text">{title}</div>
         </Col>
         <Col xs={6}>
           <div className="tol-chart-buttons">
-            {isPropDefined(setBarData) &&
+            {isPropDefined(setBarData) && (
               <Button
                 outline
                 position="right"
@@ -263,7 +283,7 @@ function BarChart(props: Props) {
                 }}
                 icon="undo"
               />
-            }
+            )}
             <Button
               outline
               position="right"
@@ -277,7 +297,6 @@ function BarChart(props: Props) {
         </Col>
       </Row>
 
-
       <Bar
         id={id}
         responsive="true"
@@ -287,7 +306,7 @@ function BarChart(props: Props) {
         options={options}
         data={{
           labels: labels,
-          datasets: datasets
+          datasets: datasets,
         }}
       />
     </div>

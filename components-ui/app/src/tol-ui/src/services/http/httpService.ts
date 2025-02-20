@@ -2,25 +2,22 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { createAxiosInstance } from './axios';
-import { CONFIG } from './config';
-import { AxiosInstance, AxiosRequestConfig } from 'axios';
+import { createAxiosInstance } from "./axios";
+import { CONFIG } from "./config";
+import { AxiosInstance, AxiosRequestConfig } from "axios";
 
 const authApi = createAxiosInstance(CONFIG);
 
 function normalizeBody(data: unknown) {
   if (!(data instanceof FormData)) {
-    if (typeof data === 'object' && data != null) {
+    if (typeof data === "object" && data != null) {
       data = JSON.stringify(data);
     }
   }
   return data;
 }
-function wrapClientWithContext(
-  client: AxiosInstance,
-  accessToken = '',
-) {
-  const authHeader = accessToken ? { "Token": `${accessToken}` } : {};
+function wrapClientWithContext(client: AxiosInstance, accessToken = "") {
+  const authHeader = accessToken ? { Token: `${accessToken}` } : {};
   const defaultOption = {
     headers: {
       ...CONFIG.headers,
@@ -70,6 +67,6 @@ function wrapClientWithContext(
   };
 }
 
-export function httpServices(accessToken = '') {
+export function httpServices(accessToken = "") {
   return wrapClientWithContext(authApi, accessToken);
 }

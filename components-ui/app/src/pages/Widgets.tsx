@@ -4,100 +4,100 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Widgets as W } from '../tol-ui/src';
+import { Widgets as W } from "../tol-ui/src";
 
-
-const randomColour = () => "#" + ((1 << 24) * Math.random() | 0).toString(16).padStart(6, "0");
+const randomColour = () =>
+  "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0");
 
 const getDiv = () => {
   return (
-    <div style={{
-      backgroundColor: randomColour(),
-      height: '100%',
-      borderRadius: 6
-    }}/>
+    <div
+      style={{
+        backgroundColor: randomColour(),
+        height: "100%",
+        borderRadius: 6,
+      }}
+    />
   );
 };
 
 const components = [
   {
     component: <h2>Widget Sizes</h2>,
-    type: 'full'
+    type: "full",
   },
   {
     component: getDiv(),
-    type: 'sm'
+    type: "sm",
   },
   {
     component: getDiv(),
-    type: 'sm'
+    type: "sm",
   },
   {
     component: getDiv(),
-    type: 'sm'
+    type: "sm",
   },
   {
     component: getDiv(),
-    type: 'sm'
+    type: "sm",
   },
   {
     component: getDiv(),
-    type: 'md'
+    type: "md",
   },
   {
     component: getDiv(),
-    type: 'md'
+    type: "md",
   },
   {
     component: getDiv(),
-    type: 'lg'
+    type: "lg",
   },
   {
     component: getDiv(),
-    type: 'xl'
-  }
+    type: "xl",
+  },
 ];
 
 const components2 = {
   components: {
-    '1': {
+    "1": {
       element: getDiv(),
-      size: 'small'
+      size: "small",
     },
-    '2': {
+    "2": {
       element: getDiv(),
-      size: 'small'
+      size: "small",
     },
-    '3': {
+    "3": {
       element: getDiv(),
-      size: 'small'
+      size: "small",
     },
-    '4': {
+    "4": {
       element: getDiv(),
-      size: 'small'
+      size: "small",
     },
-    '5': {
+    "5": {
       element: getDiv(),
-      size: 'medium'
+      size: "medium",
     },
-    '6': {
+    "6": {
       element: getDiv(),
-      size: 'medium'
+      size: "medium",
     },
-    '7': {
+    "7": {
       element: getDiv(),
-      size: 'large'
-    }
+      size: "large",
+    },
   },
-  order: ['1', '2', '3', '4', '5', '6', '7']
+  order: ["1", "2", "3", "4", "5", "6", "7"],
 };
 
 function Widgets() {
   return (
     <div className="widgets">
-      <W
-        components={components}
-      />
+      <W components={components} />
     </div>
   );
 }

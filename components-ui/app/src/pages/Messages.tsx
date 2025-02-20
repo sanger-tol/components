@@ -47,8 +47,9 @@ function Messages() {
         <b>PopUpMessage</b>' function instead and pass the props to that.{" "}
       </p>
       <p style={{ marginBottom: "20px" }}>
-        You can still use '<b>Message</b>' and '<b>Notification</b>' for more complex alerts and pop-ups, 
-        but they need to be used with '<b>Toaster</b>'.
+        You can still use '<b>Message</b>' and '<b>Notification</b>' for more
+        complex alerts and pop-ups, but they need to be used with '
+        <b>Toaster</b>'.
       </p>
       <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         <StaticMessage message={"This is a success alert"} type={"success"} />
@@ -178,10 +179,15 @@ function Messages() {
           placeholder="Select a type for the toast..."
           setValue={setToastType}
         />
-        <Button 
+        <Button
           type={"success"}
-          onClick={() => toaster.push(toastMessage, { placement: toastPosition, duration: 5000 })}
-          text='Show Toast'
+          onClick={() =>
+            toaster.push(toastMessage, {
+              placement: toastPosition,
+              duration: 5000,
+            })
+          }
+          text="Show Toast"
         />
       </div>
     </div>
@@ -200,7 +206,7 @@ function Messages() {
                 <p style={{ fontSize: "6px" }}>Hello from Tiny Notification</p>
               </div>
             }
-          />
+          />,
         );
         break;
       case 1:
@@ -209,7 +215,7 @@ function Messages() {
             type="success"
             header="Severity Level 1"
             children={"This is a success notification"}
-          />
+          />,
         );
         break;
       case 2:
@@ -218,7 +224,7 @@ function Messages() {
             type="info"
             header="Severity Level 2"
             children={"This is an informational notification"}
-          />
+          />,
         );
         break;
       case 3:
@@ -228,7 +234,7 @@ function Messages() {
             header="Severity Level 3"
             children={"This is a warning notification"}
           />,
-          { placement: "topStart", duration: 3000 }
+          { placement: "topStart", duration: 3000 },
         );
         break;
       case 4:
@@ -261,7 +267,7 @@ function Messages() {
               </div>
             }
           />,
-          { placement: "topEnd" }
+          { placement: "topEnd" },
         );
         break;
       default:
@@ -276,18 +282,21 @@ function Messages() {
         Can be customised similarly to messages and use the Toaster hook:
       </p>
       <p style={{ marginBottom: "10px" }}>Severity Level: {value}</p>
-      <Slider
-        min={0}
-        max={4}
-        onChange={setValue}
-        value={value}
-      />
-      <div style={{ margin: "auto", width: "30%", display: "flex", justifyContent: "center", marginTop: "20px" }}>
-      <Button
-        type={"success"}
-        onClick={() => sendNotification(value)}
-        text='Send Notification'
-      />
+      <Slider min={0} max={4} onChange={setValue} value={value} />
+      <div
+        style={{
+          margin: "auto",
+          width: "30%",
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "20px",
+        }}
+      >
+        <Button
+          type={"success"}
+          onClick={() => sendNotification(value)}
+          text="Send Notification"
+        />
       </div>
     </div>
   );

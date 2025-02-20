@@ -16,211 +16,208 @@ import {
   env,
   useZone,
   resetZone,
-  useTranslator
-} from '../tol-ui/src';
-
+  useTranslator,
+} from "../tol-ui/src";
 
 function Filters() {
   const speciesZone = useZone({
-    endpoint: 'species',
+    endpoint: "species",
     baseUrl: env.TOL_DATA,
     filter: {
       and_: {
-        'sts_family': {
+        sts_family: {
           in_list: {
-            value: ['Hylocomiaceae', 'Crabronidae'],
-            negate: true
-          }
+            value: ["Hylocomiaceae", "Crabronidae"],
+            negate: true,
+          },
         },
-      }
+      },
     },
     components: [
       {
-        id: 'filter-one',
+        id: "filter-one",
         filter: {
           and_: {
-            'sts_scientific_name': {
+            sts_scientific_name: {
               contains: {
-                value: 'Rh'
-              }
+                value: "Rh",
+              },
             },
-            'benchling_extraction_benchling_completion_date_min': {
+            benchling_extraction_benchling_completion_date_min: {
               gte: {
-                value: '2021-01-01'
+                value: "2021-01-01",
               },
               lt: {
-                value: '2024-01-01'
-              }
+                value: "2024-01-01",
+              },
             },
-            'goat_taxon_rank': {
+            goat_taxon_rank: {
               in_list: {
-                value: ['species', 'genus']
-              }
+                value: ["species", "genus"],
+              },
             },
-            'sts_ready': {
+            sts_ready: {
               in_list: {
-                value: ['true']
-              }
-            }
-          }
-        }
+                value: ["true"],
+              },
+            },
+          },
+        },
       },
-      {id: 'filter-two'},
-      {id: 'table-1'},
-      {id: 'table-2'},
-      {id: 'count'}
-    ]
+      { id: "filter-two" },
+      { id: "table-1" },
+      { id: "table-2" },
+      { id: "count" },
+    ],
   });
 
   const table = (
     <div>
       <h5>Table Example</h5>
-      <p style={{marginBottom: 5}}>A default filter has been applied; the input is pre-populated.</p>
-      <div style={{margin: "10px 0 10px 0"}}>
+      <p style={{ marginBottom: 5 }}>
+        A default filter has been applied; the input is pre-populated.
+      </p>
+      <div style={{ margin: "10px 0 10px 0" }}>
         <Button
-          type='primary'
+          type="primary"
           onClick={() => resetZone(speciesZone)}
-          text='Reset'
+          text="Reset"
         />
       </div>
-      <p style={{marginBottom: 3}}>Filter Level 1:</p>
+      <p style={{ marginBottom: 3 }}>Filter Level 1:</p>
       <Filter
-        attribute='sts_family'
-        rename='Family'
-        type='str'
-        componentId='filter-one'
+        attribute="sts_family"
+        rename="Family"
+        type="str"
+        componentId="filter-one"
         {...speciesZone}
       />
-      <div style={{height: 6}}/>
+      <div style={{ height: 6 }} />
       <Filter
-        attribute='sts_scientific_name'
-        rename='Scientific Name'
-        type='str'
-        componentId='filter-one'
+        attribute="sts_scientific_name"
+        rename="Scientific Name"
+        type="str"
+        componentId="filter-one"
         {...speciesZone}
       />
-      <div style={{height: 6}}/>
+      <div style={{ height: 6 }} />
       <Filter
-        attribute='benchling_extraction_benchling_completion_date_min'
-        rename='Benchling Extraction Min Date'
-        type='datetime'
-        componentId='filter-one'
+        attribute="benchling_extraction_benchling_completion_date_min"
+        rename="Benchling Extraction Min Date"
+        type="datetime"
+        componentId="filter-one"
         {...speciesZone}
       />
-      <div style={{height: 6}}/>
+      <div style={{ height: 6 }} />
       <Filter
-        attribute='goat_taxon_rank'
-        rename='Taxon Rank'
-        type='multi'
-        componentId='filter-one'
+        attribute="goat_taxon_rank"
+        rename="Taxon Rank"
+        type="multi"
+        componentId="filter-one"
         {...speciesZone}
       />
-      <div style={{height: 6}}/>
+      <div style={{ height: 6 }} />
       <Filter
-        attribute='benchling_sequencing_request_count'
-        rename='Request Count'
-        type='int'
-        componentId='filter-one'
+        attribute="benchling_sequencing_request_count"
+        rename="Request Count"
+        type="int"
+        componentId="filter-one"
         {...speciesZone}
       />
-      <div style={{height: 6}}/>
+      <div style={{ height: 6 }} />
       <Filter
-        attribute='sts_ready'
-        rename='STS Ready'
-        type='boolean'
-        componentId='filter-one'
+        attribute="sts_ready"
+        rename="STS Ready"
+        type="boolean"
+        componentId="filter-one"
         {...speciesZone}
       />
-      <p style={{marginTop: 10, marginBottom: 3}}>Filter Level 2:</p>
+      <p style={{ marginTop: 10, marginBottom: 3 }}>Filter Level 2:</p>
       <Filter
-        attribute='sts_family'
-        rename='Family Two'
-        type='str'
-        componentId='filter-two'
+        attribute="sts_family"
+        rename="Family Two"
+        type="str"
+        componentId="filter-two"
         {...speciesZone}
       />
-      <p style={{marginTop: 15, marginBottom: 10}}>Filter Level 3:</p>
+      <p style={{ marginTop: 15, marginBottom: 10 }}>Filter Level 3:</p>
       <RemoteTable
         id="table-1"
         fields={{
           uid: {
-            rename: "ID"
+            rename: "ID",
           },
           sts_family: {
-            rename: 'Family'
+            rename: "Family",
           },
           benchling_sequencing_request_count: {
-            rename: 'Request Count'
+            rename: "Request Count",
           },
           benchling_extraction_benchling_completion_date_min: {
-            rename: 'Benchling Ex. Min Date'
+            rename: "Benchling Ex. Min Date",
           },
           goat_taxon_rank: {
-            rename: 'Taxon Rank'
+            rename: "Taxon Rank",
           },
           sts_ready: {
-            rename: 'STS Ready'
-          }
+            rename: "STS Ready",
+          },
         }}
         height={300}
         {...speciesZone}
       />
-      <p style={{marginTop: 15, marginBottom: 10}}>Filter Level 4:</p>
+      <p style={{ marginTop: 15, marginBottom: 10 }}>Filter Level 4:</p>
       <RemoteTable
         id="table-2"
         fields={{
           uid: {
-            rename: "ID"
+            rename: "ID",
           },
           sts_scientific_name: {
-            rename: 'Name'
-          }
+            rename: "Name",
+          },
         }}
         height={300}
         {...speciesZone}
       />
-      <p style={{marginTop: 10}}>Filter Level 5:</p>
-      <div style={{height: 110, marginTop: 20}}>
-        <RemoteCount
-          id="count"
-          title="Total Species"
-          {...speciesZone}
-        />
+      <p style={{ marginTop: 10 }}>Filter Level 5:</p>
+      <div style={{ height: 110, marginTop: 20 }}>
+        <RemoteCount id="count" title="Total Species" {...speciesZone} />
       </div>
     </div>
   );
 
   const runDataMap = useZone({
-    endpoint: 'barcoding_run_data',
+    endpoint: "barcoding_run_data",
     baseUrl: env.TOL_DATA,
     components: [
       {
-        id: 'map-filter',
+        id: "map-filter",
         filter: {
           and_: {
-            'sts_sample.id': {
-              exists: {}
-            }
-          }
-        }
+            "sts_sample.id": {
+              exists: {},
+            },
+          },
+        },
       },
-      {id: 'map'}
-    ]
+      { id: "map" },
+    ],
   });
 
   const map = (
     <div>
-      <h5 style={{marginBottom: 10}}>Map Example</h5>
+      <h5 style={{ marginBottom: 10 }}>Map Example</h5>
       <Filter
-        attribute='bioscan_o'
-        rename='Order'
-        type='str'
-        componentId='map-filter'
+        attribute="bioscan_o"
+        rename="Order"
+        type="str"
+        componentId="map-filter"
         {...runDataMap}
       />
-      <div style={{height: 10}}/>
+      <div style={{ height: 10 }} />
       <RemoteMap
-        id='map'
+        id="map"
         bubble
         longitudeKey="sts_sample.sts_longitude.keyword"
         latitudeKey="sts_sample.sts_latitude.keyword"
@@ -232,75 +229,70 @@ function Filters() {
   );
 
   const runDataSunburst = useZone({
-    endpoint: 'barcoding_run_data',
+    endpoint: "barcoding_run_data",
     baseUrl: env.TOL_DATA,
     components: [
       {
-        id: 'sunburst-filter',
+        id: "sunburst-filter",
         filter: {
           and_: {
-            'sts_sample.id': {
-              exists: {}
+            "sts_sample.id": {
+              exists: {},
             },
-            'bioscan_o': {
+            bioscan_o: {
               contains: {
-                value: "Lep"
-              }
-            }
-          }
-        }
+                value: "Lep",
+              },
+            },
+          },
+        },
       },
-      {id: 'sunburst'},
-      {id: 'sunburst-table'}
-    ]
+      { id: "sunburst" },
+      { id: "sunburst-table" },
+    ],
   });
 
   const sunburst = (
     <div>
-      <h5 style={{marginBottom: 10}}>Sunburst Example</h5>
+      <h5 style={{ marginBottom: 10 }}>Sunburst Example</h5>
       <Filter
-        attribute='bioscan_o'
-        rename='Order'
-        type='str'
-        componentId='sunburst-filter'
+        attribute="bioscan_o"
+        rename="Order"
+        type="str"
+        componentId="sunburst-filter"
         {...runDataSunburst}
       />
-      <div style={{height: 20}}/>
+      <div style={{ height: 20 }} />
       <RemoteSunburst
         title="Example"
         id="sunburst"
         height={500}
-        sliceBy={[
-          "bioscan_o",
-          "bioscan_f",
-          "bioscan_g",
-          "bioscan_s"
-        ]}
+        sliceBy={["bioscan_o", "bioscan_f", "bioscan_g", "bioscan_s"]}
         {...runDataSunburst}
       />
-      <div style={{height: 30}}/>
+      <div style={{ height: 30 }} />
       <RemoteTable
         id="sunburst-table"
         defaultSort="bioscan_specimen.id"
         fields={{
           "bioscan_specimen.id": {
             rename: "Specimen ID",
-            cellRenderer: null
+            cellRenderer: null,
           },
           "sts_sample.id": {
             rename: "Sample",
             width: 150,
-            cellRenderer: null
+            cellRenderer: null,
           },
-          "bioscan_c": {
+          bioscan_c: {
             rename: "Class",
           },
-          "bioscan_o": {
-            rename: "Order"
+          bioscan_o: {
+            rename: "Order",
           },
-          "bioscan_f": {
-            rename: "Family"
-          }
+          bioscan_f: {
+            rename: "Family",
+          },
         }}
         height={400}
         {...runDataSunburst}
@@ -308,14 +300,10 @@ function Filters() {
     </div>
   );
 
-
   const runDataChart = useZone({
-    endpoint: 'run_data',
+    endpoint: "run_data",
     baseUrl: env.TOL_DATA,
-    components: [
-      {id: 'chart'},
-      {id: 'chart-table'}
-    ]
+    components: [{ id: "chart" }, { id: "chart-table" }],
   });
 
   const chart = (
@@ -330,68 +318,56 @@ function Filters() {
         height={400}
         {...runDataChart}
       />
-      <div style={{height: 30}}/>
-      <RemoteTable
-        id="chart-table"
-        height={400}
-        {...runDataChart}
-      />
+      <div style={{ height: 30 }} />
+      <RemoteTable id="chart-table" height={400} {...runDataChart} />
     </div>
   );
 
   const speciesTranslatorZone = useZone({
-    endpoint: 'species',
+    endpoint: "species",
     baseUrl: env.TOL_DATA,
-    components: [
-      {id: 'sunburst-1'},
-      {id: 'filter-1'}
-    ]
+    components: [{ id: "sunburst-1" }, { id: "filter-1" }],
   });
 
   const sampleTranslatorZone = useZone({
-    endpoint: 'sample',
+    endpoint: "sample",
     baseUrl: env.TOL_DATA,
-    components: [
-      {id: 'map-1'}
-    ]
+    components: [{ id: "map-1" }],
   });
 
   useTranslator({
-    excludeAfterId: 'sunburst-1',
+    excludeAfterId: "sunburst-1",
     source: speciesTranslatorZone,
     target: sampleTranslatorZone,
     translations: {
-      goat_family_name: 'sts_species.sts_family',
-      goat_genus_name: 'sts_species.sts_genus'
-    }
-  })
+      goat_family_name: "sts_species.sts_family",
+      goat_genus_name: "sts_species.sts_genus",
+    },
+  });
 
   const translatorComponent = (
     <div>
       <RemoteSunburst
         title="Example Sunburst"
         id="sunburst-1"
-        sliceBy={[
-          "goat_family_name",
-          "goat_genus_name"
-        ]}
+        sliceBy={["goat_family_name", "goat_genus_name"]}
         height={400}
         {...speciesTranslatorZone}
       />
-      <div style={{height: 30}}/>
+      <div style={{ height: 30 }} />
       <RemoteMap
-        id='map-1'
+        id="map-1"
         longitudeKey="sts_longitude"
         latitudeKey="sts_latitude"
         height={400}
         {...sampleTranslatorZone}
       />
-      <div style={{height: 10}}/>
+      <div style={{ height: 10 }} />
       <Filter
-        attribute='goat_family_name'
-        rename='Family Name'
-        type='str'
-        componentId='filter-1'
+        attribute="goat_family_name"
+        rename="Family Name"
+        type="str"
+        componentId="filter-1"
         {...speciesTranslatorZone}
       />
     </div>
@@ -400,20 +376,20 @@ function Filters() {
   const components = [
     {
       component: <h2>Filters</h2>,
-      type: 'full'
+      type: "full",
     },
     {
       component: table,
-      type: 'full'
+      type: "full",
     },
     {
       component: chart,
-      type: 'full'
+      type: "full",
     },
     {
       component: translatorComponent,
-      type: 'full'
-    }
+      type: "full",
+    },
   ];
 
   return <Widgets components={components} />;

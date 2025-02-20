@@ -4,11 +4,10 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect } from 'react';
-import { Zone, defineComponent } from '../board/Utils';
-import { IFilter, And } from '../models/Filter';
-import { deepCopy, isEmptyObject } from '../general/Utils';
-
+import { useEffect } from "react";
+import { IZone, defineComponent } from "../boards/Utils";
+import { IFilter, And } from "../models/Filter";
+import { deepCopy, isEmptyObject } from "../general/Utils";
 
 export function getComponentAbove(id: string, list: string[]) {
   const index = list.indexOf(id);
@@ -20,12 +19,20 @@ export function getComponentsAbove(id: string, list: string[]) {
   return list.slice(0, index + 1);
 }
 
-export function getComponentsBelow(id: string, list: string[], indexOffset: number = 0) {
+export function getComponentsBelow(
+  id: string,
+  list: string[],
+  indexOffset: number = 0,
+) {
   const index = list.indexOf(id);
   return index === -1 ? [] : list.slice(index + indexOffset + 1); // adding 1, as by default we want the next component
 }
 
-export function filterHasUpdated(setFilter: any, exisitingFilter?: object, incomingFilter?: object) {
+export function filterHasUpdated(
+  setFilter: any,
+  exisitingFilter?: object,
+  incomingFilter?: object,
+) {
   // force setFilter update if zone is not defined - this only occurs on initial load
   if (incomingFilter === undefined) {
     setFilter(undefined);
@@ -49,17 +56,21 @@ export function mergeAndFilters(target: object, incoming: object) {
 }
 
 export function removeSuperfluousExists(filter: And) {
-  Object.keys(filter).forEach(attribute => {
+  Object.keys(filter).forEach((attribute) => {
     const operators = Object.keys(filter[attribute]);
-    if (operators.length >= 2 && 'exists' in filter[attribute]) {
-      delete filter[attribute]['exists'];
+    if (operators.length >= 2 && "exists" in filter[attribute]) {
+      delete filter[attribute]["exists"];
     }
   });
 }
 
-export function generateFilter(zone?: object, id?: string, includeSubFilter?: boolean) {
+export function generateFilter(
+  zone?: object,
+  id?: string,
+  includeSubFilter?: boolean,
+) {
   if (zone === undefined) return undefined;
-  const z = zone as Zone;
+  const z = zone as IZone;
   const aboveComponents = id ? getComponentsAbove(id, z.order) : z.order;
   let compoundedFilter: And = z.filter ? z.filter.and_ : {};
   // loop through 'above' components
@@ -78,88 +89,104 @@ export function generateFilter(zone?: object, id?: string, includeSubFilter?: bo
   }
   removeSuperfluousExists(compoundedFilter);
   return {
-    and_: compoundedFilter
+    and_: compoundedFilter,
   } as IFilter;
 }
 
 // insert a value in a list after an id located
 export function addValueBelow(id: string, value: string, list: string[]) {
   const idIndex = list.indexOf(id);
-  list.splice(idIndex+1, 0, value);
+  list.splice(idIndex + 1, 0, value);
   return list;
 }
 
-export function addComponentBelow(id: string, newId: string, zone: Zone) {
-  defineComponent({
-    id: newId,
-    filterPassThrough: zone.components[id].data.filterPassThrough
-  }, zone);
+export function addComponentBelow(id: string, newId: string, zone: IZone) {
+  defineComponent(
+    {
+      id: newId,
+      filterPassThrough: zone.components[id].data.filterPassThrough,
+    },
+    zone,
+  );
   zone.order = addValueBelow(id, newId, zone.order);
 }
 
 export function resetFiltersBelow(params: {
-  id: string,
-  zone?: object,
-  indexOffset?: number
+  id: string;
+  zone?: object;
+  indexOffset?: number;
 }) {
-  const {zone, indexOffset} = params;
+  const { zone, indexOffset } = params;
   let id = params.id;
-  const z = zone as Zone;
+  const z = zone as IZone;
   for (const currentId of getComponentsBelow(id, z.order, indexOffset)) {
-    z.components[currentId].data.filter = deepCopy(z.components[currentId].data.defaultFilter!);
+    z.components[currentId].data.filter = deepCopy(
+      z.components[currentId].data.defaultFilter!,
+    );
     z.components[currentId].data.subFilter = undefined;
   }
 }
 
-export function resetAllFilters(zone: Zone) {
+export function resetAllFilters(zone: IZone) {
   zone.filter = deepCopy(zone.defaultFilter!);
   for (const currentId of zone.order) {
-    zone.components[currentId].data.filter = deepCopy(zone.components[currentId].data.defaultFilter!);
+    zone.components[currentId].data.filter = deepCopy(
+      zone.components[currentId].data.defaultFilter!,
+    );
     zone.components[currentId].data.subFilter = undefined;
   }
 }
 
-export function removeComponent(id: string, zone: Zone) {
+export function removeComponent(id: string, zone: IZone) {
   delete zone.components[id];
   zone.order = zone.order.filter((currentId) => currentId !== id);
 }
 
 export function setFilter(params: {
   // and_ filter attributes
-  operator: string,
-  value?: any,
-  negate: boolean,
-  exists?: boolean,
+  operator: string;
+  value?: any;
+  negate: boolean;
+  exists?: boolean;
   // filter location
-  attribute: string,
-  componentId: string,
+  attribute: string;
+  componentId: string;
   // filter state
-  zone: object,
+  zone: object;
   // differentials
-  valueExists?: any
+  valueExists?: any;
 }) {
-  const {operator, value, negate, exists, attribute, componentId, zone, valueExists} = params;
-  const z = zone as Zone;
+  const {
+    operator,
+    value,
+    negate,
+    exists,
+    attribute,
+    componentId,
+    zone,
+    valueExists,
+  } = params;
+  const z = zone as IZone;
   const and_ = z.components[componentId].data.filter!.and_;
-  resetFiltersBelow({id: componentId, zone: z});
+  resetFiltersBelow({ id: componentId, zone: z });
 
   if (valueExists || exists) {
     // exists filter removed if value is already set
-    if ('exists' in (and_[attribute] || {})) {
-      delete and_[attribute]['exists'];
+    if ("exists" in (and_[attribute] || {})) {
+      delete and_[attribute]["exists"];
     }
     // setting just an exists filter if exists is true
     if (exists) {
       and_[attribute] = {};
-      and_[attribute]['exists'] = { negate: negate };
-    // setting a value filter from an input
-    } else if (operator === 'in_list') {
+      and_[attribute]["exists"] = { negate: negate };
+      // setting a value filter from an input
+    } else if (operator === "in_list") {
       and_[attribute] = {};
-      and_[attribute]['in_list'] = { value: value, negate: negate };
+      and_[attribute]["in_list"] = { value: value, negate: negate };
     } else {
       and_[attribute] = {
         ...and_[attribute],
-        [operator]: { value, negate }
+        [operator]: { value, negate },
       };
     }
   } else {
@@ -174,18 +201,26 @@ export function setFilter(params: {
 
 function filterListenerUpdater(params: {
   // whole filter data
-  filter: any,
-  filterPassThrough?: boolean,
+  filter: any;
+  filterPassThrough?: boolean;
   // filter location
-  attribute: string,
-  operators: string[],
+  attribute: string;
+  operators: string[];
   // filter state
-  filterMeta: any,
-  disableCondition?: boolean,
+  filterMeta: any;
+  disableCondition?: boolean;
   // differentials
-  zoneToValue: (filterValue: any, exisitingValue?: any) => any
+  zoneToValue: (filterValue: any, exisitingValue?: any) => any;
 }) {
-  let {filter, filterPassThrough, filterMeta, attribute, operators, disableCondition, zoneToValue} = params;
+  let {
+    filter,
+    filterPassThrough,
+    filterMeta,
+    attribute,
+    operators,
+    disableCondition,
+    zoneToValue,
+  } = params;
 
   const and_ = filter?.and_;
   // ignore pass throughs
@@ -201,30 +236,43 @@ function filterListenerUpdater(params: {
         filterMeta.negate = filter.negate || filterMeta.negate;
       }
     }
-    if (!operatorFound && 'exists' in and_[attribute]) {
+    if (!operatorFound && "exists" in and_[attribute]) {
       filterMeta.exists = true;
-      filterMeta.negate = and_[attribute]['exists'].negate || filterMeta.negate;
+      filterMeta.negate = and_[attribute]["exists"].negate || filterMeta.negate;
       // only disables on exist filter if negate is true
       filterMeta.disabled = filterMeta.negate ? disableCondition : false;
     }
   }
 }
 
-export function filterListener(params: {
-  // filter location
-  attribute: string,
-  componentId: string,
-  operators: string[],
-  // filter state
-  zone: Zone,
-  setValue: any,
-  setExists?: any,
-  setNegate?: any,
-  setDisabled?: any,
-  emptyValue: any,
-  zoneToValue: (filterValue: any, exisitingValue?: any) => any
-}, dependencies: any[]) {
-  const {attribute, componentId, operators, zone, setValue, setExists, setNegate, setDisabled, zoneToValue} = params;
+export function filterListener(
+  params: {
+    // filter location
+    attribute: string;
+    componentId: string;
+    operators: string[];
+    // filter state
+    zone: IZone;
+    setValue: any;
+    setExists?: any;
+    setNegate?: any;
+    setDisabled?: any;
+    emptyValue: any;
+    zoneToValue: (filterValue: any, exisitingValue?: any) => any;
+  },
+  dependencies: any[],
+) {
+  const {
+    attribute,
+    componentId,
+    operators,
+    zone,
+    setValue,
+    setExists,
+    setNegate,
+    setDisabled,
+    zoneToValue,
+  } = params;
 
   useEffect(() => {
     // initialise - use an object to take advantage of reference type
@@ -232,8 +280,8 @@ export function filterListener(params: {
       value: params.emptyValue,
       exists: false,
       negate: false,
-      disabled: false
-    }
+      disabled: false,
+    };
 
     // do for the top level filter
     filterListenerUpdater({
@@ -242,7 +290,7 @@ export function filterListener(params: {
       operators,
       filterMeta,
       disableCondition: true,
-      zoneToValue
+      zoneToValue,
     });
 
     const aboveComponents = getComponentsAbove(componentId, zone.order);
@@ -254,8 +302,8 @@ export function filterListener(params: {
         attribute,
         operators,
         filterMeta,
-        disableCondition: (currentId !== componentId),
-        zoneToValue
+        disableCondition: currentId !== componentId,
+        zoneToValue,
       });
     }
     setValue(filterMeta.value);
@@ -265,19 +313,19 @@ export function filterListener(params: {
   }, dependencies);
 }
 export function addSubFilter(params: {
-  id: string,
-  filter: object,
-  zone: object
+  id: string;
+  filter: object;
+  zone: object;
 }) {
-  const {id, filter, zone} = params;
-  const z = zone as Zone;
+  const { id, filter, zone } = params;
+  const z = zone as IZone;
   const f = filter as IFilter;
-  resetFiltersBelow({id: id, zone: z!});
+  resetFiltersBelow({ id: id, zone: z! });
   z.components[id].data.subFilter = f;
 }
 
-export function resetZone(params: {zone: Zone, setZone: any}) {
-  const {zone, setZone} = params;
+export function resetZone(params: { zone: IZone; setZone: any }) {
+  const { zone, setZone } = params;
   resetAllFilters(zone);
-  setZone({...zone});
+  setZone({ ...zone });
 }

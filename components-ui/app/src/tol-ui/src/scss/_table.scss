@@ -14,7 +14,7 @@
   --rs-btn-ghost-active-border: var(--tol-primary);
   --rs-btn-ghost-active-text: var(--tol-primary);
   --rs-btn-subtle-active-bg: initial;
-  
+
   --rs-btn-subtle-hover-bg: var(--tol-grey-translucent);
 
   // page size
@@ -31,7 +31,9 @@
 
   // dropdown box shadow
   .rs-dropdown.rs-dropdown-menu {
-    box-shadow: 0 0 10px rgba(255, 255, 255, 1), 0 4px 4px rgba(255, 255, 255, 0.12) !important;
+    box-shadow:
+      0 0 10px rgba(255, 255, 255, 1),
+      0 4px 4px rgba(255, 255, 255, 0.12) !important;
   }
 
   .tol-table-bar {
@@ -40,14 +42,14 @@
 
   .tol-pagination {
     float: left;
-  
+
     .rs-pagination-btn {
       border: 1px solid var(--tol-bg);
     }
     .rs-pagination-btn.rs-pagination-btn-active {
       border: 1px solid var(--tol-grey);
     }
-  
+
     .rs-pagination-btn.rs-pagination-btn-active:hover,
     .rs-pagination-btn.rs-pagination-btn-active:focus {
       border: 1px solid var(--tol-primary);
@@ -59,7 +61,8 @@
       box-shadow: none;
     }
 
-    .rs-pagination-btn:hover, .rs-pagination-btn:focus {
+    .rs-pagination-btn:hover,
+    .rs-pagination-btn:focus {
       background-color: var(--tol-grey-subtle);
     }
   }
@@ -77,11 +80,11 @@
   .tol-table {
     display: flex;
     flex-direction: column;
-  
+
     .tol-table-inner {
       flex: 1;
       position: relative;
-    
+
       .rs-table {
         border-radius: 6px;
         border: 1px solid var(--tol-grey);
@@ -151,7 +154,7 @@
       padding-right: 18px;
       margin-top: -2px;
     }
-    
+
     // header color
     .rs-table-cell-header .rs-table-cell-content,
     .rs-table-header-row-wrapper .rs-table-row.rs-table-row-header {
@@ -207,7 +210,7 @@
 
     // inner table loader
     .tol-placeholder-icons .loader {
-      top: -150px
+      top: -150px;
     }
 
     // slim down statuses

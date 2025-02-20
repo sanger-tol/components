@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { TsDataSource } from "../services";
-import { Zone } from "../board";
-import { defineZone } from "../board/Utils";
+import { IZone } from "../boards";
+import { defineZone } from "../boards/Utils";
 import Filter from "./Filter";
 import { IFilter } from "../models";
 import { Button, useEffectUpdate } from "..";
@@ -23,7 +23,8 @@ export interface Props {
 }
 
 const PLACEHOLDER = "No filters applied, click here to add...";
-const TOOLTIP_CONTENT = "A filter already exists in the filtering system. Please remove it before adding this filter."
+const TOOLTIP_CONTENT =
+  "A filter already exists in the filtering system. Please remove it before adding this filter.";
 function RemoteFilters(props: Props) {
   const { endpoint, baseUrl, onSave, disabledFilterValues } = props;
   const ds = new TsDataSource({ baseUrl });
@@ -33,7 +34,7 @@ function RemoteFilters(props: Props) {
 
   // just keeps track of the filter ids and their order
   const [filters, setFilters] = useState(
-    Object.keys(props.filters?.and_ || {})
+    Object.keys(props.filters?.and_ || {}),
   );
   const [disabledApplyButton, setDisabledApplyButton] = useState(true);
 
@@ -41,10 +42,10 @@ function RemoteFilters(props: Props) {
   const [entityMeta, setEntityMeta] = useState<any>({});
 
   // repurposed zone so filters correctly interact with the state
-  const [filterZone, setFilterZone] = useState<Zone>(
+  const [filterZone, setFilterZone] = useState<IZone>(
     defineZone("dummy-object-for-remote-filters", [
       { id: filterComponentId, filter: props.filters },
-    ])
+    ]),
   );
 
   useEffect(() => {
@@ -99,7 +100,7 @@ function RemoteFilters(props: Props) {
         populatedFieldType="filter"
         numPopulatedFields={
           Object.keys(
-            filterZone.components[filterComponentId].data.filter?.and_ || {}
+            filterZone.components[filterComponentId].data.filter?.and_ || {},
           ).length
         }
         tooltipContent={TOOLTIP_CONTENT}

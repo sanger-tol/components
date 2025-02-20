@@ -2,12 +2,11 @@
 //
 // SPDX-License-Identifier: MIT
 
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from "axios";
 
-export function createAxiosInstance(options: any): AxiosInstance { // eslint-disable-line
-  const axiosInstance = axios.create(
-    options
-  );
+export function createAxiosInstance(options: any): AxiosInstance {
+  // eslint-disable-line
+  const axiosInstance = axios.create(options);
 
   axiosInstance.interceptors.response.use(
     (response) => {
@@ -15,8 +14,7 @@ export function createAxiosInstance(options: any): AxiosInstance { // eslint-dis
     },
     (error) => {
       throw error; // TODO: handle error like token expired, ...
-    }
+    },
   );
   return axiosInstance;
 }
-

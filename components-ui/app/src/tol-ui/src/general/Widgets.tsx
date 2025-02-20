@@ -8,14 +8,13 @@ import { Row, Col } from "../index";
 import { getCssVarValue } from "./Utils";
 import { themeListener } from "../hooks/listeners";
 
-
 interface Component {
-  component: JSX.Element,
-  type: string
+  component: JSX.Element;
+  type: string;
 }
 
 interface Props {
-  components: Component[]
+  components: Component[];
 }
 
 function Widgets(props: Props) {
@@ -31,35 +30,35 @@ function Widgets(props: Props) {
   });
 
   const getSm = (type: string) => {
-    switch(type) {
-    case 'sm':
-      return 6;
-    default:
-      return 12;
+    switch (type) {
+      case "sm":
+        return 6;
+      default:
+        return 12;
     }
   };
 
   const getLg = (type: string) => {
-    switch(type) {
-    case 'sm':
-      return 3;
-    case 'md':
-      return 6;
-    default:
-      return 12;
+    switch (type) {
+      case "sm":
+        return 3;
+      case "md":
+        return 6;
+      default:
+        return 12;
     }
   };
 
   const getHeight = (type: string) => {
-    switch(type) {
-    case 'sm':
-      return 150;
-    case 'md':
-      return 450;
-    case 'lg':
-      return 450;
-    case 'xl':
-      return 600;
+    switch (type) {
+      case "sm":
+        return 150;
+      case "md":
+        return 450;
+      case "lg":
+        return 450;
+      case "xl":
+        return 600;
     }
   };
 
@@ -68,12 +67,12 @@ function Widgets(props: Props) {
     marginRight: 0,
     paddingLeft: 0,
     paddingRight: 0,
-    marginBottom: -16
+    marginBottom: -16,
   };
 
   const colStyle = {
     paddingLeft: 0,
-    paddingRight: 0
+    paddingRight: 0,
   };
 
   return (
@@ -87,7 +86,10 @@ function Widgets(props: Props) {
               lg={getLg(item.type)}
               style={colStyle}
             >
-              <div className="tol-widget" style={{height: getHeight(item.type)}}>
+              <div
+                className="tol-widget"
+                style={{ height: getHeight(item.type) }}
+              >
                 {item.component}
               </div>
             </Col>

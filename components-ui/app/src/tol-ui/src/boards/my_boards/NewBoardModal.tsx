@@ -36,10 +36,11 @@ function NewBoardModal(props: Props) {
         type="success"
         disabled={boardTitle === "" /*|| viewTitle === ""*/} // Views will be 'View 1' for now
         onClick={() => {
-          setOpen(false), onConfirmClick(boardId, viewId, boardTitle, viewTitle);
+          setOpen(false),
+            onConfirmClick(boardId, viewId, boardTitle, viewTitle);
         }}
         text="Create"
-        icon='plus'
+        icon="plus"
       />
       <Button
         position="right"
@@ -58,16 +59,16 @@ function NewBoardModal(props: Props) {
   );
 
   const body = (
-      <RSForm fluid>
-        <FormTextField
-          id="board-title"
-          value={boardTitle}
-          onChange={(value: any) => setBoardTitle(value)}
-          name="Board Title"
-          placeholder={`Id: ${boardId}`}
-          label="Create a title for your board:"
-        />
-        {/* 
+    <RSForm fluid>
+      <FormTextField
+        id="board-title"
+        value={boardTitle}
+        onChange={(value: any) => setBoardTitle(value)}
+        name="Board Title"
+        placeholder={`Id: ${boardId}`}
+        label="Create a title for your board:"
+      />
+      {/* 
         <FormTextField
           id="board-title"
           value={viewTitle}
@@ -77,7 +78,7 @@ function NewBoardModal(props: Props) {
           label="Create a title for your first board view:"
         />
         */}
-      </RSForm>
+    </RSForm>
   );
 
   return (

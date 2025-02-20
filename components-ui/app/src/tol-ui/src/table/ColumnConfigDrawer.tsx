@@ -43,10 +43,10 @@ function ColumnConfigDrawer(props: Props) {
     customAttributeSelection,
   } = props;
   const [attributes, setAttributes] = useState<string[]>(
-    fieldMeta["order"]["active"]
+    fieldMeta["order"]["active"],
   );
   const [initialAttributes, setInitialAttributes] = useState<string[]>(
-    fieldMeta["order"]["active"]
+    fieldMeta["order"]["active"],
   );
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
@@ -87,7 +87,7 @@ function ColumnConfigDrawer(props: Props) {
   const updateMeta = (
     id: string,
     updatedFieldMeta: FieldMeta,
-    hidden: boolean
+    hidden: boolean,
   ) => {
     const isActive = hidden ? "inactive" : "active";
     updatedFieldMeta.order[isActive].push(id);

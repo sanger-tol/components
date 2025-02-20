@@ -30,10 +30,7 @@ const Notification = React.forwardRef<HTMLDivElement, Props>(
     const { children, closable, type, header, onClose, ...rest } = props;
 
     return (
-      <div
-        ref={ref}
-        style={{ marginBottom: "4px" }}
-      >
+      <div ref={ref} style={{ marginBottom: "4px" }}>
         <RSNotification
           closable={closable}
           type={type}
@@ -45,7 +42,7 @@ const Notification = React.forwardRef<HTMLDivElement, Props>(
         </RSNotification>
       </div>
     );
-  }
+  },
 );
 
 export default Notification;

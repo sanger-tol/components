@@ -9,13 +9,13 @@ import {
   TsDataSource,
   LoadingContent,
   InlineEdit,
-  themeListener
-} from "../index";
-import { getBoard, saveTitle } from "./Utils";
+  themeListener,
+} from "../../index";
+import { getBoard, saveTitle } from "../Utils";
 import { useEffect, useState } from "react";
-import { Redirect, useParams } from 'react-router-dom';
-import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
-import { getCssVarValue } from "../general/Utils";
+import { Redirect, useParams } from "react-router-dom";
+import { getUserFromLocalStorage } from "../../services/localStorage/localStorageService";
+import { getCssVarValue } from "../../general/Utils";
 
 interface Props {
   dataUrl?: string;
@@ -30,7 +30,7 @@ function Board(props: Props) {
   const [boardData, setBoardData] = useState<any>({});
   const [view, setView] = useState(viewId);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   themeListener(() => {
     try {
@@ -48,25 +48,27 @@ function Board(props: Props) {
 
   useEffect(() => {
     if (boardId && user) {
-      getBoard(boardId, ds, user.id).then((res: any) => {
-        if (!view) setView(res.views[0].id);
-        setBoardData(res);
-        setLoading(false);
-      }).catch((e: any) => {
-        setError(e);
-        console.error(e);
-      });
+      getBoard(boardId, ds, user.id)
+        .then((res: any) => {
+          if (!view) setView(res.views[0].id);
+          setBoardData(res);
+          setLoading(false);
+        })
+        .catch((e: any) => {
+          setError(e);
+          console.error(e);
+        });
     }
   }, [boardId, user]);
 
-  if (error !== '') {
-    return <Redirect to="/page-not-found" />
+  if (error !== "") {
+    return <Redirect to="/page-not-found" />;
   }
 
   if (loading) {
-    return <LoadingContent text="Finding Board..."/>;
+    return <LoadingContent text="Finding Board..." />;
   }
-  
+
   // returns the first view at the moment
   return (
     <div className="tol-board">
@@ -75,10 +77,9 @@ function Board(props: Props) {
           title={boardData.boardTitle}
           onSave={(newTitle: any) => {
             if (newTitle !== boardData.boardTitle) {
-              saveTitle(newTitle, ds, boardId, 'board');
+              saveTitle(newTitle, ds, boardId, "board");
             }
-          }
-        }
+          }}
         />
       </div>
       <View
@@ -88,7 +89,7 @@ function Board(props: Props) {
         dataUrl={dataUrl}
       />
     </div>
-  )
+  );
 }
 
 export default Board;

@@ -5,39 +5,38 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import {
-  BarChart, 
-  Widgets
-} from '../tol-ui/src';
-
+import { BarChart, Widgets } from "../tol-ui/src";
 
 // fake data for BarChart component
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+const labels = ["January", "February", "March", "April", "May", "June", "July"];
 const d1 = [
   {
-    id: 'species_1',
-    label: 'Species 1',
-    data: [100, 10, 300, 340, 500, 200, 200]
+    id: "species_1",
+    label: "Species 1",
+    data: [100, 10, 300, 340, 500, 200, 200],
   },
   {
-    id: 'species_2',
-    label: 'Species 2',
-    data: [100, 200, 30, 153, 500, 600, 56]
+    id: "species_2",
+    label: "Species 2",
+    data: [100, 200, 30, 153, 500, 600, 56],
   },
   {
-    id: 'species_3',
-    label: 'Species 3',
-    data: [100, 200, 100, 400, 110, 600, 100]
-  }
+    id: "species_3",
+    label: "Species 3",
+    data: [100, 200, 100, 400, 110, 600, 100],
+  },
 ];
 
 function BarCharts() {
   const [bar, setBar] = useState({});
-  
+
   const basicChart = (
     <div>
-      <h2 style={{marginBottom: 4}}>Bar Chart</h2>
-      <p style={{marginTop: 4}}>This is the &apos;Bar&apos; data: {bar["bucket"]} {bar["clickKey"]} {bar["value"]}</p>
+      <h2 style={{ marginBottom: 4 }}>Bar Chart</h2>
+      <p style={{ marginTop: 4 }}>
+        This is the &apos;Bar&apos; data: {bar["bucket"]} {bar["clickKey"]}{" "}
+        {bar["value"]}
+      </p>
       <BarChart
         id="basic-stacked"
         stacked
@@ -53,15 +52,13 @@ function BarCharts() {
   const components = [
     {
       component: basicChart,
-      type: 'full'
-    }
+      type: "full",
+    },
   ];
 
   return (
     <div className="barcharts">
-      <Widgets
-        components={components}
-      />
+      <Widgets components={components} />
     </div>
   );
 }

@@ -10,35 +10,34 @@ import {
   generateChartFilterFromBar,
   HistogramGrouping,
   aggsToBarChartData,
-  isChartDataEmpty
+  isChartDataEmpty,
 } from "./Utils";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { normaliseCaps } from "../general/Utils";
-import { httpClient } from '../services/http/httpClient';
+import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
 import {
   addSubFilter,
   filterHasUpdated,
   generateFilter,
-  resetFiltersBelow
+  resetFiltersBelow,
 } from "../filtering/Utils";
 
-
 interface Props {
-  id: string,
-  title: string,
-  endpoint: string,
-  baseUrl?: string
-  breakDownBy: string,
-  xAxis: string,
-  type: HistogramGrouping,
-  shortDate?: boolean
-  zone?: any,
-  setZone?: any,
-  height?: any,
-  stacked?: boolean,
-  cumulative?: boolean
+  id: string;
+  title: string;
+  endpoint: string;
+  baseUrl?: string;
+  breakDownBy: string;
+  xAxis: string;
+  type: HistogramGrouping;
+  shortDate?: boolean;
+  zone?: any;
+  setZone?: any;
+  height?: any;
+  stacked?: boolean;
+  cumulative?: boolean;
 }
 
 function RemoteBarChart(props: Props) {
@@ -52,40 +51,41 @@ function RemoteBarChart(props: Props) {
     shortDate,
     zone,
     setZone,
-    cumulative, 
+    cumulative,
   } = props;
-  const height = (props.height !== undefined) ? props.height : "100%";
+  const height = props.height !== undefined ? props.height : "100%";
   const [labels, setLabels] = useState([]);
   const [datasets, setDatasets] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [warningMessage, setWarningMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [warningMessage, setWarningMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [barData, setBarData] = useState<object>({});
-  const [filter, setFilter] = useState<object|undefined>({});
-  
+  const [filter, setFilter] = useState<object | undefined>({});
+
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
-    
+
     if (filterHasUpdated(setFilter, filter, compoundedFilter)) {
-      resetFiltersBelow({id: id, zone: zone!});
-      setZone({...zone});
+      resetFiltersBelow({ id: id, zone: zone! });
+      setZone({ ...zone });
     }
   }, [zone]);
 
   useEffectUpdate(() => {
     setLoading(true);
     const aggs = generateChartAgg(breakDownBy, xAxis, type);
-    httpClient().post('/' + endpoint + ":aggregations", aggs, {
-      baseURL: baseUrl,
-      params: {
-        filter: filter
-      }
-    })
+    httpClient()
+      .post("/" + endpoint + ":aggregations", aggs, {
+        baseURL: baseUrl,
+        params: {
+          filter: filter,
+        },
+      })
       .then((res: any) => {
         let aggs = res.data.meta.aggregations;
-        setErrorMessage('');
+        setErrorMessage("");
         setWarningMessage(isChartDataEmpty(aggs));
-        aggs = aggsToBarChartData(aggs, type, shortDate, cumulative); 
+        aggs = aggsToBarChartData(aggs, type, shortDate, cumulative);
         setDatasets(aggs.datasets);
         setLabels(aggs.labels);
         setLoading(false);
@@ -94,49 +94,38 @@ function RemoteBarChart(props: Props) {
         console.error(error.message);
         setErrorMessage(error.message);
       });
-    }, [filter, cumulative]); 
+  }, [filter, cumulative]);
 
-  
   useEffectUpdate(() => {
     const localFilter = generateChartFilterFromBar(
       barData,
       breakDownBy,
       xAxis,
-      type
+      type,
     );
-    
+
     addSubFilter({
       id: id,
       filter: localFilter,
-      zone: zone
+      zone: zone,
     });
-    setZone({...zone});
+    setZone({ ...zone });
   }, [barData]);
 
-  if (errorMessage !== ''){
-    return (
-      <Placeholder
-        errorMessage={errorMessage}
-        height={height}
-      />
-    );
+  if (errorMessage !== "") {
+    return <Placeholder errorMessage={errorMessage} height={height} />;
   }
 
-  if (warningMessage !== ''){
-    return (
-      <Placeholder
-        warningMessage={warningMessage}
-        height={height}
-      />
-    );
+  if (warningMessage !== "") {
+    return <Placeholder warningMessage={warningMessage} height={height} />;
   }
-  
+
   if (loading) {
     return <Placeholder bar height={height} />;
   }
 
   //cumulative and undefined setzone negates setBarData
-  const setter = (cumulative || setZone === undefined) ? undefined : setBarData;
+  const setter = cumulative || setZone === undefined ? undefined : setBarData;
 
   return (
     <BarChart

@@ -19,15 +19,14 @@ import {
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
-import { Zone } from "../board";
+import { IZone } from "../boards";
 import {
   generateFilter,
   filterHasUpdated,
   resetFiltersBelow,
 } from "../filtering/Utils";
 import RemoteRowCounter from "./RemoteRowCounter";
-import { DropdownButtonProps } from '../board/components/DropdownButtons';
-
+import { DropdownButtonProps } from "../general/DropdownButtons";
 
 interface Props {
   id: string;
@@ -51,7 +50,7 @@ interface Props {
   defaultSort?: string;
   pageSize?: NumRows | number;
   displaySource?: boolean;
-  filterVisibility?: boolean,
+  filterVisibility?: boolean;
 
   noFilter?: boolean;
   noPagination?: boolean;
@@ -88,18 +87,20 @@ function RemoteTable(props: Props) {
     rowSelection,
     actions,
     configButtons,
-    debug
+    debug,
   } = props;
   const ds = new TsDataSource({ baseUrl });
   const height = props.height !== undefined ? props.height : "100%";
-  
+
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta|undefined>(props.fieldMeta);
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(
+    props.fieldMeta,
+  );
 
   // pagination
   const getPageSize = () => {
-    if (props.pageSize) return props.pageSize // if overidden with prop, ignore saved value in storage
+    if (props.pageSize) return props.pageSize; // if overidden with prop, ignore saved value in storage
     const size = getTableConfigLocalStorage(id, "pageSize");
     return size ?? 50;
   };
@@ -114,11 +115,12 @@ function RemoteTable(props: Props) {
 
   // filter visibility
   const getFilterVisibility = () => {
-    if (props.filterVisibility !== undefined) return props.filterVisibility // if overidden with prop, ignore saved value in storage
+    if (props.filterVisibility !== undefined) return props.filterVisibility; // if overidden with prop, ignore saved value in storage
     const visible = getTableConfigLocalStorage(id, "filterVisibility");
     return visible ?? true;
-  }
-  const [filterVisibility, setFilterVisibility] = useState<boolean>(getFilterVisibility)
+  };
+  const [filterVisibility, setFilterVisibility] =
+    useState<boolean>(getFilterVisibility);
 
   // loading, error and warning info
   const [loading, setLoading] = useState<boolean>(true);
@@ -164,7 +166,7 @@ function RemoteTable(props: Props) {
     setFieldMeta(fm);
     resetFiltersBelow({
       id: id,
-      zone: zone as Zone,
+      zone: zone as IZone,
       indexOffset: -1,
     });
     setZone({ ...zone });
@@ -194,93 +196,82 @@ function RemoteTable(props: Props) {
 
     // get data and update state
     httpClient()
-    .get("/" + endpoint, {
-      params: params,
-      baseURL: baseUrl,
-    })
-    .then(async (res: any) => {
-      // error if endpoint doesn't return 200
-      if (res.status !== 200) throw Error();
-      const apiData = res.data.data;
-      const apiMeta = res.data.meta;
+      .get("/" + endpoint, {
+        params: params,
+        baseURL: baseUrl,
+      })
+      .then(async (res: any) => {
+        // error if endpoint doesn't return 200
+        if (res.status !== 200) throw Error();
+        const apiData = res.data.data;
+        const apiMeta = res.data.meta;
 
-      setTotalSize(apiMeta.total);
-      setError("");
+        setTotalSize(apiMeta.total);
+        setError("");
 
-      // get attribute types and relationship links
-      const entityMeta =
-        basic !== true ? await ds.getEntityMeta() : undefined;
+        // get attribute types and relationship links
+        const entityMeta =
+          basic !== true ? await ds.getEntityMeta() : undefined;
 
-      let fm = fieldMeta;
-      if (initialLoad) {
-        fm = structureFieldMeta(
-          endpoint,
-          fieldMeta ?? getFieldMetaLocalStorage(id, fields),
-          entityMeta,
-          fields
+        let fm = fieldMeta;
+        if (initialLoad) {
+          fm = structureFieldMeta(
+            endpoint,
+            fieldMeta ?? getFieldMetaLocalStorage(id, fields),
+            entityMeta,
+            fields,
+          );
+          if (!fieldMeta) setTableConfigLocalStorage(id, "fieldMeta", fm);
+          setFieldMeta(fm as FieldMeta);
+        }
+
+        // debug logs if prop defined
+        tableDebug(apiData, fm!, debug);
+
+        // setting data using fieldMeta
+        setData(convertTableData(apiData, fm as FieldMeta, baseUrl));
+        setLoading(false);
+        setInitialLoad(false);
+      })
+      .catch((error: any) => {
+        setError(error.message);
+        setLoading(false);
+        setInitialLoad(false);
+        setData([]);
+        console.warn(error);
+        console.warn("Please ensure the db has been restored");
+        console.warn(
+          "Please ensure the 'endpoint' prop is correct and pluralised",
         );
-        if (!fieldMeta) setTableConfigLocalStorage(id, "fieldMeta", fm);
-        setFieldMeta(fm as FieldMeta);
-      }
-
-      // debug logs if prop defined
-      tableDebug(apiData, fm!, debug);
-
-      // setting data using fieldMeta
-      setData(convertTableData(apiData, fm as FieldMeta, baseUrl));
-      setLoading(false);
-      setInitialLoad(false);
-    })
-    .catch((error: any) => {
-      setError(error.message);
-      setLoading(false);
-      setInitialLoad(false);
-      setData([]);
-      console.warn(error);
-      console.warn("Please ensure the db has been restored");
-      console.warn(
-        "Please ensure the 'endpoint' prop is correct and pluralised"
-      );
-    });
-  }
+      });
+  };
 
   if (error !== "") {
-    return (
-      <Placeholder
-        errorMessage={error}
-        height={height}
-      />
-    );
+    return <Placeholder errorMessage={error} height={height} />;
   }
 
   if (initialLoad) {
-    return (
-      <Placeholder
-        loader
-        height={height}
-      />
-    );
+    return <Placeholder loader height={height} />;
   }
- 
+
   //@ts-ignore
-  const runAction = async (action_name: string, ids: string[]) => await ds.custom(
-    '/run-action',
-    'POST',
-    {
+  const runAction = async (action_name: string, ids: string[]) =>
+    await ds.custom("/run-action", "POST", {
       ids: ids,
       action_name: action_name,
-      object_type: endpoint
-    }
-  );
+      object_type: endpoint,
+    });
 
-  const convertStringAction = (name: string): DropdownButtonProps => ({
-    dropdownButtonName: name,
-    action: (ids: string[]) => runAction(name, ids)
-  } as DropdownButtonProps);
+  const convertStringAction = (name: string): DropdownButtonProps =>
+    ({
+      dropdownButtonName: name,
+      action: (ids: string[]) => runAction(name, ids),
+    }) as DropdownButtonProps;
 
-  const convertAction = (action: string | DropdownButtonProps): DropdownButtonProps => (
-    (typeof action === 'string') ? convertStringAction(action) : action
-  );
+  const convertAction = (
+    action: string | DropdownButtonProps,
+  ): DropdownButtonProps =>
+    typeof action === "string" ? convertStringAction(action) : action;
 
   const convertedActions = actions?.map(convertAction);
   const hasHiddenFields = fields ? Object.values(fields).some((field) => field.hidden === true) : false;
@@ -314,7 +305,7 @@ function RemoteTable(props: Props) {
       sortType={sortType}
       defaultSort={defaultSort}
       handleSortColumn={handleSortColumn}
-      zone={zone as Zone}
+      zone={zone as IZone}
       setZone={setZone}
       filter={filter}
       onModalSave={onModalSave}

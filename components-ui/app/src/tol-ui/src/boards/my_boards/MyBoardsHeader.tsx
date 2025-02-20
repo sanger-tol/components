@@ -5,8 +5,12 @@
  */
 
 import { useState } from "react";
-import { DropdownButtons, NewBoardModal } from "./index";
-import { DropdownButtonProps, DropdownMainIconProps } from "./DropdownButtons";
+import DropdownButtons from "../../general/DropdownButtons";
+import NewBoardModal from "./NewBoardModal";
+import {
+  DropdownButtonProps,
+  DropdownMainIconProps,
+} from "../../general/DropdownButtons";
 import { useHistory } from "react-router-dom";
 import { createBoardAndView } from "../Utils";
 import { TsDataSource } from "../../index";
@@ -46,7 +50,7 @@ function MyBoardsHeader(props: Props) {
     boardId: string,
     viewId: string,
     boardTitle: string,
-    viewTitle: string
+    viewTitle: string,
   ) => {
     try {
       createBoardAndView(ds, boardId, boardTitle, viewId, viewTitle);
@@ -73,7 +77,7 @@ function MyBoardsHeader(props: Props) {
         boardId: string,
         viewId: string,
         boardTitle: string,
-        viewTitle: string
+        viewTitle: string,
       ) => handleNewBoardCreate(boardId, viewId, boardTitle, viewTitle)}
     />
   );
@@ -97,23 +101,23 @@ function MyBoardsHeader(props: Props) {
   } = props;
 
   return (
-      <div style={containerStyle} className={customClass}>
-        <div>
-          <h1>{title}</h1>
-          <p>{subTitle}</p>
-        </div>
-        <div style={newBoardModalOpen ? {display: 'none'}: {}}>
-          <DropdownButtons
-            mainButtonIcon={dropdownMainIcon}
-            placement={placement}
-            globalDisabled={globalDisabled}
-            dropdownButtons={dropdownButtons}
-            menuStyle={menuStyle}
-            showMessages={false}
-          />
-        </div>
-        {newBoardModalOpen && newBoardModal()}
+    <div style={containerStyle} className={customClass}>
+      <div>
+        <h1>{title}</h1>
+        <p>{subTitle}</p>
       </div>
+      <div style={newBoardModalOpen ? { display: "none" } : {}}>
+        <DropdownButtons
+          mainButtonIcon={dropdownMainIcon}
+          placement={placement}
+          globalDisabled={globalDisabled}
+          dropdownButtons={dropdownButtons}
+          menuStyle={menuStyle}
+          showMessages={false}
+        />
+      </div>
+      {newBoardModalOpen && newBoardModal()}
+    </div>
   );
 }
 

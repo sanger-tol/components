@@ -12,7 +12,8 @@
   box-sizing: border-box;
   box-shadow: 0px 0px 10px 0px rgba(black, 0.05);
 
-  h2, p {
+  h2,
+  p {
     margin: 0;
   }
 }
@@ -42,7 +43,7 @@
   .fa-map-location-dot,
   .fa-chart-column {
     path {
-      fill: var(--tol-bg)
+      fill: var(--tol-bg);
     }
   }
 

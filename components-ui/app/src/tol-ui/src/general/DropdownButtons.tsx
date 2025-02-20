@@ -9,7 +9,7 @@
 import React from "react";
 import { Dropdown } from "rsuite";
 
-import { Toaster, Message, Button } from '../../index';
+import { Toaster, Message, Button } from "../index";
 
 export interface DropdownButtonProps {
   dropdownButtonName: string;
@@ -46,30 +46,22 @@ function DropdownButtons(props: Props) {
     menuStyle,
     globalDisabled,
     dropdownButtons,
-    showMessages
+    showMessages,
   } = props;
 
   const toaster = Toaster();
 
-  const pushMessage = (message: string, type: string = 'info') => {
-    toaster.push(
-      <Message
-        children={message}
-        type={type}
-        showIcon={true}
-      />,
-      { duration: 4000 }
-    );
+  const pushMessage = (message: string, type: string = "info") => {
+    toaster.push(<Message children={message} type={type} showIcon={true} />, {
+      duration: 4000,
+    });
   };
 
-  const pushSuccess = (actionName: string) => pushMessage(
-    `Action "${actionName}" dispatched successfully.`
-  );
+  const pushSuccess = (actionName: string) =>
+    pushMessage(`Action "${actionName}" dispatched successfully.`);
 
-  const pushFailure = (actionName: string) => pushMessage(
-    `Action "${actionName}" failed.`,
-    'error'
-  );
+  const pushFailure = (actionName: string) =>
+    pushMessage(`Action "${actionName}" failed.`, "error");
 
   const wrapAction = (action: DropdownButtonProps) => {
     const name = action.dropdownButtonName;
@@ -83,8 +75,8 @@ function DropdownButtons(props: Props) {
         showMessages ?? pushFailure(name);
         console.error(e);
       }
-    }
-  }
+    };
+  };
 
   const renderButton = (props: any, ref: any) => {
     return (

@@ -6,10 +6,9 @@ SPDX-License-Identifier: MIT
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-
 interface Props {
-  icon?: string,
-  size?: string,
+  icon?: string;
+  size?: string;
 }
 
 function Icon(props: Props) {

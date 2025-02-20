@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { httpServices } from './httpService';
-import { getTokenFromLocalStorage } from '../localStorage/localStorageService';
+import { httpServices } from "./httpService";
+import { getTokenFromLocalStorage } from "../localStorage/localStorageService";
 
 export function httpClient() {
   const token = getTokenFromLocalStorage();

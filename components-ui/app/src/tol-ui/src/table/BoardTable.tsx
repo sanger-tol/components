@@ -7,8 +7,7 @@ SPDX-License-Identifier: MIT
 import { FieldMeta, initialiseFieldMeta } from "./Field";
 import { BoardFilters, Button, RemoteTable, TsDataSource } from "../index";
 import { useState } from "react";
-import { upsertComponentConfig, Zone } from "../board/Utils";
-
+import { upsertComponentConfig, IZone } from "../boards/Utils";
 
 interface Props {
   id: string;
@@ -16,47 +15,44 @@ interface Props {
   baseUrl?: string;
   title: string;
   config: any;
-  zone: Zone;
+  zone: IZone;
   setZone: any;
 }
 
 function BoardTable(props: Props) {
-  const {
-    id,
-    objectType,
-  } = props;
+  const { id, objectType } = props;
   const ds = new TsDataSource();
   const [config, setConfig] = useState<any>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
 
   const onModalSave = (fm: FieldMeta) => {
-    config['fieldMeta'] = fm;
-    setForceUpdate(!forceUpdate) // fetches new data on save
-    setConfig({...config});
+    config["fieldMeta"] = fm;
+    setForceUpdate(!forceUpdate); // fetches new data on save
+    setConfig({ ...config });
     upsertComponentConfig(ds, id, config);
   };
-  
+
   const onToggleFilterVisibility = (visible: boolean) => {
-    config['filterVisibility'] = visible;
-    setConfig({...config});
+    config["filterVisibility"] = visible;
+    setConfig({ ...config });
     upsertComponentConfig(ds, id, config);
-  }
+  };
 
   const onPageSizeChange = (pageSize: boolean) => {
-    config['pageSize'] = pageSize;
-    setConfig({...config});
+    config["pageSize"] = pageSize;
+    setConfig({ ...config });
     upsertComponentConfig(ds, id, config);
-  }
+  };
 
   const configButtons = [
-    <span key='board-table-filter'>
+    <span key="board-table-filter">
       <Button
         outline
-        position='right'
+        position="right"
         type="primary"
         onClick={() => setOpenFilters(true)}
-        icon='filter'
+        icon="filter"
       />
       <BoardFilters
         endpoint={objectType}
@@ -65,8 +61,8 @@ function BoardTable(props: Props) {
         setOpen={setOpenFilters}
         {...props}
       />
-    </span>
-  ]
+    </span>,
+  ];
 
   return (
     <RemoteTable
