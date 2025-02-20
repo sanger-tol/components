@@ -11,12 +11,12 @@ from unittest.mock import create_autospec
 
 from flask import Blueprint, Flask
 
-from tol.api_base2 import (
+from tol.api_base import (
     action_blueprint,
     data_blueprint,
     system_blueprint
 )
-from tol.api_base2.misc import default_ctx_getter
+from tol.api_base.misc import default_ctx_getter
 from tol.board import board_blueprint
 from tol.core import (
     DataSource,
