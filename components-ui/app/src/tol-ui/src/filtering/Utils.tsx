@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect } from "react";
-import { Zone, defineComponent } from "../boards/Utils";
+import { IZone, defineComponent } from "../boards/Utils";
 import { IFilter, And } from "../models/Filter";
 import { deepCopy, isEmptyObject } from "../general/Utils";
 
@@ -70,7 +70,7 @@ export function generateFilter(
   includeSubFilter?: boolean,
 ) {
   if (zone === undefined) return undefined;
-  const z = zone as Zone;
+  const z = zone as IZone;
   const aboveComponents = id ? getComponentsAbove(id, z.order) : z.order;
   let compoundedFilter: And = z.filter ? z.filter.and_ : {};
   // loop through 'above' components
@@ -100,7 +100,7 @@ export function addValueBelow(id: string, value: string, list: string[]) {
   return list;
 }
 
-export function addComponentBelow(id: string, newId: string, zone: Zone) {
+export function addComponentBelow(id: string, newId: string, zone: IZone) {
   defineComponent(
     {
       id: newId,
@@ -118,7 +118,7 @@ export function resetFiltersBelow(params: {
 }) {
   const { zone, indexOffset } = params;
   let id = params.id;
-  const z = zone as Zone;
+  const z = zone as IZone;
   for (const currentId of getComponentsBelow(id, z.order, indexOffset)) {
     z.components[currentId].data.filter = deepCopy(
       z.components[currentId].data.defaultFilter!,
@@ -127,7 +127,7 @@ export function resetFiltersBelow(params: {
   }
 }
 
-export function resetAllFilters(zone: Zone) {
+export function resetAllFilters(zone: IZone) {
   zone.filter = deepCopy(zone.defaultFilter!);
   for (const currentId of zone.order) {
     zone.components[currentId].data.filter = deepCopy(
@@ -137,7 +137,7 @@ export function resetAllFilters(zone: Zone) {
   }
 }
 
-export function removeComponent(id: string, zone: Zone) {
+export function removeComponent(id: string, zone: IZone) {
   delete zone.components[id];
   zone.order = zone.order.filter((currentId) => currentId !== id);
 }
@@ -166,7 +166,7 @@ export function setFilter(params: {
     zone,
     valueExists,
   } = params;
-  const z = zone as Zone;
+  const z = zone as IZone;
   const and_ = z.components[componentId].data.filter!.and_;
   resetFiltersBelow({ id: componentId, zone: z });
 
@@ -252,7 +252,7 @@ export function filterListener(
     componentId: string;
     operators: string[];
     // filter state
-    zone: Zone;
+    zone: IZone;
     setValue: any;
     setExists?: any;
     setNegate?: any;
@@ -318,13 +318,13 @@ export function addSubFilter(params: {
   zone: object;
 }) {
   const { id, filter, zone } = params;
-  const z = zone as Zone;
+  const z = zone as IZone;
   const f = filter as IFilter;
   resetFiltersBelow({ id: id, zone: z! });
   z.components[id].data.subFilter = f;
 }
 
-export function resetZone(params: { zone: Zone; setZone: any }) {
+export function resetZone(params: { zone: IZone; setZone: any }) {
   const { zone, setZone } = params;
   resetAllFilters(zone);
   setZone({ ...zone });

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Zone } from "../boards";
+import { IZone } from "../boards/Utils";
 import RemoteFilters from "./RemoteFilters";
 import { Drawer } from "../general";
 import { generateFilter, resetFiltersBelow } from "./Utils";
@@ -15,7 +15,7 @@ import { BOARD_URL_PREFIX } from "../constants";
 
 export interface Props {
   id: string;
-  zone: Zone;
+  zone: IZone;
   setZone: any;
   entityType: string; // e.g. component type or zone
   endpoint: string;
