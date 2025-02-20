@@ -18,18 +18,16 @@ function Item(props: Props) {
 
   if (editMode) {
     return (
-      // @ts-ignore
       <Draggable
+        // @ts-ignore
         style={{ top: "auto", left: "auto" }}
         draggableId={item.id}
         index={index}
       >
-        {(provided, snapshot) => {
+        {(provided: any, snapshot: any) => {
           if (snapshot.isDragging) {
-            // @ts-ignore
             provided.draggableProps.style.left =
               provided.draggableProps.style.offsetLeft;
-            // @ts-ignore
             provided.draggableProps.style.top =
               provided.draggableProps.style.offsetTop;
           }
