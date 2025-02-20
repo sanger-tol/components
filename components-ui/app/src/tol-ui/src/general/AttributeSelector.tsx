@@ -76,7 +76,7 @@ function AttributeSelector(props: Props) {
     ds.getEntityMeta()
       .then((em) => {
         setEntityMeta(em);
-        setSources(getAttributeSources(em, endpoint));
+        setSources(getAttributeSources(em, endpoint, customAttributeSelection));
       })
       .finally(() => {
         setLoading(false);
@@ -233,7 +233,8 @@ function AttributeSelector(props: Props) {
               (recommendedOn ? recommendedMatch : true) &&
               typeMatch &&
               sourceMatch &&
-              (!customAttributeSelection || customAttributeSelection.includes(key))
+              (!customAttributeSelection ||
+                customAttributeSelection.includes(key))
             );
           })
           .sort((a, b) => {
@@ -255,6 +256,7 @@ function AttributeSelector(props: Props) {
         sticky={sticky}
         renderExtraFooter={renderSearchBySource && searchBySource()}
         onClean={onClean}
+        onClose={() => setSelectedSources([])}
       />
       {recommendedFilterAvailable && (
         <div className="tol-attribute-selector-suggested-toggle">

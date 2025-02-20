@@ -112,9 +112,11 @@ function ColumnConfigDrawer(props: Props) {
   };
 
   const saveConfig = () => {
-    const updatedFieldMeta = fieldMetaUpdatedByContents();
-    onConfigSave(updatedFieldMeta);
-    setInitialAttributes(attributes);
+    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes)) {
+      const updatedFieldMeta = fieldMetaUpdatedByContents();
+      onConfigSave(updatedFieldMeta);
+      setInitialAttributes(attributes);
+    }
     setOpen(!open);
   };
 
@@ -129,7 +131,10 @@ function ColumnConfigDrawer(props: Props) {
           recentlyMoved === index ? "highlight" : ""
         } ${deletingIndex === index ? "deleting" : ""}`}
       >
-        {rename}
+        <div>
+          <p className={"tol-config-drawer-selected-column-name"}>{rename}</p>
+          <p className={"tol-config-drawer-selected-column-key"}>{attr}</p>
+        </div>
         <div className="tol-config-drawer-btn-array">
           {source && <SourceTag source={source} />}
           <div
@@ -266,6 +271,7 @@ function ColumnConfigDrawer(props: Props) {
           renderSearchBySource={true}
           displaySource={true}
           customAttributeSelection={customAttributeSelection}
+          sticky={true}
         />
       </div>
       <div>

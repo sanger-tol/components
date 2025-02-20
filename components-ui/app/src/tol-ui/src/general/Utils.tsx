@@ -164,7 +164,11 @@ export function getSourceData(fieldMeta: FieldMeta, attribute: string) {
   return fieldMeta?.data[attribute]["source"] || "";
 }
 
-export function getAttributeSources(entityMeta: any, endpoint: string) {
+export function getAttributeSources(
+  entityMeta: any,
+  endpoint: string,
+  customAttributeSelection?: string[] | undefined
+) {
   const sources = new Set<string>();
   if (
     entityMeta &&
@@ -172,6 +176,9 @@ export function getAttributeSources(entityMeta: any, endpoint: string) {
     entityMeta.flatAttributes[endpoint]
   ) {
     Object.keys(entityMeta.flatAttributes[endpoint]).forEach((att) => {
+      if (customAttributeSelection && !customAttributeSelection.includes(att)) {
+        return;
+      }
       const attributeObject = entityMeta.flatAttributes[endpoint][att];
       const source = attributeObject.source;
       if (source) {

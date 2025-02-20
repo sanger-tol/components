@@ -93,15 +93,27 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
-  padding: 10px 15px;
+  padding: 7px 12px;
   margin-top: 8px;
   margin-bottom: 8px;
   border: 1px solid var(--tol-grey-subtle);
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  align-items: center;
 }
 
 .tol-config-drawer-selected-column {
   transition: all 0.3s ease;
+}
+
+.tol-config-drawer-selected-column-name {
+  margin-bottom: 0px;
+}
+
+.tol-config-drawer-selected-column-key {
+  margin-bottom: 0px;
+  margin-top: 0px;
+  font-size: 12px;
+  color: var(--tol-grey)
 }
 
 .tol-config-drawer-selected-column.highlight {
