@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { TsDataSource } from "../services";
-import { Zone } from "../boards";
+import { IZone } from "../boards";
 import { defineZone } from "../boards/Utils";
 import Filter from "./Filter";
 import { IFilter } from "../models";
@@ -42,7 +42,7 @@ function RemoteFilters(props: Props) {
   const [entityMeta, setEntityMeta] = useState<any>({});
 
   // repurposed zone so filters correctly interact with the state
-  const [filterZone, setFilterZone] = useState<Zone>(
+  const [filterZone, setFilterZone] = useState<IZone>(
     defineZone("dummy-object-for-remote-filters", [
       { id: filterComponentId, filter: props.filters },
     ]),

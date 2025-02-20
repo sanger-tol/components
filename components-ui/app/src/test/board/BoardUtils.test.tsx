@@ -110,22 +110,9 @@ describe("getWidgetOrder function", () => {
       { w: 4, x: 0, y: 0, h: 2, i: 1 },
       { w: 4, x: 0, y: 2, h: 2, i: 2 },
     ];
-    const mockWidgets = {
-      components: {
-        1: {
-          element: <></>,
-          size: "large",
-        },
-        2: {
-          element: <></>,
-          size: "large",
-        },
-      },
-      order: [2, 1],
-    };
 
     // Act
-    const order = getWidgetOrder(mockLayout, mockWidgets);
+    const order = getWidgetOrder(mockLayout);
     expect(order.order).toEqual([1, 2]);
   });
 
@@ -135,22 +122,9 @@ describe("getWidgetOrder function", () => {
       { w: 4, x: 0, y: 0, h: 2, i: 1 },
       { w: 4, x: 0, y: 2, h: 2, i: 2 },
     ];
-    const mockWidgets = {
-      components: {
-        1: {
-          element: <></>,
-          size: "large",
-        },
-        2: {
-          element: <></>,
-          size: "large",
-        },
-      },
-      order: [1, 2],
-    };
 
     // Act
-    const order = getWidgetOrder(mockLayout, mockWidgets);
+    const order = getWidgetOrder(mockLayout);
     expect(order.order).toEqual([1, 2]);
   });
 });

@@ -109,7 +109,7 @@ export const exampleBoard: Board = {
 };
 */
 
-export function defineComponent(component: IComponentData, zone: Zone) {
+export function defineComponent(component: IComponentData, zone: IZone) {
   // setting default as empty if no filter provided
   const f = component.filter === undefined ? { and_: {} } : component.filter;
   zone.components[component.id!] = {
@@ -127,7 +127,7 @@ export function defineZone(
   filter?: IFilter,
 ) {
   const f = filter === undefined ? { and_: {} } : filter;
-  const zone: Zone = {
+  const zone: IZone = {
     components: {},
     order: [],
     type: objectType,
@@ -144,7 +144,7 @@ export function defineZone(
 interface ZoneMeta {
   endpoint: string;
   baseUrl?: string;
-  zone: Zone;
+  zone: IZone;
   setZone: any;
 }
 

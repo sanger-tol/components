@@ -19,7 +19,7 @@ import {
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
-import { Zone } from "../boards";
+import { IZone } from "../boards";
 import {
   generateFilter,
   filterHasUpdated,
@@ -166,7 +166,7 @@ function RemoteTable(props: Props) {
     setFieldMeta(fm);
     resetFiltersBelow({
       id: id,
-      zone: zone as Zone,
+      zone: zone as IZone,
       indexOffset: -1,
     });
     setZone({ ...zone });
@@ -305,7 +305,7 @@ function RemoteTable(props: Props) {
       sortType={sortType}
       defaultSort={defaultSort}
       handleSortColumn={handleSortColumn}
-      zone={zone as Zone}
+      zone={zone as IZone}
       setZone={setZone}
       filter={filter}
       onModalSave={onModalSave}

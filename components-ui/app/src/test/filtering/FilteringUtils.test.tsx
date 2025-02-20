@@ -23,7 +23,7 @@ import {
   setFilter,
   filterListener,
 } from "../../tol-ui/src/filtering/Utils";
-import { Zone } from "../../tol-ui/src/board/Utils";
+import { IZone } from "../../tol-ui/src/boards/Utils";
 import { IFilter } from "../../tol-ui/src/models/Filter";
 
 describe("Testing getComponentsAbove function", () => {
@@ -242,7 +242,7 @@ describe("Testing generateFilter function", () => {
       },
     };
 
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {
@@ -321,7 +321,7 @@ describe("Testing generateFilter function", () => {
       },
     };
 
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {
@@ -424,7 +424,7 @@ describe("Testing resetAllFilters function", () => {
   };
 
   test("Resets all filters correctly", () => {
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {
@@ -448,7 +448,7 @@ describe("Testing resetAllFilters function", () => {
   });
 
   test("Resets all filters correctly with default filter", () => {
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {
@@ -480,7 +480,7 @@ describe("Testing resetAllFilters function", () => {
 
 describe("Testing removeComponent function", () => {
   test("Removes component correctly", () => {
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {
@@ -507,7 +507,7 @@ describe("Testing removeComponent function", () => {
 
 describe("Testing addSubFilter function", () => {
   test("Adds subfilter correctly", () => {
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {
@@ -540,7 +540,7 @@ describe("Testing addSubFilter function", () => {
 
 describe("Testing resetZone function", () => {
   test("Resets zone correctly", () => {
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {
@@ -565,7 +565,7 @@ describe("Testing resetZone function", () => {
 
 describe("Testing setFilter function", () => {
   test("Sets filter correctly with valueExists and in_list", () => {
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {
@@ -603,7 +603,7 @@ describe("Testing setFilter function", () => {
   });
 
   test("Sets filter correctly when value does not exist", () => {
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {
@@ -629,7 +629,7 @@ describe("Testing setFilter function", () => {
   });
 
   test("Sets filter correctly", () => {
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {
@@ -667,7 +667,7 @@ describe("Testing setFilter function", () => {
   });
 
   test("Sets filter correctly with exists", () => {
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {
@@ -704,7 +704,7 @@ describe("Testing setFilter function", () => {
   });
 
   test("Removes empty filter", () => {
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {
@@ -763,7 +763,7 @@ describe("Testing filterListener function", () => {
   };
 
   test("Calls filterListener correctly", () => {
-    const mockZone: Zone = {
+    const mockZone: IZone = {
       components: {
         component1: {
           data: {

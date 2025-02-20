@@ -20,7 +20,7 @@ import Filter, { IFilter } from "../filtering/Filter";
 import { InfoTooltip } from "../general";
 import { PopUpMessage } from "../index";
 import { FieldMeta } from "./Field";
-import { Zone } from "../boards";
+import { IZone } from "../boards";
 import { DropdownButtonProps } from "../general/DropdownButtons";
 
 export type NumRows = 25 | 50 | 100 | 1000;
@@ -51,7 +51,7 @@ interface Props {
   defaultSort?: string;
   handleSortColumn: any;
 
-  zone: Zone;
+  zone: IZone;
   setZone: any;
   filter: any;
 

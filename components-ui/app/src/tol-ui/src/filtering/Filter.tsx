@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Zone } from "../boards";
+import { IZone } from "../boards";
 import FilterTextInput from "./FilterTextInput";
 import FilterDatePicker from "./FilterDatePicker";
 import FilterMultiSelect from "./FilterMultiSelect";
@@ -23,7 +23,7 @@ export interface Filter {
   rename: string;
   type?: IFilter;
   componentId: string;
-  zone: Zone;
+  zone: IZone;
   setZone: any;
 
   endpoint: string;
