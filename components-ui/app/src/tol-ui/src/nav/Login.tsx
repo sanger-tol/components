@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useCallback, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Redirect } from "react-router-dom";
 import { useAuth } from "../contexts/auth.context";
 import { getUrlLogin } from "../services/auth/authService";
@@ -15,7 +15,7 @@ import {
 } from "../services/localStorage/localStorageService";
 
 interface Props {
-  buttonIcon: React.ReactNode;
+  buttonIcon: any;
   returnUrl?: string;
 }
 
@@ -36,7 +36,7 @@ function Login(props: Props) {
       window.location.href = data.loginUrl;
     });
   }, []);
-  // @ts-ignore
+
   return tokenHasExpired() ? (
     buttonIcon(login)
   ) : (

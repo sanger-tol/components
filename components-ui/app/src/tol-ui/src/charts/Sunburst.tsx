@@ -72,6 +72,7 @@ function Sunburst(props: Props) {
 
   // @ts-ignore
   function handlePlaneClick(
+    // @ts-ignore
     event: any,
     chartElement: any,
     chart: any,
