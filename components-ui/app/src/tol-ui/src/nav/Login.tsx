@@ -30,13 +30,13 @@ function Login(props: Props) {
   const login = useCallback(() => {
     setReturnUrlFromLocalStorage(returnUrl || window.location.pathname);
     getUrlLogin().then((data) => {
-      //@ts-ignore
+      //@ts-expect-error
       setUser(data.userData);
-      //@ts-ignore
+      //@ts-expect-error
       window.location.href = data.loginUrl;
     });
   }, []);
-  // @ts-ignore
+  // @ts-expect-error
   return tokenHasExpired() ? (
     buttonIcon(login)
   ) : (
