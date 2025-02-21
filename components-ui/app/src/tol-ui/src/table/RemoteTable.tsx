@@ -27,6 +27,7 @@ import {
 } from "../filtering/Utils";
 import RemoteRowCounter from "./RemoteRowCounter";
 import { DropdownButtonProps } from "../general/DropdownButtons";
+import ActionModal from "./ActionModal";
 
 interface Props {
   id: string;
@@ -126,6 +127,9 @@ function RemoteTable(props: Props) {
   const [loading, setLoading] = useState<boolean>(true);
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+
+  // action modal
+  const [actionModalOpen, setActionModalOpen] = useState<boolean>(false);
 
   const handleSortColumn = (sortColumn: any, sortType: any) => {
     setSortColumn(sortColumn);
@@ -277,48 +281,54 @@ function RemoteTable(props: Props) {
   const hasHiddenFields = fields ? Object.values(fields).some((field) => field.hidden === true) : false;
 
   return (
-    <Table
-      id={id}
-      data={data}
-      fieldMeta={fieldMeta!}
-      height={height}
-      loading={loading}
-      endpoint={endpoint}
-      baseUrl={baseUrl}
-      page={page}
-      setPage={setPage}
-      pageSize={pageSize}
-      setPageSize={setPageSize}
-      totalSize={totalSize}
-      rowCounter={
-        <RemoteRowCounter
-          totalSize={totalSize}
-          filter={filter}
-          loading={loading}
-          {...props}
-        />
-      }
-      displaySource={displaySource}
-      filterVisibility={filterVisibility}
-      setFilterVisibility={setFilterVisibility}
-      sortColumn={sortColumn}
-      sortType={sortType}
-      defaultSort={defaultSort}
-      handleSortColumn={handleSortColumn}
-      zone={zone as IZone}
-      setZone={setZone}
-      filter={filter}
-      onModalSave={onModalSave}
-      noFilter={noFilter}
-      noPagination={noPagination}
-      noSorting={noSorting}
-      noConfigModal={noConfigModal}
-      noDownload={noDownload}
-      rowSelection={rowSelection}
-      actions={convertedActions}
-      configButtons={configButtons}
-      customAttributeSelection={hasHiddenFields === true ? [...Object.keys(fields!)] : undefined}
-    />
+    <div style={{ height: height }}>
+      <ActionModal
+        open={actionModalOpen}
+        setOpen={setActionModalOpen}
+      />
+      <Table
+        id={id}
+        data={data}
+        fieldMeta={fieldMeta!}
+        height={height}
+        loading={loading}
+        endpoint={endpoint}
+        baseUrl={baseUrl}
+        page={page}
+        setPage={setPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        totalSize={totalSize}
+        rowCounter={
+          <RemoteRowCounter
+            totalSize={totalSize}
+            filter={filter}
+            loading={loading}
+            {...props}
+          />
+        }
+        displaySource={displaySource}
+        filterVisibility={filterVisibility}
+        setFilterVisibility={setFilterVisibility}
+        sortColumn={sortColumn}
+        sortType={sortType}
+        defaultSort={defaultSort}
+        handleSortColumn={handleSortColumn}
+        zone={zone as IZone}
+        setZone={setZone}
+        filter={filter}
+        onModalSave={onModalSave}
+        noFilter={noFilter}
+        noPagination={noPagination}
+        noSorting={noSorting}
+        noConfigModal={noConfigModal}
+        noDownload={noDownload}
+        rowSelection={rowSelection}
+        actions={convertedActions}
+        configButtons={configButtons}
+        customAttributeSelection={hasHiddenFields === true ? [...Object.keys(fields!)] : undefined}
+      />
+    </div>
   );
 }
 
