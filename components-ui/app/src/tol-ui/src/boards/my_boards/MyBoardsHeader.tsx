@@ -41,7 +41,7 @@ function MyBoardsHeader(props: Props) {
 
   const defaultDropdownButtons: DropdownButtonProps[] = [
     {
-      dropdownButtonName: "Create New Board",
+      name: "Create New Board",
       action: () => handleOpenModal(),
     },
   ];

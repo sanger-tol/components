@@ -21,6 +21,8 @@ import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { EntityMeta } from "../models";
 import { StatusMessage } from "../messaging";
 import { colours } from "../charts/Utils";
+import { DropdownButtonProps } from "../general/DropdownButtons";
+import { TsDataSource } from "src/services";
 
 interface Rgb {
   [key: string]: number;
@@ -605,4 +607,36 @@ export function getSourceColour(sourceName: string) {
   const rgb = sourceColours[sourceName];
   if (rgb === undefined) return rgbToString({ r: 77, g: 77, b: 77 }, 1);
   return rgbToString(rgb, 1);
+}
+
+export function flowNameStringToActions(
+  ds: TsDataSource,
+  objectType: string,
+  setActionModalOpen: (open: boolean) => void,
+  actions?: (string | DropdownButtonProps)[],
+) {
+  const runAction = async (action_name: string, ids: string[]) =>
+    await ds.custom("/run-action", "POST", {
+      ids: ids,
+      action_name: action_name,
+      object_type: objectType,
+    }).then(() => {
+      setActionModalOpen(true);
+    }).catch(error => {
+      setActionModalOpen(true);
+      console.error(error);
+    });
+
+  const convertStringAction = (name: string): DropdownButtonProps =>
+    ({
+      name: name,
+      action: (ids: string[]) => runAction(name, ids),
+    }) as DropdownButtonProps;
+
+  const convertAction = (
+    action: string | DropdownButtonProps,
+  ): DropdownButtonProps =>
+    typeof action === "string" ? convertStringAction(action) : action;
+
+  return actions?.map(convertAction);
 }

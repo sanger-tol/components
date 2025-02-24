@@ -15,6 +15,7 @@ import {
   tableDebug,
   structureFieldMeta,
   getTableConfigLocalStorage,
+  flowNameStringToActions,
 } from "./Utils";
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
@@ -258,31 +259,12 @@ function RemoteTable(props: Props) {
     return <Placeholder loader height={height} />;
   }
 
-  //@ts-ignore
-  const runAction = async (action_name: string, ids: string[]) =>
-    await ds.custom("/run-action", "POST", {
-      ids: ids,
-      action_name: action_name,
-      object_type: endpoint,
-    });
-
-  const convertStringAction = (name: string): DropdownButtonProps =>
-    ({
-      dropdownButtonName: name,
-      action: (ids: string[]) => runAction(name, ids),
-    }) as DropdownButtonProps;
-
-  const convertAction = (
-    action: string | DropdownButtonProps,
-  ): DropdownButtonProps =>
-    typeof action === "string" ? convertStringAction(action) : action;
-
-  const convertedActions = actions?.map(convertAction);
   const hasHiddenFields = fields ? Object.values(fields).some((field) => field.hidden === true) : false;
 
   return (
     <div style={{ height: height }}>
       <ActionModal
+        objectType={endpoint}
         open={actionModalOpen}
         setOpen={setActionModalOpen}
       />
@@ -324,9 +306,20 @@ function RemoteTable(props: Props) {
         noConfigModal={noConfigModal}
         noDownload={noDownload}
         rowSelection={rowSelection}
-        actions={convertedActions}
+        actions={
+          flowNameStringToActions(
+            ds,
+            endpoint,
+            setActionModalOpen,
+            actions,
+          )
+        }
+        actionsFooter={{
+          name: "View Actions",
+          action: () => setActionModalOpen(true),
+        }}
         configButtons={configButtons}
-        customAttributeSelection={hasHiddenFields === true ? [...Object.keys(fields!)] : undefined}
+        customAttributeSelection={hasHiddenFields ? [...Object.keys(fields!)] : undefined}
       />
     </div>
   );

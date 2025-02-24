@@ -28,36 +28,32 @@ function Tables() {
   });
 
   const actions = [
-    "auth-required-flow",
+    // remote version
+    "Remote Flow",
+    // custom version
     {
-      dropdownButtonName: "succeed",
+      name: "Log in console",
       action: (selectedRows: string[]) => {
         console.log(selectedRows);
       },
-    },
-    {
-      dropdownButtonName: "fail... deliberately",
-      action: () => {
-        throw "this is an example error in the console.";
-      },
-    },
+    }
   ];
 
   const table1 = (
     <>
       <div style={{ paddingBottom: "12px" }}>
+        <h5 style={{ marginBottom: 12 }}>Remote Table</h5>
         <Button
           type="primary"
           onClick={() => setForceUpdate(!forceUpdate)}
           text="Force Update"
         />
-        <h5 style={{ marginBottom: 12 }}>Remote Table</h5>
       </div>
       <div>
         <RemoteTable
           id="table-example"
           rowSelection
-          //pageSize={100}
+          pageSize={100}
           forceUpdate={forceUpdate}
           fields={{
             mlwh_run_id: {

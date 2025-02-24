@@ -5,14 +5,17 @@ SPDX-License-Identifier: MIT
 */
 
 import Modal from "../general/Modal";
+// import RemoteTable from "./RemoteTable";
 
 interface Props {
+  objectType: string;
+  baseUrl?: string;
   open: boolean;
   setOpen: any;
 }
 
 function ActionModal(props: Props) {
-  // const {  } = props;
+  const { objectType } = props;
 
   return (
     <Modal
@@ -20,7 +23,8 @@ function ActionModal(props: Props) {
       size="lg"
       closeButton
     >
-      <>Tester</>
+      <h5>Actions run on {objectType}</h5>
+      <>Table here...</>
     </Modal>
   );
 }
