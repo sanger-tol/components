@@ -20,7 +20,7 @@ export { default as InlineEdit } from "./InlineEdit";
 export { default as Drawer } from "./Drawer";
 export { default as LoadingContent } from "./LoadingContent";
 export { default as Button } from "./Button";
-export { formatDate } from "./Utils";
+export { formatDate } from "./utils";
 export { default as Icon } from "./Icon";
 export { default as TolLoader } from "./TolLoader";
 export { default as SourceTag } from "./SourceTag";

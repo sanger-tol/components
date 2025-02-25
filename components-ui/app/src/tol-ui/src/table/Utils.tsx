@@ -14,13 +14,13 @@ import {
   FieldMetaData,
   initialiseFieldMeta,
 } from "./Field";
-import { isFloat, normaliseCaps } from "../general/Utils";
+import { isFloat, normaliseCaps } from "../general/utils";
 import Relationship from "./Relationship";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { EntityMeta } from "../models";
 import { StatusMessage } from "../messaging";
-import { colours } from "../charts/Utils";
+import { colours } from "../charts/utils";
 import { DropdownButtonProps } from "../general/DropdownButtons";
 import { TsDataSource } from "src/services";
 
@@ -639,4 +639,14 @@ export function flowNameStringToActions(
     typeof action === "string" ? convertStringAction(action) : action;
 
   return actions?.map(convertAction);
+}
+
+/*
+if no fields are hidden, return all keys
+if any fields are hidden, return only the fieldMeta.order.active columns and those that are marked hidden
+*/
+export function getAllowedFields(fieldMeta: FieldMeta) {
+  const hasHiddenFields = Object.values(fieldMeta.data).some((field) => field.hidden === true);
+  if (!hasHiddenFields) return Object.keys(fieldMeta.data);
+  return Object.keys(fieldMeta.data).filter((key) => fieldMeta.data[key].hidden || fieldMeta.order.active.includes(key));
 }

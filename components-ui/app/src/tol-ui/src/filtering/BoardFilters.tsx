@@ -8,8 +8,8 @@ import { useEffect, useState } from "react";
 import { IZone } from "../boards";
 import RemoteFilters from "./RemoteFilters";
 import { Drawer } from "../general";
-import { generateFilter, resetFiltersBelow } from "./Utils";
-import { deepCopy } from "../general/Utils";
+import { generateFilter, resetFiltersBelow } from "./utils";
+import { deepCopy } from "../general/utils";
 import { TsDataSource } from "..";
 import { BOARD_URL_PREFIX } from "../constants";
 

@@ -15,7 +15,7 @@ import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import ColumnConfigDrawer from "./ColumnConfigDrawer";
-import { exportTableToSpreadsheet } from "./Utils";
+import { exportTableToSpreadsheet, getAllowedFields } from "./utils";
 import Filter, { IFilter } from "../filtering/Filter";
 import { InfoTooltip } from "../general";
 import { PopUpMessage } from "../index";
@@ -66,7 +66,6 @@ interface Props {
   actions?: DropdownButtonProps[];
   actionsFooter?: DropdownButtonProps;
   configButtons?: JSX.Element[];
-  customAttributeSelection?: string[] | undefined;
 }
 
 function Table(props: Props) {
@@ -110,7 +109,6 @@ function Table(props: Props) {
     actions,
     actionsFooter,
     configButtons,
-    customAttributeSelection,
     /* eslint-enable */
   } = props;
 
@@ -184,7 +182,7 @@ function Table(props: Props) {
         setOpen={setOpen}
         title={"Add/Remove Table Columns"}
         displaySource={displaySource}
-        customAttributeSelection={customAttributeSelection}
+        customAttributeSelection={getAllowedFields(fieldMeta)}
         onConfigSave={onModalSave}
         {...props}
       />

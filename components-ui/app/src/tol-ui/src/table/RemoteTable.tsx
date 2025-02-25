@@ -16,7 +16,7 @@ import {
   structureFieldMeta,
   getTableConfigLocalStorage,
   flowNameStringToActions,
-} from "./Utils";
+} from "./utils";
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
@@ -25,7 +25,7 @@ import {
   generateFilter,
   filterHasUpdated,
   resetFiltersBelow,
-} from "../filtering/Utils";
+} from "../filtering/utils";
 import RemoteRowCounter from "./RemoteRowCounter";
 import { DropdownButtonProps } from "../general/DropdownButtons";
 import ActionModal from "./ActionModal";
@@ -259,8 +259,6 @@ function RemoteTable(props: Props) {
     return <Placeholder loader height={height} />;
   }
 
-  const hasHiddenFields = fields ? Object.values(fields).some((field) => field.hidden === true) : false;
-
   return (
     <div style={{ height: height }}>
       <ActionModal
@@ -319,7 +317,6 @@ function RemoteTable(props: Props) {
           action: () => setActionModalOpen(true),
         }}
         configButtons={configButtons}
-        customAttributeSelection={hasHiddenFields ? [...Object.keys(fields!)] : undefined}
       />
     </div>
   );

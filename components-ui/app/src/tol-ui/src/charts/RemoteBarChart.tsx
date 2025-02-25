@@ -11,10 +11,10 @@ import {
   HistogramGrouping,
   aggsToBarChartData,
   isChartDataEmpty,
-} from "./Utils";
+} from "./utils";
 import { useEffect, useState } from "react";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
-import { normaliseCaps } from "../general/Utils";
+import { normaliseCaps } from "../general/utils";
 import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
 import {
@@ -22,7 +22,7 @@ import {
   filterHasUpdated,
   generateFilter,
   resetFiltersBelow,
-} from "../filtering/Utils";
+} from "../filtering/utils";
 
 interface Props {
   id: string;

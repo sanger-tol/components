@@ -7,12 +7,12 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import { TsDataSource } from "../services";
 import { IZone } from "../boards";
-import { defineZone } from "../boards/Utils";
+import { defineZone } from "../boards/utils";
 import Filter from "./Filter";
 import { IFilter } from "../models";
 import { Button, useEffectUpdate } from "..";
 import { AttributeSelector, Icon } from "../general";
-import { getDisplayName } from "../general/Utils";
+import { getDisplayName } from "../general/utils";
 
 export interface Props {
   filters?: IFilter;
