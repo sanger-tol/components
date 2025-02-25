@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { DateRangePicker } from "rsuite";
-import { stopPropagation } from "../general/Utils";
+import { stopPropagation } from "../general/utils";
 import { Filter } from "./Filter";
 import { setFilter, filterListener } from "./Utils";
 import FilterToggle from "./FilterToggle";

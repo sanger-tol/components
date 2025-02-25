@@ -12,7 +12,7 @@ import Filter from "./Filter";
 import { IFilter } from "../models";
 import { Button, useEffectUpdate } from "..";
 import { AttributeSelector, Icon } from "../general";
-import { getDisplayName } from "../general/Utils";
+import { getDisplayName } from "../general/utils";
 
 export interface Props {
   filters?: IFilter;

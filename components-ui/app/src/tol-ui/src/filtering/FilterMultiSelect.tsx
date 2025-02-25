@@ -10,7 +10,7 @@ import { setFilter, filterListener } from "./Utils";
 import { MultipleSelect } from "../forms";
 import { httpClient } from "../services";
 import FilterToggle from "./FilterToggle";
-import { stopPropagation } from "../general/Utils";
+import { stopPropagation } from "../general/utils";
 import { PopUpMessage } from "../index";
 
 function FilterMultiSelect(props: Filter) {

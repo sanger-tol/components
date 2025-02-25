@@ -17,7 +17,7 @@ import {
 import Sunburst from "./Sunburst";
 import Placeholder from "../general/Placeholder";
 import { useEffectUpdate, resizeListener } from "../hooks";
-import { isEmptyObject, normaliseCaps } from "../general/Utils";
+import { isEmptyObject, normaliseCaps } from "../general/utils";
 import {
   generateFilter,
   addSubFilter,

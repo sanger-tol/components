@@ -8,7 +8,7 @@ import { useState } from "react";
 import { Input, InputGroup, Dropdown } from "rsuite";
 import { Button as BSButton } from "react-bootstrap";
 import { Button } from "..";
-import { stopPropagation } from "../general/Utils";
+import { stopPropagation } from "../general/utils";
 import { Filter } from "./Filter";
 import { setFilter, filterListener } from "./Utils";
 import FilterToggle from "./FilterToggle";

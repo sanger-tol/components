@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { getSourceColour } from "../table/Utils";
-import { normaliseCaps } from "./Utils";
+import { normaliseCaps } from "./utils";
 
 export interface Props {
   className?: string;

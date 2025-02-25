@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import React from "react";
 import { Message as RSMessage } from "rsuite";
-import { capitaliseFirstLetter } from "../general/Utils";
+import { capitaliseFirstLetter } from "../general/utils";
 
 export type messageType = "success" | "info" | "warning" | "error";
 

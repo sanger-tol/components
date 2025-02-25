@@ -27,7 +27,7 @@ import {
   resetItemClickedData,
   downloadItem,
 } from "./Utils";
-import { isPropDefined, getCssVarValue } from "../general/Utils";
+import { isPropDefined, getCssVarValue } from "../general/utils";
 import { themeListener } from "../hooks/listeners";
 
 ChartJS.register(

@@ -15,7 +15,7 @@ import {
   getSourceColour,
   sortFieldsByRename,
 } from "../table/Utils";
-import { normaliseCaps } from "../general/Utils";
+import { normaliseCaps } from "../general/utils";
 
 export interface Props {
   tableId: string;
