@@ -29,6 +29,7 @@ import {
 import { AuthProvider } from "./contexts/auth.context";
 import Footer from "./general/Footer";
 import { Dropdown, Page } from "./models/Nav";
+// case rename???
 import { convertToPath, matomoAnalytics } from "./general/utils";
 import { env } from "./variables/config";
 import { MyBoards, Board } from "./boards";
