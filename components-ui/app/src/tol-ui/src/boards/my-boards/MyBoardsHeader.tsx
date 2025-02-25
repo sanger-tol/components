@@ -12,7 +12,7 @@ import {
   DropdownMainIconProps,
 } from "../../general/DropdownButtons";
 import { useHistory } from "react-router-dom";
-import { createBoardAndView } from "../utils";
+import { createBoardAndView } from "../Utils";
 import { TsDataSource } from "../../index";
 
 interface Props {

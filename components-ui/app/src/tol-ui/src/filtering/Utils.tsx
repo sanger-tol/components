@@ -5,9 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect } from "react";
-import { IZone, defineComponent } from "../boards/utils";
+import { IZone, defineComponent } from "../boards/Utils";
 import { IFilter, And } from "../models/Filter";
-import { deepCopy, isEmptyObject } from "../general/utils";
+import { deepCopy, isEmptyObject } from "../general/Utils";
 
 export function getComponentAbove(id: string, list: string[]) {
   const index = list.indexOf(id);

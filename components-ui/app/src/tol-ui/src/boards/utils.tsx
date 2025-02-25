@@ -5,9 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useRef } from "react";
-import { deepCopy, generateId } from "../general/utils";
+import { deepCopy, generateId } from "../general/Utils";
 import { httpClient } from "../services/http/httpClient";
-import { generateFilter, resetAllFilters } from "../filtering/utils";
+import { generateFilter, resetAllFilters } from "../filtering/Utils";
 import { useEffectUpdate } from "../hooks";
 import { IFilter } from "../models/Filter";
 import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";

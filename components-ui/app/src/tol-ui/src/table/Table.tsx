@@ -15,7 +15,7 @@ import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import ColumnConfigDrawer from "./ColumnConfigDrawer";
-import { exportTableToSpreadsheet, getAllowedFields } from "./utils";
+import { exportTableToSpreadsheet, getAllowedFields } from "./Utils";
 import Filter, { IFilter } from "../filtering/Filter";
 import { InfoTooltip } from "../general";
 import { PopUpMessage } from "../index";

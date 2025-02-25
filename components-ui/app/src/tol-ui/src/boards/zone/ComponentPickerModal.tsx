@@ -16,7 +16,7 @@ import {
 } from "../../index";
 import { FormTextField } from "../../forms";
 import { RSForm } from "../../index";
-import { IZone, addComponent, defineComponent } from "../utils";
+import { IZone, addComponent, defineComponent } from "../Utils";
 
 interface Props {
   open: boolean;

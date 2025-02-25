@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Checkbox, CheckPicker as RSCheckPicker } from "rsuite";
-import { isPropDefined } from "../general/utils";
+import { isPropDefined } from "../general/Utils";
 import { RSForm } from "../index";
 
 interface Data {

@@ -20,7 +20,7 @@ import {
   getAttributeSources,
   filterBySource,
   normaliseCaps,
-} from "./utils";
+} from "./Utils";
 
 export interface Props {
   additionalPopulatedFieldData?: any;

@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from "react";
 import Modal from "../../general/Modal";
-import { generateId } from "../../general/utils";
+import { generateId } from "../../general/Utils";
 import { FormTextField } from "../../forms";
 import { RSForm, Button } from "../../index";
 

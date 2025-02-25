@@ -19,7 +19,7 @@ import {
 import Login from "./Login";
 import { Dropdown } from "../models/Nav";
 import { Page } from "../models/Nav";
-import { convertToPath } from "../general/utils";
+import { convertToPath } from "../general/Utils";
 import { env } from "../variables/config";
 import { confirmAuthorised } from "../services/auth/authService";
 import { LoginIcon, RegisterIcon } from "../general/Icons";

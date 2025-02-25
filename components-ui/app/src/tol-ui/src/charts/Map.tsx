@@ -9,7 +9,7 @@ import "leaflet/dist/leaflet.css";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import Leaflet from "leaflet";
 import { FormatTooltip } from "../general";
-import { getCssVarValue } from "../general/utils";
+import { getCssVarValue } from "../general/Utils";
 import MapLegend from "./MapLegend";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";

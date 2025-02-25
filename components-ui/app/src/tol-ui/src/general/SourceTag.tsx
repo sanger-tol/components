@@ -4,8 +4,8 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { getSourceColour } from "../table/utils";
-import { normaliseCaps } from "./utils";
+import { getSourceColour } from "../table/Utils";
+import { normaliseCaps } from "./Utils";
 
 export interface Props {
   className?: string;

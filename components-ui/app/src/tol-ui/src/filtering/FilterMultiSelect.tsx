@@ -6,11 +6,11 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { Filter } from "./Filter";
-import { setFilter, filterListener } from "./utils";
+import { setFilter, filterListener } from "./Utils";
 import { MultipleSelect } from "../forms";
 import { httpClient } from "../services";
 import FilterToggle from "./FilterToggle";
-import { stopPropagation } from "../general/utils";
+import { stopPropagation } from "../general/Utils";
 import { PopUpMessage } from "../index";
 
 function FilterMultiSelect(props: Filter) {

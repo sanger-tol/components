@@ -14,13 +14,13 @@ import {
   FieldMetaData,
   initialiseFieldMeta,
 } from "./Field";
-import { isFloat, normaliseCaps } from "../general/utils";
+import { isFloat, normaliseCaps } from "../general/Utils";
 import Relationship from "./Relationship";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { EntityMeta } from "../models";
 import { StatusMessage } from "../messaging";
-import { colours } from "../charts/utils";
+import { colours } from "../charts/Utils";
 import { DropdownButtonProps } from "../general/DropdownButtons";
 import { TsDataSource } from "src/services";
 

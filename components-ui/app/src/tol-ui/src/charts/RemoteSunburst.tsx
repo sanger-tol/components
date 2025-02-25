@@ -13,17 +13,17 @@ import {
   generateFilterFromSunburstClick,
   removeSliceBySingles,
   downloadItem,
-} from "./utils";
+} from "./Utils";
 import Sunburst from "./Sunburst";
 import Placeholder from "../general/Placeholder";
 import { useEffectUpdate, resizeListener } from "../hooks";
-import { isEmptyObject, normaliseCaps } from "../general/utils";
+import { isEmptyObject, normaliseCaps } from "../general/Utils";
 import {
   generateFilter,
   addSubFilter,
   filterHasUpdated,
   resetFiltersBelow,
-} from "../filtering/utils";
+} from "../filtering/Utils";
 import { Button, Col, Row } from "../index";
 
 interface Props {

@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { Button, ZoneModal, IFilter } from "../../index";
-import { getZones } from "../utils";
+import { getZones } from "../Utils";
 import Zone from "../zone/Zone";
 import { BOARD_ENDPOINTS, BoardObjectTypes } from "../../constants";
 

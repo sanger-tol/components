@@ -6,13 +6,13 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { httpClient } from "../services/http/httpClient";
-import { numberWithSpaces } from "./utils";
+import { numberWithSpaces } from "./Utils";
 import Placeholder from "./Placeholder";
 import {
   generateFilter,
   filterHasUpdated,
   resetFiltersBelow,
-} from "../filtering/utils";
+} from "../filtering/Utils";
 import { useEffectUpdate } from "../hooks";
 
 interface Props {

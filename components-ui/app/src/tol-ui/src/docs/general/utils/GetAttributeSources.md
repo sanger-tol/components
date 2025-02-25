@@ -24,7 +24,7 @@ The `getAttributeSources` function accepts the following parameters:
 ## Usage
 
 ```tsx
-import { getAttributeSources } from "./path/to/utils";
+import { getAttributeSources } from "./path/to/Utils";
 
 // Simplified example of entity metadata
 const entityMeta = {

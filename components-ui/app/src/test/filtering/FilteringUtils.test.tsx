@@ -22,8 +22,8 @@ import {
   resetZone,
   setFilter,
   filterListener,
-} from "../../tol-ui/src/filtering/utils";
-import { IZone } from "../../tol-ui/src/boards/utils";
+} from "../../tol-ui/src/filtering/Utils";
+import { IZone } from "../../tol-ui/src/boards/Utils";
 import { IFilter } from "../../tol-ui/src/models/Filter";
 
 describe("Testing getComponentsAbove function", () => {

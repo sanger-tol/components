@@ -16,7 +16,7 @@ import {
   structureFieldMeta,
   getTableConfigLocalStorage,
   flowNameStringToActions,
-} from "./utils";
+} from "./Utils";
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
@@ -25,7 +25,7 @@ import {
   generateFilter,
   filterHasUpdated,
   resetFiltersBelow,
-} from "../filtering/utils";
+} from "../filtering/Utils";
 import RemoteRowCounter from "./RemoteRowCounter";
 import { DropdownButtonProps } from "../general/DropdownButtons";
 import ActionModal from "./ActionModal";

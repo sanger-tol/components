@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { BoardTable } from "../../index";
-import { IZone } from "../utils";
+import { IZone } from "../Utils";
 
 interface Props {
   id: string;
