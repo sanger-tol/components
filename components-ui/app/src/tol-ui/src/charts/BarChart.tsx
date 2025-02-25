@@ -26,7 +26,7 @@ import {
   updateOpacitys,
   resetItemClickedData,
   downloadItem,
-} from "./Utils";
+} from "./utils";
 import { isPropDefined, getCssVarValue } from "../general/utils";
 import { themeListener } from "../hooks/listeners";
 

@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState, useEffect } from "react";
 import { Filter } from "./Filter";
-import { setFilter, filterListener } from "./Utils";
+import { setFilter, filterListener } from "./utils";
 import { MultipleSelect } from "../forms";
 import { StatusMessage, PopUpMessage } from "../index";
 

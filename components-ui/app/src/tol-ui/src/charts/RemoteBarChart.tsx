@@ -11,7 +11,7 @@ import {
   HistogramGrouping,
   aggsToBarChartData,
   isChartDataEmpty,
-} from "./Utils";
+} from "./utils";
 import { useEffect, useState } from "react";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { normaliseCaps } from "../general/utils";
@@ -22,7 +22,7 @@ import {
   filterHasUpdated,
   generateFilter,
   resetFiltersBelow,
-} from "../filtering/Utils";
+} from "../filtering/utils";
 
 interface Props {
   id: string;

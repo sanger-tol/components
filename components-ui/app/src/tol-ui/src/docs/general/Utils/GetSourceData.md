@@ -24,7 +24,7 @@ The `getSourceData` function accepts the following parameters:
 ## Usage
 
 ```tsx
-import { getSourceData } from "./path/to/Utils";
+import { getSourceData } from "./path/to/utils";
 
 // simplified example of fieldMeta object
 const fieldMeta = {

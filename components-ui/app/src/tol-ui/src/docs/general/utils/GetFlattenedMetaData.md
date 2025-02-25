@@ -25,7 +25,7 @@ The `getFlattenedMetaData` function accepts the following parameters:
 ## Usage
 
 ```tsx
-import { getFlattenedMetaData } from "./path/to/Utils";
+import { getFlattenedMetaData } from "./path/to/utils";
 
 // Simple Example of entityMeta data
 const entityMeta = {

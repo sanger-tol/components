@@ -11,7 +11,7 @@ import {
   InlineEdit,
   themeListener,
 } from "../../index";
-import { getBoard, saveTitle } from "../Utils";
+import { getBoard, saveTitle } from "../utils";
 import { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import { getUserFromLocalStorage } from "../../services/localStorage/localStorageService";

@@ -10,7 +10,7 @@ import { Button as BSButton } from "react-bootstrap";
 import { Button } from "..";
 import { stopPropagation } from "../general/utils";
 import { Filter } from "./Filter";
-import { setFilter, filterListener } from "./Utils";
+import { setFilter, filterListener } from "./utils";
 import FilterToggle from "./FilterToggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "@fortawesome/free-solid-svg-icons";

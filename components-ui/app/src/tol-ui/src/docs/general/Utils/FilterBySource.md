@@ -23,7 +23,7 @@ The `filterBySource` function accepts the following parameters:
 ## Usage
 
 ```tsx
-import { filterBySource } from "./path/to/Utils";
+import { filterBySource } from "./path/to/utils";
 
 const [selectedSources, setSelectedSources] = useState<string[]>([]);
 

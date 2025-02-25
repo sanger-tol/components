@@ -13,7 +13,7 @@ import {
   generateFilterFromSunburstClick,
   removeSliceBySingles,
   downloadItem,
-} from "./Utils";
+} from "./utils";
 import Sunburst from "./Sunburst";
 import Placeholder from "../general/Placeholder";
 import { useEffectUpdate, resizeListener } from "../hooks";
@@ -23,7 +23,7 @@ import {
   addSubFilter,
   filterHasUpdated,
   resetFiltersBelow,
-} from "../filtering/Utils";
+} from "../filtering/utils";
 import { Button, Col, Row } from "../index";
 
 interface Props {

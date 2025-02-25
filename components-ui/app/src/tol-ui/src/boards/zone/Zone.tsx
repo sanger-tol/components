@@ -17,7 +17,7 @@ import {
 import ResponsiveWidget, { IWidgets } from "../component/ResponsiveWidget";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { getComponents, saveTitle } from "../Utils";
+import { getComponents, saveTitle } from "../utils";
 import ConfirmationModal from "../ConfirmationModal";
 
 interface Props {

@@ -12,7 +12,7 @@ import {
   generateFilter,
   filterHasUpdated,
   resetFiltersBelow,
-} from "../filtering/Utils";
+} from "../filtering/utils";
 import { useEffectUpdate } from "../hooks";
 
 interface Props {

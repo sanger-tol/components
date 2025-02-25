@@ -17,7 +17,7 @@ import {
   setBorderColour,
   updateOpacity,
   downloadItem,
-} from "./Utils";
+} from "./utils";
 import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/utils";
 import { useState } from "react";
 import { themeListener } from "../hooks/listeners";
