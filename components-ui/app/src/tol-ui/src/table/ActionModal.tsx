@@ -4,7 +4,9 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Button } from "../general";
 import Modal from "../general/Modal";
+import ActionStatus from "./ActionStatus";
 // import RemoteTable from "./RemoteTable";
 
 interface Props {
@@ -15,8 +17,9 @@ interface Props {
 }
 
 function ActionModal(props: Props) {
-  const { objectType } = props;
+  const { objectType } = props
 
+  // ActionStatus will be cellRenderer at some point
   return (
     <Modal
       {...props}
@@ -24,7 +27,16 @@ function ActionModal(props: Props) {
       closeButton
     >
       <h5>Actions run on {objectType}</h5>
-      <>Table here...</>
+      <Button
+        text="Force Update Table"
+        icon="refresh"
+        onClick={() => console.log("Flip the table force update boolean")}
+        position="right"
+      />
+      <div>
+        Table here...
+      </div>
+      <ActionStatus status="Tester 1234"/>
     </Modal>
   );
 }

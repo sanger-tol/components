@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import React from "react";
 import { Notification as RSNotification } from "rsuite";
-import { messageType } from "./Message";
+import { MessageType } from "./Message";
 
 type placement =
   | "topCenter"
@@ -22,7 +22,7 @@ interface Props {
   header?: string;
   onClose?: () => void;
   placement?: placement;
-  type: messageType;
+  type: MessageType;
 }
 
 const Notification = React.forwardRef<HTMLDivElement, Props>(
