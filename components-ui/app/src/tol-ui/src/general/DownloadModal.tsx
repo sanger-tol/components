@@ -4,8 +4,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, Modal } from "..";
+import { Button, Modal, CentreContents } from "..";
 import { Tabs } from "rsuite";
+import { CopyBlock, nord } from 'react-code-blocks';
 
 
 export interface Props {
@@ -13,11 +14,24 @@ export interface Props {
   open: boolean;
   setOpen: any;
   objectType?: string;
+  filter?: string;
   action: Function;
 }
 
 const DownloadModal = (props: Props) => {
-  const { size, open, setOpen, action } = props;
+  const { size, open, setOpen, action, objectType, filter } = props;
+
+  const text = `
+  from tol.core import DataSourceFilter
+  from tol.sources.{source} import {source}
+
+  src = ${objectType}()
+  f = DataSourceFilter(
+      and_=${filter}
+  )
+  objs = src.get_list(${objectType}, object_filters=f)
+  `
+
 
   return (
     <>
@@ -28,34 +42,29 @@ const DownloadModal = (props: Props) => {
     >
       <Tabs defaultActiveKey="1">
         <Tabs.Tab eventKey="1" title="EXCEL">
-          <Button
-            type="success"
-            onClick={() => {
-              action();
-              setOpen(false);
-            }}
-            icon="download"
+          <div className="tol-download-modal-body">
+            <Button
+              type="success"
+              text="Download to Excel"
+              onClick={() => {
+                action();
+                setOpen(false);
+              }}
+              icon="download"
+            />
+          </div>
+        </Tabs.Tab>
+        <Tabs.Tab eventKey="2" title="SDK">
+          <CopyBlock
+            text={text}
+            language="python"
+            showLineNumbers={false}
+            theme={nord}
+            wrapLines
           />
         </Tabs.Tab>
-        <Tabs.Tab eventKey="2" title="CLI">
-          <Button
-            type="success"
-            onClick={() => {
-              action();
-              setOpen(false);
-            }}
-            icon="download"
-          />
-        </Tabs.Tab>
-        <Tabs.Tab eventKey="3" title="SDK">
-          <Button
-            type="success"
-            onClick={() => {
-              action();
-              setOpen(false);
-            }}
-            icon="download"
-          />
+        <Tabs.Tab eventKey="3" title="CLI">
+
         </Tabs.Tab>
       </Tabs>
     </Modal>

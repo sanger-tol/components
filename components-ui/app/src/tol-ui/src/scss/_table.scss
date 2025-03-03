@@ -333,6 +333,14 @@
   background-color: var(--tol-primary-translucent) !important;
 }
 
+.tol-download-modal-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  flex-direction: column;
+}
+
 // pagination buttons on smaller devices
 @media (max-width: 992px) {
   .tol-table .config-button {
