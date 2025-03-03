@@ -10,6 +10,9 @@ import {
   Placeholder,
   useEffectUpdate,
   DropdownButtons,
+  PopUpMessage,
+  InfoTooltip,
+  DownloadModal
 } from "../index";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,8 +20,6 @@ import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import ColumnConfigDrawer from "./ColumnConfigDrawer";
 import { exportTableToSpreadsheet } from "./Utils";
 import Filter, { IFilter } from "../filtering/Filter";
-import { InfoTooltip } from "../general";
-import { PopUpMessage } from "../index";
 import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
 import { DropdownButtonProps } from "../general/DropdownButtons";
@@ -114,6 +115,7 @@ function Table(props: Props) {
 
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [downloadOpen, setDownloadOpen] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("!");
   noFilter = !!noFilter;
@@ -192,6 +194,26 @@ function Table(props: Props) {
 
   return (
     <div style={{ height: height }} className="tol-table">
+      <DownloadModal 
+        size="sm"
+        open={downloadOpen}
+        setOpen={setDownloadOpen}
+        objectType={props.zone.type}
+        action={() =>
+          exportTableToSpreadsheet(
+            endpoint,
+            fieldMeta.data,
+            filter!,
+            sortColumn,
+            sortType,
+            setSuccess,
+            setError,
+            setDownloading,
+            defaultSort,
+            baseUrl,
+          )
+        }
+      />
       <ColumnConfigDrawer
         open={open}
         setOpen={setOpen}
@@ -291,18 +313,9 @@ function Table(props: Props) {
             position="right"
             type="primary"
             onClick={() =>
-              exportTableToSpreadsheet(
-                endpoint,
-                fieldMeta.data,
-                filter!,
-                sortColumn,
-                sortType,
-                setSuccess,
-                setError,
-                setDownloading,
-                defaultSort,
-                baseUrl,
-              )
+              {
+                setDownloadOpen(!downloadOpen)
+              }
             }
             disabled={totalSize < 1 || totalSize >= 10000 || noFieldsSelected}
             loading={downloading}
