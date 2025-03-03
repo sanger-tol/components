@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Button, Modal, CentreContents } from "..";
 import { Tabs } from "rsuite";
-import { CopyBlock, nord } from 'react-code-blocks';
+import { CopyBlock, monokai, a11yDark, a11yLight } from 'react-code-blocks';
 
 
 export interface Props {
@@ -59,7 +59,7 @@ const DownloadModal = (props: Props) => {
             text={text}
             language="python"
             showLineNumbers={false}
-            theme={nord}
+            theme={monokai}
             wrapLines
           />
         </Tabs.Tab>
