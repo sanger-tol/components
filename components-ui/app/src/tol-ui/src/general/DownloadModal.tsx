@@ -18,31 +18,49 @@ export interface Props {
   filter?: any;
   action: Function;
   source?: string;
+  fields: string[];
 }
 
 const DownloadModal = (props: Props) => {
-  const { size, open, setOpen, action, objectType, filter, source } = props;
+  const { size, open, setOpen, action, objectType, filter, source, fields } = props;
+
+  console.log(props.fields)
+
+  const stringifyFilter = (filter: any) => {
+    return JSON.stringify(filter, (key, value) => {
+      if (typeof value === 'boolean') {
+        return value ? 'True' : 'False';
+      }
+      return value;
+    }).replace(/"True"/g, 'True').replace(/"False"/g, 'False');
+  };
 
   const sourceToUse = source || 'portal';
 
-  const SDKText = `
-  from tol.core import DataSourceFilter
-  from tol.sources.${sourceToUse} import ${sourceToUse}
+  const SDKText = `from tol.core import DataSourceFilter
+from tol.sources.${sourceToUse} import ${sourceToUse}
 
-  src = ${sourceToUse}()
-  f = DataSourceFilter(
-      and_ = ${JSON.stringify(filter) || 'None'}
-  )
-  objs = src.get_list(${objectType}, object_filters=f) 
+src = ${sourceToUse}()
+f = DataSourceFilter(
+    and_ = ${stringifyFilter(filter.and_) || 'None'}
+)
+objs = src.get_list('${objectType}', object_filters=f) 
   `
 
   const CLICommand = `
-  tol data \
-  --source=${sourceToUse || 'portal'} \
-  --type=${objectType} \
-  --filter=${JSON.stringify(filter)} \
-  --output=csv 
-  ` 
+tol data \
+--source=${sourceToUse || 'portal'} \
+--operation=list \
+--type=${objectType} \
+--filter='${stringifyFilter(filter) || '{"and":{}}'}' \
+--fields=${fields.join(',')} \
+--output=tsv 
+  `
+  
+  // False and True need to have caps /
+  // Fix formatting when copying /
+  // Add fields to the CLI command (From field meta data) /
+  // Change font /
 
   const onClick = (text: string) => {
     copyToClipboard(text.trim())

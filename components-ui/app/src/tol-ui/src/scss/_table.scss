@@ -343,8 +343,6 @@
   flex-direction: column;
 }
 
-// fIHKFk is the class name of the theme used (which is no theme)
-// sc-gjcoXW is the class name of the code block itself
 .tol-download-modal-code {
   .token.token {
     color: var(--tol-primary) !important;
@@ -356,6 +354,7 @@
     color: var(--tol-text) !important;
   }
   span {
+    font-family: monospace;
     color: var(--tol-text);
     background-color: var(--tol-bg-dark) !important;
     overflow: auto;

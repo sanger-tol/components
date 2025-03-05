@@ -203,6 +203,7 @@ function Table(props: Props) {
         objectType={props.zone.type}
         filter={filter}
         source={source}
+        fields={fieldMeta.order.active}
         action={() =>
           exportTableToSpreadsheet(
             endpoint,
