@@ -333,6 +333,8 @@
   background-color: var(--tol-primary-translucent) !important;
 }
 
+// Download modal
+
 .tol-download-modal-body {
   display: flex;
   justify-content: center;
@@ -341,25 +343,22 @@
   flex-direction: column;
 }
 
-// Download modal
-
-.token.token {
-  color: var(--tol-primary) !important;
-}
-.token.token.punctuation {
-  color: var(--tol-text) !important;
-}
-.token.token.operator {
-  color: var(--tol-text) !important;
-}
-
 // fIHKFk is the class name of the theme used (which is no theme)
 // sc-gjcoXW is the class name of the code block itself
-.sc-gjcoXW.fIHKFk {
-  background-color: var(--tol-bg-dark);
+.tol-download-modal-code {
+  .token.token {
+    color: var(--tol-primary) !important;
+  }
+  .token.token.punctuation {
+    color: var(--tol-text) !important;
+  }
+  .token.token.operator {
+    color: var(--tol-text) !important;
+  }
   span {
     color: var(--tol-text);
     background-color: var(--tol-bg-dark) !important;
+    overflow: auto;
   }
 }
 

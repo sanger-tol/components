@@ -35,6 +35,7 @@ interface Props {
 
   endpoint: string;
   baseUrl?: string;
+  source?: string;
 
   page: number;
   setPage: any;
@@ -81,6 +82,7 @@ function Table(props: Props) {
 
     endpoint,
     baseUrl,
+    source,
 
     page,
     setPage,
@@ -194,11 +196,13 @@ function Table(props: Props) {
 
   return (
     <div style={{ height: height }} className="tol-table">
-      <DownloadModal 
+      <DownloadModal
         size="sm"
         open={downloadOpen}
         setOpen={setDownloadOpen}
         objectType={props.zone.type}
+        filter={filter}
+        source={source}
         action={() =>
           exportTableToSpreadsheet(
             endpoint,

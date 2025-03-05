@@ -1,12 +1,12 @@
 /*
-SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
 import { Button, Modal } from "..";
 import { Tabs } from "rsuite";
-import { CopyBlock } from 'react-code-blocks';
+import { CodeBlock } from 'react-code-blocks';
 
 
 export interface Props {
@@ -14,23 +14,34 @@ export interface Props {
   open: boolean;
   setOpen: any;
   objectType?: string;
-  filter?: string;
+  filter?: any;
   action: Function;
+  source?: string;
 }
 
 const DownloadModal = (props: Props) => {
-  const { size, open, setOpen, action, objectType, filter } = props;
+  const { size, open, setOpen, action, objectType, filter, source } = props;
 
-  const text = `
+  const sourceToUse = source || 'portal';
+
+  const SDKText = `
   from tol.core import DataSourceFilter
-  from tol.sources.{source} import {source}
+  from tol.sources.${sourceToUse} import ${sourceToUse}
 
-  src = ${objectType}()
+  src = ${sourceToUse}()
   f = DataSourceFilter(
-      and_=${filter}
+      and_ = ${JSON.stringify(filter) || 'None'}
   )
-  objs = src.get_list(${objectType}, object_filters=f)
+  objs = src.get_list(${objectType}, object_filters=f) 
   `
+
+  const CLICommand = `
+  tol data \
+  --source=${sourceToUse || 'portal'} \
+  --type=${objectType} \
+  --filter=${JSON.stringify(filter)} \
+  --output=csv 
+  ` 
 
   return (
     <>
@@ -40,11 +51,11 @@ const DownloadModal = (props: Props) => {
       setOpen={setOpen}
     >
       <Tabs defaultActiveKey="1">
-        <Tabs.Tab eventKey="1" title="EXCEL">
+        <Tabs.Tab eventKey="1" title="Spreadsheet">
           <div className="tol-download-modal-body">
             <Button
               type="success"
-              text="Download to Excel"
+              text="Download as Spreadsheet"
               onClick={() => {
                 action();
                 setOpen(false);
@@ -54,16 +65,22 @@ const DownloadModal = (props: Props) => {
           </div>
         </Tabs.Tab>
         <Tabs.Tab eventKey="2" title="SDK">
-          <CopyBlock
-            text={text}
-            language="python"
-            showLineNumbers={false}
-            className='complete-test'
-            //wrapLines
-          />
+          <div className="tol-download-modal-code">
+            <CodeBlock
+              text={SDKText}
+              language="python"
+              showLineNumbers={false}
+            />
+          </div>
         </Tabs.Tab>
         <Tabs.Tab eventKey="3" title="CLI">
-
+          <div className="tol-download-modal-code">
+            <CodeBlock
+              text={CLICommand}
+              language="bash"
+              showLineNumbers={false}
+            />
+          </div>
         </Tabs.Tab>
       </Tabs>
     </Modal>
