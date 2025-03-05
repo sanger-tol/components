@@ -21,7 +21,7 @@
     "react-scripts": "5.0.1",
     "typescript": "5.6.3",
     "web-vitals": "^0.2.4",
-    "@tol/tol-ui": "2.0.6",
+    "@tol/tol-ui": "1.9.0",
     "react-dropzone": "14.2.3",
     "styled-components": "5.3.8",
     "@types/styled-components": "5.1.26",
