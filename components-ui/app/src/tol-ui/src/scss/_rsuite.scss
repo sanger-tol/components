@@ -313,6 +313,20 @@
   }
 }
 
+// tabs
+.rs-nav-item {
+  color: var(--tol-primary-light);
+}
+
+.rs-nav-item.rs-nav-item-active {
+  color: var(--tol-primary-dark);
+}
+
+.rs-nav-tabs .rs-nav-item:not(.rs-nav-item-active):hover {
+  background-color: var(--tol-bg-dark);
+  color: var(--tol-primary);
+}
+
 // drawer on mobile
 @media (max-width: 700px) {
   .rs-drawer {
