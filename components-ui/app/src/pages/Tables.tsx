@@ -125,7 +125,6 @@ function Tables() {
         <RemoteTable
           id="table-example"
           rowSelection
-          source="tolid"
           //pageSize={100}
           forceUpdate={forceUpdate}
           fields={{
