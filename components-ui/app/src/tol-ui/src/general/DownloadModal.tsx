@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, Modal, CentreContents } from "..";
+import { Button, Modal } from "..";
 import { Tabs } from "rsuite";
-import { CopyBlock, monokai, a11yDark, a11yLight } from 'react-code-blocks';
+import { CopyBlock } from 'react-code-blocks';
 
 
 export interface Props {
@@ -31,7 +31,6 @@ const DownloadModal = (props: Props) => {
   )
   objs = src.get_list(${objectType}, object_filters=f)
   `
-
 
   return (
     <>
@@ -59,8 +58,8 @@ const DownloadModal = (props: Props) => {
             text={text}
             language="python"
             showLineNumbers={false}
-            theme={monokai}
-            wrapLines
+            className='complete-test'
+            //wrapLines
           />
         </Tabs.Tab>
         <Tabs.Tab eventKey="3" title="CLI">

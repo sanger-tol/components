@@ -106,7 +106,8 @@ export {
   SourceTag,
   AttributeSelector,
   DropdownButtons,
-  DownloadModal
+  DownloadModal,
+  Markdown
 } from "./general";
 
 // hooks
