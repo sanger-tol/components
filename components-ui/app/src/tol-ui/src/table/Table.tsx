@@ -204,6 +204,7 @@ function Table(props: Props) {
         filter={filter}
         source={source}
         fields={fieldMeta.order.active}
+        totalSize={totalSize}
         action={() =>
           exportTableToSpreadsheet(
             endpoint,
@@ -317,17 +318,16 @@ function Table(props: Props) {
           <Button
             position="right"
             type="primary"
-            onClick={() =>
-              {
-                setDownloadOpen(!downloadOpen)
-              }
+            onClick={() => {
+              setDownloadOpen(!downloadOpen)
             }
-            disabled={totalSize < 1 || totalSize >= 10000 || noFieldsSelected}
+            }
+            disabled={totalSize <= 0 || noFieldsSelected}
             loading={downloading}
             icon="download"
             disabledTooltip={
-              totalSize >= 10000
-                ? "Only 10,000 results can currently be downloaded."
+              totalSize >= 1
+                ? "Must have at least one row to download."
                 : undefined
             }
             outline

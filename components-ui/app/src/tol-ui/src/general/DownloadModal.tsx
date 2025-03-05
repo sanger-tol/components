@@ -19,10 +19,11 @@ export interface Props {
   action: Function;
   source?: string;
   fields: string[];
+  totalSize: number;
 }
 
 const DownloadModal = (props: Props) => {
-  const { size, open, setOpen, action, objectType, filter, source, fields } = props;
+  const { size, open, setOpen, action, objectType, filter, source, fields, totalSize } = props;
 
   const stringifyFilter = (filter: any) => {
     // @ts-ignore
@@ -66,57 +67,63 @@ tol data \
 
   return (
     <>
-    <Modal
-      size={size}
-      open={open}
-      setOpen={setOpen}
-    >
-      <Tabs defaultActiveKey="1">
-        <Tabs.Tab eventKey="1" title="Spreadsheet">
-          <div className="tol-download-modal-body">
+      <Modal
+        size={size}
+        open={open}
+        setOpen={setOpen}
+      >
+        <Tabs defaultActiveKey="1">
+          <Tabs.Tab eventKey="1" title="Spreadsheet">
+            <div className="tol-download-modal-body">
+              <Button
+                type="success"
+                text="Download as Spreadsheet"
+                onClick={() => {
+                  action();
+                  setOpen(false);
+                }}
+                icon="download"
+                disabledTooltip={
+                  totalSize >= 1
+                    ? "Only 10,000 results can currently be downloaded as a spreadsheet."
+                    : undefined
+                }
+                disabled={totalSize >= 10000}
+              />
+            </div>
+          </Tabs.Tab>
+          <Tabs.Tab eventKey="2" title="SDK">
+            <div className="tol-download-modal-code">
+              <CodeBlock
+                text={SDKText}
+                language="python"
+                showLineNumbers={false}
+              />
+            </div>
+            <br />
             <Button
-              type="success"
-              text="Download as Spreadsheet"
-              onClick={() => {
-                action();
-                setOpen(false);
-              }}
-              icon="download"
+              onClick={() => onClick(SDKText)}
+              icon="copy"
+              text="Copy to Clipboard"
             />
-          </div>
-        </Tabs.Tab>
-        <Tabs.Tab eventKey="2" title="SDK">
-          <div className="tol-download-modal-code">
-            <CodeBlock
-              text={SDKText}
-              language="python"
-              showLineNumbers={false}
+          </Tabs.Tab>
+          <Tabs.Tab eventKey="3" title="CLI">
+            <div className="tol-download-modal-code">
+              <CodeBlock
+                text={CLICommand}
+                language="bash"
+                showLineNumbers={false}
+              />
+            </div>
+            <br />
+            <Button
+              onClick={() => onClick(CLICommand)}
+              icon="copy"
+              text="Copy to Clipboard"
             />
-          </div>
-          <br/>
-          <Button
-            onClick={() => onClick(SDKText)}
-            icon="copy"
-            text="Copy to Clipboard"
-          />
-        </Tabs.Tab>
-        <Tabs.Tab eventKey="3" title="CLI">
-          <div className="tol-download-modal-code">
-            <CodeBlock
-              text={CLICommand}
-              language="bash"
-              showLineNumbers={false}
-            />
-          </div>
-          <br/>
-          <Button
-            onClick={() => onClick(CLICommand)}
-            icon="copy"
-            text="Copy to Clipboard"
-          />
-        </Tabs.Tab>
-      </Tabs>
-    </Modal>
+          </Tabs.Tab>
+        </Tabs>
+      </Modal>
     </>
   );
 };
