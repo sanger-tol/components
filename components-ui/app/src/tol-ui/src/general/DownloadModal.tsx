@@ -55,11 +55,6 @@ tol data \
 --fields=${fields.join(',')} \
 --output=tsv 
   `
-  
-  // False and True need to have caps /
-  // Fix formatting when copying /
-  // Add fields to the CLI command (From field meta data) /
-  // Change font /
 
   const onClick = (text: string) => {
     copyToClipboard(text.trim())
