@@ -333,6 +333,35 @@
   background-color: var(--tol-primary-translucent) !important;
 }
 
+// Download modal
+
+.tol-download-modal-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  flex-direction: column;
+}
+
+.tol-download-modal-code {
+  .token.token {
+    color: var(--tol-primary) !important;
+  }
+  .token.token.punctuation {
+    color: var(--tol-text) !important;
+  }
+  .token.token.operator {
+    color: var(--tol-text) !important;
+  }
+  span {
+    font-family: monospace;
+    color: var(--tol-text);
+    background-color: var(--tol-bg-dark) !important;
+    overflow: auto;
+  }
+}
+
+
 // pagination buttons on smaller devices
 @media (max-width: 992px) {
   .tol-table .config-button {

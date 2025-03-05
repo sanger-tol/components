@@ -105,7 +105,9 @@ export {
   TolLoader,
   SourceTag,
   AttributeSelector,
-  DropdownButtons
+  DropdownButtons,
+  DownloadModal,
+  Markdown
 } from "./general";
 
 // hooks

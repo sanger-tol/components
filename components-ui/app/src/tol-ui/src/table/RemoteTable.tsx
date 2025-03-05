@@ -32,6 +32,7 @@ interface Props {
   id: string;
   endpoint: string;
   baseUrl?: string;
+  source?: string;
   attributeMetadataUrl?: string;
   relationshipsUrl?: string;
 
@@ -70,6 +71,7 @@ function RemoteTable(props: Props) {
     id,
     endpoint,
     baseUrl,
+    source,
     fields,
     basic,
     forceUpdate,
@@ -285,6 +287,7 @@ function RemoteTable(props: Props) {
       loading={loading}
       endpoint={endpoint}
       baseUrl={baseUrl}
+      source={source}
       page={page}
       setPage={setPage}
       pageSize={pageSize}

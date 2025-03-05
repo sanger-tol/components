@@ -26,3 +26,5 @@ export { default as TolLoader } from "./TolLoader";
 export { default as SourceTag } from "./SourceTag";
 export { default as AttributeSelector } from "./AttributeSelector";
 export { default as DropdownButtons } from "./DropdownButtons";
+export { default as DownloadModal } from "./DownloadModal";
+export { default as Markdown } from "./Markdown";

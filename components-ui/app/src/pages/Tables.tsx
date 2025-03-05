@@ -24,7 +24,7 @@ function Tables() {
   const runData = useZone({
     endpoint: "run_data",
     baseUrl: env.TOL_DATA,
-    components: [{ id: "table-example" }],
+    components: [{ id: "table-example" }, { id: "table-example-3" }],
   });
 
   const outputTableData = (rows?: string[], filter?: any) => {
@@ -47,6 +47,69 @@ function Tables() {
       },
     },
   ];
+
+  const table3 = (
+    <>
+      <div style={{ paddingBottom: "12px" }}>
+        <Button
+          type="primary"
+          onClick={() => setForceUpdate(!forceUpdate)}
+          text="Force Update"
+        />
+        <h5 style={{ marginBottom: 12 }}>Remote Table</h5>
+      </div>
+      <div>
+        <RemoteTable
+          id="table-example-3"
+          rowSelection
+          //pageSize={100}
+          forceUpdate={forceUpdate}
+          fields={{
+            mlwh_run_id: {
+              rename: "Run ID",
+            },
+            "mlwh_species.sts_scientific_name": {
+              rename: "Species",
+              cellRenderer: null,
+            },
+            "mlwh_sequencing_request.id": {
+              rename: "Sequencing Request",
+            },
+            mlwh_run_complete: {
+              rename: "Complete Date",
+            },
+            mlwh_platform_type: {
+              rename: "Platform",
+            },
+            mlwh_instrument_model: {
+              rename: "Instrument",
+            },
+            mlwh_position: {
+              rename: "Position",
+              filter: "boolean",
+            },
+            mlwh_tag_index: {
+              rename: "Tag",
+              filter: null,
+              sort: false,
+            },
+            custom_field: {
+              rename: "Custom Field",
+              cellRenderer: {
+                element: exampleElement,
+                propPointers: {
+                  mlwhTag: "mlwh_tag_index",
+                },
+              },
+            },
+          }}
+          height={500}
+          actions={actions}
+          {...runData}
+        />
+      </div>
+    </>
+  );
 
   const table1 = (
     <>
@@ -143,6 +206,10 @@ function Tables() {
     },
     {
       component: table1,
+      type: "full",
+    },
+    {
+      component: table3,
       type: "full",
     },
   ];
