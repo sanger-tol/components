@@ -234,3 +234,12 @@ export function filterBySource(
     }
   }
 }
+
+export function copyToClipboard(text: string): void {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text)
+      .catch(err => console.error('Failed to copy text: ', err));
+  } else {
+    console.warn('Clipboard API not available');
+  }
+}

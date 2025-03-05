@@ -4,9 +4,10 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, Modal } from "..";
+import { Button, Modal, PopUpMessage } from "..";
 import { Tabs } from "rsuite";
 import { CodeBlock } from 'react-code-blocks';
+import { copyToClipboard } from "./Utils";
 
 
 export interface Props {
@@ -43,6 +44,14 @@ const DownloadModal = (props: Props) => {
   --output=csv 
   ` 
 
+  const onClick = (text: string) => {
+    copyToClipboard(text.trim())
+    PopUpMessage({
+      type: 'success',
+      message: 'Copied to clipboard',
+    })
+  }
+
   return (
     <>
     <Modal
@@ -72,6 +81,12 @@ const DownloadModal = (props: Props) => {
               showLineNumbers={false}
             />
           </div>
+          <br/>
+          <Button
+            onClick={() => onClick(SDKText)}
+            icon="copy"
+            text="Copy to Clipboard"
+          />
         </Tabs.Tab>
         <Tabs.Tab eventKey="3" title="CLI">
           <div className="tol-download-modal-code">
@@ -81,6 +96,12 @@ const DownloadModal = (props: Props) => {
               showLineNumbers={false}
             />
           </div>
+          <br/>
+          <Button
+            onClick={() => onClick(CLICommand)}
+            icon="copy"
+            text="Copy to Clipboard"
+          />
         </Tabs.Tab>
       </Tabs>
     </Modal>
