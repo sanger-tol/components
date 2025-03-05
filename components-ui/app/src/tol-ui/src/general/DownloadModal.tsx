@@ -24,10 +24,9 @@ export interface Props {
 const DownloadModal = (props: Props) => {
   const { size, open, setOpen, action, objectType, filter, source, fields } = props;
 
-  console.log(props.fields)
-
   const stringifyFilter = (filter: any) => {
-    return JSON.stringify(filter, (value) => {
+    // @ts-ignore
+    return JSON.stringify(filter, (key, value) => {
       if (typeof value === 'boolean') {
         return value ? 'True' : 'False';
       }
