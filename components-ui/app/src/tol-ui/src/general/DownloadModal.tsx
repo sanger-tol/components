@@ -27,7 +27,7 @@ const DownloadModal = (props: Props) => {
   console.log(props.fields)
 
   const stringifyFilter = (filter: any) => {
-    return JSON.stringify(filter, (key, value) => {
+    return JSON.stringify(filter, (value) => {
       if (typeof value === 'boolean') {
         return value ? 'True' : 'False';
       }
