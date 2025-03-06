@@ -27,11 +27,6 @@ function Tables() {
     components: [{ id: "table-example" }],
   });
 
-  const outputTableData = (rows?: string[], filter?: any) => {
-    rows && console.log("Selected rows:", rows);
-    filter && console.log("Filter:", filter);
-  };
-
   const actions = [
     "auth-required-flow",
     {

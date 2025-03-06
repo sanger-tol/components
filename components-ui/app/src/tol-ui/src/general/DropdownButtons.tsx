@@ -54,6 +54,7 @@ function DropdownButtons(props: Props) {
   const pushMessage = (message: string, type: string = "info") => {
     toaster.push(<Message children={message} type={type} showIcon={true} />, {
       duration: 4000,
+      placement: "bottomEnd",
     });
   };
 

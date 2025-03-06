@@ -17,7 +17,7 @@ import {
   getTableConfigLocalStorage,
 } from "./Utils";
 import Table, { NumRows } from "./Table";
-import { Placeholder, TsDataSource } from "../index";
+import { Placeholder, TsDataSource, Modal, Button } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { IZone } from "../boards";
 import {
@@ -95,7 +95,7 @@ function RemoteTable(props: Props) {
   // data and field information
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(
-    props.fieldMeta,
+    props.fieldMeta
   );
 
   // pagination
@@ -127,10 +127,19 @@ function RemoteTable(props: Props) {
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
+  const [actionNotReady, setActionNotReady] = useState<boolean>(false);
+  const [showIdExportModal, setShowIdExportModal] = useState<boolean>(false);
+  const [idsForExport, setIdsForExport] = useState<string[]>([]);
+  const [idsWithReqNotMet, setIdsWithReqNotMet] = useState<string[]>([]);
+
   const handleSortColumn = (sortColumn: any, sortType: any) => {
     setSortColumn(sortColumn);
     setSortType(sortType);
   };
+
+  useEffect(() => {
+    console.log("idsWithReqNotMet", idsWithReqNotMet);
+  }, [idsWithReqNotMet]);
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
@@ -219,7 +228,7 @@ function RemoteTable(props: Props) {
             endpoint,
             fieldMeta ?? getFieldMetaLocalStorage(id, fields),
             entityMeta,
-            fields,
+            fields
           );
           if (!fieldMeta) setTableConfigLocalStorage(id, "fieldMeta", fm);
           setFieldMeta(fm as FieldMeta);
@@ -241,7 +250,7 @@ function RemoteTable(props: Props) {
         console.warn(error);
         console.warn("Please ensure the db has been restored");
         console.warn(
-          "Please ensure the 'endpoint' prop is correct and pluralised",
+          "Please ensure the 'endpoint' prop is correct and pluralised"
         );
       });
   };
@@ -254,71 +263,206 @@ function RemoteTable(props: Props) {
     return <Placeholder loader height={height} />;
   }
 
-  //@ts-ignore
-  const runAction = async (action_name: string, ids: string[]) =>
-    await ds.custom("/run-action", "POST", {
-      ids: ids,
-      action_name: action_name,
-      object_type: endpoint,
-    });
+  const handleModalClose = () => {
+    setShowIdExportModal(false);
+    setLoading(false);
+  };
 
-  const convertStringAction = (name: string): DropdownButtonProps =>
+  const modalActionButtons = (
+    <div className="tol-table-action-modal-btns">
+      <Button
+        type="success"
+        onClick={() => setActionNotReady(false)}
+        text="Complete Action"
+        className="tol-table-action-modal-success-btn"
+      />
+      <Button type="error" onClick={() => handleModalClose()} text="Cancel" />
+    </div>
+  );
+
+  const exportItem = (id: string) => {
+    return (
+      <div key={id} className="tol-table-action-modal-export-item-container">
+        <div
+          className={`tol-table-action-modal-export-item ${
+            idsWithReqNotMet.includes(id) ? "error" : ""
+          }`}
+        >
+          <p>{id}</p>
+        </div>
+        {idsWithReqNotMet.includes(id) && (
+          <Button
+            type="error"
+            onClick={() => {}}
+            icon={"xmark"}
+            tooltip="Remove"
+            className="tol-table-action-modal-export-item-remove-btn"
+          />
+        )}
+      </div>
+    );
+  };
+
+  //TODO: finish action complete, remove items from list
+
+  const idCheckModalBody = (
+    <div className="tol-table-action-modal-body-container">
+      <p>
+        This is because they don't meet the criteria for actioning, please check
+        them and try again. You can also remove them from the list of items to
+        be actioned.
+      </p>
+      <h6>Items to be actioned (issues highlighted):</h6>
+      <div
+        className="tol-table-action-modal-export-item-list-container"
+      >
+        {idsForExport.map((id) => exportItem(id))}
+      </div>
+      {modalActionButtons}
+    </div>
+  );
+
+  const checkIdsMeetCriteria = async (ids: string[]) => {
+    const res = await httpClient().get(`/${endpoint}`, {
+      baseUrl: baseUrl,
+      params: {
+        filter: {
+          and_: {
+            id: { in_list: { value: ids } },
+            "specimen.id": { eq: { value: "1" } }, //TODO: change to correct query
+          },
+        },
+      },
+    });
+    const data = res.data.data;
+    if (ids.length === data.length) {
+      return true;
+    }
+    setIdsWithReqNotMet(
+      ids.filter((id) => !data.map((item: any) => item.id).includes(id))
+    );
+    return false;
+  };
+
+  const idCheckModal = () => {
+    return (
+      <div>
+        <Modal
+          open={showIdExportModal}
+          setOpen={setShowIdExportModal}
+          size={"sm"}
+          children={idCheckModalBody}
+          closeButton={false}
+          header={<h4>Some of your items cannot be actioned:</h4>}
+        />
+      </div>
+    );
+  };
+
+  const checkActionHasExportCriteria = async (
+    index: number
+  ): Promise<boolean> => {
+    const res = await httpClient().get("/action", {
+      baseUrl: baseUrl,
+    });
+    const data = res.data.data;
+    return data[index]["attributes"]["params"]["criteria"] ? true : false;
+  };
+
+  //@ts-ignore
+  const runAction = async (
+    action_name: string,
+    ids: string[],
+    index: number
+  ) => {
+    setLoading(true);
+    setIdsForExport(ids);
+    const actionNotReady = await checkActionHasExportCriteria(index);
+    setActionNotReady(actionNotReady);
+    if (!actionNotReady) {
+      await ds.custom("/run-action", "POST", {
+        ids: ids,
+        action_name: action_name,
+        object_type: endpoint,
+      });
+      setLoading(false);
+    } else {
+      const allItemsMeetCriteria = await checkIdsMeetCriteria(ids);
+      console.log("allItemsMeetCriteria", allItemsMeetCriteria);
+      if (!allItemsMeetCriteria) {
+        setShowIdExportModal(true);
+      }
+    }
+  };
+
+  const convertStringAction = (
+    name: string,
+    index: number
+  ): DropdownButtonProps =>
     ({
       dropdownButtonName: name,
-      action: (ids: string[]) => runAction(name, ids),
+      action: (ids: string[]) => runAction(name, ids, index),
     }) as DropdownButtonProps;
 
   const convertAction = (
     action: string | DropdownButtonProps,
+    index: number
   ): DropdownButtonProps =>
-    typeof action === "string" ? convertStringAction(action) : action;
+    typeof action === "string" ? convertStringAction(action, index) : action;
 
   const convertedActions = actions?.map(convertAction);
-  const hasHiddenFields = fields ? Object.values(fields).some((field) => field.hidden === true) : false;
+  const hasHiddenFields = fields
+    ? Object.values(fields).some((field) => field.hidden === true)
+    : false;
 
   return (
-    <Table
-      id={id}
-      data={data}
-      fieldMeta={fieldMeta!}
-      height={height}
-      loading={loading}
-      endpoint={endpoint}
-      baseUrl={baseUrl}
-      page={page}
-      setPage={setPage}
-      pageSize={pageSize}
-      setPageSize={setPageSize}
-      totalSize={totalSize}
-      rowCounter={
-        <RemoteRowCounter
-          totalSize={totalSize}
-          filter={filter}
-          loading={loading}
-          {...props}
-        />
-      }
-      displaySource={displaySource}
-      filterVisibility={filterVisibility}
-      setFilterVisibility={setFilterVisibility}
-      sortColumn={sortColumn}
-      sortType={sortType}
-      defaultSort={defaultSort}
-      handleSortColumn={handleSortColumn}
-      zone={zone as IZone}
-      setZone={setZone}
-      filter={filter}
-      onModalSave={onModalSave}
-      noFilter={noFilter}
-      noPagination={noPagination}
-      noSorting={noSorting}
-      noConfigModal={noConfigModal}
-      noDownload={noDownload}
-      rowSelection={rowSelection}
-      actions={convertedActions}
-      configButtons={configButtons}
-      customAttributeSelection={hasHiddenFields === true ? [...Object.keys(fields!)] : undefined}
-    />
+    <>
+      {idCheckModal()}
+      <Table
+        id={id}
+        data={data}
+        fieldMeta={fieldMeta!}
+        height={height}
+        loading={loading}
+        endpoint={endpoint}
+        baseUrl={baseUrl}
+        page={page}
+        setPage={setPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        totalSize={totalSize}
+        rowCounter={
+          <RemoteRowCounter
+            totalSize={totalSize}
+            filter={filter}
+            loading={loading}
+            {...props}
+          />
+        }
+        displaySource={displaySource}
+        filterVisibility={filterVisibility}
+        setFilterVisibility={setFilterVisibility}
+        sortColumn={sortColumn}
+        sortType={sortType}
+        defaultSort={defaultSort}
+        handleSortColumn={handleSortColumn}
+        zone={zone as IZone}
+        setZone={setZone}
+        filter={filter}
+        onModalSave={onModalSave}
+        noFilter={noFilter}
+        noPagination={noPagination}
+        noSorting={noSorting}
+        noConfigModal={noConfigModal}
+        noDownload={noDownload}
+        rowSelection={rowSelection}
+        actions={convertedActions}
+        configButtons={configButtons}
+        customAttributeSelection={
+          hasHiddenFields === true ? [...Object.keys(fields!)] : undefined
+        }
+      />
+    </>
   );
 }
 

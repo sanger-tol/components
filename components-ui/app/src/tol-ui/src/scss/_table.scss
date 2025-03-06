@@ -115,7 +115,7 @@
     .rs-table-body-row-wrapper .rs-table-cell {
       font-size: 14px;
       color: var(--tol-text);
-      background: (--tol-bg);
+      background: var(--tol-bg);
     }
 
     .rs-table-cell-full-text:hover {
@@ -331,6 +331,63 @@
 
 .tol-selected-row:hover {
   background-color: var(--tol-primary-translucent) !important;
+}
+
+.tol-table-action-modal-btns {
+  display: flex;
+  justify-content: "flex-end" !important;
+  justify-content: flex-end;
+}
+
+.tol-table-action-modal-success-btn {
+  margin-right: 8px !important;
+}
+
+// Action modal export
+
+.tol-table-action-modal-export-item-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0px 5px 10px 0px;
+  max-width: 100%;
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+.tol-table-action-modal-export-item {
+  border: 1px solid var(--tol-grey);
+  margin-right: 10px;
+  margin-bottom: 0;
+  height: 36px;
+  min-width: 90%;
+  border-radius: 5px;
+  justify-content: center;
+  justify-self: center;
+  align-items: center;
+  padding-left: 10px;
+  display: flex;
+}
+
+.tol-table-action-modal-export-item.error {
+  border: 1px solid var(--tol-danger-light) !important;
+}
+
+.tol-table-action-modal-export-item-remove-btn {
+  margin-right: 10px;
+}
+
+.tol-table-action-modal-body-container>p {
+    max-width: 85%;
+  }
+
+
+.tol-table-action-modal-export-item-list-container {
+  max-height: 250px;
+  overflow-y: auto;
+  margin: 10px 0px;
 }
 
 // pagination buttons on smaller devices
