@@ -43,8 +43,8 @@ interface Props {
   basic?: boolean;
   forceUpdate?: boolean;
 
-  zone: object;
-  setZone: any;
+  zone?: object; // required for table filtering
+  setZone?: any;
   onModalSave?: any;
   onPageSizeChange?: any;
   onToggleFilterVisibility?: any;
@@ -226,7 +226,7 @@ function RemoteTable(props: Props) {
             entityMeta,
             fields,
           );
-          if (!fieldMeta) setTableConfigLocalStorage(id, "fieldMeta", fm);
+          if (!fieldMeta && !noConfigModal) setTableConfigLocalStorage(id, "fieldMeta", fm);
           setFieldMeta(fm as FieldMeta);
         }
 
