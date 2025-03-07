@@ -49,7 +49,7 @@ const PopUpMessage = (props: Props) => {
       onClose={onClose}
     />,
     {
-      duration: getDuration(type),
+      duration: getDuration(type)
     },
   );
 };
