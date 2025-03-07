@@ -22,7 +22,7 @@ interface Props {
   menuStyle?: object;
   dropdownButtons?: DropdownButtonProps[] | DropdownButtonProps;
   dropdownMainIcon?: DropdownMainIconProps;
-  globalDisabled?: boolean;
+  disabled?: boolean;
   placement?: string;
   customClass?: string;
   dataUrl?: string;
@@ -95,7 +95,7 @@ function MyBoardsHeader(props: Props) {
     menuStyle = { marginRight: "10px" },
     dropdownButtons = defaultDropdownButtons,
     dropdownMainIcon = defaultDropdownMainIcon,
-    globalDisabled = false,
+    disabled = false,
     placement = "leftStart",
     customClass = "",
   } = props;
@@ -110,7 +110,7 @@ function MyBoardsHeader(props: Props) {
         <DropdownButtons
           mainButtonIcon={dropdownMainIcon}
           placement={placement}
-          globalDisabled={globalDisabled}
+          disabled={disabled}
           dropdownButtons={dropdownButtons}
           menuStyle={menuStyle}
           showMessages={false}
