@@ -6,11 +6,11 @@ SPDX-License-Identifier: MIT
 
 import React from "react";
 import { Message } from "./index";
-import { messageType } from "./Message";
+import { MessageType } from "./Message";
 
 interface Props {
   message: string;
-  status: messageType;
+  status: MessageType;
   bordered?: boolean;
 }
 

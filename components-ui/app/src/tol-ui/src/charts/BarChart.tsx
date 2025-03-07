@@ -26,8 +26,8 @@ import {
   updateOpacitys,
   resetItemClickedData,
   downloadItem,
-} from "./Utils";
-import { isPropDefined, getCssVarValue } from "../general/Utils";
+} from "./utils";
+import { isPropDefined, getCssVarValue } from "../general/utils";
 import { themeListener } from "../hooks/listeners";
 
 ChartJS.register(

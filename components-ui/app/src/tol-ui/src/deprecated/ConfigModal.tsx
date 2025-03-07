@@ -14,8 +14,8 @@ import {
   deleteFieldMetaLocalStorage,
   getSourceColour,
   sortFieldsByRename,
-} from "../table/Utils";
-import { normaliseCaps } from "../general/Utils";
+} from "../table/utils";
+import { normaliseCaps } from "../general/utils";
 
 export interface Props {
   tableId: string;

@@ -17,7 +17,7 @@ import {
   getAttributeSources,
   getFlattenedMetaData,
   getDisplayName,
-} from "../../tol-ui/src/general/Utils";
+} from "../../tol-ui/src/general/utils";
 import { FieldMeta } from "../../tol-ui/src/table/Field";
 
 test("isPropDefined function", () => {

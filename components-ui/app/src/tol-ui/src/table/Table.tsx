@@ -18,7 +18,7 @@ import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import ColumnConfigDrawer from "./ColumnConfigDrawer";
-import { exportTableToSpreadsheet } from "./Utils";
+import { exportTableToSpreadsheet, getAllowedFields } from "./utils";
 import Filter, { IFilter } from "../filtering/Filter";
 import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
@@ -66,8 +66,8 @@ interface Props {
   noDownload?: boolean;
   rowSelection?: boolean;
   actions?: DropdownButtonProps[];
+  actionsFooter?: DropdownButtonProps;
   configButtons?: JSX.Element[];
-  customAttributeSelection?: string[] | undefined;
 }
 
 function Table(props: Props) {
@@ -110,8 +110,8 @@ function Table(props: Props) {
     noDownload,
     rowSelection,
     actions,
+    actionsFooter,
     configButtons,
-    customAttributeSelection,
     /* eslint-enable */
   } = props;
 
@@ -124,6 +124,7 @@ function Table(props: Props) {
 
   // row selection
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  // @ts-ignore - temp turned off
   const [bulkSelect, setBulkSelect] = useState(false);
   let checked = false;
   let indeterminate = false;
@@ -175,24 +176,8 @@ function Table(props: Props) {
   const actionDropDownButtons = actions?.map((button) => ({
     ...button,
     action: () => button.action(selectedRows, filter),
+    disabled: selectedRows.length === 0,
   }));
-
-  const actionButtons = (
-    <div style={{ float: "left" }}>
-      {actions && actions.length > 0 && (
-        <DropdownButtons
-          mainButtonIcon={{
-            icon: "paper-plane",
-            type: "primary",
-            position: "left",
-            disabled: selectedRows.length === 0,
-          }}
-          dropdownButtons={actionDropDownButtons}
-          placement={"rightStart"}
-        />
-      )}
-    </div>
-  );
 
   return (
     <div style={{ height: height }} className="tol-table">
@@ -225,12 +210,12 @@ function Table(props: Props) {
         setOpen={setOpen}
         title={"Add/Remove Table Columns"}
         displaySource={displaySource}
-        customAttributeSelection={customAttributeSelection}
+        customAttributeSelection={getAllowedFields(fieldMeta)}
         onConfigSave={onModalSave}
         {...props}
       />
       <div className="tol-table-bar">
-        {rowSelection && (
+        {/*rowSelection && (
           <>
             <Button
               position="left"
@@ -244,8 +229,23 @@ function Table(props: Props) {
               outline
             />
           </>
-        )}
-        {actionButtons}
+        )*/}
+        <div style={{ float: "left" }}>
+          {actions && actions.length > 0 && (
+            <DropdownButtons
+              mainButtonIcon={{
+                icon: "paper-plane",
+                type: "primary",
+                position: "left",
+                outline: selectedRows.length === 0,
+
+              }}
+              dropdownButtons={actionDropDownButtons}
+              footer={actionsFooter}
+              placement={"rightStart"}
+            />
+          )}
+        </div>
         {!noPagination && fieldMeta.order.active.length > 0 && (
           <>
             {rowCounter ? rowCounter : totalSize}

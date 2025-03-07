@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { Button, Modal, SingleSelect, TsDataSource } from "../..";
 import { FormTextField } from "../../forms";
 import { RSForm } from "../..";
-import { addZone } from "../Utils";
+import { addZone } from "../utils";
 
 interface OrderObject {
   zoneId: string;

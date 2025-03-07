@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { Button, Modal, PopUpMessage } from "..";
 import { Tabs } from "rsuite";
 import { CodeBlock } from 'react-code-blocks';
-import { copyToClipboard } from "./Utils";
+import { copyToClipboard } from "./utils";
 
 
 export interface Props {

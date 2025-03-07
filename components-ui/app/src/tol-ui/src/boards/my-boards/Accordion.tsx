@@ -232,13 +232,13 @@ function Accordion(props: BoardsAccordionProps) {
     viewId?: string,
   ): DropdownButtonProps[] => [
     {
-      dropdownButtonName: "View",
+      name: "View",
       action: () => {
         viewId !== undefined ? goToView(boardId, viewId!) : goToBoard(boardId);
       },
     },
     {
-      dropdownButtonName: "Delete",
+      name: "Delete",
       action: () => {
         handleDelete(boardId);
       },

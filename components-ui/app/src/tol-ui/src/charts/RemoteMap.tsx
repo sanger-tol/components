@@ -8,8 +8,8 @@ import { useState, useEffect } from "react";
 import Map from "./Map";
 import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
-import { generateFilter } from "../filtering/Utils";
-import { createMapMarkers } from "./Utils";
+import { generateFilter } from "../filtering/utils";
+import { createMapMarkers } from "./utils";
 
 interface Props {
   id: string;
