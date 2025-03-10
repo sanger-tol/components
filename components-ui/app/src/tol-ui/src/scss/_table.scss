@@ -310,6 +310,13 @@
   fill: var(--tol-text);
 }
 
+// EntityMetaToolTip
+
+.tol-entity-meta-tool-tip-source {
+  width: fit-content;
+  display: inline;
+}
+
 // config modal
 .clear-saved-config.btn.btn-warning {
   color: white !important;

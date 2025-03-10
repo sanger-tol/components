@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { InfoIcon } from "./Icons";
-import { TsDataSource, FormatTooltip } from "../index";
+import { TsDataSource, FormatTooltip, SourceTag } from "../index";
 import { useEffect, useState } from "react";
 import HoverOverlay from "./HoverOverlay";
 
@@ -23,7 +23,18 @@ function EntityMetaTooltip(props: Props) {
   const ds = new TsDataSource({baseUrl: baseUrl});
   useEffect(() => {
     ds.getEntityMeta().then((meta) => {
-      setEntityMeta(meta.flatAttributes[endpoint][field]);
+      const fieldDetails = meta.flatAttributes[endpoint][field];
+      const atts = {
+        Authorative: fieldDetails.authorative,
+        Available_On_Relationship: fieldDetails.available_on_relationship,
+        Cardinality: fieldDetails.cardinality,
+        Description: fieldDetails.description,
+        Display_Name: fieldDetails.display_name,
+        Python_Type: fieldDetails.python_type,
+        source: <SourceTag source={fieldDetails.source} className="tol-entity-meta-tool-tip-source" />,
+      }
+
+      setEntityMeta(atts);
     });
   }, [field]);
 
