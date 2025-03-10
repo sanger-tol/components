@@ -240,7 +240,8 @@ function RemoteTable(props: Props) {
             entityMeta,
             fields
           );
-          if (!fieldMeta && !noConfigModal) setTableConfigLocalStorage(id, "fieldMeta", fm);
+          if (!fieldMeta && !noConfigModal)
+            setTableConfigLocalStorage(id, "fieldMeta", fm);
           setFieldMeta(fm as FieldMeta);
         }
 
@@ -412,6 +413,7 @@ function RemoteTable(props: Props) {
         idsWithReqNotMet={idsWithReqNotMet}
         completeAction={completeAction}
         currentActionName={currentActionName}
+      />
       <ActionModal
         objectType={endpoint}
         open={actionModalOpen}
@@ -461,19 +463,17 @@ function RemoteTable(props: Props) {
         }
         externalSetSelectedRows={setIdsForExport}
         externalSelectedRows={idsForExport}
-        actions={
-        flowNameStringToActions(
+        actions={flowNameStringToActions(
           ds,
           endpoint,
           setActionModalOpen,
-          actions,
-        )
-      }
-      actionsFooter={{
-        name: "View Actions",
-        action: () => setActionModalOpen(true),
-      }}
-      configButtons={configButtons}
+          actions
+        )}
+        actionsFooter={{
+          name: "View Actions",
+          action: () => setActionModalOpen(true),
+        }}
+        configButtons={configButtons}
       />
     </div>
   );
