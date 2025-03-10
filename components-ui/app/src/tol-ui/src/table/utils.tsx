@@ -21,7 +21,6 @@ import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { EntityMeta } from "../models";
 import { StatusMessage } from "../messaging";
 import { colours } from "../charts/Utils";
-import { TsDataSource } from "../index";
 
 interface Rgb {
   [key: string]: number;
@@ -476,7 +475,7 @@ export function tableDebug(
       console.log("Field Possibilities", fieldPossibilities);
       console.log("Api Response Data", apiData);
       console.log("Field Meta", fieldMeta);
-    } catch (e) {} // eslint-disable-line
+    } catch (e) { } // eslint-disable-line
   }
 }
 

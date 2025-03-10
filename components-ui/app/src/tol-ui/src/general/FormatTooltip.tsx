@@ -4,7 +4,11 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+<<<<<<< HEAD
 import { formatDate, normaliseCaps } from "./utils";
+=======
+import { formatDate } from "./Utils";
+>>>>>>> 586fa264 (Formatting and removing unneeded imports)
 
 const updateContents = (contents: object) => {
   for (const [key, value] of Object.entries(contents)) {

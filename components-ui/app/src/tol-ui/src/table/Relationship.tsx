@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { httpClient } from "../services/http/httpClient";
 import { HoverOverlay, FormatTooltip } from "../general";
-import { Loader, TsDataSource } from "../index";
+import { Loader } from "../index";
 
 export interface Props {
   attribute: string;
@@ -25,7 +25,7 @@ function Relationship(props: Props) {
   const endpoint = "/" + data["type"] + "/" + data["id"];
 
   function mapKeysToDisplayNames(
-    data: any, 
+    data: any,
     displayNames: any
   ): object {
     const result: object = {};
@@ -36,7 +36,7 @@ function Relationship(props: Props) {
         result[key] = data[key]; // Fallback to original key if no display_name exists
       }
     }
-  
+
     return result;
   }
 
