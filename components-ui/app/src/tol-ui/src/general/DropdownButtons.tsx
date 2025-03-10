@@ -12,8 +12,8 @@ import { Dropdown } from "rsuite";
 import { Toaster, Message, Button } from "../index";
 
 export interface DropdownButtonProps {
-  dropdownButtonName: string;
-  dropdownButtonIcon?: string;
+  name: string;
+  icon?: string;
   disabled?: boolean;
   icon?: Element;
   action: (...args: any[]) => void;
@@ -34,9 +34,12 @@ interface Props {
   mainButtonIcon: DropdownMainIconProps;
   placement?: string;
   menuStyle?: object;
-  globalDisabled?: boolean;
-  dropdownButtons: DropdownButtonProps[] | any;
+  disabled?: boolean;
   showMessages?: boolean;
+
+  dropdownButtons: DropdownButtonProps[] | any;
+  header?: DropdownButtonProps | any;
+  footer?: DropdownButtonProps | any;
 }
 
 function DropdownButtons(props: Props) {
@@ -44,9 +47,11 @@ function DropdownButtons(props: Props) {
     mainButtonIcon,
     placement,
     menuStyle,
-    globalDisabled,
-    dropdownButtons,
+    disabled,
     showMessages,
+    dropdownButtons,
+    header,
+    footer,
   } = props;
 
   const toaster = Toaster();
@@ -64,13 +69,13 @@ function DropdownButtons(props: Props) {
   const pushFailure = (actionName: string) =>
     pushMessage(`Action "${actionName}" failed.`, "error");
 
+  // shouldn't do this at this level
   const wrapAction = (action: DropdownButtonProps) => {
-    const name = action.dropdownButtonName;
-    const fn = action.action;
+    const name = action.name;
 
     return async (...args) => {
       try {
-        await fn(...args);
+        await action.action(...args);
         showMessages ?? pushSuccess(name);
       } catch (e: any) {
         showMessages ?? pushFailure(name);
@@ -99,18 +104,44 @@ function DropdownButtons(props: Props) {
       renderToggle={renderButton}
       placement={placement}
       menuStyle={menuStyle}
-      disabled={globalDisabled}
+      disabled={disabled}
     >
+      {header &&
+        <>
+          <Dropdown.Item
+            key="header"
+            onClick={header.action}
+            disabled={header.disabled}
+            icon={header.icon}
+          >
+            {header.name}
+          </Dropdown.Item>
+          <Dropdown.Item divider />
+        </>
+      }
       {dropdownButtons.map((button, index) => (
         <Dropdown.Item
           key={index}
-          onClick={wrapAction(button)}
+          onClick={button.action}
           disabled={button.disabled}
           icon={button.icon}
         >
-          {button.dropdownButtonName}
+          {button.name}
         </Dropdown.Item>
       ))}
+      {footer &&
+        <>
+          <Dropdown.Item divider />
+          <Dropdown.Item
+            key="footer"
+            onClick={footer.action}
+            disabled={footer.disabled}
+            icon={footer.icon}
+          >
+            {footer.name}
+          </Dropdown.Item>
+        </>
+      }
     </Dropdown>
   );
 }

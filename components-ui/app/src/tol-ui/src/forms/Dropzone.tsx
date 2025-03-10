@@ -9,7 +9,7 @@ import { Uploader } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
 import { Loader, httpClient, StatusMessage } from "../index";
-import { messageType } from "../messaging/Message";
+import { MessageType } from "../messaging/Message";
 
 interface WaitingUpload {
   message: string;
@@ -17,7 +17,7 @@ interface WaitingUpload {
 
 interface Message {
   type: string;
-  message: messageType;
+  message: MessageType;
 }
 
 export interface Props {
@@ -130,7 +130,7 @@ function Dropzone(props: Props) {
             return (
               <StatusMessage
                 key={index}
-                status={message.type as messageType}
+                status={message.type as MessageType}
                 message={message.message}
               />
             );

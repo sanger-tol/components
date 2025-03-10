@@ -10,15 +10,16 @@ import {
   Placeholder,
   useEffectUpdate,
   DropdownButtons,
+  PopUpMessage,
+  InfoTooltip,
+  DownloadModal
 } from "../index";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import ColumnConfigDrawer from "./ColumnConfigDrawer";
-import { exportTableToSpreadsheet } from "./Utils";
+import { exportTableToSpreadsheet, getAllowedFields } from "./utils";
 import Filter, { IFilter } from "../filtering/Filter";
-import { InfoTooltip } from "../general";
-import { PopUpMessage } from "../index";
 import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
 import { DropdownButtonProps } from "../general/DropdownButtons";
@@ -34,6 +35,7 @@ interface Props {
 
   endpoint: string;
   baseUrl?: string;
+  source?: string;
 
   page: number;
   setPage: any;
@@ -64,6 +66,7 @@ interface Props {
   noDownload?: boolean;
   rowSelection?: boolean;
   actions?: DropdownButtonProps[];
+  actionsFooter?: DropdownButtonProps;
   configButtons?: JSX.Element[];
   customAttributeSelection?: string[] | undefined;
   externalSetSelectedRows?: any;
@@ -82,6 +85,7 @@ function Table(props: Props) {
 
     endpoint,
     baseUrl,
+    source,
 
     page,
     setPage,
@@ -109,6 +113,7 @@ function Table(props: Props) {
     noDownload,
     rowSelection,
     actions,
+    actionsFooter,
     configButtons,
     customAttributeSelection,
     externalSetSelectedRows,
@@ -118,6 +123,7 @@ function Table(props: Props) {
 
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [downloadOpen, setDownloadOpen] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("!");
   noFilter = !!noFilter;
@@ -126,7 +132,8 @@ function Table(props: Props) {
   const [internalSelectedRows, setInternalSelectedRows] = useState<string[]>([]);
   const selectedRows = externalSelectedRows || internalSelectedRows;
   const setSelectedRows = externalSetSelectedRows || setInternalSelectedRows;
-  
+
+  // @ts-ignore - temp turned off
   const [bulkSelect, setBulkSelect] = useState(false);
   let checked = false;
   let indeterminate = false;
@@ -178,38 +185,46 @@ function Table(props: Props) {
   const actionDropDownButtons = actions?.map((button) => ({
     ...button,
     action: () => button.action(selectedRows, filter),
+    disabled: selectedRows.length === 0,
   }));
-
-  const actionButtons = (
-    <div style={{ float: "left" }}>
-      {actions && actions.length > 0 && (
-        <DropdownButtons
-          mainButtonIcon={{
-            icon: "paper-plane",
-            type: "primary",
-            position: "left",
-            disabled: selectedRows.length === 0,
-          }}
-          dropdownButtons={actionDropDownButtons}
-          placement={"rightStart"}
-        />
-      )}
-    </div>
-  );
 
   return (
     <div style={{ height: height }} className="tol-table">
+      <DownloadModal
+        size="sm"
+        open={downloadOpen}
+        setOpen={setDownloadOpen}
+        objectType={props.zone.type}
+        filter={filter}
+        source={source}
+        fields={fieldMeta.order.active}
+        totalSize={totalSize}
+        action={() =>
+          exportTableToSpreadsheet(
+            endpoint,
+            fieldMeta.data,
+            filter!,
+            sortColumn,
+            sortType,
+            setSuccess,
+            setError,
+            setDownloading,
+            defaultSort,
+            baseUrl,
+          )
+        }
+      />
       <ColumnConfigDrawer
         open={open}
         setOpen={setOpen}
         title={"Add/Remove Table Columns"}
         displaySource={displaySource}
-        customAttributeSelection={customAttributeSelection}
+        customAttributeSelection={getAllowedFields(fieldMeta)}
         onConfigSave={onModalSave}
         {...props}
       />
       <div className="tol-table-bar">
-        {rowSelection && (
+        {/*rowSelection && (
           <>
             <Button
               position="left"
@@ -223,8 +238,23 @@ function Table(props: Props) {
               outline
             />
           </>
-        )}
-        {actionButtons}
+        )*/}
+        <div style={{ float: "left" }}>
+          {actions && actions.length > 0 && (
+            <DropdownButtons
+              mainButtonIcon={{
+                icon: "paper-plane",
+                type: "primary",
+                position: "left",
+                outline: selectedRows.length === 0,
+
+              }}
+              dropdownButtons={actionDropDownButtons}
+              footer={actionsFooter}
+              placement={"rightStart"}
+            />
+          )}
+        </div>
         {!noPagination && fieldMeta.order.active.length > 0 && (
           <>
             {rowCounter ? rowCounter : totalSize}
@@ -297,26 +327,16 @@ function Table(props: Props) {
           <Button
             position="right"
             type="primary"
-            onClick={() =>
-              exportTableToSpreadsheet(
-                endpoint,
-                fieldMeta.data,
-                filter!,
-                sortColumn,
-                sortType,
-                setSuccess,
-                setError,
-                setDownloading,
-                defaultSort,
-                baseUrl,
-              )
+            onClick={() => {
+              setDownloadOpen(!downloadOpen)
             }
-            disabled={totalSize < 1 || totalSize >= 10000 || noFieldsSelected}
+            }
+            disabled={totalSize <= 0 || noFieldsSelected}
             loading={downloading}
             icon="download"
             disabledTooltip={
-              totalSize >= 10000
-                ? "Only 10,000 results can currently be downloaded."
+              totalSize >= 1
+                ? "Must have at least one row to download."
                 : undefined
             }
             outline

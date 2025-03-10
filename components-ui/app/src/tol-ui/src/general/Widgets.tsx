@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Row, Col } from "../index";
-import { getCssVarValue } from "./Utils";
+import { getCssVarValue } from "./utils";
 import { themeListener } from "../hooks/listeners";
 
 interface Component {

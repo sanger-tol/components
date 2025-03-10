@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { IFilter, EntityMeta, Attributes, Relationships } from "../../models";
 import { httpClient } from "./httpClient";
 import retry from "./Retry";
-import { deepCopy } from "../../general/Utils";
+import { deepCopy } from "../../general/utils";
 
 const EXCLUDED_DETAIL_CACHE_OBJECTS = [
   "component",

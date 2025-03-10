@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { StaticMessage } from "./index";
-import { messageType } from "./Message";
+import { MessageType } from "./Message";
 import { toaster } from "rsuite";
 
 interface Props {
-  type: messageType;
+  type: MessageType;
   message: string;
   header?: boolean;
   onClose?: () => void;
@@ -49,7 +49,7 @@ const PopUpMessage = (props: Props) => {
       onClose={onClose}
     />,
     {
-      duration: getDuration(type),
+      duration: getDuration(type)
     },
   );
 };

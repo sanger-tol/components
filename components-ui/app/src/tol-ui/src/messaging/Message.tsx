@@ -6,14 +6,14 @@ SPDX-License-Identifier: MIT
 
 import React from "react";
 import { Message as RSMessage } from "rsuite";
-import { capitaliseFirstLetter } from "../general/Utils";
+import { capitaliseFirstLetter } from "../general/utils";
 
-export type messageType = "success" | "info" | "warning" | "error";
+export type MessageType = "success" | "info" | "warning" | "error";
 
 interface Props {
   children: React.ReactNode;
   showIcon: boolean;
-  type?: messageType;
+  type?: MessageType;
   closable?: boolean;
   header?: React.ReactNode;
   onClose?: () => void;

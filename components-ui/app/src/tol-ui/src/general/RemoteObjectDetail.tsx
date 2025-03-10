@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 import { httpClient } from "../services/http/httpClient";
 import ObjectDetail from "./ObjectDetail";
 import { FieldMetaData } from "../table/Field";
-import { formatDate, normaliseCaps } from "./Utils";
+import { formatDate, normaliseCaps } from "./utils";
 
 interface Props {
   endpoint: string;

@@ -15,7 +15,8 @@ import {
   tableDebug,
   structureFieldMeta,
   getTableConfigLocalStorage,
-} from "./Utils";
+  flowNameStringToActions,
+} from "./utils";
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
@@ -24,16 +25,18 @@ import {
   generateFilter,
   filterHasUpdated,
   resetFiltersBelow,
-} from "../filtering/Utils";
+} from "../filtering/utils";
 import RemoteRowCounter from "./RemoteRowCounter";
 import { DropdownButtonProps } from "../general/DropdownButtons";
 import ActionCheckModal from "./ActionCheckModal";
 import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
+import ActionModal from "./ActionModal";
 
 interface Props {
   id: string;
   endpoint: string;
   baseUrl?: string;
+  source?: string;
   attributeMetadataUrl?: string;
   relationshipsUrl?: string;
 
@@ -43,8 +46,8 @@ interface Props {
   basic?: boolean;
   forceUpdate?: boolean;
 
-  zone: object;
-  setZone: any;
+  zone?: object; // required for table filtering
+  setZone?: any;
   onModalSave?: any;
   onPageSizeChange?: any;
   onToggleFilterVisibility?: any;
@@ -72,6 +75,7 @@ function RemoteTable(props: Props) {
     id,
     endpoint,
     baseUrl,
+    source,
     fields,
     basic,
     forceUpdate,
@@ -134,6 +138,9 @@ function RemoteTable(props: Props) {
   const [idsWithReqNotMet, setIdsWithReqNotMet] = useState<any>({});
   const [currentActionName, setCurrentActionName] = useState<string>("");
   const [itemRequirements, setItemRequirements] = useState<any>({});
+
+  // action modal
+  const [actionModalOpen, setActionModalOpen] = useState<boolean>(false);
 
   const handleSortColumn = (sortColumn: any, sortType: any) => {
     setSortColumn(sortColumn);
@@ -233,7 +240,7 @@ function RemoteTable(props: Props) {
             entityMeta,
             fields
           );
-          if (!fieldMeta) setTableConfigLocalStorage(id, "fieldMeta", fm);
+          if (!fieldMeta && !noConfigModal) setTableConfigLocalStorage(id, "fieldMeta", fm);
           setFieldMeta(fm as FieldMeta);
         }
 
@@ -394,7 +401,7 @@ function RemoteTable(props: Props) {
     : false;
 
   return (
-    <>
+    <div style={{ height: height }}>
       <ActionCheckModal
         showIdExportModal={showIdExportModal}
         setShowIdExportModal={setShowIdExportModal}
@@ -405,6 +412,10 @@ function RemoteTable(props: Props) {
         idsWithReqNotMet={idsWithReqNotMet}
         completeAction={completeAction}
         currentActionName={currentActionName}
+      <ActionModal
+        objectType={endpoint}
+        open={actionModalOpen}
+        setOpen={setActionModalOpen}
       />
       <Table
         id={id}
@@ -414,6 +425,7 @@ function RemoteTable(props: Props) {
         loading={loading}
         endpoint={endpoint}
         baseUrl={baseUrl}
+        source={source}
         page={page}
         setPage={setPage}
         pageSize={pageSize}
@@ -444,15 +456,26 @@ function RemoteTable(props: Props) {
         noConfigModal={noConfigModal}
         noDownload={noDownload}
         rowSelection={rowSelection}
-        actions={convertedActions}
-        configButtons={configButtons}
         customAttributeSelection={
           hasHiddenFields === true ? [...Object.keys(fields!)] : undefined
         }
         externalSetSelectedRows={setIdsForExport}
         externalSelectedRows={idsForExport}
+        actions={
+        flowNameStringToActions(
+          ds,
+          endpoint,
+          setActionModalOpen,
+          actions,
+        )
+      }
+      actionsFooter={{
+        name: "View Actions",
+        action: () => setActionModalOpen(true),
+      }}
+      configButtons={configButtons}
       />
-    </>
+    </div>
   );
 }
 
