@@ -20,9 +20,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { EntityMeta } from "../models";
 import { StatusMessage } from "../messaging";
-import { colours } from "../charts/utils";
-import { DropdownButtonProps } from "../general/DropdownButtons";
-import { TsDataSource } from "src/services";
+import { colours } from "../charts/Utils";
+import { TsDataSource } from "../index";
 
 interface Rgb {
   [key: string]: number;
@@ -70,8 +69,10 @@ function createRelationshipBox(
   data: any,
   baseUrl?: string,
   detail?: boolean,
+  entityMeta?: EntityMeta,
 ) {
   const [relationship, attribute] = key.split(".");
+
 
   // cannot assume some keys exist
   if ("relationships" in data) {
@@ -89,6 +90,7 @@ function createRelationshipBox(
             data={relationData}
             detail={detail}
             baseUrl={baseUrl}
+            entityMeta={entityMeta}
           />
         );
       }
@@ -164,14 +166,15 @@ function createCellRenderer(
   value: any,
   data: object,
   baseUrl?: string,
+  entityMeta?: EntityMeta,
 ) {
   if (cellRenderer === null) return value;
   if (typeof cellRenderer === "string") {
     if (value === null || value === undefined) return "";
     if (cellRenderer === "relationship") {
-      return createRelationshipBox(key, data, baseUrl);
+      return createRelationshipBox(key, data, baseUrl, false, entityMeta);
     } else if (cellRenderer === "relationshipDetail") {
-      return createRelationshipBox(key, data, baseUrl, true);
+      return createRelationshipBox(key, data, baseUrl, true, entityMeta);
     } else if (cellRenderer === "datetime") {
       return createDate(value);
     } else if (cellRenderer === "boolean") {
@@ -242,6 +245,7 @@ function formatAttributeData(
   fieldMetaData: FieldMetaData,
   rowOutput: object,
   baseUrl?: string,
+  entityMeta?: EntityMeta,
 ) {
   const attributes = row["attributes"];
 
@@ -257,6 +261,7 @@ function formatAttributeData(
           value,
           row,
           baseUrl,
+          entityMeta
         );
       } else if (fieldMetaData[key].link !== undefined) {
         rowOutput[key] = createLink(
@@ -304,6 +309,7 @@ export function convertTableData(
   data: any[],
   fieldMeta: FieldMeta,
   baseUrl?: string,
+  entityMeta?: EntityMeta,
 ) {
   if (data[0] === undefined) return [];
   const updatedData: any[] = [];
@@ -315,7 +321,7 @@ export function convertTableData(
     }
     const rowOutput = { id: row.id };
     if ("attributes" in row) {
-      formatAttributeData(row, fieldMeta.data, rowOutput, baseUrl);
+      formatAttributeData(row, fieldMeta.data, rowOutput, baseUrl, entityMeta);
     }
     updatedData.push(rowOutput);
   });

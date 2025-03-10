@@ -35,7 +35,7 @@ function FormatTooltip(props: Props) {
     <div className="tooltip-contents">
       {Object.entries(updateContents(props.contents)).map(([key, value]) => (
         <div className="formatted-tooltip" key={key}>
-          <span className="tooltip-key">{normaliseCaps(key)}:</span>
+          <span className="tooltip-key">{key}:</span>
           <span className="tooltip-value">{value}</span>
         </div>
       ))}

@@ -7,21 +7,38 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { httpClient } from "../services/http/httpClient";
 import { HoverOverlay, FormatTooltip } from "../general";
-import { Loader } from "../index";
+import { Loader, TsDataSource } from "../index";
 
 export interface Props {
   attribute: string;
-  data: string;
+  data: string; // Relationship Data
   detail?: boolean;
   baseUrl?: string;
+  entityMeta?: any;
 }
 
 function Relationship(props: Props) {
-  const { attribute, data, detail, baseUrl } = props;
+  const { attribute, data, detail, baseUrl, entityMeta } = props;
   const [contents, setContents] = useState<JSX.Element | string>(
     <Loader size="sm" />,
   );
   const endpoint = "/" + data["type"] + "/" + data["id"];
+
+  function mapKeysToDisplayNames(
+    data: any, 
+    displayNames: any
+  ): object {
+    const result: object = {};
+    for (const key in data) {
+      if (displayNames[key] && displayNames[key].display_name) {
+        result[displayNames[key].display_name] = data[key];
+      } else {
+        result[key] = data[key]; // Fallback to original key if no display_name exists
+      }
+    }
+  
+    return result;
+  }
 
   const loadRelationship = () => {
     httpClient()
@@ -34,7 +51,9 @@ function Relationship(props: Props) {
           throw Error();
         }
         const apiData = res.data.data;
-        setContents(<FormatTooltip contents={apiData["attributes"]} />);
+        const contentsToDisplay = mapKeysToDisplayNames(apiData["attributes"], entityMeta.flatAttributes[data["type"]]);
+
+        setContents(<FormatTooltip contents={contentsToDisplay} />);
       })
       .catch((error: any) => {
         setContents("Object cannot be found: " + error.message);
