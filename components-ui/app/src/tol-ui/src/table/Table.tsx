@@ -11,7 +11,6 @@ import {
   useEffectUpdate,
   DropdownButtons,
   PopUpMessage,
-  InfoTooltip,
   DownloadModal,
   EntityMetaToolTip
 } from "../index";
