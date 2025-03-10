@@ -113,7 +113,7 @@ function RemoteFilters(props: Props) {
         const attributeMeta =
           entityMeta?.flatAttributes?.[endpoint]?.[attribute];
         const type =
-          attributeMeta?.cardinality < 20 &&
+          attributeMeta?.cardinality < 50 &&
           attributeMeta?.python_type === "str"
             ? "multi"
             : attributeMeta?.python_type;

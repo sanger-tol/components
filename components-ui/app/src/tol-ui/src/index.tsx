@@ -89,6 +89,7 @@ export {
   Header,
   CentreContents,
   InfoTooltip,
+  FormatTooltip,
   Modal,
   Placeholder,
   Widgets,
@@ -107,7 +108,8 @@ export {
   AttributeSelector,
   DropdownButtons,
   DownloadModal,
-  Markdown
+  Markdown,
+  EntityMetaToolTip
 } from "./general";
 
 // hooks

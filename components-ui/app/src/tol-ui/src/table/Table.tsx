@@ -12,7 +12,8 @@ import {
   DropdownButtons,
   PopUpMessage,
   InfoTooltip,
-  DownloadModal
+  DownloadModal,
+  EntityMetaToolTip
 } from "../index";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -420,7 +421,7 @@ function Table(props: Props) {
                   <HeaderCell>
                     {field.description && (
                       <div className="tol-header-info">
-                        <InfoTooltip contents={field.description} />
+                        <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint}/>
                       </div>
                     )}
                     <p className="tol-header-text">{field.rename}</p>
