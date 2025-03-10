@@ -8,6 +8,7 @@ import { useState } from "react";
 import { httpClient } from "../services/http/httpClient";
 import { HoverOverlay, FormatTooltip } from "../general";
 import { Loader } from "../index";
+import { normaliseCaps } from "../general/Utils";
 
 export interface Props {
   attribute: string;
@@ -33,7 +34,7 @@ function Relationship(props: Props) {
       if (displayNames[key] && displayNames[key].display_name) {
         result[displayNames[key].display_name] = data[key];
       } else {
-        result[key] = data[key]; // Fallback to original key if no display_name exists
+        result[normaliseCaps(key)] = data[key]; // Fallback to original key if no display_name exists
       }
     }
 
