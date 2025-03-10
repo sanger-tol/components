@@ -8,7 +8,7 @@ import { useState } from "react";
 import { httpClient } from "../services/http/httpClient";
 import { HoverOverlay, FormatTooltip } from "../general";
 import { Loader } from "../index";
-import { normaliseCaps } from "../general/Utils";
+import { normaliseCaps } from "../general/utils";
 
 export interface Props {
   attribute: string;
