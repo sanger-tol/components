@@ -7,6 +7,12 @@ SPDX-License-Identifier: MIT
 export const BOARD_URL_PREFIX = "board-data";
 export const BOARD_DELETE_URL_PREFIX = "boards";
 
+export enum ApiMethods {
+  GET = "GET",
+  POST = "POST",
+  DELETE = "DELETE",
+}
+
 export enum BoardObjectTypes {
   BOARD = "board",
   VIEW = "view",
@@ -32,3 +38,8 @@ export const BOARD_ENDPOINTS = {
   DELETE_ZONE: `${BOARD_DELETE_URL_PREFIX}/${BoardObjectTypes.ZONE}`,
   DELETE_COMPONENT: `${BOARD_DELETE_URL_PREFIX}/${BoardObjectTypes.COMPONENT}`,
 };
+
+export const ACTION_ENDPOINTS = {
+  GET_ACTION: "action",
+  RUN_ACTION: "run-action",
+}

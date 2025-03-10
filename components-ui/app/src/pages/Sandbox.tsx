@@ -36,7 +36,7 @@ function Sandbox() {
         id="table-example-2"
         height={500}
         {...sample}
-        actions={["Example Action", "Insert into Benchling Tissue Work List"]}
+        actions={["super fun EXPORT", "Insert into Benchling Tissue Work List"]}
         rowSelection
       />
     </div>
