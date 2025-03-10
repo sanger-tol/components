@@ -40,6 +40,6 @@ export const BOARD_ENDPOINTS = {
 };
 
 export const ACTION_ENDPOINTS = {
-  GET_ACTION: "action",
+  GET_ACTIONS: "action",
   RUN_ACTION: "run-action",
 }

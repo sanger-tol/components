@@ -330,7 +330,7 @@ function RemoteTable(props: Props) {
   const checkActionHasExportCriteria = async (
     action_name: string
   ): Promise<object> => {
-    const res = await httpClient().get(`/${ACTION_ENDPOINTS.GET_ACTION}`, {
+    const res = await httpClient().get(`/${ACTION_ENDPOINTS.GET_ACTIONS}`, {
       baseUrl: baseUrl,
       params: {
         filter: {
