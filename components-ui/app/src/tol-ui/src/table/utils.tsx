@@ -655,3 +655,19 @@ export function getAllowedFields(fieldMeta: FieldMeta) {
   if (!hasHiddenFields) return Object.keys(fieldMeta.data);
   return Object.keys(fieldMeta.data).filter((key) => fieldMeta.data[key].hidden || fieldMeta.order.active.includes(key));
 }
+
+export function mapKeysToDisplayNames(
+  data: any,
+  displayNames: any
+): object {
+  const result: object = {};
+  for (const key in data) {
+    if (displayNames[key] && displayNames[key].display_name) {
+      result[displayNames[key].display_name] = data[key];
+    } else {
+      result[normaliseCaps(key)] = data[key]; // Fallback to original key if no display_name exists
+    }
+  }
+
+  return result;
+}

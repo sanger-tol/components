@@ -8,7 +8,7 @@ import { useState } from "react";
 import { httpClient } from "../services/http/httpClient";
 import { HoverOverlay, FormatTooltip } from "../general";
 import { Loader } from "../index";
-import { normaliseCaps } from "../general/utils";
+import { mapKeysToDisplayNames } from "./utils";
 
 export interface Props {
   attribute: string;
@@ -24,22 +24,6 @@ function Relationship(props: Props) {
     <Loader size="sm" />,
   );
   const endpoint = "/" + data["type"] + "/" + data["id"];
-
-  function mapKeysToDisplayNames(
-    data: any,
-    displayNames: any
-  ): object {
-    const result: object = {};
-    for (const key in data) {
-      if (displayNames[key] && displayNames[key].display_name) {
-        result[displayNames[key].display_name] = data[key];
-      } else {
-        result[normaliseCaps(key)] = data[key]; // Fallback to original key if no display_name exists
-      }
-    }
-
-    return result;
-  }
 
   const loadRelationship = () => {
     httpClient()
