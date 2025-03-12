@@ -213,6 +213,14 @@ export function getDisplayName(
   );
 }
 
+export function getDescription(
+  entityMeta: any,
+  endpoint: string,
+  attribute: string,
+) {
+  return entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.description || "";
+}
+
 export function filterBySource(
   source: string,
   selectedSources: string[],

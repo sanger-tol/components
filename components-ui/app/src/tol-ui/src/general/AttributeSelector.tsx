@@ -17,6 +17,7 @@ import {
 import {
   getFlattenedMetaData,
   getDisplayName,
+  getDescription,
   getAttributeSources,
   filterBySource,
   normaliseCaps,
@@ -85,9 +86,10 @@ function AttributeSelector(props: Props) {
 
   const searchBy = (keyword: string, label: any) => {
     const name = getDisplayName(entityMeta, endpoint, label).toLowerCase();
+    const description = getDescription(entityMeta, endpoint, label).toLowerCase();
     const kw = keyword.toLowerCase();
 
-    return name.includes(kw) || label.includes(kw);
+    return name.includes(kw) || label.includes(kw) || description.includes(kw);
   };
 
   const menuItem = (
