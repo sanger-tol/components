@@ -13,6 +13,7 @@ import {
   Icon,
   PopUpMessage,
   SourceTag,
+  EntityMetaToolTip
 } from "../index";
 import {
   getFlattenedMetaData,
@@ -96,7 +97,6 @@ function AttributeSelector(props: Props) {
     source: string,
     key: string,
     authoritative: boolean,
-    description: string,
   ) => {
     const disabled =
       disabledValues && Object.keys(disabledValues).includes(key);
@@ -113,12 +113,10 @@ function AttributeSelector(props: Props) {
                   <InfoTooltip disableMarkdown contents={tooltipContents} />
                 )}
               </span>
-            ) : description ? (
-              <span className="tol-attribute-selector-tooltip">
-                <InfoTooltip disableMarkdown contents={description} />
-              </span>
             ) : (
-              <></>
+              <span className="tol-attribute-selector-tooltip">
+                <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint}/>
+              </span>
             )}
             <div className="tol-attribute-selector-display-key">
               {authoritative === true && <Icon icon="star" />}
@@ -141,7 +139,6 @@ function AttributeSelector(props: Props) {
           metaData["source"],
           label,
           metaData["authoritative"],
-          metaData["description"],
         )}
       </div>
     );
