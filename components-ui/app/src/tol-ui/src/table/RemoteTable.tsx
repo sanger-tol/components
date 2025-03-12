@@ -133,11 +133,10 @@ function RemoteTable(props: Props) {
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  const [showIdExportModal, setShowIdExportModal] = useState<boolean>(false);
+  const [idExportModalOpen, setIdExportModalOpen] = useState<boolean>(false);
   const [idsForExport, setIdsForExport] = useState<string[]>([]);
   const [idsWithReqNotMet, setIdsWithReqNotMet] = useState<any>({});
   const [currentActionName, setCurrentActionName] = useState<string>("");
-  const [itemRequirements, setItemRequirements] = useState<any>({});
 
   // action modal
   const [actionModalOpen, setActionModalOpen] = useState<boolean>(false);
@@ -146,10 +145,6 @@ function RemoteTable(props: Props) {
     setSortColumn(sortColumn);
     setSortType(sortType);
   };
-
-  useEffect(() => {
-    console.log("Item requirements: ", itemRequirements);
-  }, [itemRequirements]);
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
@@ -274,104 +269,6 @@ function RemoteTable(props: Props) {
     return <Placeholder loader height={height} />;
   }
 
-  const checkIdsMeetCriteria = async (
-    ids: string[],
-    itemRequirements: any
-  ): Promise<boolean> => {
-    try {
-      const failedRequirementsMap: Record<string, string[]> = {};
-      if (Object.keys(itemRequirements).length === 0) {
-        return true;
-      }
-
-      for (const [field, conditionStr] of Object.entries(itemRequirements)) {
-        const condition = JSON.parse(
-          (conditionStr as string).replace(/'/g, '"')
-        );
-
-        const filter = {
-          and_: {
-            id: { in_list: { value: ids } },
-            [field]: condition,
-          },
-        };
-
-        const res = await httpClient().get(`/${endpoint}`, {
-          baseUrl: baseUrl,
-          params: { filter: filter },
-        });
-
-        const data = res.data.data;
-        const failedIds = ids.filter(
-          (id) => !data.map((item: any) => item.id).includes(id)
-        );
-
-        if (failedIds.length > 0) {
-          failedRequirementsMap[field] = failedIds;
-        }
-      }
-
-      const allFailingIds = Array.from(
-        new Set(Object.values(failedRequirementsMap).flat())
-      );
-
-      if (allFailingIds.length === 0) {
-        return true;
-      }
-
-      setIdsWithReqNotMet({
-        ...idsWithReqNotMet,
-        _failureDetails: failedRequirementsMap,
-      });
-
-      return false;
-    } catch (error) {
-      console.error(
-        "Error fetching data for checking action requirements",
-        error
-      );
-      setLoading(false);
-      return false;
-    }
-  };
-
-  const checkActionHasExportCriteria = async (
-    action_name: string
-  ): Promise<object> => {
-    const res = await httpClient().get(`/${ACTION_ENDPOINTS.GET_ACTIONS}`, {
-      baseUrl: baseUrl,
-      params: {
-        filter: {
-          and_: {
-            name: { eq: { value: action_name } },
-          },
-        },
-      },
-    });
-    const requirements =
-      res.data.data[0]["attributes"]["params"]["requirements"] || {};
-    return requirements;
-  };
-
-  //@ts-ignore
-  const runAction = async (action_name: string, ids: string[]) => {
-    setLoading(true);
-    setCurrentActionName(action_name);
-    const itemRequirements = await checkActionHasExportCriteria(action_name);
-
-    if (Object.keys(itemRequirements).length === 0) {
-      await completeAction(action_name, ids);
-    } else {
-      const allItemsMeetCriteria = await checkIdsMeetCriteria(
-        ids,
-        itemRequirements
-      );
-      if (!allItemsMeetCriteria) {
-        setShowIdExportModal(true);
-      }
-    }
-  };
-
   const completeAction = async (action_name: string, ids: string[]) => {
     setLoading(true);
     await ds
@@ -381,31 +278,29 @@ function RemoteTable(props: Props) {
         object_type: endpoint,
       })
       .finally(() => {
+        setActionModalOpen(true);
+        setIdsForExport([]);
         setLoading(false);
       });
   };
 
-  const convertStringAction = (name: string): DropdownButtonProps =>
-    ({
-      dropdownButtonName: name,
-      action: (ids: string[]) => runAction(name, ids),
-    }) as DropdownButtonProps;
-
-  const convertAction = (
-    action: string | DropdownButtonProps
-  ): DropdownButtonProps =>
-    typeof action === "string" ? convertStringAction(action) : action;
-
-  const convertedActions = actions?.map(convertAction);
-  const hasHiddenFields = fields
-    ? Object.values(fields).some((field) => field.hidden === true)
-    : false;
+  const convertedActions = flowNameStringToActions(
+    endpoint,
+    setCurrentActionName,
+    setIdExportModalOpen,
+    setIdsWithReqNotMet,
+    setLoading,
+    idsWithReqNotMet,
+    completeAction,
+    baseUrl ?? undefined,
+    actions
+  );
 
   return (
     <div style={{ height: height }}>
       <ActionCheckModal
-        showIdExportModal={showIdExportModal}
-        setShowIdExportModal={setShowIdExportModal}
+        showIdExportModal={idExportModalOpen}
+        setShowIdExportModal={setIdExportModalOpen}
         setLoading={setLoading}
         setIdsForExport={setIdsForExport}
         setIdsWithReqNotMet={setIdsWithReqNotMet}
@@ -458,17 +353,9 @@ function RemoteTable(props: Props) {
         noConfigModal={noConfigModal}
         noDownload={noDownload}
         rowSelection={rowSelection}
-        customAttributeSelection={
-          hasHiddenFields === true ? [...Object.keys(fields!)] : undefined
-        }
         externalSetSelectedRows={setIdsForExport}
         externalSelectedRows={idsForExport}
-        actions={flowNameStringToActions(
-          ds,
-          endpoint,
-          setActionModalOpen,
-          actions
-        )}
+        actions={convertedActions}
         actionsFooter={{
           name: "View Actions",
           action: () => setActionModalOpen(true),

@@ -135,7 +135,7 @@ function ActionCheckModal(props: Props) {
         />
         {failingIdsCount === 0 && (
           <p className="tol-table-actions-modal-ready-indicator">
-            Export Ready
+            Action Ready
           </p>
         )}
       </div>

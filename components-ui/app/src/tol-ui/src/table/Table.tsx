@@ -68,7 +68,6 @@ interface Props {
   actions?: DropdownButtonProps[];
   actionsFooter?: DropdownButtonProps;
   configButtons?: JSX.Element[];
-  customAttributeSelection?: string[] | undefined;
   externalSetSelectedRows?: any;
   externalSelectedRows?: string[];
 }
@@ -115,7 +114,6 @@ function Table(props: Props) {
     actions,
     actionsFooter,
     configButtons,
-    customAttributeSelection,
     externalSetSelectedRows,
     externalSelectedRows,
     /* eslint-enable */

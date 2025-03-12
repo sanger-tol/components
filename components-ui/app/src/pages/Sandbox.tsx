@@ -7,22 +7,6 @@ SPDX-License-Identifier: MIT
 import { RemoteTable, Widgets, useZone } from "../tol-ui/src";
 
 function Sandbox() {
-  const actions = [
-    "auth-required-flow",
-    {
-      dropdownButtonName: "succeed",
-      action: (selectedRows: string[]) => {
-        console.log(selectedRows);
-      },
-    },
-    {
-      dropdownButtonName: "fail... deliberately",
-      action: () => {
-        throw "this is an example error in the console.";
-      },
-    },
-  ];
-
   const sample = useZone({
     endpoint: "sample",
     // baseUrl: env.TOL_DATA,
@@ -36,7 +20,7 @@ function Sandbox() {
         id="table-example-2"
         height={500}
         {...sample}
-        actions={["super fun EXPORT", "Insert into Benchling Tissue Work List"]}
+        actions={["Export With No Requirements", "Export With Requirements"]}
         rowSelection
       />
     </div>

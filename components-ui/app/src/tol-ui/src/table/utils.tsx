@@ -22,7 +22,7 @@ import { EntityMeta } from "../models";
 import { StatusMessage } from "../messaging";
 import { colours } from "../charts/utils";
 import { DropdownButtonProps } from "../general/DropdownButtons";
-import { TsDataSource } from "src/services";
+import { ACTION_ENDPOINTS } from "../constants";
 
 interface Rgb {
   [key: string]: number;
@@ -69,7 +69,7 @@ function createRelationshipBox(
   key: string,
   data: any,
   baseUrl?: string,
-  detail?: boolean,
+  detail?: boolean
 ) {
   const [relationship, attribute] = key.split(".");
 
@@ -163,7 +163,7 @@ function createCellRenderer(
   key: string,
   value: any,
   data: object,
-  baseUrl?: string,
+  baseUrl?: string
 ) {
   if (cellRenderer === null) return value;
   if (typeof cellRenderer === "string") {
@@ -190,7 +190,7 @@ function createCellRenderer(
   const props: object = {};
   if (cellRenderer.propPointers !== undefined) {
     for (const [prop, requiredField] of Object.entries(
-      cellRenderer.propPointers,
+      cellRenderer.propPointers
     )) {
       if (requiredField === "id") {
         props[prop] = data["id"];
@@ -210,7 +210,7 @@ function createCellRenderer(
 function setValueBasedCellRenderer(
   key: string,
   value: any,
-  fieldMetaData: object,
+  fieldMetaData: object
 ) {
   if (fieldMetaData[key].cellRenderer === undefined) {
     if (value !== null && value !== undefined) {
@@ -227,7 +227,7 @@ function setValueBasedCellRenderer(
 
 function addCustomCellRendererData(
   fieldMetaData: FieldMetaData,
-  attributes: any,
+  attributes: any
 ) {
   for (const key of Object.keys(fieldMetaData)) {
     if (fieldMetaData[key].custom) {
@@ -241,7 +241,7 @@ function formatAttributeData(
   row: object,
   fieldMetaData: FieldMetaData,
   rowOutput: object,
-  baseUrl?: string,
+  baseUrl?: string
 ) {
   const attributes = row["attributes"];
 
@@ -256,12 +256,12 @@ function formatAttributeData(
           key,
           value,
           row,
-          baseUrl,
+          baseUrl
         );
       } else if (fieldMetaData[key].link !== undefined) {
         rowOutput[key] = createLink(
           attributes[key],
-          attributes[fieldMetaData[key].link],
+          attributes[fieldMetaData[key].link]
         );
       } else {
         rowOutput[key] = value;
@@ -272,7 +272,7 @@ function formatAttributeData(
 
 function addRelationshipFieldsToAttributes(
   row: object,
-  fieldMetaData: FieldMetaData,
+  fieldMetaData: FieldMetaData
 ) {
   const rowRelationships = row["relationships"];
   const rowAttributes = row["attributes"];
@@ -303,7 +303,7 @@ function addRelationshipFieldsToAttributes(
 export function convertTableData(
   data: any[],
   fieldMeta: FieldMeta,
-  baseUrl?: string,
+  baseUrl?: string
 ) {
   if (data[0] === undefined) return [];
   const updatedData: any[] = [];
@@ -337,7 +337,7 @@ function addDefaultCellRenderer(key: string, type: string) {
 
 function structureFieldMetaViaProp(
   fieldMeta: FieldMeta,
-  fields: FieldMetaData,
+  fields: FieldMetaData
 ) {
   for (const [key, meta] of Object.entries(fields)) {
     // only adding field if it is new or first load
@@ -360,10 +360,10 @@ function addRemoteFilterType(type: string, cardinality: number) {
 function addEntityMetaFields(
   endpoint: string,
   fieldMeta: FieldMeta,
-  entityMeta: EntityMeta,
+  entityMeta: EntityMeta
 ) {
   for (const [key, meta] of Object.entries(
-    entityMeta.flatAttributes[endpoint],
+    entityMeta.flatAttributes[endpoint]
   )) {
     // initialising
     const type = meta["python_type"];
@@ -377,7 +377,7 @@ function addEntityMetaFields(
       fieldMeta.order["inactive"].push(key);
       fieldMeta.data[key] = addFieldDefaults(
         // hides any new (not defined as a prop) fields
-        { isAttribute: !isRelationship(key), hidden: true },
+        { isAttribute: !isRelationship(key), hidden: true }
       );
     }
     // add defaults to fields
@@ -410,7 +410,7 @@ function addDefaultMeta(fieldMeta: FieldMeta) {
     if (fieldMeta.data[key].cellRenderer === undefined) {
       fieldMeta.data[key].cellRenderer = addDefaultCellRenderer(
         key,
-        meta.type!,
+        meta.type!
       );
     }
   }
@@ -422,7 +422,7 @@ export function structureFieldMeta(
   endpoint: string,
   savedFieldMeta?: FieldMeta,
   entityMeta?: EntityMeta,
-  fields?: FieldMetaData,
+  fields?: FieldMetaData
 ) {
   endpoint = endpoint.split("/").pop() as string;
   const fieldMeta = savedFieldMeta || initialiseFieldMeta();
@@ -444,7 +444,7 @@ export function structureFieldMeta(
 export function tableDebug(
   apiData: object,
   fieldMeta: object,
-  debug?: boolean,
+  debug?: boolean
 ) {
   if (debug) {
     try {
@@ -484,11 +484,11 @@ export function createSort(sortColumn: string, sortType: string) {
 export function setTableConfigLocalStorage(
   tableId: string,
   key: string,
-  value: any,
+  value: any
 ) {
   localStorage.setItem(
     `${key}-${tableId}-${tableVersion}`,
-    JSON.stringify(value),
+    JSON.stringify(value)
   );
 }
 
@@ -499,7 +499,7 @@ export function getTableConfigLocalStorage(tableId: string, key: string) {
 
 export function getFieldMetaLocalStorage(
   tableId: string,
-  fields?: FieldMetaData,
+  fields?: FieldMetaData
 ) {
   const data = localStorage.getItem(`fieldMeta-${tableId}-${tableVersion}`);
   if (data) return fieldMetaToCellRenderer(fields || {}, JSON.parse(data));
@@ -512,7 +512,7 @@ export function deleteFieldMetaLocalStorage(tableId: string) {
 
 export function fieldMetaToCellRenderer(
   fields: FieldMetaData,
-  fieldMeta: FieldMeta,
+  fieldMeta: FieldMeta
 ) {
   for (const field in fields) {
     if (fields[field].cellRenderer) {
@@ -532,7 +532,7 @@ export function exportTableToSpreadsheet(
   setError: any,
   setDownloading: any,
   defaultSort?: string,
-  baseUrl?: string,
+  baseUrl?: string
 ) {
   setDownloading(true);
 
@@ -562,7 +562,7 @@ export function exportTableToSpreadsheet(
         params: params,
         baseURL: baseUrl,
         responseType: "blob",
-      },
+      }
     )
     .then((res: any) => {
       // temporary URL for the blob
@@ -610,33 +610,126 @@ export function getSourceColour(sourceName: string) {
 }
 
 export function flowNameStringToActions(
-  ds: TsDataSource,
   objectType: string,
-  setActionModalOpen: (open: boolean) => void,
+  setCurrentActionName: (action_name: string) => void,
+  setIdExportModalOpen: (open: boolean) => void,
+  setIdsWithReqNotMet: (ids: any) => void,
+  setLoading: (loading: boolean) => void,
+  idsWithReqNotMet: string[],
+  completeAction: (action_name: string, ids: string[]) => Promise<void>,
+  baseUrl?: string,
   actions?: (string | DropdownButtonProps)[],
 ) {
-  const runAction = async (action_name: string, ids: string[]) =>
-    await ds.custom("/run-action", "POST", {
-      ids: ids,
-      action_name: action_name,
-      object_type: objectType,
-    }).then(() => {
-      setActionModalOpen(true);
-    }).catch(error => {
-      setActionModalOpen(true);
-      console.error(error);
-    });
 
-  const convertStringAction = (name: string): DropdownButtonProps =>
-    ({
+  const runAction = async (action_name: string, ids: string[]) => {
+    setLoading(true);
+    setCurrentActionName(action_name);
+    const itemRequirements = await checkActionHasExportCriteria(action_name);
+
+    if (Object.keys(itemRequirements).length === 0) {
+      await completeAction(action_name, ids);
+    } else {
+      const allItemsMeetCriteria = await checkIdsMeetCriteria(
+        ids,
+        itemRequirements
+      );
+      if (!allItemsMeetCriteria) {
+        setIdExportModalOpen(true);
+      }
+    }
+  };
+
+  const checkActionHasExportCriteria = async (
+    action_name: string
+  ): Promise<object> => {
+    const res = await httpClient().get(`/${ACTION_ENDPOINTS.GET_ACTIONS}`, {
+      baseUrl: baseUrl,
+      params: {
+        filter: {
+          and_: {
+            name: { eq: { value: action_name } },
+          },
+        },
+      },
+    });
+    const requirements =
+      res.data.data[0]["attributes"]["params"]["requirements"] || {};
+    return requirements;
+  };
+
+  const checkIdsMeetCriteria = async (
+    ids: string[],
+    itemRequirements: any
+  ): Promise<boolean> => {
+    try {
+      const failedRequirementsMap: Record<string, string[]> = {};
+      if (Object.keys(itemRequirements).length === 0) {
+        return true;
+      }
+
+      for (const [field, conditionStr] of Object.entries(itemRequirements)) {
+        const condition = JSON.parse(
+          (conditionStr as string).replace(/'/g, '"')
+        );
+
+        const filter = {
+          and_: {
+            id: { in_list: { value: ids } },
+            [field]: condition,
+          },
+        };
+
+        const res = await httpClient().get(`/${objectType}`, {
+          baseUrl: baseUrl,
+          params: { filter: filter },
+        });
+
+        const data = res.data.data;
+        const failedIds = ids.filter(
+          (id) => !data.map((item: any) => item.id).includes(id)
+        );
+
+        if (failedIds.length > 0) {
+          failedRequirementsMap[field] = failedIds;
+        }
+      }
+
+      const allFailingIds = Array.from(
+        new Set(Object.values(failedRequirementsMap).flat())
+      );
+
+      if (allFailingIds.length === 0) {
+        return true;
+      }
+
+      setIdsWithReqNotMet({
+        ...idsWithReqNotMet,
+        _failureDetails: failedRequirementsMap,
+      });
+
+      return false;
+    } catch (error) {
+      console.error(
+        "Error fetching data for checking action requirements",
+        error
+      );
+      setLoading(false);
+      return false;
+    }
+  };
+
+  const convertStringAction = (name: string): DropdownButtonProps => {
+    return {
       name: name,
       action: (ids: string[]) => runAction(name, ids),
-    }) as DropdownButtonProps;
+    } as DropdownButtonProps;
+  };
 
   const convertAction = (
-    action: string | DropdownButtonProps,
-  ): DropdownButtonProps =>
-    typeof action === "string" ? convertStringAction(action) : action;
+    action: string | DropdownButtonProps
+  ): DropdownButtonProps => {
+    return typeof action === "string" ? convertStringAction(action) : action;
+  };
 
   return actions?.map(convertAction);
 }
@@ -646,7 +739,11 @@ if no fields are hidden, return all keys
 if any fields are hidden, return only the fieldMeta.order.active columns and those that are marked hidden
 */
 export function getAllowedFields(fieldMeta: FieldMeta) {
-  const hasHiddenFields = Object.values(fieldMeta.data).some((field) => field.hidden === true);
+  const hasHiddenFields = Object.values(fieldMeta.data).some(
+    (field) => field.hidden === true
+  );
   if (!hasHiddenFields) return Object.keys(fieldMeta.data);
-  return Object.keys(fieldMeta.data).filter((key) => fieldMeta.data[key].hidden || fieldMeta.order.active.includes(key));
+  return Object.keys(fieldMeta.data).filter(
+    (key) => fieldMeta.data[key].hidden || fieldMeta.order.active.includes(key)
+  );
 }
