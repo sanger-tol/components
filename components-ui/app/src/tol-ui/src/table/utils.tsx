@@ -21,6 +21,8 @@ import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { EntityMeta } from "../models";
 import { StatusMessage } from "../messaging";
 import { colours } from "../charts/Utils";
+import { DropdownButtonProps } from "../general/DropdownButtons";
+import { TsDataSource } from "../services";
 
 interface Rgb {
   [key: string]: number;
