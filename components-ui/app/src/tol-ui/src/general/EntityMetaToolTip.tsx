@@ -4,11 +4,8 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { InfoIcon } from "./Icons";
-import { TsDataSource, FormatTooltip, SourceTag } from "../index";
+import { TsDataSource, FormatTooltip, SourceTag, InfoTooltip } from "../index";
 import { useEffect, useState } from "react";
-import HoverOverlay from "./HoverOverlay";
-
 
 export interface Props {
   baseUrl?: string;
@@ -18,38 +15,35 @@ export interface Props {
 
 function EntityMetaTooltip(props: Props) {
   const { baseUrl, field, endpoint } = props;
-  const [entityMeta, setEntityMeta] = useState<object>({});
+  const [attributeDeatils, setAttributeDetails] = useState<object>({});
 
   const ds = new TsDataSource({baseUrl: baseUrl});
   useEffect(() => {
     ds.getEntityMeta().then((meta) => {
-      const fieldDetails = meta.flatAttributes[endpoint][field];
-      if (fieldDetails) {
+      const attribute = meta.flatAttributes[endpoint][field];
+      if (attribute) {
         const atts = {
-          Authorative: fieldDetails.authorative,
-          Available_On_Relationship: fieldDetails.available_on_relationship,
-          Cardinality: fieldDetails.cardinality,
-          Description: fieldDetails.description,
-          Display_Name: fieldDetails.display_name,
-          Python_Type: fieldDetails.python_type,
-          source: <SourceTag source={fieldDetails.source} className="tol-entity-meta-tool-tip-source" />,
+          Authorative: attribute.authorative,
+          Available_On_Relationship: attribute.available_on_relationship,
+          Cardinality: attribute.cardinality,
+          Description: attribute.description,
+          Display_Name: attribute.display_name,
+          Python_Type: attribute.python_type,
+          source: <SourceTag source={attribute.source} className="tol-entity-meta-tool-tip-source" />,
         }
-        setEntityMeta(atts);
+        setAttributeDetails(atts);
       }
     });
   }, [field]);
 
-  const formatted = <FormatTooltip contents={entityMeta} />;
+  const tooltip = <FormatTooltip contents={attributeDeatils} />;
 
+  if (Object.keys(attributeDeatils).length === 0) {
+    return <></>;
+  }
   return (
-    Object.keys(entityMeta).length !== 0 ? (
-      <HoverOverlay placement="auto" contents={formatted} delay={250}>
-        <div className="tooltip-wrapper">
-          <InfoIcon />
-        </div>
-      </HoverOverlay>
-    ) : null
-  );
+    <InfoTooltip contents={tooltip} />
+  )
 }
 
 export default EntityMetaTooltip;
