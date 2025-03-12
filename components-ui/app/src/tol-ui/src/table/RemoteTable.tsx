@@ -236,7 +236,7 @@ function RemoteTable(props: Props) {
         tableDebug(apiData, fm!, debug);
 
         // setting data using fieldMeta
-        setData(convertTableData(apiData, fm as FieldMeta, baseUrl));
+        setData(convertTableData(apiData, fm as FieldMeta, baseUrl, entityMeta));
         setLoading(false);
         setInitialLoad(false);
       })
