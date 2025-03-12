@@ -135,8 +135,9 @@ function ColumnConfigDrawer(props: Props) {
         <div>
           <span>
             <p className={"tol-config-drawer-selected-column-name"}>
-              {rename} <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr}/>
-              </p>
+              <div style={{display:'inline', paddingRight:'5px'}}>{rename}</div> 
+              <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr}/>
+            </p>
           </span>
           <p className={"tol-config-drawer-selected-column-key"}>{attr}</p>
         </div>
