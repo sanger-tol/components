@@ -12,7 +12,7 @@ import Filter from "./Filter";
 import { IFilter } from "../models";
 import { Button, useEffectUpdate } from "..";
 import { AttributeSelector, Icon } from "../general";
-import { getDisplayName } from "../general/utils";
+import { getAttributeDetail } from "../general/utils";
 
 export interface Props {
   filters?: IFilter;
@@ -120,7 +120,7 @@ function RemoteFilters(props: Props) {
 
         return (
           <div className="tol-filters" key={attribute}>
-            {`${getDisplayName(entityMeta, endpoint, attribute)}:`}
+            {`${getAttributeDetail(entityMeta, endpoint, attribute, 'display_name')}:`}
             <div className="filter">
               <Filter
                 key={`filter-${attribute}`}

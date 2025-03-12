@@ -16,7 +16,7 @@ import {
   getSourceData,
   getAttributeSources,
   getFlattenedMetaData,
-  getDisplayName,
+  getAttributeDetail,
 } from "../../tol-ui/src/general/utils";
 import { FieldMeta } from "../../tol-ui/src/table/Field";
 
@@ -155,7 +155,7 @@ test("getFlattenedMetaData function", () => {
   expect(getFlattenedMetaData(entityMeta, "endpoint2")).toBeUndefined();
 });
 
-test("getDisplayName function", () => {
+test("getAttributeDetail function", () => {
   const entityMeta = {
     flatAttributes: {
       endpoint1: {
@@ -164,12 +164,12 @@ test("getDisplayName function", () => {
       },
     },
   };
-  expect(getDisplayName(entityMeta, "endpoint1", "attr1")).toBe(
+  expect(getAttributeDetail(entityMeta, "endpoint1", "attr1", 'display_name')).toBe(
     "Display Name 1",
   );
-  expect(getDisplayName(entityMeta, "endpoint1", "attr2")).toBe(
+  expect(getAttributeDetail(entityMeta, "endpoint1", "attr2", 'display_name')).toBe(
     "Display Name 2",
   );
-  expect(getDisplayName(entityMeta, "endpoint1", "attr3")).toBe("Attr3");
-  expect(getDisplayName(entityMeta, "endpoint2", "attr1")).toBe("Attr1");
+  expect(getAttributeDetail(entityMeta, "endpoint1", "attr3", 'display_name')).toBe("Attr3");
+  expect(getAttributeDetail(entityMeta, "endpoint2", "attr1", 'display_name')).toBe("Attr1");
 });
