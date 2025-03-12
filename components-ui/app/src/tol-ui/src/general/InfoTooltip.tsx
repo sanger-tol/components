@@ -7,9 +7,10 @@ SPDX-License-Identifier: MIT
 import { InfoIcon } from "./Icons";
 import HoverOverlay from "./HoverOverlay";
 import Markdown from "./Markdown";
+import { ReactNode } from "react";
 
 export interface Props {
-  contents: string | JSX.Element;
+  contents: ReactNode;
   disableMarkdown?: boolean;
 }
 
