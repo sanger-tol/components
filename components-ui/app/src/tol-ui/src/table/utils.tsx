@@ -615,46 +615,63 @@ export function flowNameStringToActions(
   setIdExportModalOpen: (open: boolean) => void,
   setIdsWithReqNotMet: (ids: any) => void,
   setLoading: (loading: boolean) => void,
-  idsWithReqNotMet: string[],
+  idsWithReqNotMet: object,
   completeAction: (action_name: string, ids: string[]) => Promise<void>,
-  baseUrl?: string,
-  actions?: (string | DropdownButtonProps)[],
+  actions: (string | DropdownButtonProps)[] = [],
+  baseUrl?: string
 ) {
-
   const runAction = async (action_name: string, ids: string[]) => {
     setLoading(true);
-    setCurrentActionName(action_name);
-    const itemRequirements = await checkActionHasExportCriteria(action_name);
+    try {
+      setCurrentActionName(action_name);
+      const itemRequirements = await checkActionHasExportCriteria(action_name);
 
-    if (Object.keys(itemRequirements).length === 0) {
-      await completeAction(action_name, ids);
-    } else {
-      const allItemsMeetCriteria = await checkIdsMeetCriteria(
-        ids,
-        itemRequirements
-      );
-      if (!allItemsMeetCriteria) {
-        setIdExportModalOpen(true);
+      if (Object.keys(itemRequirements).length === 0) {
+        await completeAction(action_name, ids);
+      } else {
+        const allItemsMeetCriteria = await checkIdsMeetCriteria(
+          ids,
+          itemRequirements
+        );
+        if (!allItemsMeetCriteria) {
+          setIdExportModalOpen(true);
+        } else {
+          await completeAction(action_name, ids);
+        }
       }
+    } catch (error) {
+      console.error("Error running action", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const checkActionHasExportCriteria = async (
     action_name: string
   ): Promise<object> => {
-    const res = await httpClient().get(`/${ACTION_ENDPOINTS.GET_ACTIONS}`, {
-      baseUrl: baseUrl,
-      params: {
-        filter: {
-          and_: {
-            name: { eq: { value: action_name } },
+    try {
+      const res = await httpClient().get(`/${ACTION_ENDPOINTS.GET_ACTIONS}`, {
+        baseURL: baseUrl,
+        params: {
+          filter: {
+            and_: {
+              name: { eq: { value: action_name } },
+            },
           },
         },
-      },
-    });
-    const requirements =
-      res.data.data[0]["attributes"]["params"]["requirements"] || {};
-    return requirements;
+      });
+      const requirements =
+      // @ts-ignore
+        res.data.data[0]["attributes"]["params"]["requirements"] || {};
+      return requirements;
+    } catch (error) {
+      console.error(
+        "Error fetching data for checking action requirements",
+        error
+      );
+      setLoading(false);
+      return {};
+    }
   };
 
   const checkIdsMeetCriteria = async (
@@ -680,10 +697,11 @@ export function flowNameStringToActions(
         };
 
         const res = await httpClient().get(`/${objectType}`, {
-          baseUrl: baseUrl,
+          baseURL: baseUrl,
           params: { filter: filter },
         });
 
+        //@ts-ignore
         const data = res.data.data;
         const failedIds = ids.filter(
           (id) => !data.map((item: any) => item.id).includes(id)

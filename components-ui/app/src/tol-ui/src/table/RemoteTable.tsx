@@ -292,8 +292,8 @@ function RemoteTable(props: Props) {
     setLoading,
     idsWithReqNotMet,
     completeAction,
-    baseUrl ?? undefined,
-    actions
+    actions,
+    baseUrl ?? undefined
   );
 
   return (
