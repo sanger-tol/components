@@ -68,7 +68,6 @@ function Zone(props: Props) {
 
   useEffect(() => {
     getComponents(id, ds).then((components: any) => {
-      setCurrentWidgets(components);
       // sort the widgets based on the order value
       const sortedWidgets = components.sort((a, b) => a.order - b.order);
       sortedWidgets.forEach((widget) => {
@@ -83,6 +82,7 @@ function Zone(props: Props) {
         z.zone.order.push(widget.componentId);
       });
       z.setZone({ ...z.zone });
+      setCurrentWidgets(components);
     });
   }, []);
 
