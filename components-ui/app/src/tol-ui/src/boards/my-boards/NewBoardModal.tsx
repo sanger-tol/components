@@ -86,7 +86,7 @@ function NewBoardModal(props: Props) {
       <Modal
         setOpen={setOpen}
         open={open}
-        size={"xs"}
+        size="xs"
         children={body}
         closeButton={false}
         header={header}

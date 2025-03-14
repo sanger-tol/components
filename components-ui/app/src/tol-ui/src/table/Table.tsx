@@ -68,6 +68,8 @@ interface Props {
   actions?: DropdownButtonProps[];
   actionsFooter?: DropdownButtonProps;
   configButtons?: JSX.Element[];
+  externalSetSelectedRows?: any;
+  externalSelectedRows?: string[];
 }
 
 function Table(props: Props) {
@@ -112,6 +114,8 @@ function Table(props: Props) {
     actions,
     actionsFooter,
     configButtons,
+    externalSetSelectedRows,
+    externalSelectedRows,
     /* eslint-enable */
   } = props;
 
@@ -123,7 +127,10 @@ function Table(props: Props) {
   noFilter = !!noFilter;
 
   // row selection
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [internalSelectedRows, setInternalSelectedRows] = useState<string[]>([]);
+  const selectedRows = externalSelectedRows || internalSelectedRows;
+  const setSelectedRows = externalSetSelectedRows || setInternalSelectedRows;
+
   // @ts-ignore - temp turned off
   const [bulkSelect, setBulkSelect] = useState(false);
   let checked = false;
@@ -141,7 +148,7 @@ function Table(props: Props) {
   // @ts-ignore
   const handleCheckAll = (value: any, checked: boolean) => {
     const keys = checked ? data.map((item) => item.id) : [];
-    setSelectedRows(keys);
+    setSelectedRows && setSelectedRows(keys);
   };
 
   const handleCheck = (value: any, checked: boolean) => {

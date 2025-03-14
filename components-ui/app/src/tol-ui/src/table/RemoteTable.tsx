@@ -28,6 +28,8 @@ import {
 } from "../filtering/utils";
 import RemoteRowCounter from "./RemoteRowCounter";
 import { DropdownButtonProps } from "../general/DropdownButtons";
+import ActionCheckModal from "./ActionCheckModal";
+import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
 import ActionModal from "./ActionModal";
 
 interface Props {
@@ -99,7 +101,7 @@ function RemoteTable(props: Props) {
   // data and field information
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(
-    props.fieldMeta,
+    props.fieldMeta
   );
 
   // pagination
@@ -130,6 +132,11 @@ function RemoteTable(props: Props) {
   const [loading, setLoading] = useState<boolean>(true);
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
+
+  const [idExportModalOpen, setIdExportModalOpen] = useState<boolean>(false);
+  const [idsForExport, setIdsForExport] = useState<string[]>([]);
+  const [idsWithReqNotMet, setIdsWithReqNotMet] = useState<any>({});
+  const [currentActionName, setCurrentActionName] = useState<string>("");
 
   // action modal
   const [actionModalOpen, setActionModalOpen] = useState<boolean>(false);
@@ -226,9 +233,10 @@ function RemoteTable(props: Props) {
             endpoint,
             fieldMeta ?? getFieldMetaLocalStorage(id, fields),
             entityMeta,
-            fields,
+            fields
           );
-          if (!fieldMeta && !noConfigModal) setTableConfigLocalStorage(id, "fieldMeta", fm);
+          if (!fieldMeta && !noConfigModal)
+            setTableConfigLocalStorage(id, "fieldMeta", fm);
           setFieldMeta(fm as FieldMeta);
         }
 
@@ -248,7 +256,7 @@ function RemoteTable(props: Props) {
         console.warn(error);
         console.warn("Please ensure the db has been restored");
         console.warn(
-          "Please ensure the 'endpoint' prop is correct and pluralised",
+          "Please ensure the 'endpoint' prop is correct and pluralised"
         );
       });
   };
@@ -261,8 +269,46 @@ function RemoteTable(props: Props) {
     return <Placeholder loader height={height} />;
   }
 
+  const completeAction = async (action_name: string, ids: string[]) => {
+    setLoading(true);
+    await ds
+      .custom(`/${ACTION_ENDPOINTS.RUN_ACTION}`, ApiMethods.POST as string, {
+        ids: ids,
+        action_name: action_name,
+        object_type: endpoint,
+      })
+      .finally(() => {
+        setActionModalOpen(true);
+        setIdsForExport([]);
+        setLoading(false);
+      });
+  };
+
+  const convertedActions = flowNameStringToActions(
+    endpoint,
+    setCurrentActionName,
+    setIdExportModalOpen,
+    setIdsWithReqNotMet,
+    setLoading,
+    idsWithReqNotMet,
+    completeAction,
+    actions,
+    baseUrl ?? undefined
+  );
+
   return (
     <div style={{ height: height }}>
+      <ActionCheckModal
+        showIdExportModal={idExportModalOpen}
+        setShowIdExportModal={setIdExportModalOpen}
+        setLoading={setLoading}
+        setIdsForExport={setIdsForExport}
+        setIdsWithReqNotMet={setIdsWithReqNotMet}
+        idsForExport={idsForExport}
+        idsWithReqNotMet={idsWithReqNotMet}
+        completeAction={completeAction}
+        currentActionName={currentActionName}
+      />
       <ActionModal
         objectType={endpoint}
         open={actionModalOpen}
@@ -307,14 +353,9 @@ function RemoteTable(props: Props) {
         noConfigModal={noConfigModal}
         noDownload={noDownload}
         rowSelection={rowSelection}
-        actions={
-          flowNameStringToActions(
-            ds,
-            endpoint,
-            setActionModalOpen,
-            actions,
-          )
-        }
+        externalSetSelectedRows={setIdsForExport}
+        externalSelectedRows={idsForExport}
+        actions={convertedActions}
         actionsFooter={{
           name: "View Actions",
           action: () => setActionModalOpen(true),
