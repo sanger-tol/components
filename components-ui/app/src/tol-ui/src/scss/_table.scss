@@ -310,6 +310,13 @@
   fill: var(--tol-text);
 }
 
+// EntityMetaToolTip
+
+.tol-entity-meta-tool-tip-source {
+  width: fit-content;
+  display: inline;
+}
+
 // config modal
 .clear-saved-config.btn.btn-warning {
   color: white !important;
@@ -321,16 +328,12 @@
 }
 
 // row selection
-.tol-selected-row {
-  background-color: var(--tol-primary-translucent);
+.tol-selected-row .rs-table-cell {
+  background-color: var(--tol-primary-translucent) !important;
 }
 
 .tol-selected-row.disabled {
   filter: grayscale(100%);
-}
-
-.tol-selected-row:hover {
-  background-color: var(--tol-primary-translucent) !important;
 }
 
 // Download modal

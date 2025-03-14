@@ -55,7 +55,7 @@ tol data \
 --source=${sourceToUse || 'portal'} \
 --operation=list \
 --type=${objectType} \
---filter='${stringifyFilter(filter) || '{"and":{}}'}' \
+--filter='${JSON.stringify(filter) || '{"and":{}}'}' \
 --fields=${fields.join(',')} \
 --output=tsv 
   `

@@ -202,15 +202,31 @@ export function getFlattenedMetaData(
     : entityMeta?.flatAttributes?.[endpoint];
 }
 
-export function getDisplayName(
+export function getAttributeDetail(
   entityMeta: any,
   endpoint: string,
   attribute: string,
+  detail: string,
 ) {
-  return (
-    entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.display_name ||
-    normaliseCaps(attribute)
-  );
+  switch (detail) {
+    case "display_name":
+      return (
+        entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.display_name ||
+        normaliseCaps(attribute)
+      );
+    case "description":
+      return entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.description || "";
+    case "source":
+      return entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.source || "";
+    case "python_type":
+      return entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.python_type || "";
+    case "authoritative":
+      return entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.authoritative;
+    
+    
+  }
+
+  return entityMeta?.flatAttributes?.[endpoint]?.[attribute] || {};
 }
 
 export function filterBySource(

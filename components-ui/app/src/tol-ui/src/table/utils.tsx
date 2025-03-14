@@ -22,7 +22,7 @@ import { EntityMeta } from "../models";
 import { StatusMessage } from "../messaging";
 import { colours } from "../charts/utils";
 import { DropdownButtonProps } from "../general/DropdownButtons";
-import { TsDataSource } from "src/services";
+import { TsDataSource } from "../services";
 
 interface Rgb {
   [key: string]: number;
@@ -70,8 +70,10 @@ function createRelationshipBox(
   data: any,
   baseUrl?: string,
   detail?: boolean,
+  entityMeta?: EntityMeta,
 ) {
   const [relationship, attribute] = key.split(".");
+
 
   // cannot assume some keys exist
   if ("relationships" in data) {
@@ -89,6 +91,7 @@ function createRelationshipBox(
             data={relationData}
             detail={detail}
             baseUrl={baseUrl}
+            entityMeta={entityMeta}
           />
         );
       }
@@ -164,14 +167,15 @@ function createCellRenderer(
   value: any,
   data: object,
   baseUrl?: string,
+  entityMeta?: EntityMeta,
 ) {
   if (cellRenderer === null) return value;
   if (typeof cellRenderer === "string") {
     if (value === null || value === undefined) return "";
     if (cellRenderer === "relationship") {
-      return createRelationshipBox(key, data, baseUrl);
+      return createRelationshipBox(key, data, baseUrl, false, entityMeta);
     } else if (cellRenderer === "relationshipDetail") {
-      return createRelationshipBox(key, data, baseUrl, true);
+      return createRelationshipBox(key, data, baseUrl, true, entityMeta);
     } else if (cellRenderer === "datetime") {
       return createDate(value);
     } else if (cellRenderer === "boolean") {
@@ -242,6 +246,7 @@ function formatAttributeData(
   fieldMetaData: FieldMetaData,
   rowOutput: object,
   baseUrl?: string,
+  entityMeta?: EntityMeta,
 ) {
   const attributes = row["attributes"];
 
@@ -257,6 +262,7 @@ function formatAttributeData(
           value,
           row,
           baseUrl,
+          entityMeta
         );
       } else if (fieldMetaData[key].link !== undefined) {
         rowOutput[key] = createLink(
@@ -304,6 +310,7 @@ export function convertTableData(
   data: any[],
   fieldMeta: FieldMeta,
   baseUrl?: string,
+  entityMeta?: EntityMeta,
 ) {
   if (data[0] === undefined) return [];
   const updatedData: any[] = [];
@@ -315,7 +322,7 @@ export function convertTableData(
     }
     const rowOutput = { id: row.id };
     if ("attributes" in row) {
-      formatAttributeData(row, fieldMeta.data, rowOutput, baseUrl);
+      formatAttributeData(row, fieldMeta.data, rowOutput, baseUrl, entityMeta);
     }
     updatedData.push(rowOutput);
   });
@@ -470,7 +477,7 @@ export function tableDebug(
       console.log("Field Possibilities", fieldPossibilities);
       console.log("Api Response Data", apiData);
       console.log("Field Meta", fieldMeta);
-    } catch (e) {} // eslint-disable-line
+    } catch (e) { } // eslint-disable-line
   }
 }
 
@@ -649,4 +656,20 @@ export function getAllowedFields(fieldMeta: FieldMeta) {
   const hasHiddenFields = Object.values(fieldMeta.data).some((field) => field.hidden === true);
   if (!hasHiddenFields) return Object.keys(fieldMeta.data);
   return Object.keys(fieldMeta.data).filter((key) => fieldMeta.data[key].hidden || fieldMeta.order.active.includes(key));
+}
+
+export function mapKeysToDisplayNames(
+  data: any,
+  displayNames: any
+): object {
+  const result: object = {};
+  for (const key in data) {
+    if (displayNames[key] && displayNames[key].display_name) {
+      result[displayNames[key].display_name] = data[key];
+    } else {
+      result[normaliseCaps(key)] = data[key]; // Fallback to original key if no display_name exists
+    }
+  }
+
+  return result;
 }

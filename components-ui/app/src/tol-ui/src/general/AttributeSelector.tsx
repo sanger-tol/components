@@ -13,10 +13,11 @@ import {
   Icon,
   PopUpMessage,
   SourceTag,
+  EntityMetaToolTip
 } from "../index";
 import {
   getFlattenedMetaData,
-  getDisplayName,
+  getAttributeDetail,
   getAttributeSources,
   filterBySource,
   normaliseCaps,
@@ -84,10 +85,11 @@ function AttributeSelector(props: Props) {
   }, []);
 
   const searchBy = (keyword: string, label: any) => {
-    const name = getDisplayName(entityMeta, endpoint, label).toLowerCase();
+    const name = getAttributeDetail(entityMeta, endpoint, label, 'display_name').toLowerCase();
+    const description = getAttributeDetail(entityMeta, endpoint, label, 'description').toLowerCase();
     const kw = keyword.toLowerCase();
 
-    return name.includes(kw) || label.includes(kw);
+    return name.includes(kw) || label.includes(kw) || description.includes(kw);
   };
 
   const menuItem = (
@@ -95,7 +97,6 @@ function AttributeSelector(props: Props) {
     source: string,
     key: string,
     authoritative: boolean,
-    description: string,
   ) => {
     const disabled =
       disabledValues && Object.keys(disabledValues).includes(key);
@@ -112,12 +113,10 @@ function AttributeSelector(props: Props) {
                   <InfoTooltip disableMarkdown contents={tooltipContents} />
                 )}
               </span>
-            ) : description ? (
-              <span className="tol-attribute-selector-tooltip">
-                <InfoTooltip disableMarkdown contents={description} />
-              </span>
             ) : (
-              <></>
+              <span className="tol-attribute-selector-tooltip">
+                <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint}/>
+              </span>
             )}
             <div className="tol-attribute-selector-display-key">
               {authoritative === true && <Icon icon="star" />}
@@ -140,7 +139,6 @@ function AttributeSelector(props: Props) {
           metaData["source"],
           label,
           metaData["authoritative"],
-          metaData["description"],
         )}
       </div>
     );
