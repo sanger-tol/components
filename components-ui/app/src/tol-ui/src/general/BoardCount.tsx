@@ -34,7 +34,7 @@ function BoardCount(props: Props) {
   };
 
   const filterButtons = [
-    <span key="board-table-filter">
+    <span className='board-count-filters' key="board-table-filter">
       <Button
         outline
         position="right"

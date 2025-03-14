@@ -4,6 +4,11 @@
  * SPDX-License-Identifier: MIT
  */
 
+.board-count-filters {
+  position: relative;
+  z-index: 100;
+}
+
 .tol-count {
   text-align: center;
   height: 100%;
