@@ -115,7 +115,7 @@
     .rs-table-body-row-wrapper .rs-table-cell {
       font-size: 14px;
       color: var(--tol-text);
-      background: (--tol-bg);
+      background: var(--tol-bg);
     }
 
     .rs-table-cell-full-text:hover {
@@ -336,6 +336,10 @@
   filter: grayscale(100%);
 }
 
+.tol-selected-row:hover {
+  background-color: var(--tol-primary-translucent) !important;
+}
+
 // Download modal
 
 .tol-download-modal-body {
@@ -363,7 +367,6 @@
     overflow: auto;
   }
 }
-
 
 // pagination buttons on smaller devices
 @media (max-width: 992px) {

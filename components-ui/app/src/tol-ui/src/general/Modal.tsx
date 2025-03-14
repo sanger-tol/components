@@ -17,10 +17,12 @@ export interface Props {
   closeButton?: boolean;
   actionButton?: JSX.Element;
   className?: string;
+  onEnter?: () => void;
+  onExited?: () => void;
 }
 
 const Modal = (props: Props) => {
-  const { size, open, setOpen, children, header, actionButton, className } =
+  const { size, open, setOpen, children, header, actionButton, className, onEnter, onExited } =
     props;
   const closeButton = props.closeButton ?? true;
   const rsOverflow = props.overflow !== false;
@@ -38,6 +40,8 @@ const Modal = (props: Props) => {
         /* @ts-ignore */
         size={size}
         className={className}
+        onEnter={onEnter}
+        onExited={onExited}
       >
         <RSModal.Header closeButton={false}>{header}</RSModal.Header>
 

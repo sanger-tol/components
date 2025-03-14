@@ -59,6 +59,7 @@ function DropdownButtons(props: Props) {
   const pushMessage = (message: string, type: string = "info") => {
     toaster.push(<Message children={message} type={type} showIcon={true} />, {
       duration: 4000,
+      placement: "bottomEnd",
     });
   };
 
@@ -105,7 +106,7 @@ function DropdownButtons(props: Props) {
       menuStyle={menuStyle}
       disabled={disabled}
     >
-      {header &&
+      {header && (
         <>
           <Dropdown.Item
             key="header"
@@ -115,9 +116,9 @@ function DropdownButtons(props: Props) {
           >
             {header.name}
           </Dropdown.Item>
-          <Dropdown.Item divider />
+          <Dropdown.Separator />
         </>
-      }
+      )}
       {dropdownButtons.map((button, index) => (
         <Dropdown.Item
           key={index}
@@ -128,9 +129,9 @@ function DropdownButtons(props: Props) {
           {button.name}
         </Dropdown.Item>
       ))}
-      {footer &&
+      {footer && (
         <>
-          <Dropdown.Item divider />
+          <Dropdown.Separator />
           <Dropdown.Item
             key="footer"
             onClick={footer.action}
@@ -140,7 +141,7 @@ function DropdownButtons(props: Props) {
             {footer.name}
           </Dropdown.Item>
         </>
-      }
+      )}
     </Dropdown>
   );
 }
