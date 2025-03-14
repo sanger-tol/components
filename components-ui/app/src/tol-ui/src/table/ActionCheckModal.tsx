@@ -114,7 +114,7 @@ function ActionCheckModal(props: Props) {
             onClick={() => {
               handleItemRemoval(id);
             }}
-            icon={"xmark"}
+            icon="xmark"
             tooltip="Remove"
             className="tol-table-action-modal-export-item-remove-btn"
           />
