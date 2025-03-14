@@ -6,26 +6,63 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { StatusMessage } from "../messaging";
-// import RemoteTable from "./RemoteTable";
+import { TsDataSource } from "../services";
+import { Placeholder } from "..";
 
 interface Props {
-  status: string;
-  //endpoint: string;
+  rowData: any;
 }
 
 function ActionStatus(props: Props) {
-  const { status } = props;
+  const flowRunId = props.rowData.attributes.params.flow_run_id;
+  const flowRunName = props.rowData.attributes.params.flow_run_name;
   const RELOAD_INTERVAL = 10;
-  const [secondsSinceLastUpdate, setSecondsSinceLastUpdate] = useState(RELOAD_INTERVAL);
+  const [status, setStatus] = useState('');
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [secondsSinceLastUpdate, setSecondsSinceLastUpdate] = useState(0);
+
+  const convertFlowToMessageStatus = (s: string) => {
+    switch (s) {
+      case "Scheduled":
+        return "warning";
+      case "Pending":
+        return "warning";
+      case "Completed":
+        return "success";
+      case "Failed":
+        return "error";
+      default:
+        return "info";
+    }
+  }
+
+  const getActionStatus = async () => {
+    setLoading(true);
+    const ds = new TsDataSource();
+    return await ds.getOne({
+      objectType: "prefect/flow_run",
+      id: flowRunId,
+    })
+  }
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       setSecondsSinceLastUpdate((prevSeconds) => {
         if (prevSeconds === 0) {
-          // reset the countdown AND CALL THE ENDPOINT
+          getActionStatus().then((dataObject) => {
+            if (!dataObject) setError('Failed to fetch status');
+            const state = dataObject?.state;
+            setStatus(state);
+            setLoading(false);
+            setInitialLoad(false);
+            if (state === "Late" || state === "Failed") {
+              clearInterval(intervalId);
+            }
+          });
           return RELOAD_INTERVAL;
         }
-        // decrement the countdown
         return prevSeconds - 1;
       });
     }, 1000);
@@ -33,15 +70,46 @@ function ActionStatus(props: Props) {
     return () => clearInterval(intervalId); // cleanup interval on component unmount
   }, []);
 
-  return (
-    <>
+  if (error) {
+    return (
       <StatusMessage
-        message={status}
-        status="info"
-        bordered
+        message={error}
+        status="error"
       />
-      Seconds remaining until refresh: {secondsSinceLastUpdate}...
-    </>
+    );
+  }
+
+  if (initialLoad) {
+    return <Placeholder loader height={60} />;
+  }
+
+  return (
+    <div>
+      <div>
+        <span style={{fontWeight: 'bolder'}}>Flow Run Name: </span>
+        <span>{flowRunName}</span>
+      </div>
+      <div>
+        <span style={{fontWeight: 'bolder'}}>Flow Run ID: </span>
+        <span>{flowRunId}</span>
+      </div>
+
+      <div>
+        {loading ?
+          <Placeholder height={28}/>
+        :
+          <div>
+            <StatusMessage
+              message={status}
+              status={convertFlowToMessageStatus(status)}
+            />
+            {(status !== "Late" && status !== 'Failed') && (
+              <>Refreshing in {secondsSinceLastUpdate}...</>
+            )}
+          </div>
+        }
+      </div>
+    </div>
   );
 }
 

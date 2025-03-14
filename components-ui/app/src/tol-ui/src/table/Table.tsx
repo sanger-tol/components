@@ -185,7 +185,7 @@ function Table(props: Props) {
         size="sm"
         open={downloadOpen}
         setOpen={setDownloadOpen}
-        objectType={props.zone.type}
+        objectType={endpoint}
         filter={filter}
         source={source}
         fields={fieldMeta.order.active}
