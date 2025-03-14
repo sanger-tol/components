@@ -51,16 +51,22 @@ function ActionStatus(props: Props) {
     const intervalId = setInterval(() => {
       setSecondsSinceLastUpdate((prevSeconds) => {
         if (prevSeconds === 0) {
-          getActionStatus().then((dataObject) => {
-            if (!dataObject) setError('Failed to fetch status');
-            const state = dataObject?.state;
-            setStatus(state);
-            setLoading(false);
-            setInitialLoad(false);
-            if (state === "Late" || state === "Failed") {
-              clearInterval(intervalId);
-            }
-          });
+          getActionStatus()
+            .then((dataObject) => {
+              if (!dataObject) setError(`Failed to fetch status: ${flowRunId}`);
+              const state = dataObject?.state;
+              setStatus(state);
+              setLoading(false);
+              setInitialLoad(false);
+              if (state === "Late" || state === "Failed") {
+                clearInterval(intervalId);
+              }
+            })
+            .catch((e) => {
+              setError(`Failed to fetch status: ${e.message}`);
+              setLoading(false);
+              setInitialLoad(false);
+            });
           return RELOAD_INTERVAL;
         }
         return prevSeconds - 1;
