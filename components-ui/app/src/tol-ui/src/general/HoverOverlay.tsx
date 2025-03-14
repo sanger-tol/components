@@ -4,10 +4,11 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { ReactNode } from "react";
 import { Popover, Whisper } from "rsuite";
 
 export interface Props {
-  contents: JSX.Element | string;
+  contents: ReactNode;
   children: JSX.Element;
   placement?: string;
   delay?: number;

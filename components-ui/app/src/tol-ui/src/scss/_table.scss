@@ -310,6 +310,13 @@
   fill: var(--tol-text);
 }
 
+// EntityMetaToolTip
+
+.tol-entity-meta-tool-tip-source {
+  width: fit-content;
+  display: inline;
+}
+
 // config modal
 .clear-saved-config.btn.btn-warning {
   color: white !important;
@@ -321,8 +328,8 @@
 }
 
 // row selection
-.tol-selected-row {
-  background-color: var(--tol-primary-translucent);
+.tol-selected-row .rs-table-cell {
+  background-color: var(--tol-primary-translucent) !important;
 }
 
 .tol-selected-row.disabled {
@@ -331,107 +338,6 @@
 
 .tol-selected-row:hover {
   background-color: var(--tol-primary-translucent) !important;
-}
-
-.tol-table-action-modal-export-item-list-container::-webkit-scrollbar {
-  width: 10px;
-}
-
-.tol-table-action-modal-export-item-list-container::-webkit-scrollbar-track {
-  background-color: var(--tol-grey);
-  border-radius: 5px;
-}
-
-.tol-table-action-modal-export-item-list-container::-webkit-scrollbar-thumb {
-  background-color: var(--tol-grey-subtle);
-  border-radius: 5px;
-}
-
-.tol-table-action-modal-export-item-list-container::-webkit-scrollbar-thumb:hover {
-  background-color: var(--tol-grey-subtle);
-}
-
-.tol-table-action-modal-btns {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-between !important;
-
-  .tol-table-actions-modal-remove-all-btn-container {
-    display: flex;
-  }
-
-  .tol-table-actions-modal-ready-indicator {
-    margin: 4px 0 0 10px;
-    color: var(--tol-success-light);
-  }
-}
-
-.tol-table-action-modal-success-btn {
-  margin-right: 8px !important;
-}
-
-// Action modal export
-
-.tol-table-action-modal-export-item-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0px 5px 10px 0px;
-  max-width: 100%;
-
-  p {
-    margin-bottom: 0;
-  }
-}
-
-.tol-table-action-modal-export-item-container.deleting {
-  opacity: 0;
-  height: 0;
-  margin: 0;
-  padding: 0;
-  transition:
-    opacity 0.3s ease,
-    height 0.3s ease,
-    margin 0.3s ease,
-    padding 0.3s ease;
-}
-
-.tol-table-action-modal-export-item {
-  border: 1px solid var(--tol-grey);
-  margin-right: 10px;
-  margin-bottom: 0;
-  height: 36px;
-  min-width: 90%;
-  border-radius: 5px;
-  justify-content: space-between;
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  padding: 0px 10px;
-}
-
-.tol-table-action-modal-export-item.error {
-  border: 1px solid var(--tol-danger-light) !important;
-}
-
-.tol-table-action-modal-export-item-remove-btn {
-  margin-right: 10px;
-}
-
-.tol-table-action-modal-body-container {
-  p:first-child {
-    max-width: 85%;
-  }
-
-  h6 {
-    margin-bottom: 20px;
-  }
-}
-
-.tol-table-action-modal-export-item-list-container {
-  max-height: 250px;
-  overflow-y: auto;
-  margin: 10px 0px;
 }
 
 // Download modal

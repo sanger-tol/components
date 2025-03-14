@@ -4,8 +4,6 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
-import { Button } from "../general";
 import Modal from "../general/Modal";
 import ActionStatus from "./ActionStatus";
 import RemoteTable from "./RemoteTable";
@@ -19,13 +17,12 @@ interface Props {
 
 function ActionModal(props: Props) {
   const { objectType } = props
-  const [forceUpdate, setForceUpdate] = useState(false);
 
   // ActionStatus will be cellRenderer at some point
   return (
     <Modal
       {...props}
-      size="lg"
+      size="full"
       closeButton
     >
       <h5 style={{paddingBottom: 20}}>Actions run on '{objectType}'</h5>
@@ -37,6 +34,7 @@ function ActionModal(props: Props) {
         id="action-table"
         endpoint="local/user_action"
         height={500}
+        defaultSort="-created_at"
         fields={{
           "action.name": {
             rename: "Action",
@@ -47,22 +45,16 @@ function ActionModal(props: Props) {
           },
           "status":{
             rename: "Status",
+            width: 300,
+            custom: true,
             cellRenderer: {
               element: ActionStatus,
-            }
+            },
           },
           "user.oidc_id": {
             rename: "User",
           }
         }}
-        forceUpdate={forceUpdate}
-      />
-      <ActionStatus status="Tester 1234"/>
-      <Button
-        text="Force Update Table"
-        icon="refresh"
-        onClick={() => setForceUpdate(!forceUpdate)}
-        position="right"
       />
     </Modal>
   );

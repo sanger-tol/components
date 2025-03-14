@@ -26,6 +26,9 @@ const DownloadModal = (props: Props) => {
   const { size, open, setOpen, action, objectType, filter, source, fields, totalSize } = props;
 
   const stringifyFilter = (filter: any) => {
+    if (!filter) {
+      return 'None';
+    }
     // @ts-ignore
     return JSON.stringify(filter, (key, value) => {
       if (typeof value === 'boolean') {
@@ -42,7 +45,7 @@ from tol.sources.${sourceToUse} import ${sourceToUse}
 
 src = ${sourceToUse}()
 f = DataSourceFilter(
-    and_ = ${stringifyFilter(filter.and_) || 'None'}
+    and_ = ${stringifyFilter(filter?.and_)}
 )
 objs = src.get_list('${objectType}', object_filters=f) 
   `
@@ -52,7 +55,7 @@ tol data \
 --source=${sourceToUse || 'portal'} \
 --operation=list \
 --type=${objectType} \
---filter='${stringifyFilter(filter) || '{"and":{}}'}' \
+--filter='${JSON.stringify(filter) || '{"and":{}}'}' \
 --fields=${fields.join(',')} \
 --output=tsv 
   `
