@@ -58,7 +58,7 @@ function ActionStatus(props: Props) {
               setStatus(state);
               setLoading(false);
               setInitialLoad(false);
-              if (state === "Late" || state === "Failed") {
+              if (state === "Completed" || state === "Failed") {
                 clearInterval(intervalId);
               }
             })
@@ -109,7 +109,7 @@ function ActionStatus(props: Props) {
               message={status}
               status={convertFlowToMessageStatus(status)}
             />
-            {(status !== "Late" && status !== 'Failed') && (
+            {(status !== "Completed" && status !== 'Failed') && (
               <>Refreshing in {secondsSinceLastUpdate}...</>
             )}
           </div>
