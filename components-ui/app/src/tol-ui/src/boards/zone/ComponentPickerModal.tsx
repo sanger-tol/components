@@ -144,7 +144,7 @@ function ComponentPickerModal(props: Props) {
     {
       type: "count",
       icon: "hashtag",
-      disabled: true,
+      disabled: false,
     },
     {
       type: "chart",
