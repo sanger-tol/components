@@ -167,7 +167,7 @@ function ComponentPickerModal(props: Props) {
     {
       type: "sm",
       name: "Small",
-      disabled: true,
+      disabled: componentType === "count" ? false : true,
     },
     {
       type: "md",
@@ -177,7 +177,7 @@ function ComponentPickerModal(props: Props) {
     {
       type: "lg",
       name: "Large",
-      disabled: false,
+      disabled: componentType === "count" ? true : false,
     },
   ];
 

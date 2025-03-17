@@ -406,10 +406,11 @@ async function getComponentData(
 }
 
 export const generateLayout = (components) => {
+  // Left hand side are the component types, right are the breakpoints
   const types = {
     sm: { lg: { w: 1, h: 1 }, md: { w: 1, h: 1 }, sm: { w: 1, h: 1 } },
-    md: { lg: { w: 2, h: 2 }, md: { w: 2, h: 2 }, sm: { w: 1, h: 2 } },
-    lg: { lg: { w: 4, h: 2 }, md: { w: 2, h: 2 }, sm: { w: 1, h: 2 } },
+    md: { lg: { w: 2, h: 3 }, md: { w: 2, h: 3 }, sm: { w: 1, h: 3 } },
+    lg: { lg: { w: 4, h: 4 }, md: { w: 2, h: 4 }, sm: { w: 1, h: 4 } },
   };
 
   const layout = { lg: [], md: [], sm: [] };

@@ -21,17 +21,7 @@ interface Props {
 
 function BoardCount(props: Props) {
   const { id, objectType } = props;
-  const ds = new TsDataSource();
-  const [config, setConfig] = useState<any>(props.config);
-  const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
-
-  const onModalSave = (fm: FieldMeta) => {
-    config["fieldMeta"] = fm;
-    setForceUpdate(!forceUpdate); // fetches new data on save
-    setConfig({ ...config });
-    upsertComponentConfig(ds, id, config);
-  };
 
   const filterButtons = [
     <span className='board-count-filters' key="board-table-filter">
@@ -53,7 +43,7 @@ function BoardCount(props: Props) {
   ];
 
   return (
-    <div>
+    <div className='board-count-container'>
       {filterButtons}
       <RemoteCount
         id={id}
