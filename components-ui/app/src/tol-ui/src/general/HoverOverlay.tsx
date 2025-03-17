@@ -17,7 +17,7 @@ export interface Props {
 }
 
 function HoverOverlay(props: Props) {
-  const { contents, children, delay, onHover, followCursor } = props;
+  const { contents, children, delay = 300, onHover, followCursor } = props;
   const placement = props.placement === undefined ? "auto" : props.placement;
 
   const renderTooltip = () => <Popover>{contents}</Popover>;

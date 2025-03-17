@@ -3,8 +3,8 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
-
-import { BoardTable } from "../../index";
+;
+import { BoardCount, BoardTable } from "../../index";
 import { IZone } from "../utils";
 
 interface Props {
@@ -24,6 +24,8 @@ function Visualisation(props: Props) {
 
   if (componentType === "table") {
     return <BoardTable {...props} />;
+  } else if (componentType === "count") {
+    return <BoardCount {...props}/>;
   }
   return <></>;
 }

@@ -125,6 +125,7 @@ function ResponsiveWidget(props: Props) {
     });
     setSaveLayout(false);
     zone.order = order.order;
+    setZone({ ...zone });
     setWidgets(widgets);
   };
 
@@ -168,7 +169,7 @@ function ResponsiveWidget(props: Props) {
         cols={{ lg: 4, md: 2, sm: 1 }}
         isDraggable={draggable}
         compactType="vertical"
-        rowHeight={300}
+        rowHeight={150}
         onLayoutChange={(layout: any) => setNewLayout(layout)}
         onBreakpointChange={onBreakpointChange}
         draggableCancel=".widget-delete-btn"

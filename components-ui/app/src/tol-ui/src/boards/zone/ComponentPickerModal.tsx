@@ -144,7 +144,7 @@ function ComponentPickerModal(props: Props) {
     {
       type: "count",
       icon: "hashtag",
-      disabled: true,
+      disabled: false,
     },
     {
       type: "chart",
@@ -167,17 +167,17 @@ function ComponentPickerModal(props: Props) {
     {
       type: "sm",
       name: "Small",
-      disabled: true,
+      disabled: componentType === "count" ? false : true,
     },
     {
       type: "md",
       name: "Medium",
-      disabled: false,
+      disabled: componentType === "count" ? true : false,
     },
     {
       type: "lg",
       name: "Large",
-      disabled: false,
+      disabled: componentType === "count" ? true : false,
     },
   ];
 
