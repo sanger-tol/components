@@ -125,6 +125,7 @@ function ResponsiveWidget(props: Props) {
     });
     setSaveLayout(false);
     zone.order = order.order;
+    setZone({ ...zone });
     setWidgets(widgets);
   };
 
