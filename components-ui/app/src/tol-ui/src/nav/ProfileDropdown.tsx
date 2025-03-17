@@ -65,7 +65,7 @@ function ProfileDropdown(props: Props) {
       setLoading(false);
     } else {
       if (user?.oidc_id) {
-        if (user.oidc_id.includes("/")) {
+        if (user.oidc_id.includes("/") || (user.oidc_id.includes("-") && user.oidc_id.length === 19)) {
           const orcidId = user.oidc_id.split("/").pop();
           fetchOrcidProfile(orcidId!);
         } else {

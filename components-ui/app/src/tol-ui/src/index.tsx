@@ -109,7 +109,8 @@ export {
   DropdownButtons,
   DownloadModal,
   Markdown,
-  EntityMetaToolTip
+  EntityMetaToolTip,
+  BoardCount
 } from "./general";
 
 // hooks

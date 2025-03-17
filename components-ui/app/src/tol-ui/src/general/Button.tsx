@@ -82,7 +82,7 @@ function Button(props: Props) {
         <HoverOverlay
           contents={contents!}
           followCursor={disabled}
-          delay={disabled ? 300 : 800}
+          delay={disabled ? undefined : 800}
         >
           <div className="tooltip-wrapper">{button}</div>
         </HoverOverlay>

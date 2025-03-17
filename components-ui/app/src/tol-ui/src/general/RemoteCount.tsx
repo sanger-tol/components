@@ -22,10 +22,11 @@ interface Props {
   baseUrl?: string;
   zone?: object;
   setZone?: any;
+  buttons?: JSX.Element[];
 }
 
 function RemoteCount(props: Props) {
-  const { id, endpoint, baseUrl, title, zone, setZone } = props;
+  const { id, endpoint, baseUrl, title, zone, setZone, buttons } = props;
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -71,7 +72,8 @@ function RemoteCount(props: Props) {
 
   return (
     <div id={id} className="tol-count">
-      <p>{title}</p>
+      {buttons}
+      <p style={{textAlign: 'left'}}>{title}</p>
       <h1 className="count">{numberWithSpaces(count)}</h1>
       <div className="faded" aria-hidden="true">
         <h1>{count}</h1>
