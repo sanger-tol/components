@@ -23,14 +23,18 @@ function BoardCount(props: Props) {
   const [openFilters, setOpenFilters] = useState(false);
 
   const filterButtons = [
-    <span className='board-count-filters' key="board-table-filter">
-      <Button
-        outline
-        position="right"
-        type="primary"
-        onClick={() => setOpenFilters(true)}
-        icon="filter"
-      />
+    <Button
+      outline
+      position="right"
+      type="primary"
+      onClick={() => setOpenFilters(true)}
+      icon="filter"
+      className="count-filter-button"
+    />
+  ];
+
+  return (
+    <div>
       <BoardFilters
         endpoint={objectType}
         entityType="component"
@@ -38,15 +42,10 @@ function BoardCount(props: Props) {
         setOpen={setOpenFilters}
         {...props}
       />
-    </span>,
-  ];
-
-  return (
-    <div className='board-count-container'>
-      {filterButtons}
       <RemoteCount
         id={id}
         title={props.title}
+        buttons={filterButtons}
         endpoint={objectType}
         baseUrl={props.baseUrl}
         zone={props.zone}
