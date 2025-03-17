@@ -172,7 +172,7 @@ function ComponentPickerModal(props: Props) {
     {
       type: "md",
       name: "Medium",
-      disabled: false,
+      disabled: componentType === "count" ? true : false,
     },
     {
       type: "lg",
