@@ -22,7 +22,6 @@ interface Props {
   baseUrl?: string;
   zone?: object;
   setZone?: any;
-  height?: number;
   buttons?: JSX.Element[];
 }
 
@@ -72,7 +71,7 @@ function RemoteCount(props: Props) {
   }
 
   return (
-    <div id={id} className="tol-count" style={{ height: '1000px' }}>
+    <div id={id} className="tol-count">
       {buttons}
       <p style={{textAlign: 'left'}}>{title}</p>
       <h1 className="count">{numberWithSpaces(count)}</h1>

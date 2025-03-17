@@ -34,7 +34,7 @@ function BoardCount(props: Props) {
   ];
 
   return (
-    <div>
+    <div style={{height: "100%"}}>
       <BoardFilters
         endpoint={objectType}
         entityType="component"
