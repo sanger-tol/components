@@ -14,6 +14,7 @@ import {
   Modal,
   EntityMetaToolTip
 } from "../index";
+import SelectedAttributesContainer from "./SelectedAttributesContainer";
 import { getSourceData } from "../general/utils";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
 
