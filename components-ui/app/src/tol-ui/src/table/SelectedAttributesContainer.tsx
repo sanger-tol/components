@@ -4,13 +4,14 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Icon,
   SourceTag,
   EntityMetaToolTip,
   TsDataSource
 } from "../index";
+import { normaliseCaps } from "../general/utils";
 
 const TRANSITION_TIME: number = 300;
 
@@ -35,7 +36,14 @@ function SelectedAttributesContainer(props: Props) {
   } = props;
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
-  const [attributeDeatils, setAttributeDetails] = useState<AttributeDetails>({});
+  const [objectAttributes, setObjectAttributes] = useState<AttributeDetails>({});
+
+  useEffect(() => {
+    const ds = new TsDataSource({baseUrl: baseUrl});
+    ds.getEntityMeta().then((meta) => {
+        setObjectAttributes(meta.flatAttributes[endpoint]);
+    });
+  })
 
   const moveAttributeUp = (index: number) => {
     if (index === 0) return;
@@ -69,18 +77,8 @@ function SelectedAttributesContainer(props: Props) {
     }, TRANSITION_TIME);
   };
 
-
   const selectedColumn = (attr: string, index: number) => {
-    const ds = new TsDataSource({baseUrl: baseUrl});
-    console.log('endpoint', endpoint);
-    ds.getEntityMeta().then((meta) => {
-        const source = meta.flatAttributes[endpoint][attr].source;
-        const rename = meta.flatAttributes[endpoint][attr].display_name;
-        setAttributeDetails({
-         source: source,
-         rename: rename
-        });
-    });
+    const attributeDeatils = objectAttributes[attr] || {};
 
     return (
       <div
@@ -92,7 +90,7 @@ function SelectedAttributesContainer(props: Props) {
         <div>
           <span>
             <div className={"tol-config-drawer-selected-column-name"}>
-              <div style={{display:'inline', paddingRight:'5px'}}>{attributeDeatils.rename}</div> 
+              <div style={{display:'inline', paddingRight:'5px'}}>{attributeDeatils.display_name || normaliseCaps(attr)}</div> 
               <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr}/>
             </div>
           </span>
