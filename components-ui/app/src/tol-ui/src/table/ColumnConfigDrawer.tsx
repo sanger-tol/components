@@ -7,18 +7,12 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import {
   Button,
-  Icon,
   AttributeSelector,
-  SourceTag,
   Drawer,
   Modal,
-  EntityMetaToolTip
 } from "../index";
 import SelectedAttributesContainer from "./SelectedAttributesContainer";
-import { getSourceData } from "../general/utils";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
-
-const TRANSITION_TIME: number = 300;
 
 export interface Props {
   baseUrl?: string;
@@ -51,40 +45,6 @@ function ColumnConfigDrawer(props: Props) {
     fieldMeta["order"]["active"],
   );
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
-  const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
-  const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
-
-  const moveAttributeUp = (index: number) => {
-    if (index === 0) return;
-    const newAttributes = [...attributes];
-    [newAttributes[index - 1], newAttributes[index]] = [
-      newAttributes[index],
-      newAttributes[index - 1],
-    ];
-    setAttributes(newAttributes);
-    setRecentlyMoved(index - 1);
-    setTimeout(() => setRecentlyMoved(null), TRANSITION_TIME);
-  };
-
-  const moveAttributeDown = (index: number) => {
-    if (index === attributes.length - 1) return;
-    const newAttributes = [...attributes];
-    [newAttributes[index + 1], newAttributes[index]] = [
-      newAttributes[index],
-      newAttributes[index + 1],
-    ];
-    setAttributes(newAttributes);
-    setRecentlyMoved(index + 1);
-    setTimeout(() => setRecentlyMoved(null), TRANSITION_TIME);
-  };
-
-  const removeAttribute = (index: number) => {
-    setDeletingIndex(index);
-    setTimeout(() => {
-      setAttributes(attributes.filter((_, i) => i !== index));
-      setDeletingIndex(null);
-    }, TRANSITION_TIME);
-  };
 
   const updateMeta = (
     id: string,
