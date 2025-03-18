@@ -44,7 +44,7 @@ function ComponentPickerModal(props: Props) {
   } = props;
   const [componentType, setComponentType] = useState("");
   const [widgetType, setWidgetType] = useState("");
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState<string>("");
   const [idError, setIdError] = useState(false);
   const [fieldError, setFieldError] = useState(false);
 
@@ -273,6 +273,7 @@ function ComponentPickerModal(props: Props) {
             name="Board Title"
             placeholder={`Title`}
             label=""
+            value={title}
           />
         </RSForm>
 
