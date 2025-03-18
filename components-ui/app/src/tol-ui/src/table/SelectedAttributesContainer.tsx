@@ -43,7 +43,7 @@ function SelectedAttributesContainer(props: Props) {
     ds.getEntityMeta().then((meta) => {
         setObjectAttributes(meta.flatAttributes[endpoint]);
     });
-  })
+  }, [])
 
   const moveAttributeUp = (index: number) => {
     if (index === 0) return;
