@@ -122,51 +122,6 @@ function ColumnConfigDrawer(props: Props) {
     setOpen(!open);
   };
 
-  const selectedColumn = (attr: string, index: number) => {
-    const source = getSourceData(fieldMeta, attr) ?? "";
-    const rename = fieldMeta.data[attr]?.rename ?? attr;
-
-    return (
-      <div
-        key={`${attr}-${index}`}
-        className={`tol-config-drawer-selected-column ${
-          recentlyMoved === index ? "highlight" : ""
-        } ${deletingIndex === index ? "deleting" : ""}`}
-      >
-        <div>
-          <span>
-            <div className={"tol-config-drawer-selected-column-name"}>
-              <div style={{display:'inline', paddingRight:'5px'}}>{rename}</div> 
-              <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr}/>
-            </div>
-          </span>
-          <p className={"tol-config-drawer-selected-column-key"}>{attr}</p>
-        </div>
-        <div className="tol-config-drawer-btn-array">
-          {source && <SourceTag source={source} />}
-          <div
-            className={"tol-active-column-btn first"}
-            onClick={() => moveAttributeUp(index)}
-          >
-            <Icon icon="arrow-up" size="lg" />
-          </div>
-          <div
-            className={"tol-active-column-btn"}
-            onClick={() => moveAttributeDown(index)}
-          >
-            <Icon icon="arrow-down" size="lg" />
-          </div>
-          <div
-            className="tol-active-column-btn"
-            onClick={() => removeAttribute(index)}
-          >
-            <Icon icon="close" size="lg" />
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const unsavedChangesModal = () => {
     return (
       <div>
@@ -281,24 +236,12 @@ function ColumnConfigDrawer(props: Props) {
           sticky={true}
         />
       </div>
-      <div>
-        <h6 className="tol-config-drawer-column-title">Active Columns:</h6>
-        <div className={"tol-config-drawer-column-container"}>
-          {attributes.map((att, index) => (
-            <div
-              key={`${att}-${index}`}
-              className="tol-config-drawer-column-contents"
-            >
-              {selectedColumn(att, index)}
-            </div>
-          ))}
-        </div>
-        {attributes.length === 0 && (
-          <p>
-            <i>No active columns. Select columns to display...</i>
-          </p>
-        )}
-      </div>
+      <SelectedAttributesContainer
+        baseUrl={baseUrl}
+        endpoint={endpoint}
+        attributes={attributes}
+        setAttributes={setAttributes}
+      />
       <div>
         <div className="tol-config-drawer-save-button">{drawerButtons}</div>
       </div>

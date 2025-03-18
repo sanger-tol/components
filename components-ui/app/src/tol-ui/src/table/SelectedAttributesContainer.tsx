@@ -14,6 +14,11 @@ import {
 
 const TRANSITION_TIME: number = 300;
 
+interface AttributeDetails {
+    source?: string;
+    rename?: string;
+}
+
 export interface Props {
   baseUrl?: string;
   endpoint: string;
@@ -30,6 +35,7 @@ function SelectedAttributesContainer(props: Props) {
   } = props;
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
+  const [attributeDeatils, setAttributeDetails] = useState<AttributeDetails>({});
 
   const moveAttributeUp = (index: number) => {
     if (index === 0) return;
@@ -66,9 +72,15 @@ function SelectedAttributesContainer(props: Props) {
 
   const selectedColumn = (attr: string, index: number) => {
     const ds = new TsDataSource({baseUrl: baseUrl});
-    const emd =  ds.getEntityMeta()
-    const source = ''//emd.flatAttributes[endpoint][attr].source
-    const rename = ''
+    console.log('endpoint', endpoint);
+    ds.getEntityMeta().then((meta) => {
+        const source = meta.flatAttributes[endpoint][attr].source;
+        const rename = meta.flatAttributes[endpoint][attr].display_name;
+        setAttributeDetails({
+         source: source,
+         rename: rename
+        });
+    });
 
     return (
       <div
@@ -80,14 +92,14 @@ function SelectedAttributesContainer(props: Props) {
         <div>
           <span>
             <div className={"tol-config-drawer-selected-column-name"}>
-              <div style={{display:'inline', paddingRight:'5px'}}>{rename}</div> 
+              <div style={{display:'inline', paddingRight:'5px'}}>{attributeDeatils.rename}</div> 
               <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr}/>
             </div>
           </span>
           <p className={"tol-config-drawer-selected-column-key"}>{attr}</p>
         </div>
         <div className="tol-config-drawer-btn-array">
-          {source && <SourceTag source={source} />}
+          {attributeDeatils.source && <SourceTag source={attributeDeatils.source} />}
           <div
             className={"tol-active-column-btn first"}
             onClick={() => moveAttributeUp(index)}
