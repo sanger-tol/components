@@ -24,6 +24,7 @@ function BoardCount(props: Props) {
 
   const filterButtons = [
     <Button
+      key="board-count-filter"
       outline
       position="right"
       type="primary"

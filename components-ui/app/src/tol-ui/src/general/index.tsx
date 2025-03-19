@@ -29,4 +29,5 @@ export { default as DownloadModal } from "./DownloadModal";
 export { default as Markdown } from "./Markdown";
 export { default as EntityMetaToolTip } from "./EntityMetaToolTip";
 export { default as BoardCount } from "./BoardCount";
+export { default as SelectedAttributesContainer } from "./SelectedAttributesContainer";
 export { formatDate } from "./utils";

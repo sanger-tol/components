@@ -110,7 +110,8 @@ export {
   DownloadModal,
   Markdown,
   EntityMetaToolTip,
-  BoardCount
+  BoardCount,
+  SelectedAttributesContainer
 } from "./general";
 
 // hooks
