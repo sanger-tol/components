@@ -10,8 +10,8 @@ import {
   AttributeSelector,
   Drawer,
   Modal,
+  SelectedAttributesContainer
 } from "../index";
-import SelectedAttributesContainer from "./SelectedAttributesContainer";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
 
 export interface Props {

@@ -16,15 +16,15 @@ import { normaliseCaps } from "../general/utils";
 const TRANSITION_TIME: number = 300;
 
 interface AttributeDetails {
-    source?: string;
-    rename?: string;
+  source?: string;
+  rename?: string;
 }
 
 export interface Props {
   baseUrl?: string;
   endpoint: string;
   attributes: string[];
-  setAttributes: Function;
+  setAttributes: (attributes: string[]) => void;
 }
 
 function SelectedAttributesContainer(props: Props) {
@@ -39,9 +39,9 @@ function SelectedAttributesContainer(props: Props) {
   const [objectAttributes, setObjectAttributes] = useState<AttributeDetails>({});
 
   useEffect(() => {
-    const ds = new TsDataSource({baseUrl: baseUrl});
+    const ds = new TsDataSource({ baseUrl: baseUrl });
     ds.getEntityMeta().then((meta) => {
-        setObjectAttributes(meta.flatAttributes[endpoint]);
+      setObjectAttributes(meta.flatAttributes[endpoint]);
     });
   }, [])
 
@@ -83,15 +83,14 @@ function SelectedAttributesContainer(props: Props) {
     return (
       <div
         key={`${attr}-${index}`}
-        className={`tol-config-drawer-selected-column ${
-          recentlyMoved === index ? "highlight" : ""
-        } ${deletingIndex === index ? "deleting" : ""}`}
+        className={`tol-config-drawer-selected-column ${recentlyMoved === index ? "highlight" : ""
+          } ${deletingIndex === index ? "deleting" : ""}`}
       >
         <div>
           <span>
             <div className={"tol-config-drawer-selected-column-name"}>
-              <div style={{display:'inline', paddingRight:'5px'}}>{attributeDeatils.display_name || normaliseCaps(attr)}</div> 
-              <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr}/>
+              <div style={{ display: 'inline', paddingRight: '5px' }}>{attributeDeatils.display_name || normaliseCaps(attr)}</div>
+              <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr} />
             </div>
           </span>
           <p className={"tol-config-drawer-selected-column-key"}>{attr}</p>
