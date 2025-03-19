@@ -43,6 +43,7 @@ export {
   MapLegend,
   Sunburst,
   RemoteSunburst,
+  BoardSunburst
 } from "./charts";
 
 // deprecated
