@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Button, InfoTooltip, Modal } from "../index";
+import { Button, InfoTooltip, Modal } from "../../index";
 
 interface Props {
   showIdExportModal: boolean;

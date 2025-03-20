@@ -15,7 +15,6 @@ import {
   tableDebug,
   structureFieldMeta,
   getTableConfigLocalStorage,
-  flowNameStringToActions,
 } from "./utils";
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
@@ -28,9 +27,10 @@ import {
 } from "../filtering/utils";
 import RemoteRowCounter from "./RemoteRowCounter";
 import { DropdownButtonProps } from "../general/DropdownButtons";
-import ActionCheckModal from "./ActionCheckModal";
+import ActionCheckModal from "./actions/ActionCheckModal";
 import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
-import ActionModal from "./ActionModal";
+import ActionModal from "./actions/ActionModal";
+import { addRemoteActions } from "./actions/utils";
 
 interface Props {
   id: string;
@@ -269,12 +269,12 @@ function RemoteTable(props: Props) {
     return <Placeholder loader height={height} />;
   }
 
-  const completeAction = async (action_name: string, ids: string[]) => {
+  const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
     await ds
       .custom(`/${ACTION_ENDPOINTS.RUN_ACTION}`, ApiMethods.POST as string, {
         ids: ids,
-        action_name: action_name,
+        action_name: actionName,
         object_type: endpoint,
       })
       .finally(() => {
@@ -284,7 +284,7 @@ function RemoteTable(props: Props) {
       });
   };
 
-  const convertedActions = flowNameStringToActions(
+  const convertedActions = addRemoteActions(
     endpoint,
     setCurrentActionName,
     setIdExportModalOpen,

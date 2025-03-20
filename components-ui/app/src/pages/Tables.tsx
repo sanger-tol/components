@@ -8,12 +8,13 @@ import { useState } from "react";
 import { Button, RemoteTable, Widgets, env, useZone } from "../tol-ui/src";
 
 interface exampleProps {
+  text: string;
   mlwhTag: string;
 }
 
 function exampleElement(props: exampleProps) {
-  const { mlwhTag } = props;
-  return "CUSTOM FIELD: " + mlwhTag;
+  const { text, mlwhTag } = props;
+  return `${text}: ${mlwhTag}`;
 }
 
 function Tables() {
@@ -24,83 +25,21 @@ function Tables() {
   const runData = useZone({
     endpoint: "run_data",
     baseUrl: env.TOL_DATA,
-    components: [{ id: "table-example" }, { id: "table-example-3" }],
+    components: [{ id: "table-example" }],
   });
 
   const actions = [
     // remote version
-    "Remote Flow",
+    "Remote Example",
     // custom version
     {
-      name: "Log in console",
+      name: "Custom Example",
       action: (selectedRows: string[]) => {
+        console.log('This is a fully custom action');
         console.log(selectedRows);
       },
     }
   ];
-
-  const table3 = (
-    <>
-      <div style={{ paddingBottom: "12px" }}>
-        <Button
-          type="primary"
-          onClick={() => setForceUpdate(!forceUpdate)}
-          text="Force Update"
-        />
-        <h5 style={{ marginBottom: 12 }}>Remote Table</h5>
-      </div>
-      <div>
-        <RemoteTable
-          id="table-example-3"
-          rowSelection
-          //pageSize={100}
-          forceUpdate={forceUpdate}
-          fields={{
-            mlwh_run_id: {
-              rename: "Run ID",
-            },
-            "mlwh_species.sts_scientific_name": {
-              rename: "Species",
-              cellRenderer: null,
-            },
-            "mlwh_sequencing_request.id": {
-              rename: "Sequencing Request",
-            },
-            mlwh_run_complete: {
-              rename: "Complete Date",
-            },
-            mlwh_platform_type: {
-              rename: "Platform",
-            },
-            mlwh_instrument_model: {
-              rename: "Instrument",
-            },
-            mlwh_position: {
-              rename: "Position",
-              filter: "boolean",
-            },
-            mlwh_tag_index: {
-              rename: "Tag",
-              filter: null,
-              sort: false,
-            },
-            custom_field: {
-              rename: "Custom Field",
-              cellRenderer: {
-                element: exampleElement,
-                propPointers: {
-                  mlwhTag: "mlwh_tag_index",
-                },
-              },
-            },
-          }}
-          height={500}
-          actions={actions}
-          {...runData}
-        />
-      </div>
-    </>
-  );
 
   const table1 = (
     <>
@@ -154,7 +93,11 @@ function Tables() {
                 propPointers: {
                   mlwhTag: "mlwh_tag_index",
                 },
+                props: {
+                  text: "Custom Field",
+                }
               },
+              custom: true
             },
           }}
           height={500}
@@ -165,31 +108,6 @@ function Tables() {
     </>
   );
 
-  const sample = useZone({
-    endpoint: "sample",
-    baseUrl: env.TOL_DATA,
-    components: [{ id: "table-example-2" }],
-  });
-
-  const table2 = (
-    <div>
-      <h5 style={{ marginBottom: 12 }}>Remote Table Empty On Load</h5>
-      <RemoteTable id="table-example-2" height={500} {...sample} />
-    </div>
-  );
-
-  const db = useZone({
-    endpoint: "singular",
-    components: [{ id: "db-table" }],
-  });
-
-  const dbTable = (
-    <div id="dbTable1">
-      <h5 style={{ marginBottom: 12 }}>Remote Table Local Database</h5>
-      <RemoteTable id="db-table" height={500} {...db} />
-    </div>
-  );
-
   const components = [
     {
       component: title,
@@ -197,10 +115,6 @@ function Tables() {
     },
     {
       component: table1,
-      type: "full",
-    },
-    {
-      component: table3,
       type: "full",
     },
   ];

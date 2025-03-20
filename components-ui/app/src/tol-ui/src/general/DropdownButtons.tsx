@@ -15,7 +15,6 @@ export interface DropdownButtonProps {
   name: string;
   icon?: string;
   disabled?: boolean;
-  icon?: Element;
   action: (...args: any[]) => void;
 }
 
