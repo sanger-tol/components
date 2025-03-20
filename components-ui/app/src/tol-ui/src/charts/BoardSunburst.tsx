@@ -54,8 +54,6 @@ function BoardSunburst(props: Props) {
         onClick={() => setOpenFilters(true)}
         icon="filter"
         className="count-filter-button"
-        //disabled={!config.sliceBy || config.sliceBy.length === 0}
-        //disabledTooltip="Must configure before applying filters"
       />
     </div>,
   ];
