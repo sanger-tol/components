@@ -995,6 +995,12 @@ export function downloadItem(chartId: string, chartTitle: string) {
   }
 }
 
+export function generateSunburstConfig(attributes: string[]) {
+  return {
+    sliceBy: attributes,
+  }
+}
+
 // ------------------//
 //        Map        //
 // ------------------//

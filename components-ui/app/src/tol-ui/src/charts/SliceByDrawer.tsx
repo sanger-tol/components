@@ -12,6 +12,7 @@ import {
   Modal,
   SelectedAttributesContainer
 } from "../index";
+import { generateSunburstConfig } from "./utils";
 
 export interface Props {
   baseUrl?: string;
@@ -19,7 +20,7 @@ export interface Props {
   setOpen: (open: boolean) => void;
   title: string;
   displaySource?: boolean;
-  onConfigSave: () => void;
+  onConfigSave: (config: object) => void;
   endpoint: string;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
@@ -35,14 +36,15 @@ function SliceByDrawer(props: Props) {
     onConfigSave,
     customAttributeSelection,
   } = props;
-  const [attributes, setAttributes] = useState<string[]>();
-  const [initialAttributes, setInitialAttributes] = useState<string[]>();
+  const [attributes, setAttributes] = useState<string[]>([]);
+  const [initialAttributes, setInitialAttributes] = useState<string[]>([]);
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
 
   const saveConfig = () => {
     if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes)) {
-      onConfigSave();
-      setInitialAttributes(attributes);
+        const updatedConfig = generateSunburstConfig(attributes);
+        onConfigSave(updatedConfig);
+        setInitialAttributes(attributes);
     }
     setOpen(!open);
   };
@@ -146,12 +148,13 @@ function SliceByDrawer(props: Props) {
       <div>
         <AttributeSelector
           endpoint={endpoint}
-          placeholder="Select columns to display..."
+          placeholder="Select Attributes to Slice By..."
           baseUrl={baseUrl}
           attribute={attributes}
           setAttribute={setAttributes}
           disabledValues={null}
           numPopulatedFields={0}
+          maxSelections={5}
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
           recommendedFilterAvailable={true}

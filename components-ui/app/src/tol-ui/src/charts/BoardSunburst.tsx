@@ -4,10 +4,9 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Board, BoardFilters, Button, Placeholder, RemoteSunburst, TsDataSource } from "../index";
+import { BoardFilters, Button, Placeholder, RemoteSunburst, TsDataSource } from "../index";
 import { useState } from "react";
 import { upsertComponentConfig, IZone } from "../boards/utils";
-import ColumnConfigDrawer from "src/table/ColumnConfigDrawer";
 import SliceByDrawer from "./SliceByDrawer";
 
 interface Props {
@@ -24,9 +23,13 @@ function BoardSunburst(props: Props) {
   const { id, objectType } = props;
   const ds = new TsDataSource();
   const [config, setConfig] = useState<any>(props.config);
-  const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
+
+  const onModalSave = (updatedConfig: object) => {
+      setConfig({ ...updatedConfig });
+      upsertComponentConfig(ds, id, {...updatedConfig});
+    };
 
   const configButtons = [
     <span key="board-sunburst-config">
@@ -34,7 +37,7 @@ function BoardSunburst(props: Props) {
         outline
         position="right"
         type="primary"
-        onClick={() => setOpenFilters(true)}
+        onClick={() => setOpenConfig(true)}
         icon="sliders"
         className="count-filter-button"
       />
@@ -63,11 +66,10 @@ function BoardSunburst(props: Props) {
       />
       <SliceByDrawer
         {...props}
-        fieldMeta={config}
         endpoint={objectType}
         open={openConfig}
         setOpen={setOpenConfig}
-        onConfigSave={() => {}}
+        onConfigSave={onModalSave}
       />
       {config.sliceBy && config.sliceBy.length > 0 ?
         <div>
