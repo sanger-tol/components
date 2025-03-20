@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Toggle } from "rsuite"
+import { InfoTooltip } from "../general"
 import { useEffect, useState } from "react";
 import { IZone } from "../boards";
 import RemoteFilters from "./RemoteFilters";
@@ -104,6 +106,19 @@ function BoardFilters(props: Props) {
         open={open}
         setOpen={setOpen}
       >
+        <div className="passThrough-toggle">
+          <Toggle
+            key="recommended-tick-filter"
+            onClick={() => {}}
+            checked={true}
+          />
+          <span onClick={(e) => e.stopPropagation()}>
+            Toggle to activate Filter Pass Through.
+          </span>{" "}
+          <InfoTooltip
+            contents={"Recommended properties are indicated by a star icon."}
+          />
+        </div>
         <RemoteFilters
           {...props}
           filters={filters}
