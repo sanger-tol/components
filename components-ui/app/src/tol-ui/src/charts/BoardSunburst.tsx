@@ -8,6 +8,8 @@ import { BoardFilters, Button, Placeholder, RemoteSunburst, TsDataSource } from 
 import { useState } from "react";
 import { deepCopy } from "../general/utils";
 import { upsertComponentConfig, IZone } from "../boards/utils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import SliceByDrawer from "./SliceByDrawer";
 
 interface Props {
@@ -36,7 +38,7 @@ function BoardSunburst(props: Props) {
   };
 
   const configButtons = [
-    <div key="board-sunburst-config">
+    <div key="board-sunburst-config" className="tol-table-bar">
       <Button
         outline
         position="right"
@@ -93,12 +95,26 @@ function BoardSunburst(props: Props) {
           />
         </div>
       : 
-        <div style={{height: '100%'}}>
-          <div style={{height: '8%'}}>
+        <div className="tol-table" style={{height: '100%'}}>
+          <div>
             {configButtons}
           </div>
-          <div style={{height: '92%'}}>
-            <Placeholder pie message='Configure to see SunBurst...'/>
+          <div style={{height: '100%', marginTop: '6px'}}>
+            <Placeholder
+              pie
+              height={'100%'}
+              message={
+                <>
+                  Please add an attribute to get started. Click
+                  <FontAwesomeIcon
+                    icon={faSliders}
+                    size="lg"
+                    style={{ padding: "0 10" }}
+                  />
+                  to configure.
+                </>
+              }
+            />
           </div>
         </div>
       }
