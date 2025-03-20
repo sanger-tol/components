@@ -17,6 +17,7 @@ interface Props {
   config: any;
   title: string;
   componentType: string;
+  size: string
 }
 
 function Visualisation(props: Props) {

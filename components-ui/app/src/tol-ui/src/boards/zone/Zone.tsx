@@ -245,6 +245,8 @@ function Zone(props: Props) {
     </div>
   );
 
+  console.log(z)
+
   return (
     <div className="tol-zone">
       {buttons}

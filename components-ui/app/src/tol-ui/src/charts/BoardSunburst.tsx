@@ -18,15 +18,18 @@ interface Props {
   config: any;
   zone: IZone;
   setZone: any;
+  size: string;
 }
 
 function BoardSunburst(props: Props) {
-  const { id, objectType } = props;
+  const { id, objectType, size } = props;
   const ds = new TsDataSource();
   const [config, setConfig] = useState<any>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
+
+  console.log(props.zone)
 
   const onModalSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });
@@ -88,11 +91,12 @@ function BoardSunburst(props: Props) {
             setZone={props.setZone}
             forceUpdate={forceUpdate}
             legendPosition="top"
+            noMini={size === "sm"}
           />
         </div>
       : 
         <div style={{height: '100%'}}>
-          <Placeholder pie message='Configure to see bar chart...' height={'100%'} />
+          <Placeholder pie message='Configure to see SunBurst...' height={'100%'} />
         </div>
       }
     </div>

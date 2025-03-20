@@ -16,6 +16,7 @@ export interface IWidgets {
   order: string; // placement in the order array
   componentZoneId: string;
   componentType: string;
+  widgetType: string;
   filter: any;
   title: string;
   objectType: string;
@@ -63,6 +64,7 @@ function ResponsiveWidget(props: Props) {
         /* @ts-ignore */
         <Visualisation
           id={widget.componentId}
+          size={widget.widgetType}
           zone={zone}
           setZone={setZone}
           componentType={widget.componentType}
