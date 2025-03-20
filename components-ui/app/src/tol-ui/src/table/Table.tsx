@@ -427,7 +427,7 @@ function Table(props: Props) {
                   <HeaderCell>
                     {field.description && (
                       <div className="tol-header-info">
-                        <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint}/>
+                        <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint} />
                       </div>
                     )}
                     <p className="tol-header-text">{field.rename}</p>

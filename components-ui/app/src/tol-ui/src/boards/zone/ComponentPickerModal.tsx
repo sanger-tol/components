@@ -154,7 +154,7 @@ function ComponentPickerModal(props: Props) {
     {
       type: "sunburst",
       icon: "chart-pie",
-      disabled: true,
+      disabled: false,
     },
     {
       type: "table",
@@ -167,7 +167,7 @@ function ComponentPickerModal(props: Props) {
     {
       type: "sm",
       name: "Small",
-      disabled: componentType === "count" ? false : true,
+      disabled: componentType === "count" || componentType == "sunburst" ? false : true,
     },
     {
       type: "md",

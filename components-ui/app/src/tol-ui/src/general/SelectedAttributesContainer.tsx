@@ -25,6 +25,7 @@ export interface Props {
   endpoint: string;
   attributes: string[];
   setAttributes: (attributes: string[]) => void;
+  title?: string;
 }
 
 function SelectedAttributesContainer(props: Props) {
@@ -32,7 +33,8 @@ function SelectedAttributesContainer(props: Props) {
     baseUrl,
     endpoint,
     attributes,
-    setAttributes
+    setAttributes,
+    title = "Active Columns:",
   } = props;
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
@@ -123,7 +125,7 @@ function SelectedAttributesContainer(props: Props) {
   return (
     <div>
       <div>
-        <h6 className="tol-config-drawer-column-title">Active Columns:</h6>
+        <h6 className="tol-config-drawer-column-title">{title}</h6>
         <div className={"tol-config-drawer-column-container"}>
           {attributes.map((att, index) => (
             <div
