@@ -64,8 +64,9 @@ function BoardSunburst(props: Props) {
         setOpen={setOpenFilters}
         {...props}
       />
-      <SliceByDrawer
+      <SliceByDrawer //This needs initialAttributes to be set to dliceBy
         {...props}
+        sliceBy={config.sliceBy}
         endpoint={objectType}
         open={openConfig}
         setOpen={setOpenConfig}
@@ -75,7 +76,7 @@ function BoardSunburst(props: Props) {
         <div>
           <RemoteSunburst
             id={id}
-            sliceBy={[]}
+            sliceBy={config.sliceBy}
             title={props.title}
             endpoint={objectType}
             baseUrl={props.baseUrl}

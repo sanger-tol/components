@@ -24,6 +24,7 @@ export interface Props {
   endpoint: string;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
+  sliceBy: string[];
 }
 
 function SliceByDrawer(props: Props) {
@@ -35,9 +36,10 @@ function SliceByDrawer(props: Props) {
     endpoint,
     onConfigSave,
     customAttributeSelection,
+    sliceBy
   } = props;
-  const [attributes, setAttributes] = useState<string[]>([]);
-  const [initialAttributes, setInitialAttributes] = useState<string[]>([]);
+  const [attributes, setAttributes] = useState<string[]>(sliceBy);
+  const [initialAttributes, setInitialAttributes] = useState<string[]>(sliceBy);
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
 
   const saveConfig = () => {
