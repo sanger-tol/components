@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { BoardFilters, Button, Placeholder, RemoteSunburst, TsDataSource } from "../index";
 import { useState } from "react";
+import { deepCopy } from "../general/utils";
 import { upsertComponentConfig, IZone } from "../boards/utils";
 import SliceByDrawer from "./SliceByDrawer";
 
@@ -28,10 +29,10 @@ function BoardSunburst(props: Props) {
   const [forceUpdate, setForceUpdate] = useState(false);
 
   const onModalSave = (updatedConfig: object) => {
-      setConfig({ ...updatedConfig });
-      upsertComponentConfig(ds, id, {...updatedConfig});
-      setForceUpdate(!forceUpdate);
-    };
+    setConfig({ ...updatedConfig });
+    upsertComponentConfig(ds, id, {...updatedConfig});
+    setForceUpdate(!forceUpdate);
+  };
 
   const configButtons = [
     <span key="board-sunburst-config">
@@ -66,9 +67,9 @@ function BoardSunburst(props: Props) {
         setOpen={setOpenFilters}
         {...props}
       />
-      <SliceByDrawer //This needs initialAttributes to be set to dliceBy
+      <SliceByDrawer
         {...props}
-        sliceBy={config.sliceBy}
+        sliceBy={config.sliceBy || []} //Pass in a blank array to account for no config
         endpoint={objectType}
         open={openConfig}
         setOpen={setOpenConfig}
@@ -78,13 +79,14 @@ function BoardSunburst(props: Props) {
         <div>
           <RemoteSunburst
             id={id}
-            sliceBy={config.sliceBy}
+            sliceBy={deepCopy(config.sliceBy)}
             title={props.title}
             endpoint={objectType}
             baseUrl={props.baseUrl}
             zone={props.zone}
             setZone={props.setZone}
             forceUpdate={forceUpdate}
+            height={'100%'}
           />
         </div>
       : 
