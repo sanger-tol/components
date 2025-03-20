@@ -40,6 +40,7 @@ interface Props {
   zone?: object;
   setZone?: any;
   forceUpdate?: boolean;
+  buttons?: JSX.Element[];
 }
 
 function RemoteSunburst(props: Props) {
@@ -53,7 +54,8 @@ function RemoteSunburst(props: Props) {
     noDownload,
     zone,
     setZone,
-    forceUpdate
+    forceUpdate,
+    buttons
   } = props;
   const wrapperId = "tol-sunburst-wrapper-" + id; // gets width on mount
   const height = props.height !== undefined ? props.height : "100%";
@@ -168,11 +170,12 @@ function RemoteSunburst(props: Props) {
 
   const configBar = (
     <Row>
-      <Col xs={6}>
+      <Col xs={5}>
         <p className="header-text">{title}</p>
       </Col>
-      <Col xs={6}>
-        <div className="tol-chart-buttons">
+      <Col xs={7}>
+        <div>
+          {buttons}
           <div>
             <Button
               outline

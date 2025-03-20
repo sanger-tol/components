@@ -29,8 +29,6 @@ function BoardSunburst(props: Props) {
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
 
-  console.log(props.zone)
-
   const onModalSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });
     upsertComponentConfig(ds, id, {...updatedConfig});
@@ -38,7 +36,7 @@ function BoardSunburst(props: Props) {
   };
 
   const configButtons = [
-    <span key="board-sunburst-config">
+    <div key="board-sunburst-config">
       <Button
         outline
         position="right"
@@ -57,12 +55,11 @@ function BoardSunburst(props: Props) {
         //disabled={!config.sliceBy || config.sliceBy.length === 0}
         //disabledTooltip="Must configure before applying filters"
       />
-    </span>,
+    </div>,
   ];
 
   return (
     <div style={{height: "100%"}}>
-      {configButtons}
       <BoardFilters
         endpoint={objectType}
         entityType="component"
@@ -92,11 +89,17 @@ function BoardSunburst(props: Props) {
             forceUpdate={forceUpdate}
             legendPosition="top"
             noMini={size === "sm"}
+            buttons={configButtons}
           />
         </div>
       : 
         <div style={{height: '100%'}}>
-          <Placeholder pie message='Configure to see SunBurst...' height={'100%'} />
+          <div style={{height: '8%'}}>
+            {configButtons}
+          </div>
+          <div style={{height: '92%'}}>
+            <Placeholder pie message='Configure to see SunBurst...'/>
+          </div>
         </div>
       }
     </div>
