@@ -39,6 +39,7 @@ interface Props {
   noDownload?: boolean;
   zone?: object;
   setZone?: any;
+  forceUpdate?: boolean;
 }
 
 function RemoteSunburst(props: Props) {
@@ -52,6 +53,7 @@ function RemoteSunburst(props: Props) {
     noDownload,
     zone,
     setZone,
+    forceUpdate
   } = props;
   const wrapperId = "tol-sunburst-wrapper-" + id; // gets width on mount
   const height = props.height !== undefined ? props.height : "100%";
@@ -103,7 +105,7 @@ function RemoteSunburst(props: Props) {
         setErrorMessage(error.message);
         console.error(error.message);
       });
-  }, [filter]);
+  }, [filter, forceUpdate]);
 
   // for sub sunburst updates
   useEffectUpdate(() => {

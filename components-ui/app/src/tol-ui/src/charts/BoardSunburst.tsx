@@ -25,10 +25,12 @@ function BoardSunburst(props: Props) {
   const [config, setConfig] = useState<any>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
+  const [forceUpdate, setForceUpdate] = useState(false);
 
   const onModalSave = (updatedConfig: object) => {
       setConfig({ ...updatedConfig });
       upsertComponentConfig(ds, id, {...updatedConfig});
+      setForceUpdate(!forceUpdate);
     };
 
   const configButtons = [
@@ -82,6 +84,7 @@ function BoardSunburst(props: Props) {
             baseUrl={props.baseUrl}
             zone={props.zone}
             setZone={props.setZone}
+            forceUpdate={forceUpdate}
           />
         </div>
       : 
