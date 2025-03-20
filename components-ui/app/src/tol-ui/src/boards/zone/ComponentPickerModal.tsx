@@ -167,7 +167,7 @@ function ComponentPickerModal(props: Props) {
     {
       type: "sm",
       name: "Small",
-      disabled: componentType === "count" || "sunburst" ? false : true,
+      disabled: componentType === "count" || componentType == "sunburst" ? false : true,
     },
     {
       type: "md",
