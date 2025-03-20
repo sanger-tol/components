@@ -74,9 +74,10 @@ function BoardSunburst(props: Props) {
         open={openConfig}
         setOpen={setOpenConfig}
         onConfigSave={onModalSave}
+        title="Sunburst Configuration"
       />
       {config.sliceBy && config.sliceBy.length > 0 ?
-        <div>
+        <div style={{height: '100%'}}>
           <RemoteSunburst
             id={id}
             sliceBy={deepCopy(config.sliceBy)}
@@ -86,7 +87,7 @@ function BoardSunburst(props: Props) {
             zone={props.zone}
             setZone={props.setZone}
             forceUpdate={forceUpdate}
-            height={'100%'}
+            legendPosition="top"
           />
         </div>
       : 
