@@ -133,8 +133,9 @@ function BoardFilters(props: Props) {
               Toggle to activate Filter Pass Through.
             </span>{" "}
             <InfoTooltip
-              contents={"This component can not affect or be affected by other filters (Besides Zone Filters)."}
+              contents={"This component can not affect other components."}
             />
+            <hr/>
           </div>
         : null
         }
