@@ -122,6 +122,7 @@ function ComponentPickerModal(props: Props) {
           objectType: zone.type,
           config: {},
           widgetType: widgetType,
+          filterPassThrough: false,
         },
       ]);
 

@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column('component', sa.Column('filter_pass_through', sa.Boolean(), nullable=True))
+    op.add_column('component', sa.Column('filter_pass_through', sa.Boolean(), nullable=False))
 
 
 def downgrade() -> None:

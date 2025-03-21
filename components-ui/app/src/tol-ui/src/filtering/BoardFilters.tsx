@@ -8,6 +8,7 @@ import { Toggle } from "rsuite"
 import { InfoTooltip } from "../general"
 import { useEffect, useState } from "react";
 import { IZone } from "../boards";
+import { upsertPassThrough } from "../boards/utils";
 import RemoteFilters from "./RemoteFilters";
 import { Drawer } from "../general";
 import { generateFilter, resetFiltersBelow } from "./utils";
@@ -37,6 +38,11 @@ function BoardFilters(props: Props) {
         ? zone.defaultFilter
         : zone.components[id].data.defaultFilter,
     ),
+  );
+  const [passThrough, setPassThrough] = useState<boolean | undefined>(
+    entityType === "zone"
+        ? true
+        : deepCopy(zone.components[id].data).filterPassThrough,
   );
 
   const removeCurrentEntityFiltersForDisabledFilters = (
@@ -71,15 +77,22 @@ function BoardFilters(props: Props) {
         filters?.and_!,
       ),
     );
+    setPassThrough(
+      entityType === "zone"
+        ? false
+        : deepCopy(zone.components[id].data).filterPassThrough,
+    );
   }, [open]);
 
-  const onSave = (filter: any) => {
+  const onSave = (filter: any, filterPassThrough: boolean) => {
     if (entityType === "zone") {
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
     } else {
       zone.components[id].data.filter = deepCopy(filter);
       zone.components[id].data.defaultFilter = deepCopy(filter);
+      zone.components[id].data.filterPassThrough = filterPassThrough;
+      upsertPassThrough(ds, id, filterPassThrough);
     }
     resetFiltersBelow({ id: id, zone: zone });
     setZone({ ...zone });
@@ -106,22 +119,29 @@ function BoardFilters(props: Props) {
         open={open}
         setOpen={setOpen}
       >
-        <div className="passThrough-toggle">
-          <Toggle
-            key="recommended-tick-filter"
-            onClick={() => {}}
-            checked={true}
-          />
-          <span onClick={(e) => e.stopPropagation()}>
-            Toggle to activate Filter Pass Through.
-          </span>{" "}
-          <InfoTooltip
-            contents={"Recommended properties are indicated by a star icon."}
-          />
-        </div>
+        {entityType !== "zone" ?
+          <div className="passThrough-toggle">
+            <Toggle
+              key="recommended-tick-filter"
+              onClick={() => {
+                setPassThrough(!passThrough);
+                setZone({ ...zone });
+              }}
+              checked={passThrough}
+            />
+            <span onClick={(e) => e.stopPropagation()}>
+              Toggle to activate Filter Pass Through.
+            </span>{" "}
+            <InfoTooltip
+              contents={"This component can not affect or be affected by other filters (Besides Zone Filters)."}
+            />
+          </div>
+        : null
+        }
         <RemoteFilters
           {...props}
           filters={filters}
+          filterPassThrough={passThrough}
           onSave={onSave}
           disabledFilterValues={disabledFilterValues}
         />

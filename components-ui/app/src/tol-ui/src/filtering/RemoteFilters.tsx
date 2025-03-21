@@ -20,13 +20,14 @@ export interface Props {
   baseUrl?: string;
   onSave?: any;
   disabledFilterValues?: any;
+  filterPassThrough?: boolean;
 }
 
 const PLACEHOLDER = "No filters applied, click here to add...";
 const TOOLTIP_CONTENT =
   "A filter already exists in the filtering system. Please remove it before adding this filter.";
 function RemoteFilters(props: Props) {
-  const { endpoint, baseUrl, onSave, disabledFilterValues } = props;
+  const { endpoint, baseUrl, onSave, disabledFilterValues, filterPassThrough } = props;
   const ds = new TsDataSource({ baseUrl });
 
   // zone component id pointer
@@ -58,7 +59,7 @@ function RemoteFilters(props: Props) {
   // allow to apply when changes have been made
   useEffectUpdate(() => {
     setDisabledApplyButton(false);
-  }, [filterZone]);
+  }, [filterZone, filterPassThrough]);
 
   const removeFilter = (attribute: string) => {
     // update the filters that are shown
@@ -148,7 +149,7 @@ function RemoteFilters(props: Props) {
         disabled={disabledApplyButton}
         type="success"
         onClick={() =>
-          onSave(filterZone?.components?.[filterComponentId]?.data?.filter)
+          onSave(filterZone?.components?.[filterComponentId]?.data?.filter, filterPassThrough)
         }
         text="Apply Filters"
         icon="floppy-disk"
