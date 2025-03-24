@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Icon,
   SourceTag,
@@ -82,7 +82,7 @@ function SelectedAttributesContainer(props: Props) {
   };
 
   const selectedColumn = ({ item, itemSelected, dragHandleProps }, index: number) => {
-    const { onMouseDown, onTouchStart } = dragHandleProps;
+    const { onMouseDown, onTouchStart, onMouseUp, onTouchEnd } = dragHandleProps;
     const attr_name = item
     const attributeDeatils = objectAttributes[attr_name] || {};
 
@@ -96,6 +96,8 @@ function SelectedAttributesContainer(props: Props) {
           <span
             onTouchStart={onTouchStart}
             onMouseDown={onMouseDown}
+            onMouseUp={onMouseUp}
+            onTouchEnd={onTouchEnd}
           >
             <div className={"tol-config-drawer-selected-column-name"}>
               <div style={{ display: 'inline', paddingRight: '5px' }}>{attributeDeatils.display_name || normaliseCaps(attr_name)}</div>
@@ -129,20 +131,19 @@ function SelectedAttributesContainer(props: Props) {
     );
   };
 
+
   return (
     <div>
       <div>
         <h6 className="tol-config-drawer-column-title">{title}</h6>
-        <div className={"tol-config-drawer-column-container"}>
-          <DraggableList itemKey="key" list={attributes} template={selectedColumn} onMoveEnd={(newList) => (setAttributes(newList))}/>
-          {/* {attributes.map((att, index) => (
-            <div
-              key={`${att}-${index}`}
-              className="tol-config-drawer-column-contents"
-            >
-              {selectedColumn(att, index)}
-            </div>
-          ))} */}
+        <div className="tol-config-drawer-column-container">
+          <DraggableList
+            itemKey="key"
+            list={attributes}
+            template={selectedColumn}
+            onMoveEnd={(newList) => (setAttributes(newList))}
+            springConfig={{ stiffness: 500, damping: 100 }}
+          />
         </div>
         {attributes.length === 0 && (
           <p>

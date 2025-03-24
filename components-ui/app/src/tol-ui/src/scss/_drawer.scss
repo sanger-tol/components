@@ -48,6 +48,7 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
 }
 
 .tol-config-drawer-column-container {
+  position: relative;
   max-height: 51vh;
   overflow: auto;
   padding: 5px 10px 5px 0;
