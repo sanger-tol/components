@@ -182,7 +182,11 @@ function Table(props: Props) {
 
   const actionDropDownButtons = actions?.map((button) => ({
     ...button,
-    action: () => button.action(selectedRows, filter),
+    action: () => {
+      // reset selected rows after action
+      setSelectedRows([]);
+      button.action(selectedRows, filter)
+    },
     disabled: selectedRows.length === 0,
   }));
 

@@ -25,7 +25,7 @@ import {
   filterHasUpdated,
   resetFiltersBelow,
 } from "../filtering/utils";
-import RemoteRowCounter from "./RemoteRowCounter";
+import RowCounter from "./RowCounter";
 import { DropdownButtonProps } from "../general/DropdownButtons";
 import ActionCheckModal from "./actions/ActionCheckModal";
 import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
@@ -272,7 +272,7 @@ function RemoteTable(props: Props) {
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
     await ds
-      .custom(`/${ACTION_ENDPOINTS.RUN_ACTION}`, ApiMethods.POST as string, {
+      .custom(`/local/${ACTION_ENDPOINTS.RUN_ACTION}`, ApiMethods.POST as string, {
         ids: ids,
         action_name: actionName,
         object_type: endpoint,
@@ -329,7 +329,7 @@ function RemoteTable(props: Props) {
         setPageSize={setPageSize}
         totalSize={totalSize}
         rowCounter={
-          <RemoteRowCounter
+          <RowCounter
             totalSize={totalSize}
             filter={filter}
             loading={loading}
