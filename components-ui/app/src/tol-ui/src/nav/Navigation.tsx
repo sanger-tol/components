@@ -65,15 +65,15 @@ const fetchEnvironment = (): Promise<string> => {
 const getBackgroundClass = (environment: string): string => {
   switch (environment) {
     case "dev":
-      return "bg-warning";
     case "testing":
-      return "bg-info";
+    case "review":
+    case "qa":
+      return "bg-danger";
     case "staging":
       return "bg-success";
-    case "qa":
-      return "bg-secondary";
+    default:
+      return "";
   }
-  return "";
 };
 
 // on page change update returnUrl to page route
@@ -158,9 +158,7 @@ function Navigation(props: Props) {
     <div className="navigation">
       <Navbar
         className={
-          (isProduction() && environment
-            ? "navbar-dark"
-            : "navbar-light " + getBackgroundClass(environment)) +
+          "navbar-dark " + getBackgroundClass(environment) +
           " navbar-custom fixed-top"
         }
         expand="lg"
