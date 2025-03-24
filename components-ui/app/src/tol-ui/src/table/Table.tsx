@@ -23,8 +23,10 @@ import Filter, { IFilter } from "../filtering/Filter";
 import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
 import { DropdownButtonProps } from "../general/DropdownButtons";
+import { useStateFallback } from "../hooks/useStateFallback";
 
-export type NumRows = 25 | 50 | 100 | 1000;
+
+export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
 interface Props {
   id: string;
@@ -39,7 +41,7 @@ interface Props {
 
   page: number;
   setPage: any;
-  pageSize: NumRows | number;
+  pageSize: number | NumRows;
   setPageSize: any;
   totalSize: number;
   rowCounter?: JSX.Element;
@@ -68,8 +70,8 @@ interface Props {
   actions?: DropdownButtonProps[];
   actionsFooter?: DropdownButtonProps;
   configButtons?: JSX.Element[];
-  externalSetSelectedRows?: any;
-  externalSelectedRows?: string[];
+  selectedRows?: string[];
+  setSelectedRows?: (selectedRows: string[]) => void;
 }
 
 function Table(props: Props) {
@@ -114,8 +116,6 @@ function Table(props: Props) {
     actions,
     actionsFooter,
     configButtons,
-    externalSetSelectedRows,
-    externalSelectedRows,
     /* eslint-enable */
   } = props;
 
@@ -127,9 +127,11 @@ function Table(props: Props) {
   noFilter = !!noFilter;
 
   // row selection
-  const [internalSelectedRows, setInternalSelectedRows] = useState<string[]>([]);
-  const selectedRows = externalSelectedRows || internalSelectedRows;
-  const setSelectedRows = externalSetSelectedRows || setInternalSelectedRows;
+  const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
+    props.selectedRows,
+    props.setSelectedRows,
+    []
+  );
 
   // @ts-ignore - temp turned off
   const [bulkSelect, setBulkSelect] = useState(false);
@@ -184,8 +186,7 @@ function Table(props: Props) {
     ...button,
     action: () => {
       // reset selected rows after action
-      setSelectedRows([]);
-      button.action(selectedRows, filter)
+      button.action(selectedRows, filter);
     },
     disabled: selectedRows.length === 0,
   }));
@@ -271,6 +272,7 @@ function Table(props: Props) {
                   { label: "25", value: 25 },
                   { label: "50", value: 50 },
                   { label: "100", value: 100 },
+                  { label: "100", value: 250 },
                 ]}
               />
             </span>

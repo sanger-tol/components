@@ -31,6 +31,7 @@ import ActionCheckModal from "./actions/ActionCheckModal";
 import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
 import ActionModal from "./actions/ActionModal";
 import { addRemoteActions } from "./actions/utils";
+import { useStateFallback } from "src/hooks";
 
 interface Props {
   id: string;
@@ -63,9 +64,11 @@ interface Props {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
+  configButtons?: JSX.Element[];
 
   actions?: (string | DropdownButtonProps)[];
-  configButtons?: JSX.Element[];
+  selectedRows?: string[];
+  setSelectedRows?: (selectedRows: string[]) => void;
 
   debug?: boolean;
 }
@@ -133,8 +136,14 @@ function RemoteTable(props: Props) {
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
+  
+  // row selection
+  const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
+    props.selectedRows,
+    props.setSelectedRows,
+    []
+  );
   const [idExportModalOpen, setIdExportModalOpen] = useState<boolean>(false);
-  const [idsForExport, setIdsForExport] = useState<string[]>([]);
   const [idsWithReqNotMet, setIdsWithReqNotMet] = useState<any>({});
   const [currentActionName, setCurrentActionName] = useState<string>("");
 
@@ -279,7 +288,7 @@ function RemoteTable(props: Props) {
       })
       .finally(() => {
         setActionModalOpen(true);
-        setIdsForExport([]);
+        setSelectedRows([]);
         setLoading(false);
       });
   };
@@ -302,9 +311,9 @@ function RemoteTable(props: Props) {
         showIdExportModal={idExportModalOpen}
         setShowIdExportModal={setIdExportModalOpen}
         setLoading={setLoading}
-        setIdsForExport={setIdsForExport}
+        idsForExport={selectedRows}
+        setIdsForExport={setSelectedRows}
         setIdsWithReqNotMet={setIdsWithReqNotMet}
-        idsForExport={idsForExport}
         idsWithReqNotMet={idsWithReqNotMet}
         completeAction={completeAction}
         currentActionName={currentActionName}
@@ -353,8 +362,8 @@ function RemoteTable(props: Props) {
         noConfigModal={noConfigModal}
         noDownload={noDownload}
         rowSelection={rowSelection}
-        externalSetSelectedRows={setIdsForExport}
-        externalSelectedRows={idsForExport}
+        selectedRows={selectedRows}
+        setSelectedRows={setSelectedRows}
         actions={convertedActions}
         actionsFooter={{
           name: "View Actions",

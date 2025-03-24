@@ -19,6 +19,7 @@ function exampleElement(props: exampleProps) {
 
 function Tables() {
   const [forceUpdate, setForceUpdate] = useState(false);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const title = <h2>Tables</h2>;
 
@@ -30,13 +31,15 @@ function Tables() {
 
   const actions = [
     // remote version
-    "Remote Example",
+    "super fun EXPORT",
     // custom version
     {
       name: "Custom Example",
       action: (selectedRows: string[]) => {
         console.log('This is a fully custom action');
         console.log(selectedRows);
+        // set to a certain id
+        setSelectedRows(['14354_1#1']);
       },
     }
   ];
@@ -57,6 +60,8 @@ function Tables() {
           rowSelection
           pageSize={100}
           forceUpdate={forceUpdate}
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
           fields={{
             mlwh_run_id: {
               rename: "Run ID",

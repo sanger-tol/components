@@ -7,3 +7,4 @@ SPDX-License-Identifier: MIT
 export { themeListener, resizeListener } from "./listeners";
 export { useEffectUpdate } from "./useEffectUpdate";
 export { useQuery } from "./useQuery";
+export { useStateFallback } from "./useStateFallback";

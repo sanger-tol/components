@@ -51,7 +51,6 @@ export function addRemoteActions(
   ): Promise<object> => {
     try {
       const res = await httpClient().get(`/local/${ACTION_ENDPOINTS.GET_ACTIONS}`, {
-        baseURL: baseUrl,
         params: {
           filter: {
             and_: {

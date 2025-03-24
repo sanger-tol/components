@@ -73,7 +73,6 @@ function ActionCheckModal(props: Props) {
   const handleCompleteAction = (actionName: string, ids: string[]) => {
     completeAction(actionName, ids);
     setShowIdExportModal(false);
-    setIdsForExport([]);
     setIdsWithReqNotMet([]);
   };
 
