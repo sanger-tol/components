@@ -81,19 +81,22 @@ function SelectedAttributesContainer(props: Props) {
     }, TRANSITION_TIME);
   };
 
-  const selectedColumn = (attr: string, index: number) => {
-    const attr_name = attr.item
+  const selectedColumn = ({ item, itemSelected, dragHandleProps }, index: number) => {
+    const { onMouseDown, onTouchStart } = dragHandleProps;
+    const attr_name = item
     const attributeDeatils = objectAttributes[attr_name] || {};
 
     return (
         <div
-        {...attr.dragHandleProps}
         key={`${attr_name}-${index}`}
         className={`tol-config-drawer-selected-column ${recentlyMoved === index ? "highlight" : ""
           } ${deletingIndex === index ? "deleting" : ""}`}
       >
         <div>
-          <span>
+          <span
+            onTouchStart={onTouchStart}
+            onMouseDown={onMouseDown}
+          >
             <div className={"tol-config-drawer-selected-column-name"}>
               <div style={{ display: 'inline', paddingRight: '5px' }}>{attributeDeatils.display_name || normaliseCaps(attr_name)}</div>
               <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr_name} />
@@ -131,7 +134,7 @@ function SelectedAttributesContainer(props: Props) {
       <div>
         <h6 className="tol-config-drawer-column-title">{title}</h6>
         <div className={"tol-config-drawer-column-container"}>
-          <DraggableList itemKey="key" list={attributes} template={selectedColumn}/>
+          <DraggableList itemKey="key" list={attributes} template={selectedColumn} onMoveEnd={(newList) => (setAttributes(newList))}/>
           {/* {attributes.map((att, index) => (
             <div
               key={`${att}-${index}`}
