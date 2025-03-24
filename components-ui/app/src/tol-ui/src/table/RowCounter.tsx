@@ -15,7 +15,7 @@ interface Props {
   loading: boolean;
 }
 
-function RemoteRowCounter(props: Props) {
+function RowCounter(props: Props) {
   const { totalSize, endpoint, baseUrl, filter, loading } = props;
   const [count, setCount] = useState<number | null>(null);
 
@@ -57,4 +57,4 @@ function RemoteRowCounter(props: Props) {
   return <span className="tol-total">{addTotalText(count)}</span>;
 }
 
-export default RemoteRowCounter;
+export default RowCounter;
