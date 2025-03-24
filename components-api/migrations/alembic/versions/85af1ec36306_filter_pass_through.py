@@ -18,7 +18,7 @@ depends_on = None
 
 def upgrade() -> None:
     # Add column with default value
-    op.add_column('component', sa.Column('filter_pass_through', sa.Boolean(), nullable=False, server_default=sa.false()))
+    op.add_column('component', sa.Column('filter_pass_through', sa.Boolean(), nullable=False, server_default=sa.false))
 
     # Update existing rows to ensure consistency
     op.execute("UPDATE component SET filter_pass_through = FALSE")
