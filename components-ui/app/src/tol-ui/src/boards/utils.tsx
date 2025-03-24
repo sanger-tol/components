@@ -621,10 +621,10 @@ export async function addComponent(
     });
 }
 
-export async function upsertComponentConfig(
+export async function upsertComponent(
   ds: TsDataSource,
   componentId: string,
-  config: object,
+  attributes: object,
 ) {
   return await ds.upsert({
     objectType: BOARD_ENDPOINTS.COMPONENT,
@@ -632,29 +632,16 @@ export async function upsertComponentConfig(
       {
         type: BoardObjectTypes.COMPONENT as string,
         id: componentId,
-        attributes: {
-          config: config,
-        },
+        attributes: attributes
       },
     ],
   });
 }
 
-export async function upsertPassThrough(
+export async function upsertComponentConfig(
   ds: TsDataSource,
   componentId: string,
-  passThrough?: boolean,
+  config: object,
 ) {
-  return await ds.upsert({
-    objectType: BOARD_ENDPOINTS.COMPONENT,
-    payload: [
-      {
-        type: BoardObjectTypes.COMPONENT as string,
-        id: componentId,
-        attributes: {
-          filter_pass_through: passThrough,
-        },
-      },
-    ],
-  });
+  return await upsertComponent(ds, componentId, { config: config });
 }
