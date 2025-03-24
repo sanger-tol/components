@@ -63,10 +63,10 @@ const fetchEnvironment = (): Promise<string> => {
 };
 
 const getBackgroundClass = (environment: string): string => {
+  if (environment.startsWith("review")) return "bg-danger";
   switch (environment) {
     case "dev":
     case "testing":
-    case "review":
     case "qa":
       return "bg-danger";
     case "staging":
