@@ -31,7 +31,7 @@ import ActionCheckModal from "./actions/ActionCheckModal";
 import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
 import ActionModal from "./actions/ActionModal";
 import { addRemoteActions } from "./actions/utils";
-import { useStateFallback } from "src/hooks";
+import { useStateFallback } from "../hooks";
 
 interface Props {
   id: string;

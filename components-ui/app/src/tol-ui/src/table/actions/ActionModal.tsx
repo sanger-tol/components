@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import Modal from "../../general/Modal";
 import ActionStatus from "./ActionStatus";
 import RemoteTable from "../RemoteTable";
-import { useEffect } from "react";
+
 
 interface Props {
   objectType: string; // original table object

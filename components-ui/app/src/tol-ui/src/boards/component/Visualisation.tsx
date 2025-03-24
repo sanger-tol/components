@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 ;
-import { BoardCount, BoardTable } from "../../index";
+import { BoardCount, BoardTable, BoardSunburst } from "../../index";
 import { IZone } from "../utils";
 
 interface Props {
@@ -17,17 +17,20 @@ interface Props {
   config: any;
   title: string;
   componentType: string;
+  size: string
 }
 
 function Visualisation(props: Props) {
   const { componentType } = props;
 
-  if (componentType === "table") {
-    return <BoardTable {...props} />;
-  } else if (componentType === "count") {
-    return <BoardCount {...props}/>;
+  switch (componentType) {
+    case "table":
+      return <BoardTable {...props} />;
+    case "count":
+      return <BoardCount {...props} />;
+    case "sunburst":
+      return <BoardSunburst {...props} />;
   }
-  return <></>;
 }
 
 export default Visualisation;

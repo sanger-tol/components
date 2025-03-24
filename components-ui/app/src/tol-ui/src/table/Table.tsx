@@ -185,7 +185,6 @@ function Table(props: Props) {
   const actionDropDownButtons = actions?.map((button) => ({
     ...button,
     action: () => {
-      // reset selected rows after action
       button.action(selectedRows, filter);
     },
     disabled: selectedRows.length === 0,
@@ -433,7 +432,7 @@ function Table(props: Props) {
                   <HeaderCell>
                     {field.description && (
                       <div className="tol-header-info">
-                        <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint}/>
+                        <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint} />
                       </div>
                     )}
                     <p className="tol-header-text">{field.rename}</p>
