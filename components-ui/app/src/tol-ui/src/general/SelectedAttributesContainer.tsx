@@ -13,6 +13,7 @@ import {
 } from "../index";
 import { normaliseCaps } from "../general/utils";
 import Draggable from "react-draggable";
+import DraggableList from "react-draggable-list";
 
 const TRANSITION_TIME: number = 300;
 
@@ -81,25 +82,24 @@ function SelectedAttributesContainer(props: Props) {
   };
 
   const selectedColumn = (attr: string, index: number) => {
-    const attributeDeatils = objectAttributes[attr] || {};
+    const attr_name = attr.item
+    const attributeDeatils = objectAttributes[attr_name] || {};
 
     return (
-      <Draggable
-        axis="y"
-      >
         <div
-        key={`${attr}-${index}`}
+        {...attr.dragHandleProps}
+        key={`${attr_name}-${index}`}
         className={`tol-config-drawer-selected-column ${recentlyMoved === index ? "highlight" : ""
           } ${deletingIndex === index ? "deleting" : ""}`}
       >
         <div>
           <span>
             <div className={"tol-config-drawer-selected-column-name"}>
-              <div style={{ display: 'inline', paddingRight: '5px' }}>{attributeDeatils.display_name || normaliseCaps(attr)}</div>
-              <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr} />
+              <div style={{ display: 'inline', paddingRight: '5px' }}>{attributeDeatils.display_name || normaliseCaps(attr_name)}</div>
+              <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr_name} />
             </div>
           </span>
-          <p className={"tol-config-drawer-selected-column-key"}>{attr}</p>
+          <p className={"tol-config-drawer-selected-column-key"}>{attr_name}</p>
         </div>
         <div className="tol-config-drawer-btn-array">
           {attributeDeatils.source && <SourceTag source={attributeDeatils.source} />}
@@ -123,7 +123,6 @@ function SelectedAttributesContainer(props: Props) {
           </div>
         </div>
       </div>
-      </Draggable>
     );
   };
 
@@ -132,14 +131,15 @@ function SelectedAttributesContainer(props: Props) {
       <div>
         <h6 className="tol-config-drawer-column-title">{title}</h6>
         <div className={"tol-config-drawer-column-container"}>
-          {attributes.map((att, index) => (
+          <DraggableList itemKey="key" list={attributes} template={selectedColumn}/>
+          {/* {attributes.map((att, index) => (
             <div
               key={`${att}-${index}`}
               className="tol-config-drawer-column-contents"
             >
               {selectedColumn(att, index)}
             </div>
-          ))}
+          ))} */}
         </div>
         {attributes.length === 0 && (
           <p>

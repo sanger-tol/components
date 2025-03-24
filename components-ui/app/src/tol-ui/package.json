@@ -40,7 +40,9 @@
     "@types/react": "^17.0.14",
     "@types/react-dom": "17.0.14",
     "react-code-blocks": "0.1.6",
-    "react-draggable": "4.4.6"
+    "react-draggable": "4.4.6",
+    "react-draggable-list": "4.2.1",
+    "react-draggable-lists": "1.0.0"
   },
   "scripts": {
     "build": "yarn build:esm && yarn build:cjs",
