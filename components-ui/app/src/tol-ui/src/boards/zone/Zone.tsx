@@ -77,6 +77,7 @@ function Zone(props: Props) {
             filter: widget.filter,
             id: widget.componentId,
             order: widget.order,
+            filterPassThrough: widget.filterPassThrough
           },
         };
         z.zone.order.push(widget.componentId);
