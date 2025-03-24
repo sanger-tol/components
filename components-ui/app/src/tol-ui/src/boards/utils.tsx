@@ -375,6 +375,7 @@ export async function getComponents(zoneId: string, ds: TsDataSource) {
       baseUrl: componentDetails.base_url,
       config: componentDetails.config,
       widgetType: componentDetails.widget_type,
+      filterPassThrough: componentDetails.filter_pass_through,
     };
   });
 }
@@ -592,6 +593,7 @@ export async function addComponent(
           config: {},
           base_url: dataUrl,
           user_id: user.id,
+          filter_pass_through: false,
         },
       },
     ],
@@ -632,6 +634,25 @@ export async function upsertComponentConfig(
         id: componentId,
         attributes: {
           config: config,
+        },
+      },
+    ],
+  });
+}
+
+export async function upsertPassThrough(
+  ds: TsDataSource,
+  componentId: string,
+  passThrough?: boolean,
+) {
+  return await ds.upsert({
+    objectType: BOARD_ENDPOINTS.COMPONENT,
+    payload: [
+      {
+        type: BoardObjectTypes.COMPONENT as string,
+        id: componentId,
+        attributes: {
+          filter_pass_through: passThrough,
         },
       },
     ],
