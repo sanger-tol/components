@@ -12,6 +12,7 @@ import {
   TsDataSource
 } from "../index";
 import { normaliseCaps } from "../general/utils";
+import Draggable from "react-draggable";
 
 const TRANSITION_TIME: number = 300;
 
@@ -83,7 +84,10 @@ function SelectedAttributesContainer(props: Props) {
     const attributeDeatils = objectAttributes[attr] || {};
 
     return (
-      <div
+      <Draggable
+        axis="y"
+      >
+        <div
         key={`${attr}-${index}`}
         className={`tol-config-drawer-selected-column ${recentlyMoved === index ? "highlight" : ""
           } ${deletingIndex === index ? "deleting" : ""}`}
@@ -119,6 +123,7 @@ function SelectedAttributesContainer(props: Props) {
           </div>
         </div>
       </div>
+      </Draggable>
     );
   };
 
