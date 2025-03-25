@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, forwardRef, useState, useRef } from "react";
 import {
   Icon,
   SourceTag,
@@ -12,7 +12,6 @@ import {
   TsDataSource
 } from "../index";
 import { normaliseCaps } from "../general/utils";
-import Draggable from "react-draggable";
 import DraggableList from "react-draggable-list";
 
 const TRANSITION_TIME: number = 300;
@@ -81,12 +80,13 @@ function SelectedAttributesContainer(props: Props) {
     }, TRANSITION_TIME);
   };
 
-  const selectedColumn = ({ item, dragHandleProps }, index: number) => {
+  const SelectedColumn = forwardRef(({ item, dragHandleProps, index }: { item: any; dragHandleProps: any; index: number }, ref) => {
     const attr_name = item
     const attributeDeatils = objectAttributes[attr_name] || {};
 
     return (
         <div
+        ref={ref}
         {...dragHandleProps}
         key={`${attr_name}-${index}`}
         className={`tol-config-drawer-selected-column ${recentlyMoved === index ? "highlight" : ""
@@ -125,8 +125,7 @@ function SelectedAttributesContainer(props: Props) {
         </div>
       </div>
     );
-  };
-
+  });
 
   return (
     <div>
@@ -136,7 +135,14 @@ function SelectedAttributesContainer(props: Props) {
           <DraggableList
             itemKey={(item) => item}
             list={attributes}
-            template={selectedColumn}
+            template={(props, index) => {
+              return (
+                <SelectedColumn
+                  {...props}
+                  index={index}
+                />
+              );
+            }}
             onMoveEnd={(newList) => (setAttributes(newList))}
             springConfig={{ stiffness: 500, damping: 100 }}
           />
