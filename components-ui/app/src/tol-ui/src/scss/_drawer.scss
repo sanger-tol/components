@@ -100,6 +100,7 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
   border: 1px solid var(--tol-grey-subtle);
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   align-items: center;
+  position: relative;
 }
 
 .tol-config-drawer-selected-column {

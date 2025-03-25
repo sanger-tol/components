@@ -81,23 +81,19 @@ function SelectedAttributesContainer(props: Props) {
     }, TRANSITION_TIME);
   };
 
-  const selectedColumn = ({ item, itemSelected, dragHandleProps }, index: number) => {
-    const { onMouseDown, onTouchStart, onMouseUp, onTouchEnd } = dragHandleProps;
+  const selectedColumn = ({ item, dragHandleProps }, index: number) => {
     const attr_name = item
     const attributeDeatils = objectAttributes[attr_name] || {};
 
     return (
         <div
+        {...dragHandleProps}
         key={`${attr_name}-${index}`}
         className={`tol-config-drawer-selected-column ${recentlyMoved === index ? "highlight" : ""
           } ${deletingIndex === index ? "deleting" : ""}`}
       >
         <div>
           <span
-            onTouchStart={onTouchStart}
-            onMouseDown={onMouseDown}
-            onMouseUp={onMouseUp}
-            onTouchEnd={onTouchEnd}
           >
             <div className={"tol-config-drawer-selected-column-name"}>
               <div style={{ display: 'inline', paddingRight: '5px' }}>{attributeDeatils.display_name || normaliseCaps(attr_name)}</div>
@@ -138,7 +134,7 @@ function SelectedAttributesContainer(props: Props) {
         <h6 className="tol-config-drawer-column-title">{title}</h6>
         <div className="tol-config-drawer-column-container">
           <DraggableList
-            itemKey="key"
+            itemKey={(item) => item}
             list={attributes}
             template={selectedColumn}
             onMoveEnd={(newList) => (setAttributes(newList))}
