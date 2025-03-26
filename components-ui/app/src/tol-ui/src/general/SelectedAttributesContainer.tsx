@@ -140,13 +140,11 @@ function SelectedAttributesContainer(props: Props) {
             container={() => ref.current}
             itemKey={(item) => item}
             list={attributes}
-            template={(props) => {
-              return (
-                <SelectedColumn
-                  {...props}
-                />
-              );
-            }}
+            template={(props) => (
+              <SelectedColumn
+                {...props}
+              />
+            )}
             onMoveEnd={(newList) => (setAttributes(newList))}
             springConfig={{ stiffness: 500, damping: 100 }}
           />
