@@ -55,13 +55,13 @@ function getPlaceholderIcon(
 
 function getPlaceholder(
   height: any,
+  style: any = {},
   icon: JSX.Element,
   backing?: JSX.Element,
   opacity?: number,
   clear?: boolean,
   squareCorners?: boolean,
 ) {
-  const style = {};
   if (opacity) style["opacity"] = opacity;
   if (squareCorners !== true) style["borderRadius"] = 6;
 
@@ -115,6 +115,7 @@ interface Props {
   errorMessage?: string;
   backing?: JSX.Element;
   height?: any;
+  style?: any;
 }
 
 function Placeholder(props: Props) {
@@ -133,6 +134,7 @@ function Placeholder(props: Props) {
     warningMessage,
     errorMessage,
     backing,
+    style,
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
 
@@ -153,7 +155,15 @@ function Placeholder(props: Props) {
     errorMessage,
   );
 
-  return getPlaceholder(height, icon, backing, opacity, clear, squareCorners);
+  return getPlaceholder(
+    height,
+    style,
+    icon,
+    backing,
+    opacity,
+    clear,
+    squareCorners,
+  );
 }
 
 export default Placeholder;

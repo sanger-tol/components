@@ -38,7 +38,7 @@ function BoardSunburst(props: Props) {
   };
 
   const configButtons = [
-    <div key="board-sunburst-config" className="tol-table-bar">
+    <div key="board-sunburst-config">
       <Button
         outline
         position="right"
@@ -69,7 +69,7 @@ function BoardSunburst(props: Props) {
       />
       <SliceByDrawer
         {...props}
-        sliceBy={config.sliceBy || []} //Pass in a blank array to account for no config
+        sliceBy={config.sliceBy || []} // Pass in a blank array to account for no config
         endpoint={objectType}
         open={openConfig}
         setOpen={setOpenConfig}

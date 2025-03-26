@@ -17,6 +17,7 @@ import {
 import { FormTextField } from "../../forms";
 import { RSForm } from "../../index";
 import { IZone, addComponent, defineComponent } from "../utils";
+import { normaliseCaps } from "../../general/utils";
 
 interface Props {
   open: boolean;
@@ -200,7 +201,7 @@ function ComponentPickerModal(props: Props) {
             const content = (
               <>
                 <Icon icon={option.icon} size="6x" />
-                <h6>{option.type}</h6>
+                <h6>{normaliseCaps(option.type)}</h6>
               </>
             );
             return (

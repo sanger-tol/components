@@ -156,10 +156,6 @@ function RemoteSunburst(props: Props) {
     return <Placeholder errorMessage={errorMessage} height={height} />;
   }
 
-  if (warningMessage !== "") {
-    return <Placeholder warningMessage={warningMessage} height={height} />;
-  }
-
   if (loading) {
     return (
       <div id={wrapperId} style={{ height: height }}>
@@ -247,18 +243,22 @@ function RemoteSunburst(props: Props) {
             : { height: height, paddingBottom: headerPadding }
         }
       >
-        <Sunburst
-          {...props}
-          noRefresh
-          noDownload
-          title={undefined} // have to be explicit when auto passing props
-          datasets={datasets}
-          downloadName={normaliseCaps(endpoint)}
-          setSliceData={setter}
-          noLegend={miniActive ? true : noLegend}
-          resetChart={resetChart}
-          height="100%"
-        />
+        {warningMessage !== "" ? 
+          <Placeholder warningMessage={warningMessage} style={{marginTop: 8}} />
+        :
+          <Sunburst
+            {...props}
+            noRefresh
+            noDownload
+            title={undefined} // have to be explicit when auto passing props
+            datasets={datasets}
+            downloadName={normaliseCaps(endpoint)}
+            setSliceData={setter}
+            noLegend={miniActive ? true : noLegend}
+            resetChart={resetChart}
+            height="100%"
+          />
+        }
       </div>
     </div>
   );
