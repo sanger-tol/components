@@ -50,8 +50,7 @@
     "react-markdown": "8.0.6",
     "react-select-country-list": "2.2.3",
     "react-code-blocks": "0.1.6",
-    "react-draggable-list": "4.2.1",
-    "react-draggable-lists": "1.0.0"
+    "react-draggable-list": "4.2.1"
   },
   "devDependencies": {
     "vitest": "2.0.5",
