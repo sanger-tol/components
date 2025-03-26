@@ -41,6 +41,8 @@ function SelectedAttributesContainer(props: Props) {
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
   const [objectAttributes, setObjectAttributes] = useState<AttributeDetails>({});
 
+  const ref = useRef(null)
+
   useEffect(() => {
     const ds = new TsDataSource({ baseUrl: baseUrl });
     ds.getEntityMeta().then((meta) => {
@@ -129,15 +131,13 @@ function SelectedAttributesContainer(props: Props) {
     );
   });
 
-  const test = useRef()
-
   return (
     <div>
       <div>
         <h6 className="tol-config-drawer-column-title">{title}</h6>
-        <div className="tol-config-drawer-column-container">
+        <div className="tol-config-drawer-column-container" ref={ref}>
           <DraggableList
-            ref={test}
+            container={() => ref.current}
             itemKey={(item) => item}
             list={attributes}
             template={(props) => {
