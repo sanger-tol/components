@@ -140,6 +140,7 @@ function SelectedAttributesContainer(props: Props) {
             container={() => ref.current}
             itemKey={(item) => item}
             list={attributes}
+            // @ts-ignore
             template={(props) => (
               <SelectedColumn
                 {...props}
