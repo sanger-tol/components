@@ -48,10 +48,6 @@ function SelectedAttributesContainer(props: Props) {
     });
   }, [])
 
-  useEffect(() => {
-  
-  },[attributes])
-
   const moveAttributeUp = (index: number) => {
     if (index === 0) return;
     const newAttributes = [...attributes];
@@ -91,14 +87,13 @@ function SelectedAttributesContainer(props: Props) {
 
 
     return (
-        <div
+      <div
         key={`${attr_name}-${index}`}
         className={`tol-config-drawer-selected-column ${recentlyMoved === index ? "highlight" : ""
           } ${deletingIndex === index ? "deleting" : ""}`}
       >
         <div>
           <span
-            ref={ref}
             {...dragHandleProps}
           >
             <div

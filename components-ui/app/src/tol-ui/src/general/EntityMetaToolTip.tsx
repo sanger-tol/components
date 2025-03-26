@@ -17,7 +17,7 @@ function EntityMetaTooltip(props: Props) {
   const { baseUrl, field, endpoint } = props;
   const [attributeDeatils, setAttributeDetails] = useState<object>({});
 
-  const ds = new TsDataSource({baseUrl: baseUrl});
+  const ds = new TsDataSource({ baseUrl: baseUrl });
   useEffect(() => {
     ds.getEntityMeta().then((meta) => {
       const attribute = meta.flatAttributes[endpoint][field];
