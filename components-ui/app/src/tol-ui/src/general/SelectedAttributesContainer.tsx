@@ -14,7 +14,7 @@ import {
 import { normaliseCaps } from "../general/utils";
 import DraggableList from "react-draggable-list";
 
-const TRANSITION_TIME: number = 0;
+const TRANSITION_TIME: number = 300;
 
 interface AttributeDetails {
   source?: string;
@@ -74,10 +74,8 @@ function SelectedAttributesContainer(props: Props) {
 
   const removeAttribute = (index: number) => {
     setDeletingIndex(index);
-    setTimeout(() => {
-      setAttributes(attributes.filter((_, i) => i !== index));
-      setDeletingIndex(null);
-    }, TRANSITION_TIME);
+    setAttributes(attributes.filter((_, i) => i !== index));
+    setDeletingIndex(null);
   };
 
   const SelectedColumn = forwardRef<HTMLDivElement, { item: any; dragHandleProps: any }>(({ item, dragHandleProps }, ref) => {
