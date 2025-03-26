@@ -93,11 +93,11 @@ SPDX-License-Identifier: MIT
 }
 
 .tol-attribute-selector-suggested-toggle {
-  margin-top: 10px !important;
-  margin-bottom: -20px !important;
+  margin-top: 2px !important;
+  margin-bottom: -18px !important;
 
-  .rs-toggle {
-    margin-right: 10px;
+  .rs-checkbox {
+    vertical-align: unset !important;
   }
 }
 

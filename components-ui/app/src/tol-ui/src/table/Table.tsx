@@ -18,13 +18,15 @@ import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import ColumnConfigDrawer from "./ColumnConfigDrawer";
-import { exportTableToSpreadsheet, getAllowedFields } from "./utils";
+import { exportTableToSpreadsheet, getAllowedFields, getSourceColour } from "./utils";
 import Filter, { IFilter } from "../filtering/Filter";
 import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
 import { DropdownButtonProps } from "../general/DropdownButtons";
+import { useStateFallback } from "../hooks/useStateFallback";
 
-export type NumRows = 25 | 50 | 100 | 1000;
+
+export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
 interface Props {
   id: string;
@@ -39,7 +41,7 @@ interface Props {
 
   page: number;
   setPage: any;
-  pageSize: NumRows | number;
+  pageSize: number | NumRows;
   setPageSize: any;
   totalSize: number;
   rowCounter?: JSX.Element;
@@ -68,8 +70,8 @@ interface Props {
   actions?: DropdownButtonProps[];
   actionsFooter?: DropdownButtonProps;
   configButtons?: JSX.Element[];
-  externalSetSelectedRows?: any;
-  externalSelectedRows?: string[];
+  selectedRows?: string[];
+  setSelectedRows?: (selectedRows: string[]) => void;
 }
 
 function Table(props: Props) {
@@ -114,8 +116,6 @@ function Table(props: Props) {
     actions,
     actionsFooter,
     configButtons,
-    externalSetSelectedRows,
-    externalSelectedRows,
     /* eslint-enable */
   } = props;
 
@@ -127,9 +127,11 @@ function Table(props: Props) {
   noFilter = !!noFilter;
 
   // row selection
-  const [internalSelectedRows, setInternalSelectedRows] = useState<string[]>([]);
-  const selectedRows = externalSelectedRows || internalSelectedRows;
-  const setSelectedRows = externalSetSelectedRows || setInternalSelectedRows;
+  const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
+    props.selectedRows,
+    props.setSelectedRows,
+    []
+  );
 
   // @ts-ignore - temp turned off
   const [bulkSelect, setBulkSelect] = useState(false);
@@ -182,7 +184,9 @@ function Table(props: Props) {
 
   const actionDropDownButtons = actions?.map((button) => ({
     ...button,
-    action: () => button.action(selectedRows, filter),
+    action: () => {
+      button.action(selectedRows, filter);
+    },
     disabled: selectedRows.length === 0,
   }));
 
@@ -267,6 +271,7 @@ function Table(props: Props) {
                   { label: "25", value: 25 },
                   { label: "50", value: 50 },
                   { label: "100", value: 100 },
+                  { label: "100", value: 250 },
                 ]}
               />
             </span>
@@ -417,6 +422,8 @@ function Table(props: Props) {
               const field = fieldMeta.data[key];
               const sortable = noSorting ? false : field.sort;
               const filterable = noFilter ? false : field.filter;
+              console.log(field.source, field.rename);
+
               return (
                 <Column
                   key={key}
@@ -425,12 +432,22 @@ function Table(props: Props) {
                   fixed={field.fixed}
                 >
                   <HeaderCell>
-                    {field.description && (
+                    {(field.description || field.source) && (
                       <div className="tol-header-info">
                         <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint} />
                       </div>
                     )}
-                    <p className="tol-header-text">{field.rename}</p>
+                    <p className="tol-header-text">
+                      {field.source && (
+                        <span
+                          className="inline-source"
+                          style={{
+                            backgroundColor: getSourceColour(field.source),
+                          }}
+                        />
+                      )}
+                      {field.rename}
+                    </p>
                     {filterable && (
                       <span
                         className={

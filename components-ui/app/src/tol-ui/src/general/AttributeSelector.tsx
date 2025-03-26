@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Toggle } from "rsuite";
+import { Checkbox } from "rsuite";
 import { useEffect, useState } from "react";
 import {
   TsDataSource,
@@ -258,16 +258,16 @@ function AttributeSelector(props: Props) {
       />
       {recommendedFilterAvailable && (
         <div className="tol-attribute-selector-suggested-toggle">
-          <Toggle
+          <Checkbox
             key="recommended-tick-filter"
-            onClick={() => {
+            onChange={() => {
               setRecommendedOn(!recommendedOn);
             }}
             checked={recommendedOn}
           />
-          <span onClick={(e) => e.stopPropagation()}>
-            Toggle to only show recommended columns.
-          </span>{" "}
+          <span style={{paddingRight: 6}} onClick={(e) => e.stopPropagation()}>
+            Recommended columns.
+          </span>
           <InfoTooltip
             contents={"Recommended properties are indicated by a star icon."}
           />

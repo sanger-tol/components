@@ -15,7 +15,6 @@ import {
   tableDebug,
   structureFieldMeta,
   getTableConfigLocalStorage,
-  flowNameStringToActions,
 } from "./utils";
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
@@ -26,11 +25,13 @@ import {
   filterHasUpdated,
   resetFiltersBelow,
 } from "../filtering/utils";
-import RemoteRowCounter from "./RemoteRowCounter";
+import RowCounter from "./RowCounter";
 import { DropdownButtonProps } from "../general/DropdownButtons";
-import ActionCheckModal from "./ActionCheckModal";
+import ActionCheckModal from "./actions/ActionCheckModal";
 import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
-import ActionModal from "./ActionModal";
+import ActionModal from "./actions/ActionModal";
+import { addRemoteActions } from "./actions/utils";
+import { useStateFallback } from "../hooks";
 
 interface Props {
   id: string;
@@ -63,9 +64,11 @@ interface Props {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
+  configButtons?: JSX.Element[];
 
   actions?: (string | DropdownButtonProps)[];
-  configButtons?: JSX.Element[];
+  selectedRows?: string[];
+  setSelectedRows?: (selectedRows: string[]) => void;
 
   debug?: boolean;
 }
@@ -133,8 +136,14 @@ function RemoteTable(props: Props) {
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
+  
+  // row selection
+  const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
+    props.selectedRows,
+    props.setSelectedRows,
+    []
+  );
   const [idExportModalOpen, setIdExportModalOpen] = useState<boolean>(false);
-  const [idsForExport, setIdsForExport] = useState<string[]>([]);
   const [idsWithReqNotMet, setIdsWithReqNotMet] = useState<any>({});
   const [currentActionName, setCurrentActionName] = useState<string>("");
 
@@ -269,22 +278,22 @@ function RemoteTable(props: Props) {
     return <Placeholder loader height={height} />;
   }
 
-  const completeAction = async (action_name: string, ids: string[]) => {
+  const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
     await ds
-      .custom(`/${ACTION_ENDPOINTS.RUN_ACTION}`, ApiMethods.POST as string, {
+      .custom(`/local/${ACTION_ENDPOINTS.RUN_ACTION}`, ApiMethods.POST as string, {
         ids: ids,
-        action_name: action_name,
+        action_name: actionName,
         object_type: endpoint,
       })
       .finally(() => {
         setActionModalOpen(true);
-        setIdsForExport([]);
+        setSelectedRows([]);
         setLoading(false);
       });
   };
 
-  const convertedActions = flowNameStringToActions(
+  const convertedActions = addRemoteActions(
     endpoint,
     setCurrentActionName,
     setIdExportModalOpen,
@@ -302,9 +311,9 @@ function RemoteTable(props: Props) {
         showIdExportModal={idExportModalOpen}
         setShowIdExportModal={setIdExportModalOpen}
         setLoading={setLoading}
-        setIdsForExport={setIdsForExport}
+        idsForExport={selectedRows}
+        setIdsForExport={setSelectedRows}
         setIdsWithReqNotMet={setIdsWithReqNotMet}
-        idsForExport={idsForExport}
         idsWithReqNotMet={idsWithReqNotMet}
         completeAction={completeAction}
         currentActionName={currentActionName}
@@ -329,7 +338,7 @@ function RemoteTable(props: Props) {
         setPageSize={setPageSize}
         totalSize={totalSize}
         rowCounter={
-          <RemoteRowCounter
+          <RowCounter
             totalSize={totalSize}
             filter={filter}
             loading={loading}
@@ -353,8 +362,8 @@ function RemoteTable(props: Props) {
         noConfigModal={noConfigModal}
         noDownload={noDownload}
         rowSelection={rowSelection}
-        externalSetSelectedRows={setIdsForExport}
-        externalSelectedRows={idsForExport}
+        selectedRows={selectedRows}
+        setSelectedRows={setSelectedRows}
         actions={convertedActions}
         actionsFooter={{
           name: "View Actions",

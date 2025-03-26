@@ -129,7 +129,7 @@ def application():
     # Data endpoints
     blueprint_data_local = data_blueprint(sql_datasource)
     app.register_blueprint(blueprint_data_local, name='local',
-                           url_prefix=os.getenv('API_PATH'))
+                           url_prefix=os.getenv('API_PATH') + '/local')
 
     # The system endpoints
     blueprint_system = system_blueprint()

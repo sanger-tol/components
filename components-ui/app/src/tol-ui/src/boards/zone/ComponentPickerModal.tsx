@@ -144,40 +144,35 @@ function ComponentPickerModal(props: Props) {
   const componentOptions = [
     {
       type: "count",
+      text: "Count",
       icon: "hashtag",
-      disabled: false,
-    },
-    {
-      type: "chart",
-      icon: "chart-column",
-      disabled: true,
     },
     {
       type: "sunburst",
+      text: "Sunburst",
       icon: "chart-pie",
-      disabled: false,
     },
     {
       type: "table",
+      text: "Table",
       icon: "table",
-      disabled: false,
     },
   ];
 
   const sizeOptions = [
     {
       type: "sm",
-      name: "Small",
+      text: "Small",
       disabled: componentType === "count" || componentType == "sunburst" ? false : true,
     },
     {
       type: "md",
-      name: "Medium",
+      text: "Medium",
       disabled: componentType === "count" ? true : false,
     },
     {
       type: "lg",
-      name: "Large",
+      text: "Large",
       disabled: componentType === "count" ? true : false,
     },
   ];
@@ -185,7 +180,7 @@ function ComponentPickerModal(props: Props) {
   return (
     <Modal
       open={open}
-      size="full"
+      size="md"
       setOpen={setOpen}
       actionButton={plusButton}
       overflow={false}
@@ -197,35 +192,19 @@ function ComponentPickerModal(props: Props) {
         </h6>
         <Row>
           {componentOptions.map((option, index) => {
-            const content = (
-              <>
-                <Icon icon={option.icon} size="6x" />
-                <h6>{option.type}</h6>
-              </>
-            );
             return (
-              <Col lg={3} md={6} sm={12} className="tol-button-col" key={index}>
-                {!option.disabled ? (
-                  <div
-                    className={
-                      componentType !== option.type
-                        ? "tol-component-modal-bttn"
-                        : "tol-component-modal-bttn-clicked"
-                    }
-                    onClick={() => setComponentType(option.type)}
-                  >
-                    {content}
-                  </div>
-                ) : (
-                  <HoverOverlay contents={"Coming Soon..."}>
-                    <div
-                      className={"tol-component-modal-bttn-disabled"}
-                      onClick={() => console.log("unavailable")}
-                    >
-                      {content}
-                    </div>
-                  </HoverOverlay>
-                )}
+              <Col lg={4} md={4} sm={12} className="tol-button-col" key={index}>
+                <div
+                  className={
+                    componentType !== option.type
+                      ? "tol-component-modal-bttn"
+                      : "tol-component-modal-bttn-clicked"
+                  }
+                  onClick={() => setComponentType(option.type)}
+                >
+                  <Icon icon={option.icon} size="4x" />
+                  <h6>{option.text}</h6>
+                </div>
               </Col>
             );
           })}
@@ -247,15 +226,14 @@ function ComponentPickerModal(props: Props) {
                     }
                     onClick={() => setWidgetType(option.type)}
                   >
-                    <h5>{option.name}</h5>
+                    <h5>{option.text}</h5>
                   </div>
                 ) : (
-                  <HoverOverlay contents={"Coming Soon..."}>
+                  <HoverOverlay contents={"Currently unavailable for this Component"}>
                     <div
                       className={"tol-component-modal-bttn-disabled"}
-                      onClick={() => console.log("unavailable")}
                     >
-                      <h5>{option.name}</h5>
+                      <h5>{option.text}</h5>
                     </div>
                   </HoverOverlay>
                 )}

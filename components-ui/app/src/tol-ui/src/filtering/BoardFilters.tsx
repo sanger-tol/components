@@ -8,13 +8,12 @@ import { Toggle } from "rsuite"
 import { InfoTooltip } from "../general"
 import { useEffect, useState } from "react";
 import { IZone } from "../boards";
-import { upsertPassThrough } from "../boards/utils";
+import { upsertComponent } from "../boards/utils";
 import RemoteFilters from "./RemoteFilters";
 import { Drawer } from "../general";
 import { generateFilter, resetFiltersBelow } from "./utils";
 import { deepCopy } from "../general/utils";
 import { TsDataSource } from "..";
-import { BOARD_URL_PREFIX } from "../constants";
 
 export interface Props {
   id: string;
@@ -85,6 +84,9 @@ function BoardFilters(props: Props) {
   }, [open]);
 
   const onSave = (filter: any, filterPassThrough: boolean) => {
+    let componentAttributes = {
+      filter: filter
+    };
     if (entityType === "zone") {
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
@@ -92,24 +94,12 @@ function BoardFilters(props: Props) {
       zone.components[id].data.filter = deepCopy(filter);
       zone.components[id].data.defaultFilter = deepCopy(filter);
       zone.components[id].data.filterPassThrough = filterPassThrough;
-      upsertPassThrough(ds, id, filterPassThrough);
+      componentAttributes["filter_pass_through"] = filterPassThrough;
     }
     resetFiltersBelow({ id: id, zone: zone });
     setZone({ ...zone });
     setOpen(false);
-
-    ds.upsert({
-      objectType: `${BOARD_URL_PREFIX}/${entityType}`,
-      payload: [
-        {
-          type: entityType,
-          id: id,
-          attributes: {
-            filter: filter,
-          },
-        },
-      ],
-    });
+    upsertComponent(ds, id, componentAttributes);
   };
 
   return (
@@ -129,13 +119,15 @@ function BoardFilters(props: Props) {
               }}
               checked={passThrough}
             />
-            <span onClick={(e) => e.stopPropagation()}>
-              Toggle to activate Filter Pass Through.
-            </span>{" "}
+            <span style={{paddingRight: 6}} onClick={(e) => e.stopPropagation()}>
+              Apply filters only to this Component.
+            </span>
             <InfoTooltip
-              contents={"This component can not affect other components."}
+              contents={
+                "This filter does not affect other components in the heirarchy. Filters from above are still applied."
+              }
             />
-            <hr/>
+            <hr style={{marginTop: 24}} />
           </div>
         : null
         }
