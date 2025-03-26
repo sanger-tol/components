@@ -18,7 +18,7 @@ import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import ColumnConfigDrawer from "./ColumnConfigDrawer";
-import { exportTableToSpreadsheet, getAllowedFields } from "./utils";
+import { exportTableToSpreadsheet, getAllowedFields, getSourceColour } from "./utils";
 import Filter, { IFilter } from "../filtering/Filter";
 import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
@@ -422,6 +422,8 @@ function Table(props: Props) {
               const field = fieldMeta.data[key];
               const sortable = noSorting ? false : field.sort;
               const filterable = noFilter ? false : field.filter;
+              console.log(field.source, field.rename);
+
               return (
                 <Column
                   key={key}
@@ -430,12 +432,22 @@ function Table(props: Props) {
                   fixed={field.fixed}
                 >
                   <HeaderCell>
-                    {field.description && (
+                    {(field.description || field.source) && (
                       <div className="tol-header-info">
                         <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint} />
                       </div>
                     )}
-                    <p className="tol-header-text">{field.rename}</p>
+                    <p className="tol-header-text">
+                      {field.source && (
+                        <span
+                          className="inline-source"
+                          style={{
+                            backgroundColor: getSourceColour(field.source),
+                          }}
+                        />
+                      )}
+                      {field.rename}
+                    </p>
                     {filterable && (
                       <span
                         className={

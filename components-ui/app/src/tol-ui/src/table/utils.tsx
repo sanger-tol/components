@@ -52,8 +52,9 @@ const sourceColours = {
   portaldb: colours[11],
   pantheon: colours[12],
   calculated: colours[13],
-  undefined: colours[14],
-  all: colours[30],
+  genome_notes: colours[14],
+  lrpacbio: colours[15],
+  other: colours[30],
 };
 
 function createLink(text: any, url: string) {
@@ -609,9 +610,11 @@ function rgbToString(rgb: Rgb, opacity: number) {
   );
 }
 
-export function getSourceColour(sourceName: string) {
-  const rgb = sourceColours[sourceName];
-  if (rgb === undefined) return rgbToString({ r: 77, g: 77, b: 77 }, 1);
+export function getSourceColour(sourceName?: string): string {
+  const rgb = sourceName && sourceColours[sourceName]
+    ? sourceColours[sourceName]
+    : sourceColours.other;
+
   return rgbToString(rgb, 1);
 }
 

@@ -317,6 +317,14 @@
   display: inline;
 }
 
+.inline-source {
+  height: 10px;
+  width: 2px;
+  margin-right: 3px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
 // config modal
 .clear-saved-config.btn.btn-warning {
   color: white !important;
