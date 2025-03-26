@@ -38,6 +38,14 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
   cursor: default !important;
 }
 
+.tol-active-column-btn:hover {
+  color: var(--tol-primary);
+}
+
+.tol-active-column-btn.delete:hover {
+  color: var(--tol-danger);
+}
+
 .tol-config-drawer-btn-array {
   display: flex;
 }

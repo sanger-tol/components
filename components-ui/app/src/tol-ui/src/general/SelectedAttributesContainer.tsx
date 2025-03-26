@@ -119,7 +119,7 @@ function SelectedAttributesContainer(props: Props) {
             <Icon icon="arrow-down" size="lg" />
           </div>
           <div
-            className="tol-active-column-btn"
+            className="tol-active-column-btn delete"
             onClick={() => removeAttribute(index)}
           >
             <Icon icon="close" size="lg" />
