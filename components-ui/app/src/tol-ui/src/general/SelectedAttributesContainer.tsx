@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, forwardRef, useState, useRef } from "react";
+import { useEffect, forwardRef, useState } from "react";
 import {
   Icon,
   SourceTag,
@@ -48,6 +48,10 @@ function SelectedAttributesContainer(props: Props) {
     });
   }, [])
 
+  useEffect(() => {
+  
+  },[attributes])
+
   const moveAttributeUp = (index: number) => {
     if (index === 0) return;
     const newAttributes = [...attributes];
@@ -80,22 +84,26 @@ function SelectedAttributesContainer(props: Props) {
     }, TRANSITION_TIME);
   };
 
-  const SelectedColumn = forwardRef(({ item, dragHandleProps, index }: { item: any; dragHandleProps: any; index: number }, ref) => {
+  const SelectedColumn = forwardRef(({ item, dragHandleProps }: { item: any; dragHandleProps: any; }, ref) => {
     const attr_name = item
     const attributeDeatils = objectAttributes[attr_name] || {};
+    const index = attributes.indexOf(attr_name);
+
 
     return (
         <div
-        ref={ref}
-        {...dragHandleProps}
         key={`${attr_name}-${index}`}
         className={`tol-config-drawer-selected-column ${recentlyMoved === index ? "highlight" : ""
           } ${deletingIndex === index ? "deleting" : ""}`}
       >
         <div>
           <span
+            ref={ref}
+            {...dragHandleProps}
           >
-            <div className={"tol-config-drawer-selected-column-name"}>
+            <div
+              className={"tol-config-drawer-selected-column-name"}
+            >
               <div style={{ display: 'inline', paddingRight: '5px' }}>{attributeDeatils.display_name || normaliseCaps(attr_name)}</div>
               <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr_name} />
             </div>
@@ -135,11 +143,10 @@ function SelectedAttributesContainer(props: Props) {
           <DraggableList
             itemKey={(item) => item}
             list={attributes}
-            template={(props, index) => {
+            template={(props) => {
               return (
                 <SelectedColumn
                   {...props}
-                  index={index}
                 />
               );
             }}
