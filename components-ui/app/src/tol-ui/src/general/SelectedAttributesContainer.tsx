@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, forwardRef, useState } from "react";
+import { useEffect, forwardRef, useState, useRef } from "react";
 import {
   Icon,
   SourceTag,
@@ -14,7 +14,7 @@ import {
 import { normaliseCaps } from "../general/utils";
 import DraggableList from "react-draggable-list";
 
-const TRANSITION_TIME: number = 300;
+const TRANSITION_TIME: number = 0;
 
 interface AttributeDetails {
   source?: string;
@@ -80,7 +80,7 @@ function SelectedAttributesContainer(props: Props) {
     }, TRANSITION_TIME);
   };
 
-  const SelectedColumn = forwardRef(({ item, dragHandleProps }: { item: any; dragHandleProps: any; }, ref) => {
+  const SelectedColumn = forwardRef<HTMLDivElement, { item: any; dragHandleProps: any }>(({ item, dragHandleProps }, ref) => {
     const attr_name = item
     const attributeDeatils = objectAttributes[attr_name] || {};
     const index = attributes.indexOf(attr_name);
@@ -88,6 +88,7 @@ function SelectedAttributesContainer(props: Props) {
 
     return (
       <div
+        ref={ref}
         key={`${attr_name}-${index}`}
         className={`tol-config-drawer-selected-column ${recentlyMoved === index ? "highlight" : ""
           } ${deletingIndex === index ? "deleting" : ""}`}
@@ -130,12 +131,15 @@ function SelectedAttributesContainer(props: Props) {
     );
   });
 
+  const test = useRef()
+
   return (
     <div>
       <div>
         <h6 className="tol-config-drawer-column-title">{title}</h6>
         <div className="tol-config-drawer-column-container">
           <DraggableList
+            ref={test}
             itemKey={(item) => item}
             list={attributes}
             template={(props) => {

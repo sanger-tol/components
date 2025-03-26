@@ -48,7 +48,6 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
 }
 
 .tol-config-drawer-column-container {
-  position: relative;
   max-height: 51vh;
   overflow: auto;
   padding: 5px 10px 5px 0;
@@ -100,7 +99,6 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
   border: 1px solid var(--tol-grey-subtle);
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
   align-items: center;
-  position: relative;
 }
 
 .tol-config-drawer-selected-column {
@@ -120,16 +118,4 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
 
 .tol-config-drawer-selected-column.highlight {
   border: 1px solid var(--tol-primary-light);
-}
-
-.tol-config-drawer-selected-column.deleting {
-  opacity: 0;
-  height: 0;
-  margin: 0;
-  padding: 0;
-  transition:
-    opacity 0.3s ease,
-    height 0.3s ease,
-    margin 0.3s ease,
-    padding 0.3s ease;
 }

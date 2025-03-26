@@ -19,21 +19,24 @@ function EntityMetaTooltip(props: Props) {
 
   const ds = new TsDataSource({ baseUrl: baseUrl });
   useEffect(() => {
-    ds.getEntityMeta().then((meta) => {
-      const attribute = meta.flatAttributes[endpoint][field];
-      if (attribute) {
-        const atts = {
-          Authorative: attribute.authorative,
-          Available_On_Relationship: attribute.available_on_relationship,
-          Cardinality: attribute.cardinality,
-          Description: attribute.description,
-          Display_Name: attribute.display_name,
-          Python_Type: attribute.python_type,
-          source: <SourceTag source={attribute.source} className="tol-entity-meta-tool-tip-source" />,
+    let isMounted = true;
+    if (isMounted) {
+      ds.getEntityMeta().then((meta) => {
+        const attribute = meta.flatAttributes[endpoint][field];
+        if (attribute) {
+          const atts = {
+            Authorative: attribute.authorative,
+            Available_On_Relationship: attribute.available_on_relationship,
+            Cardinality: attribute.cardinality,
+            Description: attribute.description,
+            Display_Name: attribute.display_name,
+            Python_Type: attribute.python_type,
+            source: <SourceTag source={attribute.source} className="tol-entity-meta-tool-tip-source" />,
+          }
+          setAttributeDetails(atts);
         }
-        setAttributeDetails(atts);
-      }
-    });
+    })};
+    return () => { isMounted = false };
   }, [field]);
 
   const tooltip = <FormatTooltip contents={attributeDeatils} />;
