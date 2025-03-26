@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, forwardRef, useState, useRef } from "react";
 import {
   Icon,
   SourceTag,
@@ -12,6 +12,7 @@ import {
   TsDataSource
 } from "../index";
 import { normaliseCaps } from "../general/utils";
+import DraggableList from "react-draggable-list";
 
 const TRANSITION_TIME: number = 300;
 
@@ -39,6 +40,8 @@ function SelectedAttributesContainer(props: Props) {
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
   const [objectAttributes, setObjectAttributes] = useState<AttributeDetails>({});
+
+  const ref = useRef(null)
 
   useEffect(() => {
     const ds = new TsDataSource({ baseUrl: baseUrl });
@@ -73,29 +76,35 @@ function SelectedAttributesContainer(props: Props) {
 
   const removeAttribute = (index: number) => {
     setDeletingIndex(index);
-    setTimeout(() => {
-      setAttributes(attributes.filter((_, i) => i !== index));
-      setDeletingIndex(null);
-    }, TRANSITION_TIME);
+    setAttributes(attributes.filter((_, i) => i !== index));
+    setDeletingIndex(null);
   };
 
-  const selectedColumn = (attr: string, index: number) => {
-    const attributeDeatils = objectAttributes[attr] || {};
+  const SelectedColumn = forwardRef<HTMLDivElement, { item: any; dragHandleProps: any }>(({ item, dragHandleProps }, ref) => {
+    const attr_name = item
+    const attributeDeatils = objectAttributes[attr_name] || {};
+    const index = attributes.indexOf(attr_name);
+
 
     return (
       <div
-        key={`${attr}-${index}`}
+        ref={ref}
+        key={`${attr_name}-${index}`}
         className={`tol-config-drawer-selected-column ${recentlyMoved === index ? "highlight" : ""
           } ${deletingIndex === index ? "deleting" : ""}`}
       >
         <div>
-          <span>
-            <div className={"tol-config-drawer-selected-column-name"}>
-              <div style={{ display: 'inline', paddingRight: '5px' }}>{attributeDeatils.display_name || normaliseCaps(attr)}</div>
-              <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr} />
+          <span
+            {...dragHandleProps}
+          >
+            <div
+              className={"tol-config-drawer-selected-column-name"}
+            >
+              <div style={{ display: 'inline', paddingRight: '5px' }}>{attributeDeatils.display_name || normaliseCaps(attr_name)}</div>
+              <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr_name} />
             </div>
           </span>
-          <p className={"tol-config-drawer-selected-column-key"}>{attr}</p>
+          <p className={"tol-config-drawer-selected-column-key"}>{attr_name}</p>
         </div>
         <div className="tol-config-drawer-btn-array">
           {attributeDeatils.source && <SourceTag source={attributeDeatils.source} />}
@@ -112,7 +121,7 @@ function SelectedAttributesContainer(props: Props) {
             <Icon icon="arrow-down" size="lg" />
           </div>
           <div
-            className="tol-active-column-btn"
+            className="tol-active-column-btn delete"
             onClick={() => removeAttribute(index)}
           >
             <Icon icon="close" size="lg" />
@@ -120,21 +129,26 @@ function SelectedAttributesContainer(props: Props) {
         </div>
       </div>
     );
-  };
+  });
 
   return (
     <div>
       <div>
         <h6 className="tol-config-drawer-column-title">{title}</h6>
-        <div className={"tol-config-drawer-column-container"}>
-          {attributes.map((att, index) => (
-            <div
-              key={`${att}-${index}`}
-              className="tol-config-drawer-column-contents"
-            >
-              {selectedColumn(att, index)}
-            </div>
-          ))}
+        <div className="tol-config-drawer-column-container" ref={ref}>
+          <DraggableList
+            container={() => ref.current}
+            itemKey={(item) => item}
+            list={attributes}
+            // @ts-ignore
+            template={(props) => (
+              <SelectedColumn
+                {...props}
+              />
+            )}
+            onMoveEnd={(newList) => (setAttributes(newList))}
+            springConfig={{ stiffness: 500, damping: 100 }}
+          />
         </div>
         {attributes.length === 0 && (
           <p>
