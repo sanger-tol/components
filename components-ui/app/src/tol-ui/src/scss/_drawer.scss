@@ -109,6 +109,13 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
   margin-bottom: 0px;
 }
 
+.tol-config-drawer-selected-column-name:hover {
+  cursor: grab;
+}
+.tol-config-drawer-selected-column-name:active {
+  cursor: grabbing;
+}
+
 .tol-config-drawer-selected-column-key {
   margin-bottom: 0px;
   margin-top: 0px;
