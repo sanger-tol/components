@@ -42,7 +42,7 @@ class PlaywrightTestDataSource(
     def attribute_types(self) -> dict[str, dict[str, str]]:
         return {
             'playwright': {
-                'fizz': 'boolean',  # multiple of 2
+                'fizz': 'boolean',  # multiple of 3
                 'buzz': 'boolean',  # multiple of 5
                 'a_max_10': 'str'
             }
@@ -155,7 +155,7 @@ class PlaywrightTestDataSource(
         buzz_term: bool | None,
     ) -> bool:
 
-        fizz_okay = self.__filter_by_factor(2, in_int, fizz_term)
+        fizz_okay = self.__filter_by_factor(3, in_int, fizz_term)
         buzz_okay = self.__filter_by_factor(5, in_int, buzz_term)
 
         return fizz_okay and buzz_okay
@@ -181,7 +181,7 @@ class PlaywrightTestDataSource(
     ) -> DataObject:
 
         int_id = int(object_id)
-        fizz = int_id % 2 == 0
+        fizz = int_id % 3 == 0
         buzz = int_id % 5 == 0
         a_max_10 = 'A' * min(int_id, 10)
 
