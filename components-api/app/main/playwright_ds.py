@@ -42,8 +42,8 @@ class PlaywrightTestDataSource(
     def attribute_types(self) -> dict[str, dict[str, str]]:
         return {
             'playwright': {
-                'fizz': 'bool',  # multiple of 2
-                'buzz': 'bool',  # multiple of 5
+                'fizz': 'boolean',  # multiple of 2
+                'buzz': 'boolean',  # multiple of 5
                 'a_max_10': 'str'
             }
         }
@@ -56,11 +56,11 @@ class PlaywrightTestDataSource(
         return {
             'playwright': {
                 'fizz': {
-                    'python_type': 'bool',
+                    'python_type': 'boolean',
                     'display_name': 'Fizz'
                 },
                 'buzz': {
-                    'python_type': 'bool',
+                    'python_type': 'boolean',
                     'display_name': 'Buzz'
                 },
                 'a_max_10': {
