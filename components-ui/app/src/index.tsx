@@ -23,7 +23,7 @@ import {
   Messages,
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
-import { TolApp, Page, Dropdown } from "./tol-ui/src";
+import { TolApp, Page, Dropdown, env } from "./tol-ui/src";
 import "./scss/styling.scss";
 import DataSource from "./pages/DataSource";
 
@@ -107,10 +107,12 @@ const sandbox: Page = {
   hidden: true,
 };
 
+const boardUrl = env.PLAYWRIGHT ? "/api/v1" : "https://portal.tol.sanger.ac.uk/api/v1/";
+
 ReactDOM.render(
   // eslint-disable-line
   <TolApp
-    boards={{ dataUrl: "https://portal.tol.sanger.ac.uk/api/v1/" }}
+    boards={{ dataUrl: boardUrl }}
     brand="Components"
     homePage={<Home />}
     pages={[
