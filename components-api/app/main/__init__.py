@@ -134,6 +134,15 @@ def application():
     app.register_blueprint(blueprint_data_local, name='local',
                            url_prefix=os.getenv('API_PATH') + '/local')
 
+    blueprint_data_playwright = data_blueprint(
+        PlaywrightTestDataSource()
+    )
+    app.register_blueprint(
+        blueprint_data_playwright,
+        name='playwright',
+        url_prefix=os.environ['API_PATH'] + '/playwright'
+    )
+
     # The system endpoints
     blueprint_system = system_blueprint()
     app.register_blueprint(blueprint_system, url_prefix=os.getenv('API_PATH') + '/system')

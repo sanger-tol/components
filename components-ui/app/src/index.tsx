@@ -107,12 +107,10 @@ const sandbox: Page = {
   hidden: true,
 };
 
-const boardUrl = env.PLAYWRIGHT ? "/api/v1" : "https://portal.tol.sanger.ac.uk/api/v1/";
-
 ReactDOM.render(
   // eslint-disable-line
   <TolApp
-    boards={{ dataUrl: boardUrl }}
+    boards={{ dataUrl: "/api/v1/playwright" }}
     brand="Components"
     homePage={<Home />}
     pages={[
