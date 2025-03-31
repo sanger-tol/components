@@ -100,6 +100,7 @@ class PlaywrightTestDataSource(
                 object_filters
             )
         )
+        import logging; logging.error(object_filters); logging.error(ids)
 
         limit = page_size if page_size is not None else self.page_size
         offset = (page_number - 1) * limit
@@ -139,14 +140,15 @@ class PlaywrightTestDataSource(
         key: str
     ) -> bool | None:
 
-        body = object_filters.and_.get(key, {}).get('eq')
+        body = object_filters.and_.get(key, {}).get('in_list')
         if not body:
             return None
 
         value = body.get('value')
         negate = body.get('negate', False)
+        in_list = key in value
 
-        return value if negate else not value
+        return in_list if negate else not in_list
 
     def __filter_by_fizzbuzz(
         self,
