@@ -13,10 +13,12 @@ test.use({headless: headless});
 
 const setAuth = async ({page, token}) => {
   const storageData = {
-    profile: {
-      email: "example.user@sanger.ac.uk",
-      fullName: "Example User",
-      userId: 1000021
+    user: {
+      "oidc_id": "https://orcid.org/0000-0000-0000-0000",
+      "token_created_at":"2025-03-31T14:13:36.345558",
+      "token_expires_at":"2090-04-07T14:13:36.345581",
+      "id":"1000021",
+      "roles":[]
     },
     'token': token,
   };
@@ -48,7 +50,7 @@ test.beforeAll(async ({token}) => {
   // insert the rest
   try {
     await sql.unsafe(`INSERT INTO "user"
-    VALUES (1000021, 'example.user@sanger.ac.uk');
+    VALUES (1000021, 'https://orcid.org/0000-0000-0000-0000');
     
     INSERT INTO role_binding
     VALUES (83489247, 1000021, 1);
@@ -61,8 +63,10 @@ test.beforeAll(async ({token}) => {
   };
 });
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+test('manage dashboard', async ({ page, token }) => {
+  await setAuth({page, token});
+
+  await page.goto('/my-boards');
 
   // Click the get started link.
   await page.getByRole('link', { name: 'Get started' }).click();
