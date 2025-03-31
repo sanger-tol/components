@@ -48,15 +48,16 @@ test.beforeAll(async ({token}) => {
   // insert the rest
   try {
     await sql.unsafe(`INSERT INTO "user"
-    VALUES (1000021, 'example.user@sanger.ac.uk', 'example.user@sanger.ac.uk', 'Example User', NOW(), NOW(), 'elixirID', TRUE, 'Example', 'User', '{}'::JSONB, NOW(), FALSE, '', FALSE);
+    VALUES (1000021, 'example.user@sanger.ac.uk');
     
     INSERT INTO role_binding
     VALUES (83489247, 1000021, 1);
     
     INSERT INTO "token"
-    VALUES ('${token}', 1000021, NOW(), NOW() + INTERVAL '1 YEAR');`).simple();    
+    VALUES (3498237, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', 1000021);`).simple();    
   }
   catch (e) {
+    console.error(e);
   };
 });
 
