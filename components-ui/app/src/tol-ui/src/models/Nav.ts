@@ -21,3 +21,7 @@ export interface Dropdown extends Default {
   // dropdown attributes override those from the page's
   pages?: Page[];
 } // eslint-disable-line
+
+export interface Link extends Default {
+  url: string;
+}

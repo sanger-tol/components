@@ -40,7 +40,7 @@ interface BoardsObject {
 export interface Props {
   brand: string | JSX.Element;
   homePage: JSX.Element;
-  pages: (Page | Dropdown)[];
+  pages: (Page | Dropdown | Link)[];
   profilePages?: Page[];
   login?: boolean;
   boards?: BoardsObject;
@@ -121,9 +121,6 @@ function TolApp(props: Props) {
                 ) : (
                   <Redirect to="/" />
                 )}
-              </Route>
-              <Route path="/board/:boardId/view/:viewId">
-                {boards && loggedIn ? <Board /> : <Redirect to="/" />}
               </Route>
               {allPages.map((page) => {
                 const path = convertToPath(page.name);
