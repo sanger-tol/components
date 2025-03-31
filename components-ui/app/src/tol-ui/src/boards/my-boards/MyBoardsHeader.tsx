@@ -83,6 +83,7 @@ function MyBoardsHeader(props: Props) {
   );
 
   const defaultDropdownMainIcon = {
+    id: "create-new-board-button",
     icon: "plus",
     type: "success",
     tooltip: "Create Board",
