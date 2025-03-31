@@ -1,6 +1,6 @@
 {
   "name": "@tol/tol-ui",
-  "version": "2.0.8-a",
+  "version": "2.0.9-a",
   "description": "An npm components package for ToL systems",
   "dependencies": {
     "sass": "^1.77.8",
@@ -8,7 +8,6 @@
     "bootstrap": "5.3.3",
     "date-fns": "2.29.3",
     "rsuite": "5.71.0",
-    "typescript": "5.6.3",
     "@fortawesome/fontawesome-svg-core": "6.2.1",
     "@fortawesome/free-solid-svg-icons": "6.2.1",
     "@fortawesome/react-fontawesome": "0.2.0",
@@ -47,8 +46,8 @@
   },
   "scripts": {
     "build": "yarn build:esm && yarn build:cjs",
-    "build:esm": "tsc",
-    "build:cjs": "tsc --module commonjs --outDir lib/cjs"
+    "build:esm": "npx tsc",
+    "build:cjs": "npx tsc --module commonjs --outDir lib/cjs"
   },
   "main": "./lib/cjs/index.js",
   "module": "./lib/esm/index.js",
