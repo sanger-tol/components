@@ -146,9 +146,15 @@ class PlaywrightTestDataSource(
 
         value = body.get('value')
         negate = body.get('negate', False)
-        in_list = key in value
+        is_false = "false" in value
+        is_true = "true" in value
 
-        return in_list if negate else not in_list
+        if is_false == is_true:
+            return None
+
+        is_match = is_true or not is_false
+
+        return not is_match if negate else is_match
 
     def __filter_by_fizzbuzz(
         self,
