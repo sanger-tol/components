@@ -18,7 +18,6 @@ build-package-dummy:
   script:
     - cd components-ui/app/src/tol-ui
     - yarn install
-    - yarn add typescript
     - yarn build
   except:
     - qa
@@ -41,7 +40,6 @@ deploy-package:
       } | tee -a .npmrc
     - cd components-ui/app/src/tol-ui
     - yarn install
-    - yarn add typescript
     - yarn build
     - yarn publish
   when: manual
