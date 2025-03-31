@@ -158,7 +158,7 @@ function createExpander(value: string) {
 }
 
 function createFloat(value: any) {
-  return <CellTooltip followCursor value={value.toFixed(2)} contents={value} />;
+  return <CellTooltip followCursor value={value.toFixed?.(2)} contents={value} />;
 }
 
 function createCellRenderer(
