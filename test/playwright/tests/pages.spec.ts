@@ -17,9 +17,7 @@ const insertAuthToDB = async ({userID, token, orcidID}) => {
   try {
     await sql.unsafe(`INSERT INTO "role" VALUES (1, 'admin');`).simple();
   }
-  catch (e) {
-    console.log(e);
-  };
+  catch (e) {};
 
   // insert the rest
   try {
@@ -32,9 +30,7 @@ const insertAuthToDB = async ({userID, token, orcidID}) => {
     INSERT INTO "token"
     VALUES (${randomInt()}, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', ${userID});`).simple();    
   }
-  catch (e) {
-    console.log(e);
-  };
+  catch (e) {};
 };
 
 const setAuth = async ({page}) => {
