@@ -46,9 +46,8 @@ test.beforeAll(async ({token}) => {
   // insert the admin role if not there already
   try {
     await sql.unsafe(`INSERT INTO "role" VALUES (1, 'admin');`).simple();
-    }
-  catch (e) {
-  };
+  }
+  catch (e) {};
 
   // insert the rest
   try {
@@ -61,9 +60,7 @@ test.beforeAll(async ({token}) => {
     INSERT INTO "token"
     VALUES (3498237, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', ${userID});`).simple();    
   }
-  catch (e) {
-    console.error(e);
-  };
+  catch (e) {};
 });
 
 const createBoard = async ({page, testID}) => {
@@ -97,14 +94,8 @@ const deleteBoard = async({page, testID}) => {
   // click the delete button
   await page.locator('span').filter({ hasText: /^Delete$/, visible: true, exact: true }).click();
 
-  // find the first confirm button
-  // TODO something is really weird here... why are there multiple?
-  const firstConfirm = await page.locator('span').filter({ hasText: /^Confirm$/, visible: true, exact: true }).first();
-
-  console.log(firstConfirm);
-
   // click the confirm button
-  await firstConfirm.click();
+  await page.locator('span').filter({ hasText: /^Confirm$/, visible: true, exact: true }).click();
 };
 
 test('manage dashboard', async ({ page, token }) => {
