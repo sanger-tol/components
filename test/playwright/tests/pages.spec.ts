@@ -96,6 +96,15 @@ const deleteBoard = async({page, testID}) => {
 
   // click the delete button
   await page.locator('span').filter({ hasText: /^Delete$/, visible: true, exact: true }).click();
+
+  // find the first confirm button
+  // TODO something is really weird here... why are there multiple?
+  const firstConfirm = await page.locator('span').filter({ hasText: /^Confirm$/, visible: true, exact: true }).first();
+
+  console.log(firstConfirm);
+
+  // click the confirm button
+  await firstConfirm.click();
 };
 
 test('manage dashboard', async ({ page, token }) => {

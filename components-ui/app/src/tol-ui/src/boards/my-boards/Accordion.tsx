@@ -194,15 +194,18 @@ function Accordion(props: BoardsAccordionProps) {
   };
 
   // @ts-ignore
-  const deleteConfirmationModal = () => (
-    <ConfirmationModal
-      setOpen={setOpenDelete}
-      open={openDelete}
-      // @ts-ignore
-      onConfirmClick={deleteBoard}
-      itemType={"board"}
-    />
-  );
+  const deleteConfirmationModal = (boardId: string) => {
+    if (boardId === boardIdToDelete) return (
+      <ConfirmationModal
+        setOpen={setOpenDelete}
+        open={openDelete}
+        // @ts-ignore
+        onConfirmClick={deleteBoard}
+        itemType={"board"}
+      />
+    );
+    return <></>;
+  };
 
   const deleteBoard = () => {
     if (boardIdToDelete === null) return;
@@ -461,7 +464,7 @@ function Accordion(props: BoardsAccordionProps) {
           >
             {boardOptionsDropdownButton(board.id, undefined)}
           </div>
-          {deleteConfirmationModal()}
+          {deleteConfirmationModal(board.id)}
         </div>
       ))}
     </div>
