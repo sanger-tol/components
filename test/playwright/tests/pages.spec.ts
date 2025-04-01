@@ -86,7 +86,13 @@ const createBoard = async ({page, testID}) => {
 };
 
 const deleteBoard = async({page, testID}) => {
+  await page.goto('/my-boards');
 
+  // find the correct board row
+  const boardRow = await page.getByTestId(testID);
+
+  // click the dropdown button
+  boardRow.locator(".my-boards-dropdown-buttons").click();
 };
 
 test('manage dashboard', async ({ page, token }) => {
