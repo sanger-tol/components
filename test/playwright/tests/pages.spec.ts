@@ -77,6 +77,9 @@ const createBoard = async ({page, testID}) => {
 
   // save the board
   await page.getByRole('button', {name: 'Create'}).click();
+
+  // check board is there (on first page?)
+  expect(page.locator('body')).toContainText(testID);
 };
 
 test('manage dashboard', async ({ page, token }) => {
