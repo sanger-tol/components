@@ -2,19 +2,48 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import sql from '../db';
-import { test } from '../fixtures';
-
-const userID = "1000021";
-const orcidID = "https://orcid.org/0000-0000-0000-0000";
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 
 test.use({headless: headless});
 
-const setAuth = async ({page, token}) => {
+const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
+
+const insertAuthToDB = async ({userID, token, orcidID}) => {
+  // insert the admin role if not there already
+  try {
+    await sql.unsafe(`INSERT INTO "role" VALUES (1, 'admin');`).simple();
+  }
+  catch (e) {
+    console.log(e);
+  };
+
+  // insert the rest
+  try {
+    await sql.unsafe(`INSERT INTO "user"
+    VALUES (${userID}, '${orcidID}');
+    
+    INSERT INTO role_binding
+    VALUES (${randomInt()}, ${userID}, 1);
+    
+    INSERT INTO "token"
+    VALUES (${randomInt()}, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', ${userID});`).simple();    
+  }
+  catch (e) {
+    console.log(e);
+  };
+};
+
+const setAuth = async ({page}) => {
+  const userID = randomInt();
+  const token = crypto.randomUUID();
+  const orcidID = `https://orcid.org/${crypto.randomUUID()}`;
+
+  await insertAuthToDB({userID, token, orcidID});
+ 
   const storageData = {
     user: {
       "oidc_id": orcidID,
@@ -41,31 +70,6 @@ const setAuth = async ({page, token}) => {
   await page.reload();
   await page.waitForLoadState('load');
 };
-
-test.beforeAll(async ({token}) => {
-  // insert the admin role if not there already
-  try {
-    await sql.unsafe(`INSERT INTO "role" VALUES (1, 'admin');`).simple();
-  }
-  catch (e) {
-    console.log(e);
-  };
-
-  // insert the rest
-  try {
-    await sql.unsafe(`INSERT INTO "user"
-    VALUES (${userID}, '${orcidID}');
-    
-    INSERT INTO role_binding
-    VALUES (83489247, ${userID}, 1);
-    
-    INSERT INTO "token"
-    VALUES (3498237, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', ${userID});`).simple();    
-  }
-  catch (e) {
-    console.log(e);
-  };
-});
 
 const createBoard = async ({page, testID}) => {
   await page.goto('/my-boards');
@@ -102,10 +106,10 @@ const deleteBoard = async({page, testID}) => {
   await page.locator('span').filter({ hasText: /^Confirm$/, visible: true, exact: true }).click();
 };
 
-test('manage dashboard', async ({ page, token }) => {
+test('manage dashboard', async ({ page }) => {
   const testID = crypto.randomUUID();
 
-  await setAuth({page, token});
+  await setAuth({page});
 
   await createBoard({page, testID});
 
