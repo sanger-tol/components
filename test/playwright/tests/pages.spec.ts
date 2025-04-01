@@ -115,6 +115,4 @@ test('manage dashboard', async ({ page, token }) => {
   await createBoard({page, testID});
 
   await deleteBoard({page, testID});
-
-  await page.waitForTimeout(3000);
 });
