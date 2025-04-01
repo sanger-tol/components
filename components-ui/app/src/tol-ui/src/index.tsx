@@ -38,6 +38,7 @@ export {
 export {
   BarChart,
   RemoteBarChart,
+  BoardChart,
   Map,
   RemoteMap,
   MapLegend,

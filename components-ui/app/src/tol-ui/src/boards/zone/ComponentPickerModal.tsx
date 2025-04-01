@@ -157,6 +157,11 @@ function ComponentPickerModal(props: Props) {
       text: "Table",
       icon: "table",
     },
+    {
+      type: "chart",
+      text: "Chart",
+      icon: "chart-column"
+    }
   ];
 
   const sizeOptions = [

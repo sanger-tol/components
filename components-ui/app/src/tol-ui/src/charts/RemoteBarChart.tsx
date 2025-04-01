@@ -117,7 +117,7 @@ function RemoteBarChart(props: Props) {
   }
 
   if (warningMessage !== "") {
-    return <Placeholder warningMessage={warningMessage} height={height} />;
+    return <Placeholder warningMessage={warningMessage} height={height} style={{marginTop: 8}}/>;
   }
 
   if (loading) {
