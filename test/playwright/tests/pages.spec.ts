@@ -68,9 +68,9 @@ test('manage dashboard', async ({ page, token }) => {
 
   await page.goto('/my-boards');
 
-  // Click the get started link.
+  // click the create new board button
   await page.click('#create-new-board-button');
 
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+  // click the modal
+  await page.getByText('Create New Board').click();
 });
