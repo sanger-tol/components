@@ -92,7 +92,10 @@ const deleteBoard = async({page, testID}) => {
   const boardRow = await page.getByTestId(testID);
 
   // click the dropdown button
-  boardRow.locator(".my-boards-dropdown-buttons").click();
+  await boardRow.locator(".my-boards-dropdown-buttons").click();
+
+  // click the delete button
+  await page.locator('span').filter({ hasText: /^Delete$/, visible: true, exact: true }).click();
 };
 
 test('manage dashboard', async ({ page, token }) => {
