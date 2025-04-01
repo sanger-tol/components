@@ -63,11 +63,7 @@ test.beforeAll(async ({token}) => {
   };
 });
 
-test('manage dashboard', async ({ page, token }) => {
-  const testID = crypto.randomUUID();
-
-  await setAuth({page, token});
-
+const createBoard = async ({page, testID}) => {
   await page.goto('/my-boards');
 
   // click the create new board button
@@ -81,6 +77,14 @@ test('manage dashboard', async ({ page, token }) => {
 
   // save the board
   await page.getByRole('button', {name: 'Create'}).click();
+};
+
+test('manage dashboard', async ({ page, token }) => {
+  const testID = crypto.randomUUID();
+
+  await setAuth({page, token});
+
+  await createBoard({page, testID});
 
   await page.waitForTimeout(3000);
 });
