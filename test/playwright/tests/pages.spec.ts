@@ -47,7 +47,9 @@ test.beforeAll(async ({token}) => {
   try {
     await sql.unsafe(`INSERT INTO "role" VALUES (1, 'admin');`).simple();
   }
-  catch (e) {};
+  catch (e) {
+    console.log(e);
+  };
 
   // insert the rest
   try {
@@ -60,7 +62,9 @@ test.beforeAll(async ({token}) => {
     INSERT INTO "token"
     VALUES (3498237, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', ${userID});`).simple();    
   }
-  catch (e) {};
+  catch (e) {
+    console.log(e);
+  };
 });
 
 const createBoard = async ({page, testID}) => {
