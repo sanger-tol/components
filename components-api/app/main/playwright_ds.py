@@ -100,7 +100,6 @@ class PlaywrightTestDataSource(
                 object_filters
             )
         )
-        import logging; logging.error(object_filters); logging.error(ids)
 
         limit = page_size if page_size is not None else self.page_size
         offset = (page_number - 1) * limit
@@ -148,8 +147,8 @@ class PlaywrightTestDataSource(
         negate = body.get('negate', False)
 
         # TODO these should not be strings from the frontend
-        is_false = "false" in value
-        is_true = "true" in value
+        is_false = 'false' in value
+        is_true = 'true' in value
 
         if is_false == is_true:
             return None
@@ -180,7 +179,7 @@ class PlaywrightTestDataSource(
         if bool_term is None:
             return True
 
-        is_factor = in_int % factor == 0
+        is_factor = in_int % factor == 0  # noqa S001
 
         return is_factor if bool_term else not is_factor
 
