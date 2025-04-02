@@ -4,13 +4,14 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Toggle } from 'rsuite';
 import {
   Button,
   Drawer,
   Modal,
-  AttributeSelector
+  AttributeSelector,
+  PopUpMessage
 } from "../index";
 import { HistogramGrouping } from "./utils";
 
@@ -53,18 +54,17 @@ function ChartConfigDrawer(props: Props) {
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   const [xAxis, setXAxis] = useState<string[]>(config.xAxis ? [config.xAxis] : []);
   const [breakDownBy, setBreakDownBy] = useState<string[]>(config.breakDownBy ? [config.breakDownBy] : []);
-  const [stacked, setStacked] = useState<boolean | undefined>(config.stacked);
+  const [stacked, setStacked] = useState<boolean>(config.stacked);
   const [type, setType] = useState<HistogramGrouping>(config.type);
 
   const saveConfig = () => {
-    const updatedConfig = {
+    const updatedConfig: ChartConfig = {
       breakDownBy: breakDownBy[0],
-      xAxis: xAxis[0],
       stacked: stacked,
-      type: type
+      type: type,
+      xAxis: xAxis[0]
     };
     if (JSON.stringify(config) !== JSON.stringify(updatedConfig)) {
-      console.log(updatedConfig);
       onConfigSave(updatedConfig);
     }
     setOpen(!open);
@@ -123,7 +123,12 @@ function ChartConfigDrawer(props: Props) {
         text={text ?? "Save"}
         type="success"
         onClick={() => {
-          saveConfig(), setOpenSaveModal(false);
+          if (xAxis.length === 0 || breakDownBy.length === 0 || type == undefined) {
+            PopUpMessage({type: 'error', message: 'Please fill out all fields before saving.'});
+          } else {
+            saveConfig()
+            setOpenSaveModal(false);
+          }
         }}
       />
     );
@@ -151,7 +156,13 @@ function ChartConfigDrawer(props: Props) {
   );
 
   const handleCloseDrawer = () => {
-    if (true) {
+    const updatedConfig: ChartConfig = {
+      breakDownBy: breakDownBy[0],
+      stacked: stacked,
+      type: type,
+      xAxis: xAxis[0]
+    };
+    if (JSON.stringify(updatedConfig) != JSON.stringify(config)) {
       setOpenSaveModal(true);
     } else {
       setOpen(false);
@@ -159,6 +170,10 @@ function ChartConfigDrawer(props: Props) {
   };
 
   const confirmDiscard = () => {
+    setBreakDownBy([config.breakDownBy]);
+    setStacked(config.stacked);
+    setType(config.type);
+    setXAxis([config.xAxis]);
     setOpenSaveModal(false);
     setOpen(false);
   };
@@ -246,11 +261,6 @@ function ChartConfigDrawer(props: Props) {
           checked={stacked}
           onChange={() => {
             setStacked(!stacked);
-            //if (stacked === true) {
-            //  setStacked(undefined)
-            //} else {
-            //  setStacked(true)
-            //}
           }}
         />
       </div>
