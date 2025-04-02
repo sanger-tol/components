@@ -146,21 +146,37 @@ function ComponentPickerModal(props: Props) {
       type: "count",
       text: "Count",
       icon: "hashtag",
+      disabled: false,
     },
     {
       type: "sunburst",
       text: "Sunburst",
       icon: "chart-pie",
+      disabled: false,
     },
     {
       type: "table",
       text: "Table",
       icon: "table",
+      disabled: false,
     },
     {
       type: "chart",
       text: "Chart",
-      icon: "chart-column"
+      icon: "chart-column",
+      disabled: false,
+    },
+    {
+      type: "map",
+      text: "Map",
+      icon: "location-dot",
+      disabled: true,
+    },
+    {
+      type: "text",
+      text: "Rich Text",
+      icon: "code",
+      disabled: true,
     }
   ];
 
@@ -199,17 +215,28 @@ function ComponentPickerModal(props: Props) {
           {componentOptions.map((option, index) => {
             return (
               <Col lg={4} md={4} sm={12} className="tol-button-col" key={index}>
-                <div
-                  className={
-                    componentType !== option.type
-                      ? "tol-component-modal-bttn"
-                      : "tol-component-modal-bttn-clicked"
-                  }
-                  onClick={() => setComponentType(option.type)}
-                >
-                  <Icon icon={option.icon} size="4x" />
-                  <h6>{option.text}</h6>
-                </div>
+                {!option.disabled ? (
+                  <div
+                    className={
+                      componentType !== option.type
+                        ? "tol-component-modal-bttn"
+                        : "tol-component-modal-bttn-clicked"
+                    }
+                    onClick={() => setComponentType(option.type)}
+                  >
+                    <Icon icon={option.icon} size="4x" />
+                    <h6>{option.text}</h6>
+                  </div>
+                ):(
+                  <HoverOverlay contents={"Coming Soon..."}>
+                    <div
+                      className={"tol-component-modal-bttn-disabled"}
+                    >
+                      <Icon icon={option.icon} size="4x" />
+                      <h6>{option.text}</h6>
+                    </div>
+                </HoverOverlay>
+              )}
               </Col>
             );
           })}
