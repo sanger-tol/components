@@ -67,7 +67,7 @@ function OrgChart(props: Props) {
     setIsCollapsed(!isCollapsed);
   };
 
-  const handleModalOpen = (dataPoint: any) => {
+  const handleModalOpen = (dataPoint: OrgChartDataPoint) => {
     if (modalKeys) {
       setModalData(
         Object.fromEntries(modalKeys.map((key) => [key, dataPoint[key]]))
@@ -87,7 +87,7 @@ function OrgChart(props: Props) {
       {modalData &&
         modalKeys
           ?.filter((key) => key !== "title")
-          .map((key, index) => (
+          .map((key: string, index: number) => (
             <div key={index} className="tol-org-chart-modal-row">
               <strong>
                 {`${modalData[key] && capitaliseFirstLetter(key) + ":"}` ??
@@ -137,7 +137,7 @@ function OrgChart(props: Props) {
           <div className="tol-org-chart-line-vertical"></div>
           <div className="tol-org-chart-connector"></div>
           <div className="tol-org-chart-data">
-            {data.map((dataPoint, index) => (
+            {data.map((dataPoint: OrgChartDataPoint, index: number) => (
               <div key={index} onClick={() => handleModalOpen(dataPoint)}>
                 <div className="tol-org-chart-connector-vertical"></div>
                 <div
@@ -149,7 +149,7 @@ function OrgChart(props: Props) {
                   {boxKeys &&
                     boxKeys
                       ?.filter((key) => key !== "title")
-                      .map((key, index) => {
+                      .map((key: string, index: number) => {
                         return (
                           <div key={index} className="tol-org-chart-box-body">
                             {dataPoint[key]}
