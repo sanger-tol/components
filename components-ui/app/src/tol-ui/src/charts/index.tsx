@@ -15,4 +15,6 @@ export { default as Sunburst } from "./Sunburst";
 export { default as RemoteSunburst } from "./RemoteSunburst";
 export { default as BoardSunburst } from "./BoardSunburst";
 
+export {default as OrgChart} from "./OrgChart";
+
 export {default as SliceByDrawer} from "./SliceByDrawer";

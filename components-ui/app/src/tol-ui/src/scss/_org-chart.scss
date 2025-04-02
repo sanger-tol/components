@@ -1,0 +1,170 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+.tol-org-chart {
+  text-align: center;
+  padding: 0.5rem;
+  position: relative;
+  margin: 0 auto;
+  padding-top: 30px;
+}
+
+.tol-org-chart.xs {
+  width: 30%;
+}
+.tol-org-chart.sm {
+  width: 50%;
+}
+.tol-org-chart.md {
+  width: 70%;
+}
+.tol-org-chart.lg {
+  width: 90%;
+}
+
+.tol-org-chart.xl {
+  width: 100%;
+}
+
+.tol-org-chart-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  position: relative;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.tol-org-chart-title.button {
+  display: flex;
+  justify-self: center;
+}
+
+.tol-org-chart-line-vertical {
+  width: 2px;
+  height: 30px;
+  background: var(--tol-grey);
+  margin: 0 auto;
+}
+
+.tol-org-chart-show-hide-button {
+  margin-left: 10px;
+  background: var(--tol-bg) !important;
+  border: none !important;
+
+  .bttn-icon-div {
+    color: #000;
+  }
+}
+
+.tol-org-chart-modal-row {
+  margin-bottom: 1rem;
+}
+
+.tol-org-chart-content-container {
+  max-height: 1080px;
+  opacity: 1;
+  overflow: hidden;
+  transition:
+    max-height 0.5s ease-in-out,
+    opacity 0.3s ease-in-out;
+
+  &.collapsed {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+.tol-org-chart-connector {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  margin-top: -1px;
+  border-top: 2px solid var(--tol-grey);
+  width: calc(100% - 7.9rem);
+  margin-top: -1px;
+  justify-self: center;
+}
+
+.tol-org-chart-connector-vertical {
+  width: 2px;
+  height: 30px;
+  background: var(--tol-grey);
+  display: flex;
+  justify-self: center;
+}
+
+.tol-org-chart-data {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.tol-org-chart-box {
+  padding: 1rem;
+  width: 8rem;
+  min-height: 5rem;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  flex: 1 1 auto;
+  cursor: pointer;
+  align-items: center;
+}
+
+.tol-org-chart-box.bordered {
+  border: 5px solid var(--tol-grey);
+}
+
+.tol-org-chart-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.tol-org-chart-box-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  min-height: 2.5rem;
+  align-content: center;
+}
+
+.tol-org-chart-box-body {
+  margin-bottom: 0.5rem;
+}
+
+.tol-org-chart-subtitle {
+  margin-top: -10px !important;
+  margin-bottom: 5px !important;
+}
+
+.tol-org-chart-contact {
+  overflow-wrap: normal;
+}
+
+.tol-org-chart-modal-header {
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .tol-org-chart {
+    min-width: 80%;
+  }
+}
+
+@media (max-width: 576px) {
+  .tol-org-chart {
+    min-width: 100%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .bttn-icon-div {
+    color: #fff !important;
+  }
+}
