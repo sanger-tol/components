@@ -124,7 +124,7 @@ function ChartConfigDrawer(props: Props) {
         type="success"
         onClick={() => {
           if (xAxis.length === 0 || breakDownBy.length === 0 || type == undefined) {
-            PopUpMessage({type: 'error', message: 'Please fill out all fields before saving.'});
+            PopUpMessage({ type: 'error', message: 'Please fill out all fields before saving.' });
           } else {
             saveConfig()
             setOpenSaveModal(false);
@@ -178,7 +178,7 @@ function ChartConfigDrawer(props: Props) {
     setOpen(false);
   };
 
-  const intervals:intervalListItem[] = [
+  const intervals: intervalListItem[] = [
     {
       label: "Day",
       value: "d",
@@ -198,7 +198,7 @@ function ChartConfigDrawer(props: Props) {
   ];
 
   const buttons = (
-    <div style={{display: "flex",}}>
+    <div style={{ display: "flex", }}>
       {intervals.map((interval: intervalListItem) => (
         <Button
           outline
@@ -252,7 +252,7 @@ function ChartConfigDrawer(props: Props) {
         />
       </div>
       <h6>Stacked</h6>
-      <div style={{marginBottom: "15px"}}>
+      <div style={{ marginBottom: "15px" }}>
         <Toggle
           key="stacked-toggle"
           checked={stacked}

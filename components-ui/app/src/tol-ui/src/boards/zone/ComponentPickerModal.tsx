@@ -227,7 +227,7 @@ function ComponentPickerModal(props: Props) {
                     <Icon icon={option.icon} size="4x" />
                     <h6>{option.text}</h6>
                   </div>
-                ):(
+                ) : (
                   <HoverOverlay contents={"Coming Soon..."}>
                     <div
                       className={"tol-component-modal-bttn-disabled"}
@@ -235,8 +235,8 @@ function ComponentPickerModal(props: Props) {
                       <Icon icon={option.icon} size="4x" />
                       <h6>{option.text}</h6>
                     </div>
-                </HoverOverlay>
-              )}
+                  </HoverOverlay>
+                )}
               </Col>
             );
           })}
