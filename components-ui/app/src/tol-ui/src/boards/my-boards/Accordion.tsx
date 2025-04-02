@@ -194,15 +194,18 @@ function Accordion(props: BoardsAccordionProps) {
   };
 
   // @ts-ignore
-  const deleteConfirmationModal = () => (
-    <ConfirmationModal
-      setOpen={setOpenDelete}
-      open={openDelete}
-      // @ts-ignore
-      onConfirmClick={deleteBoard}
-      itemType={"board"}
-    />
-  );
+  const deleteConfirmationModal = (boardId: string) => {
+    if (boardId === boardIdToDelete) return (
+      <ConfirmationModal
+        setOpen={setOpenDelete}
+        open={openDelete}
+        // @ts-ignore
+        onConfirmClick={deleteBoard}
+        itemType={"board"}
+      />
+    );
+    return <></>;
+  };
 
   const deleteBoard = () => {
     if (boardIdToDelete === null) return;
@@ -437,7 +440,7 @@ function Accordion(props: BoardsAccordionProps) {
   return (
     <div>
       {boardDetails.map((board: any) => (
-        <div key={board.id} style={{ marginTop: "20px", display: "flex" }}>
+        <div data-testid={board.title} key={board.id} style={{ marginTop: "20px", display: "flex" }}>
           <div style={{ flex: "1" }}>
             <AccordionBase
               id={board.id}
@@ -461,7 +464,7 @@ function Accordion(props: BoardsAccordionProps) {
           >
             {boardOptionsDropdownButton(board.id, undefined)}
           </div>
-          {deleteConfirmationModal()}
+          {deleteConfirmationModal(board.id)}
         </div>
       ))}
     </div>

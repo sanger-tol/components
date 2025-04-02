@@ -21,6 +21,7 @@ interface Props {
   disabledTooltip?: string;
   loading?: boolean;
   outline?: boolean;
+  id?: string;
 }
 
 function Button(props: Props) {
@@ -38,6 +39,7 @@ function Button(props: Props) {
     disabledTooltip,
     loading,
     outline,
+    id,
   } = props;
 
   const outlineClass = outline ? "-outline" : "";
@@ -50,6 +52,7 @@ function Button(props: Props) {
       disabled={disabled || loading}
       active={active}
       className={`icon-button-${type || "primary"}-${size || "md"}${outlineClass} ${className}`}
+      id={id}
     >
       {loading ? (
         loader

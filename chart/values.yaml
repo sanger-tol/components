@@ -120,10 +120,6 @@ tolcore:
     extra_env:
       API_PATH: api.path
       API_TOKEN: api.token
-      ELASTIC_URI: elastic.uri
-      ELASTIC_USER: elastic.user
-      ELASTIC_PASSWORD: elastic.password
-      ELASTIC_INDEX_PREFIX: elastic.index_prefix
   flask:
     env: ""
   ui:

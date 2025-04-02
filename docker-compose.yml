@@ -112,3 +112,16 @@ services:
     volumes:
       - ./components-api/migrations/alembic/versions:/migrations/alembic/versions
       - "../tol-sdk:/packages/tol-sdk:rw"
+
+  components-playwright-test:
+    build: test/playwright
+    volumes:
+      - "./test/playwright:/usr/src/app:rw"
+    environment:
+      - PLAYWRIGHT_URL=https://host.docker.internal:3011
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - HEADLESS=true

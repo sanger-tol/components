@@ -24,11 +24,13 @@ from tol.core import (
     core_data_object
 )
 from tol.core.operator import Inserter
+from tol.sources.portal import portal
 from tol.sql import Model, create_sql_datasource
 from tol.sql.auth import db_auth_blueprint
 from tol.sql.board import create_board_models
 
 from .model import Base, MODELS, UserMixin
+from .playwright_ds import PlaywrightTestDataSource
 
 
 def __user_id_blueprint(api_path: str) -> Blueprint:
@@ -126,8 +128,28 @@ def application():
     )
     core_data_object(sql_datasource)
 
+    # Playwright
+    playwright_ds = PlaywrightTestDataSource()
+    core_data_object(playwright_ds)
+
+    # Portal
+    portal_ds = portal()
+
+    # Combined data endpoints
+    blueprint_data = data_blueprint(
+        playwright_ds,
+        portal_ds,
+        url_prefix=os.environ['API_PATH']
+    )
+    app.register_blueprint(
+        blueprint_data,
+        name='data'
+    )
+
     # Data endpoints
-    blueprint_data_local = data_blueprint(sql_datasource)
+    blueprint_data_local = data_blueprint(
+        sql_datasource,
+    )
     app.register_blueprint(blueprint_data_local, name='local',
                            url_prefix=os.getenv('API_PATH') + '/local')
 
@@ -156,7 +178,6 @@ def application():
         boards_bp,
         url_prefix=os.environ['API_PATH'] + '/boards'
     )
-
     blueprint_board_data = data_blueprint(sql_datasource)
     app.register_blueprint(blueprint_board_data, url_prefix=os.getenv('API_PATH') + '/board-data')
 
