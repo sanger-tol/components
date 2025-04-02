@@ -120,11 +120,6 @@ tolcore:
     extra_env:
       API_PATH: api.path
       API_TOKEN: api.token
-      ELASTIC_URI: elastic.uri
-      ELASTIC_USER: elastic.user
-      ELASTIC_PASSWORD: elastic.password
-      ELASTIC_INDEX_PREFIX: elastic.index_prefix
-      GOOGLE_CLIENT_SECRETS: google.client_secrets
   flask:
     env: ""
   ui:
@@ -150,5 +145,3 @@ tolcore:
     api_path: ""
   oidc:
     enabled: true
-  google:
-    client_secrets: ""

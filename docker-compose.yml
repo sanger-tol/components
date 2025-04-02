@@ -22,11 +22,6 @@ services:
     image: components-api
     environment:
       - DB_URI
-      - ELASTIC_URI
-      - ELASTIC_USER
-      - ELASTIC_PASSWORD
-      - ELASTIC_INDEX_PREFIX
-      - GOOGLE_CLIENT_SECRETS
       - PARTNER_PORTAL_URL
       - API_PATH
       - API_TOKEN

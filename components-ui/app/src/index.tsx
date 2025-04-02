@@ -110,7 +110,7 @@ const sandbox: Page = {
 ReactDOM.render(
   // eslint-disable-line
   <TolApp
-    boards={{ dataUrl: env.TOL_DATA }}
+    boards={{ dataUrl: env.API_PATH }}
     brand="Components"
     homePage={<Home />}
     pages={[

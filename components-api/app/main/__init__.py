@@ -24,7 +24,7 @@ from tol.core import (
     core_data_object
 )
 from tol.core.operator import Inserter
-from tol.sources.elastic import elastic
+from tol.sources.portal import portal
 from tol.sql import Model, create_sql_datasource
 from tol.sql.auth import db_auth_blueprint
 from tol.sql.board import create_board_models
@@ -133,7 +133,7 @@ def application():
     core_data_object(playwright_ds)
 
     # Portal
-    portal_ds = elastic()
+    portal_ds = portal()
 
     # Combined data endpoints
     blueprint_data = data_blueprint(
