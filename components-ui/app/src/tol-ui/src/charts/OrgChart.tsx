@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Modal, CentreContents } from "../index";
 import { capitaliseFirstLetter } from "../general/utils";
 
@@ -21,8 +21,8 @@ export interface OrgChartDataPoint {
 interface Props {
   title: string;
   data: OrgChartDataPoint[];
-  modalKeys?: string[];  
-  boxKeys?: string[]; 
+  modalKeys?: string[];
+  boxKeys?: string[];
   subtitle?: string;
   bordered?: boolean;
   toggleButton?: boolean;
@@ -90,8 +90,7 @@ function OrgChart(props: Props) {
           .map((key: string, index: number) => (
             <div key={index} className="tol-org-chart-modal-row">
               <strong>
-                {`${modalData[key] && capitaliseFirstLetter(key) + ":"}` ??
-                  ""}{" "}
+                {`${modalData[key] && capitaliseFirstLetter(key) + ":"}`}
               </strong>
               {modalData[key] ?? ""}
             </div>
@@ -113,7 +112,10 @@ function OrgChart(props: Props) {
     <CentreContents>
       <div className={`tol-org-chart ${props.className} ${orgChartSize()}`}>
         {detailModal}
-        <div className={`tol-org-chart-title ${toggleButton ? "button" : ""}`}>
+        <div
+          className={`tol-org-chart-title ${toggleButton ? "button" : ""}`}
+          onClick={() => toggleCollapse()}
+        >
           {title}
           {toggleButton && (
             <Button
