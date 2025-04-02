@@ -38,6 +38,8 @@ interface Props {
   height?: any;
   stacked?: boolean;
   cumulative?: boolean;
+  buttons?: JSX.Element[];
+  forceUpdate?: boolean;
 }
 
 function RemoteBarChart(props: Props) {
@@ -52,6 +54,7 @@ function RemoteBarChart(props: Props) {
     zone,
     setZone,
     cumulative,
+    forceUpdate
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const [labels, setLabels] = useState([]);
@@ -94,7 +97,7 @@ function RemoteBarChart(props: Props) {
         console.error(error.message);
         setErrorMessage(error.message);
       });
-  }, [filter, cumulative]);
+  }, [filter, cumulative, forceUpdate]);
 
   useEffectUpdate(() => {
     const localFilter = generateChartFilterFromBar(

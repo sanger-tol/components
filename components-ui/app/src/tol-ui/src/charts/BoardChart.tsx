@@ -32,7 +32,7 @@ interface ChartConfig {
 }
 
 function BoardChart(props: Props) {
-  const { id, objectType, size } = props;
+  const { id, objectType } = props;
   const ds = new TsDataSource();
   const [config, setConfig] = useState<ChartConfig>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
@@ -98,6 +98,8 @@ function BoardChart(props: Props) {
             xAxis={config.xAxis}
             stacked={config.stacked}
             type={config.type}
+            buttons={configButtons}
+            forceUpdate={forceUpdate}
           />
         </div>
         :

@@ -35,6 +35,11 @@ interface ChartConfig {
   type: HistogramGrouping,
 }
 
+interface intervalListItem {
+  label: string;
+  value: HistogramGrouping;
+}
+
 function ChartConfigDrawer(props: Props) {
   const {
     baseUrl,
@@ -43,13 +48,12 @@ function ChartConfigDrawer(props: Props) {
     title,
     endpoint,
     onConfigSave,
-    ds,
     config
   } = props;
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   const [xAxis, setXAxis] = useState<string[]>(config.xAxis ? [config.xAxis] : []);
   const [breakDownBy, setBreakDownBy] = useState<string[]>(config.breakDownBy ? [config.breakDownBy] : []);
-  const [stacked, setStacked] = useState<boolean>(config.stacked);
+  const [stacked, setStacked] = useState<boolean | undefined>(config.stacked);
   const [type, setType] = useState<HistogramGrouping>(config.type);
 
   const saveConfig = () => {
@@ -57,9 +61,10 @@ function ChartConfigDrawer(props: Props) {
       breakDownBy: breakDownBy[0],
       xAxis: xAxis[0],
       stacked: stacked,
-      type: "bar"
+      type: type
     };
     if (JSON.stringify(config) !== JSON.stringify(updatedConfig)) {
+      console.log(updatedConfig);
       onConfigSave(updatedConfig);
     }
     setOpen(!open);
@@ -158,18 +163,37 @@ function ChartConfigDrawer(props: Props) {
     setOpen(false);
   };
 
-  const intervals = ['M', 'd', 'w', 'y'];
+  const intervals:intervalListItem[] = [
+    {
+      label: "Day",
+      value: "d",
+    },
+    {
+      label: "Week",
+      value: "w",
+    },
+    {
+      label: "Month",
+      value: "M",
+    },
+    {
+      label: "Year",
+      value: "y",
+    },
+  ];
 
   const buttons = (
-    <div style={{display: 'felx', flexDirection: 'row'}}>
-      {intervals.map((interval: HistogramGrouping) => (
+    <div style={{display: "flex", marginBottom: "15px"}}>
+      {intervals.map((interval: intervalListItem) => (
         <Button
           outline
-          key={interval}
-          text={interval}
+          key={interval.label}
+          text={interval.label}
           type="primary"
-          onClick={() => setType(interval)}
-          active={type === interval}
+          onClick={() => setType(interval.value)}
+          active={type === interval.value}
+          size="lg"
+          className="tol-chart-interval-buttons"
         />
       ))}
     </div>
@@ -177,8 +201,8 @@ function ChartConfigDrawer(props: Props) {
 
   const content = (
     <div>
-      <h6>X Axis</h6>
       <div>
+        <h6>X Axis</h6>
         <AttributeSelector
           endpoint={endpoint}
           placeholder="Select X-Axis Attribute..."
@@ -197,8 +221,8 @@ function ChartConfigDrawer(props: Props) {
       </div>
       <h6>Interval</h6>
       {buttons}
-      <h6>Break Down By</h6>
       <div>
+        <h6>Break Down By</h6>
         <AttributeSelector
           endpoint={endpoint}
           placeholder="Select Attribute to Break Down By..."
@@ -220,7 +244,14 @@ function ChartConfigDrawer(props: Props) {
         <Toggle
           key="stacked-toggle"
           checked={stacked}
-          onChange={() => setStacked(!stacked)}
+          onChange={() => {
+            setStacked(!stacked);
+            //if (stacked === true) {
+            //  setStacked(undefined)
+            //} else {
+            //  setStacked(true)
+            //}
+          }}
         />
       </div>
       <div>
