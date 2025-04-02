@@ -198,7 +198,7 @@ function ChartConfigDrawer(props: Props) {
   ];
 
   const buttons = (
-    <div style={{display: "flex", marginBottom: "15px"}}>
+    <div style={{display: "flex",}}>
       {intervals.map((interval: intervalListItem) => (
         <Button
           outline
