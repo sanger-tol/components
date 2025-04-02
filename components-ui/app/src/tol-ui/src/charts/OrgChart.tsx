@@ -90,7 +90,7 @@ function OrgChart(props: Props) {
           .map((key: string, index: number) => (
             <div key={index} className="tol-org-chart-modal-row">
               <strong>
-                {`${modalData[key] && capitaliseFirstLetter(key) + ":"}`}
+                {`${modalData[key] && capitaliseFirstLetter(key) + ": "}`}
               </strong>
               {modalData[key] ?? ""}
             </div>
