@@ -46,7 +46,7 @@ function BoardChart(props: Props) {
   };
 
   const configButtons = [
-    <div key="board-sunburst-config">
+    <div key="board-sunburst-config" >
       <Button
         outline
         position="right"

@@ -224,14 +224,13 @@ function ChartConfigDrawer(props: Props) {
           baseUrl={baseUrl}
           attribute={xAxis}
           setAttribute={setXAxis}
-          disabledValues={null}
-          numPopulatedFields={0}
           maxSelections={1}
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
           renderSearchBySource={true}
           displaySource={true}
           sticky={true}
+          allowedTypes={["datetime"]}
         />
       </div>
       <h6>Interval</h6>
@@ -244,8 +243,6 @@ function ChartConfigDrawer(props: Props) {
           baseUrl={baseUrl}
           attribute={breakDownBy}
           setAttribute={setBreakDownBy}
-          disabledValues={null}
-          numPopulatedFields={0}
           maxSelections={1}
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}

@@ -17,6 +17,7 @@ import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { normaliseCaps } from "../general/utils";
 import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
+import { Col, Row } from "../index";
 import {
   addSubFilter,
   filterHasUpdated,
@@ -115,12 +116,32 @@ function RemoteBarChart(props: Props) {
     setZone({ ...zone });
   }, [barData]);
 
+  const configBar = (
+    <Row>
+      <Col >
+        {props.buttons}
+      </Col>
+    </Row>
+  );
+
   if (errorMessage !== "") {
-    return <Placeholder errorMessage={errorMessage} height={height} />;
+    return (
+      <div>
+        {configBar}
+        <Placeholder errorMessage={errorMessage} height={height} />
+      </div>
+    );
   }
 
   if (warningMessage !== "") {
-    return <Placeholder warningMessage={warningMessage} height={height} style={{marginTop: 8}}/>;
+    return (
+      <div style={{ height: height }}>
+        {configBar}
+        <div style={{height: "100%", paddingBottom: 37 }}>
+          <Placeholder warningMessage={warningMessage} style={{marginTop: 8}}/>
+        </div>
+      </div>
+    );
   }
 
   if (loading) {
