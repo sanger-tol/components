@@ -13,7 +13,8 @@ import {
   AttributeSelector,
   PopUpMessage
 } from "../index";
-import { HistogramGrouping } from "./utils";
+import { IChartConfig } from "../models/Board";
+import { HistogramGrouping } from './utils';
 
 
 export interface Props {
@@ -25,18 +26,11 @@ export interface Props {
   onConfigSave: (config: object) => void;
   endpoint: string;
   sticky?: boolean;
-  config: ChartConfig;
+  config: IChartConfig;
   ds: any;
 }
 
-interface ChartConfig {
-  breakDownBy: string,
-  xAxis: string,
-  stacked: boolean,
-  type: HistogramGrouping,
-}
-
-interface intervalListItem {
+interface IIntervalListItem {
   label: string;
   value: HistogramGrouping;
 }
@@ -58,7 +52,7 @@ function ChartConfigDrawer(props: Props) {
   const [type, setType] = useState<HistogramGrouping>(config.type);
 
   const saveConfig = () => {
-    const updatedConfig: ChartConfig = {
+    const updatedConfig: IChartConfig = {
       breakDownBy: breakDownBy[0],
       stacked: stacked,
       type: type,
@@ -156,7 +150,7 @@ function ChartConfigDrawer(props: Props) {
   );
 
   const handleCloseDrawer = () => {
-    const updatedConfig: ChartConfig = {
+    const updatedConfig: IChartConfig = {
       breakDownBy: breakDownBy[0],
       stacked: stacked,
       type: type,
@@ -178,7 +172,7 @@ function ChartConfigDrawer(props: Props) {
     setOpen(false);
   };
 
-  const intervals: intervalListItem[] = [
+  const intervals: IIntervalListItem[] = [
     {
       label: "Day",
       value: "d",
@@ -199,7 +193,7 @@ function ChartConfigDrawer(props: Props) {
 
   const buttons = (
     <div style={{ display: "flex", }}>
-      {intervals.map((interval: intervalListItem) => (
+      {intervals.map((interval: IIntervalListItem) => (
         <Button
           outline
           key={interval.label}

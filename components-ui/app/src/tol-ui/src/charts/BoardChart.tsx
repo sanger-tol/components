@@ -4,14 +4,12 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BoardFilters, Button, Placeholder, RemoteBarChart, TsDataSource } from "../index";
+import { BoardFilters, Button, Icon, Placeholder, RemoteBarChart, TsDataSource } from "../index";
 import { deepCopy } from "../general/utils";
 import { useState } from "react";
 import { upsertComponentConfig, IZone } from "../boards/utils";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import ChartConfigDrawer from "./ChartConfigDrawer";
-import { HistogramGrouping } from "./utils";
+import { IChartConfig } from "../models/Board";
 
 interface Props {
   id: string;
@@ -24,22 +22,15 @@ interface Props {
   size: string;
 }
 
-interface ChartConfig {
-  breakDownBy: string,
-  xAxis: string,
-  stacked: boolean,
-  type: HistogramGrouping,
-}
-
 function BoardChart(props: Props) {
   const { id, objectType } = props;
   const ds = new TsDataSource();
-  const [config, setConfig] = useState<ChartConfig>(props.config);
+  const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
 
-  const onModalSave = (updatedConfig: ChartConfig) => {
+  const onModalSave = (updatedConfig: IChartConfig) => {
     setConfig({ ...updatedConfig });
     upsertComponentConfig(ds, id, { ...updatedConfig });
     setForceUpdate(!forceUpdate);
@@ -103,7 +94,7 @@ function BoardChart(props: Props) {
           />
         </div>
         :
-        <div className="tol-table" style={{ height: '100%' }}>
+        <div className="tol-table-full">
           <div>
             {configButtons}
           </div>
@@ -113,13 +104,7 @@ function BoardChart(props: Props) {
               height={'100%'}
               message={
                 <>
-                  Please add configure to get started. Click
-                  <FontAwesomeIcon
-                    icon={faSliders}
-                    size="lg"
-                    style={{ padding: "0 10" }}
-                  />
-                  to configure.
+                  Please add configure to get started. Click <Icon icon="sliders" size="lg" /> to configure.
                 </>
               }
             />

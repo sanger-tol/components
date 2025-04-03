@@ -4,12 +4,10 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BoardFilters, Button, Placeholder, RemoteSunburst, TsDataSource } from "../index";
+import { BoardFilters, Button, Placeholder, Icon, RemoteSunburst, TsDataSource } from "../index";
 import { useState } from "react";
 import { deepCopy } from "../general/utils";
 import { upsertComponentConfig, IZone } from "../boards/utils";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import SliceByDrawer from "./SliceByDrawer";
 
 interface Props {
@@ -93,7 +91,7 @@ function BoardSunburst(props: Props) {
           />
         </div>
         :
-        <div className="tol-table" style={{ height: '100%' }}>
+        <div className="tol-table-full">
           <div>
             {configButtons}
           </div>
@@ -103,13 +101,7 @@ function BoardSunburst(props: Props) {
               height={'100%'}
               message={
                 <>
-                  Please add an attribute to get started. Click
-                  <FontAwesomeIcon
-                    icon={faSliders}
-                    size="lg"
-                    style={{ padding: "0 10" }}
-                  />
-                  to configure.
+                  Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
                 </>
               }
             />

@@ -219,8 +219,8 @@ function ComponentPickerModal(props: Props) {
                   <div
                     className={
                       componentType !== option.type
-                        ? "tol-component-modal-bttn"
-                        : "tol-component-modal-bttn-clicked"
+                        ? "tol-component-modal-btn"
+                        : "tol-component-modal-btn-clicked"
                     }
                     onClick={() => setComponentType(option.type)}
                   >
@@ -230,7 +230,7 @@ function ComponentPickerModal(props: Props) {
                 ) : (
                   <HoverOverlay contents={"Coming Soon..."}>
                     <div
-                      className={"tol-component-modal-bttn-disabled"}
+                      className={"tol-component-modal-btn-disabled"}
                     >
                       <Icon icon={option.icon} size="4x" />
                       <h6>{option.text}</h6>
@@ -253,8 +253,8 @@ function ComponentPickerModal(props: Props) {
                   <div
                     className={
                       widgetType !== option.type
-                        ? "tol-component-modal-bttn"
-                        : "tol-component-modal-bttn-clicked"
+                        ? "tol-component-modal-btn"
+                        : "tol-component-modal-btn-clicked"
                     }
                     onClick={() => setWidgetType(option.type)}
                   >
@@ -263,7 +263,7 @@ function ComponentPickerModal(props: Props) {
                 ) : (
                   <HoverOverlay contents={"Currently unavailable for this Component"}>
                     <div
-                      className={"tol-component-modal-bttn-disabled"}
+                      className={"tol-component-modal-btn-disabled"}
                     >
                       <h5>{option.text}</h5>
                     </div>
