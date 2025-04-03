@@ -165,7 +165,7 @@
   margin-bottom: 15px;
 }
 
-.tol-component-modal-bttn {
+.tol-component-modal-btn {
   cursor: pointer;
   width: auto;
   border-radius: 6px;
@@ -186,19 +186,19 @@
 }
 
 // Temporary class as only table is useable
-.tol-component-modal-bttn-disabled {
-  @extend .tol-component-modal-bttn;
+.tol-component-modal-btn-disabled {
+  @extend .tol-component-modal-btn;
   background-color: var(--tol-grey-translucent);
   cursor: not-allowed;
   color: var(--grey-subtle);
 }
 
-.tol-component-modal-bttn:hover {
+.tol-component-modal-btn:hover {
   background-color: var(--tol-grey-translucent);
 }
 
-.tol-component-modal-bttn-clicked {
-  @extend .tol-component-modal-bttn;
+.tol-component-modal-btn-clicked {
+  @extend .tol-component-modal-btn;
   background-color: var(--tol-bg);
   border-color: var(--tol-primary) !important;
   border-width: 2px;

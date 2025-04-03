@@ -224,6 +224,11 @@
     }
   }
 
+  .tol-table-full {
+    @extend .tol-table;
+    height: 100%;
+  }
+
   // link box (e.g. relationship)
   .link-box {
     border-radius: 6px;

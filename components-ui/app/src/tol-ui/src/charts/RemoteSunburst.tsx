@@ -243,9 +243,9 @@ function RemoteSunburst(props: Props) {
             : { height: height, paddingBottom: headerPadding }
         }
       >
-        {warningMessage !== "" ? 
-          <Placeholder warningMessage={warningMessage} style={{marginTop: 8}} />
-        :
+        {warningMessage !== "" ?
+          <Placeholder warningMessage={warningMessage} style={{ marginTop: 8 }} />
+          :
           <Sunburst
             {...props}
             noRefresh

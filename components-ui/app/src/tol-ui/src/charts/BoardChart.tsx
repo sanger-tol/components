@@ -4,11 +4,12 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BoardFilters, Button, Placeholder, Icon, RemoteSunburst, TsDataSource } from "../index";
-import { useState } from "react";
+import { BoardFilters, Button, Icon, Placeholder, RemoteBarChart, TsDataSource } from "../index";
 import { deepCopy } from "../general/utils";
+import { useState } from "react";
 import { upsertComponentConfig, IZone } from "../boards/utils";
-import SliceByDrawer from "./SliceByDrawer";
+import ChartConfigDrawer from "./ChartConfigDrawer";
+import { IChartConfig } from "../models/Board";
 
 interface Props {
   id: string;
@@ -21,22 +22,22 @@ interface Props {
   size: string;
 }
 
-function BoardSunburst(props: Props) {
-  const { id, objectType, size } = props;
+function BoardChart(props: Props) {
+  const { id, objectType } = props;
   const ds = new TsDataSource();
-  const [config, setConfig] = useState<any>(props.config);
+  const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
 
-  const onModalSave = (updatedConfig: object) => {
+  const onModalSave = (updatedConfig: IChartConfig) => {
     setConfig({ ...updatedConfig });
     upsertComponentConfig(ds, id, { ...updatedConfig });
     setForceUpdate(!forceUpdate);
   };
 
   const configButtons = [
-    <div key="board-sunburst-config">
+    <div key="board-sunburst-config" >
       <Button
         outline
         position="right"
@@ -65,29 +66,31 @@ function BoardSunburst(props: Props) {
         setOpen={setOpenFilters}
         {...props}
       />
-      <SliceByDrawer
+      <ChartConfigDrawer
         {...props}
-        sliceBy={config.sliceBy || []} // Pass in a blank array to account for no config
         endpoint={objectType}
         open={openConfig}
         setOpen={setOpenConfig}
         onConfigSave={onModalSave}
-        title="Sunburst Configuration"
+        title="Chart Configuration"
+        config={deepCopy(config)}
+        ds={ds}
       />
-      {config.sliceBy && config.sliceBy.length > 0 ?
+      {config.xAxis && config.breakDownBy ?
         <div style={{ height: '100%' }}>
-          <RemoteSunburst
+          <RemoteBarChart
             id={id}
-            sliceBy={deepCopy(config.sliceBy)}
             title={props.title}
             endpoint={objectType}
             baseUrl={props.baseUrl}
             zone={props.zone}
             setZone={props.setZone}
-            forceUpdate={forceUpdate}
-            legendPosition="top"
-            noMini={size === "sm"}
+            breakDownBy={config.breakDownBy}
+            xAxis={config.xAxis}
+            stacked={config.stacked}
+            type={config.type}
             buttons={configButtons}
+            forceUpdate={forceUpdate}
           />
         </div>
         :
@@ -97,11 +100,11 @@ function BoardSunburst(props: Props) {
           </div>
           <div style={{ height: '100%', marginTop: '6px' }}>
             <Placeholder
-              pie
+              bar
               height={'100%'}
               message={
                 <>
-                  Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
+                  Please add configure to get started. Click <Icon icon="sliders" size="lg" /> to configure.
                 </>
               }
             />
@@ -112,4 +115,4 @@ function BoardSunburst(props: Props) {
   );
 }
 
-export default BoardSunburst;
+export default BoardChart;

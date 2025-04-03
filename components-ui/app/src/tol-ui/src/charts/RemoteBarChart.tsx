@@ -17,6 +17,7 @@ import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { normaliseCaps } from "../general/utils";
 import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
+import { Col, Row } from "../index";
 import {
   addSubFilter,
   filterHasUpdated,
@@ -38,6 +39,8 @@ interface Props {
   height?: any;
   stacked?: boolean;
   cumulative?: boolean;
+  buttons?: JSX.Element[];
+  forceUpdate?: boolean;
 }
 
 function RemoteBarChart(props: Props) {
@@ -52,6 +55,7 @@ function RemoteBarChart(props: Props) {
     zone,
     setZone,
     cumulative,
+    forceUpdate
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const [labels, setLabels] = useState([]);
@@ -94,7 +98,7 @@ function RemoteBarChart(props: Props) {
         console.error(error.message);
         setErrorMessage(error.message);
       });
-  }, [filter, cumulative]);
+  }, [filter, cumulative, forceUpdate]);
 
   useEffectUpdate(() => {
     const localFilter = generateChartFilterFromBar(
@@ -112,12 +116,32 @@ function RemoteBarChart(props: Props) {
     setZone({ ...zone });
   }, [barData]);
 
+  const configBar = (
+    <Row>
+      <Col >
+        {props.buttons}
+      </Col>
+    </Row>
+  );
+
   if (errorMessage !== "") {
-    return <Placeholder errorMessage={errorMessage} height={height} />;
+    return (
+      <div>
+        {configBar}
+        <Placeholder errorMessage={errorMessage} height={height} />
+      </div>
+    );
   }
 
   if (warningMessage !== "") {
-    return <Placeholder warningMessage={warningMessage} height={height} />;
+    return (
+      <div style={{ height: height }}>
+        {configBar}
+        <div style={{height: "100%", paddingBottom: 37 }}>
+          <Placeholder warningMessage={warningMessage} style={{marginTop: 8}}/>
+        </div>
+      </div>
+    );
   }
 
   if (loading) {

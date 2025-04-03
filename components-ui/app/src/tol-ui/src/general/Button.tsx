@@ -59,7 +59,7 @@ function Button(props: Props) {
       ) : (
         <>
           {icon && (
-            <div className="bttn-icon-div">
+            <div>
               <Icon icon={icon} size={size} />
             </div>
           )}

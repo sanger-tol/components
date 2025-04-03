@@ -49,12 +49,13 @@ interface Props {
   height?: any;
   setBarData?: any;
   cumulative?: boolean;
+  buttons?: JSX.Element[];
 }
 
 function BarChart(props: Props) {
-  const { id, title, labels, setBarData, cumulative } = props;
+  const { id, title, labels, setBarData, cumulative, buttons } = props;
   const height = props.height !== undefined ? props.height : "100%";
-  const stacked = isPropDefined(props.stacked);
+  const stacked = props.stacked !== undefined ? props.stacked : false;
   const originDatasets = initialiseDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
 
@@ -293,6 +294,7 @@ function BarChart(props: Props) {
               }}
               icon="download"
             />
+            {buttons}
           </div>
         </Col>
       </Row>

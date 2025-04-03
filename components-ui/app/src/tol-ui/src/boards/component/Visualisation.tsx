@@ -4,7 +4,12 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 ;
-import { BoardCount, BoardTable, BoardSunburst } from "../../index";
+import {
+  BoardCount,
+  BoardTable,
+  BoardSunburst,
+  BoardChart
+} from "../../index";
 import { IZone } from "../utils";
 
 interface Props {
@@ -30,6 +35,8 @@ function Visualisation(props: Props) {
       return <BoardCount {...props} />;
     case "sunburst":
       return <BoardSunburst {...props} />;
+    case "chart":
+      return <BoardChart {...props} />;
   }
 }
 
