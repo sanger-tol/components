@@ -6,25 +6,10 @@ SPDX-License-Identifier: MIT
 
 import { Button as RsButton } from "rsuite";
 import { TolLoader, HoverOverlay, Icon } from "../index";
+import { IButton } from "../models";
 
-interface Props {
-  icon?: string;
-  onClick?: () => void;
-  className?: string;
-  text?: string;
-  disabled?: boolean;
-  size?: "md" | "lg";
-  type?: string;
-  active?: boolean;
-  position?: "left" | "right";
-  tooltip?: string;
-  disabledTooltip?: string;
-  loading?: boolean;
-  outline?: boolean;
-  id?: string;
-}
 
-function Button(props: Props) {
+function Button(props: IButton) {
   const {
     icon,
     onClick,
