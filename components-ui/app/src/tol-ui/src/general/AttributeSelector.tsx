@@ -13,7 +13,7 @@ import {
   Icon,
   PopUpMessage,
   SourceTag,
-  EntityMetaToolTip
+  EntityMetaToolTip,
 } from "../index";
 import {
   getFlattenedMetaData,
@@ -22,6 +22,11 @@ import {
   filterBySource,
   normaliseCaps,
 } from "./utils";
+
+interface AllowedCardinality {
+  operator: string;
+  value: number;
+}
 
 export interface Props {
   additionalPopulatedFieldData?: any;
@@ -38,10 +43,12 @@ export interface Props {
   recommendedFilterAvailable?: boolean;
   renderSearchBySource?: boolean;
   setAttribute: (attribute: string[]) => void;
+  setAllAttributeData?: (attributes: any) => void;
   onClean?: () => void;
   sticky?: boolean;
   tooltipContent?: string;
   customAttributeSelection?: string[];
+  allowedCardinality?: AllowedCardinality;
 }
 
 function AttributeSelector(props: Props) {
@@ -64,7 +71,10 @@ function AttributeSelector(props: Props) {
     sticky,
     tooltipContent,
     customAttributeSelection,
+    allowedCardinality,
+    setAllAttributeData,
   } = props;
+
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
   const [recommendedOn, setRecommendedOn] = useState<boolean>(false);
@@ -84,9 +94,30 @@ function AttributeSelector(props: Props) {
       });
   }, []);
 
+  useEffect(() => {
+    if (setAllAttributeData && attribute.length > 0) {
+      const initialAttributeData = getAllAttributeData(
+        attribute,
+        entityMeta,
+        endpoint
+      );
+      setAllAttributeData(initialAttributeData);
+    }
+  }, [attribute, entityMeta, endpoint, setAllAttributeData]);
+
   const searchBy = (keyword: string, label: any) => {
-    const name = getAttributeDetail(entityMeta, endpoint, label, 'display_name').toLowerCase();
-    const description = getAttributeDetail(entityMeta, endpoint, label, 'description').toLowerCase();
+    const name = getAttributeDetail(
+      entityMeta,
+      endpoint,
+      label,
+      "display_name"
+    ).toLowerCase();
+    const description = getAttributeDetail(
+      entityMeta,
+      endpoint,
+      label,
+      "description"
+    ).toLowerCase();
     const kw = keyword.toLowerCase();
 
     return name.includes(kw) || label.includes(kw) || description.includes(kw);
@@ -96,7 +127,7 @@ function AttributeSelector(props: Props) {
     displayName: string,
     source: string,
     key: string,
-    authoritative: boolean,
+    authoritative: boolean
   ) => {
     const disabled =
       disabledValues && Object.keys(disabledValues).includes(key);
@@ -115,7 +146,11 @@ function AttributeSelector(props: Props) {
               </span>
             ) : (
               <span className="tol-attribute-selector-tooltip">
-                <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint}/>
+                <EntityMetaToolTip
+                  baseUrl={baseUrl}
+                  field={key}
+                  endpoint={endpoint}
+                />
               </span>
             )}
             <div className="tol-attribute-selector-display-key">
@@ -138,7 +173,7 @@ function AttributeSelector(props: Props) {
           metaData["display_name"] ?? normaliseCaps(label),
           metaData["source"],
           label,
-          metaData["authoritative"],
+          metaData["authoritative"]
         )}
       </div>
     );
@@ -190,20 +225,85 @@ function AttributeSelector(props: Props) {
     );
   };
 
+  const getAllAttributeData = (
+    attributes: string[],
+    entityMeta: any,
+    endpoint: string
+  ) => {
+    return attributes.reduce((acc, attr) => {
+      const attributeData = getFlattenedMetaData(entityMeta, endpoint, attr);
+      return {
+        ...acc,
+        [attr]: attributeData,
+      };
+    }, {});
+  };
+
   const handleSetAttribute = (newAttribute: string[]) => {
     if (maxSelections) {
       if (newAttribute.length > maxSelections) {
         PopUpMessage({
           type: "warning",
-          message: `You can select a maximum of ${maxSelections} items.`,
+          message: `You can select a maximum number of ${maxSelections} items.`,
         });
         return;
-      } else {
-        setAttribute(newAttribute);
       }
-    } else {
-      setAttribute(newAttribute);
     }
+    setAttribute(newAttribute);
+
+    if (setAllAttributeData) {
+      const allAttributeData = getAllAttributeData(
+        newAttribute,
+        entityMeta,
+        endpoint
+      );
+      setAllAttributeData(allAttributeData);
+    }
+  };
+
+  const filterAttributes = (
+    entityMeta: any,
+    endpoint: string,
+    allowedTypes: string[] | undefined,
+    selectedSources: string[],
+    recommendedOn: boolean,
+    allowedCardinality: AllowedCardinality | undefined,
+    customAttributeSelection: string[] | undefined
+  ) => {
+    return Object.keys(getFlattenedMetaData(entityMeta, endpoint)).filter(
+      (key) => {
+        const meta = getFlattenedMetaData(entityMeta, endpoint)[key];
+        const typeMatch =
+          !allowedTypes || allowedTypes.includes(meta.python_type);
+        const sourceMatch =
+          selectedSources.length === 0 ||
+          (selectedSources.includes("undefined")
+            ? !meta.source || selectedSources.includes(meta.source)
+            : selectedSources.includes(meta.source));
+        const recommendedMatch = meta.authoritative === true;
+        const cardinalityMatch =
+          !allowedCardinality ||
+          (meta.cardinality &&
+            ((allowedCardinality.operator === ">" &&
+              meta.cardinality > allowedCardinality.value) ||
+              (allowedCardinality.operator === "<" &&
+                meta.cardinality < allowedCardinality.value) ||
+              (allowedCardinality.operator === "=" &&
+                meta.cardinality === allowedCardinality.value) ||
+              (allowedCardinality.operator === ">=" &&
+                meta.cardinality >= allowedCardinality.value) ||
+              (allowedCardinality.operator === "<=" &&
+                meta.cardinality <= allowedCardinality.value)));
+
+        return (
+          (recommendedOn ? recommendedMatch : true) &&
+          typeMatch &&
+          sourceMatch &&
+          cardinalityMatch &&
+          (!customAttributeSelection || customAttributeSelection.includes(key))
+        );
+      }
+    );
   };
 
   if (loading) return <></>;
@@ -214,36 +314,23 @@ function AttributeSelector(props: Props) {
         className="tol-attribute-selector-select"
         block
         noSelectAll
-        data={Object.keys(getFlattenedMetaData(entityMeta, endpoint))
-          .filter((key) => {
-            const meta = getFlattenedMetaData(entityMeta, endpoint)[key];
-            const typeMatch =
-              !allowedTypes || allowedTypes.includes(meta.python_type);
-            const sourceMatch =
-              selectedSources.length === 0 ||
-              (selectedSources.includes("undefined")
-                ? !sources.includes(meta.source) ||
-                  selectedSources.includes(meta.source)
-                : selectedSources.includes(meta.source));
-            const recommendedMatch = meta.authoritative === true;
-
-            return (
-              (recommendedOn ? recommendedMatch : true) &&
-              typeMatch &&
-              sourceMatch &&
-              (!customAttributeSelection ||
-                customAttributeSelection.includes(key))
-            );
-          })
-          .sort((a, b) => {
-            const metaA = getFlattenedMetaData(entityMeta, endpoint)[a];
-            const metaB = getFlattenedMetaData(entityMeta, endpoint)[b];
-            if (metaA.source === null || metaA.source === undefined) return 1;
-            if (metaB.source === null || metaB.source === undefined) return -1;
-            if (metaA.source < metaB.source) return -1;
-            if (metaA.source > metaB.source) return 1;
-            return a.localeCompare(b);
-          })}
+        data={filterAttributes(
+          entityMeta,
+          endpoint,
+          allowedTypes,
+          selectedSources,
+          recommendedOn,
+          allowedCardinality,
+          customAttributeSelection
+        ).sort((a, b) => {
+          const metaA = getFlattenedMetaData(entityMeta, endpoint)[a];
+          const metaB = getFlattenedMetaData(entityMeta, endpoint)[b];
+          if (metaA.source === null || metaA.source === undefined) return 1;
+          if (metaB.source === null || metaB.source === undefined) return -1;
+          if (metaA.source < metaB.source) return -1;
+          if (metaA.source > metaB.source) return 1;
+          return a.localeCompare(b);
+        })}
         placeholder={placeholder}
         value={attribute}
         setValue={handleSetAttribute}
@@ -265,7 +352,10 @@ function AttributeSelector(props: Props) {
             }}
             checked={recommendedOn}
           />
-          <span style={{paddingRight: 6}} onClick={(e) => e.stopPropagation()}>
+          <span
+            style={{ paddingRight: 6 }}
+            onClick={(e) => e.stopPropagation()}
+          >
             Recommended columns.
           </span>
           <InfoTooltip
