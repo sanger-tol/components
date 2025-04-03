@@ -78,6 +78,9 @@ export {
   FormCheckboxes,
 } from "./forms";
 
+// factories
+export { loremIpsumGenerator } from "./factories";
+
 // messaging
 export {
   Message,
