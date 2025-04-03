@@ -17,6 +17,7 @@ import {
 import { FormTextField } from "../../forms";
 import { RSForm } from "../../index";
 import { IZone, addComponent, defineComponent } from "../utils";
+import { componentOptions, sizeOptions } from "../../config/boards/componentSelection";
 
 interface Props {
   open: boolean;
@@ -141,63 +142,6 @@ function ComponentPickerModal(props: Props) {
     />
   );
 
-  const componentOptions = [
-    {
-      type: "count",
-      text: "Count",
-      icon: "hashtag",
-      disabled: false,
-    },
-    {
-      type: "sunburst",
-      text: "Sunburst",
-      icon: "chart-pie",
-      disabled: false,
-    },
-    {
-      type: "table",
-      text: "Table",
-      icon: "table",
-      disabled: false,
-    },
-    {
-      type: "chart",
-      text: "Chart",
-      icon: "chart-column",
-      disabled: false,
-    },
-    {
-      type: "map",
-      text: "Map",
-      icon: "location-dot",
-      disabled: true,
-    },
-    {
-      type: "text",
-      text: "Rich Text",
-      icon: "code",
-      disabled: true,
-    }
-  ];
-
-  const sizeOptions = [
-    {
-      type: "sm",
-      text: "Small",
-      disabled: componentType === "count" || componentType == "sunburst" ? false : true,
-    },
-    {
-      type: "md",
-      text: "Medium",
-      disabled: componentType === "count" ? true : false,
-    },
-    {
-      type: "lg",
-      text: "Large",
-      disabled: componentType === "count" ? true : false,
-    },
-  ];
-
   return (
     <Modal
       open={open}
@@ -246,7 +190,7 @@ function ComponentPickerModal(props: Props) {
           Select Size <span style={{ color: "red" }}>*</span>
         </h6>
         <Row>
-          {sizeOptions.map((option, index) => {
+          {sizeOptions(componentType).map((option, index) => {
             return (
               <Col lg={4} md={4} sm={12} className="tol-button-col" key={index}>
                 {!option.disabled ? (
