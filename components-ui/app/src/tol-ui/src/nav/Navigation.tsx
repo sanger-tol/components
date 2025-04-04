@@ -35,7 +35,7 @@ interface Props extends RouteComponentProps {
 }
 
 interface Environment {
-  environment: string | undefined;
+  environment?: string;
 }
 
 const assumeProduction = (): string => {
@@ -114,7 +114,10 @@ function Navigation(props: Props) {
       const authorised = confirmAuthorised(user, page.auth, page.removeOnAuth);
       if (authorised) {
         return (
-          <Nav.Link key={page.name} href={convertToPath(page.name)}>
+          <Nav.Link
+            key={page.name}
+            href={"url" in page ? page.url : convertToPath(page.name)}
+          >
             {page.name}
           </Nav.Link>
         );
@@ -133,6 +136,7 @@ function Navigation(props: Props) {
         return (
           <NavDropdown title={dropdown.name}>
             {dropdown.pages &&
+              Array.isArray(dropdown.pages) &&
               dropdown.pages.map((page: Page, index) => {
                 return (
                   // eslint-disable-next-line
@@ -140,7 +144,9 @@ function Navigation(props: Props) {
                     <Nav.Link
                       key={page.name}
                       href={
-                        convertToPath(dropdown.name) + convertToPath(page.name)
+                        "url" in page
+                        ? page.url
+                        : convertToPath(dropdown.name) + convertToPath(page.name)
                       }
                     >
                       {page.name}

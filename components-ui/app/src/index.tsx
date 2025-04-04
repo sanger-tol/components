@@ -53,6 +53,11 @@ const maps: Page = {
   element: <Maps />,
 };
 
+const portal: Page = {
+  name: "Portal",
+  url: "https://portal.tol.sanger.ac.uk",
+}
+
 const timelines: Page = {
   name: "Timelines",
   element: <Timelines />,
@@ -97,7 +102,7 @@ const widgets: Page = {
 
 const otherDropdown: Dropdown = {
   name: "Other",
-  pages: [colours, detail, forms, messages, miscellaneous, tsds, widgets],
+  pages: [colours, detail, forms, messages, miscellaneous, tsds, widgets, portal],
 };
 
 // dev sandbox - change element if needed

@@ -6,9 +6,10 @@ SPDX-License-Identifier: MIT
 
 export interface Default {
   name: string;
-  auth?: boolean | string[];
+  auth?: boolean|string[];
   hidden?: boolean;
   removeOnAuth?: boolean;
+  url?: string;
 }
 
 export interface Page extends Default {
@@ -22,6 +23,3 @@ export interface Dropdown extends Default {
   pages?: Page[];
 } // eslint-disable-line
 
-export interface Link extends Default {
-  url: string;
-}
