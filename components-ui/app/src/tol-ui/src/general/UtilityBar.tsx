@@ -18,18 +18,19 @@ function UtilityBar(props: Props) {
   const {
     title,
     buttons,
+    elements
   } = props;
 
   return (
-    <div>
+    <div className='tol-table-bar'>
       {title && <InlineEdit {...title} />}
-      {buttons.map((button, index) => (
-        <Button key={index} {...button}/>
-      ))}
-      {props.elements.map((element, index) => (
+      {elements.map((element, index) => (
         <div key={index}>
           {element}
         </div>
+      ))}
+      {buttons.map((button, index) => (
+        <Button key={index} {...button}/>
       ))}
     </div>
   );

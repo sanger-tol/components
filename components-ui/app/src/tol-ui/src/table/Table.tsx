@@ -192,35 +192,35 @@ function Table(props: Props) {
     disabled: selectedRows.length === 0,
   }));
 
-   const configButton: IButton = !noConfigModal ? {
+  const configButton: IButton = !noConfigModal ? {
     visible: true,
     position: "right",
-    type:"primary",
+    type: "primary",
     onClick: () => {
       setOpen(true);
     },
-    icon:"sliders",
+    icon: "sliders",
     outline: true
-   } : {
+  } : {
     visible: false
-   }
+  }
 
-   const filterButton: IButton = !noFilter ? {
+  const filterButton: IButton = !noFilter ? {
     visible: true,
     position: "right",
     type: "primary",
-    onClick: () => {setFilterVisibility(!filterVisibility)},
+    onClick: () => { setFilterVisibility(!filterVisibility) },
     icon: "eye-slash",
     outline: true
-   } : {
+  } : {
     visible: false
-   }
+  }
 
-   const downloadButton: IButton = !noDownload ? {
+  const downloadButton: IButton = !noDownload ? {
     visible: true,
     position: "right",
     type: "primary",
-    onClick:() => {
+    onClick: () => {
       setDownloadOpen(!downloadOpen)
     },
     disabled: totalSize <= 0 || noFieldsSelected,
@@ -232,9 +232,9 @@ function Table(props: Props) {
         : undefined
     ,
     outline: true
-   } : {
+  } : {
     visible: false
-   }
+  }
 
   return (
     <div style={{ height: height }} className="tol-table">
@@ -271,8 +271,7 @@ function Table(props: Props) {
         onConfigSave={onModalSave}
         {...props}
       />
-      <div className="tol-table-bar">
-        {/*rowSelection && (
+      {/*rowSelection && (
           <>
             <Button
               position="left"
@@ -287,25 +286,25 @@ function Table(props: Props) {
             />
           </>
         )*/}
-        <div style={{ float: "left" }}>
-          {actions && actions.length > 0 && (
-            <DropdownButtons
-              mainButtonIcon={{
-                icon: "paper-plane",
-                type: "primary",
-                position: "left",
-                outline: selectedRows.length === 0,
+      {!noPagination && fieldMeta.order.active.length > 0 && (
+        <UtilityBar
+          elements={[
+            <div style={{ float: "left" }}>
+              {actions && actions.length > 0 && (
+                <DropdownButtons
+                  mainButtonIcon={{
+                    icon: "paper-plane",
+                    type: "primary",
+                    position: "left",
+                    outline: selectedRows.length === 0,
 
-              }}
-              dropdownButtons={actionDropDownButtons}
-              footer={actionsFooter}
-              placement={"rightStart"}
-            />
-          )}
-        </div>
-        {!noPagination && fieldMeta.order.active.length > 0 && (
-          <UtilityBar
-            elements={[
+                  }}
+                  dropdownButtons={actionDropDownButtons}
+                  footer={actionsFooter}
+                  placement={"rightStart"}
+                />
+              )}
+            </div>,
             <>{rowCounter ? rowCounter : totalSize}</>,
             <span className="tol-page-size">
               <SelectPicker
@@ -349,16 +348,15 @@ function Table(props: Props) {
               limit={pageSize}
               onChangeLimit={setPageSize}
             />
-            ]}
-            buttons={[
-              configButton,
-              filterButton,
-              downloadButton
-            ]}
-          />
-        )}
-        {configButtons}
-      </div>
+          ]}
+          buttons={[
+            configButton,
+            filterButton,
+            downloadButton,
+            ...(configButtons || []),
+          ]}
+        />
+      )}
       {noFieldsSelected ? (
         <Placeholder
           message={
