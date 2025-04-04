@@ -19,6 +19,7 @@ export interface IButton {
   loading?: boolean;
   outline?: boolean;
   id?: string;
+  visible?: boolean;
 }
 
 export interface HeaderButton {

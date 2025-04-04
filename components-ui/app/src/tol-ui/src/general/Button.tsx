@@ -25,6 +25,7 @@ function Button(props: IButton) {
     loading,
     outline,
     id,
+    visible
   } = props;
 
   const outlineClass = outline ? "-outline" : "";
@@ -32,28 +33,32 @@ function Button(props: IButton) {
   const loader = <TolLoader size="sm" />;
 
   const button = (
-    <RsButton
-      onClick={onClick}
-      disabled={disabled || loading}
-      active={active}
-      className={`icon-button-${type || "primary"}-${size || "md"}${outlineClass} ${className}`}
-      id={id}
-    >
-      {loading ? (
-        loader
-      ) : (
-        <>
-          {icon && (
-            <div>
-              <Icon icon={icon} size={size} />
-            </div>
-          )}
-          {text && (
-            <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>
-          )}
-        </>
-      )}
-    </RsButton>
+    <>
+    { visible && 
+      <RsButton
+        onClick={onClick}
+        disabled={disabled || loading}
+        active={active}
+        className={`icon-button-${type || "primary"}-${size || "md"}${outlineClass} ${className}`}
+        id={id}
+      >
+        {loading ? (
+          loader
+        ) : (
+          <>
+            {icon && (
+              <div>
+                <Icon icon={icon} size={size} />
+              </div>
+            )}
+            {text && (
+              <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>
+            )}
+          </>
+        )}
+      </RsButton>
+    }
+    </>
   );
 
   const contents = disabled && disabledTooltip ? disabledTooltip : tooltip;

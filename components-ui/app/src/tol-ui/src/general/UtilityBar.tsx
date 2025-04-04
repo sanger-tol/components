@@ -9,21 +9,27 @@ import { InlineEdit } from '.'
 import { Button } from '../'
 
 interface Props {
-  title: IInlineEdit;
+  title?: IInlineEdit;
   buttons: IButton[];
+  elements: JSX.Element[];
 }
 
 function UtilityBar(props: Props) {
   const {
     title,
-    buttons
+    buttons,
   } = props;
 
   return (
     <div>
-      <InlineEdit {...title}/>
+      {title && <InlineEdit {...title} />}
       {buttons.map((button, index) => (
         <Button key={index} {...button}/>
+      ))}
+      {props.elements.map((element, index) => (
+        <div key={index}>
+          {element}
+        </div>
       ))}
     </div>
   );

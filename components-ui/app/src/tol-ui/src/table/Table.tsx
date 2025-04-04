@@ -12,7 +12,8 @@ import {
   DropdownButtons,
   PopUpMessage,
   DownloadModal,
-  EntityMetaToolTip
+  EntityMetaToolTip,
+  UtilityBar
 } from "../index";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -24,6 +25,7 @@ import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
 import { DropdownButtonProps } from "../general/DropdownButtons";
 import { useStateFallback } from "../hooks/useStateFallback";
+import { IButton, IInlineEdit } from "../models";
 
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
@@ -190,6 +192,50 @@ function Table(props: Props) {
     disabled: selectedRows.length === 0,
   }));
 
+   const configButton: IButton = !noConfigModal ? {
+    visible: true,
+    position: "right",
+    type:"primary",
+    onClick: () => {
+      setOpen(true);
+    },
+    icon:"sliders",
+    outline: true
+   } : {
+    visible: false
+   }
+
+   const filterButton: IButton = !noFilter ? {
+    visible: true,
+    position: "right",
+    type: "primary",
+    onClick: () => {setFilterVisibility(!filterVisibility)},
+    icon: "eye-slash",
+    outline: true
+   } : {
+    visible: false
+   }
+
+   const downloadButton: IButton = !noDownload ? {
+    visible: true,
+    position: "right",
+    type: "primary",
+    onClick:() => {
+      setDownloadOpen(!downloadOpen)
+    },
+    disabled: totalSize <= 0 || noFieldsSelected,
+    loading: downloading,
+    icon: "download",
+    disabledTooltip:
+      totalSize >= 1
+        ? "Must have at least one row to download."
+        : undefined
+    ,
+    outline: true
+   } : {
+    visible: false
+   }
+
   return (
     <div style={{ height: height }} className="tol-table">
       <DownloadModal
@@ -258,8 +304,9 @@ function Table(props: Props) {
           )}
         </div>
         {!noPagination && fieldMeta.order.active.length > 0 && (
-          <>
-            {rowCounter ? rowCounter : totalSize}
+          <UtilityBar
+            elements={[
+            <>{rowCounter ? rowCounter : totalSize}</>,
             <span className="tol-page-size">
               <SelectPicker
                 value={pageSize}
@@ -274,7 +321,7 @@ function Table(props: Props) {
                   { label: "100", value: 250 },
                 ]}
               />
-            </span>
+            </span>,
             <Pagination
               className="tol-pagination"
               size="sm"
@@ -284,7 +331,7 @@ function Table(props: Props) {
               onChangePage={setPage}
               limit={pageSize}
               onChangeLimit={setPageSize}
-            />
+            />,
             <Pagination
               className="tol-pagination"
               prev
@@ -302,47 +349,12 @@ function Table(props: Props) {
               limit={pageSize}
               onChangeLimit={setPageSize}
             />
-          </>
-        )}
-        {!noConfigModal && (
-          <Button
-            position="right"
-            type="primary"
-            onClick={() => {
-              setOpen(true);
-            }}
-            icon="sliders"
-            outline
-          />
-        )}
-        {!noFilter && (
-          <Button
-            position="right"
-            active={filterVisibility}
-            type="primary"
-            onClick={() => setFilterVisibility(!filterVisibility)}
-            disabled={noFieldsSelected}
-            icon="eye-slash"
-            outline
-          />
-        )}
-        {!noDownload && (
-          <Button
-            position="right"
-            type="primary"
-            onClick={() => {
-              setDownloadOpen(!downloadOpen)
-            }
-            }
-            disabled={totalSize <= 0 || noFieldsSelected}
-            loading={downloading}
-            icon="download"
-            disabledTooltip={
-              totalSize >= 1
-                ? "Must have at least one row to download."
-                : undefined
-            }
-            outline
+            ]}
+            buttons={[
+              configButton,
+              filterButton,
+              downloadButton
+            ]}
           />
         )}
         {configButtons}
