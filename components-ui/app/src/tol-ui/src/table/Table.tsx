@@ -13,7 +13,6 @@ import {
   DownloadModal,
   EntityMetaToolTip,
   UtilityBar,
-  Button
 } from "../index";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

@@ -25,6 +25,7 @@ import {
   resetFiltersBelow,
 } from "../filtering/utils";
 import { Button, Col, Row } from "../index";
+import { IUtilityBar } from "../models";
 
 interface Props {
   id: string;
@@ -41,6 +42,7 @@ interface Props {
   setZone?: any;
   forceUpdate?: boolean;
   buttons?: JSX.Element[];
+  utilityBarConfig?: IUtilityBar;
 }
 
 function RemoteSunburst(props: Props) {

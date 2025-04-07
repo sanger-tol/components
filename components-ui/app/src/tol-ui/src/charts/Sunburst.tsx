@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { Button, Col, Row, useEffectUpdate } from "../index";
+import { Button, Col, Row, useEffectUpdate, UtilityBar } from "../index";
 import {
   generateSunburstLabels,
   convertSunburstDatasets,
@@ -21,6 +21,7 @@ import {
 import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/utils";
 import { useState } from "react";
 import { themeListener } from "../hooks/listeners";
+import { IUtilityBar } from "../models";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -37,6 +38,7 @@ interface Props {
   noRefresh?: boolean;
   setSliceData?: any;
   resetChart?: boolean; // a change in this prop will reset the chart
+  utilityBarConfig?: IUtilityBar;
 }
 
 function Sunburst(props: Props) {
@@ -49,6 +51,7 @@ function Sunburst(props: Props) {
     noLabel,
     noRefresh,
     resetChart,
+    utilityBarConfig = {}
   } = props;
   const height = props.height ? props.height : "100%";
   const originDatasets = convertSunburstDatasets(props.datasets);
@@ -188,42 +191,66 @@ function Sunburst(props: Props) {
   return (
     <div style={style}>
       {showConfigBar && (
-        <Row>
-          <Col xs={6}>
-            <p className="header-text">{title}</p>
-          </Col>
-          <Col xs={6}>
-            <div className="tol-chart-buttons">
-              {isPropDefined(setSliceData) && !noRefresh && (
-                <div>
-                  <Button
-                    outline
-                    position="right"
-                    type="primary"
-                    onClick={() => {
-                      resetItemClickedData(setSliceData);
-                      setDatasets(originDatasets);
-                    }}
-                    icon="undo"
-                  />
-                </div>
-              )}
-              {!noDownload && (
-                <div>
-                  <Button
-                    outline
-                    position="right"
-                    type="primary"
-                    onClick={() => {
-                      downloadItem(props.id, downloadName);
-                    }}
-                    icon="download"
-                  />
-                </div>
-              )}
-            </div>
-          </Col>
-        </Row>
+        // <Row>
+        //   <Col xs={6}>
+        //     <p className="header-text">{title}</p>
+        //   </Col>
+        //   <Col xs={6}>
+        //     <div className="tol-chart-buttons">
+        //       {isPropDefined(setSliceData) && !noRefresh && (
+        //         <div>
+        //           <Button
+        //             outline
+        //             position="right"
+        //             type="primary"
+        //             onClick={() => {
+        //               resetItemClickedData(setSliceData);
+        //               setDatasets(originDatasets);
+        //             }}
+        //             icon="undo"
+        //           />
+        //         </div>
+        //       )}
+        //       {!noDownload && (
+        //         <div>
+        //           <Button
+        //             outline
+        //             position="right"
+        //             type="primary"
+        //             onClick={() => {
+        //               downloadItem(props.id, downloadName);
+        //             }}
+        //             icon="download"
+        //           />
+        //         </div>
+        //       )}
+        //     </div>
+        //   </Col>
+        // </Row>
+        <UtilityBar
+          title={utilityBarConfig.title}
+          buttons={[
+            {
+              icon: "undo",
+              position: "right",
+              type: "primary",
+              onClick: () => {
+                resetItemClickedData(setSliceData);
+                setDatasets(originDatasets);
+              },
+              disabled: noRefresh,
+            },
+            {
+              icon: "download",
+              position: "right",
+              type: "primary",
+              onClick: () => {
+                downloadItem(props.id, downloadName);
+              },
+              disabled: noDownload,
+            }
+          ]}
+        />
       )}
       <Doughnut
         id={id}
