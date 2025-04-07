@@ -286,77 +286,77 @@ function Table(props: Props) {
             />
           </>
         )*/}
-        <UtilityBar
-          title={utilityBarConfig.title}
-          elements={(!noPagination && fieldMeta.order.active.length > 0) ? [
-            <div>
-              {actions && actions.length > 0 && (
-                <DropdownButtons
-                  mainButtonIcon={{
-                    icon: "paper-plane",
-                    type: "primary",
-                    position: "left",
-                    outline: selectedRows.length === 0,
+      <UtilityBar
+        title={utilityBarConfig.title}
+        elements={(!noPagination && fieldMeta.order.active.length > 0) ? [
+          <div>
+            {actions && actions.length > 0 && (
+              <DropdownButtons
+                mainButtonIcon={{
+                  icon: "paper-plane",
+                  type: "primary",
+                  position: "left",
+                  outline: selectedRows.length === 0,
 
-                  }}
-                  dropdownButtons={actionDropDownButtons}
-                  footer={actionsFooter}
-                  placement={"rightStart"}
-                />
-              )}
-            </div>,
-            <>{rowCounter ? rowCounter : totalSize}</>,
-            <span className="tol-page-size">
-              <SelectPicker
-                value={pageSize}
-                onChange={setPageSize}
-                size="sm"
-                cleanable={false}
-                searchable={false}
-                data={[
-                  { label: "25", value: 25 },
-                  { label: "50", value: 50 },
-                  { label: "100", value: 100 },
-                  { label: "100", value: 250 },
-                ]}
+                }}
+                dropdownButtons={actionDropDownButtons}
+                footer={actionsFooter}
+                placement={"rightStart"}
               />
-            </span>,
-                <Pagination
-                className="tol-pagination"
-                size="sm"
-                layout={["skip"]}
-                total={totalSize}
-                activePage={page}
-                onChangePage={setPage}
-                limit={pageSize}
-                onChangeLimit={setPageSize}
-              />,
-              <Pagination
-                className="tol-pagination"
-                prev
-                next
-                first
-                last
-                ellipsis
-                boundaryLinks
-                maxButtons={3}
-                size="sm"
-                layout={["pager"]}
-                total={totalSize}
-                activePage={page}
-                onChangePage={setPage}
-                limit={pageSize}
-                onChangeLimit={setPageSize}
-              />,
-            ...(utilityBarConfig.elements || [])
-          ] : [...(utilityBarConfig.elements || [])]}
-          buttons={[
-            configButton,
-            filterButton,
-            downloadButton,
-            ...(utilityBarConfig.buttons || []),
-          ]}
-        />
+            )}
+          </div>,
+          <>{rowCounter ? rowCounter : totalSize}</>,
+          <span className="tol-page-size">
+            <SelectPicker
+              value={pageSize}
+              onChange={setPageSize}
+              size="sm"
+              cleanable={false}
+              searchable={false}
+              data={[
+                { label: "25", value: 25 },
+                { label: "50", value: 50 },
+                { label: "100", value: 100 },
+                { label: "100", value: 250 },
+              ]}
+            />
+          </span>,
+          <Pagination
+            className="tol-pagination"
+            size="sm"
+            layout={["skip"]}
+            total={totalSize}
+            activePage={page}
+            onChangePage={setPage}
+            limit={pageSize}
+            onChangeLimit={setPageSize}
+          />,
+          <Pagination
+            className="tol-pagination"
+            prev
+            next
+            first
+            last
+            ellipsis
+            boundaryLinks
+            maxButtons={3}
+            size="sm"
+            layout={["pager"]}
+            total={totalSize}
+            activePage={page}
+            onChangePage={setPage}
+            limit={pageSize}
+            onChangeLimit={setPageSize}
+          />,
+          ...(utilityBarConfig.elements || [])
+        ] : [...(utilityBarConfig.elements || [])]}
+        buttons={[
+          configButton,
+          filterButton,
+          downloadButton,
+          ...(utilityBarConfig.buttons || []),
+        ]}
+      />
       {noFieldsSelected ? (
         <Placeholder
           message={

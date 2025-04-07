@@ -16,15 +16,15 @@ function UtilityBar(props: IUtilityBar) {
   } = props;
 
   return (
-    <div className='tol-table-bar'>
+    <div className='tol-utility-bar'>
       {title && <InlineEdit {...title} />}
       {elements && elements.map((element, index) => (
-        <div key={index} style={{ float: 'left'}}>
+        <div key={index} style={{ float: 'left' }}>
           {element}
         </div>
       ))}
       {buttons && buttons.map((button, index) => (
-        <Button key={index} {...button}/>
+        <Button key={index} {...button} />
       ))}
     </div>
   );
