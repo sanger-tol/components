@@ -45,15 +45,8 @@ function BoardTable(props: Props) {
     upsertComponentConfig(ds, id, config);
   };
 
-  const configButtons = [
+  const boardFilter = [
     <span key="board-table-filter">
-      <Button
-        outline
-        position="right"
-        type="primary"
-        onClick={() => setOpenFilters(true)}
-        icon="filter"
-      />
       <BoardFilters
         endpoint={objectType}
         entityType="component"
@@ -79,8 +72,16 @@ function BoardTable(props: Props) {
       utilityBarConfig={{
         title: {
           title: props.title,
+          editable: true,
         },
-        buttons: configButtons,
+        elements: boardFilter,
+        buttons: [{
+          outline: true,
+          position: "right",
+          type: "primary",
+          onClick: () => setOpenFilters(true),
+          icon: "filter",
+        }],
       }}
       {...props}
     />

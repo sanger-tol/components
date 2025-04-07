@@ -286,10 +286,9 @@ function Table(props: Props) {
             />
           </>
         )*/}
-      {!noPagination && fieldMeta.order.active.length > 0 && (
         <UtilityBar
           title={utilityBarConfig.title}
-          elements={[
+          elements={(!noPagination && fieldMeta.order.active.length > 0) ? [
             <div>
               {actions && actions.length > 0 && (
                 <DropdownButtons
@@ -322,35 +321,35 @@ function Table(props: Props) {
                 ]}
               />
             </span>,
-            <Pagination
-              className="tol-pagination"
-              size="sm"
-              layout={["skip"]}
-              total={totalSize}
-              activePage={page}
-              onChangePage={setPage}
-              limit={pageSize}
-              onChangeLimit={setPageSize}
-            />,
-            <Pagination
-              className="tol-pagination"
-              prev
-              next
-              first
-              last
-              ellipsis
-              boundaryLinks
-              maxButtons={3}
-              size="sm"
-              layout={["pager"]}
-              total={totalSize}
-              activePage={page}
-              onChangePage={setPage}
-              limit={pageSize}
-              onChangeLimit={setPageSize}
-            />,
+                <Pagination
+                className="tol-pagination"
+                size="sm"
+                layout={["skip"]}
+                total={totalSize}
+                activePage={page}
+                onChangePage={setPage}
+                limit={pageSize}
+                onChangeLimit={setPageSize}
+              />,
+              <Pagination
+                className="tol-pagination"
+                prev
+                next
+                first
+                last
+                ellipsis
+                boundaryLinks
+                maxButtons={3}
+                size="sm"
+                layout={["pager"]}
+                total={totalSize}
+                activePage={page}
+                onChangePage={setPage}
+                limit={pageSize}
+                onChangeLimit={setPageSize}
+              />,
             ...(utilityBarConfig.elements || [])
-          ]}
+          ] : [...(utilityBarConfig.elements || [])]}
           buttons={[
             configButton,
             filterButton,
@@ -358,7 +357,6 @@ function Table(props: Props) {
             ...(utilityBarConfig.buttons || []),
           ]}
         />
-      )}
       {noFieldsSelected ? (
         <Placeholder
           message={
