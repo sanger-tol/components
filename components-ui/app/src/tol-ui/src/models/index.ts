@@ -10,4 +10,4 @@ export { User } from "./User";
 export { IFilter } from "./Filter";
 export { EntityMeta, Attributes, Relationships } from "./EntityMeta";
 export { IButton, HeaderButton } from './Buttons'
-export { IInlineEdit } from './General'
+export { IInlineEdit, IUtilityBar } from './General'

@@ -25,7 +25,7 @@ function Button(props: IButton) {
     loading,
     outline,
     id,
-    visible
+    visible = true,
   } = props;
 
   const outlineClass = outline ? "-outline" : "";

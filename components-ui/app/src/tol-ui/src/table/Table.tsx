@@ -6,14 +6,14 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
-  Button,
   Placeholder,
   useEffectUpdate,
   DropdownButtons,
   PopUpMessage,
   DownloadModal,
   EntityMetaToolTip,
-  UtilityBar
+  UtilityBar,
+  Button
 } from "../index";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,7 +25,7 @@ import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
 import { DropdownButtonProps } from "../general/DropdownButtons";
 import { useStateFallback } from "../hooks/useStateFallback";
-import { IButton, IInlineEdit } from "../models";
+import { IButton, IUtilityBar } from "../models";
 
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
@@ -71,7 +71,7 @@ interface Props {
   rowSelection?: boolean;
   actions?: DropdownButtonProps[];
   actionsFooter?: DropdownButtonProps;
-  configButtons?: JSX.Element[];
+  utilityBarConfig?: IUtilityBar;
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
 }
@@ -117,7 +117,7 @@ function Table(props: Props) {
     rowSelection,
     actions,
     actionsFooter,
-    configButtons,
+    utilityBarConfig = {},
     /* eslint-enable */
   } = props;
 
@@ -288,6 +288,7 @@ function Table(props: Props) {
         )*/}
       {!noPagination && fieldMeta.order.active.length > 0 && (
         <UtilityBar
+          title={utilityBarConfig.title}
           elements={[
             <div>
               {actions && actions.length > 0 && (
@@ -347,13 +348,14 @@ function Table(props: Props) {
               onChangePage={setPage}
               limit={pageSize}
               onChangeLimit={setPageSize}
-            />
+            />,
+            ...(utilityBarConfig.elements || [])
           ]}
           buttons={[
             configButton,
             filterButton,
             downloadButton,
-            ...(configButtons || []),
+            ...(utilityBarConfig.buttons || []),
           ]}
         />
       )}

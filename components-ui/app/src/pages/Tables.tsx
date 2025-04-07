@@ -47,7 +47,6 @@ function Tables() {
   const table1 = (
     <>
       <div style={{ paddingBottom: "12px" }}>
-        <h5 style={{ marginBottom: 12 }}>Remote Table</h5>
         <Button
           type="primary"
           onClick={() => setForceUpdate(!forceUpdate)}
@@ -62,6 +61,11 @@ function Tables() {
           forceUpdate={forceUpdate}
           selectedRows={selectedRows}
           setSelectedRows={setSelectedRows}
+          utilityBarConfig={{
+            title: {
+              title: "Run Data",
+            },
+          }}
           fields={{
             mlwh_run_id: {
               rename: "Run ID",

@@ -9,7 +9,7 @@ import { InlineEdit as RSInlineEdit } from "rsuite";
 import { Toaster, Message } from "../index";
 import { IInlineEdit } from "../models";
 
-function InlineEdit({ title, onSave, onChange }: IInlineEdit) {
+function InlineEdit({ title, onSave, onChange, editable }: IInlineEdit) {
   const [editedTitle, setEditedTitle] = useState(title);
   const [prevTitle, setPrevTitle] = useState(title);
   const [errorMessage, setErrorMessage] = useState("");
@@ -45,6 +45,7 @@ function InlineEdit({ title, onSave, onChange }: IInlineEdit) {
         showControls={false}
         className="inline-edit"
         value={editedTitle}
+        disabled={!editable}
         onChange={(newValue) => {
           errorMessage && setErrorMessage("");
           setEditedTitle(newValue);

@@ -4,17 +4,11 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IButton, IInlineEdit } from '../models'
+import { IUtilityBar } from '../models'
 import { InlineEdit } from '.'
 import { Button } from '../'
 
-interface Props {
-  title?: IInlineEdit;
-  buttons: IButton[];
-  elements: JSX.Element[];
-}
-
-function UtilityBar(props: Props) {
+function UtilityBar(props: IUtilityBar) {
   const {
     title,
     buttons,
@@ -24,12 +18,12 @@ function UtilityBar(props: Props) {
   return (
     <div className='tol-table-bar'>
       {title && <InlineEdit {...title} />}
-      {elements.map((element, index) => (
+      {elements && elements.map((element, index) => (
         <div key={index} style={{ float: 'left'}}>
           {element}
         </div>
       ))}
-      {buttons.map((button, index) => (
+      {buttons && buttons.map((button, index) => (
         <Button key={index} {...button}/>
       ))}
     </div>

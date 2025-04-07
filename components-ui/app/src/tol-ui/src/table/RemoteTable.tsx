@@ -32,6 +32,7 @@ import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
 import ActionModal from "./actions/ActionModal";
 import { addRemoteActions } from "./actions/utils";
 import { useStateFallback } from "../hooks";
+import { IUtilityBar } from "../models";
 
 interface Props {
   id: string;
@@ -64,7 +65,7 @@ interface Props {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
-  configButtons?: JSX.Element[];
+  utilityBarConfig?: IUtilityBar;
 
   actions?: (string | DropdownButtonProps)[];
   selectedRows?: string[];
@@ -95,7 +96,7 @@ function RemoteTable(props: Props) {
     noDownload,
     rowSelection,
     actions,
-    configButtons,
+    utilityBarConfig,
     debug,
   } = props;
   const ds = new TsDataSource({ baseUrl });
@@ -369,7 +370,7 @@ function RemoteTable(props: Props) {
           name: "View Actions",
           action: () => setActionModalOpen(true),
         }}
-        configButtons={configButtons}
+        utilityBarConfig={utilityBarConfig}
       />
     </div>
   );
