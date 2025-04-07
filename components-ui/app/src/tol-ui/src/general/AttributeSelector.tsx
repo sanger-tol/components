@@ -21,9 +21,12 @@ import {
   getAttributeSources,
   filterBySource,
   normaliseCaps,
+  filterAttributes,
+  getAllAttributeData,
+  truncateString
 } from "./utils";
 
-interface AllowedCardinality {
+export interface AllowedCardinality {
   operator: string;
   value: number;
 }
@@ -42,8 +45,8 @@ export interface Props {
   populatedFieldType?: string;
   recommendedFilterAvailable?: boolean;
   renderSearchBySource?: boolean;
-  setAttribute: (attribute: string[]) => void;
-  setAllAttributeData?: (attributes: any) => void;
+  setAttributes: (attributes: string[]) => void;
+  setAttributeMeta?: (attributeMeta: any) => void;
   onClean?: () => void;
   sticky?: boolean;
   tooltipContent?: string;
@@ -66,13 +69,13 @@ function AttributeSelector(props: Props) {
     populatedFieldType = "value",
     recommendedFilterAvailable,
     renderSearchBySource,
-    setAttribute,
+    setAttributes,
     onClean,
     sticky,
     tooltipContent,
     customAttributeSelection,
     allowedCardinality,
-    setAllAttributeData,
+    setAttributeMeta,
   } = props;
 
   const [loading, setLoading] = useState(true);
@@ -95,15 +98,15 @@ function AttributeSelector(props: Props) {
   }, []);
 
   useEffect(() => {
-    if (setAllAttributeData && attribute.length > 0) {
+    if (setAttributeMeta && attribute.length > 0) {
       const initialAttributeData = getAllAttributeData(
         attribute,
         entityMeta,
         endpoint
       );
-      setAllAttributeData(initialAttributeData);
+      setAttributeMeta(initialAttributeData);
     }
-  }, [attribute, entityMeta, endpoint, setAllAttributeData]);
+  }, [attribute, entityMeta, endpoint, setAttributeMeta]);
 
   const searchBy = (keyword: string, label: any) => {
     const name = getAttributeDetail(
@@ -133,6 +136,8 @@ function AttributeSelector(props: Props) {
       disabledValues && Object.keys(disabledValues).includes(key);
     const tooltipContents = tooltipContent || "disabled";
 
+    const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
+
     return (
       <div key={key} className="tol-attribute-selector-menu-item-container">
         <div className="tol-attribute-selector-menu-item-inner-container">
@@ -155,7 +160,7 @@ function AttributeSelector(props: Props) {
             )}
             <div className="tol-attribute-selector-display-key">
               {authoritative === true && <Icon icon="star" />}
-              <p>{key}</p>
+              <p>{truncateString(key, lettersToDisplay)}</p>
             </div>
           </div>
         </div>
@@ -225,20 +230,6 @@ function AttributeSelector(props: Props) {
     );
   };
 
-  const getAllAttributeData = (
-    attributes: string[],
-    entityMeta: any,
-    endpoint: string
-  ) => {
-    return attributes.reduce((acc, attr) => {
-      const attributeData = getFlattenedMetaData(entityMeta, endpoint, attr);
-      return {
-        ...acc,
-        [attr]: attributeData,
-      };
-    }, {});
-  };
-
   const handleSetAttribute = (newAttribute: string[]) => {
     if (maxSelections) {
       if (newAttribute.length > maxSelections) {
@@ -249,61 +240,16 @@ function AttributeSelector(props: Props) {
         return;
       }
     }
-    setAttribute(newAttribute);
+    setAttributes(newAttribute);
 
-    if (setAllAttributeData) {
+    if (setAttributeMeta) {
       const allAttributeData = getAllAttributeData(
         newAttribute,
         entityMeta,
         endpoint
       );
-      setAllAttributeData(allAttributeData);
+      setAttributeMeta(allAttributeData);
     }
-  };
-
-  const filterAttributes = (
-    entityMeta: any,
-    endpoint: string,
-    allowedTypes: string[] | undefined,
-    selectedSources: string[],
-    recommendedOn: boolean,
-    allowedCardinality: AllowedCardinality | undefined,
-    customAttributeSelection: string[] | undefined
-  ) => {
-    return Object.keys(getFlattenedMetaData(entityMeta, endpoint)).filter(
-      (key) => {
-        const meta = getFlattenedMetaData(entityMeta, endpoint)[key];
-        const typeMatch =
-          !allowedTypes || allowedTypes.includes(meta.python_type);
-        const sourceMatch =
-          selectedSources.length === 0 ||
-          (selectedSources.includes("undefined")
-            ? !meta.source || selectedSources.includes(meta.source)
-            : selectedSources.includes(meta.source));
-        const recommendedMatch = meta.authoritative === true;
-        const cardinalityMatch =
-          !allowedCardinality ||
-          (meta.cardinality &&
-            ((allowedCardinality.operator === ">" &&
-              meta.cardinality > allowedCardinality.value) ||
-              (allowedCardinality.operator === "<" &&
-                meta.cardinality < allowedCardinality.value) ||
-              (allowedCardinality.operator === "=" &&
-                meta.cardinality === allowedCardinality.value) ||
-              (allowedCardinality.operator === ">=" &&
-                meta.cardinality >= allowedCardinality.value) ||
-              (allowedCardinality.operator === "<=" &&
-                meta.cardinality <= allowedCardinality.value)));
-
-        return (
-          (recommendedOn ? recommendedMatch : true) &&
-          typeMatch &&
-          sourceMatch &&
-          cardinalityMatch &&
-          (!customAttributeSelection || customAttributeSelection.includes(key))
-        );
-      }
-    );
   };
 
   if (loading) return <></>;
