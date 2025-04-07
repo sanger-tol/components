@@ -289,7 +289,7 @@ function Table(props: Props) {
       {!noPagination && fieldMeta.order.active.length > 0 && (
         <UtilityBar
           elements={[
-            <div style={{ float: "left" }}>
+            <div>
               {actions && actions.length > 0 && (
                 <DropdownButtons
                   mainButtonIcon={{

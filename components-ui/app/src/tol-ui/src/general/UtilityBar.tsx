@@ -25,7 +25,7 @@ function UtilityBar(props: Props) {
     <div className='tol-table-bar'>
       {title && <InlineEdit {...title} />}
       {elements.map((element, index) => (
-        <div key={index}>
+        <div key={index} style={{ float: 'left'}}>
           {element}
         </div>
       ))}
