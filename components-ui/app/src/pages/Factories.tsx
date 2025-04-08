@@ -59,7 +59,7 @@ function Factories() {
       </div>
       <div>
         <h5 style={{ marginBottom: "5px" }}>Initialise factory:</h5>
-        <div className="tol-download-modal-code">
+        <div className="tol-code-block">
           <CodeBlock
             text={createFactory}
             language="javascript"
@@ -69,7 +69,7 @@ function Factories() {
         <h5 style={{ margin: "5px 0px" }}>
           Generate words, sentences, or paragraphs:
         </h5>
-        <div className="tol-download-modal-code">
+        <div className="tol-code-block">
           <CodeBlock
             text={codeBlock}
             language="javascript"
@@ -77,7 +77,7 @@ function Factories() {
           />
         </div>
         <h5 style={{ margin: "5px 0px" }}>Add options to the factory:</h5>
-        <div className="tol-download-modal-code">
+        <div className="tol-code-block">
           <CodeBlock
             text={addOptions}
             language="javascript"

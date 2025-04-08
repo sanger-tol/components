@@ -96,7 +96,7 @@ tol data \
             </div>
           </Tabs.Tab>
           <Tabs.Tab eventKey="2" title="SDK">
-            <div className="tol-download-modal-code">
+            <div className="tol-code-block">
               <CodeBlock
                 text={SDKText}
                 language="python"
@@ -111,7 +111,7 @@ tol data \
             />
           </Tabs.Tab>
           <Tabs.Tab eventKey="3" title="CLI">
-            <div className="tol-download-modal-code">
+            <div className="tol-code-block">
               <CodeBlock
                 text={CLICommand}
                 language="bash"
