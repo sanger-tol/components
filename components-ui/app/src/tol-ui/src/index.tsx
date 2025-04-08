@@ -79,7 +79,7 @@ export {
 } from "./forms";
 
 // factories
-export { loremIpsumGenerator } from "./factories";
+export { createTextGeneratorFactory } from "./factories";
 
 // messaging
 export {

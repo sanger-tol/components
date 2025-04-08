@@ -21,6 +21,7 @@ import {
   Sunbursts,
   Widgets,
   Messages,
+  Factories
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown, env } from "./tol-ui/src";
@@ -95,9 +96,14 @@ const widgets: Page = {
   element: <Widgets />,
 };
 
+const factories: Page = {
+  name: "Factories",
+  element: <Factories />
+}
+
 const otherDropdown: Dropdown = {
   name: "Other",
-  pages: [colours, detail, forms, messages, miscellaneous, tsds, widgets],
+  pages: [colours, detail, forms, factories, messages, miscellaneous, tsds, widgets],
 };
 
 // dev sandbox - change element if needed

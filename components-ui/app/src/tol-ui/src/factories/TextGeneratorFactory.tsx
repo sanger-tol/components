@@ -1,12 +1,12 @@
 import { LoremIpsum } from "lorem-ipsum";
 
-export interface LoremIpsumGenerator {
+export interface TextGeneratorFactory {
   generateWords: (count?: number) => string;
   generateSentences: (count?: number) => string;
   generateParagraphs: (count?: number) => string;
 }
 
-function createLoremIpsumGenerator(options?: any): LoremIpsumGenerator {
+function createTextGeneratorFactory(options?: any): TextGeneratorFactory {
   const lorem = new LoremIpsum({
     sentencesPerParagraph: {
       max: 8,
@@ -26,4 +26,4 @@ function createLoremIpsumGenerator(options?: any): LoremIpsumGenerator {
   };
 }
 
-export default createLoremIpsumGenerator;
+export default createTextGeneratorFactory;
