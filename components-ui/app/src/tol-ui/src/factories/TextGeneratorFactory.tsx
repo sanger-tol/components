@@ -1,3 +1,9 @@
+/*
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
 import { LoremIpsum } from "lorem-ipsum";
 
 export interface TextGeneratorFactory {
