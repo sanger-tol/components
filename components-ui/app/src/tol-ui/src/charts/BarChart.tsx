@@ -15,7 +15,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { Button, Row, Col } from "../index";
+import { Button, Row, Col, UtilityBar } from "../index";
 import {
   getChartColour,
   initialiseDatasets,
@@ -29,6 +29,7 @@ import {
 } from "./utils";
 import { isPropDefined, getCssVarValue } from "../general/utils";
 import { themeListener } from "../hooks/listeners";
+import { IUtilityBar } from "../models";
 
 ChartJS.register(
   CategoryScale,
@@ -50,10 +51,11 @@ interface Props {
   setBarData?: any;
   cumulative?: boolean;
   buttons?: JSX.Element[];
+  utilityBarConfig?: IUtilityBar;
 }
 
 function BarChart(props: Props) {
-  const { id, title, labels, setBarData, cumulative, buttons } = props;
+  const { id, title, labels, setBarData, cumulative, buttons, utilityBarConfig = {}} = props;
   const height = props.height !== undefined ? props.height : "100%";
   const stacked = props.stacked !== undefined ? props.stacked : false;
   const originDatasets = initialiseDatasets(props.datasets);
@@ -266,7 +268,7 @@ function BarChart(props: Props) {
 
   return (
     <div style={{ height: height, paddingBottom: "20px" }}>
-      <Row>
+      {/* <Row>
         <Col xs={6}>
           <div className="header-text">{title}</div>
         </Col>
@@ -297,7 +299,35 @@ function BarChart(props: Props) {
             {buttons}
           </div>
         </Col>
-      </Row>
+      </Row> */}
+
+      <UtilityBar
+        title={utilityBarConfig.title}
+        buttons={[
+          {
+            outline: true,
+            position: "right",
+            type: "primary",
+            onClick: () => {
+              resetItemClickedData(setBarData);
+              setMaxHeight(null);
+              setDatasets(originDatasets);
+            },
+            icon: "undo",
+            visible: isPropDefined(setBarData),
+          },
+          {
+            outline: true,
+            position: "right",
+            type: "primary",
+            onClick: () => {
+              downloadItem(props.id, downloadName);
+            },
+            icon: "download",
+          },
+          ...(utilityBarConfig.buttons || []),
+        ]}
+      />
 
       <Bar
         id={id}

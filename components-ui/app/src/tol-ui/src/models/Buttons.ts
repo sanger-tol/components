@@ -26,4 +26,35 @@ export interface HeaderButton {
   href: string;
   text: string;
 }
+
+export interface IDropdownButtonProps {
+  name: string;
+  icon?: string;
+  disabled?: boolean;
+  action: (...args: any[]) => void;
+}
+
+interface IDropdownMainIconProps {
+  icon: string;
+  id?: string;
+  type?: string;
+  style?: object;
+  className?: string;
+  disabled?: boolean;
+  position?: string;
+  outline?: boolean;
+  tooltip?: string;
+}
+
+export interface IDropdownButtons {
+  mainButtonIcon: IDropdownMainIconProps;
+  placement?: string;
+  menuStyle?: object;
+  disabled?: boolean;
+  showMessages?: boolean;
+
+  dropdownButtons: IDropdownButtonProps[] | any;
+  header?: IDropdownButtonProps | any;
+  footer?: IDropdownButtonProps | any;
+}
   

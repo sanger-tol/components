@@ -22,7 +22,7 @@ import { exportTableToSpreadsheet, getAllowedFields, getSourceColour } from "./u
 import Filter, { IFilter } from "../filtering/Filter";
 import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
-import { DropdownButtonProps } from "../general/DropdownButtons";
+import { IDropdownButtons, IDropdownButtonProps } from "../models/Buttons";
 import { useStateFallback } from "../hooks/useStateFallback";
 import { IButton, IUtilityBar } from "../models";
 
@@ -68,8 +68,8 @@ interface Props {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
-  actions?: DropdownButtonProps[];
-  actionsFooter?: DropdownButtonProps;
+  actions?: IDropdownButtonProps[];
+  actionsFooter?: IDropdownButtonProps;
   utilityBarConfig?: IUtilityBar;
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
@@ -235,6 +235,19 @@ function Table(props: Props) {
     visible: false
   }
 
+  const actionDropdown: IDropdownButtons = actions && actions.length > 0 ? {
+    mainButtonIcon:{
+      icon: "paper-plane",
+      type: "primary",
+      position: "left",
+      outline: selectedRows.length === 0,
+
+    },
+    dropdownButtons: {actionDropDownButtons},
+    footer: {actionsFooter},
+    placement: "rightStart"
+  } : {}
+
   return (
     <div style={{ height: height }} className="tol-table">
       <DownloadModal
@@ -288,22 +301,6 @@ function Table(props: Props) {
       <UtilityBar
         title={utilityBarConfig.title}
         elements={(!noPagination && fieldMeta.order.active.length > 0) ? [
-          <div>
-            {actions && actions.length > 0 && (
-              <DropdownButtons
-                mainButtonIcon={{
-                  icon: "paper-plane",
-                  type: "primary",
-                  position: "left",
-                  outline: selectedRows.length === 0,
-
-                }}
-                dropdownButtons={actionDropDownButtons}
-                footer={actionsFooter}
-                placement={"rightStart"}
-              />
-            )}
-          </div>,
           <>{rowCounter ? rowCounter : totalSize}</>,
           <span className="tol-page-size">
             <SelectPicker
@@ -350,6 +347,7 @@ function Table(props: Props) {
           ...(utilityBarConfig.elements || [])
         ] : [...(utilityBarConfig.elements || [])]}
         buttons={[
+          actionDropdown,
           configButton,
           filterButton,
           downloadButton,

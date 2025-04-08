@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { IUtilityBar } from '../models'
 import { InlineEdit } from '.'
-import { Button } from '../'
+import { Button, DropdownButtons } from '../'
 
 function UtilityBar(props: IUtilityBar) {
   const {
@@ -23,9 +23,14 @@ function UtilityBar(props: IUtilityBar) {
           {element}
         </div>
       ))}
-      {buttons && buttons.map((button, index) => (
+      {buttons && buttons.map((button, index) => {
+        if ('dropdownButtons' in button) {
+          return (
+            <DropdownButtons key={index} {...button} />
+          )
+        }
         <Button key={index} {...button} />
-      ))}
+      })}
     </div>
   );
 }
