@@ -55,7 +55,10 @@ const maps: Page = {
 
 const portal: Page = {
   name: "Portal",
-  url: "https://portal.tol.sanger.ac.uk",
+  link: {
+    href: "https://portal.tol.sanger.ac.uk",
+    target: "_blank",
+  },
 }
 
 const timelines: Page = {

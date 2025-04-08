@@ -9,13 +9,16 @@ export interface Default {
   auth?: boolean|string[];
   hidden?: boolean;
   removeOnAuth?: boolean;
-  url?: string;
 }
 
 export interface Page extends Default {
   element?: JSX.Element;
   detail?: JSX.Element;
   authElement?: JSX.Element;
+  link?: {
+    href: string;
+    target?: string;
+  };
 } // eslint-disable-line
 
 export interface Dropdown extends Default {

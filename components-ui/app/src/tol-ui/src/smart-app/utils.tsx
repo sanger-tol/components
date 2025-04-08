@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { MyBoards } from "src/boards";
+import { MyBoards } from "../boards";
 import { Dropdown, Page } from "../models";
 import { BoardsObject } from "./TolApp";
 
@@ -33,37 +33,37 @@ export function addBoardPages(
 }
 
 /**
- * Removes all url pages from a list of pages.
+ * Removes all link pages from a list of pages.
  *
  * This function takes an optional array of Page or Dropdown items, and returns a new array 
- * that excludes any items with a "url" property.
+ * that excludes any items with a "link" property.
  *
  * @param {(Page | Dropdown)[]} [pages] - An optional array containing pages or dropdowns.
- * @returns {(Page | Dropdown)[]} A new array containing only items without the "url" property.
+ * @returns {(Page | Dropdown)[]} A new array containing only items without the "link" property.
  */
-function removeUrlPages(pages?: (Page | Dropdown)[]): (Page | Dropdown)[] {
-  return (pages ?? []).filter(page => !("url" in page));
+function removeLinkPages(pages?: (Page | Dropdown)[]): (Page | Dropdown)[] {
+  return (pages ?? []).filter(page => !("link" in page));
 }
 
 /**
- * Combines main pages and profile pages into a single route array while filtering out pages with static urls.
+ * Combines main pages and profile pages into a single route array while filtering out pages with static links.
  *
- * In addition to removing top-level url items, if a Dropdown item exists and has nested pages,
- * those nested pages are also filtered to remove any with a "url" property.
+ * In addition to removing top-level link items, if a Dropdown item exists and has nested pages,
+ * those nested pages are also filtered to remove any with a "link" property.
  *
- * @param {(Page | Dropdown)[]} [pages] - An optional array of main pages. Pages with a static url are excluded.
+ * @param {(Page | Dropdown)[]} [pages] - An optional array of main pages. Pages with a static link are excluded.
  * @param {Page[]} [profilePages] - An optional array of profile pages.
- * @returns {(Page | Dropdown)[]} A new array with the main and profile pages (pages with a static url are excluded).
+ * @returns {(Page | Dropdown)[]} A new array with the main and profile pages (pages with a static link are excluded).
  */
 export function generatePagesThatRequireARoute(
   pages?: (Page | Dropdown)[],
   profilePages?: Page[]
 ): (Page | Dropdown)[] {
-  const filteredPages = removeUrlPages(pages).map(page => {
+  const filteredPages = removeLinkPages(pages).map(page => {
     if ("pages" in page && Array.isArray(page.pages)) {
       return {
         ...page,
-        pages: removeUrlPages(page.pages)
+        pages: removeLinkPages(page.pages)
       };
     }
     return page;
