@@ -103,8 +103,13 @@ const factories: Page = {
 
 const otherDropdown: Dropdown = {
   name: "Other",
-  pages: [colours, detail, forms, factories, messages, miscellaneous, tsds, widgets],
+  pages: [colours, detail, forms, messages, miscellaneous, tsds, widgets],
 };
+
+const docsDropdown: Dropdown = {
+  name: "Docs",
+  pages: [factories]
+}
 
 // dev sandbox - change element if needed
 const sandbox: Page = {
@@ -127,6 +132,7 @@ ReactDOM.render(
       maps,
       timelines,
       otherDropdown,
+      docsDropdown,
       sandbox,
     ]}
   />,
