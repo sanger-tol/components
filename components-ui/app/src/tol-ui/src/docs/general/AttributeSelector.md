@@ -27,7 +27,7 @@ The `AttributeSelector` component accepts the following props:
 - `populatedFieldType` (string, optional): The type of populated field (e.g., "filter" or "column").
 - `recommendedFilterAvailable` (boolean, optional): A boolean indicating if a recommended filter is available.
 - `renderSearchBySource` (boolean, optional): A boolean to render search by source functionality.
-- `setAttribute` (function, required): A function to set the selected attributes, returns the selected attributes.
+- `setAttributes` (function, required): A function to set the selected attributes, returns the selected attributes.
 - `sticky` (boolean, optional): A boolean to selected items show at the top of the list.
 - `tooltipContent` (string, optional): The content for the tooltip, if an item is disabled.
 
@@ -48,7 +48,7 @@ function MyComponent() {
       attribute={attributes} // This is the initial state of the selected attributes
       endpoint="species"
       placeholder="Select an attribute"
-      setAttribute={allAttributes}
+      setAttributes={allAttributes}
       allowedTypes={['int', 'str']}
       maxSelections={5}
       displaySource={true}

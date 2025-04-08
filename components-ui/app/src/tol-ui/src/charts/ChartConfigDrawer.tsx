@@ -217,7 +217,7 @@ function ChartConfigDrawer(props: Props) {
           placeholder="Select X-Axis Attribute..."
           baseUrl={baseUrl}
           attribute={xAxis}
-          setAttribute={setXAxis}
+          setAttributes={setXAxis}
           maxSelections={1}
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
@@ -236,7 +236,7 @@ function ChartConfigDrawer(props: Props) {
           placeholder="Select Attribute to Break Down By..."
           baseUrl={baseUrl}
           attribute={breakDownBy}
-          setAttribute={setBreakDownBy}
+          setAttributes={setBreakDownBy}
           maxSelections={1}
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}

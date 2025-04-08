@@ -422,7 +422,6 @@ function Table(props: Props) {
               const field = fieldMeta.data[key];
               const sortable = noSorting ? false : field.sort;
               const filterable = noFilter ? false : field.filter;
-              console.log(field.source, field.rename);
 
               return (
                 <Column

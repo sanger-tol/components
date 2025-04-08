@@ -184,7 +184,7 @@ function ColumnConfigDrawer(props: Props) {
           placeholder="Select columns to display..."
           baseUrl={baseUrl}
           attribute={attributes}
-          setAttribute={setAttributes}
+          setAttributes={setAttributes}
           disabledValues={null}
           numPopulatedFields={0}
           populatedFieldType={"column"}
