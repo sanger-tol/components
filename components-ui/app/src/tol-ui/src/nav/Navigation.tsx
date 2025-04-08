@@ -117,7 +117,7 @@ function Navigation(props: Props) {
           <Nav.Link
             key={page.name}
             href={"link" in page ? page.link?.href : convertToPath(page.name)}
-            target={page.link?.target ? "_blank" : "_self"}
+            target={page.link?.target}
           >
             {page.name}
           </Nav.Link>
@@ -149,7 +149,7 @@ function Navigation(props: Props) {
                         ? page.link?.href
                         : convertToPath(dropdown.name) + convertToPath(page.name)
                       }
-                      target={page.link?.target ? "_blank" : "_self"}
+                      target={page.link?.target}
                     >
                       {page.name}
                     </Nav.Link>
