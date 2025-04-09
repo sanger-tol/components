@@ -15,7 +15,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { Button, Row, Col, UtilityBar } from "../index";
+import { UtilityBar } from "../index";
 import {
   getChartColour,
   initialiseDatasets,
@@ -43,7 +43,6 @@ ChartJS.register(
 interface Props {
   id: string;
   stacked?: boolean;
-  title: string;
   downloadName?: string;
   labels: string[];
   datasets: any[];
@@ -55,7 +54,7 @@ interface Props {
 }
 
 function BarChart(props: Props) {
-  const { id, title, labels, setBarData, cumulative, buttons, utilityBarConfig = {}} = props;
+  const { id, labels, setBarData, cumulative, utilityBarConfig = {}} = props;
   const height = props.height !== undefined ? props.height : "100%";
   const stacked = props.stacked !== undefined ? props.stacked : false;
   const originDatasets = initialiseDatasets(props.datasets);

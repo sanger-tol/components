@@ -24,10 +24,10 @@ import {
   generateFilter,
   resetFiltersBelow,
 } from "../filtering/utils";
+import { IUtilityBar } from "../models";
 
 interface Props {
   id: string;
-  title: string;
   endpoint: string;
   baseUrl?: string;
   breakDownBy: string;
@@ -41,6 +41,7 @@ interface Props {
   cumulative?: boolean;
   buttons?: JSX.Element[];
   forceUpdate?: boolean;
+  utilityBarConfig?: IUtilityBar;
 }
 
 function RemoteBarChart(props: Props) {
