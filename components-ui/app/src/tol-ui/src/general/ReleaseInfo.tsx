@@ -39,7 +39,7 @@ const getFriendlyReleaseName = (): string => {
         (wordArray, i) => wordArray[convertSubstr(gitSHA, i)]
     );
 
-    return words.join(' ');
+    return words.join('-');
 }
 
 const getCharFromWord = (wordArray: string[], word: string): string => {
@@ -50,7 +50,7 @@ const getCharFromWord = (wordArray: string[], word: string): string => {
 const getGitSHAFromName = (friendlyName: string): string => {
     if (!friendlyName) return "";
 
-    const words = friendlyName.split(' ');
+    const words = friendlyName.split('-');
 
     const chars = [gerunds, colors, animals].map(
         (wordArray, i) => getCharFromWord(wordArray, words[i])
