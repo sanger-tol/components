@@ -21,7 +21,8 @@ import {
   Sunbursts,
   Widgets,
   Messages,
-  Factories
+  Factories,
+  FriendlyVersion,
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown, env } from "./tol-ui/src";
@@ -109,9 +110,14 @@ const factories: Page = {
   element: <Factories />
 }
 
+const friendlyVersion: Page = {
+  name: "Version",
+  element: <FriendlyVersion />,
+}
+
 const otherDropdown: Dropdown = {
   name: "Other",
-  pages: [colours, detail, forms, messages, miscellaneous, tsds, widgets, portal],
+  pages: [colours, detail, forms, messages, miscellaneous, tsds, widgets, portal, friendlyVersion],
 };
 
 const docsDropdown: Dropdown = {

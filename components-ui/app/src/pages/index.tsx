@@ -23,3 +23,4 @@ export { default as AuthPageExample } from "./AuthPageExample";
 export { default as NoAuthPageExample } from "./NoAuthPageExample";
 export { default as Colours } from "./Colours";
 export { default as Factories } from "./Factories";
+export { default as FriendlyVersion } from "./FriendlyVersion";
