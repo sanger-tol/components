@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Container, Row, Col } from "../index";
 import { SangerLogo } from "./Icons";
+import ReleaseInfo from "./ReleaseInfo";
 
 function Footer() {
   return (
@@ -17,6 +18,11 @@ function Footer() {
               <a href="https://sanger.ac.uk">
                 <SangerLogo />
               </a>
+            </div>
+          </Col>
+          <Col sm={6} md={4} lg={3}>
+            <div className="centre">
+              <ReleaseInfo />
             </div>
           </Col>
           <Col sm={6} md={{ span: 4, offset: 4 }} lg={{ span: 3, offset: 6 }}>
