@@ -46,11 +46,33 @@ const getFriendlyReleaseName = (gitSHA: string): string => {
     return `${adverb}-${gerund}-${color}-${animal}`;
 }
 
+const getCharFromWord = (wordArray: string[], word: string): string => {
+    const index = wordArray.indexOf(word);
+    return index.toString(16);
+}
+
+const getGitSHAFromName = (friendlyName: string): string => {
+    if (!friendlyName) return "";
+
+    const words = friendlyName.split('-');
+
+    const chars = [adverbs, gerunds, colors, animals].map(
+        (wordArray, i) => {
+            const word = words[i];
+            return getCharFromWord(wordArray, word);
+        }
+    );
+
+    return chars.join('');
+}
+
 function ReleaseInfo() {
     const gitSHA = env.GIT_COMMIT_SHA;
     const gitTimestamp = env.GIT_TIMESTAMP;
 
     const friendlyName = getFriendlyReleaseName(gitSHA);
+
+    console.log(gitSHA, getGitSHAFromName(friendlyName));
 
     return (
         <div>
@@ -60,4 +82,4 @@ function ReleaseInfo() {
     )
 }
 
-export default ReleaseInfo;
+export { ReleaseInfo, getGitSHAFromName };

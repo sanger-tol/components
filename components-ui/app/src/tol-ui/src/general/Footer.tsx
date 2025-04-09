@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Container, Row, Col } from "../index";
 import { SangerLogo } from "./Icons";
-import ReleaseInfo from "./ReleaseInfo";
+import { ReleaseInfo } from "./ReleaseInfo";
 
 function Footer() {
   return (
