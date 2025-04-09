@@ -6,11 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { env } from "../index";
 
-const adverbs = [
-    "quickly", "silently", "carefully", "calmly", "efficiently", "smoothly", "gently", "patiently", "enthusiastically",
-    "happily", "precisely", "diligently", "modestly", "professionally", "cheerfully", "honestly"
-];
-
 const gerunds = [
     "analyzing", "solving", "completing", "assisting", "collaborating", "organizing", "innovating", "discussing",
     "preparing", "managing", "creating", "executing", "reviewing", "advising", "optimizing", "designing"
@@ -34,11 +29,13 @@ const convertSubstr = (gitSHA: string, index: number): number => {
     return parseInt(subSHA, 16);
 }
 
-const getFriendlyReleaseName = (gitSHA: string): string => {
+const getFriendlyReleaseName = (): string => {
+    const gitSHA = env.GIT_COMMIT_SHA;
+
     if (!gitSHA) return "dev";
     if (gitSHA.length < 4) return "error";
 
-    const words = [adverbs, gerunds, colors, animals].map(
+    const words = [gerunds, colors, animals].map(
         (wordArray, i) => wordArray[convertSubstr(gitSHA, i)]
     );
 
@@ -55,27 +52,11 @@ const getGitSHAFromName = (friendlyName: string): string => {
 
     const words = friendlyName.split(' ');
 
-    const chars = [adverbs, gerunds, colors, animals].map(
+    const chars = [gerunds, colors, animals].map(
         (wordArray, i) => getCharFromWord(wordArray, words[i])
     );
 
     return chars.join('');
 }
 
-function ReleaseInfo() {
-    const gitSHA = env.GIT_COMMIT_SHA;
-    const gitTimestamp = env.GIT_TIMESTAMP;
-
-    if (!gitSHA) return <></>
-
-    const friendlyName = getFriendlyReleaseName(gitSHA);
-
-    return (
-        <div>
-            <h4>{friendlyName}</h4>
-            <h5>{gitTimestamp}</h5>
-        </div>
-    )
-}
-
-export { ReleaseInfo, getGitSHAFromName };
+export { getFriendlyReleaseName, getGitSHAFromName };

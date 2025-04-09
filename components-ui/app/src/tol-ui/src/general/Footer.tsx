@@ -6,9 +6,11 @@ SPDX-License-Identifier: MIT
 
 import { Container, Row, Col } from "../index";
 import { SangerLogo } from "./Icons";
-import { ReleaseInfo } from "./ReleaseInfo";
+import { getFriendlyReleaseName } from "./ReleaseInfo";
 
 function Footer() {
+  const releaseName = getFriendlyReleaseName();
+
   return (
     <footer className="footer">
       <Container>
@@ -18,11 +20,6 @@ function Footer() {
               <a href="https://sanger.ac.uk">
                 <SangerLogo />
               </a>
-            </div>
-          </Col>
-          <Col sm={6} md={4} lg={3}>
-            <div className="centre">
-              <ReleaseInfo />
             </div>
           </Col>
           <Col sm={6} md={{ span: 4, offset: 4 }} lg={{ span: 3, offset: 6 }}>
@@ -35,6 +32,15 @@ function Footer() {
                 <a href="https://www.sanger.ac.uk/group/tree-of-life-enabling-platforms/">
                   Enabling Platforms
                 </a>
+                {
+                  releaseName ? (
+                    <div>
+                      Version: {releaseName}
+                    </div>
+                  ) : (
+                    <></>
+                  )
+                }
               </p>
             </div>
           </Col>
