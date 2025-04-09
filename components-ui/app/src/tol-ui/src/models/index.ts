@@ -11,3 +11,4 @@ export { IFilter } from "./Filter";
 export { EntityMeta, Attributes, Relationships } from "./EntityMeta";
 export { IButton, HeaderButton, IDropdownButtonProps, IDropdownButtons } from './Buttons'
 export { IInlineEdit, IUtilityBar } from './General'
+export { IChartConfig } from './Board'

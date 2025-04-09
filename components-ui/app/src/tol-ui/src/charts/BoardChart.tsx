@@ -4,12 +4,12 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BoardFilters, Button, Icon, Placeholder, RemoteBarChart, TsDataSource, UtilityBar } from "../index";
+import { BoardFilters, Icon, Placeholder, RemoteBarChart, TsDataSource, UtilityBar } from "../index";
 import { deepCopy } from "../general/utils";
 import { useState } from "react";
 import { upsertComponentConfig, IZone } from "../boards/utils";
 import ChartConfigDrawer from "./ChartConfigDrawer";
-import { IChartConfig } from "../models/Board";
+import { IChartConfig, IButton } from "../models";
 
 interface Props {
   id: string;
@@ -36,17 +36,17 @@ function BoardChart(props: Props) {
     setForceUpdate(!forceUpdate);
   };
 
-  const configButton = {
+  const configButton: IButton = {
     outline: true,
-    position: "right" as "right",
+    position: "right",
     type: "primary",
     onClick: () => setOpenConfig(true),
     icon: "sliders",
   }
 
-  const filterButton = {
+  const filterButton: IButton = {
     outline: true,
-    position: "right" as "right",
+    position: "right",
     type: "primary",
     onClick: () => setOpenFilters(true),
     icon: "filter",

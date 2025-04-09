@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { Button, Col, Row, useEffectUpdate, UtilityBar } from "../index";
+import { useEffectUpdate, UtilityBar } from "../index";
 import {
   generateSunburstLabels,
   convertSunburstDatasets,
@@ -27,7 +27,6 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface Props {
   id: string;
-  title?: string;
   datasets: object;
   height?: any;
   legendPosition?: string;
@@ -44,14 +43,14 @@ interface Props {
 function Sunburst(props: Props) {
   const {
     id,
-    title,
     setSliceData,
     legendPosition,
+    downloadName,
     noDownload,
     noLabel,
     noRefresh,
     resetChart,
-    utilityBarConfig = {}
+    utilityBarConfig
   } = props;
   const height = props.height ? props.height : "100%";
   const originDatasets = convertSunburstDatasets(props.datasets);
@@ -180,53 +179,12 @@ function Sunburst(props: Props) {
     onHover: handlePlaneHover,
   };
 
-  const downloadName =
-    props.downloadName !== undefined ? props.downloadName : "sunburst";
-  const showConfigBar = props.title || !noDownload || !noRefresh;
-
   // adding component sizing
-  const paddingBottom = showConfigBar ? "37px" : "0";
-  const style = { height: height, paddingBottom: paddingBottom };
+  const style = { height: height };
 
   return (
     <div style={style}>
-      {showConfigBar && (
-        // <Row>
-        //   <Col xs={6}>
-        //     <p className="header-text">{title}</p>
-        //   </Col>
-        //   <Col xs={6}>
-        //     <div className="tol-chart-buttons">
-        //       {isPropDefined(setSliceData) && !noRefresh && (
-        //         <div>
-        //           <Button
-        //             outline
-        //             position="right"
-        //             type="primary"
-        //             onClick={() => {
-        //               resetItemClickedData(setSliceData);
-        //               setDatasets(originDatasets);
-        //             }}
-        //             icon="undo"
-        //           />
-        //         </div>
-        //       )}
-        //       {!noDownload && (
-        //         <div>
-        //           <Button
-        //             outline
-        //             position="right"
-        //             type="primary"
-        //             onClick={() => {
-        //               downloadItem(props.id, downloadName);
-        //             }}
-        //             icon="download"
-        //           />
-        //         </div>
-        //       )}
-        //     </div>
-        //   </Col>
-        // </Row>
+      {(utilityBarConfig != undefined) && (
         <UtilityBar
           title={utilityBarConfig.title}
           buttons={[
@@ -245,7 +203,7 @@ function Sunburst(props: Props) {
               position: "right",
               type: "primary",
               onClick: () => {
-                downloadItem(props.id, downloadName);
+                downloadItem(props.id, downloadName || 'sunburst');
               },
               disabled: noDownload,
             }
