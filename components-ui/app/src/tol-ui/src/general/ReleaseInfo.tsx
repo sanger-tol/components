@@ -36,7 +36,7 @@ const convertSubstr = (gitSHA: string, index: number): number => {
 
 const getFriendlyReleaseName = (gitSHA: string): string => {
     if (!gitSHA) return "dev";
-    if (gitSHA.length < 15) return "error";
+    if (gitSHA.length < 4) return "error";
 
     const adverb = adverbs[convertSubstr(gitSHA, 0)];
     const gerund = gerunds[convertSubstr(gitSHA, 1)];
