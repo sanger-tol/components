@@ -15,7 +15,7 @@ export interface IInlineEdit {
 
 export interface IUtilityBar {
   title?: IInlineEdit;
-  buttons?: (IButton | IDropdownButtons)[];
+  buttons?: (IButton | IDropdownButtons | undefined)[];
   elements?: JSX.Element[];
 }
 

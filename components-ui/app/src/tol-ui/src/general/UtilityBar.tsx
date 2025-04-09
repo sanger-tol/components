@@ -24,12 +24,16 @@ function UtilityBar(props: IUtilityBar) {
         </div>
       ))}
       {buttons && buttons.map((button, index) => {
-        if ('dropdownButtons' in button) {
+        if (button) {
+          if ('dropdownButtons' in button) {
+            return (
+              <DropdownButtons key={index} {...button} />
+            )
+          }
           return (
-            <DropdownButtons key={index} {...button} />
+            <Button key={index} {...button} />
           )
         }
-        <Button key={index} {...button} />
       })}
     </div>
   );

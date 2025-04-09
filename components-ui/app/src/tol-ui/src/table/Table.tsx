@@ -235,18 +235,17 @@ function Table(props: Props) {
     visible: false
   }
 
-  const actionDropdown: IDropdownButtons = actions && actions.length > 0 ? {
-    mainButtonIcon:{
+  const actionDropdown: IDropdownButtons | undefined = (actions && actions.length > 0) ? {
+    mainButtonIcon: {
       icon: "paper-plane",
       type: "primary",
       position: "left",
       outline: selectedRows.length === 0,
-
     },
-    dropdownButtons: {actionDropDownButtons},
-    footer: {actionsFooter},
-    placement: "rightStart"
-  } : {}
+    dropdownButtons: actionDropDownButtons,
+    footer: actionsFooter,
+    placement: "rightStart",
+  } : undefined;
 
   return (
     <div style={{ height: height }} className="tol-table">
