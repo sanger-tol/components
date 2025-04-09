@@ -22,7 +22,8 @@
     "nanoid": "3.1.23",
     "react-code-blocks": "0.1.6",
     "react-draggable-list": "4.2.1",
-    "react-markdown": "8.0.7"
+    "react-markdown": "8.0.7",
+    "lorem-ipsum": "2.0.8"
   },
   "devDependencies": {
     "typescript": "5.6.3",

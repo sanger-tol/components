@@ -11,6 +11,7 @@ import {
   DnD,
   ObjectDetail,
   InfoTooltip,
+  createTextGeneratorFactory
 } from "../tol-ui/src";
 import { useState } from "react";
 
@@ -31,6 +32,8 @@ function Miscellaneous() {
   const [modalOpen, setModalOpen] = useState(false);
   const [contents, setContents] = useState();
 
+  const text = createTextGeneratorFactory();
+
   console.log(contents);
 
   return (
@@ -40,14 +43,7 @@ function Miscellaneous() {
         <Modal size="full" open={modalOpen} setOpen={setModalOpen}>
           <h2>Test Modal</h2>
           <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer est
-            leo, blandit quis justo eu, tempus condimentum mauris. Suspendisse
-            condimentum eu sapien pellentesque pharetra. Sed in tincidunt dui,
-            ac euismod nisi. Nullam lobortis non metus ac bibendum. Maecenas a
-            arcu consectetur, congue augue vitae, tempor purus. Maecenas quis
-            feugiat risus, ut ultricies felis. Sed non nulla nisi. Fusce
-            faucibus massa quis dignissim sodales. Cras sed sapien nec elit
-            porttitor auctor. Donec at ultricies velit.
+            {text.generateParagraphs(2)}
           </p>
         </Modal>
         <Button onClick={() => setModalOpen(true)} text="Example Modal" />

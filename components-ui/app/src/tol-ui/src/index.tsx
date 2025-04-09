@@ -76,6 +76,9 @@ export {
   FormCheckboxes,
 } from "./forms";
 
+// factories
+export { createTextGeneratorFactory } from "./factories";
+
 // messaging
 export {
   Message,
