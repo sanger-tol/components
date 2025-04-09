@@ -72,8 +72,6 @@ function ReleaseInfo() {
 
     const friendlyName = getFriendlyReleaseName(gitSHA);
 
-    console.log(gitSHA, getGitSHAFromName(friendlyName));
-
     return (
         <div>
             <h4>{friendlyName}</h4>
