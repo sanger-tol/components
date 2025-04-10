@@ -72,7 +72,7 @@ function BoardTable(props: Props) {
       utilityBarConfig={{
         title: {
           title: props.title,
-          editable: true,
+          editable: false,
         },
         elements: boardFilter,
         buttons: [{

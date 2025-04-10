@@ -14,19 +14,20 @@ import {
   resetFiltersBelow,
 } from "../filtering/utils";
 import { useEffectUpdate } from "../hooks";
+import { IUtilityBar } from "../models";
+import UtilityBar from "./UtilityBar";
 
 interface Props {
   id: string;
-  title: string;
   endpoint: string;
   baseUrl?: string;
   zone?: object;
   setZone?: any;
-  buttons?: JSX.Element[];
+  utilityBarConfig?: IUtilityBar;
 }
 
 function RemoteCount(props: Props) {
-  const { id, endpoint, baseUrl, title, zone, setZone, buttons } = props;
+  const { id, endpoint, baseUrl, zone, setZone, utilityBarConfig } = props;
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -72,10 +73,9 @@ function RemoteCount(props: Props) {
 
   return (
     <div id={id} className="tol-count">
-      {buttons}
-      <p style={{textAlign: 'left'}}>{title}</p>
+      <UtilityBar {...utilityBarConfig} />
       <h1 className="count">{numberWithSpaces(count)}</h1>
-      <div className="faded" aria-hidden="true">
+      <div className={!utilityBarConfig ? "faded" : "faded count-utility-bar"} aria-hidden="true">
         <h1>{count}</h1>
       </div>
     </div>

@@ -6,4 +6,12 @@
 
 .tol-utility-bar {
   margin-bottom: 6px;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  z-index: 2;
+}
+
+.tol-utility-bar-buttons {
+  flex-grow: 1;
 }
