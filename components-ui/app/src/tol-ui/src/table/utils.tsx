@@ -18,7 +18,7 @@ import { isFloat, normaliseCaps } from "../general/utils";
 import Relationship from "./Relationship";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
-import { EntityMeta } from "../models";
+import { IEntityMeta } from "../models";
 import { StatusMessage } from "../messaging";
 import { colours } from "../charts/utils";
 
@@ -70,7 +70,7 @@ function createRelationshipBox(
   data: any,
   baseUrl?: string,
   detail?: boolean,
-  entityMeta?: EntityMeta,
+  entityMeta?: IEntityMeta,
 ) {
   const [relationship, attribute] = key.split(".");
 
@@ -171,7 +171,7 @@ function createCellRenderer(
   value: any,
   data: object,
   baseUrl?: string,
-  entityMeta?: EntityMeta,
+  entityMeta?: IEntityMeta,
 ) {
   if (cellRenderer === null) return value;
   if (typeof cellRenderer === "string") {
@@ -252,7 +252,7 @@ function formatAttributeData(
   fieldMetaData: FieldMetaData,
   rowOutput: object,
   baseUrl?: string,
-  entityMeta?: EntityMeta,
+  entityMeta?: IEntityMeta,
 ) {
   const attributes = row["attributes"];
 
@@ -333,7 +333,7 @@ export function convertTableData(
   data: any[],
   fieldMeta: FieldMeta,
   baseUrl?: string,
-  entityMeta?: EntityMeta,
+  entityMeta?: IEntityMeta,
 ) {
   if (data[0] === undefined) return [];
   const updatedData: any[] = [];
@@ -390,7 +390,7 @@ function addRemoteFilterType(type: string, cardinality: number) {
 function addEntityMetaFields(
   endpoint: string,
   fieldMeta: FieldMeta,
-  entityMeta: EntityMeta
+  entityMeta: IEntityMeta
 ) {
   for (const [key, meta] of Object.entries(
     entityMeta.flatAttributes[endpoint]
@@ -451,7 +451,7 @@ function addDefaultMeta(fieldMeta: FieldMeta) {
 export function structureFieldMeta(
   endpoint: string,
   savedFieldMeta?: FieldMeta,
-  entityMeta?: EntityMeta,
+  entityMeta?: IEntityMeta,
   fields?: FieldMetaData
 ) {
   endpoint = endpoint.split("/").pop() as string;

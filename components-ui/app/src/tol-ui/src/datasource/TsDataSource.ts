@@ -4,120 +4,55 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IFilter, EntityMeta, Attributes, Relationships } from "../../models";
-import { httpClient } from "./httpClient";
-import retry from "./Retry";
-import { deepCopy } from "../../general/utils";
+import { IEntityMeta, IAttributes, IRelationships } from "../models";
+import {
+  IDetailCache,
+  IDetailPromises,
+  IConfigPromises,
+  IEntityMetaPromises,
+  IDataSource,
+  IGetOne,
+  IGetToOneRelation,
+  IUpsert,
+  IGetByIds,
+  IGetListPage,
+  ISourceDataObject,
+  TDataObjectOrNull,
+  TDataObjectListOrNull,
+} from "../models/DataSource";
+import { EXCLUDED_DETAIL_CACHE_OBJECTS } from "../constants/datasource.constants";
+import { httpClient } from "../services/http/httpClient";
+import { retry } from "../services/http/retry";
+import { deepCopy } from "../general/utils";
 
-const EXCLUDED_DETAIL_CACHE_OBJECTS = [
-  "component",
-  "zone",
-  "board",
-  "view",
-  "component_zone",
-  "zone_view",
-  "view_board",
-  'prefect/flow_run',
-];
 
-interface DetailCache {
-  [baseUrl: string]: {
-    [objectType: string]: {
-      [id: string]: number;
-    };
-  };
-}
-const detailCache: DetailCache = {};
-
-interface DetailPromises {
-  [baseUrl: string]: {
-    [objectType: string]: Promise<object>;
-  };
-}
-const detailPromises: DetailPromises = {};
-
-// CONFIG //
-interface ConfigPromises {
-  [baseUrl: string]: Promise<object>;
-}
-const configPromises: ConfigPromises = {};
-
-// ENTITY META //
-interface EntityMetaPromises {
-  [baseUrl: string]: Promise<EntityMeta>;
-}
-const entityMetaPromises: EntityMetaPromises = {};
-
-interface DataSource {
-  baseUrl?: string;
-  client?: any;
-}
-
-interface GetOne {
-  objectType: string;
-  id: string;
-}
-
-interface GetToOneRelation {
-  objectType: string;
-  id: string;
-  relation: string;
-}
-
-interface Upsert {
-  payload: UpsertData[];
-  objectType: string;
-}
-
-interface UpsertData {
-  type: string;
-  id?: any;
-  attributes: object;
-}
-
-interface GetByIds {
-  objectType: string;
-  ids: string[];
-}
-
-interface GetListPage {
-  objectType: string;
-  page?: number;
-  pageSize?: number;
-  filter?: IFilter;
-  sortBy?: string;
-}
-
-interface DataObject {
-  objectType: string;
-  id: string;
-  [attribute: string]: any;
-  relationships: {
-    [key: string]: Promise<DataObject>;
-  };
-}
-
-interface SourceDataObject extends DataObject {
-  __sourceType: string;
-  __sourceId: string;
-}
-
-type DataObjectOrNull = DataObject | null;
-type DataObjectListOrNull = DataObject[] | null;
+const detailCache: IDetailCache = {};
+const detailPromises: IDetailPromises = {};
+const configPromises: IConfigPromises = {};
+const entityMetaPromises: IEntityMetaPromises = {};
 
 export default class TsDataSource {
   private client: any;
   private baseUrl: string | undefined;
-  private baseUrlKey: string;
+  private apiPrefix: string | undefined;
+  private sourceKey: string;
 
-  constructor({ baseUrl, client }: DataSource = {}) {
+  constructor({ baseUrl, apiPrefix, client }: IDataSource = {}) {
     this.client = client ?? httpClient;
     this.baseUrl = baseUrl;
-    this.baseUrlKey = this.baseUrl || "default";
+    this.apiPrefix = apiPrefix;
+    this.sourceKey = `${baseUrl || "default"}/${apiPrefix || "default"}`;
+  }
+
+  private generateEndpoint(objectType: string, objectId?: string): string {
+    const prefix = this.apiPrefix ? `/${this.apiPrefix}` : "";
+    const type = this.apiPrefix ? objectType : `/${objectType}`;
+    const id = objectId ? `/${objectId}` : "";
+    return `${prefix}${type}${id}`;
   }
 
   private relationshipHandler = {
-    get: async (target: SourceDataObject, key: string) => {
+    get: async (target: ISourceDataObject, key: string) => {
       const targetValue = target?.[key];
 
       if (targetValue === null) return null;
@@ -139,7 +74,7 @@ export default class TsDataSource {
       if (key === "id") return target.id;
 
       if (key === "relationships") {
-        const relationshipsTarget: SourceDataObject = {
+        const relationshipsTarget: ISourceDataObject = {
           ...(target?.relationships ?? {}),
           __sourceType: target.type,
           __sourceId: target.id,
@@ -152,32 +87,32 @@ export default class TsDataSource {
   };
 
   private initializeDetailCacheAndPromises(objectType: string) {
-    detailCache[this.baseUrlKey] = detailCache[this.baseUrlKey] ?? {};
-    detailCache[this.baseUrlKey][objectType] =
-      detailCache[this.baseUrlKey][objectType] ?? {};
+    detailCache[this.sourceKey] = detailCache[this.sourceKey] ?? {};
+    detailCache[this.sourceKey][objectType] =
+      detailCache[this.sourceKey][objectType] ?? {};
 
-    detailPromises[this.baseUrlKey] = detailPromises[this.baseUrlKey] ?? {};
-    detailPromises[this.baseUrlKey][objectType] =
-      detailPromises[this.baseUrlKey][objectType] ?? Promise.resolve();
+    detailPromises[this.sourceKey] = detailPromises[this.sourceKey] ?? {};
+    detailPromises[this.sourceKey][objectType] =
+      detailPromises[this.sourceKey][objectType] ?? Promise.resolve();
   }
 
   private updateDetailCache(response: any, objectType: string) {
     if (objectType in EXCLUDED_DETAIL_CACHE_OBJECTS) return;
-    detailCache[this.baseUrlKey] = detailCache[this.baseUrlKey] ?? {};
-    detailCache[this.baseUrlKey][objectType] =
-      detailCache[this.baseUrlKey][objectType] || {};
+    detailCache[this.sourceKey] = detailCache[this.sourceKey] ?? {};
+    detailCache[this.sourceKey][objectType] =
+      detailCache[this.sourceKey][objectType] || {};
     return response.data.data.map((object: any) => {
-      detailCache[this.baseUrlKey][objectType][object.id] =
-        detailCache[this.baseUrlKey][objectType][object.id] || object;
+      detailCache[this.sourceKey][objectType][object.id] =
+        detailCache[this.sourceKey][objectType][object.id] || object;
       return new Proxy(
-        detailCache[this.baseUrlKey][objectType][object.id],
+        detailCache[this.sourceKey][objectType][object.id],
         this.dataObjectHandler,
       );
     });
   }
 
   private getLocalStorageKey(o: string): string {
-    return `${o}-${this.baseUrlKey}`;
+    return `${o}-${this.sourceKey}`;
   }
 
   private getSavedConfig(key: string): { data: object; expiry: Date } | null {
@@ -213,24 +148,6 @@ export default class TsDataSource {
     return configPromises[key];
   }
 
-  public async custom(
-    endpoint: string,
-    method: string,
-    body?: any,
-  ): Promise<any> {
-    switch (method) {
-      case "POST":
-        return await this.client().post(endpoint, {
-          baseUrl: this.baseUrl,
-          data: body,
-        });
-      case "DELETE":
-        return await this.client().delete(endpoint, {
-          baseUrl: this.baseUrl,
-        });
-    }
-  }
-
   @retry(3)
   public getConfig(endpoint: string): Promise<object> {
     const key = this.getLocalStorageKey(endpoint);
@@ -251,7 +168,7 @@ export default class TsDataSource {
     return this.getConfig("/_config/relationships");
   }
 
-  private addIds(attributes: Attributes) {
+  private addIds(attributes: IAttributes) {
     for (const objectType of Object.values(attributes)) {
       if (!objectType.hasOwnProperty("uid")) {
         objectType["id"] = {
@@ -268,7 +185,7 @@ export default class TsDataSource {
   }
 
   private addObjectTypeToAttributes = (
-    attributes: Attributes,
+    attributes: IAttributes,
   ) => {
     for (const [objectType, meta] of Object.entries(attributes)) {
       for (const [, value] of Object.entries(meta)) {
@@ -278,11 +195,11 @@ export default class TsDataSource {
   }
 
   private flattenAttributes(
-    attributes: Attributes,
-    relationships: Relationships,
+    attributes: IAttributes,
+    relationships: IRelationships,
   ) {
     this.addIds(attributes);
-    const newAttributes: Attributes = deepCopy(attributes);
+    const newAttributes: IAttributes = deepCopy(attributes);
     this.addObjectTypeToAttributes(newAttributes);
     for (const entity in relationships) {
       // just deal with one-side relationships
@@ -311,9 +228,9 @@ export default class TsDataSource {
     return newAttributes;
   }
 
-  public async getEntityMeta(): Promise<EntityMeta> {
-    if (!entityMetaPromises[this.baseUrlKey]) {
-      entityMetaPromises[this.baseUrlKey] = (async () => {
+  public async getEntityMeta(): Promise<IEntityMeta> {
+    if (!entityMetaPromises[this.sourceKey]) {
+      entityMetaPromises[this.sourceKey] = (async () => {
         const key = this.getLocalStorageKey("entityMeta");
         let savedEntityMeta = JSON.parse(localStorage.getItem(key) || "null");
         const expiry =
@@ -331,38 +248,41 @@ export default class TsDataSource {
             expiry: anHourFromNow,
             data: {
               flatAttributes: this.flattenAttributes(
-                attributes as Attributes,
-                relationships as Relationships,
+                attributes as IAttributes,
+                relationships as IRelationships,
               ),
               relationships,
             },
           };
           localStorage.setItem(key, JSON.stringify(savedEntityMeta));
         }
-        return savedEntityMeta.data as EntityMeta;
+        return savedEntityMeta.data as IEntityMeta;
       })().finally(() => {
-        delete entityMetaPromises[this.baseUrlKey];
+        delete entityMetaPromises[this.sourceKey];
       });
     }
-    return entityMetaPromises[this.baseUrlKey];
+    return entityMetaPromises[this.sourceKey];
   }
 
-  public async getOne({ objectType, id }: GetOne): Promise<DataObjectOrNull> {
-    this.initializeDetailCacheAndPromises(objectType);
-    if (id in detailCache[this.baseUrlKey][objectType]) {
-      // if object is in cache, return it
-      return new Proxy(
-        detailCache[this.baseUrlKey][objectType][id],
-        this.dataObjectHandler,
-      );
+  private getOneCache(objectType: string, id: string): TDataObjectOrNull | undefined {
+    if (id in detailCache[this.sourceKey][objectType]) {
+      return new Proxy(detailCache[this.sourceKey][objectType][id], this.dataObjectHandler);
     }
-    if (!(id in detailPromises[this.baseUrlKey][objectType])) {
-      // if promise is not in progress, start a new one
-      detailPromises[this.baseUrlKey][objectType][id] = this.client()
-        .get(`/${objectType}/${id}`, { baseURL: this.baseUrl })
+  }
+
+  private getOneFetch(
+    objectType: string,
+    id: string
+  ): Promise<TDataObjectOrNull> {
+    if (!(id in detailPromises[this.sourceKey][objectType])) {
+      detailPromises[this.sourceKey][objectType][id] = this.client()
+        .get(
+          this.generateEndpoint(objectType, id),
+          { baseURL: this.baseUrl }
+        )
         .then((response: any) => {
           if (!EXCLUDED_DETAIL_CACHE_OBJECTS.includes(objectType)) {
-            detailCache[this.baseUrlKey][objectType][id] = response.data.data;
+            detailCache[this.sourceKey][objectType][id] = response.data.data;
           }
           return new Proxy(response.data.data, this.dataObjectHandler);
         })
@@ -371,19 +291,32 @@ export default class TsDataSource {
           throw error;
         })
         .finally(() => {
-          delete detailPromises[this.baseUrlKey][objectType][id]; // remove promise from in-progress list when it's done
+          delete detailPromises[this.sourceKey][objectType][id];
         });
     }
-    return detailPromises[this.baseUrlKey][objectType][id]; // return existing promise if it's in progress
+    return detailPromises[this.sourceKey][objectType][id];
+  }
+
+  public async getOne({
+    objectType,
+    id
+  }: IGetOne): Promise<TDataObjectOrNull> {
+    this.initializeDetailCacheAndPromises(objectType);
+    const cached = this.getOneCache(objectType, id);
+    if (cached) return cached;
+    return this.getOneFetch(objectType, id);
   }
 
   public async getToOneRelation({
     objectType,
     id,
     relation,
-  }: GetToOneRelation): Promise<DataObjectOrNull> {
+  }: IGetToOneRelation): Promise<TDataObjectOrNull> {
     return await this.client()
-      .get(`/${objectType}:to-one/${id}/${relation}`, { baseURL: this.baseUrl })
+      .get(
+        `${this.generateEndpoint(objectType)}:to-one/${id}/${relation}`,
+        { baseURL: this.baseUrl }
+      )
       .then((response: any) => {
         return new Proxy(response.data.data, this.dataObjectHandler);
       })
@@ -396,7 +329,7 @@ export default class TsDataSource {
   public async getByIds({
     objectType,
     ids,
-  }: GetByIds): Promise<DataObjectOrNull[]> {
+  }: IGetByIds): Promise<TDataObjectOrNull[]> {
     this.initializeDetailCacheAndPromises(objectType);
     const promiseBulk = ids.map((id) => this.getOne({ objectType, id }));
     return await Promise.all(promiseBulk);
@@ -408,18 +341,21 @@ export default class TsDataSource {
     pageSize,
     filter,
     sortBy,
-  }: GetListPage): Promise<DataObjectListOrNull> {
+  }: IGetListPage): Promise<TDataObjectListOrNull> {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
-      .get(`/${objectType}`, {
-        baseURL: this.baseUrl,
-        params: {
-          page: page,
-          page_size: pageSize,
-          filter: filter,
-          sort_by: sortBy,
-        },
-      })
+      .get(
+        this.generateEndpoint(objectType),
+        {
+          baseURL: this.baseUrl,
+          params: {
+            page: page,
+            page_size: pageSize,
+            filter: filter,
+            sort_by: sortBy,
+          },
+        }
+      )
       .then((response: any) => {
         return this.updateDetailCache(response, objectType);
       })
@@ -429,13 +365,19 @@ export default class TsDataSource {
       });
   }
 
-  public async deleteByID({ objectType, id }: GetOne): Promise<void> {
+  public async deleteByID({
+    objectType,
+    id
+  }: IGetOne): Promise<void> {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
-      .delete(`/${objectType}/${id}`, { baseURL: this.baseUrl })
+      .delete(
+        this.generateEndpoint(objectType, id),
+        { baseURL: this.baseUrl },
+      )
       .then(() => {
-        if (id in detailCache[this.baseUrlKey][objectType]) {
-          delete detailCache[this.baseUrlKey][objectType][id];
+        if (id in detailCache[this.sourceKey][objectType]) {
+          delete detailCache[this.sourceKey][objectType][id];
         }
       })
       .catch((error: any) => {
@@ -444,11 +386,14 @@ export default class TsDataSource {
       });
   }
 
-  public async upsert({ payload, objectType }: Upsert): Promise<void> {
+  public async upsert({
+    payload,
+    objectType
+  }: IUpsert): Promise<void> {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
       .post(
-        `/${objectType}:upsert`,
+        `${this.generateEndpoint(objectType)}:upsert`,
         { data: payload },
         { baseURL: this.baseUrl },
       )

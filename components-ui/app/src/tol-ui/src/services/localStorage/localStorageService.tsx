@@ -39,12 +39,12 @@ export function tokenHasExpired() {
   }
 }
 
-export const setReturnUrlFromLocalStorage = (url: string) => {
+export function setReturnUrlFromLocalStorage (url: string) {
   if (url !== "/callback") {
     localStorage.setItem("returnUrl", url);
   }
 };
 
-export const getReturnUrlFromLocalStorage = () => {
+export function getReturnUrlFromLocalStorage() {
   return localStorage.getItem("returnUrl") || "/";
 };

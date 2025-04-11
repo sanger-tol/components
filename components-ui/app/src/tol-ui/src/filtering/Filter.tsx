@@ -10,7 +10,7 @@ import FilterDatePicker from "./FilterDatePicker";
 import FilterMultiSelect from "./FilterMultiSelect";
 import FilterBoolean from "./FilterBoolean";
 
-export type IFilter =
+export type IFilterInputType =
   | "str"
   | "int"
   | "float"
@@ -21,7 +21,7 @@ export type IFilter =
 export interface Filter {
   attribute: string;
   rename: string;
-  type?: IFilter;
+  type?: IFilterInputType;
   componentId: string;
   zone: IZone;
   setZone: any;

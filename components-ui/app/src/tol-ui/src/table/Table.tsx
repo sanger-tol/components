@@ -19,7 +19,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import ColumnConfigDrawer from "./ColumnConfigDrawer";
 import { exportTableToSpreadsheet, getAllowedFields, getSourceColour } from "./utils";
-import Filter, { IFilter } from "../filtering/Filter";
+import Filter, { IFilterInputType } from "../filtering/Filter";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
 import { IZone } from "../boards";
 import { IDropdownButtonConfig } from "../models/Buttons";
@@ -478,7 +478,7 @@ function Table(props: Props) {
                           <Filter
                             attribute={key}
                             rename={field.rename!}
-                            type={field.filter as IFilter}
+                            type={field.filter as IFilterInputType}
                             componentId={id}
                             {...props}
                           />
