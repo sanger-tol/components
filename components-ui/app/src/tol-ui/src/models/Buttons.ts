@@ -45,16 +45,4 @@ export interface IDropdownMainIconProps {
   outline?: boolean;
   tooltip?: string;
 }
-
-export interface IDropdownButtons {
-  mainButtonIcon: IDropdownMainIconProps;
-  placement?: string;
-  menuStyle?: object;
-  disabled?: boolean;
-  showMessages?: boolean;
-
-  dropdownButtons: IDropdownButtonConfig[] | any;
-  header?: IDropdownButtonConfig | any;
-  footer?: IDropdownButtonConfig | any;
-}
   

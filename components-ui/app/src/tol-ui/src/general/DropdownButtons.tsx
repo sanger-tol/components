@@ -8,8 +8,20 @@
 
 import React from "react";
 import { Dropdown } from "rsuite";
-import { IDropdownButtonConfig, IDropdownButtons } from "../models";
+import { IDropdownButtonConfig, IDropdownMainIconProps } from "../models";
 import { Toaster, Message, Button } from "../index";
+
+export interface IDropdownButtons {
+  mainButtonIcon: IDropdownMainIconProps;
+  placement?: string;
+  menuStyle?: object;
+  disabled?: boolean;
+  showMessages?: boolean;
+
+  dropdownButtons: IDropdownButtonConfig[] | any;
+  header?: IDropdownButtonConfig | any;
+  footer?: IDropdownButtonConfig | any;
+}
 
 function DropdownButtons(props: IDropdownButtons) {
   const {

@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import {
   Placeholder,
   useEffectUpdate,
-  DropdownButtons,
   PopUpMessage,
   DownloadModal,
   EntityMetaToolTip,
@@ -22,9 +21,10 @@ import { exportTableToSpreadsheet, getAllowedFields, getSourceColour } from "./u
 import Filter, { IFilter } from "../filtering/Filter";
 import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
-import { IDropdownButtons, IDropdownButtonConfig } from "../models/Buttons";
+import { IDropdownButtonConfig } from "../models/Buttons";
 import { useStateFallback } from "../hooks/useStateFallback";
 import { IButton, IUtilityBar } from "../models";
+import { IDropdownButtons } from "../general/DropdownButtons";
 
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;

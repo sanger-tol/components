@@ -9,6 +9,6 @@ export { Dropdown } from "./Nav";
 export { User } from "./User";
 export { IFilter } from "./Filter";
 export { EntityMeta, Attributes, Relationships } from "./EntityMeta";
-export { IButton, HeaderButton, IDropdownButtonConfig, IDropdownButtons, IDropdownMainIconProps } from './Buttons'
+export { IButton, HeaderButton, IDropdownButtonConfig, IDropdownMainIconProps } from './Buttons'
 export { IInlineEdit, IUtilityBar } from './General'
 export { IChartConfig } from './Board'
