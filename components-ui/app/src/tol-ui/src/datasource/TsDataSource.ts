@@ -20,8 +20,8 @@ import {
   ISourceDataObject,
   TDataObjectOrNull,
   TDataObjectListOrNull,
-} from "../models";
-import { ApiMethods, EXCLUDED_DETAIL_CACHE_OBJECTS } from "../constants";
+} from "../models/DataSource";
+import { EXCLUDED_DETAIL_CACHE_OBJECTS } from "../constants/datasource.constants";
 import { httpClient } from "../services/http/httpClient";
 import { retry } from "../services/http/retry";
 import { deepCopy } from "../general/utils";
