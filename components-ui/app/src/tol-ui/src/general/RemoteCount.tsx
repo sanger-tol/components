@@ -14,7 +14,7 @@ import {
   resetFiltersBelow,
 } from "../filtering/utils";
 import { useEffectUpdate } from "../hooks";
-import { IUtilityBar } from "../models";
+import { IUtilityBar } from "../general/UtilityBar";
 import UtilityBar from "./UtilityBar";
 
 interface Props {

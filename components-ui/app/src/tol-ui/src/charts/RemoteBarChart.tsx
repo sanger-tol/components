@@ -24,7 +24,7 @@ import {
   generateFilter,
   resetFiltersBelow,
 } from "../filtering/utils";
-import { IUtilityBar } from "../models";
+import { IUtilityBar } from "../general/UtilityBar";
 
 interface Props {
   id: string;

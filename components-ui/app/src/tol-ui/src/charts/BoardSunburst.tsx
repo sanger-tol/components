@@ -9,7 +9,7 @@ import { useState } from "react";
 import { deepCopy } from "../general/utils";
 import { upsertComponentConfig, IZone } from "../boards/utils";
 import SliceByDrawer from "./SliceByDrawer";
-import { IButton } from "../models";
+import { IButton } from "../general/Button";
 
 interface Props {
   id: string;

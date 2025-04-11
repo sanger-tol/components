@@ -24,7 +24,8 @@ import {
   filterHasUpdated,
   resetFiltersBelow,
 } from "../filtering/utils";
-import { IUtilityBar, IButton } from "../models";
+import { IUtilityBar } from "../general/UtilityBar";
+import { IButton } from "../general/Button";
 import { UtilityBar } from "../index";
 
 interface Props {

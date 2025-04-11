@@ -4,9 +4,14 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IUtilityBar } from '../models'
 import { InlineEdit } from '.'
 import { Button, DropdownButtons } from '../'
+
+export interface IUtilityBar {
+  title?: IInlineEdit;
+  buttons?: (IButton | IDropdownButtons | undefined)[];
+  elements?: JSX.Element[];
+}
 
 function UtilityBar(props: IUtilityBar) {
   const {

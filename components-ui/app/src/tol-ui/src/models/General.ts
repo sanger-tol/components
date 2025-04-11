@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IButton } from "./";
+import { IButton } from "../general/Button";
 import { IDropdownButtons } from "../general/DropdownButtons";
 
 export interface IInlineEdit {

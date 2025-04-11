@@ -9,7 +9,8 @@ import { deepCopy } from "../general/utils";
 import { useState } from "react";
 import { upsertComponentConfig, IZone } from "../boards/utils";
 import ChartConfigDrawer from "./ChartConfigDrawer";
-import { IChartConfig, IButton } from "../models";
+import { IChartConfig } from "../models";
+import { IButton } from "../general/Button"
 
 interface Props {
   id: string;

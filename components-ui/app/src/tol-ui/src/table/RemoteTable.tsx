@@ -32,7 +32,7 @@ import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
 import ActionModal from "./actions/ActionModal";
 import { addRemoteActions } from "./actions/utils";
 import { useStateFallback } from "../hooks";
-import { IUtilityBar } from "../models";
+import { IUtilityBar } from "../general/UtilityBar";
 
 interface Props {
   id: string;

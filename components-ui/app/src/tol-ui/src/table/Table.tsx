@@ -23,7 +23,8 @@ import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
 import { IDropdownButtonConfig } from "../models/Buttons";
 import { useStateFallback } from "../hooks/useStateFallback";
-import { IButton, IUtilityBar } from "../models";
+import { IUtilityBar } from "../general/UtilityBar";
+import { IButton } from "../general/Button";
 import { IDropdownButtons } from "../general/DropdownButtons";
 
 

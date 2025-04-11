@@ -21,7 +21,7 @@ import {
 import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/utils";
 import { useState } from "react";
 import { themeListener } from "../hooks/listeners";
-import { IUtilityBar } from "../models";
+import { IUtilityBar } from "../general/UtilityBar";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
