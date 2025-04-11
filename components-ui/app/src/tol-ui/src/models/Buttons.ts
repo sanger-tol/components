@@ -27,14 +27,14 @@ export interface HeaderButton {
   text: string;
 }
 
-export interface IDropdownButtonProps {
+export interface IDropdownButtonConfig {
   name: string;
   icon?: string;
   disabled?: boolean;
   action: (...args: any[]) => void;
 }
 
-interface IDropdownMainIconProps {
+export interface IDropdownMainIconProps {
   icon: string;
   id?: string;
   type?: string;
@@ -53,8 +53,8 @@ export interface IDropdownButtons {
   disabled?: boolean;
   showMessages?: boolean;
 
-  dropdownButtons: IDropdownButtonProps[] | any;
-  header?: IDropdownButtonProps | any;
-  footer?: IDropdownButtonProps | any;
+  dropdownButtons: IDropdownButtonConfig[] | any;
+  header?: IDropdownButtonConfig | any;
+  footer?: IDropdownButtonConfig | any;
 }
   

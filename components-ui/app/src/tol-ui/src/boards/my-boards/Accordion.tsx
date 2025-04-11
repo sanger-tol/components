@@ -9,10 +9,7 @@ import { Accordion as Acc } from "rsuite";
 import AccordionHeader from "./AccordionHeader";
 import DropdownButtons from "../../general/DropdownButtons";
 import ConfirmationModal from "../ConfirmationModal";
-import {
-  DropdownButtonProps,
-  DropdownMainIconProps,
-} from "../../general/DropdownButtons";
+import { IDropdownButtonConfig, IDropdownMainIconProps } from "../../models";
 import { httpClient, TsDataSource } from "../../services";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartSimple, faTable } from "@fortawesome/free-solid-svg-icons";
@@ -223,7 +220,7 @@ function Accordion(props: BoardsAccordionProps) {
     setOpenDelete(true);
   };
 
-  const boardOptionsButton: DropdownMainIconProps = {
+  const boardOptionsButton: IDropdownMainIconProps = {
     outline: true,
     type: "primary",
     icon: "ellipsis-v",
@@ -233,7 +230,7 @@ function Accordion(props: BoardsAccordionProps) {
   const dropdownButtons = (
     boardId: string,
     viewId?: string,
-  ): DropdownButtonProps[] => [
+  ): IDropdownButtonConfig[] => [
     {
       name: "View",
       action: () => {

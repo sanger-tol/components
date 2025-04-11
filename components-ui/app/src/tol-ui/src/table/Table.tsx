@@ -22,7 +22,7 @@ import { exportTableToSpreadsheet, getAllowedFields, getSourceColour } from "./u
 import Filter, { IFilter } from "../filtering/Filter";
 import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
-import { IDropdownButtons, IDropdownButtonProps } from "../models/Buttons";
+import { IDropdownButtons, IDropdownButtonConfig } from "../models/Buttons";
 import { useStateFallback } from "../hooks/useStateFallback";
 import { IButton, IUtilityBar } from "../models";
 
@@ -68,8 +68,8 @@ interface Props {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
-  actions?: IDropdownButtonProps[];
-  actionsFooter?: IDropdownButtonProps;
+  actions?: IDropdownButtonConfig[];
+  actionsFooter?: IDropdownButtonConfig;
   utilityBarConfig?: IUtilityBar;
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;

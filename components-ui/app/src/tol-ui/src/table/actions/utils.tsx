@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { httpClient } from "../../services";
 import { ACTION_ENDPOINTS } from "../../constants";
-import { DropdownButtonProps } from "../../general/DropdownButtons";
+import { IDropdownButtonConfig } from "../../models";
 
 
 export function addRemoteActions(
@@ -17,7 +17,7 @@ export function addRemoteActions(
   setLoading: (loading: boolean) => void,
   idsWithReqNotMet: object,
   completeAction: (actionName: string, ids: string[]) => Promise<void>,
-  actions: (string | DropdownButtonProps)[] = [],
+  actions: (string | IDropdownButtonConfig)[] = [],
   baseUrl?: string
 ) {
   const runAction = async (actionName: string, ids: string[]) => {
@@ -135,16 +135,16 @@ export function addRemoteActions(
     }
   };
 
-  const convertStringAction = (name: string): DropdownButtonProps => {
+  const convertStringAction = (name: string): IDropdownButtonConfig => {
     return {
       name: name,
       action: (ids: string[]) => runAction(name, ids),
-    } as DropdownButtonProps;
+    } as IDropdownButtonConfig;
   };
 
   const convertAction = (
-    action: string | DropdownButtonProps
-  ): DropdownButtonProps => {
+    action: string | IDropdownButtonConfig
+  ): IDropdownButtonConfig => {
     return typeof action === "string" ? convertStringAction(action) : action;
   };
 

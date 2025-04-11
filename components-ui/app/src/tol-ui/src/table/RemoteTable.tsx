@@ -26,7 +26,7 @@ import {
   resetFiltersBelow,
 } from "../filtering/utils";
 import RowCounter from "./RowCounter";
-import { DropdownButtonProps } from "../general/DropdownButtons";
+import  { IDropdownButtonConfig } from "../models";
 import ActionCheckModal from "./actions/ActionCheckModal";
 import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
 import ActionModal from "./actions/ActionModal";
@@ -67,7 +67,7 @@ interface Props {
   rowSelection?: boolean;
   utilityBarConfig?: IUtilityBar;
 
-  actions?: (string | DropdownButtonProps)[];
+  actions?: (string | IDropdownButtonConfig)[];
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
 

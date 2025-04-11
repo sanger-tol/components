@@ -8,7 +8,7 @@
 
 import React from "react";
 import { Dropdown } from "rsuite";
-import { IDropdownButtonProps, IDropdownButtons } from "../models";
+import { IDropdownButtonConfig, IDropdownButtons } from "../models";
 import { Toaster, Message, Button } from "../index";
 
 function DropdownButtons(props: IDropdownButtons) {
@@ -39,7 +39,7 @@ function DropdownButtons(props: IDropdownButtons) {
     pushMessage(`Action "${actionName}" failed.`, "error");
 
   // shouldn't do this at this level
-  const wrapAction = (action: IDropdownButtonProps) => {
+  const wrapAction = (action: IDropdownButtonConfig) => {
     const name = action.name;
 
     return async (...args) => {
