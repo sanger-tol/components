@@ -346,10 +346,10 @@ function Table(props: Props) {
           ...(utilityBarConfig.elements || [])
         ] : [...(utilityBarConfig.elements || [])]}
         buttons={[
-          actionDropdown,
           configButton,
           filterButton,
           downloadButton,
+          actionDropdown,
           ...(utilityBarConfig.buttons || []),
         ]}
       />
