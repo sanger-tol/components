@@ -68,6 +68,13 @@ export interface IGetListPage {
   sortBy?: string;
 }
 
+export interface ICustom {
+  method: string;
+  resource: string;
+  params?: any;
+  body?: any;
+}
+
 interface IDataObject {
   objectType: string;
   id: string;

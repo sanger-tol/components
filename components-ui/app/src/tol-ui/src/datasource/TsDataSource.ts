@@ -16,11 +16,12 @@ import {
   IUpsert,
   IGetByIds,
   IGetListPage,
+  ICustom,
   ISourceDataObject,
   TDataObjectOrNull,
   TDataObjectListOrNull,
-} from "../models/DataSource";
-import { EXCLUDED_DETAIL_CACHE_OBJECTS } from "../constants/datasource.constants";
+} from "../models";
+import { ApiMethods, EXCLUDED_DETAIL_CACHE_OBJECTS } from "../constants";
 import { httpClient } from "../services/http/httpClient";
 import { retry } from "../services/http/retry";
 import { deepCopy } from "../general/utils";
@@ -44,11 +45,11 @@ export default class TsDataSource {
     this.sourceKey = `${baseUrl || "default"}/${apiPrefix || "default"}`;
   }
 
-  private generateEndpoint(objectType: string, objectId?: string): string {
+  private generateEndpoint(target: string, objectId?: string): string {
     const prefix = this.apiPrefix ? `/${this.apiPrefix}` : "";
-    const type = this.apiPrefix ? objectType : `/${objectType}`;
+    const tar = this.apiPrefix ? target : `/${target}`;
     const id = objectId ? `/${objectId}` : "";
-    return `${prefix}${type}${id}`;
+    return `${prefix}${tar}${id}`;
   }
 
   private relationshipHandler = {
@@ -404,5 +405,41 @@ export default class TsDataSource {
         if (error.response.status === 404) return null;
         throw error;
       });
+  }
+
+  public async custom({
+    method,
+    resource,
+    params,
+    body,
+  }: ICustom): Promise<any> {
+    const url = this.generateEndpoint(resource);
+    switch (method.toUpperCase()) {
+      case ApiMethods.GET:
+        return await this.client().get(url, {
+          baseURL: this.baseUrl,
+          params: params,
+        });
+      case ApiMethods.POST:
+        return await this.client().post(url, body, {
+          baseUrl: this.baseUrl,
+          params: params,
+        });
+      case ApiMethods.PUT:
+        return await this.client().put(url, body, {
+          baseUrl: this.baseUrl,
+          params: params,
+        });
+      case ApiMethods.PATCH:
+        return await this.client().patch(url, body, {
+          baseUrl: this.baseUrl,
+        });
+      case ApiMethods.DELETE:
+        return await this.client().delete(url, {
+          baseURL: this.baseUrl,
+        });
+      default:
+        throw new Error(`Unsupported method: ${method}`);
+    }
   }
 }
