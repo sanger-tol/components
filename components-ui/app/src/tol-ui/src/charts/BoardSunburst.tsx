@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { BoardFilters, Placeholder, Icon, RemoteSunburst, TsDataSource, UtilityBar } from "../index";
 import { useState } from "react";
 import { deepCopy } from "../general/utils";
-import { upsertComponentConfig, IZone } from "../boards/utils";
+import { upsertComponentConfig, IZone, saveTitle } from "../boards/utils";
 import SliceByDrawer from "./SliceByDrawer";
 import { IButton } from "../general/Button";
 
@@ -88,8 +88,10 @@ function BoardSunburst(props: Props) {
             utilityBarConfig={{
               title: {
                 title: props.title,
-                editable: false,
-
+                editable: true,
+                onSave: (value: string) => {
+                  saveTitle(value, ds, id, objectType);
+                }
               },
               buttons: [
                 configButton,
@@ -101,7 +103,13 @@ function BoardSunburst(props: Props) {
         :
         <div className="tol-table-full">
           <UtilityBar
-            title={{ title: props.title, editable: false }}
+            title={{
+              title: props.title,
+              editable: true,
+              onSave: (value: string) => {
+                saveTitle(value, ds, id, objectType);
+              }
+            }}
             buttons={[configButton]}
           />
           <div style={{ height: '100%', marginTop: '6px' }}>

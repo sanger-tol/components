@@ -56,6 +56,7 @@ function RemoteSunburst(props: Props) {
     zone,
     setZone,
     forceUpdate,
+    utilityBarConfig
   } = props;
   const wrapperId = "tol-sunburst-wrapper-" + id; // gets width on mount
   const height = props.height !== undefined ? props.height : "100%";
@@ -198,7 +199,14 @@ function RemoteSunburst(props: Props) {
       id={wrapperId}
       style={{ height: height, position: miniActive ? "relative" : undefined }}
     >
-      <UtilityBar title={props.utilityBarConfig?.title} buttons={[...(props.utilityBarConfig?.buttons || []), resetButton, downloadButton]}/>
+      <UtilityBar
+        title={utilityBarConfig?.title}
+        buttons={[
+          ...(utilityBarConfig?.buttons || []),
+          resetButton,
+          downloadButton
+        ]}
+      />
       {miniActive ? (
         <div className="sunburst-sub" style={mainPlacement}>
           {subLoading ? (

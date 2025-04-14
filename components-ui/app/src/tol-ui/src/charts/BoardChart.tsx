@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { BoardFilters, Icon, Placeholder, RemoteBarChart, TsDataSource, UtilityBar } from "../index";
 import { deepCopy } from "../general/utils";
 import { useState } from "react";
-import { upsertComponentConfig, IZone } from "../boards/utils";
+import { upsertComponentConfig, IZone, saveTitle } from "../boards/utils";
 import ChartConfigDrawer from "./ChartConfigDrawer";
 import { IChartConfig } from "../models";
 import { IButton } from "../general/Button"
@@ -88,7 +88,10 @@ function BoardChart(props: Props) {
             utilityBarConfig={{
               title: {
                 title: props.title,
-                editable: false,
+                editable: true,
+                onSave: (value: string) => {
+                  saveTitle(value, ds, id, objectType);
+                }
               },
               buttons: [
                 configButton,
@@ -100,7 +103,13 @@ function BoardChart(props: Props) {
         :
         <div className="tol-table-full">
           <UtilityBar
-            title={{ title: props.title, editable: false }}
+            title={{
+              title: props.title,
+              editable: true,
+              onSave: (value: string) => {
+                saveTitle(value, ds, id, objectType);
+              }
+            }}
             buttons={[configButton]}
           />
           <div style={{ height: '100%' }}>

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { FieldMeta, initialiseFieldMeta } from "./Field";
 import { BoardFilters, RemoteTable, TsDataSource } from "../index";
 import { useState } from "react";
-import { upsertComponentConfig, IZone } from "../boards/utils";
+import { upsertComponentConfig, IZone, saveTitle } from "../boards/utils";
 
 interface Props {
   id: string;
@@ -72,7 +72,10 @@ function BoardTable(props: Props) {
       utilityBarConfig={{
         title: {
           title: props.title,
-          editable: false,
+          editable: true,
+          onSave: (value: string) => {
+            saveTitle(value, ds, id, objectType);
+          }
         },
         elements: boardFilter,
         buttons: [{

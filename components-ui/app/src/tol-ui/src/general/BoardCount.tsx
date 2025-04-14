@@ -5,8 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from 'react';
-import { BoardFilters, RemoteCount } from "../index";
-import { IZone } from "../boards/utils";
+import { BoardFilters, RemoteCount, TsDataSource } from "../index";
+import { IZone, saveTitle } from "../boards/utils";
 import { IButton } from "../general/Button";
 
 interface Props {
@@ -22,6 +22,7 @@ interface Props {
 function BoardCount(props: Props) {
   const { id, objectType } = props;
   const [openFilters, setOpenFilters] = useState(false);
+  const ds = new TsDataSource();
 
   const filterButton: IButton = {
     outline: true,
@@ -48,7 +49,13 @@ function BoardCount(props: Props) {
         zone={props.zone}
         setZone={props.setZone}
         utilityBarConfig={{
-          title: {title: props.title},
+          title: {
+            title: props.title,
+            editable: true,
+            onSave: (value: string) => {
+              saveTitle(value, ds, id, objectType);
+            }
+          },
           buttons: [filterButton]
         }}
       />
