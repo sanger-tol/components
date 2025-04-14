@@ -7,7 +7,13 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { InlineEdit as RSInlineEdit } from "rsuite";
 import { Toaster, Message } from "../index";
-import { IInlineEdit } from "../models";
+
+export interface IInlineEdit {
+  title: string;
+  editable?: boolean;
+  onSave?: (value: string) => void;
+  onChange?: (value: string) => void;
+}
 
 function InlineEdit({ title, onSave, onChange, editable }: IInlineEdit) {
   const [editedTitle, setEditedTitle] = useState(title);

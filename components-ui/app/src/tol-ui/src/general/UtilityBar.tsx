@@ -5,7 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { InlineEdit } from '.'
+import { IInlineEdit } from './InlineEdit'
+import { IButton } from './Button'
+import { IDropdownButtons } from './DropdownButtons'
 import { Button, DropdownButtons } from '../'
+
 
 export interface IUtilityBar {
   title?: IInlineEdit;
