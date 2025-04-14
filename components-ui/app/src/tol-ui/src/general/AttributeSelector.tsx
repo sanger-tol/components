@@ -23,7 +23,7 @@ import {
   normaliseCaps,
   filterAttributes,
   getAllAttributeData,
-  truncateString
+  truncateString,
 } from "./utils";
 
 export interface AllowedCardinality {
@@ -184,18 +184,26 @@ function AttributeSelector(props: Props) {
     );
   };
 
+  const renderSelectedValue = (value: string) => {
+    const metaData = getFlattenedMetaData(entityMeta, endpoint, value);
+    return (
+    <span className="tol-attribute-selector-render-single-item">
+      {metaData["display_name"] ?? normaliseCaps(value)} 
+      <SourceTag source={metaData["source"]}/>
+    </span>
+    );
+  };
+
   const renderTotalSelectedItems = (values: string[]) => {
-    return `
-        ${values.length} ${
-          values.length === 1
-            ? `${populatedFieldType}`
-            : `${populatedFieldType}s`
-        } selected${
-          additionalPopulatedFieldData ||
-          `; ${numPopulatedFields} ${
-            numPopulatedFields === 1 ? "filter" : "filters"
-          } populated.`
-        }`;
+    if (values.length === 1) {
+      return renderSelectedValue(values[0]);
+    }
+    return `${values.length} ${populatedFieldType}s selected${
+      additionalPopulatedFieldData ||
+      `; ${numPopulatedFields} ${
+        numPopulatedFields === 1 ? "filter" : "filters"
+      } populated.`
+    }`;
   };
 
   const searchBySource = () => {

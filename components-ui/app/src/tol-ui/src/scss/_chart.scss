@@ -61,6 +61,24 @@
   width: 100%;
 }
 
-.tol-chart-interval-buttons {
+.tol-board-chart-interval-btn-container {
+  display: flex;
+}
+
+.tol-board-chart-interval-buttons {
   margin: 0 10px 30px 0;
+}
+
+.tol-board-chart-xaxis-container {
+  display: flex;
+  align-items: self-end;
+  margin-bottom: 10px;
+}
+
+.tol-board-chart-xaxis-title {
+  margin: 0 5px 0 0;
+}
+
+.tol-board-chart-stacked-toggle {
+  margin-bottom: 15px;
 }
