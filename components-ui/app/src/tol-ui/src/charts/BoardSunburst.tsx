@@ -90,7 +90,7 @@ function BoardSunburst(props: Props) {
                 title: props.title,
                 editable: true,
                 onSave: (value: string) => {
-                  saveTitle(value, ds, id, objectType);
+                  saveTitle(value, ds, id, 'component');
                 }
               },
               buttons: [
@@ -107,7 +107,7 @@ function BoardSunburst(props: Props) {
               title: props.title,
               editable: true,
               onSave: (value: string) => {
-                saveTitle(value, ds, id, objectType);
+                saveTitle(value, ds, id, 'component');
               }
             }}
             buttons={[configButton]}

@@ -31,7 +31,6 @@ import { UtilityBar } from "../index";
 interface Props {
   id: string;
   endpoint: string;
-  title: string;
   sliceBy: string[];
   height?: any;
   baseUrl?: string;

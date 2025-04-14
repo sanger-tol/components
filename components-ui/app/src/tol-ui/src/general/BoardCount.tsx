@@ -53,7 +53,7 @@ function BoardCount(props: Props) {
             title: props.title,
             editable: true,
             onSave: (value: string) => {
-              saveTitle(value, ds, id, objectType);
+              saveTitle(value, ds, id, 'component');
             }
           },
           buttons: [filterButton]
