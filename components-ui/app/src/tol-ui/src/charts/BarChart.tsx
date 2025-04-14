@@ -29,7 +29,7 @@ import {
 } from "./utils";
 import { isPropDefined, getCssVarValue } from "../general/utils";
 import { themeListener } from "../hooks/listeners";
-import { IUtilityBar } from "../models";
+import { IUtilityBar } from "../general/UtilityBar";
 
 ChartJS.register(
   CategoryScale,
