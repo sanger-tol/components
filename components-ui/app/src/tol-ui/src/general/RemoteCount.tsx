@@ -45,7 +45,7 @@ function RemoteCount(props: Props) {
   useEffectUpdate(() => {
     setLoading(true);
     httpClient()
-      .get("/" + endpoint + ":count", {
+      .get("/" + endpoint + ":counter", {
         baseURL: baseUrl,
         params: {
           filter: filter,
@@ -63,22 +63,30 @@ function RemoteCount(props: Props) {
       });
   }, [filter]);
 
-  if (error !== "") {
-    return <Placeholder errorMessage={error} />;
-  }
-
-  if (loading) {
-    return <Placeholder loader />;
-  }
-
-  return (
-    <div id={id} className="tol-count">
-      <UtilityBar {...utilityBarConfig} />
+  const Contents = () => {
+    if (error !== "") {
+      return <Placeholder errorMessage={error} />;
+    }
+    if (loading) {
+      return <Placeholder loader />;
+    }
+    return (
+      <div id={id} className="tol-count">
       <h1 className="count">{numberWithSpaces(count)}</h1>
       <div className={!utilityBarConfig ? "faded" : "faded count-utility-bar"} aria-hidden="true">
         <h1>{count}</h1>
       </div>
     </div>
+    )
+  }
+
+  return (
+    <>
+      <UtilityBar {...utilityBarConfig} />
+      <div className="tol-component-contents">
+        <Contents />
+      </div>
+    </>
   );
 }
 
