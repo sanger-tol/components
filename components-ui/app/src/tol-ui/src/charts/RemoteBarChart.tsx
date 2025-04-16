@@ -17,7 +17,6 @@ import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { normaliseCaps } from "../general/utils";
 import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
-import { Col, Row } from "../index";
 import {
   addSubFilter,
   filterHasUpdated,

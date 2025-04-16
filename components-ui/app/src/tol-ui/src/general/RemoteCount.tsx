@@ -45,7 +45,7 @@ function RemoteCount(props: Props) {
   useEffectUpdate(() => {
     setLoading(true);
     httpClient()
-      .get("/" + endpoint + ":counter", {
+      .get("/" + endpoint + ":count", {
         baseURL: baseUrl,
         params: {
           filter: filter,
