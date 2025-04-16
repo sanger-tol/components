@@ -256,7 +256,7 @@ function RemoteSunburst(props: Props) {
         ]}
       />
       <div className="tol-component-contents">
-        <Contents />
+        {Contents()}
       </div>
     </div>
   );
