@@ -95,7 +95,7 @@ function RemoteFilters(props: Props) {
         disabledValues={disabledFilterValues}
         placeholder={PLACEHOLDER}
         attribute={filters}
-        setAttribute={setFilters}
+        setAttributes={setFilters}
         endpoint={endpoint}
         baseUrl={baseUrl}
         populatedFieldType="filter"

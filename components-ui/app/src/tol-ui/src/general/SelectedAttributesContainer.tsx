@@ -11,7 +11,7 @@ import {
   EntityMetaToolTip,
   TsDataSource
 } from "../index";
-import { normaliseCaps } from "../general/utils";
+import { normaliseCaps, truncateString } from "../general/utils";
 import DraggableList from "react-draggable-list";
 
 const TRANSITION_TIME: number = 300;
@@ -85,6 +85,7 @@ function SelectedAttributesContainer(props: Props) {
     const attributeDeatils = objectAttributes[attr_name] || {};
     const index = attributes.indexOf(attr_name);
 
+    const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
 
     return (
       <div
@@ -104,7 +105,7 @@ function SelectedAttributesContainer(props: Props) {
               <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr_name} />
             </div>
           </span>
-          <p className={"tol-config-drawer-selected-column-key"}>{attr_name}</p>
+          <p className={"tol-config-drawer-selected-column-key"}>{truncateString(attr_name, lettersToDisplay)}</p>
         </div>
         <div className="tol-config-drawer-btn-array">
           {attributeDeatils.source && <SourceTag source={attributeDeatils.source} />}

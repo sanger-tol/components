@@ -123,6 +123,10 @@ SPDX-License-Identifier: MIT
   opacity: 0.5;
 }
 
+.tol-attribute-selector-render-single-item {
+  display: flex;
+}
+
 @media (max-width: 768px) {
   .rs-anim-fade.rs-anim-in.rs-picker-check-menu.rs-picker-popup.placement-bottom-start {
     max-width: auto !important;

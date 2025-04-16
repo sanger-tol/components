@@ -4,18 +4,18 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
-import { Toggle } from 'rsuite';
+import { useState, useEffect } from "react";
+import { Toggle } from "rsuite";
 import {
   Button,
   Drawer,
   Modal,
   AttributeSelector,
-  PopUpMessage
+  PopUpMessage,
+  InfoTooltip
 } from "../index";
 import { IChartConfig } from "../models/Board";
-import { HistogramGrouping } from './utils';
-
+import { HistogramGrouping } from "./utils";
 
 export interface Props {
   baseUrl?: string;
@@ -46,17 +46,30 @@ function ChartConfigDrawer(props: Props) {
     config
   } = props;
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
-  const [xAxis, setXAxis] = useState<string[]>(config.xAxis ? [config.xAxis] : []);
-  const [breakDownBy, setBreakDownBy] = useState<string[]>(config.breakDownBy ? [config.breakDownBy] : []);
+  const [xAxis, setXAxis] = useState<string[]>(
+    config.xAxis ? [config.xAxis] : []
+  );
+  const [breakDownBy, setBreakDownBy] = useState<string[]>(
+    config.breakDownBy ? [config.breakDownBy] : []
+  );
   const [stacked, setStacked] = useState<boolean>(config.stacked);
-  const [type, setType] = useState<HistogramGrouping>(config.type);
+  const [chartType, setChartType] = useState<HistogramGrouping>(config.type);
+  const [returnedMeta, setReturnedMeta] = useState<any>(null);
+  const [returnedMetaType, setReturnedMetaType] = useState<string>("");
+
+  useEffect(() => {
+    if (returnedMeta) {
+      const firstKey = Object.keys(returnedMeta)[0];
+      setReturnedMetaType(returnedMeta[firstKey]?.python_type);
+    }
+  }, [returnedMeta]);
 
   const saveConfig = () => {
     const updatedConfig: IChartConfig = {
       breakDownBy: breakDownBy[0],
       stacked: stacked,
-      type: type,
-      xAxis: xAxis[0]
+      type: returnedMetaType === "datetime" ? chartType : "categorical",
+      xAxis: xAxis[0],
     };
     if (JSON.stringify(config) !== JSON.stringify(updatedConfig)) {
       onConfigSave(updatedConfig);
@@ -117,10 +130,17 @@ function ChartConfigDrawer(props: Props) {
         text={text ?? "Save"}
         type="success"
         onClick={() => {
-          if (xAxis.length === 0 || breakDownBy.length === 0 || type == undefined) {
-            PopUpMessage({ type: 'error', message: 'Please fill out all fields before saving.' });
+          if (
+            xAxis.length === 0 ||
+            breakDownBy.length === 0 ||
+            (returnedMetaType === "datetime" && chartType === "categorical")
+          ) {
+            PopUpMessage({
+              type: "error",
+              message: "Please fill out all fields before saving.",
+            });
           } else {
-            saveConfig()
+            saveConfig();
             setOpenSaveModal(false);
           }
         }}
@@ -130,7 +150,7 @@ function ChartConfigDrawer(props: Props) {
 
   const modalButtons = (
     <div
-      className="tol-config-drawer-modal-btns"
+      className="tol-config-drawer-modal-btns.flex-end"
       style={{ justifyContent: "flex-end" }}
     >
       {cancelButton()}
@@ -153,8 +173,8 @@ function ChartConfigDrawer(props: Props) {
     const updatedConfig: IChartConfig = {
       breakDownBy: breakDownBy[0],
       stacked: stacked,
-      type: type,
-      xAxis: xAxis[0]
+      type: returnedMetaType === "datetime" ? chartType : "categorical",
+      xAxis: xAxis[0],
     };
     if (JSON.stringify(updatedConfig) != JSON.stringify(config)) {
       setOpenSaveModal(true);
@@ -166,7 +186,7 @@ function ChartConfigDrawer(props: Props) {
   const confirmDiscard = () => {
     setBreakDownBy([config.breakDownBy]);
     setStacked(config.stacked);
-    setType(config.type);
+    setChartType(config.type);
     setXAxis([config.xAxis]);
     setOpenSaveModal(false);
     setOpen(false);
@@ -192,21 +212,21 @@ function ChartConfigDrawer(props: Props) {
   ];
 
   const buttons = (
-    <div style={{ display: "flex", }}>
+    <div className="tol-board-chart-interval-btn-container">
       {intervals.map((interval: IIntervalListItem) => (
         <Button
           outline
           key={interval.label}
           text={interval.label}
           type="primary"
-          onClick={() => setType(interval.value)}
-          active={type === interval.value}
+          onClick={() => setChartType(interval.value)}
+          active={chartType === interval.value}
           size="lg"
-          className="tol-chart-interval-buttons"
+          className="tol-board-chart-interval-buttons"
         />
       ))}
     </div>
-  )
+  );
 
   const content = (
     <div>
@@ -217,36 +237,48 @@ function ChartConfigDrawer(props: Props) {
           placeholder="Select X-Axis Attribute..."
           baseUrl={baseUrl}
           attribute={xAxis}
-          setAttribute={setXAxis}
+          setAttributes={setXAxis}
           maxSelections={1}
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
           renderSearchBySource={true}
           displaySource={true}
           sticky={true}
-          allowedTypes={["datetime"]}
+          allowedTypes={["str", "datetime"]}
+          setAttributeMeta={setReturnedMeta}
         />
       </div>
-      <h6>Interval</h6>
-      {buttons}
+      {returnedMetaType === "datetime" && (
+        <>
+          <h6>Interval</h6>
+          {buttons}
+        </>
+      )}
       <div>
-        <h6>Break Down By</h6>
+        <div className="tol-board-chart-xaxis-container">
+        <h6 className="tol-board-chart-xaxis-title">Break Down By</h6>
+        <InfoTooltip contents={
+          "Note: This list has been filtered by cardinality." + 
+          "This is the number of available values for a given attribute." +
+          "It has been set to max 25 to avoid charts becoming unreadable."}/>
+        </div>
         <AttributeSelector
           endpoint={endpoint}
           placeholder="Select Attribute to Break Down By..."
           baseUrl={baseUrl}
           attribute={breakDownBy}
-          setAttribute={setBreakDownBy}
+          setAttributes={setBreakDownBy}
           maxSelections={1}
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
           renderSearchBySource={true}
           displaySource={true}
           sticky={true}
+          allowedCardinality={{ operator: "<=", value: 25 }}
         />
       </div>
       <h6>Stacked</h6>
-      <div style={{ marginBottom: "15px" }}>
+      <div className="tol-board-chart-stacked-toggle">
         <Toggle
           key="stacked-toggle"
           checked={stacked}
@@ -259,7 +291,7 @@ function ChartConfigDrawer(props: Props) {
         <div className="tol-config-drawer-save-button">{drawerButtons}</div>
       </div>
     </div>
-  )
+  );
 
   return (
     <div>

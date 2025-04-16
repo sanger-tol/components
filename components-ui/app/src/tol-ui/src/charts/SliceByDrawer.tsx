@@ -153,7 +153,7 @@ function SliceByDrawer(props: Props) {
           placeholder="Select Attributes to Slice By..."
           baseUrl={baseUrl}
           attribute={attributes}
-          setAttribute={setAttributes}
+          setAttributes={setAttributes}
           disabledValues={null}
           numPopulatedFields={0}
           maxSelections={5}

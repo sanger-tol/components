@@ -1,6 +1,6 @@
 {
   "name": "components-ui",
-  "version": "2.0.10",
+  "version": "2.0.12",
   "private": true,
   "proxy": "http://components-api:80",
   "dependencies": {
@@ -22,7 +22,8 @@
     "@vitejs/plugin-basic-ssl": "1.1.0",
     "@testing-library/react": "12.1.2",
     "@testing-library/user-event": "14.5.2",
-    "@testing-library/jest-dom": "5.16.1"
+    "@testing-library/jest-dom": "5.16.1",
+    "lorem-ipsum": "2.0.8"
   },
   "scripts": {
     "start": "vite",

@@ -21,6 +21,7 @@ import {
   Sunbursts,
   Widgets,
   Messages,
+  Factories
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown, env } from "./tol-ui/src";
@@ -52,6 +53,14 @@ const maps: Page = {
   name: "Maps",
   element: <Maps />,
 };
+
+const portal: Page = {
+  name: "Portal",
+  link: {
+    href: "https://portal.tol.sanger.ac.uk",
+    target: "_blank",
+  },
+}
 
 const timelines: Page = {
   name: "Timelines",
@@ -95,10 +104,20 @@ const widgets: Page = {
   element: <Widgets />,
 };
 
+const factories: Page = {
+  name: "Factories",
+  element: <Factories />
+}
+
 const otherDropdown: Dropdown = {
   name: "Other",
-  pages: [colours, detail, forms, messages, miscellaneous, tsds, widgets],
+  pages: [colours, detail, forms, messages, miscellaneous, tsds, widgets, portal],
 };
+
+const docsDropdown: Dropdown = {
+  name: "Docs",
+  pages: [factories]
+}
 
 // dev sandbox - change element if needed
 const sandbox: Page = {
@@ -121,6 +140,7 @@ ReactDOM.render(
       maps,
       timelines,
       otherDropdown,
+      docsDropdown,
       sandbox,
     ]}
   />,

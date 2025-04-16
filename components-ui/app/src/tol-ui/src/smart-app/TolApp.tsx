@@ -16,24 +16,25 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
-import { Navigation, Callback, PageNotFound } from "./nav";
+import { Navigation, Callback, PageNotFound } from "../nav";
 import {
   getTokenFromLocalStorage,
   getUserFromLocalStorage,
   tokenHasExpired,
-} from "./services/localStorage/localStorageService";
+} from "../services/localStorage/localStorageService";
 import {
   confirmAuthorised,
   getElementDependingOnAuthStatus,
-} from "./services/auth/authService";
-import { AuthProvider } from "./contexts/auth.context";
-import Footer from "./general/Footer";
-import { Dropdown, Page } from "./models/Nav";
-import { convertToPath, matomoAnalytics } from "./general/utils";
-import { env } from "./variables/config";
-import { MyBoards, Board } from "./boards";
+} from "../services/auth/authService";
+import { AuthProvider } from "../contexts/auth.context";
+import Footer from "../general/Footer";
+import { Dropdown, Page } from "../models/Nav";
+import { convertToPath, matomoAnalytics } from "../general/utils";
+import { env } from "../variables/config";
+import { MyBoards, Board } from "../boards";
+import { addBoardPages, generatePagesThatRequireARoute } from "./utils";
 
-interface BoardsObject {
+export interface BoardsObject {
   dataUrl?: string;
 }
 
@@ -76,20 +77,10 @@ function TolApp(props: Props) {
     );
   }
 
-  // dealing with pages
-  let profilePages = props.profilePages;
-  if (boards) {
-    profilePages = [
-      {
-        name: "My Boards",
-        element: <MyBoards />,
-        auth: true,
-      },
-      ...(profilePages ?? []),
-    ];
-  }
-  const allPages = [...props.pages, ...(profilePages ?? [])];
+  const profilePages = addBoardPages(props.profilePages, boards);
+  const allPageRoutes = generatePagesThatRequireARoute(props.pages, profilePages);
   const loggedIn = user && !tokenHasExpired();
+
   return (
     <div id="tol-app-background">
       <AuthProvider
@@ -122,10 +113,7 @@ function TolApp(props: Props) {
                   <Redirect to="/" />
                 )}
               </Route>
-              <Route path="/board/:boardId/view/:viewId">
-                {boards && loggedIn ? <Board /> : <Redirect to="/" />}
-              </Route>
-              {allPages.map((page) => {
+              {allPageRoutes.map((page) => {
                 const path = convertToPath(page.name);
                 const routes = [];
                 const authorised = confirmAuthorised(

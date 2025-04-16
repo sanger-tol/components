@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
 import { FieldMeta } from "../table/Field";
+import { AllowedCardinality } from "./AttributeSelector";
 
 export function convertToPath(name: string) {
   const path = name.toLowerCase();
@@ -250,6 +251,72 @@ export function filterBySource(
     }
   }
 }
+
+export function truncateString(str: string, maxLength: number) {
+  if (str.length > maxLength) {
+    return str.slice(0, maxLength - 3) + "...";
+  }
+  return str;
+}
+
+export function getAllAttributeData(
+  attributes: string[],
+  entityMeta: any,
+  endpoint: string
+) {
+  return attributes.reduce((acc, attr) => {
+    const attributeData = getFlattenedMetaData(entityMeta, endpoint, attr);
+    return {
+      ...acc,
+      [attr]: attributeData,
+    };
+  }, {});
+};
+
+export function filterAttributes (
+  entityMeta: any,
+  endpoint: string,
+  allowedTypes: string[] | undefined,
+  selectedSources: string[],
+  recommendedOn: boolean,
+  allowedCardinality: AllowedCardinality | undefined,
+  customAttributeSelection: string[] | undefined
+){
+  return Object.keys(getFlattenedMetaData(entityMeta, endpoint)).filter(
+    (key) => {
+      const meta = getFlattenedMetaData(entityMeta, endpoint)[key];
+      const typeMatch =
+        !allowedTypes || allowedTypes.includes(meta.python_type);
+      const sourceMatch =
+        selectedSources.length === 0 ||
+        (selectedSources.includes("undefined")
+          ? !meta.source || selectedSources.includes(meta.source)
+          : selectedSources.includes(meta.source));
+      const recommendedMatch = meta.authoritative === true;
+      const cardinalityMatch =
+        !allowedCardinality ||
+        (meta.cardinality &&
+          ((allowedCardinality.operator === ">" &&
+            meta.cardinality > allowedCardinality.value) ||
+            (allowedCardinality.operator === "<" &&
+              meta.cardinality < allowedCardinality.value) ||
+            (allowedCardinality.operator === "=" &&
+              meta.cardinality === allowedCardinality.value) ||
+            (allowedCardinality.operator === ">=" &&
+              meta.cardinality >= allowedCardinality.value) ||
+            (allowedCardinality.operator === "<=" &&
+              meta.cardinality <= allowedCardinality.value)));
+
+      return (
+        (recommendedOn ? recommendedMatch : true) &&
+        typeMatch &&
+        sourceMatch &&
+        cardinalityMatch &&
+        (!customAttributeSelection || customAttributeSelection.includes(key))
+      );
+    }
+  );
+};
 
 export function copyToClipboard(text: string): void {
   if (navigator.clipboard) {

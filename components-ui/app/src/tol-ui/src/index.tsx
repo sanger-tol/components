@@ -12,8 +12,6 @@ import {
   Spinner,
 } from "react-bootstrap";
 export { Container, Row, Col, Form, ButtonGroup, Spinner as Loader };
-import { Link } from "react-router-dom";
-export { Link };
 import { useToaster as Toaster, Form as RSForm } from "rsuite";
 export { Toaster, RSForm };
 
@@ -77,6 +75,9 @@ export {
   FormAllInOne,
   FormCheckboxes,
 } from "./forms";
+
+// factories
+export { createTextGeneratorFactory } from "./factories";
 
 // messaging
 export {
@@ -142,7 +143,7 @@ export { RemoteTable, BoardTable } from "./table";
 export { Timeline, RemoteTimeline } from "./timeline";
 
 // toL app
-export { default as TolApp } from "./TolApp";
+export { default as TolApp } from "./smart-app/TolApp";
 
 // variables
 export { env } from "./variables";

@@ -13,7 +13,7 @@ import {
   Icon,
   PopUpMessage,
   SourceTag,
-  EntityMetaToolTip
+  EntityMetaToolTip,
 } from "../index";
 import {
   getFlattenedMetaData,
@@ -21,7 +21,15 @@ import {
   getAttributeSources,
   filterBySource,
   normaliseCaps,
+  filterAttributes,
+  getAllAttributeData,
+  truncateString,
 } from "./utils";
+
+export interface AllowedCardinality {
+  operator: string;
+  value: number;
+}
 
 export interface Props {
   additionalPopulatedFieldData?: any;
@@ -37,11 +45,13 @@ export interface Props {
   populatedFieldType?: string;
   recommendedFilterAvailable?: boolean;
   renderSearchBySource?: boolean;
-  setAttribute: (attribute: string[]) => void;
+  setAttributes: (attributes: string[]) => void;
+  setAttributeMeta?: (attributeMeta: any) => void;
   onClean?: () => void;
   sticky?: boolean;
   tooltipContent?: string;
   customAttributeSelection?: string[];
+  allowedCardinality?: AllowedCardinality;
 }
 
 function AttributeSelector(props: Props) {
@@ -59,12 +69,15 @@ function AttributeSelector(props: Props) {
     populatedFieldType = "value",
     recommendedFilterAvailable,
     renderSearchBySource,
-    setAttribute,
+    setAttributes,
     onClean,
     sticky,
     tooltipContent,
     customAttributeSelection,
+    allowedCardinality,
+    setAttributeMeta,
   } = props;
+
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
   const [recommendedOn, setRecommendedOn] = useState<boolean>(false);
@@ -84,9 +97,30 @@ function AttributeSelector(props: Props) {
       });
   }, []);
 
+  useEffect(() => {
+    if (setAttributeMeta && attribute.length > 0) {
+      const initialAttributeData = getAllAttributeData(
+        attribute,
+        entityMeta,
+        endpoint
+      );
+      setAttributeMeta(initialAttributeData);
+    }
+  }, [attribute, entityMeta, endpoint, setAttributeMeta]);
+
   const searchBy = (keyword: string, label: any) => {
-    const name = getAttributeDetail(entityMeta, endpoint, label, 'display_name').toLowerCase();
-    const description = getAttributeDetail(entityMeta, endpoint, label, 'description').toLowerCase();
+    const name = getAttributeDetail(
+      entityMeta,
+      endpoint,
+      label,
+      "display_name"
+    ).toLowerCase();
+    const description = getAttributeDetail(
+      entityMeta,
+      endpoint,
+      label,
+      "description"
+    ).toLowerCase();
     const kw = keyword.toLowerCase();
 
     return name.includes(kw) || label.includes(kw) || description.includes(kw);
@@ -96,11 +130,13 @@ function AttributeSelector(props: Props) {
     displayName: string,
     source: string,
     key: string,
-    authoritative: boolean,
+    authoritative: boolean
   ) => {
     const disabled =
       disabledValues && Object.keys(disabledValues).includes(key);
     const tooltipContents = tooltipContent || "disabled";
+
+    const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
 
     return (
       <div key={key} className="tol-attribute-selector-menu-item-container">
@@ -115,12 +151,16 @@ function AttributeSelector(props: Props) {
               </span>
             ) : (
               <span className="tol-attribute-selector-tooltip">
-                <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint}/>
+                <EntityMetaToolTip
+                  baseUrl={baseUrl}
+                  field={key}
+                  endpoint={endpoint}
+                />
               </span>
             )}
             <div className="tol-attribute-selector-display-key">
               {authoritative === true && <Icon icon="star" />}
-              <p>{key}</p>
+              <p>{truncateString(key, lettersToDisplay)}</p>
             </div>
           </div>
         </div>
@@ -138,24 +178,32 @@ function AttributeSelector(props: Props) {
           metaData["display_name"] ?? normaliseCaps(label),
           metaData["source"],
           label,
-          metaData["authoritative"],
+          metaData["authoritative"]
         )}
       </div>
     );
   };
 
+  const renderSelectedValue = (value: string) => {
+    const metaData = getFlattenedMetaData(entityMeta, endpoint, value);
+    return (
+    <span className="tol-attribute-selector-render-single-item">
+      {metaData["display_name"] ?? normaliseCaps(value)} 
+      <SourceTag source={metaData["source"]}/>
+    </span>
+    );
+  };
+
   const renderTotalSelectedItems = (values: string[]) => {
-    return `
-        ${values.length} ${
-          values.length === 1
-            ? `${populatedFieldType}`
-            : `${populatedFieldType}s`
-        } selected${
-          additionalPopulatedFieldData ||
-          `; ${numPopulatedFields} ${
-            numPopulatedFields === 1 ? "filter" : "filters"
-          } populated.`
-        }`;
+    if (values.length === 1) {
+      return renderSelectedValue(values[0]);
+    }
+    return `${values.length} ${populatedFieldType}s selected${
+      additionalPopulatedFieldData ||
+      `; ${numPopulatedFields} ${
+        numPopulatedFields === 1 ? "filter" : "filters"
+      } populated.`
+    }`;
   };
 
   const searchBySource = () => {
@@ -195,14 +243,20 @@ function AttributeSelector(props: Props) {
       if (newAttribute.length > maxSelections) {
         PopUpMessage({
           type: "warning",
-          message: `You can select a maximum of ${maxSelections} items.`,
+          message: `You can select a maximum number of ${maxSelections} items.`,
         });
         return;
-      } else {
-        setAttribute(newAttribute);
       }
-    } else {
-      setAttribute(newAttribute);
+    }
+    setAttributes(newAttribute);
+
+    if (setAttributeMeta) {
+      const allAttributeData = getAllAttributeData(
+        newAttribute,
+        entityMeta,
+        endpoint
+      );
+      setAttributeMeta(allAttributeData);
     }
   };
 
@@ -214,36 +268,23 @@ function AttributeSelector(props: Props) {
         className="tol-attribute-selector-select"
         block
         noSelectAll
-        data={Object.keys(getFlattenedMetaData(entityMeta, endpoint))
-          .filter((key) => {
-            const meta = getFlattenedMetaData(entityMeta, endpoint)[key];
-            const typeMatch =
-              !allowedTypes || allowedTypes.includes(meta.python_type);
-            const sourceMatch =
-              selectedSources.length === 0 ||
-              (selectedSources.includes("undefined")
-                ? !sources.includes(meta.source) ||
-                  selectedSources.includes(meta.source)
-                : selectedSources.includes(meta.source));
-            const recommendedMatch = meta.authoritative === true;
-
-            return (
-              (recommendedOn ? recommendedMatch : true) &&
-              typeMatch &&
-              sourceMatch &&
-              (!customAttributeSelection ||
-                customAttributeSelection.includes(key))
-            );
-          })
-          .sort((a, b) => {
-            const metaA = getFlattenedMetaData(entityMeta, endpoint)[a];
-            const metaB = getFlattenedMetaData(entityMeta, endpoint)[b];
-            if (metaA.source === null || metaA.source === undefined) return 1;
-            if (metaB.source === null || metaB.source === undefined) return -1;
-            if (metaA.source < metaB.source) return -1;
-            if (metaA.source > metaB.source) return 1;
-            return a.localeCompare(b);
-          })}
+        data={filterAttributes(
+          entityMeta,
+          endpoint,
+          allowedTypes,
+          selectedSources,
+          recommendedOn,
+          allowedCardinality,
+          customAttributeSelection
+        ).sort((a, b) => {
+          const metaA = getFlattenedMetaData(entityMeta, endpoint)[a];
+          const metaB = getFlattenedMetaData(entityMeta, endpoint)[b];
+          if (metaA.source === null || metaA.source === undefined) return 1;
+          if (metaB.source === null || metaB.source === undefined) return -1;
+          if (metaA.source < metaB.source) return -1;
+          if (metaA.source > metaB.source) return 1;
+          return a.localeCompare(b);
+        })}
         placeholder={placeholder}
         value={attribute}
         setValue={handleSetAttribute}
@@ -265,7 +306,10 @@ function AttributeSelector(props: Props) {
             }}
             checked={recommendedOn}
           />
-          <span style={{paddingRight: 6}} onClick={(e) => e.stopPropagation()}>
+          <span
+            style={{ paddingRight: 6 }}
+            onClick={(e) => e.stopPropagation()}
+          >
             Recommended columns.
           </span>
           <InfoTooltip
