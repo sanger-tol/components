@@ -152,16 +152,72 @@ function RemoteSunburst(props: Props) {
     }
   }, [sliceData]);
 
-  if (errorMessage !== "") {
-    return <Placeholder errorMessage={errorMessage} height={height} />;
-  }
+  
+  const headerPadding = 37;
+  const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
+  const setter = setZone === undefined ? undefined : setSliceData;
+  const mainPlacement = noLegend
+    ? { paddingTop: 150 - headerPadding }
+    : { paddingLeft: 150 };
+  mainPlacement["paddingBottom"] = headerPadding;
+  
+  const Contents = () => {
+    if (errorMessage !== "") {
+      return <Placeholder errorMessage={errorMessage} />
+    }
+  
+    if (loading) {
+      return <Placeholder pie />
+    }
 
-  if (loading) {
     return (
-      <div id={wrapperId} style={{ height: height }}>
-        <Placeholder pie />
-      </div>
-    );
+      <>
+        {miniActive ? (
+          <div className="sunburst-sub" style={mainPlacement}>
+            {subLoading ? (
+              <Placeholder clear loader />
+            ) : (
+              <Sunburst
+                {...props}
+                id={id}
+                noRefresh
+                noDownload
+                datasets={subDatasets}
+                setSliceData={setter}
+                noLegend={noLegend}
+                height="100%"
+                utilityBarConfig={undefined}
+              />
+            )}
+          </div>
+        ) : null}
+        <div
+          className={miniActive ? "sunburst-mini" : ""}
+          style={
+            miniActive
+              ? { paddingTop: headerPadding }
+              : { height: height, paddingBottom: headerPadding }
+          }
+        >
+          {warningMessage !== "" ?
+            <Placeholder warningMessage={warningMessage} />
+            :
+            <Sunburst
+              {...props}
+              noRefresh
+              noDownload
+              datasets={datasets}
+              downloadName={normaliseCaps(endpoint)}
+              setSliceData={setter}
+              noLegend={miniActive ? true : noLegend}
+              resetChart={resetChart}
+              height="100%"
+              utilityBarConfig={undefined}
+            />
+          }
+        </div>
+      </>
+    )
   }
 
   const resetButton: IButton = {
@@ -185,13 +241,6 @@ function RemoteSunburst(props: Props) {
     icon: "download",
   }: {};
 
-  const headerPadding = 37;
-  const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
-  const setter = setZone === undefined ? undefined : setSliceData;
-  const mainPlacement = noLegend
-    ? { paddingTop: 150 - headerPadding }
-    : { paddingLeft: 150 };
-  mainPlacement["paddingBottom"] = headerPadding;
 
   return (
     <div
@@ -206,49 +255,8 @@ function RemoteSunburst(props: Props) {
           downloadButton
         ]}
       />
-      {miniActive ? (
-        <div className="sunburst-sub" style={mainPlacement}>
-          {subLoading ? (
-            <Placeholder clear loader />
-          ) : (
-            <Sunburst
-              {...props}
-              id={id}
-              noRefresh
-              noDownload
-              datasets={subDatasets}
-              setSliceData={setter}
-              noLegend={noLegend}
-              height="100%"
-              utilityBarConfig={undefined}
-            />
-          )}
-        </div>
-      ) : null}
-      <div
-        className={miniActive ? "sunburst-mini" : ""}
-        style={
-          miniActive
-            ? { paddingTop: headerPadding }
-            : { height: height, paddingBottom: headerPadding }
-        }
-      >
-        {warningMessage !== "" ?
-          <Placeholder warningMessage={warningMessage} style={{ marginTop: 8 }} />
-          :
-          <Sunburst
-            {...props}
-            noRefresh
-            noDownload
-            datasets={datasets}
-            downloadName={normaliseCaps(endpoint)}
-            setSliceData={setter}
-            noLegend={miniActive ? true : noLegend}
-            resetChart={resetChart}
-            height="100%"
-            utilityBarConfig={undefined}
-          />
-        }
+      <div className="tol-component-contents">
+        <Contents />
       </div>
     </div>
   );

@@ -4,14 +4,25 @@
  * SPDX-License-Identifier: MIT
  */
 
+:root {
+  --tol-utility-bar-height: 30px;
+  --tol-utility-bar-margin-bottom: 6px;
+}
+
 .tol-utility-bar {
-  margin-bottom: 6px;
+  margin-bottom: var(--tol-utility-bar-margin-bottom);
   display: flex;
   flex-direction: row;
   position: relative;
   z-index: 3;
+  height: var(--tol-utility-bar-height);
+  align-items: center;
 }
 
 .tol-utility-bar-buttons {
   flex-grow: 1;
+}
+
+.tol-component-contents {
+  height: calc(100% - var(--tol-utility-bar-height) - var(--tol-utility-bar-margin-bottom));
 }

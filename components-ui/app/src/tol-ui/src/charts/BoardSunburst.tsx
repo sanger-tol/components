@@ -77,7 +77,6 @@ function BoardSunburst(props: Props) {
           <RemoteSunburst
             id={id}
             sliceBy={deepCopy(config.sliceBy)}
-            title={props.title}
             endpoint={objectType}
             baseUrl={props.baseUrl}
             zone={props.zone}
