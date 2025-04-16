@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { Button as RsButton } from "rsuite";
 import { TolLoader, HoverOverlay, Icon } from "../index";
 
-interface Props {
+export interface IButton {
   icon?: string;
   onClick?: () => void;
   className?: string;
@@ -22,9 +22,11 @@ interface Props {
   loading?: boolean;
   outline?: boolean;
   id?: string;
+  visible?: boolean;
 }
 
-function Button(props: Props) {
+
+function Button(props: IButton) {
   const {
     icon,
     onClick,
@@ -40,6 +42,7 @@ function Button(props: Props) {
     loading,
     outline,
     id,
+    visible = true,
   } = props;
 
   const outlineClass = outline ? "-outline" : "";
@@ -47,28 +50,32 @@ function Button(props: Props) {
   const loader = <TolLoader size="sm" />;
 
   const button = (
-    <RsButton
-      onClick={onClick}
-      disabled={disabled || loading}
-      active={active}
-      className={`icon-button-${type || "primary"}-${size || "md"}${outlineClass} ${className}`}
-      id={id}
-    >
-      {loading ? (
-        loader
-      ) : (
-        <>
-          {icon && (
-            <div>
-              <Icon icon={icon} size={size} />
-            </div>
+    <>
+      {visible &&
+        <RsButton
+          onClick={onClick}
+          disabled={disabled || loading}
+          active={active}
+          className={`icon-button-${type || "primary"}-${size || "md"}${outlineClass} ${className}`}
+          id={id}
+        >
+          {loading ? (
+            loader
+          ) : (
+            <>
+              {icon && (
+                <div>
+                  <Icon icon={icon} size={size} />
+                </div>
+              )}
+              {text && (
+                <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>
+              )}
+            </>
           )}
-          {text && (
-            <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>
-          )}
-        </>
-      )}
-    </RsButton>
+        </RsButton>
+      }
+    </>
   );
 
   const contents = disabled && disabledTooltip ? disabledTooltip : tooltip;

@@ -6,13 +6,12 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
-  Button,
   Placeholder,
   useEffectUpdate,
-  DropdownButtons,
   PopUpMessage,
   DownloadModal,
-  EntityMetaToolTip
+  EntityMetaToolTip,
+  UtilityBar,
 } from "../index";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,8 +21,11 @@ import { exportTableToSpreadsheet, getAllowedFields, getSourceColour } from "./u
 import Filter, { IFilter } from "../filtering/Filter";
 import { FieldMeta } from "./Field";
 import { IZone } from "../boards";
-import { DropdownButtonProps } from "../general/DropdownButtons";
+import { IDropdownButtonConfig } from "../models/Buttons";
 import { useStateFallback } from "../hooks/useStateFallback";
+import { IUtilityBar } from "../general/UtilityBar";
+import { IButton } from "../general/Button";
+import { IDropdownButtons } from "../general/DropdownButtons";
 
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
@@ -67,9 +69,9 @@ interface Props {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
-  actions?: DropdownButtonProps[];
-  actionsFooter?: DropdownButtonProps;
-  configButtons?: JSX.Element[];
+  actions?: IDropdownButtonConfig[];
+  actionsFooter?: IDropdownButtonConfig;
+  utilityBarConfig?: IUtilityBar;
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
 }
@@ -115,7 +117,7 @@ function Table(props: Props) {
     rowSelection,
     actions,
     actionsFooter,
-    configButtons,
+    utilityBarConfig = {},
     /* eslint-enable */
   } = props;
 
@@ -190,6 +192,62 @@ function Table(props: Props) {
     disabled: selectedRows.length === 0,
   }));
 
+  const configButton: IButton = !noConfigModal ? {
+    visible: true,
+    position: "right",
+    type: "primary",
+    onClick: () => {
+      setOpen(true);
+    },
+    icon: "sliders",
+    outline: true
+  } : {
+    visible: false
+  }
+
+  const filterButton: IButton = !noFilter ? {
+    visible: true,
+    position: "right",
+    type: "primary",
+    onClick: () => { setFilterVisibility(!filterVisibility) },
+    icon: "eye-slash",
+    outline: true
+  } : {
+    visible: false
+  }
+
+  const downloadButton: IButton = !noDownload ? {
+    visible: true,
+    position: "right",
+    type: "primary",
+    onClick: () => {
+      setDownloadOpen(!downloadOpen)
+    },
+    disabled: totalSize <= 0 || noFieldsSelected,
+    loading: downloading,
+    icon: "download",
+    disabledTooltip:
+      totalSize >= 1
+        ? "Must have at least one row to download."
+        : undefined
+    ,
+    outline: true
+  } : {
+    visible: false
+  }
+
+  const actionDropdown: IDropdownButtons | undefined = (actions && actions.length > 0) ? {
+    mainButtonIcon: {
+      icon: "paper-plane",
+      type: "primary",
+      position: "left",
+      outline: selectedRows.length === 0,
+    },
+    dropdownButtons: actionDropDownButtons,
+    footer: actionsFooter,
+    placement: "rightStart",
+  } : undefined;
+
   return (
     <div style={{ height: height }} className="tol-table">
       <DownloadModal
@@ -225,8 +283,7 @@ function Table(props: Props) {
         onConfigSave={onModalSave}
         {...props}
       />
-      <div className="tol-table-bar">
-        {/*rowSelection && (
+      {/*rowSelection && (
           <>
             <Button
               position="left"
@@ -241,112 +298,62 @@ function Table(props: Props) {
             />
           </>
         )*/}
-        <div style={{ float: "left" }}>
-          {actions && actions.length > 0 && (
-            <DropdownButtons
-              mainButtonIcon={{
-                icon: "paper-plane",
-                type: "primary",
-                position: "left",
-                outline: selectedRows.length === 0,
-
-              }}
-              dropdownButtons={actionDropDownButtons}
-              footer={actionsFooter}
-              placement={"rightStart"}
-            />
-          )}
-        </div>
-        {!noPagination && fieldMeta.order.active.length > 0 && (
-          <>
-            {rowCounter ? rowCounter : totalSize}
-            <span className="tol-page-size">
-              <SelectPicker
-                value={pageSize}
-                onChange={setPageSize}
-                size="sm"
-                cleanable={false}
-                searchable={false}
-                data={[
-                  { label: "25", value: 25 },
-                  { label: "50", value: 50 },
-                  { label: "100", value: 100 },
-                  { label: "100", value: 250 },
-                ]}
-              />
-            </span>
-            <Pagination
-              className="tol-pagination"
+      <UtilityBar
+        title={utilityBarConfig.title}
+        elements={(!noPagination && fieldMeta.order.active.length > 0) ? [
+          <>{rowCounter ? rowCounter : totalSize}</>,
+          <span className="tol-page-size">
+            <SelectPicker
+              value={pageSize}
+              onChange={setPageSize}
               size="sm"
-              layout={["skip"]}
-              total={totalSize}
-              activePage={page}
-              onChangePage={setPage}
-              limit={pageSize}
-              onChangeLimit={setPageSize}
+              cleanable={false}
+              searchable={false}
+              data={[
+                { label: "25", value: 25 },
+                { label: "50", value: 50 },
+                { label: "100", value: 100 },
+                { label: "250", value: 250 },
+              ]}
             />
-            <Pagination
-              className="tol-pagination"
-              prev
-              next
-              first
-              last
-              ellipsis
-              boundaryLinks
-              maxButtons={3}
-              size="sm"
-              layout={["pager"]}
-              total={totalSize}
-              activePage={page}
-              onChangePage={setPage}
-              limit={pageSize}
-              onChangeLimit={setPageSize}
-            />
-          </>
-        )}
-        {!noConfigModal && (
-          <Button
-            position="right"
-            type="primary"
-            onClick={() => {
-              setOpen(true);
-            }}
-            icon="sliders"
-            outline
-          />
-        )}
-        {!noFilter && (
-          <Button
-            position="right"
-            active={filterVisibility}
-            type="primary"
-            onClick={() => setFilterVisibility(!filterVisibility)}
-            disabled={noFieldsSelected}
-            icon="eye-slash"
-            outline
-          />
-        )}
-        {!noDownload && (
-          <Button
-            position="right"
-            type="primary"
-            onClick={() => {
-              setDownloadOpen(!downloadOpen)
-            }
-            }
-            disabled={totalSize <= 0 || noFieldsSelected}
-            loading={downloading}
-            icon="download"
-            disabledTooltip={
-              totalSize >= 1
-                ? "Must have at least one row to download."
-                : undefined
-            }
-            outline
-          />
-        )}
-        {configButtons}
-      </div>
+          </span>,
+          <Pagination
+            className="tol-pagination"
+            size="sm"
+            layout={["skip"]}
+            total={totalSize}
+            activePage={page}
+            onChangePage={setPage}
+            limit={pageSize}
+            onChangeLimit={setPageSize}
+          />,
+          <Pagination
+            className="tol-pagination"
+            prev
+            next
+            first
+            last
+            ellipsis
+            boundaryLinks
+            maxButtons={3}
+            size="sm"
+            layout={["pager"]}
+            total={totalSize}
+            activePage={page}
+            onChangePage={setPage}
+            limit={pageSize}
+            onChangeLimit={setPageSize}
+          />,
+          ...(utilityBarConfig.elements || [])
+        ] : [...(utilityBarConfig.elements || [])]}
+        buttons={[
+          configButton,
+          filterButton,
+          downloadButton,
+          actionDropdown,
+          ...(utilityBarConfig.buttons || []),
+        ]}
+      />
       {noFieldsSelected ? (
         <Placeholder
           message={

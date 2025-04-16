@@ -7,10 +7,7 @@
 import { useState } from "react";
 import DropdownButtons from "../../general/DropdownButtons";
 import NewBoardModal from "./NewBoardModal";
-import {
-  DropdownButtonProps,
-  DropdownMainIconProps,
-} from "../../general/DropdownButtons";
+import { IDropdownButtonConfig, IDropdownMainIconProps } from "../../models";
 import { useHistory } from "react-router-dom";
 import { createBoardAndView } from "../utils";
 import { TsDataSource } from "../../index";
@@ -20,8 +17,8 @@ interface Props {
   subTitle?: string;
   containerStyle?: object;
   menuStyle?: object;
-  dropdownButtons?: DropdownButtonProps[] | DropdownButtonProps;
-  dropdownMainIcon?: DropdownMainIconProps;
+  dropdownButtons?: IDropdownButtonConfig[] | IDropdownButtonConfig;
+  dropdownMainIcon?: IDropdownMainIconProps;
   disabled?: boolean;
   placement?: string;
   customClass?: string;
@@ -39,7 +36,7 @@ function MyBoardsHeader(props: Props) {
   const history = useHistory();
   const ds = new TsDataSource();
 
-  const defaultDropdownButtons: DropdownButtonProps[] = [
+  const defaultDropdownButtons: IDropdownButtonConfig[] = [
     {
       name: "Create New Board",
       action: () => handleOpenModal(),

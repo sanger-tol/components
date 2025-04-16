@@ -17,17 +17,16 @@ import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { normaliseCaps } from "../general/utils";
 import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
-import { Col, Row } from "../index";
 import {
   addSubFilter,
   filterHasUpdated,
   generateFilter,
   resetFiltersBelow,
 } from "../filtering/utils";
+import UtilityBar, { IUtilityBar } from "../general/UtilityBar";
 
 interface Props {
   id: string;
-  title: string;
   endpoint: string;
   baseUrl?: string;
   breakDownBy: string;
@@ -41,6 +40,7 @@ interface Props {
   cumulative?: boolean;
   buttons?: JSX.Element[];
   forceUpdate?: boolean;
+  utilityBarConfig?: IUtilityBar;
 }
 
 function RemoteBarChart(props: Props) {
@@ -55,7 +55,8 @@ function RemoteBarChart(props: Props) {
     zone,
     setZone,
     cumulative,
-    forceUpdate
+    forceUpdate,
+    utilityBarConfig
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const [labels, setLabels] = useState([]);
@@ -116,50 +117,45 @@ function RemoteBarChart(props: Props) {
     setZone({ ...zone });
   }, [barData]);
 
-  const configBar = (
-    <Row>
-      <Col >
-        {props.buttons}
-      </Col>
-    </Row>
-  );
+  const Contents = () => {
 
-  if (errorMessage !== "") {
+    if (errorMessage !== "") {
+      return <Placeholder errorMessage={errorMessage} height={height} />
+    }
+
+    if (warningMessage !== "") {
+      return <Placeholder warningMessage={warningMessage} />
+    }
+
+    if (loading) {
+      return <Placeholder bar height={height} />;
+    }
+
+    //cumulative and undefined setzone negates setBarData
+    const setter = cumulative || setZone === undefined ? undefined : setBarData;
+
     return (
-      <div>
-        {configBar}
-        <Placeholder errorMessage={errorMessage} height={height} />
-      </div>
+      <BarChart
+        {...props}
+        downloadName={normaliseCaps(endpoint)}
+        labels={labels}
+        datasets={datasets}
+        setBarData={setter}
+      />
     );
   }
-
-  if (warningMessage !== "") {
-    return (
-      <div style={{ height: height }}>
-        {configBar}
-        <div style={{height: "100%", paddingBottom: 37 }}>
-          <Placeholder warningMessage={warningMessage} style={{marginTop: 8}}/>
-        </div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return <Placeholder bar height={height} />;
-  }
-
-  //cumulative and undefined setzone negates setBarData
-  const setter = cumulative || setZone === undefined ? undefined : setBarData;
 
   return (
-    <BarChart
-      {...props}
-      downloadName={normaliseCaps(endpoint)}
-      labels={labels}
-      datasets={datasets}
-      setBarData={setter}
-    />
-  );
+    <div style={{ height: height }}>
+      {(warningMessage !== "" || errorMessage !== "") && (
+        <UtilityBar {...utilityBarConfig} />
+      )}
+      <div className="tol-component-contents">
+        {Contents()}
+      </div>
+    </div>
+  )
+
 }
 
 export default RemoteBarChart;

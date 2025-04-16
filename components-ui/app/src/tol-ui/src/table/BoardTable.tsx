@@ -5,9 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import { FieldMeta, initialiseFieldMeta } from "./Field";
-import { BoardFilters, Button, RemoteTable, TsDataSource } from "../index";
+import { BoardFilters, RemoteTable, TsDataSource } from "../index";
 import { useState } from "react";
-import { upsertComponentConfig, IZone } from "../boards/utils";
+import { upsertComponentConfig, IZone, saveTitle } from "../boards/utils";
 
 interface Props {
   id: string;
@@ -45,15 +45,8 @@ function BoardTable(props: Props) {
     upsertComponentConfig(ds, id, config);
   };
 
-  const configButtons = [
+  const boardFilter = [
     <span key="board-table-filter">
-      <Button
-        outline
-        position="right"
-        type="primary"
-        onClick={() => setOpenFilters(true)}
-        icon="filter"
-      />
       <BoardFilters
         endpoint={objectType}
         entityType="component"
@@ -76,7 +69,23 @@ function BoardTable(props: Props) {
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
       forceUpdate={forceUpdate}
-      configButtons={configButtons}
+      utilityBarConfig={{
+        title: {
+          title: props.title,
+          editable: true,
+          onSave: (value: string) => {
+            saveTitle(value, ds, id, "component");
+          }
+        },
+        elements: boardFilter,
+        buttons: [{
+          outline: true,
+          position: "right",
+          type: "primary",
+          onClick: () => setOpenFilters(true),
+          icon: "filter",
+        }],
+      }}
       {...props}
     />
   );

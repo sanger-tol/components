@@ -44,9 +44,9 @@ function SliceByDrawer(props: Props) {
 
   const saveConfig = () => {
     if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes)) {
-        const updatedConfig = generateSunburstConfig(attributes);
-        onConfigSave(updatedConfig);
-        setInitialAttributes(attributes);
+      const updatedConfig = generateSunburstConfig(attributes);
+      onConfigSave(updatedConfig);
+      setInitialAttributes(attributes);
     }
     setOpen(!open);
   };

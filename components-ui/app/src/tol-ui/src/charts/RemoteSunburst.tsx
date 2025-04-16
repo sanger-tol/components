@@ -24,12 +24,13 @@ import {
   filterHasUpdated,
   resetFiltersBelow,
 } from "../filtering/utils";
-import { Button, Col, Row } from "../index";
+import { IUtilityBar } from "../general/UtilityBar";
+import { IButton } from "../general/Button";
+import { UtilityBar } from "../index";
 
 interface Props {
   id: string;
   endpoint: string;
-  title: string;
   sliceBy: string[];
   height?: any;
   baseUrl?: string;
@@ -40,14 +41,13 @@ interface Props {
   zone?: object;
   setZone?: any;
   forceUpdate?: boolean;
-  buttons?: JSX.Element[];
+  utilityBarConfig?: IUtilityBar;
 }
 
 function RemoteSunburst(props: Props) {
   const {
     id,
     endpoint,
-    title,
     sliceBy,
     baseUrl,
     noMini,
@@ -55,7 +55,7 @@ function RemoteSunburst(props: Props) {
     zone,
     setZone,
     forceUpdate,
-    buttons
+    utilityBarConfig
   } = props;
   const wrapperId = "tol-sunburst-wrapper-" + id; // gets width on mount
   const height = props.height !== undefined ? props.height : "100%";
@@ -152,55 +152,6 @@ function RemoteSunburst(props: Props) {
     }
   }, [sliceData]);
 
-  if (errorMessage !== "") {
-    return <Placeholder errorMessage={errorMessage} height={height} />;
-  }
-
-  if (loading) {
-    return (
-      <div id={wrapperId} style={{ height: height }}>
-        <Placeholder pie />
-      </div>
-    );
-  }
-
-  const configBar = (
-    <Row>
-      <Col xs={5}>
-        <p className="header-text">{title}</p>
-      </Col>
-      <Col xs={7}>
-        <div>
-          {buttons}
-          <div>
-            <Button
-              outline
-              position="right"
-              type="primary"
-              onClick={() => {
-                setSubDatasets({});
-                setResetChart(!resetChart);
-              }}
-              icon="undo"
-            />
-          </div>
-          {!noDownload && (
-            <div>
-              <Button
-                outline
-                position="right"
-                type="primary"
-                onClick={() => {
-                  downloadItem(props.id, normaliseCaps(endpoint));
-                }}
-                icon="download"
-              />
-            </div>
-          )}
-        </div>
-      </Col>
-    </Row>
-  );
 
   const headerPadding = 37;
   const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
@@ -210,55 +161,102 @@ function RemoteSunburst(props: Props) {
     : { paddingLeft: 150 };
   mainPlacement["paddingBottom"] = headerPadding;
 
+  const Contents = () => {
+    if (errorMessage !== "") {
+      return <Placeholder errorMessage={errorMessage} />
+    }
+
+    if (loading) {
+      return <Placeholder pie />
+    }
+
+    return (
+      <>
+        {miniActive ? (
+          <div className="sunburst-sub" style={mainPlacement}>
+            {subLoading ? (
+              <Placeholder clear loader />
+            ) : (
+              <Sunburst
+                {...props}
+                id={id}
+                noRefresh
+                noDownload
+                datasets={subDatasets}
+                setSliceData={setter}
+                noLegend={noLegend}
+                height="100%"
+                utilityBarConfig={undefined}
+              />
+            )}
+          </div>
+        ) : null}
+        <div
+          className={miniActive ? "sunburst-mini" : ""}
+          style={
+            miniActive
+              ? { paddingTop: headerPadding }
+              : { height: height, paddingBottom: headerPadding }
+          }
+        >
+          {warningMessage !== "" ?
+            <Placeholder warningMessage={warningMessage} />
+            :
+            <Sunburst
+              {...props}
+              noRefresh
+              noDownload
+              datasets={datasets}
+              downloadName={normaliseCaps(endpoint)}
+              setSliceData={setter}
+              noLegend={miniActive ? true : noLegend}
+              resetChart={resetChart}
+              height="100%"
+              utilityBarConfig={undefined}
+            />
+          }
+        </div>
+      </>
+    )
+  }
+
+  const resetButton: IButton = {
+    outline: true,
+    position: "right",
+    type: "primary",
+    onClick: () => {
+      setSubDatasets({});
+      setResetChart(!resetChart);
+    },
+    icon: "undo",
+  }
+
+  const downloadButton: IButton = !noDownload ? {
+    outline: true,
+    position: "right",
+    type: "primary",
+    onClick: () => {
+      downloadItem(props.id, normaliseCaps(endpoint));
+    },
+    icon: "download",
+  } : {};
+
+
   return (
     <div
       id={wrapperId}
       style={{ height: height, position: miniActive ? "relative" : undefined }}
     >
-      {configBar}
-      {miniActive ? (
-        <div className="sunburst-sub" style={mainPlacement}>
-          {subLoading ? (
-            <Placeholder clear loader />
-          ) : (
-            <Sunburst
-              {...props}
-              id={id}
-              noRefresh
-              noDownload
-              title={undefined} // have to be explicit when auto passing props
-              datasets={subDatasets}
-              setSliceData={setter}
-              noLegend={noLegend}
-              height="100%"
-            />
-          )}
-        </div>
-      ) : null}
-      <div
-        className={miniActive ? "sunburst-mini" : ""}
-        style={
-          miniActive
-            ? { paddingTop: headerPadding }
-            : { height: height, paddingBottom: headerPadding }
-        }
-      >
-        {warningMessage !== "" ?
-          <Placeholder warningMessage={warningMessage} style={{ marginTop: 8 }} />
-          :
-          <Sunburst
-            {...props}
-            noRefresh
-            noDownload
-            title={undefined} // have to be explicit when auto passing props
-            datasets={datasets}
-            downloadName={normaliseCaps(endpoint)}
-            setSliceData={setter}
-            noLegend={miniActive ? true : noLegend}
-            resetChart={resetChart}
-            height="100%"
-          />
-        }
+      <UtilityBar
+        title={utilityBarConfig?.title}
+        buttons={[
+          ...(utilityBarConfig?.buttons || []),
+          resetButton,
+          downloadButton
+        ]}
+      />
+      <div className="tol-component-contents">
+        {Contents()}
       </div>
     </div>
   );

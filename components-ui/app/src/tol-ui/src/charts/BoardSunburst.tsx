@@ -4,11 +4,12 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BoardFilters, Button, Placeholder, Icon, RemoteSunburst, TsDataSource } from "../index";
+import { BoardFilters, Placeholder, Icon, RemoteSunburst, TsDataSource, UtilityBar } from "../index";
 import { useState } from "react";
 import { deepCopy } from "../general/utils";
-import { upsertComponentConfig, IZone } from "../boards/utils";
+import { upsertComponentConfig, IZone, saveTitle } from "../boards/utils";
 import SliceByDrawer from "./SliceByDrawer";
+import { IButton } from "../general/Button";
 
 interface Props {
   id: string;
@@ -35,26 +36,23 @@ function BoardSunburst(props: Props) {
     setForceUpdate(!forceUpdate);
   };
 
-  const configButtons = [
-    <div key="board-sunburst-config">
-      <Button
-        outline
-        position="right"
-        type="primary"
-        onClick={() => setOpenConfig(true)}
-        icon="sliders"
-        className="count-filter-button"
-      />
-      <Button
-        outline
-        position="right"
-        type="primary"
-        onClick={() => setOpenFilters(true)}
-        icon="filter"
-        className="count-filter-button"
-      />
-    </div>,
-  ];
+  const configButton: IButton = {
+    outline: true,
+    position: "right",
+    type: "primary",
+    onClick: () => setOpenConfig(true),
+    icon: "sliders",
+    className: "count-filter-button",
+  }
+
+  const filtersButton: IButton = {
+    outline: true,
+    position: "right",
+    type: "primary",
+    onClick: () => setOpenFilters(true),
+    icon: "filter",
+    className: "count-filter-button",
+  }
 
   return (
     <div style={{ height: "100%" }}>
@@ -79,7 +77,6 @@ function BoardSunburst(props: Props) {
           <RemoteSunburst
             id={id}
             sliceBy={deepCopy(config.sliceBy)}
-            title={props.title}
             endpoint={objectType}
             baseUrl={props.baseUrl}
             zone={props.zone}
@@ -87,14 +84,33 @@ function BoardSunburst(props: Props) {
             forceUpdate={forceUpdate}
             legendPosition="top"
             noMini={size === "sm"}
-            buttons={configButtons}
+            utilityBarConfig={{
+              title: {
+                title: props.title,
+                editable: true,
+                onSave: (value: string) => {
+                  saveTitle(value, ds, id, 'component');
+                }
+              },
+              buttons: [
+                configButton,
+                filtersButton
+              ],
+            }}
           />
         </div>
         :
         <div className="tol-table-full">
-          <div>
-            {configButtons}
-          </div>
+          <UtilityBar
+            title={{
+              title: props.title,
+              editable: true,
+              onSave: (value: string) => {
+                saveTitle(value, ds, id, 'component');
+              }
+            }}
+            buttons={[configButton]}
+          />
           <div style={{ height: '100%', marginTop: '6px' }}>
             <Placeholder
               pie

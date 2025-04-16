@@ -8,41 +8,22 @@
 
 import React from "react";
 import { Dropdown } from "rsuite";
-
+import { IDropdownButtonConfig, IDropdownMainIconProps } from "../models";
 import { Toaster, Message, Button } from "../index";
 
-export interface DropdownButtonProps {
-  name: string;
-  icon?: string;
-  disabled?: boolean;
-  action: (...args: any[]) => void;
-}
-
-export interface DropdownMainIconProps {
-  icon: string;
-  id?: string;
-  type?: string;
-  style?: object;
-  className?: string;
-  disabled?: boolean;
-  position?: string;
-  outline?: boolean;
-  tooltip?: string;
-}
-
-interface Props {
-  mainButtonIcon: DropdownMainIconProps;
+export interface IDropdownButtons {
+  mainButtonIcon: IDropdownMainIconProps;
   placement?: string;
   menuStyle?: object;
   disabled?: boolean;
   showMessages?: boolean;
 
-  dropdownButtons: DropdownButtonProps[] | any;
-  header?: DropdownButtonProps | any;
-  footer?: DropdownButtonProps | any;
+  dropdownButtons: IDropdownButtonConfig[] | any;
+  header?: IDropdownButtonConfig | any;
+  footer?: IDropdownButtonConfig | any;
 }
 
-function DropdownButtons(props: Props) {
+function DropdownButtons(props: IDropdownButtons) {
   const {
     mainButtonIcon,
     placement,
@@ -70,7 +51,7 @@ function DropdownButtons(props: Props) {
     pushMessage(`Action "${actionName}" failed.`, "error");
 
   // shouldn't do this at this level
-  const wrapAction = (action: DropdownButtonProps) => {
+  const wrapAction = (action: IDropdownButtonConfig) => {
     const name = action.name;
 
     return async (...args) => {

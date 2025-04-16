@@ -26,12 +26,13 @@ import {
   resetFiltersBelow,
 } from "../filtering/utils";
 import RowCounter from "./RowCounter";
-import { DropdownButtonProps } from "../general/DropdownButtons";
+import { IDropdownButtonConfig } from "../models";
 import ActionCheckModal from "./actions/ActionCheckModal";
 import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
 import ActionModal from "./actions/ActionModal";
 import { addRemoteActions } from "./actions/utils";
 import { useStateFallback } from "../hooks";
+import { IUtilityBar } from "../general/UtilityBar";
 
 interface Props {
   id: string;
@@ -64,9 +65,9 @@ interface Props {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
-  configButtons?: JSX.Element[];
+  utilityBarConfig?: IUtilityBar;
 
-  actions?: (string | DropdownButtonProps)[];
+  actions?: (string | IDropdownButtonConfig)[];
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
 
@@ -95,7 +96,7 @@ function RemoteTable(props: Props) {
     noDownload,
     rowSelection,
     actions,
-    configButtons,
+    utilityBarConfig,
     debug,
   } = props;
   const ds = new TsDataSource({ baseUrl });
@@ -136,7 +137,7 @@ function RemoteTable(props: Props) {
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  
+
   // row selection
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
     props.selectedRows,
@@ -369,7 +370,7 @@ function RemoteTable(props: Props) {
           name: "View Actions",
           action: () => setActionModalOpen(true),
         }}
-        configButtons={configButtons}
+        utilityBarConfig={utilityBarConfig}
       />
     </div>
   );

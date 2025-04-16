@@ -4,12 +4,13 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BoardFilters, Button, Icon, Placeholder, RemoteBarChart, TsDataSource } from "../index";
+import { BoardFilters, Icon, Placeholder, RemoteBarChart, TsDataSource, UtilityBar } from "../index";
 import { deepCopy } from "../general/utils";
 import { useState } from "react";
-import { upsertComponentConfig, IZone } from "../boards/utils";
+import { upsertComponentConfig, IZone, saveTitle } from "../boards/utils";
 import ChartConfigDrawer from "./ChartConfigDrawer";
-import { IChartConfig } from "../models/Board";
+import { IChartConfig } from "../models";
+import { IButton } from "../general/Button"
 
 interface Props {
   id: string;
@@ -36,26 +37,21 @@ function BoardChart(props: Props) {
     setForceUpdate(!forceUpdate);
   };
 
-  const configButtons = [
-    <div key="board-sunburst-config" >
-      <Button
-        outline
-        position="right"
-        type="primary"
-        onClick={() => setOpenConfig(true)}
-        icon="sliders"
-        className="count-filter-button"
-      />
-      <Button
-        outline
-        position="right"
-        type="primary"
-        onClick={() => setOpenFilters(true)}
-        icon="filter"
-        className="count-filter-button"
-      />
-    </div>,
-  ];
+  const configButton: IButton = {
+    outline: true,
+    position: "right",
+    type: "primary",
+    onClick: () => setOpenConfig(true),
+    icon: "sliders",
+  }
+
+  const filterButton: IButton = {
+    outline: true,
+    position: "right",
+    type: "primary",
+    onClick: () => setOpenFilters(true),
+    icon: "filter",
+  }
 
   return (
     <div style={{ height: "100%" }}>
@@ -80,7 +76,6 @@ function BoardChart(props: Props) {
         <div style={{ height: '100%' }}>
           <RemoteBarChart
             id={id}
-            title={props.title}
             endpoint={objectType}
             baseUrl={props.baseUrl}
             zone={props.zone}
@@ -89,19 +84,37 @@ function BoardChart(props: Props) {
             xAxis={config.xAxis}
             stacked={config.stacked}
             type={config.type}
-            buttons={configButtons}
             forceUpdate={forceUpdate}
+            utilityBarConfig={{
+              title: {
+                title: props.title,
+                editable: true,
+                onSave: (value: string) => {
+                  saveTitle(value, ds, id, 'component');
+                }
+              },
+              buttons: [
+                configButton,
+                filterButton,
+              ],
+            }}
           />
         </div>
         :
         <div className="tol-table-full">
-          <div>
-            {configButtons}
-          </div>
-          <div style={{ height: '100%', marginTop: '6px' }}>
+          <UtilityBar
+            title={{
+              title: props.title,
+              editable: true,
+              onSave: (value: string) => {
+                saveTitle(value, ds, id, 'component');
+              }
+            }}
+            buttons={[configButton]}
+          />
+          <div style={{ height: '100%' }}>
             <Placeholder
               bar
-              height={'100%'}
               message={
                 <>
                   Please add configure to get started. Click <Icon icon="sliders" size="lg" /> to configure.
