@@ -146,9 +146,9 @@ function RemoteBarChart(props: Props) {
   }
 
   return (
-    <div style={{height: height}}>
+    <div style={{ height: height }}>
       {(warningMessage !== "" || errorMessage !== "") && (
-        <UtilityBar {...utilityBarConfig}/>
+        <UtilityBar {...utilityBarConfig} />
       )}
       <div className="tol-component-contents">
         {Contents()}

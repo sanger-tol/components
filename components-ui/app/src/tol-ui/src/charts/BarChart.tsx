@@ -54,7 +54,7 @@ interface Props {
 }
 
 function BarChart(props: Props) {
-  const { id, labels, setBarData, cumulative, utilityBarConfig = {}} = props;
+  const { id, labels, setBarData, cumulative, utilityBarConfig = {} } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const stacked = props.stacked !== undefined ? props.stacked : false;
   const originDatasets = initialiseDatasets(props.datasets);

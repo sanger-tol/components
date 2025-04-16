@@ -152,7 +152,7 @@ function RemoteSunburst(props: Props) {
     }
   }, [sliceData]);
 
-  
+
   const headerPadding = 37;
   const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
   const setter = setZone === undefined ? undefined : setSliceData;
@@ -160,12 +160,12 @@ function RemoteSunburst(props: Props) {
     ? { paddingTop: 150 - headerPadding }
     : { paddingLeft: 150 };
   mainPlacement["paddingBottom"] = headerPadding;
-  
+
   const Contents = () => {
     if (errorMessage !== "") {
       return <Placeholder errorMessage={errorMessage} />
     }
-  
+
     if (loading) {
       return <Placeholder pie />
     }
@@ -239,7 +239,7 @@ function RemoteSunburst(props: Props) {
       downloadItem(props.id, normaliseCaps(endpoint));
     },
     icon: "download",
-  }: {};
+  } : {};
 
 
   return (

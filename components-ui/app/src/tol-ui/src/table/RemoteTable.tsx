@@ -26,7 +26,7 @@ import {
   resetFiltersBelow,
 } from "../filtering/utils";
 import RowCounter from "./RowCounter";
-import  { IDropdownButtonConfig } from "../models";
+import { IDropdownButtonConfig } from "../models";
 import ActionCheckModal from "./actions/ActionCheckModal";
 import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
 import ActionModal from "./actions/ActionModal";
@@ -137,7 +137,7 @@ function RemoteTable(props: Props) {
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  
+
   // row selection
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
     props.selectedRows,
