@@ -19,7 +19,7 @@ import {
   downloadItem,
 } from "./utils";
 import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/utils";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { themeListener } from "../hooks/listeners";
 import { IUtilityBar } from "../general/UtilityBar";
 
@@ -38,6 +38,7 @@ interface Props {
   setSliceData?: any;
   resetChart?: boolean; // a change in this prop will reset the chart
   utilityBarConfig?: IUtilityBar;
+  contents?: ReactNode;
 }
 
 function Sunburst(props: Props) {
@@ -50,7 +51,8 @@ function Sunburst(props: Props) {
     noLabel,
     noRefresh,
     resetChart,
-    utilityBarConfig
+    utilityBarConfig,
+    contents
   } = props;
   const height = props.height ? props.height : "100%";
   const originDatasets = convertSunburstDatasets(props.datasets);
@@ -210,15 +212,17 @@ function Sunburst(props: Props) {
           ]}
         />
       )}
-      <Doughnut
-        id={id}
-        responsive="true"
-        className="tol-sunburst"
-        datasetIdKey="id"
-        // @ts-ignore
-        options={options}
-        data={{ datasets: datasets }}
-      />
+      {contents ? contents : 
+        <Doughnut
+          id={id}
+          responsive="true"
+          className="tol-sunburst"
+          datasetIdKey="id"
+          // @ts-ignore
+          options={options}
+          data={{ datasets: datasets }}
+        />
+      }
     </div>
   );
 }

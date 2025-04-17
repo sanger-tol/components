@@ -36,6 +36,26 @@ function BoardSunburst(props: Props) {
     setForceUpdate(!forceUpdate);
   };
 
+  const Contents = () => {
+    if (!config.sliceBy || config.sliceBy.length <= 0) {
+      return (
+        <div style={{ height: '100%', marginTop: '6px' }}>
+          <Placeholder
+            pie
+            height={'100%'}
+            message={
+              <>
+                Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
+              </>
+            }
+          />
+        </div>
+      )
+    }
+
+    return null;
+  }
+
   const configButton: IButton = {
     outline: true,
     position: "right",
@@ -72,11 +92,11 @@ function BoardSunburst(props: Props) {
         onConfigSave={onModalSave}
         title="Sunburst Configuration"
       />
-      {config.sliceBy && config.sliceBy.length > 0 ?
         <div style={{ height: '100%' }}>
           <RemoteSunburst
             id={id}
             sliceBy={deepCopy(config.sliceBy)}
+            contents={Contents()}
             endpoint={objectType}
             baseUrl={props.baseUrl}
             zone={props.zone}
@@ -99,31 +119,6 @@ function BoardSunburst(props: Props) {
             }}
           />
         </div>
-        :
-        <div className="tol-table-full">
-          <UtilityBar
-            title={{
-              title: props.title,
-              editable: true,
-              onSave: (value: string) => {
-                saveTitle(value, ds, id, 'component');
-              }
-            }}
-            buttons={[configButton]}
-          />
-          <div style={{ height: '100%', marginTop: '6px' }}>
-            <Placeholder
-              pie
-              height={'100%'}
-              message={
-                <>
-                  Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
-                </>
-              }
-            />
-          </div>
-        </div>
-      }
     </div>
   );
 }
