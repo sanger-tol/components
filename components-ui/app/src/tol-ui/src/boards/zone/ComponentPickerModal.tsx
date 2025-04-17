@@ -28,7 +28,7 @@ interface Props {
   ds: TsDataSource;
   currentWidgets: any;
   setCurrentWidgets: any;
-  dataUrl?: string;
+  boardsDs?: TsDataSource;
 }
 
 function ComponentPickerModal(props: Props) {
@@ -41,7 +41,7 @@ function ComponentPickerModal(props: Props) {
     ds,
     currentWidgets,
     setCurrentWidgets,
-    dataUrl,
+    boardsDs,
   } = props;
   const [componentType, setComponentType] = useState("");
   const [widgetType, setWidgetType] = useState("");
@@ -96,7 +96,7 @@ function ComponentPickerModal(props: Props) {
         componentType,
         widgetType,
         zoneId,
-        dataUrl,
+        boardsDs,
       );
       //This adds the component to the zone
       defineComponent(

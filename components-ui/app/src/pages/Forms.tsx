@@ -7,10 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { Schema } from "rsuite";
 import {
-  RemoteAutoComplete,
   MultipleSelect,
-  MultipleSelectFilters,
-  RemoteMultipleSelectFilters,
   Dropzone,
   env,
   CountrySelect,
@@ -324,44 +321,12 @@ function Forms() {
 
   const formComponents = (
     <div>
-      <h4>AutoComplete Input</h4>
-      <RemoteAutoComplete
-        endpoint="species"
-        filter_by="name"
-        display={["family", "genus"]}
-      />
-      <br />
       <h4>Multiple Select</h4>
       <MultipleSelect
         placeholder="Select"
         data={["test1", "test2", "test3"]}
         value={value}
         setValue={setValue}
-      />
-      <br />
-      <h4>Multiple Select Filters</h4>
-      <MultipleSelectFilters
-        value={globalFilters}
-        setValue={setGlobalFilters}
-        filters={filters}
-      />
-      <br />
-      <h4>Remote Multiple Select Filters</h4>
-      <RemoteMultipleSelectFilters
-        endpoint="run_data"
-        fields={[
-          "mlwh_platform_type",
-          "mlwh_run_status",
-          "mlwh_instrument_model",
-        ]}
-        renamedFields={{
-          mlwh_platform_type: "test1",
-          mlwh_run_status: "test2",
-          mlwh_instrument_model: "test3",
-        }}
-        globalFilters={remoteFilters}
-        setGlobalFilters={setRemoteFilters}
-        baseUrl={env.TOL_DATA}
       />
       <br />
       <h4>Country Select</h4>

@@ -11,7 +11,7 @@ import { generateFilter, resetAllFilters } from "../filtering/utils";
 import { useEffectUpdate } from "../hooks";
 import { IFilter } from "../models/Filter";
 import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
-import { TsDataSource } from "../services";
+import { TsDataSource } from "../datasource";
 import {
   BOARD_URL_PREFIX,
   BOARD_ENDPOINTS,
@@ -142,27 +142,30 @@ export function defineZone(
 }
 
 interface ZoneMeta {
-  endpoint: string;
-  baseUrl?: string;
+  ds: TsDataSource;
   zone: IZone;
   setZone: any;
 }
 
 export function useZone(params: {
-  endpoint: string;
-  baseUrl?: string;
-  components: object[];
+  objectType: string;
+  ds: TsDataSource;
+  components: IComponentData[];
   filter?: IFilter;
 }) {
-  const { endpoint, baseUrl, components, filter } = params;
+  const { objectType, ds, components, filter } = params;
   const [zone, setZone] = useState(
-    defineZone(endpoint, components as IComponentData[], filter),
+    defineZone(
+      objectType,
+      components,
+      filter
+    ),
   );
   return {
-    endpoint: endpoint,
-    baseUrl: baseUrl,
-    zone: zone,
-    setZone: setZone,
+    objectType,
+    ds,
+    zone,
+    setZone,
   } as ZoneMeta;
 }
 

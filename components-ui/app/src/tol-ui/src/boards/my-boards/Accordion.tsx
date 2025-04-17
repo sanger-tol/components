@@ -10,11 +10,12 @@ import AccordionHeader from "./AccordionHeader";
 import DropdownButtons from "../../general/DropdownButtons";
 import ConfirmationModal from "../ConfirmationModal";
 import { IDropdownButtonConfig, IDropdownMainIconProps } from "../../models";
-import { httpClient, TsDataSource } from "../../services";
+import { httpClient } from "../../services";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartSimple, faTable } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
 import { BOARD_ENDPOINTS, BoardObjectTypes } from "../../constants";
+import { TsDataSource } from "../..";
 
 interface AccordionBaseProps {
   id: string;

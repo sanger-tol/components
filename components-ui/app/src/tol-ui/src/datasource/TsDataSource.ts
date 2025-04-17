@@ -32,7 +32,7 @@ const detailPromises: IDetailPromises = {};
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
-export default class TsDataSource {
+export class TsDataSource {
   private client: any;
   private baseUrl: string | undefined;
   private apiPrefix: string | undefined;
@@ -45,11 +45,19 @@ export default class TsDataSource {
     this.sourceKey = `${baseUrl || "default"}/${apiPrefix || "default"}`;
   }
 
-  private generateEndpoint(target: string, objectId?: string): string {
+  public generateEndpoint(target?: string, objectId?: string): string {
     const prefix = this.apiPrefix ? `/${this.apiPrefix}` : "";
-    const tar = this.apiPrefix ? target : `/${target}`;
+    const tg = target ? `/${target}` : "";
     const id = objectId ? `/${objectId}` : "";
-    return `${prefix}${tar}${id}`;
+    return `${prefix}${tg}${id}`;
+  }
+
+  public getBaseUrl(): string | null {
+    return this.baseUrl ?? null;
+  }
+
+  public getApiPrefix(): string | null {
+    return this.apiPrefix ?? null;
   }
 
   private relationshipHandler = {

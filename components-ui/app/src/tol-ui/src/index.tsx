@@ -46,17 +46,8 @@ export {
   OrgChart
 } from "./charts";
 
-// deprecated
-export {
-  RemoteAutoComplete,
-  MultipleSelect,
-  MultipleSelectFilters,
-  RemoteMultipleSelectFilters,
-  GlobalMultipleSelect,
-  Status,
-  PopUpMessage as AlertPopUp,
-  Alert,
-} from "./deprecated";
+// datasource
+export { TsDataSource } from "./datasource";
 
 // drag & drop
 export { DnD } from "./dnd";
@@ -74,6 +65,7 @@ export {
   FormTextField,
   FormAllInOne,
   FormCheckboxes,
+  MultipleSelect,
 } from "./forms";
 
 // factories
@@ -135,7 +127,7 @@ export type { HeaderButton, Page, Dropdown, IFilter } from "./models";
 export { Callback, Login, Navigation, ProfileDropdown } from "./nav";
 
 // services
-export { httpClient, TsDataSource, DetailAttribute } from "./services";
+export { httpClient, DetailAttribute } from "./services";
 
 // table
 export { RemoteTable, BoardTable } from "./table";
@@ -143,7 +135,7 @@ export { RemoteTable, BoardTable } from "./table";
 // timelines
 export { Timeline, RemoteTimeline } from "./timeline";
 
-// toL app
+// app
 export { default as TolApp } from "./smart-app/TolApp";
 
 // variables

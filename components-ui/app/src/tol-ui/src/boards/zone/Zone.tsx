@@ -19,21 +19,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { getComponents, saveTitle } from "../utils";
 import ConfirmationModal from "../ConfirmationModal";
+import { TsDataSource } from "../../datasource";
 
 interface Props {
   id: string;
   title: string;
   objectType: string;
+  ds: TsDataSource;
   filter: any;
   onZoneReorder: any;
   deleteZone: any;
-  ds: any;
-  dataUrl?: string;
+  boardsDs: TsDataSource;
 }
 
 function Zone(props: Props) {
-  const { id, objectType, filter, onZoneReorder, deleteZone, ds, dataUrl } =
-    props;
+  const { 
+    id,
+    objectType,
+    ds,
+    filter,
+    onZoneReorder,
+    deleteZone,
+    boardsDs
+  } = props;
   const [draggable, setDraggable] = useState(false);
   const [currentWidgets, setCurrentWidgets] = useState<IWidgets[]>([]);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
@@ -43,8 +51,8 @@ function Zone(props: Props) {
   const [saveLayout, setSaveLayout] = useState(false);
   const [title, setTitle] = useState(props.title);
   const z = useZone({
-    endpoint: objectType,
-    baseUrl: dataUrl,
+    objectType,
+    ds,
     filter: filter,
     components: [],
   });
@@ -235,10 +243,9 @@ function Zone(props: Props) {
               open={open}
               setOpen={setOpen}
               zoneId={id}
-              ds={ds}
               currentWidgets={currentWidgets}
               setCurrentWidgets={setCurrentWidgets}
-              dataUrl={dataUrl}
+              boardsDs={boardsDs}
               {...z}
             />
           </div>

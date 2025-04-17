@@ -174,24 +174,166 @@ const mockClient = () => ({
   },
 });
 
-// Need to adjust to account for the get config
-
+// need to adjust to account for the get config
 const mockDataSource = new TsDataSource({
   baseUrl: "test",
   client: mockClient,
 });
 
+describe("generateEndpoint function", () => {
+  test("Returns empty string when no apiPrefix, target, or objectId", () => {
+    const mockDataSource = new TsDataSource({ baseUrl: "test" });
+    const endpoint = mockDataSource.generateEndpoint();
+    expect(endpoint).toBe("");
+  });
+
+  test("Returns correct endpoint with apiPrefix only", () => {
+    const mockDataSource = new TsDataSource({ baseUrl: "test", apiPrefix: "api" });
+    const endpoint = mockDataSource.generateEndpoint();
+    expect(endpoint).toBe("/api");
+  });
+
+  test("Returns correct endpoint with apiPrefix and target", () => {
+    const mockDataSource = new TsDataSource({ baseUrl: "test", apiPrefix: "api" });
+    const endpoint = mockDataSource.generateEndpoint("target");
+    expect(endpoint).toBe("/api/target");
+  });
+
+  test("Returns correct endpoint with apiPrefix, target, and objectId", () => {
+    const mockDataSource = new TsDataSource({ baseUrl: "test", apiPrefix: "api" });
+    const endpoint = mockDataSource.generateEndpoint("target", "123");
+    expect(endpoint).toBe("/api/target/123");
+  });
+
+  test("Returns correct endpoint with target and objectId but no apiPrefix", () => {
+    const mockDataSource = new TsDataSource({ baseUrl: "test" });
+    const endpoint = mockDataSource.generateEndpoint("target", "123");
+    expect(endpoint).toBe("/target/123");
+  });
+});
+
+describe("Testing getBaseUrl and getApiPrefix functions", () => {
+  test("getBaseUrl returns correct base URL", () => {
+    const mockDataSource = new TsDataSource({ baseUrl: "testBaseUrl", apiPrefix: "testApiPrefix" });
+    const baseUrl = mockDataSource.getBaseUrl();
+    expect(baseUrl).toBe("testBaseUrl");
+  });
+
+  test("getApiPrefix returns correct API prefix", () => {
+    const mockDataSource = new TsDataSource({ baseUrl: "testBaseUrl", apiPrefix: "testApiPrefix" });
+    const apiPrefix = mockDataSource.getApiPrefix();
+    expect(apiPrefix).toBe("testApiPrefix");
+  });
+
+  test("getBaseUrl returns null when no baseUrl is provided", () => {
+    const mockDataSource = new TsDataSource({ apiPrefix: "testApiPrefix" });
+    const baseUrl = mockDataSource.getBaseUrl();
+    expect(baseUrl).toBeNull();
+  });
+
+  test("getApiPrefix returns null when no apiPrefix is provided", () => {
+    const mockDataSource = new TsDataSource({ baseUrl: "testBaseUrl" });
+    const apiPrefix = mockDataSource.getApiPrefix();
+    expect(apiPrefix).toBeNull();
+  });
+});
+
+describe("Testing getConfig function", () => {
+  test("Retries getConfig function 3 times on error", async () => {
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest
+      .spyOn(mockClientInstance, "get")
+      .mockImplementation(() => {
+        throw new Error("simulated error");
+      });
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: "test",
+      client: () => mockClientInstance,
+    });
+
+    try {
+      await mockDataSource.getConfig("errored-url");
+    } catch (error) {
+      // expected to throw after 3 retries
+    }
+
+    expect(clientGetSpy).toHaveBeenCalledTimes(3);
+  });
+});
+
+describe("Testing attributeMetadata function", () => {
+  test("Returns correct attribute metadata", async () => {
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
+    const mockDataSource = new TsDataSource({
+      baseUrl: "test",
+      client: () => mockClientInstance,
+    });
+
+    const dataObject = await mockDataSource.attributeMetadata();
+    const expectedData = attributeMetadataMockData;
+
+    expect(dataObject).toEqual(expectedData);
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("Caches attribute metadata and does not call client again", async () => {
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: "test",
+      client: () => mockClientInstance,
+    });
+
+    await mockDataSource.attributeMetadata();
+    expect(clientGetSpy).toHaveBeenCalledTimes(0);
+  });
+});
+
+describe("Testing relationshipConfig function", () => {
+  test("Returns correct relationship config", async () => {
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: "test",
+      client: () => mockClientInstance,
+    });
+    const expectedData = relationshipConfigMockData;
+
+    const dataObject = await mockDataSource.relationshipConfig();
+    expect(dataObject).toEqual(expectedData);
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("Caches relationship config and does not call client again", async () => {
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: "test",
+      client: () => mockClientInstance,
+    });
+
+    await mockDataSource.relationshipConfig();
+    expect(clientGetSpy).toHaveBeenCalledTimes(0);
+  });
+});
+
+describe("Testing getEntityMeta function", () => {
+  // Add tests for getEntityMeta if needed
+});
+
 describe("Testing getOne function", () => {
   test("ID does not exist in promise", async () => {
-    // Call getOne function
     const dataObject = await mockDataSource.getOne({
       objectType: "species",
       id: "testSpeciesId",
     });
 
     const expectedData = speciesMockData.data.data;
-    // Assert the result
-
     const rawData = {
       id: dataObject?.id,
       type: dataObject?.objectType,
@@ -203,19 +345,14 @@ describe("Testing getOne function", () => {
 
   test("Multiple sequential calls with the same ID", async () => {
     const mockClientInstance = mockClient();
-
-    // Spy on the client to check how many times it is called
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
 
-    // Second call should trigger an HTTP request
     const dataObject = await mockDataSource.getOne({
       objectType: "species",
       id: "testSpeciesId",
     });
 
-    // Assert the result (Should be 0 because the data is already in the cache from the first test)
     expect(clientGetSpy).toHaveBeenCalledTimes(0);
-    // Result should be the same as the data added in the first test due to caching
     const expectedData = speciesMockData.data.data;
     const rawData = {
       id: dataObject?.id,
@@ -239,8 +376,6 @@ describe("Testing getOne function", () => {
     });
 
     const expectedData = sampleMockData.data.data;
-    // Assert the result
-
     const rawData = {
       id: dataObject?.id,
       type: dataObject?.objectType,
@@ -346,100 +481,8 @@ describe("Testing getListPage function", () => {
   });
 });
 
-describe("Testing attributeMetadata function", () => {
-  test("Returns correct attribute metadata", async () => {
-    // Use mockClient to mock the client and initialize TsDataSource
-    const mockClientInstance = mockClient();
-    const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
-    const mockDataSource = new TsDataSource({
-      baseUrl: "test",
-      client: () => mockClientInstance,
-    });
-
-    // Call attributeMetadata function
-    const dataObject = await mockDataSource.attributeMetadata();
-
-    // Expected data
-    const expectedData = attributeMetadataMockData;
-
-    // Assert the result
-    expect(dataObject).toEqual(expectedData);
-    expect(clientGetSpy).toHaveBeenCalledTimes(1);
-  });
-
-  test("Caches attribute metadata and does not call client again", async () => {
-    const mockClientInstance = mockClient();
-    const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
-
-    const mockDataSource = new TsDataSource({
-      baseUrl: "test",
-      client: () => mockClientInstance,
-    });
-
-    await mockDataSource.attributeMetadata();
-    expect(clientGetSpy).toHaveBeenCalledTimes(0);
-  });
-});
-
-describe("Testing relationshipConfig function", () => {
-  test("Returns correct attribute metadata", async () => {
-    // Use mockClient to mock the client and initialize TsDataSource
-    const mockClientInstance = mockClient();
-    const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
-
-    const mockDataSource = new TsDataSource({
-      baseUrl: "test",
-      client: () => mockClientInstance,
-    });
-    const expectedData = relationshipConfigMockData;
-
-    const dataObject = await mockDataSource.relationshipConfig();
-    expect(dataObject).toEqual(expectedData);
-    expect(clientGetSpy).toHaveBeenCalledTimes(1);
-  });
-
-  test("Caches relationship config and does not call client again", async () => {
-    const mockClientInstance = mockClient();
-    const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
-
-    const mockDataSource = new TsDataSource({
-      baseUrl: "test",
-      client: () => mockClientInstance,
-    });
-
-    await mockDataSource.relationshipConfig();
-    expect(clientGetSpy).toHaveBeenCalledTimes(0);
-  });
-});
-
-describe("Testing config functions retry on error", () => {
-  test("Retries getConfig function 3 times on error", async () => {
-    // Use mockClient to mock the client and initialize TsDataSource
-    const mockClientInstance = mockClient();
-    const clientGetSpy = vitest
-      .spyOn(mockClientInstance, "get")
-      .mockImplementation(() => {
-        throw new Error("simulated error");
-      });
-
-    const mockDataSource = new TsDataSource({
-      baseUrl: "test",
-      client: () => mockClientInstance,
-    });
-
-    try {
-      await mockDataSource.getConfig("errored-url");
-    } catch (error) {
-      // expected to throw after 3 retries
-    }
-
-    expect(clientGetSpy).toHaveBeenCalledTimes(3);
-  });
-});
-
 describe("Testing delete method", () => {
   test("Delete correctly removes value", async () => {
-    // Use mockClient to mock the client and initialize TsDataSource
     const mockClientInstance = mockClient();
     const clientDeleteSpy = vitest.spyOn(mockClientInstance, "delete");
 
