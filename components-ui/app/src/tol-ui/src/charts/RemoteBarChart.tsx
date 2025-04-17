@@ -117,7 +117,7 @@ function RemoteBarChart(props: Props) {
     setZone({ ...zone });
   }, [barData]);
 
-  
+
   const Contents = () => {
 
     if (errorMessage !== "") {
@@ -132,13 +132,13 @@ function RemoteBarChart(props: Props) {
       return <Placeholder bar height={height} />;
     }
 
-    return undefined
+    return null;
 
   }
-  
+
   //cumulative and undefined setzone negates setBarData
   const setter = cumulative || setZone === undefined ? undefined : setBarData;
-  
+
   return (
     <div style={{ height: height }}>
       <div className="tol-component-contents">
@@ -153,7 +153,6 @@ function RemoteBarChart(props: Props) {
       </div>
     </div>
   )
-
 }
 
 export default RemoteBarChart;

@@ -79,6 +79,10 @@ function BarChart(props: Props) {
   //making sure legendclick is disabled when cumulative toggle is on
   const isInteractive = !cumulative && isPropDefined(setBarData);
 
+  useEffect(() => {
+    setDatasets(initialiseDatasets(props.datasets));
+  }, [props.datasets]);
+
   // functions for options
   function handleLegendClick(event: any, legendItem: any, legend: any) {
     if (isInteractive) {
@@ -292,14 +296,15 @@ function BarChart(props: Props) {
               downloadItem(props.id, downloadName);
             },
             icon: "download",
+            disabled: datasets.length === 0,
           },
           ...(utilityBarConfig.buttons || []),
         ]}
       />
 
-      {contents !== undefined ? 
+      {contents ?
         contents
-      : 
+        :
         <Bar
           id={id}
           responsive="true"
