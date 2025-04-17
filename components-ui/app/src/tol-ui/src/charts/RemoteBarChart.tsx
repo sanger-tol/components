@@ -117,6 +117,7 @@ function RemoteBarChart(props: Props) {
     setZone({ ...zone });
   }, [barData]);
 
+  
   const Contents = () => {
 
     if (errorMessage !== "") {
@@ -131,27 +132,24 @@ function RemoteBarChart(props: Props) {
       return <Placeholder bar height={height} />;
     }
 
-    //cumulative and undefined setzone negates setBarData
-    const setter = cumulative || setZone === undefined ? undefined : setBarData;
+    return undefined
 
-    return (
-      <BarChart
-        {...props}
-        downloadName={normaliseCaps(endpoint)}
-        labels={labels}
-        datasets={datasets}
-        setBarData={setter}
-      />
-    );
   }
-
+  
+  //cumulative and undefined setzone negates setBarData
+  const setter = cumulative || setZone === undefined ? undefined : setBarData;
+  
   return (
     <div style={{ height: height }}>
-      {(warningMessage !== "" || errorMessage !== "") && (
-        <UtilityBar {...utilityBarConfig} />
-      )}
       <div className="tol-component-contents">
-        {Contents()}
+        <BarChart
+          {...props}
+          contents={Contents()}
+          downloadName={normaliseCaps(endpoint)}
+          labels={labels}
+          datasets={datasets}
+          setBarData={setter}
+        />
       </div>
     </div>
   )

@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -51,10 +51,11 @@ interface Props {
   cumulative?: boolean;
   buttons?: JSX.Element[];
   utilityBarConfig?: IUtilityBar;
+  contents?: ReactNode;
 }
 
 function BarChart(props: Props) {
-  const { id, labels, setBarData, cumulative, utilityBarConfig = {} } = props;
+  const { id, labels, setBarData, cumulative, utilityBarConfig = {}, contents } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const stacked = props.stacked !== undefined ? props.stacked : false;
   const originDatasets = initialiseDatasets(props.datasets);
@@ -266,39 +267,7 @@ function BarChart(props: Props) {
     props.downloadName !== undefined ? props.downloadName : "barchart";
 
   return (
-    <div style={{ height: height, paddingBottom: "20px" }}>
-      {/* <Row>
-        <Col xs={6}>
-          <div className="header-text">{title}</div>
-        </Col>
-        <Col xs={6}>
-          <div className="tol-chart-buttons">
-            {isPropDefined(setBarData) && (
-              <Button
-                outline
-                position="right"
-                type="primary"
-                onClick={() => {
-                  resetItemClickedData(setBarData);
-                  setMaxHeight(null);
-                  setDatasets(originDatasets);
-                }}
-                icon="undo"
-              />
-            )}
-            <Button
-              outline
-              position="right"
-              type="primary"
-              onClick={() => {
-                downloadItem(props.id, downloadName);
-              }}
-              icon="download"
-            />
-            {buttons}
-          </div>
-        </Col>
-      </Row> */}
+    <div style={{ height: height }}>
 
       <UtilityBar
         title={utilityBarConfig.title}
@@ -328,18 +297,22 @@ function BarChart(props: Props) {
         ]}
       />
 
-      <Bar
-        id={id}
-        responsive="true"
-        className="tol-bar-chart"
-        datasetIdKey="id"
-        // @ts-ignore
-        options={options}
-        data={{
-          labels: labels,
-          datasets: datasets,
-        }}
-      />
+      {contents !== undefined ? 
+        contents
+      : 
+        <Bar
+          id={id}
+          responsive="true"
+          className="tol-bar-chart"
+          datasetIdKey="id"
+          // @ts-ignore
+          options={options}
+          data={{
+            labels: labels,
+            datasets: datasets,
+          }}
+        />
+      }
     </div>
   );
 }
