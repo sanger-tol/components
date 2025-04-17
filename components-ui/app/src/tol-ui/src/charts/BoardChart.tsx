@@ -53,6 +53,24 @@ function BoardChart(props: Props) {
     icon: "filter",
   }
 
+  const Content = () => {
+    if (!config.xAxis && !config.breakDownBy) {
+      return (
+        <div style={{ height: '100%' }}>
+          <Placeholder
+            bar
+            message={
+              <>
+                Please add configure to get started. Click <Icon icon="sliders" size="lg" /> to configure.
+              </>
+            }
+          />
+        </div>
+      )
+    }
+    return null;
+  }
+
   return (
     <div style={{ height: "100%" }}>
       <BoardFilters
@@ -72,58 +90,34 @@ function BoardChart(props: Props) {
         config={deepCopy(config)}
         ds={ds}
       />
-      {config.xAxis && config.breakDownBy ?
-        <div style={{ height: '100%' }}>
-          <RemoteBarChart
-            id={id}
-            endpoint={objectType}
-            baseUrl={props.baseUrl}
-            zone={props.zone}
-            setZone={props.setZone}
-            breakDownBy={config.breakDownBy}
-            xAxis={config.xAxis}
-            stacked={config.stacked}
-            type={config.type}
-            forceUpdate={forceUpdate}
-            utilityBarConfig={{
-              title: {
-                title: props.title,
-                editable: true,
-                onSave: (value: string) => {
-                  saveTitle(value, ds, id, 'component');
-                }
-              },
-              buttons: [
-                configButton,
-                filterButton,
-              ],
-            }}
-          />
-        </div>
-        :
-        <div className="tol-table-full">
-          <UtilityBar
-            title={{
+      <div style={{ height: '100%' }}>
+        <RemoteBarChart
+          id={id}
+          content={Content()}
+          endpoint={objectType}
+          baseUrl={props.baseUrl}
+          zone={props.zone}
+          setZone={props.setZone}
+          breakDownBy={config.breakDownBy || ""}
+          xAxis={config.xAxis || ""}
+          stacked={config.stacked || false}
+          type={config.type || ""}
+          forceUpdate={forceUpdate}
+          utilityBarConfig={{
+            title: {
               title: props.title,
               editable: true,
               onSave: (value: string) => {
                 saveTitle(value, ds, id, 'component');
               }
-            }}
-            buttons={[configButton]}
-          />
-          <div style={{ height: '100%' }}>
-            <Placeholder
-              bar
-              message={
-                <>
-                  Please add configure to get started. Click <Icon icon="sliders" size="lg" /> to configure.
-                </>
-              }
-            />
-          </div>
-        </div>
-      }
+            },
+            buttons: [
+              configButton,
+              filterButton,
+            ],
+          }}
+        />
+      </div>
     </div>
   );
 }
