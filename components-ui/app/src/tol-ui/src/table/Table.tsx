@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   Placeholder,
   useEffectUpdate,
@@ -74,6 +74,8 @@ interface Props {
   utilityBarConfig?: IUtilityBar;
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
+
+  contents?: ReactNode;
 }
 
 function Table(props: Props) {
@@ -118,6 +120,7 @@ function Table(props: Props) {
     actions,
     actionsFooter,
     utilityBarConfig = {},
+    contents,
     /* eslint-enable */
   } = props;
 
@@ -354,129 +357,133 @@ function Table(props: Props) {
           ...(utilityBarConfig.buttons || []),
         ]}
       />
-      {noFieldsSelected ? (
-        <Placeholder
-          message={
-            <>
-              Please add a field to get started. Click
-              <FontAwesomeIcon
-                icon={faSliders}
-                size="lg"
-                style={{ padding: "0 10" }}
-              />
-              to configure.
-            </>
-          }
-          height={height}
-        />
-      ) : (
-        <div className="tol-table-inner">
-          <RSTable
-            bordered
-            data={data}
-            headerHeight={!noFilter && filterVisibility ? 85 : 42}
-            loading={loading}
-            sortColumn={sortColumn}
-            sortType={sortType}
-            onSortColumn={handleSortColumn!}
-            rowClassName={(rowData: any) => {
-              if (rowData) {
-                if (bulkSelect) {
-                  return "tol-selected-row disabled";
-                } else if (selectedRows.some((item) => item === rowData.id)) {
-                  return "tol-selected-row";
+      {contents ? contents : 
+        <>
+        {noFieldsSelected ? (
+          <Placeholder
+            message={
+              <>
+                Please add a field to get started. Click
+                <FontAwesomeIcon
+                  icon={faSliders}
+                  size="lg"
+                  style={{ padding: "0 10" }}
+                />
+                to configure.
+              </>
+            }
+            height={height}
+          />
+        ) : (
+          <div className="tol-table-inner">
+            <RSTable
+              bordered
+              data={data}
+              headerHeight={!noFilter && filterVisibility ? 85 : 42}
+              loading={loading}
+              sortColumn={sortColumn}
+              sortType={sortType}
+              onSortColumn={handleSortColumn!}
+              rowClassName={(rowData: any) => {
+                if (rowData) {
+                  if (bulkSelect) {
+                    return "tol-selected-row disabled";
+                  } else if (selectedRows.some((item) => item === rowData.id)) {
+                    return "tol-selected-row";
+                  }
                 }
-              }
-              return "";
-            }}
-            fillHeight
-            wordWrap
-            renderLoading={() => (
-              <Placeholder loader height={height} opacity={0.8} squareCorners />
-            )}
-          >
-            {rowSelection && (
-              <Column key="rowSelection" width={60}>
-                <HeaderCell>
-                  <Checkbox
-                    className="tol-row-selection"
-                    checked={checked}
-                    indeterminate={indeterminate}
-                    disabled={bulkSelect || data.length === 0}
-                    onChange={handleCheckAll}
-                    style={data.length === 0 ? { display: "none" } : {}}
-                  />
-                </HeaderCell>
-                <Cell dataKey="id">
-                  {(rowData: { id: any }) => {
-                    return (
-                      <Checkbox
-                        className="tol-row-selection"
-                        value={rowData.id}
-                        checked={
-                          bulkSelect ||
-                          selectedRows.some((item) => item === rowData.id)
-                        }
-                        disabled={bulkSelect}
-                        onChange={handleCheck}
-                      />
-                    );
-                  }}
-                </Cell>
-              </Column>
-            )}
-            {fieldMeta!.order.active.map((key: string) => {
-              const field = fieldMeta.data[key];
-              const sortable = noSorting ? false : field.sort;
-              const filterable = noFilter ? false : field.filter;
-
-              return (
-                <Column
-                  key={key}
-                  width={field.width}
-                  sortable={sortable}
-                  fixed={field.fixed}
-                >
+                return "";
+              }}
+              fillHeight
+              wordWrap
+              renderLoading={() => (
+                <Placeholder loader height={height} opacity={0.8} squareCorners />
+              )}
+            >
+              {rowSelection && (
+                <Column key="rowSelection" width={60}>
                   <HeaderCell>
-                    {(field.description || field.source) && (
-                      <div className="tol-header-info">
-                        <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint} />
-                      </div>
-                    )}
-                    <p className="tol-header-text">
-                      {field.source && (
-                        <span
-                          className="inline-source"
-                          style={{
-                            backgroundColor: getSourceColour(field.source),
-                          }}
-                        />
-                      )}
-                      {field.rename}
-                    </p>
-                    {filterable && (
-                      <span
-                        className={
-                          filterVisibility ? "tol-filter" : "tol-filter-hide"
-                        }
-                      >
-                        <Filter
-                          attribute={key}
-                          rename={field.rename!}
-                          type={field.filter as IFilter}
-                          componentId={id}
-                          {...props}
-                        />
-                      </span>
-                    )}
+                    <Checkbox
+                      className="tol-row-selection"
+                      checked={checked}
+                      indeterminate={indeterminate}
+                      disabled={bulkSelect || data.length === 0}
+                      onChange={handleCheckAll}
+                      style={data.length === 0 ? { display: "none" } : {}}
+                    />
                   </HeaderCell>
-                  <Cell dataKey={key} />
+                  <Cell dataKey="id">
+                    {(rowData: { id: any }) => {
+                      return (
+                        <Checkbox
+                          className="tol-row-selection"
+                          value={rowData.id}
+                          checked={
+                            bulkSelect ||
+                            selectedRows.some((item) => item === rowData.id)
+                          }
+                          disabled={bulkSelect}
+                          onChange={handleCheck}
+                        />
+                      );
+                    }}
+                  </Cell>
                 </Column>
-              );
-            })}
-          </RSTable>
-        </div>
-      )}
+              )}
+              {fieldMeta!.order.active.map((key: string) => {
+                const field = fieldMeta.data[key];
+                const sortable = noSorting ? false : field.sort;
+                const filterable = noFilter ? false : field.filter;
+  
+                return (
+                  <Column
+                    key={key}
+                    width={field.width}
+                    sortable={sortable}
+                    fixed={field.fixed}
+                  >
+                    <HeaderCell>
+                      {(field.description || field.source) && (
+                        <div className="tol-header-info">
+                          <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint} />
+                        </div>
+                      )}
+                      <p className="tol-header-text">
+                        {field.source && (
+                          <span
+                            className="inline-source"
+                            style={{
+                              backgroundColor: getSourceColour(field.source),
+                            }}
+                          />
+                        )}
+                        {field.rename}
+                      </p>
+                      {filterable && (
+                        <span
+                          className={
+                            filterVisibility ? "tol-filter" : "tol-filter-hide"
+                          }
+                        >
+                          <Filter
+                            attribute={key}
+                            rename={field.rename!}
+                            type={field.filter as IFilter}
+                            componentId={id}
+                            {...props}
+                          />
+                        </span>
+                      )}
+                    </HeaderCell>
+                    <Cell dataKey={key} />
+                  </Column>
+                );
+              })}
+            </RSTable>
+          </div>
+        )}
+        </>
+      }
     </div>
   );
 }

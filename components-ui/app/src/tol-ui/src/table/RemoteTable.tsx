@@ -271,12 +271,15 @@ function RemoteTable(props: Props) {
       });
   };
 
-  if (error !== "") {
-    return <Placeholder errorMessage={error} height={height} />;
-  }
 
-  if (initialLoad) {
-    return <Placeholder loader height={height} />;
+  const Contents = () => {
+    if (error !== "") {
+      return <Placeholder errorMessage={error} height={height} />;
+    }
+  
+    if (initialLoad) {
+      return <Placeholder loader height={height} />;
+    }
   }
 
   const completeAction = async (actionName: string, ids: string[]) => {
@@ -326,6 +329,7 @@ function RemoteTable(props: Props) {
       />
       <Table
         id={id}
+        contents={Contents()}
         data={data}
         fieldMeta={fieldMeta!}
         height={height}
