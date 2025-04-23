@@ -24,6 +24,7 @@ interface Props {
   zone?: object;
   setZone?: any;
   utilityBarConfig?: IUtilityBar;
+  title?: string;
 }
 
 function RemoteCount(props: Props) {
