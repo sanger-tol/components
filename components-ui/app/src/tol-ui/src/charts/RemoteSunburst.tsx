@@ -42,6 +42,7 @@ interface Props {
   setZone?: any;
   forceUpdate?: boolean;
   utilityBarConfig?: IUtilityBar;
+  title?: string;
 }
 
 function RemoteSunburst(props: Props) {

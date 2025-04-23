@@ -41,6 +41,7 @@ interface Props {
   buttons?: JSX.Element[];
   forceUpdate?: boolean;
   utilityBarConfig?: IUtilityBar;
+  title?: string;
 }
 
 function RemoteBarChart(props: Props) {
