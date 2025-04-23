@@ -19,7 +19,7 @@ import {
   downloadItem,
 } from "./utils";
 import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/utils";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { themeListener } from "../hooks/listeners";
 import { IUtilityBar } from "../general/UtilityBar";
 
@@ -57,6 +57,10 @@ function Sunburst(props: Props) {
   const height = props.height ? props.height : "100%";
   const originDatasets = convertSunburstDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
+
+  useEffect(() => {
+    setDatasets(convertSunburstDatasets(props.datasets));
+  }, [props.datasets]);
 
   // resets chart on any change
   useEffectUpdate(() => {
