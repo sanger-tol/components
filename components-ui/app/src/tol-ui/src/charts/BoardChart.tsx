@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BoardFilters, Icon, Placeholder, RemoteBarChart, TsDataSource, UtilityBar } from "../index";
+import { BoardFilters, Icon, Placeholder, RemoteBarChart, TsDataSource } from "../index";
 import { deepCopy } from "../general/utils";
 import { useState } from "react";
 import { upsertComponentConfig, IZone, saveTitle } from "../boards/utils";
