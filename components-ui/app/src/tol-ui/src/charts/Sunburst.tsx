@@ -59,7 +59,7 @@ function Sunburst(props: Props) {
   const [datasets, setDatasets] = useState(originDatasets);
 
   useEffect(() => {
-    setDatasets(convertSunburstDatasets(props.datasets));
+    setDatasets(originDatasets);
   }, [props.datasets]);
 
   // resets chart on any change
