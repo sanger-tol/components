@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { FieldMetaData, FieldMeta } from "./Field";
 import { httpClient } from "../services/http/httpClient";
 import {
@@ -67,6 +67,7 @@ interface Props {
   noDownload?: boolean;
   rowSelection?: boolean;
   utilityBarConfig?: IUtilityBar;
+  contents?: ReactNode;
 
   actions?: (string | IDropdownButtonConfig)[];
   selectedRows?: string[];
@@ -99,6 +100,7 @@ function RemoteTable(props: Props) {
     actions,
     utilityBarConfig,
     debug,
+    contents
   } = props;
   const ds = new TsDataSource({ baseUrl });
   const height = props.height !== undefined ? props.height : "100%";
@@ -331,7 +333,7 @@ function RemoteTable(props: Props) {
       />
       <Table
         id={id}
-        contents={Contents()}
+        contents={contents ? contents : Contents()}
         data={data}
         fieldMeta={fieldMeta!}
         height={height}

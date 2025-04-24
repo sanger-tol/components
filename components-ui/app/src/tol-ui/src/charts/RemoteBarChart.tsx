@@ -41,7 +41,7 @@ interface Props {
   buttons?: JSX.Element[];
   forceUpdate?: boolean;
   utilityBarConfig?: IUtilityBar;
-  content?: ReactNode;
+  contents?: ReactNode;
 }
 
 function RemoteBarChart(props: Props) {
@@ -57,7 +57,7 @@ function RemoteBarChart(props: Props) {
     setZone,
     cumulative,
     forceUpdate,
-    content
+    contents
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const [labels, setLabels] = useState([]);
@@ -78,7 +78,7 @@ function RemoteBarChart(props: Props) {
   }, [zone]);
 
   useEffectUpdate(() => {
-    if (!content) { // This is to stop calls being made when the bar chart is not visible
+    if (!contents) { // This is to stop calls being made when the bar chart is not visible
       setLoading(true);
       const aggs = generateChartAgg(breakDownBy, xAxis, type);
       httpClient()
@@ -147,7 +147,7 @@ function RemoteBarChart(props: Props) {
       <div className="tol-component-contents">
         <BarChart
           {...props}
-          contents={content ? content : Contents()}
+          contents={contents ? contents : Contents()}
           downloadName={normaliseCaps(endpoint)}
           labels={labels}
           datasets={datasets}

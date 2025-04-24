@@ -94,7 +94,7 @@ function RemoteSunburst(props: Props) {
         .post("/" + endpoint + ":aggregations", aggs, {
           baseURL: baseUrl,
           params: {
-            filter: filter,
+            filter: generateFilter(zone, id, true),
           },
         })
         .then((res: any) => {

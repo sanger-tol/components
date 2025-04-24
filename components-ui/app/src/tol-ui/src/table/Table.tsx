@@ -304,7 +304,6 @@ function Table(props: Props) {
       <UtilityBar
         title={utilityBarConfig.title}
         elements={(!noPagination && fieldMeta.order.active.length > 0) ? [
-          <>{rowCounter ? rowCounter : totalSize}</>,
           <span className="tol-page-size">
             <SelectPicker
               value={pageSize}
@@ -347,6 +346,7 @@ function Table(props: Props) {
             limit={pageSize}
             onChangeLimit={setPageSize}
           />,
+          <>{rowCounter ? rowCounter : totalSize}</>,
           ...(utilityBarConfig.elements || [])
         ] : [...(utilityBarConfig.elements || [])]}
         buttons={[

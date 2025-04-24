@@ -53,7 +53,7 @@ function BoardChart(props: Props) {
     icon: "filter",
   }
 
-  const Content = () => {
+  const Contents = () => {
     if (!config.xAxis && !config.breakDownBy) {
       return (
         <div style={{ height: '100%' }}>
@@ -93,7 +93,7 @@ function BoardChart(props: Props) {
       <div style={{ height: '100%' }}>
         <RemoteBarChart
           id={id}
-          content={Content()}
+          contents={Contents()}
           endpoint={objectType}
           baseUrl={props.baseUrl}
           zone={props.zone}
