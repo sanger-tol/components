@@ -37,8 +37,8 @@ function UtilityBar(props: IUtilityBar) {
           if (button) {
             if ('dropdownButtons' in button) {
               return (
-                <div style={{float: 'right', marginLeft: '6px'}}>
-                  <DropdownButtons key={index} {...button} />
+                <div style={{float: 'right', marginLeft: '6px'}} key={index}>
+                  <DropdownButtons {...button} />
                 </div>
               )
             }

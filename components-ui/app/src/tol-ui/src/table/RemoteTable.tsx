@@ -16,6 +16,7 @@ import {
   structureFieldMeta,
   getTableConfigLocalStorage,
 } from "./utils";
+import { initialiseFieldMeta } from "./Field";
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
@@ -104,8 +105,8 @@ function RemoteTable(props: Props) {
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(
-    props.fieldMeta
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(
+    props.fieldMeta ?? initialiseFieldMeta()
   );
 
   // pagination
@@ -276,10 +277,11 @@ function RemoteTable(props: Props) {
     if (error !== "") {
       return <Placeholder errorMessage={error} height={height} />;
     }
-  
     if (initialLoad) {
       return <Placeholder loader height={height} />;
     }
+
+    return null;
   }
 
   const completeAction = async (actionName: string, ids: string[]) => {

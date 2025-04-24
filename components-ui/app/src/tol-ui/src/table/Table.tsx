@@ -359,7 +359,7 @@ function Table(props: Props) {
       />
       {contents ? contents : 
         <>
-        {noFieldsSelected ? (
+        {(noFieldsSelected) ? (
           <Placeholder
             message={
               <>
