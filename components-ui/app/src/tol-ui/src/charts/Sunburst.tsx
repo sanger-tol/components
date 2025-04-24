@@ -186,7 +186,7 @@ function Sunburst(props: Props) {
   };
 
   // adding component sizing
-  const style = { height: height, paddingBottom: '37px' };
+  const style = { height: height };
 
   return (
     <div style={style}>
