@@ -75,6 +75,7 @@
   .tol-table {
     display: flex;
     flex-direction: column;
+    position: relative;
 
     .tol-table-inner {
       flex: 1;
@@ -373,8 +374,10 @@
   border-radius: 6px;
   background-color: var(--tol-grey-translucent);
   position: absolute;
-  bottom: 18px;
-  right: 18px;
+  bottom: 6px;
+  right: 6px;
+  top: auto;
+  left: auto;
   padding: 4px 8px;
   backdrop-filter: blur(8px);
 }
