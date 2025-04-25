@@ -160,14 +160,6 @@
       }
     }
 
-    // number of rows total
-    .tol-total {
-      float: left;
-      margin-top: 3px;
-      margin-left: 4px;
-      margin-right: 12px;
-    }
-
     // rows per page
     .tol-page-size {
       float: left;
@@ -374,6 +366,17 @@
     background-color: var(--tol-bg-dark) !important;
     overflow: auto;
   }
+}
+
+.tol-table-row-counter {
+  z-index: 2;
+  border-radius: 6px;
+  background-color: var(--tol-grey-translucent);
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  padding: 4px 8px;
+  backdrop-filter: blur(8px);
 }
 
 // pagination buttons on smaller devices

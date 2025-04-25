@@ -347,7 +347,6 @@ function Table(props: Props) {
             boundaryLinks
             maxButtons={mediumBreakpoint ? 1 : 3}
           />,
-          // <>{rowCounter ? rowCounter : totalSize}</>,
           ...(utilityBarConfig.elements || [])
         ] : [...(utilityBarConfig.elements || [])]}
         buttons={[
@@ -376,6 +375,10 @@ function Table(props: Props) {
             height={height}
           />
         ) : (
+          <>
+          <div className="tol-table-row-counter">
+            {rowCounter ? rowCounter : totalSize}
+          </div>
           <div className="tol-table-inner">
             <RSTable
               bordered
@@ -482,6 +485,7 @@ function Table(props: Props) {
               })}
             </RSTable>
           </div>
+          </>
         )}
         </>
       }
