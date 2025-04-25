@@ -282,7 +282,7 @@ function RemoteTable(props: Props) {
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
     await ds
-      .custom(`/local/${ACTION_ENDPOINTS.RUN_ACTION}`, ApiMethods.POST as string, {
+      .custom(ACTION_ENDPOINTS.RUN_ACTION, ApiMethods.POST as string, {
         ids: ids,
         action_name: actionName,
         object_type: endpoint,
