@@ -43,6 +43,7 @@
 
   .tol-inline-edit {
     color: var(--tol-primary);
+    width: 50%;
   }
 }
 
@@ -234,13 +235,28 @@
   font-size: 14px;
 }
 
-.tol-inline-edit.rs-inline-edit{
+.tol-inline-edit.rs-inline-edit {
   font-weight: bolder !important;
+  display: block;
+  margin-right: 10px;
   .rs-plaintext {
-    max-width: 100px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+}
+
+.tol-inline-edit-sm {
+  @extend .tol-inline-edit;
+  .rs-plaintext {
+    max-width: 150px;
+  }
+}
+
+.tol-inline-edit-md {
+  @extend .tol-inline-edit;
+  .rs-plaintext {
+    max-width: 250px;
   }
 }
 

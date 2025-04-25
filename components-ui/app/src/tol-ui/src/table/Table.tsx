@@ -124,14 +124,14 @@ function Table(props: Props) {
     contents,
     /* eslint-enable */
   } = props;
-  const wrapperId = "tol-table-wrapper-" + id; // gets width on mount
+  const wrapperId = "tol-table-wrapper-" + id;
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("!");
-  const [smallBreakpoint, setSmallBreakpoint] = useState(false);
-  const [mediumBreakpoint, setMediumBreakpoint] = useState(false);
+  const [smallBreakpoint, setSmallBreakpoint] = useState(true);
+  const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
   noFilter = !!noFilter;
 
   // row selection
@@ -170,8 +170,10 @@ function Table(props: Props) {
 
   resizeListener(() => {
     const width = document.getElementById(wrapperId)?.offsetWidth;
-    if (width !== undefined) setSmallBreakpoint(width < 500);
-    if (width !== undefined) setMediumBreakpoint(width < 800);
+    if (width !== undefined) {
+      setSmallBreakpoint(width < 800);
+      setMediumBreakpoint(width < 1000);
+    }
   });
 
   useEffect(() => {
@@ -311,10 +313,11 @@ function Table(props: Props) {
           </>
         )*/}
       <UtilityBar
+        id={id}
         title={utilityBarConfig.title}
         elements={(!noPagination && fieldMeta.order.active.length > 0) ? [
           <span className="tol-page-size">
-            {!mediumBreakpoint && 
+            {!smallBreakpoint && 
               <SelectPicker
               value={pageSize}
               onChange={setPageSize}
@@ -333,7 +336,7 @@ function Table(props: Props) {
           <Pagination
             className="tol-pagination"
             size="sm"
-            layout={mediumBreakpoint ? ["pager"] : ["skip", "pager"]}
+            layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
             total={totalSize}
             activePage={page}
             onChangePage={setPage}

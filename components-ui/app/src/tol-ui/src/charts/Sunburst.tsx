@@ -192,6 +192,7 @@ function Sunburst(props: Props) {
     <div style={style}>
       {(utilityBarConfig != undefined) && (
         <UtilityBar
+          id={id}
           title={utilityBarConfig.title}
           buttons={[
             {

@@ -59,7 +59,7 @@ function RemoteSunburst(props: Props) {
     utilityBarConfig,
     contents
   } = props;
-  const wrapperId = "tol-sunburst-wrapper-" + id; // gets width on mount
+  const wrapperId = "tol-sunburst-wrapper-" + id;
   const height = props.height !== undefined ? props.height : "100%";
   const [datasets, setDatasets] = useState({});
   const [subDatasets, setSubDatasets] = useState({});
@@ -204,6 +204,7 @@ function RemoteSunburst(props: Props) {
       style={{ height: height, position: miniActive ? "relative" : undefined }}
     >
       <UtilityBar
+        id={id}
         title={utilityBarConfig?.title}
         buttons={[
           ...(utilityBarConfig?.buttons || []),

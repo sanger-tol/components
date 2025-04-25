@@ -13,9 +13,16 @@ export interface IInlineEdit {
   editable?: boolean;
   onSave?: (value: string) => void;
   onChange?: (value: string) => void;
+  size?: "sm" | "md";
 }
 
-function InlineEdit({ title, onSave, onChange, editable }: IInlineEdit) {
+function InlineEdit({
+  title,
+  onSave,
+  onChange,
+  editable,
+  size = "md"
+}: IInlineEdit) {
   const [editedTitle, setEditedTitle] = useState(title);
   const [prevTitle, setPrevTitle] = useState(title);
   const [errorMessage, setErrorMessage] = useState("");
@@ -49,7 +56,7 @@ function InlineEdit({ title, onSave, onChange, editable }: IInlineEdit) {
     <div>
       <RSInlineEdit
         showControls={false}
-        className="tol-inline-edit"
+        className={`tol-inline-edit-${size}`}
         value={editedTitle}
         disabled={!editable}
         onChange={(newValue) => {

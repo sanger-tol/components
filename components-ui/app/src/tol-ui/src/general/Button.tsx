@@ -53,11 +53,15 @@ function Button(props: IButton) {
     <>
       {visible &&
         <RsButton
+          id={id}
           onClick={onClick}
           disabled={disabled || loading}
           active={active}
-          className={`icon-button-${type || "primary"}-${size || "md"}${outlineClass} ${className}`}
-          id={id}
+          className={
+            `icon-button-${type || 
+            "primary"}-${size || 
+            "md"}${outlineClass} ${className ? className : ""}`
+          }
         >
           {loading ? (
             loader

@@ -101,6 +101,7 @@ export {
   ObjectDetail,
   RemoteCount,
   HoverOverlay,
+  ClickOverlay,
   formatDate,
   InlineEdit,
   Drawer,

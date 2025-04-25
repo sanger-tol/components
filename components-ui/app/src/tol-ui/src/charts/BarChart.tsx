@@ -274,6 +274,7 @@ function BarChart(props: Props) {
     <div style={{ height: height }}>
 
       <UtilityBar
+        id={id}
         title={utilityBarConfig.title}
         buttons={[
           {
