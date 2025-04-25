@@ -49,7 +49,7 @@ function InlineEdit({ title, onSave, onChange, editable }: IInlineEdit) {
     <div>
       <RSInlineEdit
         showControls={false}
-        className="inline-edit"
+        className="tol-inline-edit"
         value={editedTitle}
         disabled={!editable}
         onChange={(newValue) => {

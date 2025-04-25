@@ -12,6 +12,7 @@ import {
   DownloadModal,
   EntityMetaToolTip,
   UtilityBar,
+  resizeListener,
 } from "../index";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -123,12 +124,14 @@ function Table(props: Props) {
     contents,
     /* eslint-enable */
   } = props;
-
+  const wrapperId = "tol-table-wrapper-" + id; // gets width on mount
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("!");
+  const [smallBreakpoint, setSmallBreakpoint] = useState(false);
+  const [mediumBreakpoint, setMediumBreakpoint] = useState(false);
   noFilter = !!noFilter;
 
   // row selection
@@ -164,6 +167,12 @@ function Table(props: Props) {
       : selectedRows.filter((item) => item !== value);
     setSelectedRows(keys);
   };
+
+  resizeListener(() => {
+    const width = document.getElementById(wrapperId)?.offsetWidth;
+    if (width !== undefined) setSmallBreakpoint(width < 500);
+    if (width !== undefined) setMediumBreakpoint(width < 800);
+  });
 
   useEffect(() => {
     success &&
@@ -252,7 +261,7 @@ function Table(props: Props) {
   } : undefined;
 
   return (
-    <div style={{ height: height }} className="tol-table">
+    <div style={{ height: height }} className="tol-table" id={wrapperId}>
       <DownloadModal
         size="sm"
         open={downloadOpen}
@@ -305,7 +314,8 @@ function Table(props: Props) {
         title={utilityBarConfig.title}
         elements={(!noPagination && fieldMeta.order.active.length > 0) ? [
           <span className="tol-page-size">
-            <SelectPicker
+            {!mediumBreakpoint && 
+              <SelectPicker
               value={pageSize}
               onChange={setPageSize}
               size="sm"
@@ -318,35 +328,26 @@ function Table(props: Props) {
                 { label: "250", value: 250 },
               ]}
             />
+            }
           </span>,
           <Pagination
             className="tol-pagination"
             size="sm"
-            layout={["skip"]}
+            layout={mediumBreakpoint ? ["pager"] : ["skip", "pager"]}
             total={totalSize}
             activePage={page}
             onChangePage={setPage}
             limit={pageSize}
             onChangeLimit={setPageSize}
-          />,
-          <Pagination
-            className="tol-pagination"
             prev
             next
-            first
-            last
-            ellipsis
+            first={!mediumBreakpoint}
+            last={!mediumBreakpoint}
+            ellipsis={!mediumBreakpoint}
             boundaryLinks
-            maxButtons={3}
-            size="sm"
-            layout={["pager"]}
-            total={totalSize}
-            activePage={page}
-            onChangePage={setPage}
-            limit={pageSize}
-            onChangeLimit={setPageSize}
+            maxButtons={mediumBreakpoint ? 1 : 3}
           />,
-          <>{rowCounter ? rowCounter : totalSize}</>,
+          // <>{rowCounter ? rowCounter : totalSize}</>,
           ...(utilityBarConfig.elements || [])
         ] : [...(utilityBarConfig.elements || [])]}
         buttons={[
