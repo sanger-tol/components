@@ -80,6 +80,7 @@ function Board(props: Props) {
               saveTitle(newTitle, ds, boardId, "board");
             }
           }}
+          editable
         />
       </div>
       <View
