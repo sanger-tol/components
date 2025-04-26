@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ClickOverlay, InlineEdit } from '.'
 import { IInlineEdit } from './InlineEdit'
 import { IButton } from './Button'
@@ -13,7 +13,7 @@ import { Button, DropdownButtons, resizeListener } from '../'
 
 
 export interface IUtilityBar {
-  id: string;
+  id?: string;
   title?: IInlineEdit;
   buttons?: (IButton | IDropdownButtons | undefined)[];
   elements?: JSX.Element[];

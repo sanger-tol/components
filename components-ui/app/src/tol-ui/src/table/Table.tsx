@@ -120,7 +120,7 @@ function Table(props: Props) {
     rowSelection,
     actions,
     actionsFooter,
-    utilityBarConfig = {},
+    utilityBarConfig = {} as IUtilityBar,
     contents,
     /* eslint-enable */
   } = props;
