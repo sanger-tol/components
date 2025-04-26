@@ -75,6 +75,7 @@
   .tol-table {
     display: flex;
     flex-direction: column;
+    position: relative;
 
     .tol-table-inner {
       flex: 1;
@@ -158,14 +159,6 @@
       .rs-table-cell {
         background-color: transparent !important;
       }
-    }
-
-    // number of rows total
-    .tol-total {
-      float: left;
-      margin-top: 3px;
-      margin-left: 4px;
-      margin-right: 12px;
     }
 
     // rows per page
@@ -374,6 +367,19 @@
     background-color: var(--tol-bg-dark) !important;
     overflow: auto;
   }
+}
+
+.tol-table-row-counter {
+  z-index: 2;
+  border-radius: 6px;
+  background-color: var(--tol-grey-translucent);
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  top: auto;
+  left: auto;
+  padding: 4px 8px;
+  backdrop-filter: blur(8px);
 }
 
 // pagination buttons on smaller devices

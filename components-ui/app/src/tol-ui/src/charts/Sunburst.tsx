@@ -19,7 +19,7 @@ import {
   downloadItem,
 } from "./utils";
 import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/utils";
-import { useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { themeListener } from "../hooks/listeners";
 import { IUtilityBar } from "../general/UtilityBar";
 
@@ -38,6 +38,7 @@ interface Props {
   setSliceData?: any;
   resetChart?: boolean; // a change in this prop will reset the chart
   utilityBarConfig?: IUtilityBar;
+  contents?: ReactNode;
 }
 
 function Sunburst(props: Props) {
@@ -50,11 +51,16 @@ function Sunburst(props: Props) {
     noLabel,
     noRefresh,
     resetChart,
-    utilityBarConfig
+    utilityBarConfig,
+    contents
   } = props;
   const height = props.height ? props.height : "100%";
   const originDatasets = convertSunburstDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
+
+  useEffect(() => {
+    setDatasets(originDatasets);
+  }, [props.datasets]);
 
   // resets chart on any change
   useEffectUpdate(() => {
@@ -180,12 +186,13 @@ function Sunburst(props: Props) {
   };
 
   // adding component sizing
-  const style = { height: height, paddingBottom: '37px' };
+  const style = { height: height };
 
   return (
     <div style={style}>
       {(utilityBarConfig != undefined) && (
         <UtilityBar
+          id={id}
           title={utilityBarConfig.title}
           buttons={[
             {
@@ -210,15 +217,17 @@ function Sunburst(props: Props) {
           ]}
         />
       )}
-      <Doughnut
-        id={id}
-        responsive="true"
-        className="tol-sunburst"
-        datasetIdKey="id"
-        // @ts-ignore
-        options={options}
-        data={{ datasets: datasets }}
-      />
+      {contents ? contents : 
+        <Doughnut
+          id={id}
+          responsive="true"
+          className="tol-sunburst"
+          datasetIdKey="id"
+          // @ts-ignore
+          options={options}
+          data={{ datasets: datasets }}
+        />
+      }
     </div>
   );
 }

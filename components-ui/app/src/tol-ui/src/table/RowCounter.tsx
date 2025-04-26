@@ -54,7 +54,7 @@ function RowCounter(props: Props) {
 
   if (count === null) return <></>;
 
-  return <span className="tol-total">{addTotalText(count)}</span>;
+  return <span>{addTotalText(count)}</span>;
 }
 
 export default RowCounter;

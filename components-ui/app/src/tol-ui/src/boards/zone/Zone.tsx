@@ -207,6 +207,7 @@ function Zone(props: Props) {
                 setTitle(newTitle);
               }
             }}
+            editable
           />
         </Col>
         <Col>

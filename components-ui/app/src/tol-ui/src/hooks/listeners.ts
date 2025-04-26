@@ -15,15 +15,13 @@ export function themeListener(fn) {
     });
 }
 
-export function resizeListener(fn) {
+export function resizeListener(fn: () => void): void {
   useEffect(() => {
     fn();
-  }, []);
-  window.addEventListener(
-    "resize",
-    () => {
-      return fn();
-    },
-    true,
-  );
+    const handleResize = () => fn();
+    window.addEventListener("resize", handleResize, true);
+    return () => {
+      window.removeEventListener("resize", handleResize, true);
+    };
+  }, [fn]);
 }

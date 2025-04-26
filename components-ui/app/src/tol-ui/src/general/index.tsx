@@ -9,6 +9,7 @@ export { default as Header } from "./Header";
 export { default as CentreContents } from "./CentreContents";
 export { default as InfoTooltip } from "./InfoTooltip";
 export { default as HoverOverlay } from "./HoverOverlay";
+export { default as ClickOverlay } from "./ClickOverlay";
 export { default as Modal } from "./Modal";
 export { default as Placeholder } from "./Placeholder";
 export { default as Widgets } from "./Widgets";

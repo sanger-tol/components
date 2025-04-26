@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import { httpClient } from "../services/http/httpClient";
 import {
   aggsToSunburstData,
@@ -42,6 +42,7 @@ interface Props {
   setZone?: any;
   forceUpdate?: boolean;
   utilityBarConfig?: IUtilityBar;
+  contents?: ReactNode;
 }
 
 function RemoteSunburst(props: Props) {
@@ -55,9 +56,10 @@ function RemoteSunburst(props: Props) {
     zone,
     setZone,
     forceUpdate,
-    utilityBarConfig
+    utilityBarConfig,
+    contents
   } = props;
-  const wrapperId = "tol-sunburst-wrapper-" + id; // gets width on mount
+  const wrapperId = "tol-sunburst-wrapper-" + id;
   const height = props.height !== undefined ? props.height : "100%";
   const [datasets, setDatasets] = useState({});
   const [subDatasets, setSubDatasets] = useState({});
@@ -85,50 +87,9 @@ function RemoteSunburst(props: Props) {
   }, [zone]);
 
   useEffectUpdate(() => {
-    setLoading(true);
-    const aggs = createAggsViaSliceBy(endpoint, sliceBy);
-    httpClient()
-      .post("/" + endpoint + ":aggregations", aggs, {
-        baseURL: baseUrl,
-        params: {
-          filter: filter,
-        },
-      })
-      .then((res: any) => {
-        const aggs = res.data.meta.aggregations;
-        setErrorMessage("");
-        setWarningMessage(isChartDataEmpty(aggs));
-        const data = aggsToSunburstData(aggs, sliceBy);
-        setDatasets(data);
-        if (setZone) setSliceData({});
-        setLoading(false);
-      })
-      .catch((error: any) => {
-        setErrorMessage(error.message);
-        console.error(error.message);
-      });
-  }, [filter, forceUpdate]);
-
-  // for sub sunburst updates
-  useEffectUpdate(() => {
-    const localFilter = generateFilterFromSunburstClick(sliceData);
-    // this also resets components below
-    addSubFilter({
-      id: id,
-      filter: localFilter,
-      zone: zone!,
-    });
-    setZone({ ...zone });
-    // clear sub sunburst
-    if (isEmptyObject(sliceData)) {
-      setSubDatasets({});
-      // go deeper into the sunburst if not outer ring
-    } else if (sliceData["datasetIndex"] !== 0) {
-      setSubLoading(true);
-      const aggs = createAggsViaSliceBy(
-        endpoint,
-        removeSliceBySingles(sliceBy, sliceData["depth"]),
-      );
+    if (!contents) {
+      setLoading(true);
+      const aggs = createAggsViaSliceBy(endpoint, sliceBy);
       httpClient()
         .post("/" + endpoint + ":aggregations", aggs, {
           baseURL: baseUrl,
@@ -141,14 +102,59 @@ function RemoteSunburst(props: Props) {
           setErrorMessage("");
           setWarningMessage(isChartDataEmpty(aggs));
           const data = aggsToSunburstData(aggs, sliceBy);
-          setSubDatasets(data);
-          setSubLoading(false);
+          setDatasets(data);
+          if (setZone) setSliceData({});
+          setLoading(false);
         })
         .catch((error: any) => {
-          // forces an error in the main sunburst
           setErrorMessage(error.message);
           console.error(error.message);
         });
+    }
+  }, [filter, forceUpdate]);
+
+  // for sub sunburst updates
+  useEffectUpdate(() => {
+    if (!contents) {
+      const localFilter = generateFilterFromSunburstClick(sliceData);
+      // this also resets components below
+      addSubFilter({
+        id: id,
+        filter: localFilter,
+        zone: zone!,
+      });
+      setZone({ ...zone });
+      // clear sub sunburst
+      if (isEmptyObject(sliceData)) {
+        setSubDatasets({});
+        // go deeper into the sunburst if not outer ring
+      } else if (sliceData["datasetIndex"] !== 0) {
+        setSubLoading(true);
+        const aggs = createAggsViaSliceBy(
+          endpoint,
+          removeSliceBySingles(sliceBy, sliceData["depth"]),
+        );
+        httpClient()
+          .post("/" + endpoint + ":aggregations", aggs, {
+            baseURL: baseUrl,
+            params: {
+              filter: generateFilter(zone, id, true),
+            },
+          })
+          .then((res: any) => {
+            const aggs = res.data.meta.aggregations;
+            setErrorMessage("");
+            setWarningMessage(isChartDataEmpty(aggs));
+            const data = aggsToSunburstData(aggs, sliceBy);
+            setSubDatasets(data);
+            setSubLoading(false);
+          })
+          .catch((error: any) => {
+            // forces an error in the main sunburst
+            setErrorMessage(error.message);
+            console.error(error.message);
+          });
+      }
     }
   }, [sliceData]);
 
@@ -169,55 +175,6 @@ function RemoteSunburst(props: Props) {
     if (loading) {
       return <Placeholder pie />
     }
-
-    return (
-      <>
-        {miniActive ? (
-          <div className="sunburst-sub" style={mainPlacement}>
-            {subLoading ? (
-              <Placeholder clear loader />
-            ) : (
-              <Sunburst
-                {...props}
-                id={id}
-                noRefresh
-                noDownload
-                datasets={subDatasets}
-                setSliceData={setter}
-                noLegend={noLegend}
-                height="100%"
-                utilityBarConfig={undefined}
-              />
-            )}
-          </div>
-        ) : null}
-        <div
-          className={miniActive ? "sunburst-mini" : ""}
-          style={
-            miniActive
-              ? { paddingTop: headerPadding }
-              : { height: height, paddingBottom: headerPadding }
-          }
-        >
-          {warningMessage !== "" ?
-            <Placeholder warningMessage={warningMessage} />
-            :
-            <Sunburst
-              {...props}
-              noRefresh
-              noDownload
-              datasets={datasets}
-              downloadName={normaliseCaps(endpoint)}
-              setSliceData={setter}
-              noLegend={miniActive ? true : noLegend}
-              resetChart={resetChart}
-              height="100%"
-              utilityBarConfig={undefined}
-            />
-          }
-        </div>
-      </>
-    )
   }
 
   const resetButton: IButton = {
@@ -241,13 +198,13 @@ function RemoteSunburst(props: Props) {
     icon: "download",
   } : {};
 
-
   return (
     <div
       id={wrapperId}
       style={{ height: height, position: miniActive ? "relative" : undefined }}
     >
       <UtilityBar
+        id={id}
         title={utilityBarConfig?.title}
         buttons={[
           ...(utilityBarConfig?.buttons || []),
@@ -255,9 +212,55 @@ function RemoteSunburst(props: Props) {
           downloadButton
         ]}
       />
-      <div className="tol-component-contents">
-        {Contents()}
-      </div>
+      {contents ? contents : 
+        <div className="tol-component-contents">
+          {miniActive ? (
+              <div className="sunburst-sub" style={mainPlacement}>
+                {subLoading ? (
+                  <Placeholder clear loader />
+                ) : (
+                  <Sunburst
+                    {...props}
+                    id={id}
+                    noRefresh
+                    noDownload
+                    datasets={subDatasets}
+                    setSliceData={setter}
+                    noLegend={noLegend}
+                    height="100%"
+                    utilityBarConfig={undefined}
+                  />
+                )}
+              </div>
+            ) : null}
+            <div
+              className={miniActive ? "sunburst-mini" : ""}
+              style={
+                miniActive
+                  ? { paddingTop: headerPadding }
+                  : { height: height, paddingBottom: headerPadding }
+              }
+            >
+              {warningMessage !== "" ?
+                <Placeholder warningMessage={warningMessage} />
+                :
+                <Sunburst
+                  {...props}
+                  noRefresh
+                  noDownload
+                  contents={contents ? contents : Contents()}
+                  datasets={datasets}
+                  downloadName={normaliseCaps(endpoint)}
+                  setSliceData={setter}
+                  noLegend={miniActive ? true : noLegend}
+                  resetChart={resetChart}
+                  height="100%"
+                  utilityBarConfig={undefined}
+                />
+              }
+            </div>
+        </div>
+      }
     </div>
   );
 }

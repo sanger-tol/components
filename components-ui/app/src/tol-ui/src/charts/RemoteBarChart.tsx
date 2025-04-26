@@ -12,7 +12,7 @@ import {
   aggsToBarChartData,
   isChartDataEmpty,
 } from "./utils";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { normaliseCaps } from "../general/utils";
 import { httpClient } from "../services/http/httpClient";
@@ -23,7 +23,7 @@ import {
   generateFilter,
   resetFiltersBelow,
 } from "../filtering/utils";
-import UtilityBar, { IUtilityBar } from "../general/UtilityBar";
+import { IUtilityBar } from "../general/UtilityBar";
 
 interface Props {
   id: string;
@@ -41,6 +41,7 @@ interface Props {
   buttons?: JSX.Element[];
   forceUpdate?: boolean;
   utilityBarConfig?: IUtilityBar;
+  contents?: ReactNode;
 }
 
 function RemoteBarChart(props: Props) {
@@ -56,7 +57,7 @@ function RemoteBarChart(props: Props) {
     setZone,
     cumulative,
     forceUpdate,
-    utilityBarConfig
+    contents
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const [labels, setLabels] = useState([]);
@@ -77,28 +78,30 @@ function RemoteBarChart(props: Props) {
   }, [zone]);
 
   useEffectUpdate(() => {
-    setLoading(true);
-    const aggs = generateChartAgg(breakDownBy, xAxis, type);
-    httpClient()
-      .post("/" + endpoint + ":aggregations", aggs, {
-        baseURL: baseUrl,
-        params: {
-          filter: filter,
-        },
-      })
-      .then((res: any) => {
-        let aggs = res.data.meta.aggregations;
-        setErrorMessage("");
-        setWarningMessage(isChartDataEmpty(aggs));
-        aggs = aggsToBarChartData(aggs, type, shortDate, cumulative);
-        setDatasets(aggs.datasets);
-        setLabels(aggs.labels);
-        setLoading(false);
-      })
-      .catch((error: any) => {
-        console.error(error.message);
-        setErrorMessage(error.message);
-      });
+    if (!contents) { // This is to stop calls being made when the bar chart is not visible
+      setLoading(true);
+      const aggs = generateChartAgg(breakDownBy, xAxis, type);
+      httpClient()
+        .post("/" + endpoint + ":aggregations", aggs, {
+          baseURL: baseUrl,
+          params: {
+            filter: filter,
+          },
+        })
+        .then((res: any) => {
+          let aggs = res.data.meta.aggregations;
+          setErrorMessage("");
+          setWarningMessage(isChartDataEmpty(aggs));
+          aggs = aggsToBarChartData(aggs, type, shortDate, cumulative);
+          setDatasets(aggs.datasets);
+          setLabels(aggs.labels);
+          setLoading(false);
+        })
+        .catch((error: any) => {
+          console.error(error.message);
+          setErrorMessage(error.message);
+        });
+    }
   }, [filter, cumulative, forceUpdate]);
 
   useEffectUpdate(() => {
@@ -117,6 +120,7 @@ function RemoteBarChart(props: Props) {
     setZone({ ...zone });
   }, [barData]);
 
+
   const Contents = () => {
 
     if (errorMessage !== "") {
@@ -131,31 +135,27 @@ function RemoteBarChart(props: Props) {
       return <Placeholder bar height={height} />;
     }
 
-    //cumulative and undefined setzone negates setBarData
-    const setter = cumulative || setZone === undefined ? undefined : setBarData;
+    return null;
 
-    return (
-      <BarChart
-        {...props}
-        downloadName={normaliseCaps(endpoint)}
-        labels={labels}
-        datasets={datasets}
-        setBarData={setter}
-      />
-    );
   }
+
+  //cumulative and undefined setzone negates setBarData
+  const setter = cumulative || setZone === undefined ? undefined : setBarData;
 
   return (
     <div style={{ height: height }}>
-      {(warningMessage !== "" || errorMessage !== "") && (
-        <UtilityBar {...utilityBarConfig} />
-      )}
       <div className="tol-component-contents">
-        {Contents()}
+        <BarChart
+          {...props}
+          contents={contents ? contents : Contents()}
+          downloadName={normaliseCaps(endpoint)}
+          labels={labels}
+          datasets={datasets}
+          setBarData={setter}
+        />
       </div>
     </div>
   )
-
 }
 
 export default RemoteBarChart;

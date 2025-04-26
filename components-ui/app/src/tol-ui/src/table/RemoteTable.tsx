@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { FieldMetaData, FieldMeta } from "./Field";
 import { httpClient } from "../services/http/httpClient";
 import {
@@ -16,6 +16,7 @@ import {
   structureFieldMeta,
   getTableConfigLocalStorage,
 } from "./utils";
+import { initialiseFieldMeta } from "./Field";
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
@@ -66,6 +67,7 @@ interface Props {
   noDownload?: boolean;
   rowSelection?: boolean;
   utilityBarConfig?: IUtilityBar;
+  contents?: ReactNode;
 
   actions?: (string | IDropdownButtonConfig)[];
   selectedRows?: string[];
@@ -98,14 +100,15 @@ function RemoteTable(props: Props) {
     actions,
     utilityBarConfig,
     debug,
+    contents
   } = props;
   const ds = new TsDataSource({ baseUrl });
   const height = props.height !== undefined ? props.height : "100%";
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(
-    props.fieldMeta
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(
+    props.fieldMeta ?? initialiseFieldMeta()
   );
 
   // pagination
@@ -271,12 +274,16 @@ function RemoteTable(props: Props) {
       });
   };
 
-  if (error !== "") {
-    return <Placeholder errorMessage={error} height={height} />;
-  }
 
-  if (initialLoad) {
-    return <Placeholder loader height={height} />;
+  const Contents = () => {
+    if (error !== "") {
+      return <Placeholder errorMessage={error} height={height} />;
+    }
+    if (initialLoad) {
+      return <Placeholder loader height={height} />;
+    }
+
+    return null;
   }
 
   const completeAction = async (actionName: string, ids: string[]) => {
@@ -326,6 +333,7 @@ function RemoteTable(props: Props) {
       />
       <Table
         id={id}
+        contents={contents ? contents : Contents()}
         data={data}
         fieldMeta={fieldMeta!}
         height={height}

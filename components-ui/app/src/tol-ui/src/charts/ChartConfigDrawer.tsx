@@ -150,7 +150,7 @@ function ChartConfigDrawer(props: Props) {
 
   const modalButtons = (
     <div
-      className="tol-config-drawer-modal-btns.flex-end"
+      className="tol-config-drawer-modal-btns"
       style={{ justifyContent: "flex-end" }}
     >
       {cancelButton()}
@@ -184,10 +184,10 @@ function ChartConfigDrawer(props: Props) {
   };
 
   const confirmDiscard = () => {
-    setBreakDownBy([config.breakDownBy]);
+    setBreakDownBy(config.breakDownBy ? [config.breakDownBy] : []);
     setStacked(config.stacked);
     setChartType(config.type);
-    setXAxis([config.xAxis]);
+    setXAxis(config.xAxis ? [config.xAxis] : []);
     setOpenSaveModal(false);
     setOpen(false);
   };
