@@ -226,6 +226,9 @@ function filterListenerUpdater(params: {
   // ignore pass throughs
   if (and_ && attribute in and_ && !filterPassThrough) {
     let operatorFound = false;
+    if (!["in_list", "contains"].some((op) => filterMeta.operators.includes(op))) {
+      filterMeta.operators = operators;
+    }
     for (const op of operators) {
       if (op in and_[attribute]) {
         operatorFound = true;
@@ -256,6 +259,7 @@ export function filterListener(
     setValue: any;
     setExists?: any;
     setNegate?: any;
+    setOperators?: any;
     setDisabled?: any;
     emptyValue: any;
     zoneToValue: (filterValue: any, exisitingValue?: any) => any;
@@ -270,6 +274,7 @@ export function filterListener(
     setValue,
     setExists,
     setNegate,
+    setOperators,
     setDisabled,
     zoneToValue,
   } = params;
@@ -281,6 +286,7 @@ export function filterListener(
       exists: false,
       negate: false,
       disabled: false,
+      operators: operators,
     };
 
     // do for the top level filter
@@ -310,6 +316,7 @@ export function filterListener(
     if (setExists) setExists(filterMeta.exists);
     if (setNegate) setNegate(filterMeta.negate);
     if (setDisabled) setDisabled(filterMeta.disabled);
+    if(setOperators) setOperators(filterMeta.operators);
   }, dependencies);
 }
 export function addSubFilter(params: {

@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input, InputGroup, Dropdown } from "rsuite";
 import { Button as BSButton } from "react-bootstrap";
 import { Button } from "..";
@@ -49,6 +49,10 @@ function FilterTextInput(props: Filter) {
     }
   };
 
+  useEffect(() => {
+    console.log(operator);
+  }, [operator])
+
   filterListener(
     {
       attribute: attribute,
@@ -59,6 +63,7 @@ function FilterTextInput(props: Filter) {
       setDisabled: setDisabled,
       setExists: setExists,
       setNegate: setNegate,
+      setOperators: setOperator,
       emptyValue: [""],
       zoneToValue: (filterValue: any) => {
         if (Array.isArray(filterValue)) return filterValue;
