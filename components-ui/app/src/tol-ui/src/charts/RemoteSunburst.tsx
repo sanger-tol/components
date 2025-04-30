@@ -159,7 +159,7 @@ function RemoteSunburst(props: Props) {
   }, [sliceData]);
 
 
-  const headerPadding = 37;
+  const headerPadding = height === "100%" ? 0 : 37;
   const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
   const setter = setZone === undefined ? undefined : setSliceData;
   const mainPlacement = noLegend

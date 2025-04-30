@@ -147,7 +147,7 @@ function Navigation(props: Props) {
                       href={
                         "link" in page
                         ? page.link?.href
-                        : convertToPath(dropdown.name) + convertToPath(page.name)
+                        : convertToPath(page.name)
                       }
                       target={page.link?.target}
                     >

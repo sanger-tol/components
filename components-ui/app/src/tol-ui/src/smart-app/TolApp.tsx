@@ -126,9 +126,7 @@ function TolApp(props: Props) {
                 if (page.pages) {
                   page.pages.forEach((dropdownPage: Page) => {
                     const dropdownPath =
-                      convertToPath(page.name) +
                       convertToPath(dropdownPage.name);
-
                     // dropdown page route
                     routes.push(
                       <Route exact path={dropdownPath} key={dropdownPath}>
