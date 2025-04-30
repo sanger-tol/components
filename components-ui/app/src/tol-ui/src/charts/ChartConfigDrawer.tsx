@@ -133,7 +133,7 @@ function ChartConfigDrawer(props: Props) {
           if (
             xAxis.length === 0 ||
             breakDownBy.length === 0 ||
-            (returnedMetaType === "datetime" && chartType === "categorical")
+            (returnedMetaType === "datetime" && (chartType === "categorical" || chartType === undefined))
           ) {
             PopUpMessage({
               type: "error",
