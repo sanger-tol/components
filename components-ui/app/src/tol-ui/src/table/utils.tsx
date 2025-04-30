@@ -282,6 +282,25 @@ function formatAttributeData(
   }
 }
 
+function resolveNestedRelationship(
+  relationships: any,
+  keys: string[]
+): any {
+  if (keys.length === 0 || !relationships) return null;
+
+  const [currentKey, ...remainingKeys] = keys;
+  const currentRelationship = relationships[currentKey];
+
+  if (!currentRelationship || !("data" in currentRelationship)) return null;
+
+  const instanceData = currentRelationship["data"];
+  if (remainingKeys.length === 0) {
+    return instanceData;
+  }
+
+  return resolveNestedRelationship(instanceData["relationships"], remainingKeys);
+}
+
 function addRelationshipFieldsToAttributes(
   row: object,
   fieldMetaData: FieldMetaData
@@ -291,21 +310,19 @@ function addRelationshipFieldsToAttributes(
   for (const [key, meta] of Object.entries(fieldMetaData)) {
     // only deal with relationships
     if (!meta.isAttribute) {
-      const [relationship, attribute] = key.split(".");
-      // cannot assume relationship exists
-      if (relationship in rowRelationships && rowRelationships[relationship]) {
-        if ("data" in rowRelationships[relationship]) {
-          const instanceData = rowRelationships[relationship]["data"];
-          if (attribute === "id") {
-            rowAttributes[key] = instanceData["id"];
-          } else if (
-            "attributes" in instanceData &&
-            attribute in instanceData["attributes"]
-          ) {
-            rowAttributes[key] = instanceData["attributes"][attribute];
-          }
+      const keys = key.split(".");
+      const attribute = keys.pop(); // Extract the final attribute
+      const resolvedData = resolveNestedRelationship(rowRelationships, keys);
+      if (resolvedData) {
+        if (attribute === "id") {
+          rowAttributes[key] = resolvedData["id"];
+        } else if (
+          "attributes" in resolvedData && attribute! in resolvedData["attributes"]
+        ) {
+          rowAttributes[key] = resolvedData["attributes"][attribute!];
         }
       }
+
       // if row doesn't have the fields data, default to null
       if (rowAttributes[key] === undefined) rowAttributes[key] = null;
     }
