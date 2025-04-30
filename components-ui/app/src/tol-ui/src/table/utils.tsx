@@ -162,7 +162,7 @@ function createFloat(value: any) {
 }
 
 function createInteger(value: string | number) {
-  return <CellTooltip followCursor value={value.toLocaleString()} contents={value} />;
+  return <div className="tol-cell-renderer-integer">{value.toLocaleString()}</div>;
 }
 
 function createCellRenderer(

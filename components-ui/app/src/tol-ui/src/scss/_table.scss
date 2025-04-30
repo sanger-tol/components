@@ -351,6 +351,11 @@
   flex-direction: column;
 }
 
+.rs-table-cell-content:has(.tol-cell-renderer-integer) {
+  justify-items: end !important;
+  padding-right: 25px !important;
+}
+
 .tol-code-block {
   .token.token {
     color: var(--tol-primary) !important;
