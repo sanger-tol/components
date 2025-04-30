@@ -95,6 +95,10 @@ function Tables() {
               filter: null,
               sort: false,
             },
+            "tolqc_species.goat_genome_size": {
+              cellRenderer: "integer",
+              rename: "Estimated Genome Size",
+            },
             custom_field: {
               rename: "Custom Field",
               cellRenderer: {

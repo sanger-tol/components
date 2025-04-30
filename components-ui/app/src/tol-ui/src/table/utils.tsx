@@ -161,6 +161,10 @@ function createFloat(value: any) {
   return <CellTooltip followCursor value={value.toFixed?.(2)} contents={value} />;
 }
 
+function createInteger(value: string | number) {
+  return <CellTooltip followCursor value={value.toLocaleString()} contents={value} />;
+}
+
 function createCellRenderer(
   cellRenderer: CellRenderer,
   key: string,
@@ -188,6 +192,8 @@ function createCellRenderer(
       return createExpander(value);
     } else if (cellRenderer === "float") {
       return createFloat(value);
+    } else if (cellRenderer === "integer") {
+      return createInteger(value);
     }
   }
 
