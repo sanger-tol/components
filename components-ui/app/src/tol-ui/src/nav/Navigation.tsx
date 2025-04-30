@@ -128,33 +128,40 @@ function Navigation(props: Props) {
 
   const addDropdown = (dropdown: Dropdown) => {
     if (!dropdown.hidden) {
-      const authorised = confirmAuthorised(
+      const dropdownAuthorised = confirmAuthorised(
         user,
         dropdown.auth,
         dropdown.removeOnAuth,
       );
-      if (authorised) {
+      if (dropdownAuthorised) {
         return (
           <NavDropdown title={dropdown.name}>
             {dropdown.pages &&
               Array.isArray(dropdown.pages) &&
               dropdown.pages.map((page: Page, index) => {
-                return (
-                  // eslint-disable-next-line
-                  <div className="nav-dropdown-box" key={index}>
-                    <Nav.Link
-                      key={page.name}
-                      href={
-                        "link" in page
-                        ? page.link?.href
-                        : convertToPath(page.name)
-                      }
-                      target={page.link?.target}
-                    >
-                      {page.name}
-                    </Nav.Link>
-                  </div>
+                const pageAuthorised = confirmAuthorised(
+                  user,
+                  page.auth,
+                  page.removeOnAuth,
                 );
+                if(pageAuthorised) {
+                  return (
+                    // eslint-disable-next-line
+                    <div className="nav-dropdown-box" key={index}>
+                      <Nav.Link
+                        key={page.name}
+                        href={
+                          "link" in page
+                          ? page.link?.href
+                          : convertToPath(page.name)
+                        }
+                        target={page.link?.target}
+                      >
+                        {page.name}
+                      </Nav.Link>
+                    </div>
+                  );
+                }
               })}
           </NavDropdown>
         );
@@ -210,7 +217,19 @@ function Navigation(props: Props) {
               <div className="nav-right">
                 <ProfileDropdown
                   user={user}
-                  pages={props.profilePages}
+                  pages={props.profilePages
+                    ?.map((page: Page) => {
+                      const authorised = confirmAuthorised(
+                        user,
+                        page.auth,
+                        page.removeOnAuth,
+                      );
+                      if (authorised) {
+                        return page;
+                      }
+                      return undefined;
+                    })
+                    .filter((page): page is Page => page !== undefined)}
                   onLogout={logout}
                 />
               </div>

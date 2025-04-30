@@ -19,7 +19,7 @@ enum Duration {
   success = 4000,
   info = 6000,
   warning = 8000,
-  error = 30000,
+  error = 10000,
   default = 6000,
 }
 
@@ -49,7 +49,8 @@ const PopUpMessage = (props: Props) => {
       onClose={onClose}
     />,
     {
-      duration: getDuration(type)
+      duration: getDuration(type),
+      placement: "bottomEnd",
     },
   );
 };

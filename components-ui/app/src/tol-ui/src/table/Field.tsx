@@ -24,6 +24,7 @@ export type CellRenderer =
   | "list"
   | "expander"
   | "float"
+  | "integer"
   | null;
 
 export interface Field {
