@@ -12,7 +12,7 @@ import { Nav, NavDropdown } from "react-bootstrap";
 
 interface Props {
   user: User;
-  pages?: Page[];
+  pages?: Page[] | undefined;
   onLogout: () => void;
 }
 
@@ -88,6 +88,7 @@ function ProfileDropdown(props: Props) {
   );
 
   const dropdownPages = pages?.map((page) => {
+    if(!page || !page.name) return null;
     const link = convertToPath(page.name);
     return (
       <Nav.Link key={page.name} href={link}>
@@ -98,7 +99,7 @@ function ProfileDropdown(props: Props) {
 
   const dropdownContents = (
     <div className="nav-dropdown-box">
-      {dropdownPages}
+      {dropdownPages || undefined}
       <Nav.Link
         className="logout"
         key="logout"
