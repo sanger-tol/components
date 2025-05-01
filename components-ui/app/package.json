@@ -28,7 +28,7 @@
     "globals": "^16.0.0",
     "jiti": "^2.4.2",
     "lorem-ipsum": "2.0.8",
-    "typescript-eslint": "^7.0.0"
+    "typescript-eslint": "^6.0.0"
 
   },
   "scripts": {
