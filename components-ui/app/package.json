@@ -27,7 +27,9 @@
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.0.0",
     "jiti": "^2.4.2",
-    "lorem-ipsum": "2.0.8"
+    "lorem-ipsum": "2.0.8",
+    "typescript-eslint": "^8.0.0"
+    
   },
   "scripts": {
     "start": "vite",
