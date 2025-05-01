@@ -10,7 +10,7 @@ include:
 
 variables:
   APP_NAME: components
-  DISABLE_UI_LINT: "true"
+  #DISABLE_UI_LINT: "true"
 
 build-package-dummy:
   # prevents the accumulation of errors on `yarn build`
