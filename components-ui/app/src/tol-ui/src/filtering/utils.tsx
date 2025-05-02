@@ -64,6 +64,18 @@ export function removeSuperfluousExists(filter: And) {
   });
 }
 
+/**
+ * Determines whether a filter operation should pass through based on the provided conditions.
+ *
+ * @param filterPassThrough - A boolean indicating if the filter should pass through.
+ * @param id - The identifier of the current item being evaluated.
+ * @param currentId - The identifier of the item to compare against.
+ * @returns `true` if the filter should pass through and the `id` is not equal to `currentId`; otherwise, `false`.
+ */
+function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThrough?: boolean, ) {
+  return filterPassThrough && id !== currentId
+}
+
 export function generateFilter(
   zone?: object,
   id?: string,
@@ -76,7 +88,11 @@ export function generateFilter(
   // loop through 'above' components
   for (const currentId of aboveComponents) {
     // exclude pass throughs except self
-    if (z.components[currentId].data.filterPassThrough && id !== currentId) {
+    if (
+      shouldFilterPassThrough(
+        id, currentId, z.components[currentId].data.filterPassThrough
+      )
+    ) {
       continue;
     }
     let currentFilter: And = z.components[currentId].data.filter!.and_;
@@ -301,7 +317,9 @@ export function filterListener(
       const componentData = zone.components[currentId].data;
       filterListenerUpdater({
         filter: componentData.filter,
-        filterPassThrough: componentData.filterPassThrough,
+        filterPassThrough: shouldFilterPassThrough(
+          componentId, currentId, componentData.filterPassThrough
+        ),
         attribute,
         operators,
         filterMeta,
