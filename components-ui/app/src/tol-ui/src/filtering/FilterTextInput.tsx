@@ -4,13 +4,13 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Input, InputGroup, Dropdown } from "rsuite";
 import { Button as BSButton } from "react-bootstrap";
 import { Button } from "..";
 import { stopPropagation } from "../general/utils";
 import { Filter } from "./Filter";
-import { setFilter, filterListener, operatorConverter } from "./utils";
+import { setFilter, filterListener, symbolToOperator } from "./utils";
 import FilterToggle from "./FilterToggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "@fortawesome/free-solid-svg-icons";
@@ -28,20 +28,16 @@ function FilterTextInput(props: Filter) {
   const [open, setOpen] = useState<boolean>(false);
   const [listValue, setListValue] = useState<string>("");
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
-  const operators = ["in_list", "=", "<", ">", "≤", "≥"];
   const isNum = type === "int" || type === "float";
-
-  useEffect(() => {
-    console.log(operator);
-    console.log(...operators.map((op) => operatorConverter(op)))
-  }, [operator])
+  const operators = isNum ? ["=", "<", ">", "≤", "≥"] : ["contains"];
 
   filterListener(
     {
       attribute: attribute,
       componentId: componentId,
       operators: [
-        ...operators.map((op) => operatorConverter(op)),
+        "in_list",
+        ...operators.map((op) => symbolToOperator(op)),
       ],
       zone: zone,
       setValue: setValues,
@@ -80,7 +76,7 @@ function FilterTextInput(props: Filter) {
       setTimeoutValue(
         setTimeout(() => {
           setFilter({
-            operator: operatorConverter(operator, values),
+            operator: symbolToOperator(operator, values),
             value: input,
             negate: negate,
             attribute: attribute,
@@ -98,7 +94,7 @@ function FilterTextInput(props: Filter) {
     // reset value and old operator when changing operator
     setValues([""]);
     setFilter({
-      operator: operatorConverter(operator, values), // previous operator
+      operator: symbolToOperator(operator, values), // previous operator
       value: "", // resets value
       negate: negate,
       attribute: attribute,
@@ -127,7 +123,7 @@ function FilterTextInput(props: Filter) {
   const onNegate = (ng: boolean) => {
     setNegate(!ng);
     setFilter({
-      operator: exists ? "exists" : operatorConverter(operator, values),
+      operator: exists ? "exists" : symbolToOperator(operator, values),
       value: values.length > 1 ? values : values[0],
       negate: !ng,
       exists: exists,
@@ -155,7 +151,7 @@ function FilterTextInput(props: Filter) {
       });
     } else {
       setFilter({
-        operator: operatorConverter(operator, values),
+        operator: symbolToOperator(operator, values),
         value: input[0],
         negate: negate,
         attribute: attribute,

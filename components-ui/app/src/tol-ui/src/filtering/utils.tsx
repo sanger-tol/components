@@ -226,18 +226,15 @@ function filterListenerUpdater(params: {
   // ignore pass throughs
   if (and_ && attribute in and_ && !filterPassThrough) {
     let operatorFound = false;
-    console.log(and_[attribute], operators);
     for (const op of operators) {
       if (op in and_[attribute]) {
         operatorFound = true;
         const filter = and_[attribute][op];
         filterMeta.disabled = disableCondition;
-        filterMeta.value = zoneToValue(filter.value, filterMeta.value);
+        filterMeta.values = zoneToValue(filter.value, filterMeta.values);
         filterMeta.exists = false;
         filterMeta.negate = filter.negate || filterMeta.negate;
-          console.log(operatorConverter(op, [filterMeta.value]));
-          filterMeta.currentOperator = operatorConverter(op, [filterMeta.value]);
-        
+        filterMeta.currentOperator = operatorToSymbol(op, [filterMeta.values]);
       }
     }
     if (!operatorFound && "exists" in and_[attribute]) {
@@ -283,7 +280,7 @@ export function filterListener(
   useEffect(() => {
     // initialise - use an object to take advantage of reference type
     const filterMeta = {
-      value: params.emptyValue,
+      values: params.emptyValue,
       exists: false,
       negate: false,
       disabled: false,
@@ -312,11 +309,10 @@ export function filterListener(
         zoneToValue,
       });
     }
-    setValue(filterMeta.value);
+    setValue(filterMeta.values);
     if (setExists) setExists(filterMeta.exists);
     if (setNegate) setNegate(filterMeta.negate);
     if (setDisabled) setDisabled(filterMeta.disabled);
-    console.log(filterMeta);
     if (setOperator && 'currentOperator' in filterMeta) setOperator(filterMeta.currentOperator);
   }, dependencies);
 }
@@ -338,8 +334,7 @@ export function resetZone(params: { zone: IZone; setZone: any }) {
   setZone({ ...zone });
 }
 
-export function operatorConverter (operator: string, values?: string[]) {
-  console.log(values);
+export function symbolToOperator (operator: string, values?: string[]) {
   switch (operator) {
     case "=":
       return "eq";
@@ -351,6 +346,14 @@ export function operatorConverter (operator: string, values?: string[]) {
       return "gt";
     case "≥":
       return "gte";
+    default:
+      if (values && values.length > 1) return "in_list";
+      return "contains";
+  }
+};
+
+export function operatorToSymbol (operator: string, values?: string[]) {
+  switch (operator) {
     case "eq":
       return "=";
     case "lt":

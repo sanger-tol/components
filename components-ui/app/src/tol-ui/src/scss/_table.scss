@@ -399,21 +399,3 @@
     margin-top: 4px !important;
   }
 }
-
-
-// auto row height
-.rs-table-cell,
-.rs-table-cell-content {
-  background-color: red;
-  height: fit-content !important;
-}
-
-.rs-table-cell-group {
-  background-color: blue;
-  height: 100% !important;
-}
-
-.rs-table-body-row-wrapper {
-  background-color: hotpink;
-  //height: fit-content !important;
-}
