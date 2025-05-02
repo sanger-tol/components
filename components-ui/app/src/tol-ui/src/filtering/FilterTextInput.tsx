@@ -10,7 +10,7 @@ import { Button as BSButton } from "react-bootstrap";
 import { Button } from "..";
 import { stopPropagation } from "../general/utils";
 import { Filter } from "./Filter";
-import { setFilter, filterListener } from "./utils";
+import { setFilter, filterListener, operatorConverter } from "./utils";
 import FilterToggle from "./FilterToggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "@fortawesome/free-solid-svg-icons";
@@ -28,42 +28,27 @@ function FilterTextInput(props: Filter) {
   const [open, setOpen] = useState<boolean>(false);
   const [listValue, setListValue] = useState<string>("");
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
-  const operators = ["=", "<", ">", "≤", "≥"];
+  const operators = ["in_list", "=", "<", ">", "≤", "≥"];
   const isNum = type === "int" || type === "float";
-
-  const getOperator = (operator: string) => {
-    switch (operator) {
-      case "=":
-        return "eq";
-      case "<":
-        return "lt";
-      case "≤":
-        return "lte";
-      case ">":
-        return "gt";
-      case "≥":
-        return "gte";
-      default:
-        if (values.length > 1) return "in_list";
-        return "contains";
-    }
-  };
 
   useEffect(() => {
     console.log(operator);
+    console.log(...operators.map((op) => operatorConverter(op)))
   }, [operator])
 
   filterListener(
     {
       attribute: attribute,
       componentId: componentId,
-      operators: ["in_list", getOperator(operator)],
+      operators: [
+        ...operators.map((op) => operatorConverter(op)),
+      ],
       zone: zone,
       setValue: setValues,
       setDisabled: setDisabled,
       setExists: setExists,
       setNegate: setNegate,
-      setOperators: setOperator,
+      setOperator: setOperator,
       emptyValue: [""],
       zoneToValue: (filterValue: any) => {
         if (Array.isArray(filterValue)) return filterValue;
@@ -95,7 +80,7 @@ function FilterTextInput(props: Filter) {
       setTimeoutValue(
         setTimeout(() => {
           setFilter({
-            operator: getOperator(operator),
+            operator: operatorConverter(operator, values),
             value: input,
             negate: negate,
             attribute: attribute,
@@ -113,7 +98,7 @@ function FilterTextInput(props: Filter) {
     // reset value and old operator when changing operator
     setValues([""]);
     setFilter({
-      operator: getOperator(operator), // previous operator
+      operator: operatorConverter(operator, values), // previous operator
       value: "", // resets value
       negate: negate,
       attribute: attribute,
@@ -142,7 +127,7 @@ function FilterTextInput(props: Filter) {
   const onNegate = (ng: boolean) => {
     setNegate(!ng);
     setFilter({
-      operator: exists ? "exists" : getOperator(operator),
+      operator: exists ? "exists" : operatorConverter(operator, values),
       value: values.length > 1 ? values : values[0],
       negate: !ng,
       exists: exists,
@@ -170,7 +155,7 @@ function FilterTextInput(props: Filter) {
       });
     } else {
       setFilter({
-        operator: getOperator(operator),
+        operator: operatorConverter(operator, values),
         value: input[0],
         negate: negate,
         attribute: attribute,

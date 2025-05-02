@@ -226,9 +226,7 @@ function filterListenerUpdater(params: {
   // ignore pass throughs
   if (and_ && attribute in and_ && !filterPassThrough) {
     let operatorFound = false;
-    if (!["in_list", "contains"].some((op) => filterMeta.operators.includes(op))) {
-      filterMeta.operators = operators;
-    }
+    console.log(and_[attribute], operators);
     for (const op of operators) {
       if (op in and_[attribute]) {
         operatorFound = true;
@@ -237,6 +235,9 @@ function filterListenerUpdater(params: {
         filterMeta.value = zoneToValue(filter.value, filterMeta.value);
         filterMeta.exists = false;
         filterMeta.negate = filter.negate || filterMeta.negate;
+          console.log(operatorConverter(op, [filterMeta.value]));
+          filterMeta.currentOperator = operatorConverter(op, [filterMeta.value]);
+        
       }
     }
     if (!operatorFound && "exists" in and_[attribute]) {
@@ -259,7 +260,7 @@ export function filterListener(
     setValue: any;
     setExists?: any;
     setNegate?: any;
-    setOperators?: any;
+    setOperator?: any;
     setDisabled?: any;
     emptyValue: any;
     zoneToValue: (filterValue: any, exisitingValue?: any) => any;
@@ -274,7 +275,7 @@ export function filterListener(
     setValue,
     setExists,
     setNegate,
-    setOperators,
+    setOperator,
     setDisabled,
     zoneToValue,
   } = params;
@@ -286,7 +287,6 @@ export function filterListener(
       exists: false,
       negate: false,
       disabled: false,
-      operators: operators,
     };
 
     // do for the top level filter
@@ -316,7 +316,8 @@ export function filterListener(
     if (setExists) setExists(filterMeta.exists);
     if (setNegate) setNegate(filterMeta.negate);
     if (setDisabled) setDisabled(filterMeta.disabled);
-    if(setOperators) setOperators(filterMeta.operators);
+    console.log(filterMeta);
+    if (setOperator && 'currentOperator' in filterMeta) setOperator(filterMeta.currentOperator);
   }, dependencies);
 }
 export function addSubFilter(params: {
@@ -336,3 +337,32 @@ export function resetZone(params: { zone: IZone; setZone: any }) {
   resetAllFilters(zone);
   setZone({ ...zone });
 }
+
+export function operatorConverter (operator: string, values?: string[]) {
+  console.log(values);
+  switch (operator) {
+    case "=":
+      return "eq";
+    case "<":
+      return "lt";
+    case "≤":
+      return "lte";
+    case ">":
+      return "gt";
+    case "≥":
+      return "gte";
+    case "eq":
+      return "=";
+    case "lt":
+      return "<";
+    case "lte":
+      return "≤";
+    case "gt":
+      return ">";
+    case "gte":
+      return "≥";
+    default:
+      if (values && values.length > 1) return "in_list";
+      return "contains";
+  }
+};
