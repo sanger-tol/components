@@ -107,8 +107,8 @@ function RemoteTable(props: Props) {
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(
-    props.fieldMeta ?? initialiseFieldMeta()
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(
+    props.fieldMeta
   );
 
   // pagination
