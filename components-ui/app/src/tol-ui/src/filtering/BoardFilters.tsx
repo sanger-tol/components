@@ -8,7 +8,7 @@ import { Toggle } from "rsuite"
 import { InfoTooltip } from "../general"
 import { useEffect, useState } from "react";
 import { IZone } from "../boards";
-import { upsertComponent } from "../boards/utils";
+import { upsertComponent, upsertZone } from "../boards/utils";
 import RemoteFilters from "./RemoteFilters";
 import { Drawer } from "../general";
 import { generateFilter, resetFiltersBelow } from "./utils";
@@ -84,22 +84,24 @@ function BoardFilters(props: Props) {
   }, [open]);
 
   const onSave = (filter: any, filterPassThrough: boolean) => {
-    let componentAttributes = {
+    let upserter = upsertComponent;
+    let attributes = {
       filter: filter
     };
     if (entityType === "zone") {
+      upserter = upsertZone;
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
     } else {
       zone.components[id].data.filter = deepCopy(filter);
       zone.components[id].data.defaultFilter = deepCopy(filter);
       zone.components[id].data.filterPassThrough = filterPassThrough;
-      componentAttributes["filter_pass_through"] = filterPassThrough;
+      attributes["filter_pass_through"] = filterPassThrough;
     }
     resetFiltersBelow({ id: id, zone: zone });
     setZone({ ...zone });
     setOpen(false);
-    upsertComponent(ds, id, componentAttributes);
+    upserter(ds, id, attributes);
   };
 
   return (

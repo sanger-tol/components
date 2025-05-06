@@ -459,7 +459,7 @@ export async function createBoardAndView(
       objectType: BOARD_ENDPOINTS.BOARD,
       payload: [
         {
-          type: BoardObjectTypes.BOARD as string,
+          type: BoardObjectTypes.BOARD,
           id: boardId,
           attributes: {
             title: title,
@@ -478,7 +478,7 @@ export async function createBoardAndView(
           objectType: BOARD_ENDPOINTS.BOARD_VIEWS,
           payload: [
             {
-              type: BoardObjectTypes.VIEW_BOARD as string,
+              type: BoardObjectTypes.VIEW_BOARD,
               attributes: {
                 order: 1,
                 board_id: boardId,
@@ -502,7 +502,7 @@ export async function addView(ds: TsDataSource, id: string, title: string) {
       objectType: BOARD_ENDPOINTS.VIEW,
       payload: [
         {
-          type: BoardObjectTypes.VIEW as string,
+          type: BoardObjectTypes.VIEW,
           id: viewId,
           attributes: {
             title: "View 1",
@@ -531,7 +531,7 @@ export async function addZone(
     objectType: BOARD_ENDPOINTS.ZONE,
     payload: [
       {
-        type: BoardObjectTypes.ZONE as string,
+        type: BoardObjectTypes.ZONE,
         id: newId,
         attributes: {
           title: title,
@@ -549,7 +549,7 @@ export async function addZone(
       objectType: BOARD_ENDPOINTS.VIEW_ZONES,
       payload: [
         {
-          type: BoardObjectTypes.ZONE_VIEW as string,
+          type: BoardObjectTypes.ZONE_VIEW,
           attributes: {
             order: nextOrder,
             zone_id: newId,
@@ -564,6 +564,23 @@ export async function addZone(
         newZoneViewId: res[0].id,
       };
     });
+}
+
+export async function upsertZone(
+  ds: TsDataSource,
+  zoneId: string,
+  attributes: object,
+) {
+  return await ds.upsert({
+    objectType: BOARD_ENDPOINTS.ZONE,
+    payload: [
+      {
+        type: BoardObjectTypes.ZONE,
+        id: zoneId,
+        attributes: attributes
+      },
+    ],
+  });
 }
 
 export async function addComponent(
@@ -582,7 +599,7 @@ export async function addComponent(
     objectType: BOARD_ENDPOINTS.COMPONENT,
     payload: [
       {
-        type: BoardObjectTypes.COMPONENT as string,
+        type: BoardObjectTypes.COMPONENT,
         id: newId,
         attributes: {
           title: title,
@@ -604,7 +621,7 @@ export async function addComponent(
       objectType: BOARD_ENDPOINTS.ZONE_COMPONENTS,
       payload: [
         {
-          type: BoardObjectTypes.COMPONENT_ZONE as string,
+          type: BoardObjectTypes.COMPONENT_ZONE,
           attributes: {
             order: nextOrder,
             component_id: newId,
@@ -630,7 +647,7 @@ export async function upsertComponent(
     objectType: BOARD_ENDPOINTS.COMPONENT,
     payload: [
       {
-        type: BoardObjectTypes.COMPONENT as string,
+        type: BoardObjectTypes.COMPONENT,
         id: componentId,
         attributes: attributes
       },

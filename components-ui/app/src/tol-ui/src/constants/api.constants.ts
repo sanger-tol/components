@@ -7,20 +7,20 @@ SPDX-License-Identifier: MIT
 export const BOARD_URL_PREFIX = "board-data";
 export const BOARD_DELETE_URL_PREFIX = "boards";
 
-export enum ApiMethods {
-  GET = "GET",
-  POST = "POST",
-  DELETE = "DELETE",
+export const ApiMethods = {
+  GET: "GET",
+  POST: "POST",
+  DELETE: "DELETE",
 }
 
-export enum BoardObjectTypes {
-  BOARD = "board",
-  VIEW = "view",
-  ZONE = "zone",
-  COMPONENT = "component",
-  VIEW_BOARD = "view_board",
-  ZONE_VIEW = "zone_view",
-  COMPONENT_ZONE = "component_zone",
+export const BoardObjectTypes = {
+  BOARD: "board",
+  VIEW: "view",
+  ZONE: "zone",
+  COMPONENT: "component",
+  VIEW_BOARD: "view_board",
+  ZONE_VIEW: "zone_view",
+  COMPONENT_ZONE: "component_zone",
 }
 
 export const BOARD_ENDPOINTS = {

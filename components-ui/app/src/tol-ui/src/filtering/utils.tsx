@@ -64,6 +64,18 @@ export function removeSuperfluousExists(filter: And) {
   });
 }
 
+/**
+ * Determines whether a filter operation should pass through based on the provided conditions.
+ *
+ * @param filterPassThrough - A boolean indicating if the filter should pass through.
+ * @param id - The identifier of the current item being evaluated.
+ * @param currentId - The identifier of the item to compare against.
+ * @returns `true` if the filter should pass through and the `id` is not equal to `currentId`; otherwise, `false`.
+ */
+function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThrough?: boolean, ) {
+  return filterPassThrough && id !== currentId
+}
+
 export function generateFilter(
   zone?: object,
   id?: string,
@@ -76,7 +88,11 @@ export function generateFilter(
   // loop through 'above' components
   for (const currentId of aboveComponents) {
     // exclude pass throughs except self
-    if (z.components[currentId].data.filterPassThrough && id !== currentId) {
+    if (
+      shouldFilterPassThrough(
+        id, currentId, z.components[currentId].data.filterPassThrough
+      )
+    ) {
       continue;
     }
     let currentFilter: And = z.components[currentId].data.filter!.and_;
@@ -231,9 +247,10 @@ function filterListenerUpdater(params: {
         operatorFound = true;
         const filter = and_[attribute][op];
         filterMeta.disabled = disableCondition;
-        filterMeta.value = zoneToValue(filter.value, filterMeta.value);
+        filterMeta.values = zoneToValue(filter.value, filterMeta.values);
         filterMeta.exists = false;
         filterMeta.negate = filter.negate || filterMeta.negate;
+        filterMeta.currentOperator = operatorToSymbol(op, [filterMeta.values]);
       }
     }
     if (!operatorFound && "exists" in and_[attribute]) {
@@ -256,6 +273,7 @@ export function filterListener(
     setValue: any;
     setExists?: any;
     setNegate?: any;
+    setOperator?: any;
     setDisabled?: any;
     emptyValue: any;
     zoneToValue: (filterValue: any, exisitingValue?: any) => any;
@@ -270,6 +288,7 @@ export function filterListener(
     setValue,
     setExists,
     setNegate,
+    setOperator,
     setDisabled,
     zoneToValue,
   } = params;
@@ -277,7 +296,7 @@ export function filterListener(
   useEffect(() => {
     // initialise - use an object to take advantage of reference type
     const filterMeta = {
-      value: params.emptyValue,
+      values: params.emptyValue,
       exists: false,
       negate: false,
       disabled: false,
@@ -298,7 +317,9 @@ export function filterListener(
       const componentData = zone.components[currentId].data;
       filterListenerUpdater({
         filter: componentData.filter,
-        filterPassThrough: componentData.filterPassThrough,
+        filterPassThrough: shouldFilterPassThrough(
+          componentId, currentId, componentData.filterPassThrough
+        ),
         attribute,
         operators,
         filterMeta,
@@ -306,10 +327,11 @@ export function filterListener(
         zoneToValue,
       });
     }
-    setValue(filterMeta.value);
+    setValue(filterMeta.values);
     if (setExists) setExists(filterMeta.exists);
     if (setNegate) setNegate(filterMeta.negate);
     if (setDisabled) setDisabled(filterMeta.disabled);
+    if (setOperator && 'currentOperator' in filterMeta) setOperator(filterMeta.currentOperator);
   }, dependencies);
 }
 export function addSubFilter(params: {
@@ -329,3 +351,39 @@ export function resetZone(params: { zone: IZone; setZone: any }) {
   resetAllFilters(zone);
   setZone({ ...zone });
 }
+
+export function symbolToOperator (operator: string, values?: string[]) {
+  switch (operator) {
+    case "=":
+      return "eq";
+    case "<":
+      return "lt";
+    case "≤":
+      return "lte";
+    case ">":
+      return "gt";
+    case "≥":
+      return "gte";
+    default:
+      if (values && values.length > 1) return "in_list";
+      return "contains";
+  }
+};
+
+export function operatorToSymbol (operator: string, values?: string[]) {
+  switch (operator) {
+    case "eq":
+      return "=";
+    case "lt":
+      return "<";
+    case "lte":
+      return "≤";
+    case "gt":
+      return ">";
+    case "gte":
+      return "≥";
+    default:
+      if (values && values.length > 1) return "in_list";
+      return "contains";
+  }
+};
