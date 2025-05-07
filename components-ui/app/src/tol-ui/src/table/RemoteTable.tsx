@@ -16,7 +16,6 @@ import {
   structureFieldMeta,
   getTableConfigLocalStorage,
 } from "./utils";
-import { initialiseFieldMeta } from "./Field";
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
