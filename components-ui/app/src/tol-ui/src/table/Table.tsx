@@ -20,7 +20,7 @@ import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import ColumnConfigDrawer from "./ColumnConfigDrawer";
 import { exportTableToSpreadsheet, getAllowedFields, getSourceColour } from "./utils";
 import Filter, { IFilter } from "../filtering/Filter";
-import { FieldMeta } from "./Field";
+import { FieldMeta, initialiseFieldMeta } from "./Field";
 import { IZone } from "../boards";
 import { IDropdownButtonConfig } from "../models/Buttons";
 import { useStateFallback } from "../hooks/useStateFallback";
@@ -85,7 +85,7 @@ function Table(props: Props) {
     /* eslint-disable */
     id,
     data,
-    fieldMeta,
+    fieldMeta = initialiseFieldMeta(),
     height,
     loading,
 

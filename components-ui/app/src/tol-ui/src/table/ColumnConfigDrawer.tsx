@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   AttributeSelector,
@@ -39,12 +39,17 @@ function ColumnConfigDrawer(props: Props) {
     customAttributeSelection,
   } = props;
   const [attributes, setAttributes] = useState<string[]>(
-    fieldMeta["order"]["active"],
+    fieldMeta?.order?.active ?? [],
   );
   const [initialAttributes, setInitialAttributes] = useState<string[]>(
-    fieldMeta["order"]["active"],
+    fieldMeta?.order?.active ?? [],
   );
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    setAttributes(fieldMeta?.order?.active ?? []);
+    setInitialAttributes(fieldMeta?.order?.active ?? []);
+  }, [fieldMeta]);
 
   const updateMeta = (
     id: string,

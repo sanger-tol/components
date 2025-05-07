@@ -16,7 +16,6 @@ import {
   structureFieldMeta,
   getTableConfigLocalStorage,
 } from "./utils";
-import { initialiseFieldMeta } from "./Field";
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
@@ -107,8 +106,8 @@ function RemoteTable(props: Props) {
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(
-    props.fieldMeta ?? initialiseFieldMeta()
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(
+    props.fieldMeta
   );
 
   // pagination
