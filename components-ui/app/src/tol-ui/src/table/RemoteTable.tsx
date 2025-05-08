@@ -211,6 +211,9 @@ function RemoteTable(props: Props) {
       page: page,
       page_size: pageSize,
       filter: filter,
+      requested_fields: fields ? 
+        Object.keys(fields as Object).join(',') : 
+        Object.keys(fieldMeta?.order.active as Object).join(',')
     };
 
     // deal with sorting
