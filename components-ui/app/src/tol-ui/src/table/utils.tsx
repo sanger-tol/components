@@ -195,6 +195,12 @@ function createCellRenderer(
       return createFloat(value);
     } else if (cellRenderer === "integer") {
       return createInteger(value);
+    } else if (cellRenderer === "big") {
+      for (let i = 0; i < 100; i++) {
+        return (
+          <div style={{}}></div>
+        )
+      }
     }
   }
 
