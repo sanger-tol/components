@@ -52,6 +52,7 @@ export interface Props {
   tooltipContent?: string;
   customAttributeSelection?: string[];
   allowedCardinality?: AllowedCardinality;
+  groupBy?: boolean;
 }
 
 function AttributeSelector(props: Props) {
@@ -76,6 +77,7 @@ function AttributeSelector(props: Props) {
     customAttributeSelection,
     allowedCardinality,
     setAttributeMeta,
+    groupBy,
   } = props;
 
   const [loading, setLoading] = useState(true);
@@ -268,6 +270,7 @@ function AttributeSelector(props: Props) {
         className="tol-attribute-selector-select"
         block
         noSelectAll
+        groupBy={groupBy}
         data={filterAttributes(
           entityMeta,
           endpoint,
@@ -277,13 +280,11 @@ function AttributeSelector(props: Props) {
           allowedCardinality,
           customAttributeSelection
         ).sort((a, b) => {
-          const metaA = getFlattenedMetaData(entityMeta, endpoint)[a];
-          const metaB = getFlattenedMetaData(entityMeta, endpoint)[b];
-          if (metaA.source === null || metaA.source === undefined) return 1;
-          if (metaB.source === null || metaB.source === undefined) return -1;
-          if (metaA.source < metaB.source) return -1;
-          if (metaA.source > metaB.source) return 1;
-          return a.localeCompare(b);
+          if (a.source === null || a.source === undefined) return 1;
+          if (b.source === null || b.source === undefined) return -1;
+          if (a.source < b.source) return -1;
+          if (a.source > b.source) return 1;
+          return a.label.localeCompare(b.label);
         })}
         placeholder={placeholder}
         value={attribute}

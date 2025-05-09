@@ -40,6 +40,7 @@ interface Props {
   className?: string;
   onExit?: any;
   onExiting?: any;
+  groupBy?: boolean;
 }
 
 function MultipleSelect(props: Props) {
@@ -67,6 +68,7 @@ function MultipleSelect(props: Props) {
     caretAs,
     renderExtraFooter,
     className,
+    groupBy,
   } = props;
   const block = isPropDefined(props.block);
 
@@ -109,6 +111,7 @@ function MultipleSelect(props: Props) {
       {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
       <span onClick={onClick}>
         <RSCheckPicker
+          groupBy={groupBy}
           sticky={sticky}
           searchable={!noSearch}
           countable

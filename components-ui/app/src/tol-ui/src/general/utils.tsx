@@ -273,6 +273,23 @@ export function getAllAttributeData(
   }, {});
 };
 
+export function formatFilteredAttributes(
+  attributes: any,
+) {
+  // This is specific for the attribute selector and MultiSelect
+  return attributes.map((attribute: any) => {
+    const { display_name, description, source, python_type } = attribute[1];
+    return {
+      label: attribute[0],
+      value: attribute[0],
+      display_name,
+      description,
+      source,
+      python_type,
+    };
+  });
+}
+
 export function filterAttributes (
   entityMeta: any,
   endpoint: string,
@@ -282,9 +299,10 @@ export function filterAttributes (
   allowedCardinality: AllowedCardinality | undefined,
   customAttributeSelection: string[] | undefined
 ){
-  return Object.keys(getFlattenedMetaData(entityMeta, endpoint)).filter(
-    (key) => {
-      const meta = getFlattenedMetaData(entityMeta, endpoint)[key];
+
+  const filteredAttributes =  Object.entries(getFlattenedMetaData(entityMeta, endpoint)).filter(
+    ([key, value]) => {
+      const meta: any = value;
       const typeMatch =
         !allowedTypes || allowedTypes.includes(meta.python_type);
       const sourceMatch =
@@ -306,7 +324,6 @@ export function filterAttributes (
               meta.cardinality >= allowedCardinality.value) ||
             (allowedCardinality.operator === "<=" &&
               meta.cardinality <= allowedCardinality.value)));
-
       return (
         (recommendedOn ? recommendedMatch : true) &&
         typeMatch &&
@@ -316,6 +333,8 @@ export function filterAttributes (
       );
     }
   );
+
+  return formatFilteredAttributes(filteredAttributes);
 };
 
 export function copyToClipboard(text: string): void {
