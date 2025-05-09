@@ -13,19 +13,19 @@ import { generateFilter, resetAllFilters } from "../filtering/utils";
 import { deepCopy } from "../general/utils";
 
 interface ZoneMeta {
-  ds: TsDataSource;
+  dataSource: TsDataSource;
   objectType: string;
   zone: IZone;
   setZone: any;
 }
 
 export function useZone(params: {
-  ds: TsDataSource;
+  dataSource: TsDataSource;
   objectType: string;
   components: IComponentData[];
   filter?: IFilter;
 }) {
-  const { objectType, ds, components, filter } = params;
+  const { dataSource, objectType, components, filter } = params;
   const [zone, setZone] = useState(
     defineZone(
       objectType,
@@ -34,7 +34,7 @@ export function useZone(params: {
     ),
   );
   return {
-    ds,
+    dataSource,
     objectType,
     zone,
     setZone,

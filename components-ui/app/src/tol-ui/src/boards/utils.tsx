@@ -10,14 +10,14 @@ import { TsDataSource } from "../datasource";
 import { BOARDS } from "../constants/api.constants";
 
 
-export async function getBoard(id: string, dataSource: TsDataSource) {
-  const res = await dataSource
+export async function getBoard(id: string, boardDataSource: TsDataSource) {
+  const res = await boardDataSource
     .getOne({
       objectType: BOARDS.BOARD,
       id: id,
     })
     .then(async (res: any) => {
-      const views = await getViews(res.id, dataSource);
+      const views = await getViews(res.id, boardDataSource);
       return {
         boardTitle: res.title,
         boardFilter: res.filter,
@@ -27,8 +27,8 @@ export async function getBoard(id: string, dataSource: TsDataSource) {
   return res;
 }
 
-async function getViews(id: string, dataSource: TsDataSource) {
-  return await dataSource
+async function getViews(id: string, boardDataSource: TsDataSource) {
+  return await boardDataSource
     .getListPage({
       objectType: BOARDS.VIEW_BOARD,
       filter: {
@@ -41,12 +41,12 @@ async function getViews(id: string, dataSource: TsDataSource) {
       const ids = res.data.data.map(
         (view: any) => view.relationships.view.data.id, // TODO: ENSURE THIS IS CORRECT
       );
-      return getViewsData(ids, dataSource);
+      return getViewsData(ids, boardDataSource);
     });
 }
 
-async function getViewsData(ids: string[], dataSource: TsDataSource) {
-  return await dataSource
+async function getViewsData(ids: string[], boardDataSource: TsDataSource) {
+  return await boardDataSource
     .getListPage({
       objectType: BOARDS.VIEW,
       filter: {
@@ -60,8 +60,8 @@ async function getViewsData(ids: string[], dataSource: TsDataSource) {
     });
 }
 
-export async function getZones(viewId: string, dataSource: TsDataSource) {
-  return await dataSource
+export async function getZones(viewId: string, boardDataSource: TsDataSource) {
+  return await boardDataSource
     .getListPage({
       objectType: BOARDS.ZONE_VIEW,
       filter: {
@@ -77,7 +77,7 @@ export async function getZones(viewId: string, dataSource: TsDataSource) {
           res.data.data.map((zone: any) => zone.relationships.zone.data.id),
         ),
       );
-      const zoneData = await getZoneData(ids, dataSource);
+      const zoneData = await getZoneData(ids, boardDataSource);
       return {
         order: formatZoneOrders(res.data.data),
         zones: zoneData,
@@ -96,8 +96,8 @@ function formatZoneOrders(data: any) {
   return formattedData;
 }
 
-async function getZoneData(ids: string[], dataSource: TsDataSource) {
-  return await dataSource
+async function getZoneData(ids: string[], boardDataSource: TsDataSource) {
+  return await boardDataSource
     .getListPage({
       objectType: BOARDS.ZONE,
       filter: {
@@ -113,11 +113,11 @@ async function getZoneData(ids: string[], dataSource: TsDataSource) {
 
 export function saveTitle(
   title: string,
-  dataSource: TsDataSource,
+  boardDataSource: TsDataSource,
   id: string,
   objectType: string,
 ) {
-  dataSource.upsert({
+  boardDataSource.upsert({
     objectType: objectType,
     payload: [
       {
@@ -131,13 +131,13 @@ export function saveTitle(
   });
 }
 
-export async function getComponents(zoneId: string, dataSource: TsDataSource) {
-  const componentZoneData = await getComponentZoneData(zoneId, dataSource);
+export async function getComponents(zoneId: string, boardDataSource: TsDataSource) {
+  const componentZoneData = await getComponentZoneData(zoneId, boardDataSource);
   // @ts-ignore
   const componentIds = componentZoneData.data.data.map(
     (component: any) => component.relationships.component.data.id,
   );
-  const componentData = await getComponentData(componentIds, dataSource);
+  const componentData = await getComponentData(componentIds, boardDataSource);
 
   // @ts-ignore
   return componentZoneData.data.data.map((component: any) => {
@@ -161,8 +161,8 @@ export async function getComponents(zoneId: string, dataSource: TsDataSource) {
   });
 }
 
-async function getComponentZoneData(zoneId: string, dataSource: TsDataSource) {
-  return await dataSource
+async function getComponentZoneData(zoneId: string, boardDataSource: TsDataSource) {
+  return await boardDataSource
     .getListPage({
       objectType: BOARDS.COMPONENT_ZONE,
       filter: {
@@ -175,9 +175,9 @@ async function getComponentZoneData(zoneId: string, dataSource: TsDataSource) {
 
 async function getComponentData(
   componentIds: string[],
-  dataSource: TsDataSource,
+  boardDataSource: TsDataSource,
 ): Promise<any> {
-  return await dataSource
+  return await boardDataSource
     .getListPage({
       objectType: BOARDS.COMPONENT,
       filter: {
@@ -189,7 +189,7 @@ async function getComponentData(
 }
 
 export async function createBoardAndView(
-  dataSource: TsDataSource,
+  boardDataSource: TsDataSource,
   id: string,
   title: string,
   viewId: string,
@@ -197,7 +197,7 @@ export async function createBoardAndView(
 ) {
   const user = getUserFromLocalStorage();
   const boardId = id ?? generateId("b");
-  await dataSource
+  await boardDataSource
     .upsert({
       objectType: BOARDS.BOARD,
       payload: [
@@ -213,10 +213,10 @@ export async function createBoardAndView(
       ],
     })
     .then(async () => {
-      return addView(dataSource, viewId, viewTitle);
+      return addView(boardDataSource, viewId, viewTitle);
     })
     .then(async () => {
-      await dataSource
+      await boardDataSource
         .upsert({
           objectType: BOARDS.VIEW_BOARD,
           payload: [
@@ -236,10 +236,14 @@ export async function createBoardAndView(
     });
 }
 
-export async function addView(dataSource: TsDataSource, id: string, title: string = "View 1") {
+export async function addView(
+  boardDataSource: TsDataSource,
+  id: string,
+  title: string = "View 1"
+) {
   const user = getUserFromLocalStorage();
   const viewId = id ?? generateId("v");
-  await dataSource
+  await boardDataSource
     .upsert({
       objectType: BOARDS.VIEW,
       payload: [
@@ -311,11 +315,11 @@ export async function addZone(
 }
 
 export async function upsertZone(
-  dataSource: TsDataSource,
+  boardDataSource: TsDataSource,
   zoneId: string,
   attributes: object,
 ) {
-  return await dataSource
+  return await boardDataSource
     .upsert({
       objectType: BOARDS.ZONE,
       payload: [
@@ -386,11 +390,11 @@ export async function addComponent(
 }
 
 export async function upsertComponent(
-  dataSource: TsDataSource,
+  boardDataSource: TsDataSource,
   componentId: string,
   attributes: object,
 ) {
-  return await dataSource
+  return await boardDataSource
     .upsert({
       objectType: BOARDS.COMPONENT,
       payload: [
@@ -404,12 +408,12 @@ export async function upsertComponent(
 }
 
 export async function upsertComponentConfig(
-  dataSource: TsDataSource,
+  boardDataSource: TsDataSource,
   componentId: string,
   config: object,
 ) {
   return await upsertComponent(
-    dataSource,
+    boardDataSource,
     componentId,
     { config: config }
   );

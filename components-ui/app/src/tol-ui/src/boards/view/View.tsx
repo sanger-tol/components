@@ -27,7 +27,7 @@ interface Props {
   id: string;
   defaultFilter?: IFilter;
   // title: string,
-  dataSource?: TsDataSource;
+  dataSource: TsDataSource;
   boardDataSource: TsDataSource;
 }
 

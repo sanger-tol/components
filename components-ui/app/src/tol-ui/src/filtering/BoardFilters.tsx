@@ -20,15 +20,14 @@ export interface Props {
   zone: IZone;
   setZone: any;
   entityType: string; // e.g. component type or zone
-  endpoint: string;
-  baseUrl?: string;
+  objectType: string;
+  boardDataSource: TsDataSource;
   open: boolean;
   setOpen: any;
 }
 
 function BoardFilters(props: Props) {
-  const { id, zone, setZone, entityType, endpoint, open, setOpen } = props;
-  const ds = new TsDataSource();
+  const { id, zone, setZone, entityType, objectType, boardDataSource, open, setOpen } = props;
 
   // the fixed filter present on the component
   const [filters, setFilters] = useState(
@@ -101,13 +100,13 @@ function BoardFilters(props: Props) {
     resetFiltersBelow({ id: id, zone: zone });
     setZone({ ...zone });
     setOpen(false);
-    upserter(ds, id, attributes);
+    upserter(boardDataSource, id, attributes);
   };
 
   return (
     <div>
       <Drawer
-        title={`Filtering on a ${endpoint} ${entityType}`}
+        title={`Filtering on a ${objectType} ${entityType}`}
         open={open}
         setOpen={setOpen}
       >

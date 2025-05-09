@@ -10,7 +10,7 @@ import { useState, useRef, useEffect } from "react";
 import { getWidgetOrder, generateLayout } from "../utils";
 import { IZone } from "../../models";
 import ConfirmationModal from "../ConfirmationModal";
-import { BOARDS, BoardObjectTypes } from "../../constants";
+import { BOARDS } from "../../constants";
 
 export interface IWidgets {
   componentId: string;
@@ -34,7 +34,7 @@ interface Props {
   setZone: any;
   saveLayout: boolean;
   setSaveLayout: any;
-  ds: any;
+  boardDataSource: any;
 }
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
@@ -48,7 +48,7 @@ function ResponsiveWidget(props: Props) {
     setZone,
     saveLayout,
     setSaveLayout,
-    ds,
+    boardDataSource,
   } = props;
   const [layoutsState, setLayouts] = useState<Layouts>();
   // newLayout is used to store the layout when the user is dragging widgets, and is emtptied once a user saves
@@ -90,7 +90,7 @@ function ResponsiveWidget(props: Props) {
 
   const deleteWidget = (id: string) => {
     const newWidgets = widgets.filter((widget) => widget.componentId !== id);
-    ds.custom(`${BOARDS.DELETE_COMPONENT}/${id}`, "DELETE");
+    // boardDataSource.custom(`${BOARDS.DELETE_COMPONENT}/${id}`, "DELETE"); // TODO: ADD DELETE COMPONENT ENDPOINT
     setWidgets(newWidgets);
   };
 
@@ -115,15 +115,15 @@ function ResponsiveWidget(props: Props) {
       );
       widget!.order = highestPreviousOrder + 1 + index;
       return {
-        type: BoardObjectTypes.COMPONENT_ZONE as string,
+        type: BOARDS.COMPONENT_ZONE as string,
         id: widget!.componentZoneId,
         attributes: {
           order: highestPreviousOrder + index + 1,
         },
       };
     });
-    await ds.upsert({
-      objectType: BOARDS.ZONE_COMPONENTS,
+    await boardDataSource.upsert({
+      objectType: BOARDS.COMPONENT_ZONE,
       payload: payloadData,
     });
     setSaveLayout(false);

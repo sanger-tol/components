@@ -25,22 +25,22 @@ interface Props {
   id: string;
   title: string;
   objectType: string;
-  ds: TsDataSource;
+  dataSource: TsDataSource;
+  boardDataSource: TsDataSource;
   filter: any;
   onZoneReorder: any;
   deleteZone: any;
-  boardsDs: TsDataSource;
 }
 
 function Zone(props: Props) {
   const { 
     id,
     objectType,
-    ds,
+    dataSource,
+    boardDataSource,
     filter,
     onZoneReorder,
     deleteZone,
-    boardsDs
   } = props;
   const [draggable, setDraggable] = useState(false);
   const [currentWidgets, setCurrentWidgets] = useState<IWidgets[]>([]);
@@ -51,8 +51,8 @@ function Zone(props: Props) {
   const [saveLayout, setSaveLayout] = useState(false);
   const [title, setTitle] = useState(props.title);
   const z = useZone({
+    dataSource,
     objectType,
-    ds,
     filter: filter,
     components: [],
   });
@@ -75,7 +75,7 @@ function Zone(props: Props) {
   );
 
   useEffect(() => {
-    getComponents(id, ds).then((components: any) => {
+    getComponents(id, boardDataSource).then((components: any) => {
       // sort the widgets based on the order value
       const sortedWidgets = components.sort((a, b) => a.order - b.order);
       sortedWidgets.forEach((widget) => {
@@ -211,7 +211,7 @@ function Zone(props: Props) {
             title={title}
             onSave={(newTitle) => {
               if (newTitle !== title) {
-                saveTitle(newTitle, ds, id, "zone");
+                saveTitle(newTitle, dataSource, id, "zone");
                 setTitle(newTitle);
               }
             }}
@@ -245,7 +245,7 @@ function Zone(props: Props) {
               zoneId={id}
               currentWidgets={currentWidgets}
               setCurrentWidgets={setCurrentWidgets}
-              boardsDs={boardsDs}
+              boardsDataSource={boardDataSource}
               {...z}
             />
           </div>
@@ -267,7 +267,7 @@ function Zone(props: Props) {
           setZone={z.setZone}
           saveLayout={saveLayout}
           setSaveLayout={setSaveLayout}
-          ds={ds}
+          boardDataSource={boardDataSource}
         />
       ) : (
         <div className="tol-zone-empty">
