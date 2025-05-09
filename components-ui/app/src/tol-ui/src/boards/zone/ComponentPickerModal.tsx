@@ -16,7 +16,9 @@ import {
 } from "../../index";
 import { FormTextField } from "../../forms";
 import { RSForm } from "../../index";
-import { IZone, addComponent, defineComponent } from "../utils";
+import { addComponent } from "../utils";
+import { defineComponent } from "../../hooks";
+import { IZone } from "../../models";
 import { componentOptions, sizeOptions } from "../../config/boards/componentSelection";
 
 interface Props {

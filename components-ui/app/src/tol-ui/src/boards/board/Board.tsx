@@ -16,14 +16,17 @@ import { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import { getUserFromLocalStorage } from "../../services/localStorage/localStorageService";
 import { getCssVarValue } from "../../general/utils";
+import { BOARDS_API_PREFIX } from "../../constants";
 
 interface Props {
-  dataUrl?: string;
+  dataSource?: TsDataSource
 }
 
 function Board(props: Props) {
-  const { dataUrl } = props;
-  const ds = new TsDataSource();
+  const { dataSource } = props;
+  const boardDataSource = new TsDataSource({
+    apiPrefix: BOARDS_API_PREFIX,
+  });
   const { boardId, viewId } = useParams<any>();
 
   const [user, setUser] = useState<any>(null);
@@ -48,7 +51,7 @@ function Board(props: Props) {
 
   useEffect(() => {
     if (boardId && user) {
-      getBoard(boardId, ds, user.id)
+      getBoard(boardId, boardDataSource, user.id)
         .then((res: any) => {
           if (!view) setView(res.views[0].id);
           setBoardData(res);
@@ -77,7 +80,7 @@ function Board(props: Props) {
           title={boardData.boardTitle}
           onSave={(newTitle: any) => {
             if (newTitle !== boardData.boardTitle) {
-              saveTitle(newTitle, ds, boardId, "board");
+              saveTitle(newTitle, boardDataSource, boardId, "board");
             }
           }}
           editable
@@ -85,9 +88,9 @@ function Board(props: Props) {
       </div>
       <View
         id={boardData.views[0].id}
-        ds={ds}
         defaultFilter={boardData.views[0].filter}
-        dataUrl={dataUrl}
+        dataSource={dataSource}
+        boardDataSource={boardDataSource}
       />
     </div>
   );

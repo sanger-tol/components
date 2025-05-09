@@ -5,10 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Button, ZoneModal, IFilter } from "../../index";
+import { Button, ZoneModal, IFilter, TsDataSource } from "../../index";
 import { getZones } from "../utils";
 import Zone from "../zone/Zone";
-import { BOARD_ENDPOINTS, BoardObjectTypes } from "../../constants";
+import { BOARDS } from "../../constants";
 
 interface ZoneObject {
   id: string;
@@ -25,20 +25,20 @@ interface OrderObject {
 
 interface Props {
   id: string;
-  // title: string,
-  ds: any;
   defaultFilter?: IFilter;
-  dataUrl?: string;
+  // title: string,
+  dataSource?: TsDataSource;
+  boardDataSource: TsDataSource;
 }
 
 function View(props: Props) {
-  const { id, ds, dataUrl } = props;
+  const { id, dataSource, boardDataSource } = props;
   const [zones, setZones] = useState<ZoneObject[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<OrderObject[]>([]);
 
   useEffect(() => {
-    getZones(id, ds).then((res: any) => {
+    getZones(id, boardDataSource).then((res: any) => {
       const initialZones = res.zones.map((zone: any) => {
         return {
           id: zone.id,
@@ -54,7 +54,7 @@ function View(props: Props) {
 
   const deleteZone = (id: string) => {
     const newZones = zones.filter((zone) => zone.id !== id);
-    ds.custom(`${BOARD_ENDPOINTS.DELETE_ZONE}/${id}`, "DELETE");
+    // boardDataSource.custom(`${BOARDS.DELETE_ZONE}/${id}`, "DELETE"); TODO: ADD DELETE ZONE ENDPOINT
     setZones(newZones);
   };
 
@@ -98,7 +98,7 @@ function View(props: Props) {
 
     const payloadData = updatedZoneOrder.map((zone) => {
       return {
-        type: BoardObjectTypes.ZONE_VIEW as string,
+        type: BOARDS.ZONE_VIEW as string,
         id: zone.zoneViewId,
         attributes: {
           order: zone.order,
@@ -106,8 +106,8 @@ function View(props: Props) {
       };
     });
 
-    await ds.upsert({
-      objectType: BOARD_ENDPOINTS.VIEW_ZONES,
+    await boardDataSource.upsert({
+      objectType: BOARDS.ZONE_VIEW,
       payload: payloadData,
     });
 
@@ -155,9 +155,9 @@ function View(props: Props) {
         zones={zones}
         zoneOrder={zoneOrder}
         setZoneOrder={setZoneOrder}
-        ds={ds}
         viewId={id}
-        dataUrl={dataUrl}
+        dataSource={dataSource}
+        boardDataSource={boardDataSource}
       />
       {zones.length > 0 ? (
         <>
@@ -171,8 +171,8 @@ function View(props: Props) {
                 filter={zone.filter}
                 onZoneReorder={onZoneReorder}
                 deleteZone={deleteZone}
-                ds={ds}
-                dataUrl={dataUrl}
+                dataSource={dataSource}
+                boardDataSource={boardDataSource}
               />
             );
           })}

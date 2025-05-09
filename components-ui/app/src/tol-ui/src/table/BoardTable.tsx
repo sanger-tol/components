@@ -7,7 +7,8 @@ SPDX-License-Identifier: MIT
 import { FieldMeta, initialiseFieldMeta } from "./Field";
 import { BoardFilters, RemoteTable, TsDataSource } from "../index";
 import { useState } from "react";
-import { upsertComponentConfig, IZone, saveTitle } from "../boards/utils";
+import { upsertComponentConfig, saveTitle } from "../boards/utils";
+import { IZone } from "../models";
 
 interface Props {
   id: string;

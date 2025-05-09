@@ -42,6 +42,8 @@ function RemoteCount(props: Props) {
     }
   }, [zone]);
 
+  console.log(zone, id);
+
   useEffectUpdate(() => {
     setLoading(true);
     httpClient()

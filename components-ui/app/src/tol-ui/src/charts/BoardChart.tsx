@@ -7,7 +7,8 @@ SPDX-License-Identifier: MIT
 import { BoardFilters, Icon, Placeholder, RemoteBarChart, TsDataSource } from "../index";
 import { deepCopy } from "../general/utils";
 import { useState } from "react";
-import { upsertComponentConfig, IZone, saveTitle } from "../boards/utils";
+import { upsertComponentConfig, saveTitle } from "../boards/utils";
+import { IZone } from "../models";
 import ChartConfigDrawer from "./ChartConfigDrawer";
 import { IChartConfig } from "../models";
 import { IButton } from "../general/Button"

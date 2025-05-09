@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { Toggle } from "rsuite"
 import { InfoTooltip } from "../general"
 import { useEffect, useState } from "react";
-import { IZone } from "../boards";
+import { IZone } from "../models";
 import { upsertComponent, upsertZone } from "../boards/utils";
 import RemoteFilters from "./RemoteFilters";
 import { Drawer } from "../general";

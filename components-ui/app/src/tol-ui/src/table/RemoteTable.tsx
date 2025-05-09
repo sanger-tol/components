@@ -19,7 +19,7 @@ import {
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
-import { IZone } from "../boards";
+import { IZone } from "../models";
 import {
   generateFilter,
   filterHasUpdated,
@@ -28,7 +28,7 @@ import {
 import RowCounter from "./RowCounter";
 import { IDropdownButtonConfig } from "../models";
 import ActionCheckModal from "./actions/ActionCheckModal";
-import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
+import { ACTION_ENDPOINTS, API_METHODS } from "../constants";
 import ActionModal from "./actions/ActionModal";
 import { addRemoteActions } from "./actions/utils";
 import { useStateFallback } from "../hooks";
@@ -293,7 +293,7 @@ function RemoteTable(props: Props) {
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
     await ds
-      .custom(ACTION_ENDPOINTS.RUN_ACTION, ApiMethods.POST as string, {
+      .custom(ACTION_ENDPOINTS.RUN_ACTION, API_METHODS.POST as string, {
         ids: ids,
         action_name: actionName,
         object_type: endpoint,

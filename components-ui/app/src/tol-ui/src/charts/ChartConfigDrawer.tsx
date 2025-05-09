@@ -15,7 +15,7 @@ import {
   InfoTooltip
 } from "../index";
 import { normaliseCaps } from "../general/utils";
-import { IChartConfig } from "../models/Board";
+import { IChartConfig } from "../models/Boards";
 import { HistogramGrouping } from "./utils";
 
 export interface Props {

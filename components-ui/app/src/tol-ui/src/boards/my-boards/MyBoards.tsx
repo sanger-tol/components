@@ -18,7 +18,7 @@ import MyBoardsHeader from "./MyBoardsHeader";
 import { getUserFromLocalStorage } from "../../services/localStorage/localStorageService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import { BOARD_ENDPOINTS } from "../../constants/api.constants";
+import { BOARDS } from "../../constants/api.constants";
 
 const containerStyle = {
   display: "flex",
@@ -34,7 +34,7 @@ const DASHBOARD_WARNING =
 
 const getBoardDetails = async (id: string, setErrorMessage: any) => {
   try {
-    const res = await httpClient().get(`/${BOARD_ENDPOINTS.BOARD}`, {
+    const res = await httpClient().get(`/${BOARDS.BOARD}`, {
       params: {
         filter: {
           and_: {

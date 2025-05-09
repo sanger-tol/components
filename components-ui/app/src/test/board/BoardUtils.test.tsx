@@ -9,9 +9,11 @@ import { deepCopy } from "../../tol-ui/src/general/utils";
 import {
   defineComponent,
   defineZone,
+} from "../../tol-ui/src/hooks";
+import {
   getWidgetOrder,
 } from "../../tol-ui/src/boards/utils";
-import { IComponentData } from "../../tol-ui/src/boards/utils";
+import { IComponentData } from "../../tol-ui/src/models";
 
 describe("defineComponent function", () => {
   test("should add a component to the zone", () => {

@@ -23,7 +23,7 @@ import {
   setFilter,
   filterListener,
 } from "../../tol-ui/src/filtering/utils";
-import { IZone } from "../../tol-ui/src/boards/utils";
+import { IZone } from "../../tol-ui/src/models";
 import { IFilter } from "../../tol-ui/src/models/Filter";
 
 describe("Testing getComponentsAbove function", () => {

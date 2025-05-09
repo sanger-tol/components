@@ -6,7 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { useState } from 'react';
 import { BoardFilters, RemoteCount, TsDataSource } from "../index";
-import { IZone, saveTitle } from "../boards/utils";
+import { saveTitle } from "../boards/utils";
+import { IZone } from "../models";
 import { IButton } from "../general/Button";
 
 interface Props {

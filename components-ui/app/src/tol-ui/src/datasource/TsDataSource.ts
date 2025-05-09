@@ -25,6 +25,7 @@ import { EXCLUDED_DETAIL_CACHE_OBJECTS } from "../constants/datasource.constants
 import { httpClient } from "../services/http/httpClient";
 import { retry } from "../services/http/retry";
 import { deepCopy } from "../general/utils";
+import { API_METHODS } from "../constants/api.constants";
 
 
 const detailCache: IDetailCache = {};
@@ -423,26 +424,26 @@ export class TsDataSource {
   }: ICustom): Promise<any> {
     const url = this.generateEndpoint(resource);
     switch (method.toUpperCase()) {
-      case ApiMethods.GET:
+      case API_METHODS.GET:
         return await this.client().get(url, {
           baseURL: this.baseUrl,
           params: params,
         });
-      case ApiMethods.POST:
+      case API_METHODS.POST:
         return await this.client().post(url, body, {
           baseUrl: this.baseUrl,
           params: params,
         });
-      case ApiMethods.PUT:
+      case API_METHODS.PUT:
         return await this.client().put(url, body, {
           baseUrl: this.baseUrl,
           params: params,
         });
-      case ApiMethods.PATCH:
+      case API_METHODS.PATCH:
         return await this.client().patch(url, body, {
           baseUrl: this.baseUrl,
         });
-      case ApiMethods.DELETE:
+      case API_METHODS.DELETE:
         return await this.client().delete(url, {
           baseURL: this.baseUrl,
         });

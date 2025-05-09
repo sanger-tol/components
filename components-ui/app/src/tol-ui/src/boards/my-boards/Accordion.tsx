@@ -14,7 +14,7 @@ import { httpClient } from "../../services";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartSimple, faTable } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
-import { BOARD_ENDPOINTS, BoardObjectTypes } from "../../constants";
+import { BOARDS, BoardObjectTypes } from "../../constants";
 import { TsDataSource } from "../..";
 
 interface AccordionBaseProps {
@@ -51,7 +51,7 @@ interface ComponentsProps {
 // When all MRs have been merged into dev
 const returnViewInfo = async (viewId: string) => {
   try {
-    const res: any = await httpClient().get(`/${BOARD_ENDPOINTS.VIEW}`, {
+    const res: any = await httpClient().get(`/${BOARDS.VIEW}`, {
       params: {
         filter: {
           and_: {
@@ -69,7 +69,7 @@ const returnViewInfo = async (viewId: string) => {
 
 const returnZoneInfo = async (zoneId: string) => {
   try {
-    const res: any = await httpClient().get(`/${BOARD_ENDPOINTS.ZONE}`, {
+    const res: any = await httpClient().get(`/${BOARDS.ZONE}`, {
       params: {
         filter: {
           and_: {
@@ -90,7 +90,7 @@ const returnZoneInfo = async (zoneId: string) => {
 
 const returnComponentInfo = async (componentId: string) => {
   try {
-    const res: any = await httpClient().get(`/${BOARD_ENDPOINTS.COMPONENT}`, {
+    const res: any = await httpClient().get(`/${BOARDS.COMPONENT}`, {
       params: {
         filter: {
           and_: {
@@ -212,7 +212,7 @@ function Accordion(props: BoardsAccordionProps) {
     );
     setBoardDetails(deletedBoard);
     const ds = new TsDataSource();
-    ds.custom(`${BOARD_ENDPOINTS.DELETE_BOARD}/${boardIdToDelete}`, "DELETE");
+    ds.custom(`${BOARDS.DELETE_BOARD}/${boardIdToDelete}`, "DELETE");
     setBoardIdToDelete(null);
   };
 
@@ -372,7 +372,7 @@ function Accordion(props: BoardsAccordionProps) {
             <div key={zoneId} style={{ marginTop: "15px" }}>
               <AccordionBase
                 id={zoneId}
-                endpointUrl={BOARD_ENDPOINTS.ZONE_COMPONENTS}
+                endpointUrl={BOARDS.ZONE_COMPONENTS}
                 filterItem={"zone.id"}
                 itemType={BoardObjectTypes.COMPONENT as string}
                 title={zoneData[zoneId][0].title || ""}
@@ -409,7 +409,7 @@ function Accordion(props: BoardsAccordionProps) {
                 <AccordionBase
                   id={viewId}
                   title={viewData[viewId] || ""}
-                  endpointUrl={BOARD_ENDPOINTS.VIEW_ZONES}
+                  endpointUrl={BOARDS.VIEW_ZONES}
                   filterItem={"view.id"}
                   itemType={BoardObjectTypes.ZONE as string}
                   clickable={false}
@@ -443,7 +443,7 @@ function Accordion(props: BoardsAccordionProps) {
             <AccordionBase
               id={board.id}
               title={board.title}
-              endpointUrl={BOARD_ENDPOINTS.BOARD_VIEWS}
+              endpointUrl={BOARDS.BOARD_VIEWS}
               filterItem={"board.id"}
               itemType={BoardObjectTypes.VIEW as string}
               clickable={true}

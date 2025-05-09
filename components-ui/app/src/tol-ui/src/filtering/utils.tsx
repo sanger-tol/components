@@ -5,7 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect } from "react";
-import { IZone, defineComponent } from "../boards/utils";
+import { IZone } from "../models";
+import { defineComponent } from "../hooks";
 import { IFilter, And } from "../models/Filter";
 import { deepCopy, isEmptyObject } from "../general/utils";
 

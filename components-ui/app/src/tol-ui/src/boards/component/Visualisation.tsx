@@ -10,7 +10,7 @@ import {
   BoardSunburst,
   BoardChart
 } from "../../index";
-import { IZone } from "../utils";
+import { IZone } from "../../models";
 
 interface Props {
   id: string;

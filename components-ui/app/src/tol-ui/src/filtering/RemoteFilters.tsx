@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { TsDataSource } from "..";
-import { IZone } from "../boards";
-import { defineZone } from "../boards/utils";
+import { IZone } from "../models";
+import { defineZone } from "../hooks";
 import Filter from "./Filter";
 import { IFilter } from "../models";
 import { Button, useEffectUpdate } from "..";

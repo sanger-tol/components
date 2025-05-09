@@ -10,4 +10,4 @@ export * from "./Filter";
 export * from "./EntityMeta";
 export * from "./DataSource";
 export * from "./Buttons";
-export * from "./Board";
+export * from "./Boards";

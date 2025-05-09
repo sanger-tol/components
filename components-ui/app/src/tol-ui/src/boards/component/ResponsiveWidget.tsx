@@ -7,9 +7,10 @@ SPDX-License-Identifier: MIT
 import { WidthProvider, Responsive, Layouts } from "react-grid-layout";
 import { Button, Placeholder, Visualisation } from "../../index";
 import { useState, useRef, useEffect } from "react";
-import { IZone, getWidgetOrder, generateLayout } from "../utils";
+import { getWidgetOrder, generateLayout } from "../utils";
+import { IZone } from "../../models";
 import ConfirmationModal from "../ConfirmationModal";
-import { BOARD_ENDPOINTS, BoardObjectTypes } from "../../constants";
+import { BOARDS, BoardObjectTypes } from "../../constants";
 
 export interface IWidgets {
   componentId: string;
@@ -89,7 +90,7 @@ function ResponsiveWidget(props: Props) {
 
   const deleteWidget = (id: string) => {
     const newWidgets = widgets.filter((widget) => widget.componentId !== id);
-    ds.custom(`${BOARD_ENDPOINTS.DELETE_COMPONENT}/${id}`, "DELETE");
+    ds.custom(`${BOARDS.DELETE_COMPONENT}/${id}`, "DELETE");
     setWidgets(newWidgets);
   };
 
@@ -122,7 +123,7 @@ function ResponsiveWidget(props: Props) {
       };
     });
     await ds.upsert({
-      objectType: BOARD_ENDPOINTS.ZONE_COMPONENTS,
+      objectType: BOARDS.ZONE_COMPONENTS,
       payload: payloadData,
     });
     setSaveLayout(false);
