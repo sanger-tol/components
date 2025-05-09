@@ -153,7 +153,7 @@ export function capitaliseFirstLetter(string: string) {
 }
 
 export function generateId(prefix: string) {
-  // Does not include special characters
+  // does not include special characters
   const alphabet =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const nanoid = customAlphabet(alphabet, 12);

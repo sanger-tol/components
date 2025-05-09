@@ -5,22 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import { generateId } from "../general/utils";
-import { httpClient } from "../services/http/httpClient";
 import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
 import { TsDataSource } from "../datasource";
 import { BOARDS } from "../constants/api.constants";
 
-export function getWidgetOrder(layout: any) {
-  // Sort the layout array by the 'y' property (and 'x' property in case of a tie)
-  layout.sort((a, b) => a.y - b.y || a.x - b.x);
-
-  // Map the sorted layout array to an array of widget objects
-  const widgetOrder = layout.map((item) => item.i);
-
-  return {
-    order: widgetOrder,
-  };
-}
 
 export async function getBoard(id: string, dataSource: TsDataSource) {
   const res = await dataSource
@@ -108,8 +96,8 @@ function formatZoneOrders(data: any) {
   return formattedData;
 }
 
-async function getZoneData(ids: string[], ds: any) {
-  return await ds
+async function getZoneData(ids: string[], dataSource: TsDataSource) {
+  return await dataSource
     .getListPage({
       objectType: BOARDS.ZONE,
       filter: {
@@ -143,13 +131,13 @@ export function saveTitle(
   });
 }
 
-export async function getComponents(zoneId: string, ds: TsDataSource) {
-  const componentZoneData = await getComponentZoneData(zoneId);
+export async function getComponents(zoneId: string, dataSource: TsDataSource) {
+  const componentZoneData = await getComponentZoneData(zoneId, dataSource);
   // @ts-ignore
   const componentIds = componentZoneData.data.data.map(
     (component: any) => component.relationships.component.data.id,
   );
-  const componentData = await getComponentData(componentIds, ds);
+  const componentData = await getComponentData(componentIds, dataSource);
 
   // @ts-ignore
   return componentZoneData.data.data.map((component: any) => {
@@ -173,30 +161,270 @@ export async function getComponents(zoneId: string, ds: TsDataSource) {
   });
 }
 
-async function getComponentZoneData(zoneId: string) {
-  return await httpClient().get(`/${BOARDS.ZONE_COMPONENTS}`, {
-    params: {
+async function getComponentZoneData(zoneId: string, dataSource: TsDataSource) {
+  return await dataSource
+    .getListPage({
+      objectType: BOARDS.COMPONENT_ZONE,
       filter: {
         and_: {
           zone_id: { eq: { value: zoneId } },
         },
       },
-    },
-  });
+    });
 }
 
 async function getComponentData(
   componentIds: string[],
-  ds: TsDataSource,
+  dataSource: TsDataSource,
 ): Promise<any> {
-  return await ds.getListPage({
-    objectType: BOARDS.COMPONENT,
-    filter: {
-      and_: {
-        id: { in_list: { value: componentIds } },
+  return await dataSource
+    .getListPage({
+      objectType: BOARDS.COMPONENT,
+      filter: {
+        and_: {
+          id: { in_list: { value: componentIds } },
+        },
       },
-    },
-  });
+    });
+}
+
+export async function createBoardAndView(
+  dataSource: TsDataSource,
+  id: string,
+  title: string,
+  viewId: string,
+  viewTitle: string,
+) {
+  const user = getUserFromLocalStorage();
+  const boardId = id ?? generateId("b");
+  await dataSource
+    .upsert({
+      objectType: BOARDS.BOARD,
+      payload: [
+        {
+          type: BOARDS.BOARD,
+          id: boardId,
+          attributes: {
+            title: title,
+            filter: { and_: {} },
+            user_id: user.id,
+          },
+        },
+      ],
+    })
+    .then(async () => {
+      return addView(dataSource, viewId, viewTitle);
+    })
+    .then(async () => {
+      await dataSource
+        .upsert({
+          objectType: BOARDS.VIEW_BOARD,
+          payload: [
+            {
+              type: BOARDS.VIEW_BOARD,
+              attributes: {
+                order: 1,
+                board_id: boardId,
+                view_id: viewId,
+              },
+            },
+          ],
+        })
+        .catch((err: any) => {
+          console.error(err);
+        });
+    });
+}
+
+export async function addView(dataSource: TsDataSource, id: string, title: string = "View 1") {
+  const user = getUserFromLocalStorage();
+  const viewId = id ?? generateId("v");
+  await dataSource
+    .upsert({
+      objectType: BOARDS.VIEW,
+      payload: [
+        {
+          type: BOARDS.VIEW,
+          id: viewId,
+          attributes: {
+            title: title,
+            filter: { and_: {} },
+            user_id: user.id,
+          },
+        },
+      ],
+    })
+    .catch((err: any) => {
+      console.error(err);
+    });
+}
+
+export async function addZone(
+  dataSource: TsDataSource,
+  boardDataSource: TsDataSource,
+  objectType: string,
+  title: string,
+  nextOrder: number,
+  viewId: string,
+) {
+  const user = getUserFromLocalStorage();
+  const newId = generateId("z");
+  await boardDataSource
+    .upsert({
+      objectType: BOARDS.ZONE,
+      payload: [
+        {
+          type: BOARDS.ZONE,
+          id: newId,
+          attributes: {
+            title: title,
+            filter: { and_: {} },
+            object_type: objectType,
+            user_id: user.id,
+            base_url: dataSource.getBaseUrl(),
+            api_prefix: dataSource.getApiPrefix(),
+          },
+        },
+      ],
+    });
+
+  return await boardDataSource
+    .upsert({
+      objectType: BOARDS.ZONE_VIEW,
+      payload: [
+        {
+          type: BOARDS.ZONE_VIEW,
+          attributes: {
+            order: nextOrder,
+            zone_id: newId,
+            view_id: viewId,
+          },
+        },
+      ],
+    })
+    .then((res) => {
+      return {
+        newZoneId: newId,
+        newZoneViewId: res[0].id,
+      };
+    });
+}
+
+export async function upsertZone(
+  dataSource: TsDataSource,
+  zoneId: string,
+  attributes: object,
+) {
+  return await dataSource
+    .upsert({
+      objectType: BOARDS.ZONE,
+      payload: [
+        {
+          type: BOARDS.ZONE,
+          id: zoneId,
+          attributes: attributes
+        },
+      ],
+    });
+}
+
+export async function addComponent(
+  dataSource: TsDataSource,
+  boardDataSource: TsDataSource,
+  objectType: string,
+  title: string,
+  nextOrder: number,
+  componentType: string,
+  widgetType: string,
+  zoneId: string,
+) {
+  const user = getUserFromLocalStorage();
+  const newId = generateId("c");
+  await boardDataSource
+    .upsert({
+      objectType: BOARDS.COMPONENT,
+      payload: [
+        {
+          type: BOARDS.COMPONENT,
+          id: newId,
+          attributes: {
+            title: title,
+            object_type: objectType,
+            component_type: componentType,
+            widget_type: widgetType,
+            filter: { and_: {} },
+            config: {},
+            base_url: dataSource.getBaseUrl(),
+            api_prefix: dataSource.getApiPrefix(),
+            user_id: user.id,
+            filter_pass_through: false,
+          },
+        },
+      ],
+    });
+
+  return await boardDataSource
+    .upsert({
+      objectType: BOARDS.COMPONENT_ZONE,
+      payload: [
+        {
+          type: BOARDS.COMPONENT_ZONE,
+          attributes: {
+            order: nextOrder,
+            component_id: newId,
+            zone_id: zoneId,
+          },
+        },
+      ],
+    })
+    .then((res) => {
+      return {
+        newComponentId: newId,
+        newComponentZoneId: res[0].id,
+      };
+    });
+}
+
+export async function upsertComponent(
+  dataSource: TsDataSource,
+  componentId: string,
+  attributes: object,
+) {
+  return await dataSource
+    .upsert({
+      objectType: BOARDS.COMPONENT,
+      payload: [
+        {
+          type: BOARDS.COMPONENT,
+          id: componentId,
+          attributes: attributes
+        },
+      ],
+    });
+}
+
+export async function upsertComponentConfig(
+  dataSource: TsDataSource,
+  componentId: string,
+  config: object,
+) {
+  return await upsertComponent(
+    dataSource,
+    componentId,
+    { config: config }
+  );
+}
+
+export function getWidgetOrder(layout: any) {
+  // Sort the layout array by the 'y' property (and 'x' property in case of a tie)
+  layout.sort((a, b) => a.y - b.y || a.x - b.x);
+
+  // Map the sorted layout array to an array of widget objects
+  const widgetOrder = layout.map((item) => item.i);
+
+  return {
+    order: widgetOrder,
+  };
 }
 
 export const generateLayout = (components) => {
@@ -237,222 +465,3 @@ export const generateLayout = (components) => {
 
   return layout;
 };
-
-export async function createBoardAndView(
-  ds: TsDataSource,
-  id: string,
-  title: string,
-  viewId: string,
-  viewTitle: string,
-) {
-  const user = getUserFromLocalStorage();
-  const boardId = id ?? generateId("b");
-  await ds
-    .upsert({
-      objectType: BOARDS.BOARD,
-      payload: [
-        {
-          type: BoardObjectTypes.BOARD,
-          id: boardId,
-          attributes: {
-            title: title,
-            filter: { and_: {} },
-            user_id: user.id,
-          },
-        },
-      ],
-    })
-    .then(async () => {
-      return addView(ds, viewId, viewTitle);
-    })
-    .then(async () => {
-      await ds
-        .upsert({
-          objectType: BOARDS.BOARD_VIEWS,
-          payload: [
-            {
-              type: BoardObjectTypes.VIEW_BOARD,
-              attributes: {
-                order: 1,
-                board_id: boardId,
-                view_id: viewId,
-              },
-            },
-          ],
-        })
-        .catch((err: any) => {
-          console.error(err);
-        });
-    });
-}
-
-//@ts-ignore
-export async function addView(ds: TsDataSource, id: string, title: string) {
-  const user = getUserFromLocalStorage();
-  const viewId = id ?? generateId("v");
-  await ds
-    .upsert({
-      objectType: BOARDS.VIEW,
-      payload: [
-        {
-          type: BoardObjectTypes.VIEW,
-          id: viewId,
-          attributes: {
-            title: "View 1",
-            filter: { and_: {} },
-            user_id: user.id,
-          },
-        },
-      ],
-    })
-    .catch((err: any) => {
-      console.error(err);
-    });
-}
-
-export async function addZone(
-  dataSource: TsDataSource,
-  boardDataSource: TsDataSource,
-  objectType: string,
-  title: string,
-  nextOrder: number,
-  viewId: string,
-) {
-  const user = getUserFromLocalStorage();
-  const newId = generateId("z");
-  await boardDataSource.upsert({
-    objectType: BOARDS.ZONE,
-    payload: [
-      {
-        type: BoardObjectTypes.ZONE,
-        id: newId,
-        attributes: {
-          title: title,
-          filter: { and_: {} },
-          object_type: objectType,
-          user_id: user.id,
-          base_url: dataSource.getBaseUrl(),
-          api_prefix: dataSource.getApiPrefix(),
-        },
-      },
-    ],
-  });
-
-  return await boardDataSource.upsert({
-    objectType: BOARDS.ZONE_VIEW,
-    payload: [
-      {
-        type: BOARDS.ZONE_VIEW,
-        attributes: {
-          order: nextOrder,
-          zone_id: newId,
-          view_id: viewId,
-        },
-      },
-    ],
-  })
-  .then((res) => {
-    return {
-      newZoneId: newId,
-      newZoneViewId: res[0].id,
-    };
-  });
-}
-
-export async function upsertZone(
-  ds: TsDataSource,
-  zoneId: string,
-  attributes: object,
-) {
-  return await ds.upsert({
-    objectType: BOARDS.ZONE,
-    payload: [
-      {
-        type: BoardObjectTypes.ZONE,
-        id: zoneId,
-        attributes: attributes
-      },
-    ],
-  });
-}
-
-export async function addComponent(
-  dataSource: TsDataSource,
-  boardDataSource: TsDataSource,
-  objectType: string,
-  title: string,
-  nextOrder: number,
-  componentType: string,
-  widgetType: string,
-  zoneId: string,
-) {
-  const user = getUserFromLocalStorage();
-  const newId = generateId("c");
-  await boardDataSource.upsert({
-    objectType: BOARDS.COMPONENT,
-    payload: [
-      {
-        type: BOARDS.COMPONENT,
-        id: newId,
-        attributes: {
-          title: title,
-          object_type: objectType,
-          component_type: componentType,
-          widget_type: widgetType,
-          filter: { and_: {} },
-          config: {},
-          base_url: dataSource.getBaseUrl(),
-          api_prefix: dataSource.getApiPrefix(),
-          user_id: user.id,
-          filter_pass_through: false,
-        },
-      },
-    ],
-  });
-
-  return await boardDataSource
-    .upsert({
-      objectType: BOARDS.COMPONENT_ZONE,
-      payload: [
-        {
-          type: BOARDS.COMPONENT_ZONE,
-          attributes: {
-            order: nextOrder,
-            component_id: newId,
-            zone_id: zoneId,
-          },
-        },
-      ],
-    })
-    .then((res) => {
-      return {
-        newComponentId: newId,
-        newComponentZoneId: res[0].id,
-      };
-    });
-}
-
-export async function upsertComponent(
-  dataSource: TsDataSource,
-  componentId: string,
-  attributes: object,
-) {
-  return await dataSource.upsert({
-    objectType: BOARDS.COMPONENT,
-    payload: [
-      {
-        type: BOARDS.COMPONENT,
-        id: componentId,
-        attributes: attributes
-      },
-    ],
-  });
-}
-
-export async function upsertComponentConfig(
-  ds: TsDataSource,
-  componentId: string,
-  config: object,
-) {
-  return await upsertComponent(ds, componentId, { config: config });
-}

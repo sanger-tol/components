@@ -51,7 +51,7 @@ function Board(props: Props) {
 
   useEffect(() => {
     if (boardId && user) {
-      getBoard(boardId, boardDataSource, user.id)
+      getBoard(boardId, boardDataSource)
         .then((res: any) => {
           if (!view) setView(res.views[0].id);
           setBoardData(res);

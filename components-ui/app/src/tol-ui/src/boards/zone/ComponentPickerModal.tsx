@@ -27,10 +27,10 @@ interface Props {
   zone: IZone;
   setZone: any;
   zoneId: string;
-  ds: TsDataSource;
   currentWidgets: any;
   setCurrentWidgets: any;
-  boardsDs?: TsDataSource;
+  dataSource: TsDataSource;
+  boardsDataSource: TsDataSource;
 }
 
 function ComponentPickerModal(props: Props) {
@@ -40,10 +40,10 @@ function ComponentPickerModal(props: Props) {
     zone,
     setZone,
     zoneId,
-    ds,
     currentWidgets,
     setCurrentWidgets,
-    boardsDs,
+    dataSource,
+    boardsDataSource,
   } = props;
   const [componentType, setComponentType] = useState("");
   const [widgetType, setWidgetType] = useState("");
@@ -91,14 +91,14 @@ function ComponentPickerModal(props: Props) {
       const nextOrder = highestOrder! + 1;
       //All components added are set with portal as baseUrl
       const newComponent = await addComponent(
-        ds,
+        dataSource,
+        boardsDataSource,
         zone.type!,
         title,
         nextOrder,
         componentType,
         widgetType,
         zoneId,
-        boardsDs,
       );
       //This adds the component to the zone
       defineComponent(
@@ -118,7 +118,7 @@ function ComponentPickerModal(props: Props) {
           componentId: newComponent.newComponentId,
           order: nextOrder,
           componentZoneId: newComponent.newComponentZoneId,
-          baseUrl: dataUrl,
+          baseUrl: dataSource.getBaseUrl(),
           componentType: componentType,
           filter: { and_: {} },
           title: title,
