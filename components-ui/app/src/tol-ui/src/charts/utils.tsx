@@ -223,6 +223,10 @@ export function updateChartColours(
         dataset.backgroundColor,
         fadedOpacity.toString(),
       );
+      dataset.borderColor = updateOpacitys(
+        dataset.backgroundColor,
+        "1",
+      );
     } else {
       dataset.backgroundColor = updateOpacitys(
         dataset.backgroundColor,
@@ -231,6 +235,10 @@ export function updateChartColours(
       dataset.hoverBackgroundColor = updateOpacitys(
         dataset.backgroundColor,
         "0.75",
+      );
+      dataset.borderColor = updateOpacitys(
+        dataset.backgroundColor,
+        "0.25",
       );
     }
   }
