@@ -4,9 +4,14 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-function Sandbox() {
+import ValidateSteps from "../tol-ui/src/file-validation/ValidateSteps";
 
-  return <></>;
+function Sandbox() {
+  return (
+    <div>
+      <ValidateSteps numSteps={3} />
+    </div>
+  );
 }
 
 export default Sandbox;

@@ -1,0 +1,79 @@
+/*
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+import { useState } from "react";
+import { createTextGeneratorFactory, Modal } from "../index";
+import ValidationIcon from "./ValidationIcon";
+
+interface Props {
+  id?: string;
+  message?: string;
+  stepName?: string;
+}
+
+function ErrorViewer(props: Props) {
+  const words = createTextGeneratorFactory();
+  const { id, message = words.generateSentences(2), stepName } = props;
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleClick = () => {
+    setIsOpen(true);
+  };
+
+  const ModalContent = (
+    <div>
+      <h4>{stepName}</h4>
+      <p>{message}</p>
+    </div>
+  );
+
+  const ErrorModal = <Modal open={isOpen} setOpen={setIsOpen} size="sm" children={ModalContent}/>;
+
+  return (
+    <>
+      {ErrorModal}
+      <div
+        key={id}
+        style={{
+          width: "100%",
+          padding: "5px",
+          background: "var(--tol-danger)",
+          color: "white",
+          borderRadius: "6px",
+          margin: "8px 0px 5px 0px",
+          maxHeight: "30px",
+          display: "flex",
+          justifyContent: "center",
+          overflow: "hidden",
+          cursor: "pointer",
+        }}
+        onClick={handleClick}
+      >
+        <div style={{ display: "flex", gap: "8px", width: "100%" }}>
+          <ValidationIcon
+            iconType="xmark"
+            size="sm"
+            style={{ padding: "4px" }}
+          />
+          <p
+            style={{
+              margin: "-2px 2px 0 0",
+              maxHeight: "30px",
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {message}
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default ErrorViewer;

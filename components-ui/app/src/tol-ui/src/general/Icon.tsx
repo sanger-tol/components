@@ -16,7 +16,9 @@ function Icon(props: Props) {
 
   return (
     // @ts-ignore
-    <FontAwesomeIcon icon={`fa-solid fa-${icon}`} size={size} />
+    <span>
+      <FontAwesomeIcon icon={`fa-solid fa-${icon}`} size={size} />
+    </span>
   );
 }
 
