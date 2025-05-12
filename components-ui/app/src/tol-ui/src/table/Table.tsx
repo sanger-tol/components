@@ -77,6 +77,7 @@ interface Props {
   setSelectedRows?: (selectedRows: string[]) => void;
 
   contents?: ReactNode;
+  groupBy?: boolean;
 }
 
 function Table(props: Props) {
@@ -122,6 +123,7 @@ function Table(props: Props) {
     actionsFooter,
     utilityBarConfig = {} as IUtilityBar,
     contents,
+    groupBy,
     /* eslint-enable */
   } = props;
   const wrapperId = "tol-table-wrapper-" + id;
@@ -290,6 +292,7 @@ function Table(props: Props) {
       />
       <ColumnConfigDrawer
         open={open}
+        groupBy={groupBy}
         setOpen={setOpen}
         title={"Add/Remove Table Columns"}
         displaySource={displaySource}

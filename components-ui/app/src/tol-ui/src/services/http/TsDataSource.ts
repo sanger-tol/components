@@ -267,12 +267,23 @@ export default class TsDataSource {
     }
   }
 
+  private addObjectTypeToAttributes = (
+    attributes: Attributes,
+  ) => {
+    for (const [objectType, meta] of Object.entries(attributes)) {
+      for (const [, value] of Object.entries(meta)) {
+        value.object_type = objectType;
+      }
+    }
+  }
+
   private flattenAttributes(
     attributes: Attributes,
     relationships: Relationships,
   ) {
     this.addIds(attributes);
     const newAttributes: Attributes = deepCopy(attributes);
+    this.addObjectTypeToAttributes(newAttributes);
     for (const entity in relationships) {
       // just deal with one-side relationships
       const oneRelationships = relationships[entity]?.one;
@@ -283,10 +294,15 @@ export default class TsDataSource {
           newAttributes[entity][`${relationship}.id`] = {
             available_on_relationships: true,
             python_type: "str",
+            object_type: objType,
+            relationship_name: relationship,
           };
           for (const [key, meta] of Object.entries(attributes[objType])) {
+            const metaCopy = deepCopy(meta);
+            metaCopy.object_type = objType;
+            metaCopy.relationship_name = relationship
             if (meta.available_on_relationships) {
-              newAttributes[entity][`${relationship}.${key}`] = meta;
+              newAttributes[entity][`${relationship}.${key}`] = metaCopy;
             }
           }
         }
