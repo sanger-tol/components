@@ -40,7 +40,7 @@ interface Props {
   className?: string;
   onExit?: any;
   onExiting?: any;
-  groupBy?: boolean;
+  groupBy?: string;
 }
 
 function MultipleSelect(props: Props) {
@@ -111,7 +111,7 @@ function MultipleSelect(props: Props) {
       {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
       <span onClick={onClick}>
         <RSCheckPicker
-          groupBy={groupBy ? 'relationship_name' : undefined}
+          groupBy={groupBy}
           sticky={sticky}
           searchable={!noSearch}
           countable

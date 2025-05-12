@@ -291,7 +291,6 @@ export default class TsDataSource {
         for (const [relationship, objType] of Object.entries(
           oneRelationships,
         )) {
-          if (entity == 'sample') {console.log(relationship)};
           newAttributes[entity][`${relationship}.id`] = {
             available_on_relationships: true,
             python_type: "str",

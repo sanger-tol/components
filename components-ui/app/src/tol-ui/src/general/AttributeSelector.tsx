@@ -270,7 +270,7 @@ function AttributeSelector(props: Props) {
         className="tol-attribute-selector-select"
         block
         noSelectAll
-        groupBy={groupBy}
+        groupBy={groupBy ? 'relationship_name' : undefined}
         data={filterAttributes(
           entityMeta,
           endpoint,
