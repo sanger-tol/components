@@ -111,7 +111,7 @@ function MultipleSelect(props: Props) {
       {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
       <span onClick={onClick}>
         <RSCheckPicker
-          groupBy={'relationship_name'}//{groupBy ? 'relationship_name' : undefined}
+          groupBy={groupBy ? 'relationship_name' : undefined}
           sticky={sticky}
           searchable={!noSearch}
           countable

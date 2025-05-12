@@ -25,6 +25,7 @@ export interface Props {
   endpoint: string;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
+  groupBy?: boolean;
 }
 
 function ColumnConfigDrawer(props: Props) {
@@ -37,6 +38,7 @@ function ColumnConfigDrawer(props: Props) {
     endpoint,
     onConfigSave,
     customAttributeSelection,
+    groupBy,
   } = props;
   const [attributes, setAttributes] = useState<string[]>(
     fieldMeta?.order?.active ?? [],
@@ -185,6 +187,7 @@ function ColumnConfigDrawer(props: Props) {
     <div>
       <div>
         <AttributeSelector
+          groupBy={groupBy}
           endpoint={endpoint}
           placeholder="Select columns to display..."
           baseUrl={baseUrl}

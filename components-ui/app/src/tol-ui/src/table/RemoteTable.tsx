@@ -67,6 +67,7 @@ interface Props {
   rowSelection?: boolean;
   utilityBarConfig?: IUtilityBar;
   contents?: ReactNode;
+  groupBy?: boolean;
 
   actions?: (string | IDropdownButtonConfig)[];
   selectedRows?: string[];
@@ -99,7 +100,8 @@ function RemoteTable(props: Props) {
     actions,
     utilityBarConfig,
     debug,
-    contents
+    contents,
+    groupBy
   } = props;
   const ds = new TsDataSource({ baseUrl });
   const height = props.height !== undefined ? props.height : "100%";
@@ -336,6 +338,7 @@ function RemoteTable(props: Props) {
       <Table
         id={id}
         contents={contents ? contents : Contents()}
+        groupBy={groupBy}
         data={data}
         fieldMeta={fieldMeta!}
         height={height}
