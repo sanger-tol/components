@@ -267,7 +267,7 @@ export default class TsDataSource {
     }
   }
 
-  private AddObjectTypeToAttributes = (
+  private addObjectTypeToAttributes = (
     attributes: Attributes,
   ) => {
     for (const [objectType, meta] of Object.entries(attributes)) {
@@ -283,7 +283,7 @@ export default class TsDataSource {
   ) {
     this.addIds(attributes);
     const newAttributes: Attributes = deepCopy(attributes);
-    this.AddObjectTypeToAttributes(newAttributes);
+    this.addObjectTypeToAttributes(newAttributes);
     for (const entity in relationships) {
       // just deal with one-side relationships
       const oneRelationships = relationships[entity]?.one;
