@@ -77,6 +77,8 @@ function MultipleSelect(props: Props) {
       ? data.map((i) => ({ label: i, value: i }))
       : data;
 
+  console.log("formattedData", formattedData);
+
   const allValues = formattedData.map((item) => item.value);
 
   const handleCheckAll = () => {
@@ -111,7 +113,7 @@ function MultipleSelect(props: Props) {
       {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
       <span onClick={onClick}>
         <RSCheckPicker
-          groupBy={groupBy}
+          groupBy={'relationship_name'}//{groupBy ? 'relationship_name' : undefined}
           sticky={sticky}
           searchable={!noSearch}
           countable

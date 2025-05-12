@@ -286,11 +286,13 @@ export default class TsDataSource {
     this.AddObjectTypeToAttributes(newAttributes);
     for (const entity in relationships) {
       // just deal with one-side relationships
+      console.log(relationships);
       const oneRelationships = relationships[entity]?.one;
       if (oneRelationships) {
         for (const [relationship, objType] of Object.entries(
           oneRelationships,
         )) {
+          if (entity == 'sample') {console.log(relationship)};
           newAttributes[entity][`${relationship}.id`] = {
             available_on_relationships: true,
             python_type: "str",
