@@ -14,6 +14,7 @@ import {
   PopUpMessage,
   InfoTooltip
 } from "../index";
+import { normaliseCaps } from "../general/utils";
 import { IChartConfig } from "../models/Board";
 import { HistogramGrouping } from "./utils";
 
@@ -53,7 +54,8 @@ function ChartConfigDrawer(props: Props) {
     config.breakDownBy ? [config.breakDownBy] : []
   );
   const [stacked, setStacked] = useState<boolean>(config.stacked);
-  const [chartType, setChartType] = useState<HistogramGrouping>(config.type);
+  const [grouping, setGrouping] = useState<HistogramGrouping>(config.grouping);
+  const [chartType, setChartType] = useState<'bar' | 'line'>(config.chartType);
   const [returnedMeta, setReturnedMeta] = useState<any>(null);
   const [returnedMetaType, setReturnedMetaType] = useState<string>("");
 
@@ -68,8 +70,9 @@ function ChartConfigDrawer(props: Props) {
     const updatedConfig: IChartConfig = {
       breakDownBy: breakDownBy[0],
       stacked: stacked,
-      type: returnedMetaType === "datetime" ? chartType : "categorical",
+      grouping: returnedMetaType === "datetime" ? grouping : "categorical",
       xAxis: xAxis[0],
+      chartType: chartType,
     };
     if (JSON.stringify(config) !== JSON.stringify(updatedConfig)) {
       onConfigSave(updatedConfig);
@@ -133,7 +136,7 @@ function ChartConfigDrawer(props: Props) {
           if (
             xAxis.length === 0 ||
             breakDownBy.length === 0 ||
-            (returnedMetaType === "datetime" && (chartType === "categorical" || chartType === undefined))
+            (returnedMetaType === "datetime" && (grouping === "categorical" || grouping === undefined))
           ) {
             PopUpMessage({
               type: "error",
@@ -173,8 +176,9 @@ function ChartConfigDrawer(props: Props) {
     const updatedConfig: IChartConfig = {
       breakDownBy: breakDownBy[0],
       stacked: stacked,
-      type: returnedMetaType === "datetime" ? chartType : "categorical",
+      grouping: returnedMetaType === "datetime" ? grouping : "categorical",
       xAxis: xAxis[0],
+      chartType: 'bar',
     };
     if (JSON.stringify(updatedConfig) != JSON.stringify(config)) {
       setOpenSaveModal(true);
@@ -186,7 +190,7 @@ function ChartConfigDrawer(props: Props) {
   const confirmDiscard = () => {
     setBreakDownBy(config.breakDownBy ? [config.breakDownBy] : []);
     setStacked(config.stacked);
-    setChartType(config.type);
+    setGrouping(config.grouping);
     setXAxis(config.xAxis ? [config.xAxis] : []);
     setOpenSaveModal(false);
     setOpen(false);
@@ -211,7 +215,9 @@ function ChartConfigDrawer(props: Props) {
     },
   ];
 
-  const buttons = (
+  const chartTypes = ['bar', 'line']
+
+  const IntervalButtons = (
     <div className="tol-board-chart-interval-btn-container">
       {intervals.map((interval: IIntervalListItem) => (
         <Button
@@ -219,8 +225,25 @@ function ChartConfigDrawer(props: Props) {
           key={interval.label}
           text={interval.label}
           type="primary"
-          onClick={() => setChartType(interval.value)}
-          active={chartType === interval.value}
+          onClick={() => setGrouping(interval.value)}
+          active={grouping === interval.value}
+          size="lg"
+          className="tol-board-chart-interval-buttons"
+        />
+      ))}
+    </div>
+  );
+
+  const ChartTypeButtons = (
+    <div className="tol-board-chart-interval-btn-container">
+      {chartTypes.map((type: 'bar' | 'line') => (
+        <Button
+          outline
+          key={type}
+          text={normaliseCaps(type)}
+          type="primary"
+          onClick={() => setChartType(type)}
+          active={chartType === type}
           size="lg"
           className="tol-board-chart-interval-buttons"
         />
@@ -251,9 +274,11 @@ function ChartConfigDrawer(props: Props) {
       {returnedMetaType === "datetime" && (
         <>
           <h6>Interval</h6>
-          {buttons}
+          {IntervalButtons}
         </>
       )}
+      <h6>Chart Type</h6>
+      {ChartTypeButtons}
       <div>
         <div className="tol-board-chart-xaxis-container">
         <h6 className="tol-board-chart-xaxis-title">Break Down By</h6>
