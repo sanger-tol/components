@@ -19,7 +19,7 @@ import { getCssVarValue } from "../../general/utils";
 import { BOARDS_API_PREFIX } from "../../constants";
 
 interface Props {
-  dataSource?: TsDataSource
+  dataSource: TsDataSource
 }
 
 function Board(props: Props) {

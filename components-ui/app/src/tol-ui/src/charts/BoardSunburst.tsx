@@ -79,7 +79,7 @@ function BoardSunburst(props: Props) {
     <div style={{ height: "100%" }}>
       <BoardFilters
         endpoint={objectType}
-        entityType="component"
+        boardObjectType="component"
         open={openFilters}
         setOpen={setOpenFilters}
         {...props}

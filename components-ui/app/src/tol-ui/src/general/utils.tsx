@@ -167,20 +167,20 @@ export function getSourceData(fieldMeta: FieldMeta, attribute: string) {
 
 export function getAttributeSources(
   entityMeta: any,
-  endpoint: string,
+  objectType: string,
   customAttributeSelection?: string[] | undefined
 ) {
   const sources = new Set<string>();
   if (
     entityMeta &&
     entityMeta.flatAttributes &&
-    entityMeta.flatAttributes[endpoint]
+    entityMeta.flatAttributes[objectType]
   ) {
-    Object.keys(entityMeta.flatAttributes[endpoint]).forEach((att) => {
+    Object.keys(entityMeta.flatAttributes[objectType]).forEach((att) => {
       if (customAttributeSelection && !customAttributeSelection.includes(att)) {
         return;
       }
-      const attributeObject = entityMeta.flatAttributes[endpoint][att];
+      const attributeObject = entityMeta.flatAttributes[objectType][att];
       const source = attributeObject.source;
       if (source) {
         sources.add(source);
@@ -262,10 +262,10 @@ export function truncateString(str: string, maxLength: number) {
 export function getAllAttributeData(
   attributes: string[],
   entityMeta: any,
-  endpoint: string
+  objectType: string
 ) {
   return attributes.reduce((acc, attr) => {
-    const attributeData = getFlattenedMetaData(entityMeta, endpoint, attr);
+    const attributeData = getFlattenedMetaData(entityMeta, objectType, attr);
     return {
       ...acc,
       [attr]: attributeData,

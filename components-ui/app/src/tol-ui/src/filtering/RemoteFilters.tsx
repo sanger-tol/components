@@ -5,8 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { TsDataSource } from "..";
-import { IZone } from "../models";
+import { IFetchTarget, IZone } from "../models";
 import { defineZone } from "../hooks";
 import Filter from "./Filter";
 import { IFilter } from "../models";
@@ -14,21 +13,16 @@ import { Button, useEffectUpdate } from "..";
 import { AttributeSelector, Icon } from "../general";
 import { getAttributeDetail } from "../general/utils";
 
-export interface Props {
+
+export interface Props extends IFetchTarget{
   filters?: IFilter;
-  endpoint: string;
-  baseUrl?: string;
   onSave?: any;
   disabledFilterValues?: any;
   filterPassThrough?: boolean;
 }
 
-const PLACEHOLDER = "No filters applied, click here to add...";
-const TOOLTIP_CONTENT =
-  "A filter already exists in the filtering system. Please remove it before adding this filter.";
 function RemoteFilters(props: Props) {
-  const { endpoint, baseUrl, onSave, disabledFilterValues, filterPassThrough } = props;
-  const ds = new TsDataSource({ baseUrl });
+  const { objectType, dataSource, onSave, disabledFilterValues, filterPassThrough } = props;
 
   // zone component id pointer
   const filterComponentId = "remote-filters-component";
@@ -38,7 +32,6 @@ function RemoteFilters(props: Props) {
     Object.keys(props.filters?.and_ || {}),
   );
   const [disabledApplyButton, setDisabledApplyButton] = useState(true);
-
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
 
@@ -50,7 +43,7 @@ function RemoteFilters(props: Props) {
   );
 
   useEffect(() => {
-    ds.getEntityMeta().then((em) => {
+    dataSource.getEntityMeta().then((em) => {
       setEntityMeta(em);
       setLoading(false);
     });
@@ -89,15 +82,19 @@ function RemoteFilters(props: Props) {
 
   if (loading) return <></>;
 
+  const PLACEHOLDER = "No filters applied, click here to add...";
+  const TOOLTIP_CONTENT =
+    "A filter already exists in the filtering system. Please remove it before adding this filter.";
+
   return (
     <div>
       <AttributeSelector
+        objectType={objectType}
+        dataSource={dataSource}
         disabledValues={disabledFilterValues}
         placeholder={PLACEHOLDER}
         attribute={filters}
         setAttributes={setFilters}
-        endpoint={endpoint}
-        baseUrl={baseUrl}
         populatedFieldType="filter"
         numPopulatedFields={
           Object.keys(
@@ -112,7 +109,7 @@ function RemoteFilters(props: Props) {
       />
       {filters.map((attribute) => {
         const attributeMeta =
-          entityMeta?.flatAttributes?.[endpoint]?.[attribute];
+          entityMeta?.flatAttributes?.[objectType]?.[attribute];
         const type =
           attributeMeta?.cardinality < 50 &&
           attributeMeta?.python_type === "str"
@@ -121,7 +118,7 @@ function RemoteFilters(props: Props) {
 
         return (
           <div className="tol-filters" key={attribute}>
-            {`${getAttributeDetail(entityMeta, endpoint, attribute, 'display_name')}:`}
+            {`${getAttributeDetail(entityMeta, objectType, attribute, 'display_name')}:`}
             <div className="filter">
               <Filter
                 key={`filter-${attribute}`}
@@ -129,10 +126,10 @@ function RemoteFilters(props: Props) {
                 rename={attributeMeta?.display_name}
                 type={type}
                 componentId={filterComponentId}
+                objectType={objectType}
+                dataSource={dataSource}
                 zone={filterZone}
                 setZone={setFilterZone}
-                endpoint={endpoint}
-                baseUrl={baseUrl}
                 delay={0}
               />
             </div>

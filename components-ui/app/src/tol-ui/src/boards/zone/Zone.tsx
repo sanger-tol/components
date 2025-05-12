@@ -308,7 +308,7 @@ function Zone(props: Props) {
       {confirmationModal}
       <BoardFilters
         id={id}
-        entityType="zone"
+        boardObjectType="zone"
         open={openFilters}
         setOpen={setOpenFilters}
         {...z}

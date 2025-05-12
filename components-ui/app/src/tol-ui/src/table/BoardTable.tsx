@@ -50,7 +50,7 @@ function BoardTable(props: Props) {
     <span key="board-table-filter">
       <BoardFilters
         endpoint={objectType}
-        entityType="component"
+        boardObjectType="component"
         open={openFilters}
         setOpen={setOpenFilters}
         {...props}

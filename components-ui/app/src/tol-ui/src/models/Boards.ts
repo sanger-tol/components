@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { TsDataSource } from 'src/datasource';
 import { HistogramGrouping } from '../charts/utils';
 import { IFilter } from './Filter';
 
@@ -98,6 +99,18 @@ export const exampleBoard: Board = {
   order: ['viewIdOne']
 };
 */
+
+export interface IFetchTarget {
+  objectType: string;
+  dataSource: TsDataSource;
+}
+
+export interface IZoneControl {
+  zone: IZone;
+  setZone: (zone: IZone) => void;
+}
+
+export interface IFetchTargetAndZoneControl extends IFetchTarget, IZoneControl {}
 
 export interface IChartConfig {
   breakDownBy: string,

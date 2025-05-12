@@ -8,19 +8,15 @@ import { BoardFilters, Icon, Placeholder, RemoteBarChart, TsDataSource } from ".
 import { deepCopy } from "../general/utils";
 import { useState } from "react";
 import { upsertComponentConfig, saveTitle } from "../boards/utils";
-import { IZone } from "../models";
+import { IFetchTarget } from "../models";
 import ChartConfigDrawer from "./ChartConfigDrawer";
 import { IChartConfig } from "../models";
 import { IButton } from "../general/Button"
 
-interface Props {
+interface Props extends IFetchTarget {
   id: string;
-  objectType: string;
-  baseUrl?: string;
   title: string;
   config: any;
-  zone: IZone;
-  setZone: any;
   size: string;
 }
 
@@ -76,7 +72,7 @@ function BoardChart(props: Props) {
     <div style={{ height: "100%" }}>
       <BoardFilters
         endpoint={objectType}
-        entityType="component"
+        boardObjectType="component"
         open={openFilters}
         setOpen={setOpenFilters}
         {...props}

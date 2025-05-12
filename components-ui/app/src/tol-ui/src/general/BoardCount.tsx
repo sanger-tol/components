@@ -38,7 +38,7 @@ function BoardCount(props: Props) {
     <>
       <BoardFilters
         endpoint={objectType}
-        entityType="component"
+        boardObjectType="component"
         open={openFilters}
         setOpen={setOpenFilters}
         {...props}

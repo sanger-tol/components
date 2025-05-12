@@ -14,7 +14,7 @@ import { stopPropagation } from "../general/utils";
 import { PopUpMessage } from "../index";
 
 function FilterMultiSelect(props: Filter) {
-  const { attribute, componentId, rename, zone, setZone, endpoint, baseUrl } =
+  const { attribute, componentId, rename, objectType, dataSource, zone, setZone } =
     props;
   const [data, setData] = useState<string[]>([]);
   const [values, setValues] = useState<string[]>([]);
@@ -45,7 +45,7 @@ function FilterMultiSelect(props: Filter) {
         terms: { field: `${attribute}.keyword`, size: 500 },
       };
       httpClient()
-        .post("/" + endpoint + ":aggregations", aggs, {
+        .post("/" + objectType + ":aggregations", aggs, {
           baseURL: baseUrl,
         })
         .then((res: any) => {
