@@ -286,7 +286,6 @@ export default class TsDataSource {
     this.AddObjectTypeToAttributes(newAttributes);
     for (const entity in relationships) {
       // just deal with one-side relationships
-      console.log(relationships);
       const oneRelationships = relationships[entity]?.one;
       if (oneRelationships) {
         for (const [relationship, objType] of Object.entries(
@@ -300,10 +299,11 @@ export default class TsDataSource {
             relationship_name: relationship,
           };
           for (const [key, meta] of Object.entries(attributes[objType])) {
-            meta.object_type = objType;
-            meta.relationship_name = relationship
+            const metaCopy = deepCopy(meta);
+            metaCopy.object_type = objType;
+            metaCopy.relationship_name = relationship
             if (meta.available_on_relationships) {
-              newAttributes[entity][`${relationship}.${key}`] = meta;
+              newAttributes[entity][`${relationship}.${key}`] = metaCopy;
             }
           }
         }

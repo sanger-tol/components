@@ -77,8 +77,6 @@ function MultipleSelect(props: Props) {
       ? data.map((i) => ({ label: i, value: i }))
       : data;
 
-  console.log("formattedData", formattedData);
-
   const allValues = formattedData.map((item) => item.value);
 
   const handleCheckAll = () => {

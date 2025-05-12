@@ -278,17 +278,14 @@ export function formatFilteredAttributes(
 ) {
   // This is specific for the attribute selector and MultiSelect
   return attributes.map((attribute: any) => {
-    const { display_name, description, source, python_type, object_type, relationship_name } = attribute[1];
+    const { object_type, relationship_name } = attribute[1];
     console.log("attribute", attribute);
     return {
       label: attribute[0],
       value: attribute[0],
-      display_name,
-      description,
-      source,
-      python_type,
       object_type,
-      relationship_name: relationship_name || `${object_type}`
+      relationship_name:
+        normaliseCaps(relationship_name) || `${normaliseCaps(object_type)} - This Zone's Object Type`,
     };
   });
 }
