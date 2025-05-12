@@ -104,6 +104,10 @@ function BarChart(props: Props) {
               dataset.backgroundColor,
               "1",
             );
+            dataset.borderColor = updateOpacitys(
+              dataset.borderColor,
+              "1",
+            )
             setPrevOrder(dataset.order);
             setPrevLegendItemIndex(index);
             dataset.order = -1;
@@ -116,6 +120,10 @@ function BarChart(props: Props) {
               dataset.backgroundColor,
               "0.25",
             );
+            dataset.borderColor = updateOpacitys(
+              dataset.borderColor,
+              "0.25",
+            )
             // reset prev item's order
             if (prevLegendItemIndex === index) {
               dataset.order = prevOrder;
