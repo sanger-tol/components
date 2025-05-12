@@ -60,7 +60,7 @@ interface Props {
 }
 
 function BarChart(props: Props) {
-  const { id, labels, setBarData, cumulative, utilityBarConfig = {}, contents, chartType } = props;
+  const { id, labels, setBarData, cumulative, utilityBarConfig = {}, contents, chartType='bar' } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const stacked = props.stacked !== undefined ? props.stacked : false;
   const originDatasets = initialiseDatasets(props.datasets);
@@ -204,6 +204,7 @@ function BarChart(props: Props) {
     maintainAspectRatio: false,
     responsive: true,
     devicePixelRatio: 2,
+    showLine: chartType !== "scatter",
     plugins: {
       title: {},
       tooltip: {
@@ -312,7 +313,7 @@ function BarChart(props: Props) {
         contents
         :
         <Chart
-          type={chartType || "bar"}
+          type={chartType === "scatter" ? "line" : chartType}
           id={id}
           responsive="true"
           className="tol-bar-chart"

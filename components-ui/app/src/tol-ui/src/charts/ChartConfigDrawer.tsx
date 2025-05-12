@@ -55,7 +55,7 @@ function ChartConfigDrawer(props: Props) {
   );
   const [stacked, setStacked] = useState<boolean>(config.stacked);
   const [grouping, setGrouping] = useState<HistogramGrouping>(config.grouping);
-  const [chartType, setChartType] = useState<'bar' | 'line'>(config.chartType);
+  const [chartType, setChartType] = useState<'bar' | 'line' | 'scatter'>(config.chartType);
   const [returnedMeta, setReturnedMeta] = useState<any>(null);
   const [returnedMetaType, setReturnedMetaType] = useState<string>("");
 
@@ -215,7 +215,7 @@ function ChartConfigDrawer(props: Props) {
     },
   ];
 
-  const chartTypes = ['bar', 'line']
+  const chartTypes = ['bar', 'line', 'scatter']
 
   const IntervalButtons = (
     <div className="tol-board-chart-interval-btn-container">
@@ -236,13 +236,19 @@ function ChartConfigDrawer(props: Props) {
 
   const ChartTypeButtons = (
     <div className="tol-board-chart-interval-btn-container">
-      {chartTypes.map((type: 'bar' | 'line') => (
+      {chartTypes.map((type: 'bar' | 'line' | 'scatter') => (
         <Button
           outline
           key={type}
           text={normaliseCaps(type)}
           type="primary"
-          onClick={() => setChartType(type)}
+          onClick={() => {
+            setChartType(type)
+            if (type  !== "bar") {
+              setStacked(false);
+            }
+          }
+          }
           active={chartType === type}
           size="lg"
           className="tol-board-chart-interval-buttons"
@@ -302,16 +308,22 @@ function ChartConfigDrawer(props: Props) {
           allowedCardinality={{ operator: "<=", value: 25 }}
         />
       </div>
-      <h6>Stacked</h6>
-      <div className="tol-board-chart-stacked-toggle">
-        <Toggle
-          key="stacked-toggle"
-          checked={stacked}
-          onChange={() => {
-            setStacked(!stacked);
-          }}
-        />
-      </div>
+      {chartType == "bar" ? (
+        <>
+        <h6>Stacked</h6>
+        <div className="tol-board-chart-stacked-toggle">
+          <Toggle
+            key="stacked-toggle"
+            checked={stacked}
+            onChange={() => {
+              setStacked(!stacked);
+            }}
+          />
+        </div>
+        </>
+      ) : (
+        <></>
+      )}
       <div>
         <div className="tol-config-drawer-save-button">{drawerButtons}</div>
       </div>

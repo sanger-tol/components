@@ -238,7 +238,7 @@ export function updateChartColours(
       );
       dataset.borderColor = updateOpacitys(
         dataset.backgroundColor,
-        "0.25",
+        "0.1",
       );
     }
   }

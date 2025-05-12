@@ -11,5 +11,5 @@ export interface IChartConfig {
   xAxis: string,
   stacked: boolean,
   grouping: HistogramGrouping,
-  chartType: 'bar' | 'line',
+  chartType: 'bar' | 'line' | 'scatter',
 }
