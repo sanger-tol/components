@@ -295,9 +295,11 @@ export default class TsDataSource {
             available_on_relationships: true,
             python_type: "str",
             object_type: objType,
+            relationship_name: relationship,
           };
           for (const [key, meta] of Object.entries(attributes[objType])) {
             meta.object_type = objType;
+            meta.relationship_name = relationship
             if (meta.available_on_relationships) {
               newAttributes[entity][`${relationship}.${key}`] = meta;
             }
