@@ -9,7 +9,8 @@ import { Button, Modal, SingleSelect, TsDataSource } from "../..";
 import { FormTextField } from "../../forms";
 import { RSForm } from "../..";
 import { addZone } from "../utils";
-import { normaliseCaps } from "src/general/utils";
+import { normaliseCaps } from "../../general/utils";
+
 
 interface OrderObject {
   zoneId: string;

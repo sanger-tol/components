@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect, ReactNode } from "react";
-import { httpClient } from "../services/http/httpClient";
 import {
   aggsToSunburstData,
   createAggsViaSliceBy,
@@ -27,19 +26,18 @@ import {
 import { IUtilityBar } from "../general/UtilityBar";
 import { IButton } from "../general/Button";
 import { UtilityBar } from "../index";
+import { IRemoteTargetAndZone, TFilterOrUndefined } from "../models";
+import { API_METHODS } from "../constants";
 
-interface Props {
+
+interface Props extends IRemoteTargetAndZone{
   id: string;
-  endpoint: string;
   sliceBy: string[];
   height?: any;
-  baseUrl?: string;
   legendPosition?: string;
   noLabel?: boolean;
   noMini?: boolean;
   noDownload?: boolean;
-  zone?: object;
-  setZone?: any;
   forceUpdate?: boolean;
   utilityBarConfig?: IUtilityBar;
   contents?: ReactNode;
@@ -48,9 +46,9 @@ interface Props {
 function RemoteSunburst(props: Props) {
   const {
     id,
-    endpoint,
+    objectType,
+    dataSource,
     sliceBy,
-    baseUrl,
     noMini,
     noDownload,
     zone,
@@ -69,7 +67,7 @@ function RemoteSunburst(props: Props) {
   const [warningMessage, setWarningMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [sliceData, setSliceData] = useState({});
-  const [filter, setFilter] = useState<object | undefined>({});
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
   const [noLegend, setNoLegend] = useState(false);
 
   resizeListener(() => {
@@ -82,17 +80,19 @@ function RemoteSunburst(props: Props) {
     // will trigger [filter] useEffect if update has occured
     if (filterHasUpdated(setFilter, filter, compoundedFilter)) {
       resetFiltersBelow({ id: id, zone: zone! });
-      setZone({ ...zone });
+      setZone!({ ...zone! });
     }
   }, [zone]);
 
   useEffectUpdate(() => {
     if (!contents) {
       setLoading(true);
-      const aggs = createAggsViaSliceBy(endpoint, sliceBy);
-      httpClient()
-        .post("/" + endpoint + ":aggregations", aggs, {
-          baseURL: baseUrl,
+      const aggs = createAggsViaSliceBy(objectType, sliceBy);
+      dataSource
+        .custom({
+          method: API_METHODS.POST,
+          resource: `${objectType}:aggregations`,
+          body: aggs,
           params: {
             filter: generateFilter(zone, id, true),
           },
@@ -123,7 +123,7 @@ function RemoteSunburst(props: Props) {
         filter: localFilter,
         zone: zone!,
       });
-      setZone({ ...zone });
+      setZone!({ ...zone! });
       // clear sub sunburst
       if (isEmptyObject(sliceData)) {
         setSubDatasets({});
@@ -131,12 +131,14 @@ function RemoteSunburst(props: Props) {
       } else if (sliceData["datasetIndex"] !== 0) {
         setSubLoading(true);
         const aggs = createAggsViaSliceBy(
-          endpoint,
+          objectType,
           removeSliceBySingles(sliceBy, sliceData["depth"]),
         );
-        httpClient()
-          .post("/" + endpoint + ":aggregations", aggs, {
-            baseURL: baseUrl,
+        dataSource
+          .custom({
+            method: API_METHODS.POST,
+            resource: `${objectType}:aggregations`,
+            body: aggs,
             params: {
               filter: generateFilter(zone, id, true),
             },
@@ -193,7 +195,7 @@ function RemoteSunburst(props: Props) {
     position: "right",
     type: "primary",
     onClick: () => {
-      downloadItem(props.id, normaliseCaps(endpoint));
+      downloadItem(props.id, normaliseCaps(objectType));
     },
     icon: "download",
   } : {};
@@ -250,7 +252,7 @@ function RemoteSunburst(props: Props) {
                   noDownload
                   contents={contents ? contents : Contents()}
                   datasets={datasets}
-                  downloadName={normaliseCaps(endpoint)}
+                  downloadName={normaliseCaps(objectType)}
                   setSliceData={setter}
                   noLegend={miniActive ? true : noLegend}
                   resetChart={resetChart}

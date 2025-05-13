@@ -6,14 +6,13 @@ SPDX-License-Identifier: MIT
 
 import { useState, useEffect } from "react";
 import Map from "./Map";
-import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
 import { generateFilter } from "../filtering/utils";
 import { createMapMarkers } from "./utils";
-import { IFilter, IRemoteTarget } from "src/models";
+import { IRemoteTargetAndZone, TDataObjectListOrNull, TFilterOrUndefined } from "../models";
 
 
-interface Props extends IRemoteTarget {
+interface Props extends IRemoteTargetAndZone {
   id: string;
   bubble?: boolean;
   longitudeKey: string;
@@ -21,7 +20,6 @@ interface Props extends IRemoteTarget {
   attributeKeys?: string;
   height?: any;
   pageSize?: number;
-  zone?: object;
   // Used to apply custom legend keys based on whats is returned,
   // must return an object in format {key: string, colour: string}
   markerRenderer?: Function;
@@ -45,7 +43,9 @@ function RemoteMap(props: Props) {
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState<number | undefined>(undefined);
   const [legendKey, setLegendKey] = useState<object[]>([]);
-  const filter: IFilter = zone !== undefined ? generateFilter(zone, id) : {};
+  const filter: TFilterOrUndefined = zone !== undefined
+    ? generateFilter(zone, id)
+    : {};
 
   // providing a pageSize default
   let pageSize = 2500;
@@ -76,8 +76,7 @@ function RemoteMap(props: Props) {
               filter,
               pageSize,
             })
-            .then((res: any) => {
-              const data = res.data.data;
+            .then((data: TDataObjectListOrNull) => {
               const markers = createMapMarkers(
                 data,
                 latitudeKey,

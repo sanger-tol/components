@@ -50,12 +50,12 @@ export function isEmptyObject(x: object) {
   return Object.keys(x).length === 0;
 }
 
-export function normaliseCaps(name: string, endpoint?: string) {
+export function normaliseCaps(name: string, prefix?: string) {
   if (!name) return "";
   // make object ids clear (for auto load)
-  if (endpoint !== undefined) {
+  if (prefix !== undefined) {
     if (name === "id" || name === "uid") {
-      return normaliseCaps(endpoint) + " ID";
+      return normaliseCaps(prefix) + " ID";
     }
   }
   // replace relationship '.' with underscore ready to split

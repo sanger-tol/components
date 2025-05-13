@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TsDataSource } from 'src/datasource';
+import { TsDataSource } from '../datasource';
 import { HistogramGrouping } from '../charts/utils';
 import { IFilter } from './Filter';
 
@@ -106,8 +106,8 @@ export interface IRemoteTarget {
 }
 
 export interface IZoneControl {
-  zone: IZone;
-  setZone: (zone: IZone) => void;
+  zone?: IZone;
+  setZone?: (zone: IZone) => void;
 }
 
 export interface IRemoteTargetAndZone extends IRemoteTarget, IZoneControl {}

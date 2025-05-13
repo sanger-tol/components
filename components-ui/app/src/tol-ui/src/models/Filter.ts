@@ -15,6 +15,8 @@ export interface And {
   [attribute: string]: AndFilter;
 }
 
-export interface IFilter {
-  and_: And;
+export interface IFilter { // TODO: check usages
+  and_?: And;
 }
+
+export type TFilterOrUndefined = IFilter | undefined;

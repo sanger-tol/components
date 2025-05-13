@@ -23,7 +23,7 @@ import {
   resetFiltersBelow,
 } from "../filtering/utils";
 import { IUtilityBar } from "../general/UtilityBar";
-import { IRemoteTargetAndZone } from "src/models";
+import { IRemoteTargetAndZone, TFilterOrUndefined } from "../models";
 import { API_METHODS } from "../constants";
 
 
@@ -65,7 +65,7 @@ function RemoteBarChart(props: Props) {
   const [warningMessage, setWarningMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [barData, setBarData] = useState<object>({});
-  const [filter, setFilter] = useState<object | undefined>({});
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);

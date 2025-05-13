@@ -4,26 +4,24 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BoardFilters, Placeholder, Icon, RemoteSunburst, TsDataSource } from "../index";
+import { BoardFilters, Placeholder, Icon, RemoteSunburst } from "../index";
 import { useState } from "react";
 import { deepCopy } from "../general/utils";
 import { upsertComponentConfig, saveTitle } from "../boards/utils";
-import { IBoardTargetAndZone, IZone } from "../models";
+import { IBoardTargetAndZone } from "../models";
 import SliceByDrawer from "./SliceByDrawer";
 import { IButton } from "../general/Button";
-import { BOARDS } from "src/constants";
+import { BOARDS } from "../constants";
 
 interface Props extends IBoardTargetAndZone {
   id: string;
   title: string;
   config: any;
-  zone: IZone;
-  setZone: any;
   size: string;
 }
 
 function BoardSunburst(props: Props) {
-  const { id, objectType, dataSource, boardObjectType, boardDataSource, size } = props;
+  const { id, objectType, boardDataSource, size } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
