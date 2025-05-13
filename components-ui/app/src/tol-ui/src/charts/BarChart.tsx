@@ -14,7 +14,8 @@ import {
   Tooltip,
   Legend,
   PointElement,
-  LineElement
+  LineElement,
+  ChartTypeRegistry
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { UtilityBar } from "../index";
@@ -321,7 +322,7 @@ function BarChart(props: Props) {
         contents
         :
         <Chart
-          type={chartType === "scatter" ? "line" : chartType}
+          type={chartType === "scatter" ? "line" : (chartType as keyof ChartTypeRegistry)}
           id={id}
           responsive="true"
           className="tol-bar-chart"
