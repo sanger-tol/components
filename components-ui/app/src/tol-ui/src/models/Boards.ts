@@ -100,7 +100,7 @@ export const exampleBoard: Board = {
 };
 */
 
-export interface IFetchTarget {
+export interface IRemoteTarget {
   objectType: string;
   dataSource: TsDataSource;
 }
@@ -110,7 +110,12 @@ export interface IZoneControl {
   setZone: (zone: IZone) => void;
 }
 
-export interface IFetchTargetAndZoneControl extends IFetchTarget, IZoneControl {}
+export interface IRemoteTargetAndZone extends IRemoteTarget, IZoneControl {}
+
+export interface IBoardTargetAndZone extends IRemoteTargetAndZone {
+  boardObjectType: string;
+  boardDataSource: TsDataSource;
+}
 
 export interface IChartConfig {
   breakDownBy: string,

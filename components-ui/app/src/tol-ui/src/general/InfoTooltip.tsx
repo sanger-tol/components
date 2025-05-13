@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { InfoIcon } from "./Icons";
+import { InfoIcon } from "./CustomIcons";
 import HoverOverlay from "./HoverOverlay";
 import Markdown from "./Markdown";
 import { ReactNode } from "react";

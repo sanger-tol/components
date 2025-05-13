@@ -4,18 +4,16 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export { default as Map } from "./Map";
-export { default as RemoteMap } from "./RemoteMap";
-export { default as MapLegend } from "./MapLegend";
-
-export { default as BarChart } from "./BarChart";
-export { default as RemoteBarChart } from "./RemoteBarChart";
-export { default as BoardChart } from "./BoardChart";
-
-export { default as Sunburst } from "./Sunburst";
-export { default as RemoteSunburst } from "./RemoteSunburst";
-export { default as BoardSunburst } from "./BoardSunburst";
-
-export { default as OrgChart } from "./OrgChart";
-
-export { default as SliceByDrawer } from "./SliceByDrawer";
+export * from "./Map";
+export * from "./RemoteMap";
+export * from "./MapLegend";
+export * from "./BarChart";
+export * from "./RemoteBarChart";
+export * from "./BoardChart";
+export * from "./Sunburst";
+export * from "./RemoteSunburst";
+export * from "./BoardSunburst";
+export * from "./OrgChart";
+export * from "./SliceByDrawer";
+export * from "./ChartConfigDrawer";
+export * from "./utils";

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { IFetchTarget, IZone } from "../models";
+import { IRemoteTarget, IZone } from "../models";
 import { defineZone } from "../hooks";
 import Filter from "./Filter";
 import { IFilter } from "../models";
@@ -14,7 +14,7 @@ import { AttributeSelector, Icon } from "../general";
 import { getAttributeDetail } from "../general/utils";
 
 
-export interface Props extends IFetchTarget{
+export interface Props extends IRemoteTarget{
   filters?: IFilter;
   onSave?: any;
   disabledFilterValues?: any;

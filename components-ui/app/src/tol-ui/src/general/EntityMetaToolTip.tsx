@@ -4,11 +4,11 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IFetchTarget } from "../models";
+import { IRemoteTarget } from "../models";
 import { FormatTooltip, SourceTag, InfoTooltip } from "../index";
 import { useEffect, useState } from "react";
 
-export interface Props extends IFetchTarget {
+export interface Props extends IRemoteTarget {
   field: any;
 }
 

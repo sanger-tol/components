@@ -9,7 +9,7 @@ import { Input, InputGroup, Dropdown } from "rsuite";
 import { Button as BSButton } from "react-bootstrap";
 import { Button } from "..";
 import { stopPropagation } from "../general/utils";
-import { Filter } from "./Filter";
+import { IFilterInput } from "./Filter";
 import { setFilter, filterListener, symbolToOperator } from "./utils";
 import FilterToggle from "./FilterToggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,7 +17,7 @@ import { faList } from "@fortawesome/free-solid-svg-icons";
 import MultipleSelect from "../forms/MultipleSelect";
 import Modal from "../general/Modal";
 
-function FilterTextInput(props: Filter) {
+function FilterTextInput(props: IFilterInput) {
   const { attribute, componentId, rename, type, zone, setZone, delay } = props;
   // contains filtering needs adding to specific datasources
   const [values, setValues] = useState([""]);

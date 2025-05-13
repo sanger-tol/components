@@ -202,7 +202,8 @@ function FormAllInOne(props: Props) {
       case "dropzone":
         return (
           <Dropzone
-            endpoint={field.endpoint}
+            resource={field.resource}
+            dataSource={field.dataSource}
             fileType={field.fileType}
             generateMessages={field.generateMessages}
             setResponse={field.setResponse}

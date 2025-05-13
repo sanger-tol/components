@@ -4,16 +4,17 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BoardFilters, Icon, Placeholder, RemoteBarChart, TsDataSource } from "../index";
+import { BoardFilters, Icon, Placeholder, RemoteBarChart } from "../index";
 import { deepCopy } from "../general/utils";
 import { useState } from "react";
 import { upsertComponentConfig, saveTitle } from "../boards/utils";
-import { IFetchTarget } from "../models";
+import { IBoardTargetAndZone } from "../models";
 import ChartConfigDrawer from "./ChartConfigDrawer";
 import { IChartConfig } from "../models";
 import { IButton } from "../general/Button"
 
-interface Props extends IFetchTarget {
+
+interface Props extends IBoardTargetAndZone {
   id: string;
   title: string;
   config: any;
@@ -21,8 +22,7 @@ interface Props extends IFetchTarget {
 }
 
 function BoardChart(props: Props) {
-  const { id, objectType } = props;
-  const ds = new TsDataSource();
+  const { id, dataSource, boardObjectType, boardDataSource } = props;
   const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
@@ -30,7 +30,7 @@ function BoardChart(props: Props) {
 
   const onModalSave = (updatedConfig: IChartConfig) => {
     setConfig({ ...updatedConfig });
-    upsertComponentConfig(ds, id, { ...updatedConfig });
+    upsertComponentConfig(dataSource, id, { ...updatedConfig });
     setForceUpdate(!forceUpdate);
   };
 
@@ -71,30 +71,22 @@ function BoardChart(props: Props) {
   return (
     <div style={{ height: "100%" }}>
       <BoardFilters
-        endpoint={objectType}
-        boardObjectType="component"
+        {...props}
         open={openFilters}
         setOpen={setOpenFilters}
-        {...props}
       />
       <ChartConfigDrawer
         {...props}
-        endpoint={objectType}
         open={openConfig}
         setOpen={setOpenConfig}
         onConfigSave={onModalSave}
         title="Chart Configuration"
         config={deepCopy(config)}
-        ds={ds}
       />
       <div style={{ height: '100%' }}>
         <RemoteBarChart
-          id={id}
+          {...props}
           contents={Contents()}
-          endpoint={objectType}
-          baseUrl={props.baseUrl}
-          zone={props.zone}
-          setZone={props.setZone}
           breakDownBy={config.breakDownBy || ""}
           chartType={config.chartType}
           xAxis={config.xAxis || ""}
@@ -106,7 +98,7 @@ function BoardChart(props: Props) {
               title: props.title,
               editable: true,
               onSave: (value: string) => {
-                saveTitle(value, ds, id, 'component');
+                saveTitle(value, boardDataSource, id, boardObjectType);
               }
             },
             buttons: [

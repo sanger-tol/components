@@ -71,8 +71,9 @@ export interface IGetListPage {
 export interface ICustom {
   method: string;
   resource: string;
-  params?: any;
   body?: any;
+  params?: any;
+  options?: any;
 }
 
 interface IDataObject {

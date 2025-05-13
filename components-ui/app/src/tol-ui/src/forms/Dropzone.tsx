@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { Uploader } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { Loader, httpClient, StatusMessage } from "../index";
+import { Loader, StatusMessage, TsDataSource } from "../index";
 import { MessageType } from "../messaging/Message";
 
 interface WaitingUpload {
@@ -21,14 +21,15 @@ interface Message {
 }
 
 export interface Props {
-  endpoint: string;
+  resource: string;
+  dataSource: TsDataSource;
   fileType: string;
   generateMessages: (apiRes: any) => Message[];
   setResponse?: any;
 }
 
 function Dropzone(props: Props) {
-  const { endpoint, fileType, generateMessages, setResponse } = props;
+  const { resource, dataSource, fileType, generateMessages, setResponse } = props;
   const [fileList, setFileList] = useState<any[]>([]);
   const [validate, setValidate] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -54,11 +55,16 @@ function Dropzone(props: Props) {
       fileList[fileList.length - 1].name,
     );
 
-    httpClient()
-      .post("/" + endpoint, formData, {
-        headers: {
+    dataSource
+      .custom({
+        method: "POST",
+        resource: resource,
+        body: formData,
+        options: {
+          headers: {
           "Content-Type": "multipart/form-data",
-        },
+          },
+        }
       })
       .then((res: any) => {
         if (setResponse) {

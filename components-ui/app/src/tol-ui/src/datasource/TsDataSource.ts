@@ -399,7 +399,7 @@ export class TsDataSource {
   public async upsert({
     payload,
     objectType
-  }: IUpsert): Promise<void> {
+  }: IUpsert): Promise<TDataObjectListOrNull> {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
       .post(
@@ -419,8 +419,9 @@ export class TsDataSource {
   public async custom({
     method,
     resource,
-    params,
     body,
+    params,
+    options,
   }: ICustom): Promise<any> {
     const url = this.generateEndpoint(resource);
     switch (method.toUpperCase()) {
@@ -428,24 +429,29 @@ export class TsDataSource {
         return await this.client().get(url, {
           baseURL: this.baseUrl,
           params: params,
+          ...options,
         });
       case API_METHODS.POST:
         return await this.client().post(url, body, {
           baseUrl: this.baseUrl,
           params: params,
+          ...options,
         });
       case API_METHODS.PUT:
         return await this.client().put(url, body, {
           baseUrl: this.baseUrl,
           params: params,
+          ...options,
         });
       case API_METHODS.PATCH:
         return await this.client().patch(url, body, {
           baseUrl: this.baseUrl,
+          params: params,
         });
       case API_METHODS.DELETE:
         return await this.client().delete(url, {
           baseURL: this.baseUrl,
+          params: params,
         });
       default:
         throw new Error(`Unsupported method: ${method}`);

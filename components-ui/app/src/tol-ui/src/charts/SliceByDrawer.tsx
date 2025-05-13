@@ -14,7 +14,7 @@ import {
 } from "../index";
 import { generateSunburstConfig } from "./utils";
 
-export interface Props {
+export interface ISliceByDrawer {
   baseUrl?: string;
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -27,7 +27,7 @@ export interface Props {
   sliceBy: string[];
 }
 
-function SliceByDrawer(props: Props) {
+function SliceByDrawer(props: ISliceByDrawer) {
   const {
     baseUrl,
     open,

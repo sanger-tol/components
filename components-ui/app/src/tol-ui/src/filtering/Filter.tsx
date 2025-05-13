@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IFetchTargetAndZoneControl } from "../models";
+import { IRemoteTargetAndZone } from "../models";
 import FilterTextInput from "./FilterTextInput";
 import FilterDatePicker from "./FilterDatePicker";
 import FilterMultiSelect from "./FilterMultiSelect";
@@ -18,7 +18,7 @@ export type IFilterInputType =
   | "boolean"
   | "multi";
 
-export interface Filter extends IFetchTargetAndZoneControl {
+export interface IFilterInput extends IRemoteTargetAndZone {
   attribute: string;
   rename: string;
   type?: IFilterInputType;
@@ -26,7 +26,7 @@ export interface Filter extends IFetchTargetAndZoneControl {
   delay?: number;
 }
 
-function Filter(props: Filter) {
+function Filter(props: IFilterInput) {
   switch (props.type) {
     case "str":
     case "int":

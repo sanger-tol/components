@@ -18,8 +18,14 @@ interface Props {
 }
 
 function RemoteTimeline(props: Props) {
-  const { endpoint, id, data, dateWithDay, defaultIcon, titleDataPoint } =
-    props;
+  const {
+    endpoint,
+    id,
+    data,
+    dateWithDay,
+    defaultIcon,
+    titleDataPoint
+  } = props;
 
   const [timelineData, setTimelineData] = useState<any>([]);
   const [name, setName] = useState<string>("");

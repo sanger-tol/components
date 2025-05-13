@@ -8,14 +8,13 @@ import { BoardFilters, Placeholder, Icon, RemoteSunburst, TsDataSource } from ".
 import { useState } from "react";
 import { deepCopy } from "../general/utils";
 import { upsertComponentConfig, saveTitle } from "../boards/utils";
-import { IZone } from "../models";
+import { IBoardTargetAndZone, IZone } from "../models";
 import SliceByDrawer from "./SliceByDrawer";
 import { IButton } from "../general/Button";
+import { BOARDS } from "src/constants";
 
-interface Props {
+interface Props extends IBoardTargetAndZone {
   id: string;
-  objectType: string;
-  baseUrl?: string;
   title: string;
   config: any;
   zone: IZone;
@@ -24,8 +23,7 @@ interface Props {
 }
 
 function BoardSunburst(props: Props) {
-  const { id, objectType, size } = props;
-  const ds = new TsDataSource();
+  const { id, objectType, dataSource, boardObjectType, boardDataSource, size } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
@@ -33,7 +31,7 @@ function BoardSunburst(props: Props) {
 
   const onModalSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });
-    upsertComponentConfig(ds, id, { ...updatedConfig });
+    upsertComponentConfig(boardDataSource, id, { ...updatedConfig });
     setForceUpdate(!forceUpdate);
   };
 
@@ -78,11 +76,9 @@ function BoardSunburst(props: Props) {
   return (
     <div style={{ height: "100%" }}>
       <BoardFilters
-        endpoint={objectType}
-        boardObjectType="component"
+        {...props}
         open={openFilters}
         setOpen={setOpenFilters}
-        {...props}
       />
       <SliceByDrawer
         {...props}
@@ -95,13 +91,10 @@ function BoardSunburst(props: Props) {
       />
         <div style={{ height: '100%' }}>
           <RemoteSunburst
+            {...props}
             id={id}
             sliceBy={deepCopy(config.sliceBy)}
             contents={Contents()}
-            endpoint={objectType}
-            baseUrl={props.baseUrl}
-            zone={props.zone}
-            setZone={props.setZone}
             forceUpdate={forceUpdate}
             legendPosition="top"
             noMini={size === "sm"}
@@ -110,7 +103,7 @@ function BoardSunburst(props: Props) {
                 title: props.title,
                 editable: true,
                 onSave: (value: string) => {
-                  saveTitle(value, ds, id, 'component');
+                  saveTitle(value, boardDataSource, id, BOARDS.COMPONENT);
                 }
               },
               buttons: [

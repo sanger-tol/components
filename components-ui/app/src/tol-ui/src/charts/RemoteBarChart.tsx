@@ -15,7 +15,6 @@ import {
 import { ReactNode, useEffect, useState } from "react";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
 import { normaliseCaps } from "../general/utils";
-import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
 import {
   addSubFilter,
@@ -24,17 +23,16 @@ import {
   resetFiltersBelow,
 } from "../filtering/utils";
 import { IUtilityBar } from "../general/UtilityBar";
+import { IRemoteTargetAndZone } from "src/models";
+import { API_METHODS } from "../constants";
 
-interface Props {
+
+interface Props extends IRemoteTargetAndZone {
   id: string;
-  endpoint: string;
-  baseUrl?: string;
   breakDownBy: string;
   xAxis: string;
   type: HistogramGrouping;
   shortDate?: boolean;
-  zone?: any;
-  setZone?: any;
   height?: any;
   stacked?: boolean;
   cumulative?: boolean;
@@ -48,8 +46,8 @@ interface Props {
 function RemoteBarChart(props: Props) {
   const {
     id,
-    endpoint,
-    baseUrl,
+    objectType,
+    dataSource,
     breakDownBy,
     xAxis,
     type,
@@ -58,7 +56,7 @@ function RemoteBarChart(props: Props) {
     setZone,
     cumulative,
     forceUpdate,
-    contents
+    contents,
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const [labels, setLabels] = useState([]);
@@ -82,9 +80,11 @@ function RemoteBarChart(props: Props) {
     if (!contents) { // This is to stop calls being made when the bar chart is not visible
       setLoading(true);
       const aggs = generateChartAgg(breakDownBy, xAxis, type);
-      httpClient()
-        .post("/" + endpoint + ":aggregations", aggs, {
-          baseURL: baseUrl,
+      dataSource
+        .custom({
+          method: API_METHODS.POST,
+          resource: `${objectType}:aggregations`,
+          body: aggs,
           params: {
             filter: filter,
           },
@@ -149,7 +149,7 @@ function RemoteBarChart(props: Props) {
         <BarChart
           {...props}
           contents={contents ? contents : Contents()}
-          downloadName={normaliseCaps(endpoint)}
+          downloadName={normaliseCaps(objectType)}
           labels={labels}
           datasets={datasets}
           setBarData={setter}

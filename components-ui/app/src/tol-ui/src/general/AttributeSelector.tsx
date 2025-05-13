@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { Checkbox } from "rsuite";
 import { useEffect, useState } from "react";
 import {
-  TsDataSource,
   MultipleSelect,
   InfoTooltip,
   Icon,
@@ -25,7 +24,7 @@ import {
   getAllAttributeData,
   truncateString,
 } from "./utils";
-import { IFetchTarget } from "../models";
+import { IRemoteTarget } from "../models";
 
 
 export interface AllowedCardinality {
@@ -33,7 +32,7 @@ export interface AllowedCardinality {
   value: number;
 }
 
-export interface Props extends IFetchTarget {
+export interface Props extends IRemoteTarget {
   additionalPopulatedFieldData?: any;
   allowedTypes?: string[];
   attribute: string[];

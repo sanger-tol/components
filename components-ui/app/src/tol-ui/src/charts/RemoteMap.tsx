@@ -10,26 +10,28 @@ import { httpClient } from "../services/http/httpClient";
 import Placeholder from "../general/Placeholder";
 import { generateFilter } from "../filtering/utils";
 import { createMapMarkers } from "./utils";
+import { IFilter, IRemoteTarget } from "src/models";
 
-interface Props {
+
+interface Props extends IRemoteTarget {
   id: string;
   bubble?: boolean;
-  endpoint: string;
   longitudeKey: string;
   latitudeKey: string;
   attributeKeys?: string;
   height?: any;
   pageSize?: number;
   zone?: object;
-  baseUrl?: string;
-  markerRenderer?: Function; // Used to apply custom legend keys based on whats is returned, must return an object in format {key: string, colour: string}
+  // Used to apply custom legend keys based on whats is returned,
+  // must return an object in format {key: string, colour: string}
+  markerRenderer?: Function;
 }
 
 function RemoteMap(props: Props) {
   const {
     id,
-    endpoint,
-    baseUrl,
+    objectType,
+    dataSource,
     longitudeKey,
     latitudeKey,
     attributeKeys,
@@ -43,7 +45,7 @@ function RemoteMap(props: Props) {
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState<number | undefined>(undefined);
   const [legendKey, setLegendKey] = useState<object[]>([]);
-  const filter = zone !== undefined ? generateFilter(zone, id) : {};
+  const filter: IFilter = zone !== undefined ? generateFilter(zone, id) : {};
 
   // providing a pageSize default
   let pageSize = 2500;
@@ -55,24 +57,24 @@ function RemoteMap(props: Props) {
     setLoading(true);
     setWarningMessage("");
     setErrorMessage("");
-    httpClient()
-      .get("/" + endpoint + ":count", {
-        baseURL: baseUrl,
+    dataSource
+      .custom({
+        method: "GET",
+        resource: `${objectType}:count`,
         params: {
           filter: filter,
         },
+      
       })
       .then((res: any) => {
         const count = res.data.meta.total;
         if (count <= pageSize) {
           setCount(res.data.meta.total);
-          httpClient()
-            .get("/" + endpoint, {
-              baseURL: baseUrl,
-              params: {
-                filter: filter,
-                page_size: pageSize,
-              },
+          dataSource
+            .getListPage({
+              objectType,
+              filter,
+              pageSize,
             })
             .then((res: any) => {
               const data = res.data.data;

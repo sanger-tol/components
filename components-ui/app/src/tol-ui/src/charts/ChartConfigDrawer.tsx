@@ -15,37 +15,34 @@ import {
   InfoTooltip
 } from "../index";
 import { normaliseCaps } from "../general/utils";
-import { IChartConfig } from "../models/Boards";
+import { IRemoteTargetAndZone, IChartConfig } from "../models/Boards";
 import { HistogramGrouping } from "./utils";
 
-export interface Props {
-  baseUrl?: string;
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  title: string;
-  displaySource?: boolean;
-  onConfigSave: (config: object) => void;
-  endpoint: string;
-  sticky?: boolean;
-  config: IChartConfig;
-  ds: any;
-}
 
 interface IIntervalListItem {
   label: string;
   value: HistogramGrouping;
 }
 
-function ChartConfigDrawer(props: Props) {
+export interface IChartConfigDrawer extends IRemoteTargetAndZone {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  title: string;
+  displaySource?: boolean;
+  onConfigSave: (config: object) => void;
+  sticky?: boolean;
+  config: IChartConfig;
+}
+
+function ChartConfigDrawer(props: IChartConfigDrawer) {
   const {
-    baseUrl,
     open,
     setOpen,
     title,
-    endpoint,
     onConfigSave,
     config
   } = props;
+
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   const [xAxis, setXAxis] = useState<string[]>(
     config.xAxis ? [config.xAxis] : []
@@ -262,9 +259,8 @@ function ChartConfigDrawer(props: Props) {
       <div>
         <h6>X Axis</h6>
         <AttributeSelector
-          endpoint={endpoint}
+          {...props}
           placeholder="Select X-Axis Attribute..."
-          baseUrl={baseUrl}
           attribute={xAxis}
           setAttributes={setXAxis}
           maxSelections={1}
@@ -294,9 +290,8 @@ function ChartConfigDrawer(props: Props) {
           "It has been set to max 25 to avoid charts becoming unreadable."}/>
         </div>
         <AttributeSelector
-          endpoint={endpoint}
+          {...props}
           placeholder="Select Attribute to Break Down By..."
-          baseUrl={baseUrl}
           attribute={breakDownBy}
           setAttributes={setBreakDownBy}
           maxSelections={1}

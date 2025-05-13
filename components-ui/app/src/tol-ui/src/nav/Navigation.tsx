@@ -22,7 +22,7 @@ import { Page } from "../models/Nav";
 import { convertToPath } from "../general/utils";
 import { env } from "../variables/config";
 import { confirmAuthorised } from "../services/auth/authService";
-import { LoginIcon, RegisterIcon } from "../general/Icons";
+import { LoginIcon, RegisterIcon } from "../general/CustomIcons";
 import ProfileDropdown from "./ProfileDropdown";
 
 interface Props extends RouteComponentProps {

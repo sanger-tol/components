@@ -7,19 +7,16 @@ SPDX-License-Identifier: MIT
 import { Toggle } from "rsuite"
 import { InfoTooltip } from "../general"
 import { useEffect, useState } from "react";
-import { IFetchTargetAndZoneControl } from "../models";
+import { IBoardTargetAndZone } from "../models";
 import { upsertComponent, upsertZone } from "../boards/utils";
 import RemoteFilters from "./RemoteFilters";
 import { Drawer } from "../general";
 import { generateFilter, resetFiltersBelow } from "./utils";
 import { deepCopy } from "../general/utils";
-import { TsDataSource } from "..";
 
 
-export interface Props extends IFetchTargetAndZoneControl {
+export interface Props extends IBoardTargetAndZone {
   id: string;
-  boardObjectType: string; // e.g. component type or zone
-  boardDataSource: TsDataSource;
   open: boolean;
   setOpen: any;
 }
