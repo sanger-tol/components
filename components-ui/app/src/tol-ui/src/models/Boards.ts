@@ -106,8 +106,8 @@ export interface IRemoteTarget {
 }
 
 export interface IZoneControl {
-  zone?: IZone;
-  setZone?: (zone: IZone) => void;
+  zone: IZone;
+  setZone: (zone: IZone) => void;
 }
 
 export interface IRemoteTargetAndZone extends IRemoteTarget, IZoneControl {}

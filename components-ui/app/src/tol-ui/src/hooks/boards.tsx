@@ -5,27 +5,28 @@ SPDX-License-Identifier: MIT
 */
 
 import { useRef, useState } from "react";
-import { IZone } from "../models";
+import { IRemoteTargetAndZone, IZone } from "../models";
 import { TsDataSource } from "../datasource";
 import { IComponentData, IFilter } from "../models";
 import { useEffectUpdate } from "./useEffectUpdate";
 import { generateFilter, resetAllFilters } from "../filtering/utils";
 import { deepCopy } from "../general/utils";
+import { useStateFallback } from "./useStateFallback";
 
 interface ZoneMeta {
-  dataSource: TsDataSource;
   objectType: string;
+  dataSource: TsDataSource;
   zone: IZone;
   setZone: any;
 }
 
 export function useZone(params: {
-  dataSource: TsDataSource;
   objectType: string;
+  dataSource: TsDataSource;
   components: IComponentData[];
   filter?: IFilter;
 }) {
-  const { dataSource, objectType, components, filter } = params;
+  const { objectType, dataSource, components, filter } = params;
   const [zone, setZone] = useState(
     defineZone(
       objectType,
@@ -34,8 +35,8 @@ export function useZone(params: {
     ),
   );
   return {
-    dataSource,
     objectType,
+    dataSource,
     zone,
     setZone,
   } as ZoneMeta;
@@ -119,4 +120,20 @@ export function defineZone(
     zone.order.push(component.id!);
   }
   return zone;
+}
+
+export function useZoneStateFallback({
+  id,
+  objectType,
+  zone,
+  setZone,
+}: IRemoteTargetAndZone & {id: string} ): [any, (state: any) => void] {
+  return useStateFallback(
+    zone,
+    setZone,
+    defineZone(
+      objectType,
+      [{id: id}],
+    ),
+  );
 }

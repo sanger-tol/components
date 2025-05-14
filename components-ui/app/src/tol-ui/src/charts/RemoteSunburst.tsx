@@ -15,7 +15,7 @@ import {
 } from "./utils";
 import Sunburst from "./Sunburst";
 import Placeholder from "../general/Placeholder";
-import { useEffectUpdate, resizeListener } from "../hooks";
+import { useEffectUpdate, resizeListener, useZoneStateFallback } from "../hooks";
 import { isEmptyObject, normaliseCaps } from "../general/utils";
 import {
   generateFilter,
@@ -51,8 +51,6 @@ function RemoteSunburst(props: Props) {
     sliceBy,
     noMini,
     noDownload,
-    zone,
-    setZone,
     forceUpdate,
     utilityBarConfig,
     contents
@@ -61,6 +59,7 @@ function RemoteSunburst(props: Props) {
   const height = props.height !== undefined ? props.height : "100%";
   const [datasets, setDatasets] = useState({});
   const [subDatasets, setSubDatasets] = useState({});
+  const [zone, setZone] = useZoneStateFallback({...props});
   const [resetChart, setResetChart] = useState(false);
   const [loading, setLoading] = useState(true);
   const [subLoading, setSubLoading] = useState(true);
@@ -103,7 +102,7 @@ function RemoteSunburst(props: Props) {
           setWarningMessage(isChartDataEmpty(aggs));
           const data = aggsToSunburstData(aggs, sliceBy);
           setDatasets(data);
-          if (setZone) setSliceData({});
+          setSliceData({});
           setLoading(false);
         })
         .catch((error: any) => {
