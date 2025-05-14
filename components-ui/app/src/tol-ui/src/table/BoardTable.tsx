@@ -60,6 +60,7 @@ function BoardTable(props: Props) {
   return (
     <RemoteTable
       displaySource
+      groupBy
       endpoint={objectType}
       fieldMeta={config.fieldMeta || initialiseFieldMeta()}
       pageSize={config.pageSize || 50}

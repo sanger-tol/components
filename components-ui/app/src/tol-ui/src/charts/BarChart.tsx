@@ -13,8 +13,11 @@ import {
   Title,
   Tooltip,
   Legend,
+  PointElement,
+  LineElement,
+  ChartTypeRegistry
 } from "chart.js";
-import { Bar } from "react-chartjs-2";
+import { Chart } from "react-chartjs-2";
 import { UtilityBar } from "../index";
 import {
   getChartColour,
@@ -38,6 +41,8 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
+  PointElement,
+  LineElement,
 );
 
 interface Props {
@@ -52,10 +57,11 @@ interface Props {
   buttons?: JSX.Element[];
   utilityBarConfig?: IUtilityBar;
   contents?: ReactNode;
+  chartType?: string;
 }
 
 function BarChart(props: Props) {
-  const { id, labels, setBarData, cumulative, utilityBarConfig = {}, contents } = props;
+  const { id, labels, setBarData, cumulative, utilityBarConfig = {}, contents, chartType='bar' } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const stacked = props.stacked !== undefined ? props.stacked : false;
   const originDatasets = initialiseDatasets(props.datasets);
@@ -99,6 +105,10 @@ function BarChart(props: Props) {
               dataset.backgroundColor,
               "1",
             );
+            dataset.borderColor = updateOpacitys(
+              dataset.borderColor,
+              "1",
+            )
             setPrevOrder(dataset.order);
             setPrevLegendItemIndex(index);
             dataset.order = -1;
@@ -111,6 +121,10 @@ function BarChart(props: Props) {
               dataset.backgroundColor,
               "0.25",
             );
+            dataset.borderColor = updateOpacitys(
+              dataset.borderColor,
+              "0.25",
+            )
             // reset prev item's order
             if (prevLegendItemIndex === index) {
               dataset.order = prevOrder;
@@ -199,6 +213,7 @@ function BarChart(props: Props) {
     maintainAspectRatio: false,
     responsive: true,
     devicePixelRatio: 2,
+    showLine: chartType !== "scatter",
     plugins: {
       title: {},
       tooltip: {
@@ -306,7 +321,8 @@ function BarChart(props: Props) {
       {contents ?
         contents
         :
-        <Bar
+        <Chart
+          type={chartType === "scatter" ? "line" : (chartType as keyof ChartTypeRegistry)}
           id={id}
           responsive="true"
           className="tol-bar-chart"

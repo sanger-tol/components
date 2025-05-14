@@ -18,6 +18,9 @@ interface Rgb {
   b: number;
 }
 
+export const LINE_POINT_RADIUS = 3;
+const LINE_HOVER_POINT_RADIUS = 6;
+
 /*
 useful for creating rgb colours based on hsl
 https://www.rapidtables.com/convert/color/hsl-to-rgb.html
@@ -220,6 +223,10 @@ export function updateChartColours(
         dataset.backgroundColor,
         fadedOpacity.toString(),
       );
+      dataset.borderColor = updateOpacitys(
+        dataset.backgroundColor,
+        "1",
+      );
     } else {
       dataset.backgroundColor = updateOpacitys(
         dataset.backgroundColor,
@@ -228,6 +235,10 @@ export function updateChartColours(
       dataset.hoverBackgroundColor = updateOpacitys(
         dataset.backgroundColor,
         "0.75",
+      );
+      dataset.borderColor = updateOpacitys(
+        dataset.backgroundColor,
+        "0.1",
       );
     }
   }
@@ -266,14 +277,20 @@ export function initialiseDatasets(datasets: any[]) {
   for (let index = 0; index < datasets.length; index++) {
     const bgColour = getChartColour(index);
     const fadedColour = getChartColour(index, 0.75);
+    datasets[index]["borderColor"] = [];
     datasets[index]["backgroundColor"] = [];
+    datasets[index]["pointRadius"] = [];
+    datasets[index]["pointHoverRadius"] = [];
     datasets[index]["hoverBackgroundColor"] = [];
     datasets[index]["order"] = index;
     datasets[index]["colourIndex"] = index;
     const dataLength = datasets[index].data.length;
     for (let dataIndex = 0; dataIndex < dataLength; dataIndex++) {
+      datasets[index]["borderColor"].push(bgColour);
       datasets[index]["backgroundColor"].push(bgColour);
       datasets[index]["hoverBackgroundColor"].push(fadedColour);
+      datasets[index]["pointRadius"].push(LINE_POINT_RADIUS);
+      datasets[index]["pointHoverRadius"].push(LINE_HOVER_POINT_RADIUS);
     }
   }
   return datasets;

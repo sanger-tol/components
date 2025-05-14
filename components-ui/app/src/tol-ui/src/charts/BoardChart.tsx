@@ -99,9 +99,10 @@ function BoardChart(props: Props) {
           zone={props.zone}
           setZone={props.setZone}
           breakDownBy={config.breakDownBy || ""}
+          chartType={config.chartType}
           xAxis={config.xAxis || ""}
           stacked={config.stacked || false}
-          type={config.type || ""}
+          type={config.grouping || ""}
           forceUpdate={forceUpdate}
           utilityBarConfig={{
             title: {

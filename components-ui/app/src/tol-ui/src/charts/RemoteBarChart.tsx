@@ -42,6 +42,7 @@ interface Props {
   forceUpdate?: boolean;
   utilityBarConfig?: IUtilityBar;
   contents?: ReactNode;
+  chartType?: string;
 }
 
 function RemoteBarChart(props: Props) {
