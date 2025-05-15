@@ -43,6 +43,7 @@ ChartJS.register(
   Legend,
   PointElement,
   LineElement,
+  ChartTypeRegistry
 );
 
 interface Props {
