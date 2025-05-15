@@ -43,7 +43,7 @@ interface Props extends IRemoteTargetAndZone {
   chartType?: string;
 }
 
-function RemoteBarChart(props: Props) {
+export function RemoteBarChart(props: Props) {
   const {
     id,
     objectType,
@@ -158,5 +158,3 @@ function RemoteBarChart(props: Props) {
     </div>
   )
 }
-
-export default RemoteBarChart;

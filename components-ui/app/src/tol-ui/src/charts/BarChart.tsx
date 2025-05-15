@@ -64,7 +64,7 @@ interface Props {
   chartType?: string;
 }
 
-function BarChart(props: Props) {
+export function BarChart(props: Props) {
   const { id, labels, setBarData, cumulative, utilityBarConfig = {}, contents, chartType='bar' } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const stacked = props.stacked !== undefined ? props.stacked : false;
@@ -342,5 +342,3 @@ function BarChart(props: Props) {
     </div>
   );
 }
-
-export default BarChart;

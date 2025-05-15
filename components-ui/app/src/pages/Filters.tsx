@@ -19,7 +19,7 @@ import {
   useTranslator,
 } from "../tol-ui/src";
 
-function Filters() {
+export function Filters() {
   const speciesZone = useZone({
     endpoint: "species",
     baseUrl: env.TOL_DATA,
@@ -394,5 +394,3 @@ function Filters() {
 
   return <Widgets components={components} />;
 }
-
-export default Filters;

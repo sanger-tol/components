@@ -6,7 +6,7 @@
 
 import { TsDataSource, DetailAttribute, Widgets, env } from "../tol-ui/src";
 
-function DataSource() {
+export function DataSource() {
   const ds1 = new TsDataSource({ baseUrl: env.TOL_DATA });
 
   ds1
@@ -147,5 +147,3 @@ function DataSource() {
     </div>
   );
 }
-
-export default DataSource;

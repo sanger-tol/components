@@ -16,7 +16,7 @@ import {
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 
-function DetailInfo() {
+export function DetailInfo() {
   const { id } = useParams<{ id: string }>();
   const [response, setResponse] = useState();
 
@@ -118,5 +118,3 @@ function DetailInfo() {
     return <Widgets components={components} />;
   }
 }
-
-export default DetailInfo;

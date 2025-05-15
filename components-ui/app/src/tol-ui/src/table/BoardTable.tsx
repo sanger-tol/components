@@ -5,11 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import { FieldMeta, initialiseFieldMeta } from "./Field";
-import { BoardFilters, RemoteTable, TsDataSource } from "../index";
+import { BoardFilters, RemoteTable } from "../index";
 import { useState } from "react";
 import { upsertComponentConfig, saveTitle } from "../boards/utils";
 import { IBoardTargetAndZone } from "../models";
-import { BOARDS } from "../constants";
 
 interface Props extends IBoardTargetAndZone{
   id: string;
@@ -18,8 +17,7 @@ interface Props extends IBoardTargetAndZone{
 }
 
 function BoardTable(props: Props) {
-  const { id, title } = props;
-  const ds = new TsDataSource();
+  const { id, title, boardObjectType, boardDataSource } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
@@ -28,19 +26,19 @@ function BoardTable(props: Props) {
     config["fieldMeta"] = fm;
     setForceUpdate(!forceUpdate); // fetches new data on save
     setConfig({ ...config });
-    upsertComponentConfig(ds, id, config);
+    upsertComponentConfig(boardDataSource, id, config);
   };
 
   const onToggleFilterVisibility = (visible: boolean) => {
     config["filterVisibility"] = visible;
     setConfig({ ...config });
-    upsertComponentConfig(ds, id, config);
+    upsertComponentConfig(boardDataSource, id, config);
   };
 
   const onPageSizeChange = (pageSize: boolean) => {
     config["pageSize"] = pageSize;
     setConfig({ ...config });
-    upsertComponentConfig(ds, id, config);
+    upsertComponentConfig(boardDataSource, id, config);
   };
 
   const boardFilter = [
@@ -70,7 +68,7 @@ function BoardTable(props: Props) {
           title: title,
           editable: true,
           onSave: (value: string) => {
-            saveTitle(value, ds, id, BOARDS.COMPONENT);
+            saveTitle(value, boardDataSource, id, boardObjectType);
           }
         },
         elements: boardFilter,

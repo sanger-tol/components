@@ -21,7 +21,7 @@ interface Props extends IBoardTargetAndZone {
   size: string;
 }
 
-function BoardChart(props: Props) {
+export function BoardChart(props: Props) {
   const { id, dataSource, boardObjectType, boardDataSource } = props;
   const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
@@ -111,5 +111,3 @@ function BoardChart(props: Props) {
     </div>
   );
 }
-
-export default BoardChart;

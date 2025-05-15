@@ -9,7 +9,6 @@ import { BoardFilters, RemoteCount } from "../index";
 import { saveTitle } from "../boards/utils";
 import { IBoardTargetAndZone } from "../models";
 import { IButton } from "../general/Button";
-import { BOARDS } from '../constants';
 
 
 interface Props extends IBoardTargetAndZone {
@@ -19,7 +18,7 @@ interface Props extends IBoardTargetAndZone {
 }
 
 function BoardCount(props: Props) {
-  const { id, boardDataSource } = props;
+  const { id, boardObjectType, boardDataSource } = props;
   const [openFilters, setOpenFilters] = useState(false);
 
   const filterButton: IButton = {
@@ -45,7 +44,7 @@ function BoardCount(props: Props) {
             title: props.title,
             editable: true,
             onSave: (value: string) => {
-              saveTitle(value, boardDataSource, id, BOARDS.COMPONENT);
+              saveTitle(value, boardDataSource, id, boardObjectType);
             }
           },
           buttons: [filterButton]

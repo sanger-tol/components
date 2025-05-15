@@ -17,7 +17,7 @@ function exampleElement(props: exampleProps) {
   return `${text}: ${mlwhTag}`;
 }
 
-function Tables() {
+export function Tables() {
   const [forceUpdate, setForceUpdate] = useState(false);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
@@ -134,5 +134,3 @@ function Tables() {
 
   return <Widgets components={components} />;
 }
-
-export default Tables;

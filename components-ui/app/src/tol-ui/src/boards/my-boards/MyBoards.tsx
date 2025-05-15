@@ -56,7 +56,7 @@ const getBoardDetails = async (id: string, setErrorMessage: any) => {
   }
 };
 
-function MyBoards() {
+export function MyBoards() {
   const [boardDetails, setBoardDetails] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -170,5 +170,3 @@ function MyBoards() {
     </>
   );
 }
-
-export default MyBoards;

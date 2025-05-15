@@ -43,7 +43,7 @@ interface Props extends IRemoteTargetAndZone{
   contents?: ReactNode;
 }
 
-function RemoteSunburst(props: Props) {
+export function RemoteSunburst(props: Props) {
   const {
     id,
     objectType,
@@ -265,5 +265,3 @@ function RemoteSunburst(props: Props) {
     </div>
   );
 }
-
-export default RemoteSunburst;

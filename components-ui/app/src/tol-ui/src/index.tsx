@@ -22,33 +22,15 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 library.add(fas);
 
 // board
-export {
-  ComponentModal,
-  ZoneModal,
-  Visualisation,
-  View,
-  Board,
-} from "./boards";
+export * from "./boards";
 
 // charts
-export {
-  BarChart,
-  RemoteBarChart,
-  BoardChart,
-  Map,
-  RemoteMap,
-  MapLegend,
-  Sunburst,
-  RemoteSunburst,
-  BoardSunburst,
-  OrgChart
-} from "./charts";
+export * from "./charts";
 
 // datasource
 export { TsDataSource } from "./datasource";
 
 // drag & drop
-export { DnD } from "./dnd";
 
 // filter
 export { Filter, RemoteFilters, BoardFilters, resetZone } from "./filtering";

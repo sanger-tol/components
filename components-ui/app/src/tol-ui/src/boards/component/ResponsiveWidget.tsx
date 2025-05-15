@@ -39,7 +39,7 @@ interface Props {
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-function ResponsiveWidget(props: Props) {
+export function ResponsiveWidget(props: Props) {
   const {
     widgets,
     setWidgets,
@@ -205,5 +205,3 @@ function ResponsiveWidget(props: Props) {
     </div>
   );
 }
-
-export default ResponsiveWidget;

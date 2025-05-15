@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-function UserId() {
+export function UserId() {
   const user = JSON.parse(localStorage.getItem("user") || "");
   const userId = user["id"];
   const isAdmin = user["roles"].includes("admin");
@@ -17,5 +17,3 @@ function UserId() {
     </div>
   );
 }
-
-export default UserId;

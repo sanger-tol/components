@@ -5,21 +5,21 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  View,
   TsDataSource,
   LoadingContent,
   InlineEdit,
   themeListener,
 } from "../../index";
+import View from "../view/View";
 import { getBoard, saveTitle } from "../utils";
 import { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import { getUserFromLocalStorage } from "../../services/localStorage/localStorageService";
 import { getCssVarValue } from "../../general/utils";
-import { BOARDS_API_PREFIX } from "../../constants";
+import { BOARDS, BOARDS_API_PREFIX } from "../../constants";
 
 interface Props {
-  dataSource: TsDataSource
+  dataSource: TsDataSource;
   boardDataSource?: TsDataSource;
 }
 
@@ -83,7 +83,7 @@ function Board(props: Props) {
           title={boardData.boardTitle}
           onSave={(newTitle: any) => {
             if (newTitle !== boardData.boardTitle) {
-              saveTitle(newTitle, boardDataSource, boardId, "board");
+              saveTitle(newTitle, boardDataSource, boardId, BOARDS.BOARD);
             }
           }}
           editable

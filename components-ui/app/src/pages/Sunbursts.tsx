@@ -112,7 +112,7 @@ const datasets = {
   ],
 };
 
-function Sunbursts() {
+export function Sunbursts() {
   const [sliceData, setSliceData] = useState({});
   const sunburstTitle = "Order of...";
 
@@ -147,5 +147,3 @@ function Sunbursts() {
     </div>
   );
 }
-
-export default Sunbursts;

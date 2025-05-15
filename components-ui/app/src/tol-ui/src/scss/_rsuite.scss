@@ -231,12 +231,6 @@
   }
 }
 
-@media (max-width: 992px) {
-  .tol-dnd-column {
-    height: auto !important;
-  }
-}
-
 // ensure checkbox dropdowns are on top & are only as big as the content
 .rs-anim-fade.rs-anim-in.rs-picker-check-menu.rs-picker-menu.placement-bottom-start {
   z-index: 1003;

@@ -10,22 +10,17 @@ import {
   BoardSunburst,
   BoardChart
 } from "../../index";
-import { IZone } from "../../models";
+import { IBoardTargetAndZone } from "../../models";
 
-interface Props {
+interface Props extends IBoardTargetAndZone {
   id: string;
-  zone: IZone;
-  setZone: any;
-
-  objectType: string;
-  baseUrl: string;
   config: any;
   title: string;
   componentType: string;
   size: string
 }
 
-function Visualisation(props: Props) {
+export function Visualisation(props: Props) {
   const { componentType } = props;
 
   switch (componentType) {
@@ -39,5 +34,3 @@ function Visualisation(props: Props) {
       return <BoardChart {...props} />;
   }
 }
-
-export default Visualisation;

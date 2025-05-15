@@ -160,7 +160,7 @@ const cTimeline: DataPoint = {
   },
 };
 
-function Timelines() {
+export function Timelines() {
   const aTimelineTitle = "Timeline of events for sample...";
   const bTimelineTitle =
     "Nice looking timeline for species [Rando Specicus], sample [#83882.94]";
@@ -247,5 +247,3 @@ function Timelines() {
     </div>
   );
 }
-
-export default Timelines;

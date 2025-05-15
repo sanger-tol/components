@@ -10,16 +10,17 @@ import {
   Col,
   Button,
   useZone,
-  ComponentModal,
   InlineEdit,
   BoardFilters
 } from "../..";
+import ComponentPickerModal from "./ComponentPickerModal";
 import ResponsiveWidget, { IWidgets } from "../component/ResponsiveWidget";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { getComponents, saveTitle } from "../utils";
 import ConfirmationModal from "../ConfirmationModal";
 import { TsDataSource } from "../../datasource";
+import { BOARDS } from "../../constants";
 
 interface Props {
   id: string;
@@ -211,7 +212,7 @@ function Zone(props: Props) {
             title={title}
             onSave={(newTitle) => {
               if (newTitle !== title) {
-                saveTitle(newTitle, dataSource, id, "zone");
+                saveTitle(newTitle, dataSource, id, BOARDS.ZONE);
                 setTitle(newTitle);
               }
             }}
@@ -239,7 +240,7 @@ function Zone(props: Props) {
             )}
           </h6>
           <div id={"component-modal"}>
-            <ComponentModal
+            <ComponentPickerModal
               open={open}
               setOpen={setOpen}
               zoneId={id}

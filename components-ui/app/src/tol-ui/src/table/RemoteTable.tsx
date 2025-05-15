@@ -19,7 +19,7 @@ import {
 import Table, { NumRows } from "./Table";
 import { Placeholder, TsDataSource } from "../index";
 import { useEffectUpdate } from "../hooks/useEffectUpdate";
-import { IZone } from "../models";
+import { IRemoteTargetAndZone, IZone } from "../models";
 import {
   generateFilter,
   filterHasUpdated,
@@ -34,22 +34,19 @@ import { addRemoteActions } from "./actions/utils";
 import { useStateFallback } from "../hooks";
 import { IUtilityBar } from "../general/UtilityBar";
 
-interface Props {
+interface Props extends IRemoteTargetAndZone {
   id: string;
-  endpoint: string;
-  baseUrl?: string;
   source?: string;
   attributeMetadataUrl?: string;
   relationshipsUrl?: string;
 
   fields?: FieldMetaData;
-  fieldMeta?: FieldMeta; // for BoardTable use
+  // for direct injection with BoardTable use
+  fieldMeta?: FieldMeta;
   height?: any;
   basic?: boolean;
   forceUpdate?: boolean;
 
-  zone?: object; // required for table filtering
-  setZone?: any;
   onModalSave?: any;
   onPageSizeChange?: any;
   onToggleFilterVisibility?: any;
@@ -79,8 +76,8 @@ interface Props {
 function RemoteTable(props: Props) {
   const {
     id,
-    endpoint,
-    baseUrl,
+    objectType,
+    dataSource,
     source,
     fields,
     basic,
@@ -103,7 +100,6 @@ function RemoteTable(props: Props) {
     contents,
     groupBy
   } = props;
-  const ds = new TsDataSource({ baseUrl });
   const height = props.height !== undefined ? props.height : "100%";
 
   // data and field information
@@ -227,9 +223,8 @@ function RemoteTable(props: Props) {
 
     // get data and update state
     httpClient()
-      .get("/" + endpoint, {
+      .get("/" + objectType, {
         params: params,
-        baseURL: baseUrl,
       })
       .then(async (res: any) => {
         // error if endpoint doesn't return 200
@@ -242,12 +237,12 @@ function RemoteTable(props: Props) {
 
         // get attribute types and relationship links
         const entityMeta =
-          basic !== true ? await ds.getEntityMeta() : undefined;
+          basic !== true ? await dataSource.getEntityMeta() : undefined;
 
         let fm = fieldMeta;
         if (initialLoad) {
           fm = structureFieldMeta(
-            endpoint,
+            objectType,
             fieldMeta ?? getFieldMetaLocalStorage(id, fields),
             entityMeta,
             fields
@@ -261,7 +256,9 @@ function RemoteTable(props: Props) {
         tableDebug(apiData, fm!, debug);
 
         // setting data using fieldMeta
-        setData(convertTableData(apiData, fm as FieldMeta, baseUrl, entityMeta));
+        setData(
+          convertTableData(apiData, fm as FieldMeta, baseUrl, entityMeta)
+        );
         setLoading(false);
         setInitialLoad(false);
       })
@@ -292,11 +289,15 @@ function RemoteTable(props: Props) {
 
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
-    await ds
-      .custom(ACTION_ENDPOINTS.RUN_ACTION, API_METHODS.POST as string, {
-        ids: ids,
-        action_name: actionName,
-        object_type: endpoint,
+    await dataSource
+      .custom({
+        method: API_METHODS.POST,
+        resource: ACTION_ENDPOINTS.RUN_ACTION,
+        body: {
+          ids: ids,
+          action_name: actionName,
+          object_type: objectType,
+        }
       })
       .finally(() => {
         setActionModalOpen(true);
@@ -306,7 +307,8 @@ function RemoteTable(props: Props) {
   };
 
   const convertedActions = addRemoteActions(
-    endpoint,
+    objectType,
+    dataSource,
     setCurrentActionName,
     setIdExportModalOpen,
     setIdsWithReqNotMet,
@@ -314,7 +316,6 @@ function RemoteTable(props: Props) {
     idsWithReqNotMet,
     completeAction,
     actions,
-    baseUrl ?? undefined
   );
 
   return (

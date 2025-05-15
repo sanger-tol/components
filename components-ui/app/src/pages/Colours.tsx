@@ -49,7 +49,7 @@ const ColourBoxes = ({
   </div>
 );
 
-function Colours() {
+export function Colours() {
   const basicColourClasses = [
     "tol-bg",
     "tol-bg-dark",
@@ -108,5 +108,3 @@ function Colours() {
 
   return <Widgets components={components} />;
 }
-
-export default Colours;

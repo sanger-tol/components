@@ -14,7 +14,7 @@ import { httpClient } from "../../services";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartSimple, faTable } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
-import { BOARDS, BoardObjectTypes } from "../../constants";
+import { BOARDS } from "../../constants";
 import { TsDataSource } from "../..";
 
 interface AccordionBaseProps {
@@ -372,9 +372,9 @@ function Accordion(props: BoardsAccordionProps) {
             <div key={zoneId} style={{ marginTop: "15px" }}>
               <AccordionBase
                 id={zoneId}
-                endpointUrl={BOARDS.ZONE_COMPONENTS}
+                endpointUrl={BOARDS.COMPONENT_ZONE}
                 filterItem={"zone.id"}
-                itemType={BoardObjectTypes.COMPONENT as string}
+                itemType={BOARDS.COMPONENT as string}
                 title={zoneData[zoneId][0].title || ""}
                 subHeader={zoneData[zoneId][0].objectType}
                 clickable={false}
@@ -409,9 +409,9 @@ function Accordion(props: BoardsAccordionProps) {
                 <AccordionBase
                   id={viewId}
                   title={viewData[viewId] || ""}
-                  endpointUrl={BOARDS.VIEW_ZONES}
+                  endpointUrl={BOARDS.ZONE_VIEW}
                   filterItem={"view.id"}
-                  itemType={BoardObjectTypes.ZONE as string}
+                  itemType={BOARDS.ZONE}
                   clickable={false}
                   renderChildren={(zoneIds) => (
                     <ZonesAccordion zoneIds={zoneIds} />
@@ -443,9 +443,9 @@ function Accordion(props: BoardsAccordionProps) {
             <AccordionBase
               id={board.id}
               title={board.title}
-              endpointUrl={BOARDS.BOARD_VIEWS}
+              endpointUrl={BOARDS.VIEW_BOARD}
               filterItem={"board.id"}
-              itemType={BoardObjectTypes.VIEW as string}
+              itemType={BOARDS.VIEW}
               clickable={true}
               renderChildren={(viewIds) => (
                 <ViewsAccordion boardId={board.id} viewIds={viewIds} />

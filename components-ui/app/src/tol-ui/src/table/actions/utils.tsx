@@ -4,13 +4,14 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { httpClient } from "../../services";
 import { ACTION_ENDPOINTS } from "../../constants";
 import { IDropdownButtonConfig } from "../../models";
+import { TsDataSource } from "src/datasource";
 
 
 export function addRemoteActions(
   objectType: string,
+  dataSource: TsDataSource,
   setCurrentActionName: (actionName: string) => void,
   setIdExportModalOpen: (open: boolean) => void,
   setIdsWithReqNotMet: (ids: any) => void,
@@ -18,7 +19,6 @@ export function addRemoteActions(
   idsWithReqNotMet: object,
   completeAction: (actionName: string, ids: string[]) => Promise<void>,
   actions: (string | IDropdownButtonConfig)[] = [],
-  baseUrl?: string
 ) {
   const runAction = async (actionName: string, ids: string[]) => {
     setLoading(true);

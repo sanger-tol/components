@@ -11,7 +11,7 @@ const docs: HeaderButton = {
   text: "Documentation",
 };
 
-function Home() {
+export function Home() {
   return (
     <div className="home">
       <Header
@@ -23,5 +23,3 @@ function Home() {
     </div>
   );
 }
-
-export default Home;

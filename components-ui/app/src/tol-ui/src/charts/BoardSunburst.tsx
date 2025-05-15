@@ -11,7 +11,6 @@ import { upsertComponentConfig, saveTitle } from "../boards/utils";
 import { IBoardTargetAndZone } from "../models";
 import SliceByDrawer from "./SliceByDrawer";
 import { IButton } from "../general/Button";
-import { BOARDS } from "../constants";
 
 interface Props extends IBoardTargetAndZone {
   id: string;
@@ -21,7 +20,7 @@ interface Props extends IBoardTargetAndZone {
 }
 
 function BoardSunburst(props: Props) {
-  const { id, boardDataSource, size } = props;
+  const { id, boardObjectType, boardDataSource, size } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
@@ -99,7 +98,7 @@ function BoardSunburst(props: Props) {
                 title: props.title,
                 editable: true,
                 onSave: (value: string) => {
-                  saveTitle(value, boardDataSource, id, BOARDS.COMPONENT);
+                  saveTitle(value, boardDataSource, id, boardObjectType);
                 }
               },
               buttons: [

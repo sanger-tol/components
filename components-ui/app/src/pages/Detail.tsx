@@ -20,7 +20,7 @@ const detail = {
   id6: 270466,
 };
 
-function Detail() {
+export function Detail() {
   const examples = (
     <div>
       <h2 style={{ marginBottom: 10 }}>Mock Species</h2>
@@ -66,5 +66,3 @@ function Detail() {
 
   return <Widgets components={components} />;
 }
-
-export default Detail;

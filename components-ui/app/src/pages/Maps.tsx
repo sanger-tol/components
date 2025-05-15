@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Map, Widgets, RemoteMap, env, useZone } from "../tol-ui/src";
 
-function Maps() {
+export function Maps() {
   // fake data for BubbleMap component
   const points = [
     [51.50853, -0.076132],
@@ -120,5 +120,3 @@ function Maps() {
 
   return <Widgets components={components} />;
 }
-
-export default Maps;
