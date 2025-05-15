@@ -25,10 +25,11 @@ export interface Props {
   fileType: string;
   generateMessages: (apiRes: any) => Message[];
   setResponse?: any;
+  onFileDrop?: (length: boolean) => void;
 }
 
 function Dropzone(props: Props) {
-  const { endpoint, fileType, generateMessages, setResponse } = props;
+  const { endpoint, fileType, generateMessages, setResponse, onFileDrop } = props;
   const [fileList, setFileList] = useState<any[]>([]);
   const [validate, setValidate] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,6 +44,7 @@ function Dropzone(props: Props) {
       setMessages([]);
       validateFile();
       setFail(false);
+      onFileDrop?.(fileList.length > 0);
     }
   }, [validate]);
 

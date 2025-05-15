@@ -4,19 +4,73 @@
  * SPDX-License-Identifier: MIT
  */
 
-.scroll-on-hover {
-  cursor: pointer;
+@keyframes dropDownResults {
+  from {
+    opacity: 0;
+    transform: translateY(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.scroll-on-hover:hover {
-  animation: scroll-text 5s linear infinite;
+@keyframes dropDownButton {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@keyframes scroll-text {
-  0% {
-    transform: translateX(0%);
+.tol-file-upload-btn-dropdown-animation {
+  animation: dropDownButton 0.4s ease;
+}
+
+.tol-file-upload-results-dropdown-animation {
+  animation: dropDownResults 0.8s ease;
+}
+
+.tol-file-upload-title-bar-container {
+  display: flex;
+
+  .tol-file-upload-title-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 1;
+    align-items: end;
+    gap: 6px;
+    align-content: center;
+
+    .tol-file-upload-btn-inner-container {
+      display: flex;
+      gap: 6px;
+      align-self: center;
+
+      .tol-file-upload-additional-btn-container {
+        display: flex;
+        gap: 6px;
+      }
+    }
   }
-  100% {
-    transform: translateX(-100%);
-  }
+}
+
+
+.tol-file-upload-uploader-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+  margin: 5px 15px 15px 0;
+}
+
+.tol-file-upload-results-container {
+    margin-top: 15px;
+
+    .tol-file-upload-results-viewer-container {
+        min-height: 300px;
+    }
 }

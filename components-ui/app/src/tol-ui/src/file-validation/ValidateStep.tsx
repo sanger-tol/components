@@ -13,7 +13,7 @@ interface Props {
   icon?: IconType;
   errorValues?: string[];
   expanded?: boolean;
-  onSeeAll?: () => void;
+  onSeeAllErrors?: () => void;
 }
 
 const MAX_ERRORS_TO_DISPLAY = 2;
@@ -23,7 +23,7 @@ const errors = true; // Simulating an error state
 const errorValues = ["Error 1", "Error 2", "Error 3", "Error 4", "Error 5"];
 
 function ValidateStep(props: Props) {
-  const { id, stepName, onSeeAll, icon = "xmark" } = props;
+  const { id, stepName, onSeeAllErrors, icon = "xmark" } = props;
   return (
     <div
       id={id}
@@ -74,7 +74,7 @@ function ValidateStep(props: Props) {
               <ErrorViewer key={String(index)} message={error} stepName={stepName}/>
             ))}
           {errorValues.length > 2 && (
-            <div style={{ display: "flex", justifyContent: "center" }} onClick={onSeeAll}>
+            <div style={{ display: "flex", justifyContent: "center" }} onClick={onSeeAllErrors}>
               <p style={{ margin: "4px", cursor: "pointer" }}>See All...</p>
             </div>
           )}
