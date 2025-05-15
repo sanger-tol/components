@@ -16,7 +16,7 @@ import { useEffectUpdate } from "../hooks";
 import { IUtilityBar } from "../general/UtilityBar";
 import UtilityBar from "./UtilityBar";
 import { IBoardTargetAndZone, TFilterOrUndefined } from "../models";
-import { API_METHODS } from "src/constants";
+import { API_METHODS } from "../constants";
 
 interface Props extends IBoardTargetAndZone {
   id: string;

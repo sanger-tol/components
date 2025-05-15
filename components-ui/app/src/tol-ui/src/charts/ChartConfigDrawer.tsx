@@ -260,15 +260,15 @@ function ChartConfigDrawer(props: IChartConfigDrawer) {
         <h6>X Axis</h6>
         <AttributeSelector
           {...props}
+          sticky
+          renderSearchBySource
+          displaySource
           placeholder="Select X-Axis Attribute..."
           attribute={xAxis}
           setAttributes={setXAxis}
           maxSelections={1}
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
-          renderSearchBySource={true}
-          displaySource={true}
-          sticky={true}
           allowedTypes={["str", "datetime"]}
           setAttributeMeta={setReturnedMeta}
         />

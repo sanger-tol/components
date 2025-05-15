@@ -13,7 +13,7 @@ import {
   SelectedAttributesContainer
 } from "../index";
 import { generateSunburstConfig } from "./utils";
-import { IRemoteTarget } from "src/models";
+import { IRemoteTarget } from "../models";
 
 export interface ISliceByDrawer extends IRemoteTarget {
   open: boolean;
@@ -147,6 +147,10 @@ function SliceByDrawer(props: ISliceByDrawer) {
       <div>
         <AttributeSelector
           {...props}
+          sticky
+          recommendedFilterAvailable
+          renderSearchBySource
+          displaySource
           placeholder="Select Attributes to Slice By..."
           attribute={attributes}
           setAttributes={setAttributes}
@@ -155,11 +159,7 @@ function SliceByDrawer(props: ISliceByDrawer) {
           maxSelections={5}
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
-          recommendedFilterAvailable={true}
-          renderSearchBySource={true}
-          displaySource={true}
           customAttributeSelection={customAttributeSelection}
-          sticky={true}
         />
       </div>
       <SelectedAttributesContainer

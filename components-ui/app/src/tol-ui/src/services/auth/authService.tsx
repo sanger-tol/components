@@ -6,11 +6,11 @@ SPDX-License-Identifier: MIT
 
 //@ts-nocheck
 
-import { TsDataSource } from "src/datasource";
+import { TsDataSource } from "../datasource";
 import { Page } from "../../models";
 import { httpClient } from "../http/httpClient";
 import { tokenHasExpired } from "../localStorage/localStorageService";
-import { API_METHODS } from "src/constants";
+import { API_METHODS } from "../constants";
 
 const authDataSource = new TsDataSource({
   apiPrefix: "auth"

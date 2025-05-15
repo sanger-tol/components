@@ -89,8 +89,10 @@ function RemoteFilters(props: Props) {
   return (
     <div>
       <AttributeSelector
-        objectType={objectType}
-        dataSource={dataSource}
+        {...props}
+        displaySource
+        recommendedFilterAvailable
+        renderSearchBySource
         disabledValues={disabledFilterValues}
         placeholder={PLACEHOLDER}
         attribute={filters}
@@ -102,9 +104,6 @@ function RemoteFilters(props: Props) {
           ).length
         }
         tooltipContent={TOOLTIP_CONTENT}
-        displaySource={true}
-        recommendedFilterAvailable={true}
-        renderSearchBySource={true}
         onClean={onClean}
       />
       {filters.map((attribute) => {

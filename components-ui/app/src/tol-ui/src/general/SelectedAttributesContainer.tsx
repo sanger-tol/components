@@ -12,7 +12,7 @@ import {
 } from "../index";
 import { normaliseCaps, truncateString } from "../general/utils";
 import DraggableList from "react-draggable-list";
-import { IRemoteTarget } from "src/models";
+import { IRemoteTarget } from "../models";
 
 const TRANSITION_TIME: number = 300;
 

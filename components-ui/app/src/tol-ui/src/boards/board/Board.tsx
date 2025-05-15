@@ -20,13 +20,16 @@ import { BOARDS_API_PREFIX } from "../../constants";
 
 interface Props {
   dataSource: TsDataSource
+  boardDataSource?: TsDataSource;
 }
 
 function Board(props: Props) {
-  const { dataSource } = props;
-  const boardDataSource = new TsDataSource({
-    apiPrefix: BOARDS_API_PREFIX,
-  });
+  const {
+    dataSource,
+    boardDataSource = new TsDataSource({
+      apiPrefix: BOARDS_API_PREFIX,
+    })
+  } = props;
   const { boardId, viewId } = useParams<any>();
 
   const [user, setUser] = useState<any>(null);

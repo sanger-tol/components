@@ -8,20 +8,17 @@ import { FieldMeta, initialiseFieldMeta } from "./Field";
 import { BoardFilters, RemoteTable, TsDataSource } from "../index";
 import { useState } from "react";
 import { upsertComponentConfig, saveTitle } from "../boards/utils";
-import { IZone } from "../models";
+import { IBoardTargetAndZone } from "../models";
+import { BOARDS } from "../constants";
 
-interface Props {
+interface Props extends IBoardTargetAndZone{
   id: string;
-  objectType: string;
-  baseUrl?: string;
   title: string;
   config: any;
-  zone: IZone;
-  setZone: any;
 }
 
 function BoardTable(props: Props) {
-  const { id, objectType } = props;
+  const { id, title } = props;
   const ds = new TsDataSource();
   const [config, setConfig] = useState<any>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
@@ -49,19 +46,17 @@ function BoardTable(props: Props) {
   const boardFilter = [
     <span key="board-table-filter">
       <BoardFilters
-        endpoint={objectType}
-        boardObjectType="component"
+        {...props}
         open={openFilters}
         setOpen={setOpenFilters}
-        {...props}
       />
     </span>,
   ];
 
   return (
     <RemoteTable
+      {...props}
       displaySource
-      endpoint={objectType}
       fieldMeta={config.fieldMeta || initialiseFieldMeta()}
       pageSize={config.pageSize || 50}
       filterVisibility={config.filterVisibility ?? true}
@@ -72,10 +67,10 @@ function BoardTable(props: Props) {
       forceUpdate={forceUpdate}
       utilityBarConfig={{
         title: {
-          title: props.title,
+          title: title,
           editable: true,
           onSave: (value: string) => {
-            saveTitle(value, ds, id, "component");
+            saveTitle(value, ds, id, BOARDS.COMPONENT);
           }
         },
         elements: boardFilter,
@@ -87,7 +82,6 @@ function BoardTable(props: Props) {
           icon: "filter",
         }],
       }}
-      {...props}
     />
   );
 }

@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect } from "react";
 import { LoadingContent, TsDataSource } from "../index";
+import { API_METHODS } from "../constants";
 
 interface Props {
   resource: string;
@@ -21,7 +22,7 @@ function RemoteGet(props: Props) {
   useEffect(() => {
     dataSource
       .custom({
-        method: "GET",
+        method: API_METHODS.GET,
         resource,
       })
       .then((res: any) => {

@@ -5,30 +5,31 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { httpClient } from "../services/http/httpClient";
 import { HoverOverlay, FormatTooltip } from "../general";
-import { Loader } from "../index";
+import { Loader, TsDataSource } from "../index";
 import { mapKeysToDisplayNames } from "./utils";
+import { API_METHODS } from "../constants";
 
 export interface Props {
   attribute: string;
   data: string; // Relationship Data
   detail?: boolean;
-  baseUrl?: string;
   entityMeta?: any;
+  dataSource: TsDataSource;
 }
 
 function Relationship(props: Props) {
-  const { attribute, data, detail, baseUrl, entityMeta } = props;
+  const { attribute, data, detail, entityMeta, dataSource } = props;
   const [contents, setContents] = useState<JSX.Element | string>(
     <Loader size="sm" />,
   );
-  const endpoint = "/" + data["type"] + "/" + data["id"];
+  const resource = data["type"] + "/" + data["id"];
 
   const loadRelationship = () => {
-    httpClient()
-      .get(endpoint, {
-        baseURL: baseUrl,
+    dataSource // TODO: use ds properly
+      .custom({
+        method: API_METHODS.GET,
+        resource
       })
       .then((res: any) => {
         // error if endpoint doesn't return 200

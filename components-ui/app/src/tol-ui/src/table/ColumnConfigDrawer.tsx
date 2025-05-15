@@ -13,16 +13,15 @@ import {
   SelectedAttributesContainer
 } from "../index";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
+import { IRemoteTarget } from "../models";
 
-export interface Props {
-  baseUrl?: string;
+export interface Props extends IRemoteTarget{
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
   fieldMeta: FieldMeta;
   displaySource?: boolean;
   onConfigSave: (fieldMeta: FieldMeta) => void;
-  endpoint: string;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
   groupBy?: boolean;
@@ -30,15 +29,12 @@ export interface Props {
 
 function ColumnConfigDrawer(props: Props) {
   const {
-    baseUrl,
     open,
     setOpen,
     title,
     fieldMeta,
-    endpoint,
     onConfigSave,
-    customAttributeSelection,
-    groupBy,
+    customAttributeSelection
   } = props;
   const [attributes, setAttributes] = useState<string[]>(
     fieldMeta?.order?.active ?? [],
@@ -187,26 +183,23 @@ function ColumnConfigDrawer(props: Props) {
     <div>
       <div>
         <AttributeSelector
-          groupBy={groupBy}
-          endpoint={endpoint}
+          {...props}
+          sticky
+          recommendedFilterAvailable
+          renderSearchBySource
+          displaySource
           placeholder="Select columns to display..."
-          baseUrl={baseUrl}
           attribute={attributes}
           setAttributes={setAttributes}
           disabledValues={null}
           numPopulatedFields={0}
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
-          recommendedFilterAvailable={true}
-          renderSearchBySource={true}
-          displaySource={true}
           customAttributeSelection={customAttributeSelection}
-          sticky={true}
         />
       </div>
       <SelectedAttributesContainer
-        baseUrl={baseUrl}
-        endpoint={endpoint}
+        {...props}
         attributes={attributes}
         setAttributes={setAttributes}
       />

@@ -10,6 +10,7 @@ import Placeholder from "../general/Placeholder";
 import { generateFilter } from "../filtering/utils";
 import { createMapMarkers } from "./utils";
 import { IRemoteTargetAndZone, TDataObjectListOrNull, TFilterOrUndefined } from "../models";
+import { API_METHODS } from "../constants";
 
 
 interface Props extends IRemoteTargetAndZone {
@@ -59,7 +60,7 @@ function RemoteMap(props: Props) {
     setErrorMessage("");
     dataSource
       .custom({
-        method: "GET",
+        method: API_METHODS.GET,
         resource: `${objectType}:count`,
         params: {
           filter: filter,
