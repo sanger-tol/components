@@ -21,7 +21,7 @@ interface Props extends IBoardTargetAndZone {
 }
 
 function BoardSunburst(props: Props) {
-  const { id, objectType, boardDataSource, size } = props;
+  const { id, boardDataSource, size } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
@@ -49,7 +49,6 @@ function BoardSunburst(props: Props) {
         </div>
       )
     }
-
     return null;
   }
 
@@ -81,7 +80,6 @@ function BoardSunburst(props: Props) {
       <SliceByDrawer
         {...props}
         sliceBy={config.sliceBy || []} // Pass in a blank array to account for no config
-        endpoint={objectType}
         open={openConfig}
         setOpen={setOpenConfig}
         onConfigSave={onModalSave}

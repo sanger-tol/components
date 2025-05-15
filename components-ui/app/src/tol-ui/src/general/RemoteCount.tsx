@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { httpClient } from "../services/http/httpClient";
 import { numberWithSpaces } from "./utils";
 import Placeholder from "./Placeholder";
 import {
@@ -16,22 +15,20 @@ import {
 import { useEffectUpdate } from "../hooks";
 import { IUtilityBar } from "../general/UtilityBar";
 import UtilityBar from "./UtilityBar";
+import { IBoardTargetAndZone, TFilterOrUndefined } from "../models";
+import { API_METHODS } from "src/constants";
 
-interface Props {
+interface Props extends IBoardTargetAndZone {
   id: string;
-  endpoint: string;
-  baseUrl?: string;
-  zone?: object;
-  setZone?: any;
   utilityBarConfig?: IUtilityBar;
 }
 
 function RemoteCount(props: Props) {
-  const { id, endpoint, baseUrl, zone, setZone, utilityBarConfig } = props;
+  const { id, objectType, dataSource, zone, setZone, utilityBarConfig } = props;
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [filter, setFilter] = useState<object | undefined>({});
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
@@ -42,16 +39,12 @@ function RemoteCount(props: Props) {
     }
   }, [zone]);
 
-  console.log(zone, id);
-
   useEffectUpdate(() => {
     setLoading(true);
-    httpClient()
-      .get("/" + endpoint + ":count", {
-        baseURL: baseUrl,
-        params: {
-          filter: filter,
-        },
+    dataSource
+      .custom({
+        method: API_METHODS.GET,
+        resource: `${objectType}:count`
       })
       .then((res: any) => {
         const total = res.data.meta.total;

@@ -29,7 +29,7 @@ function EntityMetaTooltip(props: Props) {
             "Description": attribute.description,
             "Display Name": attribute.display_name,
             "Python Type": attribute.python_type,
-            "Source": <SourceTag source={attribute.source} className="tol-entity-meta-tool-tip-source" />,
+            "Source": attribute.source ? <SourceTag source={attribute.source} className="tol-entity-meta-tool-tip-source" /> : <></>,
           }
           setAttributeDetails(atts);
         }

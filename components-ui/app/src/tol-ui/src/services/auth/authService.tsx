@@ -6,33 +6,56 @@ SPDX-License-Identifier: MIT
 
 //@ts-nocheck
 
+import { TsDataSource } from "src/datasource";
 import { Page } from "../../models";
 import { httpClient } from "../http/httpClient";
 import { tokenHasExpired } from "../localStorage/localStorageService";
+import { API_METHODS } from "src/constants";
+
+const authDataSource = new TsDataSource({
+  apiPrefix: "auth"
+})
 
 export function getUrlLogin() {
-  return httpClient()
-    .get("/auth/login")
-    .then((response) => {
+  return authDataSource
+    .custom({
+      method: API_METHODS.GET,
+      resource: "login",
+    })
+    .then((res: any) => {
       return {
-        loginUrl: response!.data!.loginUrl,
+        loginUrl: res!.data!.loginUrl,
         userData: {
-          name: response!.data!.name,
+          name: res!.data!.name,
         },
       };
     });
 }
 
-export function getToken(dataPost: any) {
-  return httpClient().post("/auth/token", dataPost);
+export function getToken(data: any) {
+  return authDataSource
+    .custom({
+      method: API_METHODS.POST,
+      resource: "token",
+      body: data,
+    });
 }
 
 export function getProfile(token: string) {
-  return httpClient().post("/auth/profile", { token });
+  return authDataSource
+    .custom({
+      method: API_METHODS.POST,
+      resource: "profile",
+      body: { token },
+    });
 }
 
 export function getRoles() {
-  return httpClient().get("/auth/roles");
+  return authDataSource
+    .custom({
+      method: API_METHODS.GET,
+      resource: "roles",
+    });
 }
 
 export function confirmAuthorised(

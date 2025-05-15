@@ -13,15 +13,14 @@ import {
   SelectedAttributesContainer
 } from "../index";
 import { generateSunburstConfig } from "./utils";
+import { IRemoteTarget } from "src/models";
 
-export interface ISliceByDrawer {
-  baseUrl?: string;
+export interface ISliceByDrawer extends IRemoteTarget {
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
   displaySource?: boolean;
   onConfigSave: (config: object) => void;
-  endpoint: string;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
   sliceBy: string[];
@@ -29,11 +28,9 @@ export interface ISliceByDrawer {
 
 function SliceByDrawer(props: ISliceByDrawer) {
   const {
-    baseUrl,
     open,
     setOpen,
     title,
-    endpoint,
     onConfigSave,
     customAttributeSelection,
     sliceBy
@@ -149,9 +146,8 @@ function SliceByDrawer(props: ISliceByDrawer) {
     <div>
       <div>
         <AttributeSelector
-          endpoint={endpoint}
+          {...props}
           placeholder="Select Attributes to Slice By..."
-          baseUrl={baseUrl}
           attribute={attributes}
           setAttributes={setAttributes}
           disabledValues={null}
@@ -167,8 +163,7 @@ function SliceByDrawer(props: ISliceByDrawer) {
         />
       </div>
       <SelectedAttributesContainer
-        baseUrl={baseUrl}
-        endpoint={endpoint}
+        {...props}
         attributes={attributes}
         setAttributes={setAttributes}
         title="Selected Attributes (Inner Ring at the Top):"

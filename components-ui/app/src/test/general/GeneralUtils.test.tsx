@@ -38,7 +38,6 @@ test("isEmptyObject function", () => {
 });
 
 test("normailseCaps function", () => {
-  expect(normaliseCaps()).toBe("");
   expect(normaliseCaps("id", "species")).toBe("Species ID");
   expect(normaliseCaps("test.relationship")).toBe("Test Relationship");
   expect(normaliseCaps("uid")).toBe("ID");

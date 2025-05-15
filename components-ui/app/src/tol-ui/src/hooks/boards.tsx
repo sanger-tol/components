@@ -52,9 +52,8 @@ export function generateTranslatedFilter(
   const sourceFilter = generateFilter(source.zone, excludeAfterId, true);
   const translatedFilter = { and_: {} };
   Object.entries(translations).map(([sourceAttribute, targetAttribute]) => {
-    if (sourceAttribute in sourceFilter!.and_) {
-      translatedFilter.and_[targetAttribute] =
-        sourceFilter!.and_[sourceAttribute];
+    if (sourceFilter?.and_ && sourceAttribute in sourceFilter.and_) {
+      translatedFilter.and_[targetAttribute] = sourceFilter.and_[sourceAttribute];
     }
   });
   return translatedFilter;
@@ -122,12 +121,23 @@ export function defineZone(
   return zone;
 }
 
+/**
+ * A custom hook that provides a fallback mechanism for managing the state of a zone.
+ *
+ * @param {IRemoteTargetAndZone & { id: string }} params - The parameters for the hook.
+ * @param {string} params.id - The unique identifier for the component.
+ * @param {string} params.objectType - The type of the object associated with the zone.
+ * @param {any} params.zone - The current state of the zone.
+ * @param {(state: any) => void} params.setZone - A function to update the state of the zone.
+ * 
+ * @returns {[any, (state: any) => void]} - A tuple containing the current state of the zone and a function to update it.
+ */
 export function useZoneStateFallback({
   id,
   objectType,
   zone,
   setZone,
-}: IRemoteTargetAndZone & {id: string} ): [any, (state: any) => void] {
+}: IRemoteTargetAndZone & {id: string}): [any, (state: any) => void] {
   return useStateFallback(
     zone,
     setZone,

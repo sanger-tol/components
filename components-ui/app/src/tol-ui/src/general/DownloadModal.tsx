@@ -22,7 +22,7 @@ export interface Props {
   totalSize: number;
 }
 
-const DownloadModal = (props: Props) => {
+function DownloadModal(props: Props) {
   const { size, open, setOpen, action, objectType, filter, source, fields, totalSize } = props;
 
   const stringifyFilter = (filter: any) => {

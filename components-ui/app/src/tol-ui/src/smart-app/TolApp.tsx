@@ -33,9 +33,10 @@ import { convertToPath, matomoAnalytics } from "../general/utils";
 import { env } from "../variables/config";
 import { MyBoards, Board } from "../boards";
 import { addBoardPages, generatePagesThatRequireARoute } from "./utils";
+import { TsDataSource } from "../datasource";
 
-export interface BoardsObject {
-  dataUrl?: string;
+export interface AppBoard {
+  boardDataSource?: TsDataSource;
 }
 
 export interface Props {
@@ -108,7 +109,7 @@ function TolApp(props: Props) {
               </Route>
               <Route path="/board/:boardId">
                 {boards && loggedIn ? (
-                  <Board dataUrl={boards.dataUrl} />
+                  <Board boardDataSource={boards.boardDataSource} />
                 ) : (
                   <Redirect to="/" />
                 )}

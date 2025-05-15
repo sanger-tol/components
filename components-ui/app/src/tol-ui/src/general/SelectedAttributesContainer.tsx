@@ -9,10 +9,10 @@ import {
   Icon,
   SourceTag,
   EntityMetaToolTip,
-  TsDataSource
 } from "../index";
 import { normaliseCaps, truncateString } from "../general/utils";
 import DraggableList from "react-draggable-list";
+import { IRemoteTarget } from "src/models";
 
 const TRANSITION_TIME: number = 300;
 
@@ -21,9 +21,7 @@ interface AttributeDetails {
   rename?: string;
 }
 
-export interface Props {
-  baseUrl?: string;
-  endpoint: string;
+export interface Props extends IRemoteTarget {
   attributes: string[];
   setAttributes: (attributes: string[]) => void;
   title?: string;
@@ -31,8 +29,8 @@ export interface Props {
 
 function SelectedAttributesContainer(props: Props) {
   const {
-    baseUrl,
-    endpoint,
+    objectType,
+    dataSource,
     attributes,
     setAttributes,
     title = "Active Columns:",
@@ -44,9 +42,8 @@ function SelectedAttributesContainer(props: Props) {
   const ref = useRef(null)
 
   useEffect(() => {
-    const ds = new TsDataSource({ baseUrl: baseUrl });
-    ds.getEntityMeta().then((meta) => {
-      setObjectAttributes(meta.flatAttributes[endpoint]);
+    dataSource.getEntityMeta().then((meta) => {
+      setObjectAttributes(meta.flatAttributes[objectType]);
     });
   }, [])
 
@@ -102,7 +99,7 @@ function SelectedAttributesContainer(props: Props) {
               className={"tol-config-drawer-selected-column-name"}
             >
               <div style={{ display: 'inline', paddingRight: '5px' }}>{attributeDeatils.display_name || normaliseCaps(attr_name)}</div>
-              <EntityMetaToolTip baseUrl={baseUrl} endpoint={endpoint} field={attr_name} />
+              <EntityMetaToolTip {...props} field={attr_name} />
             </div>
           </span>
           <p className={"tol-config-drawer-selected-column-key"}>{truncateString(attr_name, lettersToDisplay)}</p>

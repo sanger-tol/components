@@ -85,7 +85,7 @@ export function generateFilter(
   if (zone === undefined) return undefined;
   const z = zone as IZone;
   const aboveComponents = id ? getComponentsAbove(id, z.order) : z.order;
-  let compoundedFilter: And = z.filter ? z.filter.and_ : {};
+  let compoundedFilter: And = z.filter && z.filter.and_ ? z.filter.and_ : {};
   // loop through 'above' components
   for (const currentId of aboveComponents) {
     // exclude pass throughs except self
@@ -96,11 +96,11 @@ export function generateFilter(
     ) {
       continue;
     }
-    let currentFilter: And = z.components[currentId].data.filter!.and_;
+    let currentFilter: And = z.components[currentId].data.filter?.and_ || {};
     // include sub filter if required
     const subFilter = z.components[currentId].data.subFilter;
     if ((currentId !== id || includeSubFilter) && subFilter) {
-      currentFilter = mergeAndFilters(currentFilter, subFilter.and_);
+      currentFilter = mergeAndFilters(currentFilter, subFilter.and_ ?? {});
     }
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
