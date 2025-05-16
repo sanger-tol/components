@@ -32,7 +32,7 @@ export interface AllowedCardinality {
   value: number;
 }
 
-export interface Props extends IRemoteTarget {
+interface Props extends IRemoteTarget {
   additionalPopulatedFieldData?: any;
   allowedTypes?: string[];
   attribute: string[];

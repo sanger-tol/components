@@ -4,8 +4,10 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IEntityMeta, IAttributes, IRelationships } from "../models";
 import {
+  IEntityMeta,
+  IAttributes,
+  IRelationships,
   IDetailCache,
   IDetailPromises,
   IConfigPromises,
@@ -20,12 +22,12 @@ import {
   ISourceDataObject,
   TDataObjectOrNull,
   TDataObjectListOrNull,
-} from "../models/DataSource";
-import { EXCLUDED_DETAIL_CACHE_OBJECTS } from "../constants/datasource.constants";
-import { httpClient } from "../services/http/httpClient";
-import { retry } from "../services/http/retry";
-import { deepCopy } from "../general/utils";
-import { API_METHODS } from "../constants/api.constants";
+  EXCLUDED_DETAIL_CACHE_OBJECTS,
+  httpClient,
+  retry,
+  deepCopy,
+  API_METHODS
+} from "..";
 
 
 const detailCache: IDetailCache = {};

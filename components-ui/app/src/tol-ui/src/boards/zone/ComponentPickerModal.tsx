@@ -13,13 +13,15 @@ import {
   Icon,
   HoverOverlay,
   TsDataSource,
+  FormTextField,
+  RSForm,
+  addComponent,
+  defineComponent,
+  IZone,
+  componentOptions,
+  sizeOptions
 } from "../../index";
-import { FormTextField } from "../../forms";
-import { RSForm } from "../../index";
-import { addComponent } from "../utils";
-import { defineComponent } from "../../hooks";
-import { IZone } from "../../models";
-import { componentOptions, sizeOptions } from "../../config/boards/componentSelection";
+
 
 interface Props {
   open: boolean;

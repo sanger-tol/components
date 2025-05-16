@@ -8,7 +8,7 @@ import { IRemoteTarget } from "../models";
 import { FormatTooltip, SourceTag, InfoTooltip } from "../index";
 import { useEffect, useState } from "react";
 
-export interface Props extends IRemoteTarget {
+interface Props extends IRemoteTarget {
   field: any;
 }
 

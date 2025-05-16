@@ -4,18 +4,21 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useEffect, useRef, useState } from "react";
+//@ts-ignore
+import ReactDOMServer from "react-dom/server";
 import { MapContainer, TileLayer, Popup, Marker, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import Leaflet from "leaflet";
-import { FormatTooltip } from "../general";
-import { getCssVarValue } from "../general/utils";
-import MapLegend from "./MapLegend";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
-//@ts-ignore
-import ReactDOMServer from "react-dom/server";
-import { useEffect, useRef, useState } from "react";
+import {
+  FormatTooltip,
+  getCssVarValue,
+  MapLegend,
+} from "..";
+
 
 interface Props {
   id: string;

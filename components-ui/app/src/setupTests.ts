@@ -1,6 +1,8 @@
-// SPDX-FileCopyrightText: 2023 Genome Research Ltd.
-//
-// SPDX-License-Identifier: MIT
+/*
+SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
 
 // jest-dom adds custom jest matchers for asserting on DOM nodes.
 // allows you to do things like:

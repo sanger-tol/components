@@ -1,6 +1,8 @@
-// SPDX-FileCopyrightText: 2023 Genome Research Ltd.
-//
-// SPDX-License-Identifier: MIT
+/*
+SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
 
 import { expect, test, vitest } from "vitest";
 import {

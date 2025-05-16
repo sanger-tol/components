@@ -10,7 +10,7 @@ import { CodeBlock } from 'react-code-blocks';
 import { copyToClipboard } from "./utils";
 
 
-export interface Props {
+interface Props {
   size: string;
   open: boolean;
   setOpen: any;

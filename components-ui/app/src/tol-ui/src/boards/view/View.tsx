@@ -5,10 +5,16 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Button, ZoneModal, IFilter, TsDataSource } from "../../index";
-import { getZones } from "../utils";
-import Zone from "../zone/Zone";
-import { BOARDS } from "../../constants";
+import {
+  Button,
+  ZoneModal,
+  IFilter,
+  TsDataSource,
+  getZones,
+  Zone,
+  BOARDS
+} from "../..";
+
 
 interface ZoneObject {
   id: string;

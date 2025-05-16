@@ -121,5 +121,6 @@ export interface IChartConfig {
   breakDownBy: string,
   xAxis: string,
   stacked: boolean,
-  type: HistogramGrouping,
+  grouping: HistogramGrouping,
+  chartType: 'bar' | 'line' | 'scatter',
 }

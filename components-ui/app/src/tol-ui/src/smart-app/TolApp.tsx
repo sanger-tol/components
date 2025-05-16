@@ -39,7 +39,7 @@ export interface AppBoard {
   boardDataSource?: TsDataSource;
 }
 
-export interface Props {
+interface Props {
   brand: string | JSX.Element;
   homePage: JSX.Element;
   pages: (Page | Dropdown)[];

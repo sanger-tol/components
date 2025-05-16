@@ -15,7 +15,7 @@ import { generateFilter, resetFiltersBelow } from "./utils";
 import { deepCopy } from "../general/utils";
 
 
-export interface Props extends IBoardTargetAndZone {
+interface Props extends IBoardTargetAndZone {
   id: string;
   open: boolean;
   setOpen: any;

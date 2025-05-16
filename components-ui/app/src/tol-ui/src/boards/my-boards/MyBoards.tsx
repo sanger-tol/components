@@ -12,13 +12,14 @@ import {
   Toaster,
   Loader,
   StaticMessage,
+  Accordion,
+  MyBoardsHeader,
+  BOARDS
 } from "../..";
-import Accordion from "./Accordion";
-import MyBoardsHeader from "./MyBoardsHeader";
 import { getUserFromLocalStorage } from "../../services/localStorage/localStorageService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import { BOARDS } from "../../constants/api.constants";
+
 
 const containerStyle = {
   display: "flex",

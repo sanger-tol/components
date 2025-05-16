@@ -8,9 +8,10 @@ import {
   BoardCount,
   BoardTable,
   BoardSunburst,
-  BoardChart
-} from "../../index";
-import { IBoardTargetAndZone } from "../../models";
+  BoardChart,
+  IBoardTargetAndZone
+} from "../..";
+
 
 interface Props extends IBoardTargetAndZone {
   id: string;

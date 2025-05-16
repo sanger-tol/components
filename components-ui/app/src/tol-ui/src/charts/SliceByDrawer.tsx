@@ -10,10 +10,11 @@ import {
   AttributeSelector,
   Drawer,
   Modal,
-  SelectedAttributesContainer
+  SelectedAttributesContainer,
+  generateSunburstConfig,
+  IRemoteTarget
 } from "../index";
-import { generateSunburstConfig } from "./utils";
-import { IRemoteTarget } from "../models";
+
 
 export interface ISliceByDrawer extends IRemoteTarget {
   open: boolean;

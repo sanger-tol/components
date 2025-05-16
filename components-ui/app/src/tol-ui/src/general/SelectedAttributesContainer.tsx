@@ -21,7 +21,7 @@ interface AttributeDetails {
   rename?: string;
 }
 
-export interface Props extends IRemoteTarget {
+interface Props extends IRemoteTarget {
   attributes: string[];
   setAttributes: (attributes: string[]) => void;
   title?: string;

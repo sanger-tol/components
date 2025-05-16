@@ -5,22 +5,25 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import {
   Row,
   Col,
   Button,
   useZone,
   InlineEdit,
-  BoardFilters
+  BoardFilters,
+  ComponentPickerModal,
+  ResponsiveWidget,
+  IWidgets,
+  ConfirmationModal,
+  getComponents,
+  saveTitle,
+  TsDataSource,
+  BOARDS
 } from "../..";
-import ComponentPickerModal from "./ComponentPickerModal";
-import ResponsiveWidget, { IWidgets } from "../component/ResponsiveWidget";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { getComponents, saveTitle } from "../utils";
-import ConfirmationModal from "../ConfirmationModal";
-import { TsDataSource } from "../../datasource";
-import { BOARDS } from "../../constants";
+
 
 interface Props {
   id: string;

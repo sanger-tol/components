@@ -9,7 +9,7 @@ import { Container } from "react-bootstrap";
 import { HeaderButton } from "../models/Buttons";
 import { Button } from "./Button";
 
-export interface Props {
+interface Props {
   title?: string;
   subTitle?: string;
   buttons?: HeaderButton[];

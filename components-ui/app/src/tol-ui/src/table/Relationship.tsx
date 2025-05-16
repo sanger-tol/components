@@ -10,7 +10,8 @@ import { Loader, TsDataSource } from "../index";
 import { mapKeysToDisplayNames } from "./utils";
 import { API_METHODS } from "../constants";
 
-export interface Props {
+
+interface Props {
   attribute: string;
   data: string; // Relationship Data
   detail?: boolean;

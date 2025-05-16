@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Drawer } from "../general";
 
-export interface Props {
+interface Props {
   open: boolean;
   setOpen: () => void;
 }

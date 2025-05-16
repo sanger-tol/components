@@ -5,12 +5,16 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect } from "react";
-import Map from "./Map";
-import Placeholder from "../general/Placeholder";
-import { generateFilter } from "../filtering/utils";
-import { createMapMarkers } from "./utils";
-import { IRemoteTargetAndZone, TDataObjectListOrNull, TFilterOrUndefined } from "../models";
-import { API_METHODS } from "../constants";
+import {
+  IRemoteTargetAndZone,
+  TDataObjectListOrNull,
+  TFilterOrUndefined,
+  Map,
+  API_METHODS,
+  Placeholder,
+  generateFilter,
+  createMapMarkers
+} from "..";
 
 
 interface Props extends IRemoteTargetAndZone {

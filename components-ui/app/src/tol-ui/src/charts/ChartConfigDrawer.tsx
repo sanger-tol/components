@@ -12,11 +12,12 @@ import {
   Modal,
   AttributeSelector,
   PopUpMessage,
-  InfoTooltip
-} from "../index";
-import { normaliseCaps } from "../general/utils";
-import { IRemoteTargetAndZone, IChartConfig } from "../models/Boards";
-import { HistogramGrouping } from "./utils";
+  InfoTooltip,
+  normaliseCaps,
+  IRemoteTargetAndZone,
+  IChartConfig,
+  HistogramGrouping
+} from "..";
 
 
 interface IIntervalListItem {

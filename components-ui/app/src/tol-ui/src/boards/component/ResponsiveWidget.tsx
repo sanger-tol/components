@@ -4,13 +4,19 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { WidthProvider, Responsive, Layouts } from "react-grid-layout";
-import { Button, Placeholder, Visualisation } from "../../index";
 import { useState, useRef, useEffect } from "react";
-import { getWidgetOrder, generateLayout } from "../utils";
-import { IZone } from "../../models";
-import ConfirmationModal from "../ConfirmationModal";
-import { BOARDS } from "../../constants";
+import { WidthProvider, Responsive, Layouts } from "react-grid-layout";
+import {
+  Button,
+  Placeholder,
+  Visualisation,
+  getWidgetOrder,
+  generateLayout,
+  IZone,
+  ConfirmationModal,
+  BOARDS
+} from "../..";
+
 
 export interface IWidgets {
   componentId: string;

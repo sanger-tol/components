@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { ReactNode, useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
-import { useEffectUpdate, UtilityBar } from "../index";
 import {
   generateSunburstLabels,
   convertSunburstDatasets,
@@ -17,11 +17,15 @@ import {
   setBorderColour,
   updateOpacity,
   downloadItem,
-} from "./utils";
-import { isPropDefined, getCssVarValue, normaliseCaps } from "../general/utils";
-import { ReactNode, useEffect, useState } from "react";
-import { themeListener } from "../hooks/listeners";
-import { IUtilityBar } from "../general/UtilityBar";
+  useEffectUpdate,
+  UtilityBar,
+  isPropDefined,
+  getCssVarValue,
+  normaliseCaps,
+  themeListener,
+  IUtilityBar
+} from "..";
+
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 

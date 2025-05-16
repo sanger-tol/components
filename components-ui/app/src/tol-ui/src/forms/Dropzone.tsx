@@ -20,7 +20,7 @@ interface Message {
   message: MessageType;
 }
 
-export interface Props {
+interface Props {
   resource: string;
   dataSource: TsDataSource;
   fileType: string;

@@ -4,19 +4,22 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import {
-  TsDataSource,
-  LoadingContent,
-  InlineEdit,
-  themeListener,
-} from "../../index";
-import View from "../view/View";
-import { getBoard, saveTitle } from "../utils";
+
 import { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
-import { getUserFromLocalStorage } from "../../services/localStorage/localStorageService";
-import { getCssVarValue } from "../../general/utils";
-import { BOARDS, BOARDS_API_PREFIX } from "../../constants";
+import {
+  BOARDS,
+  BOARDS_API_PREFIX,
+  getBoard,
+  getCssVarValue,
+  getUserFromLocalStorage,
+  InlineEdit,
+  LoadingContent,
+  saveTitle,
+  themeListener,
+  TsDataSource,
+  View,
+} from "../..";
 
 interface Props {
   dataSource: TsDataSource;

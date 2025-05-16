@@ -4,10 +4,12 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { generateId } from "../general/utils";
-import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
-import { TsDataSource } from "../datasource";
-import { BOARDS } from "../constants/api.constants";
+import {
+  generateId,
+  getUserFromLocalStorage,
+  TsDataSource,
+  BOARDS,
+} from "..";
 
 
 export async function getBoard(id: string, boardDataSource: TsDataSource) {

@@ -9,7 +9,7 @@ import HoverOverlay from "./HoverOverlay";
 import Markdown from "./Markdown";
 import { ReactNode } from "react";
 
-export interface Props {
+interface Props {
   contents: ReactNode;
   disableMarkdown?: boolean;
 }

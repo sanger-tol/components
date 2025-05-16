@@ -1,9 +1,11 @@
-// SPDX-FileCopyrightText: 2022 Genome Research Ltd.
-//
-// SPDX-License-Identifier: MIT
+/*
+SPDX-FileCopyrightText: 2022 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
 
 import { createContext, useContext } from "react";
-import { User } from "../models/User";
+import { User } from "..";
 
 interface AuthContextValue {
   token: string;

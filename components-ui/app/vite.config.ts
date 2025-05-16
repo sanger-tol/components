@@ -1,6 +1,8 @@
-// SPDX-FileCopyrightText: 2024 Genome Research Ltd.
-//
-// SPDX-License-Identifier: MIT
+/*
+SPDX-FileCopyrightText: 2024 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
 
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";

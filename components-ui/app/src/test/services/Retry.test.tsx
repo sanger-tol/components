@@ -1,9 +1,11 @@
-// SPDX-FileCopyrightText: 2023 Genome Research Ltd.
-//
-// SPDX-License-Identifier: MIT
+/*
+SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
 
 import { expect, test, describe } from "vitest";
-import retry from "../../../tol-ui/src/services/http/Retry";
+import { retry } from "../../../src/tol-ui/src";
 import "@testing-library/jest-dom";
 
 class PassingTestClass {

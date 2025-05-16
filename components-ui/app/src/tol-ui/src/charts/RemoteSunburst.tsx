@@ -12,25 +12,27 @@ import {
   generateFilterFromSunburstClick,
   removeSliceBySingles,
   downloadItem,
-} from "./utils";
-import Sunburst from "./Sunburst";
-import Placeholder from "../general/Placeholder";
-import { useEffectUpdate, resizeListener, useZoneStateFallback } from "../hooks";
-import { isEmptyObject, normaliseCaps } from "../general/utils";
-import {
+  Sunburst,
+  Placeholder,
+  useEffectUpdate,
+  resizeListener,
+  useZoneStateFallback,
+  isEmptyObject,
+  normaliseCaps,
   generateFilter,
   addSubFilter,
   filterHasUpdated,
   resetFiltersBelow,
-} from "../filtering/utils";
-import { IUtilityBar } from "../general/UtilityBar";
-import { IButton } from "../general/Button";
-import { UtilityBar } from "../index";
-import { IRemoteTargetAndZone, TFilterOrUndefined } from "../models";
-import { API_METHODS } from "../constants";
+  IUtilityBar,
+  IButton,
+  UtilityBar,
+  TFilterOrUndefined,
+  API_METHODS,
+  IRemoteTargetAndZone
+} from "..";
 
 
-interface Props extends IRemoteTargetAndZone{
+interface Props extends IRemoteTargetAndZone {
   id: string;
   sliceBy: string[];
   height?: any;

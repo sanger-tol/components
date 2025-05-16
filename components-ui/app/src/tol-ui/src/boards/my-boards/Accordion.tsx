@@ -6,16 +6,18 @@
 
 import React, { useState, useEffect } from "react";
 import { Accordion as Acc } from "rsuite";
-import AccordionHeader from "./AccordionHeader";
-import DropdownButtons from "../../general/DropdownButtons";
-import ConfirmationModal from "../ConfirmationModal";
 import { IDropdownButtonConfig, IDropdownMainIconProps } from "../../models";
 import { httpClient } from "../../services";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartSimple, faTable } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
-import { BOARDS } from "../../constants";
-import { TsDataSource } from "../..";
+import {
+  TsDataSource,
+  AccordionHeader,
+  DropdownButtons,
+  ConfirmationModal,
+  BOARDS
+} from "../..";
 
 interface AccordionBaseProps {
   id: string;

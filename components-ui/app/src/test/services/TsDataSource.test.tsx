@@ -1,9 +1,11 @@
-// SPDX-FileCopyrightText: 2023 Genome Research Ltd.
-//
-// SPDX-License-Identifier: MIT
+/*
+SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
 
 import { expect, test, vitest, describe } from "vitest";
-import TsDataSource from "../../../tol-ui/src/services/http/TsDataSource";
+import { TsDataSource } from "../../../src/tol-ui/src";
 import "@testing-library/jest-dom";
 
 const speciesMockData = {

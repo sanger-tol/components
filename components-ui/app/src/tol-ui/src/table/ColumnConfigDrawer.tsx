@@ -15,7 +15,8 @@ import {
 import { FieldMeta, initialiseFieldMeta } from "./Field";
 import { IRemoteTarget } from "../models";
 
-export interface Props extends IRemoteTarget{
+
+interface Props extends IRemoteTarget{
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;

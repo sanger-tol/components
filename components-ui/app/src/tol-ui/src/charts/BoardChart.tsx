@@ -4,14 +4,20 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BoardFilters, Icon, Placeholder, RemoteBarChart } from "../index";
-import { deepCopy } from "../general/utils";
 import { useState } from "react";
-import { upsertComponentConfig, saveTitle } from "../boards/utils";
-import { IBoardTargetAndZone } from "../models";
-import ChartConfigDrawer from "./ChartConfigDrawer";
-import { IChartConfig } from "../models";
-import { IButton } from "../general/Button"
+import {
+  BoardFilters,
+  Icon,
+  Placeholder,
+  RemoteBarChart,
+  deepCopy,
+  upsertComponentConfig,
+  saveTitle,
+  IBoardTargetAndZone,
+  ChartConfigDrawer,
+  IChartConfig,
+  IButton
+} from "..";
 
 
 interface Props extends IBoardTargetAndZone {

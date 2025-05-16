@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { Button } from "..";
 import { Modal as RSModal } from "rsuite";
 
-export interface Props {
+interface Props {
   size: string;
   open: boolean;
   setOpen: any;

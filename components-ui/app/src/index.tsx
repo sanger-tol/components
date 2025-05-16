@@ -21,12 +21,12 @@ import {
   Sunbursts,
   Widgets,
   Messages,
-  Factories
+  Factories,
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown, env } from "./tol-ui/src";
 import "./scss/styling.scss";
-import DataSource from "./pages/DataSource";
+import { DataSource } from "./pages/DataSource";
 
 // main data-driven components
 const barCharts: Page = {

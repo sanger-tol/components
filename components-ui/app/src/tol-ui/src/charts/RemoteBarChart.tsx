@@ -4,27 +4,26 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import BarChart from "./BarChart";
+import { ReactNode, useEffect, useState } from "react";
 import {
   generateChartAgg,
   generateChartFilterFromBar,
   HistogramGrouping,
   aggsToBarChartData,
   isChartDataEmpty,
-} from "./utils";
-import { ReactNode, useEffect, useState } from "react";
-import { useEffectUpdate } from "../hooks/useEffectUpdate";
-import { normaliseCaps } from "../general/utils";
-import Placeholder from "../general/Placeholder";
-import {
+  BarChart,
+  useEffectUpdate,
+  normaliseCaps,
+  Placeholder,
   addSubFilter,
   filterHasUpdated,
   generateFilter,
   resetFiltersBelow,
-} from "../filtering/utils";
-import { IUtilityBar } from "../general/UtilityBar";
-import { IRemoteTargetAndZone, TFilterOrUndefined } from "../models";
-import { API_METHODS } from "../constants";
+  IUtilityBar,
+  IRemoteTargetAndZone,
+  TFilterOrUndefined,
+  API_METHODS
+} from "..";
 
 
 interface Props extends IRemoteTargetAndZone {

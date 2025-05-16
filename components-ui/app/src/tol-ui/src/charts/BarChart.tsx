@@ -20,8 +20,8 @@ import {
   ChartTypeRegistry
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
-import { UtilityBar } from "../index";
 import {
+  UtilityBar,
   getChartColour,
   initialiseDatasets,
   updateChartColours,
@@ -31,10 +31,12 @@ import {
   updateOpacitys,
   resetItemClickedData,
   downloadItem,
-} from "./utils";
-import { isPropDefined, getCssVarValue } from "../general/utils";
-import { themeListener } from "../hooks/listeners";
-import { IUtilityBar } from "../general/UtilityBar";
+  isPropDefined,
+  getCssVarValue,
+  themeListener,
+  IUtilityBar
+} from "..";
+
 
 ChartJS.register(
   CategoryScale,

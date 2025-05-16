@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import ReactMarkdown from "react-markdown";
 
-export interface Props {
+interface Props {
   contents: string;
 }
 

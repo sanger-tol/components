@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BOARDS } from "./api.constants";
+import { BOARDS } from "..";
 
 export const EXCLUDED_DETAIL_CACHE_OBJECTS = [
   BOARDS.COMPONENT,

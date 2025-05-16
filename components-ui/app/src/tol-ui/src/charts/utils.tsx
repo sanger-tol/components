@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from "date-fns";
-import { getCssVarValue, isPropDefined } from "../general/utils";
+import { getCssVarValue, isPropDefined } from "..";
 
 // ------------------//
 //      GENERAL      //
