@@ -13,7 +13,7 @@ interface Props extends IRemoteTarget {
   attribute: string;
 }
 
-function DetailAttribute(props: Props) {
+export function DetailAttribute(props: Props) {
   const { id, objectType, dataSource, attribute } = props;
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(true);
@@ -32,5 +32,3 @@ function DetailAttribute(props: Props) {
     </div>
   );
 }
-
-export default DetailAttribute;

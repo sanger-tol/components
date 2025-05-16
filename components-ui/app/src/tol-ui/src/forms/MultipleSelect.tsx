@@ -43,7 +43,7 @@ interface Props {
   groupBy?: string;
 }
 
-function MultipleSelect(props: Props) {
+export function MultipleSelect(props: Props) {
   const {
     sticky,
     data,
@@ -139,5 +139,3 @@ function MultipleSelect(props: Props) {
     </>
   );
 }
-
-export default MultipleSelect;

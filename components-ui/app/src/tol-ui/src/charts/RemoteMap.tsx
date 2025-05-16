@@ -26,7 +26,7 @@ interface Props extends IRemoteTargetAndZone {
   markerRenderer?: Function;
 }
 
-function RemoteMap(props: Props) {
+export function RemoteMap(props: Props) {
   const {
     id,
     objectType,
@@ -150,5 +150,3 @@ function RemoteMap(props: Props) {
 
   return <Map {...props} legend={legendKey} markers={markers} />;
 }
-
-export default RemoteMap;

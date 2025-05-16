@@ -16,7 +16,7 @@ export interface IInlineEdit {
   size?: "sm" | "md";
 }
 
-function InlineEdit({
+export function InlineEdit({
   title,
   onSave,
   onChange,
@@ -71,5 +71,3 @@ function InlineEdit({
     </div>
   );
 }
-
-export default InlineEdit;

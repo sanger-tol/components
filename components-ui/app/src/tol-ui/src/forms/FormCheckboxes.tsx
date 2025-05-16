@@ -29,7 +29,7 @@ interface Props {
   defaultChecked?: string[];
 }
 
-function FormCheckboxes(props: Props) {
+export function FormCheckboxes(props: Props) {
   const {
     id,
     label,
@@ -90,5 +90,3 @@ function FormCheckboxes(props: Props) {
     </div>
   );
 }
-
-export default FormCheckboxes;

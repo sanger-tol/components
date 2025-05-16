@@ -16,7 +16,7 @@ interface Props {
   onConfirmClick?: any;
 }
 
-function NewBoardModal(props: Props) {
+export function NewBoardModal(props: Props) {
   const { setOpen, open, onConfirmClick } = props;
   const [boardId, setBoardId] = useState("");
   const [viewId, setViewId] = useState("");
@@ -95,5 +95,3 @@ function NewBoardModal(props: Props) {
     </div>
   );
 }
-
-export default NewBoardModal;

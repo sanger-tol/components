@@ -14,7 +14,7 @@ import { PopUpMessage } from "../index";
 import { API_METHODS } from "../constants";
 
 
-function FilterMultiSelect(props: IFilterInput) {
+export function FilterMultiSelect(props: IFilterInput) {
   const {
     attribute,
     componentId,
@@ -186,5 +186,3 @@ function FilterMultiSelect(props: IFilterInput) {
     </div>
   );
 }
-
-export default FilterMultiSelect;

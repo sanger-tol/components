@@ -19,7 +19,7 @@ interface Props {
   returnUrl?: string;
 }
 
-function Login(props: Props) {
+export function Login(props: Props) {
   const { buttonIcon, returnUrl } = props;
   const { setToken, setUser } = useAuth();
 
@@ -43,5 +43,3 @@ function Login(props: Props) {
     <Redirect to={getReturnUrlFromLocalStorage() || "/"} />
   );
 }
-
-export default Login;

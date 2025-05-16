@@ -27,7 +27,7 @@ export interface Props extends IRemoteTarget{
   groupBy?: boolean;
 }
 
-function ColumnConfigDrawer(props: Props) {
+export function ColumnConfigDrawer(props: Props) {
   const {
     open,
     setOpen,
@@ -222,5 +222,3 @@ function ColumnConfigDrawer(props: Props) {
     </div>
   );
 }
-
-export default ColumnConfigDrawer;

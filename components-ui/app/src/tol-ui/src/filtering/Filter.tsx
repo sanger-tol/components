@@ -26,7 +26,7 @@ export interface IFilterInput extends IRemoteTargetAndZone {
   delay?: number;
 }
 
-function Filter(props: IFilterInput) {
+export function Filter(props: IFilterInput) {
   switch (props.type) {
     case "str":
     case "int":
@@ -42,5 +42,3 @@ function Filter(props: IFilterInput) {
   console.warn("Cannot retrieve filter type: " + props.attribute);
   return <></>;
 }
-
-export default Filter;

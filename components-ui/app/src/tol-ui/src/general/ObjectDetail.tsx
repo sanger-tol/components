@@ -8,7 +8,7 @@ export interface Props {
   data: object;
 }
 
-function ObjectDetail(props: Props) {
+export function ObjectDetail(props: Props) {
   const { data } = props;
   return (
     <div className="tol-object-detail">
@@ -20,5 +20,3 @@ function ObjectDetail(props: Props) {
     </div>
   );
 }
-
-export default ObjectDetail;

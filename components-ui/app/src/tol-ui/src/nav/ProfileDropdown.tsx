@@ -16,7 +16,7 @@ interface Props {
   onLogout: () => void;
 }
 
-function ProfileDropdown(props: Props) {
+export function ProfileDropdown(props: Props) {
   const { user, pages, onLogout } = props;
 
   const [userName, setUserName] = useState<string>("");
@@ -136,5 +136,3 @@ function ProfileDropdown(props: Props) {
     </NavDropdown>
   );
 }
-
-export default ProfileDropdown;

@@ -73,7 +73,7 @@ interface Props extends IRemoteTargetAndZone {
   debug?: boolean;
 }
 
-function RemoteTable(props: Props) {
+export function RemoteTable(props: Props) {
   const {
     id,
     objectType,
@@ -389,5 +389,3 @@ function RemoteTable(props: Props) {
     </div>
   );
 }
-
-export default RemoteTable;

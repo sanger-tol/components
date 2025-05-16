@@ -54,7 +54,7 @@ export interface Props extends IRemoteTarget {
   groupBy?: boolean;
 }
 
-function AttributeSelector(props: Props) {
+export function AttributeSelector(props: Props) {
   const {
     objectType,
     dataSource,
@@ -320,5 +320,3 @@ function AttributeSelector(props: Props) {
     </div>
   );
 }
-
-export default AttributeSelector;

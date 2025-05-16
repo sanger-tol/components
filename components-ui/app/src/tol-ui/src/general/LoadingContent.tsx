@@ -10,7 +10,7 @@ interface Props {
   text?: string;
 }
 
-function LoadingContent(props: Props) {
+export function LoadingContent(props: Props) {
   const { text } = props;
   return (
     <div className="fixed-full-page">
@@ -21,5 +21,3 @@ function LoadingContent(props: Props) {
     </div>
   );
 }
-
-export default LoadingContent;

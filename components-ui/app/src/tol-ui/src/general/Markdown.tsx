@@ -10,10 +10,8 @@ export interface Props {
   contents: string;
 }
 
-function Markdown(props: Props) {
+export function Markdown(props: Props) {
   const { contents } = props;
 
   return <ReactMarkdown className="tol-markdown">{contents}</ReactMarkdown>;
 }
-
-export default Markdown;

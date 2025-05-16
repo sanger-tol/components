@@ -15,7 +15,7 @@ export interface Props {
   closeOnClick?: boolean;
 }
 
-function ClickOverlay(props: Props) {
+export function ClickOverlay(props: Props) {
   let { contents, children, placement = "auto", delay, closeOnClick } = props;
   const overlayRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -63,5 +63,3 @@ function ClickOverlay(props: Props) {
     </div>
   );
 }
-
-export default ClickOverlay;

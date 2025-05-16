@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Container, Row, Col } from "react-bootstrap";
 
-function CentreContents(props: any) {
+export function CentreContents(props: any) {
   return (
     <Container>
       <Row>
@@ -17,5 +17,3 @@ function CentreContents(props: any) {
     </Container>
   );
 }
-
-export default CentreContents;

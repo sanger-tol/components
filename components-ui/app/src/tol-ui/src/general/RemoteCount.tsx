@@ -23,7 +23,7 @@ interface Props extends IBoardTargetAndZone {
   utilityBarConfig?: IUtilityBar;
 }
 
-function RemoteCount(props: Props) {
+export function RemoteCount(props: Props) {
   const { id, objectType, dataSource, zone, setZone, utilityBarConfig } = props;
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
@@ -84,5 +84,3 @@ function RemoteCount(props: Props) {
     </>
   );
 }
-
-export default RemoteCount;

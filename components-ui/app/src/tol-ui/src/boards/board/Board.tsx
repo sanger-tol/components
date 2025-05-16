@@ -23,7 +23,7 @@ interface Props {
   boardDataSource?: TsDataSource;
 }
 
-function Board(props: Props) {
+export function Board(props: Props) {
   const {
     dataSource,
     boardDataSource = new TsDataSource({
@@ -98,5 +98,3 @@ function Board(props: Props) {
     </div>
   );
 }
-
-export default Board;

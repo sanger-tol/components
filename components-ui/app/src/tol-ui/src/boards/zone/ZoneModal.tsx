@@ -36,7 +36,7 @@ interface Props {
 }
 
 
-function ZoneModal(props: Props) {
+export function ZoneModal(props: Props) {
   const {
     open,
     setOpen,
@@ -197,5 +197,3 @@ function ZoneModal(props: Props) {
     </div>
   );
 }
-
-export default ZoneModal;

@@ -15,7 +15,7 @@ interface Props {
   loading: boolean;
 }
 
-function RowCounter(props: Props) {
+export function RowCounter(props: Props) {
   const { totalSize, endpoint, baseUrl, filter, loading } = props;
   const [count, setCount] = useState<number | null>(null);
 
@@ -56,5 +56,3 @@ function RowCounter(props: Props) {
 
   return <span>{addTotalText(count)}</span>;
 }
-
-export default RowCounter;

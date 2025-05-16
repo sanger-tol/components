@@ -12,7 +12,7 @@ interface Props {
   vertical?: boolean;
 }
 
-function TolLoader(props: Props) {
+export function TolLoader(props: Props) {
   const { size, content, vertical } = props;
 
   return (
@@ -26,5 +26,3 @@ function TolLoader(props: Props) {
     </div>
   );
 }
-
-export default TolLoader;

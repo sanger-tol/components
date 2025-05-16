@@ -68,7 +68,7 @@ function ScrollControl({ scrollWheel }) {
   return null;
 }
 
-function Map(props: Props) {
+export function Map(props: Props) {
   const { id, markers, bubble, legend } = props;
   const height = props.height !== undefined ? props.height : "100%";
 
@@ -163,5 +163,3 @@ function Map(props: Props) {
     </div>
   );
 }
-
-export default Map;

@@ -118,7 +118,7 @@ interface Props {
   style?: any;
 }
 
-function Placeholder(props: Props) {
+export function Placeholder(props: Props) {
   const {
     bar,
     pie,
@@ -165,5 +165,3 @@ function Placeholder(props: Props) {
     squareCorners,
   );
 }
-
-export default Placeholder;

@@ -41,7 +41,7 @@ interface Props {
   contents?: ReactNode;
 }
 
-function Sunburst(props: Props) {
+export function Sunburst(props: Props) {
   const {
     id,
     setSliceData,
@@ -231,5 +231,3 @@ function Sunburst(props: Props) {
     </div>
   );
 }
-
-export default Sunburst;

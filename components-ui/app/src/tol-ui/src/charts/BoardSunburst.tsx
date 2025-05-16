@@ -19,7 +19,7 @@ interface Props extends IBoardTargetAndZone {
   size: string;
 }
 
-function BoardSunburst(props: Props) {
+export function BoardSunburst(props: Props) {
   const { id, boardObjectType, boardDataSource, size } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
@@ -111,5 +111,3 @@ function BoardSunburst(props: Props) {
     </div>
   );
 }
-
-export default BoardSunburst;

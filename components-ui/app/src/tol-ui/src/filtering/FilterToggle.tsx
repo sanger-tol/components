@@ -15,7 +15,7 @@ interface Props {
   disabled: boolean;
 }
 
-function FilterToggle(props: Props) {
+export function FilterToggle(props: Props) {
   const { negate, onNegate, exists, onExists, disabled } = props;
 
   const existsButton = (
@@ -62,5 +62,3 @@ function FilterToggle(props: Props) {
     </div>
   );
 }
-
-export default FilterToggle;

@@ -18,7 +18,7 @@ export interface Props {
   dataSource: TsDataSource;
 }
 
-function Relationship(props: Props) {
+export function Relationship(props: Props) {
   const { attribute, data, detail, entityMeta, dataSource } = props;
   const [contents, setContents] = useState<JSX.Element | string>(
     <Loader size="sm" />,
@@ -65,5 +65,3 @@ function Relationship(props: Props) {
 
   return box;
 }
-
-export default Relationship;

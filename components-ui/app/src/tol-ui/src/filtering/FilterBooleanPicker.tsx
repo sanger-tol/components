@@ -16,7 +16,7 @@ export interface Props {
   setFilter: any;
 }
 
-function FilterBooleanPicker(props: Props) {
+export function FilterBooleanPicker(props: Props) {
   const { id, rename, filter, setFilter } = props;
   const filterType: string = "in_list";
   const [value, setValue] = useState<any>([]);
@@ -88,5 +88,3 @@ function FilterBooleanPicker(props: Props) {
     </span>
   );
 }
-
-export default FilterBooleanPicker;

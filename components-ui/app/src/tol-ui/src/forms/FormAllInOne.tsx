@@ -67,7 +67,7 @@ const MISSING_DATA_ERROR =
   "Please complete all required fields before submitting.";
 const UNSUPPORTED_FIELD_TYPE = "Unsupported field type:";
 
-function FormAllInOne(props: Props) {
+export function FormAllInOne(props: Props) {
   const { formConfig, initialData, fluid, model, onValidate } = props;
 
   const [formData, setFormData] = useState<object>({});
@@ -306,5 +306,3 @@ function FormAllInOne(props: Props) {
     </div>
   );
 }
-
-export default FormAllInOne;

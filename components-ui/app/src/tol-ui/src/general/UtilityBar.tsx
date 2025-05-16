@@ -19,7 +19,7 @@ export interface IUtilityBar {
   elements?: JSX.Element[];
 }
 
-function UtilityBar(props: IUtilityBar) {
+export function UtilityBar(props: IUtilityBar) {
   const {
     id,
     title,
@@ -96,5 +96,3 @@ function UtilityBar(props: IUtilityBar) {
     </div>
   );
 }
-
-export default UtilityBar;

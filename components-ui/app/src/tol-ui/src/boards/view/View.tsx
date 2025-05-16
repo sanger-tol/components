@@ -31,7 +31,7 @@ interface Props {
   boardDataSource: TsDataSource;
 }
 
-function View(props: Props) {
+export function View(props: Props) {
   const { id, dataSource, boardDataSource } = props;
   const [zones, setZones] = useState<ZoneObject[]>([]);
   const [open, setOpen] = useState(false);
@@ -185,5 +185,3 @@ function View(props: Props) {
     </div>
   );
 }
-
-export default View;

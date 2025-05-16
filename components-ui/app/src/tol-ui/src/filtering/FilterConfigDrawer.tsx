@@ -11,7 +11,7 @@ export interface Props {
   setOpen: () => void;
 }
 
-function FilterDrawer(props: Props) {
+export function FilterDrawer(props: Props) {
   const { open, setOpen } = props;
   return (
     <div>
@@ -19,5 +19,3 @@ function FilterDrawer(props: Props) {
     </div>
   );
 }
-
-export default FilterDrawer;

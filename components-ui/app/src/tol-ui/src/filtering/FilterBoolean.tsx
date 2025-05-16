@@ -10,7 +10,7 @@ import { setFilter, filterListener } from "./utils";
 import { MultipleSelect } from "../forms";
 import { StatusMessage, PopUpMessage } from "../index";
 
-function FilterBoolean(props: IFilterInput) {
+export function FilterBoolean(props: IFilterInput) {
   const { attribute, componentId, rename, zone, setZone, delay } = props;
   const [values, setValues] = useState<string[]>([]);
   const [disabled, setDisabled] = useState(false);
@@ -111,5 +111,3 @@ function FilterBoolean(props: IFilterInput) {
     </span>
   );
 }
-
-export default FilterBoolean;

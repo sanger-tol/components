@@ -21,7 +21,7 @@ export interface Props extends IBoardTargetAndZone {
   setOpen: any;
 }
 
-function BoardFilters(props: Props) {
+export function BoardFilters(props: Props) {
   const {
     id,
     objectType,
@@ -147,5 +147,3 @@ function BoardFilters(props: Props) {
     </div>
   );
 }
-
-export default BoardFilters;

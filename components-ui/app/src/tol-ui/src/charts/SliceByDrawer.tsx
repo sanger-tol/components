@@ -26,7 +26,7 @@ export interface ISliceByDrawer extends IRemoteTarget {
   sliceBy: string[];
 }
 
-function SliceByDrawer(props: ISliceByDrawer) {
+export function SliceByDrawer(props: ISliceByDrawer) {
   const {
     open,
     setOpen,
@@ -187,5 +187,3 @@ function SliceByDrawer(props: ISliceByDrawer) {
     </div>
   );
 }
-
-export default SliceByDrawer;

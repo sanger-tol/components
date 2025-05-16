@@ -14,7 +14,7 @@ export interface Props {
   disableMarkdown?: boolean;
 }
 
-function InfoTooltip(props: Props) {
+export function InfoTooltip(props: Props) {
   const { contents, disableMarkdown } = props;
 
   let renderedContents = contents;
@@ -38,5 +38,3 @@ function InfoTooltip(props: Props) {
     </span>
   );
 }
-
-export default InfoTooltip;

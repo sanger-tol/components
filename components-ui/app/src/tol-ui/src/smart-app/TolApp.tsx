@@ -50,7 +50,7 @@ export interface Props {
   customCallbackUrl?: string;
 }
 
-function TolApp(props: Props) {
+export function TolApp(props: Props) {
   const { boards, customCallbackUrl } = props;
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
@@ -202,5 +202,3 @@ function TolApp(props: Props) {
     </div>
   );
 }
-
-export default TolApp;

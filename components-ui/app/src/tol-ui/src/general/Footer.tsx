@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { Container, Row, Col } from "../index";
 import { SangerLogo } from "./CustomIcons";
 
-function Footer() {
+export function Footer() {
   return (
     <footer className="footer">
       <Container>
@@ -37,5 +37,3 @@ function Footer() {
     </footer>
   );
 }
-
-export default Footer;

@@ -33,7 +33,7 @@ interface Props {
   boardsDataSource: TsDataSource;
 }
 
-function ComponentPickerModal(props: Props) {
+export function ComponentPickerModal(props: Props) {
   const {
     open,
     setOpen,
@@ -246,5 +246,3 @@ function ComponentPickerModal(props: Props) {
     </Modal>
   );
 }
-
-export default ComponentPickerModal;

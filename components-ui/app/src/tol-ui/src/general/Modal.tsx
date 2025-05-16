@@ -21,9 +21,18 @@ export interface Props {
   onExited?: () => void;
 }
 
-const Modal = (props: Props) => {
-  const { size, open, setOpen, children, header, actionButton, className, onEnter, onExited } =
-    props;
+export function Modal(props: Props) {
+  const {
+    size,
+    open,
+    setOpen,
+    children,
+    header,
+    actionButton,
+    className,
+    onEnter,
+    onExited
+  } = props;
   const closeButton = props.closeButton ?? true;
   const rsOverflow = props.overflow !== false;
   const handleClose = () => {
@@ -63,5 +72,3 @@ const Modal = (props: Props) => {
     </>
   );
 };
-
-export default Modal;

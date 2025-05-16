@@ -11,10 +11,8 @@ const home: HeaderButton = {
   text: "Go back home",
 };
 
-function PageNotFound() {
+export function PageNotFound() {
   return (
     <Header title="Oops! You seem to be lost." buttons={[home]} pageEmpty />
   );
 }
-
-export default PageNotFound;

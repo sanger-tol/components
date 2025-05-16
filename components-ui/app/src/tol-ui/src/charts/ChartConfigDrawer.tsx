@@ -34,7 +34,7 @@ export interface IChartConfigDrawer extends IRemoteTargetAndZone {
   config: IChartConfig;
 }
 
-function ChartConfigDrawer(props: IChartConfigDrawer) {
+export function ChartConfigDrawer(props: IChartConfigDrawer) {
   const {
     open,
     setOpen,
@@ -338,5 +338,3 @@ function ChartConfigDrawer(props: IChartConfigDrawer) {
     </div>
   );
 }
-
-export default ChartConfigDrawer;

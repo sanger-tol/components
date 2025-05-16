@@ -17,7 +17,7 @@ interface Props {
   titleDataPoint: string;
 }
 
-function RemoteTimeline(props: Props) {
+export function RemoteTimeline(props: Props) {
   const {
     endpoint,
     id,
@@ -110,5 +110,3 @@ function RemoteTimeline(props: Props) {
     </div>
   );
 }
-
-export default RemoteTimeline;

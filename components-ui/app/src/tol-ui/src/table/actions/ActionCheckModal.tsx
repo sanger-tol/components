@@ -19,7 +19,7 @@ interface Props {
   currentActionName: string;
 }
 
-function ActionCheckModal(props: Props) {
+export function ActionCheckModal(props: Props) {
   const {
     showIdExportModal,
     setShowIdExportModal,
@@ -185,5 +185,3 @@ function ActionCheckModal(props: Props) {
     </div>
   );
 }
-
-export default ActionCheckModal;

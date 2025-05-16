@@ -17,7 +17,7 @@ import { faList } from "@fortawesome/free-solid-svg-icons";
 import MultipleSelect from "../forms/MultipleSelect";
 import Modal from "../general/Modal";
 
-function FilterTextInput(props: IFilterInput) {
+export function FilterTextInput(props: IFilterInput) {
   const { attribute, componentId, rename, type, zone, setZone, delay } = props;
   // contains filtering needs adding to specific datasources
   const [values, setValues] = useState([""]);
@@ -287,5 +287,3 @@ function FilterTextInput(props: IFilterInput) {
     </div>
   );
 }
-
-export default FilterTextInput;

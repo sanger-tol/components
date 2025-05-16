@@ -80,7 +80,7 @@ interface Props {
   groupBy?: boolean;
 }
 
-function Table(props: Props) {
+export function Table(props: Props) {
   const { Column, HeaderCell, Cell } = RSTable;
   let {
     /* eslint-disable */
@@ -498,5 +498,3 @@ function Table(props: Props) {
     </div>
   );
 }
-
-export default Table;

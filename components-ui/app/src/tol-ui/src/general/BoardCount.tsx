@@ -17,7 +17,7 @@ interface Props extends IBoardTargetAndZone {
   config: any;
 }
 
-function BoardCount(props: Props) {
+export function BoardCount(props: Props) {
   const { id, boardObjectType, boardDataSource } = props;
   const [openFilters, setOpenFilters] = useState(false);
 
@@ -53,5 +53,3 @@ function BoardCount(props: Props) {
     </>
   );
 }
-
-export default BoardCount;

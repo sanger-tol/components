@@ -16,7 +16,7 @@ interface Props {
   setResponse: any;
 }
 
-function RemoteGet(props: Props) {
+export function RemoteGet(props: Props) {
   const { resource, dataSource, loadingMessage, response, setResponse } = props;
 
   useEffect(() => {
@@ -40,5 +40,3 @@ function RemoteGet(props: Props) {
 
   return <></>;
 }
-
-export default RemoteGet;

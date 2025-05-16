@@ -27,7 +27,7 @@ export interface Props extends IRemoteTarget {
   title?: string;
 }
 
-function SelectedAttributesContainer(props: Props) {
+export function SelectedAttributesContainer(props: Props) {
   const {
     objectType,
     dataSource,
@@ -159,5 +159,3 @@ function SelectedAttributesContainer(props: Props) {
 
 
 }
-
-export default SelectedAttributesContainer;

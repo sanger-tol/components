@@ -12,7 +12,7 @@ export interface Props {
   source: string;
 }
 
-function SourceTag(props: Props) {
+export function SourceTag(props: Props) {
   const { source, className } = props;
   const sourceColour = getSourceColour(source);
 
@@ -26,5 +26,3 @@ function SourceTag(props: Props) {
     </div>
   );
 }
-
-export default SourceTag;

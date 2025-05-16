@@ -14,7 +14,7 @@ interface Props {
   itemType?: string;
 }
 
-function ConfirmationModal(props: Props) {
+export function ConfirmationModal(props: Props) {
   const { setOpen, open, onConfirmClick, itemType } = props;
 
   const actionButtons = (
@@ -68,5 +68,3 @@ function ConfirmationModal(props: Props) {
     </div>
   );
 }
-
-export default ConfirmationModal;

@@ -16,7 +16,7 @@ interface Props {
   setOpen: (open: boolean) => void;
 }
 
-function ActionModal(props: Props) {
+export function ActionModal(props: Props) {
   const { objectType } = props
 
   // ActionStatus will be cellRenderer at some point
@@ -60,5 +60,3 @@ function ActionModal(props: Props) {
     </Modal>
   );
 }
-
-export default ActionModal;

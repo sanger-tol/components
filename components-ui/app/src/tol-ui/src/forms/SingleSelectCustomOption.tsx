@@ -22,7 +22,7 @@ interface Props {
   customOptionPlaceholder?: string;
 }
 
-function SingleSelectCustomOption(props: Props) {
+export function SingleSelectCustomOption(props: Props) {
   const { id, value, setValue, data, label, customOptionPlaceholder } = props;
 
   const [selectedOption, setSelectedOption] = useState("");
@@ -100,5 +100,3 @@ function SingleSelectCustomOption(props: Props) {
     </>
   );
 }
-
-export default SingleSelectCustomOption;

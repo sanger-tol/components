@@ -16,7 +16,7 @@ interface Props extends IBoardTargetAndZone{
   config: any;
 }
 
-function BoardTable(props: Props) {
+export function BoardTable(props: Props) {
   const { id, title, boardObjectType, boardDataSource } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
@@ -83,5 +83,3 @@ function BoardTable(props: Props) {
     />
   );
 }
-
-export default BoardTable;

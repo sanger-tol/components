@@ -17,7 +17,7 @@ interface Props {
   config: object[];
 }
 
-function MapLegend(props: Props) {
+export function MapLegend(props: Props) {
   const { map, config } = props;
   useEffect(() => {
     const legend = (Leaflet.control as any)({ position: "bottomright" });
@@ -43,5 +43,3 @@ function MapLegend(props: Props) {
 
   return null;
 }
-
-export default MapLegend;

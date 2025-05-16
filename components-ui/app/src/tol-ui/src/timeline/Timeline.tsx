@@ -40,7 +40,7 @@ const ACTIVE_DOT_DEFAULT = "#039be5";
 const DEFAULT_ICON_COLOR = "#15b215";
 const DEFAULT_NOT_DEFINED = "#fff";
 
-function Timeline(props: Props) {
+export function Timeline(props: Props) {
   const { id, title, endless, data, dateWithDay, defaultIcon } = props;
   const [sortedData, setSortedData] = useState<TimelineItem[]>([]);
 
@@ -182,5 +182,3 @@ function Timeline(props: Props) {
     </Col>
   );
 }
-
-export default Timeline;

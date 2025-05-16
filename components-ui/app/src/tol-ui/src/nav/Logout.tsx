@@ -11,7 +11,7 @@ import {
   tokenHasExpired,
 } from "../services/localStorage/localStorageService";
 
-function Logout() {
+export function Logout() {
   const { setToken } = useAuth();
 
   setReturnUrlFromLocalStorage(window.location.pathname);
@@ -34,5 +34,3 @@ function Logout() {
 
   return <>Logout</>;
 }
-
-export default Logout;

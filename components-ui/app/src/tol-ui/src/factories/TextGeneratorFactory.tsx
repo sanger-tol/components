@@ -12,7 +12,7 @@ export interface TextGeneratorFactory {
   generateParagraphs: (count?: number) => string;
 }
 
-function createTextGeneratorFactory(options?: any): TextGeneratorFactory {
+export function createTextGeneratorFactory(options?: any): TextGeneratorFactory {
   const lorem = new LoremIpsum({
     sentencesPerParagraph: {
       max: 8,
@@ -31,5 +31,3 @@ function createTextGeneratorFactory(options?: any): TextGeneratorFactory {
     generateParagraphs: (count = 1) => lorem.generateParagraphs(count),
   };
 }
-
-export default createTextGeneratorFactory;

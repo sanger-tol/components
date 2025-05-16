@@ -28,7 +28,7 @@ export interface Props {
   setResponse?: any;
 }
 
-function Dropzone(props: Props) {
+export function Dropzone(props: Props) {
   const { resource, dataSource, fileType, generateMessages, setResponse } = props;
   const [fileList, setFileList] = useState<any[]>([]);
   const [validate, setValidate] = useState(true);
@@ -148,5 +148,3 @@ function Dropzone(props: Props) {
     </div>
   );
 }
-
-export default Dropzone;

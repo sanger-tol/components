@@ -33,7 +33,7 @@ interface Props {
   deleteZone: any;
 }
 
-function Zone(props: Props) {
+export function Zone(props: Props) {
   const { 
     id,
     objectType,
@@ -308,8 +308,9 @@ function Zone(props: Props) {
       )}
       {confirmationModal}
       <BoardFilters
+        {...props}
         id={id}
-        boardObjectType="zone"
+        boardObjectType={BOARDS.ZONE}
         open={openFilters}
         setOpen={setOpenFilters}
         {...z}
@@ -317,5 +318,3 @@ function Zone(props: Props) {
     </div>
   );
 }
-
-export default Zone;

@@ -52,5 +52,3 @@ export function Callback() {
 
   return <LoadingContent text="Logging in..." />;
 }
-
-export default Callback;

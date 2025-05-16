@@ -11,7 +11,7 @@ import { IFilterInput } from "./Filter";
 import { setFilter, filterListener } from "./utils";
 import FilterToggle from "./FilterToggle";
 
-function FilterDatePicker(props: IFilterInput) {
+export function FilterDatePicker(props: IFilterInput) {
   const { attribute, componentId, rename, zone, setZone } = props;
   const [value, setValue] = useState<any>();
   const [disabled, setDisabled] = useState(false);
@@ -129,5 +129,3 @@ function FilterDatePicker(props: IFilterInput) {
     </div>
   );
 }
-
-export default FilterDatePicker;

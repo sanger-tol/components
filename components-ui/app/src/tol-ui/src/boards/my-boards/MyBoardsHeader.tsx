@@ -29,7 +29,7 @@ const DEFAULT_TITLE = "My Boards";
 const DEFAULT_SUB_TITLE =
   "Here you can view and delete your boards, along with viewing board hierarchy and components of each zone.";
 
-function MyBoardsHeader(props: Props) {
+export function MyBoardsHeader(props: Props) {
   const [newBoardModalOpen, setNewBoardModalOpen] = useState(false);
   const [modalError, setModalError] = useState("");
 
@@ -118,5 +118,3 @@ function MyBoardsHeader(props: Props) {
     </div>
   );
 }
-
-export default MyBoardsHeader;

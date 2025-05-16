@@ -17,7 +17,7 @@ interface Props {
   components: Component[];
 }
 
-function Widgets(props: Props) {
+export function Widgets(props: Props) {
   const { components } = props;
 
   themeListener(() => {
@@ -99,5 +99,3 @@ function Widgets(props: Props) {
     </div>
   );
 }
-
-export default Widgets;

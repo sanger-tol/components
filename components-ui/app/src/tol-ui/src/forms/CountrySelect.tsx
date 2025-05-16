@@ -15,7 +15,7 @@ interface Props {
   setValue: any;
 }
 
-function CountrySelect(props: Props) {
+export function CountrySelect(props: Props) {
   const { label, value, setValue } = props;
 
   const countryOptions = useMemo(() => countryList().getData(), []);
@@ -34,5 +34,3 @@ function CountrySelect(props: Props) {
     </RSForm.Group>
   );
 }
-
-export default CountrySelect;

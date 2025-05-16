@@ -21,7 +21,7 @@ export interface Props extends IRemoteTarget{
   filterPassThrough?: boolean;
 }
 
-function RemoteFilters(props: Props) {
+export function RemoteFilters(props: Props) {
   const { objectType, dataSource, onSave, disabledFilterValues, filterPassThrough } = props;
 
   // zone component id pointer
@@ -153,5 +153,3 @@ function RemoteFilters(props: Props) {
     </div>
   );
 }
-
-export default RemoteFilters;

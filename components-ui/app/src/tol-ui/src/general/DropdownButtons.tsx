@@ -23,7 +23,7 @@ export interface IDropdownButtons {
   footer?: IDropdownButtonConfig | any;
 }
 
-function DropdownButtons(props: IDropdownButtons) {
+export function DropdownButtons(props: IDropdownButtons) {
   const {
     mainButtonIcon,
     placement,
@@ -127,5 +127,3 @@ function DropdownButtons(props: IDropdownButtons) {
     </Dropdown>
   );
 }
-
-export default DropdownButtons;

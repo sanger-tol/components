@@ -26,7 +26,7 @@ export interface IButton {
 }
 
 
-function Button(props: IButton) {
+export function Button(props: IButton) {
   const {
     icon,
     onClick,
@@ -106,5 +106,3 @@ function Button(props: IButton) {
     </div>
   );
 }
-
-export default Button;

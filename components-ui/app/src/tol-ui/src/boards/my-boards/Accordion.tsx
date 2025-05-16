@@ -176,7 +176,7 @@ const useItemData = <T,>(
   return { itemData, loading };
 };
 
-function Accordion(props: BoardsAccordionProps) {
+export function Accordion(props: BoardsAccordionProps) {
   const { boardDetails, setBoardDetails } = props;
   const history = useHistory();
   const [openDelete, setOpenDelete] = useState(false);
@@ -468,5 +468,3 @@ function Accordion(props: BoardsAccordionProps) {
     </div>
   );
 }
-
-export default Accordion;

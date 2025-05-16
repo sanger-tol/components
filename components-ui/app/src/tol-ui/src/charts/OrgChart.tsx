@@ -30,7 +30,7 @@ interface Props {
   className?: string;
 }
 
-function OrgChart(props: Props) {
+export function OrgChart(props: Props) {
   const {
     title,
     data,
@@ -167,5 +167,3 @@ function OrgChart(props: Props) {
     </CentreContents>
   );
 }
-
-export default OrgChart;

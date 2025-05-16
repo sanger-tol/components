@@ -38,7 +38,7 @@ const getDuration = (type: Props["type"]) => {
   }
 };
 
-const PopUpMessage = (props: Props) => {
+export const PopUpMessage = (props: Props) => {
   const { type, message, header, onClose } = props;
   toaster.push(
     <StaticMessage
@@ -54,5 +54,3 @@ const PopUpMessage = (props: Props) => {
     },
   );
 };
-
-export default PopUpMessage;
