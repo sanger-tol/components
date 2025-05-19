@@ -161,7 +161,7 @@ function FileValidation(props: Props) {
             content="Waiting for Results..."
             vertical
             styles={{ ...(TOL_LOADER_STYLES as React.CSSProperties) }}
-          />{" "}
+          />
         </div>
       ) : (
         "RESULTS HERE"

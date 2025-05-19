@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { Uploader } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { Loader, httpClient, StatusMessage } from "../index";
+import { Loader, httpClient, StatusMessage, useStateFallback } from "../index";
 import { MessageType } from "../messaging/Message";
 
 interface WaitingUpload {
@@ -20,22 +20,40 @@ interface Message {
   message: MessageType;
 }
 
+interface FileData {
+  blobFile: File;
+  fileKey: string;
+  name: string;
+  status: string;
+}
+
 export interface Props {
   endpoint: string;
   fileType: string;
   generateMessages: (apiRes: any) => Message[];
   setResponse?: any;
   onFileDrop?: (length: boolean) => void;
+  fileListVisible?: boolean;
+  fileList?: FileData[];
+  setFileList?: (fileList: FileData[]) => void;
 }
 
 function Dropzone(props: Props) {
-  const { endpoint, fileType, generateMessages, setResponse, onFileDrop } = props;
-  const [fileList, setFileList] = useState<any[]>([]);
+  const { endpoint, fileType, generateMessages, setResponse, onFileDrop, fileListVisible=false } = props;
+  const [fileList, setFileList] = useStateFallback<FileData[]>(
+    props.fileList,
+    props.setFileList,
+    []
+  );
   const [validate, setValidate] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [fail, setFail] = useState(false);
+
+  useEffect(() => {
+    console.log("FileList", fileList);
+  }, [fileList]);
 
   useEffect(() => {
     if (fileList.length > 0) {
@@ -105,7 +123,7 @@ function Dropzone(props: Props) {
         draggable
         accept={fileType}
         onChange={setFileList}
-        fileListVisible={false}
+        fileListVisible={fileListVisible}
         onUpload={() => {
           setValidate(!validate);
         }}

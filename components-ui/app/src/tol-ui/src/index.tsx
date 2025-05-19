@@ -126,6 +126,7 @@ export {
   themeListener,
   resizeListener,
   useQuery,
+  useStateFallback,
 } from "./hooks";
 
 // models
