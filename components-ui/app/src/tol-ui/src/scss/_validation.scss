@@ -7,7 +7,7 @@
 @keyframes dropDownResults {
   from {
     opacity: 0;
-    transform: translateY(-100px);
+    transform: translateY(-100%);
   }
   to {
     opacity: 1;
@@ -15,7 +15,29 @@
   }
 }
 
-@keyframes dropDownButton {
+@keyframes hideResults {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes hideExtraBtns {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+}
+
+@keyframes extraBtns {
   from {
     opacity: 0;
     transform: translateX(50px);
@@ -26,12 +48,57 @@
   }
 }
 
+@keyframes dropDownAllErrors {
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes itemEaseIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.tol-validate-steps-all-errors-animation {
+  animation: dropDownAllErrors 0.6s ease;
+}
+
 .tol-file-upload-btn-dropdown-animation {
-  animation: dropDownButton 0.4s ease;
+  animation: extraBtns 0.6s ease;
+}
+
+.tol-file-upload-btn-dropdown-hide-animation {
+  animation: hideExtraBtns 0.6s ease;
 }
 
 .tol-file-upload-results-dropdown-animation {
-  animation: dropDownResults 0.8s ease;
+  animation: dropDownResults 0.6s ease;
+}
+
+.tol-file-upload-results-dropdown-hide-animation {
+  animation: hideResults 0.6s ease;
+}
+
+.tol-file-upload-step-triangle {
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid hotpink; //TODO: CHANGE TO CORRECT COLOR
+  display: flex;
+  align-self: center;
+  animation: itemEaseIn 0.6s ease;
+}
+
+.tol-file-upload-expanded-content-container {
+  animation: itemEaseIn 0.6s ease;
 }
 
 .tol-file-upload-title-bar-container {
@@ -58,6 +125,47 @@
   }
 }
 
+.tol-file-uploader-validate-steps-outer-container {
+  display: flex;
+  // justify-content: center;
+  // justify-self: center;
+  background: var(--tol-grey-subtle);
+  width: fit-content;
+  max-width:100%;
+  padding: 20px;
+  margin-top: 20px;
+  overflow:auto;
+  // overflow: scroll;
+  // padding-bottom: 0;
+  transition: padding-bottom 0.3s ease;
+
+  &.expanded {
+    padding-bottom: 160px;
+  }
+}
+
+.tol-file-uploader-validate-steps-inner-container {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.tol-validate-step-expanded-all-errors-container {
+  border-radius: 6px;
+  margin-top: 8px;
+  padding: 16px;
+  background-color: white;
+  color: black;
+  position: absolute;
+  width: 95%;
+  overflow: hidden;
+  z-index: 1000;
+
+  &.full-width {
+    width: 100%;
+    position:static;
+  }
+}
 
 .tol-file-upload-uploader-container {
   display: flex;
@@ -68,9 +176,16 @@
 }
 
 .tol-file-upload-results-container {
-    margin-top: 15px;
+  margin-top: 15px;
 
-    .tol-file-upload-results-viewer-container {
-        min-height: 300px;
-    }
+  .tol-file-upload-results-viewer-container {
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .tol-file-upload-title-bar-container {
+    flex-direction: column;
+    gap: 12px;
+  }
 }

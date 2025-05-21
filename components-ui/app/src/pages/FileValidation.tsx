@@ -15,6 +15,8 @@ import {
   Modal,
   TolLoader,
 } from "../tol-ui/src";
+import { FileData } from "../tol-ui/src/forms/Dropzone";
+import { ValidateSteps } from "../tol-ui/src/file-validation";
 
 interface IValidationConfig {
   s3_url: string;
@@ -49,12 +51,29 @@ function FileValidation(props: Props) {
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<string | boolean>(false);
   const [fileDropped, setFileDropped] = useState<boolean>(false);
-  const [validating, setValidating] = useState<boolean>(false);
-  const [validationResults, setValidationResults] = useState<any[]>([]);
+  const [validating, setValidating] = useState<boolean>(true);
+  const [validationResults, setValidationResults] = useState<any[]>(["1"]);
   const [validated, setValidated] = useState<boolean>(false);
+  const [fileList, setFileList] = useState<FileData[]>([]);
+  const [resetKey, setResetKey] = useState<number>(0);
+  const [resetting, setResetting] = useState<boolean>(false);
+  const [validationProgress, setValidationProgress] = useState<number>(0);
 
   const generateMessages = (apiRes: any) => {
     return [];
+  };
+
+  const handleReset = () => {
+    setResetting(true);
+    setTimeout(() => {
+      setFileDropped(false);
+      setValidated(false);
+      setValidationResults([]);
+      setFileList([]);
+      setResetKey((prev) => prev + 1);
+      setValidating(false);
+      setResetting(false);
+    }, 500);
   };
 
   const TitleBar = (
@@ -65,15 +84,15 @@ function FileValidation(props: Props) {
           <div
             className={`tol-file-upload-additional-btn-container ${
               validating ? "tol-file-upload-btn-dropdown-animation" : ""
+            } ${
+              resetting ? "tol-file-upload-btn-dropdown-hide-animation" : ""
             }`}
           >
             {validating && (
               <Button
                 type="error"
                 text={"Reset"}
-                onClick={() => {
-                  setValidating(true);
-                }}
+                onClick={() => handleReset()}
               />
             )}
             {!validateAndUpload && validating && (
@@ -90,7 +109,7 @@ function FileValidation(props: Props) {
           <Button
             type="primary"
             text={`${
-              validateAndUpload ? "Validate and Upload" : "Validate File  "
+              validateAndUpload ? "Validate and Upload" : "Validate File "
             }`}
             disabled={!fileDropped || validating}
             onClick={() => {
@@ -147,6 +166,10 @@ function FileValidation(props: Props) {
         fileType={fileType}
         generateMessages={generateMessages}
         onFileDrop={(fileDropped: boolean) => setFileDropped(fileDropped)}
+        fileList={fileList}
+        setFileList={setFileList}
+        parentToSubmit
+        resetKey={resetKey}
       />
     </div>
   );
@@ -164,7 +187,7 @@ function FileValidation(props: Props) {
           />
         </div>
       ) : (
-        "RESULTS HERE"
+        <ValidateSteps />
       )}
     </div>
   );
@@ -214,8 +237,10 @@ function FileValidation(props: Props) {
       <Widgets components={Components} />
       {validating && (
         <div
-          className="tol-file-upload-results-dropdown-animation 
-            tol-file-upload-results-container"
+          className={`tol-file-upload-results-container tol-file-upload-results-dropdown-animation
+          ${
+            resetting ? "tol-file-upload-results-dropdown-hide-animation" : ""
+          }`}
         >
           <Widgets components={ValidationSteps} />
         </div>
@@ -228,8 +253,10 @@ export default FileValidation;
 
 // TODO: Render a single modal with different content
 // TODO: Implement upload button logic
-// TODO: Implement reset button logic
 // TODO: Implement progress bar
-// TODO:
-// TODO:
-// TODO:
+// TODO: Implement moving validation results to modal on 'reset'
+// TODO: Implement validation results
+// TODO: 
+// TODO: 
+// TODO: 
+// TODO: 

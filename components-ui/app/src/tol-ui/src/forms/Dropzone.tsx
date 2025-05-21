@@ -20,7 +20,7 @@ interface Message {
   message: MessageType;
 }
 
-interface FileData {
+export interface FileData {
   blobFile: File;
   fileKey: string;
   name: string;
@@ -36,10 +36,22 @@ export interface Props {
   fileListVisible?: boolean;
   fileList?: FileData[];
   setFileList?: (fileList: FileData[]) => void;
+  parentToSubmit?: boolean;
+  resetKey?: string | number;
 }
 
 function Dropzone(props: Props) {
-  const { endpoint, fileType, generateMessages, setResponse, onFileDrop, fileListVisible=false } = props;
+  const {
+    endpoint,
+    fileType,
+    generateMessages,
+    setResponse,
+    onFileDrop,
+    fileListVisible = false,
+    parentToSubmit = false,
+    resetKey,
+  } = props;
+
   const [fileList, setFileList] = useStateFallback<FileData[]>(
     props.fileList,
     props.setFileList,
@@ -56,14 +68,14 @@ function Dropzone(props: Props) {
   }, [fileList]);
 
   useEffect(() => {
-    if (fileList.length > 0) {
+    if (fileList.length > 0 && !parentToSubmit) {
       setIsLoading(true);
       setHasLoaded(false);
       setMessages([]);
       validateFile();
       setFail(false);
-      onFileDrop?.(fileList.length > 0);
     }
+    onFileDrop?.(fileList.length > 0);
   }, [validate]);
 
   const validateFile = () => {
@@ -71,7 +83,7 @@ function Dropzone(props: Props) {
     formData.set(
       "file",
       fileList[fileList.length - 1].blobFile,
-      fileList[fileList.length - 1].name,
+      fileList[fileList.length - 1].name
     );
 
     httpClient()
@@ -117,7 +129,7 @@ function Dropzone(props: Props) {
   };
 
   return (
-    <div className="tol-dropzone">
+    <div className="tol-dropzone" key={resetKey}>
       <Uploader
         action="temp-error-please-ignore"
         draggable
@@ -135,7 +147,7 @@ function Dropzone(props: Props) {
             </div>
           ) : (
             <div>
-              {fail ? (
+              {fail && fileList.length > 0 ? (
                 <WaitingUpload message="Unexpected error, please try again" />
               ) : (
                 <WaitingUpload message="Click or drag file to this area to upload" />

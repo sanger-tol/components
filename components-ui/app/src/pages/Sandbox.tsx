@@ -9,7 +9,7 @@ import ValidateSteps from "../tol-ui/src/file-validation/ValidateSteps";
 function Sandbox() {
   return (
     <div>
-      <ValidateSteps numSteps={3} />
+      <ValidateSteps />
     </div>
   );
 }

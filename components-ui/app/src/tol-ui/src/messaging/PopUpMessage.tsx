@@ -16,10 +16,10 @@ interface Props {
 }
 
 enum Duration {
-  success = 4000,
-  info = 6000,
-  warning = 8000,
-  error = 10000,
+  success = 3000,
+  info = 3000,
+  warning = 6000,
+  error = 8000,
   default = 6000,
 }
 
