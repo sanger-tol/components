@@ -15,13 +15,14 @@ interface Props {
   iconType: IconType;
   size?: string;
   style?: React.CSSProperties;
+  className?: string;
 }
 
 function ValidationIcon(props: Props) {
-  const { iconType = "check", size = "sm", style } = props;
+  const { iconType = "check", size = "sm", style, className="" } = props;
   return (
     <div>
-      <span style={{ ...style }}>{<Icon icon={iconType} size={size} />}</span>
+      <span style={{ ...style }} className={className}>{<Icon icon={iconType} size={size} />}</span>
     </div>
   );
 }

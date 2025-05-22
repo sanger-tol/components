@@ -94,7 +94,7 @@
   border-top: 12px solid var(--tol-emphasis); //TODO: CHANGE TO CORRECT COLOR
   display: flex;
   align-self: center;
-  animation: itemEaseIn 1s ease;
+  animation: dropDownAllErrors 0.5s ease;
   rotate: 180deg;
   margin-bottom: -8px;
 }
@@ -153,12 +153,13 @@
   border-radius: 6px;
   margin-top: 8px;
   padding: 16px;
-  background-color: white;
-  color: black;
+  background-color: var(--tol-grey);
   position: absolute;
   width: 95%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
   z-index: 1000;
+  max-height: 140px;
 
   &.full-width {
     width: 100%;
@@ -178,7 +179,7 @@
   margin-top: 15px;
 
   .tol-file-upload-results-viewer-container {
-    min-height: 300px;
+    min-height: 250px;
   }
 }
 
@@ -241,11 +242,17 @@
   .tol-file-uploader-validate-step-passed-container {
     display: flex;
     justify-content: center;
-    flex-direction:row;
+    flex-direction: row;
     align-items: center;
     min-height: 100px;
     margin: 10px;
   }
+}
+
+.tol-file-uploader-validate-step-icon {
+  color: white;
+  border-radius: 100%;
+  padding: 10px 12px 10px 12px;
 }
 
 @media (max-width: 768px) {
@@ -256,5 +263,4 @@
 }
 
 //TODO: Correct names - prefix with tol-file-upload
-// TODO: Fix color of icon in light mode
 // TODO: Fix triangle color in light/dark mode

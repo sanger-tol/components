@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState, useRef, useEffect } from "react";
 import ValidateStep from "./ValidateStep";
+import ErrorViewer from "./ErrorViewer";
 import { resizeListener } from "src/hooks";
 
 //TODO: Add progress bar
@@ -25,7 +26,7 @@ const steps = [
 const allErrors = [
   ["Error 1a", "Error 1b", "Error 1c"],
   ["Error 2a", "Error 2b", "Error 2c"],
-  ["Error 3a", "Error 3b", "Error 3c"],
+  ["Error 3a", "Error 3b", "Error 3c", "Error 3d", "Error 3e"],
   // ["Error 3a", "Error 3b", "Error 3c"],
   // ["Error 3a", "Error 3b", "Error 3c"],
   // ["Error 3a", "Error 3b", "Error 3c"],
@@ -34,7 +35,7 @@ const allErrors = [
 ];
 
 function ValidateSteps() {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(1);
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -84,12 +85,12 @@ function ValidateSteps() {
               key={expandedIndex}
               className="tol-validate-steps-all-errors-animation"
             >
-              <strong>All errors for {steps[expandedIndex].stepName}</strong>
-              <ul>
-                {allErrors[expandedIndex].map((err, i) => (
-                  <li key={i}>{err}</li>
-                ))}
-              </ul>
+              <h6>All errors for {steps[expandedIndex].stepName}:</h6>
+              {allErrors[expandedIndex].map((err, i) => (
+                <div key={i}>
+                  <ErrorViewer message={err} stepName={steps[expandedIndex].stepName}/>
+                </div>
+              ))}
             </div>
           </div>
         )}

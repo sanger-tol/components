@@ -26,12 +26,37 @@ function ErrorViewer(props: Props) {
 
   const ModalContent = (
     <div>
-      <h4>{stepName}</h4>
-      <p>{message}</p>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          margin: "15px 5px",
+          alignItems: "center",
+        }}
+      >
+        <h4>{stepName}</h4>
+        <ValidationIcon
+          iconType="xmark"
+          size="lg"
+          style={{
+            backgroundColor: "var(--tol-danger)",
+            margin: "0px 0px 10px 0px",
+          }}
+          className="tol-file-uploader-validate-step-icon"
+        />
+      </div>
+      <p style={{margin: "8px 5px"}}>{message}</p>
     </div>
   );
 
-  const ErrorModal = <Modal open={isOpen} setOpen={setIsOpen} size="sm" children={ModalContent}/>;
+  const ErrorModal = (
+    <Modal
+      open={isOpen}
+      setOpen={setIsOpen}
+      size="sm"
+      children={ModalContent}
+    />
+  );
 
   return (
     <>

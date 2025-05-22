@@ -34,7 +34,7 @@ interface Props {
 const DEFAULT_FILE_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
 const TOL_LOADER_STYLES = {
-  minHeight: "300px",
+  minHeight: "250px",
   flexDirection: "column",
   alignItems: "center",
   display: "flex",
@@ -51,8 +51,8 @@ function FileValidation(props: Props) {
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<string | boolean>(false);
   const [fileDropped, setFileDropped] = useState<boolean>(false);
-  const [validating, setValidating] = useState<boolean>(false);
-  const [validationResults, setValidationResults] = useState<any[]>([]);
+  const [validating, setValidating] = useState<boolean>(true);
+  const [validationResults, setValidationResults] = useState<any[]>(["1"]);
   const [validated, setValidated] = useState<boolean>(false);
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);

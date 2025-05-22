@@ -38,19 +38,15 @@ function ValidateStep(props: Props) {
             iconType={errors ? "xmark" : "check"}
             size="lg"
             style={{
-              color: "white",
               backgroundColor: errors
                 ? "var(--tol-danger)"
                 : "var(--tol-success)",
-              borderRadius: "100%",
-              padding: "10px 12px 10px 12px",
             }}
+            className="tol-file-uploader-validate-step-icon"
           />
         </div>
         {errors ? (
-          <div
-            className="tol-file-uploader-validate-step-error-container"
-          >
+          <div className="tol-file-uploader-validate-step-error-container">
             <div>
               <p className="tol-file-uploader-validate-step-error-number">
                 {errorValues.length}{" "}
