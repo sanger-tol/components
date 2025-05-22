@@ -31,7 +31,7 @@ function ValidateStep(props: Props) {
         style={{
           background: "var(--tol-success)",
           height: "fit-content",
-          width: "300px",
+          width: "250px",
           padding: "5px 15px",
           boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
           borderRadius: "6px",

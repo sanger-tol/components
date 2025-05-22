@@ -51,8 +51,8 @@ function FileValidation(props: Props) {
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<string | boolean>(false);
   const [fileDropped, setFileDropped] = useState<boolean>(false);
-  const [validating, setValidating] = useState<boolean>(true);
-  const [validationResults, setValidationResults] = useState<any[]>(["1"]);
+  const [validating, setValidating] = useState<boolean>(false);
+  const [validationResults, setValidationResults] = useState<any[]>([]);
   const [validated, setValidated] = useState<boolean>(false);
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);
@@ -114,6 +114,9 @@ function FileValidation(props: Props) {
             disabled={!fileDropped || validating}
             onClick={() => {
               setValidating(true);
+              setTimeout(() => {
+                setValidationResults(["1"]);
+              }, 3000);
             }}
           />
           <DropdownButtons

@@ -15,11 +15,11 @@ const steps = [
   { id: "step1", stepName: "Step 1" },
   { id: "step2", stepName: "Step 2" },
   { id: "step3", stepName: "Step 3" },
-  // { id: "step4", stepName: "Step 4" },
-  // { id: "step5", stepName: "Step 5" },
-  // { id: "step6", stepName: "Step 6" },
-  // { id: "step7", stepName: "Step 7" },
-  // { id: "step8", stepName: "Step 8" },
+  { id: "step4", stepName: "Step 4" },
+  { id: "step5", stepName: "Step 5" },
+  { id: "step6", stepName: "Step 6" },
+  { id: "step7", stepName: "Step 7" },
+  { id: "step8", stepName: "Step 8" },
 ];
 
 const allErrors = [
@@ -36,10 +36,16 @@ const allErrors = [
 function ValidateSteps() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    console.log(expandedIndex);
+  }, [expandedIndex]);
 
   resizeListener(() => {
     if (containerRef.current) {
+      setContainerWidth(containerRef.current.clientWidth - 40);
       const { scrollWidth, clientWidth } = containerRef.current;
       setIsOverflowing(scrollWidth > clientWidth);
     }
@@ -47,7 +53,7 @@ function ValidateSteps() {
 
   return (
     <div
-    ref={containerRef}
+      ref={containerRef}
       className={`tol-file-uploader-validate-steps-outer-container ${
         expandedIndex !== null && isOverflowing ? " expanded" : ""
       }`}
@@ -72,6 +78,7 @@ function ValidateSteps() {
             className={`tol-validate-steps-all-errors-animation tol-validate-step-expanded-all-errors-container ${
               !isOverflowing ? "full-width" : ""
             }`}
+            style={{ maxWidth: containerWidth ? containerWidth : "100%" }}
           >
             <div
               key={expandedIndex}
