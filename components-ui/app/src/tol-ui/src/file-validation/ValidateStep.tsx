@@ -20,44 +20,25 @@ const MAX_ERRORS_TO_DISPLAY = 2;
 
 const vOrC = "Validation";
 const errors = true; // Simulating an error state
-const errorValues = ["Error 1", "Error 2", "Error 3", "Error 4", "Error 5"];
+const errorValues = ["Error 1", "error 2", "Error 3"]; // Simulating error values
+
+// return "var(tol-success-translucent"; for success
+// return "var(tol-danger-translucent"; for error
 
 function ValidateStep(props: Props) {
   const { id, stepName, onSeeAllErrors, icon = "xmark", expanded } = props;
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <div
-        id={id}
-        style={{
-          background: "var(--tol-success)",
-          height: "fit-content",
-          width: "250px",
-          padding: "5px 15px",
-          boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
-          borderRadius: "6px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "15px 0px",
-          }}
-        >
-          <h6
-            style={{
-              alignSelf: "center",
-              marginBottom: "0px",
-            }}
-          >
+    <div className="tol-file-uploader-validate-step-outer-container">
+      <div id={id} className="tol-file-uploader-validate-step-inner-container">
+        <div className="tol-file-uploader-validate-step-title-container">
+          <h6 className="tol-file-uploader-validate-step-title">
             Validate {stepName}
           </h6>
           <ValidationIcon
             iconType={errors ? "xmark" : "check"}
             size="lg"
             style={{
-              border: "2px solid white",
+              color: "white",
               backgroundColor: errors
                 ? "var(--tol-danger)"
                 : "var(--tol-success)",
@@ -67,43 +48,46 @@ function ValidateStep(props: Props) {
           />
         </div>
         {errors ? (
-          <>
-            <p style={{ fontSize: "12px", marginBottom: "0px" }}>
-              {errorValues.length} Errors:
-            </p>
-            {errorValues
-              .slice(0, MAX_ERRORS_TO_DISPLAY)
-              .map((error: string, index: number) => (
-                <ErrorViewer
-                  key={String(index)}
-                  message={error}
-                  stepName={stepName}
-                />
-              ))}
-            {errorValues.length > 2 && (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                }}
-                onClick={onSeeAllErrors}
-              >
-                <p style={{ margin: "4px" }}>See All...</p>
-              </div>
-            )}
-          </>
-        ) : (
           <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignContent: "center",
-              minHeight: "fit-content",
-              marginTop: "10px",
-            }}
+            className="tol-file-uploader-validate-step-error-container"
           >
-            <p>{vOrC} Passed 🎉</p>
+            <div>
+              <p className="tol-file-uploader-validate-step-error-number">
+                {errorValues.length}{" "}
+                {errorValues.length > 1 ? "Errors" : "Error"}:
+              </p>
+              {errorValues
+                .slice(0, MAX_ERRORS_TO_DISPLAY)
+                .map((error: string, index: number) => (
+                  <ErrorViewer
+                    key={String(index)}
+                    message={error}
+                    stepName={stepName}
+                  />
+                ))}
+            </div>
+            <div>
+              {errorValues.length > 2 ? (
+                <div
+                  className="tol-file-uploader-validate-step-see-all-container"
+                  onClick={onSeeAllErrors}
+                >
+                  <p className="tol-file-uploader-validate-step-info">
+                    See All...
+                  </p>
+                </div>
+              ) : (
+                <div className="tol-file-uploader-validate-step-no-errors-container">
+                  <p className="tol-file-uploader-validate-step-info">
+                    No More Errors...
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="tol-file-uploader-validate-step-passed-container">
+            <h6>{vOrC} Passed 🎉</h6>
           </div>
         )}
       </div>
