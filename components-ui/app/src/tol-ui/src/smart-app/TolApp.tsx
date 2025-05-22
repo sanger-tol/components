@@ -121,6 +121,7 @@ function TolApp(props: Props) {
                   page.auth,
                   page.removeOnAuth,
                 );
+
                 // dropdown routes
                 if (page.pages) {
                   page.pages.forEach((dropdownPage: Page) => {
