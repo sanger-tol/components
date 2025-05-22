@@ -125,12 +125,17 @@ function TolApp(props: Props) {
                 // dropdown routes
                 if (page.pages) {
                   page.pages.forEach((dropdownPage: Page) => {
+                    const individualPageAuthorised = confirmAuthorised(
+                      user,
+                      dropdownPage.auth,
+                      dropdownPage.removeOnAuth,
+                    );
                     const dropdownPath =
                       convertToPath(dropdownPage.name);
                     // dropdown page route
                     routes.push(
                       <Route exact path={dropdownPath} key={dropdownPath}>
-                        {authorised ? (
+                        {individualPageAuthorised ? (
                           getElementDependingOnAuthStatus(
                             loggedIn,
                             dropdownPage,
