@@ -127,16 +127,12 @@
 
 .tol-file-uploader-validate-steps-outer-container {
   display: flex;
-  // justify-content: center;
-  // justify-self: center;
   background: var(--tol-grey-subtle);
   width: fit-content;
   max-width:100%;
   padding: 20px;
   margin-top: 20px;
   overflow:auto;
-  // overflow: scroll;
-  // padding-bottom: 0;
   transition: padding-bottom 0.3s ease;
 
   &.expanded {
