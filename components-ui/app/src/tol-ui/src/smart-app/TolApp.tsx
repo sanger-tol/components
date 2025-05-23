@@ -154,7 +154,7 @@ function TolApp(props: Props) {
                           path={`${dropdownPath}/:id`}
                           key={`${dropdownPath}-detail`}
                         >
-                          {authorised ? (
+                          {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user) ? (
                             dropdownPage.detail
                           ) : (
                             <Redirect to="/" />
@@ -183,7 +183,7 @@ function TolApp(props: Props) {
                         path={`${path}/:id`}
                         key={`${page.name}-detail`}
                       >
-                        {authorised ? page.detail : <Redirect to="/" />}
+                        {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user) ? page.detail : <Redirect to="/" />}
                       </Route>,
                     );
                   }
