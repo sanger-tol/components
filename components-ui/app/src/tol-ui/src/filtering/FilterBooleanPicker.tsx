@@ -5,9 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { isEmptyObject, stopPropagation } from "../general/utils";
-import { MultipleSelect } from "../forms/MultipleSelect";
-import { useEffectUpdate } from "../hooks/useEffectUpdate";
+import {
+  isEmptyObject,
+  stopPropagation,
+  MultipleSelect,
+  useEffectUpdate,
+} from "..";
 
 interface Props {
   id: string;

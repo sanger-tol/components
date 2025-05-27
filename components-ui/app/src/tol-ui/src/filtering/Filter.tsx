@@ -4,11 +4,14 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IRemoteTargetAndZone } from "../models";
-import FilterTextInput from "./FilterTextInput";
-import FilterDatePicker from "./FilterDatePicker";
-import FilterMultiSelect from "./FilterMultiSelect";
-import FilterBoolean from "./FilterBoolean";
+import {
+  IRemoteTargetAndZone,
+  FilterTextInput,
+  FilterDatePicker,
+  FilterMultiSelect,
+  FilterBoolean,
+} from "..";
+
 
 export type IFilterInputType =
   | "str"

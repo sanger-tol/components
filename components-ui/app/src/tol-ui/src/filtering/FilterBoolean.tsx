@@ -5,10 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect } from "react";
-import { IFilterInput } from "./Filter";
-import { setFilter, filterListener } from "./utils";
-import { MultipleSelect } from "../forms";
-import { StatusMessage, PopUpMessage } from "../index";
+import {
+  IFilterInput,
+  setFilter,
+  filterListener,
+  MultipleSelect,
+  StatusMessage,
+  PopUpMessage,
+} from "..";
+
 
 export function FilterBoolean(props: IFilterInput) {
   const { attribute, componentId, rename, zone, setZone, delay } = props;

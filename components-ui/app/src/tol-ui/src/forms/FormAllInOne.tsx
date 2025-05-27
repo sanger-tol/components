@@ -4,10 +4,12 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useState, useEffect, useRef } from "react";
 import { Button } from "rsuite";
-import { RSForm, Toaster, Message } from "../index";
-import React, { useState, useEffect, useRef } from "react";
 import {
+  RSForm,
+  Toaster,
+  Message,
   CountrySelect,
   FormTextField,
   SingleSelectCustomOption,
@@ -16,7 +18,8 @@ import {
   AutoComplete,
   Dropzone,
   FormCheckboxes,
-} from "./index";
+} from "..";
+
 
 export type Appearance = "default" | "primary" | "link" | "subtle" | "ghost";
 export type Color =

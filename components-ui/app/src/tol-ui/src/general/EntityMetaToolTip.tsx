@@ -12,7 +12,7 @@ interface Props extends IRemoteTarget {
   field: any;
 }
 
-export function EntityMetaTooltip(props: Props) {
+export function EntityMetaToolTip(props: Props) {
   const { field, objectType, dataSource } = props;
   const [attributeDeatils, setAttributeDetails] = useState<object>({});
 

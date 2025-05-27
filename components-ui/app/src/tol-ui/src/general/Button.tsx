@@ -5,7 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { Button as RsButton } from "rsuite";
-import { TolLoader, HoverOverlay, Icon } from "../index";
+import {
+  TolLoader,
+  HoverOverlay,
+  Icon
+} from "..";
 
 export interface IButton {
   icon?: string;

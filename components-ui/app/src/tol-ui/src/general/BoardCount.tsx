@@ -5,10 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from 'react';
-import { BoardFilters, RemoteCount } from "../index";
-import { saveTitle } from "../boards/utils";
-import { IBoardTargetAndZone } from "../models";
-import { IButton } from "../general/Button";
+import {
+  BoardFilters,
+  RemoteCount,
+  saveTitle,
+  IBoardTargetAndZone,
+  IButton,
+} from "..";
 
 
 interface Props extends IBoardTargetAndZone {

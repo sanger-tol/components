@@ -4,10 +4,14 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, Modal, PopUpMessage } from "..";
 import { Tabs } from "rsuite";
 import { CodeBlock } from 'react-code-blocks';
-import { copyToClipboard } from "./utils";
+import {
+  Button,
+  Modal,
+  PopUpMessage,
+  copyToClipboard
+} from "..";
 
 
 interface Props {

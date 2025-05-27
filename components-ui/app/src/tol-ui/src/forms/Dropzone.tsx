@@ -8,8 +8,13 @@ import { useState, useEffect } from "react";
 import { Uploader } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { Loader, StatusMessage, TsDataSource } from "../index";
-import { MessageType } from "../messaging/Message";
+import {
+  Loader,
+  StatusMessage,
+  TsDataSource,
+  MessageType,
+} from "..";
+
 
 interface WaitingUpload {
   message: string;

@@ -4,5 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export { default as RemoteTable } from "./RemoteTable";
-export { default as BoardTable } from "./BoardTable";
+export * from "./RemoteTable";
+export * from "./BoardTable";
+export * from "./DownloadModal";
+export * from "./actions";

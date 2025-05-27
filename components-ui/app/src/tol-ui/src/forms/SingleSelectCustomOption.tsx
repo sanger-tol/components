@@ -10,8 +10,11 @@ when 'other' is selected, allowing for custom response
 */
 
 import { useState, useEffect } from "react";
-import { RSForm } from "../index";
-import { SingleSelect, FormTextField } from "./index";
+import {
+  RSForm,
+  SingleSelect,
+  FormTextField,
+} from "..";
 
 interface Props {
   id: string;

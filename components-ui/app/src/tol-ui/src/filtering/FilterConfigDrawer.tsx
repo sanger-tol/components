@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Drawer } from "../general";
+import { Drawer } from "..";
 
 interface Props {
   open: boolean;

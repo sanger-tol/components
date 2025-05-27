@@ -5,9 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { useMemo } from "react";
-import { RSForm } from "../index";
 import countryList from "react-select-country-list";
-import { SingleSelect } from "./index";
+import {
+  SingleSelect,
+  RSForm
+} from "..";
 
 interface Props {
   label?: string;

@@ -4,8 +4,8 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Checkbox } from "rsuite";
 import { useEffect, useState } from "react";
+import { Checkbox } from "rsuite";
 import {
   MultipleSelect,
   InfoTooltip,
@@ -13,8 +13,6 @@ import {
   PopUpMessage,
   SourceTag,
   EntityMetaToolTip,
-} from "../index";
-import {
   getFlattenedMetaData,
   getAttributeDetail,
   getAttributeSources,
@@ -23,8 +21,8 @@ import {
   filterAttributes,
   getAllAttributeData,
   truncateString,
-} from "./utils";
-import { IRemoteTarget } from "../models";
+  IRemoteTarget,
+} from "..";
 
 
 export interface AllowedCardinality {

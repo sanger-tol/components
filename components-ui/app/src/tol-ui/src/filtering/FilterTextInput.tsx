@@ -7,15 +7,20 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { Input, InputGroup, Dropdown } from "rsuite";
 import { Button as BSButton } from "react-bootstrap";
-import { Button } from "..";
-import { stopPropagation } from "../general/utils";
-import { IFilterInput } from "./Filter";
-import { setFilter, filterListener, symbolToOperator } from "./utils";
-import FilterToggle from "./FilterToggle";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList } from "@fortawesome/free-solid-svg-icons";
-import MultipleSelect from "../forms/MultipleSelect";
-import Modal from "../general/Modal";
+import {
+  Button,
+  stopPropagation,
+  IFilterInput,
+  setFilter,
+  filterListener,
+  symbolToOperator,
+  FilterToggle,
+  MultipleSelect,
+  Modal,
+} from "..";
+
 
 export function FilterTextInput(props: IFilterInput) {
   const { attribute, componentId, rename, type, zone, setZone, delay } = props;

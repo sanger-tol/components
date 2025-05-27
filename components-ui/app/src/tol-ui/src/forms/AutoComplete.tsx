@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { AutoComplete as RSAutoComplete } from "rsuite";
-import { RSForm } from "../index";
+import { RSForm } from "..";
 
 interface Props {
   label?: string;

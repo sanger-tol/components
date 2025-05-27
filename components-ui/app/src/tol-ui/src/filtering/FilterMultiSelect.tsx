@@ -5,13 +5,16 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { IFilterInput } from "./Filter";
-import { setFilter, filterListener } from "./utils";
-import { MultipleSelect } from "../forms";
-import FilterToggle from "./FilterToggle";
-import { stopPropagation } from "../general/utils";
-import { PopUpMessage } from "../index";
-import { API_METHODS } from "../constants";
+import {
+  IFilterInput,
+  setFilter,
+  filterListener,
+  MultipleSelect,
+  FilterToggle,
+  stopPropagation,
+  PopUpMessage,
+  API_METHODS,
+} from "..";
 
 
 export function FilterMultiSelect(props: IFilterInput) {

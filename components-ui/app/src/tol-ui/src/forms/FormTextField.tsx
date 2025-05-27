@@ -5,8 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { RSForm } from "../index";
-import { capitaliseFirstLetter } from "../general/utils";
+import {
+  RSForm,
+  capitaliseFirstLetter,
+} from "..";
+
 
 interface Props {
   id: string;

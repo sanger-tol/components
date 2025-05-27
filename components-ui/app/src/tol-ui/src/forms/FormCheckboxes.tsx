@@ -5,8 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import React, { useState } from "react";
-import { RSForm } from "../index";
 import { Checkbox, CheckboxGroup } from "rsuite"; // @ts-ignore
+import { RSForm } from "..";
+
 
 interface Props {
   id: string;

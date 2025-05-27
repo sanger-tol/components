@@ -5,14 +5,18 @@ SPDX-License-Identifier: MIT
 */
 
 import { Toggle } from "rsuite"
-import { InfoTooltip } from "../general"
 import { useEffect, useState } from "react";
-import { IBoardTargetAndZone } from "../models";
-import { upsertComponent, upsertZone } from "../boards/utils";
-import RemoteFilters from "./RemoteFilters";
-import { Drawer } from "../general";
-import { generateFilter, resetFiltersBelow } from "./utils";
-import { deepCopy } from "../general/utils";
+import {
+  InfoTooltip,
+  IBoardTargetAndZone,
+  upsertComponent,
+  upsertZone,
+  RemoteFilters,
+  Drawer,
+  generateFilter,
+  resetFiltersBelow,
+  deepCopy,
+} from ".."
 
 
 interface Props extends IBoardTargetAndZone {
