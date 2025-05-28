@@ -4,22 +4,22 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export { default as Home } from "./Home";
-export { default as Tables } from "./Tables";
-export { default as Sandbox } from "./Sandbox";
-export { default as Miscellaneous } from "./Miscellaneous";
-export { default as Filters } from "./Filters";
-export { default as Forms } from "./Forms";
-export { default as BarCharts } from "./BarCharts";
-export { default as Maps } from "./Maps";
-export { default as Sunbursts } from "./Sunbursts";
-export { default as Widgets } from "./Widgets";
-export { default as Detail } from "./Detail";
-export { default as DetailInfo } from "./DetailInfo";
-export { default as UserId } from "./UserId";
-export { default as Timelines } from "./Timelines";
-export { default as Messages } from "./Messages";
-export { default as AuthPageExample } from "./AuthPageExample";
-export { default as NoAuthPageExample } from "./NoAuthPageExample";
-export { default as Colours } from "./Colours";
-export { default as Factories } from "./Factories";
+export * from "./Home";
+export * from "./Tables";
+export * from "./Sandbox";
+export * from "./Miscellaneous";
+export * from "./Filters";
+export * from "./Forms";
+export * from "./BarCharts";
+export * from "./Maps";
+export * from "./Sunbursts";
+export * from "./Widgets";
+export * from "./Detail";
+export * from "./DetailInfo";
+export * from "./UserId";
+export * from "./Timelines";
+export * from "./Messages";
+export * from "./AuthPageExample";
+export * from "./NoAuthPageExample";
+export * from "./Colours";
+export * from "./Factories";

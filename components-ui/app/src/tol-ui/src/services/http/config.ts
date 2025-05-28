@@ -33,3 +33,5 @@ export const CONFIG = {
   },
   paramsSerializer: serializeParams,
 };
+
+console.log(env);

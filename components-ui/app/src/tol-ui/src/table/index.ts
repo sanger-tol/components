@@ -14,3 +14,4 @@ export * from "./Table";
 export * from "./utils";
 export * from "./RemoteTable";
 export * from "./DownloadModal";
+export * from "./Relationship";
