@@ -5,13 +5,19 @@ SPDX-License-Identifier: MIT
 */
 
 import { useRef, useState } from "react";
-import { IRemoteTargetAndZone, IZone } from "../models";
-import { TsDataSource } from "../datasource";
-import { IComponentData, IFilter } from "../models";
-import { useEffectUpdate } from "./useEffectUpdate";
-import { generateFilter, resetAllFilters } from "../filtering/utils";
-import { deepCopy } from "../general/utils";
-import { useStateFallback } from "./useStateFallback";
+import {
+  IRemoteTargetAndZone,
+  IZone,
+  TsDataSource,
+  IComponentData,
+  IFilter,
+  useEffectUpdate,
+  generateFilter,
+  resetAllFilters,
+  deepCopy,
+  useStateFallback,
+} from "..";
+
 
 interface ZoneMeta {
   objectType: string;

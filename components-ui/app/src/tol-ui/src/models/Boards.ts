@@ -4,9 +4,11 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TsDataSource } from '../datasource';
-import { HistogramGrouping } from '../charts/utils';
-import { IFilter } from './Filter';
+import {
+  TsDataSource,
+  HistogramGrouping,
+  IFilter,
+} from '..';
 
 
 export interface IComponent {

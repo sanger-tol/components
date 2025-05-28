@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
-import { FieldMeta } from "../table/Field";
-import { AllowedCardinality } from "./AttributeSelector";
+import { FieldMeta, AllowedCardinality } from "..";
+
 
 export function convertToPath(name: string) {
   const path = name.toLowerCase();

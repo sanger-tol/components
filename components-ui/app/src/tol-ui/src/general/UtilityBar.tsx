@@ -5,11 +5,16 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from 'react'
-import { ClickOverlay, InlineEdit } from '.'
-import { IInlineEdit } from './InlineEdit'
-import { IButton } from './Button'
-import { IDropdownButtons } from './DropdownButtons'
-import { Button, DropdownButtons, resizeListener } from '../'
+import {
+  ClickOverlay,
+  InlineEdit,
+  IInlineEdit,
+  IButton,
+  IDropdownButtons,
+  Button,
+  DropdownButtons,
+  resizeListener
+} from '..'
 
 
 export interface IUtilityBar {

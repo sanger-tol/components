@@ -3,7 +3,10 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IEntityMeta, IFilter } from ".";
+import {
+  IEntityMeta,
+  IFilter
+} from "..";
 
 export interface IDetailCache {
   [baseUrl: string]: {

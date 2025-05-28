@@ -6,9 +6,10 @@ SPDX-License-Identifier: MIT
 
 import React, { useState, useEffect } from "react";
 import { Timeline as RSTimeline } from "rsuite";
-import { Col, Row } from "../index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { Col, Row } from "..";
+
 
 type iconType = "active-dot" | "dot";
 

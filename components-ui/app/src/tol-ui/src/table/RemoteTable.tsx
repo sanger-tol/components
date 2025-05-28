@@ -5,34 +5,37 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReactNode, useEffect, useState } from "react";
-import { FieldMetaData, FieldMeta } from "./Field";
-import { httpClient } from "../services/http/httpClient";
 import {
-  createSort,
-  getFieldMetaLocalStorage,
-  setTableConfigLocalStorage,
+  ACTION_ENDPOINTS,
+  ActionCheckModal,
+  ActionModal,
+  API_METHODS,
+  FieldMeta,
+  FieldMetaData,
+  IRemoteTargetAndZone,
+  IUtilityBar,
+  IZone,
+  IDropdownButtonConfig,
+  NumRows,
+  Placeholder,
+  RowCounter,
+  Table,
+  addRemoteActions,
   convertTableData,
-  tableDebug,
-  structureFieldMeta,
-  getTableConfigLocalStorage,
-} from "./utils";
-import Table, { NumRows } from "./Table";
-import { Placeholder, TsDataSource } from "../index";
-import { useEffectUpdate } from "../hooks/useEffectUpdate";
-import { IRemoteTargetAndZone, IZone } from "../models";
-import {
-  generateFilter,
+  createSort,
   filterHasUpdated,
+  generateFilter,
+  getFieldMetaLocalStorage,
+  getTableConfigLocalStorage,
+  httpClient,
   resetFiltersBelow,
-} from "../filtering/utils";
-import RowCounter from "./RowCounter";
-import { IDropdownButtonConfig } from "../models";
-import ActionCheckModal from "./actions/ActionCheckModal";
-import { ACTION_ENDPOINTS, API_METHODS } from "../constants";
-import ActionModal from "./actions/ActionModal";
-import { addRemoteActions } from "./actions/utils";
-import { useStateFallback } from "../hooks";
-import { IUtilityBar } from "../general/UtilityBar";
+  setTableConfigLocalStorage,
+  structureFieldMeta,
+  tableDebug,
+  useEffectUpdate,
+  useStateFallback,
+} from '..';
+
 
 interface Props extends IRemoteTargetAndZone {
   id: string;

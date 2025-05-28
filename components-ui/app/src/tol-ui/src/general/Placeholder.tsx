@@ -12,7 +12,7 @@ import {
   faUpDownLeftRight,
   faTable,
 } from "@fortawesome/free-solid-svg-icons";
-import { Loader, StatusMessage } from "../index";
+import { Loader, StatusMessage } from "..";
 
 function getPlaceholderIcon(
   bar?: boolean,

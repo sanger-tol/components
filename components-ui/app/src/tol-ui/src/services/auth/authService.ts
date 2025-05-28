@@ -4,13 +4,14 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-//@ts-nocheck
 
-import { TsDataSource } from "../../datasource";
-import { Page } from "../../models";
-import { httpClient } from "../http/httpClient";
-import { tokenHasExpired } from "../localStorage/localStorageService";
-import { API_METHODS } from "../../constants";
+import {
+  TsDataSource,
+  Page,
+  tokenHasExpired,
+  API_METHODS,
+} from "../..";
+
 
 const authDataSource = new TsDataSource({
   apiPrefix: "auth"

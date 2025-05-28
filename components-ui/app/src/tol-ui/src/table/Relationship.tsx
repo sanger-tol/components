@@ -5,10 +5,14 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { HoverOverlay, FormatTooltip } from "../general";
-import { Loader, TsDataSource } from "../index";
-import { mapKeysToDisplayNames } from "./utils";
-import { API_METHODS } from "../constants";
+import {
+  HoverOverlay,
+  FormatTooltip,
+  Loader,
+  TsDataSource,
+  mapKeysToDisplayNames,
+  API_METHODS,
+} from "..";
 
 
 interface Props {
@@ -61,7 +65,7 @@ export function Relationship(props: Props) {
   );
 
   if (detail) {
-    return <a href={endpoint}>{box}</a>;
+    return <a href={data["type"]}>{box}</a>;
   }
 
   return box;

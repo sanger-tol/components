@@ -5,12 +5,16 @@
  */
 
 import { useState } from "react";
-import DropdownButtons from "../../general/DropdownButtons";
-import NewBoardModal from "./NewBoardModal";
-import { IDropdownButtonConfig, IDropdownMainIconProps } from "../../models";
 import { useHistory } from "react-router-dom";
-import { createBoardAndView } from "../utils";
-import { TsDataSource } from "../../index";
+import {
+  DropdownButtons,
+  NewBoardModal,
+  IDropdownButtonConfig,
+  IDropdownMainIconProps,
+  createBoardAndView,
+  TsDataSource,
+} from "../..";
+
 
 interface Props {
   title?: string;

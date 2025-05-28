@@ -5,6 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReactNode, useEffect, useState } from "react";
+import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import {
   Placeholder,
   useEffectUpdate,
@@ -13,20 +16,21 @@ import {
   EntityMetaToolTip,
   UtilityBar,
   resizeListener,
-} from "../index";
-import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSliders } from "@fortawesome/free-solid-svg-icons";
-import ColumnConfigDrawer from "./ColumnConfigDrawer";
-import { exportTableToSpreadsheet, getAllowedFields, getSourceColour } from "./utils";
-import Filter, { IFilterInputType } from "../filtering/Filter";
-import { FieldMeta, initialiseFieldMeta } from "./Field";
-import { IZone } from "../boards";
-import { IDropdownButtonConfig } from "../models/Buttons";
-import { useStateFallback } from "../hooks/useStateFallback";
-import { IUtilityBar } from "../general/UtilityBar";
-import { IButton } from "../general/Button";
-import { IDropdownButtons } from "../general/DropdownButtons";
+  ColumnConfigDrawer,
+  exportTableToSpreadsheet,
+  getAllowedFields,
+  getSourceColour,
+  Filter,
+  IFilterInputType,
+  FieldMeta,
+  initialiseFieldMeta,
+  IZone,
+  IDropdownButtonConfig,
+  useStateFallback,
+  IUtilityBar,
+  IButton,
+  IDropdownButtons,
+} from "..";
 
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
@@ -121,7 +125,7 @@ export function Table(props: Props) {
     rowSelection,
     actions,
     actionsFooter,
-    utilityBarConfig = {} as IUtilityBar,
+    utilityBarConfig = {},
     contents,
     groupBy,
     /* eslint-enable */

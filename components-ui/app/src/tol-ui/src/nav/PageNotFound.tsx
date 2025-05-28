@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Header, HeaderButton } from "../index";
+import { Header, HeaderButton } from "..";
 
 const home: HeaderButton = {
   href: "/",

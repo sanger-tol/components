@@ -4,9 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import Modal from "../../general/Modal";
-import ActionStatus from "./ActionStatus";
-import RemoteTable from "../RemoteTable";
+import { Modal, ActionStatus, RemoteTable } from "../..";
 
 
 interface Props {

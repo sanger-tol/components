@@ -4,8 +4,13 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Container, Row, Col } from "../index";
-import { SangerLogo } from "./CustomIcons";
+import {
+  Container,
+  Row,
+  Col,
+  SangerLogo
+} from "..";
+
 
 export function Footer() {
   return (

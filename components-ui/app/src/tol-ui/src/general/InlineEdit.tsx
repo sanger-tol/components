@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { InlineEdit as RSInlineEdit } from "rsuite";
-import { Toaster, Message } from "../index";
+import { Toaster, Message } from "..";
 
 export interface IInlineEdit {
   title: string;

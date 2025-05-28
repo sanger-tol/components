@@ -4,9 +4,13 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import MyBoards from "../boards/my-boards/MyBoards";
-import { Dropdown, Page } from "../models";
-import { AppBoard } from "./TolApp";
+import {
+  MyBoards,
+  Dropdown,
+  Page,
+  AppBoard,
+} from "..";
+
 
 /**
  * Adds a "My Boards" page to the profile pages if the boards prop is provided.

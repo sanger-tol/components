@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col } from "..";
 
 export function CentreContents(props: any) {
   return (

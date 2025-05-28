@@ -4,8 +4,8 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { httpServices } from "./httpService";
-import { getTokenFromLocalStorage } from "../localStorage/localStorageService";
+import { httpServices, getTokenFromLocalStorage } from "../..";
+
 
 export function httpClient() {
   const token = getTokenFromLocalStorage();

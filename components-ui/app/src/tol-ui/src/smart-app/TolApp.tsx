@@ -16,26 +16,31 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
-import { Navigation, Callback, PageNotFound } from "../nav";
+import Navigation from "../nav/Navigation";
 import {
+  Callback,
+  PageNotFound,
   getTokenFromLocalStorage,
   getUserFromLocalStorage,
   tokenHasExpired,
-} from "../services/localStorage/localStorageService";
-import {
   confirmAuthorised,
   getElementDependingOnAuthStatus,
-} from "../services/auth/authService";
-import { AuthProvider } from "../contexts/auth.context";
-import Footer from "../general/Footer";
-import { Dropdown, Page } from "../models/Nav";
-import { convertToPath, matomoAnalytics } from "../general/utils";
-import { env } from "../variables/config";
-import { MyBoards, Board } from "../boards";
-import { addBoardPages, generatePagesThatRequireARoute } from "./utils";
-import { TsDataSource } from "../datasource";
+  AuthProvider,
+  Footer,
+  Dropdown,
+  Page,
+  convertToPath,
+  matomoAnalytics,
+  env,
+  Board,
+  addBoardPages,
+  generatePagesThatRequireARoute,
+  TsDataSource,
+} from "..";
+
 
 export interface AppBoard {
+  dataSource: TsDataSource;
   boardDataSource?: TsDataSource;
 }
 
@@ -45,7 +50,7 @@ interface Props {
   pages: (Page | Dropdown)[];
   profilePages?: Page[];
   login?: boolean;
-  boards?: BoardsObject;
+  boards?: AppBoard;
   register?: boolean;
   customCallbackUrl?: string;
 }
@@ -109,7 +114,10 @@ export function TolApp(props: Props) {
               </Route>
               <Route path="/board/:boardId">
                 {boards && loggedIn ? (
-                  <Board boardDataSource={boards.boardDataSource} />
+                  <Board
+                    dataSource={boards.dataSource}
+                    boardDataSource={boards.boardDataSource}
+                  />
                 ) : (
                   <Redirect to="/" />
                 )}
@@ -124,8 +132,8 @@ export function TolApp(props: Props) {
                 );
 
                 // dropdown routes
-                if (page.pages) {
-                  page.pages.forEach((dropdownPage: Page) => {
+                if ('pages' in page && page.pages) {
+                  page.pages!.forEach((dropdownPage: Page) => {
                     const dropdownPath =
                       convertToPath(dropdownPage.name);
                     // dropdown page route
@@ -172,7 +180,7 @@ export function TolApp(props: Props) {
                   );
 
                   // detail page route
-                  if (page.detail) {
+                  if ('detail' in page && page.detail) {
                     routes.push(
                       <Route
                         exact

@@ -5,18 +5,19 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { numberWithSpaces } from "./utils";
-import Placeholder from "./Placeholder";
 import {
   generateFilter,
   filterHasUpdated,
   resetFiltersBelow,
-} from "../filtering/utils";
-import { useEffectUpdate } from "../hooks";
-import { IUtilityBar } from "../general/UtilityBar";
-import UtilityBar from "./UtilityBar";
-import { IBoardTargetAndZone, TFilterOrUndefined } from "../models";
-import { API_METHODS } from "../constants";
+  Placeholder,
+  numberWithSpaces,
+  useEffectUpdate,
+  IUtilityBar,
+  IBoardTargetAndZone,
+  TFilterOrUndefined,
+  API_METHODS,
+} from "..";
+
 
 interface Props extends IBoardTargetAndZone {
   id: string;

@@ -4,8 +4,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button } from "..";
 import { Modal as RSModal } from "rsuite";
+import { Button } from "..";
+
 
 interface Props {
   size: string;

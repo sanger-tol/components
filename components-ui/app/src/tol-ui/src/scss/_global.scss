@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+@import "./_mixins.scss";
+
 body {
   @include body-font;
   min-width: 350px;

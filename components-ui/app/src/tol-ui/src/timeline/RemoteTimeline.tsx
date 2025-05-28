@@ -5,8 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import Timeline, { DataPoint, TimelineItem } from "./Timeline";
-import { Placeholder, httpClient, env } from "../index";
+import {
+  DataPoint,
+  TimelineItem,
+  Timeline,
+  Placeholder,
+  httpClient,
+  env
+} from "..";
+
 
 interface Props {
   endpoint: string;

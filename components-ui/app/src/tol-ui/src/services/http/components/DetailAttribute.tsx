@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IRemoteTarget } from "../../../models";
-import { Loader } from "../../..";
 import { useState } from "react";
+import { IRemoteTarget, Loader } from "../../..";
+
 
 interface Props extends IRemoteTarget {
   id: string;

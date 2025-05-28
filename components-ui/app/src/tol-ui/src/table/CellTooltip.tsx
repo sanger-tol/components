@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import HoverOverlay from "../general/HoverOverlay";
+import { HoverOverlay } from "..";
 
 interface Props {
   value: any;

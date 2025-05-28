@@ -5,8 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect } from "react";
-import { LoadingContent, TsDataSource } from "../index";
-import { API_METHODS } from "../constants";
+import {
+  LoadingContent,
+  TsDataSource,
+  API_METHODS,
+} from "..";
+
 
 interface Props {
   resource: string;

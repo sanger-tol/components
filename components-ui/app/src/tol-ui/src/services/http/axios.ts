@@ -3,7 +3,9 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
+
 import axios, { AxiosInstance } from "axios";
+
 
 export function createAxiosInstance(options: any): AxiosInstance {
   // eslint-disable-line

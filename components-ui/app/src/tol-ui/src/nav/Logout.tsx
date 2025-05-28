@@ -5,11 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect } from "react";
-import { useAuth } from "../contexts/auth.context";
 import {
+  useAuth,
   setReturnUrlFromLocalStorage,
   tokenHasExpired,
-} from "../services/localStorage/localStorageService";
+} from "..";
+
 
 export function Logout() {
   const { setToken } = useAuth();

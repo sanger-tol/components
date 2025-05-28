@@ -4,10 +4,13 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { InfoIcon } from "./CustomIcons";
-import HoverOverlay from "./HoverOverlay";
-import Markdown from "./Markdown";
 import { ReactNode } from "react";
+import {
+  HoverOverlay,
+  Markdown,
+  InfoIcon,
+} from "..";
+
 
 interface Props {
   contents: ReactNode;

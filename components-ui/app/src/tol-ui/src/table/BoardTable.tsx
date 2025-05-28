@@ -4,11 +4,17 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { FieldMeta, initialiseFieldMeta } from "./Field";
-import { BoardFilters, RemoteTable } from "../index";
 import { useState } from "react";
-import { upsertComponentConfig, saveTitle } from "../boards/utils";
-import { IBoardTargetAndZone } from "../models";
+import {
+  FieldMeta,
+  initialiseFieldMeta,
+  BoardFilters,
+  RemoteTable,
+  upsertComponentConfig,
+  saveTitle,
+  IBoardTargetAndZone
+} from "..";
+
 
 interface Props extends IBoardTargetAndZone{
   id: string;

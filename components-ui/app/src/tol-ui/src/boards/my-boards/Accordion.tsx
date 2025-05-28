@@ -6,18 +6,20 @@
 
 import React, { useState, useEffect } from "react";
 import { Accordion as Acc } from "rsuite";
-import { IDropdownButtonConfig, IDropdownMainIconProps } from "../../models";
-import { httpClient } from "../../services";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartSimple, faTable } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
 import {
+  IDropdownButtonConfig,
+  IDropdownMainIconProps,
+  httpClient,
   TsDataSource,
   AccordionHeader,
   DropdownButtons,
   ConfirmationModal,
-  BOARDS
+  BOARDS,
 } from "../..";
+
 
 interface AccordionBaseProps {
   id: string;
@@ -214,7 +216,7 @@ export function Accordion(props: BoardsAccordionProps) {
     );
     setBoardDetails(deletedBoard);
     const ds = new TsDataSource();
-    ds.custom(`${BOARDS.DELETE_BOARD}/${boardIdToDelete}`, "DELETE");
+    // ds.custom(`${BOARDS.DELETE_BOARD}/${boardIdToDelete}`, API_METHODS.DELETE); // TODO: add delete
     setBoardIdToDelete(null);
   };
 

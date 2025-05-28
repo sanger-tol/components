@@ -5,6 +5,8 @@
  */
 
 import { useState, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import {
   Widgets,
   httpClient,
@@ -14,11 +16,9 @@ import {
   StaticMessage,
   Accordion,
   MyBoardsHeader,
+  getUserFromLocalStorage,
   BOARDS
 } from "../..";
-import { getUserFromLocalStorage } from "../../services/localStorage/localStorageService";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 
 
 const containerStyle = {

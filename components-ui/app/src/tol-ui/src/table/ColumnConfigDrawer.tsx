@@ -10,10 +10,11 @@ import {
   AttributeSelector,
   Drawer,
   Modal,
-  SelectedAttributesContainer
-} from "../index";
-import { FieldMeta, initialiseFieldMeta } from "./Field";
-import { IRemoteTarget } from "../models";
+  SelectedAttributesContainer,
+  FieldMeta,
+  initialiseFieldMeta,
+  IRemoteTarget,
+} from "..";
 
 
 interface Props extends IRemoteTarget{

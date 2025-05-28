@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import { ReactNode } from "react";
 import { Popover, Whisper } from "rsuite";
 
+
 interface Props {
   contents: ReactNode;
   children: JSX.Element;

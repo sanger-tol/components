@@ -5,10 +5,14 @@
  */
 
 import { useEffect, useState } from "react";
-import Modal from "../../general/Modal";
-import { generateId } from "../../general/utils";
-import { FormTextField } from "../../forms";
-import { RSForm, Button } from "../../index";
+import {
+  Modal,
+  generateId,
+  FormTextField,
+  RSForm,
+  Button,
+} from "../..";
+
 
 interface Props {
   setOpen: any;

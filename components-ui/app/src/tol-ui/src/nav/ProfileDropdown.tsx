@@ -5,10 +5,14 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Avatar } from "rsuite";
-import { Page, User } from "../models";
-import { convertToPath } from "../general/utils";
 import { Nav, NavDropdown } from "react-bootstrap";
+import { Avatar } from "rsuite";
+import {
+  Page,
+  User,
+  convertToPath,
+} from "..";
+
 
 interface Props {
   user: User;

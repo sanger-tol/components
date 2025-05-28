@@ -5,8 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { StatusMessage } from "../../messaging";
-import { TsDataSource, Placeholder } from "../..";
+import { StatusMessage, TsDataSource, Placeholder } from "../..";
+
 
 interface Props {
   rowData: any;

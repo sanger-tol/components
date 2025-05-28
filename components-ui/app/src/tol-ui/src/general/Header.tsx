@@ -5,9 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { Container } from "react-bootstrap";
-import { HeaderButton } from "../models/Buttons";
-import { Button } from "./Button";
+import {
+  Container,
+  HeaderButton,
+  Button
+} from "..";
+
 
 interface Props {
   title?: string;
