@@ -10,9 +10,11 @@ import {
   AttributeSelector,
   Drawer,
   Modal,
-  SelectedAttributesContainer
+  SelectedAttributesContainer,
+  MultipleSelect
 } from "../index";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
+import { getActions } from "./utils";
 
 export interface Props {
   baseUrl?: string;
@@ -47,6 +49,10 @@ function ColumnConfigDrawer(props: Props) {
     fieldMeta?.order?.active ?? [],
   );
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
+  // Used to store action options for the dropdown
+  const [actionOptions, setActionOptions] = useState<string[]>([]);
+  // Used to store selected actions from the dropdown
+  const [action, setAction] = useState<string[]>([]);
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
@@ -183,6 +189,22 @@ function ColumnConfigDrawer(props: Props) {
     setOpen(false);
   };
 
+  useEffect(() => {
+    const formatActionOptions = async () => {
+      setActionOptions(await getActions(endpoint))
+    }
+    formatActionOptions();
+  }, [])
+
+  const actionDropdown = (
+    <MultipleSelect
+      placeholder="Select"
+      data={actionOptions}
+      value={action}
+      setValue={setAction}
+    />
+  )
+
   const attSelector = (
     <div>
       <div>
@@ -210,6 +232,7 @@ function ColumnConfigDrawer(props: Props) {
         attributes={attributes}
         setAttributes={setAttributes}
       />
+      {actionDropdown}
       <div>
         <div className="tol-config-drawer-save-button">{drawerButtons}</div>
       </div>
