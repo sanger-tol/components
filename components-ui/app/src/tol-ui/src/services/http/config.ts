@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { env } from "../..";
+import { env } from "../../variables";
 
 
 const serializeParam = (k, v) => {
@@ -33,5 +33,3 @@ export const CONFIG = {
   },
   paramsSerializer: serializeParams,
 };
-
-console.log(env);

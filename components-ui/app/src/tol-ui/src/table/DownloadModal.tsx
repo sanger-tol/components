@@ -20,14 +20,14 @@ interface Props {
   setOpen: any;
   objectType?: string;
   filter?: any;
-  action: Function;
+  onDownloadSpreadsheet: Function;
   source?: string;
   fields: string[];
   totalSize: number;
 }
 
 export function DownloadModal(props: Props) {
-  const { size, open, setOpen, action, objectType, filter, source, fields, totalSize } = props;
+  const { size, open, setOpen, onDownloadSpreadsheet, objectType, filter, source, fields, totalSize } = props;
 
   const stringifyFilter = (filter: any) => {
     if (!filter) {
@@ -86,7 +86,7 @@ tol data \
                 type="success"
                 text="Download as Spreadsheet"
                 onClick={() => {
-                  action();
+                  onDownloadSpreadsheet();
                   setOpen(false);
                 }}
                 icon="download"

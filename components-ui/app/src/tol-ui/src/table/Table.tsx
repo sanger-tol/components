@@ -30,20 +30,19 @@ import {
   IUtilityBar,
   IButton,
   IDropdownButtons,
+  IRemoteTarget,
 } from "..";
 
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
-interface Props {
+interface Props extends IRemoteTarget{
   id: string;
   data: any;
   fieldMeta: FieldMeta;
   height: any;
   loading: boolean;
 
-  endpoint: string;
-  baseUrl?: string;
   source?: string;
 
   page: number;
@@ -94,8 +93,8 @@ export function Table(props: Props) {
     height,
     loading,
 
-    endpoint,
-    baseUrl,
+    objectType,
+    dataSource,
     source,
 
     page,
@@ -274,14 +273,15 @@ export function Table(props: Props) {
         size="sm"
         open={downloadOpen}
         setOpen={setDownloadOpen}
-        objectType={endpoint}
+        objectType={objectType}
         filter={filter}
         source={source}
         fields={fieldMeta.order.active}
         totalSize={totalSize}
-        action={() =>
+        onDownloadSpreadsheet={() =>
           exportTableToSpreadsheet(
-            endpoint,
+            objectType,
+            dataSource,
             fieldMeta.data,
             filter!,
             sortColumn,
@@ -290,7 +290,6 @@ export function Table(props: Props) {
             setError,
             setDownloading,
             defaultSort,
-            baseUrl,
           )
         }
       />

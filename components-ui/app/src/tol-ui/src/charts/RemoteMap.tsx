@@ -69,7 +69,6 @@ export function RemoteMap(props: Props) {
         params: {
           filter: filter,
         },
-      
       })
       .then((res: any) => {
         const count = res.data.meta.total;

@@ -9,7 +9,6 @@ import { Modal, ActionStatus, RemoteTable } from "../..";
 
 interface Props {
   objectType: string; // original table object
-  apiPrefix?: string; // for the action table
   open: boolean;
   setOpen: (open: boolean) => void;
 }

@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { ReactNode, useEffect, useState } from "react";
 import {
-  ACTION_ENDPOINTS,
+  ACTIONS,
   ActionCheckModal,
   ActionModal,
   API_METHODS,
@@ -27,7 +27,6 @@ import {
   generateFilter,
   getFieldMetaLocalStorage,
   getTableConfigLocalStorage,
-  httpClient,
   resetFiltersBelow,
   setTableConfigLocalStorage,
   structureFieldMeta,
@@ -81,7 +80,6 @@ export function RemoteTable(props: Props) {
     id,
     objectType,
     dataSource,
-    source,
     fields,
     basic,
     forceUpdate,
@@ -90,7 +88,6 @@ export function RemoteTable(props: Props) {
     onPageSizeChange,
     onToggleFilterVisibility,
     defaultSort,
-    displaySource,
     noFilter,
     noPagination,
     noSorting,
@@ -101,9 +98,8 @@ export function RemoteTable(props: Props) {
     utilityBarConfig,
     debug,
     contents,
-    groupBy
+    height = "100%",
   } = props;
-  const height = props.height !== undefined ? props.height : "100%";
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
@@ -210,11 +206,11 @@ export function RemoteTable(props: Props) {
     // generating query params
     const params = {
       page: page,
-      page_size: pageSize,
+      pageSize: pageSize,
       filter: filter,
-      requested_fields: fields ? 
-        Object.keys(fields as Object).join(',') : 
-        Object.keys(fieldMeta?.order.active as Object).join(',')
+      requestedFields: fields
+        ? Object.keys(fields as Object).join(',')
+        : (fieldMeta?.order.active || []).join(',')
     };
 
     // deal with sorting
@@ -225,11 +221,13 @@ export function RemoteTable(props: Props) {
     }
 
     // get data and update state
-    httpClient()
-      .get("/" + objectType, {
-        params: params,
+    dataSource
+      .custom({
+        method: API_METHODS.GET,
+        resource: objectType,
+        params
       })
-      .then(async (res: any) => {
+      .then(async (res) => {
         // error if endpoint doesn't return 200
         if (res.status !== 200) throw Error();
         const apiData = res.data.data;
@@ -260,7 +258,7 @@ export function RemoteTable(props: Props) {
 
         // setting data using fieldMeta
         setData(
-          convertTableData(apiData, fm as FieldMeta, baseUrl, entityMeta)
+          convertTableData(apiData, fm as FieldMeta, dataSource, entityMeta)
         );
         setLoading(false);
         setInitialLoad(false);
@@ -295,7 +293,7 @@ export function RemoteTable(props: Props) {
     await dataSource
       .custom({
         method: API_METHODS.POST,
-        resource: ACTION_ENDPOINTS.RUN_ACTION,
+        resource: ACTIONS.RUN_ACTION,
         body: {
           ids: ids,
           action_name: actionName,
@@ -335,21 +333,17 @@ export function RemoteTable(props: Props) {
         currentActionName={currentActionName}
       />
       <ActionModal
-        objectType={endpoint}
+        objectType={objectType}
         open={actionModalOpen}
         setOpen={setActionModalOpen}
       />
       <Table
-        id={id}
+        {...props}
         contents={contents ? contents : Contents()}
-        groupBy={groupBy}
         data={data}
         fieldMeta={fieldMeta!}
         height={height}
         loading={loading}
-        endpoint={endpoint}
-        baseUrl={baseUrl}
-        source={source}
         page={page}
         setPage={setPage}
         pageSize={pageSize}
@@ -363,15 +357,12 @@ export function RemoteTable(props: Props) {
             {...props}
           />
         }
-        displaySource={displaySource}
         filterVisibility={filterVisibility}
         setFilterVisibility={setFilterVisibility}
         sortColumn={sortColumn}
         sortType={sortType}
         defaultSort={defaultSort}
         handleSortColumn={handleSortColumn}
-        zone={zone as IZone}
-        setZone={setZone}
         filter={filter}
         onModalSave={onModalSave}
         noFilter={noFilter}

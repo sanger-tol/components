@@ -4,10 +4,17 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ACTION_ENDPOINTS } from "../../constants";
-import { IDropdownButtonConfig } from "../../models";
-import { TsDataSource } from "src/datasource";
+import {
+  API_METHODS,
+  IDropdownButtonConfig,
+  LOCAL_API_PREFIX,
+  TsDataSource,
+} from "../..";
 
+
+const actionDataSource = new TsDataSource({
+  apiPrefix: LOCAL_API_PREFIX,
+});
 
 export function addRemoteActions(
   objectType: string,
@@ -50,7 +57,10 @@ export function addRemoteActions(
     actionName: string
   ): Promise<object> => {
     try {
-      const res = await httpClient().get(`/local/${ACTION_ENDPOINTS.GET_ACTIONS}`, {
+      const res = await actionDataSource
+      .custom({
+        method: API_METHODS.GET,
+        resource: objectType,
         params: {
           filter: {
             and_: {
@@ -95,10 +105,12 @@ export function addRemoteActions(
           },
         };
 
-        const res = await httpClient().get(`/${objectType}`, {
-          baseURL: baseUrl,
-          params: { filter: filter },
-        });
+        const res = await dataSource
+          .custom({
+            method: API_METHODS.GET,
+            resource: objectType,
+            params: { filter: filter },
+          });
 
         //@ts-ignore
         const data = res.data.data;

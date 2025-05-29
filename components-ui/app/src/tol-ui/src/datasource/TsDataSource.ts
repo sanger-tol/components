@@ -353,6 +353,7 @@ export class TsDataSource {
     pageSize,
     filter,
     sortBy,
+    requestedFields,
   }: IGetListPage): Promise<TDataObjectListOrNull> {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
@@ -365,6 +366,7 @@ export class TsDataSource {
             page_size: pageSize,
             filter: filter,
             sort_by: sortBy,
+            requested_fields: requestedFields
           },
         }
       )

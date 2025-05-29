@@ -69,6 +69,7 @@ export interface IGetListPage {
   pageSize?: number;
   filter?: IFilter;
   sortBy?: string;
+  requestedFields?: string;
 }
 
 export interface ICustom {

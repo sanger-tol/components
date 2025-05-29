@@ -12,6 +12,9 @@ export const API_METHODS = {
   PUT: "PUT",
 }
 
+export const BOARDS_API_PREFIX = "board-data";
+export const LOCAL_API_PREFIX = "local";
+
 export const BOARDS = {
   BOARD: "board",
   VIEW: "view",
@@ -22,9 +25,7 @@ export const BOARDS = {
   COMPONENT_ZONE: "component_zone",
 }
 
-export const BOARDS_API_PREFIX = "board-data";
-
-export const ACTION_ENDPOINTS = {
-  GET_ACTIONS: "action",
+export const ACTIONS = {
+  ACTION: "action",
   RUN_ACTION: "run-action",
 }
