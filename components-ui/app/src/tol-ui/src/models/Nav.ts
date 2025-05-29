@@ -15,6 +15,7 @@ export interface Page extends Default {
   element?: JSX.Element;
   detail?: JSX.Element;
   authElement?: JSX.Element;
+  detailAuth?: boolean;
   link?: {
     href: string;
     target?: string;

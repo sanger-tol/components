@@ -133,13 +133,18 @@ export function TolApp(props: Props) {
 
                 // dropdown routes
                 if ('pages' in page && page.pages) {
-                  page.pages!.forEach((dropdownPage: Page) => {
+                  page.pages.forEach((dropdownPage: Page) => {
+                    const individualPageAuthorised = confirmAuthorised(
+                      user,
+                      dropdownPage.auth,
+                      dropdownPage.removeOnAuth,
+                    );
                     const dropdownPath =
                       convertToPath(dropdownPage.name);
                     // dropdown page route
                     routes.push(
                       <Route exact path={dropdownPath} key={dropdownPath}>
-                        {authorised ? (
+                        {individualPageAuthorised ? (
                           getElementDependingOnAuthStatus(
                             loggedIn,
                             dropdownPage,
@@ -158,7 +163,7 @@ export function TolApp(props: Props) {
                           path={`${dropdownPath}/:id`}
                           key={`${dropdownPath}-detail`}
                         >
-                          {authorised ? (
+                          {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user) ? (
                             dropdownPage.detail
                           ) : (
                             <Redirect to="/" />
@@ -187,7 +192,7 @@ export function TolApp(props: Props) {
                         path={`${path}/:id`}
                         key={`${page.name}-detail`}
                       >
-                        {authorised ? page.detail : <Redirect to="/" />}
+                        {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user) ? page.detail : <Redirect to="/" />}
                       </Route>,
                     );
                   }
