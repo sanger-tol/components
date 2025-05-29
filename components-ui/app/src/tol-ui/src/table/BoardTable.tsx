@@ -71,6 +71,7 @@ function BoardTable(props: Props) {
       onPageSizeChange={onPageSizeChange}
       forceUpdate={forceUpdate}
       actions={config.actions}
+      rowSelection={config.actions?.length > 0}
       utilityBarConfig={{
         title: {
           title: props.title,
