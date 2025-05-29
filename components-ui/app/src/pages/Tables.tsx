@@ -5,7 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Button, RemoteTable, Widgets, env, useZone } from "../tol-ui/src";
+import { Button, RemoteTable, Widgets, useZone } from "../tol-ui/src";
+import { tolDataSource } from ".";
 
 interface exampleProps {
   text: string;
@@ -24,8 +25,8 @@ export function Tables() {
   const title = <h2>Tables</h2>;
 
   const runData = useZone({
-    endpoint: "run_data",
-    baseUrl: env.TOL_DATA,
+    objectType: "run_data",
+    dataSource: tolDataSource,
     components: [{ id: "table-example" }],
   });
 

@@ -458,7 +458,11 @@ export function Table(props: Props) {
                     <HeaderCell>
                       {(field.description || field.source) && (
                         <div className="tol-header-info">
-                          <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint} />
+                          <EntityMetaToolTip
+                            objectType={objectType}
+                            dataSource={dataSource}
+                            field={key}
+                          />
                         </div>
                       )}
                       <p className="tol-header-text">
