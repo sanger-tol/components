@@ -54,7 +54,8 @@ function ColumnConfigDrawer(props: Props) {
   // Used to store actions options for the dropdown
   const [actionOptions, setActionsOptions] = useState<string[]>([]);
   // Used to store selected actions from the dropdown
-  const [actions, setActions] = useState<string[]>(props.actions?.map((btn) => btn.name as string) ?? []);
+  const originalActions = props.actions?.map((btn) => btn.name as string) ?? [];
+  const [actions, setActions] = useState<string[]>(originalActions);
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
@@ -89,7 +90,7 @@ function ColumnConfigDrawer(props: Props) {
   };
 
   const saveConfig = () => {
-    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || actions.length > 0) {
+    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || originalActions !== actions) {
       const updatedFieldMeta = fieldMetaUpdatedByContents();
       onConfigSave(updatedFieldMeta, actions);
       setInitialAttributes(attributes);
