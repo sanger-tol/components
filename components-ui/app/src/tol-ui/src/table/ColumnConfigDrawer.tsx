@@ -201,7 +201,7 @@ function ColumnConfigDrawer(props: Props) {
 
   const actionDropdown = (
     <MultipleSelect
-      placeholder="Select"
+      placeholder="Select Actions..."
       data={actionOptions}
       value={actions}
       setValue={setActions}
@@ -229,13 +229,16 @@ function ColumnConfigDrawer(props: Props) {
           sticky={true}
         />
       </div>
+      <div style={{ marginTop: "15px", marginBottom: "15px" }}>
+        <h6>Actions</h6>
+        {actionDropdown}
+      </div>
       <SelectedAttributesContainer
         baseUrl={baseUrl}
         endpoint={endpoint}
         attributes={attributes}
         setAttributes={setAttributes}
       />
-      {actionDropdown}
       <div>
         <div className="tol-config-drawer-save-button">{drawerButtons}</div>
       </div>
