@@ -26,8 +26,9 @@ function BoardTable(props: Props) {
   const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
 
-  const onModalSave = (fm: FieldMeta) => {
+  const onModalSave = (fm: FieldMeta, actions: string[]) => {
     config["fieldMeta"] = fm;
+    config["actions"] = actions;
     setForceUpdate(!forceUpdate); // fetches new data on save
     setConfig({ ...config });
     upsertComponentConfig(ds, id, config);
@@ -69,6 +70,7 @@ function BoardTable(props: Props) {
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
       forceUpdate={forceUpdate}
+      actions={config.actions}
       utilityBarConfig={{
         title: {
           title: props.title,

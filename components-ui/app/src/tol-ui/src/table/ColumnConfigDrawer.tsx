@@ -23,7 +23,7 @@ export interface Props {
   title: string;
   fieldMeta: FieldMeta;
   displaySource?: boolean;
-  onConfigSave: (fieldMeta: FieldMeta) => void;
+  onConfigSave: (fieldMeta: FieldMeta, action?: string[]) => void;
   endpoint: string;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
@@ -87,9 +87,9 @@ function ColumnConfigDrawer(props: Props) {
   };
 
   const saveConfig = () => {
-    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes)) {
+    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || action.length > 0) {
       const updatedFieldMeta = fieldMetaUpdatedByContents();
-      onConfigSave(updatedFieldMeta);
+      onConfigSave(updatedFieldMeta, action);
       setInitialAttributes(attributes);
     }
     setOpen(!open);
