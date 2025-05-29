@@ -291,6 +291,7 @@ function Table(props: Props) {
         }
       />
       <ColumnConfigDrawer
+        actions={actions} 
         open={open}
         groupBy={groupBy}
         setOpen={setOpen}
