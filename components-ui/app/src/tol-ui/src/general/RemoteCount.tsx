@@ -12,14 +12,15 @@ import {
   Placeholder,
   numberWithSpaces,
   useEffectUpdate,
+  UtilityBar,
   IUtilityBar,
-  IBoardTargetAndZone,
   TFilterOrUndefined,
   API_METHODS,
+  IRemoteTargetAndZone,
 } from "..";
 
 
-interface Props extends IBoardTargetAndZone {
+interface Props extends IRemoteTargetAndZone {
   id: string;
   utilityBarConfig?: IUtilityBar;
 }

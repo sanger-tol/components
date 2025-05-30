@@ -483,11 +483,11 @@ export function Table(props: Props) {
                           }
                         >
                           <Filter
+                            {...props}
                             attribute={key}
                             rename={field.rename!}
                             type={field.filter as IFilterInputType}
                             componentId={id}
-                            {...props}
                           />
                         </span>
                       )}

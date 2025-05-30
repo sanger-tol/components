@@ -22,9 +22,10 @@ import {
   Widgets,
   Messages,
   Factories,
+  tolDataSource,
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
-import { TolApp, Page, Dropdown, env } from "./tol-ui/src";
+import { TolApp, Page, Dropdown } from "./tol-ui/src";
 import "./scss/styling.scss";
 import { DataSource } from "./pages/DataSource";
 
@@ -109,15 +110,15 @@ const factories: Page = {
   element: <Factories />
 }
 
-const otherDropdown: Dropdown = {
-  name: "Other",
-  pages: [colours, detail, forms, messages, miscellaneous, tsds, widgets, portal],
+const mainDropdown: Dropdown = {
+  name: "Main",
+  pages: [barCharts, sunbursts, tables, filters, maps, timelines],
 };
 
-const docsDropdown: Dropdown = {
-  name: "Docs",
-  pages: [factories]
-}
+const otherDropdown: Dropdown = {
+  name: "Other",
+  pages: [colours, detail, factories, forms, messages, miscellaneous, tsds, widgets, portal],
+};
 
 // dev sandbox - change element if needed
 const sandbox: Page = {
@@ -129,18 +130,12 @@ const sandbox: Page = {
 ReactDOM.render(
   // eslint-disable-line
   <TolApp
-    boards={{ dataUrl: env.TOL_DATA }}
+    boards={{dataSource: tolDataSource}}
     brand="Components"
     homePage={<Home />}
     pages={[
-      barCharts,
-      sunbursts,
-      tables,
-      filters,
-      maps,
-      timelines,
+      mainDropdown,
       otherDropdown,
-      docsDropdown,
       sandbox,
     ]}
   />,

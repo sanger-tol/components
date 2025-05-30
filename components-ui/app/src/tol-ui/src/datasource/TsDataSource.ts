@@ -437,19 +437,19 @@ export class TsDataSource {
         });
       case API_METHODS.POST:
         return await this.client().post(url, body, {
-          baseUrl: this.baseUrl,
+          baseURL: this.baseUrl,
           params: params,
           ...options,
         });
       case API_METHODS.PUT:
         return await this.client().put(url, body, {
-          baseUrl: this.baseUrl,
+          baseURL: this.baseUrl,
           params: params,
           ...options,
         });
       case API_METHODS.PATCH:
         return await this.client().patch(url, body, {
-          baseUrl: this.baseUrl,
+          baseURL: this.baseUrl,
           params: params,
         });
       case API_METHODS.DELETE:

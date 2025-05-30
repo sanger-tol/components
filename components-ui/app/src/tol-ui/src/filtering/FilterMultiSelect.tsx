@@ -14,6 +14,7 @@ import {
   stopPropagation,
   PopUpMessage,
   API_METHODS,
+  deepCopy,
 } from "..";
 
 
@@ -38,6 +39,8 @@ export function FilterMultiSelect(props: IFilterInput) {
   const [errorMessage, setErrorMessage] = useState("");
   const operator = "in_list";
 
+  console.log(deepCopy(dataSource));
+
   useEffect(() => {
     if (!fetched && values.length !== 0) {
       fetchValues();
@@ -58,7 +61,7 @@ export function FilterMultiSelect(props: IFilterInput) {
       dataSource
         .custom({
           method: API_METHODS.POST,
-          resource: `${objectType}: aggregations`,
+          resource: `${objectType}:aggregations`,
           body: aggs,
         })
         .then((res: any) => {

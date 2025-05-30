@@ -212,7 +212,7 @@ export function Zone(props: Props) {
       <Row>
         <Col>
           <InlineEdit
-            title={title}
+            text={title}
             onSave={(newTitle) => {
               if (newTitle !== title) {
                 saveTitle(newTitle, dataSource, id, BOARDS.ZONE);

@@ -83,7 +83,7 @@ export function Board(props: Props) {
     <div className="tol-board">
       <div className="tol-board-bar">
         <InlineEdit
-          title={boardData.boardTitle}
+          text={boardData.boardTitle}
           onSave={(newTitle: any) => {
             if (newTitle !== boardData.boardTitle) {
               saveTitle(newTitle, boardDataSource, boardId, BOARDS.BOARD);

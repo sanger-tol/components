@@ -4,17 +4,17 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useParams } from "react-router-dom";
+import { useState } from "react";
 import {
   Header,
   ObjectDetail,
   RemoteGet,
   Widgets,
-  env,
   formatDate,
   Timeline,
 } from "../tol-ui/src";
-import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { tolDataSource } from ".";
 
 export function DetailInfo() {
   const { id } = useParams<{ id: string }>();
@@ -27,8 +27,8 @@ export function DetailInfo() {
   if (response === undefined) {
     return (
       <RemoteGet
-        endpoint={"species/" + id}
-        baseUrl={env.TOL_DATA}
+        resource={"species/" + id}
+        dataSource={tolDataSource}
         loadingMessage="Loading species..."
         response={response}
         setResponse={setResponse}
