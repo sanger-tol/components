@@ -15,7 +15,7 @@ import {
 } from "../index";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
 import { getActions } from "./utils";
-import { IDropdownButtonConfig } from "src/models";
+import { IDropdownButtonConfig } from "../models";
 
 export interface Props {
   baseUrl?: string;
@@ -201,6 +201,7 @@ function ColumnConfigDrawer(props: Props) {
 
   const actionDropdown = (
     <MultipleSelect
+      block={true}
       placeholder="Select Actions..."
       data={actionOptions}
       value={actions}
