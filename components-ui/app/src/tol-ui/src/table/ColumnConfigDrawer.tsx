@@ -11,7 +11,7 @@ import {
   Drawer,
   Modal,
   SelectedAttributesContainer,
-  MultipleSelect
+  // MultipleSelect
 } from "../index";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
 import { getActions } from "./utils";
