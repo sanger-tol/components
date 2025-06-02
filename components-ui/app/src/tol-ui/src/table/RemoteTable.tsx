@@ -190,7 +190,7 @@ function RemoteTable(props: Props) {
     }
   }, [filterVisibility]);
 
-  const onModalSave = (fm: FieldMeta, actions?: string[]) => {
+  const onModalSave = (fm: FieldMeta, actions?: string[], sortByAttribute?: string, sortByType?: string) => {
     setFieldMeta(fm);
     resetFiltersBelow({
       id: id,
@@ -198,11 +198,16 @@ function RemoteTable(props: Props) {
       indexOffset: -1,
     });
     setZone({ ...zone });
-
+    
     if (props.onModalSave) {
       props.onModalSave(fm, actions);
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", fm);
+    }
+
+    if (sortByAttribute) {
+      setSortColumn(sortByAttribute);
+      setSortType(sortByType || "asc");
     }
   };
 

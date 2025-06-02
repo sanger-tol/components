@@ -25,7 +25,11 @@ export interface Props {
   title: string;
   fieldMeta: FieldMeta;
   displaySource?: boolean;
-  onConfigSave: (fieldMeta: FieldMeta, actions?: string[]) => void;
+  onConfigSave: (
+    fieldMeta: FieldMeta,
+    actions?: string[],
+    sortByAttribute?: string,
+    sortByType?: string ) => void;
   endpoint: string;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
@@ -58,6 +62,8 @@ function ColumnConfigDrawer(props: Props) {
   const originalActions = props.actions?.map((btn) => btn.name as string) ?? [];
   // @ts-ignore
   const [actions, setActions] = useState<string[]>(originalActions);
+  const [sortByAttribute, setSortByAttribute] = useState<string[]>([]);
+  const [sortByDirection, setSortByDirection] = useState<string>("asc");
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
@@ -94,7 +100,7 @@ function ColumnConfigDrawer(props: Props) {
   const saveConfig = () => {
     if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || originalActions !== actions) {
       const updatedFieldMeta = fieldMetaUpdatedByContents();
-      onConfigSave(updatedFieldMeta, actions);
+      onConfigSave(updatedFieldMeta, actions, sortByAttribute[0], sortByDirection);
       setInitialAttributes(attributes);
     }
     setOpen(!open);
@@ -211,6 +217,23 @@ function ColumnConfigDrawer(props: Props) {
   //   />
   // )
 
+  const sortByButtons = (
+      <div className="tol-board-chart-interval-btn-container">
+        {['asc', 'desc'].map((direction: string) => (
+          <Button
+            outline
+            key={direction}
+            text={direction}
+            type="primary"
+            onClick={() => setSortByDirection(direction)}
+            active={sortByDirection === direction}
+            size="lg"
+            className="tol-board-chart-interval-buttons"
+          />
+        ))}
+      </div>
+    );
+
   const attSelector = (
     <div>
       <div>
@@ -232,6 +255,30 @@ function ColumnConfigDrawer(props: Props) {
           sticky={true}
         />
       </div>
+      <h6>Default Sort</h6>
+      <AttributeSelector
+        groupBy={groupBy}
+        maxSelections={1}
+        endpoint={endpoint}
+        placeholder="Default Sort Column"
+        baseUrl={baseUrl}
+        attribute={sortByAttribute}
+        setAttributes={setSortByAttribute}
+        disabledValues={null}
+        numPopulatedFields={0}
+        populatedFieldType={"column"}
+        additionalPopulatedFieldData={"."}
+        renderSearchBySource={true}
+        displaySource={true}
+        customAttributeSelection={customAttributeSelection}
+        sticky={true}
+      />
+      {sortByAttribute.length > 0 && (
+        <>
+          {sortByButtons}
+        </>
+      )
+      }
       {/* <div style={{ marginTop: "15px", marginBottom: "15px" }}>
         <h6>Actions</h6>
         {actionDropdown}

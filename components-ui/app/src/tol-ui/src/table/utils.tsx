@@ -507,7 +507,7 @@ export function tableDebug(
 }
 
 export function createSort(sortColumn: string, sortType: string) {
-  if (sortType === "desc") {
+  if (sortType === "desc" && !sortColumn.startsWith("-")) {
     return "-" + sortColumn;
   }
   return sortColumn;
