@@ -199,15 +199,15 @@ function ColumnConfigDrawer(props: Props) {
     formatActionOptions();
   }, [])
 
-  const actionDropdown = (
-    <MultipleSelect
-      block={true}
-      placeholder="Select Actions..."
-      data={actionOptions}
-      value={actions}
-      setValue={setActions}
-    />
-  )
+  // const actionDropdown = (
+  //   <MultipleSelect
+  //     block={true}
+  //     placeholder="Select Actions..."
+  //     data={actionOptions}
+  //     value={actions}
+  //     setValue={setActions}
+  //   />
+  // )
 
   const attSelector = (
     <div>
