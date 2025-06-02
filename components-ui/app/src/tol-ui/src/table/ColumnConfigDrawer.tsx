@@ -230,10 +230,10 @@ function ColumnConfigDrawer(props: Props) {
           sticky={true}
         />
       </div>
-      <div style={{ marginTop: "15px", marginBottom: "15px" }}>
+      {/* <div style={{ marginTop: "15px", marginBottom: "15px" }}>
         <h6>Actions</h6>
         {actionDropdown}
-      </div>
+      </div> */}
       <SelectedAttributesContainer
         baseUrl={baseUrl}
         endpoint={endpoint}

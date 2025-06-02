@@ -70,7 +70,7 @@ function BoardTable(props: Props) {
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
       forceUpdate={forceUpdate}
-      actions={config.actions}
+      // actions={config.actions}
       rowSelection={config.actions?.length > 0}
       utilityBarConfig={{
         title: {
