@@ -444,6 +444,7 @@ function addDefaultMeta(fieldMeta: FieldMeta) {
         meta.type!
       );
     }
+    if (!meta.rename) meta.rename = normaliseCaps(key);
   }
   // ensure fields are easy to find
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
