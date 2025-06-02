@@ -52,9 +52,11 @@ function ColumnConfigDrawer(props: Props) {
   );
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   // Used to store actions options for the dropdown
+  // @ts-ignore
   const [actionOptions, setActionsOptions] = useState<string[]>([]);
   // Used to store selected actions from the dropdown
   const originalActions = props.actions?.map((btn) => btn.name as string) ?? [];
+  // @ts-ignore
   const [actions, setActions] = useState<string[]>(originalActions);
 
   useEffect(() => {
