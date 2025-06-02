@@ -6,19 +6,17 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
-  Row,
-  Col,
-  Button,
   useZone,
   ComponentModal,
-  InlineEdit,
-  BoardFilters
+  BoardFilters,
+  UtilityBar
 } from "../..";
 import ResponsiveWidget, { IWidgets } from "../component/ResponsiveWidget";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { getComponents, saveTitle } from "../utils";
 import ConfirmationModal from "../ConfirmationModal";
+import { IButton } from "../../general/Button";
 
 interface Props {
   id: string;
@@ -91,159 +89,130 @@ function Zone(props: Props) {
     setOpen(true);
   };
 
-  const editButton = (
-    <Button
-      outline
-      onClick={() => {
-        setDraggable(!draggable);
-      }}
-      disabled={currentWidgets.length < 1}
-      type="edit"
-      icon="up-down-left-right"
-      position="right"
-      tooltip="Edit Widgets"
-    />
-  );
+  const addButton : IButton = {
+    outline: true,
+    onClick: () => {
+      onAddComponent();
+    },
+    type: "success",
+    icon: "plus",
+    position: "right",
+    tooltip: "Add Widget"
+  };
 
-  const addButton = (
-    <Button
-      outline
-      onClick={() => {
-        onAddComponent();
-      }}
-      type="success"
-      icon="plus"
-      position="right"
-      tooltip="Add Widget"
-    />
-  );
-
-  const deleteButton = (
-    <Button
-      outline
-      onClick={() => {
-        handleOpenModal();
-      }}
-      type="error"
-      icon="trash"
-      position="right"
-      tooltip="Delete Zone"
-    />
-  );
-
-  const upButton = (
-    <Button
-      outline
-      onClick={async () => {
-        await onZoneReorder(id, "up");
-      }}
-      type="primary"
-      icon="arrow-up"
-      position="right"
-      tooltip="Move Zone Up"
-    />
-  );
-
-  const downButton = (
-    <Button
-      outline
-      onClick={async () => {
-        await onZoneReorder(id, "down");
-      }}
-      type="primary"
-      icon="arrow-down"
-      position="right"
-      tooltip="Move Zone Down"
-    />
-  );
-
-  const saveButton = (
-    <Button
-      onClick={() => {
-        setDraggable(!draggable);
-        setSaveLayout(true);
-        setDraggable(false);
-      }}
-      type="success"
-      icon="floppy-disk"
-      position="right"
-      tooltip="Save Layout"
-    />
-  );
-
-  const filtersButton = (
-    <Button
-      outline
-      onClick={() => setOpenFilters(true)}
-      type="primary"
-      icon="filter"
-      position="right"
-      tooltip="Add filters to the Zone"
-    />
-  );
-
-  const showEditButtons = (
-    <Button
-      onClick={() => {
-        handleBtnsVisible();
-      }}
-      type={editBtnsVisible ? "success" : "warning"}
-      icon={editBtnsVisible ? "check" : "pen-to-square"}
-      position="right"
-      tooltip={editBtnsVisible ? "Save Changes" : "Edit Zone"}
-      outline={!editBtnsVisible}
-    />
-  );
+  const editButton: IButton = {
+    outline: true,
+    onClick: () => {
+      setDraggable(!draggable);
+    },
+    disabled: currentWidgets.length < 1,
+    type: "edit",
+    icon: "up-down-left-right",
+    position: "right",
+    tooltip: "Edit Widgets"
+  };
+  
+  const deleteButton: IButton = {
+    outline: true,
+    onClick: () => {
+      handleOpenModal();
+    },
+    type: "error",
+    icon: "trash",
+    position: "right",
+    tooltip: "Delete Zone"
+  };
+  
+  const upButton: IButton = {
+    outline: true,
+    onClick: async () => {
+      await onZoneReorder(id, "up");
+    },
+    type: "primary",
+    icon: "arrow-up",
+    position: "right",
+    tooltip: "Move Zone Up"
+  };
+  
+  const downButton: IButton = {
+    outline: true,
+    onClick: async () => {
+      await onZoneReorder(id, "down");
+    },
+    type: "primary",
+    icon: "arrow-down",
+    position: "right",
+    tooltip: "Move Zone Down"
+  };
+  
+  const saveButton: IButton = {
+    outline: false,
+    onClick: () => {
+      setDraggable(!draggable);
+      setSaveLayout(true);
+      setDraggable(false);
+    },
+    type: "success",
+    icon: "floppy-disk",
+    position: "right",
+    tooltip: "Save Layout"
+  };
+  
+  const filtersButton: IButton = {
+    outline: true,
+    onClick: () => setOpenFilters(true),
+    type: "primary",
+    icon: "filter",
+    position: "right",
+    tooltip: "Add filters to the Zone"
+  };
+  
+  const showEditButtons: IButton = {
+    outline: !editBtnsVisible,
+    onClick: () => {
+      handleBtnsVisible();
+    },
+    type: editBtnsVisible ? "success" : "warning",
+    icon: editBtnsVisible ? "check" : "pen-to-square",
+    position: "right",
+    tooltip: editBtnsVisible ? "Save Changes" : "Edit Zone"
+  };
 
   const buttons = (
     <div className="tol-zone-bar">
-      <Row>
-        <Col>
-          <InlineEdit
-            title={title}
-            onSave={(newTitle) => {
-              if (newTitle !== title) {
-                saveTitle(newTitle, ds, id, "zone");
-                setTitle(newTitle);
-              }
-            }}
-            editable
-          />
-        </Col>
-        <Col>
-          <h6>
-            {!draggable ? (
-              <>
-                {addButton}
-                {showEditButtons}
-                {editBtnsVisible ? (
-                  <>
-                    {deleteButton}
-                    {editButton}
-                    {downButton}
-                    {upButton}
-                  </>
-                ) : null}
-                {filtersButton}
-              </>
-            ) : (
-              <>{saveButton}</>
-            )}
-          </h6>
-          <div id={"component-modal"}>
-            <ComponentModal
-              open={open}
-              setOpen={setOpen}
-              zoneId={id}
-              ds={ds}
-              currentWidgets={currentWidgets}
-              setCurrentWidgets={setCurrentWidgets}
-              dataUrl={dataUrl}
-              {...z}
-            />
-          </div>
-        </Col>
-      </Row>
+      <UtilityBar
+        id="zone-utility-bar"
+        title= {{
+          title: title,
+          editable: true,
+          onSave: (value: string) => {
+            if (value !== title) {
+              saveTitle(value, ds, id, "zone");
+              setTitle(value);
+            }
+          }
+        }}
+        buttons={!draggable ? [
+          addButton,
+          showEditButtons,
+          ...(editBtnsVisible
+            ? [deleteButton, editButton, downButton, upButton]
+            : []),
+          filtersButton
+        ] : [saveButton]}
+      />
+      <div id={"component-modal"}>
+        <ComponentModal
+          open={open}
+          setOpen={setOpen}
+          zoneId={id}
+          ds={ds}
+          currentWidgets={currentWidgets}
+          setCurrentWidgets={setCurrentWidgets}
+          dataUrl={dataUrl}
+          {...z}
+        />
+      </div>
     </div>
   );
 
