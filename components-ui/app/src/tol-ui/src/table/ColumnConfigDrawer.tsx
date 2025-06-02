@@ -10,18 +10,22 @@ import {
   AttributeSelector,
   Drawer,
   Modal,
-  SelectedAttributesContainer
+  SelectedAttributesContainer,
+  // MultipleSelect
 } from "../index";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
+import { getActions } from "./utils";
+import { IDropdownButtonConfig } from "../models";
 
 export interface Props {
   baseUrl?: string;
+  actions?: IDropdownButtonConfig[];
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
   fieldMeta: FieldMeta;
   displaySource?: boolean;
-  onConfigSave: (fieldMeta: FieldMeta) => void;
+  onConfigSave: (fieldMeta: FieldMeta, actions?: string[]) => void;
   endpoint: string;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
@@ -47,6 +51,13 @@ function ColumnConfigDrawer(props: Props) {
     fieldMeta?.order?.active ?? [],
   );
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
+  // Used to store actions options for the dropdown
+  // @ts-ignore
+  const [actionOptions, setActionsOptions] = useState<string[]>([]);
+  // Used to store selected actions from the dropdown
+  const originalActions = props.actions?.map((btn) => btn.name as string) ?? [];
+  // @ts-ignore
+  const [actions, setActions] = useState<string[]>(originalActions);
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
@@ -81,9 +92,9 @@ function ColumnConfigDrawer(props: Props) {
   };
 
   const saveConfig = () => {
-    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes)) {
+    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || originalActions !== actions) {
       const updatedFieldMeta = fieldMetaUpdatedByContents();
-      onConfigSave(updatedFieldMeta);
+      onConfigSave(updatedFieldMeta, actions);
       setInitialAttributes(attributes);
     }
     setOpen(!open);
@@ -183,6 +194,23 @@ function ColumnConfigDrawer(props: Props) {
     setOpen(false);
   };
 
+  useEffect(() => {
+    const formatActionOptions = async () => {
+      setActionsOptions(await getActions(endpoint))
+    }
+    formatActionOptions();
+  }, [])
+
+  // const actionDropdown = (
+  //   <MultipleSelect
+  //     block={true}
+  //     placeholder="Select Actions..."
+  //     data={actionOptions}
+  //     value={actions}
+  //     setValue={setActions}
+  //   />
+  // )
+
   const attSelector = (
     <div>
       <div>
@@ -204,6 +232,10 @@ function ColumnConfigDrawer(props: Props) {
           sticky={true}
         />
       </div>
+      {/* <div style={{ marginTop: "15px", marginBottom: "15px" }}>
+        <h6>Actions</h6>
+        {actionDropdown}
+      </div> */}
       <SelectedAttributesContainer
         baseUrl={baseUrl}
         endpoint={endpoint}

@@ -14,6 +14,7 @@ import {
   FieldMetaData,
   initialiseFieldMeta,
 } from "./Field";
+import { TsDataSource } from "../services";
 import { isFloat, normaliseCaps } from "../general/utils";
 import Relationship from "./Relationship";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -669,4 +670,24 @@ export function mapKeysToDisplayNames(
   }
 
   return result;
+}
+
+export async function getActions(
+  objectType: string,
+): Promise<string[]> {
+  const ds = new TsDataSource();
+  const actionsList: string[] = [];
+  const actions =  await ds.getListPage({
+      objectType: 'local/action',
+      filter: {
+        and_: {
+          object_type: { eq: { value: objectType } },
+        },
+      },
+    })
+
+  actions?.find((action) => {
+    actionsList.push(action.name);
+  })
+  return actionsList
 }

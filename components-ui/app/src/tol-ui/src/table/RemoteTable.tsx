@@ -190,7 +190,7 @@ function RemoteTable(props: Props) {
     }
   }, [filterVisibility]);
 
-  const onModalSave = (fm: FieldMeta) => {
+  const onModalSave = (fm: FieldMeta, actions?: string[]) => {
     setFieldMeta(fm);
     resetFiltersBelow({
       id: id,
@@ -200,7 +200,7 @@ function RemoteTable(props: Props) {
     setZone({ ...zone });
 
     if (props.onModalSave) {
-      props.onModalSave(fm);
+      props.onModalSave(fm, actions);
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", fm);
     }
