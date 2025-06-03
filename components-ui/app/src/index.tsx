@@ -110,9 +110,9 @@ const factories: Page = {
   element: <Factories />
 }
 
-const mainDropdown: Dropdown = {
-  name: "Main",
-  pages: [barCharts, sunbursts, tables, filters, maps, timelines],
+const visualisationsDropdown: Dropdown = {
+  name: "Visualisations",
+  pages: [barCharts, filters, maps, sunbursts, tables, timelines],
 };
 
 const otherDropdown: Dropdown = {
@@ -134,7 +134,7 @@ ReactDOM.render(
     brand="Components"
     homePage={<Home />}
     pages={[
-      mainDropdown,
+      visualisationsDropdown,
       otherDropdown,
       sandbox,
     ]}

@@ -1105,7 +1105,7 @@ export function createMapMarkers(
       const latitude = parseFloat(item.attributes[latitudeKey]);
       const longitude = parseFloat(item.attributes[longitudeKey]);
 
-      // if latitute and longitude are not provided, skip the current iteration
+      // if latitute or longitude are not provided, skip the current iteration
       if (isNaN(latitude) || isNaN(longitude)) {
         continue;
       }

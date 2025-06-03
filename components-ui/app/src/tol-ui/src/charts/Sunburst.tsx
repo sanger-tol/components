@@ -50,15 +50,15 @@ export function Sunburst(props: Props) {
     id,
     setSliceData,
     legendPosition,
-    downloadName,
+    downloadName = "sunburst",
     noDownload,
     noLabel,
     noRefresh,
     resetChart,
     utilityBarConfig,
-    contents
+    contents,
+    height = "100%",
   } = props;
-  const height = props.height ? props.height : "100%";
   const originDatasets = convertSunburstDatasets(props.datasets);
   const [datasets, setDatasets] = useState(originDatasets);
 
@@ -132,7 +132,7 @@ export function Sunburst(props: Props) {
     animation: false,
     maintainAspectRatio: false,
     responsive: true,
-    cutout: "20%",
+    cutout: "12%",
     devicePixelRatio: 2,
     plugins: {
       // tooltip styling
@@ -189,49 +189,48 @@ export function Sunburst(props: Props) {
     onHover: handlePlaneHover,
   };
 
-  // adding component sizing
   const style = { height: height };
 
   return (
     <div style={style}>
-      {(utilityBarConfig != undefined) && (
-        <UtilityBar
-          id={id}
-          title={utilityBarConfig.title}
-          buttons={[
-            {
-              icon: "undo",
-              position: "right",
-              type: "primary",
-              onClick: () => {
-                resetItemClickedData(setSliceData);
-                setDatasets(originDatasets);
-              },
-              disabled: noRefresh,
+      <UtilityBar
+        id={id}
+        title={utilityBarConfig?.title}
+        buttons={[
+          {
+            icon: "undo",
+            position: "right",
+            type: "primary",
+            onClick: () => {
+              resetItemClickedData(setSliceData);
+              setDatasets(originDatasets);
             },
-            {
-              icon: "download",
-              position: "right",
-              type: "primary",
-              onClick: () => {
-                downloadItem(props.id, downloadName || 'sunburst');
-              },
-              disabled: noDownload,
-            }
-          ]}
-        />
-      )}
-      {contents ? contents : 
-        <Doughnut
-          id={id}
-          responsive="true"
-          className="tol-sunburst"
-          datasetIdKey="id"
-          // @ts-ignore
-          options={options}
-          data={{ datasets: datasets }}
-        />
-      }
+            disabled: noRefresh,
+          },
+          {
+            icon: "download",
+            position: "right",
+            type: "primary",
+            onClick: () => {
+              downloadItem(props.id, downloadName);
+            },
+            disabled: noDownload,
+          }
+        ]}
+      />
+      <div style={style} className="tol-utility-bar-content-offset">
+        {contents ? contents : 
+          <Doughnut
+            id={id}
+            responsive="true"
+            className="tol-sunburst"
+            datasetIdKey="id"
+            // @ts-ignore
+            options={options}
+            data={{ datasets: datasets }}
+          />
+        }
+      </div>
     </div>
   );
 }

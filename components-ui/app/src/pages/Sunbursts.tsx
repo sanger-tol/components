@@ -126,7 +126,11 @@ export function Sunbursts() {
       <Sunburst
         id="basic-sunburst"
         datasets={datasets}
-        title={sunburstTitle}
+        utilityBarConfig={{
+          title: {
+            text: sunburstTitle,
+          }
+        }}
         height={500}
         setSliceData={setSliceData}
         legendPosition="left"

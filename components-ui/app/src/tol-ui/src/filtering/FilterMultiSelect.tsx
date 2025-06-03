@@ -39,8 +39,6 @@ export function FilterMultiSelect(props: IFilterInput) {
   const [errorMessage, setErrorMessage] = useState("");
   const operator = "in_list";
 
-  console.log(deepCopy(dataSource));
-
   useEffect(() => {
     if (!fetched && values.length !== 0) {
       fetchValues();

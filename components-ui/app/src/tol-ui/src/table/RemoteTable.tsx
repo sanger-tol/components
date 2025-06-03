@@ -33,6 +33,8 @@ import {
   tableDebug,
   useEffectUpdate,
   useStateFallback,
+  TsDataSource,
+  LOCAL_API_PREFIX,
 } from '..';
 
 
@@ -68,6 +70,7 @@ interface Props extends IRemoteTargetAndZone {
   contents?: ReactNode;
   groupBy?: boolean;
 
+  actionDataSource?: TsDataSource;
   actions?: (string | IDropdownButtonConfig)[];
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
@@ -94,6 +97,9 @@ export function RemoteTable(props: Props) {
     noConfigModal,
     noDownload,
     rowSelection,
+    actionDataSource = new TsDataSource({
+      apiPrefix: LOCAL_API_PREFIX,
+    }),
     actions,
     utilityBarConfig,
     debug,
@@ -290,7 +296,7 @@ export function RemoteTable(props: Props) {
 
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
-    await dataSource
+    await actionDataSource!
       .custom({
         method: API_METHODS.POST,
         resource: ACTIONS.RUN_ACTION,
@@ -310,6 +316,7 @@ export function RemoteTable(props: Props) {
   const convertedActions = addRemoteActions(
     objectType,
     dataSource,
+    actionDataSource,
     setCurrentActionName,
     setIdExportModalOpen,
     setIdsWithReqNotMet,
@@ -334,6 +341,7 @@ export function RemoteTable(props: Props) {
       />
       <ActionModal
         objectType={objectType}
+        actionDataSource={actionDataSource}
         open={actionModalOpen}
         setOpen={setActionModalOpen}
       />

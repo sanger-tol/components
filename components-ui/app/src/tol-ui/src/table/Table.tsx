@@ -259,12 +259,12 @@ export function Table(props: Props) {
     mainButtonIcon: {
       icon: "paper-plane",
       type: "primary",
-      position: "left",
+      position: "right",
       outline: selectedRows.length === 0,
     },
     dropdownButtons: actionDropDownButtons,
     footer: actionsFooter,
-    placement: "rightStart",
+    placement: "leftStart",
   } : undefined;
 
   return (

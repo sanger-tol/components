@@ -67,7 +67,16 @@ interface Props {
 }
 
 export function BarChart(props: Props) {
-  const { id, labels, setBarData, cumulative, utilityBarConfig = {}, contents, chartType='bar' } = props;
+  const {
+    id,
+    labels,
+    setBarData,
+    cumulative,
+    utilityBarConfig = {},
+    contents,
+    chartType='bar',
+    downloadName = 'barchart'
+  } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const stacked = props.stacked !== undefined ? props.stacked : false;
   const originDatasets = initialiseDatasets(props.datasets);
@@ -288,12 +297,10 @@ export function BarChart(props: Props) {
     },
   };
 
-  const downloadName =
-    props.downloadName !== undefined ? props.downloadName : "barchart";
+  const style = { height: height };
 
   return (
     <div style={{ height: height }}>
-
       <UtilityBar
         id={id}
         title={utilityBarConfig.title}
@@ -323,24 +330,23 @@ export function BarChart(props: Props) {
           ...(utilityBarConfig.buttons || []),
         ]}
       />
-
-      {contents ?
-        contents
-        :
-        <Chart
-          type={chartType === "scatter" ? "line" : (chartType as keyof ChartTypeRegistry)}
-          id={id}
-          responsive="true"
-          className="tol-bar-chart"
-          datasetIdKey="id"
-          // @ts-ignore
-          options={options}
-          data={{
-            labels: labels,
-            datasets: datasets,
-          }}
-        />
+      <div style={style} className="tol-utility-bar-content-offset">
+        {contents ? contents :
+          <Chart
+            type={chartType === "scatter" ? "line" : (chartType as keyof ChartTypeRegistry)}
+            id={id}
+            responsive="true"
+            className="tol-bar-chart"
+            datasetIdKey="id"
+            // @ts-ignore
+            options={options}
+            data={{
+              labels: labels,
+              datasets: datasets,
+            }}
+          />
       }
+      </div>
     </div>
   );
 }

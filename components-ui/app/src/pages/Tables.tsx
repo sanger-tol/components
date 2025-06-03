@@ -64,7 +64,7 @@ export function Tables() {
           setSelectedRows={setSelectedRows}
           utilityBarConfig={{
             title: {
-              title: "Run Data",
+              text: "Run Data",
             },
           }}
           fields={{

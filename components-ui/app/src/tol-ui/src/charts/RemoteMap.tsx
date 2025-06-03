@@ -75,14 +75,17 @@ export function RemoteMap(props: Props) {
         if (count <= pageSize) {
           setCount(res.data.meta.total);
           dataSource
-            .getListPage({
-              objectType,
-              filter,
-              pageSize,
+            .custom({
+              method: API_METHODS.GET,
+              resource: objectType,
+              params: {
+                filter,
+                page_size: pageSize,
+              }
             })
-            .then((data: TDataObjectListOrNull) => {
+            .then((res) => {
               const markers = createMapMarkers(
-                data,
+                res.data.data,
                 latitudeKey,
                 longitudeKey,
                 legendKey,
@@ -91,7 +94,7 @@ export function RemoteMap(props: Props) {
                 markerRenderer,
               );
               setMarkers(markers);
-              setWarningMessage(markers.length === 0 ? "No Data Found" : "");
+              setWarningMessage(markers.length === 0 ? "No Location Data Found" : "");
               setLoading(false);
             })
             .catch((error: any) => {

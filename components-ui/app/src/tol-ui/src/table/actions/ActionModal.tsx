@@ -4,19 +4,36 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Modal, ActionStatus, RemoteTable } from "../..";
+import {
+  Modal,
+  ActionStatus,
+  RemoteTable,
+  TsDataSource,
+  useZone
+} from "../..";
 
 
 interface Props {
   objectType: string; // original table object
+  actionDataSource?: TsDataSource; // data source for the action table
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
 export function ActionModal(props: Props) {
-  const { objectType } = props
+  const {
+    objectType,
+    actionDataSource = new TsDataSource({
+      apiPrefix: "local",
+    })
+  } = props
 
-  // ActionStatus will be cellRenderer at some point
+  const actionZone = useZone({
+    objectType: "user_action",
+    dataSource: actionDataSource,
+    components: [{ id: "action-table" }],
+  });
+
   return (
     <Modal
       {...props}
@@ -30,7 +47,6 @@ export function ActionModal(props: Props) {
         noDownload
         noFilter
         id="action-table"
-        endpoint="local/user_action"
         height={500}
         defaultSort="-created_at"
         fields={{
@@ -53,6 +69,7 @@ export function ActionModal(props: Props) {
             rename: "User",
           }
         }}
+        {...actionZone}
       />
     </Modal>
   );
