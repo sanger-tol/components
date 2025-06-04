@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import ValidateStep from "./ValidateStep";
 import ErrorViewer from "./ErrorViewer";
 import { resizeListener } from "src/hooks";
@@ -12,41 +12,40 @@ import { resizeListener } from "src/hooks";
 //TODO: Add progress bar
 
 // TEST DATA
-const steps = [
-  { id: "step1", stepName: "Step 1" },
-  { id: "step2", stepName: "Step 2" },
-  { id: "step3", stepName: "Step 3" },
-  { id: "step4", stepName: "Step 4" },
-  { id: "step5", stepName: "Step 5" },
-  { id: "step6", stepName: "Step 6" },
-  { id: "step7", stepName: "Step 7" },
-  { id: "step8", stepName: "Step 8" },
+const data = [
+  {
+    id: "step1",
+    stepName: "validate_species_not_null",
+    errors: ["OH NO!", "Error 1b", "Error 1c"],
+  },
+  {
+    id: "step2",
+    stepName: "validate_species_is_valid",
+    errors: ["Error 2a", "Error 2b", "Error 2c"],
+  },
+  {
+    id: "step3",
+    stepName: "Step 3",
+    errors: ["The user is a silly silly silly silly goose...", "Error 3b", "Error 3c", "Error 3d", "Error 3e"],
+  },
+  { id: "step4", stepName: "Step 4", errors: [] },
+  { id: "step5", stepName: "Step 5", errors: [] },
+  { id: "step6", stepName: "Step 6", errors: ["error 6a", "error 6b"] },
+  { id: "step7", stepName: "Step 7", errors: [] },
+  { id: "step8", stepName: "Step 8", errors: ["error 8a", "error 8b"] },
 ];
 
-const allErrors = [
-  ["Error 1a", "Error 1b", "Error 1c"],
-  ["Error 2a", "Error 2b", "Error 2c"],
-  ["Error 3a", "Error 3b", "Error 3c", "Error 3d", "Error 3e"],
-  // ["Error 3a", "Error 3b", "Error 3c"],
-  // ["Error 3a", "Error 3b", "Error 3c"],
-  // ["Error 3a", "Error 3b", "Error 3c"],
-  // ["Error 3a", "Error 3b", "Error 3c"],
-  // ["Error 3a", "Error 3b", "Error 3c"],
-];
+const WIDTH_REDUCER = 20;
 
 function ValidateSteps() {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(1);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    console.log(expandedIndex);
-  }, [expandedIndex]);
-
   resizeListener(() => {
     if (containerRef.current) {
-      setContainerWidth(containerRef.current.clientWidth - 40);
+      setContainerWidth(containerRef.current.clientWidth - WIDTH_REDUCER);
       const { scrollWidth, clientWidth } = containerRef.current;
       setIsOverflowing(scrollWidth > clientWidth);
     }
@@ -61,12 +60,12 @@ function ValidateSteps() {
     >
       <div>
         <div className="tol-file-uploader-validate-steps-inner-container">
-          {steps.map((step, index) => (
+          {data.map((step, index) => (
             <ValidateStep
               key={step.id}
               id={step.id}
               stepName={step.stepName}
-              errorValues={allErrors[index]}
+              errorValues={step.errors}
               expanded={expandedIndex === index}
               onSeeAllErrors={() =>
                 setExpandedIndex(expandedIndex === index ? null : index)
@@ -85,12 +84,24 @@ function ValidateSteps() {
               key={expandedIndex}
               className="tol-validate-steps-all-errors-animation"
             >
-              <h6>All errors for {steps[expandedIndex].stepName}:</h6>
-              {allErrors[expandedIndex].map((err, i) => (
-                <div key={i}>
-                  <ErrorViewer message={err} stepName={steps[expandedIndex].stepName}/>
-                </div>
-              ))}
+              <h6>All errors for {data[expandedIndex].stepName}:</h6>
+              {data.map((step) =>
+                step.errors.length > 0 &&
+                step.id === data[expandedIndex].id ? (
+                  <div
+                    key={step.id}
+                    className="tol-validate-step-expanded-error-container"
+                  >
+                    {step.errors.map((error, index) => (
+                      <ErrorViewer
+                        key={`${step.id}-error-${index}`}
+                        message={error}
+                        stepName={step.stepName}
+                      />
+                    ))}
+                  </div>
+                ) : null
+              )}
             </div>
           </div>
         )}

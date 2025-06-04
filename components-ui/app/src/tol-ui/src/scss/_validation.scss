@@ -91,7 +91,7 @@
 .tol-file-upload-step-triangle {
   border-left: 12px solid transparent;
   border-right: 12px solid transparent;
-  border-top: 12px solid var(--tol-emphasis); //TODO: CHANGE TO CORRECT COLOR
+  border-top: 12px solid var(--tol-grey-subtle); //TODO: CHANGE TO CORRECT COLOR
   display: flex;
   align-self: center;
   animation: dropDownAllErrors 0.5s ease;
@@ -195,8 +195,16 @@
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px,
       rgba(0, 0, 0, 0.23) 0px 6px 6px;
     border-radius: 6px;
-    min-height: 190px;
+    min-height: 210px;
     margin-right: 10px;
+
+    &.passed {
+      background: var(--tol-success-translucent);
+    }
+
+    &.error {
+      background: var(--tol-danger-translucent);
+    }
   }
 
   .tol-file-uploader-validate-step-error-number {
@@ -220,6 +228,9 @@
 
   .tol-file-uploader-validate-step-title {
     margin-bottom: 0;
+    text-wrap: wrap;
+    margin-right: 10px;
+    min-height: 35px;
   }
 
   .tol-file-uploader-validate-step-no-errors-container {
@@ -253,6 +264,14 @@
   color: white;
   border-radius: 100%;
   padding: 10px 12px 10px 12px;
+
+  &.error {
+    background-color: var(--tol-danger);
+  }
+
+  &.passed {
+    background-color: var(--tol-success);
+  }
 }
 
 @media (max-width: 768px) {

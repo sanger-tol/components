@@ -4,13 +4,12 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { normaliseCaps, truncateString } from "../general/utils";
 import { ValidationIcon, ErrorViewer } from "./index";
-import { IconType } from "./ValidationIcon";
 
 interface Props {
   id: string;
   stepName: string;
-  icon?: IconType;
   errorValues?: string[];
   expanded?: boolean;
   onSeeAllErrors?: () => void;
@@ -18,34 +17,38 @@ interface Props {
 
 const MAX_ERRORS_TO_DISPLAY = 2;
 
-const vOrC = "Validation";
-const errors = true; // Simulating an error state
-const errorValues = ["Error 1", "error 2", "Error 3"]; // Simulating error values
-
-// return "var(tol-success-translucent"; for success
-// return "var(tol-danger-translucent"; for error
-
 function ValidateStep(props: Props) {
-  const { id, stepName, onSeeAllErrors, icon = "xmark", expanded } = props;
+  const {
+    id,
+    stepName,
+    onSeeAllErrors,
+    errorValues = [],
+    expanded = false,
+  } = props;
+
+  const hasErrors = !!errorValues && errorValues.length > 0;
+
   return (
     <div className="tol-file-uploader-validate-step-outer-container">
-      <div id={id} className="tol-file-uploader-validate-step-inner-container">
+      <div
+        id={id}
+        className={`tol-file-uploader-validate-step-inner-container ${
+          hasErrors ? "error" : "passed"
+        }`}
+      >
         <div className="tol-file-uploader-validate-step-title-container">
           <h6 className="tol-file-uploader-validate-step-title">
-            Validate {stepName}
+            {truncateString(normaliseCaps(stepName), 50)}
           </h6>
           <ValidationIcon
-            iconType={errors ? "xmark" : "check"}
+            iconType={hasErrors ? "xmark" : "check"}
             size="lg"
-            style={{
-              backgroundColor: errors
-                ? "var(--tol-danger)"
-                : "var(--tol-success)",
-            }}
-            className="tol-file-uploader-validate-step-icon"
+            className={`tol-file-uploader-validate-step-icon ${
+              hasErrors ? "error" : "passed"
+            }`}
           />
         </div>
-        {errors ? (
+        {hasErrors ? (
           <div className="tol-file-uploader-validate-step-error-container">
             <div>
               <p className="tol-file-uploader-validate-step-error-number">
@@ -56,14 +59,14 @@ function ValidateStep(props: Props) {
                 .slice(0, MAX_ERRORS_TO_DISPLAY)
                 .map((error: string, index: number) => (
                   <ErrorViewer
-                    key={String(index)}
+                    key={`${id}-error-${index}`}
                     message={error}
                     stepName={stepName}
                   />
                 ))}
             </div>
             <div>
-              {errorValues.length > 2 ? (
+              {errorValues.length > MAX_ERRORS_TO_DISPLAY ? (
                 <div
                   className="tol-file-uploader-validate-step-see-all-container"
                   onClick={onSeeAllErrors}
@@ -83,7 +86,7 @@ function ValidateStep(props: Props) {
           </div>
         ) : (
           <div className="tol-file-uploader-validate-step-passed-container">
-            <h6>{vOrC} Passed 🎉</h6>
+            <h6>Validation Passed 🎉</h6>
           </div>
         )}
       </div>
