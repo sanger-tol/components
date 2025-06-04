@@ -14,7 +14,7 @@ import {
   // MultipleSelect
 } from "../index";
 import { FieldMeta, initialiseFieldMeta } from "./Field";
-import { getActions } from "./utils";
+import { getActions, createSort } from "./utils";
 import { IDropdownButtonConfig } from "../models";
 
 export interface Props {
@@ -196,7 +196,9 @@ function ColumnConfigDrawer(props: Props) {
   );
 
   const handleCloseDrawer = () => {
-    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes)) {
+    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || 
+      defaultSort !== createSort(sortByAttribute[0], sortByDirection)
+    ) {
       setOpenSaveModal(true);
     } else {
       setOpen(false);
@@ -245,26 +247,7 @@ function ColumnConfigDrawer(props: Props) {
 
   const attSelector = (
     <div>
-      <div>
-        <AttributeSelector
-          groupBy={groupBy}
-          endpoint={endpoint}
-          placeholder="Select columns to display..."
-          baseUrl={baseUrl}
-          attribute={attributes}
-          setAttributes={setAttributes}
-          disabledValues={null}
-          numPopulatedFields={0}
-          populatedFieldType={"column"}
-          additionalPopulatedFieldData={"."}
-          recommendedFilterAvailable={true}
-          renderSearchBySource={true}
-          displaySource={true}
-          customAttributeSelection={customAttributeSelection}
-          sticky={true}
-        />
-      </div>
-      <h6>Default Sort</h6>
+       <h6>Default Sort:</h6>
       <AttributeSelector
         groupBy={groupBy}
         maxSelections={1}
@@ -288,6 +271,26 @@ function ColumnConfigDrawer(props: Props) {
         </>
       )
       }
+      <h6 className="tol-config-drawer-column-title">Active Columns:</h6>
+      <div>
+        <AttributeSelector
+          groupBy={groupBy}
+          endpoint={endpoint}
+          placeholder="Select columns to display..."
+          baseUrl={baseUrl}
+          attribute={attributes}
+          setAttributes={setAttributes}
+          disabledValues={null}
+          numPopulatedFields={0}
+          populatedFieldType={"column"}
+          additionalPopulatedFieldData={"."}
+          recommendedFilterAvailable={true}
+          renderSearchBySource={true}
+          displaySource={true}
+          customAttributeSelection={customAttributeSelection}
+          sticky={true}
+        />
+      </div>
       {/* <div style={{ marginTop: "15px", marginBottom: "15px" }}>
         <h6>Actions</h6>
         {actionDropdown}
