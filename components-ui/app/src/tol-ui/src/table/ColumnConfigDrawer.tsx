@@ -239,7 +239,7 @@ function ColumnConfigDrawer(props: Props) {
             onClick={() => setSortByDirection(direction)}
             active={sortByDirection === direction}
             size="lg"
-            className="tol-board-chart-interval-buttons"
+            className="tol-board-chart-sort-buttons"
           />
         ))}
       </div>
