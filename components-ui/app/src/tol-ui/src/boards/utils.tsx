@@ -9,27 +9,33 @@ import {
   getUserFromLocalStorage,
   TsDataSource,
   BOARDS,
+  TDataObjectListOrNull,
 } from "..";
 
 
-export async function getBoard(id: string, boardDataSource: TsDataSource) {
-  const res = await boardDataSource
+export async function getBoard(
+  id: string,
+  boardDataSource: TsDataSource
+): Promise<{ boardTitle: any; boardFilter: any; views: TDataObjectListOrNull }> {
+  return await boardDataSource
     .getOne({
       objectType: BOARDS.BOARD,
       id: id,
     })
-    .then(async (res: any) => {
-      const views = await getViews(res.id, boardDataSource);
+    .then(async (board: any) => {
+      const views = await getViews(board.id, boardDataSource);
       return {
-        boardTitle: res.title,
-        boardFilter: res.filter,
+        boardTitle: board.title,
+        boardFilter: board.filter,
         views: views,
       };
     });
-  return res;
 }
 
-async function getViews(id: string, boardDataSource: TsDataSource) {
+async function getViews(
+  id: string,
+  boardDataSource: TsDataSource
+): Promise<TDataObjectListOrNull> {
   return await boardDataSource
     .getListPage({
       objectType: BOARDS.VIEW_BOARD,
@@ -39,15 +45,21 @@ async function getViews(id: string, boardDataSource: TsDataSource) {
         },
       }
     })
-    .then((res: any) => {
-      const ids = res.data.data.map(
-        (view: any) => view.relationships.view.data.id, // TODO: ENSURE THIS IS CORRECT
+    .then(async (data: TDataObjectListOrNull) => {
+      const ids = await Promise.all(
+        data?.map(async (viewBoard: any) => {
+          const view = await viewBoard.relationships.view;
+          return view.id;
+        }) || []
       );
       return getViewsData(ids, boardDataSource);
     });
 }
 
-async function getViewsData(ids: string[], boardDataSource: TsDataSource) {
+async function getViewsData(
+  ids: string[],
+  boardDataSource: TsDataSource
+): Promise<TDataObjectListOrNull> {
   return await boardDataSource
     .getListPage({
       objectType: BOARDS.VIEW,
@@ -57,9 +69,6 @@ async function getViewsData(ids: string[], boardDataSource: TsDataSource) {
         },
       },
     })
-    .then((res: any) => {
-      return res;
-    });
 }
 
 export async function getZones(viewId: string, boardDataSource: TsDataSource) {

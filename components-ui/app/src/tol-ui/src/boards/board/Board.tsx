@@ -58,13 +58,13 @@ export function Board(props: Props) {
   useEffect(() => {
     if (boardId && user) {
       getBoard(boardId, boardDataSource)
-        .then((res: any) => {
-          if (!view) setView(res.views[0].id);
-          setBoardData(res);
+        .then((data: any) => {
+          if (!view) setView(data.views[0].id);
+          setBoardData(data);
           setLoading(false);
         })
         .catch((e: any) => {
-          setError(e);
+          //setError(e);
           console.error(e);
         });
     }

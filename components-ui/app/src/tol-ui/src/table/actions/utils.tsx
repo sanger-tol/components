@@ -7,18 +7,14 @@ SPDX-License-Identifier: MIT
 import {
   API_METHODS,
   IDropdownButtonConfig,
-  LOCAL_API_PREFIX,
   TsDataSource,
 } from "../..";
 
 
-const actionDataSource = new TsDataSource({
-  apiPrefix: LOCAL_API_PREFIX,
-});
-
 export function addRemoteActions(
   objectType: string,
   dataSource: TsDataSource,
+  actionDataSource: TsDataSource,
   setCurrentActionName: (actionName: string) => void,
   setIdExportModalOpen: (open: boolean) => void,
   setIdsWithReqNotMet: (ids: any) => void,
