@@ -66,7 +66,11 @@ function BoardTable(props: Props) {
       fieldMeta={config.fieldMeta || initialiseFieldMeta()}
       pageSize={config.pageSize || 50}
       filterVisibility={config.filterVisibility ?? true}
-      defaultSort={config.sort_by || undefined}
+      defaultSort={
+        config.sort_by || 
+        config?.fieldMeta?.order?.active[0] ||
+        undefined
+      }
       onModalSave={onModalSave}
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
