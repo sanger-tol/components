@@ -29,7 +29,8 @@ export interface Props {
     fieldMeta: FieldMeta,
     actions?: string[],
     sortByAttribute?: string,
-    sortByType?: string ) => void;
+    sortByType?: string 
+  ) => void;
   endpoint: string;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
@@ -70,7 +71,7 @@ function ColumnConfigDrawer(props: Props) {
       ? [defaultSort.slice(1)]
       : [defaultSort];
   });
-  const [sortByDirection, setSortByDirection] = useState<string>(
+  const [sortByType, setsortByType] = useState<string>(
     defaultSort?.startsWith("-") ? "desc" : "asc"
   );
 
@@ -109,7 +110,7 @@ function ColumnConfigDrawer(props: Props) {
   const saveConfig = () => {
     if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || originalActions !== actions) {
       const updatedFieldMeta = fieldMetaUpdatedByContents();
-      onConfigSave(updatedFieldMeta, actions, sortByAttribute[0], sortByDirection);
+      onConfigSave(updatedFieldMeta, actions, sortByAttribute[0], sortByType);
       setInitialAttributes(attributes);
     }
     setOpen(!open);
@@ -197,7 +198,7 @@ function ColumnConfigDrawer(props: Props) {
 
   const handleCloseDrawer = () => {
     if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || 
-      defaultSort !== createSort(sortByAttribute[0], sortByDirection)
+      defaultSort !== createSort(sortByAttribute[0], sortByType)
     ) {
       setOpenSaveModal(true);
     } else {
@@ -236,8 +237,8 @@ function ColumnConfigDrawer(props: Props) {
             key={direction}
             text={direction}
             type="primary"
-            onClick={() => setSortByDirection(direction)}
-            active={sortByDirection === direction}
+            onClick={() => setsortByType(direction)}
+            active={sortByType === direction}
             size="lg"
             className="tol-board-chart-sort-buttons"
           />
