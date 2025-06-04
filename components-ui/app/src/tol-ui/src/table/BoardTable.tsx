@@ -26,9 +26,10 @@ function BoardTable(props: Props) {
   const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
 
-  const onModalSave = (fm: FieldMeta, actions: string[]) => {
+  const onModalSave = (fm: FieldMeta, actions: string[], sortByAtt: string) => {
     config["fieldMeta"] = fm;
     config["actions"] = actions;
+    config["sort_by"] = sortByAtt
     setForceUpdate(!forceUpdate); // fetches new data on save
     setConfig({ ...config });
     upsertComponentConfig(ds, id, config);
@@ -65,7 +66,7 @@ function BoardTable(props: Props) {
       fieldMeta={config.fieldMeta || initialiseFieldMeta()}
       pageSize={config.pageSize || 50}
       filterVisibility={config.filterVisibility ?? true}
-      defaultSort={config?.fieldMeta?.order?.active[0] || undefined}
+      defaultSort={config.sort_by || undefined}
       onModalSave={onModalSave}
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}

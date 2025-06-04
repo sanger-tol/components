@@ -200,7 +200,8 @@ function RemoteTable(props: Props) {
     setZone({ ...zone });
     
     if (props.onModalSave) {
-      props.onModalSave(fm, actions);
+      // Add in the default sort here
+      props.onModalSave(fm, actions, createSort(sortByAttribute || "", sortByType || "asc"));
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", fm);
     }

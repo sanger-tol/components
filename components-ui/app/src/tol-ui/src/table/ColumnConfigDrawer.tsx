@@ -34,6 +34,7 @@ export interface Props {
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
   groupBy?: boolean;
+  defaultSort?: string;  
 }
 
 function ColumnConfigDrawer(props: Props) {
@@ -47,6 +48,7 @@ function ColumnConfigDrawer(props: Props) {
     onConfigSave,
     customAttributeSelection,
     groupBy,
+    defaultSort
   } = props;
   const [attributes, setAttributes] = useState<string[]>(
     fieldMeta?.order?.active ?? [],
@@ -62,8 +64,15 @@ function ColumnConfigDrawer(props: Props) {
   const originalActions = props.actions?.map((btn) => btn.name as string) ?? [];
   // @ts-ignore
   const [actions, setActions] = useState<string[]>(originalActions);
-  const [sortByAttribute, setSortByAttribute] = useState<string[]>([]);
-  const [sortByDirection, setSortByDirection] = useState<string>("asc");
+  const [sortByAttribute, setSortByAttribute] = useState<string[]>(() => {
+    if (!defaultSort) return [];
+    return defaultSort.startsWith("-")
+      ? [defaultSort.slice(1)]
+      : [defaultSort];
+  });
+  const [sortByDirection, setSortByDirection] = useState<string>(
+    defaultSort?.startsWith("-") ? "desc" : "asc"
+  );
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
