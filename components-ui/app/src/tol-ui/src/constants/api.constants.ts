@@ -12,7 +12,7 @@ export const API_METHODS = {
   PUT: "PUT",
 }
 
-export const BOARDS_API_PREFIX = "board-data";
+export const BOARDS_API_PREFIX = "boards";
 export const LOCAL_API_PREFIX = "local";
 
 export const BOARDS = {
