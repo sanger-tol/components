@@ -26,7 +26,6 @@ export interface Props {
   endpoint: string;
   attributes: string[];
   setAttributes: (attributes: string[]) => void;
-  title?: string;
 }
 
 function SelectedAttributesContainer(props: Props) {
@@ -35,7 +34,6 @@ function SelectedAttributesContainer(props: Props) {
     endpoint,
     attributes,
     setAttributes,
-    title = "Active Columns:",
   } = props;
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
@@ -135,7 +133,6 @@ function SelectedAttributesContainer(props: Props) {
   return (
     <div>
       <div>
-        <h6 className="tol-config-drawer-column-title">{title}</h6>
         <div className="tol-config-drawer-column-container" ref={ref}>
           <DraggableList
             container={() => ref.current}
