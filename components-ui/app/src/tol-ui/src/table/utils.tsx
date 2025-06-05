@@ -445,6 +445,7 @@ function addDefaultMeta(fieldMeta: FieldMeta) {
         meta.type!
       );
     }
+    if (!meta.rename) meta.rename = normaliseCaps(key);
   }
   // ensure fields are easy to find
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
@@ -507,7 +508,7 @@ export function tableDebug(
 }
 
 export function createSort(sortColumn: string, sortType: string) {
-  if (sortType === "desc") {
+  if (sortType === "desc" && !sortColumn.startsWith("-")) {
     return "-" + sortColumn;
   }
   return sortColumn;
@@ -669,4 +670,24 @@ export function mapKeysToDisplayNames(
   }
 
   return result;
+}
+
+export async function getActions(
+  objectType: string,
+): Promise<string[]> {
+  const ds = new TsDataSource();
+  const actionsList: string[] = [];
+  const actions =  await ds.getListPage({
+      objectType: 'local/action',
+      filter: {
+        and_: {
+          object_type: { eq: { value: objectType } },
+        },
+      },
+    })
+
+  actions?.find((action) => {
+    actionsList.push(action.name);
+  })
+  return actionsList
 }

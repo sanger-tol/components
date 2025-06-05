@@ -294,10 +294,12 @@ export function Table(props: Props) {
         }
       />
       <ColumnConfigDrawer
+        actions={actions}
+        defaultSort={defaultSort}
         open={open}
         groupBy={groupBy}
         setOpen={setOpen}
-        title={"Add/Remove Table Columns"}
+        title={"Table Configuration"}
         displaySource={displaySource}
         customAttributeSelection={getAllowedFields(fieldMeta)}
         onConfigSave={onModalSave}
@@ -362,8 +364,8 @@ export function Table(props: Props) {
           configButton,
           filterButton,
           downloadButton,
-          actionDropdown,
           ...(utilityBarConfig.buttons || []),
+          actionDropdown,
         ]}
       />
       {contents ? contents : 

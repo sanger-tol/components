@@ -145,6 +145,7 @@ export function SliceByDrawer(props: ISliceByDrawer) {
 
   const attSelector = (
     <div>
+      <h6 className="tol-config-drawer-column-title">Selected Attributes (Inner Ring at the Top):</h6>
       <div>
         <AttributeSelector
           {...props}
@@ -167,7 +168,6 @@ export function SliceByDrawer(props: ISliceByDrawer) {
         {...props}
         attributes={attributes}
         setAttributes={setAttributes}
-        title="Selected Attributes (Inner Ring at the Top):"
       />
       <div>
         <div className="tol-config-drawer-save-button">{drawerButtons}</div>

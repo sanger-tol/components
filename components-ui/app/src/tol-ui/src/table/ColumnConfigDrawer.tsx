@@ -14,19 +14,29 @@ import {
   FieldMeta,
   initialiseFieldMeta,
   IRemoteTarget,
+  IDropdownButtonConfig,
+  getActions,
+  createSort
 } from "..";
 
 
-interface Props extends IRemoteTarget{
+interface Props extends IRemoteTarget {
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
   fieldMeta: FieldMeta;
   displaySource?: boolean;
-  onConfigSave: (fieldMeta: FieldMeta) => void;
+  onConfigSave: (
+    fieldMeta: FieldMeta,
+    actions?: string[],
+    sortByAttribute?: string,
+    sortByType?: string 
+  ) => void;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
+  actions?: IDropdownButtonConfig[];
   groupBy?: boolean;
+  defaultSort?: string;  
 }
 
 export function ColumnConfigDrawer(props: Props) {
@@ -36,8 +46,11 @@ export function ColumnConfigDrawer(props: Props) {
     title,
     fieldMeta,
     onConfigSave,
-    customAttributeSelection
+    customAttributeSelection,
+    groupBy,
+    defaultSort
   } = props;
+
   const [attributes, setAttributes] = useState<string[]>(
     fieldMeta?.order?.active ?? [],
   );
@@ -45,6 +58,22 @@ export function ColumnConfigDrawer(props: Props) {
     fieldMeta?.order?.active ?? [],
   );
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
+  // Used to store actions options for the dropdown
+  // @ts-ignore
+  const [actionOptions, setActionsOptions] = useState<string[]>([]);
+  // Used to store selected actions from the dropdown
+  const originalActions = props.actions?.map((btn) => btn.name as string) ?? [];
+  // @ts-ignore
+  const [actions, setActions] = useState<string[]>(originalActions);
+  const [sortByAttribute, setSortByAttribute] = useState<string[]>(() => {
+    if (!defaultSort) return [];
+    return defaultSort.startsWith("-")
+      ? [defaultSort.slice(1)]
+      : [defaultSort];
+  });
+  const [sortByType, setsortByType] = useState<string>(
+    defaultSort?.startsWith("-") ? "desc" : "asc"
+  );
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
@@ -79,9 +108,9 @@ export function ColumnConfigDrawer(props: Props) {
   };
 
   const saveConfig = () => {
-    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes)) {
+    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || originalActions !== actions) {
       const updatedFieldMeta = fieldMetaUpdatedByContents();
-      onConfigSave(updatedFieldMeta);
+      onConfigSave(updatedFieldMeta, actions, sortByAttribute[0], sortByType);
       setInitialAttributes(attributes);
     }
     setOpen(!open);
@@ -168,7 +197,9 @@ export function ColumnConfigDrawer(props: Props) {
   );
 
   const handleCloseDrawer = () => {
-    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes)) {
+    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || 
+      defaultSort !== createSort(sortByAttribute[0], sortByType)
+    ) {
       setOpenSaveModal(true);
     } else {
       setOpen(false);
@@ -181,8 +212,67 @@ export function ColumnConfigDrawer(props: Props) {
     setOpen(false);
   };
 
+  useEffect(() => {
+    const formatActionOptions = async () => {
+      setActionsOptions(await getActions(endpoint))
+    }
+    formatActionOptions();
+  }, [])
+
+  // const actionDropdown = (
+  //   <MultipleSelect
+  //     block={true}
+  //     placeholder="Select Actions..."
+  //     data={actionOptions}
+  //     value={actions}
+  //     setValue={setActions}
+  //   />
+  // )
+
+  const sortByButtons = (
+      <div className="tol-board-chart-interval-btn-container">
+        {['asc', 'desc'].map((direction: string) => (
+          <Button
+            outline
+            key={direction}
+            text={direction}
+            type="primary"
+            onClick={() => setsortByType(direction)}
+            active={sortByType === direction}
+            size="lg"
+            className="tol-board-chart-sort-buttons"
+          />
+        ))}
+      </div>
+    );
+
   const attSelector = (
     <div>
+       <h6>Default Sort:</h6>
+      <AttributeSelector
+        groupBy={groupBy}
+        maxSelections={1}
+        endpoint={endpoint}
+        placeholder="Default Sort Column"
+        baseUrl={baseUrl}
+        attribute={sortByAttribute}
+        setAttributes={setSortByAttribute}
+        disabledValues={null}
+        numPopulatedFields={0}
+        populatedFieldType={"column"}
+        additionalPopulatedFieldData={"."}
+        renderSearchBySource={true}
+        displaySource={true}
+        customAttributeSelection={customAttributeSelection}
+        sticky={true}
+      />
+      {sortByAttribute.length > 0 && (
+        <>
+          {sortByButtons}
+        </>
+      )
+      }
+      <h6 className="tol-config-drawer-column-title">Active Columns:</h6>
       <div>
         <AttributeSelector
           {...props}
@@ -200,6 +290,10 @@ export function ColumnConfigDrawer(props: Props) {
           customAttributeSelection={customAttributeSelection}
         />
       </div>
+      {/* <div style={{ marginTop: "15px", marginBottom: "15px" }}>
+        <h6>Actions</h6>
+        {actionDropdown}
+      </div> */}
       <SelectedAttributesContainer
         {...props}
         attributes={attributes}

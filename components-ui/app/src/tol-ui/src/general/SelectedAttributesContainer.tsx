@@ -26,7 +26,6 @@ interface AttributeDetails {
 interface Props extends IRemoteTarget {
   attributes: string[];
   setAttributes: (attributes: string[]) => void;
-  title?: string;
 }
 
 export function SelectedAttributesContainer(props: Props) {
@@ -35,7 +34,6 @@ export function SelectedAttributesContainer(props: Props) {
     dataSource,
     attributes,
     setAttributes,
-    title = "Active Columns:",
   } = props;
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
@@ -134,7 +132,6 @@ export function SelectedAttributesContainer(props: Props) {
   return (
     <div>
       <div>
-        <h6 className="tol-config-drawer-column-title">{title}</h6>
         <div className="tol-config-drawer-column-container" ref={ref}>
           <DraggableList
             container={() => ref.current}
