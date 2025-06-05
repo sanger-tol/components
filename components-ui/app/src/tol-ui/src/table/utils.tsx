@@ -674,18 +674,18 @@ export function mapKeysToDisplayNames(
 
 export async function getActions(
   objectType: string,
+  actionDataSource: TsDataSource,
 ): Promise<string[]> {
-  const ds = new TsDataSource();
   const actionsList: string[] = [];
-  const actions =  await ds.getListPage({
-      objectType: 'local/action',
+  const actions =  await actionDataSource
+    .getListPage({
+      objectType: objectType,
       filter: {
         and_: {
           object_type: { eq: { value: objectType } },
         },
       },
     })
-
   actions?.find((action) => {
     actionsList.push(action.name);
   })

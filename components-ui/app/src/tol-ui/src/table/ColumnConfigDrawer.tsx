@@ -15,8 +15,8 @@ import {
   initialiseFieldMeta,
   IRemoteTarget,
   IDropdownButtonConfig,
-  getActions,
-  createSort
+  createSort,
+  MultipleSelect
 } from "..";
 
 
@@ -35,8 +35,9 @@ interface Props extends IRemoteTarget {
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
   actions?: IDropdownButtonConfig[];
+  actionChoices?: string[]; // just the names of the actions
   groupBy?: boolean;
-  defaultSort?: string;  
+  defaultSort?: string;
 }
 
 export function ColumnConfigDrawer(props: Props) {
@@ -48,7 +49,8 @@ export function ColumnConfigDrawer(props: Props) {
     onConfigSave,
     customAttributeSelection,
     groupBy,
-    defaultSort
+    defaultSort,
+    actionChoices,
   } = props;
 
   const [attributes, setAttributes] = useState<string[]>(
@@ -58,12 +60,8 @@ export function ColumnConfigDrawer(props: Props) {
     fieldMeta?.order?.active ?? [],
   );
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
-  // Used to store actions options for the dropdown
-  // @ts-ignore
-  const [actionOptions, setActionsOptions] = useState<string[]>([]);
-  // Used to store selected actions from the dropdown
+  // used to store selected actions from the dropdown
   const originalActions = props.actions?.map((btn) => btn.name as string) ?? [];
-  // @ts-ignore
   const [actions, setActions] = useState<string[]>(originalActions);
   const [sortByAttribute, setSortByAttribute] = useState<string[]>(() => {
     if (!defaultSort) return [];
@@ -212,22 +210,15 @@ export function ColumnConfigDrawer(props: Props) {
     setOpen(false);
   };
 
-  useEffect(() => {
-    const formatActionOptions = async () => {
-      setActionsOptions(await getActions(endpoint))
-    }
-    formatActionOptions();
-  }, [])
-
-  // const actionDropdown = (
-  //   <MultipleSelect
-  //     block={true}
-  //     placeholder="Select Actions..."
-  //     data={actionOptions}
-  //     value={actions}
-  //     setValue={setActions}
-  //   />
-  // )
+  const actionDropdown = actions && actionChoices ? (
+    <MultipleSelect
+      block={true}
+      placeholder="Select Actions..."
+      data={actionChoices}
+      value={actions}
+      setValue={setActions}
+    />
+  ) : <></>
 
   const sortByButtons = (
       <div className="tol-board-chart-interval-btn-container">
@@ -250,11 +241,10 @@ export function ColumnConfigDrawer(props: Props) {
     <div>
        <h6>Default Sort:</h6>
       <AttributeSelector
+        {...props}
         groupBy={groupBy}
         maxSelections={1}
-        endpoint={endpoint}
         placeholder="Default Sort Column"
-        baseUrl={baseUrl}
         attribute={sortByAttribute}
         setAttributes={setSortByAttribute}
         disabledValues={null}
@@ -290,10 +280,12 @@ export function ColumnConfigDrawer(props: Props) {
           customAttributeSelection={customAttributeSelection}
         />
       </div>
-      {/* <div style={{ marginTop: "15px", marginBottom: "15px" }}>
-        <h6>Actions</h6>
-        {actionDropdown}
-      </div> */}
+      {actions && actionChoices && (
+        <div style={{ marginTop: "15px", marginBottom: "15px" }}>
+          <h6>Actions</h6>
+          {actionDropdown}
+        </div>
+      )}
       <SelectedAttributesContainer
         {...props}
         attributes={attributes}

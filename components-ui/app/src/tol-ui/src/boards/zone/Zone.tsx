@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import {
   useZone,
-  InlineEdit,
   BoardFilters,
   ComponentPickerModal,
   ResponsiveWidget,
@@ -195,11 +194,11 @@ export function Zone(props: Props) {
       <UtilityBar
         id="zone-utility-bar"
         title= {{
-          title: title,
+          text: title,
           editable: true,
           onSave: (value: string) => {
             if (value !== title) {
-              saveTitle(newTitle, dataSource, id, BOARDS.ZONE);
+              saveTitle(value, dataSource, id, BOARDS.ZONE);
               setTitle(value);
             }
           }

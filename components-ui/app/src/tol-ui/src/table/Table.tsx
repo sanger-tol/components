@@ -74,6 +74,7 @@ interface Props extends IRemoteTarget{
   noDownload?: boolean;
   rowSelection?: boolean;
   actions?: IDropdownButtonConfig[];
+  actionChoices?: string[];
   actionsFooter?: IDropdownButtonConfig;
   utilityBarConfig?: IUtilityBar;
   selectedRows?: string[];
@@ -294,16 +295,16 @@ export function Table(props: Props) {
         }
       />
       <ColumnConfigDrawer
+        {...props}
+        title={"Table Configuration"}
         actions={actions}
         defaultSort={defaultSort}
         open={open}
         groupBy={groupBy}
         setOpen={setOpen}
-        title={"Table Configuration"}
         displaySource={displaySource}
         customAttributeSelection={getAllowedFields(fieldMeta)}
         onConfigSave={onModalSave}
-        {...props}
       />
       {/*rowSelection && (
           <>
