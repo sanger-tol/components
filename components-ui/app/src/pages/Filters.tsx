@@ -394,7 +394,14 @@ export function Filters() {
       component: table,
       type: "full",
     },
-
+    {
+      component: chart,
+      type: "full",
+    },
+    {
+      component: translatorComponent,
+      type: "full",
+    },
   ];
 
   return <Widgets components={components} />;

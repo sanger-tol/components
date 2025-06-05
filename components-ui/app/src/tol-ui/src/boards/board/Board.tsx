@@ -64,7 +64,7 @@ export function Board(props: Props) {
           setLoading(false);
         })
         .catch((e: any) => {
-          //setError(e);
+          setError(e);
           console.error(e);
         });
     }

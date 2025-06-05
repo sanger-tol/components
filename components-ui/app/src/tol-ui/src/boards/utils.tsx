@@ -81,29 +81,34 @@ export async function getZones(viewId: string, boardDataSource: TsDataSource) {
         },
       },
     })
-    .then(async (res: any) => {
-      // removes duplicate values
-      const ids: string[] = Array.from(
-        new Set(
-          res.data.data.map((zone: any) => zone.relationships.zone.data.id),
-        ),
+    .then(async (data: TDataObjectListOrNull) => {
+      const allIds = await Promise.all(
+        data?.map(async (zoneView: any) => {
+          const zone = await zoneView.relationships.zone;
+          return zone.id;
+        }) || []
       );
+      // removes duplicate values
+      const ids: string[] = Array.from(new Set(allIds));
       const zoneData = await getZoneData(ids, boardDataSource);
       return {
-        order: formatZoneOrders(res.data.data),
+        order: await formatZoneOrders(data),
         zones: zoneData,
       };
     });
 }
 
-function formatZoneOrders(data: any) {
-  const formattedData = data.map((zone: any) => {
-    return {
-      zoneId: zone.relationships.zone.data.id,
-      order: zone.attributes.order,
-      zoneViewId: zone.id,
-    };
-  });
+async function formatZoneOrders(data: TDataObjectListOrNull) {
+  const formattedData = await Promise.all(
+    data?.map(async (zone: any) => {
+      const zoneRelationships = await zone.relationships.zone;
+      return {
+        zoneId: zoneRelationships.id,
+        order: zone.order,
+        zoneViewId: zone.id,
+      };
+    }) || []
+  );
   return formattedData;
 }
 
@@ -117,9 +122,6 @@ async function getZoneData(ids: string[], boardDataSource: TsDataSource) {
         },
       },
     })
-    .then((res: any) => {
-      return res;
-    });
 }
 
 export function saveTitle(
