@@ -40,8 +40,8 @@ export function NewBoardModal(props: Props) {
         type="success"
         disabled={boardTitle === "" /*|| viewTitle === ""*/} // Views will be 'View 1' for now
         onClick={() => {
-          setOpen(false),
-            onConfirmClick(boardId, viewId, boardTitle, viewTitle);
+          setOpen(false);
+          onConfirmClick(boardId, viewId, boardTitle, viewTitle);
         }}
         text="Create"
         icon="plus"

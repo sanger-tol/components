@@ -210,15 +210,15 @@ export function ColumnConfigDrawer(props: Props) {
     setOpen(false);
   };
 
-  const actionDropdown = actions && actionChoices ? (
+  const actionDropdown = (
     <MultipleSelect
       block={true}
       placeholder="Select Actions..."
-      data={actionChoices}
+      data={actionChoices || []}
       value={actions}
       setValue={setActions}
     />
-  ) : <></>
+  )
 
   const sortByButtons = (
       <div className="tol-board-chart-interval-btn-container">
@@ -239,7 +239,7 @@ export function ColumnConfigDrawer(props: Props) {
 
   const attSelector = (
     <div>
-       <h6>Default Sort:</h6>
+      <h6>Default Sort:</h6>
       <AttributeSelector
         {...props}
         groupBy={groupBy}
@@ -260,8 +260,7 @@ export function ColumnConfigDrawer(props: Props) {
         <>
           {sortByButtons}
         </>
-      )
-      }
+      )}
       <h6 className="tol-config-drawer-column-title">Active Columns:</h6>
       <div>
         <AttributeSelector

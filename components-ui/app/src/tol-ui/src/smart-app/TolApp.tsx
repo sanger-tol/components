@@ -36,10 +36,12 @@ import {
   addBoardPages,
   generatePagesThatRequireARoute,
   TsDataSource,
+  API_METHODS,
+  BOARDS_API_PREFIX,
 } from "..";
 
 
-export interface AppBoard {
+export interface BoardSources {
   dataSource: TsDataSource;
   boardDataSource?: TsDataSource;
 }
@@ -50,13 +52,22 @@ interface Props {
   pages: (Page | Dropdown)[];
   profilePages?: Page[];
   login?: boolean;
-  boards?: AppBoard;
+  boards?: BoardSources;
   register?: boolean;
   customCallbackUrl?: string;
 }
 
 export function TolApp(props: Props) {
-  const { boards, customCallbackUrl } = props;
+  const { customCallbackUrl } = props;
+
+  // setting a default for the boardDataSource
+  const boards = props.boards ? {
+    dataSource: props.boards?.dataSource,
+    boardDataSource: props.boards?.boardDataSource
+      || new TsDataSource({
+        apiPrefix: BOARDS_API_PREFIX,
+      }),
+  } : undefined;
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);

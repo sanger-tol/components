@@ -153,6 +153,14 @@ def application():
     app.register_blueprint(blueprint_data_local, name='local',
                            url_prefix=os.getenv('API_PATH') + '/local')
     
+    # The system endpoints
+    blueprint_system = system_blueprint()
+    app.register_blueprint(blueprint_system, url_prefix=os.getenv('API_PATH') + '/system')
+
+    # user id
+    user_id_bp = __user_id_blueprint(os.environ['API_PATH'])
+    app.register_blueprint(user_id_bp)
+
     # actions
     actions_bp = action_blueprint(
         sql_datasource,
@@ -163,14 +171,6 @@ def application():
         actions_bp,
         url_prefix=os.getenv('API_PATH') + '/local/run-action'
     )
-
-    # The system endpoints
-    blueprint_system = system_blueprint()
-    app.register_blueprint(blueprint_system, url_prefix=os.getenv('API_PATH') + '/system')
-
-    # user id
-    user_id_bp = __user_id_blueprint(os.environ['API_PATH'])
-    app.register_blueprint(user_id_bp)
 
     # dashboards
     boards_bp = board_blueprint(sql_datasource)
@@ -186,8 +186,6 @@ def application():
 
     import logging
     logger = logging.getLogger(__name__)
-    # Log all routes of the application
-    logger.error('APPLES')
     for rule in app.url_map.iter_rules():
         logger.error(f"Route: {rule} -> Methods: {rule.methods}")
 

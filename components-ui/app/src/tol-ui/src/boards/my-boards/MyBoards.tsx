@@ -9,56 +9,25 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import {
   Widgets,
-  httpClient,
   Message,
   Toaster,
-  Loader,
   StaticMessage,
   Accordion,
   MyBoardsHeader,
   getUserFromLocalStorage,
-  BOARDS
+  TsDataSource,
+  getBoardDetails,
+  LoadingContent,
 } from "../..";
 
 
-const containerStyle = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  position: "relative",
-  paddingLeft: "10px",
-  paddingRight: "10px",
-};
+export interface IMyBoards {
+  boardDataSource: TsDataSource;
+}
 
-const DASHBOARD_WARNING =
-  "WARNING: Dashboards are still in development, so existing boards or views may be removed at any point";
-
-const getBoardDetails = async (id: string, setErrorMessage: any) => {
-  try {
-    const res = await httpClient().get(`/${BOARDS.BOARD}`, {
-      params: {
-        filter: {
-          and_: {
-            user_id: { eq: { value: id } },
-          },
-        },
-      },
-    });
-    // @ts-ignore
-    const boardDetails: any = res!.data!.data!.map((board: any) => ({
-      id: board.id,
-      title: board.attributes.title,
-    }));
-    return boardDetails;
-  } catch (error) {
-    console.warn("Error fetching boards", error);
-    setErrorMessage("Error fetching boards. Please reload and try again.");
-    return [];
-  }
-};
-
-export function MyBoards() {
-  const [boardDetails, setBoardDetails] = useState<string[]>([]);
+export function MyBoards(props: IMyBoards) {
+  const { boardDataSource } = props;
+  const [boardDetails, setBoardDetails] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const toaster = Toaster();
@@ -66,6 +35,12 @@ export function MyBoards() {
   useEffect(() => {
     fetchBoardDetails();
   }, []);
+
+  useEffect(() => {
+    if (errorMessage) {
+      toaster.push(errMessage);
+    }
+  }, [errorMessage]);
 
   const errMessage = (
     <Message
@@ -80,28 +55,21 @@ export function MyBoards() {
   const fetchBoardDetails = async () => {
     const user = getUserFromLocalStorage();
     const userId = user.id;
-
     if (userId) {
-      try {
-        const ids: any = await getBoardDetails(userId, setErrorMessage);
-        setBoardDetails(ids);
-      } catch (error) {
-        console.error("Error fetching boards:", error);
-        setErrorMessage("Error fetching board IDs. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
+      await getBoardDetails(boardDataSource, userId, setErrorMessage)
+        .then((data) => {
+          setBoardDetails(data ?? []);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     } else {
-      console.warn("User ID not found.");
-      setErrorMessage("User ID not found. Please reload and try again.");
+      setErrorMessage("User not found. Please login and try again.");
+      setLoading(false);
     }
-  };
+  }
 
-  useEffect(() => {
-    if (errorMessage) {
-      toaster.push(errMessage);
-    }
-  }, [errorMessage]);
+  if (loading) return <LoadingContent text={"Finding your Boards..."} />;
 
   const noBoards = (
     <div style={{ textAlign: "center" }}>
@@ -121,53 +89,43 @@ export function MyBoards() {
     </div>
   );
 
-  const myBoards = (
-    <div className="my-boards-container">
-      {!loading ? (
-        boardDetails && boardDetails.length > 0 ? (
-          <Accordion
-            boardDetails={boardDetails}
-            setBoardDetails={setBoardDetails}
-          />
-        ) : (
-          <div>{noBoards}</div>
-        )
-      ) : (
-        <div className="fixed-full-page">
-          <div className="fixed-centered-loader">
-            <span style={{ display: "flex", justifyContent: "center" }}>
-              <Loader />
-            </span>
-            <p style={{ marginTop: "10px" }}>Loading Your Boards...</p>
-          </div>
-        </div>
-      )}
-    </div>
+  const containerStyle = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    position: "relative",
+    paddingLeft: "10px",
+    paddingRight: "10px",
+  };
+
+  const Header = (
+    <MyBoardsHeader
+      boardDataSource={boardDataSource}
+      containerStyle={containerStyle}
+    />
   );
 
-  const myBoardsHeader = <MyBoardsHeader containerStyle={containerStyle} />;
-
-  const myBoardsWarning = (
-    <div style={{ padding: "0px 10px" }}>
-      <StaticMessage message={DASHBOARD_WARNING} type={"warning"} />
+  const MyBoardContent = (
+    <div className="my-boards-container">
+      {boardDetails && boardDetails.length > 0 ? (
+        <Accordion
+          boardDetails={boardDetails}
+          setBoardDetails={setBoardDetails}
+        />
+      ) : noBoards}
     </div>
   );
 
   const components = [
     {
-      component: myBoardsHeader,
+      component: Header,
       type: "full",
     },
     {
-      component: myBoards,
+      component: MyBoardContent,
       type: "full",
     },
   ];
 
-  return (
-    <>
-      {myBoardsWarning}
-      <Widgets components={components} />
-    </>
-  );
+  return <Widgets components={components} />;
 }

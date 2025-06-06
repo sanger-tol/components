@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import {
   BOARDS,
-  BOARDS_API_PREFIX,
   getBoard,
   getCssVarValue,
   getUserFromLocalStorage,
@@ -29,9 +28,7 @@ interface Props {
 export function Board(props: Props) {
   const {
     dataSource,
-    boardDataSource = new TsDataSource({
-      apiPrefix: BOARDS_API_PREFIX,
-    })
+    boardDataSource,
   } = props;
   const { boardId, viewId } = useParams<any>();
 
@@ -57,7 +54,7 @@ export function Board(props: Props) {
 
   useEffect(() => {
     if (boardId && user) {
-      getBoard(boardId, boardDataSource)
+      getBoard(boardId, boardDataSource!)
         .then((data: any) => {
           if (!view) setView(data.views[0].id);
           setBoardData(data);
@@ -86,7 +83,7 @@ export function Board(props: Props) {
           text={boardData.boardTitle}
           onSave={(newTitle: any) => {
             if (newTitle !== boardData.boardTitle) {
-              saveTitle(newTitle, boardDataSource, boardId, BOARDS.BOARD);
+              saveTitle(newTitle, boardDataSource!, boardId, BOARDS.BOARD);
             }
           }}
           editable
@@ -96,7 +93,7 @@ export function Board(props: Props) {
         id={boardData.views[0].id}
         defaultFilter={boardData.views[0].filter}
         dataSource={dataSource}
-        boardDataSource={boardDataSource}
+        boardDataSource={boardDataSource!}
       />
     </div>
   );

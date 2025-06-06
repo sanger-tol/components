@@ -307,9 +307,11 @@ export function RemoteTable(props: Props) {
         method: API_METHODS.POST,
         resource: ACTIONS.RUN_ACTION,
         body: {
-          ids: ids,
-          action_name: actionName,
-          object_type: objectType,
+          data: {
+            ids: ids,
+            action_name: actionName,
+            object_type: objectType,
+          }
         }
       })
       .finally(() => {

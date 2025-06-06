@@ -8,7 +8,7 @@ import {
   MyBoards,
   Dropdown,
   Page,
-  AppBoard,
+  BoardSources,
 } from "..";
 
 
@@ -21,13 +21,13 @@ import {
  */
 export function addBoardPages(
   profilePages?: Page[],
-  boards?: AppBoard
+  boards?: BoardSources
 ): Page[] {
   if (boards) {
     return [
       {
         name: "My Boards",
-        element: <MyBoards />,
+        element: <MyBoards boardDataSource={boards.boardDataSource!}/>,
         auth: true,
       },
       ...(profilePages ?? []),
