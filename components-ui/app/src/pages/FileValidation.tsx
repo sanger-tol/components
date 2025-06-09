@@ -1,5 +1,5 @@
 /*
-SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
@@ -16,7 +16,7 @@ import {
   TolLoader,
 } from "../tol-ui/src";
 import { FileData } from "../tol-ui/src/forms/Dropzone";
-import { ValidateSteps } from "../tol-ui/src/file-validation";
+import { ValidateSteps, PreviousUploads } from "../tol-ui/src/file-validation";
 
 interface IValidationConfig {
   s3_url: string;
@@ -39,6 +39,35 @@ const TOL_LOADER_STYLES = {
   alignItems: "center",
   display: "flex",
 };
+
+const data = [
+  {
+    id: "step1",
+    stepName: "validate_species_not_null",
+    errors: ["OH NO!", "Error 1b", "Error 1c"],
+  },
+  {
+    id: "step2",
+    stepName: "validate_species_is_valid",
+    errors: ["Error 2a", "Error 2b", "Error 2c"],
+  },
+  {
+    id: "step3",
+    stepName: "Step 3",
+    errors: [
+      "The user is a silly silly silly silly goose...",
+      "Error 3b",
+      "Error 3c",
+      "Error 3d",
+      "Error 3e",
+    ],
+  },
+  { id: "step4", stepName: "Step 4", errors: [] },
+  { id: "step5", stepName: "Step 5", errors: [] },
+  { id: "step6", stepName: "Step 6", errors: ["error 6a", "error 6b"] },
+  { id: "step7", stepName: "Step 7", errors: [] },
+  { id: "step8", stepName: "Step 8", errors: ["error 8a", "error 8b"] },
+];
 
 function FileValidation(props: Props) {
   const {
@@ -125,7 +154,7 @@ function FileValidation(props: Props) {
             menuStyle={{ marginRight: "5px" }}
             dropdownButtons={[
               {
-                name: "Previous Uploads",
+                name: "Previous Validations",
                 action: () => {
                   setOpenModal("results");
                 },
@@ -190,7 +219,7 @@ function FileValidation(props: Props) {
           />
         </div>
       ) : (
-        <ValidateSteps />
+        <ValidateSteps data={data} />
       )}
     </div>
   );
@@ -199,6 +228,14 @@ function FileValidation(props: Props) {
     <div>
       <Modal
         open={openModal === "results"}
+        header={<h3>Previous Validations</h3>}
+        children={
+          <div>
+            <PreviousUploads data={data} />
+            <PreviousUploads data={data} />
+            <PreviousUploads data={data} />
+          </div>
+        }
         onClose={() => setOpenModal(false)}
         setOpen={setOpenModal}
       />
@@ -259,7 +296,7 @@ export default FileValidation;
 // TODO: Implement progress bar
 // TODO: Implement moving validation results to modal on 'reset'
 // TODO: Implement validation results
-// TODO: 
-// TODO: 
-// TODO: 
-// TODO: 
+// TODO:
+// TODO:
+// TODO:
+// TODO:

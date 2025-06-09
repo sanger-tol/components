@@ -141,6 +141,20 @@
   &.expanded {
     padding-bottom: 160px;
   }
+
+  .tol-file-upload-results-viewer-container {
+    min-height: 250px;
+  }
+
+  &::-webkit-scrollbar {
+    background-color: var(--tol-grey-subtle);
+    height: 9px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: grey;
+    border-radius: 5px;
+  }
 }
 
 .tol-file-uploader-validate-steps-inner-container {
@@ -155,7 +169,7 @@
   padding: 16px;
   background-color: var(--tol-grey);
   position: absolute;
-  width: 95%;
+  width: 96%;
   overflow-x: hidden;
   overflow-y: scroll;
   z-index: 1000;
@@ -164,6 +178,16 @@
   &.full-width {
     width: 100%;
     position: static;
+  }
+
+  &::-webkit-scrollbar {
+    background-color: var(--tol-grey-subtle);
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: grey;
+    border-radius: 5px;
   }
 }
 
@@ -260,10 +284,53 @@
   }
 }
 
+.tol-file-uploader-previous-validation-results-container {
+  margin: 0px;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, margin 0.4s ease-in-out;
+
+  &.expanded {
+    max-height: 500px;
+    opacity: 1;
+    margin: 15px 0px;
+  }
+}
+
+.tol-file-uploader-previous-validations-dropdown-btn {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &.icon-rotate {
+    transform: rotate(180deg);
+    opacity: 0.8;
+  }
+
+  &.icon-rotate:hover {
+    opacity: 1;
+  }
+}
+
+.tol-file-uploader-dropdown-btn-icon-transition {
+  transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
+  opacity: 1;
+}
+
 .tol-file-uploader-validate-step-icon {
   color: white;
   border-radius: 100%;
-  padding: 10px 12px 10px 12px;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &.error {
     background-color: var(--tol-danger);
