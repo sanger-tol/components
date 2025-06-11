@@ -37,9 +37,9 @@ export const componentOptions = [
   },
   {
     type: "text",
-    text: "Rich Text",
+    text: "Text",
     icon: "font",
-    disabled: true,
+    disabled: false,
   }
 ];
 
@@ -48,7 +48,7 @@ export const sizeOptions = (componentType: string) => {
     {
       type: "sm",
       text: "Small",
-      disabled: componentType === "count" || componentType == "sunburst" ? false : true,
+      disabled: componentType === "count" || componentType == "sunburst" || componentType === "text" ? false : true,
     },
     {
       type: "md",
