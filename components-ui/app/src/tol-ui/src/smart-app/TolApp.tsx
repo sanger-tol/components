@@ -33,6 +33,7 @@ import { convertToPath, matomoAnalytics } from "../general/utils";
 import { env } from "../variables/config";
 import { MyBoards, Board } from "../boards";
 import { addBoardPages, generatePagesThatRequireARoute } from "./utils";
+import { ValidationResultsViewer } from "src/file-validation";
 
 export interface BoardsObject {
   dataUrl?: string;
@@ -113,6 +114,13 @@ function TolApp(props: Props) {
                   <Redirect to="/" />
                 )}
               </Route>
+              <Route path="/file-validation/results/:pipelineId" render={(routeProps) => {
+                return boards && loggedIn ? (
+                  <ValidationResultsViewer {...routeProps} />
+                ) : (
+                  <Redirect to="/" />
+                )
+              }} />
               {allPageRoutes.map((page) => {
                 const path = convertToPath(page.name);
                 const routes = [];

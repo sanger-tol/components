@@ -8,6 +8,8 @@ import { useState } from "react";
 import { createTextGeneratorFactory, Modal } from "../index";
 import ValidationIcon from "./ValidationIcon";
 
+//TODO: Take into account warnings, as well as errors
+
 interface Props {
   id?: string;
   message?: string;

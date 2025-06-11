@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-interface Step {
+export interface Step {
     id: string;
     stepName: string;
     errors?: string[];

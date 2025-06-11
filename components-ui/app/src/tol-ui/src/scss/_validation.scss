@@ -68,6 +68,15 @@
   }
 }
 
+@keyframes itemEaseOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 .tol-validate-steps-all-errors-animation {
   animation: dropDownAllErrors 0.6s ease;
 }
@@ -289,12 +298,14 @@
   overflow: hidden;
   max-height: 0;
   opacity: 0;
-  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, margin 0.4s ease-in-out;
+  transition: max-height 0.6s ease-in-out;
+  animation: itemEaseOut 0.6s ease-in-out;
+  margin: 15px 0px 0px 0px;
 
   &.expanded {
     max-height: 500px;
     opacity: 1;
-    margin: 15px 0px;
+    animation: itemEaseIn 1s ease-in-out;
   }
 }
 

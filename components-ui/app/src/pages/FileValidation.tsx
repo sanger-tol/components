@@ -86,10 +86,17 @@ function FileValidation(props: Props) {
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);
   const [resetting, setResetting] = useState<boolean>(false);
+  const [expandedModalResults, setExpandedModalResults] = useState<
+    string | null
+  >(null);
   const [validationProgress, setValidationProgress] = useState<number>(0);
 
   const generateMessages = (apiRes: any) => {
     return [];
+  };
+
+  const handleToggleUploadResults = (id: string) => {
+    setExpandedModalResults(expandedModalResults === id ? null : id);
   };
 
   const handleReset = () => {
@@ -208,7 +215,7 @@ function FileValidation(props: Props) {
 
   const ResultsViewer = (
     <div>
-      <h6>Results: </h6>
+      <h6>Results:</h6>
       {validationResults.length > 0 === false ? (
         <div className="tol-file-upload-results-viewer-container">
           <TolLoader
@@ -231,9 +238,25 @@ function FileValidation(props: Props) {
         header={<h3>Previous Validations</h3>}
         children={
           <div>
-            <PreviousUploads data={data} />
-            <PreviousUploads data={data} />
-            <PreviousUploads data={data} />
+            <PreviousUploads
+              data={data}
+              id="12312"
+              expanded={expandedModalResults === "12312"}
+              onToggle={handleToggleUploadResults}
+            />
+            <PreviousUploads
+              data={data}
+              id="234342"
+              expanded={expandedModalResults === "234342"}
+              onToggle={handleToggleUploadResults}
+            />
+            <PreviousUploads
+              data={data}
+              id="456454"
+              expanded={expandedModalResults === "456454"}
+              onToggle={handleToggleUploadResults}
+            />
+            {/* TODO: no hard coded id's */}
           </div>
         }
         onClose={() => setOpenModal(false)}

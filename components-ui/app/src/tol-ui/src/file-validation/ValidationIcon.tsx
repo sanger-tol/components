@@ -36,8 +36,8 @@ function ValidationIcon(props: Props) {
       }}
     >
       {tooltip ? (
-        <HoverOverlay contents={tooltip} delay={200} placement="bottom">
-          <span style={{ ...style, cursor: "pointer" }} className={className}>
+        <HoverOverlay contents={tooltip} delay={200} placement="top">
+          <span style={{ ...style, cursor: iconType === "xmark" ? "pointer" : "" }} className={className}>
             <Icon icon={iconType} size={size} />
           </span>
         </HoverOverlay>

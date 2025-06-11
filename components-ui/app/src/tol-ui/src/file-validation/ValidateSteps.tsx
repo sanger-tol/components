@@ -20,7 +20,7 @@ interface Props {
 const WIDTH_REDUCER = 20;
 
 function ValidateSteps(props: Props) {
-  const {data} = props;
+  const { data } = props;
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
@@ -71,7 +71,7 @@ function ValidateSteps(props: Props) {
               {data.map((step) =>
                 step.errors.length > 0 && step.id === data[expandedIndex].id ? (
                   <div key={step.id}>
-                    {step.errors.map((error, index) => (
+                    {step.errors.map((error: string, index: number) => (
                       <ErrorViewer
                         key={`${step.id}-error-${index}`}
                         message={error}
