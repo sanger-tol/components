@@ -117,7 +117,8 @@ export {
   EntityMetaToolTip,
   BoardCount,
   SelectedAttributesContainer,
-  UtilityBar
+  UtilityBar,
+  BoardMarkDown,
 } from "./general";
 
 // hooks
