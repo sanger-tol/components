@@ -163,6 +163,7 @@
   &::-webkit-scrollbar-thumb {
     background: grey;
     border-radius: 5px;
+    opacity: 0.8;
   }
 }
 
@@ -197,6 +198,7 @@
   &::-webkit-scrollbar-thumb {
     background: grey;
     border-radius: 5px;
+    opacity: 0.8;
   }
 }
 
@@ -349,6 +351,10 @@
 
   &.passed {
     background-color: var(--tol-success);
+  }
+
+  &.pointer {
+    cursor: pointer;
   }
 }
 

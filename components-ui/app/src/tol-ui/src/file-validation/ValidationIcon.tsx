@@ -6,10 +6,9 @@ SPDX-License-Identifier: MIT
 
 import { Icon, HoverOverlay } from "../index";
 
-export type IconType = "check" | "xmark" | "question";
+export type IconType = "check" | "xmark" | "exclamation";
 
-// TODO: Change ValidationIcon style to className
-// TODO: Create size type
+// TODO: Take into account warnings
 
 interface Props {
   iconType: IconType;
@@ -19,25 +18,26 @@ interface Props {
   tooltip?: string;
 }
 
+const OVERLAY_DELAY = 200;
+const OVERLAY_PLACEMENT = "top";
+
 function ValidationIcon(props: Props) {
-  const {
-    iconType = "check",
-    size = "sm",
-    style,
-    className = "",
-    tooltip,
-  } = props;
+  const { iconType, size, style, className, tooltip } = props;
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <div>
       {tooltip ? (
-        <HoverOverlay contents={tooltip} delay={200} placement="top">
-          <span style={{ ...style, cursor: iconType === "xmark" ? "pointer" : "" }} className={className}>
+        <HoverOverlay
+          contents={tooltip}
+          delay={OVERLAY_DELAY}
+          placement={OVERLAY_PLACEMENT}
+        >
+          <span
+            className={`${className} ${
+              iconType === "xmark" || iconType === "exclamation"
+                ? "pointer"
+                : ""
+            }`}
+          >
             <Icon icon={iconType} size={size} />
           </span>
         </HoverOverlay>

@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useParams, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import ValidateSteps from "./ValidateSteps";
-import { Widgets } from "../index";
+import { HoverOverlay, Widgets } from "../index";
 
 interface LocationState {
   data: any;
@@ -19,6 +19,7 @@ interface LocationState {
 
 // TDOO: fetch validation results if not provided in location state
 // TODO: Calc number of errors/warnings/passes and display
+// TODO: No hardcoded styles, use CSS classes instead
 
 function ValidationResultsViewer() {
   const location = useLocation<LocationState>();
@@ -26,7 +27,7 @@ function ValidationResultsViewer() {
     location.state || {};
 
   const Results = (
-    <div>
+    <div style={{padding: "10px"}}>
       <div>
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <h4>Results for Pipeline #{pipelineId}</h4>{" "}
@@ -39,9 +40,11 @@ function ValidationResultsViewer() {
         </div>
         <div style={{ maxWidth: "150px" }}>
           <h6>{pipelineName}</h6>
-          <a href="#">
-            <p>{s3Filename}</p>
-          </a>
+          <HoverOverlay contents="Download">
+            <a href="#">
+              <p>{s3Filename}</p>
+            </a>
+          </HoverOverlay>
         </div>
       </div>
       <ValidateSteps data={data} />

@@ -80,7 +80,7 @@ function PreviousUploads(props: Props) {
             onClick={() => onToggle(id)}
             className={`tol-file-uploader-previous-dropdown-btn-icon-transition 
                 tol-file-uploader-previous-validations-dropdown-btn ${
-                  expanded ? "icon-rotate" : ""
+                  expanded ? "icorotaten-" : ""
                 }`}
             tooltip={expanded ? "Collapse" : "Expand"}
           />

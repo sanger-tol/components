@@ -16,6 +16,7 @@ interface Props {
 }
 
 const MAX_ERRORS_TO_DISPLAY = 2;
+const MAX_CHAR_LENGTH = 50;
 
 function ValidateStep(props: Props) {
   const {
@@ -38,7 +39,7 @@ function ValidateStep(props: Props) {
       >
         <div className="tol-file-uploader-validate-step-title-container">
           <h6 className="tol-file-uploader-validate-step-title">
-            {truncateString(normaliseCaps(stepName), 50)}
+            {truncateString(normaliseCaps(stepName), MAX_CHAR_LENGTH)}
           </h6>
           <ValidationIcon
             iconType={hasErrors ? "xmark" : "check"}
