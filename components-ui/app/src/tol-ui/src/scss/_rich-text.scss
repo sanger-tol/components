@@ -21,8 +21,8 @@
   }
 }
 
-.front,
-.back {
+.tol-rich-text-front,
+.tol-rich-text-back {
   position: absolute;
   width: 100%;
   backface-visibility: hidden;
@@ -30,7 +30,7 @@
   left: 0;
 }
 
-.back {
+.tol-rich-text-back {
   transform: rotateY(180deg);
 }
 
