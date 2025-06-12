@@ -118,7 +118,7 @@ export {
   BoardCount,
   SelectedAttributesContainer,
   UtilityBar,
-  BoardMarkDown,
+  BoardMarkdown,
 } from "./general";
 
 // hooks

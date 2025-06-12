@@ -9,7 +9,7 @@ import {
   BoardTable,
   BoardSunburst,
   BoardChart,
-  BoardMarkDown
+  BoardMarkdown
 } from "../../index";
 import { IZone } from "../utils";
 
@@ -39,7 +39,7 @@ function Visualisation(props: Props) {
     case "chart":
       return <BoardChart {...props} />;
     case "text":
-      return <BoardMarkDown {...props} />;
+      return <BoardMarkdown {...props} />;
   }
 }
 

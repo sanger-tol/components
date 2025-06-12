@@ -7,17 +7,17 @@ SPDX-License-Identifier: MIT
 import { useState, useEffect } from "react";
 import Markdown from "./Markdown";
 import MDEditor from "@uiw/react-md-editor";
-import { IButton } from "../general/Button";
+import { IButton } from "./Button";
 import { UtilityBar, TsDataSource } from "../index";
 import { saveTitle, upsertComponentConfig } from "../boards/utils";
 import { BoardObjectTypes } from "../constants";
 
-export interface MdComponentConfig {
+export interface IMdComponentConfig {
   content: string;
 }
 
 interface Props {
-  config: MdComponentConfig;
+  config: IMdComponentConfig;
   id: string;
   size: string;
   title: string;
@@ -25,7 +25,7 @@ interface Props {
 
 const RESOLUTION = { sm: "90px", md: "405px", lg: "565px" };
 
-export default function BoardMarkDown(props: Props) {
+export default function BoardMarkdown(props: Props) {
   const { config, id, size, title } = props;
   const ds = new TsDataSource();
 
@@ -38,7 +38,7 @@ export default function BoardMarkDown(props: Props) {
     config.content && setShowMarkdown(true);
   }, []);
 
-  const onMarkdownSave = (config: MdComponentConfig) => {
+  const onMarkdownSave = (config: IMdComponentConfig) => {
     {
       showMarkdown === false && upsertComponentConfig(ds, id, { ...config });
     }
@@ -78,10 +78,10 @@ export default function BoardMarkDown(props: Props) {
   );
 
   const MarkdownEditor = (
-    <div className="front">
+    <div className="tol-rich-text-front">
       <MDEditor
         value={content}
-        onChange={setContent}
+        onChange={(content?: string) => setContent(content ?? "")}
         preview={showPreview ? "live" : "edit"}
         height={RESOLUTION[size]}
       />
@@ -89,7 +89,7 @@ export default function BoardMarkDown(props: Props) {
   );
 
   const MarkdownViewer = (
-    <div className="back">
+    <div className="tol-rich-text-back">
       <div className={`tol-rich-text-viewer-inner-container ${size}`}>
         <Markdown contents={content} />
       </div>
