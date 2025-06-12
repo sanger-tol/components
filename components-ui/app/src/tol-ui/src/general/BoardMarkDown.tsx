@@ -4,37 +4,41 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-
+import { useState, useEffect } from "react";
 import Markdown from "./Markdown";
 import MDEditor from "@uiw/react-md-editor";
-import { useState, useEffect } from "react";
 import { IButton } from "../general/Button";
 import { UtilityBar, TsDataSource } from "../index";
 import { saveTitle, upsertComponentConfig } from "../boards/utils";
+import { BoardObjectTypes } from "../constants";
 
-export interface Props {
-  config: any;
+export interface MdComponentConfig {
+  content: string;
+}
+
+interface Props {
+  config: MdComponentConfig;
   id: string;
   size: string;
   title: string;
 }
 
+const RESOLUTION = { sm: "90px", md: "405px", lg: "565px" };
+
 export default function BoardMarkDown(props: Props) {
   const { config, id, size, title } = props;
+  const ds = new TsDataSource();
+
+  const [flipped, setFlipped] = useState<boolean>(false);
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [showMarkdown, setShowMarkdown] = useState<boolean>(false);
-  // const conditionMarkdown = showMarkdown ? "Edit" : "Save";
-  const conditionPreview = showPreview ? "Hide Preview" : "Show Preview";
-  const ds = new TsDataSource();
-  const resolution = { sm: "90px", md: "405px", lg: "565px" };
 
   useEffect(() => {
     config.content && setShowMarkdown(true);
-    console.log(size);
   }, []);
 
-  const onMarkdownSave = (config) => {
+  const onMarkdownSave = (config: MdComponentConfig) => {
     {
       showMarkdown === false && upsertComponentConfig(ds, id, { ...config });
     }
@@ -43,7 +47,7 @@ export default function BoardMarkDown(props: Props) {
   const PreviewButton: IButton = {
     position: "right",
     type: "primary",
-    text: conditionPreview,
+    icon: showPreview ? "eye-slash" : "eye",
     onClick: () => setShowPreview(!showPreview),
   };
 
@@ -55,45 +59,54 @@ export default function BoardMarkDown(props: Props) {
     onClick: () => {
       setShowMarkdown(!showMarkdown);
       onMarkdownSave({ content: content });
+      setFlipped(!flipped);
     },
   };
 
-  return (
-    <div style={{ width: "100%", height: "100%" }}>
-      <UtilityBar
-        id="editorMarkDown"
-        buttons={[EditButton, showMarkdown ? undefined : PreviewButton]}
-        title={{
-          title: title,
-          editable: true,
-          onSave: (value: string) => {
-            saveTitle(value, ds, id, "component");
-          },
-        }}
+  const MdUtilityBar = (
+    <UtilityBar
+      id="editor-markdown"
+      buttons={[EditButton, !showMarkdown ? PreviewButton : undefined]}
+      title={{
+        title: title,
+        editable: true,
+        onSave: (value: string) => {
+          saveTitle(value, ds, id, BoardObjectTypes.COMPONENT);
+        },
+      }}
+    />
+  );
+
+  const MarkdownEditor = (
+    <div className="front">
+      <MDEditor
+        value={content}
+        onChange={setContent}
+        preview={showPreview ? "live" : "edit"}
+        height={RESOLUTION[size]}
       />
-      {showMarkdown ? (
+    </div>
+  );
+
+  const MarkdownViewer = (
+    <div className="back">
+      <div className={`tol-rich-text-viewer-inner-container ${size}`}>
+        <Markdown contents={content} />
+      </div>
+    </div>
+  );
+
+  return (
+    <div>
+      {MdUtilityBar}
+      <div className="tol-rich-text-flip-container">
         <div
-          style={{
-            border: "1px solid var(--tol-grey-subtle)",
-            padding: "16px",
-            borderRadius: "8px",
-            backgroundColor: "var(--tol-grey-translucent)",
-            fontFamily: "Arial, sans-serif",
-            lineHeight: "1.6",
-            height: resolution[size],
-            boxShadow: "rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px",
-          }}
+          className={`tol-rich-text-flipper ${showMarkdown ? "flipped" : ""}`}
         >
-          <Markdown contents={content} />
+          {MarkdownEditor}
+          {MarkdownViewer}
         </div>
-      ) : (
-        <MDEditor
-          value={content}
-          onChange={setContent}
-          preview={showPreview ? "live" : "edit"}
-          height={resolution[size]}
-        />
-      )}
+      </div>
     </div>
   );
 }
