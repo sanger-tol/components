@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-import datetime
+from datetime import datetime
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import JSONB
@@ -20,8 +20,8 @@ class Upload(Base):
     pipeline_name: Mapped[str] = mapped_column(ForeignKey('pipeline.pipeline_name'))
     destination: Mapped[str] = mapped_column()
     flow_run_id: Mapped[str] = mapped_column()
-    date: Mapped[datetime.datetime] = mapped_column()
-    results: Mapped[JSONB] = mapped_column()
+    date: Mapped[datetime] = mapped_column(default=datetime.now, nullable=False)
+    results: Mapped[dict] = mapped_column(JSONB, nullable=False, default={})
     complete: Mapped[bool] = mapped_column(default=False)
 
     user: Mapped['User'] = relationship('User', back_populates='uploads') # noqa F821
