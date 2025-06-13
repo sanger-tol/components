@@ -13,7 +13,7 @@ class PipelineStep(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa A003
     pipeline_id: Mapped[int] = mapped_column(ForeignKey('pipeline.id'))
     step_name: Mapped[str] = mapped_column()
-    stage: Mapped[str] = mapped_column()
+    stage_order: Mapped[str] = mapped_column()
     step_order: Mapped[int] = mapped_column()
 
     pipeline: Mapped['Pipeline'] = \
