@@ -7,8 +7,8 @@ SPDX-License-Identifier: MIT
 import { createAxiosInstance } from "../tol-ui/src/services/http/axios";
 import { IButton } from "../tol-ui/src/general/Button";
 import { UtilityBar } from "../tol-ui/src";
-// import XLSX from 'xlsx';
-var XLSX = require("xlsx");
+import * as XLSX from 'xlsx';
+// var XLSX = require("xlsx");
 
 function Sandbox() {
   const url = "https://docs.sheetjs.com";
@@ -45,6 +45,9 @@ function Sandbox() {
     }));
     console.log("Row details:", rows);
     const worksheet = XLSX.utils.json_to_sheet(rows);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Dates");
+    XLSX.writeFile(workbook, "Presidents.xlsx", { compression: true });
   })
   }
   return <>
