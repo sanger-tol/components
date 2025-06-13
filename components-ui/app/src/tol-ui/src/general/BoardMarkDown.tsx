@@ -25,7 +25,7 @@ interface Props {
 
 const RESOLUTION = { sm: "90px", md: "405px", lg: "565px" };
 
-export default function BoardMarkdown(props: Props) {
+function BoardMarkdown(props: Props) {
   const { config, id, size, title } = props;
   const ds = new TsDataSource();
 
@@ -110,3 +110,5 @@ export default function BoardMarkdown(props: Props) {
     </div>
   );
 }
+
+export default BoardMarkdown;

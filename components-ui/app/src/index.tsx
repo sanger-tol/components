@@ -22,7 +22,6 @@ import {
   Widgets,
   Messages,
   Factories,
-  BoardMarkdown,
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown, env } from "./tol-ui/src";
