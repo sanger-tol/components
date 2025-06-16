@@ -33,4 +33,4 @@ export { default as BoardCount } from "./BoardCount";
 export { default as SelectedAttributesContainer } from "./SelectedAttributesContainer";
 export { formatDate } from "./utils";
 export { default as UtilityBar } from "./UtilityBar";
-export { default as BoardMarkdown } from "./BoardMarkDown";
+export { default as BoardMarkdown } from "./BoardMarkdown";
