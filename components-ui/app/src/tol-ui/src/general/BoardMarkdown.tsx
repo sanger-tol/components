@@ -18,16 +18,14 @@ export interface IMarkdownConfig {
   content: string;
 }
 
-interface Props {
+export interface IBoardMarkdown {
   config: IMarkdownConfig;
   id: string;
   size: string;
   title: string;
 }
 
-// const RESOLUTION = { sm: "90px", md: "300px", lg: "565px" };
-
-function BoardMarkdown(props: Props) {
+function BoardMarkdown(props: IBoardMarkdown) {
   const { config, id, size, title } = props;
   const ds = new TsDataSource();
 
@@ -91,8 +89,8 @@ function BoardMarkdown(props: Props) {
         previewOptions={{
           rehypePlugins: [[rehypeSanitize]],
         }}
-        hideToolbar={size === 'sm'}
-        className = 'tol-markdown-viewer'
+        hideToolbar={size === "sm"}
+        className="tol-markdown-viewer"
         height="100%"
       />
     </>
