@@ -82,16 +82,20 @@ function BoardMarkdown(props: Props) {
   );
 
   const MarkdownEditor = (
-    <MDEditor
-      value={content}
-      onChange={(content?: string) => setContent(content ?? "")}
-      preview={showPreview ? "live" : "edit"}
-      previewOptions={{
-        rehypePlugins: [[rehypeSanitize]],
-      }}
-      hideToolbar={size === 'sm'}
-      height="100%"
-    />
+    <>
+      <span className="tol-hide-extra-viewer-buttons" />
+      <MDEditor
+        value={content}
+        onChange={(content?: string) => setContent(content ?? "")}
+        preview={showPreview ? "live" : "edit"}
+        previewOptions={{
+          rehypePlugins: [[rehypeSanitize]],
+        }}
+        hideToolbar={size === 'sm'}
+        className = 'tol-markdown-viewer'
+        height="100%"
+      />
+    </>
   );
 
   const MarkdownViewer = (
