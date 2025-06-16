@@ -11,7 +11,6 @@ import {
   Widgets,
   Message,
   Toaster,
-  StaticMessage,
   Accordion,
   MyBoardsHeader,
   getUserFromLocalStorage,
@@ -71,7 +70,7 @@ export function MyBoards(props: IMyBoards) {
 
   if (loading) return <LoadingContent text={"Finding your Boards..."} />;
 
-  const noBoards = (
+  const NoBoards = (
     <div style={{ textAlign: "center" }}>
       <div style={{ marginTop: "60px" }}>
         <span>
@@ -111,8 +110,9 @@ export function MyBoards(props: IMyBoards) {
         <Accordion
           boardDetails={boardDetails}
           setBoardDetails={setBoardDetails}
+          boardDataSource={boardDataSource}
         />
-      ) : noBoards}
+      ) : NoBoards}
     </div>
   );
 

@@ -102,7 +102,7 @@ export function BoardSunburst(props: Props) {
             noMini={size === "sm"}
             utilityBarConfig={{
               title: {
-                title: props.title,
+                text: props.title,
                 editable: true,
                 onSave: (value: string) => {
                   saveTitle(value, boardDataSource, id, boardObjectType);

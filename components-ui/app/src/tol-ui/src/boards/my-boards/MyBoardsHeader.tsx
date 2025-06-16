@@ -14,6 +14,7 @@ import {
   createBoardAndView,
   TsDataSource,
   StaticMessage,
+  BOARDS,
 } from "../..";
 
 
@@ -83,7 +84,7 @@ export function MyBoardsHeader(props: IMyBoardsHeader) {
     }).finally(() => {
       if (modalError === "") {
         setTimeout(() => {
-          history.push(`/board/${boardId}`);
+          history.push(`/${BOARDS.BOARD}/${boardId}`);
         }, 800);
       }
     });

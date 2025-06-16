@@ -81,88 +81,97 @@ export function useItemData<T,> (
 };
 
 
-const returnViewInfo = async (viewId: string) => {
-  try {
-    const res: any = await httpClient().get(`/${BOARDS.VIEW}`, {
-      params: {
-        filter: {
-          and_: {
-            id: { eq: { value: viewId } },
-          },
+export async function returnViewInfo(boardDataSource: TsDataSource, viewId: string) {
+  return boardDataSource
+    .getListPage({
+      objectType: BOARDS.VIEW,
+      filter: {
+        and_: {
+          id: { eq: { value: viewId } },
         },
       },
+    })
+    .then((data: TDataObjectListOrNull) => {
+      return data?.[0].title; // temporary assumption - only one view per ID
+    })
+    .catch((error: any) => {
+      console.error("Error fetching view info:", error);
+      return [];
     });
-    return res.data.data[0].attributes.title;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-};
+}
 
-const returnZoneInfo = async (zoneId: string) => {
-  try {
-    const res: any = await httpClient().get(`/${BOARDS.ZONE}`, {
-      params: {
-        filter: {
-          and_: {
-            id: { eq: { value: zoneId } },
-          },
+export async function returnZoneInfo(boardDataSource: TsDataSource, zoneId: string) {
+  return boardDataSource
+    .getListPage({
+      objectType: BOARDS.ZONE,
+      filter: {
+        and_: {
+          id: { eq: { value: zoneId } },
         },
       },
+    })
+    .then((data: TDataObjectListOrNull) => {
+      return data?.map((item: TDataObjectOrNull) => ({
+        title: item?.title,
+        objectType: item?.object_type,
+      }));
+    })
+    .catch((error: any) => {
+      console.error("Error fetching zone info:", error);
+      return [];
     });
-    return res.data.data.map((item: any) => ({
-      title: item.attributes.title,
-      objectType: item.attributes.object_type,
-    }));
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-};
+}
 
-const returnComponentInfo = async (componentId: string) => {
-  try {
-    const res: any = await httpClient().get(`/${BOARDS.COMPONENT}`, {
-      params: {
-        filter: {
-          and_: {
-            id: { eq: { value: componentId } },
-          },
+export async function returnComponentInfo(boardDataSource: TsDataSource, componentId: string) {
+  return boardDataSource
+    .getListPage({
+      objectType: BOARDS.COMPONENT,
+      filter: {
+        and_: {
+          id: { eq: { value: componentId } },
         },
       },
+    })
+    .then((data: TDataObjectListOrNull) => {
+      return data?.map((item: TDataObjectOrNull) => ({
+        title: item?.title,
+        componentType: item?.component_type,
+      }));
+    })
+    .catch((error: any) => {
+      console.error("Error fetching component info:", error);
+      return [];
     });
-    return res.data.data.map((item: any) => ({
-      title: item.attributes.title,
-      componentType: item.attributes.component_type,
-    }));
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-};
+}
 
-const fetchSubItemId = async (
+export async function fetchSubItemId(
   id: string,
-  endpointUrl?: string,
-  filterItem?: string,
-  itemType?: any,
-) => {
-  try {
-    const res: any = await httpClient().get(`/${endpointUrl}`, {
-      params: {
-        filter: {
-          and_: {
-            [`${filterItem}`]: { eq: { value: id } },
-          },
+  objectType: string,
+  boardDataSource: TsDataSource,
+  filterKey: string,
+  itemType: any,
+) {
+  return boardDataSource
+    .getListPage({
+      objectType,
+      filter: {
+        and_: {
+          [filterKey]: { eq: { value: id } },
         },
       },
+    }).then(async (data: TDataObjectListOrNull) => {
+      return await Promise.all(
+        data?.map(async (item: TDataObjectOrNull) => {
+          const relationshipData = await item?.relationships?.[itemType];
+          return {
+            id: relationshipData?.id,
+            order: item?.order,
+          };
+        }) || []
+      );
+    }
+    ).catch((error: any) => {
+      console.error(error);
+      return [];
     });
-    return res.data.data.map((item: any) => ({
-      id: item.relationships[itemType].data.id,
-      order: item.attributes.order,
-    }));
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
 };

@@ -71,12 +71,13 @@ export function Zone(props: Props) {
       setOpen={setConfirmationModalOpen}
       open={confirmationModalOpen}
       onConfirmClick={() => deleteZone(id)}
-      itemType={"zone"}
+      itemType={BOARDS.ZONE}
     />
   );
 
   useEffect(() => {
     getComponents(id, boardDataSource).then((components: any) => {
+      console.log(components);
       // sort the widgets based on the order value
       const sortedWidgets = components.sort((a, b) => a.order - b.order);
       sortedWidgets.forEach((widget) => {
@@ -86,7 +87,7 @@ export function Zone(props: Props) {
             filter: widget.filter,
             id: widget.componentId,
             order: widget.order,
-            filterPassThrough: widget.filterPassThrough
+            filterPassThrough: widget.filterPassThrough,
           },
         };
         z.zone.order.push(widget.componentId);

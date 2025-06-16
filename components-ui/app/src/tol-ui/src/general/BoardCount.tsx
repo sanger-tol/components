@@ -44,7 +44,7 @@ export function BoardCount(props: Props) {
         {...props}
         utilityBarConfig={{
           title: {
-            title: props.title,
+            text: props.title,
             editable: true,
             onSave: (value: string) => {
               saveTitle(value, boardDataSource, id, boardObjectType);

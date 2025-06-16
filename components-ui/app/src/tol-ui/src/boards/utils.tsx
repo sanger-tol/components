@@ -146,32 +146,37 @@ export function saveTitle(
 
 export async function getComponents(zoneId: string, boardDataSource: TsDataSource) {
   const componentZoneData = await getComponentZoneData(zoneId, boardDataSource);
-  // @ts-ignore
-  const componentIds = componentZoneData.data.data.map(
-    (component: any) => component.relationships.component.data.id,
-  );
-  const componentData = await getComponentData(componentIds, boardDataSource);
+  if (componentZoneData) {
+    const componentIds = await Promise.all(
+      componentZoneData.map(
+        async (componentZone) => (await componentZone.relationships.component).id
+      )
+    ) || [];
+    const componentData = await getComponentData(componentIds, boardDataSource);
 
-  // @ts-ignore
-  return componentZoneData.data.data.map((component: any) => {
-    const componentId = component.relationships.component.data.id;
-    const componentDetails = componentData.find(
-      (data: any) => data.id === componentId,
+    return Promise.all(
+      componentZoneData.map(async (component) => {
+        const componentId = (await component.relationships.component).id;
+        const componentDetails = componentData.find(
+          (data) => data.id === componentId
+        );
+        return {
+          componentId: componentId,
+          order: component.order,
+          componentZoneId: component.id,
+          componentType: componentDetails?.component_type,
+          filter: componentDetails?.filter,
+          title: componentDetails?.title,
+          objectType: componentDetails?.object_type,
+          baseUrl: componentDetails?.base_url,
+          apiPrefix: componentDetails?.api_prefix,
+          config: componentDetails?.config,
+          widgetType: componentDetails?.widget_type,
+          filterPassThrough: componentDetails?.filter_pass_through,
+        };
+      })
     );
-    return {
-      componentId: componentId,
-      order: component.attributes.order,
-      componentZoneId: component.id,
-      componentType: componentDetails.component_type,
-      filter: componentDetails.filter,
-      title: componentDetails.title,
-      objectType: componentDetails.object_type,
-      baseUrl: componentDetails.base_url,
-      config: componentDetails.config,
-      widgetType: componentDetails.widget_type,
-      filterPassThrough: componentDetails.filter_pass_through,
-    };
-  });
+  }
 }
 
 async function getComponentZoneData(zoneId: string, boardDataSource: TsDataSource) {
@@ -320,10 +325,13 @@ export async function addZone(
       ],
     })
     .then((res) => {
-      return {
-        newZoneId: newId,
-        newZoneViewId: res[0].id,
-      };
+      if (res && res[0]) {
+        return {
+          newZoneId: newId,
+          newZoneViewId: res[0].id,
+        };
+      }
+      throw new Error("Unexpected null response for Zone View creation");
     });
 }
 
@@ -395,10 +403,13 @@ export async function addComponent(
       ],
     })
     .then((res) => {
-      return {
-        newComponentId: newId,
-        newComponentZoneId: res[0].id,
-      };
+      if (res && res[0]) {
+        return {
+          newComponentId: newId,
+          newComponentZoneId: res[0].id,
+        };
+      }
+      throw new Error("Unexpected null response for Component Zone creation");
     });
 }
 

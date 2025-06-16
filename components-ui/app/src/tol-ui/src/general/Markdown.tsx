@@ -13,5 +13,9 @@ interface Props {
 export function Markdown(props: Props) {
   const { contents } = props;
 
-  return <ReactMarkdown className="tol-markdown">{contents}</ReactMarkdown>;
+  return (
+    <ReactMarkdown className="tol-markdown">
+      {contents}
+    </ReactMarkdown>
+  );
 }

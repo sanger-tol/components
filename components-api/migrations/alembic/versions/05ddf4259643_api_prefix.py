@@ -19,6 +19,7 @@ depends_on = None
 def upgrade() -> None:
     # Add column with default value
     op.add_column('component', sa.Column('api_prefix', sa.String(), nullable=True))
+    op.add_column('zone', sa.Column('api_prefix', sa.String(), nullable=True))
 
 
 def downgrade() -> None:

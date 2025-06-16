@@ -17,15 +17,20 @@ import {
   DropdownButtons,
   ConfirmationModal,
   BOARDS,
+  useItemData,
+  fetchSubItemId,
+  returnComponentInfo,
+  returnZoneInfo,
+  returnViewInfo,
 } from "../..";
 
 
 interface AccordionBaseProps {
   id: string;
+  objectType: string;
+  filterKey: string;
   title: string;
   itemType?: string;
-  filterItem?: string;
-  endpointUrl?: string;
   subHeader?: string;
   renderChildren: (childIds: string[]) => React.ReactNode;
   infoText?: string;
@@ -35,6 +40,7 @@ interface AccordionBaseProps {
 interface BoardsAccordionProps {
   boardDetails: string[];
   setBoardDetails: any;
+  boardDataSource: TsDataSource;
 }
 
 interface ViewsAccordionProps {
@@ -51,31 +57,32 @@ interface ComponentsProps {
 }
 
 export function Accordion(props: BoardsAccordionProps) {
-  const { boardDetails, setBoardDetails } = props;
+  const { boardDetails, setBoardDetails, boardDataSource } = props;
   const history = useHistory();
   const [openDelete, setOpenDelete] = useState(false);
   const [boardIdToDelete, setBoardIdToDelete] = useState<string | null>(null);
 
   const goToBoard = (boardId: string) => {
-    history.push(`/board/${boardId}`);
+    history.push(`/${BOARDS.BOARD}/${boardId}`);
   };
 
   // @ts-ignore
   const goToView = (boardId: string, viewId: string) => {
-    history.push(`/board/${boardId}`);
+    history.push(`/${BOARDS.BOARD}/${boardId}`);
   };
 
   // @ts-ignore
   const deleteConfirmationModal = (boardId: string) => {
-    if (boardId === boardIdToDelete) return (
-      <ConfirmationModal
-        setOpen={setOpenDelete}
-        open={openDelete}
-        // @ts-ignore
-        onConfirmClick={deleteBoard}
-        itemType={"board"}
-      />
-    );
+    if (boardId === boardIdToDelete) {
+      return (
+        <ConfirmationModal
+          setOpen={setOpenDelete}
+          open={openDelete}
+          onConfirmClick={deleteBoard}
+          itemType={BOARDS.BOARD}
+        />
+      );
+    }
     return <></>;
   };
 
@@ -85,7 +92,6 @@ export function Accordion(props: BoardsAccordionProps) {
       (board: any) => board.id !== boardIdToDelete,
     );
     setBoardDetails(deletedBoard);
-    const ds = new TsDataSource();
     // ds.custom(`${BOARDS.DELETE_BOARD}/${boardIdToDelete}`, API_METHODS.DELETE); // TODO: add delete
     setBoardIdToDelete(null);
   };
@@ -120,7 +126,7 @@ export function Accordion(props: BoardsAccordionProps) {
     },
   ];
 
-  const boardOptionsDropdownButton = (boardId: string, viewId?: string) => (
+  const BoardOptionsDropdownButton = (boardId: string, viewId?: string) => (
     <DropdownButtons
       mainButtonIcon={boardOptionsButton}
       placement="leftStart"
@@ -138,8 +144,8 @@ export function Accordion(props: BoardsAccordionProps) {
     const {
       id,
       itemType,
-      filterItem,
-      endpointUrl,
+      filterKey,
+      objectType,
       title,
       subHeader,
       renderChildren,
@@ -154,7 +160,7 @@ export function Accordion(props: BoardsAccordionProps) {
     const handleExpand = async () => {
       if (!expanded) {
         setLoading(true);
-        const ids = await fetchSubItemId(id, endpointUrl, filterItem, itemType);
+        const ids = await fetchSubItemId(id, objectType, boardDataSource, filterKey, itemType);
         setChildIds(ids.map((id: any) => id.id));
         setLoading(false);
         setExpanded(true);
@@ -189,14 +195,14 @@ export function Accordion(props: BoardsAccordionProps) {
     const { componentIds } = props;
     const { itemData: componentData, loading } = useItemData(
       componentIds,
-      returnComponentInfo,
+      (id: string) => returnComponentInfo(boardDataSource, id) 
     );
 
     if (!componentIds?.length) return null;
     if (loading)
       return <div style={{ textAlign: "center" }}>Loading views...</div>;
 
-    const componentTitle = (title: any, componentType: string) => {
+    const ComponentTitle = (title: any, componentType: string) => {
       return (
         <span
           style={{
@@ -217,12 +223,14 @@ export function Accordion(props: BoardsAccordionProps) {
       <div>
         <p style={{ marginBottom: "10px" }}>Zone Components:</p>
         {componentIds.map((componentId) => {
-          const component = componentData[componentId][0];
-          return (
-            <div key={componentId} style={{ marginTop: "5px" }}>
-              {componentTitle(component.title, component.componentType)}
-            </div>
-          );
+          if (componentData[componentId]) {
+            const component = componentData[componentId][0];
+            return (
+              <div key={componentId} style={{ marginTop: "5px" }}>
+                {ComponentTitle(component.title, component.componentType)}
+              </div>
+            );
+          }
         })}
       </div>
     );
@@ -232,7 +240,7 @@ export function Accordion(props: BoardsAccordionProps) {
     const { zoneIds } = props;
     const { itemData: zoneData, loading } = useItemData(
       zoneIds,
-      returnZoneInfo,
+      (id: string) => returnZoneInfo(boardDataSource, id) 
     );
 
     if (!zoneIds?.length) return null;
@@ -246,11 +254,11 @@ export function Accordion(props: BoardsAccordionProps) {
             <div key={zoneId} style={{ marginTop: "15px" }}>
               <AccordionBase
                 id={zoneId}
-                endpointUrl={BOARDS.COMPONENT_ZONE}
-                filterItem={"zone.id"}
+                objectType={BOARDS.COMPONENT_ZONE}
+                filterKey="zone.id"
                 itemType={BOARDS.COMPONENT as string}
-                title={zoneData[zoneId][0].title || ""}
-                subHeader={zoneData[zoneId][0].objectType}
+                title={zoneData[zoneId]?.[0].title || ""}
+                subHeader={zoneData[zoneId]?.[0].objectType}
                 clickable={false}
                 renderChildren={(componentIds) => (
                   <Components componentIds={componentIds} />
@@ -267,7 +275,7 @@ export function Accordion(props: BoardsAccordionProps) {
     const { boardId, viewIds } = props;
     const { itemData: viewData, loading } = useItemData(
       viewIds,
-      returnViewInfo,
+      (id: string) => returnViewInfo(boardDataSource, id) 
     );
 
     if (!viewIds?.length) return null;
@@ -283,8 +291,8 @@ export function Accordion(props: BoardsAccordionProps) {
                 <AccordionBase
                   id={viewId}
                   title={viewData[viewId] || ""}
-                  endpointUrl={BOARDS.ZONE_VIEW}
-                  filterItem={"view.id"}
+                  objectType={BOARDS.ZONE_VIEW}
+                  filterKey="view.id"
                   itemType={BOARDS.ZONE}
                   clickable={false}
                   renderChildren={(zoneIds) => (
@@ -300,7 +308,7 @@ export function Accordion(props: BoardsAccordionProps) {
                   marginTop: "15px",
                 }}
               >
-                {boardOptionsDropdownButton(boardId!, viewId)}
+                {BoardOptionsDropdownButton(boardId!, viewId)}
               </div>
             </div>
           );
@@ -317,8 +325,8 @@ export function Accordion(props: BoardsAccordionProps) {
             <AccordionBase
               id={board.id}
               title={board.title}
-              endpointUrl={BOARDS.VIEW_BOARD}
-              filterItem={"board.id"}
+              objectType={BOARDS.VIEW_BOARD}
+              filterKey="board.id"
               itemType={BOARDS.VIEW}
               clickable={true}
               renderChildren={(viewIds) => (
@@ -334,7 +342,7 @@ export function Accordion(props: BoardsAccordionProps) {
               marginTop: "15px",
             }}
           >
-            {boardOptionsDropdownButton(board.id, undefined)}
+            {BoardOptionsDropdownButton(board.id, undefined)}
           </div>
           {deleteConfirmationModal(board.id)}
         </div>

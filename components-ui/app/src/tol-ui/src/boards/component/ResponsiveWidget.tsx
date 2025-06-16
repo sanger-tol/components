@@ -14,7 +14,8 @@ import {
   generateLayout,
   IZone,
   ConfirmationModal,
-  BOARDS
+  BOARDS,
+  TsDataSource
 } from "../..";
 
 
@@ -28,6 +29,7 @@ export interface IWidgets {
   title: string;
   objectType: string;
   baseUrl: string;
+  apiPrefix: string;
   config: any;
 }
 
@@ -76,7 +78,13 @@ export function ResponsiveWidget(props: Props) {
           setZone={setZone}
           componentType={widget.componentType}
           objectType={widget.objectType}
-          baseUrl={widget.baseUrl}
+          dataSource={
+            new TsDataSource({
+              baseUrl: widget.baseUrl,
+              apiPrefix: widget.apiPrefix,
+            })
+          }
+          boardDataSource={boardDataSource}
           config={widget.config}
           title={widget.title}
         />
@@ -158,7 +166,7 @@ export function ResponsiveWidget(props: Props) {
       open={confirmationModalOpen}
       // @ts-ignore
       onConfirmClick={handleConfirmDeleteComponent}
-      itemType={"widget"}
+      itemType="widget"
     />
   );
 
