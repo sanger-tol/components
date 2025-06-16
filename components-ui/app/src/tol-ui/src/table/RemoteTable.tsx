@@ -109,7 +109,13 @@ function RemoteTable(props: Props) {
   // data and field information
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(
-    props.fieldMeta
+    props.fieldMeta || 
+    structureFieldMeta(
+      endpoint,
+      getFieldMetaLocalStorage(id, fields),
+      undefined,
+      fields
+    )
   );
 
   // pagination
@@ -219,9 +225,7 @@ function RemoteTable(props: Props) {
       page: page,
       page_size: pageSize,
       filter: filter,
-      requested_fields: fields ? 
-        Object.keys(fields as Object).join(',') : 
-        (fieldMeta?.order.active || []).join(',')
+      requested_fields: (fieldMeta?.order.active || []).join(',')
     };
 
     // deal with sorting
