@@ -81,7 +81,7 @@ function BoardMarkdown(props: IBoardMarkdown) {
 
   const MarkdownEditor = (
     <>
-      <span className="tol-hide-extra-viewer-buttons" />
+      <span className={size !== "sm" ? "tol-hide-extra-viewer-buttons" : ""} />
       <MDEditor
         value={content}
         onChange={(content?: string) => setContent(content ?? "")}
