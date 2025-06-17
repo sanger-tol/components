@@ -19,19 +19,25 @@ depends_on = None
 def upgrade() -> None:
     op.create_table('pipeline',
                     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-                    sa.Column('pipeline_name', sa.String(), nullable=False, unique=True),
+                    sa.Column('name', sa.String(), nullable=False, unique=True),
                     sa.PrimaryKeyConstraint('id'),
-                    sa.UniqueConstraint('pipeline_name')
+                    sa.UniqueConstraint('name')
                     )
 
     op.create_table('pipeline_steps',
                     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
                     sa.Column('pipeline_id', sa.Integer(), nullable=False),
                     sa.Column('step_name', sa.String(), nullable=False),
-                    sa.Column('stage', sa.String(), nullable=False),
+                    sa.Column('stage', sa.Integer(), nullable=False),
                     sa.Column('step_order', sa.Integer(), nullable=False),
+                    sa.Column('config', postgresql.JSONB(), nullable=False, server_default='{}'),
                     sa.ForeignKeyConstraint(['pipeline_id'], ['pipeline.id'], ),
-                    sa.PrimaryKeyConstraint('id')
+                    sa.PrimaryKeyConstraint('id'),
+                    sa.UniqueConstraint(
+                        'pipeline_id',
+                        'stage',
+                        'step_order',
+                        name='uq_pipeline_stage_step_order')
                     )
 
     op.create_table('upload',
@@ -42,12 +48,12 @@ def upgrade() -> None:
                     sa.Column('user_id', sa.Integer(), nullable=False),
                     sa.Column('pipeline_name', sa.String(), nullable=False),
                     sa.Column('destination', sa.String(), nullable=False),
-                    sa.Column('flow_run_id', sa.String(), nullable=False),
-                    sa.Column('date', sa.DateTime(), nullable=False),
-                    sa.Column('results', postgresql.JSONB(), nullable=True),
-                    sa.Column('complete', sa.Boolean(), default=False, nullable=False),
+                    sa.Column('flow_run_id', sa.String(), nullable=True),
+                    sa.Column('date_started', sa.DateTime(), nullable=False),
+                    sa.Column('results', postgresql.JSONB(), nullable=False, server_default='[]'),
+                    sa.Column('completed', sa.Boolean(), default=False, nullable=False),
                     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-                    sa.ForeignKeyConstraint(['pipeline_name'], ['pipeline.pipeline_name'], ),
+                    sa.ForeignKeyConstraint(['pipeline_name'], ['pipeline.name'], ),
                     sa.PrimaryKeyConstraint('id')
                     )
 
