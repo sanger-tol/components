@@ -7,7 +7,7 @@ from typing import Any
 
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
 
@@ -35,4 +35,4 @@ class PipelineStep(Base):
     )
 
     pipeline: Mapped['Pipeline'] = \
-        relatiopnship('Pipeline', back_populates='steps')  # noqa F821
+        relationship('Pipeline', back_populates='steps')  # noqa F821

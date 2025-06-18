@@ -17,7 +17,7 @@ class Pipeline(Base):
     source: Mapped[dict[str, Any]] = mapped_column(nullable=False, default={})
     destination: Mapped[dict[str, Any] | None] = mapped_column()
 
-    uploads: Mapped[list['Upload']] = \
+    upload: Mapped[list['Upload']] = \
         relationship('Upload', back_populates='pipeline') # noqa F821
-    steps: Mapped[list['PipelineSteps']] = \
-        relationship('PipelineSteps', back_populates='pipeline')  # noqa F821
+    steps: Mapped[list['PipelineStep']] = \
+        relationship('PipelineStep', back_populates='pipeline')  # noqa F821

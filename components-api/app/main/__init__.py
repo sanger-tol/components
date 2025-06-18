@@ -14,6 +14,7 @@ from flask import Blueprint, Flask
 from tol.api_base import (
     action_blueprint,
     data_blueprint,
+    pipeline_steps_blueprint,
     system_blueprint
 )
 from tol.api_base.misc import default_ctx_getter
@@ -170,6 +171,17 @@ def application():
     app.register_blueprint(
         actions_bp,
         url_prefix=os.environ['API_PATH'] + '/run-action'
+    )
+
+    # pipeline steps
+    pipeline_steps_bp = pipeline_steps_blueprint(
+        sql_datasource,
+        __mock_prefect_ds(),
+        role=None
+    )
+    app.register_blueprint(
+        pipeline_steps_bp,
+        url_prefix=os.environ['API_PATH'] + '/run-pipeline'
     )
 
     # dashboards

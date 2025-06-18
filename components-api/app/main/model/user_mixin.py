@@ -16,3 +16,9 @@ class UserMixin:
         return relationship(
             back_populates='user'
         )
+
+    @declared_attr
+    def user_uploads(self) -> Mapped[list['Upload']]: # noqa F821
+        return relationship(
+            back_populates='user'
+        )

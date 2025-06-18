@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Toggle } from "rsuite";
 import {
   Widgets,
@@ -14,6 +14,7 @@ import {
   DropdownButtons,
   Modal,
   TolLoader,
+  httpClient,
 } from "../tol-ui/src";
 import { FileData } from "../tol-ui/src/forms/Dropzone";
 import { ValidateSteps, PreviousUploads } from "../tol-ui/src/file-validation";
@@ -91,8 +92,24 @@ function FileValidation(props: Props) {
   >(null);
   const [validationProgress, setValidationProgress] = useState<number>(0);
 
-  const generateMessages = (apiRes: any) => {
-    return [];
+  useEffect(() => {
+    generateMessages();
+  });
+
+  const generateMessages = async () => {
+    const pipeline_data = {
+      data: {
+        s3_url: "made up url",
+        s3_filename: "made up file name",
+        spreadsheet_config: "made up config",
+        pipeline_name: "made up pipeline name",
+        destination: "made up destination",
+      },
+    };
+    const res = await httpClient().post("/run-pipeline", pipeline_data, {
+      params: {},
+    });
+    return res;
   };
 
   const handleToggleUploadResults = (id: string) => {

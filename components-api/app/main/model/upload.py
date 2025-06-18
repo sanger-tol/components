@@ -13,6 +13,8 @@ from .base import Base
 
 
 class Upload(Base):
+    __tablename__ = 'upload'
+
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa A003
     s3_url: Mapped[str] = mapped_column(nullable=False)
     s3_filename: Mapped[str] = mapped_column(nullable=False)
@@ -25,5 +27,5 @@ class Upload(Base):
     results: Mapped[List[Dict[str, Any]]] = mapped_column(JSONB, nullable=False, default=[])
     completed: Mapped[bool] = mapped_column(nullable=False, default=False)
 
-    user: Mapped['User'] = relationship('User', back_populates='uploads') # noqa F821
-    pipeline: Mapped['Pipeline'] = relationship('Pipeline', back_populates='uploads')  # noqa F821
+    user: Mapped['User'] = relationship('User', back_populates='user_uploads') # noqa F821
+    pipeline: Mapped['Pipeline'] = relationship('Pipeline', back_populates='upload')  # noqa F821
