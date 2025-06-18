@@ -28,4 +28,4 @@ class Upload(Base):
     completed: Mapped[bool] = mapped_column(nullable=False, default=False)
 
     user: Mapped['User'] = relationship('User', back_populates='user_uploads') # noqa F821
-    pipeline: Mapped['Pipeline'] = relationship('Pipeline', back_populates='upload')  # noqa F821
+    pipeline: Mapped['Pipeline'] = relationship('Pipeline', back_populates='uploads')  # noqa F821
