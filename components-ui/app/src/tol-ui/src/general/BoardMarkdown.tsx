@@ -29,7 +29,6 @@ function BoardMarkdown(props: IBoardMarkdown) {
   const { config, id, size, title } = props;
   const ds = new TsDataSource();
 
-  const [flipped, setFlipped] = useState<boolean>(false);
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [showMarkdownViewer, setShowMarkdownViewer] = useState<boolean>(false);
@@ -61,7 +60,6 @@ function BoardMarkdown(props: IBoardMarkdown) {
     onClick: () => {
       setShowMarkdownViewer(!showMarkdownViewer);
       onMarkdownSave({ content: content });
-      setFlipped(!flipped);
     },
   }
 
