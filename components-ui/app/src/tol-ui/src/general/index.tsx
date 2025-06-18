@@ -33,3 +33,4 @@ export { default as BoardCount } from "./BoardCount";
 export { default as SelectedAttributesContainer } from "./SelectedAttributesContainer";
 export { formatDate } from "./utils";
 export { default as UtilityBar } from "./UtilityBar";
+export * from "./PlateComponent";

@@ -1,0 +1,27 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+.plate{
+  display: inline-block;
+  background-color: var(--tol-grey-translucent);
+  border: 2px solid var(--tol-grey);
+  border-radius: 6px;
+  padding: 0px 12px;
+}
+
+.well{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  background-color: var(--tol-grey);
+}
+
+.row{
+}
