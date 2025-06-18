@@ -47,6 +47,12 @@
   }
 }
 
+.tol-view-bar {
+  button {
+    border-radius: 100%;
+  }
+}
+
 .tol-zone-bar {
   @extend .tol-widget;
   border-radius: 0;
@@ -103,7 +109,7 @@
 .add-zone-button {
   position: absolute;
   right: 20px;
-  top: 94px;
+  top: 92px;
 }
 
 .edit-config-button {

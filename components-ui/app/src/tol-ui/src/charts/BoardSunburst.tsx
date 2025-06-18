@@ -77,7 +77,7 @@ export function BoardSunburst(props: Props) {
   }
 
   return (
-    <div style={{ height: "100%" }}>
+    <>
       <BoardFilters
         {...props}
         open={openFilters}
@@ -91,30 +91,28 @@ export function BoardSunburst(props: Props) {
         onConfigSave={onModalSave}
         title="Sunburst Configuration"
       />
-      <div style={{ height: '100%' }}>
-        <RemoteSunburst
-          {...props}
-          id={id}
-          sliceBy={deepCopy(config.sliceBy)}
-          contents={Contents()}
-          forceUpdate={forceUpdate}
-          legendPosition="top"
-          noMini={size === "sm"}
-          utilityBarConfig={{
-            title: {
-              text: props.title,
-              editable: true,
-              onSave: (value: string) => {
-                saveTitle(value, boardDataSource, id, boardObjectType);
-              }
-            },
-            buttons: [
-              configButton,
-              filtersButton
-            ],
-          }}
-        />
-      </div>
-    </div>
+      <RemoteSunburst
+        {...props}
+        id={id}
+        sliceBy={deepCopy(config.sliceBy)}
+        contents={Contents()}
+        forceUpdate={forceUpdate}
+        legendPosition="top"
+        noMini={size === "sm"}
+        utilityBarConfig={{
+          title: {
+            text: props.title,
+            editable: true,
+            onSave: (value: string) => {
+              saveTitle(value, boardDataSource, id, boardObjectType);
+            }
+          },
+          buttons: [
+            configButton,
+            filtersButton
+          ],
+        }}
+      />
+    </>
   );
 }

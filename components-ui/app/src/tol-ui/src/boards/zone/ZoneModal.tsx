@@ -87,9 +87,7 @@ export function ZoneModal(props: Props) {
   useEffect(() => {
     boardDataSource.attributeMetadata().then((am) => {
       setObjectTypesList(
-        Object.keys(am).map(
-          (key) => normaliseCaps(key),
-        ),
+        Object.keys(am)
       );
     });
   }, []);

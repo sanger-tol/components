@@ -55,10 +55,10 @@ export function RemoteSunburst(props: Props) {
     noDownload,
     forceUpdate,
     utilityBarConfig,
-    contents
+    contents,
+    height = "100%",
   } = props;
   const wrapperId = "tol-sunburst-wrapper-" + id;
-  const height = props.height !== undefined ? props.height : "100%";
   const [datasets, setDatasets] = useState({});
   const [subDatasets, setSubDatasets] = useState({});
   const [zone, setZone] = useZoneStateFallback({...props});
