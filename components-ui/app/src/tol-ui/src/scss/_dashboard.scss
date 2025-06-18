@@ -37,8 +37,8 @@
 
 .tol-board-bar {
   @extend .tol-widget;
-  margin: 0;
-  margin-bottom: 10px !important;
+  margin: 6px 11px;
+  margin-bottom: 11px;
   border-radius: 0;
 
   .tol-inline-edit {
@@ -50,11 +50,10 @@
 .tol-zone-bar {
   @extend .tol-widget;
   border-radius: 0;
-  margin: 0;
+  margin: 0px 11px;
 }
 
 .tol-zone-bar > div {
-  padding-right: 2px;
   margin-bottom: 0;
 }
 
@@ -103,8 +102,8 @@
 
 .add-zone-button {
   position: absolute;
-  right: 26px;
-  top: 100px;
+  right: 20px;
+  top: 94px;
 }
 
 .edit-config-button {
