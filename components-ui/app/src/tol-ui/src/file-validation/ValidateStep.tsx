@@ -15,6 +15,8 @@ interface Props {
   onSeeAllErrors?: () => void;
 }
 
+// TODO: Change to bringing in the entire object, rather than just the error values
+
 const MAX_ERRORS_TO_DISPLAY = 2;
 const MAX_CHAR_LENGTH = 50;
 
