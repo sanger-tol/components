@@ -70,11 +70,12 @@ function ValidateSteps(props: Props) {
               key={expandedIndex}
               className="tol-validate-steps-all-errors-animation"
             >
-              <h6>All errors for {data[expandedIndex].stepName}:</h6>
+              <h6>All errors and warnings for {data[expandedIndex].stepName}:</h6>
               {determineStepHasErrors(data[expandedIndex]) &&
                 data[expandedIndex].errors?.map((error, index) => (
                   <ErrorViewer
                     key={`error-${index}`}
+                    errorType="warning" // TODO: Don't hardcode this
                     message={error}
                     stepName={data[expandedIndex].stepName}
                   />

@@ -11,8 +11,5 @@ export interface Step {
 }
 
 export function determineStepHasErrors(step: Step): boolean {
-  if (!step.errors || step.errors.length === 0) {
-    return false;
-  }
-  return true;
+  return (!step.errors || step.errors.length === 0) ? false : true;
 }

@@ -100,7 +100,7 @@
 .tol-file-upload-step-triangle {
   border-left: 12px solid transparent;
   border-right: 12px solid transparent;
-  border-top: 12px solid var(--tol-grey-subtle); //TODO: CHANGE TO CORRECT COLOR
+  border-top: 12px solid var(--tol-grey-subtle);
   display: flex;
   align-self: center;
   animation: dropDownAllErrors 0.5s ease;
@@ -295,6 +295,60 @@
   }
 }
 
+.tol-file-uploader-validate-step-error-modal-header {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 5px;
+  align-items: center;
+
+  .tol-file-uploader-validate-step-error-modal-icon {
+    margin: 0 0 10px 0;
+
+    &.error {
+      background-color: var(--tol-danger);
+    }
+
+    &.warning {
+      background-color: var(--tol-warning);
+    }
+  }
+}
+
+.tol-file-uploader-validate-step-single-error-container {
+  width: 100%;
+  padding: 5px;
+  color: white;
+  border-radius: 6px;
+  margin: 8px 0 5px 0;
+  max-height: 30px;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+
+  &.error {
+    background-color: var(--tol-danger) !important;
+  }
+
+  &.warning {
+    background-color: var(--tol-warning) !important;
+  }
+
+  .tol-file-uploader-validate-step-single-error-inner-container {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .tol-file-uploader-validate-step-single-error-icon {
+    padding: 4px;
+  }
+}
+
+.tol-file-uploader-validate-step-error-modal-content {
+  margin: 8px 5px;
+}
+
 .tol-file-uploader-previous-validation-results-container {
   margin: 0px;
   overflow: hidden;
@@ -365,5 +419,5 @@
   }
 }
 
-//TODO: Correct names - prefix with tol-file-upload
+// TODO: Correct names - prefix with tol-file-upload
 // TODO: Fix triangle color in light/dark mode

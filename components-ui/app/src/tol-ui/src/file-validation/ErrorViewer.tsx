@@ -5,50 +5,42 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { createTextGeneratorFactory, Modal } from "../index";
+import { Modal } from "../index";
 import ValidationIcon from "./ValidationIcon";
 
 //TODO: Take into account warnings, as well as errors
 
 interface Props {
   id?: string;
+  errorType?: string;
   message?: string;
   stepName?: string;
 }
 
 function ErrorViewer(props: Props) {
-  const words = createTextGeneratorFactory();
-  const { id, message = words.generateSentences(2), stepName } = props;
+  const { id, errorType, message, stepName } = props;
 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = () => {
-    setIsOpen(true);
+    setIsOpen((prev) => !prev);
   };
 
   const ModalContent = (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          margin: "15px 5px",
-          alignItems: "center",
-        }}
-      >
+    <>
+      <div className="tol-file-uploader-validate-step-error-modal-header">
         <h4>{stepName}</h4>
         <ValidationIcon
-          iconType="xmark"
+          iconType={errorType === "error" ? "xmark" : "exclamation"}
           size="lg"
-          style={{
-            backgroundColor: "var(--tol-danger)",
-            margin: "0px 0px 10px 0px",
-          }}
-          className="tol-file-uploader-validate-step-icon"
+          className={`tol-file-uploader-validate-step-icon 
+            tol-file-uploader-validate-step-error-modal-icon ${errorType}`}
         />
       </div>
-      <p style={{margin: "8px 5px"}}>{message}</p>
-    </div>
+      <p className="tol-file-uploader-validate-step-error-modal-content">
+        {message}
+      </p>
+    </>
   );
 
   const ErrorModal = (
@@ -65,38 +57,16 @@ function ErrorViewer(props: Props) {
       {ErrorModal}
       <div
         key={id}
-        style={{
-          width: "100%",
-          padding: "5px",
-          background: "var(--tol-danger)",
-          color: "white",
-          borderRadius: "6px",
-          margin: "8px 0px 5px 0px",
-          maxHeight: "30px",
-          display: "flex",
-          justifyContent: "center",
-          overflow: "hidden",
-          cursor: "pointer",
-        }}
+        className={`tol-file-uploader-validate-step-single-error-container ${errorType}`}
         onClick={handleClick}
       >
-        <div style={{ display: "flex", gap: "8px", width: "100%" }}>
+        <div className="tol-file-uploader-validate-step-single-error-inner-container">
           <ValidationIcon
-            iconType="xmark"
+            iconType={errorType === "error" ? "xmark" : "exclamation"}
             size="sm"
-            style={{ padding: "4px" }}
+            className="tol-file-uploader-validate-step-single-error-icon"
           />
-          <p
-            style={{
-              margin: "-2px 2px 0 0",
-              maxHeight: "30px",
-              textOverflow: "ellipsis",
-              overflow: "hidden",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {message}
-          </p>
+          <span>{message}</span>
         </div>
       </div>
     </>

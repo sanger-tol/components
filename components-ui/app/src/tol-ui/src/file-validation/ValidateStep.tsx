@@ -62,6 +62,7 @@ function ValidateStep(props: Props) {
                   <ErrorViewer
                     key={`${id}-error-${index}`}
                     message={error}
+                    errorType={"warning"} // TODO: Don't hardcode this
                     stepName={stepName}
                   />
                 ))}

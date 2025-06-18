@@ -12,6 +12,8 @@ class Pipeline(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)  # noqa A003
     name: Mapped[str] = mapped_column(nullable=False, unique=True)
+    source: Mapped[dict] = mapped_column(nullable=False, default={})
+    destination: Mapped[dict | None] = mapped_column()
 
     uploads: Mapped[list['Upload']] = \
         relationship('Upload', back_populates='pipeline') # noqa F821
