@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+-->
+
 # Playwright tests for ToL-UI
 
 ## Running
