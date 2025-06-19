@@ -20,17 +20,14 @@ const insertAuthToDB = async ({userID, token, orcidID}) => {
   catch (e) {};
 
   // insert the rest
-  try {
-    await sql.unsafe(`INSERT INTO "user"
-    VALUES (${userID}, '${orcidID}');
-    
-    INSERT INTO role_binding
-    VALUES (${randomInt()}, ${userID}, 1);
-    
-    INSERT INTO "token"
-    VALUES (${randomInt()}, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', ${userID});`).simple();    
-  }
-  catch (e) {};
+  await sql.unsafe(`INSERT INTO "user"
+  VALUES (${userID}, '${orcidID}');
+  
+  INSERT INTO role_binding
+  VALUES (${randomInt()}, ${userID}, 1);
+  
+  INSERT INTO "token"
+  VALUES (${randomInt()}, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', ${userID});`).simple();    
 };
 
 const setAuth = async ({page}) => {
