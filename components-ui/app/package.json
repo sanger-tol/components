@@ -1,6 +1,6 @@
 {
   "name": "components-ui",
-  "version": "2.1.12",
+  "version": "2.1.13",
   "private": true,
   "proxy": "http://components-api:80",
   "dependencies": {
@@ -23,7 +23,9 @@
     "@testing-library/react": "12.1.2",
     "@testing-library/user-event": "14.5.2",
     "@testing-library/jest-dom": "5.16.1",
-    "lorem-ipsum": "2.0.8"
+    "lorem-ipsum": "2.0.8",
+    "@uiw/react-md-editor": "4.0.7",
+    "rehype-sanitize":"6.0.0"
   },
   "scripts": {
     "start": "vite",

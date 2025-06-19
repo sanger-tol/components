@@ -9,7 +9,8 @@ import {
   BoardTable,
   BoardSunburst,
   BoardChart,
-  IBoardTargetAndZone
+  IBoardTargetAndZone,
+  BoardMarkdown
 } from "../..";
 
 
@@ -33,5 +34,7 @@ export function Visualisation(props: Props) {
       return <BoardSunburst {...props} />;
     case "chart":
       return <BoardChart {...props} />;
+    case "text":
+      return <BoardMarkdown {...props} />;
   }
 }

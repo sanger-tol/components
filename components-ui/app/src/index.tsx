@@ -9,6 +9,7 @@ import {
   Home,
   BarCharts,
   Colours,
+  DataSource,
   Detail,
   DetailInfo,
   Filters,
@@ -27,7 +28,6 @@ import {
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown } from "./tol-ui/src";
 import "./scss/styling.scss";
-import { DataSource } from "./pages/DataSource";
 
 // main data-driven components
 const barCharts: Page = {

@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 export * from "./AttributeSelector";
 export * from "./BoardCount";
+export * from "./BoardMarkdown";
 export * from "./Button";
 export * from "./CentreContents";
 export * from "./ClickOverlay";
