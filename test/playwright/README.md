@@ -39,3 +39,11 @@ Then in VSCode, on MacOS:
 **[cmd-shift-P][Tasks: Run Task][Playwright test (.env.dev)]**
 
 This assumes that you are using an environment variable file called `.env.dev`.
+
+## Reading the report
+
+In the `test/playwright directory`, run:
+
+```bash
+npx playwright show-report
+```
