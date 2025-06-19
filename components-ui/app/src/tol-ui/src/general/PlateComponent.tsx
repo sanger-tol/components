@@ -23,28 +23,29 @@ interface Props {
 }
 
 export function PlateComponent(props: Props) {
-  const { id, data, rowLabels, columnLabels} = props;
+  const { id, data, rowLabels, columnLabels } = props;
 
-  
   return (
-    <div className="columns">
-    <div className="rLabels" />
-    <div className="rows">
-    <div className="cLabels"/>
+    <>
     <div className="plate" id={id}>
       {data.map((row, rowIndex) => {
         return (
-          <div key={rowIndex} className="row">
-            {row.map((well, columnIndex)=> {
+          <div key={rowIndex} className="rows">
+            <div className="rLabels">{rowLabels[rowIndex]}</div>
+            {row.map((well, columnIndex) => {
               return (
-                <div key={columnIndex} className="well">{well.label}</div>
-              )
+                <div>
+                    <div className="cLabels">{rowIndex === 0 && columnLabels[columnIndex]}</div>
+                    <div key={columnIndex} className="well">
+                    {well.label}
+                    </div>
+                </div>
+              );
             })}
           </div>
-        )
+        );
       })}
     </div>
-    </div>
-    </div>
+    </>
   );
 }

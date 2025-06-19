@@ -4,14 +4,17 @@
  * SPDX-License-Identifier: MIT
  */
 
-.plate{
+.plate {
+  display: inline-block;
   background-color: var(--tol-grey-translucent);
   border: 2px solid var(--tol-grey);
   border-radius: 6px;
-  padding: 0px 12px;
+  padding: 0px 8px;
+  margin-top: 30px;
+  margin-left: 30px;
 }
 
-.well{
+.well {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,25 +25,22 @@
   background-color: var(--tol-grey);
 }
 
-.rLabels{
-  min-width: 20vw !important; 
-  min-height: 10vh !important;
-  // padding: 100px;
-  background-color: greenyellow;
+.rLabels {
+  position: absolute;
+  left: 10px;
 }
 
-.cLabels{
-  width: 10%;
-  background-color: pink;
-}
-
-.rows{
+.rows {
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
-.columns{
+.cLabels {
   display: flex;
-  flex-direction: column;
-  max-width: 50%;
+  align-items: center;
+  justify-content: center;
+  top: 80px;
+  position: absolute;
+  padding-left: 18px;
 }

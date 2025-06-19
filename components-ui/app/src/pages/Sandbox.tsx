@@ -22,11 +22,13 @@ const examplePlateData: TPlateData = [
     { id: "A2", label: "A2", className: "well" },
     { id: "B2", label: "B2", className: "well" },
     { id: "C2", label: "C2", className: "well" },
+    { id: "B2", label: "B2", className: "well" },
+    { id: "C2", label: "C2", className: "well" },
   ],
 ];
  
-const rowNames = ['A', 'B', 'C', 'D', 'E', 'F'];
-const colNames = ['1', '2'];
+const colNames = ['A', 'B', 'C', 'D', 'E', 'F'];
+const rowNames = ['1', '2'];
 
 function Sandbox() {
   return (
