@@ -152,7 +152,7 @@ def application():
     )
     app.register_blueprint(blueprint_data_local, name='local',
                            url_prefix=os.getenv('API_PATH') + '/local')
-    
+
     # The system endpoints
     blueprint_system = system_blueprint()
     app.register_blueprint(blueprint_system, url_prefix=os.getenv('API_PATH') + '/system')
@@ -183,10 +183,5 @@ def application():
         blueprint_board_data,
         url_prefix=os.getenv('API_PATH') + '/boards'
     )
-
-    import logging
-    logger = logging.getLogger(__name__)
-    for rule in app.url_map.iter_rules():
-        logger.error(f"Route: {rule} -> Methods: {rule.methods}")
 
     return app
