@@ -102,7 +102,7 @@ function FileValidation(props: Props) {
         s3_url: "made up url",
         s3_filename: "made up file name",
         spreadsheet_config: "made up config",
-        pipeline_name: "made up pipeline name",
+        pipeline_name: "tos_manifest_validation",
         destination: "made up destination",
       },
     };

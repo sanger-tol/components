@@ -52,8 +52,12 @@ def upgrade() -> None:
                     sa.Column('destination', sa.String(), nullable=False),
                     sa.Column('flow_run_id', sa.String(), nullable=True),
                     sa.Column('date_started', sa.DateTime(), nullable=False),
-                    sa.Column('results', postgresql.JSONB(), nullable=False, server_default='[]'),
+                    sa.Column('validation_results',
+                              postgresql.JSONB(),
+                              nullable=False,
+                              server_default='[]'),
                     sa.Column('completed', sa.Boolean(), default=False, nullable=False),
+                    sa.Column('failure_message', sa.String(), nullable=True),
                     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
                     sa.ForeignKeyConstraint(['pipeline_name'], ['pipeline.name'], ),
                     sa.PrimaryKeyConstraint('id')

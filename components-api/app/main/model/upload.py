@@ -24,8 +24,15 @@ class Upload(Base):
     destination: Mapped[str] = mapped_column(nullable=False)
     flow_run_id: Mapped[str] = mapped_column(nullable=True)
     date_started: Mapped[datetime] = mapped_column(default=datetime.now, nullable=False)
-    results: Mapped[List[Dict[str, Any]]] = mapped_column(JSONB, nullable=False, default=[])
+
+    validation_results: Mapped[List[Dict[str, Any]]] = mapped_column(
+        JSONB,
+        nullable=False,
+        default=[]
+    )
+
     completed: Mapped[bool] = mapped_column(nullable=False, default=False)
+    failure_message: Mapped[str | None] = mapped_column(nullable=True)
 
     user: Mapped['User'] = relationship('User', back_populates='user_uploads') # noqa F821
     pipeline: Mapped['Pipeline'] = relationship('Pipeline', back_populates='uploads')  # noqa F821
