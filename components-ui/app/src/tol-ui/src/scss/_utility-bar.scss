@@ -7,6 +7,7 @@
 :root {
   --tol-utility-bar-height: 30px;
   --tol-utility-bar-margin-bottom: 6px;
+  --tol-utility-bar-offset: calc(var(--tol-utility-bar-height) + var(--tol-utility-bar-margin-bottom));
 }
 
 .tol-utility-bar {
@@ -24,5 +25,5 @@
 }
 
 .tol-component-contents {
-  height: calc(100% - var(--tol-utility-bar-height) - var(--tol-utility-bar-margin-bottom));
+  height: calc(100% - var(--tol-utility-bar-offset));
 }
