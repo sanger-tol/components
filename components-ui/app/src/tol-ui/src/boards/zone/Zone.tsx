@@ -199,7 +199,7 @@ export function Zone(props: Props) {
           editable: true,
           onSave: (value: string) => {
             if (value !== title) {
-              saveTitle(value, dataSource, id, BOARDS.ZONE);
+              saveTitle(value, boardDataSource, id, BOARDS.ZONE);
               setTitle(value);
             }
           }

@@ -12,7 +12,7 @@
 
 .tol-responsive-widget {
   @extend .tol-widget;
-  margin: 0;
+  margin: 0px;
   position: relative;
 }
 
@@ -36,7 +36,7 @@
 }
 
 .tol-board-bar {
-  @extend .tol-widget;
+  @extend .tol-responsive-widget;
   margin: 6px 11px;
   margin-bottom: 11px;
   border-radius: 0;
@@ -54,7 +54,7 @@
 }
 
 .tol-zone-bar {
-  @extend .tol-widget;
+  @extend .tol-responsive-widget;
   border-radius: 0;
   margin: 0px 11px;
 }
@@ -109,7 +109,7 @@
 .add-zone-button {
   position: absolute;
   right: 20px;
-  top: 92px;
+  top: 94px;
 }
 
 .edit-config-button {

@@ -22,7 +22,7 @@ import {
 
 interface Props {
   dataSource: TsDataSource;
-  boardDataSource?: TsDataSource;
+  boardDataSource: TsDataSource;
 }
 
 export function Board(props: Props) {
@@ -93,7 +93,7 @@ export function Board(props: Props) {
         id={boardData.views[0].id}
         defaultFilter={boardData.views[0].filter}
         dataSource={dataSource}
-        boardDataSource={boardDataSource!}
+        boardDataSource={boardDataSource}
       />
     </div>
   );

@@ -79,7 +79,7 @@ export function BoardTable(props: Props) {
       rowSelection={config.actions?.length > 0}
       utilityBarConfig={{
         title: {
-          title: title,
+          text: title,
           editable: true,
           onSave: (value: string) => {
             saveTitle(value, boardDataSource, id, boardObjectType);

@@ -77,6 +77,8 @@ export function ResponsiveWidget(props: Props) {
           zone={zone}
           setZone={setZone}
           componentType={widget.componentType}
+          title={widget.title}
+          config={widget.config}
           objectType={widget.objectType}
           dataSource={
             new TsDataSource({
@@ -85,8 +87,7 @@ export function ResponsiveWidget(props: Props) {
             })
           }
           boardDataSource={boardDataSource}
-          config={widget.config}
-          title={widget.title}
+          boardObjectType={BOARDS.COMPONENT}
         />
       );
       return (
