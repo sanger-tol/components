@@ -6,13 +6,17 @@ SPDX-License-Identifier: MIT
 
 # Playwright tests for ToL-UI
 
-## Running
+## Setup
 
 First, start the app
 
 ```bash
 tol down && tol up && tol restore && tol alembic upgrade
 ```
+
+## Running
+
+There are 2 ways to run the tests
 
 ### ToL CLI
 
