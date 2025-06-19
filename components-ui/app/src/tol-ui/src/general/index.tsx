@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { PlateComponent } from "./PlateComponent";
+
 export { default as Footer } from "./Footer";
 export { default as Header } from "./Header";
 export { default as CentreContents } from "./CentreContents";
@@ -33,3 +35,4 @@ export { default as BoardCount } from "./BoardCount";
 export { default as SelectedAttributesContainer } from "./SelectedAttributesContainer";
 export { formatDate } from "./utils";
 export { default as UtilityBar } from "./UtilityBar";
+export * from "./PlateComponent";

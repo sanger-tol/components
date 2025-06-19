@@ -27,19 +27,24 @@ export function PlateComponent(props: Props) {
 
   
   return (
+    <div className="columns">
+    <div className="rLabels" />
+    <div className="rows">
+    <div className="cLabels"/>
     <div className="plate" id={id}>
       {data.map((row, rowIndex) => {
         return (
           <div key={rowIndex} className="row">
             {row.map((well, columnIndex)=> {
               return (
-                <div key={columnIndex} className="well"><div className="rLabels">{rowIndex===0 && rowLabels[columnIndex]}</div><div className="cLabels">{columnIndex===0 && columnLabels[rowIndex]}</div>{well.label}</div>
-                // <div key={columnIndex} className="well">{well.label}</div>
+                <div key={columnIndex} className="well">{well.label}</div>
               )
             })}
           </div>
         )
       })}
+    </div>
+    </div>
     </div>
   );
 }

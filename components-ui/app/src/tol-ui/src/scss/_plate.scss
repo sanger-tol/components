@@ -5,12 +5,10 @@
  */
 
 .plate{
-  display: inline-block;
   background-color: var(--tol-grey-translucent);
   border: 2px solid var(--tol-grey);
   border-radius: 6px;
   padding: 0px 12px;
-  // margin: 10px;
 }
 
 .well{
@@ -24,18 +22,25 @@
   background-color: var(--tol-grey);
 }
 
-.row::not-first-child{
-  display: none;
-}
-
 .rLabels{
-  
-  // z-index: 50;
-  padding-bottom: 50px;
+  min-width: 20vw !important; 
+  min-height: 10vh !important;
+  // padding: 100px;
+  background-color: greenyellow;
 }
 
-// .cLabels{
-  
-//   // z-index: 50;
-//   margin: 50px;
-// }
+.cLabels{
+  width: 10%;
+  background-color: pink;
+}
+
+.rows{
+  display: flex;
+  flex-direction: row;
+}
+
+.columns{
+  display: flex;
+  flex-direction: column;
+  max-width: 50%;
+}
