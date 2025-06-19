@@ -1,1 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+#
+# SPDX-License-Identifier: MIT
+
+# do not copy in local node_modules/
 node_modules/
