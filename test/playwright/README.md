@@ -28,7 +28,7 @@ tol test --type=playwright
 
 ### Local browsers (VSCode)
 
-Only once, enter the directory install the dependencies and browsers
+Only once, enter the directory, and install the dependencies and browsers
 
 ```bash
 cd test/playwright && npm i && npx playwright install --with-deps
