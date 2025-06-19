@@ -24,16 +24,10 @@ tol test --type=playwright
 
 ### Local browsers (VSCode)
 
-Enter the directory
+Only once, enter the directory install the dependencies and browsers
 
 ```bash
-cd test/playwright
-```
-
-Only once, install the dependencies and browsers
-
-```bash
-npm i && npx playwright install --with-deps
+cd test/playwright && npm i && npx playwright install --with-deps
 ```
 
 Then in VSCode, on MacOS:
