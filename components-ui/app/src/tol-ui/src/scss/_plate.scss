@@ -1,0 +1,86 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+.tol-plate-container {
+  padding: 20px;
+  width: fit-content;
+}
+
+.tol-plate {
+  padding: 5px 15px;
+  width: fit-content;
+  height: fit-content;
+}
+
+.tol-col-label:first-child {
+  margin-left: 40px;
+}
+
+.tol-col-label {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+}
+
+.tol-col-header {
+  width: 50px;
+  height: 30px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.tol-rows {
+  display: flex;
+  flex-direction: row;
+}
+
+.tol-row-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  align-content: center;
+  justify-items: center;
+}
+
+.tol-row-header {
+  display: flex;
+  align-items: center;
+  min-width: 30px;
+  height: 50px;
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+.tol-row-header:first-child{
+  margin-top: 2px;
+}
+
+.tol-plate-wells {
+  background-color: var(--tol-grey-translucent);
+  border: 2px solid var(--tol-grey);
+  border-radius: 6px;
+  min-height: 200px;
+  min-width: 90%;
+  padding: 5px;
+}
+
+.tol-plate-wells-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.well {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px;
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  // background-color: var(--tol-grey);
+}
