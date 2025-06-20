@@ -88,19 +88,9 @@ export function MyBoards(props: IMyBoards) {
     </div>
   );
 
-  const containerStyle = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    position: "relative",
-    paddingLeft: "10px",
-    paddingRight: "10px",
-  };
-
   const Header = (
     <MyBoardsHeader
       boardDataSource={boardDataSource}
-      containerStyle={containerStyle}
     />
   );
 

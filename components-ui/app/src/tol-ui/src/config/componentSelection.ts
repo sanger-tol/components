@@ -30,17 +30,17 @@ export const componentOptions = [
     disabled: false,
   },
   {
+    type: "text",
+    text: "Text",
+    icon: "font",
+    disabled: false,
+  },
+  {
     type: "map",
     text: "Map",
     icon: "location-dot",
     disabled: true,
   },
-  {
-    type: "text",
-    text: "Text",
-    icon: "font",
-    disabled: false,
-  }
 ];
 
 export const sizeOptions = (componentType: string) => {
@@ -48,17 +48,17 @@ export const sizeOptions = (componentType: string) => {
     {
       type: "sm",
       text: "Small",
-      disabled: componentType === "count" || componentType == "sunburst" || componentType === "text" ? false : true,
+      disabled: componentType === "table" || componentType == "chart",
     },
     {
       type: "md",
       text: "Medium",
-      disabled: componentType === "count" ? true : false,
+      disabled: componentType === "count",
     },
     {
       type: "lg",
       text: "Large",
-      disabled: componentType === "count" ? true : false,
+      disabled: componentType === "count",
     },
   ]
 }

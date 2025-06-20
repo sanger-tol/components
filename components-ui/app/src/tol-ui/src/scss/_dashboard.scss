@@ -12,7 +12,6 @@
 
 .tol-responsive-widget {
   @extend .tol-widget;
-  margin: 0px;
   position: relative;
 }
 
@@ -131,6 +130,10 @@
     font-size: 14px;
     font-weight: bolder;
   }
+}
+
+.my-boards-buttons {
+  float: right;
 }
 
 .my-boards-container {

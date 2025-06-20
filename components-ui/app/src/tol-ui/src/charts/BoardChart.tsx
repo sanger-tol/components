@@ -28,7 +28,7 @@ interface Props extends IBoardTargetAndZone {
 }
 
 export function BoardChart(props: Props) {
-  const { id, dataSource, boardObjectType, boardDataSource } = props;
+  const { id, title, boardObjectType, boardDataSource } = props;
   const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
@@ -36,7 +36,7 @@ export function BoardChart(props: Props) {
 
   const onModalSave = (updatedConfig: IChartConfig) => {
     setConfig({ ...updatedConfig });
-    upsertComponentConfig(dataSource, id, { ...updatedConfig });
+    upsertComponentConfig(boardDataSource, id, { ...updatedConfig });
     setForceUpdate(!forceUpdate);
   };
 
@@ -101,7 +101,7 @@ export function BoardChart(props: Props) {
           forceUpdate={forceUpdate}
           utilityBarConfig={{
             title: {
-              title: props.title,
+              text: title,
               editable: true,
               onSave: (value: string) => {
                 saveTitle(value, boardDataSource, id, boardObjectType);

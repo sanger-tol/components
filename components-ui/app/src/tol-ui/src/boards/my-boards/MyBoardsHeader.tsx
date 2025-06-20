@@ -15,56 +15,26 @@ import {
   TsDataSource,
   StaticMessage,
   BOARDS,
+  Button,
 } from "../..";
 
 
 export interface IMyBoardsHeader {
   boardDataSource: TsDataSource;
-  title?: string;
-  subTitle?: string;
-  containerStyle?: object;
-  menuStyle?: object;
-  dropdownButtons?: IDropdownButtonConfig[] | IDropdownButtonConfig;
-  dropdownMainIcon?: IDropdownMainIconProps;
-  disabled?: boolean;
-  placement?: string;
-  customClass?: string;
 }
 
 export function MyBoardsHeader(props: IMyBoardsHeader) {
+  const { boardDataSource } = props;
   const [newBoardModalOpen, setNewBoardModalOpen] = useState(false);
   const [modalError, setModalError] = useState("");
   const history = useHistory();
 
-  const defaultDropdownButtons: IDropdownButtonConfig[] = [
-    {
-      name: "Create New Board",
-      action: () => setNewBoardModalOpen(true),
-    },
-  ];
-
-  const defaultDropdownMainIcon = {
-    id: "create-new-board-button",
-    icon: "plus",
-    type: "success",
-    tooltip: "Create Board",
-  };
-
-  const {
-    boardDataSource,
-    title = "My Boards",
-    subTitle =
-      `Here you can view and delete your boards, 
-      along with viewing board hierarchy and components 
-      of each zone.`,
-    containerStyle,
-    menuStyle = { marginRight: "10px" },
-    dropdownButtons = defaultDropdownButtons,
-    dropdownMainIcon = defaultDropdownMainIcon,
-    disabled = false,
-    placement = "leftStart",
-    customClass = "",
-  } = props;
+  const TITLE = "My Boards";
+  const SUB_TITLE = (
+    `Here you can view and delete your boards, 
+    along with viewing board hierarchy and components 
+    of each zone.`
+  );
 
   const handleNewBoardCreate = async (
     boardId: string,
@@ -111,27 +81,22 @@ export function MyBoardsHeader(props: IMyBoardsHeader) {
   );
 
   return (
-    <div>
-      <div style={containerStyle} className={customClass}>
-        <div>
-          <h1>{title}</h1>
-          <p>{subTitle}</p>
-        </div>
-        <div style={newBoardModalOpen ? { display: "none" } : {}}>
-          <DropdownButtons
-            mainButtonIcon={dropdownMainIcon}
-            placement={placement}
-            disabled={disabled}
-            dropdownButtons={dropdownButtons}
-            menuStyle={menuStyle}
-            showMessages={false}
-          />
-        </div>
-        {newBoardModalOpen &&
-          NewBoardModalContent()
-        }
+      <div className="my-boards-header">
+        <>
+          <div className="my-boards-buttons" style={newBoardModalOpen ? { display: "none" } : {}}>
+            <Button
+              id="create-new-board-button"
+              icon="plus"
+              text="New Board"
+              type="success"
+              onClick={() => setNewBoardModalOpen(true)}
+            />
+          </div>
+          <h1>{TITLE}</h1>
+          <p>{SUB_TITLE}</p>
+        </>
+        {newBoardModalOpen && NewBoardModalContent()}
+        {WarningMessage}
       </div>
-      {WarningMessage}
-    </div>
   );
 }
