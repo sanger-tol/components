@@ -15,7 +15,8 @@ import {
   IZone,
   ConfirmationModal,
   BOARDS,
-  TsDataSource
+  TsDataSource,
+  API_METHODS
 } from "../..";
 
 
@@ -42,7 +43,7 @@ interface Props {
   setZone: any;
   saveLayout: boolean;
   setSaveLayout: any;
-  boardDataSource: any;
+  boardDataSource: TsDataSource;
 }
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
@@ -105,7 +106,11 @@ export function ResponsiveWidget(props: Props) {
 
   const deleteWidget = (id: string) => {
     const newWidgets = widgets.filter((widget) => widget.componentId !== id);
-    // boardDataSource.custom(`${BOARDS.DELETE_COMPONENT}/${id}`, "DELETE"); // TODO: ADD DELETE COMPONENT ENDPOINT
+    boardDataSource
+      .custom({
+        method: API_METHODS.DELETE,
+        resource: `${BOARDS.COMPONENT}/${id}`,
+      })
     setWidgets(newWidgets);
   };
 

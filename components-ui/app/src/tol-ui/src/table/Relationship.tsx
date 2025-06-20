@@ -31,7 +31,7 @@ export function Relationship(props: Props) {
   const resource = data["type"] + "/" + data["id"];
 
   const loadRelationship = () => {
-    dataSource // TODO: use ds properly
+    dataSource
       .custom({
         method: API_METHODS.GET,
         resource

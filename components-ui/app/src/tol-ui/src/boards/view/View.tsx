@@ -12,7 +12,8 @@ import {
   TsDataSource,
   getZones,
   Zone,
-  BOARDS
+  BOARDS,
+  API_METHODS
 } from "../..";
 
 
@@ -60,7 +61,11 @@ export function View(props: Props) {
 
   const deleteZone = (id: string) => {
     const newZones = zones.filter((zone) => zone.id !== id);
-    // boardDataSource.custom(`${BOARDS.DELETE_ZONE}/${id}`, "DELETE"); TODO: ADD DELETE ZONE ENDPOINT
+    boardDataSource
+      .custom({
+        method: API_METHODS.DELETE,
+        resource: `${BOARDS.ZONE}/${id}`,
+      })
     setZones(newZones);
   };
 

@@ -16,7 +16,7 @@ export function createAxiosInstance(options: any): AxiosInstance {
       return response;
     },
     (error) => {
-      throw error; // TODO: handle error like token expired, ...
+      throw error; // TODO: handle error like token expired
     },
   );
   return axiosInstance;
