@@ -262,7 +262,7 @@ export function Accordion(props: BoardsAccordionProps) {
                 objectType={BOARDS.COMPONENT_ZONE}
                 filterKey="zone.id"
                 itemType={BOARDS.COMPONENT as string}
-                title={zoneData[zoneId]?.[0].title || ""}
+                title={zoneData[zoneId]?.[0].title || "Untitled Zone"}
                 subHeader={zoneData[zoneId]?.[0].objectType}
                 clickable={false}
                 renderChildren={(componentIds) => (
@@ -295,7 +295,7 @@ export function Accordion(props: BoardsAccordionProps) {
               <div style={{ flex: "1" }}>
                 <AccordionBase
                   id={viewId}
-                  title={viewData[viewId] || ""}
+                  title={viewData[viewId] || "Untitled View"}
                   objectType={BOARDS.ZONE_VIEW}
                   filterKey="view.id"
                   itemType={BOARDS.ZONE}
