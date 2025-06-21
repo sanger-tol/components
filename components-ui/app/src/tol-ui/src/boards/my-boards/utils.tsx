@@ -75,7 +75,7 @@ export function useItemData<T,> (
     return () => {
       mounted = false;
     };
-  }, [ids, fetchFunction]);
+  }, [ids]);
 
   return { itemData, loading };
 };

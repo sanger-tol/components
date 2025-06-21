@@ -22,6 +22,7 @@ import {
   returnComponentInfo,
   returnZoneInfo,
   returnViewInfo,
+  API_METHODS,
 } from "../..";
 
 
@@ -92,7 +93,11 @@ export function Accordion(props: BoardsAccordionProps) {
       (board: any) => board.id !== boardIdToDelete,
     );
     setBoardDetails(deletedBoard);
-    // ds.custom(`${BOARDS.DELETE_BOARD}/${boardIdToDelete}`, API_METHODS.DELETE); // TODO: add delete
+    boardDataSource
+      .custom({
+        method: API_METHODS.DELETE,
+        resource: `${BOARDS.BOARD}/${boardIdToDelete}`,
+      })
     setBoardIdToDelete(null);
   };
 

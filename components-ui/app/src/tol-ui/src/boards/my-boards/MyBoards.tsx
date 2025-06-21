@@ -94,7 +94,7 @@ export function MyBoards(props: IMyBoards) {
     />
   );
 
-  const MyBoardContent = (
+  const Content = (
     <div className="my-boards-container">
       {boardDetails && boardDetails.length > 0 ? (
         <Accordion
@@ -112,7 +112,7 @@ export function MyBoards(props: IMyBoards) {
       type: "full",
     },
     {
-      component: MyBoardContent,
+      component: Content,
       type: "full",
     },
   ];
