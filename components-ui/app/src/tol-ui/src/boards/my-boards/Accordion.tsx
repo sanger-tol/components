@@ -295,7 +295,7 @@ export function Accordion(props: BoardsAccordionProps) {
               <div style={{ flex: "1" }}>
                 <AccordionBase
                   id={viewId}
-                  title={viewData[viewId] || "Untitled View"}
+                  title={viewData[viewId] || "Untitled View (Coming Soon)"}
                   objectType={BOARDS.ZONE_VIEW}
                   filterKey="view.id"
                   itemType={BOARDS.ZONE}
