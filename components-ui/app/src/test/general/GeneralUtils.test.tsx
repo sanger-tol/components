@@ -19,8 +19,8 @@ import {
   getAttributeSources,
   getFlattenedMetaData,
   getAttributeDetail,
-} from "../../tol-ui/src/general/utils";
-import { FieldMeta } from "../../tol-ui/src/table/Field";
+  FieldMeta,
+} from "../../tol-ui/src";
 
 test("isPropDefined function", () => {
   expect(isPropDefined(undefined)).toBe(false);

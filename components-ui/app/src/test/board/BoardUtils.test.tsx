@@ -5,15 +5,14 @@ SPDX-License-Identifier: MIT
 */
 
 import { expect, test, describe } from "vitest";
-import { deepCopy } from "../../tol-ui/src/general/utils";
 import {
+  deepCopy,
   defineComponent,
   defineZone,
-} from "../../tol-ui/src/hooks";
-import {
   getWidgetOrder,
-} from "../../tol-ui/src/boards/utils";
-import { IComponentData } from "../../tol-ui/src/models";
+  IComponentData,
+} from "../../tol-ui/src";
+
 
 describe("defineComponent function", () => {
   test("should add a component to the zone", () => {
