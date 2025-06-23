@@ -38,15 +38,15 @@ export function PlateComponent(props: Props) {
   return (
     <div id={id} className="tol-plate-container">
       <div className="tol-plate">
-        <div className="tol-col-label">
+        <div className="tol-plate-col-label">
           {columnLabels.map((colLabel, _) => (
-            <p className="tol-col-header">{colLabel}</p>
+            <p className="tol-plate-col-header">{colLabel}</p>
           ))}
         </div>
-        <div className="tol-rows">
-          <div className="tol-row-label">
+        <div className="tol-plate-rows">
+          <div className="tol-plate-row-label">
             {rowLabels.map((rowLabel, _) => (
-              <p className="tol-row-header">{rowLabel}</p>
+              <p className="tol-plate-row-header">{rowLabel}</p>
             ))}
           </div>
           <div className="tol-plate-wells">
@@ -54,7 +54,13 @@ export function PlateComponent(props: Props) {
               <div className="tol-plate-wells-row">
                 {row.map((well, _) => (
                   <HoverOverlay contents={well.label} placement="left">
-                    <div className="well" style={style}><Progress.Circle percent={well.sampleVol.split('%')[0]} ></Progress.Circle></div>
+                    <div className="well" style={style}>
+                      <Progress.Circle
+                        percent={Number(well.sampleVol.split("%")[0])}
+                        strokeWidth={10}
+                        trailWidth={10}
+                      ></Progress.Circle>
+                    </div>
                   </HoverOverlay>
                 ))}
               </div>
