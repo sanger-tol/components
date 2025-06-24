@@ -15,6 +15,7 @@ export function Markdown(props: Props) {
   const { contents } = props;
 
   return (
+    // @ts-ignore
     <ReactMarkdown className="tol-markdown">
       {contents}
     </ReactMarkdown>
