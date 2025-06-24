@@ -65,9 +65,9 @@ export function RemoteFilters(props: Props) {
     setFilters(f);
 
     // update the zone state which builds the filter ready for the api
-    if (filterZone.components[filterComponentId].data.filter?.and_[attribute]) {
+    if (filterZone.components[filterComponentId].data.filter?.and_?.[attribute]) {
       const updatedComponents = { ...filterZone.components };
-      delete updatedComponents[filterComponentId].data.filter?.and_[attribute];
+      delete updatedComponents[filterComponentId].data.filter?.and_?.[attribute];
       setFilterZone({
         ...filterZone,
         components: updatedComponents,

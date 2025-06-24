@@ -136,7 +136,7 @@ export function SelectedAttributesContainer(props: Props) {
           <DraggableList
             container={() => ref.current}
             itemKey={(item) => item}
-            list={attributes}
+            list={[...attributes]}
             // @ts-ignore
             template={(props) => (
               <SelectedColumn

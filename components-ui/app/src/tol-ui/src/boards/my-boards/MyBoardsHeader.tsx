@@ -7,10 +7,7 @@
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
-  DropdownButtons,
   NewBoardModal,
-  IDropdownButtonConfig,
-  IDropdownMainIconProps,
   createBoardAndView,
   TsDataSource,
   StaticMessage,
