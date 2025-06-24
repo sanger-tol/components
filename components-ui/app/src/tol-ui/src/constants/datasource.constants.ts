@@ -4,14 +4,12 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BOARDS } from "..";
-
 export const EXCLUDED_DETAIL_CACHE_OBJECTS = [
-  BOARDS.COMPONENT,
-  BOARDS.ZONE,
-  BOARDS.VIEW,
-  BOARDS.COMPONENT_ZONE,
-  BOARDS.ZONE_VIEW,
-  BOARDS.VIEW_BOARD,
+  'component',
+  'zone',
+  'view',
+  'component_zone',
+  'zone_view',
+  'view_board',
   'prefect/flow_run',
 ];

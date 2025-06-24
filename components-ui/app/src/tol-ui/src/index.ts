@@ -42,3 +42,5 @@ export * from "./smart-app";
 export * from "./table";
 export * from "./timeline";
 export * from "./variables";
+
+export { Map, RemoteMap, MapLegend } from "./map";

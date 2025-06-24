@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { useState, useEffect } from "react";
 import {
   IRemoteTargetAndZone,
-  TDataObjectListOrNull,
   TFilterOrUndefined,
   Map,
   API_METHODS,
