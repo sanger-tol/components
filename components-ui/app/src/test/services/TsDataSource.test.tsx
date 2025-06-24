@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { expect, test, vitest, describe } from "vitest";
-import { TsDataSource } from "../../../src/tol-ui/src";
+import { TsDataSource } from "../../tol-ui/src";
 import "@testing-library/jest-dom";
 
 const speciesMockData = {
@@ -324,9 +324,11 @@ describe("Testing relationshipConfig function", () => {
   });
 });
 
+/*
 describe("Testing getEntityMeta function", () => {
   // Add tests for getEntityMeta if needed
 });
+*/
 
 describe("Testing getOne function", () => {
   test("ID does not exist in promise", async () => {

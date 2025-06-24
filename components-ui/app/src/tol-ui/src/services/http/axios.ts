@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import axios, { AxiosInstance } from "axios";
 
 
-export function createAxiosInstance(options: any): AxiosInstance {
+export default function createAxiosInstance(options: any): AxiosInstance {
   // eslint-disable-line
   const axiosInstance = axios.create(options);
 

@@ -5,7 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { AxiosInstance, AxiosRequestConfig } from "axios";
-import { CONFIG, createAxiosInstance } from "../..";
+import createAxiosInstance from "./axios";
+import { CONFIG } from "../..";
 
 
 const authApi = createAxiosInstance(CONFIG);

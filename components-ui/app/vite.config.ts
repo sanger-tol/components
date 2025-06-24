@@ -52,5 +52,10 @@ export default defineConfig({
         return false;
       }
     },
+    deps: {
+      // force Vitest to treat these as ESM and bundle them into the
+      // test environment, rather than trying to require() them
+      inline: ["@react-leaflet/core", "react-leaflet-cluster"],
+    },
   },
 });

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { expect, test, describe } from "vitest";
-import { retry } from "../../../src/tol-ui/src";
+import { retry } from "../../tol-ui/src/services/http/retry";
 import "@testing-library/jest-dom";
 
 class PassingTestClass {

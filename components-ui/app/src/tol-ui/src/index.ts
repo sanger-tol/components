@@ -34,13 +34,13 @@ export * from "./filtering";
 export * from "./forms";
 export * from "./general";
 export * from "./hooks";
+export * from "./map";
 export * from "./messaging";
 export * from "./models";
 export * from "./nav";
 export * from "./services";
+export { retry } from "./services/http";
 export * from "./smart-app";
 export * from "./table";
 export * from "./timeline";
 export * from "./variables";
-
-export { Map, RemoteMap, MapLegend } from "./map";

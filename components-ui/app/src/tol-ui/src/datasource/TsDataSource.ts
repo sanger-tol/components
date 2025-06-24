@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { retry } from "../services/http/retry";
 import {
   IEntityMeta,
   IAttributes,
@@ -24,9 +25,8 @@ import {
   TDataObjectListOrNull,
   EXCLUDED_DETAIL_CACHE_OBJECTS,
   httpClient,
-  retry,
   deepCopy,
-  API_METHODS
+  API_METHODS,
 } from "..";
 
 
