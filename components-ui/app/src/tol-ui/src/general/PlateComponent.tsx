@@ -4,8 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import HoverOverlay from "./HoverOverlay";
-import { Progress } from "rsuite";
+import { WellComponent } from "./WellComponent";
 
 export type TPlateData = Array<TRow>;
 type TRow = Array<IWell>;
@@ -33,20 +32,8 @@ interface Props {
 }
 
 export function PlateComponent(props: Props) {
-  const {
-    id,
-    data,
-    rowLabels,
-    columnLabels,
-    onWellClick,
-    WellHoverContents
-  } = props;
-
-  const style = {
-    width: "50px",
-    display: "inline-block",
-    margin: "8px",
-  };
+  const { id, data, rowLabels, columnLabels, onWellClick, WellHoverContents } =
+    props;
 
   return (
     <div id={id} className="tol-plate-container">
@@ -66,34 +53,11 @@ export function PlateComponent(props: Props) {
             {data.map((row, _) => (
               <div className="tol-plate-wells-row">
                 {row.map((well, _) => (
-                  <HoverOverlay
-                    contents={
-                      WellHoverContents &&
-                        <WellHoverContents
-                          id={well.id}
-                          data={well.data}
-                        />
-                    }
-                    placement="right"
-                  >
-                    <div
-                      className="well"
-                      style={style}
-                      onClick={
-                        onWellClick ? 
-                          () => onWellClick(well.id)
-                        :
-                          undefined
-                      }
-                    >
-                      <Progress.Circle
-                        percent={well.volume}
-                        strokeWidth={well.className ? 12 : 20}
-                        trailWidth={well.className ? 12 : 20}
-                        showInfo={false}
-                      />
-                    </div>
-                  </HoverOverlay>
+                  <WellComponent
+                    well={well}
+                    onWellClick={onWellClick}
+                    WellHoverContents={WellHoverContents}
+                  />
                 ))}
               </div>
             ))}

@@ -1,8 +1,6 @@
 import HoverOverlay from "./HoverOverlay";
 import { Progress } from "rsuite";
 
-// type TRow = Array<IWell>;
-
 interface IWell {
   id: string;
   label: string;
@@ -17,21 +15,21 @@ export interface IWellHoverContents {
 }
 
 interface Props {
-  id: string;
   well: IWell;
   onWellClick?: (id: string) => void;
   WellHoverContents?: (props: IWellHoverContents) => JSX.Element;
 }
 
-function WellComponent(props: Props) {
-    const {
-    well,
-    onWellClick,
-    WellHoverContents
-  } = props;
+export function WellComponent(props: Props) {
+  const { well, onWellClick, WellHoverContents } = props;
 
+  const style = {
+    width: "50px",
+    display: "inline-block",
+    margin: "8px",
+  };
 
-  <>
+  return<>
     <HoverOverlay
       contents={
         WellHoverContents && <WellHoverContents id={well.id} data={well.data} />
@@ -51,6 +49,5 @@ function WellComponent(props: Props) {
         />
       </div>
     </HoverOverlay>
-    ;
   </>;
 }
