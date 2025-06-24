@@ -13,8 +13,14 @@ type TRow = Array<IWell>;
 interface IWell {
   id: string;
   label: string;
-  className: string;
-  sampleVol: string;
+  className?: string;
+  percentage?: number;
+  data?: any;
+}
+
+export interface IWellHoverContents {
+  id: string;
+  data: any;
 }
 
 interface Props {
@@ -22,12 +28,19 @@ interface Props {
   rowLabels: string[];
   columnLabels: string[];
   data: TPlateData;
-  //   onClick: (id: string) => {};
-  //   onHover: (id: string) => {};
+  onWellClick?: (id: string) => void;
+  WellHoverContents?: (props: IWellHoverContents) => JSX.Element;
 }
 
 export function PlateComponent(props: Props) {
-  const { id, data, rowLabels, columnLabels } = props;
+  const {
+    id,
+    data,
+    rowLabels,
+    columnLabels,
+    onWellClick,
+    WellHoverContents
+  } = props;
 
   const style = {
     width: "50px",
@@ -53,13 +66,32 @@ export function PlateComponent(props: Props) {
             {data.map((row, _) => (
               <div className="tol-plate-wells-row">
                 {row.map((well, _) => (
-                  <HoverOverlay contents={well.label} placement="left">
-                    <div className="well" style={style}>
+                  <HoverOverlay
+                    contents={
+                      WellHoverContents &&
+                        <WellHoverContents
+                          id={well.id}
+                          data={well.data}
+                        />
+                    }
+                    placement="right"
+                  >
+                    <div
+                      className="well"
+                      style={style}
+                      onClick={
+                        onWellClick ? 
+                          () => onWellClick(well.id)
+                        :
+                          undefined
+                      }
+                    >
                       <Progress.Circle
-                        percent={Number(well.sampleVol.split("%")[0])}
-                        strokeWidth={10}
-                        trailWidth={10}
-                      ></Progress.Circle>
+                        percent={well.volume}
+                        strokeWidth={well.className ? 12 : 20}
+                        trailWidth={well.className ? 12 : 20}
+                        showInfo={false}
+                      />
                     </div>
                   </HoverOverlay>
                 ))}
