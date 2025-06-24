@@ -143,7 +143,7 @@ export function SelectedAttributesContainer(props: Props) {
                 {...props}
               />
             )}
-            onMoveEnd={(newList) => (setAttributes(newList))}
+            onMoveEnd={(newList: string[]) => (setAttributes(newList))}
             springConfig={{ stiffness: 500, damping: 100 }}
           />
         </div>
