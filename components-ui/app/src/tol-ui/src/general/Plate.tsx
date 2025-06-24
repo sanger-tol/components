@@ -4,25 +4,10 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { WellComponent } from "./WellComponent";
+import { Well } from "./Well";
+import { TPlateData, IWellHoverContents } from "../models";
 
-export type TPlateData = Array<TRow>;
-type TRow = Array<IWell>;
-
-interface IWell {
-  id: string;
-  label: string;
-  className?: string;
-  percentage?: number;
-  data?: any;
-}
-
-export interface IWellHoverContents {
-  id: string;
-  data: any;
-}
-
-interface Props {
+interface IPlate {
   id: string;
   rowLabels: string[];
   columnLabels: string[];
@@ -31,7 +16,7 @@ interface Props {
   WellHoverContents?: (props: IWellHoverContents) => JSX.Element;
 }
 
-export function PlateComponent(props: Props) {
+export function Plate(props: IPlate) {
   const { id, data, rowLabels, columnLabels, onWellClick, WellHoverContents } =
     props;
 
@@ -53,10 +38,10 @@ export function PlateComponent(props: Props) {
             {data.map((row, _) => (
               <div className="tol-plate-wells-row">
                 {row.map((well, _) => (
-                  <WellComponent
-                    well={well}
-                    onWellClick={onWellClick}
-                    WellHoverContents={WellHoverContents}
+                  <Well
+                    data={well}
+                    onClick={onWellClick}
+                    HoverContents={WellHoverContents}
                   />
                 ))}
               </div>
