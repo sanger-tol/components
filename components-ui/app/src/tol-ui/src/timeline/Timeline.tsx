@@ -21,15 +21,15 @@ export interface TimelineItem {
   desc?: string;
 }
 
-export interface DataPoint {
+export interface TimeLineData {
   [key: string]: TimelineItem;
 }
 
-interface Props {
+interface ITimeline {
   id: string;
   title: string;
   endless?: boolean;
-  data: DataPoint;
+  data: TimeLineData;
   dateWithDay?: boolean;
   defaultIcon?: boolean;
 }
@@ -41,7 +41,7 @@ const ACTIVE_DOT_DEFAULT = "#039be5";
 const DEFAULT_ICON_COLOR = "#15b215";
 const DEFAULT_NOT_DEFINED = "#fff";
 
-export function Timeline(props: Props) {
+export function Timeline(props: ITimeline) {
   const { id, title, endless, data, dateWithDay, defaultIcon } = props;
   const [sortedData, setSortedData] = useState<TimelineItem[]>([]);
 
@@ -51,7 +51,7 @@ export function Timeline(props: Props) {
     setSortedData(sortedTimeline);
   }, [data]);
 
-  const parseDataPoints = (data: DataPoint): TimelineItem[] => {
+  const parseDataPoints = (data: TimeLineData): TimelineItem[] => {
     return Object.entries(data).reduce((acc: TimelineItem[], [key, value]) => {
       if (value === null || value === undefined) {
         return acc;
