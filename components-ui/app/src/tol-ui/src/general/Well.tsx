@@ -45,7 +45,7 @@ export function Well(props: IWell) {
             strokeWidth={12}
             trailWidth={12}
             showInfo={false}
-            className='plate-well'
+            className='plate-progress-circle'
           />
           <div className={`plate-well-small ${data.className}`} />
         </>
