@@ -22,52 +22,54 @@ export function Well(props: IWell) {
     console.log(data);
 
     if (!data.percentage && !data.className) {
-      return (
-        <div className="plate-well"></div>
-      );
+      return <div className="plate-well" />;
     }
     if (data.percentage && !data.className) {
       return (
         <Progress.Circle
           percent={data.percentage}
-          strokeWidth={data.className ? 12 : 20}
-          trailWidth={data.className ? 12 : 20}
+          strokeWidth={24}
+          trailWidth={24}
           showInfo={false}
         />
       );
     }
     if (!data.percentage && data.className) {
-      return (
-        <div className={`plate-well ${data.className}`}/>
-      );
+      return <div className={`plate-well ${data.className}`} />;
     }
     if (data.percentage && data.className) {
       return (
-        <Progress.Circle
-          percent={data.percentage}
-          strokeWidth={data.className ? 12 : 20}
-          trailWidth={data.className ? 12 : 20}
-          showInfo={false}
-        ><div className="${data.className}" ></div></Progress.Circle>
+        <>
+          <Progress.Circle
+            percent={data.percentage}
+            strokeWidth={12}
+            trailWidth={12}
+            showInfo={false}
+            className='plate-well'
+          />
+          <div className={`plate-well-small ${data.className}`} />
+        </>
       );
     }
     return <></>;
-  }
+  };
 
-  return<>
-    <HoverOverlay
-      contents={
-        HoverContents && <HoverContents id={data.id} data={data.data} />
-      }
-      placement="right"
-    >
-      <div
-        className="well"
-        style={style}
-        onClick={onClick ? () => onClick(data.id) : undefined}
+  return (
+    <>
+      <HoverOverlay
+        contents={
+          HoverContents && <HoverContents id={data.id} data={data.data} />
+        }
+        placement="right"
       >
-        <StyledWell />
-      </div>
-    </HoverOverlay>
-  </>;
+        <div
+          className="well"
+          style={style}
+          onClick={onClick ? () => onClick(data.id) : undefined}
+        >
+          <StyledWell />
+        </div>
+      </HoverOverlay>
+    </>
+  );
 }
