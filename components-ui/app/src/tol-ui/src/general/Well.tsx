@@ -12,11 +12,25 @@ interface IWell {
 export function Well(props: IWell) {
   const { data, onClick, HoverContents } = props;
 
+  // put in class
   const style = {
     width: "50px",
     display: "inline-block",
     margin: "8px",
   };
+
+  const PercentageCircle = (
+    width: number,
+    cN?: string
+  ) => (
+    <Progress.Circle
+      percent={data.percentage}
+      strokeWidth={width}
+      trailWidth={width}
+      showInfo={false}
+      className={cN}
+    />
+  );
 
   const StyledWell = () => {
     console.log(data);
@@ -25,14 +39,7 @@ export function Well(props: IWell) {
       return <div className="plate-well" />;
     }
     if (data.percentage && !data.className) {
-      return (
-        <Progress.Circle
-          percent={data.percentage}
-          strokeWidth={24}
-          trailWidth={24}
-          showInfo={false}
-        />
-      );
+      return PercentageCircle(24)
     }
     if (!data.percentage && data.className) {
       return <div className={`plate-well ${data.className}`} />;
@@ -40,13 +47,7 @@ export function Well(props: IWell) {
     if (data.percentage && data.className) {
       return (
         <>
-          <Progress.Circle
-            percent={data.percentage}
-            strokeWidth={12}
-            trailWidth={12}
-            showInfo={false}
-            className='plate-progress-circle'
-          />
+          {PercentageCircle(12, "plate-progress-circle")}
           <div className={`plate-well-small ${data.className}`} />
         </>
       );
