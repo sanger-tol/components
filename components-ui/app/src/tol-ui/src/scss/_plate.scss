@@ -79,7 +79,7 @@
   flex-direction: row;
 }
 
-.well {
+.tol-well {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,17 +87,22 @@
   width: 50px;
   height: 50px;
   border-radius: 100%;
-  // background-color: var(--tol-grey);
 }
 
-.plate-well {
+.tol-progress-circle-style {
+  width: 50px;
+  display: inline-block;
+  margin: 8px;
+}
+
+.tol-well-classname {
   background-color: var(--tol-grey);
   width: 50px;
   height: 50px;
   border-radius: 100%;
 }
 
-.plate-progress-circle {
+.well-progress-circle {
   width: 50px;
   height: 50px;
   border-radius: 100%;
@@ -105,8 +110,8 @@
   position: absolute;
 }
 
-.plate-well-small {
-  @extend .plate-well;
+.tol-well-percentage-classname {
+  @extend .tol-well-classname;
   width: 30px;
   height: 30px;
   position: absolute;
@@ -114,7 +119,4 @@
   margin: 10px;
 }
 
-.test-well {
-  background-color: green;
-  // z-index: 1;
-}
+

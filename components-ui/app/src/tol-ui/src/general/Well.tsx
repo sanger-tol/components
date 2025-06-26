@@ -1,3 +1,8 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
 import HoverOverlay from "./HoverOverlay";
 import { Progress } from "rsuite";
 
@@ -11,13 +16,6 @@ interface IWell {
 
 export function Well(props: IWell) {
   const { data, onClick, HoverContents } = props;
-
-  // put in class
-  const style = {
-    width: "50px",
-    display: "inline-block",
-    margin: "8px",
-  };
 
   const PercentageCircle = (
     width: number,
@@ -36,19 +34,19 @@ export function Well(props: IWell) {
     console.log(data);
 
     if (!data.percentage && !data.className) {
-      return <div className="plate-well" />;
+      return <div className="tol-well-classname" />;
     }
     if (data.percentage && !data.className) {
       return PercentageCircle(24)
     }
     if (!data.percentage && data.className) {
-      return <div className={`plate-well ${data.className}`} />;
+      return <div className={`tol-well-classname ${data.className}`} />;
     }
     if (data.percentage && data.className) {
       return (
         <>
-          {PercentageCircle(12, "plate-progress-circle")}
-          <div className={`plate-well-small ${data.className}`} />
+          {PercentageCircle(12, "well-progress-circle")}
+          <div className={`tol-well-percentage-classname ${data.className}`} />
         </>
       );
     }
@@ -64,8 +62,7 @@ export function Well(props: IWell) {
         placement="right"
       >
         <div
-          className="well"
-          style={style}
+          className="tol-well tol-progress-circle-style"
           onClick={onClick ? () => onClick(data.id) : undefined}
         >
           <StyledWell />
