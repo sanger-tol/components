@@ -1,5 +1,5 @@
 /*
-SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
@@ -95,7 +95,7 @@ export function Plates() {
       </div>
     );
   };
-  
+
   const PlateComponent = (
     <Plate
       id="plate1"

@@ -5,7 +5,6 @@
  */
 import HoverOverlay from "./HoverOverlay";
 import { Progress } from "rsuite";
-
 import { IWellData, IWellHoverContents } from "../models";
 
 interface IWell {
@@ -17,10 +16,7 @@ interface IWell {
 export function Well(props: IWell) {
   const { data, onClick, HoverContents } = props;
 
-  const PercentageCircle = (
-    width: number,
-    cN?: string
-  ) => (
+  const PercentageCircle = (width: number, cN?: string) => (
     <Progress.Circle
       percent={data.percentage}
       strokeWidth={width}
@@ -31,13 +27,11 @@ export function Well(props: IWell) {
   );
 
   const StyledWell = () => {
-    console.log(data);
-
     if (!data.percentage && !data.className) {
       return <div className="tol-well-classname" />;
     }
     if (data.percentage && !data.className) {
-      return PercentageCircle(24)
+      return PercentageCircle(24);
     }
     if (!data.percentage && data.className) {
       return <div className={`tol-well-classname ${data.className}`} />;
