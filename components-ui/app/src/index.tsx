@@ -23,10 +23,9 @@ import {
   Widgets,
   Messages,
   Factories,
-  tolDataSource,
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
-import { TolApp, Page, Dropdown } from "./tol-ui/src";
+import { TolApp, Page, Dropdown, TOL_DS } from "./tol-ui/src";
 import "./scss/styling.scss";
 
 // main data-driven components
@@ -130,7 +129,7 @@ const sandbox: Page = {
 ReactDOM.render(
   // eslint-disable-line
   <TolApp
-    boards={{dataSource: tolDataSource}}
+    boards={{dataSource: TOL_DS}}
     brand="Components"
     homePage={<Home />}
     pages={[

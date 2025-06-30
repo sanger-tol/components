@@ -11,5 +11,5 @@ export const EXCLUDED_DETAIL_CACHE_OBJECTS = [
   'component_zone',
   'zone_view',
   'view_board',
-  'prefect/flow_run',
+  'flow_run',
 ];

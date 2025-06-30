@@ -77,7 +77,6 @@ export function Zone(props: Props) {
 
   useEffect(() => {
     getComponents(id, boardDataSource).then((components: any) => {
-      console.log(components);
       // sort the widgets based on the order value
       const sortedWidgets = components.sort((a, b) => a.order - b.order);
       sortedWidgets.forEach((widget) => {
@@ -160,7 +159,6 @@ export function Zone(props: Props) {
   const saveButton: IButton = {
     outline: false,
     onClick: () => {
-      setDraggable(!draggable);
       setSaveLayout(true);
       setDraggable(false);
     },

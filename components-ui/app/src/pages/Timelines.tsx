@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Timeline, RemoteTimeline, Widgets } from "../tol-ui/src";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -12,8 +11,8 @@ import {
   faTruck,
   faExclamation,
 } from "@fortawesome/free-solid-svg-icons";
-import { TimeLineData } from "../tol-ui/src/timeline/Timeline";
-import { tolDataSource } from ".";
+import { Timeline, RemoteTimeline, Widgets, TimeLineData, TOL_DS } from "../tol-ui/src";
+
 
 // Test Remote Timeline Data
 const aRemoteTimeline: TimeLineData = {
@@ -172,7 +171,7 @@ export function Timelines() {
       <h4>Remote Timeline with Default Dots</h4>
       <RemoteTimeline
         objectType="species"
-        dataSource={tolDataSource}
+        dataSource={TOL_DS}
         id="71285"
         data={aRemoteTimeline}
         titleDataPoint="sts_scientific_name"
@@ -187,7 +186,7 @@ export function Timelines() {
       <h4>Remote Timeline with Custom Dots</h4>
       <RemoteTimeline
         objectType="species"
-        dataSource={tolDataSource}
+        dataSource={TOL_DS}
         id="572802"
         data={bRemoteTimeline}
         titleDataPoint="Random Name"

@@ -91,7 +91,7 @@ export function ComponentPickerModal(props: Props) {
         0,
       );
       const nextOrder = highestOrder! + 1;
-      //All components added are set with portal as baseUrl
+      // all components added are set with portal as baseUrl
       const newComponent = await addComponent(
         dataSource,
         boardsDataSource,
@@ -102,7 +102,7 @@ export function ComponentPickerModal(props: Props) {
         widgetType,
         zoneId,
       );
-      //This adds the component to the zone
+      // this adds the component to the zone
       defineComponent(
         {
           id: newComponent.newComponentId,
@@ -113,7 +113,7 @@ export function ComponentPickerModal(props: Props) {
         zone,
       );
       zone.order = [...zone.order, newComponent.newComponentId];
-      // This adds the component to the currentWidgets to be rendered
+      // this adds the component to the currentWidgets to be rendered
       setCurrentWidgets([
         ...currentWidgets,
         {
@@ -121,6 +121,7 @@ export function ComponentPickerModal(props: Props) {
           order: nextOrder,
           componentZoneId: newComponent.newComponentZoneId,
           baseUrl: dataSource.getBaseUrl(),
+          apiPrefix: dataSource.getApiPrefix(),
           componentType: componentType,
           filter: { and_: {} },
           title: title,

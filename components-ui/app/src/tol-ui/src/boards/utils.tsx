@@ -10,19 +10,21 @@ import {
   TsDataSource,
   BOARDS,
   TDataObjectListOrNull,
+  TDataObjectOrNull,
 } from "..";
 
 
 export async function getBoard(
   id: string,
   boardDataSource: TsDataSource
-): Promise<{ boardTitle: any; boardFilter: any; views: TDataObjectListOrNull }> {
+): Promise<{ boardTitle: any; boardFilter: any; views: TDataObjectListOrNull } | undefined> {
   return await boardDataSource
     .getOne({
       objectType: BOARDS.BOARD,
       id: id,
     })
-    .then(async (board: any) => {
+    .then(async (board: TDataObjectOrNull) => {
+      if (!board) return;
       const views = await getViews(board.id, boardDataSource);
       return {
         boardTitle: board.title,
@@ -168,8 +170,8 @@ export async function getComponents(zoneId: string, boardDataSource: TsDataSourc
           filter: componentDetails?.filter,
           title: componentDetails?.title,
           objectType: componentDetails?.object_type,
-          baseUrl: componentDetails?.base_url,
-          apiPrefix: componentDetails?.api_prefix,
+          baseUrl: componentDetails?.datasource?.base_url,
+          apiPrefix: componentDetails?.datasource?.api_prefix,
           config: componentDetails?.config,
           widgetType: componentDetails?.widget_type,
           filterPassThrough: componentDetails?.filter_pass_through,
@@ -303,8 +305,10 @@ export async function addZone(
             filter: { and_: {} },
             object_type: objectType,
             user_id: user.id,
-            base_url: dataSource.getBaseUrl(),
-            api_prefix: dataSource.getApiPrefix(),
+            datasource: {
+              base_url: dataSource.getBaseUrl(),
+              api_prefix: dataSource.getApiPrefix(),
+            },
           },
         },
       ],
@@ -379,8 +383,12 @@ export async function addComponent(
             widget_type: widgetType,
             filter: { and_: {} },
             config: {},
-            base_url: dataSource.getBaseUrl(),
-            api_prefix: dataSource.getApiPrefix(),
+            datasource: {
+              base_url: dataSource.getBaseUrl(),
+              api_prefix: dataSource.getApiPrefix(),
+              hello1: undefined,
+              hello2: "kiernan"
+            },
             user_id: user.id,
             filter_pass_through: false,
           },

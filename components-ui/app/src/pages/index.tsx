@@ -4,12 +4,6 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TsDataSource, env } from "../tol-ui/src";
-
-export const tolDataSource = new TsDataSource({
-  baseUrl: env.TOL_DATA,
-});
-
 export * from "./Home";
 export * from "./Tables";
 export * from "./Sandbox";

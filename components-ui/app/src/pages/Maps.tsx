@@ -4,8 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { tolDataSource } from ".";
-import { Map, Widgets, RemoteMap, useZone } from "../tol-ui/src";
+import { Map, Widgets, RemoteMap, useZone, TOL_DS } from "../tol-ui/src";
 
 export function Maps() {
   // fake data for BubbleMap component
@@ -57,7 +56,7 @@ export function Maps() {
 
   const cardZone = useZone({
     objectType: "sample", // TODO: get correct object type from Andrew
-    dataSource: tolDataSource,
+    dataSource: TOL_DS,
     components: [
       {
         id: "report-card-map-v1",

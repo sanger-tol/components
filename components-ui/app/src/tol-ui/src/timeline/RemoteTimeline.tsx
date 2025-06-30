@@ -46,7 +46,6 @@ export function RemoteTimeline(props: IRemoteTimeline) {
     dataObject: TDataObjectOrNull,
   ): TimelineItem[] => {
     return Object.keys(data).reduce((acc: TimelineItem[], key) => {
-      console.log('hello', dataObject && dataObject[key]);
       if (dataObject && dataObject[key]) {
         const timelineItem: TimelineItem = {
           title: data[key].title,
@@ -76,8 +75,6 @@ export function RemoteTimeline(props: IRemoteTimeline) {
         setLoading(false);
       });
   }
-
-  console.log(timelineData);
 
   const createTitle = (id: string, endpoint: string): string => {
     switch (endpoint) {

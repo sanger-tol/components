@@ -55,12 +55,12 @@ export class TsDataSource {
     return `${prefix}${tg}${id}`;
   }
 
-  public getBaseUrl(): string | null {
-    return this.baseUrl ?? null;
+  public getBaseUrl(): string | undefined {
+    return this.baseUrl ?? undefined;
   }
 
-  public getApiPrefix(): string | null {
-    return this.apiPrefix ?? null;
+  public getApiPrefix(): string | undefined {
+    return this.apiPrefix ?? undefined;
   }
 
   private relationshipHandler = {
@@ -173,11 +173,19 @@ export class TsDataSource {
   }
 
   public async attributeMetadata(): Promise<object> {
-    return this.getConfig("/_config/attribute_metadata");
+    return this.getConfig(
+      this.generateEndpoint(
+        "_config/attribute_metadata"
+      )
+    );
   }
 
   public async relationshipConfig(): Promise<object> {
-    return this.getConfig("/_config/relationships");
+    return this.getConfig(
+      this.generateEndpoint(
+        "/_config/relationships"
+      )
+    );
   }
 
   private addIds(attributes: IAttributes) {

@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { tolDataSource } from ".";
 import {
   Button,
   RemoteCount,
@@ -17,12 +16,13 @@ import {
   useZone,
   resetZone,
   useTranslator,
+  TOL_DS,
 } from "../tol-ui/src";
 
 export function Filters() {
   const speciesZone = useZone({
     objectType: "species",
-    dataSource: tolDataSource,
+    dataSource: TOL_DS,
     filter: {
       and_: {
         sts_family: {
@@ -195,7 +195,7 @@ export function Filters() {
 
   const runDataMap = useZone({
     objectType: "barcoding_run_data",
-    dataSource: tolDataSource,
+    dataSource: TOL_DS,
     components: [
       {
         id: "map-filter",
@@ -236,7 +236,7 @@ export function Filters() {
 
   const runDataSunburst = useZone({
     objectType: "barcoding_run_data",
-    dataSource: tolDataSource,
+    dataSource: TOL_DS,
     components: [
       {
         id: "sunburst-filter",
@@ -310,7 +310,7 @@ export function Filters() {
 
   const runDataChart = useZone({
     objectType: "run_data",
-    dataSource: tolDataSource,
+    dataSource: TOL_DS,
     components: [{ id: "chart" }, { id: "chart-table" }],
   });
 
@@ -335,13 +335,13 @@ export function Filters() {
 
   const speciesTranslatorZone = useZone({
     objectType: "species",
-    dataSource: tolDataSource,
+    dataSource: TOL_DS,
     components: [{ id: "sunburst-1" }, { id: "filter-1" }],
   });
 
   const sampleTranslatorZone = useZone({
     objectType: "sample",
-    dataSource: tolDataSource,
+    dataSource: TOL_DS,
     components: [{ id: "map-1" }],
   });
 

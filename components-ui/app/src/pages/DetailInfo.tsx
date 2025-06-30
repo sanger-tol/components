@@ -13,8 +13,8 @@ import {
   Widgets,
   formatDate,
   Timeline,
+  TOL_DS,
 } from "../tol-ui/src";
-import { tolDataSource } from ".";
 
 export function DetailInfo() {
   const { id } = useParams<{ id: string }>();
@@ -28,7 +28,7 @@ export function DetailInfo() {
     return (
       <RemoteGet
         resource={"species/" + id}
-        dataSource={tolDataSource}
+        dataSource={TOL_DS}
         loadingMessage="Loading species..."
         response={response}
         setResponse={setResponse}

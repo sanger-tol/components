@@ -44,3 +44,8 @@ export * from "./smart-app";
 export * from "./table";
 export * from "./timeline";
 export * from "./variables";
+
+import { TsDataSource, env } from ".";
+export const TOL_DS = new TsDataSource({
+  baseUrl: env.TOL_DATA,
+});
