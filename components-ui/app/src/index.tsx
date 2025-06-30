@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import {
   Home,
   BarCharts,
@@ -126,8 +126,9 @@ const sandbox: Page = {
   hidden: true,
 };
 
-ReactDOM.render(
-  // eslint-disable-line
+
+const root = createRoot(document.getElementById('root')!);
+root.render(
   <TolApp
     boards={{dataSource: TOL_DS}}
     brand="Components"
@@ -137,8 +138,7 @@ ReactDOM.render(
       otherDropdown,
       sandbox,
     ]}
-  />,
-  document.getElementById("root"),
+  />
 );
 
 // If you want to start measuring performance in your app, pass a function
