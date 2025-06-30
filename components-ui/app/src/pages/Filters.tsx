@@ -13,16 +13,16 @@ import {
   RemoteSunburst,
   RemoteBarChart,
   Widgets,
-  env,
   useZone,
   resetZone,
   useTranslator,
+  TOL_DS,
 } from "../tol-ui/src";
 
-function Filters() {
+export function Filters() {
   const speciesZone = useZone({
-    endpoint: "species",
-    baseUrl: env.TOL_DATA,
+    objectType: "species",
+    dataSource: TOL_DS,
     filter: {
       and_: {
         sts_family: {
@@ -182,14 +182,20 @@ function Filters() {
       />
       <p style={{ marginTop: 10 }}>Filter Level 5:</p>
       <div style={{ height: 110, marginTop: 20 }}>
-        <RemoteCount id="count" title="Total Species" {...speciesZone} />
+        <RemoteCount
+          id="count"
+          utilityBarConfig={{
+            title: {text: "Total Species"}
+          }}
+          {...speciesZone}
+        />
       </div>
     </div>
   );
 
   const runDataMap = useZone({
-    endpoint: "barcoding_run_data",
-    baseUrl: env.TOL_DATA,
+    objectType: "barcoding_run_data",
+    dataSource: TOL_DS,
     components: [
       {
         id: "map-filter",
@@ -229,8 +235,8 @@ function Filters() {
   );
 
   const runDataSunburst = useZone({
-    endpoint: "barcoding_run_data",
-    baseUrl: env.TOL_DATA,
+    objectType: "barcoding_run_data",
+    dataSource: TOL_DS,
     components: [
       {
         id: "sunburst-filter",
@@ -264,8 +270,10 @@ function Filters() {
       />
       <div style={{ height: 20 }} />
       <RemoteSunburst
-        title="Example"
         id="sunburst"
+        utilityBarConfig={{
+          title: {text: "Example Sunburst"}
+        }}
         height={500}
         sliceBy={["bioscan_o", "bioscan_f", "bioscan_g", "bioscan_s"]}
         {...runDataSunburst}
@@ -301,8 +309,8 @@ function Filters() {
   );
 
   const runDataChart = useZone({
-    endpoint: "run_data",
-    baseUrl: env.TOL_DATA,
+    objectType: "run_data",
+    dataSource: TOL_DS,
     components: [{ id: "chart" }, { id: "chart-table" }],
   });
 
@@ -311,7 +319,9 @@ function Filters() {
       <RemoteBarChart
         stacked
         id="chart"
-        title="Run Data"
+        utilityBarConfig={{
+          title: {text: "Run Data"}
+        }}
         type="M"
         breakDownBy="mlwh_platform_type"
         xAxis="mlwh_run_complete"
@@ -324,14 +334,14 @@ function Filters() {
   );
 
   const speciesTranslatorZone = useZone({
-    endpoint: "species",
-    baseUrl: env.TOL_DATA,
+    objectType: "species",
+    dataSource: TOL_DS,
     components: [{ id: "sunburst-1" }, { id: "filter-1" }],
   });
 
   const sampleTranslatorZone = useZone({
-    endpoint: "sample",
-    baseUrl: env.TOL_DATA,
+    objectType: "sample",
+    dataSource: TOL_DS,
     components: [{ id: "map-1" }],
   });
 
@@ -348,7 +358,9 @@ function Filters() {
   const translatorComponent = (
     <div>
       <RemoteSunburst
-        title="Example Sunburst"
+        utilityBarConfig={{
+          title: {text: "Example Sunburst"}
+        }}
         id="sunburst-1"
         sliceBy={["goat_family_name", "goat_genus_name"]}
         height={400}
@@ -394,5 +406,3 @@ function Filters() {
 
   return <Widgets components={components} />;
 }
-
-export default Filters;

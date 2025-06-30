@@ -5,41 +5,48 @@ SPDX-License-Identifier: MIT
 */
 
 import { Toggle } from "rsuite"
-import { InfoTooltip } from "../general"
 import { useEffect, useState } from "react";
-import { IZone } from "../boards";
-import { upsertComponent, upsertZone } from "../boards/utils";
-import RemoteFilters from "./RemoteFilters";
-import { Drawer } from "../general";
-import { generateFilter, resetFiltersBelow } from "./utils";
-import { deepCopy } from "../general/utils";
-import { TsDataSource } from "..";
+import {
+  InfoTooltip,
+  IBoardTargetAndZone,
+  upsertComponent,
+  upsertZone,
+  RemoteFilters,
+  Drawer,
+  generateFilter,
+  resetFiltersBelow,
+  deepCopy,
+} from ".."
 
-export interface Props {
+
+interface Props extends IBoardTargetAndZone {
   id: string;
-  zone: IZone;
-  setZone: any;
-  entityType: string; // e.g. component type or zone
-  endpoint: string;
-  baseUrl?: string;
   open: boolean;
   setOpen: any;
 }
 
-function BoardFilters(props: Props) {
-  const { id, zone, setZone, entityType, endpoint, open, setOpen } = props;
-  const ds = new TsDataSource();
+export function BoardFilters(props: Props) {
+  const {
+    id,
+    objectType,
+    zone,
+    setZone,
+    boardObjectType,
+    boardDataSource,
+    open,
+    setOpen
+  } = props;
 
   // the fixed filter present on the component
   const [filters, setFilters] = useState(
     deepCopy(
-      entityType === "zone"
+      boardObjectType === "zone"
         ? zone.defaultFilter
         : zone.components[id].data.defaultFilter,
     ),
   );
   const [passThrough, setPassThrough] = useState<boolean | undefined>(
-    entityType === "zone"
+    boardObjectType === "zone"
         ? true
         : deepCopy(zone.components[id].data).filterPassThrough,
   );
@@ -65,7 +72,7 @@ function BoardFilters(props: Props) {
   useEffect(() => {
     setFilters(
       deepCopy(
-        entityType === "zone"
+        boardObjectType === "zone"
           ? zone.defaultFilter
           : zone.components[id].data.defaultFilter,
       ),
@@ -77,7 +84,7 @@ function BoardFilters(props: Props) {
       ),
     );
     setPassThrough(
-      entityType === "zone"
+      boardObjectType === "zone"
         ? false
         : deepCopy(zone.components[id].data).filterPassThrough,
     );
@@ -88,7 +95,7 @@ function BoardFilters(props: Props) {
     let attributes = {
       filter: filter
     };
-    if (entityType === "zone") {
+    if (boardObjectType === "zone") {
       upserter = upsertZone;
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
@@ -101,17 +108,17 @@ function BoardFilters(props: Props) {
     resetFiltersBelow({ id: id, zone: zone });
     setZone({ ...zone });
     setOpen(false);
-    upserter(ds, id, attributes);
+    upserter(boardDataSource, id, attributes);
   };
 
   return (
     <div>
       <Drawer
-        title={`Filtering on a ${endpoint} ${entityType}`}
+        title={`Filtering on a ${objectType} ${boardObjectType}`}
         open={open}
         setOpen={setOpen}
       >
-        {entityType !== "zone" ?
+        {boardObjectType !== "zone" ?
           <div className="passThrough-toggle">
             <Toggle
               key="recommended-tick-filter"
@@ -144,5 +151,3 @@ function BoardFilters(props: Props) {
     </div>
   );
 }
-
-export default BoardFilters;

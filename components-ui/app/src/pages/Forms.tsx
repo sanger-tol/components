@@ -7,10 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { Schema } from "rsuite";
 import {
-  RemoteAutoComplete,
   MultipleSelect,
-  MultipleSelectFilters,
-  RemoteMultipleSelectFilters,
   Dropzone,
   env,
   CountrySelect,
@@ -278,34 +275,13 @@ const signUpFormConfig = (hasUnsavedChanges: boolean) => ({
   },
 });
 
-function Forms() {
+export function Forms() {
   const [value, setValue] = useState([]);
-  const [globalFilters, setGlobalFilters] = useState<object>({ in_list: {} });
-  const [choices1, setChoices1] = useState<any[]>([]);
-  const [choices2, setChoices2] = useState<any[]>([]);
-  const [remoteFilters, setRemoteFilters] = useState<object>({ in_list: {} });
   const [country, setCountry] = useState<string>("");
   const [otherOptionValue, setOtherOptionValue] = useState<string>("");
   const [formUnsavedChanges, setFormUnsavedChanges] = useState<boolean>(false);
 
   const toaster = Toaster();
-
-  // Used as data for the MultipleSelectFilters
-  const filters = [
-    {
-      name: "test filter 1",
-      choices: ["t1", "t2", "t3"],
-      selected: choices1,
-      setChoices: setChoices1,
-    },
-    {
-      name: "test filter 2",
-      choices: ["t1", "t2", "t3"],
-      selected: choices2,
-      setChoices: setChoices2,
-    },
-  ];
-
   const formComponentsTitle = <h2>Individual Form Components</h2>;
 
   const aioTitle = <h2>All In One Forms</h2>;
@@ -324,44 +300,12 @@ function Forms() {
 
   const formComponents = (
     <div>
-      <h4>AutoComplete Input</h4>
-      <RemoteAutoComplete
-        endpoint="species"
-        filter_by="name"
-        display={["family", "genus"]}
-      />
-      <br />
       <h4>Multiple Select</h4>
       <MultipleSelect
         placeholder="Select"
         data={["test1", "test2", "test3"]}
         value={value}
         setValue={setValue}
-      />
-      <br />
-      <h4>Multiple Select Filters</h4>
-      <MultipleSelectFilters
-        value={globalFilters}
-        setValue={setGlobalFilters}
-        filters={filters}
-      />
-      <br />
-      <h4>Remote Multiple Select Filters</h4>
-      <RemoteMultipleSelectFilters
-        endpoint="run_data"
-        fields={[
-          "mlwh_platform_type",
-          "mlwh_run_status",
-          "mlwh_instrument_model",
-        ]}
-        renamedFields={{
-          mlwh_platform_type: "test1",
-          mlwh_run_status: "test2",
-          mlwh_instrument_model: "test3",
-        }}
-        globalFilters={remoteFilters}
-        setGlobalFilters={setRemoteFilters}
-        baseUrl={env.TOL_DATA}
       />
       <br />
       <h4>Country Select</h4>
@@ -383,7 +327,7 @@ function Forms() {
       <br />
       <h4>Dropzone</h4>
       <Dropzone
-        endpoint="this-is-fake"
+        resource="this-is-fake"
         fileType=".csv"
         generateMessages={() => {
           return [];
@@ -445,5 +389,3 @@ function Forms() {
     </div>
   );
 }
-
-export default Forms;

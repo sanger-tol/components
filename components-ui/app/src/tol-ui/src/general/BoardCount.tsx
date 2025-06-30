@@ -5,24 +5,24 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from 'react';
-import { BoardFilters, RemoteCount, TsDataSource } from "../index";
-import { IZone, saveTitle } from "../boards/utils";
-import { IButton } from "../general/Button";
+import {
+  BoardFilters,
+  RemoteCount,
+  saveTitle,
+  IBoardTargetAndZone,
+  IButton,
+} from "..";
 
-interface Props {
+
+interface Props extends IBoardTargetAndZone {
   id: string;
   title: string;
-  objectType: string;
-  baseUrl?: string;
-  zone: IZone;
-  setZone: any;
   config: any;
 }
 
-function BoardCount(props: Props) {
-  const { id, objectType } = props;
+export function BoardCount(props: Props) {
+  const { id, boardObjectType, boardDataSource } = props;
   const [openFilters, setOpenFilters] = useState(false);
-  const ds = new TsDataSource();
 
   const filterButton: IButton = {
     outline: true,
@@ -36,24 +36,18 @@ function BoardCount(props: Props) {
   return (
     <>
       <BoardFilters
-        endpoint={objectType}
-        entityType="component"
+        {...props}
         open={openFilters}
         setOpen={setOpenFilters}
-        {...props}
       />
       <RemoteCount
-        id={id}
-        endpoint={objectType}
-        baseUrl={props.baseUrl}
-        zone={props.zone}
-        setZone={props.setZone}
+        {...props}
         utilityBarConfig={{
           title: {
-            title: props.title,
+            text: props.title,
             editable: true,
             onSave: (value: string) => {
-              saveTitle(value, ds, id, 'component');
+              saveTitle(value, boardDataSource, id, boardObjectType);
             }
           },
           buttons: [filterButton]
@@ -62,5 +56,3 @@ function BoardCount(props: Props) {
     </>
   );
 }
-
-export default BoardCount;

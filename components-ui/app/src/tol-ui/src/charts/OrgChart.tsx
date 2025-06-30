@@ -5,8 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Button, Modal, CentreContents } from "../index";
-import { capitaliseFirstLetter } from "../general/utils";
+import {
+  Button,
+  Modal,
+  CentreContents,
+  capitaliseFirstLetter
+} from "..";
+
 
 export interface OrgChartDataPoint {
   title: string;
@@ -30,7 +35,7 @@ interface Props {
   className?: string;
 }
 
-function OrgChart(props: Props) {
+export function OrgChart(props: Props) {
   const {
     title,
     data,
@@ -167,5 +172,3 @@ function OrgChart(props: Props) {
     </CentreContents>
   );
 }
-
-export default OrgChart;

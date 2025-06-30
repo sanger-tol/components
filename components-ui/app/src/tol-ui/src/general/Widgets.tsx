@@ -4,9 +4,13 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Row, Col } from "../index";
-import { getCssVarValue } from "./utils";
-import { themeListener } from "../hooks/listeners";
+import {
+  Row,
+  Col,
+  getCssVarValue,
+  themeListener,
+} from "..";
+
 
 interface Component {
   component: JSX.Element;
@@ -17,7 +21,7 @@ interface Props {
   components: Component[];
 }
 
-function Widgets(props: Props) {
+export function Widgets(props: Props) {
   const { components } = props;
 
   themeListener(() => {
@@ -99,5 +103,3 @@ function Widgets(props: Props) {
     </div>
   );
 }
-
-export default Widgets;

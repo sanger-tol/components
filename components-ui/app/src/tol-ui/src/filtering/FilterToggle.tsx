@@ -4,8 +4,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { HoverOverlay } from "../index";
 import { Button } from "react-bootstrap";
+import { HoverOverlay } from "..";
+
 
 interface Props {
   negate: boolean;
@@ -15,7 +16,7 @@ interface Props {
   disabled: boolean;
 }
 
-function FilterToggle(props: Props) {
+export function FilterToggle(props: Props) {
   const { negate, onNegate, exists, onExists, disabled } = props;
 
   const existsButton = (
@@ -62,5 +63,3 @@ function FilterToggle(props: Props) {
     </div>
   );
 }
-
-export default FilterToggle;

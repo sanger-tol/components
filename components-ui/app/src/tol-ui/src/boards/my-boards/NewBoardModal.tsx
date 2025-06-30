@@ -5,10 +5,14 @@
  */
 
 import { useEffect, useState } from "react";
-import Modal from "../../general/Modal";
-import { generateId } from "../../general/utils";
-import { FormTextField } from "../../forms";
-import { RSForm, Button } from "../../index";
+import {
+  Modal,
+  generateId,
+  FormTextField,
+  RSForm,
+  Button,
+} from "../..";
+
 
 interface Props {
   setOpen: any;
@@ -16,7 +20,7 @@ interface Props {
   onConfirmClick?: any;
 }
 
-function NewBoardModal(props: Props) {
+export function NewBoardModal(props: Props) {
   const { setOpen, open, onConfirmClick } = props;
   const [boardId, setBoardId] = useState("");
   const [viewId, setViewId] = useState("");
@@ -36,8 +40,8 @@ function NewBoardModal(props: Props) {
         type="success"
         disabled={boardTitle === "" /*|| viewTitle === ""*/} // Views will be 'View 1' for now
         onClick={() => {
-          setOpen(false),
-            onConfirmClick(boardId, viewId, boardTitle, viewTitle);
+          setOpen(false);
+          onConfirmClick(boardId, viewId, boardTitle, viewTitle);
         }}
         text="Create"
         icon="plus"
@@ -95,5 +99,3 @@ function NewBoardModal(props: Props) {
     </div>
   );
 }
-
-export default NewBoardModal;

@@ -5,7 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { Button as RsButton } from "rsuite";
-import { TolLoader, HoverOverlay, Icon } from "../index";
+import {
+  TolLoader,
+  HoverOverlay,
+  Icon
+} from "..";
 
 export interface IButton {
   icon?: string;
@@ -26,7 +30,7 @@ export interface IButton {
 }
 
 
-function Button(props: IButton) {
+export function Button(props: IButton) {
   const {
     icon,
     onClick,
@@ -106,5 +110,3 @@ function Button(props: IButton) {
     </div>
   );
 }
-
-export default Button;

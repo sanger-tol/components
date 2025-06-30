@@ -4,9 +4,13 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { MyBoards } from "../boards";
-import { Dropdown, Page } from "../models";
-import { BoardsObject } from "./TolApp";
+import {
+  MyBoards,
+  Dropdown,
+  Page,
+  BoardSources,
+} from "..";
+
 
 /**
  * Adds a "My Boards" page to the profile pages if the boards prop is provided.
@@ -17,13 +21,13 @@ import { BoardsObject } from "./TolApp";
  */
 export function addBoardPages(
   profilePages?: Page[],
-  boards?: BoardsObject
+  boards?: BoardSources
 ): Page[] {
   if (boards) {
     return [
       {
         name: "My Boards",
-        element: <MyBoards />,
+        element: <MyBoards boardDataSource={boards.boardDataSource!}/>,
         auth: true,
       },
       ...(profilePages ?? []),

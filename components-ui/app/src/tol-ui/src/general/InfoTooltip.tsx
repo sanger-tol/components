@@ -4,17 +4,20 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { InfoIcon } from "./Icons";
-import HoverOverlay from "./HoverOverlay";
-import Markdown from "./Markdown";
 import { ReactNode } from "react";
+import {
+  HoverOverlay,
+  Markdown,
+  InfoIcon,
+} from "..";
 
-export interface Props {
+
+interface Props {
   contents: ReactNode;
   disableMarkdown?: boolean;
 }
 
-function InfoTooltip(props: Props) {
+export function InfoTooltip(props: Props) {
   const { contents, disableMarkdown } = props;
 
   let renderedContents = contents;
@@ -38,5 +41,3 @@ function InfoTooltip(props: Props) {
     </span>
   );
 }
-
-export default InfoTooltip;

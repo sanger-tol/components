@@ -4,13 +4,17 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { httpClient } from "../../services";
-import { ACTION_ENDPOINTS } from "../../constants";
-import { IDropdownButtonConfig } from "../../models";
+import {
+  API_METHODS,
+  IDropdownButtonConfig,
+  TsDataSource,
+} from "../..";
 
 
 export function addRemoteActions(
   objectType: string,
+  dataSource: TsDataSource,
+  actionDataSource: TsDataSource,
   setCurrentActionName: (actionName: string) => void,
   setIdExportModalOpen: (open: boolean) => void,
   setIdsWithReqNotMet: (ids: any) => void,
@@ -18,7 +22,6 @@ export function addRemoteActions(
   idsWithReqNotMet: object,
   completeAction: (actionName: string, ids: string[]) => Promise<void>,
   actions: (string | IDropdownButtonConfig)[] = [],
-  baseUrl?: string
 ) {
   const runAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
@@ -50,7 +53,10 @@ export function addRemoteActions(
     actionName: string
   ): Promise<object> => {
     try {
-      const res = await httpClient().get(`/local/${ACTION_ENDPOINTS.GET_ACTIONS}`, {
+      const res = await actionDataSource
+      .custom({
+        method: API_METHODS.GET,
+        resource: objectType,
         params: {
           filter: {
             and_: {
@@ -95,10 +101,12 @@ export function addRemoteActions(
           },
         };
 
-        const res = await httpClient().get(`/${objectType}`, {
-          baseURL: baseUrl,
-          params: { filter: filter },
-        });
+        const res = await dataSource
+          .custom({
+            method: API_METHODS.GET,
+            resource: objectType,
+            params: { filter: filter },
+          });
 
         //@ts-ignore
         const data = res.data.data;

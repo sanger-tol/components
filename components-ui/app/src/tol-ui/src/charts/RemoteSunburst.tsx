@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect, ReactNode } from "react";
-import { httpClient } from "../services/http/httpClient";
 import {
   aggsToSunburstData,
   createAggsViaSliceBy,
@@ -13,63 +12,63 @@ import {
   generateFilterFromSunburstClick,
   removeSliceBySingles,
   downloadItem,
-} from "./utils";
-import Sunburst from "./Sunburst";
-import Placeholder from "../general/Placeholder";
-import { useEffectUpdate, resizeListener } from "../hooks";
-import { isEmptyObject, normaliseCaps } from "../general/utils";
-import {
+  Sunburst,
+  Placeholder,
+  useEffectUpdate,
+  resizeListener,
+  useZoneStateFallback,
+  isEmptyObject,
+  normaliseCaps,
   generateFilter,
   addSubFilter,
   filterHasUpdated,
   resetFiltersBelow,
-} from "../filtering/utils";
-import { IUtilityBar } from "../general/UtilityBar";
-import { IButton } from "../general/Button";
-import { UtilityBar } from "../index";
+  IUtilityBar,
+  IButton,
+  UtilityBar,
+  TFilterOrUndefined,
+  API_METHODS,
+  IRemoteTargetAndZone
+} from "..";
 
-interface Props {
+
+interface Props extends IRemoteTargetAndZone {
   id: string;
-  endpoint: string;
   sliceBy: string[];
   height?: any;
-  baseUrl?: string;
   legendPosition?: string;
   noLabel?: boolean;
   noMini?: boolean;
   noDownload?: boolean;
-  zone?: object;
-  setZone?: any;
   forceUpdate?: boolean;
   utilityBarConfig?: IUtilityBar;
   contents?: ReactNode;
 }
 
-function RemoteSunburst(props: Props) {
+export function RemoteSunburst(props: Props) {
   const {
     id,
-    endpoint,
+    objectType,
+    dataSource,
     sliceBy,
-    baseUrl,
     noMini,
     noDownload,
-    zone,
-    setZone,
     forceUpdate,
     utilityBarConfig,
-    contents
+    contents,
+    height = "100%",
   } = props;
   const wrapperId = "tol-sunburst-wrapper-" + id;
-  const height = props.height !== undefined ? props.height : "100%";
   const [datasets, setDatasets] = useState({});
   const [subDatasets, setSubDatasets] = useState({});
+  const [zone, setZone] = useZoneStateFallback({...props});
   const [resetChart, setResetChart] = useState(false);
   const [loading, setLoading] = useState(true);
   const [subLoading, setSubLoading] = useState(true);
   const [warningMessage, setWarningMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [sliceData, setSliceData] = useState({});
-  const [filter, setFilter] = useState<object | undefined>({});
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
   const [noLegend, setNoLegend] = useState(false);
 
   resizeListener(() => {
@@ -82,17 +81,19 @@ function RemoteSunburst(props: Props) {
     // will trigger [filter] useEffect if update has occured
     if (filterHasUpdated(setFilter, filter, compoundedFilter)) {
       resetFiltersBelow({ id: id, zone: zone! });
-      setZone({ ...zone });
+      setZone!({ ...zone! });
     }
   }, [zone]);
 
   useEffectUpdate(() => {
     if (!contents) {
       setLoading(true);
-      const aggs = createAggsViaSliceBy(endpoint, sliceBy);
-      httpClient()
-        .post("/" + endpoint + ":aggregations", aggs, {
-          baseURL: baseUrl,
+      const aggs = createAggsViaSliceBy(objectType, sliceBy);
+      dataSource
+        .custom({
+          method: API_METHODS.POST,
+          resource: `${objectType}:aggregations`,
+          body: aggs,
           params: {
             filter: generateFilter(zone, id, true),
           },
@@ -103,7 +104,7 @@ function RemoteSunburst(props: Props) {
           setWarningMessage(isChartDataEmpty(aggs));
           const data = aggsToSunburstData(aggs, sliceBy);
           setDatasets(data);
-          if (setZone) setSliceData({});
+          setSliceData({});
           setLoading(false);
         })
         .catch((error: any) => {
@@ -123,7 +124,7 @@ function RemoteSunburst(props: Props) {
         filter: localFilter,
         zone: zone!,
       });
-      setZone({ ...zone });
+      setZone!({ ...zone! });
       // clear sub sunburst
       if (isEmptyObject(sliceData)) {
         setSubDatasets({});
@@ -131,12 +132,14 @@ function RemoteSunburst(props: Props) {
       } else if (sliceData["datasetIndex"] !== 0) {
         setSubLoading(true);
         const aggs = createAggsViaSliceBy(
-          endpoint,
+          objectType,
           removeSliceBySingles(sliceBy, sliceData["depth"]),
         );
-        httpClient()
-          .post("/" + endpoint + ":aggregations", aggs, {
-            baseURL: baseUrl,
+        dataSource
+          .custom({
+            method: API_METHODS.POST,
+            resource: `${objectType}:aggregations`,
+            body: aggs,
             params: {
               filter: generateFilter(zone, id, true),
             },
@@ -193,7 +196,7 @@ function RemoteSunburst(props: Props) {
     position: "right",
     type: "primary",
     onClick: () => {
-      downloadItem(props.id, normaliseCaps(endpoint));
+      downloadItem(props.id, normaliseCaps(objectType));
     },
     icon: "download",
   } : {};
@@ -250,7 +253,7 @@ function RemoteSunburst(props: Props) {
                   noDownload
                   contents={contents ? contents : Contents()}
                   datasets={datasets}
-                  downloadName={normaliseCaps(endpoint)}
+                  downloadName={normaliseCaps(objectType)}
                   setSliceData={setter}
                   noLegend={miniActive ? true : noLegend}
                   resetChart={resetChart}
@@ -264,5 +267,3 @@ function RemoteSunburst(props: Props) {
     </div>
   );
 }
-
-export default RemoteSunburst;

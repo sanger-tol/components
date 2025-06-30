@@ -4,26 +4,32 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import {
-  View,
-  TsDataSource,
-  LoadingContent,
-  InlineEdit,
-  themeListener,
-} from "../../index";
-import { getBoard, saveTitle } from "../utils";
+
 import { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
-import { getUserFromLocalStorage } from "../../services/localStorage/localStorageService";
-import { getCssVarValue } from "../../general/utils";
+import {
+  BOARDS,
+  getBoard,
+  getCssVarValue,
+  getUserFromLocalStorage,
+  InlineEdit,
+  LoadingContent,
+  saveTitle,
+  themeListener,
+  TsDataSource,
+  View,
+} from "../..";
 
 interface Props {
-  dataUrl?: string;
+  dataSource: TsDataSource;
+  boardDataSource: TsDataSource;
 }
 
-function Board(props: Props) {
-  const { dataUrl } = props;
-  const ds = new TsDataSource();
+export function Board(props: Props) {
+  const {
+    dataSource,
+    boardDataSource,
+  } = props;
   const { boardId, viewId } = useParams<any>();
 
   const [user, setUser] = useState<any>(null);
@@ -48,10 +54,10 @@ function Board(props: Props) {
 
   useEffect(() => {
     if (boardId && user) {
-      getBoard(boardId, ds, user.id)
-        .then((res: any) => {
-          if (!view) setView(res.views[0].id);
-          setBoardData(res);
+      getBoard(boardId, boardDataSource!)
+        .then((data: any) => {
+          if (!view) setView(data.views[0].id);
+          setBoardData(data);
           setLoading(false);
         })
         .catch((e: any) => {
@@ -74,10 +80,10 @@ function Board(props: Props) {
     <div className="tol-board">
       <div className="tol-board-bar">
         <InlineEdit
-          title={boardData.boardTitle}
+          text={boardData.boardTitle}
           onSave={(newTitle: any) => {
             if (newTitle !== boardData.boardTitle) {
-              saveTitle(newTitle, ds, boardId, "board");
+              saveTitle(newTitle, boardDataSource!, boardId, BOARDS.BOARD);
             }
           }}
           editable
@@ -85,12 +91,10 @@ function Board(props: Props) {
       </div>
       <View
         id={boardData.views[0].id}
-        ds={ds}
         defaultFilter={boardData.views[0].filter}
-        dataUrl={dataUrl}
+        dataSource={dataSource}
+        boardDataSource={boardDataSource}
       />
     </div>
   );
 }
-
-export default Board;

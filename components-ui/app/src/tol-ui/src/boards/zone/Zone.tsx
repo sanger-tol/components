@@ -5,33 +5,44 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import {
-  useZone,
-  ComponentModal,
-  BoardFilters,
-  UtilityBar
-} from "../..";
-import ResponsiveWidget, { IWidgets } from "../component/ResponsiveWidget";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { getComponents, saveTitle } from "../utils";
-import ConfirmationModal from "../ConfirmationModal";
-import { IButton } from "../../general/Button";
+import {
+  useZone,
+  BoardFilters,
+  ComponentPickerModal,
+  ResponsiveWidget,
+  IWidgets,
+  ConfirmationModal,
+  getComponents,
+  saveTitle,
+  TsDataSource,
+  BOARDS,
+  UtilityBar,
+  IButton
+} from "../..";
 
 interface Props {
   id: string;
   title: string;
   objectType: string;
+  dataSource: TsDataSource;
+  boardDataSource: TsDataSource;
   filter: any;
   onZoneReorder: any;
   deleteZone: any;
-  ds: any;
-  dataUrl?: string;
 }
 
-function Zone(props: Props) {
-  const { id, objectType, filter, onZoneReorder, deleteZone, ds, dataUrl } =
-    props;
+export function Zone(props: Props) {
+  const { 
+    id,
+    objectType,
+    dataSource,
+    boardDataSource,
+    filter,
+    onZoneReorder,
+    deleteZone,
+  } = props;
   const [draggable, setDraggable] = useState(false);
   const [currentWidgets, setCurrentWidgets] = useState<IWidgets[]>([]);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
@@ -41,8 +52,8 @@ function Zone(props: Props) {
   const [saveLayout, setSaveLayout] = useState(false);
   const [title, setTitle] = useState(props.title);
   const z = useZone({
-    endpoint: objectType,
-    baseUrl: dataUrl,
+    dataSource,
+    objectType,
     filter: filter,
     components: [],
   });
@@ -60,12 +71,12 @@ function Zone(props: Props) {
       setOpen={setConfirmationModalOpen}
       open={confirmationModalOpen}
       onConfirmClick={() => deleteZone(id)}
-      itemType={"zone"}
+      itemType={BOARDS.ZONE}
     />
   );
 
   useEffect(() => {
-    getComponents(id, ds).then((components: any) => {
+    getComponents(id, boardDataSource).then((components: any) => {
       // sort the widgets based on the order value
       const sortedWidgets = components.sort((a, b) => a.order - b.order);
       sortedWidgets.forEach((widget) => {
@@ -75,7 +86,7 @@ function Zone(props: Props) {
             filter: widget.filter,
             id: widget.componentId,
             order: widget.order,
-            filterPassThrough: widget.filterPassThrough
+            filterPassThrough: widget.filterPassThrough,
           },
         };
         z.zone.order.push(widget.componentId);
@@ -148,7 +159,6 @@ function Zone(props: Props) {
   const saveButton: IButton = {
     outline: false,
     onClick: () => {
-      setDraggable(!draggable);
       setSaveLayout(true);
       setDraggable(false);
     },
@@ -183,11 +193,11 @@ function Zone(props: Props) {
       <UtilityBar
         id="zone-utility-bar"
         title= {{
-          title: title,
+          text: title,
           editable: true,
           onSave: (value: string) => {
             if (value !== title) {
-              saveTitle(value, ds, id, "zone");
+              saveTitle(value, boardDataSource, id, BOARDS.ZONE);
               setTitle(value);
             }
           }
@@ -201,15 +211,14 @@ function Zone(props: Props) {
           filtersButton
         ] : [saveButton]}
       />
-      <div id={"component-modal"}>
-        <ComponentModal
+      <div id="component-modal">
+        <ComponentPickerModal
           open={open}
           setOpen={setOpen}
           zoneId={id}
-          ds={ds}
           currentWidgets={currentWidgets}
           setCurrentWidgets={setCurrentWidgets}
-          dataUrl={dataUrl}
+          boardsDataSource={boardDataSource}
           {...z}
         />
       </div>
@@ -229,7 +238,7 @@ function Zone(props: Props) {
           setZone={z.setZone}
           saveLayout={saveLayout}
           setSaveLayout={setSaveLayout}
-          ds={ds}
+          boardDataSource={boardDataSource}
         />
       ) : (
         <div className="tol-zone-empty">
@@ -269,8 +278,9 @@ function Zone(props: Props) {
       )}
       {confirmationModal}
       <BoardFilters
+        {...props}
         id={id}
-        entityType="zone"
+        boardObjectType={BOARDS.ZONE}
         open={openFilters}
         setOpen={setOpenFilters}
         {...z}
@@ -278,5 +288,3 @@ function Zone(props: Props) {
     </div>
   );
 }
-
-export default Zone;

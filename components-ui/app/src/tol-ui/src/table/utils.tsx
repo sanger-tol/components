@@ -5,23 +5,24 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from "date-fns";
-import CellTooltip from "./CellTooltip";
-import { httpClient } from "../services/http/httpClient";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import {
+  CellTooltip,
   addFieldDefaults,
   CellRenderer,
   FieldMeta,
   FieldMetaData,
   initialiseFieldMeta,
-} from "./Field";
-import { TsDataSource } from "../services";
-import { isFloat, normaliseCaps } from "../general/utils";
-import Relationship from "./Relationship";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy } from "@fortawesome/free-solid-svg-icons";
-import { EntityMeta } from "../models";
-import { StatusMessage } from "../messaging";
-import { colours } from "../charts/utils";
+  isFloat,
+  normaliseCaps,
+  Relationship,
+  IEntityMeta,
+  StatusMessage,
+  colours,
+  TsDataSource,
+  API_METHODS,
+} from "..";
 
 
 interface Rgb {
@@ -69,9 +70,9 @@ function createLink(text: any, url: string) {
 function createRelationshipBox(
   key: string,
   data: any,
-  baseUrl?: string,
+  dataSource: TsDataSource,
   detail?: boolean,
-  entityMeta?: EntityMeta,
+  entityMeta?: IEntityMeta,
 ) {
   const [relationship, attribute] = key.split(".");
 
@@ -91,7 +92,7 @@ function createRelationshipBox(
             attribute={attribute}
             data={relationData}
             detail={detail}
-            baseUrl={baseUrl}
+            dataSource={dataSource}
             entityMeta={entityMeta}
           />
         );
@@ -171,16 +172,16 @@ function createCellRenderer(
   key: string,
   value: any,
   data: object,
-  baseUrl?: string,
-  entityMeta?: EntityMeta,
+  dataSource: TsDataSource,
+  entityMeta?: IEntityMeta,
 ) {
   if (cellRenderer === null) return value;
   if (typeof cellRenderer === "string") {
     if (value === null || value === undefined) return "";
     if (cellRenderer === "relationship") {
-      return createRelationshipBox(key, data, baseUrl, false, entityMeta);
+      return createRelationshipBox(key, data, dataSource, false, entityMeta);
     } else if (cellRenderer === "relationshipDetail") {
-      return createRelationshipBox(key, data, baseUrl, true, entityMeta);
+      return createRelationshipBox(key, data, dataSource, true, entityMeta);
     } else if (cellRenderer === "datetime") {
       return createDate(value);
     } else if (cellRenderer === "boolean") {
@@ -252,8 +253,8 @@ function formatAttributeData(
   row: object,
   fieldMetaData: FieldMetaData,
   rowOutput: object,
-  baseUrl?: string,
-  entityMeta?: EntityMeta,
+  dataSource: TsDataSource,
+  entityMeta?: IEntityMeta,
 ) {
   const attributes = row["attributes"];
 
@@ -268,7 +269,7 @@ function formatAttributeData(
           key,
           value,
           row,
-          baseUrl,
+          dataSource,
           entityMeta
         );
       } else if (fieldMetaData[key].link !== undefined) {
@@ -333,8 +334,8 @@ function addRelationshipFieldsToAttributes(
 export function convertTableData(
   data: any[],
   fieldMeta: FieldMeta,
-  baseUrl?: string,
-  entityMeta?: EntityMeta,
+  dataSource: TsDataSource,
+  entityMeta?: IEntityMeta,
 ) {
   if (data[0] === undefined) return [];
   const updatedData: any[] = [];
@@ -346,7 +347,7 @@ export function convertTableData(
     }
     const rowOutput = { id: row.id };
     if ("attributes" in row) {
-      formatAttributeData(row, fieldMeta.data, rowOutput, baseUrl, entityMeta);
+      formatAttributeData(row, fieldMeta.data, rowOutput, dataSource, entityMeta);
     }
     updatedData.push(rowOutput);
   });
@@ -391,7 +392,7 @@ function addRemoteFilterType(type: string, cardinality: number) {
 function addEntityMetaFields(
   endpoint: string,
   fieldMeta: FieldMeta,
-  entityMeta: EntityMeta
+  entityMeta: IEntityMeta
 ) {
   for (const [key, meta] of Object.entries(
     entityMeta.flatAttributes[endpoint]
@@ -453,7 +454,7 @@ function addDefaultMeta(fieldMeta: FieldMeta) {
 export function structureFieldMeta(
   endpoint: string,
   savedFieldMeta?: FieldMeta,
-  entityMeta?: EntityMeta,
+  entityMeta?: IEntityMeta,
   fields?: FieldMetaData
 ) {
   endpoint = endpoint.split("/").pop() as string;
@@ -555,7 +556,8 @@ export function fieldMetaToCellRenderer(
 }
 
 export function exportTableToSpreadsheet(
-  endpoint: string,
+  objectType: string,
+  dataSource: TsDataSource,
   fieldMetaData: FieldMetaData,
   filter: object,
   sortColumn: string,
@@ -564,7 +566,6 @@ export function exportTableToSpreadsheet(
   setError: any,
   setDownloading: any,
   defaultSort?: string,
-  baseUrl?: string
 ) {
   setDownloading(true);
 
@@ -586,16 +587,14 @@ export function exportTableToSpreadsheet(
     params["sort_by"] = defaultSort;
   }
 
-  httpClient()
-    .post(
-      "/" + endpoint + ":export",
-      { data: columns },
-      {
-        params: params,
-        baseURL: baseUrl,
-        responseType: "blob",
-      }
-    )
+  dataSource
+    .custom({
+      method: API_METHODS.POST,
+      resource: `${objectType}:export`,
+      params: params,
+      body: { data: columns },
+      options: { responseType: "blob" },
+    })
     .then((res: any) => {
       // temporary URL for the blob
       const tempUrl = window.URL.createObjectURL(res.data);
@@ -603,7 +602,7 @@ export function exportTableToSpreadsheet(
       // Trigger the download with an anchor element
       const a = document.createElement("a");
       a.href = tempUrl;
-      a.download = endpoint + "_table.xlsx";
+      a.download = objectType + "_table.xlsx";
       a.click();
 
       // Release the URL
@@ -675,18 +674,18 @@ export function mapKeysToDisplayNames(
 
 export async function getActions(
   objectType: string,
+  actionDataSource: TsDataSource,
 ): Promise<string[]> {
-  const ds = new TsDataSource();
   const actionsList: string[] = [];
-  const actions =  await ds.getListPage({
-      objectType: 'local/action',
+  const actions =  await actionDataSource
+    .getListPage({
+      objectType: objectType,
       filter: {
         and_: {
           object_type: { eq: { value: objectType } },
         },
       },
     })
-
   actions?.find((action) => {
     actionsList.push(action.name);
   })

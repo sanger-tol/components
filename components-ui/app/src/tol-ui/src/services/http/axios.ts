@@ -1,10 +1,13 @@
-// SPDX-FileCopyrightText: 2022 Genome Research Ltd.
-//
-// SPDX-License-Identifier: MIT
+/*
+SPDX-FileCopyrightText: 2022 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
 
 import axios, { AxiosInstance } from "axios";
 
-export function createAxiosInstance(options: any): AxiosInstance {
+
+export default function createAxiosInstance(options: any): AxiosInstance {
   // eslint-disable-line
   const axiosInstance = axios.create(options);
 
@@ -13,7 +16,7 @@ export function createAxiosInstance(options: any): AxiosInstance {
       return response;
     },
     (error) => {
-      throw error; // TODO: handle error like token expired, ...
+      throw error; // TODO: handle error like token expired
     },
   );
   return axiosInstance;

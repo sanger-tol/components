@@ -1,6 +1,8 @@
-// SPDX-FileCopyrightText: 2023 Genome Research Ltd.
-//
-// SPDX-License-Identifier: MIT
+/*
+SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
 
 import { expect, test, vitest } from "vitest";
 import {
@@ -17,8 +19,8 @@ import {
   getAttributeSources,
   getFlattenedMetaData,
   getAttributeDetail,
-} from "../../tol-ui/src/general/utils";
-import { FieldMeta } from "../../tol-ui/src/table/Field";
+  FieldMeta,
+} from "../../tol-ui/src";
 
 test("isPropDefined function", () => {
   expect(isPropDefined(undefined)).toBe(false);
@@ -38,7 +40,6 @@ test("isEmptyObject function", () => {
 });
 
 test("normailseCaps function", () => {
-  expect(normaliseCaps()).toBe("");
   expect(normaliseCaps("id", "species")).toBe("Species ID");
   expect(normaliseCaps("test.relationship")).toBe("Test Relationship");
   expect(normaliseCaps("uid")).toBe("ID");

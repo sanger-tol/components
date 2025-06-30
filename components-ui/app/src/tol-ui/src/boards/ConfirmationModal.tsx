@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Modal from "../general/Modal";
-import { Button } from "../index";
+import { Button, Modal } from "..";
 
 interface Props {
   setOpen: any;
@@ -14,7 +13,7 @@ interface Props {
   itemType?: string;
 }
 
-function ConfirmationModal(props: Props) {
+export function ConfirmationModal(props: Props) {
   const { setOpen, open, onConfirmClick, itemType } = props;
 
   const actionButtons = (
@@ -68,5 +67,3 @@ function ConfirmationModal(props: Props) {
     </div>
   );
 }
-
-export default ConfirmationModal;
