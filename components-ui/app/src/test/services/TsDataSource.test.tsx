@@ -227,16 +227,16 @@ describe("Testing getBaseUrl and getApiPrefix functions", () => {
     expect(apiPrefix).toBe("testApiPrefix");
   });
 
-  test("getBaseUrl returns null when no baseUrl is provided", () => {
+  test("getBaseUrl returns undefined when no baseUrl is provided", () => {
     const mockDataSource = new TsDataSource({ apiPrefix: "testApiPrefix" });
     const baseUrl = mockDataSource.getBaseUrl();
-    expect(baseUrl).toBeNull();
+    expect(baseUrl).toBeUndefined();
   });
 
-  test("getApiPrefix returns null when no apiPrefix is provided", () => {
+  test("getApiPrefix returns undefined when no apiPrefix is provided", () => {
     const mockDataSource = new TsDataSource({ baseUrl: "testBaseUrl" });
     const apiPrefix = mockDataSource.getApiPrefix();
-    expect(apiPrefix).toBeNull();
+    expect(apiPrefix).toBeUndefined();
   });
 });
 
