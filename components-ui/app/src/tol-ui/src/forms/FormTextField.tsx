@@ -5,8 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { RSForm } from "../index";
-import { capitaliseFirstLetter } from "../general/utils";
+import {
+  RSForm,
+  capitaliseFirstLetter,
+} from "..";
+
 
 interface Props {
   id: string;
@@ -23,7 +26,7 @@ interface Props {
   centered?: boolean;
 }
 
-function FormTextField(props: Props) {
+export function FormTextField(props: Props) {
   const { id, name, centered, label, accepter, helpText, ...rest } = props;
   let style = {};
 
@@ -37,5 +40,3 @@ function FormTextField(props: Props) {
     </RSForm.Group>
   );
 }
-
-export default FormTextField;

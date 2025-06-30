@@ -1,10 +1,13 @@
-// SPDX-FileCopyrightText: 2022 Genome Research Ltd.
-//
-// SPDX-License-Identifier: MIT
+/*
+SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 
-import { createAxiosInstance } from "./axios";
-import { CONFIG } from "./config";
+SPDX-License-Identifier: MIT
+*/
+
 import { AxiosInstance, AxiosRequestConfig } from "axios";
+import createAxiosInstance from "./axios";
+import { CONFIG } from "../..";
+
 
 const authApi = createAxiosInstance(CONFIG);
 

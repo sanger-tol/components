@@ -10,30 +10,28 @@ import {
   AttributeSelector,
   Drawer,
   Modal,
-  SelectedAttributesContainer
+  SelectedAttributesContainer,
+  generateSunburstConfig,
+  IRemoteTarget
 } from "../index";
-import { generateSunburstConfig } from "./utils";
 
-export interface Props {
-  baseUrl?: string;
+
+export interface ISliceByDrawer extends IRemoteTarget {
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
   displaySource?: boolean;
   onConfigSave: (config: object) => void;
-  endpoint: string;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
   sliceBy: string[];
 }
 
-function SliceByDrawer(props: Props) {
+export function SliceByDrawer(props: ISliceByDrawer) {
   const {
-    baseUrl,
     open,
     setOpen,
     title,
-    endpoint,
     onConfigSave,
     customAttributeSelection,
     sliceBy
@@ -150,9 +148,12 @@ function SliceByDrawer(props: Props) {
       <h6 className="tol-config-drawer-column-title">Selected Attributes (Inner Ring at the Top):</h6>
       <div>
         <AttributeSelector
-          endpoint={endpoint}
+          {...props}
+          sticky
+          recommendedFilterAvailable
+          renderSearchBySource
+          displaySource
           placeholder="Select Attributes to Slice By..."
-          baseUrl={baseUrl}
           attribute={attributes}
           setAttributes={setAttributes}
           disabledValues={null}
@@ -160,16 +161,11 @@ function SliceByDrawer(props: Props) {
           maxSelections={5}
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
-          recommendedFilterAvailable={true}
-          renderSearchBySource={true}
-          displaySource={true}
           customAttributeSelection={customAttributeSelection}
-          sticky={true}
         />
       </div>
       <SelectedAttributesContainer
-        baseUrl={baseUrl}
-        endpoint={endpoint}
+        {...props}
         attributes={attributes}
         setAttributes={setAttributes}
       />
@@ -192,5 +188,3 @@ function SliceByDrawer(props: Props) {
     </div>
   );
 }
-
-export default SliceByDrawer;

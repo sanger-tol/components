@@ -4,14 +4,14 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Drawer } from "../general";
+import { Drawer } from "..";
 
-export interface Props {
+interface Props {
   open: boolean;
   setOpen: () => void;
 }
 
-function FilterDrawer(props: Props) {
+export function FilterDrawer(props: Props) {
   const { open, setOpen } = props;
   return (
     <div>
@@ -19,5 +19,3 @@ function FilterDrawer(props: Props) {
     </div>
   );
 }
-
-export default FilterDrawer;

@@ -11,6 +11,7 @@ import { Dropdown } from "rsuite";
 import { IDropdownButtonConfig, IDropdownMainIconProps } from "../models";
 import { Toaster, Message, Button } from "../index";
 
+
 export interface IDropdownButtons {
   mainButtonIcon: IDropdownMainIconProps;
   placement?: string;
@@ -23,7 +24,7 @@ export interface IDropdownButtons {
   footer?: IDropdownButtonConfig | any;
 }
 
-function DropdownButtons(props: IDropdownButtons) {
+export function DropdownButtons(props: IDropdownButtons) {
   const {
     mainButtonIcon,
     placement,
@@ -127,5 +128,3 @@ function DropdownButtons(props: IDropdownButtons) {
     </Dropdown>
   );
 }
-
-export default DropdownButtons;

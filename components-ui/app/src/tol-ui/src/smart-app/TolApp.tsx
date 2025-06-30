@@ -16,41 +16,58 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
-import { Navigation, Callback, PageNotFound } from "../nav";
+import Navigation from "../nav/Navigation";
 import {
+  Callback,
+  PageNotFound,
   getTokenFromLocalStorage,
   getUserFromLocalStorage,
   tokenHasExpired,
-} from "../services/localStorage/localStorageService";
-import {
   confirmAuthorised,
   getElementDependingOnAuthStatus,
-} from "../services/auth/authService";
-import { AuthProvider } from "../contexts/auth.context";
-import Footer from "../general/Footer";
-import { Dropdown, Page } from "../models/Nav";
-import { convertToPath, matomoAnalytics } from "../general/utils";
-import { env } from "../variables/config";
-import { MyBoards, Board } from "../boards";
-import { addBoardPages, generatePagesThatRequireARoute } from "./utils";
+  AuthProvider,
+  Footer,
+  Dropdown,
+  Page,
+  convertToPath,
+  matomoAnalytics,
+  env,
+  Board,
+  addBoardPages,
+  generatePagesThatRequireARoute,
+  TsDataSource,
+  API_METHODS,
+  BOARDS_API_PREFIX,
+} from "..";
 
-export interface BoardsObject {
-  dataUrl?: string;
+
+export interface BoardSources {
+  dataSource: TsDataSource;
+  boardDataSource?: TsDataSource;
 }
 
-export interface Props {
+interface Props {
   brand: string | JSX.Element;
   homePage: JSX.Element;
   pages: (Page | Dropdown)[];
   profilePages?: Page[];
   login?: boolean;
-  boards?: BoardsObject;
+  boards?: BoardSources;
   register?: boolean;
   customCallbackUrl?: string;
 }
 
-function TolApp(props: Props) {
-  const { boards, customCallbackUrl } = props;
+export function TolApp(props: Props) {
+  const { customCallbackUrl } = props;
+
+  // setting a default for the boardDataSource
+  const boards = props.boards ? {
+    dataSource: props.boards?.dataSource,
+    boardDataSource: props.boards?.boardDataSource
+      || new TsDataSource({
+        apiPrefix: BOARDS_API_PREFIX,
+      }),
+  } : undefined;
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
@@ -108,7 +125,10 @@ function TolApp(props: Props) {
               </Route>
               <Route path="/board/:boardId">
                 {boards && loggedIn ? (
-                  <Board dataUrl={boards.dataUrl} />
+                  <Board
+                    dataSource={boards.dataSource}
+                    boardDataSource={boards.boardDataSource}
+                  />
                 ) : (
                   <Redirect to="/" />
                 )}
@@ -123,7 +143,7 @@ function TolApp(props: Props) {
                 );
 
                 // dropdown routes
-                if (page.pages) {
+                if ('pages' in page && page.pages) {
                   page.pages.forEach((dropdownPage: Page) => {
                     const individualPageAuthorised = confirmAuthorised(
                       user,
@@ -176,7 +196,7 @@ function TolApp(props: Props) {
                   );
 
                   // detail page route
-                  if (page.detail) {
+                  if ('detail' in page && page.detail) {
                     routes.push(
                       <Route
                         exact
@@ -206,5 +226,3 @@ function TolApp(props: Props) {
     </div>
   );
 }
-
-export default TolApp;

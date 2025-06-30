@@ -5,9 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { useMemo } from "react";
-import { RSForm } from "../index";
 import countryList from "react-select-country-list";
-import { SingleSelect } from "./index";
+import {
+  SingleSelect,
+  RSForm
+} from "..";
 
 interface Props {
   label?: string;
@@ -15,7 +17,7 @@ interface Props {
   setValue: any;
 }
 
-function CountrySelect(props: Props) {
+export function CountrySelect(props: Props) {
   const { label, value, setValue } = props;
 
   const countryOptions = useMemo(() => countryList().getData(), []);
@@ -34,5 +36,3 @@ function CountrySelect(props: Props) {
     </RSForm.Group>
   );
 }
-
-export default CountrySelect;

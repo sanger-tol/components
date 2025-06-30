@@ -15,7 +15,7 @@ interface Props {
   block?: boolean;
 }
 
-const SingleSelect = (props: Props) => {
+export const SingleSelect = (props: Props) => {
   const { placeholder, setValue, value, block } = props;
   const [data, setData] = useState([{}]);
 
@@ -34,5 +34,3 @@ const SingleSelect = (props: Props) => {
     />
   );
 };
-
-export default SingleSelect;

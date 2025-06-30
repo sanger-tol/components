@@ -5,39 +5,51 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import Timeline, { DataPoint, TimelineItem } from "./Timeline";
-import { Placeholder, httpClient, env } from "../index";
+import {
+  TimeLineData,
+  TimelineItem,
+  Timeline,
+  Placeholder,
+  IRemoteTarget,
+  TDataObjectOrNull
+} from "..";
 
-interface Props {
-  endpoint: string;
+
+interface IRemoteTimeline extends IRemoteTarget {
   id: string;
-  data: DataPoint;
+  data: TimeLineData;
   dateWithDay?: boolean;
   defaultIcon?: boolean;
   titleDataPoint: string;
 }
 
-function RemoteTimeline(props: Props) {
-  const { endpoint, id, data, dateWithDay, defaultIcon, titleDataPoint } =
-    props;
+export function RemoteTimeline(props: IRemoteTimeline) {
+  const {
+    id,
+    objectType,
+    dataSource,
+    data,
+    dateWithDay,
+    defaultIcon,
+    titleDataPoint
+  } = props;
 
   const [timelineData, setTimelineData] = useState<any>([]);
   const [name, setName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    createTimelineData(endpoint, id);
-  }, [endpoint, id]);
+    createTimelineData();
+  }, []);
 
-  const parseValuesFromEndpoint = (
-    endpointData: object,
-    data: DataPoint,
+  const parseObjectValues = (
+    dataObject: TDataObjectOrNull,
   ): TimelineItem[] => {
     return Object.keys(data).reduce((acc: TimelineItem[], key) => {
-      if (endpointData.hasOwnProperty(key)) {
+      if (dataObject && dataObject[key]) {
         const timelineItem: TimelineItem = {
           title: data[key].title,
-          date: endpointData[key],
+          date: dataObject[key],
           desc: data[key].desc || "",
           icon: data[key].icon || undefined,
           color: data[key].color || undefined,
@@ -47,6 +59,22 @@ function RemoteTimeline(props: Props) {
       return acc;
     }, []);
   };
+
+  const createTimelineData = async () => {
+    setLoading(true);
+    dataSource
+      .getOne({objectType, id})
+      .then((dataObject: TDataObjectOrNull) => {
+        setName(dataObject?.[titleDataPoint] ?? titleDataPoint);
+        setTimelineData(parseObjectValues(dataObject));
+      })
+      .catch((error) => {
+        console.warn(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
 
   const createTitle = (id: string, endpoint: string): string => {
     switch (endpoint) {
@@ -59,50 +87,18 @@ function RemoteTimeline(props: Props) {
     }
   };
 
-  const createTimelineId = (id: string, endpoint: string): string => {
-    return `timeline-${endpoint}-${id}`;
-  };
-
-  const createTimelineData = async (endpoint: string, id: string) => {
-    setLoading(true);
-
-    try {
-      const res: any = await httpClient().get(`/${endpoint}/${id}`, {
-        baseURL: env.TOL_DATA,
-      });
-
-      if (res.status === 200) {
-        const attributesData = res!.data.data.attributes;
-        setName(attributesData[titleDataPoint] ?? titleDataPoint);
-
-        const dataPointsObject = parseValuesFromEndpoint(attributesData, data);
-        setTimelineData(dataPointsObject);
-      }
-    } catch (error) {
-      console.warn(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (loading) {
+    return <Placeholder clear loader />;
+  }
 
   return (
-    <div>
-      {loading ? (
-        <div style={{ minHeight: "20px", marginTop: "20px" }}>
-          <Placeholder clear loader />
-        </div>
-      ) : (
-        <Timeline
-          id={createTimelineId(id, endpoint)}
-          title={createTitle(id, endpoint)}
-          endless={false}
-          data={timelineData}
-          dateWithDay={dateWithDay}
-          defaultIcon={defaultIcon}
-        />
-      )}
-    </div>
+    <Timeline
+      id={`timeline-${objectType}-${id}`}
+      title={createTitle(id, objectType)}
+      endless={false}
+      data={timelineData}
+      dateWithDay={dateWithDay}
+      defaultIcon={defaultIcon}
+    />
   );
 }
-
-export default RemoteTimeline;

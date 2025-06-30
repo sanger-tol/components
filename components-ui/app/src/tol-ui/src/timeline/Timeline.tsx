@@ -6,9 +6,10 @@ SPDX-License-Identifier: MIT
 
 import React, { useState, useEffect } from "react";
 import { Timeline as RSTimeline } from "rsuite";
-import { Col, Row } from "../index";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { Col, Row } from "..";
+
 
 type iconType = "active-dot" | "dot";
 
@@ -20,15 +21,15 @@ export interface TimelineItem {
   desc?: string;
 }
 
-export interface DataPoint {
+export interface TimeLineData {
   [key: string]: TimelineItem;
 }
 
-interface Props {
+interface ITimeline {
   id: string;
   title: string;
   endless?: boolean;
-  data: DataPoint;
+  data: TimeLineData;
   dateWithDay?: boolean;
   defaultIcon?: boolean;
 }
@@ -40,7 +41,7 @@ const ACTIVE_DOT_DEFAULT = "#039be5";
 const DEFAULT_ICON_COLOR = "#15b215";
 const DEFAULT_NOT_DEFINED = "#fff";
 
-function Timeline(props: Props) {
+export function Timeline(props: ITimeline) {
   const { id, title, endless, data, dateWithDay, defaultIcon } = props;
   const [sortedData, setSortedData] = useState<TimelineItem[]>([]);
 
@@ -50,7 +51,7 @@ function Timeline(props: Props) {
     setSortedData(sortedTimeline);
   }, [data]);
 
-  const parseDataPoints = (data: DataPoint): TimelineItem[] => {
+  const parseDataPoints = (data: TimeLineData): TimelineItem[] => {
     return Object.entries(data).reduce((acc: TimelineItem[], [key, value]) => {
       if (value === null || value === undefined) {
         return acc;
@@ -182,5 +183,3 @@ function Timeline(props: Props) {
     </Col>
   );
 }
-
-export default Timeline;

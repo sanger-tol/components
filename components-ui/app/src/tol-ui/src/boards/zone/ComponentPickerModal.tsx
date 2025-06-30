@@ -13,11 +13,15 @@ import {
   Icon,
   HoverOverlay,
   TsDataSource,
+  FormTextField,
+  RSForm,
+  addComponent,
+  defineComponent,
+  IZone,
+  componentOptions,
+  sizeOptions
 } from "../../index";
-import { FormTextField } from "../../forms";
-import { RSForm } from "../../index";
-import { IZone, addComponent, defineComponent } from "../utils";
-import { componentOptions, sizeOptions } from "../../config/boards/componentSelection";
+
 
 interface Props {
   open: boolean;
@@ -25,23 +29,23 @@ interface Props {
   zone: IZone;
   setZone: any;
   zoneId: string;
-  ds: TsDataSource;
   currentWidgets: any;
   setCurrentWidgets: any;
-  dataUrl?: string;
+  dataSource: TsDataSource;
+  boardsDataSource: TsDataSource;
 }
 
-function ComponentPickerModal(props: Props) {
+export function ComponentPickerModal(props: Props) {
   const {
     open,
     setOpen,
     zone,
     setZone,
     zoneId,
-    ds,
     currentWidgets,
     setCurrentWidgets,
-    dataUrl,
+    dataSource,
+    boardsDataSource,
   } = props;
   const [componentType, setComponentType] = useState("");
   const [widgetType, setWidgetType] = useState("");
@@ -87,18 +91,18 @@ function ComponentPickerModal(props: Props) {
         0,
       );
       const nextOrder = highestOrder! + 1;
-      //All components added are set with portal as baseUrl
+      // all components added are set with portal as baseUrl
       const newComponent = await addComponent(
-        ds,
+        dataSource,
+        boardsDataSource,
         zone.type!,
         title,
         nextOrder,
         componentType,
         widgetType,
         zoneId,
-        dataUrl,
       );
-      //This adds the component to the zone
+      // this adds the component to the zone
       defineComponent(
         {
           id: newComponent.newComponentId,
@@ -109,14 +113,15 @@ function ComponentPickerModal(props: Props) {
         zone,
       );
       zone.order = [...zone.order, newComponent.newComponentId];
-      // This adds the component to the currentWidgets to be rendered
+      // this adds the component to the currentWidgets to be rendered
       setCurrentWidgets([
         ...currentWidgets,
         {
           componentId: newComponent.newComponentId,
           order: nextOrder,
           componentZoneId: newComponent.newComponentZoneId,
-          baseUrl: dataUrl,
+          baseUrl: dataSource.getBaseUrl(),
+          apiPrefix: dataSource.getApiPrefix(),
           componentType: componentType,
           filter: { and_: {} },
           title: title,
@@ -244,5 +249,3 @@ function ComponentPickerModal(props: Props) {
     </Modal>
   );
 }
-
-export default ComponentPickerModal;

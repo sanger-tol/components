@@ -11,7 +11,7 @@ interface Props {
   containerStyle?: object;
 }
 
-function AccordionHeader(props: Props) {
+export function AccordionHeader(props: Props) {
   const { header, subHeader, infoText, containerStyle } = props;
 
   return (
@@ -38,5 +38,3 @@ function AccordionHeader(props: Props) {
     </div>
   );
 }
-
-export default AccordionHeader;

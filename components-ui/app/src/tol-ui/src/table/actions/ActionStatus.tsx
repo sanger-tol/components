@@ -5,15 +5,14 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { StatusMessage } from "../../messaging";
-import { TsDataSource } from "../../services";
-import { Placeholder } from "../..";
+import { StatusMessage, TsDataSource, Placeholder } from "../..";
+
 
 interface Props {
   rowData: any;
 }
 
-function ActionStatus(props: Props) {
+export function ActionStatus(props: Props) {
   const flowRunId = props.rowData.attributes.params.flow_run_id;
   const flowRunName = props.rowData.attributes.params.flow_run_name;
   const RELOAD_INTERVAL = 10;
@@ -118,5 +117,3 @@ function ActionStatus(props: Props) {
     </div>
   );
 }
-
-export default ActionStatus;

@@ -5,16 +5,19 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { useAuth } from "../contexts/auth.context";
-import { LoadingContent } from "../index";
-import { getProfile, getRoles, getToken } from "../services/auth/authService";
-import { useQuery } from "../hooks/useQuery";
 import {
+  LoadingContent,
+  getProfile,
+  getRoles,
+  getToken,
+  useQuery,
+  useAuth,
   getReturnUrlFromLocalStorage,
   setTokenToLocalStorage,
   setUserToLocalStorage,
   tokenHasExpired,
-} from "../services/localStorage/localStorageService";
+} from "..";
+
 
 export function Callback() {
   const { setToken, token, setUser } = useAuth();
@@ -52,5 +55,3 @@ export function Callback() {
 
   return <LoadingContent text="Logging in..." />;
 }
-
-export default Callback;

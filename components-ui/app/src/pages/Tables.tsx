@@ -5,7 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Button, RemoteTable, Widgets, env, useZone } from "../tol-ui/src";
+import { Button, RemoteTable, Widgets, useZone, TOL_DS } from "../tol-ui/src";
+
 
 interface exampleProps {
   text: string;
@@ -17,15 +18,15 @@ function exampleElement(props: exampleProps) {
   return `${text}: ${mlwhTag}`;
 }
 
-function Tables() {
+export function Tables() {
   const [forceUpdate, setForceUpdate] = useState(false);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const title = <h2>Tables</h2>;
 
   const runData = useZone({
-    endpoint: "run_data",
-    baseUrl: env.TOL_DATA,
+    objectType: "run_data",
+    dataSource: TOL_DS,
     components: [{ id: "table-example" }],
   });
 
@@ -63,7 +64,7 @@ function Tables() {
           setSelectedRows={setSelectedRows}
           utilityBarConfig={{
             title: {
-              title: "Run Data",
+              text: "Run Data",
             },
           }}
           fields={{
@@ -134,5 +135,3 @@ function Tables() {
 
   return <Widgets components={components} />;
 }
-
-export default Tables;

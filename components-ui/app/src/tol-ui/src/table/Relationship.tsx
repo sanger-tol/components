@@ -5,30 +5,36 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { httpClient } from "../services/http/httpClient";
-import { HoverOverlay, FormatTooltip } from "../general";
-import { Loader } from "../index";
-import { mapKeysToDisplayNames } from "./utils";
+import {
+  HoverOverlay,
+  FormatTooltip,
+  Loader,
+  TsDataSource,
+  mapKeysToDisplayNames,
+  API_METHODS,
+} from "..";
 
-export interface Props {
+
+interface Props {
   attribute: string;
   data: string; // Relationship Data
   detail?: boolean;
-  baseUrl?: string;
   entityMeta?: any;
+  dataSource: TsDataSource;
 }
 
-function Relationship(props: Props) {
-  const { attribute, data, detail, baseUrl, entityMeta } = props;
+export function Relationship(props: Props) {
+  const { attribute, data, detail, entityMeta, dataSource } = props;
   const [contents, setContents] = useState<JSX.Element | string>(
     <Loader size="sm" />,
   );
-  const endpoint = "/" + data["type"] + "/" + data["id"];
+  const resource = data["type"] + "/" + data["id"];
 
   const loadRelationship = () => {
-    httpClient()
-      .get(endpoint, {
-        baseURL: baseUrl,
+    dataSource
+      .custom({
+        method: API_METHODS.GET,
+        resource
       })
       .then((res: any) => {
         // error if endpoint doesn't return 200
@@ -59,10 +65,8 @@ function Relationship(props: Props) {
   );
 
   if (detail) {
-    return <a href={endpoint}>{box}</a>;
+    return <a href={data["type"]}>{box}</a>;
   }
 
   return box;
 }
-
-export default Relationship;

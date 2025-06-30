@@ -16,7 +16,7 @@ interface Props {
   onClose?: () => void;
 }
 
-function Drawer(props: Props) {
+export function Drawer(props: Props) {
   const { open, setOpen, title, children, onClose } = props;
   const placement = props.placement ?? "right";
   const { Header, Body } = RSDrawer;
@@ -40,5 +40,3 @@ function Drawer(props: Props) {
     </RSDrawer>
   );
 }
-
-export default Drawer;

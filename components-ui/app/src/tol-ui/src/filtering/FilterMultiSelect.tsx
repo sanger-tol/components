@@ -5,17 +5,28 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Filter } from "./Filter";
-import { setFilter, filterListener } from "./utils";
-import { MultipleSelect } from "../forms";
-import { httpClient } from "../services";
-import FilterToggle from "./FilterToggle";
-import { stopPropagation } from "../general/utils";
-import { PopUpMessage } from "../index";
+import {
+  IFilterInput,
+  setFilter,
+  filterListener,
+  MultipleSelect,
+  FilterToggle,
+  stopPropagation,
+  PopUpMessage,
+  API_METHODS,
+} from "..";
 
-function FilterMultiSelect(props: Filter) {
-  const { attribute, componentId, rename, zone, setZone, endpoint, baseUrl } =
-    props;
+
+export function FilterMultiSelect(props: IFilterInput) {
+  const {
+    attribute,
+    componentId,
+    rename,
+    objectType,
+    dataSource,
+    zone,
+    setZone
+  } = props;
   const [data, setData] = useState<string[]>([]);
   const [values, setValues] = useState<string[]>([]);
   const [disabled, setDisabled] = useState(false);
@@ -44,9 +55,11 @@ function FilterMultiSelect(props: Filter) {
       aggs["aggs"][attribute] = {
         terms: { field: `${attribute}.keyword`, size: 500 },
       };
-      httpClient()
-        .post("/" + endpoint + ":aggregations", aggs, {
-          baseURL: baseUrl,
+      dataSource
+        .custom({
+          method: API_METHODS.POST,
+          resource: `${objectType}:aggregations`,
+          body: aggs,
         })
         .then((res: any) => {
           const aggValues = res.data.meta.aggregations[attribute].buckets;
@@ -60,7 +73,7 @@ function FilterMultiSelect(props: Filter) {
             "Error fetching unique values for " +
               attribute +
               " in " +
-              endpoint +
+              objectType +
               ". " +
               error.message +
               ".",
@@ -176,5 +189,3 @@ function FilterMultiSelect(props: Filter) {
     </div>
   );
 }
-
-export default FilterMultiSelect;

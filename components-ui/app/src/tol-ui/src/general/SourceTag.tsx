@@ -4,15 +4,14 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { getSourceColour } from "../table/utils";
-import { normaliseCaps } from "./utils";
+import { normaliseCaps, getSourceColour } from "..";
 
-export interface Props {
+interface Props {
   className?: string;
   source: string;
 }
 
-function SourceTag(props: Props) {
+export function SourceTag(props: Props) {
   const { source, className } = props;
   const sourceColour = getSourceColour(source);
 
@@ -26,5 +25,3 @@ function SourceTag(props: Props) {
     </div>
   );
 }
-
-export default SourceTag;

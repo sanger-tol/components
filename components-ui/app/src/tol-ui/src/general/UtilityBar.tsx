@@ -5,11 +5,16 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from 'react'
-import { ClickOverlay, InlineEdit } from '.'
-import { IInlineEdit } from './InlineEdit'
-import { IButton } from './Button'
-import { IDropdownButtons } from './DropdownButtons'
-import { Button, DropdownButtons, resizeListener } from '../'
+import {
+  ClickOverlay,
+  InlineEdit,
+  IInlineEdit,
+  IButton,
+  IDropdownButtons,
+  Button,
+  DropdownButtons,
+  resizeListener
+} from '..'
 
 
 export interface IUtilityBar {
@@ -19,7 +24,7 @@ export interface IUtilityBar {
   elements?: JSX.Element[];
 }
 
-function UtilityBar(props: IUtilityBar) {
+export function UtilityBar(props: IUtilityBar) {
   const {
     id,
     title,
@@ -96,5 +101,3 @@ function UtilityBar(props: IUtilityBar) {
     </div>
   );
 }
-
-export default UtilityBar;

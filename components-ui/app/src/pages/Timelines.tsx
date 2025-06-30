@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Timeline, RemoteTimeline, Widgets } from "../tol-ui/src";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -12,10 +11,11 @@ import {
   faTruck,
   faExclamation,
 } from "@fortawesome/free-solid-svg-icons";
-import { DataPoint } from "../tol-ui/src/timeline/Timeline";
+import { Timeline, RemoteTimeline, Widgets, TimeLineData, TOL_DS } from "../tol-ui/src";
+
 
 // Test Remote Timeline Data
-const aRemoteTimeline: DataPoint = {
+const aRemoteTimeline: TimeLineData = {
   sts_sample_sts_submit_date_min: { title: "Compliance in Progress" },
   sts_sample_sts_accept_date_min: { title: "Approved to Ship" },
   sts_sample_sts_receive_date_min: { title: "Arrived at Sanger" },
@@ -38,7 +38,7 @@ const aRemoteTimeline: DataPoint = {
   },
 };
 
-const bRemoteTimeline: DataPoint = {
+const bRemoteTimeline: TimeLineData = {
   sts_sample_sts_submit_date_min: {
     title: "Compliance in Progress",
     icon: <FontAwesomeIcon icon={faUser} style={{ color: "#fff" }} />,
@@ -58,7 +58,7 @@ const bRemoteTimeline: DataPoint = {
 };
 
 // Test timeline data
-const aTimeline: DataPoint = {
+const aTimeline: TimeLineData = {
   "Sample Arrived": {
     date: new Date("2021-07-02"),
     icon: "dot",
@@ -81,7 +81,7 @@ const aTimeline: DataPoint = {
   },
 };
 
-const bTimeline: DataPoint = {
+const bTimeline: TimeLineData = {
   "Sample Arrived": {
     date: new Date("2021-07-02"),
     icon: <FontAwesomeIcon icon={faTruck} />,
@@ -112,7 +112,7 @@ const bTimeline: DataPoint = {
   },
 };
 
-const cTimeline: DataPoint = {
+const cTimeline: TimeLineData = {
   "Sample Arrived": {
     date: new Date("2021-07-02"),
     icon: (
@@ -160,7 +160,7 @@ const cTimeline: DataPoint = {
   },
 };
 
-function Timelines() {
+export function Timelines() {
   const aTimelineTitle = "Timeline of events for sample...";
   const bTimelineTitle =
     "Nice looking timeline for species [Rando Specicus], sample [#83882.94]";
@@ -170,7 +170,8 @@ function Timelines() {
     <div>
       <h4>Remote Timeline with Default Dots</h4>
       <RemoteTimeline
-        endpoint="species"
+        objectType="species"
+        dataSource={TOL_DS}
         id="71285"
         data={aRemoteTimeline}
         titleDataPoint="sts_scientific_name"
@@ -184,7 +185,8 @@ function Timelines() {
     <div>
       <h4>Remote Timeline with Custom Dots</h4>
       <RemoteTimeline
-        endpoint="species"
+        objectType="species"
+        dataSource={TOL_DS}
         id="572802"
         data={bRemoteTimeline}
         titleDataPoint="Random Name"
@@ -247,5 +249,3 @@ function Timelines() {
     </div>
   );
 }
-
-export default Timelines;

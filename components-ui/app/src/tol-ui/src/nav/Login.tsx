@@ -6,20 +6,21 @@ SPDX-License-Identifier: MIT
 
 import { useCallback, useEffect } from "react";
 import { Redirect } from "react-router-dom";
-import { useAuth } from "../contexts/auth.context";
-import { getUrlLogin } from "../services/auth/authService";
 import {
+  useAuth,
+  getUrlLogin,
   getReturnUrlFromLocalStorage,
   setReturnUrlFromLocalStorage,
   tokenHasExpired,
-} from "../services/localStorage/localStorageService";
+} from "..";
+
 
 interface Props {
   buttonIcon: any;
   returnUrl?: string;
 }
 
-function Login(props: Props) {
+export function Login(props: Props) {
   const { buttonIcon, returnUrl } = props;
   const { setToken, setUser } = useAuth();
 
@@ -43,5 +44,3 @@ function Login(props: Props) {
     <Redirect to={getReturnUrlFromLocalStorage() || "/"} />
   );
 }
-
-export default Login;

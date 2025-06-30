@@ -5,6 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReactNode, useEffect, useState } from "react";
+import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import {
   Placeholder,
   useEffectUpdate,
@@ -13,33 +16,33 @@ import {
   EntityMetaToolTip,
   UtilityBar,
   resizeListener,
-} from "../index";
-import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSliders } from "@fortawesome/free-solid-svg-icons";
-import ColumnConfigDrawer from "./ColumnConfigDrawer";
-import { exportTableToSpreadsheet, getAllowedFields, getSourceColour } from "./utils";
-import Filter, { IFilter } from "../filtering/Filter";
-import { FieldMeta, initialiseFieldMeta } from "./Field";
-import { IZone } from "../boards";
-import { IDropdownButtonConfig } from "../models/Buttons";
-import { useStateFallback } from "../hooks/useStateFallback";
-import { IUtilityBar } from "../general/UtilityBar";
-import { IButton } from "../general/Button";
-import { IDropdownButtons } from "../general/DropdownButtons";
+  ColumnConfigDrawer,
+  exportTableToSpreadsheet,
+  getAllowedFields,
+  getSourceColour,
+  Filter,
+  IFilterInputType,
+  FieldMeta,
+  initialiseFieldMeta,
+  IZone,
+  IDropdownButtonConfig,
+  useStateFallback,
+  IUtilityBar,
+  IButton,
+  IDropdownButtons,
+  IRemoteTarget,
+} from "..";
 
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
-interface Props {
+interface Props extends IRemoteTarget{
   id: string;
   data: any;
   fieldMeta: FieldMeta;
   height: any;
   loading: boolean;
 
-  endpoint: string;
-  baseUrl?: string;
   source?: string;
 
   page: number;
@@ -71,6 +74,7 @@ interface Props {
   noDownload?: boolean;
   rowSelection?: boolean;
   actions?: IDropdownButtonConfig[];
+  actionChoices?: string[];
   actionsFooter?: IDropdownButtonConfig;
   utilityBarConfig?: IUtilityBar;
   selectedRows?: string[];
@@ -80,7 +84,7 @@ interface Props {
   groupBy?: boolean;
 }
 
-function Table(props: Props) {
+export function Table(props: Props) {
   const { Column, HeaderCell, Cell } = RSTable;
   let {
     /* eslint-disable */
@@ -90,8 +94,8 @@ function Table(props: Props) {
     height,
     loading,
 
-    endpoint,
-    baseUrl,
+    objectType,
+    dataSource,
     source,
 
     page,
@@ -121,7 +125,7 @@ function Table(props: Props) {
     rowSelection,
     actions,
     actionsFooter,
-    utilityBarConfig = {} as IUtilityBar,
+    utilityBarConfig = {},
     contents,
     groupBy,
     /* eslint-enable */
@@ -256,12 +260,12 @@ function Table(props: Props) {
     mainButtonIcon: {
       icon: "paper-plane",
       type: "primary",
-      position: "left",
+      position: "right",
       outline: selectedRows.length === 0,
     },
     dropdownButtons: actionDropDownButtons,
     footer: actionsFooter,
-    placement: "rightStart",
+    placement: "leftStart",
   } : undefined;
 
   return (
@@ -270,14 +274,15 @@ function Table(props: Props) {
         size="sm"
         open={downloadOpen}
         setOpen={setDownloadOpen}
-        objectType={endpoint}
+        objectType={objectType}
         filter={filter}
         source={source}
         fields={fieldMeta.order.active}
         totalSize={totalSize}
-        action={() =>
+        onDownloadSpreadsheet={() =>
           exportTableToSpreadsheet(
-            endpoint,
+            objectType,
+            dataSource,
             fieldMeta.data,
             filter!,
             sortColumn,
@@ -286,21 +291,20 @@ function Table(props: Props) {
             setError,
             setDownloading,
             defaultSort,
-            baseUrl,
           )
         }
       />
       <ColumnConfigDrawer
+        {...props}
+        title={"Table Configuration"}
         actions={actions}
         defaultSort={defaultSort}
         open={open}
         groupBy={groupBy}
         setOpen={setOpen}
-        title={"Table Configuration"}
         displaySource={displaySource}
         customAttributeSelection={getAllowedFields(fieldMeta)}
         onConfigSave={onModalSave}
-        {...props}
       />
       {/*rowSelection && (
           <>
@@ -457,7 +461,11 @@ function Table(props: Props) {
                     <HeaderCell>
                       {(field.description || field.source) && (
                         <div className="tol-header-info">
-                          <EntityMetaToolTip baseUrl={baseUrl} field={key} endpoint={endpoint} />
+                          <EntityMetaToolTip
+                            objectType={objectType}
+                            dataSource={dataSource}
+                            field={key}
+                          />
                         </div>
                       )}
                       <p className="tol-header-text">
@@ -478,11 +486,11 @@ function Table(props: Props) {
                           }
                         >
                           <Filter
+                            {...props}
                             attribute={key}
                             rename={field.rename!}
-                            type={field.filter as IFilter}
+                            type={field.filter as IFilterInputType}
                             componentId={id}
-                            {...props}
                           />
                         </span>
                       )}
@@ -500,5 +508,3 @@ function Table(props: Props) {
     </div>
   );
 }
-
-export default Table;

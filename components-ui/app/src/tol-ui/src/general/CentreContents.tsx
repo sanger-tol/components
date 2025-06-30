@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col } from "..";
 
-function CentreContents(props: any) {
+export function CentreContents(props: any) {
   return (
     <Container>
       <Row>
@@ -17,5 +17,3 @@ function CentreContents(props: any) {
     </Container>
   );
 }
-
-export default CentreContents;

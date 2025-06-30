@@ -7,7 +7,8 @@ SPDX-License-Identifier: MIT
 import { ReactNode } from "react";
 import { Popover, Whisper } from "rsuite";
 
-export interface Props {
+
+interface Props {
   contents: ReactNode;
   children: JSX.Element;
   placement?: string;
@@ -16,7 +17,7 @@ export interface Props {
   followCursor?: boolean;
 }
 
-function HoverOverlay(props: Props) {
+export function HoverOverlay(props: Props) {
   const { contents, children, delay = 300, onHover, followCursor } = props;
   const placement = props.placement === undefined ? "auto" : props.placement;
 
@@ -38,5 +39,3 @@ function HoverOverlay(props: Props) {
     </Whisper>
   );
 }
-
-export default HoverOverlay;

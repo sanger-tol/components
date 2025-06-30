@@ -5,9 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect } from "react";
-import { IZone, defineComponent } from "../boards/utils";
-import { IFilter, And } from "../models/Filter";
-import { deepCopy, isEmptyObject } from "../general/utils";
+import {
+  IZone,
+  defineComponent,
+  IFilter,
+  IAndAttributes,
+  deepCopy,
+  isEmptyObject,
+} from "..";
+
 
 export function getComponentAbove(id: string, list: string[]) {
   const index = list.indexOf(id);
@@ -52,10 +58,10 @@ export function mergeAndFilters(target: object, incoming: object) {
     const currentIn = id in incoming ? incoming[id] : {};
     output[id] = Object.assign(currentOut, currentIn);
   }
-  return output as And;
+  return output as IAndAttributes;
 }
 
-export function removeSuperfluousExists(filter: And) {
+export function removeSuperfluousExists(filter: IAndAttributes) {
   Object.keys(filter).forEach((attribute) => {
     const operators = Object.keys(filter[attribute]);
     if (operators.length >= 2 && "exists" in filter[attribute]) {
@@ -84,7 +90,7 @@ export function generateFilter(
   if (zone === undefined) return undefined;
   const z = zone as IZone;
   const aboveComponents = id ? getComponentsAbove(id, z.order) : z.order;
-  let compoundedFilter: And = z.filter ? z.filter.and_ : {};
+  let compoundedFilter: IAndAttributes = z.filter && z.filter.and_ ? z.filter.and_ : {};
   // loop through 'above' components
   for (const currentId of aboveComponents) {
     // exclude pass throughs except self
@@ -95,11 +101,11 @@ export function generateFilter(
     ) {
       continue;
     }
-    let currentFilter: And = z.components[currentId].data.filter!.and_;
+    let currentFilter: IAndAttributes = z.components[currentId].data.filter?.and_ || {};
     // include sub filter if required
     const subFilter = z.components[currentId].data.subFilter;
     if ((currentId !== id || includeSubFilter) && subFilter) {
-      currentFilter = mergeAndFilters(currentFilter, subFilter.and_);
+      currentFilter = mergeAndFilters(currentFilter, subFilter.and_ ?? {});
     }
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
@@ -186,32 +192,34 @@ export function setFilter(params: {
   const and_ = z.components[componentId].data.filter!.and_;
   resetFiltersBelow({ id: componentId, zone: z });
 
-  if (valueExists || exists) {
-    // exists filter removed if value is already set
-    if ("exists" in (and_[attribute] || {})) {
-      delete and_[attribute]["exists"];
-    }
-    // setting just an exists filter if exists is true
-    if (exists) {
-      and_[attribute] = {};
-      and_[attribute]["exists"] = { negate: negate };
-      // setting a value filter from an input
-    } else if (operator === "in_list") {
-      and_[attribute] = {};
-      and_[attribute]["in_list"] = { value: value, negate: negate };
+  if (and_) {
+    if (valueExists || exists) {
+      // exists filter removed if value is already set
+      if ("exists" in (and_[attribute] || {})) {
+        delete and_[attribute]["exists"];
+      }
+      // setting just an exists filter if exists is true
+      if (exists) {
+        and_[attribute] = {};
+        and_[attribute]["exists"] = { negate: negate };
+        // setting a value filter from an input
+      } else if (operator === "in_list") {
+        and_[attribute] = {};
+        and_[attribute]["in_list"] = { value: value, negate: negate };
+      } else {
+        and_[attribute] = {
+          ...and_[attribute],
+          [operator]: { value, negate },
+        };
+      }
     } else {
-      and_[attribute] = {
-        ...and_[attribute],
-        [operator]: { value, negate },
-      };
+      if (operator in (and_[attribute] || {})) {
+        delete and_[attribute][operator];
+      }
     }
-  } else {
-    if (operator in (and_[attribute] || {})) {
-      delete and_[attribute][operator];
+    if (attribute in and_ && isEmptyObject(and_[attribute])) {
+      delete and_[attribute];
     }
-  }
-  if (attribute in and_ && isEmptyObject(and_[attribute])) {
-    delete and_[attribute];
   }
 }
 

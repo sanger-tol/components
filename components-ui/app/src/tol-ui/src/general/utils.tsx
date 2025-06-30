@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT
 
 import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
-import { FieldMeta } from "../table/Field";
-import { AllowedCardinality } from "./AttributeSelector";
+import { FieldMeta, AllowedCardinality } from "..";
+
 
 export function convertToPath(name: string) {
   const path = name.toLowerCase();
@@ -50,12 +50,12 @@ export function isEmptyObject(x: object) {
   return Object.keys(x).length === 0;
 }
 
-export function normaliseCaps(name: string, endpoint?: string) {
+export function normaliseCaps(name: string, prefix?: string) {
   if (!name) return "";
   // make object ids clear (for auto load)
-  if (endpoint !== undefined) {
+  if (prefix !== undefined) {
     if (name === "id" || name === "uid") {
-      return normaliseCaps(endpoint) + " ID";
+      return normaliseCaps(prefix) + " ID";
     }
   }
   // replace relationship '.' with underscore ready to split
@@ -153,7 +153,7 @@ export function capitaliseFirstLetter(string: string) {
 }
 
 export function generateId(prefix: string) {
-  // Does not include special characters
+  // does not include special characters
   const alphabet =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const nanoid = customAlphabet(alphabet, 12);
@@ -167,20 +167,20 @@ export function getSourceData(fieldMeta: FieldMeta, attribute: string) {
 
 export function getAttributeSources(
   entityMeta: any,
-  endpoint: string,
+  objectType: string,
   customAttributeSelection?: string[] | undefined
 ) {
   const sources = new Set<string>();
   if (
     entityMeta &&
     entityMeta.flatAttributes &&
-    entityMeta.flatAttributes[endpoint]
+    entityMeta.flatAttributes[objectType]
   ) {
-    Object.keys(entityMeta.flatAttributes[endpoint]).forEach((att) => {
+    Object.keys(entityMeta.flatAttributes[objectType]).forEach((att) => {
       if (customAttributeSelection && !customAttributeSelection.includes(att)) {
         return;
       }
-      const attributeObject = entityMeta.flatAttributes[endpoint][att];
+      const attributeObject = entityMeta.flatAttributes[objectType][att];
       const source = attributeObject.source;
       if (source) {
         sources.add(source);
@@ -262,10 +262,10 @@ export function truncateString(str: string, maxLength: number) {
 export function getAllAttributeData(
   attributes: string[],
   entityMeta: any,
-  endpoint: string
+  objectType: string
 ) {
   return attributes.reduce((acc, attr) => {
-    const attributeData = getFlattenedMetaData(entityMeta, endpoint, attr);
+    const attributeData = getFlattenedMetaData(entityMeta, objectType, attr);
     return {
       ...acc,
       [attr]: attributeData,
