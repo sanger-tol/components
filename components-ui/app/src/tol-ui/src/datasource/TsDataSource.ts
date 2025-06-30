@@ -56,11 +56,11 @@ export class TsDataSource {
   }
 
   public getBaseUrl(): string | undefined {
-    return this.baseUrl ?? undefined;
+    return this.baseUrl;
   }
 
   public getApiPrefix(): string | undefined {
-    return this.apiPrefix ?? undefined;
+    return this.apiPrefix;
   }
 
   private relationshipHandler = {
@@ -183,7 +183,7 @@ export class TsDataSource {
   public async relationshipConfig(): Promise<object> {
     return this.getConfig(
       this.generateEndpoint(
-        "/_config/relationships"
+        "_config/relationships"
       )
     );
   }
