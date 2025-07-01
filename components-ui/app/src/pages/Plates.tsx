@@ -96,6 +96,10 @@ export function Plates() {
     );
   };
 
+  const Title = (
+    <h2>Plate</h2>
+  );
+
   const PlateComponent = (
     <Plate
       id="plate1"
@@ -109,14 +113,16 @@ export function Plates() {
 
   const components = [
     {
+      component: Title,
+      type: "title",
+    },
+    {
       component: PlateComponent,
       type: "full",
     },
   ];
 
   return (
-    <div className="barcharts">
-      <Widgets components={components} />
-    </div>
+    <Widgets components={components} />
   );
 }

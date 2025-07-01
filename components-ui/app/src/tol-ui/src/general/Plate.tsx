@@ -4,8 +4,11 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Well } from "./Well";
-import { TPlateData, IWellHoverContents } from "../models";
+import {
+  Well,
+  TPlateData,
+  IWellHoverContents
+} from "..";
 
 interface IPlate {
   id: string;

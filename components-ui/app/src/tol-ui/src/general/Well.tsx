@@ -3,9 +3,14 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import HoverOverlay from "./HoverOverlay";
+
 import { Progress } from "rsuite";
-import { IWellData, IWellHoverContents } from "../models";
+import {
+  HoverOverlay,
+  IWellData,
+  IWellHoverContents,
+} from "..";
+
 
 interface IWell {
   data: IWellData;
