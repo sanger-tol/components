@@ -4,13 +4,11 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode } from "react";
 import { Popover, Whisper } from "rsuite";
 
-
-interface Props {
-  contents: ReactNode;
-  children: JSX.Element;
+export interface Props {
+  contents: any;
+  children: any;
   placement?: string;
   delay?: number;
   onHover?: any;
@@ -22,6 +20,8 @@ export function HoverOverlay(props: Props) {
   const placement = props.placement === undefined ? "auto" : props.placement;
 
   const renderTooltip = () => <Popover>{contents}</Popover>;
+
+  if (!contents) return children
 
   return (
     <Whisper

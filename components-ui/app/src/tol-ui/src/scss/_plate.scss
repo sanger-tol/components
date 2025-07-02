@@ -1,0 +1,121 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+:root {
+  --plateMargin: 8px;
+}
+
+.tol-plate-container {
+  width: fit-content;
+}
+
+.tol-plate {
+  // transform: scale(0.5);
+  padding: 5px 15px;
+  width: fit-content;
+  height: fit-content;
+}
+
+.tol-plate-col-label:first-child {
+  margin-left: 40px;
+}
+
+.tol-plate-col-label {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+}
+
+.tol-plate-col-header {
+  width: 50px;
+  height: 30px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.tol-plate-rows {
+  display: flex;
+  flex-direction: row;
+}
+
+.tol-plate-row-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  align-content: center;
+  justify-items: center;
+}
+
+.tol-plate-row-header {
+  display: flex;
+  align-items: center;
+  min-width: 30px;
+  height: 50px;
+  text-align: center;
+  margin-bottom: var(--plateMargin);
+  margin-top: var(--plateMargin);
+}
+
+.tol-plate-row-header:first-child {
+  margin-top: calc(5px + var(--plateMargin));
+}
+
+.tol-plate-wells {
+  background-color: var(--tol-grey-translucent);
+  border: 2px solid var(--tol-grey);
+  border-radius: 6px;
+  min-height: 200px;
+  min-width: 90%;
+  padding: 5px;
+}
+
+.tol-plate-wells-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.tol-well {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: var(--plateMargin);
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+}
+
+.tol-progress-circle-style {
+  width: 50px;
+  display: inline-block;
+  margin: 8px;
+}
+
+.tol-well-classname {
+  background-color: var(--tol-grey);
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+}
+
+.well-progress-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  background-color: var(--tol-grey-translucent);
+  position: absolute;
+}
+
+.tol-well-percentage-classname {
+  @extend .tol-well-classname;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  justify-self: center;
+  margin: 10px;
+}
+
+
