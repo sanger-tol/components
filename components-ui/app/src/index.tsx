@@ -23,6 +23,7 @@ import {
   Widgets,
   Messages,
   Factories,
+  Plates,
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown, TOL_DS } from "./tol-ui/src";
@@ -114,9 +115,14 @@ const visualisationsDropdown: Dropdown = {
   pages: [barCharts, filters, maps, sunbursts, tables, timelines],
 };
 
+const plates: Page = {
+  name: "Plates",
+  element: <Plates />,
+};
+
 const otherDropdown: Dropdown = {
   name: "Other",
-  pages: [colours, detail, factories, forms, messages, miscellaneous, tsds, widgets, portal],
+  pages: [colours, detail, factories, forms, messages, miscellaneous, tsds, widgets, plates, portal],
 };
 
 // dev sandbox - change element if needed
