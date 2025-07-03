@@ -215,6 +215,7 @@ export function ResponsiveWidget(props: Props) {
                   type="error"
                   className="widget-delete-btn"
                   icon="trash"
+                  testid="delete-component-button"
                 />
                 {confirmationModal()}
               </div>

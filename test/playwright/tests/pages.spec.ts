@@ -97,6 +97,26 @@ const filterCountComponent = async ({page, testID}) => {
   expect(countAfter).not.toBe(countBefore);
 }
 
+const deleteCountComponent = async ({page, testID}) => {
+  // click show edit buttons button
+  await page.getByTestId('edit-zone-button').first().click();
+
+  // click the edit/move components button
+  await page.getByTestId('drag-components-button').first().click();
+
+  // click the delete button
+  await page.getByTestId('delete-component-button').first().click();
+
+  // confirm the delete
+  await page.getByTestId('confirm-delete-button').click();
+
+  // click the save button
+  await page.getByTestId('save-layout-button').click();
+
+  // check the count component has been deleted
+  expect(page.locator('.tol-count')).not.toBeVisible();
+};
+
 const deleteBoard = async({page, testID}) => {
   await page.goto('/my-boards');
 
@@ -125,6 +145,8 @@ test('manage dashboard', async ({ page }) => {
   await addCountComponent({page, testID});
 
   await filterCountComponent({page, testID});
+  
+  await deleteCountComponent({page, testID});
 
   await deleteBoard({page, testID});
 });

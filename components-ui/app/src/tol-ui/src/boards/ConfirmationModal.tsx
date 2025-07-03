@@ -25,6 +25,7 @@ export function ConfirmationModal(props: Props) {
           setOpen(false), onConfirmClick();
         }}
         text="Confirm"
+        testid="confirm-delete-button"
       />
       <Button
         position="right"
