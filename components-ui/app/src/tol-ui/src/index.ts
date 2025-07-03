@@ -36,7 +36,7 @@ export * from "./general";
 export * from "./hooks";
 export * from "./map";
 export * from "./messaging";
-export * from "./models";
+export * from "./interfaces";
 export * from "./nav";
 export * from "./services";
 export { retry } from "./services/http";

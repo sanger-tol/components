@@ -5,3 +5,5 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./Board";
+export * from "./utils";
+
