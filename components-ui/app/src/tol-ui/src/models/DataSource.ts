@@ -72,6 +72,10 @@ export interface IGetListPage {
   requestedFields?: string;
 }
 
+export interface IGetListCursor {
+  objectType: string;
+}
+
 export interface ICustom {
   method: string;
   resource: string;

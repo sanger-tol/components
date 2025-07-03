@@ -19,6 +19,7 @@ import {
   IUpsert,
   IGetByIds,
   IGetListPage,
+  IGetListCursor,
   ICustom,
   ISourceDataObject,
   TDataObjectOrNull,
@@ -386,6 +387,14 @@ export class TsDataSource {
         throw error;
       });
   }
+
+  public async getCursorPage({objectType}:IGetListCursor)
+  {
+    return await this.client()
+    .post(`${this.generateEndpoint(objectType)}:cursor`,
+      { baseURL: this.baseUrl },
+    )
+    .then((response: any) => {return response});}
 
   public async deleteByID({
     objectType,

@@ -21,9 +21,18 @@ export function DataSource() {
   ds1
     .getListPage({
       objectType: "species",
+      page: 1,
     })
     .then((dataObjects) => {
       console.log("List Page: ", dataObjects);
+    });
+
+  ds1
+    .getCursorPage({
+      objectType: "species",
+    })
+    .then((dataObjects) => {
+      console.log("List cursor page: ", dataObjects);
     });
 
   ds1
