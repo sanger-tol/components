@@ -19,7 +19,7 @@ import {
   TsDataSource,
   BOARDS,
   UtilityBar,
-  IButton
+  IButton,
 } from "../..";
 
 interface Props {
