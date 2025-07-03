@@ -68,7 +68,10 @@ const addCountComponent = async ({page, testID}) => {
   await expect(page.locator('.tol-count')).toBeVisible();
 }
 
-const editCountComponent = async ({page, testID}) => {
+const filterCountComponent = async ({page, testID}) => {
+  // get the count before filtering
+  const countBefore = await page.locator('.tol-count').textContent();
+
   // click the filter button
   await page.getByTestId('count-filter-button').first().click();
 
@@ -88,6 +91,10 @@ const editCountComponent = async ({page, testID}) => {
 
   // Click Apply Filter button
   await page.getByTestId('apply-filter-button').click();
+
+  // check the count has changed
+  const countAfter = await page.locator('.tol-count').textContent();
+  expect(countAfter).not.toBe(countBefore);
 }
 
 const deleteBoard = async({page, testID}) => {
@@ -117,7 +124,7 @@ test('manage dashboard', async ({ page }) => {
 
   await addCountComponent({page, testID});
 
-  await editCountComponent({page, testID});
+  await filterCountComponent({page, testID});
 
   await deleteBoard({page, testID});
 });
