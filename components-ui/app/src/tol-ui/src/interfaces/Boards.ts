@@ -6,14 +6,13 @@ SPDX-License-Identifier: MIT
 
 import {
   TsDataSource,
-  HistogramGrouping,
   IFilter,
   IUtilityBar,
 } from '..';
 
 
 export interface IComponent {
-  data: IComponentData;
+  data: IComponentData | IBoardComponentsData;
 }
 
 export interface IComponentData {
@@ -25,6 +24,14 @@ export interface IComponentData {
   type?: string; // component type e.g. table
   size?: string; // component size e.g. sm
   order?: number;
+}
+
+export interface IBoardComponentsData extends IComponentData {
+  componentZoneId: string;
+  objectType: string;
+  baseUrl: string;
+  apiPrefix: string;
+  config: any;
 }
 
 export interface IComponents {
@@ -122,10 +129,16 @@ export interface IBoardTargetAndZone extends IRemoteTargetAndZone {
 
 export type TUtilityBarOrNull = IUtilityBar | null;
 
-export interface IChartConfig {
-  breakDownBy: string,
-  xAxis: string,
-  stacked: boolean,
-  grouping: HistogramGrouping,
-  chartType: 'bar' | 'line' | 'scatter',
+export interface IWidgets {
+  componentId: string;
+  order: string; // placement in the order array
+  componentZoneId: string;
+  componentType: string;
+  widgetType: string;
+  filter: any;
+  title: string;
+  objectType: string;
+  baseUrl: string;
+  apiPrefix: string;
+  config: any;
 }

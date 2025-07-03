@@ -67,7 +67,7 @@ export function Board(props: PBoard) {
     }
   }, [boardId, user]);
 
-  if (!error) {
+  if (error !== "") {
     return <Redirect to="/page-not-found" />;
   }
 

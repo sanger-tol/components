@@ -10,31 +10,20 @@ import {
   Button,
   Placeholder,
   Visualisation,
-  getWidgetOrder,
   generateLayout,
   IZone,
   ConfirmationModal,
   BOARDS,
   TsDataSource,
-  API_METHODS
+  IWidgets,
+  onLayoutSave,
+  deleteComponent,
 } from "../..";
 
 
-export interface IWidgets {
-  componentId: string;
-  order: string; // placement in the order array
-  componentZoneId: string;
-  componentType: string;
-  widgetType: string;
-  filter: any;
-  title: string;
-  objectType: string;
-  baseUrl: string;
-  apiPrefix: string;
-  config: any;
-}
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-interface Props {
+interface PVisualisations {
   id: string;
   widgets: IWidgets[];
   draggable: boolean;
@@ -46,9 +35,7 @@ interface Props {
   boardDataSource: TsDataSource;
 }
 
-const ResponsiveReactGridLayout = WidthProvider(Responsive);
-
-export function ResponsiveWidget(props: Props) {
+export function ResponsiveWidget(props: PVisualisations) {
   const {
     widgets,
     setWidgets,
@@ -59,6 +46,7 @@ export function ResponsiveWidget(props: Props) {
     setSaveLayout,
     boardDataSource,
   } = props;
+
   const [layoutsState, setLayouts] = useState<Layouts>();
   // newLayout is used to store the layout when the user is dragging widgets, and is emtptied once a user saves
   const [newLayout, setNewLayout] = useState(undefined);
@@ -68,10 +56,8 @@ export function ResponsiveWidget(props: Props) {
   const internalLayouts = useRef(generateLayout(widgets));
 
   useEffect(() => {
-    // Generating the visualisations from the widgets
-    const elementsFromWidgets = widgets.map((widget) => {
-      const visualisation: JSX.Element = (
-        /* @ts-ignore */
+    const elementsFromWidgets = widgets.map((widget) => (
+      <div key={widget.componentId} className="tol-visualisation">
         <Visualisation
           id={widget.componentId}
           size={widget.widgetType}
@@ -90,66 +76,32 @@ export function ResponsiveWidget(props: Props) {
           boardDataSource={boardDataSource}
           boardObjectType={BOARDS.COMPONENT}
         />
-      );
-      return (
-        <div key={widget.componentId} className="tol-responsive-widget">
-          {visualisation || null}
-        </div>
-      );
-    });
+      </div>
+    ));
     setElements(elementsFromWidgets);
-
     const newLayout = generateLayout(widgets);
     setLayouts(newLayout);
     internalLayouts.current = newLayout;
   }, [widgets, zone]);
 
-  const deleteWidget = (id: string) => {
-    const newWidgets = widgets.filter((widget) => widget.componentId !== id);
-    boardDataSource
-      .custom({
-        method: API_METHODS.DELETE,
-        resource: `${BOARDS.COMPONENT}/${id}`,
-      })
-    setWidgets(newWidgets);
-  };
-
   useEffect(() => {
     if (saveLayout) {
-      onLayoutSave(newLayout);
+      onLayoutSave(
+        newLayout,
+        boardDataSource,
+        setSaveLayout,
+        widgets,
+        setWidgets,
+        zone,
+        setZone
+      );
     }
   }, [saveLayout]);
 
-  const onLayoutSave = async (layout) => {
-    // Gets the order based off of the layout on screen
-    const order = getWidgetOrder(layout);
-
-    // Finds the highest order value in the current widgets, based off the db
-    const orderValues = widgets.map((widget) => Number(widget.order));
-    const highestPreviousOrder = Math.max(...orderValues);
-
-    // Maps through the order and upserts based off of the componentId
-    const payloadData = order.order.map((componentId, index) => {
-      const widget = widgets.find(
-        (widget) => widget.componentId === componentId,
-      );
-      widget!.order = highestPreviousOrder + 1 + index;
-      return {
-        type: BOARDS.COMPONENT_ZONE as string,
-        id: widget!.componentZoneId,
-        attributes: {
-          order: highestPreviousOrder + index + 1,
-        },
-      };
-    });
-    await boardDataSource.upsert({
-      objectType: BOARDS.COMPONENT_ZONE,
-      payload: payloadData,
-    });
-    setSaveLayout(false);
-    zone.order = order.order;
-    setZone({ ...zone });
-    setWidgets(widgets);
+  const deleteWidget = (id: string) => {
+    const newWidgets = widgets.filter((widget) => widget.componentId !== id);
+    deleteComponent(id, boardDataSource);
+    setWidgets(newWidgets);
   };
 
   const onBreakpointChange = () => {
@@ -164,17 +116,6 @@ export function ResponsiveWidget(props: Props) {
     setWidgetToDelete(key);
     setConfirmationModalOpen(true);
   };
-
-  // @ts-ignore
-  const confirmationModal = () => (
-    <ConfirmationModal
-      setOpen={setConfirmationModalOpen}
-      open={confirmationModalOpen}
-      // @ts-ignore
-      onConfirmClick={handleConfirmDeleteComponent}
-      itemType="widget"
-    />
-  );
 
   const handleConfirmDeleteComponent = () => {
     if (widgetToDelete) {
@@ -217,7 +158,13 @@ export function ResponsiveWidget(props: Props) {
                   icon="trash"
                   testid="delete-component-button"
                 />
-                {confirmationModal()}
+                <ConfirmationModal
+                  setOpen={setConfirmationModalOpen}
+                  open={confirmationModalOpen}
+                  // @ts-ignore
+                  onConfirmClick={handleConfirmDeleteComponent}
+                  itemType="widget"
+                />
               </div>
             );
           }
