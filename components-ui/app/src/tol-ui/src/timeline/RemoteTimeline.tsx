@@ -65,7 +65,7 @@ export function RemoteTimeline(props: IRemoteTimeline) {
   return (
     <Timeline
       id={`timeline-${objectType}-${id}`}
-      title={createTitle(id, objectType)}
+      title={createTitle(id, objectType, name)}
       endless={false}
       data={timelineData}
       dateWithDay={dateWithDay}

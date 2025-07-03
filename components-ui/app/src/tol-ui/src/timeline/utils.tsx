@@ -7,7 +7,11 @@ import { ITimelineData, ITimelineItem, TDataObjectOrNull } from "..";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
-export function createTitle(id: string, endpoint: string): string {
+export function createTitle(
+  id: string,
+  endpoint: string,
+  name: string
+): string {
   switch (endpoint) {
     case "species":
       return `Timeline of completed events for ${name}`;
