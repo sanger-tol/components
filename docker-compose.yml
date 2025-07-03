@@ -126,4 +126,4 @@ services:
       - POSTGRES_HOST
       - POSTGRES_PORT
       - HEADLESS=true
-    
+      - DOCKER_COMPOSE=1
