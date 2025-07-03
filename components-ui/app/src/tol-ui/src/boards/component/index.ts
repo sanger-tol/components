@@ -6,3 +6,4 @@ SPDX-License-Identifier: MIT
 
 export * from "./Visualisation";
 export * from "./ResponsiveWidget";
+export * from "./utils";
