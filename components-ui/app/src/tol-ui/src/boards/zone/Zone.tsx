@@ -108,7 +108,8 @@ export function Zone(props: Props) {
     type: "success",
     icon: "plus",
     position: "right",
-    tooltip: "Add Widget"
+    tooltip: "Add Widget",
+    testid: "add-component-button",
   };
 
   const editButton: IButton = {

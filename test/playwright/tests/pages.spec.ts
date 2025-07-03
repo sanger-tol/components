@@ -10,7 +10,7 @@ const headless = !!(process.env.CI || process.env.HEADLESS);
 test.use({headless: headless});
 
 test.beforeEach(async ({ page }) => {
-  setAuth({page});
+  await setAuth({page});
 });
 
 const createBoard = async ({page, testID}) => {
@@ -28,6 +28,42 @@ const createBoard = async ({page, testID}) => {
   // save the board
   await page.getByRole('button', {name: 'Create'}).click();
 };
+
+const createView = async ({page, testID}) => {};
+
+const createZone = async ({page, testID}) => {
+  // click add zone button
+  await page.click('.add-zone-button');
+
+  // choose the object type
+  await page.getByRole('combobox').click();
+
+  // select the object type
+  await page.getByText('curation').click();
+
+  // name the zone
+  await page.getByRole('textbox').fill(testID);
+
+  // click add zone button
+  await page.getByRole('button', {name: 'Add Zone'}).click();
+};
+
+const addCountComponent = async ({page, testID}) => {
+  // click the add component button
+  await page.getByTestId('add-component-button').first().click();
+
+  // select the component type
+  await page.getByTestId(`component-option-count`).click();
+
+  // select size
+  await page.getByText('Small').click();
+
+  // enter the title
+  await page.getByRole('textbox').fill(testID);
+
+  // click the add component button
+  await page.getByTestId('confirm-add-component-button').click();
+}
 
 const deleteBoard = async({page, testID}) => {
   await page.goto('/my-boards');
@@ -48,9 +84,13 @@ const deleteBoard = async({page, testID}) => {
 test('manage dashboard', async ({ page }) => {
   const testID = crypto.randomUUID();
 
-  await setAuth({page});
-
   await createBoard({page, testID});
+
+  await createView({page, testID});
+
+  await createZone({page, testID});
+
+  await addCountComponent({page, testID});
 
   await deleteBoard({page, testID});
 });
