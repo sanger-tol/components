@@ -34,6 +34,8 @@ export function UtilityBar(props: IUtilityBar) {
 
   const wrapperId = "tol-utility-bar-wrapper-" + id; // gets width on mount
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
+
+  
   
   resizeListener(() => {
     const width = document.getElementById(wrapperId)?.offsetWidth;
@@ -91,7 +93,7 @@ export function UtilityBar(props: IUtilityBar) {
           (
             smallBreakpoint &&
             buttons &&
-            // only takes into account buttons that are not hidden
+            // only takes into account buttons that are visible
             buttons.filter(button => button?.['visible'] !== false).length > 1
           )
           ? CondensedButtons

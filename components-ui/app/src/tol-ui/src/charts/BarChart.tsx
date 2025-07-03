@@ -297,8 +297,6 @@ export function BarChart(props: Props) {
     },
   };
 
-  const style = { height: height };
-
   return (
     <div style={{ height: height }}>
       <UtilityBar
@@ -330,7 +328,7 @@ export function BarChart(props: Props) {
           ...(utilityBarConfig.buttons || []),
         ]}
       />
-      <div style={style} className="tol-utility-bar-content-offset">
+      <div className="tol-component-contents-with-offset">
         {contents ? contents :
           <Chart
             type={chartType === "scatter" ? "line" : (chartType as keyof ChartTypeRegistry)}

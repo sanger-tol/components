@@ -19,7 +19,7 @@
 }
 
 .tol-placeholder {
-  background-color: var(--tol-grey-subtle);
+  background-image: linear-gradient(var(--tol-grey-subtle), rgba(255, 255, 255, 0));
   position: relative !important;
   height: auto !important;
   min-height: 100% !important;

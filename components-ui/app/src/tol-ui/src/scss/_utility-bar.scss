@@ -25,9 +25,9 @@
 }
 
 .tol-component-contents {
-  height: calc(100% - var(--tol-utility-bar-offset));
+  height: 100%;
 }
 
-.tol-utility-bar-content-offset {
-  padding-bottom: var(--tol-utility-bar-offset);
+.tol-component-contents-with-offset {
+  height: calc(100% - var(--tol-utility-bar-offset));
 }

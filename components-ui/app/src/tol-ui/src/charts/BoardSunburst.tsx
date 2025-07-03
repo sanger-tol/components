@@ -42,18 +42,15 @@ export function BoardSunburst(props: Props) {
   const Contents = () => {
     if (!config.sliceBy || config.sliceBy.length <= 0) {
       return (
-        <div style={{ height: '100%', marginTop: '6px' }}>
-          <Placeholder
-            pie
-            height={'100%'}
-            message={
-              <>
-                Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
-              </>
-            }
-          />
-        </div>
-      )
+        <Placeholder
+          pie
+          message={
+            <>
+              Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
+            </>
+          }
+        />
+      );
     }
     return null;
   }

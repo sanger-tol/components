@@ -75,7 +75,7 @@ export function BoardChart(props: Props) {
   }
 
   return (
-    <div style={{ height: "100%" }}>
+    <>
       <BoardFilters
         {...props}
         open={openFilters}
@@ -89,31 +89,29 @@ export function BoardChart(props: Props) {
         title="Chart Configuration"
         config={deepCopy(config)}
       />
-      <div style={{ height: '100%' }}>
-        <RemoteBarChart
-          {...props}
-          contents={Contents()}
-          breakDownBy={config.breakDownBy || ""}
-          chartType={config.chartType}
-          xAxis={config.xAxis || ""}
-          stacked={config.stacked || false}
-          type={config.grouping || ""}
-          forceUpdate={forceUpdate}
-          utilityBarConfig={{
-            title: {
-              text: title,
-              editable: true,
-              onSave: (value: string) => {
-                saveTitle(value, boardDataSource, id, boardObjectType);
-              }
-            },
-            buttons: [
-              configButton,
-              filterButton,
-            ],
-          }}
-        />
-      </div>
-    </div>
+      <RemoteBarChart
+        {...props}
+        contents={Contents()}
+        breakDownBy={config.breakDownBy || ""}
+        chartType={config.chartType}
+        xAxis={config.xAxis || ""}
+        stacked={config.stacked || false}
+        type={config.grouping || ""}
+        forceUpdate={forceUpdate}
+        utilityBarConfig={{
+          title: {
+            text: title,
+            editable: true,
+            onSave: (value: string) => {
+              saveTitle(value, boardDataSource, id, boardObjectType);
+            }
+          },
+          buttons: [
+            configButton,
+            filterButton,
+          ],
+        }}
+      />
+    </>
   );
 }

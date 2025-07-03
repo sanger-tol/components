@@ -143,17 +143,13 @@ export function RemoteBarChart(props: Props) {
   const setter = cumulative || setZone === undefined ? undefined : setBarData;
 
   return (
-    <div style={{ height: height }}>
-      <div className="tol-component-contents">
-        <BarChart
-          {...props}
-          contents={contents ? contents : Contents()}
-          downloadName={normaliseCaps(objectType)}
-          labels={labels}
-          datasets={datasets}
-          setBarData={setter}
-        />
-      </div>
-    </div>
+    <BarChart
+      {...props}
+      contents={contents ? contents : Contents()}
+      downloadName={normaliseCaps(objectType)}
+      labels={labels}
+      datasets={datasets}
+      setBarData={setter}
+    />
   )
 }

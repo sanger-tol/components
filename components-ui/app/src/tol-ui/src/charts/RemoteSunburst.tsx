@@ -80,8 +80,8 @@ export function RemoteSunburst(props: Props) {
     const compoundedFilter = generateFilter(zone, id);
     // will trigger [filter] useEffect if update has occured
     if (filterHasUpdated(setFilter, filter, compoundedFilter)) {
-      resetFiltersBelow({ id: id, zone: zone! });
-      setZone!({ ...zone! });
+      resetFiltersBelow({ id: id, zone: zone });
+      setZone({ ...zone });
     }
   }, [zone]);
 
@@ -122,9 +122,9 @@ export function RemoteSunburst(props: Props) {
       addSubFilter({
         id: id,
         filter: localFilter,
-        zone: zone!,
+        zone: zone,
       });
-      setZone!({ ...zone! });
+      setZone({ ...zone });
       // clear sub sunburst
       if (isEmptyObject(sliceData)) {
         setSubDatasets({});
@@ -161,15 +161,6 @@ export function RemoteSunburst(props: Props) {
     }
   }, [sliceData]);
 
-
-  const headerPadding = height === "100%" ? 0 : 37;
-  const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
-  const setter = setZone === undefined ? undefined : setSliceData;
-  const mainPlacement = noLegend
-    ? { paddingTop: 150 - headerPadding }
-    : { paddingLeft: 150 };
-  mainPlacement["paddingBottom"] = headerPadding;
-
   const Contents = () => {
     if (errorMessage !== "") {
       return <Placeholder errorMessage={errorMessage} />
@@ -201,6 +192,10 @@ export function RemoteSunburst(props: Props) {
     icon: "download",
   } : {};
 
+  const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
+  const setter = setZone === undefined ? undefined : setSliceData;
+  const mainPlacement = noLegend ? { paddingTop: 150 } : { paddingLeft: 150 };
+
   return (
     <div
       id={wrapperId}
@@ -215,55 +210,52 @@ export function RemoteSunburst(props: Props) {
           downloadButton
         ]}
       />
-      {contents ? contents : 
-        <div className="tol-component-contents">
-          {miniActive ? (
-              <div className="sunburst-sub" style={mainPlacement}>
-                {subLoading ? (
-                  <Placeholder clear loader />
-                ) : (
+      <div className="tol-component-contents-with-offset">
+        {contents ? contents : 
+          <>
+            {miniActive ? (
+                <div className="sunburst-sub" style={mainPlacement}>
+                  {subLoading ? (
+                    <Placeholder clear loader />
+                  ) : (
+                    <Sunburst
+                      {...props}
+                      id={id}
+                      noRefresh
+                      noDownload
+                      datasets={subDatasets}
+                      setSliceData={setter}
+                      noLegend={noLegend}
+                      utilityBarConfig={null}
+                      height={"100%"}
+                    />
+                  )}
+                </div>
+              ) : null}
+              <div
+                className={miniActive ? "sunburst-mini" : "tol-component-contents"}
+              >
+                {warningMessage !== "" ?
+                  <Placeholder warningMessage={warningMessage} />
+                  :
                   <Sunburst
                     {...props}
-                    id={id}
                     noRefresh
                     noDownload
-                    datasets={subDatasets}
+                    contents={contents ? contents : Contents()}
+                    datasets={datasets}
+                    downloadName={normaliseCaps(objectType)}
                     setSliceData={setter}
-                    noLegend={noLegend}
-                    height="100%"
-                    utilityBarConfig={undefined}
+                    noLegend={miniActive ? true : noLegend}
+                    resetChart={resetChart}
+                    utilityBarConfig={null}
+                    height={"100%"}
                   />
-                )}
-              </div>
-            ) : null}
-            <div
-              className={miniActive ? "sunburst-mini" : ""}
-              style={
-                miniActive
-                  ? { paddingTop: headerPadding }
-                  : { height: height, paddingBottom: headerPadding }
-              }
-            >
-              {warningMessage !== "" ?
-                <Placeholder warningMessage={warningMessage} />
-                :
-                <Sunburst
-                  {...props}
-                  noRefresh
-                  noDownload
-                  contents={contents ? contents : Contents()}
-                  datasets={datasets}
-                  downloadName={normaliseCaps(objectType)}
-                  setSliceData={setter}
-                  noLegend={miniActive ? true : noLegend}
-                  resetChart={resetChart}
-                  height="100%"
-                  utilityBarConfig={undefined}
-                />
-              }
+                }
             </div>
-        </div>
-      }
+          </>
+        }
+      </div>
     </div>
   );
 }
