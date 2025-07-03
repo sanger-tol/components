@@ -46,7 +46,10 @@ export function RemoteCount(props: Props) {
     dataSource
       .custom({
         method: API_METHODS.GET,
-        resource: `${objectType}:count`
+        resource: `${objectType}:count`,
+        params: {
+          filter: filter
+        }
       })
       .then((res: any) => {
         const total = res.data.meta.total;

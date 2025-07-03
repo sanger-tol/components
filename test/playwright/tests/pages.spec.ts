@@ -68,6 +68,28 @@ const addCountComponent = async ({page, testID}) => {
   await expect(page.locator('.tol-count')).toBeVisible();
 }
 
+const editCountComponent = async ({page, testID}) => {
+  // click the filter button
+  await page.getByTestId('count-filter-button').first().click();
+
+  // click the attribute selector dropdown
+  await page.getByRole('combobox').first().click();
+  
+  // choose specific attribute
+  await page.getByText('grit_project').click();
+
+  // click again to hide dropdown
+  await page.getByRole('combobox').first().click();
+
+  // Give filter a value
+  await page.getByRole('combobox').nth(1).click();
+  await page.getByText('ToL Rapid Curation').click();
+  await page.getByRole('combobox').nth(1).click();
+
+  // Click Apply Filter button
+  await page.getByTestId('apply-filter-button').click();
+}
+
 const deleteBoard = async({page, testID}) => {
   await page.goto('/my-boards');
 
@@ -94,6 +116,8 @@ test('manage dashboard', async ({ page }) => {
   await createZone({page, testID});
 
   await addCountComponent({page, testID});
+
+  await editCountComponent({page, testID});
 
   await deleteBoard({page, testID});
 });
