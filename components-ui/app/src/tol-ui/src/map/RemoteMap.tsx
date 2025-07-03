@@ -12,11 +12,10 @@ import {
   API_METHODS,
   Placeholder,
   generateFilter,
-  createMapMarkers
+  createMapMarkers,
 } from "..";
 
-
-interface Props extends IRemoteTargetAndZone {
+export interface PRemoteMap extends IRemoteTargetAndZone {
   id: string;
   bubble?: boolean;
   longitudeKey: string;
@@ -29,7 +28,7 @@ interface Props extends IRemoteTargetAndZone {
   markerRenderer?: Function;
 }
 
-export function RemoteMap(props: Props) {
+export function RemoteMap(props: PRemoteMap) {
   const {
     id,
     objectType,
@@ -41,15 +40,15 @@ export function RemoteMap(props: Props) {
     markerRenderer,
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
+  const filter: TFilterOrUndefined =
+    zone !== undefined ? generateFilter(zone, id) : {};
+  
   const [markers, setMarkers] = useState<object[]>([]);
   const [warningMessage, setWarningMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState<number | undefined>(undefined);
   const [legendKey, setLegendKey] = useState<object[]>([]);
-  const filter: TFilterOrUndefined = zone !== undefined
-    ? generateFilter(zone, id)
-    : {};
 
   // providing a pageSize default
   let pageSize = 2500;
@@ -80,7 +79,7 @@ export function RemoteMap(props: Props) {
               params: {
                 filter,
                 page_size: pageSize,
-              }
+              },
             })
             .then((res) => {
               const markers = createMapMarkers(
@@ -90,10 +89,12 @@ export function RemoteMap(props: Props) {
                 legendKey,
                 setLegendKey,
                 attributeKeys,
-                markerRenderer,
+                markerRenderer
               );
               setMarkers(markers);
-              setWarningMessage(markers.length === 0 ? "No Location Data Found" : "");
+              setWarningMessage(
+                markers.length === 0 ? "No Location Data Found" : ""
+              );
               setLoading(false);
             })
             .catch((error: any) => {
@@ -116,7 +117,7 @@ export function RemoteMap(props: Props) {
 
   const map = <Map {...props} markers={markers} />;
 
-  if (errorMessage !== "") {
+  if (!errorMessage) {
     return (
       <Placeholder
         errorMessage={errorMessage}
@@ -127,7 +128,7 @@ export function RemoteMap(props: Props) {
     );
   }
 
-  if (warningMessage !== "") {
+  if (!warningMessage) {
     return (
       <Placeholder
         warningMessage={warningMessage}

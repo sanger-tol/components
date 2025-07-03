@@ -10,17 +10,9 @@ import ReactDOMServer from "react-dom/server";
 import { MapContainer, TileLayer, Popup, Marker, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import MarkerClusterGroup from "react-leaflet-cluster";
-import Leaflet from "leaflet";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
-import {
-  FormatTooltip,
-  getCssVarValue,
-  MapLegend,
-} from "..";
+import { FormatTooltip, MapLegend, generateIcon, ScrollControl } from "..";
 
-
-interface Props {
+export interface PMap {
   id: string;
   markers: any[];
   height?: any;
@@ -28,50 +20,7 @@ interface Props {
   legend?: object[];
 }
 
-interface MapWithLegendProps {
-  config: object[];
-}
-
-const generateIcon = (marker) => {
-  let pointerColour = marker.colour;
-  if (!marker.colour) {
-    pointerColour = getCssVarValue("--tol-primary");
-  }
-
-  return Leaflet.divIcon({
-    html: ReactDOMServer.renderToString(
-      <FontAwesomeIcon
-        icon={faLocationDot}
-        style={{ color: pointerColour }}
-        size="2x"
-      />,
-    ),
-    iconAnchor: [0, 20],
-    className: "",
-  });
-};
-
-function MapWithLegend(props: MapWithLegendProps) {
-  const { config } = props;
-  const map = useMap();
-  return <MapLegend map={map} config={config} />;
-}
-
-function ScrollControl({ scrollWheel }) {
-  const map = useMap();
-
-  useEffect(() => {
-    if (scrollWheel) {
-      map.scrollWheelZoom.enable(); // Enable scroll zoom when state is true
-    } else {
-      map.scrollWheelZoom.disable(); // Disable scroll zoom when state is false
-    }
-  }, [scrollWheel, map]);
-
-  return null;
-}
-
-export function Map(props: Props) {
+export function Map(props: PMap) {
   const { id, markers, bubble, legend } = props;
   const height = props.height !== undefined ? props.height : "100%";
 
@@ -98,6 +47,11 @@ export function Map(props: Props) {
     return () => {
       document.removeEventListener("mousedown", handleMouseDown);
     };
+  };
+
+  const MapWithLegend = (config: object[]) => {
+    const map = useMap();
+    return <MapLegend map={map} config={config} />;
   };
 
   return (
@@ -161,7 +115,7 @@ export function Map(props: Props) {
             })}
           </div>
         )}
-        {legend && legend.length > 0 && <MapWithLegend config={legend} />}
+        {legend && legend.length > 0 && MapWithLegend(legend)}
       </MapContainer>
     </div>
   );

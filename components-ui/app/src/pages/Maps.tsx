@@ -62,9 +62,9 @@ export function Maps() {
         id: "report-card-map-v1",
         filter: {
           and_: {
-            bioscan_o: {
-              in_list: {
-                value: ["Polydesmida", "Pseudoscorpiones"],
+            "sts_species.sts_family": {
+              contains: {
+                value: "La",
                 negate: false,
               },
             },
@@ -93,9 +93,9 @@ export function Maps() {
       <RemoteMap
         id="report-card-map-v1"
         bubble
-        longitudeKey="sts_sample.sts_longitude.keyword"
-        latitudeKey="sts_sample.sts_latitude.keyword"
-        attributeKeys="bioscan_s"
+        longitudeKey="sts_longitude.keyword"
+        latitudeKey="sts_latitude.keyword"
+        attributeKeys="sts_longitude"
         markerRenderer={activeChecker}
         height={400}
         {...cardZone}

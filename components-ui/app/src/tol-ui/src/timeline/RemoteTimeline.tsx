@@ -39,10 +39,6 @@ export function RemoteTimeline(props: IRemoteTimeline) {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    createTimelineData();
-  }, []);
-
-  const createTimelineData = async () => {
     setLoading(true);
     dataSource
       .getOne({ objectType, id })
@@ -56,7 +52,7 @@ export function RemoteTimeline(props: IRemoteTimeline) {
       .finally(() => {
         setLoading(false);
       });
-  };
+  }, []);
 
   if (loading) {
     return <Placeholder clear loader />;
