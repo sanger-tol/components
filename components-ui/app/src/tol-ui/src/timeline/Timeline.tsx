@@ -9,41 +9,20 @@ import { Timeline as RSTimeline } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row } from "..";
+import { ITimelineData, ITimelineItem, TIMELINE_DOTS } from "..";
 
-
-type iconType = "active-dot" | "dot";
-
-export interface TimelineItem {
-  title?: string;
-  date?: Date;
-  color?: string;
-  icon?: iconType | React.ReactNode;
-  desc?: string;
-}
-
-export interface TimeLineData {
-  [key: string]: TimelineItem;
-}
-
-interface ITimeline {
+export interface PTimeline {
   id: string;
   title: string;
   endless?: boolean;
-  data: TimeLineData;
+  data: ITimelineData;
   dateWithDay?: boolean;
   defaultIcon?: boolean;
 }
 
-const ACTIVE_DOT = "active-dot";
-const DOT = "dot";
-const DOT_DEFAULT = "#d9d9d9";
-const ACTIVE_DOT_DEFAULT = "#039be5";
-const DEFAULT_ICON_COLOR = "#15b215";
-const DEFAULT_NOT_DEFINED = "#fff";
-
-export function Timeline(props: ITimeline) {
+export function Timeline(props: PTimeline) {
   const { id, title, endless, data, dateWithDay, defaultIcon } = props;
-  const [sortedData, setSortedData] = useState<TimelineItem[]>([]);
+  const [sortedData, setSortedData] = useState<ITimelineItem[]>([]);
 
   useEffect(() => {
     const parsedData: any = parseDataPoints(data);
@@ -51,8 +30,8 @@ export function Timeline(props: ITimeline) {
     setSortedData(sortedTimeline);
   }, [data]);
 
-  const parseDataPoints = (data: TimeLineData): TimelineItem[] => {
-    return Object.entries(data).reduce((acc: TimelineItem[], [key, value]) => {
+  const parseDataPoints = (data: ITimelineData): ITimelineItem[] => {
+    return Object.entries(data).reduce((acc: ITimelineItem[], [key, value]) => {
       if (value === null || value === undefined) {
         return acc;
       }
@@ -61,7 +40,7 @@ export function Timeline(props: ITimeline) {
       if (typeof value.date === "string") {
         const dateString = value.date as string;
         const date = new Date(
-          dateString + (dateString.indexOf("Z") === -1 ? "Z" : ""),
+          dateString + (dateString.indexOf("Z") === -1 ? "Z" : "")
         );
         if (!isNaN(date.getTime())) {
           parsedDate = date;
@@ -85,7 +64,7 @@ export function Timeline(props: ITimeline) {
     }, []);
   };
 
-  const sortTimelineByDate = (timeline: TimelineItem[]) => {
+  const sortTimelineByDate = (timeline: ITimelineItem[]) => {
     return timeline.sort((a, b) => {
       const dateA = new Date(a.date!);
       const dateB = new Date(b.date!);
@@ -102,8 +81,8 @@ export function Timeline(props: ITimeline) {
         <Row>
           <RSTimeline endless={endless} className="timeline-wrapper" id={id}>
             {sortedData
-              .filter((item: TimelineItem) => item.date !== null)
-              .map((item: TimelineItem, index: Number) => (
+              .filter((item: ITimelineItem) => item.date !== null)
+              .map((item: ITimelineItem, index: Number) => (
                 <RSTimeline.Item
                   key={item.date!.toISOString()}
                   time={
@@ -121,8 +100,8 @@ export function Timeline(props: ITimeline) {
                               item.color !== undefined
                                 ? item.color
                                 : defaultIcon
-                                  ? DEFAULT_ICON_COLOR
-                                  : DEFAULT_NOT_DEFINED,
+                                ? TIMELINE_DOTS.DEFAULT_ICON_COLOR
+                                : TIMELINE_DOTS.DEFAULT_NOT_DEFINED,
                           }}
                         >
                           {defaultIcon ? (
@@ -142,31 +121,34 @@ export function Timeline(props: ITimeline) {
                           className="timeline-custom-dot-color"
                           style={{
                             backgroundColor:
-                              item.icon === ACTIVE_DOT
-                                ? ACTIVE_DOT_DEFAULT || DOT_DEFAULT
-                                : item.color || DOT_DEFAULT,
+                              item.icon === TIMELINE_DOTS.ACTIVE_DOT
+                                ? TIMELINE_DOTS.ACTIVE_DOT_DEFAULT ||
+                                  TIMELINE_DOTS.DOT_DEFAULT
+                                : item.color || TIMELINE_DOTS.DOT_DEFAULT,
                           }}
                         ></div>
                       );
                     }
-                    if (item.icon === ACTIVE_DOT) {
+                    if (item.icon === TIMELINE_DOTS.ACTIVE_DOT) {
                       return (
                         <div
                           className="timeline-custom-dot-color"
                           style={{
-                            backgroundColor: ACTIVE_DOT_DEFAULT || DOT_DEFAULT,
+                            backgroundColor:
+                              TIMELINE_DOTS.ACTIVE_DOT_DEFAULT ||
+                              TIMELINE_DOTS.DOT_DEFAULT,
                           }}
                         ></div>
                       );
                     }
                     if (
                       index === sortedData.length - 1 &&
-                      (item.icon === DOT || !defaultIcon)
+                      (item.icon === TIMELINE_DOTS.DOT || !defaultIcon)
                     ) {
                       return (
                         <div
                           className="timeline-custom-dot-color"
-                          style={{ backgroundColor: DOT_DEFAULT }}
+                          style={{ backgroundColor: TIMELINE_DOTS.DOT_DEFAULT }}
                         ></div>
                       );
                     }

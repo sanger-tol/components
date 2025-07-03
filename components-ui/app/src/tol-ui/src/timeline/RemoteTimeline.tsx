@@ -6,18 +6,17 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
-  TimeLineData,
-  TimelineItem,
+  ITimelineData,
+  ITimelineItem,
   Timeline,
   Placeholder,
   IRemoteTarget,
-  TDataObjectOrNull
+  TDataObjectOrNull,
 } from "..";
-
 
 interface IRemoteTimeline extends IRemoteTarget {
   id: string;
-  data: TimeLineData;
+  data: ITimelineData;
   dateWithDay?: boolean;
   defaultIcon?: boolean;
   titleDataPoint: string;
@@ -31,7 +30,7 @@ export function RemoteTimeline(props: IRemoteTimeline) {
     data,
     dateWithDay,
     defaultIcon,
-    titleDataPoint
+    titleDataPoint,
   } = props;
 
   const [timelineData, setTimelineData] = useState<any>([]);
@@ -43,11 +42,11 @@ export function RemoteTimeline(props: IRemoteTimeline) {
   }, []);
 
   const parseObjectValues = (
-    dataObject: TDataObjectOrNull,
-  ): TimelineItem[] => {
-    return Object.keys(data).reduce((acc: TimelineItem[], key) => {
+    dataObject: TDataObjectOrNull
+  ): ITimelineItem[] => {
+    return Object.keys(data).reduce((acc: ITimelineItem[], key) => {
       if (dataObject && dataObject[key]) {
-        const timelineItem: TimelineItem = {
+        const timelineItem: ITimelineItem = {
           title: data[key].title,
           date: dataObject[key],
           desc: data[key].desc || "",
@@ -63,7 +62,7 @@ export function RemoteTimeline(props: IRemoteTimeline) {
   const createTimelineData = async () => {
     setLoading(true);
     dataSource
-      .getOne({objectType, id})
+      .getOne({ objectType, id })
       .then((dataObject: TDataObjectOrNull) => {
         setName(dataObject?.[titleDataPoint] ?? titleDataPoint);
         setTimelineData(parseObjectValues(dataObject));
@@ -74,7 +73,7 @@ export function RemoteTimeline(props: IRemoteTimeline) {
       .finally(() => {
         setLoading(false);
       });
-  }
+  };
 
   const createTitle = (id: string, endpoint: string): string => {
     switch (endpoint) {
