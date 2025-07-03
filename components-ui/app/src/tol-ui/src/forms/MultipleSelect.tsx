@@ -5,8 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { Checkbox, CheckPicker as RSCheckPicker } from "rsuite";
-import { isPropDefined } from "../general/utils";
-import { RSForm } from "../index";
+import {
+  RSForm,
+  isPropDefined,
+} from "..";
+
 
 interface Data {
   label: string;
@@ -43,7 +46,7 @@ interface Props {
   groupBy?: string;
 }
 
-function MultipleSelect(props: Props) {
+export function MultipleSelect(props: Props) {
   const {
     sticky,
     data,
@@ -139,5 +142,3 @@ function MultipleSelect(props: Props) {
     </>
   );
 }
-
-export default MultipleSelect;

@@ -17,7 +17,7 @@ import {
 } from "../tol-ui/src";
 import { Slider } from "rsuite";
 
-function Messages() {
+export function Messages() {
   const [toastPosition, setToastPosition] = useState("topCenter");
   const [toastType, setToastType] = useState("success");
   const [value, setValue] = useState(0);
@@ -330,5 +330,3 @@ function Messages() {
     </div>
   );
 }
-
-export default Messages;

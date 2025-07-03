@@ -4,10 +4,12 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useState, useEffect, useRef } from "react";
 import { Button } from "rsuite";
-import { RSForm, Toaster, Message } from "../index";
-import React, { useState, useEffect, useRef } from "react";
 import {
+  RSForm,
+  Toaster,
+  Message,
   CountrySelect,
   FormTextField,
   SingleSelectCustomOption,
@@ -16,7 +18,8 @@ import {
   AutoComplete,
   Dropzone,
   FormCheckboxes,
-} from "./index";
+} from "..";
+
 
 export type Appearance = "default" | "primary" | "link" | "subtle" | "ghost";
 export type Color =
@@ -67,7 +70,7 @@ const MISSING_DATA_ERROR =
   "Please complete all required fields before submitting.";
 const UNSUPPORTED_FIELD_TYPE = "Unsupported field type:";
 
-function FormAllInOne(props: Props) {
+export function FormAllInOne(props: Props) {
   const { formConfig, initialData, fluid, model, onValidate } = props;
 
   const [formData, setFormData] = useState<object>({});
@@ -202,7 +205,8 @@ function FormAllInOne(props: Props) {
       case "dropzone":
         return (
           <Dropzone
-            endpoint={field.endpoint}
+            resource={field.resource}
+            dataSource={field.dataSource}
             fileType={field.fileType}
             generateMessages={field.generateMessages}
             setResponse={field.setResponse}
@@ -305,5 +309,3 @@ function FormAllInOne(props: Props) {
     </div>
   );
 }
-
-export default FormAllInOne;

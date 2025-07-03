@@ -5,18 +5,21 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { Container } from "react-bootstrap";
-import { HeaderButton } from "../models/Buttons";
-import Button from "./Button";
+import {
+  Container,
+  HeaderButton,
+  Button
+} from "..";
 
-export interface Props {
+
+interface Props {
   title?: string;
   subTitle?: string;
   buttons?: HeaderButton[];
   pageEmpty?: boolean;
 }
 
-class Header extends React.Component<Props> {
+export class Header extends React.Component<Props> {
   buttons: HeaderButton[] = [];
   pageEmpty = true;
 
@@ -72,5 +75,3 @@ class Header extends React.Component<Props> {
     );
   }
 }
-
-export default Header;

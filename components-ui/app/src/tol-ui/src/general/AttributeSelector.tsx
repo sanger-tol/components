@@ -4,18 +4,15 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Checkbox } from "rsuite";
 import { useEffect, useState } from "react";
+import { Checkbox } from "rsuite";
 import {
-  TsDataSource,
   MultipleSelect,
   InfoTooltip,
   Icon,
   PopUpMessage,
   SourceTag,
   EntityMetaToolTip,
-} from "../index";
-import {
   getFlattenedMetaData,
   getAttributeDetail,
   getAttributeSources,
@@ -24,21 +21,21 @@ import {
   filterAttributes,
   getAllAttributeData,
   truncateString,
-} from "./utils";
+  IRemoteTarget,
+} from "..";
+
 
 export interface AllowedCardinality {
   operator: string;
   value: number;
 }
 
-export interface Props {
+interface Props extends IRemoteTarget {
   additionalPopulatedFieldData?: any;
   allowedTypes?: string[];
   attribute: string[];
-  baseUrl?: string;
   disabledValues?: any;
   displaySource?: boolean;
-  endpoint: string;
   maxSelections?: number;
   numPopulatedFields?: number;
   placeholder: string;
@@ -55,15 +52,15 @@ export interface Props {
   groupBy?: boolean;
 }
 
-function AttributeSelector(props: Props) {
+export function AttributeSelector(props: Props) {
   const {
+    objectType,
+    dataSource,
     additionalPopulatedFieldData,
     allowedTypes,
     attribute,
-    baseUrl,
     disabledValues,
     displaySource,
-    endpoint,
     numPopulatedFields,
     maxSelections,
     placeholder,
@@ -86,13 +83,13 @@ function AttributeSelector(props: Props) {
   const [sources, setSources] = useState<string[]>([]);
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
 
-  const ds = new TsDataSource({ baseUrl });
-
   useEffect(() => {
-    ds.getEntityMeta()
+    dataSource.getEntityMeta()
       .then((em) => {
         setEntityMeta(em);
-        setSources(getAttributeSources(em, endpoint, customAttributeSelection));
+        setSources(
+          getAttributeSources(em, objectType, customAttributeSelection)
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -104,22 +101,22 @@ function AttributeSelector(props: Props) {
       const initialAttributeData = getAllAttributeData(
         attribute,
         entityMeta,
-        endpoint
+        objectType
       );
       setAttributeMeta(initialAttributeData);
     }
-  }, [attribute, entityMeta, endpoint, setAttributeMeta]);
+  }, [attribute, entityMeta, objectType, setAttributeMeta]);
 
   const searchBy = (keyword: string, label: any) => {
     const name = getAttributeDetail(
       entityMeta,
-      endpoint,
+      objectType,
       label,
       "display_name"
     ).toLowerCase();
     const description = getAttributeDetail(
       entityMeta,
-      endpoint,
+      objectType,
       label,
       "description"
     ).toLowerCase();
@@ -154,9 +151,9 @@ function AttributeSelector(props: Props) {
             ) : (
               <span className="tol-attribute-selector-tooltip">
                 <EntityMetaToolTip
-                  baseUrl={baseUrl}
                   field={key}
-                  endpoint={endpoint}
+                  objectType={objectType}
+                  dataSource={dataSource}
                 />
               </span>
             )}
@@ -173,7 +170,7 @@ function AttributeSelector(props: Props) {
 
   const renderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
-    const metaData = getFlattenedMetaData(entityMeta, endpoint, label);
+    const metaData = getFlattenedMetaData(entityMeta, objectType, label);
     return (
       <div key={`${label}-${index}`}>
         {menuItem(
@@ -187,7 +184,7 @@ function AttributeSelector(props: Props) {
   };
 
   const renderSelectedValue = (value: string) => {
-    const metaData = getFlattenedMetaData(entityMeta, endpoint, value);
+    const metaData = getFlattenedMetaData(entityMeta, objectType, value);
     return (
     <span className="tol-attribute-selector-render-single-item">
       {metaData["display_name"] ?? normaliseCaps(value)} 
@@ -256,7 +253,7 @@ function AttributeSelector(props: Props) {
       const allAttributeData = getAllAttributeData(
         newAttribute,
         entityMeta,
-        endpoint
+        objectType
       );
       setAttributeMeta(allAttributeData);
     }
@@ -273,7 +270,7 @@ function AttributeSelector(props: Props) {
         groupBy={groupBy ? 'relationship_name' : undefined}
         data={filterAttributes(
           entityMeta,
-          endpoint,
+          objectType,
           allowedTypes,
           selectedSources,
           recommendedOn,
@@ -321,5 +318,3 @@ function AttributeSelector(props: Props) {
     </div>
   );
 }
-
-export default AttributeSelector;

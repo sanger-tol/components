@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from "date-fns";
-import { getCssVarValue, isPropDefined } from "../general/utils";
+import { getCssVarValue, isPropDefined } from "..";
 
 // ------------------//
 //      GENERAL      //
@@ -745,7 +745,7 @@ function initialiseOrIncrementDepth(depth: number | undefined) {
 }
 
 export function createAggsViaSliceBy(
-  endpoint: string,
+  objectType: string,
   sliceBy: string[],
   depth?: number,
 ) {
@@ -765,7 +765,7 @@ export function createAggsViaSliceBy(
 
   if (depth < sliceBy.length - 1) {
     terms[sliceBy[depth]]["aggs"] = createAggsViaSliceBy(
-      endpoint,
+      objectType,
       sliceBy,
       depth,
     );
@@ -1045,7 +1045,7 @@ export function formattingAttributeKeys(attributeKeysArray, item, marker) {
 }
 
 export function createMapMarkers(
-  elasticData: any,
+  data: any,
   latitudeKey: string,
   longitudeKey: string,
   legendKey: object[],
@@ -1062,7 +1062,7 @@ export function createMapMarkers(
     const relationshipName = latitudeKey.split(".")[0];
     const latAttribute = latitudeKey.split(".")[1];
     const longAttribute = longitudeKey.split(".")[1];
-    elasticData.forEach((item: any) => {
+    data.forEach((item: any) => {
       if (item.relationships[relationshipName].data) {
         const longitude = parseFloat(
           item.relationships[relationshipName].data.attributes[longAttribute],
@@ -1101,11 +1101,11 @@ export function createMapMarkers(
       }
     });
   } else {
-    for (const item of elasticData) {
+    for (const item of data) {
       const latitude = parseFloat(item.attributes[latitudeKey]);
       const longitude = parseFloat(item.attributes[longitudeKey]);
 
-      // if latitute and longitude are not provided, skip the current iteration
+      // if latitute or longitude are not provided, skip the current iteration
       if (isNaN(latitude) || isNaN(longitude)) {
         continue;
       }

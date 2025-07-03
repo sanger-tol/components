@@ -4,12 +4,21 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { WidthProvider, Responsive, Layouts } from "react-grid-layout";
-import { Button, Placeholder, Visualisation } from "../../index";
 import { useState, useRef, useEffect } from "react";
-import { IZone, getWidgetOrder, generateLayout } from "../utils";
-import ConfirmationModal from "../ConfirmationModal";
-import { BOARD_ENDPOINTS, BoardObjectTypes } from "../../constants";
+import { WidthProvider, Responsive, Layouts } from "react-grid-layout";
+import {
+  Button,
+  Placeholder,
+  Visualisation,
+  getWidgetOrder,
+  generateLayout,
+  IZone,
+  ConfirmationModal,
+  BOARDS,
+  TsDataSource,
+  API_METHODS
+} from "../..";
+
 
 export interface IWidgets {
   componentId: string;
@@ -21,6 +30,7 @@ export interface IWidgets {
   title: string;
   objectType: string;
   baseUrl: string;
+  apiPrefix: string;
   config: any;
 }
 
@@ -33,12 +43,12 @@ interface Props {
   setZone: any;
   saveLayout: boolean;
   setSaveLayout: any;
-  ds: any;
+  boardDataSource: TsDataSource;
 }
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-function ResponsiveWidget(props: Props) {
+export function ResponsiveWidget(props: Props) {
   const {
     widgets,
     setWidgets,
@@ -47,7 +57,7 @@ function ResponsiveWidget(props: Props) {
     setZone,
     saveLayout,
     setSaveLayout,
-    ds,
+    boardDataSource,
   } = props;
   const [layoutsState, setLayouts] = useState<Layouts>();
   // newLayout is used to store the layout when the user is dragging widgets, and is emtptied once a user saves
@@ -68,10 +78,17 @@ function ResponsiveWidget(props: Props) {
           zone={zone}
           setZone={setZone}
           componentType={widget.componentType}
-          objectType={widget.objectType}
-          baseUrl={widget.baseUrl}
-          config={widget.config}
           title={widget.title}
+          config={widget.config}
+          objectType={widget.objectType}
+          dataSource={
+            new TsDataSource({
+              baseUrl: widget.baseUrl,
+              apiPrefix: widget.apiPrefix,
+            })
+          }
+          boardDataSource={boardDataSource}
+          boardObjectType={BOARDS.COMPONENT}
         />
       );
       return (
@@ -89,7 +106,11 @@ function ResponsiveWidget(props: Props) {
 
   const deleteWidget = (id: string) => {
     const newWidgets = widgets.filter((widget) => widget.componentId !== id);
-    ds.custom(`${BOARD_ENDPOINTS.DELETE_COMPONENT}/${id}`, "DELETE");
+    boardDataSource
+      .custom({
+        method: API_METHODS.DELETE,
+        resource: `${BOARDS.COMPONENT}/${id}`,
+      })
     setWidgets(newWidgets);
   };
 
@@ -114,15 +135,15 @@ function ResponsiveWidget(props: Props) {
       );
       widget!.order = highestPreviousOrder + 1 + index;
       return {
-        type: BoardObjectTypes.COMPONENT_ZONE as string,
+        type: BOARDS.COMPONENT_ZONE as string,
         id: widget!.componentZoneId,
         attributes: {
           order: highestPreviousOrder + index + 1,
         },
       };
     });
-    await ds.upsert({
-      objectType: BOARD_ENDPOINTS.ZONE_COMPONENTS,
+    await boardDataSource.upsert({
+      objectType: BOARDS.COMPONENT_ZONE,
       payload: payloadData,
     });
     setSaveLayout(false);
@@ -151,7 +172,7 @@ function ResponsiveWidget(props: Props) {
       open={confirmationModalOpen}
       // @ts-ignore
       onConfirmClick={handleConfirmDeleteComponent}
-      itemType={"widget"}
+      itemType="widget"
     />
   );
 
@@ -204,5 +225,3 @@ function ResponsiveWidget(props: Props) {
     </div>
   );
 }
-
-export default ResponsiveWidget;

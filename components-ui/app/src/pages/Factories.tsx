@@ -8,7 +8,7 @@ import { createTextGeneratorFactory, Widgets } from "../tol-ui/src";
 import { CodeBlock } from "react-code-blocks";
 import { truncateString } from "../tol-ui/src/general/utils";
 
-function Factories() {
+export function Factories() {
   const words = createTextGeneratorFactory();
   const fiveWords = words.generateWords(5);
   const twoSentences = words.generateSentences(2);
@@ -101,5 +101,3 @@ function Factories() {
 
   return <Widgets components={components} />;
 }
-
-export default Factories;

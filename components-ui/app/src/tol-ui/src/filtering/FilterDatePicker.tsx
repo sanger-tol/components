@@ -6,12 +6,16 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { DateRangePicker } from "rsuite";
-import { stopPropagation } from "../general/utils";
-import { Filter } from "./Filter";
-import { setFilter, filterListener } from "./utils";
-import FilterToggle from "./FilterToggle";
+import {
+  stopPropagation,
+  IFilterInput,
+  setFilter,
+  filterListener,
+  FilterToggle,
+} from "..";
 
-function FilterDatePicker(props: Filter) {
+
+export function FilterDatePicker(props: IFilterInput) {
   const { attribute, componentId, rename, zone, setZone } = props;
   const [value, setValue] = useState<any>();
   const [disabled, setDisabled] = useState(false);
@@ -129,5 +133,3 @@ function FilterDatePicker(props: Filter) {
     </div>
   );
 }
-
-export default FilterDatePicker;

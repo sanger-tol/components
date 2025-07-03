@@ -64,9 +64,15 @@
     font-size: 14px !important;
   }
 
-  // inline edit text inputs
-  .rs-inline-edit .rs-plaintext {
-    border: 1px solid transparent !important;
+  .rs-inline-edit {
+    .rs-plaintext {
+      border: 1px solid transparent !important;
+      padding: 4px 6px;
+    }
+
+    input.rs-input {
+      padding: 4px 6px;
+    }
   }
 
   .rs-inline-edit .rs-plaintext:hover {
@@ -228,12 +234,6 @@
   // temporary
   .rs-modal-footer {
     padding-top: 45px;
-  }
-}
-
-@media (max-width: 992px) {
-  .tol-dnd-column {
-    height: auto !important;
   }
 }
 

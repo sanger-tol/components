@@ -25,5 +25,9 @@
 }
 
 .tol-component-contents {
+  height: 100%;
+}
+
+.tol-component-contents-with-offset {
   height: calc(100% - var(--tol-utility-bar-offset));
 }

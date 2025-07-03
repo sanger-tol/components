@@ -25,7 +25,7 @@ interface Props {
   type: MessageType;
 }
 
-const Notification = React.forwardRef<HTMLDivElement, Props>(
+export const Notification = React.forwardRef<HTMLDivElement, Props>(
   (props: Props, ref: React.Ref<HTMLDivElement>) => {
     const { children, closable, type, header, onClose, ...rest } = props;
 
@@ -44,5 +44,3 @@ const Notification = React.forwardRef<HTMLDivElement, Props>(
     );
   },
 );
-
-export default Notification;

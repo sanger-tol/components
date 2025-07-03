@@ -6,25 +6,25 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { InlineEdit as RSInlineEdit } from "rsuite";
-import { Toaster, Message } from "../index";
+import { Toaster, Message } from "..";
 
 export interface IInlineEdit {
-  title: string;
+  text: string;
   editable?: boolean;
   onSave?: (value: string) => void;
   onChange?: (value: string) => void;
   size?: "sm" | "md";
 }
 
-function InlineEdit({
-  title,
+export function InlineEdit({
+  text,
   onSave,
   onChange,
   editable,
   size = "md"
 }: IInlineEdit) {
-  const [editedTitle, setEditedTitle] = useState(title);
-  const [prevTitle, setPrevTitle] = useState(title);
+  const [editedText, setEditedText] = useState(text);
+  const [prevText, setPrevText] = useState(text);
   const [errorMessage, setErrorMessage] = useState("");
 
   const toaster = Toaster();
@@ -40,16 +40,16 @@ function InlineEdit({
 
   // Handles the save action
   const handleSave = () => {
-    if (editedTitle.trim() === "") {
+    if (editedText.trim() === "") {
       toaster.push(toastMessage, {
         placement: "topCenter",
         duration: 5000,
       });
-      setEditedTitle(prevTitle);
+      setEditedText(prevText);
       return;
     }
 
-    onSave?.(editedTitle);
+    onSave?.(editedText);
   };
 
   return (
@@ -57,19 +57,17 @@ function InlineEdit({
       <RSInlineEdit
         showControls={false}
         className={`tol-inline-edit-${size}`}
-        value={editedTitle}
+        value={editedText}
         disabled={!editable}
         onChange={(newValue) => {
           errorMessage && setErrorMessage("");
-          setEditedTitle(newValue);
+          setEditedText(newValue);
           onChange?.(newValue);
         }}
         onSave={handleSave}
-        onEdit={() => setPrevTitle(editedTitle)} // Store title before edit
-        onCancel={() => setEditedTitle(prevTitle)} // Revert to previous title
+        onEdit={() => setPrevText(editedText)} // Store title before edit
+        onCancel={() => setEditedText(prevText)} // Revert to previous title
       />
     </div>
   );
 }
-
-export default InlineEdit;

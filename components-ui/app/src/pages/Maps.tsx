@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Map, Widgets, RemoteMap, env, useZone } from "../tol-ui/src";
+import { Map, Widgets, RemoteMap, useZone, TOL_DS } from "../tol-ui/src";
 
-function Maps() {
+export function Maps() {
   // fake data for BubbleMap component
   const points = [
     [51.50853, -0.076132],
@@ -55,8 +55,8 @@ function Maps() {
   );
 
   const cardZone = useZone({
-    endpoint: "barcoding_run_data",
-    baseUrl: env.TOL_DATA,
+    objectType: "sample", // TODO: get correct object type from Andrew
+    dataSource: TOL_DS,
     components: [
       {
         id: "report-card-map-v1",
@@ -120,5 +120,3 @@ function Maps() {
 
   return <Widgets components={components} />;
 }
-
-export default Maps;

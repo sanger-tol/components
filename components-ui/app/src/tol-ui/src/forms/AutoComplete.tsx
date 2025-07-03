@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { AutoComplete as RSAutoComplete } from "rsuite";
-import { RSForm } from "../index";
+import { RSForm } from "..";
 
 interface Props {
   label?: string;
@@ -14,7 +14,7 @@ interface Props {
   onChange?: any;
 }
 
-function AutoComplete(props: Props) {
+export function AutoComplete(props: Props) {
   const { label, data, value, onChange } = props;
 
   return (
@@ -24,5 +24,3 @@ function AutoComplete(props: Props) {
     </div>
   );
 }
-
-export default AutoComplete;

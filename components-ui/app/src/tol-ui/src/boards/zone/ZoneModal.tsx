@@ -10,6 +10,7 @@ import { FormTextField } from "../../forms";
 import { RSForm } from "../..";
 import { addZone } from "../utils";
 
+
 interface OrderObject {
   zoneId: string;
   order: number;
@@ -28,23 +29,13 @@ interface Props {
   zones: object[];
   setZoneOrder: any;
   zoneOrder: OrderObject[];
-  ds: any;
   viewId: string;
-  dataUrl?: string;
+  dataSource: TsDataSource;
+  boardDataSource: TsDataSource;
 }
 
-const BOARD_ENDPOINTS = [
-  "board",
-  "view",
-  "zone",
-  "component",
-  "view_board",
-  "component_zone",
-  "zone_view",
-];
-const MISC_ENDPOINTS = ["user", "user_action", "action", "singular"];
 
-function ZoneModal(props: Props) {
+export function ZoneModal(props: Props) {
   const {
     open,
     setOpen,
@@ -52,9 +43,9 @@ function ZoneModal(props: Props) {
     zones,
     zoneOrder,
     setZoneOrder,
-    ds,
     viewId,
-    dataUrl,
+    dataSource,
+    boardDataSource,
   } = props;
   const [objectType, setObjectType] = useState("");
   const [title, setTitle] = useState("");
@@ -93,12 +84,9 @@ function ZoneModal(props: Props) {
   }, [open]);
 
   useEffect(() => {
-    const tempDs = new TsDataSource({ baseUrl: dataUrl });
-    tempDs.attributeMetadata().then((am) => {
+    dataSource.attributeMetadata().then((am) => {
       setObjectTypesList(
-        Object.keys(am).filter(
-          (key) => ![...BOARD_ENDPOINTS, ...MISC_ENDPOINTS].includes(key),
-        ),
+        Object.keys(am)
       );
     });
   }, []);
@@ -110,12 +98,12 @@ function ZoneModal(props: Props) {
       });
       const nextOrder = orders.length > 0 ? Math.max(...orders) + 1 : 1;
       const newZone: INewZone = await addZone(
-        ds,
+        dataSource,
+        boardDataSource,
         objectType,
         title,
         nextOrder,
         viewId,
-        dataUrl,
       );
       setZones([
         ...zones,
@@ -206,5 +194,3 @@ function ZoneModal(props: Props) {
     </div>
   );
 }
-
-export default ZoneModal;

@@ -5,29 +5,31 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect } from "react";
-import Markdown from "./Markdown";
 import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
-import { IButton } from "./Button";
-import { UtilityBar, TsDataSource } from "../index";
-import { saveTitle, upsertComponentConfig } from "../boards/utils";
-import { BoardObjectTypes } from "../constants";
+import {
+  Markdown,
+  UtilityBar,
+  IBoardTargetAndZone,
+  IButton,
+  saveTitle,
+  upsertComponentConfig,
+} from "..";
 
 
 export interface IMarkdownConfig {
   content: string;
 }
 
-export interface IBoardMarkdown {
-  config: IMarkdownConfig;
+export interface IBoardMarkdown extends IBoardTargetAndZone {
   id: string;
-  size: string;
   title: string;
+  config: IMarkdownConfig;
+  size: string;
 }
 
-function BoardMarkdown(props: IBoardMarkdown) {
-  const { config, id, size, title } = props;
-  const ds = new TsDataSource();
+export function BoardMarkdown(props: IBoardMarkdown) {
+  const { id, title, config, size, boardObjectType, boardDataSource } = props;
 
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
@@ -40,7 +42,7 @@ function BoardMarkdown(props: IBoardMarkdown) {
 
   const onMarkdownSave = (config: IMarkdownConfig) => {
     if (!showMarkdownViewer) {
-      upsertComponentConfig(ds, id, { ...config });
+      upsertComponentConfig(boardDataSource, id, { ...config });
     }
   }
 
@@ -68,10 +70,10 @@ function BoardMarkdown(props: IBoardMarkdown) {
       id="editor-markdown"
       buttons={[EditButton, PreviewButton]}
       title={{
-        title: title,
+        text: title,
         editable: true,
         onSave: (value: string) => {
-          saveTitle(value, ds, id, BoardObjectTypes.COMPONENT);
+          saveTitle(value, boardDataSource, id, boardObjectType);
         },
       }}
     />
@@ -101,11 +103,9 @@ function BoardMarkdown(props: IBoardMarkdown) {
   return (
     <>
       {MdUtilityBar}
-      <div className="tol-component-contents tol-markdown">
+      <div className="tol-component-contents-with-offset tol-markdown">
         {showMarkdownViewer ? MarkdownViewer : MarkdownEditor}
       </div>
     </>
   );
 }
-
-export default BoardMarkdown;

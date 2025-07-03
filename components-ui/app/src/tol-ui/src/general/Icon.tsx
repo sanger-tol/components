@@ -11,7 +11,7 @@ interface Props {
   size?: string;
 }
 
-function Icon(props: Props) {
+export function Icon(props: Props) {
   const { icon, size } = props;
 
   return (
@@ -19,5 +19,3 @@ function Icon(props: Props) {
     <FontAwesomeIcon icon={`fa-solid fa-${icon}`} size={size} />
   );
 }
-
-export default Icon;
