@@ -3,4 +3,4 @@
 # SPDX-License-Identifier: MIT
 
 # do not copy in local node_modules/
-node_modules/
+node_modules

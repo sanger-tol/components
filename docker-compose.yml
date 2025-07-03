@@ -58,6 +58,8 @@ services:
       - "./components-ui/app:/usr/src/app"
       - "/usr/src/app/node_modules"
       - "/usr/src/app/src/tol-ui/node_modules"
+    depends_on:
+      - components-storybook
 
   components-api-test:
     image: components-api
@@ -127,3 +129,18 @@ services:
       - POSTGRES_PORT
       - HEADLESS=true
       - DOCKER_COMPOSE=1
+
+  components-storybook:
+    build:
+      context: components-ui/.
+      dockerfile: Dockerfile.storybook
+    image: components-storybook
+    stdin_open: true
+    ports:
+      - 6006:6006
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - "./components-ui/app:/usr/src/app"
+      - "/usr/src/app/node_modules"
+      - "/usr/src/app/src/tol-ui/node_modules"

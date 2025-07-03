@@ -1,0 +1,20 @@
+# SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+#
+# SPDX-License-Identifier: MIT
+
+# This is used for local development only.
+FROM node:20
+
+WORKDIR /usr/src/app
+
+COPY ./app/package.json ./app/.yarnrc ./
+
+RUN yarn install --dev
+
+COPY ./app/.storybook .
+
+RUN npm create storybook@latest
+
+COPY ./app/ ./
+
+CMD ["npx", "storybook", "dev", "-p", "6006", "--no-open"]
