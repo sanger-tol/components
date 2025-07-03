@@ -9,7 +9,13 @@ import { Timeline as RSTimeline } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { Col, Row } from "..";
-import { ITimelineData, ITimelineItem, TIMELINE_DOTS } from "..";
+import {
+  ITimelineData,
+  ITimelineItem,
+  TIMELINE_DOTS,
+  parseDataPoints,
+  sortTimelineByDate,
+} from "..";
 
 export interface PTimeline {
   id: string;
@@ -29,48 +35,6 @@ export function Timeline(props: PTimeline) {
     const sortedTimeline = sortTimelineByDate(parsedData);
     setSortedData(sortedTimeline);
   }, [data]);
-
-  const parseDataPoints = (data: ITimelineData): ITimelineItem[] => {
-    return Object.entries(data).reduce((acc: ITimelineItem[], [key, value]) => {
-      if (value === null || value === undefined) {
-        return acc;
-      }
-
-      let parsedDate: Date | null = null;
-      if (typeof value.date === "string") {
-        const dateString = value.date as string;
-        const date = new Date(
-          dateString + (dateString.indexOf("Z") === -1 ? "Z" : "")
-        );
-        if (!isNaN(date.getTime())) {
-          parsedDate = date;
-        }
-      } else if (value.date instanceof Date) {
-        parsedDate = value.date;
-      }
-
-      if (parsedDate !== null) {
-        acc.push({
-          title: value.title ?? key,
-          date: parsedDate,
-          color: value.color,
-          icon: value.icon || (
-            <FontAwesomeIcon icon={faCheck} style={{ color: "#fff" }} />
-          ),
-          desc: value.desc || "",
-        });
-      }
-      return acc;
-    }, []);
-  };
-
-  const sortTimelineByDate = (timeline: ITimelineItem[]) => {
-    return timeline.sort((a, b) => {
-      const dateA = new Date(a.date!);
-      const dateB = new Date(b.date!);
-      return dateA.getTime() - dateB.getTime();
-    });
-  };
 
   return (
     <Col>

@@ -6,11 +6,12 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
+  createTitle,
   ITimelineData,
-  ITimelineItem,
-  Timeline,
-  Placeholder,
   IRemoteTarget,
+  Placeholder,
+  parseObjectValues,
+  Timeline,
   TDataObjectOrNull,
 } from "..";
 
@@ -41,31 +42,13 @@ export function RemoteTimeline(props: IRemoteTimeline) {
     createTimelineData();
   }, []);
 
-  const parseObjectValues = (
-    dataObject: TDataObjectOrNull
-  ): ITimelineItem[] => {
-    return Object.keys(data).reduce((acc: ITimelineItem[], key) => {
-      if (dataObject && dataObject[key]) {
-        const timelineItem: ITimelineItem = {
-          title: data[key].title,
-          date: dataObject[key],
-          desc: data[key].desc || "",
-          icon: data[key].icon || undefined,
-          color: data[key].color || undefined,
-        };
-        acc.push(timelineItem);
-      }
-      return acc;
-    }, []);
-  };
-
   const createTimelineData = async () => {
     setLoading(true);
     dataSource
       .getOne({ objectType, id })
       .then((dataObject: TDataObjectOrNull) => {
         setName(dataObject?.[titleDataPoint] ?? titleDataPoint);
-        setTimelineData(parseObjectValues(dataObject));
+        setTimelineData(parseObjectValues(dataObject, data));
       })
       .catch((error) => {
         console.warn(error);
@@ -73,17 +56,6 @@ export function RemoteTimeline(props: IRemoteTimeline) {
       .finally(() => {
         setLoading(false);
       });
-  };
-
-  const createTitle = (id: string, endpoint: string): string => {
-    switch (endpoint) {
-      case "species":
-        return `Timeline of completed events for ${name}`;
-      case "sample":
-        return `Timeline of completed events for ${endpoint} - ${id}`;
-      default:
-        return "Timeline of events";
-    }
   };
 
   if (loading) {

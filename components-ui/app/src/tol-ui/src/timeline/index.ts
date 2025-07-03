@@ -6,3 +6,4 @@ SPDX-License-Identifier: MIT
 
 export * from "./RemoteTimeline";
 export * from "./Timeline";
+export * from "./utils"
