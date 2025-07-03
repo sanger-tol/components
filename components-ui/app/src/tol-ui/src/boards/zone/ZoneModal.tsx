@@ -84,7 +84,7 @@ export function ZoneModal(props: Props) {
   }, [open]);
 
   useEffect(() => {
-    boardDataSource.attributeMetadata().then((am) => {
+    dataSource.attributeMetadata().then((am) => {
       setObjectTypesList(
         Object.keys(am)
       );
