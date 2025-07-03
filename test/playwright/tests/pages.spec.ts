@@ -63,6 +63,9 @@ const addCountComponent = async ({page, testID}) => {
 
   // click the add component button
   await page.getByTestId('confirm-add-component-button').click();
+
+  // check count has rendered
+  await expect(page.locator('.tol-count')).toBeVisible();
 }
 
 const deleteBoard = async({page, testID}) => {
