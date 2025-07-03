@@ -23,7 +23,7 @@ import {
   getCssVarValue,
   normaliseCaps,
   themeListener,
-  IUtilityBar
+  TUtilityBarOrNull
 } from "..";
 
 
@@ -41,7 +41,7 @@ interface Props {
   noRefresh?: boolean;
   setSliceData?: any;
   resetChart?: boolean; // a change in this prop will reset the chart
-  utilityBarConfig?: IUtilityBar;
+  utilityBarConfig?: TUtilityBarOrNull;
   contents?: ReactNode;
 }
 
@@ -189,36 +189,36 @@ export function Sunburst(props: Props) {
     onHover: handlePlaneHover,
   };
 
-  const style = { height: height };
-
   return (
-    <div style={style}>
-      <UtilityBar
-        id={id}
-        title={utilityBarConfig?.title}
-        buttons={[
-          {
-            icon: "undo",
-            position: "right",
-            type: "primary",
-            onClick: () => {
-              resetItemClickedData(setSliceData);
-              setDatasets(originDatasets);
+    <div style={{ height: height }}>
+      {utilityBarConfig !== null &&
+        <UtilityBar
+          id={id}
+          title={utilityBarConfig?.title}
+          buttons={[
+            {
+              icon: "undo",
+              position: "right",
+              type: "primary",
+              onClick: () => {
+                resetItemClickedData(setSliceData);
+                setDatasets(originDatasets);
+              },
+              disabled: noRefresh,
             },
-            disabled: noRefresh,
-          },
-          {
-            icon: "download",
-            position: "right",
-            type: "primary",
-            onClick: () => {
-              downloadItem(props.id, downloadName);
-            },
-            disabled: noDownload,
-          }
-        ]}
-      />
-      <div style={style} className="tol-utility-bar-content-offset">
+            {
+              icon: "download",
+              position: "right",
+              type: "primary",
+              onClick: () => {
+                downloadItem(props.id, downloadName);
+              },
+              disabled: noDownload,
+            }
+          ]}
+        />
+      }
+      <div className={utilityBarConfig !== null ? "tol-component-contents-with-offset" : "tol-component-contents"}>
         {contents ? contents : 
           <Doughnut
             id={id}

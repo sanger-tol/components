@@ -8,6 +8,7 @@ import {
   TsDataSource,
   HistogramGrouping,
   IFilter,
+  IUtilityBar,
 } from '..';
 
 
@@ -118,6 +119,8 @@ export interface IBoardTargetAndZone extends IRemoteTargetAndZone {
   boardObjectType: string;
   boardDataSource: TsDataSource;
 }
+
+export type TUtilityBarOrNull = IUtilityBar | null;
 
 export interface IChartConfig {
   breakDownBy: string,
