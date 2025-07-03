@@ -101,7 +101,8 @@ def application():
     # the user Mixin
     user_mixin_class = type(
         '',
-        (UserMixin, _board_user_mixin),
+        (UserMixin,
+         _board_user_mixin),
         {}
     )
 
@@ -119,7 +120,7 @@ def application():
     models = [
         *MODELS,
         auth_bp.models.user_class,
-        *board_models
+        *board_models,
     ]
 
     # Set up datasource
@@ -173,7 +174,7 @@ def application():
         url_prefix=os.environ['API_PATH'] + '/run-action'
     )
 
-    # pipeline steps
+    # pipelines
     pipeline_steps_bp = pipeline_steps_blueprint(
         sql_datasource,
         __mock_prefect_ds(),
@@ -183,6 +184,13 @@ def application():
         pipeline_steps_bp,
         url_prefix=os.environ['API_PATH'] + '/run-pipeline'
     )
+
+    uploads_bp = data_blueprint(
+        sql_datasource,
+    )
+
+    app.register_blueprint(uploads_bp, name='upload-data',
+                           url_prefix=os.getenv('API_PATH') + '/upload-data')
 
     # dashboards
     boards_bp = board_blueprint(sql_datasource)

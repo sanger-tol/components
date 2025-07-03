@@ -77,6 +77,20 @@
   }
 }
 
+.tol-file-validation-scrollbar-fix {
+  &::-webkit-scrollbar {
+    background-color: var(--tol-grey-subtle);
+    width: 8px;
+    height: 9px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: grey;
+    border-radius: 5px;
+    opacity: 0.8;
+  }
+}
+
 .tol-validate-steps-all-errors-animation {
   animation: dropDownAllErrors 0.6s ease;
 }
@@ -146,6 +160,7 @@
   overflow: auto;
   border-radius: 6px;
   transition: padding-bottom 0.3s ease;
+  justify-self: center;
 
   &.expanded {
     padding-bottom: 160px;
@@ -153,17 +168,6 @@
 
   .tol-file-upload-results-viewer-container {
     min-height: 250px;
-  }
-
-  &::-webkit-scrollbar {
-    background-color: var(--tol-grey-subtle);
-    height: 9px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: grey;
-    border-radius: 5px;
-    opacity: 0.8;
   }
 }
 
@@ -188,17 +192,6 @@
   &.full-width {
     width: 100%;
     position: static;
-  }
-
-  &::-webkit-scrollbar {
-    background-color: var(--tol-grey-subtle);
-    width: 8px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: grey;
-    border-radius: 5px;
-    opacity: 0.8;
   }
 }
 
@@ -266,6 +259,7 @@
     text-wrap: wrap;
     margin-right: 10px;
     min-height: 35px;
+    align-content: center;
   }
 
   .tol-file-uploader-validate-step-no-errors-container {
@@ -293,6 +287,32 @@
     min-height: 100px;
     margin: 10px;
   }
+}
+
+.tol-file-validation-previous-uploads-modal-container {
+  max-height: 65vh;
+  overflow-y: auto;
+
+  .tol-file-validation-previous-uploads-inner-container {
+    margin: 0 5px;
+  }
+}
+
+.tol-file-validation-error-info {
+  text-align: center;
+  padding: 10px;
+}
+
+.tol-file-validation-error-icon {
+  display: inline-flex;
+  margin-bottom: 10px;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  background-color: var(--tol-grey-subtle);
+  padding: 5px;
 }
 
 .tol-file-uploader-validate-step-error-modal-header {
@@ -365,26 +385,6 @@
   }
 }
 
-.tol-file-uploader-previous-validations-dropdown-btn {
-  background-color: transparent !important;
-  border: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  &.icon-rotate {
-    transform: rotate(180deg);
-    opacity: 0.8;
-  }
-
-  &.icon-rotate:hover {
-    opacity: 1;
-  }
-}
-
 .tol-file-uploader-dropdown-btn-icon-transition {
   transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
   opacity: 1;
@@ -399,16 +399,197 @@
   align-items: center;
   justify-content: center;
 
-  &.error {
-    background-color: var(--tol-danger);
-  }
-
   &.passed {
     background-color: var(--tol-success);
   }
 
+  &.error {
+    background-color: var(--tol-danger);
+  }
+
+  &.warning {
+    background-color: var(--tol-warning);
+  }
+
   &.pointer {
     cursor: pointer;
+  }
+}
+
+.tol-file-validation-results-page-container {
+  padding: 10px;
+  min-width: 150px;
+
+  .tol-file-validation-results-page-info-container {
+    display: flex;
+    justify-content: space-between;
+
+    .tol-file-validation-results-page-info-inner-container {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .tol-file-validation-results-page-status-indicator {
+    color: var(--tol-success);
+
+    &.incomplete {
+      color: var(--tol-danger) !important;
+    }
+  }
+
+  .tol-file-validation-results-page-info-date {
+    text-align: right;
+  }
+
+  .tol-file-validation-results-page-additional-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+
+  .tol-file-validation-results-page-error-count-container {
+    min-width: 160px;
+    padding-left: 10px;
+
+    p {
+      text-align: right;
+    }
+
+    p:first-child {
+      margin-bottom: 0.5rem;
+    }
+  }
+}
+
+.tol-file-validation-previous-results-container {
+  min-height: 40px;
+  margin: 10px 0;
+  border: 1px solid var(--tol-emphasis);
+  border-right: 3px solid var(--tol-emphasis);
+  border-left: 3px solid var(--tol-emphasis);
+  padding: 10px 15px;
+  border-radius: 5px;
+
+  .tol-file-uploader-previous-validations-dropdown-btn {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
+
+    &:hover {
+      opacity: 0.8;
+    }
+
+    &.icon-rotate {
+      transform: rotate(180deg);
+      opacity: 0.8;
+      transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    }
+
+    &.icon-rotate:hover {
+      opacity: 1;
+    }
+  }
+
+  .tol-file-validation-previous-results-title {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-content: center;
+    justify-items: center;
+    margin-top: 5px;
+  }
+
+  .tol-file-validation-previous-results-title-text {
+    align-self: center;
+    margin: 0;
+  }
+
+  .tol-file-validation-previous-results-date-container {
+    display: flex;
+  }
+
+  .tol-file-validation-previous-results-date-text {
+    margin: 0;
+    align-self: center;
+    margin-right: 5px;
+  }
+
+  .tol-file-validation-previous-results-status-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .tol-file-validation-previous-results-show-results-container {
+    display: flex;
+    flex-direction: column;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .tol-file-validation-previous-results-show-results-inner {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+  }
+
+  .tol-file-validation-previous-results-icon-container {
+    display: flex;
+    gap: 10px;
+    max-width: 70%;
+    overflow-y: auto;
+    margin-right: 10px;
+
+    .tol-file-validation-previous-results-icon-inner-container {
+      padding-bottom: 5px;
+    }
+  }
+
+  .tol-file-validation-previous-results-failure-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.tol-file-validation-previous-results-results-status {
+  margin: 0;
+
+  &.passed {
+    color: var(--tol-success);
+  }
+
+  &.completed-with-errors {
+    color: var(--tol-danger);
+  }
+
+  &.completed-with-warnings {
+    color: var(--tol-warning);
+  }
+
+  &.failed {
+    color: var(--tol-danger-light);
+  }
+
+  &.in-progress {
+    color: var(--tol-warning-light);
+  }
+}
+
+.tol-file-validation-previous-results-icon-tooltip {
+  text-align: center !important;
+
+  p {
+    margin: 0;
   }
 }
 

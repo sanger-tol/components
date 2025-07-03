@@ -5,31 +5,38 @@ SPDX-License-Identifier: MIT
 */
 
 import { normaliseCaps, truncateString } from "../general/utils";
-import { ValidationIcon, ErrorViewer } from "./index";
+import {
+  ValidationIcon,
+  ErrorViewer,
+  getErrorWarningCounts,
+  IValidationResult,
+  determineStepStatus,
+} from "./index";
 
 interface Props {
   id: string;
   stepName: string;
-  errorValues?: string[];
+  errors?: IValidationResult[];
   expanded?: boolean;
   onSeeAllErrors?: () => void;
 }
 
-// TODO: Change to bringing in the entire object, rather than just the error values
-
 const MAX_ERRORS_TO_DISPLAY = 2;
-const MAX_CHAR_LENGTH = 50;
 
 function ValidateStep(props: Props) {
-  const {
-    id,
-    stepName,
-    onSeeAllErrors,
-    errorValues = [],
-    expanded = false,
-  } = props;
+  const { id, stepName, onSeeAllErrors, errors = [], expanded = false } = props;
 
-  const hasErrors = !!errorValues && errorValues.length > 0;
+  const issueCount = getErrorWarningCounts(errors);
+  const hasErrors = issueCount.errors > 0 || issueCount.warnings > 0;
+
+  const stepStatus = determineStepStatus(issueCount);
+
+  const iconType =
+    issueCount.errors > 0
+      ? "xmark"
+      : issueCount.warnings > 0
+      ? "exclamation"
+      : "check";
 
   return (
     <div className="tol-file-uploader-validate-step-outer-container">
@@ -41,36 +48,40 @@ function ValidateStep(props: Props) {
       >
         <div className="tol-file-uploader-validate-step-title-container">
           <h6 className="tol-file-uploader-validate-step-title">
-            {truncateString(normaliseCaps(stepName), MAX_CHAR_LENGTH)}
+            {truncateString(normaliseCaps(stepName))}
           </h6>
           <ValidationIcon
-            iconType={hasErrors ? "xmark" : "check"}
+            iconType={iconType}
             size="lg"
-            className={`tol-file-uploader-validate-step-icon ${
-              hasErrors ? "error" : "passed"
-            }`}
+            className={`tol-file-uploader-validate-step-icon ${stepStatus.className}`}
           />
         </div>
         {hasErrors ? (
           <div className="tol-file-uploader-validate-step-error-container">
             <div>
               <p className="tol-file-uploader-validate-step-error-number">
-                {errorValues.length}{" "}
-                {errorValues.length > 1 ? "Errors" : "Error"}:
+                {issueCount.warnings}{" "}
+                {issueCount.warnings > 1 ? "Warnings" : "Warning"},{" "}
+                {issueCount.errors} {issueCount.errors > 1 ? "Errors" : "Error"}
+                :
               </p>
-              {errorValues
+              {errors
                 .slice(0, MAX_ERRORS_TO_DISPLAY)
-                .map((error: string, index: number) => (
+                .map((error: IValidationResult, index: number) => (
                   <ErrorViewer
                     key={`${id}-error-${index}`}
-                    message={error}
-                    errorType={"warning"} // TODO: Don't hardcode this
-                    stepName={stepName}
+                    message={error.detail}
+                    errorType={error.severity}
+                    stepName={error.stepName}
+                    cellId={{
+                      column: error.field ?? "all",
+                      row: error.objectId || "N/A",
+                    }}
                   />
                 ))}
             </div>
             <div>
-              {errorValues.length > MAX_ERRORS_TO_DISPLAY ? (
+              {errors.length > MAX_ERRORS_TO_DISPLAY ? (
                 <div
                   className="tol-file-uploader-validate-step-see-all-container"
                   onClick={onSeeAllErrors}

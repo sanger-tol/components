@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import React from "react";
 import { Icon, HoverOverlay } from "../index";
 
 export type IconType = "check" | "xmark" | "exclamation";
@@ -15,7 +16,7 @@ interface Props {
   size?: string;
   style?: React.CSSProperties;
   className?: string;
-  tooltip?: string;
+  tooltip?: React.ReactNode;
 }
 
 const OVERLAY_DELAY = 200;
@@ -23,6 +24,7 @@ const OVERLAY_PLACEMENT = "top";
 
 function ValidationIcon(props: Props) {
   const { iconType, size, style, className, tooltip } = props;
+
   return (
     <div>
       {tooltip ? (

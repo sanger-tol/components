@@ -10,15 +10,21 @@ import ValidationIcon from "./ValidationIcon";
 
 //TODO: Take into account warnings, as well as errors
 
+interface ICellId {
+  column: string;
+  row: string;
+}
+
 interface Props {
   id?: string;
   errorType?: string;
   message?: string;
   stepName?: string;
+  cellId: ICellId;
 }
 
 function ErrorViewer(props: Props) {
-  const { id, errorType, message, stepName } = props;
+  const { id, errorType, message, stepName, cellId } = props;
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -37,9 +43,11 @@ function ErrorViewer(props: Props) {
             tol-file-uploader-validate-step-error-modal-icon ${errorType}`}
         />
       </div>
-      <p className="tol-file-uploader-validate-step-error-modal-content">
-        {message}
-      </p>
+      <div className="tol-file-uploader-validate-step-error-modal-content">
+        <p>{message}</p>
+        <p>Row: {cellId.row}</p>
+        <p>Column(s): {cellId.column}</p>
+      </div>
     </>
   );
 
@@ -66,7 +74,9 @@ function ErrorViewer(props: Props) {
             size="sm"
             className="tol-file-uploader-validate-step-single-error-icon"
           />
-          <span>{message}</span>
+          <span>
+            Row {cellId.row}: {message}
+          </span>
         </div>
       </div>
     </>

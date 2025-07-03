@@ -114,9 +114,9 @@ function TolApp(props: Props) {
                   <Redirect to="/" />
                 )}
               </Route>
-              <Route path="/file-validation/results/:pipelineId" render={(routeProps) => {
+              <Route path="/file-validation/results/:uploadId" render={(routeProps) => {
                 return boards && loggedIn ? (
-                  <ValidationResultsViewer {...routeProps} />
+                  <ValidationResultsViewer {...routeProps} endpoint="local/upload"/>
                 ) : (
                   <Redirect to="/" />
                 )

@@ -15,9 +15,18 @@ import {
   Modal,
   TolLoader,
   httpClient,
+  TsDataSource,
+  Icon,
 } from "../tol-ui/src";
 import { FileData } from "../tol-ui/src/forms/Dropzone";
-import { ValidateSteps, PreviousUploads } from "../tol-ui/src/file-validation";
+import {
+  ValidateSteps,
+  PreviousUploads,
+  severityType,
+  normalisePipelineUpload,
+  fetchAndNormaliseAllUploadResults,
+} from "../tol-ui/src/file-validation";
+import { getUserFromLocalStorage } from "../tol-ui/src/services/localStorage/localStorageService";
 
 interface IValidationConfig {
   s3_url: string;
@@ -43,46 +52,180 @@ const TOL_LOADER_STYLES = {
 
 const data = [
   {
-    id: "step1",
-    stepName: "validate_species_not_null",
-    errors: ["OH NO!", "Error 1b", "Error 1c"],
+    code: "",
+    field: "E",
+    detail: "Field is required.",
+    severity: "warning",
+    object_id: "1",
+    step_name: "species_not_null",
   },
   {
-    id: "step2",
-    stepName: "validate_species_is_valid",
-    errors: ["Error 2a", "Error 2b", "Error 2c"],
+    code: "",
+    field: "D",
+    detail: "Field is required.",
+    severity: "error",
+    object_id: "2",
+    step_name: "species_not_null",
   },
   {
-    id: "step3",
-    stepName: "Step 3",
-    errors: [
-      "The user is a silly silly silly silly goose...",
-      "Error 3b",
-      "Error 3c",
-      "Error 3d",
-      "Error 3e",
-    ],
+    code: "",
+    field: "B",
+    detail: "Species cannot be null.",
+    severity: "warning",
+    object_id: "5",
+    step_name: "species_not_null",
   },
-  { id: "step4", stepName: "Step 4", errors: [] },
-  { id: "step5", stepName: "Step 5", errors: [] },
-  { id: "step6", stepName: "Step 6", errors: ["error 6a", "error 6b"] },
-  { id: "step7", stepName: "Step 7", errors: [] },
-  { id: "step8", stepName: "Step 8", errors: ["error 8a", "error 8b"] },
+  {
+    code: "",
+    field: null,
+    detail: "Invalid value provided.",
+    severity: "error",
+    object_id: "1",
+    step_name: "species_not_null",
+  },
+  {
+    code: "",
+    field: ["A", "F"],
+    detail: "Field is required.",
+    severity: "warning",
+    object_id: "3",
+    step_name: "species_not_null",
+  },
+  {
+    code: "",
+    field: ["C", "D", "F"],
+    detail: "Invalid value provided.",
+    severity: "warning",
+    object_id: "4",
+    step_name: "value_not_allowed",
+  },
+  {
+    code: "",
+    field: ["A", "B", "D"],
+    detail: "Field is required.",
+    severity: "error",
+    object_id: "5",
+    step_name: "value_not_allowed",
+  },
+  {
+    code: "",
+    field: ["A", "B", "C"],
+    detail: "Value is not allowed.",
+    severity: "error",
+    object_id: "7",
+    step_name: "value_not_allowed",
+  },
+  {
+    code: "",
+    field: ["B", "D"],
+    detail: "Field is required.",
+    severity: "warning",
+    object_id: "1",
+    step_name: "value_not_allowed",
+  },
+  {
+    code: "",
+    field: ["A", "C", "D", "E"],
+    detail: "Species cannot be null.",
+    severity: "warning",
+    object_id: "6",
+    step_name: "value_not_allowed",
+  },
+  {
+    code: "",
+    field: ["A", "B", "E", "F"],
+    detail: "Species cannot be null.",
+    severity: "warning",
+    object_id: "10",
+    step_name: "a_third_because_why_not",
+  },
+  {
+    code: "",
+    field: "D",
+    detail: "Species cannot be null.",
+    severity: "warning",
+    object_id: "5",
+    step_name: "a_third_because_why_not",
+  },
+  {
+    code: "",
+    field: ["A", "F"],
+    detail: "Field is required.",
+    severity: "error",
+    object_id: "6",
+    step_name: "a_third_because_why_not",
+  },
+  {
+    code: "",
+    field: ["C", "D", "E", "F"],
+    detail: "Invalid value provided.",
+    severity: "error",
+    object_id: "1",
+    step_name: "a_third_because_why_not",
+  },
+  {
+    code: "",
+    field: ["C", "F"],
+    detail: "Field is required.",
+    severity: "error",
+    object_id: "2",
+    step_name: "a_third_because_why_not",
+  },
+  {
+    code: "",
+    field: null,
+    detail: "Field is required.",
+    severity: "warning",
+    object_id: "8",
+    step_name: "and_a_fourth",
+  },
+  {
+    code: "",
+    field: ["B", "F"],
+    detail: "Species cannot be null.",
+    severity: "error",
+    object_id: "2",
+    step_name: "and_a_fourth",
+  },
+  {
+    code: "",
+    field: "A",
+    detail: "Invalid value provided.",
+    severity: "warning",
+    object_id: "2",
+    step_name: "and_a_fourth",
+  },
+  {
+    code: "",
+    field: ["C", "F"],
+    detail: "Species cannot be null.",
+    severity: "error",
+    object_id: "8",
+    step_name: "and_a_fourth",
+  },
+  {
+    code: "",
+    field: null,
+    detail: "Invalid value provided.",
+    severity: "error",
+    object_id: "5",
+    step_name: "and_a_fourth",
+  },
 ];
 
 function FileValidation(props: Props) {
   const {
     endpoint,
     validationConfig,
-    pageTitle = "File Validation",
+    pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
   } = props;
 
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<string | boolean>(false);
   const [fileDropped, setFileDropped] = useState<boolean>(false);
-  const [validating, setValidating] = useState<boolean>(true);
-  const [validationResults, setValidationResults] = useState<any[]>(["1"]);
+  const [validating, setValidating] = useState<boolean>(false);
+  const [validationResults, setValidationResults] = useState<any[]>([]);
   const [validated, setValidated] = useState<boolean>(false);
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);
@@ -91,10 +234,26 @@ function FileValidation(props: Props) {
     string | null
   >(null);
   const [validationProgress, setValidationProgress] = useState<number>(0);
+  const [userFileValidationUploads, setUserFileValidationUploads] = useState<
+    any[]
+  >([]);
+  const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [errors, setErrors] = useState<boolean>(false);
+
+  const ds = new TsDataSource();
+  const { id } = getUserFromLocalStorage();
 
   useEffect(() => {
-    generateMessages();
-  });
+    fetchAndNormaliseAllUploadResults(
+      ds,
+      "local/upload",
+      id,
+      setUserFileValidationUploads,
+      setErrors,
+      setLoading
+    );
+  }, []);
 
   const generateMessages = async () => {
     const pipeline_data = {
@@ -243,8 +402,76 @@ function FileValidation(props: Props) {
           />
         </div>
       ) : (
-        <ValidateSteps data={data} />
+        <ValidateSteps
+          data={data.map((item) => ({
+            code: item.code,
+            field: Array.isArray(item.field)
+              ? item.field.join(", ")
+              : item.field,
+            detail: item.detail,
+            severity: item.severity as severityType,
+            objectId: item.object_id,
+            stepName: item.step_name,
+          }))}
+        />
       )}
+    </div>
+  );
+
+  const ResultsModalContent = (
+    <div className="tol-file-validation-previous-uploads-modal-container tol-file-validation-scrollbar-fix">
+      {userFileValidationUploads ? (
+        userFileValidationUploads.map((upload, index) => (
+          <div
+            key={upload.id}
+            className="tol-file-validation-previous-uploads-inner-container"
+          >
+            <PreviousUploads
+              key={upload.id}
+              data={userFileValidationUploads[index]}
+              id={upload.id}
+              expanded={expandedModalResults === upload.id}
+              onToggle={handleToggleUploadResults}
+              showPassedSteps={showPassedSteps}
+            />
+          </div>
+        ))
+      ) : (
+        <div className="tol-file-validation-error-info">
+          <span className="tol-file-validation-error-icon">
+            <Icon icon="info" size="lg" />
+          </span>
+          <h6>No previous uploads found.</h6>
+        </div>
+      )}
+    </div>
+  );
+
+  const ResultsModalHeader = (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <h3>Previous Validations</h3>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          width: "fit-content",
+          marginLeft: "auto",
+        }}
+      >
+        <p style={{ margin: 0 }}>Show passed steps</p>
+        <Toggle
+          key="passed-steps-toggle"
+          checked={showPassedSteps}
+          onChange={() => setShowPassedSteps((prev) => !prev)}
+        />
+      </div>
     </div>
   );
 
@@ -252,30 +479,8 @@ function FileValidation(props: Props) {
     <div>
       <Modal
         open={openModal === "results"}
-        header={<h3>Previous Validations</h3>}
-        children={
-          <div>
-            <PreviousUploads
-              data={data}
-              id="12312"
-              expanded={expandedModalResults === "12312"}
-              onToggle={handleToggleUploadResults}
-            />
-            <PreviousUploads
-              data={data}
-              id="234342"
-              expanded={expandedModalResults === "234342"}
-              onToggle={handleToggleUploadResults}
-            />
-            <PreviousUploads
-              data={data}
-              id="456454"
-              expanded={expandedModalResults === "456454"}
-              onToggle={handleToggleUploadResults}
-            />
-            {/* TODO: no hard coded id's */}
-          </div>
-        }
+        header={ResultsModalHeader}
+        children={ResultsModalContent}
         onClose={() => setOpenModal(false)}
         setOpen={setOpenModal}
       />
@@ -288,6 +493,7 @@ function FileValidation(props: Props) {
         open={openModal === "help"}
         onClose={() => setOpenModal(false)}
         setOpen={setOpenModal}
+        onEnter={() => {}}
       />
     </div>
   );
