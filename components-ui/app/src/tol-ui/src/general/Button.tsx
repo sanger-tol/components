@@ -12,20 +12,35 @@ import {
 } from "..";
 
 export interface IButton {
+  /** Optional font-awesome icon */ 
   icon?: string;
+  /** Function to call when the button is clicked */
   onClick?: () => void;
+  /** Optional class name to add to the button */
   className?: string;
+  /** Optional text to display on the button */
   text?: string;
+  /** Optional flag to disable the button */
   disabled?: boolean;
+  /** Optional size of the button */
   size?: "md" | "lg";
+  /** Optional type of the button */
   type?: string;
+  /** Optional flag to indicate if the button is active */
   active?: boolean;
+  /** Optional position of the button */
   position?: "left" | "right";
+  /** Optional tooltip to display when hovering over the button */
   tooltip?: string;
+  /** Optional tooltip to display when the button is disabled */
   disabledTooltip?: string;
+  /** Optional flag to indicate if the button is loading and show a spinner */
   loading?: boolean;
+  /** Optional flag to indicate if the button should have an outline style */
   outline?: boolean;
+  /** Optional id for the button */
   id?: string;
+  /** Optional flag to control the visibility of the button */
   visible?: boolean;
 }
 
@@ -36,8 +51,8 @@ export function Button(props: IButton) {
     onClick,
     className,
     text,
-    disabled,
-    size,
+    disabled = false,
+    size = "md",
     type,
     active,
     position = "none",
