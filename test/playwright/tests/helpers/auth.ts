@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-import sql from '../db';
+import sql from '../../db';
 
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
