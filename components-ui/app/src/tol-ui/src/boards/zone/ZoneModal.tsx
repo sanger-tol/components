@@ -134,6 +134,7 @@ export function ZoneModal(props: Props) {
         onClick={onAddZone}
         icon="plus"
         text="Add Zone"
+        testid="add-zone-button"
       />
       <Button
         position="right"

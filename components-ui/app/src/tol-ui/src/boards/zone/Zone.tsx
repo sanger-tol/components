@@ -108,7 +108,8 @@ export function Zone(props: Props) {
     type: "success",
     icon: "plus",
     position: "right",
-    tooltip: "Add Widget"
+    tooltip: "Add Widget",
+    testid: "add-component-button",
   };
 
   const editButton: IButton = {
@@ -120,7 +121,8 @@ export function Zone(props: Props) {
     type: "edit",
     icon: "up-down-left-right",
     position: "right",
-    tooltip: "Edit Widgets"
+    tooltip: "Edit Widgets",
+    testid: "drag-components-button",
   };
   
   const deleteButton: IButton = {
@@ -165,7 +167,8 @@ export function Zone(props: Props) {
     type: "success",
     icon: "floppy-disk",
     position: "right",
-    tooltip: "Save Layout"
+    tooltip: "Save Layout",
+    testid: "save-layout-button"
   };
   
   const filtersButton: IButton = {
@@ -185,7 +188,8 @@ export function Zone(props: Props) {
     type: editBtnsVisible ? "success" : "warning",
     icon: editBtnsVisible ? "check" : "pen-to-square",
     position: "right",
-    tooltip: editBtnsVisible ? "Save Changes" : "Edit Zone"
+    tooltip: editBtnsVisible ? "Save Changes" : "Edit Zone",
+    testid: "edit-zone-button"
   };
 
   const buttons = (
