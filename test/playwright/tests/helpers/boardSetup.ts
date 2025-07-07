@@ -37,7 +37,9 @@ const createZone = async ({page, testID}) => {
   await page.getByRole('textbox').fill(testID);
 
   // click add zone button
-  await page.getByTestId('add-zone-button').click();
+  const addZoneButton = await page.getByTestId('add-zone-button');
+  await addZoneButton.waitFor();
+  await addZoneButton.click();
 };
 
 export const deleteBoard = async({page, testID}) => {
