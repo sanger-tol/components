@@ -3,5 +3,5 @@
 // SPDX-License-Identifier: MIT
 
 export * from './auth.ts';
-export * from './boardSetUp.ts';
+export * from './boardSetup.ts';
 export * from './componentSetup.ts';
