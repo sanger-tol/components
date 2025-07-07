@@ -29,8 +29,6 @@ interface Props {
   zone: IZone;
   setZone: any;
   zoneId: string;
-  currentWidgets: any;
-  setCurrentWidgets: any;
   dataSource: TsDataSource;
   boardsDataSource: TsDataSource;
 }
@@ -42,8 +40,6 @@ export function ComponentPickerModal(props: Props) {
     zone,
     setZone,
     zoneId,
-    currentWidgets,
-    setCurrentWidgets,
     dataSource,
     boardsDataSource,
   } = props;
@@ -109,29 +105,18 @@ export function ComponentPickerModal(props: Props) {
           size: widgetType,
           type: componentType,
           order: nextOrder,
-        },
-        zone,
-      );
-      zone.order = [...zone.order, newComponent.newComponentId];
-      // this adds the component to the currentWidgets to be rendered
-      setCurrentWidgets([
-        ...currentWidgets,
-        {
-          componentId: newComponent.newComponentId,
-          order: nextOrder,
           componentZoneId: newComponent.newComponentZoneId,
           baseUrl: dataSource.getBaseUrl(),
           apiPrefix: dataSource.getApiPrefix(),
-          componentType: componentType,
           filter: { and_: {} },
           title: title,
           objectType: zone.type,
           config: {},
-          widgetType: widgetType,
           filterPassThrough: false,
         },
-      ]);
-
+        zone,
+      );
+      zone.order = [...zone.order, newComponent.newComponentId];
       setZone({ ...zone });
       reset();
       setOpen(false);

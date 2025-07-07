@@ -12,7 +12,7 @@ import {
 
 
 export interface IComponent {
-  data: IComponentData | IBoardComponentsData;
+  data: IComponentData;
 }
 
 export interface IComponentData {
@@ -24,14 +24,14 @@ export interface IComponentData {
   type?: string; // component type e.g. table
   size?: string; // component size e.g. sm
   order?: number;
-}
 
-export interface IBoardComponentsData extends IComponentData {
-  componentZoneId: string;
-  objectType: string;
-  baseUrl: string;
-  apiPrefix: string;
-  config: any;
+  // used for boards
+  componentZoneId?: string;
+  title?: string;
+  objectType?: string;
+  baseUrl?: string;
+  apiPrefix?: string;
+  config?: any;
 }
 
 export interface IComponents {
@@ -128,17 +128,3 @@ export interface IBoardTargetAndZone extends IRemoteTargetAndZone {
 }
 
 export type TUtilityBarOrNull = IUtilityBar | null;
-
-export interface IWidgets {
-  componentId: string;
-  order: string; // placement in the order array
-  componentZoneId: string;
-  componentType: string;
-  widgetType: string;
-  filter: any;
-  title: string;
-  objectType: string;
-  baseUrl: string;
-  apiPrefix: string;
-  config: any;
-}

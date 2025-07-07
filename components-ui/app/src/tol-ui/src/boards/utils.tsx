@@ -10,6 +10,7 @@ import {
   TsDataSource,
   BOARDS,
   TDataObjectListOrNull,
+  IComponentData,
 } from "..";
 
 
@@ -86,7 +87,7 @@ export function saveTitle(
   });
 }
 
-export async function getComponents(zoneId: string, boardDataSource: TsDataSource) {
+export async function getComponents(zoneId: string, boardDataSource: TsDataSource): Promise<IComponentData[] | undefined> {
   const componentZoneData = await getComponentZoneData(zoneId, boardDataSource);
   if (componentZoneData) {
     const componentIds = await Promise.all(
@@ -103,17 +104,17 @@ export async function getComponents(zoneId: string, boardDataSource: TsDataSourc
           (data) => data.id === componentId
         );
         return {
-          componentId: componentId,
+          id: componentId,
           order: component.order,
           componentZoneId: component.id,
-          componentType: componentDetails?.component_type,
+          type: componentDetails?.component_type,
           filter: componentDetails?.filter,
           title: componentDetails?.title,
           objectType: componentDetails?.object_type,
           baseUrl: componentDetails?.datasource?.base_url,
           apiPrefix: componentDetails?.datasource?.api_prefix,
           config: componentDetails?.config,
-          widgetType: componentDetails?.widget_type,
+          size: componentDetails?.widget_type,
           filterPassThrough: componentDetails?.filter_pass_through,
         };
       })
@@ -390,54 +391,3 @@ export async function upsertComponentConfig(
     { config: config }
   );
 }
-
-export function getWidgetOrder(layout: any) {
-  // Sort the layout array by the 'y' property (and 'x' property in case of a tie)
-  layout.sort((a, b) => a.y - b.y || a.x - b.x);
-
-  // Map the sorted layout array to an array of widget objects
-  const widgetOrder = layout.map((item) => item.i);
-
-  return {
-    order: widgetOrder,
-  };
-}
-
-export const generateLayout = (components) => {
-  // Left hand side are the component types, right are the breakpoints
-  const types = {
-    sm: { lg: { w: 1, h: 1 }, md: { w: 1, h: 1 }, sm: { w: 1, h: 1 } },
-    md: { lg: { w: 2, h: 3 }, md: { w: 2, h: 3 }, sm: { w: 1, h: 3 } },
-    lg: { lg: { w: 4, h: 4 }, md: { w: 2, h: 4 }, sm: { w: 1, h: 4 } },
-  };
-
-  const layout = { lg: [], md: [], sm: [] };
-  const y = { lg: 0, md: 0, sm: 0 };
-  const x = { lg: 0, md: 0, sm: 0 };
-
-  components.forEach((component) => {
-    const type = component.widgetType || "sm";
-    ["lg", "md", "sm"].forEach((breakpoint) => {
-      const { w, h } = types[type][breakpoint];
-      // if the widget won't fit on the current row, move it to the next row
-      if (
-        x[breakpoint] + w >
-        (breakpoint === "lg" ? 4 : breakpoint === "md" ? 2 : 1)
-      ) {
-        y[breakpoint] += h;
-        x[breakpoint] = 0;
-      }
-
-      layout[breakpoint].push({
-        i: component.componentId,
-        x: x[breakpoint],
-        y: y[breakpoint],
-        w,
-        h,
-      });
-      x[breakpoint] += w;
-    });
-  });
-
-  return layout;
-};
