@@ -10,20 +10,20 @@ import {
   initialiseFieldMeta,
   BoardFilters,
   RemoteTable,
-  upsertComponentConfig,
   saveTitle,
-  IBoardTargetAndZone
+  IBoardTargetAndZone,
+  updateConfigAndUpsert
 } from "..";
 
 
-interface Props extends IBoardTargetAndZone{
+interface Props extends IBoardTargetAndZone {
   id: string;
   title: string;
   config: any;
 }
 
 export function BoardTable(props: Props) {
-  const { id, title, boardObjectType, boardDataSource } = props;
+  const { id, title, boardObjectType, boardDataSource, zone } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
@@ -34,19 +34,34 @@ export function BoardTable(props: Props) {
     config["sort_by"] = sortByAtt
     setForceUpdate(!forceUpdate); // fetches new data on save
     setConfig({ ...config });
-    upsertComponentConfig(boardDataSource, id, config);
+    updateConfigAndUpsert(
+      id,
+      config,
+      zone,
+      boardDataSource
+    );
   };
 
   const onToggleFilterVisibility = (visible: boolean) => {
     config["filterVisibility"] = visible;
     setConfig({ ...config });
-    upsertComponentConfig(boardDataSource, id, config);
+    updateConfigAndUpsert(
+      id,
+      config,
+      zone,
+      boardDataSource
+    );
   };
 
   const onPageSizeChange = (pageSize: boolean) => {
     config["pageSize"] = pageSize;
     setConfig({ ...config });
-    upsertComponentConfig(boardDataSource, id, config);
+    updateConfigAndUpsert(
+      id,
+      config,
+      zone,
+      boardDataSource
+    );
   };
 
   const boardFilter = [
@@ -67,7 +82,7 @@ export function BoardTable(props: Props) {
       pageSize={config.pageSize || 50}
       filterVisibility={config.filterVisibility ?? true}
       defaultSort={
-        config.sort_by || 
+        config.sort_by ||
         config?.fieldMeta?.order?.active[0] ||
         undefined
       }

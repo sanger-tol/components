@@ -11,6 +11,7 @@ import {
   BOARDS,
   TDataObjectListOrNull,
   IComponentData,
+  IZone,
 } from "..";
 
 
@@ -378,11 +379,13 @@ export async function upsertComponent(
     });
 }
 
-export async function upsertComponentConfig(
-  boardDataSource: TsDataSource,
+export async function updateConfigAndUpsert(
   componentId: string,
   config: object,
+  zone: IZone,
+  boardDataSource: TsDataSource,
 ) {
+  zone.components[componentId].data.config = config;
   return await upsertComponent(
     boardDataSource,
     componentId,

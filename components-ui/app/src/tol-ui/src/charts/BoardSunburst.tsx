@@ -11,11 +11,11 @@ import {
   Icon,
   RemoteSunburst,
   deepCopy,
-  upsertComponentConfig,
   saveTitle,
   IBoardTargetAndZone,
   SliceByDrawer,
   IButton,
+  updateConfigAndUpsert,
 } from "..";
 
 
@@ -27,7 +27,7 @@ interface Props extends IBoardTargetAndZone {
 }
 
 export function BoardSunburst(props: Props) {
-  const { id, boardObjectType, boardDataSource, size } = props;
+  const { id, boardObjectType, boardDataSource, size, zone } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
@@ -35,7 +35,12 @@ export function BoardSunburst(props: Props) {
 
   const onModalSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });
-    upsertComponentConfig(boardDataSource, id, { ...updatedConfig });
+    updateConfigAndUpsert(
+      id,
+      { ...updatedConfig },
+      zone,
+      boardDataSource
+    )
     setForceUpdate(!forceUpdate);
   };
 

@@ -13,7 +13,7 @@ import {
   IBoardTargetAndZone,
   IButton,
   saveTitle,
-  upsertComponentConfig,
+  updateConfigAndUpsert,
 } from "..";
 
 
@@ -29,7 +29,7 @@ export interface IBoardMarkdown extends IBoardTargetAndZone {
 }
 
 export function BoardMarkdown(props: IBoardMarkdown) {
-  const { id, title, config, size, boardObjectType, boardDataSource } = props;
+  const { id, title, config, size, boardObjectType, boardDataSource, zone } = props;
 
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
@@ -42,7 +42,12 @@ export function BoardMarkdown(props: IBoardMarkdown) {
 
   const onMarkdownSave = (config: IMarkdownConfig) => {
     if (!showMarkdownViewer) {
-      upsertComponentConfig(boardDataSource, id, { ...config });
+      updateConfigAndUpsert(
+        id,
+        config,
+        zone,
+        boardDataSource
+      )
     }
   }
 
