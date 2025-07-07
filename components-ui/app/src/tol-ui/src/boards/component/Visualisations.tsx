@@ -9,15 +9,13 @@ import { WidthProvider, Responsive, Layouts } from "react-grid-layout";
 import {
   Button,
   Placeholder,
-  Visualisation,
   generateLayout,
   IZone,
   ConfirmationModal,
-  BOARDS,
   TsDataSource,
-  IWidgets,
-  onLayoutSave,
   deleteComponent,
+  generateVisualisations,
+  updateLayout,
 } from "../..";
 
 
@@ -25,23 +23,19 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 interface PVisualisations {
   id: string;
-  widgets: IWidgets[];
-  draggable: boolean;
-  setWidgets?: any;
   zone: IZone;
-  setZone: any;
+  setZone: (zone: IZone) => void;
+  draggable: boolean;
   saveLayout: boolean;
   setSaveLayout: any;
   boardDataSource: TsDataSource;
 }
 
-export function ResponsiveWidget(props: PVisualisations) {
+export function Visualisations(props: PVisualisations) {
   const {
-    widgets,
-    setWidgets,
-    draggable,
     zone,
     setZone,
+    draggable,
     saveLayout,
     setSaveLayout,
     boardDataSource,
@@ -53,55 +47,38 @@ export function ResponsiveWidget(props: PVisualisations) {
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [elements, setElements] = useState<JSX.Element[]>([]);
   const [widgetToDelete, setWidgetToDelete] = useState<string | null>(null);
-  const internalLayouts = useRef(generateLayout(widgets));
+  const internalLayouts = useRef(generateLayout(zone));
 
   useEffect(() => {
-    const elementsFromWidgets = widgets.map((widget) => (
-      <div key={widget.componentId} className="tol-visualisation">
-        <Visualisation
-          id={widget.componentId}
-          size={widget.widgetType}
-          zone={zone}
-          setZone={setZone}
-          componentType={widget.componentType}
-          title={widget.title}
-          config={widget.config}
-          objectType={widget.objectType}
-          dataSource={
-            new TsDataSource({
-              baseUrl: widget.baseUrl,
-              apiPrefix: widget.apiPrefix,
-            })
-          }
-          boardDataSource={boardDataSource}
-          boardObjectType={BOARDS.COMPONENT}
-        />
-      </div>
-    ));
-    setElements(elementsFromWidgets);
-    const newLayout = generateLayout(widgets);
+    setElements(
+      generateVisualisations(
+        zone,
+        setZone,
+        boardDataSource
+      )
+    );
+    console.log(elements);
+    const newLayout = generateLayout(zone);
     setLayouts(newLayout);
     internalLayouts.current = newLayout;
-  }, [widgets, zone]);
+  }, [zone]);
 
   useEffect(() => {
     if (saveLayout) {
-      onLayoutSave(
+      updateLayout(
         newLayout,
-        boardDataSource,
         setSaveLayout,
-        widgets,
-        setWidgets,
         zone,
-        setZone
+        setZone,
+        boardDataSource
       );
     }
   }, [saveLayout]);
 
   const deleteWidget = (id: string) => {
-    const newWidgets = widgets.filter((widget) => widget.componentId !== id);
     deleteComponent(id, boardDataSource);
-    setWidgets(newWidgets);
+    zone.order = zone.order.filter(cId => cId !== id);
+    setZone({ ...zone });
   };
 
   const onBreakpointChange = () => {

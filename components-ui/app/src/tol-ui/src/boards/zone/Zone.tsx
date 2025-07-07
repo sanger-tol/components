@@ -11,8 +11,7 @@ import {
   useZone,
   BoardFilters,
   ComponentPickerModal,
-  ResponsiveWidget,
-  IWidgets,
+  Visualisations,
   ConfirmationModal,
   getComponents,
   saveTitle,
@@ -20,6 +19,7 @@ import {
   BOARDS,
   UtilityBar,
   IButton,
+  IComponentData,
 } from "../..";
 
 interface Props {
@@ -44,7 +44,6 @@ export function Zone(props: Props) {
     deleteZone,
   } = props;
   const [draggable, setDraggable] = useState(false);
-  const [currentWidgets, setCurrentWidgets] = useState<IWidgets[]>([]);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
@@ -76,23 +75,16 @@ export function Zone(props: Props) {
   );
 
   useEffect(() => {
-    getComponents(id, boardDataSource).then((components: any) => {
+    getComponents(id, boardDataSource).then((components) => {
       // sort the widgets based on the order value
-      const sortedWidgets = components.sort((a, b) => a.order - b.order);
-      sortedWidgets.forEach((widget) => {
-        z.zone.components[widget.componentId] = {
-          data: {
-            defaultFilter: widget.filter,
-            filter: widget.filter,
-            id: widget.componentId,
-            order: widget.order,
-            filterPassThrough: widget.filterPassThrough,
-          },
+      const sortedComponents = components!.sort((a, b) => a.order! - b.order!);
+      sortedComponents.forEach((c: IComponentData) => {
+        z.zone.components[c.id!] = {
+          data: { ...c },
         };
-        z.zone.order.push(widget.componentId);
+        z.zone.order.push(c.id!);
       });
       z.setZone({ ...z.zone });
-      setCurrentWidgets(components);
     });
   }, []);
 
@@ -116,7 +108,7 @@ export function Zone(props: Props) {
     onClick: () => {
       setDraggable(!draggable);
     },
-    disabled: currentWidgets.length < 1,
+    disabled: z.zone.order.length < 1,
     type: "edit",
     icon: "up-down-left-right",
     position: "right",
@@ -216,8 +208,6 @@ export function Zone(props: Props) {
           open={open}
           setOpen={setOpen}
           zoneId={id}
-          currentWidgets={currentWidgets}
-          setCurrentWidgets={setCurrentWidgets}
           boardsDataSource={boardDataSource}
           {...z}
         />
@@ -228,14 +218,12 @@ export function Zone(props: Props) {
   return (
     <div className="tol-zone">
       {buttons}
-      {currentWidgets.length > 0 ? (
-        <ResponsiveWidget
+      {z.zone.order.length > 0 ? (
+        <Visualisations
           id={id}
-          widgets={currentWidgets!}
-          setWidgets={setCurrentWidgets}
-          draggable={draggable}
           zone={z.zone}
           setZone={z.setZone}
+          draggable={draggable}
           saveLayout={saveLayout}
           setSaveLayout={setSaveLayout}
           boardDataSource={boardDataSource}
