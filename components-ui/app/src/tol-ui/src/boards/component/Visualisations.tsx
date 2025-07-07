@@ -13,9 +13,10 @@ import {
   IZone,
   ConfirmationModal,
   TsDataSource,
-  deleteComponent,
   generateVisualisations,
   updateLayout,
+  BOARDS,
+  removeComponent,
 } from "../..";
 
 
@@ -46,7 +47,7 @@ export function Visualisations(props: PVisualisations) {
   const [newLayout, setNewLayout] = useState(undefined);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [elements, setElements] = useState<JSX.Element[]>([]);
-  const [widgetToDelete, setWidgetToDelete] = useState<string | null>(null);
+  const [componentToDelete, setComponentToDelete] = useState<string | null>(null);
   const internalLayouts = useRef(generateLayout(zone));
 
   useEffect(() => {
@@ -57,7 +58,6 @@ export function Visualisations(props: PVisualisations) {
         boardDataSource
       )
     );
-    console.log(elements);
     const newLayout = generateLayout(zone);
     setLayouts(newLayout);
     internalLayouts.current = newLayout;
@@ -75,9 +75,13 @@ export function Visualisations(props: PVisualisations) {
     }
   }, [saveLayout]);
 
-  const deleteWidget = (id: string) => {
-    deleteComponent(id, boardDataSource);
-    zone.order = zone.order.filter(cId => cId !== id);
+  const deleteComponent = (id: string) => {
+    boardDataSource
+      .deleteByID({
+        objectType: BOARDS.COMPONENT,
+        id: id,
+      })
+    removeComponent(id, zone);
     setZone({ ...zone });
   };
 
@@ -90,14 +94,14 @@ export function Visualisations(props: PVisualisations) {
   };
 
   const handleOpenModal = (key: string) => {
-    setWidgetToDelete(key);
+    setComponentToDelete(key);
     setConfirmationModalOpen(true);
   };
 
   const handleConfirmDeleteComponent = () => {
-    if (widgetToDelete) {
-      deleteWidget(widgetToDelete);
-      setWidgetToDelete(null);
+    if (componentToDelete) {
+      deleteComponent(componentToDelete);
+      setComponentToDelete(null);
     }
     setConfirmationModalOpen(false);
   };

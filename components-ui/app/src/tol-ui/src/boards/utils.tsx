@@ -174,7 +174,7 @@ export async function createBoardAndView(
       ],
     })
     .then(async () => {
-      return addView(boardDataSource, viewId, viewTitle);
+      return upsertNewView(boardDataSource, viewId, viewTitle);
     })
     .then(async () => {
       await boardDataSource
@@ -197,7 +197,7 @@ export async function createBoardAndView(
     });
 }
 
-export async function addView(
+export async function upsertNewView(
   boardDataSource: TsDataSource,
   id: string,
   title: string = "View 1"
@@ -224,7 +224,7 @@ export async function addView(
     });
 }
 
-export async function addZone(
+export async function upsertNewZone(
   dataSource: TsDataSource,
   boardDataSource: TsDataSource,
   objectType: string,
@@ -298,7 +298,7 @@ export async function upsertZone(
     });
 }
 
-export async function addComponent(
+export async function upsertNewComponent(
   dataSource: TsDataSource,
   boardDataSource: TsDataSource,
   objectType: string,
@@ -327,8 +327,6 @@ export async function addComponent(
             datasource: {
               base_url: dataSource.getBaseUrl(),
               api_prefix: dataSource.getApiPrefix(),
-              hello1: undefined,
-              hello2: "kiernan"
             },
             user_id: user.id,
             filter_pass_through: false,

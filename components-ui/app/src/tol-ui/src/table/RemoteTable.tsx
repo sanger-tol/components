@@ -224,7 +224,7 @@ export function RemoteTable(props: Props) {
     // generating query params
     const params = {
       page: page,
-      pageSize: pageSize,
+      page_size: pageSize,
       filter: filter,
       requested_fields: (fieldMeta?.order.active || []).join(',')
     };

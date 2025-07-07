@@ -16,11 +16,12 @@ import {
   FormTextField,
   RSForm,
   addComponent,
-  defineComponent,
   IZone,
   componentOptions,
-  sizeOptions
+  sizeOptions,
+  upsertNewComponent
 } from "../../index";
+import { getNextOrder } from "./utils";
 
 
 interface Props {
@@ -49,6 +50,12 @@ export function ComponentPickerModal(props: Props) {
   const [idError, setIdError] = useState(false);
   const [fieldError, setFieldError] = useState(false);
 
+  useEffect(() => {
+    if (!open) {
+      reset();
+    }
+  }, [open]);
+
   function reset() {
     setComponentType("");
     setWidgetType("");
@@ -72,23 +79,10 @@ export function ComponentPickerModal(props: Props) {
     return validId && validField;
   }
 
-  useEffect(() => {
-    if (!open) {
-      reset();
-    }
-  }, [open]);
-
   const onAddComponent = async () => {
     if (checkStates()) {
-      const highestOrder = Object.values(zone.components).reduce(
-        (max, component) => {
-          return component.data.order! > max ? component.data.order : max;
-        },
-        0,
-      );
-      const nextOrder = highestOrder! + 1;
-      // all components added are set with portal as baseUrl
-      const newComponent = await addComponent(
+      const nextOrder = getNextOrder(zone);
+      const newComponent = await upsertNewComponent(
         dataSource,
         boardsDataSource,
         zone.type!,
@@ -98,25 +92,20 @@ export function ComponentPickerModal(props: Props) {
         widgetType,
         zoneId,
       );
-      // this adds the component to the zone
-      defineComponent(
-        {
-          id: newComponent.newComponentId,
-          size: widgetType,
-          type: componentType,
-          order: nextOrder,
-          componentZoneId: newComponent.newComponentZoneId,
-          baseUrl: dataSource.getBaseUrl(),
-          apiPrefix: dataSource.getApiPrefix(),
-          filter: { and_: {} },
-          title: title,
-          objectType: zone.type,
-          config: {},
-          filterPassThrough: false,
-        },
-        zone,
-      );
-      zone.order = [...zone.order, newComponent.newComponentId];
+      addComponent({
+        id: newComponent.newComponentId,
+        size: widgetType,
+        type: componentType,
+        order: nextOrder,
+        componentZoneId: newComponent.newComponentZoneId,
+        baseUrl: dataSource.getBaseUrl(),
+        apiPrefix: dataSource.getApiPrefix(),
+        filter: { and_: {} },
+        title: title,
+        objectType: zone.type,
+        config: {},
+        filterPassThrough: false,
+      }, zone);
       setZone({ ...zone });
       reset();
       setOpen(false);

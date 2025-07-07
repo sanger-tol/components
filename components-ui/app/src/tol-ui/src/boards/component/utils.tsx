@@ -14,14 +14,6 @@ import {
 } from "../..";
 
 
-export function deleteComponent(id: string, boardDataSource: TsDataSource) {
-  boardDataSource
-    .deleteByID({
-      objectType: BOARDS.COMPONENT,
-      id: id,
-    })
-}
-
 export async function updateLayout(
   layout,
   setSaveLayout: (value: boolean) => void,
