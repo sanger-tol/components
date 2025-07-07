@@ -110,6 +110,13 @@ export const exampleBoard: Board = {
 };
 */
 
+export interface IUseZoneMeta {
+  objectType: string;
+  dataSource: TsDataSource;
+  zone: IZone;
+  setZone: (zone: IZone) => void;
+}
+
 export interface IRemoteTarget {
   objectType: string;
   dataSource: TsDataSource;

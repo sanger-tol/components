@@ -22,6 +22,7 @@ import {
   IComponentData,
 } from "../..";
 
+
 interface Props {
   id: string;
   title: string;
@@ -34,7 +35,7 @@ interface Props {
 }
 
 export function Zone(props: Props) {
-  const { 
+  const {
     id,
     objectType,
     dataSource,

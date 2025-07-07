@@ -5,10 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Button, Modal, SingleSelect, TsDataSource } from "../..";
-import { FormTextField } from "../../forms";
-import { RSForm } from "../..";
-import { addZone } from "../utils";
+import {
+  Button,
+  Modal,
+  SingleSelect,
+  TsDataSource,
+  RSForm,
+  upsertNewZone,
+  FormTextField,
+} from "../..";
 
 
 interface OrderObject {
@@ -97,7 +102,7 @@ export function ZoneModal(props: Props) {
         return zone.order;
       });
       const nextOrder = orders.length > 0 ? Math.max(...orders) + 1 : 1;
-      const newZone: INewZone = await addZone(
+      const newZone: INewZone = await upsertNewZone(
         dataSource,
         boardDataSource,
         objectType,
