@@ -3,8 +3,6 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, test } from '@playwright/test';
-//import { setAuth } from './helpers/auth.ts';
-//import { setupBoard, deleteBoard } from './helpers/boardSetUp.ts';
 import { addComponent, setupBoard, deleteBoard, setAuth, addComponentFilter } from './helpers'
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
