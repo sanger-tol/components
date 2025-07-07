@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, test } from '@playwright/test';
+import { sleep } from './sleep';
 
 const createBoard = async ({page, testID}) => {
   await page.goto('/my-boards');
@@ -36,7 +37,7 @@ const createZone = async ({page, testID}) => {
   await page.getByRole('textbox').fill(testID);
 
   // click add zone button
-  await page.getByRole('button', {name: 'Add Zone'}).click();
+  await page.getByTestId('add-zone-button').click();
 };
 
 export const deleteBoard = async({page, testID}) => {

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import sql from '../../db';
+globalThis.crypto ??= require("node:crypto").webcrypto
 
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 

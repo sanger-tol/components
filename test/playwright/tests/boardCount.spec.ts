@@ -17,6 +17,7 @@ const addCountComponent = async ({page, testID}) => {
   addComponent({page, testID}, 'count', 'Small');
 
   // check count has rendered
+  await sleep(200);
   await expect(page.locator('.tol-count')).toBeVisible();
 }
 
