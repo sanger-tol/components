@@ -14,7 +14,7 @@ import {
 } from "../..";
 
 
-interface Props extends IBoardTargetAndZone {
+export interface PVisualisation extends IBoardTargetAndZone {
   id: string;
   config: any;
   title: string;
@@ -22,7 +22,7 @@ interface Props extends IBoardTargetAndZone {
   size: string
 }
 
-export function Visualisation(props: Props) {
+export function Visualisation(props: PVisualisation) {
   const { componentType } = props;
 
   switch (componentType) {

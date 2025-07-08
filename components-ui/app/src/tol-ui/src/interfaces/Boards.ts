@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import {
   TsDataSource,
-  HistogramGrouping,
   IFilter,
   IUtilityBar,
 } from '..';
@@ -25,6 +24,14 @@ export interface IComponentData {
   type?: string; // component type e.g. table
   size?: string; // component size e.g. sm
   order?: number;
+
+  // used for boards
+  componentZoneId?: string;
+  title?: string;
+  objectType?: string;
+  baseUrl?: string;
+  apiPrefix?: string;
+  config?: any;
 }
 
 export interface IComponents {
@@ -115,17 +122,36 @@ export interface IZoneControl {
 
 export interface IRemoteTargetAndZone extends IRemoteTarget, IZoneControl {}
 
-export interface IBoardTargetAndZone extends IRemoteTargetAndZone {
+export interface IBoardTarget {
   boardObjectType: string;
   boardDataSource: TsDataSource;
 }
 
+export interface IBoardTargetAndZone extends IRemoteTargetAndZone, IBoardTarget {}
+
 export type TUtilityBarOrNull = IUtilityBar | null;
 
-export interface IChartConfig {
-  breakDownBy: string,
-  xAxis: string,
-  stacked: boolean,
-  grouping: HistogramGrouping,
-  chartType: 'bar' | 'line' | 'scatter',
+export interface IUseZoneMeta {
+  objectType: string;
+  dataSource: TsDataSource;
+  zone: IZone;
+  setZone: (zone: IZone) => void;
+}
+
+export interface IDBZone {
+  id: string;
+  objectType: string;
+  title: string;
+  filter?: IFilter;
+}
+
+export interface IDBZoneView {
+  zoneId: string;
+  order: number;
+  zoneViewId: string;
+}
+
+export interface IUpdatedZoneIds {
+  newZoneId: string;
+  newZoneViewId: string;
 }

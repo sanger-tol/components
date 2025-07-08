@@ -10,5 +10,6 @@ export * from "./DataSource";
 export * from "./EntityMeta";
 export * from "./Filter";
 export * from "./Nav";
-export * from "./User";
 export * from './Plate';
+export * from "./User";
+export * from "./Visualisation";

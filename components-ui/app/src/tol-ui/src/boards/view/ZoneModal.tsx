@@ -5,37 +5,33 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Button, Modal, SingleSelect, TsDataSource } from "../..";
-import { FormTextField } from "../../forms";
-import { RSForm } from "../..";
-import { addZone } from "../utils";
+import {
+  Button,
+  Modal,
+  SingleSelect,
+  RSForm,
+  upsertNewZone,
+  FormTextField,
+  PBoard,
+  IDBZoneView,
+  IUpdatedZoneIds,
+  IDBZone,
+  getNextZoneOrder,
+} from "../..";
 
 
-interface OrderObject {
-  zoneId: string;
-  order: number;
-  zoneViewId: string;
-}
-
-interface INewZone {
-  newZoneId: string;
-  newZoneViewId: string;
-}
-
-interface Props {
+export interface PZoneModal extends PBoard {
   open: boolean;
   setOpen: any;
-  setZones: any;
-  zones: object[];
-  setZoneOrder: any;
-  zoneOrder: OrderObject[];
+  zones: IDBZone[];
+  setZones: (zone: IDBZone[]) => void;
+  zoneOrder: IDBZoneView[];
+  setZoneOrder: (zone: IDBZoneView[]) => void;
   viewId: string;
-  dataSource: TsDataSource;
-  boardDataSource: TsDataSource;
 }
 
 
-export function ZoneModal(props: Props) {
+export function ZoneModal(props: PZoneModal) {
   const {
     open,
     setOpen,
@@ -47,6 +43,7 @@ export function ZoneModal(props: Props) {
     dataSource,
     boardDataSource,
   } = props;
+
   const [objectType, setObjectType] = useState("");
   const [title, setTitle] = useState("");
   const [titleError, setTitleError] = useState(false);
@@ -65,7 +62,7 @@ export function ZoneModal(props: Props) {
     setFieldError(false);
     let validId = true;
     let validField = true;
-    // @ts-ignore
+
     if (title === "") {
       setTitleError(true);
       validId = false;
@@ -93,11 +90,8 @@ export function ZoneModal(props: Props) {
 
   const onAddZone = async () => {
     if (checkStates()) {
-      const orders = zoneOrder.map((zone) => {
-        return zone.order;
-      });
-      const nextOrder = orders.length > 0 ? Math.max(...orders) + 1 : 1;
-      const newZone: INewZone = await addZone(
+      const nextOrder = getNextZoneOrder(zoneOrder);
+      const newZone: IUpdatedZoneIds = await upsertNewZone(
         dataSource,
         boardDataSource,
         objectType,
@@ -126,7 +120,7 @@ export function ZoneModal(props: Props) {
     }
   };
 
-  const actionButtons = (
+  const ActionButtons = (
     <div>
       <Button
         position="right"
@@ -152,7 +146,7 @@ export function ZoneModal(props: Props) {
         open={open}
         size="xs"
         setOpen={setOpen}
-        actionButton={actionButtons}
+        actionButton={ActionButtons}
         closeButton={false}
         overflow={false}
         data-testid="zoneModal"
@@ -160,7 +154,7 @@ export function ZoneModal(props: Props) {
         <div>
           <h4>Add New Zone</h4>
           <p className="zone-modal-labels">
-            Select Object Type <span style={{ color: "red" }}>*</span>
+            Select Object Type <span className="tol-danger-colour">*</span>
           </p>
           <SingleSelect
             data={objectTypesList}
@@ -171,7 +165,7 @@ export function ZoneModal(props: Props) {
           />
           <br />
           <p className="zone-modal-labels">
-            Enter Title <span style={{ color: "red" }}>*</span>
+            Enter Title <span className="tol-danger-colour">*</span>
           </p>
           <RSForm fluid>
             <FormTextField

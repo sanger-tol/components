@@ -16,15 +16,9 @@ import {
   resetAllFilters,
   deepCopy,
   useStateFallback,
+  IUseZoneMeta,
 } from "..";
 
-
-interface ZoneMeta {
-  objectType: string;
-  dataSource: TsDataSource;
-  zone: IZone;
-  setZone: any;
-}
 
 export function useZone(params: {
   objectType: string;
@@ -45,11 +39,11 @@ export function useZone(params: {
     dataSource,
     zone,
     setZone,
-  } as ZoneMeta;
+  } as IUseZoneMeta;
 }
 
 export function generateTranslatedFilter(
-  source: ZoneMeta,
+  source: IUseZoneMeta,
   translations: {
     [sourceAttribute: string]: string;
   },
@@ -66,8 +60,8 @@ export function generateTranslatedFilter(
 }
 
 export function useTranslator(params: {
-  source: ZoneMeta;
-  target: ZoneMeta;
+  source: IUseZoneMeta;
+  target: IUseZoneMeta;
   translations: {
     [sourceAttribute: string]: string;
   };
@@ -107,6 +101,17 @@ export function defineComponent(component: IComponentData, zone: IZone) {
 	};
 }
 
+export function addComponent(component: IComponentData, zone: IZone) {
+  defineComponent(component, zone);
+  zone.order.push(component.id!);
+}
+
+export function addComponents(components: IComponentData[], zone: IZone) {
+  for (const component of Object.values(components)) {
+    addComponent(component, zone);
+  }
+}
+
 export function defineZone(
   objectType: string,
   components: IComponentData[],
@@ -120,10 +125,7 @@ export function defineZone(
     filter: deepCopy(f),
     defaultFilter: deepCopy(f),
   };
-  for (const component of components) {
-    defineComponent(component, zone);
-    zone.order.push(component.id!);
-  }
+  addComponents(components, zone);
   return zone;
 }
 

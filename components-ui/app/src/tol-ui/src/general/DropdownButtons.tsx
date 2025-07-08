@@ -8,7 +8,7 @@
 
 import React from "react";
 import { Dropdown } from "rsuite";
-import { IDropdownButtonConfig, IDropdownMainIconProps } from "../models";
+import { IDropdownButtonConfig, IDropdownMainIconProps } from "../interfaces";
 import { Toaster, Message, Button } from "../index";
 
 

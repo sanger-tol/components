@@ -11,12 +11,12 @@ import {
   Placeholder,
   RemoteBarChart,
   deepCopy,
-  upsertComponentConfig,
   saveTitle,
   IBoardTargetAndZone,
   ChartConfigDrawer,
   IChartConfig,
-  IButton
+  IButton,
+  updateConfigAndUpsert
 } from "..";
 
 
@@ -28,7 +28,7 @@ interface Props extends IBoardTargetAndZone {
 }
 
 export function BoardChart(props: Props) {
-  const { id, title, boardObjectType, boardDataSource } = props;
+  const { id, title, boardObjectType, boardDataSource, zone } = props;
   const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
@@ -36,7 +36,12 @@ export function BoardChart(props: Props) {
 
   const onModalSave = (updatedConfig: IChartConfig) => {
     setConfig({ ...updatedConfig });
-    upsertComponentConfig(boardDataSource, id, { ...updatedConfig });
+    updateConfigAndUpsert(
+      id,
+      { ...updatedConfig },
+      zone,
+      boardDataSource
+    )
     setForceUpdate(!forceUpdate);
   };
 
@@ -103,7 +108,7 @@ export function BoardChart(props: Props) {
             text: title,
             editable: true,
             onSave: (value: string) => {
-              saveTitle(value, boardDataSource, id, boardObjectType);
+              saveTitle(value, id, boardObjectType, boardDataSource);
             }
           },
           buttons: [

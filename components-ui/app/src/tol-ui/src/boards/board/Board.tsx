@@ -20,18 +20,19 @@ import {
   View,
 } from "../..";
 
-interface Props {
+
+export interface PBoard {
   dataSource: TsDataSource;
   boardDataSource: TsDataSource;
 }
 
-export function Board(props: Props) {
+export function Board(props: PBoard) {
   const {
     dataSource,
     boardDataSource,
   } = props;
-  const { boardId, viewId } = useParams<any>();
 
+  const { boardId, viewId } = useParams<any>();
   const [user, setUser] = useState<any>(null);
   const [boardData, setBoardData] = useState<any>({});
   const [view, setView] = useState(viewId);
@@ -83,7 +84,7 @@ export function Board(props: Props) {
           text={boardData.boardTitle}
           onSave={(newTitle: any) => {
             if (newTitle !== boardData.boardTitle) {
-              saveTitle(newTitle, boardDataSource!, boardId, BOARDS.BOARD);
+              saveTitle(newTitle, boardId, BOARDS.BOARD, boardDataSource);
             }
           }}
           editable
