@@ -31,6 +31,7 @@ export function BoardCount(props: Props) {
     onClick: () => setOpenFilters(true),
     icon: "filter",
     className: "count-filter-button",
+    testid: "count-filter-button",
   }
 
   return (

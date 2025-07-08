@@ -154,6 +154,7 @@ export function RemoteFilters(props: Props) {
         }
         text="Apply Filters"
         icon="floppy-disk"
+        testid="apply-filter-button"
       />
     </div>
   );

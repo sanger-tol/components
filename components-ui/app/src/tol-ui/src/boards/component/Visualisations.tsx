@@ -137,6 +137,7 @@ export function Visualisations(props: PVisualisations) {
                   type="error"
                   className="widget-delete-btn"
                   icon="trash"
+                  testid="delete-component-button"
                 />
                 <ConfirmationModal
                   setOpen={setConfirmationModalOpen}

@@ -2,13 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { expect, test } from '@playwright/test';
-
-import sql from '../db';
-
-const headless = !!(process.env.CI || process.env.HEADLESS);
-
-test.use({headless: headless});
+import sql from '../../db';
+globalThis.crypto ??= require("node:crypto").webcrypto
 
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
@@ -30,7 +25,7 @@ const insertAuthToDB = async ({userID, token, orcidID}) => {
   VALUES (${randomInt()}, '${token}', NOW(), NOW() + INTERVAL '1 YEAR', ${userID});`).simple();    
 };
 
-const setAuth = async ({page}) => {
+export const setAuth = async ({page}) => {
   const userID = randomInt();
   const token = crypto.randomUUID();
   const orcidID = `https://orcid.org/${crypto.randomUUID()}`;
@@ -63,45 +58,3 @@ const setAuth = async ({page}) => {
   await page.reload();
   await page.waitForLoadState('load');
 };
-
-const createBoard = async ({page, testID}) => {
-  await page.goto('/my-boards');
-
-  // click the create new board button
-  await page.click('#create-new-board-button');
-
-  // click the modal
-  await page.getByText('Create New Board').click();
-
-  // name the board
-  await page.getByRole('textbox').fill(testID);
-
-  // save the board
-  await page.getByRole('button', {name: 'Create'}).click();
-};
-
-const deleteBoard = async({page, testID}) => {
-  await page.goto('/my-boards');
-
-  // find the correct board row
-  const boardRow = await page.getByTestId(testID);
-
-  // click the dropdown button
-  await boardRow.locator(".my-boards-dropdown-buttons").click();
-
-  // click the delete button
-  await page.locator('span').filter({ hasText: /^Delete$/, visible: true, exact: true }).click();
-
-  // click the confirm button
-  await page.locator('span').filter({ hasText: /^Confirm$/, visible: true, exact: true }).click();
-};
-
-test('manage dashboard', async ({ page }) => {
-  const testID = crypto.randomUUID();
-
-  await setAuth({page});
-
-  await createBoard({page, testID});
-
-  await deleteBoard({page, testID});
-});

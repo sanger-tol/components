@@ -116,6 +116,7 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
       onClick={onAddComponent}
       icon="plus"
       position="right"
+      testid="confirm-add-component-button"
     />
   );
 
@@ -144,6 +145,7 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
                         : "tol-component-modal-btn-clicked"
                     }
                     onClick={() => setComponentType(option.type)}
+                    data-testid={`component-option-${option.type}`}
                   >
                     <Icon icon={option.icon} size="4x" />
                     <h6>{option.text}</h6>

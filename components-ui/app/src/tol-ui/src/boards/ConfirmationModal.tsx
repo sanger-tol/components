@@ -26,6 +26,7 @@ export function ConfirmationModal(props: PConfirmationModal) {
           setOpen(false), onConfirmClick();
         }}
         text="Confirm"
+        testid="confirm-delete-button"
       />
       <Button
         position="right"

@@ -27,6 +27,7 @@ export interface IButton {
   outline?: boolean;
   id?: string;
   visible?: boolean;
+  testid?: string;
 }
 
 
@@ -47,6 +48,7 @@ export function Button(props: IButton) {
     outline,
     id,
     visible = true,
+    testid,
   } = props;
 
   const outlineClass = outline ? "-outline" : "";
@@ -57,15 +59,16 @@ export function Button(props: IButton) {
     <>
       {visible &&
         <RsButton
-          id={id}
-          onClick={onClick}
-          disabled={disabled || loading}
-          active={active}
-          className={
-            `icon-button-${type || 
-            "primary"}-${size || 
-            "md"}${outlineClass} ${className ? className : ""}`
-          }
+        id={id}
+        onClick={onClick}
+        disabled={disabled || loading}
+        active={active}
+        className={
+          `icon-button-${type ||
+            "primary"}-${size ||
+              "md"}${outlineClass} ${className ? className : ""}`
+            }
+        data-testid={testid}
         >
           {loading ? (
             loader
