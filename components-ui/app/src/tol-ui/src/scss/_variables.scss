@@ -243,111 +243,71 @@ $danger: $tol-danger !default;
 }
 
 // Variable classes for test page
-.tol-light {
-  background-color: var(--tol-light) !important;
-}
-.tol-dark {
-  background-color: var(--tol-dark) !important;
-}
+.tol-light-bg { background-color: var(--tol-light) !important; }
+.tol-dark-bg { background-color: var(--tol-dark) !important; }
+.tol-bg-bg { background-color: var(--tol-bg) !important; }
+.tol-bg-dark-bg { background-color: var(--tol-bg-dark) !important; }
+.tol-text-bg { background-color: var(--tol-text) !important; }
+.tol-emphasis-bg { background-color: var(--tol-emphasis) !important; }
+.tol-grey-bg { background-color: var(--tol-grey) !important; }
+.tol-grey-translucent-bg { background-color: var(--tol-grey-translucent) !important; }
+.tol-grey-subtle-bg { background-color: var(--tol-grey-subtle) !important; }
+.tol-primary-bg { background-color: var(--tol-primary) !important; }
+.tol-primary-translucent-bg { background-color: var(--tol-primary-translucent) !important; }
+.tol-primary-light-bg { background-color: var(--tol-primary-light) !important; }
+.tol-primary-dark-bg { background-color: var(--tol-primary-dark) !important; }
+.tol-info-bg { background-color: var(--tol-info) !important; }
+.tol-info-translucent-bg { background-color: var(--tol-info-translucent) !important; }
+.tol-info-light-bg { background-color: var(--tol-info-light) !important; }
+.tol-info-dark-bg { background-color: var(--tol-info-dark) !important; }
+.tol-success-bg { background-color: var(--tol-success) !important; }
+.tol-success-translucent-bg { background-color: var(--tol-success-translucent) !important; }
+.tol-success-light-bg { background-color: var(--tol-success-light) !important; }
+.tol-success-dark-bg { background-color: var(--tol-success-dark) !important; }
+.tol-warning-bg { background-color: var(--tol-warning) !important; }
+.tol-warning-translucent-bg { background-color: var(--tol-warning-translucent) !important; }
+.tol-warning-light-bg { background-color: var(--tol-warning-light) !important; }
+.tol-warning-dark-bg { background-color: var(--tol-warning-dark) !important; }
+.tol-danger-bg { background-color: var(--tol-danger) !important; }
+.tol-danger-translucent-bg { background-color: var(--tol-danger-translucent) !important; }
+.tol-danger-light-bg { background-color: var(--tol-danger-light) !important; }
+.tol-danger-dark-bg { background-color: var(--tol-danger-dark) !important; }
+.tol-royal-bg { background-color: var(--tol-royal) !important; }
+.tol-royal-translucent-bg { background-color: var(--tol-royal-translucent) !important; }
+.tol-royal-light-bg { background-color: var(--tol-royal-light) !important; }
+.tol-royal-dark-bg { background-color: var(--tol-royal-dark) !important; }
 
-.tol-bg {
-  background-color: var(--tol-bg) !important;
-}
-.tol-bg-dark {
-  background-color: var(--tol-bg-dark) !important;
-}
-
-.tol-text {
-  background-color: var(--tol-text) !important;
-}
-.tol-emphasis {
-  background-color: var(--tol-emphasis) !important;
-}
-
-.tol-grey {
-  background-color: var(--tol-grey) !important;
-}
-.tol-grey-translucent {
-  background-color: var(--tol-grey-translucent) !important;
-}
-.tol-grey-subtle {
-  background-color: var(--tol-grey-subtle) !important;
-}
-
-.tol-primary {
-  background-color: var(--tol-primary) !important;
-}
-.tol-primary-translucent {
-  background-color: var(--tol-primary-translucent) !important;
-}
-.tol-primary-light {
-  background-color: var(--tol-primary-light) !important;
-}
-.tol-primary-dark {
-  background-color: var(--tol-primary-dark) !important;
-}
-
-.tol-info {
-  background-color: var(--tol-info) !important;
-}
-.tol-info-translucent {
-  background-color: var(--tol-info-translucent) !important;
-}
-.tol-info-light {
-  background-color: var(--tol-info-light) !important;
-}
-.tol-info-dark {
-  background-color: var(--tol-info-dark) !important;
-}
-
-.tol-success {
-  background-color: var(--tol-success) !important;
-}
-.tol-success-translucent {
-  background-color: var(--tol-success-translucent) !important;
-}
-.tol-success-light {
-  background-color: var(--tol-success-light) !important;
-}
-.tol-success-dark {
-  background-color: var(--tol-success-dark) !important;
-}
-
-.tol-warning {
-  background-color: var(--tol-warning) !important;
-}
-.tol-warning-translucent {
-  background-color: var(--tol-warning-translucent) !important;
-}
-.tol-warning-light {
-  background-color: var(--tol-warning-light) !important;
-}
-.tol-warning-dark {
-  background-color: var(--tol-warning-dark) !important;
-}
-
-.tol-danger {
-  background-color: var(--tol-danger) !important;
-}
-.tol-danger-translucent {
-  background-color: var(--tol-danger-translucent) !important;
-}
-.tol-danger-light {
-  background-color: var(--tol-danger-light) !important;
-}
-.tol-danger-dark {
-  background-color: var(--tol-danger-dark) !important;
-}
-
-.tol-royal {
-  background-color: var(--tol-royal) !important;
-}
-.tol-royal-translucent {
-  background-color: var(--tol-royal-translucent) !important;
-}
-.tol-royal-light {
-  background-color: var(--tol-royal-light) !important;
-}
-.tol-royal-dark {
-  background-color: var(--tol-royal-dark) !important;
-}
+// Variable classes for test page
+.tol-light-colour { color: var(--tol-light) !important; }
+.tol-dark-colour { color: var(--tol-dark) !important; }
+.tol-bg-colour { color: var(--tol-bg) !important; }
+.tol-bg-dark-colour { color: var(--tol-bg-dark) !important; }
+.tol-text-colour { color: var(--tol-text) !important; }
+.tol-emphasis-colour { color: var(--tol-emphasis) !important; }
+.tol-grey-colour { color: var(--tol-grey) !important; }
+.tol-grey-translucent-colour { color: var(--tol-grey-translucent) !important; }
+.tol-grey-subtle-colour { color: var(--tol-grey-subtle) !important; }
+.tol-primary-colour { color: var(--tol-primary) !important; }
+.tol-primary-translucent-colour { color: var(--tol-primary-translucent) !important; }
+.tol-primary-light-colour { color: var(--tol-primary-light) !important; }
+.tol-primary-dark-colour { color: var(--tol-primary-dark) !important; }
+.tol-info-colour { color: var(--tol-info) !important; }
+.tol-info-translucent-colour { color: var(--tol-info-translucent) !important; }
+.tol-info-light-colour { color: var(--tol-info-light) !important; }
+.tol-info-dark-colour { color: var(--tol-info-dark) !important; }
+.tol-success-colour { color: var(--tol-success) !important; }
+.tol-success-translucent-colour { color: var(--tol-success-translucent) !important; }
+.tol-success-light-colour { color: var(--tol-success-light) !important; }
+.tol-success-dark-colour { color: var(--tol-success-dark) !important; }
+.tol-warning-colour { color: var(--tol-warning) !important; }
+.tol-warning-translucent-colour { color: var(--tol-warning-translucent) !important; }
+.tol-warning-light-colour { color: var(--tol-warning-light) !important; }
+.tol-warning-dark-colour { color: var(--tol-warning-dark) !important; }
+.tol-danger-colour { color: var(--tol-danger) !important; }
+.tol-danger-translucent-colour { color: var(--tol-danger-translucent) !important; }
+.tol-danger-light-colour { color: var(--tol-danger-light) !important; }
+.tol-danger-dark-colour { color: var(--tol-danger-dark) !important; }
+.tol-royal-colour { color: var(--tol-royal) !important; }
+.tol-royal-translucent-colour { color: var(--tol-royal-translucent) !important; }
+.tol-royal-light-colour { color: var(--tol-royal-light) !important; }
+.tol-royal-dark-colour { color: var(--tol-royal-dark) !important; }

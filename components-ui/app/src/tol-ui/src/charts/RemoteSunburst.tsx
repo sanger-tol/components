@@ -57,6 +57,7 @@ export function RemoteSunburst(props: Props) {
     utilityBarConfig,
     contents,
     height = "100%",
+    noLabel,
   } = props;
   const wrapperId = "tol-sunburst-wrapper-" + id;
   const [datasets, setDatasets] = useState({});
@@ -245,8 +246,9 @@ export function RemoteSunburst(props: Props) {
                     contents={contents ? contents : Contents()}
                     datasets={datasets}
                     downloadName={normaliseCaps(objectType)}
-                    setSliceData={setter}
+                    setSliceData={miniActive ? undefined : setter}
                     noLegend={miniActive ? true : noLegend}
+                    noLabel={miniActive ? true : noLabel}
                     resetChart={resetChart}
                     utilityBarConfig={null}
                     height={"100%"}

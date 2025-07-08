@@ -12,29 +12,27 @@ import {
   Col,
   Icon,
   HoverOverlay,
-  TsDataSource,
   FormTextField,
   RSForm,
   addComponent,
   IZone,
   componentOptions,
   sizeOptions,
-  upsertNewComponent
-} from "../../index";
-import { getNextOrder } from "./utils";
+  upsertNewComponent,
+  PBoard,
+  getNextComponentOrder,
+} from "../..";
 
 
-interface Props {
+export interface PComponentPickerModal extends PBoard {
   open: boolean;
   setOpen: any;
   zone: IZone;
   setZone: any;
   zoneId: string;
-  dataSource: TsDataSource;
-  boardsDataSource: TsDataSource;
 }
 
-export function ComponentPickerModal(props: Props) {
+export function ComponentPickerModal(props: PComponentPickerModal) {
   const {
     open,
     setOpen,
@@ -42,7 +40,7 @@ export function ComponentPickerModal(props: Props) {
     setZone,
     zoneId,
     dataSource,
-    boardsDataSource,
+    boardDataSource,
   } = props;
   const [componentType, setComponentType] = useState("");
   const [widgetType, setWidgetType] = useState("");
@@ -81,10 +79,10 @@ export function ComponentPickerModal(props: Props) {
 
   const onAddComponent = async () => {
     if (checkStates()) {
-      const nextOrder = getNextOrder(zone);
+      const nextOrder = getNextComponentOrder(zone);
       const newComponent = await upsertNewComponent(
         dataSource,
-        boardsDataSource,
+        boardDataSource,
         zone.type!,
         title,
         nextOrder,
@@ -112,7 +110,7 @@ export function ComponentPickerModal(props: Props) {
     }
   };
 
-  const plusButton = (
+  const PlusButton = (
     <Button
       type="success"
       onClick={onAddComponent}
@@ -126,13 +124,13 @@ export function ComponentPickerModal(props: Props) {
       open={open}
       size="md"
       setOpen={setOpen}
-      actionButton={plusButton}
+      actionButton={PlusButton}
       overflow={false}
       className={"dashboard-component-modal-full"}
     >
       <>
         <h6>
-          Select Component <span style={{ color: "red" }}>*</span>
+          Select Component <span className="tol-danger-colour">*</span>
         </h6>
         <Row>
           {componentOptions.map((option, index) => {
@@ -166,7 +164,7 @@ export function ComponentPickerModal(props: Props) {
         </Row>
         <br />
         <h6>
-          Select Size <span style={{ color: "red" }}>*</span>
+          Select Size <span className="tol-danger-colour">*</span>
         </h6>
         <Row>
           {sizeOptions(componentType).map((option, index) => {
@@ -198,7 +196,7 @@ export function ComponentPickerModal(props: Props) {
         </Row>
         <br />
         <h6>
-          Enter Title <span style={{ color: "red" }}>*</span>
+          Enter Title <span className="tol-danger-colour">*</span>
         </h6>
         <RSForm fluid>
           <FormTextField

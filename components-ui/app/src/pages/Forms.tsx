@@ -166,7 +166,7 @@ const testConfigProfileForm = {
             children: (
               <span>
                 I would like to receive the newsletter
-                <span style={{ color: "red" }}>*</span>
+                <span className="tol-danger-colour">*</span>
               </span>
             ),
             subtext: "We will share your details with our partners.",

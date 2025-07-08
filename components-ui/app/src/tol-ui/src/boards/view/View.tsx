@@ -9,40 +9,28 @@ import {
   Button,
   ZoneModal,
   IFilter,
-  TsDataSource,
   getZones,
   Zone,
   BOARDS,
-  API_METHODS
+  IDBZone,
+  IDBZoneView,
+  PBoard,
+  reorderZoneAndUpsert,
+  getSortedZones,
 } from "../..";
 
 
-interface ZoneObject {
-  id: string;
-  objectType: string;
-  title: string;
-  filter: IFilter;
-}
-
-interface OrderObject {
-  zoneId: string;
-  order: number;
-  zoneViewId: string;
-}
-
-interface Props {
+export interface PView extends PBoard {
   id: string;
   defaultFilter?: IFilter;
-  // title: string,
-  dataSource: TsDataSource;
-  boardDataSource: TsDataSource;
+  // title: string;
 }
 
-export function View(props: Props) {
+export function View(props: PView) {
   const { id, dataSource, boardDataSource } = props;
-  const [zones, setZones] = useState<ZoneObject[]>([]);
+  const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
-  const [zoneOrder, setZoneOrder] = useState<OrderObject[]>([]);
+  const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
 
   useEffect(() => {
     getZones(id, boardDataSource).then((res: any) => {
@@ -60,87 +48,28 @@ export function View(props: Props) {
   }, []);
 
   const deleteZone = (id: string) => {
-    const newZones = zones.filter((zone) => zone.id !== id);
     boardDataSource
-      .custom({
-        method: API_METHODS.DELETE,
-        resource: `${BOARDS.ZONE}/${id}`,
+      .deleteByID({
+        objectType: BOARDS.ZONE,
+        id
       })
+    const newZones = zones.filter((zone) => zone.id !== id);
     setZones(newZones);
   };
 
   const onZoneReorder = async (id: string, direction: string) => {
-    // Sort a copy of zoneOrder array by order
-    const updatedZoneOrder = [...zoneOrder];
-    updatedZoneOrder.sort((a, b) => a.order - b.order);
-
-    // Find the index of the zone order to move
-    const moverIndex = updatedZoneOrder.findIndex((zone) => zone.zoneId === id);
-
-    const delta = direction === "up" ? -1 : 1;
-
-    // Find the zone order to move and the zone order to move it to
-    const mover = updatedZoneOrder[moverIndex];
-    const moved = updatedZoneOrder[moverIndex + delta];
-
-    // Bounds check
-    if (!moved) return;
-
-    // Swap the order values
-    const oldMoverOrder = mover.order;
-    const oldMovedOrder = moved.order;
-
-    mover.order = oldMovedOrder;
-    moved.order = oldMoverOrder;
-
-    // Sort again
-    updatedZoneOrder.sort((a, b) => a.order - b.order);
-
-    // Get the maximum order value
-    const orders = updatedZoneOrder.map((zone) => {
-      return zone.order;
-    });
-    const maxOrder = Math.max(...orders);
-
-    // Add the max offset value to each zone order (This avoids integrity issues in the DB)
-    updatedZoneOrder.forEach((zone) => {
-      zone.order += maxOrder + 1;
-    });
-
-    const payloadData = updatedZoneOrder.map((zone) => {
-      return {
-        type: BOARDS.ZONE_VIEW as string,
-        id: zone.zoneViewId,
-        attributes: {
-          order: zone.order,
-        },
-      };
-    });
-
-    await boardDataSource.upsert({
-      objectType: BOARDS.ZONE_VIEW,
-      payload: payloadData,
-    });
-
-    setZoneOrder(updatedZoneOrder);
-
-    // Reorder the zones state based on the updated zoneOrder
-    const updatedZones = [...zones].sort((a, b) => {
-      const orderA = // @ts-ignore
-        updatedZoneOrder.find((zone) => zone.id === a.id)?.order || 0;
-      const orderB = // @ts-ignore
-        updatedZoneOrder.find((zone) => zone.id === b.id)?.order || 0;
-      return orderA - orderB;
-    });
-
-    setZones(updatedZones);
-  };
-
-  const getSortedZones = () => {
-    return [...zones].sort((a, b) => {
-      const orderA = zoneOrder.find((zone) => zone.zoneId === a.id)?.order || 0;
-      const orderB = zoneOrder.find((zone) => zone.zoneId === b.id)?.order || 0;
-      return orderA - orderB;
+    reorderZoneAndUpsert(
+      id,
+      direction,
+      zones,
+      zoneOrder,
+      boardDataSource,
+    ).then((data) => {
+      if (data) {
+        const { zones: updatedZones, zoneOrder: updatedZoneOrder } = data;
+        setZones(updatedZones);
+        setZoneOrder(updatedZoneOrder);
+      }
     });
   };
 
@@ -172,7 +101,7 @@ export function View(props: Props) {
       />
       {zones.length > 0 ? (
         <>
-          {getSortedZones().map((zone) => {
+          {getSortedZones(zones, zoneOrder).map((zone) => {
             return (
               <Zone
                 key={zone.id}

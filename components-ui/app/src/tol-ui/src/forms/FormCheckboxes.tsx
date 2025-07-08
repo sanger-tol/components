@@ -76,7 +76,7 @@ export function FormCheckboxes(props: Props) {
                   {field.children}
                   {field.subtext && (
                     <span className="rs-form-help-text">
-                      <span style={{ color: "red", marginLeft: "10px" }}>
+                      <span className="tol-danger-colour" style={{ marginLeft: "10px" }}>
                         *{" "}
                       </span>
                       {field.subtext}
