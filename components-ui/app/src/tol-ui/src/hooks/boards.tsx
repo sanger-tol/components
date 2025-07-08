@@ -16,7 +16,6 @@ import {
   resetAllFilters,
   deepCopy,
   useStateFallback,
-  IComponents,
   IUseZoneMeta,
 } from "..";
 
