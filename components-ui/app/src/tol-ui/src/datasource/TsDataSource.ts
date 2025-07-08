@@ -27,6 +27,7 @@ import {
   httpClient,
   deepCopy,
   API_METHODS,
+  normaliseCaps,
 } from "..";
 
 
@@ -189,18 +190,16 @@ export class TsDataSource {
   }
 
   private addIds(attributes: IAttributes) {
-    for (const objectType of Object.values(attributes)) {
-      if (!objectType.hasOwnProperty("uid")) {
-        objectType["id"] = {
-          authoritative: null,
-          available_on_relationships: null,
-          cardinality: 99999,
-          description: null,
-          display_name: null,
-          python_type: "str",
-          source: null,
-        };
-      }
+    for (const [objectType, attr] of  Object.entries(attributes)) {
+      attr["id"] = {
+        authoritative: true,
+        available_on_relationships: true,
+        cardinality: 99999,
+        description: null,
+        display_name: normaliseCaps("id", objectType),
+        python_type: "str",
+        source: null,
+      };
     }
   }
 
