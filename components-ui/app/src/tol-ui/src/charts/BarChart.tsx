@@ -69,7 +69,9 @@ interface Props {
 export function BarChart(props: Props) {
   const {
     id,
+    stacked = false,
     labels,
+    height = "100%",
     setBarData,
     cumulative,
     utilityBarConfig = {},
@@ -77,11 +79,9 @@ export function BarChart(props: Props) {
     chartType='bar',
     downloadName = 'barchart'
   } = props;
-  const height = props.height !== undefined ? props.height : "100%";
-  const stacked = props.stacked !== undefined ? props.stacked : false;
   const originDatasets = initialiseDatasets(props.datasets);
-  const [datasets, setDatasets] = useState(originDatasets);
 
+  const [datasets, setDatasets] = useState(originDatasets);
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
   // Used to change the height of the y-axis when selecting a legend

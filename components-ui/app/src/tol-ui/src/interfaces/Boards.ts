@@ -110,13 +110,6 @@ export const exampleBoard: Board = {
 };
 */
 
-export interface IUseZoneMeta {
-  objectType: string;
-  dataSource: TsDataSource;
-  zone: IZone;
-  setZone: (zone: IZone) => void;
-}
-
 export interface IRemoteTarget {
   objectType: string;
   dataSource: TsDataSource;
@@ -129,9 +122,36 @@ export interface IZoneControl {
 
 export interface IRemoteTargetAndZone extends IRemoteTarget, IZoneControl {}
 
-export interface IBoardTargetAndZone extends IRemoteTargetAndZone {
+export interface IBoardTarget {
   boardObjectType: string;
   boardDataSource: TsDataSource;
 }
 
+export interface IBoardTargetAndZone extends IRemoteTargetAndZone, IBoardTarget {}
+
 export type TUtilityBarOrNull = IUtilityBar | null;
+
+export interface IUseZoneMeta {
+  objectType: string;
+  dataSource: TsDataSource;
+  zone: IZone;
+  setZone: (zone: IZone) => void;
+}
+
+export interface IDBZone {
+  id: string;
+  objectType: string;
+  title: string;
+  filter?: IFilter;
+}
+
+export interface IDBZoneView {
+  zoneId: string;
+  order: number;
+  zoneViewId: string;
+}
+
+export interface IUpdatedZoneIds {
+  newZoneId: string;
+  newZoneViewId: string;
+}

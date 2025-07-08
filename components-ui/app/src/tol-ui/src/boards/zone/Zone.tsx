@@ -15,26 +15,24 @@ import {
   ConfirmationModal,
   getComponents,
   saveTitle,
-  TsDataSource,
   BOARDS,
   UtilityBar,
   IButton,
-  IComponentData,
+  PBoard,
+  addComponents,
 } from "../..";
 
 
-interface Props {
+export interface PZone extends PBoard {
   id: string;
   title: string;
   objectType: string;
-  dataSource: TsDataSource;
-  boardDataSource: TsDataSource;
   filter: any;
   onZoneReorder: any;
   deleteZone: any;
 }
 
-export function Zone(props: Props) {
+export function Zone(props: PZone) {
   const {
     id,
     objectType,
@@ -58,6 +56,15 @@ export function Zone(props: Props) {
     components: [],
   });
 
+  useEffect(() => {
+    getComponents(id, boardDataSource).then((components) => {
+      // sort the widgets based on the order value
+      const sortedComponents = components!.sort((a, b) => a.order! - b.order!);
+      addComponents(sortedComponents, z.zone);
+      z.setZone({ ...z.zone });
+    });
+  }, []);
+
   const handleOpenModal = () => {
     setConfirmationModalOpen(true);
   };
@@ -66,7 +73,11 @@ export function Zone(props: Props) {
     setEditBtnsVisible(!editBtnsVisible);
   };
 
-  const confirmationModal = (
+  const onAddComponent = () => {
+    setOpen(true);
+  };
+
+  const ConfirmModal = (
     <ConfirmationModal
       setOpen={setConfirmationModalOpen}
       open={confirmationModalOpen}
@@ -75,25 +86,7 @@ export function Zone(props: Props) {
     />
   );
 
-  useEffect(() => {
-    getComponents(id, boardDataSource).then((components) => {
-      // sort the widgets based on the order value
-      const sortedComponents = components!.sort((a, b) => a.order! - b.order!);
-      sortedComponents.forEach((c: IComponentData) => {
-        z.zone.components[c.id!] = {
-          data: { ...c },
-        };
-        z.zone.order.push(c.id!);
-      });
-      z.setZone({ ...z.zone });
-    });
-  }, []);
-
-  const onAddComponent = () => {
-    setOpen(true);
-  };
-
-  const addButton : IButton = {
+  const addButton: IButton = {
     outline: true,
     onClick: () => {
       onAddComponent();
@@ -117,7 +110,7 @@ export function Zone(props: Props) {
     tooltip: "Edit Widgets",
     testid: "drag-components-button",
   };
-  
+
   const deleteButton: IButton = {
     outline: true,
     onClick: () => {
@@ -128,7 +121,7 @@ export function Zone(props: Props) {
     position: "right",
     tooltip: "Delete Zone"
   };
-  
+
   const upButton: IButton = {
     outline: true,
     onClick: async () => {
@@ -139,7 +132,7 @@ export function Zone(props: Props) {
     position: "right",
     tooltip: "Move Zone Up"
   };
-  
+
   const downButton: IButton = {
     outline: true,
     onClick: async () => {
@@ -150,7 +143,7 @@ export function Zone(props: Props) {
     position: "right",
     tooltip: "Move Zone Down"
   };
-  
+
   const saveButton: IButton = {
     outline: false,
     onClick: () => {
@@ -163,7 +156,7 @@ export function Zone(props: Props) {
     tooltip: "Save Layout",
     testid: "save-layout-button"
   };
-  
+
   const filtersButton: IButton = {
     outline: true,
     onClick: () => setOpenFilters(true),
@@ -172,7 +165,7 @@ export function Zone(props: Props) {
     position: "right",
     tooltip: "Add filters to the Zone"
   };
-  
+
   const showEditButtons: IButton = {
     outline: !editBtnsVisible,
     onClick: () => {
@@ -189,12 +182,12 @@ export function Zone(props: Props) {
     <div className="tol-zone-bar">
       <UtilityBar
         id="zone-utility-bar"
-        title= {{
+        title={{
           text: title,
           editable: true,
           onSave: (value: string) => {
             if (value !== title) {
-              saveTitle(value, boardDataSource, id, BOARDS.ZONE);
+              saveTitle(value, id, BOARDS.ZONE, boardDataSource);
               setTitle(value);
             }
           }
@@ -213,7 +206,7 @@ export function Zone(props: Props) {
           open={open}
           setOpen={setOpen}
           zoneId={id}
-          boardsDataSource={boardDataSource}
+          boardDataSource={boardDataSource}
           {...z}
         />
       </div>
@@ -269,7 +262,7 @@ export function Zone(props: Props) {
           )}
         </div>
       )}
-      {confirmationModal}
+      {ConfirmModal}
       <BoardFilters
         {...props}
         id={id}

@@ -108,7 +108,7 @@ export function BoardChart(props: Props) {
             text: title,
             editable: true,
             onSave: (value: string) => {
-              saveTitle(value, boardDataSource, id, boardObjectType);
+              saveTitle(value, id, boardObjectType, boardDataSource);
             }
           },
           buttons: [

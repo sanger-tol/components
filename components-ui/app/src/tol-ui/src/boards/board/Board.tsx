@@ -20,6 +20,7 @@ import {
   View,
 } from "../..";
 
+
 export interface PBoard {
   dataSource: TsDataSource;
   boardDataSource: TsDataSource;
@@ -83,7 +84,7 @@ export function Board(props: PBoard) {
           text={boardData.boardTitle}
           onSave={(newTitle: any) => {
             if (newTitle !== boardData.boardTitle) {
-              saveTitle(newTitle, boardDataSource!, boardId, BOARDS.BOARD);
+              saveTitle(newTitle, boardId, BOARDS.BOARD, boardDataSource);
             }
           }}
           editable
