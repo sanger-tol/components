@@ -30,6 +30,7 @@ export function DataSource() {
   ds1
     .getCursorPage({
       objectType: "species",
+      searchAfter: ["1000448"],
     })
     .then((dataObjects) => {
       console.log("List cursor page: ", dataObjects);
