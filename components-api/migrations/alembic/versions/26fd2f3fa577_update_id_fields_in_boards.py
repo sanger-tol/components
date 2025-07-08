@@ -19,12 +19,28 @@ depends_on = None
 
 def upgrade() -> None:
     conn = op.get_bind()
-    # update the config field in the components table
+    # update the config field in the component table
     conn.execute(
         text("""
-        UPDATE components
-        SET config = jsonb_replace(config::jsonb, '"uid"', '"id"')
+        UPDATE component
+        SET config = REPLACE(config::text, '"uid"', '"id"')::jsonb
         WHERE config::text LIKE '%"uid"%'
+        """)
+    )
+    # update the filter field in the component table
+    conn.execute(
+        text("""
+        UPDATE component
+        SET filter = REPLACE(filter::text, '"uid"', '"id"')::jsonb
+        WHERE filter::text LIKE '%"uid"%'
+        """)
+    )
+    # update the filter field in the zone table
+    conn.execute(
+        text("""
+        UPDATE zone
+        SET filter = REPLACE(filter::text, '"uid"', '"id"')::jsonb
+        WHERE filter::text LIKE '%"uid"%'
         """)
     )
 
