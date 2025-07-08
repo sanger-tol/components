@@ -373,10 +373,30 @@ export class TsDataSource {
       });
   }
 
-  // public async getListByCursor({objectType, searchAfter}:IGetListCursor){
-
-  //   while
-  // }
+  public async *getListByCursor({
+    objectType,
+    page,
+    pageSize,
+    filter,
+    requestedFields,
+    searchAfter,
+  }: IGetListCursor) {
+    let currentSearch = searchAfter
+    while (true) {
+      const [fetched, nextSearch] = await this.getCursorPage({
+        objectType,
+        page,
+        pageSize,
+        filter,
+        requestedFields,
+        searchAfter: currentSearch,
+      });
+      for (const item of fetched){
+        yield item;
+      }
+      currentSearch = nextSearch;
+    }
+  }
 
   public async getCursorPage({
     objectType,

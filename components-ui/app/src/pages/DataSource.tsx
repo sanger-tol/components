@@ -27,14 +27,13 @@ export function DataSource() {
       console.log("List Page: ", dataObjects);
     });
 
-  ds1
-    .getCursorPage({
-      objectType: "species",
-      searchAfter: ["1000448"],
-    })
-    .then((dataObjects) => {
-      console.log("List cursor page: ", dataObjects);
-    });
+ const f1 = ds1.getListByCursor({
+    objectType: "species",
+    searchAfter: ["1000448"],
+  });
+  for await (const item of f1) {
+    console.log(`here`, item);
+  }
 
   ds1
     .getByIds({
