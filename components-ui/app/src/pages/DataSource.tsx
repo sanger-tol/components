@@ -6,13 +6,6 @@
 
 import { TsDataSource, DetailAttribute, Widgets, env } from "../tol-ui/src";
 
-function handle(response, generator) {
-  if (response.done) return;
-  console.log("Element", response.value);
-  generator.next().then((result) => {
-    handle(result, generator);
-  });
-}
 
 export function DataSource() {
   const ds1 = new TsDataSource({ baseUrl: env.TOL_DATA });
@@ -35,14 +28,16 @@ export function DataSource() {
     });
 
   const f1 = ds1.getListByCursor({
-    objectType: "playwright",
-    searchAfter: ["10"],
+    objectType: "species",
   });
 
-  // const f1 = ds1.getListByCursor({
-  //   objectType: "species",
-  // });
-  //:Todo --> remove comment when the Species sample size is less
+  const handle = (response, generator) => {
+    if (response) return;
+    console.log("Element", response);
+    generator.next().then((result) => {
+      handle(result, generator);
+    });
+  }
 
   f1.next().then((dataOjects) => handle(dataOjects, f1));
 
