@@ -30,7 +30,6 @@ import {
   normaliseCaps,
 } from "..";
 
-
 const detailCache: IDetailCache = {};
 const detailPromises: IDetailPromises = {};
 const configPromises: IConfigPromises = {};
@@ -119,7 +118,7 @@ export class TsDataSource {
         detailCache[this.sourceKey][objectType][object.id] || object;
       return new Proxy(
         detailCache[this.sourceKey][objectType][object.id],
-        this.dataObjectHandler,
+        this.dataObjectHandler
       );
     });
   }
@@ -174,19 +173,11 @@ export class TsDataSource {
   }
 
   public async attributeMetadata(): Promise<object> {
-    return this.getConfig(
-      this.generateEndpoint(
-        "_config/attribute_metadata"
-      )
-    );
+    return this.getConfig(this.generateEndpoint("_config/attribute_metadata"));
   }
 
   public async relationshipConfig(): Promise<object> {
-    return this.getConfig(
-      this.generateEndpoint(
-        "_config/relationships"
-      )
-    );
+    return this.getConfig(this.generateEndpoint("_config/relationships"));
   }
 
   private addIds(attributes: IAttributes) {
@@ -203,19 +194,17 @@ export class TsDataSource {
     }
   }
 
-  private addObjectTypeToAttributes = (
-    attributes: IAttributes,
-  ) => {
+  private addObjectTypeToAttributes = (attributes: IAttributes) => {
     for (const [objectType, meta] of Object.entries(attributes)) {
       for (const [, value] of Object.entries(meta)) {
         value.object_type = objectType;
       }
     }
-  }
+  };
 
   private flattenAttributes(
     attributes: IAttributes,
-    relationships: IRelationships,
+    relationships: IRelationships
   ) {
     this.addIds(attributes);
     const newAttributes: IAttributes = deepCopy(attributes);
@@ -225,7 +214,7 @@ export class TsDataSource {
       const oneRelationships = relationships[entity]?.one;
       if (oneRelationships) {
         for (const [relationship, objType] of Object.entries(
-          oneRelationships,
+          oneRelationships
         )) {
           newAttributes[entity][`${relationship}.id`] = {
             available_on_relationships: true,
@@ -236,7 +225,7 @@ export class TsDataSource {
           for (const [key, meta] of Object.entries(attributes[objType])) {
             const metaCopy = deepCopy(meta);
             metaCopy.object_type = objType;
-            metaCopy.relationship_name = relationship
+            metaCopy.relationship_name = relationship;
             if (meta.available_on_relationships) {
               newAttributes[entity][`${relationship}.${key}`] = metaCopy;
             }
@@ -268,7 +257,7 @@ export class TsDataSource {
             data: {
               flatAttributes: this.flattenAttributes(
                 attributes as IAttributes,
-                relationships as IRelationships,
+                relationships as IRelationships
               ),
               relationships,
             },
@@ -283,9 +272,15 @@ export class TsDataSource {
     return entityMetaPromises[this.sourceKey];
   }
 
-  private getOneCache(objectType: string, id: string): TDataObjectOrNull | undefined {
+  private getOneCache(
+    objectType: string,
+    id: string
+  ): TDataObjectOrNull | undefined {
     if (id in detailCache[this.sourceKey][objectType]) {
-      return new Proxy(detailCache[this.sourceKey][objectType][id], this.dataObjectHandler);
+      return new Proxy(
+        detailCache[this.sourceKey][objectType][id],
+        this.dataObjectHandler
+      );
     }
   }
 
@@ -295,10 +290,7 @@ export class TsDataSource {
   ): Promise<TDataObjectOrNull> {
     if (!(id in detailPromises[this.sourceKey][objectType])) {
       detailPromises[this.sourceKey][objectType][id] = this.client()
-        .get(
-          this.generateEndpoint(objectType, id),
-          { baseURL: this.baseUrl }
-        )
+        .get(this.generateEndpoint(objectType, id), { baseURL: this.baseUrl })
         .then((response: any) => {
           if (!EXCLUDED_DETAIL_CACHE_OBJECTS.includes(objectType)) {
             detailCache[this.sourceKey][objectType][id] = response.data.data;
@@ -316,10 +308,7 @@ export class TsDataSource {
     return detailPromises[this.sourceKey][objectType][id];
   }
 
-  public async getOne({
-    objectType,
-    id
-  }: IGetOne): Promise<TDataObjectOrNull> {
+  public async getOne({ objectType, id }: IGetOne): Promise<TDataObjectOrNull> {
     this.initializeDetailCacheAndPromises(objectType);
     const cached = this.getOneCache(objectType, id);
     if (cached) return cached;
@@ -332,10 +321,9 @@ export class TsDataSource {
     relation,
   }: IGetToOneRelation): Promise<TDataObjectOrNull> {
     return await this.client()
-      .get(
-        `${this.generateEndpoint(objectType)}:to-one/${id}/${relation}`,
-        { baseURL: this.baseUrl }
-      )
+      .get(`${this.generateEndpoint(objectType)}:to-one/${id}/${relation}`, {
+        baseURL: this.baseUrl,
+      })
       .then((response: any) => {
         return new Proxy(response.data.data, this.dataObjectHandler);
       })
@@ -364,19 +352,16 @@ export class TsDataSource {
   }: IGetListPage): Promise<TDataObjectListOrNull> {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
-      .get(
-        this.generateEndpoint(objectType),
-        {
-          baseURL: this.baseUrl,
-          params: {
-            page: page,
-            page_size: pageSize,
-            filter: filter,
-            sort_by: sortBy,
-            requested_fields: requestedFields
-          },
-        }
-      )
+      .get(this.generateEndpoint(objectType), {
+        baseURL: this.baseUrl,
+        params: {
+          page: page,
+          page_size: pageSize,
+          filter: filter,
+          sort_by: sortBy,
+          requested_fields: requestedFields,
+        },
+      })
       .then((response: any) => {
         return this.updateDetailCache(response, objectType);
       })
@@ -386,16 +371,65 @@ export class TsDataSource {
       });
   }
 
-  public async deleteByID({
+  public async *getListByCursor({
     objectType,
-    id
-  }: IGetOne): Promise<void> {
+    page,
+    pageSize,
+    filter,
+    requestedFields,
+    searchAfter,
+  }: IGetListCursor) {
+    let currentSearch = searchAfter;
+    while (true) {
+      const [fetched, nextSearch] = await this.getCursorPage({
+        objectType,
+        page,
+        pageSize,
+        filter,
+        requestedFields,
+        searchAfter: currentSearch,
+      });
+
+      for (const item of fetched) {
+        yield item;
+      }
+
+      if (fetched.length === 0) {
+        return;
+      }
+
+      currentSearch = nextSearch;
+      console.log("search keys", currentSearch);
+      
+    }
+  }
+
+  public async getCursorPage({
+    objectType,
+    page,
+    pageSize,
+    filter,
+    requestedFields,
+    searchAfter,
+  }: IGetListCursor) {
+    return await this.client()
+      .post(`${this.generateEndpoint(objectType)}:cursor`, {
+        search_after: searchAfter,
+        baseURL: this.baseUrl,
+        page: page,
+        page_size: pageSize,
+        filter: filter,
+        requested_fields: requestedFields,
+      })
+      .then((response: any) => {
+        return [response.data.data, response.data.meta.search_after];
+      });
+  }
+
+  public async deleteByID({ objectType, id }: IGetOne): Promise<void> {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
-      .delete(
-        this.generateEndpoint(objectType, id),
-        { baseURL: this.baseUrl },
-      )
+      .delete(this.generateEndpoint(objectType, id), { baseURL: this.baseUrl })
       .then(() => {
         if (id in detailCache[this.sourceKey][objectType]) {
           delete detailCache[this.sourceKey][objectType][id];
@@ -409,14 +443,14 @@ export class TsDataSource {
 
   public async upsert({
     payload,
-    objectType
+    objectType,
   }: IUpsert): Promise<TDataObjectListOrNull> {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
       .post(
         `${this.generateEndpoint(objectType)}:upsert`,
         { data: payload },
-        { baseURL: this.baseUrl },
+        { baseURL: this.baseUrl }
       )
       .then((response: any) => {
         return this.updateDetailCache(response, objectType);
