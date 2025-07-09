@@ -20,6 +20,8 @@ import {
   IButton,
   PBoard,
   addComponents,
+  InfoTooltip,
+  normaliseCaps,
 } from "../..";
 
 
@@ -94,7 +96,7 @@ export function Zone(props: PZone) {
     type: "success",
     icon: "plus",
     position: "right",
-    tooltip: "Add Widget",
+    tooltip: "Add Component",
     testid: "add-component-button",
   };
 
@@ -178,6 +180,14 @@ export function Zone(props: PZone) {
     testid: "edit-zone-button"
   };
 
+  const Tooltip = (
+    <InfoTooltip
+      contents={
+      <>{normaliseCaps(objectType)} Zone</>
+    }
+    />
+  )
+
   const buttons = (
     <div className="tol-zone-bar">
       <UtilityBar
@@ -200,6 +210,7 @@ export function Zone(props: PZone) {
             : []),
           filtersButton
         ] : [saveButton]}
+        elements={[Tooltip]}
       />
       <div id="component-modal">
         <ComponentPickerModal

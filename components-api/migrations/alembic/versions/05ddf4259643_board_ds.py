@@ -8,6 +8,7 @@ Create Date: 2025-04-17 11:10:09.252107
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.sql import text
 
 
 # revision identifiers, used by Alembic.
@@ -20,6 +21,20 @@ depends_on = None
 def upgrade() -> None:
     op.add_column('component', sa.Column('datasource', JSONB, nullable=False, server_default='{}'))
     op.add_column('zone', sa.Column('datasource', JSONB, nullable=False, server_default='{}'))
+
+    conn = op.get_bind()
+    conn.execute(
+        text("""
+        UPDATE component
+        SET datasource = '{"base_url": "https://portal.tol.sanger.ac.uk/api/v1"}'::jsonb
+        """)
+    )
+    conn.execute(
+        text("""
+        UPDATE zone
+        SET datasource = '{"base_url": "https://portal.tol.sanger.ac.uk/api/v1"}'::jsonb
+        """)
+    )
 
     op.drop_column('component', 'base_url')
     op.drop_column('zone', 'base_url')

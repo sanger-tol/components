@@ -299,3 +299,8 @@
   background-color: var(--tol-grey-translucent);
   color: var(--tol-primary);
 }
+
+// temp for info on zone bar
+.tol-zone-bar .tooltip-wrapper svg {
+  margin-top: -3px;
+}
