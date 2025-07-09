@@ -12,12 +12,14 @@ from tol.core import (
     DataSourceFilter,
 )
 from tol.core.operator import (
+    Cursor,
     DetailGetter,
     PageGetter,
 )
 
 
 class PlaywrightTestDataSource(
+    Cursor,
     DataSource,
     DetailGetter,
     PageGetter,
@@ -108,6 +110,30 @@ class PlaywrightTestDataSource(
         objs = self.get_by_ids(object_type, ids_page)
 
         return objs, len(ids)
+
+    def get_cursor_page(
+        self,
+        object_type: str,
+        page_size: int | None = None,
+        object_filters: DataSourceFilter | None = None,
+        search_after: list[str] | None = None,
+        session=None,
+        requested_fields: list[str] | None = None
+    ) -> tuple[Iterable[DataObject], list[str] | None]:
+
+        (last_id,) = search_after
+
+        p_size = page_size if page_size is not None else self.page_size
+
+        start = int(last_id) + 1
+        stop = start + p_size - 1
+
+        if start > 56:
+            return [], None
+
+        ids = range(start, stop)
+
+        return self.get_by_ids(object_type, ids), [str(stop)]
 
     def __get_filtered_ids(
         self,

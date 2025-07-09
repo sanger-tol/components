@@ -28,17 +28,8 @@ export function DataSource() {
     });
 
   const f1 = ds1.getListByCursor({
-    objectType: "species",
-    searchAfter: ["1000448"],
-    filter: {
-      and_: {
-        id: {
-          lt: {
-            value: "100050",
-          },
-        },
-      },
-    },
+    objectType: "playwright",
+    searchAfter: ["10"],
   });
 
   for (let i = 0; i < 1000; i++) {
