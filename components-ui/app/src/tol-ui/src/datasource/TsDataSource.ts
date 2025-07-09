@@ -394,15 +394,10 @@ export class TsDataSource {
 
       if (Array.isArray(cursorObjects)) {
         const [fetched, nextSearch] = cursorObjects;
-        if (Array.isArray(fetched)) {
-          for (const item of fetched) {
-            yield item;
-          }
-
-          if (fetched.length === 0) {
-            return;
-          }
-        } else {
+        for (const item of fetched) {
+          yield item;
+        }
+        if (fetched.length === 0) {
           return;
         }
         currentSearch = nextSearch;
