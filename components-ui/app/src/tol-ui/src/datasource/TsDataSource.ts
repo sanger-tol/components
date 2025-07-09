@@ -391,10 +391,17 @@ export class TsDataSource {
         requestedFields,
         searchAfter: currentSearch,
       });
+      
       for (const item of fetched){
         yield item;
       }
+      
+      if (fetched.length === 0){
+        return;
+      }
+      
       currentSearch = nextSearch;
+      console.log("search keys", currentSearch);
     }
   }
 
@@ -417,7 +424,7 @@ export class TsDataSource {
       })
       .then((response: any) => {
         return [
-          new Proxy(response.data.data, this.dataObjectHandler),
+          response.data.data,
           response.data.meta.search_after,
         ];
       });

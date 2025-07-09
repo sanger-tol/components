@@ -27,12 +27,24 @@ export function DataSource() {
       console.log("List Page: ", dataObjects);
     });
 
- const f1 = ds1.getListByCursor({
+  const f1 = ds1.getListByCursor({
     objectType: "species",
     searchAfter: ["1000448"],
+    filter: {
+      and_: {
+        id: {
+          lt: {
+            value: "100050",
+          },
+        },
+      },
+    },
   });
-  for await (const item of f1) {
-    console.log(`here`, item);
+
+  for (let i = 0; i < 1000; i++) {
+    f1.next().then((dataObjects) =>
+      console.log("right here --> ", dataObjects.value)
+    );
   }
 
   ds1
