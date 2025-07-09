@@ -144,7 +144,7 @@ export function Filters() {
       <RemoteTable
         id="table-1"
         fields={{
-          uid: {
+          id: {
             rename: "ID",
           },
           sts_family: {
@@ -170,7 +170,7 @@ export function Filters() {
       <RemoteTable
         id="table-2"
         fields={{
-          uid: {
+          id: {
             rename: "ID",
           },
           sts_scientific_name: {

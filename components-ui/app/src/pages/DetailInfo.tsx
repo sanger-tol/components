@@ -35,13 +35,14 @@ export function DetailInfo() {
       />
     );
   } else {
+    const id = response!["data"]["data"]["id"];
     const attributes = response!["data"]["data"]["attributes"];
     const detail = (
       <>
         <h1 className="mb-3">{attributes["sts_scientific_name"]}</h1>
         <ObjectDetail
           data={{
-            "Taxonomy ID": attributes["uid"],
+            "Taxonomy ID": id,
             "Common Name": attributes["sts_common_name"],
             Family: attributes["sts_family"],
             "Order Group": attributes["sts_order_group"],

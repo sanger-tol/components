@@ -32,7 +32,7 @@ interface Rgb {
   b: number;
 }
 
-export const tableVersion = "table-v12";
+export const tableVersion = "25-tabVer";
 let hiddenFields = false;
 
 export function isRelationship(key: string) {
@@ -514,6 +514,16 @@ export function createSort(sortColumn: string, sortType: string) {
   return sortColumn;
 }
 
+function deleteRedundantLocalStorageEntries(ids: string[]) {
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && ids.some(id => key.includes(id))) {
+      localStorage.removeItem(key);
+      i--; // adjust the index after removing an item
+    }
+  }
+}
+
 export function setTableConfigLocalStorage(
   tableId: string,
   key: string,
@@ -526,6 +536,11 @@ export function setTableConfigLocalStorage(
 }
 
 export function getTableConfigLocalStorage(tableId: string, key: string) {
+  deleteRedundantLocalStorageEntries([
+    "-field-meta", // legacy suffix
+    "-table-v" // recent suffix
+  ])
+
   const data = localStorage.getItem(`${key}-${tableId}-${tableVersion}`);
   if (data) return JSON.parse(data);
 }
