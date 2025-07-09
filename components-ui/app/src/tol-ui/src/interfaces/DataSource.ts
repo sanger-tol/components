@@ -105,5 +105,5 @@ export type TDataObjectListOrNull = IDataObject[] | null;
 export type TCursorDataObjectListOrNull =
   | {data: IDataObject[]; cursor: string[]}
   | {data: null; cursor: string[]}
-  | {data: IDataObject[], cursor:null}
+  | {data: IDataObject[], cursor: null}
   | null;
