@@ -102,3 +102,8 @@ export interface ISourceDataObject extends IDataObject {
 
 export type TDataObjectOrNull = IDataObject | null;
 export type TDataObjectListOrNull = IDataObject[] | null;
+export type TCursorDataObjectListOrNull =
+  | {data: IDataObject[]; cursor: string[]}
+  | {data: null; cursor: string[]}
+  | {data: IDataObject[], cursor:null}
+  | null;
