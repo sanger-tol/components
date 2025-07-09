@@ -4,43 +4,30 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import ValidateStep from "./ValidateStep";
 import ErrorViewer from "./ErrorViewer";
 import { resizeListener } from "../hooks";
-import { getStepsInResults, IValidationResult } from "./utils";
-
-interface IStepsCount {
-  validationSteps: number;
-  conversionSteps: number;
-  totalSteps: number;
-}
+import { IValidationResult } from "./utils";
 
 interface Props {
   data: IValidationResult[];
-  stepsCount?: IStepsCount;
+  steps: string[];
   expandedIndex?: string;
+  stepName?: string;
+  targetRef?: React.RefObject<HTMLDivElement | null>;
 }
-
-//TODO: Add progress bar
-//TODO: Get the number of steps from the pipeline_steps db, or config?
 
 const WIDTH_REDUCER = 40;
 
 function ValidateSteps(props: Props) {
-  const { data, stepsCount } = props;
+  const { data, steps } = props;
   const [expandedIndex, setExpandedIndex] = useState<string | null>(
     props.expandedIndex || null
   );
-  const [loading, setLoading] = useState<boolean>(true);
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [stepsInResults, setStepsInResults] = useState<string[]>([]);
-
-  useEffect(() => {
-    setStepsInResults(getStepsInResults(data));
-  }, [data]);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const handleResize = useCallback(() => {
     if (containerRef.current) {
@@ -48,12 +35,12 @@ function ValidateSteps(props: Props) {
       setContainerWidth(containerRef.current.clientWidth - WIDTH_REDUCER);
       setIsOverflowing(scrollWidth > clientWidth);
     }
-  }, [stepsInResults]);
+  }, [steps]);
 
   resizeListener(handleResize);
 
   const handleToggleExpanded = useCallback((stepName: string) => {
-    setExpandedIndex((prev) => (prev === stepName ? null : stepName));
+    setExpandedIndex((prev: string) => (prev === stepName ? null : stepName));
   }, []);
 
   return (
@@ -65,19 +52,23 @@ function ValidateSteps(props: Props) {
     >
       <div>
         <div className="tol-file-uploader-validate-steps-inner-container">
-          {stepsInResults.map((stepName, index) => {
+          {steps.map((stepName: string) => {
             const stepData = data.filter(
               (result) => result.stepName === stepName
             );
             return (
-              <ValidateStep
+              <div
                 key={stepName}
-                id={`step-${index}`}
-                stepName={stepName}
-                errors={stepData}
-                expanded={expandedIndex === stepName}
-                onSeeAllErrors={() => handleToggleExpanded(stepName)}
-              />
+                ref={props.stepName === stepName ? props.targetRef : null}
+              >
+                <ValidateStep
+                  id={`${stepName}`}
+                  stepName={stepName}
+                  results={stepData}
+                  expanded={expandedIndex === stepName}
+                  onSeeAllErrors={() => handleToggleExpanded(stepName)}
+                />
+              </div>
             );
           })}
         </div>
@@ -98,7 +89,7 @@ function ValidateSteps(props: Props) {
               className="tol-validate-steps-all-errors-animation"
             >
               <h6>All errors and warnings for {expandedIndex}:</h6>
-              {data.map((result, index) => {
+              {data.map((result: IValidationResult, index: number) => {
                 if (result.stepName === expandedIndex) {
                   return (
                     <ErrorViewer
@@ -107,8 +98,12 @@ function ValidateSteps(props: Props) {
                       message={result.detail}
                       stepName={result.stepName}
                       cellId={{
-                        column: result.field ?? "all",
-                        row: result.objectId ?? "",
+                        column: result.field
+                          ? Array.isArray(result.field)
+                            ? result.field.join(", ")
+                            : result.field
+                          : "all",
+                        row: result.objectId || "N/A",
                       }}
                     />
                   );

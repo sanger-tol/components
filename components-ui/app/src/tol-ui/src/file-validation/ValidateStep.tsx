@@ -16,7 +16,7 @@ import {
 interface Props {
   id: string;
   stepName: string;
-  errors?: IValidationResult[];
+  results?: IValidationResult[];
   expanded?: boolean;
   onSeeAllErrors?: () => void;
 }
@@ -24,11 +24,16 @@ interface Props {
 const MAX_ERRORS_TO_DISPLAY = 2;
 
 function ValidateStep(props: Props) {
-  const { id, stepName, onSeeAllErrors, errors = [], expanded = false } = props;
+  const {
+    id,
+    stepName,
+    onSeeAllErrors,
+    results = [],
+    expanded = false,
+  } = props;
 
-  const issueCount = getErrorWarningCounts(errors);
+  const issueCount = getErrorWarningCounts(results);
   const hasErrors = issueCount.errors > 0 || issueCount.warnings > 0;
-
   const stepStatus = determineStepStatus(issueCount);
 
   const iconType =
@@ -65,23 +70,27 @@ function ValidateStep(props: Props) {
                 {issueCount.errors} {issueCount.errors > 1 ? "Errors" : "Error"}
                 :
               </p>
-              {errors
+              {results
                 .slice(0, MAX_ERRORS_TO_DISPLAY)
-                .map((error: IValidationResult, index: number) => (
+                .map((result: IValidationResult) => (
                   <ErrorViewer
-                    key={`${id}-error-${index}`}
-                    message={error.detail}
-                    errorType={error.severity}
-                    stepName={error.stepName}
+                    message={result.detail}
+                    errorType={result.severity}
+                    stepName={result.stepName}
                     cellId={{
-                      column: error.field ?? "all",
-                      row: error.objectId || "N/A",
+                      column: result.field
+                        ? Array.isArray(result.field)
+                          ? result.field.join(", ")
+                          : result.field
+                        : "all",
+                      row: result.objectId || "N/A",
                     }}
+                    truncate={true}
                   />
                 ))}
             </div>
             <div>
-              {errors.length > MAX_ERRORS_TO_DISPLAY ? (
+              {results.length > MAX_ERRORS_TO_DISPLAY ? (
                 <div
                   className="tol-file-uploader-validate-step-see-all-container"
                   onClick={onSeeAllErrors}

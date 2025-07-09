@@ -6,10 +6,7 @@ SPDX-License-Identifier: MIT
 
 import React from "react";
 import { Icon, HoverOverlay } from "../index";
-
-export type IconType = "check" | "xmark" | "exclamation";
-
-// TODO: Take into account warnings
+import { IconType } from "./utils";
 
 interface Props {
   iconType: IconType;

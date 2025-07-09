@@ -5,15 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Modal } from "../index";
+import { Button, Modal } from "../index";
 import ValidationIcon from "./ValidationIcon";
-
-//TODO: Take into account warnings, as well as errors
-
-interface ICellId {
-  column: string;
-  row: string;
-}
+import { capitaliseFirstLetter, truncateString } from "../general/utils";
+import { ICellId } from "./utils";
 
 interface Props {
   id?: string;
@@ -21,15 +16,16 @@ interface Props {
   message?: string;
   stepName?: string;
   cellId: ICellId;
+  truncate?: boolean;
 }
 
 function ErrorViewer(props: Props) {
-  const { id, errorType, message, stepName, cellId } = props;
+  const { id, errorType, message, stepName, cellId, truncate = false } = props;
 
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = () => {
-    setIsOpen((prev) => !prev);
+    setIsOpen((prev: boolean) => !prev);
   };
 
   const ModalContent = (
@@ -44,7 +40,8 @@ function ErrorViewer(props: Props) {
         />
       </div>
       <div className="tol-file-uploader-validate-step-error-modal-content">
-        <p>{message}</p>
+        <p>Type: {capitaliseFirstLetter(errorType || "unknown")}</p>
+        <p>Message: {message}</p>
         <p>Row: {cellId.row}</p>
         <p>Column(s): {cellId.column}</p>
       </div>
@@ -57,6 +54,10 @@ function ErrorViewer(props: Props) {
       setOpen={setIsOpen}
       size="sm"
       children={ModalContent}
+      closeButton={false}
+      actionButton={
+        <Button type="primary" text="Close" onClick={handleClick} />
+      }
     />
   );
 
@@ -75,7 +76,9 @@ function ErrorViewer(props: Props) {
             className="tol-file-uploader-validate-step-single-error-icon"
           />
           <span>
-            Row {cellId.row}: {message}
+            {truncate
+              ? truncateString(`Row ${cellId.row}: ${message}`, 30)
+              : `Row ${cellId.row}: ${message}`}
           </span>
         </div>
       </div>

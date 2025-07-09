@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useHistory } from "react-router-dom";
 import { useParams } from "react-router";
 import ValidateSteps from "./ValidateSteps";
 import { Widgets, TsDataSource, LoadingContent, Icon } from "../index";
@@ -29,6 +29,8 @@ function ValidationResultsViewer(props: Props) {
 
   const ds = new TsDataSource();
   const location = useLocation();
+  const history = useHistory();
+  const targetRef = useRef<HTMLDivElement | null>(null);
 
   const searchParams = new URLSearchParams(location.search);
   const stepName = searchParams.get("stepName") || undefined;
@@ -72,6 +74,23 @@ function ValidationResultsViewer(props: Props) {
     }
   }, [pipelineResult]);
 
+  useEffect(() => {
+    if (stepName !== undefined && targetRef.current) {
+      targetRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "nearest",
+      });
+
+      searchParams.delete("stepName");
+      history.replace(
+        {
+          search: searchParams.toString(),
+        }
+      );
+    }
+  }, [stepName, pipelineResult]);
+
   const Results = (
     <div className="tol-file-validation-results-page-container">
       <div>
@@ -79,7 +98,7 @@ function ValidationResultsViewer(props: Props) {
           <>
             <div className="tol-file-validation-results-page-info-container">
               <div className="tol-file-validation-results-page-info-inner-container">
-                <h4>Results for Pipeline # {pipelineResult.id}</h4>
+                <h4>Results for Pipeline #{pipelineResult.id}</h4>
                 <h6>Pipeline: {pipelineResult.pipelineName}</h6>
               </div>
               <div>
@@ -118,6 +137,9 @@ function ValidationResultsViewer(props: Props) {
         <ValidateSteps
           data={pipelineResult.validationResults}
           expandedIndex={stepName}
+          steps={pipelineResult.pipelineSteps}
+          stepName={stepName}
+          targetRef={targetRef}
         />
       )}
     </div>

@@ -4,7 +4,8 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Toggle } from "rsuite";
 import {
   Widgets,
@@ -14,17 +15,24 @@ import {
   DropdownButtons,
   Modal,
   TolLoader,
-} from "../tol-ui/src";
-import { FileData } from "../tol-ui/src/forms/Dropzone";
-import { ValidateSteps, PreviousUploads } from "../tol-ui/src/file-validation";
-
-interface IValidationConfig {
-  s3_url: string;
-  pipeline: string;
-  destination: string;
-}
+  httpClient,
+  TsDataSource,
+  Icon,
+} from "../index";
+import { FileData } from "../forms/Dropzone";
+import {
+  ValidateSteps,
+  PreviousUploads,
+  tSeverity,
+  fetchAndNormaliseAllUploadResults,
+  IValidationConfig,
+  IPipelineUpload,
+} from "../file-validation";
+import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
+import { VALIDATION_ENDPOINTS } from "../constants";
 
 interface Props {
+  data: any[]; // mock
   endpoint: string;
   validationConfig: IValidationConfig;
   fileType?: string;
@@ -40,59 +48,69 @@ const TOL_LOADER_STYLES = {
   display: "flex",
 };
 
-const data = [
-  {
-    id: "step1",
-    stepName: "validate_species_not_null",
-    errors: ["OH NO!", "Error 1b", "Error 1c"],
-  },
-  {
-    id: "step2",
-    stepName: "validate_species_is_valid",
-    errors: ["Error 2a", "Error 2b", "Error 2c"],
-  },
-  {
-    id: "step3",
-    stepName: "Step 3",
-    errors: [
-      "The user is a silly silly silly silly goose...",
-      "Error 3b",
-      "Error 3c",
-      "Error 3d",
-      "Error 3e",
-    ],
-  },
-  { id: "step4", stepName: "Step 4", errors: [] },
-  { id: "step5", stepName: "Step 5", errors: [] },
-  { id: "step6", stepName: "Step 6", errors: ["error 6a", "error 6b"] },
-  { id: "step7", stepName: "Step 7", errors: [] },
-  { id: "step8", stepName: "Step 8", errors: ["error 8a", "error 8b"] },
-];
+const PREVIOUS_UPLOADS_REFRESH = 10000;
 
 function FileValidation(props: Props) {
   const {
+    data,
     endpoint,
     validationConfig,
-    pageTitle = "File Validation",
+    pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
   } = props;
 
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<string | boolean>(false);
   const [fileDropped, setFileDropped] = useState<boolean>(false);
-  const [validating, setValidating] = useState<boolean>(true);
-  const [validationResults, setValidationResults] = useState<any[]>(["1"]);
+  const [validating, setValidating] = useState<boolean>(false);
+  const [validationResults, setValidationResults] = useState<any[]>([]);
   const [validated, setValidated] = useState<boolean>(false);
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);
   const [resetting, setResetting] = useState<boolean>(false);
-  const [validationProgress, setValidationProgress] = useState<number>(0);
   const [expandedModalResults, setExpandedModalResults] = useState<
     string | null
   >(null);
+  const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
 
-  const generateMessages = (apiRes: any) => {
-    return [];
+  const ds = new TsDataSource();
+  const { id } = getUserFromLocalStorage();
+
+  const fetchPreviousUploads = async () => {
+    const cacheBustedEndpoint = `${
+      VALIDATION_ENDPOINTS.UPLOAD
+    }?_cache_bust=${Date.now()}`;
+    return await fetchAndNormaliseAllUploadResults(ds, cacheBustedEndpoint, id);
+  };
+
+  const {
+    data: userFileValidationUploadsData = [],
+    isLoading,
+    isError,
+    refetch,
+    dataUpdatedAt,
+  } = useQuery({
+    queryKey: ["userFileValidationUploads", id],
+    queryFn: fetchPreviousUploads,
+    enabled: openModal === "results",
+    refetchInterval: openModal === "results" ? PREVIOUS_UPLOADS_REFRESH : false,
+    staleTime: 0,
+  });
+
+  const generateMessages = async () => {
+    const pipeline_data = {
+      data: {
+        s3_url: validationConfig.s3_url,
+        s3_filename: "made up file name",
+        spreadsheet_config: "made up config",
+        pipeline_name: validationConfig.pipeline_name,
+        destination: validationConfig.destination,
+      },
+    };
+    const res = await httpClient().post("/run-pipeline", pipeline_data, {
+      params: {},
+    });
+    return res;
   };
 
   const handleToggleUploadResults = (id: string) => {
@@ -226,66 +244,128 @@ function FileValidation(props: Props) {
           />
         </div>
       ) : (
-        <ValidateSteps data={data} />
+        <ValidateSteps
+          data={data.map((item) => ({
+            code: item.code,
+            field: Array.isArray(item.field)
+              ? item.field.join(", ")
+              : item.field,
+            detail: item.detail,
+            severity: item.severity as tSeverity,
+            objectId: item.object_id,
+            stepName: item.step_name,
+          }))}
+          steps={[]}
+        />
       )}
     </div>
   );
 
-  const ResultsViewerModal = (
-    <Modal
-      open={openModal === "results"}
-      header={<h3>Previous Validations</h3>}
-      children={
-        <div>
-          <PreviousUploads
-            data={data}
-            id="12312"
-            expanded={expandedModalResults === "12312"}
-            onToggle={handleToggleUploadResults}
-          />
-          <PreviousUploads
-            data={data}
-            id="234342"
-            expanded={expandedModalResults === "234342"}
-            onToggle={handleToggleUploadResults}
-          />
-          <PreviousUploads
-            data={data}
-            id="456454"
-            expanded={expandedModalResults === "456454"}
-            onToggle={handleToggleUploadResults}
-          />
-          {/* TODO: no hard coded id's */}
+  const ResultsModalContent = (
+    <div className="tol-file-validation-previous-uploads-modal-container tol-file-validation-scrollbar-fix">
+      {isLoading ? (
+        <TolLoader
+          size="lg"
+          content="Loading..."
+          vertical
+          styles={TOL_LOADER_STYLES}
+        />
+      ) : isError ? (
+        <div className="tol-file-validation-error-info">
+          <span className="tol-file-validation-error-icon">
+            <Icon icon="info" size="lg" />
+          </span>
+          <h6>Error loading uploads.</h6>
         </div>
-      }
-      onClose={() => setOpenModal(false)}
-      setOpen={setOpenModal}
-    />
+      ) : userFileValidationUploadsData.length > 0 ? (
+        userFileValidationUploadsData.map(
+          (upload: IPipelineUpload, index: number) => {
+            return (
+              <div
+                key={`${upload.id}-${dataUpdatedAt}-${index}`}
+                className="tol-file-validation-previous-uploads-inner-container"
+              >
+                <PreviousUploads
+                  data={upload}
+                  id={upload.id}
+                  expanded={expandedModalResults === upload.id}
+                  onToggle={handleToggleUploadResults}
+                  showPassedSteps={showPassedSteps}
+                />
+              </div>
+            );
+          }
+        )
+      ) : (
+        <div className="tol-file-validation-error-info">
+          <span className="tol-file-validation-error-icon">
+            <Icon icon="info" size="lg" />
+          </span>
+          <h6>No previous uploads found.</h6>
+        </div>
+      )}
+    </div>
+  );
+
+  const ResultsModalHeader = (
+    <div className="tol-file-validation-previous-uploads-modal-header">
+      <div className="tol-file-validation-previous-uploads-modal-header-content">
+        <h3>Previous Validations</h3>
+        <p>This page updates every {PREVIOUS_UPLOADS_REFRESH / 1000} seconds</p>
+      </div>
+      <div className="tol-file-validation-previous-uploads-modal-toggle">
+        <p className="tol-file-validation-previous-uploads-modal-toggle-tag">
+          Show passed steps
+        </p>
+        <Toggle
+          key="passed-steps-toggle"
+          checked={showPassedSteps}
+          onChange={() => setShowPassedSteps((prev: boolean) => !prev)}
+        />
+        <div>
+          <Button icon="rotate" tooltip="Refresh" />
+        </div>
+      </div>
+    </div>
+  );
+
+  const ResultsViewerModal = (
+    <div>
+      <Modal
+        open={openModal === "results"}
+        header={ResultsModalHeader}
+        children={ResultsModalContent}
+        onClose={() => setOpenModal(false)}
+        setOpen={setOpenModal}
+      />
+    </div>
   );
 
   const helpModal = (
-    <Modal
-      open={openModal === "help"}
-      onClose={() => setOpenModal(false)}
-      setOpen={setOpenModal}
-    />
+    <div>
+      <Modal
+        open={openModal === "help"}
+        onClose={() => setOpenModal(false)}
+        setOpen={setOpenModal}
+      />
+    </div>
   );
 
   const Components = [
     {
       component: TitleBar,
-      size: "xl",
+      type: "full",
     },
     {
       component: FileUploader,
-      size: "full",
+      type: "full",
     },
   ];
 
   const ValidationSteps = [
     {
       component: ResultsViewer,
-      size: "full",
+      type: "full",
     },
   ];
 
@@ -315,3 +395,7 @@ export default FileValidation;
 // TODO: Implement progress bar
 // TODO: Implement moving validation results to modal on 'reset'
 // TODO: Implement validation results
+// TODO:
+// TODO:
+// TODO:
+// TODO:

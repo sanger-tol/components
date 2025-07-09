@@ -16,6 +16,7 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { Navigation, Callback, PageNotFound } from "../nav";
 import {
   getTokenFromLocalStorage,
@@ -33,7 +34,7 @@ import { convertToPath, matomoAnalytics } from "../general/utils";
 import { env } from "../variables/config";
 import { MyBoards, Board } from "../boards";
 import { addBoardPages, generatePagesThatRequireARoute } from "./utils";
-import { ValidationResultsViewer } from "src/file-validation";
+import { ValidationResultsViewer } from "../file-validation";
 
 export interface BoardsObject {
   dataUrl?: string;
@@ -52,6 +53,7 @@ export interface Props {
 
 function TolApp(props: Props) {
   const { boards, customCallbackUrl } = props;
+  const queryClient = new QueryClient();
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
@@ -84,6 +86,7 @@ function TolApp(props: Props) {
 
   return (
     <div id="tol-app-background">
+      <QueryClientProvider client={queryClient}>
       <AuthProvider
         value={{
           token,
@@ -211,6 +214,7 @@ function TolApp(props: Props) {
           <Footer />
         </Router>
       </AuthProvider>
+      </QueryClientProvider>
     </div>
   );
 }

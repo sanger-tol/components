@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import {
   IPipelineUpload,
@@ -20,6 +20,7 @@ import { Button, HoverOverlay, InfoTooltip } from "../general";
 import { normaliseCaps, truncateString } from "../general/utils";
 
 interface Props {
+  // key: string;
   id: string;
   data: IPipelineUpload;
   expanded: boolean;
@@ -42,6 +43,10 @@ function PreviousUploads(props: Props) {
     errorsAndWarningCounts.warnings,
     data.failureMessage || null
   );
+
+  useEffect(() => {
+    console.log("PreviousUploads data:", data);
+  }, [data]);
 
   const ValidationIconTooltip = (
     errorCount: number,
@@ -69,7 +74,9 @@ function PreviousUploads(props: Props) {
   };
 
   return (
-    <div className="tol-file-validation-previous-results-container">
+    <div
+      className="tol-file-validation-previous-results-container"
+    >
       <div className="tol-file-validation-previous-results-title">
         <h6 className="tol-file-validation-previous-results-title-text">
           ID: #{id} - {data.pipelineName}
@@ -140,7 +147,7 @@ function PreviousUploads(props: Props) {
                   });
 
                   return uniqueSteps
-                    .filter((stepName) => {
+                    .filter((stepName: string) => {
                       if (allStepsPassed) return true;
                       if (showPassedSteps) return true;
                       const stepResults = data.validationResults.filter(
@@ -150,14 +157,14 @@ function PreviousUploads(props: Props) {
                       const issueCount = getErrorWarningCounts(stepResults);
                       return issueCount.errors > 0 || issueCount.warnings > 0;
                     })
-                    .map((stepName, index) => {
+                    .map((stepName: string, index: number) => {
                       const stepResults = data.validationResults.filter(
                         (result: IValidationResult) =>
                           result.stepName === stepName
                       );
                       const issueCount = getErrorWarningCounts(stepResults);
                       const iconType =
-                      issueCount.errors > 0
+                        issueCount.errors > 0
                           ? "xmark"
                           : issueCount.warnings > 0
                           ? "exclamation"

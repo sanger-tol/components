@@ -10,4 +10,5 @@ export { default as ErrorViewer } from "./ErrorViewer";
 export { default as ValidationIcon } from "./ValidationIcon";
 export { default as PreviousUploads } from "./PreviousUpload";
 export { default as ValidationResultsViewer } from "./ValidationResultsViewer";
+export { default as FileValidation } from "./FileValidation";
 export * from "./utils";

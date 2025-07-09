@@ -298,6 +298,31 @@
   }
 }
 
+.tol-file-validation-previous-uploads-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.tol-file-validation-previous-uploads-modal-header-content {
+  p {
+    margin: 0;
+  }
+}
+
+.tol-file-validation-previous-uploads-modal-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: fit-content;
+  margin-left: auto;
+}
+
+.tol-file-validation-previous-uploads-modal-toggle-tag {
+  margin: 0;
+}
+
 .tol-file-validation-error-info {
   text-align: center;
   padding: 10px;
@@ -362,6 +387,7 @@
 
   .tol-file-uploader-validate-step-single-error-icon {
     padding: 4px;
+    margin-left: 2px;
   }
 }
 
@@ -563,6 +589,7 @@
 
 .tol-file-validation-previous-results-results-status {
   margin: 0;
+  text-align: right;
 
   &.passed {
     color: var(--tol-success);

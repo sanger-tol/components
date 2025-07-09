@@ -3,9 +3,11 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
+import { VALIDATION_ENDPOINTS } from "src/constants";
 import { httpClient, PopUpMessage, TsDataSource } from "../index";
 
-export type severityType = "error" | "warning";
+export type tSeverity = "error" | "warning";
+export type IconType = "check" | "xmark" | "exclamation";
 
 export interface Step {
   id: string;
@@ -13,9 +15,20 @@ export interface Step {
   errors?: string[];
 }
 
+export interface ICellId {
+  column: string;
+  row: string;
+}
+
 export interface IUploadStatus {
   className: string;
   text: string;
+}
+
+export interface IValidationConfig {
+  s3_url: string;
+  pipeline_name: string;
+  destination: string;
 }
 
 export interface IErrorWarningCount {
@@ -27,7 +40,7 @@ export interface IValidationResult {
   detail: string;
   field: string | null;
   objectId: string;
-  severity: severityType;
+  severity: tSeverity;
   stepName: string;
 }
 
@@ -66,18 +79,6 @@ export function getErrorWarningCounts(results: IValidationResult[]): {
 //@ts-ignore
 export function downloadItem(filename: string) {
   //TODO: Implement download functionality
-}
-
-export function getStepsInResults(results: IValidationResult[]): string[] {
-  const stepNames = new Set<string>();
-
-  results.forEach((result) => {
-    if (result.stepName) {
-      stepNames.add(result.stepName);
-    }
-  });
-
-  return Array.from(stepNames);
 }
 
 export function normaliseValidationResult(result: any): IValidationResult {
@@ -150,9 +151,9 @@ export async function fetchAndNormaliseAllUploadResults(
   ds: TsDataSource,
   endpoint: string,
   userId: string,
-  setAllUploadResults: (results: IPipelineUpload[]) => void,
-  setHasErrors: (hasErrors: boolean) => void,
-  setLoading: (loading: boolean) => void
+  setAllUploadResults?: (results: IPipelineUpload[]) => void,
+  setHasErrors?: (hasErrors: boolean) => void,
+  setLoading?: (loading: boolean) => void
 ) {
   try {
     const results = await ds.getListPage({
@@ -169,19 +170,21 @@ export async function fetchAndNormaliseAllUploadResults(
           normalisePipelineUpload(upload, upload.relationships)
         )
       );
-      console.log("Normalised Results:", normalisedResults);
-      setAllUploadResults(normalisedResults);
+      if (setAllUploadResults) setAllUploadResults(normalisedResults);
+      return [...normalisedResults];
     }
+    return [];
   } catch (error) {
     console.error("Error fetching all upload results:", error);
     PopUpMessage({
       type: "error",
       message: "Failed to fetch upload results. Please try again.",
     });
-    setAllUploadResults([]);
-    setHasErrors(true);
+    if (setAllUploadResults) setAllUploadResults([]);
+    if (setHasErrors) setHasErrors(true);
+    return [];
   } finally {
-    setLoading(false);
+    if (setLoading) setLoading(false);
   }
 }
 
@@ -203,7 +206,7 @@ export function determineUploadStatus(
   } else if (completedStatus && overallWarnings > 0) {
     return {
       className: "completed-with-warnings",
-      text: "Completed with Warnings",
+      text: "Passed with Warnings",
     };
   }
   return { className: "", text: "In Progress" };
@@ -222,14 +225,17 @@ export function determineStepStatus(errorCount: {
 }
 
 export async function getStepsInPipeline(pipelineId: string) {
-  const res = await httpClient().get("local/pipeline_steps", {
-    params: {},
-    filter: {
-      and_: {
-        pipeline_id: { eq: { value: pipelineId } },
+  const res = await httpClient().get(
+    `/${VALIDATION_ENDPOINTS.PIPELINE_STEPS}`,
+    {
+      params: {},
+      filter: {
+        and_: {
+          pipeline_id: { eq: { value: pipelineId } },
+        },
       },
-    },
-  });
+    }
+  );
 
   return res.data.data.map((step: any) => step.attributes.step_name);
 }
