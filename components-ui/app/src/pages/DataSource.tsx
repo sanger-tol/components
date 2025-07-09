@@ -42,8 +42,7 @@ export function DataSource() {
   // const f1 = ds1.getListByCursor({
   //   objectType: "species",
   // });
-
-  //:Todo --> remove when the Species sample size is less
+  //:Todo --> remove comment when the Species sample size is less
 
   f1.next().then((dataOjects) => handle(dataOjects, f1));
 

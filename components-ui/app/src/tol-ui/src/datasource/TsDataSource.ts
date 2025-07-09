@@ -28,6 +28,8 @@ import {
   deepCopy,
   API_METHODS,
   normaliseCaps,
+  IGetListCursor,
+  TCursorDataObjectListOrNull,
 } from "..";
 
 const detailCache: IDetailCache = {};
@@ -381,7 +383,7 @@ export class TsDataSource {
   }: IGetListCursor) {
     let currentSearch = searchAfter;
     while (true) {
-      const [fetched, nextSearch] = await this.getCursorPage({
+      const cursorObjects = await this.getCursorPage({
         objectType,
         page,
         pageSize,
@@ -390,17 +392,23 @@ export class TsDataSource {
         searchAfter: currentSearch,
       });
 
-      for (const item of fetched) {
-        yield item;
-      }
+      if (Array.isArray(cursorObjects)) {
+        const [fetched, nextSearch] = cursorObjects;
+        if (Array.isArray(fetched)) {
+          for (const item of fetched) {
+            yield item;
+          }
 
-      if (fetched.length === 0) {
+          if (fetched.length === 0) {
+            return;
+          }
+        } else {
+          return;
+        }
+        currentSearch = nextSearch;
+      } else {
         return;
       }
-
-      currentSearch = nextSearch;
-      console.log("search keys", currentSearch);
-      
     }
   }
 
@@ -411,7 +419,7 @@ export class TsDataSource {
     filter,
     requestedFields,
     searchAfter,
-  }: IGetListCursor) {
+  }: IGetListCursor): Promise<TCursorDataObjectListOrNull> {
     return await this.client()
       .post(`${this.generateEndpoint(objectType)}:cursor`, {
         search_after: searchAfter,
