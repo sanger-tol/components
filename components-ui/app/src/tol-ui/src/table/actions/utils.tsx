@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import {
+  ACTIONS,
   API_METHODS,
   IDropdownButtonConfig,
   TsDataSource,
@@ -56,7 +57,7 @@ export function addRemoteActions(
       const res = await actionDataSource
       .custom({
         method: API_METHODS.GET,
-        resource: 'action',
+        resource: ACTIONS.ACTION,
         params: {
           filter: {
             and_: {

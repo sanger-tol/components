@@ -352,7 +352,7 @@ export function RemoteTable(props: Props) {
         currentActionName={currentActionName}
       />
       <ActionModal
-        objectType={'action'}
+        objectType={ACTIONS.ACTION}
         actionDataSource={actionDataSource}
         open={actionModalOpen}
         setOpen={setActionModalOpen}
