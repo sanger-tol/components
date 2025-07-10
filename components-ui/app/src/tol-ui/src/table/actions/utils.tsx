@@ -56,7 +56,7 @@ export function addRemoteActions(
       const res = await actionDataSource
       .custom({
         method: API_METHODS.GET,
-        resource: objectType,
+        resource: 'action',
         params: {
           filter: {
             and_: {
