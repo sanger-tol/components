@@ -31,12 +31,16 @@ export function DataSource() {
     objectType: "species",
   });
 
+  let index = 0;
   const handle = (response, generator) => {
-    if (response) return;
-    console.log("Element", response);
-    generator.next().then((result) => {
-      handle(result, generator);
-    });
+    if (response.done) return;
+    index += 1;
+    if (index!==20){
+      console.log("Element", response.value);
+      generator.next().then((result) => {
+        handle(result, generator);
+      });
+    }
   }
 
   f1.next().then((dataOjects) => handle(dataOjects, f1));
