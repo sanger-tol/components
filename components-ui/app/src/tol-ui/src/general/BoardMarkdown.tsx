@@ -51,15 +51,16 @@ export function BoardMarkdown(props: IBoardMarkdown) {
     }
   }
 
-  const PreviewButton: IButton = {
+  const previewButton: IButton = {
     position: "right",
     type: "primary",
     icon: showPreview ? "eye-slash" : "eye",
     onClick: () => setShowPreview(!showPreview),
     visible: !showMarkdownViewer,
+    outline: true,
   }
 
-  const EditButton: IButton = {
+  const editButton: IButton = {
     position: "right",
     type: "primary",
     tooltip: showMarkdownViewer ? "Edit" : "Save",
@@ -68,12 +69,13 @@ export function BoardMarkdown(props: IBoardMarkdown) {
       setShowMarkdownViewer(!showMarkdownViewer);
       onMarkdownSave({ content: content });
     },
+    outline: true,
   }
 
   const MdUtilityBar = (
     <UtilityBar
       id="editor-markdown"
-      buttons={[EditButton, PreviewButton]}
+      buttons={[editButton, previewButton]}
       title={{
         text: title,
         editable: true,
