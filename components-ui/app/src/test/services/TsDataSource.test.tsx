@@ -485,6 +485,25 @@ describe("Testing getListPage function", () => {
   });
 });
 
+describe("Testing getListByCursor function", () => {
+
+  test("Calls get correct page size", async () => {
+    const dataObjects1 = await mockDataSource.getListByCursor({
+      objectType: "species",
+      pageSize: 1,
+    });
+
+    const dataObjects2 = await mockDataSource.getListByCursor({
+      objectType: "species",
+      pageSize: 20,
+    });
+
+    expect(dataObjects1).toHaveLength(1);
+    expect(dataObjects2).toHaveLength(20);
+  });
+
+})
+
 describe("Testing delete method", () => {
   test("Delete correctly removes value", async () => {
     const mockClientInstance = mockClient();
