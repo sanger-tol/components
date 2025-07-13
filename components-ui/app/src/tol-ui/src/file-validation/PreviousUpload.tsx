@@ -20,7 +20,6 @@ import { Button, HoverOverlay, InfoTooltip } from "../general";
 import { normaliseCaps, truncateString } from "../general/utils";
 
 interface Props {
-  // key: string;
   id: string;
   data: IPipelineUpload;
   expanded: boolean;
@@ -43,10 +42,6 @@ function PreviousUploads(props: Props) {
     errorsAndWarningCounts.warnings,
     data.failureMessage || null
   );
-
-  useEffect(() => {
-    console.log("PreviousUploads data:", data);
-  }, [data]);
 
   const ValidationIconTooltip = (
     errorCount: number,

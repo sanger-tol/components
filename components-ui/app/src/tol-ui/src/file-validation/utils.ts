@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
-import { VALIDATION_ENDPOINTS } from "src/constants";
+import { ApiMethods, VALIDATION_ENDPOINTS } from "src/constants";
 import { httpClient, PopUpMessage, TsDataSource } from "../index";
 
 export type tSeverity = "error" | "warning";
@@ -57,7 +57,7 @@ export interface IPipelineUpload {
   failureMessage?: string | null;
 }
 
-export const FILE_VALIDATION_PATH = "/file-validation/results/"; // TODO: ADD CONSTANT
+export const FILE_VALIDATION_PATH = "/file-validation/results/";
 
 export function getErrorWarningCounts(results: IValidationResult[]): {
   errors: number;
@@ -112,6 +112,42 @@ export async function normalisePipelineUpload(
   };
 }
 
+export async function fetchCurrentPipelineResults(
+  ds: TsDataSource,
+  endpoint: string,
+  pipelineId: string,
+  setPipelineResult: (results: IPipelineUpload | null) => void,
+  setHasErrors: (hasErrors: boolean) => void,
+  setLoading?: (loading: boolean) => void | null
+): Promise<IPipelineUpload | null> {
+  try {
+    const results = await ds.getOne({
+      objectType: endpoint,
+      id: pipelineId,
+    });
+    if (results) {
+      const normalisedResults = await normalisePipelineUpload(
+        results,
+        results.relationships
+      );
+      setPipelineResult(normalisedResults);
+      return normalisedResults;
+    }
+    return null;
+  } catch (error) {
+    console.error("Error fetching current pipeline results:", error);
+    PopUpMessage({
+      type: "error",
+      message: "Failed to fetch pipeline results. Please try again.",
+    });
+    setPipelineResult(null);
+    setHasErrors(true);
+    return null;
+  } finally {
+    if (setLoading) setLoading(false);
+  }
+}
+
 export async function fetchAndNormaliseUploadResult(
   ds: TsDataSource,
   endpoint: string,
@@ -141,9 +177,7 @@ export async function fetchAndNormaliseUploadResult(
     setPipelineResult(null);
     setHasErrors(true);
   } finally {
-    if (setLoading) {
-      setLoading(false);
-    }
+    if (setLoading) setLoading(false);
   }
 }
 
@@ -185,6 +219,39 @@ export async function fetchAndNormaliseAllUploadResults(
     return [];
   } finally {
     if (setLoading) setLoading(false);
+  }
+}
+
+export async function uploadPipelineConfig(
+  ds: TsDataSource,
+  config: IValidationConfig,
+  fileName: string,
+  spreadsheetConfig: string
+): Promise<IPipelineUpload | null> {
+  const body = {
+    s3_url: config.s3_url,
+    s3_filename: fileName,
+    spreadsheet_config: spreadsheetConfig,
+    pipeline_name: config.pipeline_name,
+    destination: config.destination,
+  };
+  try {
+    const response = await ds.custom(
+      VALIDATION_ENDPOINTS.RUN_PIPELINE,
+      ApiMethods.POST,
+      body
+    );
+    if (response) {
+      return response.data["upload_id"];
+    }
+    return null;
+  } catch (error) {
+    console.error("Error initiating validation:", error);
+    PopUpMessage({
+      type: "error",
+      message: "Failed to initiate validation. Please try again.",
+    });
+    return null;
   }
 }
 

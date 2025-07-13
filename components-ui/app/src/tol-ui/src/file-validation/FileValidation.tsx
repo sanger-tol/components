@@ -15,7 +15,6 @@ import {
   DropdownButtons,
   Modal,
   TolLoader,
-  httpClient,
   TsDataSource,
   Icon,
 } from "../index";
@@ -27,12 +26,15 @@ import {
   fetchAndNormaliseAllUploadResults,
   IValidationConfig,
   IPipelineUpload,
+  uploadPipelineConfig,
+  fetchCurrentPipelineResults,
+  IValidationResult,
 } from "../file-validation";
 import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
 import { VALIDATION_ENDPOINTS } from "../constants";
 
 interface Props {
-  data: any[]; // mock
+  data: any[]; // mocked
   endpoint: string;
   validationConfig: IValidationConfig;
   fileType?: string;
@@ -48,7 +50,7 @@ const TOL_LOADER_STYLES = {
   display: "flex",
 };
 
-const PREVIOUS_UPLOADS_REFRESH = 10000;
+const REFRESH_INTERVAL = 10000;
 
 function FileValidation(props: Props) {
   const {
@@ -72,6 +74,9 @@ function FileValidation(props: Props) {
     string | null
   >(null);
   const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
+  const [currentPipelineId, setCurrentPipelineId] = useState<string | null>(
+    null
+  );
 
   const ds = new TsDataSource();
   const { id } = getUserFromLocalStorage();
@@ -83,34 +88,54 @@ function FileValidation(props: Props) {
     return await fetchAndNormaliseAllUploadResults(ds, cacheBustedEndpoint, id);
   };
 
+  const fetchLatestPipelineResults = async () => {
+    const cacheBustedEndpoint = `${
+      VALIDATION_ENDPOINTS.UPLOAD
+    }?_cache_bust=${Date.now()}`;
+    if (!currentPipelineId) return null;
+    return await fetchCurrentPipelineResults(
+      ds,
+      cacheBustedEndpoint,
+      currentPipelineId,
+      setValidationResults
+    );
+  };
+
+  const {
+    data: latestPipelineResults = [],
+    isLoading: loadingLatestPipelineResults,
+    refetch: refetchLatestPipelineResults,
+    dataUpdatedAt: latestResultsUpdatedAt,
+  } = useQuery({
+    queryKey: ["latestPipelineResults", currentPipelineId],
+    queryFn: fetchLatestPipelineResults,
+    enabled: validating && currentPipelineId !== null,
+    refetchInterval: validating ? REFRESH_INTERVAL : false,
+    staleTime: 0,
+  });
+
   const {
     data: userFileValidationUploadsData = [],
     isLoading,
     isError,
-    refetch,
-    dataUpdatedAt,
+    refetch: refetchAllUploads,
+    dataUpdatedAt: allUploadsUpdatedAt,
   } = useQuery({
     queryKey: ["userFileValidationUploads", id],
     queryFn: fetchPreviousUploads,
     enabled: openModal === "results",
-    refetchInterval: openModal === "results" ? PREVIOUS_UPLOADS_REFRESH : false,
+    refetchInterval: openModal === "results" ? REFRESH_INTERVAL : false,
     staleTime: 0,
   });
 
-  const generateMessages = async () => {
-    const pipeline_data = {
-      data: {
-        s3_url: validationConfig.s3_url,
-        s3_filename: "made up file name",
-        spreadsheet_config: "made up config",
-        pipeline_name: validationConfig.pipeline_name,
-        destination: validationConfig.destination,
-      },
-    };
-    const res = await httpClient().post("/run-pipeline", pipeline_data, {
-      params: {},
-    });
-    return res;
+  const generateMessages = async (fileName: string[]) => {
+    const pipeline_id = await uploadPipelineConfig(
+      ds,
+      validationConfig,
+      fileName[0],
+      "spreadsheet_config"
+    );
+    setCurrentPipelineId(pipeline_id);
   };
 
   const handleToggleUploadResults = (id: string) => {
@@ -168,9 +193,7 @@ function FileValidation(props: Props) {
             disabled={!fileDropped || validating}
             onClick={() => {
               setValidating(true);
-              setTimeout(() => {
-                setValidationResults(["1"]);
-              }, 3000);
+              generateMessages(fileList.map((file) => file.name));
             }}
           />
           <DropdownButtons
@@ -244,25 +267,34 @@ function FileValidation(props: Props) {
           />
         </div>
       ) : (
-        <ValidateSteps
-          data={data.map((item) => ({
-            code: item.code,
-            field: Array.isArray(item.field)
-              ? item.field.join(", ")
-              : item.field,
-            detail: item.detail,
-            severity: item.severity as tSeverity,
-            objectId: item.object_id,
-            stepName: item.step_name,
-          }))}
-          steps={[]}
-        />
+        latestPipelineResults !== null && (
+          <ValidateSteps
+            data={
+              Array.isArray(latestPipelineResults)
+                ? latestPipelineResults.map((item: IValidationResult) => ({
+                    code: item.code,
+                    field: Array.isArray(item.field)
+                      ? item.field.join(", ")
+                      : item.field,
+                    detail: item.detail,
+                    severity: item.severity as tSeverity,
+                    objectId: item.objectId,
+                    stepName: item.stepName,
+                  }))
+                : []
+            }
+            steps={[]}
+          />
+        )
       )}
     </div>
   );
 
   const ResultsModalContent = (
-    <div className="tol-file-validation-previous-uploads-modal-container tol-file-validation-scrollbar-fix">
+    <div
+      className="tol-file-validation-previous-uploads-modal-container 
+    tol-file-validation-scrollbar-fix"
+    >
       {isLoading ? (
         <TolLoader
           size="lg"
@@ -282,7 +314,7 @@ function FileValidation(props: Props) {
           (upload: IPipelineUpload, index: number) => {
             return (
               <div
-                key={`${upload.id}-${dataUpdatedAt}-${index}`}
+                key={`${upload.id}-${allUploadsUpdatedAt}-${index}`}
                 className="tol-file-validation-previous-uploads-inner-container"
               >
                 <PreviousUploads
@@ -311,7 +343,7 @@ function FileValidation(props: Props) {
     <div className="tol-file-validation-previous-uploads-modal-header">
       <div className="tol-file-validation-previous-uploads-modal-header-content">
         <h3>Previous Validations</h3>
-        <p>This page updates every {PREVIOUS_UPLOADS_REFRESH / 1000} seconds</p>
+        <p>Last updated at: {new Date(allUploadsUpdatedAt).toLocaleString()}</p>
       </div>
       <div className="tol-file-validation-previous-uploads-modal-toggle">
         <p className="tol-file-validation-previous-uploads-modal-toggle-tag">
@@ -323,7 +355,11 @@ function FileValidation(props: Props) {
           onChange={() => setShowPassedSteps((prev: boolean) => !prev)}
         />
         <div>
-          <Button icon="rotate" tooltip="Refresh" />
+          <Button
+            icon="rotate"
+            tooltip="Refresh"
+            onClick={() => refetchAllUploads()}
+          />
         </div>
       </div>
     </div>

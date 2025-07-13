@@ -74,6 +74,7 @@ function ValidateStep(props: Props) {
                 .slice(0, MAX_ERRORS_TO_DISPLAY)
                 .map((result: IValidationResult) => (
                   <ErrorViewer
+                    key={`${result.objectId}-${result.field}-${result.stepName}`}
                     message={result.detail}
                     errorType={result.severity}
                     stepName={result.stepName}

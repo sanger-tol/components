@@ -11,6 +11,7 @@ import { capitaliseFirstLetter, truncateString } from "../general/utils";
 import { ICellId } from "./utils";
 
 interface Props {
+  key?: string;
   id?: string;
   errorType?: string;
   message?: string;
