@@ -445,3 +445,4 @@ export default FileValidation;
 // TODO: previous uploads icon should show loading spinner when not completed
 // TODO: correct status for results viewer
 // TODO: if errors, upload file button should be disabled
+// TODO: limit on refresh buttons
