@@ -53,11 +53,7 @@ export function isEmptyObject(x: object) {
 export function normaliseCaps(name: string, prefix?: string) {
   if (!name) return "";
   // make object ids clear (for auto load)
-  if (prefix !== undefined) {
-    if (name === "id" || name === "uid") {
-      return normaliseCaps(prefix) + " ID";
-    }
-  }
+  if (prefix && name === "id") return normaliseCaps(prefix) + " ID";
   // replace relationship '.' with underscore ready to split
   name = name.replace(".", "_");
   const words = name.split("_");
@@ -69,7 +65,6 @@ export function normaliseCaps(name: string, prefix?: string) {
 
 function normaliseWords(word: string) {
   switch (word) {
-    case "uid":
     case "id":
       return "ID";
     case "sts":
