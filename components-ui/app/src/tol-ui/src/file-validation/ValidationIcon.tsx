@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { Icon, HoverOverlay } from "../index";
+import { Icon, HoverOverlay, TolLoader } from "../index";
 import { IconType } from "./utils";
 
 interface Props {
@@ -14,13 +14,23 @@ interface Props {
   style?: React.CSSProperties;
   className?: string;
   tooltip?: React.ReactNode;
+  completed?: boolean;
+  completedCheck?: boolean;
 }
 
 const OVERLAY_DELAY = 200;
 const OVERLAY_PLACEMENT = "top";
 
 function ValidationIcon(props: Props) {
-  const { iconType, size, style, className, tooltip } = props;
+  const {
+    iconType,
+    size,
+    style,
+    className,
+    tooltip,
+    completed,
+    completedCheck = false,
+  } = props;
 
   return (
     <div>
@@ -42,7 +52,11 @@ function ValidationIcon(props: Props) {
         </HoverOverlay>
       ) : (
         <span style={{ ...style }} className={className}>
-          <Icon icon={iconType} size={size} />
+          {!completed && completedCheck ? (
+            <TolLoader />
+          ) : (
+            <Icon icon={iconType} size={size} />
+          )}
         </span>
       )}
     </div>

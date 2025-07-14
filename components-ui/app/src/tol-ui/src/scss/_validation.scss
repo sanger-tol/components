@@ -230,6 +230,14 @@
       background: var(--tol-success-translucent);
     }
 
+    &.warning {
+      background: var(--tol-warning-translucent);
+    }
+
+    &.in-progress {
+      background: var(--tol-info-translucent);
+    }
+
     &.error {
       background: var(--tol-danger-translucent);
     }
@@ -435,6 +443,10 @@
 
   &.warning {
     background-color: var(--tol-warning);
+  }
+
+  &.in-progress {
+    background-color: var(--tol-grey-subtle);
   }
 
   &.pointer {

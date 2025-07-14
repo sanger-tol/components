@@ -22,19 +22,18 @@ import { FileData } from "../forms/Dropzone";
 import {
   ValidateSteps,
   PreviousUploads,
-  TSeverity,
   fetchAndNormaliseAllUploadResults,
   IValidationConfig,
   IPipelineUpload,
   uploadPipelineConfig,
   fetchCurrentPipelineResults,
-  IValidationResult,
+  constructCompletionMessage,
+  REFRESH_INTERVAL,
 } from "../file-validation";
 import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
 import { VALIDATION_ENDPOINTS } from "../constants";
 
 interface Props {
-  data: any[]; // mocked
   endpoint: string;
   validationConfig: IValidationConfig;
   fileType?: string;
@@ -50,11 +49,10 @@ const TOL_LOADER_STYLES = {
   display: "flex",
 };
 
-const REFRESH_INTERVAL = 10000;
+
 
 function FileValidation(props: Props) {
   const {
-    data,
     endpoint,
     validationConfig,
     pageTitle = "File Validation / Manifest Validation",
@@ -65,7 +63,6 @@ function FileValidation(props: Props) {
   const [openModal, setOpenModal] = useState<string | boolean>(false);
   const [fileDropped, setFileDropped] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
-  const [validationResults, setValidationResults] = useState<any[]>([]);
   const [validated, setValidated] = useState<boolean>(false);
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);
@@ -102,16 +99,33 @@ function FileValidation(props: Props) {
 
   const {
     data: latestPipelineResults = {} as IPipelineUpload | null,
-    isLoading: loadingLatestPipelineResults,
     refetch: refetchLatestPipelineResults,
     dataUpdatedAt: latestResultsUpdatedAt,
   } = useQuery({
     queryKey: ["latestPipelineResults", currentUploadId],
     queryFn: fetchLatestPipelineResults,
-    enabled: validating && currentUploadId !== null,
+    enabled: validating && currentUploadId !== null && !validated,
     refetchInterval: validating ? REFRESH_INTERVAL / 2 : false,
     staleTime: 0,
   });
+
+  useEffect(() => {
+    if (latestPipelineResults) {
+      if (latestPipelineResults.completed) {
+        setValidated(true);
+
+        const completionMessage = constructCompletionMessage(
+          latestPipelineResults.validationResults,
+          latestPipelineResults.failureMessage
+        );
+
+        PopUpMessage({
+          type: completionMessage.messageType,
+          message: `Validation completed. ${completionMessage.message}`,
+        });
+      }
+    }
+  }, [latestPipelineResults]);
 
   const {
     data: userFileValidationUploadsData = [],
@@ -146,7 +160,6 @@ function FileValidation(props: Props) {
     setTimeout(() => {
       setFileDropped(false);
       setValidated(false);
-      setValidationResults([]);
       setFileList([]);
       setResetKey((prev) => prev + 1);
       setValidating(false);
@@ -315,8 +328,9 @@ function FileValidation(props: Props) {
           <h6>Error loading uploads.</h6>
         </div>
       ) : userFileValidationUploadsData.length > 0 ? (
-        userFileValidationUploadsData.map(
-          (upload: IPipelineUpload, index: number) => {
+        userFileValidationUploadsData
+          .sort((a, b) => Number(b.id) - Number(a.id))
+          .map((upload: IPipelineUpload, index: number) => {
             return (
               <div
                 key={`${upload.id}-${allUploadsUpdatedAt}-${index}`}
@@ -331,8 +345,7 @@ function FileValidation(props: Props) {
                 />
               </div>
             );
-          }
-        )
+          })
       ) : (
         <div className="tol-file-validation-error-info">
           <span className="tol-file-validation-error-icon">

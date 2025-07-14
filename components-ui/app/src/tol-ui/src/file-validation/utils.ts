@@ -7,6 +7,7 @@ import { History } from "history";
 import { ApiMethods, VALIDATION_ENDPOINTS } from "../constants";
 import { PopUpMessage, TsDataSource } from "../index";
 import { DataObject } from "../services/http/TsDataSource";
+import { MessageType } from "./messaging/Message";
 
 export type TSeverity = "error" | "warning";
 export type IconType = "check" | "xmark" | "exclamation";
@@ -74,6 +75,7 @@ export interface IPipelineUpload {
 }
 
 export const FILE_VALIDATION_PATH = "/file-validation/results/";
+export const REFRESH_INTERVAL = 10000;
 
 const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
 
@@ -280,6 +282,41 @@ export async function uploadPipelineConfig(
     });
     return null;
   }
+}
+
+export function constructCompletionMessage(
+  validationResults: IValidationResult[],
+  failureMessage: string | null
+): { message: string; messageType: MessageType } {
+  const errorsAndWarnings = getErrorWarningCounts(validationResults);
+  if (failureMessage) {
+    return {
+      message: `Validation terminated early: ${failureMessage}`,
+      messageType: "error",
+    };
+  } else if (
+    errorsAndWarnings.errors === 0 &&
+    errorsAndWarnings.warnings === 0
+  ) {
+    return {
+      message: "Validation passed successfully with no issues.",
+      messageType: "success",
+    };
+  } else if (errorsAndWarnings.errors > 0) {
+    return {
+      message: `Validation failed with ${errorsAndWarnings.errors} error(s).`,
+      messageType: "error",
+    };
+  } else if (errorsAndWarnings.warnings > 0) {
+    return {
+      message: `Validation completed with ${errorsAndWarnings.warnings} warning(s).`,
+      messageType: "warning",
+    };
+  }
+  return {
+    message: "Could not detemine completion status.",
+    messageType: "info",
+  };
 }
 
 export function determineUploadStatus(

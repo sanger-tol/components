@@ -22,7 +22,7 @@ interface Props {
 const WIDTH_REDUCER = 40;
 
 function ValidateSteps(props: Props) {
-  const { data, steps } = props;
+  const { data, steps, completed } = props;
   const [expandedIndex, setExpandedIndex] = useState<string | null>(
     props.expandedIndex || null
   );
@@ -72,6 +72,7 @@ function ValidateSteps(props: Props) {
                   results={stepData}
                   expanded={expandedIndex === stepName}
                   onSeeAllErrors={() => handleToggleExpanded(stepName)}
+                  completed={completed}
                 />
               </div>
             );
@@ -94,26 +95,33 @@ function ValidateSteps(props: Props) {
               className="tol-validate-steps-all-errors-animation"
             >
               <h6>All errors and warnings for {expandedIndex}:</h6>
-              {data.map((result: IValidationResult, index: number) => {
-                if (result.stepName === expandedIndex) {
-                  return (
-                    <ErrorViewer
-                      key={`error-${index}-${result.stepName}`}
-                      errorType={result.severity}
-                      message={result.detail}
-                      stepName={result.stepName}
-                      cellId={{
-                        column: result.field
-                          ? Array.isArray(result.field)
-                            ? result.field.join(", ")
-                            : result.field
-                          : "all",
-                        row: result.objectId || "N/A",
-                      }}
-                    />
-                  );
-                }
-              })}
+              {data
+                .sort((a, b) => {
+                  if (a.severity !== b.severity) {
+                    return a.severity === "error" ? -1 : 1;
+                  }
+                  return Number(a.objectId) - Number(b.objectId);
+                })
+                .map((result: IValidationResult, index: number) => {
+                  if (result.stepName === expandedIndex) {
+                    return (
+                      <ErrorViewer
+                        key={`error-${index}-${result.stepName}`}
+                        errorType={result.severity}
+                        message={result.detail}
+                        stepName={result.stepName}
+                        cellId={{
+                          column: result.field
+                            ? Array.isArray(result.field)
+                              ? result.field.join(", ")
+                              : result.field
+                            : "all",
+                          row: result.objectId || "N/A",
+                        }}
+                      />
+                    );
+                  }
+                })}
             </div>
           </div>
         )}

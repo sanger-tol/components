@@ -6,25 +6,23 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import ValidateSteps from "./ValidateSteps";
 import { Widgets, TsDataSource, LoadingContent, Icon } from "../index";
 import {
   getErrorWarningCounts,
-  fetchAndNormaliseUploadResult,
   downloadItem,
   determineUploadStatus,
   IUploadStatus,
   IErrorWarningCount,
+  fetchCurrentPipelineResults,
+  REFRESH_INTERVAL,
 } from "./utils";
 import { IPipelineUpload } from "./utils";
+import { VALIDATION_ENDPOINTS } from "../constants";
 
-interface Props {
-  endpoint: string;
-}
-
-function ValidationResultsViewer(props: Props) {
-  const { endpoint } = props;
+function ValidationResultsViewer() {
   const { uploadId } = useParams<{ uploadId: string }>();
 
   const ds = new TsDataSource();
@@ -35,11 +33,7 @@ function ValidationResultsViewer(props: Props) {
   const searchParams = new URLSearchParams(location.search);
   const stepName = searchParams.get("stepName") || undefined;
 
-  const [loading, setLoading] = useState<boolean>(true);
   const [hasErrors, setHasErrors] = useState<boolean>(false);
-  const [pipelineResult, setPipelineResult] = useState<IPipelineUpload | null>(
-    null
-  );
   const [errorAndWarningCount, setErrorAndWarningCount] =
     useState<IErrorWarningCount>({ errors: 0, warnings: 0 });
   const [uploadStatus, setUploadStatus] = useState<IUploadStatus>({
@@ -47,34 +41,73 @@ function ValidationResultsViewer(props: Props) {
     text: "",
   });
 
-  useEffect(() => {
-    fetchAndNormaliseUploadResult(
+  const [validating, setValidating] = useState<boolean>(false);
+  const [validated, setValidated] = useState<boolean>(false);
+
+  const fetchLatestPipelineResults = async () => {
+    const cacheBustedEndpoint = `${
+      VALIDATION_ENDPOINTS.UPLOAD
+    }?_cache_bust=${Date.now()}`;
+    if (!uploadId) {
+      return null;
+    }
+    const result = await fetchCurrentPipelineResults(
       ds,
-      endpoint,
-      uploadId,
-      setPipelineResult,
-      setHasErrors,
-      setLoading
+      cacheBustedEndpoint,
+      uploadId
     );
-  }, [uploadId]);
+
+    if (!result) {
+      setHasErrors(true);
+      return null;
+    }
+    return result;
+  };
+
+  const {
+    data: latestPipelineResults = {} as IPipelineUpload | null,
+    refetch: refetchLatestPipelineResults,
+    dataUpdatedAt: latestResultsUpdatedAt,
+    isLoading,
+  } = useQuery({
+    queryKey: ["latestPipelineResults", uploadId],
+    queryFn: fetchLatestPipelineResults,
+    enabled: uploadId !== null && !validated,
+    refetchInterval: (data: any) => {
+      return data && !data.completed ? REFRESH_INTERVAL / 2 : false;
+    },
+    staleTime: 0,
+  });
 
   useEffect(() => {
-    if (pipelineResult) {
-      const counts = getErrorWarningCounts(pipelineResult!.validationResults);
+    if (!latestPipelineResults || !uploadId) return;
+
+    if (!latestPipelineResults.completed && !validating) {
+      setValidating(true);
+      setValidated(false);
+    } else if (latestPipelineResults.completed && validating) {
+      setValidating(false);
+      setValidated(true);
+    }
+  }, [latestPipelineResults, uploadId, validating]);
+
+  useEffect(() => {
+    if (latestPipelineResults && latestPipelineResults.validationResults) {
+      const counts = getErrorWarningCounts(
+        latestPipelineResults.validationResults
+      );
       setErrorAndWarningCount(counts);
 
       setUploadStatus(
         determineUploadStatus(
-          pipelineResult.completed,
+          latestPipelineResults.completed,
           counts.errors,
           counts.warnings,
-          pipelineResult.failureMessage || null
+          latestPipelineResults.failureMessage || null
         )
       );
     }
-  }, [pipelineResult]);
 
-  useEffect(() => {
     if (stepName !== undefined && targetRef.current) {
       targetRef.current.scrollIntoView({
         behavior: "smooth",
@@ -83,23 +116,21 @@ function ValidationResultsViewer(props: Props) {
       });
 
       searchParams.delete("stepName");
-      history.replace(
-        {
-          search: searchParams.toString(),
-        }
-      );
+      history.replace({
+        search: searchParams.toString(),
+      });
     }
-  }, [stepName, pipelineResult]);
+  }, [latestPipelineResults, stepName]);
 
   const Results = (
     <div className="tol-file-validation-results-page-container">
       <div>
-        {pipelineResult && (
+        {latestPipelineResults && (
           <>
             <div className="tol-file-validation-results-page-info-container">
               <div className="tol-file-validation-results-page-info-inner-container">
-                <h4>Results for Pipeline #{pipelineResult.id}</h4>
-                <h6>Pipeline: {pipelineResult.pipelineName}</h6>
+                <h4>Results for Pipeline #{latestPipelineResults.id}</h4>
+                <h6>Pipeline: {latestPipelineResults.pipelineName}</h6>
               </div>
               <div>
                 <h4
@@ -108,20 +139,22 @@ function ValidationResultsViewer(props: Props) {
                   {uploadStatus.text}
                 </h4>
                 <p className="tol-file-validation-results-page-info-date">
-                  {new Date(pipelineResult.dateStarted).toLocaleString()}
+                  {new Date(latestPipelineResults.dateStarted).toLocaleString()}
                 </p>
               </div>
             </div>
             <div className="tol-file-validation-results-page-additional-info">
               <div>
-                <h6>Flow ID: {pipelineResult.flowRunId}</h6>
+                <h6>Flow ID: {latestPipelineResults.flowRunId}</h6>
                 <p>
                   {"Download File: "}
                   <a
                     href="#"
-                    onClick={() => downloadItem(pipelineResult.s3Filename)}
+                    onClick={() =>
+                      downloadItem(latestPipelineResults.s3Filename)
+                    }
                   >
-                    {pipelineResult.s3Filename}
+                    {latestPipelineResults.s3Filename}
                   </a>
                 </p>
               </div>
@@ -133,13 +166,14 @@ function ValidationResultsViewer(props: Props) {
           </>
         )}
       </div>
-      {pipelineResult?.validationResults && (
+      {latestPipelineResults?.validationResults && (
         <ValidateSteps
-          data={pipelineResult.validationResults}
+          data={latestPipelineResults.validationResults}
           expandedIndex={stepName}
-          steps={pipelineResult.pipelineSteps}
+          steps={latestPipelineResults.pipelineSteps}
           stepName={stepName}
           targetRef={targetRef}
+          completed={latestPipelineResults.completed}
         />
       )}
     </div>
@@ -161,7 +195,7 @@ function ValidationResultsViewer(props: Props) {
     },
   ];
 
-  return loading && !pipelineResult ? (
+  return isLoading && !latestPipelineResults ? (
     <LoadingContent text="Loading Results" />
   ) : (
     <Widgets components={ResultsViewer} />

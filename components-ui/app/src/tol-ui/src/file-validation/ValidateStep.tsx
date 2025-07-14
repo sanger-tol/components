@@ -19,6 +19,7 @@ interface Props {
   results?: IValidationResult[];
   expanded?: boolean;
   onSeeAllErrors?: () => void;
+  completed?: boolean;
 }
 
 const MAX_ERRORS_TO_DISPLAY = 2;
@@ -30,6 +31,7 @@ function ValidateStep(props: Props) {
     onSeeAllErrors,
     results = [],
     expanded = false,
+    completed = false,
   } = props;
 
   const issueCount = getErrorWarningCounts(results);
@@ -48,7 +50,7 @@ function ValidateStep(props: Props) {
       <div
         id={id}
         className={`tol-file-uploader-validate-step-inner-container ${
-          hasErrors ? "error" : "passed"
+          !completed && !hasErrors ? "in-progress" : stepStatus.className
         }`}
       >
         <div className="tol-file-uploader-validate-step-title-container">
@@ -58,7 +60,11 @@ function ValidateStep(props: Props) {
           <ValidationIcon
             iconType={iconType}
             size="lg"
-            className={`tol-file-uploader-validate-step-icon ${stepStatus.className}`}
+            className={`tol-file-uploader-validate-step-icon ${
+              completed ? stepStatus.className : "in-progress"
+            }`}
+            completed={completed}
+            completedCheck={true}
           />
         </div>
         {hasErrors ? (
@@ -66,11 +72,17 @@ function ValidateStep(props: Props) {
             <div>
               <p className="tol-file-uploader-validate-step-error-number">
                 {issueCount.warnings}{" "}
-                {issueCount.warnings > 1 ? "Warnings" : "Warning"},{" "}
-                {issueCount.errors} {issueCount.errors > 1 ? "Errors" : "Error"}
-                :
+                {issueCount.warnings !== 1 ? "Warnings" : "Warning"},{" "}
+                {issueCount.errors}{" "}
+                {issueCount.errors !== 1 ? "Errors" : "Error"}:
               </p>
               {results
+                .sort((a, b) => {
+                  if (a.severity !== b.severity) {
+                    return a.severity === "error" ? -1 : 1;
+                  }
+                  return Number(a.objectId) - Number(b.objectId);
+                })
                 .slice(0, MAX_ERRORS_TO_DISPLAY)
                 .map((result: IValidationResult) => (
                   <ErrorViewer
@@ -108,6 +120,14 @@ function ValidateStep(props: Props) {
                 </div>
               )}
             </div>
+          </div>
+        ) : !completed ? (
+          <div
+            style={{ display: "flex" }}
+            className="tol-file-uploader-validate-step-passed-container"
+          >
+            <h6>Waiting On Results</h6>
+            <h6 className="tol-file-validation-ellipsis-loader">...</h6>
           </div>
         ) : (
           <div className="tol-file-uploader-validate-step-passed-container">
