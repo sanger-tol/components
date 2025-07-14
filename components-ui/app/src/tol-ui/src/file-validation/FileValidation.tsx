@@ -74,9 +74,7 @@ function FileValidation(props: Props) {
     string | null
   >(null);
   const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
-  const [currentPipelineId, setCurrentPipelineId] = useState<string | null>(
-    null
-  );
+  const [currentUploadId, setCurrentUploadId] = useState<string | null>(null);
 
   const ds = new TsDataSource();
   const { id } = getUserFromLocalStorage();
@@ -92,25 +90,26 @@ function FileValidation(props: Props) {
     const cacheBustedEndpoint = `${
       VALIDATION_ENDPOINTS.UPLOAD
     }?_cache_bust=${Date.now()}`;
-    if (!currentPipelineId) return null;
+    if (!currentUploadId) {
+      return null;
+    }
     return await fetchCurrentPipelineResults(
       ds,
       cacheBustedEndpoint,
-      currentPipelineId,
-      setValidationResults
+      currentUploadId
     );
   };
 
   const {
-    data: latestPipelineResults = [],
+    data: latestPipelineResults = {} as IPipelineUpload | null,
     isLoading: loadingLatestPipelineResults,
     refetch: refetchLatestPipelineResults,
     dataUpdatedAt: latestResultsUpdatedAt,
   } = useQuery({
-    queryKey: ["latestPipelineResults", currentPipelineId],
+    queryKey: ["latestPipelineResults", currentUploadId],
     queryFn: fetchLatestPipelineResults,
-    enabled: validating && currentPipelineId !== null,
-    refetchInterval: validating ? REFRESH_INTERVAL : false,
+    enabled: validating && currentUploadId !== null,
+    refetchInterval: validating ? REFRESH_INTERVAL / 2 : false,
     staleTime: 0,
   });
 
@@ -135,7 +134,7 @@ function FileValidation(props: Props) {
       fileName[0],
       "spreadsheet_config"
     );
-    setCurrentPipelineId(pipeline_id);
+    setCurrentUploadId(pipeline_id);
   };
 
   const handleToggleUploadResults = (id: string) => {
@@ -256,8 +255,26 @@ function FileValidation(props: Props) {
 
   const ResultsViewer = (
     <div>
-      <h6>Results:</h6>
-      {validationResults.length > 0 === false ? (
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div>
+          <h6>Results:</h6>
+          <p>
+            Last updated at: {new Date(latestResultsUpdatedAt).toLocaleString()}
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <h6 style={{ display: "flex", alignSelf: "center", marginBottom: 0 }}>
+            {latestPipelineResults?.completed ? "Completed" : "In Progress"}
+          </h6>
+          <Button
+            icon="rotate"
+            tooltip="Refresh"
+            disabled={latestPipelineResults?.completed}
+            onClick={() => refetchLatestPipelineResults()}
+          />
+        </div>
+      </div>
+      {!latestPipelineResults ? (
         <div className="tol-file-upload-results-viewer-container">
           <TolLoader
             size="lg"
@@ -266,24 +283,12 @@ function FileValidation(props: Props) {
             styles={{ ...(TOL_LOADER_STYLES as React.CSSProperties) }}
           />
         </div>
-      ) : (
-        latestPipelineResults !== null && (
+      ) : Array.isArray(latestPipelineResults) ? null : (
+        latestPipelineResults?.validationResults && (
           <ValidateSteps
-            data={
-              Array.isArray(latestPipelineResults)
-                ? latestPipelineResults.map((item: IValidationResult) => ({
-                    code: item.code,
-                    field: Array.isArray(item.field)
-                      ? item.field.join(", ")
-                      : item.field,
-                    detail: item.detail,
-                    severity: item.severity as TSeverity,
-                    objectId: item.objectId,
-                    stepName: item.stepName,
-                  }))
-                : []
-            }
-            steps={[]}
+            data={latestPipelineResults.validationResults}
+            steps={latestPipelineResults["pipelineSteps"]}
+            completed={latestPipelineResults.completed}
           />
         )
       )}

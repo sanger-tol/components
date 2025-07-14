@@ -115,7 +115,7 @@ export function normaliseValidationResult(
 export async function normalisePipelineUpload(
   ds: TsDataSource,
   upload: DataObject,
-  relationships: {[key: string]: Promise<DataObject>}
+  relationships: { [key: string]: Promise<DataObject> }
 ): Promise<IPipelineUpload> {
   const pipeline = await relationships?.pipeline;
   const pipelineSteps = await getStepsInPipeline(ds, pipeline.id);
@@ -136,23 +136,27 @@ export async function normalisePipelineUpload(
 export async function fetchCurrentPipelineResults(
   ds: TsDataSource,
   endpoint: string,
-  pipelineId: string,
-  setPipelineResult: (results: IPipelineUpload | null) => void,
-  setHasErrors: (hasErrors: boolean) => void,
+  uploadId: string,
+  setPipelineResult?: (results: IPipelineUpload | null) => void,
+  setHasErrors?: (hasErrors: boolean) => void,
   setLoading?: (loading: boolean) => void | null
 ): Promise<IPipelineUpload | null> {
   try {
-    const results = await ds.getOne({
+    const results = await ds.getListPage({
       objectType: endpoint,
-      id: pipelineId,
+      filter: {
+        and_: {
+          id: { eq: { value: uploadId } },
+        },
+      },
     });
     if (results) {
       const normalisedResults = await normalisePipelineUpload(
         ds,
-        results,
-        results.relationships
+        results[0],
+        results[0].relationships
       );
-      setPipelineResult(normalisedResults);
+      if (setPipelineResult) setPipelineResult(normalisedResults);
       return normalisedResults;
     }
     return null;
@@ -162,8 +166,8 @@ export async function fetchCurrentPipelineResults(
       type: "error",
       message: "Failed to fetch pipeline results. Please try again.",
     });
-    setPipelineResult(null);
-    setHasErrors(true);
+    if (setPipelineResult) setPipelineResult(null);
+    if (setHasErrors) setHasErrors(true);
     return null;
   } finally {
     if (setLoading) setLoading(false);
@@ -341,7 +345,6 @@ export function goToResults(
   stepName?: string,
   errorWarningCount: number = 0
 ) {
-  console.log(errorWarningCount);
   history.push(
     `${FILE_VALIDATION_PATH}${pipelineId}${
       errorWarningCount > 2 && stepName ? `?stepName=${stepName}` : ""
