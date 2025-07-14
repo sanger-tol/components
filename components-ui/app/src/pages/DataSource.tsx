@@ -46,7 +46,7 @@ export function DataSource() {
 
   ds1
     .getList({
-      objectType: "species",
+      objectType: "manifest",
     })
     .then((res) => console.log("here bouy ->", res));
 

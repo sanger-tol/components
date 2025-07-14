@@ -184,7 +184,7 @@ export class TsDataSource {
   }
 
   private addIds(attributes: IAttributes) {
-    for (const [objectType, attr] of  Object.entries(attributes)) {
+    for (const [objectType, attr] of Object.entries(attributes)) {
       attr["id"] = {
         authoritative: true,
         available_on_relationships: true,
@@ -374,15 +374,17 @@ export class TsDataSource {
       });
   }
 
-  public async getList({objectType, filter, requestedFields}:IList){
-    const objectCursorLists = await this.getListByCursor({objectType, filter, requestedFields});
-    let cursorPage;
+  public async getList({ objectType, filter, requestedFields }: IList) {
+    const objectCursorLists = await this.getListByCursor({
+      objectType,
+      filter,
+      requestedFields,
+    });
     const displayCursorPage: any[] = [];
-    while (true){
-      cursorPage = await objectCursorLists.next();
-      displayCursorPage.push(cursorPage.value);
-      if (cursorPage.done) return displayCursorPage;
+    for await (const page of objectCursorLists) {
+      displayCursorPage.push(page);
     }
+    return displayCursorPage;
   }
 
   public async *getListByCursor({
