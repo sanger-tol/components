@@ -59,6 +59,8 @@ export interface IPipelineUpload {
 
 export const FILE_VALIDATION_PATH = "/file-validation/results/";
 
+const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
+
 export function getErrorWarningCounts(results: IValidationResult[]): {
   errors: number;
   warnings: number;
@@ -93,11 +95,12 @@ export function normaliseValidationResult(result: any): IValidationResult {
 }
 
 export async function normalisePipelineUpload(
+  ds: TsDataSource,
   upload: any,
   relationships: any
 ): Promise<IPipelineUpload> {
   const pipeline = await relationships?.pipeline;
-  const pipelineSteps = await getStepsInPipeline(pipeline.id);
+  const pipelineSteps = await getStepsInPipeline(ds, pipeline.id);
   return {
     completed: upload.completed,
     dateStarted: upload.date_started,
@@ -163,6 +166,7 @@ export async function fetchAndNormaliseUploadResult(
     });
     if (results) {
       const normalisedResults = await normalisePipelineUpload(
+        ds,
         results,
         results.relationships
       );
@@ -201,7 +205,7 @@ export async function fetchAndNormaliseAllUploadResults(
     if (results) {
       const normalisedResults = await Promise.all(
         results.map((upload: any) =>
-          normalisePipelineUpload(upload, upload.relationships)
+          normalisePipelineUpload(ds, upload, upload.relationships)
         )
       );
       if (setAllUploadResults) setAllUploadResults(normalisedResults);
@@ -291,20 +295,25 @@ export function determineStepStatus(errorCount: {
   return { className: "passed", text: "Passed" };
 }
 
-export async function getStepsInPipeline(pipelineId: string) {
-  const res = await httpClient().get(
-    `/${VALIDATION_ENDPOINTS.PIPELINE_STEPS}`,
-    {
-      params: {},
+export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
+  if (pipelineStepsPromiseCache.has(pipelineId))
+    return pipelineStepsPromiseCache.get(pipelineId);
+
+  const stepPromise = (async () => {
+    const res = await ds.getListPage({
+      objectType: VALIDATION_ENDPOINTS.PIPELINE_STEPS,
       filter: {
         and_: {
           pipeline_id: { eq: { value: pipelineId } },
         },
       },
-    }
-  );
+    });
+    return res?.map((step: any) => step.step_name) || [];
+  })();
 
-  return res.data.data.map((step: any) => step.attributes.step_name);
+  pipelineStepsPromiseCache.set(pipelineId, stepPromise);
+
+  return stepPromise;
 }
 
 export function goToResults(
