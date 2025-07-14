@@ -53,7 +53,7 @@ export interface FieldMetaOrder {
 }
 
 export interface FieldMeta {
-  data: FieldMetaData;
+  data?: FieldMetaData;
   order: FieldMetaOrder;
 }
 

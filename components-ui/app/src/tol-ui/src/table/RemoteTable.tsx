@@ -11,7 +11,6 @@ import {
   ActionModal,
   API_METHODS,
   FieldMeta,
-  FieldMetaData,
   IRemoteTargetAndZone,
   IUtilityBar,
   IZone,
@@ -41,12 +40,8 @@ import {
 interface Props extends IRemoteTargetAndZone {
   id: string;
   source?: string;
-  attributeMetadataUrl?: string;
-  relationshipsUrl?: string;
 
-  fields?: FieldMetaData;
-  // for direct injection with BoardTable use
-  fieldMeta?: FieldMeta;
+  fields?: FieldMeta;
   height?: any;
   basic?: boolean;
   forceUpdate?: boolean;
@@ -109,15 +104,7 @@ export function RemoteTable(props: Props) {
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(
-    props.fieldMeta || 
-    structureFieldMeta(
-      objectType,
-      getFieldMetaLocalStorage(id, fields),
-      undefined,
-      fields
-    )
-  );
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(props.fields);
 
   // pagination
   const getPageSize = () => {
