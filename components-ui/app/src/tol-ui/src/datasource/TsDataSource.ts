@@ -28,6 +28,7 @@ import {
   deepCopy,
   API_METHODS,
   normaliseCaps,
+  IList,
   IGetListCursor,
   TCursorDataObjectListOrNull,
 } from "..";
@@ -371,6 +372,17 @@ export class TsDataSource {
         if (error.response.status === 404) return null;
         throw error;
       });
+  }
+
+  public async getList({objectType, filter, requestedFields}:IList){
+    const objectCursorLists = await this.getListByCursor({objectType, filter, requestedFields});
+    let cursorPage;
+    const displayCursorPage: any[] = [];
+    while (true){
+      cursorPage = await objectCursorLists.next();
+      displayCursorPage.push(cursorPage.value);
+      if (cursorPage.done) return displayCursorPage;
+    }
   }
 
   public async *getListByCursor({

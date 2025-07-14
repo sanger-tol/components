@@ -69,6 +69,12 @@ export interface IGetListPage {
   requestedFields?: string;
 }
 
+export interface IList {
+  objectType: string;
+  filter?: IFilter;
+  requestedFields?: string;
+}
+
 export interface IGetListCursor {
   objectType: string;
   page?: number;
