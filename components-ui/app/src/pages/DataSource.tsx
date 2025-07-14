@@ -6,7 +6,6 @@
 
 import { TsDataSource, DetailAttribute, Widgets, env } from "../tol-ui/src";
 
-
 export function DataSource() {
   const ds1 = new TsDataSource({ baseUrl: env.TOL_DATA });
 
@@ -35,15 +34,23 @@ export function DataSource() {
   const handle = (response, generator) => {
     if (response.done) return;
     index += 1;
-    if (index!==20){
+    if (index !== 20) {
       console.log("Element", response.value);
       generator.next().then((result) => {
         handle(result, generator);
       });
     }
-  }
+  };
 
-  f1.next().then((dataOjects) => handle(dataOjects, f1));
+  // f1.next().then((dataOjects) => handle(dataOjects, f1));
+
+  ds1
+    .getList({
+      objectType: "species",
+    })
+    .then((res) => console.log("here bouy ->", res));
+
+  // console.log("Here bouy -->", f2);
 
   ds1
     .getByIds({
