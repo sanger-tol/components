@@ -426,6 +426,10 @@ export class TsDataSource {
       })
       .then((response: any) => {
         return [response.data.data, response.data.meta.search_after];
+      })
+      .catch((error: any) => {
+        if (error.response.status === 404) return null;
+        throw error;
       });
   }
 

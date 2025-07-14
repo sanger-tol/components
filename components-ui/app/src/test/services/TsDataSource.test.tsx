@@ -17,6 +17,20 @@ const speciesMockData = {
     },
   },
 };
+const speciesCursorMockData = {
+  data: {
+    data: [
+      {
+        id: "newTestSpeciesId",
+        type: "species",
+        attributes: { name: "test species" },
+      },
+    ],
+    meta: {
+      search_after: "newTestSpeciesIdX2",
+    }
+  },
+};
 const speciesUpsertMockData = {
   data: {
     data: [
@@ -138,7 +152,7 @@ const relationshipConfigMockData = {
 const mockClient = () => ({
   get(
     endpoint: string,
-    { baseURL, params }: { baseURL: string; params?: any },
+    { baseURL, params }: { baseURL: string; params?: any }
   ) {
     if (endpoint === "/_config/attribute_metadata" && baseURL === "test") {
       return Promise.resolve({ data: attributeMetadataMockData });
@@ -172,6 +186,9 @@ const mockClient = () => ({
     if (endpoint === "/species:upsert" && config.baseURL === "test") {
       return Promise.resolve(speciesUpsertMockData);
     }
+    else if (endpoint === "/species:cursor") {
+      return Promise.resolve(speciesCursorMockData);
+    }
     return Promise.reject({ response: { status: 404 } });
   },
 });
@@ -190,19 +207,28 @@ describe("generateEndpoint function", () => {
   });
 
   test("Returns correct endpoint with apiPrefix only", () => {
-    const mockDataSource = new TsDataSource({ baseUrl: "test", apiPrefix: "api" });
+    const mockDataSource = new TsDataSource({
+      baseUrl: "test",
+      apiPrefix: "api",
+    });
     const endpoint = mockDataSource.generateEndpoint();
     expect(endpoint).toBe("/api");
   });
 
   test("Returns correct endpoint with apiPrefix and target", () => {
-    const mockDataSource = new TsDataSource({ baseUrl: "test", apiPrefix: "api" });
+    const mockDataSource = new TsDataSource({
+      baseUrl: "test",
+      apiPrefix: "api",
+    });
     const endpoint = mockDataSource.generateEndpoint("target");
     expect(endpoint).toBe("/api/target");
   });
 
   test("Returns correct endpoint with apiPrefix, target, and objectId", () => {
-    const mockDataSource = new TsDataSource({ baseUrl: "test", apiPrefix: "api" });
+    const mockDataSource = new TsDataSource({
+      baseUrl: "test",
+      apiPrefix: "api",
+    });
     const endpoint = mockDataSource.generateEndpoint("target", "123");
     expect(endpoint).toBe("/api/target/123");
   });
@@ -216,13 +242,19 @@ describe("generateEndpoint function", () => {
 
 describe("Testing getBaseUrl and getApiPrefix functions", () => {
   test("getBaseUrl returns correct base URL", () => {
-    const mockDataSource = new TsDataSource({ baseUrl: "testBaseUrl", apiPrefix: "testApiPrefix" });
+    const mockDataSource = new TsDataSource({
+      baseUrl: "testBaseUrl",
+      apiPrefix: "testApiPrefix",
+    });
     const baseUrl = mockDataSource.getBaseUrl();
     expect(baseUrl).toBe("testBaseUrl");
   });
 
   test("getApiPrefix returns correct API prefix", () => {
-    const mockDataSource = new TsDataSource({ baseUrl: "testBaseUrl", apiPrefix: "testApiPrefix" });
+    const mockDataSource = new TsDataSource({
+      baseUrl: "testBaseUrl",
+      apiPrefix: "testApiPrefix",
+    });
     const apiPrefix = mockDataSource.getApiPrefix();
     expect(apiPrefix).toBe("testApiPrefix");
   });
@@ -480,29 +512,42 @@ describe("Testing getListPage function", () => {
       objectType: "fail",
       pageSize: 1,
     });
-
     expect(dataObjects).toBeNull();
   });
 });
 
-describe("Testing getListByCursor function", () => {
-
-  test("Calls get correct page size", async () => {
-    const dataObjects1 = await mockDataSource.getListByCursor({
+describe("Testing CursorList function", () => {
+  test("Calls get correct generator call number", async () => {
+    const cursorDataObjects = await mockDataSource.getListByCursor({
       objectType: "species",
-      pageSize: 1,
     });
+    const f1 = await cursorDataObjects.next()
+    expect(f1.value.id).toEqual("newTestSpeciesId");
+    expect(f1.value.type).toEqual("species");
+  });
+});
 
-    const dataObjects2 = await mockDataSource.getListByCursor({
+describe("Testing CursorPage function", () => {
+  test("Calls get correct page info", async () => {
+    const cursorDataObjects = await mockDataSource.getCursorPage({
       objectType: "species",
-      pageSize: 20,
     });
-
-    expect(dataObjects1).toHaveLength(1);
-    expect(dataObjects2).toHaveLength(20);
+    const [fetched, searchAfter] = cursorDataObjects
+    expect(fetched).toBeDefined();
+    expect(fetched[0]?.id).toEqual("newTestSpeciesId");
+    expect(fetched[0]?.type).toEqual("species");
+    expect(searchAfter).toBe("newTestSpeciesIdX2");
+    expect(fetched).toHaveLength(1);
   });
 
-})
+  test("Should return null on invalid objectType", async () => {
+    const cursorDataObjects = await mockDataSource.getCursorPage({
+      objectType: "fail",
+      pageSize: 1,
+    });
+    expect(cursorDataObjects).toBeNull();
+  });
+});
 
 describe("Testing delete method", () => {
   test("Delete correctly removes value", async () => {
