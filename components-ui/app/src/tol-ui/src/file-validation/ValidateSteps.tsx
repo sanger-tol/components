@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import ValidateStep from "./ValidateStep";
 import ErrorViewer from "./ErrorViewer";
 import { resizeListener } from "../hooks";
@@ -37,10 +37,6 @@ function ValidateSteps(props: Props) {
       setIsOverflowing(scrollWidth > clientWidth);
     }
   }, [steps]);
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
 
   resizeListener(handleResize);
 

@@ -49,8 +49,6 @@ const TOL_LOADER_STYLES = {
   display: "flex",
 };
 
-
-
 function FileValidation(props: Props) {
   const {
     endpoint,
@@ -275,8 +273,8 @@ function FileValidation(props: Props) {
             Last updated at: {new Date(latestResultsUpdatedAt).toLocaleString()}
           </p>
         </div>
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          <h6 style={{ display: "flex", alignSelf: "center", marginBottom: 0 }}>
+        <div className="tol-file-upload-results-viewer-content-inner-container">
+          <h6 className="tol-file-upload-results-viewer-content-status">
             {latestPipelineResults?.completed ? "Completed" : "In Progress"}
           </h6>
           <Button
@@ -444,12 +442,6 @@ function FileValidation(props: Props) {
 
 export default FileValidation;
 
-// TODO: Render a single modal with different content
-// TODO: Implement upload button logic
-// TODO: Implement progress bar
-// TODO: Implement moving validation results to modal on 'reset'
-// TODO: Implement validation results
-// TODO:
-// TODO:
-// TODO:
-// TODO:
+// TODO: previous uploads icon should show loading spinner when not completed
+// TODO: correct status for results viewer
+// TODO: if errors, upload file button should be disabled

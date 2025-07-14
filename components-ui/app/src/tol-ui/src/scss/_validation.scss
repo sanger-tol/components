@@ -171,6 +171,23 @@
   }
 }
 
+.tol-file-upload-results-viewer-content-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tol-file-upload-results-viewer-content-inner-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.tol-file-upload-results-viewer-content-status {
+  display: flex;
+  align-self: center;
+  margin-bottom: 0 !important;
+}
+
 .tol-file-uploader-validate-steps-inner-container {
   display: flex;
   flex-direction: row;
@@ -484,6 +501,10 @@
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+
+    .tol-file-validation-results-page-additional-info-updated-at {
+      margin-top: 15px;
+    }
   }
 
   .tol-file-validation-results-page-error-count-container {
@@ -498,6 +519,12 @@
       margin-bottom: 0.5rem;
     }
   }
+}
+
+.tol-file-validation-results-page-error-count-button {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
 }
 
 .tol-file-validation-previous-results-container {

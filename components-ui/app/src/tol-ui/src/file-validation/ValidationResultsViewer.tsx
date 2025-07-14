@@ -9,7 +9,7 @@ import { useLocation, useHistory } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import ValidateSteps from "./ValidateSteps";
-import { Widgets, TsDataSource, LoadingContent, Icon } from "../index";
+import { Widgets, TsDataSource, LoadingContent, Icon, Button } from "../index";
 import {
   getErrorWarningCounts,
   downloadItem,
@@ -157,10 +157,22 @@ function ValidationResultsViewer() {
                     {latestPipelineResults.s3Filename}
                   </a>
                 </p>
+                <p className="tol-file-validation-results-page-additional-info-updated-at">
+                  Updated At:{" "}
+                  {new Date(latestResultsUpdatedAt).toLocaleString()}
+                </p>
               </div>
               <div className="tol-file-validation-results-page-error-count-container">
                 <p>Number of Warnings: {errorAndWarningCount.warnings}</p>
                 <p>Number of Errors: {errorAndWarningCount.errors}</p>
+                <span className="tol-file-validation-results-page-error-count-button">
+                  <Button
+                    icon="rotate"
+                    tooltip="Refresh"
+                    disabled={latestPipelineResults?.completed}
+                    onClick={() => refetchLatestPipelineResults()}
+                  />
+                </span>
               </div>
             </div>
           </>
