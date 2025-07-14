@@ -3,17 +3,13 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
-import { ApiMethods, VALIDATION_ENDPOINTS } from "src/constants";
-import { httpClient, PopUpMessage, TsDataSource } from "../index";
+import { History } from "history";
+import { ApiMethods, VALIDATION_ENDPOINTS } from "../constants";
+import { PopUpMessage, TsDataSource } from "../index";
+import { DataObject } from "../services/http/TsDataSource";
 
-export type tSeverity = "error" | "warning";
+export type TSeverity = "error" | "warning";
 export type IconType = "check" | "xmark" | "exclamation";
-
-export interface Step {
-  id: string;
-  stepName: string;
-  errors?: string[];
-}
 
 export interface ICellId {
   column: string;
@@ -35,13 +31,33 @@ export interface IErrorWarningCount {
   errors: number;
   warnings: number;
 }
+
+interface IValidationResultAPI {
+  code: string;
+  detail: string;
+  field: string | null;
+  object_id: string;
+  severity: TSeverity;
+  step_name: string;
+}
+
 export interface IValidationResult {
   code: string;
   detail: string;
   field: string | null;
   objectId: string;
-  severity: tSeverity;
+  severity: TSeverity;
   stepName: string;
+}
+
+export interface IPipelineUploadAPI {
+  id: string;
+  completed: boolean;
+  date_started: string;
+  flow_run_id: string;
+  s3_filename: string;
+  validation_results: IValidationResult[];
+  failure_message: string | null;
 }
 
 export interface IPipelineUpload {
@@ -54,7 +70,7 @@ export interface IPipelineUpload {
   pipelineSteps: string[];
   s3Filename: string;
   validationResults: IValidationResult[];
-  failureMessage?: string | null;
+  failureMessage: string | null;
 }
 
 export const FILE_VALIDATION_PATH = "/file-validation/results/";
@@ -83,7 +99,9 @@ export function downloadItem(filename: string) {
   //TODO: Implement download functionality
 }
 
-export function normaliseValidationResult(result: any): IValidationResult {
+export function normaliseValidationResult(
+  result: IValidationResultAPI
+): IValidationResult {
   return {
     code: result.code,
     detail: result.detail,
@@ -96,8 +114,8 @@ export function normaliseValidationResult(result: any): IValidationResult {
 
 export async function normalisePipelineUpload(
   ds: TsDataSource,
-  upload: any,
-  relationships: any
+  upload: DataObject,
+  relationships: {[key: string]: Promise<DataObject>}
 ): Promise<IPipelineUpload> {
   const pipeline = await relationships?.pipeline;
   const pipelineSteps = await getStepsInPipeline(ds, pipeline.id);
@@ -130,6 +148,7 @@ export async function fetchCurrentPipelineResults(
     });
     if (results) {
       const normalisedResults = await normalisePipelineUpload(
+        ds,
         results,
         results.relationships
       );
@@ -204,7 +223,7 @@ export async function fetchAndNormaliseAllUploadResults(
     });
     if (results) {
       const normalisedResults = await Promise.all(
-        results.map((upload: any) =>
+        results.map((upload) =>
           normalisePipelineUpload(ds, upload, upload.relationships)
         )
       );
@@ -308,7 +327,7 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
         },
       },
     });
-    return res?.map((step: any) => step.step_name) || [];
+    return res?.map((step: DataObject) => step.step_name) || [];
   })();
 
   pipelineStepsPromiseCache.set(pipelineId, stepPromise);
@@ -317,7 +336,7 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
 }
 
 export function goToResults(
-  history: any,
+  history: History,
   pipelineId: string,
   stepName?: string,
   errorWarningCount: number = 0

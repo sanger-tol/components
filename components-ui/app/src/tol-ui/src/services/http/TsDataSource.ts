@@ -88,7 +88,7 @@ interface GetListPage {
   sortBy?: string;
 }
 
-interface DataObject {
+export interface DataObject {
   objectType: string;
   id: string;
   [attribute: string]: any;

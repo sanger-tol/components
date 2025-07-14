@@ -22,7 +22,7 @@ import { FileData } from "../forms/Dropzone";
 import {
   ValidateSteps,
   PreviousUploads,
-  tSeverity,
+  TSeverity,
   fetchAndNormaliseAllUploadResults,
   IValidationConfig,
   IPipelineUpload,
@@ -277,7 +277,7 @@ function FileValidation(props: Props) {
                       ? item.field.join(", ")
                       : item.field,
                     detail: item.detail,
-                    severity: item.severity as tSeverity,
+                    severity: item.severity as TSeverity,
                     objectId: item.objectId,
                     stepName: item.stepName,
                   }))
