@@ -44,17 +44,22 @@ export function DataSource() {
           sts_sample_sts_programme_union: {
             eq: {
               value: "ToL",
-            }
+            },
           },
           sts_scientific_name: {
             contains: {
-              value: "L"
-            }
-          }
-        }
-      }
+              value: "L",
+            },
+          },
+        },
+      },
     })
-    .then((res) => console.log("List Page Cursor - All ToL Species that have a name that starts with 'L': ", res))
+    .then((res) =>
+      console.log(
+        "List Page Cursor - All ToL Species that have a name that starts with 'L': ",
+        res
+      )
+    )
     .catch((error) => console.log(error));
 
   ds1

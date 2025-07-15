@@ -199,11 +199,12 @@ const mockClient = () => ({
   post(endpoint: string, payload, config: { baseURL: string }) {
     if (endpoint === "/species:upsert" && config.baseURL === "test") {
       return Promise.resolve(speciesUpsertMockData);
-    }
-    else if (endpoint === "/species:cursor" && payload.search_after == null) {
+    } else if (endpoint === "/species:cursor" && payload.search_after == null) {
       return Promise.resolve(speciesCursorMockData1);
-    }
-    else if (endpoint === "/species:cursor" && payload.search_after == "newTestSpeciesIdX2") {
+    } else if (
+      endpoint === "/species:cursor" &&
+      payload.search_after == "newTestSpeciesIdX2"
+    ) {
       return Promise.resolve(speciesCursorMockData2);
     }
     return Promise.reject({ response: { status: 404 } });
@@ -535,12 +536,24 @@ describe("Testing getListPage function", () => {
 
 describe("Testing getList function", () => {
   test("Calls get the async generator", async () => {
+    const mockClientInstance = mockClient();
+    const clientCursorPostSpy = vitest.spyOn(mockClientInstance, "post");
+    const mockDataSource = new TsDataSource({
+      baseUrl: "test",
+      client: () => mockClientInstance,
+    });
     const cursorDataObjects = await mockDataSource.getList({
       objectType: "species",
     });
-    console.log("here bouy-->", cursorDataObjects);
+    if (cursorDataObjects) {
+      expect(cursorDataObjects).toBeDefined();
+      expect(clientCursorPostSpy).toHaveBeenCalledTimes(3);
+      expect(cursorDataObjects[0].id).toEqual("newTestSpeciesId");
+      expect(cursorDataObjects[0].objectType).toEqual("species");
+      expect(cursorDataObjects[0].name).toEqual("test species");
+      expect(cursorDataObjects[1].id).toEqual("newTestSpeciesIdX2");
+    }
   });
-
 });
 
 describe("Testing getListByCursor function", () => {
@@ -548,10 +561,10 @@ describe("Testing getListByCursor function", () => {
     const cursorDataObjects = await mockDataSource.getListByCursor({
       objectType: "species",
     });
-    const iter1 = await cursorDataObjects.next()
+    const iter1 = await cursorDataObjects.next();
     expect(iter1.value.id).toEqual("newTestSpeciesId");
     expect(iter1.value.objectType).toEqual("species");
-    const iter2 = await cursorDataObjects.next()
+    const iter2 = await cursorDataObjects.next();
     expect(iter2.value.id).toEqual("newTestSpeciesIdX2");
     expect(iter2.value.objectType).toEqual("species");
   });
@@ -571,10 +584,10 @@ describe("Testing getCursorPage function", () => {
     const cursorDataObjects = await mockDataSource.getCursorPage({
       objectType: "species",
     });
-    
+
     if (Array.isArray(cursorDataObjects)) {
       const [fetched, searchAfter] = cursorDataObjects;
-      if (fetched && fetched[0] && searchAfter){
+      if (fetched && fetched[0] && searchAfter) {
         expect(fetched).toBeDefined();
         expect(fetched[0]?.id).toEqual("newTestSpeciesId");
         expect(fetched[0]?.objectType).toEqual("species");
