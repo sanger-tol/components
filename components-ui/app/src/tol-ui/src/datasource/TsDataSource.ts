@@ -422,7 +422,7 @@ export class TsDataSource {
           currentSearch = nextSearch!;
         }
       } else {
-        return;
+        return null;
       }
     }
   }

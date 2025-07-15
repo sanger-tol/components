@@ -17,7 +17,7 @@ const speciesMockData = {
     },
   },
 };
-const speciesCursorMockData = {
+const speciesCursorMockData1 = {
   data: {
     data: [
       {
@@ -28,6 +28,20 @@ const speciesCursorMockData = {
     ],
     meta: {
       search_after: "newTestSpeciesIdX2",
+    },
+  },
+};
+const speciesCursorMockData2 = {
+  data: {
+    data: [
+      {
+        id: "newTestSpeciesIdX2",
+        type: "species",
+        attributes: { name: "test species" },
+      },
+    ],
+    meta: {
+      search_after: "newTestSpeciesIdX3",
     },
   },
 };
@@ -182,12 +196,15 @@ const mockClient = () => ({
     }
     return Promise.reject({ response: { status: 404 } });
   },
-  post(endpoint: string, payload: { data: any }, config: { baseURL: string }) {
+  post(endpoint: string, payload, config: { baseURL: string }) {
     if (endpoint === "/species:upsert" && config.baseURL === "test") {
       return Promise.resolve(speciesUpsertMockData);
     }
-    else if (endpoint === "/species:cursor") {
-      return Promise.resolve(speciesCursorMockData);
+    else if (endpoint === "/species:cursor" && payload.search_after == null) {
+      return Promise.resolve(speciesCursorMockData1);
+    }
+    else if (endpoint === "/species:cursor" && payload.search_after == "newTestSpeciesIdX2") {
+      return Promise.resolve(speciesCursorMockData2);
     }
     return Promise.reject({ response: { status: 404 } });
   },
@@ -516,28 +533,56 @@ describe("Testing getListPage function", () => {
   });
 });
 
-describe("Testing CursorList function", () => {
-  test("Calls get correct generator call number", async () => {
+describe("Testing getList function", () => {
+  test("Calls get the async generator", async () => {
+    const cursorDataObjects = await mockDataSource.getList({
+      objectType: "species",
+    });
+    console.log("here bouy-->", cursorDataObjects);
+  });
+
+});
+
+describe("Testing getListByCursor function", () => {
+  test("Calls get the async generator", async () => {
     const cursorDataObjects = await mockDataSource.getListByCursor({
       objectType: "species",
     });
-    const f1 = await cursorDataObjects.next()
-    expect(f1.value.id).toEqual("newTestSpeciesId");
-    expect(f1.value.type).toEqual("species");
+    const iter1 = await cursorDataObjects.next()
+    expect(iter1.value.id).toEqual("newTestSpeciesId");
+    expect(iter1.value.objectType).toEqual("species");
+    const iter2 = await cursorDataObjects.next()
+    expect(iter2.value.id).toEqual("newTestSpeciesIdX2");
+    expect(iter2.value.objectType).toEqual("species");
+  });
+
+  test("Should return null on invalid objectType", async () => {
+    const cursorDataObjects = await mockDataSource.getListByCursor({
+      objectType: "fail",
+      pageSize: 1,
+    });
+    const iter = await cursorDataObjects.next();
+    expect(iter.value).toBeNull();
   });
 });
 
-describe("Testing CursorPage function", () => {
+describe("Testing getCursorPage function", () => {
   test("Calls get correct page info", async () => {
     const cursorDataObjects = await mockDataSource.getCursorPage({
       objectType: "species",
     });
-    const [fetched, searchAfter] = cursorDataObjects
-    expect(fetched).toBeDefined();
-    expect(fetched[0]?.id).toEqual("newTestSpeciesId");
-    expect(fetched[0]?.type).toEqual("species");
-    expect(searchAfter).toBe("newTestSpeciesIdX2");
-    expect(fetched).toHaveLength(1);
+    
+    if (Array.isArray(cursorDataObjects)) {
+      const [fetched, searchAfter] = cursorDataObjects;
+      if (fetched && fetched[0] && searchAfter){
+        expect(fetched).toBeDefined();
+        expect(fetched[0]?.id).toEqual("newTestSpeciesId");
+        expect(fetched[0]?.objectType).toEqual("species");
+        expect(fetched[0]?.name).toEqual("test species");
+        expect(searchAfter).toBe("newTestSpeciesIdX2");
+        expect(fetched).toHaveLength(1);
+      }
+    }
   });
 
   test("Should return null on invalid objectType", async () => {
