@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
   IPipelineUpload,
@@ -25,10 +25,11 @@ interface Props {
   expanded: boolean;
   onToggle: (id: string) => void;
   showPassedSteps?: boolean;
+  completed?: boolean;
 }
 
 function PreviousUploads(props: Props) {
-  const { id, data, expanded, onToggle, showPassedSteps } = props;
+  const { id, data, expanded, onToggle, showPassedSteps, completed } = props;
 
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -53,25 +54,26 @@ function PreviousUploads(props: Props) {
     return (
       <span className="tol-file-validation-previous-results-icon-tooltip">
         <p>{normaliseCaps(stepName)}</p>
+        {!completed && <p>Running Pipeline</p>}
         <p>
           {hasIssues
             ? `${errorCount} Errors, ${warningCount} Warnings`
-            : "Passed - No Issues"}
+            : completed
+            ? "Passed - No Issues"
+            : "No issues found yet..."}
         </p>
         <a
           href="#"
           onClick={() => goToResults(history, id, stepName, totalIssues)}
         >
-          {hasIssues && <p>Go to</p>}
+          {hasIssues && completed && <p>Go to</p>}
         </a>
       </span>
     );
   };
 
   return (
-    <div
-      className="tol-file-validation-previous-results-container"
-    >
+    <div className="tol-file-validation-previous-results-container">
       <div className="tol-file-validation-previous-results-title">
         <h6 className="tol-file-validation-previous-results-title-text">
           ID: #{id} - {data.pipelineName}
@@ -183,8 +185,11 @@ function PreviousUploads(props: Props) {
                               )}
                               iconType={iconType}
                               size="lg"
-                              className={`tol-file-uploader-validate-step-icon 
-                                ${stepStatus.className}`}
+                              className={`tol-file-uploader-validate-step-icon ${
+                                completed ? stepStatus.className : "in-progress"
+                              }`}
+                              completed={completed}
+                              completedCheck={true}
                             />
                           </div>
                         </div>

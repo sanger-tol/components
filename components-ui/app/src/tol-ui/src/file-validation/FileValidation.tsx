@@ -29,6 +29,8 @@ import {
   fetchCurrentPipelineResults,
   constructCompletionMessage,
   REFRESH_INTERVAL,
+  determineUploadStatus,
+  getErrorWarningCounts,
 } from "../file-validation";
 import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
 import { VALIDATION_ENDPOINTS } from "../constants";
@@ -58,18 +60,20 @@ function FileValidation(props: Props) {
   } = props;
 
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
-  const [openModal, setOpenModal] = useState<string | boolean>(false);
+  const [expandedResults, setExpandedResults] = useState<string | null>(null);
+  const [currentUploadId, setCurrentUploadId] = useState<string | null>(null);
+  const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
+  const [validationStatus, setValidationStatus] = useState<{}>({
+    className: "",
+    text: "",
+  });
   const [fileDropped, setFileDropped] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<string | boolean>(false);
   const [validated, setValidated] = useState<boolean>(false);
+  const [resetting, setResetting] = useState<boolean>(false);
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);
-  const [resetting, setResetting] = useState<boolean>(false);
-  const [expandedModalResults, setExpandedModalResults] = useState<
-    string | null
-  >(null);
-  const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
-  const [currentUploadId, setCurrentUploadId] = useState<string | null>(null);
 
   const ds = new TsDataSource();
   const { id } = getUserFromLocalStorage();
@@ -103,7 +107,7 @@ function FileValidation(props: Props) {
     queryKey: ["latestPipelineResults", currentUploadId],
     queryFn: fetchLatestPipelineResults,
     enabled: validating && currentUploadId !== null && !validated,
-    refetchInterval: validating ? REFRESH_INTERVAL / 2 : false,
+    refetchInterval: validating ? REFRESH_INTERVAL : false,
     staleTime: 0,
   });
 
@@ -111,6 +115,21 @@ function FileValidation(props: Props) {
     if (latestPipelineResults) {
       if (latestPipelineResults.completed) {
         setValidated(true);
+
+        const counts = getErrorWarningCounts(
+          latestPipelineResults.validationResults
+        );
+
+        const status = determineUploadStatus(
+          latestPipelineResults.completed,
+          counts.errors,
+          counts.warnings,
+          latestPipelineResults.failureMessage || null
+        );
+
+        setValidationStatus(status);
+
+        console.log(status);
 
         const completionMessage = constructCompletionMessage(
           latestPipelineResults.validationResults,
@@ -150,7 +169,7 @@ function FileValidation(props: Props) {
   };
 
   const handleToggleUploadResults = (id: string) => {
-    setExpandedModalResults(expandedModalResults === id ? null : id);
+    setExpandedResults(expandedResults === id ? null : id);
   };
 
   const handleReset = () => {
@@ -159,9 +178,10 @@ function FileValidation(props: Props) {
       setFileDropped(false);
       setValidated(false);
       setFileList([]);
-      setResetKey((prev) => prev + 1);
+      setResetKey((prev: number) => prev + 1);
       setValidating(false);
       setResetting(false);
+      setCurrentUploadId(null);
     }, 500);
   };
 
@@ -188,7 +208,11 @@ function FileValidation(props: Props) {
               <Button
                 type="success"
                 text={"Upload File"}
-                disabled={!validated}
+                disabled={
+                  !validated ||
+                  validationStatus.text !== "Passed" ||
+                  validationStatus.text !== "Passed with Warnings"
+                }
                 onClick={() => {
                   setValidating(true);
                 }}
@@ -203,7 +227,7 @@ function FileValidation(props: Props) {
             disabled={!fileDropped || validating}
             onClick={() => {
               setValidating(true);
-              generateMessages(fileList.map((file) => file.name));
+              generateMessages(fileList.map((file: FileData) => file.name));
             }}
           />
           <DropdownButtons
@@ -266,7 +290,7 @@ function FileValidation(props: Props) {
 
   const ResultsViewer = (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div className="tol-file-upload-results-viewer-outer-container">
         <div>
           <h6>Results:</h6>
           <p>
@@ -275,13 +299,16 @@ function FileValidation(props: Props) {
         </div>
         <div className="tol-file-upload-results-viewer-content-inner-container">
           <h6 className="tol-file-upload-results-viewer-content-status">
-            {latestPipelineResults?.completed ? "Completed" : "In Progress"}
+            {latestPipelineResults?.completed
+              ? `${validationStatus.text}`
+              : "In Progress"}
           </h6>
           <Button
             icon="rotate"
             tooltip="Refresh"
             disabled={latestPipelineResults?.completed}
             onClick={() => refetchLatestPipelineResults()}
+            timeout={3000}
           />
         </div>
       </div>
@@ -337,9 +364,10 @@ function FileValidation(props: Props) {
                 <PreviousUploads
                   data={upload}
                   id={upload.id}
-                  expanded={expandedModalResults === upload.id}
+                  expanded={expandedResults === upload.id}
                   onToggle={handleToggleUploadResults}
                   showPassedSteps={showPassedSteps}
+                  completed={upload.completed}
                 />
               </div>
             );
@@ -375,6 +403,7 @@ function FileValidation(props: Props) {
             icon="rotate"
             tooltip="Refresh"
             onClick={() => refetchAllUploads()}
+            timeout={3000}
           />
         </div>
       </div>
@@ -389,6 +418,7 @@ function FileValidation(props: Props) {
         children={ResultsModalContent}
         onClose={() => setOpenModal(false)}
         setOpen={setOpenModal}
+        onExited={() => setExpandedResults(null)}
       />
     </div>
   );
@@ -397,6 +427,8 @@ function FileValidation(props: Props) {
     <div>
       <Modal
         open={openModal === "help"}
+        header={<h3>File Validation Help</h3>}
+        children={<h6>You can download </h6>}
         onClose={() => setOpenModal(false)}
         setOpen={setOpenModal}
       />
@@ -442,7 +474,6 @@ function FileValidation(props: Props) {
 
 export default FileValidation;
 
-// TODO: previous uploads icon should show loading spinner when not completed
-// TODO: correct status for results viewer
-// TODO: if errors, upload file button should be disabled
-// TODO: limit on refresh buttons
+// TODO: add help modal with instructions on how to use the validation
+// TODO: Create a summary of the validation results
+// TODO: Add 'view results' button to validation results viewer

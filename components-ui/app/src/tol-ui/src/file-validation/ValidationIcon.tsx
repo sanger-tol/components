@@ -32,6 +32,13 @@ function ValidationIcon(props: Props) {
     completedCheck = false,
   } = props;
 
+  const iconContent =
+    !completed && completedCheck ? (
+      <TolLoader />
+    ) : (
+      <Icon icon={iconType} size={size} />
+    );
+
   return (
     <div>
       {tooltip ? (
@@ -41,22 +48,20 @@ function ValidationIcon(props: Props) {
           placement={OVERLAY_PLACEMENT}
         >
           <span
+            style={{ ...style }}
             className={`${className} ${
-              iconType === "xmark" || iconType === "exclamation"
+              (completed && iconType === "xmark") ||
+              (completed && iconType === "exclamation")
                 ? "pointer"
                 : ""
             }`}
           >
-            <Icon icon={iconType} size={size} />
+            {iconContent}
           </span>
         </HoverOverlay>
       ) : (
         <span style={{ ...style }} className={className}>
-          {!completed && completedCheck ? (
-            <TolLoader />
-          ) : (
-            <Icon icon={iconType} size={size} />
-          )}
+          {iconContent}
         </span>
       )}
     </div>

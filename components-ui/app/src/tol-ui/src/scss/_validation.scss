@@ -171,6 +171,11 @@
   }
 }
 
+.tol-file-upload-results-viewer-outer-container {
+  display: flex;
+  justify-content: space-between;
+}
+
 .tol-file-upload-results-viewer-content-container {
   display: flex;
   justify-content: space-between;
@@ -426,13 +431,12 @@
   max-height: 0;
   opacity: 0;
   transition: max-height 0.6s ease-in-out;
-  animation: itemEaseOut 0.6s ease-in-out;
+  transition: opacity 0.6s ease-in-out;
   margin: 15px 0px 0px 0px;
 
   &.expanded {
     max-height: 500px;
     opacity: 1;
-    animation: itemEaseIn 1s ease-in-out;
   }
 }
 
@@ -530,9 +534,9 @@
 .tol-file-validation-previous-results-container {
   min-height: 40px;
   margin: 10px 0;
-  border: 1px solid var(--tol-emphasis);
-  border-right: 3px solid var(--tol-emphasis);
-  border-left: 3px solid var(--tol-emphasis);
+  border: 1px solid var(--tol-grey);
+  border-right: 3px solid var(--tol-grey);
+  border-left: 3px solid var(--tol-grey);
   padding: 10px 15px;
   border-radius: 5px;
 
@@ -665,6 +669,3 @@
     gap: 12px;
   }
 }
-
-// TODO: Correct names - prefix with tol-file-upload
-// TODO: Fix triangle color in light/dark mode

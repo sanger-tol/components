@@ -171,6 +171,7 @@ function ValidationResultsViewer() {
                     tooltip="Refresh"
                     disabled={latestPipelineResults?.completed}
                     onClick={() => refetchLatestPipelineResults()}
+                    timeout={3000}
                   />
                 </span>
               </div>

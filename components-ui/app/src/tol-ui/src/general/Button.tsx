@@ -4,12 +4,13 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import React, { useState } from "react";
 import { Button as RsButton } from "rsuite";
 import { TolLoader, HoverOverlay, Icon } from "../index";
 
 export interface IButton {
   icon?: string;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string;
   text?: string;
   disabled?: boolean;
@@ -23,8 +24,9 @@ export interface IButton {
   outline?: boolean;
   id?: string;
   visible?: boolean;
+  limit?: number;
+  timeout?: number;
 }
-
 
 function Button(props: IButton) {
   const {
@@ -43,7 +45,37 @@ function Button(props: IButton) {
     outline,
     id,
     visible = true,
+    limit = 0,
+    timeout = 0,
   } = props;
+
+  const [buttonClicked, setButtonClicked] = useState<number>(0);
+  const [timeoutDisabled, setTimeoutDisabled] = useState<boolean>(false);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (onClick) {
+      onClick(event);
+    }
+
+    if (limit > 0) {
+      setButtonClicked((prev: number) => {
+        const newCount = prev + 1;
+
+        if (newCount >= limit) {
+          setTimeout(() => {
+            setButtonClicked(0);
+          }, timeout);
+        }
+
+        return newCount;
+      });
+    } else if (limit === 0 && timeout > 0) {
+      setTimeoutDisabled(true);
+      setTimeout(() => {
+        setTimeoutDisabled(false);
+      }, timeout);
+    }
+  };
 
   const outlineClass = outline ? "-outline" : "";
 
@@ -51,17 +83,20 @@ function Button(props: IButton) {
 
   const button = (
     <>
-      {visible &&
+      {visible && (
         <RsButton
           id={id}
-          onClick={onClick}
-          disabled={disabled || loading}
-          active={active}
-          className={
-            `icon-button-${type || 
-            "primary"}-${size || 
-            "md"}${outlineClass} ${className ? className : ""}`
+          onClick={handleClick}
+          disabled={
+            disabled ||
+            loading ||
+            (limit > 0 && buttonClicked >= limit) ||
+            timeoutDisabled
           }
+          active={active}
+          className={`icon-button-${type || "primary"}-${
+            size || "md"
+          }${outlineClass} ${className ? className : ""}`}
         >
           {loading ? (
             loader
@@ -78,7 +113,7 @@ function Button(props: IButton) {
             </>
           )}
         </RsButton>
-      }
+      )}
     </>
   );
 

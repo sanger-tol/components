@@ -75,7 +75,7 @@ export interface IPipelineUpload {
 }
 
 export const FILE_VALIDATION_PATH = "/file-validation/results/";
-export const REFRESH_INTERVAL = 10000;
+export const REFRESH_INTERVAL = 5000; // 5 seconds
 
 const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
 
@@ -83,6 +83,9 @@ export function getErrorWarningCounts(results: IValidationResult[]): {
   errors: number;
   warnings: number;
 } {
+  if (!Array.isArray(results)) {
+    return { errors: 0, warnings: 0 };
+  }
   return results.reduce(
     (acc, result) => {
       if (result.severity === "warning") {
@@ -291,7 +294,7 @@ export function constructCompletionMessage(
   const errorsAndWarnings = getErrorWarningCounts(validationResults);
   if (failureMessage) {
     return {
-      message: `Validation terminated early: ${failureMessage}`,
+      message: `Validation terminated early: ${failureMessage}. File cannot be uploaded`,
       messageType: "error",
     };
   } else if (
@@ -304,7 +307,7 @@ export function constructCompletionMessage(
     };
   } else if (errorsAndWarnings.errors > 0) {
     return {
-      message: `Validation failed with ${errorsAndWarnings.errors} error(s).`,
+      message: `Validation failed with ${errorsAndWarnings.errors} error(s). File cannot be uploaded.`,
       messageType: "error",
     };
   } else if (errorsAndWarnings.warnings > 0) {
