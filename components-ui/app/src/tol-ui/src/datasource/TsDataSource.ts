@@ -27,10 +27,10 @@ import {
   httpClient,
   deepCopy,
   API_METHODS,
-  IList,
   IGetListCursor,
   TCursorDataObjectOrNull,
   normaliseCaps,
+  IGetList,
 } from "..";
 
 const detailCache: IDetailCache = {};
@@ -374,8 +374,12 @@ export class TsDataSource {
       });
   }
 
-  public async getList({ objectType, filter, requestedFields }: IList) {
-    const objectCursorLists = await this.getListByCursor({
+  public async getList({
+    objectType,
+    filter,
+    requestedFields
+  }: IGetList): Promise<TDataObjectListOrNull> {
+    const objectCursorLists = this.getListByCursor({
       objectType,
       filter,
       requestedFields,
@@ -394,7 +398,7 @@ export class TsDataSource {
     filter,
     requestedFields,
     searchAfter,
-  }: IGetListCursor) {
+  }: IGetListCursor): AsyncGenerator<TDataObjectOrNull> {
     let currentSearch = searchAfter;
     while (true) {
       const cursorObjects = await this.getCursorPage({
@@ -432,14 +436,19 @@ export class TsDataSource {
     searchAfter,
   }: IGetListCursor): Promise<TCursorDataObjectOrNull> {
     return await this.client()
-      .post(`${this.generateEndpoint(objectType)}:cursor`, {
-        search_after: searchAfter,
-        baseURL: this.baseUrl,
-        page: page,
-        page_size: pageSize,
-        filter: filter,
-        requested_fields: requestedFields,
-      })
+      .post(
+        `${this.generateEndpoint(objectType)}:cursor`,
+        { search_after: searchAfter },
+        {
+          baseURL: this.baseUrl,
+          params: {
+            page: page,
+            page_size: pageSize,
+            filter: filter,
+            requested_fields: requestedFields,
+          }
+        },
+      )
       .then((response: any) => {
         const dataObjects = response.data.data.map((object: any) => {
           return new Proxy(object, this.dataObjectHandler);
