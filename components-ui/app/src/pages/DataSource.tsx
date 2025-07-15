@@ -30,20 +30,32 @@ export function DataSource() {
     objectType: "species",
   });
 
-  // for (let i = 0; i < 20; i++) {
-  //   f1.next().then((dataObjects) => {
-  //     console.log("List Page Cursor: ", dataObjects.value);
-  //   });
-  // }
+  for (let i = 0; i < 20; i++) {
+    f1.next().then((dataObjects) => {
+      console.log("List Page Cursor - First 20: ", dataObjects.value);
+    });
+  }
 
   ds1
     .getList({
-      objectType: "manifest",
+      objectType: "species",
+      filter: {
+        and_: {
+          sts_sample_sts_programme_union: {
+            eq: {
+              value: "ToL",
+            }
+          },
+          sts_scientific_name: {
+            contains: {
+              value: "L"
+            }
+          }
+        }
+      }
     })
-    .then((res) => console.log("here bouy ->", res))
+    .then((res) => console.log("List Page Cursor - All ToL Species that have a name that starts with 'L': ", res))
     .catch((error) => console.log(error));
-
-  // console.log("Here bouy -->", f2);
 
   ds1
     .getByIds({

@@ -69,7 +69,7 @@ export interface IGetListPage {
   requestedFields?: string;
 }
 
-export interface IList {
+export interface IGetList {
   objectType: string;
   filter?: IFilter;
   requestedFields?: string;
