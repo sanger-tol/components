@@ -27,10 +27,10 @@ import {
   httpClient,
   deepCopy,
   API_METHODS,
-  normaliseCaps,
   IList,
   IGetListCursor,
-  TCursorDataObjectListOrNull,
+  TCursorDataObjectOrNull,
+  normaliseCaps,
 } from "..";
 
 const detailCache: IDetailCache = {};
@@ -380,11 +380,11 @@ export class TsDataSource {
       filter,
       requestedFields,
     });
-    const displayCursorPage: any[] = [];
-    for await (const page of objectCursorLists) {
-      displayCursorPage.push(page);
+    const results: any[] = [];
+    for await (const item of objectCursorLists) {
+      results.push(item);
     }
-    return displayCursorPage;
+    return results;
   }
 
   public async *getListByCursor({
@@ -407,14 +407,16 @@ export class TsDataSource {
       });
 
       if (Array.isArray(cursorObjects)) {
-        const [fetched, nextSearch] = cursorObjects;
-        for (const item of fetched) {
-          yield item;
+        const [dataObjects, nextSearch] = cursorObjects;
+        if (dataObjects) {
+          for (const item of dataObjects) {
+            yield item;
+          }
+          if (dataObjects.length === 0) {
+            return;
+          }
+          currentSearch = nextSearch!;
         }
-        if (fetched.length === 0) {
-          return;
-        }
-        currentSearch = nextSearch;
       } else {
         return;
       }
@@ -424,11 +426,11 @@ export class TsDataSource {
   public async getCursorPage({
     objectType,
     page,
-    pageSize,
+    pageSize = 100,
     filter,
     requestedFields,
     searchAfter,
-  }: IGetListCursor): Promise<TCursorDataObjectListOrNull> {
+  }: IGetListCursor): Promise<TCursorDataObjectOrNull> {
     return await this.client()
       .post(`${this.generateEndpoint(objectType)}:cursor`, {
         search_after: searchAfter,
@@ -439,7 +441,10 @@ export class TsDataSource {
         requested_fields: requestedFields,
       })
       .then((response: any) => {
-        return [response.data.data, response.data.meta.search_after];
+        const dataObjects = response.data.data.map((object: any) => {
+          return new Proxy(object, this.dataObjectHandler);
+        });
+        return [dataObjects, response.data.meta.search_after];
       })
       .catch((error: any) => {
         if (error.response.status === 404) return null;
