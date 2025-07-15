@@ -28,7 +28,7 @@ const speciesCursorMockData = {
     ],
     meta: {
       search_after: "newTestSpeciesIdX2",
-    }
+    },
   },
 };
 const speciesUpsertMockData = {

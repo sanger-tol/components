@@ -30,25 +30,18 @@ export function DataSource() {
     objectType: "species",
   });
 
-  let index = 0;
-  const handle = (response, generator) => {
-    if (response.done) return;
-    index += 1;
-    if (index !== 20) {
-      console.log("Element", response.value);
-      generator.next().then((result) => {
-        handle(result, generator);
-      });
-    }
-  };
-
-  // f1.next().then((dataOjects) => handle(dataOjects, f1));
+  // for (let i = 0; i < 20; i++) {
+  //   f1.next().then((dataObjects) => {
+  //     console.log("List Page Cursor: ", dataObjects.value);
+  //   });
+  // }
 
   ds1
     .getList({
       objectType: "manifest",
     })
-    .then((res) => console.log("here bouy ->", res));
+    .then((res) => console.log("here bouy ->", res))
+    .catch((error) => console.log(error));
 
   // console.log("Here bouy -->", f2);
 
