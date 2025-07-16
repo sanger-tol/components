@@ -16,13 +16,10 @@ import {
   Modal,
   TolLoader,
   TsDataSource,
-  Icon,
 } from "../index";
 import { FileData } from "../forms/Dropzone";
 import {
   ValidateSteps,
-  PreviousUploads,
-  fetchAndNormaliseAllUploadResults,
   IValidationConfig,
   IPipelineUpload,
   uploadPipelineConfig,
@@ -31,8 +28,9 @@ import {
   REFRESH_INTERVAL,
   determineUploadStatus,
   getErrorWarningCounts,
-} from "../file-validation";
-import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
+  PreviousUploadsModal,
+  TOL_LOADER_STYLES,
+} from "./index";
 import { VALIDATION_ENDPOINTS } from "../constants";
 
 interface Props {
@@ -44,12 +42,6 @@ interface Props {
 
 const DEFAULT_FILE_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
-const TOL_LOADER_STYLES = {
-  minHeight: "250px",
-  flexDirection: "column",
-  alignItems: "center",
-  display: "flex",
-};
 
 function FileValidation(props: Props) {
   const {
@@ -60,9 +52,7 @@ function FileValidation(props: Props) {
   } = props;
 
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
-  const [expandedResults, setExpandedResults] = useState<string | null>(null);
   const [currentUploadId, setCurrentUploadId] = useState<string | null>(null);
-  const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
   const [validationStatus, setValidationStatus] = useState<{}>({
     className: "",
     text: "",
@@ -76,14 +66,6 @@ function FileValidation(props: Props) {
   const [resetKey, setResetKey] = useState<number>(0);
 
   const ds = new TsDataSource();
-  const { id } = getUserFromLocalStorage();
-
-  const fetchPreviousUploads = async () => {
-    const cacheBustedEndpoint = `${
-      VALIDATION_ENDPOINTS.UPLOAD
-    }?_cache_bust=${Date.now()}`;
-    return await fetchAndNormaliseAllUploadResults(ds, cacheBustedEndpoint, id);
-  };
 
   const fetchLatestPipelineResults = async () => {
     const cacheBustedEndpoint = `${
@@ -129,8 +111,6 @@ function FileValidation(props: Props) {
 
         setValidationStatus(status);
 
-        console.log(status);
-
         const completionMessage = constructCompletionMessage(
           latestPipelineResults.validationResults,
           latestPipelineResults.failureMessage
@@ -144,20 +124,6 @@ function FileValidation(props: Props) {
     }
   }, [latestPipelineResults]);
 
-  const {
-    data: userFileValidationUploadsData = [],
-    isLoading,
-    isError,
-    refetch: refetchAllUploads,
-    dataUpdatedAt: allUploadsUpdatedAt,
-  } = useQuery({
-    queryKey: ["userFileValidationUploads", id],
-    queryFn: fetchPreviousUploads,
-    enabled: openModal === "results",
-    refetchInterval: openModal === "results" ? REFRESH_INTERVAL : false,
-    staleTime: 0,
-  });
-
   const generateMessages = async (fileName: string[]) => {
     const pipeline_id = await uploadPipelineConfig(
       ds,
@@ -166,10 +132,6 @@ function FileValidation(props: Props) {
       "spreadsheet_config"
     );
     setCurrentUploadId(pipeline_id);
-  };
-
-  const handleToggleUploadResults = (id: string) => {
-    setExpandedResults(expandedResults === id ? null : id);
   };
 
   const handleReset = () => {
@@ -333,96 +295,6 @@ function FileValidation(props: Props) {
     </div>
   );
 
-  const ResultsModalContent = (
-    <div
-      className="tol-file-validation-previous-uploads-modal-container 
-    tol-file-validation-scrollbar-fix"
-    >
-      {isLoading ? (
-        <TolLoader
-          size="lg"
-          content="Loading..."
-          vertical
-          styles={TOL_LOADER_STYLES}
-        />
-      ) : isError ? (
-        <div className="tol-file-validation-error-info">
-          <span className="tol-file-validation-error-icon">
-            <Icon icon="info" size="lg" />
-          </span>
-          <h6>Error loading uploads.</h6>
-        </div>
-      ) : userFileValidationUploadsData.length > 0 ? (
-        userFileValidationUploadsData
-          .sort((a, b) => Number(b.id) - Number(a.id))
-          .map((upload: IPipelineUpload, index: number) => {
-            return (
-              <div
-                key={`${upload.id}-${allUploadsUpdatedAt}-${index}`}
-                className="tol-file-validation-previous-uploads-inner-container"
-              >
-                <PreviousUploads
-                  data={upload}
-                  id={upload.id}
-                  expanded={expandedResults === upload.id}
-                  onToggle={handleToggleUploadResults}
-                  showPassedSteps={showPassedSteps}
-                  completed={upload.completed}
-                />
-              </div>
-            );
-          })
-      ) : (
-        <div className="tol-file-validation-error-info">
-          <span className="tol-file-validation-error-icon">
-            <Icon icon="info" size="lg" />
-          </span>
-          <h6>No previous uploads found.</h6>
-        </div>
-      )}
-    </div>
-  );
-
-  const ResultsModalHeader = (
-    <div className="tol-file-validation-previous-uploads-modal-header">
-      <div className="tol-file-validation-previous-uploads-modal-header-content">
-        <h3>Previous Validations</h3>
-        <p>Last updated at: {new Date(allUploadsUpdatedAt).toLocaleString()}</p>
-      </div>
-      <div className="tol-file-validation-previous-uploads-modal-toggle">
-        <p className="tol-file-validation-previous-uploads-modal-toggle-tag">
-          Show passed steps
-        </p>
-        <Toggle
-          key="passed-steps-toggle"
-          checked={showPassedSteps}
-          onChange={() => setShowPassedSteps((prev: boolean) => !prev)}
-        />
-        <div>
-          <Button
-            icon="rotate"
-            tooltip="Refresh"
-            onClick={() => refetchAllUploads()}
-            timeout={3000}
-          />
-        </div>
-      </div>
-    </div>
-  );
-
-  const ResultsViewerModal = (
-    <div>
-      <Modal
-        open={openModal === "results"}
-        header={ResultsModalHeader}
-        children={ResultsModalContent}
-        onClose={() => setOpenModal(false)}
-        setOpen={setOpenModal}
-        onExited={() => setExpandedResults(null)}
-      />
-    </div>
-  );
-
   const helpModal = (
     <div>
       <Modal
@@ -455,7 +327,7 @@ function FileValidation(props: Props) {
 
   return (
     <>
-      {ResultsViewerModal}
+      <PreviousUploadsModal openModal={openModal} setOpenModal={setOpenModal} />
       {helpModal}
       <Widgets components={Components} />
       {validating && (
@@ -476,4 +348,3 @@ export default FileValidation;
 
 // TODO: add help modal with instructions on how to use the validation
 // TODO: Create a summary of the validation results
-// TODO: Add 'view results' button to validation results viewer

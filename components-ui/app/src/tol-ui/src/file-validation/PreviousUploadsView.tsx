@@ -26,10 +26,19 @@ interface Props {
   onToggle: (id: string) => void;
   showPassedSteps?: boolean;
   completed?: boolean;
+  setOpenModal?: (open: boolean) => void;
 }
 
-function PreviousUploads(props: Props) {
-  const { id, data, expanded, onToggle, showPassedSteps, completed } = props;
+function PreviousUploadsView(props: Props) {
+  const {
+    id,
+    data,
+    expanded,
+    onToggle,
+    showPassedSteps,
+    completed,
+    setOpenModal,
+  } = props;
 
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -200,7 +209,10 @@ function PreviousUploads(props: Props) {
             <div>
               <Button
                 text="View Results"
-                onClick={() => goToResults(history, id)}
+                onClick={() => {
+                  if (setOpenModal) setOpenModal(false);
+                  goToResults(history, id);
+                }}
               />
             </div>
           </div>
@@ -215,4 +227,4 @@ function PreviousUploads(props: Props) {
   );
 }
 
-export default PreviousUploads;
+export default PreviousUploadsView;

@@ -8,7 +8,6 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import ValidateSteps from "./ValidateSteps";
 import { Widgets, TsDataSource, LoadingContent, Icon, Button } from "../index";
 import {
   getErrorWarningCounts,
@@ -18,8 +17,10 @@ import {
   IErrorWarningCount,
   fetchCurrentPipelineResults,
   REFRESH_INTERVAL,
-} from "./utils";
-import { IPipelineUpload } from "./utils";
+  ValidateSteps,
+  IPipelineUpload,
+  PreviousUploadsModal,
+} from "./index";
 import { VALIDATION_ENDPOINTS } from "../constants";
 
 function ValidationResultsViewer() {
@@ -40,6 +41,7 @@ function ValidationResultsViewer() {
     className: "",
     text: "",
   });
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   const [validating, setValidating] = useState<boolean>(false);
   const [validated, setValidated] = useState<boolean>(false);
@@ -72,7 +74,7 @@ function ValidationResultsViewer() {
   } = useQuery({
     queryKey: ["latestPipelineResults", uploadId],
     queryFn: fetchLatestPipelineResults,
-    enabled: uploadId !== null && !validated,
+    enabled: !hasErrors && uploadId !== null && !validated,
     refetchInterval: (data: any) => {
       return data && !data.completed ? REFRESH_INTERVAL / 2 : false;
     },
@@ -201,7 +203,24 @@ function ValidationResultsViewer() {
     </div>
   );
 
+  const Title = (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <h3 style={{ margin: 0 }}>Previous Validation Results</h3>
+      <Button text="View All" onClick={() => setOpenModal(true)} />
+    </div>
+  );
+
   const ResultsViewer = [
+    {
+      component: Title,
+      type: "full",
+    },
     {
       component: !hasErrors ? Results : Errors,
       type: "full",
@@ -211,7 +230,10 @@ function ValidationResultsViewer() {
   return isLoading && !latestPipelineResults ? (
     <LoadingContent text="Loading Results" />
   ) : (
-    <Widgets components={ResultsViewer} />
+    <>
+      <PreviousUploadsModal openModal={openModal} setOpenModal={setOpenModal} />
+      <Widgets components={ResultsViewer} />
+    </>
   );
 }
 

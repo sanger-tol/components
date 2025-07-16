@@ -20,8 +20,7 @@ def upgrade() -> None:
     op.create_table('pipeline',
                     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
                     sa.Column('name', sa.String(), nullable=False, unique=True),
-                    sa.Column('source', postgresql.JSONB(), nullable=False, server_default='{}'),
-                    sa.Column('destination', postgresql.JSONB(), nullable=True),
+                    sa.Column('config', postgresql.JSONB(), nullable=False, server_default='{}'),
                     sa.PrimaryKeyConstraint('id'),
                     sa.UniqueConstraint('name')
                     )

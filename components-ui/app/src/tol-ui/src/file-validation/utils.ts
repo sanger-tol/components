@@ -76,6 +76,12 @@ export interface IPipelineUpload {
 
 export const FILE_VALIDATION_PATH = "/file-validation/results/";
 export const REFRESH_INTERVAL = 5000; // 5 seconds
+export const TOL_LOADER_STYLES = {
+  minHeight: "250px",
+  flexDirection: "column",
+  alignItems: "center",
+  display: "flex",
+};
 
 const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
 
