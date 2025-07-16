@@ -27,7 +27,17 @@ interface Props {
 }
 
 export function DownloadModal(props: Props) {
-  const { size, open, setOpen, onDownloadSpreadsheet, objectType, filter, source, fields, totalSize } = props;
+  const {
+    size,
+    open,
+    setOpen,
+    onDownloadSpreadsheet,
+    objectType,
+    filter,
+    source,
+    fields = [],
+    totalSize
+  } = props;
 
   const stringifyFilter = (filter: any) => {
     if (!filter) {

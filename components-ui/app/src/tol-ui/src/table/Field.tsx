@@ -49,7 +49,7 @@ export interface FieldMetaData {
 
 export interface FieldMetaOrder {
   active: string[];
-  inactive: string[];
+  inactive?: string[];
 }
 
 export interface FieldMeta {
@@ -70,12 +70,10 @@ export function addFieldDefaults(field: Field) {
   };
 }
 
-export function initialiseFieldMeta() {
+export function initialiseFields() {
   return {
-    data: {},
     order: {
       active: [],
-      inactive: [],
     },
   } as FieldMeta;
 }

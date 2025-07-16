@@ -12,7 +12,7 @@ import {
   Modal,
   SelectedAttributesContainer,
   FieldMeta,
-  initialiseFieldMeta,
+  initialiseFields,
   IRemoteTarget,
   IDropdownButtonConfig,
   createSort,
@@ -85,12 +85,12 @@ export function ColumnConfigDrawer(props: Props) {
   ) => {
     const isActive = hidden ? "inactive" : "active";
     updatedFieldMeta.order[isActive].push(id);
-    updatedFieldMeta.data[id] = fieldMeta.data[id];
-    updatedFieldMeta.data[id].hidden = hidden;
+    updatedFieldMeta.data![id] = fieldMeta.data![id];
+    updatedFieldMeta.data![id].hidden = hidden;
   };
 
   const fieldMetaUpdatedByContents = () => {
-    const updatedFieldMeta: FieldMeta = initialiseFieldMeta();
+    const updatedFieldMeta: FieldMeta = initialiseFields();
 
     attributes.forEach((key) => {
       updateMeta(key, updatedFieldMeta, false);
