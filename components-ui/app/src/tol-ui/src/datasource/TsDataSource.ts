@@ -54,8 +54,8 @@ export class TsDataSource {
   public generateEndpoint(target?: string, suffix?: string): string {
     const prefix = this.apiPrefix ? `/${this.apiPrefix}` : "";
     const tg = target ? `/${target}` : "";
-    const id = suffix ? `${suffix}` : "";
-    return `${prefix}${tg}${id}`;
+    const sf = suffix ? `${suffix}` : "";
+    return `${prefix}${tg}${sf}`;
   }
 
   public getBaseUrl(): string | undefined {
@@ -439,7 +439,7 @@ export class TsDataSource {
   }: IGetListCursor): Promise<TCursorDataObjectOrNull> {
     return await this.client()
       .post(
-        this.generateEndpoint(objectType, ':cursor'),
+        this.generateEndpoint(objectType, ":cursor"),
         { search_after: searchAfter },
         {
           baseURL: this.baseUrl,
@@ -466,7 +466,9 @@ export class TsDataSource {
   public async deleteByID({ objectType, id }: IGetOne): Promise<void> {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
-      .delete(this.generateEndpoint(objectType, `/${id}`), { baseURL: this.baseUrl })
+      .delete(this.generateEndpoint(objectType, `/${id}`), {
+        baseURL: this.baseUrl,
+      })
       .then(() => {
         if (id in detailCache[this.sourceKey][objectType]) {
           delete detailCache[this.sourceKey][objectType][id];
@@ -485,7 +487,7 @@ export class TsDataSource {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
       .post(
-        this.generateEndpoint(objectType, ':upsert'),
+        this.generateEndpoint(objectType, ":upsert"),
         { data: payload },
         { baseURL: this.baseUrl }
       )
