@@ -204,14 +204,8 @@ function ValidationResultsViewer() {
   );
 
   const Title = (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <h3 style={{ margin: 0 }}>Previous Validation Results</h3>
+    <div className="tol-file-validation-results-viewer-title-container">
+      <h3>Previous Validation Results</h3>
       <Button text="View All" onClick={() => setOpenModal(true)} />
     </div>
   );

@@ -73,7 +73,10 @@ function PreviousUploadsView(props: Props) {
         </p>
         <a
           href="#"
-          onClick={() => goToResults(history, id, stepName, totalIssues)}
+          onClick={() => {
+            goToResults(history, id, stepName, totalIssues);
+            if (setOpenModal) setOpenModal(false);
+          }}
         >
           {hasIssues && completed && <p>Go to</p>}
         </a>

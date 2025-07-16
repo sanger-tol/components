@@ -333,6 +333,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+  padding-left: 10px;
 }
 
 .tol-file-validation-previous-uploads-modal-header-content {
@@ -347,6 +348,7 @@
   gap: 10px;
   width: fit-content;
   margin-left: auto;
+  margin-right: -10px;
 }
 
 .tol-file-validation-previous-uploads-modal-toggle-tag {
@@ -627,6 +629,16 @@
     display: flex;
     align-items: center;
     gap: 6px;
+  }
+}
+
+.tol-file-validation-results-viewer-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    margin: 0;
   }
 }
 

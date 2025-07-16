@@ -345,6 +345,3 @@ function FileValidation(props: Props) {
 }
 
 export default FileValidation;
-
-// TODO: add help modal with instructions on how to use the validation
-// TODO: Create a summary of the validation results

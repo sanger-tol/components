@@ -64,10 +64,6 @@ function Dropzone(props: Props) {
   const [fail, setFail] = useState(false);
 
   useEffect(() => {
-    console.log("FileList", fileList);
-  }, [fileList]);
-
-  useEffect(() => {
     if (fileList.length > 0 && !parentToSubmit) {
       setIsLoading(true);
       setHasLoaded(false);
