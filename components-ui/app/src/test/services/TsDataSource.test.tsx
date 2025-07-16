@@ -45,6 +45,14 @@ const speciesCursorMockData2 = {
     },
   },
 };
+const speciesCursorMockData3 = {
+  data: {
+    data: [],
+    meta: {
+      search_after: null,
+    },
+  },
+};
 const speciesUpsertMockData = {
   data: {
     data: [
@@ -206,6 +214,11 @@ const mockClient = () => ({
       payload.search_after == "newTestSpeciesIdX2"
     ) {
       return Promise.resolve(speciesCursorMockData2);
+    } else if (
+      endpoint === "/species:cursor" &&
+      payload.search_after == "newTestSpeciesIdX3"
+    ) {
+      return Promise.resolve(speciesCursorMockData3);
     }
     return Promise.reject({ response: { status: 404 } });
   },
@@ -552,6 +565,7 @@ describe("Testing getList function", () => {
       expect(cursorDataObjects[0].objectType).toEqual("species");
       expect(cursorDataObjects[0].name).toEqual("test species");
       expect(cursorDataObjects[1].id).toEqual("newTestSpeciesIdX2");
+      expect(cursorDataObjects).toHaveLength(2);
     }
   });
 });
@@ -585,6 +599,11 @@ describe("Testing getCursorPage function", () => {
       objectType: "species",
     });
 
+    const cursorDataObjectsLastItemCheck = await mockDataSource.getCursorPage({
+      objectType: "species",
+      searchAfter: ["newTestSpeciesIdX3"],
+    });
+
     if (Array.isArray(cursorDataObjects)) {
       const [fetched, searchAfter] = cursorDataObjects;
       if (fetched && fetched[0] && searchAfter) {
@@ -594,6 +613,12 @@ describe("Testing getCursorPage function", () => {
         expect(fetched[0]?.name).toEqual("test species");
         expect(searchAfter).toBe("newTestSpeciesIdX2");
         expect(fetched).toHaveLength(1);
+      }
+    }
+    if (Array.isArray(cursorDataObjectsLastItemCheck)) {
+      const [fetched, searchAfter] = cursorDataObjectsLastItemCheck;
+      if (fetched && fetched[0] && searchAfter) {
+        expect(searchAfter).toBeNull;
       }
     }
   });
