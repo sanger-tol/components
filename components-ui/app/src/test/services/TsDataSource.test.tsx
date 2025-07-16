@@ -247,13 +247,13 @@ describe("generateEndpoint function", () => {
       baseUrl: "test",
       apiPrefix: "api",
     });
-    const endpoint = mockDataSource.generateEndpoint("target", "123");
+    const endpoint = mockDataSource.generateEndpoint("target", "/123");
     expect(endpoint).toBe("/api/target/123");
   });
 
   test("Returns correct endpoint with target and objectId but no apiPrefix", () => {
     const mockDataSource = new TsDataSource({ baseUrl: "test" });
-    const endpoint = mockDataSource.generateEndpoint("target", "123");
+    const endpoint = mockDataSource.generateEndpoint("target", "/123");
     expect(endpoint).toBe("/target/123");
   });
 });
