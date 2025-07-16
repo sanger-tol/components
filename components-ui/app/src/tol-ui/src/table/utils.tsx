@@ -13,7 +13,6 @@ import {
   CellRenderer,
   FieldMeta,
   FieldMetaData,
-  initialiseFieldMeta,
   isFloat,
   normaliseCaps,
   Relationship,
@@ -367,29 +366,13 @@ function addDefaultCellRenderer(key: string, type: string) {
   return undefined;
 }
 
-function structureFieldMetaViaProp(
-  fieldMeta: FieldMeta,
-  fields: FieldMetaData
-) {
-  for (const [key, meta] of Object.entries(fields)) {
-    // only adding field if it is new or first load
-    if (!(key in fieldMeta.data)) {
-      const isActive = meta.hidden ? "inactive" : "active";
-      fieldMeta.order[isActive].push(key);
-    }
-    fieldMeta.data[key] = addFieldDefaults(meta);
-    fieldMeta.data[key].isAttribute = !isRelationship(key);
-    if (fieldMeta.data[key].hidden) hiddenFields = true;
-  }
-}
-
 function addRemoteFilterType(type: string, cardinality: number) {
   if (cardinality && cardinality < 20 && type === "str") return "multi";
   if (type === "double") return "float";
   return type;
 }
 
-function addEntityMetaFields(
+function addEntityMeta(
   endpoint: string,
   fieldMeta: FieldMeta,
   entityMeta: IEntityMeta
@@ -427,9 +410,10 @@ function addEntityMetaFields(
 }
 
 export function sortFieldsByRename(fieldMeta: FieldMeta) {
+  if (!fieldMeta || !fieldMeta.order.inactive) return [];
   return fieldMeta.order.inactive.sort((a, b) => {
-    const fieldA = fieldMeta.data[a];
-    const fieldB = fieldMeta.data[b];
+    const fieldA = fieldMeta.data![a];
+    const fieldB = fieldMeta.data![b];
     if (fieldA.rename! < fieldB.rename!) return -1;
     if (fieldA.rename! > fieldB.rename!) return 1;
     return 0;
@@ -452,59 +436,13 @@ function addDefaultMeta(fieldMeta: FieldMeta) {
 }
 
 export function structureFieldMeta(
-  endpoint: string,
-  savedFieldMeta?: FieldMeta,
-  entityMeta?: IEntityMeta,
-  fields?: FieldMetaData
+  objectType: string,
+  fields: FieldMeta,
+  entityMeta: IEntityMeta,
 ) {
-  endpoint = endpoint.split("/").pop() as string;
-  const fieldMeta = savedFieldMeta || initialiseFieldMeta();
-  const fieldPropExists = fields !== undefined;
-  if (fieldPropExists) structureFieldMetaViaProp(fieldMeta, fields);
-  /*
-  --- dealing with id/uid ---
-  - id is seperate from attributes, so it needs to be added
-  - only added if uid does not exist
-  - value can be null, as only the key is used in this instance
-  */
-  if (entityMeta) {
-    addEntityMetaFields(endpoint, fieldMeta, entityMeta);
-  }
-  addDefaultMeta(fieldMeta);
-  return fieldMeta;
-}
-
-export function tableDebug(
-  apiData: object,
-  fieldMeta: object,
-  debug?: boolean
-) {
-  if (debug) {
-    try {
-      const fieldPossibilities: any = {
-        attributes: ["id"],
-        relationships: [],
-      };
-      const apiDataInstance = apiData[0];
-      if ("attributes" in apiDataInstance) {
-        for (const key of Object.keys(apiDataInstance.attributes)) {
-          fieldPossibilities["attributes"].push(key);
-        }
-      }
-      const relationships: object = apiDataInstance.relationships;
-      if ("relationships" in apiDataInstance) {
-        for (const [key, value] of Object.entries(relationships)) {
-          // ignoring one-to-many relationships
-          if ("data" in value) {
-            fieldPossibilities["relationships"].push(key);
-          }
-        }
-      }
-      console.log("Field Possibilities", fieldPossibilities);
-      console.log("Api Response Data", apiData);
-      console.log("Field Meta", fieldMeta);
-    } catch (e) { } // eslint-disable-line
-  }
+  addEntityMeta(objectType, fields, entityMeta);
+  addDefaultMeta(fields);
+  return fields;
 }
 
 export function createSort(sortColumn: string, sortType: string) {
@@ -662,12 +600,13 @@ if no fields are hidden, return all keys
 if any fields are hidden, return only the fieldMeta.order.active columns and those that are marked hidden
 */
 export function getAllowedFields(fieldMeta: FieldMeta) {
+  if (!fieldMeta || !fieldMeta.data) return [];
   const hasHiddenFields = Object.values(fieldMeta.data).some(
     (field) => field.hidden === true
   );
   if (!hasHiddenFields) return Object.keys(fieldMeta.data);
   return Object.keys(fieldMeta.data).filter(
-    (key) => fieldMeta.data[key].hidden || fieldMeta.order.active.includes(key)
+    (key) => fieldMeta.data![key].hidden || fieldMeta.order.active.includes(key)
   );
 }
 
@@ -692,7 +631,7 @@ export async function getActions(
   actionDataSource: TsDataSource,
 ): Promise<string[]> {
   const actionsList: string[] = [];
-  const actions =  await actionDataSource
+  const actions = await actionDataSource
     .getListPage({
       objectType: objectType,
       filter: {

@@ -15,7 +15,7 @@ import {
   IUtilityBar,
   IZone,
   IDropdownButtonConfig,
-  NumRows,
+  ACTION_API_PREFIX,
   Placeholder,
   RowCounter,
   Table,
@@ -29,11 +29,11 @@ import {
   resetFiltersBelow,
   setTableConfigLocalStorage,
   structureFieldMeta,
-  tableDebug,
   useEffectUpdate,
   useStateFallback,
   TsDataSource,
-  LOCAL_API_PREFIX,
+  IEntityMeta,
+  initialiseFields,
 } from '..';
 
 
@@ -51,7 +51,7 @@ interface Props extends IRemoteTargetAndZone {
   onToggleFilterVisibility?: any;
 
   defaultSort?: string;
-  pageSize?: NumRows | number;
+  pageSize?: number;
   displaySource?: boolean;
   filterVisibility?: boolean;
 
@@ -60,6 +60,7 @@ interface Props extends IRemoteTargetAndZone {
   noSorting?: boolean;
   noConfigModal?: boolean;
   noDownload?: boolean;
+
   rowSelection?: boolean;
   utilityBarConfig?: IUtilityBar;
   contents?: ReactNode;
@@ -69,8 +70,6 @@ interface Props extends IRemoteTargetAndZone {
   actions?: (string | IDropdownButtonConfig)[];
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
-
-  debug?: boolean;
 }
 
 export function RemoteTable(props: Props) {
@@ -78,7 +77,6 @@ export function RemoteTable(props: Props) {
     id,
     objectType,
     dataSource,
-    fields,
     basic,
     forceUpdate,
     zone,
@@ -93,22 +91,23 @@ export function RemoteTable(props: Props) {
     noDownload,
     rowSelection,
     actionDataSource = new TsDataSource({
-      apiPrefix: LOCAL_API_PREFIX,
+      apiPrefix: ACTION_API_PREFIX,
     }),
     actions,
     utilityBarConfig,
-    debug,
     contents,
     height = "100%",
   } = props;
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(props.fields);
+  const [fields, setFields] = useState<FieldMeta>(props.fields ?? initialiseFields());
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(props.fields ?? initialiseFields());
+  const [entityMeta, setEntityMeta] = useState<IEntityMeta>();
 
   // pagination
   const getPageSize = () => {
-    if (props.pageSize) return props.pageSize; // if overidden with prop, ignore saved value in storage
+    if (props.pageSize) return props.pageSize;
     const size = getTableConfigLocalStorage(id, "pageSize");
     return size ?? 50;
   };
@@ -123,7 +122,7 @@ export function RemoteTable(props: Props) {
 
   // filter visibility
   const getFilterVisibility = () => {
-    if (props.filterVisibility !== undefined) return props.filterVisibility; // if overidden with prop, ignore saved value in storage
+    if (props.filterVisibility !== undefined) return props.filterVisibility;
     const visible = getTableConfigLocalStorage(id, "filterVisibility");
     return visible ?? true;
   };
@@ -155,11 +154,38 @@ export function RemoteTable(props: Props) {
   };
 
   useEffect(() => {
+    if (!basic) {
+      dataSource
+        .getEntityMeta()
+        .then((em: IEntityMeta) => {
+          setEntityMeta(em);
+
+          setFieldMeta(
+            structureFieldMeta(
+              objectType,
+              fields,
+              em,
+            )
+          );
+        })
+        .catch((error: any) => {
+          setError(error.message);
+        })
+        .finally(() => {
+          //setInitialLoad(false);
+          //setLoading(false);
+        });
+    }
+    // if (!fieldMeta && !noConfigModal)
+    //   setTableConfigLocalStorage(id, "fieldMeta", fm);
+  }, []);
+
+  useEffectUpdate(() => {
     const compoundedFilter = generateFilter(zone, id);
     // will trigger [filter] useEffect if update has occured
     filterHasUpdated(setFilter, filter, compoundedFilter);
     // resetFiltersBelow({id: id, zone: zone!}); occurs in <Filter />: onFilter()
-  }, [zone]);
+  }, [initialLoad, zone]);
 
   useEffectUpdate(() => {
     renderTable();
@@ -192,9 +218,8 @@ export function RemoteTable(props: Props) {
       indexOffset: -1,
     });
     setZone({ ...zone });
-    
+
     if (props.onModalSave) {
-      // Add in the default sort here
       props.onModalSave(fm, actions, createSort(sortByAttribute || "", sortByType || "asc"));
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", fm);
@@ -239,29 +264,9 @@ export function RemoteTable(props: Props) {
         setTotalSize(apiMeta.total);
         setError("");
 
-        // get attribute types and relationship links
-        const entityMeta =
-          basic !== true ? await dataSource.getEntityMeta() : undefined;
-
-        let fm = fieldMeta;
-        if (initialLoad) {
-          fm = structureFieldMeta(
-            objectType,
-            fieldMeta ?? getFieldMetaLocalStorage(id, fields),
-            entityMeta,
-            fields
-          );
-          if (!fieldMeta && !noConfigModal)
-            setTableConfigLocalStorage(id, "fieldMeta", fm);
-          setFieldMeta(fm as FieldMeta);
-        }
-
-        // debug logs if prop defined
-        tableDebug(apiData, fm!, debug);
-
         // setting data using fieldMeta
         setData(
-          convertTableData(apiData, fm as FieldMeta, dataSource, entityMeta)
+          convertTableData(apiData, fieldMeta!, dataSource, entityMeta)
         );
         setLoading(false);
         setInitialLoad(false);
@@ -348,7 +353,7 @@ export function RemoteTable(props: Props) {
         {...props}
         contents={contents ? contents : Contents()}
         data={data}
-        fieldMeta={fieldMeta!}
+        fields={fieldMeta!}
         height={height}
         loading={loading}
         page={page}

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import {
   FieldMeta,
-  initialiseFieldMeta,
+  initialiseFields,
   BoardFilters,
   RemoteTable,
   saveTitle,
@@ -78,7 +78,7 @@ export function BoardTable(props: Props) {
     <RemoteTable
       {...props}
       displaySource
-      fieldMeta={config.fieldMeta || initialiseFieldMeta()}
+      fields={config.fieldMeta || initialiseFields()}
       pageSize={config.pageSize || 50}
       filterVisibility={config.filterVisibility ?? true}
       defaultSort={
