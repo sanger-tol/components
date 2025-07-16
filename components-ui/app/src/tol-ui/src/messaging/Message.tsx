@@ -7,12 +7,12 @@ SPDX-License-Identifier: MIT
 import React from "react";
 import { Message as RSMessage } from "rsuite";
 import { capitaliseFirstLetter } from "../general/utils";
-import { MessageType } from "..";
+import { TMessageType } from "..";
 
 export interface PMessage {
   children: React.ReactNode;
   showIcon: boolean;
-  type?: MessageType;
+  type?: TMessageType;
   closable?: boolean;
   header?: React.ReactNode;
   onClose?: () => void;
