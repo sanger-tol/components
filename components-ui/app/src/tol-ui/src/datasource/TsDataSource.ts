@@ -28,10 +28,11 @@ import {
   deepCopy,
   API_METHODS,
   IGetListCursor,
-  TCursorDataObjectOrNull,
+  TCursorObjectOrNull,
   normaliseCaps,
   IGetList,
 } from "..";
+
 
 const detailCache: IDetailCache = {};
 const detailPromises: IDetailPromises = {};
@@ -436,7 +437,7 @@ export class TsDataSource {
     filter,
     requestedFields,
     searchAfter,
-  }: IGetListCursor): Promise<TCursorDataObjectOrNull> {
+  }: IGetListCursor): Promise<TCursorObjectOrNull> {
     return await this.client()
       .post(
         this.generateEndpoint(objectType, ":cursor"),

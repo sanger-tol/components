@@ -110,4 +110,4 @@ export type TDataObjectOrNull = IDataObject | null;
 export type TDataObjectListOrNull = IDataObject[] | null;
 
 export type TCursorSearchAfterOrNull = string[] | null;
-export type TCursorDataObjectOrNull = [TDataObjectListOrNull, TCursorSearchAfterOrNull] | null
+export type TCursorObjectOrNull = [TDataObjectListOrNull, TCursorSearchAfterOrNull] | null
