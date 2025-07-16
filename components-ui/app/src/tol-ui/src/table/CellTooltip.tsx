@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import HoverOverlay from "../general/HoverOverlay";
+import { HoverOverlay } from "..";
 
 interface Props {
   value: any;
@@ -12,7 +12,7 @@ interface Props {
   followCursor?: boolean;
 }
 
-function CellTooltip(props: Props) {
+export function CellTooltip(props: Props) {
   const { value, contents } = props;
   return (
     <HoverOverlay {...props} contents={contents}>
@@ -20,5 +20,3 @@ function CellTooltip(props: Props) {
     </HoverOverlay>
   );
 }
-
-export default CellTooltip;

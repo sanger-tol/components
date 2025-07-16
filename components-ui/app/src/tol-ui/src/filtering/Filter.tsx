@@ -4,13 +4,16 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IZone } from "../boards";
-import FilterTextInput from "./FilterTextInput";
-import FilterDatePicker from "./FilterDatePicker";
-import FilterMultiSelect from "./FilterMultiSelect";
-import FilterBoolean from "./FilterBoolean";
+import {
+  IRemoteTargetAndZone,
+  FilterTextInput,
+  FilterDatePicker,
+  FilterMultiSelect,
+  FilterBoolean,
+} from "..";
 
-export type IFilter =
+
+export type IFilterInputType =
   | "str"
   | "int"
   | "float"
@@ -18,21 +21,15 @@ export type IFilter =
   | "boolean"
   | "multi";
 
-export interface Filter {
+export interface IFilterInput extends IRemoteTargetAndZone {
   attribute: string;
   rename: string;
-  type?: IFilter;
+  type?: IFilterInputType;
   componentId: string;
-  zone: IZone;
-  setZone: any;
-
-  endpoint: string;
-  baseUrl?: string;
-
   delay?: number;
 }
 
-function Filter(props: Filter) {
+export function Filter(props: IFilterInput) {
   switch (props.type) {
     case "str":
     case "int":
@@ -45,8 +42,6 @@ function Filter(props: Filter) {
     case "multi":
       return <FilterMultiSelect {...props} />;
   }
-  console.log("Cannot retrieve filter type: " + props.attribute);
+  console.warn("Cannot retrieve filter type: " + props.attribute);
   return <></>;
 }
-
-export default Filter;

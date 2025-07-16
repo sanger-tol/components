@@ -5,8 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import React, { useState } from "react";
-import { RSForm } from "../index";
 import { Checkbox, CheckboxGroup } from "rsuite"; // @ts-ignore
+import { RSForm } from "..";
+
 
 interface Props {
   id: string;
@@ -29,7 +30,7 @@ interface Props {
   defaultChecked?: string[];
 }
 
-function FormCheckboxes(props: Props) {
+export function FormCheckboxes(props: Props) {
   const {
     id,
     label,
@@ -75,7 +76,7 @@ function FormCheckboxes(props: Props) {
                   {field.children}
                   {field.subtext && (
                     <span className="rs-form-help-text">
-                      <span style={{ color: "red", marginLeft: "10px" }}>
+                      <span className="tol-danger-colour" style={{ marginLeft: "10px" }}>
                         *{" "}
                       </span>
                       {field.subtext}
@@ -90,5 +91,3 @@ function FormCheckboxes(props: Props) {
     </div>
   );
 }
-
-export default FormCheckboxes;

@@ -20,8 +20,8 @@ import {
   ChartTypeRegistry
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
-import { UtilityBar } from "../index";
 import {
+  UtilityBar,
   getChartColour,
   initialiseDatasets,
   updateChartColours,
@@ -31,10 +31,12 @@ import {
   updateOpacitys,
   resetItemClickedData,
   downloadItem,
-} from "./utils";
-import { isPropDefined, getCssVarValue } from "../general/utils";
-import { themeListener } from "../hooks/listeners";
-import { IUtilityBar } from "../general/UtilityBar";
+  isPropDefined,
+  getCssVarValue,
+  themeListener,
+  IUtilityBar
+} from "..";
+
 
 ChartJS.register(
   CategoryScale,
@@ -64,13 +66,22 @@ interface Props {
   chartType?: string;
 }
 
-function BarChart(props: Props) {
-  const { id, labels, setBarData, cumulative, utilityBarConfig = {}, contents, chartType='bar' } = props;
-  const height = props.height !== undefined ? props.height : "100%";
-  const stacked = props.stacked !== undefined ? props.stacked : false;
+export function BarChart(props: Props) {
+  const {
+    id,
+    stacked = false,
+    labels,
+    height = "100%",
+    setBarData,
+    cumulative,
+    utilityBarConfig = {},
+    contents,
+    chartType='bar',
+    downloadName = 'barchart'
+  } = props;
   const originDatasets = initialiseDatasets(props.datasets);
-  const [datasets, setDatasets] = useState(originDatasets);
 
+  const [datasets, setDatasets] = useState(originDatasets);
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
   // Used to change the height of the y-axis when selecting a legend
@@ -286,12 +297,8 @@ function BarChart(props: Props) {
     },
   };
 
-  const downloadName =
-    props.downloadName !== undefined ? props.downloadName : "barchart";
-
   return (
     <div style={{ height: height }}>
-
       <UtilityBar
         id={id}
         title={utilityBarConfig.title}
@@ -321,26 +328,23 @@ function BarChart(props: Props) {
           ...(utilityBarConfig.buttons || []),
         ]}
       />
-
-      {contents ?
-        contents
-        :
-        <Chart
-          type={chartType === "scatter" ? "line" : (chartType as keyof ChartTypeRegistry)}
-          id={id}
-          responsive="true"
-          className="tol-bar-chart"
-          datasetIdKey="id"
-          // @ts-ignore
-          options={options}
-          data={{
-            labels: labels,
-            datasets: datasets,
-          }}
-        />
+      <div className="tol-component-contents-with-offset">
+        {contents ? contents :
+          <Chart
+            type={chartType === "scatter" ? "line" : (chartType as keyof ChartTypeRegistry)}
+            id={id}
+            responsive="true"
+            className="tol-bar-chart"
+            datasetIdKey="id"
+            // @ts-ignore
+            options={options}
+            data={{
+              labels: labels,
+              datasets: datasets,
+            }}
+          />
       }
+      </div>
     </div>
   );
 }
-
-export default BarChart;

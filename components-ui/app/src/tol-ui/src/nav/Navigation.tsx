@@ -7,23 +7,25 @@ SPDX-License-Identifier: MIT
 import { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
-import { useAuth } from "../contexts/auth.context";
 import {
+  useAuth,
   getReturnUrlFromLocalStorage,
   setReturnUrlFromLocalStorage,
   getTokenFromLocalStorage,
   setTokenToLocalStorage,
   setUserToLocalStorage,
   tokenHasExpired,
-} from "../services/localStorage/localStorageService";
-import Login from "./Login";
-import { Dropdown } from "../models/Nav";
-import { Page } from "../models/Nav";
-import { convertToPath } from "../general/utils";
-import { env } from "../variables/config";
-import { confirmAuthorised } from "../services/auth/authService";
-import { LoginIcon, RegisterIcon } from "../general/Icons";
-import ProfileDropdown from "./ProfileDropdown";
+  Login,
+  Dropdown,
+  Page,
+  convertToPath,
+  env,
+  confirmAuthorised,
+  LoginIcon,
+  RegisterIcon,
+  ProfileDropdown,
+} from "..";
+
 
 interface Props extends RouteComponentProps {
   brand: string | JSX.Element;

@@ -4,25 +4,23 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Loader, TsDataSource } from "../../../index";
 import { useState } from "react";
+import { IRemoteTarget, Loader } from "../../..";
 
-interface Props {
+
+interface Props extends IRemoteTarget {
   id: string;
-  endpoint: string;
-  baseUrl?: string;
   attribute: string;
 }
 
-function DetailAttribute(props: Props) {
-  const { id, endpoint, baseUrl, attribute } = props;
+export function DetailAttribute(props: Props) {
+  const { id, objectType, dataSource, attribute } = props;
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(true);
-  const ds = new TsDataSource({ baseUrl: baseUrl });
 
-  ds.getOne({
-    objectType: endpoint,
-    id: id,
+  dataSource.getOne({
+    objectType,
+    id
   }).then((res: any) => {
     setText(res[attribute] || "");
     setLoading(false);
@@ -34,5 +32,3 @@ function DetailAttribute(props: Props) {
     </div>
   );
 }
-
-export default DetailAttribute;

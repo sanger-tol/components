@@ -14,7 +14,7 @@ interface Props {
   bordered?: boolean;
 }
 
-const StatusMessage = React.forwardRef<HTMLDivElement, Props>(
+export const StatusMessage = React.forwardRef<HTMLDivElement, Props>(
   (props: Props, ref: React.Ref<HTMLDivElement>) => {
     const { message, status, bordered, ...rest } = props;
 
@@ -35,5 +35,3 @@ const StatusMessage = React.forwardRef<HTMLDivElement, Props>(
     );
   },
 );
-
-export default StatusMessage;

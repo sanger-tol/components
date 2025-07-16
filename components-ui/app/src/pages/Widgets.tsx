@@ -60,46 +60,10 @@ const components = [
   },
 ];
 
-const components2 = {
-  components: {
-    "1": {
-      element: getDiv(),
-      size: "small",
-    },
-    "2": {
-      element: getDiv(),
-      size: "small",
-    },
-    "3": {
-      element: getDiv(),
-      size: "small",
-    },
-    "4": {
-      element: getDiv(),
-      size: "small",
-    },
-    "5": {
-      element: getDiv(),
-      size: "medium",
-    },
-    "6": {
-      element: getDiv(),
-      size: "medium",
-    },
-    "7": {
-      element: getDiv(),
-      size: "large",
-    },
-  },
-  order: ["1", "2", "3", "4", "5", "6", "7"],
-};
-
-function Widgets() {
+export function Widgets() {
   return (
     <div className="widgets">
       <W components={components} />
     </div>
   );
 }
-
-export default Widgets;

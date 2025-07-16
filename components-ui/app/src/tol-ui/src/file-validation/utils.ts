@@ -4,10 +4,14 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 import { History } from "history";
-import { ApiMethods, VALIDATION_ENDPOINTS } from "../constants";
-import { PopUpMessage, TsDataSource } from "../index";
-import { DataObject } from "../services/http/TsDataSource";
-import { MessageType } from "./messaging/Message";
+import {
+  API_METHODS,
+  VALIDATION_ENDPOINTS,
+  PopUpMessage,
+  TsDataSource,
+  ISourceDataObject,
+} from "..";
+import { MessageType } from "../messaging/Message";
 
 export type TSeverity = "error" | "warning";
 export type IconType = "check" | "xmark" | "exclamation";
@@ -125,8 +129,8 @@ export function normaliseValidationResult(
 
 export async function normalisePipelineUpload(
   ds: TsDataSource,
-  upload: DataObject,
-  relationships: { [key: string]: Promise<DataObject> }
+  upload: ISourceDataObject,
+  relationships: { [key: string]: Promise<ISourceDataObject> }
 ): Promise<IPipelineUpload> {
   const pipeline = await relationships?.pipeline;
   const pipelineSteps = await getStepsInPipeline(ds, pipeline.id);
@@ -274,11 +278,11 @@ export async function uploadPipelineConfig(
     destination: config.destination,
   };
   try {
-    const response = await ds.custom(
-      VALIDATION_ENDPOINTS.RUN_PIPELINE,
-      ApiMethods.POST,
-      body
-    );
+    const response = await ds.custom({
+      method: API_METHODS.POST,
+      resource: VALIDATION_ENDPOINTS.RUN_PIPELINE,
+      body: body,
+    });
     if (response) {
       return response.data["upload_id"];
     }

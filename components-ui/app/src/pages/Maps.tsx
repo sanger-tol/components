@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Map, Widgets, RemoteMap, env, useZone } from "../tol-ui/src";
+import { Map, Widgets, RemoteMap, useZone, TOL_DS } from "../tol-ui/src";
 
-function Maps() {
+export function Maps() {
   // fake data for BubbleMap component
   const points = [
     [51.50853, -0.076132],
@@ -55,16 +55,16 @@ function Maps() {
   );
 
   const cardZone = useZone({
-    endpoint: "barcoding_run_data",
-    baseUrl: env.TOL_DATA,
+    objectType: "sample",
+    dataSource: TOL_DS,
     components: [
       {
         id: "report-card-map-v1",
         filter: {
           and_: {
-            bioscan_o: {
-              in_list: {
-                value: ["Polydesmida", "Pseudoscorpiones"],
+            "sts_species.sts_family": {
+              contains: {
+                value: "Le",
                 negate: false,
               },
             },
@@ -93,9 +93,9 @@ function Maps() {
       <RemoteMap
         id="report-card-map-v1"
         bubble
-        longitudeKey="sts_sample.sts_longitude.keyword"
-        latitudeKey="sts_sample.sts_latitude.keyword"
-        attributeKeys="bioscan_s"
+        longitudeKey="sts_longitude"
+        latitudeKey="sts_latitude"
+        attributeKeys="sts_longitude"
         markerRenderer={activeChecker}
         height={400}
         {...cardZone}
@@ -120,5 +120,3 @@ function Maps() {
 
   return <Widgets components={components} />;
 }
-
-export default Maps;

@@ -1,6 +1,6 @@
 {
   "name": "@tol/tol-ui",
-  "version": "2.1.11",
+  "version": "2.2.3",
   "description": "An npm components package for ToL systems",
   "dependencies": {
     "sass": "^1.77.8",
@@ -16,14 +16,15 @@
     "react-leaflet": "4.2.1",
     "leaflet": "1.9.4",
     "react-leaflet-cluster": "2.1.0",
-    "react-beautiful-dnd": "13.1.1",
     "react-grid-layout": "1.4.4",
     "react-select-country-list": "2.2.3",
     "nanoid": "3.1.23",
     "react-code-blocks": "0.1.6",
     "react-draggable-list": "4.2.1",
-    "react-markdown": "8.0.7",
+    "react-markdown": "10.1.0",
     "lorem-ipsum": "2.0.8",
+    "@uiw/react-md-editor":"4.0.7",
+    "rehype-sanitize": "6.0.0",
     "@tanstack/react-query": "^5.81.5"
   },
 "devDependencies": {

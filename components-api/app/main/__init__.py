@@ -149,9 +149,7 @@ def application():
     )
 
     # Data endpoints
-    blueprint_data_local = data_blueprint(
-        sql_datasource,
-    )
+    blueprint_data_local = data_blueprint(sql_datasource)
     app.register_blueprint(blueprint_data_local, name='local',
                            url_prefix=os.getenv('API_PATH') + '/local')
 
@@ -159,7 +157,7 @@ def application():
     blueprint_system = system_blueprint()
     app.register_blueprint(blueprint_system, url_prefix=os.getenv('API_PATH') + '/system')
 
-    # user ID
+    # user id
     user_id_bp = __user_id_blueprint(os.environ['API_PATH'])
     app.register_blueprint(user_id_bp)
 
@@ -171,7 +169,7 @@ def application():
     )
     app.register_blueprint(
         actions_bp,
-        url_prefix=os.environ['API_PATH'] + '/run-action'
+        url_prefix=os.getenv('API_PATH') + '/local/run-action'
     )
 
     # pipelines
@@ -199,6 +197,9 @@ def application():
         url_prefix=os.environ['API_PATH'] + '/boards'
     )
     blueprint_board_data = data_blueprint(sql_datasource)
-    app.register_blueprint(blueprint_board_data, url_prefix=os.getenv('API_PATH') + '/board-data')
+    app.register_blueprint(
+        blueprint_board_data,
+        url_prefix=os.getenv('API_PATH') + '/boards'
+    )
 
     return app

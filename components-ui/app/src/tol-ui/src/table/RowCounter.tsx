@@ -5,27 +5,26 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { httpClient } from "../services/http/httpClient";
+import { API_METHODS, IRemoteTarget } from "..";
 
-interface Props {
+interface Props extends IRemoteTarget {
   totalSize: number;
-  endpoint: string;
-  baseUrl?: string;
   filter?: object;
   loading: boolean;
 }
 
-function RowCounter(props: Props) {
-  const { totalSize, endpoint, baseUrl, filter, loading } = props;
+export function RowCounter(props: Props) {
+  const { dataSource, objectType, totalSize, filter, loading } = props;
   const [count, setCount] = useState<number | null>(null);
 
   const fetchRowTotal = () => {
-    httpClient()
-      .get("/" + endpoint + ":count", {
+    dataSource
+      .custom({
+        method: API_METHODS.GET,
+        resource: `${objectType}:count`,
         params: {
           filter: filter,
         },
-        baseURL: baseUrl,
       })
       .then((res: any) => {
         setCount(res.data.meta.total);
@@ -56,5 +55,3 @@ function RowCounter(props: Props) {
 
   return <span>{addTotalText(count)}</span>;
 }
-
-export default RowCounter;

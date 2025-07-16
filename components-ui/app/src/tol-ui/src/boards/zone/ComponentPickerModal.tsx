@@ -12,42 +12,47 @@ import {
   Col,
   Icon,
   HoverOverlay,
-  TsDataSource,
-} from "../../index";
-import { FormTextField } from "../../forms";
-import { RSForm } from "../../index";
-import { IZone, addComponent, defineComponent } from "../utils";
-import { componentOptions, sizeOptions } from "../../config/boards/componentSelection";
+  FormTextField,
+  RSForm,
+  addComponent,
+  IZone,
+  componentOptions,
+  sizeOptions,
+  upsertNewComponent,
+  PBoard,
+  getNextComponentOrder,
+} from "../..";
 
-interface Props {
+
+export interface PComponentPickerModal extends PBoard {
   open: boolean;
   setOpen: any;
   zone: IZone;
   setZone: any;
   zoneId: string;
-  ds: TsDataSource;
-  currentWidgets: any;
-  setCurrentWidgets: any;
-  dataUrl?: string;
 }
 
-function ComponentPickerModal(props: Props) {
+export function ComponentPickerModal(props: PComponentPickerModal) {
   const {
     open,
     setOpen,
     zone,
     setZone,
     zoneId,
-    ds,
-    currentWidgets,
-    setCurrentWidgets,
-    dataUrl,
+    dataSource,
+    boardDataSource,
   } = props;
   const [componentType, setComponentType] = useState("");
   const [widgetType, setWidgetType] = useState("");
   const [title, setTitle] = useState<string>("");
   const [idError, setIdError] = useState(false);
   const [fieldError, setFieldError] = useState(false);
+
+  useEffect(() => {
+    if (!open) {
+      reset();
+    }
+  }, [open]);
 
   function reset() {
     setComponentType("");
@@ -72,73 +77,46 @@ function ComponentPickerModal(props: Props) {
     return validId && validField;
   }
 
-  useEffect(() => {
-    if (!open) {
-      reset();
-    }
-  }, [open]);
-
   const onAddComponent = async () => {
     if (checkStates()) {
-      const highestOrder = Object.values(zone.components).reduce(
-        (max, component) => {
-          return component.data.order! > max ? component.data.order : max;
-        },
-        0,
-      );
-      const nextOrder = highestOrder! + 1;
-      //All components added are set with portal as baseUrl
-      const newComponent = await addComponent(
-        ds,
+      const nextOrder = getNextComponentOrder(zone);
+      const newComponent = await upsertNewComponent(
+        dataSource,
+        boardDataSource,
         zone.type!,
         title,
         nextOrder,
         componentType,
         widgetType,
         zoneId,
-        dataUrl,
       );
-      //This adds the component to the zone
-      defineComponent(
-        {
-          id: newComponent.newComponentId,
-          size: widgetType,
-          type: componentType,
-          order: nextOrder,
-        },
-        zone,
-      );
-      zone.order = [...zone.order, newComponent.newComponentId];
-      // This adds the component to the currentWidgets to be rendered
-      setCurrentWidgets([
-        ...currentWidgets,
-        {
-          componentId: newComponent.newComponentId,
-          order: nextOrder,
-          componentZoneId: newComponent.newComponentZoneId,
-          baseUrl: dataUrl,
-          componentType: componentType,
-          filter: { and_: {} },
-          title: title,
-          objectType: zone.type,
-          config: {},
-          widgetType: widgetType,
-          filterPassThrough: false,
-        },
-      ]);
-
+      addComponent({
+        id: newComponent.newComponentId,
+        size: widgetType,
+        type: componentType,
+        order: nextOrder,
+        componentZoneId: newComponent.newComponentZoneId,
+        baseUrl: dataSource.getBaseUrl(),
+        apiPrefix: dataSource.getApiPrefix(),
+        filter: { and_: {} },
+        title: title,
+        objectType: zone.type,
+        config: {},
+        filterPassThrough: false,
+      }, zone);
       setZone({ ...zone });
       reset();
       setOpen(false);
     }
   };
 
-  const plusButton = (
+  const PlusButton = (
     <Button
       type="success"
       onClick={onAddComponent}
       icon="plus"
       position="right"
+      testid="confirm-add-component-button"
     />
   );
 
@@ -147,13 +125,13 @@ function ComponentPickerModal(props: Props) {
       open={open}
       size="md"
       setOpen={setOpen}
-      actionButton={plusButton}
+      actionButton={PlusButton}
       overflow={false}
       className={"dashboard-component-modal-full"}
     >
       <>
         <h6>
-          Select Component <span style={{ color: "red" }}>*</span>
+          Select Component <span className="tol-danger-colour">*</span>
         </h6>
         <Row>
           {componentOptions.map((option, index) => {
@@ -167,6 +145,7 @@ function ComponentPickerModal(props: Props) {
                         : "tol-component-modal-btn-clicked"
                     }
                     onClick={() => setComponentType(option.type)}
+                    data-testid={`component-option-${option.type}`}
                   >
                     <Icon icon={option.icon} size="4x" />
                     <h6>{option.text}</h6>
@@ -187,7 +166,7 @@ function ComponentPickerModal(props: Props) {
         </Row>
         <br />
         <h6>
-          Select Size <span style={{ color: "red" }}>*</span>
+          Select Size <span className="tol-danger-colour">*</span>
         </h6>
         <Row>
           {sizeOptions(componentType).map((option, index) => {
@@ -219,7 +198,7 @@ function ComponentPickerModal(props: Props) {
         </Row>
         <br />
         <h6>
-          Enter Title <span style={{ color: "red" }}>*</span>
+          Enter Title <span className="tol-danger-colour">*</span>
         </h6>
         <RSForm fluid>
           <FormTextField
@@ -244,5 +223,3 @@ function ComponentPickerModal(props: Props) {
     </Modal>
   );
 }
-
-export default ComponentPickerModal;

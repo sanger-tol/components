@@ -1,6 +1,8 @@
-// SPDX-FileCopyrightText: 2022 Genome Research Ltd.
-//
-// SPDX-License-Identifier: MIT
+/*
+SPDX-FileCopyrightText: 2022 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
 
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";

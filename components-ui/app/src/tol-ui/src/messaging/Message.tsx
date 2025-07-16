@@ -22,7 +22,7 @@ interface Props {
   bordered?: boolean;
 }
 
-const Message = React.forwardRef<HTMLDivElement, Props>(
+export const Message = React.forwardRef<HTMLDivElement, Props>(
   (props: Props, ref: React.Ref<HTMLDivElement>) => {
     const {
       children,
@@ -57,5 +57,3 @@ const Message = React.forwardRef<HTMLDivElement, Props>(
     );
   },
 );
-
-export default Message;

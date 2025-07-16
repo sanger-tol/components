@@ -14,7 +14,7 @@ interface Props {
   styles?: React.CSSProperties;
 }
 
-function TolLoader(props: Props) {
+export function TolLoader(props: Props) {
   const { size, content, vertical, styles } = props;
 
   return (
@@ -28,5 +28,3 @@ function TolLoader(props: Props) {
     </div>
   );
 }
-
-export default TolLoader;

@@ -4,20 +4,20 @@
  * SPDX-License-Identifier: MIT
  */
 
-import Modal from "../general/Modal";
-import { Button } from "../index";
+import { Button, Modal } from "..";
 
-interface Props {
-  setOpen: any;
+
+export interface PConfirmationModal {
   open: any;
+  setOpen: any;
   onConfirmClick?: any;
   itemType?: string;
 }
 
-function ConfirmationModal(props: Props) {
-  const { setOpen, open, onConfirmClick, itemType } = props;
+export function ConfirmationModal(props: PConfirmationModal) {
+  const { open, setOpen, onConfirmClick, itemType } = props;
 
-  const actionButtons = (
+  const Buttons = (
     <div style={{ paddingBottom: "35px" }}>
       <Button
         position="right"
@@ -26,6 +26,7 @@ function ConfirmationModal(props: Props) {
           setOpen(false), onConfirmClick();
         }}
         text="Confirm"
+        testid="confirm-delete-button"
       />
       <Button
         position="right"
@@ -36,21 +37,9 @@ function ConfirmationModal(props: Props) {
     </div>
   );
 
-  const header = (
+  const Header = (
     <div>
       <h4>Confirm Deletion</h4>
-    </div>
-  );
-
-  const body = (
-    <div>
-      <p style={{ marginBottom: "-6px" }}>
-        Are you sure you want to delete this {itemType ?? "item"}?
-      </p>
-      <p style={{ color: "#d62915" }}>
-        Warning: If you delete this {itemType ?? "item"}, you will not be able
-        to retrieve it later.
-      </p>
     </div>
   );
 
@@ -60,13 +49,20 @@ function ConfirmationModal(props: Props) {
         setOpen={setOpen}
         open={open}
         size={"sm"}
-        children={body}
         closeButton={false}
-        header={header}
-        actionButton={actionButtons}
-      />
+        header={Header}
+        actionButton={Buttons}
+      >
+        <div>
+          <p style={{ marginBottom: "-6px" }}>
+            Are you sure you want to delete this {itemType ?? "item"}?
+          </p>
+          <p style={{ color: "#d62915" }}>
+            Warning: If you delete this {itemType ?? "item"}, you will not be able
+            to retrieve it later.
+          </p>
+        </div>
+      </Modal>
     </div>
   );
 }
-
-export default ConfirmationModal;

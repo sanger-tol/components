@@ -6,7 +6,11 @@ SPDX-License-Identifier: MIT
 
 import React, { useState } from "react";
 import { Button as RsButton } from "rsuite";
-import { TolLoader, HoverOverlay, Icon } from "../index";
+import {
+  TolLoader,
+  HoverOverlay,
+  Icon
+} from "..";
 
 export interface IButton {
   icon?: string;
@@ -26,9 +30,10 @@ export interface IButton {
   visible?: boolean;
   limit?: number;
   timeout?: number;
+  testid?: string;
 }
 
-function Button(props: IButton) {
+export function Button(props: IButton) {
   const {
     icon,
     onClick,
@@ -45,6 +50,7 @@ function Button(props: IButton) {
     outline,
     id,
     visible = true,
+    testid,
     limit = 0,
     timeout = 0,
   } = props;
@@ -97,6 +103,7 @@ function Button(props: IButton) {
           className={`icon-button-${type || "primary"}-${
             size || "md"
           }${outlineClass} ${className ? className : ""}`}
+          data-testid={testid}
         >
           {loading ? (
             loader
@@ -141,5 +148,3 @@ function Button(props: IButton) {
     </div>
   );
 }
-
-export default Button;

@@ -5,7 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Button, InfoTooltip, Modal } from "../../index";
+import { Button, InfoTooltip, Modal } from "../..";
+
 
 interface Props {
   showIdExportModal: boolean;
@@ -19,7 +20,7 @@ interface Props {
   currentActionName: string;
 }
 
-function ActionCheckModal(props: Props) {
+export function ActionCheckModal(props: Props) {
   const {
     showIdExportModal,
     setShowIdExportModal,
@@ -185,5 +186,3 @@ function ActionCheckModal(props: Props) {
     </div>
   );
 }
-
-export default ActionCheckModal;

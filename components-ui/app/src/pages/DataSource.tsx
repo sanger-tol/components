@@ -6,7 +6,7 @@
 
 import { TsDataSource, DetailAttribute, Widgets, env } from "../tol-ui/src";
 
-function DataSource() {
+export function DataSource() {
   const ds1 = new TsDataSource({ baseUrl: env.TOL_DATA });
 
   ds1
@@ -15,7 +15,15 @@ function DataSource() {
       id: "9606",
     })
     .then((dataObject) => {
-      console.log(dataObject);
+      console.log("Get One: ", dataObject);
+    });
+
+  ds1
+    .getListPage({
+      objectType: "species",
+    })
+    .then((dataObjects) => {
+      console.log("List Page: ", dataObjects);
     });
 
   ds1
@@ -111,21 +119,21 @@ function DataSource() {
       in table cells.
       <DetailAttribute
         id="9606"
-        endpoint="species"
+        objectType="species"
+        dataSource={ds1}
         attribute="id"
-        baseUrl={env.TOL_DATA}
       />
       <DetailAttribute
         id="9606"
-        endpoint="species"
+        objectType="species"
+        dataSource={ds1}
         attribute="tolid_prefix"
-        baseUrl={env.TOL_DATA}
       />
       <DetailAttribute
         id="9606"
-        endpoint="species"
+        objectType="species"
+        dataSource={ds1}
         attribute="sts_order_group"
-        baseUrl={env.TOL_DATA}
       />
     </div>
   );
@@ -147,5 +155,3 @@ function DataSource() {
     </div>
   );
 }
-
-export default DataSource;

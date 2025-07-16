@@ -27,7 +27,7 @@ const d1 = [
   },
 ];
 
-function BarCharts() {
+export function BarCharts() {
   const [bar, setBar] = useState({});
 
   const basicChart = (
@@ -40,7 +40,6 @@ function BarCharts() {
       <BarChart
         id="basic-stacked"
         stacked
-        title="Basic Stacked Bar Chart"
         labels={labels}
         datasets={d1}
         setBarData={setBar}
@@ -62,5 +61,3 @@ function BarCharts() {
     </div>
   );
 }
-
-export default BarCharts;

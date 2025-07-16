@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Playwright test (.env.dev)",
+        "type": "shell",
+        "command": "export $(grep -E '^(POSTGRES_USER|POSTGRES_PASSWORD|POSTGRES_DB)=' ../../.env.dev | sed 's/\"/\\\\\"/g') && POSTGRES_HOST=localhost POSTGRES_PORT=5442 npx playwright test",
+        "options": {
+          "cwd": "${workspaceFolder}/test/playwright"
+        },
+        "problemMatcher": []
+      }
+    ]
+  }
+  

@@ -8,24 +8,21 @@ import {
   BoardCount,
   BoardTable,
   BoardSunburst,
-  BoardChart
-} from "../../index";
-import { IZone } from "../utils";
+  BoardChart,
+  IBoardTargetAndZone,
+  BoardMarkdown
+} from "../..";
 
-interface Props {
+
+export interface PVisualisation extends IBoardTargetAndZone {
   id: string;
-  zone: IZone;
-  setZone: any;
-
-  objectType: string;
-  baseUrl: string;
   config: any;
   title: string;
   componentType: string;
   size: string
 }
 
-function Visualisation(props: Props) {
+export function Visualisation(props: PVisualisation) {
   const { componentType } = props;
 
   switch (componentType) {
@@ -37,7 +34,7 @@ function Visualisation(props: Props) {
       return <BoardSunburst {...props} />;
     case "chart":
       return <BoardChart {...props} />;
+    case "text":
+      return <BoardMarkdown {...props} />;
   }
 }
-
-export default Visualisation;

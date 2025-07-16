@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { Popover, Whisper } from "rsuite";
 
-export interface Props {
+interface Props {
   contents: ReactNode;
   children: JSX.Element;
   placement?: string;
@@ -15,7 +15,7 @@ export interface Props {
   closeOnClick?: boolean;
 }
 
-function ClickOverlay(props: Props) {
+export function ClickOverlay(props: Props) {
   let { contents, children, placement = "auto", delay, closeOnClick } = props;
   const overlayRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -63,5 +63,3 @@ function ClickOverlay(props: Props) {
     </div>
   );
 }
-
-export default ClickOverlay;

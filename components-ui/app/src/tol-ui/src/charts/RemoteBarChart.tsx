@@ -4,37 +4,34 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import BarChart from "./BarChart";
+import { ReactNode, useEffect, useState } from "react";
 import {
   generateChartAgg,
   generateChartFilterFromBar,
   HistogramGrouping,
   aggsToBarChartData,
   isChartDataEmpty,
-} from "./utils";
-import { ReactNode, useEffect, useState } from "react";
-import { useEffectUpdate } from "../hooks/useEffectUpdate";
-import { normaliseCaps } from "../general/utils";
-import { httpClient } from "../services/http/httpClient";
-import Placeholder from "../general/Placeholder";
-import {
+  BarChart,
+  useEffectUpdate,
+  normaliseCaps,
+  Placeholder,
   addSubFilter,
   filterHasUpdated,
   generateFilter,
   resetFiltersBelow,
-} from "../filtering/utils";
-import { IUtilityBar } from "../general/UtilityBar";
+  IUtilityBar,
+  IRemoteTargetAndZone,
+  TFilterOrUndefined,
+  API_METHODS
+} from "..";
 
-interface Props {
+
+interface Props extends IRemoteTargetAndZone {
   id: string;
-  endpoint: string;
-  baseUrl?: string;
   breakDownBy: string;
   xAxis: string;
   type: HistogramGrouping;
   shortDate?: boolean;
-  zone?: any;
-  setZone?: any;
   height?: any;
   stacked?: boolean;
   cumulative?: boolean;
@@ -45,11 +42,11 @@ interface Props {
   chartType?: string;
 }
 
-function RemoteBarChart(props: Props) {
+export function RemoteBarChart(props: Props) {
   const {
     id,
-    endpoint,
-    baseUrl,
+    objectType,
+    dataSource,
     breakDownBy,
     xAxis,
     type,
@@ -58,7 +55,7 @@ function RemoteBarChart(props: Props) {
     setZone,
     cumulative,
     forceUpdate,
-    contents
+    contents,
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const [labels, setLabels] = useState([]);
@@ -67,7 +64,7 @@ function RemoteBarChart(props: Props) {
   const [warningMessage, setWarningMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [barData, setBarData] = useState<object>({});
-  const [filter, setFilter] = useState<object | undefined>({});
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
@@ -82,9 +79,11 @@ function RemoteBarChart(props: Props) {
     if (!contents) { // This is to stop calls being made when the bar chart is not visible
       setLoading(true);
       const aggs = generateChartAgg(breakDownBy, xAxis, type);
-      httpClient()
-        .post("/" + endpoint + ":aggregations", aggs, {
-          baseURL: baseUrl,
+      dataSource
+        .custom({
+          method: API_METHODS.POST,
+          resource: `${objectType}:aggregations`,
+          body: aggs,
           params: {
             filter: filter,
           },
@@ -144,19 +143,13 @@ function RemoteBarChart(props: Props) {
   const setter = cumulative || setZone === undefined ? undefined : setBarData;
 
   return (
-    <div style={{ height: height }}>
-      <div className="tol-component-contents">
-        <BarChart
-          {...props}
-          contents={contents ? contents : Contents()}
-          downloadName={normaliseCaps(endpoint)}
-          labels={labels}
-          datasets={datasets}
-          setBarData={setter}
-        />
-      </div>
-    </div>
+    <BarChart
+      {...props}
+      contents={contents ? contents : Contents()}
+      downloadName={normaliseCaps(objectType)}
+      labels={labels}
+      datasets={datasets}
+      setBarData={setter}
+    />
   )
 }
-
-export default RemoteBarChart;

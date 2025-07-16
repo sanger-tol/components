@@ -4,8 +4,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button } from "..";
 import { Modal as RSModal } from "rsuite";
+import { Button } from "..";
+
 
 export interface Props {
   size?: string;
@@ -22,9 +23,18 @@ export interface Props {
   onExited?: () => void;
 }
 
-const Modal = (props: Props) => {
-  const { size = "md", open, setOpen, children, header, actionButton, className, onClose, onEnter, onExited } =
-    props;
+export function Modal(props: Props) {
+  const {
+    size = "md",
+    open,
+    setOpen,
+    children,
+    header,
+    actionButton,
+    className,
+    onClose, onEnter,
+    onExited
+  } = props;
   const closeButton = props.closeButton ?? true;
   const rsOverflow = props.overflow !== false;
   const handleClose = () => {
@@ -64,5 +74,3 @@ const Modal = (props: Props) => {
     </>
   );
 };
-
-export default Modal;

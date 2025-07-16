@@ -5,24 +5,29 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect } from "react";
-import { httpClient } from "../services/http/httpClient";
-import { LoadingContent } from "../index";
+import {
+  LoadingContent,
+  TsDataSource,
+  API_METHODS,
+} from "..";
+
 
 interface Props {
-  endpoint: string;
-  baseUrl?: string;
+  resource: string;
+  dataSource: TsDataSource;
   loadingMessage?: string;
   response: any;
   setResponse: any;
 }
 
-function RemoteGet(props: Props) {
-  const { endpoint, baseUrl, loadingMessage, response, setResponse } = props;
+export function RemoteGet(props: Props) {
+  const { resource, dataSource, loadingMessage, response, setResponse } = props;
 
   useEffect(() => {
-    httpClient()
-      .get("/" + endpoint, {
-        baseURL: baseUrl,
+    dataSource
+      .custom({
+        method: API_METHODS.GET,
+        resource,
       })
       .then((res: any) => {
         setResponse(res);
@@ -39,5 +44,3 @@ function RemoteGet(props: Props) {
 
   return <></>;
 }
-
-export default RemoteGet;

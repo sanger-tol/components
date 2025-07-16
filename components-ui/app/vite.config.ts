@@ -1,6 +1,8 @@
-// SPDX-FileCopyrightText: 2024 Genome Research Ltd.
-//
-// SPDX-License-Identifier: MIT
+/*
+SPDX-FileCopyrightText: 2024 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
 
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
@@ -49,6 +51,11 @@ export default defineConfig({
       if (log === "message from third party library" && type === "stdout") {
         return false;
       }
+    },
+    deps: {
+      // force Vitest to treat these as ESM and bundle them into the
+      // test environment, rather than trying to require() them
+      inline: ["@react-leaflet/core", "react-leaflet-cluster"],
     },
   },
 });

@@ -4,11 +4,12 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import {
   Home,
   BarCharts,
   Colours,
+  DataSource,
   Detail,
   DetailInfo,
   Filters,
@@ -22,12 +23,12 @@ import {
   Widgets,
   Messages,
   Factories,
+  Plates,
   FileValidation
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
-import { TolApp, Page, Dropdown, env } from "./tol-ui/src";
+import { TolApp, Page, Dropdown, TOL_DS } from "./tol-ui/src";
 import "./scss/styling.scss";
-import DataSource from "./pages/DataSource";
 
 // main data-driven components
 const barCharts: Page = {
@@ -110,6 +111,16 @@ const factories: Page = {
   element: <Factories />
 }
 
+const visualisationsDropdown: Dropdown = {
+  name: "Visualisations",
+  pages: [barCharts, filters, maps, sunbursts, tables, timelines],
+};
+
+const plates: Page = {
+  name: "Plates",
+  element: <Plates />,
+};
+
 const fileValidation: Page = {
   name: "File Validation",
   element: <FileValidation /> 
@@ -117,13 +128,8 @@ const fileValidation: Page = {
 
 const otherDropdown: Dropdown = {
   name: "Other",
-  pages: [colours, detail, forms, messages, miscellaneous, tsds, widgets, fileValidation, portal],
+  pages: [colours, detail, factories, forms, messages, miscellaneous, tsds, widgets, plates, fileValidation, portal],
 };
-
-const docsDropdown: Dropdown = {
-  name: "Docs",
-  pages: [factories]
-}
 
 // dev sandbox - change element if needed
 const sandbox: Page = {
@@ -132,25 +138,19 @@ const sandbox: Page = {
   hidden: true,
 };
 
-ReactDOM.render(
-  // eslint-disable-line
+
+const root = createRoot(document.getElementById('root')!);
+root.render(
   <TolApp
-    boards={{ dataUrl: env.TOL_DATA }}
+    boards={{dataSource: TOL_DS}}
     brand="Components"
     homePage={<Home />}
     pages={[
-      barCharts,
-      sunbursts,
-      tables,
-      filters,
-      maps,
-      timelines,
+      visualisationsDropdown,
       otherDropdown,
-      docsDropdown,
       sandbox,
     ]}
-  />,
-  document.getElementById("root"),
+  />
 );
 
 // If you want to start measuring performance in your app, pass a function

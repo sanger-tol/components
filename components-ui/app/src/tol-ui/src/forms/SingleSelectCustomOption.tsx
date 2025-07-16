@@ -10,8 +10,11 @@ when 'other' is selected, allowing for custom response
 */
 
 import { useState, useEffect } from "react";
-import { RSForm } from "../index";
-import { SingleSelect, FormTextField } from "./index";
+import {
+  RSForm,
+  SingleSelect,
+  FormTextField,
+} from "..";
 
 interface Props {
   id: string;
@@ -22,7 +25,7 @@ interface Props {
   customOptionPlaceholder?: string;
 }
 
-function SingleSelectCustomOption(props: Props) {
+export function SingleSelectCustomOption(props: Props) {
   const { id, value, setValue, data, label, customOptionPlaceholder } = props;
 
   const [selectedOption, setSelectedOption] = useState("");
@@ -100,5 +103,3 @@ function SingleSelectCustomOption(props: Props) {
     </>
   );
 }
-
-export default SingleSelectCustomOption;

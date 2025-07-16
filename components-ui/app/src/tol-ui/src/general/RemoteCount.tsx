@@ -5,33 +5,32 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { httpClient } from "../services/http/httpClient";
-import { numberWithSpaces } from "./utils";
-import Placeholder from "./Placeholder";
 import {
   generateFilter,
   filterHasUpdated,
   resetFiltersBelow,
-} from "../filtering/utils";
-import { useEffectUpdate } from "../hooks";
-import { IUtilityBar } from "../general/UtilityBar";
-import UtilityBar from "./UtilityBar";
+  Placeholder,
+  numberWithSpaces,
+  useEffectUpdate,
+  UtilityBar,
+  IUtilityBar,
+  TFilterOrUndefined,
+  API_METHODS,
+  IRemoteTargetAndZone,
+} from "..";
 
-interface Props {
+
+interface Props extends IRemoteTargetAndZone {
   id: string;
-  endpoint: string;
-  baseUrl?: string;
-  zone?: object;
-  setZone?: any;
   utilityBarConfig?: IUtilityBar;
 }
 
-function RemoteCount(props: Props) {
-  const { id, endpoint, baseUrl, zone, setZone, utilityBarConfig } = props;
+export function RemoteCount(props: Props) {
+  const { id, objectType, dataSource, zone, setZone, utilityBarConfig } = props;
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [filter, setFilter] = useState<object | undefined>({});
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
@@ -44,12 +43,13 @@ function RemoteCount(props: Props) {
 
   useEffectUpdate(() => {
     setLoading(true);
-    httpClient()
-      .get("/" + endpoint + ":count", {
-        baseURL: baseUrl,
+    dataSource
+      .custom({
+        method: API_METHODS.GET,
+        resource: `${objectType}:count`,
         params: {
-          filter: filter,
-        },
+          filter: filter
+        }
       })
       .then((res: any) => {
         const total = res.data.meta.total;
@@ -83,11 +83,9 @@ function RemoteCount(props: Props) {
   return (
     <>
       <UtilityBar id={id} {...utilityBarConfig} />
-      <div className="tol-component-contents">
+      <div className="tol-component-contents-with-offset">
         <Contents />
       </div>
     </>
   );
 }
-
-export default RemoteCount;

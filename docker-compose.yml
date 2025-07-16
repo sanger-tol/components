@@ -117,6 +117,7 @@ services:
     build: test/playwright
     volumes:
       - "./test/playwright:/usr/src/app:rw"
+      - "/usr/src/app/node_modules"
     environment:
       - PLAYWRIGHT_URL=https://host.docker.internal:3011
       - POSTGRES_USER
@@ -125,3 +126,4 @@ services:
       - POSTGRES_HOST
       - POSTGRES_PORT
       - HEADLESS=true
+      - DOCKER_COMPOSE=1

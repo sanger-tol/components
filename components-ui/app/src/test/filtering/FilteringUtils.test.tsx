@@ -22,9 +22,10 @@ import {
   resetZone,
   setFilter,
   filterListener,
-} from "../../tol-ui/src/filtering/utils";
-import { IZone } from "../../tol-ui/src/boards/utils";
-import { IFilter } from "../../tol-ui/src/models/Filter";
+  IZone,
+  IFilter,
+} from "../../tol-ui/src";
+
 
 describe("Testing getComponentsAbove function", () => {
   test("Returns correct values above", () => {

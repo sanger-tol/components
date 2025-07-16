@@ -5,18 +5,21 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { isEmptyObject, stopPropagation } from "../general/utils";
-import MultipleSelect from "../forms/MultipleSelect";
-import { useEffectUpdate } from "../hooks/useEffectUpdate";
+import {
+  isEmptyObject,
+  stopPropagation,
+  MultipleSelect,
+  useEffectUpdate,
+} from "..";
 
-export interface Props {
+interface Props {
   id: string;
   rename: string;
   filter: object;
   setFilter: any;
 }
 
-function FilterBooleanPicker(props: Props) {
+export function FilterBooleanPicker(props: Props) {
   const { id, rename, filter, setFilter } = props;
   const filterType: string = "in_list";
   const [value, setValue] = useState<any>([]);
@@ -88,5 +91,3 @@ function FilterBooleanPicker(props: Props) {
     </span>
   );
 }
-
-export default FilterBooleanPicker;

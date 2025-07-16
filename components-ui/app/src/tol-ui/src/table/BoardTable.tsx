@@ -4,68 +4,88 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { FieldMeta, initialiseFieldMeta } from "./Field";
-import { BoardFilters, RemoteTable, TsDataSource } from "../index";
 import { useState } from "react";
-import { upsertComponentConfig, IZone, saveTitle } from "../boards/utils";
+import {
+  FieldMeta,
+  initialiseFieldMeta,
+  BoardFilters,
+  RemoteTable,
+  saveTitle,
+  IBoardTargetAndZone,
+  updateConfigAndUpsert
+} from "..";
 
-interface Props {
+
+interface Props extends IBoardTargetAndZone {
   id: string;
-  objectType: string;
-  baseUrl?: string;
   title: string;
   config: any;
-  zone: IZone;
-  setZone: any;
 }
 
-function BoardTable(props: Props) {
-  const { id, objectType } = props;
-  const ds = new TsDataSource();
+export function BoardTable(props: Props) {
+  const { id, title, boardObjectType, boardDataSource, zone } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
 
-  const onModalSave = (fm: FieldMeta, actions: string[]) => {
+  const onModalSave = (fm: FieldMeta, actions: string[], sortByAtt: string) => {
     config["fieldMeta"] = fm;
     config["actions"] = actions;
+    config["sort_by"] = sortByAtt
     setForceUpdate(!forceUpdate); // fetches new data on save
     setConfig({ ...config });
-    upsertComponentConfig(ds, id, config);
+    updateConfigAndUpsert(
+      id,
+      config,
+      zone,
+      boardDataSource
+    );
   };
 
   const onToggleFilterVisibility = (visible: boolean) => {
     config["filterVisibility"] = visible;
     setConfig({ ...config });
-    upsertComponentConfig(ds, id, config);
+    updateConfigAndUpsert(
+      id,
+      config,
+      zone,
+      boardDataSource
+    );
   };
 
   const onPageSizeChange = (pageSize: boolean) => {
     config["pageSize"] = pageSize;
     setConfig({ ...config });
-    upsertComponentConfig(ds, id, config);
+    updateConfigAndUpsert(
+      id,
+      config,
+      zone,
+      boardDataSource
+    );
   };
 
   const boardFilter = [
     <span key="board-table-filter">
       <BoardFilters
-        endpoint={objectType}
-        entityType="component"
+        {...props}
         open={openFilters}
         setOpen={setOpenFilters}
-        {...props}
       />
     </span>,
   ];
 
   return (
     <RemoteTable
+      {...props}
       displaySource
-      endpoint={objectType}
       fieldMeta={config.fieldMeta || initialiseFieldMeta()}
       pageSize={config.pageSize || 50}
       filterVisibility={config.filterVisibility ?? true}
-      defaultSort={config?.fieldMeta?.order?.active[0] || undefined}
+      defaultSort={
+        config.sort_by ||
+        config?.fieldMeta?.order?.active[0] ||
+        undefined
+      }
       onModalSave={onModalSave}
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
@@ -74,10 +94,10 @@ function BoardTable(props: Props) {
       rowSelection={config.actions?.length > 0}
       utilityBarConfig={{
         title: {
-          title: props.title,
+          text: title,
           editable: true,
           onSave: (value: string) => {
-            saveTitle(value, ds, id, "component");
+            saveTitle(value, id, boardObjectType, boardDataSource);
           }
         },
         elements: boardFilter,
@@ -89,9 +109,6 @@ function BoardTable(props: Props) {
           icon: "filter",
         }],
       }}
-      {...props}
     />
   );
 }
-
-export default BoardTable;

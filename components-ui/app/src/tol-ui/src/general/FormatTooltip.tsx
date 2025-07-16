@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { formatDate } from "./utils";
+import { formatDate } from "..";
 
 const updateContents = (contents: object) => {
   for (const [key, value] of Object.entries(contents)) {
@@ -30,7 +30,7 @@ interface Props {
   contents: object;
 }
 
-function FormatTooltip(props: Props) {
+export function FormatTooltip(props: Props) {
   return (
     <div className="tooltip-contents">
       {Object.entries(updateContents(props.contents)).map(([key, value]) => (
@@ -42,5 +42,3 @@ function FormatTooltip(props: Props) {
     </div>
   );
 }
-
-export default FormatTooltip;

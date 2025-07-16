@@ -5,51 +5,52 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReactNode, useEffect, useState } from "react";
-import { FieldMetaData, FieldMeta } from "./Field";
-import { httpClient } from "../services/http/httpClient";
 import {
-  createSort,
-  getFieldMetaLocalStorage,
-  setTableConfigLocalStorage,
+  ACTIONS,
+  ActionCheckModal,
+  ActionModal,
+  API_METHODS,
+  FieldMeta,
+  FieldMetaData,
+  IRemoteTargetAndZone,
+  IUtilityBar,
+  IZone,
+  IDropdownButtonConfig,
+  NumRows,
+  Placeholder,
+  RowCounter,
+  Table,
+  addRemoteActions,
   convertTableData,
-  tableDebug,
-  structureFieldMeta,
-  getTableConfigLocalStorage,
-} from "./utils";
-import Table, { NumRows } from "./Table";
-import { Placeholder, TsDataSource } from "../index";
-import { useEffectUpdate } from "../hooks/useEffectUpdate";
-import { IZone } from "../boards";
-import {
-  generateFilter,
+  createSort,
   filterHasUpdated,
+  generateFilter,
+  getFieldMetaLocalStorage,
+  getTableConfigLocalStorage,
   resetFiltersBelow,
-} from "../filtering/utils";
-import RowCounter from "./RowCounter";
-import { IDropdownButtonConfig } from "../models";
-import ActionCheckModal from "./actions/ActionCheckModal";
-import { ACTION_ENDPOINTS, ApiMethods } from "../constants";
-import ActionModal from "./actions/ActionModal";
-import { addRemoteActions } from "./actions/utils";
-import { useStateFallback } from "../hooks";
-import { IUtilityBar } from "../general/UtilityBar";
+  setTableConfigLocalStorage,
+  structureFieldMeta,
+  tableDebug,
+  useEffectUpdate,
+  useStateFallback,
+  TsDataSource,
+  LOCAL_API_PREFIX,
+} from '..';
 
-interface Props {
+
+interface Props extends IRemoteTargetAndZone {
   id: string;
-  endpoint: string;
-  baseUrl?: string;
   source?: string;
   attributeMetadataUrl?: string;
   relationshipsUrl?: string;
 
   fields?: FieldMetaData;
-  fieldMeta?: FieldMeta; // for BoardTable use
+  // for direct injection with BoardTable use
+  fieldMeta?: FieldMeta;
   height?: any;
   basic?: boolean;
   forceUpdate?: boolean;
 
-  zone?: object; // required for table filtering
-  setZone?: any;
   onModalSave?: any;
   onPageSizeChange?: any;
   onToggleFilterVisibility?: any;
@@ -69,6 +70,7 @@ interface Props {
   contents?: ReactNode;
   groupBy?: boolean;
 
+  actionDataSource?: TsDataSource;
   actions?: (string | IDropdownButtonConfig)[];
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
@@ -76,12 +78,11 @@ interface Props {
   debug?: boolean;
 }
 
-function RemoteTable(props: Props) {
+export function RemoteTable(props: Props) {
   const {
     id,
-    endpoint,
-    baseUrl,
-    source,
+    objectType,
+    dataSource,
     fields,
     basic,
     forceUpdate,
@@ -90,26 +91,32 @@ function RemoteTable(props: Props) {
     onPageSizeChange,
     onToggleFilterVisibility,
     defaultSort,
-    displaySource,
     noFilter,
     noPagination,
     noSorting,
     noConfigModal,
     noDownload,
     rowSelection,
+    actionDataSource = new TsDataSource({
+      apiPrefix: LOCAL_API_PREFIX,
+    }),
     actions,
     utilityBarConfig,
     debug,
     contents,
-    groupBy
+    height = "100%",
   } = props;
-  const ds = new TsDataSource({ baseUrl });
-  const height = props.height !== undefined ? props.height : "100%";
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(
-    props.fieldMeta
+    props.fieldMeta || 
+    structureFieldMeta(
+      objectType,
+      getFieldMetaLocalStorage(id, fields),
+      undefined,
+      fields
+    )
   );
 
   // pagination
@@ -190,7 +197,7 @@ function RemoteTable(props: Props) {
     }
   }, [filterVisibility]);
 
-  const onModalSave = (fm: FieldMeta, actions?: string[]) => {
+  const onModalSave = (fm: FieldMeta, actions?: string[], sortByAttribute?: string, sortByType?: string) => {
     setFieldMeta(fm);
     resetFiltersBelow({
       id: id,
@@ -198,11 +205,17 @@ function RemoteTable(props: Props) {
       indexOffset: -1,
     });
     setZone({ ...zone });
-
+    
     if (props.onModalSave) {
-      props.onModalSave(fm, actions);
+      // Add in the default sort here
+      props.onModalSave(fm, actions, createSort(sortByAttribute || "", sortByType || "asc"));
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", fm);
+    }
+
+    if (sortByAttribute) {
+      setSortColumn(sortByAttribute);
+      setSortType(sortByType || "asc");
     }
   };
 
@@ -213,9 +226,7 @@ function RemoteTable(props: Props) {
       page: page,
       page_size: pageSize,
       filter: filter,
-      requested_fields: fields ? 
-        Object.keys(fields as Object).join(',') : 
-        (fieldMeta?.order.active || []).join(',')
+      requested_fields: (fieldMeta?.order.active || []).join(',')
     };
 
     // deal with sorting
@@ -226,12 +237,13 @@ function RemoteTable(props: Props) {
     }
 
     // get data and update state
-    httpClient()
-      .get("/" + endpoint, {
-        params: params,
-        baseURL: baseUrl,
+    dataSource
+      .custom({
+        method: API_METHODS.GET,
+        resource: objectType,
+        params
       })
-      .then(async (res: any) => {
+      .then(async (res) => {
         // error if endpoint doesn't return 200
         if (res.status !== 200) throw Error();
         const apiData = res.data.data;
@@ -242,12 +254,12 @@ function RemoteTable(props: Props) {
 
         // get attribute types and relationship links
         const entityMeta =
-          basic !== true ? await ds.getEntityMeta() : undefined;
+          basic !== true ? await dataSource.getEntityMeta() : undefined;
 
         let fm = fieldMeta;
         if (initialLoad) {
           fm = structureFieldMeta(
-            endpoint,
+            objectType,
             fieldMeta ?? getFieldMetaLocalStorage(id, fields),
             entityMeta,
             fields
@@ -261,7 +273,9 @@ function RemoteTable(props: Props) {
         tableDebug(apiData, fm!, debug);
 
         // setting data using fieldMeta
-        setData(convertTableData(apiData, fm as FieldMeta, baseUrl, entityMeta));
+        setData(
+          convertTableData(apiData, fm as FieldMeta, dataSource, entityMeta)
+        );
         setLoading(false);
         setInitialLoad(false);
       })
@@ -292,11 +306,17 @@ function RemoteTable(props: Props) {
 
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
-    await ds
-      .custom(ACTION_ENDPOINTS.RUN_ACTION, ApiMethods.POST as string, {
-        ids: ids,
-        action_name: actionName,
-        object_type: endpoint,
+    await actionDataSource!
+      .custom({
+        method: API_METHODS.POST,
+        resource: ACTIONS.RUN_ACTION,
+        body: {
+          data: {
+            ids: ids,
+            action_name: actionName,
+            object_type: objectType,
+          }
+        }
       })
       .finally(() => {
         setActionModalOpen(true);
@@ -306,7 +326,9 @@ function RemoteTable(props: Props) {
   };
 
   const convertedActions = addRemoteActions(
-    endpoint,
+    objectType,
+    dataSource,
+    actionDataSource,
     setCurrentActionName,
     setIdExportModalOpen,
     setIdsWithReqNotMet,
@@ -314,7 +336,6 @@ function RemoteTable(props: Props) {
     idsWithReqNotMet,
     completeAction,
     actions,
-    baseUrl ?? undefined
   );
 
   return (
@@ -331,21 +352,18 @@ function RemoteTable(props: Props) {
         currentActionName={currentActionName}
       />
       <ActionModal
-        objectType={endpoint}
+        objectType={ACTIONS.ACTION}
+        actionDataSource={actionDataSource}
         open={actionModalOpen}
         setOpen={setActionModalOpen}
       />
       <Table
-        id={id}
+        {...props}
         contents={contents ? contents : Contents()}
-        groupBy={groupBy}
         data={data}
         fieldMeta={fieldMeta!}
         height={height}
         loading={loading}
-        endpoint={endpoint}
-        baseUrl={baseUrl}
-        source={source}
         page={page}
         setPage={setPage}
         pageSize={pageSize}
@@ -359,15 +377,12 @@ function RemoteTable(props: Props) {
             {...props}
           />
         }
-        displaySource={displaySource}
         filterVisibility={filterVisibility}
         setFilterVisibility={setFilterVisibility}
         sortColumn={sortColumn}
         sortType={sortType}
         defaultSort={defaultSort}
         handleSortColumn={handleSortColumn}
-        zone={zone as IZone}
-        setZone={setZone}
         filter={filter}
         onModalSave={onModalSave}
         noFilter={noFilter}
@@ -388,5 +403,3 @@ function RemoteTable(props: Props) {
     </div>
   );
 }
-
-export default RemoteTable;
