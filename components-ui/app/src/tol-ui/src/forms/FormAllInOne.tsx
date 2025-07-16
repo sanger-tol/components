@@ -8,7 +8,6 @@ import { useState, useEffect, useRef } from "react";
 import {
   RSForm,
   Toaster,
-  Message,
   CountrySelect,
   FormTextField,
   SingleSelectCustomOption,
@@ -20,7 +19,8 @@ import {
   Button,
   IFormConfig,
   IButton,
-  MISSING_DATA_ERROR,
+  setInitialData,
+  validateForm,
   UNSUPPORTED_FIELD_TYPE
 } from "..";
 
@@ -48,7 +48,7 @@ export function FormAllInOne(props: PFormAllInOne) {
 
   useEffect(() => {
     if (initialData) {
-      setInitialData(initialData);
+      setInitialData(formConfig, setFormData, initialData);
     }
   }, []);
 
@@ -66,12 +66,6 @@ export function FormAllInOne(props: PFormAllInOne) {
     };
   }, []);
 
-  const pushErrorMessage = (message: string) => {
-    toaster.push(<Message children={message} type="error" showIcon={true} />, {
-      duration: 4000,
-    });
-  };
-
   useEffect(() => {
     const hasChanges = modifiedFields && Object.keys(modifiedFields).length > 0;
     hasUnsavedChanges.current = hasChanges;
@@ -80,35 +74,9 @@ export function FormAllInOne(props: PFormAllInOne) {
     }
   }, [modifiedFields, props.onUnsavedChanges]);
 
-  const validateForm = () => {
-    if (!formRef.current.check()) {
-      pushErrorMessage(MISSING_DATA_ERROR);
-      return false;
-    } else {
-      if (props.onSubmit) {
-        props.onSubmit(formData, true);
-      }
-      return true;
-    }
-  };
-
   const handleInputChange = (name: any, value: any) => {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
     setModifiedFields((prev: any) => ({ ...prev, [name]: value }));
-  };
-
-  const setInitialData = (data?: any) => {
-    setFormData(() => {
-      const initialData = {};
-      formConfig.fields.forEach((field: any) => {
-        if (field.type === "checkbox" && field.defaultChecked) {
-          initialData[field.name] = field.defaultChecked;
-        } else {
-          initialData[field.name] = data[field.name] || "";
-        }
-      });
-      return initialData;
-    });
   };
 
   const renderField = (field: any) => {
@@ -235,7 +203,15 @@ export function FormAllInOne(props: PFormAllInOne) {
         fluid={fluid}
         ref={formRef}
         id={`form-${formId}`}
-        onSubmit={validateForm}
+        onSubmit={(e: any) => {
+          e.preventDefault();
+          validateForm(
+            formRef,
+            toaster,
+            formData,
+            props.onSubmit
+          );
+        }}
         model={model || null}
         formValue={formData}
       >
@@ -256,7 +232,14 @@ export function FormAllInOne(props: PFormAllInOne) {
                   loading={button.loading}
                   onClick={() => {
                     if (modifiedFields && onValidate) {
-                      onValidate(validateForm());
+                      onValidate(
+                        validateForm(
+                          formRef,
+                          toaster,
+                          formData,
+                          props.onSubmit
+                        )
+                      );
                     }
                     setModifiedFields({});
                     if (button.onClick) {
