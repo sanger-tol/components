@@ -51,10 +51,10 @@ export class TsDataSource {
     this.sourceKey = `${baseUrl || "default"}/${apiPrefix || "default"}`;
   }
 
-  public generateEndpoint(target?: string, objectId?: string): string {
+  public generateEndpoint(target?: string, suffix?: string): string {
     const prefix = this.apiPrefix ? `/${this.apiPrefix}` : "";
     const tg = target ? `/${target}` : "";
-    const id = objectId ? `/${objectId}` : "";
+    const id = suffix ? `${suffix}` : "";
     return `${prefix}${tg}${id}`;
   }
 
@@ -293,7 +293,9 @@ export class TsDataSource {
   ): Promise<TDataObjectOrNull> {
     if (!(id in detailPromises[this.sourceKey][objectType])) {
       detailPromises[this.sourceKey][objectType][id] = this.client()
-        .get(this.generateEndpoint(objectType, id), { baseURL: this.baseUrl })
+        .get(this.generateEndpoint(objectType, `/${id}`), {
+          baseURL: this.baseUrl,
+        })
         .then((response: any) => {
           if (!EXCLUDED_DETAIL_CACHE_OBJECTS.includes(objectType)) {
             detailCache[this.sourceKey][objectType][id] = response.data.data;
@@ -324,7 +326,7 @@ export class TsDataSource {
     relation,
   }: IGetToOneRelation): Promise<TDataObjectOrNull> {
     return await this.client()
-      .get(`${this.generateEndpoint(objectType)}:to-one/${id}/${relation}`, {
+      .get(this.generateEndpoint(objectType, `:to-one/${id}/${relation}`), {
         baseURL: this.baseUrl,
       })
       .then((response: any) => {
@@ -377,7 +379,7 @@ export class TsDataSource {
   public async getList({
     objectType,
     filter,
-    requestedFields
+    requestedFields,
   }: IGetList): Promise<TDataObjectListOrNull> {
     const objectCursorLists = this.getListByCursor({
       objectType,
@@ -437,7 +439,7 @@ export class TsDataSource {
   }: IGetListCursor): Promise<TCursorDataObjectOrNull> {
     return await this.client()
       .post(
-        `${this.generateEndpoint(objectType)}:cursor`,
+        this.generateEndpoint(objectType, ':cursor'),
         { search_after: searchAfter },
         {
           baseURL: this.baseUrl,
@@ -446,8 +448,8 @@ export class TsDataSource {
             page_size: pageSize,
             filter: filter,
             requested_fields: requestedFields,
-          }
-        },
+          },
+        }
       )
       .then((response: any) => {
         const dataObjects = response.data.data.map((object: any) => {
@@ -464,7 +466,7 @@ export class TsDataSource {
   public async deleteByID({ objectType, id }: IGetOne): Promise<void> {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
-      .delete(this.generateEndpoint(objectType, id), { baseURL: this.baseUrl })
+      .delete(this.generateEndpoint(objectType, `/${id}`), { baseURL: this.baseUrl })
       .then(() => {
         if (id in detailCache[this.sourceKey][objectType]) {
           delete detailCache[this.sourceKey][objectType][id];
@@ -483,7 +485,7 @@ export class TsDataSource {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
       .post(
-        `${this.generateEndpoint(objectType)}:upsert`,
+        this.generateEndpoint(objectType, ':upsert'),
         { data: payload },
         { baseURL: this.baseUrl }
       )
