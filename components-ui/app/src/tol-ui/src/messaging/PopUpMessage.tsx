@@ -4,8 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { StaticMessage } from "./index";
-import { MessageType } from "./Message";
+import { StaticMessage, MessageType } from "..";
 import { toaster } from "rsuite";
 
 interface Props {

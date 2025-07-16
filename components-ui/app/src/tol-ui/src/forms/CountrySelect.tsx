@@ -11,13 +11,13 @@ import {
   RSForm
 } from "..";
 
-interface Props {
+export interface PCountrySelect {
   label?: string;
   value: string;
   setValue: any;
 }
 
-export function CountrySelect(props: Props) {
+export function CountrySelect(props: PCountrySelect) {
   const { label, value, setValue } = props;
 
   const countryOptions = useMemo(() => countryList().getData(), []);

@@ -5,8 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { Message } from "./index";
-import { MessageType } from "./Message";
+import { Message, MessageType } from "..";
 
 interface Props {
   message: string;

@@ -7,10 +7,9 @@ SPDX-License-Identifier: MIT
 import React from "react";
 import { Message as RSMessage } from "rsuite";
 import { capitaliseFirstLetter } from "../general/utils";
+import { MessageType } from "..";
 
-export type MessageType = "success" | "info" | "warning" | "error";
-
-interface Props {
+export interface PMessage {
   children: React.ReactNode;
   showIcon: boolean;
   type?: MessageType;
@@ -22,8 +21,8 @@ interface Props {
   bordered?: boolean;
 }
 
-export const Message = React.forwardRef<HTMLDivElement, Props>(
-  (props: Props, ref: React.Ref<HTMLDivElement>) => {
+export const Message = React.forwardRef<HTMLDivElement, PMessage>(
+  (props: PMessage, ref: React.Ref<HTMLDivElement>) => {
     const {
       children,
       showIcon,

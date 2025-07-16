@@ -16,7 +16,7 @@ import {
   FormTextField,
 } from "..";
 
-interface Props {
+interface PSingleSelectCustomOption {
   id: string;
   value: string;
   setValue: Function;
@@ -25,7 +25,7 @@ interface Props {
   customOptionPlaceholder?: string;
 }
 
-export function SingleSelectCustomOption(props: Props) {
+export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
   const { id, value, setValue, data, label, customOptionPlaceholder } = props;
 
   const [selectedOption, setSelectedOption] = useState("");
@@ -73,9 +73,8 @@ export function SingleSelectCustomOption(props: Props) {
   return (
     <>
       <RSForm.Group
-        controlId={`form${
-          label ? label.replace(/\s+/, "") : "OtherOptionSelect"
-        }`}
+        controlId={`form${label ? label.replace(/\s+/, "") : "OtherOptionSelect"
+          }`}
       >
         <RSForm.ControlLabel>
           {label || "Please select from the dropdown below..."}
@@ -92,9 +91,8 @@ export function SingleSelectCustomOption(props: Props) {
             id={`form-${id}-custom-${label}`}
             name={`custom${label ? label.replace(/\s+/, "") : "FormTextField"}`}
             label={`Other ${label || "Option"}`}
-            placeholder={`${
-              customOptionPlaceholder || "Please enter a custom option..."
-            }`}
+            placeholder={`${customOptionPlaceholder || "Please enter a custom option..."
+              }`}
             value={customValue}
             onChange={handleCustomValueChange}
           />

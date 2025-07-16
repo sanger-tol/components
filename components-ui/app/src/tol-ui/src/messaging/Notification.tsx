@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import React from "react";
 import { Notification as RSNotification } from "rsuite";
-import { MessageType } from "./Message";
+import { MessageType } from "..";
 
 type placement =
   | "topCenter"

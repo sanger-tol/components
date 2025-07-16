@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect, useRef } from "react";
-import { Button } from "rsuite";
 import {
   RSForm,
   Toaster,
@@ -18,46 +17,16 @@ import {
   AutoComplete,
   Dropzone,
   FormCheckboxes,
+  Button,
+  IFormConfig,
+  IButton,
+  MISSING_DATA_ERROR,
+  UNSUPPORTED_FIELD_TYPE
 } from "..";
 
 
-export type Appearance = "default" | "primary" | "link" | "subtle" | "ghost";
-export type Color =
-  | "red"
-  | "orange"
-  | "yellow"
-  | "green"
-  | "cyan"
-  | "blue"
-  | "violet";
-export type ButtonType = "button" | "submit" | "reset" | undefined;
-
-interface FormConfig {
-  fields: object[];
-  buttonConfig?: Buttons;
-}
-
-interface Buttons {
-  buttons: ButtonConfig[];
-  buttonStyle?: React.CSSProperties;
-}
-
-interface ButtonConfig {
-  text: string;
-  type?: ButtonType;
-  block?: boolean;
-  appearance?: Appearance;
-  active?: boolean;
-  color?: Color;
-  disabled?: boolean;
-  loading?: boolean;
-  endIcon?: React.ReactNode;
-  startIcon?: React.ReactNode;
-  onClick: (formData?: object) => void;
-}
-
-interface Props {
-  formConfig: FormConfig;
+interface PFormAllInOne {
+  formConfig: IFormConfig;
   initialData?: object;
   fluid?: boolean;
   model?: any;
@@ -66,11 +35,7 @@ interface Props {
   onSubmit?: (formData: object, isValid: boolean) => void;
 }
 
-const MISSING_DATA_ERROR =
-  "Please complete all required fields before submitting.";
-const UNSUPPORTED_FIELD_TYPE = "Unsupported field type:";
-
-export function FormAllInOne(props: Props) {
+export function FormAllInOne(props: PFormAllInOne) {
   const { formConfig, initialData, fluid, model, onValidate } = props;
 
   const [formData, setFormData] = useState<object>({});
@@ -280,25 +245,23 @@ export function FormAllInOne(props: Props) {
         {formConfig.buttonConfig && (
           <div style={formConfig.buttonConfig.buttonStyle}>
             {formConfig.buttonConfig.buttons.map(
-              (button: ButtonConfig, index: number) => (
+              (button: IButton, index: number) => (
                 <Button
                   key={`form-${formId}-button-${index}`}
-                  children={button.text}
-                  appearance={button.appearance}
-                  color={button.color}
+                  text={button.text}
+                  type={button.type}
+                  outline={button.outline}
                   active={button.active}
-                  block={button.block}
                   disabled={button.disabled}
                   loading={button.loading}
-                  endIcon={button.endIcon}
-                  startIcon={button.startIcon}
-                  type={button.type}
                   onClick={() => {
                     if (modifiedFields && onValidate) {
                       onValidate(validateForm());
                     }
                     setModifiedFields({});
-                    button.onClick(formData);
+                    if (button.onClick) {
+                      button.onClick(formData);
+                    }
                   }}
                 />
               ),
