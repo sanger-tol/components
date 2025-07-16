@@ -6,27 +6,19 @@ SPDX-License-Identifier: MIT
 
 import React from "react";
 import { Notification as RSNotification } from "rsuite";
-import { MessageType } from "..";
+import { TMessageType, TPlacement } from "..";
 
-type placement =
-  | "topCenter"
-  | "topStart"
-  | "topEnd"
-  | "bottomCenter"
-  | "bottomStart"
-  | "bottomEnd";
-
-interface Props {
+export interface PNotification {
   children: React.ReactNode;
   closable?: boolean;
   header?: string;
   onClose?: () => void;
-  placement?: placement;
-  type: MessageType;
+  placement?: TPlacement;
+  type: TMessageType;
 }
 
-export const Notification = React.forwardRef<HTMLDivElement, Props>(
-  (props: Props, ref: React.Ref<HTMLDivElement>) => {
+export const Notification = React.forwardRef<HTMLDivElement, PNotification>(
+  (props: PNotification, ref: React.Ref<HTMLDivElement>) => {
     const { children, closable, type, header, onClose, ...rest } = props;
 
     return (

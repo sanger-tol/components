@@ -5,18 +5,18 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { Message, MessageType } from "..";
+import { Message, TMessageType } from "..";
 
-interface Props {
+interface PStaticMessage {
   message: string;
-  type?: MessageType;
+  type?: TMessageType;
   header?: boolean;
   onClose?: () => void;
   bordered?: boolean;
 }
 
-export const StaticMessage = React.forwardRef<HTMLDivElement, Props>(
-  (props: Props, ref: React.Ref<HTMLDivElement>) => {
+export const StaticMessage = React.forwardRef<HTMLDivElement, PStaticMessage>(
+  (props: PStaticMessage, ref: React.Ref<HTMLDivElement>) => {
     const { message, type, header, onClose, ...rest } = props;
 
     return (

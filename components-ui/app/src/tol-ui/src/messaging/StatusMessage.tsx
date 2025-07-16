@@ -5,16 +5,16 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { Message, MessageType } from "..";
+import { Message, TMessageType } from "..";
 
-interface Props {
+export interface PStatusMessage {
   message: string;
-  status: MessageType;
+  status: TMessageType;
   bordered?: boolean;
 }
 
-export const StatusMessage = React.forwardRef<HTMLDivElement, Props>(
-  (props: Props, ref: React.Ref<HTMLDivElement>) => {
+export const StatusMessage = React.forwardRef<HTMLDivElement, PStatusMessage>(
+  (props: PStatusMessage, ref: React.Ref<HTMLDivElement>) => {
     const { message, status, bordered, ...rest } = props;
 
     return (

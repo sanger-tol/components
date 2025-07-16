@@ -5,3 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 export type TMessageType = "success" | "info" | "warning" | "error";
+
+export type TPlacement =
+  | "topCenter"
+  | "topStart"
+  | "topEnd"
+  | "bottomCenter"
+  | "bottomStart"
+  | "bottomEnd";
