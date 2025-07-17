@@ -20,6 +20,15 @@ import {
 
 const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
 
+/**
+ * Counts the number of errors and warnings in a list of validation results.
+ *
+ * @param results - An array of IValidationResult objects to analyze.
+ * @returns An object containing the total number of errors and warnings.
+ *
+ * If the input is not an array, returns { errors: 0, warnings: 0 }.
+ */
+
 export function getErrorWarningCounts(results: IValidationResult[]): {
   errors: number;
   warnings: number;
@@ -45,6 +54,13 @@ export function downloadFile(filename: string) {
   //TODO: Implement download functionality
 }
 
+/**
+ * Normalises a validation result received from the API into the internal IValidationResult format.
+ *
+ * @param result - The raw validation result object from the API.
+ * @returns An IValidationResult object with mapped and defaulted fields.
+ */
+
 export function normaliseValidationResult(
   result: IValidationResultAPI
 ): IValidationResult {
@@ -57,6 +73,18 @@ export function normaliseValidationResult(
     stepName: result.step_name,
   };
 }
+
+/**
+ * Normalises a pipeline upload object and its relationships into the internal IPipelineUpload format.
+ *
+ * @param ds - The TsDataSource instance used for fetching related pipeline steps.
+ * @param upload - The raw upload object to normalise.
+ * @param relationships - An object containing promises for related entities, such as the pipeline.
+ * @returns A Promise that resolves to an IPipelineUpload object with all fields mapped and normalised.
+ *
+ * This function fetches pipeline steps if a pipeline relationship exists,
+ * and maps all relevant fields from the raw upload and its relationships.
+ */
 
 export async function normalisePipelineUpload(
   ds: TsDataSource,
@@ -81,6 +109,20 @@ export async function normalisePipelineUpload(
     failureMessage: upload?.failure_message || null,
   };
 }
+
+/**
+ * Fetches the current pipeline results for a given upload ID from the API and normalises the response.
+ *
+ * @param ds - The TsDataSource instance used to perform the API request.
+ * @param endpoint - The API endpoint to query for pipeline results.
+ * @param uploadId - The ID of the upload to fetch results for.
+ * @param setPipelineResult - Optional callback to set the normalised pipeline result in state.
+ * @param setHasErrors - Optional callback to set error state if the fetch fails.
+ * @param setLoading - Optional callback to set loading state during the fetch.
+ * @returns A Promise that resolves to an IPipelineUpload object if successful, or null if not.
+ *
+ * If the fetch fails, this function will trigger a popup error message and update error/loading state if callbacks are provided.
+ */
 
 export async function fetchCurrentPipelineResults(
   ds: TsDataSource,
@@ -123,6 +165,20 @@ export async function fetchCurrentPipelineResults(
   }
 }
 
+/**
+ * Fetches and normalises the upload result for a given upload ID from the API.
+ *
+ * @param ds - The TsDataSource instance used to perform the API request.
+ * @param endpoint - The API endpoint to query for the upload result.
+ * @param uploadId - The ID of the upload to fetch results for.
+ * @param setPipelineResult - Callback to set the normalised pipeline result in state.
+ * @param setHasErrors - Callback to set error state if the fetch fails.
+ * @param setLoading - Optional callback to set loading state during the fetch.
+ * @returns A Promise that resolves when the operation is complete.
+ *
+ * If the fetch fails, this function will trigger a popup error message and update error/loading state via the provided callbacks.
+ */
+
 export async function fetchAndNormaliseUploadResult(
   ds: TsDataSource,
   endpoint: string,
@@ -156,6 +212,20 @@ export async function fetchAndNormaliseUploadResult(
     if (setLoading) setLoading(false);
   }
 }
+
+/**
+ * Fetches and normalises all upload results for a given user ID from the API.
+ *
+ * @param ds - The TsDataSource instance used to perform the API request.
+ * @param endpoint - The API endpoint to query for upload results.
+ * @param userId - The ID of the user whose uploads are to be fetched.
+ * @param setAllUploadResults - Optional callback to set the array of normalised pipeline upload results in state.
+ * @param setHasErrors - Optional callback to set error state if the fetch fails.
+ * @param setLoading - Optional callback to set loading state during the fetch.
+ * @returns A Promise that resolves to an array of IPipelineUpload objects if successful, or an empty array if not.
+ *
+ * If the fetch fails, this function will trigger a popup error message and update error/loading state via the provided callbacks.
+ */
 
 export async function fetchAndNormaliseAllUploadResults(
   ds: TsDataSource,
@@ -198,6 +268,18 @@ export async function fetchAndNormaliseAllUploadResults(
   }
 }
 
+/**
+ * Initiates a pipeline validation run by uploading the configuration and file information to the API.
+ *
+ * @param ds - The TsDataSource instance used to perform the API request.
+ * @param config - The validation configuration containing pipeline and destination details.
+ * @param fileName - The name of the file to be validated.
+ * @param spreadsheetConfig - The spreadsheet configuration string.
+ * @returns A Promise that resolves to the upload ID if successful, or null if the request fails.
+ *
+ * If the request fails, this function will trigger a popup error message.
+ */
+
 export async function uploadPipelineConfig(
   ds: TsDataSource,
   config: IValidationConfig,
@@ -232,6 +314,17 @@ export async function uploadPipelineConfig(
     return null;
   }
 }
+
+/**
+ * Constructs a completion message and message type based on validation results and failure status.
+ *
+ * @param validationResults - An array of IValidationResult objects to analyze for errors and warnings.
+ * @param failureMessage - An optional failure message string indicating early termination.
+ * @returns An object containing a user-friendly message and its corresponding message type.
+ *
+ * The returned message and type reflect whether validation passed, failed, completed with warnings,
+ * or was terminated early due to a failure.
+ */
 
 export function constructCompletionMessage(
   validationResults: IValidationResult[],
@@ -268,6 +361,18 @@ export function constructCompletionMessage(
   };
 }
 
+/**
+ * Determines the upload status and corresponding display text based on completion state, error and warning counts, and failure message.
+ *
+ * @param completedStatus - Boolean indicating whether the upload process has completed.
+ * @param overallErrors - The total number of errors found during validation.
+ * @param overallWarnings - The total number of warnings found during validation.
+ * @param failureMessage - An optional failure message indicating early termination or failure.
+ * @returns An object containing a CSS class name and a status text string for display.
+ *
+ * The returned status reflects whether the upload passed, failed, completed with errors or warnings, or is still in progress.
+ */
+
 export function determineUploadStatus(
   completedStatus: boolean,
   overallErrors: number,
@@ -292,6 +397,15 @@ export function determineUploadStatus(
   return { className: "", text: "In Progress" };
 }
 
+/**
+ * Determines the status of a pipeline step based on the number of errors and warnings.
+ *
+ * @param errorCount - An object containing the number of errors and warnings for the step.
+ * @returns An object with a CSS class name and a status text string representing the step's status.
+ *
+ * Returns "error" if there are errors, "warning" if there are warnings, and "passed" if there are neither.
+ */
+
 export function determineStepStatus(errorCount: {
   errors: number;
   warnings: number;
@@ -303,6 +417,17 @@ export function determineStepStatus(errorCount: {
   }
   return { className: "passed", text: "Passed" };
 }
+
+/**
+ * Retrieves the step names for a given pipeline ID, using a cache to avoid redundant API requests.
+ *
+ * @param ds - The TsDataSource instance used to perform the API request.
+ * @param pipelineId - The ID of the pipeline whose steps are to be fetched.
+ * @returns A Promise that resolves to an array of step name strings.
+ *
+ * If the steps for the given pipeline ID are already cached, the cached promise is returned.
+ * Otherwise, the steps are fetched from the API and cached before returning.
+ */
 
 export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
   if (pipelineStepsPromiseCache.has(pipelineId))
@@ -326,6 +451,15 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
 
   return stepPromise;
 }
+
+/**
+ * Navigates to the results page for a specific pipeline upload, optionally including a step name in the query string.
+ *
+ * @param history - The history object used to perform navigation.
+ * @param pipelineId - The ID of the pipeline upload to view results for.
+ * @param stepName - (Optional) The name of the step to highlight in the results view.
+ * @param errorWarningCount - (Optional) The total number of errors and warnings; if greater than 2 and stepName is provided, the stepName is included in the query string.
+ */
 
 export function goToResults(
   history: History,
