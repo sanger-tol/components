@@ -5,35 +5,34 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { Message } from "./index";
-import { MessageType } from "./Message";
+import { Message, TMessageType } from "..";
 
-interface Props {
+interface PStaticMessage {
   message: string;
-  type?: MessageType;
+  type?: TMessageType;
   header?: boolean;
   onClose?: () => void;
   bordered?: boolean;
 }
 
-export const StaticMessage = React.forwardRef<HTMLDivElement, Props>(
-  (props: Props, ref: React.Ref<HTMLDivElement>) => {
-    const { message, type, header, onClose, ...rest } = props;
+function InternalStaticMessage(props: PStaticMessage, ref: React.Ref<HTMLDivElement>) {
+  const { message, type, header, onClose, ...rest } = props;
 
-    return (
-      <div ref={ref}>
-        <Message
-          children={message}
-          type={type}
-          showIcon={true}
-          onClose={onClose}
-          hidePrefix={true}
-          closable={true}
-          bordered={true}
-          header={header && "Message"}
-          {...rest}
-        />
-      </div>
-    );
-  },
-);
+  return (
+    <div ref={ref}>
+      <Message
+        children={message}
+        type={type}
+        showIcon={true}
+        onClose={onClose}
+        hidePrefix={true}
+        closable={true}
+        bordered={true}
+        header={header && "Message"}
+        {...rest}
+      />
+    </div>
+  );
+}
+
+export const StaticMessage = React.forwardRef<HTMLDivElement, PStaticMessage>(InternalStaticMessage);

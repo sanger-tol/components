@@ -17,12 +17,8 @@ import {
   RSForm,
   Notification,
   Toaster,
+  TsDataSource,
 } from "../tol-ui/src";
-import {
-  Appearance,
-  Color,
-  ButtonType,
-} from "../tol-ui/src/forms/FormAllInOne";
 
 const { StringType } = Schema.Types;
 
@@ -204,11 +200,10 @@ const testConfigProfileForm = {
       {
         name: "submit",
         text: "Submit",
-        appearance: "primary" as Appearance,
-        color: "cyan" as Color,
-        type: "submit" as ButtonType,
-        onClick: (formData: any) => {
-          console.log("Form submitted with data: " + JSON.stringify(formData));
+        type: "success",
+        outline: true,
+        onClick: () => {
+          console.log("Form submitted");
         },
       },
     ],
@@ -253,8 +248,8 @@ const signUpFormConfig = (hasUnsavedChanges: boolean) => ({
         id: "cancel-button",
         name: "cancel",
         text: "Cancel",
-        appearance: "ghost" as Appearance,
-        color: "red" as Color,
+        type: 'error',
+        outline: true,
         onClick: () => {
           alert("Cancel button clicked");
         },
@@ -262,10 +257,9 @@ const signUpFormConfig = (hasUnsavedChanges: boolean) => ({
       {
         name: "submit",
         text: "Submit",
-        appearance: "ghost" as Appearance,
+        type: "success",
+        outline: true,
         disabled: !hasUnsavedChanges,
-        color: "green" as Color,
-        type: "submit" as ButtonType,
         onClick: () => {
           null;
         },
@@ -332,6 +326,7 @@ export function Forms() {
         generateMessages={() => {
           return [];
         }}
+        dataSource={new TsDataSource()}
       />
       <br />
     </div>

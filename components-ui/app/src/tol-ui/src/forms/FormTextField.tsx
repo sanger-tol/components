@@ -11,7 +11,7 @@ import {
 } from "..";
 
 
-interface Props {
+export interface PFormTextField {
   id: string;
   name: string;
   label: string;
@@ -26,7 +26,7 @@ interface Props {
   centered?: boolean;
 }
 
-export function FormTextField(props: Props) {
+export function FormTextField(props: PFormTextField) {
   const { id, name, centered, label, accepter, helpText, ...rest } = props;
   let style = {};
 

@@ -5,33 +5,32 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { Message } from "./index";
-import { MessageType } from "./Message";
+import { Message, TMessageType } from "..";
 
-interface Props {
+export interface PStatusMessage {
   message: string;
-  status: MessageType;
+  status: TMessageType;
   bordered?: boolean;
 }
 
-export const StatusMessage = React.forwardRef<HTMLDivElement, Props>(
-  (props: Props, ref: React.Ref<HTMLDivElement>) => {
-    const { message, status, bordered, ...rest } = props;
+export function InternalStatusMessage(props: PStatusMessage, ref: React.Ref<HTMLDivElement>) {
+  const { message, status, bordered, ...rest } = props;
 
-    return (
-      <div ref={ref} className="status-message tol-status">
-        <Message
-          children={message}
-          type={status}
-          showIcon={true}
-          onClose={() => null}
-          hidePrefix={true}
-          closable={false}
-          header={false}
-          bordered={bordered}
-          {...rest}
-        />
-      </div>
-    );
-  },
-);
+  return (
+    <div ref={ref} className="status-message tol-status">
+      <Message
+        children={message}
+        type={status}
+        showIcon={true}
+        onClose={() => null}
+        hidePrefix={true}
+        closable={false}
+        header={false}
+        bordered={bordered}
+        {...rest}
+      />
+    </div>
+  );
+}
+
+export const StatusMessage = React.forwardRef<HTMLDivElement, PStatusMessage>(InternalStatusMessage);

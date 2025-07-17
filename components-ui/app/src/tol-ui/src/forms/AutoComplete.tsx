@@ -7,14 +7,14 @@ SPDX-License-Identifier: MIT
 import { AutoComplete as RSAutoComplete } from "rsuite";
 import { RSForm } from "..";
 
-interface Props {
+export interface PAutoComplete {
   label?: string;
   data: string[];
   value: string;
   onChange?: any;
 }
 
-export function AutoComplete(props: Props) {
+export function AutoComplete(props: PAutoComplete) {
   const { label, data, value, onChange } = props;
 
   return (

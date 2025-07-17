@@ -5,11 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect, useRef } from "react";
-import { Button } from "rsuite";
 import {
   RSForm,
   Toaster,
-  Message,
   CountrySelect,
   FormTextField,
   SingleSelectCustomOption,
@@ -18,46 +16,17 @@ import {
   AutoComplete,
   Dropzone,
   FormCheckboxes,
+  Button,
+  IFormConfig,
+  IButton,
+  setInitialData,
+  validateForm,
+  UNSUPPORTED_FIELD_TYPE
 } from "..";
 
 
-export type Appearance = "default" | "primary" | "link" | "subtle" | "ghost";
-export type Color =
-  | "red"
-  | "orange"
-  | "yellow"
-  | "green"
-  | "cyan"
-  | "blue"
-  | "violet";
-export type ButtonType = "button" | "submit" | "reset" | undefined;
-
-interface FormConfig {
-  fields: object[];
-  buttonConfig?: Buttons;
-}
-
-interface Buttons {
-  buttons: ButtonConfig[];
-  buttonStyle?: React.CSSProperties;
-}
-
-interface ButtonConfig {
-  text: string;
-  type?: ButtonType;
-  block?: boolean;
-  appearance?: Appearance;
-  active?: boolean;
-  color?: Color;
-  disabled?: boolean;
-  loading?: boolean;
-  endIcon?: React.ReactNode;
-  startIcon?: React.ReactNode;
-  onClick: (formData?: object) => void;
-}
-
-interface Props {
-  formConfig: FormConfig;
+export interface PFormAllInOne {
+  formConfig: IFormConfig;
   initialData?: object;
   fluid?: boolean;
   model?: any;
@@ -66,11 +35,7 @@ interface Props {
   onSubmit?: (formData: object, isValid: boolean) => void;
 }
 
-const MISSING_DATA_ERROR =
-  "Please complete all required fields before submitting.";
-const UNSUPPORTED_FIELD_TYPE = "Unsupported field type:";
-
-export function FormAllInOne(props: Props) {
+export function FormAllInOne(props: PFormAllInOne) {
   const { formConfig, initialData, fluid, model, onValidate } = props;
 
   const [formData, setFormData] = useState<object>({});
@@ -83,7 +48,7 @@ export function FormAllInOne(props: Props) {
 
   useEffect(() => {
     if (initialData) {
-      setInitialData(initialData);
+      setInitialData(formConfig, setFormData, initialData);
     }
   }, []);
 
@@ -101,12 +66,6 @@ export function FormAllInOne(props: Props) {
     };
   }, []);
 
-  const pushErrorMessage = (message: string) => {
-    toaster.push(<Message children={message} type="error" showIcon={true} />, {
-      duration: 4000,
-    });
-  };
-
   useEffect(() => {
     const hasChanges = modifiedFields && Object.keys(modifiedFields).length > 0;
     hasUnsavedChanges.current = hasChanges;
@@ -115,35 +74,9 @@ export function FormAllInOne(props: Props) {
     }
   }, [modifiedFields, props.onUnsavedChanges]);
 
-  const validateForm = () => {
-    if (!formRef.current.check()) {
-      pushErrorMessage(MISSING_DATA_ERROR);
-      return false;
-    } else {
-      if (props.onSubmit) {
-        props.onSubmit(formData, true);
-      }
-      return true;
-    }
-  };
-
   const handleInputChange = (name: any, value: any) => {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
     setModifiedFields((prev: any) => ({ ...prev, [name]: value }));
-  };
-
-  const setInitialData = (data?: any) => {
-    setFormData(() => {
-      const initialData = {};
-      formConfig.fields.forEach((field: any) => {
-        if (field.type === "checkbox" && field.defaultChecked) {
-          initialData[field.name] = field.defaultChecked;
-        } else {
-          initialData[field.name] = data[field.name] || "";
-        }
-      });
-      return initialData;
-    });
   };
 
   const renderField = (field: any) => {
@@ -270,7 +203,15 @@ export function FormAllInOne(props: Props) {
         fluid={fluid}
         ref={formRef}
         id={`form-${formId}`}
-        onSubmit={validateForm}
+        onSubmit={(e: any) => {
+          e.preventDefault();
+          validateForm(
+            formRef,
+            toaster,
+            formData,
+            props.onSubmit
+          );
+        }}
         model={model || null}
         formValue={formData}
       >
@@ -280,25 +221,30 @@ export function FormAllInOne(props: Props) {
         {formConfig.buttonConfig && (
           <div style={formConfig.buttonConfig.buttonStyle}>
             {formConfig.buttonConfig.buttons.map(
-              (button: ButtonConfig, index: number) => (
+              (button: IButton, index: number) => (
                 <Button
                   key={`form-${formId}-button-${index}`}
-                  children={button.text}
-                  appearance={button.appearance}
-                  color={button.color}
+                  text={button.text}
+                  type={button.type}
+                  outline={button.outline}
                   active={button.active}
-                  block={button.block}
                   disabled={button.disabled}
                   loading={button.loading}
-                  endIcon={button.endIcon}
-                  startIcon={button.startIcon}
-                  type={button.type}
                   onClick={() => {
                     if (modifiedFields && onValidate) {
-                      onValidate(validateForm());
+                      onValidate(
+                        validateForm(
+                          formRef,
+                          toaster,
+                          formData,
+                          props.onSubmit
+                        )
+                      );
                     }
                     setModifiedFields({});
-                    button.onClick(formData);
+                    if (button.onClick) {
+                      button.onClick(formData);
+                    }
                   }}
                 />
               ),

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import { SelectPicker } from "rsuite";
 
-interface Props {
+export interface PSingleSelect {
   data: string[];
   placeholder?: string;
   value: string;
@@ -15,7 +15,7 @@ interface Props {
   block?: boolean;
 }
 
-export const SingleSelect = (props: Props) => {
+export const SingleSelect = (props: PSingleSelect) => {
   const { placeholder, setValue, value, block } = props;
   const [data, setData] = useState([{}]);
 

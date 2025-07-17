@@ -12,34 +12,26 @@ import {
   Loader,
   StatusMessage,
   TsDataSource,
-  MessageType,
+  TMessageType,
+  IMessage,
+  IWaitingUpload
 } from "..";
 
-
-interface WaitingUpload {
-  message: string;
-}
-
-interface Message {
-  type: string;
-  message: MessageType;
-}
-
-interface Props {
+export interface PDropzone {
   resource: string;
   dataSource: TsDataSource;
   fileType: string;
-  generateMessages: (apiRes: any) => Message[];
+  generateMessages: (apiRes: any) => IMessage[];
   setResponse?: any;
 }
 
-export function Dropzone(props: Props) {
+export function Dropzone(props: PDropzone) {
   const { resource, dataSource, fileType, generateMessages, setResponse } = props;
   const [fileList, setFileList] = useState<any[]>([]);
   const [validate, setValidate] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const [fail, setFail] = useState(false);
 
   useEffect(() => {
@@ -67,7 +59,7 @@ export function Dropzone(props: Props) {
         body: formData,
         options: {
           headers: {
-          "Content-Type": "multipart/form-data",
+            "Content-Type": "multipart/form-data",
           },
         }
       })
@@ -87,7 +79,7 @@ export function Dropzone(props: Props) {
       });
   };
 
-  const WaitingUpload = (props: WaitingUpload) => {
+  const WaitingUpload = (props: IWaitingUpload) => {
     return (
       <div className="dropzone-container">
         <FontAwesomeIcon
@@ -137,11 +129,11 @@ export function Dropzone(props: Props) {
       </Uploader>
       {hasLoaded ? (
         <div className="mt-3">
-          {messages.map((message: Message, index: number) => {
+          {messages.map((message: IMessage, index: number) => {
             return (
               <StatusMessage
                 key={index}
-                status={message.type as MessageType}
+                status={message.type as TMessageType}
                 message={message.message}
               />
             );
