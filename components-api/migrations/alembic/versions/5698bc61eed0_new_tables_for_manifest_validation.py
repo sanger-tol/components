@@ -1,7 +1,7 @@
 """new tables for manifest validation
 
 Revision ID: 5698bc61eed0
-Revises: 23b51e802c2a
+Revises: e6f99a0bce16
 Create Date: 2025-06-04 10:23:31.293049
 
 """
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '5698bc61eed0'
-down_revision = '23b51e802c2a'
+down_revision = 'e6f99a0bce16'
 branch_labels = None
 depends_on = None
 
