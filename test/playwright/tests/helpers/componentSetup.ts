@@ -41,6 +41,7 @@ export const addComponentFilter = async (
     await page.getByRole('combobox').first().click();
     
     // choose specific attribute
+    await page.locator('.rs-search-box-input').fill(filterValue);
     await page.getByText(attribute).click();
 
     // click again to hide dropdown
@@ -49,7 +50,6 @@ export const addComponentFilter = async (
 
     // Give filter a value
     await page.getByRole('combobox').nth(1).click();
-    await page.locator('.rs-search-box-input').fill(filterValue);
     await page.getByText(filterValue).click();
     await page.getByRole('combobox').nth(1).click();
   }
