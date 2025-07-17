@@ -41,7 +41,7 @@ export const addComponentFilter = async (
     await page.getByRole('combobox').first().click();
     
     // choose specific attribute
-    await page.locator('.rs-search-box-input').fill(filterValue);
+    await page.locator('.rs-search-box-input').fill(attribute);
     await page.getByText(attribute).click();
 
     // click again to hide dropdown
