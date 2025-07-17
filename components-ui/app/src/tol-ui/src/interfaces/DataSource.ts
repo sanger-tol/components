@@ -3,10 +3,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import {
-  IEntityMeta,
-  IFilter
-} from "..";
+import { IEntityMeta, IFilter } from "..";
 
 export interface IDetailCache {
   [baseUrl: string]: {
@@ -72,6 +69,21 @@ export interface IGetListPage {
   requestedFields?: string;
 }
 
+export interface IGetList {
+  objectType: string;
+  filter?: IFilter;
+  requestedFields?: string;
+}
+
+export interface IGetListCursor {
+  objectType: string;
+  page?: number;
+  pageSize?: number;
+  filter?: IFilter;
+  requestedFields?: string;
+  searchAfter?: string[];
+}
+
 export interface ICustom {
   method: string;
   resource: string;
@@ -96,3 +108,6 @@ export interface ISourceDataObject extends IDataObject {
 
 export type TDataObjectOrNull = IDataObject | null;
 export type TDataObjectListOrNull = IDataObject[] | null;
+
+export type TCursorSearchAfterOrNull = string[] | null;
+export type TCursorObjectOrNull = [TDataObjectListOrNull, TCursorSearchAfterOrNull] | null
