@@ -13,13 +13,16 @@ import {
   getErrorWarningCounts,
   determineUploadStatus,
   determineStepStatus,
-  downloadItem,
+  downloadFile,
   goToResults,
-} from "./index";
-import { Button, HoverOverlay, InfoTooltip } from "../general";
-import { normaliseCaps, truncateString } from "../general/utils";
+  Button,
+  HoverOverlay,
+  InfoTooltip,
+  normaliseCaps,
+  truncateString,
+} from "..";
 
-interface Props {
+export interface PPreviousUploadsView {
   id: string;
   data: IPipelineUpload;
   expanded: boolean;
@@ -29,7 +32,7 @@ interface Props {
   setOpenModal?: (open: boolean) => void;
 }
 
-function PreviousUploadsView(props: Props) {
+export function PreviousUploadsView(props: PPreviousUploadsView) {
   const {
     id,
     data,
@@ -106,7 +109,7 @@ function PreviousUploadsView(props: Props) {
         </div>
       </div>
       <div className="tol-file-validation-previous-results-status-container">
-        <a href="#" onClick={() => downloadItem(data.s3Filename)}>
+        <a href="#" onClick={() => downloadFile(data.s3Filename)}>
           <p>
             {
               <HoverOverlay contents={"download"}>
@@ -229,5 +232,3 @@ function PreviousUploadsView(props: Props) {
     </div>
   );
 }
-
-export default PreviousUploadsView;

@@ -9,83 +9,14 @@ import {
   VALIDATION_ENDPOINTS,
   PopUpMessage,
   TsDataSource,
-  ISourceDataObject,
+  MessageType,
+  TDataObjectOrNull,
+  IValidationResult,
+  IValidationResultAPI,
+  IPipelineUpload,
+  IValidationConfig,
+  FILE_VALIDATION_PATH,
 } from "..";
-import { MessageType } from "../messaging/Message";
-
-export type TSeverity = "error" | "warning";
-export type IconType = "check" | "xmark" | "exclamation";
-
-export interface ICellId {
-  column: string;
-  row: string;
-}
-
-export interface IUploadStatus {
-  className: string;
-  text: string;
-}
-
-export interface IValidationConfig {
-  s3_url: string;
-  pipeline_name: string;
-  destination: string;
-}
-
-export interface IErrorWarningCount {
-  errors: number;
-  warnings: number;
-}
-
-interface IValidationResultAPI {
-  code: string;
-  detail: string;
-  field: string | null;
-  object_id: string;
-  severity: TSeverity;
-  step_name: string;
-}
-
-export interface IValidationResult {
-  code: string;
-  detail: string;
-  field: string | null;
-  objectId: string;
-  severity: TSeverity;
-  stepName: string;
-}
-
-export interface IPipelineUploadAPI {
-  id: string;
-  completed: boolean;
-  date_started: string;
-  flow_run_id: string;
-  s3_filename: string;
-  validation_results: IValidationResult[];
-  failure_message: string | null;
-}
-
-export interface IPipelineUpload {
-  id: string;
-  completed: boolean;
-  dateStarted: string;
-  flowRunId: string;
-  pipelineName: string;
-  pipelineId: string;
-  pipelineSteps: string[];
-  s3Filename: string;
-  validationResults: IValidationResult[];
-  failureMessage: string | null;
-}
-
-export const FILE_VALIDATION_PATH = "/file-validation/results/";
-export const REFRESH_INTERVAL = 5000; // 5 seconds
-export const TOL_LOADER_STYLES = {
-  minHeight: "250px",
-  flexDirection: "column",
-  alignItems: "center",
-  display: "flex",
-};
 
 const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
 
@@ -110,7 +41,7 @@ export function getErrorWarningCounts(results: IValidationResult[]): {
 }
 
 //@ts-ignore
-export function downloadItem(filename: string) {
+export function downloadFile(filename: string) {
   //TODO: Implement download functionality
 }
 
@@ -129,22 +60,25 @@ export function normaliseValidationResult(
 
 export async function normalisePipelineUpload(
   ds: TsDataSource,
-  upload: ISourceDataObject,
-  relationships: { [key: string]: Promise<ISourceDataObject> }
+  upload: TDataObjectOrNull,
+  relationships: { [key: string]: Promise<TDataObjectOrNull> }
 ): Promise<IPipelineUpload> {
   const pipeline = await relationships?.pipeline;
-  const pipelineSteps = await getStepsInPipeline(ds, pipeline.id);
+  const pipelineSteps = pipeline
+    ? await getStepsInPipeline(ds, pipeline.id)
+    : [];
   return {
-    completed: upload.completed,
-    dateStarted: upload.date_started,
-    flowRunId: upload.flow_run_id,
-    id: upload.id,
-    pipelineName: pipeline.name,
-    pipelineId: pipeline.id,
+    completed: upload?.completed || false,
+    dateStarted: upload?.date_started || "",
+    flowRunId: upload?.flow_run_id,
+    id: upload?.id || "",
+    pipelineName: pipeline?.name || "",
+    pipelineId: pipeline?.id || "",
     pipelineSteps: pipelineSteps || [],
-    s3Filename: upload.s3_filename,
-    validationResults: upload.validation_results.map(normaliseValidationResult),
-    failureMessage: upload.failure_message || null,
+    s3Filename: upload?.s3_filename || "",
+    validationResults:
+      upload?.validation_results.map(normaliseValidationResult) || [],
+    failureMessage: upload?.failure_message || null,
   };
 }
 
@@ -271,11 +205,13 @@ export async function uploadPipelineConfig(
   spreadsheetConfig: string
 ): Promise<IPipelineUpload | null> {
   const body = {
-    s3_url: config.s3_url,
-    s3_filename: fileName,
-    spreadsheet_config: spreadsheetConfig,
-    pipeline_name: config.pipeline_name,
-    destination: config.destination,
+    data: {
+      s3_url: config.s3_url,
+      s3_filename: fileName,
+      spreadsheet_config: spreadsheetConfig,
+      pipeline_name: config.pipeline_name,
+      destination: config.destination,
+    },
   };
   try {
     const response = await ds.custom({
@@ -381,7 +317,9 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
         },
       },
     });
-    return res?.map((step: DataObject) => step.step_name) || [];
+    return (
+      res?.map((step: TDataObjectOrNull) => (step ? step.step_name : "")) || []
+    );
   })();
 
   pipelineStepsPromiseCache.set(pipelineId, stepPromise);

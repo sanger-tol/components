@@ -8,22 +8,27 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { Widgets, TsDataSource, LoadingContent, Icon, Button } from "../index";
 import {
   getErrorWarningCounts,
-  downloadItem,
+  downloadFile,
   determineUploadStatus,
   IUploadStatus,
   IErrorWarningCount,
   fetchCurrentPipelineResults,
-  REFRESH_INTERVAL,
   ValidateSteps,
   IPipelineUpload,
   PreviousUploadsModal,
-} from "./index";
-import { VALIDATION_ENDPOINTS } from "../constants";
+  Widgets,
+  TsDataSource,
+  LoadingContent,
+  Icon,
+  Button,
+  REFRESH_INTERVAL,
+  VALIDATION_ENDPOINTS,
+  BUTTON_TIMEOUT,
+} from "..";
 
-function ValidationResultsViewer() {
+export function ValidationResultsViewer() {
   const { uploadId } = useParams<{ uploadId: string }>();
 
   const ds = new TsDataSource();
@@ -34,6 +39,9 @@ function ValidationResultsViewer() {
   const searchParams = new URLSearchParams(location.search);
   const stepName = searchParams.get("stepName") || undefined;
 
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [validating, setValidating] = useState<boolean>(false);
+  const [validated, setValidated] = useState<boolean>(false);
   const [hasErrors, setHasErrors] = useState<boolean>(false);
   const [errorAndWarningCount, setErrorAndWarningCount] =
     useState<IErrorWarningCount>({ errors: 0, warnings: 0 });
@@ -41,10 +49,6 @@ function ValidationResultsViewer() {
     className: "",
     text: "",
   });
-  const [openModal, setOpenModal] = useState<boolean>(false);
-
-  const [validating, setValidating] = useState<boolean>(false);
-  const [validated, setValidated] = useState<boolean>(false);
 
   const fetchLatestPipelineResults = async () => {
     const cacheBustedEndpoint = `${
@@ -153,7 +157,7 @@ function ValidationResultsViewer() {
                   <a
                     href="#"
                     onClick={() =>
-                      downloadItem(latestPipelineResults.s3Filename)
+                      downloadFile(latestPipelineResults.s3Filename)
                     }
                   >
                     {latestPipelineResults.s3Filename}
@@ -173,7 +177,7 @@ function ValidationResultsViewer() {
                     tooltip="Refresh"
                     disabled={latestPipelineResults?.completed}
                     onClick={() => refetchLatestPipelineResults()}
-                    timeout={3000}
+                    timeout={BUTTON_TIMEOUT}
                   />
                 </span>
               </div>
@@ -230,5 +234,3 @@ function ValidationResultsViewer() {
     </>
   );
 }
-
-export default ValidationResultsViewer;

@@ -7,30 +7,34 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { Toggle } from "rsuite";
 import { useQuery } from "@tanstack/react-query";
-import { Button, Icon, Modal, TolLoader, TsDataSource } from "../index";
 import {
+  Icon,
+  Modal,
+  Button,
+  TolLoader,
+  TsDataSource,
+  PreviousUploadsView,
+  getUserFromLocalStorage,
   fetchAndNormaliseAllUploadResults,
   IPipelineUpload,
-  PreviousUploadsView,
   REFRESH_INTERVAL,
   TOL_LOADER_STYLES,
-} from "./index";
-import { VALIDATION_ENDPOINTS } from "../constants";
-import { getUserFromLocalStorage } from "../services/localStorage/localStorageService";
+  VALIDATION_ENDPOINTS,
+  BUTTON_TIMEOUT,
+} from "..";
 
-interface Props {
+export interface PPreviousUploadsModal {
   openModal: boolean | string;
   setOpenModal: (open: boolean | string) => void;
 }
 
-function PreviousUploadsModal(props: Props) {
+export function PreviousUploadsModal(props: PPreviousUploadsModal) {
   const { openModal, setOpenModal } = props;
+  const ds = new TsDataSource();
 
   const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
   const [expandedResults, setExpandedResults] = useState<string | null>(null);
-
   const { id } = getUserFromLocalStorage();
-  const ds = new TsDataSource();
 
   const fetchPreviousUploads = async () => {
     const cacheBustedEndpoint = `${
@@ -78,7 +82,10 @@ function PreviousUploadsModal(props: Props) {
         </div>
       ) : userFileValidationUploadsData.length > 0 ? (
         userFileValidationUploadsData
-          .sort((a, b) => Number(b.id) - Number(a.id))
+          .sort(
+            (a: IPipelineUpload, b: IPipelineUpload) =>
+              Number(b.id) - Number(a.id)
+          )
           .map((upload: IPipelineUpload, index: number) => {
             return (
               <div
@@ -128,7 +135,7 @@ function PreviousUploadsModal(props: Props) {
             icon="rotate"
             tooltip="Refresh"
             onClick={() => refetchAllUploads()}
-            timeout={3000}
+            timeout={BUTTON_TIMEOUT}
           />
         </div>
       </div>
@@ -148,5 +155,3 @@ function PreviousUploadsModal(props: Props) {
     </div>
   );
 }
-
-export default PreviousUploadsModal;

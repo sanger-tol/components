@@ -5,12 +5,16 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Button, Modal } from "../index";
-import ValidationIcon from "./ValidationIcon";
-import { capitaliseFirstLetter, truncateString } from "../general/utils";
-import { ICellId } from "./utils";
+import {
+  Modal,
+  Button,
+  truncateString,
+  ValidationIcon,
+  capitaliseFirstLetter,
+  ICellId,
+} from "..";
 
-interface Props {
+export interface PErrorViewer {
   key?: string;
   id?: string;
   errorType?: string;
@@ -20,7 +24,7 @@ interface Props {
   truncate?: boolean;
 }
 
-function ErrorViewer(props: Props) {
+export function ErrorViewer(props: PErrorViewer) {
   const { id, errorType, message, stepName, cellId, truncate = false } = props;
 
   const [isOpen, setIsOpen] = useState(false);
@@ -86,5 +90,3 @@ function ErrorViewer(props: Props) {
     </>
   );
 }
-
-export default ErrorViewer;

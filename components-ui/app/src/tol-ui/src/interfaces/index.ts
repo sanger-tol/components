@@ -13,3 +13,4 @@ export * from "./Nav";
 export * from './Plate';
 export * from "./User";
 export * from "./Visualisation";
+export * from "./FileValidation";

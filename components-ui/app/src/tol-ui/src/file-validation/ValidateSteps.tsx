@@ -5,12 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import React, { useState, useRef, useCallback } from "react";
-import ValidateStep from "./ValidateStep";
-import ErrorViewer from "./ErrorViewer";
-import { resizeListener } from "../hooks";
-import { IValidationResult } from "./utils";
+import {
+  ValidateStep,
+  ErrorViewer,
+  resizeListener,
+  IValidationResult,
+  WIDTH_REDUCER,
+} from "..";
 
-interface Props {
+export interface PValidateSteps {
   data: IValidationResult[];
   steps: string[];
   expandedIndex?: string;
@@ -19,16 +22,15 @@ interface Props {
   completed?: boolean;
 }
 
-const WIDTH_REDUCER = 40;
-
-function ValidateSteps(props: Props) {
+export function ValidateSteps(props: PValidateSteps) {
   const { data, steps, completed } = props;
-  const [expandedIndex, setExpandedIndex] = useState<string | null>(
-    props.expandedIndex || null
-  );
+
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<string | null>(
+    props.expandedIndex || null
+  );
 
   const handleResize = useCallback(() => {
     if (containerRef.current) {
@@ -47,15 +49,16 @@ function ValidateSteps(props: Props) {
   return (
     <div
       ref={containerRef}
-      className={`tol-file-validation-scrollbar-fix tol-file-uploader-validate-steps-outer-container ${
-        expandedIndex !== null && isOverflowing ? " expanded" : ""
-      }`}
+      className={`tol-file-validation-scrollbar-fix 
+        tol-file-uploader-validate-steps-outer-container ${
+          expandedIndex !== null && isOverflowing ? " expanded" : ""
+        }`}
     >
       <div>
         <div className="tol-file-uploader-validate-steps-inner-container">
           {steps.map((stepName: string) => {
             const stepData = data.filter(
-              (result) => result.stepName === stepName
+              (result: IValidationResult) => result.stepName === stepName
             );
             return (
               <div
@@ -92,7 +95,7 @@ function ValidateSteps(props: Props) {
             >
               <h6>All errors and warnings for {expandedIndex}:</h6>
               {data
-                .sort((a, b) => {
+                .sort((a: IValidationResult, b: IValidationResult) => {
                   if (a.severity !== b.severity) {
                     return a.severity === "error" ? -1 : 1;
                   }
@@ -125,5 +128,3 @@ function ValidateSteps(props: Props) {
     </div>
   );
 }
-
-export default ValidateSteps;

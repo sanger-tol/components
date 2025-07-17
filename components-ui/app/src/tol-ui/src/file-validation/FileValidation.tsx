@@ -8,17 +8,6 @@ import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Toggle } from "rsuite";
 import {
-  Widgets,
-  Dropzone,
-  PopUpMessage,
-  Button,
-  DropdownButtons,
-  Modal,
-  TolLoader,
-  TsDataSource,
-} from "../index";
-import { FileData } from "../forms/Dropzone";
-import {
   ValidateSteps,
   IValidationConfig,
   IPipelineUpload,
@@ -30,33 +19,41 @@ import {
   getErrorWarningCounts,
   PreviousUploadsModal,
   TOL_LOADER_STYLES,
-} from "./index";
-import { VALIDATION_ENDPOINTS } from "../constants";
+  BUTTON_TIMEOUT,
+  Widgets,
+  Dropzone,
+  PopUpMessage,
+  Button,
+  DropdownButtons,
+  Modal,
+  TolLoader,
+  TsDataSource,
+  VALIDATION_ENDPOINTS,
+  FileData,
+} from "..";
 
-interface Props {
+export interface PFileValidation {
   endpoint: string;
   validationConfig: IValidationConfig;
   fileType?: string;
   pageTitle?: string;
+  defaultFileTemplateLink?: string;
 }
 
 const DEFAULT_FILE_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
 
-function FileValidation(props: Props) {
+export function FileValidation(props: PFileValidation) {
   const {
     endpoint,
     validationConfig,
     pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
+    defaultFileTemplateLink = "",
   } = props;
 
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
   const [currentUploadId, setCurrentUploadId] = useState<string | null>(null);
-  const [validationStatus, setValidationStatus] = useState<{}>({
-    className: "",
-    text: "",
-  });
   const [fileDropped, setFileDropped] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<string | boolean>(false);
@@ -64,6 +61,10 @@ function FileValidation(props: Props) {
   const [resetting, setResetting] = useState<boolean>(false);
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);
+  const [validationStatus, setValidationStatus] = useState<{}>({
+    className: "",
+    text: "",
+  });
 
   const ds = new TsDataSource();
 
@@ -270,7 +271,7 @@ function FileValidation(props: Props) {
             tooltip="Refresh"
             disabled={latestPipelineResults?.completed}
             onClick={() => refetchLatestPipelineResults()}
-            timeout={3000}
+            timeout={BUTTON_TIMEOUT}
           />
         </div>
       </div>
@@ -300,7 +301,12 @@ function FileValidation(props: Props) {
       <Modal
         open={openModal === "help"}
         header={<h3>File Validation Help</h3>}
-        children={<h6>You can download </h6>}
+        children={
+          <h6>
+            You can download a template file for uploading documents{" "}
+            <a href={defaultFileTemplateLink}>here</a>
+          </h6>
+        }
         onClose={() => setOpenModal(false)}
         setOpen={setOpenModal}
       />
@@ -343,5 +349,3 @@ function FileValidation(props: Props) {
     </>
   );
 }
-
-export default FileValidation;

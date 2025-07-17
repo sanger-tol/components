@@ -4,16 +4,18 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { normaliseCaps, truncateString } from "../general/utils";
 import {
   ValidationIcon,
   ErrorViewer,
   getErrorWarningCounts,
   IValidationResult,
   determineStepStatus,
-} from "./index";
+  normaliseCaps,
+  truncateString,
+  MAX_ERRORS_TO_DISPLAY,
+} from "..";
 
-interface Props {
+export interface PValidateStep {
   id: string;
   stepName: string;
   results?: IValidationResult[];
@@ -22,9 +24,7 @@ interface Props {
   completed?: boolean;
 }
 
-const MAX_ERRORS_TO_DISPLAY = 2;
-
-function ValidateStep(props: Props) {
+export function ValidateStep(props: PValidateStep) {
   const {
     id,
     stepName,
@@ -139,5 +139,3 @@ function ValidateStep(props: Props) {
     </div>
   );
 }
-
-export default ValidateStep;
