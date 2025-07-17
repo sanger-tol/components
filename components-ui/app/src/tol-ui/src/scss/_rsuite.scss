@@ -272,6 +272,10 @@
   box-shadow: 0 0 0px 1000px var(--rs-input-bg) inset;
 }
 
+.rs-form-help-text {
+  color: var(--tol-grey-light);
+}
+
 .rs-timeline-item-custom-dot .svg-inline--fa {
   height: 20px;
   width: 20px;
