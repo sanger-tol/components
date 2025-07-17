@@ -21,38 +21,38 @@ export interface PMessage {
   bordered?: boolean;
 }
 
-export const Message = React.forwardRef<HTMLDivElement, PMessage>(
-  (props: PMessage, ref: React.Ref<HTMLDivElement>) => {
-    const {
-      children,
-      showIcon,
-      closable,
-      type,
-      header,
-      onClose,
-      styles,
-      hidePrefix,
-      bordered,
-      ...rest
-    } = props;
+function InternalMessage(props: PMessage, ref: React.Ref<HTMLDivElement>) {
+  const {
+    children,
+    showIcon,
+    closable,
+    type,
+    header,
+    onClose,
+    styles,
+    hidePrefix,
+    bordered,
+    ...rest
+  } = props;
 
-    return (
-      <div ref={ref} style={{ ...styles, marginBottom: "4px" }}>
-        <RSMessage
-          closable={closable}
-          showIcon={showIcon}
-          type={type}
-          header={header}
-          bordered={bordered}
-          onClose={onClose}
-          {...rest}
-        >
-          {typeof children === "string" && type && !hidePrefix && (
-            <strong>{capitaliseFirstLetter(type)}! </strong>
-          )}
-          {children}
-        </RSMessage>
-      </div>
-    );
-  },
-);
+  return (
+    <div ref={ref} style={{ ...styles, marginBottom: "4px" }}>
+      <RSMessage
+        closable={closable}
+        showIcon={showIcon}
+        type={type}
+        header={header}
+        bordered={bordered}
+        onClose={onClose}
+        {...rest}
+      >
+        {typeof children === "string" && type && !hidePrefix && (
+          <strong>{capitaliseFirstLetter(type)}! </strong>
+        )}
+        {children}
+      </RSMessage>
+    </div>
+  );
+}
+
+export const Message = React.forwardRef<HTMLDivElement, PMessage>(InternalMessage);

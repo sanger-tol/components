@@ -29,6 +29,10 @@ export interface ICheckboxField {
   subtext?: string;
 }
 
+export interface ICheckboxConfig {
+  fields: TCheckboxFields;
+}
+
 export type TCheckboxFields = ICheckboxField[];
 
 export interface IFormConfig {

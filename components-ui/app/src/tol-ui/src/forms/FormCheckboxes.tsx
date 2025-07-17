@@ -5,16 +5,14 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Checkbox, CheckboxGroup } from "rsuite"; // @ts-ignore
-import { RSForm, TCheckboxFields } from "..";
+import { Checkbox, CheckboxGroup } from "rsuite";
+import { RSForm, ICheckboxConfig } from "..";
 
 
 export interface PFormCheckboxes {
   id: string;
   label?: string;
-  checkboxConfig: {
-    fields: TCheckboxFields;
-  };
+  checkboxConfig: ICheckboxConfig;
   checkedItems: string[];
   setCheckedItems: Function;
   inline?: boolean;
@@ -65,7 +63,7 @@ export function FormCheckboxes(props: PFormCheckboxes) {
                 disabled={field.disabled}
                 onChange={() => handleCheckboxChange(field.value)}
               >
-                <div style={{ display: "flex", flexDirection: "column" }}>
+                <div className="tol-form-checkboxes-text">
                   {field.children}
                   {field.subtext && (
                     <span className="rs-form-help-text">

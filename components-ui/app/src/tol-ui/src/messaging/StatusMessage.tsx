@@ -13,24 +13,24 @@ export interface PStatusMessage {
   bordered?: boolean;
 }
 
-export const StatusMessage = React.forwardRef<HTMLDivElement, PStatusMessage>(
-  (props: PStatusMessage, ref: React.Ref<HTMLDivElement>) => {
-    const { message, status, bordered, ...rest } = props;
+export function InternalStatusMessage(props: PStatusMessage, ref: React.Ref<HTMLDivElement>) {
+  const { message, status, bordered, ...rest } = props;
 
-    return (
-      <div ref={ref} className="status-message tol-status">
-        <Message
-          children={message}
-          type={status}
-          showIcon={true}
-          onClose={() => null}
-          hidePrefix={true}
-          closable={false}
-          header={false}
-          bordered={bordered}
-          {...rest}
-        />
-      </div>
-    );
-  },
-);
+  return (
+    <div ref={ref} className="status-message tol-status">
+      <Message
+        children={message}
+        type={status}
+        showIcon={true}
+        onClose={() => null}
+        hidePrefix={true}
+        closable={false}
+        header={false}
+        bordered={bordered}
+        {...rest}
+      />
+    </div>
+  );
+}
+
+export const StatusMessage = React.forwardRef<HTMLDivElement, PStatusMessage>(InternalStatusMessage);

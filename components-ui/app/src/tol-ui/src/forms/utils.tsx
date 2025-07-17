@@ -11,17 +11,17 @@ import {
   MISSING_DATA_ERROR
 } from "..";
 
-export const pushErrorMessage = (message: string, toaster: Toaster) => {
+export function pushErrorMessage (message: string, toaster: Toaster) {
   toaster.push(<Message children={message} type="error" showIcon={true} />, {
     duration: 4000,
   });
 };
 
-export const setInitialData = (
+export function setInitialData (
   formConfig: IFormConfig,
   setFormData: React.Dispatch<React.SetStateAction<object>>,
   data?: any
-) => {
+) {
   setFormData(() => {
     const initialData = {};
     formConfig.fields.forEach((field: any) => {
@@ -35,12 +35,12 @@ export const setInitialData = (
   });
 };
 
-export const validateForm = (
+export function validateForm (
   formRef: React.RefObject<any>,
   toaster: Toaster,
   formData: object,
   onSubmit?: (formData: object, isValid: boolean) => void
-) => {
+) {
   if (!formRef.current || !formRef.current.check()) {
     pushErrorMessage(MISSING_DATA_ERROR, toaster);
     return false;

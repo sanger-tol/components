@@ -16,7 +16,7 @@ import {
   FormTextField,
 } from "..";
 
-interface PSingleSelectCustomOption {
+export interface PSingleSelectCustomOption {
   id: string;
   value: string;
   setValue: Function;

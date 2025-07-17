@@ -25,7 +25,7 @@ import {
 } from "..";
 
 
-interface PFormAllInOne {
+export interface PFormAllInOne {
   formConfig: IFormConfig;
   initialData?: object;
   fluid?: boolean;

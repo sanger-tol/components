@@ -17,22 +17,22 @@ export interface PNotification {
   type: TMessageType;
 }
 
-export const Notification = React.forwardRef<HTMLDivElement, PNotification>(
-  (props: PNotification, ref: React.Ref<HTMLDivElement>) => {
-    const { children, closable, type, header, onClose, ...rest } = props;
+function InternalNotification(props: PNotification, ref: React.Ref<HTMLDivElement>) {
+  const { children, closable, type, header, onClose, ...rest } = props;
 
-    return (
-      <div ref={ref} style={{ marginBottom: "4px" }}>
-        <RSNotification
-          closable={closable}
-          type={type}
-          header={header}
-          onClose={onClose}
-          {...rest}
-        >
-          {children}
-        </RSNotification>
-      </div>
-    );
-  },
-);
+  return (
+    <div ref={ref} style={{ marginBottom: "4px" }}>
+      <RSNotification
+        closable={closable}
+        type={type}
+        header={header}
+        onClose={onClose}
+        {...rest}
+      >
+        {children}
+      </RSNotification>
+    </div>
+  );
+}
+
+export const Notification = React.forwardRef<HTMLDivElement, PNotification>(InternalNotification);

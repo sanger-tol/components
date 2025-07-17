@@ -3,28 +3,20 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
-import { PPopUpMessage } from "..";
 
+import { TMessageType, MESSAGE_DURATION } from "..";
 
-enum Duration {
-  success = 4000,
-  info = 6000,
-  warning = 8000,
-  error = 10000,
-  default = 6000,
-}
-
-export const getDuration = (type: PPopUpMessage["type"]) => {
+export function getDuration(type: TMessageType) {
   switch (type) {
     case "success":
-      return Duration.success;
+      return MESSAGE_DURATION.SUCCESS;
     case "info":
-      return Duration.info;
+      return MESSAGE_DURATION.INFO;
     case "warning":
-      return Duration.warning;
+      return MESSAGE_DURATION.WARNING;
     case "error":
-      return Duration.error;
+      return MESSAGE_DURATION.ERROR;
     default:
-      return Duration.default;
+      return MESSAGE_DURATION.DEFAULT;
   }
 };
