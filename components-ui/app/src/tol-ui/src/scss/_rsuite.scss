@@ -48,6 +48,16 @@
     font-weight: 400 !important;
   }
 
+  .rs-input:hover,
+  .rs-input-group:hover,
+  .rs-input:focus,
+  .rs-input-group:focus,
+  .rs-input-group:focus-within {
+    font-family: "Lato" !important;
+    font-weight: 400 !important;
+    font-size: 14px !important;
+  }
+
   .rs-picker-toggle-placeholder {
     font-family: "Lato" !important;
     font-weight: 400 !important;
