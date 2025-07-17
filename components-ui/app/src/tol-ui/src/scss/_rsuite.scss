@@ -48,16 +48,6 @@
     font-weight: 400 !important;
   }
 
-  .rs-input:hover,
-  .rs-input-group:hover,
-  .rs-input:focus,
-  .rs-input-group:focus,
-  .rs-input-group:focus-within {
-    font-family: "Lato" !important;
-    font-weight: 400 !important;
-    font-size: 14px !important;
-  }
-
   .rs-picker-toggle-placeholder {
     font-family: "Lato" !important;
     font-weight: 400 !important;
@@ -250,6 +240,26 @@
 
 .rs-timeline-with-time.rs-timeline-align-left .rs-timeline-item-content {
   padding-left: 60px;
+}
+
+.rs-picker-select-menu-item-active {
+  background-color: var(--tol-grey-translucent) !important;
+  color: var(--tol-primary) !important;
+  font-weight: normal;
+}
+
+.rs-picker-has-value .rs-btn .rs-picker-toggle-value,
+.rs-picker-has-value .rs-picker-toggle .rs-picker-toggle-value {
+  color: var(--rs-text-primary) !important;
+}
+
+.rs-form-control > .rs-input.rs-input:-webkit-autofill,
+.rs-input.rs-input:-webkit-autofill:hover,
+.rs-input.rs-input:-webkit-autofill:focus,
+.rs-input.rs-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px var(--rs-input-bg) inset;
+  -webkit-text-fill-color: var(--rs-text-primary);
+  box-shadow: 0 0 0px 1000px var(--rs-input-bg) inset;
 }
 
 .rs-timeline-item-custom-dot .svg-inline--fa {
