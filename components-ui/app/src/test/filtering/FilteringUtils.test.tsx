@@ -5,9 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import { expect, test, describe, vitest } from "vitest";
-import { render, screen, act } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { useState } from "react";
+import { useState, act } from "react";
 import {
   getComponentsAbove,
   getComponentsBelow,
