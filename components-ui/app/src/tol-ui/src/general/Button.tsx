@@ -13,7 +13,7 @@ import {
 
 export interface IButton {
   icon?: string;
-  onClick?: () => void;
+  onClick?: (...args: any[]) => void;
   className?: string;
   text?: string;
   disabled?: boolean;
