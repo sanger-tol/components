@@ -25,14 +25,14 @@ export type CellRenderer =
   | "expander"
   | "float"
   | "integer"
-  | null;
+  | null
+  | undefined;
 
 export interface Field {
   cellRenderer?: CellRenderer;
   custom?: boolean;
   filter?: string | null;
   fixed?: boolean;
-  hidden?: boolean;
   isAttribute?: boolean;
   link?: string;
   rename?: string;
@@ -55,25 +55,4 @@ export interface FieldMetaOrder {
 export interface FieldMeta {
   data?: FieldMetaData;
   order: FieldMetaOrder;
-}
-
-const fieldDefaults = () => {
-  return {
-    width: 200,
-  };
-};
-
-export function addFieldDefaults(field: Field) {
-  return {
-    ...fieldDefaults(),
-    ...field,
-  };
-}
-
-export function initialiseFields() {
-  return {
-    order: {
-      active: [],
-    },
-  } as FieldMeta;
 }

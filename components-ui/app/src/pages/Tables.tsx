@@ -68,50 +68,66 @@ export function Tables() {
             },
           }}
           fields={{
-            mlwh_run_id: {
-              rename: "Run ID",
-            },
-            "mlwh_species.sts_scientific_name": {
-              rename: "Species",
-              cellRenderer: null,
-            },
-            "mlwh_sequencing_request.id": {
-              rename: "Sequencing Request",
-            },
-            mlwh_run_complete: {
-              rename: "Complete Date",
-            },
-            mlwh_platform_type: {
-              rename: "Platform",
-            },
-            mlwh_instrument_model: {
-              rename: "Instrument",
-            },
-            mlwh_position: {
-              rename: "Position",
-              filter: "boolean",
-            },
-            mlwh_tag_index: {
-              rename: "Tag",
-              filter: null,
-              sort: false,
-            },
-            "tolqc_species.goat_genome_size": {
-              cellRenderer: "integer",
-              rename: "Estimated Genome Size",
-            },
-            custom_field: {
-              rename: "Custom Field",
-              cellRenderer: {
-                element: exampleElement,
-                propPointers: {
-                  mlwhTag: "mlwh_tag_index",
-                },
-                props: {
-                  text: "Custom Field",
-                }
+            data: {
+              mlwh_run_id: {
+                rename: "Run ID",
               },
-              custom: true
+              "mlwh_species.sts_scientific_name": {
+                rename: "Species",
+                cellRenderer: null,
+              },
+              "mlwh_sequencing_request.id": {
+                rename: "Sequencing Request",
+              },
+              mlwh_run_complete: {
+                //rename: "Complete Date",
+              },
+              mlwh_platform_type: {
+                //rename: "Platform",
+              },
+              mlwh_instrument_model: {
+                rename: "Instrument",
+              },
+              mlwh_position: {
+                rename: "Position",
+                filter: "boolean",
+              },
+              mlwh_tag_index: {
+                rename: "Tag",
+                filter: null,
+                sort: false,
+              },
+              "tolqc_species.goat_genome_size": {
+                cellRenderer: "integer",
+                rename: "Estimated Genome Size",
+              },
+              custom_field: {
+                rename: "Custom Field",
+                cellRenderer: {
+                  element: exampleElement,
+                  propPointers: {
+                    mlwhTag: "mlwh_tag_index",
+                  },
+                  props: {
+                    text: "Custom Field",
+                  }
+                },
+                custom: true
+              },
+            },
+            order: {
+              active: [
+                "mlwh_run_id",
+                "mlwh_species.sts_scientific_name",
+                "mlwh_sequencing_request.id",
+                "mlwh_run_complete",
+                "mlwh_platform_type",
+                "mlwh_instrument_model",
+                "mlwh_position",
+                "mlwh_tag_index",
+                "tolqc_species.goat_genome_size",
+                "custom_field",
+              ],
             },
           }}
           height={500}

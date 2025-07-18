@@ -17,7 +17,6 @@ import {
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
-  exportTableToSpreadsheet,
   getAllowedFields,
   getSourceColour,
   Filter,
@@ -273,20 +272,7 @@ export function Table(props: Props) {
         source={source}
         fields={fields?.order?.active}
         totalSize={totalSize}
-        onDownloadSpreadsheet={() =>
-          exportTableToSpreadsheet(
-            objectType,
-            dataSource,
-            fields.data!,
-            filter!,
-            sortColumn,
-            sortType,
-            setSuccess,
-            setError,
-            setDownloading,
-            defaultSort,
-          )
-        }
+        onDownloadSpreadsheet={() => {}}
       />
       <ColumnConfigDrawer
         {...props}

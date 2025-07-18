@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import {
   CellTooltip,
-  addFieldDefaults,
   CellRenderer,
   FieldMeta,
   FieldMetaData,
@@ -21,6 +20,7 @@ import {
   colours,
   TsDataSource,
   API_METHODS,
+  IAttributeData,
 } from "..";
 
 
@@ -32,7 +32,6 @@ interface Rgb {
 }
 
 export const tableVersion = "25-tabVer";
-let hiddenFields = false;
 
 export function isRelationship(key: string) {
   return key.includes(".");
@@ -57,6 +56,15 @@ const sourceColours = {
   lrpacbio: colours[15],
   other: colours[30],
 };
+
+export function initialiseFields() {
+  return {
+    order: {
+      active: [],
+    },
+  } as FieldMeta;
+}
+
 
 function createLink(text: any, url: string) {
   return (
@@ -174,7 +182,7 @@ function createCellRenderer(
   dataSource: TsDataSource,
   entityMeta?: IEntityMeta,
 ) {
-  if (cellRenderer === null) return value;
+  if (!cellRenderer) return value;
   if (typeof cellRenderer === "string") {
     if (value === null || value === undefined) return "";
     if (cellRenderer === "relationship") {
@@ -197,7 +205,6 @@ function createCellRenderer(
       return createInteger(value);
     }
   }
-
   const props: object = {};
   if (cellRenderer.propPointers !== undefined) {
     for (const [prop, requiredField] of Object.entries(
@@ -342,18 +349,18 @@ export function convertTableData(
     // create empty attributes if they don't exist
     if (!("attributes" in row)) row["attributes"] = {};
     if ("relationships" in row) {
-      addRelationshipFieldsToAttributes(row, fieldMeta.data);
+      addRelationshipFieldsToAttributes(row, fieldMeta.data!);
     }
     const rowOutput = { id: row.id };
     if ("attributes" in row) {
-      formatAttributeData(row, fieldMeta.data, rowOutput, dataSource, entityMeta);
+      formatAttributeData(row, fieldMeta.data!, rowOutput, dataSource, entityMeta);
     }
     updatedData.push(rowOutput);
   });
   return updatedData;
 }
 
-function addDefaultCellRenderer(key: string, type: string) {
+function addDefaultCellRenderer(key: string, type: string): CellRenderer {
   // relationship ids have relationship boxes by default
   if (isRelationship(key) && key.split(".")[1] === "id") {
     return "relationship";
@@ -363,7 +370,6 @@ function addDefaultCellRenderer(key: string, type: string) {
     case "boolean":
       return type;
   }
-  return undefined;
 }
 
 function addRemoteFilterType(type: string, cardinality: number) {
@@ -372,44 +378,7 @@ function addRemoteFilterType(type: string, cardinality: number) {
   return type;
 }
 
-function addEntityMeta(
-  endpoint: string,
-  fieldMeta: FieldMeta,
-  entityMeta: IEntityMeta
-) {
-  for (const [key, meta] of Object.entries(
-    entityMeta.flatAttributes[endpoint]
-  )) {
-    // initialising
-    const type = meta["python_type"];
-    const rename = meta["display_name"];
-    const description = meta["description"] || undefined;
-    const filterType = addRemoteFilterType(type, meta["cardinality"]);
-    const source = meta["source"];
-
-    // auto add field that are not yet in fieldMeta & hidden not enabled
-    if (!hiddenFields && !(key in fieldMeta.data)) {
-      fieldMeta.order["inactive"].push(key);
-      fieldMeta.data[key] = addFieldDefaults(
-        // hides any new (not defined as a prop) fields
-        { isAttribute: !isRelationship(key), hidden: true }
-      );
-    }
-    // add defaults to fields
-    if (key in fieldMeta.data) {
-      fieldMeta.data[key].type = fieldMeta.data[key].type || type;
-      fieldMeta.data[key].filter = fieldMeta.data[key].filter || filterType;
-      fieldMeta.data[key].sort = fieldMeta.data[key].sort || true;
-      fieldMeta.data[key].rename =
-        fieldMeta.data[key].rename || rename || normaliseCaps(key, endpoint);
-      fieldMeta.data[key].description =
-        fieldMeta.data[key].description || description;
-      fieldMeta.data[key].source = fieldMeta.data[key].source || source;
-    }
-  }
-}
-
-export function sortFieldsByRename(fieldMeta: FieldMeta) {
+function sortFieldsByRename(fieldMeta: FieldMeta) {
   if (!fieldMeta || !fieldMeta.order.inactive) return [];
   return fieldMeta.order.inactive.sort((a, b) => {
     const fieldA = fieldMeta.data![a];
@@ -420,29 +389,60 @@ export function sortFieldsByRename(fieldMeta: FieldMeta) {
   });
 }
 
-function addDefaultMeta(fieldMeta: FieldMeta) {
-  // add defaults
-  for (const [key, meta] of Object.entries(fieldMeta.data)) {
-    if (fieldMeta.data[key].cellRenderer === undefined) {
-      fieldMeta.data[key].cellRenderer = addDefaultCellRenderer(
-        key,
-        meta.type!
-      );
-    }
-    if (!meta.rename) meta.rename = normaliseCaps(key);
+function dealWithInactiveFields(
+  key: string,
+  fieldMeta: FieldMeta,
+) {
+  if (!fieldMeta.order.inactive) {
+    fieldMeta.order.inactive = [];
   }
-  // ensure fields are easy to find
-  fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
+  if (!fieldMeta.order.active.includes(key)) {
+    fieldMeta.order.inactive.push(key);
+  }
 }
+
+export function addDefaultsFromEntityMeta(
+  key: string,
+  meta: IAttributeData,
+  fieldMeta: FieldMeta,
+) {
+  if (!fieldMeta.data) fieldMeta.data = {};
+  const defaults = {
+    cellRenderer: addDefaultCellRenderer(key, meta.type),
+    filter: addRemoteFilterType(meta.python_type, meta.cardinality),
+    isAttribute: isRelationship(key),
+    rename: meta.display_name || normaliseCaps(key),
+    sort: true,
+    type: meta.python_type,
+    width: 200,
+    description: meta.description,
+    source: meta.source,
+  }
+  // customised field config overrides the defaults
+  fieldMeta.data[key] = { ...defaults, ...fieldMeta.data[key] };
+}
+
 
 export function structureFieldMeta(
   objectType: string,
-  fields: FieldMeta,
+  fieldMeta: FieldMeta,
   entityMeta: IEntityMeta,
 ) {
-  addEntityMeta(objectType, fields, entityMeta);
-  addDefaultMeta(fields);
-  return fields;
+  for (const [key, meta] of Object.entries(
+    entityMeta.flatAttributes[objectType]
+  )) {
+    // TODO: pre-flight check for old fields
+    dealWithInactiveFields(key, fieldMeta);
+    if (fieldMeta.order.active.includes(key) || fieldMeta.order.inactive?.includes(key)) {
+      addDefaultsFromEntityMeta(
+        key,
+        meta,
+        fieldMeta,
+      );
+    }
+  }
+  fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
+  return fieldMeta;
 }
 
 export function createSort(sortColumn: string, sortType: string) {
@@ -501,76 +501,11 @@ export function fieldMetaToCellRenderer(
   fieldMeta: FieldMeta
 ) {
   for (const field in fields) {
-    if (fields[field].cellRenderer) {
+    if (fieldMeta.data && fields[field].cellRenderer) {
       fieldMeta.data[field].cellRenderer = fields[field].cellRenderer;
     }
   }
   return fieldMeta;
-}
-
-export function exportTableToSpreadsheet(
-  objectType: string,
-  dataSource: TsDataSource,
-  fieldMetaData: FieldMetaData,
-  filter: object,
-  sortColumn: string,
-  sortType: string,
-  setSuccess: any,
-  setError: any,
-  setDownloading: any,
-  defaultSort?: string,
-) {
-  setDownloading(true);
-
-  const columns = Object.keys(fieldMetaData).map((key: string) => ({
-    key: key,
-    display_name: fieldMetaData[key].rename,
-    hidden: fieldMetaData[key].hidden || false,
-  }));
-
-  const params = {
-    page_size: 10000,
-    filter: filter,
-  };
-
-  // deal with sorting
-  if (sortColumn !== "") {
-    params["sort_by"] = createSort(sortColumn, sortType);
-  } else if (defaultSort !== undefined) {
-    params["sort_by"] = defaultSort;
-  }
-
-  dataSource
-    .custom({
-      method: API_METHODS.POST,
-      resource: `${objectType}:export`,
-      params: params,
-      body: { data: columns },
-      options: { responseType: "blob" },
-    })
-    .then((res: any) => {
-      // temporary URL for the blob
-      const tempUrl = window.URL.createObjectURL(res.data);
-
-      // Trigger the download with an anchor element
-      const a = document.createElement("a");
-      a.href = tempUrl;
-      a.download = objectType + "_table.xlsx";
-      a.click();
-
-      // Release the URL
-      window.URL.revokeObjectURL(tempUrl);
-      setDownloading(false);
-
-      if (res.status !== 200) throw Error();
-
-      setDownloading(false);
-      setSuccess("Download Completed");
-    })
-    .catch((error: any) => {
-      setDownloading(false);
-      setError("Download Failed: " + error.message);
-    });
 }
 
 function rgbToString(rgb: Rgb, opacity: number) {

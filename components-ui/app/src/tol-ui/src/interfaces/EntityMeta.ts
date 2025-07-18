@@ -14,8 +14,12 @@ interface IRelationship {
   foreign_keys?: IValues;
 }
 
+export interface IAttributeData {
+  [attributeKey: string]: any;
+}
+
 export interface IAttributes {
-  [objectType: string]: object;
+  [objectType: string]: IAttributeData;
 }
 
 export interface IRelationships {
