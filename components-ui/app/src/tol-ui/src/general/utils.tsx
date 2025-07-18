@@ -156,10 +156,6 @@ export function generateId(prefix: string) {
   return `${prefix}_${nanoid()}`;
 }
 
-export function getSourceData(fieldMeta: FieldMeta, attribute: string) {
-  return fieldMeta?.data[attribute]["source"] || "";
-}
-
 export function getAttributeSources(
   entityMeta: any,
   objectType: string,

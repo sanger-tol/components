@@ -163,7 +163,7 @@ export function RemoteTable(props: Props) {
           setFieldMeta(
             structureFieldMeta(
               objectType,
-              fields,
+              fieldMeta,
               em,
             )
           );
@@ -172,8 +172,8 @@ export function RemoteTable(props: Props) {
           setError(error.message);
         })
         .finally(() => {
-          //setInitialLoad(false);
-          //setLoading(false);
+          setInitialLoad(false);
+          setLoading(false);
         });
     }
     // if (!fieldMeta && !noConfigModal)
