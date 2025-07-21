@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
+import * as XLSX from "xlsx";
 import {
   CellTooltip,
   addFieldDefaults,
@@ -22,8 +23,9 @@ import {
   colours,
   TsDataSource,
   API_METHODS,
+  IProgressThreshold,
+  IGetList,
 } from "..";
-
 
 interface Rgb {
   [key: string]: number;
@@ -72,10 +74,9 @@ function createRelationshipBox(
   data: any,
   dataSource: TsDataSource,
   detail?: boolean,
-  entityMeta?: IEntityMeta,
+  entityMeta?: IEntityMeta
 ) {
   const [relationship, attribute] = key.split(".");
-
 
   // cannot assume some keys exist
   if ("relationships" in data) {
@@ -160,11 +161,15 @@ function createExpander(value: string) {
 }
 
 function createFloat(value: any) {
-  return <CellTooltip followCursor value={value.toFixed?.(2)} contents={value} />;
+  return (
+    <CellTooltip followCursor value={value.toFixed?.(2)} contents={value} />
+  );
 }
 
 function createInteger(value: string | number) {
-  return <div className="tol-cell-renderer-integer">{value.toLocaleString()}</div>;
+  return (
+    <div className="tol-cell-renderer-integer">{value.toLocaleString()}</div>
+  );
 }
 
 function createCellRenderer(
@@ -173,7 +178,7 @@ function createCellRenderer(
   value: any,
   data: object,
   dataSource: TsDataSource,
-  entityMeta?: IEntityMeta,
+  entityMeta?: IEntityMeta
 ) {
   if (cellRenderer === null) return value;
   if (typeof cellRenderer === "string") {
@@ -254,7 +259,7 @@ function formatAttributeData(
   fieldMetaData: FieldMetaData,
   rowOutput: object,
   dataSource: TsDataSource,
-  entityMeta?: IEntityMeta,
+  entityMeta?: IEntityMeta
 ) {
   const attributes = row["attributes"];
 
@@ -284,10 +289,7 @@ function formatAttributeData(
   }
 }
 
-function resolveNestedRelationship(
-  relationships: any,
-  keys: string[]
-): any {
+function resolveNestedRelationship(relationships: any, keys: string[]): any {
   if (keys.length === 0 || !relationships) return null;
 
   const [currentKey, ...remainingKeys] = keys;
@@ -300,7 +302,10 @@ function resolveNestedRelationship(
     return instanceData;
   }
 
-  return resolveNestedRelationship(instanceData["relationships"], remainingKeys);
+  return resolveNestedRelationship(
+    instanceData["relationships"],
+    remainingKeys
+  );
 }
 
 function addRelationshipFieldsToAttributes(
@@ -319,7 +324,8 @@ function addRelationshipFieldsToAttributes(
         if (attribute === "id") {
           rowAttributes[key] = resolvedData["id"];
         } else if (
-          "attributes" in resolvedData && attribute! in resolvedData["attributes"]
+          "attributes" in resolvedData &&
+          attribute! in resolvedData["attributes"]
         ) {
           rowAttributes[key] = resolvedData["attributes"][attribute!];
         }
@@ -335,7 +341,7 @@ export function convertTableData(
   data: any[],
   fieldMeta: FieldMeta,
   dataSource: TsDataSource,
-  entityMeta?: IEntityMeta,
+  entityMeta?: IEntityMeta
 ) {
   if (data[0] === undefined) return [];
   const updatedData: any[] = [];
@@ -347,7 +353,13 @@ export function convertTableData(
     }
     const rowOutput = { id: row.id };
     if ("attributes" in row) {
-      formatAttributeData(row, fieldMeta.data, rowOutput, dataSource, entityMeta);
+      formatAttributeData(
+        row,
+        fieldMeta.data,
+        rowOutput,
+        dataSource,
+        entityMeta
+      );
     }
     updatedData.push(rowOutput);
   });
@@ -503,7 +515,7 @@ export function tableDebug(
       console.log("Field Possibilities", fieldPossibilities);
       console.log("Api Response Data", apiData);
       console.log("Field Meta", fieldMeta);
-    } catch (e) { } // eslint-disable-line
+    } catch (e) {} // eslint-disable-line
   }
 }
 
@@ -517,7 +529,7 @@ export function createSort(sortColumn: string, sortType: string) {
 function deleteRedundantLocalStorageEntries(ids: string[]) {
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && ids.some(id => key.includes(id))) {
+    if (key && ids.some((id) => key.includes(id))) {
       localStorage.removeItem(key);
       i--; // adjust the index after removing an item
     }
@@ -538,8 +550,8 @@ export function setTableConfigLocalStorage(
 export function getTableConfigLocalStorage(tableId: string, key: string) {
   deleteRedundantLocalStorageEntries([
     "-field-meta", // legacy suffix
-    "-table-v" // recent suffix
-  ])
+    "-table-v", // recent suffix
+  ]);
 
   const data = localStorage.getItem(`${key}-${tableId}-${tableVersion}`);
   if (data) return JSON.parse(data);
@@ -570,71 +582,6 @@ export function fieldMetaToCellRenderer(
   return fieldMeta;
 }
 
-export function exportTableToSpreadsheet(
-  objectType: string,
-  dataSource: TsDataSource,
-  fieldMetaData: FieldMetaData,
-  filter: object,
-  sortColumn: string,
-  sortType: string,
-  setSuccess: any,
-  setError: any,
-  setDownloading: any,
-  defaultSort?: string,
-) {
-  setDownloading(true);
-
-  const columns = Object.keys(fieldMetaData).map((key: string) => ({
-    key: key,
-    display_name: fieldMetaData[key].rename,
-    hidden: fieldMetaData[key].hidden || false,
-  }));
-
-  const params = {
-    page_size: 10000,
-    filter: filter,
-  };
-
-  // deal with sorting
-  if (sortColumn !== "") {
-    params["sort_by"] = createSort(sortColumn, sortType);
-  } else if (defaultSort !== undefined) {
-    params["sort_by"] = defaultSort;
-  }
-
-  dataSource
-    .custom({
-      method: API_METHODS.POST,
-      resource: `${objectType}:export`,
-      params: params,
-      body: { data: columns },
-      options: { responseType: "blob" },
-    })
-    .then((res: any) => {
-      // temporary URL for the blob
-      const tempUrl = window.URL.createObjectURL(res.data);
-
-      // Trigger the download with an anchor element
-      const a = document.createElement("a");
-      a.href = tempUrl;
-      a.download = objectType + "_table.xlsx";
-      a.click();
-
-      // Release the URL
-      window.URL.revokeObjectURL(tempUrl);
-      setDownloading(false);
-
-      if (res.status !== 200) throw Error();
-
-      setDownloading(false);
-      setSuccess("Download Completed");
-    })
-    .catch((error: any) => {
-      setDownloading(false);
-      setError("Download Failed: " + error.message);
-    });
-}
-
 function rgbToString(rgb: Rgb, opacity: number) {
   return (
     "rgba(" +
@@ -650,9 +597,10 @@ function rgbToString(rgb: Rgb, opacity: number) {
 }
 
 export function getSourceColour(sourceName?: string): string {
-  const rgb = sourceName && sourceColours[sourceName]
-    ? sourceColours[sourceName]
-    : sourceColours.other;
+  const rgb =
+    sourceName && sourceColours[sourceName]
+      ? sourceColours[sourceName]
+      : sourceColours.other;
 
   return rgbToString(rgb, 1);
 }
@@ -671,10 +619,7 @@ export function getAllowedFields(fieldMeta: FieldMeta) {
   );
 }
 
-export function mapKeysToDisplayNames(
-  data: any,
-  displayNames: any
-): object {
+export function mapKeysToDisplayNames(data: any, displayNames: any): object {
   const result: object = {};
   for (const key in data) {
     if (displayNames[key] && displayNames[key].display_name) {
@@ -689,20 +634,62 @@ export function mapKeysToDisplayNames(
 
 export async function getActions(
   objectType: string,
-  actionDataSource: TsDataSource,
+  actionDataSource: TsDataSource
 ): Promise<string[]> {
   const actionsList: string[] = [];
-  const actions =  await actionDataSource
-    .getListPage({
-      objectType: objectType,
-      filter: {
-        and_: {
-          object_type: { eq: { value: objectType } },
-        },
+  const actions = await actionDataSource.getListPage({
+    objectType: objectType,
+    filter: {
+      and_: {
+        object_type: { eq: { value: objectType } },
       },
-    })
+    },
+  });
   actions?.find((action) => {
     actionsList.push(action.name);
-  })
-  return actionsList
+  });
+  return actionsList;
 }
+
+export async function progressBar(
+  { objectType, filter, requestedFields }: IGetList,
+  { setTotal, setCurrent, setPercentageComplete }: IProgressThreshold,
+  datasource: TsDataSource
+) {
+  const results: any[] = [];
+  setTotal(0);
+  setCurrent(0);
+  setPercentageComplete(0);
+
+  datasource
+    .custom({
+      method: API_METHODS.GET,
+      resource: "manifest",
+    })
+    .then(async (response) => {
+      const tl = response.data.meta.total;
+      setTotal(tl);
+      const ds = datasource.getListByCursor({
+        objectType: "manifest",
+        filter: filter,
+        requestedFields: requestedFields,
+      });
+      for await (const item of ds) {
+        setCurrent((prev) => {
+          const next = prev + 1;
+          setPercentageComplete(Math.round((next / tl) * 100));
+          results.push(item);
+          return next;
+        });
+      }
+      return results;
+    });
+}
+
+// export function exportDataToSpreadsheet({ results}) {
+//   console.log("Here bouy-->", results);
+//   const worksheet = XLSX.utils.json_to_sheet(results);
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, "Dates");
+//   XLSX.writeFile(workbook, "Presidents.xlsx", { compression: true });
+// }

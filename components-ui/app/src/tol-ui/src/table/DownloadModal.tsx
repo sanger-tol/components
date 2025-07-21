@@ -5,14 +5,19 @@ SPDX-License-Identifier: MIT
 */
 
 import { Tabs } from "rsuite";
-import { CodeBlock } from 'react-code-blocks';
+import { CodeBlock } from "react-code-blocks";
 import {
   Button,
   Modal,
   PopUpMessage,
-  copyToClipboard
+  TsDataSource,
+  copyToClipboard,
+  progressBar,
+  exportDataToSpreadsheet,
+  IGetList,
 } from "..";
-
+import { Progress } from "rsuite";
+import { Dispatch, useState } from "react";
 
 interface Props {
   size: string;
@@ -20,29 +25,50 @@ interface Props {
   setOpen: any;
   objectType?: string;
   filter?: any;
-  onDownloadSpreadsheet: Function;
+
   source?: string;
-  fields: string[];
+  dataSource: TsDataSource;
+  requestedFields: string[] | string;
   totalSize: number;
 }
 
-export function DownloadModal(props: Props) {
-  const { size, open, setOpen, onDownloadSpreadsheet, objectType, filter, source, fields, totalSize } = props;
+export interface IProgressThreshold {
+  setTotal: Dispatch<React.SetStateAction<number>>;
+  setCurrent: Dispatch<React.SetStateAction<number>>;
+  setPercentageComplete: Dispatch<React.SetStateAction<number>>;
+}
 
+export function DownloadModal(props: Props) {
+  const {
+    size,
+    open,
+    setOpen,
+    objectType,
+    filter,
+    source,
+    dataSource,
+    totalSize,
+  } = props;
+  const [total, setTotal] = useState<number>(0);
+  const [current, setCurrent] = useState<number>(0);
+  const [percentageComplete, setPercentageComplete] = useState<number>(0);
+  const requestedFields =Array.isArray(props.requestedFields)? props.requestedFields.join(","): props.requestedFields;
   const stringifyFilter = (filter: any) => {
     if (!filter) {
-      return 'None';
+      return "None";
     }
     // @ts-ignore
     return JSON.stringify(filter, (key, value) => {
-      if (typeof value === 'boolean') {
-        return value ? 'True' : 'False';
+      if (typeof value === "boolean") {
+        return value ? "True" : "False";
       }
       return value;
-    }).replace(/"True"/g, 'True').replace(/"False"/g, 'False');
+    })
+      .replace(/"True"/g, "True")
+      .replace(/"False"/g, "False");
   };
 
-  const sourceToUse = source || 'portal';
+  const sourceToUse = source || "portal";
 
   const SDKText = `from tol.core import DataSourceFilter
 from tol.sources.${sourceToUse} import ${sourceToUse}
@@ -52,33 +78,39 @@ f = DataSourceFilter(
     and_ = ${stringifyFilter(filter?.and_)}
 )
 objs = src.get_list('${objectType}', object_filters=f) 
-  `
+  `;
 
   const CLICommand = `
 tol data \
---source=${sourceToUse || 'portal'} \
+--source=${sourceToUse || "portal"} \
 --operation=list \
 --type=${objectType} \
 --filter='${JSON.stringify(filter) || '{"and":{}}'}' \
---fields=${fields.join(',')} \
+--fields=${requestedFields} \
 --output=tsv 
-  `
+  `;
 
   const onClick = (text: string) => {
-    copyToClipboard(text.trim())
+    copyToClipboard(text.trim());
     PopUpMessage({
-      type: 'success',
-      message: 'Copied to clipboard',
-    })
-  }
+      type: "success",
+      message: "Copied to clipboard",
+    });
+  };
 
+  const onDownloadSpreadsheet = () => {
+    let response = progressBar(
+      { objectType: objectType || "" , filter, requestedFields: requestedFields },
+      { setTotal, setCurrent, setPercentageComplete },
+      dataSource
+    );
+    // const k = JSON.stringify(response);
+    // console.log("Here bouy-->", k);
+    // exportDataToSpreadsheet();
+  };
   return (
     <>
-      <Modal
-        size={size}
-        open={open}
-        setOpen={setOpen}
-      >
+      <Modal size={size} open={open} setOpen={setOpen}>
         <Tabs defaultActiveKey="1">
           <Tabs.Tab eventKey="1" title="Spreadsheet">
             <div className="tol-download-modal-body">
@@ -87,7 +119,7 @@ tol data \
                 text="Download as Spreadsheet"
                 onClick={() => {
                   onDownloadSpreadsheet();
-                  setOpen(false);
+                  setOpen(true);
                 }}
                 icon="download"
                 disabledTooltip={
@@ -95,7 +127,11 @@ tol data \
                     ? "Only 10,000 results can currently be downloaded as a spreadsheet."
                     : undefined
                 }
-                disabled={totalSize >= 10000}
+                // disabled={totalSize >= 10000}
+              />
+              <Progress.Line
+                percent={percentageComplete}
+                status={percentageComplete === 100 ? "success" : "active"}
               />
             </div>
           </Tabs.Tab>
@@ -133,4 +169,4 @@ tol data \
       </Modal>
     </>
   );
-};
+}
