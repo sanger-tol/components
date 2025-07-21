@@ -48,7 +48,7 @@ async function getViews(
     .then(async (data: TDataObjectListOrNull) => {
       const ids = await Promise.all(
         data?.map(async (viewBoard: any) => {
-          const view = await viewBoard.relationships.view;
+          const view = await viewBoard.fetchRelationships.view;
           return view.id;
         }) || []
       );

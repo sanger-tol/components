@@ -67,6 +67,23 @@ export class TsDataSource {
     return this.apiPrefix;
   }
 
+  private fetchRelationshipHandler = {
+    get: async (target: ISourceDataObject, key: string) => {
+      const targetValue = target?.[key];
+
+      if (targetValue === null) return null;
+
+      if (targetValue !== undefined)
+        return new Proxy(targetValue.data, this.dataObjectHandler);
+
+      return await this.getToOneRelation({
+        objectType: target.__sourceType,
+        id: target.__sourceId,
+        relation: key,
+      });
+    },
+  };
+
   private relationshipHandler = {
     get: async (target: ISourceDataObject, key: string) => {
       const targetValue = target?.[key];
@@ -88,6 +105,15 @@ export class TsDataSource {
     get: (target: any, key: string) => {
       if (key === "objectType") return target.type;
       if (key === "id") return target.id;
+
+      if (key === "fetchRelationships") {
+        const relationshipsTarget: ISourceDataObject = {
+          ...(target?.fetchRelationships ?? {}),
+          __sourceType: target.type,
+          __sourceId: target.id,
+        };
+        return new Proxy(relationshipsTarget, this.fetchRelationshipHandler);
+      }
 
       if (key === "relationships") {
         const relationshipsTarget: ISourceDataObject = {

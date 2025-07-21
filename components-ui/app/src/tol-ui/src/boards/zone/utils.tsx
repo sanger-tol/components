@@ -32,14 +32,14 @@ export async function getComponents(
   if (componentZoneData) {
     const componentIds = await Promise.all(
       componentZoneData.map(
-        async (componentZone) => (await componentZone.relationships.component).id
+        async (componentZone) => (await componentZone.fecthRelationships.component).id
       )
     ) || [];
     const componentData = await getComponentData(componentIds, boardDataSource);
 
     return Promise.all(
       componentZoneData.map(async (component) => {
-        const componentId = (await component.relationships.component).id;
+        const componentId = (await component.fetchRelationships.component).id;
         const componentDetails = componentData.find(
           (data) => data.id === componentId
         );

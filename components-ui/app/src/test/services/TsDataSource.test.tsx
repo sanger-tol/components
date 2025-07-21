@@ -696,7 +696,7 @@ describe("Testing relationship getting", () => {
     expect(specimen).not.toBeNull();
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
 
-    expect(await specimen!.relationships.none_species).toBeNull();
+    expect(await specimen!.fetchRelationships.none_species).toBeNull();
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -714,7 +714,7 @@ describe("Testing relationship getting", () => {
     });
     expect(specimen).not.toBeNull();
 
-    const presentSpecies = await specimen!.relationships.present_species;
+    const presentSpecies = await specimen!.fetchRelationships.present_species;
     expect(presentSpecies.id).toEqual("present");
     expect(presentSpecies.objectType).toEqual("species");
   });
@@ -733,7 +733,7 @@ describe("Testing relationship getting", () => {
     });
     expect(specimen).not.toBeNull();
 
-    const lazySpecies = await specimen!.relationships.lazy_species;
+    const lazySpecies = await specimen!.fetchRelationships.lazy_species;
 
     expect(lazySpecies.id).toEqual("lazy");
     expect(lazySpecies.objectType).toEqual("species");
