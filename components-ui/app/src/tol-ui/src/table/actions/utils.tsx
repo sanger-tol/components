@@ -64,7 +64,6 @@ export function addRemoteActions(
           },
         },
       });
-      console.log(res);
       const requirements =
         // @ts-ignore
         res.data.data[0]["attributes"]["params"]["requirements"] || {};
