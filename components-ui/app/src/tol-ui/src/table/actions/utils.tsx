@@ -8,6 +8,7 @@ import {
   ACTIONS,
   API_METHODS,
   IDropdownButtonConfig,
+  PopUpMessage,
   TsDataSource,
 } from "../..";
 
@@ -32,6 +33,7 @@ export function addRemoteActions(
       if (Object.keys(itemRequirements).length === 0) {
         await completeAction(actionName, ids);
       } else {
+        PopUpMessage({type: "warning", message: "Checking export items meet criteria..."});
         const allItemsMeetCriteria = await checkIdsMeetCriteria(
           ids,
           itemRequirements
@@ -39,10 +41,19 @@ export function addRemoteActions(
         if (!allItemsMeetCriteria) {
           setIdExportModalOpen(true);
         } else {
+          PopUpMessage({type: "success", message: "All items meet criteria. Exporting..."});
           await completeAction(actionName, ids);
         }
       }
+      PopUpMessage({
+        type: "success",
+        message: `Action "${actionName}" completed successfully.`,
+      });
     } catch (error) {
+      PopUpMessage({
+        type: "error",
+        message: `Error running action "${actionName}": ${error.message}`,
+      });
       console.error("Error running action", error);
     } finally {
       setLoading(false);
