@@ -26,10 +26,11 @@ export interface IBoardMarkdown extends IBoardTargetAndZone {
   title: string;
   config: IMarkdownConfig;
   size: string;
+  editable?: boolean;
 }
 
 export function BoardMarkdown(props: IBoardMarkdown) {
-  const { id, title, config, size, boardObjectType, boardDataSource, zone } = props;
+  const { id, title, config, size, boardObjectType, boardDataSource, zone, editable } = props;
 
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
@@ -56,7 +57,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
     type: "primary",
     icon: showPreview ? "eye-slash" : "eye",
     onClick: () => setShowPreview(!showPreview),
-    visible: !showMarkdownViewer,
+    visible: !showMarkdownViewer && editable,
     outline: true,
   }
 
@@ -70,6 +71,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
       onMarkdownSave({ content: content });
     },
     outline: true,
+    visible: editable,
   }
 
   const MdUtilityBar = (
@@ -78,7 +80,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
       buttons={[editButton, previewButton]}
       title={{
         text: title,
-        editable: true,
+        editable: editable,
         onSave: (value: string) => {
           saveTitle(value, id, boardObjectType, boardDataSource);
         },
@@ -99,6 +101,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
         hideToolbar={size === "sm"}
         className="tol-markdown-viewer"
         height="100%"
+        visibleEditor={showMarkdownViewer ? "preview" : "edit"}
       />
     </>
   );

@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -22,10 +22,11 @@ import {
   addComponents,
   InfoTooltip,
   normaliseCaps,
+  PrivelegeContext
 } from "../..";
 
 
-export interface PZone extends PBoard {
+export interface PZone extends Omit<PBoard, 'setPrivelege'> {
   id: string;
   title: string;
   objectType: string;
@@ -57,6 +58,7 @@ export function Zone(props: PZone) {
     filter: filter,
     components: [],
   });
+  const privelege = useContext(PrivelegeContext);
 
   useEffect(() => {
     getComponents(id, boardDataSource).then((components) => {
@@ -98,6 +100,7 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "Add Component",
     testid: "add-component-button",
+    visible: privelege === "editable"
   };
 
   const editButton: IButton = {
@@ -111,6 +114,7 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "Edit Widgets",
     testid: "drag-components-button",
+    visible: privelege === "editable"
   };
 
   const deleteButton: IButton = {
@@ -121,7 +125,8 @@ export function Zone(props: PZone) {
     type: "error",
     icon: "trash",
     position: "right",
-    tooltip: "Delete Zone"
+    tooltip: "Delete Zone",
+    visible: privelege === "editable"
   };
 
   const upButton: IButton = {
@@ -132,7 +137,8 @@ export function Zone(props: PZone) {
     type: "primary",
     icon: "arrow-up",
     position: "right",
-    tooltip: "Move Zone Up"
+    tooltip: "Move Zone Up",
+    visible: privelege === "editable"
   };
 
   const downButton: IButton = {
@@ -143,7 +149,8 @@ export function Zone(props: PZone) {
     type: "primary",
     icon: "arrow-down",
     position: "right",
-    tooltip: "Move Zone Down"
+    tooltip: "Move Zone Down",
+    visible: privelege === "editable"
   };
 
   const saveButton: IButton = {
@@ -156,7 +163,8 @@ export function Zone(props: PZone) {
     icon: "floppy-disk",
     position: "right",
     tooltip: "Save Layout",
-    testid: "save-layout-button"
+    testid: "save-layout-button",
+    visible: privelege === "editable"
   };
 
   const filtersButton: IButton = {
@@ -165,7 +173,8 @@ export function Zone(props: PZone) {
     type: "primary",
     icon: "filter",
     position: "right",
-    tooltip: "Add filters to the Zone"
+    tooltip: "Add filters to the Zone",
+    visible: privelege === "editable"
   };
 
   const showEditButtons: IButton = {
@@ -177,7 +186,8 @@ export function Zone(props: PZone) {
     icon: editBtnsVisible ? "check" : "pen-to-square",
     position: "right",
     tooltip: editBtnsVisible ? "Save Changes" : "Edit Zone",
-    testid: "edit-zone-button"
+    testid: "edit-zone-button",
+    visible: privelege === "editable"
   };
 
   const Tooltip = (
@@ -194,7 +204,7 @@ export function Zone(props: PZone) {
         id="zone-utility-bar"
         title={{
           text: title,
-          editable: true,
+          editable: privelege === "editable",
           onSave: (value: string) => {
             if (value !== title) {
               saveTitle(value, id, BOARDS.ZONE, boardDataSource);

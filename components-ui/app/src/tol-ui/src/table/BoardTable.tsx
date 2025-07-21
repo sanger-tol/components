@@ -12,7 +12,7 @@ import {
   RemoteTable,
   saveTitle,
   IBoardTargetAndZone,
-  updateConfigAndUpsert
+  updateConfigAndUpsert,
 } from "..";
 
 
@@ -20,13 +20,15 @@ interface Props extends IBoardTargetAndZone {
   id: string;
   title: string;
   config: any;
+  editable?: boolean;
 }
 
 export function BoardTable(props: Props) {
-  const { id, title, boardObjectType, boardDataSource, zone } = props;
+  const { id, title, boardObjectType, boardDataSource, zone, editable } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
+
 
   const onModalSave = (fm: FieldMeta, actions: string[], sortByAtt: string) => {
     config["fieldMeta"] = fm;
@@ -77,6 +79,7 @@ export function BoardTable(props: Props) {
   return (
     <RemoteTable
       {...props}
+      noConfigModal={!editable}
       displaySource
       fieldMeta={config.fieldMeta || initialiseFieldMeta()}
       pageSize={config.pageSize || 50}
@@ -95,13 +98,13 @@ export function BoardTable(props: Props) {
       utilityBarConfig={{
         title: {
           text: title,
-          editable: true,
+          editable: editable,
           onSave: (value: string) => {
             saveTitle(value, id, boardObjectType, boardDataSource);
           }
         },
         elements: boardFilter,
-        buttons: [{
+        buttons: [!editable ? undefined : {
           outline: true,
           position: "right",
           type: "primary",

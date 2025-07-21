@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 // not containing detail and element props
 // @ts-nocheck
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -38,6 +38,8 @@ import {
   TsDataSource,
   API_METHODS,
   BOARDS_API_PREFIX,
+  getUserRole,
+  PrivelegeContext
 } from "..";
 
 
@@ -57,20 +59,22 @@ interface Props {
   customCallbackUrl?: string;
 }
 
+
 export function TolApp(props: Props) {
   const { customCallbackUrl } = props;
-
+  
   // setting a default for the boardDataSource
   const boards = props.boards ? {
     dataSource: props.boards?.dataSource,
     boardDataSource: props.boards?.boardDataSource
-      || new TsDataSource({
-        apiPrefix: BOARDS_API_PREFIX,
-      }),
+    || new TsDataSource({
+      apiPrefix: BOARDS_API_PREFIX,
+    }),
   } : undefined;
-
+  
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
+  const [privelege, setPrivelege] = useState<string>("");
 
   useEffect(() => {
     const siteId = env.MATOMO_SITE_ID;
@@ -125,10 +129,13 @@ export function TolApp(props: Props) {
               </Route>
               <Route path="/board/:boardId">
                 {boards && loggedIn ? (
-                  <Board
-                    dataSource={boards.dataSource}
-                    boardDataSource={boards.boardDataSource}
-                  />
+                  <PrivelegeContext.Provider value={privelege}>
+                    <Board
+                      dataSource={boards.dataSource}
+                      boardDataSource={boards.boardDataSource}
+                      setPrivelege={setPrivelege}
+                    />
+                  </PrivelegeContext.Provider>
                 ) : (
                   <Redirect to="/" />
                 )}

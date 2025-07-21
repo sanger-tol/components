@@ -18,10 +18,11 @@ interface Props extends IBoardTargetAndZone {
   id: string;
   title: string;
   config: any;
+  editable?: boolean;
 }
 
 export function BoardCount(props: Props) {
-  const { id, boardObjectType, boardDataSource } = props;
+  const { id, boardObjectType, boardDataSource, editable } = props;
   const [openFilters, setOpenFilters] = useState(false);
 
   const filterButton: IButton = {
@@ -32,6 +33,7 @@ export function BoardCount(props: Props) {
     icon: "filter",
     className: "count-filter-button",
     testid: "count-filter-button",
+    visible: editable,
   }
 
   return (
@@ -46,7 +48,7 @@ export function BoardCount(props: Props) {
         utilityBarConfig={{
           title: {
             text: props.title,
-            editable: true,
+            editable: editable,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);
             }

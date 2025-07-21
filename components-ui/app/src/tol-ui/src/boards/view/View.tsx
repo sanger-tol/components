@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   Button,
   ZoneModal,
@@ -17,10 +17,12 @@ import {
   PBoard,
   reorderZoneAndUpsert,
   getSortedZones,
+  PrivelegeContext
 } from "../..";
 
 
-export interface PView extends PBoard {
+export interface PView extends Omit<PBoard, 'setPrivelege'> {
+  // extends but excludes setPrivelege
   id: string;
   defaultFilter?: IFilter;
   // title: string;
@@ -31,6 +33,7 @@ export function View(props: PView) {
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
+  const privelege = useContext(PrivelegeContext);
 
   useEffect(() => {
     getZones(id, boardDataSource).then((res: any) => {
@@ -85,6 +88,7 @@ export function View(props: PView) {
             className="add-zone-button" // temp placement
             icon="plus"
             position="right"
+            visible={privelege == "editable"}
           />
         </div>
       </div>

@@ -4,11 +4,15 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { createContext } from "react";
 import {
   MyBoards,
   Dropdown,
   Page,
   BoardSources,
+  TsDataSource,
+  BOARDS,
+  TDataObjectOrNull
 } from "..";
 
 
@@ -75,3 +79,27 @@ export function generatePagesThatRequireARoute(
   
   return [...filteredPages, ...(profilePages ?? [])];
 }
+
+export async function getUserRole(
+  user: any,
+  boardDataSource: TsDataSource,
+  boardId: string 
+) {
+  if (user && boardDataSource && boardId) {
+    return boardDataSource.getOne({
+      objectType: BOARDS.BOARD,
+      id: boardId,
+    }).then(async(board: TDataObjectOrNull) => {
+      const board_user = await board?.relationships.user;
+      if (board && board_user?.id === user.id || user.roles.includes('admin')) {
+        return 'editable';
+      } else {
+        return 'view-only';
+      }
+    });
+  } else { 
+    return 'hidden'; // If no user or boardDataSource, return hidden
+  }
+}
+
+export const PrivelegeContext = createContext<string>('');

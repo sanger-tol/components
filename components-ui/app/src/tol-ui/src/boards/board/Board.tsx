@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import {
   BOARDS,
@@ -18,18 +18,22 @@ import {
   themeListener,
   TsDataSource,
   View,
+  getUserRole,
+  PrivelegeContext
 } from "../..";
 
 
 export interface PBoard {
   dataSource: TsDataSource;
   boardDataSource: TsDataSource;
+  setPrivelege: (privelege: string) => void;
 }
 
 export function Board(props: PBoard) {
   const {
     dataSource,
     boardDataSource,
+    setPrivelege
   } = props;
 
   const { boardId, viewId } = useParams<any>();
@@ -38,6 +42,7 @@ export function Board(props: PBoard) {
   const [view, setView] = useState(viewId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const privelege = useContext(PrivelegeContext);
 
   themeListener(() => {
     try {
@@ -51,6 +56,12 @@ export function Board(props: PBoard) {
   useEffect(() => {
     const u = getUserFromLocalStorage();
     if (u) setUser(u);
+
+    const awaitUserRole = async () => {
+    const userRole = await getUserRole(u, boardDataSource!, boardId)
+      setPrivelege(userRole);
+    };
+    awaitUserRole();
   }, []);
 
   useEffect(() => {
@@ -68,7 +79,7 @@ export function Board(props: PBoard) {
     }
   }, [boardId, user]);
 
-  if (error !== "") {
+  if (error !== "" || privelege === "hidden") {
     return <Redirect to="/page-not-found" />;
   }
 
@@ -87,7 +98,7 @@ export function Board(props: PBoard) {
               saveTitle(newTitle, boardId, BOARDS.BOARD, boardDataSource);
             }
           }}
-          editable
+          editable={privelege === "editable"}
         />
       </div>
       <View
