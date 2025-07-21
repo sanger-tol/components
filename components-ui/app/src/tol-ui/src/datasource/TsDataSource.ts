@@ -85,7 +85,7 @@ export class TsDataSource {
   };
 
   private relationshipHandler = {
-    get: async (target: ISourceDataObject, key: string) => {
+    get: (target: ISourceDataObject, key: string) => {
       const targetValue = target?.[key];
 
       if (targetValue === null) return null;
@@ -93,7 +93,7 @@ export class TsDataSource {
       if (targetValue !== undefined)
         return new Proxy(targetValue.data, this.dataObjectHandler);
 
-      return await this.getToOneRelation({
+      return this.getToOneRelation({
         objectType: target.__sourceType,
         id: target.__sourceId,
         relation: key,
@@ -108,7 +108,7 @@ export class TsDataSource {
 
       if (key === "fetchRelationships") {
         const relationshipsTarget: ISourceDataObject = {
-          ...(target?.fetchRelationships ?? {}),
+          ...(target?.relationships ?? {}),
           __sourceType: target.type,
           __sourceId: target.id,
         };

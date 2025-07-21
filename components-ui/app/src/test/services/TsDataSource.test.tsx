@@ -697,6 +697,7 @@ describe("Testing relationship getting", () => {
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
 
     expect(await specimen!.fetchRelationships.none_species).toBeNull();
+    expect(specimen!.relationships.none_species).toBeNull();
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -714,9 +715,15 @@ describe("Testing relationship getting", () => {
     });
     expect(specimen).not.toBeNull();
 
-    const presentSpecies = await specimen!.fetchRelationships.present_species;
-    expect(presentSpecies.id).toEqual("present");
-    expect(presentSpecies.objectType).toEqual("species");
+    const presentSpecies1 = await specimen!.fetchRelationships.present_species;
+    expect(presentSpecies1.id).toEqual("present");
+    expect(presentSpecies1.objectType).toEqual("species");
+
+    // New funtionality on relationships
+    const presentSpecies2 = specimen!.relationships.present_species;
+    expect(presentSpecies2.id).toEqual("present");
+    expect(presentSpecies2.objectType).toEqual("species");
+
   });
 
   test("Lazily fetch missing relation", async () => {
@@ -733,10 +740,17 @@ describe("Testing relationship getting", () => {
     });
     expect(specimen).not.toBeNull();
 
-    const lazySpecies = await specimen!.fetchRelationships.lazy_species;
+    const lazySpecies1 = await specimen!.fetchRelationships.lazy_species;
 
-    expect(lazySpecies.id).toEqual("lazy");
-    expect(lazySpecies.objectType).toEqual("species");
-    expect(lazySpecies.lazy).toEqual(true);
+    expect(lazySpecies1.id).toEqual("lazy");
+    expect(lazySpecies1.objectType).toEqual("species");
+    expect(lazySpecies1.lazy).toEqual(true);
+
+    // New funtionality on relationships
+    const lazySpecies2 = specimen!.relationships.lazy_species;
+
+    expect(lazySpecies2.id).toEqual("lazy");
+    expect(lazySpecies2.objectType).toEqual("species");
+    expect(lazySpecies2.lazy).toEqual(true);
   });
 });
