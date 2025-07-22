@@ -21,7 +21,7 @@ import {
   PrivelegeContext,
   copyToClipboard,
   PopUpMessage,
-  UtilityBar
+  IUtilityBar
 } from "../..";
 
 
@@ -89,41 +89,40 @@ export function Board(props: PBoard) {
     return <LoadingContent text="Finding Board..." />;
   }
 
+  const UtilityBarConfig: IUtilityBar = {
+    id: "board-utility-bar",
+    buttons: [
+      {
+        position: "right",
+        type: "primary",
+        icon: "share-from-square",
+        onClick: () => {
+          copyToClipboard(location.href);
+          PopUpMessage({
+            type: 'success',
+            message: 'Board data copied to clipboard',
+          });
+        },
+      }
+    ],
+    title: {
+      text: boardData.boardTitle,
+      editable: privelege === "editable",
+      onSave: (value: string) => {
+        saveTitle(value, boardId, BOARDS.BOARD, boardDataSource);
+      },
+    },
+  }
+
   // returns the first view at the moment
   return (
     <div className="tol-board">
-      <div className="tol-board-bar">
-        <UtilityBar
-          id="board-utility-bar"
-          buttons={[
-            {
-              position: "right",
-              type: "primary",
-              icon: "share-from-square",
-              text: "Copy Board Link",
-              onClick: () => {
-                copyToClipboard(location.href);
-                PopUpMessage({
-                  type: 'success',
-                  message: 'Board data copied to clipboard',
-                });
-              },
-            }
-          ]}
-          title={{
-            text: boardData.boardTitle,
-            editable: privelege === "editable",
-            onSave: (value: string) => {
-              saveTitle(value, boardId, BOARDS.BOARD, boardDataSource);
-            },
-          }}
-        />
-      </div>
       <View
         id={boardData.views[0].id}
         defaultFilter={boardData.views[0].filter}
         dataSource={dataSource}
         boardDataSource={boardDataSource}
+        utilityBarConfig={UtilityBarConfig}
       />
     </div>
   );

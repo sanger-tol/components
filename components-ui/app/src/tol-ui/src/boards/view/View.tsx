@@ -17,7 +17,10 @@ import {
   PBoard,
   reorderZoneAndUpsert,
   getSortedZones,
-  PrivelegeContext
+  PrivelegeContext,
+  IUtilityBar,
+  UtilityBar,
+  IButton
 } from "../..";
 
 
@@ -25,11 +28,12 @@ export interface PView extends Omit<PBoard, 'setPrivelege'> {
   // extends but excludes setPrivelege
   id: string;
   defaultFilter?: IFilter;
+  utilityBarConfig?: IUtilityBar
   // title: string;
 }
 
 export function View(props: PView) {
-  const { id, dataSource, boardDataSource } = props;
+  const { id, dataSource, boardDataSource, utilityBarConfig } = props;
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
@@ -76,21 +80,26 @@ export function View(props: PView) {
     });
   };
 
+  const addZoneButton: IButton = {
+    type: "success",
+    className: "add-zone-button", // temp placement
+    testid: "add-zone-button",
+    icon: "plus",
+    position: "right",
+    visible: privelege === "editable",
+    onClick: () => {
+      setOpen(true);
+    },
+  }
+
   return (
     <div className="tol-view">
-      <div className="tol-view-bar">
-        <div style={open ? { display: "none" } : {}}>
-          <Button
-            onClick={() => {
-              setOpen(true);
-            }}
-            type="success"
-            className="add-zone-button" // temp placement
-            icon="plus"
-            position="right"
-            visible={privelege == "editable"}
-          />
-        </div>
+      <div className="tol-board-bar">
+        <UtilityBar
+          id={utilityBarConfig?.id}
+          buttons={[addZoneButton, ...(utilityBarConfig?.buttons || []) ]}
+          title={utilityBarConfig?.title}
+        />
       </div>
       <ZoneModal
         open={open}
