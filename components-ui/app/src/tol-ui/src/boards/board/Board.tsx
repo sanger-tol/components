@@ -12,14 +12,16 @@ import {
   getBoard,
   getCssVarValue,
   getUserFromLocalStorage,
-  InlineEdit,
   LoadingContent,
   saveTitle,
   themeListener,
   TsDataSource,
   View,
   getUserRole,
-  PrivelegeContext
+  PrivelegeContext,
+  copyToClipboard,
+  PopUpMessage,
+  UtilityBar
 } from "../..";
 
 
@@ -91,14 +93,30 @@ export function Board(props: PBoard) {
   return (
     <div className="tol-board">
       <div className="tol-board-bar">
-        <InlineEdit
-          text={boardData.boardTitle}
-          onSave={(newTitle: any) => {
-            if (newTitle !== boardData.boardTitle) {
-              saveTitle(newTitle, boardId, BOARDS.BOARD, boardDataSource);
+        <UtilityBar
+          id="board-utility-bar"
+          buttons={[
+            {
+              position: "right",
+              type: "primary",
+              icon: "share-from-square",
+              text: "Copy Board Link",
+              onClick: () => {
+                copyToClipboard(location.href);
+                PopUpMessage({
+                  type: 'success',
+                  message: 'Board data copied to clipboard',
+                });
+              },
             }
+          ]}
+          title={{
+            text: boardData.boardTitle,
+            editable: privelege === "editable",
+            onSave: (value: string) => {
+              saveTitle(value, boardId, BOARDS.BOARD, boardDataSource);
+            },
           }}
-          editable={privelege === "editable"}
         />
       </div>
       <View

@@ -101,7 +101,6 @@ export function BoardMarkdown(props: IBoardMarkdown) {
         hideToolbar={size === "sm"}
         className="tol-markdown-viewer"
         height="100%"
-        visibleEditor={showMarkdownViewer ? "preview" : "edit"}
       />
     </>
   );
