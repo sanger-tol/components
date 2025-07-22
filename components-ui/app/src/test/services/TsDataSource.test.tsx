@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { expect, test, vitest, describe } from "vitest";
-import { Relationship, TsDataSource } from "../../tol-ui/src";
+import { TsDataSource } from "../../tol-ui/src";
 import "@testing-library/jest-dom";
 
 const speciesMockData = {
@@ -707,6 +707,7 @@ describe("Testing upsert method", () => {
   });
 });
 
+// another describe for .relationships
 describe("Testing describe for .relationships", () => {
   // test fetching an attribute 1 jump (toHaveBeenCalledTimes(1))
   // --- sample.relationships.specimen.id
@@ -734,7 +735,6 @@ describe("Testing describe for .relationships", () => {
     );
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
   });
-  // another describe for .relationships
   // test null
   test("Do not fetch explicit null", async () => {
     const mockDataSource = new TsDataSource({
