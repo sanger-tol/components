@@ -92,12 +92,6 @@ export class TsDataSource {
 
       if (targetValue !== undefined)
         return new Proxy(targetValue.data, this.dataObjectHandler);
-
-      return this.getToOneRelation({
-        objectType: target.__sourceType,
-        id: target.__sourceId,
-        relation: key,
-      });
     },
   };
 

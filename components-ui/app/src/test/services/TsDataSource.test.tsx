@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { expect, test, vitest, describe } from "vitest";
-import { TsDataSource } from "../../tol-ui/src";
+import { Relationship, TsDataSource } from "../../tol-ui/src";
 import "@testing-library/jest-dom";
 
 const speciesMockData = {
@@ -104,6 +104,32 @@ const toOneSpeciesMockData = {
   },
 };
 
+const nestedRelationshipMockData = {
+  data: {
+    data: {
+      id: "a",
+      type: "sample",
+      relationships: {
+        specimen: {
+          data: {
+            id: "b",
+            type: "specimen",
+            relationships: {
+              species: {
+                data: {
+                  id: "c",
+                  type: "species",
+                  attributes: { scientific_name: "pikachu" },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
 const attributeMetadataMockData = {
   barcoding_run_data: {
     bioscan_c: {
@@ -180,6 +206,8 @@ const mockClient = () => ({
       return Promise.resolve({ data: attributeMetadataMockData });
     } else if (endpoint === "/species/testSpeciesId" && baseURL === "test") {
       return Promise.resolve(speciesMockData);
+    } else if (endpoint === "/sample/a" && baseURL === "test") {
+      return Promise.resolve(nestedRelationshipMockData);
     } else if (endpoint === "/specimen/testSpecimenId" && baseURL === "test") {
       return Promise.resolve(specimenMockData);
     } else if (endpoint === "/sample/testSampleId" && baseURL === "test") {
@@ -679,7 +707,52 @@ describe("Testing upsert method", () => {
   });
 });
 
-describe("Testing relationship getting", () => {
+describe("Testing describe for .relationships", () => {
+  // test fetching an attribute 1 jump (toHaveBeenCalledTimes(1))
+  // --- sample.relationships.specimen.id
+  // test fetching an attribute 2 jump (toHaveBeenCalledTimes(1))
+  // --- sample.relationships.specimen.relationships.species.scientific_name
+  test("Testing fetching an attribute 1 jump and then an attribute 2 jump", async () => {
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
+
+    const mockDataSource = new TsDataSource({
+      baseUrl: "test",
+      client: () => mockClientInstance,
+    });
+
+    const sample = await mockDataSource.getOne({
+      objectType: "sample",
+      id: "a",
+    });
+    expect(sample).not.toBeNull();
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
+
+    expect(sample!.relationships.specimen.id).toEqual("b");
+    expect(sample!.relationships.specimen.relationships.species.id).toEqual(
+      "c"
+    );
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
+  });
+  // another describe for .relationships
+  // test null
+  test("Do not fetch explicit null", async () => {
+    const mockDataSource = new TsDataSource({
+      baseUrl: "test",
+      client: () => mockClient(),
+    });
+
+    const sample = await mockDataSource.getOne({
+      objectType: "sample",
+      id: "a",
+    });
+
+    expect(sample).not.toBeNull();
+    expect(sample!.relationships.none_species).toBeUndefined();
+  });
+});
+
+describe("Testing fetching relationship getting", () => {
   test("Do not fetch explicit null", async () => {
     const mockClientInstance = mockClient();
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
@@ -697,7 +770,6 @@ describe("Testing relationship getting", () => {
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
 
     expect(await specimen!.fetchRelationships.none_species).toBeNull();
-    expect(specimen!.relationships.none_species).toBeNull();
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -718,12 +790,6 @@ describe("Testing relationship getting", () => {
     const presentSpecies1 = await specimen!.fetchRelationships.present_species;
     expect(presentSpecies1.id).toEqual("present");
     expect(presentSpecies1.objectType).toEqual("species");
-
-    // New funtionality on relationships
-    const presentSpecies2 = specimen!.relationships.present_species;
-    expect(presentSpecies2.id).toEqual("present");
-    expect(presentSpecies2.objectType).toEqual("species");
-
   });
 
   test("Lazily fetch missing relation", async () => {
@@ -745,12 +811,5 @@ describe("Testing relationship getting", () => {
     expect(lazySpecies1.id).toEqual("lazy");
     expect(lazySpecies1.objectType).toEqual("species");
     expect(lazySpecies1.lazy).toEqual(true);
-
-    // New funtionality on relationships
-    const lazySpecies2 = specimen!.relationships.lazy_species;
-
-    expect(lazySpecies2.id).toEqual("lazy");
-    expect(lazySpecies2.objectType).toEqual("species");
-    expect(lazySpecies2.lazy).toEqual(true);
   });
 });
