@@ -38,7 +38,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
 
 
   useEffect(() => {
-    config.content && setShowMarkdownViewer(true);
+    (config.content || !editable) && setShowMarkdownViewer(true);
   }, []);
 
   const onMarkdownSave = (config: IMarkdownConfig) => {
@@ -107,14 +107,16 @@ export function BoardMarkdown(props: IBoardMarkdown) {
   );
 
   const MarkdownViewer = (
-    <Markdown contents={content} />
+    <div className="tol-markdown-viewer">
+      <Markdown contents={content} />
+    </div>
   );
 
   return (
     <>
       {MdUtilityBar}
       <div className="tol-component-contents-with-offset tol-markdown">
-        {showMarkdownViewer ? MarkdownViewer : MarkdownEditor}
+        {(showMarkdownViewer) ? MarkdownViewer : MarkdownEditor}
       </div>
     </>
   );
