@@ -707,13 +707,8 @@ describe("Testing upsert method", () => {
   });
 });
 
-// another describe for .relationships
-describe("Testing describe for .relationships", () => {
-  // test fetching an attribute 1 jump (toHaveBeenCalledTimes(1))
-  // --- sample.relationships.specimen.id
-  // test fetching an attribute 2 jump (toHaveBeenCalledTimes(1))
-  // --- sample.relationships.specimen.relationships.species.scientific_name
-  test("Testing fetching an attribute 1 jump and then an attribute 2 jump", async () => {
+describe("Testing relationships getting", () => {
+  test("Testing fetching 1 and 2 jump attributes", async () => {
     const mockClientInstance = mockClient();
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
 
@@ -729,14 +724,14 @@ describe("Testing describe for .relationships", () => {
     expect(sample).not.toBeNull();
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
 
-    expect(sample!.relationships.specimen.id).toEqual("b");
-    expect(sample!.relationships.specimen.relationships.species.id).toEqual(
-      "c"
+    expect(sample?.relationships?.specimen.id!).toEqual("b");
+    expect(sample?.relationships?.specimen.relationships?.species.scientific_name).toEqual(
+      "pikachu"
     );
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
   });
-  // test null
-  test("Do not fetch explicit null", async () => {
+
+  test("Ensure missing attribute is undefined", async () => {
     const mockDataSource = new TsDataSource({
       baseUrl: "test",
       client: () => mockClient(),
@@ -748,11 +743,11 @@ describe("Testing describe for .relationships", () => {
     });
 
     expect(sample).not.toBeNull();
-    expect(sample!.relationships.none_species).toBeUndefined();
+    expect(sample?.relationships?.random_attribute).toBeUndefined();
   });
 });
 
-describe("Testing fetching relationship getting", () => {
+describe("Testing fetchRelationships getting", () => {
   test("Do not fetch explicit null", async () => {
     const mockClientInstance = mockClient();
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
@@ -769,7 +764,7 @@ describe("Testing fetching relationship getting", () => {
     expect(specimen).not.toBeNull();
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
 
-    expect(await specimen!.fetchRelationships.none_species).toBeNull();
+    expect(await specimen?.fetchRelationships?.none_species).toBeNull();
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -787,9 +782,9 @@ describe("Testing fetching relationship getting", () => {
     });
     expect(specimen).not.toBeNull();
 
-    const presentSpecies1 = await specimen!.fetchRelationships.present_species;
-    expect(presentSpecies1.id).toEqual("present");
-    expect(presentSpecies1.objectType).toEqual("species");
+    const presentSpecies1 = await specimen?.fetchRelationships?.present_species;
+    expect(presentSpecies1?.id).toEqual("present");
+    expect(presentSpecies1?.objectType).toEqual("species");
   });
 
   test("Lazily fetch missing relation", async () => {
@@ -806,10 +801,10 @@ describe("Testing fetching relationship getting", () => {
     });
     expect(specimen).not.toBeNull();
 
-    const lazySpecies1 = await specimen!.fetchRelationships.lazy_species;
+    const lazySpecies1 = await specimen?.fetchRelationships?.lazy_species;
 
-    expect(lazySpecies1.id).toEqual("lazy");
-    expect(lazySpecies1.objectType).toEqual("species");
-    expect(lazySpecies1.lazy).toEqual(true);
+    expect(lazySpecies1?.id).toEqual("lazy");
+    expect(lazySpecies1?.objectType).toEqual("species");
+    expect(lazySpecies1?.lazy).toEqual(true);
   });
 });
