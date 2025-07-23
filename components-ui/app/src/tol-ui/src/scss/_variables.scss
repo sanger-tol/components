@@ -22,10 +22,12 @@ $tol-emphasis-DARK-MODE: $tol-light !default;
 $tol-grey-LIGHT-MODE: #c2c8cd !default;
 $tol-grey-translucent-LIGHT-MODE: rgba($tol-grey-LIGHT-MODE, 0.2) !default;
 $tol-grey-subtle-LIGHT-MODE: lighten($tol-grey-LIGHT-MODE, 15%) !default;
+$tol-grey-light-LIGHT-MODE: lighten($tol-grey-LIGHT-MODE, 15%) !default;
 
 $tol-grey-DARK-MODE: #424b52 !default;
 $tol-grey-translucent-DARK-MODE: rgba($tol-grey-DARK-MODE, 0.3) !default;
 $tol-grey-subtle-DARK-MODE: darken($tol-grey-DARK-MODE, 8%) !default;
+$tol-grey-light-DARK-MODE: lighten($tol-grey-DARK-MODE, 15%) !default;
 
 // ToL Colours
 $tol-primary: #039be5 !default;
@@ -71,6 +73,7 @@ $tol-royal-dark: darken($tol-royal, 15%) !default;
   --tol-grey: #{$tol-grey-LIGHT-MODE};
   --tol-grey-translucent: #{$tol-grey-translucent-LIGHT-MODE};
   --tol-grey-subtle: #{$tol-grey-subtle-LIGHT-MODE};
+  --tol-grey-light: #{$tol-grey-light-LIGHT-MODE};
 
   --tol-primary: #{$tol-primary};
   --tol-primary-translucent: #{$tol-primary-translucent};
@@ -113,6 +116,7 @@ $tol-royal-dark: darken($tol-royal, 15%) !default;
     --tol-grey: #{$tol-grey-DARK-MODE};
     --tol-grey-translucent: #{$tol-grey-translucent-DARK-MODE};
     --tol-grey-subtle: #{$tol-grey-subtle-DARK-MODE};
+    --tol-grey-light: #{$tol-grey-light-DARK-MODE};
   }
 }
 
@@ -252,6 +256,7 @@ $danger: $tol-danger !default;
 .tol-grey-bg { background-color: var(--tol-grey) !important; }
 .tol-grey-translucent-bg { background-color: var(--tol-grey-translucent) !important; }
 .tol-grey-subtle-bg { background-color: var(--tol-grey-subtle) !important; }
+.tol-grey-light-bg { background-color: var(--tol-grey-light) !important; }
 .tol-primary-bg { background-color: var(--tol-primary) !important; }
 .tol-primary-translucent-bg { background-color: var(--tol-primary-translucent) !important; }
 .tol-primary-light-bg { background-color: var(--tol-primary-light) !important; }
@@ -287,6 +292,7 @@ $danger: $tol-danger !default;
 .tol-grey-colour { color: var(--tol-grey) !important; }
 .tol-grey-translucent-colour { color: var(--tol-grey-translucent) !important; }
 .tol-grey-subtle-colour { color: var(--tol-grey-subtle) !important; }
+.tol-grey-light-colour { color: var(--tol-grey-light) !important; }
 .tol-primary-colour { color: var(--tol-primary) !important; }
 .tol-primary-translucent-colour { color: var(--tol-primary-translucent) !important; }
 .tol-primary-light-colour { color: var(--tol-primary-light) !important; }

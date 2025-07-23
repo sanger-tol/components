@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 export * from "./Boards";
 export * from "./Buttons";
-export * from "./DataSource";
+export * from "./TsDataSource";
 export * from "./EntityMeta";
 export * from "./Filter";
 export * from "./Forms";

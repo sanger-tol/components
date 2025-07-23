@@ -67,7 +67,7 @@ export class TsDataSource {
     return this.apiPrefix;
   }
 
-  private relationshipHandler = {
+  private fetchRelationshipHandler = {
     get: async (target: ISourceDataObject, key: string) => {
       const targetValue = target?.[key];
 
@@ -84,10 +84,30 @@ export class TsDataSource {
     },
   };
 
+  private relationshipHandler = {
+    get: (target: ISourceDataObject, key: string) => {
+      const targetValue = target?.[key];
+
+      if (targetValue === null) return null;
+
+      if (targetValue !== undefined)
+        return new Proxy(targetValue.data, this.dataObjectHandler);
+    },
+  };
+
   private dataObjectHandler = {
     get: (target: any, key: string) => {
       if (key === "objectType") return target.type;
       if (key === "id") return target.id;
+
+      if (key === "fetchRelationships") {
+        const relationshipsTarget: ISourceDataObject = {
+          ...(target?.relationships ?? {}),
+          __sourceType: target.type,
+          __sourceId: target.id,
+        };
+        return new Proxy(relationshipsTarget, this.fetchRelationshipHandler);
+      }
 
       if (key === "relationships") {
         const relationshipsTarget: ISourceDataObject = {
@@ -542,4 +562,15 @@ export class TsDataSource {
         throw new Error(`Unsupported method: ${method}`);
     }
   }
+}
+
+export function getFieldByName(object: TDataObjectOrNull, field: string): any {
+  if (field.includes(".")) {
+    const [relationship, ...rest] = field.split(".");
+    const relationshipObject = object?.relationships?.[relationship];
+    if (relationshipObject) {
+      return getFieldByName(relationshipObject, rest.join("."));
+    }
+  }
+  return object?.[field];
 }
