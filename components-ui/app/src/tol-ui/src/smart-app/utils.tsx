@@ -80,7 +80,7 @@ export function generatePagesThatRequireARoute(
   return [...filteredPages, ...(profilePages ?? [])];
 }
 
-export async function getUserRole(
+export async function getUserPrivilege(
   user: any,
   boardDataSource: TsDataSource,
   boardId: string

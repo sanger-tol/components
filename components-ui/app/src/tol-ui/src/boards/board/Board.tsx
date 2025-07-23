@@ -17,7 +17,7 @@ import {
   themeListener,
   TsDataSource,
   View,
-  getUserRole,
+  getUserPrivilege,
   PrivilegeContext,
   copyToClipboard,
   PopUpMessage,
@@ -59,11 +59,11 @@ export function Board(props: PBoard) {
     const u = getUserFromLocalStorage();
     if (u) setUser(u);
 
-    const awaitUserRole = async () => {
-      const userRole = await getUserRole(u, boardDataSource!, boardId)
-      setPrivilege(userRole);
+    const awaitUserPrivilege = async () => {
+      const userPrivilege = await getUserPrivilege(u, boardDataSource!, boardId)
+      setPrivilege(userPrivilege);
     };
-    awaitUserRole();
+    awaitUserPrivilege();
   }, []);
 
   useEffect(() => {
