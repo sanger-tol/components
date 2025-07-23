@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { expect, test, vitest, describe } from "vitest";
-import { TsDataSource } from "../../tol-ui/src";
+import { getFieldByName, TDataObjectOrNull, TsDataSource } from "../../tol-ui/src";
 import "@testing-library/jest-dom";
 
 const speciesMockData = {
@@ -107,19 +107,27 @@ const toOneSpeciesMockData = {
 const nestedRelationshipMockData = {
   data: {
     data: {
-      id: "a",
+      id: "nestedRelationships1",
       type: "sample",
+      attributes: {
+        name: "sampleName",
+      },
       relationships: {
         specimen: {
           data: {
-            id: "b",
+            id: "nestedRelationships2",
             type: "specimen",
+            attributes: {
+              name: "specimenName",
+            },
             relationships: {
               species: {
                 data: {
-                  id: "c",
+                  id: "nestedRelationships3",
                   type: "species",
-                  attributes: { scientific_name: "pikachu" },
+                  attributes: {
+                    name: "speciesName",
+                  },
                 },
               },
             },
@@ -206,7 +214,7 @@ const mockClient = () => ({
       return Promise.resolve({ data: attributeMetadataMockData });
     } else if (endpoint === "/species/testSpeciesId" && baseURL === "test") {
       return Promise.resolve(speciesMockData);
-    } else if (endpoint === "/sample/a" && baseURL === "test") {
+    } else if (endpoint === "/sample/nestedRelationships1" && baseURL === "test") {
       return Promise.resolve(nestedRelationshipMockData);
     } else if (endpoint === "/specimen/testSpecimenId" && baseURL === "test") {
       return Promise.resolve(specimenMockData);
@@ -719,14 +727,14 @@ describe("Testing relationships getting", () => {
 
     const sample = await mockDataSource.getOne({
       objectType: "sample",
-      id: "a",
+      id: "nestedRelationships1",
     });
     expect(sample).not.toBeNull();
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
 
-    expect(sample?.relationships?.specimen.id!).toEqual("b");
-    expect(sample?.relationships?.specimen.relationships?.species.scientific_name).toEqual(
-      "pikachu"
+    expect(sample?.relationships?.specimen.id!).toEqual("nestedRelationships2");
+    expect(sample?.relationships?.specimen.relationships?.species.name).toEqual(
+      "speciesName"
     );
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
   });
@@ -739,7 +747,7 @@ describe("Testing relationships getting", () => {
 
     const sample = await mockDataSource.getOne({
       objectType: "sample",
-      id: "a",
+      id: "nestedRelationships1",
     });
 
     expect(sample).not.toBeNull();
@@ -808,3 +816,18 @@ describe("Testing fetchRelationships getting", () => {
     expect(lazySpecies1?.lazy).toEqual(true);
   });
 });
+
+describe("Testing temp getFieldByName function", () => {
+  test("Returns correct value from an attribute or related attribute", () => {
+    mockDataSource.getOne({
+      objectType: "sample",
+      id: "nestedRelationships1",
+    }).then((dataObject: TDataObjectOrNull) => {
+      expect(dataObject).toBeDefined();
+      expect(getFieldByName(dataObject, "name")).toBe("sampleName");
+      expect(getFieldByName(dataObject, "specimen.name")).toBe("specimenName");
+      expect(getFieldByName(dataObject, "specimen.species.name")).toBe("speciesName");
+      expect(getFieldByName(dataObject, "doesNotExist.alsoDoesNotExist")).toBeUndefined();
+    });
+  });
+})

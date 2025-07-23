@@ -563,3 +563,15 @@ export class TsDataSource {
     }
   }
 }
+
+export function getFieldByName(object: TDataObjectOrNull, field: string): any {
+  if (!object) return;
+  if (field.includes(".")) {
+    const [relationship, ...rest] = field.split(".");
+    const relationshipObject = object.relationships?.[relationship];
+    if (relationshipObject) {
+      return getFieldByName(relationshipObject, rest.join("."));
+    }
+  }
+  return object?.[field];
+}
