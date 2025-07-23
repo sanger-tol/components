@@ -30,6 +30,7 @@ interface Props {
   dataSource: TsDataSource;
   requestedFields: string[] | string;
   totalSize: number;
+  title?: string;
 }
 
 export interface IProgressThreshold {
@@ -48,11 +49,15 @@ export function DownloadModal(props: Props) {
     source,
     dataSource,
     totalSize,
+    title,
   } = props;
+  const [clicked, isClicked] = useState<boolean>(false);
   const [total, setTotal] = useState<number>(0);
   const [current, setCurrent] = useState<number>(0);
   const [percentageComplete, setPercentageComplete] = useState<number>(0);
-  const requestedFields =Array.isArray(props.requestedFields)? props.requestedFields.join(","): props.requestedFields;
+  const requestedFields = Array.isArray(props.requestedFields)
+    ? props.requestedFields.join(",")
+    : props.requestedFields;
   const stringifyFilter = (filter: any) => {
     if (!filter) {
       return "None";
@@ -98,15 +103,33 @@ tol data \
     });
   };
 
-  const onDownloadSpreadsheet = () => {
+  const onDownloadSpreadsheet = async () => {
     let response = progressBar(
-      { objectType: objectType || "" , filter, requestedFields: requestedFields },
+      {
+        objectType: objectType || "",
+        filter,
+        requestedFields: requestedFields,
+      },
       { setTotal, setCurrent, setPercentageComplete },
       dataSource
     );
-    // const k = JSON.stringify(response);
-    // console.log("Here bouy-->", k);
-    // exportDataToSpreadsheet();
+    const generateDummyJson = (
+      keys: string[],
+      count: number = 5
+    ): Array<Record<string, string>> => {
+      const dummyData = [];
+
+      for (let i = 0; i < count; i++) {
+        const obj: Record<string, string> = {};
+        keys.forEach((key) => {
+          obj[key] = `value_${key}_${i}`;
+        });
+        dummyData.push(obj);
+      }
+      return dummyData;
+    };
+    const jsonFormatter = generateDummyJson(requestedFields.split(","));
+    exportDataToSpreadsheet(jsonFormatter, title);
   };
   return (
     <>
@@ -120,6 +143,7 @@ tol data \
                 onClick={() => {
                   onDownloadSpreadsheet();
                   setOpen(true);
+                  isClicked(true);
                 }}
                 icon="download"
                 disabledTooltip={
@@ -127,13 +151,17 @@ tol data \
                     ? "Only 10,000 results can currently be downloaded as a spreadsheet."
                     : undefined
                 }
-                // disabled={totalSize >= 10000}
-              />
-              <Progress.Line
-                percent={percentageComplete}
-                status={percentageComplete === 100 ? "success" : "active"}
+                disabled={totalSize >= 10000 || clicked && percentageComplete!=100}
               />
             </div>
+            {clicked ? (
+              <Progress.Line
+                percent={percentageComplete}
+                status={percentageComplete === 100 ? "success" : "active" }
+              />
+            ) : (
+              <></>
+            )}
           </Tabs.Tab>
           <Tabs.Tab eventKey="2" title="SDK">
             <div className="tol-code-block">
