@@ -104,7 +104,7 @@ tol data \
   };
 
   const onDownloadSpreadsheet = async () => {
-    let response = progressBar(
+     await progressBar(
       {
         objectType: objectType || "",
         filter,
@@ -112,7 +112,11 @@ tol data \
       },
       { setTotal, setCurrent, setPercentageComplete },
       dataSource
-    );
+    ).then((response)=>{
+      //Todo--> getFieldByName called to obtain the dataObject in list of array format
+      // use the exportDataSpreadsheet on <Array<string,string>> and the title
+    });
+    
     const generateDummyJson = (
       keys: string[],
       count: number = 5
@@ -128,6 +132,7 @@ tol data \
       }
       return dummyData;
     };
+
     const jsonFormatter = generateDummyJson(requestedFields.split(","));
     exportDataToSpreadsheet(jsonFormatter, title);
   };

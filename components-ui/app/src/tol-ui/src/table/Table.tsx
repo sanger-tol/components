@@ -216,6 +216,7 @@ export function Table(props: Props) {
         visible: true,
         position: "right",
         type: "primary",
+        tooltip: "Open table config",
         onClick: () => {
           setOpen(true);
         },
@@ -231,10 +232,11 @@ export function Table(props: Props) {
         visible: true,
         position: "right",
         type: "primary",
+        tooltip: filterVisibility ? "Hide filters" : "Show filters",
         onClick: () => {
           setFilterVisibility(!filterVisibility);
         },
-        icon: "eye-slash",
+        icon: filterVisibility ? "eye-slash" : "eye",
         outline: true,
       }
     : {
@@ -246,6 +248,7 @@ export function Table(props: Props) {
         visible: true,
         position: "right",
         type: "primary",
+        tooltip: "Download",
         onClick: () => {
           setDownloadOpen(!downloadOpen);
         },
@@ -284,8 +287,8 @@ export function Table(props: Props) {
         open={downloadOpen}
         setOpen={setDownloadOpen}
         objectType={objectType}
-        dataSource={(dataSource)}
-        source= {source}
+        dataSource={dataSource}
+        source={source}
         filter={filter}
         requestedFields={fieldMeta.order.active}
         totalSize={totalSize}
