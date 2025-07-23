@@ -100,7 +100,7 @@ export function Board(props: PBoard) {
           copyToClipboard(location.href);
           PopUpMessage({
             type: 'success',
-            message: 'Board data copied to clipboard',
+            message: 'Board link copied to clipboard',
           });
         },
       }
