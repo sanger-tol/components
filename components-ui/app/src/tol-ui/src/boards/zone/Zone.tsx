@@ -249,7 +249,8 @@ export function Zone(props: PZone) {
         />
       ) : (
         <div className="tol-zone-empty">
-          {editBtnsVisible ? (
+          {privelege === "editable" ? (
+          <>
             <p>
               Click the
               <FontAwesomeIcon
@@ -259,17 +260,7 @@ export function Zone(props: PZone) {
               />
               to add a new Component to the Zone.
             </p>
-          ) : (
-            <div>
-              <p style={{ marginBottom: "0" }}>
-                Click the
-                <FontAwesomeIcon
-                  icon={faPlus}
-                  size="lg"
-                  style={{ padding: "0 8" }}
-                />
-                to add a new Component to the Zone.
-              </p>
+            {!editBtnsVisible && (
               <p>
                 Click the
                 <FontAwesomeIcon
@@ -279,8 +270,11 @@ export function Zone(props: PZone) {
                 />
                 to edit the Zone.
               </p>
-            </div>
-          )}
+            )}
+          </>
+        ): (
+          <p>No components found</p>
+        )}
         </div>
       )}
       {ConfirmModal}

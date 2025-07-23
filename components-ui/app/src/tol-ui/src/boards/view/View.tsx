@@ -93,7 +93,7 @@ export function View(props: PView) {
 
   return (
     <div className="tol-view">
-      <div className="tol-board-bar">
+      <div className="tol-zone-bar">
         <UtilityBar
           id={utilityBarConfig?.id}
           buttons={[addZoneButton, ...(utilityBarConfig?.buttons || [])]}
@@ -131,7 +131,11 @@ export function View(props: PView) {
         </>
       ) : (
         <div className="tol-zone-empty">
-          <p>Click the + button to add a Zone</p>
+          {privelege === "editable" ? (
+            <p>Click the + button to add a Zone</p>
+          ) : (
+            <p>No zones found</p>
+          )}
         </div>
       )}
     </div>
