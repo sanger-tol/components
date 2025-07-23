@@ -60,7 +60,7 @@ export function Board(props: PBoard) {
     if (u) setUser(u);
 
     const awaitUserRole = async () => {
-    const userRole = await getUserRole(u, boardDataSource!, boardId)
+      const userRole = await getUserRole(u, boardDataSource!, boardId)
       setPrivelege(userRole);
     };
     awaitUserRole();

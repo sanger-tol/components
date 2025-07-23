@@ -31,7 +31,7 @@ export function addBoardPages(
     return [
       {
         name: "My Boards",
-        element: <MyBoards boardDataSource={boards.boardDataSource!}/>,
+        element: <MyBoards boardDataSource={boards.boardDataSource!} />,
         auth: true,
       },
       ...(profilePages ?? []),
@@ -76,20 +76,20 @@ export function generatePagesThatRequireARoute(
     }
     return page;
   });
-  
+
   return [...filteredPages, ...(profilePages ?? [])];
 }
 
 export async function getUserRole(
   user: any,
   boardDataSource: TsDataSource,
-  boardId: string 
+  boardId: string
 ) {
   if (user && boardDataSource && boardId) {
     return boardDataSource.getOne({
       objectType: BOARDS.BOARD,
       id: boardId,
-    }).then(async(board: TDataObjectOrNull) => {
+    }).then(async (board: TDataObjectOrNull) => {
       const board_user = await board?.relationships.user;
       if (board && (board_user?.id.toString() === user.id.toString() || user.roles.includes('admin'))) {
         return 'editable';
@@ -97,7 +97,7 @@ export async function getUserRole(
         return 'view-only';
       }
     });
-  } else { 
+  } else {
     return 'hidden'; // If no user or boardDataSource, return hidden
   }
 }

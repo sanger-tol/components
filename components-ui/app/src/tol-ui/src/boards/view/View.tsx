@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState, useContext } from "react";
 import {
-  Button,
   ZoneModal,
   IFilter,
   getZones,
@@ -97,7 +96,7 @@ export function View(props: PView) {
       <div className="tol-board-bar">
         <UtilityBar
           id={utilityBarConfig?.id}
-          buttons={[addZoneButton, ...(utilityBarConfig?.buttons || []) ]}
+          buttons={[addZoneButton, ...(utilityBarConfig?.buttons || [])]}
           title={utilityBarConfig?.title}
         />
       </div>
