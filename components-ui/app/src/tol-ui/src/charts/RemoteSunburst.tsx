@@ -186,9 +186,7 @@ export function RemoteSunburst(props: Props) {
     visible: false,
   }) 
 
-  const downloadButton: IButton = (noDownload || isEmptyObject(datasets)) ? {
-    visible: false,
-  } : {
+  const downloadButton: IButton = !noDownload ? {
     outline: true,
     position: "right",
     type: "primary",
@@ -196,7 +194,8 @@ export function RemoteSunburst(props: Props) {
       downloadItem(props.id, normaliseCaps(objectType));
     },
     icon: "download",
-  };
+    disabled: isEmptyObject(datasets),
+  } : {}
 
   const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
   const setter = setZone === undefined ? undefined : setSliceData;
@@ -211,9 +210,9 @@ export function RemoteSunburst(props: Props) {
         id={id}
         title={utilityBarConfig?.title}
         buttons={[
+          downloadButton,
           ...(utilityBarConfig?.buttons || []),
           resetButton,
-          downloadButton
         ]}
       />
       <div className="tol-component-contents-with-offset">
