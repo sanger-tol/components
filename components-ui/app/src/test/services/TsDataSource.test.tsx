@@ -4,9 +4,10 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { expect, test, vitest, describe } from "vitest";
-import { getFieldByName, TDataObjectOrNull, TsDataSource } from "../../tol-ui/src";
 import "@testing-library/jest-dom";
+import { expect, test, vitest, describe } from "vitest";
+import { TsDataSource, getFieldByName } from "../../tol-ui/src";
+
 
 const speciesMockData = {
   data: {
@@ -214,7 +215,7 @@ const mockClient = () => ({
       return Promise.resolve({ data: attributeMetadataMockData });
     } else if (endpoint === "/species/testSpeciesId" && baseURL === "test") {
       return Promise.resolve(speciesMockData);
-    } else if (endpoint === "/sample/nestedRelationships1" && baseURL === "test") {
+    } else if (endpoint === "/noCacheTest/nestedRelationships1" && baseURL === "test") {
       return Promise.resolve(nestedRelationshipMockData);
     } else if (endpoint === "/specimen/testSpecimenId" && baseURL === "test") {
       return Promise.resolve(specimenMockData);
@@ -726,12 +727,12 @@ describe("Testing relationships getting", () => {
     });
 
     const sample = await mockDataSource.getOne({
-      objectType: "sample",
+      objectType: "noCacheTest",
       id: "nestedRelationships1",
     });
-    expect(sample).not.toBeNull();
-    expect(clientGetSpy).toHaveBeenCalledTimes(1);
 
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
+    expect(sample).not.toBeNull();
     expect(sample?.relationships?.specimen.id!).toEqual("nestedRelationships2");
     expect(sample?.relationships?.specimen.relationships?.species.name).toEqual(
       "speciesName"
@@ -740,13 +741,14 @@ describe("Testing relationships getting", () => {
   });
 
   test("Ensure missing attribute is undefined", async () => {
+    const mockClientInstance = mockClient();
     const mockDataSource = new TsDataSource({
       baseUrl: "test",
-      client: () => mockClient(),
+      client: () => mockClientInstance,
     });
 
     const sample = await mockDataSource.getOne({
-      objectType: "sample",
+      objectType: "noCacheTest",
       id: "nestedRelationships1",
     });
 
@@ -817,17 +819,27 @@ describe("Testing fetchRelationships getting", () => {
   });
 });
 
-describe("Testing temp getFieldByName function", () => {
+describe("Testing temp getFieldByName function", async () => {
+  const mockClientInstance = mockClient();
+  const mockDataSource = new TsDataSource({
+    baseUrl: "test",
+    client: () => mockClientInstance,
+  });
+
+  const testDataObject = await mockDataSource.getOne({
+    objectType: "noCacheTest",
+    id: "nestedRelationships1",
+  })
+
   test("Returns correct value from an attribute or related attribute", () => {
-    mockDataSource.getOne({
-      objectType: "sample",
-      id: "nestedRelationships1",
-    }).then((dataObject: TDataObjectOrNull) => {
-      expect(dataObject).toBeDefined();
-      expect(getFieldByName(dataObject, "name")).toBe("sampleName");
-      expect(getFieldByName(dataObject, "specimen.name")).toBe("specimenName");
-      expect(getFieldByName(dataObject, "specimen.species.name")).toBe("speciesName");
-      expect(getFieldByName(dataObject, "doesNotExist.alsoDoesNotExist")).toBeUndefined();
-    });
+    expect(testDataObject).toBeDefined();
+    expect(getFieldByName(testDataObject, "name")).toBe("sampleName");
+    expect(getFieldByName(testDataObject, "specimen.name")).toBe("specimenName");
+    expect(getFieldByName(testDataObject, "specimen.species.name")).toBe("speciesName");
+  });
+
+  test("Ensures a field's value is undefined if it does not exist", () => {
+    expect(getFieldByName(testDataObject, "doesNotExist.alsoDoesNotExist")).toBeUndefined();
+    // check if null obj
   });
 })
