@@ -313,7 +313,7 @@ export function BarChart(props: Props) {
               setDatasets(originDatasets);
             },
             icon: "undo",
-            visible: isPropDefined(setBarData),
+            visible: isPropDefined(setBarData) && datasets.length > 0,
           },
           {
             outline: true,
@@ -324,6 +324,7 @@ export function BarChart(props: Props) {
             },
             icon: "download",
             disabled: datasets.length === 0,
+            disabledTooltip: "No data to download",
           },
           ...(utilityBarConfig.buttons || []),
         ]}

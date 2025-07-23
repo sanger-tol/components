@@ -172,7 +172,8 @@ export function RemoteSunburst(props: Props) {
     }
   }
 
-  const resetButton: IButton = {
+
+  const resetButton: IButton = (!isEmptyObject(datasets) ? {
     outline: true,
     position: "right",
     type: "primary",
@@ -181,9 +182,13 @@ export function RemoteSunburst(props: Props) {
       setResetChart(!resetChart);
     },
     icon: "undo",
-  }
+  } : {
+    visible: false,
+  }) 
 
-  const downloadButton: IButton = !noDownload ? {
+  const downloadButton: IButton = (noDownload || isEmptyObject(datasets)) ? {
+    visible: false,
+  } : {
     outline: true,
     position: "right",
     type: "primary",
@@ -191,7 +196,7 @@ export function RemoteSunburst(props: Props) {
       downloadItem(props.id, normaliseCaps(objectType));
     },
     icon: "download",
-  } : {};
+  };
 
   const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
   const setter = setZone === undefined ? undefined : setSliceData;
