@@ -210,9 +210,9 @@ export function RemoteSunburst(props: Props) {
         id={id}
         title={utilityBarConfig?.title}
         buttons={[
-          downloadButton,
           ...(utilityBarConfig?.buttons || []),
           resetButton,
+          downloadButton,
         ]}
       />
       <div className="tol-component-contents-with-offset">

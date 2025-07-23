@@ -27,11 +27,10 @@ interface Props extends IBoardTargetAndZone {
   title: string;
   config: any;
   size: string;
-  editable?: boolean;
 }
 
 export function BoardChart(props: Props) {
-  const { id, title, boardObjectType, boardDataSource, zone, editable } = props;
+  const { id, title, boardObjectType, boardDataSource, zone } = props;
   const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
@@ -55,7 +54,7 @@ export function BoardChart(props: Props) {
     type: "primary",
     onClick: () => setOpenConfig(true),
     icon: "sliders",
-    visible: editable,
+    visible: privilege == PRIVILEGE.BOARD.EDITABLE,
   }
 
   const filterButton: IButton = {
@@ -64,7 +63,7 @@ export function BoardChart(props: Props) {
     type: "primary",
     onClick: () => setOpenFilters(true),
     icon: "filter",
-    visible: editable,
+    visible: privilege == PRIVILEGE.BOARD.EDITABLE,
   }
 
   const Contents = () => {
@@ -120,7 +119,7 @@ export function BoardChart(props: Props) {
         utilityBarConfig={{
           title: {
             text: title,
-            editable: editable,
+            editable: privilege == PRIVILEGE.BOARD.EDITABLE,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);
             }

@@ -26,11 +26,10 @@ interface Props extends IBoardTargetAndZone {
   title: string;
   config: any;
   size: string;
-  editable?: boolean;
 }
 
 export function BoardSunburst(props: Props) {
-  const { id, boardObjectType, boardDataSource, size, zone, editable } = props;
+  const { id, boardObjectType, boardDataSource, size, zone } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
@@ -89,7 +88,7 @@ export function BoardSunburst(props: Props) {
     onClick: () => setOpenFilters(true),
     icon: "filter",
     className: "count-filter-button",
-    visible: editable,
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
   }
 
   return (

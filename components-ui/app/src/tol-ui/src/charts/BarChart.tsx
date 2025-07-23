@@ -315,6 +315,7 @@ export function BarChart(props: Props) {
             icon: "undo",
             visible: isPropDefined(setBarData) && datasets.length > 0,
           },
+          ...(utilityBarConfig.buttons || []),
           {
             outline: true,
             position: "right",
@@ -326,7 +327,6 @@ export function BarChart(props: Props) {
             disabled: datasets.length === 0,
             disabledTooltip: "No data to download",
           },
-          ...(utilityBarConfig.buttons || []),
         ]}
       />
       <div className="tol-component-contents-with-offset">

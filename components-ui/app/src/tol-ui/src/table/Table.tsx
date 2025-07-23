@@ -370,9 +370,9 @@ export function Table(props: Props) {
         buttons={[
           configButton,
           filterButton,
-          downloadButton,
           ...(utilityBarConfig.buttons || []),
           actionDropdown,
+          downloadButton,
         ]}
       />
       {contents ? contents :
