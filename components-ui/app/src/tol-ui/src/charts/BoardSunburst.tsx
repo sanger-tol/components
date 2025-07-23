@@ -34,7 +34,7 @@ export function BoardSunburst(props: Props) {
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
-  const {privilege} = useBoardPrivilege()
+  const { privilege } = useBoardPrivilege()
 
   const onModalSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });

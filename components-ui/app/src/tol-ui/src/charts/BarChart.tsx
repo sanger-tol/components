@@ -76,7 +76,7 @@ export function BarChart(props: Props) {
     cumulative,
     utilityBarConfig = {},
     contents,
-    chartType='bar',
+    chartType = 'bar',
     downloadName = 'barchart'
   } = props;
   const originDatasets = initialiseDatasets(props.datasets);
@@ -344,7 +344,7 @@ export function BarChart(props: Props) {
               datasets: datasets,
             }}
           />
-      }
+        }
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ import {
 } from "../..";
 
 
-export interface PComponentPickerModal extends Omit<PBoard, 'setPrivilege'> {
+export interface PComponentPickerModal extends PBoard {
   open: boolean;
   setOpen: any;
   zone: IZone;

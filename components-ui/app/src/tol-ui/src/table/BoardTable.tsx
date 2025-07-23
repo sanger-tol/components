@@ -29,7 +29,7 @@ export function BoardTable(props: Props) {
   const [config, setConfig] = useState<any>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
-  const {privilege} = useBoardPrivilege()
+  const { privilege } = useBoardPrivilege()
 
 
   const onModalSave = (fm: FieldMeta, actions: string[], sortByAtt: string) => {

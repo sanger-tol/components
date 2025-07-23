@@ -12,7 +12,8 @@ import {
   BoardSources,
   TsDataSource,
   BOARDS,
-  TDataObjectOrNull
+  TDataObjectOrNull,
+  PRIVILEGE
 } from "..";
 
 
@@ -92,12 +93,13 @@ export async function getUserPrivilege(
     }).then(async (board: TDataObjectOrNull) => {
       const board_user = await board?.relationships.user;
       if (board && (board_user?.id.toString() === user.id.toString() || user.roles.includes('admin'))) {
-        return 'editable';
+        return PRIVILEGE.BOARD.EDITABLE;
       } else {
-        return 'viewable';
+        return PRIVILEGE.BOARD.VIEWABLE;
       }
     });
   } else {
-    return 'hidden'; // If no user or boardDataSource, return hidden
+    // If no user or boardDataSource, return hidden
+    return PRIVILEGE.BOARD.HIDDEN;
   }
 }

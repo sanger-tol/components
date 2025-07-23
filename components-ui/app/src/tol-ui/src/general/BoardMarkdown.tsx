@@ -14,6 +14,8 @@ import {
   IButton,
   saveTitle,
   updateConfigAndUpsert,
+  useBoardPrivilege,
+  PRIVILEGE,
 } from "..";
 
 
@@ -26,19 +28,19 @@ export interface IBoardMarkdown extends IBoardTargetAndZone {
   title: string;
   config: IMarkdownConfig;
   size: string;
-  editable?: boolean;
 }
 
 export function BoardMarkdown(props: IBoardMarkdown) {
-  const { id, title, config, size, boardObjectType, boardDataSource, zone, editable } = props;
+  const { id, title, config, size, boardObjectType, boardDataSource, zone } = props;
 
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [showMarkdownViewer, setShowMarkdownViewer] = useState<boolean>(false);
+  const { privilege } = useBoardPrivilege();
 
 
   useEffect(() => {
-    (config.content || !editable) && setShowMarkdownViewer(true);
+    (config.content || !(privilege === PRIVILEGE.BOARD.EDITABLE)) && setShowMarkdownViewer(true);
   }, []);
 
   const onMarkdownSave = (config: IMarkdownConfig) => {
@@ -57,7 +59,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
     type: "primary",
     icon: showPreview ? "eye-slash" : "eye",
     onClick: () => setShowPreview(!showPreview),
-    visible: !showMarkdownViewer && editable,
+    visible: !showMarkdownViewer && privilege === PRIVILEGE.BOARD.EDITABLE,
     outline: true,
   }
 
@@ -71,7 +73,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
       onMarkdownSave({ content: content });
     },
     outline: true,
-    visible: editable,
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
   }
 
   const MdUtilityBar = (
@@ -80,7 +82,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
       buttons={[editButton, previewButton]}
       title={{
         text: title,
-        editable: editable,
+        editable: privilege === PRIVILEGE.BOARD.EDITABLE,
         onSave: (value: string) => {
           saveTitle(value, id, boardObjectType, boardDataSource);
         },

@@ -27,7 +27,7 @@ import {
 } from "../..";
 
 
-export interface PZone extends Omit<PBoard, 'setPrivilege'> {
+export interface PZone extends PBoard {
   id: string;
   title: string;
   objectType: string;
@@ -194,8 +194,8 @@ export function Zone(props: PZone) {
   const Tooltip = (
     <InfoTooltip
       contents={
-      <>{normaliseCaps(objectType)} Zone</>
-    }
+        <>{normaliseCaps(objectType)} Zone</>
+      }
     />
   )
 
@@ -251,31 +251,31 @@ export function Zone(props: PZone) {
       ) : (
         <div className="tol-zone-empty">
           {privilege === PRIVILEGE.BOARD.EDITABLE ? (
-          <>
-            <p>
-              Click the
-              <FontAwesomeIcon
-                icon={faPlus}
-                size="lg"
-                style={{ padding: "0 8" }}
-              />
-              to add a new Component to the Zone.
-            </p>
-            {!editBtnsVisible && (
+            <>
               <p>
                 Click the
                 <FontAwesomeIcon
-                  icon={faPenToSquare}
+                  icon={faPlus}
                   size="lg"
                   style={{ padding: "0 8" }}
                 />
-                to edit the Zone.
+                to add a new Component to the Zone.
               </p>
-            )}
-          </>
-        ): (
-          <p>No components found</p>
-        )}
+              {!editBtnsVisible && (
+                <p>
+                  Click the
+                  <FontAwesomeIcon
+                    icon={faPenToSquare}
+                    size="lg"
+                    style={{ padding: "0 8" }}
+                  />
+                  to edit the Zone.
+                </p>
+              )}
+            </>
+          ) : (
+            <p>No components found</p>
+          )}
         </div>
       )}
       {ConfirmModal}

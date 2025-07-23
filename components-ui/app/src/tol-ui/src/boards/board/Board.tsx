@@ -44,7 +44,7 @@ export function Board(props: PBoard) {
   const [view, setView] = useState(viewId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const {privilege, setPrivilege} = useBoardPrivilege();
+  const { privilege, setPrivilege } = useBoardPrivilege();
 
   themeListener(() => {
     try {

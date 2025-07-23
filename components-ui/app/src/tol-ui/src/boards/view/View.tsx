@@ -24,7 +24,7 @@ import {
 } from "../..";
 
 
-export interface PView extends Omit<PBoard, 'setPrivilege'> {
+export interface PView extends PBoard {
   // extends but excludes setPrivilege
   id: string;
   defaultFilter?: IFilter;
@@ -37,7 +37,7 @@ export function View(props: PView) {
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
-  const {privilege} = useBoardPrivilege();
+  const { privilege } = useBoardPrivilege();
 
   useEffect(() => {
     getZones(id, boardDataSource).then((res: any) => {

@@ -11,6 +11,8 @@ import {
   saveTitle,
   IBoardTargetAndZone,
   IButton,
+  useBoardPrivilege,
+  PRIVILEGE,
 } from "..";
 
 
@@ -18,12 +20,12 @@ interface Props extends IBoardTargetAndZone {
   id: string;
   title: string;
   config: any;
-  editable?: boolean;
 }
 
 export function BoardCount(props: Props) {
-  const { id, boardObjectType, boardDataSource, editable } = props;
+  const { id, boardObjectType, boardDataSource } = props;
   const [openFilters, setOpenFilters] = useState(false);
+  const { privilege } = useBoardPrivilege();
 
   const filterButton: IButton = {
     outline: true,
@@ -33,7 +35,7 @@ export function BoardCount(props: Props) {
     icon: "filter",
     className: "count-filter-button",
     testid: "count-filter-button",
-    visible: editable,
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
   }
 
   return (
@@ -48,7 +50,7 @@ export function BoardCount(props: Props) {
         utilityBarConfig={{
           title: {
             text: props.title,
-            editable: editable,
+            editable: privilege === PRIVILEGE.BOARD.EDITABLE,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);
             }

@@ -63,16 +63,16 @@ interface Props {
 
 export function TolApp(props: Props) {
   const { customCallbackUrl } = props;
-  
+
   // setting a default for the boardDataSource
   const boards = props.boards ? {
     dataSource: props.boards?.dataSource,
     boardDataSource: props.boards?.boardDataSource
-    || new TsDataSource({
-      apiPrefix: BOARDS_API_PREFIX,
-    }),
+      || new TsDataSource({
+        apiPrefix: BOARDS_API_PREFIX,
+      }),
   } : undefined;
-  
+
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
 

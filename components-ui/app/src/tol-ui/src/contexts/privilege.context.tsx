@@ -5,17 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import React, { createContext, useState } from "react";
-import { TBoardPrivilegeOrUndefined } from "..";
+import { TBoardPrivilegeOrUndefined, IBoardPrivilegeContextValue } from "..";
 
-export interface BoardPrivilegeContextValue {
-  privilege: TBoardPrivilegeOrUndefined;
-  setPrivilege: (privilege: TBoardPrivilegeOrUndefined) => void;
-}
-
-export const PrivilegeContext = createContext<BoardPrivilegeContextValue | undefined>(undefined);
+export const PrivilegeContext = createContext<IBoardPrivilegeContextValue | undefined>(undefined);
 
 export function BoardPrivilegeContextProvider({ children }: { children: React.ReactNode }) {
-  const [privilege, setPrivilege] = useState<TBoardPrivilegeOrUndefined>('viewable');
-  
+  const [privilege, setPrivilege] = useState<TBoardPrivilegeOrUndefined>(undefined);
+
   return <PrivilegeContext.Provider value={{ privilege, setPrivilege }}>{children}</PrivilegeContext.Provider>
 }

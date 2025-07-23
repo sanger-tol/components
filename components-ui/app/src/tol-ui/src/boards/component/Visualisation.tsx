@@ -27,14 +27,14 @@ export function Visualisation(props: PVisualisation) {
 
   switch (componentType) {
     case "table":
-      return <BoardTable {...props}/>;
+      return <BoardTable {...props} />;
     case "count":
-      return <BoardCount {...props}/>;
+      return <BoardCount {...props} />;
     case "sunburst":
-      return <BoardSunburst {...props}/>;
+      return <BoardSunburst {...props} />;
     case "chart":
-      return <BoardChart {...props}/>;
+      return <BoardChart {...props} />;
     case "text":
-      return <BoardMarkdown {...props}/>;
+      return <BoardMarkdown {...props} />;
   }
 }
