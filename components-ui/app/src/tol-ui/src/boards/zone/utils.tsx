@@ -30,16 +30,18 @@ export async function getComponents(
 ): Promise<IComponentData[] | undefined> {
   const componentZoneData = await getComponentZoneData(zoneId, boardDataSource);
   if (componentZoneData) {
-    const componentIds = await Promise.all(
-      componentZoneData.map(
-        async (componentZone) => (await componentZone.fetchRelationships.component).id
+    const componentIds = (
+      await Promise.all(
+        componentZoneData.map(
+          async (componentZone) => (await componentZone.fetchRelationships?.component)?.id
+        )
       )
-    ) || [];
+    ).filter((id): id is string => typeof id === "string"); // remove undefined values
     const componentData = await getComponentData(componentIds, boardDataSource);
 
     return Promise.all(
       componentZoneData.map(async (component) => {
-        const componentId = (await component.fetchRelationships.component).id;
+        const componentId = (await component.fetchRelationships?.component)?.id;
         const componentDetails = componentData.find(
           (data) => data.id === componentId
         );
