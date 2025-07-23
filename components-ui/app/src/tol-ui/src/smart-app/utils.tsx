@@ -91,7 +91,7 @@ export async function getUserRole(
       id: boardId,
     }).then(async(board: TDataObjectOrNull) => {
       const board_user = await board?.relationships.user;
-      if (board && board_user?.id === user.id || user.roles.includes('admin')) {
+      if (board && (board_user?.id.toString() === user.id.toString() || user.roles.includes('admin'))) {
         return 'editable';
       } else {
         return 'view-only';

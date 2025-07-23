@@ -25,7 +25,9 @@ const createView = async ({page, testID}) => {};
   
 const createZone = async ({page, testID}) => {
   // click add zone button
-  await page.click('.add-zone-button');
+  const addZoneButton = await page.getByTestId('add-zone-button');
+  await addZoneButton.waitFor();
+  await addZoneButton.click();
 
   // choose the object type
   await page.getByRole('combobox').click();
@@ -37,9 +39,9 @@ const createZone = async ({page, testID}) => {
   await page.getByRole('textbox').fill(testID);
 
   // click add zone button
-  const addZoneButton = await page.getByTestId('add-zone-button');
-  await addZoneButton.waitFor();
-  await addZoneButton.click();
+  const confirmZoneButton = await page.getByTestId('confirm-zone-button');
+  await confirmZoneButton.waitFor();
+  await confirmZoneButton.click();
 };
 
 export const deleteBoard = async({page, testID}) => {
@@ -63,7 +65,7 @@ export const setupBoard = async ({page, testID}) => {
   await createBoard({page, testID});
 
   // create a view
-  await createView({page, testID});
+  // await createView({page, testID});
 
   // create a zone
   await createZone({page, testID});
