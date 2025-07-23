@@ -664,13 +664,16 @@ export async function progressBar(
   datasource
     .custom({
       method: API_METHODS.GET,
-      resource: "manifest",
+      resource: objectType,
+      params: {
+        filter: filter,
+      },
     })
     .then(async (response) => {
       const tl = response.data.meta.total;
       setTotal(tl);
       const ds = datasource.getListByCursor({
-        objectType: "manifest",
+        objectType: objectType,
         filter: filter,
         requestedFields: requestedFields,
       });
@@ -686,10 +689,10 @@ export async function progressBar(
     });
 }
 
-// export function exportDataToSpreadsheet({ results}) {
-//   console.log("Here bouy-->", results);
-//   const worksheet = XLSX.utils.json_to_sheet(results);
-//   const workbook = XLSX.utils.book_new();
-//   XLSX.utils.book_append_sheet(workbook, worksheet, "Dates");
-//   XLSX.writeFile(workbook, "Presidents.xlsx", { compression: true });
-// }
+export function exportDataToSpreadsheet(results: Array<Record<string, string>>, title: string) {
+  const heading = `${title.text.replace(/\s+/g, '_')}_TOL.xlsx`;
+  const worksheet = XLSX.utils.json_to_sheet(results);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Dates");
+  XLSX.writeFile(workbook, heading, { compression: true });
+}

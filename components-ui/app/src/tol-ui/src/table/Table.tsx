@@ -289,6 +289,7 @@ export function Table(props: Props) {
         filter={filter}
         requestedFields={fieldMeta.order.active}
         totalSize={totalSize}
+        title={utilityBarConfig.title}
       />
       <ColumnConfigDrawer
         {...props}
