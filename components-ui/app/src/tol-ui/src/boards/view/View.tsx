@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import {
   ZoneModal,
   IFilter,
@@ -16,10 +16,11 @@ import {
   PBoard,
   reorderZoneAndUpsert,
   getSortedZones,
-  PrivilegeContext,
   IUtilityBar,
   UtilityBar,
-  IButton
+  IButton,
+  PRIVILEGE,
+  useBoardPrivilege
 } from "../..";
 
 
@@ -36,7 +37,7 @@ export function View(props: PView) {
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
-  const privilege = useContext(PrivilegeContext);
+  const {privilege} = useBoardPrivilege();
 
   useEffect(() => {
     getZones(id, boardDataSource).then((res: any) => {
@@ -85,7 +86,7 @@ export function View(props: PView) {
     testid: "add-zone-button",
     icon: "plus",
     position: "right",
-    visible: privilege === "editable",
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
     onClick: () => {
       setOpen(true);
     },
@@ -131,7 +132,7 @@ export function View(props: PView) {
         </>
       ) : (
         <div className="tol-zone-empty">
-          {privilege === "editable" ? (
+          {privilege === PRIVILEGE.BOARD.EDITABLE ? (
             <p>Click the + button to add a Zone</p>
           ) : (
             <p>No zones found</p>

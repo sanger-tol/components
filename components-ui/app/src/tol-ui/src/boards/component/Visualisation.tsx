@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useContext } from "react";
 import {
   BoardCount,
   BoardTable,
@@ -12,7 +11,6 @@ import {
   BoardChart,
   IBoardTargetAndZone,
   BoardMarkdown,
-  PrivilegeContext
 } from "../..";
 
 
@@ -26,19 +24,17 @@ export interface PVisualisation extends IBoardTargetAndZone {
 
 export function Visualisation(props: PVisualisation) {
   const { componentType } = props;
-  const privilege = useContext(PrivilegeContext);
-  const editable = privilege === "editable";
 
   switch (componentType) {
     case "table":
-      return <BoardTable {...props} editable={editable}/>;
+      return <BoardTable {...props}/>;
     case "count":
-      return <BoardCount {...props} editable={editable}/>;
+      return <BoardCount {...props}/>;
     case "sunburst":
-      return <BoardSunburst {...props} editable={editable}/>;
+      return <BoardSunburst {...props}/>;
     case "chart":
-      return <BoardChart {...props} editable={editable}/>;
+      return <BoardChart {...props}/>;
     case "text":
-      return <BoardMarkdown {...props} editable={editable}/>;
+      return <BoardMarkdown {...props}/>;
   }
 }

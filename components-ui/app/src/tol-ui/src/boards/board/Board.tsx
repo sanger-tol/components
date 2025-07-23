@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import {
   BOARDS,
@@ -18,24 +18,24 @@ import {
   TsDataSource,
   View,
   getUserPrivilege,
-  PrivilegeContext,
+  useBoardPrivilege,
   copyToClipboard,
   PopUpMessage,
-  IUtilityBar
+  IUtilityBar,
+  TBoardPrivilege,
+  PRIVILEGE
 } from "../..";
 
 
 export interface PBoard {
   dataSource: TsDataSource;
   boardDataSource: TsDataSource;
-  setPrivilege: (privilege: string) => void;
 }
 
 export function Board(props: PBoard) {
   const {
     dataSource,
     boardDataSource,
-    setPrivilege
   } = props;
 
   const { boardId, viewId } = useParams<any>();
@@ -44,7 +44,7 @@ export function Board(props: PBoard) {
   const [view, setView] = useState(viewId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const privilege = useContext(PrivilegeContext);
+  const {privilege, setPrivilege} = useBoardPrivilege();
 
   themeListener(() => {
     try {
@@ -60,7 +60,7 @@ export function Board(props: PBoard) {
     if (u) setUser(u);
 
     const awaitUserPrivilege = async () => {
-      const userPrivilege = await getUserPrivilege(u, boardDataSource!, boardId)
+      const userPrivilege: TBoardPrivilege = await getUserPrivilege(u, boardDataSource!, boardId)
       setPrivilege(userPrivilege);
     };
     awaitUserPrivilege();
@@ -81,7 +81,7 @@ export function Board(props: PBoard) {
     }
   }, [boardId, user]);
 
-  if (error !== "" || privilege === "hidden") {
+  if (error !== "" || privilege === PRIVILEGE.BOARD.HIDDEN) {
     return <Redirect to="/page-not-found" />;
   }
 
@@ -107,7 +107,7 @@ export function Board(props: PBoard) {
     ],
     title: {
       text: boardData.boardTitle,
-      editable: privilege === "editable",
+      editable: privilege === PRIVILEGE.BOARD.EDITABLE,
       onSave: (value: string) => {
         saveTitle(value, boardId, BOARDS.BOARD, boardDataSource);
       },

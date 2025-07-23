@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useEffect, useState, useContext } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
@@ -31,7 +31,8 @@ import {
   IButton,
   IDropdownButtons,
   IRemoteTarget,
-  PrivilegeContext
+  useBoardPrivilege,
+  PRIVILEGE
 } from "..";
 
 
@@ -154,7 +155,7 @@ export function Table(props: Props) {
   let indeterminate = false;
   const noFieldsSelected = fieldMeta.order.active.length === 0;
 
-  const privilege = useContext(PrivilegeContext);
+  const { privilege } = useBoardPrivilege()
 
   if (selectedRows.length === data.length || bulkSelect) {
     checked = true;
@@ -381,7 +382,7 @@ export function Table(props: Props) {
               message={
                 <>
                   {/* Assume that when privilege is undefined, the table is not in a board */}
-                  {privilege === "editable" || !privilege ? (
+                  {privilege === PRIVILEGE.BOARD.EDITABLE || !privilege ? (
                     <>
                       No fields selected. Please click
                       <FontAwesomeIcon

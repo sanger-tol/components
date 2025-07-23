@@ -94,12 +94,10 @@ export async function getUserPrivilege(
       if (board && (board_user?.id.toString() === user.id.toString() || user.roles.includes('admin'))) {
         return 'editable';
       } else {
-        return 'view-only';
+        return 'viewable';
       }
     });
   } else {
     return 'hidden'; // If no user or boardDataSource, return hidden
   }
 }
-
-export const PrivilegeContext = createContext<string | undefined>(undefined);

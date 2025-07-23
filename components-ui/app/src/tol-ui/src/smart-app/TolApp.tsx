@@ -39,7 +39,8 @@ import {
   API_METHODS,
   BOARDS_API_PREFIX,
   getUserPrivilege,
-  PrivilegeContext
+  PrivilegeContext,
+  BoardPrivilegeContextProvider
 } from "..";
 
 
@@ -74,7 +75,6 @@ export function TolApp(props: Props) {
   
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
-  const [privilege, setPrivilege] = useState<string>("");
 
   useEffect(() => {
     const siteId = env.MATOMO_SITE_ID;
@@ -129,13 +129,12 @@ export function TolApp(props: Props) {
               </Route>
               <Route path="/board/:boardId">
                 {boards && loggedIn ? (
-                  <PrivilegeContext.Provider value={privilege}>
+                  <BoardPrivilegeContextProvider>
                     <Board
                       dataSource={boards.dataSource}
                       boardDataSource={boards.boardDataSource}
-                      setPrivilege={setPrivilege}
                     />
-                  </PrivilegeContext.Provider>
+                  </BoardPrivilegeContextProvider>
                 ) : (
                   <Redirect to="/" />
                 )}

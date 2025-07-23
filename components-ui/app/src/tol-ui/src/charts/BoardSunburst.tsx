@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useContext } from "react";
+import { useState } from "react";
 import {
   BoardFilters,
   Placeholder,
@@ -16,7 +16,8 @@ import {
   SliceByDrawer,
   IButton,
   updateConfigAndUpsert,
-  PrivilegeContext
+  PRIVILEGE,
+  useBoardPrivilege
 } from "..";
 
 
@@ -34,7 +35,7 @@ export function BoardSunburst(props: Props) {
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
-  const privilege = useContext(PrivilegeContext);
+  const {privilege} = useBoardPrivilege()
 
   const onModalSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });
@@ -54,7 +55,7 @@ export function BoardSunburst(props: Props) {
           pie
           message={
             <>
-              {privilege === "editable" ? (
+              {privilege === PRIVILEGE.BOARD.EDITABLE ? (
                 <>
                   Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
                 </>
@@ -78,7 +79,7 @@ export function BoardSunburst(props: Props) {
     onClick: () => setOpenConfig(true),
     icon: "sliders",
     className: "count-filter-button",
-    visible: editable,
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
   }
 
   const filtersButton: IButton = {
