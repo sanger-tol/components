@@ -12,4 +12,5 @@ export const EXCLUDED_DETAIL_CACHE_OBJECTS = [
   'zone_view',
   'view_board',
   'flow_run',
+  'noCacheTest',
 ];
