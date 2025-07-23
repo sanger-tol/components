@@ -20,7 +20,7 @@ import {
 } from "../..";
 
 
-export interface PZoneModal extends Omit<PBoard, 'setPrivelege'> {
+export interface PZoneModal extends Omit<PBoard, 'setPrivilege'> {
   open: boolean;
   setOpen: any;
   zones: IDBZone[];

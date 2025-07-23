@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   BoardFilters,
   Placeholder,
@@ -16,6 +16,7 @@ import {
   SliceByDrawer,
   IButton,
   updateConfigAndUpsert,
+  PrivilegeContext
 } from "..";
 
 
@@ -33,6 +34,7 @@ export function BoardSunburst(props: Props) {
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
+  const privilege = useContext(PrivilegeContext);
 
   const onModalSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });
@@ -52,7 +54,15 @@ export function BoardSunburst(props: Props) {
           pie
           message={
             <>
-              Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
+              {privilege === "editable" ? (
+                <>
+                  Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
+                </>
+              ) : (
+                <>
+                  No attributes selected.
+                </>
+              )}
             </>
           }
         />

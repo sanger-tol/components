@@ -22,11 +22,11 @@ import {
   addComponents,
   InfoTooltip,
   normaliseCaps,
-  PrivelegeContext
+  PrivilegeContext
 } from "../..";
 
 
-export interface PZone extends Omit<PBoard, 'setPrivelege'> {
+export interface PZone extends Omit<PBoard, 'setPrivilege'> {
   id: string;
   title: string;
   objectType: string;
@@ -58,7 +58,7 @@ export function Zone(props: PZone) {
     filter: filter,
     components: [],
   });
-  const privelege = useContext(PrivelegeContext);
+  const privilege = useContext(PrivilegeContext);
 
   useEffect(() => {
     getComponents(id, boardDataSource).then((components) => {
@@ -100,7 +100,7 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "Add Component",
     testid: "add-component-button",
-    visible: privelege === "editable"
+    visible: privilege === "editable"
   };
 
   const editButton: IButton = {
@@ -114,7 +114,7 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "Edit Widgets",
     testid: "drag-components-button",
-    visible: privelege === "editable"
+    visible: privilege === "editable"
   };
 
   const deleteButton: IButton = {
@@ -126,7 +126,7 @@ export function Zone(props: PZone) {
     icon: "trash",
     position: "right",
     tooltip: "Delete Zone",
-    visible: privelege === "editable"
+    visible: privilege === "editable"
   };
 
   const upButton: IButton = {
@@ -138,7 +138,7 @@ export function Zone(props: PZone) {
     icon: "arrow-up",
     position: "right",
     tooltip: "Move Zone Up",
-    visible: privelege === "editable"
+    visible: privilege === "editable"
   };
 
   const downButton: IButton = {
@@ -150,7 +150,7 @@ export function Zone(props: PZone) {
     icon: "arrow-down",
     position: "right",
     tooltip: "Move Zone Down",
-    visible: privelege === "editable"
+    visible: privilege === "editable"
   };
 
   const saveButton: IButton = {
@@ -164,7 +164,7 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "Save Layout",
     testid: "save-layout-button",
-    visible: privelege === "editable"
+    visible: privilege === "editable"
   };
 
   const filtersButton: IButton = {
@@ -174,7 +174,7 @@ export function Zone(props: PZone) {
     icon: "filter",
     position: "right",
     tooltip: "Add filters to the Zone",
-    visible: privelege === "editable"
+    visible: privilege === "editable"
   };
 
   const showEditButtons: IButton = {
@@ -187,7 +187,7 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: editBtnsVisible ? "Save Changes" : "Edit Zone",
     testid: "edit-zone-button",
-    visible: privelege === "editable"
+    visible: privilege === "editable"
   };
 
   const Tooltip = (
@@ -204,7 +204,7 @@ export function Zone(props: PZone) {
         id="zone-utility-bar"
         title={{
           text: title,
-          editable: privelege === "editable",
+          editable: privilege === "editable",
           onSave: (value: string) => {
             if (value !== title) {
               saveTitle(value, id, BOARDS.ZONE, boardDataSource);
@@ -249,7 +249,7 @@ export function Zone(props: PZone) {
         />
       ) : (
         <div className="tol-zone-empty">
-          {privelege === "editable" ? (
+          {privilege === "editable" ? (
           <>
             <p>
               Click the

@@ -102,4 +102,4 @@ export async function getUserRole(
   }
 }
 
-export const PrivelegeContext = createContext<string>('');
+export const PrivilegeContext = createContext<string | undefined>(undefined);

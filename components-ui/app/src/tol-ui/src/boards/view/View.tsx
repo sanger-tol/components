@@ -16,15 +16,15 @@ import {
   PBoard,
   reorderZoneAndUpsert,
   getSortedZones,
-  PrivelegeContext,
+  PrivilegeContext,
   IUtilityBar,
   UtilityBar,
   IButton
 } from "../..";
 
 
-export interface PView extends Omit<PBoard, 'setPrivelege'> {
-  // extends but excludes setPrivelege
+export interface PView extends Omit<PBoard, 'setPrivilege'> {
+  // extends but excludes setPrivilege
   id: string;
   defaultFilter?: IFilter;
   utilityBarConfig?: IUtilityBar
@@ -36,7 +36,7 @@ export function View(props: PView) {
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
-  const privelege = useContext(PrivelegeContext);
+  const privilege = useContext(PrivilegeContext);
 
   useEffect(() => {
     getZones(id, boardDataSource).then((res: any) => {
@@ -85,7 +85,7 @@ export function View(props: PView) {
     testid: "add-zone-button",
     icon: "plus",
     position: "right",
-    visible: privelege === "editable",
+    visible: privilege === "editable",
     onClick: () => {
       setOpen(true);
     },
@@ -131,7 +131,7 @@ export function View(props: PView) {
         </>
       ) : (
         <div className="tol-zone-empty">
-          {privelege === "editable" ? (
+          {privilege === "editable" ? (
             <p>Click the + button to add a Zone</p>
           ) : (
             <p>No zones found</p>

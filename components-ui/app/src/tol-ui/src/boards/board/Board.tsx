@@ -18,7 +18,7 @@ import {
   TsDataSource,
   View,
   getUserRole,
-  PrivelegeContext,
+  PrivilegeContext,
   copyToClipboard,
   PopUpMessage,
   IUtilityBar
@@ -28,14 +28,14 @@ import {
 export interface PBoard {
   dataSource: TsDataSource;
   boardDataSource: TsDataSource;
-  setPrivelege: (privelege: string) => void;
+  setPrivilege: (privilege: string) => void;
 }
 
 export function Board(props: PBoard) {
   const {
     dataSource,
     boardDataSource,
-    setPrivelege
+    setPrivilege
   } = props;
 
   const { boardId, viewId } = useParams<any>();
@@ -44,7 +44,7 @@ export function Board(props: PBoard) {
   const [view, setView] = useState(viewId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const privelege = useContext(PrivelegeContext);
+  const privilege = useContext(PrivilegeContext);
 
   themeListener(() => {
     try {
@@ -61,7 +61,7 @@ export function Board(props: PBoard) {
 
     const awaitUserRole = async () => {
       const userRole = await getUserRole(u, boardDataSource!, boardId)
-      setPrivelege(userRole);
+      setPrivilege(userRole);
     };
     awaitUserRole();
   }, []);
@@ -81,7 +81,7 @@ export function Board(props: PBoard) {
     }
   }, [boardId, user]);
 
-  if (error !== "" || privelege === "hidden") {
+  if (error !== "" || privilege === "hidden") {
     return <Redirect to="/page-not-found" />;
   }
 
@@ -107,7 +107,7 @@ export function Board(props: PBoard) {
     ],
     title: {
       text: boardData.boardTitle,
-      editable: privelege === "editable",
+      editable: privilege === "editable",
       onSave: (value: string) => {
         saveTitle(value, boardId, BOARDS.BOARD, boardDataSource);
       },

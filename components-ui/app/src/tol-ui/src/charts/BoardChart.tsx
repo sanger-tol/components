@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   BoardFilters,
   Icon,
@@ -16,7 +16,8 @@ import {
   ChartConfigDrawer,
   IChartConfig,
   IButton,
-  updateConfigAndUpsert
+  updateConfigAndUpsert,
+  PrivilegeContext
 } from "..";
 
 
@@ -34,6 +35,7 @@ export function BoardChart(props: Props) {
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
+  const privilege = useContext(PrivilegeContext);
 
   const onModalSave = (updatedConfig: IChartConfig) => {
     setConfig({ ...updatedConfig });
@@ -72,7 +74,15 @@ export function BoardChart(props: Props) {
             bar
             message={
               <>
-                Please add configure to get started. Click <Icon icon="sliders" size="lg" /> to configure.
+                {privilege === "editable" ? (
+                  <>
+                    Please add attributes to get started. Click <Icon icon="sliders" size="lg" /> to configure.
+                  </>
+                ) : (
+                  <>
+                    No attributes selected.
+                  </>
+                )}
               </>
             }
           />

@@ -12,7 +12,7 @@ import {
   BoardChart,
   IBoardTargetAndZone,
   BoardMarkdown,
-  PrivelegeContext
+  PrivilegeContext
 } from "../..";
 
 
@@ -26,8 +26,8 @@ export interface PVisualisation extends IBoardTargetAndZone {
 
 export function Visualisation(props: PVisualisation) {
   const { componentType } = props;
-  const privelege = useContext(PrivelegeContext);
-  const editable = privelege === "editable";
+  const privilege = useContext(PrivilegeContext);
+  const editable = privilege === "editable";
 
   switch (componentType) {
     case "table":
