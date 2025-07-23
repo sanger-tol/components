@@ -690,7 +690,7 @@ export async function progressBar(
 }
 
 export function exportDataToSpreadsheet(results: Array<Record<string, string>>, title: string) {
-  const heading = `${title.text.replace(/\s+/g, '_')}_TOL.xlsx`;
+  const heading = `${title.text.replace(/\s+/g, '_')}.xlsx`;
   const worksheet = XLSX.utils.json_to_sheet(results);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "Dates");
