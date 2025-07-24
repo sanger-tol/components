@@ -230,7 +230,9 @@ export function Table(props: Props) {
   }
 
   const filterButton: IButton = (
-    !noFilter && fieldMeta.order.active.length !== 0 && privilege === PRIVILEGE.BOARD.EDITABLE
+    !noFilter &&
+    fieldMeta.order.active.length !== 0 &&
+    privilege === PRIVILEGE.BOARD.EDITABLE || privilege === undefined
   ) ? {
     visible: true,
     position: "right",
