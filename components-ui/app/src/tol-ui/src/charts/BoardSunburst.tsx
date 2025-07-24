@@ -117,7 +117,7 @@ export function BoardSunburst(props: Props) {
         utilityBarConfig={{
           title: {
             text: props.title,
-            editable: true,
+            editable: privilege === PRIVILEGE.BOARD.EDITABLE,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);
             }

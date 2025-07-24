@@ -100,7 +100,7 @@ export function BoardTable(props: Props) {
       utilityBarConfig={{
         title: {
           text: title,
-          editable: privilege !== PRIVILEGE.BOARD.EDITABLE,
+          editable: privilege === PRIVILEGE.BOARD.EDITABLE,
           onSave: (value: string) => {
             saveTitle(value, id, boardObjectType, boardDataSource);
           }
