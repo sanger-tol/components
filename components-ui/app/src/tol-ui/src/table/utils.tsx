@@ -27,6 +27,7 @@ import {
   IGetList,
   getFieldByName,
   TDataObjectListOrNull,
+  ICountProps,
 } from "..";
 
 interface Rgb {
@@ -656,24 +657,14 @@ export async function getActions(
 export async function progressBar(
   { objectType, filter, requestedFields }: IGetList,
   { setTotal, setCurrent, setPercentageComplete }: IProgressThreshold,
-  datasource: TsDataSource
+  datasource: TsDataSource, count
 ) {
   const results: any[] = [];
   setTotal(0);
   setCurrent(0);
   setPercentageComplete(0);
 
-  return datasource
-    .custom({
-      method: API_METHODS.GET,
-      resource: objectType,
-      params: {
-        filter: filter,
-      },
-    })
-    .then(async (response) => {
-      const tl = response.data.meta.total;
-      setTotal(tl);
+      setTotal(count);
       const ds = datasource.getListByCursor({
         objectType: objectType,
         filter: filter,
@@ -682,13 +673,13 @@ export async function progressBar(
       for await (const item of ds) {
         setCurrent((prev) => {
           const next = prev + 1;
-          setPercentageComplete(Math.round((next / tl) * 100));
+          setPercentageComplete(Math.round((next / count) * 100));
+          console.log(next,'/',count);
           results.push(item);
           return next;
         });
       }
       return results;
-    });
 }
 
 export async function dataObjectToSpreadsheetData(

@@ -31,6 +31,7 @@ import {
   IButton,
   IDropdownButtons,
   IRemoteTarget,
+  ICountProps
 } from "..";
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
@@ -83,7 +84,9 @@ interface Props extends IRemoteTarget {
   groupBy?: boolean;
 }
 
-export function Table(props: Props) {
+type TUpdatedProps = ICountProps & Props
+
+export function Table(props: TUpdatedProps) {
   const { Column, HeaderCell, Cell } = RSTable;
   let {
     /* eslint-disable */
@@ -127,6 +130,7 @@ export function Table(props: Props) {
     utilityBarConfig = {},
     contents,
     groupBy,
+    count,
     /* eslint-enable */
   } = props;
   const wrapperId = "tol-table-wrapper-" + id;
@@ -294,6 +298,7 @@ export function Table(props: Props) {
         totalSize={totalSize}
         title={utilityBarConfig.title}
         fieldMeta={fieldMeta}
+        count={count}
       />
       <ColumnConfigDrawer
         {...props}

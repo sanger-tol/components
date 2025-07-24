@@ -17,6 +17,9 @@ import {
   IGetList,
   getFieldByName,
   dataObjectToSpreadsheetData,
+  IInlineEdit,
+  ITableCount,
+  ICountProps
 } from "..";
 import { Progress } from "rsuite";
 import { Dispatch, useState } from "react";
@@ -32,8 +35,8 @@ interface Props {
   dataSource: TsDataSource;
   requestedFields: string[] | string;
   totalSize: number;
-  title?: string;
-  fieldMeta?: any;
+  title: IInlineEdit;
+  fieldMeta: any;
 }
 
 export interface IProgressThreshold {
@@ -42,7 +45,9 @@ export interface IProgressThreshold {
   setPercentageComplete: Dispatch<React.SetStateAction<number>>;
 }
 
-export function DownloadModal(props: Props) {
+type TUpdatedProps = ICountProps & Props
+
+export function DownloadModal(props: TUpdatedProps) {
   const {
     size,
     open,
@@ -54,7 +59,9 @@ export function DownloadModal(props: Props) {
     totalSize,
     title,
     fieldMeta,
+count
   } = props;
+  console.log()
   const [clicked, isClicked] = useState<boolean>(false);
   const [total, setTotal] = useState<number>(0);
   const [current, setCurrent] = useState<number>(0);
@@ -115,7 +122,8 @@ tol data \
         requestedFields: requestedFields,
       },
       { setTotal, setCurrent, setPercentageComplete },
-      dataSource
+      dataSource,
+      count
     ).then((response) => {
       dataObjectToSpreadsheetData(
         response,
@@ -145,7 +153,7 @@ tol data \
                     : undefined
                 }
                 disabled={
-                  totalSize >= 10000 || (clicked && percentageComplete != 100)
+                  totalSize >= 100000 || (clicked && percentageComplete != 100)
                 }
               />
             </div>
