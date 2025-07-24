@@ -25,6 +25,8 @@ import {
   API_METHODS,
   IProgressThreshold,
   IGetList,
+  getFieldByName,
+  TDataObjectListOrNull,
 } from "..";
 
 interface Rgb {
@@ -661,7 +663,7 @@ export async function progressBar(
   setCurrent(0);
   setPercentageComplete(0);
 
-  datasource
+  return datasource
     .custom({
       method: API_METHODS.GET,
       resource: objectType,
@@ -689,9 +691,28 @@ export async function progressBar(
     });
 }
 
-export function exportDataToSpreadsheet(results: Array<Record<string, string>>, title: string) {
-  const heading = `${title.text.replace(/\s+/g, '_')}.xlsx`;
-  const worksheet = XLSX.utils.json_to_sheet(results);
+export async function dataObjectToSpreadsheetData(
+  dataObjects: TDataObjectListOrNull,
+  requestedFields: string[],
+  fieldMeta: any
+) {
+  const spreadsheetData: any[] = [];
+  dataObjects?.forEach((obj) => {
+    const flatData = {};
+    requestedFields.forEach((field) => {
+      flatData[fieldMeta.data[field].rename] = getFieldByName(obj, field);
+    });
+    spreadsheetData.push(flatData);
+  });
+  return spreadsheetData;
+}
+
+export function exportDataToSpreadsheet(
+  spreadsheetData: Array<Record<string, string>>,
+  boardTitle: any
+) {
+  const heading = `${boardTitle.text.replace(/\s+/g, "_")}.xlsx`;
+  const worksheet = XLSX.utils.json_to_sheet(spreadsheetData);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "ToLTable");
   XLSX.writeFile(workbook, heading, { compression: true });

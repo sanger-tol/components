@@ -15,6 +15,8 @@ import {
   progressBar,
   exportDataToSpreadsheet,
   IGetList,
+  getFieldByName,
+  dataObjectToSpreadsheetData,
 } from "..";
 import { Progress } from "rsuite";
 import { Dispatch, useState } from "react";
@@ -31,6 +33,7 @@ interface Props {
   requestedFields: string[] | string;
   totalSize: number;
   title?: string;
+  fieldMeta?: any;
 }
 
 export interface IProgressThreshold {
@@ -50,6 +53,7 @@ export function DownloadModal(props: Props) {
     dataSource,
     totalSize,
     title,
+    fieldMeta,
   } = props;
   const [clicked, isClicked] = useState<boolean>(false);
   const [total, setTotal] = useState<number>(0);
@@ -104,7 +108,7 @@ tol data \
   };
 
   const onDownloadSpreadsheet = async () => {
-     await progressBar(
+    await progressBar(
       {
         objectType: objectType || "",
         filter,
@@ -112,29 +116,13 @@ tol data \
       },
       { setTotal, setCurrent, setPercentageComplete },
       dataSource
-    ).then((response)=>{
-      //Todo--> getFieldByName called to obtain the dataObject in list of array format
-      // use the exportDataSpreadsheet on <Array<string,string>> and the title
+    ).then((response) => {
+      dataObjectToSpreadsheetData(
+        response,
+        requestedFields.split(","),
+        fieldMeta
+      ).then((info) => exportDataToSpreadsheet(info, title));
     });
-    
-    const generateDummyJson = (
-      keys: string[],
-      count: number = 5
-    ): Array<Record<string, string>> => {
-      const dummyData = [];
-
-      for (let i = 0; i < count; i++) {
-        const obj: Record<string, string> = {};
-        keys.forEach((key) => {
-          obj[key] = `value_${key}_${i}`;
-        });
-        dummyData.push(obj);
-      }
-      return dummyData;
-    };
-
-    const jsonFormatter = generateDummyJson(requestedFields.split(","));
-    exportDataToSpreadsheet(jsonFormatter, title);
   };
   return (
     <>
@@ -156,13 +144,15 @@ tol data \
                     ? "Only 10,000 results can currently be downloaded as a spreadsheet."
                     : undefined
                 }
-                disabled={totalSize >= 10000 || clicked && percentageComplete!=100}
+                disabled={
+                  totalSize >= 10000 || (clicked && percentageComplete != 100)
+                }
               />
             </div>
             {clicked ? (
               <Progress.Line
                 percent={percentageComplete}
-                status={percentageComplete === 100 ? "success" : "active" }
+                status={percentageComplete === 100 ? "success" : "active"}
               />
             ) : (
               <></>

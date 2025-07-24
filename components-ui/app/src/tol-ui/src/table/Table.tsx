@@ -293,6 +293,7 @@ export function Table(props: Props) {
         requestedFields={fieldMeta.order.active}
         totalSize={totalSize}
         title={utilityBarConfig.title}
+        fieldMeta={fieldMeta}
       />
       <ColumnConfigDrawer
         {...props}
