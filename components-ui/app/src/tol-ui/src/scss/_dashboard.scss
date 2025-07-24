@@ -37,13 +37,11 @@
 
 .tol-board-bar {
   @extend .tol-widget;
-  margin: 6px 11px;
-  margin-bottom: 11px;
+  margin: 6px;
   border-radius: 0;
 
   .tol-inline-edit {
     color: var(--tol-primary);
-    width: 50%;
   }
 }
 
@@ -223,6 +221,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
 
   p {
     font-size: 14px;

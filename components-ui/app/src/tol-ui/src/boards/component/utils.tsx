@@ -4,13 +4,14 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+
 import {
   BOARDS,
   IComponent,
   IComponentData,
   IZone,
   TsDataSource,
-  Visualisation
+  Visualisation,
 } from "../..";
 
 
