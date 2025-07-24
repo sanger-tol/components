@@ -84,9 +84,9 @@ interface Props extends IRemoteTarget {
   groupBy?: boolean;
 }
 
-type TUpdatedProps = ICountProps & Props
 
-export function Table(props: TUpdatedProps) {
+
+export function Table(props: Props & ICountProps) {
   const { Column, HeaderCell, Cell } = RSTable;
   let {
     /* eslint-disable */

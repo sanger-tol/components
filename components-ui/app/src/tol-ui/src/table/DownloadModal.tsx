@@ -19,7 +19,7 @@ import {
   dataObjectToSpreadsheetData,
   IInlineEdit,
   ITableCount,
-  ICountProps
+  ICountProps,
 } from "..";
 import { Progress } from "rsuite";
 import { Dispatch, useState } from "react";
@@ -45,9 +45,7 @@ export interface IProgressThreshold {
   setPercentageComplete: Dispatch<React.SetStateAction<number>>;
 }
 
-type TUpdatedProps = ICountProps & Props
-
-export function DownloadModal(props: TUpdatedProps) {
+export function DownloadModal(props: Props & ICountProps) {
   const {
     size,
     open,
@@ -59,9 +57,9 @@ export function DownloadModal(props: TUpdatedProps) {
     totalSize,
     title,
     fieldMeta,
-count
+    count,
   } = props;
-  console.log()
+  console.log();
   const [clicked, isClicked] = useState<boolean>(false);
   const [total, setTotal] = useState<number>(0);
   const [current, setCurrent] = useState<number>(0);

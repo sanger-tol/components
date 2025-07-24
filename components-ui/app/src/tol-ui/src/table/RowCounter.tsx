@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect} from "react";
-import { API_METHODS, IRemoteTarget, ICountProps } from "..";
+import { API_METHODS, ICountProps, IRemoteTarget  } from "..";
 
 interface Props extends IRemoteTarget {
   totalSize: number;
@@ -13,11 +13,8 @@ interface Props extends IRemoteTarget {
   loading: boolean;
 }
 
-type TRowCounterProps = ICountProps & Props; 
-
-export function RowCounter(
-  { setCount, count, dataSource, objectType, totalSize, filter, loading }: RowCounterProps
-) {
+export function RowCounter(props:Props & ICountProps){
+  let { setCount, count, dataSource, objectType, totalSize, filter, loading }=props
 
   const fetchRowTotal = () => {
     dataSource
