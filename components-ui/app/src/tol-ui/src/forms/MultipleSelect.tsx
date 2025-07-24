@@ -8,18 +8,14 @@ import { Checkbox, CheckPicker as RSCheckPicker } from "rsuite";
 import {
   RSForm,
   isPropDefined,
+  IData
 } from "..";
 
 
-interface Data {
-  label: string;
-  value: string;
-}
-
-interface Props {
+export interface PMultipleSelect {
   sticky?: boolean;
   block?: boolean;
-  data: string[] | Data[];
+  data: string[] | IData[];
   value: string[];
   setValue: any;
   placeholder?: string;
@@ -46,7 +42,7 @@ interface Props {
   groupBy?: string;
 }
 
-export function MultipleSelect(props: Props) {
+export function MultipleSelect(props: PMultipleSelect) {
   const {
     sticky,
     data,

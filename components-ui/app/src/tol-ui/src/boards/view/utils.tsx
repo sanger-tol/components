@@ -110,7 +110,7 @@ export async function getZones(viewId: string, boardDataSource: TsDataSource) {
     .then(async (data: TDataObjectListOrNull) => {
       const allIds = await Promise.all(
         data?.map(async (zoneView: any) => {
-          const zone = await zoneView.relationships.zone;
+          const zone = await zoneView.fetchRelationships.zone;
           return zone.id;
         }) || []
       );
@@ -127,7 +127,7 @@ export async function getZones(viewId: string, boardDataSource: TsDataSource) {
 async function formatZoneOrders(data: TDataObjectListOrNull) {
   const formattedData = await Promise.all(
     data?.map(async (zone: any) => {
-      const zoneRelationships = await zone.relationships.zone;
+      const zoneRelationships = await zone.fetchRelationships.zone;
       return {
         zoneId: zoneRelationships.id,
         order: zone.order,

@@ -8,9 +8,9 @@ import {
   ACTIONS,
   API_METHODS,
   IDropdownButtonConfig,
+  PopUpMessage,
   TsDataSource,
 } from "../..";
-
 
 export function addRemoteActions(
   objectType: string,
@@ -22,7 +22,7 @@ export function addRemoteActions(
   setLoading: (loading: boolean) => void,
   idsWithReqNotMet: object,
   completeAction: (actionName: string, ids: string[]) => Promise<void>,
-  actions: (string | IDropdownButtonConfig)[] = [],
+  actions: (string | IDropdownButtonConfig)[] = []
 ) {
   const runAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
@@ -33,6 +33,7 @@ export function addRemoteActions(
       if (Object.keys(itemRequirements).length === 0) {
         await completeAction(actionName, ids);
       } else {
+        PopUpMessage({type: "warning", message: "Checking export items meet criteria..."});
         const allItemsMeetCriteria = await checkIdsMeetCriteria(
           ids,
           itemRequirements
@@ -40,10 +41,19 @@ export function addRemoteActions(
         if (!allItemsMeetCriteria) {
           setIdExportModalOpen(true);
         } else {
+          PopUpMessage({type: "success", message: "All items meet criteria. Exporting..."});
           await completeAction(actionName, ids);
         }
       }
+      PopUpMessage({
+        type: "success",
+        message: `Action "${actionName}" completed successfully.`,
+      });
     } catch (error) {
+      PopUpMessage({
+        type: "error",
+        message: `Error running action "${actionName}": ${error.message}`,
+      });
       console.error("Error running action", error);
     } finally {
       setLoading(false);
@@ -54,8 +64,7 @@ export function addRemoteActions(
     actionName: string
   ): Promise<object> => {
     try {
-      const res = await actionDataSource
-      .custom({
+      const res = await actionDataSource.custom({
         method: API_METHODS.GET,
         resource: ACTIONS.ACTION,
         params: {
@@ -67,7 +76,7 @@ export function addRemoteActions(
         },
       });
       const requirements =
-      // @ts-ignore
+        // @ts-ignore
         res.data.data[0]["attributes"]["params"]["requirements"] || {};
       return requirements;
     } catch (error) {
@@ -90,35 +99,34 @@ export function addRemoteActions(
         return true;
       }
 
-      for (const [field, conditionStr] of Object.entries(itemRequirements)) {
-        const condition = JSON.parse(
-          (conditionStr as string).replace(/'/g, '"')
-        );
+      const requests = Object.entries(itemRequirements).map(
+        async ([field, conditionStr]) => {
+          const filter = {
+            and_: {
+              id: { in_list: { value: ids } },
+              [field]: conditionStr, // e.g. "sts_species.id": { eq: { value: "some_value" } }
+            },
+          };
 
-        const filter = {
-          and_: {
-            id: { in_list: { value: ids } },
-            [field]: condition,
-          },
-        };
-
-        const res = await dataSource
-          .custom({
+          const res = await dataSource.custom({
             method: API_METHODS.GET,
             resource: objectType,
             params: { filter: filter },
           });
+          
+          // @ts-ignore
+          const data = res.data.data;
+          const failedIds = ids.filter(
+            (id) => !data.map((item: any) => item.id).includes(id)
+          );
 
-        //@ts-ignore
-        const data = res.data.data;
-        const failedIds = ids.filter(
-          (id) => !data.map((item: any) => item.id).includes(id)
-        );
-
-        if (failedIds.length > 0) {
-          failedRequirementsMap[field] = failedIds;
+          if (failedIds.length > 0) {
+            failedRequirementsMap[field] = failedIds;
+          }
         }
-      }
+      );
+
+      await Promise.all(requests);
 
       const allFailingIds = Array.from(
         new Set(Object.values(failedRequirementsMap).flat())

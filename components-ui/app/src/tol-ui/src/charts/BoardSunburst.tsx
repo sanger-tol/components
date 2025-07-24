@@ -16,6 +16,8 @@ import {
   SliceByDrawer,
   IButton,
   updateConfigAndUpsert,
+  PRIVILEGE,
+  useBoardPrivilege
 } from "..";
 
 
@@ -32,6 +34,7 @@ export function BoardSunburst(props: Props) {
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
+  const { privilege } = useBoardPrivilege()
 
   const onModalSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });
@@ -51,7 +54,15 @@ export function BoardSunburst(props: Props) {
           pie
           message={
             <>
-              Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
+              {privilege === PRIVILEGE.BOARD.EDITABLE ? (
+                <>
+                  Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
+                </>
+              ) : (
+                <>
+                  No attributes selected.
+                </>
+              )}
             </>
           }
         />
@@ -67,6 +78,7 @@ export function BoardSunburst(props: Props) {
     onClick: () => setOpenConfig(true),
     icon: "sliders",
     className: "count-filter-button",
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
   }
 
   const filtersButton: IButton = {
@@ -76,6 +88,7 @@ export function BoardSunburst(props: Props) {
     onClick: () => setOpenFilters(true),
     icon: "filter",
     className: "count-filter-button",
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
   }
 
   return (
@@ -104,7 +117,7 @@ export function BoardSunburst(props: Props) {
         utilityBarConfig={{
           title: {
             text: props.title,
-            editable: true,
+            editable: privilege === PRIVILEGE.BOARD.EDITABLE,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);
             }

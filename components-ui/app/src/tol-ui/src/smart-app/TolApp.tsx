@@ -9,7 +9,7 @@ SPDX-License-Identifier: MIT
 // not containing detail and element props
 // @ts-nocheck
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -39,7 +39,10 @@ import {
   TsDataSource,
   API_METHODS,
   BOARDS_API_PREFIX,
-  ValidationResultsViewer
+  ValidationResultsViewer,
+  getUserPrivilege,
+  PrivilegeContext,
+  BoardPrivilegeContextProvider
 } from "..";
 
 
@@ -58,6 +61,7 @@ interface Props {
   register?: boolean;
   customCallbackUrl?: string;
 }
+
 
 export function TolApp(props: Props) {
   const { customCallbackUrl } = props;
@@ -129,10 +133,12 @@ export function TolApp(props: Props) {
               </Route>
               <Route path="/board/:boardId">
                 {boards && loggedIn ? (
-                  <Board
-                    dataSource={boards.dataSource}
-                    boardDataSource={boards.boardDataSource}
-                  />
+                  <BoardPrivilegeContextProvider>
+                    <Board
+                      dataSource={boards.dataSource}
+                      boardDataSource={boards.boardDataSource}
+                    />
+                  </BoardPrivilegeContextProvider>
                 ) : (
                   <Redirect to="/" />
                 )}

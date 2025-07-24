@@ -389,7 +389,7 @@ export function RemoteTable(props: Props) {
         noPagination={noPagination}
         noSorting={noSorting}
         noConfigModal={noConfigModal}
-        noDownload={noDownload}
+        noDownload={(noDownload || error !== "")}
         rowSelection={rowSelection}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}

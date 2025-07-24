@@ -92,11 +92,14 @@ export interface ICustom {
   options?: any;
 }
 
-interface IDataObject {
+export interface IDataObject {
   objectType: string;
   id: string;
   [attribute: string]: any;
-  relationships: {
+  relationships?: {
+    [key: string]: IDataObject;
+  };
+  fetchRelationships?: {
     [key: string]: Promise<IDataObject>;
   };
 }

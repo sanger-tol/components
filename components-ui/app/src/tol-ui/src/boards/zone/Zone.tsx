@@ -22,6 +22,8 @@ import {
   addComponents,
   InfoTooltip,
   normaliseCaps,
+  useBoardPrivilege,
+  PRIVILEGE
 } from "../..";
 
 
@@ -57,6 +59,7 @@ export function Zone(props: PZone) {
     filter: filter,
     components: [],
   });
+  const { privilege } = useBoardPrivilege();
 
   useEffect(() => {
     getComponents(id, boardDataSource).then((components) => {
@@ -98,6 +101,7 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "Add Component",
     testid: "add-component-button",
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
   const editButton: IButton = {
@@ -111,6 +115,7 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "Edit Widgets",
     testid: "drag-components-button",
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
   const deleteButton: IButton = {
@@ -121,7 +126,8 @@ export function Zone(props: PZone) {
     type: "error",
     icon: "trash",
     position: "right",
-    tooltip: "Delete Zone"
+    tooltip: "Delete Zone",
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
   const upButton: IButton = {
@@ -132,7 +138,8 @@ export function Zone(props: PZone) {
     type: "primary",
     icon: "arrow-up",
     position: "right",
-    tooltip: "Move Zone Up"
+    tooltip: "Move Zone Up",
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
   const downButton: IButton = {
@@ -143,7 +150,8 @@ export function Zone(props: PZone) {
     type: "primary",
     icon: "arrow-down",
     position: "right",
-    tooltip: "Move Zone Down"
+    tooltip: "Move Zone Down",
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
   const saveButton: IButton = {
@@ -156,7 +164,8 @@ export function Zone(props: PZone) {
     icon: "floppy-disk",
     position: "right",
     tooltip: "Save Layout",
-    testid: "save-layout-button"
+    testid: "save-layout-button",
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
   const filtersButton: IButton = {
@@ -165,7 +174,8 @@ export function Zone(props: PZone) {
     type: "primary",
     icon: "filter",
     position: "right",
-    tooltip: "Add filters to the Zone"
+    tooltip: "Add filters to the Zone",
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
   const showEditButtons: IButton = {
@@ -177,14 +187,15 @@ export function Zone(props: PZone) {
     icon: editBtnsVisible ? "check" : "pen-to-square",
     position: "right",
     tooltip: editBtnsVisible ? "Save Changes" : "Edit Zone",
-    testid: "edit-zone-button"
+    testid: "edit-zone-button",
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
   const Tooltip = (
     <InfoTooltip
       contents={
-      <>{normaliseCaps(objectType)} Zone</>
-    }
+        <>{normaliseCaps(objectType)} Zone</>
+      }
     />
   )
 
@@ -194,7 +205,7 @@ export function Zone(props: PZone) {
         id="zone-utility-bar"
         title={{
           text: title,
-          editable: true,
+          editable: privilege === PRIVILEGE.BOARD.EDITABLE,
           onSave: (value: string) => {
             if (value !== title) {
               saveTitle(value, id, BOARDS.ZONE, boardDataSource);
@@ -239,19 +250,9 @@ export function Zone(props: PZone) {
         />
       ) : (
         <div className="tol-zone-empty">
-          {editBtnsVisible ? (
-            <p>
-              Click the
-              <FontAwesomeIcon
-                icon={faPlus}
-                size="lg"
-                style={{ padding: "0 8" }}
-              />
-              to add a new Component to the Zone.
-            </p>
-          ) : (
-            <div>
-              <p style={{ marginBottom: "0" }}>
+          {privilege === PRIVILEGE.BOARD.EDITABLE ? (
+            <>
+              <p>
                 Click the
                 <FontAwesomeIcon
                   icon={faPlus}
@@ -260,16 +261,20 @@ export function Zone(props: PZone) {
                 />
                 to add a new Component to the Zone.
               </p>
-              <p>
-                Click the
-                <FontAwesomeIcon
-                  icon={faPenToSquare}
-                  size="lg"
-                  style={{ padding: "0 8" }}
-                />
-                to edit the Zone.
-              </p>
-            </div>
+              {!editBtnsVisible && (
+                <p>
+                  Click the
+                  <FontAwesomeIcon
+                    icon={faPenToSquare}
+                    size="lg"
+                    style={{ padding: "0 8" }}
+                  />
+                  to edit the Zone.
+                </p>
+              )}
+            </>
+          ) : (
+            <p>No components found</p>
           )}
         </div>
       )}

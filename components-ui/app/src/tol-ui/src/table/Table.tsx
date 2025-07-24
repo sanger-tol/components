@@ -31,12 +31,14 @@ import {
   IButton,
   IDropdownButtons,
   IRemoteTarget,
+  useBoardPrivilege,
+  PRIVILEGE
 } from "..";
 
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
-interface Props extends IRemoteTarget{
+interface Props extends IRemoteTarget {
   id: string;
   data: any;
   fieldMeta: FieldMeta;
@@ -153,6 +155,8 @@ export function Table(props: Props) {
   let indeterminate = false;
   const noFieldsSelected = fieldMeta.order.active.length === 0;
 
+  const { privilege } = useBoardPrivilege()
+
   if (selectedRows.length === data.length || bulkSelect) {
     checked = true;
   } else if (selectedRows.length === 0) {
@@ -225,7 +229,11 @@ export function Table(props: Props) {
     visible: false
   }
 
-  const filterButton: IButton = !noFilter ? {
+  const filterButton: IButton = (
+    !noFilter &&
+    fieldMeta.order.active.length !== 0 &&
+    privilege === PRIVILEGE.BOARD.EDITABLE || privilege === undefined
+  ) ? {
     visible: true,
     position: "right",
     type: "primary",
@@ -326,20 +334,20 @@ export function Table(props: Props) {
         title={utilityBarConfig.title}
         elements={(!noPagination && fieldMeta.order.active.length > 0) ? [
           <span className="tol-page-size">
-            {!smallBreakpoint && 
+            {(!smallBreakpoint && privilege === PRIVILEGE.BOARD.EDITABLE) &&
               <SelectPicker
-              value={pageSize}
-              onChange={setPageSize}
-              size="sm"
-              cleanable={false}
-              searchable={false}
-              data={[
-                { label: "25", value: 25 },
-                { label: "50", value: 50 },
-                { label: "100", value: 100 },
-                { label: "250", value: 250 },
-              ]}
-            />
+                value={pageSize}
+                onChange={setPageSize}
+                size="sm"
+                cleanable={false}
+                searchable={false}
+                data={[
+                  { label: "25", value: 25 },
+                  { label: "50", value: 50 },
+                  { label: "100", value: 100 },
+                  { label: "250", value: 250 },
+                ]}
+              />
             }
           </span>,
           <Pagination
@@ -364,145 +372,154 @@ export function Table(props: Props) {
         buttons={[
           configButton,
           filterButton,
-          downloadButton,
           ...(utilityBarConfig.buttons || []),
           actionDropdown,
+          downloadButton,
         ]}
       />
-      {contents ? contents : 
+      {contents ? contents :
         <>
-        {(noFieldsSelected) ? (
-          <Placeholder
-            message={
-              <>
-                Please add a field to get started. Click
-                <FontAwesomeIcon
-                  icon={faSliders}
-                  size="lg"
-                  style={{ padding: "0 10" }}
-                />
-                to configure.
-              </>
-            }
-            height={height}
-          />
-        ) : (
-          <>
-          <div className="tol-table-row-counter">
-            {rowCounter ? rowCounter : totalSize}
-          </div>
-          <div className="tol-table-inner">
-            <RSTable
-              bordered
-              data={data}
-              headerHeight={!noFilter && filterVisibility ? 85 : 42}
-              loading={loading}
-              sortColumn={sortColumn}
-              sortType={sortType}
-              onSortColumn={handleSortColumn!}
-              rowClassName={(rowData: any) => {
-                if (rowData) {
-                  if (bulkSelect) {
-                    return "tol-selected-row disabled";
-                  } else if (selectedRows.some((item) => item === rowData.id)) {
-                    return "tol-selected-row";
-                  }
-                }
-                return "";
-              }}
-              fillHeight
-              wordWrap
-              renderLoading={() => (
-                <Placeholder loader height={height} opacity={0.8} squareCorners />
-              )}
-            >
-              {rowSelection && (
-                <Column key="rowSelection" width={60}>
-                  <HeaderCell>
-                    <Checkbox
-                      className="tol-row-selection"
-                      checked={checked}
-                      indeterminate={indeterminate}
-                      disabled={bulkSelect || data.length === 0}
-                      onChange={handleCheckAll}
-                      style={data.length === 0 ? { display: "none" } : {}}
-                    />
-                  </HeaderCell>
-                  <Cell dataKey="id">
-                    {(rowData: { id: any }) => {
-                      return (
+          {(noFieldsSelected) ? (
+            <Placeholder
+              message={
+                <>
+                  {/* Assume that when privilege is undefined, the table is not in a board */}
+                  {privilege === PRIVILEGE.BOARD.EDITABLE || !privilege ? (
+                    <>
+                      No fields selected. Please click
+                      <FontAwesomeIcon
+                        icon={faSliders}
+                        size="lg"
+                        style={{ padding: "0 10" }}
+                      />
+                      to configure.
+                    </>
+                  ) : (
+                    <>
+                      No fields available.
+                    </>
+                  )}
+                </>
+              }
+              height={height}
+            />
+          ) : (
+            <>
+              <div className="tol-table-row-counter">
+                {rowCounter ? rowCounter : totalSize}
+              </div>
+              <div className="tol-table-inner">
+                <RSTable
+                  bordered
+                  data={data}
+                  headerHeight={!noFilter && filterVisibility ? 85 : 42}
+                  loading={loading}
+                  sortColumn={sortColumn}
+                  sortType={sortType}
+                  onSortColumn={handleSortColumn!}
+                  rowClassName={(rowData: any) => {
+                    if (rowData) {
+                      if (bulkSelect) {
+                        return "tol-selected-row disabled";
+                      } else if (selectedRows.some((item) => item === rowData.id)) {
+                        return "tol-selected-row";
+                      }
+                    }
+                    return "";
+                  }}
+                  fillHeight
+                  wordWrap
+                  renderLoading={() => (
+                    <Placeholder loader height={height} opacity={0.8} squareCorners />
+                  )}
+                >
+                  {rowSelection && (
+                    <Column key="rowSelection" width={60}>
+                      <HeaderCell>
                         <Checkbox
                           className="tol-row-selection"
-                          value={rowData.id}
-                          checked={
-                            bulkSelect ||
-                            selectedRows.some((item) => item === rowData.id)
-                          }
-                          disabled={bulkSelect}
-                          onChange={handleCheck}
+                          checked={checked}
+                          indeterminate={indeterminate}
+                          disabled={bulkSelect || data.length === 0}
+                          onChange={handleCheckAll}
+                          style={data.length === 0 ? { display: "none" } : {}}
                         />
-                      );
-                    }}
-                  </Cell>
-                </Column>
-              )}
-              {fieldMeta!.order.active.map((key: string) => {
-                const field = fieldMeta.data[key];
-                const sortable = noSorting ? false : field.sort;
-                const filterable = noFilter ? false : field.filter;
-  
-                return (
-                  <Column
-                    key={key}
-                    width={field.width}
-                    sortable={sortable}
-                    fixed={field.fixed}
-                  >
-                    <HeaderCell>
-                      {(field.description || field.source) && (
-                        <div className="tol-header-info">
-                          <EntityMetaToolTip
-                            objectType={objectType}
-                            dataSource={dataSource}
-                            field={key}
-                          />
-                        </div>
-                      )}
-                      <p className="tol-header-text">
-                        {field.source && (
-                          <span
-                            className="inline-source"
-                            style={{
-                              backgroundColor: getSourceColour(field.source),
-                            }}
-                          />
-                        )}
-                        {field.rename}
-                      </p>
-                      {filterable && (
-                        <span
-                          className={
-                            filterVisibility ? "tol-filter" : "tol-filter-hide"
-                          }
-                        >
-                          <Filter
-                            {...props}
-                            attribute={key}
-                            rename={field.rename!}
-                            type={field.filter as IFilterInputType}
-                            componentId={id}
-                          />
-                        </span>
-                      )}
-                    </HeaderCell>
-                    <Cell dataKey={key} />
-                  </Column>
-                );
-              })}
-            </RSTable>
-          </div>
-          </>
-        )}
+                      </HeaderCell>
+                      <Cell dataKey="id">
+                        {(rowData: { id: any }) => {
+                          return (
+                            <Checkbox
+                              className="tol-row-selection"
+                              value={rowData.id}
+                              checked={
+                                bulkSelect ||
+                                selectedRows.some((item) => item === rowData.id)
+                              }
+                              disabled={bulkSelect}
+                              onChange={handleCheck}
+                            />
+                          );
+                        }}
+                      </Cell>
+                    </Column>
+                  )}
+                  {fieldMeta!.order.active.map((key: string) => {
+                    const field = fieldMeta.data[key];
+                    const sortable = noSorting ? false : field.sort;
+                    const filterable = noFilter ? false : field.filter;
+
+                    return (
+                      <Column
+                        key={key}
+                        width={field.width}
+                        sortable={sortable}
+                        fixed={field.fixed}
+                      >
+                        <HeaderCell>
+                          {(field.description || field.source) && (
+                            <div className="tol-header-info">
+                              <EntityMetaToolTip
+                                objectType={objectType}
+                                dataSource={dataSource}
+                                field={key}
+                              />
+                            </div>
+                          )}
+                          <p className="tol-header-text">
+                            {field.source && (
+                              <span
+                                className="inline-source"
+                                style={{
+                                  backgroundColor: getSourceColour(field.source),
+                                }}
+                              />
+                            )}
+                            {field.rename}
+                          </p>
+                          {filterable && (
+                            <span
+                              className={
+                                filterVisibility ? "tol-filter" : "tol-filter-hide"
+                              }
+                            >
+                              <Filter
+                                {...props}
+                                attribute={key}
+                                rename={field.rename!}
+                                type={field.filter as IFilterInputType}
+                                componentId={id}
+                              />
+                            </span>
+                          )}
+                        </HeaderCell>
+                        <Cell dataKey={key} />
+                      </Column>
+                    );
+                  })}
+                </RSTable>
+              </div>
+            </>
+          )}
         </>
       }
     </div>

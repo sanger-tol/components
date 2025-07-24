@@ -4,24 +4,15 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useState } from "react";
-import { Checkbox, CheckboxGroup } from "rsuite"; // @ts-ignore
-import { RSForm } from "..";
+import { useState } from "react";
+import { Checkbox, CheckboxGroup } from "rsuite";
+import { RSForm, ICheckboxConfig } from "..";
 
 
-interface Props {
+export interface PFormCheckboxes {
   id: string;
   label?: string;
-  checkboxConfig: {
-    fields: Array<{
-      disabled?: boolean;
-      defaultChecked?: boolean;
-      value: string;
-      children: React.ReactNode;
-      style?: React.CSSProperties;
-      subtext?: string;
-    }>;
-  };
+  checkboxConfig: ICheckboxConfig;
   checkedItems: string[];
   setCheckedItems: Function;
   inline?: boolean;
@@ -30,7 +21,7 @@ interface Props {
   defaultChecked?: string[];
 }
 
-export function FormCheckboxes(props: Props) {
+export function FormCheckboxes(props: PFormCheckboxes) {
   const {
     id,
     label,
@@ -72,7 +63,7 @@ export function FormCheckboxes(props: Props) {
                 disabled={field.disabled}
                 onChange={() => handleCheckboxChange(field.value)}
               >
-                <div style={{ display: "flex", flexDirection: "column" }}>
+                <div className="tol-form-checkboxes-text">
                   {field.children}
                   {field.subtext && (
                     <span className="rs-form-help-text">

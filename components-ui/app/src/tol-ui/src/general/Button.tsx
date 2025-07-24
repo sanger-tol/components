@@ -14,7 +14,7 @@ import {
 
 export interface IButton {
   icon?: string;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>, ...args: any[]) => void;
   className?: string;
   text?: string;
   disabled?: boolean;
@@ -58,9 +58,9 @@ export function Button(props: IButton) {
   const [buttonClicked, setButtonClicked] = useState<number>(0);
   const [timeoutDisabled, setTimeoutDisabled] = useState<boolean>(false);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>, ...args: any[]) => {
     if (onClick) {
-      onClick(event);
+      onClick(event, ...args);
     }
 
     if (limit > 0) {

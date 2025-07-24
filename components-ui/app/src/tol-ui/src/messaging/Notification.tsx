@@ -6,41 +6,33 @@ SPDX-License-Identifier: MIT
 
 import React from "react";
 import { Notification as RSNotification } from "rsuite";
-import { MessageType } from "./Message";
+import { TMessageType, TPlacement } from "..";
 
-type placement =
-  | "topCenter"
-  | "topStart"
-  | "topEnd"
-  | "bottomCenter"
-  | "bottomStart"
-  | "bottomEnd";
-
-interface Props {
+export interface PNotification {
   children: React.ReactNode;
   closable?: boolean;
   header?: string;
   onClose?: () => void;
-  placement?: placement;
-  type: MessageType;
+  placement?: TPlacement;
+  type: TMessageType;
 }
 
-export const Notification = React.forwardRef<HTMLDivElement, Props>(
-  (props: Props, ref: React.Ref<HTMLDivElement>) => {
-    const { children, closable, type, header, onClose, ...rest } = props;
+function InternalNotification(props: PNotification, ref: React.Ref<HTMLDivElement>) {
+  const { children, closable, type, header, onClose, ...rest } = props;
 
-    return (
-      <div ref={ref} style={{ marginBottom: "4px" }}>
-        <RSNotification
-          closable={closable}
-          type={type}
-          header={header}
-          onClose={onClose}
-          {...rest}
-        >
-          {children}
-        </RSNotification>
-      </div>
-    );
-  },
-);
+  return (
+    <div ref={ref} style={{ marginBottom: "4px" }}>
+      <RSNotification
+        closable={closable}
+        type={type}
+        header={header}
+        onClose={onClose}
+        {...rest}
+      >
+        {children}
+      </RSNotification>
+    </div>
+  );
+}
+
+export const Notification = React.forwardRef<HTMLDivElement, PNotification>(InternalNotification);
