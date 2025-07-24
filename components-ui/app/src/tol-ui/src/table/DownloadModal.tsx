@@ -40,7 +40,6 @@ interface Props {
 }
 
 export interface IProgressThreshold {
-  setTotal: Dispatch<React.SetStateAction<number>>;
   setCurrent: Dispatch<React.SetStateAction<number>>;
   setPercentageComplete: Dispatch<React.SetStateAction<number>>;
 }
@@ -61,7 +60,6 @@ export function DownloadModal(props: Props & ICountProps) {
   } = props;
   console.log();
   const [clicked, isClicked] = useState<boolean>(false);
-  const [total, setTotal] = useState<number>(0);
   const [current, setCurrent] = useState<number>(0);
   const [percentageComplete, setPercentageComplete] = useState<number>(0);
   const requestedFields = Array.isArray(props.requestedFields)
@@ -119,7 +117,7 @@ tol data \
         filter,
         requestedFields: requestedFields,
       },
-      { setTotal, setCurrent, setPercentageComplete },
+      {setCurrent, setPercentageComplete },
       dataSource,
       count
     ).then((response) => {
@@ -153,7 +151,7 @@ tol data \
                 disabled={
                   totalSize >= 100000 || (clicked && percentageComplete != 100)
                 }
-              />
+              />{current}/{count}
             </div>
             {clicked ? (
               <Progress.Line

@@ -654,15 +654,13 @@ export async function getActions(
 
 export async function progressBar(
   { objectType, filter, requestedFields }: IGetList,
-  { setTotal, setCurrent, setPercentageComplete }: IProgressThreshold,
+  { setCurrent, setPercentageComplete }: IProgressThreshold,
   datasource: TsDataSource,
   count
 ) {
   const results: any[] = [];
-  setTotal(0);
   setCurrent(0);
   setPercentageComplete(0);
-  setTotal(count);
   const ds = datasource.getListByCursor({
     objectType: objectType,
     filter: filter,
