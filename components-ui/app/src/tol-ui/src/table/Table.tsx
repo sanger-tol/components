@@ -230,7 +230,7 @@ export function Table(props: Props) {
   }
 
   const filterButton: IButton = (
-    !noFilter && fieldMeta.order.active.length !== 0
+    !noFilter && fieldMeta.order.active.length !== 0 && privilege === PRIVILEGE.BOARD.EDITABLE
   ) ? {
     visible: true,
     position: "right",
@@ -332,7 +332,7 @@ export function Table(props: Props) {
         title={utilityBarConfig.title}
         elements={(!noPagination && fieldMeta.order.active.length > 0) ? [
           <span className="tol-page-size">
-            {!smallBreakpoint &&
+            {(!smallBreakpoint && privilege === PRIVILEGE.BOARD.EDITABLE) &&
               <SelectPicker
                 value={pageSize}
                 onChange={setPageSize}

@@ -65,18 +65,6 @@ export function MyBoardsHeader(props: IMyBoardsHeader) {
     />
   );
 
-  const WarningMessage = (
-    <div style={{ marginTop: 12 }}>
-      <StaticMessage
-        message={
-          `WARNING: Dashboards are still in development,
-          so existing boards or views may be removed at any point`
-        }
-        type={"warning"}
-      />
-    </div>
-  );
-
   return (
       <div className="my-boards-header">
         <>
@@ -93,7 +81,6 @@ export function MyBoardsHeader(props: IMyBoardsHeader) {
           <p>{SUB_TITLE}</p>
         </>
         {newBoardModalOpen && NewBoardModalContent()}
-        {WarningMessage}
       </div>
   );
 }
