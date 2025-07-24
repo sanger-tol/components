@@ -62,7 +62,7 @@ export function RemoteSunburst(props: Props) {
   const wrapperId = "tol-sunburst-wrapper-" + id;
   const [datasets, setDatasets] = useState({});
   const [subDatasets, setSubDatasets] = useState({});
-  const [zone, setZone] = useZoneStateFallback({...props});
+  const [zone, setZone] = useZoneStateFallback({ ...props });
   const [resetChart, setResetChart] = useState(false);
   const [loading, setLoading] = useState(true);
   const [subLoading, setSubLoading] = useState(true);
@@ -172,7 +172,8 @@ export function RemoteSunburst(props: Props) {
     }
   }
 
-  const resetButton: IButton = {
+
+  const resetButton: IButton = (!isEmptyObject(datasets) ? {
     outline: true,
     position: "right",
     type: "primary",
@@ -181,7 +182,9 @@ export function RemoteSunburst(props: Props) {
       setResetChart(!resetChart);
     },
     icon: "undo",
-  }
+  } : {
+    visible: false,
+  })
 
   const downloadButton: IButton = !noDownload ? {
     outline: true,
@@ -191,7 +194,8 @@ export function RemoteSunburst(props: Props) {
       downloadItem(props.id, normaliseCaps(objectType));
     },
     icon: "download",
-  } : {};
+    disabled: isEmptyObject(datasets),
+  } : {}
 
   const miniActive = noMini === true ? false : !isEmptyObject(subDatasets);
   const setter = setZone === undefined ? undefined : setSliceData;
@@ -208,52 +212,52 @@ export function RemoteSunburst(props: Props) {
         buttons={[
           ...(utilityBarConfig?.buttons || []),
           resetButton,
-          downloadButton
+          downloadButton,
         ]}
       />
       <div className="tol-component-contents-with-offset">
-        {contents ? contents : 
+        {contents ? contents :
           <>
             {miniActive ? (
-                <div className="sunburst-sub" style={mainPlacement}>
-                  {subLoading ? (
-                    <Placeholder clear loader />
-                  ) : (
-                    <Sunburst
-                      {...props}
-                      id={id}
-                      noRefresh
-                      noDownload
-                      datasets={subDatasets}
-                      setSliceData={setter}
-                      noLegend={noLegend}
-                      utilityBarConfig={null}
-                      height={"100%"}
-                    />
-                  )}
-                </div>
-              ) : null}
-              <div
-                className={miniActive ? "sunburst-mini" : "tol-component-contents"}
-              >
-                {warningMessage !== "" ?
-                  <Placeholder warningMessage={warningMessage} />
-                  :
+              <div className="sunburst-sub" style={mainPlacement}>
+                {subLoading ? (
+                  <Placeholder clear loader />
+                ) : (
                   <Sunburst
                     {...props}
+                    id={id}
                     noRefresh
                     noDownload
-                    contents={contents ? contents : Contents()}
-                    datasets={datasets}
-                    downloadName={normaliseCaps(objectType)}
-                    setSliceData={miniActive ? undefined : setter}
-                    noLegend={miniActive ? true : noLegend}
-                    noLabel={miniActive ? true : noLabel}
-                    resetChart={resetChart}
+                    datasets={subDatasets}
+                    setSliceData={setter}
+                    noLegend={noLegend}
                     utilityBarConfig={null}
                     height={"100%"}
                   />
-                }
+                )}
+              </div>
+            ) : null}
+            <div
+              className={miniActive ? "sunburst-mini" : "tol-component-contents"}
+            >
+              {warningMessage !== "" ?
+                <Placeholder warningMessage={warningMessage} />
+                :
+                <Sunburst
+                  {...props}
+                  noRefresh
+                  noDownload
+                  contents={contents ? contents : Contents()}
+                  datasets={datasets}
+                  downloadName={normaliseCaps(objectType)}
+                  setSliceData={miniActive ? undefined : setter}
+                  noLegend={miniActive ? true : noLegend}
+                  noLabel={miniActive ? true : noLabel}
+                  resetChart={resetChart}
+                  utilityBarConfig={null}
+                  height={"100%"}
+                />
+              }
             </div>
           </>
         }

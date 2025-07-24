@@ -28,8 +28,12 @@ import {
   IButton,
   IDropdownButtons,
   IRemoteTargetAndZone,
+  useBoardPrivilege,
+  PRIVILEGE
 } from "..";
 
+
+export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
 interface Props extends IRemoteTargetAndZone {
   id: string;
@@ -146,6 +150,8 @@ export function Table(props: Props) {
   let indeterminate = false;
   const noFieldsSelected = fields?.order?.active?.length === 0;
 
+  const { privilege } = useBoardPrivilege()
+
   if (selectedRows.length === data.length || bulkSelect) {
     checked = true;
   } else if (selectedRows.length === 0) {
@@ -218,7 +224,9 @@ export function Table(props: Props) {
     visible: false
   }
 
-  const filterButton: IButton = !noFilter ? {
+  const filterButton: IButton = (
+    !noFilter && fieldMeta.order.active.length !== 0
+  ) ? {
     visible: true,
     position: "right",
     type: "primary",
@@ -345,9 +353,9 @@ export function Table(props: Props) {
         buttons={[
           configButton,
           filterButton,
-          downloadButton,
           ...(utilityBarConfig.buttons || []),
           actionDropdown,
+          downloadButton,
         ]}
       />
       {contents ? contents :
@@ -356,13 +364,22 @@ export function Table(props: Props) {
             <Placeholder
               message={
                 <>
-                  Please add a field to get started. Click
-                  <FontAwesomeIcon
-                    icon={faSliders}
-                    size="lg"
-                    style={{ padding: "0 10" }}
-                  />
-                  to configure.
+                  {/* Assume that when privilege is undefined, the table is not in a board */}
+                  {privilege === PRIVILEGE.BOARD.EDITABLE || !privilege ? (
+                    <>
+                      No fields selected. Please click
+                      <FontAwesomeIcon
+                        icon={faSliders}
+                        size="lg"
+                        style={{ padding: "0 10" }}
+                      />
+                      to configure.
+                    </>
+                  ) : (
+                    <>
+                      No fields available.
+                    </>
+                  )}
                 </>
               }
               height={height}

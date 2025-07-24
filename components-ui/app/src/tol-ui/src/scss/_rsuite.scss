@@ -252,6 +252,30 @@
   padding-left: 60px;
 }
 
+.rs-picker-select-menu-item-active {
+  background-color: var(--tol-grey-translucent) !important;
+  color: var(--tol-primary) !important;
+  font-weight: normal;
+}
+
+.rs-picker-has-value .rs-btn .rs-picker-toggle-value,
+.rs-picker-has-value .rs-picker-toggle .rs-picker-toggle-value {
+  color: var(--rs-text-primary) !important;
+}
+
+.rs-form-control > .rs-input.rs-input:-webkit-autofill,
+.rs-input.rs-input:-webkit-autofill:hover,
+.rs-input.rs-input:-webkit-autofill:focus,
+.rs-input.rs-input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px var(--rs-input-bg) inset;
+  -webkit-text-fill-color: var(--rs-text-primary);
+  box-shadow: 0 0 0px 1000px var(--rs-input-bg) inset;
+}
+
+.rs-form-help-text {
+  color: var(--tol-grey-light);
+}
+
 .rs-timeline-item-custom-dot .svg-inline--fa {
   height: 20px;
   width: 20px;

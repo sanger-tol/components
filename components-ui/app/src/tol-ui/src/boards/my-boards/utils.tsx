@@ -162,7 +162,7 @@ export async function fetchSubItemId(
     }).then(async (data: TDataObjectListOrNull) => {
       return await Promise.all(
         data?.map(async (item: TDataObjectOrNull) => {
-          const relationshipData = await item?.relationships?.[itemType];
+          const relationshipData = await item?.fetchRelationships?.[itemType];
           return {
             id: relationshipData?.id,
             order: item?.order,

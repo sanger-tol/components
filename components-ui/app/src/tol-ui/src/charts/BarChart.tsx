@@ -76,7 +76,7 @@ export function BarChart(props: Props) {
     cumulative,
     utilityBarConfig = {},
     contents,
-    chartType='bar',
+    chartType = 'bar',
     downloadName = 'barchart'
   } = props;
   const originDatasets = initialiseDatasets(props.datasets);
@@ -313,8 +313,9 @@ export function BarChart(props: Props) {
               setDatasets(originDatasets);
             },
             icon: "undo",
-            visible: isPropDefined(setBarData),
+            visible: isPropDefined(setBarData) && datasets.length > 0,
           },
+          ...(utilityBarConfig.buttons || []),
           {
             outline: true,
             position: "right",
@@ -324,8 +325,8 @@ export function BarChart(props: Props) {
             },
             icon: "download",
             disabled: datasets.length === 0,
+            disabledTooltip: "No data to download",
           },
-          ...(utilityBarConfig.buttons || []),
         ]}
       />
       <div className="tol-component-contents-with-offset">
@@ -343,7 +344,7 @@ export function BarChart(props: Props) {
               datasets: datasets,
             }}
           />
-      }
+        }
       </div>
     </div>
   );

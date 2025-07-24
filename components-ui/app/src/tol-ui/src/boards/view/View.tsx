@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
-  Button,
   ZoneModal,
   IFilter,
   getZones,
@@ -17,20 +16,28 @@ import {
   PBoard,
   reorderZoneAndUpsert,
   getSortedZones,
+  IUtilityBar,
+  UtilityBar,
+  IButton,
+  PRIVILEGE,
+  useBoardPrivilege
 } from "../..";
 
 
 export interface PView extends PBoard {
+  // extends but excludes setPrivilege
   id: string;
   defaultFilter?: IFilter;
+  utilityBarConfig?: IUtilityBar
   // title: string;
 }
 
 export function View(props: PView) {
-  const { id, dataSource, boardDataSource } = props;
+  const { id, dataSource, boardDataSource, utilityBarConfig } = props;
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
+  const { privilege } = useBoardPrivilege();
 
   useEffect(() => {
     getZones(id, boardDataSource).then((res: any) => {
@@ -73,20 +80,26 @@ export function View(props: PView) {
     });
   };
 
+  const addZoneButton: IButton = {
+    type: "success",
+    className: "add-zone-button", // temp placement
+    testid: "add-zone-button",
+    icon: "plus",
+    position: "right",
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
+    onClick: () => {
+      setOpen(true);
+    },
+  }
+
   return (
     <div className="tol-view">
-      <div className="tol-view-bar">
-        <div style={open ? { display: "none" } : {}}>
-          <Button
-            onClick={() => {
-              setOpen(true);
-            }}
-            type="success"
-            className="add-zone-button" // temp placement
-            icon="plus"
-            position="right"
-          />
-        </div>
+      <div className="tol-zone-bar">
+        <UtilityBar
+          id={utilityBarConfig?.id}
+          buttons={[addZoneButton, ...(utilityBarConfig?.buttons || [])]}
+          title={utilityBarConfig?.title}
+        />
       </div>
       <ZoneModal
         open={open}
@@ -119,7 +132,11 @@ export function View(props: PView) {
         </>
       ) : (
         <div className="tol-zone-empty">
-          <p>Click the + button to add a Zone</p>
+          {privilege === PRIVILEGE.BOARD.EDITABLE ? (
+            <p>Click the + button to add a Zone</p>
+          ) : (
+            <p>No zones found</p>
+          )}
         </div>
       )}
     </div>

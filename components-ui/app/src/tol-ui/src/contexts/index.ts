@@ -5,3 +5,4 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./auth.context";
+export * from "./privilege.context";

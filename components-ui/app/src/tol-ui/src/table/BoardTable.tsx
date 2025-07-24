@@ -12,7 +12,9 @@ import {
   RemoteTable,
   saveTitle,
   IBoardTargetAndZone,
-  updateConfigAndUpsert
+  updateConfigAndUpsert,
+  useBoardPrivilege,
+  PRIVILEGE
 } from "..";
 
 
@@ -27,6 +29,8 @@ export function BoardTable(props: Props) {
   const [config, setConfig] = useState<any>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
+  const { privilege } = useBoardPrivilege()
+
 
   const onModalSave = (fm: FieldMeta, actions: string[], sortByAtt: string) => {
     config["fieldMeta"] = fm;
@@ -77,6 +81,7 @@ export function BoardTable(props: Props) {
   return (
     <RemoteTable
       {...props}
+      noConfigModal={privilege !== PRIVILEGE.BOARD.EDITABLE}
       displaySource
       fields={config.fieldMeta || initialiseFields()}
       pageSize={config.pageSize || 50}
@@ -95,13 +100,13 @@ export function BoardTable(props: Props) {
       utilityBarConfig={{
         title: {
           text: title,
-          editable: true,
+          editable: privilege !== PRIVILEGE.BOARD.EDITABLE,
           onSave: (value: string) => {
             saveTitle(value, id, boardObjectType, boardDataSource);
           }
         },
         elements: boardFilter,
-        buttons: [{
+        buttons: [privilege !== PRIVILEGE.BOARD.EDITABLE ? undefined : {
           outline: true,
           position: "right",
           type: "primary",
