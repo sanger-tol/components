@@ -225,7 +225,7 @@ export function Table(props: Props) {
   }
 
   const filterButton: IButton = (
-    !noFilter && fieldMeta.order.active.length !== 0
+    !noFilter && fields.order.active.length !== 0
   ) ? {
     visible: true,
     position: "right",
