@@ -10,7 +10,6 @@ import {
   NewBoardModal,
   createBoardAndView,
   TsDataSource,
-  StaticMessage,
   BOARDS,
   Button,
 } from "../..";
