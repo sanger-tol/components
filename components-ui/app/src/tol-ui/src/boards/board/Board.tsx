@@ -12,12 +12,18 @@ import {
   getBoard,
   getCssVarValue,
   getUserFromLocalStorage,
-  InlineEdit,
   LoadingContent,
   saveTitle,
   themeListener,
   TsDataSource,
   View,
+  getUserPrivilege,
+  useBoardPrivilege,
+  copyToClipboard,
+  PopUpMessage,
+  IUtilityBar,
+  TBoardPrivilege,
+  PRIVILEGE
 } from "../..";
 
 
@@ -38,6 +44,7 @@ export function Board(props: PBoard) {
   const [view, setView] = useState(viewId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { privilege, setPrivilege } = useBoardPrivilege();
 
   themeListener(() => {
     try {
@@ -51,6 +58,12 @@ export function Board(props: PBoard) {
   useEffect(() => {
     const u = getUserFromLocalStorage();
     if (u) setUser(u);
+
+    const awaitUserPrivilege = async () => {
+      const userPrivilege: TBoardPrivilege = await getUserPrivilege(u, boardDataSource!, boardId)
+      setPrivilege(userPrivilege);
+    };
+    awaitUserPrivilege();
   }, []);
 
   useEffect(() => {
@@ -68,7 +81,7 @@ export function Board(props: PBoard) {
     }
   }, [boardId, user]);
 
-  if (error !== "") {
+  if (error !== "" || privilege === PRIVILEGE.BOARD.HIDDEN) {
     return <Redirect to="/page-not-found" />;
   }
 
@@ -76,25 +89,40 @@ export function Board(props: PBoard) {
     return <LoadingContent text="Finding Board..." />;
   }
 
+  const UtilityBarConfig: IUtilityBar = {
+    id: "board-utility-bar",
+    buttons: [
+      {
+        position: "right",
+        type: "primary",
+        icon: "share-from-square",
+        onClick: () => {
+          copyToClipboard(location.href);
+          PopUpMessage({
+            type: 'success',
+            message: 'Board link copied to clipboard',
+          });
+        },
+      }
+    ],
+    title: {
+      text: boardData.boardTitle,
+      editable: privilege === PRIVILEGE.BOARD.EDITABLE,
+      onSave: (value: string) => {
+        saveTitle(value, boardId, BOARDS.BOARD, boardDataSource);
+      },
+    },
+  }
+
   // returns the first view at the moment
   return (
     <div className="tol-board">
-      <div className="tol-board-bar">
-        <InlineEdit
-          text={boardData.boardTitle}
-          onSave={(newTitle: any) => {
-            if (newTitle !== boardData.boardTitle) {
-              saveTitle(newTitle, boardId, BOARDS.BOARD, boardDataSource);
-            }
-          }}
-          editable
-        />
-      </div>
       <View
         id={boardData.views[0].id}
         defaultFilter={boardData.views[0].filter}
         dataSource={dataSource}
         boardDataSource={boardDataSource}
+        utilityBarConfig={UtilityBarConfig}
       />
     </div>
   );

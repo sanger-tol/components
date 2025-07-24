@@ -128,7 +128,7 @@ export function ZoneModal(props: PZoneModal) {
         onClick={onAddZone}
         icon="plus"
         text="Add Zone"
-        testid="add-zone-button"
+        testid="confirm-zone-button"
       />
       <Button
         position="right"

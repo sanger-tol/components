@@ -9,3 +9,4 @@ export * from "./listeners";
 export * from "./useEffectUpdate";
 export * from "./useQuery";
 export * from "./useStateFallback";
+export * from "./usePrivilege";

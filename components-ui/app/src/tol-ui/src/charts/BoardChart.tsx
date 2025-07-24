@@ -16,7 +16,9 @@ import {
   ChartConfigDrawer,
   IChartConfig,
   IButton,
-  updateConfigAndUpsert
+  updateConfigAndUpsert,
+  useBoardPrivilege,
+  PRIVILEGE
 } from "..";
 
 
@@ -33,6 +35,7 @@ export function BoardChart(props: Props) {
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
+  const { privilege } = useBoardPrivilege()
 
   const onModalSave = (updatedConfig: IChartConfig) => {
     setConfig({ ...updatedConfig });
@@ -51,6 +54,7 @@ export function BoardChart(props: Props) {
     type: "primary",
     onClick: () => setOpenConfig(true),
     icon: "sliders",
+    visible: privilege == PRIVILEGE.BOARD.EDITABLE,
   }
 
   const filterButton: IButton = {
@@ -59,6 +63,7 @@ export function BoardChart(props: Props) {
     type: "primary",
     onClick: () => setOpenFilters(true),
     icon: "filter",
+    visible: privilege == PRIVILEGE.BOARD.EDITABLE,
   }
 
   const Contents = () => {
@@ -69,7 +74,15 @@ export function BoardChart(props: Props) {
             bar
             message={
               <>
-                Please add configure to get started. Click <Icon icon="sliders" size="lg" /> to configure.
+                {privilege === PRIVILEGE.BOARD.EDITABLE ? (
+                  <>
+                    Please add attributes to get started. Click <Icon icon="sliders" size="lg" /> to configure.
+                  </>
+                ) : (
+                  <>
+                    No attributes selected.
+                  </>
+                )}
               </>
             }
           />
@@ -106,7 +119,7 @@ export function BoardChart(props: Props) {
         utilityBarConfig={{
           title: {
             text: title,
-            editable: true,
+            editable: privilege == PRIVILEGE.BOARD.EDITABLE,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);
             }
