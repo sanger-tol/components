@@ -9,7 +9,7 @@ import {
   VALIDATION_ENDPOINTS,
   PopUpMessage,
   TsDataSource,
-  MessageType,
+  TMessageType,
   TDataObjectOrNull,
   IValidationResult,
   IValidationResultAPI,
@@ -89,7 +89,7 @@ export function normaliseValidationResult(
 export async function normalisePipelineUpload(
   ds: TsDataSource,
   upload: TDataObjectOrNull,
-  relationships: { [key: string]: Promise<TDataObjectOrNull> }
+  relationships: any
 ): Promise<IPipelineUpload> {
   const pipeline = await relationships?.pipeline;
   const pipelineSteps = pipeline
@@ -329,7 +329,7 @@ export async function uploadPipelineConfig(
 export function constructCompletionMessage(
   validationResults: IValidationResult[],
   failureMessage: string | null
-): { message: string; messageType: MessageType } {
+): { message: string; messageType: TMessageType } {
   const errorsAndWarnings = getErrorWarningCounts(validationResults);
   if (failureMessage) {
     return {
