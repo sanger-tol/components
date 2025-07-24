@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { createContext } from "react";
 import {
   MyBoards,
   Dropdown,
@@ -91,7 +90,7 @@ export async function getUserPrivilege(
       objectType: BOARDS.BOARD,
       id: boardId,
     }).then(async (board: TDataObjectOrNull) => {
-      const board_user = await board?.relationships.user;
+      const board_user = await board?.relationships?.user;
       if (board && (board_user?.id.toString() === user.id.toString() || user.roles.includes('admin'))) {
         return PRIVILEGE.BOARD.EDITABLE;
       } else {
