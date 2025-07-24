@@ -53,6 +53,14 @@ export function Modal(props: Props) {
         onEnter={onEnter}
         onExited={onExited}
       >
+        {closeButton && (
+            <Button
+              type="error"
+              onClick={handleClose}
+              icon="minus"
+              position="right"
+            />
+          )}
         <RSModal.Header closeButton={false}>{header}</RSModal.Header>
 
         <RSModal.Body>{children}</RSModal.Body>
@@ -60,14 +68,7 @@ export function Modal(props: Props) {
           {actionButton && (
             <span style={{ margin: "6px" }}>{actionButton}</span>
           )}
-          {closeButton && (
-            <Button
-              type="error"
-              onClick={handleClose}
-              icon="xmark"
-              position="right"
-            />
-          )}
+          
         </RSModal.Footer>
       </RSModal>
     </>
