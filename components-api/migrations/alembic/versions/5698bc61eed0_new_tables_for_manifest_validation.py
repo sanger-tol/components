@@ -45,9 +45,9 @@ def upgrade() -> None:
                     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
                     sa.Column('s3_url', sa.String(), nullable=False),
                     sa.Column('s3_filename', sa.String(), nullable=False),
-                    sa.Column('spreadsheet_config', sa.String(), nullable=False),
+                    sa.Column('spreadsheet_config', sa.String(), nullable=True),
                     sa.Column('user_id', sa.Integer(), nullable=False),
-                    sa.Column('pipeline_name', sa.String(), nullable=False),
+                    sa.Column('pipeline_id', sa.Integer(), nullable=False),
                     sa.Column('destination', sa.String(), nullable=False),
                     sa.Column('flow_run_id', sa.String(), nullable=True),
                     sa.Column('date_started', sa.DateTime(), nullable=False),
@@ -58,7 +58,7 @@ def upgrade() -> None:
                     sa.Column('completed', sa.Boolean(), default=False, nullable=False),
                     sa.Column('failure_message', sa.String(), nullable=True),
                     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-                    sa.ForeignKeyConstraint(['pipeline_name'], ['pipeline.name'], ),
+                    sa.ForeignKeyConstraint(['pipeline_id'], ['pipeline.id'], ),
                     sa.PrimaryKeyConstraint('id')
                     )
 

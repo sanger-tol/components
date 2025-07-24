@@ -56,7 +56,7 @@ export function ValidateSteps(props: PValidateSteps) {
     >
       <div>
         <div className="tol-file-uploader-validate-steps-inner-container">
-          {steps.map((stepName: string) => {
+          {steps.length > 0 ? steps.map((stepName: string) => {
             const stepData = data.filter(
               (result: IValidationResult) => result.stepName === stepName
             );
@@ -75,7 +75,11 @@ export function ValidateSteps(props: PValidateSteps) {
                 />
               </div>
             );
-          })}
+          }): (
+            <h6 className="tol-file-validation-previous-results-no-data">
+              No pipeline steps found.
+            </h6>
+          )}
         </div>
         {expandedIndex !== null && (
           <div

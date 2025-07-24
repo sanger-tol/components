@@ -284,14 +284,14 @@ export async function uploadPipelineConfig(
   ds: TsDataSource,
   config: IValidationConfig,
   fileName: string,
-  spreadsheetConfig: string
+  spreadsheetConfig?: string
 ): Promise<IPipelineUpload | null> {
   const body = {
     data: {
       s3_url: config.s3_url,
       s3_filename: fileName,
-      spreadsheet_config: spreadsheetConfig,
-      pipeline_name: config.pipeline_name,
+      spreadsheet_config: spreadsheetConfig || null,
+      pipeline_id: config.pipeline_id,
       destination: config.destination,
     },
   };

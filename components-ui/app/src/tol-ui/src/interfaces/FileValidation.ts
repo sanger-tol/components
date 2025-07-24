@@ -19,7 +19,7 @@ export interface IUploadStatus {
 
 export interface IValidationConfig {
   s3_url: string;
-  pipeline_name: string;
+  pipeline_id: number;
   destination: string;
 }
 

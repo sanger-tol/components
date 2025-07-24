@@ -146,7 +146,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
               className="tol-file-validation-scrollbar-fix 
             tol-file-validation-previous-results-icon-container"
             >
-              {data &&
+              {data.pipelineSteps.length > 0 ? (
                 (() => {
                   const uniqueSteps = Array.from(new Set(data.pipelineSteps));
                   const allStepsPassed = uniqueSteps.every((stepName) => {
@@ -210,7 +210,12 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
                         </div>
                       );
                     });
-                })()}
+                })()
+              ) : (
+                <h6 className="tol-file-validation-previous-results-no-data">
+                  No pipeline steps found.
+                </h6>
+              )}
             </div>
             <div>
               <Button

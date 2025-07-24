@@ -29,6 +29,7 @@ from tol.sources.portal import portal
 from tol.sql import Model, create_sql_datasource
 from tol.sql.auth import db_auth_blueprint
 from tol.sql.board import create_board_models
+from tol.sql.pipeline_step import create_pipeline_step_models
 
 from .model import Base, MODELS, UserMixin
 from .playwright_ds import PlaywrightTestDataSource
@@ -92,17 +93,29 @@ def __get_board_models(
     return list(board_models), board_models._user_mixin
 
 
+def __get_pipeline_step_models(
+    base_model: type[Model],
+) -> tuple[list[type[Model]], type[Model]]:
+    pipeline_models = create_pipeline_step_models(base_model)
+
+    return list(pipeline_models), pipeline_models._user_mixin
+
+
 def application():
     app = Flask(__name__)
 
     # the user-configurable dashboards
     board_models, _board_user_mixin = __get_board_models(Base)
 
+    # the pipeline, steps, and uploads models
+    pipeline_models, _pipeline_user_mixin = __get_pipeline_step_models(Base)
+
     # the user Mixin
     user_mixin_class = type(
         '',
         (UserMixin,
-         _board_user_mixin),
+         _board_user_mixin,
+         _pipeline_user_mixin),
         {}
     )
 
@@ -121,6 +134,7 @@ def application():
         *MODELS,
         auth_bp.models.user_class,
         *board_models,
+        *pipeline_models,
     ]
 
     # Set up datasource

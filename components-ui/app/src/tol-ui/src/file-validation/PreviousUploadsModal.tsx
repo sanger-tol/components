@@ -34,7 +34,8 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
 
   const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
   const [expandedResults, setExpandedResults] = useState<string | null>(null);
-  const { id } = getUserFromLocalStorage();
+  const user = getUserFromLocalStorage();
+  const id = user ? user.id : null;
 
   const fetchPreviousUploads = async () => {
     const cacheBustedEndpoint = `${
@@ -52,8 +53,9 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
   } = useQuery({
     queryKey: ["userFileValidationUploads", id],
     queryFn: fetchPreviousUploads,
-    enabled: openModal === "results" || openModal === true,
-    refetchInterval: openModal === "results" ? REFRESH_INTERVAL : false,
+    enabled: (openModal === "results" || openModal === true) && id !== null,
+    refetchInterval: 500000000,
+    // refetchInterval: openModal === "results" ? REFRESH_INTERVAL : false,
     staleTime: 0,
   });
 
@@ -73,12 +75,16 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
           vertical
           styles={TOL_LOADER_STYLES}
         />
-      ) : isError ? (
+      ) : isError || !id ? (
         <div className="tol-file-validation-error-info">
           <span className="tol-file-validation-error-icon">
             <Icon icon="info" size="lg" />
           </span>
-          <h6>Error loading uploads.</h6>
+          <h6>
+            {!id
+              ? "User ID not found. Please log in to view."
+              : "Error loading uploads."}
+          </h6>
         </div>
       ) : userFileValidationUploadsData.length > 0 ? (
         userFileValidationUploadsData

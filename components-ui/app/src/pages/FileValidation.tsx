@@ -8,7 +8,7 @@ import { FileValidation as FV } from "../tol-ui/src";
 
 const VALIDATION_CONFIG = {
   s3_url: "made-up-url",
-  pipeline_name: "tos_spreadsheet_validation",
+  pipeline_id: 1,
   destination: "random_destination",
 };
 

@@ -130,7 +130,6 @@ export function FileValidation(props: PFileValidation) {
       ds,
       validationConfig,
       fileName[0],
-      "spreadsheet_config"
     );
     setCurrentUploadId(pipeline_id);
   };

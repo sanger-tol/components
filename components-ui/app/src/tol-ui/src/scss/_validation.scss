@@ -233,6 +233,13 @@
   }
 }
 
+.tol-file-validation-previous-results-no-data {
+  color: var(--tol-danger);
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+
 .tol-file-uploader-validate-step-outer-container {
   display: flex;
   flex-direction: column;
