@@ -654,7 +654,7 @@ export async function getActions(
 
 export async function progressBar(
   { objectType, filter, requestedFields }: IGetList,
-  { setCurrent, setPercentageComplete }: IProgressThreshold,
+  { setCurrent, setPercentageComplete, setSecondsElapsed }: IProgressThreshold,
   datasource: TsDataSource,
   count
 ) {
@@ -666,14 +666,21 @@ export async function progressBar(
     filter: filter,
     requestedFields: requestedFields,
   });
+  const interval = setInterval(() => {
+    setSecondsElapsed((prev) => prev + 1);
+  }, 1000);
   for await (const item of ds) {
     setCurrent((prev) => {
       const next = prev + 1;
-      setPercentageComplete(Math.round((next / count) * 100));
+      const percentage = (next / count) * 100;
+      setPercentageComplete(percentage);
+      // if (percentage == 100) {setSecondsElapsed(0)};
       results.push(item);
       return next;
     });
   }
+  setSecondsElapsed(0);
+  clearInterval(interval);
   return results;
 }
 

@@ -42,6 +42,7 @@ interface Props {
 export interface IProgressThreshold {
   setCurrent: Dispatch<React.SetStateAction<number>>;
   setPercentageComplete: Dispatch<React.SetStateAction<number>>;
+  setSecondsElapsed: Dispatch<React.SetStateAction<number>>;
 }
 
 export function DownloadModal(props: Props & ICountProps) {
@@ -62,6 +63,7 @@ export function DownloadModal(props: Props & ICountProps) {
   const [clicked, isClicked] = useState<boolean>(false);
   const [current, setCurrent] = useState<number>(0);
   const [percentageComplete, setPercentageComplete] = useState<number>(0);
+  const [secondsElapsed, setSecondsElapsed] = useState<number>(0);
   const requestedFields = Array.isArray(props.requestedFields)
     ? props.requestedFields.join(",")
     : props.requestedFields;
@@ -117,7 +119,7 @@ tol data \
         filter,
         requestedFields: requestedFields,
       },
-      {setCurrent, setPercentageComplete },
+      { setCurrent, setPercentageComplete, setSecondsElapsed },
       dataSource,
       count
     ).then((response) => {
@@ -151,13 +153,19 @@ tol data \
                 disabled={
                   totalSize >= 100000 || (clicked && percentageComplete != 100)
                 }
-              />{current}/{count}
+              />
             </div>
             {clicked ? (
-              <Progress.Line
-                percent={percentageComplete}
-                status={percentageComplete === 100 ? "success" : "active"}
-              />
+              <>
+                <Progress.Line
+                  percent={percentageComplete}
+                  status={percentageComplete === 100 ? "success" : "active"}
+                />
+                <div style={{textAlign:"center"}}>
+                  {current}/{count} {Math.floor((secondsElapsed % 3600) / 60)}:
+                  {secondsElapsed}
+                </div>
+              </>
             ) : (
               <></>
             )}
