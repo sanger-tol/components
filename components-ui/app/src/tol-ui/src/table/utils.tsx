@@ -660,6 +660,7 @@ export async function progressBar(
 ) {
   const results: any[] = [];
   setCurrent(0);
+  setSecondsElapsed(0);
   setPercentageComplete(0);
   const ds = datasource.getListByCursor({
     objectType: objectType,
@@ -674,12 +675,10 @@ export async function progressBar(
       const next = prev + 1;
       const percentage = (next / count) * 100;
       setPercentageComplete(percentage);
-      // if (percentage == 100) {setSecondsElapsed(0)};
       results.push(item);
       return next;
     });
   }
-  setSecondsElapsed(0);
   clearInterval(interval);
   return results;
 }

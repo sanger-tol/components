@@ -62,7 +62,7 @@ export function Modal(props: Props) {
           )}
           {closeButton && (
             <Button
-              type="error"
+              type="warning"
               onClick={handleClose}
               icon="minus"
               position="right"
