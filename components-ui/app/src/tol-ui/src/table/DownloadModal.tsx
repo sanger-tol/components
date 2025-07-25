@@ -161,9 +161,16 @@ tol data \
                   percent={percentageComplete}
                   status={percentageComplete === 100 ? "success" : "active"}
                 />
-                <div style={{textAlign:"center"}}>
-                  {current}/{count} {Math.floor((secondsElapsed % 3600) / 60)}:
-                  {secondsElapsed}
+                <div style={{ textAlign: "center" }}>
+                  <span>
+                    {current}/{count}
+                  </span>
+                  <span style={{ marginLeft: "10px" }}>
+                    {Math.floor((secondsElapsed % 3600) / 60)
+                      .toString()
+                      .padStart(2, "0")}
+                    :{(secondsElapsed % 60).toString().padStart(2, "0")}
+                  </span>
                 </div>
               </>
             ) : (
