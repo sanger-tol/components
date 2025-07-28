@@ -4,8 +4,8 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect} from "react";
-import { API_METHODS, ICountProps, IRemoteTarget  } from "..";
+import { useEffect } from "react";
+import { API_METHODS, ICountProps, IRemoteTarget } from "..";
 
 interface Props extends IRemoteTarget {
   totalSize: number;
@@ -13,8 +13,9 @@ interface Props extends IRemoteTarget {
   loading: boolean;
 }
 
-export function RowCounter(props:Props & ICountProps){
-  let { setCount, count, dataSource, objectType, totalSize, filter, loading }=props
+export function RowCounter(props: Props & ICountProps) {
+  let { setCount, count, dataSource, objectType, totalSize, filter, loading } =
+    props;
 
   const fetchRowTotal = () => {
     dataSource

@@ -28,23 +28,16 @@ export function Modal(props: Props) {
     setOpen,
     children,
     header,
+    actionButton,
     className,
     onEnter,
     onExited,
   } = props;
-  const closeButton = props.closeButton ?? false;
+  const closeButton = props.closeButton ?? true;
   const rsOverflow = props.overflow !== false;
   const handleClose = () => {
     setOpen(false);
   };
-  const actionButton = (
-    <Button
-      type="warning"
-      onClick={handleClose}
-      icon="minus"
-      position="right"
-    />
-  );
 
   return (
     <>
@@ -63,8 +56,17 @@ export function Modal(props: Props) {
 
         <RSModal.Body>{children}</RSModal.Body>
         <RSModal.Footer>
-          {actionButton}
-          {closeButton}
+          {actionButton && (
+            <span style={{ margin: "6px" }}>{actionButton}</span>
+          )}
+          {closeButton && (
+            <Button
+              type="error"
+              onClick={handleClose}
+              icon="xmark"
+              position="right"
+            />
+          )}
         </RSModal.Footer>
       </RSModal>
     </>
