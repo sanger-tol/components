@@ -79,7 +79,7 @@ interface Props extends IRemoteTargetAndZone {
 
 export interface ICountProps {
   count: number | null;
-  setCount: Dispatch<React.SetStateAction<number | null>>;
+  setCount?: Dispatch<React.SetStateAction<number | null>>;
 }
 
 export function RemoteTable(props: Props) {

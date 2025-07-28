@@ -135,10 +135,7 @@ export function Table(props: Props & ICountProps) {
   } = props;
   const wrapperId = "tol-table-wrapper-" + id;
   const [open, setOpen] = useState(false);
-  const [downloading, setDownloading] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("!");
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
   const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
   noFilter = !!noFilter;
@@ -184,23 +181,6 @@ export function Table(props: Props & ICountProps) {
       setMediumBreakpoint(width < 1000);
     }
   });
-
-  useEffect(() => {
-    success &&
-      PopUpMessage({
-        message: success,
-        type: "success",
-      });
-  }, [success]);
-
-  useEffect(() => {
-    error &&
-      error !== "!" &&
-      PopUpMessage({
-        message: error,
-        type: "error",
-      });
-  }, [error]);
 
   useEffectUpdate(() => {
     checked = false;
@@ -257,7 +237,6 @@ export function Table(props: Props & ICountProps) {
           setDownloadOpen(!downloadOpen);
         },
         disabled: totalSize <= 0 || noFieldsSelected,
-        loading: downloading,
         icon: "download",
         disabledTooltip:
           totalSize >= 1

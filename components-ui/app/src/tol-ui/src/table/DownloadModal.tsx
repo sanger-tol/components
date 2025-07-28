@@ -14,11 +14,8 @@ import {
   copyToClipboard,
   progressBar,
   exportDataToSpreadsheet,
-  IGetList,
-  getFieldByName,
   dataObjectToSpreadsheetData,
   IInlineEdit,
-  ITableCount,
   ICountProps,
 } from "..";
 import { Progress } from "rsuite";
@@ -35,7 +32,7 @@ interface Props {
   dataSource: TsDataSource;
   requestedFields: string[] | string;
   totalSize: number;
-  title: IInlineEdit;
+  title: IInlineEdit | undefined;
   fieldMeta: any;
 }
 
