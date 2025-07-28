@@ -241,7 +241,6 @@ export function RemoteTable(props: Props) {
       sortBy = defaultSort;
     }
 
-    // get data and update state
     dataSource
       .getListPage({
         objectType,
@@ -254,7 +253,7 @@ export function RemoteTable(props: Props) {
       .then((dataObjects: TDataObjectListOrNull) => {
         setError("");
         setData(
-          convertTableData(dataObjects, fieldMeta!, dataSource, entityMeta)
+          convertTableData(dataObjects, fieldMeta!, dataSource)
         );
         //setTotalSize(apiMeta.total);
       })

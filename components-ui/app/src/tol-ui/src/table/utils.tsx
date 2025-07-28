@@ -10,6 +10,7 @@ import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import {
   CellTooltip,
   CellRenderer,
+  Field,
   FieldMeta,
   FieldMetaData,
   isFloat,
@@ -23,6 +24,9 @@ import {
   IAttributeData,
   TDataObjectListOrNull,
   getFieldByName,
+  IDataObject,
+  ITableData,
+  ITableRecord,
 } from "..";
 
 
@@ -246,37 +250,38 @@ function setValueBasedCellRenderer(
 }
 
 function addCustomCellRendererData(
-  fieldMetaData: FieldMetaData,
-  attributes: any
+  key: string,
+  row: ITableRecord,
+  meta: Field,
 ) {
-  for (const key of Object.keys(fieldMetaData)) {
-    if (fieldMetaData[key].custom) {
-      attributes[key] = "CUSTOM_FIELD";
-    }
+  if (meta?.custom) {
+    row[key] = "CUSTOM_FIELD";
   }
-  return attributes;
 }
 
 export function convertTableData(
   dataObjects: TDataObjectListOrNull,
   fieldMeta: FieldMeta,
   dataSource: TsDataSource,
-  entityMeta?: IEntityMeta,
 ) {
   if (!dataObjects) return [];
-  const data: any[] = [];
-  dataObjects.forEach((obj) => {
-    const rowOutput: any = {};
-    fieldMeta.order.active.forEach((name) => {
-      rowOutput[name] = getFieldByName(obj, name);
+  const data: ITableData = [];
+  // loop over each data object
+  dataObjects!.forEach((obj) => {
+    const row: ITableRecord = {};
+    // loop over each field
+    fieldMeta.order.active.forEach((key) => {
+      row[key] = getFieldByName(obj, key);
+      addCustomCellRendererData(key, row, fieldMeta.data![key]);
+      // set value-based cell renderer
+      // cellRenderer logic (maybe new...
     });
-    data.push(rowOutput);
+    data.push(row);
   });
 
   console.log(data)
   return data;
-  // // add non-null value for a custom field to allow cellRenderer to display
-  // //addCustomCellRendererData(fieldMeta.data?, attributes);
+
   // for (const [key, value] of Object.entries(attributes)) {
   //   if (fieldMetaData[key] !== undefined) {
   //     setValueBasedCellRenderer(key, value, fieldMetaData);

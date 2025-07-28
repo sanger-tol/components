@@ -15,7 +15,6 @@ import {
   isInt,
   isFloat,
   generateId,
-  getSourceData,
   getAttributeSources,
   getFlattenedMetaData,
   getAttributeDetail,
@@ -85,21 +84,6 @@ test("generateId Function", () => {
   expect(id2).toContain(prefix + "_");
   expect(id2).toHaveLength(17);
   expect(id).not.toBe(id2);
-});
-
-test("getSourceData Function", () => {
-  const fieldMeta: FieldMeta = {
-    data: {
-      attribute1: { source: "source1" },
-      attribute2: { source: "source2" },
-    },
-    order: {
-      active: ["attribute1", "attribute2"],
-      inactive: [],
-    },
-  };
-  expect(getSourceData(fieldMeta, "attribute1")).toBe("source1");
-  expect(getSourceData(fieldMeta, "attribute2")).toBe("source2");
 });
 
 test("getAttributeSources function", () => {

@@ -56,3 +56,7 @@ export interface FieldMeta {
   data?: FieldMetaData;
   order: FieldMetaOrder;
 }
+
+export type ITableRecord = Record<string, any>;
+
+export type ITableData = ITableRecord[];
