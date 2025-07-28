@@ -198,19 +198,19 @@ export function Table(props: Props & ICountProps) {
 
   const configButton: IButton = !noConfigModal
     ? {
-        visible: true,
-        position: "right",
-        type: "primary",
-        tooltip: "Open table config",
-        onClick: () => {
-          setOpen(true);
-        },
-        icon: "sliders",
-        outline: true,
-      }
+      visible: true,
+      position: "right",
+      type: "primary",
+      tooltip: "Open table config",
+      onClick: () => {
+        setOpen(true);
+      },
+      icon: "sliders",
+      outline: true,
+    }
     : {
-        visible: false,
-      };
+      visible: false,
+    };
 
   const filterButton: IButton = (
     !noFilter &&
@@ -230,38 +230,38 @@ export function Table(props: Props & ICountProps) {
 
   const downloadButton: IButton = !noDownload
     ? {
-        visible: true,
-        position: "right",
-        type: "primary",
-        tooltip: "Download",
-        onClick: () => {
-          setDownloadOpen(!downloadOpen);
-        },
-        disabled: totalSize <= 0 || noFieldsSelected,
-        icon: "download",
-        disabledTooltip:
-          totalSize >= 1
-            ? "Must have at least one row to download."
-            : undefined,
-        outline: true,
-      }
+      visible: true,
+      position: "right",
+      type: "primary",
+      tooltip: "Download",
+      onClick: () => {
+        setDownloadOpen(!downloadOpen);
+      },
+      disabled: totalSize <= 0 || noFieldsSelected,
+      icon: "download",
+      disabledTooltip:
+        totalSize >= 1
+          ? "Must have at least one row to download."
+          : undefined,
+      outline: true,
+    }
     : {
-        visible: false,
-      };
+      visible: false,
+    };
 
   const actionDropdown: IDropdownButtons | undefined =
     actions && actions.length > 0
       ? {
-          mainButtonIcon: {
-            icon: "paper-plane",
-            type: "primary",
-            position: "right",
-            outline: selectedRows.length === 0,
-          },
-          dropdownButtons: actionDropDownButtons,
-          footer: actionsFooter,
-          placement: "leftStart",
-        }
+        mainButtonIcon: {
+          icon: "paper-plane",
+          type: "primary",
+          position: "right",
+          outline: selectedRows.length === 0,
+        },
+        dropdownButtons: actionDropDownButtons,
+        footer: actionsFooter,
+        placement: "leftStart",
+      }
       : undefined;
 
   return (
@@ -348,7 +348,6 @@ export function Table(props: Props & ICountProps) {
           />,
           ...(utilityBarConfig.elements || [])
         ] : [...(utilityBarConfig.elements || [])]}
->>>>>>> components-ui/app/src/tol-ui/src/table/Table.tsx
         buttons={[
           configButton,
           filterButton,
@@ -512,7 +511,7 @@ export function Table(props: Props & ICountProps) {
             </>
           )}
         </>
-      )}
+      }
     </div>
   );
 }
