@@ -232,18 +232,17 @@ function createCellRenderer(
 }
 
 function setValueBasedCellRenderer(
-  key: string,
   value: any,
-  fieldMetaData: object
+  meta: Field,
 ) {
-  if (fieldMetaData[key].cellRenderer === undefined) {
+  if (meta.cellRenderer === undefined) {
     if (value !== null && value !== undefined) {
       if (Array.isArray(value)) {
-        fieldMetaData[key].cellRenderer = "list";
+        meta.cellRenderer = "list";
       } else if (value.length > 32) {
-        fieldMetaData[key].cellRenderer = "expander";
+        meta.cellRenderer = "expander";
       } else if (isFloat(value)) {
-        fieldMetaData[key].cellRenderer = "float";
+        meta.cellRenderer = "float";
       }
     }
   }
@@ -273,7 +272,7 @@ export function convertTableData(
     fieldMeta.order.active.forEach((key) => {
       row[key] = getFieldByName(obj, key);
       addCustomCellRendererData(key, row, fieldMeta.data![key]);
-      // set value-based cell renderer
+      setValueBasedCellRenderer(row[key], fieldMeta.data![key]);
       // cellRenderer logic (maybe new...
     });
     data.push(row);
