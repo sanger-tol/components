@@ -4,7 +4,8 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Tabs } from "rsuite";
+import { Dispatch, useState } from "react";
+import { Tabs, Progress } from "rsuite";
 import { CodeBlock } from "react-code-blocks";
 import {
   Button,
@@ -18,8 +19,6 @@ import {
   IInlineEdit,
   ICountProps,
 } from "..";
-import { Progress } from "rsuite";
-import { Dispatch, useState } from "react";
 
 interface Props {
   size: string;
@@ -119,12 +118,16 @@ tol data \
       { setCurrent, setPercentageComplete, setSecondsElapsed },
       dataSource,
       count
-    ).then((response) => {
+    )
+    .then((response) => {
       dataObjectToSpreadsheetData(
         response,
         requestedFields.split(","),
         fieldMeta
-      ).then((info) => exportDataToSpreadsheet(info, title));
+      )
+      .then((info) => {
+        exportDataToSpreadsheet(info, title);
+      });
     });
   };
 

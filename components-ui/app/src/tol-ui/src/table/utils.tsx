@@ -658,7 +658,7 @@ export async function progressBar(
   datasource: TsDataSource,
   count
 ) {
-  const results: any[] = [];
+  const results: any[] = []; // TODO: add type - kh16
   setCurrent(0);
   setSecondsElapsed(0);
   setPercentageComplete(0);
