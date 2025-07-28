@@ -148,7 +148,7 @@ tol data \
                     : undefined
                 }
                 disabled={
-                  totalSize >= 100000 || (clicked && percentageComplete != 100)
+                  totalSize >= 100000 || (clicked && percentageComplete !== 100)
                 }
               />
             </div>
@@ -160,7 +160,13 @@ tol data \
                 />
                 <div style={{ textAlign: "center" }}>
                   <span>
-                    {current}/{count}
+                    {percentageComplete !== 100 ? (
+                      <>
+                        {current}/{count}
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </span>
                   <span style={{ marginLeft: "10px" }}>
                     {Math.floor((secondsElapsed % 3600) / 60)

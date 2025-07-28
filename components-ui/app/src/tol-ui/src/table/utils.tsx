@@ -673,7 +673,7 @@ export async function progressBar(
   for await (const item of ds) {
     setCurrent((prev) => {
       const next = prev + 1;
-      const percentage = (next / count) * 100;
+      const percentage = Math.floor((next / count) * 100);
       setPercentageComplete(percentage);
       results.push(item);
       return next;

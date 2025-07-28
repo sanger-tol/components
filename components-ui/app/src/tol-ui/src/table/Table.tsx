@@ -11,13 +11,11 @@ import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import {
   Placeholder,
   useEffectUpdate,
-  PopUpMessage,
   DownloadModal,
   EntityMetaToolTip,
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
-  // exportTableToSpreadsheet,
   getAllowedFields,
   getSourceColour,
   Filter,
@@ -131,6 +129,7 @@ export function Table(props: Props & ICountProps) {
     contents,
     groupBy,
     count,
+    setCount
     /* eslint-enable */
   } = props;
   const wrapperId = "tol-table-wrapper-" + id;
@@ -278,6 +277,7 @@ export function Table(props: Props & ICountProps) {
         title={utilityBarConfig.title}
         fieldMeta={fieldMeta}
         count={count}
+        setCount={setCount}
       />
       <ColumnConfigDrawer
         {...props}
