@@ -30,7 +30,7 @@ interface Props extends IRemoteTarget {
     fieldMeta: FieldMeta,
     actions?: string[],
     sortByAttribute?: string,
-    sortByType?: string 
+    sortByType?: string
   ) => void;
   sticky?: boolean;
   customAttributeSelection?: string[] | undefined;
@@ -53,12 +53,8 @@ export function ColumnConfigDrawer(props: Props) {
     actionChoices,
   } = props;
 
-  const [attributes, setAttributes] = useState<string[]>(
-    fieldMeta?.order?.active ?? [],
-  );
-  const [initialAttributes, setInitialAttributes] = useState<string[]>(
-    fieldMeta?.order?.active ?? [],
-  );
+  const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
+  const [initialAttributes, setInitialAttributes] = useState<string[]>(fieldMeta.order.active);
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   // used to store selected actions from the dropdown
   const originalActions = props.actions?.map((btn) => btn.name as string) ?? [];
@@ -84,7 +80,7 @@ export function ColumnConfigDrawer(props: Props) {
     hidden: boolean,
   ) => {
     const isActive = hidden ? "inactive" : "active";
-    updatedFieldMeta.order[isActive].push(id);
+    updatedFieldMeta.order![isActive].push(id);
     updatedFieldMeta.data![id] = fieldMeta.data![id];
     updatedFieldMeta.data![id].hidden = hidden;
   };
@@ -195,7 +191,7 @@ export function ColumnConfigDrawer(props: Props) {
   );
 
   const handleCloseDrawer = () => {
-    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || 
+    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) ||
       defaultSort !== createSort(sortByAttribute[0], sortByType)
     ) {
       setOpenSaveModal(true);
@@ -221,21 +217,21 @@ export function ColumnConfigDrawer(props: Props) {
   )
 
   const sortByButtons = (
-      <div className="tol-board-chart-interval-btn-container">
-        {['asc', 'desc'].map((direction: string) => (
-          <Button
-            outline
-            key={direction}
-            text={direction}
-            type="primary"
-            onClick={() => setsortByType(direction)}
-            active={sortByType === direction}
-            size="lg"
-            className="tol-board-chart-sort-buttons"
-          />
-        ))}
-      </div>
-    );
+    <div className="tol-board-chart-interval-btn-container">
+      {['asc', 'desc'].map((direction: string) => (
+        <Button
+          outline
+          key={direction}
+          text={direction}
+          type="primary"
+          onClick={() => setsortByType(direction)}
+          active={sortByType === direction}
+          size="lg"
+          className="tol-board-chart-sort-buttons"
+        />
+      ))}
+    </div>
+  );
 
   const attSelector = (
     <div>

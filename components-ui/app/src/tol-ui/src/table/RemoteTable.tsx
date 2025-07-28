@@ -34,6 +34,7 @@ import {
   TsDataSource,
   IEntityMeta,
   initialiseFields,
+  TDataObjectListOrNull,
 } from '..';
 
 
@@ -101,7 +102,6 @@ export function RemoteTable(props: Props) {
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fields, setFields] = useState<FieldMeta>(props.fields ?? initialiseFields());
   const [fieldMeta, setFieldMeta] = useState<FieldMeta>(props.fields ?? initialiseFields());
   const [entityMeta, setEntityMeta] = useState<IEntityMeta>();
 
@@ -233,54 +233,44 @@ export function RemoteTable(props: Props) {
 
   const renderTable = () => {
     setLoading(true);
-    // generating query params
-    const params = {
-      page: page,
-      page_size: pageSize,
-      filter: filter,
-      requested_fields: (fieldMeta?.order.active || []).join(',')
-    };
 
-    // deal with sorting
+    let sortBy: string | undefined;
     if (sortColumn !== "") {
-      params["sort_by"] = createSort(sortColumn, sortType);
+      sortBy = createSort(sortColumn, sortType);
     } else if (defaultSort !== undefined) {
-      params["sort_by"] = defaultSort;
+      sortBy = defaultSort;
     }
 
     // get data and update state
     dataSource
-      .custom({
-        method: API_METHODS.GET,
-        resource: objectType,
-        params
+      .getListPage({
+        objectType,
+        page,
+        pageSize,
+        filter,
+        sortBy,
+        requestedFields: (fieldMeta?.order.active || []).join(','),
       })
-      .then(async (res) => {
-        // error if endpoint doesn't return 200
-        if (res.status !== 200) throw Error();
-        const apiData = res.data.data;
-        const apiMeta = res.data.meta;
-
-        setTotalSize(apiMeta.total);
+      .then((dataObjects: TDataObjectListOrNull) => {
         setError("");
-
-        // setting data using fieldMeta
         setData(
-          convertTableData(apiData, fieldMeta!, dataSource, entityMeta)
+          convertTableData(dataObjects, fieldMeta!, dataSource, entityMeta)
         );
-        setLoading(false);
-        setInitialLoad(false);
+        //setTotalSize(apiMeta.total);
       })
       .catch((error: any) => {
         setError(error.message);
-        setLoading(false);
-        setInitialLoad(false);
+
         setData([]);
         console.warn(error);
         console.warn("Please ensure the db has been restored");
         console.warn(
           "Please ensure the 'endpoint' prop is correct and pluralised"
         );
+      })
+      .finally(() => {
+        setLoading(false);
+        setInitialLoad(false);
       });
   };
 
@@ -353,7 +343,7 @@ export function RemoteTable(props: Props) {
         {...props}
         contents={contents ? contents : Contents()}
         data={data}
-        fields={fieldMeta!}
+        fieldMeta={fieldMeta!}
         height={height}
         loading={loading}
         page={page}

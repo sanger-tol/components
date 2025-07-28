@@ -21,6 +21,8 @@ import {
   TsDataSource,
   API_METHODS,
   IAttributeData,
+  TDataObjectListOrNull,
+  getFieldByName,
 } from "..";
 
 
@@ -255,109 +257,49 @@ function addCustomCellRendererData(
   return attributes;
 }
 
-function formatAttributeData(
-  row: object,
-  fieldMetaData: FieldMetaData,
-  rowOutput: object,
-  dataSource: TsDataSource,
-  entityMeta?: IEntityMeta,
-) {
-  const attributes = row["attributes"];
-
-  // add non-null value for a custom field to allow cellRenderer to display
-  addCustomCellRendererData(fieldMetaData, attributes);
-  for (const [key, value] of Object.entries(attributes)) {
-    if (fieldMetaData[key] !== undefined) {
-      setValueBasedCellRenderer(key, value, fieldMetaData);
-      if (fieldMetaData[key].cellRenderer !== undefined) {
-        rowOutput[key] = createCellRenderer(
-          fieldMetaData[key].cellRenderer!,
-          key,
-          value,
-          row,
-          dataSource,
-          entityMeta
-        );
-      } else if (fieldMetaData[key].link !== undefined) {
-        rowOutput[key] = createLink(
-          attributes[key],
-          attributes[fieldMetaData[key].link]
-        );
-      } else {
-        rowOutput[key] = value;
-      }
-    }
-  }
-}
-
-function resolveNestedRelationship(
-  relationships: any,
-  keys: string[]
-): any {
-  if (keys.length === 0 || !relationships) return null;
-
-  const [currentKey, ...remainingKeys] = keys;
-  const currentRelationship = relationships[currentKey];
-
-  if (!currentRelationship || !("data" in currentRelationship)) return null;
-
-  const instanceData = currentRelationship["data"];
-  if (remainingKeys.length === 0) {
-    return instanceData;
-  }
-
-  return resolveNestedRelationship(instanceData["relationships"], remainingKeys);
-}
-
-function addRelationshipFieldsToAttributes(
-  row: object,
-  fieldMetaData: FieldMetaData
-) {
-  const rowRelationships = row["relationships"];
-  const rowAttributes = row["attributes"];
-  for (const [key, meta] of Object.entries(fieldMetaData)) {
-    // only deal with relationships
-    if (!meta.isAttribute) {
-      const keys = key.split(".");
-      const attribute = keys.pop(); // Extract the final attribute
-      const resolvedData = resolveNestedRelationship(rowRelationships, keys);
-      if (resolvedData) {
-        if (attribute === "id") {
-          rowAttributes[key] = resolvedData["id"];
-        } else if (
-          "attributes" in resolvedData && attribute! in resolvedData["attributes"]
-        ) {
-          rowAttributes[key] = resolvedData["attributes"][attribute!];
-        }
-      }
-
-      // if row doesn't have the fields data, default to null
-      if (rowAttributes[key] === undefined) rowAttributes[key] = null;
-    }
-  }
-}
-
 export function convertTableData(
-  data: any[],
+  dataObjects: TDataObjectListOrNull,
   fieldMeta: FieldMeta,
   dataSource: TsDataSource,
   entityMeta?: IEntityMeta,
 ) {
-  if (data[0] === undefined) return [];
-  const updatedData: any[] = [];
-  data.forEach((row) => {
-    // create empty attributes if they don't exist
-    if (!("attributes" in row)) row["attributes"] = {};
-    if ("relationships" in row) {
-      addRelationshipFieldsToAttributes(row, fieldMeta.data!);
-    }
-    const rowOutput = { id: row.id };
-    if ("attributes" in row) {
-      formatAttributeData(row, fieldMeta.data!, rowOutput, dataSource, entityMeta);
-    }
-    updatedData.push(rowOutput);
+  if (!dataObjects) return [];
+  const data: any[] = [];
+  dataObjects.forEach((obj) => {
+    const rowOutput: any = {};
+    fieldMeta.order.active.forEach((name) => {
+      rowOutput[name] = getFieldByName(obj, name);
+    });
+    data.push(rowOutput);
   });
-  return updatedData;
+
+  console.log(data)
+  return data;
+  // // add non-null value for a custom field to allow cellRenderer to display
+  // //addCustomCellRendererData(fieldMeta.data?, attributes);
+  // for (const [key, value] of Object.entries(attributes)) {
+  //   if (fieldMetaData[key] !== undefined) {
+  //     setValueBasedCellRenderer(key, value, fieldMetaData);
+  //     if (fieldMetaData[key].cellRenderer !== undefined) {
+  //       rowOutput[key] = createCellRenderer(
+  //         fieldMetaData[key].cellRenderer!,
+  //         key,
+  //         value,
+  //         row,
+  //         dataSource,
+  //         entityMeta
+  //       );
+  //     } else if (fieldMetaData[key].link !== undefined) {
+  //       rowOutput[key] = createLink(
+  //         attributes[key],
+  //         attributes[fieldMetaData[key].link]
+  //       );
+  //     } else {
+  //       rowOutput[key] = value;
+  //     }
+  //   }
+  // }
+  // });
 }
 
 function addDefaultCellRenderer(key: string, type: string): CellRenderer {
@@ -528,21 +470,6 @@ export function getSourceColour(sourceName?: string): string {
     : sourceColours.other;
 
   return rgbToString(rgb, 1);
-}
-
-/*
-if no fields are hidden, return all keys
-if any fields are hidden, return only the fieldMeta.order.active columns and those that are marked hidden
-*/
-export function getAllowedFields(fieldMeta: FieldMeta) {
-  if (!fieldMeta || !fieldMeta.data) return [];
-  const hasHiddenFields = Object.values(fieldMeta.data).some(
-    (field) => field.hidden === true
-  );
-  if (!hasHiddenFields) return Object.keys(fieldMeta.data);
-  return Object.keys(fieldMeta.data).filter(
-    (key) => fieldMeta.data![key].hidden || fieldMeta.order.active.includes(key)
-  );
 }
 
 export function mapKeysToDisplayNames(

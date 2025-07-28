@@ -17,7 +17,6 @@ import {
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
-  getAllowedFields,
   getSourceColour,
   Filter,
   IFilterInputType,
@@ -38,7 +37,7 @@ export type NumRows = 25 | 50 | 100 | 250 | 1000;
 interface Props extends IRemoteTargetAndZone {
   id: string;
   data: any;
-  fields: FieldMeta;
+  fieldMeta: FieldMeta;
   height: any;
   loading: boolean;
 
@@ -87,7 +86,7 @@ export function Table(props: Props) {
     /* eslint-disable */
     id,
     data,
-    fields,
+    fieldMeta,
     height,
     loading,
 
@@ -127,7 +126,9 @@ export function Table(props: Props) {
     groupBy,
     /* eslint-enable */
   } = props;
-  const wrapperId = "tol-table-wrapper-" + id;
+
+  const { privilege } = useBoardPrivilege()
+
   const [open, setOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
@@ -148,9 +149,8 @@ export function Table(props: Props) {
   const [bulkSelect, setBulkSelect] = useState(false);
   let checked = false;
   let indeterminate = false;
-  const noFieldsSelected = fields?.order?.active?.length === 0;
-
-  const { privilege } = useBoardPrivilege()
+  const noFieldsSelected = fieldMeta?.order?.active?.length === 0;
+  const wrapperId = "tol-table-wrapper-" + id;
 
   if (selectedRows.length === data.length || bulkSelect) {
     checked = true;
@@ -225,7 +225,7 @@ export function Table(props: Props) {
   }
 
   const filterButton: IButton = (
-    !noFilter && fields.order.active.length !== 0
+    !noFilter && fieldMeta.order.active.length !== 0
   ) ? {
     visible: true,
     position: "right",
@@ -278,22 +278,25 @@ export function Table(props: Props) {
         objectType={objectType}
         filter={filter}
         source={source}
-        fields={fields?.order?.active}
+        fields={fieldMeta?.order?.active}
         totalSize={totalSize}
-        onDownloadSpreadsheet={() => {}}
+        onDownloadSpreadsheet={() => { }}
       />
       <ColumnConfigDrawer
         {...props}
         title={"Table Configuration"}
+        fieldMeta={fieldMeta}
         actions={actions}
         defaultSort={defaultSort}
         open={open}
         groupBy={groupBy}
         setOpen={setOpen}
         displaySource={displaySource}
-        customAttributeSelection={getAllowedFields(fields)}
+        customAttributeSelection={[
+          ...(fieldMeta.order.active ?? []),
+          ...(fieldMeta.order.inactive ?? [])
+        ]}
         onConfigSave={onModalSave}
-        fieldMeta={fields}
       />
       {/*rowSelection && (
           <>
@@ -313,7 +316,7 @@ export function Table(props: Props) {
       <UtilityBar
         id={id}
         title={utilityBarConfig.title}
-        elements={(!noPagination && fields?.order?.active?.length > 0) ? [
+        elements={(!noPagination && fieldMeta?.order?.active?.length > 0) ? [
           <span className="tol-page-size">
             {!smallBreakpoint &&
               <SelectPicker
@@ -444,8 +447,8 @@ export function Table(props: Props) {
                       </Cell>
                     </Column>
                   )}
-                  {fields!.order.active.map((key: string) => {
-                    const field = fields.data![key];
+                  {fieldMeta!.order.active.map((key: string) => {
+                    const field = fieldMeta.data![key];
                     const sortable = noSorting ? false : field.sort;
                     const filterable = noFilter ? false : field.filter;
 
