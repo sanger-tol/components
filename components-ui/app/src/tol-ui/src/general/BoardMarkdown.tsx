@@ -14,6 +14,8 @@ import {
   IButton,
   saveTitle,
   updateConfigAndUpsert,
+  useBoardPrivilege,
+  PRIVILEGE,
 } from "..";
 
 
@@ -34,10 +36,11 @@ export function BoardMarkdown(props: IBoardMarkdown) {
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [showMarkdownViewer, setShowMarkdownViewer] = useState<boolean>(false);
+  const { privilege } = useBoardPrivilege();
 
 
   useEffect(() => {
-    config.content && setShowMarkdownViewer(true);
+    (config.content || !(privilege === PRIVILEGE.BOARD.EDITABLE)) && setShowMarkdownViewer(true);
   }, []);
 
   const onMarkdownSave = (config: IMarkdownConfig) => {
@@ -56,7 +59,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
     type: "primary",
     icon: showPreview ? "eye-slash" : "eye",
     onClick: () => setShowPreview(!showPreview),
-    visible: !showMarkdownViewer,
+    visible: !showMarkdownViewer && privilege === PRIVILEGE.BOARD.EDITABLE,
     outline: true,
   }
 
@@ -70,6 +73,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
       onMarkdownSave({ content: content });
     },
     outline: true,
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
   }
 
   const MdUtilityBar = (
@@ -78,7 +82,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
       buttons={[editButton, previewButton]}
       title={{
         text: title,
-        editable: true,
+        editable: privilege === PRIVILEGE.BOARD.EDITABLE,
         onSave: (value: string) => {
           saveTitle(value, id, boardObjectType, boardDataSource);
         },
@@ -104,14 +108,16 @@ export function BoardMarkdown(props: IBoardMarkdown) {
   );
 
   const MarkdownViewer = (
-    <Markdown contents={content} />
+    <div className="tol-markdown-viewer">
+      <Markdown contents={content} />
+    </div>
   );
 
   return (
     <>
       {MdUtilityBar}
       <div className="tol-component-contents-with-offset tol-markdown">
-        {showMarkdownViewer ? MarkdownViewer : MarkdownEditor}
+        {(showMarkdownViewer) ? MarkdownViewer : MarkdownEditor}
       </div>
     </>
   );

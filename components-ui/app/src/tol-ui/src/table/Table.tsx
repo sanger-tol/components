@@ -30,6 +30,8 @@ import {
   IDropdownButtons,
   IRemoteTarget,
   ICountProps,
+  useBoardPrivilege,
+  PRIVILEGE
 } from "..";
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
@@ -150,6 +152,8 @@ export function Table(props: Props & ICountProps) {
   let indeterminate = false;
   const noFieldsSelected = fieldMeta.order.active.length === 0;
 
+  const { privilege } = useBoardPrivilege()
+
   if (selectedRows.length === data.length || bulkSelect) {
     checked = true;
   } else if (selectedRows.length === 0) {
@@ -208,21 +212,21 @@ export function Table(props: Props & ICountProps) {
         visible: false,
       };
 
-  const filterButton: IButton = !noFilter
-    ? {
-        visible: true,
-        position: "right",
-        type: "primary",
-        tooltip: filterVisibility ? "Hide filters" : "Show filters",
-        onClick: () => {
-          setFilterVisibility(!filterVisibility);
-        },
-        icon: filterVisibility ? "eye-slash" : "eye",
-        outline: true,
-      }
-    : {
-        visible: false,
-      };
+  const filterButton: IButton = (
+    !noFilter &&
+    fieldMeta.order.active.length !== 0 &&
+    privilege === PRIVILEGE.BOARD.EDITABLE || privilege === undefined
+  ) ? {
+    visible: true,
+    position: "right",
+    type: "primary",
+    onClick: () => { setFilterVisibility(!filterVisibility) },
+    icon: filterVisibility ? "eye-slash" : "eye",
+    tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
+    outline: true
+  } : {
+    visible: false
+  }
 
   const downloadButton: IButton = !noDownload
     ? {
@@ -307,70 +311,74 @@ export function Table(props: Props & ICountProps) {
       <UtilityBar
         id={id}
         title={utilityBarConfig.title}
-        elements={
-          !noPagination && fieldMeta.order.active.length > 0
-            ? [
-                <span className="tol-page-size">
-                  {!smallBreakpoint && (
-                    <SelectPicker
-                      value={pageSize}
-                      onChange={setPageSize}
-                      size="sm"
-                      cleanable={false}
-                      searchable={false}
-                      data={[
-                        { label: "25", value: 25 },
-                        { label: "50", value: 50 },
-                        { label: "100", value: 100 },
-                        { label: "250", value: 250 },
-                      ]}
-                    />
-                  )}
-                </span>,
-                <Pagination
-                  className="tol-pagination"
-                  size="sm"
-                  layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
-                  total={totalSize}
-                  activePage={page}
-                  onChangePage={setPage}
-                  limit={pageSize}
-                  onChangeLimit={setPageSize}
-                  prev
-                  next
-                  first={!mediumBreakpoint}
-                  last={!mediumBreakpoint}
-                  ellipsis={!mediumBreakpoint}
-                  boundaryLinks
-                  maxButtons={mediumBreakpoint ? 1 : 3}
-                />,
-                ...(utilityBarConfig.elements || []),
-              ]
-            : [...(utilityBarConfig.elements || [])]
-        }
+        elements={(!noPagination && fieldMeta.order.active.length > 0) ? [
+          <span className="tol-page-size">
+            {(!smallBreakpoint && privilege === PRIVILEGE.BOARD.EDITABLE) &&
+              <SelectPicker
+                value={pageSize}
+                onChange={setPageSize}
+                size="sm"
+                cleanable={false}
+                searchable={false}
+                data={[
+                  { label: "25", value: 25 },
+                  { label: "50", value: 50 },
+                  { label: "100", value: 100 },
+                  { label: "250", value: 250 },
+                ]}
+              />
+            }
+          </span>,
+          <Pagination
+            className="tol-pagination"
+            size="sm"
+            layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
+            total={totalSize}
+            activePage={page}
+            onChangePage={setPage}
+            limit={pageSize}
+            onChangeLimit={setPageSize}
+            prev
+            next
+            first={!mediumBreakpoint}
+            last={!mediumBreakpoint}
+            ellipsis={!mediumBreakpoint}
+            boundaryLinks
+            maxButtons={mediumBreakpoint ? 1 : 3}
+          />,
+          ...(utilityBarConfig.elements || [])
+        ] : [...(utilityBarConfig.elements || [])]}
+>>>>>>> components-ui/app/src/tol-ui/src/table/Table.tsx
         buttons={[
           configButton,
           filterButton,
-          downloadButton,
           ...(utilityBarConfig.buttons || []),
           actionDropdown,
+          downloadButton,
         ]}
       />
-      {contents ? (
-        contents
-      ) : (
+      {contents ? contents :
         <>
           {noFieldsSelected ? (
             <Placeholder
               message={
                 <>
-                  Please add a field to get started. Click
-                  <FontAwesomeIcon
-                    icon={faSliders}
-                    size="lg"
-                    style={{ padding: "0 10" }}
-                  />
-                  to configure.
+                  {/* Assume that when privilege is undefined, the table is not in a board */}
+                  {privilege === PRIVILEGE.BOARD.EDITABLE || !privilege ? (
+                    <>
+                      No fields selected. Please click
+                      <FontAwesomeIcon
+                        icon={faSliders}
+                        size="lg"
+                        style={{ padding: "0 10" }}
+                      />
+                      to configure.
+                    </>
+                  ) : (
+                    <>
+                      No fields available.
+                    </>
+                  )}
                 </>
               }
               height={height}

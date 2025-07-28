@@ -3,14 +3,14 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
-;
+
 import {
   BoardCount,
   BoardTable,
   BoardSunburst,
   BoardChart,
   IBoardTargetAndZone,
-  BoardMarkdown
+  BoardMarkdown,
 } from "../..";
 
 
