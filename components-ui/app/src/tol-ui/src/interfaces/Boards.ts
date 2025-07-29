@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
-import { Dispatch } from 'react';
+
 import {
   TsDataSource,
   IFilter,
@@ -154,10 +154,4 @@ export interface IDBZoneView {
 export interface IUpdatedZoneIds {
   newZoneId: string;
   newZoneViewId: string;
-}
-
-export interface IProgressThreshold {
-  setCurrent: Dispatch<React.SetStateAction<number>>;
-  setPercentageComplete: Dispatch<React.SetStateAction<number>>;
-  setSecondsElapsed: Dispatch<React.SetStateAction<number>>;
 }

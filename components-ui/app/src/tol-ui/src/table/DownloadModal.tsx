@@ -19,6 +19,7 @@ import {
   IInlineEdit,
   ICountProps,
   FieldMeta,
+  converterForElapsedTime,
 } from "..";
 
 interface Props {
@@ -34,6 +35,7 @@ interface Props {
   totalSize: number;
   title: IInlineEdit | undefined;
   fieldMeta: FieldMeta;
+  setDownloadInProgress: (downloadInProgress: boolean) => void;
 }
 
 export function DownloadModal(props: Props & ICountProps) {
@@ -49,11 +51,13 @@ export function DownloadModal(props: Props & ICountProps) {
     title,
     fieldMeta,
     count,
+    setDownloadInProgress,
   } = props;
   const [clicked, isClicked] = useState<boolean>(false);
   const [current, setCurrent] = useState<number>(0);
   const [percentageComplete, setPercentageComplete] = useState<number>(0);
   const [secondsElapsed, setSecondsElapsed] = useState<number>(0);
+  const [stopDownload, setStopDownload] = useState<boolean>(false);
   const requestedFields = Array.isArray(props.requestedFields)
     ? props.requestedFields.join(",")
     : props.requestedFields;
@@ -103,6 +107,7 @@ tol data \
   };
 
   const onDownloadSpreadsheet = async () => {
+    setDownloadInProgress(true);
     await fetchSpreadSheetDataObjects(
       {
         objectType: objectType,
@@ -117,23 +122,34 @@ tol data \
         response,
         requestedFields.split(","),
         fieldMeta
-      ).then((info) => {
-        exportDataToSpreadsheet(info, title);
-      });
+      )
+        .then((info) => {
+          exportDataToSpreadsheet(info, title);
+        })
+        .finally(() => {
+          setDownloadInProgress(false);
+        });
     });
   };
 
-  const converterForElapsedTime = (secondsElapsed:number):string => {
-    const minutes = Math.floor((secondsElapsed % 3600) / 60)
-      .toString()
-      .padStart(2, "0");
-    const seconds = (secondsElapsed % 60).toString().padStart(2, "0");
-    return `${minutes}:${seconds}`;
-  };
+  const MinimizeButton = (
+    <Button
+      type="warning"
+      onClick={() => setOpen(false)}
+      icon="minus"
+      position="right"
+    />
+  );
 
   return (
     <>
-      <Modal size={size} open={open} setOpen={setOpen}>
+      <Modal
+        size={size}
+        open={open}
+        setOpen={setOpen}
+        actionButton={MinimizeButton}
+        closeButton={false}
+      >
         <Tabs defaultActiveKey="1">
           <Tabs.Tab eventKey="1" title="Spreadsheet">
             <div className="tol-download-modal-body">

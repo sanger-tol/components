@@ -77,7 +77,8 @@ interface Props extends IRemoteTargetAndZone {
   debug?: boolean;
 }
 
-export interface ICountProps { // TODO - kh16 to change 
+export interface ICountProps {
+  // TODO - kh16 to change
   count: number;
   setCount: Dispatch<React.SetStateAction<number | null>>;
 }
@@ -151,6 +152,7 @@ export function RemoteTable(props: Props) {
   // loading, error and warning info
   const [loading, setLoading] = useState<boolean>(true);
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
+  const [downloadInProgress, setDownloadInProgress] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   // row selection
@@ -312,6 +314,15 @@ export function RemoteTable(props: Props) {
     if (initialLoad) {
       return <Placeholder loader height={height} />;
     }
+    if (downloadInProgress) {
+      return (
+        <Placeholder
+          download
+          height={height}
+          message={"Download in Progress..."}
+        />
+      );
+    }
 
     return null;
   };
@@ -383,6 +394,7 @@ export function RemoteTable(props: Props) {
         totalSize={totalSize}
         count={count}
         setCount={setCount}
+        setDownloadInProgress={setDownloadInProgress}
         rowCounter={
           <RowCounter
             setCount={setCount}
@@ -405,7 +417,7 @@ export function RemoteTable(props: Props) {
         noPagination={noPagination}
         noSorting={noSorting}
         noConfigModal={noConfigModal}
-        noDownload={(noDownload || error !== "")}
+        noDownload={noDownload || error !== ""}
         rowSelection={rowSelection}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
