@@ -656,7 +656,7 @@ export async function fetchSpreadSheetDataObjects(
   { objectType, filter, requestedFields }: IGetList,
   { setCurrent, setPercentageComplete, setSecondsElapsed }: IProgressThreshold,
   dataSource: TsDataSource,
-  count: number | null
+  count: number 
 ) {
   const results: any[] = []; // TODO: add type - kh16
   setCurrent(0);
@@ -692,7 +692,7 @@ export async function dataObjectToSpreadsheetData(
   dataObjects?.forEach((obj) => {
     const flatData = {};
     requestedFields.forEach((field) => {
-      flatData[fieldMeta.data[field].rename] = getFieldByName(obj, field);
+      flatData[fieldMeta.data[field].rename!] = getFieldByName(obj, field);
     });
     spreadsheetData.push(flatData);
   });

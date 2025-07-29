@@ -78,7 +78,7 @@ interface Props extends IRemoteTargetAndZone {
 }
 
 export interface ICountProps { // TODO - kh16 to change 
-  count: number|null;
+  count: number;
   setCount: Dispatch<React.SetStateAction<number | null>>;
 }
 
@@ -132,7 +132,7 @@ export function RemoteTable(props: Props) {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(getPageSize);
   const [totalSize, setTotalSize] = useState<number>(0);
-  const [count, setCount] = useState<number | null>(null);
+  const [count, setCount] = useState<number>(0);
 
   // filtering/sorting
   const [filter, setFilter] = useState<object | undefined>({});
