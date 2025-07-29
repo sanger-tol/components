@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Dispatch, useState } from "react";
+import { useState } from "react";
 import { Tabs, Progress } from "rsuite";
 import { CodeBlock } from "react-code-blocks";
 import {
@@ -13,18 +13,19 @@ import {
   PopUpMessage,
   TsDataSource,
   copyToClipboard,
-  progressBar,
+  fetchSpreadSheetDataObjects,
   exportDataToSpreadsheet,
   dataObjectToSpreadsheetData,
   IInlineEdit,
   ICountProps,
+  FieldMeta,
 } from "..";
 
 interface Props {
   size: string;
   open: boolean;
   setOpen: any;
-  objectType?: string;
+  objectType: string;
   filter?: any;
 
   source?: string;
@@ -32,13 +33,7 @@ interface Props {
   requestedFields: string[] | string;
   totalSize: number;
   title: IInlineEdit | undefined;
-  fieldMeta: any;
-}
-
-export interface IProgressThreshold {
-  setCurrent: Dispatch<React.SetStateAction<number>>;
-  setPercentageComplete: Dispatch<React.SetStateAction<number>>;
-  setSecondsElapsed: Dispatch<React.SetStateAction<number>>;
+  fieldMeta: FieldMeta;
 }
 
 export function DownloadModal(props: Props & ICountProps) {
@@ -55,7 +50,6 @@ export function DownloadModal(props: Props & ICountProps) {
     fieldMeta,
     count,
   } = props;
-  console.log();
   const [clicked, isClicked] = useState<boolean>(false);
   const [current, setCurrent] = useState<number>(0);
   const [percentageComplete, setPercentageComplete] = useState<number>(0);
@@ -109,26 +103,32 @@ tol data \
   };
 
   const onDownloadSpreadsheet = async () => {
-    await progressBar(
+    await fetchSpreadSheetDataObjects(
       {
-        objectType: objectType || "",
+        objectType: objectType,
         filter,
         requestedFields: requestedFields,
       },
       { setCurrent, setPercentageComplete, setSecondsElapsed },
       dataSource,
       count
-    )
-    .then((response) => {
+    ).then((response) => {
       dataObjectToSpreadsheetData(
         response,
         requestedFields.split(","),
         fieldMeta
-      )
-      .then((info) => {
+      ).then((info) => {
         exportDataToSpreadsheet(info, title);
       });
     });
+  };
+
+  const converterForElapsedTime = (secondsElapsed:number):string => {
+    const minutes = Math.floor((secondsElapsed % 3600) / 60)
+      .toString()
+      .padStart(2, "0");
+    const seconds = (secondsElapsed % 60).toString().padStart(2, "0");
+    return `${minutes}:${seconds}`;
   };
 
   return (
@@ -156,7 +156,7 @@ tol data \
                 }
               />
             </div>
-            {clicked ? (
+            {clicked && (
               <>
                 <Progress.Line
                   percent={percentageComplete}
@@ -164,24 +164,17 @@ tol data \
                 />
                 <div style={{ textAlign: "center" }}>
                   <span>
-                    {percentageComplete !== 100 ? (
+                    {percentageComplete !== 100 && (
                       <>
                         {current}/{count}
                       </>
-                    ) : (
-                      <></>
                     )}
                   </span>
                   <span style={{ marginLeft: "10px" }}>
-                    {Math.floor((secondsElapsed % 3600) / 60)
-                      .toString()
-                      .padStart(2, "0")}
-                    :{(secondsElapsed % 60).toString().padStart(2, "0")}
+                    {converterForElapsedTime(secondsElapsed)}
                   </span>
                 </div>
               </>
-            ) : (
-              <></>
             )}
           </Tabs.Tab>
           <Tabs.Tab eventKey="2" title="SDK">

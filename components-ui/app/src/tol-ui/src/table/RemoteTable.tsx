@@ -78,7 +78,7 @@ interface Props extends IRemoteTargetAndZone {
 }
 
 export interface ICountProps { // TODO - kh16 to change 
-  count: number | null;
+  count: number|null;
   setCount: Dispatch<React.SetStateAction<number | null>>;
 }
 

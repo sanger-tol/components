@@ -652,17 +652,17 @@ export async function getActions(
   return actionsList;
 }
 
-export async function progressBar(
+export async function fetchSpreadSheetDataObjects(
   { objectType, filter, requestedFields }: IGetList,
   { setCurrent, setPercentageComplete, setSecondsElapsed }: IProgressThreshold,
-  datasource: TsDataSource,
-  count
+  dataSource: TsDataSource,
+  count: number | null
 ) {
   const results: any[] = []; // TODO: add type - kh16
   setCurrent(0);
   setSecondsElapsed(0);
   setPercentageComplete(0);
-  const ds = datasource.getListByCursor({
+  const ds = dataSource.getListByCursor({
     objectType: objectType,
     filter: filter,
     requestedFields: requestedFields,
@@ -686,7 +686,7 @@ export async function progressBar(
 export async function dataObjectToSpreadsheetData(
   dataObjects: TDataObjectListOrNull,
   requestedFields: string[],
-  fieldMeta: any
+  fieldMeta: FieldMeta
 ) {
   const spreadsheetData: any[] = [];
   dataObjects?.forEach((obj) => {
