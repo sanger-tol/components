@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, Progress } from "rsuite";
 import { CodeBlock } from "react-code-blocks";
 import {
@@ -13,7 +13,6 @@ import {
   PopUpMessage,
   TsDataSource,
   copyToClipboard,
-  fetchSpreadSheetDataObjects,
   exportDataToSpreadsheet,
   dataObjectToSpreadsheetData,
   IInlineEdit,
@@ -32,7 +31,6 @@ interface Props {
   source?: string;
   dataSource: TsDataSource;
   requestedFields: string[] | string;
-  totalSize: number;
   title: IInlineEdit | undefined;
   fieldMeta: FieldMeta;
   setDownloadInProgress: (downloadInProgress: boolean) => void;
@@ -47,7 +45,6 @@ export function DownloadModal(props: Props & ICountProps) {
     filter,
     source,
     dataSource,
-    totalSize,
     title,
     fieldMeta,
     count,
@@ -57,7 +54,7 @@ export function DownloadModal(props: Props & ICountProps) {
   const [current, setCurrent] = useState<number>(0);
   const [percentageComplete, setPercentageComplete] = useState<number>(0);
   const [secondsElapsed, setSecondsElapsed] = useState<number>(0);
-  const [stopDownload, setStopDownload] = useState<boolean>(false);
+  let [stopDownload, setStopDownload] = useState<boolean>(false);
   const requestedFields = Array.isArray(props.requestedFields)
     ? props.requestedFields.join(",")
     : props.requestedFields;
@@ -106,30 +103,59 @@ tol data \
     });
   };
 
+  const fetchSpreadSheetDataObjects = async (gen: AsyncGenerator) => {
+    const results: any[] = []; // TODO: add type - kh16
+
+    for await (const item of gen) {
+      setCurrent((prev) => {
+        const next = prev + 1;
+        const percentage = Math.floor((next / count) * 100);
+        setPercentageComplete(percentage);
+        results.push(item);
+        return next;
+      });
+      if (stopDownload) throw Error();
+    }
+    return results;
+  };
+
   const onDownloadSpreadsheet = async () => {
     setDownloadInProgress(true);
-    await fetchSpreadSheetDataObjects(
-      {
-        objectType: objectType,
-        filter,
-        requestedFields: requestedFields,
-      },
-      { setCurrent, setPercentageComplete, setSecondsElapsed },
-      dataSource,
-      count
-    ).then((response) => {
-      dataObjectToSpreadsheetData(
-        response,
-        requestedFields.split(","),
-        fieldMeta
-      )
-        .then((info) => {
-          exportDataToSpreadsheet(info, title);
-        })
-        .finally(() => {
-          setDownloadInProgress(false);
-        });
+    setCurrent(0);
+    setSecondsElapsed(0);
+    setPercentageComplete(0);
+
+    const gen = dataSource.getListByCursor({
+      objectType: objectType,
+      filter: filter,
+      requestedFields: requestedFields,
     });
+    const interval = setInterval(() => {
+      setSecondsElapsed((prev) => prev + 1);
+    }, 1000);
+
+    fetchSpreadSheetDataObjects(gen)
+      .then((results) => {
+        dataObjectToSpreadsheetData(
+          results,
+          requestedFields.split(","),
+          fieldMeta
+        )
+          .then((info) => {
+            exportDataToSpreadsheet(info, title);
+          })
+          .finally(() => {
+            setDownloadInProgress(false);
+          });
+      })
+      .catch(() => {
+        setStopDownload(false);
+        setDownloadInProgress(false);
+        isClicked(false);
+      })
+      .finally(() => {
+        clearInterval(interval);
+      })
   };
 
   const MinimizeButton = (
@@ -153,45 +179,47 @@ tol data \
         <Tabs defaultActiveKey="1">
           <Tabs.Tab eventKey="1" title="Spreadsheet">
             <div className="tol-download-modal-body">
-              <Button
-                type="success"
-                text="Download as Spreadsheet"
-                onClick={() => {
-                  onDownloadSpreadsheet();
-                  setOpen(true);
-                  isClicked(true);
-                }}
-                icon="download"
-                disabledTooltip={
-                  totalSize >= 1
-                    ? "Only 10,000 results can currently be downloaded as a spreadsheet."
-                    : undefined
-                }
-                disabled={
-                  totalSize >= 100000 || (clicked && percentageComplete !== 100)
-                }
-              />
-            </div>
-            {clicked && (
-              <>
-                <Progress.Line
-                  percent={percentageComplete}
-                  status={percentageComplete === 100 ? "success" : "active"}
+              {clicked ? (
+                <>
+                  <Button
+                    type="error"
+                    text="Stop Download"
+                    onClick={() => {
+                      stopDownload = true;
+                      setStopDownload(true);
+                      isClicked(true);
+                    }}
+                    icon="stop"
+                  />
+                  <Progress.Line
+                    percent={percentageComplete}
+                    status={percentageComplete === 100 ? "success" : "active"}
+                  />
+                  <div style={{ textAlign: "center" }}>
+                    <span>
+                      {percentageComplete !== 100 && (
+                        <>
+                          {current}/{count}
+                        </>
+                      )}
+                    </span>
+                    <span style={{ marginLeft: "10px" }}>
+                      {converterForElapsedTime(secondsElapsed)}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <Button
+                  type="success"
+                  text="Download as Spreadsheet"
+                  onClick={() => {
+                    onDownloadSpreadsheet();
+                    isClicked(true);
+                  }}
+                  icon="download"
                 />
-                <div style={{ textAlign: "center" }}>
-                  <span>
-                    {percentageComplete !== 100 && (
-                      <>
-                        {current}/{count}
-                      </>
-                    )}
-                  </span>
-                  <span style={{ marginLeft: "10px" }}>
-                    {converterForElapsedTime(secondsElapsed)}
-                  </span>
-                </div>
-              </>
-            )}
+              )}
+            </div>
           </Tabs.Tab>
           <Tabs.Tab eventKey="2" title="SDK">
             <div className="tol-code-block">

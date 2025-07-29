@@ -22,7 +22,7 @@ import {
   StatusMessage,
   colours,
   TsDataSource,
-  IProgressThreshold,
+  IDownloadProgressState,
   IGetList,
   getFieldByName,
   TDataObjectListOrNull,
@@ -654,9 +654,14 @@ export async function getActions(
 
 export async function fetchSpreadSheetDataObjects(
   { objectType, filter, requestedFields }: IGetList,
-  { setCurrent, setPercentageComplete, setSecondsElapsed }: IProgressThreshold,
+  {
+    setCurrent,
+    setPercentageComplete,
+    setSecondsElapsed,
+    stopDownload,
+  }: IDownloadProgressState,
   dataSource: TsDataSource,
-  count: number,
+  count: number
 ) {
   const results: any[] = []; // TODO: add type - kh16
   setCurrent(0);
@@ -670,17 +675,20 @@ export async function fetchSpreadSheetDataObjects(
   const interval = setInterval(() => {
     setSecondsElapsed((prev) => prev + 1);
   }, 1000);
-    for await (const item of ds) {
-      setCurrent((prev) => {
-        const next = prev + 1;
-        const percentage = Math.floor((next / count) * 100);
-        setPercentageComplete(percentage);
-        results.push(item);
-        return next;
-      });
-    }
-    clearInterval(interval);
-    return results;
+
+  for await (const item of ds) {
+    setCurrent((prev) => {
+      const next = prev + 1;
+      const percentage = Math.floor((next / count) * 100);
+      setPercentageComplete(percentage);
+      results.push(item);
+      return next;
+    });
+    console.log(stopDownload);
+    if (stopDownload) throw Error();
+  }
+  clearInterval(interval);
+  return results;
 }
 
 export async function dataObjectToSpreadsheetData(
