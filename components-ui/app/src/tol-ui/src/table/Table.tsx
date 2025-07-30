@@ -131,6 +131,7 @@ export function Table(props: Props) {
     utilityBarConfig = {},
     contents,
     groupBy,
+    downloadInProgress,
     /* eslint-enable */
   } = props;
   const wrapperId = "tol-table-wrapper-" + id;
@@ -248,6 +249,7 @@ export function Table(props: Props) {
         ? "Must have at least one row to download."
         : undefined,
     outline: true,
+    loading: downloadInProgress
   } : {
     visible: false,
   };

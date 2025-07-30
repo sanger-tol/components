@@ -62,6 +62,13 @@ export function DownloadModal(props: Props) {
   const [stopDownloadLoading, setStopDownloadLoading] = useState<boolean>(false);
   const stopDownloadRef = useRef<boolean>(false);
 
+  // nmj: 
+  // 4 'frozen' states for objectType, filter, requestedFields, totalSize (call these e.g. frozenObjectType)
+  // 1 useEffect to update these states when the props change (look for changes in objectType, filter, and requestedFields, totalSize)
+  // --- deepCopy used on filter and requestedFields to avoid mutation issues
+  // --- the change should only happen when a download is not in progress
+  // use the frozen states for the generator call and the totalSize below.
+
   useEffect(() => {
     stopDownloadRef.current = stopDownload;
   }, [stopDownload]);
@@ -240,6 +247,12 @@ tol data \
                   </div>
                 </div>
               }
+              {downloadInProgress && (
+                <div className="tol-download-progress-message">
+                  Your spreadsheet download is in progress. Please feel free to minimize this window,
+                  but do not refresh the page.
+                </div>
+              )}
             </div>
           </Tabs.Tab>
           <Tabs.Tab eventKey="2" title="SDK">

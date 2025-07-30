@@ -308,6 +308,8 @@ export function RemoteTable(props: Props) {
     if (initialLoad) {
       return <Placeholder loader height={height} />;
     }
+
+    // nmj: can be removed once the download modal is refactored
     if (downloadInProgress) {
       return (
         <Placeholder

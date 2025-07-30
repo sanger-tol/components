@@ -53,7 +53,15 @@ export function Button(props: IButton) {
 
   const outlineClass = outline ? "-outline" : "";
 
-  const loader = <TolLoader size="sm" />;
+  const Loader = () => {
+    if (!loading) return null;
+  
+    return (
+      <span style={{ marginRight: text || icon ? 6 : 0 }}>
+        <TolLoader size="sm" />
+      </span>
+    );
+  };
 
   const button = (
     <>
@@ -61,7 +69,7 @@ export function Button(props: IButton) {
         <RsButton
           id={id}
           onClick={onClick}
-          disabled={disabled || loading}
+          disabled={disabled}
           active={active}
           className={
             `icon-button-${type ||
@@ -70,29 +78,24 @@ export function Button(props: IButton) {
           }
           data-testid={testid}
         >
-          {loading ? (
-            loader
+          {Loader()}
+          {position === "right" ? (
+            <>
+              {text && <span style={{ marginRight: icon ? "6px" : "0px" }}>{text}</span>}
+              {icon && (
+                <div>
+                  <Icon icon={icon} size={size} />
+                </div>
+              )}
+            </>
           ) : (
             <>
-              {position === "right" ? (
-                <>
-                  {text && <span style={{ marginRight: icon ? "6px" : "0px" }}>{text}</span>}
-                  {icon && (
-                    <div>
-                      <Icon icon={icon} size={size} />
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
-                  {icon && (
-                    <div>
-                      <Icon icon={icon} size={size} />
-                    </div>
-                  )}
-                  {text && <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>}
-                </>
+              {icon && (
+                <div>
+                  <Icon icon={icon} size={size} />
+                </div>
               )}
+              {text && <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>}
             </>
           )}
         </RsButton>
