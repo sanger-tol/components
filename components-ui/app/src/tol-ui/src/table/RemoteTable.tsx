@@ -394,6 +394,7 @@ export function RemoteTable(props: Props) {
         totalSize={totalSize}
         count={count}
         setCount={setCount}
+        downloadInProgress={downloadInProgress}
         setDownloadInProgress={setDownloadInProgress}
         rowCounter={
           <RowCounter

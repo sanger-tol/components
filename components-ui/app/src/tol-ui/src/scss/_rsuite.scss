@@ -339,11 +339,12 @@
 
 // tabs
 .rs-nav-item {
-  color: var(--tol-primary-light);
+  color: var(--tol-text);
 }
 
 .rs-nav-item.rs-nav-item-active {
-  color: var(--tol-primary-dark);
+  color: var(--tol-primary);
+  font-weight: bolder;
 }
 
 .rs-nav-tabs .rs-nav-item:not(.rs-nav-item-active):hover {

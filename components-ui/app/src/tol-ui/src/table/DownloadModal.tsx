@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Tabs, Progress } from "rsuite";
 import { CodeBlock } from "react-code-blocks";
 import {
@@ -33,6 +33,8 @@ interface Props {
   requestedFields: string[] | string;
   title: IInlineEdit | undefined;
   fieldMeta: FieldMeta;
+
+  downloadInProgress: boolean;
   setDownloadInProgress: (downloadInProgress: boolean) => void;
 }
 
@@ -48,16 +50,24 @@ export function DownloadModal(props: Props & ICountProps) {
     title,
     fieldMeta,
     count,
+    downloadInProgress,
     setDownloadInProgress,
   } = props;
-  const [clicked, isClicked] = useState<boolean>(false);
   const [current, setCurrent] = useState<number>(0);
   const [percentageComplete, setPercentageComplete] = useState<number>(0);
   const [secondsElapsed, setSecondsElapsed] = useState<number>(0);
-  let [stopDownload, setStopDownload] = useState<boolean>(false);
+  const [stopDownload, setStopDownload] = useState<boolean>(false);
+  const [stopDownloadLoading, setStopDownloadLoading] = useState<boolean>(false);
+  const stopDownloadRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    stopDownloadRef.current = stopDownload;
+  }, [stopDownload]);
+
   const requestedFields = Array.isArray(props.requestedFields)
     ? props.requestedFields.join(",")
     : props.requestedFields;
+
   const stringifyFilter = (filter: any) => {
     if (!filter) {
       return "None";
@@ -114,7 +124,7 @@ tol data \
         results.push(item);
         return next;
       });
-      if (stopDownload) throw Error();
+      if (stopDownloadRef.current) throw Error();
     }
     return results;
   };
@@ -130,6 +140,7 @@ tol data \
       filter: filter,
       requestedFields: requestedFields,
     });
+
     const interval = setInterval(() => {
       setSecondsElapsed((prev) => prev + 1);
     }, 1000);
@@ -149,9 +160,10 @@ tol data \
           });
       })
       .catch(() => {
-        setStopDownload(false);
         setDownloadInProgress(false);
-        isClicked(false);
+        setStopDownloadLoading(false);
+        setStopDownload(false);
+        stopDownloadRef.current = false;
       })
       .finally(() => {
         clearInterval(interval);
@@ -179,15 +191,16 @@ tol data \
         <Tabs defaultActiveKey="1">
           <Tabs.Tab eventKey="1" title="Spreadsheet">
             <div className="tol-download-modal-body">
-              {clicked ? (
+              {downloadInProgress ? (
                 <>
                   <Button
                     type="error"
-                    text="Stop Download"
+                    text={
+                      stopDownloadLoading ? "Stopping..." : "Stop Download"
+                    }
                     onClick={() => {
-                      stopDownload = true;
                       setStopDownload(true);
-                      isClicked(true);
+                      setStopDownloadLoading(true);
                     }}
                     icon="stop"
                   />
@@ -214,7 +227,6 @@ tol data \
                   text="Download as Spreadsheet"
                   onClick={() => {
                     onDownloadSpreadsheet();
-                    isClicked(true);
                   }}
                   icon="download"
                 />
