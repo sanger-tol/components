@@ -249,8 +249,8 @@ tol data \
               }
               {downloadInProgress && (
                 <div className="tol-download-progress-message">
-                  Your spreadsheet download is in progress. Please feel free to minimize this window,
-                  but do not refresh the page.
+                  Your spreadsheet download is in progress. Please feel free to minimize this window, and continue using this page, 
+                  but do not refresh the window.
                 </div>
               )}
             </div>
