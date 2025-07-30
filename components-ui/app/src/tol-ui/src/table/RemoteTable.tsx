@@ -310,15 +310,15 @@ export function RemoteTable(props: Props) {
     }
 
     // nmj: can be removed once the download modal is refactored
-    if (downloadInProgress) {
-      return (
-        <Placeholder
-          download
-          height={height}
-          message={"Download in Progress..."}
-        />
-      );
-    }
+    // if (downloadInProgress) {
+    //   return (
+    //     <Placeholder
+    //       download
+    //       height={height}
+    //       message={"Download in Progress..."}
+    //     />
+    //   );
+    // }
 
     return null;
   };
