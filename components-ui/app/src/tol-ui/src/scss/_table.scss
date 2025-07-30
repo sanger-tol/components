@@ -341,8 +341,7 @@
   background-color: var(--tol-primary-translucent) !important;
 }
 
-// Download modal
-
+// download modal
 .tol-download-modal-body {
   display: flex;
   justify-content: center;
@@ -371,6 +370,18 @@
     color: var(--tol-text);
     background-color: var(--tol-bg-dark) !important;
     overflow: auto;
+  }
+}
+
+.tol-download-progress-figures {
+  text-align: center;
+
+  .tol-download-complete {
+    color: var(--tol-primary);
+    margin-top: 10px;
+  }
+  .tol-download-figure-spacer {
+    margin-left: 12px;
   }
 }
 

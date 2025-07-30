@@ -237,7 +237,7 @@ export function Table(props: Props) {
     visible: true,
     position: "right",
     type: "primary",
-    tooltip: "Download",
+    tooltip: "Download the tables current state in various formats",
     onClick: () => {
       setDownloadOpen(!downloadOpen);
     },

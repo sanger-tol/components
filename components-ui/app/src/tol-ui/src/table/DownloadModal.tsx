@@ -54,9 +54,10 @@ export function DownloadModal(props: Props) {
     downloadInProgress,
     setDownloadInProgress,
   } = props;
-  const [current, setCurrent] = useState<number>(0);
+  const [fetchCount, setFetchCount] = useState<number>(0);
   const [percentageComplete, setPercentageComplete] = useState<number>(0);
   const [secondsElapsed, setSecondsElapsed] = useState<number>(0);
+  const [downloadComplete, setDownloadComplete] = useState<boolean>(false);
   const [stopDownload, setStopDownload] = useState<boolean>(false);
   const [stopDownloadLoading, setStopDownloadLoading] = useState<boolean>(false);
   const stopDownloadRef = useRef<boolean>(false);
@@ -118,7 +119,7 @@ tol data \
     const results: any[] = []; // TODO: add type - kh16
 
     for await (const item of gen) {
-      setCurrent((prev) => {
+      setFetchCount((prev) => {
         const next = prev + 1;
         const percentage = Math.floor((next / totalSize) * 100);
         setPercentageComplete(percentage);
@@ -132,7 +133,8 @@ tol data \
 
   const onDownloadSpreadsheet = async () => {
     setDownloadInProgress(true);
-    setCurrent(0);
+    setDownloadComplete(false);
+    setFetchCount(0);
     setSecondsElapsed(0);
     setPercentageComplete(0);
 
@@ -157,10 +159,12 @@ tol data \
             exportDataToSpreadsheet(info, title);
           })
           .finally(() => {
+            setDownloadComplete(true);
             setDownloadInProgress(false);
           });
       })
       .catch(() => {
+        setDownloadComplete(false);
         setDownloadInProgress(false);
         setStopDownloadLoading(false);
         setStopDownload(false);
@@ -174,7 +178,9 @@ tol data \
   const MinimizeButton = (
     <Button
       type="warning"
-      onClick={() => setOpen(false)}
+      onClick={
+        () => setOpen(false)
+      }
       icon="minus"
       position="right"
     />
@@ -209,18 +215,6 @@ tol data \
                     percent={percentageComplete}
                     status={percentageComplete === 100 ? "success" : "active"}
                   />
-                  <div style={{ textAlign: "center" }}>
-                    <span>
-                      {percentageComplete !== 100 && (
-                        <>
-                          {current}/{totalSize}
-                        </>
-                      )}
-                    </span>
-                    <span style={{ marginLeft: "10px" }}>
-                      {converterForElapsedTime(secondsElapsed)}
-                    </span>
-                  </div>
                 </>
               ) : (
                 <Button
@@ -232,6 +226,20 @@ tol data \
                   icon="download"
                 />
               )}
+              {(downloadInProgress || downloadComplete) &&
+                <div className="tol-download-progress-figures">
+                  <div className={downloadComplete ? "tol-download-complete" : ""}>
+                    {downloadInProgress && (
+                      <>
+                        {fetchCount}/{totalSize}
+                        <span className="tol-download-figure-spacer" />
+                      </>
+                    )}
+                    {downloadComplete && "Last download completed in "}
+                    {converterForElapsedTime(secondsElapsed)}
+                  </div>
+                </div>
+              }
             </div>
           </Tabs.Tab>
           <Tabs.Tab eventKey="2" title="SDK">
