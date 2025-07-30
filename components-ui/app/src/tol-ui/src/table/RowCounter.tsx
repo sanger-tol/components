@@ -5,17 +5,24 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect } from "react";
-import { API_METHODS, ICountProps, IRemoteTarget } from "..";
+import { API_METHODS, IRemoteTarget } from "..";
 
 interface Props extends IRemoteTarget {
   totalSize: number;
+  setTotalSize: (totalSize: number) => void;
   filter?: object;
   loading: boolean;
 }
 
-export function RowCounter(props: Props & ICountProps) {
-  let { setCount, count, dataSource, objectType, totalSize, filter, loading } =
-    props;
+export function RowCounter(props: Props) {
+  let {
+    totalSize,
+    setTotalSize,
+    dataSource,
+    objectType,
+    filter,
+    loading,
+  } = props;
 
   const fetchRowTotal = () => {
     dataSource
@@ -27,7 +34,7 @@ export function RowCounter(props: Props & ICountProps) {
         },
       })
       .then((res: any) => {
-        setCount(res.data.meta.total);
+        setTotalSize(res.data.meta.total);
       });
   };
 
@@ -36,7 +43,7 @@ export function RowCounter(props: Props & ICountProps) {
       if (totalSize === 10000) {
         fetchRowTotal();
       } else {
-        setCount(totalSize);
+        setTotalSize(totalSize);
       }
     }
   }, [loading]);
@@ -51,7 +58,7 @@ export function RowCounter(props: Props & ICountProps) {
     return total.toLocaleString() + " Rows";
   };
 
-  if (count === null) return <></>;
+  if (totalSize === null) return <></>;
 
-  return <span>{addTotalText(count)}</span>;
+  return <span>{addTotalText(totalSize)}</span>;
 }

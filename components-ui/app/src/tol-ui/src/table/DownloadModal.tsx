@@ -16,7 +16,6 @@ import {
   exportDataToSpreadsheet,
   dataObjectToSpreadsheetData,
   IInlineEdit,
-  ICountProps,
   FieldMeta,
   converterForElapsedTime,
 } from "..";
@@ -36,9 +35,11 @@ interface Props {
 
   downloadInProgress: boolean;
   setDownloadInProgress: (downloadInProgress: boolean) => void;
+
+  totalSize: number;
 }
 
-export function DownloadModal(props: Props & ICountProps) {
+export function DownloadModal(props: Props) {
   const {
     size,
     open,
@@ -49,7 +50,7 @@ export function DownloadModal(props: Props & ICountProps) {
     dataSource,
     title,
     fieldMeta,
-    count,
+    totalSize,
     downloadInProgress,
     setDownloadInProgress,
   } = props;
@@ -119,7 +120,7 @@ tol data \
     for await (const item of gen) {
       setCurrent((prev) => {
         const next = prev + 1;
-        const percentage = Math.floor((next / count) * 100);
+        const percentage = Math.floor((next / totalSize) * 100);
         setPercentageComplete(percentage);
         results.push(item);
         return next;
@@ -212,7 +213,7 @@ tol data \
                     <span>
                       {percentageComplete !== 100 && (
                         <>
-                          {current}/{count}
+                          {current}/{totalSize}
                         </>
                       )}
                     </span>

@@ -29,7 +29,6 @@ import {
   IButton,
   IDropdownButtons,
   IRemoteTarget,
-  ICountProps,
   useBoardPrivilege,
   PRIVILEGE,
 } from "..";
@@ -50,6 +49,7 @@ interface Props extends IRemoteTarget {
   pageSize: number | NumRows;
   setPageSize: any;
   totalSize: number;
+  setTotalSize?: (totalSize: number) => void;
   rowCounter?: JSX.Element;
   displaySource?: boolean;
 
@@ -87,7 +87,7 @@ interface Props extends IRemoteTarget {
   setDownloadInProgress: (downloadInProgress: boolean) => void;
 }
 
-export function Table(props: Props & ICountProps) {
+export function Table(props: Props) {
   const { Column, HeaderCell, Cell } = RSTable;
   let {
     /* eslint-disable */
@@ -313,7 +313,7 @@ export function Table(props: Props & ICountProps) {
             ? [
               <span className="tol-page-size">
                 {!smallBreakpoint &&
-                  privilege === PRIVILEGE.BOARD.EDITABLE && (
+                  (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
                     <SelectPicker
                       value={pageSize}
                       onChange={setPageSize}
@@ -333,7 +333,7 @@ export function Table(props: Props & ICountProps) {
                 className="tol-pagination"
                 size="sm"
                 layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
-                total={totalSize}
+                total={totalSize <= 10000 ? totalSize : 10000}
                 activePage={page}
                 onChangePage={setPage}
                 limit={pageSize}

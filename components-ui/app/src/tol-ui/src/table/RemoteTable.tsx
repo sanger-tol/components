@@ -77,11 +77,6 @@ interface Props extends IRemoteTargetAndZone {
   debug?: boolean;
 }
 
-export interface ICountProps {
-  // TODO - kh16 to change
-  count: number;
-  setCount: Dispatch<React.SetStateAction<number | null>>;
-}
 
 export function RemoteTable(props: Props) {
   const {
@@ -133,7 +128,6 @@ export function RemoteTable(props: Props) {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(getPageSize);
   const [totalSize, setTotalSize] = useState<number>(0);
-  const [count, setCount] = useState<number>(0);
 
   // filtering/sorting
   const [filter, setFilter] = useState<object | undefined>({});
@@ -392,15 +386,13 @@ export function RemoteTable(props: Props) {
         pageSize={pageSize}
         setPageSize={setPageSize}
         totalSize={totalSize}
-        count={count}
-        setCount={setCount}
+        setTotalSize={setTotalSize}
         downloadInProgress={downloadInProgress}
         setDownloadInProgress={setDownloadInProgress}
         rowCounter={
           <RowCounter
-            setCount={setCount}
-            count={count}
             totalSize={totalSize}
+            setTotalSize={setTotalSize}
             filter={filter}
             loading={loading}
             {...props}
