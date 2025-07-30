@@ -42,7 +42,7 @@ export function UtilityBar(props: IUtilityBar) {
           if (button) {
             if ("dropdownButtons" in button) {
               return (
-                <div style={{ float: "right", marginLeft: "6px" }} key={index}>
+                <div style={{ float: "right" }} key={index}>
                   <DropdownButtons {...button} />
                 </div>
               );
