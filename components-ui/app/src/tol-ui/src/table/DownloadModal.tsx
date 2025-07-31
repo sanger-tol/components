@@ -66,12 +66,6 @@ export function DownloadModal(props: Props) {
   const [frozenObjectType, setFrozenObjectType] = useState<string>(objectType);
   const [frozenFilter, setFrozenFilter] = useState<object>(deepCopy(filter));
   const [frozenTotalSize, setFrozenTotalSize] = useState<number>(totalSize);
-  // nmj:
-  // 4 'frozen' states for objectType, filter, requestedFields, totalSize (call these e.g. frozenObjectType)
-  // 1 useEffect to update these states when the props change (look for changes in objectType, filter, and requestedFields, totalSize)
-  // --- deepCopy used on filter and requestedFields to avoid mutation issues
-  // --- the change should only happen when a download is not in progress
-  // use the frozen states for the generator call and the totalSize below.
 
   useEffect(() => {
     stopDownloadRef.current = stopDownload;
@@ -85,7 +79,7 @@ export function DownloadModal(props: Props) {
     string[] | string
   >(deepCopy(requestedFields));
 
-useEffect(() => {
+  useEffect(() => {
     if (!downloadInProgress) {
       setFrozenObjectType(deepCopy(objectType));
       setFrozenFilter(deepCopy(filter));
@@ -188,11 +182,11 @@ tol data \
           });
       })
       .catch(() => {
+        setStopDownload(false);
+        stopDownloadRef.current = false;
         setDownloadComplete(false);
         setDownloadInProgress(false);
         setStopDownloadLoading(false);
-        setStopDownload(false);
-        stopDownloadRef.current = false;
       })
       .finally(() => {
         clearInterval(interval);
@@ -244,6 +238,8 @@ tol data \
                     onDownloadSpreadsheet();
                   }}
                   icon="download"
+                  disabled={totalSize >= 50000}
+                  disabledTooltip="Download limit of 50,000 rows."
                 />
               )}
               {(downloadInProgress || downloadComplete) && (

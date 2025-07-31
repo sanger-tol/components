@@ -77,7 +77,6 @@ interface Props extends IRemoteTargetAndZone {
   debug?: boolean;
 }
 
-
 export function RemoteTable(props: Props) {
   const {
     id,
@@ -308,18 +307,6 @@ export function RemoteTable(props: Props) {
     if (initialLoad) {
       return <Placeholder loader height={height} />;
     }
-
-    // nmj: can be removed once the download modal is refactored
-    // if (downloadInProgress) {
-    //   return (
-    //     <Placeholder
-    //       download
-    //       height={height}
-    //       message={"Download in Progress..."}
-    //     />
-    //   );
-    // }
-
     return null;
   };
 

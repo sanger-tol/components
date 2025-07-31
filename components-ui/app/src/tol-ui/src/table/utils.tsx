@@ -22,8 +22,6 @@ import {
   StatusMessage,
   colours,
   TsDataSource,
-  IDownloadProgressState,
-  IGetList,
   getFieldByName,
   TDataObjectListOrNull,
 } from "..";
