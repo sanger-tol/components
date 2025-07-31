@@ -16,4 +16,3 @@ export * from "./Plate";
 export * from "./User";
 export * from "./Visualisation";
 export * from "./Privilege";
-export * from "./Table";
