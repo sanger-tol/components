@@ -30,7 +30,7 @@ interface Props {
 
   source?: string;
   dataSource: TsDataSource;
-  requestedFields: string[] | string;
+  requestedFields: string[];
   title: IInlineEdit | undefined;
   fieldMeta: FieldMeta;
 
@@ -49,6 +49,7 @@ export function DownloadModal(props: Props) {
     filter,
     source,
     dataSource,
+    requestedFields,
     title,
     fieldMeta,
     totalSize,
@@ -66,25 +67,24 @@ export function DownloadModal(props: Props) {
   const [frozenObjectType, setFrozenObjectType] = useState<string>(objectType);
   const [frozenFilter, setFrozenFilter] = useState<object>(deepCopy(filter));
   const [frozenTotalSize, setFrozenTotalSize] = useState<number>(totalSize);
+  const [frozenRequestedFields, setFrozenRequestedFields] = useState<string[]>(
+    deepCopy(requestedFields)
+  );
 
   useEffect(() => {
     stopDownloadRef.current = stopDownload;
   }, [stopDownload]);
 
-  const requestedFields = Array.isArray(props.requestedFields)
-    ? props.requestedFields.join(",")
-    : props.requestedFields;
-
-  const [frozenRequestedFields, setFrozenRequestedFields] = useState<
-    string[] | string
-  >(deepCopy(requestedFields));
+  const stringifyRequestedFields = (requestedFields: string[]) => {
+    return requestedFields.join(",");
+  };
 
   useEffect(() => {
     if (!downloadInProgress) {
-      setFrozenObjectType(deepCopy(objectType));
+      setFrozenObjectType(objectType);
       setFrozenFilter(deepCopy(filter));
       setFrozenRequestedFields(deepCopy(requestedFields));
-      setFrozenTotalSize(deepCopy(totalSize));
+      setFrozenTotalSize(totalSize);
     }
   }, [objectType, filter, requestedFields, totalSize, stopDownload]);
 
@@ -121,7 +121,7 @@ tol data \
 --operation=list \
 --type=${objectType} \
 --filter='${JSON.stringify(filter) || '{"and":{}}'}' \
---fields=${requestedFields} \
+--fields=${stringifyRequestedFields} \
 --output=tsv 
   `;
 
@@ -159,7 +159,7 @@ tol data \
     const gen = dataSource.getListByCursor({
       objectType: frozenObjectType,
       filter: frozenFilter,
-      requestedFields: String(frozenRequestedFields),
+      requestedFields: stringifyRequestedFields(frozenRequestedFields),
     });
 
     const interval = setInterval(() => {
@@ -168,11 +168,7 @@ tol data \
 
     fetchSpreadSheetDataObjects(gen)
       .then((results) => {
-        dataObjectToSpreadsheetData(
-          results,
-          String(frozenRequestedFields).split(","),
-          fieldMeta
-        )
+        dataObjectToSpreadsheetData(results, frozenRequestedFields, fieldMeta)
           .then((info) => {
             exportDataToSpreadsheet(info, title);
           })
