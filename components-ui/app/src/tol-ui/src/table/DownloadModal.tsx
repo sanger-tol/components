@@ -170,7 +170,7 @@ tol data \
       .then((results) => {
         dataObjectToSpreadsheetData(results, frozenRequestedFields, fieldMeta)
           .then((info) => {
-            exportDataToSpreadsheet(info, title.text || frozenObjectType);
+            exportDataToSpreadsheet(info, title?.text || frozenObjectType);
           })
           .finally(() => {
             setDownloadComplete(true);
