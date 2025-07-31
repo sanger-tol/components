@@ -75,10 +75,6 @@ export function DownloadModal(props: Props) {
     stopDownloadRef.current = stopDownload;
   }, [stopDownload]);
 
-  const stringifyRequestedFields = (requestedFields: string[]) => {
-    return requestedFields.join(",");
-  };
-
   useEffect(() => {
     if (!downloadInProgress) {
       setFrozenObjectType(objectType);
@@ -87,6 +83,10 @@ export function DownloadModal(props: Props) {
       setFrozenTotalSize(totalSize);
     }
   }, [objectType, filter, requestedFields, totalSize, stopDownload]);
+
+  const stringifyRequestedFields = (requestedFields: string[]) => {
+    return requestedFields.join(",");
+  };
 
   const stringifyFilter = (filter: any) => {
     if (!filter) {
