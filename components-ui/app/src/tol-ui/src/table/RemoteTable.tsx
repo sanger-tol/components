@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useEffect, useState, Dispatch } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   ACTIONS,
   ActionCheckModal,
