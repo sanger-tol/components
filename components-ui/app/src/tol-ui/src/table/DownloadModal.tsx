@@ -18,6 +18,7 @@ import {
   IInlineEdit,
   FieldMeta,
   converterForElapsedTime,
+  deepCopy,
 } from "..";
 
 interface Props {
@@ -59,10 +60,13 @@ export function DownloadModal(props: Props) {
   const [secondsElapsed, setSecondsElapsed] = useState<number>(0);
   const [downloadComplete, setDownloadComplete] = useState<boolean>(false);
   const [stopDownload, setStopDownload] = useState<boolean>(false);
-  const [stopDownloadLoading, setStopDownloadLoading] = useState<boolean>(false);
+  const [stopDownloadLoading, setStopDownloadLoading] =
+    useState<boolean>(false);
   const stopDownloadRef = useRef<boolean>(false);
-
-  // nmj: 
+  const [frozenObjectType, setFrozenObjectType] = useState<string>(objectType);
+  const [frozenFilter, setFrozenFilter] = useState<object>(deepCopy(filter));
+  const [frozenTotalSize, setFrozenTotalSize] = useState<number>(totalSize);
+  // nmj:
   // 4 'frozen' states for objectType, filter, requestedFields, totalSize (call these e.g. frozenObjectType)
   // 1 useEffect to update these states when the props change (look for changes in objectType, filter, and requestedFields, totalSize)
   // --- deepCopy used on filter and requestedFields to avoid mutation issues
@@ -76,6 +80,19 @@ export function DownloadModal(props: Props) {
   const requestedFields = Array.isArray(props.requestedFields)
     ? props.requestedFields.join(",")
     : props.requestedFields;
+
+  const [frozenRequestedFields, setFrozenRequestedFields] = useState<
+    string[] | string
+  >(deepCopy(requestedFields));
+
+useEffect(() => {
+    if (!downloadInProgress) {
+      setFrozenObjectType(deepCopy(objectType));
+      setFrozenFilter(deepCopy(filter));
+      setFrozenRequestedFields(deepCopy(requestedFields));
+      setFrozenTotalSize(deepCopy(totalSize));
+    }
+  }, [objectType, filter, requestedFields, totalSize, stopDownload]);
 
   const stringifyFilter = (filter: any) => {
     if (!filter) {
@@ -128,7 +145,7 @@ tol data \
     for await (const item of gen) {
       setFetchCount((prev) => {
         const next = prev + 1;
-        const percentage = Math.floor((next / totalSize) * 100);
+        const percentage = Math.floor((next / frozenTotalSize) * 100);
         setPercentageComplete(percentage);
         results.push(item);
         return next;
@@ -146,9 +163,9 @@ tol data \
     setPercentageComplete(0);
 
     const gen = dataSource.getListByCursor({
-      objectType: objectType,
-      filter: filter,
-      requestedFields: requestedFields,
+      objectType: frozenObjectType,
+      filter: frozenFilter,
+      requestedFields: String(frozenRequestedFields),
     });
 
     const interval = setInterval(() => {
@@ -159,7 +176,7 @@ tol data \
       .then((results) => {
         dataObjectToSpreadsheetData(
           results,
-          requestedFields.split(","),
+          String(frozenRequestedFields).split(","),
           fieldMeta
         )
           .then((info) => {
@@ -179,15 +196,13 @@ tol data \
       })
       .finally(() => {
         clearInterval(interval);
-      })
+      });
   };
 
   const MinimizeButton = (
     <Button
       type="warning"
-      onClick={
-        () => setOpen(false)
-      }
+      onClick={() => setOpen(false)}
       icon="minus"
       position="right"
     />
@@ -209,9 +224,7 @@ tol data \
                 <>
                   <Button
                     type="error"
-                    text={
-                      stopDownloadLoading ? "Stopping..." : "Stop Download"
-                    }
+                    text={stopDownloadLoading ? "Stopping..." : "Stop Download"}
                     onClick={() => {
                       setStopDownload(true);
                       setStopDownloadLoading(true);
@@ -233,12 +246,14 @@ tol data \
                   icon="download"
                 />
               )}
-              {(downloadInProgress || downloadComplete) &&
+              {(downloadInProgress || downloadComplete) && (
                 <div className="tol-download-progress-figures">
-                  <div className={downloadComplete ? "tol-download-complete" : ""}>
+                  <div
+                    className={downloadComplete ? "tol-download-complete" : ""}
+                  >
                     {downloadInProgress && (
                       <>
-                        {fetchCount}/{totalSize}
+                        {fetchCount}/{frozenTotalSize}
                         <span className="tol-download-figure-spacer" />
                       </>
                     )}
@@ -246,11 +261,12 @@ tol data \
                     {converterForElapsedTime(secondsElapsed)}
                   </div>
                 </div>
-              }
+              )}
               {downloadInProgress && (
                 <div className="tol-download-progress-message">
-                  Your spreadsheet download is in progress. Please feel free to minimize this window, and continue using this page, 
-                  but do not refresh the window.
+                  Your spreadsheet download is in progress. Please feel free to
+                  minimize this window, and continue using this page, but do not
+                  refresh the window.
                 </div>
               )}
             </div>
