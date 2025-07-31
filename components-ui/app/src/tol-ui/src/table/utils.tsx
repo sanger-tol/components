@@ -668,9 +668,9 @@ export async function dataObjectToSpreadsheetData(
 
 export function exportDataToSpreadsheet(
   spreadsheetData: Array<Record<string, string>>,
-  boardTitle: any
+  title: string
 ) {
-  const heading = `${boardTitle.text.replace(/\s+/g, "_")}.xlsx`;
+  const heading = `${title.replace(/\s+/g, "_")}.xlsx`;
   const worksheet = XLSX.utils.json_to_sheet(spreadsheetData);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "ToLTable");
