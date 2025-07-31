@@ -35,8 +35,7 @@ import {
   useStateFallback,
   TsDataSource,
   LOCAL_API_PREFIX,
-} from '..';
-
+} from "..";
 
 interface Props extends IRemoteTargetAndZone {
   id: string;
@@ -110,13 +109,13 @@ export function RemoteTable(props: Props) {
   // data and field information
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<FieldMeta | undefined>(
-    props.fieldMeta || 
-    structureFieldMeta(
-      objectType,
-      getFieldMetaLocalStorage(id, fields),
-      undefined,
-      fields
-    )
+    props.fieldMeta ||
+      structureFieldMeta(
+        objectType,
+        getFieldMetaLocalStorage(id, fields),
+        undefined,
+        fields
+      )
   );
 
   // pagination
@@ -146,8 +145,8 @@ export function RemoteTable(props: Props) {
   // loading, error and warning info
   const [loading, setLoading] = useState<boolean>(true);
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
+  const [downloadInProgress, setDownloadInProgress] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-
 
   // row selection
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
@@ -197,7 +196,12 @@ export function RemoteTable(props: Props) {
     }
   }, [filterVisibility]);
 
-  const onModalSave = (fm: FieldMeta, actions?: string[], sortByAttribute?: string, sortByType?: string) => {
+  const onModalSave = (
+    fm: FieldMeta,
+    actions?: string[],
+    sortByAttribute?: string,
+    sortByType?: string
+  ) => {
     setFieldMeta(fm);
     resetFiltersBelow({
       id: id,
@@ -205,10 +209,14 @@ export function RemoteTable(props: Props) {
       indexOffset: -1,
     });
     setZone({ ...zone });
-    
+
     if (props.onModalSave) {
       // Add in the default sort here
-      props.onModalSave(fm, actions, createSort(sortByAttribute || "", sortByType || "asc"));
+      props.onModalSave(
+        fm,
+        actions,
+        createSort(sortByAttribute || "", sortByType || "asc")
+      );
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", fm);
     }
@@ -226,7 +234,7 @@ export function RemoteTable(props: Props) {
       page: page,
       page_size: pageSize,
       filter: filter,
-      requested_fields: (fieldMeta?.order.active || []).join(',')
+      requested_fields: (fieldMeta?.order.active || []).join(","),
     };
 
     // deal with sorting
@@ -241,7 +249,7 @@ export function RemoteTable(props: Props) {
       .custom({
         method: API_METHODS.GET,
         resource: objectType,
-        params
+        params,
       })
       .then(async (res) => {
         // error if endpoint doesn't return 200
@@ -292,7 +300,6 @@ export function RemoteTable(props: Props) {
       });
   };
 
-
   const Contents = () => {
     if (error !== "") {
       return <Placeholder errorMessage={error} height={height} />;
@@ -300,9 +307,8 @@ export function RemoteTable(props: Props) {
     if (initialLoad) {
       return <Placeholder loader height={height} />;
     }
-
     return null;
-  }
+  };
 
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
@@ -315,8 +321,8 @@ export function RemoteTable(props: Props) {
             ids: ids,
             action_name: actionName,
             object_type: objectType,
-          }
-        }
+          },
+        },
       })
       .finally(() => {
         setActionModalOpen(true);
@@ -335,7 +341,7 @@ export function RemoteTable(props: Props) {
     setLoading,
     idsWithReqNotMet,
     completeAction,
-    actions,
+    actions
   );
 
   return (
@@ -369,9 +375,13 @@ export function RemoteTable(props: Props) {
         pageSize={pageSize}
         setPageSize={setPageSize}
         totalSize={totalSize}
+        setTotalSize={setTotalSize}
+        downloadInProgress={downloadInProgress}
+        setDownloadInProgress={setDownloadInProgress}
         rowCounter={
           <RowCounter
             totalSize={totalSize}
+            setTotalSize={setTotalSize}
             filter={filter}
             loading={loading}
             {...props}
@@ -389,7 +399,7 @@ export function RemoteTable(props: Props) {
         noPagination={noPagination}
         noSorting={noSorting}
         noConfigModal={noConfigModal}
-        noDownload={(noDownload || error !== "")}
+        noDownload={noDownload || error !== ""}
         rowSelection={rowSelection}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}

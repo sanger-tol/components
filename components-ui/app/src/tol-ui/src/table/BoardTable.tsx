@@ -110,6 +110,7 @@ export function BoardTable(props: Props) {
           outline: true,
           position: "right",
           type: "primary",
+          tooltip: "Open filter config",
           onClick: () => setOpenFilters(true),
           icon: "filter",
         }],

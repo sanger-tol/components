@@ -4,20 +4,18 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import {
   Placeholder,
   useEffectUpdate,
-  PopUpMessage,
   DownloadModal,
   EntityMetaToolTip,
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
-  exportTableToSpreadsheet,
   getAllowedFields,
   getSourceColour,
   Filter,
@@ -32,9 +30,8 @@ import {
   IDropdownButtons,
   IRemoteTarget,
   useBoardPrivilege,
-  PRIVILEGE
+  PRIVILEGE,
 } from "..";
-
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
@@ -52,6 +49,7 @@ interface Props extends IRemoteTarget {
   pageSize: number | NumRows;
   setPageSize: any;
   totalSize: number;
+  setTotalSize?: (totalSize: number) => void;
   rowCounter?: JSX.Element;
   displaySource?: boolean;
 
@@ -84,6 +82,9 @@ interface Props extends IRemoteTarget {
 
   contents?: ReactNode;
   groupBy?: boolean;
+
+  downloadInProgress: boolean;
+  setDownloadInProgress: (downloadInProgress: boolean) => void;
 }
 
 export function Table(props: Props) {
@@ -130,14 +131,12 @@ export function Table(props: Props) {
     utilityBarConfig = {},
     contents,
     groupBy,
+    downloadInProgress,
     /* eslint-enable */
   } = props;
   const wrapperId = "tol-table-wrapper-" + id;
   const [open, setOpen] = useState(false);
-  const [downloading, setDownloading] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("!");
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
   const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
   noFilter = !!noFilter;
@@ -155,7 +154,7 @@ export function Table(props: Props) {
   let indeterminate = false;
   const noFieldsSelected = fieldMeta.order.active.length === 0;
 
-  const { privilege } = useBoardPrivilege()
+  const { privilege } = useBoardPrivilege();
 
   if (selectedRows.length === data.length || bulkSelect) {
     checked = true;
@@ -186,23 +185,6 @@ export function Table(props: Props) {
     }
   });
 
-  useEffect(() => {
-    success &&
-      PopUpMessage({
-        message: success,
-        type: "success",
-      });
-  }, [success]);
-
-  useEffect(() => {
-    error &&
-      error !== "!" &&
-      PopUpMessage({
-        message: error,
-        type: "error",
-      });
-  }, [error]);
-
   useEffectUpdate(() => {
     checked = false;
     setSelectedRows([]);
@@ -216,91 +198,87 @@ export function Table(props: Props) {
     disabled: selectedRows.length === 0,
   }));
 
-  const configButton: IButton = !noConfigModal ? {
-    visible: true,
-    position: "right",
-    type: "primary",
-    onClick: () => {
-      setOpen(true);
-    },
-    icon: "sliders",
-    outline: true
-  } : {
-    visible: false
-  }
+  const configButton: IButton = !noConfigModal
+    ? {
+      visible: true,
+      position: "right",
+      type: "primary",
+      tooltip: "Configure Table",
+      onClick: () => {
+        setOpen(true);
+      },
+      icon: "sliders",
+      outline: true,
+    }
+    : {
+      visible: false,
+    };
 
-  const filterButton: IButton = (
-    !noFilter &&
-    fieldMeta.order.active.length !== 0 &&
-    privilege === PRIVILEGE.BOARD.EDITABLE || privilege === undefined
-  ) ? {
-    visible: true,
-    position: "right",
-    type: "primary",
-    onClick: () => { setFilterVisibility(!filterVisibility) },
-    icon: "eye-slash",
-    outline: true
-  } : {
-    visible: false
-  }
+  const filterButton: IButton =
+    (!noFilter &&
+      fieldMeta.order.active.length !== 0 &&
+      privilege === PRIVILEGE.BOARD.EDITABLE) ||
+      privilege === undefined
+      ? {
+        visible: true,
+        position: "right",
+        type: "primary",
+        onClick: () => {
+          setFilterVisibility(!filterVisibility);
+        },
+        icon: filterVisibility ? "eye-slash" : "eye",
+        tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
+        outline: true,
+      }
+      : {
+        visible: false,
+      };
 
   const downloadButton: IButton = !noDownload ? {
     visible: true,
     position: "right",
     type: "primary",
+    tooltip: "Download the tables current state in various formats",
     onClick: () => {
-      setDownloadOpen(!downloadOpen)
+      setDownloadOpen(!downloadOpen);
     },
     disabled: totalSize <= 0 || noFieldsSelected,
-    loading: downloading,
     icon: "download",
     disabledTooltip:
       totalSize >= 1
         ? "Must have at least one row to download."
-        : undefined
-    ,
-    outline: true
+        : undefined,
+    outline: true,
+    loading: downloadInProgress
   } : {
-    visible: false
-  }
+    visible: false,
+  };
 
-  const actionDropdown: IDropdownButtons | undefined = (actions && actions.length > 0) ? {
-    mainButtonIcon: {
-      icon: "paper-plane",
-      type: "primary",
-      position: "right",
-      outline: selectedRows.length === 0,
-    },
-    dropdownButtons: actionDropDownButtons,
-    footer: actionsFooter,
-    placement: "leftStart",
-  } : undefined;
+  const actionDropdown: IDropdownButtons | undefined =
+    actions && actions.length > 0
+      ? {
+        mainButtonIcon: {
+          icon: "paper-plane",
+          type: "primary",
+          position: "right",
+          outline: selectedRows.length === 0,
+        },
+        dropdownButtons: actionDropDownButtons,
+        footer: actionsFooter,
+        placement: "leftStart",
+      }
+      : undefined;
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
       <DownloadModal
+        {...props}
         size="sm"
         open={downloadOpen}
         setOpen={setDownloadOpen}
-        objectType={objectType}
-        filter={filter}
         source={source}
-        fields={fieldMeta.order.active}
-        totalSize={totalSize}
-        onDownloadSpreadsheet={() =>
-          exportTableToSpreadsheet(
-            objectType,
-            dataSource,
-            fieldMeta.data,
-            filter!,
-            sortColumn,
-            sortType,
-            setSuccess,
-            setError,
-            setDownloading,
-            defaultSort,
-          )
-        }
+        requestedFields={fieldMeta.order.active}
+        title={utilityBarConfig.title}
       />
       <ColumnConfigDrawer
         {...props}
@@ -332,43 +310,48 @@ export function Table(props: Props) {
       <UtilityBar
         id={id}
         title={utilityBarConfig.title}
-        elements={(!noPagination && fieldMeta.order.active.length > 0) ? [
-          <span className="tol-page-size">
-            {(!smallBreakpoint && privilege === PRIVILEGE.BOARD.EDITABLE) &&
-              <SelectPicker
-                value={pageSize}
-                onChange={setPageSize}
+        elements={
+          !noPagination && fieldMeta.order.active.length > 0
+            ? [
+              <span className="tol-page-size">
+                {!smallBreakpoint &&
+                  (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
+                    <SelectPicker
+                      value={pageSize}
+                      onChange={setPageSize}
+                      size="sm"
+                      cleanable={false}
+                      searchable={false}
+                      data={[
+                        { label: "25", value: 25 },
+                        { label: "50", value: 50 },
+                        { label: "100", value: 100 },
+                        { label: "250", value: 250 },
+                      ]}
+                    />
+                  )}
+              </span>,
+              <Pagination
+                className="tol-pagination"
                 size="sm"
-                cleanable={false}
-                searchable={false}
-                data={[
-                  { label: "25", value: 25 },
-                  { label: "50", value: 50 },
-                  { label: "100", value: 100 },
-                  { label: "250", value: 250 },
-                ]}
-              />
-            }
-          </span>,
-          <Pagination
-            className="tol-pagination"
-            size="sm"
-            layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
-            total={totalSize}
-            activePage={page}
-            onChangePage={setPage}
-            limit={pageSize}
-            onChangeLimit={setPageSize}
-            prev
-            next
-            first={!mediumBreakpoint}
-            last={!mediumBreakpoint}
-            ellipsis={!mediumBreakpoint}
-            boundaryLinks
-            maxButtons={mediumBreakpoint ? 1 : 3}
-          />,
-          ...(utilityBarConfig.elements || [])
-        ] : [...(utilityBarConfig.elements || [])]}
+                layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
+                total={totalSize <= 10000 ? totalSize : 10000}
+                activePage={page}
+                onChangePage={setPage}
+                limit={pageSize}
+                onChangeLimit={setPageSize}
+                prev
+                next
+                first={!mediumBreakpoint}
+                last={!mediumBreakpoint}
+                ellipsis={!mediumBreakpoint}
+                boundaryLinks
+                maxButtons={mediumBreakpoint ? 1 : 3}
+              />,
+              ...(utilityBarConfig.elements || []),
+            ]
+            : [...(utilityBarConfig.elements || [])]
+        }
         buttons={[
           configButton,
           filterButton,
@@ -377,9 +360,11 @@ export function Table(props: Props) {
           downloadButton,
         ]}
       />
-      {contents ? contents :
+      {contents ? (
+        contents
+      ) : (
         <>
-          {(noFieldsSelected) ? (
+          {noFieldsSelected ? (
             <Placeholder
               message={
                 <>
@@ -395,9 +380,7 @@ export function Table(props: Props) {
                       to configure.
                     </>
                   ) : (
-                    <>
-                      No fields available.
-                    </>
+                    <>No fields available.</>
                   )}
                 </>
               }
@@ -421,7 +404,9 @@ export function Table(props: Props) {
                     if (rowData) {
                       if (bulkSelect) {
                         return "tol-selected-row disabled";
-                      } else if (selectedRows.some((item) => item === rowData.id)) {
+                      } else if (
+                        selectedRows.some((item) => item === rowData.id)
+                      ) {
                         return "tol-selected-row";
                       }
                     }
@@ -430,7 +415,12 @@ export function Table(props: Props) {
                   fillHeight
                   wordWrap
                   renderLoading={() => (
-                    <Placeholder loader height={height} opacity={0.8} squareCorners />
+                    <Placeholder
+                      loader
+                      height={height}
+                      opacity={0.8}
+                      squareCorners
+                    />
                   )}
                 >
                   {rowSelection && (
@@ -490,7 +480,9 @@ export function Table(props: Props) {
                               <span
                                 className="inline-source"
                                 style={{
-                                  backgroundColor: getSourceColour(field.source),
+                                  backgroundColor: getSourceColour(
+                                    field.source
+                                  ),
                                 }}
                               />
                             )}
@@ -499,7 +491,9 @@ export function Table(props: Props) {
                           {filterable && (
                             <span
                               className={
-                                filterVisibility ? "tol-filter" : "tol-filter-hide"
+                                filterVisibility
+                                  ? "tol-filter"
+                                  : "tol-filter-hide"
                               }
                             >
                               <Filter
@@ -521,7 +515,7 @@ export function Table(props: Props) {
             </>
           )}
         </>
-      }
+      )}
     </div>
   );
 }

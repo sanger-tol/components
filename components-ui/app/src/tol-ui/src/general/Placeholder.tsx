@@ -11,6 +11,7 @@ import {
   faMapLocationDot,
   faUpDownLeftRight,
   faTable,
+  faDownload
 } from "@fortawesome/free-solid-svg-icons";
 import { Loader, StatusMessage } from "..";
 
@@ -20,10 +21,11 @@ function getPlaceholderIcon(
   table?: boolean,
   map?: boolean,
   drag?: boolean,
+  download?: boolean,
   loader?: boolean,
   message?: string | JSX.Element,
   warningMessage?: string,
-  errorMessage?: string,
+  errorMessage?: string
 ) {
   let icon: JSX.Element | null = null;
 
@@ -37,6 +39,8 @@ function getPlaceholderIcon(
     icon = <FontAwesomeIcon icon={faMapLocationDot} size="8x" />;
   } else if (drag) {
     icon = <FontAwesomeIcon icon={faUpDownLeftRight} size="6x" />;
+  } else if (download) {
+    icon = <FontAwesomeIcon icon={faDownload} size="8x" />;
   } else if (loader) {
     icon = <Loader />;
   } else if (warningMessage !== undefined) {
@@ -60,7 +64,7 @@ function getPlaceholder(
   backing?: JSX.Element,
   opacity?: number,
   clear?: boolean,
-  squareCorners?: boolean,
+  squareCorners?: boolean
 ) {
   if (opacity) style["opacity"] = opacity;
   if (squareCorners !== true) style["borderRadius"] = 6;
@@ -105,6 +109,7 @@ interface Props {
   table?: boolean;
   map?: boolean;
   drag?: boolean;
+  download?: boolean;
   empty?: boolean;
   loader?: boolean;
   opacity?: number;
@@ -125,6 +130,7 @@ export function Placeholder(props: Props) {
     table,
     map,
     drag,
+    download,
     empty,
     loader,
     opacity,
@@ -149,10 +155,11 @@ export function Placeholder(props: Props) {
     table,
     map,
     drag,
+    download,
     loader,
     message,
     warningMessage,
-    errorMessage,
+    errorMessage
   );
 
   return getPlaceholder(
@@ -162,6 +169,6 @@ export function Placeholder(props: Props) {
     backing,
     opacity,
     clear,
-    squareCorners,
+    squareCorners
   );
 }

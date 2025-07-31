@@ -4,45 +4,106 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Tabs } from "rsuite";
-import { CodeBlock } from 'react-code-blocks';
+import { useEffect, useRef, useState } from "react";
+import { Tabs, Progress } from "rsuite";
+import { CodeBlock } from "react-code-blocks";
 import {
   Button,
   Modal,
   PopUpMessage,
-  copyToClipboard
+  TsDataSource,
+  copyToClipboard,
+  exportDataToSpreadsheet,
+  dataObjectToSpreadsheetData,
+  IInlineEdit,
+  FieldMeta,
+  converterForElapsedTime,
+  deepCopy,
 } from "..";
-
 
 interface Props {
   size: string;
   open: boolean;
   setOpen: any;
-  objectType?: string;
+  objectType: string;
   filter?: any;
-  onDownloadSpreadsheet: Function;
+
   source?: string;
-  fields: string[];
+  dataSource: TsDataSource;
+  requestedFields: string[];
+  title: IInlineEdit | undefined;
+  fieldMeta: FieldMeta;
+
+  downloadInProgress: boolean;
+  setDownloadInProgress: (downloadInProgress: boolean) => void;
+
   totalSize: number;
 }
 
 export function DownloadModal(props: Props) {
-  const { size, open, setOpen, onDownloadSpreadsheet, objectType, filter, source, fields, totalSize } = props;
+  const {
+    size,
+    open,
+    setOpen,
+    objectType,
+    filter,
+    source,
+    dataSource,
+    requestedFields,
+    title,
+    fieldMeta,
+    totalSize,
+    downloadInProgress,
+    setDownloadInProgress,
+  } = props;
+  const [fetchCount, setFetchCount] = useState<number>(0);
+  const [percentageComplete, setPercentageComplete] = useState<number>(0);
+  const [secondsElapsed, setSecondsElapsed] = useState<number>(0);
+  const [downloadComplete, setDownloadComplete] = useState<boolean>(false);
+  const [stopDownload, setStopDownload] = useState<boolean>(false);
+  const [stopDownloadLoading, setStopDownloadLoading] =
+    useState<boolean>(false);
+  const stopDownloadRef = useRef<boolean>(false);
+  const [frozenObjectType, setFrozenObjectType] = useState<string>(objectType);
+  const [frozenFilter, setFrozenFilter] = useState<object>(deepCopy(filter));
+  const [frozenTotalSize, setFrozenTotalSize] = useState<number>(totalSize);
+  const [frozenRequestedFields, setFrozenRequestedFields] = useState<string[]>(
+    deepCopy(requestedFields)
+  );
+
+  useEffect(() => {
+    stopDownloadRef.current = stopDownload;
+  }, [stopDownload]);
+
+  useEffect(() => {
+    if (!downloadInProgress) {
+      setFrozenObjectType(objectType);
+      setFrozenFilter(deepCopy(filter));
+      setFrozenRequestedFields(deepCopy(requestedFields));
+      setFrozenTotalSize(totalSize);
+    }
+  }, [objectType, filter, requestedFields, totalSize, stopDownload]);
+
+  const stringifyRequestedFields = (requestedFields: string[]) => {
+    return requestedFields.join(",");
+  };
 
   const stringifyFilter = (filter: any) => {
     if (!filter) {
-      return 'None';
+      return "None";
     }
     // @ts-ignore
     return JSON.stringify(filter, (key, value) => {
-      if (typeof value === 'boolean') {
-        return value ? 'True' : 'False';
+      if (typeof value === "boolean") {
+        return value ? "True" : "False";
       }
       return value;
-    }).replace(/"True"/g, 'True').replace(/"False"/g, 'False');
+    })
+      .replace(/"True"/g, "True")
+      .replace(/"False"/g, "False");
   };
 
-  const sourceToUse = source || 'portal';
+  const sourceToUse = source || "portal";
 
   const SDKText = `from tol.core import DataSourceFilter
 from tol.sources.${sourceToUse} import ${sourceToUse}
@@ -52,25 +113,90 @@ f = DataSourceFilter(
     and_ = ${stringifyFilter(filter?.and_)}
 )
 objs = src.get_list('${objectType}', object_filters=f) 
-  `
+  `;
 
   const CLICommand = `
 tol data \
---source=${sourceToUse || 'portal'} \
+--source=${sourceToUse || "portal"} \
 --operation=list \
 --type=${objectType} \
 --filter='${JSON.stringify(filter) || '{"and":{}}'}' \
---fields=${fields.join(',')} \
+--fields=${stringifyRequestedFields} \
 --output=tsv 
-  `
+  `;
 
   const onClick = (text: string) => {
-    copyToClipboard(text.trim())
+    copyToClipboard(text.trim());
     PopUpMessage({
-      type: 'success',
-      message: 'Copied to clipboard',
-    })
-  }
+      type: "success",
+      message: "Copied to clipboard",
+    });
+  };
+
+  const fetchSpreadSheetDataObjects = async (gen: AsyncGenerator) => {
+    const results: any[] = []; // TODO: add type - kh16
+
+    for await (const item of gen) {
+      setFetchCount((prev) => {
+        const next = prev + 1;
+        const percentage = Math.floor((next / frozenTotalSize) * 100);
+        setPercentageComplete(percentage);
+        results.push(item);
+        return next;
+      });
+      if (stopDownloadRef.current) throw Error();
+    }
+    return results;
+  };
+
+  const onDownloadSpreadsheet = async () => {
+    setDownloadInProgress(true);
+    setDownloadComplete(false);
+    setFetchCount(0);
+    setSecondsElapsed(0);
+    setPercentageComplete(0);
+
+    const gen = dataSource.getListByCursor({
+      objectType: frozenObjectType,
+      filter: frozenFilter,
+      requestedFields: stringifyRequestedFields(frozenRequestedFields),
+    });
+
+    const interval = setInterval(() => {
+      setSecondsElapsed((prev) => prev + 1);
+    }, 1000);
+
+    fetchSpreadSheetDataObjects(gen)
+      .then((results) => {
+        dataObjectToSpreadsheetData(results, frozenRequestedFields, fieldMeta)
+          .then((info) => {
+            exportDataToSpreadsheet(info, title);
+          })
+          .finally(() => {
+            setDownloadComplete(true);
+            setDownloadInProgress(false);
+          });
+      })
+      .catch(() => {
+        setStopDownload(false);
+        stopDownloadRef.current = false;
+        setDownloadComplete(false);
+        setDownloadInProgress(false);
+        setStopDownloadLoading(false);
+      })
+      .finally(() => {
+        clearInterval(interval);
+      });
+  };
+
+  const MinimizeButton = (
+    <Button
+      type="warning"
+      onClick={() => setOpen(false)}
+      icon="minus"
+      position="right"
+    />
+  );
 
   return (
     <>
@@ -78,25 +204,63 @@ tol data \
         size={size}
         open={open}
         setOpen={setOpen}
+        actionButton={MinimizeButton}
+        closeButton={false}
       >
         <Tabs defaultActiveKey="1">
           <Tabs.Tab eventKey="1" title="Spreadsheet">
             <div className="tol-download-modal-body">
-              <Button
-                type="success"
-                text="Download as Spreadsheet"
-                onClick={() => {
-                  onDownloadSpreadsheet();
-                  setOpen(false);
-                }}
-                icon="download"
-                disabledTooltip={
-                  totalSize >= 1
-                    ? "Only 10,000 results can currently be downloaded as a spreadsheet."
-                    : undefined
-                }
-                disabled={totalSize >= 10000}
-              />
+              {downloadInProgress ? (
+                <>
+                  <Button
+                    type="error"
+                    text={stopDownloadLoading ? "Stopping..." : "Stop Download"}
+                    onClick={() => {
+                      setStopDownload(true);
+                      setStopDownloadLoading(true);
+                    }}
+                    icon="stop"
+                  />
+                  <Progress.Line
+                    percent={percentageComplete}
+                    status={percentageComplete === 100 ? "success" : "active"}
+                  />
+                </>
+              ) : (
+                <Button
+                  type="success"
+                  text="Download as Spreadsheet"
+                  onClick={() => {
+                    onDownloadSpreadsheet();
+                  }}
+                  icon="download"
+                  disabled={totalSize >= 50000}
+                  disabledTooltip="Download limit of 50,000 rows."
+                />
+              )}
+              {(downloadInProgress || downloadComplete) && (
+                <div className="tol-download-progress-figures">
+                  <div
+                    className={downloadComplete ? "tol-download-complete" : ""}
+                  >
+                    {downloadInProgress && (
+                      <>
+                        {fetchCount}/{frozenTotalSize}
+                        <span className="tol-download-figure-spacer" />
+                      </>
+                    )}
+                    {downloadComplete && "Last download completed in "}
+                    {converterForElapsedTime(secondsElapsed)}
+                  </div>
+                </div>
+              )}
+              {downloadInProgress && (
+                <div className="tol-download-progress-message">
+                  Your spreadsheet download is in progress. Please feel free to
+                  minimize this window, and continue using this page, but do not
+                  refresh the window.
+                </div>
+              )}
             </div>
           </Tabs.Tab>
           <Tabs.Tab eventKey="2" title="SDK">
@@ -133,4 +297,4 @@ tol data \
       </Modal>
     </>
   );
-};
+}

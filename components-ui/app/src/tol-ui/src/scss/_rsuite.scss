@@ -260,7 +260,7 @@
 
 .rs-picker-has-value .rs-btn .rs-picker-toggle-value,
 .rs-picker-has-value .rs-picker-toggle .rs-picker-toggle-value {
-  color: var(--rs-text-primary) !important;
+  color: var(--tol-primary) !important;
 }
 
 .rs-form-control > .rs-input.rs-input:-webkit-autofill,
@@ -339,11 +339,12 @@
 
 // tabs
 .rs-nav-item {
-  color: var(--tol-primary-light);
+  color: var(--tol-text);
 }
 
 .rs-nav-item.rs-nav-item-active {
-  color: var(--tol-primary-dark);
+  color: var(--tol-primary);
+  font-weight: bolder;
 }
 
 .rs-nav-tabs .rs-nav-item:not(.rs-nav-item-active):hover {

@@ -53,25 +53,41 @@ export function Button(props: IButton) {
 
   const outlineClass = outline ? "-outline" : "";
 
-  const loader = <TolLoader size="sm" />;
+  const Loader = () => {
+    if (!loading) return null;
+  
+    return (
+      <span style={{ marginRight: text || icon ? 6 : 0 }}>
+        <TolLoader size="sm" />
+      </span>
+    );
+  };
 
   const button = (
     <>
       {visible &&
         <RsButton
-        id={id}
-        onClick={onClick}
-        disabled={disabled || loading}
-        active={active}
-        className={
-          `icon-button-${type ||
+          id={id}
+          onClick={onClick}
+          disabled={disabled}
+          active={active}
+          className={
+            `icon-button-${type ||
             "primary"}-${size ||
-              "md"}${outlineClass} ${className ? className : ""}`
-            }
-        data-testid={testid}
+            "md"}${outlineClass} ${className ? className : ""}`
+          }
+          data-testid={testid}
         >
-          {loading ? (
-            loader
+          {Loader()}
+          {position === "right" ? (
+            <>
+              {text && <span style={{ marginRight: icon ? "6px" : "0px" }}>{text}</span>}
+              {icon && (
+                <div>
+                  <Icon icon={icon} size={size} />
+                </div>
+              )}
+            </>
           ) : (
             <>
               {icon && (
@@ -79,9 +95,7 @@ export function Button(props: IButton) {
                   <Icon icon={icon} size={size} />
                 </div>
               )}
-              {text && (
-                <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>
-              )}
+              {text && <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>}
             </>
           )}
         </RsButton>
