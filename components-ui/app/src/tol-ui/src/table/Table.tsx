@@ -278,7 +278,7 @@ export function Table(props: Props) {
         setOpen={setDownloadOpen}
         source={source}
         requestedFields={fieldMeta.order.active}
-        title={utilityBarConfig.title || ""}
+        title={utilityBarConfig.title}
       />
       <ColumnConfigDrawer
         {...props}

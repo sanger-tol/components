@@ -31,7 +31,7 @@ interface Props {
   source?: string;
   dataSource: TsDataSource;
   requestedFields: string[];
-  title: IInlineEdit;
+  title?: IInlineEdit;
   fieldMeta: FieldMeta;
 
   downloadInProgress: boolean;
@@ -170,7 +170,7 @@ tol data \
       .then((results) => {
         dataObjectToSpreadsheetData(results, frozenRequestedFields, fieldMeta)
           .then((info) => {
-            exportDataToSpreadsheet(info, title.text || frozenObjectType);
+            exportDataToSpreadsheet(info, title?.text || frozenObjectType);
           })
           .finally(() => {
             setDownloadComplete(true);
