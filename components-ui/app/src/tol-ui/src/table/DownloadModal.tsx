@@ -31,7 +31,7 @@ interface Props {
   source?: string;
   dataSource: TsDataSource;
   requestedFields: string[];
-  title: IInlineEdit;
+  title?: IInlineEdit;
   fieldMeta: FieldMeta;
 
   downloadInProgress: boolean;
