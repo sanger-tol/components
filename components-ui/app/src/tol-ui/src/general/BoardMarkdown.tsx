@@ -16,12 +16,9 @@ import {
   updateConfigAndUpsert,
   useBoardPrivilege,
   PRIVILEGE,
+  IMarkdownConfig
 } from "..";
 
-
-export interface IMarkdownConfig {
-  content: string;
-}
 
 export interface IBoardMarkdown extends IBoardTargetAndZone {
   id: string;

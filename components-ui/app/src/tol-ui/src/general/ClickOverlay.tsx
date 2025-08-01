@@ -20,16 +20,6 @@ export function ClickOverlay(props: Props) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
 
-  const renderTooltip = () => (
-    <Popover
-      onClick={() => {
-        closeOnClick && setOpen(false);
-      }}
-    >
-      {contents}
-    </Popover>
-  );
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (overlayRef.current && !overlayRef.current.contains(event.target as Node)) {
@@ -42,6 +32,16 @@ export function ClickOverlay(props: Props) {
       document.removeEventListener("mouseup", handleClickOutside);
     };
   }, []);
+
+  const renderTooltip = () => (
+    <Popover
+      onClick={() => {
+        closeOnClick && setOpen(false);
+      }}
+    >
+      {contents}
+    </Popover>
+  );
 
   return (
     <div ref={overlayRef}>

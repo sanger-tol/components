@@ -28,3 +28,21 @@ export interface IDropdownMainIconProps {
   tooltip?: string;
 }
   
+export interface IButton {
+  icon?: string;
+  onClick?: (...args: any[]) => void;
+  className?: string;
+  text?: string;
+  disabled?: boolean;
+  size?: "md" | "lg";
+  type?: string;
+  active?: boolean;
+  position?: "left" | "right";
+  tooltip?: string;
+  disabledTooltip?: string;
+  loading?: boolean;
+  outline?: boolean;
+  id?: string;
+  visible?: boolean;
+  testid?: string;
+}

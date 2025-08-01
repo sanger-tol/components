@@ -22,15 +22,10 @@ import {
   getAllAttributeData,
   truncateString,
   IRemoteTarget,
+  AllowedCardinality
 } from "..";
 
-
-export interface AllowedCardinality {
-  operator: string;
-  value: number;
-}
-
-interface Props extends IRemoteTarget {
+interface Props extends IRemoteTarget{
   additionalPopulatedFieldData?: any;
   allowedTypes?: string[];
   attribute: string[];

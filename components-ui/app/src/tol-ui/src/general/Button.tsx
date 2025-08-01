@@ -52,6 +52,7 @@ export function Button(props: IButton) {
   } = props;
 
   const outlineClass = outline ? "-outline" : "";
+  const contents = disabled && disabledTooltip ? disabledTooltip : tooltip;
 
   const Loader = () => {
     if (!loading) return null;
@@ -102,9 +103,7 @@ export function Button(props: IButton) {
       }
     </>
   );
-
-  const contents = disabled && disabledTooltip ? disabledTooltip : tooltip;
-
+  
   return (
     <div
       style={{
