@@ -152,8 +152,6 @@ export function Table(props: Props) {
   const noFieldsSelected = fieldMeta?.order?.active?.length === 0;
   const wrapperId = "tol-table-wrapper-" + id;
 
-  const { privilege } = useBoardPrivilege();
-
   if (selectedRows.length === data.length || bulkSelect) {
     checked = true;
   } else if (selectedRows.length === 0) {
@@ -275,8 +273,9 @@ export function Table(props: Props) {
         open={downloadOpen}
         setOpen={setDownloadOpen}
         source={source}
-        fields={fieldMeta?.order?.active}
+        requestedFields={fieldMeta?.order?.active}
         title={utilityBarConfig.title}
+        fieldMeta={fieldMeta}
       />
       <ColumnConfigDrawer
         {...props}

@@ -103,7 +103,6 @@ export function RemoteTable(props: Props) {
   // data and field information
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<FieldMeta>(props.fields ?? initialiseFields());
-  const [entityMeta, setEntityMeta] = useState<IEntityMeta>();
 
   // pagination
   const getPageSize = () => {

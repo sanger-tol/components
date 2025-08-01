@@ -21,11 +21,9 @@ import {
   StatusMessage,
   colours,
   TsDataSource,
-  API_METHODS,
   IAttributeData,
   TDataObjectListOrNull,
   getFieldByName,
-  IDataObject,
   ITableData,
   ITableRecord,
 } from "..";
@@ -501,19 +499,19 @@ export async function getActions(
   actionDataSource: TsDataSource
 ): Promise<string[]> {
   const actionsList: string[] = [];
-  const actions = await actionDataSource
-    .getListPage({
-      objectType: objectType,
-      filter: {
-        and_: {
-          object_type: { eq: { value: objectType } },
-        },
+  const actions = await actionDataSource.getListPage({
+    objectType: objectType,
+    filter: {
+      and_: {
+        object_type: { eq: { value: objectType } },
       },
     },
   });
-  actions?.find((action) => {
+
+  actions?.forEach((action) => {
     actionsList.push(action.name);
   });
+
   return actionsList;
 }
 
@@ -526,7 +524,7 @@ export async function dataObjectToSpreadsheetData(
   dataObjects?.forEach((obj) => {
     const flatData = {};
     requestedFields.forEach((field) => {
-      flatData[fieldMeta.data[field].rename!] = getFieldByName(obj, field);
+      flatData[fieldMeta?.data?.[field].rename ?? field] = getFieldByName(obj, field);
     });
     spreadsheetData.push(flatData);
   });
