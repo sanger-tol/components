@@ -8,7 +8,6 @@ import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
 import { FieldMeta, AllowedCardinality } from "..";
 
-
 export function convertToPath(name: string) {
   const path = name.toLowerCase();
   return "/" + path.replace(/\s+/g, "-");
@@ -138,8 +137,11 @@ export function isFloat(n: any) {
   return Number(n) === n && n % 1 !== 0;
 }
 
-export function deepCopy(o?: object) {
-  if (!o) return {};
+export function deepCopy(o?: object | any[]) {
+  if (!o) {
+    if (Array.isArray(o)) return [];
+    return {};
+  }
   return JSON.parse(JSON.stringify(o));
 }
 
@@ -187,7 +189,7 @@ export function getAttributeSources(
 export function getFlattenedMetaData(
   entityMeta: any,
   endpoint: string,
-  attribute?: string,
+  attribute?: string
 ) {
   return attribute
     ? entityMeta?.flatAttributes?.[endpoint]?.[attribute]
@@ -198,7 +200,7 @@ export function getAttributeDetail(
   entityMeta: any,
   endpoint: string,
   attribute: string,
-  detail: string,
+  detail: string
 ) {
   switch (detail) {
     case "display_name":
@@ -207,15 +209,17 @@ export function getAttributeDetail(
         normaliseCaps(attribute)
       );
     case "description":
-      return entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.description || "";
+      return (
+        entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.description || ""
+      );
     case "source":
       return entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.source || "";
     case "python_type":
-      return entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.python_type || "";
+      return (
+        entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.python_type || ""
+      );
     case "authoritative":
       return entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.authoritative;
-    
-    
   }
 
   return entityMeta?.flatAttributes?.[endpoint]?.[attribute] || {};
@@ -224,7 +228,7 @@ export function getAttributeDetail(
 export function filterBySource(
   source: string,
   selectedSources: string[],
-  setSelectedSources: any,
+  setSelectedSources: any
 ) {
   if (source === "all") {
     setSelectedSources([]);
@@ -262,11 +266,9 @@ export function getAllAttributeData(
       [attr]: attributeData,
     };
   }, {});
-};
+}
 
-export function formatFilteredAttributes(
-  attributes: any,
-) {
+export function formatFilteredAttributes(attributes: any) {
   // This is specific for the attribute selector and MultiSelect
   return attributes.map((attribute: any) => {
     const { object_type, relationship_name } = attribute[1];
@@ -275,12 +277,13 @@ export function formatFilteredAttributes(
       value: attribute[0],
       object_type,
       relationship_name:
-        normaliseCaps(relationship_name) || `${normaliseCaps(object_type)} (Current Object Type)`,
+        normaliseCaps(relationship_name) ||
+        `${normaliseCaps(object_type)} (Current Object Type)`,
     };
   });
 }
 
-export function filterAttributes (
+export function filterAttributes(
   entityMeta: any,
   endpoint: string,
   allowedTypes: string[] | undefined,
@@ -288,50 +291,57 @@ export function filterAttributes (
   recommendedOn: boolean,
   allowedCardinality: AllowedCardinality | undefined,
   customAttributeSelection: string[] | undefined
-){
-
-  const filteredAttributes =  Object.entries(getFlattenedMetaData(entityMeta, endpoint)).filter(
-    ([key, value]) => {
-      const meta: any = value;
-      const typeMatch =
-        !allowedTypes || allowedTypes.includes(meta.python_type);
-      const sourceMatch =
-        selectedSources.length === 0 ||
-        (selectedSources.includes("undefined")
-          ? !meta.source || selectedSources.includes(meta.source)
-          : selectedSources.includes(meta.source));
-      const recommendedMatch = meta.authoritative === true;
-      const cardinalityMatch =
-        !allowedCardinality ||
-        (meta.cardinality &&
-          ((allowedCardinality.operator === ">" &&
-            meta.cardinality > allowedCardinality.value) ||
-            (allowedCardinality.operator === "<" &&
-              meta.cardinality < allowedCardinality.value) ||
-            (allowedCardinality.operator === "=" &&
-              meta.cardinality === allowedCardinality.value) ||
-            (allowedCardinality.operator === ">=" &&
-              meta.cardinality >= allowedCardinality.value) ||
-            (allowedCardinality.operator === "<=" &&
-              meta.cardinality <= allowedCardinality.value)));
-      return (
-        (recommendedOn ? recommendedMatch : true) &&
-        typeMatch &&
-        sourceMatch &&
-        cardinalityMatch &&
-        (!customAttributeSelection || customAttributeSelection.includes(key))
-      );
-    }
-  );
+) {
+  const filteredAttributes = Object.entries(
+    getFlattenedMetaData(entityMeta, endpoint)
+  ).filter(([key, value]) => {
+    const meta: any = value;
+    const typeMatch = !allowedTypes || allowedTypes.includes(meta.python_type);
+    const sourceMatch =
+      selectedSources.length === 0 ||
+      (selectedSources.includes("undefined")
+        ? !meta.source || selectedSources.includes(meta.source)
+        : selectedSources.includes(meta.source));
+    const recommendedMatch = meta.authoritative === true;
+    const cardinalityMatch =
+      !allowedCardinality ||
+      (meta.cardinality &&
+        ((allowedCardinality.operator === ">" &&
+          meta.cardinality > allowedCardinality.value) ||
+          (allowedCardinality.operator === "<" &&
+            meta.cardinality < allowedCardinality.value) ||
+          (allowedCardinality.operator === "=" &&
+            meta.cardinality === allowedCardinality.value) ||
+          (allowedCardinality.operator === ">=" &&
+            meta.cardinality >= allowedCardinality.value) ||
+          (allowedCardinality.operator === "<=" &&
+            meta.cardinality <= allowedCardinality.value)));
+    return (
+      (recommendedOn ? recommendedMatch : true) &&
+      typeMatch &&
+      sourceMatch &&
+      cardinalityMatch &&
+      (!customAttributeSelection || customAttributeSelection.includes(key))
+    );
+  });
 
   return formatFilteredAttributes(filteredAttributes);
-};
+}
 
 export function copyToClipboard(text: string): void {
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text)
-      .catch(err => console.error('Failed to copy text: ', err));
+    navigator.clipboard
+      .writeText(text)
+      .catch((err) => console.error("Failed to copy text: ", err));
   } else {
-    console.warn('Clipboard API not available');
+    console.warn("Clipboard API not available");
   }
+}
+
+export function converterForElapsedTime(secondsElapsed: number): string {
+  const minutes = Math.floor((secondsElapsed % 3600) / 60)
+    .toString()
+    .padStart(2, "0");
+  const seconds = (secondsElapsed % 60).toString().padStart(2, "0");
+  return `${minutes}:${seconds}`;
 }

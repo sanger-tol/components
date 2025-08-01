@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
+import * as XLSX from "xlsx";
 import {
   CellTooltip,
   CellRenderer,
@@ -28,7 +29,6 @@ import {
   ITableData,
   ITableRecord,
 } from "..";
-
 
 interface Rgb {
   [key: string]: number;
@@ -85,10 +85,9 @@ function createRelationshipBox(
   data: any,
   dataSource: TsDataSource,
   detail?: boolean,
-  entityMeta?: IEntityMeta,
+  entityMeta?: IEntityMeta
 ) {
   const [relationship, attribute] = key.split(".");
-
 
   // cannot assume some keys exist
   if ("relationships" in data) {
@@ -173,11 +172,15 @@ function createExpander(value: string) {
 }
 
 function createFloat(value: any) {
-  return <CellTooltip followCursor value={value.toFixed?.(2)} contents={value} />;
+  return (
+    <CellTooltip followCursor value={value.toFixed?.(2)} contents={value} />
+  );
 }
 
 function createInteger(value: string | number) {
-  return <div className="tol-cell-renderer-integer">{value.toLocaleString()}</div>;
+  return (
+    <div className="tol-cell-renderer-integer">{value.toLocaleString()}</div>
+  );
 }
 
 function createCellRenderer(
@@ -186,7 +189,7 @@ function createCellRenderer(
   value: any,
   data: object,
   dataSource: TsDataSource,
-  entityMeta?: IEntityMeta,
+  entityMeta?: IEntityMeta
 ) {
   if (!cellRenderer) return value;
   if (typeof cellRenderer === "string") {
@@ -401,7 +404,7 @@ export function createSort(sortColumn: string, sortType: string) {
 function deleteRedundantLocalStorageEntries(ids: string[]) {
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
-    if (key && ids.some(id => key.includes(id))) {
+    if (key && ids.some((id) => key.includes(id))) {
       localStorage.removeItem(key);
       i--; // adjust the index after removing an item
     }
@@ -422,8 +425,8 @@ export function setTableConfigLocalStorage(
 export function getTableConfigLocalStorage(tableId: string, key: string) {
   deleteRedundantLocalStorageEntries([
     "-field-meta", // legacy suffix
-    "-table-v" // recent suffix
-  ])
+    "-table-v", // recent suffix
+  ]);
 
   const data = localStorage.getItem(`${key}-${tableId}-${tableVersion}`);
   if (data) return JSON.parse(data);
@@ -469,9 +472,10 @@ function rgbToString(rgb: Rgb, opacity: number) {
 }
 
 export function getSourceColour(sourceName?: string): string {
-  const rgb = sourceName && sourceColours[sourceName]
-    ? sourceColours[sourceName]
-    : sourceColours.other;
+  const rgb =
+    sourceName && sourceColours[sourceName]
+      ? sourceColours[sourceName]
+      : sourceColours.other;
 
   return rgbToString(rgb, 1);
 }
@@ -494,7 +498,7 @@ export function mapKeysToDisplayNames(
 
 export async function getActions(
   objectType: string,
-  actionDataSource: TsDataSource,
+  actionDataSource: TsDataSource
 ): Promise<string[]> {
   const actionsList: string[] = [];
   const actions = await actionDataSource
@@ -505,9 +509,37 @@ export async function getActions(
           object_type: { eq: { value: objectType } },
         },
       },
-    })
+    },
+  });
   actions?.find((action) => {
     actionsList.push(action.name);
-  })
-  return actionsList
+  });
+  return actionsList;
+}
+
+export async function dataObjectToSpreadsheetData(
+  dataObjects: TDataObjectListOrNull,
+  requestedFields: string[],
+  fieldMeta: FieldMeta
+) {
+  const spreadsheetData: any[] = [];
+  dataObjects?.forEach((obj) => {
+    const flatData = {};
+    requestedFields.forEach((field) => {
+      flatData[fieldMeta.data[field].rename!] = getFieldByName(obj, field);
+    });
+    spreadsheetData.push(flatData);
+  });
+  return spreadsheetData;
+}
+
+export function exportDataToSpreadsheet(
+  spreadsheetData: Array<Record<string, string>>,
+  title: string
+) {
+  const heading = `${title.replace(/\s+/g, "_")}.xlsx`;
+  const worksheet = XLSX.utils.json_to_sheet(spreadsheetData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "ToLTable");
+  XLSX.writeFile(workbook, heading, { compression: true });
 }
