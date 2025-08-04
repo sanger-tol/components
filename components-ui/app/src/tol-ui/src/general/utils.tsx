@@ -308,7 +308,7 @@ export function filterAttributes(
   allowedTypes: string[] | undefined,
   selectedSources: string[],
   recommendedOn: boolean,
-  allowedCardinality: AllowedCardinality | undefined,
+  allowedCardinality: IAllowedCardinality | undefined,
   customAttributeSelection: string[] | undefined
 ) {
   const filteredAttributes = Object.entries(

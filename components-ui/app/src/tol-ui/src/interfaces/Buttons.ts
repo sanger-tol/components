@@ -27,22 +27,3 @@ export interface IDropdownMainIconProps {
   outline?: boolean;
   tooltip?: string;
 }
-  
-export interface PButton {
-  icon?: string;
-  onClick?: (...args: any[]) => void;
-  className?: string;
-  text?: string;
-  disabled?: boolean;
-  size?: "md" | "lg";
-  type?: string;
-  active?: boolean;
-  position?: "left" | "right";
-  tooltip?: string;
-  disabledTooltip?: string;
-  loading?: boolean;
-  outline?: boolean;
-  id?: string;
-  visible?: boolean;
-  testid?: string;
-}
