@@ -13,15 +13,9 @@ import {
   normaliseCaps,
   truncateString,
   IRemoteTarget,
+  AttributeDetails,
+  TRANSITION_TIME,
 } from "../index";
-
-
-const TRANSITION_TIME: number = 300;
-
-interface AttributeDetails {
-  source?: string;
-  rename?: string;
-}
 
 interface Props extends IRemoteTarget {
   attributes: readonly string[];
@@ -29,23 +23,20 @@ interface Props extends IRemoteTarget {
 }
 
 export function SelectedAttributesContainer(props: Props) {
-  const {
-    objectType,
-    dataSource,
-    attributes,
-    setAttributes,
-  } = props;
+  const { objectType, dataSource, attributes, setAttributes } = props;
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
-  const [objectAttributes, setObjectAttributes] = useState<AttributeDetails>({});
+  const [objectAttributes, setObjectAttributes] = useState<AttributeDetails>(
+    {}
+  );
 
-  const ref = useRef(null)
+  const ref = useRef(null);
 
   useEffect(() => {
     dataSource.getEntityMeta().then((meta) => {
       setObjectAttributes(meta.flatAttributes[objectType]);
     });
-  }, [])
+  }, []);
 
   const moveAttributeUp = (index: number) => {
     if (index === 0) return;
@@ -77,8 +68,11 @@ export function SelectedAttributesContainer(props: Props) {
     setDeletingIndex(null);
   };
 
-  const SelectedColumn = forwardRef<HTMLDivElement, { item: any; dragHandleProps: any }>(({ item, dragHandleProps }, ref) => {
-    const attr_name = item
+  const SelectedColumn = forwardRef<
+    HTMLDivElement,
+    { item: any; dragHandleProps: any }
+  >(({ item, dragHandleProps }, ref) => {
+    const attr_name = item;
     const attributeDeatils = objectAttributes[attr_name] || {};
     const index = attributes.indexOf(attr_name);
 
@@ -88,24 +82,27 @@ export function SelectedAttributesContainer(props: Props) {
       <div
         ref={ref}
         key={`${attr_name}-${index}`}
-        className={`tol-config-drawer-selected-column ${recentlyMoved === index ? "highlight" : ""
-          } ${deletingIndex === index ? "deleting" : ""}`}
+        className={`tol-config-drawer-selected-column ${
+          recentlyMoved === index ? "highlight" : ""
+        } ${deletingIndex === index ? "deleting" : ""}`}
       >
         <div>
-          <span
-            {...dragHandleProps}
-          >
-            <div
-              className={"tol-config-drawer-selected-column-name"}
-            >
-              <div style={{ display: 'inline', paddingRight: '5px' }}>{attributeDeatils.display_name || normaliseCaps(attr_name)}</div>
+          <span {...dragHandleProps}>
+            <div className={"tol-config-drawer-selected-column-name"}>
+              <div style={{ display: "inline", paddingRight: "5px" }}>
+                {attributeDeatils.display_name || normaliseCaps(attr_name)}
+              </div>
               <EntityMetaToolTip {...props} field={attr_name} />
             </div>
           </span>
-          <p className={"tol-config-drawer-selected-column-key"}>{truncateString(attr_name, lettersToDisplay)}</p>
+          <p className={"tol-config-drawer-selected-column-key"}>
+            {truncateString(attr_name, lettersToDisplay)}
+          </p>
         </div>
         <div className="tol-config-drawer-btn-array">
-          {attributeDeatils.source && <SourceTag source={attributeDeatils.source} />}
+          {attributeDeatils.source && (
+            <SourceTag source={attributeDeatils.source} />
+          )}
           <div
             className={"tol-active-column-btn first"}
             onClick={() => moveAttributeUp(index)}
@@ -138,12 +135,8 @@ export function SelectedAttributesContainer(props: Props) {
             itemKey={(item) => item}
             list={attributes}
             // @ts-ignore
-            template={(props) => (
-              <SelectedColumn
-                {...props}
-              />
-            )}
-            onMoveEnd={(newList: string[]) => (setAttributes(newList))}
+            template={(props) => <SelectedColumn {...props} />}
+            onMoveEnd={(newList: string[]) => setAttributes(newList)}
             springConfig={{ stiffness: 500, damping: 100 }}
           />
         </div>
@@ -155,6 +148,4 @@ export function SelectedAttributesContainer(props: Props) {
       </div>
     </div>
   );
-
-
 }

@@ -18,3 +18,4 @@ export * from "./Visualisation";
 export * from "./Privilege";
 export * from "./Attribute";
 export * from "./Markdown";
+export * from "./Widgets";

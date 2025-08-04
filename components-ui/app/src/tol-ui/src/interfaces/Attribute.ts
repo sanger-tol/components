@@ -8,3 +8,8 @@ export interface AllowedCardinality {
   operator: string;
   value: number;
 }
+
+export interface AttributeDetails {
+  source?: string;
+  rename?: string;
+}

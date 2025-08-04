@@ -5,12 +5,7 @@
  */
 
 import { Progress } from "rsuite";
-import {
-  HoverOverlay,
-  IWellData,
-  IWellHoverContents,
-} from "..";
-
+import { HoverOverlay, IWellData, IWellHoverContents } from "..";
 
 interface IWell {
   data: IWellData;

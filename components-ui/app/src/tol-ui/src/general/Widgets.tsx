@@ -9,13 +9,11 @@ import {
   Col,
   getCssVarValue,
   themeListener,
+  Component,
+  getSm,
+  getLg,
+  getHeight,
 } from "..";
-
-
-interface Component {
-  component: JSX.Element;
-  type: string;
-}
 
 interface Props {
   components: Component[];
@@ -32,39 +30,6 @@ export function Widgets(props: Props) {
       return;
     }
   });
-
-  const getSm = (type: string) => {
-    switch (type) {
-      case "sm":
-        return 6;
-      default:
-        return 12;
-    }
-  };
-
-  const getLg = (type: string) => {
-    switch (type) {
-      case "sm":
-        return 3;
-      case "md":
-        return 6;
-      default:
-        return 12;
-    }
-  };
-
-  const getHeight = (type: string) => {
-    switch (type) {
-      case "sm":
-        return 150;
-      case "md":
-        return 450;
-      case "lg":
-        return 450;
-      case "xl":
-        return 600;
-    }
-  };
 
   const rowStyle = {
     marginLeft: 0,

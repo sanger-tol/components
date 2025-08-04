@@ -21,22 +21,13 @@ export function InlineEdit({
   onSave,
   onChange,
   editable,
-  size = "md"
+  size = "md",
 }: IInlineEdit) {
   const [editedText, setEditedText] = useState(text);
   const [prevText, setPrevText] = useState(text);
   const [errorMessage, setErrorMessage] = useState("");
 
   const toaster = Toaster();
-  const toastMessage = (
-    <Message
-      children="Title cannot be blank."
-      type="error"
-      showIcon={true}
-      closable
-      styles={{ marginTop: "5px" }}
-    />
-  );
 
   // Handles the save action
   const handleSave = () => {
@@ -51,6 +42,16 @@ export function InlineEdit({
 
     onSave?.(editedText);
   };
+
+  const toastMessage = (
+    <Message
+      children="Title cannot be blank."
+      type="error"
+      showIcon={true}
+      closable
+      styles={{ marginTop: "5px" }}
+    />
+  );
 
   return (
     <div>
