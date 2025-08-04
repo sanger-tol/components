@@ -15,7 +15,7 @@ import {
 import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
 import { Loader, StatusMessage } from "..";
-import { FieldMeta, AllowedCardinality } from "..";
+import { FieldMeta, IAllowedCardinality } from "..";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function convertToPath(name: string) {
