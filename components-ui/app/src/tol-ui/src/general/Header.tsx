@@ -7,23 +7,23 @@ SPDX-License-Identifier: MIT
 import React from "react";
 import {
   Container,
-  HeaderButton,
+  IHeaderButton,
   Button
 } from "..";
 
 
-interface Props {
+interface PHeader {
   title?: string;
   subTitle?: string;
-  buttons?: HeaderButton[];
+  buttons?: IHeaderButton[];
   pageEmpty?: boolean;
 }
 
-export class Header extends React.Component<Props> {
-  buttons: HeaderButton[] = [];
+export class Header extends React.Component<PHeader> {
+  buttons: IHeaderButton[] = [];
   pageEmpty = true;
 
-  constructor(props: Props) {
+  constructor(props: PHeader) {
     super(props);
 
     if (props.buttons !== undefined) {

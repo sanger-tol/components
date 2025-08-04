@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Popover, Whisper } from "rsuite";
 
-export interface Props {
+export interface PHoverOverlay {
   contents: any;
   children: any;
   placement?: string;
@@ -15,7 +15,7 @@ export interface Props {
   followCursor?: boolean;
 }
 
-export function HoverOverlay(props: Props) {
+export function HoverOverlay(props: PHoverOverlay) {
   const { contents, children, delay = 300, onHover, followCursor } = props;
   const placement = props.placement === undefined ? "auto" : props.placement;
 

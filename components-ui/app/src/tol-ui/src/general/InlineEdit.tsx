@@ -8,7 +8,7 @@ import { useState } from "react";
 import { InlineEdit as RSInlineEdit } from "rsuite";
 import { Toaster, Message } from "..";
 
-export interface IInlineEdit {
+export interface PInlineEdit {
   text: string;
   editable?: boolean;
   onSave?: (value: string) => void;
@@ -22,7 +22,7 @@ export function InlineEdit({
   onChange,
   editable,
   size = "md",
-}: IInlineEdit) {
+}: PInlineEdit) {
   const [editedText, setEditedText] = useState(text);
   const [prevText, setPrevText] = useState(text);
   const [errorMessage, setErrorMessage] = useState("");

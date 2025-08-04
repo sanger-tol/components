@@ -12,7 +12,7 @@ import { IDropdownButtonConfig, IDropdownMainIconProps } from "../interfaces";
 import { Toaster, Message, Button } from "../index";
 
 
-export interface IDropdownButtons {
+export interface PDropdownButtons {
   mainButtonIcon: IDropdownMainIconProps;
   placement?: string;
   menuStyle?: object;
@@ -24,7 +24,7 @@ export interface IDropdownButtons {
   footer?: IDropdownButtonConfig | any;
 }
 
-export function DropdownButtons(props: IDropdownButtons) {
+export function DropdownButtons(props: PDropdownButtons) {
   const {
     mainButtonIcon,
     placement,

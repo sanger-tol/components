@@ -22,10 +22,10 @@ import {
   getAllAttributeData,
   truncateString,
   IRemoteTarget,
-  AllowedCardinality
+  IAllowedCardinality
 } from "..";
 
-interface Props extends IRemoteTarget{
+interface PAttributeSelector extends IRemoteTarget{
   additionalPopulatedFieldData?: any;
   allowedTypes?: string[];
   attribute: string[];
@@ -43,11 +43,11 @@ interface Props extends IRemoteTarget{
   sticky?: boolean;
   tooltipContent?: string;
   customAttributeSelection?: string[];
-  allowedCardinality?: AllowedCardinality;
+  allowedCardinality?: IAllowedCardinality;
   groupBy?: boolean;
 }
 
-export function AttributeSelector(props: Props) {
+export function AttributeSelector(props: PAttributeSelector) {
   const {
     objectType,
     dataSource,

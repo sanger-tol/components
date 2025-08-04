@@ -7,11 +7,11 @@ SPDX-License-Identifier: MIT
 import ReactMarkdown from "react-markdown";
 
 
-interface Props {
+interface PMarkdown {
   contents: string;
 }
 
-export function Markdown(props: Props) {
+export function Markdown(props: PMarkdown) {
   const { contents } = props;
 
   return (

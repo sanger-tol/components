@@ -13,19 +13,19 @@ import {
   numberWithSpaces,
   useEffectUpdate,
   UtilityBar,
-  IUtilityBar,
+  PUtilityBar,
   TFilterOrUndefined,
   API_METHODS,
   IRemoteTargetAndZone,
 } from "..";
 
 
-interface Props extends IRemoteTargetAndZone {
+interface PRemoteCount extends IRemoteTargetAndZone {
   id: string;
-  utilityBarConfig?: IUtilityBar;
+  utilityBarConfig?: PUtilityBar;
 }
 
-export function RemoteCount(props: Props) {
+export function RemoteCount(props: PRemoteCount) {
   const { id, objectType, dataSource, zone, setZone, utilityBarConfig } = props;
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);

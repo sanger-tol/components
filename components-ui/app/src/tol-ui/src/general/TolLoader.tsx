@@ -6,13 +6,13 @@ SPDX-License-Identifier: MIT
 
 import { Loader as RSLoader } from "rsuite";
 
-interface Props {
+interface PTolLoader {
   size?: string;
   content?: string;
   vertical?: boolean;
 }
 
-export function TolLoader(props: Props) {
+export function TolLoader(props: PTolLoader) {
   const { size, content, vertical } = props;
 
   return (

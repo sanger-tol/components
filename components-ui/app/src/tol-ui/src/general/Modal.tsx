@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { Modal as RSModal } from "rsuite";
 import { Button } from "..";
 
-interface Props {
+interface PModal {
   size: string;
   open: boolean;
   setOpen: any;
@@ -21,7 +21,7 @@ interface Props {
   onExited?: () => void;
 }
 
-export function Modal(props: Props) {
+export function Modal(props: PModal) {
   const {
     size,
     open,

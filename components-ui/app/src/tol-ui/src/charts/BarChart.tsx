@@ -34,7 +34,7 @@ import {
   isPropDefined,
   getCssVarValue,
   themeListener,
-  IUtilityBar
+  PUtilityBar
 } from "..";
 
 
@@ -61,7 +61,7 @@ interface Props {
   setBarData?: any;
   cumulative?: boolean;
   buttons?: JSX.Element[];
-  utilityBarConfig?: IUtilityBar;
+  utilityBarConfig?: PUtilityBar;
   contents?: ReactNode;
   chartType?: string;
 }

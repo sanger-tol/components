@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 import { getPlaceholder, getPlaceholderIcon } from "./utils";
 
-interface Props {
+interface PPlaceholder {
   bar?: boolean;
   pie?: boolean;
   table?: boolean;
@@ -25,7 +25,7 @@ interface Props {
   style?: any;
 }
 
-export function Placeholder(props: Props) {
+export function Placeholder(props: PPlaceholder) {
   const {
     bar,
     pie,

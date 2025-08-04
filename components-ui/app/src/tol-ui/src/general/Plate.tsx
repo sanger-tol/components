@@ -10,7 +10,7 @@ import {
   IWellHoverContents
 } from "..";
 
-interface IPlate {
+interface PPlate {
   id: string;
   rowLabels: string[];
   columnLabels: string[];
@@ -19,7 +19,7 @@ interface IPlate {
   WellHoverContents?: (props: IWellHoverContents) => JSX.Element;
 }
 
-export function Plate(props: IPlate) {
+export function Plate(props: PPlate) {
   const { id, data, rowLabels, columnLabels, onWellClick, WellHoverContents } =
     props;
 

@@ -11,7 +11,7 @@ import {
   Icon
 } from "..";
 
-export interface IButton {
+export interface PButton {
   icon?: string;
   onClick?: (...args: any[]) => void;
   className?: string;
@@ -31,7 +31,7 @@ export interface IButton {
 }
 
 
-export function Button(props: IButton) {
+export function Button(props: PButton) {
   const {
     icon,
     onClick,

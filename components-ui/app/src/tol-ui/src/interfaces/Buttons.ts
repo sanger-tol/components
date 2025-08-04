@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export interface HeaderButton {
+export interface IHeaderButton {
   href: string;
   text: string;
 }
@@ -28,7 +28,7 @@ export interface IDropdownMainIconProps {
   tooltip?: string;
 }
   
-export interface IButton {
+export interface PButton {
   icon?: string;
   onClick?: (...args: any[]) => void;
   className?: string;

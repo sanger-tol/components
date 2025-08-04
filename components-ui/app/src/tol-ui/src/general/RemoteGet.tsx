@@ -12,7 +12,7 @@ import {
 } from "..";
 
 
-interface Props {
+interface PRemoteGet {
   resource: string;
   dataSource: TsDataSource;
   loadingMessage?: string;
@@ -20,7 +20,7 @@ interface Props {
   setResponse: any;
 }
 
-export function RemoteGet(props: Props) {
+export function RemoteGet(props: PRemoteGet) {
   const { resource, dataSource, loadingMessage, response, setResponse } = props;
 
   useEffect(() => {

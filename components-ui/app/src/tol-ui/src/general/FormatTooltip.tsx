@@ -6,11 +6,11 @@ SPDX-License-Identifier: MIT
 
 import { updateContents } from "..";
 
-interface Props {
+interface PFormatTooltip {
   contents: object;
 }
 
-export function FormatTooltip(props: Props) {
+export function FormatTooltip(props: PFormatTooltip) {
   return (
     <div className="tooltip-contents">
       {Object.entries(updateContents(props.contents)).map(([key, value]) => (

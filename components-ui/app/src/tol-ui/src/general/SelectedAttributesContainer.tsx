@@ -13,20 +13,20 @@ import {
   normaliseCaps,
   truncateString,
   IRemoteTarget,
-  AttributeDetails,
+  IAttributeDetails,
   TRANSITION_TIME,
 } from "../index";
 
-interface Props extends IRemoteTarget {
+interface PSelectedAttributesContainer extends IRemoteTarget {
   attributes: readonly string[];
   setAttributes: (attributes: string[]) => void;
 }
 
-export function SelectedAttributesContainer(props: Props) {
+export function SelectedAttributesContainer(props: PSelectedAttributesContainer) {
   const { objectType, dataSource, attributes, setAttributes } = props;
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
-  const [objectAttributes, setObjectAttributes] = useState<AttributeDetails>(
+  const [objectAttributes, setObjectAttributes] = useState<IAttributeDetails>(
     {}
   );
 

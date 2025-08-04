@@ -9,17 +9,17 @@ import {
   Col,
   getCssVarValue,
   themeListener,
-  Component,
+  IWidgetsComponent,
   getSm,
   getLg,
   getHeight,
 } from "..";
 
-interface Props {
-  components: Component[];
+interface PWidgets {
+  components: IWidgetsComponent[];
 }
 
-export function Widgets(props: Props) {
+export function Widgets(props: PWidgets) {
   const { components } = props;
 
   themeListener(() => {

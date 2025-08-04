@@ -7,13 +7,13 @@
 import { Progress } from "rsuite";
 import { HoverOverlay, IWellData, IWellHoverContents } from "..";
 
-interface IWell {
+interface PWell {
   data: IWellData;
   onClick?: (id: string) => void;
   HoverContents?: (props: IWellHoverContents) => JSX.Element;
 }
 
-export function Well(props: IWell) {
+export function Well(props: PWell) {
   const { data, onClick, HoverContents } = props;
 
   const PercentageCircle = (width: number, cN?: string) => (

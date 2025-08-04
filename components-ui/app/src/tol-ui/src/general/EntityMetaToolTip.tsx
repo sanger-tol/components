@@ -13,11 +13,11 @@ import {
 } from "..";
 
 
-interface Props extends IRemoteTarget {
+interface PEntityMetaToolTip extends IRemoteTarget {
   field: any;
 }
 
-export function EntityMetaToolTip(props: Props) {
+export function EntityMetaToolTip(props: PEntityMetaToolTip) {
   const { field, objectType, dataSource } = props;
   const [attributeDeatils, setAttributeDetails] = useState<object>({});
 

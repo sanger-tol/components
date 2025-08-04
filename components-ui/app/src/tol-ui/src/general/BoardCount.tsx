@@ -10,24 +10,24 @@ import {
   RemoteCount,
   saveTitle,
   IBoardTargetAndZone,
-  IButton,
+  PButton,
   useBoardPrivilege,
   PRIVILEGE,
 } from "..";
 
 
-interface Props extends IBoardTargetAndZone {
+interface PBoardCount extends IBoardTargetAndZone {
   id: string;
   title: string;
   config: any;
 }
 
-export function BoardCount(props: Props) {
+export function BoardCount(props: PBoardCount) {
   const { id, boardObjectType, boardDataSource } = props;
   const [openFilters, setOpenFilters] = useState(false);
   const { privilege } = useBoardPrivilege();
 
-  const filterButton: IButton = {
+  const filterButton: PButton = {
     outline: true,
     position: "right",
     type: "primary",

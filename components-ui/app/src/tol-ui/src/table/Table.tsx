@@ -25,9 +25,9 @@ import {
   IZone,
   IDropdownButtonConfig,
   useStateFallback,
-  IUtilityBar,
-  IButton,
-  IDropdownButtons,
+  PUtilityBar,
+  PButton,
+  PDropdownButtons,
   IRemoteTarget,
   useBoardPrivilege,
   PRIVILEGE,
@@ -76,7 +76,7 @@ interface Props extends IRemoteTarget {
   actions?: IDropdownButtonConfig[];
   actionChoices?: string[];
   actionsFooter?: IDropdownButtonConfig;
-  utilityBarConfig?: IUtilityBar;
+  utilityBarConfig?: PUtilityBar;
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
 
@@ -198,7 +198,7 @@ export function Table(props: Props) {
     disabled: selectedRows.length === 0,
   }));
 
-  const configButton: IButton = !noConfigModal
+  const configButton: PButton = !noConfigModal
     ? {
       visible: true,
       position: "right",
@@ -214,7 +214,7 @@ export function Table(props: Props) {
       visible: false,
     };
 
-  const filterButton: IButton =
+  const filterButton: PButton =
     (!noFilter &&
       fieldMeta.order.active.length !== 0 &&
       privilege === PRIVILEGE.BOARD.EDITABLE) ||
@@ -234,7 +234,7 @@ export function Table(props: Props) {
         visible: false,
       };
 
-  const downloadButton: IButton = !noDownload ? {
+  const downloadButton: PButton = !noDownload ? {
     visible: true,
     position: "right",
     type: "primary",
@@ -254,7 +254,7 @@ export function Table(props: Props) {
     visible: false,
   };
 
-  const actionDropdown: IDropdownButtons | undefined =
+  const actionDropdown: PDropdownButtons | undefined =
     actions && actions.length > 0
       ? {
         mainButtonIcon: {
