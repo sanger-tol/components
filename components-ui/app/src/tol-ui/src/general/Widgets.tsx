@@ -15,7 +15,7 @@ import {
   getHeight,
 } from "..";
 
-interface PWidgets {
+export interface PWidgets {
   components: IWidgetsComponent[];
 }
 
@@ -31,29 +31,27 @@ export function Widgets(props: PWidgets) {
     }
   });
 
-  const rowStyle = {
-    marginLeft: 0,
-    marginRight: 0,
-    paddingLeft: 0,
-    paddingRight: 0,
-    marginBottom: -16,
-  };
-
-  const colStyle = {
-    paddingLeft: 0,
-    paddingRight: 0,
-  };
-
   return (
     <div>
-      <Row style={rowStyle}>
+      <Row
+        style={{
+          marginLeft: 0,
+          marginRight: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          marginBottom: -16,
+        }}
+      >
         {components.map((item, index) => {
           return (
             <Col
               key={`tol-widget-${index}`}
               sm={getSm(item.type)}
               lg={getLg(item.type)}
-              style={colStyle}
+              style={{
+                paddingLeft: 0,
+                paddingRight: 0,
+              }}
             >
               <div
                 className="tol-widget"

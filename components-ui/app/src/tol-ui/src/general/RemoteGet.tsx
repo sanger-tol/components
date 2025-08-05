@@ -12,7 +12,7 @@ import {
 } from "..";
 
 
-interface PRemoteGet {
+export interface PRemoteGet {
   resource: string;
   dataSource: TsDataSource;
   loadingMessage?: string;

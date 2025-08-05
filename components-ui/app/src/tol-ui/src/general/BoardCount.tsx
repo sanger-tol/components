@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
   BoardFilters,
   RemoteCount,
@@ -15,8 +15,7 @@ import {
   PRIVILEGE,
 } from "..";
 
-
-interface PBoardCount extends IBoardTargetAndZone {
+export interface PBoardCount extends IBoardTargetAndZone {
   id: string;
   title: string;
   config: any;
@@ -36,15 +35,11 @@ export function BoardCount(props: PBoardCount) {
     className: "count-filter-button",
     testid: "count-filter-button",
     visible: privilege === PRIVILEGE.BOARD.EDITABLE,
-  }
+  };
 
   return (
     <>
-      <BoardFilters
-        {...props}
-        open={openFilters}
-        setOpen={setOpenFilters}
-      />
+      <BoardFilters {...props} open={openFilters} setOpen={setOpenFilters} />
       <RemoteCount
         {...props}
         utilityBarConfig={{
@@ -53,9 +48,9 @@ export function BoardCount(props: PBoardCount) {
             editable: privilege === PRIVILEGE.BOARD.EDITABLE,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);
-            }
+            },
           },
-          buttons: [filterButton]
+          buttons: [filterButton],
         }}
       />
     </>

@@ -5,11 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Button as RsButton } from "rsuite";
-import {
-  TolLoader,
-  HoverOverlay,
-  Icon
-} from "..";
+import { TolLoader, HoverOverlay, Icon } from "..";
 
 export interface PButton {
   icon?: string;
@@ -29,7 +25,6 @@ export interface PButton {
   visible?: boolean;
   testid?: string;
 }
-
 
 export function Button(props: PButton) {
   const {
@@ -56,7 +51,7 @@ export function Button(props: PButton) {
 
   const Loader = () => {
     if (!loading) return null;
-  
+
     return (
       <span style={{ marginRight: text || icon ? 6 : 0 }}>
         <TolLoader size="sm" />
@@ -64,25 +59,27 @@ export function Button(props: PButton) {
     );
   };
 
-  const button = (
+  const ButtonContent = (
     <>
-      {visible &&
+      {visible && (
         <RsButton
           id={id}
           onClick={onClick}
           disabled={disabled}
           active={active}
-          className={
-            `icon-button-${type ||
-            "primary"}-${size ||
-            "md"}${outlineClass} ${className ? className : ""}`
-          }
+          className={`icon-button-${type || "primary"}-${
+            size || "md"
+          }${outlineClass} ${className ? className : ""}`}
           data-testid={testid}
         >
           {Loader()}
           {position === "right" ? (
             <>
-              {text && <span style={{ marginRight: icon ? "6px" : "0px" }}>{text}</span>}
+              {text && (
+                <span style={{ marginRight: icon ? "6px" : "0px" }}>
+                  {text}
+                </span>
+              )}
               {icon && (
                 <div>
                   <Icon icon={icon} size={size} />
@@ -96,14 +93,16 @@ export function Button(props: PButton) {
                   <Icon icon={icon} size={size} />
                 </div>
               )}
-              {text && <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>}
+              {text && (
+                <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>
+              )}
             </>
           )}
         </RsButton>
-      }
+      )}
     </>
   );
-  
+
   return (
     <div
       style={{
@@ -118,10 +117,10 @@ export function Button(props: PButton) {
           followCursor={disabled}
           delay={disabled ? undefined : 800}
         >
-          <div className="tooltip-wrapper">{button}</div>
+          <div className="tooltip-wrapper">{ButtonContent}</div>
         </HoverOverlay>
       ) : (
-        button
+        ButtonContent
       )}
     </div>
   );

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import ReactMarkdown from "react-markdown";
 
 
-interface PMarkdown {
+export interface PMarkdown {
   contents: string;
 }
 

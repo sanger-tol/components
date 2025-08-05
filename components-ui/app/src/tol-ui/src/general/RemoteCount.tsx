@@ -19,8 +19,7 @@ import {
   IRemoteTargetAndZone,
 } from "..";
 
-
-interface PRemoteCount extends IRemoteTargetAndZone {
+export interface PRemoteCount extends IRemoteTargetAndZone {
   id: string;
   utilityBarConfig?: PUtilityBar;
 }
@@ -48,8 +47,8 @@ export function RemoteCount(props: PRemoteCount) {
         method: API_METHODS.GET,
         resource: `${objectType}:count`,
         params: {
-          filter: filter
-        }
+          filter: filter,
+        },
       })
       .then((res: any) => {
         const total = res.data.meta.total;
@@ -72,13 +71,16 @@ export function RemoteCount(props: PRemoteCount) {
     }
     return (
       <div id={id} className="tol-count">
-      <h1 className="count">{numberWithSpaces(count)}</h1>
-      <div className={!utilityBarConfig ? "faded" : "faded count-utility-bar"} aria-hidden="true">
-        <h1>{count}</h1>
+        <h1 className="count">{numberWithSpaces(count)}</h1>
+        <div
+          className={!utilityBarConfig ? "faded" : "faded count-utility-bar"}
+          aria-hidden="true"
+        >
+          <h1>{count}</h1>
+        </div>
       </div>
-    </div>
-    )
-  }
+    );
+  };
 
   return (
     <>

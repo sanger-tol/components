@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Loader } from "../index";
 
-interface PLoadingContent {
+export interface PLoadingContent {
   text?: string;
 }
 

@@ -12,7 +12,7 @@ import {
 } from "..";
 
 
-interface PInfoTooltip {
+export interface PInfoTooltip {
   contents: ReactNode;
   disableMarkdown?: boolean;
 }

@@ -11,9 +11,11 @@ interface PFormatTooltip {
 }
 
 export function FormatTooltip(props: PFormatTooltip) {
+  const { contents } = props;
+
   return (
     <div className="tooltip-contents">
-      {Object.entries(updateContents(props.contents)).map(([key, value]) => (
+      {Object.entries(updateContents(contents)).map(([key, value]) => (
         <div className="formatted-tooltip" key={key}>
           <span className="tooltip-key">{key}:</span>
           <span className="tooltip-value">{value}</span>

@@ -17,7 +17,7 @@ import {
   TRANSITION_TIME,
 } from "../index";
 
-interface PSelectedAttributesContainer extends IRemoteTarget {
+export interface PSelectedAttributesContainer extends IRemoteTarget {
   attributes: readonly string[];
   setAttributes: (attributes: string[]) => void;
 }

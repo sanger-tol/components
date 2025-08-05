@@ -5,12 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import { Drawer as RSDrawer } from "rsuite";
-import { Button } from "..";
+import { Button, TDrawerPlacement } from "..";
 
 interface PDrawer {
   open: boolean;
   setOpen: any;
-  placement?: "top" | "bottom" | "left" | "right";
+  placement?: TDrawerPlacement;
   title: string;
   children?: any;
   onClose?: () => void;

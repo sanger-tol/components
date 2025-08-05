@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { Popover, Whisper } from "rsuite";
 
-interface PClickOverlay {
+export interface PClickOverlay {
   contents: ReactNode;
   children: JSX.Element;
   placement?: string;
@@ -22,7 +22,10 @@ export function ClickOverlay(props: PClickOverlay) {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (overlayRef.current && !overlayRef.current.contains(event.target as Node)) {
+      if (
+        overlayRef.current &&
+        !overlayRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     };
@@ -33,7 +36,7 @@ export function ClickOverlay(props: PClickOverlay) {
     };
   }, []);
 
-  const renderTooltip = () => (
+  const RenderTooltip = () => (
     <Popover
       onClick={() => {
         closeOnClick && setOpen(false);
@@ -50,7 +53,7 @@ export function ClickOverlay(props: PClickOverlay) {
         placement={placement}
         controlId="control-id-clickable"
         trigger="click"
-        speaker={renderTooltip()}
+        speaker={RenderTooltip()}
         delayOpen={delay}
         open={open}
         onOpen={() => setOpen(true)}

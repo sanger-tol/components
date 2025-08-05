@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-interface PObjectDetail {
+export interface PObjectDetail {
   data: object;
 }
 

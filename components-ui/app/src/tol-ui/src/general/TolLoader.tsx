@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Loader as RSLoader } from "rsuite";
 
-interface PTolLoader {
+export interface PTolLoader {
   size?: string;
   content?: string;
   vertical?: boolean;

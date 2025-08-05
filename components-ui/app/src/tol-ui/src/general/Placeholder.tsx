@@ -3,9 +3,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
-import { getPlaceholder, getPlaceholderIcon } from "./utils";
+import { GetPlaceholder, GetPlaceholderIcon } from "..";
 
-interface PPlaceholder {
+export interface PPlaceholder {
   bar?: boolean;
   pie?: boolean;
   table?: boolean;
@@ -51,26 +51,18 @@ export function Placeholder(props: PPlaceholder) {
     return <div style={{ height: height }} />;
   }
 
-  const icon = getPlaceholderIcon(
-    bar,
-    pie,
-    table,
-    map,
-    drag,
-    download,
-    loader,
-    message,
-    warningMessage,
-    errorMessage
-  );
+  const icon = <GetPlaceholderIcon
+    bar={bar}
+    pie={pie}
+    table={table}
+    map={map}
+    drag={drag}
+    download={download}
+    loader={loader}
+    message={message}
+    warningMessage={warningMessage}
+    errorMessage={errorMessage}
+  />;
 
-  return getPlaceholder(
-    height,
-    style,
-    icon,
-    backing,
-    opacity,
-    clear,
-    squareCorners
-  );
+  return <GetPlaceholder height={height} style={style} icon={icon} backing={backing} opacity={opacity} clear={clear} squareCorners={squareCorners}/>
 }

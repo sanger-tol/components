@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { normaliseCaps, getSourceColour } from "..";
 
-interface PSourceTag {
+export interface PSourceTag {
   className?: string;
   source: string;
 }

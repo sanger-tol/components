@@ -10,7 +10,7 @@ import {
   IWellHoverContents
 } from "..";
 
-interface PPlate {
+export interface PPlate {
   id: string;
   rowLabels: string[];
   columnLabels: string[];

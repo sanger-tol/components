@@ -32,7 +32,7 @@ export function InlineEdit({
   // Handles the save action
   const handleSave = () => {
     if (editedText.trim() === "") {
-      toaster.push(toastMessage, {
+      toaster.push(ToastMessage, {
         placement: "topCenter",
         duration: 5000,
       });
@@ -43,7 +43,7 @@ export function InlineEdit({
     onSave?.(editedText);
   };
 
-  const toastMessage = (
+  const ToastMessage = (
     <Message
       children="Title cannot be blank."
       type="error"

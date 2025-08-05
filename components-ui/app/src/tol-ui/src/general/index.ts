@@ -36,3 +36,5 @@ export * from "./UtilityBar";
 export * from "./utils";
 export * from "./Well";
 export * from "./Widgets";
+export * from "./GetPlaceholder";
+export * from "./GetPlaceholderIcon";

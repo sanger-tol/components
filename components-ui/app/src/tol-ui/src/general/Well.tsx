@@ -7,7 +7,7 @@
 import { Progress } from "rsuite";
 import { HoverOverlay, IWellData, IWellHoverContents } from "..";
 
-interface PWell {
+export interface PWell {
   data: IWellData;
   onClick?: (id: string) => void;
   HoverContents?: (props: IWellHoverContents) => JSX.Element;
