@@ -28,13 +28,14 @@ export function Modal(props: PModal) {
     setOpen,
     children,
     header,
+    closeButton = true,
+    overflow = true,
     actionButton,
     className,
     onEnter,
     onExited,
   } = props;
-  const closeButton = props.closeButton ?? true;
-  const rsOverflow = props.overflow !== false;
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -43,7 +44,7 @@ export function Modal(props: PModal) {
     <>
       {/* @ts-ignore */}
       <RSModal
-        overflow={rsOverflow}
+        overflow={overflow}
         open={open}
         onClose={handleClose}
         /* @ts-ignore */

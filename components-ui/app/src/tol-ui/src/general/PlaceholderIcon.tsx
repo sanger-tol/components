@@ -13,10 +13,10 @@ import {
   faTable,
   faDownload,
 } from "@fortawesome/free-solid-svg-icons";
-import { Loader, StatusMessage } from "..";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Loader, StatusMessage } from "..";
 
-export function GetPlaceholderIcon(Props: PPlaceholder) {
+export function PlaceholderIcon(Props: PPlaceholder) {
   const {
     bar,
     pie,

@@ -10,6 +10,7 @@ export interface PObjectDetail {
 
 export function ObjectDetail(props: PObjectDetail) {
   const { data } = props;
+
   return (
     <div className="tol-object-detail">
       {Object.entries(data).map(([key, value]) => (

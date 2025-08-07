@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { Drawer as RSDrawer } from "rsuite";
 import { Button, TDrawerPlacement } from "..";
 
-interface PDrawer {
+export interface PDrawer {
   open: boolean;
   setOpen: any;
   placement?: TDrawerPlacement;
@@ -17,8 +17,14 @@ interface PDrawer {
 }
 
 export function Drawer(props: PDrawer) {
-  const { open, setOpen, title, children, onClose } = props;
-  const placement = props.placement ?? "right";
+  const {
+    open,
+    setOpen,
+    placement = "right",
+    title,
+    children,
+    onClose,
+  } = props;
   const { Header, Body } = RSDrawer;
 
   const handleClose = () => {

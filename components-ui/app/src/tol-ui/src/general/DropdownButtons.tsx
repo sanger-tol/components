@@ -65,21 +65,19 @@ export function DropdownButtons(props: PDropdownButtons) {
     };
   };
 
-  const RenderButton = (props: any, ref: any) => {
-    return (
-      <Button
-        {...props}
-        type={mainButtonIcon.type}
-        className={mainButtonIcon.className}
-        disabled={mainButtonIcon.disabled}
-        icon={mainButtonIcon.icon}
-        position={mainButtonIcon.position}
-        outline={mainButtonIcon.outline}
-        tooltip={mainButtonIcon.tooltip}
-        id={mainButtonIcon.id}
-      />
-    );
-  };
+  const RenderButton = (props: any, ref: any) => (
+    <Button
+      {...props}
+      type={mainButtonIcon.type}
+      className={mainButtonIcon.className}
+      disabled={mainButtonIcon.disabled}
+      icon={mainButtonIcon.icon}
+      position={mainButtonIcon.position}
+      outline={mainButtonIcon.outline}
+      tooltip={mainButtonIcon.tooltip}
+      id={mainButtonIcon.id}
+    />
+  );
 
   return (
     <Dropdown

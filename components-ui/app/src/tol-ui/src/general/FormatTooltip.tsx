@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { updateContents } from "..";
 
-interface PFormatTooltip {
+export interface PFormatTooltip {
   contents: object;
 }
 

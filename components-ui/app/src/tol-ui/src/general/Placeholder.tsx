@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
-import { GetPlaceholder, GetPlaceholderIcon } from "..";
+import { PlaceholderIcon } from "..";
 
 export interface PPlaceholder {
   bar?: boolean;
@@ -27,42 +27,55 @@ export interface PPlaceholder {
 
 export function Placeholder(props: PPlaceholder) {
   const {
-    bar,
-    pie,
-    table,
-    map,
-    drag,
-    download,
     empty,
-    loader,
+    height = "100%",
+    style = {},
+    backing,
     opacity,
     clear,
     squareCorners,
-    message,
-    warningMessage,
-    errorMessage,
-    backing,
-    style,
   } = props;
-  const height = props.height !== undefined ? props.height : "100%";
 
   // this temporarily fills a gap - used for on load
   if (empty) {
     return <div style={{ height: height }} />;
   }
 
-  const icon = <GetPlaceholderIcon
-    bar={bar}
-    pie={pie}
-    table={table}
-    map={map}
-    drag={drag}
-    download={download}
-    loader={loader}
-    message={message}
-    warningMessage={warningMessage}
-    errorMessage={errorMessage}
-  />;
+  const Icon = <PlaceholderIcon {...props} />;
 
-  return <GetPlaceholder height={height} style={style} icon={icon} backing={backing} opacity={opacity} clear={clear} squareCorners={squareCorners}/>
+  if (opacity) style["opacity"] = opacity;
+  if (squareCorners !== true) style["borderRadius"] = 6;
+
+  // default placeholder
+  if (!backing) {
+    return (
+      <div style={{ height: height }}>
+        <div
+          className={clear ? "tol-placeholder-empty" : "tol-placeholder"}
+          style={style}
+        >
+          <div className="tol-placeholder-icons">{Icon}</div>
+        </div>
+      </div>
+    );
+  }
+
+  // adding a faded background to the backing contents (e.g. map behind loading)
+  return (
+    <div className="overlay-outer">
+      <div className="overlay-top" style={{ zIndex: 1002 }}>
+        <div style={{ height: height }}>
+          <div className="tol-placeholder-empty">
+            <div className="tol-placeholder-icons">{Icon}</div>
+          </div>
+        </div>
+      </div>
+      <div className="overlay-top" style={{ zIndex: 1001 }}>
+        <div style={{ height: height }}>
+          <div className="tol-placeholder" style={style} />
+        </div>
+      </div>
+      {backing}
+    </div>
+  );
 }

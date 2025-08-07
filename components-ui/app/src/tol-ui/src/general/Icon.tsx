@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-interface PIcon {
+export interface PIcon {
   icon?: string;
   size?: string;
 }

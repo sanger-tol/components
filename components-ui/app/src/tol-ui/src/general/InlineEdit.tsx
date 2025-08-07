@@ -16,13 +16,8 @@ export interface PInlineEdit {
   size?: "sm" | "md";
 }
 
-export function InlineEdit({
-  text,
-  onSave,
-  onChange,
-  editable,
-  size = "md",
-}: PInlineEdit) {
+export function InlineEdit(props: PInlineEdit) {
+  const { text, onSave, onChange, editable, size = "md" } = props;
   const [editedText, setEditedText] = useState(text);
   const [prevText, setPrevText] = useState(text);
   const [errorMessage, setErrorMessage] = useState("");
