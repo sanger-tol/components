@@ -197,13 +197,6 @@ def application():
         url_prefix=os.environ['API_PATH'] + '/run-pipeline'
     )
 
-    uploads_bp = data_blueprint(
-        sql_datasource,
-    )
-
-    app.register_blueprint(uploads_bp, name='upload-data',
-                           url_prefix=os.getenv('API_PATH') + '/upload-data')
-
     # dashboards
     boards_bp = board_blueprint(sql_datasource)
     app.register_blueprint(
