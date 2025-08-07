@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react'
+import { useState } from "react";
 import {
   ClickOverlay,
   InlineEdit,
@@ -13,9 +13,8 @@ import {
   IDropdownButtons,
   Button,
   DropdownButtons,
-  resizeListener
-} from '..'
-
+  resizeListener,
+} from "..";
 
 export interface IUtilityBar {
   id?: string;
@@ -25,18 +24,11 @@ export interface IUtilityBar {
 }
 
 export function UtilityBar(props: IUtilityBar) {
-  const {
-    id,
-    title,
-    buttons,
-    elements
-  } = props;
+  const { id, title, buttons, elements } = props;
 
   const wrapperId = "tol-utility-bar-wrapper-" + id; // gets width on mount
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
 
-  
-  
   resizeListener(() => {
     const width = document.getElementById(wrapperId)?.offsetWidth;
     if (width !== undefined) setSmallBreakpoint(width < 600);
@@ -44,27 +36,32 @@ export function UtilityBar(props: IUtilityBar) {
 
   const Buttons = (
     // remove left-most button margin
-    <div style={{marginLeft: '-6px'}}>
-      {buttons && buttons.map((button, index) => {
-        if (button) {
-          if ('dropdownButtons' in button) {
+    <div style={{ marginLeft: "-6px" }}>
+      {buttons &&
+        buttons.map((button, index) => {
+          if (button) {
+            if ("dropdownButtons" in button) {
+              return (
+                <div style={{ float: "right" }} key={index}>
+                  <DropdownButtons {...button} />
+                </div>
+              );
+            }
             return (
-              <div style={{float: 'right', marginLeft: '6px'}} key={index}>
-                <DropdownButtons {...button} />
-              </div>
-            )
+              <Button
+                key={index}
+                {...button}
+                className="tol-utility-bar-button"
+              />
+            );
           }
-          return (
-            <Button key={index} {...button} className='tol-utility-bar-button'/>
-          )
-        }
-      })}
+        })}
     </div>
-  )
+  );
 
   const CondensedButtons = (
     <ClickOverlay contents={Buttons} closeOnClick>
-      <div style={{float: "right"}}>
+      <div style={{ float: "right" }}>
         <Button
           outline
           position="right"
@@ -73,32 +70,24 @@ export function UtilityBar(props: IUtilityBar) {
         />
       </div>
     </ClickOverlay>
-  )
+  );
 
   return (
-    <div className='tol-utility-bar' id={wrapperId}>
-      {title &&
-        <InlineEdit
-          {...title}
-          size={smallBreakpoint ? 'sm' : 'md'}
-        />
-      }
-      {elements && elements.map((element, index) => (
-        <div key={index} style={{ float: 'left' }}>
-          {element}
-        </div>
-      ))}
-      <div className='tol-utility-bar-buttons'>
-        {
-          (
-            smallBreakpoint &&
-            buttons &&
-            // only takes into account buttons that are visible
-            buttons.filter(button => button?.['visible'] !== false).length > 1
-          )
+    <div className="tol-utility-bar" id={wrapperId}>
+      {title && <InlineEdit {...title} size={smallBreakpoint ? "sm" : "md"} />}
+      {elements &&
+        elements.map((element, index) => (
+          <div key={index} style={{ float: "left" }}>
+            {element}
+          </div>
+        ))}
+      <div className="tol-utility-bar-buttons">
+        {smallBreakpoint &&
+        buttons &&
+        // only takes into account buttons that are visible
+        buttons.filter((button) => button?.["visible"] !== false).length > 1
           ? CondensedButtons
-          : Buttons
-        }
+          : Buttons}
       </div>
     </div>
   );

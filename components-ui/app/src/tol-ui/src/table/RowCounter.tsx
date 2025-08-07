@@ -4,18 +4,25 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { API_METHODS, IRemoteTarget } from "..";
 
 interface Props extends IRemoteTarget {
   totalSize: number;
+  setTotalSize: (totalSize: number) => void;
   filter?: object;
   loading: boolean;
 }
 
 export function RowCounter(props: Props) {
-  const { dataSource, objectType, totalSize, filter, loading } = props;
-  const [count, setCount] = useState<number | null>(null);
+  let {
+    totalSize,
+    setTotalSize,
+    dataSource,
+    objectType,
+    filter,
+    loading,
+  } = props;
 
   const fetchRowTotal = () => {
     dataSource
@@ -27,7 +34,7 @@ export function RowCounter(props: Props) {
         },
       })
       .then((res: any) => {
-        setCount(res.data.meta.total);
+        setTotalSize(res.data.meta.total);
       });
   };
 
@@ -36,7 +43,7 @@ export function RowCounter(props: Props) {
       if (totalSize === 10000) {
         fetchRowTotal();
       } else {
-        setCount(totalSize);
+        setTotalSize(totalSize);
       }
     }
   }, [loading]);
@@ -51,7 +58,7 @@ export function RowCounter(props: Props) {
     return total.toLocaleString() + " Rows";
   };
 
-  if (count === null) return <></>;
+  if (totalSize === null) return <></>;
 
-  return <span>{addTotalText(count)}</span>;
+  return <span>{addTotalText(totalSize)}</span>;
 }
