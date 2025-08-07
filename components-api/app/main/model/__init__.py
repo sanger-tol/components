@@ -18,5 +18,5 @@ MODELS = [
     Singular,
     Species,
     Specimen,
-    UserAction,
+    UserAction
 ]
