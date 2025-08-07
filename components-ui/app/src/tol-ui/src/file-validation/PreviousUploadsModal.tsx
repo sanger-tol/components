@@ -12,7 +12,6 @@ import {
   Modal,
   Button,
   TolLoader,
-  TsDataSource,
   PreviousUploadsView,
   getUserFromLocalStorage,
   fetchAndNormaliseAllUploadResults,
@@ -21,6 +20,7 @@ import {
   TOL_LOADER_STYLES,
   VALIDATION_ENDPOINTS,
   BUTTON_TIMEOUT,
+  PIPELINE_DS
 } from "..";
 
 export interface PPreviousUploadsModal {
@@ -30,7 +30,6 @@ export interface PPreviousUploadsModal {
 
 export function PreviousUploadsModal(props: PPreviousUploadsModal) {
   const { openModal, setOpenModal } = props;
-  const ds = new TsDataSource();
 
   const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
   const [expandedResults, setExpandedResults] = useState<string | null>(null);
@@ -40,8 +39,8 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
   const fetchPreviousUploads = async () => {
     const cacheBustedEndpoint = `${
       VALIDATION_ENDPOINTS.UPLOAD
-    }?_cache_bust=${Date.now()}`;
-    return await fetchAndNormaliseAllUploadResults(ds, cacheBustedEndpoint, id);
+    }?_cb=${Date.now()}`;
+    return await fetchAndNormaliseAllUploadResults(PIPELINE_DS, cacheBustedEndpoint, id);
   };
 
   const {
@@ -54,8 +53,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
     queryKey: ["userFileValidationUploads", id],
     queryFn: fetchPreviousUploads,
     enabled: (openModal === "results" || openModal === true) && id !== null,
-    refetchInterval: 500000000,
-    // refetchInterval: openModal === "results" ? REFRESH_INTERVAL : false,
+    refetchInterval: openModal === "results" ? REFRESH_INTERVAL : false,
     staleTime: 0,
   });
 

@@ -27,9 +27,9 @@ import {
   DropdownButtons,
   Modal,
   TolLoader,
-  TsDataSource,
   VALIDATION_ENDPOINTS,
   FileData,
+  TsDataSource
 } from "..";
 
 export interface PFileValidation {
@@ -42,6 +42,8 @@ export interface PFileValidation {
 
 const DEFAULT_FILE_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
+
+export const PIPELINE_DS = new TsDataSource();
 
 export function FileValidation(props: PFileValidation) {
   const {
@@ -61,22 +63,21 @@ export function FileValidation(props: PFileValidation) {
   const [resetting, setResetting] = useState<boolean>(false);
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);
+  const [stepsFound, setStepsFound] = useState<boolean>(false);
   const [validationStatus, setValidationStatus] = useState<{}>({
     className: "",
     text: "",
   });
 
-  const ds = new TsDataSource();
-
   const fetchLatestPipelineResults = async () => {
     const cacheBustedEndpoint = `${
       VALIDATION_ENDPOINTS.UPLOAD
-    }?_cache_bust=${Date.now()}`;
+    }?_cb=${Date.now()}`;
     if (!currentUploadId) {
       return null;
     }
     return await fetchCurrentPipelineResults(
-      ds,
+      PIPELINE_DS,
       cacheBustedEndpoint,
       currentUploadId
     );
@@ -90,12 +91,15 @@ export function FileValidation(props: PFileValidation) {
     queryKey: ["latestPipelineResults", currentUploadId],
     queryFn: fetchLatestPipelineResults,
     enabled: validating && currentUploadId !== null && !validated,
-    refetchInterval: validating ? REFRESH_INTERVAL : false,
+    refetchInterval: validating && stepsFound ? REFRESH_INTERVAL : false,
     staleTime: 0,
   });
 
   useEffect(() => {
     if (latestPipelineResults) {
+
+      setStepsFound(latestPipelineResults.pipelineSteps?.length > 0);
+
       if (latestPipelineResults.completed) {
         setValidated(true);
 
@@ -127,7 +131,7 @@ export function FileValidation(props: PFileValidation) {
 
   const generateMessages = async (fileName: string[]) => {
     const pipeline_id = await uploadPipelineConfig(
-      ds,
+      PIPELINE_DS,
       validationConfig,
       fileName[0],
     );
@@ -238,14 +242,15 @@ export function FileValidation(props: PFileValidation) {
         <p>Validate and upload</p>
       </div>
       <Dropzone
-        endpoint={endpoint}
+        resource={endpoint}
+        dataSource={PIPELINE_DS}
         fileType={fileType}
-        generateMessages={generateMessages}
         onFileDrop={(fileDropped: boolean) => setFileDropped(fileDropped)}
         fileList={fileList}
         setFileList={setFileList}
         parentToSubmit
         resetKey={resetKey}
+        validating={validating}
       />
     </div>
   );
@@ -287,7 +292,7 @@ export function FileValidation(props: PFileValidation) {
         latestPipelineResults?.validationResults && (
           <ValidateSteps
             data={latestPipelineResults.validationResults}
-            steps={latestPipelineResults["pipelineSteps"]}
+            steps={latestPipelineResults.pipelineSteps}
             completed={latestPipelineResults.completed}
           />
         )
@@ -342,7 +347,7 @@ export function FileValidation(props: PFileValidation) {
             resetting ? "tol-file-upload-results-dropdown-hide-animation" : ""
           }`}
         >
-          <Widgets components={ValidationSteps} />
+          <Widgets components={currentUploadId ? ValidationSteps : []} />
         </div>
       )}
     </>

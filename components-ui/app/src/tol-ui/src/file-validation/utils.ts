@@ -54,6 +54,8 @@ export function downloadFile(filename: string) {
   //TODO: Implement download functionality
 }
 
+export function uploadFileToS3() {}
+
 /**
  * Normalises a validation result received from the API into the internal IValidationResult format.
  *

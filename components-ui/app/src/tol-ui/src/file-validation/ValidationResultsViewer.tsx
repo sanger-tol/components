@@ -19,19 +19,18 @@ import {
   IPipelineUpload,
   PreviousUploadsModal,
   Widgets,
-  TsDataSource,
   LoadingContent,
   Icon,
   Button,
   REFRESH_INTERVAL,
   VALIDATION_ENDPOINTS,
   BUTTON_TIMEOUT,
+  PIPELINE_DS,
 } from "..";
 
 export function ValidationResultsViewer() {
   const { uploadId } = useParams<{ uploadId: string }>();
 
-  const ds = new TsDataSource();
   const location = useLocation();
   const history = useHistory();
   const targetRef = useRef<HTMLDivElement | null>(null);
@@ -53,12 +52,12 @@ export function ValidationResultsViewer() {
   const fetchLatestPipelineResults = async () => {
     const cacheBustedEndpoint = `${
       VALIDATION_ENDPOINTS.UPLOAD
-    }?_cache_bust=${Date.now()}`;
+    }?_cb=${Date.now()}`;
     if (!uploadId) {
       return null;
     }
     const result = await fetchCurrentPipelineResults(
-      ds,
+      PIPELINE_DS,
       cacheBustedEndpoint,
       uploadId
     );
@@ -80,7 +79,7 @@ export function ValidationResultsViewer() {
     queryFn: fetchLatestPipelineResults,
     enabled: !hasErrors && uploadId !== null && !validated,
     refetchInterval: (data: any) => {
-      return data && !data.completed ? REFRESH_INTERVAL / 2 : false;
+      return data && !data.completed ? REFRESH_INTERVAL : false;
     },
     staleTime: 0,
   });

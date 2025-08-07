@@ -162,6 +162,11 @@
   transition: padding-bottom 0.3s ease;
   justify-self: center;
 
+  &.few-steps {
+    justify-self: flex-start !important;
+    min-width: 100% !important;
+  }
+
   &.expanded {
     padding-bottom: 160px;
   }

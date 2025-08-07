@@ -144,8 +144,8 @@ export function TolApp(props: Props) {
                 )}
               </Route>
               <Route path="/file-validation/results/:uploadId" render={(routeProps) => {
-                return boards && loggedIn ? (
-                  <ValidationResultsViewer {...routeProps} endpoint="local/upload"/>
+                return loggedIn ? (
+                  <ValidationResultsViewer {...routeProps} />
                 ) : (
                   <Redirect to="/" />
                 )

@@ -10,12 +10,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
 import {
   Loader,
-  StatusMessage, 
+  StatusMessage,
   useStateFallback,
   TsDataSource,
   TMessageType,
   IMessage,
-  IWaitingUpload
+  IWaitingUpload,
 } from "..";
 
 export interface FileData {
@@ -29,7 +29,7 @@ export interface PDropzone {
   resource: string;
   dataSource: TsDataSource;
   fileType: string;
-  generateMessages: (apiRes: any) => IMessage[];
+  generateMessages?: (apiRes: any) => IMessage[];
   setResponse?: any;
   onFileDrop?: (length: boolean) => void;
   fileListVisible?: boolean;
@@ -37,11 +37,13 @@ export interface PDropzone {
   setFileList?: (fileList: FileData[]) => void;
   parentToSubmit?: boolean;
   resetKey?: string | number;
+  validating?: boolean;
 }
 
 export function Dropzone(props: PDropzone) {
   const {
-    resource, dataSource,
+    resource,
+    dataSource,
     fileType,
     generateMessages,
     setResponse,
@@ -49,6 +51,7 @@ export function Dropzone(props: PDropzone) {
     fileListVisible = false,
     parentToSubmit = false,
     resetKey,
+    validating = false
   } = props;
 
   const [fileList, setFileList] = useStateFallback<FileData[]>(
@@ -90,7 +93,7 @@ export function Dropzone(props: PDropzone) {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       })
       .then((res: any) => {
         if (setResponse) {
@@ -98,7 +101,7 @@ export function Dropzone(props: PDropzone) {
         }
         setIsLoading(false);
         setHasLoaded(true);
-        setMessages(generateMessages(res));
+        setMessages(generateMessages ? generateMessages(res) : []);
       })
       .catch((error: any) => {
         setIsLoading(false);
@@ -116,7 +119,7 @@ export function Dropzone(props: PDropzone) {
           icon={faFileArrowUp}
           size="8x"
         />
-        <p>{props.message}</p>
+        <h6>{props.message}</h6>
         {fileList.length > 0 ? (
           <p className="file-name">
             {String(fileList[fileList.length - 1].name)}
@@ -136,6 +139,7 @@ export function Dropzone(props: PDropzone) {
         accept={fileType}
         onChange={setFileList}
         fileListVisible={fileListVisible}
+        disabled={fileList.length > 0 && validating}
         onUpload={() => {
           setValidate(!validate);
         }}
@@ -150,7 +154,13 @@ export function Dropzone(props: PDropzone) {
               {fail && fileList.length > 0 ? (
                 <WaitingUpload message="Unexpected error, please try again" />
               ) : (
-                <WaitingUpload message="Click or drag file to this area to upload" />
+                <WaitingUpload
+                  message={
+                    (fileList.length > 0 && validating)
+                      ? "Please reset to upload a new file."
+                      : "Click or drag file to this area to upload"
+                  }
+                />
               )}
             </div>
           )}
