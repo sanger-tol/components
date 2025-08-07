@@ -12,8 +12,6 @@ const VALIDATION_CONFIG = {
   destination: "random_destination",
 };
 
-function FileValidation() {
+export function FileValidation() {
   return <FV endpoint="" validationConfig={VALIDATION_CONFIG} />;
 }
-
-export default FileValidation;

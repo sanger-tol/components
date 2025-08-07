@@ -25,4 +25,4 @@ export * from "./Colours";
 export * from "./Factories";
 export * from "./DataSource";
 export * from "./Plates";
-export { default as FileValidation } from "./FileValidation";
+export * from "./FileValidation";
