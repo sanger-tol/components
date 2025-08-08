@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TMessageType, IButton } from "..";
+import { TMessageType, PButton } from "..";
 
 export interface IWaitingUpload {
   message: string;
@@ -41,6 +41,6 @@ export interface IFormConfig {
 }
 
 export interface IFormButtons {
-  buttons: IButton[];
+  buttons: PButton[];
   buttonStyle?: React.CSSProperties;
 }

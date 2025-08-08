@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { Popover, Whisper } from "rsuite";
 
-interface Props {
+export interface PClickOverlay {
   contents: ReactNode;
   children: JSX.Element;
   placement?: string;
@@ -15,24 +15,17 @@ interface Props {
   closeOnClick?: boolean;
 }
 
-export function ClickOverlay(props: Props) {
+export function ClickOverlay(props: PClickOverlay) {
   let { contents, children, placement = "auto", delay, closeOnClick } = props;
   const overlayRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
 
-  const renderTooltip = () => (
-    <Popover
-      onClick={() => {
-        closeOnClick && setOpen(false);
-      }}
-    >
-      {contents}
-    </Popover>
-  );
-
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (overlayRef.current && !overlayRef.current.contains(event.target as Node)) {
+      if (
+        overlayRef.current &&
+        !overlayRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     };
@@ -43,6 +36,16 @@ export function ClickOverlay(props: Props) {
     };
   }, []);
 
+  const RenderTooltip = () => (
+    <Popover
+      onClick={() => {
+        closeOnClick && setOpen(false);
+      }}
+    >
+      {contents}
+    </Popover>
+  );
+
   return (
     <div ref={overlayRef}>
       <Whisper
@@ -50,7 +53,7 @@ export function ClickOverlay(props: Props) {
         placement={placement}
         controlId="control-id-clickable"
         trigger="click"
-        speaker={renderTooltip()}
+        speaker={RenderTooltip()}
         delayOpen={delay}
         open={open}
         onOpen={() => setOpen(true)}

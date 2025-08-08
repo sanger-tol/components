@@ -11,8 +11,7 @@ import { Dropdown } from "rsuite";
 import { IDropdownButtonConfig, IDropdownMainIconProps } from "../interfaces";
 import { Toaster, Message, Button } from "../index";
 
-
-export interface IDropdownButtons {
+export interface PDropdownButtons {
   mainButtonIcon: IDropdownMainIconProps;
   placement?: string;
   menuStyle?: object;
@@ -24,7 +23,7 @@ export interface IDropdownButtons {
   footer?: IDropdownButtonConfig | any;
 }
 
-export function DropdownButtons(props: IDropdownButtons) {
+export function DropdownButtons(props: PDropdownButtons) {
   const {
     mainButtonIcon,
     placement,
@@ -66,25 +65,23 @@ export function DropdownButtons(props: IDropdownButtons) {
     };
   };
 
-  const renderButton = (props: any, ref: any) => {
-    return (
-      <Button
-        {...props}
-        type={mainButtonIcon.type}
-        className={mainButtonIcon.className}
-        disabled={mainButtonIcon.disabled}
-        icon={mainButtonIcon.icon}
-        position={mainButtonIcon.position}
-        outline={mainButtonIcon.outline}
-        tooltip={mainButtonIcon.tooltip}
-        id={mainButtonIcon.id}
-      />
-    );
-  };
+  const RenderButton = (props: any, ref: any) => (
+    <Button
+      {...props}
+      type={mainButtonIcon.type}
+      className={mainButtonIcon.className}
+      disabled={mainButtonIcon.disabled}
+      icon={mainButtonIcon.icon}
+      position={mainButtonIcon.position}
+      outline={mainButtonIcon.outline}
+      tooltip={mainButtonIcon.tooltip}
+      id={mainButtonIcon.id}
+    />
+  );
 
   return (
     <Dropdown
-      renderToggle={renderButton}
+      renderToggle={RenderButton}
       placement={placement}
       menuStyle={menuStyle}
       disabled={disabled}

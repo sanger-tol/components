@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { Popover, Whisper } from "rsuite";
 
-export interface Props {
+export interface PHoverOverlay {
   contents: any;
   children: any;
   placement?: string;
@@ -15,13 +15,19 @@ export interface Props {
   followCursor?: boolean;
 }
 
-export function HoverOverlay(props: Props) {
-  const { contents, children, delay = 300, onHover, followCursor } = props;
-  const placement = props.placement === undefined ? "auto" : props.placement;
+export function HoverOverlay(props: PHoverOverlay) {
+  const {
+    contents,
+    children,
+    placement = "auto",
+    delay = 300,
+    onHover,
+    followCursor,
+  } = props;
 
-  const renderTooltip = () => <Popover>{contents}</Popover>;
+  const RenderTooltip = () => <Popover>{contents}</Popover>;
 
-  if (!contents) return children
+  if (!contents) return children;
 
   return (
     <Whisper
@@ -29,10 +35,10 @@ export function HoverOverlay(props: Props) {
       placement={placement}
       controlId="control-id-hover-enterable"
       trigger="hover"
-      speaker={renderTooltip()}
+      speaker={RenderTooltip()}
       enterable={followCursor ? false : true}
       followCursor={followCursor ? true : false}
-      onEntering={onHover !== undefined ? onHover : () => {}}
+      onEntering={onHover ? onHover : () => {}}
       delayOpen={delay}
     >
       {children}

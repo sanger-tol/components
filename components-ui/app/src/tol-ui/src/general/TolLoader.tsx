@@ -7,14 +7,14 @@ SPDX-License-Identifier: MIT
 import React from "react";
 import { Loader as RSLoader } from "rsuite";
 
-interface Props {
+export interface PTolLoader {
   size?: string;
   content?: string;
   vertical?: boolean;
   styles?: React.CSSProperties;
 }
 
-export function TolLoader(props: Props) {
+export function TolLoader(props: PTolLoader) {
   const { size, content, vertical, styles } = props;
 
   return (

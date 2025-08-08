@@ -8,22 +8,22 @@ import { useState } from "react";
 import {
   ClickOverlay,
   InlineEdit,
-  IInlineEdit,
-  IButton,
-  IDropdownButtons,
+  PInlineEdit,
+  PButton,
+  PDropdownButtons,
   Button,
   DropdownButtons,
   resizeListener,
 } from "..";
 
-export interface IUtilityBar {
+export interface PUtilityBar {
   id?: string;
-  title?: IInlineEdit;
-  buttons?: (IButton | IDropdownButtons | undefined)[];
+  title?: PInlineEdit;
+  buttons?: (PButton | PDropdownButtons | undefined)[];
   elements?: JSX.Element[];
 }
 
-export function UtilityBar(props: IUtilityBar) {
+export function UtilityBar(props: PUtilityBar) {
   const { id, title, buttons, elements } = props;
 
   const wrapperId = "tol-utility-bar-wrapper-" + id; // gets width on mount

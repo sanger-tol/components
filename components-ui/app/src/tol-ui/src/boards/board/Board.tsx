@@ -21,7 +21,7 @@ import {
   useBoardPrivilege,
   copyToClipboard,
   PopUpMessage,
-  IUtilityBar,
+  PUtilityBar,
   TBoardPrivilege,
   PRIVILEGE
 } from "../..";
@@ -89,7 +89,7 @@ export function Board(props: PBoard) {
     return <LoadingContent text="Finding Board..." />;
   }
 
-  const UtilityBarConfig: IUtilityBar = {
+  const UtilityBarConfig: PUtilityBar = {
     id: "board-utility-bar",
     buttons: [
       {

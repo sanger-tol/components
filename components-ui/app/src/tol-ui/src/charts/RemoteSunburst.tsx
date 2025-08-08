@@ -23,8 +23,8 @@ import {
   addSubFilter,
   filterHasUpdated,
   resetFiltersBelow,
-  IUtilityBar,
-  IButton,
+  PUtilityBar,
+  PButton,
   UtilityBar,
   TFilterOrUndefined,
   API_METHODS,
@@ -41,7 +41,7 @@ interface Props extends IRemoteTargetAndZone {
   noMini?: boolean;
   noDownload?: boolean;
   forceUpdate?: boolean;
-  utilityBarConfig?: IUtilityBar;
+  utilityBarConfig?: PUtilityBar;
   contents?: ReactNode;
 }
 
@@ -173,7 +173,7 @@ export function RemoteSunburst(props: Props) {
   }
 
 
-  const resetButton: IButton = (!isEmptyObject(datasets) ? {
+  const resetButton: PButton = (!isEmptyObject(datasets) ? {
     outline: true,
     position: "right",
     type: "primary",
@@ -186,7 +186,7 @@ export function RemoteSunburst(props: Props) {
     visible: false,
   })
 
-  const downloadButton: IButton = !noDownload ? {
+  const downloadButton: PButton = !noDownload ? {
     outline: true,
     position: "right",
     type: "primary",

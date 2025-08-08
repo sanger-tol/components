@@ -11,26 +11,23 @@ import {
   Markdown,
   UtilityBar,
   IBoardTargetAndZone,
-  IButton,
+  PButton,
   saveTitle,
   updateConfigAndUpsert,
   useBoardPrivilege,
   PRIVILEGE,
+  IMarkdownConfig
 } from "..";
 
 
-export interface IMarkdownConfig {
-  content: string;
-}
-
-export interface IBoardMarkdown extends IBoardTargetAndZone {
+export interface PBoardMarkdown extends IBoardTargetAndZone {
   id: string;
   title: string;
   config: IMarkdownConfig;
   size: string;
 }
 
-export function BoardMarkdown(props: IBoardMarkdown) {
+export function BoardMarkdown(props: PBoardMarkdown) {
   const { id, title, config, size, boardObjectType, boardDataSource, zone } = props;
 
   const [content, setContent] = useState<string>(config.content || "");
@@ -54,7 +51,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
     }
   }
 
-  const previewButton: IButton = {
+  const previewButton: PButton = {
     position: "right",
     type: "primary",
     icon: showPreview ? "eye-slash" : "eye",
@@ -63,7 +60,7 @@ export function BoardMarkdown(props: IBoardMarkdown) {
     outline: true,
   }
 
-  const editButton: IButton = {
+  const editButton: PButton = {
     position: "right",
     type: "primary",
     tooltip: showMarkdownViewer ? "Edit" : "Save",

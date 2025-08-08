@@ -4,30 +4,29 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
   BoardFilters,
   RemoteCount,
   saveTitle,
   IBoardTargetAndZone,
-  IButton,
+  PButton,
   useBoardPrivilege,
   PRIVILEGE,
 } from "..";
 
-
-interface Props extends IBoardTargetAndZone {
+export interface PBoardCount extends IBoardTargetAndZone {
   id: string;
   title: string;
   config: any;
 }
 
-export function BoardCount(props: Props) {
+export function BoardCount(props: PBoardCount) {
   const { id, boardObjectType, boardDataSource } = props;
   const [openFilters, setOpenFilters] = useState(false);
   const { privilege } = useBoardPrivilege();
 
-  const filterButton: IButton = {
+  const filterButton: PButton = {
     outline: true,
     position: "right",
     type: "primary",
@@ -36,15 +35,11 @@ export function BoardCount(props: Props) {
     className: "count-filter-button",
     testid: "count-filter-button",
     visible: privilege === PRIVILEGE.BOARD.EDITABLE,
-  }
+  };
 
   return (
     <>
-      <BoardFilters
-        {...props}
-        open={openFilters}
-        setOpen={setOpenFilters}
-      />
+      <BoardFilters {...props} open={openFilters} setOpen={setOpenFilters} />
       <RemoteCount
         {...props}
         utilityBarConfig={{
@@ -53,9 +48,9 @@ export function BoardCount(props: Props) {
             editable: privilege === PRIVILEGE.BOARD.EDITABLE,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);
-            }
+            },
           },
-          buttons: [filterButton]
+          buttons: [filterButton],
         }}
       />
     </>

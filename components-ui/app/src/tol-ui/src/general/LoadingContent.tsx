@@ -6,11 +6,11 @@ SPDX-License-Identifier: MIT
 
 import { Loader } from "../index";
 
-interface Props {
+export interface PLoadingContent {
   text?: string;
 }
 
-export function LoadingContent(props: Props) {
+export function LoadingContent(props: PLoadingContent) {
   const { text } = props;
   return (
     <div className="fixed-full-page">

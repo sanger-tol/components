@@ -16,9 +16,9 @@ import {
   PBoard,
   reorderZoneAndUpsert,
   getSortedZones,
-  IUtilityBar,
+  PUtilityBar,
   UtilityBar,
-  IButton,
+  PButton,
   PRIVILEGE,
   useBoardPrivilege
 } from "../..";
@@ -28,7 +28,7 @@ export interface PView extends PBoard {
   // extends but excludes setPrivilege
   id: string;
   defaultFilter?: IFilter;
-  utilityBarConfig?: IUtilityBar
+  utilityBarConfig?: PUtilityBar
   // title: string;
 }
 
@@ -80,7 +80,7 @@ export function View(props: PView) {
     });
   };
 
-  const addZoneButton: IButton = {
+  const addZoneButton: PButton = {
     type: "success",
     className: "add-zone-button", // temp placement
     testid: "add-zone-button",

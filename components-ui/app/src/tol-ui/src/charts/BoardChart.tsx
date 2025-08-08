@@ -15,7 +15,7 @@ import {
   IBoardTargetAndZone,
   ChartConfigDrawer,
   IChartConfig,
-  IButton,
+  PButton,
   updateConfigAndUpsert,
   useBoardPrivilege,
   PRIVILEGE
@@ -48,7 +48,7 @@ export function BoardChart(props: Props) {
     setForceUpdate(!forceUpdate);
   };
 
-  const configButton: IButton = {
+  const configButton: PButton = {
     outline: true,
     position: "right",
     type: "primary",
@@ -57,7 +57,7 @@ export function BoardChart(props: Props) {
     visible: privilege == PRIVILEGE.BOARD.EDITABLE,
   }
 
-  const filterButton: IButton = {
+  const filterButton: PButton = {
     outline: true,
     position: "right",
     type: "primary",

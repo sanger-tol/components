@@ -13,19 +13,18 @@ import {
   numberWithSpaces,
   useEffectUpdate,
   UtilityBar,
-  IUtilityBar,
+  PUtilityBar,
   TFilterOrUndefined,
   API_METHODS,
   IRemoteTargetAndZone,
 } from "..";
 
-
-interface Props extends IRemoteTargetAndZone {
+export interface PRemoteCount extends IRemoteTargetAndZone {
   id: string;
-  utilityBarConfig?: IUtilityBar;
+  utilityBarConfig?: PUtilityBar;
 }
 
-export function RemoteCount(props: Props) {
+export function RemoteCount(props: PRemoteCount) {
   const { id, objectType, dataSource, zone, setZone, utilityBarConfig } = props;
   const [count, setCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
@@ -48,8 +47,8 @@ export function RemoteCount(props: Props) {
         method: API_METHODS.GET,
         resource: `${objectType}:count`,
         params: {
-          filter: filter
-        }
+          filter: filter,
+        },
       })
       .then((res: any) => {
         const total = res.data.meta.total;
@@ -72,13 +71,16 @@ export function RemoteCount(props: Props) {
     }
     return (
       <div id={id} className="tol-count">
-      <h1 className="count">{numberWithSpaces(count)}</h1>
-      <div className={!utilityBarConfig ? "faded" : "faded count-utility-bar"} aria-hidden="true">
-        <h1>{count}</h1>
+        <h1 className="count">{numberWithSpaces(count)}</h1>
+        <div
+          className={!utilityBarConfig ? "faded" : "faded count-utility-bar"}
+          aria-hidden="true"
+        >
+          <h1>{count}</h1>
+        </div>
       </div>
-    </div>
-    )
-  }
+    );
+  };
 
   return (
     <>
