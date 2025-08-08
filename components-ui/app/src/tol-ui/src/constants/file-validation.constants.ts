@@ -15,3 +15,5 @@ export const TOL_LOADER_STYLES = {
   alignItems: "center",
   display: "flex",
 };
+export const DEFAULT_FILE_TYPE =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";

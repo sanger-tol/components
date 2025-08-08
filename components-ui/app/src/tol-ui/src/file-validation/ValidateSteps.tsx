@@ -52,7 +52,7 @@ export function ValidateSteps(props: PValidateSteps) {
       className={`tol-file-validation-scrollbar-fix 
         tol-file-uploader-validate-steps-outer-container ${
           expandedIndex !== null && isOverflowing ? " expanded" : ""
-        } ${steps.length < 4 ? " few-steps" : ""}`}
+        } ${steps.length < 4 ? "few-steps" : ""}`}
     >
       <div>
         <div className="tol-file-uploader-validate-steps-inner-container">

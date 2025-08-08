@@ -29,25 +29,23 @@ import {
   TolLoader,
   VALIDATION_ENDPOINTS,
   FileData,
-  TsDataSource
+  TsDataSource,
+  DEFAULT_FILE_TYPE,
 } from "..";
 
 export interface PFileValidation {
-  endpoint: string;
+  objectType: string;
   validationConfig: IValidationConfig;
   fileType?: string;
   pageTitle?: string;
   defaultFileTemplateLink?: string;
 }
 
-const DEFAULT_FILE_TYPE =
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
-
 export const PIPELINE_DS = new TsDataSource();
 
 export function FileValidation(props: PFileValidation) {
   const {
-    endpoint,
+    objectType,
     validationConfig,
     pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
@@ -129,7 +127,7 @@ export function FileValidation(props: PFileValidation) {
     }
   }, [latestPipelineResults]);
 
-  const generateMessages = async (fileName: string[]) => {
+  const handleValidation = async (fileName: string[]) => {
     const pipeline_id = await uploadPipelineConfig(
       PIPELINE_DS,
       validationConfig,
@@ -193,7 +191,7 @@ export function FileValidation(props: PFileValidation) {
             disabled={!fileDropped || validating}
             onClick={() => {
               setValidating(true);
-              generateMessages(fileList.map((file: FileData) => file.name));
+              handleValidation(fileList.map((file: FileData) => file.name));
             }}
           />
           <DropdownButtons
@@ -242,7 +240,7 @@ export function FileValidation(props: PFileValidation) {
         <p>Validate and upload</p>
       </div>
       <Dropzone
-        resource={endpoint}
+        resource={objectType}
         dataSource={PIPELINE_DS}
         fileType={fileType}
         onFileDrop={(fileDropped: boolean) => setFileDropped(fileDropped)}

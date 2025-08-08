@@ -123,11 +123,9 @@ export function ValidateStep(props: PValidateStep) {
           </div>
         ) : !completed ? (
           <div
-            style={{ display: "flex" }}
             className="tol-file-uploader-validate-step-passed-container"
           >
-            <h6>Waiting for some Results</h6>
-            <h6 className="tol-file-validation-ellipsis-loader">...</h6>
+            <h6>Waiting for some Results...</h6>
           </div>
         ) : (
           <div className="tol-file-uploader-validate-step-passed-container">
