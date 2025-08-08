@@ -16,3 +16,7 @@ export * from "./Plate";
 export * from "./User";
 export * from "./Visualisation";
 export * from "./Privilege";
+export * from "./Attribute";
+export * from "./Markdown";
+export * from "./Widgets";
+export * from "./Drawer";

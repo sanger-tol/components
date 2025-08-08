@@ -3,107 +3,9 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
+import { PlaceholderIcon } from "..";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faChartColumn,
-  faChartPie,
-  faMapLocationDot,
-  faUpDownLeftRight,
-  faTable,
-  faDownload
-} from "@fortawesome/free-solid-svg-icons";
-import { Loader, StatusMessage } from "..";
-
-function getPlaceholderIcon(
-  bar?: boolean,
-  pie?: boolean,
-  table?: boolean,
-  map?: boolean,
-  drag?: boolean,
-  download?: boolean,
-  loader?: boolean,
-  message?: string | JSX.Element,
-  warningMessage?: string,
-  errorMessage?: string
-) {
-  let icon: JSX.Element | null = null;
-
-  if (bar) {
-    icon = <FontAwesomeIcon icon={faChartColumn} size="8x" />;
-  } else if (pie) {
-    icon = <FontAwesomeIcon icon={faChartPie} size="8x" />;
-  } else if (table) {
-    icon = <FontAwesomeIcon icon={faTable} size="8x" />;
-  } else if (map) {
-    icon = <FontAwesomeIcon icon={faMapLocationDot} size="8x" />;
-  } else if (drag) {
-    icon = <FontAwesomeIcon icon={faUpDownLeftRight} size="6x" />;
-  } else if (download) {
-    icon = <FontAwesomeIcon icon={faDownload} size="8x" />;
-  } else if (loader) {
-    icon = <Loader />;
-  } else if (warningMessage !== undefined) {
-    icon = <StatusMessage status="warning" message={warningMessage} bordered />;
-  } else if (errorMessage !== undefined) {
-    icon = <StatusMessage status="error" message={errorMessage} bordered />;
-  }
-
-  return (
-    <div>
-      {icon}
-      {message && <p className="tol-placeholder-message">{message}</p>}
-    </div>
-  );
-}
-
-function getPlaceholder(
-  height: any,
-  style: any = {},
-  icon: JSX.Element,
-  backing?: JSX.Element,
-  opacity?: number,
-  clear?: boolean,
-  squareCorners?: boolean
-) {
-  if (opacity) style["opacity"] = opacity;
-  if (squareCorners !== true) style["borderRadius"] = 6;
-
-  // default placeholder
-  if (backing === undefined) {
-    return (
-      <div style={{ height: height }}>
-        <div
-          className={clear ? "tol-placeholder-empty" : "tol-placeholder"}
-          style={style}
-        >
-          <div className="tol-placeholder-icons">{icon}</div>
-        </div>
-      </div>
-    );
-  }
-
-  // adding a faded background to the backing contents (e.g. map behind loading)
-  return (
-    <div className="overlay-outer">
-      <div className="overlay-top" style={{ zIndex: 1002 }}>
-        <div style={{ height: height }}>
-          <div className="tol-placeholder-empty">
-            <div className="tol-placeholder-icons">{icon}</div>
-          </div>
-        </div>
-      </div>
-      <div className="overlay-top" style={{ zIndex: 1001 }}>
-        <div style={{ height: height }}>
-          <div className="tol-placeholder" style={style} />
-        </div>
-      </div>
-      {backing}
-    </div>
-  );
-}
-
-interface Props {
+export interface PPlaceholder {
   bar?: boolean;
   pie?: boolean;
   table?: boolean;
@@ -123,52 +25,57 @@ interface Props {
   style?: any;
 }
 
-export function Placeholder(props: Props) {
+export function Placeholder(props: PPlaceholder) {
   const {
-    bar,
-    pie,
-    table,
-    map,
-    drag,
-    download,
     empty,
-    loader,
+    height = "100%",
+    style = {},
+    backing,
     opacity,
     clear,
     squareCorners,
-    message,
-    warningMessage,
-    errorMessage,
-    backing,
-    style,
   } = props;
-  const height = props.height !== undefined ? props.height : "100%";
 
   // this temporarily fills a gap - used for on load
   if (empty) {
     return <div style={{ height: height }} />;
   }
 
-  const icon = getPlaceholderIcon(
-    bar,
-    pie,
-    table,
-    map,
-    drag,
-    download,
-    loader,
-    message,
-    warningMessage,
-    errorMessage
-  );
+  const Icon = <PlaceholderIcon {...props} />;
 
-  return getPlaceholder(
-    height,
-    style,
-    icon,
-    backing,
-    opacity,
-    clear,
-    squareCorners
+  if (opacity) style["opacity"] = opacity;
+  if (squareCorners !== true) style["borderRadius"] = 6;
+
+  // default placeholder
+  if (!backing) {
+    return (
+      <div style={{ height: height }}>
+        <div
+          className={clear ? "tol-placeholder-empty" : "tol-placeholder"}
+          style={style}
+        >
+          <div className="tol-placeholder-icons">{Icon}</div>
+        </div>
+      </div>
+    );
+  }
+
+  // adding a faded background to the backing contents (e.g. map behind loading)
+  return (
+    <div className="overlay-outer">
+      <div className="overlay-top" style={{ zIndex: 1002 }}>
+        <div style={{ height: height }}>
+          <div className="tol-placeholder-empty">
+            <div className="tol-placeholder-icons">{Icon}</div>
+          </div>
+        </div>
+      </div>
+      <div className="overlay-top" style={{ zIndex: 1001 }}>
+        <div style={{ height: height }}>
+          <div className="tol-placeholder" style={style} />
+        </div>
+      </div>
+      {backing}
+    </div>
   );
 }

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import {
   TsDataSource,
   IFilter,
-  IUtilityBar,
+  PUtilityBar,
 } from '..';
 
 
@@ -129,7 +129,7 @@ export interface IBoardTarget {
 
 export interface IBoardTargetAndZone extends IRemoteTargetAndZone, IBoardTarget {}
 
-export type TUtilityBarOrNull = IUtilityBar | null;
+export type TUtilityBarOrNull = PUtilityBar | null;
 
 export interface IUseZoneMeta {
   objectType: string;

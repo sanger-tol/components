@@ -13,7 +13,7 @@ import {
   FieldMeta,
   FieldMetaData,
   IRemoteTargetAndZone,
-  IUtilityBar,
+  PUtilityBar,
   IZone,
   IDropdownButtonConfig,
   NumRows,
@@ -65,7 +65,7 @@ interface Props extends IRemoteTargetAndZone {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
-  utilityBarConfig?: IUtilityBar;
+  utilityBarConfig?: PUtilityBar;
   contents?: ReactNode;
   groupBy?: boolean;
 

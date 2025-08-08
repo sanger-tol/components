@@ -8,7 +8,7 @@ import { useState } from "react";
 import { InlineEdit as RSInlineEdit } from "rsuite";
 import { Toaster, Message } from "..";
 
-export interface IInlineEdit {
+export interface PInlineEdit {
   text: string;
   editable?: boolean;
   onSave?: (value: string) => void;
@@ -16,32 +16,18 @@ export interface IInlineEdit {
   size?: "sm" | "md";
 }
 
-export function InlineEdit({
-  text,
-  onSave,
-  onChange,
-  editable,
-  size = "md"
-}: IInlineEdit) {
+export function InlineEdit(props: PInlineEdit) {
+  const { text, onSave, onChange, editable, size = "md" } = props;
   const [editedText, setEditedText] = useState(text);
   const [prevText, setPrevText] = useState(text);
   const [errorMessage, setErrorMessage] = useState("");
 
   const toaster = Toaster();
-  const toastMessage = (
-    <Message
-      children="Title cannot be blank."
-      type="error"
-      showIcon={true}
-      closable
-      styles={{ marginTop: "5px" }}
-    />
-  );
 
   // Handles the save action
   const handleSave = () => {
     if (editedText.trim() === "") {
-      toaster.push(toastMessage, {
+      toaster.push(ToastMessage, {
         placement: "topCenter",
         duration: 5000,
       });
@@ -51,6 +37,16 @@ export function InlineEdit({
 
     onSave?.(editedText);
   };
+
+  const ToastMessage = (
+    <Message
+      children="Title cannot be blank."
+      type="error"
+      showIcon={true}
+      closable
+      styles={{ marginTop: "5px" }}
+    />
+  );
 
   return (
     <div>

@@ -14,7 +14,7 @@ import {
   saveTitle,
   IBoardTargetAndZone,
   SliceByDrawer,
-  IButton,
+  PButton,
   updateConfigAndUpsert,
   PRIVILEGE,
   useBoardPrivilege
@@ -71,7 +71,7 @@ export function BoardSunburst(props: Props) {
     return null;
   }
 
-  const configButton: IButton = {
+  const configButton: PButton = {
     outline: true,
     position: "right",
     type: "primary",
@@ -81,7 +81,7 @@ export function BoardSunburst(props: Props) {
     visible: privilege === PRIVILEGE.BOARD.EDITABLE,
   }
 
-  const filtersButton: IButton = {
+  const filtersButton: PButton = {
     outline: true,
     position: "right",
     type: "primary",

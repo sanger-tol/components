@@ -17,7 +17,7 @@ import {
   saveTitle,
   BOARDS,
   UtilityBar,
-  IButton,
+  PButton,
   PBoard,
   addComponents,
   InfoTooltip,
@@ -91,7 +91,7 @@ export function Zone(props: PZone) {
     />
   );
 
-  const addButton: IButton = {
+  const addButton: PButton = {
     outline: true,
     onClick: () => {
       onAddComponent();
@@ -104,7 +104,7 @@ export function Zone(props: PZone) {
     visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
-  const editButton: IButton = {
+  const editButton: PButton = {
     outline: true,
     onClick: () => {
       setDraggable(!draggable);
@@ -118,7 +118,7 @@ export function Zone(props: PZone) {
     visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
-  const deleteButton: IButton = {
+  const deleteButton: PButton = {
     outline: true,
     onClick: () => {
       handleOpenModal();
@@ -130,7 +130,7 @@ export function Zone(props: PZone) {
     visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
-  const upButton: IButton = {
+  const upButton: PButton = {
     outline: true,
     onClick: async () => {
       await onZoneReorder(id, "up");
@@ -142,7 +142,7 @@ export function Zone(props: PZone) {
     visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
-  const downButton: IButton = {
+  const downButton: PButton = {
     outline: true,
     onClick: async () => {
       await onZoneReorder(id, "down");
@@ -154,7 +154,7 @@ export function Zone(props: PZone) {
     visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
-  const saveButton: IButton = {
+  const saveButton: PButton = {
     outline: false,
     onClick: () => {
       setSaveLayout(true);
@@ -168,7 +168,7 @@ export function Zone(props: PZone) {
     visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
-  const filtersButton: IButton = {
+  const filtersButton: PButton = {
     outline: true,
     onClick: () => setOpenFilters(true),
     type: "primary",
@@ -178,7 +178,7 @@ export function Zone(props: PZone) {
     visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
-  const showEditButtons: IButton = {
+  const showEditButtons: PButton = {
     outline: !editBtnsVisible,
     onClick: () => {
       handleBtnsVisible();

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { Modal as RSModal } from "rsuite";
 import { Button } from "..";
 
-interface Props {
+export interface PModal {
   size: string;
   open: boolean;
   setOpen: any;
@@ -21,20 +21,21 @@ interface Props {
   onExited?: () => void;
 }
 
-export function Modal(props: Props) {
+export function Modal(props: PModal) {
   const {
     size,
     open,
     setOpen,
     children,
     header,
+    closeButton = true,
+    overflow = true,
     actionButton,
     className,
     onEnter,
     onExited,
   } = props;
-  const closeButton = props.closeButton ?? true;
-  const rsOverflow = props.overflow !== false;
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -43,7 +44,7 @@ export function Modal(props: Props) {
     <>
       {/* @ts-ignore */}
       <RSModal
-        overflow={rsOverflow}
+        overflow={overflow}
         open={open}
         onClose={handleClose}
         /* @ts-ignore */

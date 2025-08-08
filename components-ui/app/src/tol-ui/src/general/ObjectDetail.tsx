@@ -4,12 +4,13 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-interface Props {
+export interface PObjectDetail {
   data: object;
 }
 
-export function ObjectDetail(props: Props) {
+export function ObjectDetail(props: PObjectDetail) {
   const { data } = props;
+
   return (
     <div className="tol-object-detail">
       {Object.entries(data).map(([key, value]) => (

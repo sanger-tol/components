@@ -18,7 +18,7 @@ import {
   FormCheckboxes,
   Button,
   IFormConfig,
-  IButton,
+  PButton,
   setInitialData,
   validateForm,
   UNSUPPORTED_FIELD_TYPE
@@ -221,7 +221,7 @@ export function FormAllInOne(props: PFormAllInOne) {
         {formConfig.buttonConfig && (
           <div style={formConfig.buttonConfig.buttonStyle}>
             {formConfig.buttonConfig.buttons.map(
-              (button: IButton, index: number) => (
+              (button: PButton, index: number) => (
                 <Button
                   key={`form-${formId}-button-${index}`}
                   text={button.text}
