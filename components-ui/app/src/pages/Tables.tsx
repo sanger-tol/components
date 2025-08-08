@@ -98,21 +98,22 @@ export function Tables() {
                 sort: false,
               },
               "tolqc_species.goat_genome_size": {
-                cellRenderer: "integer",
+                cellRenderer: {
+                  type: "integer",
+                },
                 rename: "Estimated Genome Size",
               },
               custom_field: {
-                rename: "Custom Field",
-                cellRenderer: {
-                  element: exampleElement,
-                  propPointers: {
-                    mlwhTag: "mlwh_tag_index",
-                  },
-                  props: {
-                    text: "Custom Field",
-                  }
-                },
-                custom: true
+                // rename: "Custom Field",
+                // cellRenderer: {
+                //   element: exampleElement,
+                //   propPointers: {
+                //     mlwhTag: "mlwh_tag_index",
+                //   },
+                //   props: {
+                //     text: "Custom Field",
+                //   }
+                // },
               },
             },
             order: {

@@ -4,19 +4,15 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { TsDataSource, IDataObject } from "..";
+
+
 interface ElementProps {
   [prop: string]: string;
 }
 
-interface CustomCellRenderer {
-  element: any;
-  propPointers?: ElementProps;
-  props?: ElementProps;
-}
-
-export type CellRenderer =
-  | CustomCellRenderer
-  | "relationship"
+export type CellRendererType =
+  "relationship"
   | "relationshipDetail"
   | "datetime"
   | "boolean"
@@ -25,12 +21,24 @@ export type CellRenderer =
   | "expander"
   | "float"
   | "integer"
-  | null
+  | "link"
+  | "custom";
+
+export interface ICellRenderer {
+  type: CellRendererType;
+  element?: any;
+  props?: ElementProps;
+  propPointers?: ElementProps;
+}
+
+export type TCellRenderer =
+  ICellRenderer
+  | null // turn off cell renderer if a default is usually added
   | undefined;
 
+
 export interface Field {
-  cellRenderer?: CellRenderer;
-  custom?: boolean;
+  cellRenderer?: TCellRenderer;
   filter?: string | null;
   fixed?: boolean;
   isAttribute?: boolean;
@@ -60,3 +68,10 @@ export interface FieldMeta {
 export type ITableRecord = Record<string, any>;
 
 export type ITableData = ITableRecord[];
+
+export interface ICellRendererInstanceData {
+  key: string,
+  value?: string,
+  dataObject: IDataObject,
+  dataSource?: TsDataSource;
+}

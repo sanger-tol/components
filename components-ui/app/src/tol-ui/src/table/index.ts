@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./actions";
+export * from "./cells"
 export * from "./BoardTable";
 export * from "./CellTooltip";
 export * from "./ColumnConfigDrawer";

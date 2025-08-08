@@ -85,9 +85,6 @@ export function RemoteTable(props: Props) {
     onPageSizeChange,
     onToggleFilterVisibility,
     defaultSort,
-    noFilter,
-    noPagination,
-    noSorting,
     noConfigModal,
     noDownload,
     rowSelection,
@@ -157,8 +154,6 @@ export function RemoteTable(props: Props) {
       dataSource
         .getEntityMeta()
         .then((em: IEntityMeta) => {
-          setEntityMeta(em);
-
           setFieldMeta(
             structureFieldMeta(
               objectType,
@@ -377,12 +372,7 @@ export function RemoteTable(props: Props) {
         handleSortColumn={handleSortColumn}
         filter={filter}
         onModalSave={onModalSave}
-        noFilter={noFilter}
-        noPagination={noPagination}
-        noSorting={noSorting}
-        noConfigModal={noConfigModal}
         noDownload={noDownload || error !== ""}
-        rowSelection={rowSelection}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={convertedActions}

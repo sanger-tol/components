@@ -10,7 +10,6 @@ import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import * as XLSX from "xlsx";
 import {
   CellTooltip,
-  CellRenderer,
   Field,
   FieldMeta,
   FieldMetaData,
@@ -26,6 +25,10 @@ import {
   getFieldByName,
   ITableData,
   ITableRecord,
+  ICellRenderer,
+  IDataObject,
+  TCellRenderer,
+  Cell
 } from "..";
 
 interface Rgb {
@@ -83,7 +86,6 @@ function createRelationshipBox(
   data: any,
   dataSource: TsDataSource,
   detail?: boolean,
-  entityMeta?: IEntityMeta
 ) {
   const [relationship, attribute] = key.split(".");
 
@@ -103,7 +105,6 @@ function createRelationshipBox(
             data={relationData}
             detail={detail}
             dataSource={dataSource}
-            entityMeta={entityMeta}
           />
         );
       }
@@ -181,81 +182,20 @@ function createInteger(value: string | number) {
   );
 }
 
-function createCellRenderer(
-  cellRenderer: CellRenderer,
-  key: string,
-  value: any,
-  data: object,
-  dataSource: TsDataSource,
-  entityMeta?: IEntityMeta
-) {
-  if (!cellRenderer) return value;
-  if (typeof cellRenderer === "string") {
-    if (value === null || value === undefined) return "";
-    if (cellRenderer === "relationship") {
-      return createRelationshipBox(key, data, dataSource, false, entityMeta);
-    } else if (cellRenderer === "relationshipDetail") {
-      return createRelationshipBox(key, data, dataSource, true, entityMeta);
-    } else if (cellRenderer === "datetime") {
-      return createDate(value);
-    } else if (cellRenderer === "boolean") {
-      return createBoolean(value);
-    } else if (cellRenderer === "image") {
-      return createImage(value);
-    } else if (cellRenderer === "list") {
-      return createFormattedList(value);
-    } else if (cellRenderer === "expander") {
-      return createExpander(value);
-    } else if (cellRenderer === "float") {
-      return createFloat(value);
-    } else if (cellRenderer === "integer") {
-      return createInteger(value);
-    }
-  }
-  const props: object = {};
-  if (cellRenderer.propPointers !== undefined) {
-    for (const [prop, requiredField] of Object.entries(
-      cellRenderer.propPointers
-    )) {
-      if (requiredField === "id") {
-        props[prop] = data["id"];
-      } else {
-        props[prop] = data["attributes"][requiredField];
-      }
-    }
-  }
-  if (cellRenderer.props !== undefined) {
-    Object.assign(props, cellRenderer.props);
-  }
-  // all row data always passed to use in a cellRenderer component via a rowData prop
-  props["rowData"] = data;
-  return <cellRenderer.element {...props} />;
-}
-
-function setValueBasedCellRenderer(
+function addValueBasedCellRenderer(
   value: any,
   meta: Field,
 ) {
   if (meta.cellRenderer === undefined) {
     if (value !== null && value !== undefined) {
       if (Array.isArray(value)) {
-        meta.cellRenderer = "list";
+        meta.cellRenderer = { type: "list" };
       } else if (value.length > 32) {
-        meta.cellRenderer = "expander";
+        meta.cellRenderer = { type: "expander" };
       } else if (isFloat(value)) {
-        meta.cellRenderer = "float";
+        meta.cellRenderer = { type: "float" };
       }
     }
-  }
-}
-
-function addCustomCellRendererData(
-  key: string,
-  row: ITableRecord,
-  meta: Field,
-) {
-  if (meta?.custom) {
-    row[key] = "CUSTOM_FIELD";
   }
 }
 
@@ -271,51 +211,39 @@ export function convertTableData(
     const row: ITableRecord = {};
     // loop over each field
     fieldMeta.order.active.forEach((key) => {
-      row[key] = getFieldByName(obj, key);
-      addCustomCellRendererData(key, row, fieldMeta.data![key]);
-      setValueBasedCellRenderer(row[key], fieldMeta.data![key]);
-      // cellRenderer logic (maybe new...
+      // only add if undefined, not null - null = turn off cell renderer
+      const value = getFieldByName(obj, key);
+      if (fieldMeta.data![key].cellRenderer === undefined) {
+        addValueBasedCellRenderer(value, fieldMeta.data![key]);
+      }
+      row[key] = (
+        <Cell
+          key={key}
+          value={value}
+          dataObject={obj}
+          dataSource={dataSource}
+          renderer={fieldMeta.data![key].cellRenderer!}
+        />
+      );
+
     });
     data.push(row);
   });
-
-  console.log(data)
+  console.log(fieldMeta, data)
   return data;
-
-  // for (const [key, value] of Object.entries(attributes)) {
-  //   if (fieldMetaData[key] !== undefined) {
-  //     setValueBasedCellRenderer(key, value, fieldMetaData);
-  //     if (fieldMetaData[key].cellRenderer !== undefined) {
-  //       rowOutput[key] = createCellRenderer(
-  //         fieldMetaData[key].cellRenderer!,
-  //         key,
-  //         value,
-  //         row,
-  //         dataSource,
-  //         entityMeta
-  //       );
-  //     } else if (fieldMetaData[key].link !== undefined) {
-  //       rowOutput[key] = createLink(
-  //         attributes[key],
-  //         attributes[fieldMetaData[key].link]
-  //       );
-  //     } else {
-  //       rowOutput[key] = value;
-  //     }
-  //   }
-  // }
-  // });
 }
 
-function addDefaultCellRenderer(key: string, type: string): CellRenderer {
+function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
   // relationship ids have relationship boxes by default
   if (isRelationship(key) && key.split(".")[1] === "id") {
-    return "relationship";
+    return { type: "relationship" };
   }
+  //console.log(key, type);
   switch (type) {
     case "datetime":
+      return { type: "datetime" };
     case "boolean":
-      return type;
+      return { type: "boolean" };
   }
 }
 
@@ -354,8 +282,9 @@ export function addDefaultsFromEntityMeta(
   fieldMeta: FieldMeta,
 ) {
   if (!fieldMeta.data) fieldMeta.data = {};
+  console.log(key, meta);
   const defaults = {
-    cellRenderer: addDefaultCellRenderer(key, meta.type),
+    cellRenderer: addDefaultCellRenderer(key, meta.python_type),
     filter: addRemoteFilterType(meta.python_type, meta.cardinality),
     isAttribute: isRelationship(key),
     rename: meta.display_name || normaliseCaps(key),
