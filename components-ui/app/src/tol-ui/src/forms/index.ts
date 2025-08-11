@@ -13,4 +13,5 @@ export * from "./FormTextField";
 export * from "./MultipleSelect";
 export * from "./SingleSelect";
 export * from "./SingleSelectCustomOption";
+export * from "./FormMarkdown";
 export * from "./utils";

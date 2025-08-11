@@ -272,6 +272,12 @@
   box-shadow: 0 0 0px 1000px var(--rs-input-bg) inset;
 }
 
+.rs-form-control-label {
+  margin-bottom: 6px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+
 .rs-form-help-text {
   color: var(--tol-grey-light);
 }

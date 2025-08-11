@@ -21,9 +21,9 @@ import {
   PButton,
   setInitialData,
   validateForm,
-  UNSUPPORTED_FIELD_TYPE
+  UNSUPPORTED_FIELD_TYPE,
+  FormMarkdown,
 } from "..";
-
 
 export interface PFormAllInOne {
   formConfig: IFormConfig;
@@ -65,6 +65,10 @@ export function FormAllInOne(props: PFormAllInOne) {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
   useEffect(() => {
     const hasChanges = modifiedFields && Object.keys(modifiedFields).length > 0;
@@ -175,6 +179,17 @@ export function FormAllInOne(props: PFormAllInOne) {
             noSearch={field.noSearch}
           />
         );
+      case "markdown":
+        return (
+          <FormMarkdown
+            value={formData[field.name] ?? ""}
+            onChange={(value: any) => handleInputChange(field.name, value)}
+            preview={field.preview}
+            label={field.label}
+            removeCommands={field.removeCommands}
+            height={field.height}
+          />
+        );
       case "checkbox":
         return (
           <FormCheckboxes
@@ -205,19 +220,16 @@ export function FormAllInOne(props: PFormAllInOne) {
         id={`form-${formId}`}
         onSubmit={(e: any) => {
           e.preventDefault();
-          validateForm(
-            formRef,
-            toaster,
-            formData,
-            props.onSubmit
-          );
+          validateForm(formRef, toaster, formData, props.onSubmit);
         }}
         model={model || null}
         formValue={formData}
       >
-        {formConfig.fields.map((field: any) => (
-          <div key={`${formId}-${field.name}`}>{renderField(field)}</div>
-        ))}
+        {formConfig.fields.map((field: any) => {
+          return (
+            <div key={`${formId}-${field.name}`}>{renderField(field)}</div>
+          );
+        })}
         {formConfig.buttonConfig && (
           <div style={formConfig.buttonConfig.buttonStyle}>
             {formConfig.buttonConfig.buttons.map(
@@ -233,12 +245,7 @@ export function FormAllInOne(props: PFormAllInOne) {
                   onClick={() => {
                     if (modifiedFields && onValidate) {
                       onValidate(
-                        validateForm(
-                          formRef,
-                          toaster,
-                          formData,
-                          props.onSubmit
-                        )
+                        validateForm(formRef, toaster, formData, props.onSubmit)
                       );
                     }
                     setModifiedFields({});
@@ -247,7 +254,7 @@ export function FormAllInOne(props: PFormAllInOne) {
                     }
                   }}
                 />
-              ),
+              )
             )}
           </div>
         )}
