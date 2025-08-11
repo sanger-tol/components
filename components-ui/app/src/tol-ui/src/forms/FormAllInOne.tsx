@@ -221,9 +221,9 @@ export function FormAllInOne(props: PFormAllInOne) {
         model={model || null}
         formValue={formData}
       >
-        {formConfig.fields.map((field: any) => {
-          <div key={`${formId}-${field.name}`}>{renderField(field)}</div>;
-        })}
+        {formConfig.fields.map((field: any) => (
+          <div key={`${formId}-${field.name}`}>{renderField(field)}</div>
+        ))}
         {formConfig.buttonConfig && (
           <div style={formConfig.buttonConfig.buttonStyle}>
             {formConfig.buttonConfig.buttons.map(
