@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect, useRef } from "react";
+import { Schema } from "rsuite";
 import {
   RSForm,
   Toaster,
@@ -23,6 +24,7 @@ import {
   validateForm,
   UNSUPPORTED_FIELD_TYPE,
   FormMarkdown,
+  FormDatetime,
 } from "..";
 
 export interface PFormAllInOne {
@@ -45,12 +47,17 @@ export function FormAllInOne(props: PFormAllInOne) {
 
   const formRef = useRef<any>(null);
   const toaster = Toaster();
+  const defaultModel = Schema.Model({});
 
   useEffect(() => {
     if (initialData) {
       setInitialData(formConfig, setFormData, initialData);
     }
   }, []);
+
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -111,8 +118,16 @@ export function FormAllInOne(props: PFormAllInOne) {
             setValue={(value: any) => handleInputChange(field.name, value)}
           />
         );
-      // case "datetime":
-      //   return null;
+      case "datetime":
+        return <FormDatetime 
+          name={field.name}
+          label={field.label}
+          value={formData[field.name] ?? ""}
+          onChange={(value: any) => handleInputChange(field.name, value)}
+          helpText={field.helpText}
+          placeholder={field.placeholder}
+          hideMinutes={field.hideMinutes}
+        />;
       case "singleselect":
         return (
           <RSForm.Group controlId={`${formId}-${field.name}`}>
@@ -221,7 +236,7 @@ export function FormAllInOne(props: PFormAllInOne) {
           e.preventDefault();
           validateForm(formRef, toaster, formData, props.onSubmit);
         }}
-        model={model || null}
+        model={model || defaultModel}
         formValue={formData}
       >
         {formConfig.fields.map((field: any) => (
