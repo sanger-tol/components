@@ -111,6 +111,8 @@ export function FormAllInOne(props: PFormAllInOne) {
             setValue={(value: any) => handleInputChange(field.name, value)}
           />
         );
+      // case "datetime":
+      //   return null;
       case "singleselect":
         return (
           <RSForm.Group controlId={`${formId}-${field.name}`}>
@@ -184,6 +186,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             label={field.label}
             removeCommands={field.removeCommands}
             height={field.height}
+            helpText={field.helpText}
           />
         );
       case "checkbox":

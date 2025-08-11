@@ -9,40 +9,47 @@ import { FormAllInOne, Widgets } from "../tol-ui/src";
 const formConfig = {
   fields: [
     {
-      name: "title",
+      name: "sessionName",
       type: "text",
-      label: "Title:",
-      placeholder: "Enter title here...",
+      label: "Session Name:",
+      placeholder: "Enter session name here...",
     },
     {
-      name: "Markdown Field",
+      name: "description",
       type: "markdown",
-      label: "Event Description:",
-      placeholder: "Type your markdown here...",
+      label: "Description:",
       preview: "edit",
-      removeCommands: ["preview", "fullscreen", "edit"],
-      height: 400
+      removeCommands: ["preview", "fullscreen", "edit", "live"],
+      height: 400,
     },
     {
-      name: "Another Markdown Field",
+      name: "prerequisites",
       type: "markdown",
-      label: "Another Event Description:",
-      placeholder: "Type your markdown here...",
+      label: "Prerequisites:",
+      helpText: "Please leave blank if there are no prerequisites.",
       preview: "edit",
-      removeCommands: ["preview", "fullscreen", "edit"],
-      height: 400
-    }
-  ]
+      removeCommands: ["preview", "fullscreen", "edit", "live"],
+      height: 400,
+    },
+    {
+      name: "additionalInfo",
+      type: "markdown",
+      label: "Additional Information:",
+      helpText: "Please leave blank if not applicable.",
+      preview: "edit",
+      removeCommands: ["preview", "fullscreen", "edit", "live"],
+      height: 400,
+    },
+  ],
 };
 
 export function Sandbox() {
-
   const components = [
     {
       component: <FormAllInOne formConfig={formConfig} fluid />,
-      type: "full"
-    }
-  ]
+      type: "full",
+    },
+  ];
   return (
     <>
       <Widgets components={components} />

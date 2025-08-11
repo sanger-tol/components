@@ -9,7 +9,7 @@ import { Button as RsButton } from "rsuite";
 import { TolLoader, HoverOverlay, Icon } from "..";
 
 export interface PButton {
-  key?: string;
+  key?: string | number;
   icon?: string;
   onClick?: (...args: any[]) => void;
   className?: string;

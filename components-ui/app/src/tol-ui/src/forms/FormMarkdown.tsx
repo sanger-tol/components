@@ -15,29 +15,39 @@ export interface PFormMarkdown {
   label?: string;
   removeCommands?: string[];
   height?: string | number;
+  helpText?: string;
 }
 
 export function FormMarkdown(props: PFormMarkdown) {
-  const { value, onChange, preview, label, removeCommands, height } = props;
+  const { value, onChange, preview = true, label, removeCommands, height, helpText } =
+    props;
 
   return (
     <>
-      {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
-      <MDEditor
-        value={value}
-        onChange={onChange}
-        preview={preview ? "live" : "edit"}
-        className="tol-markdown-viewer tol-form-markdown"
-        fullscreen={false}
-        height={height || "100%"}
-        visibleDragbar={false}
-        previewOptions={{
-          rehypePlugins: [[rehypeSanitize]],
-        }}
-        commandsFilter={(commands) => {
-          return !removeCommands?.includes(commands.name) ? commands : [];
-        }}
-      />
+      <RSForm.Group controlId={label}>
+        {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
+        {helpText && (
+          <div className="tol-form-markdown-help-text">
+            <RSForm.HelpText>{helpText}</RSForm.HelpText>
+          </div>
+        )}
+        <MDEditor
+          id={label}
+          value={value}
+          onChange={onChange}
+          preview={preview ? "live" : "edit"}
+          className="tol-markdown-viewer tol-form-markdown"
+          fullscreen={false}
+          height={height || "100%"}
+          visibleDragbar={false}
+          previewOptions={{
+            rehypePlugins: [[rehypeSanitize]],
+          }}
+          commandsFilter={(commands: any) => {
+            return !removeCommands?.includes(commands.name) ? commands : [];
+          }}
+        />
+      </RSForm.Group>
     </>
   );
 }
