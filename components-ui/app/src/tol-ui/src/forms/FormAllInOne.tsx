@@ -67,10 +67,6 @@ export function FormAllInOne(props: PFormAllInOne) {
   }, []);
 
   useEffect(() => {
-    console.log(formData);
-  }, [formData]);
-
-  useEffect(() => {
     const hasChanges = modifiedFields && Object.keys(modifiedFields).length > 0;
     hasUnsavedChanges.current = hasChanges;
     if (props.onUnsavedChanges) {
@@ -226,9 +222,7 @@ export function FormAllInOne(props: PFormAllInOne) {
         formValue={formData}
       >
         {formConfig.fields.map((field: any) => {
-          return (
-            <div key={`${formId}-${field.name}`}>{renderField(field)}</div>
-          );
+          <div key={`${formId}-${field.name}`}>{renderField(field)}</div>;
         })}
         {formConfig.buttonConfig && (
           <div style={formConfig.buttonConfig.buttonStyle}>
