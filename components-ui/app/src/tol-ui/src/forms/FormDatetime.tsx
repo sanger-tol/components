@@ -14,7 +14,7 @@ export interface PFormDatetime {
   label?: string;
   helpText?: string;
   placeholder?: string;
-  hideMinutes?: boolean;
+  hideMinutes?: (minute: number, date: Date) => boolean;
   format?: string;
 }
 
@@ -26,7 +26,7 @@ export function FormDatetime(props: PFormDatetime) {
     onChange,
     helpText,
     placeholder = "Select date/time",
-    hideMinutes = false,
+    hideMinutes = () => false,
     format = "dd-MM-yyyy HH:mm",
   } = props;
 

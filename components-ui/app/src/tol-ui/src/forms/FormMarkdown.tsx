@@ -19,8 +19,15 @@ export interface PFormMarkdown {
 }
 
 export function FormMarkdown(props: PFormMarkdown) {
-  const { value, onChange, preview = true, label, removeCommands, height, helpText } =
-    props;
+  const {
+    value,
+    onChange,
+    preview = true,
+    label,
+    removeCommands,
+    height,
+    helpText,
+  } = props;
 
   return (
     <>
