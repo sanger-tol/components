@@ -12,7 +12,7 @@ import {
   Modal,
   SelectedAttributesContainer,
   FieldMeta,
-  initialiseFields,
+  initialiseFieldMeta,
   IRemoteTarget,
   IDropdownButtonConfig,
   createSort,
@@ -79,14 +79,14 @@ export function ColumnConfigDrawer(props: Props) {
     updatedFieldMeta: FieldMeta,
     hidden: boolean,
   ) => {
-    const isActive = hidden ? "inactive" : "active";
-    updatedFieldMeta.order![isActive].push(id);
-    updatedFieldMeta.data![id] = fieldMeta.data![id];
-    updatedFieldMeta.data![id].hidden = hidden;
+    // const isActive = hidden ? "inactive" : "active";
+    // updatedFieldMeta.order![isActive].push(id);
+    // updatedFieldMeta.data![id] = fieldMeta.data![id];
+    // updatedFieldMeta.data![id].hidden = hidden;
   };
 
   const fieldMetaUpdatedByContents = () => {
-    const updatedFieldMeta: FieldMeta = initialiseFields();
+    const updatedFieldMeta: FieldMeta = initialiseFieldMeta();
 
     attributes.forEach((key) => {
       updateMeta(key, updatedFieldMeta, false);
@@ -108,6 +108,7 @@ export function ColumnConfigDrawer(props: Props) {
       setInitialAttributes(attributes);
     }
     setOpen(!open);
+    setOpenSaveModal(false);
   };
 
   const unsavedChangesModal = () => {
@@ -162,9 +163,7 @@ export function ColumnConfigDrawer(props: Props) {
       <Button
         text={text ?? "Save"}
         type="success"
-        onClick={() => {
-          saveConfig(), setOpenSaveModal(false);
-        }}
+        onClick={saveConfig}
       />
     );
   };

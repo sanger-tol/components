@@ -28,7 +28,8 @@ import {
   ICellRenderer,
   IDataObject,
   TCellRenderer,
-  Cell
+  Cell,
+  deepCopy
 } from "..";
 
 interface Rgb {
@@ -64,9 +65,11 @@ const sourceColours = {
   other: colours[30],
 };
 
-export function initialiseFields() {
+export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
   return {
-    order: {
+    data: fieldMeta?.data || {},
+    dataWithDefaults: deepCopy(fieldMeta?.data) || {},
+    order: fieldMeta?.order || {
       active: [],
     },
   } as FieldMeta;
@@ -213,8 +216,8 @@ export function convertTableData(
     fieldMeta.order.active.forEach((key) => {
       // only add if undefined, not null - null = turn off cell renderer
       const value = getFieldByName(obj, key);
-      if (fieldMeta.data![key].cellRenderer === undefined) {
-        addValueBasedCellRenderer(value, fieldMeta.data![key]);
+      if (fieldMeta.dataWithDefaults![key].cellRenderer === undefined) {
+        addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![key]);
       }
       row[key] = (
         <Cell
@@ -222,14 +225,13 @@ export function convertTableData(
           value={value}
           dataObject={obj}
           dataSource={dataSource}
-          renderer={fieldMeta.data![key].cellRenderer!}
+          renderer={fieldMeta.dataWithDefaults![key].cellRenderer!}
         />
       );
 
     });
     data.push(row);
   });
-  console.log(fieldMeta, data)
   return data;
 }
 
@@ -256,8 +258,8 @@ function addRemoteFilterType(type: string, cardinality: number) {
 function sortFieldsByRename(fieldMeta: FieldMeta) {
   if (!fieldMeta || !fieldMeta.order.inactive) return [];
   return fieldMeta.order.inactive.sort((a, b) => {
-    const fieldA = fieldMeta.data![a];
-    const fieldB = fieldMeta.data![b];
+    const fieldA = fieldMeta.dataWithDefaults![a];
+    const fieldB = fieldMeta.dataWithDefaults![b];
     if (fieldA.rename! < fieldB.rename!) return -1;
     if (fieldA.rename! > fieldB.rename!) return 1;
     return 0;
@@ -281,8 +283,7 @@ export function addDefaultsFromEntityMeta(
   meta: IAttributeData,
   fieldMeta: FieldMeta,
 ) {
-  if (!fieldMeta.data) fieldMeta.data = {};
-  console.log(key, meta);
+  if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
   const defaults = {
     cellRenderer: addDefaultCellRenderer(key, meta.python_type),
     filter: addRemoteFilterType(meta.python_type, meta.cardinality),
@@ -295,11 +296,11 @@ export function addDefaultsFromEntityMeta(
     source: meta.source,
   }
   // customised field config overrides the defaults
-  fieldMeta.data[key] = { ...defaults, ...fieldMeta.data[key] };
+  fieldMeta.dataWithDefaults[key] = { ...defaults, ...fieldMeta.dataWithDefaults[key] };
 }
 
 
-export function structureFieldMeta(
+export function addFieldMetaDefaults(
   objectType: string,
   fieldMeta: FieldMeta,
   entityMeta: IEntityMeta,
@@ -373,12 +374,12 @@ export function deleteFieldMetaLocalStorage(tableId: string) {
 }
 
 export function fieldMetaToCellRenderer(
-  fields: FieldMetaData,
+  fieldMetaData: FieldMetaData,
   fieldMeta: FieldMeta
 ) {
-  for (const field in fields) {
-    if (fieldMeta.data && fields[field].cellRenderer) {
-      fieldMeta.data[field].cellRenderer = fields[field].cellRenderer;
+  for (const field in fieldMetaData) {
+    if (fieldMeta.dataWithDefaults && fieldMetaData[field].cellRenderer) {
+      fieldMeta.dataWithDefaults[field].cellRenderer = fieldMetaData[field].cellRenderer;
     }
   }
   return fieldMeta;
@@ -453,7 +454,7 @@ export async function dataObjectToSpreadsheetData(
   dataObjects?.forEach((obj) => {
     const flatData = {};
     requestedFields.forEach((field) => {
-      flatData[fieldMeta?.data?.[field].rename ?? field] = getFieldByName(obj, field);
+      flatData[fieldMeta?.dataWithDefaults?.[field].rename ?? field] = getFieldByName(obj, field);
     });
     spreadsheetData.push(flatData);
   });

@@ -455,7 +455,7 @@ export function Table(props: Props) {
                     </Column>
                   )}
                   {fieldMeta!.order.active.map((key: string) => {
-                    const field = fieldMeta.data![key];
+                    const field = fieldMeta.dataWithDefaults![key];
                     const sortable = noSorting ? false : field.sort;
                     const filterable = noFilter ? false : field.filter;
 

@@ -104,7 +104,7 @@ export function Tables() {
                 rename: "Estimated Genome Size",
               },
               custom_field: {
-                // rename: "Custom Field",
+                rename: "Custom Field",
                 // cellRenderer: {
                 //   element: exampleElement,
                 //   propPointers: {

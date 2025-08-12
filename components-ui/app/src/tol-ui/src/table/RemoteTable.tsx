@@ -28,13 +28,14 @@ import {
   getTableConfigLocalStorage,
   resetFiltersBelow,
   setTableConfigLocalStorage,
-  structureFieldMeta,
+  addFieldMetaDefaults,
   useEffectUpdate,
   useStateFallback,
   TsDataSource,
   IEntityMeta,
-  initialiseFields,
+  initialiseFieldMeta,
   TDataObjectListOrNull,
+  deepCopy,
 } from '..';
 
 
@@ -99,7 +100,7 @@ export function RemoteTable(props: Props) {
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(props.fields ?? initialiseFields());
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(initialiseFieldMeta(props.fields));
 
   // pagination
   const getPageSize = () => {
@@ -155,7 +156,7 @@ export function RemoteTable(props: Props) {
         .getEntityMeta()
         .then((em: IEntityMeta) => {
           setFieldMeta(
-            structureFieldMeta(
+            addFieldMetaDefaults(
               objectType,
               fieldMeta,
               em,
@@ -219,7 +220,7 @@ export function RemoteTable(props: Props) {
     setZone({ ...zone });
 
     if (props.onModalSave) {
-      // Add in the default sort here
+      // add in the default sort here
       props.onModalSave(
         fm,
         actions,

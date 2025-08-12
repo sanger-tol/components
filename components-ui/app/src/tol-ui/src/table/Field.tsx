@@ -42,7 +42,6 @@ export interface Field {
   filter?: string | null;
   fixed?: boolean;
   isAttribute?: boolean;
-  link?: string;
   rename?: string;
   sort?: boolean;
   type?: string;
@@ -59,9 +58,9 @@ export interface FieldMetaOrder {
   active: string[];
   inactive?: string[];
 }
-
 export interface FieldMeta {
-  data?: FieldMetaData;
+  data?: FieldMetaData; // original fields with specified options
+  dataWithDefaults?: FieldMetaData; // fields with defaults added
   order: FieldMetaOrder;
 }
 
@@ -69,9 +68,3 @@ export type ITableRecord = Record<string, any>;
 
 export type ITableData = ITableRecord[];
 
-export interface ICellRendererInstanceData {
-  key: string,
-  value?: string,
-  dataObject: IDataObject,
-  dataSource?: TsDataSource;
-}

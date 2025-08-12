@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import {
   FieldMeta,
-  initialiseFields,
+  initialiseFieldMeta,
   BoardFilters,
   RemoteTable,
   saveTitle,
@@ -83,7 +83,7 @@ export function BoardTable(props: Props) {
       {...props}
       noConfigModal={privilege !== PRIVILEGE.BOARD.EDITABLE}
       displaySource
-      fields={config.fieldMeta || initialiseFields()}
+      fields={config.fieldMeta || initialiseFieldMeta()}
       pageSize={config.pageSize || 50}
       filterVisibility={config.filterVisibility ?? true}
       defaultSort={
