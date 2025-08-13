@@ -25,6 +25,16 @@ const formConfig = {
       ],
     },
     {
+      name: "leaders",
+      type: "componentmultiples",
+      label: "Session Leaders:",
+      innerField: {
+        name: "leader",
+        type: "text",
+        placeholder: "Enter leader name here...",
+      }
+    },
+    {
       name: "sessionName",
       type: "text",
       label: "Session Name:",
