@@ -18,7 +18,7 @@ export interface PValidateSteps {
   steps: string[];
   expandedIndex?: string;
   stepName?: string;
-  targetRef?: React.RefObject<HTMLDivElement | null>;
+  targetRef?: React.RefObject<HTMLDivElement>;
   completed?: boolean;
 }
 

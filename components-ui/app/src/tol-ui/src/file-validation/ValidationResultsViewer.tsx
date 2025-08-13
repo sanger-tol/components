@@ -228,7 +228,10 @@ export function ValidationResultsViewer() {
     <LoadingContent text="Loading Results" />
   ) : (
     <>
-      <PreviousUploadsModal openModal={openModal} setOpenModal={setOpenModal} />
+      <PreviousUploadsModal
+        openModal={openModal}
+        setOpenModal={(open) => setOpenModal(Boolean(open))}
+      />
       <Widgets components={ResultsViewer} />
     </>
   );

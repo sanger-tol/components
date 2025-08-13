@@ -62,7 +62,10 @@ export function FileValidation(props: PFileValidation) {
   const [fileList, setFileList] = useState<FileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);
   const [stepsFound, setStepsFound] = useState<boolean>(false);
-  const [validationStatus, setValidationStatus] = useState<{}>({
+  const [validationStatus, setValidationStatus] = useState<{
+    className: string;
+    text: string;
+  }>({
     className: "",
     text: "",
   });
@@ -95,7 +98,6 @@ export function FileValidation(props: PFileValidation) {
 
   useEffect(() => {
     if (latestPipelineResults) {
-
       setStepsFound(latestPipelineResults.pipelineSteps?.length > 0);
 
       if (latestPipelineResults.completed) {
@@ -131,9 +133,9 @@ export function FileValidation(props: PFileValidation) {
     const pipeline_id = await uploadPipelineConfig(
       PIPELINE_DS,
       validationConfig,
-      fileName[0],
+      fileName[0]
     );
-    setCurrentUploadId(pipeline_id);
+    setCurrentUploadId(pipeline_id?.id);
   };
 
   const handleReset = () => {

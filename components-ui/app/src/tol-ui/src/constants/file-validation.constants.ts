@@ -11,9 +11,9 @@ export const BUTTON_TIMEOUT = 3000;
 export const WIDTH_REDUCER = 40;
 export const TOL_LOADER_STYLES = {
   minHeight: "250px",
-  flexDirection: "column",
-  alignItems: "center",
-  display: "flex",
+  flexDirection: "column" as "column",
+  alignItems: "center" as "center",
+  display: "flex" as "flex",
 };
 export const DEFAULT_FILE_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
