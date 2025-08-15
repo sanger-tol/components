@@ -10,5 +10,17 @@ import {
 
 
 export function List(props: PCell) {
-  return <>List: {props.value}</>;
+  const { value } = props;
+
+  return (
+    <div className="simple-tag-container">
+      {value.map((item: any) => {
+        return (
+          <div className="simple-tag" key={item}>
+            {item}
+          </div>
+        );
+      })}
+    </div>
+  );
 }

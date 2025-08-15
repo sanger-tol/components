@@ -9,6 +9,6 @@ import {
 } from "../..";
 
 
-export function Relationship(props: PCell) {
+export function RelationshipDetail(props: PCell) {
   return <>Relationship: {props.value}</>;
 }

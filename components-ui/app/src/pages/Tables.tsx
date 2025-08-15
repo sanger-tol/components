@@ -77,7 +77,15 @@ export function Tables() {
                 cellRenderer: null,
               },
               "mlwh_sequencing_request.id": {
+                // give better example
                 rename: "Sequencing Request",
+                cellRenderer: {
+                  type: "link" as const,
+                  props: {
+                    url: "https://example.com/api/${mlwh_sequencing_request.id}",
+                    text: "https://example.com/api/${mlwh_platform_type}",
+                  }
+                },
               },
               mlwh_run_complete: {
                 //rename: "Complete Date",

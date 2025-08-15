@@ -39,7 +39,7 @@ export function Button(props: IButton) {
     text,
     disabled,
     size,
-    type,
+    type = "primary",
     active,
     position = "none",
     tooltip,

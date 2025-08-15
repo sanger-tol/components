@@ -10,5 +10,11 @@ import {
 
 
 export function Integer(props: PCell) {
-  return <>Integer: {props.value}</>;
+  const { value } = props;
+
+  return (
+    <div className="tol-cell-renderer-integer">
+      {value.toLocaleString()}
+    </div>
+  );
 }

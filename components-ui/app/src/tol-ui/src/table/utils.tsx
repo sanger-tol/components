@@ -75,15 +75,6 @@ export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
   } as FieldMeta;
 }
 
-
-function createLink(text: any, url: string) {
-  return (
-    <a href={url} target="_blank" rel="noopener noreferrer">
-      {text}
-    </a>
-  );
-}
-
 function createRelationshipBox(
   key: string,
   data: any,
@@ -116,75 +107,6 @@ function createRelationshipBox(
   return "";
 }
 
-function createDate(value: string) {
-  const date = new Date(value);
-  const dateText = format(date, "dd/MM/yyyy");
-  const dateContents = format(date, "dd/MM/yyyy HH:mm");
-  return <CellTooltip followCursor value={dateText} contents={dateContents} />;
-}
-
-function createBoolean(value: boolean) {
-  switch (value) {
-    case true:
-      return <StatusMessage message="True" status="success" />;
-    case false:
-      return <StatusMessage message="False" status="error" />;
-    default:
-      return "";
-  }
-}
-
-function createImage(value: string) {
-  return (
-    <a href={value} target="_blank" rel="noopener noreferrer">
-      <img src={value} alt={value} width="30%" />
-    </a>
-  );
-}
-
-function createFormattedList(list: any[]) {
-  return (
-    <div className="simple-tag-container">
-      {list.map((value: any) => {
-        return (
-          <div className="simple-tag" key={value}>
-            {value}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function createExpander(value: string) {
-  const shortValue = (
-    <div className="copy-icon">
-      {value.substring(0, 32) + "..."}
-      <FontAwesomeIcon
-        icon={faCopy}
-        size="sm"
-        onClick={() => {
-          navigator.clipboard.writeText(value);
-        }}
-      />
-    </div>
-  );
-
-  return <CellTooltip value={shortValue} contents={value} />;
-}
-
-function createFloat(value: any) {
-  return (
-    <CellTooltip followCursor value={value.toFixed?.(2)} contents={value} />
-  );
-}
-
-function createInteger(value: string | number) {
-  return (
-    <div className="tol-cell-renderer-integer">{value.toLocaleString()}</div>
-  );
-}
-
 function addValueBasedCellRenderer(
   value: any,
   meta: Field,
@@ -205,8 +127,7 @@ function addValueBasedCellRenderer(
 export function convertTableData(
   dataObjects: TDataObjectListOrNull,
   fieldMeta: FieldMeta,
-  dataSource: TsDataSource,
-) {
+): ITableData {
   if (!dataObjects) return [];
   const data: ITableData = [];
   // loop over each data object
@@ -224,7 +145,6 @@ export function convertTableData(
           key={key}
           value={value}
           dataObject={obj}
-          dataSource={dataSource}
           renderer={fieldMeta.dataWithDefaults![key].cellRenderer!}
         />
       );

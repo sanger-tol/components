@@ -7,36 +7,41 @@ SPDX-License-Identifier: MIT
 import {
   getFieldByName,
   IDataObject,
-  Relationship,
   TCellRenderer,
-  TsDataSource
+  Boolean,
+  Datetime,
+  Expander,
+  Float,
+  Image,
+  Integer,
+  Link,
+  List,
+  RelationshipDetail,
 } from "../..";
-import { Boolean } from "./Boolean";
-import { Datetime } from "./Datetime";
-import { Expander } from "./Expander";
-import { Float } from "./Float";
-import { Image } from "./Image";
-import { Integer } from "./Integer";
-import { Link } from "./Link";
-import { List } from "./List";
-
 
 export interface PCell {
   key: string,
-  value?: string,
+  value?: any,
   dataObject: IDataObject,
-  dataSource?: TsDataSource;
   renderer: TCellRenderer;
 }
 
 export function Cell(props: PCell) {
   const { value, dataObject, renderer } = props;
 
-  if (!renderer || !renderer.type) return <>{value}</>;
+  if (
+    // renderer type is not defined
+    !renderer ||
+    !renderer.type ||
+    // no value and not a custom renderer as custom renderers may not require a value
+    // no need to to deal with empty values with pre-defined cellRenderers
+    (!value && renderer.type !== "custom")
+  )
+    return <>{value}</>;
 
   const elements = {
-    relationship: Relationship,
-    relationshipDetail: Relationship,
+    relationship: RelationshipDetail,
+    relationshipDetail: RelationshipDetail,
     datetime: Datetime,
     boolean: Boolean,
     image: Image,
@@ -50,15 +55,18 @@ export function Cell(props: PCell) {
   renderer.element = elements[renderer.type];
 
   const elementProps: Record<string, any> = { ...props };
-  
-  if (renderer.propPointers) {
-    Object.entries(renderer.propPointers).forEach(([prop, requiredField]) => {
-      elementProps[prop] = getFieldByName(dataObject, requiredField);
-    });
-  }
-  
+
   if (renderer.props) {
-    Object.assign(elementProps, renderer.props);
+    Object.entries(renderer.props).forEach(([prop, value]) => {
+      if (typeof value === "string" && value.includes("${")) {
+        // replace placeholders with values from dataObject
+        elementProps[prop] = value.replace(/\${(.*?)}/g, (_, key) =>
+          getFieldByName(dataObject, key) || ""
+        );
+      } else {
+        elementProps[prop] = value;
+      }
+    });
   }
 
   return <renderer.element {...elementProps} />;

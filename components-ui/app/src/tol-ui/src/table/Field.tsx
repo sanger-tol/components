@@ -4,8 +4,6 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TsDataSource, IDataObject } from "..";
-
 
 interface ElementProps {
   [prop: string]: string;
@@ -28,7 +26,6 @@ export interface ICellRenderer {
   type: CellRendererType;
   element?: any;
   props?: ElementProps;
-  propPointers?: ElementProps;
 }
 
 export type TCellRenderer =

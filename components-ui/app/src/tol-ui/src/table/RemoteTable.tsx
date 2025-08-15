@@ -151,36 +151,11 @@ export function RemoteTable(props: Props) {
   };
 
   useEffect(() => {
-    if (!basic) {
-      dataSource
-        .getEntityMeta()
-        .then((em: IEntityMeta) => {
-          setFieldMeta(
-            addFieldMetaDefaults(
-              objectType,
-              fieldMeta,
-              em,
-            )
-          );
-        })
-        .catch((error: any) => {
-          setError(error.message);
-        })
-        .finally(() => {
-          setInitialLoad(false);
-          setLoading(false);
-        });
-    }
-    // if (!fieldMeta && !noConfigModal)
-    //   setTableConfigLocalStorage(id, "fieldMeta", fm);
-  }, []);
-
-  useEffectUpdate(() => {
     const compoundedFilter = generateFilter(zone, id);
     // will trigger [filter] useEffect if update has occured
     filterHasUpdated(setFilter, filter, compoundedFilter);
     // resetFiltersBelow({id: id, zone: zone!}); occurs in <Filter />: onFilter()
-  }, [initialLoad, zone]);
+  }, [zone]);
 
   useEffectUpdate(() => {
     renderTable();
@@ -205,38 +180,31 @@ export function RemoteTable(props: Props) {
     }
   }, [filterVisibility]);
 
-  const onModalSave = (
-    fm: FieldMeta,
-    actions?: string[],
-    sortByAttribute?: string,
-    sortByType?: string
-  ) => {
-    setFieldMeta(fm);
-    resetFiltersBelow({
-      id: id,
-      zone: zone as IZone,
-      indexOffset: -1,
-    });
-    setZone({ ...zone });
-
-    if (props.onModalSave) {
-      // add in the default sort here
-      props.onModalSave(
-        fm,
-        actions,
-        createSort(sortByAttribute || "", sortByType || "asc")
-      );
-    } else {
-      setTableConfigLocalStorage(id, "fieldMeta", fm);
+  const initialSetup = async () => {
+    if (!basic) {
+      dataSource
+        .getEntityMeta()
+        .then((em: IEntityMeta) => {
+          setFieldMeta(
+            addFieldMetaDefaults(
+              objectType,
+              fieldMeta,
+              em,
+            )
+          );
+        })
+        .catch((error: any) => {
+          setError(error.message);
+        })
     }
+    // if (!fieldMeta && !noConfigModal)
+    //   setTableConfigLocalStorage(id, "fieldMeta", fm);
+  }
 
-    if (sortByAttribute) {
-      setSortColumn(sortByAttribute);
-      setSortType(sortByType || "asc");
+  const renderTable = async () => {
+    if (initialLoad) {
+      await initialSetup();
     }
-  };
-
-  const renderTable = () => {
     setLoading(true);
 
     let sortBy: string | undefined;
@@ -276,6 +244,37 @@ export function RemoteTable(props: Props) {
         setLoading(false);
         setInitialLoad(false);
       });
+  };
+
+  const onModalSave = (
+    fm: FieldMeta,
+    actions?: string[],
+    sortByAttribute?: string,
+    sortByType?: string
+  ) => {
+    setFieldMeta(fm);
+    resetFiltersBelow({
+      id: id,
+      zone: zone as IZone,
+      indexOffset: -1,
+    });
+    setZone({ ...zone });
+
+    if (props.onModalSave) {
+      // add in the default sort here
+      props.onModalSave(
+        fm,
+        actions,
+        createSort(sortByAttribute || "", sortByType || "asc")
+      );
+    } else {
+      setTableConfigLocalStorage(id, "fieldMeta", fm);
+    }
+
+    if (sortByAttribute) {
+      setSortColumn(sortByAttribute);
+      setSortType(sortByType || "asc");
+    }
   };
 
   const Contents = () => {

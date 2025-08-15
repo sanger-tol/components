@@ -10,5 +10,11 @@ import {
 
 
 export function Image(props: PCell) {
-  return <>Image: {props.value}</>;
+  const { value } = props;
+
+  return (
+    <a href={value} target="_blank" rel="noopener noreferrer">
+      <img src={value} alt={value} width="30%" />
+    </a>
+  );
 }

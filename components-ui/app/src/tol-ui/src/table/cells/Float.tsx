@@ -5,10 +5,19 @@ SPDX-License-Identifier: MIT
 */
 
 import {
+  CellTooltip,
   PCell
 } from "../..";
 
 
 export function Float(props: PCell) {
-  return <>Float: {props.value}</>;
+  const { value } = props;
+
+  return (
+    <CellTooltip
+      followCursor
+      value={value.toFixed?.(2)}
+      contents={value}
+    />
+  );
 }

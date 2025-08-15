@@ -462,7 +462,7 @@ export function Table(props: Props) {
                     return (
                       <Column
                         key={key}
-                        width={field.width}
+                        width={field.width || 200}
                         sortable={sortable}
                         fixed={field.fixed}
                       >
