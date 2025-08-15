@@ -12,7 +12,7 @@ import {
   API_METHODS,
   FieldMeta,
   IRemoteTargetAndZone,
-  IUtilityBar,
+  PUtilityBar,
   IZone,
   IDropdownButtonConfig,
   ACTION_API_PREFIX,
@@ -64,7 +64,7 @@ interface Props extends IRemoteTargetAndZone {
   noDownload?: boolean;
 
   rowSelection?: boolean;
-  utilityBarConfig?: IUtilityBar;
+  utilityBarConfig?: PUtilityBar;
   contents?: ReactNode;
   groupBy?: boolean;
 

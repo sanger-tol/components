@@ -12,12 +12,12 @@ import {
 } from "..";
 
 
-interface Props {
+export interface PInfoTooltip {
   contents: ReactNode;
   disableMarkdown?: boolean;
 }
 
-export function InfoTooltip(props: Props) {
+export function InfoTooltip(props: PInfoTooltip) {
   const { contents, disableMarkdown } = props;
 
   let renderedContents = contents;

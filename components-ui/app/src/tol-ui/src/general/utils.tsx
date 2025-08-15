@@ -4,9 +4,11 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+
 import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
-import { FieldMeta, AllowedCardinality } from "..";
+import { FieldMeta, IAllowedCardinality } from "..";
+
 
 export function convertToPath(name: string) {
   const path = name.toLowerCase();
@@ -289,7 +291,7 @@ export function filterAttributes(
   allowedTypes: string[] | undefined,
   selectedSources: string[],
   recommendedOn: boolean,
-  allowedCardinality: AllowedCardinality | undefined,
+  allowedCardinality: IAllowedCardinality | undefined,
   customAttributeSelection: string[] | undefined
 ) {
   const filteredAttributes = Object.entries(
@@ -344,4 +346,57 @@ export function converterForElapsedTime(secondsElapsed: number): string {
     .padStart(2, "0");
   const seconds = (secondsElapsed % 60).toString().padStart(2, "0");
   return `${minutes}:${seconds}`;
+}
+
+export function updateContents(contents: object) {
+  for (const [key, value] of Object.entries(contents)) {
+    // remove or format some content
+    switch (key) {
+      case "history":
+        delete contents[key];
+        break;
+      case "last_modified_at":
+      case "created_at":
+        contents[key] = formatDate(value);
+        break;
+    }
+    // make nulls show a faded 'None'
+    if (!value) {
+      contents[key] = <span className="tooltip-value-none">None</span>;
+    }
+  }
+  return contents;
+}
+
+export function getSm(type: string) {
+  switch (type) {
+    case "sm":
+      return 6;
+    default:
+      return 12;
+  }
+}
+
+export function getLg(type: string) {
+  switch (type) {
+    case "sm":
+      return 3;
+    case "md":
+      return 6;
+    default:
+      return 12;
+  }
+}
+
+export function getHeight(type: string) {
+  switch (type) {
+    case "sm":
+      return 150;
+    case "md":
+      return 450;
+    case "lg":
+      return 450;
+    case "xl":
+      return 600;
+  }
 }

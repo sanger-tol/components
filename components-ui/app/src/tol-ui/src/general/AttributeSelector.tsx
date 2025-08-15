@@ -22,15 +22,10 @@ import {
   getAllAttributeData,
   truncateString,
   IRemoteTarget,
+  IAllowedCardinality,
 } from "..";
 
-
-export interface AllowedCardinality {
-  operator: string;
-  value: number;
-}
-
-interface Props extends IRemoteTarget {
+export interface PAttributeSelector extends IRemoteTarget {
   additionalPopulatedFieldData?: any;
   allowedTypes?: string[];
   attribute: string[];
@@ -48,11 +43,11 @@ interface Props extends IRemoteTarget {
   sticky?: boolean;
   tooltipContent?: string;
   customAttributeSelection?: string[];
-  allowedCardinality?: AllowedCardinality;
+  allowedCardinality?: IAllowedCardinality;
   groupBy?: boolean;
 }
 
-export function AttributeSelector(props: Props) {
+export function AttributeSelector(props: PAttributeSelector) {
   const {
     objectType,
     dataSource,
@@ -84,7 +79,8 @@ export function AttributeSelector(props: Props) {
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
 
   useEffect(() => {
-    dataSource.getEntityMeta()
+    dataSource
+      .getEntityMeta()
       .then((em) => {
         setEntityMeta(em);
         setSources(
@@ -125,7 +121,41 @@ export function AttributeSelector(props: Props) {
     return name.includes(kw) || label.includes(kw) || description.includes(kw);
   };
 
-  const menuItem = (
+  const renderTotalSelectedItems = (values: string[]) => {
+    if (values.length === 1) {
+      return RenderSelectedValue(values[0]);
+    }
+    return `${values.length} ${populatedFieldType}s selected${
+      additionalPopulatedFieldData ||
+      `; ${numPopulatedFields} ${
+        numPopulatedFields === 1 ? "filter" : "filters"
+      } populated.`
+    }`;
+  };
+
+  const handleSetAttribute = (newAttribute: string[]) => {
+    if (maxSelections) {
+      if (newAttribute.length > maxSelections) {
+        PopUpMessage({
+          type: "warning",
+          message: `You can select a maximum number of ${maxSelections} items.`,
+        });
+        return;
+      }
+    }
+    setAttributes(newAttribute);
+
+    if (setAttributeMeta) {
+      const allAttributeData = getAllAttributeData(
+        newAttribute,
+        entityMeta,
+        objectType
+      );
+      setAttributeMeta(allAttributeData);
+    }
+  };
+
+  const MenuItem = (
     displayName: string,
     source: string,
     key: string,
@@ -168,12 +198,12 @@ export function AttributeSelector(props: Props) {
     );
   };
 
-  const renderMenuItem = (l: any, index: number) => {
+  const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
     return (
       <div key={`${label}-${index}`}>
-        {menuItem(
+        {MenuItem(
           metaData["display_name"] ?? normaliseCaps(label),
           metaData["source"],
           label,
@@ -183,29 +213,17 @@ export function AttributeSelector(props: Props) {
     );
   };
 
-  const renderSelectedValue = (value: string) => {
+  const RenderSelectedValue = (value: string) => {
     const metaData = getFlattenedMetaData(entityMeta, objectType, value);
     return (
-    <span className="tol-attribute-selector-render-single-item">
-      {metaData["display_name"] ?? normaliseCaps(value)} 
-      <SourceTag source={metaData["source"]}/>
-    </span>
+      <span className="tol-attribute-selector-render-single-item">
+        {metaData["display_name"] ?? normaliseCaps(value)}
+        <SourceTag source={metaData["source"]} />
+      </span>
     );
   };
 
-  const renderTotalSelectedItems = (values: string[]) => {
-    if (values.length === 1) {
-      return renderSelectedValue(values[0]);
-    }
-    return `${values.length} ${populatedFieldType}s selected${
-      additionalPopulatedFieldData ||
-      `; ${numPopulatedFields} ${
-        numPopulatedFields === 1 ? "filter" : "filters"
-      } populated.`
-    }`;
-  };
-
-  const searchBySource = () => {
+  const SearchBySource = () => {
     const hasActiveSource = selectedSources.length > 0;
 
     return (
@@ -237,28 +255,6 @@ export function AttributeSelector(props: Props) {
     );
   };
 
-  const handleSetAttribute = (newAttribute: string[]) => {
-    if (maxSelections) {
-      if (newAttribute.length > maxSelections) {
-        PopUpMessage({
-          type: "warning",
-          message: `You can select a maximum number of ${maxSelections} items.`,
-        });
-        return;
-      }
-    }
-    setAttributes(newAttribute);
-
-    if (setAttributeMeta) {
-      const allAttributeData = getAllAttributeData(
-        newAttribute,
-        entityMeta,
-        objectType
-      );
-      setAttributeMeta(allAttributeData);
-    }
-  };
-
   if (loading) return <></>;
 
   return (
@@ -267,7 +263,7 @@ export function AttributeSelector(props: Props) {
         className="tol-attribute-selector-select"
         block
         noSelectAll
-        groupBy={groupBy ? 'relationship_name' : undefined}
+        groupBy={groupBy ? "relationship_name" : undefined}
         data={filterAttributes(
           entityMeta,
           objectType,
@@ -286,12 +282,12 @@ export function AttributeSelector(props: Props) {
         placeholder={placeholder}
         value={attribute}
         setValue={handleSetAttribute}
-        renderMenuItem={(l: any, index: number) => renderMenuItem(l, index)}
+        renderMenuItem={(l: any, index: number) => RenderMenuItem(l, index)}
         renderValue={renderTotalSelectedItems}
         disabledItemValues={disabledValues && [...Object.keys(disabledValues)]}
         searchBy={searchBy}
         sticky={sticky}
-        renderExtraFooter={renderSearchBySource && searchBySource()}
+        renderExtraFooter={renderSearchBySource && SearchBySource()}
         onClean={onClean}
         onClose={() => setSelectedSources([])}
       />

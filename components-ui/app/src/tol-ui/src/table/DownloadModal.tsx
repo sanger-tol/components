@@ -15,7 +15,7 @@ import {
   copyToClipboard,
   exportDataToSpreadsheet,
   dataObjectToSpreadsheetData,
-  IInlineEdit,
+  PInlineEdit,
   FieldMeta,
   converterForElapsedTime,
   deepCopy,
@@ -31,7 +31,7 @@ interface Props {
   source?: string;
   dataSource: TsDataSource;
   requestedFields: string[];
-  title?: IInlineEdit;
+  title?: PInlineEdit;
   fieldMeta: FieldMeta;
 
   downloadInProgress: boolean;

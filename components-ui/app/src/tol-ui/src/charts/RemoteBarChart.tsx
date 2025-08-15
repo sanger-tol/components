@@ -19,7 +19,7 @@ import {
   filterHasUpdated,
   generateFilter,
   resetFiltersBelow,
-  IUtilityBar,
+  PUtilityBar,
   IRemoteTargetAndZone,
   TFilterOrUndefined,
   API_METHODS
@@ -37,7 +37,7 @@ interface Props extends IRemoteTargetAndZone {
   cumulative?: boolean;
   buttons?: JSX.Element[];
   forceUpdate?: boolean;
-  utilityBarConfig?: IUtilityBar;
+  utilityBarConfig?: PUtilityBar;
   contents?: ReactNode;
   chartType?: string;
 }
