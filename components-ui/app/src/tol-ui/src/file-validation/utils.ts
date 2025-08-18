@@ -295,6 +295,7 @@ export async function uploadPipelineConfig(
       spreadsheet_config: spreadsheetConfig || null,
       pipeline_id: config.pipeline_id,
       destination: config.destination,
+      dry_run: true,
     },
   };
   try {

@@ -16,6 +16,13 @@ export interface IMessage {
   message: TMessageType;
 }
 
+export interface IFileData {
+  blobFile: File;
+  fileKey: string;
+  name: string;
+  status: string;
+}
+
 export interface IData {
   label: string;
   value: string;

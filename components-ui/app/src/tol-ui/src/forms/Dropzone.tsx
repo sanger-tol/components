@@ -16,14 +16,10 @@ import {
   TMessageType,
   IMessage,
   IWaitingUpload,
+  IFileData
 } from "..";
 
-export interface IFileData {
-  blobFile: File;
-  fileKey: string;
-  name: string;
-  status: string;
-}
+
 
 export interface PDropzone {
   resource: string;
