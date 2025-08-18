@@ -51,10 +51,10 @@ export function Dropzone(props: PDropzone) {
     fileListVisible = false,
     parentToSubmit = false,
     resetKey,
-    validating = false
+    validating = false,
   } = props;
 
-  const [fileList, setFileList] = useStateFallback<FileData[]>(
+  const [fileList, setFileList] = useStateFallback<IFileData[]>(
     props.fileList,
     props.setFileList,
     []
@@ -137,15 +137,15 @@ export function Dropzone(props: PDropzone) {
         action="temp-error-please-ignore"
         draggable
         accept={fileType}
-        onChange={(fileList: IFileData[]) => {
+        onChange={(fileList: any, _event: any) => {
           const mapped = fileList
-          .filter(f => f.blobFile)
-          .map((file: IFileData) => ({
-            blobFile: file.blobFile as File,
-            fileKey: file.fileKey,
-            name: file.name,
-            status: file.status,
-          }));
+            .filter((f: any) => f.blobFile)
+            .map((file: any) => ({
+              blobFile: file.blobFile as File,
+              fileKey: file.fileKey,
+              name: file.name,
+              status: file.status,
+            }));
           setFileList(mapped);
         }}
         fileListVisible={fileListVisible}
@@ -166,7 +166,7 @@ export function Dropzone(props: PDropzone) {
               ) : (
                 <WaitingUpload
                   message={
-                    (fileList.length > 0 && validating)
+                    fileList.length > 0 && validating
                       ? "Please reset to upload a new file."
                       : "Click or drag file to this area to upload"
                   }

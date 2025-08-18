@@ -28,7 +28,7 @@ import {
   Modal,
   TolLoader,
   VALIDATION_ENDPOINTS,
-  FileData,
+  IFileData,
   TsDataSource,
   DEFAULT_FILE_TYPE,
 } from "..";
@@ -59,7 +59,7 @@ export function FileValidation(props: PFileValidation) {
   const [openModal, setOpenModal] = useState<string | boolean>(false);
   const [validated, setValidated] = useState<boolean>(false);
   const [resetting, setResetting] = useState<boolean>(false);
-  const [fileList, setFileList] = useState<FileData[]>([]);
+  const [fileList, setFileList] = useState<IFileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);
   const [stepsFound, setStepsFound] = useState<boolean>(false);
   const [validationStatus, setValidationStatus] = useState<{
@@ -193,7 +193,7 @@ export function FileValidation(props: PFileValidation) {
             disabled={!fileDropped || validating}
             onClick={() => {
               setValidating(true);
-              handleValidation(fileList.map((file: FileData) => file.name));
+              handleValidation(fileList.map((file: IFileData) => file.name));
             }}
           />
           <DropdownButtons
