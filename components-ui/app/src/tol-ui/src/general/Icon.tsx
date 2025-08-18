@@ -17,7 +17,7 @@ export function Icon(props: PIcon) {
   return (
     // @ts-ignore
     <span>
-      <FontAwesomeIcon icon={`fa-solid fa-${icon}`} size={size} />
+      <FontAwesomeIcon icon={`fa-solid fa-${icon}`} size={size as any} />
     </span>
   );
 }

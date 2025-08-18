@@ -135,7 +135,7 @@ export function FileValidation(props: PFileValidation) {
       validationConfig,
       fileName[0]
     );
-    setCurrentUploadId(pipeline_id?.id);
+    setCurrentUploadId(pipeline_id?.id ?? null);
   };
 
   const handleReset = () => {
@@ -176,8 +176,8 @@ export function FileValidation(props: PFileValidation) {
                 text={"Upload File"}
                 disabled={
                   !validated ||
-                  validationStatus.text !== "Passed" ||
-                  validationStatus.text !== "Passed with Warnings"
+                  (validationStatus.text !== "Passed" &&
+                  validationStatus.text !== "Passed with Warnings")
                 }
                 onClick={() => {
                   setValidating(true);

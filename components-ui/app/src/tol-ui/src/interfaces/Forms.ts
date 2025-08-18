@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import React from "react";
 import { TMessageType, PButton } from "..";
 
 export interface IWaitingUpload {

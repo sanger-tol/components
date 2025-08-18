@@ -10,7 +10,7 @@ import { TolLoader, HoverOverlay, Icon } from "..";
 
 export interface PButton {
   icon?: string;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>, ...args: any[]) => void;
+  onClick?: (...args: any[]) => void;
   className?: string;
   text?: string;
   disabled?: boolean;
