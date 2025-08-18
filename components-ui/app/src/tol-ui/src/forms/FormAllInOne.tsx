@@ -24,8 +24,7 @@ import {
   validateForm,
   UNSUPPORTED_FIELD_TYPE,
   FormMarkdown,
-  FormDatetime,
-  FormComponentMultiples,
+  FormDatetime
 } from "..";
 
 export interface PFormAllInOne {
@@ -172,14 +171,6 @@ export function FormAllInOne(props: PFormAllInOne) {
             data={field.data}
             value={formData[field.name] ?? ""}
             onChange={(value: any) => handleInputChange(field.name, value)}
-          />
-        );
-      case "componentmultiples":
-        return (
-          <FormComponentMultiples
-            fieldConfig={field.innerField}
-            label={field.label}
-            renderField={renderField}
           />
         );
       case "multipleselect":

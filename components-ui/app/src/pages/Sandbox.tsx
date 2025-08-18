@@ -25,16 +25,6 @@ const formConfig = {
       ],
     },
     {
-      name: "leaders",
-      type: "componentmultiples",
-      label: "Session Leaders:",
-      innerField: {
-        name: "leader",
-        type: "text",
-        placeholder: "Enter leader name here...",
-      }
-    },
-    {
       name: "sessionName",
       type: "text",
       label: "Session Name:",
@@ -110,7 +100,7 @@ export function Sandbox() {
         <>
           <h3 style={{ marginBottom: "0px" }}>Session Creation</h3>
           <p>
-            Please fill in all required information. This form will be sent to
+            Please fill in all required information. This session information will be sent to
             the admin team for approval.
           </p>
           <FormAllInOne
