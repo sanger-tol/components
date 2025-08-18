@@ -56,10 +56,6 @@ export function FormAllInOne(props: PFormAllInOne) {
   }, []);
 
   useEffect(() => {
-    console.log(formData);
-  }, [formData]);
-
-  useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasUnsavedChanges.current) {
         e.preventDefault();
