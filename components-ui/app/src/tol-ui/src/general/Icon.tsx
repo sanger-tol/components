@@ -15,9 +15,9 @@ export function Icon(props: PIcon) {
   const { icon, size } = props;
 
   return (
-    // @ts-ignore
     <span>
-      <FontAwesomeIcon icon={`fa-solid fa-${icon}`} size={size as any} />
+      {/* @ts-ignore */}
+      <FontAwesomeIcon icon={`fa-solid fa-${icon}`} size={size} />
     </span>
   );
 }
