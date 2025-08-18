@@ -5,8 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Button, InfoTooltip, Modal } from "../..";
-
+import { Button, InfoTooltip, Modal, PopUpMessage } from "../..";
 
 interface Props {
   showIdExportModal: boolean;
@@ -75,9 +74,15 @@ export function ActionCheckModal(props: Props) {
     completeAction(actionName, ids);
     setShowIdExportModal(false);
     setIdsWithReqNotMet([]);
+    PopUpMessage({
+      type: "success",
+      message: `Action "${actionName}" completed successfully.`,
+    });
   };
 
-  const failingIdsCount = new Set(Object.values(idsWithReqNotMet._failureDetails || {}).flat()).size;
+  const failingIdsCount = new Set(
+    Object.values(idsWithReqNotMet._failureDetails || {}).flat()
+  ).size;
 
   const exportItem = (id: string) => {
     const isFailingItem = Object.values(idsWithReqNotMet._failureDetails || {})
@@ -92,13 +97,24 @@ export function ActionCheckModal(props: Props) {
 
     const tooltipContent =
       failureReasons.length > 0
-        ? `Failed Requirements: ${failureReasons.join(", ")}`
+        ? (
+          <>
+            <p style={{margin: 0}}>Missing Fields:</p>
+            <ul>
+              {failureReasons.map((requirement) => (
+                <li key={requirement}>{requirement}</li>
+              ))}
+            </ul>
+          </>
+        )
         : "Could not get reasons for failure.";
 
     return (
       <div
         key={id}
-        className={`tol-table-action-modal-export-item-container ${deletingItem === id ? "deleting" : ""}`}
+        className={`tol-table-action-modal-export-item-container ${
+          deletingItem === id ? "deleting" : ""
+        }`}
       >
         <div
           className={`tol-table-action-modal-export-item ${
@@ -133,7 +149,7 @@ export function ActionCheckModal(props: Props) {
           disabled={failingIdsCount === 0}
           className="tol-table-action-modal-close-btn"
         />
-        {failingIdsCount === 0 && (
+        {failingIdsCount === 0 && idsForExport.length > 0 && (
           <p className="tol-table-actions-modal-ready-indicator">
             Action Ready
           </p>
@@ -143,7 +159,7 @@ export function ActionCheckModal(props: Props) {
         <Button
           type="success"
           onClick={() => handleCompleteAction(currentActionName, idsForExport)}
-          disabled={failingIdsCount > 0}
+          disabled={failingIdsCount > 0 || idsForExport.length === 0}
           text="Complete Action"
           className="tol-table-action-modal-success-btn"
         />
@@ -162,7 +178,9 @@ export function ActionCheckModal(props: Props) {
         actioned.
       </p>
       <h6>
-        {`${idsForExport.length} items to be actioned; ${failingIdsCount} issues ${" "}
+        {`${
+          idsForExport.length
+        } items to be actioned; ${failingIdsCount} issues ${" "}
         ${failingIdsCount > 0 ? "highlighted" : "detected"}:`}
       </h6>
       <div className="tol-table-action-modal-export-item-list-container">

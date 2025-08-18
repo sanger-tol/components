@@ -29,3 +29,9 @@ export const ACTIONS = {
   ACTION: "action",
   RUN_ACTION: "run-action",
 }
+
+export const VALIDATION_ENDPOINTS = {
+  UPLOAD: "local/upload",
+  RUN_PIPELINE: "run-pipeline",
+  PIPELINE_STEPS: "local/pipeline_steps",
+}

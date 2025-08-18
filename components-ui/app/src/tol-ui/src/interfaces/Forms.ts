@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import React from "react";
 import { TMessageType, PButton } from "..";
 
 export interface IWaitingUpload {
@@ -13,6 +14,13 @@ export interface IWaitingUpload {
 export interface IMessage {
   type: string;
   message: TMessageType;
+}
+
+export interface IFileData {
+  blobFile: File;
+  fileKey: string;
+  name: string;
+  status: string;
 }
 
 export interface IData {

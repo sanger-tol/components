@@ -4,19 +4,21 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import React from "react";
 import { Loader as RSLoader } from "rsuite";
 
 export interface PTolLoader {
   size?: string;
   content?: string;
   vertical?: boolean;
+  styles?: React.CSSProperties;
 }
 
 export function TolLoader(props: PTolLoader) {
-  const { size, content, vertical } = props;
+  const { size, content, vertical, styles } = props;
 
   return (
-    <div className="tol-loader">
+    <div className="tol-loader" style={{ ...styles }}>
       <RSLoader
         // @ts-ignore
         size={size}
