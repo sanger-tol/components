@@ -18,7 +18,7 @@ import {
   IWaitingUpload,
 } from "..";
 
-export interface FileData {
+export interface IFileData {
   blobFile: File;
   fileKey: string;
   name: string;
@@ -33,8 +33,8 @@ export interface PDropzone {
   setResponse?: any;
   onFileDrop?: (length: boolean) => void;
   fileListVisible?: boolean;
-  fileList?: FileData[];
-  setFileList?: (fileList: FileData[]) => void;
+  fileList?: IFileData[];
+  setFileList?: (fileList: IFileData[]) => void;
   parentToSubmit?: boolean;
   resetKey?: string | number;
   validating?: boolean;
@@ -137,7 +137,17 @@ export function Dropzone(props: PDropzone) {
         action="temp-error-please-ignore"
         draggable
         accept={fileType}
-        onChange={setFileList}
+        onChange={(fileList: IFileData[]) => {
+          const mapped = fileList
+          .filter(f => f.blobFile)
+          .map((file: IFileData) => ({
+            blobFile: file.blobFile as File,
+            fileKey: file.fileKey,
+            name: file.name,
+            status: file.status,
+          }));
+          setFileList(mapped);
+        }}
         fileListVisible={fileListVisible}
         disabled={fileList.length > 0 && validating}
         onUpload={() => {
