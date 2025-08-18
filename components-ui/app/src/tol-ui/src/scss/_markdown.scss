@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-.wmde-markdown, 
+.wmde-markdown,
 .wmde-markdown-var {
   --color-accent-fg: var(--tol-primary);
 }
@@ -20,6 +20,14 @@
     border-radius: 6px;
     padding-left: 8px;
   }
+}
+
+.tol-form-markdown {
+  margin-bottom: 10px !important;
+}
+
+.tol-form-markdown-help-text {
+  margin-top: -6px;
 }
 
 .tol-hide-extra-viewer-buttons {

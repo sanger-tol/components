@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect, useRef } from "react";
+import { Schema } from "rsuite";
 import {
   RSForm,
   Toaster,
@@ -21,9 +22,10 @@ import {
   PButton,
   setInitialData,
   validateForm,
-  UNSUPPORTED_FIELD_TYPE
+  UNSUPPORTED_FIELD_TYPE,
+  FormMarkdown,
+  FormDatetime
 } from "..";
-
 
 export interface PFormAllInOne {
   formConfig: IFormConfig;
@@ -45,6 +47,7 @@ export function FormAllInOne(props: PFormAllInOne) {
 
   const formRef = useRef<any>(null);
   const toaster = Toaster();
+  const defaultModel = Schema.Model({});
 
   useEffect(() => {
     if (initialData) {
@@ -111,6 +114,18 @@ export function FormAllInOne(props: PFormAllInOne) {
             setValue={(value: any) => handleInputChange(field.name, value)}
           />
         );
+      case "datetime":
+        return (
+          <FormDatetime
+            name={field.name}
+            label={field.label}
+            value={formData[field.name] ?? ""}
+            onChange={(value: any) => handleInputChange(field.name, value)}
+            helpText={field.helpText}
+            placeholder={field.placeholder}
+            hideMinutes={field.hideMinutes}
+          />
+        );
       case "singleselect":
         return (
           <RSForm.Group controlId={`${formId}-${field.name}`}>
@@ -175,6 +190,18 @@ export function FormAllInOne(props: PFormAllInOne) {
             noSearch={field.noSearch}
           />
         );
+      case "markdown":
+        return (
+          <FormMarkdown
+            value={formData[field.name] ?? ""}
+            onChange={(value: any) => handleInputChange(field.name, value)}
+            preview={field.preview}
+            label={field.label}
+            removeCommands={field.removeCommands}
+            height={field.height}
+            helpText={field.helpText}
+          />
+        );
       case "checkbox":
         return (
           <FormCheckboxes
@@ -205,14 +232,9 @@ export function FormAllInOne(props: PFormAllInOne) {
         id={`form-${formId}`}
         onSubmit={(e: any) => {
           e.preventDefault();
-          validateForm(
-            formRef,
-            toaster,
-            formData,
-            props.onSubmit
-          );
+          validateForm(formRef, toaster, formData, props.onSubmit);
         }}
-        model={model || null}
+        model={model || defaultModel}
         formValue={formData}
       >
         {formConfig.fields.map((field: any) => (
@@ -233,12 +255,7 @@ export function FormAllInOne(props: PFormAllInOne) {
                   onClick={() => {
                     if (modifiedFields && onValidate) {
                       onValidate(
-                        validateForm(
-                          formRef,
-                          toaster,
-                          formData,
-                          props.onSubmit
-                        )
+                        validateForm(formRef, toaster, formData, props.onSubmit)
                       );
                     }
                     setModifiedFields({});
@@ -247,7 +264,7 @@ export function FormAllInOne(props: PFormAllInOne) {
                     }
                   }}
                 />
-              ),
+              )
             )}
           </div>
         )}
