@@ -16,6 +16,7 @@ import {
   IPipelineUpload,
   IValidationConfig,
   FILE_VALIDATION_PATH,
+  S3_ENDPOINTS,
 } from "..";
 
 const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
@@ -49,12 +50,57 @@ export function getErrorWarningCounts(results: IValidationResult[]): {
   );
 }
 
-//@ts-ignore
-export function downloadFile(filename: string) {
-  //TODO: Implement download functionality
+export async function downloadFile(
+  ds: TsDataSource,
+  s3_bucket: string,
+  filename: string
+) {
+  const body = {
+    data: {
+      file_name: filename,
+      s3_bucket: s3_bucket,
+    },
+  };
+  try {
+    const response = await ds.custom({
+      method: API_METHODS.POST,
+      resource: S3_ENDPOINTS.DOWNLOAD,
+      body: body,
+      options: {
+        responseType: "blob",
+      },
+    });
+
+    const blob = new Blob([response.data], {
+      type: "application/octet-stream",
+    });
+
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const downloadElement = document.createElement("a");
+    downloadElement.href = downloadUrl;
+    downloadElement.download = filename;
+    downloadElement.click();
+    window.URL.revokeObjectURL(downloadUrl);
+  } catch (error) {
+    console.error("Error downloading file: ", error);
+    PopUpMessage({
+      type: "error",
+      message: "Failed to download file. Please try again.",
+    });
+  }
 }
 
-export function uploadFileToS3() {}
+export function uploadFileToS3(ds: TsDataSource, file: File, s3Bucket: string) {
+  const body = new FormData();
+  body.append("file", file);
+  body.append("s3_bucket", s3Bucket);
+
+  return ds.custom({
+    method: API_METHODS.POST,
+    resource: S3_ENDPOINTS.UPLOAD,
+    body: body,
+  });
+}
 
 /**
  * Normalises a validation result received from the API into the internal IValidationResult format.
@@ -106,6 +152,7 @@ export async function normalisePipelineUpload(
     pipelineId: pipeline?.id || "",
     pipelineSteps: pipelineSteps || [],
     s3Filename: upload?.s3_filename || "",
+    s3Url: upload?.s3_url || "",
     validationResults:
       upload?.validation_results.map(normaliseValidationResult) || [],
     failureMessage: upload?.failure_message || null,
@@ -286,8 +333,9 @@ export async function uploadPipelineConfig(
   ds: TsDataSource,
   config: IValidationConfig,
   fileName: string,
+  file: File,
   spreadsheetConfig?: string
-): Promise<IPipelineUpload | null> {
+): Promise<IPipelineUpload | null | undefined> {
   const body = {
     data: {
       s3_url: config.s3_url,
@@ -298,21 +346,57 @@ export async function uploadPipelineConfig(
       dry_run: true,
     },
   };
+
   try {
-    const response = await ds.custom({
-      method: API_METHODS.POST,
-      resource: VALIDATION_ENDPOINTS.RUN_PIPELINE,
-      body: body,
-    });
-    if (response) {
-      return response.data["upload_id"];
+    const uploadResponse = await uploadFileToS3(ds, file, config.s3_url);
+    
+    if (uploadResponse.status !== 200) {
+      PopUpMessage({
+        type: "error",
+        message: "Failed to upload file. Please try again.",
+      });
+      return null;
     }
-    return null;
-  } catch (error) {
-    console.error("Error initiating validation:", error);
+
+    PopUpMessage({
+      type: "success",
+      message: "File uploaded successfully.",
+    });
+
+    try {
+      const response = await ds.custom({
+        method: API_METHODS.POST,
+        resource: VALIDATION_ENDPOINTS.RUN_PIPELINE,
+        body: body,
+      });
+
+      if (response) {
+        PopUpMessage({
+          type: "success",
+          message: "Validation started successfully.",
+        });
+        return response.data["upload_id"];
+      } else {
+        PopUpMessage({
+          type: "error",
+          message: "Failed to start validation. Please try again.",
+        });
+        return null;
+      }
+    } catch (pipelineError) {
+      console.error("Error running pipeline:", pipelineError);
+      PopUpMessage({
+        type: "error",
+        message: "Failed to start validation. Please try again.",
+      });
+      return null;
+    }
+
+  } catch (uploadError) {
+    console.error("Error uploading file:", uploadError);
     PopUpMessage({
       type: "error",
-      message: "Failed to initiate validation. Please try again.",
+      message: "Failed to upload file. Please try again.",
     });
     return null;
   }

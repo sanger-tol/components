@@ -20,6 +20,7 @@ import {
   InfoTooltip,
   normaliseCaps,
   truncateString,
+  PIPELINE_DS,
 } from "..";
 
 export interface PPreviousUploadsView {
@@ -109,7 +110,10 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
         </div>
       </div>
       <div className="tol-file-validation-previous-results-status-container">
-        <a href="#" onClick={() => downloadFile(data.s3Filename)}>
+        <a
+          href="#"
+          onClick={() => downloadFile(PIPELINE_DS, data.s3Url, data.s3Filename)}
+        >
           <p>
             {
               <HoverOverlay contents={"download"}>

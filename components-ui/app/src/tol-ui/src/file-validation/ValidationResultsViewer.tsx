@@ -156,7 +156,11 @@ export function ValidationResultsViewer() {
                   <a
                     href="#"
                     onClick={() =>
-                      downloadFile(latestPipelineResults.s3Filename)
+                      downloadFile(
+                        PIPELINE_DS,
+                        latestPipelineResults.s3Url,
+                        latestPipelineResults.s3Filename
+                      )
                     }
                   >
                     {latestPipelineResults.s3Filename}

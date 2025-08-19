@@ -35,3 +35,8 @@ export const VALIDATION_ENDPOINTS = {
   RUN_PIPELINE: "run-pipeline",
   PIPELINE_STEPS: "local/pipeline_steps",
 }
+
+export const S3_ENDPOINTS = {
+  UPLOAD: "data-upload/upload",
+  DOWNLOAD: "data-upload/download",
+}

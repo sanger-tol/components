@@ -129,11 +129,12 @@ export function FileValidation(props: PFileValidation) {
     }
   }, [latestPipelineResults]);
 
-  const handleValidation = async (fileName: string[]) => {
+  const handleValidation = async (file: IFileData) => {
     const pipeline_id = await uploadPipelineConfig(
       PIPELINE_DS,
       validationConfig,
-      fileName[0]
+      file.name,
+      file.blobFile
     );
     setCurrentUploadId(pipeline_id?.id ?? null);
   };
@@ -193,7 +194,7 @@ export function FileValidation(props: PFileValidation) {
             disabled={!fileDropped || validating}
             onClick={() => {
               setValidating(true);
-              handleValidation(fileList.map((file: IFileData) => file.name));
+              handleValidation(fileList[0]);
             }}
           />
           <DropdownButtons

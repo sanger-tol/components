@@ -52,6 +52,7 @@ export interface IPipelineUploadAPI {
   date_started: string;
   flow_run_id: string;
   s3_filename: string;
+  s3_url: string;
   validation_results: IValidationResult[];
   failure_message: string | null;
 }
@@ -65,6 +66,7 @@ export interface IPipelineUpload {
   pipelineId: string;
   pipelineSteps: string[];
   s3Filename: string;
+  s3Url: string;
   validationResults: IValidationResult[];
   failureMessage: string | null;
 }
