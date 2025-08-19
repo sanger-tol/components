@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import {
   getErrorWarningCounts,
-  downloadFile,
+  downloadFileFromS3,
   determineUploadStatus,
   IUploadStatus,
   IErrorWarningCount,
@@ -156,7 +156,7 @@ export function ValidationResultsViewer() {
                   <a
                     href="#"
                     onClick={() =>
-                      downloadFile(
+                      downloadFileFromS3(
                         PIPELINE_DS,
                         latestPipelineResults.s3Url,
                         latestPipelineResults.s3Filename

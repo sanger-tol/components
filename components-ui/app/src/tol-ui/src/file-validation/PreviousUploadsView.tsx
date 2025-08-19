@@ -13,7 +13,7 @@ import {
   getErrorWarningCounts,
   determineUploadStatus,
   determineStepStatus,
-  downloadFile,
+  downloadFileFromS3,
   goToResults,
   Button,
   HoverOverlay,
@@ -112,7 +112,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
       <div className="tol-file-validation-previous-results-status-container">
         <a
           href="#"
-          onClick={() => downloadFile(PIPELINE_DS, data.s3Url, data.s3Filename)}
+          onClick={() => downloadFileFromS3(PIPELINE_DS, data.s3Url, data.s3Filename)}
         >
           <p>
             {

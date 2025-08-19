@@ -50,7 +50,7 @@ export function getErrorWarningCounts(results: IValidationResult[]): {
   );
 }
 
-export async function downloadFile(
+export async function downloadFileFromS3(
   ds: TsDataSource,
   s3_bucket: string,
   filename: string
