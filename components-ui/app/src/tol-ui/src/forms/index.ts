@@ -17,3 +17,4 @@ export * from "./SingleSelectCustomOption";
 export * from "./FormMarkdown";
 export * from "./FormDatetime";
 export * from "./utils";
+export * from "./FormComponentMultiples";
