@@ -295,6 +295,7 @@ export function FileValidation(props: PFileValidation) {
             data={latestPipelineResults.validationResults}
             steps={latestPipelineResults.pipelineSteps}
             completed={latestPipelineResults.completed}
+            failureMessage={latestPipelineResults.failureMessage}
           />
         )
       )}

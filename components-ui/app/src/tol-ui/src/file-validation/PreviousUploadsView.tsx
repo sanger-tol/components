@@ -67,9 +67,11 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
     return (
       <span className="tol-file-validation-previous-results-icon-tooltip">
         <p>{normaliseCaps(stepName)}</p>
-        {!completed && <p>Running Pipeline</p>}
+        {!completed && !data.failureMessage && <p>Running Pipeline</p>}
         <p>
-          {hasIssues
+          {data.failureMessage
+            ? "Pipeline Failed..."
+            : hasIssues
             ? `${errorCount} Errors, ${warningCount} Warnings`
             : completed
             ? "Passed - No Issues"
@@ -82,7 +84,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
             if (setOpenModal) setOpenModal(false);
           }}
         >
-          {hasIssues && completed && <p>Go to</p>}
+          {hasIssues && completed && !data.failureMessage && <p>Go to</p>}
         </a>
       </span>
     );
@@ -180,6 +182,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
                       );
                       const issueCount = getErrorWarningCounts(stepResults);
                       const iconType =
+                      data.failureMessage ? "question" :
                         issueCount.errors > 0
                           ? "xmark"
                           : issueCount.warnings > 0
@@ -209,6 +212,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
                               }`}
                               completed={completed}
                               completedCheck={true}
+                              failed={!!data.failureMessage}
                             />
                           </div>
                         </div>

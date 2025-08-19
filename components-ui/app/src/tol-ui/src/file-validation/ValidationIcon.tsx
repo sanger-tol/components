@@ -15,6 +15,7 @@ export interface PValidationIcon {
   tooltip?: React.ReactNode;
   completed?: boolean;
   completedCheck?: boolean;
+  failed?: boolean;
 }
 
 export function ValidationIcon(props: PValidationIcon) {
@@ -26,10 +27,11 @@ export function ValidationIcon(props: PValidationIcon) {
     tooltip,
     completed,
     completedCheck = false,
+    failed,
   } = props;
 
   const iconContent =
-    !completed && completedCheck ? (
+    !completed && completedCheck && !failed ? (
       <TolLoader />
     ) : (
       <Icon icon={iconType} size={size} />

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 export type TSeverity = "error" | "warning";
-export type TIconType = "check" | "xmark" | "exclamation";
+export type TIconType = "check" | "xmark" | "exclamation" | "question";
 
 export interface ICellId {
   column: string;
