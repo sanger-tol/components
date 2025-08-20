@@ -26,6 +26,7 @@ import {
   VALIDATION_ENDPOINTS,
   BUTTON_TIMEOUT,
   PIPELINE_DS,
+  ValidationReport,
 } from "..";
 
 export function ValidationResultsViewer() {
@@ -43,6 +44,7 @@ export function ValidationResultsViewer() {
   const [validated, setValidated] = useState<boolean>(false);
   const [hasErrors, setHasErrors] = useState<boolean>(false);
   const [failedPipeline, setFailedPipeline] = useState<boolean>(false);
+  const [reportOpen, setReportOpen] = useState<boolean>(false);
   const [errorAndWarningCount, setErrorAndWarningCount] =
     useState<IErrorWarningCount>({ errors: 0, warnings: 0 });
   const [uploadStatus, setUploadStatus] = useState<IUploadStatus>({
@@ -181,6 +183,11 @@ export function ValidationResultsViewer() {
                 <p>Number of Errors: {errorAndWarningCount.errors}</p>
                 <span className="tol-file-validation-results-page-error-count-button">
                   <Button
+                    icon="clipboard"
+                    tooltip="Show Report"
+                    onClick={() => setReportOpen((prev: boolean) => !prev)}
+                  />
+                  <Button
                     icon="rotate"
                     tooltip="Refresh"
                     disabled={latestPipelineResults?.completed}
@@ -238,6 +245,13 @@ export function ValidationResultsViewer() {
     <LoadingContent text="Loading Results" />
   ) : (
     <>
+      <ValidationReport
+        data={latestPipelineResults}
+        open={reportOpen}
+        setOpen={setReportOpen}
+        uploadStatus={uploadStatus.text}
+        loading={isLoading}
+      />
       <PreviousUploadsModal
         openModal={openModal}
         setOpenModal={(open) => setOpenModal(Boolean(open))}
