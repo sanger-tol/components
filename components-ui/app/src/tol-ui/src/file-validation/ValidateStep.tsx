@@ -22,6 +22,7 @@ export interface PValidateStep {
   expanded?: boolean;
   onSeeAllErrors?: () => void;
   completed?: boolean;
+  failureMessage?: string | null;
 }
 
 export function ValidateStep(props: PValidateStep) {
@@ -32,6 +33,7 @@ export function ValidateStep(props: PValidateStep) {
     results = [],
     expanded = false,
     completed = false,
+    failureMessage = null,
   } = props;
 
   const issueCount = getErrorWarningCounts(results);
@@ -39,6 +41,7 @@ export function ValidateStep(props: PValidateStep) {
   const stepStatus = determineStepStatus(issueCount);
 
   const iconType =
+    failureMessage ? "question" :
     issueCount.errors > 0
       ? "xmark"
       : issueCount.warnings > 0
@@ -65,6 +68,7 @@ export function ValidateStep(props: PValidateStep) {
             }`}
             completed={completed}
             completedCheck={true}
+            failed={!!failureMessage}
           />
         </div>
         {hasErrors ? (
@@ -122,11 +126,19 @@ export function ValidateStep(props: PValidateStep) {
             </div>
           </div>
         ) : !completed ? (
-          <div
-            className="tol-file-uploader-validate-step-passed-container"
-          >
-            <h6>Waiting for some Results...</h6>
-          </div>
+          failureMessage ? (
+            <div className="tol-file-uploader-validate-step-failed-container">
+              <h6>Pipeline Failed</h6>
+              <p>
+                Could not validate before the overall pipeline failed. Please
+                re-upload and try again.
+              </p>
+            </div>
+          ) : (
+            <div className="tol-file-uploader-validate-step-passed-container">
+              <h6>Waiting for some Results...</h6>
+            </div>
+          )
         ) : (
           <div className="tol-file-uploader-validate-step-passed-container">
             <h6>Validation Passed 🎉</h6>
