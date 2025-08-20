@@ -250,7 +250,6 @@ export function ValidationResultsViewer() {
         open={reportOpen}
         setOpen={setReportOpen}
         uploadStatus={uploadStatus.text}
-        loading={isLoading}
       />
       <PreviousUploadsModal
         openModal={openModal}

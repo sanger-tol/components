@@ -338,7 +338,7 @@ export async function uploadPipelineConfig(
   dry_run: boolean = true,
   uploadId?: string,
   spreadsheetConfig?: string
-): Promise<IPipelineUpload | null | undefined> {
+): Promise<string | null | undefined> {
   const body = {
     data: {
       s3_url: config.s3_url,
