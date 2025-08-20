@@ -165,9 +165,10 @@ export function FormAllInOne(props: PFormAllInOne) {
         if (field.datasource) {
           return (
             <RemoteAutoComplete
-              datasource={field.datasource}
+              dataSource={field.datasource}
               objectType={field.objectType}
               displayFields={field.displayFields}
+              displayFieldsTitle={field.displayFieldsTitle}
               searchBy={field.searchBy}
               label={field.label}
               data={field.data}

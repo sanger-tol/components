@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { AutoComplete as RSAutoComplete } from "rsuite";
-import { RSForm } from "..";
+import { RSForm, normaliseCaps } from "..";
 
 export interface PAutoComplete {
   label?: string;
@@ -13,10 +13,11 @@ export interface PAutoComplete {
   value: string;
   onChange?: any;
   displayFields?: object;
+  displayFieldsTitle?: boolean;
 }
 
 export function AutoComplete(props: PAutoComplete) {
-  const { label, data, value, onChange, displayFields } = props;
+  const { label, data, value, onChange, displayFields, displayFieldsTitle } = props;
 
 
   return (
@@ -30,9 +31,13 @@ export function AutoComplete(props: PAutoComplete) {
           return (
             <>
               {item}
-              {displayFields && displayFields[item.props.children].map((field: string, index: number) => (
-                <div key={index}>{field}</div>
-              ))}
+              {displayFields && displayFields[item.props.children].map((fieldObj: object, index: number) => {
+                const [key, value] = Object.entries(fieldObj)[0];
+                if (displayFieldsTitle) {
+                  return <div key={index}>{normaliseCaps(key)}: {value}</div>;
+                }
+                return <div key={index}>{value}</div>;
+              })}
             </>
           )
         }}
