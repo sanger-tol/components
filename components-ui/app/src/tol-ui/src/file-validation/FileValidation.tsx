@@ -54,7 +54,7 @@ export function FileValidation(props: PFileValidation) {
   } = props;
 
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
-  const [currentUploadId, setCurrentUploadId] = useState<string | null>(null);
+  const [currentUploadId, setCurrentUploadId] = useState<string | null | undefined>(null);
   const [fileDropped, setFileDropped] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<string | boolean>(false);
