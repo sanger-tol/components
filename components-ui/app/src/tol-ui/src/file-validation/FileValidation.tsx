@@ -141,11 +141,6 @@ export function FileValidation(props: PFileValidation) {
     setCurrentUploadId(pipeline_id);
   };
 
-  useEffect(() => {
-    console.log(validating);
-    console.log(currentUploadId);
-  }, [validating, currentUploadId]);
-
   const handleReset = () => {
     setResetting(true);
     setTimeout(() => {
