@@ -20,10 +20,11 @@ export interface PValidateSteps {
   stepName?: string;
   targetRef?: React.RefObject<HTMLDivElement>;
   completed?: boolean;
+  failureMessage?: string | null;
 }
 
 export function ValidateSteps(props: PValidateSteps) {
-  const { data, steps, completed } = props;
+  const { data, steps, completed, failureMessage } = props;
 
   const [isOverflowing, setIsOverflowing] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
@@ -72,6 +73,7 @@ export function ValidateSteps(props: PValidateSteps) {
                   expanded={expandedIndex === stepName}
                   onSeeAllErrors={() => handleToggleExpanded(stepName)}
                   completed={completed}
+                  failureMessage={failureMessage}
                 />
               </div>
             );

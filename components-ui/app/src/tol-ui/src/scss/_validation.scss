@@ -329,6 +329,18 @@
     min-height: 100px;
     margin: 10px;
   }
+
+  .tol-file-uploader-validate-step-failed-container {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 10px;
+
+    h6 {
+      color: var(--tol-danger);
+    }
+  }
 }
 
 .tol-file-validation-previous-uploads-modal-container {

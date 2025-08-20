@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import {
   getErrorWarningCounts,
-  downloadFile,
+  downloadFileFromS3,
   determineUploadStatus,
   IUploadStatus,
   IErrorWarningCount,
@@ -42,6 +42,7 @@ export function ValidationResultsViewer() {
   const [validating, setValidating] = useState<boolean>(false);
   const [validated, setValidated] = useState<boolean>(false);
   const [hasErrors, setHasErrors] = useState<boolean>(false);
+  const [failedPipeline, setFailedPipeline] = useState<boolean>(false);
   const [errorAndWarningCount, setErrorAndWarningCount] =
     useState<IErrorWarningCount>({ errors: 0, warnings: 0 });
   const [uploadStatus, setUploadStatus] = useState<IUploadStatus>({
@@ -62,6 +63,10 @@ export function ValidationResultsViewer() {
       uploadId
     );
 
+    if (result?.failureMessage) {
+      setFailedPipeline(true);
+    }
+
     if (!result) {
       setHasErrors(true);
       return null;
@@ -77,7 +82,7 @@ export function ValidationResultsViewer() {
   } = useQuery({
     queryKey: ["latestPipelineResults", uploadId],
     queryFn: fetchLatestPipelineResults,
-    enabled: !hasErrors && uploadId !== null && !validated,
+    enabled: !hasErrors && uploadId !== null && !validated && !failedPipeline,
     refetchInterval: (data: any) => {
       return data && !data.completed ? REFRESH_INTERVAL : false;
     },
@@ -156,7 +161,11 @@ export function ValidationResultsViewer() {
                   <a
                     href="#"
                     onClick={() =>
-                      downloadFile(latestPipelineResults.s3Filename)
+                      downloadFileFromS3(
+                        PIPELINE_DS,
+                        latestPipelineResults.s3Url,
+                        latestPipelineResults.s3Filename
+                      )
                     }
                   >
                     {latestPipelineResults.s3Filename}
@@ -192,6 +201,7 @@ export function ValidationResultsViewer() {
           stepName={stepName}
           targetRef={targetRef}
           completed={latestPipelineResults.completed}
+          failureMessage={latestPipelineResults.failureMessage}
         />
       )}
     </div>
