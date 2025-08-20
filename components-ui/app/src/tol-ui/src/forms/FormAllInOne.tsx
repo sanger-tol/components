@@ -15,6 +15,7 @@ import {
   SingleSelect,
   MultipleSelect,
   AutoComplete,
+  RemoteAutoComplete,
   Dropzone,
   FormCheckboxes,
   Button,
@@ -161,7 +162,21 @@ export function FormAllInOne(props: PFormAllInOne) {
           />
         );
       case "autocomplete":
-        return (
+        if (field.datasource) {
+          return (
+            <RemoteAutoComplete
+              datasource={field.datasource}
+              objectType={field.objectType}
+              displayFields={field.displayFields}
+              searchBy={field.searchBy}
+              label={field.label}
+              data={field.data}
+              value={formData[field.name] ?? ""}
+              onChange={(value: any) => handleInputChange(field.name, value)}
+            />
+          )
+        } else {
+          return (
           <AutoComplete
             label={field.label}
             data={field.data}
@@ -169,6 +184,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             onChange={(value: any) => handleInputChange(field.name, value)}
           />
         );
+        }
       case "multipleselect":
         return (
           <MultipleSelect
