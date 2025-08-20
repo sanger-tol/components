@@ -6,29 +6,28 @@ SPDX-License-Identifier: MIT
 
 import { useState, useRef } from "react";
 import {
-  TsDataSource,
   AutoComplete,
   PAutoComplete,
+  IRemoteTarget,
 } from "..";
 
-export interface PRemoteAutoComplete extends PAutoComplete {
-  datasource: TsDataSource;
-  objectType: string;
+export interface PRemoteAutoComplete extends PAutoComplete, IRemoteTarget {
   label?: string;
   data: string[];
   value: string;
   onChange?: any;
-  displayFields: string[];
+  displayFields?: string[];
   searchBy: string;
 }
 
 export function RemoteAutoComplete(props: PRemoteAutoComplete) {
-  const { onChange, datasource, objectType, displayFields, searchBy } = props;
-  const [filteredData, setFilteredData] = useState<string[]>([]);
+  const { onChange, datasource, objectType, displayFields = [], searchBy } = props;
+  const [filteredData, setFilteredData] = useState<object>({});
+
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleChange = async(value: string) => {
+  const handleChange = async (value: string) => {
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -36,6 +35,7 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
     if (onChange) {
       onChange(value);
     }
+    // Stops API getting everything when value is empty
     if (value !== "") {
       timeoutRef.current = setTimeout(async () => {
         const data = await datasource.getList({
@@ -50,13 +50,14 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
             },
           },
         });
-
-        setFilteredData(
-          data!.map((item: any) => item[displayFields[0]])
-        );
+        const newData = {}
+        data!.map((item: any) => {
+          newData[item[searchBy]] = [...displayFields.map((field: string) => item[field])]
+        })
+        setFilteredData(newData);
       }, 300);
     } else {
-      setFilteredData([]);
+      setFilteredData({});
     }
   }
 
@@ -65,8 +66,9 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
       <AutoComplete
         onChange={handleChange}
         label={props.label}
-        data={filteredData}
+        data={Object.keys(filteredData)}
         value={props.value}
+        displayFields={filteredData}
       />
     </div>
   );
