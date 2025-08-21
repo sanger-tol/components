@@ -52,3 +52,7 @@ export interface IFormButtons {
   buttons: PButton[];
   buttonStyle?: React.CSSProperties;
 }
+
+export interface IRemoteAutoCompleteData {
+  [key: string]: object[];
+}
