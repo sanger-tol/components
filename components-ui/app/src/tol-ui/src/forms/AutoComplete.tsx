@@ -33,7 +33,7 @@ export function AutoComplete(props: PAutoComplete) {
         value={value}
         onChange={onChange}
         loading={loading}
-        renderMenu={(menu) =>{
+        renderMenu={(menu: any) =>{
           if (loading === true) {
             return (
               <div style={{ textAlign: 'center' }}>
@@ -43,7 +43,7 @@ export function AutoComplete(props: PAutoComplete) {
           }
           return menu;
         }}
-        renderMenuItem={(item) => {
+        renderMenuItem={(item: any) => {
           return (
             <>
               {item}
