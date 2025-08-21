@@ -32,7 +32,6 @@ export function AutoComplete(props: PAutoComplete) {
         data={data}
         value={value}
         onChange={onChange}
-        loading={loading}
         renderMenu={(menu: any) =>{
           if (loading === true) {
             return (
