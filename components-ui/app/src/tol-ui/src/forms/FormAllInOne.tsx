@@ -25,7 +25,8 @@ import {
   validateForm,
   UNSUPPORTED_FIELD_TYPE,
   FormMarkdown,
-  FormDatetime
+  FormDatetime,
+  MultipleFormInput
 } from "..";
 
 export interface PFormAllInOne {
@@ -45,6 +46,7 @@ export function FormAllInOne(props: PFormAllInOne) {
   const [modifiedFields, setModifiedFields] = useState<object>({});
   const [formId, _] = useState<any>(() => crypto.randomUUID());
   const hasUnsavedChanges = useRef(false);
+  console.log(formData)
 
   const formRef = useRef<any>(null);
   const toaster = Toaster();
@@ -178,13 +180,13 @@ export function FormAllInOne(props: PFormAllInOne) {
           )
         } else {
           return (
-          <AutoComplete
-            label={field.label}
-            data={field.data}
-            value={formData[field.name] ?? ""}
-            onChange={(value: any) => handleInputChange(field.name, value)}
-          />
-        );
+            <AutoComplete
+              label={field.label}
+              data={field.data}
+              value={formData[field.name] ?? ""}
+              onChange={(value: any) => handleInputChange(field.name, value)}
+            />
+          );
         }
       case "multipleselect":
         return (
@@ -255,7 +257,18 @@ export function FormAllInOne(props: PFormAllInOne) {
         formValue={formData}
       >
         {formConfig.fields.map((field: any) => (
-          <div key={`${formId}-${field.name}`}>{renderField(field)}</div>
+          <div key={`${formId}-${field.name}`}>
+            {field.multiple ? (
+              <MultipleFormInput
+                renderField={renderField}
+                field={field}
+                formData={formData}
+                setFormData={setFormData}
+              />
+            ) : (
+              renderField(field)
+            )}
+          </div>
         ))}
         {formConfig.buttonConfig && (
           <div style={formConfig.buttonConfig.buttonStyle}>
