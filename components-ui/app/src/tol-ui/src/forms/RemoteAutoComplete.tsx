@@ -9,6 +9,7 @@ import {
   AutoComplete,
   PAutoComplete,
   IRemoteTarget,
+  IRemoteAutoCompleteData,
 } from "..";
 
 export interface PRemoteAutoComplete extends PAutoComplete, IRemoteTarget {
@@ -23,7 +24,8 @@ export interface PRemoteAutoComplete extends PAutoComplete, IRemoteTarget {
 
 export function RemoteAutoComplete(props: PRemoteAutoComplete) {
   const { onChange, dataSource, objectType, displayFields = [], displayFieldsTitle, searchBy } = props;
-  const [filteredData, setFilteredData] = useState<object>({});
+  const [filteredData, setFilteredData] = useState<IRemoteAutoCompleteData>({});
+  const [loading, setLoading] = useState<boolean>(false);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -38,6 +40,7 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
     // Stops API getting everything when value is empty
     if (value !== "") {
       timeoutRef.current = setTimeout(async () => {
+        setLoading(true);
         const data = await dataSource.getList({
           objectType,
           filter: {
@@ -55,7 +58,8 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
           newData[item[searchBy]] = displayFields.map((field: string) => ({ [field]: item[field] }));
         })
         setFilteredData(newData);
-      }, 300);
+        setLoading(false);
+      }, 400);
     } else {
       setFilteredData({});
     }
@@ -70,6 +74,7 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
         value={props.value}
         displayFields={filteredData}
         displayFieldsTitle={displayFieldsTitle}
+        loading={loading}
       />
     </div>
   );

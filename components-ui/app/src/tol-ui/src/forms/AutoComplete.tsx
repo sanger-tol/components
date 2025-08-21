@@ -5,7 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { AutoComplete as RSAutoComplete } from "rsuite";
-import { RSForm, normaliseCaps } from "..";
+import {
+  RSForm,
+  normaliseCaps,
+  Loader
+} from "..";
 
 export interface PAutoComplete {
   label?: string;
@@ -14,10 +18,11 @@ export interface PAutoComplete {
   onChange?: any;
   displayFields?: object;
   displayFieldsTitle?: boolean;
+  loading?: boolean;
 }
 
 export function AutoComplete(props: PAutoComplete) {
-  const { label, data, value, onChange, displayFields, displayFieldsTitle } = props;
+  const { label, data, value, onChange, displayFields, displayFieldsTitle, loading } = props;
 
 
   return (
@@ -27,6 +32,17 @@ export function AutoComplete(props: PAutoComplete) {
         data={data}
         value={value}
         onChange={onChange}
+        loading={loading}
+        renderMenu={(menu) =>{
+          if (loading === true) {
+            return (
+              <div style={{ textAlign: 'center' }}>
+                <Loader />
+              </div>
+            )
+          }
+          return menu;
+        }}
         renderMenuItem={(item) => {
           return (
             <>
