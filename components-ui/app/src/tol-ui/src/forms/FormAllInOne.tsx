@@ -4,6 +4,12 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+/* 
+To use a FormAllInOne, you must define a form config object to pass in as a prop:
+<FormAllInOne formConfig={FORM_CONFIG} />
+You can find the interface for this object in tol-ui/interfaces/Forms.ts (IFormConifg)
+*/
+
 import { useState, useEffect, useRef } from "react";
 import { Schema } from "rsuite";
 import {
