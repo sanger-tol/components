@@ -24,7 +24,8 @@ import {
   Messages,
   Factories,
   Plates,
-  FileValidation
+  FileValidation,
+  Session
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown, TOL_DS } from "./tol-ui/src";
@@ -126,9 +127,14 @@ const fileValidation: Page = {
   element: <FileValidation /> 
 }
 
+const session: Page = {
+  name: "Session",
+  element: <Session />
+}
+
 const otherDropdown: Dropdown = {
   name: "Other",
-  pages: [colours, detail, factories, forms, messages, miscellaneous, tsds, widgets, plates, fileValidation, portal],
+  pages: [colours, detail, factories, forms, messages, miscellaneous, tsds, widgets, plates, fileValidation, session, portal],
 };
 
 // dev sandbox - change element if needed
