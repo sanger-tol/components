@@ -12,7 +12,7 @@ const SESSION_FORM_CONFIG: IFormConfig = {
       name: "event",
       type: "singleselect",
       label: "Event:",
-      placeholder: "Event",
+      placeholder: "Choose an event",
       data: [
         "Event One",
         "Event Two"
@@ -34,7 +34,7 @@ const SESSION_FORM_CONFIG: IFormConfig = {
     {
       name: "startDatetime",
       type: "datetime",
-      label: "Start Date and Time"
+      label: "Start Date and Time:"
     },
     {
       name: "duration",
