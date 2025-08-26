@@ -64,7 +64,7 @@ const SESSION_FORM_CONFIG: IFormConfig = {
     buttons: [
       {
         text: "Save Session",
-        type: "submit",
+        type: "primary",
       }
     ],
     buttonStyle: {
