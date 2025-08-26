@@ -26,7 +26,9 @@ Every form component has the `name` property. This is the name by which you'll r
 
 ### `buttonConfig`
 
-PLACEHOLDER
+The button configuration describes the buttons at the bottom of your form (such as a submit or cancel button).
+
+TODO
 
 ## Defining a form model
 
@@ -54,7 +56,11 @@ See the Example section for examples.
 
 ## Extracting data from a submitted form
 
-PLACEHOLDER
+To access the data object returned when the form is submitted, you must assign a function to the `onSubmit` prop of `FormAllInOne`.
+
+This function will be called with two arguments: an `object` containing the form data (where the name of each property is the name assigned to each field in your form config), and a `boolean` indicating whether the form is in a valid state. This is because `onSubmit` is called whenever the user attempts to submit the form, even if in an invalid state. Thus, check whether the form is valid before you use the data in the object.
+
+**NOTE:** Make sure that you have assigned a function to the `onValidate` prop of `FormAllInOne`, even if you don't need it. This is because `onSubmit` is not called if `onValidate` is not set. If you do not need to handle this event (which is called after the form has been validated), simply pass it a function that does nothing (`() => null`).
 
 ## Example
 
@@ -110,6 +116,15 @@ const FORM_MODEL = Schema.Model({
     .isRequired("This field is required"),
 });
 
+// OPTIONAL: Define interface for object returned from form submit
+// The types here match the types in the form model
+// Types that are not required are marked optional
+interface IFormData {
+  eventName: string;
+  eventLocation: string;
+  eventDatetime: Date;
+}
+
 // React component to house our form
 export function ExampleForm() {
   // Title component (separate to form body)
@@ -120,8 +135,20 @@ export function ExampleForm() {
     <FormAllInOne
       formConfig={FORM_CONFIG}
       model={FORM_MODEL}
+      onValidate={() => null}
+      onSubmit={(formData, isValid) => handleSubmit(formData as IFormData, isValid)}
     />
   );
+
+  // Submit event handler
+  function handleSubmit(formData: IFormData, isValid: boolean) {
+    if (!isValid) {
+      // We do not need to report this to the user, as FormAllInOne handles this for us
+      return;
+    }
+
+    // You can now extract data from `formData` and do what you want with it
+  }
 
   // Define components of page
   // See `docs/general/Widgets.md` for documentation for this
