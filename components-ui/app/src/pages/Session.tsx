@@ -28,6 +28,7 @@ const SESSION_FORM_CONFIG: IFormConfig = {
       placeholder: "Session Name"
     },
     // TODO: Change the leaders field to a multiselect once that component is ready
+    // (it wasn't when this code was written)
     {
       name: "leaders",
       type: "text",
