@@ -4,6 +4,8 @@ The `FormAllInOne` component is the main component to use when you want a form.
 
 In `src/forms`, you'll find this component alongside all form components/form fields that you can use in a form.
 
+A form requires a **config**, used to define its layout, and a **model**, used for its validation.
+
 ## Defining a form config
 
 When using a `FormAllInOne`, you do not need to work with the individual form components. Instead, these are made for you according to your form config.
@@ -26,6 +28,30 @@ Every form component has the `name` property. This is the name by which you'll r
 
 PLACEHOLDER
 
+## Defining a form model
+
+The form model is what the `rsuite` library uses to validate the form. Similarly to the form config, it is reccommended to define it outside of any React components, as it only needs to be defined once.
+
+To define the model, call the constructor for `Model` on the `Schema` object from the `rsuite` library, passing in an object. This object will have a property for each of the fields in your form.
+
+Each field is assigned a type. This is done through constructing a type class. To access these type classes, you will need to extract them from the `Schema.Types` object:
+```ts
+const { DateType, StringType } = Schema.Types;
+```
+
+To then add requirements for validation, call methods on this newly instantiated class, providing an error message for if this validation requirement fails. The `rsuite` documentation does not list all of them, so you can go to [this folder](https://github.com/rsuite/schema-typed/tree/master/src) in their github page to view the methods for each type class.
+
+This results in a structure like this:
+```ts
+  field: TypeClass()
+    .validationRequirementOne()
+    .validationRequirementTwo(),
+```
+
+See the Example section for examples.
+
+**NOTE:** These type classes are different to the `type` property used in the form config. These are the types that you would expect from the data returned from the submitted form. For example, a `singleselect` would be a string type.
+
 ## Extracting data from a submitted form
 
 PLACEHOLDER
@@ -35,11 +61,13 @@ PLACEHOLDER
 This example shows a form where users can create an event, by inputting the event's name, location, time and date.
 
 ```tsx
+import { Schema } from "rsuite";
+
 import {
   FormAllInOne, IFormConfig, Widgets
 } from "../tol-ui/src";
 
-// Define form config
+// Define form config for layout
 const FORM_CONFIG: IFormConfig = {
   fields: [
     {
@@ -70,16 +98,33 @@ const FORM_CONFIG: IFormConfig = {
   }
 };
 
+// Define form model for validation
+const { DateType, StringType } = Schema.Types;
+const FORM_MODEL = Schema.Model({
+  eventName: StringType()
+    .isRequired("This field is required")
+    .containsLetterOnly("An event name may only contain letters"),
+  eventLocation: StringType()
+    .isRequired("This field is required"),
+  eventDatetime: DateType()
+    .isRequired("This field is required"),
+});
+
 // React component to house our form
 export function ExampleForm() {
   // Title component (separate to form body)
   const title = <h2>Create Event</h2>;
 
   // Form component
-  const formBody = <FormAllInOne formConfig={FORM_CONFIG} />;
+  const formBody = (
+    <FormAllInOne
+      formConfig={FORM_CONFIG}
+      model={FORM_MODEL}
+    />
+  );
 
   // Define components of page
-  // See `docs/general/Widgets.md` for documentation
+  // See `docs/general/Widgets.md` for documentation for this
   const components = [
     {
       component: title,
@@ -94,5 +139,3 @@ export function ExampleForm() {
   return <Widgets components={components} />
 }
 ```
-
-TODO: Add data retrieval to example
