@@ -1,3 +1,7 @@
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+
 # FormAllInOne
 
 The `FormAllInOne` component is the main component to use when you want a form.
