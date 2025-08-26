@@ -32,7 +32,9 @@ Every form component has the `name` property. This is the name by which you'll r
 
 The button configuration describes the buttons at the bottom of your form (such as a submit or cancel button).
 
-TODO
+The `buttons` property is an array of type `PButton`, the props type for the `Button` component. Pass in the same data here as you would pass in as props to that component.
+
+The `buttonStyle` property applies CSS properties to the container for the buttons. This object is the same as the one used for the `style` prop in React.
 
 ## Defining a form model
 
@@ -104,7 +106,18 @@ const FORM_CONFIG: IFormConfig = {
     }
   ],
   buttonConfig: {
-    // TODO
+    buttons: [
+      {
+        text: "Submit",
+        type: "primary"
+      }
+    ],
+    buttonStyle: {
+      // One button on the right
+      display: "flex",
+      justifyContent: "flex-end",
+      marginTop: "10px"
+    }
   }
 };
 
