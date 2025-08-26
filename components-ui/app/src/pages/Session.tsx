@@ -4,8 +4,11 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Schema } from "rsuite";
+
 import { FormAllInOne, IFormConfig, Widgets } from "../tol-ui/src";
 
+// Form layout config
 const SESSION_FORM_CONFIG: IFormConfig = {
   fields: [
     {
@@ -56,7 +59,45 @@ const SESSION_FORM_CONFIG: IFormConfig = {
       type: "markdown",
       label: "Additional Information:"
     }
-  ]
+  ],
+  buttonConfig: {
+    buttons: [
+      {
+        text: "Save Session",
+        type: "submit",
+      }
+    ],
+    buttonStyle: {
+      display: "flex",
+      justifyContent: "flex-end",
+      marginTop: "10px"
+    }
+  }
+};
+
+// Form model config (used for validation)
+const { DateType, StringType } = Schema.Types;
+const FORM_MODEL = Schema.Model({
+  event: StringType().isRequired("This field is required"),
+  sessionName: StringType().isRequired("This field is required"),
+  leaders: StringType().isRequired("This field is required"),
+  startDatetime: DateType().isRequired("This field is required"),
+  duration: StringType().isRequired("This field is required"),
+  description: StringType().isRequired("This field is required"),
+  prerequisites: StringType().isRequired("This field is required"),
+  additionalInformation: StringType()
+});
+
+// Type of object resulted from form submit
+interface IFormData {
+  event: string,
+  sessionName: string,
+  leaders: string,
+  startDatetime: Date,
+  duration: string,
+  description: string,
+  prerequisities: string,
+  additionalInformation?: string
 }
 
 export function Session() {
@@ -64,9 +105,25 @@ export function Session() {
 
   const sessionForm = (
     <div className="session-form-container p-4">
-      <FormAllInOne formConfig={SESSION_FORM_CONFIG} />
+      <FormAllInOne
+        model={FORM_MODEL}
+        formConfig={SESSION_FORM_CONFIG}
+        onValidate={() => null}  // We don't need to do anything on validate, but it's required for onSubmit to be called
+        onSubmit={(formData, isValid) => handleSubmit(formData as IFormData, isValid)}
+      />
     </div>
   );
+
+  function handleSubmit(formData: IFormData, isValid: boolean) {
+    if (!isValid) {
+      // We do not need to report this to the user, as FormAllInOne handles this for us
+      return;
+    }
+    
+    // TODO: Use submitted data
+    console.log(formData);
+    alert("Success!\n\nSee console log for submitted data");
+  }
 
   const components = [
     {
