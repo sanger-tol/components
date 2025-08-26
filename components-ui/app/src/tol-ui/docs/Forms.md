@@ -2,7 +2,9 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 
-# FormAllInOne
+# Forms
+
+This is the documentation for the `FormAllInOne` component. If you are looking for individual form components (to be used outside of a form), check the props, as well as any JSDoc comments in their individual component files.
 
 The `FormAllInOne` component is the main component to use when you want a form.
 
