@@ -78,26 +78,33 @@ const SESSION_FORM_CONFIG: IFormConfig = {
 // Form model config (used for validation)
 const { DateType, StringType } = Schema.Types;
 const FORM_MODEL = Schema.Model({
-  event: StringType().isRequired("This field is required"),
-  sessionName: StringType().isRequired("This field is required"),
-  leaders: StringType().isRequired("This field is required"),
-  startDatetime: DateType().isRequired("This field is required"),
-  duration: StringType().isRequired("This field is required"),
-  description: StringType().isRequired("This field is required"),
-  prerequisites: StringType().isRequired("This field is required"),
+  event: StringType()
+    .isRequired("This field is required"),
+  sessionName: StringType()
+    .isRequired("This field is required"),
+  leaders: StringType()
+    .isRequired("This field is required"),
+  startDatetime: DateType()
+    .isRequired("This field is required"),
+  duration: StringType()
+    .isRequired("This field is required"),
+  description: StringType()
+    .isRequired("This field is required"),
+  prerequisites: StringType()
+    .isRequired("This field is required"),
   additionalInformation: StringType()
 });
 
 // Type of object resulted from form submit
 interface IFormData {
-  event: string,
-  sessionName: string,
-  leaders: string,
-  startDatetime: Date,
-  duration: string,
-  description: string,
-  prerequisities: string,
-  additionalInformation?: string
+  event: string;
+  sessionName: string;
+  leaders: string;
+  startDatetime: Date;
+  duration: string;
+  description: string;
+  prerequisities: string;
+  additionalInformation?: string;
 }
 
 export function Session() {
