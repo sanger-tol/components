@@ -89,7 +89,7 @@ export interface ISingleselectField {
   name: string;
   type: "singleselect";
   label: string;
-  data: string[];
+  data: string[]; // Array of selectable options
   placeholder?: string;
   block?: boolean;
 }
