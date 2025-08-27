@@ -27,6 +27,8 @@ export function setInitialData (
     formConfig.fields.forEach((field: any) => {
       if (field.type === "checkbox" && field.defaultChecked) {
         initialData[field.name] = field.defaultChecked;
+      } else if (field.multiple){
+        initialData[field.name] = data[field.name] || {};
       } else {
         initialData[field.name] = data[field.name] || "";
       }
