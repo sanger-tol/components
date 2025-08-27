@@ -3,6 +3,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
+
 import { History } from "history";
 import {
   API_METHODS,
@@ -17,6 +18,7 @@ import {
   IValidationConfig,
   FILE_VALIDATION_PATH,
   S3_ENDPOINTS,
+  IFileData,
 } from "..";
 
 const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
@@ -332,36 +334,44 @@ export async function fetchAndNormaliseAllUploadResults(
 export async function uploadPipelineConfig(
   ds: TsDataSource,
   config: IValidationConfig,
-  fileName: string,
-  file: File,
+  file: IFileData,
+  dry_run: boolean = true,
+  uploadId?: string,
   spreadsheetConfig?: string
-): Promise<IPipelineUpload | null | undefined> {
+): Promise<string | null | undefined> {
   const body = {
     data: {
       s3_url: config.s3_url,
-      s3_filename: fileName,
+      s3_filename: file.name,
       spreadsheet_config: spreadsheetConfig || null,
       pipeline_id: config.pipeline_id,
+      dry_run: dry_run,
       destination: config.destination,
-      dry_run: true,
+      upload_id: uploadId || null,
     },
   };
 
   try {
-    const uploadResponse = await uploadFileToS3(ds, file, config.s3_url);
-    
-    if (uploadResponse.status !== 200) {
-      PopUpMessage({
-        type: "error",
-        message: "Failed to upload file. Please try again.",
-      });
-      return null;
-    }
+    if (!uploadId) {
+      const uploadResponse = await uploadFileToS3(
+        ds,
+        file.blobFile,
+        config.s3_url
+      );
 
-    PopUpMessage({
-      type: "success",
-      message: "File uploaded successfully.",
-    });
+      if (uploadResponse.status !== 200) {
+        PopUpMessage({
+          type: "error",
+          message: "Failed to upload file. Please try again.",
+        });
+        return null;
+      }
+
+      PopUpMessage({
+        type: "success",
+        message: "File uploaded for validation successfully.",
+      });
+    }
 
     try {
       const response = await ds.custom({
@@ -370,18 +380,27 @@ export async function uploadPipelineConfig(
         body: body,
       });
 
-      if (response) {
-        PopUpMessage({
-          type: "success",
-          message: "Validation started successfully.",
-        });
-        return response.data["upload_id"];
+      if (response && !uploadId) {
+        if (response.status === 200) {
+          PopUpMessage({
+            type: "success",
+            message: "Validation started successfully.",
+          });
+          return response.data["upload_id"];
+        } else {
+          PopUpMessage({
+            type: "error",
+            message: "Failed to start validation. Please try again.",
+          });
+          return null;
+        }
       } else {
-        PopUpMessage({
-          type: "error",
-          message: "Failed to start validation. Please try again.",
-        });
-        return null;
+        if (response && uploadId) {
+          PopUpMessage({
+            type: "success",
+            message: "File submitted successfully.",
+          });
+        }
       }
     } catch (pipelineError) {
       console.error("Error running pipeline:", pipelineError);
@@ -391,7 +410,6 @@ export async function uploadPipelineConfig(
       });
       return null;
     }
-
   } catch (uploadError) {
     console.error("Error uploading file:", uploadError);
     PopUpMessage({

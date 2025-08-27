@@ -31,6 +31,7 @@ import {
   IFileData,
   TsDataSource,
   DEFAULT_FILE_TYPE,
+  downloadFileFromS3,
 } from "..";
 
 export interface PFileValidation {
@@ -38,7 +39,7 @@ export interface PFileValidation {
   validationConfig: IValidationConfig;
   fileType?: string;
   pageTitle?: string;
-  defaultFileTemplateLink?: string;
+  defaultFileTemplateName?: string;
 }
 
 export const PIPELINE_DS = new TsDataSource();
@@ -49,11 +50,11 @@ export function FileValidation(props: PFileValidation) {
     validationConfig,
     pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
-    defaultFileTemplateLink = "",
+    defaultFileTemplateName = "",
   } = props;
 
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
-  const [currentUploadId, setCurrentUploadId] = useState<string | null>(null);
+  const [currentUploadId, setCurrentUploadId] = useState<string | null | undefined>(null);
   const [fileDropped, setFileDropped] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<string | boolean>(false);
@@ -62,6 +63,7 @@ export function FileValidation(props: PFileValidation) {
   const [fileList, setFileList] = useState<IFileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);
   const [stepsFound, setStepsFound] = useState<boolean>(false);
+  const [fileUploaded, setFileUploaded] = useState<boolean>(false);
   const [validationStatus, setValidationStatus] = useState<{
     className: string;
     text: string;
@@ -133,10 +135,10 @@ export function FileValidation(props: PFileValidation) {
     const pipeline_id = await uploadPipelineConfig(
       PIPELINE_DS,
       validationConfig,
-      file.name,
-      file.blobFile
+      file,
+      !validateAndUpload
     );
-    setCurrentUploadId(pipeline_id?.id ?? null);
+    setCurrentUploadId(pipeline_id);
   };
 
   const handleReset = () => {
@@ -174,14 +176,23 @@ export function FileValidation(props: PFileValidation) {
             {!validateAndUpload && validating && (
               <Button
                 type="success"
-                text={"Upload File"}
+                text={"Submit File"}
                 disabled={
                   !validated ||
                   (validationStatus.text !== "Passed" &&
-                  validationStatus.text !== "Passed with Warnings")
+                    validationStatus.text !== "Passed with Warnings") ||
+                  fileUploaded
                 }
-                onClick={() => {
-                  setValidating(true);
+                onClick={async () => {
+                  await uploadPipelineConfig(
+                    PIPELINE_DS,
+                    validationConfig,
+                    fileList[0],
+                    false,
+                    currentUploadId ?? undefined
+                  ).finally(() => {
+                    setFileUploaded(true);
+                  });
                 }}
               />
             )}
@@ -235,12 +246,12 @@ export function FileValidation(props: PFileValidation) {
             PopUpMessage({
               type: "info",
               message: `File validation ${
-                !validateAndUpload ? "and upload enabled" : "only enabled"
+                !validateAndUpload ? "and submission enabled" : "only enabled"
               }.`,
             });
           }}
         />
-        <p>Validate and upload</p>
+        <p>Validate and submit</p>
       </div>
       <Dropzone
         resource={objectType}
@@ -308,10 +319,73 @@ export function FileValidation(props: PFileValidation) {
         open={openModal === "help"}
         header={<h3>File Validation Help</h3>}
         children={
-          <h6>
-            You can download a template file for uploading documents{" "}
-            <a href={defaultFileTemplateLink}>here</a>
-          </h6>
+          <>
+            <h6
+              onClick={() =>
+                downloadFileFromS3(
+                  PIPELINE_DS,
+                  validationConfig.s3_url,
+                  defaultFileTemplateName
+                )
+              }
+            >
+              You can download a template file for uploading spreadsheet files{" "}
+              <a href="#">here</a>.
+            </h6>
+            <h6>Modes:</h6>
+            <ul>
+              <li>
+                <strong>Validate only:</strong> Your file will only be
+                validated, you will receive results as to whether it passes
+                validation. You can choose to submit afterwards, if validation
+                passes successfully.
+              </li>
+              <li>
+                <strong>Validate and submit:</strong> Your file will be
+                validated and submitted automatically if it passes validation.
+              </li>
+            </ul>
+            <h6>Status Messages:</h6>{" "}
+            <ul>
+              <li>
+                <strong>Passed:</strong> The file passed validation. If you
+                haven't chosen to submit automatically, you can submit it now.
+              </li>
+              <li>
+                <strong>Failed:</strong> The entire file validation pipeline has
+                failed. This is usually due to a server error. If the issue
+                persists, please contact an admin. Your file will not be
+                submitted.
+              </li>
+              <li>
+                <strong>Completed with Errors:</strong> The file validation
+                completed, but there were errors. Please review the error
+                messages and fix the errors before trying again.
+              </li>
+              <li>
+                <strong>Passed with warnings:</strong> The file passed
+                validation, but there are warnings. These may be minor issues
+                that do not prevent submission.
+              </li>
+              <li>
+                <strong>In Progress: </strong> The file is currently being
+                validated and results should be coming through in real-time.
+              </li>
+            </ul>
+            <h6>Additional:</h6>
+            <ul>
+              <li>
+                {" "}
+                You can find any of your previous submissions in the "Previous
+                Validations" section.
+              </li>
+              <li>
+                {" "}
+                You can click on "View Report" on any specific submission page
+                to see a breakdown of the validation results.
+              </li>
+            </ul>
+          </>
         }
         onClose={() => setOpenModal(false)}
         setOpen={setOpenModal}

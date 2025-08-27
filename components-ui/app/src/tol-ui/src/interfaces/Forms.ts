@@ -195,3 +195,7 @@ export interface IFormConfig {
   fields: TField[];
   buttonConfig?: IFormButtons;
 }
+
+export interface IRemoteAutoCompleteData {
+  [key: string]: object[];
+}

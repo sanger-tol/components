@@ -379,6 +379,27 @@
   margin: 0;
 }
 
+.tol-file-validation-report-modal-container {
+  max-height: 600px;
+}
+
+.tol-file-validation-report-modal-details {
+  display: flex;
+  gap: 20px;
+}
+
+.tol-file-validation-report-modal-results {
+  margin-bottom: 0;
+}
+
+.tol-file-validation-report-modal-details-para {
+  margin-top: 0;
+}
+
+.tol-file-validation-report-modal-details-detail {
+  margin: 0;
+}
+
 .tol-file-validation-error-info {
   text-align: center;
   padding: 10px;
@@ -555,6 +576,7 @@
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
+  gap: 8px;
 }
 
 .tol-file-validation-previous-results-container {

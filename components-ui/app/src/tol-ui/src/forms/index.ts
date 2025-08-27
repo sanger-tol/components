@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./AutoComplete";
+export * from "./RemoteAutoComplete";
 export * from "./CountrySelect";
 export * from "./Dropzone";
 export * from "./FormAllInOne";
