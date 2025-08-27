@@ -26,4 +26,3 @@ export * from "./Factories";
 export * from "./DataSource";
 export * from "./Plates";
 export * from "./FileValidation";
-export * from "./Session";
