@@ -28,7 +28,7 @@ Here you'll define each field of your form.
 
 Once you have chosen a component `type`, your IDE will be able to show you the possible options for this component type (such as its `name` or `label`). In addition, the interfaces for each component in `src/interfaces/Forms.ts` have comments describing the purpose of some of their properties.
 
-Every form component has the `name` property. This is the name by which you'll refer to the 
+Every form component has the `name` property. This is the name by which you'll refer to this field in the object passed to your `onSubmit` function.
 
 ### `buttonConfig`
 
