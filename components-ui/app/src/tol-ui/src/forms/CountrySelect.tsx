@@ -33,7 +33,6 @@ export function CountrySelect(props: PCountrySelect) {
         setValue={setValue}
         block
       />
-      <RSForm.ErrorMessage show placement="bottomStart">PLACEHOLDER ERROR</RSForm.ErrorMessage>
     </RSForm.Group>
   );
 }
