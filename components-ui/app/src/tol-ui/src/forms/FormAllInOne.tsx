@@ -44,7 +44,7 @@ export interface PFormAllInOne {
   formConfig: IFormConfig;
   initialData?: object;
   fluid?: boolean;
-  model?: any;
+  model?: Schema.Model;
   onUnsavedChanges?: (hasUnsavedChanges: boolean) => void;
   onValidate?: (isValid: boolean) => void;
   onSubmit?: (formData: object, isValid: boolean) => void;
@@ -91,7 +91,7 @@ export function FormAllInOne(props: PFormAllInOne) {
     }
   }, [modifiedFields, props.onUnsavedChanges]);
 
-  const handleInputChange = (name: any, value: any) => {
+  const handleInputChange = (name: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
     setModifiedFields((prev: any) => ({ ...prev, [name]: value }));
   };
