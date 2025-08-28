@@ -123,7 +123,7 @@ export interface IAutocompleteField {
   name: string;
   type: "autocomplete";
   label?: string;
-  data: string;
+  data: string[];
 }
 
 export interface IMultipleselectField {
