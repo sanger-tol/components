@@ -179,7 +179,7 @@ export interface ICheckboxFormField {
   defaultChecked?: string[];
 }
 
-export type TField = 
+export type TFormField = 
   ITextField | IEmailField | IPasswordField |
   ICountryselectField | IDatetimeField |
   ISingleselectField | ISingleselectcustomoptionField |
@@ -192,7 +192,7 @@ export interface IFormButtons {
 }
 
 export interface IFormConfig {
-  fields: TField[];
+  fields: TFormField[];
   buttonConfig?: IFormButtons;
 }
 
