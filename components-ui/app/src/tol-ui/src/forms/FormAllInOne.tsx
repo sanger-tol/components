@@ -46,7 +46,6 @@ export function FormAllInOne(props: PFormAllInOne) {
   const [modifiedFields, setModifiedFields] = useState<object>({});
   const [formId, _] = useState<any>(() => crypto.randomUUID());
   const hasUnsavedChanges = useRef(false);
-  console.log(formData)
 
   const formRef = useRef<any>(null);
   const toaster = Toaster();
@@ -164,10 +163,10 @@ export function FormAllInOne(props: PFormAllInOne) {
           />
         );
       case "autocomplete":
-        if (field.datasource) {
+        if (field.dataSource) {
           return (
             <RemoteAutoComplete
-              dataSource={field.datasource}
+              dataSource={field.dataSource}
               objectType={field.objectType}
               displayFields={field.displayFields}
               displayFieldsTitle={field.displayFieldsTitle}
@@ -264,6 +263,7 @@ export function FormAllInOne(props: PFormAllInOne) {
                 field={field}
                 formData={formData}
                 setFormData={setFormData}
+                minOne={field.minOne}
               />
             ) : (
               renderField(field)

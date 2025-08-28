@@ -53,3 +53,19 @@ export function validateForm (
     return true;
   }
 };
+
+export function createNewInput (
+  fieldName: string,
+  formData: object,
+  setFormData: React.Dispatch<React.SetStateAction<object>>
+) {
+  const newInput = `${fieldName}${Math.floor(Math.random() * 900) + 100}`;
+  const updatedFormData = {
+    ...formData,
+    [fieldName]: {
+      ...formData[fieldName],
+      [newInput]: "",
+    },
+  };
+  setFormData(updatedFormData); 
+}
