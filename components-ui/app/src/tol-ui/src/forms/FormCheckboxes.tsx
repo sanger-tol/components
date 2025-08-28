@@ -78,6 +78,7 @@ export function FormCheckboxes(props: PFormCheckboxes) {
             </div>
           ))}
         </CheckboxGroup>
+        <RSForm.ErrorMessage show placement="bottomStart">PLACEHOLDER ERROR</RSForm.ErrorMessage>
       </RSForm.Group>
     </div>
   );

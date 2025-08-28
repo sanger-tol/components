@@ -12,7 +12,7 @@ import {
 } from "..";
 
 export interface PAutoComplete {
-  label?: string;
+  label: string;
   data: string[];
   value: string;
   onChange?: any;
@@ -26,7 +26,7 @@ export function AutoComplete(props: PAutoComplete) {
 
 
   return (
-    <div>
+    <RSForm.Group controlId={label}>
       {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
       <RSAutoComplete
         data={data}
@@ -57,6 +57,7 @@ export function AutoComplete(props: PAutoComplete) {
           )
         }}
       />
-    </div>
+      <RSForm.ErrorMessage show placement="bottomStart">PLACEHOLDER ERROR</RSForm.ErrorMessage>
+    </RSForm.Group>
   );
 }

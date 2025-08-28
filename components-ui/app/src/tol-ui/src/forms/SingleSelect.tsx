@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { SelectPicker } from "rsuite";
+import { RSForm } from "src";
 
 export interface PSingleSelect {
   data: string[];
@@ -24,13 +25,16 @@ export const SingleSelect = (props: PSingleSelect) => {
   }, [props.data]);
 
   return (
-    <SelectPicker
-      data={data}
-      searchable={false}
-      value={value}
-      onChange={setValue}
-      placeholder={placeholder}
-      block={block}
-    />
+    <RSForm.Group groupId={data}>
+      <SelectPicker
+        data={data}
+        searchable={false}
+        value={value}
+        onChange={setValue}
+        placeholder={placeholder}
+        block={block}
+      />
+      <RSForm.ErrorMessage show placement="bottomStart">PLACEHOLDER ERROR</RSForm.ErrorMessage>
+    </RSForm.Group>
   );
 };

@@ -43,6 +43,7 @@ export function FormDatetime(props: PFormDatetime) {
           block
         />
         {helpText && <RSForm.HelpText>{helpText}</RSForm.HelpText>}
+        <RSForm.ErrorMessage show placement="bottomStart">PLACEHOLDER ERROR</RSForm.ErrorMessage>
       </RSForm.Group>
     </>
   );

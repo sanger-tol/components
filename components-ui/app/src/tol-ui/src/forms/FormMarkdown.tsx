@@ -54,6 +54,7 @@ export function FormMarkdown(props: PFormMarkdown) {
             return !removeCommands?.includes(commands.name) ? commands : [];
           }}
         />
+        <RSForm.ErrorMessage show placement="bottomStart">PLACEHOLDER ERROR</RSForm.ErrorMessage>
       </RSForm.Group>
     </>
   );
