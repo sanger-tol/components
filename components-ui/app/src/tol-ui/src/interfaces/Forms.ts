@@ -122,7 +122,7 @@ export interface IDropzoneField {
 export interface IAutocompleteField {
   name: string;
   type: "autocomplete";
-  label?: string;
+  label: string;
   data: string[];
 }
 
