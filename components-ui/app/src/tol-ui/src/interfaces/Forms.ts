@@ -96,7 +96,7 @@ export interface ISingleselectField {
 
 export interface ISingleselectcustomoptionField {
   name: string;
-  type: "singleselectcustomvalue";
+  type: "singleselectcustomoption";
   data: string[];
   label?: string;
   customOptionPlaceholder?: string;
