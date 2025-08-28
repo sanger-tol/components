@@ -279,7 +279,7 @@
 }
 
 .rs-form-help-text {
-  color: var(--tol-grey-light);
+  color: var(--tol-grey);
 }
 
 .rs-timeline-item-custom-dot .svg-inline--fa {
@@ -362,5 +362,11 @@
 @media (max-width: 700px) {
   .rs-drawer {
     width: 100% !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .rs-form-help-text {
+    color: var(--tol-grey-light);
   }
 }
