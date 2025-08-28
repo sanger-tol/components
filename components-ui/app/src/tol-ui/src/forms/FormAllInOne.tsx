@@ -42,6 +42,7 @@ export function FormAllInOne(props: PFormAllInOne) {
   const { formConfig, initialData, fluid, model, onValidate } = props;
 
   const [formData, setFormData] = useState<object>({});
+  const [formErrors, setFormErrors] = useState<Record<string, any>>({});
   const [modifiedFields, setModifiedFields] = useState<object>({});
   const [formId, _] = useState<any>(() => crypto.randomUUID());
   const hasUnsavedChanges = useRef(false);
@@ -88,6 +89,9 @@ export function FormAllInOne(props: PFormAllInOne) {
       return null;
     }
 
+    // Fetch any errors for this field from the record of all errors
+    const errorText: string | undefined = formErrors[field.name];
+
     switch (field.type.toLowerCase()) {
       case "text":
       case "email":
@@ -113,6 +117,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             label={field.label}
             value={formData[field.name] ?? ""}
             setValue={(value: any) => handleInputChange(field.name, value)}
+            errorText={errorText}
           />
         );
       case "datetime":
@@ -123,6 +128,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             value={formData[field.name] ?? ""}
             onChange={(value: any) => handleInputChange(field.name, value)}
             helpText={field.helpText}
+            errorText={errorText}
             placeholder={field.placeholder}
             hideMinutes={field.hideMinutes}
           />
@@ -138,6 +144,7 @@ export function FormAllInOne(props: PFormAllInOne) {
               setValue={(value: any) => handleInputChange(field.name, value)}
               block={field.block}
             />
+            <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
           </RSForm.Group>
         );
       case "singleselectcustomoption":
@@ -146,6 +153,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             id={formId}
             value={formData[field.name] ?? ""}
             setValue={(value: any) => handleInputChange(field.name, value)}
+            errorText={errorText}
             data={field.data}
             label={field.label}
             customOptionPlaceholder={field.customOptionPlaceholder}
@@ -159,6 +167,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             fileType={field.fileType}
             generateMessages={field.generateMessages}
             setResponse={field.setResponse}
+            errorText={errorText}
           />
         );
       case "autocomplete":
@@ -174,6 +183,7 @@ export function FormAllInOne(props: PFormAllInOne) {
               data={field.data}
               value={formData[field.name] ?? ""}
               onChange={(value: any) => handleInputChange(field.name, value)}
+              errorText={errorText}
             />
           )
         } else {
@@ -183,6 +193,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             data={field.data}
             value={formData[field.name] ?? ""}
             onChange={(value: any) => handleInputChange(field.name, value)}
+            errorText={errorText}
           />
         );
         }
@@ -194,6 +205,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             label={field.label}
             value={formData[field.name] || []}
             setValue={(value: any) => handleInputChange(field.name, value)}
+            errorText={errorText}
             placeholder={field.placeholder}
             disabled={field.disabled}
             loading={field.loading}
@@ -217,6 +229,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             removeCommands={field.removeCommands}
             height={field.height}
             helpText={field.helpText}
+            errorText={errorText}
           />
         );
       case "checkbox":
@@ -229,6 +242,7 @@ export function FormAllInOne(props: PFormAllInOne) {
             setCheckedItems={(value: any) =>
               handleInputChange(field.name, value)
             }
+            errorText={errorText}
             hidden={field.hidden}
             inline={field.inline}
             indeterminate={field.indeterminate}
@@ -247,6 +261,7 @@ export function FormAllInOne(props: PFormAllInOne) {
         fluid={fluid}
         ref={formRef}
         id={`form-${formId}`}
+        onCheck={setFormErrors}
         onSubmit={(e: any) => {
           e.preventDefault();
           validateForm(formRef, toaster, formData, props.onSubmit);
@@ -289,3 +304,4 @@ export function FormAllInOne(props: PFormAllInOne) {
     </div>
   );
 }
+

@@ -13,6 +13,7 @@ export interface PFormDatetime {
   onChange: (value: any) => void;
   label?: string;
   helpText?: string;
+  errorText?: string;
   placeholder?: string;
   hideMinutes?: (minute: number, date: Date) => boolean;
   format?: string;
@@ -25,6 +26,7 @@ export function FormDatetime(props: PFormDatetime) {
     value,
     onChange,
     helpText,
+    errorText,
     placeholder = "Select date/time",
     hideMinutes = () => false,
     format = "dd-MM-yyyy HH:mm",
@@ -43,7 +45,7 @@ export function FormDatetime(props: PFormDatetime) {
           block
         />
         {helpText && <RSForm.HelpText>{helpText}</RSForm.HelpText>}
-        <RSForm.ErrorMessage show placement="bottomStart">PLACEHOLDER ERROR</RSForm.ErrorMessage>
+        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
       </RSForm.Group>
     </>
   );

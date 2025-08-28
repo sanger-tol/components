@@ -25,16 +25,13 @@ export const SingleSelect = (props: PSingleSelect) => {
   }, [props.data]);
 
   return (
-    <RSForm.Group groupId={data}>
-      <SelectPicker
-        data={data}
-        searchable={false}
-        value={value}
-        onChange={setValue}
-        placeholder={placeholder}
-        block={block}
-      />
-      <RSForm.ErrorMessage show placement="bottomStart">PLACEHOLDER ERROR</RSForm.ErrorMessage>
-    </RSForm.Group>
+    <SelectPicker
+      data={data}
+      searchable={false}
+      value={value}
+      onChange={setValue}
+      placeholder={placeholder}
+      block={block}
+    />
   );
 };

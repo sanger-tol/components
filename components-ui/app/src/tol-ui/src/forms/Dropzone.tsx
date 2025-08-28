@@ -28,6 +28,7 @@ export interface PDropzone {
   fileType: string;
   generateMessages?: (apiRes: any) => IMessage[];
   setResponse?: any;
+  errorText?: string;
   onFileDrop?: (length: boolean) => void;
   fileListVisible?: boolean;
   fileList?: IFileData[];
@@ -44,6 +45,7 @@ export function Dropzone(props: PDropzone) {
     fileType,
     generateMessages,
     setResponse,
+    errorText,
     onFileDrop,
     fileListVisible = false,
     parentToSubmit = false,
@@ -190,7 +192,7 @@ export function Dropzone(props: PDropzone) {
           <></>
         )}
       </div>
-      <RSForm.ErrorMessage show placement="bottomStart">PLACEHOLDER ERROR</RSForm.ErrorMessage>
+      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
     </RSForm.Group>
   );
 }

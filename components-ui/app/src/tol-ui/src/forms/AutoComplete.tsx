@@ -19,10 +19,20 @@ export interface PAutoComplete {
   displayFields?: object;
   displayFieldsTitle?: boolean;
   loading?: boolean;
+  errorText?: string;
 }
 
 export function AutoComplete(props: PAutoComplete) {
-  const { label, data, value, onChange, displayFields, displayFieldsTitle, loading } = props;
+  const { 
+    label,
+    data,
+    value,
+    onChange,
+    displayFields,
+    displayFieldsTitle,
+    loading,
+    errorText
+  } = props;
 
 
   return (
@@ -57,7 +67,7 @@ export function AutoComplete(props: PAutoComplete) {
           )
         }}
       />
-      <RSForm.ErrorMessage show placement="bottomStart">PLACEHOLDER ERROR</RSForm.ErrorMessage>
+      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
     </RSForm.Group>
   );
 }

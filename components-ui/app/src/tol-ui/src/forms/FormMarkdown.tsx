@@ -16,6 +16,7 @@ export interface PFormMarkdown {
   removeCommands?: string[];
   height?: string | number;
   helpText?: string;
+  errorText?: string;
 }
 
 export function FormMarkdown(props: PFormMarkdown) {
@@ -27,6 +28,7 @@ export function FormMarkdown(props: PFormMarkdown) {
     removeCommands,
     height,
     helpText,
+    errorText,
   } = props;
 
   return (
@@ -54,7 +56,7 @@ export function FormMarkdown(props: PFormMarkdown) {
             return !removeCommands?.includes(commands.name) ? commands : [];
           }}
         />
-        <RSForm.ErrorMessage show placement="bottomStart">PLACEHOLDER ERROR</RSForm.ErrorMessage>
+        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
       </RSForm.Group>
     </>
   );

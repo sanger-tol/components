@@ -15,10 +15,11 @@ export interface PCountrySelect {
   label?: string;
   value: string;
   setValue: any;
+  errorText?: string;
 }
 
 export function CountrySelect(props: PCountrySelect) {
-  const { label, value, setValue } = props;
+  const { label, value, setValue, errorText } = props;
 
   const countryOptions = useMemo(() => countryList().getData(), []);
   const countryItems = countryOptions.map((item: any) => item.label);
@@ -32,7 +33,9 @@ export function CountrySelect(props: PCountrySelect) {
         value={value}
         setValue={setValue}
         block
+        errorText={errorText}
       />
+      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
     </RSForm.Group>
   );
 }
