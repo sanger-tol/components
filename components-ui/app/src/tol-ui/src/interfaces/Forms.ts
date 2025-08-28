@@ -56,7 +56,7 @@ export interface ITextField {
   placeholder?: string;
   readOnly?: boolean;
   required?: boolean;
-  centred?: boolean;
+  centered?: boolean;
 }
 
 // "email" and "password" are controlled by the same form element in
