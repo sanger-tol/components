@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { SelectPicker } from "rsuite";
-import { RSForm } from "src";
 
 export interface PSingleSelect {
   data: string[];
