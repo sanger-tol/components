@@ -131,7 +131,7 @@ export function Dropzone(props: PDropzone) {
   };
 
   return (
-    <RSForm.Group groupId={resetKey}>
+    <RSForm.Group controlId={resetKey}>
       <div className="tol-dropzone" key={resetKey}>
         <Uploader
           action="temp-error-please-ignore"
