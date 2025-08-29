@@ -44,7 +44,7 @@ export interface PFormAllInOne {
   formConfig: IFormConfig;
   initialData?: object;
   fluid?: boolean;
-  model?: Schema.Model;
+  model?: any;
   onUnsavedChanges?: (hasUnsavedChanges: boolean) => void;
   onValidate?: (isValid: boolean) => void;
   onSubmit?: (formData: object, isValid: boolean) => void;
