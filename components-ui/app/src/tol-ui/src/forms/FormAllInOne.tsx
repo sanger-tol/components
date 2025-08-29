@@ -189,11 +189,12 @@ export function FormAllInOne(props: PFormAllInOne) {
           />
         );
       case "autocomplete":
-        if (field.datasource) {
-          const remoteAutocompleteField = field as IAutocompleteField & PRemoteAutoComplete
+        const autocompleteField = field as IAutocompleteField;
+        if (autocompleteField.dataSource) {
+          const remoteAutocompleteField = field as Omit<IAutocompleteField, "dataSource"> & PRemoteAutoComplete
           return (
             <RemoteAutoComplete
-              dataSource={remoteAutocompleteField.datasource}
+              dataSource={remoteAutocompleteField.dataSource}
               objectType={remoteAutocompleteField.objectType}
               displayFields={remoteAutocompleteField.displayFields}
               displayFieldsTitle={remoteAutocompleteField.displayFieldsTitle}
@@ -206,7 +207,6 @@ export function FormAllInOne(props: PFormAllInOne) {
             />
           )
         } else {
-          const autocompleteField = field as IAutocompleteField;
           return (
           <AutoComplete
             label={autocompleteField.label}

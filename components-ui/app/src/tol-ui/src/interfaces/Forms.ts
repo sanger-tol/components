@@ -124,6 +124,7 @@ export interface IAutocompleteField {
   type: "autocomplete";
   label: string;
   data: string[];
+  dataSource?: TsDataSource;  // Exists if this is a RemoteAutoComplete field
 }
 
 export interface IMultipleselectField {
