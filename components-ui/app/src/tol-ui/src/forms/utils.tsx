@@ -27,6 +27,8 @@ export function setInitialData (
     formConfig.fields.forEach((field: any) => {
       if (field.type === "checkbox" && field.defaultChecked) {
         initialData[field.name] = field.defaultChecked;
+      } else if (field.multiple){
+        initialData[field.name] = data[field.name] || {};
       } else {
         initialData[field.name] = data[field.name] || "";
       }
@@ -51,3 +53,19 @@ export function validateForm (
     return true;
   }
 };
+
+export function createNewInput (
+  fieldName: string,
+  formData: object,
+  setFormData: React.Dispatch<React.SetStateAction<object>>
+) {
+  const newInput = `${fieldName}${Math.floor(Math.random() * 900) + 100}`;
+  const updatedFormData = {
+    ...formData,
+    [fieldName]: {
+      ...formData[fieldName],
+      [newInput]: "",
+    },
+  };
+  setFormData(updatedFormData); 
+}
