@@ -11,23 +11,50 @@ import { faFileArrowUp } from "@fortawesome/free-solid-svg-icons";
 import {
   Loader,
   StatusMessage,
+  useStateFallback,
   TsDataSource,
   TMessageType,
   IMessage,
-  IWaitingUpload
+  IWaitingUpload,
+  IFileData
 } from "..";
+
+
 
 export interface PDropzone {
   resource: string;
   dataSource: TsDataSource;
   fileType: string;
-  generateMessages: (apiRes: any) => IMessage[];
+  generateMessages?: (apiRes: any) => IMessage[];
   setResponse?: any;
+  onFileDrop?: (length: boolean) => void;
+  fileListVisible?: boolean;
+  fileList?: IFileData[];
+  setFileList?: (fileList: IFileData[]) => void;
+  parentToSubmit?: boolean;
+  resetKey?: string | number;
+  validating?: boolean;
 }
 
 export function Dropzone(props: PDropzone) {
-  const { resource, dataSource, fileType, generateMessages, setResponse } = props;
-  const [fileList, setFileList] = useState<any[]>([]);
+  const {
+    resource,
+    dataSource,
+    fileType,
+    generateMessages,
+    setResponse,
+    onFileDrop,
+    fileListVisible = false,
+    parentToSubmit = false,
+    resetKey,
+    validating = false,
+  } = props;
+
+  const [fileList, setFileList] = useStateFallback<IFileData[]>(
+    props.fileList,
+    props.setFileList,
+    []
+  );
   const [validate, setValidate] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
@@ -35,13 +62,14 @@ export function Dropzone(props: PDropzone) {
   const [fail, setFail] = useState(false);
 
   useEffect(() => {
-    if (fileList.length > 0) {
+    if (fileList.length > 0 && !parentToSubmit) {
       setIsLoading(true);
       setHasLoaded(false);
       setMessages([]);
       validateFile();
       setFail(false);
     }
+    onFileDrop?.(fileList.length > 0);
   }, [validate]);
 
   const validateFile = () => {
@@ -49,7 +77,7 @@ export function Dropzone(props: PDropzone) {
     formData.set(
       "file",
       fileList[fileList.length - 1].blobFile,
-      fileList[fileList.length - 1].name,
+      fileList[fileList.length - 1].name
     );
 
     dataSource
@@ -61,7 +89,7 @@ export function Dropzone(props: PDropzone) {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       })
       .then((res: any) => {
         if (setResponse) {
@@ -69,7 +97,7 @@ export function Dropzone(props: PDropzone) {
         }
         setIsLoading(false);
         setHasLoaded(true);
-        setMessages(generateMessages(res));
+        setMessages(generateMessages ? generateMessages(res) : []);
       })
       .catch((error: any) => {
         setIsLoading(false);
@@ -87,7 +115,7 @@ export function Dropzone(props: PDropzone) {
           icon={faFileArrowUp}
           size="8x"
         />
-        <p>{props.message}</p>
+        <h6>{props.message}</h6>
         {fileList.length > 0 ? (
           <p className="file-name">
             {String(fileList[fileList.length - 1].name)}
@@ -100,13 +128,24 @@ export function Dropzone(props: PDropzone) {
   };
 
   return (
-    <div className="tol-dropzone">
+    <div className="tol-dropzone" key={resetKey}>
       <Uploader
         action="temp-error-please-ignore"
         draggable
         accept={fileType}
-        onChange={setFileList}
-        fileListVisible={false}
+        onChange={(fileList: any, _event: any) => {
+          const mapped = fileList
+            .filter((f: any) => f.blobFile)
+            .map((file: any) => ({
+              blobFile: file.blobFile as File,
+              fileKey: file.fileKey,
+              name: file.name,
+              status: file.status,
+            }));
+          setFileList(mapped);
+        }}
+        fileListVisible={fileListVisible}
+        disabled={fileList.length > 0 && validating}
         onUpload={() => {
           setValidate(!validate);
         }}
@@ -118,10 +157,16 @@ export function Dropzone(props: PDropzone) {
             </div>
           ) : (
             <div>
-              {fail ? (
+              {fail && fileList.length > 0 ? (
                 <WaitingUpload message="Unexpected error, please try again" />
               ) : (
-                <WaitingUpload message="Click or drag file to this area to upload" />
+                <WaitingUpload
+                  message={
+                    fileList.length > 0 && validating
+                      ? "Please reset to upload a new file."
+                      : "Click or drag file to this area to upload"
+                  }
+                />
               )}
             </div>
           )}

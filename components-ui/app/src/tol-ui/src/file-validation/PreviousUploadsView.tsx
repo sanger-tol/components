@@ -1,0 +1,247 @@
+/*
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+import { useState } from "react";
+import { useHistory } from "react-router-dom";
+import {
+  IPipelineUpload,
+  IValidationResult,
+  ValidationIcon,
+  getErrorWarningCounts,
+  determineUploadStatus,
+  determineStepStatus,
+  downloadFileFromS3,
+  goToResults,
+  Button,
+  HoverOverlay,
+  InfoTooltip,
+  normaliseCaps,
+  truncateString,
+  PIPELINE_DS,
+} from "..";
+
+export interface PPreviousUploadsView {
+  id: string;
+  data: IPipelineUpload;
+  expanded: boolean;
+  onToggle: (id: string) => void;
+  showPassedSteps?: boolean;
+  completed?: boolean;
+  setOpenModal?: (open: boolean) => void;
+}
+
+export function PreviousUploadsView(props: PPreviousUploadsView) {
+  const {
+    id,
+    data,
+    expanded,
+    onToggle,
+    showPassedSteps,
+    completed,
+    setOpenModal,
+  } = props;
+
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const history = useHistory();
+
+  const errorsAndWarningCounts = getErrorWarningCounts(data.validationResults);
+
+  const uploadStatus = determineUploadStatus(
+    data.completed,
+    errorsAndWarningCounts.errors,
+    errorsAndWarningCounts.warnings,
+    data.failureMessage || null
+  );
+
+  const ValidationIconTooltip = (
+    errorCount: number,
+    warningCount: number,
+    stepName: string
+  ) => {
+    const hasIssues = errorCount > 0 || warningCount > 0;
+    const totalIssues = errorCount + warningCount;
+    return (
+      <span className="tol-file-validation-previous-results-icon-tooltip">
+        <p>{normaliseCaps(stepName)}</p>
+        {!completed && !data.failureMessage && <p>Running Pipeline</p>}
+        <p>
+          {data.failureMessage
+            ? "Pipeline Failed..."
+            : hasIssues
+            ? `${errorCount} Errors, ${warningCount} Warnings`
+            : completed
+            ? "Passed - No Issues"
+            : "No issues found yet..."}
+        </p>
+        <a
+          href="#"
+          onClick={() => {
+            goToResults(history, id, stepName, totalIssues);
+            if (setOpenModal) setOpenModal(false);
+          }}
+        >
+          {hasIssues && completed && !data.failureMessage && <p>Go to</p>}
+        </a>
+      </span>
+    );
+  };
+
+  return (
+    <div className="tol-file-validation-previous-results-container">
+      <div className="tol-file-validation-previous-results-title">
+        <h6 className="tol-file-validation-previous-results-title-text">
+          ID: #{id} - {data.pipelineName}
+        </h6>
+        <div className="tol-file-validation-previous-results-date-container">
+          <p className="tol-file-validation-previous-results-date-text">
+            {new Date(data.dateStarted).toLocaleString()}
+          </p>
+          <Button
+            icon="chevron-down"
+            onClick={() => onToggle(id)}
+            className={`
+                tol-file-uploader-previous-validations-dropdown-btn ${
+                  expanded ? "icon-rotate" : ""
+                }`}
+            tooltip={expanded ? "Collapse" : "Expand"}
+          />
+        </div>
+      </div>
+      <div className="tol-file-validation-previous-results-status-container">
+        <a
+          href="#"
+          onClick={() => downloadFileFromS3(PIPELINE_DS, data.s3Url, data.s3Filename)}
+        >
+          <p>
+            {
+              <HoverOverlay contents={"download"}>
+                {data.s3Filename}
+              </HoverOverlay>
+            }
+          </p>
+        </a>
+        <div className="tol-file-validation-previous-results-failure-info">
+          <h6
+            className={`tol-file-validation-previous-results-results-status 
+            ${uploadStatus.className}
+            `}
+          >
+            {`${uploadStatus.text}`}
+          </h6>
+          {uploadStatus.text === "Failed" && (
+            <InfoTooltip
+              contents={`Reason: ${truncateString(data.failureMessage || "")}`}
+              disableMarkdown
+            />
+          )}
+        </div>
+      </div>
+      <div
+        className={`tol-file-uploader-previous-validation-results-container ${
+          expanded ? "expanded" : ""
+        }`}
+      >
+        <div className="tol-file-validation-previous-results-show-results-container">
+          <h6>Results:</h6>
+          <div className="tol-file-validation-previous-results-show-results-inner">
+            <div
+              className="tol-file-validation-scrollbar-fix 
+            tol-file-validation-previous-results-icon-container"
+            >
+              {data.pipelineSteps.length > 0 ? (
+                (() => {
+                  const uniqueSteps = Array.from(new Set(data.pipelineSteps));
+                  const allStepsPassed = uniqueSteps.every((stepName) => {
+                    const stepResults = data.validationResults.filter(
+                      (result: IValidationResult) =>
+                        result.stepName === stepName
+                    );
+                    const issueCount = getErrorWarningCounts(stepResults);
+                    return issueCount.errors === 0 && issueCount.warnings === 0;
+                  });
+
+                  return uniqueSteps
+                    .filter((stepName: string) => {
+                      if (allStepsPassed) return true;
+                      if (showPassedSteps) return true;
+                      const stepResults = data.validationResults.filter(
+                        (result: IValidationResult) =>
+                          result.stepName === stepName
+                      );
+                      const issueCount = getErrorWarningCounts(stepResults);
+                      return issueCount.errors > 0 || issueCount.warnings > 0;
+                    })
+                    .map((stepName: string, index: number) => {
+                      const stepResults = data.validationResults.filter(
+                        (result: IValidationResult) =>
+                          result.stepName === stepName
+                      );
+                      const issueCount = getErrorWarningCounts(stepResults);
+                      const iconType =
+                      data.failureMessage ? "question" :
+                        issueCount.errors > 0
+                          ? "xmark"
+                          : issueCount.warnings > 0
+                          ? "exclamation"
+                          : "check";
+                      const stepStatus = determineStepStatus(issueCount);
+                      return (
+                        <div
+                          key={`${stepName}-${index}`}
+                          onClick={() => {
+                            setExpandedId(
+                              expandedId === stepName ? null : stepName
+                            );
+                          }}
+                        >
+                          <div className="tol-file-validation-previous-results-icon-inner-container">
+                            <ValidationIcon
+                              tooltip={ValidationIconTooltip(
+                                issueCount.errors,
+                                issueCount.warnings,
+                                stepName
+                              )}
+                              iconType={iconType}
+                              size="lg"
+                              className={`tol-file-uploader-validate-step-icon ${
+                                completed ? stepStatus.className : "in-progress"
+                              }`}
+                              completed={completed}
+                              completedCheck={true}
+                              failed={!!data.failureMessage}
+                            />
+                          </div>
+                        </div>
+                      );
+                    });
+                })()
+              ) : (
+                <h6 className="tol-file-validation-previous-results-no-data">
+                  No pipeline steps found.
+                </h6>
+              )}
+            </div>
+            <div>
+              <Button
+                text="View Results"
+                onClick={() => {
+                  if (setOpenModal) setOpenModal(false);
+                  goToResults(history, id);
+                }}
+              />
+            </div>
+          </div>
+          {data.failureMessage && (
+            <p>
+              Failure reason: <span>{truncateString(data.failureMessage)}</span>
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

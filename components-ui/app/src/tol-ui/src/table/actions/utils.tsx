@@ -33,22 +33,34 @@ export function addRemoteActions(
       if (Object.keys(itemRequirements).length === 0) {
         await completeAction(actionName, ids);
       } else {
-        PopUpMessage({type: "warning", message: "Checking export items meet criteria..."});
+        PopUpMessage({
+          type: "warning",
+          message: "Checking export items meet criteria...",
+        });
         const allItemsMeetCriteria = await checkIdsMeetCriteria(
           ids,
           itemRequirements
         );
         if (!allItemsMeetCriteria) {
+          PopUpMessage({
+            type: "error",
+            message:
+              "Some items do not meet criteria. Please check them before exporting.",
+          });
           setIdExportModalOpen(true);
         } else {
-          PopUpMessage({type: "success", message: "All items meet criteria. Exporting..."});
-          await completeAction(actionName, ids);
+          PopUpMessage({
+            type: "success",
+            message: "All items meet criteria. Exporting...",
+          });
+          await completeAction(actionName, ids).then(() => {
+            PopUpMessage({
+              type: "success",
+              message: `Action "${actionName}" completed successfully.`,
+            });
+          });
         }
       }
-      PopUpMessage({
-        type: "success",
-        message: `Action "${actionName}" completed successfully.`,
-      });
     } catch (error) {
       PopUpMessage({
         type: "error",
@@ -113,7 +125,7 @@ export function addRemoteActions(
             resource: objectType,
             params: { filter: filter },
           });
-          
+
           // @ts-ignore
           const data = res.data.data;
           const failedIds = ids.filter(
@@ -124,6 +136,7 @@ export function addRemoteActions(
             failedRequirementsMap[field] = failedIds;
           }
         }
+
       );
 
       await Promise.all(requests);

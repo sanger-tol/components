@@ -272,8 +272,14 @@
   box-shadow: 0 0 0px 1000px var(--rs-input-bg) inset;
 }
 
+.rs-form-control-label {
+  margin-bottom: 6px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+
 .rs-form-help-text {
-  color: var(--tol-grey-light);
+  color: var(--tol-grey);
 }
 
 .rs-timeline-item-custom-dot .svg-inline--fa {
@@ -356,5 +362,11 @@
 @media (max-width: 700px) {
   .rs-drawer {
     width: 100% !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .rs-form-help-text {
+    color: var(--tol-grey-light);
   }
 }

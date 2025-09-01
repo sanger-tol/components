@@ -14,7 +14,7 @@ export interface PPopUpMessage {
   onClose?: () => void;
 }
 
-export function PopUpMessage (props: PPopUpMessage){
+export function PopUpMessage(props: PPopUpMessage){
   const { type, message, header, onClose } = props;
   toaster.push(
     <StaticMessage

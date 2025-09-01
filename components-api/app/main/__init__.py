@@ -14,6 +14,7 @@ from flask import Blueprint, Flask
 from tol.api_base import (
     action_blueprint,
     data_blueprint,
+    pipeline_steps_blueprint,
     system_blueprint
 )
 from tol.api_base.misc import default_ctx_getter
@@ -28,6 +29,7 @@ from tol.sources.portal import portal
 from tol.sql import Model, create_sql_datasource
 from tol.sql.auth import db_auth_blueprint
 from tol.sql.board import create_board_models
+from tol.sql.pipeline_step import create_pipeline_step_models
 
 from .model import Base, MODELS, UserMixin
 from .playwright_ds import PlaywrightTestDataSource
@@ -91,16 +93,29 @@ def __get_board_models(
     return list(board_models), board_models._user_mixin
 
 
+def __get_pipeline_step_models(
+    base_model: type[Model],
+) -> tuple[list[type[Model]], type[Model]]:
+    pipeline_models = create_pipeline_step_models(base_model)
+
+    return list(pipeline_models), pipeline_models._user_mixin
+
+
 def application():
     app = Flask(__name__)
 
     # the user-configurable dashboards
     board_models, _board_user_mixin = __get_board_models(Base)
 
+    # the pipeline, steps, and uploads models
+    pipeline_models, _pipeline_user_mixin = __get_pipeline_step_models(Base)
+
     # the user Mixin
     user_mixin_class = type(
         '',
-        (UserMixin, _board_user_mixin),
+        (UserMixin,
+         _board_user_mixin,
+         _pipeline_user_mixin),
         {}
     )
 
@@ -118,7 +133,8 @@ def application():
     models = [
         *MODELS,
         auth_bp.models.user_class,
-        *board_models
+        *board_models,
+        *pipeline_models,
     ]
 
     # Set up datasource
@@ -168,6 +184,17 @@ def application():
     app.register_blueprint(
         actions_bp,
         url_prefix=os.getenv('API_PATH') + '/local/run-action'
+    )
+
+    # pipelines
+    pipeline_steps_bp = pipeline_steps_blueprint(
+        sql_datasource,
+        __mock_prefect_ds(),
+        role=None
+    )
+    app.register_blueprint(
+        pipeline_steps_bp,
+        url_prefix=os.environ['API_PATH'] + '/run-pipeline'
     )
 
     # dashboards

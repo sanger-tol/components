@@ -8,7 +8,7 @@ import { Modal as RSModal } from "rsuite";
 import { Button } from "..";
 
 export interface PModal {
-  size: string;
+  size?: string;
   open: boolean;
   setOpen: any;
   children?: JSX.Element | JSX.Element[];
@@ -17,13 +17,14 @@ export interface PModal {
   closeButton?: boolean;
   actionButton?: JSX.Element;
   className?: string;
+  onClose?: () => void;
   onEnter?: () => void;
   onExited?: () => void;
 }
 
 export function Modal(props: PModal) {
   const {
-    size,
+    size = "md",
     open,
     setOpen,
     children,
@@ -32,8 +33,9 @@ export function Modal(props: PModal) {
     overflow = true,
     actionButton,
     className,
+    onClose, 
     onEnter,
-    onExited,
+    onExited
   } = props;
 
   const handleClose = () => {
@@ -46,7 +48,7 @@ export function Modal(props: PModal) {
       <RSModal
         overflow={overflow}
         open={open}
-        onClose={handleClose}
+        onClose={onClose || handleClose}
         /* @ts-ignore */
         size={size}
         className={className}

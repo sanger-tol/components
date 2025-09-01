@@ -16,6 +16,7 @@ import {
   Switch,
   Redirect,
 } from "react-router-dom";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import Navigation from "../nav/Navigation";
 import {
   Callback,
@@ -38,6 +39,7 @@ import {
   TsDataSource,
   API_METHODS,
   BOARDS_API_PREFIX,
+  ValidationResultsViewer,
   getUserPrivilege,
   PrivilegeContext,
   BoardPrivilegeContextProvider
@@ -72,6 +74,7 @@ export function TolApp(props: Props) {
         apiPrefix: BOARDS_API_PREFIX,
       }),
   } : undefined;
+  const queryClient = new QueryClient();
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
@@ -104,6 +107,7 @@ export function TolApp(props: Props) {
 
   return (
     <div id="tol-app-background">
+      <QueryClientProvider client={queryClient}>
       <AuthProvider
         value={{
           token,
@@ -139,6 +143,13 @@ export function TolApp(props: Props) {
                   <Redirect to="/" />
                 )}
               </Route>
+              <Route path="/file-validation/results/:uploadId" render={(routeProps) => {
+                return loggedIn ? (
+                  <ValidationResultsViewer {...routeProps} />
+                ) : (
+                  <Redirect to="/" />
+                )
+              }} />
               {allPageRoutes.map((page) => {
                 const path = convertToPath(page.name);
                 const routes = [];
@@ -229,6 +240,7 @@ export function TolApp(props: Props) {
           <Footer />
         </Router>
       </AuthProvider>
+      </QueryClientProvider>
     </div>
   );
 }

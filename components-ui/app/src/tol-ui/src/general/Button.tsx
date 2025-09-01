@@ -4,10 +4,12 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import React, { useState } from "react";
 import { Button as RsButton } from "rsuite";
 import { TolLoader, HoverOverlay, Icon } from "..";
 
 export interface PButton {
+  key?: string | number;
   icon?: string;
   onClick?: (...args: any[]) => void;
   className?: string;
@@ -23,11 +25,14 @@ export interface PButton {
   outline?: boolean;
   id?: string;
   visible?: boolean;
+  limit?: number;
+  timeout?: number;
   testid?: string;
 }
 
 export function Button(props: PButton) {
   const {
+    key,
     icon,
     onClick,
     className,
@@ -44,7 +49,37 @@ export function Button(props: PButton) {
     id,
     visible = true,
     testid,
+    limit = 0,
+    timeout = 0,
   } = props;
+
+  const [buttonClicked, setButtonClicked] = useState<number>(0);
+  const [timeoutDisabled, setTimeoutDisabled] = useState<boolean>(false);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>, ...args: any[]) => {
+    if (onClick) {
+      onClick(event, ...args);
+    }
+
+    if (limit > 0) {
+      setButtonClicked((prev: number) => {
+        const newCount = prev + 1;
+
+        if (newCount >= limit) {
+          setTimeout(() => {
+            setButtonClicked(0);
+          }, timeout);
+        }
+
+        return newCount;
+      });
+    } else if (limit === 0 && timeout > 0) {
+      setTimeoutDisabled(true);
+      setTimeout(() => {
+        setTimeoutDisabled(false);
+      }, timeout);
+    }
+  };
 
   const outlineClass = outline ? "-outline" : "";
   const contents = disabled && disabledTooltip ? disabledTooltip : tooltip;
@@ -63,9 +98,15 @@ export function Button(props: PButton) {
     <>
       {visible && (
         <RsButton
+          key={key || `button-${text || icon}`}
           id={id}
-          onClick={onClick}
-          disabled={disabled}
+          onClick={handleClick}
+          disabled={
+            disabled ||
+            loading ||
+            (limit > 0 && buttonClicked >= limit) ||
+            timeoutDisabled
+          }
           active={active}
           className={`icon-button-${type || "primary"}-${
             size || "md"
