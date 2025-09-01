@@ -8,16 +8,6 @@ import { useState } from "react";
 import { Button, RemoteTable, Widgets, useZone, TOL_DS } from "../tol-ui/src";
 
 
-interface exampleProps {
-  text: string;
-  mlwhTag: string;
-}
-
-function exampleElement(props: exampleProps) {
-  const { text, mlwhTag } = props;
-  return `${text}: ${mlwhTag}`;
-}
-
 export function Tables() {
   const [forceUpdate, setForceUpdate] = useState(false);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -44,6 +34,11 @@ export function Tables() {
       },
     }
   ];
+
+  function ExampleElement({ text, mlwhTag }) {
+    if (!text || !mlwhTag) return <></>;
+    return `${text}: ${mlwhTag}`;
+  }
 
   const table1 = (
     <>
@@ -80,10 +75,10 @@ export function Tables() {
                 // give better example
                 rename: "Sequencing Request",
                 cellRenderer: {
-                  type: "link" as const,
+                  type: "link",
                   props: {
                     url: "https://example.com/api/${mlwh_sequencing_request.id}",
-                    text: "https://example.com/api/${mlwh_platform_type}",
+                    text: "Type: ${mlwh_platform_type}",
                   }
                 },
               },
@@ -113,15 +108,14 @@ export function Tables() {
               },
               custom_field: {
                 rename: "Custom Field",
-                // cellRenderer: {
-                //   element: exampleElement,
-                //   propPointers: {
-                //     mlwhTag: "mlwh_tag_index",
-                //   },
-                //   props: {
-                //     text: "Custom Field",
-                //   }
-                // },
+                cellRenderer: {
+                  type: "custom",
+                  element: ExampleElement,
+                  props: {
+                    mlwhTag: "${mlwh_tag_index}",
+                    text: "Custom Field",
+                  }
+                },
               },
             },
             order: {

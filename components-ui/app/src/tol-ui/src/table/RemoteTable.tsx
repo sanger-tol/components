@@ -226,7 +226,7 @@ export function RemoteTable(props: Props) {
       .then((dataObjects: TDataObjectListOrNull) => {
         setError("");
         setData(
-          convertTableData(dataObjects, fieldMeta!, dataSource)
+          convertTableData(dataObjects, fieldMeta!)
         );
         //setTotalSize(apiMeta.total);
       })

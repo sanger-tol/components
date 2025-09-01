@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import {
   Button,
-  IButton,
+  PButton,
   PCell
 } from "../..";
 
@@ -15,7 +15,7 @@ export interface PLink extends PCell {
   url: string;
 
   text?: string;
-  buttonConfig?: IButton;
+  buttonConfig?: PButton;
 }
 
 export function Link(props: PLink) {

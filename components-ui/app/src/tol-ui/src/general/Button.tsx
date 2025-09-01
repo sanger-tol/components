@@ -9,7 +9,6 @@ import { Button as RsButton } from "rsuite";
 import { TolLoader, HoverOverlay, Icon } from "..";
 
 export interface PButton {
-  key?: string | number;
   icon?: string;
   onClick?: (...args: any[]) => void;
   className?: string;
@@ -32,7 +31,6 @@ export interface PButton {
 
 export function Button(props: PButton) {
   const {
-    key,
     icon,
     onClick,
     className,
@@ -98,7 +96,7 @@ export function Button(props: PButton) {
     <>
       {visible && (
         <RsButton
-          key={key || `button-${text || icon}`}
+          key={`button-${text || icon}`}
           id={id}
           onClick={handleClick}
           disabled={

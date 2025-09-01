@@ -4,12 +4,8 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { format } from "date-fns";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import * as XLSX from "xlsx";
 import {
-  CellTooltip,
   Field,
   FieldMeta,
   FieldMetaData,
@@ -17,7 +13,6 @@ import {
   normaliseCaps,
   Relationship,
   IEntityMeta,
-  StatusMessage,
   colours,
   TsDataSource,
   IAttributeData,
@@ -25,8 +20,6 @@ import {
   getFieldByName,
   ITableData,
   ITableRecord,
-  ICellRenderer,
-  IDataObject,
   TCellRenderer,
   Cell,
   deepCopy
@@ -68,7 +61,10 @@ const sourceColours = {
 export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
   return {
     data: fieldMeta?.data || {},
-    dataWithDefaults: deepCopy(fieldMeta?.data) || {},
+    dataWithDefaults:
+      deepCopyWithCellRenderers(
+        fieldMeta
+      ),
     order: fieldMeta?.order || {
       active: [],
     },
@@ -285,7 +281,7 @@ export function getFieldMetaLocalStorage(
   fields?: FieldMetaData
 ) {
   const data = localStorage.getItem(`fieldMeta-${tableId}-${tableVersion}`);
-  if (data) return fieldMetaToCellRenderer(fields || {}, JSON.parse(data));
+  //if (data) return fieldMetaToCellRenderer(fields || {}, JSON.parse(data));
 }
 
 export function deleteFieldMetaLocalStorage(tableId: string) {
@@ -293,16 +289,16 @@ export function deleteFieldMetaLocalStorage(tableId: string) {
   window.location.reload();
 }
 
-export function fieldMetaToCellRenderer(
-  fieldMetaData: FieldMetaData,
-  fieldMeta: FieldMeta
+export function deepCopyWithCellRenderers(
+  fieldMeta?: FieldMeta,
 ) {
-  for (const field in fieldMetaData) {
-    if (fieldMeta.dataWithDefaults && fieldMetaData[field].cellRenderer) {
-      fieldMeta.dataWithDefaults[field].cellRenderer = fieldMetaData[field].cellRenderer;
+  const fmData = deepCopy(fieldMeta?.data);
+  for (const field in fmData) {
+    if (fmData[field].cellRenderer) {
+      fmData[field].cellRenderer = fieldMeta?.data?.[field].cellRenderer;
     }
   }
-  return fieldMeta;
+  return fmData;
 }
 
 function rgbToString(rgb: Rgb, opacity: number) {
