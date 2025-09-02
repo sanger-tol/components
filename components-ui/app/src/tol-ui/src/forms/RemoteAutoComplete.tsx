@@ -13,7 +13,7 @@ import {
 } from "..";
 
 export interface PRemoteAutoComplete extends PAutoComplete, IRemoteTarget {
-  label?: string;
+  label: string;
   data: string[];
   value: string;
   onChange?: any;

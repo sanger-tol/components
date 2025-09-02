@@ -12,21 +12,31 @@ import {
 } from "..";
 
 export interface PAutoComplete {
-  label?: string;
+  label: string;
   data: string[];
   value: string;
   onChange?: any;
   displayFields?: object;
   displayFieldsTitle?: boolean;
   loading?: boolean;
+  errorText?: string;
 }
 
 export function AutoComplete(props: PAutoComplete) {
-  const { label, data, value, onChange, displayFields, displayFieldsTitle, loading } = props;
+  const { 
+    label,
+    data,
+    value,
+    onChange,
+    displayFields,
+    displayFieldsTitle,
+    loading,
+    errorText
+  } = props;
 
 
   return (
-    <div>
+    <RSForm.Group controlId={label}>
       {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
       <RSAutoComplete
         data={data}
@@ -57,6 +67,7 @@ export function AutoComplete(props: PAutoComplete) {
           )
         }}
       />
-    </div>
+      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
+    </RSForm.Group>
   );
 }

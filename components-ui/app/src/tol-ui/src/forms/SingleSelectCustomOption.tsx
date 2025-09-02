@@ -20,13 +20,14 @@ export interface PSingleSelectCustomOption {
   id: string;
   value: string;
   setValue: Function;
+  errorText?: string;
   data: string[];
   label?: string;
   customOptionPlaceholder?: string;
 }
 
 export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
-  const { id, value, setValue, data, label, customOptionPlaceholder } = props;
+  const { id, value, setValue, data, label, customOptionPlaceholder, errorText } = props;
 
   const [selectedOption, setSelectedOption] = useState("");
   const [customValue, setCustomValue] = useState("");
@@ -97,6 +98,7 @@ export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
             onChange={handleCustomValueChange}
           />
         )}
+        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
       </RSForm.Group>
     </>
   );

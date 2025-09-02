@@ -56,7 +56,7 @@ export interface ITextField {
   placeholder?: string;
   readOnly?: boolean;
   required?: boolean;
-  centred?: boolean;
+  centered?: boolean;
 }
 
 // "email" and "password" are controlled by the same form element in
@@ -96,7 +96,7 @@ export interface ISingleselectField {
 
 export interface ISingleselectcustomoptionField {
   name: string;
-  type: "singleselectcustomvalue";
+  type: "singleselectcustomoption";
   data: string[];
   label?: string;
   customOptionPlaceholder?: string;
@@ -122,8 +122,9 @@ export interface IDropzoneField {
 export interface IAutocompleteField {
   name: string;
   type: "autocomplete";
-  label?: string;
-  data: string;
+  label: string;
+  data: string[];
+  dataSource?: TsDataSource;  // Exists if this is a RemoteAutoComplete field
 }
 
 export interface IMultipleselectField {
@@ -179,7 +180,7 @@ export interface ICheckboxFormField {
   defaultChecked?: string[];
 }
 
-export type TField = 
+export type TFormField = 
   ITextField | IEmailField | IPasswordField |
   ICountryselectField | IDatetimeField |
   ISingleselectField | ISingleselectcustomoptionField |
@@ -192,7 +193,7 @@ export interface IFormButtons {
 }
 
 export interface IFormConfig {
-  fields: TField[];
+  fields: TFormField[];
   buttonConfig?: IFormButtons;
 }
 
