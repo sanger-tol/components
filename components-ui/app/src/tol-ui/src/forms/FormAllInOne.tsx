@@ -38,8 +38,7 @@ import {
   PRemoteAutoComplete,
   IMultipleselectField,
   IMarkdownField,
-  ICheckboxFormField,
-  MultipleFormInput
+  ICheckboxFormField
 } from "..";
 
 export interface PFormAllInOne {
