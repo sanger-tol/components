@@ -26,6 +26,7 @@ import {
   UNSUPPORTED_FIELD_TYPE,
   FormMarkdown,
   FormDatetime,
+  MultipleFormInput,
   TFormField,
   ITextField,
   ICountryselectField,
@@ -37,7 +38,8 @@ import {
   PRemoteAutoComplete,
   IMultipleselectField,
   IMarkdownField,
-  ICheckboxFormField
+  ICheckboxFormField,
+  MultipleFormInput
 } from "..";
 
 export interface PFormAllInOne {
@@ -208,14 +210,13 @@ export function FormAllInOne(props: PFormAllInOne) {
           )
         } else {
           return (
-          <AutoComplete
-            label={autocompleteField.label}
-            data={autocompleteField.data}
-            value={formData[autocompleteField.name] ?? ""}
-            onChange={(value: any) => handleInputChange(autocompleteField.name, value)}
-            errorText={errorText}
-          />
-        );
+            <AutoComplete
+              label={field.label}
+              data={field.data}
+              value={formData[field.name] ?? ""}
+              onChange={(value: any) => handleInputChange(field.name, value)}
+            />
+          );
         }
       case "multipleselect":
         const multipleselectField = field as IMultipleselectField;
@@ -293,7 +294,19 @@ export function FormAllInOne(props: PFormAllInOne) {
         formValue={formData}
       >
         {formConfig.fields.map((field: any) => (
-          <div key={`${formId}-${field.name}`}>{renderField(field)}</div>
+          <div key={`${formId}-${field.name}`}>
+            {field.multiple ? (
+              <MultipleFormInput
+                renderField={renderField}
+                field={field}
+                formData={formData}
+                setFormData={setFormData}
+                minOne={field.minOne}
+              />
+            ) : (
+              renderField(field)
+            )}
+          </div>
         ))}
         {formConfig.buttonConfig && (
           <div style={formConfig.buttonConfig.buttonStyle}>
