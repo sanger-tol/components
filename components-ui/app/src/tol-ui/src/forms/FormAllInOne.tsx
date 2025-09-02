@@ -210,10 +210,10 @@ export function FormAllInOne(props: PFormAllInOne) {
         } else {
           return (
             <AutoComplete
-              label={field.label}
-              data={field.data}
-              value={formData[field.name] ?? ""}
-              onChange={(value: any) => handleInputChange(field.name, value)}
+              label={autocompleteField.label}
+              data={autocompleteField.data}
+              value={formData[autocompleteField.name] ?? ""}
+              onChange={(value: any) => handleInputChange(autocompleteField.name, value)}
             />
           );
         }
