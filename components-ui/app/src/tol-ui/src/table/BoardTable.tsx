@@ -32,7 +32,7 @@ export function BoardTable(props: Props) {
   const { privilege } = useBoardPrivilege()
 
 
-  const onModalSave = (fm: FieldMeta, actions: string[], sortByAtt: string) => {
+  const onConfigSave = (fm: FieldMeta, actions: string[], sortByAtt: string) => {
     config["fieldMeta"] = fm;
     config["actions"] = actions;
     config["sort_by"] = sortByAtt
@@ -83,7 +83,7 @@ export function BoardTable(props: Props) {
       {...props}
       noConfigModal={privilege !== PRIVILEGE.BOARD.EDITABLE}
       displaySource
-      fields={config.fieldMeta || initialiseFieldMeta()}
+      fields={initialiseFieldMeta(config.fieldMeta)}
       pageSize={config.pageSize || 50}
       filterVisibility={config.filterVisibility ?? true}
       defaultSort={
@@ -91,7 +91,7 @@ export function BoardTable(props: Props) {
         config?.fieldMeta?.order?.active[0] ||
         undefined
       }
-      onModalSave={onModalSave}
+      onConfigSave={onConfigSave}
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
       forceUpdate={forceUpdate}

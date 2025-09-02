@@ -61,7 +61,7 @@ interface Props extends IRemoteTargetAndZone {
 
   filter: any;
 
-  onModalSave: any;
+  onConfigSave: any;
 
   noFilter?: boolean;
   noPagination?: boolean;
@@ -113,7 +113,7 @@ export function Table(props: Props) {
     defaultSort,
     handleSortColumn,
 
-    onModalSave,
+    onConfigSave,
     filter,
 
     noFilter,
@@ -292,7 +292,6 @@ export function Table(props: Props) {
           ...(fieldMeta.order.active ?? []),
           ...(fieldMeta.order.inactive ?? [])
         ]}
-        onConfigSave={onModalSave}
       />
       {/*rowSelection && (
           <>

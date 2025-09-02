@@ -48,7 +48,7 @@ interface Props extends IRemoteTargetAndZone {
   basic?: boolean;
   forceUpdate?: boolean;
 
-  onModalSave?: any;
+  onConfigSave?: any;
   onPageSizeChange?: any;
   onToggleFilterVisibility?: any;
 
@@ -246,7 +246,7 @@ export function RemoteTable(props: Props) {
       });
   };
 
-  const onModalSave = (
+  const onConfigSave = (
     fm: FieldMeta,
     actions?: string[],
     sortByAttribute?: string,
@@ -260,9 +260,9 @@ export function RemoteTable(props: Props) {
     });
     setZone({ ...zone });
 
-    if (props.onModalSave) {
+    if (props.onConfigSave) {
       // add in the default sort here
-      props.onModalSave(
+      props.onConfigSave(
         fm,
         actions,
         createSort(sortByAttribute || "", sortByType || "asc")
@@ -371,7 +371,7 @@ export function RemoteTable(props: Props) {
         defaultSort={defaultSort}
         handleSortColumn={handleSortColumn}
         filter={filter}
-        onModalSave={onModalSave}
+        onConfigSave={onConfigSave}
         noDownload={noDownload || error !== ""}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}

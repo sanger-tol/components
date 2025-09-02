@@ -12,7 +12,6 @@ import {
   Modal,
   SelectedAttributesContainer,
   FieldMeta,
-  initialiseFieldMeta,
   IRemoteTarget,
   IDropdownButtonConfig,
   createSort,
@@ -74,37 +73,9 @@ export function ColumnConfigDrawer(props: Props) {
     setInitialAttributes(fieldMeta?.order?.active ?? []);
   }, [fieldMeta]);
 
-  const updateMeta = (
-    id: string,
-    updatedFieldMeta: FieldMeta,
-    hidden: boolean,
-  ) => {
-    // const isActive = hidden ? "inactive" : "active";
-    // updatedFieldMeta.order![isActive].push(id);
-    // updatedFieldMeta.data![id] = fieldMeta.data![id];
-    // updatedFieldMeta.data![id].hidden = hidden;
-  };
-
-  const fieldMetaUpdatedByContents = () => {
-    const updatedFieldMeta: FieldMeta = initialiseFieldMeta();
-
-    attributes.forEach((key) => {
-      updateMeta(key, updatedFieldMeta, false);
-    });
-
-    for (const key in fieldMeta.data) {
-      if (!attributes.includes(key)) {
-        updateMeta(key, updatedFieldMeta, true);
-      }
-    }
-
-    return updatedFieldMeta;
-  };
-
   const saveConfig = () => {
     if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || originalActions !== actions) {
-      const updatedFieldMeta = fieldMetaUpdatedByContents();
-      onConfigSave(updatedFieldMeta, actions, sortByAttribute[0], sortByType);
+      onConfigSave(fieldMeta, actions, sortByAttribute[0], sortByType);
       setInitialAttributes(attributes);
     }
     setOpen(!open);
