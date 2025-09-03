@@ -150,7 +150,6 @@ root.render(
       otherDropdown,
       sandbox,
     ]}
-    appName="components"
   />
 );
 
