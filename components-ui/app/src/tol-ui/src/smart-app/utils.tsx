@@ -113,17 +113,26 @@ export function clearUnusedLocalStorage() {
   // The number of hours old a key must be before it is deleted
   const hoursAgeLimit = 1;
   
-  // The keys we're checking which may be cleared
-  const keysToClear = [
-    "/_config/attribute_metadata-default/default",
-    "/_config/attribute_metadata-https://portal.tol.sanger.ac.uk/api/v1/data/tol_production/default",
-    "/_config/relationships-default/default",
-    "_config/relationships-https://portal.tol.sanger.ac.uk/api/v1/data/tol_production/default",
-    "entityMeta-default/default",
-    "entityMeta-https://portal.tol.sanger.ac.uk/api/v1/data/tol_production/default",
+  // The prefixes of keys we're checking which may be cleared
+  const prefixesOfKeysToClear = [
+    "/_config/attribute_metadata-",
+    "/_config/relationships-",
+    "entityMeta-",
   ];
 
-  for (const storageKey of keysToClear) {
+  // You can't iterate over localStorage, but you can get how many keys it has with `.length`
+  // combined with `key(index)`, so we need to use a count-controlled loop, decrementing i
+  // each time we remove a key
+  for (let i = 0; i < localStorage.length; i++) {
+    // Get storage key
+    const storageKey = localStorage.key(i);
+  
+    // Check if this is one of the keys we're looking for
+    // (by skipping ones that aren't)
+    if (!(storageKey && prefixesOfKeysToClear.some(prefix => storageKey.includes(prefix)))) {
+      continue;
+    }
+
     // Retrieve value
     const valueString = localStorage.getItem(storageKey);
     if (!valueString) continue;
