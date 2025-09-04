@@ -130,6 +130,7 @@ tolcore:
       REACT_APP_API_PATH: api.path
       REACT_APP_PORTAL_URL: portal.url
       REACT_APP_PORTAL_API_PATH: portal.api_path
+      REACT_APP_PORTAL_DATA_PATH: portal.api_data_path
       REACT_APP_MATOMO_SITE_ID: ui.matomo_site_id
   backup:
     schedule: ""
@@ -143,5 +144,6 @@ tolcore:
   portal:
     url: ""
     api_path: ""
+    api_data_path: ""
   oidc:
     enabled: true
