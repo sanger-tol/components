@@ -18,6 +18,7 @@ export interface PMultipleSelect {
   data: string[] | IData[];
   value: string[];
   setValue: any;
+  errorText?: string;
   placeholder?: string;
   disabled?: boolean;
   loading?: boolean;
@@ -48,6 +49,7 @@ export function MultipleSelect(props: PMultipleSelect) {
     data,
     value,
     setValue,
+    errorText,
     placeholder,
     disabled,
     loading,
@@ -106,7 +108,7 @@ export function MultipleSelect(props: PMultipleSelect) {
   };
 
   return (
-    <>
+    <RSForm.Group controlId="formMultipleSelect">
       {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
       <span onClick={onClick}>
         <RSCheckPicker
@@ -135,6 +137,7 @@ export function MultipleSelect(props: PMultipleSelect) {
           className={className}
         />
       </span>
-    </>
+      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
+    </RSForm.Group>
   );
 }

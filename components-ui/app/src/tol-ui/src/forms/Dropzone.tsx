@@ -16,7 +16,8 @@ import {
   TMessageType,
   IMessage,
   IWaitingUpload,
-  IFileData
+  IFileData,
+  RSForm
 } from "..";
 
 
@@ -27,6 +28,7 @@ export interface PDropzone {
   fileType: string;
   generateMessages?: (apiRes: any) => IMessage[];
   setResponse?: any;
+  errorText?: string;
   onFileDrop?: (length: boolean) => void;
   fileListVisible?: boolean;
   fileList?: IFileData[];
@@ -43,6 +45,7 @@ export function Dropzone(props: PDropzone) {
     fileType,
     generateMessages,
     setResponse,
+    errorText,
     onFileDrop,
     fileListVisible = false,
     parentToSubmit = false,
@@ -128,65 +131,68 @@ export function Dropzone(props: PDropzone) {
   };
 
   return (
-    <div className="tol-dropzone" key={resetKey}>
-      <Uploader
-        action="temp-error-please-ignore"
-        draggable
-        accept={fileType}
-        onChange={(fileList: any, _event: any) => {
-          const mapped = fileList
-            .filter((f: any) => f.blobFile)
-            .map((file: any) => ({
-              blobFile: file.blobFile as File,
-              fileKey: file.fileKey,
-              name: file.name,
-              status: file.status,
-            }));
-          setFileList(mapped);
-        }}
-        fileListVisible={fileListVisible}
-        disabled={fileList.length > 0 && validating}
-        onUpload={() => {
-          setValidate(!validate);
-        }}
-      >
-        <div>
-          {isLoading ? (
-            <div className="dropzone-container">
-              <Loader />
-            </div>
-          ) : (
-            <div>
-              {fail && fileList.length > 0 ? (
-                <WaitingUpload message="Unexpected error, please try again" />
-              ) : (
-                <WaitingUpload
-                  message={
-                    fileList.length > 0 && validating
-                      ? "Please reset to upload a new file."
-                      : "Click or drag file to this area to upload"
-                  }
+    <RSForm.Group controlId={resetKey?.toString()}>
+      <div className="tol-dropzone" key={resetKey}>
+        <Uploader
+          action="temp-error-please-ignore"
+          draggable
+          accept={fileType}
+          onChange={(fileList: any, _event: any) => {
+            const mapped = fileList
+              .filter((f: any) => f.blobFile)
+              .map((file: any) => ({
+                blobFile: file.blobFile as File,
+                fileKey: file.fileKey,
+                name: file.name,
+                status: file.status,
+              }));
+            setFileList(mapped);
+          }}
+          fileListVisible={fileListVisible}
+          disabled={fileList.length > 0 && validating}
+          onUpload={() => {
+            setValidate(!validate);
+          }}
+        >
+          <div>
+            {isLoading ? (
+              <div className="dropzone-container">
+                <Loader />
+              </div>
+            ) : (
+              <div>
+                {fail && fileList.length > 0 ? (
+                  <WaitingUpload message="Unexpected error, please try again" />
+                ) : (
+                  <WaitingUpload
+                    message={
+                      fileList.length > 0 && validating
+                        ? "Please reset to upload a new file."
+                        : "Click or drag file to this area to upload"
+                    }
+                  />
+                )}
+              </div>
+            )}
+          </div>
+        </Uploader>
+        {hasLoaded ? (
+          <div className="mt-3">
+            {messages.map((message: IMessage, index: number) => {
+              return (
+                <StatusMessage
+                  key={index}
+                  status={message.type as TMessageType}
+                  message={message.message}
                 />
-              )}
-            </div>
-          )}
-        </div>
-      </Uploader>
-      {hasLoaded ? (
-        <div className="mt-3">
-          {messages.map((message: IMessage, index: number) => {
-            return (
-              <StatusMessage
-                key={index}
-                status={message.type as TMessageType}
-                message={message.message}
-              />
-            );
-          })}
-        </div>
-      ) : (
-        <></>
-      )}
-    </div>
+              );
+            })}
+          </div>
+        ) : (
+          <></>
+        )}
+      </div>
+      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
+    </RSForm.Group>
   );
 }

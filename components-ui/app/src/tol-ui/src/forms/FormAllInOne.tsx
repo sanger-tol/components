@@ -26,7 +26,19 @@ import {
   UNSUPPORTED_FIELD_TYPE,
   FormMarkdown,
   FormDatetime,
-  MultipleFormInput
+  MultipleFormInput,
+  TFormField,
+  ITextField,
+  ICountryselectField,
+  IDatetimeField,
+  ISingleselectField,
+  ISingleselectcustomoptionField,
+  IDropzoneField,
+  IAutocompleteField,
+  PRemoteAutoComplete,
+  IMultipleselectField,
+  IMarkdownField,
+  ICheckboxFormField
 } from "..";
 
 export interface PFormAllInOne {
@@ -43,6 +55,7 @@ export function FormAllInOne(props: PFormAllInOne) {
   const { formConfig, initialData, fluid, model, onValidate } = props;
 
   const [formData, setFormData] = useState<object>({});
+  const [formErrors, setFormErrors] = useState<Record<string, any>>({});
   const [modifiedFields, setModifiedFields] = useState<object>({});
   const [formId, _] = useState<any>(() => crypto.randomUUID());
   const hasUnsavedChanges = useRef(false);
@@ -79,161 +92,184 @@ export function FormAllInOne(props: PFormAllInOne) {
     }
   }, [modifiedFields, props.onUnsavedChanges]);
 
-  const handleInputChange = (name: any, value: any) => {
+  const handleInputChange = (name: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [name]: value }));
     setModifiedFields((prev: any) => ({ ...prev, [name]: value }));
   };
 
-  const renderField = (field: any) => {
+  const renderField = (field: TFormField) => {
     if (!field) {
       return null;
     }
+
+    // Fetch any errors for this field from the record of all errors
+    const errorText: string | undefined = formErrors[field.name];
 
     switch (field.type.toLowerCase()) {
       case "text":
       case "email":
       case "password":
+        const textField = field as ITextField;
         return (
           <FormTextField
             id={formId}
-            name={field.name}
-            label={field.label}
-            accepter={field.accepter}
-            helpText={field.helpText}
-            placeholder={field.placeholder}
-            value={formData[field.name] ?? ""}
-            onChange={(value: any) => handleInputChange(field.name, value)}
-            type={field.type}
-            readOnly={field.readOnly}
-            centered={field.centered}
+            name={textField.name}
+            label={textField.label}
+            accepter={textField.accepter}
+            helpText={textField.helpText}
+            placeholder={textField.placeholder}
+            value={formData[textField.name] ?? ""}
+            onChange={(value: any) => handleInputChange(textField.name, value)}
+            type={textField.type}
+            readOnly={textField.readOnly}
+            centered={textField.centered}
           />
         );
       case "countryselect":
+        const countryselectField = field as ICountryselectField;
         return (
           <CountrySelect
-            label={field.label}
-            value={formData[field.name] ?? ""}
+            label={countryselectField.label}
+            value={formData[countryselectField.name] ?? ""}
             setValue={(value: any) => handleInputChange(field.name, value)}
+            errorText={errorText}
           />
         );
       case "datetime":
+        const datetimeField = field as IDatetimeField;
         return (
           <FormDatetime
-            name={field.name}
-            label={field.label}
-            value={formData[field.name] ?? ""}
-            onChange={(value: any) => handleInputChange(field.name, value)}
-            helpText={field.helpText}
-            placeholder={field.placeholder}
-            hideMinutes={field.hideMinutes}
+            name={datetimeField.name}
+            label={datetimeField.label}
+            value={formData[datetimeField.name] ?? ""}
+            onChange={(value: any) => handleInputChange(datetimeField.name, value)}
+            helpText={datetimeField.helpText}
+            errorText={errorText}
+            placeholder={datetimeField.placeholder}
+            hideMinutes={datetimeField.hideMinutes}
           />
         );
       case "singleselect":
+        const singleselectField = field as ISingleselectField;
         return (
-          <RSForm.Group controlId={`${formId}-${field.name}`}>
-            <RSForm.ControlLabel>{field.label}</RSForm.ControlLabel>
+          <RSForm.Group controlId={`${formId}-${singleselectField.name}`}>
+            <RSForm.ControlLabel>{singleselectField.label}</RSForm.ControlLabel>
             <SingleSelect
-              data={field.data}
-              placeholder={field.placeholder}
-              value={formData[field.name] ?? ""}
-              setValue={(value: any) => handleInputChange(field.name, value)}
-              block={field.block}
+              data={singleselectField.data}
+              placeholder={singleselectField.placeholder}
+              value={formData[singleselectField.name] ?? ""}
+              setValue={(value: any) => handleInputChange(singleselectField.name, value)}
+              block={singleselectField.block}
             />
+            <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
           </RSForm.Group>
         );
       case "singleselectcustomoption":
+        const singleselectcustomoptionField = field as ISingleselectcustomoptionField;
         return (
           <SingleSelectCustomOption
             id={formId}
-            value={formData[field.name] ?? ""}
-            setValue={(value: any) => handleInputChange(field.name, value)}
-            data={field.data}
-            label={field.label}
-            customOptionPlaceholder={field.customOptionPlaceholder}
+            value={formData[singleselectcustomoptionField.name] ?? ""}
+            setValue={(value: any) => handleInputChange(singleselectcustomoptionField.name, value)}
+            errorText={errorText}
+            data={singleselectcustomoptionField.data}
+            label={singleselectcustomoptionField.label}
+            customOptionPlaceholder={singleselectcustomoptionField.customOptionPlaceholder}
           />
         );
       case "dropzone":
+        const dropzoneField = field as IDropzoneField;
         return (
           <Dropzone
-            resource={field.resource}
-            dataSource={field.dataSource}
-            fileType={field.fileType}
-            generateMessages={field.generateMessages}
-            setResponse={field.setResponse}
+            resource={dropzoneField.resource}
+            dataSource={dropzoneField.dataSource}
+            fileType={dropzoneField.fileType}
+            generateMessages={dropzoneField.generateMessages}
+            setResponse={dropzoneField.setResponse}
+            errorText={errorText}
           />
         );
       case "autocomplete":
-        if (field.dataSource) {
+        const autocompleteField = field as IAutocompleteField;
+        if (autocompleteField.dataSource) {
+          const remoteAutocompleteField = field as Omit<IAutocompleteField, "dataSource"> & PRemoteAutoComplete
           return (
             <RemoteAutoComplete
-              dataSource={field.dataSource}
-              objectType={field.objectType}
-              displayFields={field.displayFields}
-              displayFieldsTitle={field.displayFieldsTitle}
-              searchBy={field.searchBy}
-              label={field.label}
-              data={field.data}
-              value={formData[field.name] ?? ""}
-              onChange={(value: any) => handleInputChange(field.name, value)}
+              dataSource={remoteAutocompleteField.dataSource}
+              objectType={remoteAutocompleteField.objectType}
+              displayFields={remoteAutocompleteField.displayFields}
+              displayFieldsTitle={remoteAutocompleteField.displayFieldsTitle}
+              searchBy={remoteAutocompleteField.searchBy}
+              label={remoteAutocompleteField.label}
+              data={remoteAutocompleteField.data}
+              value={formData[remoteAutocompleteField.name] ?? ""}
+              onChange={(value: any) => handleInputChange(remoteAutocompleteField.name, value)}
+              errorText={errorText}
             />
           )
         } else {
           return (
             <AutoComplete
-              label={field.label}
-              data={field.data}
-              value={formData[field.name] ?? ""}
-              onChange={(value: any) => handleInputChange(field.name, value)}
+              label={autocompleteField.label}
+              data={autocompleteField.data}
+              value={formData[autocompleteField.name] ?? ""}
+              onChange={(value: any) => handleInputChange(autocompleteField.name, value)}
             />
           );
         }
       case "multipleselect":
+        const multipleselectField = field as IMultipleselectField;
         return (
           <MultipleSelect
-            block={field.block}
-            data={field.data}
-            label={field.label}
-            value={formData[field.name] || []}
-            setValue={(value: any) => handleInputChange(field.name, value)}
-            placeholder={field.placeholder}
-            disabled={field.disabled}
-            loading={field.loading}
-            open={field.open}
-            onOpen={field.onOpen}
-            onEntering={field.onEntering}
-            onClose={field.onClose}
-            onClick={field.onClick}
-            renderMenuItem={field.renderMenuItem}
-            renderValue={field.renderValue}
-            noSearch={field.noSearch}
+            block={multipleselectField.block}
+            data={multipleselectField.data}
+            label={multipleselectField.label}
+            value={formData[multipleselectField.name] || []}
+            setValue={(value: any) => handleInputChange(multipleselectField.name, value)}
+            errorText={errorText}
+            placeholder={multipleselectField.placeholder}
+            disabled={multipleselectField.disabled}
+            loading={multipleselectField.loading}
+            open={multipleselectField.open}
+            onOpen={multipleselectField.onOpen}
+            onEntering={multipleselectField.onEntering}
+            onClose={multipleselectField.onClose}
+            onClick={multipleselectField.onClick}
+            renderMenuItem={multipleselectField.renderMenuItem}
+            renderValue={multipleselectField.renderValue}
+            noSearch={multipleselectField.noSearch}
           />
         );
       case "markdown":
+        const markdownField = field as IMarkdownField;
         return (
           <FormMarkdown
-            value={formData[field.name] ?? ""}
-            onChange={(value: any) => handleInputChange(field.name, value)}
-            preview={field.preview}
-            label={field.label}
-            removeCommands={field.removeCommands}
-            height={field.height}
-            helpText={field.helpText}
+            value={formData[markdownField.name] ?? ""}
+            onChange={(value: any) => handleInputChange(markdownField.name, value)}
+            preview={markdownField.preview}
+            label={markdownField.label}
+            removeCommands={markdownField.removeCommands}
+            height={markdownField.height}
+            helpText={markdownField.helpText}
+            errorText={errorText}
           />
         );
       case "checkbox":
+        const checkboxField = field as ICheckboxFormField;
         return (
           <FormCheckboxes
-            id={`${formId}-${field.name}-checkbox`}
-            label={field.label}
-            checkboxConfig={field.checkboxConfig}
-            checkedItems={formData[field.name] ?? []}
+            id={`${formId}-${checkboxField.name}-checkbox`}
+            label={checkboxField.label}
+            checkboxConfig={checkboxField.checkboxConfig}
+            checkedItems={formData[checkboxField.name] ?? []}
             setCheckedItems={(value: any) =>
-              handleInputChange(field.name, value)
+              handleInputChange(checkboxField.name, value)
             }
-            hidden={field.hidden}
-            inline={field.inline}
-            indeterminate={field.indeterminate}
-            defaultChecked={field.defaultChecked}
+            errorText={errorText}
+            hidden={checkboxField.hidden}
+            inline={checkboxField.inline}
+            indeterminate={checkboxField.indeterminate}
+            defaultChecked={checkboxField.defaultChecked}
           />
         );
       default:
@@ -248,6 +284,7 @@ export function FormAllInOne(props: PFormAllInOne) {
         fluid={fluid}
         ref={formRef}
         id={`form-${formId}`}
+        onCheck={setFormErrors}
         onSubmit={(e: any) => {
           e.preventDefault();
           validateForm(formRef, toaster, formData, props.onSubmit);
@@ -302,3 +339,4 @@ export function FormAllInOne(props: PFormAllInOne) {
     </div>
   );
 }
+

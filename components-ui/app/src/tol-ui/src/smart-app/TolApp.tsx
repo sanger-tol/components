@@ -42,7 +42,8 @@ import {
   ValidationResultsViewer,
   getUserPrivilege,
   PrivilegeContext,
-  BoardPrivilegeContextProvider
+  BoardPrivilegeContextProvider,
+  clearUnusedLocalStorage
 } from "..";
 
 
@@ -60,11 +61,12 @@ interface Props {
   boards?: BoardSources;
   register?: boolean;
   customCallbackUrl?: string;
+  basename?: string;
 }
 
 
 export function TolApp(props: Props) {
-  const { customCallbackUrl } = props;
+  const { customCallbackUrl, basename } = props;
 
   // setting a default for the boardDataSource
   const boards = props.boards ? {
@@ -82,6 +84,8 @@ export function TolApp(props: Props) {
   useEffect(() => {
     const siteId = env.MATOMO_SITE_ID;
     matomoAnalytics(siteId);
+
+    clearUnusedLocalStorage();
   }, []);
 
   // show login button as default
@@ -116,7 +120,7 @@ export function TolApp(props: Props) {
           setUser,
         }}
       >
-        <Router>
+        <Router basename={basename}>
           <Navigation
             brand={props.brand}
             pages={props.pages}

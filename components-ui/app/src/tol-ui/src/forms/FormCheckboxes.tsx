@@ -12,6 +12,7 @@ import { RSForm, ICheckboxConfig } from "..";
 export interface PFormCheckboxes {
   id: string;
   label?: string;
+  errorText?: string;
   checkboxConfig: ICheckboxConfig;
   checkedItems: string[];
   setCheckedItems: Function;
@@ -25,6 +26,7 @@ export function FormCheckboxes(props: PFormCheckboxes) {
   const {
     id,
     label,
+    errorText,
     checkboxConfig,
     inline,
     indeterminate,
@@ -78,6 +80,7 @@ export function FormCheckboxes(props: PFormCheckboxes) {
             </div>
           ))}
         </CheckboxGroup>
+        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
       </RSForm.Group>
     </div>
   );
