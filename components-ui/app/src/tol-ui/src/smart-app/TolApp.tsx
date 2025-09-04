@@ -42,7 +42,8 @@ import {
   ValidationResultsViewer,
   getUserPrivilege,
   PrivilegeContext,
-  BoardPrivilegeContextProvider
+  BoardPrivilegeContextProvider,
+  clearUnusedLocalStorage
 } from "..";
 
 
@@ -83,6 +84,8 @@ export function TolApp(props: Props) {
   useEffect(() => {
     const siteId = env.MATOMO_SITE_ID;
     matomoAnalytics(siteId);
+
+    clearUnusedLocalStorage();
   }, []);
 
   // show login button as default

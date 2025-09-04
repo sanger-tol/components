@@ -102,3 +102,43 @@ export async function getUserPrivilege(
     return PRIVILEGE.BOARD.HIDDEN;
   }
 }
+
+/**
+ * Deletes cache stored in localStorage more than the set age limit.
+ * This age limit is defined at the top of this function.
+ * 
+ * This function is designed to be called in `TolApp` as it mounts
+ */
+export function clearUnusedLocalStorage() {
+  // The number of hours old a key must be before it is deleted
+  const hoursAgeLimit = 1;
+  
+  // The keys we're checking which may be cleared
+  const keysToClear = [
+    "/_config/attribute_metadata-default/default",
+    "/_config/attribute_metadata-https://portal.tol.sanger.ac.uk/api/v1/data/tol_production/default",
+    "/_config/relationships-default/default",
+    "_config/relationships-https://portal.tol.sanger.ac.uk/api/v1/data/tol_production/default",
+    "entityMeta-default/default",
+    "entityMeta-https://portal.tol.sanger.ac.uk/api/v1/data/tol_production/default",
+  ];
+
+  for (const storageKey of keysToClear) {
+    // Retrieve value
+    const valueString = localStorage.getItem(storageKey);
+    if (!valueString) continue;
+
+    // Parse value to object and use it to get expiry date of this value
+    const value: { expiry: string, data: object } = JSON.parse(valueString);
+    const expiryDate = new Date(value.expiry);
+
+    // Calculate the difference in hours between now and the expiry 
+    const age = Date.now() - expiryDate.getTime();
+    const hoursPassed = new Date(age).getHours();
+
+    // Delete this key if the time difference exceeds the limit
+    if (hoursPassed >= hoursAgeLimit) {
+      localStorage.removeItem(storageKey);
+    }
+  }
+}
