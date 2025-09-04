@@ -60,11 +60,12 @@ interface Props {
   boards?: BoardSources;
   register?: boolean;
   customCallbackUrl?: string;
+  basename?: string;
 }
 
 
 export function TolApp(props: Props) {
-  const { customCallbackUrl } = props;
+  const { customCallbackUrl, basename } = props;
 
   // setting a default for the boardDataSource
   const boards = props.boards ? {
@@ -116,7 +117,7 @@ export function TolApp(props: Props) {
           setUser,
         }}
       >
-        <Router>
+        <Router basename={basename}>
           <Navigation
             brand={props.brand}
             pages={props.pages}
