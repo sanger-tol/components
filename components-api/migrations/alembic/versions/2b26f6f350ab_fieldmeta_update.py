@@ -17,15 +17,21 @@ depends_on = None
 
 
 def upgrade() -> None:
-    # Update the JSON field to remove 'data' and 'inactive' keys
+    # Update the JSONB column to remove the specified keys
     op.execute("""
         UPDATE component
-        SET config = config - 'data' || jsonb_set(
-            config - 'data',
-            '{fieldMeta,order}',
-            (config->'fieldMeta'->'order') - 'inactive'
+        SET config = config - 'fieldMeta' || jsonb_set(
+            config->'fieldMeta',
+            '{data}',
+            'null'::jsonb,
+            true
+        ) || jsonb_set(
+            config->'fieldMeta',
+            '{order,inactive}',
+            'null'::jsonb,
+            true
         )
-        WHERE config->'fieldMeta' IS NOT NULL;
+        WHERE config ? 'fieldMeta';
     """)
 
 
