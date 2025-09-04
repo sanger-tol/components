@@ -7,11 +7,11 @@ import {
   TNameAndLinks,
   SocialViewer,
 } from "../tol-ui/src/general/SocialViewer";
-import { Widgets } from "./Widgets";
+import { Widgets } from "../tol-ui/src";
 
 const speakers: TNameAndLinks = [
   {
-  name: "Kiernan Harding",
+    name: "Kiernan Harding",
     links: [
       { link: "https://twitter.com/kiernan", icon: "twitter" },
       { link: "https://github.com/kiernan", icon: "github" },
@@ -24,20 +24,14 @@ const speakers: TNameAndLinks = [
 ];
 
 export function Sandbox() {
-  const viewer = (
-    <div>
-      {speakers.map((speakerDetails, index) => (
-        <SocialViewer key={index} {...speakerDetails} />
-      ))}
-    </div>
-  );
+  const Viewer = <SocialViewer id={"1"} data={speakers} />;
 
   const components = [
     {
-      component: viewer,
+      component: Viewer,
       type: "full",
     },
   ];
 
-  return <Widgets components={components} />;;
+  return <Widgets components={components} />;
 }

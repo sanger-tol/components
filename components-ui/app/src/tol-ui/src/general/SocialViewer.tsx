@@ -6,6 +6,11 @@
 
 import { Icon } from ".";
 
+export interface PNameAndLinks {
+  id: string;
+  data: TNameAndLinks;
+}
+
 export type TNameAndLinks = INameAndLinks[];
 
 export interface INameAndLinks {
@@ -20,21 +25,27 @@ export interface ILink {
   icon: string;
 }
 
-export function SocialViewer({ name, links }: INameAndLinks) {
+export function SocialViewer(props: PNameAndLinks) {
+  const { id, data } = props;
   return (
-    <div>
-      <h3 className="text-lg font-semibold">{name}</h3>
-      <div>
-        {links.map((link, id) => (
-          <a
-            key={id}
-            href={link.link}
-            target="_blank"
-          >
-            <Icon icon={link.icon} />
-          </a>
-        ))}
-      </div>
+    <div id={id}>
+      {data.map((item, topLevelIndex) => (
+        <div className="">
+          <h3 className="text-lg font-semibold" key={topLevelIndex}>
+            {item.name}
+          </h3>
+          <div>
+            {item.links.map((link, bottomLevelIndex) => {
+              console.log(link);
+              return (
+                <a key={bottomLevelIndex} href={link.link} target="_blank">
+                  <Icon icon={link.icon} size="10" />
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
