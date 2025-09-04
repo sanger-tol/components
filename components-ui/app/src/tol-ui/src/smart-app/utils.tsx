@@ -141,13 +141,16 @@ export function clearUnusedLocalStorage() {
     const value: { expiry: string, data: object } = JSON.parse(valueString);
     const expiryDate = new Date(value.expiry);
 
-    // Calculate the difference in hours between now and the expiry 
+    // Calculate the difference in hours between now and the expiry date
     const age = Date.now() - expiryDate.getTime();
     const hoursPassed = new Date(age).getHours();
 
     // Delete this key if the time difference exceeds the limit
     if (hoursPassed >= hoursAgeLimit) {
       localStorage.removeItem(storageKey);
+      
+      // We need to adjust the index one back after removing an item
+      i--;
     }
   }
 }
