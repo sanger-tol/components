@@ -112,8 +112,6 @@ export function Table(props: Props) {
     sortType,
     defaultSort,
     handleSortColumn,
-
-    onConfigSave,
     filter,
 
     noFilter,
