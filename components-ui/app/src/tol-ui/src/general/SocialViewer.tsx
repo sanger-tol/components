@@ -5,9 +5,9 @@
  */
 
 import { Icon } from ".";
+import { FontAwesomeIcon } from "@fortawesome/free-brands-svg-icons";
 
 export interface PNameAndLinks {
-  id: string;
   data: TNameAndLinks;
 }
 
@@ -26,9 +26,9 @@ export interface ILink {
 }
 
 export function SocialViewer(props: PNameAndLinks) {
-  const { id, data } = props;
+  const { data } = props;
   return (
-    <div id={id}>
+    <div>
       {data.map((item, topLevelIndex) => (
         <div className="">
           <h3 className="text-lg font-semibold" key={topLevelIndex}>
@@ -36,10 +36,9 @@ export function SocialViewer(props: PNameAndLinks) {
           </h3>
           <div>
             {item.links.map((link, bottomLevelIndex) => {
-              console.log(link);
               return (
                 <a key={bottomLevelIndex} href={link.link} target="_blank">
-                  <Icon icon={link.icon} size="10" />
+                  <FontAwesomeIcon icon={link.icon} size="10" />
                 </a>
               );
             })}

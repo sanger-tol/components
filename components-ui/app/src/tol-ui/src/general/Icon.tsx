@@ -9,15 +9,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export interface PIcon {
   icon?: string;
   size?: string;
+  config?: string;
 }
 
 export function Icon(props: PIcon) {
-  const { icon, size } = props;
-
+  const { icon, size, config= "fas" } = props;
+// {console.log(`<FontAwesomeIcon icon={fa-${config} fa-${icon}} size={size} />`)}
   return (
+    
     <span>
       {/* @ts-ignore */}
-      <FontAwesomeIcon icon={`fa-solid fa-${icon}`} size={size} />
+      <FontAwesomeIcon icon={[config, icon]} size={size} />
     </span>
   );
 }

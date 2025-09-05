@@ -24,7 +24,7 @@ const speakers: TNameAndLinks = [
 ];
 
 export function Sandbox() {
-  const Viewer = <SocialViewer id={"1"} data={speakers} />;
+  const Viewer = <SocialViewer data={speakers} />;
 
   const components = [
     {
