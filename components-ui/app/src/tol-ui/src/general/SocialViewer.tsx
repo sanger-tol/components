@@ -36,7 +36,12 @@ export function SocialViewer(props: PNameAndLinks) {
           </h3>
           <div className="d-flex gap-1">
             {item.links.map((link, bottomLevelIndex) => (
-              <a key={bottomLevelIndex} href={link.link} target="_blank">
+              <a
+                key={bottomLevelIndex}
+                href={link.link}
+                target="_blank"
+                className="icon"
+              >
                 <Icon
                   icon={link.icon}
                   config={link.icon === "link" ? "solid" : "brands"}
