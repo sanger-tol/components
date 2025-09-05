@@ -20,16 +20,14 @@ def upgrade() -> None:
     # Update the JSONB column to remove the specified keys
     op.execute("""
         UPDATE component
-        SET config = config - 'fieldMeta' || jsonb_set(
-            config->'fieldMeta',
-            '{data}',
-            'null'::jsonb,
-            true
-        ) || jsonb_set(
-            config->'fieldMeta',
-            '{order,inactive}',
-            'null'::jsonb,
-            true
+        SET config = jsonb_set(
+            jsonb_set(
+                config,
+                '{fieldMeta}',
+                (config->'fieldMeta') - 'data'::TEXT
+            ),
+            '{fieldMeta,order}',
+            (config->'fieldMeta'->'order') - 'inactive'::TEXT
         )
         WHERE config ? 'fieldMeta';
     """)
