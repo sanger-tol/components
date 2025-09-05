@@ -5,7 +5,7 @@
  */
 
 import { Icon } from ".";
-import { FontAwesomeIcon } from "@fortawesome/free-brands-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/free-brands-svg-icons";
 
 export interface PNameAndLinks {
   data: TNameAndLinks;
@@ -38,7 +38,7 @@ export function SocialViewer(props: PNameAndLinks) {
             {item.links.map((link, bottomLevelIndex) => {
               return (
                 <a key={bottomLevelIndex} href={link.link} target="_blank">
-                  <FontAwesomeIcon icon={link.icon} size="10" />
+                  <Icon icon={link.icon} config="fab"/>
                 </a>
               );
             })}
