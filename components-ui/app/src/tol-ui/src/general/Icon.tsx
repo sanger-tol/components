@@ -13,13 +13,15 @@ export interface PIcon {
 }
 
 export function Icon(props: PIcon) {
-  const { icon, size, config= "fas" } = props;
+  const { icon, size, config } = props;
 // {console.log(`<FontAwesomeIcon icon={fa-${config} fa-${icon}} size={size} />`)}
   return (
     
     <span>
       {/* @ts-ignore */}
-      <FontAwesomeIcon icon={[config, icon]} size={size} />
+      {
+        config? (<FontAwesomeIcon icon={`fa-${config} fa-${icon}`} size={size} />) : (<FontAwesomeIcon icon={`fa-solid fa-${icon}`} size={size} />)
+      }
     </span>
   );
 }

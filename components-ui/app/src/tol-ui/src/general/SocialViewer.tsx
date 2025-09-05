@@ -30,18 +30,20 @@ export function SocialViewer(props: PNameAndLinks) {
   return (
     <div>
       {data.map((item, topLevelIndex) => (
-        <div className="">
+        <div className="d-flex gap-2">
           <h3 className="text-lg font-semibold" key={topLevelIndex}>
             {item.name}
           </h3>
-          <div>
-            {item.links.map((link, bottomLevelIndex) => {
-              return (
-                <a key={bottomLevelIndex} href={link.link} target="_blank">
-                  <Icon icon={link.icon} config="fab"/>
-                </a>
-              );
-            })}
+          <div className="d-flex gap-1">
+            {item.links.map((link, bottomLevelIndex) => (
+              <a key={bottomLevelIndex} href={link.link} target="_blank">
+                <Icon
+                  icon={link.icon}
+                  config={link.icon === "link" ? "solid" : "brands"}
+                  size={"2x"}
+                />
+              </a>
+            ))}
           </div>
         </div>
       ))}

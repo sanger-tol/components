@@ -15,6 +15,7 @@ const speakers: TNameAndLinks = [
     links: [
       { link: "https://twitter.com/kiernan", icon: "twitter" },
       { link: "https://github.com/kiernan", icon: "github" },
+      { link: "www.externallink.com", icon: "link" },
     ],
   },
   {
