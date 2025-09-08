@@ -1,10 +1,10 @@
 {
   "name": "components-ui",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "private": true,
   "proxy": "http://components-api:80",
   "dependencies": {
-    "@tol/tol-ui": "2.4.2",
+    "@tol/tol-ui": "2.4.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-bootstrap": "2.8.0",
