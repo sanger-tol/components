@@ -108,7 +108,7 @@ export function MultipleSelect(props: PMultipleSelect) {
   };
 
   return (
-    <RSForm.Group controlId="formMultipleSelect">
+    <RSForm.Group controlId="formMultipleSelect" as="span">
       {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
       <span onClick={onClick}>
         <RSCheckPicker
@@ -137,7 +137,15 @@ export function MultipleSelect(props: PMultipleSelect) {
           className={className}
         />
       </span>
-      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
+      {/*
+        If there is a multiple select toggle filter, MultipleSelect being an RSForm.Group
+        pushes it downwards. To fix this, MultipleSelect has been made a span. This fixed the
+        filter but made the error message too high up, so this class moves it back down again
+        See `_form.scss`
+      */}
+      <span className="tol-multiple-select-error-message">
+        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
+      </span>
     </RSForm.Group>
   );
 }
