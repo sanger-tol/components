@@ -17,6 +17,7 @@ import {
   Link,
   List,
   RelationshipDetail,
+  ICustomCellRenderers,
 } from "../..";
 
 export interface PCell {
@@ -24,22 +25,13 @@ export interface PCell {
   value?: any,
   dataObject: IDataObject,
   renderer: TCellRenderer;
+  customCellRenderers?: ICustomCellRenderers;
 }
 
 export function Cell(props: PCell) {
-  const { value, dataObject, renderer } = props;
+  const { value, dataObject, renderer, customCellRenderers } = props;
 
-  if (
-    // renderer type is not defined
-    !renderer ||
-    !renderer.type ||
-    // no value and not a custom renderer as custom renderers may not require a value
-    // no need to to deal with empty values with pre-defined cellRenderers
-    (!value && renderer.type !== "custom")
-  )
-    return <>{value}</>;
-
-  const elements = {
+  const preDefinedElements = {
     relationship: RelationshipDetail,
     relationshipDetail: RelationshipDetail,
     datetime: Datetime,
@@ -49,9 +41,20 @@ export function Cell(props: PCell) {
     expander: Expander,
     float: Float,
     integer: Integer,
-    link: Link,
-    custom: renderer.element,
+    link: Link
   };
+
+  if (
+    // renderer type is not defined
+    !renderer ||
+    !renderer.type ||
+    // no value and not a custom renderer as custom renderers may not require a value
+    // no need to to deal with empty values with pre-defined cellRenderers
+    (!value && renderer.type in preDefinedElements)
+  )
+    return <>{value}</>;
+
+  const elements = { ...preDefinedElements, ...customCellRenderers };
   renderer.element = elements[renderer.type];
 
   const elementProps: Record<string, any> = { ...props };

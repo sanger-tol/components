@@ -22,7 +22,8 @@ import {
   ITableRecord,
   TCellRenderer,
   Cell,
-  deepCopy
+  deepCopy,
+  ICustomCellRenderers
 } from "..";
 
 interface Rgb {
@@ -31,8 +32,6 @@ interface Rgb {
   g: number;
   b: number;
 }
-
-export const tableVersion = "25-tabVer";
 
 export function isRelationship(key: string) {
   return key.includes(".");
@@ -61,10 +60,7 @@ const sourceColours = {
 export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
   return {
     data: fieldMeta?.data || {},
-    dataWithDefaults:
-      deepCopyWithCellRenderers(
-        fieldMeta
-      ),
+    dataWithDefaults: deepCopy(fieldMeta?.data),
     order: fieldMeta?.order || {
       active: [],
     },
@@ -123,6 +119,7 @@ function addValueBasedCellRenderer(
 export function convertTableData(
   dataObjects: TDataObjectListOrNull,
   fieldMeta: FieldMeta,
+  customCellRenderers?: ICustomCellRenderers
 ): ITableData {
   if (!dataObjects) return [];
   const data: ITableData = [];
@@ -142,6 +139,7 @@ export function convertTableData(
           value={value}
           dataObject={obj}
           renderer={fieldMeta.dataWithDefaults![key].cellRenderer!}
+          customCellRenderers={customCellRenderers}
         />
       );
 
@@ -156,7 +154,7 @@ function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
   if (isRelationship(key) && key.split(".")[1] === "id") {
     return { type: "relationship" };
   }
-  //console.log(key, type);
+
   switch (type) {
     case "datetime":
       return { type: "datetime" };
@@ -172,7 +170,7 @@ function addRemoteFilterType(type: string, cardinality: number) {
 }
 
 function sortFieldsByRename(fieldMeta: FieldMeta) {
-  if (!fieldMeta || !fieldMeta.order.inactive) return [];
+  if (!fieldMeta || !fieldMeta.order.inactive) return;
   return fieldMeta.order.inactive.sort((a, b) => {
     const fieldA = fieldMeta.dataWithDefaults![a];
     const fieldB = fieldMeta.dataWithDefaults![b];
@@ -180,18 +178,6 @@ function sortFieldsByRename(fieldMeta: FieldMeta) {
     if (fieldA.rename! > fieldB.rename!) return 1;
     return 0;
   });
-}
-
-function dealWithInactiveFields(
-  key: string,
-  fieldMeta: FieldMeta,
-) {
-  if (!fieldMeta.order.inactive) {
-    fieldMeta.order.inactive = [];
-  }
-  if (!fieldMeta.order.active.includes(key)) {
-    fieldMeta.order.inactive.push(key);
-  }
 }
 
 export function addDefaultsFromEntityMeta(
@@ -224,8 +210,6 @@ export function addFieldMetaDefaults(
   for (const [key, meta] of Object.entries(
     entityMeta.flatAttributes[objectType]
   )) {
-    // TODO: pre-flight check for old fields
-    dealWithInactiveFields(key, fieldMeta);
     if (fieldMeta.order.active.includes(key) || fieldMeta.order.inactive?.includes(key)) {
       addDefaultsFromEntityMeta(
         key,
@@ -245,14 +229,8 @@ export function createSort(sortColumn: string, sortType: string) {
   return sortColumn;
 }
 
-function deleteRedundantLocalStorageEntries(ids: string[]) {
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key && ids.some((id) => key.includes(id))) {
-      localStorage.removeItem(key);
-      i--; // adjust the index after removing an item
-    }
-  }
+function getTableConfigKey(id: string) {
+  return `${id}-9-25`;
 }
 
 export function setTableConfigLocalStorage(
@@ -260,46 +238,45 @@ export function setTableConfigLocalStorage(
   key: string,
   value: any
 ) {
+  let config = getTableConfigLocalStorage(tableId);
+  if (!config) config = {};
+  config[key] = value;
   localStorage.setItem(
-    `${key}-${tableId}-${tableVersion}`,
-    JSON.stringify(value)
+    getTableConfigKey(tableId),
+    JSON.stringify(config)
   );
 }
 
-export function getTableConfigLocalStorage(tableId: string, key: string) {
-  deleteRedundantLocalStorageEntries([
-    "-field-meta", // legacy suffix
-    "-table-v", // recent suffix
-  ]);
-
-  const data = localStorage.getItem(`${key}-${tableId}-${tableVersion}`);
-  if (data) return JSON.parse(data);
-}
-
-export function getFieldMetaLocalStorage(
-  tableId: string,
-  fields?: FieldMetaData
-) {
-  const data = localStorage.getItem(`fieldMeta-${tableId}-${tableVersion}`);
-  //if (data) return fieldMetaToCellRenderer(fields || {}, JSON.parse(data));
-}
-
-export function deleteFieldMetaLocalStorage(tableId: string) {
-  localStorage.removeItem(`${tableId}-${tableVersion}`);
-  window.location.reload();
-}
-
-export function deepCopyWithCellRenderers(
-  fieldMeta?: FieldMeta,
-) {
-  const fmData = deepCopy(fieldMeta?.data);
-  for (const field in fmData) {
-    if (fmData[field].cellRenderer) {
-      fmData[field].cellRenderer = fieldMeta?.data?.[field].cellRenderer;
+export function getTableConfigLocalStorage(tableId: string, key?: string) {
+  const data = localStorage.getItem(getTableConfigKey(tableId));
+  if (data) {
+    const config = JSON.parse(data);
+    if (key) {
+      if (key in config) {
+        return config[key];
+      } else {
+        return undefined;
+      }
     }
+    return config;
   }
-  return fmData;
 }
+
+// function getWithCellRenderers(fieldMeta?: FieldMeta) {
+//   return deepCopyWithCellRenderers(fieldMeta);
+// }
+
+// function deepCopyWithCellRenderers(
+//   fieldMeta?: FieldMeta,
+// ) {
+//   const fmData = deepCopy(fieldMeta?.data);
+//   for (const field in fmData) {
+//     if (fmData[field].cellRenderer) {
+//       fmData[field].cellRenderer = fieldMeta?.data?.[field].cellRenderer;
+//     }
+//   }
+//   return fmData;
+// }
 
 function rgbToString(rgb: Rgb, opacity: number) {
   return (

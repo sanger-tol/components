@@ -15,7 +15,8 @@ import {
   IRemoteTarget,
   IDropdownButtonConfig,
   createSort,
-  MultipleSelect
+  MultipleSelect,
+  ITableConfigSave
 } from "..";
 
 
@@ -25,18 +26,13 @@ interface Props extends IRemoteTarget {
   title: string;
   fieldMeta: FieldMeta;
   displaySource?: boolean;
-  onConfigSave: (
-    fieldMeta: FieldMeta,
-    actions?: string[],
-    sortByAttribute?: string,
-    sortByType?: string
-  ) => void;
   sticky?: boolean;
-  customAttributeSelection?: string[] | undefined;
+  customAttributeSelection?: string[];
   actions?: IDropdownButtonConfig[];
   actionChoices?: string[]; // just the names of the actions
   groupBy?: boolean;
   defaultSort?: string;
+  onConfigSave: (config: ITableConfigSave) => void;
 }
 
 export function ColumnConfigDrawer(props: Props) {
@@ -76,7 +72,12 @@ export function ColumnConfigDrawer(props: Props) {
   const saveConfig = () => {
     if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || originalActions !== actions) {
       fieldMeta.order.active = attributes;
-      onConfigSave(fieldMeta, actions, sortByAttribute[0], sortByType);
+      onConfigSave({
+        fieldMeta,
+        actions,
+        sortByAttribute: sortByAttribute[0],
+        sortByType
+      });
       setInitialAttributes(attributes);
     }
     setOpen(!open);

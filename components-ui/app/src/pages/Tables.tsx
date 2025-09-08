@@ -35,9 +35,9 @@ export function Tables() {
     }
   ];
 
-  function ExampleElement({ text, mlwhTag }) {
-    if (!text || !mlwhTag) return <></>;
-    return `${text}: ${mlwhTag}`;
+  function ExampleElement({ p1, p2 }) {
+    //if (!p1 || !p2) return 'A PROP IS EMPTY!';
+    return `${p1}: ${p2}`;
   }
 
   const table1 = (
@@ -61,6 +61,9 @@ export function Tables() {
             title: {
               text: "Run Data",
             },
+          }}
+          cellRenderers={{
+            exampleElement: ExampleElement,
           }}
           fields={{
             data: {
@@ -109,11 +112,10 @@ export function Tables() {
               custom_field: {
                 rename: "Custom Field",
                 cellRenderer: {
-                  type: "custom",
-                  element: ExampleElement,
+                  type: "exampleElement",
                   props: {
-                    mlwhTag: "${mlwh_tag_index}",
-                    text: "Custom Field",
+                    p1: "${mlwh_species.sts_scientific_name}",
+                    p2: "Custom Field",
                   }
                 },
               },

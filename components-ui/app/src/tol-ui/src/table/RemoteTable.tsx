@@ -24,7 +24,6 @@ import {
   createSort,
   filterHasUpdated,
   generateFilter,
-  getFieldMetaLocalStorage,
   getTableConfigLocalStorage,
   resetFiltersBelow,
   setTableConfigLocalStorage,
@@ -35,15 +34,16 @@ import {
   IEntityMeta,
   initialiseFieldMeta,
   TDataObjectListOrNull,
-  deepCopy,
+  ICustomCellRenderers,
 } from '..';
 
 
-interface Props extends IRemoteTargetAndZone {
+export interface PRemoteTable extends IRemoteTargetAndZone {
   id: string;
   source?: string;
 
   fields?: FieldMeta;
+  cellRenderers?: ICustomCellRenderers;
   height?: any;
   basic?: boolean;
   forceUpdate?: boolean;
@@ -74,7 +74,7 @@ interface Props extends IRemoteTargetAndZone {
   setSelectedRows?: (selectedRows: string[]) => void;
 }
 
-export function RemoteTable(props: Props) {
+export function RemoteTable(props: PRemoteTable) {
   const {
     id,
     objectType,
@@ -88,25 +88,29 @@ export function RemoteTable(props: Props) {
     defaultSort,
     noConfigModal,
     noDownload,
-    rowSelection,
     actionDataSource = new TsDataSource({
       apiPrefix: ACTION_API_PREFIX,
     }),
     actions,
     utilityBarConfig,
+    cellRenderers,
     contents,
     height = "100%",
   } = props;
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(initialiseFieldMeta(props.fields));
-
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(() => {
+    const fm = getTableConfigLocalStorage(id, "fieldMeta");
+    console.log(fm)
+    if (fm) return fm;
+    return initialiseFieldMeta(props.fields);
+  });
   // pagination
   const getPageSize = () => {
-    if (props.pageSize) return props.pageSize;
     const size = getTableConfigLocalStorage(id, "pageSize");
-    return size ?? 50;
+    if (size) return size;
+    return props.pageSize ?? 50;
   };
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(getPageSize);
@@ -197,8 +201,6 @@ export function RemoteTable(props: Props) {
           setError(error.message);
         })
     }
-    // if (!fieldMeta && !noConfigModal)
-    //   setTableConfigLocalStorage(id, "fieldMeta", fm);
   }
 
   const renderTable = async () => {
@@ -226,7 +228,7 @@ export function RemoteTable(props: Props) {
       .then((dataObjects: TDataObjectListOrNull) => {
         setError("");
         setData(
-          convertTableData(dataObjects, fieldMeta!)
+          convertTableData(dataObjects, fieldMeta!, cellRenderers)
         );
         //setTotalSize(apiMeta.total);
       })

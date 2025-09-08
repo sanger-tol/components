@@ -14,19 +14,20 @@ import {
   IBoardTargetAndZone,
   updateConfigAndUpsert,
   useBoardPrivilege,
-  PRIVILEGE
+  PRIVILEGE,
+  ITableConfigSave
 } from "..";
 
 
 interface Props extends IBoardTargetAndZone {
   id: string;
   title: string;
-  config: any;
+  config: ITableConfigSave;
 }
 
 export function BoardTable(props: Props) {
   const { id, title, boardObjectType, boardDataSource, zone } = props;
-  const [config, setConfig] = useState<any>(props.config);
+  const [config, setConfig] = useState<ITableConfigSave>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
   const { privilege } = useBoardPrivilege()

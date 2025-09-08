@@ -5,6 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 
+export interface ICustomCellRenderers {
+  [customType: string]: any;
+}
+
 interface ElementProps {
   [prop: string]: string;
 }
@@ -20,7 +24,7 @@ export type CellRendererType =
   | "float"
   | "integer"
   | "link"
-  | "custom";
+  | string;
 
 export interface ICellRenderer {
   type: CellRendererType;
