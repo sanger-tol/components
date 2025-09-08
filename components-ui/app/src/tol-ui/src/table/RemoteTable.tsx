@@ -35,6 +35,8 @@ import {
   initialiseFieldMeta,
   TDataObjectListOrNull,
   ICustomCellRenderers,
+  ITableDrawerSave,
+  ITableConfigSave,
 } from '..';
 
 
@@ -43,19 +45,20 @@ export interface PRemoteTable extends IRemoteTargetAndZone {
   source?: string;
 
   fields?: FieldMeta;
+  defaultSortByAttribute?: string;
+  defaultSortByType?: string;
   cellRenderers?: ICustomCellRenderers;
   height?: any;
   basic?: boolean;
   forceUpdate?: boolean;
 
-  onConfigSave?: any;
-  onPageSizeChange?: any;
-  onToggleFilterVisibility?: any;
+  onConfigSave?: (config: ITableDrawerSave) => void;
+  onPageSizeChange?: (pageSize: number) => void;
+  onToggleFilterVisibility?: (visible: boolean) => void;
 
-  defaultSort?: string;
   pageSize?: number;
-  displaySource?: boolean;
   filterVisibility?: boolean;
+  displaySource?: boolean;
 
   noFilter?: boolean;
   noPagination?: boolean;
@@ -79,13 +82,14 @@ export function RemoteTable(props: PRemoteTable) {
     id,
     objectType,
     dataSource,
+    defaultSortByAttribute,
+    defaultSortByType,
     basic,
     forceUpdate,
     zone,
     setZone,
     onPageSizeChange,
     onToggleFilterVisibility,
-    defaultSort,
     noConfigModal,
     noDownload,
     actionDataSource = new TsDataSource({
@@ -102,7 +106,6 @@ export function RemoteTable(props: PRemoteTable) {
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<FieldMeta>(() => {
     const fm = getTableConfigLocalStorage(id, "fieldMeta");
-    console.log(fm)
     if (fm) return fm;
     return initialiseFieldMeta(props.fields);
   });
@@ -118,8 +121,8 @@ export function RemoteTable(props: PRemoteTable) {
 
   // filtering/sorting
   const [filter, setFilter] = useState<object | undefined>({});
-  const [sortColumn, setSortColumn] = useState<string>("");
-  const [sortType, setSortType] = useState<string>("asc");
+  const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
+  const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
 
   // filter visibility
   const getFilterVisibility = () => {
@@ -127,8 +130,7 @@ export function RemoteTable(props: PRemoteTable) {
     const visible = getTableConfigLocalStorage(id, "filterVisibility");
     return visible ?? true;
   };
-  const [filterVisibility, setFilterVisibility] =
-    useState<boolean>(getFilterVisibility);
+  const [filterVisibility, setFilterVisibility] = useState<boolean>(getFilterVisibility);
 
   // loading, error and warning info
   const [loading, setLoading] = useState<boolean>(true);
@@ -150,8 +152,8 @@ export function RemoteTable(props: PRemoteTable) {
   const [actionModalOpen, setActionModalOpen] = useState<boolean>(false);
 
   const handleSortColumn = (sortColumn: any, sortType: any) => {
-    setSortColumn(sortColumn);
-    setSortType(sortType);
+    setSortByAttribute(sortColumn);
+    setSortByType(sortType);
   };
 
   useEffect(() => {
@@ -163,7 +165,7 @@ export function RemoteTable(props: PRemoteTable) {
 
   useEffectUpdate(() => {
     renderTable();
-  }, [page, sortColumn, sortType, filter, forceUpdate]);
+  }, [page, sortByAttribute, sortByType, filter, forceUpdate]);
 
   useEffectUpdate(() => {
     if (page === 1) renderTable();
@@ -209,20 +211,13 @@ export function RemoteTable(props: PRemoteTable) {
     }
     setLoading(true);
 
-    let sortBy: string | undefined;
-    if (sortColumn !== "") {
-      sortBy = createSort(sortColumn, sortType);
-    } else if (defaultSort !== undefined) {
-      sortBy = defaultSort;
-    }
-
     dataSource
       .getListPage({
         objectType,
         page,
         pageSize,
         filter,
-        sortBy,
+        sortBy: createSort(sortByAttribute, sortByType),
         requestedFields: (fieldMeta?.order.active || []).join(','),
       })
       .then((dataObjects: TDataObjectListOrNull) => {
@@ -248,13 +243,13 @@ export function RemoteTable(props: PRemoteTable) {
       });
   };
 
-  const onConfigSave = (
-    fm: FieldMeta,
-    actions?: string[],
-    sortByAttribute?: string,
-    sortByType?: string
-  ) => {
-    setFieldMeta(fm);
+  const onConfigSave = ({
+    fieldMeta: fm,
+    actions,
+    defaultSortByAttribute,
+    defaultSortByType
+  }: ITableConfigSave) => {
+    setFieldMeta(fm!);
     resetFiltersBelow({
       id: id,
       zone: zone as IZone,
@@ -263,19 +258,19 @@ export function RemoteTable(props: PRemoteTable) {
     setZone({ ...zone });
 
     if (props.onConfigSave) {
-      // add in the default sort here
-      props.onConfigSave(
-        fm,
+      props.onConfigSave({
+        fieldMeta: fm,
         actions,
-        createSort(sortByAttribute || "", sortByType || "asc")
-      );
+        defaultSortByAttribute: defaultSortByAttribute,
+        defaultSortByType: defaultSortByType
+      });
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", fm);
     }
 
-    if (sortByAttribute) {
-      setSortColumn(sortByAttribute);
-      setSortType(sortByType || "asc");
+    if (defaultSortByAttribute) {
+      setSortByAttribute(defaultSortByAttribute);
+      setSortByType(defaultSortByType);
     }
   };
 
@@ -368,9 +363,10 @@ export function RemoteTable(props: PRemoteTable) {
         }
         filterVisibility={filterVisibility}
         setFilterVisibility={setFilterVisibility}
-        sortColumn={sortColumn}
-        sortType={sortType}
-        defaultSort={defaultSort}
+        sortByAttribute={sortByAttribute}
+        sortByType={sortByType}
+        defaultSortByAttribute={defaultSortByAttribute}
+        defaultSortByType={defaultSortByType}
         handleSortColumn={handleSortColumn}
         filter={filter}
         onConfigSave={onConfigSave}

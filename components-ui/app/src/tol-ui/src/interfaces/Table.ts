@@ -6,11 +6,16 @@ SPDX-License-Identifier: MIT
 
 import { FieldMeta } from "..";
 
-export interface ITableConfigSave {
-	fieldMeta?: FieldMeta;
-	filterVisibility?: boolean;
-	pageSize?: number;
-	actions?: string[];
-	sortByAttribute?: string;
-	sortByType?: string;
+export interface ITableDrawerSave {
+  fieldMeta?: FieldMeta;
+  actions?: string[];
+  defaultSortByAttribute?: string;
+  defaultSortByType?: string;
 }
+
+export interface ITableOtherSave {
+  filterVisibility?: boolean;
+  pageSize?: number;
+}
+
+export interface ITableConfigSave extends ITableDrawerSave, ITableOtherSave {}

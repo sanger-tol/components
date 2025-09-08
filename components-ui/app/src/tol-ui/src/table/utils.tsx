@@ -222,11 +222,18 @@ export function addFieldMetaDefaults(
   return fieldMeta;
 }
 
-export function createSort(sortColumn: string, sortType: string) {
+export function createSort(sortColumn?: string, sortType?: string) {
+  if (!sortColumn) return undefined;
   if (sortType === "desc" && !sortColumn.startsWith("-")) {
     return "-" + sortColumn;
   }
   return sortColumn;
+}
+
+export function optimiseFieldMetaForSave(fieldMeta: FieldMeta) {
+  const fm = deepCopy(fieldMeta);
+  delete fm.dataWithDefaults;
+  return fm;
 }
 
 function getTableConfigKey(id: string) {
@@ -261,22 +268,6 @@ export function getTableConfigLocalStorage(tableId: string, key?: string) {
     return config;
   }
 }
-
-// function getWithCellRenderers(fieldMeta?: FieldMeta) {
-//   return deepCopyWithCellRenderers(fieldMeta);
-// }
-
-// function deepCopyWithCellRenderers(
-//   fieldMeta?: FieldMeta,
-// ) {
-//   const fmData = deepCopy(fieldMeta?.data);
-//   for (const field in fmData) {
-//     if (fmData[field].cellRenderer) {
-//       fmData[field].cellRenderer = fieldMeta?.data?.[field].cellRenderer;
-//     }
-//   }
-//   return fmData;
-// }
 
 function rgbToString(rgb: Rgb, opacity: number) {
   return (

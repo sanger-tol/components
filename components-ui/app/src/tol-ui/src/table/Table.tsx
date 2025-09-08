@@ -28,6 +28,7 @@ import {
   PDropdownButtons,
   useBoardPrivilege,
   PRIVILEGE,
+  ITableConfigSave,
 } from "..";
 
 
@@ -54,14 +55,14 @@ interface Props extends IRemoteTargetAndZone {
   filterVisibility?: boolean;
   setFilterVisibility?: any;
 
-  sortColumn: string;
-  sortType: any;
-  defaultSort?: string;
+  sortByAttribute?: string;
+  sortByType?: string;
+  defaultSortByAttribute?: string;
+  defaultSortByType?: string;
   handleSortColumn: any;
-
   filter: any;
 
-  onConfigSave: any;
+  onConfigSave: (config: ITableConfigSave) => void;
 
   noFilter?: boolean;
   noPagination?: boolean;
@@ -108,9 +109,10 @@ export function Table(props: Props) {
     filterVisibility,
     setFilterVisibility,
 
-    sortColumn,
-    sortType,
-    defaultSort,
+    sortByAttribute,
+    sortByType,
+    defaultSortByAttribute,
+    defaultSortByType,
     handleSortColumn,
     filter,
 
@@ -183,7 +185,7 @@ export function Table(props: Props) {
   useEffectUpdate(() => {
     checked = false;
     setSelectedRows([]);
-  }, [page, pageSize, filter, sortColumn, sortType]);
+  }, [page, pageSize, filter, sortByAttribute, sortByType]);
 
   const actionDropDownButtons = actions?.map((button) => ({
     ...button,
@@ -281,7 +283,8 @@ export function Table(props: Props) {
         title={"Table Configuration"}
         fieldMeta={fieldMeta}
         actions={actions}
-        defaultSort={defaultSort}
+        defaultSortByAttribute={defaultSortByAttribute}
+        defaultSortByType={defaultSortByType}
         open={open}
         groupBy={groupBy}
         setOpen={setOpen}
@@ -396,8 +399,8 @@ export function Table(props: Props) {
                   data={data}
                   headerHeight={!noFilter && filterVisibility ? 85 : 42}
                   loading={loading}
-                  sortColumn={sortColumn}
-                  sortType={sortType}
+                  sortColumn={sortByAttribute}
+                  sortType={sortByType}
                   onSortColumn={handleSortColumn!}
                   rowClassName={(rowData: any) => {
                     if (rowData) {

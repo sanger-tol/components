@@ -14,9 +14,9 @@ import {
   FieldMeta,
   IRemoteTarget,
   IDropdownButtonConfig,
-  createSort,
   MultipleSelect,
-  ITableConfigSave
+  ITableConfigSave,
+  optimiseFieldMetaForSave
 } from "..";
 
 
@@ -31,7 +31,8 @@ interface Props extends IRemoteTarget {
   actions?: IDropdownButtonConfig[];
   actionChoices?: string[]; // just the names of the actions
   groupBy?: boolean;
-  defaultSort?: string;
+  defaultSortByAttribute?: string;
+  defaultSortByType?: string;
   onConfigSave: (config: ITableConfigSave) => void;
 }
 
@@ -44,7 +45,8 @@ export function ColumnConfigDrawer(props: Props) {
     onConfigSave,
     customAttributeSelection,
     groupBy,
-    defaultSort,
+    defaultSortByAttribute,
+    defaultSortByType,
     actionChoices,
   } = props;
 
@@ -54,15 +56,8 @@ export function ColumnConfigDrawer(props: Props) {
   // used to store selected actions from the dropdown
   const originalActions = props.actions?.map((btn) => btn.name as string) ?? [];
   const [actions, setActions] = useState<string[]>(originalActions);
-  const [sortByAttribute, setSortByAttribute] = useState<string[]>(() => {
-    if (!defaultSort) return [];
-    return defaultSort.startsWith("-")
-      ? [defaultSort.slice(1)]
-      : [defaultSort];
-  });
-  const [sortByType, setsortByType] = useState<string>(
-    defaultSort?.startsWith("-") ? "desc" : "asc"
-  );
+  const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
+  const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
@@ -73,10 +68,10 @@ export function ColumnConfigDrawer(props: Props) {
     if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || originalActions !== actions) {
       fieldMeta.order.active = attributes;
       onConfigSave({
-        fieldMeta,
+        fieldMeta: optimiseFieldMetaForSave(fieldMeta),
         actions,
-        sortByAttribute: sortByAttribute[0],
-        sortByType
+        defaultSortByAttribute,
+        defaultSortByType,
       });
       setInitialAttributes(attributes);
     }
@@ -164,7 +159,8 @@ export function ColumnConfigDrawer(props: Props) {
 
   const handleCloseDrawer = () => {
     if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) ||
-      defaultSort !== createSort(sortByAttribute[0], sortByType)
+      defaultSortByAttribute !== sortByAttribute ||
+      defaultSortByType !== sortByType
     ) {
       setOpenSaveModal(true);
     } else {
@@ -196,7 +192,7 @@ export function ColumnConfigDrawer(props: Props) {
           key={direction}
           text={direction}
           type="primary"
-          onClick={() => setsortByType(direction)}
+          onClick={() => setSortByType(direction)}
           active={sortByType === direction}
           size="lg"
           className="tol-board-chart-sort-buttons"
@@ -213,8 +209,8 @@ export function ColumnConfigDrawer(props: Props) {
         groupBy={groupBy}
         maxSelections={1}
         placeholder="Default Sort Column"
-        attribute={sortByAttribute}
-        setAttributes={setSortByAttribute}
+        attribute={sortByAttribute ? [sortByAttribute] : []}
+        setAttributes={(a) => setSortByAttribute(a[0])}
         disabledValues={null}
         numPopulatedFields={0}
         populatedFieldType={"column"}
@@ -224,7 +220,7 @@ export function ColumnConfigDrawer(props: Props) {
         customAttributeSelection={customAttributeSelection}
         sticky={true}
       />
-      {sortByAttribute.length > 0 && (
+      {sortByAttribute && (
         <>
           {sortByButtons}
         </>

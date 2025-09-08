@@ -15,28 +15,33 @@ import {
   updateConfigAndUpsert,
   useBoardPrivilege,
   PRIVILEGE,
-  ITableConfigSave
+  ITableConfigSave,
 } from "..";
 
 
-interface Props extends IBoardTargetAndZone {
+export interface PBoardTable extends IBoardTargetAndZone {
   id: string;
   title: string;
   config: ITableConfigSave;
 }
 
-export function BoardTable(props: Props) {
+export function BoardTable(props: PBoardTable) {
   const { id, title, boardObjectType, boardDataSource, zone } = props;
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
   const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
   const { privilege } = useBoardPrivilege()
 
-
-  const onConfigSave = (fm: FieldMeta, actions: string[], sortByAtt: string) => {
+  const onConfigSave = ({
+    fieldMeta: fm,
+    actions,
+    defaultSortByAttribute,
+    defaultSortByType
+  }: ITableConfigSave) => {
     config["fieldMeta"] = fm;
     config["actions"] = actions;
-    config["sort_by"] = sortByAtt
+    config["defaultSortByAttribute"] = defaultSortByAttribute;
+    config["defaultSortByType"] = defaultSortByType;
     setForceUpdate(!forceUpdate); // fetches new data on save
     setConfig({ ...config });
     updateConfigAndUpsert(
@@ -58,7 +63,7 @@ export function BoardTable(props: Props) {
     );
   };
 
-  const onPageSizeChange = (pageSize: boolean) => {
+  const onPageSizeChange = (pageSize: number) => {
     config["pageSize"] = pageSize;
     setConfig({ ...config });
     updateConfigAndUpsert(
@@ -85,19 +90,16 @@ export function BoardTable(props: Props) {
       noConfigModal={privilege !== PRIVILEGE.BOARD.EDITABLE}
       displaySource
       fields={initialiseFieldMeta(config.fieldMeta)}
-      pageSize={config.pageSize || 50}
-      filterVisibility={config.filterVisibility ?? true}
-      defaultSort={
-        config.sort_by ||
-        config?.fieldMeta?.order?.active[0] ||
-        undefined
-      }
+      pageSize={config.pageSize}
+      filterVisibility={config.filterVisibility}
+      defaultSortByAttribute={config.defaultSortByAttribute}
+      defaultSortByType={config.defaultSortByType}
       onConfigSave={onConfigSave}
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
       forceUpdate={forceUpdate}
       // actions={config.actions}
-      rowSelection={config.actions?.length > 0}
+      rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
       utilityBarConfig={{
         title: {
           text: title,
