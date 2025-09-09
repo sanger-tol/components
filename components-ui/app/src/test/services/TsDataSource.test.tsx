@@ -272,40 +272,37 @@ const mockDataSource = new TsDataSource({
 
 describe("generateEndpoint function", () => {
   test("Returns empty string when no apiPrefix, target, or objectId", () => {
-    const mockDataSource = new TsDataSource({ baseUrl: "test" });
+    const mockDataSource = new TsDataSource({});
     const endpoint = mockDataSource.generateEndpoint();
     expect(endpoint).toBe("");
   });
 
-  test("Returns correct endpoint with apiPrefix only", () => {
+  test("Returns correct endpoint with apiPath only", () => {
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
-      apiPrefix: "api",
+      apiPath: "api",
     });
     const endpoint = mockDataSource.generateEndpoint();
     expect(endpoint).toBe("/api");
   });
 
-  test("Returns correct endpoint with apiPrefix and target", () => {
+  test("Returns correct endpoint with apiPath and target", () => {
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
-      apiPrefix: "api",
+      apiPath: "api",
     });
     const endpoint = mockDataSource.generateEndpoint("target");
     expect(endpoint).toBe("/api/target");
   });
 
-  test("Returns correct endpoint with apiPrefix, target, and objectId", () => {
+  test("Returns correct endpoint with apiPath, target, and objectId", () => {
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
-      apiPrefix: "api",
+      apiPath: "api",
     });
     const endpoint = mockDataSource.generateEndpoint("target", "/123");
     expect(endpoint).toBe("/api/target/123");
   });
 
-  test("Returns correct endpoint with target and objectId but no apiPrefix", () => {
-    const mockDataSource = new TsDataSource({ baseUrl: "test" });
+  test("Returns correct endpoint with target and objectId but no apiPath", () => {
+    const mockDataSource = new TsDataSource({});
     const endpoint = mockDataSource.generateEndpoint("target", "/123");
     expect(endpoint).toBe("/target/123");
   });
