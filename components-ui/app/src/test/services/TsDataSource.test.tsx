@@ -371,7 +371,7 @@ describe("Testing getters", () => {
 
   test("getSourceKey returns correct source key", () => {
     const sourceKey = mockDataSource.getSourceKey();
-    expect(sourceKey).toBe("test.website.com/api/v1/data/test-dataspace");
+    expect(sourceKey).toBe("test.website.com/api/v2/data/test-dataspace");
   });
 
   test("getSourceKey returns 'default' when ALL of url, apiPath, apiDataPath and dataspace are undefined", () => {
