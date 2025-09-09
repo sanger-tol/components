@@ -263,7 +263,10 @@ const mockClient = () => ({
 
 // need to adjust to account for the get config
 const mockDataSource = new TsDataSource({
-  baseUrl: "test",
+  url: "test.website.com",
+  apiPath: "api/v2",
+  apiDataPath: "data",
+  dataspace: "test-dataspace",
   client: mockClient,
 });
 
@@ -308,35 +311,144 @@ describe("generateEndpoint function", () => {
   });
 });
 
-describe("Testing getBaseUrl and getApiPrefix functions", () => {
+describe("Testing getters", () => {
+  test("getUrl returns correct URL", () => {
+    const url = mockDataSource.getUrl();
+    expect(url).toBe("test.website.com");
+  });
+
+  test("getUrl returns undefined when no URL is provided", () => {
+    const mockDataSource = new TsDataSource({
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
+    });
+    const url = mockDataSource.getUrl();
+    expect(url).toBe(undefined);
+  });
+
+  test("getApiPath returns correct API path", () => {
+    const apiPath = mockDataSource.getApiPath();
+    expect(apiPath).toBe("api/v2");
+  });
+
+  test("getApiPath returns undefined when no apiPath is provided", () => {
+    const mockDataSource = new TsDataSource({
+      url: "test.website.com",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
+    });
+    const apiPath = mockDataSource.getApiPath();
+    expect(apiPath).toBe(undefined);
+  });
+
+  test("getApiDataPath returns correct API Data Path", () => {
+    const apiDataPath = mockDataSource.getApiDataPath();
+    expect(apiDataPath).toBe("data");
+  });
+
+  test("getApiDataPath returns undefined when no API Data Path is provided", () => {
+    const mockDataSource = new TsDataSource({
+      url: "test.website.com",
+      apiPath: "api/v2",
+      dataspace: "test-dataspace",
+    });
+    const apiDataPath = mockDataSource.getApiDataPath();
+    expect(apiDataPath).toBe(undefined);
+  });
+
+  test("getDataspace returns correct dataspace", () => {
+    const dataspace = mockDataSource.getDataspace();
+    expect(dataspace).toBe("test-dataspace");
+  });
+
+  test("getDataspace returns undefined when no dataspace is provided", () => {
+    const mockDataSource = new TsDataSource({
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+    });
+    const dataspace = mockDataSource.getDataspace();
+    expect(dataspace).toBe(undefined);
+  });
+
+  test("getSourceKey returns correct source key", () => {
+    const sourceKey = mockDataSource.getSourceKey();
+    expect(sourceKey).toBe("test.website.com/api/v1/data/test-dataspace");
+  });
+
+  test("getSourceKey returns 'default' when ALL of url, apiPath, apiDataPath and dataspace are undefined", () => {
+    const mockDataSource = new TsDataSource();
+    const sourceKey = mockDataSource.getSourceKey();
+    expect(sourceKey).toBe("default");
+  });
+
+  test("getSourceKey returns source key containing `undefined`s if some of the above fields are undefined", () => {
+    const mockDataSource = new TsDataSource({
+      apiPath: "api/v1",
+      dataspace: "test-dataspace"
+    });
+    const sourceKey = mockDataSource.getSourceKey();
+    expect(sourceKey).toBe("undefined/api/v1/undefined/test-dataspace");
+  });
+
   test("getBaseUrl returns correct base URL", () => {
-    const mockDataSource = new TsDataSource({
-      baseUrl: "testBaseUrl",
-      apiPrefix: "testApiPrefix",
-    });
     const baseUrl = mockDataSource.getBaseUrl();
-    expect(baseUrl).toBe("testBaseUrl");
+    expect(baseUrl).toBe("test.website.com/api/v2/data/test-dataspace");
   });
+});
 
-  test("getApiPrefix returns correct API prefix", () => {
+describe("Testing setters", () => {
+  test("setUrl correctly sets URL", () => {
     const mockDataSource = new TsDataSource({
-      baseUrl: "testBaseUrl",
-      apiPrefix: "testApiPrefix",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
+      client: mockClient,
     });
-    const apiPrefix = mockDataSource.getApiPrefix();
-    expect(apiPrefix).toBe("testApiPrefix");
+    mockDataSource.setUrl("portal.tol.sanger.ac.uk");
+    const url = mockDataSource.getUrl();
+    expect(url).toBe("portal.tol.sanger.ac.uk");
   });
 
-  test("getBaseUrl returns undefined when no baseUrl is provided", () => {
-    const mockDataSource = new TsDataSource({ apiPrefix: "testApiPrefix" });
-    const baseUrl = mockDataSource.getBaseUrl();
-    expect(baseUrl).toBeUndefined();
+  test("setApiPath correctly sets apiPath", () => {
+    const mockDataSource = new TsDataSource({
+      url: "test.website.com",
+      apiPath: "api/v1",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
+      client: mockClient,
+    });
+    mockDataSource.setApiPath("api/v2");
+    const apiPath = mockDataSource.getApiPath();
+    expect(apiPath).toBe("api/v2");
   });
 
-  test("getApiPrefix returns undefined when no apiPrefix is provided", () => {
-    const mockDataSource = new TsDataSource({ baseUrl: "testBaseUrl" });
-    const apiPrefix = mockDataSource.getApiPrefix();
-    expect(apiPrefix).toBeUndefined();
+  test("setApiDataPath correctly sets apiDataPath", () => {
+    const mockDataSource = new TsDataSource({
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
+      client: mockClient,
+    });
+    mockDataSource.setApiDataPath("different-data");
+    const apiDataPath = mockDataSource.getApiDataPath();
+    expect(apiDataPath).toBe("different-data");
+  });
+
+  test("setDataspace correctly sets dataspace", () => {
+    const mockDataSource = new TsDataSource({
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
+      client: mockClient,
+    });
+    mockDataSource.setDataspace("treeofsex");
+    const dataspace = mockDataSource.getDataspace();
+    expect(dataspace).toBe("treeofsex");
   });
 });
 
