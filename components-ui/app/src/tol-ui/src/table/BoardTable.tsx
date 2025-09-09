@@ -16,6 +16,7 @@ import {
   useBoardPrivilege,
   PRIVILEGE,
   ITableConfigSave,
+  optimiseFieldMetaForSave,
 } from "..";
 
 
@@ -28,7 +29,6 @@ export interface PBoardTable extends IBoardTargetAndZone {
 export function BoardTable(props: PBoardTable) {
   const { id, title, boardObjectType, boardDataSource, zone } = props;
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
-  const [forceUpdate, setForceUpdate] = useState(true);
   const [openFilters, setOpenFilters] = useState(false);
   const { privilege } = useBoardPrivilege()
 
@@ -38,11 +38,10 @@ export function BoardTable(props: PBoardTable) {
     defaultSortByAttribute,
     defaultSortByType
   }: ITableConfigSave) => {
-    config["fieldMeta"] = fm;
+    config["fieldMeta"] = optimiseFieldMetaForSave(fm);
     config["actions"] = actions;
     config["defaultSortByAttribute"] = defaultSortByAttribute;
     config["defaultSortByType"] = defaultSortByType;
-    setForceUpdate(!forceUpdate); // fetches new data on save
     setConfig({ ...config });
     updateConfigAndUpsert(
       id,
@@ -97,7 +96,6 @@ export function BoardTable(props: PBoardTable) {
       onConfigSave={onConfigSave}
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
-      forceUpdate={forceUpdate}
       // actions={config.actions}
       rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
       utilityBarConfig={{

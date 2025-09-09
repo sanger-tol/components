@@ -86,6 +86,7 @@ export function Tables() {
                 },
               },
               mlwh_run_complete: {
+                filter: null,
                 //rename: "Complete Date",
               },
               mlwh_platform_type: {
@@ -100,7 +101,6 @@ export function Tables() {
               },
               mlwh_tag_index: {
                 rename: "Tag",
-                filter: null,
                 sort: false,
               },
               "tolqc_species.goat_genome_size": {
@@ -127,12 +127,13 @@ export function Tables() {
                 "mlwh_sequencing_request.id",
                 "mlwh_run_complete",
                 "mlwh_platform_type",
-                "mlwh_instrument_model",
-                "mlwh_position",
-                "mlwh_tag_index",
                 "tolqc_species.goat_genome_size",
                 "custom_field",
               ],
+              inactive: [
+                "mlwh_instrument_model",
+                "mlwh_tag_index",
+              ]
             },
           }}
           height={500}

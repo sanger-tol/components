@@ -68,7 +68,7 @@ export function ColumnConfigDrawer(props: Props) {
     if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || originalActions !== actions) {
       fieldMeta.order.active = attributes;
       onConfigSave({
-        fieldMeta: optimiseFieldMetaForSave(fieldMeta),
+        fieldMeta: fieldMeta,
         actions,
         defaultSortByAttribute,
         defaultSortByType,

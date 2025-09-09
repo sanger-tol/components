@@ -37,6 +37,7 @@ import {
   ICustomCellRenderers,
   ITableDrawerSave,
   ITableConfigSave,
+  optimiseFieldMetaForSave,
 } from '..';
 
 
@@ -85,7 +86,6 @@ export function RemoteTable(props: PRemoteTable) {
     defaultSortByAttribute,
     defaultSortByType,
     basic,
-    forceUpdate,
     zone,
     setZone,
     onPageSizeChange,
@@ -106,8 +106,7 @@ export function RemoteTable(props: PRemoteTable) {
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<FieldMeta>(() => {
     const fm = getTableConfigLocalStorage(id, "fieldMeta");
-    if (fm) return fm;
-    return initialiseFieldMeta(props.fields);
+    return initialiseFieldMeta(fm ?? props.fields);
   });
   // pagination
   const getPageSize = () => {
@@ -137,6 +136,9 @@ export function RemoteTable(props: PRemoteTable) {
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const [downloadInProgress, setDownloadInProgress] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
+
+  // flip boolean to force reload table
+  const [forceUpdate, setForceUpdate] = useState<boolean>(props.forceUpdate ?? false);
 
   // row selection
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
@@ -249,7 +251,6 @@ export function RemoteTable(props: PRemoteTable) {
     defaultSortByAttribute,
     defaultSortByType
   }: ITableConfigSave) => {
-    setFieldMeta(fm!);
     resetFiltersBelow({
       id: id,
       zone: zone as IZone,
@@ -265,13 +266,16 @@ export function RemoteTable(props: PRemoteTable) {
         defaultSortByType: defaultSortByType
       });
     } else {
-      setTableConfigLocalStorage(id, "fieldMeta", fm);
+      setTableConfigLocalStorage(id, "fieldMeta", optimiseFieldMetaForSave(fm));
     }
 
     if (defaultSortByAttribute) {
       setSortByAttribute(defaultSortByAttribute);
       setSortByType(defaultSortByType);
     }
+
+    setFieldMeta(fm!);
+    setForceUpdate(!forceUpdate);
   };
 
   const Contents = () => {

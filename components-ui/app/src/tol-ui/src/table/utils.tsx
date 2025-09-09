@@ -103,15 +103,13 @@ function addValueBasedCellRenderer(
   value: any,
   meta: Field,
 ) {
-  if (meta.cellRenderer === undefined) {
-    if (value !== null && value !== undefined) {
-      if (Array.isArray(value)) {
-        meta.cellRenderer = { type: "list" };
-      } else if (value.length > 32) {
-        meta.cellRenderer = { type: "expander" };
-      } else if (isFloat(value)) {
-        meta.cellRenderer = { type: "float" };
-      }
+  if (value !== null && value !== undefined) {
+    if (Array.isArray(value)) {
+      meta.cellRenderer = { type: "list" };
+    } else if (value.length > 32) {
+      meta.cellRenderer = { type: "expander" };
+    } else if (isFloat(value)) {
+      meta.cellRenderer = { type: "float" };
     }
   }
 }
@@ -130,7 +128,7 @@ export function convertTableData(
     fieldMeta.order.active.forEach((key) => {
       // only add if undefined, not null - null = turn off cell renderer
       const value = getFieldByName(obj, key);
-      if (fieldMeta.dataWithDefaults![key].cellRenderer === undefined) {
+      if (fieldMeta.dataWithDefaults![key]?.cellRenderer === undefined) {
         addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![key]);
       }
       row[key] = (
@@ -138,7 +136,7 @@ export function convertTableData(
           key={key}
           value={value}
           dataObject={obj}
-          renderer={fieldMeta.dataWithDefaults![key].cellRenderer!}
+          renderer={fieldMeta.dataWithDefaults![key].cellRenderer}
           customCellRenderers={customCellRenderers}
         />
       );
@@ -230,7 +228,7 @@ export function createSort(sortColumn?: string, sortType?: string) {
   return sortColumn;
 }
 
-export function optimiseFieldMetaForSave(fieldMeta: FieldMeta) {
+export function optimiseFieldMetaForSave(fieldMeta?: FieldMeta) {
   const fm = deepCopy(fieldMeta);
   delete fm.dataWithDefaults;
   return fm;

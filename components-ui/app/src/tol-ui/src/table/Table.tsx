@@ -289,10 +289,12 @@ export function Table(props: Props) {
         groupBy={groupBy}
         setOpen={setOpen}
         displaySource={displaySource}
-        customAttributeSelection={[
-          ...(fieldMeta.order.active ?? []),
-          ...(fieldMeta.order.inactive ?? [])
-        ]}
+        // fetches all if inactive isn't specified
+        customAttributeSelection={
+          fieldMeta.order.inactive && fieldMeta.order.inactive.length > 0
+            ? [...(fieldMeta.order.active ?? []), ...fieldMeta.order.inactive]
+            : undefined
+        }
       />
       {/*rowSelection && (
           <>
