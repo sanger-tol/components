@@ -462,7 +462,10 @@ describe("Testing getConfig function", () => {
       });
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -481,7 +484,10 @@ describe("Testing attributeMetadata function", () => {
     const mockClientInstance = mockClient();
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -497,7 +503,10 @@ describe("Testing attributeMetadata function", () => {
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -512,7 +521,10 @@ describe("Testing relationshipConfig function", () => {
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
     const expectedData = relationshipConfigMockData;
@@ -527,7 +539,10 @@ describe("Testing relationshipConfig function", () => {
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -582,7 +597,10 @@ describe("Testing getOne function", () => {
     const mockClientInstance = mockClient();
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -605,7 +623,10 @@ describe("Testing getOne function", () => {
     const mockClientInstance = mockClient();
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -701,7 +722,10 @@ describe("Testing getList function", () => {
     const mockClientInstance = mockClient();
     const clientCursorPostSpy = vitest.spyOn(mockClientInstance, "post");
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
     const cursorDataObjects = await mockDataSource.getList({
@@ -787,7 +811,10 @@ describe("Testing delete method", () => {
     const clientDeleteSpy = vitest.spyOn(mockClientInstance, "delete");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -807,7 +834,10 @@ describe("Testing upsert method", () => {
     const clientPostSpy = vitest.spyOn(mockClientInstance, "post");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -834,7 +864,10 @@ describe("Testing relationships getting", () => {
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -855,7 +888,10 @@ describe("Testing relationships getting", () => {
   test("Ensure missing attribute is undefined", async () => {
     const mockClientInstance = mockClient();
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -875,7 +911,10 @@ describe("Testing fetchRelationships getting", () => {
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -894,7 +933,10 @@ describe("Testing fetchRelationships getting", () => {
     const mockClientInstance = mockClient();
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -913,7 +955,10 @@ describe("Testing fetchRelationships getting", () => {
     const mockClientInstance = mockClient();
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -934,7 +979,10 @@ describe("Testing fetchRelationships getting", () => {
 describe("Testing temp getFieldByName function", async () => {
   const mockClientInstance = mockClient();
   const mockDataSource = new TsDataSource({
-    baseUrl: "test",
+    url: "test.website.com",
+    apiPath: "api/v2",
+    apiDataPath: "data",
+    dataspace: "test-dataspace",
     client: () => mockClientInstance,
   });
 
