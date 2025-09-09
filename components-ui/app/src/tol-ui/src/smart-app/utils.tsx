@@ -102,3 +102,55 @@ export async function getUserPrivilege(
     return PRIVILEGE.BOARD.HIDDEN;
   }
 }
+
+/**
+ * Deletes cache stored in localStorage more than the set age limit.
+ * This age limit is defined at the top of this function.
+ * 
+ * This function is designed to be called in `TolApp` as it mounts
+ */
+export function clearUnusedLocalStorage() {
+  // The number of hours old a key must be before it is deleted
+  const hoursAgeLimit = 1;
+  
+  // The prefixes of keys we're checking which may be cleared
+  const prefixesOfKeysToClear = [
+    "/_config/attribute_metadata-",
+    "/_config/relationships-",
+    "entityMeta-",
+  ];
+
+  // You can't iterate over localStorage, but you can get how many keys it has with `.length`
+  // combined with `key(index)`, so we need to use a count-controlled loop, decrementing i
+  // each time we remove a key
+  for (let i = 0; i < localStorage.length; i++) {
+    // Get storage key
+    const storageKey = localStorage.key(i);
+  
+    // Check if this is one of the keys we're looking for
+    // (by skipping ones that aren't)
+    if (!(storageKey && prefixesOfKeysToClear.some(prefix => storageKey.includes(prefix)))) {
+      continue;
+    }
+
+    // Retrieve value
+    const valueString = localStorage.getItem(storageKey);
+    if (!valueString) continue;
+
+    // Parse value to object and use it to get expiry date of this value
+    const value: { expiry: string, data: object } = JSON.parse(valueString);
+    const expiryDate = new Date(value.expiry);
+
+    // Calculate the difference in hours between now and the expiry date
+    const age = Date.now() - expiryDate.getTime();
+    const hoursPassed = new Date(age).getHours();
+
+    // Delete this key if the time difference exceeds the limit
+    if (hoursPassed >= hoursAgeLimit) {
+      localStorage.removeItem(storageKey);
+      
+      // We need to adjust the index one back after removing an item
+      i--;
+    }
+  }
+}
