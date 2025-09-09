@@ -41,15 +41,31 @@ const entityMetaPromises: IEntityMetaPromises = {};
 
 export class TsDataSource {
   private client: any;
+  private url: string | undefined;
+  private apiPath: string | undefined;
+  private apiDataPath: string | undefined;
+  private dataspace: string | undefined;
   private baseUrl: string | undefined;
-  private apiPrefix: string | undefined;
   private sourceKey: string;
 
-  constructor({ baseUrl, apiPrefix, client }: IDataSource = {}) {
+  constructor({ url, apiPath, apiDataPath, dataspace, client }: IDataSource = {}) {
     this.client = client ?? httpClient;
-    this.baseUrl = baseUrl;
-    this.apiPrefix = apiPrefix;
-    this.sourceKey = `${baseUrl || "default"}/${apiPrefix || "default"}`;
+    this.url = url;
+    this.apiPath = apiPath;
+    this.apiDataPath = apiDataPath;
+    this.dataspace = dataspace;
+    this.baseUrl = this.makeBaseUrl();
+    this.sourceKey = this.baseUrl ?? "default";
+  }
+
+  private makeBaseUrl(): string | undefined {
+    // If all parts passed in are undefined, then this should be undefined overall
+    if (!this.url && !this.apiPath && !this.apiDataPath && !this.dataspace) {
+      return undefined;
+    }
+
+    // Else join all parts together to form the baseUrl
+    return `${this.url}/${this.apiPath}/${this.apiDataPath}/${this.dataspace}`;
   }
 
   public generateEndpoint(target?: string, suffix?: string): string {
@@ -61,10 +77,6 @@ export class TsDataSource {
 
   public getBaseUrl(): string | undefined {
     return this.baseUrl;
-  }
-
-  public getApiPrefix(): string | undefined {
-    return this.apiPrefix;
   }
 
   private fetchRelationshipHandler = {
