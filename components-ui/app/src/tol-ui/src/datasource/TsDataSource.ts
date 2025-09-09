@@ -75,8 +75,44 @@ export class TsDataSource {
     return `${prefix}${tg}${sf}`;
   }
 
+  public getUrl(): string | undefined {
+    return this.url;
+  }
+
+  public setUrl(url: string) {
+    this.url = url;
+  }
+
+  public getApiPath(): string | undefined {
+    return this.apiPath;
+  }
+
+  public setApiPath(apiPath: string) {
+    this.apiPath = apiPath;
+  }
+
+  public getApiDataPath(): string | undefined {
+    return this.apiDataPath;
+  }
+
+  public setApiDataPath(apiDataPath: string) {
+    this.apiDataPath = apiDataPath;
+  }
+
+  public getDataspace(): string | undefined {
+    return this.dataspace
+  }
+
+  public setDataspace(dataspace: string) {
+    this.dataspace = dataspace;
+  }
+
   public getBaseUrl(): string | undefined {
     return this.baseUrl;
+  }
+
+  public getSourceKey(): string {
+    return this.sourceKey;
   }
 
   private fetchRelationshipHandler = {
