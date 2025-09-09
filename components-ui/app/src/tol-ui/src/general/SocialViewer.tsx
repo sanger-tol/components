@@ -5,24 +5,10 @@
  */
 
 import { Icon } from ".";
-// import { FontAwesomeIcon } from "@fortawesome/free-brands-svg-icons";
+import { TNameAndLinks } from "..";
 
 export interface PNameAndLinks {
   data: TNameAndLinks;
-}
-
-export type TNameAndLinks = INameAndLinks[];
-
-export interface INameAndLinks {
-  name: string;
-  links: TLinks;
-}
-
-type TLinks = ILink[];
-
-export interface ILink {
-  link: string;
-  icon: string;
 }
 
 export function SocialViewer(props: PNameAndLinks) {
@@ -30,11 +16,11 @@ export function SocialViewer(props: PNameAndLinks) {
   return (
     <div>
       {data.map((item, topLevelIndex) => (
-        <div className="d-flex gap-2">
-          <h3 className="text-lg font-semibold" key={topLevelIndex}>
+        <div className="tol-socialviewer-parent">
+          <h3 className=".tol-socialviewer-title" key={topLevelIndex}>
             {item.name}
           </h3>
-          <div className="d-flex gap-1">
+          <div className="tol-socialviewer-child">
             {item.links.map((link, bottomLevelIndex) => (
               <a
                 key={bottomLevelIndex}

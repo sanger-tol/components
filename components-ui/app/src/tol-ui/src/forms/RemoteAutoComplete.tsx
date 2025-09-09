@@ -57,7 +57,6 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
         data!.map((item: any) => {
           newData[item[searchBy]] = displayFields.map((field: string) => ({ [field]: item[field] }));
         })
-        console.log(newData);
         setFilteredData(newData);
         setLoading(false);
       }, 400);
