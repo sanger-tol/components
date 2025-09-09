@@ -69,7 +69,7 @@ export class TsDataSource {
   }
 
   public generateEndpoint(target?: string, suffix?: string): string {
-    const prefix = this.apiPrefix ? `/${this.apiPrefix}` : "";
+    const prefix = this.apiPath ? `/${this.apiPath}` : "";
     const tg = target ? `/${target}` : "";
     const sf = suffix ? `${suffix}` : "";
     return `${prefix}${tg}${sf}`;
