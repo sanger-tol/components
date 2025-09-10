@@ -35,9 +35,8 @@ export function AutoComplete(props: PAutoComplete) {
     displayFieldsTitle,
     loading,
     errorText,
+    icon,
   } = props;
-
-  const icon = { ...props.icon, position: props.icon?.position || "right" };
 
   return (
     <RSForm.Group controlId={label}>
