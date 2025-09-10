@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  FieldMeta,
   initialiseFieldMeta,
   BoardFilters,
   RemoteTable,
@@ -17,6 +16,7 @@ import {
   PRIVILEGE,
   ITableConfigSave,
   optimiseFieldMetaForSave,
+  ITableDrawerSave,
 } from "..";
 
 
@@ -37,7 +37,7 @@ export function BoardTable(props: PBoardTable) {
     actions,
     defaultSortByAttribute,
     defaultSortByType
-  }: ITableConfigSave) => {
+  }: ITableDrawerSave) => {
     config["fieldMeta"] = optimiseFieldMetaForSave(fm);
     config["actions"] = actions;
     config["defaultSortByAttribute"] = defaultSortByAttribute;
@@ -96,6 +96,7 @@ export function BoardTable(props: PBoardTable) {
       onConfigSave={onConfigSave}
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
+      // disabled temporarily
       // actions={config.actions}
       rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
       utilityBarConfig={{

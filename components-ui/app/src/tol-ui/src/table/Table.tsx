@@ -457,62 +457,65 @@ export function Table(props: Props) {
                       </Cell>
                     </Column>
                   )}
+                  {console.log(fieldMeta)}
                   {fieldMeta!.order.active.map((key: string) => {
                     const field = fieldMeta.dataWithDefaults![key];
-                    const sortable = noSorting ? false : field.sort;
-                    const filterable = noFilter ? false : field.filter;
+                    if (field) {
+                      const sortable = !noSorting && field.sort;
+                      const filterable = !noFilter && field.filter;
 
-                    return (
-                      <Column
-                        key={key}
-                        width={field.width || 200}
-                        sortable={sortable}
-                        fixed={field.fixed}
-                      >
-                        <HeaderCell>
-                          {(field.description || field.source) && (
-                            <div className="tol-header-info">
-                              <EntityMetaToolTip
-                                objectType={objectType}
-                                dataSource={dataSource}
-                                field={key}
-                              />
-                            </div>
-                          )}
-                          <p className="tol-header-text">
-                            {field.source && (
-                              <span
-                                className="inline-source"
-                                style={{
-                                  backgroundColor: getSourceColour(
-                                    field.source
-                                  ),
-                                }}
-                              />
+                      return (
+                        <Column
+                          key={key}
+                          width={field.width || 200}
+                          sortable={sortable}
+                          fixed={field.fixed}
+                        >
+                          <HeaderCell>
+                            {(field.description || field.source) && (
+                              <div className="tol-header-info">
+                                <EntityMetaToolTip
+                                  objectType={objectType}
+                                  dataSource={dataSource}
+                                  field={key}
+                                />
+                              </div>
                             )}
-                            {field.rename}
-                          </p>
-                          {filterable && (
-                            <span
-                              className={
-                                filterVisibility
-                                  ? "tol-filter"
-                                  : "tol-filter-hide"
-                              }
-                            >
-                              <Filter
-                                {...props}
-                                attribute={key}
-                                rename={field.rename!}
-                                type={field.filter as IFilterInputType}
-                                componentId={id}
-                              />
-                            </span>
-                          )}
-                        </HeaderCell>
-                        <Cell dataKey={key} />
-                      </Column>
-                    );
+                            <p className="tol-header-text">
+                              {field.source && (
+                                <span
+                                  className="inline-source"
+                                  style={{
+                                    backgroundColor: getSourceColour(
+                                      field.source
+                                    ),
+                                  }}
+                                />
+                              )}
+                              {field.rename}
+                            </p>
+                            {filterable && (
+                              <span
+                                className={
+                                  filterVisibility
+                                    ? "tol-filter"
+                                    : "tol-filter-hide"
+                                }
+                              >
+                                <Filter
+                                  {...props}
+                                  attribute={key}
+                                  rename={field.rename!}
+                                  type={field.filter as IFilterInputType}
+                                  componentId={id}
+                                />
+                              </span>
+                            )}
+                          </HeaderCell>
+                          <Cell dataKey={key} />
+                        </Column>
+                      );
+                    }
                   })}
                 </RSTable>
               </div>

@@ -16,7 +16,6 @@ import {
   IDropdownButtonConfig,
   MultipleSelect,
   ITableConfigSave,
-  optimiseFieldMetaForSave
 } from "..";
 
 
@@ -69,9 +68,9 @@ export function ColumnConfigDrawer(props: Props) {
       fieldMeta.order.active = attributes;
       onConfigSave({
         fieldMeta: fieldMeta,
-        actions,
-        defaultSortByAttribute,
-        defaultSortByType,
+        actions: actions.length !== 0 ? actions : undefined,
+        defaultSortByAttribute: sortByAttribute,
+        defaultSortByType: sortByType,
       });
       setInitialAttributes(attributes);
     }

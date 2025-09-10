@@ -130,10 +130,6 @@ export function Tables() {
                 "tolqc_species.goat_genome_size",
                 "custom_field",
               ],
-              inactive: [
-                "mlwh_instrument_model",
-                "mlwh_tag_index",
-              ]
             },
           }}
           height={500}

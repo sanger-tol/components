@@ -83,11 +83,14 @@ export function RemoteTable(props: PRemoteTable) {
     id,
     objectType,
     dataSource,
-    defaultSortByAttribute,
-    defaultSortByType,
     basic,
     zone,
     setZone,
+    fields = getTableConfigLocalStorage(id, "fieldMeta"),
+    defaultSortByAttribute = getTableConfigLocalStorage(id, "defaultSortByAttribute"),
+    defaultSortByType = getTableConfigLocalStorage(id, "defaultSortByType"),
+    pageSize: propPageSize = getTableConfigLocalStorage(id, "pageSize"),
+    filterVisibility: propFilterVisibility = getTableConfigLocalStorage(id, "filterVisibility"),
     onPageSizeChange,
     onToggleFilterVisibility,
     noConfigModal,
@@ -100,36 +103,27 @@ export function RemoteTable(props: PRemoteTable) {
     cellRenderers,
     contents,
     height = "100%",
+    forceUpdate: propForceUpdate = false,
   } = props;
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(() => {
-    const fm = getTableConfigLocalStorage(id, "fieldMeta");
-    return initialiseFieldMeta(fm ?? props.fields);
-  });
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(() => (
+    initialiseFieldMeta(fields)
+  ));
+
   // pagination
-  const getPageSize = () => {
-    const size = getTableConfigLocalStorage(id, "pageSize");
-    if (size) return size;
-    return props.pageSize ?? 50;
-  };
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(getPageSize);
+  const [pageSize, setPageSize] = useState<number>(propPageSize ?? 50);
   const [totalSize, setTotalSize] = useState<number>(0);
 
   // filtering/sorting
   const [filter, setFilter] = useState<object | undefined>({});
-  const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
+  const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(
+    defaultSortByAttribute ?? fieldMeta?.order?.active?.[0]
+  );
   const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
-
-  // filter visibility
-  const getFilterVisibility = () => {
-    if (props.filterVisibility !== undefined) return props.filterVisibility;
-    const visible = getTableConfigLocalStorage(id, "filterVisibility");
-    return visible ?? true;
-  };
-  const [filterVisibility, setFilterVisibility] = useState<boolean>(getFilterVisibility);
+  const [filterVisibility, setFilterVisibility] = useState<boolean>(propFilterVisibility ?? true);
 
   // loading, error and warning info
   const [loading, setLoading] = useState<boolean>(true);
@@ -138,7 +132,7 @@ export function RemoteTable(props: PRemoteTable) {
   const [error, setError] = useState<string>("");
 
   // flip boolean to force reload table
-  const [forceUpdate, setForceUpdate] = useState<boolean>(props.forceUpdate ?? false);
+  const [forceUpdate, setForceUpdate] = useState<boolean>(propForceUpdate);
 
   // row selection
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
@@ -153,11 +147,6 @@ export function RemoteTable(props: PRemoteTable) {
   // action modal
   const [actionModalOpen, setActionModalOpen] = useState<boolean>(false);
 
-  const handleSortColumn = (sortColumn: any, sortType: any) => {
-    setSortByAttribute(sortColumn);
-    setSortByType(sortType);
-  };
-
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
     // will trigger [filter] useEffect if update has occured
@@ -167,7 +156,12 @@ export function RemoteTable(props: PRemoteTable) {
 
   useEffectUpdate(() => {
     renderTable();
-  }, [page, sortByAttribute, sortByType, filter, forceUpdate]);
+  }, [page, sortByAttribute, sortByType, filter]);
+
+  useEffectUpdate(() => {
+    setInitialLoad(true);
+    renderTable();
+  }, [forceUpdate]);
 
   useEffectUpdate(() => {
     if (page === 1) renderTable();
@@ -231,13 +225,8 @@ export function RemoteTable(props: PRemoteTable) {
       })
       .catch((error: any) => {
         setError(error.message);
-
         setData([]);
-        console.warn(error);
-        console.warn("Please ensure the db has been restored");
-        console.warn(
-          "Please ensure the 'endpoint' prop is correct and pluralised"
-        );
+        console.error(error);
       })
       .finally(() => {
         setLoading(false);
@@ -267,6 +256,8 @@ export function RemoteTable(props: PRemoteTable) {
       });
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", optimiseFieldMetaForSave(fm));
+      setTableConfigLocalStorage(id, "defaultSortByAttribute", defaultSortByAttribute);
+      setTableConfigLocalStorage(id, "defaultSortByType", defaultSortByType);
     }
 
     if (defaultSortByAttribute) {
@@ -278,14 +269,9 @@ export function RemoteTable(props: PRemoteTable) {
     setForceUpdate(!forceUpdate);
   };
 
-  const Contents = () => {
-    if (error !== "") {
-      return <Placeholder errorMessage={error} height={height} />;
-    }
-    if (initialLoad) {
-      return <Placeholder loader height={height} />;
-    }
-    return null;
+  const handleSortColumn = (sortColumn: any, sortType: any) => {
+    setSortByAttribute(sortColumn);
+    setSortByType(sortType);
   };
 
   const completeAction = async (actionName: string, ids: string[]) => {
@@ -321,6 +307,16 @@ export function RemoteTable(props: PRemoteTable) {
     completeAction,
     actions
   );
+
+  const Contents = () => {
+    if (error !== "") {
+      return <Placeholder errorMessage={error} height={height} />;
+    }
+    if (initialLoad) {
+      return <Placeholder loader height={height} />;
+    }
+    return null;
+  };
 
   return (
     <div style={{ height: height }}>

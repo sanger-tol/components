@@ -126,6 +126,7 @@ export function convertTableData(
     const row: ITableRecord = {};
     // loop over each field
     fieldMeta.order.active.forEach((key) => {
+      //console.log('loop', key)
       // only add if undefined, not null - null = turn off cell renderer
       const value = getFieldByName(obj, key);
       if (fieldMeta.dataWithDefaults![key]?.cellRenderer === undefined) {
@@ -136,7 +137,7 @@ export function convertTableData(
           key={key}
           value={value}
           dataObject={obj}
-          renderer={fieldMeta.dataWithDefaults![key].cellRenderer}
+          renderer={fieldMeta.dataWithDefaults?.[key]?.cellRenderer}
           customCellRenderers={customCellRenderers}
         />
       );
