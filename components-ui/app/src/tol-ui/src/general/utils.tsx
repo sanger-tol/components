@@ -10,8 +10,11 @@ import { customAlphabet } from "nanoid";
 import { PopUpMessage } from "..";
 
 
-export function convertToPath(name: string) {
+export function convertToPath(name: string, prefix?: string) {
   const path = name.toLowerCase();
+  if (prefix) {
+    return "/" + prefix + path.replace(/\s+/g, "-");
+  }
   return "/" + path.replace(/\s+/g, "-");
 }
 

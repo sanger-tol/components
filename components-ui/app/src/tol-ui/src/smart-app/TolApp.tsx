@@ -155,7 +155,7 @@ export function TolApp(props: Props) {
                 )
               }} />
               {allPageRoutes.map((page) => {
-                const path = convertToPath(page.name);
+                const path = convertToPath(page.name, page.prefix);
                 const routes = [];
                 const authorised = confirmAuthorised(
                   user,
