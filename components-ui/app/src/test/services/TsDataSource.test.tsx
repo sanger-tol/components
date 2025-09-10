@@ -209,50 +209,50 @@ const relationshipConfigMockData = {
 const mockClient = () => ({
   get(
     endpoint: string,
-    { baseURL, params }: { baseURL: string; params?: any }
+    { url, params }: { url: string; params?: any }
   ) {
-    if (endpoint === "/_config/attribute_metadata" && baseURL === "test") {
+    if (endpoint === "/api/v2/_config/attribute_metadata" && url === "test.website.com") {
       return Promise.resolve({ data: attributeMetadataMockData });
-    } else if (endpoint === "/species/testSpeciesId" && baseURL === "test") {
+    } else if (endpoint === "/api/v2/species/testSpeciesId" && url === "test.website.com") {
       return Promise.resolve(speciesMockData);
-    } else if (endpoint === "/noCacheTest/nestedRelationships1" && baseURL === "test") {
+    } else if (endpoint === "/api/v2/noCacheTest/nestedRelationships1" && url === "test.website.com") {
       return Promise.resolve(nestedRelationshipMockData);
-    } else if (endpoint === "/specimen/testSpecimenId" && baseURL === "test") {
+    } else if (endpoint === "/api/v2/specimen/testSpecimenId" && url === "test.website.com") {
       return Promise.resolve(specimenMockData);
-    } else if (endpoint === "/sample/testSampleId" && baseURL === "test") {
+    } else if (endpoint === "/api/v2/sample/testSampleId" && url === "test.website.com") {
       return Promise.resolve(sampleMockData);
-    } else if (endpoint === "/species" && baseURL === "test") {
+    } else if (endpoint === "/api/v2/species" && url === "test.website.com") {
       const pageSize = params?.page_size || 10;
       const mockPageData = Array(pageSize).fill(speciesMockData.data.data);
       return Promise.resolve({ data: { data: mockPageData } });
     } else if (
-      endpoint === "/specimen:to-one/testSpecimenId/lazy_species" &&
-      baseURL === "test"
+      endpoint === "/api/v2/specimen:to-one/testSpecimenId/lazy_species" &&
+      url === "test.website.com"
     ) {
       return Promise.resolve(toOneSpeciesMockData);
-    } else if (endpoint === "/_config/relationships" && baseURL === "test") {
+    } else if (endpoint === "/api/v2/_config/relationships" && url === "test.website.com") {
       return Promise.resolve({ data: relationshipConfigMockData });
     }
     return Promise.reject({ response: { status: 404 } });
   },
-  delete(endpoint: string, { baseURL }: { baseURL: string; params?: any }) {
-    if (endpoint === "/species/testSpeciesId" && baseURL === "test") {
+  delete(endpoint: string, { url }: { url: string; params?: any }) {
+    if (endpoint === "/api/v2/species/testSpeciesId" && url === "test.website.com") {
       return Promise.resolve(null);
     }
     return Promise.reject({ response: { status: 404 } });
   },
-  post(endpoint: string, payload, config: { baseURL: string }) {
-    if (endpoint === "/species:upsert" && config.baseURL === "test") {
+  post(endpoint: string, payload, config: { url: string }) {
+    if (endpoint === "/api/v2/species:upsert" && config.url === "test.website.com") {
       return Promise.resolve(speciesUpsertMockData);
-    } else if (endpoint === "/species:cursor" && payload.search_after == null) {
+    } else if (endpoint === "/api/v2/species:cursor" && payload.search_after == null) {
       return Promise.resolve(speciesCursorMockData1);
     } else if (
-      endpoint === "/species:cursor" &&
+      endpoint === "/api/v2/species:cursor" &&
       payload.search_after == "newTestSpeciesIdX2"
     ) {
       return Promise.resolve(speciesCursorMockData2);
     } else if (
-      endpoint === "/species:cursor" &&
+      endpoint === "/api/v2/species:cursor" &&
       payload.search_after == "newTestSpeciesIdX3"
     ) {
       return Promise.resolve(speciesCursorMockData3);
