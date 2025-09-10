@@ -112,56 +112,56 @@ export function TolApp(props: Props) {
   return (
     <div id="tol-app-background">
       <QueryClientProvider client={queryClient}>
-        <AuthProvider
-          value={{
-            token,
-            setToken,
-            user,
-            setUser,
-          }}
-        >
-          <Router basename={basename}>
-            <Navigation
-              brand={props.brand}
-              pages={props.pages}
-              profilePages={profilePages}
-              login={login}
-              register={register}
-              customCallbackUrl={customCallbackUrl}
-            />
-            <div className="tol-app">
-              <Switch>
-                <Route path="/" exact component={() => props.homePage} />
-                <Route path="/callback" exact>
-                  <Callback />
-                </Route>
-                <Route path="/board/:boardId">
-                  {boards && loggedIn ? (
-                    <BoardPrivilegeContextProvider>
-                      <Board
-                        dataSource={boards.dataSource}
-                        boardDataSource={boards.boardDataSource}
-                      />
-                    </BoardPrivilegeContextProvider>
-                  ) : (
-                    <Redirect to="/" />
-                  )}
-                </Route>
-                <Route path="/file-validation/results/:uploadId" render={(routeProps) => {
-                  return loggedIn ? (
-                    <ValidationResultsViewer {...routeProps} />
-                  ) : (
-                    <Redirect to="/" />
-                  )
-                }} />
-                {allPageRoutes.map((page) => {
-                  const path = convertToPath(page.name);
-                  const routes = [];
-                  const authorised = confirmAuthorised(
-                    user,
-                    page.auth,
-                    page.removeOnAuth,
-                  );
+      <AuthProvider
+        value={{
+          token,
+          setToken,
+          user,
+          setUser,
+        }}
+      >
+        <Router basename={loggedIn ? basename : "/"}>
+          <Navigation
+            brand={props.brand}
+            pages={props.pages}
+            profilePages={profilePages}
+            login={login}
+            register={register}
+            customCallbackUrl={customCallbackUrl}
+          />
+          <div className="tol-app">
+            <Switch>
+              <Route path="/" exact component={() => props.homePage} />
+              <Route path="/callback" exact>
+                <Callback />
+              </Route>
+              <Route path="/board/:boardId">
+                {boards && loggedIn ? (
+                  <BoardPrivilegeContextProvider>
+                    <Board
+                      dataSource={boards.dataSource}
+                      boardDataSource={boards.boardDataSource}
+                    />
+                  </BoardPrivilegeContextProvider>
+                ) : (
+                  <Redirect to="/" />
+                )}
+              </Route>
+              <Route path="/file-validation/results/:uploadId" render={(routeProps) => {
+                return loggedIn ? (
+                  <ValidationResultsViewer {...routeProps} />
+                ) : (
+                  <Redirect to="/" />
+                )
+              }} />
+              {allPageRoutes.map((page) => {
+                const path = convertToPath(page.name);
+                const routes = [];
+                const authorised = confirmAuthorised(
+                  user,
+                  page.auth,
+                  page.removeOnAuth,
+                );
 
                   // dropdown routes
                   if ('pages' in page && page.pages) {
