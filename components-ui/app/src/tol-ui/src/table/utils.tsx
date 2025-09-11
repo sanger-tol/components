@@ -199,7 +199,6 @@ export function addDefaultsFromEntityMeta(
   fieldMeta.dataWithDefaults[key] = { ...defaults, ...fieldMeta.dataWithDefaults[key] };
 }
 
-
 export function addFieldMetaDefaults(
   objectType: string,
   fieldMeta: FieldMeta,
