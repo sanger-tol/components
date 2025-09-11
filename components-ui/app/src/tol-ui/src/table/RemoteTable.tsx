@@ -17,7 +17,6 @@ import {
   IDropdownButtonConfig,
   ACTION_API_PREFIX,
   Placeholder,
-  RowCounter,
   Table,
   addRemoteActions,
   convertTableData,
@@ -102,7 +101,7 @@ export function RemoteTable(props: PRemoteTable) {
     cellRenderers,
     contents,
     height = "100%",
-    forceUpdate: propForceUpdate = false,
+    forceUpdate,
   } = props;
 
   // data and field information
@@ -125,17 +124,16 @@ export function RemoteTable(props: PRemoteTable) {
   const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(
     defaultSortByAttribute ?? fieldMeta?.order?.active?.[0]
   );
-  const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
+  const [sortByType, setSortByType] = useState<string | undefined>(
+    defaultSortByType ?? "asc"
+  );
   const [filterVisibility, setFilterVisibility] = useState<boolean>(propFilterVisibility ?? true);
 
   // loading, error and warning info
   const [loading, setLoading] = useState<boolean>(true);
-  const [initialLoad, setInitialLoad] = useState<boolean>(true);
+  const [fullLoad, setFullLoad] = useState<boolean>(true);
   const [downloadInProgress, setDownloadInProgress] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-
-  // flip boolean to force reload table
-  const [forceUpdate, setForceUpdate] = useState<boolean>(propForceUpdate);
 
   // row selection
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
@@ -159,17 +157,18 @@ export function RemoteTable(props: PRemoteTable) {
 
   useEffectUpdate(() => {
     renderTable();
-  }, [page, sortByAttribute, sortByType, filter]);
+  }, [page, sortByAttribute, sortByType, filter, forceUpdate]);
 
   useEffectUpdate(() => {
-    setInitialLoad(true);
-    renderTable();
-  }, [forceUpdate]);
+    if (fullLoad) {
+      if (page === 1) renderTable();
+      setPage(1); // setting page then triggers useEffect above
+    }
+  }, [fullLoad]);
 
   useEffectUpdate(() => {
     if (page === 1) renderTable();
-    // setting page then triggers renderTable in useEffect above
-    setPage(1);
+    setPage(1); // setting page then triggers useEffect above
     if (onPageSizeChange) {
       onPageSizeChange(pageSize);
     } else {
@@ -205,7 +204,7 @@ export function RemoteTable(props: PRemoteTable) {
   }
 
   const renderTable = async () => {
-    if (initialLoad) {
+    if (fullLoad) {
       await initialSetup();
     }
     setLoading(true);
@@ -233,7 +232,7 @@ export function RemoteTable(props: PRemoteTable) {
       })
       .finally(() => {
         setLoading(false);
-        setInitialLoad(false);
+        setFullLoad(false);
       });
 
     // fetch count
@@ -276,18 +275,17 @@ export function RemoteTable(props: PRemoteTable) {
       setTableConfigLocalStorage(id, "defaultSortByType", defaultSortByType);
     }
 
-    if (defaultSortByAttribute) {
-      setSortByAttribute(defaultSortByAttribute || fieldMeta?.order?.active?.[0]);
-      setSortByType(defaultSortByType);
-    }
+    setSortByAttribute(defaultSortByAttribute ?? fieldMeta?.order?.active?.[0]);
+    setSortByType(defaultSortByType ?? "asc");
 
     setFieldMeta(fm!);
-    setForceUpdate(!forceUpdate);
+    setFullLoad(true);
   };
 
-  const handleSortColumn = (sortColumn: any, sortType: any) => {
-    setSortByAttribute(sortColumn);
-    setSortByType(sortType);
+  const handleSortColumn = (column: string, type: string) => {
+    console.log("Sorting column:", column, "Type:", type);
+    setSortByAttribute(column);
+    setSortByType(type);
   };
 
   const completeAction = async (actionName: string, ids: string[]) => {
@@ -328,21 +326,11 @@ export function RemoteTable(props: PRemoteTable) {
     if (error !== "") {
       return <Placeholder errorMessage={error} height={height} />;
     }
-    if (initialLoad) {
+    if (fullLoad) {
       return <Placeholder loader height={height} />;
     }
     return null;
   };
-
-  const RowCount = () => (
-    <RowCounter
-      totalSize={totalSize}
-      setTotalSize={setTotalSize}
-      filter={filter}
-      loading={loading}
-      {...props}
-    />
-  );
 
   return (
     <div style={{ height: height }}>
@@ -377,7 +365,6 @@ export function RemoteTable(props: PRemoteTable) {
         totalSize={totalSize}
         downloadInProgress={downloadInProgress}
         setDownloadInProgress={setDownloadInProgress}
-        rowCounter={RowCount()}
         filterVisibility={filterVisibility}
         setFilterVisibility={setFilterVisibility}
         sortByAttribute={sortByAttribute}

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { formatTotalSize } from "..";
 
 
-interface PRowCounter {
+export interface PRowCounter {
   totalSize: number;
   loading: boolean;
 }

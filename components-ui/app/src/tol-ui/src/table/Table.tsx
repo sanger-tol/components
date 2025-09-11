@@ -31,6 +31,7 @@ import {
   ITableConfigSave,
   RowCounter,
 } from "..";
+import { Sort } from "./Sort";
 
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
@@ -457,7 +458,7 @@ export function Table(props: Props) {
                   {fieldMeta!.order.active.map((key: string) => {
                     const field = fieldMeta.dataWithDefaults![key];
                     if (field) {
-                      const sortable = !noSorting && field.sort;
+                      const sortable: boolean = (!noSorting && field.sort) ?? false;
                       const filterable = !noFilter && field.filter;
 
                       return (
@@ -507,6 +508,11 @@ export function Table(props: Props) {
                                 />
                               </span>
                             )}
+                            <Sort
+                              attribute={key}
+                              sortable={sortable}
+                              {...props}
+                            />
                           </HeaderCell>
                           <Cell dataKey={key} />
                         </Column>

@@ -45,7 +45,7 @@ export function Tables() {
       <div style={{ paddingBottom: "12px" }}>
         <Button
           type="primary"
-          onClick={() => setForceUpdate(!forceUpdate)}
+          onClick={() => { setForceUpdate(!forceUpdate); console.log('hi', forceUpdate); }}
           text="Force Update"
         />
       </div>
