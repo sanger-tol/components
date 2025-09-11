@@ -209,7 +209,10 @@ export function ColumnConfigDrawer(props: Props) {
         maxSelections={1}
         placeholder="Default Sort Column"
         attribute={sortByAttribute ? [sortByAttribute] : []}
-        setAttributes={(a) => setSortByAttribute(a[0])}
+        setAttributes={(a) => {
+          setSortByAttribute(a[0])
+          setSortByType(a[0] ? 'asc' : undefined)
+        }}
         disabledValues={null}
         numPopulatedFields={0}
         populatedFieldType={"column"}

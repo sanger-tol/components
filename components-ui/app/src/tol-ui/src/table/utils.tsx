@@ -126,7 +126,6 @@ export function convertTableData(
     const row: ITableRecord = {};
     // loop over each field
     fieldMeta.order.active.forEach((key) => {
-      //console.log('loop', key)
       // only add if undefined, not null - null = turn off cell renderer
       const value = getFieldByName(obj, key);
       if (fieldMeta.dataWithDefaults![key]?.cellRenderer === undefined) {
@@ -353,4 +352,9 @@ export function exportDataToSpreadsheet(
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "ToLTable");
   XLSX.writeFile(workbook, heading, { compression: true });
+}
+
+export function formatTotalSize(totalSize: number) {
+  if (totalSize === 1) return "1 Row";
+  return totalSize.toLocaleString() + " Rows";
 }

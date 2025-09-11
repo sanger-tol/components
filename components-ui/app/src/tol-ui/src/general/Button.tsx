@@ -55,9 +55,7 @@ export function Button(props: PButton) {
   const [timeoutDisabled, setTimeoutDisabled] = useState<boolean>(false);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>, ...args: any[]) => {
-    if (onClick) {
-      onClick(event, ...args);
-    }
+    if (onClick) onClick(event, ...args);
 
     if (limit > 0) {
       setButtonClicked((prev: number) => {
@@ -101,7 +99,7 @@ export function Button(props: PButton) {
           onClick={handleClick}
           disabled={
             disabled ||
-            loading ||
+            (loading && timeout > 0) ||
             (limit > 0 && buttonClicked >= limit) ||
             timeoutDisabled
           }

@@ -29,6 +29,7 @@ import {
   useBoardPrivilege,
   PRIVILEGE,
   ITableConfigSave,
+  RowCounter,
 } from "..";
 
 
@@ -48,8 +49,6 @@ interface Props extends IRemoteTargetAndZone {
   pageSize: number;
   setPageSize: any;
   totalSize: number;
-  setTotalSize?: (totalSize: number) => void;
-  rowCounter?: JSX.Element;
   displaySource?: boolean;
 
   filterVisibility?: boolean;
@@ -103,7 +102,6 @@ export function Table(props: Props) {
     pageSize,
     setPageSize,
     totalSize,
-    rowCounter,
     displaySource,
 
     filterVisibility,
@@ -150,6 +148,7 @@ export function Table(props: Props) {
   const [bulkSelect, setBulkSelect] = useState(false);
   let checked = false;
   let indeterminate = false;
+
   const noFieldsSelected = fieldMeta?.order?.active?.length === 0;
   const wrapperId = "tol-table-wrapper-" + id;
 
@@ -239,7 +238,7 @@ export function Table(props: Props) {
     onClick: () => {
       setDownloadOpen(!downloadOpen);
     },
-    disabled: totalSize <= 0 || noFieldsSelected,
+    disabled: (totalSize <= 0 || noFieldsSelected) || loading,
     icon: "download",
     disabledTooltip:
       totalSize >= 1
@@ -392,9 +391,7 @@ export function Table(props: Props) {
             />
           ) : (
             <>
-              <div className="tol-table-row-counter">
-                {rowCounter ? rowCounter : totalSize}
-              </div>
+              <RowCounter {...props} />
               <div className="tol-table-inner">
                 <RSTable
                   bordered
@@ -457,7 +454,6 @@ export function Table(props: Props) {
                       </Cell>
                     </Column>
                   )}
-                  {console.log(fieldMeta)}
                   {fieldMeta!.order.active.map((key: string) => {
                     const field = fieldMeta.dataWithDefaults![key];
                     if (field) {

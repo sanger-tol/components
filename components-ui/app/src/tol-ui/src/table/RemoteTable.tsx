@@ -86,10 +86,9 @@ export function RemoteTable(props: PRemoteTable) {
     basic,
     zone,
     setZone,
-    fields = getTableConfigLocalStorage(id, "fieldMeta"),
+    fields,
     defaultSortByAttribute = getTableConfigLocalStorage(id, "defaultSortByAttribute"),
     defaultSortByType = getTableConfigLocalStorage(id, "defaultSortByType"),
-    pageSize: propPageSize = getTableConfigLocalStorage(id, "pageSize"),
     filterVisibility: propFilterVisibility = getTableConfigLocalStorage(id, "filterVisibility"),
     onPageSizeChange,
     onToggleFilterVisibility,
@@ -108,13 +107,17 @@ export function RemoteTable(props: PRemoteTable) {
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
-  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(() => (
-    initialiseFieldMeta(fields)
-  ));
+  const [fieldMeta, setFieldMeta] = useState<FieldMeta>(
+    initialiseFieldMeta(
+      getTableConfigLocalStorage(id, "fieldMeta") || fields
+    )
+  );
 
   // pagination
   const [page, setPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(propPageSize ?? 50);
+  const [pageSize, setPageSize] = useState<number>(
+    getTableConfigLocalStorage(id, "pageSize") || props.pageSize || 50
+  );
   const [totalSize, setTotalSize] = useState<number>(0);
 
   // filtering/sorting
@@ -207,6 +210,7 @@ export function RemoteTable(props: PRemoteTable) {
     }
     setLoading(true);
 
+    // fetch data
     dataSource
       .getListPage({
         objectType,
@@ -221,7 +225,6 @@ export function RemoteTable(props: PRemoteTable) {
         setData(
           convertTableData(dataObjects, fieldMeta!, cellRenderers)
         );
-        //setTotalSize(apiMeta.total);
       })
       .catch((error: any) => {
         setError(error.message);
@@ -231,6 +234,19 @@ export function RemoteTable(props: PRemoteTable) {
       .finally(() => {
         setLoading(false);
         setInitialLoad(false);
+      });
+
+    // fetch count
+    dataSource
+      .custom({
+        method: API_METHODS.GET,
+        resource: `${objectType}:count`,
+        params: {
+          filter: filter,
+        },
+      })
+      .then((res: any) => {
+        setTotalSize(res.data.meta.total);
       });
   };
 
@@ -261,7 +277,7 @@ export function RemoteTable(props: PRemoteTable) {
     }
 
     if (defaultSortByAttribute) {
-      setSortByAttribute(defaultSortByAttribute);
+      setSortByAttribute(defaultSortByAttribute || fieldMeta?.order?.active?.[0]);
       setSortByType(defaultSortByType);
     }
 
@@ -318,6 +334,16 @@ export function RemoteTable(props: PRemoteTable) {
     return null;
   };
 
+  const RowCount = () => (
+    <RowCounter
+      totalSize={totalSize}
+      setTotalSize={setTotalSize}
+      filter={filter}
+      loading={loading}
+      {...props}
+    />
+  );
+
   return (
     <div style={{ height: height }}>
       <ActionCheckModal
@@ -349,18 +375,9 @@ export function RemoteTable(props: PRemoteTable) {
         pageSize={pageSize}
         setPageSize={setPageSize}
         totalSize={totalSize}
-        setTotalSize={setTotalSize}
         downloadInProgress={downloadInProgress}
         setDownloadInProgress={setDownloadInProgress}
-        rowCounter={
-          <RowCounter
-            totalSize={totalSize}
-            setTotalSize={setTotalSize}
-            filter={filter}
-            loading={loading}
-            {...props}
-          />
-        }
+        rowCounter={RowCount()}
         filterVisibility={filterVisibility}
         setFilterVisibility={setFilterVisibility}
         sortByAttribute={sortByAttribute}
