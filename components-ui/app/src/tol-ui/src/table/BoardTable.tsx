@@ -90,7 +90,7 @@ export function BoardTable(props: PBoardTable) {
       {...props}
       noConfigModal={privilege !== PRIVILEGE.BOARD.EDITABLE}
       displaySource
-      fields={initialiseFieldMeta(config.fieldMeta)}
+      fields={config.fieldMeta}
       pageSize={config.pageSize}
       filterVisibility={config.filterVisibility}
       defaultSortByAttribute={config.defaultSortByAttribute}

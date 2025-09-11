@@ -91,7 +91,6 @@ export function RemoteTable(props: PRemoteTable) {
     filterVisibility: propFilterVisibility = getTableConfigLocalStorage(id, "filterVisibility"),
     onPageSizeChange,
     onToggleFilterVisibility,
-    noConfigModal,
     noDownload,
     actionDataSource = new TsDataSource({
       apiPrefix: ACTION_API_PREFIX,
