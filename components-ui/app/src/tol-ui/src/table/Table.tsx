@@ -419,7 +419,6 @@ export function Table(props: Props) {
                   renderLoading={() => (
                     <Placeholder
                       loader
-                      height={height}
                       opacity={0.8}
                       squareCorners
                     />

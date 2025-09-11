@@ -224,6 +224,18 @@ export function RemoteTable(props: PRemoteTable) {
         setData(
           convertTableData(dataObjects, fieldMeta!, cellRenderers)
         );
+        // fetch count
+        dataSource
+          .custom({
+            method: API_METHODS.GET,
+            resource: `${objectType}:count`,
+            params: {
+              filter: filter,
+            },
+          })
+          .then((res: any) => {
+            setTotalSize(res.data.meta.total);
+          });
       })
       .catch((error: any) => {
         setError(error.message);
@@ -231,21 +243,8 @@ export function RemoteTable(props: PRemoteTable) {
         console.error(error);
       })
       .finally(() => {
-        setLoading(false);
+        //setLoading(false);
         setFullLoad(false);
-      });
-
-    // fetch count
-    dataSource
-      .custom({
-        method: API_METHODS.GET,
-        resource: `${objectType}:count`,
-        params: {
-          filter: filter,
-        },
-      })
-      .then((res: any) => {
-        setTotalSize(res.data.meta.total);
       });
   };
 

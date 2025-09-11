@@ -150,7 +150,7 @@
     .tol-header-info {
       position: absolute;
       right: 0;
-      padding-right: 10px;
+      padding-right: 22px;
       margin-top: -2px;
     }
 
@@ -185,9 +185,6 @@
     --rs-row-resize: var(--tol-primary);
     --rs-table-resize: var(--tol-primary);
 
-    // sort arrows
-    --rs-table-sort: var(--tol-primary);
-
     // scroll bar
     --rs-table-scrollbar-track: none;
     --rs-table-scrollbar-vertical-track: none;
@@ -199,8 +196,8 @@
 
     .tol-sorting-arrows {
       position: absolute;
-      right: 30px;
-      top: 10px
+      right: 12px;
+      top: 10px;
     }
 
     .tol-sorting-arrow-active {
