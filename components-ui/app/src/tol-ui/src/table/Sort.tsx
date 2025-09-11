@@ -21,7 +21,7 @@ export function Sort(props: PSort) {
     if (attribute === sortByAttribute) {
       return (
         <Icon
-          icon={sortByType === "asc" ? "arrow-up" : "arrow-down"}
+          icon={sortByType === "asc" ? "sort-up" : "sort-down"}
           size="2xs"
           className="tol-sorting-arrows tol-sorting-arrow-active"
         />
@@ -29,7 +29,7 @@ export function Sort(props: PSort) {
     } else {
       return (
         <Icon
-          icon="arrows-up-down"
+          icon="sort"
           size="2xs"
           className="tol-sorting-arrows"
         />
