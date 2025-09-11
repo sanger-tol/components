@@ -120,7 +120,7 @@ export function TolApp(props: Props) {
           setUser,
         }}
       >
-        <Router basename={loggedIn ? basename : "/"}>
+        <Router basename={loggedIn ? basename : undefined}>
           <Navigation
             brand={props.brand}
             pages={props.pages}

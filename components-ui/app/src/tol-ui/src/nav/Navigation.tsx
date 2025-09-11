@@ -126,7 +126,7 @@ function Navigation(props: Props) {
         return (
           <Nav.Link
             key={page.name}
-            href={"link" in page ? page.link?.href : convertToPath(page.name)}
+            href={"link" in page ? page.link?.href : convertToPath(page.name, page.prefix)}
             target={page.link?.target}
           >
             {page.name}
@@ -162,8 +162,8 @@ function Navigation(props: Props) {
                         key={page.name}
                         href={
                           "link" in page
-                            ? page.link?.href
-                            : convertToPath(page.name)
+                          ? page.link?.href
+                          : convertToPath(page.name, page.prefix)
                         }
                         target={page.link?.target}
                       >
