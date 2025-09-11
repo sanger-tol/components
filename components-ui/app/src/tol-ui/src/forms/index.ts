@@ -17,4 +17,5 @@ export * from "./SingleSelectCustomOption";
 export * from "./FormMarkdown";
 export * from "./FormDatetime";
 export * from "./utils";
-export * from "./MultipleFormInput"
+export * from "./MultipleFormInput";
+export * from "./FormLabel";

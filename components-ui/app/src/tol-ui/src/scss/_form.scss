@@ -19,6 +19,12 @@
   flex-direction: column;
 }
 
+.tol-form-label {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
 .tol-multiple-form-input-row {
   margin-top: 10px;
   display: flex;

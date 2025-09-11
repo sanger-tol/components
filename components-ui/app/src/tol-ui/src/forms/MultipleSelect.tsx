@@ -8,7 +8,9 @@ import { Checkbox, CheckPicker as RSCheckPicker } from "rsuite";
 import {
   RSForm,
   isPropDefined,
-  IData
+  IData,
+  FormLabel,
+  IFormLabelIcon
 } from "..";
 
 
@@ -41,6 +43,7 @@ export interface PMultipleSelect {
   onExit?: any;
   onExiting?: any;
   groupBy?: string;
+  icon?: IFormLabelIcon;
 }
 
 export function MultipleSelect(props: PMultipleSelect) {
@@ -70,6 +73,7 @@ export function MultipleSelect(props: PMultipleSelect) {
     renderExtraFooter,
     className,
     groupBy,
+    icon
   } = props;
   const block = isPropDefined(props.block);
 
@@ -109,7 +113,7 @@ export function MultipleSelect(props: PMultipleSelect) {
 
   return (
     <RSForm.Group controlId="formMultipleSelect" as="span">
-      {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
+      <FormLabel label={label} icon={icon} />
       <span onClick={onClick}>
         <RSCheckPicker
           groupBy={groupBy}

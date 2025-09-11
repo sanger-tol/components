@@ -38,7 +38,9 @@ import {
   PRemoteAutoComplete,
   IMultipleselectField,
   IMarkdownField,
-  ICheckboxFormField
+  ICheckboxFormField,
+  PIcon,
+  FormLabel,
 } from "..";
 
 export interface PFormAllInOne {
@@ -142,7 +144,9 @@ export function FormAllInOne(props: PFormAllInOne) {
             name={datetimeField.name}
             label={datetimeField.label}
             value={formData[datetimeField.name] ?? ""}
-            onChange={(value: any) => handleInputChange(datetimeField.name, value)}
+            onChange={(value: any) =>
+              handleInputChange(datetimeField.name, value)
+            }
             helpText={datetimeField.helpText}
             errorText={errorText}
             placeholder={datetimeField.placeholder}
@@ -153,28 +157,43 @@ export function FormAllInOne(props: PFormAllInOne) {
         const singleselectField = field as ISingleselectField;
         return (
           <RSForm.Group controlId={`${formId}-${singleselectField.name}`}>
-            <RSForm.ControlLabel>{singleselectField.label}</RSForm.ControlLabel>
+            <FormLabel
+              label={singleselectField.label}
+              icon={singleselectField.icon}
+            />
             <SingleSelect
               data={singleselectField.data}
               placeholder={singleselectField.placeholder}
               value={formData[singleselectField.name] ?? ""}
-              setValue={(value: any) => handleInputChange(singleselectField.name, value)}
+              setValue={(value: any) =>
+                handleInputChange(singleselectField.name, value)
+              }
               block={singleselectField.block}
             />
-            <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
+            <RSForm.ErrorMessage
+              show={Boolean(errorText)}
+              placement="bottomStart"
+            >
+              {errorText}
+            </RSForm.ErrorMessage>
           </RSForm.Group>
         );
       case "singleselectcustomoption":
-        const singleselectcustomoptionField = field as ISingleselectcustomoptionField;
+        const singleselectcustomoptionField =
+          field as ISingleselectcustomoptionField;
         return (
           <SingleSelectCustomOption
             id={formId}
             value={formData[singleselectcustomoptionField.name] ?? ""}
-            setValue={(value: any) => handleInputChange(singleselectcustomoptionField.name, value)}
+            setValue={(value: any) =>
+              handleInputChange(singleselectcustomoptionField.name, value)
+            }
             errorText={errorText}
             data={singleselectcustomoptionField.data}
             label={singleselectcustomoptionField.label}
-            customOptionPlaceholder={singleselectcustomoptionField.customOptionPlaceholder}
+            customOptionPlaceholder={
+              singleselectcustomoptionField.customOptionPlaceholder
+            }
           />
         );
       case "dropzone":
@@ -187,12 +206,17 @@ export function FormAllInOne(props: PFormAllInOne) {
             generateMessages={dropzoneField.generateMessages}
             setResponse={dropzoneField.setResponse}
             errorText={errorText}
+            // icon={dropzoneField.icon}
           />
         );
       case "autocomplete":
         const autocompleteField = field as IAutocompleteField;
         if (autocompleteField.dataSource) {
-          const remoteAutocompleteField = field as Omit<IAutocompleteField, "dataSource"> & PRemoteAutoComplete
+          const remoteAutocompleteField = field as Omit<
+            IAutocompleteField,
+            "dataSource"
+          > &
+            PRemoteAutoComplete;
           return (
             <RemoteAutoComplete
               dataSource={remoteAutocompleteField.dataSource}
@@ -203,17 +227,23 @@ export function FormAllInOne(props: PFormAllInOne) {
               label={remoteAutocompleteField.label}
               data={remoteAutocompleteField.data}
               value={formData[remoteAutocompleteField.name] ?? ""}
-              onChange={(value: any) => handleInputChange(remoteAutocompleteField.name, value)}
+              onChange={(value: any) =>
+                handleInputChange(remoteAutocompleteField.name, value)
+              }
               errorText={errorText}
+              icon={remoteAutocompleteField.icon as PIcon}
             />
-          )
+          );
         } else {
           return (
             <AutoComplete
               label={autocompleteField.label}
               data={autocompleteField.data}
               value={formData[autocompleteField.name] ?? ""}
-              onChange={(value: any) => handleInputChange(autocompleteField.name, value)}
+              onChange={(value: any) =>
+                handleInputChange(autocompleteField.name, value)
+              }
+              icon={autocompleteField.icon as PIcon}
             />
           );
         }
@@ -225,7 +255,9 @@ export function FormAllInOne(props: PFormAllInOne) {
             data={multipleselectField.data}
             label={multipleselectField.label}
             value={formData[multipleselectField.name] || []}
-            setValue={(value: any) => handleInputChange(multipleselectField.name, value)}
+            setValue={(value: any) =>
+              handleInputChange(multipleselectField.name, value)
+            }
             errorText={errorText}
             placeholder={multipleselectField.placeholder}
             disabled={multipleselectField.disabled}
@@ -245,7 +277,9 @@ export function FormAllInOne(props: PFormAllInOne) {
         return (
           <FormMarkdown
             value={formData[markdownField.name] ?? ""}
-            onChange={(value: any) => handleInputChange(markdownField.name, value)}
+            onChange={(value: any) =>
+              handleInputChange(markdownField.name, value)
+            }
             preview={markdownField.preview}
             label={markdownField.label}
             removeCommands={markdownField.removeCommands}
@@ -339,4 +373,3 @@ export function FormAllInOne(props: PFormAllInOne) {
     </div>
   );
 }
-

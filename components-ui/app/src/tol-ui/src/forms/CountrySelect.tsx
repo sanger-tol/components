@@ -8,7 +8,9 @@ import { useMemo } from "react";
 import countryList from "react-select-country-list";
 import {
   SingleSelect,
-  RSForm
+  RSForm,
+  FormLabel,
+  IFormLabelIcon
 } from "..";
 
 export interface PCountrySelect {
@@ -16,17 +18,18 @@ export interface PCountrySelect {
   value: string;
   setValue: any;
   errorText?: string;
+  icon?: IFormLabelIcon;
 }
 
 export function CountrySelect(props: PCountrySelect) {
-  const { label, value, setValue, errorText } = props;
+  const { label, value, setValue, errorText, icon } = props;
 
   const countryOptions = useMemo(() => countryList().getData(), []);
   const countryItems = countryOptions.map((item: any) => item.label);
 
   return (
     <RSForm.Group controlId="formCountrySelector">
-      <RSForm.ControlLabel>{label ?? "Nationality:"}</RSForm.ControlLabel>
+      <FormLabel label={label || "Nationality:"} icon={icon} />
       <SingleSelect
         data={countryItems}
         placeholder="Please Select..."

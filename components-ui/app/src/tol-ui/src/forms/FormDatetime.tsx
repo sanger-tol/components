@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { DatePicker } from "rsuite";
-import { RSForm } from "..";
+import { FormLabel, IFormLabelIcon, RSForm } from "..";
 
 export interface PFormDatetime {
   name: string;
@@ -17,6 +17,7 @@ export interface PFormDatetime {
   placeholder?: string;
   hideMinutes?: (minute: number, date: Date) => boolean;
   format?: string;
+  icon?: IFormLabelIcon;
 }
 
 export function FormDatetime(props: PFormDatetime) {
@@ -30,12 +31,13 @@ export function FormDatetime(props: PFormDatetime) {
     placeholder = "Select date/time",
     hideMinutes = () => false,
     format = "dd-MM-yyyy HH:mm",
+    icon,
   } = props;
 
   return (
     <>
       <RSForm.Group controlId={name}>
-        <RSForm.ControlLabel>{label}</RSForm.ControlLabel>
+        <FormLabel label={label} icon={icon} />
         <DatePicker
           value={value ? new Date(value) : null}
           onChange={onChange}
@@ -45,7 +47,9 @@ export function FormDatetime(props: PFormDatetime) {
           block
         />
         {helpText && <RSForm.HelpText>{helpText}</RSForm.HelpText>}
-        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
+        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">
+          {errorText}
+        </RSForm.ErrorMessage>
       </RSForm.Group>
     </>
   );

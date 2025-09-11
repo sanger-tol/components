@@ -4,21 +4,26 @@
  * SPDX-License-Identifier: MIT
  */
 
-.icon {
-  color: #039be5;
-  @media (prefers-color-scheme: dark) {
-    color: white;
-  }
-}
-
 .tol-socialviewer-parent {
   display: flex;
   gap: 0.5rem;
+
+  h3 {
+    margin-bottom: 0;
+  }
+
+  .icon {
+    color: var(--tol-text-primary);
+    align-self: center;
+    @media (prefers-color-scheme: dark) {
+      color: white;
+    }
+  }
 }
 
 .tol-socialviewer-title {
-  font-size: 1.125rem; 
-  font-weight: 600; 
+  font-size: 1.125rem;
+  font-weight: 600;
   line-height: 1.75rem;
 }
 

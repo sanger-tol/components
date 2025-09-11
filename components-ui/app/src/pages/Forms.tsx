@@ -100,6 +100,7 @@ const testConfigProfileForm = {
         "Giraffe",
         "Horse",
       ],
+      icon: { icon: "linkedin", config: "brands", size: "sm", position: "left" },
     },
     {
       name: "age",
@@ -303,7 +304,7 @@ export function Forms() {
       />
       <br />
       <h4>Country Select</h4>
-      <CountrySelect value={country} setValue={setCountry} />
+      <CountrySelect value={country} setValue={setCountry} icon={{icon: "globe", size: "sm", position: "left"}}/>
       <br />
       <h4>Single Select With Custom Option</h4>
       <p>This must be inside a 'Form' component</p>
