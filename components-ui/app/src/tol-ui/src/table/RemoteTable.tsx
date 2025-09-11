@@ -243,7 +243,7 @@ export function RemoteTable(props: PRemoteTable) {
         console.error(error);
       })
       .finally(() => {
-        //setLoading(false);
+        setLoading(false);
         setFullLoad(false);
       });
   };
