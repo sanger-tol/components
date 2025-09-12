@@ -82,6 +82,7 @@ function addValueBasedCellRenderer(
 
 export function convertTableData(
   dataObjects: TDataObjectListOrNull,
+  dataSource: TsDataSource,
   fieldMeta: FieldMeta,
   customCellRenderers?: ICustomCellRenderers
 ): ITableData {
@@ -91,18 +92,19 @@ export function convertTableData(
   dataObjects!.forEach((obj) => {
     const row: ITableRecord = {};
     // loop over each field
-    fieldMeta.order.active.forEach((key) => {
+    fieldMeta.order.active.forEach((attribute) => {
       // only add if undefined, not null - null = turn off cell renderer
-      const value = getFieldByName(obj, key);
-      if (fieldMeta.dataWithDefaults![key]?.cellRenderer === undefined) {
-        addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![key]);
+      const value = getFieldByName(obj, attribute);
+      if (fieldMeta.dataWithDefaults![attribute]?.cellRenderer === undefined) {
+        addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![attribute]);
       }
-      row[key] = (
+      row[attribute] = (
         <Cell
-          key={key}
+          attribute={attribute}
           value={value}
           dataObject={obj}
-          renderer={fieldMeta.dataWithDefaults?.[key]?.cellRenderer}
+          dataSource={dataSource}
+          renderer={fieldMeta.dataWithDefaults?.[attribute]?.cellRenderer}
           customCellRenderers={customCellRenderers}
         />
       );
@@ -115,7 +117,8 @@ export function convertTableData(
 
 function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
   // relationship ids have relationship boxes by default
-  if (isRelationship(key) && key.split(".")[1] === "id") {
+  const splitKey = key.split(".")
+  if (isRelationship(key) && splitKey[splitKey.length - 1] === "id") {
     return { type: "relationship" };
   }
 

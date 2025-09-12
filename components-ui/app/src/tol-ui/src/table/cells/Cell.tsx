@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import {
   getFieldByName,
-  IDataObject,
+  TDataObjectOrNull,
   TCellRenderer,
   Boolean,
   Datetime,
@@ -16,14 +16,16 @@ import {
   Integer,
   Link,
   List,
-  RelationshipDetail,
+  Relationship,
   ICustomCellRenderers,
+  TsDataSource,
 } from "../..";
 
 export interface PCell {
-  key: string,
+  attribute: string,
   value?: any,
-  dataObject: IDataObject,
+  dataObject: TDataObjectOrNull,
+  dataSource?: TsDataSource,
   renderer: TCellRenderer;
   customCellRenderers?: ICustomCellRenderers;
 }
@@ -32,8 +34,8 @@ export function Cell(props: PCell) {
   const { value, dataObject, renderer, customCellRenderers } = props;
 
   const preDefinedElements = {
-    relationship: RelationshipDetail,
-    relationshipDetail: RelationshipDetail,
+    relationship: Relationship,
+    relationshipDetail: Relationship,
     datetime: Datetime,
     boolean: Boolean,
     image: Image,

@@ -221,7 +221,12 @@ export function RemoteTable(props: PRemoteTable) {
       .then((dataObjects: TDataObjectListOrNull) => {
         setError("");
         setData(
-          convertTableData(dataObjects, fieldMeta!, cellRenderers)
+          convertTableData(
+            dataObjects,
+            dataSource,
+            fieldMeta!,
+            cellRenderers
+          )
         );
         // fetch count
         dataSource

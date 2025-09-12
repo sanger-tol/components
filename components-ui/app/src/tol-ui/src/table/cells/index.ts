@@ -13,4 +13,4 @@ export * from "./Image";
 export * from "./Integer";
 export * from "./Link";
 export * from "./List";
-export * from "./RelationshipDetail";
+export * from "./Relationship"
