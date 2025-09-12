@@ -8,10 +8,8 @@ import * as XLSX from "xlsx";
 import {
   Field,
   FieldMeta,
-  FieldMetaData,
   isFloat,
   normaliseCaps,
-  Relationship,
   IEntityMeta,
   colours,
   TsDataSource,
@@ -65,38 +63,6 @@ export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
       active: [],
     },
   } as FieldMeta;
-}
-
-function createRelationshipBox(
-  key: string,
-  data: any,
-  dataSource: TsDataSource,
-  detail?: boolean,
-) {
-  const [relationship, attribute] = key.split(".");
-
-  // cannot assume some keys exist
-  if ("relationships" in data) {
-    if (relationship in data["relationships"]) {
-      const relationData = data["relationships"][relationship]["data"];
-      // need to create attributes for id to be added to if it doesn't exist
-      if (!("attributes" in relationData)) {
-        relationData["attributes"] = {};
-      }
-      relationData["attributes"]["id"] = relationData["id"];
-      if (attribute in relationData["attributes"]) {
-        return (
-          <Relationship
-            attribute={attribute}
-            data={relationData}
-            detail={detail}
-            dataSource={dataSource}
-          />
-        );
-      }
-    }
-  }
-  return "";
 }
 
 function addValueBasedCellRenderer(
