@@ -400,3 +400,12 @@ export function getHeight(type: string) {
       return 600;
   }
 }
+
+export function sortObjectAlphabetically(obj: Record<string, any>): Record<string, any> {
+  return Object.keys(obj)
+    .sort() // sort keys alphabetically
+    .reduce((sortedObj: Record<string, any>, key: string) => {
+      sortedObj[key] = obj[key]; // rebuild the object with sorted keys
+      return sortedObj;
+    }, {});
+}

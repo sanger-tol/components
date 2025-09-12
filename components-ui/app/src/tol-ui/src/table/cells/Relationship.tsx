@@ -16,6 +16,7 @@ import {
   IEntityMeta,
   TDataObjectOrNull,
   getFieldByName,
+  sortObjectAlphabetically,
 } from "../..";
 
 
@@ -33,20 +34,28 @@ export function Relationship(props: PRelationship) {
   const relationship = splitKey[splitKey.length - 2];
   const relationshipObjectType = dataObject?.relationships?.[relationship]?.objectType;
 
+  /*
+    currently ignores null data entries
+    fetchRelationships not fetching here, only caching
+    -- needs improving in the future
+  */
   const loadRelationship = async () => {
     dataSource
       ?.attributeMetadata().then(async (am: any) => {
         await dataObject?.fetchRelationships?.[relationship]
           .then((relDataObject: TDataObjectOrNull) => {
             const data = {};
-            console.log(am)
             Object.entries(am[relationshipObjectType!]).map(([key, meta]: any) => {
-              if (relDataObject && key in relDataObject) {
+              if (relDataObject?.[key]) {
                 data[meta.display_name] = relDataObject?.[key];
               }
             });
-            console.log(data);
-            setContents(<FormatTooltip contents={data} />);
+            
+            setContents(
+              <FormatTooltip
+                contents={sortObjectAlphabetically(data)}
+              />
+            );
           });
       })
       .catch((error: any) => {
