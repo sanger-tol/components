@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  initialiseFieldMeta,
   BoardFilters,
   RemoteTable,
   saveTitle,

@@ -56,7 +56,7 @@ interface Props extends IRemoteTargetAndZone {
   setFilterVisibility?: any;
 
   sortByAttribute?: string;
-  sortByType?: string;
+  sortByType?: any;
   defaultSortByAttribute?: string;
   defaultSortByType?: string;
   handleSortColumn: any;
