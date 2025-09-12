@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
-import { RSForm } from "..";
+import { FormLabel, IFormLabelIcon, RSForm } from "..";
 
 export interface PFormMarkdown {
   value: string;
@@ -17,6 +17,7 @@ export interface PFormMarkdown {
   height?: string | number;
   helpText?: string;
   errorText?: string;
+  icon?: IFormLabelIcon;
 }
 
 export function FormMarkdown(props: PFormMarkdown) {
@@ -29,12 +30,13 @@ export function FormMarkdown(props: PFormMarkdown) {
     height,
     helpText,
     errorText,
+    icon
   } = props;
 
   return (
     <>
       <RSForm.Group controlId={label}>
-        {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
+        <FormLabel label={label || "Markdown Editor:"} icon={icon}/>
         {helpText && (
           <div className="tol-form-markdown-help-text">
             <RSForm.HelpText>{helpText}</RSForm.HelpText>

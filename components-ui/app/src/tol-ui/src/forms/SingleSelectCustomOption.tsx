@@ -14,6 +14,8 @@ import {
   RSForm,
   SingleSelect,
   FormTextField,
+  FormLabel,
+  IFormLabelIcon,
 } from "..";
 
 export interface PSingleSelectCustomOption {
@@ -24,10 +26,20 @@ export interface PSingleSelectCustomOption {
   data: string[];
   label?: string;
   customOptionPlaceholder?: string;
+  icon?: IFormLabelIcon;
 }
 
 export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
-  const { id, value, setValue, data, label, customOptionPlaceholder, errorText } = props;
+  const {
+    id,
+    value,
+    setValue,
+    data,
+    label,
+    customOptionPlaceholder,
+    errorText,
+    icon,
+  } = props;
 
   const [selectedOption, setSelectedOption] = useState("");
   const [customValue, setCustomValue] = useState("");
@@ -74,12 +86,11 @@ export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
   return (
     <>
       <RSForm.Group
-        controlId={`form${label ? label.replace(/\s+/, "") : "OtherOptionSelect"
-          }`}
+        controlId={`form${
+          label ? label.replace(/\s+/, "") : "OtherOptionSelect"
+        }`}
       >
-        <RSForm.ControlLabel>
-          {label || "Please select from the dropdown below..."}
-        </RSForm.ControlLabel>
+        <FormLabel label={label || "Select an option:"} icon={icon} />
         <SingleSelect
           data={data}
           placeholder="Please Select..."
@@ -92,13 +103,16 @@ export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
             id={`form-${id}-custom-${label}`}
             name={`custom${label ? label.replace(/\s+/, "") : "FormTextField"}`}
             label={`Other ${label || "Option"}`}
-            placeholder={`${customOptionPlaceholder || "Please enter a custom option..."
-              }`}
+            placeholder={`${
+              customOptionPlaceholder || "Please enter a custom option..."
+            }`}
             value={customValue}
             onChange={handleCustomValueChange}
           />
         )}
-        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
+        <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">
+          {errorText}
+        </RSForm.ErrorMessage>
       </RSForm.Group>
     </>
   );
