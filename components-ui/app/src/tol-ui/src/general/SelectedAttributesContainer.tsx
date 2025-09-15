@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, forwardRef, useState, useRef } from "react";
+import { useEffect, forwardRef, useState, useRef, ReactElement } from "react";
 import DraggableList from "react-draggable-list";
 import {
   Icon,
@@ -20,10 +20,11 @@ import {
 export interface PSelectedAttributesContainer extends IRemoteTarget {
   attributes: readonly string[];
   setAttributes: (attributes: string[]) => void;
+  additionalIcons?: ReactElement;
 }
 
 export function SelectedAttributesContainer(props: PSelectedAttributesContainer) {
-  const { objectType, dataSource, attributes, setAttributes } = props;
+  const { objectType, dataSource, attributes, setAttributes, additionalIcons } = props;
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
   const [objectAttributes, setObjectAttributes] = useState<IAttributeDetails>(
@@ -103,8 +104,11 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
           {attributeDeatils.source && (
             <SourceTag source={attributeDeatils.source} />
           )}
+          {additionalIcons?.map(icon =>
+            icon
+          )}
           <div
-            className={"tol-active-column-btn first"}
+            className={"tol-active-column-btn"}
             onClick={() => moveAttributeUp(index)}
           >
             <Icon icon="arrow-up" size="lg" />
