@@ -12,12 +12,6 @@ import { Image } from "../tol-ui/src";
 export function Sandbox() {
 let images: string[] = ["https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png", "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"]
 
-const [currentIndex, setCurrentIndex] = useState(0);
-
-const arrowPrev = () => {setCurrentIndex((prev) => prev === 0? images.length - 1: prev -1 )}
-
-const arrowNext = () => {setCurrentIndex((prev) => prev === images.length - 1? 0 : prev + 1 )}
-
   return (
     <>
       <Image value={images} attribute="TOLQC" dataObject={null} renderer={{type:"image"}}/>

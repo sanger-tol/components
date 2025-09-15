@@ -27,12 +27,6 @@ export function Image(props: PCell) {
       {ImageViewerModal}
       <div
         className="tol-table-image-cell"
-        style={{
-          marginLeft: "500px",
-          width: "250px",
-          height: "100px",
-          background: "purple",
-        }}
       >
         <Icon
           className="tol-table-image-cell-arrow"
