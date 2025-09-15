@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { Icon } from "../tol-ui/src";
+import { Image } from "../tol-ui/src";
 
 
 export function Sandbox() {
@@ -19,22 +20,7 @@ const arrowNext = () => {setCurrentIndex((prev) => prev === images.length - 1? 0
 
   return (
     <>
-      <div className="d-flex align-items-center"
-        style={{
-          marginLeft: "500px",
-          width: "200px",
-          height: "100px",
-          background: "purple",
-        }}
-      >
-        <button className="btn btn-primary me-auto" onClick={arrowPrev}>
-          <Icon icon="caret-left" />
-        </button>
-        <img src={images[currentIndex]} alt="Ditto" width="150px" height="100px"/> 
-        <button className="btn btn-primary ms-auto" onClick={arrowNext}>
-          <Icon icon="caret-right" />
-        </button>
-      </div>
+      <Image value={images} attribute="TOLQC" dataObject={null} renderer={{type:"image"}}/>
     </>
   );
 }

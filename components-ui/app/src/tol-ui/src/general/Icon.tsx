@@ -11,13 +11,14 @@ export interface PIcon {
   size?: string;
   config?: string;
   className?: string;
+  onClick?: ()=> void;
 }
 
 export function Icon(props: PIcon) {
-  const { icon, size, config = "solid", className } = props;
+  const { icon, size, config = "solid", className, onClick } = props;
 
   return (
-    <span className={className}>
+    <span className={className} onClick={onClick}>
       {/* @ts-ignore */}
       <FontAwesomeIcon icon={`fa-${config} fa-${icon}`} size={size} />
     </span>

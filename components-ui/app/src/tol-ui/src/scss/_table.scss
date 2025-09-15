@@ -31,13 +31,11 @@
 
   // dropdown box shadow
   .rs-dropdown.rs-dropdown-menu {
-    box-shadow:
-      0 0 10px rgba(255, 255, 255, 1),
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1),
       0 4px 4px rgba(255, 255, 255, 0.12) !important;
   }
 
   .tol-pagination {
-
     .rs-pagination-btn {
       border: 1px solid var(--tol-bg);
     }
@@ -298,7 +296,7 @@
 .tooltip-value {
   font-size: small;
   padding-right: 10px;
-  color: var(--tol-primary)
+  color: var(--tol-primary);
 }
 
 .tooltip-value-none {
@@ -414,6 +412,23 @@
   left: auto;
   padding: 4px 8px;
   backdrop-filter: blur(8px);
+}
+
+.tol-table-image-cell-arrow {
+  cursor: pointer;
+  color: var(--tol-text);
+}
+
+.tol-table-image-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tol-table-image-cell-image {
+  width: 200px;
+  height: 200px;
+  cursor: pointer;
 }
 
 // pagination buttons on smaller devices
