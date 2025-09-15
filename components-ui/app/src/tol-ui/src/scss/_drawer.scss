@@ -29,8 +29,21 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
   cursor: pointer;
 }
 
-.tol-active-column-btn.first {
-  margin-left: 12px !important;
+@keyframes tol-palette-hue-loop {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.tol-palette-icon:hover {
+  transition: 300ms;
+  animation-duration: 1s;
+  animation-direction: alternate;
+  animation-name: tol-palette-hue-loop;
+  animation-iteration-count: infinite;
 }
 
 .tol-active-column-btn.hidden {
