@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { SelectPicker } from "rsuite";
 
 export interface PSingleSelect {
-  data: string[];
+  data: string[] | { label: string, value: string }[];
   placeholder?: string;
   value: string;
   setValue: any;
@@ -20,7 +20,11 @@ export const SingleSelect = (props: PSingleSelect) => {
   const [data, setData] = useState([{}]);
 
   useEffect(() => {
-    setData(props.data.map((item) => ({ label: item, value: item })));
+    if (props.data[0] instanceof String) {
+      setData(props.data.map((item) => ({ label: item, value: item })));
+    } else {
+      setData(props.data);
+    }
   }, [props.data]);
 
   return (
