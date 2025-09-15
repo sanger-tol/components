@@ -18,6 +18,7 @@ import {
   ITableConfigSave,
   Icon,
 } from "..";
+import CellRendererModal from "./CellRendererModal";
 
 
 interface Props extends IRemoteTarget {
@@ -58,6 +59,7 @@ export function ColumnConfigDrawer(props: Props) {
   const [actions, setActions] = useState<string[]>(originalActions);
   const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
   const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
+  const [cellRendererModalOpen, setCellRendererModelOpen] = useState(false);
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
@@ -204,7 +206,7 @@ export function ColumnConfigDrawer(props: Props) {
   const ConfigureCellRendererOpenIcon = (
     <div
       className={"tol-active-column-btn tol-palette-icon"}
-      onClick={() => console.log("works")}
+      onClick={() => setCellRendererModelOpen(true)}
     >
       <Icon icon="palette" size="lg" />
     </div>
@@ -286,6 +288,10 @@ export function ColumnConfigDrawer(props: Props) {
         setOpen={setOpen}
         children={attSelector}
         onClose={handleCloseDrawer}
+      />
+      <CellRendererModal
+        open={cellRendererModalOpen}
+        setOpen={setCellRendererModelOpen}
       />
     </div>
   );
