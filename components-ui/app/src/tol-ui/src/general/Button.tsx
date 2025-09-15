@@ -9,7 +9,6 @@ import { Button as RsButton } from "rsuite";
 import { TolLoader, HoverOverlay, Icon } from "..";
 
 export interface PButton {
-  key?: string | number;
   icon?: string;
   onClick?: (...args: any[]) => void;
   className?: string;
@@ -32,14 +31,13 @@ export interface PButton {
 
 export function Button(props: PButton) {
   const {
-    key,
     icon,
     onClick,
     className,
     text,
     disabled,
     size,
-    type,
+    type = "primary",
     active,
     position = "none",
     tooltip,
@@ -57,9 +55,7 @@ export function Button(props: PButton) {
   const [timeoutDisabled, setTimeoutDisabled] = useState<boolean>(false);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>, ...args: any[]) => {
-    if (onClick) {
-      onClick(event, ...args);
-    }
+    if (onClick) onClick(event, ...args);
 
     if (limit > 0) {
       setButtonClicked((prev: number) => {
@@ -98,12 +94,12 @@ export function Button(props: PButton) {
     <>
       {visible && (
         <RsButton
-          key={key || `button-${text || icon}`}
+          key={`button-${text || icon}`}
           id={id}
           onClick={handleClick}
           disabled={
             disabled ||
-            loading ||
+            (loading && timeout > 0) ||
             (limit > 0 && buttonClicked >= limit) ||
             timeoutDisabled
           }

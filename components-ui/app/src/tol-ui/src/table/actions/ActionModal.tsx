@@ -40,7 +40,7 @@ export function ActionModal(props: Props) {
       size="full"
       closeButton
     >
-      <h5 style={{paddingBottom: 20}}>Actions run on '{objectType}'</h5>
+      <h5 style={{ paddingBottom: 20 }}>Actions run on '{objectType}'</h5>
       <RemoteTable
         basic
         noConfigModal
@@ -48,25 +48,38 @@ export function ActionModal(props: Props) {
         noFilter
         id="action-table"
         height={500}
-        defaultSort="-created_at"
+        defaultSortByAttribute="created_at"
+        defaultSortByType="desc"
+        cellRenderers={{
+          actionStatus: ActionStatus,
+        }}
         fields={{
-          "action.name": {
-            rename: "Action",
-          },
-          ids: {
-            rename: "IDs",
-            width: 500,
-          },
-          "status":{
-            rename: "Status",
-            width: 300,
-            custom: true,
-            cellRenderer: {
-              element: ActionStatus,
+          data: {
+            "action.name": {
+              rename: "Action",
             },
+            ids: {
+              rename: "IDs",
+              width: 500,
+            },
+            "status": {
+              rename: "Status",
+              width: 300,
+              cellRenderer: {
+                type: "actionStatus",
+              },
+            },
+            "user.oidc_id": {
+              rename: "User",
+            }
           },
-          "user.oidc_id": {
-            rename: "User",
+          order: {
+            active: [
+              "action.name",
+              "ids",
+              "status",
+              "user.oidc_id"
+            ]
           }
         }}
         {...actionZone}

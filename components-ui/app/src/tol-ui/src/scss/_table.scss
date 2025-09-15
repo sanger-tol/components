@@ -41,6 +41,7 @@
     .rs-pagination-btn {
       border: 1px solid var(--tol-bg);
     }
+
     .rs-pagination-btn.rs-pagination-btn-active {
       border: 1px solid var(--tol-grey);
     }
@@ -64,9 +65,11 @@
 
   .config-modal-overflow-fix {
     max-height: 80vh;
+
     .rs-modal-body {
       max-height: 58vh;
     }
+
     .rs-modal-footer {
       padding-top: 25px !important;
     }
@@ -147,7 +150,7 @@
     .tol-header-info {
       position: absolute;
       right: 0;
-      padding-right: 18px;
+      padding-right: 22px;
       margin-top: -2px;
     }
 
@@ -182,18 +185,23 @@
     --rs-row-resize: var(--tol-primary);
     --rs-table-resize: var(--tol-primary);
 
-    // sort arrows
-    --rs-table-sort: var(--tol-primary);
-
     // scroll bar
     --rs-table-scrollbar-track: none;
     --rs-table-scrollbar-vertical-track: none;
 
-    // sort arrows
+    // remove rsuite sort arrows
     .rs-table-cell-header-sort-wrapper {
+      display: none;
+    }
+
+    .tol-sorting-arrows {
       position: absolute;
-      top: 0;
-      right: 0;
+      right: 12px;
+      top: 10px;
+    }
+
+    .tol-sorting-arrow-active {
+      color: var(--tol-primary);
     }
 
     // inner table loader
@@ -285,12 +293,12 @@
 .tooltip-key {
   margin-right: 5px;
   font-size: small;
-  font-weight: 1000;
 }
 
 .tooltip-value {
   font-size: small;
   padding-right: 10px;
+  color: var(--tol-primary)
 }
 
 .tooltip-value-none {
@@ -359,12 +367,15 @@
   .token.token {
     color: var(--tol-primary) !important;
   }
+
   .token.token.punctuation {
     color: var(--tol-text) !important;
   }
+
   .token.token.operator {
     color: var(--tol-text) !important;
   }
+
   span {
     font-family: monospace;
     color: var(--tol-text);
@@ -380,6 +391,7 @@
     color: var(--tol-primary);
     margin-top: 10px;
   }
+
   .tol-download-figure-spacer {
     margin-left: 12px;
   }

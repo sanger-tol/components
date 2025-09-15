@@ -16,26 +16,27 @@ import {
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
-  getAllowedFields,
   getSourceColour,
   Filter,
   IFilterInputType,
   FieldMeta,
-  initialiseFieldMeta,
-  IZone,
   IDropdownButtonConfig,
   useStateFallback,
+  IRemoteTargetAndZone,
   PUtilityBar,
   PButton,
   PDropdownButtons,
-  IRemoteTarget,
   useBoardPrivilege,
   PRIVILEGE,
+  ITableConfigSave,
+  RowCounter,
 } from "..";
+import { Sort } from "./Sort";
+
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
-interface Props extends IRemoteTarget {
+interface Props extends IRemoteTargetAndZone {
   id: string;
   data: any;
   fieldMeta: FieldMeta;
@@ -46,26 +47,22 @@ interface Props extends IRemoteTarget {
 
   page: number;
   setPage: any;
-  pageSize: number | NumRows;
+  pageSize: number;
   setPageSize: any;
   totalSize: number;
-  setTotalSize?: (totalSize: number) => void;
-  rowCounter?: JSX.Element;
   displaySource?: boolean;
 
   filterVisibility?: boolean;
   setFilterVisibility?: any;
 
-  sortColumn: string;
-  sortType: any;
-  defaultSort?: string;
+  sortByAttribute?: string;
+  sortByType?: any;
+  defaultSortByAttribute?: string;
+  defaultSortByType?: string;
   handleSortColumn: any;
-
-  zone: IZone;
-  setZone: any;
   filter: any;
 
-  onModalSave: any;
+  onConfigSave: (config: ITableConfigSave) => void;
 
   noFilter?: boolean;
   noPagination?: boolean;
@@ -93,7 +90,7 @@ export function Table(props: Props) {
     /* eslint-disable */
     id,
     data,
-    fieldMeta = initialiseFieldMeta(),
+    fieldMeta,
     height,
     loading,
 
@@ -106,18 +103,16 @@ export function Table(props: Props) {
     pageSize,
     setPageSize,
     totalSize,
-    rowCounter,
     displaySource,
 
     filterVisibility,
     setFilterVisibility,
 
-    sortColumn,
-    sortType,
-    defaultSort,
+    sortByAttribute,
+    sortByType,
+    defaultSortByAttribute,
+    defaultSortByType,
     handleSortColumn,
-
-    onModalSave,
     filter,
 
     noFilter,
@@ -134,7 +129,9 @@ export function Table(props: Props) {
     downloadInProgress,
     /* eslint-enable */
   } = props;
-  const wrapperId = "tol-table-wrapper-" + id;
+
+  const { privilege } = useBoardPrivilege()
+
   const [open, setOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
@@ -152,9 +149,9 @@ export function Table(props: Props) {
   const [bulkSelect, setBulkSelect] = useState(false);
   let checked = false;
   let indeterminate = false;
-  const noFieldsSelected = fieldMeta.order.active.length === 0;
 
-  const { privilege } = useBoardPrivilege();
+  const noFieldsSelected = fieldMeta?.order?.active?.length === 0;
+  const wrapperId = "tol-table-wrapper-" + id;
 
   if (selectedRows.length === data.length || bulkSelect) {
     checked = true;
@@ -188,7 +185,7 @@ export function Table(props: Props) {
   useEffectUpdate(() => {
     checked = false;
     setSelectedRows([]);
-  }, [page, pageSize, filter, sortColumn, sortType]);
+  }, [page, pageSize, filter, sortByAttribute, sortByType]);
 
   const actionDropDownButtons = actions?.map((button) => ({
     ...button,
@@ -242,7 +239,7 @@ export function Table(props: Props) {
     onClick: () => {
       setDownloadOpen(!downloadOpen);
     },
-    disabled: totalSize <= 0 || noFieldsSelected,
+    disabled: (totalSize <= 0 || noFieldsSelected) || loading,
     icon: "download",
     disabledTooltip:
       totalSize >= 1
@@ -277,20 +274,27 @@ export function Table(props: Props) {
         open={downloadOpen}
         setOpen={setDownloadOpen}
         source={source}
-        requestedFields={fieldMeta.order.active}
+        requestedFields={fieldMeta?.order?.active}
         title={utilityBarConfig.title}
+        fieldMeta={fieldMeta}
       />
       <ColumnConfigDrawer
         {...props}
         title={"Table Configuration"}
+        fieldMeta={fieldMeta}
         actions={actions}
-        defaultSort={defaultSort}
+        defaultSortByAttribute={defaultSortByAttribute}
+        defaultSortByType={defaultSortByType}
         open={open}
         groupBy={groupBy}
         setOpen={setOpen}
         displaySource={displaySource}
-        customAttributeSelection={getAllowedFields(fieldMeta)}
-        onConfigSave={onModalSave}
+        // fetches all if inactive isn't specified
+        customAttributeSelection={
+          fieldMeta.order.inactive && fieldMeta.order.inactive.length > 0
+            ? [...(fieldMeta.order.active ?? []), ...fieldMeta.order.inactive]
+            : undefined
+        }
       />
       {/*rowSelection && (
           <>
@@ -311,7 +315,7 @@ export function Table(props: Props) {
         id={id}
         title={utilityBarConfig.title}
         elements={
-          !noPagination && fieldMeta.order.active.length > 0
+          !noPagination && fieldMeta?.order?.active?.length > 0
             ? [
               <span className="tol-page-size">
                 {!smallBreakpoint &&
@@ -388,17 +392,15 @@ export function Table(props: Props) {
             />
           ) : (
             <>
-              <div className="tol-table-row-counter">
-                {rowCounter ? rowCounter : totalSize}
-              </div>
+              <RowCounter {...props} />
               <div className="tol-table-inner">
                 <RSTable
                   bordered
                   data={data}
                   headerHeight={!noFilter && filterVisibility ? 85 : 42}
                   loading={loading}
-                  sortColumn={sortColumn}
-                  sortType={sortType}
+                  sortColumn={sortByAttribute}
+                  sortType={sortByType}
                   onSortColumn={handleSortColumn!}
                   rowClassName={(rowData: any) => {
                     if (rowData) {
@@ -417,7 +419,6 @@ export function Table(props: Props) {
                   renderLoading={() => (
                     <Placeholder
                       loader
-                      height={height}
                       opacity={0.8}
                       squareCorners
                     />
@@ -454,61 +455,68 @@ export function Table(props: Props) {
                     </Column>
                   )}
                   {fieldMeta!.order.active.map((key: string) => {
-                    const field = fieldMeta.data[key];
-                    const sortable = noSorting ? false : field.sort;
-                    const filterable = noFilter ? false : field.filter;
+                    const field = fieldMeta.dataWithDefaults![key];
+                    if (field) {
+                      const sortable: boolean = (!noSorting && field.sort) ?? false;
+                      const filterable = !noFilter && field.filter;
 
-                    return (
-                      <Column
-                        key={key}
-                        width={field.width}
-                        sortable={sortable}
-                        fixed={field.fixed}
-                      >
-                        <HeaderCell>
-                          {(field.description || field.source) && (
-                            <div className="tol-header-info">
-                              <EntityMetaToolTip
-                                objectType={objectType}
-                                dataSource={dataSource}
-                                field={key}
-                              />
-                            </div>
-                          )}
-                          <p className="tol-header-text">
-                            {field.source && (
-                              <span
-                                className="inline-source"
-                                style={{
-                                  backgroundColor: getSourceColour(
-                                    field.source
-                                  ),
-                                }}
-                              />
+                      return (
+                        <Column
+                          key={key}
+                          width={field.width || 200}
+                          sortable={sortable}
+                          fixed={field.fixed}
+                        >
+                          <HeaderCell>
+                            {(field.description || field.source) && (
+                              <div className="tol-header-info">
+                                <EntityMetaToolTip
+                                  objectType={objectType}
+                                  dataSource={dataSource}
+                                  field={key}
+                                />
+                              </div>
                             )}
-                            {field.rename}
-                          </p>
-                          {filterable && (
-                            <span
-                              className={
-                                filterVisibility
-                                  ? "tol-filter"
-                                  : "tol-filter-hide"
-                              }
-                            >
-                              <Filter
-                                {...props}
-                                attribute={key}
-                                rename={field.rename!}
-                                type={field.filter as IFilterInputType}
-                                componentId={id}
-                              />
-                            </span>
-                          )}
-                        </HeaderCell>
-                        <Cell dataKey={key} />
-                      </Column>
-                    );
+                            <p className="tol-header-text">
+                              {field.source && (
+                                <span
+                                  className="inline-source"
+                                  style={{
+                                    backgroundColor: getSourceColour(
+                                      field.source
+                                    ),
+                                  }}
+                                />
+                              )}
+                              {field.rename}
+                            </p>
+                            {filterable && (
+                              <span
+                                className={
+                                  filterVisibility
+                                    ? "tol-filter"
+                                    : "tol-filter-hide"
+                                }
+                              >
+                                <Filter
+                                  {...props}
+                                  attribute={key}
+                                  rename={field.rename!}
+                                  type={field.filter as IFilterInputType}
+                                  componentId={id}
+                                />
+                              </span>
+                            )}
+                            <Sort
+                              attribute={key}
+                              sortable={sortable}
+                              {...props}
+                            />
+                          </HeaderCell>
+                          <Cell dataKey={key} />
+                        </Column>
+                      );
+                    }
                   })}
                 </RSTable>
               </div>

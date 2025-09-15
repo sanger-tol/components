@@ -74,7 +74,9 @@ export function AttributeSelector(props: PAttributeSelector) {
 
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
-  const [recommendedOn, setRecommendedOn] = useState<boolean>(false);
+  const [recommendedOn, setRecommendedOn] = useState<boolean>(
+    localStorage.getItem("attribute-selector-recommended-columns") === "true"
+  );
   const [sources, setSources] = useState<string[]>([]);
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
 
@@ -297,6 +299,10 @@ export function AttributeSelector(props: PAttributeSelector) {
             key="recommended-tick-filter"
             onChange={() => {
               setRecommendedOn(!recommendedOn);
+              localStorage.setItem(
+                "attribute-selector-recommended-columns",
+                String(!recommendedOn)
+              );
             }}
             checked={recommendedOn}
           />
