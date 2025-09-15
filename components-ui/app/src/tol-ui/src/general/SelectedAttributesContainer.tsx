@@ -132,24 +132,22 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
 
   return (
     <div>
-      <div>
-        <div className="tol-config-drawer-column-container" ref={ref}>
-          <DraggableList
-            container={() => ref.current}
-            itemKey={(item) => item}
-            list={attributes}
-            // @ts-ignore
-            template={(props) => <SelectedColumn {...props} />}
-            onMoveEnd={(newList: string[]) => setAttributes(newList)}
-            springConfig={{ stiffness: 500, damping: 100 }}
-          />
-        </div>
-        {attributes.length === 0 && (
-          <p>
-            <i>No active columns. Select columns to display...</i>
-          </p>
-        )}
+      <div className="tol-config-drawer-column-container" ref={ref}>
+        <DraggableList
+          container={() => ref.current}
+          itemKey={(item) => item}
+          list={attributes}
+          // @ts-ignore
+          template={(props) => <SelectedColumn {...props} />}
+          onMoveEnd={(newList: string[]) => setAttributes(newList)}
+          springConfig={{ stiffness: 500, damping: 100 }}
+        />
       </div>
+      {attributes.length === 0 && (
+        <p>
+          <i>No active columns. Select columns to display...</i>
+        </p>
+      )}
     </div>
   );
 }
