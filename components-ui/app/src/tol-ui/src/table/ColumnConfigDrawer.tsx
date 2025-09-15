@@ -16,6 +16,7 @@ import {
   IDropdownButtonConfig,
   MultipleSelect,
   ITableConfigSave,
+  Icon,
 } from "..";
 
 
@@ -200,6 +201,19 @@ export function ColumnConfigDrawer(props: Props) {
     </div>
   );
 
+  const ConfigureCellRendererOpenIcon = (
+    <div
+      className={"tol-active-column-btn tol-palette-icon"}
+      onClick={() => console.log("works")}
+    >
+      <Icon icon="palette" size="lg" />
+    </div>
+  );
+
+  const additionalIcons = [
+    ConfigureCellRendererOpenIcon,
+  ];
+
   const attSelector = (
     <div>
       <h6>Default Sort:</h6>
@@ -255,6 +269,7 @@ export function ColumnConfigDrawer(props: Props) {
         {...props}
         attributes={attributes}
         setAttributes={setAttributes}
+        additionalIcons={additionalIcons}
       />
       <div>
         <div className="tol-config-drawer-save-button">{drawerButtons}</div>
