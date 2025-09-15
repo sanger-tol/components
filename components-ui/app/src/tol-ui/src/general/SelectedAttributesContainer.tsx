@@ -73,16 +73,16 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
     HTMLDivElement,
     { item: any; dragHandleProps: any }
   >(({ item, dragHandleProps }, ref) => {
-    const attr_name = item;
-    const attributeDeatils = objectAttributes[attr_name] || {};
-    const index = attributes.indexOf(attr_name);
+    const attributeId = item;
+    const attributeDetails = objectAttributes[attributeId] || {};
+    const index = attributes.indexOf(attributeId);
 
     const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
 
     return (
       <div
         ref={ref}
-        key={`${attr_name}-${index}`}
+        key={`${attributeId}-${index}`}
         className={`tol-config-drawer-selected-column ${
           recentlyMoved === index ? "highlight" : ""
         } ${deletingIndex === index ? "deleting" : ""}`}
@@ -91,21 +91,21 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
           <span {...dragHandleProps}>
             <div className={"tol-config-drawer-selected-column-name"}>
               <div style={{ display: "inline", paddingRight: "5px" }}>
-                {attributeDeatils.display_name || normaliseCaps(attr_name)}
+                {attributeDetails.display_name || normaliseCaps(attributeId)}
               </div>
-              <EntityMetaToolTip {...props} field={attr_name} />
+              <EntityMetaToolTip {...props} field={attributeId} />
             </div>
           </span>
           <p className={"tol-config-drawer-selected-column-key"}>
-            {truncateString(attr_name, lettersToDisplay)}
+            {truncateString(attributeId, lettersToDisplay)}
           </p>
         </div>
         <div className="tol-config-drawer-btn-array">
-          {attributeDeatils.source && (
-            <SourceTag source={attributeDeatils.source} />
+          {attributeDetails.source && (
+            <SourceTag source={attributeDetails.source} />
           )}
-          {additionalIcons?.map(icon =>
-            icon
+          {additionalIcons?.map(Icon =>
+            <Icon attributeId={attributeId} />
           )}
           <div
             className={"tol-active-column-btn"}

@@ -4,19 +4,30 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Modal } from "src/general";
+import { useState, Dispatch, SetStateAction } from "react";
+import {
+  CellRendererType,
+  FieldMeta,
+  TCellRendererType,
+  SingleSelect,
+  Modal,
+  normaliseCaps
+} from "..";
 
-import { Dispatch, SetStateAction } from "react";
 
 interface PCellRendererModal {
   open: boolean,
-  setOpen: Dispatch<SetStateAction<boolean>>;
+  setOpen: Dispatch<SetStateAction<boolean>>,
+  attributeId: string,
+  fieldMeta: FieldMeta
 }
 
-export default function CellRendererModal(props: PCellRendererModal) {
-  const { open, setOpen } = props;
+export function CellRendererModal(props: PCellRendererModal) {
+  const { open, setOpen, attributeId } = props;
 
-  const Header = <h5>Configure Cell Renderer</h5>;
+  const [value, setValue] = useState<TCellRendererType>();
+
+  const Header = <h5>Configure Cell Renderer: {attributeId}</h5>;
 
   return (
     <Modal 
@@ -25,7 +36,15 @@ export default function CellRendererModal(props: PCellRendererModal) {
       setOpen={setOpen}
       size="sm"
     >
-      <p>TEST</p>
+      <SingleSelect
+        block
+        value={value}
+        setValue={setValue}
+        data={CellRendererType.map(cellRendererType => ({
+          label: normaliseCaps(cellRendererType),
+          value: cellRendererType
+        }))}
+      />
     </Modal>
   )
 }
