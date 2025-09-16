@@ -19,6 +19,7 @@ import {
   Relationship,
   ICustomCellRenderers,
   TsDataSource,
+  CellFilterResult
 } from "../..";
 
 export interface PCell {
@@ -68,6 +69,10 @@ export function Cell(props: PCell) {
         elementProps[prop] = value.replace(/\${(.*?)}/g, (_, key) =>
           getFieldByName(dataObject, key) || ""
         );
+      // Checks for filter object as prop
+      } else if (typeof value === "object" && 'and_' in value) {
+        elementProps[prop] = CellFilterResult(value, dataObject);
+        
       } else {
         elementProps[prop] = value;
       }

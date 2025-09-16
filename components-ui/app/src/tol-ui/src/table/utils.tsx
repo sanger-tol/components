@@ -326,3 +326,42 @@ export function formatTotalSize(totalSize: number) {
   if (totalSize === 1) return "1 Row";
   return totalSize.toLocaleString() + " Rows";
 }
+
+export function CellFilterResult(filterObj: any, dataObject: any) {
+  for (const fieldName in filterObj.and_) {
+    const fieldValue = getFieldByName(dataObject, fieldName)
+    for (const condition in filterObj.and_[fieldName]) {
+      if (dataObject && fieldValue) {
+        switch (condition) {
+          case "contains":
+            if (!(typeof dataObject[fieldName] === 'string' && fieldValue.includes(filterObj.and_[fieldName][condition].value))) {
+              return false;
+            }
+            break;
+          case "eq":
+            if (!(fieldValue == (filterObj.and_[fieldName][condition].value))) {
+              return false;
+            }
+            break;
+          case "gt":
+            if (!(fieldValue == (filterObj.and_[fieldName][condition].value))) {
+              return false;
+            }
+            break;
+          case "gte":
+            if (!(fieldValue == (filterObj.and_[fieldName][condition].value))) {
+              return false;
+            }
+            break;
+          case "in_list":
+            if (!(fieldValue == (filterObj.and_[fieldName][condition].value))) {
+              return false;
+            }
+            break;
+        }
+      }
+    }
+  }
+
+  return true;
+}
