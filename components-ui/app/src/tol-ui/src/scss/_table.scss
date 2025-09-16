@@ -435,6 +435,12 @@
   cursor: pointer;
 }
 
+.tol-table-image-modal {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
 // pagination buttons on smaller devices
 @media (max-width: 992px) {
   .tol-table .config-button {
