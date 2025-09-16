@@ -1,6 +1,5 @@
 import {
   TBoardParams,
-  TCellRendererType
 } from "..";
 
 
@@ -29,4 +28,3 @@ export const cellRendererParams = {
     },
   },
 } as Record<string, TBoardParams>;
-// TODO: replace string with TCellRendeerType
