@@ -414,9 +414,22 @@
   backdrop-filter: blur(8px);
 }
 
+.tol-table-image-cell-right-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+}
+
 .tol-table-image-cell-arrow {
   cursor: pointer;
   color: var(--tol-text);
+}
+
+.tol-table-image-cell-down {
+  cursor: pointer;
+  color: var(--tol-text);
+  margin-top: 5px;
 }
 
 .tol-table-image-cell {
@@ -439,6 +452,16 @@
   display: flex !important;
   align-items: center;
   justify-content: center;
+}
+
+.tol-table-image-modal .tol-table-image-cell-image{
+  width: 500px;
+  height: 500px;
+  cursor: default !important;
+}
+
+.tol-table-modal-image-caption{
+  color:var(--tol-text);
 }
 
 // pagination buttons on smaller devices
