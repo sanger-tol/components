@@ -29,13 +29,35 @@ interface PCellRendererModal {
 
 export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, attributeId, fieldMeta } = props;
-
   const [renderer, setRenderer] = useState({
     props: {},
     ...deepCopy(fieldMeta.dataWithDefaults[attributeId].cellRenderer),
   });
 
+  function saveRendererProps() {
+    alert(`FOR FIELD ${attributeId}, WE SAVE THE FOLLOWING PROPS:\n\n${JSON.stringify(renderer.props, null, 4)}`);
+  }
+
   const Header = <h5>Configure Cell Renderer: {attributeId}</h5>;
+
+  const Buttons = (
+    <div>
+      <Button
+        position="right"
+        type="success"
+        onClick={() => {
+          setOpen(false), saveRendererProps();
+        }}
+        text="Confirm"
+      />
+      <Button
+        position="right"
+        type="error"
+        onClick={() => setOpen(false)}
+        text="Cancel"
+      />
+    </div>
+  );
 
   return (
     <Modal
@@ -43,6 +65,8 @@ export function CellRendererModal(props: PCellRendererModal) {
       open={open}
       setOpen={setOpen}
       size="sm"
+      closeButton={false}
+      actionButton={Buttons}
     >
       <SingleSelect
         block
