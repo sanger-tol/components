@@ -35,7 +35,9 @@ export function CellRendererModal(props: PCellRendererModal) {
   });
 
   function saveRendererProps() {
-    alert(`FOR FIELD ${attributeId}, WE SAVE THE FOLLOWING PROPS:\n\n${JSON.stringify(renderer.props, null, 4)}`);
+    // Set back the render to where we got it from
+    // When config save is called this will be saved (as it will have the same object reference)
+    fieldMeta.dataWithDefaults[attributeId].cellRenderer = renderer;
   }
 
   const Header = <h5>Configure Cell Renderer: {attributeId}</h5>;
