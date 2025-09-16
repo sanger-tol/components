@@ -144,14 +144,14 @@ export function TolApp(props: Props) {
                     />
                   </BoardPrivilegeContextProvider>
                 ) : (
-                  <Redirect to="/" />
+                  <Redirect to="/" replace />
                 )}
               </Route>
               <Route path="/file-validation/results/:uploadId" render={(routeProps) => {
                 return loggedIn ? (
                   <ValidationResultsViewer {...routeProps} />
                 ) : (
-                  <Redirect to="/" />
+                  <Redirect to="/" replace />
                 )
               }} />
               {allPageRoutes.map((page) => {
@@ -211,7 +211,7 @@ export function TolApp(props: Props) {
                         {authorised ? (
                           getElementDependingOnAuthStatus(loggedIn, page)
                         ) : (
-                          <Redirect to="/" />
+                          <Redirect to="/" replace />
                         )}
                       </Route>,
                     );
@@ -224,10 +224,38 @@ export function TolApp(props: Props) {
                           path={`${path}/:id`}
                           key={`${page.name}-detail`}
                         >
-                          {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to="/" />}
+                          {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user?.id) ? (
+                            dropdownPage.detail
+                          ) : (
+                            <Redirect to="/" replace />
+                          )}
                         </Route>,
                       );
                     }
+                  });
+                } else {
+                  // regular page route
+                  routes.push(
+                    <Route exact path={path} key={page.name}>
+                      {authorised ? (
+                        getElementDependingOnAuthStatus(loggedIn, page)
+                      ) : (
+                        <Redirect to="/" replace />
+                      )}
+                    </Route>,
+                  );
+
+                  // detail page route
+                  if ('detail' in page && page.detail) {
+                    routes.push(
+                      <Route
+                        exact
+                        path={`${path}/:id`}
+                        key={`${page.name}-detail`}
+                      >
+                        {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to="/" replace />}
+                      </Route>,
+                    );
                   }
 
                   return routes;
