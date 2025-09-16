@@ -31,12 +31,12 @@ export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, attributeId, fieldMeta } = props;
 
   const [renderer, setRenderer] = useState({
+    props: {},
     ...deepCopy(fieldMeta.dataWithDefaults[attributeId].cellRenderer),
-    props: {}
   });
 
   const Header = <h5>Configure Cell Renderer: {attributeId}</h5>;
-  console.log(renderer);
+
   return (
     <Modal
       header={Header}
@@ -47,7 +47,7 @@ export function CellRendererModal(props: PCellRendererModal) {
       <SingleSelect
         block
         value={renderer.type}
-        setValue={(newType) => setRenderer({ ...renderer, type: newType })}
+        setValue={(newType) => setRenderer({ ...renderer, type: newType, props: {} })}
         data={CellRendererType.map(cellRendererType => ({
           label: normaliseCaps(cellRendererType),
           value: cellRendererType
