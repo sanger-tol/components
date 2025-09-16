@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, Dispatch, SetStateAction, ComponentProps } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import { Input } from "rsuite";
 import {
   FieldMeta,
