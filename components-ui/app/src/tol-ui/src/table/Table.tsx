@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useState, useEffect, useRef } from "react";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
@@ -78,8 +78,8 @@ interface Props extends IRemoteTargetAndZone {
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
 
-  expandedRows?: number[];
-  setExpandedRows?: (expandedRows: number[]) => void;
+  expandedRows?: string[];
+  setExpandedRows?: (expandedRows: string[]) => void;
 
   contents?: ReactNode;
   groupBy?: boolean;
@@ -140,6 +140,7 @@ export function Table(props: Props) {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
   const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
+  const prevPageRef = useRef(page);
   noFilter = !!noFilter;
 
   // row selection
@@ -149,11 +150,7 @@ export function Table(props: Props) {
     []
   );
 
-  const [expandedRows, setExpandedRows] = useStateFallback<number[]>(
-    props.expandedRows,
-    props.setExpandedRows,
-    []
-  );
+  const [expandedRows, setExpandedRows] = useState<string[]>([]);
 
   // @ts-ignore - temp turned off
   const [bulkSelect, setBulkSelect] = useState(false);
@@ -178,8 +175,8 @@ export function Table(props: Props) {
   };
 
   useEffect(() => {
-    console.log(expandedRows);
-  }, [expandedRows]);
+    setExpandedRows([]);
+  }, [page]);
 
   const handleCheck = (value: any, checked: boolean) => {
     const keys = checked
@@ -188,11 +185,11 @@ export function Table(props: Props) {
     setSelectedRows(keys);
   };
 
-  const handleExpandedRows = (index: number) => {
-    if (expandedRows.includes(index)) {
-      setExpandedRows(expandedRows.filter((i: number) => i !== index));
+  const handleExpandedRows = (key: string) => {
+    if (expandedRows.includes(key)) {
+      setExpandedRows(expandedRows.filter((k: string) => k !== key));
     } else {
-      setExpandedRows([...expandedRows, index]);
+      setExpandedRows([...expandedRows, key]);
     }
   };
 
@@ -290,10 +287,10 @@ export function Table(props: Props) {
         }
       : undefined;
 
-  const renderRowExpanded = (rowData: any) => {
+  const renderRowExpanded = () => {
     return (
       <div style={{ height: "50px", width: "100%", backgroundColor: "red" }}>
-       {JSON.stringify(rowData)}
+        hi
       </div>
     );
   };
@@ -431,7 +428,6 @@ export function Table(props: Props) {
                 <RSTable
                   bordered
                   data={data}
-                  rowKey={(rowData, index) => rowData[index]}
                   headerHeight={!noFilter && filterVisibility ? 85 : 42}
                   loading={loading}
                   sortColumn={sortByAttribute}
@@ -439,14 +435,17 @@ export function Table(props: Props) {
                   onSortColumn={handleSortColumn!}
                   expandedRowKeys={expandedRows}
                   renderRowExpanded={renderRowExpanded}
+                  rowKey={'key'}
+                  // onScroll={(x, y) => {
+                  //   scrollPosition.current = {x, y};
+                  // }}
+                  // shouldUpdateScroll={expandedRows.length > 0 ? () => false : true}
                   rowClassName={(rowData: any) => {
                     if (rowData) {
                       if (bulkSelect) {
                         return "tol-selected-row disabled";
                       } else if (
-                        selectedRows.some(
-                          (item) => item === rowData.id
-                        )
+                        selectedRows.some((item) => item === rowData.id)
                       ) {
                         return "tol-selected-row";
                       }
@@ -459,25 +458,25 @@ export function Table(props: Props) {
                     <Placeholder loader opacity={0.8} squareCorners />
                   )}
                 >
-                  {true && (
+                  {
                     <Column key="rowExpand" width={60}>
                       <HeaderCell>Expand</HeaderCell>
                       <Cell>
-                        {(_, rowIndex) => (
+                        {(rowData: any) => (
                           <Button
                             icon={
-                              expandedRows.includes(rowIndex)
+                              expandedRows.includes(rowData.key)
                                 ? "chevron-up"
                                 : "chevron-down"
                             }
                             onClick={() => {
-                              handleExpandedRows(rowIndex);
+                              handleExpandedRows(rowData.key);
                             }}
                           />
                         )}
                       </Cell>
                     </Column>
-                  )}
+                  }
                   {rowSelection && (
                     <Column key="rowSelection" width={60}>
                       <HeaderCell>
