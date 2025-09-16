@@ -91,7 +91,20 @@ describe("Testing processFilterToBoolean function", () => {
         },
       }
     );
+
+    const value2 = processFilterToBoolean(
+      { "and_": { "sts_scientific_name": { "eq": { "value": 2 } } } },
+      {
+        id: "abc",
+        objectType: "species",
+        attributes: {
+          sts_scientific_name: 2,
+        },
+      }
+    );
+
     expect(value).toBe(true);
+    expect(value2).toBe(true);
   });
 
   test("eq False", () => {
@@ -105,7 +118,20 @@ describe("Testing processFilterToBoolean function", () => {
         },
       }
     );
+
+    const value2 = processFilterToBoolean(
+      { "and_": { "sts_scientific_name": { "eq": { "value": 2 } } } },
+      {
+        id: "abc",
+        objectType: "species",
+        attributes: {
+          sts_scientific_name: "Abax parallelepipedus",
+        },
+      }
+    );
+
     expect(value).toBe(false);
+    expect(value2).toBe(false);
   });
 
   test("gt True", () => {
@@ -133,7 +159,19 @@ describe("Testing processFilterToBoolean function", () => {
         },
       }
     );
+
+    const value2 = processFilterToBoolean(
+      { "and_": { "random_count": { "gt": { "value": 'test' } } } },
+      {
+        id: "abc",
+        objectType: "species",
+        attributes: {
+          random_count: 1,
+        },
+      }
+    );
     expect(value).toBe(false);
+    expect(value2).toBe(false);
   });
 
   test("gte True", () => {
@@ -161,7 +199,19 @@ describe("Testing processFilterToBoolean function", () => {
         },
       }
     );
+
+    const value2 = processFilterToBoolean(
+      { "and_": { "random_count": { "gte": { "value": 'test' } } } },
+      {
+        id: "abc",
+        objectType: "species",
+        attributes: {
+          random_count: 5,
+        },
+      }
+    );
     expect(value).toBe(false);
+    expect(value2).toBe(false);
   });
 
   test("lt True", () => {
@@ -189,7 +239,19 @@ describe("Testing processFilterToBoolean function", () => {
         },
       }
     );
+
+    const value2 = processFilterToBoolean(
+      { "and_": { "random_count": { "lt": { "value": 'test' } } } },
+      {
+        id: "abc",
+        objectType: "species",
+        attributes: {
+          random_count: 10,
+        },
+      }
+    );
     expect(value).toBe(false);
+    expect(value2).toBe(false);
   });
 
   test("lte True", () => {
@@ -217,7 +279,18 @@ describe("Testing processFilterToBoolean function", () => {
         },
       }
     );
+    const value2 = processFilterToBoolean(
+      { "and_": { "random_count": { "lte": { "value": 'test' } } } },
+      {
+        id: "abc",
+        objectType: "species",
+        attributes: {
+          random_count: 10,
+        },
+      }
+    );
     expect(value).toBe(false);
+    expect(value2).toBe(false);
   });
 
 });

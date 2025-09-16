@@ -20,7 +20,7 @@ import {
   ICustomCellRenderers,
   TsDataSource,
   processFilterToBoolean,
-  getCellRendererValue
+  getCellRendererPropValue
 } from "../..";
 
 export interface PCell {
@@ -65,7 +65,7 @@ export function Cell(props: PCell) {
 
   if (renderer.props) {
     Object.entries(renderer.props).forEach(([prop, value]) => {
-      getCellRendererValue(elementProps, value, dataObject, prop);
+      getCellRendererPropValue(elementProps, value, dataObject, prop);
     });
   }
 

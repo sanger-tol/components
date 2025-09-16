@@ -62,7 +62,7 @@ export function processFilterToBoolean(filterObj: any, dataObject: TDataObjectOr
   return true;
 }
 
-export function getCellRendererValue(
+export function getCellRendererPropValue(
     elementProps: Record<string, any>,
     value: string | IFilter,
     dataObject: TDataObjectOrNull,
