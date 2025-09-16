@@ -90,7 +90,8 @@ export function convertTableData(
   const data: ITableData = [];
   // loop over each data object
   dataObjects!.forEach((obj) => {
-    const row: ITableRecord = {};
+    // id always required for rsuite table (actions, selection, expansion)
+    const row: ITableRecord = "id" in fieldMeta.order.active ? {} : { id: obj.id };
     // loop over each field
     fieldMeta.order.active.forEach((attribute) => {
       // only add if undefined, not null - null = turn off cell renderer

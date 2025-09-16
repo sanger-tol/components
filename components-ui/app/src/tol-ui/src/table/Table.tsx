@@ -328,6 +328,8 @@ export function Table(props: Props) {
             : undefined
         }
       />
+      {/* Bulk select doesn't work with actions, 
+      so this has been disabled for now*/}
       {/*rowSelection && (
           <>
             <Button
@@ -442,7 +444,9 @@ export function Table(props: Props) {
                       if (bulkSelect) {
                         return "tol-selected-row disabled";
                       } else if (
-                        selectedRows.some((item) => item === rowData.id)
+                        selectedRows.some(
+                          (item) => item === rowData.id
+                        )
                       ) {
                         return "tol-selected-row";
                       }
