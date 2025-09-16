@@ -4,14 +4,16 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, Dispatch, SetStateAction } from "react";
+import { useState, Dispatch, SetStateAction, ComponentProps } from "react";
+import { Input } from "rsuite";
 import {
   CellRendererType,
   FieldMeta,
   TCellRendererType,
   SingleSelect,
   Modal,
-  normaliseCaps
+  normaliseCaps,
+  Link,
 } from "..";
 
 
@@ -45,6 +47,14 @@ export function CellRendererModal(props: PCellRendererModal) {
           value: cellRendererType
         }))}
       />
+
+      {/* Extra options depending on the value selected */}
+      {
+        value === "link" ?
+          <Input />
+        :
+          ""
+      }
     </Modal>
   )
 }
