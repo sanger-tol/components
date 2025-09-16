@@ -410,7 +410,6 @@ export function Table(props: Props) {
                       if (bulkSelect) {
                         return "tol-selected-row disabled";
                       } else if (
-                        // console.log(rowData),
                         selectedRows.some(
                           (item) => item === rowData.id
                         )
