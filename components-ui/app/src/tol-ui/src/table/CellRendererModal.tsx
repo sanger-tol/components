@@ -16,6 +16,7 @@ import {
   cellRendererParams,
   TBoardParams,
   Button,
+  deepCopy,
 } from "..";
 
 
@@ -28,14 +29,16 @@ interface PCellRendererModal {
 
 export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, attributeId, fieldMeta } = props;
-  const renderer = fieldMeta.dataWithDefaults[attributeId].cellRenderer;
 
-  const [rendererType, setRendererType] = useState<TCellRendererType>(renderer?.type);
+  const [renderer, setRenderer] = useState({
+    ...deepCopy(fieldMeta.dataWithDefaults[attributeId].cellRenderer),
+    props: {}
+  });
 
   const Header = <h5>Configure Cell Renderer: {attributeId}</h5>;
-
+  console.log(renderer);
   return (
-    <Modal 
+    <Modal
       header={Header}
       open={open}
       setOpen={setOpen}
@@ -43,8 +46,8 @@ export function CellRendererModal(props: PCellRendererModal) {
     >
       <SingleSelect
         block
-        value={rendererType}
-        setValue={setRendererType}
+        value={renderer.type}
+        setValue={(newType) => setRenderer({ ...renderer, type: newType })}
         data={CellRendererType.map(cellRendererType => ({
           label: normaliseCaps(cellRendererType),
           value: cellRendererType
@@ -53,26 +56,33 @@ export function CellRendererModal(props: PCellRendererModal) {
 
       {/* Extra options depending on the value selected */}
       {
-        cellRendererParams[rendererType] && Object.values(cellRendererParams[rendererType]).map((values) => {
-          switch (values.type) {
-            case "string":
-              return (
-                <>
-                  {values.rename}:
-                  <Input />
-                </>
-              )
-            case "boolean":
-              return (
-                <>
-                  {values.rename}:
-                  <Button text="Add text field" />
-                </>
-              )
-            default:
-              return "";
-          }
-        })
+        cellRendererParams[renderer.type] &&
+          Object.entries(cellRendererParams[renderer.type]).map(([param, values]) => {
+            switch (values.type) {
+              case "string":
+                return (
+                  <>
+                    {values.rename}:
+                    <Input
+                      value={renderer.props[param]}
+                      onChange={(newValue) => {
+                        renderer.props[param] = newValue;
+                        setRenderer({...renderer});
+                      }}
+                    />
+                  </>
+                )
+              case "boolean":
+                return (
+                  <>
+                    {values.rename}:
+                    <Button text="Add text field" />
+                  </>
+                )
+              default:
+                return "";
+            }
+          })
       }
     </Modal>
   )
