@@ -7,6 +7,7 @@ export const cellRendererParams = {
   relationship: {
     detailPageIdAttribute: {
       type: "string",
+      rename: "ID Attribute",
       required: false,
     },
   },
@@ -20,10 +21,12 @@ export const cellRendererParams = {
   link: {
     url: {
       type: "string",
+      rename: "URL",
       required: true,
     },
     text: {
       type: "string",
+      rename: "Text",
       required: false,
     },
   },

@@ -13,6 +13,9 @@ import {
   SingleSelect,
   Modal,
   normaliseCaps,
+  cellRendererParams,
+  TBoardParams,
+  Button,
 } from "..";
 
 
@@ -27,7 +30,7 @@ export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, attributeId, fieldMeta } = props;
   const renderer = fieldMeta.dataWithDefaults[attributeId].cellRenderer;
 
-  const [value, setValue] = useState<TCellRendererType>(renderer?.type);
+  const [rendererType, setRendererType] = useState<TCellRendererType>(renderer?.type);
 
   const Header = <h5>Configure Cell Renderer: {attributeId}</h5>;
 
@@ -40,8 +43,8 @@ export function CellRendererModal(props: PCellRendererModal) {
     >
       <SingleSelect
         block
-        value={value}
-        setValue={setValue}
+        value={rendererType}
+        setValue={setRendererType}
         data={CellRendererType.map(cellRendererType => ({
           label: normaliseCaps(cellRendererType),
           value: cellRendererType
@@ -50,10 +53,26 @@ export function CellRendererModal(props: PCellRendererModal) {
 
       {/* Extra options depending on the value selected */}
       {
-        renderer?.type === "link" ?
-          <Input />
-        :
-          ""
+        cellRendererParams[rendererType] && Object.values(cellRendererParams[rendererType]).map((values) => {
+          switch (values.type) {
+            case "string":
+              return (
+                <>
+                  {values.rename}:
+                  <Input />
+                </>
+              )
+            case "boolean":
+              return (
+                <>
+                  {values.rename}:
+                  <Button text="Add text field" />
+                </>
+              )
+            default:
+              return "";
+          }
+        })
       }
     </Modal>
   )

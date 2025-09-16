@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 export interface IBoardParam {
   type: string,
+  rename: string,
   required: boolean
 }
 
