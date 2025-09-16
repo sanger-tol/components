@@ -21,7 +21,8 @@ import {
   TCellRenderer,
   Cell,
   deepCopy,
-  ICustomCellRenderers
+  ICustomCellRenderers,
+  TDataObjectOrNull
 } from "..";
 
 interface Rgb {
@@ -327,7 +328,7 @@ export function formatTotalSize(totalSize: number) {
   return totalSize.toLocaleString() + " Rows";
 }
 
-export function CellFilterResult(filterObj: any, dataObject: any) {
+export function CellFilterResult(filterObj: any, dataObject: TDataObjectOrNull) {
   for (const fieldName in filterObj.and_) {
     const fieldValue = getFieldByName(dataObject, fieldName)
     for (const condition in filterObj.and_[fieldName]) {
