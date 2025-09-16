@@ -72,7 +72,6 @@ export function Cell(props: PCell) {
       // Checks for filter object as prop
       } else if (typeof value === "object" && 'and_' in value) {
         elementProps[prop] = CellFilterResult(value, dataObject);
-        
       } else {
         elementProps[prop] = value;
       }

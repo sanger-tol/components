@@ -344,17 +344,27 @@ export function CellFilterResult(filterObj: any, dataObject: any) {
             }
             break;
           case "gt":
-            if (!(fieldValue == (filterObj.and_[fieldName][condition].value))) {
+            if (!(fieldValue > (filterObj.and_[fieldName][condition].value))) {
               return false;
             }
             break;
           case "gte":
-            if (!(fieldValue == (filterObj.and_[fieldName][condition].value))) {
+            if (!(fieldValue >= (filterObj.and_[fieldName][condition].value))) {
+              return false;
+            }
+            break;
+          case "lt":
+            if (!(fieldValue < (filterObj.and_[fieldName][condition].value))) {
+              return false;
+            }
+            break;
+          case "lte":
+            if (!(fieldValue <= (filterObj.and_[fieldName][condition].value))) {
               return false;
             }
             break;
           case "in_list":
-            if (!(fieldValue == (filterObj.and_[fieldName][condition].value))) {
+            if (!((filterObj.and_[fieldName][condition].value).includes(fieldValue))) {
               return false;
             }
             break;
