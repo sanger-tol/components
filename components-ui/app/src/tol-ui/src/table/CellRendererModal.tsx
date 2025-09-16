@@ -24,9 +24,10 @@ interface PCellRendererModal {
 }
 
 export function CellRendererModal(props: PCellRendererModal) {
-  const { open, setOpen, attributeId } = props;
+  const { open, setOpen, attributeId, fieldMeta } = props;
+  const renderer = fieldMeta.dataWithDefaults[attributeId].cellRenderer;
 
-  const [value, setValue] = useState<TCellRendererType>();
+  const [value, setValue] = useState<TCellRendererType>(renderer?.type);
 
   const Header = <h5>Configure Cell Renderer: {attributeId}</h5>;
 
@@ -49,7 +50,7 @@ export function CellRendererModal(props: PCellRendererModal) {
 
       {/* Extra options depending on the value selected */}
       {
-        value === "link" ?
+        renderer?.type === "link" ?
           <Input />
         :
           ""
