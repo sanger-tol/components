@@ -14,6 +14,8 @@ export function Image(props: PCell) {
   const [open, setOpen] = useState<boolean>(false);
   const [dropDown, setDropDown] = useState<boolean>(false);
 
+  const multipleImages = Array.isArray(value);
+
   const arrowPrev = (
     setIndex: React.Dispatch<React.SetStateAction<number>>
   ) => {
@@ -28,25 +30,25 @@ export function Image(props: PCell) {
 
   const Content = (
     <>
-      <Icon
+      {multipleImages && <Icon
         className="tol-table-image-cell-arrow"
         icon="caret-left"
         onClick={() => arrowPrev(setModalIndex)}
         size="2x"
-      />
+      />}
       <img
-        src={value[modalIndex]}
+        src={multipleImages ? value[modalIndex] : value}
         className="tol-table-image-cell-image"
-        title={value[modalIndex]}
+        title={multipleImages ? value[modalIndex] : value}
       />
-      <Icon
+      {multipleImages && <Icon
         className="tol-table-image-cell-arrow"
         icon="caret-right"
         onClick={() => arrowNext(setModalIndex)}
         size="2x"
-      />
+      />}
       <caption className="tol-table-modal-image-caption">
-        {value[modalIndex]}
+        {multipleImages ? value[modalIndex] : value}
       </caption>
     </>
   );
@@ -60,6 +62,7 @@ export function Image(props: PCell) {
     />
   );
 
+  console.log(value);
   return (
     <>
       {ImageViewerModal}
@@ -71,9 +74,9 @@ export function Image(props: PCell) {
           size="2x"
         />
         <img
-          src={value[currentIndex]}
+          src={multipleImages ? value[currentIndex] : value}
           className="tol-table-image-cell-image"
-          onClick={() => {
+          onClick={() => {value.length>0 &&
             setOpen((prev: boolean) => !prev);
             setModalIndex(currentIndex);
           }}
