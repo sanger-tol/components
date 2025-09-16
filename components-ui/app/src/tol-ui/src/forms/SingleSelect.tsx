@@ -20,7 +20,7 @@ export const SingleSelect = (props: PSingleSelect) => {
   const [data, setData] = useState([{}]);
 
   useEffect(() => {
-    if (props.data[0] instanceof String) {
+    if (typeof props.data[0] === "string") {
       setData(props.data.map((item) => ({ label: item, value: item })));
     } else {
       setData(props.data);
