@@ -250,7 +250,7 @@
     display: table-cell;
   }
 
-  .rs-table-cell-wrap,
+  .rs-table-cell-wrap:not(.tol-table-image-cell),
   .simple-tag-container {
     display: table-cell;
   }
@@ -440,6 +440,8 @@
   height: 126px;
   background: red;
 }
+
+
 
 .tol-table-image-cell-image {
   width: auto;

@@ -58,7 +58,6 @@ export function Sandbox() {
         fields={{
           data:{
             "id": {
-            
               cellRenderer: {
                 type:'image',
                 props: {
