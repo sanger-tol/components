@@ -335,7 +335,7 @@ export function CellFilterResult(filterObj: any, dataObject: TDataObjectOrNull) 
       if (dataObject && fieldValue) {
         switch (condition) {
           case "contains":
-            if (!(typeof dataObject[fieldName] === 'string' && fieldValue.includes(filterObj.and_[fieldName][condition].value))) {
+            if (!(typeof fieldValue === 'string' && fieldValue.includes(filterObj.and_[fieldName][condition].value))) {
               return false;
             }
             break;
@@ -370,6 +370,8 @@ export function CellFilterResult(filterObj: any, dataObject: TDataObjectOrNull) 
             }
             break;
         }
+      } else {
+        return false;
       }
     }
   }

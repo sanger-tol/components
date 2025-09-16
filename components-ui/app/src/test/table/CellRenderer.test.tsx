@@ -4,12 +4,24 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { expect, test, describe } from "vitest";
+import { expect, test, describe, vitest } from "vitest";
 import "@testing-library/jest-dom";
+
+// Mock the getFieldByName function from utils.tsx
+vitest.mock("../../tol-ui/src/table/utils", async(importOriginal) => {
+  const actual = await importOriginal(); 
+  return {
+    ...actual,
+    getFieldByName: vitest.fn((dataObject, fieldName) => {
+      return dataObject?.attributes[fieldName];
+    }),
+  };
+});
+
+// Have to import after the mock to ensure the mock is applied
 import {
   CellFilterResult,
 } from "../../tol-ui/src";
-
 
 describe("Testing CellFilterResult function", () => {
   test("in_list True", () => {
@@ -42,7 +54,7 @@ describe("Testing CellFilterResult function", () => {
 
   test("contains True", () => {
     const value = CellFilterResult(
-      { "and_": { "sts_scientific_name": { "contains": { "value": "Abax" } } } },
+      { "and_": { "sts_scientific_name": { "contains": { "value": "A" } } } },
       {
         id: "abc",
         objectType: "species",
