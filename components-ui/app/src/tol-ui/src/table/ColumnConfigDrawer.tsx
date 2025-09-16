@@ -202,8 +202,12 @@ export function ColumnConfigDrawer(props: Props) {
     </div>
   );
 
+  const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string} ) => (
+    <CellRendererConfigurer attributeId={attributeId} fieldMeta={fieldMeta} />
+  );
+
   const additionalIcons = [
-    CellRendererConfigurer,
+    CellRendererConfigurerWrapper,
   ];
 
   const attSelector = (
