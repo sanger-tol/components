@@ -19,7 +19,8 @@ import {
   Relationship,
   ICustomCellRenderers,
   TsDataSource,
-  CellFilterResult
+  processFilterToBoolean,
+  getCellRendererValue
 } from "../..";
 
 export interface PCell {
@@ -64,17 +65,7 @@ export function Cell(props: PCell) {
 
   if (renderer.props) {
     Object.entries(renderer.props).forEach(([prop, value]) => {
-      if (typeof value === "string" && value.includes("${")) {
-        // replace placeholders with values from dataObject
-        elementProps[prop] = value.replace(/\${(.*?)}/g, (_, key) =>
-          getFieldByName(dataObject, key) || ""
-        );
-      // Checks for filter object as prop
-      } else if (typeof value === "object" && 'and_' in value) {
-        elementProps[prop] = CellFilterResult(value, dataObject);
-      } else {
-        elementProps[prop] = value;
-      }
+      getCellRendererValue(elementProps, value, dataObject, prop);
     });
   }
 

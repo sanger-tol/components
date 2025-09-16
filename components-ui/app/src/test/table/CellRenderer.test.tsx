@@ -20,12 +20,12 @@ vitest.mock("../../tol-ui/src/table/utils", async(importOriginal) => {
 
 // Have to import after the mock to ensure the mock is applied
 import {
-  CellFilterResult,
+  processFilterToBoolean,
 } from "../../tol-ui/src";
 
-describe("Testing CellFilterResult function", () => {
+describe("Testing processFilterToBoolean function", () => {
   test("in_list True", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "sts_scientific_name": { "in_list": { "value": ["Abax parallelepipedus"] } } } },
       {
         id: "abc",
@@ -39,7 +39,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("in_list False", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "sts_scientific_name": { "in_list": { "value": ["Abax parallelepipedus"] } } } },
       {
         id: "abc",
@@ -53,7 +53,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("contains True", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "sts_scientific_name": { "contains": { "value": "A" } } } },
       {
         id: "abc",
@@ -67,7 +67,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("contains False", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "sts_scientific_name": { "contains": { "value": "Z" } } } },
       {
         id: "abc",
@@ -81,7 +81,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("eq True", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "sts_scientific_name": { "eq": { "value": "Abax parallelepipedus" } } } },
       {
         id: "abc",
@@ -95,7 +95,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("eq False", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "sts_scientific_name": { "eq": { "value": "Z" } } } },
       {
         id: "abc",
@@ -109,7 +109,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("gt True", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "random_count": { "gt": { "value": 5 } } } },
       {
         id: "abc",
@@ -123,7 +123,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("gt False", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "random_count": { "gt": { "value": 5 } } } },
       {
         id: "abc",
@@ -137,7 +137,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("gte True", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "random_count": { "gte": { "value": 5 } } } },
       {
         id: "abc",
@@ -151,7 +151,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("gte False", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "random_count": { "gte": { "value": 5 } } } },
       {
         id: "abc",
@@ -165,7 +165,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("lt True", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "random_count": { "lt": { "value": 10 } } } },
       {
         id: "abc",
@@ -179,7 +179,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("lt False", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "random_count": { "lt": { "value": 5 } } } },
       {
         id: "abc",
@@ -193,7 +193,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("lte True", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "random_count": { "lte": { "value": 5 } } } },
       {
         id: "abc",
@@ -207,7 +207,7 @@ describe("Testing CellFilterResult function", () => {
   });
 
   test("lte False", () => {
-    const value = CellFilterResult(
+    const value = processFilterToBoolean(
       { "and_": { "random_count": { "lte": { "value": 5 } } } },
       {
         id: "abc",
