@@ -9,8 +9,9 @@ import { StatusMessage, TsDataSource, Placeholder, PCell } from "../..";
 
 
 export function ActionStatus(props: PCell) {
-  const flowRunId = props.dataObject.params.flow_run_id;
-  const flowRunName = props.dataObject.params.flow_run_name;
+  // inherits from PCell which sets dataObject as TDataObjectOrNull, assume not null here
+  const flowRunId = props.dataObject?.params.flow_run_id;
+  const flowRunName = props.dataObject?.params.flow_run_name;
   const RELOAD_INTERVAL = 10;
   const [status, setStatus] = useState('');
   const [initialLoad, setInitialLoad] = useState(true);
