@@ -19,7 +19,28 @@ export function Sandbox() {
     components: [{ id: "table-example" }],
   });
 
-   const images: string[] = ["https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/132.png", "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"]
+   const images: string[] = [
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/bulbasaur.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/ivysaur.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/venusaur.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/squirtle.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/feraligatr.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/blastoise.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmander.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmeleon.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charizard.png",
+  ];
+  const names: string[] = [
+    "bulbasaur",
+    "ivysaur",
+    "venusaur",
+    "squirtle",
+    "wartortle",
+    "blastoise",
+    "charmander",
+    "charmeleon",
+    "charizard",
+  ]
 
   //  Playing around to find the images in the TOLQC attribute in run_data
   // TOL_DS
@@ -49,6 +70,7 @@ export function Sandbox() {
                 type:'image',
                 props: {
                   value: images,
+                  names: names,
                 }
               }
             },

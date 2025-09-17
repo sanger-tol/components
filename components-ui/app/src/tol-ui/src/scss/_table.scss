@@ -444,8 +444,8 @@
 }
 
 .tol-table-image-cell-image {
-  width: auto;
-  height: auto;
+  width: 80px;
+  height: 80px;
   cursor: pointer;
 }
 
@@ -463,6 +463,7 @@
 
 .tol-table-modal-image-caption {
   color: var(--tol-text);
+  font-size: large;
 }
 
 // pagination buttons on smaller devices

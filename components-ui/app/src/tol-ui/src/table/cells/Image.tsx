@@ -8,7 +8,7 @@ import { PCell, Icon, Modal } from "../..";
 import { useState } from "react";
 
 export function Image(props: PCell) {
-  const { value } = props;
+  const { value, names } = props;
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [modalIndex, setModalIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
@@ -51,8 +51,8 @@ export function Image(props: PCell) {
           size="2x"
         />
       )}
-      <caption className="tol-table-modal-image-caption">
-        {multipleImages ? value[modalIndex] : value}
+      <caption className="tol-table-modal-image-caption" style={{textAlign: "center", width:"500px"}}>
+        {multipleImages ? names[modalIndex] : names}
       </caption>
     </>
   );
