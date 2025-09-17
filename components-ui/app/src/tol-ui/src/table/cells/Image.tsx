@@ -30,23 +30,27 @@ export function Image(props: PCell) {
 
   const Content = (
     <>
-      {multipleImages && <Icon
-        className="tol-table-image-cell-arrow"
-        icon="caret-left"
-        onClick={() => arrowPrev(setModalIndex)}
-        size="2x"
-      />}
+      {multipleImages && (
+        <Icon
+          className="tol-table-image-cell-arrow"
+          icon="caret-left"
+          onClick={() => arrowPrev(setModalIndex)}
+          size="2x"
+        />
+      )}
       <img
         src={multipleImages ? value[modalIndex] : value}
         className="tol-table-image-cell-image"
         title={multipleImages ? value[modalIndex] : value}
       />
-      {multipleImages && <Icon
-        className="tol-table-image-cell-arrow"
-        icon="caret-right"
-        onClick={() => arrowNext(setModalIndex)}
-        size="2x"
-      />}
+      {multipleImages && (
+        <Icon
+          className="tol-table-image-cell-arrow"
+          icon="caret-right"
+          onClick={() => arrowNext(setModalIndex)}
+          size="2x"
+        />
+      )}
       <caption className="tol-table-modal-image-caption">
         {multipleImages ? value[modalIndex] : value}
       </caption>
@@ -62,7 +66,6 @@ export function Image(props: PCell) {
     />
   );
 
-  console.log(value);
   return (
     <>
       {ImageViewerModal}
@@ -76,8 +79,8 @@ export function Image(props: PCell) {
         <img
           src={multipleImages ? value[currentIndex] : value}
           className="tol-table-image-cell-image"
-          onClick={() => {value.length>0 &&
-            setOpen((prev: boolean) => !prev);
+          onClick={() => {
+            value.length > 0 && setOpen((prev: boolean) => !prev);
             setModalIndex(currentIndex);
           }}
         />
@@ -91,7 +94,7 @@ export function Image(props: PCell) {
           <Icon
             className="tol-table-image-cell-down"
             icon={dropDown ? "caret-up" : "caret-down"}
-            onClick={() => setDropDown((prev:boolean) => !prev)}
+            onClick={() => setDropDown((prev: boolean) => !prev)}
             size="2x"
           />
         </div>

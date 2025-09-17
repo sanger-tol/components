@@ -10,7 +10,7 @@ export interface ICustomCellRenderers {
 }
 
 interface ElementProps {
-  [prop: string]: string;
+  [prop: string]: string | string[];
 }
 
 export type CellRendererType =

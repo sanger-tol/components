@@ -250,10 +250,11 @@
     display: table-cell;
   }
 
-  .rs-table-cell-wrap:not(.tol-table-image-cell),
-  .simple-tag-container {
-    display: table-cell;
-  }
+  // commenting out for cellrenderer images feature return to active state when something breaks 
+  // .rs-table-cell-wrap,
+  // .simple-tag-container {
+  //   display: table-cell;
+  // }
 
   // expander cellRenderer
   .copy-icon {
@@ -414,6 +415,16 @@
   backdrop-filter: blur(8px);
 }
 
+.tol-table-image-cell {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  width: auto;
+  height: 126px;
+  // background:red;
+  padding: 2.5%;
+}
+
 .tol-table-image-cell-right-column {
   display: flex;
   flex-direction: column;
@@ -429,19 +440,8 @@
 .tol-table-image-cell-down {
   cursor: pointer;
   color: var(--tol-text);
-  margin-top: 5px;
+  margin-top: 70%;
 }
-
-.tol-table-image-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: inherit;
-  height: 126px;
-  background: red;
-}
-
-
 
 .tol-table-image-cell-image {
   width: auto;
@@ -455,14 +455,14 @@
   justify-content: center;
 }
 
-.tol-table-image-modal .tol-table-image-cell-image{
+.tol-table-image-modal .tol-table-image-cell-image {
   width: 500px;
   height: 500px;
   cursor: default !important;
 }
 
-.tol-table-modal-image-caption{
-  color:var(--tol-text);
+.tol-table-modal-image-caption {
+  color: var(--tol-text);
 }
 
 // pagination buttons on smaller devices
