@@ -21,8 +21,7 @@ import {
   TCellRenderer,
   Cell,
   deepCopy,
-  ICustomCellRenderers,
-  TDataObjectOrNull
+  ICustomCellRenderers
 } from "..";
 
 interface Rgb {
