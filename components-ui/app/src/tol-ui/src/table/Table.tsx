@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useState, useEffect, useRef } from "react";
+import { ReactNode, useState } from "react";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
@@ -140,7 +140,6 @@ export function Table(props: Props) {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
   const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
-  const prevPageRef = useRef(page);
   noFilter = !!noFilter;
 
   // row selection
@@ -150,7 +149,25 @@ export function Table(props: Props) {
     []
   );
 
-  const [expandedRows, setExpandedRows] = useState<string[]>([]);
+  // row expansion
+  const [expandedRows, setExpandedRows] = useStateFallback<string[]>(
+    props.expandedRows,
+    props.setExpandedRows,
+    []
+  );
+
+  // dummy image data for expanded rows
+  const pkmnArray = [
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/bulbasaur.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/ivysaur.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/venusaur.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/squirtle.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/wartortle.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/blastoise.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmander.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmeleon.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charizard.png",
+  ];
 
   // @ts-ignore - temp turned off
   const [bulkSelect, setBulkSelect] = useState(false);
@@ -174,9 +191,10 @@ export function Table(props: Props) {
     setSelectedRows && setSelectedRows(keys);
   };
 
-  useEffect(() => {
-    setExpandedRows([]);
-  }, [page]);
+  const handleExpandAll = (expanded: boolean) => {
+    const keys = expanded ? data.map((item) => item.key) : [];
+    setExpandedRows(keys);
+  };
 
   const handleCheck = (value: any, checked: boolean) => {
     const keys = checked
@@ -287,10 +305,17 @@ export function Table(props: Props) {
         }
       : undefined;
 
-  const renderRowExpanded = () => {
+  const renderRowExpanded = (_: any) => {
     return (
-      <div style={{ height: "50px", width: "100%", backgroundColor: "red" }}>
-        hi
+      <div className="tol-table-expanded-row">
+        {pkmnArray.map((pkmn) => (
+          <img
+            className="tol-table-expanded-row-img"
+            key={pkmn}
+            src={pkmn}
+            alt="pokemon"
+          />
+        ))}
       </div>
     );
   };
@@ -435,11 +460,8 @@ export function Table(props: Props) {
                   onSortColumn={handleSortColumn!}
                   expandedRowKeys={expandedRows}
                   renderRowExpanded={renderRowExpanded}
-                  rowKey={'key'}
-                  // onScroll={(x, y) => {
-                  //   scrollPosition.current = {x, y};
-                  // }}
-                  // shouldUpdateScroll={expandedRows.length > 0 ? () => false : true}
+                  rowKey={"key"}
+                  shouldUpdateScroll={false} // This messes up pagination scrolling to top
                   rowClassName={(rowData: any) => {
                     if (rowData) {
                       if (bulkSelect) {
@@ -459,8 +481,27 @@ export function Table(props: Props) {
                   )}
                 >
                   {
-                    <Column key="rowExpand" width={60}>
-                      <HeaderCell>Expand</HeaderCell>
+                    <Column key="rowExpand" width={70}>
+                      <HeaderCell>
+                        Expand
+                        <Button
+                          icon={`${expandedRows.length === data.length
+                            ? "down-left-and-up-right-to-center"
+                            : "up-right-and-down-left-from-center"
+                          }`}
+                          tooltip={`${
+                            expandedRows.length === data.length
+                              ? "Collapse"
+                              : "Expand"
+                          } All`}
+                          className="tol-table-header-component tol-component-header"
+                          onClick={() => {
+                            handleExpandAll(
+                              expandedRows.length !== data.length
+                            );
+                          }}
+                        />
+                      </HeaderCell>
                       <Cell>
                         {(rowData: any) => (
                           <Button
@@ -469,6 +510,7 @@ export function Table(props: Props) {
                                 ? "chevron-up"
                                 : "chevron-down"
                             }
+                            className="tol-table-header-component"
                             onClick={() => {
                               handleExpandedRows(rowData.key);
                             }}
@@ -478,10 +520,11 @@ export function Table(props: Props) {
                     </Column>
                   }
                   {rowSelection && (
-                    <Column key="rowSelection" width={60}>
-                      <HeaderCell>
+                    <Column key="rowSelection" width={70}>
+                      <HeaderCell style={{ textAlign: "center" }}>
+                        Select
                         <Checkbox
-                          className="tol-row-selection"
+                          className="tol-table-header-component tol-component-header"
                           checked={checked}
                           indeterminate={indeterminate}
                           disabled={bulkSelect || data.length === 0}
@@ -493,7 +536,7 @@ export function Table(props: Props) {
                         {(rowData: { id: any }) => {
                           return (
                             <Checkbox
-                              className="tol-row-selection"
+                              className="tol-table-header-component"
                               value={rowData.id}
                               checked={
                                 bulkSelect ||

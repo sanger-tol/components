@@ -286,7 +286,6 @@ export function RemoteTable(props: PRemoteTable) {
   };
 
   const handleSortColumn = (column: string, type: string) => {
-    console.log("Sorting column:", column, "Type:", type);
     setSortByAttribute(column);
     setSortByType(type);
   };

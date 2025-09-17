@@ -31,13 +31,11 @@
 
   // dropdown box shadow
   .rs-dropdown.rs-dropdown-menu {
-    box-shadow:
-      0 0 10px rgba(255, 255, 255, 1),
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1),
       0 4px 4px rgba(255, 255, 255, 0.12) !important;
   }
 
   .tol-pagination {
-
     .rs-pagination-btn {
       border: 1px solid var(--tol-bg);
     }
@@ -215,9 +213,15 @@
     }
 
     // re-position the checkboxes
-    .tol-row-selection .rs-checkbox-checker {
+    .tol-table-header-component .rs-checkbox-checker {
       margin-top: -6px;
+      align-items: center;
     }
+  }
+
+  .tol-component-header {
+    margin-top: 9px !important;
+    align-items: center;
   }
 
   .tol-table-full {
@@ -252,10 +256,10 @@
     display: table-cell;
   }
 
-  .rs-table-cell-wrap,
-  .simple-tag-container {
-    display: table-cell;
-  }
+  // .rs-table-cell-wrap,
+  // .simple-tag-container {
+  //   display: table-cell;
+  // }
 
   // expander cellRenderer
   .copy-icon {
@@ -269,6 +273,10 @@
       cursor: pointer;
     }
   }
+}
+
+.rs-table-cell-content:has(.tol-table-header-component) {
+  place-items: center;
 }
 
 // cell loader
@@ -298,7 +306,7 @@
 .tooltip-value {
   font-size: small;
   padding-right: 10px;
-  color: var(--tol-primary)
+  color: var(--tol-primary);
 }
 
 .tooltip-value-none {
@@ -414,6 +422,28 @@
   left: auto;
   padding: 4px 8px;
   backdrop-filter: blur(8px);
+}
+
+.tol-table-expanded-row {
+  height: 100px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 8px;
+
+  .tol-table-expanded-row-img {
+    height: 80px;
+    width: 80px;
+    object-fit: contain;
+    border: 1px solid var(--tol-grey) !important;
+    padding: 2px;
+    border-radius: 6px;
+  }
+}
+
+.rs-table-row-expanded:has(.tol-table-expanded-row) {
+  padding: 0 !important;
 }
 
 // pagination buttons on smaller devices
