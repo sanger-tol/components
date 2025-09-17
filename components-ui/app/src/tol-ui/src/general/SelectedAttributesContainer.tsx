@@ -20,7 +20,7 @@ import {
 export interface PSelectedAttributesContainer extends IRemoteTarget {
   attributes: readonly string[];
   setAttributes: (attributes: string[]) => void;
-  additionalIcons?: ReactElement;
+  additionalIcons?: any[];
 }
 
 export function SelectedAttributesContainer(props: PSelectedAttributesContainer) {

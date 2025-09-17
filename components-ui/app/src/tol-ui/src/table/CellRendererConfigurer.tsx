@@ -5,16 +5,16 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { CellRendererModal, FieldMeta, Icon } from "..";
+import { CellRendererModal, FieldMeta, ICellRenderer, Icon, INewCellRenderersToSave } from "..";
 
 
 export interface PCellRendererConfigurer {
   attributeId: string,
   fieldMeta: FieldMeta
+  onSave: (cellRenderers: ICellRenderer) => void
 }
 
 export function CellRendererConfigurer(props: PCellRendererConfigurer) {
-  const { attributeId, fieldMeta } = props;
   const [modelOpen, setModalOpen] = useState(false);
   
   const ConfigureCellRendererOpenIcon = (
@@ -32,8 +32,7 @@ export function CellRendererConfigurer(props: PCellRendererConfigurer) {
       <CellRendererModal
         open={modelOpen}
         setOpen={setModalOpen}
-        attributeId={attributeId}
-        fieldMeta={fieldMeta}
+        {...props}
       />
     </div>
   )

@@ -21,7 +21,8 @@ import {
   TCellRenderer,
   Cell,
   deepCopy,
-  ICustomCellRenderers
+  ICustomCellRenderers,
+  INewCellRenderersToSave
 } from "..";
 
 interface Rgb {
@@ -329,4 +330,11 @@ export function exportDataToSpreadsheet(
 export function formatTotalSize(totalSize: number) {
   if (totalSize === 1) return "1 Row";
   return totalSize.toLocaleString() + " Rows";
+}
+
+export function addNewCellRenderersToFieldMeta(cellRenderers: INewCellRenderersToSave, fieldMeta: FieldMeta) {
+  for (const [attributeId, renderer] of Object.entries(cellRenderers)) {
+    fieldMeta.data[attributeId].cellRenderer = renderer;
+    fieldMeta.dataWithDefaults[attributeId].cellRenderer = renderer;
+  }
 }

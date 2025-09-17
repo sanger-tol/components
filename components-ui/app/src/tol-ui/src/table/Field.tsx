@@ -30,8 +30,8 @@ export type TCellRendererType = typeof CellRendererType | string;
 
 export interface ICellRenderer {
   type: TCellRendererType;
-  element?: any;
   props?: ElementProps;
+  element?: any; // only added automatically
 }
 
 export type TCellRenderer =

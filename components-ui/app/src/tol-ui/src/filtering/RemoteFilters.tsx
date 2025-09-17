@@ -19,7 +19,7 @@ import {
 } from "..";
 
 
-interface Props extends IRemoteTarget{
+interface Props extends IRemoteTarget {
   filters?: IFilter;
   onSave?: any;
   disabledFilterValues?: any;

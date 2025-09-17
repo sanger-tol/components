@@ -16,8 +16,9 @@ import {
   IDropdownButtonConfig,
   MultipleSelect,
   ITableConfigSave,
-  Icon,
   CellRendererConfigurer,
+  INewCellRenderersToSave,
+  ICellRenderer,
 } from "..";
 
 
@@ -55,10 +56,11 @@ export function ColumnConfigDrawer(props: Props) {
   const [initialAttributes, setInitialAttributes] = useState<string[]>(fieldMeta.order.active);
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   // used to store selected actions from the dropdown
-  const originalActions = props.actions?.map((btn) => btn.name as string) ?? [];
-  const [actions, setActions] = useState<string[]>(originalActions);
+  const initialActions = props.actions?.map((btn) => btn.name as string) ?? [];
+  const [actions, setActions] = useState<string[]>(initialActions);
   const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
   const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
+  const [newCellRenderers, setNewCellRenderers] = useState<INewCellRenderersToSave>({});
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
@@ -66,8 +68,13 @@ export function ColumnConfigDrawer(props: Props) {
   }, [fieldMeta]);
 
   const saveConfig = () => {
-    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || originalActions !== actions) {
+    if (
+      JSON.stringify(initialAttributes) !== JSON.stringify(attributes)
+      || initialActions !== actions
+      || Object.keys(newCellRenderers).length !== 0
+    ) {
       fieldMeta.order.active = attributes;
+      // UPDATE HERE: addNewCellRenderersToFieldMeta(newCellRenderers, fieldMeta);
       onConfigSave({
         fieldMeta: fieldMeta,
         actions: actions.length !== 0 ? actions : undefined,
@@ -78,6 +85,13 @@ export function ColumnConfigDrawer(props: Props) {
     }
     setOpen(!open);
     setOpenSaveModal(false);
+  };
+
+  const onCellRendererModalSave = (cellRenderer: ICellRenderer, attributeId: string) => {
+    setNewCellRenderers((prev) => ({
+      ...prev,
+      [attributeId]: cellRenderer,
+    }));
   };
 
   const unsavedChangesModal = () => {
@@ -203,7 +217,11 @@ export function ColumnConfigDrawer(props: Props) {
   );
 
   const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string} ) => (
-    <CellRendererConfigurer attributeId={attributeId} fieldMeta={fieldMeta} />
+    <CellRendererConfigurer
+      attributeId={attributeId}
+      fieldMeta={fieldMeta}
+      onSave={onCellRendererModalSave}
+    />
   );
 
   const additionalIcons = [
