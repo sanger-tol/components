@@ -8,19 +8,17 @@ import { useState, Dispatch, SetStateAction } from "react";
 import { Input } from "rsuite";
 import {
   FieldMeta,
-  TCellRendererType,
   CellRendererType,
   SingleSelect,
   Modal,
   normaliseCaps,
   cellRendererParams,
-  TBoardParams,
   Button,
   deepCopy,
 } from "..";
 
 
-interface PCellRendererModal {
+export interface PCellRendererModal {
   open: boolean,
   setOpen: Dispatch<SetStateAction<boolean>>,
   attributeId: string,
@@ -31,13 +29,17 @@ export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, attributeId, fieldMeta } = props;
   const [renderer, setRenderer] = useState({
     props: {},
-    ...deepCopy(fieldMeta.dataWithDefaults[attributeId].cellRenderer),
+    ...deepCopy(
+      fieldMeta.dataWithDefaults?.[attributeId].cellRenderer as object
+    ),
   });
 
-  function saveRendererProps() {
+  const saveRenderer = () => {
     // Set back the render to where we got it from
     // When config save is called this will be saved (as it will have the same object reference)
-    fieldMeta.dataWithDefaults[attributeId].cellRenderer = renderer;
+    if (fieldMeta.dataWithDefaults) {
+      fieldMeta.dataWithDefaults[attributeId].cellRenderer = renderer;
+    }
   }
 
   const Header = <h5>Configure Cell Renderer: {attributeId}</h5>;
@@ -48,7 +50,7 @@ export function CellRendererModal(props: PCellRendererModal) {
         position="right"
         type="success"
         onClick={() => {
-          setOpen(false), saveRendererProps();
+          setOpen(false), saveRenderer();
         }}
         text="Confirm"
       />
@@ -80,9 +82,10 @@ export function CellRendererModal(props: PCellRendererModal) {
         }))}
       />
 
-      {/* Extra options depending on the value selected */}
-      {
-        cellRendererParams[renderer.type] &&
+      <>
+        {/* Extra options depending on the value selected */}
+        {
+          cellRendererParams[renderer.type] &&
           Object.entries(cellRendererParams[renderer.type]).map(([param, values]) => {
             switch (values.type) {
               case "string":
@@ -93,7 +96,7 @@ export function CellRendererModal(props: PCellRendererModal) {
                       value={renderer.props[param]}
                       onChange={(newValue) => {
                         renderer.props[param] = newValue;
-                        setRenderer({...renderer});
+                        setRenderer({ ...renderer });
                       }}
                     />
                   </>
@@ -106,10 +109,11 @@ export function CellRendererModal(props: PCellRendererModal) {
                   </>
                 )
               default:
-                return "";
+                return <></>;
             }
           })
-      }
+        }
+      </>
     </Modal>
   )
 }
