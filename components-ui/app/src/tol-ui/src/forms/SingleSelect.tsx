@@ -11,12 +11,12 @@ export interface PSingleSelect {
   data: string[] | { label: string, value: string }[];
   placeholder?: string;
   value: string;
-  setValue: any;
+  onChange: (value: string) => void;
   block?: boolean;
 }
 
 export const SingleSelect = (props: PSingleSelect) => {
-  const { placeholder, setValue, value, block } = props;
+  const { placeholder, onChange, value, block } = props;
   const [data, setData] = useState([{}]);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export const SingleSelect = (props: PSingleSelect) => {
       data={data}
       searchable={false}
       value={value}
-      onChange={setValue}
+      onChange={onChange}
       placeholder={placeholder}
       block={block}
     />

@@ -11,7 +11,7 @@ import { CellRendererModal, FieldMeta, ICellRenderer, Icon, INewCellRenderersToS
 export interface PCellRendererConfigurer {
   attributeId: string,
   fieldMeta: FieldMeta
-  onSave: (cellRenderers: ICellRenderer) => void
+  onSave: (cellRenderers: ICellRenderer, attributeId: string) => void
 }
 
 export function CellRendererConfigurer(props: PCellRendererConfigurer) {

@@ -334,7 +334,13 @@ export function formatTotalSize(totalSize: number) {
 
 export function addNewCellRenderersToFieldMeta(cellRenderers: INewCellRenderersToSave, fieldMeta: FieldMeta) {
   for (const [attributeId, renderer] of Object.entries(cellRenderers)) {
-    fieldMeta.data[attributeId].cellRenderer = renderer;
-    fieldMeta.dataWithDefaults[attributeId].cellRenderer = renderer;
+    fieldMeta.data![attributeId] = {
+      ...fieldMeta.data![attributeId], // preserve existing properties
+      cellRenderer: renderer, // add or overwrite the cellRenderer property
+    };
+    fieldMeta.dataWithDefaults![attributeId] = {
+      ...fieldMeta.dataWithDefaults![attributeId],
+      cellRenderer: renderer,
+    };
   }
 }

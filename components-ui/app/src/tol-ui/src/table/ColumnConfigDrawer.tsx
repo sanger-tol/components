@@ -19,6 +19,7 @@ import {
   CellRendererConfigurer,
   INewCellRenderersToSave,
   ICellRenderer,
+  addNewCellRenderersToFieldMeta,
 } from "..";
 
 
@@ -65,7 +66,10 @@ export function ColumnConfigDrawer(props: Props) {
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
     setInitialAttributes(fieldMeta?.order?.active ?? []);
-  }, [fieldMeta]);
+
+    // reset newCellRenderers onClose
+    if (!open) setNewCellRenderers({});
+  }, [open]);
 
   const saveConfig = () => {
     if (
@@ -74,7 +78,6 @@ export function ColumnConfigDrawer(props: Props) {
       || Object.keys(newCellRenderers).length !== 0
     ) {
       fieldMeta.order.active = attributes;
-      // UPDATE HERE: addNewCellRenderersToFieldMeta(newCellRenderers, fieldMeta);
       onConfigSave({
         fieldMeta: fieldMeta,
         actions: actions.length !== 0 ? actions : undefined,
@@ -83,15 +86,14 @@ export function ColumnConfigDrawer(props: Props) {
       });
       setInitialAttributes(attributes);
     }
-    setOpen(!open);
+    setOpen(false);
     setOpenSaveModal(false);
   };
 
-  const onCellRendererModalSave = (cellRenderer: ICellRenderer, attributeId: string) => {
-    setNewCellRenderers((prev) => ({
-      ...prev,
-      [attributeId]: cellRenderer,
-    }));
+  const onCellRendererModalSave = (renderer: ICellRenderer, attributeId: string) => {
+    const updatedNewCellRenderers = { ...newCellRenderers, [attributeId]: renderer };
+    setNewCellRenderers(updatedNewCellRenderers);
+    addNewCellRenderersToFieldMeta(updatedNewCellRenderers, fieldMeta);
   };
 
   const unsavedChangesModal = () => {
@@ -216,7 +218,7 @@ export function ColumnConfigDrawer(props: Props) {
     </div>
   );
 
-  const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string} ) => (
+  const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
     <CellRendererConfigurer
       attributeId={attributeId}
       fieldMeta={fieldMeta}

@@ -23,7 +23,7 @@ export const CellRendererType = [
   "expander",
   "float",
   "integer",
-  "link"
+  "link",
 ] as const;
 
 export type TCellRendererType = typeof CellRendererType | string;

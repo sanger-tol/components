@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, Dispatch, SetStateAction } from "react";
+import { useState, Dispatch, SetStateAction, useEffect } from "react";
 import { Input } from "rsuite";
 import {
   FieldMeta,
@@ -15,7 +15,7 @@ import {
   cellRendererParams,
   Button,
   deepCopy,
-  ICellRenderer,
+  TCellRenderer,
 } from "..";
 
 
@@ -23,20 +23,48 @@ export interface PCellRendererModal {
   open: boolean,
   setOpen: Dispatch<SetStateAction<boolean>>,
   attributeId: string,
-  fieldMeta: FieldMeta
-  onSave: (renderer: ICellRenderer, attributeId: string) => void
+  fieldMeta: FieldMeta,
+  onSave: (renderer: TCellRenderer, attributeId: string) => void,
 }
-// RESET CELL RENDERERS ON CLOSE
+
 export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, attributeId, fieldMeta, onSave } = props;
-  const [renderer, setRenderer] = useState<ICellRenderer>({
-    props: {},
-    ...deepCopy(
-      fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer as object || {}
-    ),
-  });
+  const [renderer, setRenderer] = useState<TCellRenderer>();
 
-  const Header = <h5>Configure Cell Renderer: {attributeId}</h5>;
+  useEffect(() => {
+    if (open) {
+      setRenderer(
+        fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer === null ? null :
+        fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer === undefined ? undefined :
+        deepCopy(
+          fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer as object
+        )
+      );
+    }
+  }, [open]);
+
+  const onTypeChange = (type: string) => {
+    setRenderer(
+      type === "none" ? null : // forces no renderer
+        { ...renderer, type: type, props: {} }
+    );
+  };
+
+  const Header = (
+    <h5>
+      Configure
+      <span
+        style={{
+          color: "var(--tol-primary)",
+          marginLeft: 5,
+          marginRight: 5
+        }}
+      >
+        {fieldMeta.dataWithDefaults?.[attributeId].rename}
+      </span>
+      Cell Renderer
+    </h5>
+  );
 
   const Buttons = (
     <div>
@@ -46,7 +74,7 @@ export function CellRendererModal(props: PCellRendererModal) {
         onClick={() => {
           setOpen(false), onSave(renderer, attributeId);
         }}
-        text="Confirm"
+        text="Update"
       />
       <Button
         position="right"
@@ -56,6 +84,13 @@ export function CellRendererModal(props: PCellRendererModal) {
       />
     </div>
   );
+
+  const typeChoices = [
+    "none", ...CellRendererType
+  ].map(cellRendererType => ({
+    label: normaliseCaps(cellRendererType),
+    value: cellRendererType
+  }));
 
   return (
     <Modal
@@ -69,39 +104,38 @@ export function CellRendererModal(props: PCellRendererModal) {
       <SingleSelect
         block
         placeholder="Default Cell Renderer"
-        value={renderer.type as string}
-        setValue={(newType) => setRenderer({ ...renderer, type: newType, props: {} })}
-        data={CellRendererType.map(cellRendererType => ({
-          label: normaliseCaps(cellRendererType),
-          value: cellRendererType
-        }))}
+        value={
+          renderer === null ? "none" :
+            renderer?.type as string || ""
+        }
+        onChange={onTypeChange}
+        data={typeChoices}
       />
 
       <>
         {/* Extra options depending on the value selected */}
-        {
-          cellRendererParams[renderer.type as string] &&
+        {renderer && cellRendererParams[renderer.type as string] &&
           Object.entries(cellRendererParams[renderer.type as string]).map(([param, values]) => {
             switch (values.type) {
               case "string":
                 return (
-                  <>
+                  <span key={param} style={{marginTop: 10}}>
                     {values.rename}:
                     <Input
                       value={renderer.props![param]}
-                      onChange={(newValue) => {
+                      onChange={(newValue: string) => {
                         renderer.props![param] = newValue;
                         setRenderer({ ...renderer });
                       }}
                     />
-                  </>
+                  </span>
                 )
               case "boolean":
                 return (
-                  <>
+                  <span key={param} style={{marginTop: 10}}>
                     {values.rename}:
                     <Button text="Add text field" />
-                  </>
+                  </span>
                 )
               default:
                 return <></>;
