@@ -58,6 +58,7 @@ deploy-doc:
     - cd components-ui/app/src/tol-ui
     - yarn install
     - yarn build
+    - pip show sphinx-js
     - sphinx-build -b html doc/source .public
     - ls -al .public
     - mv .public ${CI_PROJECT_DIR}/public

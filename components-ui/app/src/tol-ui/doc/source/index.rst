@@ -2,7 +2,7 @@
    SPDX-License-Identifier: MIT
 
 Tree of Life UI Library documentation
-==============================
+=====================================
 
 .. toctree::
    :maxdepth: 2
