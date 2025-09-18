@@ -30,4 +30,4 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 js_language = 'typescript'
-js_source_path = 'src'
+js_source_path = '../src'

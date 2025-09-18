@@ -59,7 +59,6 @@ deploy-doc:
     - yarn install
     - yarn build
     - cd doc
-    - sphinx-apidoc -o source ../src
     - sphinx-build -b html source .public
     - mv .public public
   pages:
