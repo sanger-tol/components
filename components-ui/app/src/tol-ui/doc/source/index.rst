@@ -8,14 +8,7 @@ Tree of Life UI Library documentation
    :maxdepth: 2
    :caption: Contents:
 
-   Forms.md
-   Webpage Components.md
+   guides/Forms.md
+   guides/Webpage Components.md
+   api_reference
 
-API Reference
--------------
-
-.. js:autodoc:: src/index.ts
-   :members:
-   :private-members:
-   :undoc-members:
-   :recursive:
