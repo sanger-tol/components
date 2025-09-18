@@ -52,7 +52,7 @@ deploy-doc:
     - apk add --no-cache python3 py3-pip make gcc musl-dev python3-dev git
     - python3 -m venv /venv
     - . /venv/bin/activate
-    - pip install sphinx sphinx-rtd-theme sphinx-js
+    - pip install sphinx sphinx-rtd-theme sphinx-js myst_parser
     - yarn global add typescript typedoc
   script:
     - cd components-ui/app/src/tol-ui
