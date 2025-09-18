@@ -9,11 +9,8 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-import os
-import sys
 
-
-project = 'Tree of Life SDK'
+project = 'Tree of Life UI Library'
 copyright = '2025 Genome Research Ltd'  # noqa A001
 author = 'ToL Enabling Platforms Team'
 # release = '1.6.30'
