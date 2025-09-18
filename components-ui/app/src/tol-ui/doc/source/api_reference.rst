@@ -4,6 +4,6 @@
 API Reference
 =============
 
-.. js:automodule:: .
+.. js:automodule:: index
    :members:
    :private-members:
