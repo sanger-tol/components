@@ -44,3 +44,22 @@ deploy-package:
     - yarn publish
   when: manual
   needs: []
+
+deploy-doc:
+  stage: unit test
+  image: ${CI_REGISTRY_IMAGE}/${APP_NAME}-ui:CI_COMMIT_SHA
+  before_script:
+    - apk add --no-cache python3 py3-pip make gcc musl-dev python3-dev git
+    - pip install sphinx sphinx-rtd-theme sphinx-js
+    - yarn global add typescript
+  script:
+    # Adjust these paths as needed for your repo structure
+    - cd src/tol-ui/doc  # Assuming your Sphinx docs are in ./docs
+    - sphinx-apidoc -o source ../src  # Optional: if you want API docs from .ts files
+    - sphinx-build -b html source .public
+    - mv .public public
+  pages:
+    publish: public
+  only:
+    - main
+    - production
