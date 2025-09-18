@@ -55,10 +55,12 @@ deploy-doc:
     - pip install sphinx sphinx-rtd-theme sphinx-js
     - yarn global add typescript typedoc
   script:
-    - (cd components-ui/app/src/tol-ui; yarn install; yarn build)
-    - sphinx-build -b html components-ui/app/src/tol-ui/doc/source .public
+    - cd components-ui/app/src/tol-ui
+    - yarn install
+    - yarn build
+    - sphinx-build -b html doc/source .public
     - ls -al .public
-    - mv .public public
+    - mv .public ${CI_PROJECT_DIR}public
   pages:
     publish: public
   # only:
