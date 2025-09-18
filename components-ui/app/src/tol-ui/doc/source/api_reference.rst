@@ -4,9 +4,9 @@
 API Reference
 =============
 
-Interfaces
-----------
+TSDataSource
+------------
 
-.. js:automodule:: interfaces.index
+.. js:automodule:: TsDataSource
    :members:
    :private-members:
