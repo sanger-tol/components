@@ -7,6 +7,6 @@ API Reference
 TSDataSource
 ------------
 
-.. js:automodule:: TsDataSource
+.. js:automodule:: datasource/TsDataSource
    :members:
    :private-members:
