@@ -39,6 +39,19 @@ const detailPromises: IDetailPromises = {};
 const configPromises: IConfigPromises = {};
 const entityMetaPromises: IEntityMetaPromises = {};
 
+/**
+ * TsDataSource provides a client for interacting with a RESTful API,
+ * including caching, relationship handling, and CRUD operations for data objects.
+ *
+ * @remarks
+ * - Handles detail caching and promise management for efficient data retrieval.
+ * - Supports fetching, upserting, deleting, and custom API calls.
+ * - Manages relationships between data objects using proxies.
+ *
+ * @example
+ * const ds = new TsDataSource({ apiPrefix: "api/v1" });
+ * const item = await ds.getOne({ objectType: "species", id: "sp1" });
+ */
 export class TsDataSource {
   private client: any;
   private baseUrl: string | undefined;
