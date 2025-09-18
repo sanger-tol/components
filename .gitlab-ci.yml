@@ -55,10 +55,11 @@ deploy-doc:
     - pip install sphinx sphinx-rtd-theme sphinx-js
     - yarn global add typescript
   script:
+    - cd components-ui/app/src/tol-ui
     - yarn install
     - yarn build
     # Adjust these paths as needed for your repo structure
-    - cd src/tol-ui/doc  # Assuming your Sphinx docs are in ./docs
+    - cd doc  # Assuming your Sphinx docs are in ./docs
     - sphinx-apidoc -o source ../src  # Optional: if you want API docs from .ts files
     - sphinx-build -b html source .public
     - mv .public public
