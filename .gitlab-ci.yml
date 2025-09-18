@@ -60,7 +60,8 @@ deploy-doc:
     - yarn build
     - cd doc
     - sphinx-build -b html source .public
-    - mv .public public
+    - ls -al .public
+    - mv .public ~/public
   pages:
     publish: public
   # only:
