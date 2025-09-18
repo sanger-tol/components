@@ -4,7 +4,7 @@
 API Reference
 =============
 
-.. js:autodoc:: src/index.ts
+.. js:autodoc:: index.ts
    :members:
    :private-members:
    :undoc-members:
