@@ -60,6 +60,5 @@ deploy-doc:
     - mv .public public
   pages:
     publish: public
-  only:
-    - main
-    - production
+  # only:
+  #   - production
