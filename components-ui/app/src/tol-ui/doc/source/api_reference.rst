@@ -4,6 +4,9 @@
 API Reference
 =============
 
-.. js:automodule:: index
+Interfaces
+----------
+
+.. js:automodule:: interfaces
    :members:
    :private-members:
