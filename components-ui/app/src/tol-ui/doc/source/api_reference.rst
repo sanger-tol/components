@@ -7,3 +7,7 @@ API Reference
 .. js:automodule:: index
    :members:
    :private-members:
+
+.. js:automodule:: boards
+   :members:
+   :private-members:
