@@ -53,14 +53,13 @@ deploy-doc:
     - python3 -m venv /venv
     - . /venv/bin/activate
     - pip install sphinx sphinx-rtd-theme sphinx-js
-    - yarn global add typescript
+    - yarn global add typescript typedoc
   script:
     - cd components-ui/app/src/tol-ui
     - yarn install
     - yarn build
-    # Adjust these paths as needed for your repo structure
-    - cd doc  # Assuming your Sphinx docs are in ./docs
-    - sphinx-apidoc -o source ../src  # Optional: if you want API docs from .ts files
+    - cd doc
+    - sphinx-apidoc -o source ../src
     - sphinx-build -b html source .public
     - mv .public public
   pages:
