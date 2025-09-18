@@ -7,6 +7,6 @@ API Reference
 Interfaces
 ----------
 
-.. js:automodule:: interfaces/index
+.. js:automodule:: interfaces.index
    :members:
    :private-members:
