@@ -4,6 +4,6 @@
 API Reference
 =============
 
-.. js:automodule:: tol-ui
+.. js:automodule:: index
    :members:
    :private-members:
