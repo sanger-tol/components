@@ -56,7 +56,6 @@ deploy-doc:
     - yarn global add typescript typedoc
   script:
     - (cd components-ui/app/src/tol-ui; yarn install; yarn build)
-    - pwd
     - sphinx-build -b html components-ui/app/src/tol-ui/doc/source .public
     - ls -al .public
     - mv .public public
