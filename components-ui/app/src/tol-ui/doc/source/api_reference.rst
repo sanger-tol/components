@@ -7,4 +7,3 @@ API Reference
 .. js:automodule:: tol-ui
    :members:
    :private-members:
-   :recursive:
