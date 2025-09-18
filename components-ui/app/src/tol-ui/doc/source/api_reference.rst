@@ -4,7 +4,7 @@
 API Reference
 =============
 
-.. js:autodoc:: index.ts
+.. js:automodule:: tol-ui
    :members:
    :private-members:
    :undoc-members:
