@@ -9,7 +9,9 @@ import { ICellRenderer } from "src/table";
 export interface IBoardParam {
   type: string,
   rename: string,
-  required: boolean
+  required: boolean,
+  description: string,
+  previewExample: string|boolean,
 }
 
 export type TBoardParams = Record<string, IBoardParam>;

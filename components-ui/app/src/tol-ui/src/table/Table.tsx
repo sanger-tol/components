@@ -206,6 +206,7 @@ export function Table(props: Props) {
       },
       icon: "sliders",
       outline: true,
+      disabled: loading
     }
     : {
       visible: false,
@@ -226,6 +227,7 @@ export function Table(props: Props) {
         icon: filterVisibility ? "eye-slash" : "eye",
         tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
         outline: true,
+        disabled: loading
       }
       : {
         visible: false,

@@ -93,8 +93,9 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
 }
 
 .tol-config-drawer-column-title {
-  border-bottom: 1px solid var(--tol-grey);
-  padding-bottom: 5px;
+  border-top: 1px solid var(--tol-grey);
+  padding-top: 24px;
+  margin-bottom: 8px;
 }
 
 .tol-config-drawer-modal-btns {

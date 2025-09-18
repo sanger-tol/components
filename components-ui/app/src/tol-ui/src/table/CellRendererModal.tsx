@@ -16,10 +16,13 @@ import {
   Button,
   deepCopy,
   TCellRenderer,
+  IEntityMeta,
+  IRemoteTarget,
+  InfoTooltip,
 } from "..";
 
 
-export interface PCellRendererModal {
+export interface PCellRendererModal extends IRemoteTarget {
   open: boolean,
   setOpen: Dispatch<SetStateAction<boolean>>,
   attributeId: string,
@@ -28,17 +31,25 @@ export interface PCellRendererModal {
 }
 
 export function CellRendererModal(props: PCellRendererModal) {
-  const { open, setOpen, attributeId, fieldMeta, onSave } = props;
+  const { open, setOpen, attributeId, fieldMeta, objectType, dataSource, onSave } = props;
   const [renderer, setRenderer] = useState<TCellRenderer>();
+  const [entityMeta, setEntityMeta] = useState<IEntityMeta>();
+
+  useEffect(() => {
+    dataSource
+      .getEntityMeta().then((em) => {
+        setEntityMeta(em);
+      });
+  }, []);
 
   useEffect(() => {
     if (open) {
       setRenderer(
         fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer === null ? null :
-        fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer === undefined ? undefined :
-        deepCopy(
-          fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer as object
-        )
+          fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer === undefined ? undefined :
+            deepCopy(
+              fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer as object
+            )
       );
     }
   }, [open]);
@@ -53,15 +64,10 @@ export function CellRendererModal(props: PCellRendererModal) {
   const Header = (
     <h5>
       Configure
-      <span
-        style={{
-          color: "var(--tol-primary)",
-          marginLeft: 5,
-          marginRight: 5
-        }}
-      >
-        {fieldMeta.dataWithDefaults?.[attributeId].rename}
-      </span>
+      {
+        ` '${entityMeta?.flatAttributes[objectType][attributeId].display_name
+        || normaliseCaps(attributeId)}' `
+      }
       Cell Renderer
     </h5>
   );
@@ -101,26 +107,35 @@ export function CellRendererModal(props: PCellRendererModal) {
       closeButton={false}
       actionButton={Buttons}
     >
-      <SingleSelect
-        block
-        placeholder="Default Cell Renderer"
-        value={
-          renderer === null ? "none" :
-            renderer?.type as string || ""
-        }
-        onChange={onTypeChange}
-        data={typeChoices}
-      />
-
-      <>
+      <div className="tol-cell-renderer-modal-selector">
+        <SingleSelect
+          block
+          placeholder="Default Cell Renderer"
+          value={
+            renderer === null ? "none" :
+              renderer?.type as string || ""
+          }
+          onChange={onTypeChange}
+          data={typeChoices}
+        />
+      </div>
+      <div className="tol-cell-renderer-modal-params">
         {/* Extra options depending on the value selected */}
         {renderer && cellRendererParams[renderer.type as string] &&
           Object.entries(cellRendererParams[renderer.type as string]).map(([param, values]) => {
-            switch (values.type) {
-              case "string":
-                return (
-                  <span key={param} style={{marginTop: 10}}>
-                    {values.rename}:
+            return (
+              <div key={param}>
+                <span className="tol-param-title">
+                  {values.rename}:
+                </span>
+                {values.required &&
+                  <span className="tol-param-required">*</span>
+                }
+                <span className="tol-param-info">
+                  <InfoTooltip contents={values.description} disableMarkdown />
+                </span>
+                <div className="tol-param">
+                  {values.type === "string" ? (
                     <Input
                       value={renderer.props![param]}
                       onChange={(newValue: string) => {
@@ -128,21 +143,15 @@ export function CellRendererModal(props: PCellRendererModal) {
                         setRenderer({ ...renderer });
                       }}
                     />
-                  </span>
-                )
-              case "boolean":
-                return (
-                  <span key={param} style={{marginTop: 10}}>
-                    {values.rename}:
+                  ) : values.type === "boolean" ? (
                     <Button text="Add text field" />
-                  </span>
-                )
-              default:
-                return <></>;
-            }
+                  ) : null}
+                </div>
+              </div>
+            )
           })
         }
-      </>
+      </div>
     </Modal>
   )
 }

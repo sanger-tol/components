@@ -220,6 +220,7 @@ export function ColumnConfigDrawer(props: Props) {
 
   const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
     <CellRendererConfigurer
+      {...props}
       attributeId={attributeId}
       fieldMeta={fieldMeta}
       onSave={onCellRendererModalSave}
