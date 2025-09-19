@@ -30,7 +30,7 @@ import {
   Footer,
   Dropdown,
   Page,
-  convertToPath,
+  convertToPathWithUiPath,
   matomoAnalytics,
   env,
   Board,
@@ -61,12 +61,12 @@ interface Props {
   boards?: BoardSources;
   register?: boolean;
   customCallbackUrl?: string;
-  basename?: string;
+  uiPath?: string;
 }
 
 
 export function TolApp(props: Props) {
-  const { customCallbackUrl, basename } = props;
+  const { customCallbackUrl, uiPath } = props;
 
   // setting a default for the boardDataSource
   const boards = props.boards ? {
@@ -120,9 +120,10 @@ export function TolApp(props: Props) {
           setUser,
         }}
       >
-        <Router basename={loggedIn ? basename : undefined}>
+        <Router>
           <Navigation
             brand={props.brand}
+            uiPath={uiPath}
             pages={props.pages}
             profilePages={profilePages}
             login={login}
@@ -131,11 +132,15 @@ export function TolApp(props: Props) {
           />
           <div className="tol-app">
             <Switch>
-              <Route path="/" exact component={() => props.homePage} />
-              <Route path="/callback" exact>
+              <Route
+                path={[`/${uiPath ?? ''}/`,]}
+                exact
+                render={() => props.homePage}
+              />
+              <Route path={`${uiPath ?? ''}/callback`} exact>
                 <Callback />
               </Route>
-              <Route path="/board/:boardId">
+              <Route path={`${uiPath ?? ''}/board/:boardId`}>
                 {boards && loggedIn ? (
                   <BoardPrivilegeContextProvider>
                     <Board
@@ -144,18 +149,18 @@ export function TolApp(props: Props) {
                     />
                   </BoardPrivilegeContextProvider>
                 ) : (
-                  <Redirect to="/" replace />
+                  <Redirect to={`${uiPath ?? ''}/`} replace />
                 )}
               </Route>
-              <Route path="/file-validation/results/:uploadId" render={(routeProps) => {
+              <Route path={`${uiPath ?? ''}/file-validation/results/:uploadId`} render={(routeProps) => {
                 return loggedIn ? (
                   <ValidationResultsViewer {...routeProps} />
                 ) : (
-                  <Redirect to="/" replace />
+                  <Redirect to={`${uiPath ?? ''}/`} replace />
                 )
               }} />
               {allPageRoutes.map((page) => {
-                const path = convertToPath(page.name, page.prefix);
+                const path = convertToPathWithUiPath(page.name, uiPath);
                 const routes = [];
                 const authorised = confirmAuthorised(
                   user,
@@ -163,55 +168,23 @@ export function TolApp(props: Props) {
                   page.removeOnAuth,
                 );
 
-                  // dropdown routes
-                  if ('pages' in page && page.pages) {
-                    page.pages.forEach((dropdownPage: Page) => {
-                      const individualPageAuthorised = confirmAuthorised(
-                        user,
-                        dropdownPage.auth,
-                        dropdownPage.removeOnAuth,
-                      );
-                      const dropdownPath =
-                        convertToPath(dropdownPage.name);
-                      // dropdown page route
-                      routes.push(
-                        <Route exact path={dropdownPath} key={dropdownPath}>
-                          {individualPageAuthorised ? (
-                            getElementDependingOnAuthStatus(
-                              loggedIn,
-                              dropdownPage,
-                            )
-                          ) : (
-                            <Redirect to="/" />
-                          )}
-                        </Route>,
-                      );
-
-                      // dropdown detail page route
-                      if (dropdownPage.detail) {
-                        routes.push(
-                          <Route
-                            exact
-                            path={`${dropdownPath}/:id`}
-                            key={`${dropdownPath}-detail`}
-                          >
-                            {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user?.id) ? (
-                              dropdownPage.detail
-                            ) : (
-                              <Redirect to="/" />
-                            )}
-                          </Route>,
-                        );
-                      }
-                    });
-                  } else {
-                    // regular page route
+                // dropdown routes
+                if ('pages' in page && page.pages) {
+                  page.pages.forEach((dropdownPage: Page) => {
+                    const individualPageAuthorised = confirmAuthorised(
+                      user,
+                      dropdownPage.auth,
+                      dropdownPage.removeOnAuth,
+                    );
+                    const dropdownPath =
+                      convertToPathWithUiPath(dropdownPage.name, uiPath);
+                    // dropdown page route
                     routes.push(
                       <Route exact path={path} key={page.name}>
                         {authorised ? (
                           getElementDependingOnAuthStatus(loggedIn, page)
                         ) : (
-                          <Redirect to="/" replace />
+                          <Redirect to={`${uiPath ?? ''}/`} replace />
                         )}
                       </Route>,
                     );
@@ -227,7 +200,7 @@ export function TolApp(props: Props) {
                           {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user?.id) ? (
                             dropdownPage.detail
                           ) : (
-                            <Redirect to="/" replace />
+                            <Redirect to={`${uiPath ?? ''}/`} replace />
                           )}
                         </Route>,
                       );
@@ -240,7 +213,7 @@ export function TolApp(props: Props) {
                       {authorised ? (
                         getElementDependingOnAuthStatus(loggedIn, page)
                       ) : (
-                        <Redirect to="/" replace />
+                        <Redirect to={`${uiPath ?? ''}/`} replace />
                       )}
                     </Route>,
                   );
@@ -253,11 +226,12 @@ export function TolApp(props: Props) {
                         path={`${path}/:id`}
                         key={`${page.name}-detail`}
                       >
-                        {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to="/" replace />}
+                        {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to={`${uiPath ?? ''}/`} replace />}
                       </Route>,
                     );
                   }
 
+<<<<<<< HEAD
                   return routes;
                 })}
                 <Route
@@ -272,6 +246,22 @@ export function TolApp(props: Props) {
             <Footer />
           </Router>
         </AuthProvider>
+=======
+                return routes;
+              })}
+              <Route
+                path={`/page-not-found`}
+                component={() => <PageNotFound />}
+              />
+              <Route path="*">
+                <Redirect to={`/page-not-found`} />
+              </Route>
+            </Switch>
+          </div>
+          <Footer />
+        </Router>
+      </AuthProvider>
+>>>>>>> 06ec644f (Fixing rerouting on homepage - Still need to fix login issue)
       </QueryClientProvider>
     </div>
   );

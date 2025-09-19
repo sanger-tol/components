@@ -8,14 +8,17 @@ SPDX-License-Identifier: MIT
 import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
 import { PopUpMessage } from "..";
+import { IAllowedCardinality } from "..";
 
 
-export function convertToPath(name: string, prefix?: string) {
+export function convertToPath(name: string) {
   const path = name.toLowerCase();
-  if (prefix) {
-    return "/" + prefix + path.replace(/\s+/g, "-");
-  }
   return "/" + path.replace(/\s+/g, "-");
+}
+
+export function convertToPathWithUiPath(pathname: string, uiPath?: string) {
+  const convertedPath = convertToPath(pathname);
+  return uiPath ? `/${uiPath}${convertedPath}` : convertedPath;
 }
 
 export function convertToName(path: string) {

@@ -18,7 +18,7 @@ import {
   Login,
   Dropdown,
   Page,
-  convertToPath,
+  convertToPathWithUiPath,
   env,
   confirmAuthorised,
   LoginIcon,
@@ -34,6 +34,7 @@ interface Props extends RouteComponentProps {
   login: boolean;
   register: boolean;
   customCallbackUrl?: string;
+  uiPath?: string;
 }
 
 interface Environment {
@@ -80,7 +81,7 @@ const getBackgroundClass = (environment: string): string => {
 
 // on page change update returnUrl to page route
 function Navigation(props: Props) {
-  const { setToken, user, setUser } = useAuth();
+  const { setToken, user, setUser, uiPath } = useAuth();
   const [environment, setEnvironment] = useState("");
   const [navbarOffset, setNavbarOffset] = useState<number>(0);
 
@@ -126,7 +127,7 @@ function Navigation(props: Props) {
         return (
           <Nav.Link
             key={page.name}
-            href={"link" in page ? page.link?.href : convertToPath(page.name, page.prefix)}
+            href={"link" in page ? page.link?.href : convertToPathWithUiPath(page.name, uiPath)}
             target={page.link?.target}
           >
             {page.name}
@@ -163,7 +164,7 @@ function Navigation(props: Props) {
                         href={
                           "link" in page
                           ? page.link?.href
-                          : convertToPath(page.name, page.prefix)
+                          : convertToPathWithUiPath(page.name, uiPath)
                         }
                         target={page.link?.target}
                       >
