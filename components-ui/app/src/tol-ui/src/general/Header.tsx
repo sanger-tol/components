@@ -4,23 +4,30 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Container, IHeaderButton, Button } from "..";
+import { ReactNode } from "react";
 
 export interface PHeader {
   title?: string;
   subTitle?: string;
-  buttons?: IHeaderButton[];
-  pageEmpty?: boolean;
+  element?: ReactNode;
+  height?: number;
+  backgroundImageLink?: string;
 }
 
-export function Header(PHeader) {
-  const { title, subTitle, buttons = [], pageEmpty = false } = PHeader;
+export function Header(props: PHeader) {
+  const { title, subTitle, element, height, backgroundImageLink } = props;
 
   return (
-    <div>
-      <div className="header">
-        <header className="masthead text-center text-white">
-          <div className="masthead-content">
+    <header
+      className="masthead text-center text-white"
+      style={{
+        backgroundImage: backgroundImageLink ? `url(${backgroundImageLink})` : undefined,
+        height: height ? height : undefined
+      }}
+    >
+      <div className="masthead-content">
+        {!backgroundImageLink &&
+          <>
             <li></li>
             <li></li>
             <li></li>
@@ -31,25 +38,14 @@ export function Header(PHeader) {
             <li></li>
             <li></li>
             <li></li>
-            <Container>
-              <div className="navbar-filler" />
-              <h1 className="masthead-heading mb-0">{title}</h1>
-              <h2 className="masthead-subheading mb-0">{subTitle}</h2>
-              {buttons.map((button) => (
-                <div key={button.text} style={{ marginTop: "30px" }}>
-                  <Button
-                    text={button.text}
-                    onClick={() => {
-                      window.location.href = button.href;
-                    }}
-                  />
-                </div>
-              ))}
-            </Container>
-          </div>
-        </header>
+          </>
+        }
+        <div>
+          <h1 className="masthead-heading">{title}</h1>
+          <h2 className="masthead-subheading">{subTitle}</h2>
+          {element}
+        </div>
       </div>
-      {pageEmpty ? <h6>‎</h6> : <></>}
-    </div>
+    </header>
   );
 }
