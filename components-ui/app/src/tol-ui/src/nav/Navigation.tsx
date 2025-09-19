@@ -81,7 +81,7 @@ const getBackgroundClass = (environment: string): string => {
 
 // on page change update returnUrl to page route
 function Navigation(props: Props) {
-  const { setToken, user, setUser, uiPath } = useAuth();
+  const { setToken, user, setUser } = useAuth();
   const [environment, setEnvironment] = useState("");
   const [navbarOffset, setNavbarOffset] = useState<number>(0);
 
@@ -127,7 +127,7 @@ function Navigation(props: Props) {
         return (
           <Nav.Link
             key={page.name}
-            href={"link" in page ? page.link?.href : convertToPathWithUiPath(page.name, uiPath)}
+            href={"link" in page ? page.link?.href : convertToPathWithUiPath(page.name, props.uiPath)}
             target={page.link?.target}
           >
             {page.name}
@@ -164,7 +164,7 @@ function Navigation(props: Props) {
                         href={
                           "link" in page
                           ? page.link?.href
-                          : convertToPathWithUiPath(page.name, uiPath)
+                          : convertToPathWithUiPath(page.name, props.uiPath)
                         }
                         target={page.link?.target}
                       >

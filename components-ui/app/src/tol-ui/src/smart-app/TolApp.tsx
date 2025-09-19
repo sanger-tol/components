@@ -231,22 +231,6 @@ export function TolApp(props: Props) {
                     );
                   }
 
-<<<<<<< HEAD
-                  return routes;
-                })}
-                <Route
-                  path="/page-not-found"
-                  component={() => <PageNotFound />}
-                />
-                <Route path="*">
-                  <Redirect to="/page-not-found" />
-                </Route>
-              </Switch>
-            </div>
-            <Footer />
-          </Router>
-        </AuthProvider>
-=======
                 return routes;
               })}
               <Route
@@ -261,7 +245,6 @@ export function TolApp(props: Props) {
           <Footer />
         </Router>
       </AuthProvider>
->>>>>>> 06ec644f (Fixing rerouting on homepage - Still need to fix login issue)
       </QueryClientProvider>
     </div>
   );
