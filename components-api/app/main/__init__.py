@@ -28,8 +28,8 @@ from tol.core.operator import Inserter
 from tol.sources.portal import portal
 from tol.sql import Model, create_sql_datasource
 from tol.sql.auth import db_auth_blueprint
-from tol.sql.standard import create_standard_models
 from tol.sql.pipeline_step import create_pipeline_step_models
+from tol.sql.standard import create_standard_models
 
 from .model import Base, MODELS, UserMixin
 from .playwright_ds import PlaywrightTestDataSource
