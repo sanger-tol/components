@@ -21,6 +21,51 @@ depends_on = None
 def upgrade() -> None:
     conn = op.get_bind()
 
+    # Create `data_source_config` table (needed for the `data_source_instance` table)
+    op.create_table(
+        'data_source_config',
+        sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
+        sa.Column('name', sa.String(), nullable=False),
+        sa.Column('description', sa.String(), nullable=False),
+    )
+
+    # Create `data_source_config_attribute` table (needed for the `data_source_instance` table)
+    op.create_table(
+        'data_source_config_attribute',
+        sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
+        sa.Column('data_source_config_id', sa.Integer(), sa.ForeignKey('data_source_config.id'), nullable=False),
+        sa.Column('name', sa.String(), nullable=False),
+        sa.Column('object_type', sa.String(), nullable=False),
+        sa.Column('display_name', sa.String(), nullable=True),
+        sa.Column('description', sa.String(), nullable=True),
+        sa.Column('available_on_relationships', sa.Boolean(), nullable=False, server_default=sa.text('true')),
+        sa.Column('is_authoritative', sa.Boolean(), nullable=False, server_default=sa.text('false')),
+        sa.Column('source', sa.String(), nullable=True),
+        sa.Column('runtime_definition', JSONB(astext_type=sa.Text()), nullable=True),
+    )
+
+    # Create `data_source_config_relationship` table (needed for the `data_source_instance` table)
+    op.create_table(
+        'data_source_config_relationship',
+        sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
+        sa.Column('object_type', sa.String(), nullable=False),
+        sa.Column('name', sa.String(), nullable=False),
+        sa.Column('foreign_object_type', sa.String(), nullable=False),
+        sa.Column('foreign_name', sa.String(), nullable=False),
+        sa.Column('data_source_config_id', sa.Integer(), sa.ForeignKey('data_source_config.id'), nullable=False),
+    )
+
+    # Create `data_source_instance` table
+    op.create_table(
+        'data_source_instance',
+        sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
+        sa.Column('name', sa.String(), nullable=False),
+        sa.Column('builtin_name', sa.String(), nullable=False),
+        sa.Column('kwargs', JSONB(astext_type=sa.Text()), nullable=True),
+        sa.Column('publish', sa.Boolean(), nullable=False, server_default=sa.text('false')),
+        sa.Column('data_source_config_id', sa.Integer(), sa.ForeignKey('data_source_config.id'), nullable=False),
+    )
+
     # Remove `datasource` fields
     op.drop_column('component', 'datasource')
     op.drop_column('zone', 'datasource')
@@ -56,12 +101,18 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    # Remove `data_source_instance_id` fields
+    # Drop the new tables
+    op.drop_table('data_source_config')
+    op.drop_table('data_source_config_attribute')
+    op.drop_table('data_source_config_relationship')
+    op.drop_table('data_source_instance')
+
+    # Remove `data_source_instance_id` fields from `component` and `zone` tables
     op.drop_constraint('fk_component_data_source_instance', 'component')
     op.drop_column('component', 'data_source_instance_id')
     op.drop_constraint('fk_zone_data_source_instance', 'zone')
     op.drop_column('zone', 'data_source_instance_id')
 
-    # Replace back old `datasource` field
+    # Replace back old `datasource` field into these tables
     op.add_column('component', sa.Column('datasource', JSONB, nullable=False, server_default='{}'))
     op.add_column('zone', sa.Column('datasource', JSONB, nullable=False, server_default='{}'))
