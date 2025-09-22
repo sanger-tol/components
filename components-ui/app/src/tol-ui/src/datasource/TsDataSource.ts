@@ -41,30 +41,78 @@ const entityMetaPromises: IEntityMetaPromises = {};
 
 export class TsDataSource {
   private client: any;
+  private url: string | undefined;
+  private apiPath: string | undefined;
+  private apiDataPath: string | undefined;
+  private dataspace: string | undefined;
   private baseUrl: string | undefined;
-  private apiPrefix: string | undefined;
   private sourceKey: string;
 
-  constructor({ baseUrl, apiPrefix, client }: IDataSource = {}) {
+  constructor({ url, apiPath, apiDataPath, dataspace, client }: IDataSource = {}) {
     this.client = client ?? httpClient;
-    this.baseUrl = baseUrl;
-    this.apiPrefix = apiPrefix;
-    this.sourceKey = `${baseUrl || "default"}/${apiPrefix || "default"}`;
+    this.url = url;
+    this.apiPath = apiPath;
+    this.apiDataPath = apiDataPath;
+    this.dataspace = dataspace;
+    this.baseUrl = this.makeBaseUrl();
+    this.sourceKey = this.baseUrl ?? "default";
+  }
+
+  private makeBaseUrl(): string | undefined {
+    // If all parts passed in are undefined, then this should be undefined overall
+    if (!this.url && !this.apiPath && !this.apiDataPath && !this.dataspace) {
+      return undefined;
+    }
+
+    // Else join all parts together to form the baseUrl
+    return `${this.url}/${this.apiPath}/${this.apiDataPath}/${this.dataspace}`;
   }
 
   public generateEndpoint(target?: string, suffix?: string): string {
-    const prefix = this.apiPrefix ? `/${this.apiPrefix}` : "";
+    const prefix = this.apiPath ? `/${this.apiPath}` : "";
     const tg = target ? `/${target}` : "";
     const sf = suffix ? `${suffix}` : "";
     return `${prefix}${tg}${sf}`;
+  }
+
+  public getUrl(): string | undefined {
+    return this.url;
+  }
+
+  public setUrl(url: string) {
+    this.url = url;
+  }
+
+  public getApiPath(): string | undefined {
+    return this.apiPath;
+  }
+
+  public setApiPath(apiPath: string) {
+    this.apiPath = apiPath;
+  }
+
+  public getApiDataPath(): string | undefined {
+    return this.apiDataPath;
+  }
+
+  public setApiDataPath(apiDataPath: string) {
+    this.apiDataPath = apiDataPath;
+  }
+
+  public getDataspace(): string | undefined {
+    return this.dataspace
+  }
+
+  public setDataspace(dataspace: string) {
+    this.dataspace = dataspace;
   }
 
   public getBaseUrl(): string | undefined {
     return this.baseUrl;
   }
 
-  public getApiPrefix(): string | undefined {
-    return this.apiPrefix;
+  public getSourceKey(): string {
+    return this.sourceKey;
   }
 
   private fetchRelationshipHandler = {
@@ -168,7 +216,7 @@ export class TsDataSource {
     anHourFromNow.setHours(anHourFromNow.getHours() + 1);
     if (!configPromises[key]) {
       configPromises[key] = this.client()
-        .get(endpoint, { baseURL: this.baseUrl })
+        .get(endpoint, { url: this.url })
         .then((config) => {
           const savedConfig = {
             expiry: anHourFromNow,
@@ -315,7 +363,7 @@ export class TsDataSource {
     if (!(id in detailPromises[this.sourceKey][objectType])) {
       detailPromises[this.sourceKey][objectType][id] = this.client()
         .get(this.generateEndpoint(objectType, `/${id}`), {
-          baseURL: this.baseUrl,
+          url: this.url,
         })
         .then((response: any) => {
           if (!EXCLUDED_DETAIL_CACHE_OBJECTS.includes(objectType)) {
@@ -348,7 +396,7 @@ export class TsDataSource {
   }: IGetToOneRelation): Promise<TDataObjectOrNull> {
     return await this.client()
       .get(this.generateEndpoint(objectType, `:to-one/${id}/${relation}`), {
-        baseURL: this.baseUrl,
+        url: this.url,
       })
       .then((response: any) => {
         return new Proxy(response.data.data, this.dataObjectHandler);
@@ -379,7 +427,7 @@ export class TsDataSource {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
       .get(this.generateEndpoint(objectType), {
-        baseURL: this.baseUrl,
+        url: this.url,
         params: {
           page: page,
           page_size: pageSize,
@@ -463,7 +511,7 @@ export class TsDataSource {
         this.generateEndpoint(objectType, ":cursor"),
         { search_after: searchAfter },
         {
-          baseURL: this.baseUrl,
+          url: this.url,
           params: {
             page: page,
             page_size: pageSize,
@@ -488,7 +536,7 @@ export class TsDataSource {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
       .delete(this.generateEndpoint(objectType, `/${id}`), {
-        baseURL: this.baseUrl,
+        url: this.url,
       })
       .then(() => {
         if (id in detailCache[this.sourceKey][objectType]) {
@@ -510,7 +558,7 @@ export class TsDataSource {
       .post(
         this.generateEndpoint(objectType, ":upsert"),
         { data: payload },
-        { baseURL: this.baseUrl }
+        { url: this.url }
       )
       .then((response: any) => {
         return this.updateDetailCache(response, objectType);
@@ -532,30 +580,30 @@ export class TsDataSource {
     switch (method.toUpperCase()) {
       case API_METHODS.GET:
         return await this.client().get(url, {
-          baseURL: this.baseUrl,
+          url: this.url,
           params: params,
           ...options,
         });
       case API_METHODS.POST:
         return await this.client().post(url, body, {
-          baseURL: this.baseUrl,
+          url: this.url,
           params: params,
           ...options,
         });
       case API_METHODS.PUT:
         return await this.client().put(url, body, {
-          baseURL: this.baseUrl,
+          url: this.url,
           params: params,
           ...options,
         });
       case API_METHODS.PATCH:
         return await this.client().patch(url, body, {
-          baseURL: this.baseUrl,
+          url: this.url,
           params: params,
         });
       case API_METHODS.DELETE:
         return await this.client().delete(url, {
-          baseURL: this.baseUrl,
+          url: this.url,
           params: params,
         });
       default:

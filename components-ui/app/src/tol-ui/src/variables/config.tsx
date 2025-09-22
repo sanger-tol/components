@@ -11,7 +11,11 @@ const env: any = {
   ...(typeof injectedEnv === "object" ? injectedEnv : {}),
 };
 
-env.TOL_DATA = env.PORTAL_URL + env.PORTAL_API_PATH + env.PORTAL_API_DATA_PATH + "/tol_production"
-               || undefined;
+env.TOL_DATA = {
+  url: env.PORTAL_URL,
+  apiPath: env.PORTAL_API_PATH,
+  apiDataPath: env.PORTAL_API_DATA_PATH,
+  dataspace: "tol-production"
+};
 
 export { env };
