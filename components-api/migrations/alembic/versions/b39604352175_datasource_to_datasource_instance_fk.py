@@ -67,6 +67,14 @@ def upgrade() -> None:
         sa.Column('api_details', JSONB, nullable=True)
     )
 
+    # Insert 'tol_production' data source instance into table
+    conn.execute(
+        text("""
+        INSERT INTO data_source_instance (id, name, builtin_name, kwargs, publish, data_source_config_id, api_details)
+        VALUES ('1', 'tol_production', 'portal', '{"dataspace": "tol_production"}', 'false', NULL, '{"url": "https://portal.tol.sanger.ac.uk", "api_path": "/api/v1", "api_data_path": "/data", "dataspace": "tol_production"}')
+        """)
+    )
+
     # Remove `datasource` fields
     op.drop_column('component', 'datasource')
     op.drop_column('zone', 'datasource')
