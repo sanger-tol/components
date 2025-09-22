@@ -176,7 +176,7 @@ function Navigation(props: Props) {
       <Navbar
         className={
           "navbar-dark " + getBackgroundClass(environment) +
-          " navbar-custom"
+          " tol-navbar"
         }
         expand="lg"
       >
