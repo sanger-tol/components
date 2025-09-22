@@ -63,7 +63,8 @@ def upgrade() -> None:
         sa.Column('builtin_name', sa.String(), nullable=False),
         sa.Column('kwargs', JSONB(astext_type=sa.Text()), nullable=True),
         sa.Column('publish', sa.Boolean(), nullable=False, server_default=sa.text('false')),
-        sa.Column('data_source_config_id', sa.Integer(), sa.ForeignKey('data_source_config.id'), nullable=False),
+        sa.Column('data_source_config_id', sa.Integer(), sa.ForeignKey('data_source_config.id'), nullable=True),
+        sa.Column('api_details', JSONB, nullable=True)
     )
 
     # Remove `datasource` fields
