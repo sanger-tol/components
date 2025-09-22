@@ -9,8 +9,9 @@ header.masthead {
   top: 0;
   left: 0;
   width: 100%;
-  height: 400px;
+  height: 500px;
   overflow: hidden;
+  z-index: -1;
   background: linear-gradient(0deg,
       darken($tol-primary, 20%) 0%,
       darken($tol-primary, 10%) 100%);
@@ -22,8 +23,8 @@ header.masthead {
 
 .masthead-content {
   z-index: 1;
-  position: relative;
   color: white;
+  margin: 30px;
 
   .masthead-heading {
     margin-bottom: 0;
@@ -50,8 +51,15 @@ header.masthead {
   }
 }
 
+.masthead-media {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-.masthead-content li {
+
+.masthead-default li {
   position: absolute;
   display: block;
   list-style: none;
@@ -64,14 +72,14 @@ header.masthead {
   z-index: -1;
 }
 
-.masthead-content li:nth-child(1) {
+.masthead-default li:nth-child(1) {
   left: 25%;
   width: 80px;
   height: 80px;
   animation-delay: 0s;
 }
 
-.masthead-content li:nth-child(2) {
+.masthead-default li:nth-child(2) {
   left: 10%;
   width: 20px;
   height: 20px;
@@ -79,14 +87,14 @@ header.masthead {
   animation-duration: 12s;
 }
 
-.masthead-content li:nth-child(3) {
+.masthead-default li:nth-child(3) {
   left: 70%;
   width: 20px;
   height: 20px;
   animation-delay: 4s;
 }
 
-.masthead-content li:nth-child(4) {
+.masthead-default li:nth-child(4) {
   left: 40%;
   width: 60px;
   height: 60px;
@@ -94,28 +102,28 @@ header.masthead {
   animation-duration: 18s;
 }
 
-.masthead-content li:nth-child(5) {
+.masthead-default li:nth-child(5) {
   left: 65%;
   width: 20px;
   height: 20px;
   animation-delay: 0s;
 }
 
-.masthead-content li:nth-child(6) {
+.masthead-default li:nth-child(6) {
   left: 75%;
   width: 110px;
   height: 110px;
   animation-delay: 3s;
 }
 
-.masthead-content li:nth-child(7) {
+.masthead-default li:nth-child(7) {
   left: 35%;
   width: 150px;
   height: 150px;
   animation-delay: 7s;
 }
 
-.masthead-content li:nth-child(8) {
+.masthead-default li:nth-child(8) {
   left: 50%;
   width: 25px;
   height: 25px;
@@ -123,7 +131,7 @@ header.masthead {
   animation-duration: 45s;
 }
 
-.masthead-content li:nth-child(9) {
+.masthead-default li:nth-child(9) {
   left: 20%;
   width: 15px;
   height: 15px;
@@ -131,7 +139,7 @@ header.masthead {
   animation-duration: 35s;
 }
 
-.masthead-content li:nth-child(10) {
+.masthead-default li:nth-child(10) {
   left: 85%;
   width: 150px;
   height: 150px;

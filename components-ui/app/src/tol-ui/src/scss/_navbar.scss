@@ -30,16 +30,7 @@
     font-size: 14px;
     font-weight: bolder;
     padding: 6px 8px;
-    color: var(--bs-navbar-brand-color);
-    opacity: 0.6;
-  }
-
-  .nav-link {
-    font-size: 14px;
-    font-weight: bolder;
-    padding: 6px 8px;
-    color: var(--bs-navbar-brand-color);
-    opacity: 0.6;
+    color: var(--tol-emphasis);
   }
 
   .nav-link:hover,
@@ -106,13 +97,14 @@
   }
 }
 
+// clear navbar with header
+.navigation:has(+ .tol-app .home .masthead) .tol-navbar {
+  background-color: unset;
+}
+
 // remove border around mobile nav
 .navbar-toggler {
   border: none;
-}
-
-.tol-app {
-  margin: auto;
 }
 
 .footer {
@@ -121,6 +113,7 @@
   padding: 48px;
   background-color: black;
   color: white;
+  z-index: 1;
 }
 
 .footer-text {
@@ -135,6 +128,7 @@
     margin-bottom: 3rem;
     text-align: center;
   }
+
   .footer {
     height: 250px;
   }
@@ -161,7 +155,8 @@
   }
 }
 
-.st0, // #242642
+.st0,
+// #242642
 .st1,
 .st2,
 .st3 {
