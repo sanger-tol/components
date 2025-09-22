@@ -80,7 +80,7 @@ def upgrade() -> None:
     op.drop_column('zone', 'datasource')
 
     # Create new `data_source_instance_id` fields in their places,
-    # with foreign keys linking to the DatasourceInstance table
+    # with foreign keys linking to the `data_source_instance` table
     op.add_column('component', sa.Column('data_source_instance_id', sa.Integer, nullable=False))
     op.create_foreign_key(
         'fk_component_data_source_instance',
