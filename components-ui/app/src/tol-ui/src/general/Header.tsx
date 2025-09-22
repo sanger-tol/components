@@ -9,7 +9,7 @@ import { ReactNode } from "react";
 export interface PHeader {
   title?: string;
   subTitle?: string;
-  element?: ReactNode;
+  children?: ReactNode;
   image?: string;
   video?: string;
   fade?: number;
@@ -17,7 +17,7 @@ export interface PHeader {
 }
 
 export function Header(props: PHeader) {
-  const { title, subTitle, element, landingPage, image, video } = props;
+  const { title, subTitle, children, landingPage, image, video } = props;
 
   return (
     <>
@@ -53,7 +53,7 @@ export function Header(props: PHeader) {
       <div className="masthead-content text-center">
         <h1 className="masthead-heading">{title}</h1>
         <h2 className="masthead-subheading">{subTitle}</h2>
-        {element}
+        {children}
       </div>
     </>
   );
