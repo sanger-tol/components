@@ -28,8 +28,14 @@ export interface IEntityMetaPromises {
 }
 
 export interface IDataSource {
-  baseUrl?: string;
-  apiPrefix?: string;
+  // The URL of the website (e.g. "portal.tol.sanger.ac.uk")
+  url?: string;
+  // The path to the current API root (e.g. "api/v1")
+  apiPath?: string;
+  // The path, from the API root, to where data is served (e.g. "data")
+  apiDataPath?: string;
+  // Which data space to source from (e.g. "tolproduction" or "treeofsex")
+  dataspace?: string;
   client?: any;
 }
 

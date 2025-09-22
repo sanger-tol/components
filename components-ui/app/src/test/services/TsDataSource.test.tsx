@@ -209,50 +209,50 @@ const relationshipConfigMockData = {
 const mockClient = () => ({
   get(
     endpoint: string,
-    { baseURL, params }: { baseURL: string; params?: any }
+    { url, params }: { url: string; params?: any }
   ) {
-    if (endpoint === "/_config/attribute_metadata" && baseURL === "test") {
+    if (endpoint === "/api/v2/_config/attribute_metadata" && url === "test.website.com") {
       return Promise.resolve({ data: attributeMetadataMockData });
-    } else if (endpoint === "/species/testSpeciesId" && baseURL === "test") {
+    } else if (endpoint === "/api/v2/species/testSpeciesId" && url === "test.website.com") {
       return Promise.resolve(speciesMockData);
-    } else if (endpoint === "/noCacheTest/nestedRelationships1" && baseURL === "test") {
+    } else if (endpoint === "/api/v2/noCacheTest/nestedRelationships1" && url === "test.website.com") {
       return Promise.resolve(nestedRelationshipMockData);
-    } else if (endpoint === "/specimen/testSpecimenId" && baseURL === "test") {
+    } else if (endpoint === "/api/v2/specimen/testSpecimenId" && url === "test.website.com") {
       return Promise.resolve(specimenMockData);
-    } else if (endpoint === "/sample/testSampleId" && baseURL === "test") {
+    } else if (endpoint === "/api/v2/sample/testSampleId" && url === "test.website.com") {
       return Promise.resolve(sampleMockData);
-    } else if (endpoint === "/species" && baseURL === "test") {
+    } else if (endpoint === "/api/v2/species" && url === "test.website.com") {
       const pageSize = params?.page_size || 10;
       const mockPageData = Array(pageSize).fill(speciesMockData.data.data);
       return Promise.resolve({ data: { data: mockPageData } });
     } else if (
-      endpoint === "/specimen:to-one/testSpecimenId/lazy_species" &&
-      baseURL === "test"
+      endpoint === "/api/v2/specimen:to-one/testSpecimenId/lazy_species" &&
+      url === "test.website.com"
     ) {
       return Promise.resolve(toOneSpeciesMockData);
-    } else if (endpoint === "/_config/relationships" && baseURL === "test") {
+    } else if (endpoint === "/api/v2/_config/relationships" && url === "test.website.com") {
       return Promise.resolve({ data: relationshipConfigMockData });
     }
     return Promise.reject({ response: { status: 404 } });
   },
-  delete(endpoint: string, { baseURL }: { baseURL: string; params?: any }) {
-    if (endpoint === "/species/testSpeciesId" && baseURL === "test") {
+  delete(endpoint: string, { url }: { url: string; params?: any }) {
+    if (endpoint === "/api/v2/species/testSpeciesId" && url === "test.website.com") {
       return Promise.resolve(null);
     }
     return Promise.reject({ response: { status: 404 } });
   },
-  post(endpoint: string, payload, config: { baseURL: string }) {
-    if (endpoint === "/species:upsert" && config.baseURL === "test") {
+  post(endpoint: string, payload, config: { url: string }) {
+    if (endpoint === "/api/v2/species:upsert" && config.url === "test.website.com") {
       return Promise.resolve(speciesUpsertMockData);
-    } else if (endpoint === "/species:cursor" && payload.search_after == null) {
+    } else if (endpoint === "/api/v2/species:cursor" && payload.search_after == null) {
       return Promise.resolve(speciesCursorMockData1);
     } else if (
-      endpoint === "/species:cursor" &&
+      endpoint === "/api/v2/species:cursor" &&
       payload.search_after == "newTestSpeciesIdX2"
     ) {
       return Promise.resolve(speciesCursorMockData2);
     } else if (
-      endpoint === "/species:cursor" &&
+      endpoint === "/api/v2/species:cursor" &&
       payload.search_after == "newTestSpeciesIdX3"
     ) {
       return Promise.resolve(speciesCursorMockData3);
@@ -263,80 +263,189 @@ const mockClient = () => ({
 
 // need to adjust to account for the get config
 const mockDataSource = new TsDataSource({
-  baseUrl: "test",
+  url: "test.website.com",
+  apiPath: "api/v2",
+  apiDataPath: "data",
+  dataspace: "test-dataspace",
   client: mockClient,
 });
 
 describe("generateEndpoint function", () => {
   test("Returns empty string when no apiPrefix, target, or objectId", () => {
-    const mockDataSource = new TsDataSource({ baseUrl: "test" });
+    const mockDataSource = new TsDataSource({});
     const endpoint = mockDataSource.generateEndpoint();
     expect(endpoint).toBe("");
   });
 
-  test("Returns correct endpoint with apiPrefix only", () => {
+  test("Returns correct endpoint with apiPath only", () => {
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
-      apiPrefix: "api",
+      apiPath: "api",
     });
     const endpoint = mockDataSource.generateEndpoint();
     expect(endpoint).toBe("/api");
   });
 
-  test("Returns correct endpoint with apiPrefix and target", () => {
+  test("Returns correct endpoint with apiPath and target", () => {
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
-      apiPrefix: "api",
+      apiPath: "api",
     });
     const endpoint = mockDataSource.generateEndpoint("target");
     expect(endpoint).toBe("/api/target");
   });
 
-  test("Returns correct endpoint with apiPrefix, target, and objectId", () => {
+  test("Returns correct endpoint with apiPath, target, and objectId", () => {
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
-      apiPrefix: "api",
+      apiPath: "api",
     });
     const endpoint = mockDataSource.generateEndpoint("target", "/123");
     expect(endpoint).toBe("/api/target/123");
   });
 
-  test("Returns correct endpoint with target and objectId but no apiPrefix", () => {
-    const mockDataSource = new TsDataSource({ baseUrl: "test" });
+  test("Returns correct endpoint with target and objectId but no apiPath", () => {
+    const mockDataSource = new TsDataSource({});
     const endpoint = mockDataSource.generateEndpoint("target", "/123");
     expect(endpoint).toBe("/target/123");
   });
 });
 
-describe("Testing getBaseUrl and getApiPrefix functions", () => {
+describe("Testing getters", () => {
+  test("getUrl returns correct URL", () => {
+    const url = mockDataSource.getUrl();
+    expect(url).toBe("test.website.com");
+  });
+
+  test("getUrl returns undefined when no URL is provided", () => {
+    const mockDataSource = new TsDataSource({
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
+    });
+    const url = mockDataSource.getUrl();
+    expect(url).toBe(undefined);
+  });
+
+  test("getApiPath returns correct API path", () => {
+    const apiPath = mockDataSource.getApiPath();
+    expect(apiPath).toBe("api/v2");
+  });
+
+  test("getApiPath returns undefined when no apiPath is provided", () => {
+    const mockDataSource = new TsDataSource({
+      url: "test.website.com",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
+    });
+    const apiPath = mockDataSource.getApiPath();
+    expect(apiPath).toBe(undefined);
+  });
+
+  test("getApiDataPath returns correct API Data Path", () => {
+    const apiDataPath = mockDataSource.getApiDataPath();
+    expect(apiDataPath).toBe("data");
+  });
+
+  test("getApiDataPath returns undefined when no API Data Path is provided", () => {
+    const mockDataSource = new TsDataSource({
+      url: "test.website.com",
+      apiPath: "api/v2",
+      dataspace: "test-dataspace",
+    });
+    const apiDataPath = mockDataSource.getApiDataPath();
+    expect(apiDataPath).toBe(undefined);
+  });
+
+  test("getDataspace returns correct dataspace", () => {
+    const dataspace = mockDataSource.getDataspace();
+    expect(dataspace).toBe("test-dataspace");
+  });
+
+  test("getDataspace returns undefined when no dataspace is provided", () => {
+    const mockDataSource = new TsDataSource({
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+    });
+    const dataspace = mockDataSource.getDataspace();
+    expect(dataspace).toBe(undefined);
+  });
+
+  test("getSourceKey returns correct source key", () => {
+    const sourceKey = mockDataSource.getSourceKey();
+    expect(sourceKey).toBe("test.website.com/api/v2/data/test-dataspace");
+  });
+
+  test("getSourceKey returns 'default' when ALL of url, apiPath, apiDataPath and dataspace are undefined", () => {
+    const mockDataSource = new TsDataSource();
+    const sourceKey = mockDataSource.getSourceKey();
+    expect(sourceKey).toBe("default");
+  });
+
+  test("getSourceKey returns source key containing `undefined`s if some of the above fields are undefined", () => {
+    const mockDataSource = new TsDataSource({
+      apiPath: "api/v1",
+      dataspace: "test-dataspace"
+    });
+    const sourceKey = mockDataSource.getSourceKey();
+    expect(sourceKey).toBe("undefined/api/v1/undefined/test-dataspace");
+  });
+
   test("getBaseUrl returns correct base URL", () => {
-    const mockDataSource = new TsDataSource({
-      baseUrl: "testBaseUrl",
-      apiPrefix: "testApiPrefix",
-    });
     const baseUrl = mockDataSource.getBaseUrl();
-    expect(baseUrl).toBe("testBaseUrl");
+    expect(baseUrl).toBe("test.website.com/api/v2/data/test-dataspace");
   });
+});
 
-  test("getApiPrefix returns correct API prefix", () => {
+describe("Testing setters", () => {
+  test("setUrl correctly sets URL", () => {
     const mockDataSource = new TsDataSource({
-      baseUrl: "testBaseUrl",
-      apiPrefix: "testApiPrefix",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
+      client: mockClient,
     });
-    const apiPrefix = mockDataSource.getApiPrefix();
-    expect(apiPrefix).toBe("testApiPrefix");
+    mockDataSource.setUrl("portal.tol.sanger.ac.uk");
+    const url = mockDataSource.getUrl();
+    expect(url).toBe("portal.tol.sanger.ac.uk");
   });
 
-  test("getBaseUrl returns undefined when no baseUrl is provided", () => {
-    const mockDataSource = new TsDataSource({ apiPrefix: "testApiPrefix" });
-    const baseUrl = mockDataSource.getBaseUrl();
-    expect(baseUrl).toBeUndefined();
+  test("setApiPath correctly sets apiPath", () => {
+    const mockDataSource = new TsDataSource({
+      url: "test.website.com",
+      apiPath: "api/v1",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
+      client: mockClient,
+    });
+    mockDataSource.setApiPath("api/v2");
+    const apiPath = mockDataSource.getApiPath();
+    expect(apiPath).toBe("api/v2");
   });
 
-  test("getApiPrefix returns undefined when no apiPrefix is provided", () => {
-    const mockDataSource = new TsDataSource({ baseUrl: "testBaseUrl" });
-    const apiPrefix = mockDataSource.getApiPrefix();
-    expect(apiPrefix).toBeUndefined();
+  test("setApiDataPath correctly sets apiDataPath", () => {
+    const mockDataSource = new TsDataSource({
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
+      client: mockClient,
+    });
+    mockDataSource.setApiDataPath("different-data");
+    const apiDataPath = mockDataSource.getApiDataPath();
+    expect(apiDataPath).toBe("different-data");
+  });
+
+  test("setDataspace correctly sets dataspace", () => {
+    const mockDataSource = new TsDataSource({
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
+      client: mockClient,
+    });
+    mockDataSource.setDataspace("treeofsex");
+    const dataspace = mockDataSource.getDataspace();
+    expect(dataspace).toBe("treeofsex");
   });
 });
 
@@ -350,7 +459,10 @@ describe("Testing getConfig function", () => {
       });
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -369,7 +481,10 @@ describe("Testing attributeMetadata function", () => {
     const mockClientInstance = mockClient();
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -385,7 +500,10 @@ describe("Testing attributeMetadata function", () => {
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -400,7 +518,10 @@ describe("Testing relationshipConfig function", () => {
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
     const expectedData = relationshipConfigMockData;
@@ -415,7 +536,10 @@ describe("Testing relationshipConfig function", () => {
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -470,7 +594,10 @@ describe("Testing getOne function", () => {
     const mockClientInstance = mockClient();
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -493,7 +620,10 @@ describe("Testing getOne function", () => {
     const mockClientInstance = mockClient();
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -589,7 +719,10 @@ describe("Testing getList function", () => {
     const mockClientInstance = mockClient();
     const clientCursorPostSpy = vitest.spyOn(mockClientInstance, "post");
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
     const cursorDataObjects = await mockDataSource.getList({
@@ -675,7 +808,10 @@ describe("Testing delete method", () => {
     const clientDeleteSpy = vitest.spyOn(mockClientInstance, "delete");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -695,7 +831,10 @@ describe("Testing upsert method", () => {
     const clientPostSpy = vitest.spyOn(mockClientInstance, "post");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -722,7 +861,10 @@ describe("Testing relationships getting", () => {
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -743,7 +885,10 @@ describe("Testing relationships getting", () => {
   test("Ensure missing attribute is undefined", async () => {
     const mockClientInstance = mockClient();
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -763,7 +908,10 @@ describe("Testing fetchRelationships getting", () => {
     const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -782,7 +930,10 @@ describe("Testing fetchRelationships getting", () => {
     const mockClientInstance = mockClient();
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -801,7 +952,10 @@ describe("Testing fetchRelationships getting", () => {
     const mockClientInstance = mockClient();
 
     const mockDataSource = new TsDataSource({
-      baseUrl: "test",
+      url: "test.website.com",
+      apiPath: "api/v2",
+      apiDataPath: "data",
+      dataspace: "test-dataspace",
       client: () => mockClientInstance,
     });
 
@@ -822,7 +976,10 @@ describe("Testing fetchRelationships getting", () => {
 describe("Testing temp getFieldByName function", async () => {
   const mockClientInstance = mockClient();
   const mockDataSource = new TsDataSource({
-    baseUrl: "test",
+    url: "test.website.com",
+    apiPath: "api/v2",
+    apiDataPath: "data",
+    dataspace: "test-dataspace",
     client: () => mockClientInstance,
   });
 
