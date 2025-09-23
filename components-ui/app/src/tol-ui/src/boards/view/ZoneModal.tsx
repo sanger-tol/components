@@ -44,6 +44,7 @@ export function ZoneModal(props: PZoneModal) {
     boardDataSource,
   } = props;
 
+  const [dataspace, setDataspace] = useState("tol_production");
   const [objectType, setObjectType] = useState("");
   const [title, setTitle] = useState("");
   const [titleError, setTitleError] = useState(false);
@@ -153,6 +154,19 @@ export function ZoneModal(props: PZoneModal) {
       >
         <div>
           <h4>Add New Zone</h4>
+          <p className="zone-modal-labels">
+            Select Dataspace
+            &nbsp;<i>(the set of data to pull from)</i>
+            <span className="tol-danger-colour">*</span>
+          </p>
+          <SingleSelect
+            data={["tol_production"]}
+            placeholder="Dataspace"
+            value={dataspace}
+            setValue={setDataspace}
+            block
+          />
+          <br/>
           <p className="zone-modal-labels">
             Select Object Type <span className="tol-danger-colour">*</span>
           </p>
