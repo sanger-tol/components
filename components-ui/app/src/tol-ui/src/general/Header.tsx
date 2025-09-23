@@ -4,57 +4,82 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+import { resizeListener } from "..";
 
 export interface PHeader {
   title?: string;
   subTitle?: string;
-  children?: ReactNode;
   image?: string;
   video?: string;
   fade?: number;
-  landingPage?: boolean;
+  textLeft?: boolean;
+  children?: ReactNode;
 }
 
 export function Header(props: PHeader) {
-  const { title, subTitle, children, landingPage, image, video } = props;
+  const {
+    title,
+    subTitle,
+    image,
+    video,
+    fade = 0,
+    textLeft = false,
+    children
+  } = props;
+
+  const [navbarOffset, setNavbarOffset] = useState<number>(0);
+  const [mastheadOffset, setMastheadOffset] = useState<number>(0);
+
+  resizeListener(() => {
+    const navbar = document.getElementById("tol-navbar");
+    const masthead = document.getElementById("tol-masthead");
+    if (navbar) setNavbarOffset(navbar.offsetHeight);
+    if (masthead) setMastheadOffset(masthead.offsetHeight);
+  });
+
+  const Backing = (
+    <div>
+      <div className="masthead-fade" style={{ background: `rgba(0, 0, 0, ${fade})` }} />
+      {image && <img className="masthead-media" src={image} alt="background" />}
+      {video && (
+        <video className="masthead-media" autoPlay loop muted>
+          <source src={video} type="video/mp4" />
+        </video>
+      )}
+      <div className="masthead-default">
+        {!image && !video &&
+          <>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </>
+        }
+      </div>
+    </div>
+  )
 
   return (
-    <>
-      <header
-        className="masthead"
-        style={{
-          height: landingPage ? "100vh" : undefined
-        }}
-      >
-        {image && <img className="masthead-media" src={image} alt="background" />}
-        {video && (
-          <video className="masthead-media" autoPlay loop muted>
-            <source src={video} type="video/mp4" />
-          </video>
-        )}
-        <div className="masthead-default">
-          {!image && !video &&
-            <>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-              <li></li>
-            </>
-          }
+    <div
+      className="masthead-offset"
+      style={{ height: mastheadOffset - navbarOffset }}
+    >
+      <header id="tol-masthead" className="masthead">
+        <div style={{ height: navbarOffset }}></div>
+        <div className={`masthead-content ${textLeft ? "" : "text-center"}`}>
+          <h1 className="masthead-heading">{title}</h1>
+          <h2 className="masthead-subheading">{subTitle}</h2>
+          {children}
         </div>
+        {Backing}
       </header>
-      <div className="masthead-content text-center">
-        <h1 className="masthead-heading">{title}</h1>
-        <h2 className="masthead-subheading">{subTitle}</h2>
-        {children}
-      </div>
-    </>
+    </div>
   );
 }

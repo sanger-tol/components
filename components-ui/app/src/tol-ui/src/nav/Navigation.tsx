@@ -82,11 +82,19 @@ const getBackgroundClass = (environment: string): string => {
 function Navigation(props: Props) {
   const { setToken, user, setUser } = useAuth();
   const [environment, setEnvironment] = useState("");
+  const [navbarOffset, setNavbarOffset] = useState<number>(0);
 
   useEffect(() => {
     fetchEnvironment().then((fetchedEnvironment: string) => {
       setEnvironment(fetchedEnvironment);
     });
+  }, []);
+
+  useEffect(() => {
+    const navbar = document.getElementById("tol-navbar");
+    if (navbar) {
+      setNavbarOffset(navbar.offsetHeight);
+    }
   }, []);
 
   const isProduction = () => {
@@ -146,7 +154,7 @@ function Navigation(props: Props) {
                   page.auth,
                   page.removeOnAuth,
                 );
-                if(pageAuthorised) {
+                if (pageAuthorised) {
                   return (
                     // eslint-disable-next-line
                     <div className="nav-dropdown-box" key={index}>
@@ -154,8 +162,8 @@ function Navigation(props: Props) {
                         key={page.name}
                         href={
                           "link" in page
-                          ? page.link?.href
-                          : convertToPath(page.name)
+                            ? page.link?.href
+                            : convertToPath(page.name)
                         }
                         target={page.link?.target}
                       >
@@ -173,10 +181,11 @@ function Navigation(props: Props) {
 
   return (
     <div className="navigation">
+      <div style={{ height: navbarOffset }}></div>
       <Navbar
+        id="tol-navbar"
         className={
-          "navbar-dark " + getBackgroundClass(environment) +
-          " tol-navbar"
+          "navbar-dark " + getBackgroundClass(environment) + " tol-navbar"
         }
         expand="lg"
       >
