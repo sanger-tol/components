@@ -659,7 +659,11 @@ export async function dataObjectToSpreadsheetData(
   dataObjects?.forEach((obj) => {
     const flatData = {};
     requestedFields.forEach((field) => {
-      flatData[fieldMeta.data[field].rename!] = getFieldByName(obj, field);
+      flatData[fieldMeta.data[field].rename!] = Array.isArray(
+        getFieldByName(obj, field)
+      )
+        ? getFieldByName(obj, field).toString()
+        : getFieldByName(obj, field);
     });
     spreadsheetData.push(flatData);
   });
