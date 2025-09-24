@@ -13,7 +13,7 @@ export function Home() {
       <Header
         title="Components"
         subTitle="Tree of Life UI"
-        pageEmpty
+        fullHeight
       />
     </div>
   );

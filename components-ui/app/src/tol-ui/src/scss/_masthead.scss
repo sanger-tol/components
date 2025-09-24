@@ -5,54 +5,70 @@
  */
 
 header.masthead {
-  top: -95px;
-  margin-bottom: -85px;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   overflow: hidden;
-  padding-top: calc(72px);
-  padding-bottom: 3rem;
-  background: linear-gradient(
-    0deg,
-    darken($tol-primary, 20%) 0%,
-    darken($tol-primary, 10%) 100%
-  );
+  background: linear-gradient(0deg,
+      darken($tol-primary, 20%) 0%,
+      darken($tol-primary, 10%) 100%);
   background-repeat: no-repeat;
   background-position: center center;
   background-attachment: auto;
   background-size: cover;
+}
 
-  .masthead-content {
-    z-index: 1;
-    position: relative;
+.masthead-content {
+  position: relative;
+  z-index: 3;
+  color: white;
+  margin: 15px 30px 60px 30px;
 
-    .masthead-heading {
-      font-size: 3rem;
-    }
+  .masthead-heading {
+    margin-bottom: 0;
+    font-size: 4rem;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+  }
 
-    .masthead-subheading {
-      font-size: 2rem;
-    }
+  .masthead-subheading {
+    font-size: 2rem;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
   }
 }
 
 @media (min-width: 800px) {
-  header.masthead {
-    padding-top: calc(55px);
-    padding-bottom: 3rem;
+  .masthead-content {
+    .masthead-heading {
+      font-size: 6rem;
+    }
 
-    .masthead-content {
-      .masthead-heading {
-        font-size: 6rem;
-      }
-
-      .masthead-subheading {
-        font-size: 4rem;
-      }
+    .masthead-subheading {
+      font-size: 3rem;
     }
   }
 }
 
-.masthead-content li {
+.masthead-media {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.masthead-fade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+}
+
+.masthead-default li {
   position: absolute;
   display: block;
   list-style: none;
@@ -61,18 +77,18 @@ header.masthead {
   background: rgba($tol-primary, 0.5);
   animation: animate 25s linear infinite;
   bottom: -200px;
-  border-radius: 20%;
-  z-index: -1;
+  border-radius: 25%;
+  z-index: 1;
 }
 
-.masthead-content li:nth-child(1) {
+.masthead-default li:nth-child(1) {
   left: 25%;
   width: 80px;
   height: 80px;
   animation-delay: 0s;
 }
 
-.masthead-content li:nth-child(2) {
+.masthead-default li:nth-child(2) {
   left: 10%;
   width: 20px;
   height: 20px;
@@ -80,14 +96,14 @@ header.masthead {
   animation-duration: 12s;
 }
 
-.masthead-content li:nth-child(3) {
+.masthead-default li:nth-child(3) {
   left: 70%;
   width: 20px;
   height: 20px;
   animation-delay: 4s;
 }
 
-.masthead-content li:nth-child(4) {
+.masthead-default li:nth-child(4) {
   left: 40%;
   width: 60px;
   height: 60px;
@@ -95,28 +111,28 @@ header.masthead {
   animation-duration: 18s;
 }
 
-.masthead-content li:nth-child(5) {
+.masthead-default li:nth-child(5) {
   left: 65%;
   width: 20px;
   height: 20px;
   animation-delay: 0s;
 }
 
-.masthead-content li:nth-child(6) {
+.masthead-default li:nth-child(6) {
   left: 75%;
   width: 110px;
   height: 110px;
   animation-delay: 3s;
 }
 
-.masthead-content li:nth-child(7) {
+.masthead-default li:nth-child(7) {
   left: 35%;
   width: 150px;
   height: 150px;
   animation-delay: 7s;
 }
 
-.masthead-content li:nth-child(8) {
+.masthead-default li:nth-child(8) {
   left: 50%;
   width: 25px;
   height: 25px;
@@ -124,7 +140,7 @@ header.masthead {
   animation-duration: 45s;
 }
 
-.masthead-content li:nth-child(9) {
+.masthead-default li:nth-child(9) {
   left: 20%;
   width: 15px;
   height: 15px;
@@ -132,7 +148,7 @@ header.masthead {
   animation-duration: 35s;
 }
 
-.masthead-content li:nth-child(10) {
+.masthead-default li:nth-child(10) {
   left: 85%;
   width: 150px;
   height: 150px;
