@@ -17,6 +17,7 @@ import {
   IUpdatedZoneIds,
   IDBZone,
   getNextZoneOrder,
+  InfoTooltip,
 } from "../..";
 
 
@@ -130,6 +131,7 @@ export function ZoneModal(props: PZoneModal) {
         icon="plus"
         text="Add Zone"
         testid="confirm-zone-button"
+        disabled={!(titleError || fieldError)}
       />
       <Button
         position="right"
@@ -156,7 +158,11 @@ export function ZoneModal(props: PZoneModal) {
           <h4>Add New Zone</h4>
           <p className="zone-modal-labels">
             Select Dataspace
-            &nbsp;<i>(the set of data to pull from)</i>
+            &nbsp;
+            <span className="tol-param-info">
+              <InfoTooltip contents={"The set of data to pull from"} disableMarkdown />
+            </span>
+            &nbsp;
             <span className="tol-danger-colour">*</span>
           </p>
           <SingleSelect
@@ -168,7 +174,13 @@ export function ZoneModal(props: PZoneModal) {
           />
           <br/>
           <p className="zone-modal-labels">
-            Select Object Type <span className="tol-danger-colour">*</span>
+            Select Object Type
+            &nbsp;
+            <span className="tol-param-info">
+              <InfoTooltip contents={"The type of data this zone will focus on"} disableMarkdown />
+            </span>
+            &nbsp;
+            <span className="tol-danger-colour">*</span>
           </p>
           <SingleSelect
             data={objectTypesList}
@@ -179,7 +191,13 @@ export function ZoneModal(props: PZoneModal) {
           />
           <br />
           <p className="zone-modal-labels">
-            Enter Title <span className="tol-danger-colour">*</span>
+            Enter Title
+            &nbsp;
+            <span className="tol-param-info">
+              <InfoTooltip contents={"The title to be displayed for this zone"} disableMarkdown />
+            </span>
+            &nbsp;
+            <span className="tol-danger-colour">*</span>
           </p>
           <RSForm fluid>
             <FormTextField
