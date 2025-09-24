@@ -53,8 +53,8 @@ export function ZoneModal(props: PZoneModal) {
   const [objectTypesList, setObjectTypesList] = useState<string[]>([]);
 
   function reset() {
-    setObjectType("");
     setTitle("");
+    setObjectType("");
     setTitleError(false);
     setFieldError(false);
   }
@@ -132,6 +132,7 @@ export function ZoneModal(props: PZoneModal) {
         text="Add Zone"
         testid="confirm-zone-button"
         disabled={!(titleError || fieldError)}
+        disabledTooltip="Please ensure all mandatory fields are filled"
       />
       <Button
         position="right"
@@ -208,14 +209,6 @@ export function ZoneModal(props: PZoneModal) {
               label=""
             />
           </RSForm>
-          {titleError ? (
-            <p className="tol-modal-error">Title cannot be blank</p>
-          ) : null}
-          {fieldError ? (
-            <p className="tol-modal-error">
-              Please ensure all mandatory fields are filled
-            </p>
-          ) : null}
         </div>
       </Modal>
     </div>
