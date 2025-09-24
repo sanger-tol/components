@@ -190,7 +190,10 @@ function Navigation(props: Props) {
         expand="lg"
       >
         <Container>
-          <Navbar.Brand href="/">
+          <Navbar.Brand
+            href="/"
+            style={{padding: typeof props.brand === "string" ? 10 : 0}}
+          >
             {props.brand}
             {environment && !isProduction() && " " + environment}
           </Navbar.Brand>
