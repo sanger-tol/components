@@ -48,33 +48,28 @@ export function ZoneModal(props: PZoneModal) {
   const [dataspace, setDataspace] = useState("tol_production");
   const [objectType, setObjectType] = useState("");
   const [title, setTitle] = useState("");
-  const [titleError, setTitleError] = useState(false);
-  const [fieldError, setFieldError] = useState(false);
+  const [mandatoryFieldsFilled, setMandatoryFieldsFilled] = useState(false);
   const [objectTypesList, setObjectTypesList] = useState<string[]>([]);
 
-  function reset() {
+  const reset = () => {
     setTitle("");
     setObjectType("");
-    setTitleError(false);
-    setFieldError(false);
-  }
+    setMandatoryFieldsFilled(false);
+  };
 
-  function checkStates() {
-    setTitleError(false);
-    setFieldError(false);
-    let validId = true;
-    let validField = true;
-
-    if (title === "") {
-      setTitleError(true);
-      validId = false;
+  const validateForm = ({
+    newDataspace = dataspace,
+    newObjectType = objectType,
+    newTitle = title,
+  }) => {
+    if (!newDataspace || !newObjectType || !newTitle) {
+      setMandatoryFieldsFilled(false);
+      return false;
+    } else {
+      setMandatoryFieldsFilled(true);
+      return true;
     }
-    if (objectType === "" || objectType === null) {
-      setFieldError(true);
-      validField = false;
-    }
-    return validId && validField;
-  }
+  };
 
   useEffect(() => {
     if (!open) {
@@ -91,7 +86,7 @@ export function ZoneModal(props: PZoneModal) {
   }, []);
 
   const onAddZone = async () => {
-    if (checkStates()) {
+    if (validateForm({})) {
       const nextOrder = getNextZoneOrder(zoneOrder);
       const newZone: IUpdatedZoneIds = await upsertNewZone(
         dataSource,
@@ -131,7 +126,7 @@ export function ZoneModal(props: PZoneModal) {
         icon="plus"
         text="Add Zone"
         testid="confirm-zone-button"
-        disabled={!(titleError || fieldError)}
+        disabled={!mandatoryFieldsFilled}
         disabledTooltip="Please ensure all mandatory fields are filled"
       />
       <Button
@@ -170,7 +165,10 @@ export function ZoneModal(props: PZoneModal) {
             data={["tol_production"]}
             placeholder="Dataspace"
             value={dataspace}
-            setValue={setDataspace}
+            setValue={(newValue) => {
+              validateForm({ newDataspace: newValue });
+              setDataspace(newValue);
+            }}
             block
           />
           <br/>
@@ -187,7 +185,10 @@ export function ZoneModal(props: PZoneModal) {
             data={objectTypesList}
             placeholder="Object Type"
             value={objectType}
-            setValue={setObjectType}
+            setValue={(newValue) => {
+              validateForm({ newObjectType: newValue });
+              setObjectType(newValue);
+            }}
             block
           />
           <br />
@@ -203,7 +204,10 @@ export function ZoneModal(props: PZoneModal) {
           <RSForm fluid>
             <FormTextField
               id="zone-title"
-              onChange={(value: any) => setTitle(value)}
+              onChange={(newValue: any) => {
+                validateForm({ newTitle: newValue });
+                setTitle(newValue);
+              }}
               name="Zone Title"
               placeholder={`Zone Title`}
               label=""
