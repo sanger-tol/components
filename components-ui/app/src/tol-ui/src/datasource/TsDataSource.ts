@@ -65,14 +65,18 @@ export class TsDataSource {
     }
 
     // Else join all parts together to form the baseUrl
-    return `${this.url}/${this.apiPath}/${this.apiDataPath}/${this.dataspace}`;
+    let baseUrl = "";
+    baseUrl += this.url ? `${this.url}/` : "";
+    baseUrl += this.apiPath ? `${this.apiPath}/` : "";
+    baseUrl += this.apiDataPath ? `${this.apiDataPath}/` : "";
+    baseUrl += this.dataspace ? `${this.dataspace}` : "";
+    return baseUrl;
   }
 
   public generateEndpoint(target?: string, suffix?: string): string {
-    const prefix = this.apiPath ? `/${this.apiPath}` : "";
     const tg = target ? `/${target}` : "";
     const sf = suffix ? `${suffix}` : "";
-    return `${prefix}${tg}${sf}`;
+    return `${tg}${sf}`;
   }
 
   public getUrl(): string | undefined {
