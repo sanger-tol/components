@@ -5,8 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import { Button, Header } from "..";
+import { useHistory } from "react-router-dom";
+
 
 export function PageNotFound() {
+  const history = useHistory();
+
   return (
     <Header
       title="Page Not Found"
@@ -14,10 +18,9 @@ export function PageNotFound() {
       fullHeight
     >
       <Button
+        icon="home"
         text="Return Home"
-        onClick={() => {
-          window.location.href = "/";
-        }}
+        onClick={() => history.push("/")}
         className="return-home-button"
       />
     </Header>
