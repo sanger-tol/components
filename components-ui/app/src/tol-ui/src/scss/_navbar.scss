@@ -24,6 +24,8 @@
     font-size: 1rem;
     letter-spacing: 0.1rem;
     font-weight: 1000;
+    padding: 0 !important;
+    align-self: center;
   }
 
   .navbar-brand:hover {
@@ -46,11 +48,6 @@
 
   .logout.nav-link:hover {
     color: var(--tol-danger);
-  }
-
-  // login
-  .nav-right.nav-link {
-    opacity: 1;
   }
 
   // login hover
@@ -95,6 +92,7 @@
 }
 
 .navigation {
+
   a:active,
   a:focus {
     text-decoration: none;
