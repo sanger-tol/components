@@ -6,8 +6,8 @@
 
 // layout of the grid
 .tol-responsive-grid {
-  padding: 2px;
   position: relative;
+  margin: -10px; // compensate for padding on children
 }
 
 .tol-visualisation {

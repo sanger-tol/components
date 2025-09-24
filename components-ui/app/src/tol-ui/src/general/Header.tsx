@@ -14,6 +14,7 @@ export interface PHeader {
   video?: string;
   fade?: number;
   textLeft?: boolean;
+  fullHeight?: boolean;
   children?: ReactNode;
 }
 
@@ -25,6 +26,7 @@ export function Header(props: PHeader) {
     video,
     fade = 0,
     textLeft = false,
+    fullHeight = false,
     children
   } = props;
 
@@ -69,9 +71,14 @@ export function Header(props: PHeader) {
   return (
     <div
       className="masthead-offset"
-      style={{ height: mastheadOffset - navbarOffset }}
+      // if full height ignore masthead offset as no content required below header
+      style={{ height: (fullHeight ? 0 : mastheadOffset) - navbarOffset }}
     >
-      <header id="tol-masthead" className="masthead">
+      <header
+        id="tol-masthead"
+        className="masthead"
+        style={fullHeight ? { height: "100vh" } : {}}
+      >
         <div style={{ height: navbarOffset }}></div>
         <div className={`masthead-content ${textLeft ? "" : "text-center"}`}>
           <h1 className="masthead-heading">{title}</h1>
