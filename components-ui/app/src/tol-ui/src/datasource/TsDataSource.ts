@@ -431,7 +431,7 @@ export class TsDataSource {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
       .get(this.generateEndpoint(objectType), {
-        url: this.baseUrl,
+        baseURL: this.baseUrl,
         params: {
           page: page,
           page_size: pageSize,
