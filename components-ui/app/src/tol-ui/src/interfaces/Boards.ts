@@ -155,3 +155,8 @@ export interface IUpdatedZoneIds {
   newZoneId: string;
   newZoneViewId: string;
 }
+
+export interface IDataspace {
+  dataSourceInstanceId: number;
+  dataSource: TsDataSource;
+}

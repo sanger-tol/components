@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, React } from "react";
 import {
   Button,
   Modal,
@@ -18,6 +18,8 @@ import {
   IDBZone,
   getNextZoneOrder,
   InfoTooltip,
+  IDataspace,
+  TsDataSource,
 } from "../..";
 
 
@@ -29,6 +31,8 @@ export interface PZoneModal extends PBoard {
   zoneOrder: IDBZoneView[];
   setZoneOrder: (zone: IDBZoneView[]) => void;
   viewId: string;
+  dataspace: IDataspace | undefined;
+  setDataspace: React.Dispatch<React.SetStateAction<IDataspace | undefined>>;
 }
 
 
@@ -41,11 +45,13 @@ export function ZoneModal(props: PZoneModal) {
     zoneOrder,
     setZoneOrder,
     viewId,
-    dataSource,
+    dataspace,
+    setDataspace,
     boardDataSource,
   } = props;
 
-  const [dataspace, setDataspace] = useState("tol_production");
+  const [dataspaceNames, setDataspaceNames] = useState(["tol_production"]);
+  const [dataspaceName, setDataspaceName] = useState("tol_production");
   const [objectType, setObjectType] = useState("");
   const [title, setTitle] = useState("");
   const [mandatoryFieldsFilled, setMandatoryFieldsFilled] = useState(false);
@@ -58,7 +64,7 @@ export function ZoneModal(props: PZoneModal) {
   };
 
   const validateForm = ({
-    newDataspace = dataspace,
+    newDataspace = dataspaceName,
     newObjectType = objectType,
     newTitle = title,
   }) => {
@@ -78,18 +84,35 @@ export function ZoneModal(props: PZoneModal) {
   }, [open]);
 
   useEffect(() => {
-    dataSource.attributeMetadata().then((am) => {
-      setObjectTypesList(
-        Object.keys(am)
-      );
-    });
-  }, []);
+    if (open) {
+      // Default dataspace is tol_production
+      const dataspace: IDataspace = {
+        dataSourceInstanceId: 1,
+        dataSource: new TsDataSource({
+          // TEMP! THIS CAN BE DONE BETTER BUT I NEED SOMETHING TO FETCH FROM
+          url: "https://portal.tol.sanger.ac.uk",
+          apiPath: "/api/v1",
+          apiDataPath: "/data",
+          dataspace: dataspaceName
+        })
+      };
+      setDataspace(dataspace);
+
+      dataspace.dataSource.attributeMetadata().then((am) => {
+        setObjectTypesList(
+          Object.keys(am)
+        );
+      });
+    }
+  }, [open]);
 
   const onAddZone = async () => {
+    if (!dataspace) return;  // Shouldn't happen
+
     if (validateForm({})) {
       const nextOrder = getNextZoneOrder(zoneOrder);
       const newZone: IUpdatedZoneIds = await upsertNewZone(
-        dataSource,
+        dataspace.dataSource,
         boardDataSource,
         objectType,
         title,
@@ -162,12 +185,12 @@ export function ZoneModal(props: PZoneModal) {
             <span className="tol-danger-colour">*</span>
           </p>
           <SingleSelect
-            data={["tol_production"]}
+            data={dataspaceNames}
             placeholder="Dataspace"
-            value={dataspace}
+            value={dataspaceName}
             setValue={(newValue) => {
               validateForm({ newDataspace: newValue });
-              setDataspace(newValue);
+              setDataspaceName(newValue);
             }}
             block
           />
@@ -182,7 +205,7 @@ export function ZoneModal(props: PZoneModal) {
             <span className="tol-danger-colour">*</span>
           </p>
           <SingleSelect
-            data={objectTypesList}
+            data={objectTypesList}  // Which might be empty but that's okay
             placeholder="Object Type"
             value={objectType}
             setValue={(newValue) => {

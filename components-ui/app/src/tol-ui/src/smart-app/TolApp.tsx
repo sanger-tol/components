@@ -48,7 +48,6 @@ import {
 
 
 export interface BoardSources {
-  dataSource: TsDataSource;
   boardDataSource?: TsDataSource;
 }
 
@@ -70,10 +69,10 @@ export function TolApp(props: Props) {
 
   // setting a default for the boardDataSource
   const boards = props.boards ? {
-    dataSource: props.boards?.dataSource,
     boardDataSource: props.boards?.boardDataSource
       || new TsDataSource({
-        apiPrefix: BOARDS_API_PREFIX,
+        apiPath: env.API_PATH,
+        apiDataPath: "boards"  // Not being passed in?
       }),
   } : undefined;
   const queryClient = new QueryClient();

@@ -20,7 +20,8 @@ import {
   UtilityBar,
   PButton,
   PRIVILEGE,
-  useBoardPrivilege
+  useBoardPrivilege,
+  IDataspace
 } from "../..";
 
 
@@ -35,6 +36,7 @@ export interface PView extends PBoard {
 export function View(props: PView) {
   const { id, dataSource, boardDataSource, utilityBarConfig } = props;
   const [zones, setZones] = useState<IDBZone[]>([]);
+  const [dataspace, setDataspace] = useState<IDataspace | undefined>();
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
   const { privilege } = useBoardPrivilege();
@@ -109,7 +111,8 @@ export function View(props: PView) {
         zoneOrder={zoneOrder}
         setZoneOrder={setZoneOrder}
         viewId={id}
-        dataSource={dataSource}
+        dataspace={dataspace}
+        setDataspace={setDataspace}
         boardDataSource={boardDataSource}
       />
       {zones.length > 0 ? (
