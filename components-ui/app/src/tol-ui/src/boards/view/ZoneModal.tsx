@@ -25,22 +25,6 @@ import {
 } from "../..";
 
 
-// TODO: Separate this out into a different file
-export interface IDataSourceInstance {
-  id: number;
-  name: string;
-  // publish: boolean;
-  apiDetails
-}
-
-// TODO: Same here
-// export interface IApiDetails {
-//   url?: string;
-//   apiPath?: string;
-//   apiDataPath?: string;
-//   dataspace?: string;
-// }
-
 export interface PZoneModal extends PBoard {
   open: boolean;
   setOpen: any;
@@ -68,8 +52,7 @@ export function ZoneModal(props: PZoneModal) {
     boardDataSource,
   } = props;
 
-  const [dataSourceInstances, setDataSourceInstances] = useState<TsDataSource[] | undefined>();
-  const [dataspaces, setDataspaces] = useState<IDataspace[] | undefined>();
+  const [selectableDataspaces, setSelectableDataspaces] = useState<Record<string, IDataspace> | undefined>();
   const [dataspaceNames, setDataspaceNames] = useState(["sdf"]);
   const [dataspaceName, setDataspaceName] = useState("sdf");
   const [objectType, setObjectType] = useState("");
@@ -101,22 +84,28 @@ export function ZoneModal(props: PZoneModal) {
   // This allows us to use their names as the data in the dataspace singleselect, and also lets
   // us use their information (url, apiPath, apiDataPath, dataspace) to make a new IDataspace
   // object (in `selectDataspace`) when the user selects one
-  const fetchDataSourceInstances = () => {
+  const fetchSelectableDataspaces = () => {
     boardDataSource
       .getListPage({ 
         objectType: "data_source_instance",
         pageSize: 100,
       })
       .then((data: TDataObjectListOrNull) => {
-        const newDataSourceInstances = data?.map((instance: TDataObjectOrNull) => new TsDataSource({
-          url: instance?.api_details.url,
-          apiPath: instance?.api_details.api_path,
-          apiDataPath: instance?.api_details.api_data_path,
-          dataspace: instance?.api_details.dataspace
-        }))
+        let newSelectableDataspaces: Record<string, IDataspace> = {};
+        data?.forEach((instance: TDataObjectOrNull) => {
+          newSelectableDataspaces[instance?.api_details.dataspace] = {
+            dataSourceInstanceId: instance?.id as string,  // TODO: would the query every return undefined for id? It's a primary key
+            dataSource: new TsDataSource({
+              url: instance?.api_details.url,
+              apiPath: instance?.api_details.api_path,
+              apiDataPath: instance?.api_details.api_data_path,
+              dataspace: instance?.api_details.dataspace
+            })
+          }
+        });
 
-        setDataSourceInstances(newDataSourceInstances);
-        setDataspaceNames(newDataSourceInstances?.map(instance => instance.getDataspace()));
+        setSelectableDataspaces(newSelectableDataspaces);
+        setDataspaceNames(Object.keys(newSelectableDataspaces));
       })
       .catch((error: any) => {
         console.error("Error fetching data source instances:", error);
@@ -126,11 +115,22 @@ export function ZoneModal(props: PZoneModal) {
 
   useEffect(() => {
     if (open) {
-      fetchDataSourceInstances();
+      fetchSelectableDataspaces();
     } else {  // Closed 
       reset();
     }
   }, [open]);
+
+  const selectDataspace = (dataspaceName: string) => {
+    const newDataspace: IDataspace = selectableDataspaces[dataspaceName];
+    setDataspace(newDataspace);
+
+    newDataspace.dataSource.attributeMetadata().then((am) => {
+      setObjectTypesList(
+        Object.keys(am)
+      );
+    });
+  };
 
   const onAddZone = async () => {
     if (!dataspace) return;  // Shouldn't happen
@@ -217,6 +217,7 @@ export function ZoneModal(props: PZoneModal) {
             setValue={(newValue) => {
               validateForm({ newDataspace: newValue });
               setDataspaceName(newValue);
+              selectDataspace(newValue);
             }}
             block
           />

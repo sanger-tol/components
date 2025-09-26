@@ -157,6 +157,6 @@ export interface IUpdatedZoneIds {
 }
 
 export interface IDataspace {
-  dataSourceInstanceId: number;
+  dataSourceInstanceId: string;
   dataSource: TsDataSource;
 }
