@@ -30,9 +30,12 @@ import {
   PRIVILEGE,
   ITableConfigSave,
   RowCounter,
+  Button,
+  copyToClipboard,
+  getFieldByName,
+  stopPropagation,
 } from "..";
 import { Sort } from "./Sort";
-
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
@@ -130,7 +133,7 @@ export function Table(props: Props) {
     /* eslint-enable */
   } = props;
 
-  const { privilege } = useBoardPrivilege()
+  const { privilege } = useBoardPrivilege();
 
   const [open, setOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
@@ -197,74 +200,86 @@ export function Table(props: Props) {
 
   const configButton: PButton = !noConfigModal
     ? {
-      visible: true,
-      position: "right",
-      type: "primary",
-      tooltip: "Configure Table",
-      onClick: () => {
-        setOpen(true);
-      },
-      icon: "sliders",
-      outline: true,
-    }
+        visible: true,
+        position: "right",
+        type: "primary",
+        tooltip: "Configure Table",
+        onClick: () => {
+          setOpen(true);
+        },
+        icon: "sliders",
+        outline: true,
+      }
     : {
-      visible: false,
-    };
+        visible: false,
+      };
 
   const filterButton: PButton =
     (!noFilter &&
       fieldMeta.order.active.length !== 0 &&
       privilege === PRIVILEGE.BOARD.EDITABLE) ||
-      privilege === undefined
+    privilege === undefined
       ? {
+          visible: true,
+          position: "right",
+          type: "primary",
+          onClick: () => {
+            setFilterVisibility(!filterVisibility);
+          },
+          icon: filterVisibility ? "eye-slash" : "eye",
+          tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
+          outline: true,
+        }
+      : {
+          visible: false,
+        };
+
+  const downloadButton: PButton = !noDownload
+    ? {
         visible: true,
         position: "right",
         type: "primary",
+        tooltip: "Download the tables current state in various formats",
         onClick: () => {
-          setFilterVisibility(!filterVisibility);
+          setDownloadOpen(!downloadOpen);
         },
-        icon: filterVisibility ? "eye-slash" : "eye",
-        tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
+        disabled: totalSize <= 0 || noFieldsSelected || loading,
+        icon: "download",
+        disabledTooltip:
+          totalSize >= 1
+            ? "Must have at least one row to download."
+            : undefined,
         outline: true,
+        loading: downloadInProgress,
       }
-      : {
+    : {
         visible: false,
       };
-
-  const downloadButton: PButton = !noDownload ? {
-    visible: true,
-    position: "right",
-    type: "primary",
-    tooltip: "Download the tables current state in various formats",
-    onClick: () => {
-      setDownloadOpen(!downloadOpen);
-    },
-    disabled: (totalSize <= 0 || noFieldsSelected) || loading,
-    icon: "download",
-    disabledTooltip:
-      totalSize >= 1
-        ? "Must have at least one row to download."
-        : undefined,
-    outline: true,
-    loading: downloadInProgress
-  } : {
-    visible: false,
-  };
 
   const actionDropdown: PDropdownButtons | undefined =
     actions && actions.length > 0
       ? {
-        mainButtonIcon: {
-          icon: "paper-plane",
-          type: "primary",
-          position: "right",
-          outline: selectedRows.length === 0,
-        },
-        dropdownButtons: actionDropDownButtons,
-        footer: actionsFooter,
-        placement: "leftStart",
-      }
+          mainButtonIcon: {
+            icon: "paper-plane",
+            type: "primary",
+            position: "right",
+            outline: selectedRows.length === 0,
+          },
+          dropdownButtons: actionDropDownButtons,
+          footer: actionsFooter,
+          placement: "leftStart",
+        }
       : undefined;
+
+  const copyConcept = (data: any, fieldHeader: string) => {
+    const copySet = new Set<string>(
+      data.flatMap((element) =>
+        Array.isArray(getFieldByName(element[fieldHeader].props.dataObject, fieldHeader))? getFieldByName(element[fieldHeader].props.dataObject, fieldHeader): [getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)]
+      )
+    );
+    const copyList = Array.from(copySet).join("\n");
+    copyToClipboard(copyList);
+  };
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
@@ -317,43 +332,43 @@ export function Table(props: Props) {
         elements={
           !noPagination && fieldMeta?.order?.active?.length > 0
             ? [
-              <span className="tol-page-size">
-                {!smallBreakpoint &&
-                  (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
-                    <SelectPicker
-                      value={pageSize}
-                      onChange={setPageSize}
-                      size="sm"
-                      cleanable={false}
-                      searchable={false}
-                      data={[
-                        { label: "25", value: 25 },
-                        { label: "50", value: 50 },
-                        { label: "100", value: 100 },
-                        { label: "250", value: 250 },
-                      ]}
-                    />
-                  )}
-              </span>,
-              <Pagination
-                className="tol-pagination"
-                size="sm"
-                layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
-                total={totalSize <= 10000 ? totalSize : 10000}
-                activePage={page}
-                onChangePage={setPage}
-                limit={pageSize}
-                onChangeLimit={setPageSize}
-                prev
-                next
-                first={!mediumBreakpoint}
-                last={!mediumBreakpoint}
-                ellipsis={!mediumBreakpoint}
-                boundaryLinks
-                maxButtons={mediumBreakpoint ? 1 : 3}
-              />,
-              ...(utilityBarConfig.elements || []),
-            ]
+                <span className="tol-page-size">
+                  {!smallBreakpoint &&
+                    (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
+                      <SelectPicker
+                        value={pageSize}
+                        onChange={setPageSize}
+                        size="sm"
+                        cleanable={false}
+                        searchable={false}
+                        data={[
+                          { label: "25", value: 25 },
+                          { label: "50", value: 50 },
+                          { label: "100", value: 100 },
+                          { label: "250", value: 250 },
+                        ]}
+                      />
+                    )}
+                </span>,
+                <Pagination
+                  className="tol-pagination"
+                  size="sm"
+                  layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
+                  total={totalSize <= 10000 ? totalSize : 10000}
+                  activePage={page}
+                  onChangePage={setPage}
+                  limit={pageSize}
+                  onChangeLimit={setPageSize}
+                  prev
+                  next
+                  first={!mediumBreakpoint}
+                  last={!mediumBreakpoint}
+                  ellipsis={!mediumBreakpoint}
+                  boundaryLinks
+                  maxButtons={mediumBreakpoint ? 1 : 3}
+                />,
+                ...(utilityBarConfig.elements || []),
+              ]
             : [...(utilityBarConfig.elements || [])]
         }
         buttons={[
@@ -417,11 +432,7 @@ export function Table(props: Props) {
                   fillHeight
                   wordWrap
                   renderLoading={() => (
-                    <Placeholder
-                      loader
-                      opacity={0.8}
-                      squareCorners
-                    />
+                    <Placeholder loader opacity={0.8} squareCorners />
                   )}
                 >
                   {rowSelection && (
@@ -457,7 +468,8 @@ export function Table(props: Props) {
                   {fieldMeta!.order.active.map((key: string) => {
                     const field = fieldMeta.dataWithDefaults![key];
                     if (field) {
-                      const sortable: boolean = (!noSorting && field.sort) ?? false;
+                      const sortable: boolean =
+                        (!noSorting && field.sort) ?? false;
                       const filterable = !noFilter && field.filter;
 
                       return (
@@ -475,6 +487,17 @@ export function Table(props: Props) {
                                   dataSource={dataSource}
                                   field={key}
                                 />
+                                <span onClick={stopPropagation}>
+                                  <Button
+                                    onClick={() => copyConcept(data, key)}
+                                    icon="share-from-square"
+                                    type="primary"
+                                    position="right"
+                                    outline
+                                    tooltip="Copy column values"
+                                    className="tol-table-copy-button"
+                                  />
+                                </span>
                               </div>
                             )}
                             <p className="tol-header-text">
