@@ -61,6 +61,7 @@ export function ZoneModal(props: PZoneModal) {
   const [objectTypesList, setObjectTypesList] = useState<string[]>([]);
 
   const reset = () => {
+    setDataspaceName("tol_production");
     setTitle("");
     setObjectType("");
     setMandatoryFieldsFilled(false);
