@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { Toggle } from "rsuite"
 import { useEffect, useState } from "react";
 import {
-  InfoTooltip,
+  IconTooltip,
   IBoardTargetAndZone,
   upsertComponent,
   upsertZone,
@@ -131,7 +131,7 @@ export function BoardFilters(props: Props) {
             <span style={{paddingRight: 6}} onClick={(e) => e.stopPropagation()}>
               Apply filters only to this Component.
             </span>
-            <InfoTooltip
+            <IconTooltip
               contents={
                 "This filter does not affect other components in the heirarchy. Filters from above are still applied."
               }

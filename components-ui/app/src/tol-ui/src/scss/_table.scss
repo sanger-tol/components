@@ -143,15 +143,8 @@
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
-      padding-right: 30px;
+      padding-right: 26px;
       width: 100%;
-    }
-
-    .tol-header-info {
-      position: absolute;
-      right: 0;
-      padding-right: 22px;
-      margin-top: -2px;
     }
 
     // header color
@@ -196,7 +189,7 @@
 
     .tol-sorting-arrows {
       position: absolute;
-      right: 12px;
+      right: 22px;
       top: 10px;
     }
 
@@ -283,7 +276,7 @@
 // tooltip
 .tooltip-contents {
   overflow: auto;
-  max-height: 200px;
+  max-height: 300px;
 }
 
 .formatted-tooltip {
@@ -309,11 +302,10 @@
 .tooltip-wrapper {
   display: inline-block;
   fill: var(--tol-text);
+  cursor: default;
 }
 
-// EntityMetaToolTip
-
-.tol-entity-meta-tool-tip-source {
+.tol-attribute-tooltip-source {
   width: fit-content;
   display: inline;
 }
@@ -324,6 +316,21 @@
   margin-right: 3px;
   border-radius: 2px;
   display: inline-block;
+  transition: width 0.5s ease;
+}
+
+.rs-table-cell-header:hover {
+  .inline-source {
+    width: 10px;
+  }
+}
+
+.tol-field-dropdown {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  padding: 0 6px;
+  cursor: pointer;
 }
 
 // config modal

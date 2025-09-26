@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./AttributeSelector";
+export * from "./AttributeTooltip";
 export * from "./BoardCount";
 export * from "./BoardMarkdown";
 export * from "./Button";
@@ -13,13 +14,12 @@ export * from "./ClickOverlay";
 export * from "./CustomIcons";
 export * from "./Drawer";
 export * from "./DropdownButtons";
-export * from "./EntityMetaToolTip";
 export * from "./Footer";
 export * from "./FormatTooltip";
 export * from "./Header";
 export * from "./HoverOverlay";
 export * from "./Icon";
-export * from "./InfoTooltip";
+export * from "./IconTooltip";
 export * from "./InlineEdit";
 export * from "./LoadingContent";
 export * from "./Markdown";
