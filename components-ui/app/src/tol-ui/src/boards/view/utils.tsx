@@ -175,7 +175,7 @@ export async function upsertNewZone(
             user_id: user.id,
             datasource: {
               base_url: dataSource.getBaseUrl(),
-              api_prefix: dataSource.getApiPrefix(),
+              api_data_path: dataSource.getApiDataPath(),
             },
           },
         },
