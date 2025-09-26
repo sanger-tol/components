@@ -13,7 +13,7 @@
   padding-top: 16px;
 
   .tol-param-info {
-    margin-left: 6px
+    margin-left: 6px;
   }
 
   .tol-param-required {
@@ -23,5 +23,15 @@
 
   .tol-param {
     margin: 4px 0 12px 0;
+
+    button {
+      width: 100%;
+    }
   }
+}
+
+.tol-cell-renderer-modal-logic-param {
+  border-top: 1px solid var(--tol-grey);
+  padding-top: 20px;
+  margin-top: 20px;
 }

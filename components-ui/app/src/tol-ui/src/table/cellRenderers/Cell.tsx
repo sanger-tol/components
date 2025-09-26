@@ -24,7 +24,7 @@ import {
 export interface PCell {
   attribute: string,
   value?: any,
-  dataObject: TDataObjectOrNull,
+  dataObject?: TDataObjectOrNull,
   dataSource?: TsDataSource,
   renderer: TCellRenderer;
   customCellRenderers?: ICustomCellRenderers;

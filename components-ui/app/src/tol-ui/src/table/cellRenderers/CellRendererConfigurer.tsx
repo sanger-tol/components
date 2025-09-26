@@ -11,7 +11,7 @@ import {
   ICellRenderer,
   Icon,
   IRemoteTarget,
-} from "..";
+} from "../..";
 
 
 export interface PCellRendererConfigurer extends IRemoteTarget {

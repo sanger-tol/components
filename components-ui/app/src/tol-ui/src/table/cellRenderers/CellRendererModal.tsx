@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, Dispatch, SetStateAction, useEffect } from "react";
-import { Input } from "rsuite";
 import {
   FieldMeta,
   CellRendererType,
@@ -18,8 +17,10 @@ import {
   TCellRenderer,
   IEntityMeta,
   IRemoteTarget,
-  InfoTooltip,
-} from "..";
+  RemoteFilters,
+  Cell,
+} from "../..";
+import { CellRendererParam } from "./CellRendererParam";
 
 
 export interface PCellRendererModal extends IRemoteTarget {
@@ -34,6 +35,17 @@ export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, attributeId, fieldMeta, objectType, dataSource, onSave } = props;
   const [renderer, setRenderer] = useState<TCellRenderer>();
   const [entityMeta, setEntityMeta] = useState<IEntityMeta>();
+  const [selectedLogicParam, setSelectedLogicParam] = useState<string | undefined>();
+
+  const requiredParamKeys = renderer && cellRendererParams[renderer.type as string]
+    ? Object.entries(cellRendererParams[renderer.type as string])
+      .filter(([_, v]) => v.required)
+      .map(([k, _]) => k)
+    : [];
+  const requiredParamsCount = requiredParamKeys.length;
+  const filledParamsCount = requiredParamKeys.filter(key => {
+    return renderer?.props && renderer.props[key];
+  }).length;
 
   useEffect(() => {
     dataSource
@@ -61,6 +73,9 @@ export function CellRendererModal(props: PCellRendererModal) {
     );
   };
 
+  const onLogicSave = (filters: any) => {
+  }
+
   const Header = (
     <h5>
       Configure
@@ -80,7 +95,12 @@ export function CellRendererModal(props: PCellRendererModal) {
         onClick={() => {
           setOpen(false), onSave(renderer, attributeId);
         }}
-        text="Update"
+        text="Add"
+        disabled={
+          renderer !== null &&
+          !renderer?.type ||
+          requiredParamsCount > filledParamsCount
+        }
       />
       <Button
         position="right"
@@ -119,39 +139,45 @@ export function CellRendererModal(props: PCellRendererModal) {
           data={typeChoices}
         />
       </div>
-      <div className="tol-cell-renderer-modal-params">
-        {/* Extra options depending on the value selected */}
-        {renderer && cellRendererParams[renderer.type as string] &&
-          Object.entries(cellRendererParams[renderer.type as string]).map(([param, values]) => {
-            return (
-              <div key={param}>
-                <span className="tol-param-title">
-                  {values.rename}:
-                </span>
-                {values.required &&
-                  <span className="tol-param-required">*</span>
-                }
-                <span className="tol-param-info">
-                  <InfoTooltip contents={values.description} disableMarkdown />
-                </span>
-                <div className="tol-param">
-                  {values.type === "string" ? (
-                    <Input
-                      value={renderer.props![param]}
-                      onChange={(newValue: string) => {
-                        renderer.props![param] = newValue;
-                        setRenderer({ ...renderer });
-                      }}
-                    />
-                  ) : values.type === "boolean" ? (
-                    <Button text="Add text field" />
-                  ) : null}
-                </div>
-              </div>
-            )
-          })
-        }
-      </div>
+      <>
+        {renderer &&
+          Object.keys(cellRendererParams[renderer?.type as string] || {}).length > 0 && (
+            <div className="tol-cell-renderer-modal-params">
+              <h6>Parameters</h6>
+              {Object.entries(cellRendererParams[renderer.type as string]).map(([param, values]) => {
+                return (
+                  <CellRendererParam
+                    {...props}
+                    key={param}
+                    param={param}
+                    values={values}
+                    renderer={renderer}
+                    setRenderer={setRenderer}
+                    selectedLogicParam={selectedLogicParam}
+                    setSelectedLogicParam={setSelectedLogicParam}
+                  />
+                )
+              })}
+            </div>
+          )}
+      </>
+      <>
+        {selectedLogicParam && (
+          <div className="tol-cell-renderer-modal-logic-param">
+            <h6>
+              Configure Logic for
+              '{cellRendererParams[renderer?.type as string][selectedLogicParam]?.rename}'
+              Parameter
+            </h6>
+            <RemoteFilters
+              {...props}
+              filters={{}}
+              onSave={onLogicSave}
+              onSaveText="Add Logic"
+            />
+          </div>
+        )}
+      </>
     </Modal>
   )
 }
