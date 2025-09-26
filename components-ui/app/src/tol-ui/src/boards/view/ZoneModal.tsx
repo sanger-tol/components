@@ -123,9 +123,11 @@ export function ZoneModal(props: PZoneModal) {
   }, [open]);
 
   const selectDataspace = (dataspaceName: string) => {
+    // Fetch the dataspace with this name from the dataspaces fetched
     const newDataspace: IDataspace = selectableDataspaces[dataspaceName];
     setDataspace(newDataspace);
 
+    // Fetch the possible object types from this dataspace to fill the second dropdown
     newDataspace.dataSource.attributeMetadata().then((am) => {
       setObjectTypesList(
         Object.keys(am)
