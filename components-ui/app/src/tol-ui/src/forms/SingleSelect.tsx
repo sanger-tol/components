@@ -42,11 +42,11 @@ export const SingleSelect = (props: PSingleSelect) => {
       <span>
         <SelectPicker
           data={data}
-          searchable={false}ß
+          searchable={false}
           value={value}
           onChange={setValue}
           placeholder={placeholder}
-          disabled={disabled}ß
+          disabled={disabled}
           block={block}
         />
       </span>
