@@ -122,6 +122,15 @@ export function ZoneModal(props: PZoneModal) {
     }
   }, [open]);
 
+  useEffect(() => {
+    if (selectableDataspaces) {
+      // Select "tol_production" by default on form load
+      // Otherwise there would be no object types available even though "tol_production"
+      // appears to be selected
+      selectDataspace("tol_production");
+    }
+  }, [selectableDataspaces]);
+
   const selectDataspace = (dataspaceName: string) => {
     // Fetch the dataspace with this name from the dataspaces fetched
     const newDataspace: IDataspace = selectableDataspaces[dataspaceName];
