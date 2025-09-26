@@ -323,9 +323,9 @@ export function Accordion(props: BoardsAccordionProps) {
   };
 
   return (
-    <div>
+    <>
       {boardDetails.map((board: any) => (
-        <div data-testid={board.title} key={board.id} style={{ marginTop: "20px", display: "flex" }}>
+        <div data-testid={board.title} key={board.id} className="tol-accordion">
           <div style={{ flex: "1" }}>
             <AccordionBase
               id={board.id}
@@ -352,6 +352,6 @@ export function Accordion(props: BoardsAccordionProps) {
           {deleteConfirmationModal(board.id)}
         </div>
       ))}
-    </div>
+    </>
   );
 }

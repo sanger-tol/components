@@ -1,0 +1,14 @@
+/*
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+.tol-accordion {
+	display: flex;
+}
+
+// doesn't add margin to last accordion in a list
+div > .tol-accordion:not(:last-child) {
+  margin-bottom: 10px;
+}

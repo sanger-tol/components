@@ -4,15 +4,25 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Header, IHeaderButton } from "..";
+import { Button, Header } from "..";
+import { useHistory } from "react-router-dom";
 
-const home: IHeaderButton = {
-  href: "/",
-  text: "Go back home",
-};
 
 export function PageNotFound() {
+  const history = useHistory();
+
   return (
-    <Header title="Oops! You seem to be lost." buttons={[home]} pageEmpty />
+    <Header
+      title="Page Not Found"
+      subTitle="Oops! You seem to be lost."
+      fullHeight
+    >
+      <Button
+        icon="home"
+        text="Return Home"
+        onClick={() => history.push("/")}
+        className="return-home-button"
+      />
+    </Header>
   );
 }
