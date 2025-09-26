@@ -20,8 +20,26 @@ import {
   InfoTooltip,
   IDataspace,
   TsDataSource,
+  TDataObjectListOrNull,
+  TDataObjectOrNull,
 } from "../..";
 
+
+// TODO: Separate this out into a different file
+export interface IDataSourceInstance {
+  id: number;
+  name: string;
+  // publish: boolean;
+  apiDetails
+}
+
+// TODO: Same here
+// export interface IApiDetails {
+//   url?: string;
+//   apiPath?: string;
+//   apiDataPath?: string;
+//   dataspace?: string;
+// }
 
 export interface PZoneModal extends PBoard {
   open: boolean;
@@ -50,8 +68,10 @@ export function ZoneModal(props: PZoneModal) {
     boardDataSource,
   } = props;
 
-  const [dataspaceNames, setDataspaceNames] = useState(["tol_production"]);
-  const [dataspaceName, setDataspaceName] = useState("tol_production");
+  const [dataSourceInstances, setDataSourceInstances] = useState<TsDataSource[] | undefined>();
+  const [dataspaces, setDataspaces] = useState<IDataspace[] | undefined>();
+  const [dataspaceNames, setDataspaceNames] = useState(["sdf"]);
+  const [dataspaceName, setDataspaceName] = useState("sdf");
   const [objectType, setObjectType] = useState("");
   const [title, setTitle] = useState("");
   const [mandatoryFieldsFilled, setMandatoryFieldsFilled] = useState(false);
@@ -77,32 +97,38 @@ export function ZoneModal(props: PZoneModal) {
     }
   };
 
-  useEffect(() => {
-    if (!open) {
-      reset();
-    }
-  }, [open]);
+  // Queries the data_source_instance table to fetch all of the dataspaces the user can pick from
+  // This allows us to use their names as the data in the dataspace singleselect, and also lets
+  // us use their information (url, apiPath, apiDataPath, dataspace) to make a new IDataspace
+  // object (in `selectDataspace`) when the user selects one
+  const fetchDataSourceInstances = () => {
+    boardDataSource
+      .getListPage({ 
+        objectType: "data_source_instance",
+        pageSize: 100,
+      })
+      .then((data: TDataObjectListOrNull) => {
+        const newDataSourceInstances = data?.map((instance: TDataObjectOrNull) => new TsDataSource({
+          url: instance?.api_details.url,
+          apiPath: instance?.api_details.api_path,
+          apiDataPath: instance?.api_details.api_data_path,
+          dataspace: instance?.api_details.dataspace
+        }))
+
+        setDataSourceInstances(newDataSourceInstances);
+        setDataspaceNames(newDataSourceInstances?.map(instance => instance.getDataspace()));
+      })
+      .catch((error: any) => {
+        console.error("Error fetching data source instances:", error);
+        alert("There was an error fetching the required data for this form");
+      });
+  };
 
   useEffect(() => {
     if (open) {
-      // Default dataspace is tol_production
-      const dataspace: IDataspace = {
-        dataSourceInstanceId: 1,
-        dataSource: new TsDataSource({
-          // TEMP! THIS CAN BE DONE BETTER BUT I NEED SOMETHING TO FETCH FROM
-          url: "https://portal.tol.sanger.ac.uk",
-          apiPath: "/api/v1",
-          apiDataPath: "/data",
-          dataspace: dataspaceName
-        })
-      };
-      setDataspace(dataspace);
-
-      dataspace.dataSource.attributeMetadata().then((am) => {
-        setObjectTypesList(
-          Object.keys(am)
-        );
-      });
+      fetchDataSourceInstances();
+    } else {  // Closed 
+      reset();
     }
   }, [open]);
 
