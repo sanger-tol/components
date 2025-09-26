@@ -53,8 +53,8 @@ export function ZoneModal(props: PZoneModal) {
   } = props;
 
   const [selectableDataspaces, setSelectableDataspaces] = useState<Record<string, IDataspace> | undefined>();
-  const [dataspaceNames, setDataspaceNames] = useState(["sdf"]);
-  const [dataspaceName, setDataspaceName] = useState("sdf");
+  const [dataspaceNames, setDataspaceNames] = useState(["tol_production"]);
+  const [dataspaceName, setDataspaceName] = useState("tol_production");
   const [objectType, setObjectType] = useState("");
   const [title, setTitle] = useState("");
   const [mandatoryFieldsFilled, setMandatoryFieldsFilled] = useState(false);
@@ -239,6 +239,8 @@ export function ZoneModal(props: PZoneModal) {
               validateForm({ newObjectType: newValue });
               setObjectType(newValue);
             }}
+            disabled={!dataspaceName}
+            disabledTooltip="You must select a dataspace first"
             block
           />
           <br />
