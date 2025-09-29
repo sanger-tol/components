@@ -183,9 +183,9 @@ export function TolApp(props: Props) {
                       convertToPathWithUiPath(dropdownPage.name, uiPath);
                     // dropdown page route
                     routes.push(
-                      <Route exact path={dropdownPath} key={page.name}>
+                      <Route exact path={dropdownPath} key={dropdownPage.name}>
                         {authorised ? (
-                          getElementDependingOnAuthStatus(loggedIn, page)
+                          getElementDependingOnAuthStatus(loggedIn, dropdownPage)
                         ) : (
                           <Redirect to={`${uiPath ?? ''}/`} replace />
                         )}
