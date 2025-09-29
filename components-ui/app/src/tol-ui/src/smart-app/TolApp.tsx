@@ -229,19 +229,11 @@ export function TolApp(props: Props) {
                         path={`${path}/:id`}
                         key={`${page.name}-detail`}
                       >
-<<<<<<< HEAD
-                        {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to={`${uiPath ?? ''}/`} replace />}
-                      </Route>,
-                    );
-                  }
-
-=======
                           {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to={basePath} replace />}
                         </Route>,
                       );
                     }
                 }
->>>>>>> 656ca26a (using basePath)
                 return routes;
               })}
               <Route
