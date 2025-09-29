@@ -68,6 +68,9 @@ interface Props {
 export function TolApp(props: Props) {
   const { customCallbackUrl, uiPath } = props;
 
+  // ensure redirect targets are absolute; basePath will be '/' or '/<uiPath>/'
+  const basePath = uiPath ? `/${uiPath}/` : "/";
+
   // setting a default for the boardDataSource
   const boards = props.boards ? {
     dataSource: props.boards?.dataSource,
@@ -149,14 +152,14 @@ export function TolApp(props: Props) {
                     />
                   </BoardPrivilegeContextProvider>
                 ) : (
-                  <Redirect to={`${uiPath ?? ''}/`} replace />
+                  <Redirect to={basePath} replace />
                 )}
               </Route>
               <Route path={`${uiPath ?? ''}/file-validation/results/:uploadId`} render={(routeProps) => {
                 return loggedIn ? (
                   <ValidationResultsViewer {...routeProps} />
                 ) : (
-                  <Redirect to={`${uiPath ?? ''}/`} replace />
+                  <Redirect to={basePath} replace />
                 )
               }} />
               {allPageRoutes.map((page) => {
@@ -226,11 +229,19 @@ export function TolApp(props: Props) {
                         path={`${path}/:id`}
                         key={`${page.name}-detail`}
                       >
+<<<<<<< HEAD
                         {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to={`${uiPath ?? ''}/`} replace />}
                       </Route>,
                     );
                   }
 
+=======
+                          {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to={basePath} replace />}
+                        </Route>,
+                      );
+                    }
+                }
+>>>>>>> 656ca26a (using basePath)
                 return routes;
               })}
               <Route
