@@ -183,7 +183,7 @@ export function TolApp(props: Props) {
                       convertToPathWithUiPath(dropdownPage.name, uiPath);
                     // dropdown page route
                     routes.push(
-                      <Route exact path={path} key={page.name}>
+                      <Route exact path={dropdownPath} key={page.name}>
                         {authorised ? (
                           getElementDependingOnAuthStatus(loggedIn, page)
                         ) : (
@@ -197,7 +197,7 @@ export function TolApp(props: Props) {
                       routes.push(
                         <Route
                           exact
-                          path={`${path}/:id`}
+                          path={`${dropdownPath}/:id`}
                           key={`${page.name}-detail`}
                         >
                           {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user?.id) ? (
