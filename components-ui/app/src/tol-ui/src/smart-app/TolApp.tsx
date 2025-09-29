@@ -136,14 +136,14 @@ export function TolApp(props: Props) {
           <div className="tol-app">
             <Switch>
               <Route
-                path={[`/${uiPath ?? ''}/`,]}
+                path={[`${basePath}`,]}
                 exact
                 render={() => props.homePage}
               />
-              <Route path={`${uiPath ?? ''}/callback`} exact>
+              <Route path={`${basePath}callback`} exact>
                 <Callback />
               </Route>
-              <Route path={`${uiPath ?? ''}/board/:boardId`}>
+              <Route path={`${basePath}board/:boardId`}>
                 {boards && loggedIn ? (
                   <BoardPrivilegeContextProvider>
                     <Board
@@ -155,7 +155,7 @@ export function TolApp(props: Props) {
                   <Redirect to={basePath} replace />
                 )}
               </Route>
-              <Route path={`${uiPath ?? ''}/file-validation/results/:uploadId`} render={(routeProps) => {
+              <Route path={`${basePath}file-validation/results/:uploadId`} render={(routeProps) => {
                 return loggedIn ? (
                   <ValidationResultsViewer {...routeProps} />
                 ) : (
