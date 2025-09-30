@@ -20,7 +20,7 @@ import {
   PButton,
   PBoard,
   addComponents,
-  InfoTooltip,
+  IconTooltip,
   normaliseCaps,
   useBoardPrivilege,
   PRIVILEGE
@@ -192,7 +192,7 @@ export function Zone(props: PZone) {
   };
 
   const Tooltip = (
-    <InfoTooltip
+    <IconTooltip
       contents={
         <>{normaliseCaps(objectType)} Zone</>
       }

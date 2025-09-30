@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TBoardPrivilege } from "src/interfaces";
+import { TBoardPrivilege } from "../interfaces";
 
 export const PRIVILEGE = {
   BOARD: {

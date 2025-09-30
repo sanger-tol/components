@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
-import { FieldMeta, IAllowedCardinality } from "..";
+import { IAllowedCardinality } from "..";
 
 
 export function convertToPath(name: string) {
@@ -54,11 +54,7 @@ export function isEmptyObject(x: object) {
 export function normaliseCaps(name: string, prefix?: string) {
   if (!name) return "";
   // make object ids clear (for auto load)
-  if (prefix !== undefined) {
-    if (name === "id" || name === "uid") {
-      return normaliseCaps(prefix) + " ID";
-    }
-  }
+  if (prefix && name === "id") return normaliseCaps(prefix) + " ID";
   // replace relationship '.' with underscore ready to split
   name = name.replace(".", "_");
   const words = name.split("_");
@@ -70,7 +66,6 @@ export function normaliseCaps(name: string, prefix?: string) {
 
 function normaliseWords(word: string) {
   switch (word) {
-    case "uid":
     case "id":
       return "ID";
     case "sts":
@@ -163,10 +158,6 @@ export function generateId(prefix: string) {
   const nanoid = customAlphabet(alphabet, 12);
 
   return `${prefix}_${nanoid()}`;
-}
-
-export function getSourceData(fieldMeta: FieldMeta, attribute: string) {
-  return fieldMeta?.data[attribute]["source"] || "";
 }
 
 export function getAttributeSources(
@@ -408,4 +399,13 @@ export function getHeight(type: string) {
     case "xl":
       return 600;
   }
+}
+
+export function sortObjectAlphabetically(obj: Record<string, any>): Record<string, any> {
+  return Object.keys(obj)
+    .sort() // sort keys alphabetically
+    .reduce((sortedObj: Record<string, any>, key: string) => {
+      sortedObj[key] = obj[key]; // rebuild the object with sorted keys
+      return sortedObj;
+    }, {});
 }
