@@ -6,11 +6,13 @@ SPDX-License-Identifier: MIT
 
 import videojs from "video.js";
 import { useEffect, useRef } from "react";
+import "videojs-youtube"; 
 import "video.js/dist/video-js.css";
 
 export type TVideoConfig = IVideoConfig;
 
 export interface IVideoConfig {
+  techOrder?: string[];
   autoplay: boolean;
   controls: boolean;
   sources: Tsources;
@@ -31,20 +33,20 @@ export function VideoPlayer(props: IVideoSetter) {
   const { options } = props;
 
   const videoNode = useRef<HTMLVideoElement | null>(null);
-  const playerRef = useRef<videojs.js | null>(null);
+  const playerRef = useRef<videojs.Player | null>(null);
 
   useEffect(() => {
     if (videoNode.current) {
       playerRef.current = videojs(videoNode.current, options, () => {
         videojs.log("on Player ready", playerRef.current);
       });
-      return()=>{
-        if(playerRef.current){
-            playerRef.current.dispose();
+      return () => {
+        if (playerRef.current) {
+          playerRef.current.dispose();
         }
-      }
+      };
     }
-  },[options]);
+  }, [options]);
 
   return (
     <div data-vjs-player>
