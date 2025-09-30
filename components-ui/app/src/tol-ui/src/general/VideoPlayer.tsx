@@ -5,19 +5,26 @@ SPDX-License-Identifier: MIT
 */
 
 export interface IVideoSetter {
+  host?: "youtube" | "vimeo";
   videoId: string;
   width?: string | number;
   height?: string | number;
 }
 
 export function VideoPlayer(props: IVideoSetter) {
-  const { videoId, width = 500, height = 300 } = props;
-  const url = `https://www.youtube.com/embed/${videoId}`;
+  const { host, videoId, width = 500, height = 300 } = props;
+
+  let url = `https://www.youtube.com/embed/${videoId}`;
+
+  if (host) {
+    if (host === "vimeo") {
+      url = `https://player.vimeo.com/video/${videoId}`;
+    }
+    // ==>Todo: Add conditions based on the host
+  }
 
   return (
-    <div
-      className="tol-video-container"
-    >
+    <div className="tol-video-container">
       <iframe
         src={url}
         title="Tol Embedded Video Player"
