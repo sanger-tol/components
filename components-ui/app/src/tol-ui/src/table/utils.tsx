@@ -21,7 +21,8 @@ import {
   TCellRenderer,
   Cell,
   deepCopy,
-  ICustomCellRenderers
+  ICustomCellRenderers,
+  copyToClipboard,
 } from "..";
 
 interface Rgb {
@@ -65,10 +66,7 @@ export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
   } as FieldMeta;
 }
 
-function addValueBasedCellRenderer(
-  value: any,
-  meta: Field,
-) {
+function addValueBasedCellRenderer(value: any, meta: Field) {
   if (value !== null && value !== undefined) {
     if (Array.isArray(value)) {
       meta.cellRenderer = { type: "list" };
@@ -96,7 +94,10 @@ export function convertTableData(
       // only add if undefined, not null - null = turn off cell renderer
       const value = getFieldByName(obj, attribute);
       if (fieldMeta.dataWithDefaults![attribute]?.cellRenderer === undefined) {
-        addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![attribute]);
+        addValueBasedCellRenderer(
+          value,
+          fieldMeta.dataWithDefaults![attribute]
+        );
       }
       row[attribute] = (
         <Cell
@@ -108,7 +109,6 @@ export function convertTableData(
           customCellRenderers={customCellRenderers}
         />
       );
-
     });
     data.push(row);
   });
@@ -117,7 +117,7 @@ export function convertTableData(
 
 function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
   // relationship ids have relationship boxes by default
-  const splitKey = key.split(".")
+  const splitKey = key.split(".");
   if (isRelationship(key) && splitKey[splitKey.length - 1] === "id") {
     return { type: "relationship" };
   }
@@ -150,7 +150,7 @@ function sortFieldsByRename(fieldMeta: FieldMeta) {
 export function addDefaultsFromEntityMeta(
   key: string,
   meta: IAttributeData,
-  fieldMeta: FieldMeta,
+  fieldMeta: FieldMeta
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
   const defaults = {
@@ -163,25 +163,27 @@ export function addDefaultsFromEntityMeta(
     width: 200,
     description: meta.description,
     source: meta.source,
-  }
+  };
   // customised field config overrides the defaults
-  fieldMeta.dataWithDefaults[key] = { ...defaults, ...fieldMeta.dataWithDefaults[key] };
+  fieldMeta.dataWithDefaults[key] = {
+    ...defaults,
+    ...fieldMeta.dataWithDefaults[key],
+  };
 }
 
 export function addFieldMetaDefaults(
   objectType: string,
   fieldMeta: FieldMeta,
-  entityMeta: IEntityMeta,
+  entityMeta: IEntityMeta
 ) {
   for (const [key, meta] of Object.entries(
     entityMeta.flatAttributes[objectType]
   )) {
-    if (fieldMeta.order.active.includes(key) || fieldMeta.order.inactive?.includes(key)) {
-      addDefaultsFromEntityMeta(
-        key,
-        meta,
-        fieldMeta,
-      );
+    if (
+      fieldMeta.order.active.includes(key) ||
+      fieldMeta.order.inactive?.includes(key)
+    ) {
+      addDefaultsFromEntityMeta(key, meta, fieldMeta);
     }
   }
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
@@ -214,10 +216,7 @@ export function setTableConfigLocalStorage(
   let config = getTableConfigLocalStorage(tableId);
   if (!config) config = {};
   config[key] = value;
-  localStorage.setItem(
-    getTableConfigKey(tableId),
-    JSON.stringify(config)
-  );
+  localStorage.setItem(getTableConfigKey(tableId), JSON.stringify(config));
 }
 
 export function getTableConfigLocalStorage(tableId: string, key?: string) {
@@ -258,10 +257,7 @@ export function getSourceColour(sourceName?: string): string {
   return rgbToString(rgb, 1);
 }
 
-export function mapKeysToDisplayNames(
-  data: any,
-  displayNames: any
-): object {
+export function mapKeysToDisplayNames(data: any, displayNames: any): object {
   const result: object = {};
   for (const key in data) {
     if (displayNames[key] && displayNames[key].display_name) {
@@ -304,11 +300,10 @@ export async function dataObjectToSpreadsheetData(
   dataObjects?.forEach((obj) => {
     const flatData = {};
     requestedFields.forEach((field) => {
-      flatData[fieldMeta.dataWithDefaults?.[field].rename ?? field] = Array.isArray(
-        getFieldByName(obj, field)
-      )
-        ? getFieldByName(obj, field).toString()
-        : getFieldByName(obj, field);
+      flatData[fieldMeta.dataWithDefaults?.[field].rename ?? field] =
+        Array.isArray(getFieldByName(obj, field))
+          ? getFieldByName(obj, field).toString()
+          : getFieldByName(obj, field);
     });
     spreadsheetData.push(flatData);
   });
@@ -329,4 +324,18 @@ export function exportDataToSpreadsheet(
 export function formatTotalSize(totalSize: number) {
   if (totalSize === 1) return "1 Row";
   return totalSize.toLocaleString() + " Rows";
+}
+
+export function copyConcept(data: any, fieldHeader: string) {
+  const copySet = new Set<string>(
+    data.flatMap((element) =>
+      Array.isArray(
+        getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)
+      )
+        ? getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)
+        : [getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)]
+    )
+  );
+  const copyList = Array.from(copySet).join("\n");
+  copyToClipboard(copyList);
 }
