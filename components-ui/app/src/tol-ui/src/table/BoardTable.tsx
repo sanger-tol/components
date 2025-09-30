@@ -6,36 +6,42 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  FieldMeta,
-  initialiseFieldMeta,
   BoardFilters,
   RemoteTable,
   saveTitle,
   IBoardTargetAndZone,
   updateConfigAndUpsert,
   useBoardPrivilege,
-  PRIVILEGE
+  PRIVILEGE,
+  ITableConfigSave,
+  optimiseFieldMetaForSave,
+  ITableDrawerSave,
 } from "..";
 
 
-interface Props extends IBoardTargetAndZone {
+export interface PBoardTable extends IBoardTargetAndZone {
   id: string;
   title: string;
-  config: any;
+  config: ITableConfigSave;
 }
 
-export function BoardTable(props: Props) {
+export function BoardTable(props: PBoardTable) {
   const { id, title, boardObjectType, boardDataSource, zone } = props;
-  const [config, setConfig] = useState<any>(props.config);
-  const [forceUpdate, setForceUpdate] = useState(true);
+  const [config, setConfig] = useState<ITableConfigSave>(props.config);
+  const [forceUpdate, setForceUpdate] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
   const { privilege } = useBoardPrivilege()
 
-
-  const onModalSave = (fm: FieldMeta, actions: string[], sortByAtt: string) => {
-    config["fieldMeta"] = fm;
+  const onConfigSave = ({
+    fieldMeta: fm,
+    actions,
+    defaultSortByAttribute,
+    defaultSortByType
+  }: ITableDrawerSave) => {
+    config["fieldMeta"] = optimiseFieldMetaForSave(fm);
     config["actions"] = actions;
-    config["sort_by"] = sortByAtt
+    config["defaultSortByAttribute"] = defaultSortByAttribute;
+    config["defaultSortByType"] = defaultSortByType;
     setForceUpdate(!forceUpdate); // fetches new data on save
     setConfig({ ...config });
     updateConfigAndUpsert(
@@ -57,7 +63,7 @@ export function BoardTable(props: Props) {
     );
   };
 
-  const onPageSizeChange = (pageSize: boolean) => {
+  const onPageSizeChange = (pageSize: number) => {
     config["pageSize"] = pageSize;
     setConfig({ ...config });
     updateConfigAndUpsert(
@@ -83,20 +89,18 @@ export function BoardTable(props: Props) {
       {...props}
       noConfigModal={privilege !== PRIVILEGE.BOARD.EDITABLE}
       displaySource
-      fieldMeta={config.fieldMeta || initialiseFieldMeta()}
-      pageSize={config.pageSize || 50}
-      filterVisibility={config.filterVisibility ?? true}
-      defaultSort={
-        config.sort_by ||
-        config?.fieldMeta?.order?.active[0] ||
-        undefined
-      }
-      onModalSave={onModalSave}
+      fields={config.fieldMeta}
+      pageSize={config.pageSize}
+      filterVisibility={config.filterVisibility}
+      defaultSortByAttribute={config.defaultSortByAttribute}
+      defaultSortByType={config.defaultSortByType}
+      onConfigSave={onConfigSave}
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
       forceUpdate={forceUpdate}
+      // disabled temporarily
       // actions={config.actions}
-      rowSelection={config.actions?.length > 0}
+      rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
       utilityBarConfig={{
         title: {
           text: title,

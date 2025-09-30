@@ -36,7 +36,7 @@ export function BoardSunburst(props: Props) {
   const [forceUpdate, setForceUpdate] = useState(false);
   const { privilege } = useBoardPrivilege()
 
-  const onModalSave = (updatedConfig: object) => {
+  const onConfigSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });
     updateConfigAndUpsert(
       id,
@@ -103,7 +103,7 @@ export function BoardSunburst(props: Props) {
         sliceBy={config.sliceBy || []} // Pass in a blank array to account for no config
         open={openConfig}
         setOpen={setOpenConfig}
-        onConfigSave={onModalSave}
+        onConfigSave={onConfigSave}
         title="Sunburst Configuration"
       />
       <RemoteSunburst

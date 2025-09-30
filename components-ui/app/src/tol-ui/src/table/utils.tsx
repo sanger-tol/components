@@ -4,26 +4,24 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { format } from "date-fns";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import * as XLSX from "xlsx";
 import {
-  CellTooltip,
-  addFieldDefaults,
-  CellRenderer,
+  Field,
   FieldMeta,
-  FieldMetaData,
-  initialiseFieldMeta,
   isFloat,
   normaliseCaps,
-  Relationship,
   IEntityMeta,
-  StatusMessage,
   colours,
   TsDataSource,
-  getFieldByName,
+  IAttributeData,
   TDataObjectListOrNull,
+  getFieldByName,
+  ITableData,
+  ITableRecord,
+  TCellRenderer,
+  Cell,
+  deepCopy,
+  ICustomCellRenderers
 } from "..";
 
 interface Rgb {
@@ -32,9 +30,6 @@ interface Rgb {
   g: number;
   b: number;
 }
-
-export const tableVersion = "25-tabVer";
-let hiddenFields = false;
 
 export function isRelationship(key: string) {
   return key.includes(".");
@@ -60,337 +55,78 @@ const sourceColours = {
   other: colours[30],
 };
 
-function createLink(text: any, url: string) {
-  return (
-    <a href={url} target="_blank" rel="noopener noreferrer">
-      {text}
-    </a>
-  );
+export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
+  return {
+    data: fieldMeta?.data || {},
+    dataWithDefaults: deepCopy(fieldMeta?.data),
+    order: fieldMeta?.order || {
+      active: [],
+    },
+  } as FieldMeta;
 }
 
-function createRelationshipBox(
-  key: string,
-  data: any,
-  dataSource: TsDataSource,
-  detail?: boolean,
-  entityMeta?: IEntityMeta
-) {
-  const [relationship, attribute] = key.split(".");
-
-  // cannot assume some keys exist
-  if ("relationships" in data) {
-    if (relationship in data["relationships"]) {
-      const relationData = data["relationships"][relationship]["data"];
-      // need to create attributes for id to be added to if it doesn't exist
-      if (!("attributes" in relationData)) {
-        relationData["attributes"] = {};
-      }
-      relationData["attributes"]["id"] = relationData["id"];
-      if (attribute in relationData["attributes"]) {
-        return (
-          <Relationship
-            attribute={attribute}
-            data={relationData}
-            detail={detail}
-            dataSource={dataSource}
-            entityMeta={entityMeta}
-          />
-        );
-      }
-    }
-  }
-  return "";
-}
-
-function createDate(value: string) {
-  const date = new Date(value);
-  const dateText = format(date, "dd/MM/yyyy");
-  const dateContents = format(date, "dd/MM/yyyy HH:mm");
-  return <CellTooltip followCursor value={dateText} contents={dateContents} />;
-}
-
-function createBoolean(value: boolean) {
-  switch (value) {
-    case true:
-      return <StatusMessage message="True" status="success" />;
-    case false:
-      return <StatusMessage message="False" status="error" />;
-    default:
-      return "";
-  }
-}
-
-function createImage(value: string) {
-  return (
-    <a href={value} target="_blank" rel="noopener noreferrer">
-      <img src={value} alt={value} width="30%" />
-    </a>
-  );
-}
-
-function createFormattedList(list: any[]) {
-  return (
-    <div className="simple-tag-container">
-      {list.map((value: any) => {
-        return (
-          <div className="simple-tag" key={value}>
-            {value}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function createExpander(value: string) {
-  const shortValue = (
-    <div className="copy-icon">
-      {value.substring(0, 32) + "..."}
-      <FontAwesomeIcon
-        icon={faCopy}
-        size="sm"
-        onClick={() => {
-          navigator.clipboard.writeText(value);
-        }}
-      />
-    </div>
-  );
-
-  return <CellTooltip value={shortValue} contents={value} />;
-}
-
-function createFloat(value: any) {
-  return (
-    <CellTooltip followCursor value={value.toFixed?.(2)} contents={value} />
-  );
-}
-
-function createInteger(value: string | number) {
-  return (
-    <div className="tol-cell-renderer-integer">{value.toLocaleString()}</div>
-  );
-}
-
-function createCellRenderer(
-  cellRenderer: CellRenderer,
-  key: string,
+function addValueBasedCellRenderer(
   value: any,
-  data: object,
-  dataSource: TsDataSource,
-  entityMeta?: IEntityMeta
+  meta: Field,
 ) {
-  if (cellRenderer === null) return value;
-  if (typeof cellRenderer === "string") {
-    if (value === null || value === undefined) return "";
-    if (cellRenderer === "relationship") {
-      return createRelationshipBox(key, data, dataSource, false, entityMeta);
-    } else if (cellRenderer === "relationshipDetail") {
-      return createRelationshipBox(key, data, dataSource, true, entityMeta);
-    } else if (cellRenderer === "datetime") {
-      return createDate(value);
-    } else if (cellRenderer === "boolean") {
-      return createBoolean(value);
-    } else if (cellRenderer === "image") {
-      return createImage(value);
-    } else if (cellRenderer === "list") {
-      return createFormattedList(value);
-    } else if (cellRenderer === "expander") {
-      return createExpander(value);
-    } else if (cellRenderer === "float") {
-      return createFloat(value);
-    } else if (cellRenderer === "integer") {
-      return createInteger(value);
-    }
-  }
-
-  const props: object = {};
-  if (cellRenderer.propPointers !== undefined) {
-    for (const [prop, requiredField] of Object.entries(
-      cellRenderer.propPointers
-    )) {
-      if (requiredField === "id") {
-        props[prop] = data["id"];
-      } else {
-        props[prop] = data["attributes"][requiredField];
-      }
-    }
-  }
-  if (cellRenderer.props !== undefined) {
-    Object.assign(props, cellRenderer.props);
-  }
-  // all row data always passed to use in a cellRenderer component via a rowData prop
-  props["rowData"] = data;
-  return <cellRenderer.element {...props} />;
-}
-
-function setValueBasedCellRenderer(
-  key: string,
-  value: any,
-  fieldMetaData: object
-) {
-  if (fieldMetaData[key].cellRenderer === undefined) {
-    if (value !== null && value !== undefined) {
-      if (Array.isArray(value)) {
-        fieldMetaData[key].cellRenderer = "list";
-      } else if (value.length > 32) {
-        fieldMetaData[key].cellRenderer = "expander";
-      } else if (isFloat(value)) {
-        fieldMetaData[key].cellRenderer = "float";
-      }
-    }
-  }
-}
-
-function addCustomCellRendererData(
-  fieldMetaData: FieldMetaData,
-  attributes: any
-) {
-  for (const key of Object.keys(fieldMetaData)) {
-    if (fieldMetaData[key].custom) {
-      attributes[key] = "CUSTOM_FIELD";
-    }
-  }
-  return attributes;
-}
-
-function formatAttributeData(
-  row: object,
-  fieldMetaData: FieldMetaData,
-  rowOutput: object,
-  dataSource: TsDataSource,
-  entityMeta?: IEntityMeta
-) {
-  const attributes = row["attributes"];
-
-  // add non-null value for a custom field to allow cellRenderer to display
-  addCustomCellRendererData(fieldMetaData, attributes);
-  for (const [key, value] of Object.entries(attributes)) {
-    if (fieldMetaData[key] !== undefined) {
-      setValueBasedCellRenderer(key, value, fieldMetaData);
-      if (fieldMetaData[key].cellRenderer !== undefined) {
-        rowOutput[key] = createCellRenderer(
-          fieldMetaData[key].cellRenderer!,
-          key,
-          value,
-          row,
-          dataSource,
-          entityMeta
-        );
-      } else if (fieldMetaData[key].link !== undefined) {
-        rowOutput[key] = createLink(
-          attributes[key],
-          attributes[fieldMetaData[key].link]
-        );
-      } else {
-        rowOutput[key] = value;
-      }
-    }
-  }
-}
-
-function resolveNestedRelationship(relationships: any, keys: string[]): any {
-  if (keys.length === 0 || !relationships) return null;
-
-  const [currentKey, ...remainingKeys] = keys;
-  const currentRelationship = relationships[currentKey];
-
-  if (!currentRelationship || !("data" in currentRelationship)) return null;
-
-  const instanceData = currentRelationship["data"];
-  if (remainingKeys.length === 0) {
-    return instanceData;
-  }
-
-  return resolveNestedRelationship(
-    instanceData["relationships"],
-    remainingKeys
-  );
-}
-
-function addRelationshipFieldsToAttributes(
-  row: object,
-  fieldMetaData: FieldMetaData
-) {
-  const rowRelationships = row["relationships"];
-  const rowAttributes = row["attributes"];
-  for (const [key, meta] of Object.entries(fieldMetaData)) {
-    // only deal with relationships
-    if (!meta.isAttribute) {
-      const keys = key.split(".");
-      const attribute = keys.pop(); // Extract the final attribute
-      const resolvedData = resolveNestedRelationship(rowRelationships, keys);
-      if (resolvedData) {
-        if (attribute === "id") {
-          rowAttributes[key] = resolvedData["id"];
-        } else if (
-          "attributes" in resolvedData &&
-          attribute! in resolvedData["attributes"]
-        ) {
-          rowAttributes[key] = resolvedData["attributes"][attribute!];
-        }
-      }
-
-      // if row doesn't have the fields data, default to null
-      if (rowAttributes[key] === undefined) rowAttributes[key] = null;
+  if (value !== null && value !== undefined) {
+    if (Array.isArray(value)) {
+      meta.cellRenderer = { type: "list" };
+    } else if (value.length > 32) {
+      meta.cellRenderer = { type: "expander" };
+    } else if (isFloat(value)) {
+      meta.cellRenderer = { type: "float" };
     }
   }
 }
 
 export function convertTableData(
-  data: any[],
-  fieldMeta: FieldMeta,
+  dataObjects: TDataObjectListOrNull,
   dataSource: TsDataSource,
-  entityMeta?: IEntityMeta
-) {
-  if (data[0] === undefined) return [];
-  const updatedData: any[] = [];
-  data.forEach((row) => {
-    // create empty attributes if they don't exist
-    if (!("attributes" in row)) row["attributes"] = {};
-    if ("relationships" in row) {
-      addRelationshipFieldsToAttributes(row, fieldMeta.data);
-    }
-    const rowOutput = { id: row.id };
-    if ("attributes" in row) {
-      formatAttributeData(
-        row,
-        fieldMeta.data,
-        rowOutput,
-        dataSource,
-        entityMeta
+  fieldMeta: FieldMeta,
+  customCellRenderers?: ICustomCellRenderers
+): ITableData {
+  if (!dataObjects) return [];
+  const data: ITableData = [];
+  // loop over each data object
+  dataObjects!.forEach((obj) => {
+    const row: ITableRecord = {};
+    // loop over each field
+    fieldMeta.order.active.forEach((attribute) => {
+      // only add if undefined, not null - null = turn off cell renderer
+      const value = getFieldByName(obj, attribute);
+      if (fieldMeta.dataWithDefaults![attribute]?.cellRenderer === undefined) {
+        addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![attribute]);
+      }
+      row[attribute] = (
+        <Cell
+          attribute={attribute}
+          value={value}
+          dataObject={obj}
+          dataSource={dataSource}
+          renderer={fieldMeta.dataWithDefaults?.[attribute]?.cellRenderer}
+          customCellRenderers={customCellRenderers}
+        />
       );
-    }
-    updatedData.push(rowOutput);
+
+    });
+    data.push(row);
   });
-  return updatedData;
+  return data;
 }
 
-function addDefaultCellRenderer(key: string, type: string) {
+function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
   // relationship ids have relationship boxes by default
-  if (isRelationship(key) && key.split(".")[1] === "id") {
-    return "relationship";
+  const splitKey = key.split(".")
+  if (isRelationship(key) && splitKey[splitKey.length - 1] === "id") {
+    return { type: "relationship" };
   }
+
   switch (type) {
     case "datetime":
+      return { type: "datetime" };
     case "boolean":
-      return type;
-  }
-  return undefined;
-}
-
-function structureFieldMetaViaProp(
-  fieldMeta: FieldMeta,
-  fields: FieldMetaData
-) {
-  for (const [key, meta] of Object.entries(fields)) {
-    // only adding field if it is new or first load
-    if (!(key in fieldMeta.data)) {
-      const isActive = meta.hidden ? "inactive" : "active";
-      fieldMeta.order[isActive].push(key);
-    }
-    fieldMeta.data[key] = addFieldDefaults(meta);
-    fieldMeta.data[key].isAttribute = !isRelationship(key);
-    if (fieldMeta.data[key].hidden) hiddenFields = true;
+      return { type: "boolean" };
   }
 }
 
@@ -400,139 +136,74 @@ function addRemoteFilterType(type: string, cardinality: number) {
   return type;
 }
 
-function addEntityMetaFields(
-  endpoint: string,
-  fieldMeta: FieldMeta,
-  entityMeta: IEntityMeta
-) {
-  for (const [key, meta] of Object.entries(
-    entityMeta.flatAttributes[endpoint]
-  )) {
-    // initialising
-    const type = meta["python_type"];
-    const rename = meta["display_name"];
-    const description = meta["description"] || undefined;
-    const filterType = addRemoteFilterType(type, meta["cardinality"]);
-    const source = meta["source"];
-
-    // auto add field that are not yet in fieldMeta & hidden not enabled
-    if (!hiddenFields && !(key in fieldMeta.data)) {
-      fieldMeta.order["inactive"].push(key);
-      fieldMeta.data[key] = addFieldDefaults(
-        // hides any new (not defined as a prop) fields
-        { isAttribute: !isRelationship(key), hidden: true }
-      );
-    }
-    // add defaults to fields
-    if (key in fieldMeta.data) {
-      fieldMeta.data[key].type = fieldMeta.data[key].type || type;
-      fieldMeta.data[key].filter = fieldMeta.data[key].filter || filterType;
-      fieldMeta.data[key].sort = fieldMeta.data[key].sort || true;
-      fieldMeta.data[key].rename =
-        fieldMeta.data[key].rename || rename || normaliseCaps(key, endpoint);
-      fieldMeta.data[key].description =
-        fieldMeta.data[key].description || description;
-      fieldMeta.data[key].source = fieldMeta.data[key].source || source;
-    }
-  }
-}
-
-export function sortFieldsByRename(fieldMeta: FieldMeta) {
+function sortFieldsByRename(fieldMeta: FieldMeta) {
+  if (!fieldMeta || !fieldMeta.order.inactive) return;
   return fieldMeta.order.inactive.sort((a, b) => {
-    const fieldA = fieldMeta.data[a];
-    const fieldB = fieldMeta.data[b];
+    const fieldA = fieldMeta.dataWithDefaults![a];
+    const fieldB = fieldMeta.dataWithDefaults![b];
     if (fieldA.rename! < fieldB.rename!) return -1;
     if (fieldA.rename! > fieldB.rename!) return 1;
     return 0;
   });
 }
 
-function addDefaultMeta(fieldMeta: FieldMeta) {
-  // add defaults
-  for (const [key, meta] of Object.entries(fieldMeta.data)) {
-    if (fieldMeta.data[key].cellRenderer === undefined) {
-      fieldMeta.data[key].cellRenderer = addDefaultCellRenderer(
-        key,
-        meta.type!
-      );
-    }
-    if (!meta.rename) meta.rename = normaliseCaps(key);
+export function addDefaultsFromEntityMeta(
+  key: string,
+  meta: IAttributeData,
+  fieldMeta: FieldMeta,
+) {
+  if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
+  const defaults = {
+    cellRenderer: addDefaultCellRenderer(key, meta.python_type),
+    filter: addRemoteFilterType(meta.python_type, meta.cardinality),
+    isAttribute: isRelationship(key),
+    rename: meta.display_name || normaliseCaps(key),
+    sort: true,
+    type: meta.python_type,
+    width: 200,
+    description: meta.description,
+    source: meta.source,
   }
-  // ensure fields are easy to find
-  fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
+  // customised field config overrides the defaults
+  fieldMeta.dataWithDefaults[key] = { ...defaults, ...fieldMeta.dataWithDefaults[key] };
 }
 
-export function structureFieldMeta(
-  endpoint: string,
-  savedFieldMeta?: FieldMeta,
-  entityMeta?: IEntityMeta,
-  fields?: FieldMetaData
+export function addFieldMetaDefaults(
+  objectType: string,
+  fieldMeta: FieldMeta,
+  entityMeta: IEntityMeta,
 ) {
-  endpoint = endpoint.split("/").pop() as string;
-  const fieldMeta = savedFieldMeta || initialiseFieldMeta();
-  const fieldPropExists = fields !== undefined;
-  if (fieldPropExists) structureFieldMetaViaProp(fieldMeta, fields);
-  /*
-  --- dealing with id/uid ---
-  - id is seperate from attributes, so it needs to be added
-  - only added if uid does not exist
-  - value can be null, as only the key is used in this instance
-  */
-  if (entityMeta) {
-    addEntityMetaFields(endpoint, fieldMeta, entityMeta);
+  for (const [key, meta] of Object.entries(
+    entityMeta.flatAttributes[objectType]
+  )) {
+    if (fieldMeta.order.active.includes(key) || fieldMeta.order.inactive?.includes(key)) {
+      addDefaultsFromEntityMeta(
+        key,
+        meta,
+        fieldMeta,
+      );
+    }
   }
-  addDefaultMeta(fieldMeta);
+  fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
   return fieldMeta;
 }
 
-export function tableDebug(
-  apiData: object,
-  fieldMeta: object,
-  debug?: boolean
-) {
-  if (debug) {
-    try {
-      const fieldPossibilities: any = {
-        attributes: ["id"],
-        relationships: [],
-      };
-      const apiDataInstance = apiData[0];
-      if ("attributes" in apiDataInstance) {
-        for (const key of Object.keys(apiDataInstance.attributes)) {
-          fieldPossibilities["attributes"].push(key);
-        }
-      }
-      const relationships: object = apiDataInstance.relationships;
-      if ("relationships" in apiDataInstance) {
-        for (const [key, value] of Object.entries(relationships)) {
-          // ignoring one-to-many relationships
-          if ("data" in value) {
-            fieldPossibilities["relationships"].push(key);
-          }
-        }
-      }
-      console.log("Field Possibilities", fieldPossibilities);
-      console.log("Api Response Data", apiData);
-      console.log("Field Meta", fieldMeta);
-    } catch (e) {} // eslint-disable-line
-  }
-}
-
-export function createSort(sortColumn: string, sortType: string) {
+export function createSort(sortColumn?: string, sortType?: string) {
+  if (!sortColumn) return undefined;
   if (sortType === "desc" && !sortColumn.startsWith("-")) {
     return "-" + sortColumn;
   }
   return sortColumn;
 }
 
-function deleteRedundantLocalStorageEntries(ids: string[]) {
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key && ids.some((id) => key.includes(id))) {
-      localStorage.removeItem(key);
-      i--; // adjust the index after removing an item
-    }
-  }
+export function optimiseFieldMetaForSave(fieldMeta?: FieldMeta) {
+  const fm = deepCopy(fieldMeta);
+  delete fm.dataWithDefaults;
+  return fm;
+}
+
+function getTableConfigKey(id: string) {
+  return `${id}-9-25`;
 }
 
 export function setTableConfigLocalStorage(
@@ -540,45 +211,28 @@ export function setTableConfigLocalStorage(
   key: string,
   value: any
 ) {
+  let config = getTableConfigLocalStorage(tableId);
+  if (!config) config = {};
+  config[key] = value;
   localStorage.setItem(
-    `${key}-${tableId}-${tableVersion}`,
-    JSON.stringify(value)
+    getTableConfigKey(tableId),
+    JSON.stringify(config)
   );
 }
 
-export function getTableConfigLocalStorage(tableId: string, key: string) {
-  deleteRedundantLocalStorageEntries([
-    "-field-meta", // legacy suffix
-    "-table-v", // recent suffix
-  ]);
-
-  const data = localStorage.getItem(`${key}-${tableId}-${tableVersion}`);
-  if (data) return JSON.parse(data);
-}
-
-export function getFieldMetaLocalStorage(
-  tableId: string,
-  fields?: FieldMetaData
-) {
-  const data = localStorage.getItem(`fieldMeta-${tableId}-${tableVersion}`);
-  if (data) return fieldMetaToCellRenderer(fields || {}, JSON.parse(data));
-}
-
-export function deleteFieldMetaLocalStorage(tableId: string) {
-  localStorage.removeItem(`${tableId}-${tableVersion}`);
-  window.location.reload();
-}
-
-export function fieldMetaToCellRenderer(
-  fields: FieldMetaData,
-  fieldMeta: FieldMeta
-) {
-  for (const field in fields) {
-    if (fields[field].cellRenderer) {
-      fieldMeta.data[field].cellRenderer = fields[field].cellRenderer;
+export function getTableConfigLocalStorage(tableId: string, key?: string) {
+  const data = localStorage.getItem(getTableConfigKey(tableId));
+  if (data) {
+    const config = JSON.parse(data);
+    if (key) {
+      if (key in config) {
+        return config[key];
+      } else {
+        return undefined;
+      }
     }
+    return config;
   }
-  return fieldMeta;
 }
 
 function rgbToString(rgb: Rgb, opacity: number) {
@@ -604,21 +258,10 @@ export function getSourceColour(sourceName?: string): string {
   return rgbToString(rgb, 1);
 }
 
-/*
-if no fields are hidden, return all keys
-if any fields are hidden, return only the fieldMeta.order.active columns and those that are marked hidden
-*/
-export function getAllowedFields(fieldMeta: FieldMeta) {
-  const hasHiddenFields = Object.values(fieldMeta.data).some(
-    (field) => field.hidden === true
-  );
-  if (!hasHiddenFields) return Object.keys(fieldMeta.data);
-  return Object.keys(fieldMeta.data).filter(
-    (key) => fieldMeta.data[key].hidden || fieldMeta.order.active.includes(key)
-  );
-}
-
-export function mapKeysToDisplayNames(data: any, displayNames: any): object {
+export function mapKeysToDisplayNames(
+  data: any,
+  displayNames: any
+): object {
   const result: object = {};
   for (const key in data) {
     if (displayNames[key] && displayNames[key].display_name) {
@@ -644,9 +287,11 @@ export async function getActions(
       },
     },
   });
-  actions?.find((action) => {
+
+  actions?.forEach((action) => {
     actionsList.push(action.name);
   });
+
   return actionsList;
 }
 
@@ -659,7 +304,7 @@ export async function dataObjectToSpreadsheetData(
   dataObjects?.forEach((obj) => {
     const flatData = {};
     requestedFields.forEach((field) => {
-      flatData[fieldMeta.data[field].rename!] = Array.isArray(
+      flatData[fieldMeta.dataWithDefaults?.[field].rename ?? field] = Array.isArray(
         getFieldByName(obj, field)
       )
         ? getFieldByName(obj, field).toString()
@@ -679,4 +324,9 @@ export function exportDataToSpreadsheet(
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "ToLTable");
   XLSX.writeFile(workbook, heading, { compression: true });
+}
+
+export function formatTotalSize(totalSize: number) {
+  if (totalSize === 1) return "1 Row";
+  return totalSize.toLocaleString() + " Rows";
 }

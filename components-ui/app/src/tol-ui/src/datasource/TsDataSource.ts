@@ -324,7 +324,7 @@ export class TsDataSource {
           return new Proxy(response.data.data, this.dataObjectHandler);
         })
         .catch((error: any) => {
-          if (error.response.status === 404) return null;
+          if (error?.response?.status === 404) return null;
           throw error;
         })
         .finally(() => {
@@ -354,7 +354,7 @@ export class TsDataSource {
         return new Proxy(response.data.data, this.dataObjectHandler);
       })
       .catch((error: any) => {
-        if (error.response.status === 404) return null;
+        if (error?.response?.status === 404) return null;
         throw error;
       });
   }
@@ -392,7 +392,7 @@ export class TsDataSource {
         return this.updateDetailCache(response, objectType);
       })
       .catch((error: any) => {
-        if (error.response.status === 404) return null;
+        if (error?.response?.status === 404) return null;
         throw error;
       });
   }
@@ -479,7 +479,7 @@ export class TsDataSource {
         return [dataObjects, response.data.meta.search_after];
       })
       .catch((error: any) => {
-        if (error.response.status === 404) return null;
+        if (error?.response?.status === 404) return null;
         throw error;
       });
   }
@@ -496,7 +496,7 @@ export class TsDataSource {
         }
       })
       .catch((error: any) => {
-        if (error.response.status === 404) return null;
+        if (error?.response?.status === 404) return null;
         throw error;
       });
   }
@@ -516,7 +516,7 @@ export class TsDataSource {
         return this.updateDetailCache(response, objectType);
       })
       .catch((error: any) => {
-        if (error.response.status === 404) return null;
+        if (error?.response?.status === 404) return null;
         throw error;
       });
   }
