@@ -6,24 +6,9 @@ SPDX-License-Identifier: MIT
 
 import videojs from "video.js";
 import { useEffect, useRef } from "react";
-import "videojs-youtube"; 
+import "videojs-youtube";
 import "video.js/dist/video-js.css";
-
-export type TVideoConfig = IVideoConfig;
-
-export interface IVideoConfig {
-  techOrder?: string[];
-  autoplay: boolean;
-  controls: boolean;
-  sources: Tsources;
-}
-
-export type Tsources = ISources[];
-
-export interface ISources {
-  src: string;
-  type: string;
-}
+import { TVideoConfig } from "..";
 
 export interface IVideoSetter {
   options: TVideoConfig;
@@ -31,7 +16,6 @@ export interface IVideoSetter {
 
 export function VideoPlayer(props: IVideoSetter) {
   const { options } = props;
-
   const videoNode = useRef<HTMLVideoElement | null>(null);
   const playerRef = useRef<videojs.Player | null>(null);
 

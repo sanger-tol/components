@@ -22,3 +22,4 @@ export * from "./Widgets";
 export * from "./Drawer";
 export * from "./FileValidation";
 export * from "./SocialViewer";
+export * from "./VideoPlayer";
