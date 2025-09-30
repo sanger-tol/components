@@ -28,11 +28,7 @@
     "@uiw/react-md-editor":"4.0.7",
     "rehype-sanitize": "6.0.0",
     "xlsx": "0.18.5",
-    "@tanstack/react-query": "^5.81.5",
-    "video.js":"8.23.4",
-    "videojs-contrib-quality-levels": "4.1.0",
-    "videojs-http-source-selector": "1.1.6",
-    "videojs-youtube": "3.0.1"
+    "@tanstack/react-query": "^5.81.5"
   },
 "devDependencies": {
     "typescript": "5.6.3",

@@ -14,11 +14,7 @@
     "web-vitals": "^0.2.4",
     "react-markdown": "10.1.0",
     "xlsx": "0.18.5",
-    "@fortawesome/free-brands-svg-icons": "6.7.2",
-    "video.js":"8.23.4",
-    "videojs-contrib-quality-levels": "4.1.0",
-    "videojs-http-source-selector": "1.1.6",
-    "videojs-youtube": "3.0.1"
+    "@fortawesome/free-brands-svg-icons": "6.7.2"
   },
   "devDependencies": {
     "vite": "5.3.5",
