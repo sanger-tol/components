@@ -22,7 +22,7 @@ export function FieldDropdown(props: FieldDropdown) {
   // button ready for a dropdown menu - not implemented yet
   return (
     <span className="tol-field-dropdown" onClick={onClick}>
-      <Dropdown icon={<Icon icon="ellipsis-vertical" size="sm" />} noCaret>
+      <Dropdown icon={<Icon icon="ellipsis-vertical" size="sm" />} noCaret placement="bottomEnd">
         <Dropdown.Item
           icon={<Icon icon="share-from-square" size="sm" />}
           onClick={() => copyConcept(data, attribute)}
