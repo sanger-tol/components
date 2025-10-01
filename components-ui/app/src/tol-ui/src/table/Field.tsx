@@ -4,19 +4,18 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { IFilter } from "..";
+
+export interface ICustomCellRenderers {
+  [customType: string]: any;
+}
+
 interface ElementProps {
-  [prop: string]: string;
+  [prop: string]: string | IFilter;
 }
 
-interface CustomCellRenderer {
-  element: any;
-  propPointers?: ElementProps;
-  props?: ElementProps;
-}
-
-export type CellRenderer =
-  | CustomCellRenderer
-  | "relationship"
+export type CellRendererType =
+  "relationship"
   | "relationshipDetail"
   | "datetime"
   | "boolean"
@@ -25,16 +24,26 @@ export type CellRenderer =
   | "expander"
   | "float"
   | "integer"
-  | null;
+  | "link"
+  | string;
+
+export interface ICellRenderer {
+  type: CellRendererType;
+  element?: any;
+  props?: ElementProps;
+}
+
+export type TCellRenderer =
+  ICellRenderer
+  | null // turn off cell renderer if a default is usually added
+  | undefined;
+
 
 export interface Field {
-  cellRenderer?: CellRenderer;
-  custom?: boolean;
+  cellRenderer?: TCellRenderer;
   filter?: string | null;
   fixed?: boolean;
-  hidden?: boolean;
   isAttribute?: boolean;
-  link?: string;
   rename?: string;
   sort?: boolean;
   type?: string;
@@ -49,33 +58,15 @@ export interface FieldMetaData {
 
 export interface FieldMetaOrder {
   active: string[];
-  inactive: string[];
+  inactive?: string[];
 }
-
 export interface FieldMeta {
-  data: FieldMetaData;
+  data?: FieldMetaData; // original fields with specified options
+  dataWithDefaults?: FieldMetaData; // fields with defaults added
   order: FieldMetaOrder;
 }
 
-const fieldDefaults = () => {
-  return {
-    width: 200,
-  };
-};
+export type ITableRecord = Record<string, any>;
 
-export function addFieldDefaults(field: Field) {
-  return {
-    ...fieldDefaults(),
-    ...field,
-  };
-}
+export type ITableData = ITableRecord[];
 
-export function initialiseFieldMeta() {
-  return {
-    data: {},
-    order: {
-      active: [],
-      inactive: [],
-    },
-  } as FieldMeta;
-}
