@@ -126,7 +126,7 @@ function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
   switch (type) {
     case "datetime":
       return { type: "datetime" };
-    case "boolean":
+    case "bool":
       return { type: "boolean" };
   }
 }

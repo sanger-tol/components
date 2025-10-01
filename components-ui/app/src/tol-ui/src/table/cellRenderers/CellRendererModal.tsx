@@ -80,7 +80,7 @@ export function CellRendererModal(props: PCellRendererModal) {
     <h5>
       Configure
       {
-        ` '${entityMeta?.flatAttributes[objectType][attributeId].display_name
+        ` '${entityMeta?.flatAttributes[objectType][attributeId]?.display_name
         || normaliseCaps(attributeId)}' `
       }
       Cell Renderer

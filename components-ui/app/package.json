@@ -1,6 +1,6 @@
 {
   "name": "components-ui",
-  "version": "2.5.0-b",
+  "version": "2.5.0-c",
   "private": true,
   "proxy": "http://components-api:80",
   "dependencies": {

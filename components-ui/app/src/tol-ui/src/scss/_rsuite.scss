@@ -30,6 +30,7 @@
   // multiple select tags
   --rs-picker-value: var(--tol-primary);
   --rs-picker-count-bg: var(--tol-primary);
+
   .rs-picker-value-item {
     font-size: 14px !important;
   }
@@ -179,6 +180,13 @@
     padding-bottom: 0px;
   }
 
+  // modal icon buttons
+  .rs-modal-wrapper .rs-modal-footer .btn:has(svg) {
+    padding: 0;
+    height: 30px;
+    width: 30px;
+  }
+
   // tooltip
   --tol-tooltip-colour: var(--tol-dark);
 
@@ -195,22 +203,22 @@
     overflow-wrap: break-word;
   }
 
-  .rs-popover[class*="placement-left"] > .rs-popover-arrow::after {
+  .rs-popover[class*="placement-left"]>.rs-popover-arrow::after {
     border-left-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 
-  .rs-popover[class*="placement-top"] > .rs-popover-arrow::after {
+  .rs-popover[class*="placement-top"]>.rs-popover-arrow::after {
     border-top-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 
-  .rs-popover[class*="placement-right"] > .rs-popover-arrow::after {
+  .rs-popover[class*="placement-right"]>.rs-popover-arrow::after {
     border-right-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 
-  .rs-popover[class*="placement-bottom"] > .rs-popover-arrow::after {
+  .rs-popover[class*="placement-bottom"]>.rs-popover-arrow::after {
     border-bottom-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
@@ -262,7 +270,7 @@
   color: var(--tol-primary) !important;
 }
 
-.rs-form-control > .rs-input.rs-input:-webkit-autofill,
+.rs-form-control>.rs-input.rs-input:-webkit-autofill,
 .rs-input.rs-input:-webkit-autofill:hover,
 .rs-input.rs-input:-webkit-autofill:focus,
 .rs-input.rs-input:-webkit-autofill:active {
@@ -324,9 +332,7 @@
 }
 
 // checkboxes on pickers
-.rs-checkbox-disabled:not(.rs-checkbox-checked):not(.rs-checkbox-indeterminate)
-  .rs-checkbox-control
-  .rs-checkbox-inner::before {
+.rs-checkbox-disabled:not(.rs-checkbox-checked):not(.rs-checkbox-indeterminate) .rs-checkbox-control .rs-checkbox-inner::before {
   background-color: var(--rs-input-disabled-bg) !important;
   border-color: var(--rs-input-disabled-bg) !important;
 }
@@ -340,6 +346,15 @@
   .rs-anim-fade.rs-anim-in.rs-picker-check-menu.rs-picker-popup.placement-bottom-start {
     margin-right: 28px;
   }
+}
+
+// drawer and modal overlay switch
+.rs-modal-backdrop {
+  z-index: 1050;
+}
+
+.rs-drawer-backdrop {
+  z-index: 1049;
 }
 
 // tabs

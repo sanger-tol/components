@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, forwardRef, useState, useRef, ReactElement } from "react";
+import { useEffect, forwardRef, useState, useRef } from "react";
 import DraggableList from "react-draggable-list";
 import {
   Icon,
@@ -93,7 +93,7 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
               <div style={{ display: "inline", paddingRight: "5px" }}>
                 {attributeDetails.display_name || normaliseCaps(attributeId)}
               </div>
-              <EntityMetaToolTip {...props} field={attributeId} />
+              <AttributeTooltip {...props} field={attributeId} />
             </div>
           </span>
           <p className={"tol-config-drawer-selected-column-key"}>
