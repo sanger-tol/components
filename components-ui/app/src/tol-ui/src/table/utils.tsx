@@ -336,6 +336,8 @@ export function copyConcept(data: any, fieldHeader: string) {
         : [getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)]
     )
   );
-  const copyList = Array.from(copySet).join("\n");
+  const emptyStringsRemoval = Array.from(copySet).filter(Boolean);
+
+  const copyList = emptyStringsRemoval.join("\n");
   copyToClipboard(copyList);
 }
