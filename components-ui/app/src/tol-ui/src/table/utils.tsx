@@ -326,7 +326,7 @@ export function formatTotalSize(totalSize: number) {
   return totalSize.toLocaleString() + " Rows";
 }
 
-export function copyConcept(data: any, fieldHeader: string) {
+export function copyPageColumnValues(data: any, fieldHeader: string) {
   const copySet = new Set<string>(
     data.flatMap((element) =>
       Array.isArray(

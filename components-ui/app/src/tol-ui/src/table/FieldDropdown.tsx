@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Dropdown } from "rsuite";
-import { Icon, stopPropagation, copyConcept } from "..";
+import { Icon, stopPropagation, copyPageColumnValues } from "..";
 
 export interface FieldDropdown {
   attribute: string;
@@ -25,7 +25,7 @@ export function FieldDropdown(props: FieldDropdown) {
       <Dropdown icon={<Icon icon="ellipsis-vertical" size="sm" />} noCaret placement="bottomEnd">
         <Dropdown.Item
           icon={<Icon icon="share-from-square" size="sm" />}
-          onClick={() => copyConcept(data, attribute)}
+          onClick={() => copyPageColumnValues(data, attribute)}
         >
           Copy page column values
         </Dropdown.Item>
