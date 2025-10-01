@@ -11,6 +11,7 @@ export interface FieldDropdown {
 }
 
 export function FieldDropdown(props: FieldDropdown) {
+  // @ts-ignore
   const { attribute } = props;
 
   const onClick = (e) => {

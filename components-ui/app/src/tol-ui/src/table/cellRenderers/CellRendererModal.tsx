@@ -18,7 +18,6 @@ import {
   IEntityMeta,
   IRemoteTarget,
   RemoteFilters,
-  Cell,
 } from "../..";
 import { CellRendererParam } from "./CellRendererParam";
 
@@ -73,6 +72,7 @@ export function CellRendererModal(props: PCellRendererModal) {
     );
   };
 
+  // @ts-ignore
   const onLogicSave = (filters: any) => {
   }
 

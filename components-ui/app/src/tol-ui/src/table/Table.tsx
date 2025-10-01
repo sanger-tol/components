@@ -94,9 +94,6 @@ export function Table(props: Props) {
     fieldMeta,
     height,
     loading,
-
-    objectType,
-    dataSource,
     source,
 
     page,

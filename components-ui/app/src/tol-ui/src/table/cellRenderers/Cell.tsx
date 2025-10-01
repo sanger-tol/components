@@ -24,7 +24,7 @@ import {
 export interface PCell {
   attribute: string,
   value?: any,
-  dataObject?: TDataObjectOrNull,
+  dataObject: TDataObjectOrNull,
   dataSource?: TsDataSource,
   renderer: TCellRenderer;
   customCellRenderers?: ICustomCellRenderers;
@@ -52,12 +52,12 @@ export function Cell(props: PCell) {
     !renderer.type ||
     // no value and not a custom renderer as custom renderers may not require a value
     // no need to to deal with empty values with pre-defined cellRenderers
-    (!value && renderer.type in preDefinedElements)
+    (!value && (renderer.type as string) in preDefinedElements)
   )
     return <>{value}</>;
 
   const elements = { ...preDefinedElements, ...customCellRenderers };
-  renderer.element = elements[renderer.type];
+  renderer.element = elements[renderer.type as string];
 
   const elementProps: Record<string, any> = { ...props };
 
