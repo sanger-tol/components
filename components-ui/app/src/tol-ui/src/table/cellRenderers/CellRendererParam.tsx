@@ -9,7 +9,7 @@ import { Input } from "rsuite";
 import {
   Button,
   TCellRenderer,
-  InfoTooltip,
+  IconTooltip,
   IBoardParam,
   IRemoteTarget
 } from "../..";
@@ -43,7 +43,7 @@ export function CellRendererParam(props: PCellRendererParam) {
         <span className="tol-param-required">*</span>
       }
       <span className="tol-param-info">
-        <InfoTooltip contents={values.description} disableMarkdown />
+        <IconTooltip contents={values.description} disableMarkdown />
       </span>
       <div className="tol-param">
         {values.type === "string" ? (
