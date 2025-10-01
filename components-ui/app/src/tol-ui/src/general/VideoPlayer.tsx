@@ -4,15 +4,15 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export interface IVideoSetter {
+export interface PVideoPlayer {
   host?: "youtube" | "vimeo";
   videoId: string;
   width?: string | number;
   height?: string | number;
 }
 
-export function VideoPlayer(props: IVideoSetter) {
-  const { host, videoId, width = 500, height = 300 } = props;
+export function VideoPlayer(props: PVideoPlayer) {
+  const { host = "youtube", videoId, width = 500, height = 300 } = props;
 
   let url = `https://www.youtube.com/embed/${videoId}`;
 
