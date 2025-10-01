@@ -9,7 +9,7 @@ import DraggableList from "react-draggable-list";
 import {
   Icon,
   SourceTag,
-  EntityMetaToolTip,
+  AttributeTooltip,
   normaliseCaps,
   truncateString,
   IRemoteTarget,

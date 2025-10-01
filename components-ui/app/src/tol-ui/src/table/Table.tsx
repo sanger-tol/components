@@ -12,7 +12,7 @@ import {
   Placeholder,
   useEffectUpdate,
   DownloadModal,
-  EntityMetaToolTip,
+  AttributeTooltip,
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
@@ -32,6 +32,7 @@ import {
   RowCounter,
 } from "..";
 import { Sort } from "./Sort";
+import { FieldDropdown } from "./FieldDropdown";
 
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
@@ -470,26 +471,21 @@ export function Table(props: Props) {
                           fixed={field.fixed}
                         >
                           <HeaderCell>
-                            {(field.description || field.source) && (
-                              <div className="tol-header-info">
-                                <EntityMetaToolTip
-                                  objectType={objectType}
-                                  dataSource={dataSource}
-                                  field={key}
-                                />
-                              </div>
-                            )}
                             <p className="tol-header-text">
-                              {field.source && (
-                                <span
-                                  className="inline-source"
-                                  style={{
-                                    backgroundColor: getSourceColour(
-                                      field.source
-                                    ),
-                                  }}
-                                />
-                              )}
+                              <AttributeTooltip
+                                {...props}
+                                field={key}
+                                element={
+                                  <span
+                                    className="inline-source"
+                                    style={{
+                                      backgroundColor: getSourceColour(
+                                        field.source || "var(--tol-emphasis)"
+                                      ),
+                                    }}
+                                  />
+                                }
+                              />
                               {field.rename}
                             </p>
                             {filterable && (
@@ -510,9 +506,13 @@ export function Table(props: Props) {
                               </span>
                             )}
                             <Sort
+                              {...props}
                               attribute={key}
                               sortable={sortable}
+                            />
+                            <FieldDropdown
                               {...props}
+                              attribute={key}
                             />
                           </HeaderCell>
                           <Cell dataKey={key} />
