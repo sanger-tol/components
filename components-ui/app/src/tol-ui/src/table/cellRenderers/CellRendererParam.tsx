@@ -48,7 +48,7 @@ export function CellRendererParam(props: PCellRendererParam) {
       <div className="tol-param">
         {meta.type === "string" ? (
           <Input
-            value={renderer?.props![param]}
+            value={renderer?.props![param] as string}
             onChange={(newValue: string) => {
               if (renderer) {
                 renderer.props![param] = newValue;
