@@ -11,7 +11,7 @@ export interface IBoardParam {
   rename: string,
   required: boolean,
   description: string,
-  previewExample: string|boolean,
+  previewExample: string,
 }
 
 export type TBoardParams = Record<string, IBoardParam>;
