@@ -17,7 +17,7 @@ import {
 
 export interface PCellRendererParam extends IRemoteTarget { // maybe
   param: string,
-  values: IBoardParam,
+  meta: IBoardParam,
   renderer: TCellRenderer
   setRenderer: Dispatch<SetStateAction<TCellRenderer>>;
   selectedLogicParam: string | undefined;
@@ -27,7 +27,7 @@ export interface PCellRendererParam extends IRemoteTarget { // maybe
 export function CellRendererParam(props: PCellRendererParam) {
   const {
     param,
-    values,
+    meta,
     renderer,
     setRenderer,
     selectedLogicParam,
@@ -37,16 +37,16 @@ export function CellRendererParam(props: PCellRendererParam) {
   return (
     <div key={param}>
       <span className="tol-param-title">
-        {values.rename}:
+        {meta.rename}:
       </span>
-      {values.required &&
+      {meta.required &&
         <span className="tol-param-required">*</span>
       }
       <span className="tol-param-info">
-        <IconTooltip contents={values.description} disableMarkdown />
+        <IconTooltip contents={meta.description} disableMarkdown />
       </span>
       <div className="tol-param">
-        {values.type === "string" ? (
+        {meta.type === "string" ? (
           <Input
             value={renderer?.props![param]}
             onChange={(newValue: string) => {
@@ -55,9 +55,9 @@ export function CellRendererParam(props: PCellRendererParam) {
                 setRenderer({ ...renderer });
               }
             }}
-            placeholder={values.previewExample}
+            placeholder={meta.previewExample}
           />
-        ) : values.type === "boolean" ? (
+        ) : meta.type === "boolean" ? (
           <Button
             outline
             text="Configure Logic"

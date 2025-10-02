@@ -52,12 +52,12 @@ export function Cell(props: PCell) {
     !renderer.type ||
     // no value and not a custom renderer as custom renderers may not require a value
     // no need to to deal with empty values with pre-defined cellRenderers
-    (!value && (renderer.type as string) in preDefinedElements)
+    (!value && (renderer.type) in preDefinedElements)
   )
     return <>{value}</>;
 
   const elements = { ...preDefinedElements, ...customCellRenderers };
-  renderer.element = elements[renderer.type as string];
+  renderer.element = elements[renderer.type];
 
   const elementProps: Record<string, any> = { ...props };
 

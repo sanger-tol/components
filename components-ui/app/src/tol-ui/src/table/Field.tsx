@@ -14,19 +14,17 @@ interface ElementProps {
   [prop: string]: string | IFilter;
 }
 
-export const CellRendererType = [
-  "relationship",
-  "datetime",
-  "boolean",
-  "image",
-  "list",
-  "expander",
-  "float",
-  "integer",
-  "link",
-] as const;
-
-export type TCellRendererType = typeof CellRendererType | string;
+export type TCellRendererType =
+  "boolean" |
+  "datetime" |
+  "expander" |
+  "float" |
+  "image" |
+  "integer" |
+  "link" |
+  "list" |
+  "relationship" |
+  string;
 
 export interface ICellRenderer {
   type: TCellRendererType;

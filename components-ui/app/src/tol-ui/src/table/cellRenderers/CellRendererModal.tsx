@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { useState, Dispatch, SetStateAction, useEffect } from "react";
 import {
   FieldMeta,
-  CellRendererType,
   SingleSelect,
   Modal,
   normaliseCaps,
@@ -36,8 +35,8 @@ export function CellRendererModal(props: PCellRendererModal) {
   const [entityMeta, setEntityMeta] = useState<IEntityMeta>();
   const [selectedLogicParam, setSelectedLogicParam] = useState<string | undefined>();
 
-  const requiredParamKeys = renderer && cellRendererParams[renderer.type as string]
-    ? Object.entries(cellRendererParams[renderer.type as string])
+  const requiredParamKeys = renderer && cellRendererParams[renderer.type]
+    ? Object.entries(cellRendererParams[renderer.type])
       .filter(([_, v]) => v.required)
       .map(([k, _]) => k)
     : [];
@@ -112,7 +111,7 @@ export function CellRendererModal(props: PCellRendererModal) {
   );
 
   const typeChoices = [
-    "none", ...CellRendererType
+    "none", ...Object.keys(cellRendererParams)
   ].map(cellRendererType => ({
     label: normaliseCaps(cellRendererType),
     value: cellRendererType
@@ -133,7 +132,7 @@ export function CellRendererModal(props: PCellRendererModal) {
           placeholder="Default Cell Renderer"
           value={
             renderer === null ? "none" :
-              renderer?.type as string || ""
+              renderer?.type || ""
           }
           onChange={onTypeChange}
           data={typeChoices}
@@ -141,16 +140,16 @@ export function CellRendererModal(props: PCellRendererModal) {
       </div>
       <>
         {renderer &&
-          Object.keys(cellRendererParams[renderer?.type as string] || {}).length > 0 && (
+          Object.keys(cellRendererParams[renderer?.type] || {}).length > 0 && (
             <div className="tol-cell-renderer-modal-params">
               <h6>Parameters</h6>
-              {Object.entries(cellRendererParams[renderer.type as string]).map(([param, values]) => {
+              {Object.entries(cellRendererParams[renderer.type]).map(([param, meta]) => {
                 return (
                   <CellRendererParam
                     {...props}
                     key={param}
                     param={param}
-                    values={values}
+                    meta={meta}
                     renderer={renderer}
                     setRenderer={setRenderer}
                     selectedLogicParam={selectedLogicParam}
@@ -166,7 +165,7 @@ export function CellRendererModal(props: PCellRendererModal) {
           <div className="tol-cell-renderer-modal-logic-param">
             <h6>
               Configure Logic for
-              '{cellRendererParams[renderer?.type as string][selectedLogicParam]?.rename}'
+              '{cellRendererParams[renderer?.type!][selectedLogicParam]?.rename}'
               Parameter
             </h6>
             <RemoteFilters
