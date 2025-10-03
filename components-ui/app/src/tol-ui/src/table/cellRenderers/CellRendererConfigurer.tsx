@@ -28,7 +28,7 @@ export function CellRendererConfigurer(props: PCellRendererConfigurer) {
       className={"tol-active-column-btn tol-palette-icon"}
       onClick={() => setModalOpen(true)}
     >
-      <Icon icon="palette" size="lg" />
+      <Icon icon="palette" size="md" />
     </div>
   );
 

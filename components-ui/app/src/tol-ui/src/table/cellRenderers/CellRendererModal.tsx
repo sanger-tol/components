@@ -17,6 +17,9 @@ import {
   IEntityMeta,
   IRemoteTarget,
   RemoteFilters,
+  IFilter,
+  TFilterOrUndefined,
+  Icon,
 } from "../..";
 import { CellRendererParam } from "./CellRendererParam";
 
@@ -61,6 +64,7 @@ export function CellRendererModal(props: PCellRendererModal) {
               fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer as object
             )
       );
+      setSelectedLogicParam(undefined);
     }
   }, [open]);
 
@@ -71,8 +75,11 @@ export function CellRendererModal(props: PCellRendererModal) {
     );
   };
 
-  // @ts-ignore
-  const onLogicSave = (filters: any) => {
+  const onLogicSave = (filters: IFilter) => {
+    console.log(filters);
+    renderer!.props![selectedLogicParam!] = filters;
+    setRenderer({ ...renderer! });
+    setSelectedLogicParam(undefined);
   }
 
   const Header = (
@@ -139,42 +146,48 @@ export function CellRendererModal(props: PCellRendererModal) {
         />
       </div>
       <>
-        {renderer &&
-          Object.keys(cellRendererParams[renderer?.type] || {}).length > 0 && (
-            <div className="tol-cell-renderer-modal-params">
-              <h6>Parameters</h6>
-              {Object.entries(cellRendererParams[renderer.type]).map(([param, meta]) => {
-                return (
-                  <CellRendererParam
-                    {...props}
-                    key={param}
-                    param={param}
-                    meta={meta}
-                    renderer={renderer}
-                    setRenderer={setRenderer}
-                    selectedLogicParam={selectedLogicParam}
-                    setSelectedLogicParam={setSelectedLogicParam}
-                  />
-                )
-              })}
-            </div>
-          )}
-      </>
-      <>
-        {selectedLogicParam && (
-          <div className="tol-cell-renderer-modal-logic-param">
+        {selectedLogicParam ? (
+          <div className="tol-cell-renderer-modal-logic-params">
             <h6>
+              <Icon
+                icon="arrow-left"
+                className="tol-return-button"
+                onClick={() => setSelectedLogicParam(undefined)}
+              />
               Configure Logic for
               '{cellRendererParams[renderer?.type!][selectedLogicParam]?.rename}'
               Parameter
             </h6>
             <RemoteFilters
               {...props}
-              filters={{}}
+              filters={renderer?.props?.[selectedLogicParam!] as IFilter || { and_: {} }}
               onSave={onLogicSave}
               onSaveText="Add Logic"
             />
           </div>
+        ) : (
+          <>
+            {renderer &&
+              Object.keys(cellRendererParams[renderer?.type] || {}).length > 0 && (
+                <div className="tol-cell-renderer-modal-params">
+                  <h6>Parameters</h6>
+                  {Object.entries(cellRendererParams[renderer.type]).map(([param, meta]) => {
+                    return (
+                      <CellRendererParam
+                        {...props}
+                        key={param}
+                        param={param}
+                        meta={meta}
+                        renderer={renderer}
+                        setRenderer={setRenderer}
+                        selectedLogicParam={selectedLogicParam}
+                        setSelectedLogicParam={setSelectedLogicParam}
+                      />
+                    )
+                  })}
+                </div>
+              )}
+          </>
         )}
       </>
     </Modal>

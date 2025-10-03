@@ -384,3 +384,8 @@
     color: var(--tol-grey-light);
   }
 }
+
+// dropdowns
+.rs-picker-popup {
+  border: var(--tol-grey) 1px solid !important;
+}

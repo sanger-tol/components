@@ -63,20 +63,20 @@ export function processFilterToBoolean(filterObj: any, dataObject: TDataObjectOr
 }
 
 export function getCellRendererPropValue(
-    elementProps: Record<string, any>,
-    value: string | IFilter,
-    dataObject: TDataObjectOrNull,
-    prop: string
+  elementProps: Record<string, any>,
+  value: string | IFilter,
+  dataObject: TDataObjectOrNull,
+  prop: string
 ) {
-    if (typeof value === "string" && value.includes("${")) {
-        // replace placeholders with values from dataObject
-        elementProps[prop] = value.replace(/\${(.*?)}/g, (_, key) =>
-            getFieldByName(dataObject, key) || ""
-        );
-        // Checks for filter object as prop
-    } else if (typeof value === "object" && 'and_' in value) {
-        elementProps[prop] = processFilterToBoolean(value, dataObject);
-    } else {
-        elementProps[prop] = value;
-    }
+  if (typeof value === "string" && value.includes("${")) {
+    // replace placeholders with values from dataObject
+    elementProps[prop] = value.replace(/\${(.*?)}/g, (_, key) =>
+      getFieldByName(dataObject, key) || ""
+    );
+    // Checks for filter object as prop
+  } else if (typeof value === "object" && 'and_' in value) {
+    elementProps[prop] = processFilterToBoolean(value, dataObject);
+  } else {
+    elementProps[prop] = value;
+  }
 }

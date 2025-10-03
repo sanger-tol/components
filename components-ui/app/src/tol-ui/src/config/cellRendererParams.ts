@@ -10,15 +10,12 @@ import {
 
 
 export const cellRendererParams = {
-  relationship: {
-    detailPageIdAttribute: {
-      type: "string",
-      rename: "ID Attribute",
-      required: false,
-      description: "The name of the field that holds the ID for the detail page link",
-      previewExample: "id"
-    },
-  },
+  boolean: {},
+  datetime: {},
+  expander: {},
+  float: {},
+  image: {},
+  integer: {},
   link: {
     url: {
       type: "string",
@@ -35,11 +32,40 @@ export const cellRendererParams = {
       previewExample: "This is a link"
     },
   },
-  datetime: {},
-  boolean: {},
-  image: {},
   list: {},
-  expander: {},
-  float: {},
-  integer: {},
+  relationship: {
+    detailPageIdAttribute: {
+      type: "string",
+      rename: "ID Attribute",
+      required: false,
+      description: "The name of the field that holds the ID for the detail page link",
+      previewExample: "id"
+    },
+  },
+  status: {
+    info: {
+      type: "boolean",
+      rename: "Info",
+      required: false,
+      description: "Logic for displaying an info status",
+    },
+    success: {
+      type: "boolean",
+      rename: "Success",
+      required: false,
+      description: "Logic for displaying a success status",
+    },
+    warning: {
+      type: "boolean",
+      rename: "Warning",
+      required: false,
+      description: "Logic for displaying a warning status",
+    },
+    danger: {
+      type: "boolean",
+      rename: "Danger",
+      required: false,
+      description: "Logic for displaying a danger status",
+    },
+  },
 } as Record<string, TBoardParams>;

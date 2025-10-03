@@ -20,6 +20,7 @@ import {
   TsDataSource,
   getCellRendererPropValue
 } from "../..";
+import { Status } from "./Status";
 
 export interface PCell {
   attribute: string,
@@ -34,18 +35,17 @@ export function Cell(props: PCell) {
   const { value, dataObject, renderer, customCellRenderers } = props;
 
   const preDefinedElements = {
-    relationship: Relationship,
-    relationshipDetail: Relationship,
-    datetime: Datetime,
     boolean: Boolean,
-    image: Image,
-    list: List,
+    datetime: Datetime,
     expander: Expander,
     float: Float,
+    image: Image,
     integer: Integer,
-    link: Link
+    link: Link,
+    list: List,
+    relationship: Relationship,
+    status: Status
   };
-
   if (
     // renderer type is not defined
     !renderer ||

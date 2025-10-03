@@ -23,8 +23,9 @@ interface Props extends IRemoteTarget {
   filters?: IFilter;
   disabledFilterValues?: any;
   filterPassThrough?: boolean;
-  onSave?: any;
   onSaveText?: string;
+  onSave: (filters: IFilter, passThrough?: boolean) => void;
+  //onChange?: (filters: IFilter) => void;
 }
 
 export function RemoteFilters(props: Props) {
@@ -36,6 +37,8 @@ export function RemoteFilters(props: Props) {
     onSave,
     onSaveText
   } = props;
+
+  console.log(props.filters);
 
   // zone component id pointer
   const filterComponentId = "remote-filters-component";
@@ -158,7 +161,10 @@ export function RemoteFilters(props: Props) {
         disabled={disabledApplyButton}
         type="success"
         onClick={() =>
-          onSave(filterZone?.components?.[filterComponentId]?.data?.filter, filterPassThrough)
+          onSave(
+            filterZone?.components?.[filterComponentId]?.data?.filter || {},
+            filterPassThrough
+          )
         }
         text={onSaveText || "Apply Filters"}
         icon="floppy-disk"
