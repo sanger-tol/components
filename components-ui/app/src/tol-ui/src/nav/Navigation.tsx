@@ -18,7 +18,7 @@ import {
   Login,
   Dropdown,
   Page,
-  convertToPathWithUiPath,
+  convertToPath,
   env,
   confirmAuthorised,
   LoginIcon,
@@ -127,7 +127,7 @@ function Navigation(props: Props) {
         return (
           <Nav.Link
             key={page.name}
-            href={"link" in page ? page.link?.href : convertToPathWithUiPath(page.name, props.uiPath)}
+            href={"link" in page ? page.link?.href : convertToPath(page.name, props.uiPath)}
             target={page.link?.target}
           >
             {page.name}
@@ -164,7 +164,7 @@ function Navigation(props: Props) {
                         href={
                           "link" in page
                           ? page.link?.href
-                          : convertToPathWithUiPath(page.name, props.uiPath)
+                          : convertToPath(page.name, props.uiPath)
                         }
                         target={page.link?.target}
                       >

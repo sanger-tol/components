@@ -10,7 +10,7 @@ import { Avatar } from "rsuite";
 import {
   Page,
   User,
-  convertToPathWithUiPath,
+  convertToPath,
 } from "..";
 
 
@@ -93,7 +93,7 @@ export function ProfileDropdown(props: Props) {
 
   const dropdownPages = pages?.map((page) => {
     if(!page || !page.name) return null;
-    const link = convertToPathWithUiPath(page.name);
+    const link = convertToPath(page.name);
     return (
       <Nav.Link key={page.name} href={link}>
         {page.name}

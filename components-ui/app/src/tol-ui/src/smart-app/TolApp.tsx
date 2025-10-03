@@ -30,7 +30,7 @@ import {
   Footer,
   Dropdown,
   Page,
-  convertToPathWithUiPath,
+  convertToPath,
   matomoAnalytics,
   env,
   Board,
@@ -163,7 +163,7 @@ export function TolApp(props: Props) {
                 )
               }} />
               {allPageRoutes.map((page) => {
-                const path = convertToPathWithUiPath(page.name, uiPath);
+                const path = convertToPath(page.name, uiPath);
                 const routes = [];
                 const authorised = confirmAuthorised(
                   user,
@@ -180,7 +180,7 @@ export function TolApp(props: Props) {
                       dropdownPage.removeOnAuth,
                     );
                     const dropdownPath =
-                      convertToPathWithUiPath(dropdownPage.name, uiPath);
+                      convertToPath(dropdownPage.name, uiPath);
                     // dropdown page route
                     routes.push(
                       <Route exact path={dropdownPath} key={dropdownPage.name}>
