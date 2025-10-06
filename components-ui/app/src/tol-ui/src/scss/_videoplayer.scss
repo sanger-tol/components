@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-.tol-video-player{
-    overflow: hidden;
+.tol-video-player {
+  max-width: 100%;
+  max-height: 100%;
 }
