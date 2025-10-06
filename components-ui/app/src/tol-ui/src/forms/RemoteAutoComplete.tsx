@@ -26,10 +26,12 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
   const { onChange, dataSource, objectType, displayFields = [], displayFieldsTitle, searchBy } = props;
   const [filteredData, setFilteredData] = useState<IRemoteAutoCompleteData>({});
   const [loading, setLoading] = useState<boolean>(false);
+  const [valueID, setValueID] = useState<string | undefined>("");
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleChange = async (value: string) => {
+
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -55,11 +57,18 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
         });
         const newData = {}
         data!.map((item: any) => {
+          setValueID(item.id);
           newData[item[searchBy]] = displayFields.map((field: string) => ({ [field]: item[field] }));
         })
         setFilteredData(newData);
         setLoading(false);
+        
+        if (onChange) {
+          onChange({value: value, id: valueID});
+        }
+
       }, 400);
+
     } else {
       setFilteredData({});
     }

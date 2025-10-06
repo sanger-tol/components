@@ -11,12 +11,13 @@ import {
   Loader,
   IFormLabelIcon,
   FormLabel,
+  TAutoCompleteValue
 } from "..";
 
 export interface PAutoComplete {
   label: string;
   data: string[];
-  value: string;
+  value: TAutoCompleteValue;
   onChange?: any;
   displayFields?: object;
   displayFieldsTitle?: boolean;
@@ -38,12 +39,13 @@ export function AutoComplete(props: PAutoComplete) {
     icon,
   } = props;
 
+
   return (
     <RSForm.Group controlId={label}>
       <FormLabel label={label} icon={icon} />
       <RSAutoComplete
         data={data}
-        value={value}
+        value={typeof value === "string" ? value : value?.value}
         onChange={onChange}
         renderMenu={(menu: any) => {
           if (loading === true) {
