@@ -9,9 +9,10 @@ import { ICellRenderer } from "..";
 export interface IBoardParam {
   type: string,
   rename: string,
-  required: boolean,
   description: string,
+  required?: boolean,
   previewExample?: string,
+  placeholder?: string,
 }
 
 export type TBoardParams = Record<string, IBoardParam>;

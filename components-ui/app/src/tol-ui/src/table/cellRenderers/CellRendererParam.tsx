@@ -15,13 +15,13 @@ import {
 } from "../..";
 
 
-export interface PCellRendererParam extends IRemoteTarget { // maybe
+export interface PCellRendererParam extends IRemoteTarget {
   param: string,
   meta: IBoardParam,
   renderer: TCellRenderer
   setRenderer: Dispatch<SetStateAction<TCellRenderer>>;
-  selectedLogicParam: string | undefined;
-  setSelectedLogicParam: Dispatch<SetStateAction<string | undefined>>;
+  selectedConditionParam: string | undefined;
+  setSelectedConditionParam: Dispatch<SetStateAction<string | undefined>>;
 }
 
 export function CellRendererParam(props: PCellRendererParam) {
@@ -30,8 +30,8 @@ export function CellRendererParam(props: PCellRendererParam) {
     meta,
     renderer,
     setRenderer,
-    selectedLogicParam,
-    setSelectedLogicParam
+    selectedConditionParam,
+    setSelectedConditionParam
   } = props;
 
   return (
@@ -55,18 +55,18 @@ export function CellRendererParam(props: PCellRendererParam) {
                 setRenderer({ ...renderer });
               }
             }}
-            placeholder={meta.previewExample}
+            placeholder={meta.placeholder}
           />
         ) : meta.type === "boolean" ? (
           <Button
-            outline
-            text="Configure Logic"
+            text="Configure Condition"
+            icon="gears"
             onClick={() => {
-              setSelectedLogicParam(
-                param === selectedLogicParam ? undefined : param
+              setSelectedConditionParam(
+                param === selectedConditionParam ? undefined : param
               );
             }}
-            active={param === selectedLogicParam}
+            active={param === selectedConditionParam}
           />
         ) : null}
       </div>

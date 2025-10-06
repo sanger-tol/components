@@ -22,14 +22,13 @@ export const cellRendererParams = {
       rename: "URL",
       required: true,
       description: "The URL to link to",
-      previewExample: "www.example.com"
+      placeholder: "www.example.com"
     },
     text: {
       type: "string",
       rename: "Text",
-      required: false,
       description: "The text to display for the link, if empty it will default to the current field value",
-      previewExample: "This is a link"
+      placeholder: "This is a link",
     },
   },
   list: {},
@@ -37,35 +36,30 @@ export const cellRendererParams = {
     detailPageIdAttribute: {
       type: "string",
       rename: "ID Attribute",
-      required: false,
       description: "The name of the field that holds the ID for the detail page link",
-      previewExample: "id"
+      placeholder: "id",
     },
   },
   status: {
     info: {
       type: "boolean",
       rename: "Info",
-      required: false,
-      description: "Logic for displaying an info status",
+      description: "Condition for displaying an info status",
     },
     success: {
       type: "boolean",
       rename: "Success",
-      required: false,
-      description: "Logic for displaying a success status",
+      description: "Condition for displaying a success status",
     },
     warning: {
       type: "boolean",
       rename: "Warning",
-      required: false,
-      description: "Logic for displaying a warning status",
+      description: "Condition for displaying a warning status",
     },
     danger: {
       type: "boolean",
       rename: "Danger",
-      required: false,
-      description: "Logic for displaying a danger status",
+      description: "Condition for displaying a danger status",
     },
   },
 } as Record<string, TBoardParams>;

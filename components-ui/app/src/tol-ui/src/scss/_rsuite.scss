@@ -165,6 +165,7 @@
   // modal
   .rs-modal {
     margin: 30px auto 30px auto;
+    transition: transform 0.3s ease-out, width 0.3s ease, height 0.3s ease;
 
     // stop blue box showing on modal opening
     *:focus {
@@ -199,6 +200,7 @@
   }
 
   .rs-popover-content {
+    font-size: 14px;
     overflow: auto;
     overflow-wrap: break-word;
   }
@@ -350,10 +352,12 @@
 
 // drawer and modal overlay switch
 .rs-modal-backdrop {
+  backdrop-filter: blur(3px);
   z-index: 1050;
 }
 
 .rs-drawer-backdrop {
+  backdrop-filter: blur(3px);
   z-index: 1049;
 }
 

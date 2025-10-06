@@ -18,7 +18,6 @@ import {
   IRemoteTarget,
   RemoteFilters,
   IFilter,
-  TFilterOrUndefined,
   Icon,
 } from "../..";
 import { CellRendererParam } from "./CellRendererParam";
@@ -36,7 +35,7 @@ export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, attributeId, fieldMeta, objectType, dataSource, onSave } = props;
   const [renderer, setRenderer] = useState<TCellRenderer>();
   const [entityMeta, setEntityMeta] = useState<IEntityMeta>();
-  const [selectedLogicParam, setSelectedLogicParam] = useState<string | undefined>();
+  const [selectedConditionParam, setSelectedConditionParam] = useState<string | undefined>();
 
   const requiredParamKeys = renderer && cellRendererParams[renderer.type]
     ? Object.entries(cellRendererParams[renderer.type])
@@ -64,8 +63,8 @@ export function CellRendererModal(props: PCellRendererModal) {
               fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer as object
             )
       );
-      setSelectedLogicParam(undefined);
     }
+    setSelectedConditionParam(undefined);
   }, [open]);
 
   const onTypeChange = (type: string) => {
@@ -75,11 +74,11 @@ export function CellRendererModal(props: PCellRendererModal) {
     );
   };
 
-  const onLogicSave = (filters: IFilter) => {
+  const onConditionSave = (filters: IFilter) => {
     console.log(filters);
-    renderer!.props![selectedLogicParam!] = filters;
+    renderer!.props![selectedConditionParam!] = filters;
     setRenderer({ ...renderer! });
-    setSelectedLogicParam(undefined);
+    setSelectedConditionParam(undefined);
   }
 
   const Header = (
@@ -94,27 +93,20 @@ export function CellRendererModal(props: PCellRendererModal) {
   );
 
   const Buttons = (
-    <div>
-      <Button
-        position="right"
-        type="success"
-        onClick={() => {
-          setOpen(false), onSave(renderer, attributeId);
-        }}
-        text="Add"
-        disabled={
-          renderer !== null &&
-          !renderer?.type ||
-          requiredParamsCount > filledParamsCount
-        }
-      />
-      <Button
-        position="right"
-        type="error"
-        onClick={() => setOpen(false)}
-        text="Cancel"
-      />
-    </div>
+    <Button
+      icon="check"
+      position="right"
+      type="success"
+      onClick={() => {
+        setOpen(false), onSave(renderer, attributeId);
+      }}
+      text="Add"
+      disabled={
+        renderer !== null &&
+        !renderer?.type ||
+        requiredParamsCount > filledParamsCount
+      }
+    />
   );
 
   const typeChoices = [
@@ -129,9 +121,9 @@ export function CellRendererModal(props: PCellRendererModal) {
       header={Header}
       open={open}
       setOpen={setOpen}
-      size="sm"
-      closeButton={false}
-      actionButton={Buttons}
+      size={selectedConditionParam ? "sm" : "xs"}
+      closeButton={!selectedConditionParam}
+      actionButton={selectedConditionParam ? undefined : Buttons}
     >
       <div className="tol-cell-renderer-modal-selector">
         <SingleSelect
@@ -146,23 +138,26 @@ export function CellRendererModal(props: PCellRendererModal) {
         />
       </div>
       <>
-        {selectedLogicParam ? (
-          <div className="tol-cell-renderer-modal-logic-params">
-            <h6>
-              <Icon
-                icon="arrow-left"
-                className="tol-return-button"
-                onClick={() => setSelectedLogicParam(undefined)}
-              />
-              Configure Logic for
-              '{cellRendererParams[renderer?.type!][selectedLogicParam]?.rename}'
+        {selectedConditionParam ? (
+          <div className="tol-cell-renderer-modal-condition-params">
+            <div className="tol-param-header">
+            <h6 className="tol-param-title">
+              Configure Condition for
+              '{cellRendererParams[renderer?.type!][selectedConditionParam]?.rename}'
               Parameter
             </h6>
+            <Button
+              type="warning"
+              text="Return"
+              icon="arrow-right"
+              onClick={() => setSelectedConditionParam(undefined)}
+            />
+            </div>
             <RemoteFilters
               {...props}
-              filters={renderer?.props?.[selectedLogicParam!] as IFilter || { and_: {} }}
-              onSave={onLogicSave}
-              onSaveText="Add Logic"
+              filters={renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} }}
+              onSave={onConditionSave}
+              onSaveText="Add Condition"
             />
           </div>
         ) : (
@@ -170,7 +165,6 @@ export function CellRendererModal(props: PCellRendererModal) {
             {renderer &&
               Object.keys(cellRendererParams[renderer?.type] || {}).length > 0 && (
                 <div className="tol-cell-renderer-modal-params">
-                  <h6>Parameters</h6>
                   {Object.entries(cellRendererParams[renderer.type]).map(([param, meta]) => {
                     return (
                       <CellRendererParam
@@ -180,8 +174,8 @@ export function CellRendererModal(props: PCellRendererModal) {
                         meta={meta}
                         renderer={renderer}
                         setRenderer={setRenderer}
-                        selectedLogicParam={selectedLogicParam}
-                        setSelectedLogicParam={setSelectedLogicParam}
+                        selectedConditionParam={selectedConditionParam}
+                        setSelectedConditionParam={setSelectedConditionParam}
                       />
                     )
                   })}

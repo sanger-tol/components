@@ -23,14 +23,10 @@
 
   .tol-param {
     margin: 4px 0 12px 0;
-
-    button {
-      width: 100%;
-    }
   }
 }
 
-.tol-cell-renderer-modal-logic-params {
+.tol-cell-renderer-modal-condition-params {
   border-top: 1px solid var(--tol-grey);
   padding-top: 20px;
   margin-top: 20px;
