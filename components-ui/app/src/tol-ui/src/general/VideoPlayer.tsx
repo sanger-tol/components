@@ -12,7 +12,7 @@ export interface PVideoPlayer {
 }
 
 export function VideoPlayer(props: PVideoPlayer) {
-  const { host = "youtube", videoId, width = 500, height = 300 } = props;
+  let { host = "youtube", videoId, width, height } = props;
 
   let url = `https://www.youtube.com/embed/${videoId}`;
 
@@ -20,20 +20,26 @@ export function VideoPlayer(props: PVideoPlayer) {
     if (host === "vimeo") {
       url = `https://player.vimeo.com/video/${videoId}`;
     }
-    // ==>Todo: Add conditions based on the host
   }
 
+  if (height === undefined && width !== undefined) {
+    height = Number(width) * (9 / 16);
+  } else if (width === undefined && height !== undefined) {
+    width = Number(height) * (16 / 9);
+  }else if (height === undefined && width == undefined) {
+    height = 300;
+    width = 500;
+  }
+
+console.log(width, height);
+
   return (
-    <div className="tol-video-container">
-      <iframe
-        src={url}
-        title="Tol Embedded Video Player"
-        width={width}
-        height={height}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-        className="tol-video-player"
-      ></iframe>
-    </div>
+    <iframe
+      src={url}
+      title="Tol Embedded Video Player"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+      style={{ width: width, height: height }}
+    />
   );
 }
