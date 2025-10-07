@@ -13,11 +13,11 @@ export function Sandbox() {
     </div>
     <p>Hello</p>
     <div style={{height:500, width:500, backgroundColor:"blue"}}>
-      <VideoPlayer videoId="bWDvccrSAL4" width={500}/>
+      <VideoPlayer videoId="bWDvccrSAL4" width={300}/>
     </div>
     <p>Hello</p>
     <div style={{height:500, width:500, backgroundColor:"green"}}>
-      <VideoPlayer videoId="bWDvccrSAL4" height={500}/>
+      <VideoPlayer videoId="bWDvccrSAL4" height={300}/>
     </div>
     <p>Hello</p>
     <div style={{height:500, width:500, backgroundColor:"yellow"}}>
