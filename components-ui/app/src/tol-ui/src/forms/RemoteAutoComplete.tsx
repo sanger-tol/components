@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
   AutoComplete,
   PAutoComplete,
