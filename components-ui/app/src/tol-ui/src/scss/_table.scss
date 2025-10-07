@@ -31,13 +31,11 @@
 
   // dropdown box shadow
   .rs-dropdown.rs-dropdown-menu {
-    box-shadow:
-      0 0 10px rgba(255, 255, 255, 1),
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1),
       0 4px 4px rgba(255, 255, 255, 0.12) !important;
   }
 
   .tol-pagination {
-
     .rs-pagination-btn {
       border: 1px solid var(--tol-bg);
     }
@@ -291,7 +289,7 @@
 .tooltip-value {
   font-size: small;
   padding-right: 10px;
-  color: var(--tol-primary)
+  color: var(--tol-primary);
 }
 
 .tooltip-value-none {
@@ -332,8 +330,15 @@
   cursor: pointer;
 }
 
-.rs-dropdown-toggle.rs-dropdown-toggle-no-caret{
+.rs-dropdown-toggle.rs-dropdown-toggle-no-caret {
   padding: 5px;
+}
+
+span.rs-dropdown-toggle-icon {
+  color: black;
+  @media (prefers-color-scheme: dark) {
+    color: white;
+  }
 }
 
 // config modal
