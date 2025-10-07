@@ -28,7 +28,6 @@ export function VideoPlayer(props: PVideoPlayer) {
     width = Number(height) * (16 / 9);
   }
 
-  console.log(width,height);
   return (
     <iframe
       src={url}
