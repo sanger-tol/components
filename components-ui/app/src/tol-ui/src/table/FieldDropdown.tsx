@@ -19,10 +19,13 @@ export function FieldDropdown(props: FieldDropdown) {
     stopPropagation(e);
   };
 
-  // button ready for a dropdown menu - not implemented yet
   return (
     <span className="tol-field-dropdown" onClick={onClick}>
-      <Dropdown icon={<Icon icon="ellipsis-vertical" size="sm" />} noCaret placement="bottomEnd">
+      <Dropdown
+        icon={<Icon icon="ellipsis-vertical" size="xs" />}
+        noCaret
+        placement="bottomEnd"
+      >
         <Dropdown.Item
           icon={<Icon icon="share-from-square" size="sm" />}
           onClick={() => copyPageColumnValues(data, attribute)}

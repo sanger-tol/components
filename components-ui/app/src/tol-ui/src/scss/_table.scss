@@ -327,10 +327,13 @@
 
 .tol-field-dropdown {
   position: absolute;
-  top: 3px;
-  right: 5px;
-  padding: 0 6px;
+  top: 6px;
+  right: 6px;
   cursor: pointer;
+}
+
+.rs-dropdown-toggle.rs-dropdown-toggle-no-caret{
+  padding: 5px;
 }
 
 // config modal
