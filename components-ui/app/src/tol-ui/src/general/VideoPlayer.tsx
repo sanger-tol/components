@@ -22,16 +22,11 @@ export function VideoPlayer(props: PVideoPlayer) {
     }
   }
 
-  if (height === undefined && width !== undefined) {
+  if (height! && width) {
     height = Number(width) * (9 / 16);
-  } else if (width === undefined && height !== undefined) {
+  } else if (width! && height) {
     width = Number(height) * (16 / 9);
-  }else if (height === undefined && width == undefined) {
-    height = 300;
-    width = 500;
   }
-
-console.log(width, height);
 
   return (
     <iframe
