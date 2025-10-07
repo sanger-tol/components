@@ -22,12 +22,13 @@ export function VideoPlayer(props: PVideoPlayer) {
     }
   }
 
-  if (height! && width) {
+  if (!height && width) {
     height = Number(width) * (9 / 16);
-  } else if (width! && height) {
+  } else if (!width && height) {
     width = Number(height) * (16 / 9);
   }
 
+  console.log(width,height);
   return (
     <iframe
       src={url}
