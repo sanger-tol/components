@@ -75,7 +75,6 @@ export function CellRendererModal(props: PCellRendererModal) {
   };
 
   const onConditionSave = (filters: IFilter) => {
-    console.log(filters);
     renderer!.props![selectedConditionParam!] = filters;
     setRenderer({ ...renderer! });
     setSelectedConditionParam(undefined);

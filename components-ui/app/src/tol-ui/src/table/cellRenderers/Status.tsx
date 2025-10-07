@@ -39,8 +39,6 @@ export function Status(props: PBoolean) {
             : undefined
   );
 
-  console.log('status', value, info, success, warning, danger);
-
   if (!status) return <>{value}</>;
 
   return (

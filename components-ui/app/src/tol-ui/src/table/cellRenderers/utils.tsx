@@ -10,67 +10,44 @@ import {
   TDataObjectOrNull
 } from "../..";
 
-
 export function processConditionToBoolean(conditionObj: IFilter, dataObject: TDataObjectOrNull) {
-  console.log(conditionObj.and_?.sts_sample_sts_project_union?.in_list.value[0], Object.keys(conditionObj.and_ ?? {}).length);
   if (Object.keys(conditionObj.and_ ?? {}).length === 0) return false;
 
   for (const [fieldSystemName, conditions] of Object.entries(conditionObj.and_!)) {
     let fieldValue = getFieldByName(dataObject, fieldSystemName);
-    console.log({dataObject, fieldValue, fieldSystemName});
     if (dataObject && fieldValue) {
       // normalize to array for easier processing
       fieldValue = Array.isArray(fieldValue) ? fieldValue : [fieldValue];
-      for (const condition in conditions) {
-        const conditionValue = conditions[condition].value;
-
-        switch (condition) {
+      for (const [operator, condition] of Object.entries(conditions)) {
+        let result = false;
+        switch (operator) {
           case "contains":
-            if (!fieldValue.some((v: any) => typeof v === 'string' && v.includes(conditionValue))) {
-              console.log(false, 1);
-              return false;
-            }
+            result = fieldValue.some((v: any) => typeof v === 'string' && v.includes(condition.value));
             break;
           case "eq":
-            if (!fieldValue.some((v: any) => v === conditionValue)) {
-              console.log(false, 2);
-              return false;
-            }
+            result = fieldValue.some((v: any) => v === condition.value);
             break;
           case "gt":
-            if (!fieldValue.some((v: any) => v > conditionValue)) {
-              console.log(false, 3);
-              return false;
-            }
+            result = fieldValue.some((v: any) => v > condition.value);
             break;
           case "gte":
-            if (!fieldValue.some((v: any) => v >= conditionValue)) {
-              console.log(false, 4);
-              return false;
-            }
+            result = fieldValue.some((v: any) => v >= condition.value);
             break;
           case "lt":
-            if (!fieldValue.some((v: any) => v < conditionValue)) {
-              console.log(false, 5);
-              return false;
-            }
+            result = fieldValue.some((v: any) => v < condition.value);
             break;
           case "lte":
-            if (!fieldValue.some((v: any) => v <= conditionValue)) {
-              console.log(false, 6);
-              return false;
-            }
+            result = fieldValue.some((v: any) => v <= condition.value);
             break;
           case "in_list":
-            if (!fieldValue.some((v: any) => Array.isArray(conditionValue) && conditionValue.includes(v))) {
-              console.log(false, 7);
-              return false;
-            }
+            result = fieldValue.some((v: any) => Array.isArray(condition.value) && condition.value.includes(v));
             break;
         }
+        // Handle negate
+        if (condition.negate) result = !result;
+        if (!result) return false;
       }
     } else {
-      console.log(false, 8);
       return false;
     }
   }
@@ -83,17 +60,13 @@ export function getCellRendererPropValue(
   elementProps: Record<string, any>,
   dataObject: TDataObjectOrNull,
 ) {
-  console.log('inner hello')
   if (typeof value === "string" && value.includes("${")) {
     // replace placeholders with values from dataObject
     elementProps[prop] = value.replace(/\${(.*?)}/g, (_, key) =>
       getFieldByName(dataObject, key) || ""
     );
   } else if (typeof value === "object" && 'and_' in value) {
-    console.log({h: 'y', value, dataObject});
-    const x = processConditionToBoolean(value, dataObject);
-    console.log('output', x);
-    elementProps[prop] = x;
+    elementProps[prop] = processConditionToBoolean(value, dataObject);
   } else {
     elementProps[prop] = value;
   }
