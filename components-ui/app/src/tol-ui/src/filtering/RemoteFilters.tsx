@@ -152,7 +152,7 @@ export function RemoteFilters(props: Props) {
               className="remove-filter-button"
               onClick={() => removeFilter(attribute)}
             >
-              <Icon icon="close" size="sm" />
+              <Icon icon="close" />
             </span>
           </div>
         );

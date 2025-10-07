@@ -11,7 +11,8 @@ import {
   TCellRenderer,
   IconTooltip,
   IBoardParam,
-  IRemoteTarget
+  IRemoteTarget,
+  IFilter
 } from "../..";
 
 
@@ -34,6 +35,9 @@ export function CellRendererParam(props: PCellRendererParam) {
     setSelectedConditionParam
   } = props;
 
+  const paramValue = renderer?.props![param];
+  const conditionPresent = Object.keys((paramValue as IFilter || {}).and_ || {}).length > 0;
+
   return (
     <div key={param}>
       <span className="tol-param-title">
@@ -48,7 +52,7 @@ export function CellRendererParam(props: PCellRendererParam) {
       <div className="tol-param">
         {meta.type === "string" ? (
           <Input
-            value={renderer?.props![param] as string}
+            value={paramValue as string}
             onChange={(newValue: string) => {
               if (renderer) {
                 renderer.props![param] = newValue;
@@ -59,14 +63,15 @@ export function CellRendererParam(props: PCellRendererParam) {
           />
         ) : meta.type === "boolean" ? (
           <Button
-            text="Configure Condition"
-            icon="gears"
+            outline
+            text={conditionPresent ? "Edit Condition" : "Set Condition"}
+            icon="puzzle-piece"
+            type={conditionPresent ? "warning" : "success"}
             onClick={() => {
               setSelectedConditionParam(
                 param === selectedConditionParam ? undefined : param
               );
             }}
-            active={param === selectedConditionParam}
           />
         ) : null}
       </div>

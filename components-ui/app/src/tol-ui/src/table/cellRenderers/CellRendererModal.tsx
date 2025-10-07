@@ -99,7 +99,7 @@ export function CellRendererModal(props: PCellRendererModal) {
       onClick={() => {
         setOpen(false), onSave(renderer, attributeId);
       }}
-      text="Add"
+      text="Apply"
       disabled={
         renderer !== null &&
         !renderer?.type ||
@@ -147,6 +147,7 @@ export function CellRendererModal(props: PCellRendererModal) {
               Parameter
             </h6>
             <Button
+              outline
               type="warning"
               text="Return"
               icon="arrow-right"
@@ -158,7 +159,7 @@ export function CellRendererModal(props: PCellRendererModal) {
             {...props}
             filters={renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} }}
             onSave={onConditionSave}
-            onSaveText="Add Condition"
+            onSaveText="Update Condition"
           />
         </div>
       ) : (
