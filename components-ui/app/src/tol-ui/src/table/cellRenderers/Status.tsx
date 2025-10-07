@@ -39,13 +39,14 @@ export function Status(props: PBoolean) {
             : undefined
   );
 
-  if (!status) return <>STATUS: {value}</>;
+  console.log('status', value, info, success, warning, danger);
 
-  return value.map((val, index) => (
+  if (!status) return <>{value}</>;
+
+  return (
     <StatusMessage
-      key={index}
-      message={val}
+      message={value}
       status={status}
     />
-  ));
+  );
 }

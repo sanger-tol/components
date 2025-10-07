@@ -63,7 +63,7 @@ export function Cell(props: PCell) {
 
   if (renderer.props) {
     Object.entries(renderer.props).forEach(([prop, value]) => {
-      getCellRendererPropValue(elementProps, value, dataObject, prop);
+      getCellRendererPropValue(prop, value, elementProps, dataObject);
     });
   }
 
