@@ -181,10 +181,6 @@
     // row hover
     --rs-state-hover-bg: none;
 
-    .rs-table-row:hover {
-      background-color: pink !important;
-    }
-
     // row resize
     --rs-row-resize: var(--tol-primary);
     --rs-table-resize: var(--tol-primary);
