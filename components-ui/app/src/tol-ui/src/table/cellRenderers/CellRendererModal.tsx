@@ -124,22 +124,23 @@ export function CellRendererModal(props: PCellRendererModal) {
       closeButton={!selectedConditionParam}
       actionButton={selectedConditionParam ? undefined : Buttons}
     >
-      <div className="tol-cell-renderer-modal-selector">
-        <SingleSelect
-          block
-          placeholder="Default Cell Renderer"
-          value={
-            renderer === null ? "none" :
-              renderer?.type || ""
-          }
-          onChange={onTypeChange}
-          data={typeChoices}
-        />
-      </div>
-      <>
-        {selectedConditionParam ? (
-          <div className="tol-cell-renderer-modal-condition-params">
-            <div className="tol-param-header">
+      {!selectedConditionParam ? (
+        <div className="tol-cell-renderer-modal-selector">
+          <SingleSelect
+            block
+            placeholder="Default Cell Renderer"
+            value={
+              renderer === null ? "none" :
+                renderer?.type || ""
+            }
+            onChange={onTypeChange}
+            data={typeChoices}
+          />
+        </div>
+      ) : <></>}
+      {selectedConditionParam ? (
+        <div className="tol-cell-renderer-modal-condition-params">
+          <div className="tol-param-header">
             <h6 className="tol-param-title">
               Configure Condition for
               '{cellRendererParams[renderer?.type!][selectedConditionParam]?.rename}'
@@ -150,39 +151,39 @@ export function CellRendererModal(props: PCellRendererModal) {
               text="Return"
               icon="arrow-right"
               onClick={() => setSelectedConditionParam(undefined)}
-            />
-            </div>
-            <RemoteFilters
-              {...props}
-              filters={renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} }}
-              onSave={onConditionSave}
-              onSaveText="Add Condition"
+              position="right"
             />
           </div>
-        ) : (
-          <>
-            {renderer &&
-              Object.keys(cellRendererParams[renderer?.type] || {}).length > 0 && (
-                <div className="tol-cell-renderer-modal-params">
-                  {Object.entries(cellRendererParams[renderer.type]).map(([param, meta]) => {
-                    return (
-                      <CellRendererParam
-                        {...props}
-                        key={param}
-                        param={param}
-                        meta={meta}
-                        renderer={renderer}
-                        setRenderer={setRenderer}
-                        selectedConditionParam={selectedConditionParam}
-                        setSelectedConditionParam={setSelectedConditionParam}
-                      />
-                    )
-                  })}
-                </div>
-              )}
-          </>
-        )}
-      </>
+          <RemoteFilters
+            {...props}
+            filters={renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} }}
+            onSave={onConditionSave}
+            onSaveText="Add Condition"
+          />
+        </div>
+      ) : (
+        <>
+          {renderer &&
+            Object.keys(cellRendererParams[renderer?.type] || {}).length > 0 && (
+              <div className="tol-cell-renderer-modal-params">
+                {Object.entries(cellRendererParams[renderer.type]).map(([param, meta]) => {
+                  return (
+                    <CellRendererParam
+                      {...props}
+                      key={param}
+                      param={param}
+                      meta={meta}
+                      renderer={renderer}
+                      setRenderer={setRenderer}
+                      selectedConditionParam={selectedConditionParam}
+                      setSelectedConditionParam={setSelectedConditionParam}
+                    />
+                  )
+                })}
+              </div>
+            )}
+        </>
+      )}
     </Modal>
   )
 }

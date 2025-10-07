@@ -31,19 +31,12 @@
   padding-top: 20px;
   margin-top: 20px;
 
-  .tol-return-button {
-    cursor: pointer;
-    margin-right: 10px;
-    color: var(--tol-primary);
-  }
-
   .tol-param-header {
+    height: 50px;
     position: relative;
-  }
 
-  .tol-param-title {
-    position: absolute;
+    .tol-param-title {
+      position: absolute;
+    }
   }
 }
-
-
