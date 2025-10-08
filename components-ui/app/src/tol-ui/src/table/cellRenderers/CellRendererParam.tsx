@@ -10,7 +10,7 @@ import {
   Button,
   TCellRenderer,
   IconTooltip,
-  IBoardParam,
+  IBoardCellRendererParam,
   IRemoteTarget,
   IFilter
 } from "../..";
@@ -18,7 +18,7 @@ import {
 
 export interface PCellRendererParam extends IRemoteTarget {
   param: string,
-  meta: IBoardParam,
+  meta: IBoardCellRendererParam,
   renderer: TCellRenderer
   setRenderer: Dispatch<SetStateAction<TCellRenderer>>;
   selectedConditionParam: string | undefined;

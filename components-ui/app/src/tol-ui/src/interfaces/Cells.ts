@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { ICellRenderer } from "..";
 
-export interface IBoardParam {
+export interface IBoardCellRendererParam {
   type: string,
   rename: string,
   description: string,
@@ -15,7 +15,16 @@ export interface IBoardParam {
   placeholder?: string,
 }
 
-export type TBoardParams = Record<string, IBoardParam>;
+export type TBoardCellRendererParams = Record<string, IBoardCellRendererParam>;
+
+export interface IBoardCellRenderer {
+  params?: TBoardCellRendererParams
+  allowedDataTypes?: string[]
+};
+
+export interface IBoardCellRenderers {
+  [rendererType: string]: IBoardCellRenderer
+};
 
 export type INewCellRenderersToSave = {
   [attributeId: string]: ICellRenderer

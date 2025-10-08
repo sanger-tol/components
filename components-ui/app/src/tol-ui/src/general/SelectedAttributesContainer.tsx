@@ -89,14 +89,14 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
       >
         <div>
           <span {...dragHandleProps}>
-            <div className={"tol-config-drawer-selected-column-name"}>
+            <div className="tol-config-drawer-selected-column-name">
               <div style={{ display: "inline", paddingRight: "5px" }}>
                 {attributeDetails.display_name || normaliseCaps(attributeId)}
               </div>
               <AttributeTooltip {...props} field={attributeId} />
             </div>
           </span>
-          <p className={"tol-config-drawer-selected-column-key"}>
+          <p className="tol-config-drawer-selected-column-key">
             {truncateString(attributeId, lettersToDisplay)}
           </p>
         </div>

@@ -78,7 +78,7 @@ export function removeSuperfluousExists(filter: IAndAttributes) {
  * @param currentId - The identifier of the item to compare against.
  * @returns `true` if the filter should pass through and the `id` is not equal to `currentId`; otherwise, `false`.
  */
-function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThrough?: boolean, ) {
+function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThrough?: boolean) {
   return filterPassThrough && id !== currentId
 }
 
@@ -360,7 +360,7 @@ export function resetZone(params: { zone: IZone; setZone: any }) {
   setZone({ ...zone });
 }
 
-export function symbolToOperator (operator: string, values?: string[]) {
+export function symbolToOperator(operator: string, values?: string[]) {
   switch (operator) {
     case "=":
       return "eq";
@@ -378,7 +378,7 @@ export function symbolToOperator (operator: string, values?: string[]) {
   }
 };
 
-export function operatorToSymbol (operator: string, values?: string[]) {
+export function operatorToSymbol(operator: string, values?: string[]) {
   switch (operator) {
     case "eq":
       return "=";

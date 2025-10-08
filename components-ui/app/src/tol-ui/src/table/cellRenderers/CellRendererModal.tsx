@@ -18,7 +18,6 @@ import {
   IRemoteTarget,
   RemoteFilters,
   IFilter,
-  Icon,
 } from "../..";
 import { CellRendererParam } from "./CellRendererParam";
 
@@ -38,7 +37,7 @@ export function CellRendererModal(props: PCellRendererModal) {
   const [selectedConditionParam, setSelectedConditionParam] = useState<string | undefined>();
 
   const requiredParamKeys = renderer && cellRendererParams[renderer.type]
-    ? Object.entries(cellRendererParams[renderer.type])
+    ? Object.entries(cellRendererParams[renderer.type].params || {})
       .filter(([_, v]) => v.required)
       .map(([k, _]) => k)
     : [];
@@ -107,13 +106,21 @@ export function CellRendererModal(props: PCellRendererModal) {
       }
     />
   );
-
-  const typeChoices = [
-    "none", ...Object.keys(cellRendererParams)
-  ].map(cellRendererType => ({
+// ...existing code...
+const typeChoices = ["none", ...Object.keys(cellRendererParams)]
+  .filter(cellRendererType => {
+    if (cellRendererType === "none") return true;
+    const allowed = cellRendererParams[cellRendererType]?.allowedDataTypes;
+    const attrType = fieldMeta?.dataWithDefaults?.[attributeId]?.type;
+    // If allowedDataTypes is not defined, allow all
+    if (!allowed) return true;
+    return allowed.includes(attrType!);
+  })
+  .map(cellRendererType => ({
     label: normaliseCaps(cellRendererType),
     value: cellRendererType
   }));
+// ...existing code...
 
   return (
     <Modal
@@ -143,7 +150,7 @@ export function CellRendererModal(props: PCellRendererModal) {
           <div className="tol-param-header">
             <h6 className="tol-param-title">
               Configure Condition for
-              '{cellRendererParams[renderer?.type!][selectedConditionParam]?.rename}'
+              '{cellRendererParams[renderer?.type!].params?.[selectedConditionParam]?.rename}'
               Parameter
             </h6>
             <Button
@@ -167,7 +174,7 @@ export function CellRendererModal(props: PCellRendererModal) {
           {renderer &&
             Object.keys(cellRendererParams[renderer?.type] || {}).length > 0 && (
               <div className="tol-cell-renderer-modal-params">
-                {Object.entries(cellRendererParams[renderer.type]).map(([param, meta]) => {
+                {Object.entries(cellRendererParams[renderer.type].params || {}).map(([param, meta]) => {
                   return (
                     <CellRendererParam
                       {...props}
