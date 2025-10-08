@@ -7,17 +7,15 @@
 .tol-socialviewer-parent {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
 
-  h3 {
+  h6 {
     margin-bottom: 0;
   }
 
   .icon {
-    color: var(--tol-text-primary);
+    color: var(--tol-text);
     align-self: center;
-    @media (prefers-color-scheme: dark) {
-      color: white;
-    }
   }
 }
 

@@ -22,12 +22,7 @@ export function FieldDropdown(props: FieldDropdown) {
   return (
     <span className="tol-field-dropdown" onClick={onClick}>
       <Dropdown
-        icon={
-          <Icon
-            icon="ellipsis-vertical"
-            size="xs"
-          />
-        }
+        icon={<Icon icon="ellipsis-vertical" size="xs" />}
         noCaret
         placement="bottomEnd"
       >

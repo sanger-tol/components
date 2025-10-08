@@ -335,10 +335,7 @@
 }
 
 span.rs-dropdown-toggle-icon {
-  color: black;
-  @media (prefers-color-scheme: dark) {
-    color: white;
-  }
+  color: var(--tol-text);
 }
 
 // config modal
