@@ -26,6 +26,7 @@ export function AttributeTitle(props: PAttributeTitle) {
   }, [])
 
   return (
+    <div className="tol-attribute-title">
     <TitleElement className={classname}>
       <AttributeTooltip
         {...props}
@@ -42,5 +43,6 @@ export function AttributeTitle(props: PAttributeTitle) {
       />
       {fieldDisplayName || field}
     </TitleElement>
+    </div>
   );
 }
