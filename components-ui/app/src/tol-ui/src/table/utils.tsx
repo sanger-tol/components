@@ -332,7 +332,7 @@ export function copyPageColumnValues(data: any, fieldHeader: string) {
       Array.isArray(
         getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)
       )
-        ? getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)
+        ? getFieldByName(element[fieldHeader].props.dataObject, fieldHeader).join(',')
         : [getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)]
     )
   );
