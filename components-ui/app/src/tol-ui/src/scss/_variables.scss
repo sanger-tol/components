@@ -35,7 +35,7 @@ $tol-primary-translucent: rgba($tol-primary, 0.1) !default;
 $tol-primary-light: lighten($tol-primary, 15%) !default;
 $tol-primary-dark: darken($tol-primary, 15%) !default;
 
-$tol-info: $tol-primary !default;
+$tol-info: #039be5 !default;
 $tol-info-translucent: rgba($tol-info, 0.1) !default;
 $tol-info-light: lighten($tol-info, 15%) !default;
 $tol-info-dark: darken($tol-info, 15%) !default;
@@ -55,7 +55,7 @@ $tol-danger-translucent: rgba($tol-danger, 0.1) !default;
 $tol-danger-light: lighten($tol-danger, 15%) !default;
 $tol-danger-dark: darken($tol-danger, 15%) !default;
 
-$tol-royal: #6c3baa !default;
+$tol-royal: #a33baa !default;
 $tol-royal-translucent: rgba($tol-royal, 0.1) !default;
 $tol-royal-light: lighten($tol-royal, 15%) !default;
 $tol-royal-dark: darken($tol-royal, 15%) !default;

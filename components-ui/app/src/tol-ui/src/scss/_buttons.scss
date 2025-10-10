@@ -85,14 +85,8 @@ $sizes: (
       box-sizing: border-box;
       &:hover,
       &:active {
-        border-color: var(#{$color}-dark) !important;
+        border-color: var(#{$color}) !important;
         color: var($color) !important;
-        border-width: 2px;
-        @if $size == "md" {
-          padding: 4px;
-        } @else {
-          padding: 9px;
-        }
       }
 
       &.rs-btn.rs-btn-active {

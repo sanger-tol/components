@@ -20,6 +20,7 @@ import {
   TsDataSource,
   getCellRendererPropValue
 } from "../..";
+import { Status } from "./Status";
 
 export interface PCell {
   attribute: string,
@@ -34,25 +35,25 @@ export function Cell(props: PCell) {
   const { value, dataObject, renderer, customCellRenderers } = props;
 
   const preDefinedElements = {
-    relationship: Relationship,
-    relationshipDetail: Relationship,
-    datetime: Datetime,
     boolean: Boolean,
-    image: Image,
-    list: List,
+    datetime: Datetime,
     expander: Expander,
     float: Float,
+    image: Image,
     integer: Integer,
-    link: Link
+    link: Link,
+    list: List,
+    relationship: Relationship,
+    status: Status
   };
-
   if (
     // renderer type is not defined
     !renderer ||
     !renderer.type ||
+    renderer.type === "none" ||
     // no value and not a custom renderer as custom renderers may not require a value
     // no need to to deal with empty values with pre-defined cellRenderers
-    (!value && renderer.type in preDefinedElements)
+    (!value && (renderer.type) in preDefinedElements)
   )
     return <>{value}</>;
 
@@ -63,7 +64,7 @@ export function Cell(props: PCell) {
 
   if (renderer.props) {
     Object.entries(renderer.props).forEach(([prop, value]) => {
-      getCellRendererPropValue(elementProps, value, dataObject, prop);
+      getCellRendererPropValue(prop, value, elementProps, dataObject);
     });
   }
 

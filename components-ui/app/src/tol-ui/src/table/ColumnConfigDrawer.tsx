@@ -16,6 +16,10 @@ import {
   IDropdownButtonConfig,
   MultipleSelect,
   ITableConfigSave,
+  CellRendererConfigurer,
+  INewCellRenderersToSave,
+  ICellRenderer,
+  addNewCellRenderersToFieldMeta,
 } from "..";
 
 
@@ -53,19 +57,28 @@ export function ColumnConfigDrawer(props: Props) {
   const [initialAttributes, setInitialAttributes] = useState<string[]>(fieldMeta.order.active);
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   // used to store selected actions from the dropdown
-  const originalActions = props.actions?.map((btn) => btn.name as string) ?? [];
-  const [actions, setActions] = useState<string[]>(originalActions);
+  const initialActions = props.actions?.map((btn) => btn.name as string) ?? [];
+  const [actions, setActions] = useState<string[]>(initialActions);
   const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
   const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
+  const [newCellRenderers, setNewCellRenderers] = useState<INewCellRenderersToSave>({});
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
     setInitialAttributes(fieldMeta?.order?.active ?? []);
-  }, [fieldMeta]);
+
+    // reset newCellRenderers onClose
+    if (!open) setNewCellRenderers({});
+  }, [open]);
 
   const saveConfig = () => {
-    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || originalActions !== actions) {
+    if (
+      JSON.stringify(initialAttributes) !== JSON.stringify(attributes)
+      || initialActions !== actions
+      || Object.keys(newCellRenderers).length !== 0
+    ) {
       fieldMeta.order.active = attributes;
+      addNewCellRenderersToFieldMeta(newCellRenderers, fieldMeta);
       onConfigSave({
         fieldMeta: fieldMeta,
         actions: actions.length !== 0 ? actions : undefined,
@@ -74,8 +87,12 @@ export function ColumnConfigDrawer(props: Props) {
       });
       setInitialAttributes(attributes);
     }
-    setOpen(!open);
+    setOpen(false);
     setOpenSaveModal(false);
+  };
+
+  const onCellRendererModalSave = (renderer: ICellRenderer, attributeId: string) => {
+    setNewCellRenderers({ ...newCellRenderers, [attributeId]: renderer });
   };
 
   const unsavedChangesModal = () => {
@@ -200,6 +217,19 @@ export function ColumnConfigDrawer(props: Props) {
     </div>
   );
 
+  const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
+    <CellRendererConfigurer
+      {...props}
+      attributeId={attributeId}
+      fieldMeta={fieldMeta}
+      onSave={onCellRendererModalSave}
+    />
+  );
+
+  const additionalIcons = [
+    CellRendererConfigurerWrapper,
+  ];
+
   const attSelector = (
     <div>
       <h6>Default Sort:</h6>
@@ -255,6 +285,7 @@ export function ColumnConfigDrawer(props: Props) {
         {...props}
         attributes={attributes}
         setAttributes={setAttributes}
+        additionalIcons={additionalIcons}
       />
       <div>
         <div className="tol-config-drawer-save-button">{drawerButtons}</div>

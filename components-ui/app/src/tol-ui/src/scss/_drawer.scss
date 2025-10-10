@@ -29,8 +29,21 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
   cursor: pointer;
 }
 
-.tol-active-column-btn.first {
-  margin-left: 12px !important;
+@keyframes tol-palette-hue-loop {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.tol-palette-icon:hover {
+  transition: 300ms;
+  animation-duration: 1s;
+  animation-direction: alternate;
+  animation-name: tol-palette-hue-loop;
+  animation-iteration-count: infinite;
 }
 
 .tol-active-column-btn.hidden {
@@ -80,8 +93,9 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
 }
 
 .tol-config-drawer-column-title {
-  border-bottom: 1px solid var(--tol-grey);
-  padding-bottom: 5px;
+  border-top: 1px solid var(--tol-grey);
+  padding-top: 24px;
+  margin-bottom: 8px;
 }
 
 .tol-config-drawer-modal-btns {
