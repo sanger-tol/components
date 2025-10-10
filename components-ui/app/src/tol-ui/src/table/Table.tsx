@@ -30,6 +30,7 @@ import {
   PRIVILEGE,
   ITableConfigSave,
   RowCounter,
+  Button
 } from "..";
 import { Sort } from "./Sort";
 import { FieldDropdown } from "./FieldDropdown";
@@ -77,6 +78,8 @@ interface Props extends IRemoteTargetAndZone {
   utilityBarConfig?: PUtilityBar;
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
+  expandedRows?: string[];
+  setExpandedRows?: (expandedRows: string[]) => void;
 
   contents?: ReactNode;
   groupBy?: boolean;
@@ -131,6 +134,19 @@ export function Table(props: Props) {
     /* eslint-enable */
   } = props;
 
+  // dummy image data for expanded rows
+  const pkmnArray = [
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/bulbasaur.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/ivysaur.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/venusaur.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/squirtle.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/wartortle.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/blastoise.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmander.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmeleon.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charizard.png",
+  ];
+
   const { privilege } = useBoardPrivilege()
 
   const [open, setOpen] = useState(false);
@@ -143,6 +159,13 @@ export function Table(props: Props) {
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
     props.selectedRows,
     props.setSelectedRows,
+    []
+  );
+
+  // row expansion
+  const [expandedRows, setExpandedRows] = useStateFallback<string[]>(
+    props.expandedRows,
+    props.setExpandedRows,
     []
   );
 
@@ -173,6 +196,19 @@ export function Table(props: Props) {
       ? [...selectedRows, value]
       : selectedRows.filter((item) => item !== value);
     setSelectedRows(keys);
+  };
+
+  const handleExpandAll = (expanded: boolean) => {
+    const keys = expanded ? data.map((item) => item.key) : [];
+    setExpandedRows(keys);
+  };
+
+  const handleExpandedRows = (key: string) => {
+    if (expandedRows.includes(key)) {
+      setExpandedRows(expandedRows.filter((k: string) => k !== key));
+    } else {
+      setExpandedRows([...expandedRows, key]);
+    }
   };
 
   resizeListener(() => {
@@ -266,6 +302,22 @@ export function Table(props: Props) {
         placement: "leftStart",
       }
       : undefined;
+
+  const renderRowExpanded = (_: any) => {
+    return (
+      <div className="tol-table-expanded-row">
+        {pkmnArray.map((pkmn) => (
+          <img
+            className="tol-table-expanded-row-img"
+            key={pkmn}
+            src={pkmn}
+            alt="pokemon"
+          />
+        ))}
+      </div>
+    );
+  };
+  
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
@@ -403,6 +455,10 @@ export function Table(props: Props) {
                   sortColumn={sortByAttribute}
                   sortType={sortByType}
                   onSortColumn={handleSortColumn!}
+                  expandedRowKeys={expandedRows}
+                  renderRowExpanded={renderRowExpanded}
+                  shouldUpdateScroll={false}
+                  rowKey={"key"}
                   rowClassName={(rowData: any) => {
                     if (rowData) {
                       if (bulkSelect) {
@@ -425,11 +481,50 @@ export function Table(props: Props) {
                     />
                   )}
                 >
+                  {
+                    <Column key="rowExpand" width={70}>
+                      <HeaderCell>
+                        Expand
+                        <Button
+                          icon={`${expandedRows.length === data.length
+                            ? "down-left-and-up-right-to-center"
+                            : "up-right-and-down-left-from-center"
+                          }`}
+                          tooltip={`${
+                            expandedRows.length === data.length
+                              ? "Collapse"
+                              : "Expand"
+                          } All`}
+                          className="tol-table-header-component tol-component-header"
+                          onClick={() => {
+                            handleExpandAll(
+                              expandedRows.length !== data.length
+                            );
+                          }}
+                        />
+                      </HeaderCell>
+                      <Cell>
+                        {(rowData: any) => (
+                          <Button
+                            icon={
+                              expandedRows.includes(rowData.key)
+                                ? "chevron-up"
+                                : "chevron-down"
+                            }
+                            className="tol-table-header-component"
+                            onClick={() => {
+                              handleExpandedRows(rowData.key);
+                            }}
+                          />
+                        )}
+                      </Cell>
+                    </Column>
+                  }
                   {rowSelection && (
-                    <Column key="rowSelection" width={60}>
+                    <Column key="rowSelection" width={70}>
                       <HeaderCell>
                         <Checkbox
-                          className="tol-row-selection"
+                          className="tol-table-header-component tol-component-header"
                           checked={checked}
                           indeterminate={indeterminate}
                           disabled={bulkSelect || data.length === 0}
@@ -437,11 +532,11 @@ export function Table(props: Props) {
                           style={data.length === 0 ? { display: "none" } : {}}
                         />
                       </HeaderCell>
-                      <Cell dataKey="id">
+                      <Cell>
                         {(rowData: { id: any }) => {
                           return (
                             <Checkbox
-                              className="tol-row-selection"
+                              className="tol-table-header-component"
                               value={rowData.id}
                               checked={
                                 bulkSelect ||
