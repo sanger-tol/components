@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  getFieldByName,
   TDataObjectOrNull,
   TCellRenderer,
   Boolean,
@@ -19,6 +18,7 @@ import {
   Relationship,
   ICustomCellRenderers,
   TsDataSource,
+  getCellRendererPropValue
 } from "../..";
 
 export interface PCell {
@@ -63,14 +63,7 @@ export function Cell(props: PCell) {
 
   if (renderer.props) {
     Object.entries(renderer.props).forEach(([prop, value]) => {
-      if (typeof value === "string" && value.includes("${")) {
-        // replace placeholders with values from dataObject
-        elementProps[prop] = value.replace(/\${(.*?)}/g, (_, key) =>
-          getFieldByName(dataObject, key) || ""
-        );
-      } else {
-        elementProps[prop] = value;
-      }
+      getCellRendererPropValue(elementProps, value, dataObject, prop);
     });
   }
 

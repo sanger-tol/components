@@ -4,13 +4,14 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { IFilter } from "..";
 
 export interface ICustomCellRenderers {
   [customType: string]: any;
 }
 
 interface ElementProps {
-  [prop: string]: string | string[];
+  [prop: string]: string | IFilter;
 }
 
 export type CellRendererType =

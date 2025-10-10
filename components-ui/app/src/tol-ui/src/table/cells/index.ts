@@ -14,3 +14,4 @@ export * from "./Integer";
 export * from "./Link";
 export * from "./List";
 export * from "./Relationship"
+export * from "./utils";
