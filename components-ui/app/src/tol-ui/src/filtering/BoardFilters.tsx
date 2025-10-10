@@ -16,6 +16,7 @@ import {
   generateFilter,
   resetFiltersBelow,
   deepCopy,
+  IFilter,
 } from ".."
 
 
@@ -47,8 +48,8 @@ export function BoardFilters(props: Props) {
   );
   const [passThrough, setPassThrough] = useState<boolean | undefined>(
     boardObjectType === "zone"
-        ? true
-        : deepCopy(zone.components[id].data).filterPassThrough,
+      ? true
+      : deepCopy(zone.components[id].data).filterPassThrough,
   );
 
   const removeCurrentEntityFiltersForDisabledFilters = (
@@ -90,7 +91,7 @@ export function BoardFilters(props: Props) {
     );
   }, [open]);
 
-  const onSave = (filter: any, filterPassThrough: boolean) => {
+  const onSave = (filter: IFilter, filterPassThrough: boolean) => {
     let upserter = upsertComponent;
     let attributes = {
       filter: filter
@@ -128,7 +129,7 @@ export function BoardFilters(props: Props) {
               }}
               checked={passThrough}
             />
-            <span style={{paddingRight: 6}} onClick={(e) => e.stopPropagation()}>
+            <span style={{ paddingRight: 6 }} onClick={(e) => e.stopPropagation()}>
               Apply filters only to this Component.
             </span>
             <IconTooltip
@@ -136,9 +137,9 @@ export function BoardFilters(props: Props) {
                 "This filter does not affect other components in the heirarchy. Filters from above are still applied."
               }
             />
-            <hr style={{marginTop: 24}} />
+            <hr style={{ marginTop: 24 }} />
           </div>
-        : null
+          : null
         }
         <RemoteFilters
           {...props}

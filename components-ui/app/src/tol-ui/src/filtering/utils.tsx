@@ -61,6 +61,7 @@ export function mergeAndFilters(target: object, incoming: object) {
   return output as IAndAttributes;
 }
 
+// removes 'exists' operators if there are other operators for the same attribute
 export function removeSuperfluousExists(filter: IAndAttributes) {
   Object.keys(filter).forEach((attribute) => {
     const operators = Object.keys(filter[attribute]);
@@ -83,7 +84,7 @@ function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThro
 }
 
 export function generateFilter(
-  zone?: object,
+  zone: IZone,
   id?: string,
   includeSubFilter?: boolean,
 ) {
@@ -110,6 +111,8 @@ export function generateFilter(
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
   removeSuperfluousExists(compoundedFilter);
+  // TODO: update when api supports upsert with empty objects
+  // return (isEmptyObject(compoundedFilter)) ? {} : { and_: compoundedFilter } as IFilter;
   return {
     and_: compoundedFilter,
   } as IFilter;
@@ -225,7 +228,7 @@ export function setFilter(params: {
 
 function filterListenerUpdater(params: {
   // whole filter data
-  filter: any;
+  filter?: IFilter;
   filterPassThrough?: boolean;
   // filter location
   attribute: string;

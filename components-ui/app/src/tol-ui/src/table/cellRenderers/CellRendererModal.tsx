@@ -18,6 +18,7 @@ import {
   IRemoteTarget,
   RemoteFilters,
   IFilter,
+  isEmptyObject,
 } from "../..";
 import { CellRendererParam } from "./CellRendererParam";
 
@@ -74,7 +75,12 @@ export function CellRendererModal(props: PCellRendererModal) {
   };
 
   const onConditionSave = (filters: IFilter) => {
-    renderer!.props![selectedConditionParam!] = filters;
+    // delete empty params if no condition present
+    if (isEmptyObject(filters.and_ || {})) {
+      delete renderer!.props![selectedConditionParam!];
+    } else {
+      renderer!.props![selectedConditionParam!] = filters;
+    }
     setRenderer({ ...renderer! });
     setSelectedConditionParam(undefined);
   }
@@ -164,7 +170,7 @@ const typeChoices = ["none", ...Object.keys(cellRendererParams)]
           </div>
           <RemoteFilters
             {...props}
-            filters={renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} }}
+            filters={renderer?.props?.[selectedConditionParam!] as IFilter}
             onSave={onConditionSave}
             onSaveText="Update Condition"
           />
