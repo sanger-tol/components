@@ -303,21 +303,27 @@ export function Table(props: Props) {
       }
       : undefined;
 
-  const renderRowExpanded = (_: any) => {
+  const renderRowExpanded = (rowData: object) => {
+    // rowData always returns {key, data}, we only want the data
+    const key: string = Object.keys(rowData).find(k => k !== 'key')!;
+    const value = rowData[key];
+    // could be single or multiple images
+    const urlList = Array.isArray(
+      value.props.value) ? value.props.value : [value.props.value];
     return (
       <div className="tol-table-expanded-row">
-        {pkmnArray.map((pkmn) => (
+        {urlList.map((url) => (
           <img
             className="tol-table-expanded-row-img"
-            key={pkmn}
-            src={pkmn}
-            alt="pokemon"
+            key={url}
+            src={url}
+            alt={url}
           />
         ))}
       </div>
     );
   };
-  
+
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
@@ -489,12 +495,11 @@ export function Table(props: Props) {
                           icon={`${expandedRows.length === data.length
                             ? "down-left-and-up-right-to-center"
                             : "up-right-and-down-left-from-center"
-                          }`}
-                          tooltip={`${
-                            expandedRows.length === data.length
+                            }`}
+                          tooltip={`${expandedRows.length === data.length
                               ? "Collapse"
                               : "Expand"
-                          } All`}
+                            } All`}
                           className="tol-table-header-component tol-component-header"
                           onClick={() => {
                             handleExpandAll(
