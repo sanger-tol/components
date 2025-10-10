@@ -92,7 +92,7 @@ export function convertTableData(
   const data: ITableData = [];
   // loop over each data object
   dataObjects!.forEach((obj) => {
-    const row: ITableRecord = {};
+    const row: ITableRecord = { key: obj.id };
     // loop over each field
     fieldMeta.order.active.forEach((attribute) => {
       const value = getFieldByName(obj, attribute);
@@ -132,7 +132,7 @@ function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
 }
 
 function addRemoteFilterType(type: string, cardinality: number) {
-  if (cardinality && cardinality < 20 && type === "str") return "multi";
+  if (cardinality && cardinality < 50 && type === "str") return "multi";
   if (type === "double") return "float";
   return type;
 }
