@@ -22,7 +22,8 @@ import {
   Cell,
   deepCopy,
   ICustomCellRenderers,
-  INewCellRenderersToSave
+  INewCellRenderersToSave,
+  isEmptyObject
 } from "..";
 
 interface Rgb {
@@ -70,7 +71,7 @@ function addValueBasedCellRenderer(
   value: any,
   meta: Field,
 ) {
-  if (value !== null && value !== undefined) {
+  if (value) {
     if (Array.isArray(value)) {
       meta.cellRenderer = { type: "list" };
     } else if (value.length > 32) {
@@ -94,9 +95,8 @@ export function convertTableData(
     const row: ITableRecord = {};
     // loop over each field
     fieldMeta.order.active.forEach((attribute) => {
-      // only add if undefined, not null - null = turn off cell renderer
       const value = getFieldByName(obj, attribute);
-      if (fieldMeta.dataWithDefaults![attribute]?.cellRenderer === undefined) {
+      if (!fieldMeta.dataWithDefaults![attribute]?.cellRenderer) {
         addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![attribute]);
       }
       row[attribute] = (
@@ -334,13 +334,20 @@ export function formatTotalSize(totalSize: number) {
 
 export function addNewCellRenderersToFieldMeta(cellRenderers: INewCellRenderersToSave, fieldMeta: FieldMeta) {
   for (const [attributeId, renderer] of Object.entries(cellRenderers)) {
-    fieldMeta.data![attributeId] = {
-      ...fieldMeta.data![attributeId], // preserve existing properties
-      cellRenderer: renderer, // add or overwrite the cellRenderer property
-    };
-    fieldMeta.dataWithDefaults![attributeId] = {
-      ...fieldMeta.dataWithDefaults![attributeId],
-      cellRenderer: renderer,
-    };
+    if (renderer) {
+      fieldMeta.data![attributeId] = fieldMeta.data![attributeId] || {};
+      fieldMeta.data![attributeId].cellRenderer = renderer;
+      fieldMeta.dataWithDefaults![attributeId] = fieldMeta.dataWithDefaults![attributeId] || {};
+      fieldMeta.dataWithDefaults![attributeId].cellRenderer = renderer;
+    } else {
+      delete fieldMeta.data![attributeId].cellRenderer;
+      if (isEmptyObject(fieldMeta.data![attributeId])) {
+        delete fieldMeta.data![attributeId];
+      }
+      delete fieldMeta.dataWithDefaults![attributeId].cellRenderer;
+      if (isEmptyObject(fieldMeta.dataWithDefaults![attributeId])) {
+        delete fieldMeta.dataWithDefaults![attributeId];
+      }
+    }
   }
 }

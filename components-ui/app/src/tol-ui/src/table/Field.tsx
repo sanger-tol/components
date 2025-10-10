@@ -23,6 +23,7 @@ export type TCellRendererType =
   "integer" |
   "link" |
   "list" |
+  "none" |
   "relationship" |
   string;
 
@@ -34,9 +35,7 @@ export interface ICellRenderer {
 
 export type TCellRenderer =
   ICellRenderer
-  | null // turn off cell renderer if a default is usually added
   | undefined;
-
 
 export interface Field {
   cellRenderer?: TCellRenderer;

@@ -33,9 +33,14 @@ export interface PCellRendererModal extends IRemoteTarget {
 
 export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, attributeId, fieldMeta, objectType, dataSource, onSave } = props;
-  const [renderer, setRenderer] = useState<TCellRenderer>();
+  const [renderer, setRenderer] = useState<TCellRenderer>(
+    deepCopy(
+      fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer
+    )
+  );
   const [entityMeta, setEntityMeta] = useState<IEntityMeta>();
   const [selectedConditionParam, setSelectedConditionParam] = useState<string | undefined>();
+  const [previousRenderer, setPreviousRenderer] = useState<string>();
 
   const requiredParamKeys = renderer && cellRendererParams[renderer.type]
     ? Object.entries(cellRendererParams[renderer.type].params || {})
@@ -56,12 +61,8 @@ export function CellRendererModal(props: PCellRendererModal) {
 
   useEffect(() => {
     if (open) {
-      setRenderer(
-        fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer === null ? null :
-          fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer === undefined ? undefined :
-            deepCopy(
-              fieldMeta?.dataWithDefaults?.[attributeId]?.cellRenderer as object
-            )
+      setPreviousRenderer(
+        JSON.stringify(renderer)
       );
     }
     setSelectedConditionParam(undefined);
@@ -69,8 +70,7 @@ export function CellRendererModal(props: PCellRendererModal) {
 
   const onTypeChange = (type: string) => {
     setRenderer(
-      type === "none" ? null : // forces no renderer
-        { ...renderer, type: type, props: {} }
+      type ? { ...renderer, type: type, props: {} } : undefined
     );
   };
 
@@ -102,31 +102,29 @@ export function CellRendererModal(props: PCellRendererModal) {
       position="right"
       type="success"
       onClick={() => {
-        setOpen(false), onSave(renderer, attributeId);
+        setOpen(false);
+        onSave(renderer, attributeId);
       }}
       text="Apply"
       disabled={
-        renderer !== null &&
-        !renderer?.type ||
+        JSON.stringify(renderer) === previousRenderer ||
         requiredParamsCount > filledParamsCount
       }
     />
   );
-// ...existing code...
-const typeChoices = ["none", ...Object.keys(cellRendererParams)]
-  .filter(cellRendererType => {
-    if (cellRendererType === "none") return true;
-    const allowed = cellRendererParams[cellRendererType]?.allowedDataTypes;
-    const attrType = fieldMeta?.dataWithDefaults?.[attributeId]?.type;
-    // If allowedDataTypes is not defined, allow all
-    if (!allowed) return true;
-    return allowed.includes(attrType!);
-  })
-  .map(cellRendererType => ({
-    label: normaliseCaps(cellRendererType),
-    value: cellRendererType
-  }));
-// ...existing code...
+
+  const typeChoices = Object.keys(cellRendererParams)
+    .filter(cellRendererType => {
+      const allowed = cellRendererParams[cellRendererType]?.allowedDataTypes;
+      const attrType = fieldMeta?.dataWithDefaults?.[attributeId]?.type;
+      // if allowedDataTypes is not defined, allow all
+      if (!allowed) return true;
+      return allowed.includes(attrType!);
+    })
+    .map(cellRendererType => ({
+      label: normaliseCaps(cellRendererType),
+      value: cellRendererType
+    }));
 
   return (
     <Modal
@@ -143,8 +141,7 @@ const typeChoices = ["none", ...Object.keys(cellRendererParams)]
             block
             placeholder="Default Cell Renderer"
             value={
-              renderer === null ? "none" :
-                renderer?.type || ""
+              renderer?.type || ""
             }
             onChange={onTypeChange}
             data={typeChoices}

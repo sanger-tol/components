@@ -42,6 +42,7 @@ export const cellRendererParams: IBoardCellRenderers = {
     }
   },
   list: {},
+  none: {},
   relationship: {
     params: {
       detailPageIdAttribute: {

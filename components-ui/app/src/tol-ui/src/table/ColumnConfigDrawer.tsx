@@ -20,6 +20,8 @@ import {
   INewCellRenderersToSave,
   ICellRenderer,
   addNewCellRenderersToFieldMeta,
+  clearEmptyFieldMetaData,
+  deepClean,
 } from "..";
 
 
@@ -78,6 +80,7 @@ export function ColumnConfigDrawer(props: Props) {
       || Object.keys(newCellRenderers).length !== 0
     ) {
       fieldMeta.order.active = attributes;
+      addNewCellRenderersToFieldMeta(newCellRenderers, fieldMeta);
       onConfigSave({
         fieldMeta: fieldMeta,
         actions: actions.length !== 0 ? actions : undefined,
@@ -91,9 +94,7 @@ export function ColumnConfigDrawer(props: Props) {
   };
 
   const onCellRendererModalSave = (renderer: ICellRenderer, attributeId: string) => {
-    const updatedNewCellRenderers = { ...newCellRenderers, [attributeId]: renderer };
-    setNewCellRenderers(updatedNewCellRenderers);
-    addNewCellRenderersToFieldMeta(updatedNewCellRenderers, fieldMeta);
+    setNewCellRenderers({ ...newCellRenderers, [attributeId]: renderer });
   };
 
   const unsavedChangesModal = () => {
