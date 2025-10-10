@@ -94,7 +94,7 @@ export function View(props: PView) {
 
   return (
     <div className="tol-view">
-      <div className="tol-zone-bar">
+      <div className="tol-view-bar">
         <UtilityBar
           id={utilityBarConfig?.id}
           buttons={[addZoneButton, ...(utilityBarConfig?.buttons || [])]}

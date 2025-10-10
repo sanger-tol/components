@@ -45,18 +45,14 @@
   }
 }
 
-.tol-view-bar {
-  button {
-    border-radius: 100%;
-  }
-}
-
+.tol-view-bar,
 .tol-zone-bar {
   @extend .tol-widget;
   border-radius: 0;
 }
 
-.tol-zone-bar > div {
+.tol-view-bar>div,
+.tol-zone-bar>div {
   margin-bottom: 0;
 }
 
@@ -187,7 +183,9 @@
   h6 {
     margin-top: 10px;
   }
-  h5, h6 {
+
+  h5,
+  h6 {
     margin-bottom: 0;
   }
 }
@@ -210,6 +208,10 @@
   border-color: var(--tol-primary) !important;
   border-width: 2px;
   border-style: solid;
+}
+
+.tol-zone {
+  margin-top: 10px;
 }
 
 .tol-zone-empty {
@@ -246,6 +248,7 @@
   font-weight: bolder !important;
   display: block;
   margin-right: 10px;
+
   .rs-plaintext {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -255,6 +258,7 @@
 
 .tol-inline-edit-sm {
   @extend .tol-inline-edit;
+
   .rs-plaintext {
     max-width: 150px;
   }
@@ -262,6 +266,7 @@
 
 .tol-inline-edit-md {
   @extend .tol-inline-edit;
+
   .rs-plaintext {
     max-width: 250px;
   }
