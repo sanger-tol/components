@@ -12,7 +12,7 @@ import {
   Placeholder,
   useEffectUpdate,
   DownloadModal,
-  EntityMetaToolTip,
+  AttributeTooltip,
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
@@ -30,9 +30,10 @@ import {
   PRIVILEGE,
   ITableConfigSave,
   RowCounter,
-  Button,
 } from "..";
 import { Sort } from "./Sort";
+import { FieldDropdown } from "./FieldDropdown";
+
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
@@ -290,6 +291,26 @@ export function Table(props: Props) {
         visible: false,
       };
 
+  const downloadButton: PButton = !noDownload ? {
+    visible: true,
+    position: "right",
+    type: "primary",
+    tooltip: "Download the tables current state in various formats",
+    onClick: () => {
+      setDownloadOpen(!downloadOpen);
+    },
+    disabled: (totalSize <= 0 || noFieldsSelected) || loading,
+    icon: "download",
+    disabledTooltip:
+      totalSize >= 1
+        ? "Must have at least one row to download."
+        : undefined,
+    outline: true,
+    loading: downloadInProgress
+  } : {
+    visible: false,
+  };
+
   const actionDropdown: PDropdownButtons | undefined =
     actions && actions.length > 0
       ? {
@@ -477,7 +498,11 @@ export function Table(props: Props) {
                   fillHeight
                   wordWrap
                   renderLoading={() => (
-                    <Placeholder loader opacity={0.8} squareCorners />
+                    <Placeholder
+                      loader
+                      opacity={0.8}
+                      squareCorners
+                    />
                   )}
                 >
                   {
@@ -553,8 +578,7 @@ export function Table(props: Props) {
                   {fieldMeta!.order.active.map((key: string) => {
                     const field = fieldMeta.dataWithDefaults![key];
                     if (field) {
-                      const sortable: boolean =
-                        (!noSorting && field.sort) ?? false;
+                      const sortable: boolean = (!noSorting && field.sort) ?? false;
                       const filterable = !noFilter && field.filter;
 
                       return (
@@ -565,26 +589,21 @@ export function Table(props: Props) {
                           fixed={field.fixed}
                         >
                           <HeaderCell>
-                            {(field.description || field.source) && (
-                              <div className="tol-header-info">
-                                <EntityMetaToolTip
-                                  objectType={objectType}
-                                  dataSource={dataSource}
-                                  field={key}
-                                />
-                              </div>
-                            )}
                             <p className="tol-header-text">
-                              {field.source && (
-                                <span
-                                  className="inline-source"
-                                  style={{
-                                    backgroundColor: getSourceColour(
-                                      field.source
-                                    ),
-                                  }}
-                                />
-                              )}
+                              <AttributeTooltip
+                                {...props}
+                                field={key}
+                                element={
+                                  <span
+                                    className="inline-source"
+                                    style={{
+                                      backgroundColor: getSourceColour(
+                                        field.source || "var(--tol-emphasis)"
+                                      ),
+                                    }}
+                                  />
+                                }
+                              />
                               {field.rename}
                             </p>
                             {filterable && (
@@ -605,9 +624,13 @@ export function Table(props: Props) {
                               </span>
                             )}
                             <Sort
+                              {...props}
                               attribute={key}
                               sortable={sortable}
+                            />
+                            <FieldDropdown
                               {...props}
+                              attribute={key}
                             />
                           </HeaderCell>
                           <Cell dataKey={key} />

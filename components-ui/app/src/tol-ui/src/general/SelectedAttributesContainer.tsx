@@ -9,7 +9,7 @@ import DraggableList from "react-draggable-list";
 import {
   Icon,
   SourceTag,
-  EntityMetaToolTip,
+  AttributeTooltip,
   normaliseCaps,
   truncateString,
   IRemoteTarget,
@@ -72,16 +72,16 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
     HTMLDivElement,
     { item: any; dragHandleProps: any }
   >(({ item, dragHandleProps }, ref) => {
-    const attr_name = item;
-    const attributeDeatils = objectAttributes[attr_name] || {};
-    const index = attributes.indexOf(attr_name);
+    const attrName = item;
+    const attributeDeatils = objectAttributes[attrName] || {};
+    const index = attributes.indexOf(attrName);
 
     const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
 
     return (
       <div
         ref={ref}
-        key={`${attr_name}-${index}`}
+        key={`${attrName}-${index}`}
         className={`tol-config-drawer-selected-column ${
           recentlyMoved === index ? "highlight" : ""
         } ${deletingIndex === index ? "deleting" : ""}`}
@@ -90,13 +90,13 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
           <span {...dragHandleProps}>
             <div className={"tol-config-drawer-selected-column-name"}>
               <div style={{ display: "inline", paddingRight: "5px" }}>
-                {attributeDeatils.display_name || normaliseCaps(attr_name)}
+                {attributeDeatils.display_name || normaliseCaps(attrName)}
               </div>
-              <EntityMetaToolTip {...props} field={attr_name} />
+              <AttributeTooltip {...props} field={attrName} />
             </div>
           </span>
           <p className={"tol-config-drawer-selected-column-key"}>
-            {truncateString(attr_name, lettersToDisplay)}
+            {truncateString(attrName, lettersToDisplay)}
           </p>
         </div>
         <div className="tol-config-drawer-btn-array">

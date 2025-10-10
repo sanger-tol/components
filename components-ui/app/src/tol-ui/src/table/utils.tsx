@@ -305,7 +305,11 @@ export async function dataObjectToSpreadsheetData(
   dataObjects?.forEach((obj) => {
     const flatData = {};
     requestedFields.forEach((field) => {
-      flatData[fieldMeta?.dataWithDefaults?.[field].rename ?? field] = getFieldByName(obj, field);
+      flatData[fieldMeta.dataWithDefaults?.[field].rename ?? field] = Array.isArray(
+        getFieldByName(obj, field)
+      )
+        ? getFieldByName(obj, field).toString()
+        : getFieldByName(obj, field);
     });
     spreadsheetData.push(flatData);
   });
