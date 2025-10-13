@@ -34,6 +34,8 @@ export interface PCell {
 export function Cell(props: PCell) {
   const { value, dataObject, renderer, customCellRenderers } = props;
 
+  const DefaultCell = ({ value }) => <>{value ?? ""}</>;
+
   const preDefinedElements = {
     boolean: Boolean,
     collection: Collection,
@@ -46,6 +48,7 @@ export function Cell(props: PCell) {
     relationship: Relationship,
     status: Status
   };
+
   if (
     // renderer type is not defined
     !renderer ||
@@ -55,10 +58,10 @@ export function Cell(props: PCell) {
     // no need to to deal with empty values with pre-defined cellRenderers
     (!value && (renderer.type) in preDefinedElements)
   )
-    return <>{value}</>;
+    return <DefaultCell value={value} />;
 
   const elements = { ...preDefinedElements, ...customCellRenderers };
-  renderer.element = elements[renderer.type];
+  renderer.element = elements[renderer.type] || DefaultCell;
 
   const elementProps: Record<string, any> = { ...props };
 
