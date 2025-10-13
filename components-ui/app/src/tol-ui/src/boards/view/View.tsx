@@ -113,7 +113,7 @@ export function View(props: PView) {
         boardDataSource={boardDataSource}
       />
       {zones.length > 0 ? (
-        <>
+        <div className="tol-zones">
           {getSortedZones(zones, zoneOrder).map((zone) => {
             return (
               <Zone
@@ -129,7 +129,7 @@ export function View(props: PView) {
               />
             );
           })}
-        </>
+        </div>
       ) : (
         <div className="tol-zone-empty">
           {privilege === PRIVILEGE.BOARD.EDITABLE ? (
