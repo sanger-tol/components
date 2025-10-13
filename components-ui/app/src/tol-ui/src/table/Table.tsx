@@ -30,6 +30,7 @@ import {
   PRIVILEGE,
   ITableConfigSave,
   RowCounter,
+  AttributeTitle
 } from "..";
 import { Sort } from "./Sort";
 import { FieldDropdown } from "./FieldDropdown";
@@ -468,23 +469,12 @@ export function Table(props: Props) {
                           fixed={field.fixed}
                         >
                           <HeaderCell>
-                            <p className="tol-header-text">
-                              <AttributeTooltip
-                                {...props}
-                                field={key}
-                                element={
-                                  <span
-                                    className="inline-source"
-                                    style={{
-                                      backgroundColor: getSourceColour(
-                                        field.source || "var(--tol-emphasis)"
-                                      ),
-                                    }}
-                                  />
-                                }
-                              />
-                              {field.rename}
-                            </p>
+                            <AttributeTitle
+                              {...props}
+                              field={key}
+                              titleElement="p"
+                              classname="tol-header-text"
+                            />
                             {filterable && (
                               <span
                                 className={
