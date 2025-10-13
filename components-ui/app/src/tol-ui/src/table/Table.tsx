@@ -134,19 +134,6 @@ export function Table(props: Props) {
     /* eslint-enable */
   } = props;
 
-  // dummy image data for expanded rows
-  const pkmnArray = [
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/bulbasaur.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/ivysaur.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/venusaur.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/squirtle.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/wartortle.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/blastoise.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmander.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmeleon.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charizard.png",
-  ];
-
   const { privilege } = useBoardPrivilege()
 
   const [open, setOpen] = useState(false);
@@ -355,21 +342,6 @@ export function Table(props: Props) {
             : undefined
         }
       />
-      {/*rowSelection && (
-          <>
-            <Button
-              position="left"
-              type="primary"
-              active={bulkSelect}
-              onClick={() => {
-                handleCheckAll(null, !bulkSelect);
-                setBulkSelect(!bulkSelect);
-              }}
-              icon="check-double"
-              outline
-            />
-          </>
-        )*/}
       <UtilityBar
         id={id}
         title={utilityBarConfig.title}
@@ -497,8 +469,8 @@ export function Table(props: Props) {
                             : "up-right-and-down-left-from-center"
                             }`}
                           tooltip={`${expandedRows.length === data.length
-                              ? "Collapse"
-                              : "Expand"
+                            ? "Collapse"
+                            : "Expand"
                             } All`}
                           className="tol-table-header-component tol-component-header"
                           onClick={() => {
@@ -538,14 +510,14 @@ export function Table(props: Props) {
                         />
                       </HeaderCell>
                       <Cell>
-                        {(rowData: { id: any }) => {
+                        {(rowData: any) => {
                           return (
                             <Checkbox
                               className="tol-table-header-component"
-                              value={rowData.id}
+                              value={rowData.key}
                               checked={
                                 bulkSelect ||
-                                selectedRows.some((item) => item === rowData.id)
+                                selectedRows.some((item) => item === rowData.key)
                               }
                               disabled={bulkSelect}
                               onChange={handleCheck}
