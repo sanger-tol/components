@@ -72,7 +72,9 @@ export function Tables() {
               },
               "mlwh_species.sts_scientific_name": {
                 rename: "Species",
-                cellRenderer: null,
+                cellRenderer: {
+                  type: "none",
+                },
               },
               "mlwh_sequencing_request.id": {
                 // give better example
