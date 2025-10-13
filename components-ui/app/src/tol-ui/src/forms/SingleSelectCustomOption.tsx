@@ -95,7 +95,7 @@ export function SingleSelectCustomOption(props: PSingleSelectCustomOption) {
           data={data}
           placeholder="Please Select..."
           value={selectedOption}
-          setValue={handleSelectChange}
+          onChange={handleSelectChange}
           block
         />
         {showCustomBox && (

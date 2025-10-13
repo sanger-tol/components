@@ -147,6 +147,13 @@
       width: 100%;
     }
 
+    .tol-header-info {
+      position: absolute;
+      right: 0;
+      padding-right: 22px;
+      margin-top: -2px;
+    }
+
     // header color
     .rs-table-cell-header .rs-table-cell-content,
     .rs-table-header-row-wrapper .rs-table-row.rs-table-row-header {
@@ -295,11 +302,9 @@
 
 .tooltip-key {
   margin-right: 5px;
-  font-size: small;
 }
 
 .tooltip-value {
-  font-size: small;
   padding-right: 10px;
   color: var(--tol-primary)
 }

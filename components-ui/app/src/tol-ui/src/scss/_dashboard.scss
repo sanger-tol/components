@@ -4,14 +4,21 @@
  * SPDX-License-Identifier: MIT
  */
 
+.tol-boards-widget {
+  @extend .tol-widget;
+  margin: 0px !important;
+  margin-bottom: 10px !important;
+}
+
 // layout of the grid
 .tol-responsive-grid {
   position: relative;
   margin: -10px; // compensate for padding on children
+  margin-bottom: -28px !important;
 }
 
 .tol-visualisation {
-  @extend .tol-widget;
+  @extend .tol-boards-widget;
   position: relative;
   margin: 0px !important;
 }
@@ -36,7 +43,7 @@
 }
 
 .tol-board-bar {
-  @extend .tol-widget;
+  @extend .tol-boards-widget;
   margin: 6px;
   border-radius: 0;
 
@@ -45,18 +52,14 @@
   }
 }
 
-.tol-view-bar {
-  button {
-    border-radius: 100%;
-  }
-}
-
+.tol-view-bar,
 .tol-zone-bar {
-  @extend .tol-widget;
+  @extend .tol-boards-widget;
   border-radius: 0;
 }
 
-.tol-zone-bar > div {
+.tol-view-bar>div,
+.tol-zone-bar>div {
   margin-bottom: 0;
 }
 
@@ -187,7 +190,9 @@
   h6 {
     margin-top: 10px;
   }
-  h5, h6 {
+
+  h5,
+  h6 {
     margin-bottom: 0;
   }
 }
@@ -210,6 +215,10 @@
   border-color: var(--tol-primary) !important;
   border-width: 2px;
   border-style: solid;
+}
+
+.tol-zone {
+  margin-top: 10px;
 }
 
 .tol-zone-empty {
@@ -246,6 +255,7 @@
   font-weight: bolder !important;
   display: block;
   margin-right: 10px;
+
   .rs-plaintext {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -255,6 +265,7 @@
 
 .tol-inline-edit-sm {
   @extend .tol-inline-edit;
+
   .rs-plaintext {
     max-width: 150px;
   }
@@ -262,6 +273,7 @@
 
 .tol-inline-edit-md {
   @extend .tol-inline-edit;
+
   .rs-plaintext {
     max-width: 250px;
   }

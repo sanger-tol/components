@@ -21,7 +21,9 @@ import {
   TCellRenderer,
   Cell,
   deepCopy,
-  ICustomCellRenderers
+  ICustomCellRenderers,
+  INewCellRenderersToSave,
+  isEmptyObject
 } from "..";
 
 interface Rgb {
@@ -69,7 +71,7 @@ function addValueBasedCellRenderer(
   value: any,
   meta: Field,
 ) {
-  if (value !== null && value !== undefined) {
+  if (value) {
     if (Array.isArray(value)) {
       meta.cellRenderer = { type: "list" };
     } else if (value.length > 32) {
@@ -90,13 +92,11 @@ export function convertTableData(
   const data: ITableData = [];
   // loop over each data object
   dataObjects!.forEach((obj) => {
-    // id always required for rsuite table (actions, selection, expansion)
     const row: ITableRecord = { key: obj.id };
     // loop over each field
     fieldMeta.order.active.forEach((attribute) => {
-      // only add if undefined, not null - null = turn off cell renderer
       const value = getFieldByName(obj, attribute);
-      if (fieldMeta.dataWithDefaults![attribute]?.cellRenderer === undefined) {
+      if (!fieldMeta.dataWithDefaults![attribute]?.cellRenderer) {
         addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![attribute]);
       }
       row[attribute] = (
@@ -126,13 +126,13 @@ function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
   switch (type) {
     case "datetime":
       return { type: "datetime" };
-    case "boolean":
+    case "bool":
       return { type: "boolean" };
   }
 }
 
 function addRemoteFilterType(type: string, cardinality: number) {
-  if (cardinality && cardinality < 20 && type === "str") return "multi";
+  if (cardinality && cardinality < 50 && type === "str") return "multi";
   if (type === "double") return "float";
   return type;
 }
@@ -330,4 +330,24 @@ export function exportDataToSpreadsheet(
 export function formatTotalSize(totalSize: number) {
   if (totalSize === 1) return "1 Row";
   return totalSize.toLocaleString() + " Rows";
+}
+
+export function addNewCellRenderersToFieldMeta(cellRenderers: INewCellRenderersToSave, fieldMeta: FieldMeta) {
+  for (const [attributeId, renderer] of Object.entries(cellRenderers)) {
+    if (renderer) {
+      fieldMeta.data![attributeId] = fieldMeta.data![attributeId] || {};
+      fieldMeta.data![attributeId].cellRenderer = renderer;
+      fieldMeta.dataWithDefaults![attributeId] = fieldMeta.dataWithDefaults![attributeId] || {};
+      fieldMeta.dataWithDefaults![attributeId].cellRenderer = renderer;
+    } else {
+      delete fieldMeta.data![attributeId].cellRenderer;
+      if (isEmptyObject(fieldMeta.data![attributeId])) {
+        delete fieldMeta.data![attributeId];
+      }
+      delete fieldMeta.dataWithDefaults![attributeId].cellRenderer;
+      if (isEmptyObject(fieldMeta.dataWithDefaults![attributeId])) {
+        delete fieldMeta.dataWithDefaults![attributeId];
+      }
+    }
+  }
 }

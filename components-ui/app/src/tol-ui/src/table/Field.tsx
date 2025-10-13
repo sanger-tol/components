@@ -14,30 +14,28 @@ interface ElementProps {
   [prop: string]: string | IFilter;
 }
 
-export type CellRendererType =
-  "relationship"
-  | "relationshipDetail"
-  | "datetime"
-  | "boolean"
-  | "image"
-  | "list"
-  | "expander"
-  | "float"
-  | "integer"
-  | "link"
-  | string;
+export type TCellRendererType =
+  "boolean" |
+  "datetime" |
+  "expander" |
+  "float" |
+  "image" |
+  "integer" |
+  "link" |
+  "list" |
+  "none" |
+  "relationship" |
+  string;
 
 export interface ICellRenderer {
-  type: CellRendererType;
-  element?: any;
+  type: TCellRendererType;
   props?: ElementProps;
+  element?: any; // only added automatically
 }
 
 export type TCellRenderer =
   ICellRenderer
-  | null // turn off cell renderer if a default is usually added
   | undefined;
-
 
 export interface Field {
   cellRenderer?: TCellRenderer;

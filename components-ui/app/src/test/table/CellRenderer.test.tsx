@@ -20,12 +20,12 @@ vitest.mock("../../tol-ui/src/table/utils", async(importOriginal) => {
 
 // Have to import after the mock to ensure the mock is applied
 import {
-  processFilterToBoolean,
+  processConditionToBoolean,
 } from "../../tol-ui/src";
 
-describe("Testing processFilterToBoolean function", () => {
+describe("Testing processConditionToBoolean function", () => {
   test("in_list True", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "sts_scientific_name": { "in_list": { "value": ["Abax parallelepipedus"] } } } },
       {
         id: "abc",
@@ -39,7 +39,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("in_list False", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "sts_scientific_name": { "in_list": { "value": ["Abax parallelepipedus"] } } } },
       {
         id: "abc",
@@ -53,7 +53,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("contains True", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "sts_scientific_name": { "contains": { "value": "A" } } } },
       {
         id: "abc",
@@ -67,7 +67,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("contains False", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "sts_scientific_name": { "contains": { "value": "Z" } } } },
       {
         id: "abc",
@@ -81,7 +81,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("eq True", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "sts_scientific_name": { "eq": { "value": "Abax parallelepipedus" } } } },
       {
         id: "abc",
@@ -92,7 +92,7 @@ describe("Testing processFilterToBoolean function", () => {
       }
     );
 
-    const value2 = processFilterToBoolean(
+    const value2 = processConditionToBoolean(
       { "and_": { "sts_scientific_name": { "eq": { "value": 2 } } } },
       {
         id: "abc",
@@ -108,7 +108,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("eq False", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "sts_scientific_name": { "eq": { "value": "Z" } } } },
       {
         id: "abc",
@@ -119,7 +119,7 @@ describe("Testing processFilterToBoolean function", () => {
       }
     );
 
-    const value2 = processFilterToBoolean(
+    const value2 = processConditionToBoolean(
       { "and_": { "sts_scientific_name": { "eq": { "value": 2 } } } },
       {
         id: "abc",
@@ -135,7 +135,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("gt True", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "random_count": { "gt": { "value": 5 } } } },
       {
         id: "abc",
@@ -149,7 +149,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("gt False", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "random_count": { "gt": { "value": 5 } } } },
       {
         id: "abc",
@@ -160,7 +160,7 @@ describe("Testing processFilterToBoolean function", () => {
       }
     );
 
-    const value2 = processFilterToBoolean(
+    const value2 = processConditionToBoolean(
       { "and_": { "random_count": { "gt": { "value": 'test' } } } },
       {
         id: "abc",
@@ -175,7 +175,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("gte True", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "random_count": { "gte": { "value": 5 } } } },
       {
         id: "abc",
@@ -189,7 +189,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("gte False", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "random_count": { "gte": { "value": 5 } } } },
       {
         id: "abc",
@@ -200,7 +200,7 @@ describe("Testing processFilterToBoolean function", () => {
       }
     );
 
-    const value2 = processFilterToBoolean(
+    const value2 = processConditionToBoolean(
       { "and_": { "random_count": { "gte": { "value": 'test' } } } },
       {
         id: "abc",
@@ -215,7 +215,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("lt True", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "random_count": { "lt": { "value": 10 } } } },
       {
         id: "abc",
@@ -229,7 +229,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("lt False", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "random_count": { "lt": { "value": 5 } } } },
       {
         id: "abc",
@@ -240,7 +240,7 @@ describe("Testing processFilterToBoolean function", () => {
       }
     );
 
-    const value2 = processFilterToBoolean(
+    const value2 = processConditionToBoolean(
       { "and_": { "random_count": { "lt": { "value": 'test' } } } },
       {
         id: "abc",
@@ -255,7 +255,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("lte True", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "random_count": { "lte": { "value": 5 } } } },
       {
         id: "abc",
@@ -269,7 +269,7 @@ describe("Testing processFilterToBoolean function", () => {
   });
 
   test("lte False", () => {
-    const value = processFilterToBoolean(
+    const value = processConditionToBoolean(
       { "and_": { "random_count": { "lte": { "value": 5 } } } },
       {
         id: "abc",
@@ -279,7 +279,7 @@ describe("Testing processFilterToBoolean function", () => {
         },
       }
     );
-    const value2 = processFilterToBoolean(
+    const value2 = processConditionToBoolean(
       { "and_": { "random_count": { "lte": { "value": 'test' } } } },
       {
         id: "abc",
