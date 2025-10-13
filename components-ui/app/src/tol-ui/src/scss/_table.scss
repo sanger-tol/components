@@ -315,21 +315,6 @@
   display: inline;
 }
 
-.inline-source {
-  height: 10px;
-  width: 2px;
-  margin-right: 3px;
-  border-radius: 2px;
-  display: inline-block;
-  transition: width 0.5s ease;
-}
-
-.rs-table-cell-header:hover {
-  .inline-source {
-    width: 10px;
-  }
-}
-
 .tol-field-dropdown {
   position: absolute;
   top: 10px;
