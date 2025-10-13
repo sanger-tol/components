@@ -7,7 +7,12 @@ SPDX-License-Identifier: MIT
 import { PCell, Icon, Modal } from "../..";
 import { useState } from "react";
 
-export function Image(props: PCell) {
+export interface PImage extends PCell {
+  value: string | string[];
+  names: string | string[];
+}
+
+export function Image(props: PImage) {
   const { value, names } = props;
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [modalIndex, setModalIndex] = useState<number>(0);
@@ -32,7 +37,6 @@ export function Image(props: PCell) {
     <>
       {multipleImages && (
         <Icon
-          className="tol-table-image-cell-arrow"
           icon="caret-left"
           onClick={() => arrowPrev(setModalIndex)}
           size="2x"
@@ -40,18 +44,17 @@ export function Image(props: PCell) {
       )}
       <img
         src={multipleImages ? value[modalIndex] : value}
-        className="tol-table-image-cell-image"
+        style={{ height: "auto", width: "95%" }}
         title={multipleImages ? value[modalIndex] : value}
       />
       {multipleImages && (
         <Icon
-          className="tol-table-image-cell-arrow"
           icon="caret-right"
           onClick={() => arrowNext(setModalIndex)}
           size="2x"
         />
       )}
-      <caption className="tol-table-modal-image-caption" style={{textAlign: "center", width:"500px"}}>
+      <caption style={{ textAlign: "center", width: "500px" }}>
         {multipleImages ? names[modalIndex] : names}
       </caption>
     </>
@@ -62,43 +65,43 @@ export function Image(props: PCell) {
       open={open}
       setOpen={setOpen}
       children={Content}
-      className="tol-table-image-modal"
     />
   );
 
   return (
-    <>
+    <div>
       {ImageViewerModal}
-      <div className="tol-table-image-cell">
-        <Icon
-          className="tol-table-image-cell-arrow"
-          icon="caret-left"
-          onClick={() => arrowPrev(setCurrentIndex)}
-          size="2x"
-        />
+      <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        {multipleImages ??
+          <Icon
+            icon="caret-left"
+            onClick={() => arrowPrev(setCurrentIndex)}
+            size="2x"
+          />
+        }
         <img
           src={multipleImages ? value[currentIndex] : value}
-          className="tol-table-image-cell-image"
+          style={{ height: "auto", width: "75%" }}
           onClick={() => {
             value.length > 0 && setOpen((prev: boolean) => !prev);
             setModalIndex(currentIndex);
           }}
         />
-        <div className="tol-table-image-cell-right-column">
+        {multipleImages ??
           <Icon
-            className="tol-table-image-cell-arrow"
             icon="caret-right"
             onClick={() => arrowNext(setCurrentIndex)}
             size="2x"
           />
-          <Icon
-            className="tol-table-image-cell-down"
-            icon={dropDown ? "caret-up" : "caret-down"}
-            onClick={() => setDropDown((prev: boolean) => !prev)}
-            size="2x"
-          />
-        </div>
-      </div>
-    </>
+        }
+      </span>
+      {/* <div>
+        <Icon
+          icon={dropDown ? "caret-up" : "caret-down"}
+          onClick={() => setDropDown((prev: boolean) => !prev)}
+          size="2x"
+        />
+      </div> */}
+    </div>
   );
 }
