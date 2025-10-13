@@ -67,6 +67,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone {
   noDownload?: boolean;
 
   rowSelection?: boolean;
+  rowExpansion?: boolean;
   utilityBarConfig?: PUtilityBar;
   contents?: ReactNode;
   groupBy?: boolean;

@@ -72,6 +72,7 @@ interface Props extends IRemoteTargetAndZone {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
+  rowExpansion?: boolean;
   actions?: IDropdownButtonConfig[];
   actionChoices?: string[];
   actionsFooter?: IDropdownButtonConfig;
@@ -122,6 +123,7 @@ export function Table(props: Props) {
     noConfigModal,
     noDownload,
     rowSelection,
+    rowExpansion,
     actions,
     actionsFooter,
     utilityBarConfig = {},
@@ -458,7 +460,7 @@ export function Table(props: Props) {
                     />
                   )}
                 >
-                  {
+                  {rowExpansion && (
                     <Column key="rowExpand" width={70}>
                       <HeaderCell>
                         Expand
@@ -495,7 +497,7 @@ export function Table(props: Props) {
                         )}
                       </Cell>
                     </Column>
-                  }
+                  )}
                   {rowSelection && (
                     <Column key="rowSelection" width={70}>
                       <HeaderCell>
