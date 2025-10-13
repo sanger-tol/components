@@ -40,3 +40,31 @@
     }
   }
 }
+
+.tol-collection {
+  display: table-cell;
+}
+
+.rs-table-cell-wrap:has(.tol-collection) {
+  margin: -4px !important;
+}
+
+.tol-collection-list-item {
+  background-color: var(--tol-bg-dark);
+  color: var(--tol-emphasis);
+  border-radius: 6px;
+  padding: 4px 6px;
+  margin: 4px;
+  float: left;
+  display: table-cell;
+  border: 1px solid var(--tol-grey);
+}
+
+.tol-collection-object-entry {
+  margin-bottom: 6px;
+}
+
+.tol-collection-object-key {
+  font-weight: bold;
+  margin-right: 6px;
+}

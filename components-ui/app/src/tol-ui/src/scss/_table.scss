@@ -241,22 +241,6 @@
     cursor: pointer;
   }
 
-  // list cellRenderer
-  .simple-tag {
-    background-color: var(--tol-bg-dark);
-    color: var(--tol-emphasis);
-    border-radius: 6px;
-    padding: 4px 6px;
-    margin: 2px;
-    float: left;
-    display: table-cell;
-  }
-
-  .rs-table-cell-wrap,
-  .simple-tag-container {
-    display: table-cell;
-  }
-
   // expander cellRenderer
   .copy-icon {
     svg {
