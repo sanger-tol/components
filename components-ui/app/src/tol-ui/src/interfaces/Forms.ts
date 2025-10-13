@@ -219,3 +219,5 @@ export interface IFormConfig {
 export interface IRemoteAutoCompleteData {
   [key: string]: object[];
 }
+
+export type TAutoCompleteValue = string | { value: string, id: string };
