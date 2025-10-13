@@ -8,13 +8,13 @@ import {
   TDataObjectOrNull,
   TCellRenderer,
   Boolean,
+  Collection,
   Datetime,
   Expander,
   Float,
   Image,
   Integer,
   Link,
-  List,
   Relationship,
   ICustomCellRenderers,
   TsDataSource,
@@ -36,13 +36,13 @@ export function Cell(props: PCell) {
 
   const preDefinedElements = {
     boolean: Boolean,
+    collection: Collection,
     datetime: Datetime,
     expander: Expander,
     float: Float,
     image: Image,
     integer: Integer,
     link: Link,
-    list: List,
     relationship: Relationship,
     status: Status
   };
