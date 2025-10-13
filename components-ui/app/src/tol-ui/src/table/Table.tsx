@@ -30,7 +30,7 @@ import {
   PRIVILEGE,
   ITableConfigSave,
   RowCounter,
-  Button
+  RowExpander,
 } from "..";
 import { Sort } from "./Sort";
 import { FieldDropdown } from "./FieldDropdown";
@@ -80,7 +80,6 @@ interface Props extends IRemoteTargetAndZone {
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
   expandedRows?: string[];
-  setExpandedRows?: (expandedRows: string[]) => void;
 
   contents?: ReactNode;
   groupBy?: boolean;
@@ -116,6 +115,7 @@ export function Table(props: Props) {
     defaultSortByType,
     handleSortColumn,
     filter,
+    expandedRows,
 
     noFilter,
     noPagination,
@@ -123,7 +123,6 @@ export function Table(props: Props) {
     noConfigModal,
     noDownload,
     rowSelection,
-    rowExpansion,
     actions,
     actionsFooter,
     utilityBarConfig = {},
@@ -145,13 +144,6 @@ export function Table(props: Props) {
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
     props.selectedRows,
     props.setSelectedRows,
-    []
-  );
-
-  // row expansion
-  const [expandedRows, setExpandedRows] = useStateFallback<string[]>(
-    props.expandedRows,
-    props.setExpandedRows,
     []
   );
 
@@ -182,19 +174,6 @@ export function Table(props: Props) {
       ? [...selectedRows, value]
       : selectedRows.filter((item) => item !== value);
     setSelectedRows(keys);
-  };
-
-  const handleExpandAll = (expanded: boolean) => {
-    const keys = expanded ? data.map((item) => item.key) : [];
-    setExpandedRows(keys);
-  };
-
-  const handleExpandedRows = (key: string) => {
-    if (expandedRows.includes(key)) {
-      setExpandedRows(expandedRows.filter((k: string) => k !== key));
-    } else {
-      setExpandedRows([...expandedRows, key]);
-    }
   };
 
   resizeListener(() => {
@@ -290,28 +269,6 @@ export function Table(props: Props) {
         placement: "leftStart",
       }
       : undefined;
-
-  const renderRowExpanded = (rowData: object) => {
-    // rowData always returns {key, data}, we only want the data
-    const key: string = Object.keys(rowData).find(k => k !== 'key')!;
-    const value = rowData[key];
-    // could be single or multiple images
-    const urlList = Array.isArray(
-      value.props.value) ? value.props.value : [value.props.value];
-    return (
-      <div className="tol-table-expanded-row">
-        {urlList.map((url) => (
-          <img
-            className="tol-table-expanded-row-img"
-            key={url}
-            src={url}
-            alt={url}
-          />
-        ))}
-      </div>
-    );
-  };
-
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
@@ -435,7 +392,7 @@ export function Table(props: Props) {
                   sortType={sortByType}
                   onSortColumn={handleSortColumn!}
                   expandedRowKeys={expandedRows}
-                  renderRowExpanded={renderRowExpanded}
+                  renderRowExpanded={RowExpander}
                   shouldUpdateScroll={false}
                   rowKey={"key"}
                   rowClassName={(rowData: any) => {
@@ -460,44 +417,6 @@ export function Table(props: Props) {
                     />
                   )}
                 >
-                  {rowExpansion && (
-                    <Column key="rowExpand" width={70}>
-                      <HeaderCell>
-                        Expand
-                        <Button
-                          icon={`${expandedRows.length === data.length
-                            ? "down-left-and-up-right-to-center"
-                            : "up-right-and-down-left-from-center"
-                            }`}
-                          tooltip={`${expandedRows.length === data.length
-                            ? "Collapse"
-                            : "Expand"
-                            } All`}
-                          className="tol-table-header-component tol-component-header"
-                          onClick={() => {
-                            handleExpandAll(
-                              expandedRows.length !== data.length
-                            );
-                          }}
-                        />
-                      </HeaderCell>
-                      <Cell>
-                        {(rowData: any) => (
-                          <Button
-                            icon={
-                              expandedRows.includes(rowData.key)
-                                ? "chevron-up"
-                                : "chevron-down"
-                            }
-                            className="tol-table-header-component"
-                            onClick={() => {
-                              handleExpandedRows(rowData.key);
-                            }}
-                          />
-                        )}
-                      </Cell>
-                    </Column>
-                  )}
                   {rowSelection && (
                     <Column key="rowSelection" width={70}>
                       <HeaderCell>

@@ -18,7 +18,8 @@ import {
   Relationship,
   ICustomCellRenderers,
   TsDataSource,
-  getCellRendererPropValue
+  getCellRendererPropValue,
+  Icon
 } from "../..";
 import { Status } from "./Status";
 
@@ -28,11 +29,13 @@ export interface PCell {
   dataObject: TDataObjectOrNull,
   dataSource?: TsDataSource,
   renderer: TCellRenderer;
+  expandedRows: string[];
+  setExpandedRows: (state: string[]) => void;
   customCellRenderers?: ICustomCellRenderers;
 }
 
 export function Cell(props: PCell) {
-  const { value, dataObject, renderer, customCellRenderers } = props;
+  const { value, dataObject, renderer, customCellRenderers, expandedRows, setExpandedRows } = props;
 
   const preDefinedElements = {
     boolean: Boolean,
@@ -57,6 +60,7 @@ export function Cell(props: PCell) {
   )
     return <>{value}</>;
 
+
   const elements = { ...preDefinedElements, ...customCellRenderers };
   renderer.element = elements[renderer.type];
 
@@ -68,5 +72,23 @@ export function Cell(props: PCell) {
     });
   }
 
-  return <renderer.element {...elementProps} />;
+
+  return (
+    <>
+      <renderer.element {...elementProps} />
+      <div>
+        <Icon
+          icon={expandedRows.includes(elementProps.dataObject.id) ? "caret-up" : "caret-down"}
+          onClick={() => {
+            if (expandedRows.includes(elementProps.dataObject.id)) {
+              setExpandedRows(expandedRows.filter(id => id !== elementProps.dataObject.id))
+            } else {
+              setExpandedRows([...expandedRows, elementProps.dataObject.id])
+            }
+          }}
+          size="2x"
+        />
+      </div>
+    </>
+  );
 }
