@@ -4,24 +4,35 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Icon, stopPropagation } from "..";
+import { Dropdown } from "rsuite";
+import { Icon, stopPropagation, copyPageColumnValues } from "..";
 
 export interface FieldDropdown {
   attribute: string;
+  data: any;
 }
 
 export function FieldDropdown(props: FieldDropdown) {
-  // @ts-ignore
-  const { attribute } = props;
+  const { attribute, data } = props;
 
   const onClick = (e) => {
     stopPropagation(e);
   };
 
-  // button ready for a dropdown menu - not implemented yet
   return (
     <span className="tol-field-dropdown" onClick={onClick}>
-      <Icon icon="ellipsis-vertical" size="sm" />
+      <Dropdown
+        icon={<Icon icon="ellipsis-vertical" size="sm" />}
+        noCaret
+        placement="bottomEnd"
+      >
+        <Dropdown.Item
+          icon={<Icon icon="share-from-square" size="sm" />}
+          onClick={() => copyPageColumnValues(data, attribute)}
+        >
+          Copy Column Values (Page)
+        </Dropdown.Item>
+      </Dropdown>
     </span>
   );
 }

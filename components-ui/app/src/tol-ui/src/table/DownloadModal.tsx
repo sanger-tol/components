@@ -10,7 +10,6 @@ import { CodeBlock } from "react-code-blocks";
 import {
   Button,
   Modal,
-  PopUpMessage,
   TsDataSource,
   copyToClipboard,
   exportDataToSpreadsheet,
@@ -127,10 +126,6 @@ tol data \
 
   const onClick = (text: string) => {
     copyToClipboard(text.trim());
-    PopUpMessage({
-      type: "success",
-      message: "Copied to clipboard",
-    });
   };
 
   const fetchSpreadSheetDataObjects = async (gen: AsyncGenerator) => {
