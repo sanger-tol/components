@@ -18,7 +18,7 @@ export type IFilterInputType =
   | "int"
   | "float"
   | "datetime"
-  | "boolean"
+  | "bool"
   | "multi";
 
 export interface IFilterInput extends IRemoteTargetAndZone {
@@ -37,7 +37,7 @@ export function Filter(props: IFilterInput) {
       return <FilterTextInput {...props} />;
     case "datetime":
       return <FilterDatePicker {...props} />;
-    case "boolean":
+    case "bool":
       return <FilterBoolean {...props} />;
     case "multi":
       return <FilterMultiSelect {...props} />;
