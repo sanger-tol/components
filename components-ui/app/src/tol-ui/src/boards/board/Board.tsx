@@ -20,7 +20,6 @@ import {
   getUserPrivilege,
   useBoardPrivilege,
   copyToClipboard,
-  PopUpMessage,
   PUtilityBar,
   TBoardPrivilege,
   PRIVILEGE
