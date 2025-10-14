@@ -8,18 +8,19 @@ import {
   TDataObjectOrNull,
   TCellRenderer,
   Boolean,
+  Collection,
   Datetime,
   Expander,
   Float,
   Image,
   Integer,
   Link,
-  List,
   Relationship,
   ICustomCellRenderers,
   TsDataSource,
   getCellRendererPropValue
 } from "../..";
+import { Status } from "./Status";
 
 export interface PCell {
   attribute: string,
@@ -33,37 +34,40 @@ export interface PCell {
 export function Cell(props: PCell) {
   const { value, dataObject, renderer, customCellRenderers } = props;
 
+  const DefaultCell = ({ value }) => <>{value ?? ""}</>;
+
   const preDefinedElements = {
-    relationship: Relationship,
-    relationshipDetail: Relationship,
-    datetime: Datetime,
     boolean: Boolean,
-    image: Image,
-    list: List,
+    collection: Collection,
+    datetime: Datetime,
     expander: Expander,
     float: Float,
+    image: Image,
     integer: Integer,
-    link: Link
+    link: Link,
+    relationship: Relationship,
+    status: Status
   };
 
   if (
     // renderer type is not defined
     !renderer ||
     !renderer.type ||
+    renderer.type === "none" ||
     // no value and not a custom renderer as custom renderers may not require a value
     // no need to to deal with empty values with pre-defined cellRenderers
-    (!value && renderer.type in preDefinedElements)
+    (!value && (renderer.type) in preDefinedElements)
   )
-    return <>{value}</>;
+    return <DefaultCell value={value} />;
 
   const elements = { ...preDefinedElements, ...customCellRenderers };
-  renderer.element = elements[renderer.type];
+  renderer.element = elements[renderer.type] || DefaultCell;
 
   const elementProps: Record<string, any> = { ...props };
 
   if (renderer.props) {
     Object.entries(renderer.props).forEach(([prop, value]) => {
-      getCellRendererPropValue(elementProps, value, dataObject, prop);
+      getCellRendererPropValue(prop, value, elementProps, dataObject);
     });
   }
 

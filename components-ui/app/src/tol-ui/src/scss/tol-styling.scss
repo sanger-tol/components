@@ -19,6 +19,7 @@ $color-mode-type: media-query;
 @import "actions.scss";
 @import "attribute-selector.scss";
 @import "buttons.scss";
+@import "cells.scss";
 @import "chart.scss";
 @import "count.scss";
 @import "dashboard.scss";
@@ -45,4 +46,5 @@ $color-mode-type: media-query;
 @import "utility-bar.scss";
 @import "widgets.scss";
 @import "validation.scss";
-@import "socialviewer.scss"
+@import "socialviewer.scss";
+@import "videoplayer.scss"

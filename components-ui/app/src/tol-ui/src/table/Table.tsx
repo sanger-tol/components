@@ -12,11 +12,9 @@ import {
   Placeholder,
   useEffectUpdate,
   DownloadModal,
-  AttributeTooltip,
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
-  getSourceColour,
   Filter,
   IFilterInputType,
   FieldMeta,
@@ -30,6 +28,7 @@ import {
   PRIVILEGE,
   ITableConfigSave,
   RowCounter,
+  AttributeTitle
 } from "..";
 import { Sort } from "./Sort";
 import { FieldDropdown } from "./FieldDropdown";
@@ -93,9 +92,6 @@ export function Table(props: Props) {
     fieldMeta,
     height,
     loading,
-
-    objectType,
-    dataSource,
     source,
 
     page,
@@ -197,75 +193,76 @@ export function Table(props: Props) {
 
   const configButton: PButton = !noConfigModal
     ? {
-        visible: true,
-        position: "right",
-        type: "primary",
-        tooltip: "Configure Table",
-        onClick: () => {
-          setOpen(true);
-        },
-        icon: "sliders",
-        outline: true,
-      }
+      visible: true,
+      position: "right",
+      type: "primary",
+      tooltip: "Configure Table",
+      onClick: () => {
+        setOpen(true);
+      },
+      icon: "sliders",
+      outline: true,
+      disabled: loading
+    }
     : {
-        visible: false,
-      };
+      visible: false,
+    };
 
   const filterButton: PButton =
     (!noFilter &&
       fieldMeta.order.active.length !== 0 &&
       privilege === PRIVILEGE.BOARD.EDITABLE) ||
-    privilege === undefined
+      privilege === undefined
       ? {
-          visible: true,
-          position: "right",
-          type: "primary",
-          onClick: () => {
-            setFilterVisibility(!filterVisibility);
-          },
-          icon: filterVisibility ? "eye-slash" : "eye",
-          tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
-          outline: true,
-        }
-      : {
-          visible: false,
-        };
-
-  const downloadButton: PButton = !noDownload
-    ? {
         visible: true,
         position: "right",
         type: "primary",
-        tooltip: "Download the tables current state in various formats",
         onClick: () => {
-          setDownloadOpen(!downloadOpen);
+          setFilterVisibility(!filterVisibility);
         },
-        disabled: totalSize <= 0 || noFieldsSelected || loading,
-        icon: "download",
-        disabledTooltip:
-          totalSize >= 1
-            ? "Must have at least one row to download."
-            : undefined,
+        icon: filterVisibility ? "eye-slash" : "eye",
+        tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
         outline: true,
-        loading: downloadInProgress,
       }
-    : {
+      : {
         visible: false,
       };
+
+  const downloadButton: PButton = !noDownload
+    ? {
+      visible: true,
+      position: "right",
+      type: "primary",
+      tooltip: "Download the tables current state in various formats",
+      onClick: () => {
+        setDownloadOpen(!downloadOpen);
+      },
+      disabled: totalSize <= 0 || noFieldsSelected || loading,
+      icon: "download",
+      disabledTooltip:
+        totalSize >= 1
+          ? "Must have at least one row to download."
+          : undefined,
+      outline: true,
+      disabled: loading
+    }
+    : {
+      visible: false,
+    };
 
   const actionDropdown: PDropdownButtons | undefined =
     actions && actions.length > 0
       ? {
-          mainButtonIcon: {
-            icon: "paper-plane",
-            type: "primary",
-            position: "right",
-            outline: selectedRows.length === 0,
-          },
-          dropdownButtons: actionDropDownButtons,
-          footer: actionsFooter,
-          placement: "leftStart",
-        }
+        mainButtonIcon: {
+          icon: "paper-plane",
+          type: "primary",
+          position: "right",
+          outline: selectedRows.length === 0,
+        },
+        dropdownButtons: actionDropDownButtons,
+        footer: actionsFooter,
+        placement: "leftStart",
+      }
       : undefined;
 
   return (
@@ -319,43 +316,43 @@ export function Table(props: Props) {
         elements={
           !noPagination && fieldMeta?.order?.active?.length > 0
             ? [
-                <span className="tol-page-size">
-                  {!smallBreakpoint &&
-                    (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
-                      <SelectPicker
-                        value={pageSize}
-                        onChange={setPageSize}
-                        size="sm"
-                        cleanable={false}
-                        searchable={false}
-                        data={[
-                          { label: "25", value: 25 },
-                          { label: "50", value: 50 },
-                          { label: "100", value: 100 },
-                          { label: "250", value: 250 },
-                        ]}
-                      />
-                    )}
-                </span>,
-                <Pagination
-                  className="tol-pagination"
-                  size="sm"
-                  layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
-                  total={totalSize <= 10000 ? totalSize : 10000}
-                  activePage={page}
-                  onChangePage={setPage}
-                  limit={pageSize}
-                  onChangeLimit={setPageSize}
-                  prev
-                  next
-                  first={!mediumBreakpoint}
-                  last={!mediumBreakpoint}
-                  ellipsis={!mediumBreakpoint}
-                  boundaryLinks
-                  maxButtons={mediumBreakpoint ? 1 : 3}
-                />,
-                ...(utilityBarConfig.elements || []),
-              ]
+              <span className="tol-page-size">
+                {!smallBreakpoint &&
+                  (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
+                    <SelectPicker
+                      value={pageSize}
+                      onChange={setPageSize}
+                      size="sm"
+                      cleanable={false}
+                      searchable={false}
+                      data={[
+                        { label: "25", value: 25 },
+                        { label: "50", value: 50 },
+                        { label: "100", value: 100 },
+                        { label: "250", value: 250 },
+                      ]}
+                    />
+                  )}
+              </span>,
+              <Pagination
+                className="tol-pagination"
+                size="sm"
+                layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
+                total={totalSize <= 10000 ? totalSize : 10000}
+                activePage={page}
+                onChangePage={setPage}
+                limit={pageSize}
+                onChangeLimit={setPageSize}
+                prev
+                next
+                first={!mediumBreakpoint}
+                last={!mediumBreakpoint}
+                ellipsis={!mediumBreakpoint}
+                boundaryLinks
+                maxButtons={mediumBreakpoint ? 1 : 3}
+              />,
+              ...(utilityBarConfig.elements || []),
+            ]
             : [...(utilityBarConfig.elements || [])]
         }
         buttons={[
@@ -467,23 +464,12 @@ export function Table(props: Props) {
                           fixed={field.fixed}
                         >
                           <HeaderCell>
-                            <p className="tol-header-text">
-                              <AttributeTooltip
-                                {...props}
-                                field={key}
-                                element={
-                                  <span
-                                    className="inline-source"
-                                    style={{
-                                      backgroundColor: getSourceColour(
-                                        field.source || "var(--tol-emphasis)"
-                                      ),
-                                    }}
-                                  />
-                                }
-                              />
-                              {field.rename}
-                            </p>
+                            <AttributeTitle
+                              {...props}
+                              field={key}
+                              titleElement="p"
+                              classname="tol-header-text"
+                            />
                             {filterable && (
                               <span
                                 className={

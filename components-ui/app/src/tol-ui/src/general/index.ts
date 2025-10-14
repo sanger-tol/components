@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 export * from "./AttributeSelector";
 export * from "./AttributeTooltip";
+export * from "./AttributeTitle";
 export * from "./BoardCount";
 export * from "./BoardMarkdown";
 export * from "./Button";
@@ -37,3 +38,4 @@ export * from "./utils";
 export * from "./Well";
 export * from "./Widgets";
 export * from "./PlaceholderIcon";
+export * from "./VideoPlayer";

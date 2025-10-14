@@ -1,0 +1,70 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+.tol-cell-renderer-modal-selector {
+  margin: 12px 0 20px 0;
+}
+
+.tol-cell-renderer-modal-params {
+  border-top: 1px solid var(--tol-grey);
+  padding-top: 16px;
+
+  .tol-param-info {
+    margin-left: 6px;
+  }
+
+  .tol-param-required {
+    margin-left: 2px;
+    color: var(--tol-danger);
+  }
+
+  .tol-param {
+    margin: 4px 0 12px 0;
+  }
+}
+
+.tol-cell-renderer-modal-condition-params {
+  border-top: 1px solid var(--tol-grey);
+  padding-top: 20px;
+  margin-top: 20px;
+
+  .tol-param-header {
+    height: 50px;
+    position: relative;
+
+    .tol-param-title {
+      position: absolute;
+    }
+  }
+}
+
+.tol-collection {
+  display: table-cell;
+}
+
+.rs-table-cell-wrap:has(.tol-collection) {
+  margin: -4px !important;
+}
+
+.tol-collection-list-item {
+  background-color: var(--tol-bg-dark);
+  color: var(--tol-emphasis);
+  border-radius: 6px;
+  padding: 4px 6px;
+  margin: 4px;
+  float: left;
+  display: table-cell;
+  border: 1px solid var(--tol-grey);
+}
+
+.tol-collection-object-entry {
+  margin-bottom: 6px;
+}
+
+.tol-collection-object-key {
+  font-weight: bold;
+  margin-right: 6px;
+}

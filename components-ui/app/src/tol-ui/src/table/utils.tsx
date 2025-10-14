@@ -23,6 +23,8 @@ import {
   deepCopy,
   ICustomCellRenderers,
   copyToClipboard,
+  INewCellRenderersToSave,
+  isEmptyObject
 } from "..";
 
 interface Rgb {
@@ -66,10 +68,13 @@ export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
   } as FieldMeta;
 }
 
-function addValueBasedCellRenderer(value: any, meta: Field) {
-  if (value !== null && value !== undefined) {
-    if (Array.isArray(value)) {
-      meta.cellRenderer = { type: "list" };
+function addValueBasedCellRenderer(
+  value: any,
+  meta: Field,
+) {
+  if (value) {
+    if (Array.isArray(value) || typeof value === "object") {
+      meta.cellRenderer = { type: "collection" };
     } else if (value.length > 32) {
       meta.cellRenderer = { type: "expander" };
     } else if (isFloat(value)) {
@@ -88,16 +93,12 @@ export function convertTableData(
   const data: ITableData = [];
   // loop over each data object
   dataObjects!.forEach((obj) => {
-    const row: ITableRecord = {};
+    const row: ITableRecord = { key: obj.id };
     // loop over each field
     fieldMeta.order.active.forEach((attribute) => {
-      // only add if undefined, not null - null = turn off cell renderer
       const value = getFieldByName(obj, attribute);
-      if (fieldMeta.dataWithDefaults![attribute]?.cellRenderer === undefined) {
-        addValueBasedCellRenderer(
-          value,
-          fieldMeta.dataWithDefaults![attribute]
-        );
+      if (!fieldMeta.dataWithDefaults![attribute]?.cellRenderer) {
+        addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![attribute]);
       }
       row[attribute] = (
         <Cell
@@ -125,13 +126,13 @@ function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
   switch (type) {
     case "datetime":
       return { type: "datetime" };
-    case "boolean":
+    case "bool":
       return { type: "boolean" };
   }
 }
 
 function addRemoteFilterType(type: string, cardinality: number) {
-  if (cardinality && cardinality < 20 && type === "str") return "multi";
+  if (cardinality && cardinality < 50 && type === "str") return "multi";
   if (type === "double") return "float";
   return type;
 }
@@ -340,4 +341,24 @@ export function copyPageColumnValues(data: any, fieldHeader: string) {
 
   const copyList = emptyStringsRemoval.join("\n");
   copyToClipboard(copyList);
+}
+
+export function addNewCellRenderersToFieldMeta(cellRenderers: INewCellRenderersToSave, fieldMeta: FieldMeta) {
+  for (const [attributeId, renderer] of Object.entries(cellRenderers)) {
+    if (renderer) {
+      fieldMeta.data![attributeId] = fieldMeta.data![attributeId] || {};
+      fieldMeta.data![attributeId].cellRenderer = renderer;
+      fieldMeta.dataWithDefaults![attributeId] = fieldMeta.dataWithDefaults![attributeId] || {};
+      fieldMeta.dataWithDefaults![attributeId].cellRenderer = renderer;
+    } else {
+      delete fieldMeta.data![attributeId].cellRenderer;
+      if (isEmptyObject(fieldMeta.data![attributeId])) {
+        delete fieldMeta.data![attributeId];
+      }
+      delete fieldMeta.dataWithDefaults![attributeId].cellRenderer;
+      if (isEmptyObject(fieldMeta.dataWithDefaults![attributeId])) {
+        delete fieldMeta.dataWithDefaults![attributeId];
+      }
+    }
+  }
 }
