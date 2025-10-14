@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
-import { IAllowedCardinality } from "..";
+import { IAllowedCardinality, PopUpMessage } from "..";
 
 
 export function convertToPath(name: string) {
@@ -335,6 +335,10 @@ export function copyToClipboard(text: string): void {
     navigator.clipboard
       .writeText(text)
       .catch((err) => console.error("Failed to copy text: ", err));
+    PopUpMessage({
+      type: 'success',
+      message: 'Copied to clipboard',
+    });
   } else {
     console.warn("Clipboard API not available");
   }

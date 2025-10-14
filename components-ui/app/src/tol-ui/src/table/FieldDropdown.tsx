@@ -22,7 +22,7 @@ export function FieldDropdown(props: FieldDropdown) {
   return (
     <span className="tol-field-dropdown" onClick={onClick}>
       <Dropdown
-        icon={<Icon icon="ellipsis-vertical" size="xs" />}
+        icon={<Icon icon="ellipsis-vertical" size="sm" />}
         noCaret
         placement="bottomEnd"
       >
@@ -30,7 +30,7 @@ export function FieldDropdown(props: FieldDropdown) {
           icon={<Icon icon="share-from-square" size="sm" />}
           onClick={() => copyPageColumnValues(data, attribute)}
         >
-          Copy page column values
+          Copy Column Values (Page)
         </Dropdown.Item>
       </Dropdown>
     </span>
