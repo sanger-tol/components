@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useState } from "react";
 import {
   TDataObjectOrNull,
   TCellRenderer,
@@ -30,12 +31,13 @@ export interface PCell {
   dataSource?: TsDataSource,
   renderer: TCellRenderer;
   expandedRows: string[];
-  setExpandedRows: (state: string[]) => void;
+  setExpandedRows: any,
   customCellRenderers?: ICustomCellRenderers;
 }
 
 export function Cell(props: PCell) {
   const { value, dataObject, renderer, customCellRenderers, expandedRows, setExpandedRows } = props;
+  const [expanded, setExpanded] = useState(false);
 
   const preDefinedElements = {
     boolean: Boolean,
@@ -76,17 +78,19 @@ export function Cell(props: PCell) {
   return (
     <>
       <renderer.element {...elementProps} />
-      <div>
+      <div style={{ color: 'var(--tol-grey-light)'}}>
         <Icon
-          icon={expandedRows.includes(elementProps.dataObject.id) ? "caret-up" : "caret-down"}
+          icon={expanded ? "caret-up" : "caret-down"}
           onClick={() => {
-            if (expandedRows.includes(elementProps.dataObject.id)) {
-              setExpandedRows(expandedRows.filter(id => id !== elementProps.dataObject.id))
-            } else {
-              setExpandedRows([...expandedRows, elementProps.dataObject.id])
-            }
+            setExpanded(!expanded);
+            setExpandedRows((prev: string[]) => {
+              const id = elementProps.dataObject.id;
+              return prev.includes(id)
+                ? prev.filter((existingId) => existingId !== id)
+                : [...prev, id];
+            });
           }}
-          size="2x"
+          size="1x"
         />
       </div>
     </>

@@ -17,7 +17,6 @@ export function Image(props: PImage) {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [modalIndex, setModalIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
-  const [dropDown, setDropDown] = useState<boolean>(false);
 
   const multipleImages = Array.isArray(value);
 
@@ -54,7 +53,7 @@ export function Image(props: PImage) {
           size="2x"
         />
       )}
-      <caption style={{ textAlign: "center", width: "500px" }}>
+      <caption style={{ textAlign: "center", width: 'max-content', color: 'var(--tol-grey-light)' }}>
         {multipleImages ? names[modalIndex] : names}
       </caption>
     </>
@@ -95,13 +94,6 @@ export function Image(props: PImage) {
           />
         }
       </span>
-      {/* <div>
-        <Icon
-          icon={dropDown ? "caret-up" : "caret-down"}
-          onClick={() => setDropDown((prev: boolean) => !prev)}
-          size="2x"
-        />
-      </div> */}
     </div>
   );
 }
