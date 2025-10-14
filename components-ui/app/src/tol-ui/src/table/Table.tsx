@@ -121,8 +121,7 @@ export function Table(props: Props) {
     actionsFooter,
     utilityBarConfig = {},
     contents,
-    groupBy,
-    downloadInProgress,
+    groupBy
     /* eslint-enable */
   } = props;
 
@@ -244,7 +243,6 @@ export function Table(props: Props) {
           ? "Must have at least one row to download."
           : undefined,
       outline: true,
-      disabled: loading
     }
     : {
       visible: false,
