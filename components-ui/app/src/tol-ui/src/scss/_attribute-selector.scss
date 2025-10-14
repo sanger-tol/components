@@ -149,3 +149,18 @@ SPDX-License-Identifier: MIT
     overflow-wrap: anywhere !important;
   }
 }
+
+.inline-source {
+  height: 0.75em;
+  width: 0.2em;
+  margin-right: 0.3em;
+  border-radius: 2px;
+  display: inline-block;
+  transition: width 0.5s ease;
+}
+
+.tol-attribute-title:hover {
+  .inline-source {
+    width: 0.75em;
+  }
+}

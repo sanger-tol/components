@@ -12,11 +12,9 @@ import {
   Placeholder,
   useEffectUpdate,
   DownloadModal,
-  AttributeTooltip,
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
-  getSourceColour,
   Filter,
   IFilterInputType,
   FieldMeta,
@@ -31,10 +29,10 @@ import {
   ITableConfigSave,
   RowCounter,
   RowExpander,
+  AttributeTitle
 } from "..";
 import { Sort } from "./Sort";
 import { FieldDropdown } from "./FieldDropdown";
-
 
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
@@ -127,12 +125,11 @@ export function Table(props: Props) {
     actionsFooter,
     utilityBarConfig = {},
     contents,
-    groupBy,
-    downloadInProgress,
+    groupBy
     /* eslint-enable */
   } = props;
 
-  const { privilege } = useBoardPrivilege()
+  const { privilege } = useBoardPrivilege();
 
   const [open, setOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
@@ -229,31 +226,31 @@ export function Table(props: Props) {
         icon: filterVisibility ? "eye-slash" : "eye",
         tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
         outline: true,
-        disabled: loading
       }
       : {
         visible: false,
       };
 
-  const downloadButton: PButton = !noDownload ? {
-    visible: true,
-    position: "right",
-    type: "primary",
-    tooltip: "Download the tables current state in various formats",
-    onClick: () => {
-      setDownloadOpen(!downloadOpen);
-    },
-    disabled: (totalSize <= 0 || noFieldsSelected) || loading,
-    icon: "download",
-    disabledTooltip:
-      totalSize >= 1
-        ? "Must have at least one row to download."
-        : undefined,
-    outline: true,
-    loading: downloadInProgress
-  } : {
-    visible: false,
-  };
+  const downloadButton: PButton = !noDownload
+    ? {
+      visible: true,
+      position: "right",
+      type: "primary",
+      tooltip: "Download the tables current state in various formats",
+      onClick: () => {
+        setDownloadOpen(!downloadOpen);
+      },
+      disabled: totalSize <= 0 || noFieldsSelected || loading,
+      icon: "download",
+      disabledTooltip:
+        totalSize >= 1
+          ? "Must have at least one row to download."
+          : undefined,
+      outline: true,
+    }
+    : {
+      visible: false,
+    };
 
   const actionDropdown: PDropdownButtons | undefined =
     actions && actions.length > 0
@@ -410,11 +407,7 @@ export function Table(props: Props) {
                   fillHeight
                   wordWrap
                   renderLoading={() => (
-                    <Placeholder
-                      loader
-                      opacity={0.8}
-                      squareCorners
-                    />
+                    <Placeholder loader opacity={0.8} squareCorners />
                   )}
                 >
                   {rowSelection && (
@@ -450,7 +443,8 @@ export function Table(props: Props) {
                   {fieldMeta!.order.active.map((key: string) => {
                     const field = fieldMeta.dataWithDefaults![key];
                     if (field) {
-                      const sortable: boolean = (!noSorting && field.sort) ?? false;
+                      const sortable: boolean =
+                        (!noSorting && field.sort) ?? false;
                       const filterable = !noFilter && field.filter;
 
                       return (
@@ -461,23 +455,12 @@ export function Table(props: Props) {
                           fixed={field.fixed}
                         >
                           <HeaderCell>
-                            <p className="tol-header-text">
-                              <AttributeTooltip
-                                {...props}
-                                field={key}
-                                element={
-                                  <span
-                                    className="inline-source"
-                                    style={{
-                                      backgroundColor: getSourceColour(
-                                        field.source || "var(--tol-emphasis)"
-                                      ),
-                                    }}
-                                  />
-                                }
-                              />
-                              {field.rename}
-                            </p>
+                            <AttributeTitle
+                              {...props}
+                              field={key}
+                              titleElement="p"
+                              classname="tol-header-text"
+                            />
                             {filterable && (
                               <span
                                 className={
@@ -503,6 +486,7 @@ export function Table(props: Props) {
                             <FieldDropdown
                               {...props}
                               attribute={key}
+                              data={data}
                             />
                           </HeaderCell>
                           <Cell dataKey={key} />

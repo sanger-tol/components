@@ -22,6 +22,7 @@ import {
   Cell,
   deepCopy,
   ICustomCellRenderers,
+  copyToClipboard,
   INewCellRenderersToSave,
   isEmptyObject
 } from "..";
@@ -72,8 +73,8 @@ function addValueBasedCellRenderer(
   meta: Field,
 ) {
   if (value) {
-    if (Array.isArray(value)) {
-      meta.cellRenderer = { type: "list" };
+    if (Array.isArray(value) || typeof value === "object") {
+      meta.cellRenderer = { type: "collection" };
     } else if (value.length > 32) {
       meta.cellRenderer = { type: "expander" };
     } else if (isFloat(value)) {
@@ -113,7 +114,6 @@ export function convertTableData(
           customCellRenderers={customCellRenderers}
         />
       );
-
     });
     data.push(row);
   });
@@ -122,7 +122,7 @@ export function convertTableData(
 
 function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
   // relationship ids have relationship boxes by default
-  const splitKey = key.split(".")
+  const splitKey = key.split(".");
   if (isRelationship(key) && splitKey[splitKey.length - 1] === "id") {
     return { type: "relationship" };
   }
@@ -155,7 +155,7 @@ function sortFieldsByRename(fieldMeta: FieldMeta) {
 export function addDefaultsFromEntityMeta(
   key: string,
   meta: IAttributeData,
-  fieldMeta: FieldMeta,
+  fieldMeta: FieldMeta
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
   const defaults = {
@@ -168,25 +168,27 @@ export function addDefaultsFromEntityMeta(
     width: 200,
     description: meta.description,
     source: meta.source,
-  }
+  };
   // customised field config overrides the defaults
-  fieldMeta.dataWithDefaults[key] = { ...defaults, ...fieldMeta.dataWithDefaults[key] };
+  fieldMeta.dataWithDefaults[key] = {
+    ...defaults,
+    ...fieldMeta.dataWithDefaults[key],
+  };
 }
 
 export function addFieldMetaDefaults(
   objectType: string,
   fieldMeta: FieldMeta,
-  entityMeta: IEntityMeta,
+  entityMeta: IEntityMeta
 ) {
   for (const [key, meta] of Object.entries(
     entityMeta.flatAttributes[objectType]
   )) {
-    if (fieldMeta.order.active.includes(key) || fieldMeta.order.inactive?.includes(key)) {
-      addDefaultsFromEntityMeta(
-        key,
-        meta,
-        fieldMeta,
-      );
+    if (
+      fieldMeta.order.active.includes(key) ||
+      fieldMeta.order.inactive?.includes(key)
+    ) {
+      addDefaultsFromEntityMeta(key, meta, fieldMeta);
     }
   }
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
@@ -219,10 +221,7 @@ export function setTableConfigLocalStorage(
   let config = getTableConfigLocalStorage(tableId);
   if (!config) config = {};
   config[key] = value;
-  localStorage.setItem(
-    getTableConfigKey(tableId),
-    JSON.stringify(config)
-  );
+  localStorage.setItem(getTableConfigKey(tableId), JSON.stringify(config));
 }
 
 export function getTableConfigLocalStorage(tableId: string, key?: string) {
@@ -263,10 +262,7 @@ export function getSourceColour(sourceName?: string): string {
   return rgbToString(rgb, 1);
 }
 
-export function mapKeysToDisplayNames(
-  data: any,
-  displayNames: any
-): object {
+export function mapKeysToDisplayNames(data: any, displayNames: any): object {
   const result: object = {};
   for (const key in data) {
     if (displayNames[key] && displayNames[key].display_name) {
@@ -309,11 +305,10 @@ export async function dataObjectToSpreadsheetData(
   dataObjects?.forEach((obj) => {
     const flatData = {};
     requestedFields.forEach((field) => {
-      flatData[fieldMeta.dataWithDefaults?.[field].rename ?? field] = Array.isArray(
-        getFieldByName(obj, field)
-      )
-        ? getFieldByName(obj, field).toString()
-        : getFieldByName(obj, field);
+      flatData[fieldMeta.dataWithDefaults?.[field].rename ?? field] =
+        Array.isArray(getFieldByName(obj, field))
+          ? getFieldByName(obj, field).toString()
+          : getFieldByName(obj, field);
     });
     spreadsheetData.push(flatData);
   });
@@ -334,6 +329,22 @@ export function exportDataToSpreadsheet(
 export function formatTotalSize(totalSize: number) {
   if (totalSize === 1) return "1 Row";
   return totalSize.toLocaleString() + " Rows";
+}
+
+export function copyPageColumnValues(data: any, fieldHeader: string) {
+  const copySet = new Set<string>(
+    data.flatMap((element) =>
+      Array.isArray(
+        getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)
+      )
+        ? getFieldByName(element[fieldHeader].props.dataObject, fieldHeader).join(',')
+        : [getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)]
+    )
+  );
+  const emptyStringsRemoval = Array.from(copySet).filter(Boolean);
+
+  const copyList = emptyStringsRemoval.join("\n");
+  copyToClipboard(copyList);
 }
 
 export function addNewCellRenderersToFieldMeta(cellRenderers: INewCellRenderersToSave, fieldMeta: FieldMeta) {
