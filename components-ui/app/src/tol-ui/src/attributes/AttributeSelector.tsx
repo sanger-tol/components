@@ -20,7 +20,11 @@ import {
   IAllowedCardinality,
   handleSetAttribute,
   SourceContainer,
-  MenuItem
+  renderTotalSelectedItems,
+  MenuItem,
+  AttributeTooltip,
+  Icon,
+  truncateString
 } from "..";
 
 export interface PAttributeSelector extends IRemoteTarget {
@@ -103,16 +107,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     }
   }, [attribute, entityMeta, objectType, setAttributeMeta]);
 
-  const renderTotalSelectedItems = (values: string[]) => {
-    if (values.length === 1) {
-      return RenderSelectedValue(values[0]);
-    }
-    return `${values.length} ${populatedFieldType}s selected${additionalPopulatedFieldData ||
-      `; ${numPopulatedFields} ${numPopulatedFields === 1 ? "filter" : "filters"
-      } populated.`
-      }`;
-  };
-
   const RenderMenuItem = (l: any, index: number) => {
     const label = l.props?.children || l;
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
@@ -129,9 +123,53 @@ export function AttributeSelector(props: PAttributeSelector) {
           tooltipContent={tooltipContent}
           disabledValues={disabledValues}
         />
+
       </div>
     );
   };
+
+  // const MenuItem = (
+  //   displayName: string,
+  //   source: string,
+  //   key: string,
+  //   authoritative: boolean
+  // ) => {
+  //   const disabled =
+  //     disabledValues && Object.keys(disabledValues).includes(key);
+  //   const tooltipContents = tooltipContent || "disabled";
+
+  //   const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
+
+  //   return (
+  //     <div key={key} className="tol-attribute-selector-menu-item-container">
+  //       <div className="tol-attribute-selector-menu-item-inner-container">
+  //         <div className="tol-attribute-selector-display-name">
+  //           {displayName}{" "}
+  //           {disabled ? (
+  //             <span className="tol-attribute-selector-tooltip">
+  //               {tooltipContent && (
+  //                 <IconTooltip disableMarkdown contents={tooltipContents} />
+  //               )}
+  //             </span>
+  //           ) : (
+  //             <span className="tol-attribute-selector-tooltip">
+  //               <AttributeTooltip
+  //                 field={key}
+  //                 objectType={objectType}
+  //                 dataSource={dataSource}
+  //               />
+  //             </span>
+  //           )}
+  //           <div className="tol-attribute-selector-display-key">
+  //             {authoritative === true && <Icon icon="star" />}
+  //             <p>{truncateString(key, lettersToDisplay)}</p>
+  //           </div>
+  //         </div>
+  //       </div>
+  //       {displaySource && source && <SourceTag source={source} />}
+  //     </div>
+  //   )
+  // }
 
   const RenderSelectedValue = (value: string) => {
     const metaData = getFlattenedMetaData(entityMeta, objectType, value);
@@ -180,7 +218,15 @@ export function AttributeSelector(props: PAttributeSelector) {
           );
         }}
         renderMenuItem={(l: any, index: number) => RenderMenuItem(l, index)}
-        renderValue={renderTotalSelectedItems}
+        renderValue={(values: string[]) => {
+          return renderTotalSelectedItems(
+            values,
+            RenderSelectedValue,
+            populatedFieldType,
+            additionalPopulatedFieldData,
+            numPopulatedFields
+          );
+        }}
         disabledItemValues={disabledValues && [...Object.keys(disabledValues)]}
         searchBy={(keyWord: string, label: string) => {
           return attributeSelectorSearchBy(keyWord, label, entityMeta, objectType);

@@ -171,3 +171,19 @@ export function handleSetAttribute(
     setAttributeMeta(allAttributeData);
   }
 };
+
+export function renderTotalSelectedItems(
+  values: string[],
+  renderFunction: (value: string) => JSX.Element,
+  populatedFieldType: string,
+  additionalPopulatedFieldData?: any,
+  numPopulatedFields?: number,
+) {
+  if (values.length === 1) {
+    return renderFunction(values[0]);
+  }
+  return `${values.length} ${populatedFieldType}s selected${additionalPopulatedFieldData ||
+    `; ${numPopulatedFields} ${numPopulatedFields === 1 ? "filter" : "filters"
+    } populated.`
+    }`;
+};
