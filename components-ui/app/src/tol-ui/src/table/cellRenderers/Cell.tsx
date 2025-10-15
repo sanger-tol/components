@@ -56,7 +56,7 @@ export function Cell(props: PCell) {
     renderer.type === "none" ||
     // no value and not a custom renderer as custom renderers may not require a value
     // no need to to deal with empty values with pre-defined cellRenderers
-    (!value && (renderer.type) in preDefinedElements)
+    (value == null && (renderer.type) in preDefinedElements)
   )
     return <DefaultCell value={value} />;
 
