@@ -9,20 +9,18 @@ import { Checkbox } from "rsuite";
 import {
   MultipleSelect,
   IconTooltip,
-  Icon,
-  PopUpMessage,
   SourceTag,
-  AttributeTooltip,
   getFlattenedMetaData,
-  getAttributeDetail,
+  attributeSelectorSearchBy,
   getAttributeSources,
-  filterBySource,
   normaliseCaps,
   filterAttributes,
   getAllAttributeData,
-  truncateString,
   IRemoteTarget,
   IAllowedCardinality,
+  handleSetAttribute,
+  SourceContainer,
+  MenuItem
 } from "..";
 
 export interface PAttributeSelector extends IRemoteTarget {
@@ -105,99 +103,14 @@ export function AttributeSelector(props: PAttributeSelector) {
     }
   }, [attribute, entityMeta, objectType, setAttributeMeta]);
 
-  const searchBy = (keyword: string, label: any) => {
-    const name = getAttributeDetail(
-      entityMeta,
-      objectType,
-      label,
-      "display_name"
-    ).toLowerCase();
-    const description = getAttributeDetail(
-      entityMeta,
-      objectType,
-      label,
-      "description"
-    ).toLowerCase();
-    const kw = keyword.toLowerCase();
-
-    return name.includes(kw) || label.includes(kw) || description.includes(kw);
-  };
-
   const renderTotalSelectedItems = (values: string[]) => {
     if (values.length === 1) {
       return RenderSelectedValue(values[0]);
     }
-    return `${values.length} ${populatedFieldType}s selected${
-      additionalPopulatedFieldData ||
-      `; ${numPopulatedFields} ${
-        numPopulatedFields === 1 ? "filter" : "filters"
+    return `${values.length} ${populatedFieldType}s selected${additionalPopulatedFieldData ||
+      `; ${numPopulatedFields} ${numPopulatedFields === 1 ? "filter" : "filters"
       } populated.`
-    }`;
-  };
-
-  const handleSetAttribute = (newAttribute: string[]) => {
-    if (maxSelections) {
-      if (newAttribute.length > maxSelections) {
-        PopUpMessage({
-          type: "warning",
-          message: `You can select a maximum number of ${maxSelections} items.`,
-        });
-        return;
-      }
-    }
-    setAttributes(newAttribute);
-
-    if (setAttributeMeta) {
-      const allAttributeData = getAllAttributeData(
-        newAttribute,
-        entityMeta,
-        objectType
-      );
-      setAttributeMeta(allAttributeData);
-    }
-  };
-
-  const MenuItem = (
-    displayName: string,
-    source: string,
-    key: string,
-    authoritative: boolean
-  ) => {
-    const disabled =
-      disabledValues && Object.keys(disabledValues).includes(key);
-    const tooltipContents = tooltipContent || "disabled";
-
-    const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
-
-    return (
-      <div key={key} className="tol-attribute-selector-menu-item-container">
-        <div className="tol-attribute-selector-menu-item-inner-container">
-          <div className="tol-attribute-selector-display-name">
-            {displayName}{" "}
-            {disabled ? (
-              <span className="tol-attribute-selector-tooltip">
-                {tooltipContent && (
-                  <IconTooltip disableMarkdown contents={tooltipContents} />
-                )}
-              </span>
-            ) : (
-              <span className="tol-attribute-selector-tooltip">
-                <AttributeTooltip
-                  field={key}
-                  objectType={objectType}
-                  dataSource={dataSource}
-                />
-              </span>
-            )}
-            <div className="tol-attribute-selector-display-key">
-              {authoritative === true && <Icon icon="star" />}
-              <p>{truncateString(key, lettersToDisplay)}</p>
-            </div>
-          </div>
-        </div>
-        {displaySource && source && <SourceTag source={source} />}
-      </div>
-    );
+      }`;
   };
 
   const RenderMenuItem = (l: any, index: number) => {
@@ -205,12 +118,17 @@ export function AttributeSelector(props: PAttributeSelector) {
     const metaData = getFlattenedMetaData(entityMeta, objectType, label);
     return (
       <div key={`${label}-${index}`}>
-        {MenuItem(
-          metaData["display_name"] ?? normaliseCaps(label),
-          metaData["source"],
-          label,
-          metaData["authoritative"]
-        )}
+        <MenuItem
+          displayName={metaData["display_name"] ?? normaliseCaps(label)}
+          source={metaData["source"]}
+          field={label}
+          authoritative={metaData["authoritative"]}
+          objectType={objectType}
+          dataSource={dataSource}
+          displaySource={displaySource}
+          tooltipContent={tooltipContent}
+          disabledValues={disabledValues}
+        />
       </div>
     );
   };
@@ -222,38 +140,6 @@ export function AttributeSelector(props: PAttributeSelector) {
         {metaData["display_name"] ?? normaliseCaps(value)}
         <SourceTag source={metaData["source"]} />
       </span>
-    );
-  };
-
-  const SearchBySource = () => {
-    const hasActiveSource = selectedSources.length > 0;
-
-    return (
-      <div className="tol-attribute-selector-search-by-source-container">
-        <p>Filter by source:</p>
-        <div className="tol-attribute-selector-sources">
-          {sources.map((source: string, index: number) => (
-            <div
-              key={index}
-              className="tol-attribute-selector-sources-inner-container"
-              onClick={() =>
-                filterBySource(source, selectedSources, setSelectedSources)
-              }
-            >
-              <SourceTag
-                source={source}
-                className={`${
-                  selectedSources.includes(source) ? "active" : ""
-                } ${
-                  hasActiveSource && !selectedSources.includes(source)
-                    ? "faded"
-                    : ""
-                }`}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
     );
   };
 
@@ -283,13 +169,30 @@ export function AttributeSelector(props: PAttributeSelector) {
         })}
         placeholder={placeholder}
         value={attribute}
-        setValue={handleSetAttribute}
+        setValue={(newAttribute: string[]) => {
+          handleSetAttribute(
+            newAttribute,
+            maxSelections!,
+            setAttributes,
+            entityMeta,
+            objectType,
+            setAttributeMeta
+          );
+        }}
         renderMenuItem={(l: any, index: number) => RenderMenuItem(l, index)}
         renderValue={renderTotalSelectedItems}
         disabledItemValues={disabledValues && [...Object.keys(disabledValues)]}
-        searchBy={searchBy}
+        searchBy={(keyWord: string, label: string) => {
+          return attributeSelectorSearchBy(keyWord, label, entityMeta, objectType);
+        }}
         sticky={sticky}
-        renderExtraFooter={renderSearchBySource && SearchBySource()}
+        renderExtraFooter={renderSearchBySource &&
+          <SourceContainer
+            sources={sources}
+            selectedSources={selectedSources}
+            setSelectedSources={setSelectedSources}
+          />
+        }
         onClean={onClean}
         onClose={() => setSelectedSources([])}
       />
