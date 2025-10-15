@@ -70,6 +70,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone {
   utilityBarConfig?: PUtilityBar;
   contents?: ReactNode;
   groupBy?: boolean;
+  copySeparator?: string;
 
   actionDataSource?: TsDataSource;
   actions?: (string | IDropdownButtonConfig)[];

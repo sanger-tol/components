@@ -10,10 +10,11 @@ import { Icon, stopPropagation, copyPageColumnValues } from "..";
 export interface FieldDropdown {
   attribute: string;
   data: any;
+  separator?: string;
 }
 
 export function FieldDropdown(props: FieldDropdown) {
-  const { attribute, data } = props;
+  const { attribute, data, separator } = props;
 
   const onClick = (e) => {
     stopPropagation(e);
@@ -28,7 +29,7 @@ export function FieldDropdown(props: FieldDropdown) {
       >
         <Dropdown.Item
           icon={<Icon icon="share-from-square" size="sm" />}
-          onClick={() => copyPageColumnValues(data, attribute)}
+          onClick={() => copyPageColumnValues(data, attribute, separator)}
         >
           Copy Column Values (Page)
         </Dropdown.Item>

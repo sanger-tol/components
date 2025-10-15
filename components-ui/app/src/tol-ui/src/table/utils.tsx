@@ -327,14 +327,14 @@ export function formatTotalSize(totalSize: number) {
   return totalSize.toLocaleString() + " Rows";
 }
 
-export function copyPageColumnValues(data: any, fieldHeader: string) {
+export function copyPageColumnValues(data: any, fieldHeader: string, separator?: string) {
   const copySet = new Set<string>(
     data.flatMap((element) =>
       Array.isArray(
         getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)
       )
         ? getFieldByName(element[fieldHeader].props.dataObject, fieldHeader).join(',')
-        : [getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)]
+        : [getFieldByName(element[fieldHeader].props.dataObject, fieldHeader) + (separator || '')]
     )
   );
   const emptyStringsRemoval = Array.from(copySet).filter(Boolean);

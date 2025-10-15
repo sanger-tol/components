@@ -22,9 +22,6 @@ import {
   SourceContainer,
   renderTotalSelectedItems,
   MenuItem,
-  AttributeTooltip,
-  Icon,
-  truncateString
 } from "..";
 
 export interface PAttributeSelector extends IRemoteTarget {
@@ -127,49 +124,6 @@ export function AttributeSelector(props: PAttributeSelector) {
       </div>
     );
   };
-
-  // const MenuItem = (
-  //   displayName: string,
-  //   source: string,
-  //   key: string,
-  //   authoritative: boolean
-  // ) => {
-  //   const disabled =
-  //     disabledValues && Object.keys(disabledValues).includes(key);
-  //   const tooltipContents = tooltipContent || "disabled";
-
-  //   const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
-
-  //   return (
-  //     <div key={key} className="tol-attribute-selector-menu-item-container">
-  //       <div className="tol-attribute-selector-menu-item-inner-container">
-  //         <div className="tol-attribute-selector-display-name">
-  //           {displayName}{" "}
-  //           {disabled ? (
-  //             <span className="tol-attribute-selector-tooltip">
-  //               {tooltipContent && (
-  //                 <IconTooltip disableMarkdown contents={tooltipContents} />
-  //               )}
-  //             </span>
-  //           ) : (
-  //             <span className="tol-attribute-selector-tooltip">
-  //               <AttributeTooltip
-  //                 field={key}
-  //                 objectType={objectType}
-  //                 dataSource={dataSource}
-  //               />
-  //             </span>
-  //           )}
-  //           <div className="tol-attribute-selector-display-key">
-  //             {authoritative === true && <Icon icon="star" />}
-  //             <p>{truncateString(key, lettersToDisplay)}</p>
-  //           </div>
-  //         </div>
-  //       </div>
-  //       {displaySource && source && <SourceTag source={source} />}
-  //     </div>
-  //   )
-  // }
 
   const RenderSelectedValue = (value: string) => {
     const metaData = getFlattenedMetaData(entityMeta, objectType, value);
