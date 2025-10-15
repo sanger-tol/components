@@ -4,9 +4,6 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export * from "./AttributeSelector";
-export * from "./AttributeTooltip";
-export * from "./AttributeTitle";
 export * from "./BoardCount";
 export * from "./BoardMarkdown";
 export * from "./Button";
@@ -30,7 +27,6 @@ export * from "./Placeholder";
 export * from "./Plate";
 export * from "./RemoteCount";
 export * from "./RemoteGet";
-export * from "./SelectedAttributesContainer";
 export * from "./SourceTag";
 export * from "./TolLoader";
 export * from "./UtilityBar";
