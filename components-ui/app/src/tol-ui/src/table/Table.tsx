@@ -60,6 +60,7 @@ interface Props extends IRemoteTargetAndZone {
   defaultSortByType?: string;
   handleSortColumn: any;
   filter: any;
+  copySeparator?: string;
 
   onConfigSave: (config: ITableConfigSave) => void;
 
@@ -110,6 +111,7 @@ export function Table(props: Props) {
     defaultSortByType,
     handleSortColumn,
     filter,
+    copySeparator,
 
     noFilter,
     noPagination,
@@ -494,6 +496,7 @@ export function Table(props: Props) {
                               {...props}
                               attribute={key}
                               data={data}
+                              separator={copySeparator}
                             />
                           </HeaderCell>
                           <Cell dataKey={key} />
