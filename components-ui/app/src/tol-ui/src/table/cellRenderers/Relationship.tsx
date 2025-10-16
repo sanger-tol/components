@@ -11,7 +11,8 @@ import {
   FormatTooltip,
   Loader,
   TDataObjectOrNull,
-  sortObjectAlphabetically,
+  getFieldByName,
+  sortObjectAlphabetically
 } from "../..";
 
 
@@ -73,7 +74,7 @@ export function Relationship(props: PRelationship) {
 
   if (detailPageIdAttribute) {
     return (
-      <a href={`${relationship}/${detailPageIdAttribute}`}>
+      <a href={`${relationshipObjectType}/${getFieldByName(dataObject, detailPageIdAttribute)}`}>
         {Box}
       </a>
     );

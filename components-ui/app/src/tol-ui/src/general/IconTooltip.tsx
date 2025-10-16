@@ -35,9 +35,9 @@ export function IconTooltip(props: PIconTooltip) {
   return (
     <span onClick={(e) => e.stopPropagation()}>
       <HoverOverlay contents={renderedContents}>
-        <div className="tooltip-wrapper">
+        <span className="tooltip-wrapper">
           {icon || <Icon icon="circle-info" size="sm"/>}
-        </div>
+        </span>
       </HoverOverlay>
     </span>
   );
