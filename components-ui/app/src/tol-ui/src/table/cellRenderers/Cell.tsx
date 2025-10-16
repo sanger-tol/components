@@ -30,13 +30,12 @@ export interface PCell {
   dataObject: TDataObjectOrNull,
   dataSource?: TsDataSource,
   renderer: TCellRenderer;
-  expandedRows: string[];
   setExpandedRows: any,
   customCellRenderers?: ICustomCellRenderers;
 }
 
 export function Cell(props: PCell) {
-  const { value, dataObject, renderer, customCellRenderers, expandedRows, setExpandedRows } = props;
+  const { value, dataObject, renderer, customCellRenderers, setExpandedRows } = props;
   const [expanded, setExpanded] = useState(false);
 
   const DefaultCell = ({ value }) => <>{value ?? ""}</>;
@@ -81,7 +80,7 @@ export function Cell(props: PCell) {
   return (
     <>
       <renderer.element {...elementProps} />
-      <div style={{ color: 'var(--tol-grey-light)'}}>
+      <div style={{ color: 'var(--tol-grey)', cursor: 'pointer' }}>
         <Icon
           icon={expanded ? "caret-up" : "caret-down"}
           onClick={() => {

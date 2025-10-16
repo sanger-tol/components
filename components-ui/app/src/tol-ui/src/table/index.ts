@@ -18,3 +18,4 @@ export * from "./RemoteTable";
 export * from "./DownloadModal";
 export * from "./cellRenderers/CellRendererConfigurer";
 export * from "./cellRenderers/CellRendererModal";
+export * from "./ImageModal";

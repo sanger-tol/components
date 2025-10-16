@@ -423,11 +423,13 @@ span.rs-dropdown-toggle-icon {
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-left: 8px;
+  background-color: var(--tol-grey-translucent);
 
   .tol-table-expanded-row-img {
-    height: 80px;
+    height: 60px;
     width: 80px;
+    margin-left: 8px;
+    background-color: var(--tol-bg);
     object-fit: contain;
     border: 1px solid var(--tol-grey) !important;
     padding: 2px;

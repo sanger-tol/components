@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { PCell, Icon, Modal } from "../..";
+import { PCell, Icon, ImageModal } from "../..";
 import { useState } from "react";
 
 export interface PImage extends PCell {
@@ -13,9 +13,30 @@ export interface PImage extends PCell {
 }
 
 export function Image(props: PImage) {
-  const { value, names } = props;
+  // const { value, names } = props;
+  const value: string[] = [
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/bulbasaur.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/ivysaur.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/venusaur.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/squirtle.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/feraligatr.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/blastoise.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmander.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmeleon.png",
+    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charizard.png",
+  ];
+  const names: string[] = [
+    "bulbasaur",
+    "ivysaur",
+    "venusaur",
+    "squirtle",
+    "wartortle",
+    "blastoise",
+    "charmander",
+    "charmeleon",
+    "charizard",
+  ]
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [modalIndex, setModalIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
 
   const multipleImages = Array.isArray(value);
@@ -32,67 +53,41 @@ export function Image(props: PImage) {
     setIndex((prev) => (prev === value.length - 1 ? 0 : prev + 1));
   };
 
-  const Content = (
-    <>
-      {multipleImages && (
-        <Icon
-          icon="caret-left"
-          onClick={() => arrowPrev(setModalIndex)}
-          size="2x"
-        />
-      )}
-      <img
-        src={multipleImages ? value[modalIndex] : value}
-        style={{ height: "auto", width: "95%" }}
-        title={multipleImages ? value[modalIndex] : value}
-      />
-      {multipleImages && (
-        <Icon
-          icon="caret-right"
-          onClick={() => arrowNext(setModalIndex)}
-          size="2x"
-        />
-      )}
-      <caption style={{ textAlign: "center", width: 'max-content', color: 'var(--tol-grey-light)' }}>
-        {multipleImages ? names[modalIndex] : names}
-      </caption>
-    </>
-  );
-
-  const ImageViewerModal = (
-    <Modal
-      open={open}
-      setOpen={setOpen}
-      children={Content}
-    />
-  );
-
   return (
     <div>
-      {ImageViewerModal}
+      <ImageModal
+        value={value}
+        names={names}
+        open={open}
+        setOpen={setOpen}
+        currentIndex={currentIndex}
+      />
       <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        {multipleImages ??
-          <Icon
-            icon="caret-left"
-            onClick={() => arrowPrev(setCurrentIndex)}
-            size="2x"
-          />
-        }
+        {multipleImages && (
+          <div style={{ cursor: "pointer", color: 'var(--tol-grey)' }}>
+            <Icon
+              icon="caret-left"
+              onClick={() => arrowPrev(setCurrentIndex)}
+              size="1x"
+            />
+          </div>
+        )}
         <img
           src={multipleImages ? value[currentIndex] : value}
-          style={{ height: "auto", width: "75%" }}
+          style={{ maxHeight: "60px",  }}
           onClick={() => {
             value.length > 0 && setOpen((prev: boolean) => !prev);
-            setModalIndex(currentIndex);
           }}
         />
-        {multipleImages ??
-          <Icon
-            icon="caret-right"
-            onClick={() => arrowNext(setCurrentIndex)}
-            size="2x"
-          />
-        }
+        {multipleImages && (
+          <div style={{ cursor: "pointer", color: 'var(--tol-grey)' }}>
+            <Icon
+              icon="caret-right"
+              onClick={() => arrowNext(setCurrentIndex)}
+              size="1x"
+            />
+          </div>
+        )}
       </span>
     </div>
   );
