@@ -20,7 +20,6 @@ import {
   PButton,
   PBoard,
   addComponents,
-  IconTooltip,
   normaliseCaps,
   useBoardPrivilege,
   PRIVILEGE
@@ -191,14 +190,6 @@ export function Zone(props: PZone) {
     visible: privilege === PRIVILEGE.BOARD.EDITABLE
   };
 
-  const Tooltip = (
-    <IconTooltip
-      contents={
-        <>{normaliseCaps(objectType)} Zone</>
-      }
-    />
-  )
-
   const buttons = (
     <div className="tol-zone-bar">
       <UtilityBar
@@ -213,6 +204,7 @@ export function Zone(props: PZone) {
             }
           }
         }}
+        description={normaliseCaps(objectType) + " Zone"}
         buttons={!draggable ? [
           addButton,
           showEditButtons,
@@ -221,7 +213,6 @@ export function Zone(props: PZone) {
             : []),
           filtersButton
         ] : [saveButton]}
-        elements={[Tooltip]}
       />
       <div id="component-modal">
         <ComponentPickerModal
