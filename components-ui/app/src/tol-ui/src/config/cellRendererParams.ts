@@ -36,7 +36,7 @@ export const cellRendererParams: IBoardCellRenderers = {
         placeholder: "This is an image of a cat",
       },
     },
-    allowedDataTypes: ["string"]
+    allowedDataTypes: ["str"]
   },
   integer: {
     allowedDataTypes: ["int"]
