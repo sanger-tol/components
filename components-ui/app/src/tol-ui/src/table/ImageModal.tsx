@@ -9,14 +9,14 @@ import { Icon, Modal } from "..";
 
 export interface PImageModal {
   value: string | string[];
-  names: string | string[];
+  captions: string | string[];
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   currentIndex: number;
 }
 
 export function ImageModal(props: PImageModal) {
-  const { value, names, open, setOpen, currentIndex } = props;
+  const { value, captions, open, setOpen, currentIndex } = props;
   const [modalIndex, setModalIndex] = useState<number>(currentIndex);
 
   useEffect(() => {
@@ -49,6 +49,7 @@ export function ImageModal(props: PImageModal) {
           icon="caret-left"
           onClick={() => arrowPrev(setModalIndex)}
           size="2x"
+          className="tol-table-image-cell-arrow"
         />
       )}
       <img
@@ -61,10 +62,11 @@ export function ImageModal(props: PImageModal) {
           icon="caret-right"
           onClick={() => arrowNext(setModalIndex)}
           size="2x"
+          className="tol-table-image-cell-arrow"
         />
       )}
       <p className={"tol-table-image-modal-caption"}>
-        {multipleImages ? names[modalIndex] : names}
+        {multipleImages ? captions[modalIndex] : captions}
       </p>
     </div>
   );

@@ -9,11 +9,11 @@ import { ImageModal } from "../..";
 
 export interface PImages {
   value: any;
-  names: any;
+  captions: any;
 }
 
 export function Images(props: PImages) {
-  // const { value, names } = props;
+  // const { value, captions } = props;
   const value: string[] = [
     "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/bulbasaur.png",
     "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/ivysaur.png",
@@ -25,7 +25,7 @@ export function Images(props: PImages) {
     "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmeleon.png",
     "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charizard.png",
   ];
-  const names: string[] = [
+  const captions: string[] = [
     "bulbasaur",
     "ivysaur",
     "venusaur",
@@ -46,7 +46,7 @@ export function Images(props: PImages) {
     <div className="tol-table-expanded-row">
       <ImageModal
         value={value}
-        names={names}
+        captions={captions}
         open={open}
         setOpen={setOpen}
         currentIndex={currentIndex}
@@ -57,7 +57,7 @@ export function Images(props: PImages) {
           className="tol-table-expanded-row-img"
           key={url}
           src={url}
-          alt={names[index] || url}
+          alt={captions[index] || url}
           onClick={() => {
             setCurrentIndex(index);
             setOpen(true)

@@ -9,11 +9,11 @@ import { useState } from "react";
 
 export interface PImage extends PCell {
   value: string | string[];
-  names: string | string[];
+  captions: string | string[];
 }
 
 export function Image(props: PImage) {
-  // const { value, names } = props;
+  // const { value, captions } = props;
   const value: string[] = [
     "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/bulbasaur.png",
     "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/ivysaur.png",
@@ -25,7 +25,7 @@ export function Image(props: PImage) {
     "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmeleon.png",
     "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charizard.png",
   ];
-  const names: string[] = [
+  const captions: string[] = [
     "bulbasaur",
     "ivysaur",
     "venusaur",
@@ -58,14 +58,14 @@ export function Image(props: PImage) {
     <div>
       <ImageModal
         value={value}
-        names={names}
+        captions={captions}
         open={open}
         setOpen={setOpen}
         currentIndex={currentIndex}
       />
       <span className={"tol-table-image-cell"}>
         {multipleImages && (
-          <div>
+          <div style={{ display: "flex", alignItems: "center" }}>
             <Icon
               icon="caret-left"
               onClick={() => arrowPrev(setCurrentIndex)}
@@ -82,7 +82,7 @@ export function Image(props: PImage) {
           }}
         />
         {multipleImages && (
-          <div>
+          <div style={{ display: "flex", alignItems: "center" }}>
             <Icon
               icon="caret-right"
               onClick={() => arrowNext(setCurrentIndex)}
