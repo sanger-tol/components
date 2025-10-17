@@ -87,7 +87,6 @@ export function convertTableData(
   dataObjects: TDataObjectListOrNull,
   dataSource: TsDataSource,
   fieldMeta: FieldMeta,
-  expandedRows: string[],
   setExpandedRows: (expandedRows: string[]) => void,
   customCellRenderers?: ICustomCellRenderers
 ): ITableData {
@@ -110,7 +109,6 @@ export function convertTableData(
           dataSource={dataSource}
           renderer={fieldMeta.dataWithDefaults?.[attribute]?.cellRenderer}
           setExpandedRows={setExpandedRows}
-          expandedRows={expandedRows}
           customCellRenderers={customCellRenderers}
         />
       );

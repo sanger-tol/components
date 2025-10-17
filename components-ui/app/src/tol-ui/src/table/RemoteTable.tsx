@@ -227,7 +227,6 @@ export function RemoteTable(props: PRemoteTable) {
             dataObjects,
             dataSource,
             fieldMeta!,
-            expandedRows,
             setExpandedRows,
             cellRenderers,
           )
