@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Icon, Modal } from "..";
 
 export interface PImageModal {
@@ -18,6 +18,15 @@ export interface PImageModal {
 export function ImageModal(props: PImageModal) {
   const { value, names, open, setOpen, currentIndex } = props;
   const [modalIndex, setModalIndex] = useState<number>(currentIndex);
+
+  useEffect(() => {
+    if (Array.isArray(value)) {
+      const max = value.length - 1;
+      setModalIndex(Math.max(0, Math.min(currentIndex, max)));
+    } else {
+      setModalIndex(currentIndex);
+    }
+  }, [currentIndex, value]);
 
   const multipleImages = Array.isArray(value);
 
@@ -44,7 +53,7 @@ export function ImageModal(props: PImageModal) {
       )}
       <img
         src={multipleImages ? value[modalIndex] : value}
-        style={{ minHeight: "200px", minWidth: "200px", maxHeight: "650px", maxWidth: "95%", borderRadius: '6px' }}
+        className={'tol-table-image-modal-image'}
         title={multipleImages ? value[modalIndex] : value}
       />
       {multipleImages && (
@@ -54,9 +63,9 @@ export function ImageModal(props: PImageModal) {
           size="2x"
         />
       )}
-      <caption style={{ textAlign: "center", width: 'max-content', color: 'var(--tol-text)' }}>
+      <p className={"tol-table-image-modal-caption"}>
         {multipleImages ? names[modalIndex] : names}
-      </caption>
+      </p>
     </div>
   );
 

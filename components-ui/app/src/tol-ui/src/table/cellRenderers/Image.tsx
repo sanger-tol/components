@@ -13,29 +13,7 @@ export interface PImage extends PCell {
 }
 
 export function Image(props: PImage) {
-  // const { value, names } = props;
-  const value: string[] = [
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/bulbasaur.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/ivysaur.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/venusaur.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/squirtle.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/feraligatr.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/blastoise.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmander.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charmeleon.png",
-    "https://img.pokemondb.net/sprites/ruby-sapphire/shiny/charizard.png",
-  ];
-  const names: string[] = [
-    "bulbasaur",
-    "ivysaur",
-    "venusaur",
-    "squirtle",
-    "wartortle",
-    "blastoise",
-    "charmander",
-    "charmeleon",
-    "charizard",
-  ]
+  const { value, names } = props;
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
 
@@ -62,13 +40,14 @@ export function Image(props: PImage) {
         setOpen={setOpen}
         currentIndex={currentIndex}
       />
-      <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <span className={"tol-table-image-cell"}>
         {multipleImages && (
-          <div style={{ cursor: "pointer", color: 'var(--tol-grey)' }}>
+          <div>
             <Icon
               icon="caret-left"
               onClick={() => arrowPrev(setCurrentIndex)}
               size="1x"
+              className={"tol-table-image-cell-arrow"}
             />
           </div>
         )}
@@ -80,11 +59,12 @@ export function Image(props: PImage) {
           }}
         />
         {multipleImages && (
-          <div style={{ cursor: "pointer", color: 'var(--tol-grey)' }}>
+          <div>
             <Icon
               icon="caret-right"
               onClick={() => arrowNext(setCurrentIndex)}
               size="1x"
+              className={"tol-table-image-cell-arrow"}
             />
           </div>
         )}

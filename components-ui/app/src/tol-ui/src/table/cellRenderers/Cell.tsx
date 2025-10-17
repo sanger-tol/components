@@ -80,7 +80,7 @@ export function Cell(props: PCell) {
   return (
     <>
       <renderer.element {...elementProps} />
-      <div style={{ color: 'var(--tol-grey)', cursor: 'pointer' }}>
+      <div>
         <Icon
           icon={expanded ? "caret-up" : "caret-down"}
           onClick={() => {
@@ -93,6 +93,7 @@ export function Cell(props: PCell) {
             });
           }}
           size="1x"
+          className={"tol-table-image-cell-arrow"}
         />
       </div>
     </>
