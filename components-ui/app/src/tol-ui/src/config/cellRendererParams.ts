@@ -23,19 +23,20 @@ export const cellRendererParams: IBoardCellRenderers = {
   image: {
     params: {
       value: {
-        type: "string | string[]",
-        rename: "Image URL(s)",
+        type: "string",
+        rename: "Image URL",
         required: true,
         description: "The URL or list of URLs of the image(s) to display",
         placeholder: "www.example.com/image.png"
       },
       names: {
-        type: "string | string[]",
-        rename: "Caption(s)",
+        type: "string",
+        rename: "Caption",
         description: "The caption or list of captions for the image(s)",
-        placeholder: "This is an image"
+        placeholder: "This is an image of a cat",
       },
-    }
+    },
+    allowedDataTypes: ["string"]
   },
   integer: {
     allowedDataTypes: ["int"]

@@ -208,14 +208,10 @@
     }
 
     // re-position the checkboxes
-    .tol-table-header-component .rs-checkbox-checker {
+    .tol-table-row-selection .rs-checkbox-checker {
       margin-top: -6px;
       align-items: center;
-    }
-
-    .tol-component-header {
-      margin-top: 9px !important;
-      align-items: center;
+      cursor: pointer !important;
     }
   }
 

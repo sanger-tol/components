@@ -413,10 +413,10 @@ export function Table(props: Props) {
                   )}
                 >
                   {rowSelection && (
-                    <Column key="rowSelection" width={70}>
+                    <Column key="rowSelection" width={58}>
                       <HeaderCell>
                         <Checkbox
-                          className="tol-table-header-component tol-component-header"
+                          className="tol-table-row-selection"
                           checked={checked}
                           indeterminate={indeterminate}
                           disabled={bulkSelect || data.length === 0}
@@ -428,7 +428,7 @@ export function Table(props: Props) {
                         {(rowData: any) => {
                           return (
                             <Checkbox
-                              className="tol-table-header-component"
+                              className="tol-table-row-selection"
                               value={rowData.key}
                               checked={
                                 bulkSelect ||
