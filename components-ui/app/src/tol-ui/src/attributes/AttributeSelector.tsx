@@ -19,7 +19,6 @@ import {
   IRemoteTarget,
   IAllowedCardinality,
   handleSetAttribute,
-  SourceContainer,
   renderTotalSelectedItems,
   MenuItem,
 } from "..";
@@ -186,13 +185,6 @@ export function AttributeSelector(props: PAttributeSelector) {
           return attributeSelectorSearchBy(keyWord, label, entityMeta, objectType);
         }}
         sticky={sticky}
-        renderExtraFooter={renderSearchBySource &&
-          <SourceContainer
-            sources={sources}
-            selectedSources={selectedSources}
-            setSelectedSources={setSelectedSources}
-          />
-        }
         onClean={onClean}
         onClose={() => setSelectedSources([])}
       />
