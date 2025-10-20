@@ -6,11 +6,20 @@
 
 @import "./_mixins.scss";
 
+:root {
+  --tol-radius: 6px;
+  --tol-radius-2: calc(var(--tol-radius) * 2);
+  --tol-margin: 6px;
+  --tol-margin-2: calc(var(--tol-margin) * 2);
+  --tol-padding: 6px;
+  --tol-padding-2: calc(var(--tol-padding) * 2);
+}
+
 .tol-app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin-left: var(--tol-navigation-width);
+  margin-left: calc(var(--tol-side-nav-width));
 }
 
 .tol-app-content {
@@ -22,6 +31,7 @@
 body {
   @include body-font;
   min-width: 350px;
+  //background-color: var(--tol-primary-dark-subtle);
 }
 
 h1,

@@ -87,17 +87,19 @@ export function NewNav(props: PNewNav) {
   };
 
   return (
-    <div className="tol-navigation">
+    <div className="tol-side-nav">
       <Sidenav appearance="inverse">
-        <Sidenav.Header>
+        <Sidenav.Header className="tol-side-nav-header">
           {brand}
         </Sidenav.Header>
-        <Sidenav.Body>
+        <Sidenav.Body className="tol-side-nav-body">
           <Nav>
-            <Nav.Item icon={<Icon icon="dashboard" />}>
+            <Nav.Item className="tol-side-nav-item">
+              <Icon icon="dashboard" />
               Dashboard
             </Nav.Item>
-            <Nav.Item icon={<Icon icon="user" />}>
+            <Nav.Item className="tol-side-nav-item">
+              <Icon icon="user" />
               User Group
             </Nav.Item>
           </Nav>

@@ -24,6 +24,7 @@ header.masthead {
   z-index: 3;
   color: white;
   margin: 15px 30px 60px 30px;
+  margin-left: calc(var(--tol-side-nav-width));
 
   .masthead-heading {
     margin-bottom: 0;

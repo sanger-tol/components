@@ -111,11 +111,14 @@
 
 .footer {
   height: 150px;
-  margin-top: 20px;
   padding: 48px;
-  background-color: black;
   color: white;
   z-index: 2;
+  background-color: var(--tol-bg-dark-dm);
+  border-top: 1px solid var(--tol-bg-dm);
+  border-radius: 6px;
+  margin: var(--tol-margin) !important;
+  margin-top: 20px !important;
 }
 
 .footer-text {

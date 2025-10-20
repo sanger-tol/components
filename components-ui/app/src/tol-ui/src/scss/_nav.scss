@@ -5,26 +5,66 @@ SPDX-License-Identifier: MIT
 */
 
 :root {
-  --tol-navigation-width: 220px;
-  --tol-navigation-display: block;
-
-  --rs-sidenav-inverse-bg: var(--tol-primary-dark);
+  &:has(.tol-side-nav) {
+    --tol-side-nav-width: 220px;
+    --tol-side-nav-display: block;
+  }
+  // background colour
+  --rs-sidenav-inverse-bg: var(--tol-primary-dark-subtle);
 }
 
-.tol-navigation {
+.tol-side-nav {
   position: fixed;
-  width: var(--tol-navigation-width);
-  height: 100%;
-  display: var(--tol-navigation-display);
+  z-index: 1000;
+  width: var(--tol-side-nav-width);
+  height: 100vh;
+  display: var(--tol-side-nav-display);
+  padding: 8px 0 8px 8px;
 
   nav {
     height: 100%;
+    border-radius: var(--tol-radius);
   }
-}
 
-@media (max-width: 986px) {
-  :root {
-    --tol-navigation-width: 0;
-    --tol-navigation-display: none;
+  .tol-side-nav-header {
+    text-transform: uppercase;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bolder;
+    text-align: center;
+    background-color: var(--tol-primary-translucent);
+    border-radius: var(--tol-radius);
+    margin: var(--tol-margin) !important;
+
+    img {
+      transform: scale(1.2);
+    }
+  }
+
+  .tol-side-nav-body {
+    padding: var(--tol-margin);
+
+    .tol-icon {
+      margin-right: calc(var(--tol-margin) * 2);
+    }
+
+    .tol-side-nav-item {
+      padding: var(--tol-padding-2) !important;
+      margin-bottom: var(--tol-margin) !important;
+
+      &:hover,
+      &:focus,
+      &:active {
+        background-color: var(--tol-primary-translucent);
+        border-radius: var(--tol-radius);
+      }
+    }
+  }
+
+  @media (max-width: 500px) {
+    :root {
+      --tol-side-nav-width: 0;
+      --tol-side-nav-display: none;
+    }
   }
 }
