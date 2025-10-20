@@ -15,6 +15,7 @@ import {
   IRemoteTarget,
   IAttributeDetails,
   TRANSITION_TIME,
+  AttributeTitle
 } from "../index";
 
 export interface PSelectedAttributesContainer extends IRemoteTarget {
@@ -90,9 +91,13 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
         <div>
           <span {...dragHandleProps}>
             <div className="tol-config-drawer-selected-column-name">
-              <div style={{ display: "inline", paddingRight: "5px" }}>
-                {attributeDetails.display_name || normaliseCaps(attributeId)}
-              </div>
+              <AttributeTitle
+                objectType={objectType}
+                dataSource={dataSource}
+                field={attributeId}
+                titleElement="p"
+                classname="tol-config-drawer-selected-column-title"
+              />
               <AttributeTooltip {...props} field={attributeId} />
             </div>
           </span>
@@ -105,7 +110,7 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
             <SourceTag source={attributeDetails.source} />
           )}
           {additionalIcons?.map(Icon =>
-            <Icon attributeId={attributeId} />
+            <Icon attributeId={attributeId} key={attributeId}/>
           )}
           <div
             className={"tol-active-column-btn"}

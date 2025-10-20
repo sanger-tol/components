@@ -129,6 +129,12 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
 
 .tol-config-drawer-selected-column-name {
   margin-bottom: 0px;
+  display: flex;
+}
+
+.tol-config-drawer-selected-column-title {
+  padding-right: 10px;
+  margin-bottom: 0px;
 }
 
 .tol-config-drawer-selected-column-name:hover {
