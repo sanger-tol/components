@@ -164,7 +164,7 @@ export function Table(props: Props) {
 
   // @ts-ignore
   const handleCheckAll = (value: any, checked: boolean) => {
-    const keys = checked ? data.map((item) => item.id) : [];
+    const keys = checked ? data.map((item) => item.key) : [];
     setSelectedRows && setSelectedRows(keys);
   };
 
@@ -399,7 +399,7 @@ export function Table(props: Props) {
                       if (bulkSelect) {
                         return "tol-selected-row disabled";
                       } else if (
-                        selectedRows.some((item) => item === rowData.id)
+                        selectedRows.some((item) => item === rowData.key)
                       ) {
                         return "tol-selected-row";
                       }

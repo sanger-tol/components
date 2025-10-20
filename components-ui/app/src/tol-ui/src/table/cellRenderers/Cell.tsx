@@ -64,7 +64,6 @@ export function Cell(props: PCell) {
   )
     return <DefaultCell value={value} />;
 
-
   const elements = { ...preDefinedElements, ...customCellRenderers };
   renderer.element = elements[renderer.type] || DefaultCell;
 
@@ -76,25 +75,26 @@ export function Cell(props: PCell) {
     });
   }
 
-
   return (
     <>
       <renderer.element {...elementProps} />
       <div>
-        <Icon
-          icon={expanded ? "caret-up" : "caret-down"}
-          onClick={() => {
-            setExpanded(!expanded);
-            setExpandedRows((prev: string[]) => {
-              const id = elementProps.dataObject.id;
-              return prev.includes(id)
-                ? prev.filter((existingId) => existingId !== id)
-                : [...prev, id];
-            });
-          }}
-          size="1x"
-          className={"tol-table-image-cell-arrow"}
-        />
+        {Array.isArray(value) && value.length > 1 &&
+          <Icon
+            icon={expanded ? "caret-up" : "caret-down"}
+            onClick={() => {
+              setExpanded(!expanded);
+              setExpandedRows((prev: string[]) => {
+                const id = elementProps.dataObject.id;
+                return prev.includes(id)
+                  ? prev.filter((existingId) => existingId !== id)
+                  : [...prev, id];
+              });
+            }}
+            size="1x"
+            className={"tol-table-image-cell-arrow"}
+          />
+        }
       </div>
     </>
   );
