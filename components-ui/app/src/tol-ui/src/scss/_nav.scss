@@ -1,0 +1,30 @@
+/*
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
+:root {
+  --tol-navigation-width: 220px;
+  --tol-navigation-display: block;
+
+  --rs-sidenav-inverse-bg: var(--tol-primary-dark);
+}
+
+.tol-navigation {
+  position: fixed;
+  width: var(--tol-navigation-width);
+  height: 100%;
+  display: var(--tol-navigation-display);
+
+  nav {
+    height: 100%;
+  }
+}
+
+@media (max-width: 986px) {
+  :root {
+    --tol-navigation-width: 0;
+    --tol-navigation-display: none;
+  }
+}

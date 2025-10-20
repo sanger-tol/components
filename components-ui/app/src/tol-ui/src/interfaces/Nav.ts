@@ -27,3 +27,6 @@ export interface Dropdown extends Default {
   pages?: Page[];
 } // eslint-disable-line
 
+export interface IAppEnvironment {
+  environment?: string;
+}

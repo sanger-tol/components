@@ -6,17 +6,14 @@
 
 @import "./_mixins.scss";
 
-#root {
-  height: 100vh;
-}
-
-#tol-app-background {
-  min-height: 100%;
+.tol-app {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  margin-left: var(--tol-navigation-width);
 }
 
-.tol-app {
+.tol-app-content {
   margin: 10px;
   width: calc(100% - 20px);
   flex: 1 1 auto;
