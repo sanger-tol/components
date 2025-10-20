@@ -7,9 +7,14 @@ SPDX-License-Identifier: MIT
 import {
   Images,
   getCellRendererPropValue,
+  PCell
 } from "../..";
 
-export function RowExpander(rowData: object) {
+export type PRowExpander<Extra = Record<string, unknown>> = {
+  key: string;
+} & Record<string, { props: PCell & Extra }>;
+
+export function RowExpander(rowData: PRowExpander) {
   const key: string = Object.keys(rowData).find(k => k !== 'key')!;
   const value: any = rowData[key];
   const renderer = value.props.renderer;
