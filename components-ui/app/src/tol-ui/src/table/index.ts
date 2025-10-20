@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 export * from "./actions";
 export * from "./cellRenderers"
+export * from "./rowExpanders";
 export * from "./BoardTable";
 export * from "./CellTooltip";
 export * from "./ColumnConfigDrawer";
@@ -17,3 +18,4 @@ export * from "./RemoteTable";
 export * from "./DownloadModal";
 export * from "./cellRenderers/CellRendererConfigurer";
 export * from "./cellRenderers/CellRendererModal";
+export * from "./ImageModal";

@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useState } from "react";
 import {
   TDataObjectOrNull,
   TCellRenderer,
@@ -18,7 +19,8 @@ import {
   Relationship,
   ICustomCellRenderers,
   TsDataSource,
-  getCellRendererPropValue
+  getCellRendererPropValue,
+  Icon
 } from "../..";
 import { Status } from "./Status";
 
@@ -28,11 +30,13 @@ export interface PCell {
   dataObject: TDataObjectOrNull,
   dataSource?: TsDataSource,
   renderer: TCellRenderer;
+  setExpandedRows: any,
   customCellRenderers?: ICustomCellRenderers;
 }
 
 export function Cell(props: PCell) {
-  const { value, dataObject, renderer, customCellRenderers } = props;
+  const { value, dataObject, renderer, customCellRenderers, setExpandedRows } = props;
+  const [expanded, setExpanded] = useState(false);
 
   const DefaultCell = ({ value }) => <>{value ?? ""}</>;
 
@@ -71,5 +75,27 @@ export function Cell(props: PCell) {
     });
   }
 
-  return <renderer.element {...elementProps} />;
+  return (
+    <>
+      <renderer.element {...elementProps} />
+      <div>
+        {Array.isArray(value) && value.length > 1 &&
+          <Icon
+            icon={expanded ? "caret-up" : "caret-down"}
+            onClick={() => {
+              setExpanded(!expanded);
+              setExpandedRows((prev: string[]) => {
+                const id = elementProps.dataObject.id;
+                return prev.includes(id)
+                  ? prev.filter((existingId) => existingId !== id)
+                  : [...prev, id];
+              });
+            }}
+            size="1x"
+            className={"tol-table-image-cell-arrow"}
+          />
+        }
+      </div>
+    </>
+  );
 }

@@ -141,6 +141,7 @@ export function RemoteTable(props: PRemoteTable) {
     props.setSelectedRows,
     []
   );
+  const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [idExportModalOpen, setIdExportModalOpen] = useState<boolean>(false);
   const [idsWithReqNotMet, setIdsWithReqNotMet] = useState<any>({});
   const [currentActionName, setCurrentActionName] = useState<string>("");
@@ -226,7 +227,8 @@ export function RemoteTable(props: PRemoteTable) {
             dataObjects,
             dataSource,
             fieldMeta!,
-            cellRenderers
+            setExpandedRows,
+            cellRenderers,
           )
         );
         // fetch count
@@ -252,6 +254,7 @@ export function RemoteTable(props: PRemoteTable) {
         setFullLoad(false);
       });
   };
+
 
   const onConfigSave = ({
     fieldMeta: fm,
@@ -359,6 +362,7 @@ export function RemoteTable(props: PRemoteTable) {
         contents={contents ? contents : Contents()}
         data={data}
         fieldMeta={fieldMeta!}
+        expandedRows={expandedRows}
         height={height}
         loading={loading}
         page={page}

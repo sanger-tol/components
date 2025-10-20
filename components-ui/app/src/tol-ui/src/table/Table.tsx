@@ -28,6 +28,7 @@ import {
   PRIVILEGE,
   ITableConfigSave,
   RowCounter,
+  RowExpander,
   AttributeTitle
 } from "..";
 import { Sort } from "./Sort";
@@ -70,12 +71,14 @@ interface Props extends IRemoteTargetAndZone {
   noConfigModal?: boolean;
   noDownload?: boolean;
   rowSelection?: boolean;
+  rowExpansion?: boolean;
   actions?: IDropdownButtonConfig[];
   actionChoices?: string[];
   actionsFooter?: IDropdownButtonConfig;
   utilityBarConfig?: PUtilityBar;
   selectedRows?: string[];
   setSelectedRows?: (selectedRows: string[]) => void;
+  expandedRows?: string[];
 
   contents?: ReactNode;
   groupBy?: boolean;
@@ -111,6 +114,7 @@ export function Table(props: Props) {
     defaultSortByType,
     handleSortColumn,
     filter,
+    expandedRows,
     copySeparator,
 
     noFilter,
@@ -160,7 +164,7 @@ export function Table(props: Props) {
 
   // @ts-ignore
   const handleCheckAll = (value: any, checked: boolean) => {
-    const keys = checked ? data.map((item) => item.id) : [];
+    const keys = checked ? data.map((item) => item.key) : [];
     setSelectedRows && setSelectedRows(keys);
   };
 
@@ -295,21 +299,6 @@ export function Table(props: Props) {
             : undefined
         }
       />
-      {/*rowSelection && (
-          <>
-            <Button
-              position="left"
-              type="primary"
-              active={bulkSelect}
-              onClick={() => {
-                handleCheckAll(null, !bulkSelect);
-                setBulkSelect(!bulkSelect);
-              }}
-              icon="check-double"
-              outline
-            />
-          </>
-        )*/}
       <UtilityBar
         id={id}
         title={utilityBarConfig.title}
@@ -401,12 +390,16 @@ export function Table(props: Props) {
                   sortColumn={sortByAttribute}
                   sortType={sortByType}
                   onSortColumn={handleSortColumn!}
+                  expandedRowKeys={expandedRows}
+                  renderRowExpanded={RowExpander}
+                  shouldUpdateScroll={false}
+                  rowKey={"key"}
                   rowClassName={(rowData: any) => {
                     if (rowData) {
                       if (bulkSelect) {
                         return "tol-selected-row disabled";
                       } else if (
-                        selectedRows.some((item) => item === rowData.id)
+                        selectedRows.some((item) => item === rowData.key)
                       ) {
                         return "tol-selected-row";
                       }
@@ -420,10 +413,10 @@ export function Table(props: Props) {
                   )}
                 >
                   {rowSelection && (
-                    <Column key="rowSelection" width={60}>
+                    <Column key="rowSelection" width={58}>
                       <HeaderCell>
                         <Checkbox
-                          className="tol-row-selection"
+                          className="tol-table-row-selection"
                           checked={checked}
                           indeterminate={indeterminate}
                           disabled={bulkSelect || data.length === 0}
@@ -431,15 +424,15 @@ export function Table(props: Props) {
                           style={data.length === 0 ? { display: "none" } : {}}
                         />
                       </HeaderCell>
-                      <Cell dataKey="id">
-                        {(rowData: { id: any }) => {
+                      <Cell>
+                        {(rowData: any) => {
                           return (
                             <Checkbox
-                              className="tol-row-selection"
-                              value={rowData.id}
+                              className="tol-table-row-selection"
+                              value={rowData.key}
                               checked={
                                 bulkSelect ||
-                                selectedRows.some((item) => item === rowData.id)
+                                selectedRows.some((item) => item === rowData.key)
                               }
                               disabled={bulkSelect}
                               onChange={handleCheck}

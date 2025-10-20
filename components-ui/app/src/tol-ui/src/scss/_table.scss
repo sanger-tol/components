@@ -53,7 +53,7 @@
     .rs-pagination-btn:disabled {
       border: none;
       box-shadow: none;
-    }    
+    }
   }
 
   .config-modal-overflow-fix {
@@ -208,8 +208,10 @@
     }
 
     // re-position the checkboxes
-    .tol-row-selection .rs-checkbox-checker {
+    .tol-table-row-selection .rs-checkbox-checker {
       margin-top: -6px;
+      align-items: center;
+      cursor: pointer !important;
     }
   }
 
@@ -405,6 +407,10 @@ span.rs-dropdown-toggle-icon {
   left: auto;
   padding: 4px 8px;
   backdrop-filter: blur(8px);
+}
+
+.rs-table-row-expanded:has(.tol-table-expanded-row) {
+  padding: 0 !important;
 }
 
 // pagination buttons on smaller devices
