@@ -44,6 +44,7 @@ export interface PMultipleSelect {
   onExiting?: any;
   groupBy?: string;
   icon?: IFormLabelIcon;
+  renderMenu?: (menuItem: JSX.Element) => JSX.Element;
 }
 
 export function MultipleSelect(props: PMultipleSelect) {
@@ -73,7 +74,8 @@ export function MultipleSelect(props: PMultipleSelect) {
     renderExtraFooter,
     className,
     groupBy,
-    icon
+    icon,
+    renderMenu
   } = props;
   const block = isPropDefined(props.block);
 
@@ -122,6 +124,7 @@ export function MultipleSelect(props: PMultipleSelect) {
           countable
           block={block}
           value={value}
+          renderMenu={renderMenu}
           data={formattedData}
           placeholder={placeholder}
           disabled={disabled}

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Checkbox } from "rsuite";
+import { Checkbox, Tabs } from "rsuite";
 import {
   MultipleSelect,
   IconTooltip,
@@ -59,7 +59,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     placeholder,
     populatedFieldType = "value",
     recommendedFilterAvailable,
-    renderSearchBySource,
     setAttributes,
     onClean,
     sticky,
@@ -136,6 +135,19 @@ export function AttributeSelector(props: PAttributeSelector) {
 
   if (loading) return <></>;
 
+  const MenuTabs = (MenuItem: React.ReactNode) => {
+    return (
+      <Tabs defaultActiveKey="all">
+        <Tabs.Tab eventKey="all" title="All">
+          {MenuItem}
+        </Tabs.Tab>
+        <Tabs.Tab eventKey="advanced" title="Advanced">
+          <p>Coming Soon...</p>
+        </Tabs.Tab>
+      </Tabs>
+    );
+  }
+
   return (
     <div className="tol-attribute-selector">
       <MultipleSelect
@@ -171,6 +183,7 @@ export function AttributeSelector(props: PAttributeSelector) {
           );
         }}
         renderMenuItem={(l: any, index: number) => RenderMenuItem(l, index)}
+        renderMenu={MenuTabs}
         renderValue={(values: string[]) => {
           return renderTotalSelectedItems(
             values,
