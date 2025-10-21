@@ -43,6 +43,7 @@ export interface PAttributeSelector extends IRemoteTarget {
   customAttributeSelection?: string[];
   allowedCardinality?: IAllowedCardinality;
   groupBy?: boolean;
+  advanceTab?: boolean;
 }
 
 export function AttributeSelector(props: PAttributeSelector) {
@@ -67,6 +68,7 @@ export function AttributeSelector(props: PAttributeSelector) {
     allowedCardinality,
     setAttributeMeta,
     groupBy,
+    advanceTab
   } = props;
 
   const [loading, setLoading] = useState(true);
@@ -74,7 +76,6 @@ export function AttributeSelector(props: PAttributeSelector) {
   const [recommendedOn, setRecommendedOn] = useState<boolean>(
     localStorage.getItem("attribute-selector-recommended-columns") === "true"
   );
-  const [sources, setSources] = useState<string[]>([]);
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
 
   useEffect(() => {
@@ -82,9 +83,6 @@ export function AttributeSelector(props: PAttributeSelector) {
       .getEntityMeta()
       .then((em) => {
         setEntityMeta(em);
-        setSources(
-          getAttributeSources(em, objectType, customAttributeSelection)
-        );
       })
       .finally(() => {
         setLoading(false);
@@ -183,7 +181,7 @@ export function AttributeSelector(props: PAttributeSelector) {
           );
         }}
         renderMenuItem={(l: any, index: number) => RenderMenuItem(l, index)}
-        renderMenu={MenuTabs}
+        renderMenu={advanceTab ? MenuTabs : undefined}
         renderValue={(values: string[]) => {
           return renderTotalSelectedItems(
             values,
