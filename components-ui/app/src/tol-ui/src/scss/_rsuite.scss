@@ -409,6 +409,7 @@
     &.rs-nav-item-active {
       color: var(--tol-primary);
       background-color: var(--tol-primary-translucent);
+      border: 1px solid var(--tol-primary-translucent);
     }
 
     &:hover {
