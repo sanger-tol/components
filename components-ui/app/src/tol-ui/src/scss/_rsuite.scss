@@ -196,6 +196,7 @@
     font-size: 14px;
     overflow: auto;
     overflow-wrap: break-word;
+
     p {
       margin: 0 !important;
     }
@@ -395,5 +396,23 @@
 .rs-dropdown-item:focus {
   path {
     fill: var(--tol-primary);
+  }
+}
+
+// tabs
+.rs-nav-pills {
+  background-color: unset;
+
+  .rs-nav-item {
+    color: var(--tol-text);
+
+    &.rs-nav-item-active {
+      color: var(--tol-primary);
+      background-color: var(--tol-primary-translucent);
+    }
+
+    &:hover {
+      color: var(--tol-primary);
+    }
   }
 }
