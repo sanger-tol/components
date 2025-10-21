@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+:root {
+  --tol-nav-margin: 10px 10px 0 10px;
+}
+
 .tol-navbar {
   padding-top: 14px;
   padding-bottom: 1rem;
@@ -14,6 +18,8 @@
   top: 0;
   left: 0;
   right: 0;
+  margin: var(--tol-nav-margin);
+  border-radius: 6px;
 
   .container {
     align-items: flex-start;
@@ -91,7 +97,8 @@
   margin-left: 5px;
 }
 
-.navigation {
+.tol-navigation {
+  margin: var(--tol-nav-margin);
 
   a:active,
   a:focus {
@@ -100,7 +107,7 @@
 }
 
 // clear navbar with header
-.navigation:has(+ .tol-app .masthead) .tol-navbar {
+.tol-navigation:has(+ .tol-app .masthead) .tol-navbar {
   background-color: unset;
 }
 
