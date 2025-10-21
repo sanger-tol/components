@@ -9,12 +9,11 @@ import DraggableList from "react-draggable-list";
 import {
   Icon,
   SourceTag,
-  AttributeTooltip,
-  normaliseCaps,
   truncateString,
   IRemoteTarget,
   IAttributeDetails,
   TRANSITION_TIME,
+  AttributeTitle
 } from "../index";
 
 export interface PSelectedAttributesContainer extends IRemoteTarget {
@@ -90,10 +89,13 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
         <div>
           <span {...dragHandleProps}>
             <div className="tol-config-drawer-selected-column-name">
-              <div style={{ display: "inline", paddingRight: "5px" }}>
-                {attributeDetails.display_name || normaliseCaps(attributeId)}
-              </div>
-              <AttributeTooltip {...props} field={attributeId} />
+              <AttributeTitle
+                objectType={objectType}
+                dataSource={dataSource}
+                field={attributeId}
+                titleElement="p"
+                classname="tol-config-drawer-selected-column-title"
+              />
             </div>
           </span>
           <p className="tol-config-drawer-selected-column-key">
@@ -105,7 +107,7 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
             <SourceTag source={attributeDetails.source} />
           )}
           {additionalIcons?.map(Icon =>
-            <Icon attributeId={attributeId} />
+            <Icon attributeId={attributeId} key={attributeId}/>
           )}
           <div
             className={"tol-active-column-btn"}

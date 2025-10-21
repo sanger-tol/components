@@ -12,14 +12,13 @@ import {
   SourceTag,
   getFlattenedMetaData,
   attributeSelectorSearchBy,
-  getAttributeSources,
+  Tabs,
   normaliseCaps,
   filterAttributes,
   getAllAttributeData,
   IRemoteTarget,
   IAllowedCardinality,
   handleSetAttribute,
-  SourceContainer,
   renderTotalSelectedItems,
   MenuItem,
 } from "..";
@@ -44,6 +43,7 @@ export interface PAttributeSelector extends IRemoteTarget {
   customAttributeSelection?: string[];
   allowedCardinality?: IAllowedCardinality;
   groupBy?: boolean;
+  advanceTab?: boolean;
 }
 
 export function AttributeSelector(props: PAttributeSelector) {
@@ -60,7 +60,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     placeholder,
     populatedFieldType = "value",
     recommendedFilterAvailable,
-    renderSearchBySource,
     setAttributes,
     onClean,
     sticky,
@@ -69,6 +68,7 @@ export function AttributeSelector(props: PAttributeSelector) {
     allowedCardinality,
     setAttributeMeta,
     groupBy,
+    advanceTab
   } = props;
 
   const [loading, setLoading] = useState(true);
@@ -76,7 +76,6 @@ export function AttributeSelector(props: PAttributeSelector) {
   const [recommendedOn, setRecommendedOn] = useState<boolean>(
     localStorage.getItem("attribute-selector-recommended-columns") === "true"
   );
-  const [sources, setSources] = useState<string[]>([]);
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
 
   useEffect(() => {
@@ -84,9 +83,6 @@ export function AttributeSelector(props: PAttributeSelector) {
       .getEntityMeta()
       .then((em) => {
         setEntityMeta(em);
-        setSources(
-          getAttributeSources(em, objectType, customAttributeSelection)
-        );
       })
       .finally(() => {
         setLoading(false);
@@ -110,7 +106,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     return (
       <div key={`${label}-${index}`}>
         <MenuItem
-          displayName={metaData["display_name"] ?? normaliseCaps(label)}
           source={metaData["source"]}
           field={label}
           authoritative={metaData["authoritative"]}
@@ -136,6 +131,19 @@ export function AttributeSelector(props: PAttributeSelector) {
   };
 
   if (loading) return <></>;
+
+  const MenuTabs = (MenuItem: React.ReactNode) => {
+    return (
+      <Tabs defaultActiveKey="all">
+        <Tabs.Tab eventKey="all" title="All">
+          {MenuItem}
+        </Tabs.Tab>
+        <Tabs.Tab eventKey="advanced" title="Advanced">
+          <p>Coming Soon...</p>
+        </Tabs.Tab>
+      </Tabs>
+    );
+  }
 
   return (
     <div className="tol-attribute-selector">
@@ -172,6 +180,7 @@ export function AttributeSelector(props: PAttributeSelector) {
           );
         }}
         renderMenuItem={(l: any, index: number) => RenderMenuItem(l, index)}
+        renderMenu={advanceTab ? MenuTabs : undefined}
         renderValue={(values: string[]) => {
           return renderTotalSelectedItems(
             values,
@@ -186,13 +195,6 @@ export function AttributeSelector(props: PAttributeSelector) {
           return attributeSelectorSearchBy(keyWord, label, entityMeta, objectType);
         }}
         sticky={sticky}
-        renderExtraFooter={renderSearchBySource &&
-          <SourceContainer
-            sources={sources}
-            selectedSources={selectedSources}
-            setSelectedSources={setSelectedSources}
-          />
-        }
         onClean={onClean}
         onClose={() => setSelectedSources([])}
       />

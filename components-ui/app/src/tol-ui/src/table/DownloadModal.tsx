@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useRef, useState } from "react";
-import { Tabs, Progress } from "rsuite";
+import { Progress } from "rsuite";
 import { CodeBlock } from "react-code-blocks";
 import {
   Button,
@@ -18,6 +18,7 @@ import {
   FieldMeta,
   converterForElapsedTime,
   deepCopy,
+  Tabs
 } from "..";
 
 interface Props {

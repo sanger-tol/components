@@ -4,6 +4,17 @@
  * SPDX-License-Identifier: MIT
  */
 
+.rs-drawer {
+  padding: 10px;
+  -webkit-box-shadow: unset;
+  box-shadow: unset;
+
+  .rs-drawer-content {
+    border-radius: 6px;
+    box-shadow: var(--rs-drawer-shadow);
+  }
+}
+
 .rs-drawer-header {
   padding: 20px;
 }
@@ -128,6 +139,12 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
 }
 
 .tol-config-drawer-selected-column-name {
+  margin-bottom: 0px;
+  display: flex;
+}
+
+.tol-config-drawer-selected-column-title {
+  padding-right: 10px;
   margin-bottom: 0px;
 }
 

@@ -19,30 +19,33 @@ export function AttributeTitle(props: PAttributeTitle) {
 
   useEffect(() => {
     dataSource.getEntityMeta()
-    .then((data) => {
-      setSource(data.flatAttributes[props.objectType][field].source);
-      setFieldDisplayName(data.flatAttributes[props.objectType][field].display_name);
-    })
+      .then((data) => {
+        const attr = data.flatAttributes?.[props.objectType]?.[field];
+        if (attr) {
+          setSource(attr.source);
+          setFieldDisplayName(attr.display_name);
+        }
+      })
   }, [])
 
   return (
     <div className="tol-attribute-title">
-    <TitleElement className={classname}>
-      <AttributeTooltip
-        {...props}
-        element={
-          <span
-            className="inline-source"
-            style={{
-              backgroundColor: getSourceColour(
-                fieldSource || "var(--tol-emphasis)"
-              ),
-            }}
-          />
-        }
-      />
-      {fieldDisplayName || field}
-    </TitleElement>
+      <TitleElement className={classname}>
+        <AttributeTooltip
+          {...props}
+          element={
+            <span
+              className="inline-source"
+              style={{
+                backgroundColor: getSourceColour(
+                  fieldSource || "var(--tol-emphasis)"
+                ),
+              }}
+            />
+          }
+        />
+        {fieldDisplayName || field}
+      </TitleElement>
     </div>
   );
 }
