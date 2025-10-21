@@ -14,6 +14,7 @@ export const API_METHODS = {
 
 export const BOARDS_API_PREFIX = "boards";
 export const LOCAL_API_PREFIX = "local";
+export const ACTION_API_PREFIX = "local";
 
 export const BOARDS = {
   BOARD: "board",

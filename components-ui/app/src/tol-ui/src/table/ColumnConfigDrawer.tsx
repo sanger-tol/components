@@ -12,11 +12,14 @@ import {
   Modal,
   SelectedAttributesContainer,
   FieldMeta,
-  initialiseFieldMeta,
   IRemoteTarget,
   IDropdownButtonConfig,
-  createSort,
-  MultipleSelect
+  MultipleSelect,
+  ITableConfigSave,
+  CellRendererConfigurer,
+  INewCellRenderersToSave,
+  ICellRenderer,
+  addNewCellRenderersToFieldMeta,
 } from "..";
 
 
@@ -26,18 +29,14 @@ interface Props extends IRemoteTarget {
   title: string;
   fieldMeta: FieldMeta;
   displaySource?: boolean;
-  onConfigSave: (
-    fieldMeta: FieldMeta,
-    actions?: string[],
-    sortByAttribute?: string,
-    sortByType?: string 
-  ) => void;
   sticky?: boolean;
-  customAttributeSelection?: string[] | undefined;
+  customAttributeSelection?: string[];
   actions?: IDropdownButtonConfig[];
   actionChoices?: string[]; // just the names of the actions
   groupBy?: boolean;
-  defaultSort?: string;
+  defaultSortByAttribute?: string;
+  defaultSortByType?: string;
+  onConfigSave: (config: ITableConfigSave) => void;
 }
 
 export function ColumnConfigDrawer(props: Props) {
@@ -49,69 +48,51 @@ export function ColumnConfigDrawer(props: Props) {
     onConfigSave,
     customAttributeSelection,
     groupBy,
-    defaultSort,
+    defaultSortByAttribute,
+    defaultSortByType,
     actionChoices,
   } = props;
 
-  const [attributes, setAttributes] = useState<string[]>(
-    fieldMeta?.order?.active ?? [],
-  );
-  const [initialAttributes, setInitialAttributes] = useState<string[]>(
-    fieldMeta?.order?.active ?? [],
-  );
+  const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
+  const [initialAttributes, setInitialAttributes] = useState<string[]>(fieldMeta.order.active);
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   // used to store selected actions from the dropdown
-  const originalActions = props.actions?.map((btn) => btn.name as string) ?? [];
-  const [actions, setActions] = useState<string[]>(originalActions);
-  const [sortByAttribute, setSortByAttribute] = useState<string[]>(() => {
-    if (!defaultSort) return [];
-    return defaultSort.startsWith("-")
-      ? [defaultSort.slice(1)]
-      : [defaultSort];
-  });
-  const [sortByType, setsortByType] = useState<string>(
-    defaultSort?.startsWith("-") ? "desc" : "asc"
-  );
+  const initialActions = props.actions?.map((btn) => btn.name as string) ?? [];
+  const [actions, setActions] = useState<string[]>(initialActions);
+  const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
+  const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
+  const [newCellRenderers, setNewCellRenderers] = useState<INewCellRenderersToSave>({});
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
     setInitialAttributes(fieldMeta?.order?.active ?? []);
-  }, [fieldMeta]);
 
-  const updateMeta = (
-    id: string,
-    updatedFieldMeta: FieldMeta,
-    hidden: boolean,
-  ) => {
-    const isActive = hidden ? "inactive" : "active";
-    updatedFieldMeta.order[isActive].push(id);
-    updatedFieldMeta.data[id] = fieldMeta.data[id];
-    updatedFieldMeta.data[id].hidden = hidden;
-  };
-
-  const fieldMetaUpdatedByContents = () => {
-    const updatedFieldMeta: FieldMeta = initialiseFieldMeta();
-
-    attributes.forEach((key) => {
-      updateMeta(key, updatedFieldMeta, false);
-    });
-
-    for (const key in fieldMeta.data) {
-      if (!attributes.includes(key)) {
-        updateMeta(key, updatedFieldMeta, true);
-      }
-    }
-
-    return updatedFieldMeta;
-  };
+    // reset newCellRenderers onClose
+    if (!open) setNewCellRenderers({});
+  }, [open]);
 
   const saveConfig = () => {
-    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || originalActions !== actions) {
-      const updatedFieldMeta = fieldMetaUpdatedByContents();
-      onConfigSave(updatedFieldMeta, actions, sortByAttribute[0], sortByType);
+    if (
+      JSON.stringify(initialAttributes) !== JSON.stringify(attributes)
+      || initialActions !== actions
+      || Object.keys(newCellRenderers).length !== 0
+    ) {
+      fieldMeta.order.active = attributes;
+      addNewCellRenderersToFieldMeta(newCellRenderers, fieldMeta);
+      onConfigSave({
+        fieldMeta: fieldMeta,
+        actions: actions.length !== 0 ? actions : undefined,
+        defaultSortByAttribute: sortByAttribute,
+        defaultSortByType: sortByType,
+      });
       setInitialAttributes(attributes);
     }
-    setOpen(!open);
+    setOpen(false);
+    setOpenSaveModal(false);
+  };
+
+  const onCellRendererModalSave = (renderer: ICellRenderer, attributeId: string) => {
+    setNewCellRenderers({ ...newCellRenderers, [attributeId]: renderer });
   };
 
   const unsavedChangesModal = () => {
@@ -166,9 +147,7 @@ export function ColumnConfigDrawer(props: Props) {
       <Button
         text={text ?? "Save"}
         type="success"
-        onClick={() => {
-          saveConfig(), setOpenSaveModal(false);
-        }}
+        onClick={saveConfig}
       />
     );
   };
@@ -195,8 +174,9 @@ export function ColumnConfigDrawer(props: Props) {
   );
 
   const handleCloseDrawer = () => {
-    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) || 
-      defaultSort !== createSort(sortByAttribute[0], sortByType)
+    if (JSON.stringify(initialAttributes) !== JSON.stringify(attributes) ||
+      defaultSortByAttribute !== sortByAttribute ||
+      defaultSortByType !== sortByType
     ) {
       setOpenSaveModal(true);
     } else {
@@ -221,21 +201,34 @@ export function ColumnConfigDrawer(props: Props) {
   )
 
   const sortByButtons = (
-      <div className="tol-board-chart-interval-btn-container">
-        {['asc', 'desc'].map((direction: string) => (
-          <Button
-            outline
-            key={direction}
-            text={direction}
-            type="primary"
-            onClick={() => setsortByType(direction)}
-            active={sortByType === direction}
-            size="lg"
-            className="tol-board-chart-sort-buttons"
-          />
-        ))}
-      </div>
-    );
+    <div className="tol-board-chart-interval-btn-container">
+      {['asc', 'desc'].map((direction: string) => (
+        <Button
+          outline
+          key={direction}
+          text={direction}
+          type="primary"
+          onClick={() => setSortByType(direction)}
+          active={sortByType === direction}
+          size="lg"
+          className="tol-board-chart-sort-buttons"
+        />
+      ))}
+    </div>
+  );
+
+  const CellRendererConfigurerWrapper = ({ attributeId }: { attributeId: string }) => (
+    <CellRendererConfigurer
+      {...props}
+      attributeId={attributeId}
+      fieldMeta={fieldMeta}
+      onSave={onCellRendererModalSave}
+    />
+  );
+
+  const additionalIcons = [
+    CellRendererConfigurerWrapper,
+  ];
 
   const attSelector = (
     <div>
@@ -245,8 +238,11 @@ export function ColumnConfigDrawer(props: Props) {
         groupBy={groupBy}
         maxSelections={1}
         placeholder="Default Sort Column"
-        attribute={sortByAttribute}
-        setAttributes={setSortByAttribute}
+        attribute={sortByAttribute ? [sortByAttribute] : []}
+        setAttributes={(a) => {
+          setSortByAttribute(a[0])
+          setSortByType(a[0] ? 'asc' : undefined)
+        }}
         disabledValues={null}
         numPopulatedFields={0}
         populatedFieldType={"column"}
@@ -256,7 +252,7 @@ export function ColumnConfigDrawer(props: Props) {
         customAttributeSelection={customAttributeSelection}
         sticky={true}
       />
-      {sortByAttribute.length > 0 && (
+      {sortByAttribute && (
         <>
           {sortByButtons}
         </>
@@ -289,6 +285,7 @@ export function ColumnConfigDrawer(props: Props) {
         {...props}
         attributes={attributes}
         setAttributes={setAttributes}
+        additionalIcons={additionalIcons}
       />
       <div>
         <div className="tol-config-drawer-save-button">{drawerButtons}</div>

@@ -9,7 +9,7 @@ import {
   CentreContents,
   Modal,
   ObjectDetail,
-  InfoTooltip,
+  IconTooltip,
   createTextGeneratorFactory
 } from "../tol-ui/src";
 import { useState } from "react";
@@ -44,10 +44,10 @@ export function Miscellaneous() {
         <Button onClick={() => setModalOpen(true)} text="Example Modal" />
 
         <h2 className="mt-5">Info Tooltip</h2>
-        <InfoTooltip contents={markdownString} />
+        <IconTooltip contents={markdownString} />
 
         <h2 className="mt-5">Tooltip (with markdown disabled)</h2>
-        <InfoTooltip contents={markdownString} disableMarkdown={true} />
+        <IconTooltip contents={markdownString} disableMarkdown={true} />
 
         <h2 className="mt-5">Object Detail</h2>
         <ObjectDetail data={jsonData} />

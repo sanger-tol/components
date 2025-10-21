@@ -34,7 +34,7 @@ export function CountrySelect(props: PCountrySelect) {
         data={countryItems}
         placeholder="Please Select..."
         value={value}
-        setValue={setValue}
+        onChange={setValue}
         block
       />
       <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>

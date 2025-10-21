@@ -37,7 +37,7 @@ export function BoardChart(props: Props) {
   const [forceUpdate, setForceUpdate] = useState(false);
   const { privilege } = useBoardPrivilege()
 
-  const onModalSave = (updatedConfig: IChartConfig) => {
+  const onConfigSave = (updatedConfig: IChartConfig) => {
     setConfig({ ...updatedConfig });
     updateConfigAndUpsert(
       id,
@@ -103,7 +103,7 @@ export function BoardChart(props: Props) {
         {...props}
         open={openConfig}
         setOpen={setOpenConfig}
-        onConfigSave={onModalSave}
+        onConfigSave={onConfigSave}
         title="Chart Configuration"
         config={deepCopy(config)}
       />

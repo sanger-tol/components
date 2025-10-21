@@ -41,7 +41,6 @@ SPDX-License-Identifier: MIT
   justify-content: space-between;
 
   .tol-attribute-selector-menu-item-inner-container {
-    display: flex;
     flex-grow: 1;
     max-width: 300px;
   }
@@ -55,6 +54,10 @@ SPDX-License-Identifier: MIT
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     width: 100%;
+
+    p {
+      margin-bottom: 0px !important;
+    }
   }
 
   .tol-attribute-selector-display-key {
@@ -109,6 +112,7 @@ SPDX-License-Identifier: MIT
   font-size: 12px;
   font-weight: normal;
   margin-left: 6px;
+  margin-right: 10px;
   overflow: auto;
   float: right;
   background-color: var(--config-source-bg-color);
@@ -146,5 +150,20 @@ SPDX-License-Identifier: MIT
   .tol-attribute-selector-display-key,
   .tol-attribute-selector-display-name {
     overflow-wrap: anywhere !important;
+  }
+}
+
+.inline-source {
+  height: 0.75em;
+  width: 0.2em;
+  margin-right: 0.3em;
+  border-radius: 2px;
+  display: inline-block;
+  transition: width 0.5s ease;
+}
+
+.tol-attribute-title:hover {
+  .inline-source {
+    width: 0.75em;
   }
 }

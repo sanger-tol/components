@@ -165,7 +165,7 @@ export function FormAllInOne(props: PFormAllInOne) {
               data={singleselectField.data}
               placeholder={singleselectField.placeholder}
               value={formData[singleselectField.name] ?? ""}
-              setValue={(value: any) =>
+              onChange={(value: any) =>
                 handleInputChange(singleselectField.name, value)
               }
               block={singleselectField.block}

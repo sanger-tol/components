@@ -94,7 +94,7 @@ export function View(props: PView) {
 
   return (
     <div className="tol-view">
-      <div className="tol-zone-bar">
+      <div className="tol-view-bar">
         <UtilityBar
           id={utilityBarConfig?.id}
           buttons={[addZoneButton, ...(utilityBarConfig?.buttons || [])]}
@@ -113,7 +113,7 @@ export function View(props: PView) {
         boardDataSource={boardDataSource}
       />
       {zones.length > 0 ? (
-        <>
+        <div className="tol-zones">
           {getSortedZones(zones, zoneOrder).map((zone) => {
             return (
               <Zone
@@ -129,7 +129,7 @@ export function View(props: PView) {
               />
             );
           })}
-        </>
+        </div>
       ) : (
         <div className="tol-zone-empty">
           {privilege === PRIVILEGE.BOARD.EDITABLE ? (

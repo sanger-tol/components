@@ -61,6 +61,7 @@ export function mergeAndFilters(target: object, incoming: object) {
   return output as IAndAttributes;
 }
 
+// removes 'exists' operators if there are other operators for the same attribute
 export function removeSuperfluousExists(filter: IAndAttributes) {
   Object.keys(filter).forEach((attribute) => {
     const operators = Object.keys(filter[attribute]);
@@ -78,12 +79,12 @@ export function removeSuperfluousExists(filter: IAndAttributes) {
  * @param currentId - The identifier of the item to compare against.
  * @returns `true` if the filter should pass through and the `id` is not equal to `currentId`; otherwise, `false`.
  */
-function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThrough?: boolean, ) {
+function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThrough?: boolean) {
   return filterPassThrough && id !== currentId
 }
 
 export function generateFilter(
-  zone?: object,
+  zone: IZone,
   id?: string,
   includeSubFilter?: boolean,
 ) {
@@ -110,6 +111,8 @@ export function generateFilter(
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
   removeSuperfluousExists(compoundedFilter);
+  // TODO: update when api supports upsert with empty objects
+  // return (isEmptyObject(compoundedFilter)) ? {} : { and_: compoundedFilter } as IFilter;
   return {
     and_: compoundedFilter,
   } as IFilter;
@@ -225,7 +228,7 @@ export function setFilter(params: {
 
 function filterListenerUpdater(params: {
   // whole filter data
-  filter: any;
+  filter?: IFilter;
   filterPassThrough?: boolean;
   // filter location
   attribute: string;
@@ -360,7 +363,7 @@ export function resetZone(params: { zone: IZone; setZone: any }) {
   setZone({ ...zone });
 }
 
-export function symbolToOperator (operator: string, values?: string[]) {
+export function symbolToOperator(operator: string, values?: string[]) {
   switch (operator) {
     case "=":
       return "eq";
@@ -378,7 +381,7 @@ export function symbolToOperator (operator: string, values?: string[]) {
   }
 };
 
-export function operatorToSymbol (operator: string, values?: string[]) {
+export function operatorToSymbol(operator: string, values?: string[]) {
   switch (operator) {
     case "eq":
       return "=";
