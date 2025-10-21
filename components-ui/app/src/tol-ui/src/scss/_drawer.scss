@@ -4,6 +4,17 @@
  * SPDX-License-Identifier: MIT
  */
 
+.rs-drawer {
+  padding: 10px;
+  -webkit-box-shadow: unset;
+  box-shadow: unset;
+
+  .rs-drawer-content {
+    border-radius: 6px;
+    box-shadow: var(--rs-drawer-shadow);
+  }
+}
+
 .rs-drawer-header {
   padding: 20px;
 }
