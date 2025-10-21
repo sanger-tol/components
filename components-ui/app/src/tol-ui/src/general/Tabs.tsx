@@ -6,8 +6,12 @@ SPDX-License-Identifier: MIT
 
 import { Tabs as RSTabs } from "rsuite";
 
-export function Tabs(props: any) {
-  return <RSTabs className="tol-tabs" appearance="pills" {...props} />;
-}
+type PTabs = React.ComponentProps<typeof RSTabs>;
+type TabSubcomponent = typeof RSTabs.Tab;
+type TabsComponent = React.FC<PTabs> & { Tab: TabSubcomponent };
+
+export const Tabs: TabsComponent = (props: PTabs) => (
+  <RSTabs className="tol-tabs" appearance="pills" {...props} />
+);
 
 Tabs.Tab = RSTabs.Tab;

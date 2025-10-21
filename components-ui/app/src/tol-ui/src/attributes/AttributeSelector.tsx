@@ -106,7 +106,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     return (
       <div key={`${label}-${index}`}>
         <MenuItem
-          displayName={metaData["display_name"] ?? normaliseCaps(label)}
           source={metaData["source"]}
           field={label}
           authoritative={metaData["authoritative"]}
