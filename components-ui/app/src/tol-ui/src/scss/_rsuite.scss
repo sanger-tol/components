@@ -351,11 +351,13 @@
 .rs-modal-backdrop {
   backdrop-filter: blur(3px);
   z-index: 1050;
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .rs-drawer-backdrop {
   backdrop-filter: blur(3px);
   z-index: 1049;
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 // tabs
