@@ -5,11 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import {
-  RSForm,
-  capitaliseFirstLetter,
-} from "..";
-
+import { FormLabel, IFormLabelIcon, RSForm, capitaliseFirstLetter } from "..";
 
 export interface PFormTextField {
   id: string;
@@ -24,17 +20,19 @@ export interface PFormTextField {
   readOnly?: boolean;
   required?: boolean;
   centered?: boolean;
+  icon?: IFormLabelIcon;
 }
 
 export function FormTextField(props: PFormTextField) {
-  const { id, name, centered, label, accepter, helpText, ...rest } = props;
+  const { id, name, centered, label, accepter, helpText, icon, ...rest } =
+    props;
   let style = {};
 
   centered ? (style = { ...style, textAlign: "center" }) : null;
 
   return (
     <RSForm.Group controlId={`form-${id}-${capitaliseFirstLetter(name)}`}>
-      <RSForm.ControlLabel>{label}</RSForm.ControlLabel>
+      <FormLabel label={label} icon={icon} />
       <RSForm.Control style={style} name={name} accepter={accepter} {...rest} />
       {helpText && <RSForm.HelpText>{helpText}</RSForm.HelpText>}
     </RSForm.Group>

@@ -6,12 +6,12 @@
 
 :root {
   --tol-utility-bar-height: 30px;
-  --tol-utility-bar-margin-bottom: 6px;
-  --tol-utility-bar-offset: calc(var(--tol-utility-bar-height) + var(--tol-utility-bar-margin-bottom));
+  --tol-utility-bar-margin: 6px;
+  --tol-utility-bar-offset: calc(var(--tol-utility-bar-height) + var(--tol-utility-bar-margin));
 }
 
 .tol-utility-bar {
-  margin-bottom: var(--tol-utility-bar-margin-bottom);
+  margin-bottom: var(--tol-utility-bar-margin);
   display: flex;
   flex-direction: row;
   position: relative;

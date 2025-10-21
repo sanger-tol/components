@@ -20,9 +20,11 @@ export { Toaster, RSForm };
 // FontAwesome icons
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
+import { fab } from "@fortawesome/free-brands-svg-icons";
 // Add icons to the library
-library.add(fas);
+library.add(fas, fab);
 
+export * from "./attributes";
 export * from "./boards";
 export * from "./charts";
 export * from "./config";

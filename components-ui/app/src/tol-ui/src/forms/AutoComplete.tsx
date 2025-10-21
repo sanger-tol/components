@@ -8,22 +8,26 @@ import { AutoComplete as RSAutoComplete } from "rsuite";
 import {
   RSForm,
   normaliseCaps,
-  Loader
+  Loader,
+  IFormLabelIcon,
+  FormLabel,
+  TAutoCompleteValue
 } from "..";
 
 export interface PAutoComplete {
   label: string;
   data: string[];
-  value: string;
+  value: TAutoCompleteValue;
   onChange?: any;
   displayFields?: object;
   displayFieldsTitle?: boolean;
   loading?: boolean;
   errorText?: string;
+  icon?: IFormLabelIcon;
 }
 
 export function AutoComplete(props: PAutoComplete) {
-  const { 
+  const {
     label,
     data,
     value,
@@ -31,24 +35,25 @@ export function AutoComplete(props: PAutoComplete) {
     displayFields,
     displayFieldsTitle,
     loading,
-    errorText
+    errorText,
+    icon,
   } = props;
 
 
   return (
     <RSForm.Group controlId={label}>
-      {label && <RSForm.ControlLabel>{label}</RSForm.ControlLabel>}
+      <FormLabel label={label} icon={icon} />
       <RSAutoComplete
         data={data}
-        value={value}
+        value={typeof value === "string" ? value : value?.value}
         onChange={onChange}
-        renderMenu={(menu: any) =>{
+        renderMenu={(menu: any) => {
           if (loading === true) {
             return (
-              <div style={{ textAlign: 'center' }}>
+              <div style={{ textAlign: "center" }}>
                 <Loader />
               </div>
-            )
+            );
           }
           return menu;
         }}
@@ -56,18 +61,27 @@ export function AutoComplete(props: PAutoComplete) {
           return (
             <>
               {item}
-              {displayFields && displayFields[item.props.children].map((fieldObj: object, index: number) => {
-                const [key, value] = Object.entries(fieldObj)[0];
-                if (displayFieldsTitle) {
-                  return <div key={index}>{normaliseCaps(key)}: {value}</div>;
-                }
-                return <div key={index}>{value}</div>;
-              })}
+              {displayFields &&
+                displayFields[item.props.children].map(
+                  (fieldObj: object, index: number) => {
+                    const [key, value] = Object.entries(fieldObj)[0];
+                    if (displayFieldsTitle) {
+                      return (
+                        <div key={index}>
+                          {normaliseCaps(key)}: {value}
+                        </div>
+                      );
+                    }
+                    return <div key={index}>{value}</div>;
+                  }
+                )}
             </>
-          )
+          );
         }}
       />
-      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
+      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">
+        {errorText}
+      </RSForm.ErrorMessage>
     </RSForm.Group>
   );
 }

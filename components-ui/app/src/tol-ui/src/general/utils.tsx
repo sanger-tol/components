@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 
 import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
-import { FieldMeta, IAllowedCardinality } from "..";
+import { PopUpMessage } from "..";
 
 
 export function convertToPath(name: string) {
@@ -54,11 +54,7 @@ export function isEmptyObject(x: object) {
 export function normaliseCaps(name: string, prefix?: string) {
   if (!name) return "";
   // make object ids clear (for auto load)
-  if (prefix !== undefined) {
-    if (name === "id" || name === "uid") {
-      return normaliseCaps(prefix) + " ID";
-    }
-  }
+  if (prefix && name === "id") return normaliseCaps(prefix) + " ID";
   // replace relationship '.' with underscore ready to split
   name = name.replace(".", "_");
   const words = name.split("_");
@@ -70,7 +66,6 @@ export function normaliseCaps(name: string, prefix?: string) {
 
 function normaliseWords(word: string) {
   switch (word) {
-    case "uid":
     case "id":
       return "ID";
     case "sts":
@@ -165,10 +160,6 @@ export function generateId(prefix: string) {
   return `${prefix}_${nanoid()}`;
 }
 
-export function getSourceData(fieldMeta: FieldMeta, attribute: string) {
-  return fieldMeta?.data[attribute]["source"] || "";
-}
-
 export function getAttributeSources(
   entityMeta: any,
   objectType: string,
@@ -195,45 +186,6 @@ export function getAttributeSources(
   sortedSources.unshift("all");
   sortedSources.push("undefined");
   return sortedSources;
-}
-
-export function getFlattenedMetaData(
-  entityMeta: any,
-  endpoint: string,
-  attribute?: string
-) {
-  return attribute
-    ? entityMeta?.flatAttributes?.[endpoint]?.[attribute]
-    : entityMeta?.flatAttributes?.[endpoint];
-}
-
-export function getAttributeDetail(
-  entityMeta: any,
-  endpoint: string,
-  attribute: string,
-  detail: string
-) {
-  switch (detail) {
-    case "display_name":
-      return (
-        entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.display_name ||
-        normaliseCaps(attribute)
-      );
-    case "description":
-      return (
-        entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.description || ""
-      );
-    case "source":
-      return entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.source || "";
-    case "python_type":
-      return (
-        entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.python_type || ""
-      );
-    case "authoritative":
-      return entityMeta?.flatAttributes?.[endpoint]?.[attribute]?.authoritative;
-  }
-
-  return entityMeta?.flatAttributes?.[endpoint]?.[attribute] || {};
 }
 
 export function filterBySource(
@@ -265,85 +217,15 @@ export function truncateString(str: string, maxLength: number = 50) {
   return str;
 }
 
-export function getAllAttributeData(
-  attributes: string[],
-  entityMeta: any,
-  objectType: string
-) {
-  return attributes.reduce((acc, attr) => {
-    const attributeData = getFlattenedMetaData(entityMeta, objectType, attr);
-    return {
-      ...acc,
-      [attr]: attributeData,
-    };
-  }, {});
-}
-
-export function formatFilteredAttributes(attributes: any) {
-  // This is specific for the attribute selector and MultiSelect
-  return attributes.map((attribute: any) => {
-    const { object_type, relationship_name } = attribute[1];
-    return {
-      label: attribute[0],
-      value: attribute[0],
-      object_type,
-      relationship_name:
-        normaliseCaps(relationship_name) ||
-        `${normaliseCaps(object_type)} (Current Object Type)`,
-    };
-  });
-}
-
-export function filterAttributes(
-  entityMeta: any,
-  endpoint: string,
-  allowedTypes: string[] | undefined,
-  selectedSources: string[],
-  recommendedOn: boolean,
-  allowedCardinality: IAllowedCardinality | undefined,
-  customAttributeSelection: string[] | undefined
-) {
-  const filteredAttributes = Object.entries(
-    getFlattenedMetaData(entityMeta, endpoint)
-  ).filter(([key, value]) => {
-    const meta: any = value;
-    const typeMatch = !allowedTypes || allowedTypes.includes(meta.python_type);
-    const sourceMatch =
-      selectedSources.length === 0 ||
-      (selectedSources.includes("undefined")
-        ? !meta.source || selectedSources.includes(meta.source)
-        : selectedSources.includes(meta.source));
-    const recommendedMatch = meta.authoritative === true;
-    const cardinalityMatch =
-      !allowedCardinality ||
-      (meta.cardinality &&
-        ((allowedCardinality.operator === ">" &&
-          meta.cardinality > allowedCardinality.value) ||
-          (allowedCardinality.operator === "<" &&
-            meta.cardinality < allowedCardinality.value) ||
-          (allowedCardinality.operator === "=" &&
-            meta.cardinality === allowedCardinality.value) ||
-          (allowedCardinality.operator === ">=" &&
-            meta.cardinality >= allowedCardinality.value) ||
-          (allowedCardinality.operator === "<=" &&
-            meta.cardinality <= allowedCardinality.value)));
-    return (
-      (recommendedOn ? recommendedMatch : true) &&
-      typeMatch &&
-      sourceMatch &&
-      cardinalityMatch &&
-      (!customAttributeSelection || customAttributeSelection.includes(key))
-    );
-  });
-
-  return formatFilteredAttributes(filteredAttributes);
-}
-
 export function copyToClipboard(text: string): void {
   if (navigator.clipboard) {
     navigator.clipboard
       .writeText(text)
       .catch((err) => console.error("Failed to copy text: ", err));
+    PopUpMessage({
+      type: 'success',
+      message: 'Copied to clipboard',
+    });
   } else {
     console.warn("Clipboard API not available");
   }
@@ -408,4 +290,13 @@ export function getHeight(type: string) {
     case "xl":
       return 600;
   }
+}
+
+export function sortObjectAlphabetically(obj: Record<string, any>): Record<string, any> {
+  return Object.keys(obj)
+    .sort() // sort keys alphabetically
+    .reduce((sortedObj: Record<string, any>, key: string) => {
+      sortedObj[key] = obj[key]; // rebuild the object with sorted keys
+      return sortedObj;
+    }, {});
 }

@@ -20,7 +20,6 @@ import {
   getUserPrivilege,
   useBoardPrivilege,
   copyToClipboard,
-  PopUpMessage,
   PUtilityBar,
   TBoardPrivilege,
   PRIVILEGE
@@ -98,10 +97,6 @@ export function Board(props: PBoard) {
         icon: "share-from-square",
         onClick: () => {
           copyToClipboard(location.href);
-          PopUpMessage({
-            type: 'success',
-            message: 'Board link copied to clipboard',
-          });
         },
       }
     ],

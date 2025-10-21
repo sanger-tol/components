@@ -35,11 +35,12 @@ export function Widgets(props: PWidgets) {
     <div>
       <Row
         style={{
-          marginLeft: 0,
-          marginRight: 0,
+          marginTop: -5,
+          marginLeft: -5,
+          marginRight: -5,
           paddingLeft: 0,
           paddingRight: 0,
-          marginBottom: -16,
+          marginBottom: -22,
         }}
       >
         {components.map((item, index) => {

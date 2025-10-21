@@ -25,7 +25,11 @@ export function HoverOverlay(props: PHoverOverlay) {
     followCursor,
   } = props;
 
-  const RenderTooltip = () => <Popover>{contents}</Popover>;
+  const RenderTooltip = () => (
+    <Popover>
+      <span>{contents}</span>
+    </Popover>
+  );
 
   if (!contents) return children;
 
@@ -38,7 +42,7 @@ export function HoverOverlay(props: PHoverOverlay) {
       speaker={RenderTooltip()}
       enterable={followCursor ? false : true}
       followCursor={followCursor ? true : false}
-      onEntering={onHover ? onHover : () => {}}
+      onEntering={onHover ? onHover : () => { }}
       delayOpen={delay}
     >
       {children}

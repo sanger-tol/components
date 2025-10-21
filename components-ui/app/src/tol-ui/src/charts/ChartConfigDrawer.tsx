@@ -12,7 +12,7 @@ import {
   Modal,
   AttributeSelector,
   PopUpMessage,
-  InfoTooltip,
+  IconTooltip,
   normaliseCaps,
   IRemoteTargetAndZone,
   IChartConfig,
@@ -285,7 +285,7 @@ export function ChartConfigDrawer(props: IChartConfigDrawer) {
       <div>
         <div className="tol-board-chart-xaxis-container">
         <h6 className="tol-board-chart-xaxis-title">Break Down By</h6>
-        <InfoTooltip contents={
+        <IconTooltip contents={
           "Note: This list has been filtered by cardinality." + 
           "This is the number of available values for a given attribute." +
           "It has been set to max 25 to avoid charts becoming unreadable."}/>

@@ -144,23 +144,15 @@ export function Filters() {
       <RemoteTable
         id="table-1"
         fields={{
-          id: {
-            rename: "ID",
-          },
-          sts_family: {
-            rename: "Family",
-          },
-          benchling_sequencing_request_count: {
-            rename: "Request Count",
-          },
-          benchling_extraction_benchling_completion_date_min: {
-            rename: "Benchling Ex. Min Date",
-          },
-          goat_taxon_rank: {
-            rename: "Taxon Rank",
-          },
-          sts_ready: {
-            rename: "STS Ready",
+          order: {
+            active: [
+              "id",
+              "sts_family",
+              "benchling_sequencing_request_count",
+              "benchling_extraction_benchling_completion_date_min",
+              "goat_taxon_rank",
+              "sts_ready"
+            ]
           },
         }}
         height={300}
@@ -170,12 +162,12 @@ export function Filters() {
       <RemoteTable
         id="table-2"
         fields={{
-          id: {
-            rename: "ID",
-          },
-          sts_scientific_name: {
-            rename: "Name",
-          },
+          order: {
+            active: [
+              "id",
+              "sts_scientific_name"
+            ]
+          }
         }}
         height={300}
         {...speciesZone}
@@ -281,25 +273,16 @@ export function Filters() {
       <div style={{ height: 30 }} />
       <RemoteTable
         id="sunburst-table"
-        defaultSort="bioscan_specimen.id"
+        defaultSortByAttribute="bioscan_specimen.id"
         fields={{
-          "bioscan_specimen.id": {
-            rename: "Specimen ID",
-            cellRenderer: null,
-          },
-          "sts_sample.id": {
-            rename: "Sample",
-            width: 150,
-            cellRenderer: null,
-          },
-          bioscan_c: {
-            rename: "Class",
-          },
-          bioscan_o: {
-            rename: "Order",
-          },
-          bioscan_f: {
-            rename: "Family",
+          order: {
+            active: [
+              "bioscan_specimen.id",
+              "sts_sample.id",
+              "bioscan_c",
+              "bioscan_o",
+              "bioscan_f"
+            ]
           },
         }}
         height={400}

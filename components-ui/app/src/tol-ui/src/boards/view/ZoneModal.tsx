@@ -160,7 +160,7 @@ export function ZoneModal(props: PZoneModal) {
             data={objectTypesList}
             placeholder="Object Type"
             value={objectType}
-            setValue={setObjectType}
+            onChange={setObjectType}
             block
           />
           <br />

@@ -8,16 +8,6 @@ import { useState } from "react";
 import { Button, RemoteTable, Widgets, useZone, TOL_DS } from "../tol-ui/src";
 
 
-interface exampleProps {
-  text: string;
-  mlwhTag: string;
-}
-
-function exampleElement(props: exampleProps) {
-  const { text, mlwhTag } = props;
-  return `${text}: ${mlwhTag}`;
-}
-
 export function Tables() {
   const [forceUpdate, setForceUpdate] = useState(false);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
@@ -45,12 +35,17 @@ export function Tables() {
     }
   ];
 
+  function ExampleElement({ p1, p2 }) {
+    //if (!p1 || !p2) return 'A PROP IS EMPTY!';
+    return `${p1}: ${p2}`;
+  }
+
   const table1 = (
     <>
       <div style={{ paddingBottom: "12px" }}>
         <Button
           type="primary"
-          onClick={() => setForceUpdate(!forceUpdate)}
+          onClick={() => { setForceUpdate(!forceUpdate); console.log('hi', forceUpdate); }}
           text="Force Update"
         />
       </div>
@@ -67,51 +62,79 @@ export function Tables() {
               text: "Run Data",
             },
           }}
+          cellRenderers={{
+            exampleElement: ExampleElement,
+          }}
           fields={{
-            mlwh_run_id: {
-              rename: "Run ID",
-            },
-            "mlwh_species.sts_scientific_name": {
-              rename: "Species",
-              cellRenderer: null,
-            },
-            "mlwh_sequencing_request.id": {
-              rename: "Sequencing Request",
-            },
-            mlwh_run_complete: {
-              rename: "Complete Date",
-            },
-            mlwh_platform_type: {
-              rename: "Platform",
-            },
-            mlwh_instrument_model: {
-              rename: "Instrument",
-            },
-            mlwh_position: {
-              rename: "Position",
-              filter: "boolean",
-            },
-            mlwh_tag_index: {
-              rename: "Tag",
-              filter: null,
-              sort: false,
-            },
-            "tolqc_species.goat_genome_size": {
-              cellRenderer: "integer",
-              rename: "Estimated Genome Size",
-            },
-            custom_field: {
-              rename: "Custom Field",
-              cellRenderer: {
-                element: exampleElement,
-                propPointers: {
-                  mlwhTag: "mlwh_tag_index",
-                },
-                props: {
-                  text: "Custom Field",
+            data: {
+              mlwh_run_id: {
+                rename: "Run ID",
+              },
+              "mlwh_species.sts_scientific_name": {
+                rename: "Species",
+                cellRenderer: {
+                  type: "relationship",
+                  props: {
+                    detailPageIdAttribute: "mlwh_species.id"
+                  }
                 }
               },
-              custom: true
+              "mlwh_sequencing_request.id": {
+                // give better example
+                rename: "Sequencing Request",
+                cellRenderer: {
+                  type: "link",
+                  props: {
+                    url: "https://example.com/api/${mlwh_sequencing_request.id}",
+                    text: "Type: ${mlwh_platform_type}",
+                  }
+                },
+              },
+              mlwh_run_complete: {
+                filter: null,
+                //rename: "Complete Date",
+              },
+              mlwh_platform_type: {
+                //rename: "Platform",
+              },
+              mlwh_instrument_model: {
+                rename: "Instrument",
+              },
+              mlwh_position: {
+                rename: "Position",
+                filter: "boolean",
+              },
+              mlwh_tag_index: {
+                rename: "Tag",
+                sort: false,
+              },
+              "tolqc_species.goat_genome_size": {
+                cellRenderer: {
+                  type: "integer",
+                },
+                rename: "Estimated Genome Size",
+              },
+              custom_field: {
+                rename: "Custom Field",
+                cellRenderer: {
+                  type: "exampleElement",
+                  props: {
+                    p1: "${mlwh_species.sts_scientific_name}",
+                    p2: "Custom Field",
+                  }
+                },
+              },
+            },
+            order: {
+              active: [
+                "mlwh_run_id",
+                "mlwh_species.sts_scientific_name",
+                "mlwh_sequencing_request.id",
+                "mlwh_run_complete",
+                "mlwh_platform_type",
+                "tolqc_species.goat_genome_size",
+                "custom_field",
+              ],
             },
           }}
           height={500}
