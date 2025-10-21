@@ -9,8 +9,6 @@ import DraggableList from "react-draggable-list";
 import {
   Icon,
   SourceTag,
-  AttributeTooltip,
-  normaliseCaps,
   truncateString,
   IRemoteTarget,
   IAttributeDetails,
@@ -98,7 +96,6 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
                 titleElement="p"
                 classname="tol-config-drawer-selected-column-title"
               />
-              <AttributeTooltip {...props} field={attributeId} />
             </div>
           </span>
           <p className="tol-config-drawer-selected-column-key">

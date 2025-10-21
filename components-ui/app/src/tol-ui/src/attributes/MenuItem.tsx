@@ -6,16 +6,14 @@ SPDX-License-Identifier: MIT
 
 
 import {
-  IconTooltip,
-  AttributeTooltip,
   TsDataSource,
   Icon,
   SourceTag,
-  truncateString
+  truncateString,
+  AttributeTitle
 } from "..";
 
 export interface PMenuItem {
-  displayName: string,
   source: string,
   field: string,
   authoritative: boolean,
@@ -27,12 +25,11 @@ export interface PMenuItem {
 }
 
 export function MenuItem(props: PMenuItem) {
-  const { displayName, source, field, authoritative, disabledValues,
-    tooltipContent, objectType, dataSource, displaySource } = props;
+  const { source, field, authoritative, disabledValues,
+    objectType, dataSource, displaySource } = props;
 
   const disabled =
     disabledValues && Object.keys(disabledValues).includes(field);
-  const tooltipContents = tooltipContent || "disabled";
 
   const lettersToDisplay = window.innerWidth < 576 ? 30 : 60;
 
@@ -40,22 +37,13 @@ export function MenuItem(props: PMenuItem) {
     <div key={field} className="tol-attribute-selector-menu-item-container">
       <div className="tol-attribute-selector-menu-item-inner-container">
         <div className="tol-attribute-selector-display-name">
-          {displayName}{" "}
-          {disabled ? (
-            <span className="tol-attribute-selector-tooltip">
-              {tooltipContent && (
-                <IconTooltip disableMarkdown contents={tooltipContents} />
-              )}
-            </span>
-          ) : (
-            <span className="tol-attribute-selector-tooltip">
-              <AttributeTooltip
-                field={field}
-                objectType={objectType}
-                dataSource={dataSource}
-              />
-            </span>
-          )}
+          <AttributeTitle
+            objectType={objectType}
+            dataSource={dataSource}
+            field={field}
+            titleElement="p"
+            classname={disabled ? "disabled" : undefined}
+          />
           <div className="tol-attribute-selector-display-key">
             {authoritative === true && <Icon icon="star" />}
             <p>{truncateString(field, lettersToDisplay)}</p>
