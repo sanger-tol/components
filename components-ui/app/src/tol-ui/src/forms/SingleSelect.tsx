@@ -8,29 +8,25 @@ import { useEffect, useState } from "react";
 import { Whisper, SelectPicker, Tooltip } from "rsuite";
 
 export interface PSingleSelect {
-  data: string[];
+  data: string[] | { label: string, value: string }[];
   placeholder?: string;
   value: string;
-  setValue: any;
+  onChange: (value: string) => void;
+  block?: boolean;
   disabled?: boolean;
   disabledTooltip?: string;
-  block?: boolean;
 }
 
 export const SingleSelect = (props: PSingleSelect) => {
-  const { placeholder, setValue, value, disabledTooltip, block } = props;
-  
-  let { disabled } = props;
-  if (!disabled) {
-    // Convert `disabled` from a falsy value to explicitly `false`
-    // This is required for disabled props in components below
-    disabled = false;
-  }
- 
+  const { placeholder, onChange, value, block, disabled, disabledTooltip } = props;
   const [data, setData] = useState([{}]);
 
   useEffect(() => {
-    setData(props.data.map((item) => ({ label: item, value: item })));
+    if (typeof props.data[0] === "string") {
+      setData(props.data.map((item) => ({ label: item, value: item })));
+    } else {
+      setData(props.data);
+    }
   }, [props.data]);
 
   const DisabledTooltip = (
@@ -44,7 +40,7 @@ export const SingleSelect = (props: PSingleSelect) => {
           data={data}
           searchable={false}
           value={value}
-          onChange={setValue}
+          onChange={onChange}
           placeholder={placeholder}
           disabled={disabled}
           block={block}

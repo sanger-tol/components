@@ -21,4 +21,6 @@ export * from "./Markdown";
 export * from "./Widgets";
 export * from "./Drawer";
 export * from "./FileValidation";
+export * from "./Table";
 export * from "./SocialViewer";
+export * from "./Cells";

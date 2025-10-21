@@ -31,16 +31,15 @@
 
   // dropdown box shadow
   .rs-dropdown.rs-dropdown-menu {
-    box-shadow:
-      0 0 10px rgba(255, 255, 255, 1),
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1),
       0 4px 4px rgba(255, 255, 255, 0.12) !important;
   }
 
   .tol-pagination {
-
     .rs-pagination-btn {
       border: 1px solid var(--tol-bg);
     }
+
     .rs-pagination-btn.rs-pagination-btn-active {
       border: 1px solid var(--tol-grey);
     }
@@ -55,18 +54,15 @@
       border: none;
       box-shadow: none;
     }
-
-    .rs-pagination-btn:hover,
-    .rs-pagination-btn:focus {
-      background-color: var(--tol-grey-subtle);
-    }
   }
 
   .config-modal-overflow-fix {
     max-height: 80vh;
+
     .rs-modal-body {
       max-height: 58vh;
     }
+
     .rs-modal-footer {
       padding-top: 25px !important;
     }
@@ -140,14 +136,14 @@
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
-      padding-right: 30px;
+      padding-right: 26px;
       width: 100%;
     }
 
     .tol-header-info {
       position: absolute;
       right: 0;
-      padding-right: 18px;
+      padding-right: 22px;
       margin-top: -2px;
     }
 
@@ -182,18 +178,23 @@
     --rs-row-resize: var(--tol-primary);
     --rs-table-resize: var(--tol-primary);
 
-    // sort arrows
-    --rs-table-sort: var(--tol-primary);
-
     // scroll bar
     --rs-table-scrollbar-track: none;
     --rs-table-scrollbar-vertical-track: none;
 
-    // sort arrows
+    // remove rsuite sort arrows
     .rs-table-cell-header-sort-wrapper {
+      display: none;
+    }
+
+    .tol-sorting-arrows {
       position: absolute;
-      top: 0;
-      right: 0;
+      right: 22px;
+      top: 10px;
+    }
+
+    .tol-sorting-arrow-active {
+      color: var(--tol-primary);
     }
 
     // inner table loader
@@ -207,8 +208,10 @@
     }
 
     // re-position the checkboxes
-    .tol-row-selection .rs-checkbox-checker {
+    .tol-table-row-selection .rs-checkbox-checker {
       margin-top: -6px;
+      align-items: center;
+      cursor: pointer !important;
     }
   }
 
@@ -220,33 +223,13 @@
   // link box (e.g. relationship)
   .link-box {
     border-radius: 6px;
-    background-color: rgba($tol-primary, 0.1) !important;
+    background-color: var(--tol-primary-translucent);
     padding: 5px 10px;
-    border: 1px solid rgba($tol-primary, 0.2);
-  }
-
-  .link-box:hover {
-    background-color: rgba($tol-primary, 0.2) !important;
+    border: 1px solid var(--tol-primary-translucent);
   }
 
   .link-box.clickable {
     cursor: pointer;
-  }
-
-  // list cellRenderer
-  .simple-tag {
-    background-color: var(--tol-bg-dark);
-    color: var(--tol-emphasis);
-    border-radius: 6px;
-    padding: 4px 6px;
-    margin: 2px;
-    float: left;
-    display: table-cell;
-  }
-
-  .rs-table-cell-wrap,
-  .simple-tag-container {
-    display: table-cell;
   }
 
   // expander cellRenderer
@@ -275,7 +258,7 @@
 // tooltip
 .tooltip-contents {
   overflow: auto;
-  max-height: 200px;
+  max-height: 300px;
 }
 
 .formatted-tooltip {
@@ -284,13 +267,11 @@
 
 .tooltip-key {
   margin-right: 5px;
-  font-size: small;
-  font-weight: 1000;
 }
 
 .tooltip-value {
-  font-size: small;
   padding-right: 10px;
+  color: var(--tol-primary);
 }
 
 .tooltip-value-none {
@@ -301,21 +282,37 @@
 .tooltip-wrapper {
   display: inline-block;
   fill: var(--tol-text);
+  cursor: default;
 }
 
-// EntityMetaToolTip
-
-.tol-entity-meta-tool-tip-source {
+.tol-attribute-tooltip-source {
   width: fit-content;
   display: inline;
 }
 
-.inline-source {
-  height: 10px;
-  width: 2px;
-  margin-right: 3px;
-  border-radius: 2px;
-  display: inline-block;
+.tol-field-dropdown {
+  position: absolute;
+  top: 7px;
+  right: 6px;
+  cursor: pointer;
+}
+
+.rs-dropdown-toggle.rs-dropdown-toggle-no-caret {
+  padding: 5px;
+}
+
+.rs-dropdown-toggle.rs-dropdown-toggle-no-caret:hover,
+.rs-dropdown-toggle.rs-dropdown-toggle-no-caret:focus,
+.rs-dropdown-toggle.rs-dropdown-toggle-no-caret:active {
+  background-color: unset;
+
+  path {
+    fill: var(--tol-primary);
+  }
+}
+
+span.rs-dropdown-toggle-icon {
+  color: var(--tol-text);
 }
 
 // config modal
@@ -359,17 +356,21 @@
   .token.token {
     color: var(--tol-primary) !important;
   }
+
   .token.token.punctuation {
     color: var(--tol-text) !important;
   }
+
   .token.token.operator {
     color: var(--tol-text) !important;
   }
+
   span {
     font-family: monospace;
     color: var(--tol-text);
     background-color: var(--tol-bg-dark) !important;
     overflow: auto;
+    border-radius: 6px !important;
   }
 }
 
@@ -380,6 +381,7 @@
     color: var(--tol-primary);
     margin-top: 10px;
   }
+
   .tol-download-figure-spacer {
     margin-left: 12px;
   }
@@ -402,6 +404,10 @@
   left: auto;
   padding: 4px 8px;
   backdrop-filter: blur(8px);
+}
+
+.rs-table-row-expanded:has(.tol-table-expanded-row) {
+  padding: 0 !important;
 }
 
 // pagination buttons on smaller devices

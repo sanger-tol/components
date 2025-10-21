@@ -5,12 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useRef, useState } from "react";
-import { Tabs, Progress } from "rsuite";
+import { Progress } from "rsuite";
 import { CodeBlock } from "react-code-blocks";
 import {
   Button,
   Modal,
-  PopUpMessage,
   TsDataSource,
   copyToClipboard,
   exportDataToSpreadsheet,
@@ -19,6 +18,7 @@ import {
   FieldMeta,
   converterForElapsedTime,
   deepCopy,
+  Tabs
 } from "..";
 
 interface Props {
@@ -127,10 +127,6 @@ tol data \
 
   const onClick = (text: string) => {
     copyToClipboard(text.trim());
-    PopUpMessage({
-      type: "success",
-      message: "Copied to clipboard",
-    });
   };
 
   const fetchSpreadSheetDataObjects = async (gen: AsyncGenerator) => {

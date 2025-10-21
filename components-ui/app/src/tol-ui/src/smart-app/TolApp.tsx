@@ -111,138 +111,138 @@ export function TolApp(props: Props) {
   return (
     <div id="tol-app-background">
       <QueryClientProvider client={queryClient}>
-      <AuthProvider
-        value={{
-          token,
-          setToken,
-          user,
-          setUser,
-        }}
-      >
-        <Router basename={basename}>
-          <Navigation
-            brand={props.brand}
-            pages={props.pages}
-            profilePages={profilePages}
-            login={login}
-            register={register}
-            customCallbackUrl={customCallbackUrl}
-          />
-          <div className="tol-app">
-            <Switch>
-              <Route path="/" exact component={() => props.homePage} />
-              <Route path="/callback" exact>
-                <Callback />
-              </Route>
-              <Route path="/board/:boardId">
-                {boards && loggedIn ? (
-                  <BoardPrivilegeContextProvider>
-                    <Board
-                      dataSource={boards.dataSource}
-                      boardDataSource={boards.boardDataSource}
-                    />
-                  </BoardPrivilegeContextProvider>
-                ) : (
-                  <Redirect to="/" />
-                )}
-              </Route>
-              <Route path="/file-validation/results/:uploadId" render={(routeProps) => {
-                return loggedIn ? (
-                  <ValidationResultsViewer {...routeProps} />
-                ) : (
-                  <Redirect to="/" />
-                )
-              }} />
-              {allPageRoutes.map((page) => {
-                const path = convertToPath(page.name);
-                const routes = [];
-                const authorised = confirmAuthorised(
-                  user,
-                  page.auth,
-                  page.removeOnAuth,
-                );
+        <AuthProvider
+          value={{
+            token,
+            setToken,
+            user,
+            setUser,
+          }}
+        >
+          <Router basename={basename}>
+            <Navigation
+              brand={props.brand}
+              pages={props.pages}
+              profilePages={profilePages}
+              login={login}
+              register={register}
+              customCallbackUrl={customCallbackUrl}
+            />
+            <div className="tol-app">
+              <Switch>
+                <Route path="/" exact component={() => props.homePage} />
+                <Route path="/callback" exact>
+                  <Callback />
+                </Route>
+                <Route path="/board/:boardId">
+                  {boards && loggedIn ? (
+                    <BoardPrivilegeContextProvider>
+                      <Board
+                        dataSource={boards.dataSource}
+                        boardDataSource={boards.boardDataSource}
+                      />
+                    </BoardPrivilegeContextProvider>
+                  ) : (
+                    <Redirect to="/" />
+                  )}
+                </Route>
+                <Route path="/file-validation/results/:uploadId" render={(routeProps) => {
+                  return loggedIn ? (
+                    <ValidationResultsViewer {...routeProps} />
+                  ) : (
+                    <Redirect to="/" />
+                  )
+                }} />
+                {allPageRoutes.map((page) => {
+                  const path = convertToPath(page.name);
+                  const routes = [];
+                  const authorised = confirmAuthorised(
+                    user,
+                    page.auth,
+                    page.removeOnAuth,
+                  );
 
-                // dropdown routes
-                if ('pages' in page && page.pages) {
-                  page.pages.forEach((dropdownPage: Page) => {
-                    const individualPageAuthorised = confirmAuthorised(
-                      user,
-                      dropdownPage.auth,
-                      dropdownPage.removeOnAuth,
-                    );
-                    const dropdownPath =
-                      convertToPath(dropdownPage.name);
-                    // dropdown page route
+                  // dropdown routes
+                  if ('pages' in page && page.pages) {
+                    page.pages.forEach((dropdownPage: Page) => {
+                      const individualPageAuthorised = confirmAuthorised(
+                        user,
+                        dropdownPage.auth,
+                        dropdownPage.removeOnAuth,
+                      );
+                      const dropdownPath =
+                        convertToPath(dropdownPage.name);
+                      // dropdown page route
+                      routes.push(
+                        <Route exact path={dropdownPath} key={dropdownPath}>
+                          {individualPageAuthorised ? (
+                            getElementDependingOnAuthStatus(
+                              loggedIn,
+                              dropdownPage,
+                            )
+                          ) : (
+                            <Redirect to="/" />
+                          )}
+                        </Route>,
+                      );
+
+                      // dropdown detail page route
+                      if (dropdownPage.detail) {
+                        routes.push(
+                          <Route
+                            exact
+                            path={`${dropdownPath}/:id`}
+                            key={`${dropdownPath}-detail`}
+                          >
+                            {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user?.id) ? (
+                              dropdownPage.detail
+                            ) : (
+                              <Redirect to="/" />
+                            )}
+                          </Route>,
+                        );
+                      }
+                    });
+                  } else {
+                    // regular page route
                     routes.push(
-                      <Route exact path={dropdownPath} key={dropdownPath}>
-                        {individualPageAuthorised ? (
-                          getElementDependingOnAuthStatus(
-                            loggedIn,
-                            dropdownPage,
-                          )
+                      <Route exact path={path} key={page.name}>
+                        {authorised ? (
+                          getElementDependingOnAuthStatus(loggedIn, page)
                         ) : (
                           <Redirect to="/" />
                         )}
                       </Route>,
                     );
 
-                    // dropdown detail page route
-                    if (dropdownPage.detail) {
+                    // detail page route
+                    if ('detail' in page && page.detail) {
                       routes.push(
                         <Route
                           exact
-                          path={`${dropdownPath}/:id`}
-                          key={`${dropdownPath}-detail`}
+                          path={`${path}/:id`}
+                          key={`${page.name}-detail`}
                         >
-                          {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user?.id) ? (
-                            dropdownPage.detail
-                          ) : (
-                            <Redirect to="/" />
-                          )}
+                          {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to="/" />}
                         </Route>,
                       );
                     }
-                  });
-                } else {
-                  // regular page route
-                  routes.push(
-                    <Route exact path={path} key={page.name}>
-                      {authorised ? (
-                        getElementDependingOnAuthStatus(loggedIn, page)
-                      ) : (
-                        <Redirect to="/" />
-                      )}
-                    </Route>,
-                  );
-
-                  // detail page route
-                  if ('detail' in page && page.detail) {
-                    routes.push(
-                      <Route
-                        exact
-                        path={`${path}/:id`}
-                        key={`${page.name}-detail`}
-                      >
-                        {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to="/" />}
-                      </Route>,
-                    );
                   }
-                }
 
-                return routes;
-              })}
-              <Route
-                path="/page-not-found"
-                component={() => <PageNotFound />}
-              />
-              <Route path="*">
-                <Redirect to="/page-not-found" />
-              </Route>
-            </Switch>
-          </div>
-          <Footer />
-        </Router>
-      </AuthProvider>
+                  return routes;
+                })}
+                <Route
+                  path="/page-not-found"
+                  component={() => <PageNotFound />}
+                />
+                <Route path="*">
+                  <Redirect to="/page-not-found" />
+                </Route>
+              </Switch>
+            </div>
+            <Footer />
+          </Router>
+        </AuthProvider>
       </QueryClientProvider>
     </div>
   );

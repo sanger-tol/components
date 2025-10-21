@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Button, InfoTooltip, Modal, PopUpMessage } from "../..";
+import { Button, IconTooltip, Modal, PopUpMessage } from "../..";
 
 interface Props {
   showIdExportModal: boolean;
@@ -122,7 +122,7 @@ export function ActionCheckModal(props: Props) {
           }`}
         >
           <p>{id}</p>
-          {isFailingItem && <InfoTooltip contents={tooltipContent} />}
+          {isFailingItem && <IconTooltip contents={tooltipContent} />}
         </div>
         {isFailingItem && (
           <Button

@@ -17,7 +17,7 @@ import {
   goToResults,
   Button,
   HoverOverlay,
-  InfoTooltip,
+  IconTooltip,
   normaliseCaps,
   truncateString,
   PIPELINE_DS,
@@ -133,7 +133,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
             {`${uploadStatus.text}`}
           </h6>
           {uploadStatus.text === "Failed" && (
-            <InfoTooltip
+            <IconTooltip
               contents={`Reason: ${truncateString(data.failureMessage || "")}`}
               disableMarkdown
             />

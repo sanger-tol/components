@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import {
   ClickOverlay,
   InlineEdit,
@@ -14,17 +14,19 @@ import {
   Button,
   DropdownButtons,
   resizeListener,
+  IconTooltip,
 } from "..";
 
 export interface PUtilityBar {
   id?: string;
   title?: PInlineEdit;
+  description?: ReactNode;
   buttons?: (PButton | PDropdownButtons | undefined)[];
   elements?: JSX.Element[];
 }
 
 export function UtilityBar(props: PUtilityBar) {
-  const { id, title, buttons, elements } = props;
+  const { id, title, description, buttons, elements } = props;
 
   const wrapperId = "tol-utility-bar-wrapper-" + id; // gets width on mount
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
@@ -75,6 +77,7 @@ export function UtilityBar(props: PUtilityBar) {
   return (
     <div className="tol-utility-bar" id={wrapperId}>
       {title && <InlineEdit {...title} size={smallBreakpoint ? "sm" : "md"} />}
+      {description && <IconTooltip contents={description} />}
       {elements &&
         elements.map((element, index) => (
           <div key={index} style={{ float: "left" }}>

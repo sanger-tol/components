@@ -4,52 +4,89 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Container, IHeaderButton, Button } from "..";
+import { ReactNode, useState } from "react";
+import { resizeListener } from "..";
 
 export interface PHeader {
   title?: string;
   subTitle?: string;
-  buttons?: IHeaderButton[];
-  pageEmpty?: boolean;
+  image?: string;
+  video?: string;
+  fade?: number;
+  textLeft?: boolean;
+  fullHeight?: boolean;
+  children?: ReactNode;
 }
 
-export function Header(PHeader) {
-  const { title, subTitle, buttons = [], pageEmpty = false } = PHeader;
+export function Header(props: PHeader) {
+  const {
+    title,
+    subTitle,
+    image,
+    video,
+    fade = 0,
+    textLeft = false,
+    fullHeight = false,
+    children
+  } = props;
+
+  const [navbarOffset, setNavbarOffset] = useState<number>(0);
+  const [mastheadOffset, setMastheadOffset] = useState<number>(0);
+
+  resizeListener(() => {
+    const navbar = document.getElementById("tol-navbar");
+    const masthead = document.getElementById("tol-masthead");
+    if (navbar) setNavbarOffset(navbar.offsetHeight);
+    if (masthead) setMastheadOffset(masthead.offsetHeight);
+  });
+
+  const Backing = (
+    <div>
+      <div className="masthead-fade" style={{ background: `rgba(0, 0, 0, ${fade})` }} />
+      {image && <img className="masthead-media" src={image} alt="background" />}
+      {video && (
+        <video className="masthead-media" autoPlay loop muted>
+          <source src={video} type="video/mp4" />
+        </video>
+      )}
+      <div className="masthead-default">
+        {!image && !video &&
+          <>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </>
+        }
+      </div>
+    </div>
+  )
 
   return (
-    <div>
-      <div className="header">
-        <header className="masthead text-center text-white">
-          <div className="masthead-content">
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <li></li>
-            <Container>
-              <div className="navbar-filler" />
-              <h1 className="masthead-heading mb-0">{title}</h1>
-              <h2 className="masthead-subheading mb-0">{subTitle}</h2>
-              {buttons.map((button) => (
-                <div key={button.text} style={{ marginTop: "30px" }}>
-                  <Button
-                    text={button.text}
-                    onClick={() => {
-                      window.location.href = button.href;
-                    }}
-                  />
-                </div>
-              ))}
-            </Container>
-          </div>
-        </header>
-      </div>
-      {pageEmpty ? <h6>‎</h6> : <></>}
+    <div
+      className="masthead-offset"
+      // if full height ignore masthead offset as no content required below header
+      style={{ height: (fullHeight ? 0 : mastheadOffset) - navbarOffset }}
+    >
+      <header
+        id="tol-masthead"
+        className="masthead"
+        style={fullHeight ? { height: "100vh" } : {}}
+      >
+        <div style={{ height: navbarOffset }}></div>
+        <div className={`masthead-content ${textLeft ? "" : "text-center"}`}>
+          <h1 className="masthead-heading">{title}</h1>
+          <h2 className="masthead-subheading">{subTitle}</h2>
+          {children}
+        </div>
+        {Backing}
+      </header>
     </div>
   );
 }

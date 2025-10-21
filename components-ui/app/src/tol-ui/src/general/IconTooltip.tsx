@@ -7,18 +7,19 @@ SPDX-License-Identifier: MIT
 import { ReactNode } from "react";
 import {
   HoverOverlay,
+  Icon,
   Markdown,
-  InfoIcon,
 } from "..";
 
 
-export interface PInfoTooltip {
+export interface PIconTooltip {
   contents: ReactNode;
   disableMarkdown?: boolean;
+  icon?: ReactNode;
 }
 
-export function InfoTooltip(props: PInfoTooltip) {
-  const { contents, disableMarkdown } = props;
+export function IconTooltip(props: PIconTooltip) {
+  const { contents, disableMarkdown, icon } = props;
 
   let renderedContents = contents;
 
@@ -34,9 +35,9 @@ export function InfoTooltip(props: PInfoTooltip) {
   return (
     <span onClick={(e) => e.stopPropagation()}>
       <HoverOverlay contents={renderedContents}>
-        <div className="tooltip-wrapper">
-          <InfoIcon />
-        </div>
+        <span className="tooltip-wrapper">
+          {icon || <Icon icon="circle-info" size="sm"/>}
+        </span>
       </HoverOverlay>
     </span>
   );

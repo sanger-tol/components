@@ -24,6 +24,7 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 // Add icons to the library
 library.add(fas, fab);
 
+export * from "./attributes";
 export * from "./boards";
 export * from "./charts";
 export * from "./config";

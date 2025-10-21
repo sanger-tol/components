@@ -5,3 +5,4 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./componentSelection";
+export * from "./cellRendererParams";

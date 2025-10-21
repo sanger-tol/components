@@ -15,9 +15,12 @@ $color-mode-type: media-query;
 @import url("https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900");
 @import url("https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900");
 
+@import "accordion.scss";
 @import "actions.scss";
 @import "attribute-selector.scss";
 @import "buttons.scss";
+@import "cells.scss";
+@import "cell-renderers.scss";
 @import "chart.scss";
 @import "count.scss";
 @import "dashboard.scss";
@@ -39,9 +42,12 @@ $color-mode-type: media-query;
 @import "plate.scss";
 @import "react-bootstrap.scss";
 @import "rsuite.scss";
+@import "row-expander.scss";
 @import "table.scss";
+@import "tabs.scss";
 @import "timeline.scss";
 @import "utility-bar.scss";
 @import "widgets.scss";
 @import "validation.scss";
-@import "socialviewer.scss"
+@import "socialviewer.scss";
+@import "videoplayer.scss"

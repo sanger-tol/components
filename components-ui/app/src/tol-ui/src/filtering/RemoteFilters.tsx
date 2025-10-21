@@ -16,25 +16,35 @@ import {
   AttributeSelector,
   Icon,
   getAttributeDetail,
+  generateFilter,
 } from "..";
 
 
-interface Props extends IRemoteTarget{
+interface Props extends IRemoteTarget {
   filters?: IFilter;
-  onSave?: any;
   disabledFilterValues?: any;
   filterPassThrough?: boolean;
+  onSaveText?: string;
+  onSave: (filters?: IFilter, passThrough?: boolean) => void;
 }
 
 export function RemoteFilters(props: Props) {
-  const { objectType, dataSource, onSave, disabledFilterValues, filterPassThrough } = props;
+  const {
+    objectType,
+    dataSource,
+    filters = { and_: {} },
+    disabledFilterValues,
+    filterPassThrough,
+    onSave,
+    onSaveText
+  } = props;
 
   // zone component id pointer
   const filterComponentId = "remote-filters-component";
 
   // just keeps track of the filter ids and their order
-  const [filters, setFilters] = useState(
-    Object.keys(props.filters?.and_ || {}),
+  const [filterKeys, setFilterKeys] = useState(
+    Object.keys(filters.and_ || {}),
   );
   const [disabledApplyButton, setDisabledApplyButton] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -43,7 +53,7 @@ export function RemoteFilters(props: Props) {
   // repurposed zone so filters correctly interact with the state
   const [filterZone, setFilterZone] = useState<IZone>(
     defineZone("dummy-object-for-remote-filters", [
-      { id: filterComponentId, filter: props.filters },
+      { id: filterComponentId, filter: filters },
     ]),
   );
 
@@ -61,8 +71,8 @@ export function RemoteFilters(props: Props) {
 
   const removeFilter = (attribute: string) => {
     // update the filters that are shown
-    const f = filters.filter((str) => str !== attribute);
-    setFilters(f);
+    const f = filterKeys.filter((str) => str !== attribute);
+    setFilterKeys(f);
 
     // update the zone state which builds the filter ready for the api
     if (filterZone.components[filterComponentId].data.filter?.and_?.[attribute]) {
@@ -100,8 +110,8 @@ export function RemoteFilters(props: Props) {
         renderSearchBySource
         disabledValues={disabledFilterValues}
         placeholder={PLACEHOLDER}
-        attribute={filters}
-        setAttributes={setFilters}
+        attribute={filterKeys}
+        setAttributes={setFilterKeys}
         populatedFieldType="filter"
         numPopulatedFields={
           Object.keys(
@@ -111,7 +121,7 @@ export function RemoteFilters(props: Props) {
         tooltipContent={TOOLTIP_CONTENT}
         onClean={onClean}
       />
-      {filters.map((attribute) => {
+      {filterKeys.map((attribute) => {
         const attributeMeta =
           entityMeta?.flatAttributes?.[objectType]?.[attribute];
         const type =
@@ -141,7 +151,7 @@ export function RemoteFilters(props: Props) {
               className="remove-filter-button"
               onClick={() => removeFilter(attribute)}
             >
-              <Icon icon="close" size="lg" />
+              <Icon icon="close" />
             </span>
           </div>
         );
@@ -150,9 +160,12 @@ export function RemoteFilters(props: Props) {
         disabled={disabledApplyButton}
         type="success"
         onClick={() =>
-          onSave(filterZone?.components?.[filterComponentId]?.data?.filter, filterPassThrough)
+          onSave(
+            generateFilter(filterZone, filterComponentId),
+            filterPassThrough
+          )
         }
-        text="Apply Filters"
+        text={onSaveText || "Apply Filters"}
         icon="floppy-disk"
         testid="apply-filter-button"
       />

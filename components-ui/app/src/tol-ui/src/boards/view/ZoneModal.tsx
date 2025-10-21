@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState, React } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Modal,
@@ -17,7 +17,7 @@ import {
   IUpdatedZoneIds,
   IDBZone,
   getNextZoneOrder,
-  InfoTooltip,
+  IconTooltip,
   IDataspace,
   TsDataSource,
   TDataObjectListOrNull,
@@ -217,7 +217,7 @@ export function ZoneModal(props: PZoneModal) {
             Select Dataspace
             &nbsp;
             <span className="tol-param-info">
-              <InfoTooltip contents={"The set of data to pull from"} disableMarkdown />
+              <IconTooltip contents={"The set of data to pull from"} disableMarkdown />
             </span>
             &nbsp;
             <span className="tol-danger-colour">*</span>
@@ -226,7 +226,7 @@ export function ZoneModal(props: PZoneModal) {
             data={dataspaceNames}
             placeholder="Dataspace"
             value={dataspaceName}
-            setValue={(newValue) => {
+            onChange={(newValue) => {
               validateForm({ newDataspace: newValue });
               setDataspaceName(newValue);
               selectDataspace(newValue);
@@ -238,7 +238,7 @@ export function ZoneModal(props: PZoneModal) {
             Select Object Type
             &nbsp;
             <span className="tol-param-info">
-              <InfoTooltip contents={"The type of data this zone will focus on"} disableMarkdown />
+              <IconTooltip contents={"The type of data this zone will focus on"} disableMarkdown />
             </span>
             &nbsp;
             <span className="tol-danger-colour">*</span>
@@ -247,7 +247,7 @@ export function ZoneModal(props: PZoneModal) {
             data={objectTypesList}  // Which might be empty but that's okay
             placeholder="Object Type"
             value={objectType}
-            setValue={(newValue) => {
+            onChange={(newValue) => {
               validateForm({ newObjectType: newValue });
               setObjectType(newValue);
             }}
@@ -260,7 +260,7 @@ export function ZoneModal(props: PZoneModal) {
             Enter Title
             &nbsp;
             <span className="tol-param-info">
-              <InfoTooltip contents={"The title to be displayed for this zone"} disableMarkdown />
+              <IconTooltip contents={"The title to be displayed for this zone"} disableMarkdown />
             </span>
             &nbsp;
             <span className="tol-danger-colour">*</span>
