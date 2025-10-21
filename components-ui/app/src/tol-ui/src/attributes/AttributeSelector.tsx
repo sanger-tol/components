@@ -5,14 +5,14 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Checkbox, Tabs } from "rsuite";
+import { Checkbox } from "rsuite";
 import {
   MultipleSelect,
   IconTooltip,
   SourceTag,
   getFlattenedMetaData,
   attributeSelectorSearchBy,
-  getAttributeSources,
+  Tabs,
   normaliseCaps,
   filterAttributes,
   getAllAttributeData,
