@@ -28,6 +28,7 @@ export * from "./Plate";
 export * from "./RemoteCount";
 export * from "./RemoteGet";
 export * from "./SourceTag";
+export * from "./Tabs";
 export * from "./TolLoader";
 export * from "./UtilityBar";
 export * from "./utils";

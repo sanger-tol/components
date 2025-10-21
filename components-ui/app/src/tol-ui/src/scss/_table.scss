@@ -223,13 +223,9 @@
   // link box (e.g. relationship)
   .link-box {
     border-radius: 6px;
-    background-color: rgba($tol-primary, 0.1) !important;
+    background-color: var(--tol-primary-translucent);
     padding: 5px 10px;
-    border: 1px solid rgba($tol-primary, 0.2);
-  }
-
-  .link-box:hover {
-    background-color: rgba($tol-primary, 0.2) !important;
+    border: 1px solid var(--tol-primary-translucent);
   }
 
   .link-box.clickable {
@@ -316,7 +312,7 @@
 }
 
 span.rs-dropdown-toggle-icon {
-  color: var(--tol-light);
+  color: var(--tol-text);
 }
 
 // config modal

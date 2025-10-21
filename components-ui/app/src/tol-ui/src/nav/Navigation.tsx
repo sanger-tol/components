@@ -180,8 +180,8 @@ function Navigation(props: Props) {
   };
 
   return (
-    <div className="navigation">
-      <div style={{ height: navbarOffset }}></div>
+    <div className="tol-navigation">
+      <div className="tol-navbar-offset" style={{ height: navbarOffset }}></div>
       <Navbar
         id="tol-navbar"
         className={
