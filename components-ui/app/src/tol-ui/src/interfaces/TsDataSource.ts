@@ -92,6 +92,11 @@ export interface ICustom {
   options?: any;
 }
 
+export interface IGetFieldMetadata {
+  objectType: string;
+  field: string;
+}
+
 export interface IDataObject {
   objectType: string;
   id: string;
