@@ -12,24 +12,30 @@
   .rs-drawer-content {
     border-radius: 6px;
     box-shadow: var(--rs-drawer-shadow);
+
+    .rs-drawer-header {
+      padding: 16px;
+    }
+
+    .rs-drawer-body {
+      padding: 24px;
+    }
+
+    .rs-drawer-header+.rs-drawer-body {
+      height: calc(100% - 130px);
+    }
+
+    .rs-drawer-footer {
+      border-top: 1px solid var(--rs-border-primary);
+      margin: 0;
+      padding: 16px;
+    }
   }
-}
 
-.rs-drawer-header {
-  padding: 20px;
-}
-
-.rs-drawer-body {
-  padding: 30px;
-}
-
-// remove close button
-button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-btn-subtle.rs-btn-sm {
-  display: none;
-}
-
-.tol-config-drawer-save-button {
-  margin-top: 10px;
+  // remove close button
+  button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-btn-subtle.rs-btn-sm {
+    display: none;
+  }
 }
 
 .tol-active-column-btn {
@@ -38,23 +44,6 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
   height: 20px;
   text-align: center;
   cursor: pointer;
-}
-
-@keyframes tol-palette-hue-loop {
-  from {
-    filter: hue-rotate(0deg);
-  }
-  to {
-    filter: hue-rotate(360deg);
-  }
-}
-
-.tol-palette-icon:hover {
-  transition: 300ms;
-  animation-duration: 1s;
-  animation-direction: alternate;
-  animation-name: tol-palette-hue-loop;
-  animation-iteration-count: infinite;
 }
 
 .tol-active-column-btn.hidden {
@@ -80,27 +69,8 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
 }
 
 .tol-config-drawer-column-container {
-  max-height: 51vh;
   overflow: auto;
   padding: 5px 10px 5px 0;
-}
-
-.tol-config-drawer-column-container::-webkit-scrollbar {
-  width: 10px;
-}
-
-.tol-config-drawer-column-container::-webkit-scrollbar-track {
-  background-color: var(--tol-grey);
-  border-radius: 5px;
-}
-
-.tol-config-drawer-column-container::-webkit-scrollbar-thumb {
-  background-color: var(--tol-grey-subtle);
-  border-radius: 5px;
-}
-
-.tol-config-drawer-column-container::-webkit-scrollbar-thumb:hover {
-  background-color: var(--tol-grey-subtle);
 }
 
 .tol-config-drawer-column-title {
@@ -151,6 +121,7 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
 .tol-config-drawer-selected-column-name:hover {
   cursor: grab;
 }
+
 .tol-config-drawer-selected-column-name:active {
   cursor: grabbing;
 }
@@ -164,4 +135,22 @@ button.rs-drawer-header-close.rs-btn-icon.rs-btn-icon-placement-left.rs-btn.rs-b
 
 .tol-config-drawer-selected-column.highlight {
   border: 1px solid var(--tol-primary-light);
+}
+
+@keyframes tol-palette-hue-loop {
+  from {
+    filter: hue-rotate(0deg);
+  }
+
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.tol-palette-icon:hover {
+  transition: 300ms;
+  animation-duration: 1s;
+  animation-direction: alternate;
+  animation-name: tol-palette-hue-loop;
+  animation-iteration-count: infinite;
 }

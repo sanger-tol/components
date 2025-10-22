@@ -14,9 +14,9 @@ export const cellRendererParams: IBoardCellRenderers = {
     allowedDataTypes: ["bool"]
   },
   datetime: {
+    rename: "DateTime",
     allowedDataTypes: ["datetime"]
   },
-  expander: {},
   float: {
     allowedDataTypes: ["float", "int"]
   },
@@ -59,6 +59,10 @@ export const cellRendererParams: IBoardCellRenderers = {
     }
   },
   list: {},
+  longText: {
+    rename: "Long Text",
+    allowedDataTypes: ["str", "float", "int"]
+  },
   none: {},
   relationship: {
     params: {
@@ -70,13 +74,9 @@ export const cellRendererParams: IBoardCellRenderers = {
       },
     }
   },
-  status: {
+  trafficLightStatus: {
+    rename: "Traffic Light Status",
     params: {
-      info: {
-        type: "boolean",
-        rename: "Info",
-        description: "Condition for displaying an info status",
-      },
       success: {
         type: "boolean",
         rename: "Success",

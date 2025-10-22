@@ -10,7 +10,6 @@ export * from "./Button";
 export * from "./CentreContents";
 export * from "./ClickOverlay";
 export * from "./CustomIcons";
-export * from "./Drawer";
 export * from "./DropdownButtons";
 export * from "./Footer";
 export * from "./FormatTooltip";

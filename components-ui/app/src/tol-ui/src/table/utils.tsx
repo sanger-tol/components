@@ -55,7 +55,7 @@ const sourceColours = {
   calculated: colours[13],
   genome_notes: colours[14],
   lrpacbio: colours[15],
-  other: colours[30],
+  other: "var(--tol-grey)",
 };
 
 export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
@@ -252,12 +252,15 @@ function rgbToString(rgb: Rgb, opacity: number) {
 }
 
 export function getSourceColour(sourceName?: string): string {
-  const rgb =
+  const colour =
     sourceName && sourceColours[sourceName]
       ? sourceColours[sourceName]
       : sourceColours.other;
 
-  return rgbToString(rgb, 1);
+  if (typeof colour === "object" && colour !== null) {
+    return rgbToString(colour, 1);
+  }
+  return colour;
 }
 
 export function mapKeysToDisplayNames(data: any, displayNames: any): object {

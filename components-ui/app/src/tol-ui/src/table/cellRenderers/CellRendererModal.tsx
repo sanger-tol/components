@@ -122,7 +122,7 @@ export function CellRendererModal(props: PCellRendererModal) {
       return allowed.includes(attrType!);
     })
     .map(cellRendererType => ({
-      label: normaliseCaps(cellRendererType),
+      label: cellRendererParams[cellRendererType]?.rename || normaliseCaps(cellRendererType),
       value: cellRendererType
     }));
 

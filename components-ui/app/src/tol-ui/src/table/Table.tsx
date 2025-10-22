@@ -283,7 +283,7 @@ export function Table(props: Props) {
       />
       <ColumnConfigDrawer
         {...props}
-        title={"Table Configuration"}
+        title="Table Configuration"
         fieldMeta={fieldMeta}
         actions={actions}
         defaultSortByAttribute={defaultSortByAttribute}

@@ -20,6 +20,7 @@ export type TBoardCellRendererParams = Record<string, IBoardCellRendererParam>;
 export interface IBoardCellRenderer {
   params?: TBoardCellRendererParams
   allowedDataTypes?: string[]
+  rename?: string
 };
 
 export interface IBoardCellRenderers {

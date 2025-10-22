@@ -6,7 +6,9 @@
 
 .tol-tabs {
   .rs-nav-pills {
-    background-color: unset;
+    @extend .tol-widget;
+    padding: 4px !important;
+    margin: 0 !important;
 
     .rs-nav-item {
       color: var(--tol-text);

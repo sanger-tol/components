@@ -10,13 +10,14 @@ import { Button } from "..";
 export interface PModal {
   size?: string;
   open: boolean;
-  setOpen: any;
+  setOpen: (open: boolean) => void;
   children?: JSX.Element | JSX.Element[];
   header?: JSX.Element;
   overflow?: boolean;
   closeButton?: boolean;
   actionButton?: JSX.Element;
   className?: string;
+  pendingChanges?: boolean;
   onClose?: () => void;
   onEnter?: () => void;
   onExited?: () => void;
@@ -33,6 +34,7 @@ export function Modal(props: PModal) {
     overflow = true,
     actionButton,
     className,
+    pendingChanges = false,
     onClose, 
     onEnter,
     onExited
@@ -54,9 +56,9 @@ export function Modal(props: PModal) {
         className={className}
         onEnter={onEnter}
         onExited={onExited}
+        backdrop={pendingChanges ? "static" : true}
       >
         <RSModal.Header closeButton={false}>{header}</RSModal.Header>
-
         <RSModal.Body>{children}</RSModal.Body>
         <RSModal.Footer>
           {actionButton && (
