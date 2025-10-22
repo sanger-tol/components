@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import "@testing-library/jest-dom";
 import { expect, test, vitest, describe } from "vitest";
-import { TsDataSource, getFieldByName } from "../../tol-ui/src";
+import { TsDataSource, getFieldByName, getFieldRelationshipValue } from "../../tol-ui/src";
 
 
 const speciesMockData = {
@@ -140,6 +140,36 @@ const nestedRelationshipMockData = {
 };
 
 const attributeMetadataMockData = {
+  specimen: {
+    id: {
+      authoritative: null,
+      available_on_relationships: null,
+      cardinality: 10,
+      description: 'This is a specimen id',
+      display_name: null,
+      python_type: "int",
+    }
+  },
+  species: {
+    id: {
+      authoritative: null,
+      available_on_relationships: null,
+      cardinality: 10,
+      description: 'This is a species id',
+      display_name: null,
+      python_type: "int",
+    }
+  },
+  sample: {
+    id: {
+      authoritative: null,
+      available_on_relationships: null,
+      cardinality: 10,
+      description: 'This is a sample id',
+      display_name: null,
+      python_type: "int",
+    }
+  },
   barcoding_run_data: {
     bioscan_c: {
       authoritative: null,
@@ -181,6 +211,7 @@ const relationshipConfigMockData = {
       benchling_tissue_preps: "tissue_prep",
       grit_curations: "curation",
       sts_samples: "sample",
+      benchling_specimens: "specimen",
     },
   },
   specimen: {
@@ -195,6 +226,7 @@ const relationshipConfigMockData = {
       present_species: "species",
       none_species: "species",
       lazy_species: "species",
+      benchling_species: "species",
     },
     many: {
       benchling_extractions: "extraction",
@@ -204,6 +236,14 @@ const relationshipConfigMockData = {
       sts_samples: "sample",
     },
   },
+  sample: {
+    foreign_keys: {
+      benchling_specimens: "benchling_sample.id",
+    },
+    one: {
+      benchling_specimen: "specimen",
+    },
+  }
 };
 
 const mockClient = () => ({
@@ -842,4 +882,42 @@ describe("Testing temp getFieldByName function", async () => {
     expect(getFieldByName(testDataObject, "doesNotExist.alsoDoesNotExist")).toBeUndefined();
     // check if null obj
   });
+})
+
+describe("Testing getFieldRelationshipValue", async () => {
+  test('Returns correct value from a to many relationship field', () => {
+    const mockAttValue = getFieldRelationshipValue(
+      attributeMetadataMockData,
+      relationshipConfigMockData,
+      "benchling_specimens.benchling_samples.id",
+      "species"
+    )
+    expect(mockAttValue).toBeDefined();
+    expect(mockAttValue.cardinality).toBe(10);
+    expect(mockAttValue.python_type).toBe("int");
+    expect(mockAttValue.description).toBe('This is a sample id');
+  })
+
+  test('Returns correct value from a to one relationship field', () => {
+    const mockAttValue = getFieldRelationshipValue(
+      attributeMetadataMockData,
+      relationshipConfigMockData,
+      "benchling_specimen.benchling_species.id",
+      "sample"
+    )
+    expect(mockAttValue).toBeDefined();
+    expect(mockAttValue.cardinality).toBe(10);
+    expect(mockAttValue.python_type).toBe("int");
+    expect(mockAttValue.description).toBe('This is a species id');
+  })
+
+  test('Returns undefined for non-existent relationship field', () => {
+    const mockAttValue = getFieldRelationshipValue(
+      attributeMetadataMockData,
+      relationshipConfigMockData,
+      "benchling_specimen.non_existent_field",
+      "sample"
+    )
+    expect(mockAttValue).toBeUndefined();
+  })
 })
