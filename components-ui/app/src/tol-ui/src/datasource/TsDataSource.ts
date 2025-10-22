@@ -588,8 +588,10 @@ export function getFieldRelationshipValue(
   const splitField = field.split(".");
   if (splitField.length > 1) {
     // Checks if the object type exists in the relationships of previous "jump"
-    if (splitField[0] in relationships[objectType]?.one) {
-      const relatedObjectType = relationships[objectType].one[splitField[0]];
+    if (splitField[0] in relationships[objectType]?.one ||
+      splitField[0] in relationships[objectType]?.many) {
+      const relatedObjectType = relationships[objectType].one[splitField[0]] ||
+        relationships[objectType].many[splitField[0]];
       const remainingField = splitField.slice(1).join(".");
       return getFieldRelationshipValue(attributes, relationships, remainingField, relatedObjectType);
     }
