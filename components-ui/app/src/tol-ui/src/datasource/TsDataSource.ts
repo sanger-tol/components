@@ -580,8 +580,8 @@ export class TsDataSource {
 }
 
 export function getFieldRelationshipValue(
-  attributes: any,
-  relationships: any,
+  attributes: object,
+  relationships: object,
   field: string,
   objectType: string
 ): any {
@@ -591,10 +591,11 @@ export function getFieldRelationshipValue(
     const relObj = relationships[objectType];
     const one = relObj?.one ?? {};
     const many = relObj?.many ?? {};
+    const combinedRels = { ...one, ...many }; 
 
     // If relationship exists, get the related object type and continue down the field path
-    if (splitField[0] in one || splitField[0] in many) {
-      const relatedObjectType = one[splitField[0]] || many[splitField[0]];
+    if (splitField[0] in combinedRels) {
+      const relatedObjectType = combinedRels[splitField[0]];
       const remainingField = splitField.slice(1).join(".");
       return getFieldRelationshipValue(attributes, relationships, remainingField, relatedObjectType);
     }
