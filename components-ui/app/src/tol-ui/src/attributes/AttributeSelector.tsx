@@ -12,7 +12,6 @@ import {
   SourceTag,
   getFlattenedMetaData,
   attributeSelectorSearchBy,
-  Tabs,
   normaliseCaps,
   filterAttributes,
   getAllAttributeData,
@@ -21,6 +20,7 @@ import {
   handleSetAttribute,
   renderTotalSelectedItems,
   MenuItem,
+  AdvanceSearchTab,
 } from "..";
 
 export interface PAttributeSelector extends IRemoteTarget {
@@ -121,7 +121,7 @@ export function AttributeSelector(props: PAttributeSelector) {
   };
 
   const RenderSelectedValue = (value: string) => {
-    const metaData = getFlattenedMetaData(entityMeta, objectType, value);
+    const metaData = getFlattenedMetaData(entityMeta, objectType, value) || {};
     return (
       <span className="tol-attribute-selector-render-single-item">
         {metaData["display_name"] ?? normaliseCaps(value)}
@@ -131,19 +131,6 @@ export function AttributeSelector(props: PAttributeSelector) {
   };
 
   if (loading) return <></>;
-
-  const MenuTabs = (MenuItem: React.ReactNode) => {
-    return (
-      <Tabs defaultActiveKey="all">
-        <Tabs.Tab eventKey="all" title="All">
-          {MenuItem}
-        </Tabs.Tab>
-        <Tabs.Tab eventKey="advanced" title="Advanced">
-          <p>Coming Soon...</p>
-        </Tabs.Tab>
-      </Tabs>
-    );
-  }
 
   return (
     <div className="tol-attribute-selector">
@@ -180,7 +167,17 @@ export function AttributeSelector(props: PAttributeSelector) {
           );
         }}
         renderMenuItem={(l: any, index: number) => RenderMenuItem(l, index)}
-        renderMenu={advanceTab ? MenuTabs : undefined}
+        renderMenu={
+          advanceTab
+            ? (menuItem) =>
+              <AdvanceSearchTab
+                MenuItem={menuItem}
+                dataSource={dataSource}
+                objectType={objectType}
+                setAttributes={setAttributes}
+              />
+            : undefined
+        }
         renderValue={(values: string[]) => {
           return renderTotalSelectedItems(
             values,

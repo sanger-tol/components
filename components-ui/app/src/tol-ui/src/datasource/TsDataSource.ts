@@ -565,7 +565,7 @@ export class TsDataSource {
     }
   }
 
-  private async getFieldRelationshipValue(
+  private async getAttributeDescriptorValue(
     field: string,
     objectType: string
   ): Promise<IAttributeDescriptor | undefined> {
@@ -583,7 +583,7 @@ export class TsDataSource {
       if (splitField[0] in combinedRelationships) {
         const relatedObjectType = combinedRelationships[splitField[0]];
         const remainingField = splitField.slice(1).join(".");
-        return this.getFieldRelationshipValue(remainingField, relatedObjectType);
+        return this.getAttributeDescriptorValue(remainingField, relatedObjectType);
       }
     } else if (splitField.length === 1) {
       if (field in attributes[objectType]) {
@@ -592,11 +592,11 @@ export class TsDataSource {
     }
   }
 
-  public async getFieldMetaData({
+  public async getAttributeDescriptor({
     objectType,
     field,
   }: IGetAttributeDescriptor): Promise<IAttributeDescriptor | undefined> {
-    return this.getFieldRelationshipValue(
+    return this.getAttributeDescriptorValue(
       field,
       objectType
     );
