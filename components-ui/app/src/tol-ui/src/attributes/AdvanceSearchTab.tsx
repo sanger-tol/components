@@ -11,6 +11,8 @@ import {
   AutoComplete,
   IAttributeDescriptor,
   Button,
+  PopUpMessage,
+  IconTooltip,
 } from "..";
 
 export interface PAdvanceSearchTab extends IRemoteTarget {
@@ -42,8 +44,16 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
 
   const updateAttributes = (attribute: string, attributes: string[]) => {
     if (attributes.includes(attribute)) {
+      PopUpMessage({
+        type: "warning",
+        message: `The attribute "${searchValue}" has already been added.`,
+      })
       return attributes;
     } else {
+      PopUpMessage({
+        type: "success",
+        message: `The attribute "${searchValue}" has been added.`,
+      })
       return [...attributes, attribute];
     }
   }
@@ -58,21 +68,30 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
         {MenuItem}
       </Tabs.Tab>
       <Tabs.Tab eventKey="advanced" title="Advanced">
-        <AutoComplete
-          label="Search attributes..."
-          data={[]}
-          value={searchValue}
-          onChange={handleOnChange}
-          loading={false}
-        />
-        {/* Also need to add a pop up that lets them know the field was added */}
-        <Button
-          onClick={handleOnAdd}
-          disabled={!attributeAvailable}
-          disabledTooltip="Attribute not found"
-          icon="plus"
-          type="success"
-        />
+        <div className="tol-advance-search-tab">
+          <div className="tol-advance-search-tab-tooltip">
+            <p style={{paddingRight: '5px'}}>Advance Search</p>
+            <IconTooltip
+              contents="Add columns using system names, with relationships separated by periods. E.g. 'relationship1.relationship2.attribute_name'"
+            />
+          </div>
+          <AutoComplete
+            label=""
+            data={[]}
+            value={searchValue}
+            onChange={handleOnChange}
+            loading={false}
+          />
+          {/* Also need to add a pop up that lets them know the field was added */}
+          <Button
+            onClick={handleOnAdd}
+            className="tol-advance-search-tab-button"
+            disabled={!attributeAvailable}
+            disabledTooltip="Attribute not found"
+            icon="plus"
+            type="success"
+          />
+        </div>
       </Tabs.Tab>
     </Tabs>
   );
