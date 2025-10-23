@@ -31,7 +31,7 @@ import {
   TCursorObjectOrNull,
   normaliseCaps,
   IGetList,
-  IGetFieldMetadata,
+  IGetAttributeDescriptor,
   IAttributeDescriptor
 } from "..";
 
@@ -595,7 +595,7 @@ export class TsDataSource {
   public async getFieldMetaData({
     objectType,
     field,
-  }: IGetFieldMetadata): Promise<IAttributeDescriptor | undefined> {
+  }: IGetAttributeDescriptor): Promise<IAttributeDescriptor | undefined> {
     return this.getFieldRelationshipValue(
       field,
       objectType

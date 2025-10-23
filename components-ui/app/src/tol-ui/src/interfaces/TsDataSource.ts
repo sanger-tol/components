@@ -92,7 +92,7 @@ export interface ICustom {
   options?: any;
 }
 
-export interface IGetFieldMetadata {
+export interface IGetAttributeDescriptor {
   objectType: string;
   field: string;
 }
