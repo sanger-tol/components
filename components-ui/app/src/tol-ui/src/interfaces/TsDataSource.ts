@@ -114,7 +114,7 @@ export interface ISourceDataObject extends IDataObject {
   __sourceId: string;
 }
 
-export interface IFieldMetadata {
+export interface IAttributeDescriptor {
   authoritative: boolean;
   available_on_relationships: boolean;
   cardinality?: number;

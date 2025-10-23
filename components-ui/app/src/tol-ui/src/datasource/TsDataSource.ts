@@ -32,7 +32,7 @@ import {
   normaliseCaps,
   IGetList,
   IGetFieldMetadata,
-  IFieldMetadata
+  IAttributeDescriptor
 } from "..";
 
 
@@ -568,15 +568,15 @@ export class TsDataSource {
   private async getFieldRelationshipValue(
     field: string,
     objectType: string
-  ): Promise<IFieldMetadata | undefined> {
+  ): Promise<IAttributeDescriptor | undefined> {
     const attributes = await this.attributeMetadata();
     const relationships = await this.relationshipConfig();
     const splitField = field.split(".");
     if (splitField.length > 1) {
       // Checks if the object type exists in the relationships of previous "jump"
-      const relObj = relationships[objectType];
-      const one = relObj?.one ?? {};
-      const many = relObj?.many ?? {};
+      const objectRelationships = relationships[objectType];
+      const one = objectRelationships?.one ?? {};
+      const many = objectRelationships?.many ?? {};
       const combinedRels = { ...one, ...many };
 
       // If relationship exists, get the related object type and continue down the field path
@@ -595,7 +595,7 @@ export class TsDataSource {
   public async getFieldMetaData({
     objectType,
     field,
-  }: IGetFieldMetadata): Promise<IFieldMetadata | undefined> {
+  }: IGetFieldMetadata): Promise<IAttributeDescriptor | undefined> {
     return this.getFieldRelationshipValue(
       field,
       objectType
