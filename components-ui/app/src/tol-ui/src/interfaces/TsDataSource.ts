@@ -114,6 +114,16 @@ export interface ISourceDataObject extends IDataObject {
   __sourceId: string;
 }
 
+export interface IFieldMetadata {
+  authoritative: boolean;
+  available_on_relationships: boolean;
+  cardinality?: number;
+  description?: string;
+  display_name?: string;
+  python_type?: string;
+  source?: string;
+}
+
 export type TDataObjectOrNull = IDataObject | null;
 export type TDataObjectListOrNull = IDataObject[] | null;
 

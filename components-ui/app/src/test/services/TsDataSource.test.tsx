@@ -897,9 +897,9 @@ describe("Testing getFieldRelationshipValue", () => {
       field: 'benchling_specimens.benchling_samples.id'
     })
     expect(mockAttValue).toBeDefined();
-    expect(mockAttValue.cardinality).toBe(10);
-    expect(mockAttValue.python_type).toBe("int");
-    expect(mockAttValue.description).toBe('This is a sample id');
+    expect(mockAttValue?.cardinality).toBe(10);
+    expect(mockAttValue?.python_type).toBe("int");
+    expect(mockAttValue?.description).toBe('This is a sample id');
   })
 
   test('Returns correct value from a to one relationship field', async () => {
@@ -908,9 +908,9 @@ describe("Testing getFieldRelationshipValue", () => {
       field: 'benchling_specimen.benchling_species.id'
     })
     expect(mockAttValue).toBeDefined();
-    expect(mockAttValue.cardinality).toBe(10);
-    expect(mockAttValue.python_type).toBe("int");
-    expect(mockAttValue.description).toBe('This is a species id');
+    expect(mockAttValue?.cardinality).toBe(10);
+    expect(mockAttValue?.python_type).toBe("int");
+    expect(mockAttValue?.description).toBe('This is a species id');
   })
 
   test('Returns undefined for non-existent relationship field', async () => {

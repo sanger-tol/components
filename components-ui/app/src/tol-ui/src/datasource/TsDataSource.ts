@@ -31,7 +31,8 @@ import {
   TCursorObjectOrNull,
   normaliseCaps,
   IGetList,
-  IGetFieldMetadata
+  IGetFieldMetadata,
+  IFieldMetadata
 } from "..";
 
 
@@ -567,7 +568,7 @@ export class TsDataSource {
   private async getFieldRelationshipValue(
     field: string,
     objectType: string
-  ): Promise<any> {
+  ): Promise<IFieldMetadata | undefined> {
     const attributes = await this.attributeMetadata();
     const relationships = await this.relationshipConfig();
     const splitField = field.split(".");
@@ -594,7 +595,7 @@ export class TsDataSource {
   public async getFieldMetaData({
     objectType,
     field,
-  }: IGetFieldMetadata): Promise<any> {
+  }: IGetFieldMetadata): Promise<IFieldMetadata | undefined> {
     return this.getFieldRelationshipValue(
       field,
       objectType
