@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import "@testing-library/jest-dom";
 import { expect, test, vitest, describe } from "vitest";
-import { TsDataSource, getFieldByName, getFieldRelationshipValue } from "../../tol-ui/src";
+import { TsDataSource, getFieldByName } from "../../tol-ui/src";
 
 
 const speciesMockData = {
@@ -884,40 +884,40 @@ describe("Testing temp getFieldByName function", async () => {
   });
 })
 
-describe("Testing getFieldRelationshipValue", async () => {
-  test('Returns correct value from a to many relationship field', () => {
-    const mockAttValue = getFieldRelationshipValue(
-      attributeMetadataMockData,
-      relationshipConfigMockData,
-      "benchling_specimens.benchling_samples.id",
-      "species"
-    )
+describe("Testing getFieldRelationshipValue", () => {
+  const mockClientInstance = mockClient();
+  const mockDataSource = new TsDataSource({
+    baseUrl: "test",
+    client: () => mockClientInstance,
+  });
+
+  test('Returns correct value from a to many relationship field', async () => {
+    const mockAttValue = await mockDataSource.getFieldMetaData({
+      objectType: 'species',
+      field: 'benchling_specimens.benchling_samples.id'
+    })
     expect(mockAttValue).toBeDefined();
     expect(mockAttValue.cardinality).toBe(10);
     expect(mockAttValue.python_type).toBe("int");
     expect(mockAttValue.description).toBe('This is a sample id');
   })
 
-  test('Returns correct value from a to one relationship field', () => {
-    const mockAttValue = getFieldRelationshipValue(
-      attributeMetadataMockData,
-      relationshipConfigMockData,
-      "benchling_specimen.benchling_species.id",
-      "sample"
-    )
+  test('Returns correct value from a to one relationship field', async () => {
+    const mockAttValue = await mockDataSource.getFieldMetaData({
+      objectType: 'sample',
+      field: 'benchling_specimen.benchling_species.id'
+    })
     expect(mockAttValue).toBeDefined();
     expect(mockAttValue.cardinality).toBe(10);
     expect(mockAttValue.python_type).toBe("int");
     expect(mockAttValue.description).toBe('This is a species id');
   })
 
-  test('Returns undefined for non-existent relationship field', () => {
-    const mockAttValue = getFieldRelationshipValue(
-      attributeMetadataMockData,
-      relationshipConfigMockData,
-      "benchling_specimen.non_existent_field",
-      "sample"
-    )
+  test('Returns undefined for non-existent relationship field', async () => {
+    const mockAttValue = await mockDataSource.getFieldMetaData({
+      objectType: 'sample',
+      field: 'benchling_specimen.non_existent_field'
+    })
     expect(mockAttValue).toBeUndefined();
   })
 })
