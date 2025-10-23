@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import {
   Button,
-  useEffectUpdate,
   IRemoteTarget,
   IZone,
   defineZone,
@@ -17,6 +16,8 @@ import {
   Icon,
   getAttributeDetail,
   generateFilter,
+  PButton,
+  buttons,
 } from "..";
 
 
@@ -24,8 +25,8 @@ interface Props extends IRemoteTarget {
   filters?: IFilter;
   disabledFilterValues?: any;
   filterPassThrough?: boolean;
-  onSaveText?: string;
   onSave: (filters?: IFilter, passThrough?: boolean) => void;
+  saveButtonConfig?: PButton;
 }
 
 export function RemoteFilters(props: Props) {
@@ -36,7 +37,7 @@ export function RemoteFilters(props: Props) {
     disabledFilterValues,
     filterPassThrough,
     onSave,
-    onSaveText
+    saveButtonConfig = {},
   } = props;
 
   // zone component id pointer
@@ -46,7 +47,6 @@ export function RemoteFilters(props: Props) {
   const [filterKeys, setFilterKeys] = useState(
     Object.keys(filters.and_ || {}),
   );
-  const [disabledApplyButton, setDisabledApplyButton] = useState(true);
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
 
@@ -64,10 +64,7 @@ export function RemoteFilters(props: Props) {
     });
   }, []);
 
-  // allow to apply when changes have been made
-  useEffectUpdate(() => {
-    setDisabledApplyButton(false);
-  }, [filterZone, filterPassThrough]);
+  // TODO: allow to apply when changes have been made
 
   const removeFilter = (attribute: string) => {
     // update the filters that are shown
@@ -157,17 +154,15 @@ export function RemoteFilters(props: Props) {
         );
       })}
       <Button
-        disabled={disabledApplyButton}
-        type="success"
         onClick={() =>
           onSave(
             generateFilter(filterZone, filterComponentId),
             filterPassThrough
           )
         }
-        text={onSaveText || "Apply Filters"}
-        icon="floppy-disk"
         testid="apply-filter-button"
+        {...buttons.save}
+        {...saveButtonConfig}
       />
     </div>
   );

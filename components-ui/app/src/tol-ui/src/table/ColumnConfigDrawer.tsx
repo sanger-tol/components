@@ -22,7 +22,7 @@ import {
 } from "..";
 
 
-interface Props extends IRemoteTarget {
+export interface PColumnConfigDrawer extends IRemoteTarget {
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
@@ -31,14 +31,14 @@ interface Props extends IRemoteTarget {
   sticky?: boolean;
   customAttributeSelection?: string[];
   actions?: IDropdownButtonConfig[];
-  actionChoices?: string[]; // just the names of the actions
+  actionChoices?: string[];
   groupBy?: boolean;
   defaultSortByAttribute?: string;
   defaultSortByType?: string;
   onConfigSave: (config: ITableConfigSave) => void;
 }
 
-export function ColumnConfigDrawer(props: Props) {
+export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   const {
     open,
     setOpen,
@@ -71,9 +71,7 @@ export function ColumnConfigDrawer(props: Props) {
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
     setInitialAttributes(fieldMeta?.order?.active ?? []);
-
-    // reset newCellRenderers onClose
-    if (!open) setNewCellRenderers({});
+    setNewCellRenderers({});
   }, [open]);
 
   const onSave = () => {

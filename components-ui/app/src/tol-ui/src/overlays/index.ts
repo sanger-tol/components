@@ -6,3 +6,4 @@ SPDX-License-Identifier: MIT
 
 export * from "./AreYouSureModal";
 export * from "./Drawer";
+export * from "./Modal";

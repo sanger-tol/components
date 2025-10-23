@@ -119,7 +119,7 @@ export function BoardFilters(props: Props) {
         open={open}
         setOpen={setOpen}
       >
-        {boardObjectType !== "zone" ?
+        {boardObjectType !== "zone" &&
           <div className="passThrough-toggle">
             <Toggle
               key="recommended-tick-filter"
@@ -139,7 +139,6 @@ export function BoardFilters(props: Props) {
             />
             <hr style={{ marginTop: 24 }} />
           </div>
-          : null
         }
         <RemoteFilters
           {...props}

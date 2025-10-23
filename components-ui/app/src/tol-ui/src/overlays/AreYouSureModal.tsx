@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { DiscardButton, Modal, SaveButton, XButton } from "..";
+import { Button, buttons, Modal } from "..";
 
 
 export interface PAreYouSureModalProps {
@@ -34,22 +34,24 @@ export function AreYouSureModal(props: PAreYouSureModalProps) {
       <p>
         You have an unsaved configuration. Are you sure you want to close without saving?
       </p>
-      <SaveButton
+      <Button
+        {...buttons.save}
         position="right"
         onClick={() => {
           setOpen(false);
           onSave();
         }}
       />
-      <DiscardButton
+      <Button
+        {...buttons.discard}
         position="right"
         onClick={() => {
           setOpen(false);
           onDiscard();
         }}
       />
-      <XButton
-        tooltip="Cancel"
+      <Button
+        {...buttons.cancel}
         position="right"
         onClick={() => {
           setOpen(false);

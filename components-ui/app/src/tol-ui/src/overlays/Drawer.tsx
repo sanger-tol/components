@@ -8,11 +8,9 @@ import { Drawer as RSDrawer } from "rsuite";
 import {
   AreYouSureModal,
   Button,
-  DiscardButton,
+  buttons,
   PButton,
-  SaveButton,
   TDrawerPlacement,
-  XButton
 } from "..";
 import { ReactNode, useState } from "react";
 
@@ -76,7 +74,8 @@ export function Drawer(props: PDrawer) {
           <h5 className="tol-drawer-title">
             {title}
           </h5>
-          <XButton
+          <Button
+            {...buttons.close}
             position="right"
             onClick={onClose}
           />
@@ -84,14 +83,16 @@ export function Drawer(props: PDrawer) {
         <Body>{children}</Body>
         <Footer>
           {onSave &&
-            <SaveButton
+            <Button
+              {...buttons.save}
               position="right"
               disabled={!hasPendingChanges}
               onClick={onSave}
             />
           }
           {onDiscard &&
-            <DiscardButton
+            <Button
+              {...buttons.discard}
               position="right"
               disabled={!hasPendingChanges}
               onClick={onDiscard}
