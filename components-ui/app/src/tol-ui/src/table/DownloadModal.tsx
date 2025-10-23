@@ -121,7 +121,7 @@ tol data \
 --operation=list \
 --type=${objectType} \
 --filter='${JSON.stringify(filter) || '{"and":{}}'}' \
---fields=${stringifyRequestedFields} \
+--fields=${stringifyRequestedFields(requestedFields)} \
 --output=tsv 
   `;
 
@@ -192,6 +192,22 @@ tol data \
       icon="minus"
       position="right"
     />
+  );
+
+  const instructions = (
+    <>
+      <p>
+        To use this code snippet you'll need to have the ToL Python SDK installed in your
+        Python environment:
+      </p>
+      <div className="tol-code-block">
+        <CodeBlock
+          text="pip install tol-sdk"
+          language="bash"
+          showLineNumbers={false}
+        />
+      </div>
+    </>
   );
 
   return (
@@ -273,6 +289,8 @@ tol data \
               icon="copy"
               text="Copy to Clipboard"
             />
+            <br />
+            {instructions}
           </Tabs.Tab>
           <Tabs.Tab eventKey="3" title="CLI">
             <div className="tol-code-block">
@@ -288,6 +306,8 @@ tol data \
               icon="copy"
               text="Copy to Clipboard"
             />
+            <br/>
+            {instructions}
           </Tabs.Tab>
         </Tabs>
       </Modal>
