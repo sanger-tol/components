@@ -564,45 +564,41 @@ export class TsDataSource {
     }
   }
 
+  private async getFieldRelationshipValue(
+    field: string,
+    objectType: string
+  ): Promise<any> {
+    const attributes = await this.attributeMetadata();
+    const relationships = await this.relationshipConfig();
+    const splitField = field.split(".");
+    if (splitField.length > 1) {
+      // Checks if the object type exists in the relationships of previous "jump"
+      const relObj = relationships[objectType];
+      const one = relObj?.one ?? {};
+      const many = relObj?.many ?? {};
+      const combinedRels = { ...one, ...many };
+
+      // If relationship exists, get the related object type and continue down the field path
+      if (splitField[0] in combinedRels) {
+        const relatedObjectType = combinedRels[splitField[0]];
+        const remainingField = splitField.slice(1).join(".");
+        return this.getFieldRelationshipValue(remainingField, relatedObjectType);
+      }
+    } else if (splitField.length === 1) {
+      if (field in attributes[objectType]) {
+        return attributes[objectType][field];
+      }
+    }
+  }
+
   public async getFieldMetaData({
     objectType,
     field,
   }: IGetFieldMetadata): Promise<any> {
-    const attributes = await this.attributeMetadata();
-    const relationships = await this.relationshipConfig();
-    return getFieldRelationshipValue(
-      attributes,
-      relationships,
+    return this.getFieldRelationshipValue(
       field,
       objectType
     );
-  }
-}
-
-export function getFieldRelationshipValue(
-  attributes: object,
-  relationships: object,
-  field: string,
-  objectType: string
-): any {
-  const splitField = field.split(".");
-  if (splitField.length > 1) {
-    // Checks if the object type exists in the relationships of previous "jump"
-    const relObj = relationships[objectType];
-    const one = relObj?.one ?? {};
-    const many = relObj?.many ?? {};
-    const combinedRels = { ...one, ...many }; 
-
-    // If relationship exists, get the related object type and continue down the field path
-    if (splitField[0] in combinedRels) {
-      const relatedObjectType = combinedRels[splitField[0]];
-      const remainingField = splitField.slice(1).join(".");
-      return getFieldRelationshipValue(attributes, relationships, remainingField, relatedObjectType);
-    }
-  } else if (splitField.length === 1) {
-    if (field in attributes[objectType]) {
-      return attributes[objectType][field];
-    }
   }
 }
 
