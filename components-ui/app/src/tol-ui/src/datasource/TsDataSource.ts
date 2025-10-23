@@ -577,11 +577,11 @@ export class TsDataSource {
       const objectRelationships = relationships[objectType];
       const one = objectRelationships?.one ?? {};
       const many = objectRelationships?.many ?? {};
-      const combinedRels = { ...one, ...many };
+      const combinedRelationships = { ...one, ...many };
 
       // If relationship exists, get the related object type and continue down the field path
-      if (splitField[0] in combinedRels) {
-        const relatedObjectType = combinedRels[splitField[0]];
+      if (splitField[0] in combinedRelationships) {
+        const relatedObjectType = combinedRelationships[splitField[0]];
         const remainingField = splitField.slice(1).join(".");
         return this.getFieldRelationshipValue(remainingField, relatedObjectType);
       }
