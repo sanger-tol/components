@@ -20,13 +20,13 @@ import {
 } from ".."
 
 
-interface Props extends IBoardTargetAndZone {
+export interface PBoardFilters extends IBoardTargetAndZone {
   id: string;
   open: boolean;
-  setOpen: any;
+  setOpen: (open: boolean) => void;
 }
 
-export function BoardFilters(props: Props) {
+export function BoardFilters(props: PBoardFilters) {
   const {
     id,
     objectType,
@@ -46,28 +46,14 @@ export function BoardFilters(props: Props) {
         : zone.components[id].data.defaultFilter,
     ),
   );
-  const [passThrough, setPassThrough] = useState<boolean | undefined>(
-    boardObjectType === "zone"
-      ? true
-      : deepCopy(zone.components[id].data).filterPassThrough,
-  );
+  const [passThrough, setPassThrough] = useState<boolean>(false);
+  const [filterHasPendingChanges, setFilterHasPendingChanges] = useState(false);
 
-  const removeCurrentEntityFiltersForDisabledFilters = (
-    source: object = {},
-    remove?: object,
-  ) => {
-    const keysToRemove = new Set(Object.keys(remove || {}));
-    return Object.fromEntries(
-      Object.entries(source).filter(([key]) => !keysToRemove.has(key)),
-    );
-  };
-
-  // getting the disabled filter values (currently all other entity filters)
-  const [disabledFilterValues, setDisabledFilterValues] = useState(
-    removeCurrentEntityFiltersForDisabledFilters(
-      generateFilter(zone, undefined, true)?.and_!,
-      filters?.and_!,
-    ),
+  const hasPendingChanges = (
+    filterHasPendingChanges ||
+    passThrough !== (boardObjectType === "zone"
+      ? false
+      : zone.components[id].data.filterPassThrough)
   );
 
   useEffect(() => {
@@ -91,6 +77,24 @@ export function BoardFilters(props: Props) {
     );
   }, [open]);
 
+  const removeCurrentEntityFiltersForDisabledFilters = (
+    source: object = {},
+    remove?: object,
+  ) => {
+    const keysToRemove = new Set(Object.keys(remove || {}));
+    return Object.fromEntries(
+      Object.entries(source).filter(([key]) => !keysToRemove.has(key)),
+    );
+  };
+
+  // getting the disabled filter values (currently all other entity filters)
+  const [disabledFilterValues, setDisabledFilterValues] = useState(
+    removeCurrentEntityFiltersForDisabledFilters(
+      generateFilter(zone, undefined, true)?.and_!,
+      filters?.and_!,
+    ),
+  );
+
   const onSave = (filter: IFilter, filterPassThrough: boolean) => {
     let upserter = upsertComponent;
     let attributes = {
@@ -108,7 +112,6 @@ export function BoardFilters(props: Props) {
     }
     resetFiltersBelow({ id: id, zone: zone });
     setZone({ ...zone });
-    setOpen(false);
     upserter(boardDataSource, id, attributes);
   };
 
@@ -118,9 +121,11 @@ export function BoardFilters(props: Props) {
         title={`Filtering on a ${objectType} ${boardObjectType}`}
         open={open}
         setOpen={setOpen}
+        onSave={() => onSave(filters, passThrough)}
+        hasPendingChanges={hasPendingChanges}
       >
         {boardObjectType !== "zone" &&
-          <div className="passThrough-toggle">
+          <div className="pass-through-toggle">
             <Toggle
               key="recommended-tick-filter"
               onClick={() => {
@@ -143,9 +148,10 @@ export function BoardFilters(props: Props) {
         <RemoteFilters
           {...props}
           filters={filters}
-          filterPassThrough={passThrough}
-          onSave={onSave}
+          setFilters={setFilters}
           disabledFilterValues={disabledFilterValues}
+          open={open}
+          setHasPendingChanges={setFilterHasPendingChanges}
         />
       </Drawer>
     </div>

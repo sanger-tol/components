@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
-  Button,
   IRemoteTarget,
   IZone,
   defineZone,
@@ -16,28 +15,27 @@ import {
   Icon,
   getAttributeDetail,
   generateFilter,
-  PButton,
-  buttons,
+  TFilterOrUndefined,
 } from "..";
 
 
-interface Props extends IRemoteTarget {
+export interface PRemoteFilters extends IRemoteTarget {
   filters?: IFilter;
+  setFilters: (filters: TFilterOrUndefined) => void;
   disabledFilterValues?: any;
-  filterPassThrough?: boolean;
-  onSave: (filters?: IFilter, passThrough?: boolean) => void;
-  saveButtonConfig?: PButton;
+  open?: boolean;
+  setHasPendingChanges?: (hasPendingChanges: boolean) => void;
 }
 
-export function RemoteFilters(props: Props) {
+export function RemoteFilters(props: PRemoteFilters) {
   const {
     objectType,
     dataSource,
     filters = { and_: {} },
+    setFilters,
     disabledFilterValues,
-    filterPassThrough,
-    onSave,
-    saveButtonConfig = {},
+    open,
+    setHasPendingChanges,
   } = props;
 
   // zone component id pointer
@@ -64,7 +62,18 @@ export function RemoteFilters(props: Props) {
     });
   }, []);
 
-  // TODO: allow to apply when changes have been made
+  useEffect(() => {
+    if (open) {
+      const newFilter = generateFilter(filterZone, filterComponentId);
+      setFilters(newFilter);
+      if (setHasPendingChanges) {
+        setHasPendingChanges(
+          JSON.stringify(filters) !== JSON.stringify(newFilter)
+        );
+        console.log(JSON.stringify(filters), JSON.stringify(newFilter));
+      }
+    }
+  }, [filterZone]);
 
   const removeFilter = (attribute: string) => {
     // update the filters that are shown
@@ -123,7 +132,7 @@ export function RemoteFilters(props: Props) {
           entityMeta?.flatAttributes?.[objectType]?.[attribute];
         const type =
           attributeMeta?.cardinality < 50 &&
-          attributeMeta?.python_type === "str"
+            attributeMeta?.python_type === "str"
             ? "multi"
             : attributeMeta?.python_type;
 
@@ -153,17 +162,6 @@ export function RemoteFilters(props: Props) {
           </div>
         );
       })}
-      <Button
-        onClick={() =>
-          onSave(
-            generateFilter(filterZone, filterComponentId),
-            filterPassThrough
-          )
-        }
-        testid="apply-filter-button"
-        {...buttons.save}
-        {...saveButtonConfig}
-      />
     </div>
   );
 }
