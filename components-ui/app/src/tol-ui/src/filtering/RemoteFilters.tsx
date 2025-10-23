@@ -16,6 +16,8 @@ import {
   getAttributeDetail,
   generateFilter,
   TFilterOrUndefined,
+  deepCopy,
+  isFiltersEqual,
 } from "..";
 
 
@@ -37,6 +39,8 @@ export function RemoteFilters(props: PRemoteFilters) {
     open,
     setHasPendingChanges,
   } = props;
+
+  const [initialFilters, setInitialFilters] = useState<IFilter>(deepCopy(filters));
 
   // zone component id pointer
   const filterComponentId = "remote-filters-component";
@@ -68,12 +72,15 @@ export function RemoteFilters(props: PRemoteFilters) {
       setFilters(newFilter);
       if (setHasPendingChanges) {
         setHasPendingChanges(
-          JSON.stringify(filters) !== JSON.stringify(newFilter)
+          !isFiltersEqual(initialFilters, newFilter!)
         );
-        console.log(JSON.stringify(filters), JSON.stringify(newFilter));
       }
     }
   }, [filterZone]);
+
+  useEffect(() => {
+    setInitialFilters(deepCopy(filters));
+  }, [open]);
 
   const removeFilter = (attribute: string) => {
     // update the filters that are shown

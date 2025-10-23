@@ -398,3 +398,30 @@ export function operatorToSymbol(operator: string, values?: string[]) {
       return "contains";
   }
 };
+
+export function isFiltersEqual(filter1: object, filter2: object): boolean {
+  try {
+    return deepEqual(filter1, filter2);
+  } catch {
+    return false;
+  }
+}
+
+function deepEqual(a: any, b: any): boolean {
+  if (a === b) return true;
+
+  if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null)
+    return false;
+
+  const keysA = Object.keys(a);
+  const keysB = Object.keys(b);
+
+  if (keysA.length !== keysB.length) return false;
+
+  for (const key of keysA) {
+    if (!keysB.includes(key)) return false;
+    if (!deepEqual(a[key], b[key])) return false;
+  }
+
+  return true;
+}
