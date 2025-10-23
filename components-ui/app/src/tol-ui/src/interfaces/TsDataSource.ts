@@ -92,6 +92,11 @@ export interface ICustom {
   options?: any;
 }
 
+export interface IGetAttributeDescriptor {
+  objectType: string;
+  field: string;
+}
+
 export interface IDataObject {
   objectType: string;
   id: string;
@@ -107,6 +112,16 @@ export interface IDataObject {
 export interface ISourceDataObject extends IDataObject {
   __sourceType: string;
   __sourceId: string;
+}
+
+export interface IAttributeDescriptor {
+  authoritative: boolean;
+  available_on_relationships: boolean;
+  cardinality?: number;
+  description?: string;
+  display_name?: string;
+  python_type?: string;
+  source?: string;
 }
 
 export type TDataObjectOrNull = IDataObject | null;

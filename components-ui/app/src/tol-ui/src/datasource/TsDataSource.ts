@@ -31,6 +31,8 @@ import {
   TCursorObjectOrNull,
   normaliseCaps,
   IGetList,
+  IGetAttributeDescriptor,
+  IAttributeDescriptor
 } from "..";
 
 
@@ -561,6 +563,43 @@ export class TsDataSource {
       default:
         throw new Error(`Unsupported method: ${method}`);
     }
+  }
+
+  private async getFieldRelationshipValue(
+    field: string,
+    objectType: string
+  ): Promise<IAttributeDescriptor | undefined> {
+    const attributes = await this.attributeMetadata();
+    const relationships = await this.relationshipConfig();
+    const splitField = field.split(".");
+    if (splitField.length > 1) {
+      // Checks if the object type exists in the relationships of previous "jump"
+      const objectRelationships = relationships[objectType];
+      const one = objectRelationships?.one ?? {};
+      const many = objectRelationships?.many ?? {};
+      const combinedRelationships = { ...one, ...many };
+
+      // If relationship exists, get the related object type and continue down the field path
+      if (splitField[0] in combinedRelationships) {
+        const relatedObjectType = combinedRelationships[splitField[0]];
+        const remainingField = splitField.slice(1).join(".");
+        return this.getFieldRelationshipValue(remainingField, relatedObjectType);
+      }
+    } else if (splitField.length === 1) {
+      if (field in attributes[objectType]) {
+        return attributes[objectType][field];
+      }
+    }
+  }
+
+  public async getFieldMetaData({
+    objectType,
+    field,
+  }: IGetAttributeDescriptor): Promise<IAttributeDescriptor | undefined> {
+    return this.getFieldRelationshipValue(
+      field,
+      objectType
+    );
   }
 }
 
