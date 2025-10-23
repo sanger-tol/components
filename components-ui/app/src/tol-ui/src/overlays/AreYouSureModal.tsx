@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, Modal } from "..";
+import { DiscardButton, Modal, SaveButton, XButton } from "..";
 
 
 export interface PAreYouSureModalProps {
@@ -12,55 +12,47 @@ export interface PAreYouSureModalProps {
   setOpen: (open: boolean) => void;
   onSave?: () => void;
   onDiscard?: () => void;
-  onCancel?: () => void;
 }
 
 export function AreYouSureModal(props: PAreYouSureModalProps) {
   const {
     open,
     setOpen,
-    onSave = () => { },
-    onDiscard = () => { },
-    onCancel = () => { },
+    onSave = () => {},
+    onDiscard = () => {},
   } = props;
 
   return (
     <Modal
-      pendingChanges
+      hasPendingChanges
       open={open}
       setOpen={setOpen}
-      size="sm"
+      size="xs"
       closeButton={false}
     >
       <h5>Unsaved Changes</h5>
       <p>
         You have an unsaved configuration. Are you sure you want to close without saving?
       </p>
-      <Button
-        text="Save & Close"
-        type="success"
+      <SaveButton
         position="right"
         onClick={() => {
           setOpen(false);
           onSave();
         }}
       />
-      <Button
-        text="Cancel"
-        type="error"
-        position="right"
-        onClick={() => {
-          setOpen(false);
-          onCancel();
-        }}
-      />
-      <Button
-        text="Discard Changes & Close"
-        type="grey"
+      <DiscardButton
         position="right"
         onClick={() => {
           setOpen(false);
           onDiscard();
+        }}
+      />
+      <XButton
+        tooltip="Cancel"
+        position="right"
+        onClick={() => {
+          setOpen(false);
         }}
       />
     </Modal>

@@ -19,7 +19,6 @@ import {
   INewCellRenderersToSave,
   ICellRenderer,
   addNewCellRenderersToFieldMeta,
-  AreYouSureModal,
 } from "..";
 
 
@@ -55,7 +54,6 @@ export function ColumnConfigDrawer(props: Props) {
 
   const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
   const [initialAttributes, setInitialAttributes] = useState<string[]>(fieldMeta.order.active);
-  const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
   const initialActions = props.actions?.map((btn) => btn.name as string) ?? [];
   const [actions, setActions] = useState<string[]>(initialActions);
   const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
@@ -90,8 +88,6 @@ export function ColumnConfigDrawer(props: Props) {
       });
       setInitialAttributes(attributes);
     }
-    setOpen(false);
-    setOpenSaveModal(false);
   };
 
   const onCellRendererModalSave = (renderer: ICellRenderer, attributeId: string) => {
@@ -100,16 +96,6 @@ export function ColumnConfigDrawer(props: Props) {
 
   const onDiscard = () => {
     setAttributes(initialAttributes);
-    setOpenSaveModal(false);
-    setOpen(false);
-  };
-
-  const onClose = () => {
-    if (hasPendingChanges) {
-      setOpenSaveModal(true);
-    } else {
-      setOpen(false);
-    }
   };
 
   const ActionDropdown = (
@@ -209,24 +195,15 @@ export function ColumnConfigDrawer(props: Props) {
   );
 
   return (
-    <>
-      <AreYouSureModal
-        open={openSaveModal}
-        setOpen={setOpenSaveModal}
-        onSave={onSave}
-        onDiscard={onDiscard}
-      />
-      <Drawer
-        title={title}
-        open={open}
-        setOpen={setOpen}
-        onClose={onClose}
-        onSave={onSave}
-        onDiscard={onDiscard}
-        pendingChanges={hasPendingChanges}
-      >
-        {AttributeSelecting}
-      </Drawer>
-    </>
+    <Drawer
+      title={title}
+      open={open}
+      setOpen={setOpen}
+      onSave={onSave}
+      onDiscard={onDiscard}
+      hasPendingChanges={hasPendingChanges}
+    >
+      {AttributeSelecting}
+    </Drawer>
   );
 }

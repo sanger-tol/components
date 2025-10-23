@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-.rs-drawer {
+.tol-drawer {
   padding: 10px;
   -webkit-box-shadow: unset;
   box-shadow: unset;
@@ -14,7 +14,13 @@
     box-shadow: var(--rs-drawer-shadow);
 
     .rs-drawer-header {
+      display: block;
       padding: 16px;
+
+      .tol-drawer-title {
+        margin: 4px;
+        position: absolute;
+      }
     }
 
     .rs-drawer-body {

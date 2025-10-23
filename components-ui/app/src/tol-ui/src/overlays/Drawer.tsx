@@ -5,8 +5,16 @@ SPDX-License-Identifier: MIT
 */
 
 import { Drawer as RSDrawer } from "rsuite";
-import { Button, PButton, TDrawerPlacement } from "..";
-import { ReactNode } from "react";
+import {
+  AreYouSureModal,
+  Button,
+  DiscardButton,
+  PButton,
+  SaveButton,
+  TDrawerPlacement,
+  XButton
+} from "..";
+import { ReactNode, useState } from "react";
 
 
 export interface PDrawer {
@@ -18,7 +26,7 @@ export interface PDrawer {
   onSave?: () => void;
   onDiscard?: () => void;
   onClose?: () => void;
-  pendingChanges?: boolean;
+  hasPendingChanges?: boolean;
   actionButtons?: PButton[];
 }
 
@@ -29,57 +37,80 @@ export function Drawer(props: PDrawer) {
     setOpen,
     placement = "right",
     title,
-    onSave,
-    onDiscard,
-    onClose = () => setOpen(false),
-    pendingChanges = false,
+    hasPendingChanges = false,
     actionButtons = [],
   } = props;
   const { Header, Body, Footer } = RSDrawer;
+  const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
+
+  const onSave = () => {
+    setOpenSaveModal(false);
+    setOpen(false);
+    props.onSave && props.onSave();
+  }
+
+  const onDiscard = () => {
+    setOpenSaveModal(false);
+    setOpen(false);
+    props.onDiscard && props.onDiscard();
+  };
+
+  const onClose = () => {
+    if (hasPendingChanges) {
+      setOpenSaveModal(true);
+    } else {
+      setOpen(false);
+    }
+    props.onClose && props.onClose();
+  };
 
   return (
-    <RSDrawer
-      backdrop={pendingChanges ? "static" : true}
-      placement={placement}
-      open={open}
-      onClose={onClose}
-    >
-      <Header>
-        <h5 style={{ margin: 4 }}>{title}</h5>
-        <Button
-          onClick={onClose}
-          className="close-button"
-          type="error"
-          icon="xmark"
-        />
-      </Header>
-      <Body>{children}</Body>
-      <Footer>
-        {onSave &&
-          <Button
-            text="Save & Close"
-            type="success"
+    <>
+      <RSDrawer
+        className="tol-drawer"
+        placement={placement}
+        open={open}
+        onClose={onClose}
+      >
+        <Header>
+          <h5 className="tol-drawer-title">
+            {title}
+          </h5>
+          <XButton
             position="right"
-            disabled={!pendingChanges}
-            onClick={onSave}
+            onClick={onClose}
           />
-        }
-        {onDiscard &&
-          <Button
-            text="Discard & Close"
-            type="error"
-            position="right"
-            disabled={!pendingChanges}
-            onClick={onDiscard}
-          />
-        }
-        {actionButtons && actionButtons.map((btn, index) => (
-          <Button
-            key={index}
-            {...btn}
-          />
-        ))}
-      </Footer>
-    </RSDrawer>
+        </Header>
+        <Body>{children}</Body>
+        <Footer>
+          {onSave &&
+            <SaveButton
+              position="right"
+              disabled={!hasPendingChanges}
+              onClick={onSave}
+            />
+          }
+          {onDiscard &&
+            <DiscardButton
+              position="right"
+              disabled={!hasPendingChanges}
+              onClick={onDiscard}
+            />
+          }
+          {actionButtons && actionButtons.map((btn, index) => (
+            <Button
+              key={index}
+              {...btn}
+            />
+          ))}
+        </Footer>
+      </RSDrawer>
+      <AreYouSureModal
+        open={openSaveModal}
+        setOpen={setOpenSaveModal}
+        onSave={onSave}
+        onDiscard={onDiscard}
+      />
+    </>
   );
 }

@@ -26,6 +26,7 @@ library.add(fas, fab);
 
 export * from "./attributes";
 export * from "./boards";
+export * from "./buttons";
 export * from "./charts";
 export * from "./config";
 export * from "./constants";

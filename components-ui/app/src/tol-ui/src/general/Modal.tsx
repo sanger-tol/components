@@ -17,7 +17,7 @@ export interface PModal {
   closeButton?: boolean;
   actionButton?: JSX.Element;
   className?: string;
-  pendingChanges?: boolean;
+  hasPendingChanges?: boolean;
   onClose?: () => void;
   onEnter?: () => void;
   onExited?: () => void;
@@ -34,7 +34,7 @@ export function Modal(props: PModal) {
     overflow = true,
     actionButton,
     className,
-    pendingChanges = false,
+    hasPendingChanges = false,
     onClose, 
     onEnter,
     onExited
@@ -56,7 +56,7 @@ export function Modal(props: PModal) {
         className={className}
         onEnter={onEnter}
         onExited={onExited}
-        backdrop={pendingChanges ? "static" : true}
+        backdrop={hasPendingChanges ? "static" : true}
       >
         <RSModal.Header closeButton={false}>{header}</RSModal.Header>
         <RSModal.Body>{children}</RSModal.Body>
