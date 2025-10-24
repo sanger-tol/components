@@ -26,7 +26,3 @@ export interface IBoardCellRenderer {
 export interface IBoardCellRenderers {
   [rendererType: string]: IBoardCellRenderer
 };
-
-export type INewCellRenderersToSave = {
-  [attributeId: string]: ICellRenderer
-};

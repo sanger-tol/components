@@ -17,7 +17,7 @@ import {
   generateFilter,
   TFilterOrUndefined,
   deepCopy,
-  isFiltersEqual,
+  isObjectEqual,
 } from "..";
 
 
@@ -72,7 +72,7 @@ export function RemoteFilters(props: PRemoteFilters) {
       setFilters(newFilter);
       if (setHasPendingChanges) {
         setHasPendingChanges(
-          !isFiltersEqual(initialFilters, newFilter!)
+          !isObjectEqual(initialFilters, newFilter!)
         );
       }
     }

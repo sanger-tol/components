@@ -33,7 +33,7 @@ export const cellRendererParams: IBoardCellRenderers = {
         type: "string",
         rename: "Caption",
         description: "The caption or list of captions for the image(s)",
-        placeholder: "This is an image of a cat",
+        placeholder: "This is an image of a forest",
       },
     },
     allowedDataTypes: ["str"]
@@ -58,7 +58,7 @@ export const cellRendererParams: IBoardCellRenderers = {
       },
     }
   },
-  list: {},
+  collection: {},
   longText: {
     rename: "Long Text",
     allowedDataTypes: ["str", "float", "int"]

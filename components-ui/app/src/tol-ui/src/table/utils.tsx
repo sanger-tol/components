@@ -208,7 +208,7 @@ export function optimiseFieldMetaForSave(fieldMeta?: FieldMeta) {
 }
 
 function getTableConfigKey(id: string) {
-  return `${id}-9-25`;
+  return `${id}-10-25`;
 }
 
 export function setTableConfigLocalStorage(
@@ -346,24 +346,4 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
 
   const copyList = emptyStringsRemoval.join("\n");
   copyToClipboard(copyList);
-}
-
-export function addNewCellRenderersToFieldMeta(cellRenderers: INewCellRenderersToSave, fieldMeta: FieldMeta) {
-  for (const [attributeId, renderer] of Object.entries(cellRenderers)) {
-    if (renderer) {
-      fieldMeta.data![attributeId] = fieldMeta.data![attributeId] || {};
-      fieldMeta.data![attributeId].cellRenderer = renderer;
-      fieldMeta.dataWithDefaults![attributeId] = fieldMeta.dataWithDefaults![attributeId] || {};
-      fieldMeta.dataWithDefaults![attributeId].cellRenderer = renderer;
-    } else {
-      delete fieldMeta.data![attributeId].cellRenderer;
-      if (isEmptyObject(fieldMeta.data![attributeId])) {
-        delete fieldMeta.data![attributeId];
-      }
-      delete fieldMeta.dataWithDefaults![attributeId].cellRenderer;
-      if (isEmptyObject(fieldMeta.dataWithDefaults![attributeId])) {
-        delete fieldMeta.dataWithDefaults![attributeId];
-      }
-    }
-  }
 }

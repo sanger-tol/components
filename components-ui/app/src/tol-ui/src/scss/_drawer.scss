@@ -153,10 +153,16 @@
   }
 }
 
-.tol-palette-icon:hover {
-  transition: 300ms;
-  animation-duration: 1s;
-  animation-direction: alternate;
-  animation-name: tol-palette-hue-loop;
-  animation-iteration-count: infinite;
+.tol-palette-icon {
+  &.active {
+    color: var(--tol-primary);
+  }
+
+  &:hover {
+    transition: 300ms;
+    animation-duration: 1s;
+    animation-direction: alternate;
+    animation-name: tol-palette-hue-loop;
+    animation-iteration-count: infinite;
+  }
 }

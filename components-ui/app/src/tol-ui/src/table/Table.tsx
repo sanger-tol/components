@@ -29,7 +29,8 @@ import {
   ITableConfigSave,
   RowCounter,
   RowExpander,
-  AttributeTitle
+  AttributeTitle,
+  deepCopy
 } from "..";
 import { Sort } from "./Sort";
 import { FieldDropdown } from "./FieldDropdown";

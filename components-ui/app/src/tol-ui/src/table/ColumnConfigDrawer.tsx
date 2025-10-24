@@ -16,9 +16,8 @@ import {
   MultipleSelect,
   ITableConfigSave,
   CellRendererConfigurer,
-  INewCellRenderersToSave,
-  ICellRenderer,
-  addNewCellRenderersToFieldMeta,
+  deepCopy,
+  isObjectEqual,
 } from "..";
 
 
@@ -52,48 +51,39 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
     actionChoices,
   } = props;
 
+  const [newFieldMeta, setNewFieldMeta] = useState<FieldMeta>();
   const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
-  const [initialAttributes, setInitialAttributes] = useState<string[]>(fieldMeta.order.active);
   const initialActions = props.actions?.map((btn) => btn.name as string) ?? [];
   const [actions, setActions] = useState<string[]>(initialActions);
   const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(defaultSortByAttribute);
   const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
-  const [newCellRenderers, setNewCellRenderers] = useState<INewCellRenderersToSave>({});
 
   const hasPendingChanges = (
-    JSON.stringify(initialAttributes) !== JSON.stringify(attributes) ||
+    !isObjectEqual(newFieldMeta || {}, deepCopy(fieldMeta)) ||
     JSON.stringify(initialActions) !== JSON.stringify(actions) ||
-    Object.keys(newCellRenderers).length !== 0 ||
     defaultSortByAttribute !== sortByAttribute ||
     defaultSortByType !== sortByType
   );
 
   useEffect(() => {
     setAttributes(fieldMeta?.order?.active ?? []);
-    setInitialAttributes(fieldMeta?.order?.active ?? []);
-    setNewCellRenderers({});
+    setNewFieldMeta(deepCopy(fieldMeta));
   }, [open]);
 
   const onSave = () => {
     if (hasPendingChanges) {
-      fieldMeta.order.active = attributes;
-      addNewCellRenderersToFieldMeta(newCellRenderers, fieldMeta);
+      newFieldMeta!.order.active = attributes;
       onConfigSave({
-        fieldMeta: fieldMeta,
+        fieldMeta: newFieldMeta,
         actions: actions.length !== 0 ? actions : undefined,
         defaultSortByAttribute: sortByAttribute,
         defaultSortByType: sortByType,
       });
-      setInitialAttributes(attributes);
     }
   };
 
-  const onCellRendererModalSave = (renderer: ICellRenderer, attributeId: string) => {
-    setNewCellRenderers({ ...newCellRenderers, [attributeId]: renderer });
-  };
-
   const onDiscard = () => {
-    setAttributes(initialAttributes);
+    setNewFieldMeta(deepCopy(fieldMeta));
   };
 
   const ActionDropdown = (
@@ -127,8 +117,8 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
     <CellRendererConfigurer
       {...props}
       attributeId={attributeId}
-      fieldMeta={fieldMeta}
-      onSave={onCellRendererModalSave}
+      fieldMeta={newFieldMeta!}
+      setFieldMeta={setNewFieldMeta}
     />
   );
 

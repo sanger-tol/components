@@ -319,3 +319,11 @@ export function deepEqual(a: any, b: any): boolean {
 
   return true;
 }
+
+export function isObjectEqual(obj1: object, obj2: object): boolean {
+  try {
+    return deepEqual(obj1, obj2);
+  } catch {
+    return false;
+  }
+}

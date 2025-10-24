@@ -399,11 +399,3 @@ export function operatorToSymbol(operator: string, values?: string[]) {
       return "contains";
   }
 };
-
-export function isFiltersEqual(filter1: object, filter2: object): boolean {
-  try {
-    return deepEqual(filter1, filter2);
-  } catch {
-    return false;
-  }
-}

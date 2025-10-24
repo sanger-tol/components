@@ -13,17 +13,23 @@ export const buttons: Record<string, PButton> = {
     tooltip: "Add",
     disabledTooltip: "No changes to add",
   },
-  discard: {
-    type: "error",
-    icon: "trash",
-    tooltip: "Discard Changes",
-    disabledTooltip: "No changes to discard",
-  },
   save: {
     type: "success",
     icon: "save",
     tooltip: "Save Changes",
     disabledTooltip: "No changes to save",
+  },
+  return: {
+    outline: true,
+    type: "warning",
+    icon: "arrow-left",
+    tooltip: "Return",
+  },
+  discard: {
+    type: "error",
+    icon: "trash",
+    tooltip: "Discard Changes",
+    disabledTooltip: "No changes to discard",
   },
   close: {
     outline: true,
