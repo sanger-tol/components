@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   IRemoteTarget,
   Tabs,
@@ -13,6 +13,7 @@ import {
   Button,
   PopUpMessage,
   IconTooltip,
+  stopPropagation,
 } from "..";
 
 export interface PAdvanceSearchTab extends IRemoteTarget {
@@ -25,12 +26,22 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
   const { MenuItem, objectType, dataSource, setAttributes } = props;
   const [searchValue, setSearchValue] = useState<string>("");
   const [attributeAvailable, setAttributeAvailable] = useState<boolean>(false);
+  const [availableRelationships, setAvailableRelationships] = useState<string[] | undefined>(undefined);
 
   const handleOnChange = async (value: string) => {
     setSearchValue(value);
     if (value.slice(-1) === ".") {
-      console.log('There is a relationship!')
-      // Check for other relationships and set a limit of hops?
+      ;
+      await dataSource.getAvailableRelationships(objectType, value.slice(0, -1)).then((data: string[] | undefined) => {
+        if (data) {
+          const updatedOptions = data.map((relationship) => {
+            return value + relationship;
+          })
+          setAvailableRelationships(updatedOptions);
+        } else {
+          setAvailableRelationships(undefined);
+        }
+      });
 
     } else {
       setAttributeAvailable(false);
@@ -70,19 +81,22 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
       <Tabs.Tab eventKey="advanced" title="Advanced">
         <div className="tol-advance-search-tab">
           <div className="tol-advance-search-tab-tooltip">
-            <p style={{paddingRight: '5px'}}>Advance Search</p>
+            <p style={{ paddingRight: '5px' }}>Advance Search</p>
             <IconTooltip
               contents="Add columns using system names, with relationships separated by periods. E.g. 'relationship1.relationship2.attribute_name'"
             />
           </div>
-          <AutoComplete
-            label=""
-            data={[]}
-            value={searchValue}
-            onChange={handleOnChange}
-            loading={false}
-          />
-          {/* Also need to add a pop up that lets them know the field was added */}
+          <div
+            onKeyDown={stopPropagation}
+          >
+            <AutoComplete
+              label=""
+              data={availableRelationships || []}
+              value={searchValue}
+              onChange={handleOnChange}
+              loading={false}
+            />
+          </div>
           <Button
             onClick={handleOnAdd}
             className="tol-advance-search-tab-button"
