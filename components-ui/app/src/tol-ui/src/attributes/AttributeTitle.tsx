@@ -9,11 +9,12 @@ import { PAttributeTooltip, AttributeTooltip, getSourceColour } from "..";
 
 export interface PAttributeTitle extends PAttributeTooltip {
   titleElement?: keyof JSX.IntrinsicElements;
-  classname?: string;
+  className?: string;
+  rename?: string;
 }
 
 export function AttributeTitle(props: PAttributeTitle) {
-  const { field, dataSource, titleElement: TitleElement = 'p', classname } = props;
+  const { field, dataSource, titleElement: TitleElement = 'p', className, rename } = props;
   const [fieldSource, setSource] = useState<string | undefined>(undefined);
   const [fieldDisplayName, setFieldDisplayName] = useState<string | undefined>(undefined);
 
@@ -30,7 +31,7 @@ export function AttributeTitle(props: PAttributeTitle) {
 
   return (
     <div className="tol-attribute-title">
-      <TitleElement className={classname}>
+      <TitleElement className={className}>
         <AttributeTooltip
           {...props}
           element={
@@ -44,7 +45,7 @@ export function AttributeTitle(props: PAttributeTitle) {
             />
           }
         />
-        {fieldDisplayName || field}
+        {rename || fieldDisplayName || field}
       </TitleElement>
     </div>
   );

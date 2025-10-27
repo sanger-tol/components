@@ -178,6 +178,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
         attributes={attributes}
         setAttributes={setAttributes}
         additionalIcons={additionalIcons}
+        fieldMeta={fieldMeta!}
       />
     </>
   );

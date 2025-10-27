@@ -461,8 +461,8 @@ export function Table(props: Props) {
                             <AttributeTitle
                               {...props}
                               field={key}
-                              titleElement="p"
-                              classname="tol-header-text"
+                              className="tol-header-text"
+                              rename={field.rename!}
                             />
                             {filterable && (
                               <span

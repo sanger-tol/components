@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import {
   IBoardCellRenderers,
+  Relationship,
 } from "..";
 
 
@@ -66,10 +67,10 @@ export const cellRendererParams: IBoardCellRenderers = {
   none: {},
   relationship: {
     params: {
-      detailPageIdAttribute: {
+      relationshipId: {
         type: "string",
-        rename: "ID Attribute",
-        description: "The name of the field that holds the ID for the detail page link",
+        rename: "Relationship ID",
+        description: "The ID used in the detail page URL for the related object",
         placeholder: "id",
       },
     }
