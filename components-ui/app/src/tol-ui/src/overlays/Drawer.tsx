@@ -8,7 +8,7 @@ import { Drawer as RSDrawer } from "rsuite";
 import {
   AreYouSureModal,
   Button,
-  buttons,
+  BUTTONS,
   PButton,
   TDrawerPlacement,
 } from "..";
@@ -75,7 +75,7 @@ export function Drawer(props: PDrawer) {
             {title}
           </h5>
           <Button
-            {...buttons.close}
+            {...BUTTONS.CLOSE}
             position="right"
             onClick={onClose}
           />
@@ -84,7 +84,7 @@ export function Drawer(props: PDrawer) {
         <Footer>
           {onSave &&
             <Button
-              {...buttons.save}
+              {...BUTTONS.SAVE}
               position="right"
               disabled={!hasPendingChanges}
               onClick={onSave}
@@ -92,7 +92,7 @@ export function Drawer(props: PDrawer) {
           }
           {onDiscard &&
             <Button
-              {...buttons.discard}
+              {...BUTTONS.DISCARD}
               position="right"
               disabled={!hasPendingChanges}
               onClick={onDiscard}

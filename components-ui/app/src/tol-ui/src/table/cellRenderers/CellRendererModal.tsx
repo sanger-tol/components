@@ -19,7 +19,7 @@ import {
   RemoteFilters,
   IFilter,
   isEmptyObject,
-  buttons,
+  BUTTONS,
   isObjectEqual,
 } from "../..";
 import { CellRendererParam } from "./CellRendererParam";
@@ -130,7 +130,7 @@ export function CellRendererModal(props: PCellRendererModal) {
 
   const SaveCellRendererButton = (
     <Button
-      {...buttons.add}
+      {...BUTTONS.ADD}
       position="right"
       disabled={!rendererHasPendingChanges || requiredParamsCount > filledParamsCount}
       onClick={onAddNewRenderer}
@@ -140,13 +140,13 @@ export function CellRendererModal(props: PCellRendererModal) {
   const ConditionButtons = (
     <>
       <Button
-        {...buttons.add}
+        {...BUTTONS.ADD}
         position="right"
         disabled={!conditionHasPendingChanges}
         onClick={onConditionSave}
       />
       <Button
-        {...buttons.return}
+        {...BUTTONS.RETURN}
         position="left"
         onClick={() => setSelectedConditionParam(undefined)}
       />

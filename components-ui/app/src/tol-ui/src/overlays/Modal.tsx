@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Modal as RSModal } from "rsuite";
-import { Button, buttons } from "..";
+import { Button, BUTTONS } from "..";
 
 export interface PModal {
   size?: string;
@@ -66,7 +66,7 @@ export function Modal(props: PModal) {
           )}
           {closeButton && (
             <Button
-              {...buttons.close}
+              {...BUTTONS.CLOSE}
               position="right"
               onClick={handleClose}
             />

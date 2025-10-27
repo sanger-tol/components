@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, buttons, Modal } from "..";
+import { Button, BUTTONS, Modal } from "..";
 
 
 export interface PAreYouSureModalProps {
@@ -35,7 +35,7 @@ export function AreYouSureModal(props: PAreYouSureModalProps) {
         You have an unsaved configuration. Are you sure you want to close without saving?
       </p>
       <Button
-        {...buttons.save}
+        {...BUTTONS.SAVE}
         position="right"
         onClick={() => {
           setOpen(false);
@@ -43,7 +43,7 @@ export function AreYouSureModal(props: PAreYouSureModalProps) {
         }}
       />
       <Button
-        {...buttons.discard}
+        {...BUTTONS.DISCARD}
         position="right"
         onClick={() => {
           setOpen(false);
@@ -51,7 +51,7 @@ export function AreYouSureModal(props: PAreYouSureModalProps) {
         }}
       />
       <Button
-        {...buttons.cancel}
+        {...BUTTONS.CANCEL}
         position="right"
         onClick={() => {
           setOpen(false);
