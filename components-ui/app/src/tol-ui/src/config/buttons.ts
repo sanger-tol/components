@@ -6,44 +6,44 @@ SPDX-License-Identifier: MIT
 
 import { PButton } from "..";
 
-export const buttons: Record<string, PButton> = {
-  add: {
+export const BUTTONS: Record<string, PButton> = {
+  ADD: {
     type: "success",
     icon: "add",
     tooltip: "Add",
     disabledTooltip: "No changes to add",
   },
-  confirm: {
+  CONFIRM: {
     type: "success",
     icon: "check",
     tooltip: "Confirm",
     disabledTooltip: "No changes to confirm",
   },
-  save: {
+  SAVE: {
     type: "success",
     icon: "save",
     tooltip: "Save Changes",
     disabledTooltip: "No changes to save",
   },
-  return: {
+  RETURN: {
     outline: true,
     type: "warning",
     icon: "arrow-left",
     tooltip: "Return",
   },
-  discard: {
+  DISCARD: {
     type: "error",
     icon: "trash",
     tooltip: "Discard Changes",
     disabledTooltip: "No changes to discard",
   },
-  close: {
+  CLOSE: {
     outline: true,
     type: "error",
     icon: "xmark",
     tooltip: "Close",
   },
-  cancel: {
+  CANCEL: {
     outline: true,
     type: "error",
     icon: "xmark",
