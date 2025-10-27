@@ -13,6 +13,12 @@ export const buttons: Record<string, PButton> = {
     tooltip: "Add",
     disabledTooltip: "No changes to add",
   },
+  confirm: {
+    type: "success",
+    icon: "check",
+    tooltip: "Confirm",
+    disabledTooltip: "No changes to confirm",
+  },
   save: {
     type: "success",
     icon: "save",
