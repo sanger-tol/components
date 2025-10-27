@@ -4,8 +4,6 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ICellRenderer } from "..";
-
 export interface IBoardCellRendererParam {
   type: string,
   rename: string,

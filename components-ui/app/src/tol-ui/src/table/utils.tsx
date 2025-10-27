@@ -23,8 +23,6 @@ import {
   deepCopy,
   ICustomCellRenderers,
   copyToClipboard,
-  INewCellRenderersToSave,
-  isEmptyObject
 } from "..";
 
 interface Rgb {

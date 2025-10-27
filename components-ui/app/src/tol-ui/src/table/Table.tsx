@@ -30,7 +30,6 @@ import {
   RowCounter,
   RowExpander,
   AttributeTitle,
-  deepCopy
 } from "..";
 import { Sort } from "./Sort";
 import { FieldDropdown } from "./FieldDropdown";
