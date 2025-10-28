@@ -14,12 +14,17 @@ const Tabs: React.FC<PTabs> & { Tab: TabSubcomponent } = (props: PTabs) => {
   const { children, activeKey, defaultActiveKey, onSelect } = props;
 
   const [activatedKeys, setActivatedKeys] = useState<string[]>(
-    defaultActiveKey ? [defaultActiveKey] : activeKey ? [activeKey] : []
+    defaultActiveKey !== undefined
+      ? [String(defaultActiveKey)]
+      : activeKey !== undefined
+      ? [String(activeKey)]
+      : []
   );
 
-  const handleSelect = (eventKey: string, event: React.SyntheticEvent) => {
-    if (!activatedKeys.includes(eventKey)) {
-      setActivatedKeys(keys => [...keys, eventKey]);
+  const handleSelect = (eventKey: string | number, event: React.SyntheticEvent) => {
+    const keyStr = String(eventKey);
+    if (!activatedKeys.includes(keyStr)) {
+      setActivatedKeys(keys => [...keys, keyStr]);
     }
     onSelect?.(eventKey, event);
   };
@@ -27,8 +32,8 @@ const Tabs: React.FC<PTabs> & { Tab: TabSubcomponent } = (props: PTabs) => {
   // clone children to only render content if activated
   const lazyChildren = React.Children.map(children, child => {
     if (!React.isValidElement(child)) return child;
-    const { eventKey, children: tabChildren } = child.props as { eventKey: string; children?: React.ReactNode };
-    const isActive = activatedKeys.includes(eventKey);
+    const { eventKey, children: tabChildren } = child.props as { eventKey: string | number; children?: React.ReactNode };
+    const isActive = activatedKeys.includes(String(eventKey));
     return React.cloneElement(
       child,
       undefined,
