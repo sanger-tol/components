@@ -79,7 +79,7 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
       <Tabs.Tab eventKey="all" title="All">
         {MenuItem}
       </Tabs.Tab>
-      <Tabs.Tab eventKey="advanced" title="Advance Search">
+      <Tabs.Tab eventKey="advanced" title="Advanced Search">
         <div className="tol-advance-search-tab">
           <AutoComplete
             label=""
