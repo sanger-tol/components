@@ -81,7 +81,7 @@ export function ChartConfigDrawer(props: IChartConfigDrawer) {
     xAxis.length > 0 &&
     breakDownBy.length > 0 &&
     (chartDataType === "datetime" ? grouping : true) &&
-    chartType
+    !!chartType
   );
   const hasPendingChanges = hasUpdated && hasRequiredFields;
 

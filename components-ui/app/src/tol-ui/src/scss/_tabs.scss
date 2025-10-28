@@ -13,10 +13,26 @@
     .rs-nav-item {
       color: var(--tol-text);
 
+      &:not(:first-child) {
+        margin-left: 4px;
+      }
+
       &.rs-nav-item-active {
         color: var(--tol-primary);
         background-color: var(--tol-primary-translucent);
         border: 1px solid var(--tol-primary-translucent);
+      }
+
+      &.rs-nav-item-disabled {
+        color: var(--tol-grey);
+      }
+
+      &:not(.rs-nav-item-disabled) {
+        border: 1px solid transparent;
+
+        &:hover {
+          border-color: var(--tol-grey-translucent);
+        }
       }
 
       &:hover {

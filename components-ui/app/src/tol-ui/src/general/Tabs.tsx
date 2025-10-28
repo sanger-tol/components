@@ -9,9 +9,10 @@ import { Tabs as RSTabs } from "rsuite";
 
 type PTabs = React.ComponentProps<typeof RSTabs>;
 type TabSubcomponent = typeof RSTabs.Tab;
-type TabsComponent = React.FC<PTabs> & { Tab: TabSubcomponent };
 
-export const Tabs: TabsComponent = ({ children, activeKey, defaultActiveKey, onSelect, ...props }) => {
+const Tabs: React.FC<PTabs> & { Tab: TabSubcomponent } = (props: PTabs) => {
+  const { children, activeKey, defaultActiveKey, onSelect } = props;
+
   const [activatedKeys, setActivatedKeys] = useState<string[]>(
     defaultActiveKey ? [defaultActiveKey] : activeKey ? [activeKey] : []
   );
@@ -50,3 +51,5 @@ export const Tabs: TabsComponent = ({ children, activeKey, defaultActiveKey, onS
 };
 
 Tabs.Tab = RSTabs.Tab;
+
+export { Tabs };
