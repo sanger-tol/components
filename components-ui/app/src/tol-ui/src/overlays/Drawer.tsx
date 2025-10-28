@@ -90,7 +90,7 @@ export function Drawer(props: PDrawer) {
               position="right"
               disabled={!hasPendingChanges}
               onClick={onSave}
-              data-testid={onSaveTestId}
+              testid={onSaveTestId}
             />
           }
           {onDiscard &&
