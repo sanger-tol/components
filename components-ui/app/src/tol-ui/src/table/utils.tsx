@@ -10,7 +10,6 @@ import {
   FieldMeta,
   isFloat,
   normaliseCaps,
-  IEntityMeta,
   colours,
   TsDataSource,
   IAttributeData,
