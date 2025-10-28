@@ -123,6 +123,7 @@ export function BoardFilters(props: PBoardFilters) {
         setOpen={setOpen}
         onSave={() => onSave(filters, passThrough)}
         hasPendingChanges={hasPendingChanges}
+        onSaveTestId="apply-filter-button"
       >
         {boardObjectType !== "zone" &&
           <div className="pass-through-toggle">

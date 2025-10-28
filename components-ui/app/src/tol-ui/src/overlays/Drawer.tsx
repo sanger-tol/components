@@ -26,6 +26,7 @@ export interface PDrawer {
   onClose?: () => void;
   hasPendingChanges?: boolean;
   actionButtons?: PButton[];
+  onSaveTestId?: string;
 }
 
 export function Drawer(props: PDrawer) {
@@ -37,6 +38,7 @@ export function Drawer(props: PDrawer) {
     title,
     hasPendingChanges = false,
     actionButtons = [],
+    onSaveTestId,
   } = props;
   const { Header, Body, Footer } = RSDrawer;
   const [openSaveModal, setOpenSaveModal] = useState<boolean>(false);
@@ -88,6 +90,7 @@ export function Drawer(props: PDrawer) {
               position="right"
               disabled={!hasPendingChanges}
               onClick={onSave}
+              data-testid={onSaveTestId}
             />
           }
           {onDiscard &&
