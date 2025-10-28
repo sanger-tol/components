@@ -79,7 +79,7 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
       <Tabs.Tab eventKey="all" title="All">
         {MenuItem}
       </Tabs.Tab>
-      <Tabs.Tab eventKey="advanced" title="Advanced">
+      <Tabs.Tab eventKey="advanced" title="Advance Search">
         <div className="tol-advance-search-tab">
           <span
             className="tol-advance-search-tab-search"
