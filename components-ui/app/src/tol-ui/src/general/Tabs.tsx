@@ -9,22 +9,18 @@ import { Tabs as RSTabs } from "rsuite";
 
 type PTabs = React.ComponentProps<typeof RSTabs>;
 type TabSubcomponent = typeof RSTabs.Tab;
+type TabsComponent = React.FC<PTabs> & { Tab: TabSubcomponent };
 
-const Tabs: React.FC<PTabs> & { Tab: TabSubcomponent } = (props: PTabs) => {
+export function Tabs(props: PTabs): TabsComponent {
   const { children, activeKey, defaultActiveKey, onSelect } = props;
 
   const [activatedKeys, setActivatedKeys] = useState<string[]>(
-    defaultActiveKey !== undefined
-      ? [String(defaultActiveKey)]
-      : activeKey !== undefined
-      ? [String(activeKey)]
-      : []
+    defaultActiveKey ? [defaultActiveKey] : activeKey ? [activeKey] : []
   );
 
-  const handleSelect = (eventKey: string | number, event: React.SyntheticEvent) => {
-    const keyStr = String(eventKey);
-    if (!activatedKeys.includes(keyStr)) {
-      setActivatedKeys(keys => [...keys, keyStr]);
+  const handleSelect = (eventKey: string, event: React.SyntheticEvent) => {
+    if (!activatedKeys.includes(eventKey)) {
+      setActivatedKeys(keys => [...keys, eventKey]);
     }
     onSelect?.(eventKey, event);
   };
@@ -32,8 +28,8 @@ const Tabs: React.FC<PTabs> & { Tab: TabSubcomponent } = (props: PTabs) => {
   // clone children to only render content if activated
   const lazyChildren = React.Children.map(children, child => {
     if (!React.isValidElement(child)) return child;
-    const { eventKey, children: tabChildren } = child.props as { eventKey: string | number; children?: React.ReactNode };
-    const isActive = activatedKeys.includes(String(eventKey));
+    const { eventKey, children: tabChildren } = child.props as { eventKey: string; children?: React.ReactNode };
+    const isActive = activatedKeys.includes(eventKey);
     return React.cloneElement(
       child,
       undefined,
@@ -41,6 +37,7 @@ const Tabs: React.FC<PTabs> & { Tab: TabSubcomponent } = (props: PTabs) => {
     );
   });
 
+  // @ts-ignore
   return (
     <RSTabs
       className="tol-tabs"
@@ -50,11 +47,9 @@ const Tabs: React.FC<PTabs> & { Tab: TabSubcomponent } = (props: PTabs) => {
       onSelect={handleSelect}
       {...props}
     >
-      {lazyChildren}
+        {lazyChildren}
     </RSTabs>
   );
 };
 
 Tabs.Tab = RSTabs.Tab;
-
-export { Tabs };
