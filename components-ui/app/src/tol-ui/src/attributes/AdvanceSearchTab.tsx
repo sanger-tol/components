@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   IRemoteTarget,
   Tabs,
@@ -26,22 +26,23 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
   const { MenuItem, objectType, dataSource, setAttributes } = props;
   const [searchValue, setSearchValue] = useState<string>("");
   const [attributeAvailable, setAttributeAvailable] = useState<boolean>(false);
-  const [availableRelationships, setAvailableRelationships] = useState<string[] | undefined>(undefined);
+  // const [availableRelationships, setAvailableRelationships] = useState<string[] | undefined>(undefined);
 
   const handleOnChange = async (value: string) => {
     setSearchValue(value);
     if (value.slice(-1) === ".") {
-      ;
-      await dataSource.getAvailableRelationships(objectType, value.slice(0, -1)).then((data: string[] | undefined) => {
-        if (data) {
-          const updatedOptions = data.map((relationship) => {
-            return value + relationship;
-          })
-          setAvailableRelationships(updatedOptions);
-        } else {
-          setAvailableRelationships(undefined);
-        }
-      });
+      // Uncomment when availableRelationships functionality is needed on the dropdown
+
+      // await dataSource.getAvailableRelationships(objectType, value.slice(0, -1)).then((data: string[] | undefined) => {
+      //   if (data) {
+      //     const updatedOptions = data.map((relationship) => {
+      //       return value + relationship;
+      //     })
+      //     setAvailableRelationships(updatedOptions);
+      //   } else {
+      //     setAvailableRelationships(undefined);
+      //   }
+      // });
 
     } else {
       setAttributeAvailable(false);
@@ -80,23 +81,27 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
       </Tabs.Tab>
       <Tabs.Tab eventKey="advanced" title="Advanced">
         <div className="tol-advance-search-tab">
-          <div className="tol-advance-search-tab-tooltip">
-            <p style={{ paddingRight: '5px' }}>Advance Search</p>
-            <IconTooltip
-              contents="Add columns using system names, with relationships separated by periods. E.g. 'relationship1.relationship2.attribute_name'"
-            />
-          </div>
-          <div
+          <span
+            className="tol-advance-search-tab-search"
             onKeyDown={stopPropagation}
           >
-            <AutoComplete
-              label=""
-              data={availableRelationships || []}
-              value={searchValue}
-              onChange={handleOnChange}
-              loading={false}
-            />
-          </div>
+            <div className="tol-advance-search-tab-tooltip">
+              <IconTooltip
+                contents="Add columns using system names, with relationships separated by periods.
+                E.g. 'relationship1.relationship2.attribute_name'"
+              />
+            </div>
+            <div className="tol-advance-search-tab-input">
+              <AutoComplete
+                label=""
+                // Add available relationships state in data
+                data={[]}
+                value={searchValue}
+                onChange={handleOnChange}
+                loading={false}
+              />
+            </div>
+          </span>
           <Button
             onClick={handleOnAdd}
             className="tol-advance-search-tab-button"
@@ -104,6 +109,7 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
             disabledTooltip="Attribute not found"
             icon="plus"
             type="success"
+            position="right"
           />
         </div>
       </Tabs.Tab>
