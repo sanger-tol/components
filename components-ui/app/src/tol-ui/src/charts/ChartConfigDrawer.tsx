@@ -47,7 +47,7 @@ export function ChartConfigDrawer(props: IChartConfigDrawer) {
   const [breakDownBy, setBreakDownBy] = useState<string[]>(config.breakDownBy ? [config.breakDownBy] : []);
   const [stacked, setStacked] = useState<boolean>(config.stacked);
   const [grouping, setGrouping] = useState<HistogramGrouping>(config.grouping);
-  const [chartType, setChartType] = useState<'bar' | 'line' | 'scatter'>(config.chartType);
+  const [chartType, setChartType] = useState<'bar' | 'line' | 'scatter'>(config.chartType || 'bar');
   const [attributeDescriptor, setAttributeDescriptor] = useState<any>(null);
   const [chartDataType, setChartDataType] = useState<string>("");
 
@@ -77,7 +77,12 @@ export function ChartConfigDrawer(props: IChartConfigDrawer) {
     (chartDataType === "datetime" ? grouping !== config.grouping : false) ||
     chartType !== config.chartType
   );
-  const hasRequiredFields = xAxis.length > 0 && breakDownBy.length > 0;
+  const hasRequiredFields = (
+    xAxis.length > 0 &&
+    breakDownBy.length > 0 &&
+    (chartDataType === "datetime" ? grouping : true) &&
+    chartType
+  );
   const hasPendingChanges = hasUpdated && hasRequiredFields;
 
   useEffect(() => {
