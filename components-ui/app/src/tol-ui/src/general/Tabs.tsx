@@ -47,7 +47,7 @@ export function Tabs(props: PTabs): TabsComponent {
       onSelect={handleSelect}
       {...props}
     >
-        {lazyChildren}
+      {lazyChildren}
     </RSTabs>
   );
 };

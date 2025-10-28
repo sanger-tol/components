@@ -39,5 +39,12 @@
         color: var(--tol-primary);
       }
     }
+
+    &.rs-nav-horizontal {
+      overflow-x: auto;
+      white-space: nowrap;
+      max-width: 100%;
+      display: block;
+    }
   }
 }
