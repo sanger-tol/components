@@ -81,6 +81,14 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
       </Tabs.Tab>
       <Tabs.Tab eventKey="advanced" title="Advance Search">
         <div className="tol-advance-search-tab">
+          <AutoComplete
+            label=""
+            // Add available relationships state in data
+            data={[]}
+            value={searchValue}
+            onChange={handleOnChange}
+            loading={false}
+          />
           <span
             className="tol-advance-search-tab-search"
             onKeyDown={stopPropagation}
@@ -91,26 +99,18 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
                 E.g. 'relationship1.relationship2.attribute_name'"
               />
             </div>
-            <div className="tol-advance-search-tab-input">
-              <AutoComplete
-                label=""
-                // Add available relationships state in data
-                data={[]}
-                value={searchValue}
-                onChange={handleOnChange}
-                loading={false}
+            <div className='tol-advance-search-tab-button'>
+              <Button
+                onClick={handleOnAdd}
+                className="tol-advance-search-tab-button"
+                disabled={!attributeAvailable}
+                disabledTooltip="Attribute not found"
+                icon="plus"
+                type="success"
+                position="right"
               />
             </div>
           </span>
-          <Button
-            onClick={handleOnAdd}
-            className="tol-advance-search-tab-button"
-            disabled={!attributeAvailable}
-            disabledTooltip="Attribute not found"
-            icon="plus"
-            type="success"
-            position="right"
-          />
         </div>
       </Tabs.Tab>
     </Tabs>
