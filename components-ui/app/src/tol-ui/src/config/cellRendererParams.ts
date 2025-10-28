@@ -78,17 +78,17 @@ export const cellRendererParams: IBoardCellRenderers = {
     rename: "Traffic Light Status",
     params: {
       success: {
-        type: "boolean",
+        type: "condition",
         rename: "Success",
         description: "Condition for displaying a success status",
       },
       warning: {
-        type: "boolean",
+        type: "condition",
         rename: "Warning",
         description: "Condition for displaying a warning status",
       },
       danger: {
-        type: "boolean",
+        type: "condition",
         rename: "Danger",
         description: "Condition for displaying a danger status",
       },

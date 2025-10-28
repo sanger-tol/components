@@ -31,6 +31,12 @@ export const BUTTONS: Record<string, PButton> = {
     icon: "arrow-left",
     tooltip: "Return",
   },
+  BACK: {
+    outline: true,
+    type: "warning",
+    icon: "arrow-left",
+    tooltip: "Back",
+  },
   DISCARD: {
     type: "error",
     icon: "trash",

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect } from "react";
-import { PAttributeTooltip, AttributeTooltip, getSourceColour } from "..";
+import { PAttributeTooltip, AttributeTooltip, getSourceColour, normaliseCaps } from "..";
 
 export interface PAttributeTitle extends PAttributeTooltip {
   titleElement?: keyof JSX.IntrinsicElements;
@@ -45,7 +45,7 @@ export function AttributeTitle(props: PAttributeTitle) {
             />
           }
         />
-        {rename || fieldDisplayName || field}
+        {rename || fieldDisplayName || normaliseCaps(field)}
       </TitleElement>
     </div>
   );

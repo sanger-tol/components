@@ -152,7 +152,10 @@ export function handleSetAttribute(
   setAttributeMeta?: any
 ) {
   if (maxSelections) {
-    if (newAttribute.length > maxSelections) {
+    if (maxSelections === 1 && newAttribute.length > 1) {
+      setAttributes([newAttribute[newAttribute.length - 1]]);
+      return;
+    } else if (newAttribute.length > maxSelections) {
       PopUpMessage({
         type: "warning",
         message: `You can select a maximum number of ${maxSelections} items.`,

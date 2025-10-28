@@ -17,7 +17,6 @@ import {
   ITableConfigSave,
   CellRendererConfigurer,
   deepCopy,
-  isObjectEqual,
 } from "..";
 
 
@@ -59,7 +58,8 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   const [sortByType, setSortByType] = useState<string | undefined>(defaultSortByType);
 
   const hasPendingChanges = (
-    !isObjectEqual(newFieldMeta || {}, deepCopy(fieldMeta)) ||
+    JSON.stringify(newFieldMeta) !== JSON.stringify(fieldMeta) ||
+    JSON.stringify(attributes) !== JSON.stringify(newFieldMeta?.order.active) ||
     JSON.stringify(initialActions) !== JSON.stringify(actions) ||
     defaultSortByAttribute !== sortByAttribute ||
     defaultSortByType !== sortByType
@@ -80,10 +80,6 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
         defaultSortByType: sortByType,
       });
     }
-  };
-
-  const onDiscard = () => {
-    setNewFieldMeta(deepCopy(fieldMeta));
   };
 
   const ActionDropdown = (
@@ -189,7 +185,6 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
       open={open}
       setOpen={setOpen}
       onSave={onSave}
-      onDiscard={onDiscard}
       hasPendingChanges={hasPendingChanges}
     >
       {AttributeSelecting}

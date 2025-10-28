@@ -45,6 +45,7 @@ export interface PMultipleSelect {
   groupBy?: string;
   icon?: IFormLabelIcon;
   renderMenu?: (menuItem: JSX.Element) => JSX.Element;
+  menuClassName?: string;
 }
 
 export function MultipleSelect(props: PMultipleSelect) {
@@ -73,6 +74,7 @@ export function MultipleSelect(props: PMultipleSelect) {
     caretAs,
     renderExtraFooter,
     className,
+    menuClassName,
     groupBy,
     icon,
     renderMenu
@@ -142,6 +144,7 @@ export function MultipleSelect(props: PMultipleSelect) {
           searchBy={searchBy}
           caretAs={caretAs}
           className={className}
+          menuClassName={menuClassName}
         />
       </span>
       {/*

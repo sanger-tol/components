@@ -17,7 +17,6 @@ import {
   generateFilter,
   TFilterOrUndefined,
   deepCopy,
-  isObjectEqual,
 } from "..";
 
 
@@ -72,7 +71,7 @@ export function RemoteFilters(props: PRemoteFilters) {
       setFilters(newFilter);
       if (setHasPendingChanges) {
         setHasPendingChanges(
-          !isObjectEqual(initialFilters, newFilter!)
+          JSON.stringify(newFilter) !== JSON.stringify(initialFilters),
         );
       }
     }

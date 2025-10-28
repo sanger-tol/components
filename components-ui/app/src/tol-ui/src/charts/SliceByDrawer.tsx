@@ -176,15 +176,12 @@ export function SliceByDrawer(props: ISliceByDrawer) {
   );
 
   return (
-    <div>
-      {unsavedChangesModal()}
-      <Drawer
-        title={title}
-        open={open}
-        setOpen={setOpen}
-        children={attSelector}
-        onClose={handleCloseDrawer}
-      />
-    </div>
+    <Drawer
+      title={title}
+      open={open}
+      setOpen={setOpen}
+      children={attSelector}
+      onClose={handleCloseDrawer}
+    />
   );
 }

@@ -128,7 +128,7 @@ export function Filters() {
       <Filter
         attribute="sts_ready"
         rename="STS Ready"
-        type="boolean"
+        type="bool"
         componentId="filter-one"
         {...speciesZone}
       />

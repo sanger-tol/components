@@ -61,7 +61,7 @@ export function CellRendererParam(props: PCellRendererParam) {
             }}
             placeholder={meta.placeholder}
           />
-        ) : meta.type === "boolean" ? (
+        ) : meta.type === "condition" ? (
           <Button
             outline
             text={conditionPresent ? "Edit Condition" : "Set Condition"}

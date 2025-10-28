@@ -20,7 +20,6 @@ import {
   IFilter,
   isEmptyObject,
   BUTTONS,
-  isObjectEqual,
 } from "../..";
 import { CellRendererParam } from "./CellRendererParam";
 
@@ -53,7 +52,7 @@ export function CellRendererModal(props: PCellRendererModal) {
   }).length;
 
   const rendererHasPendingChanges = (
-    !isObjectEqual(renderer || {}, previousRenderer || {})
+    JSON.stringify(renderer) !== JSON.stringify(previousRenderer)
   );
 
   useEffect(() => {
