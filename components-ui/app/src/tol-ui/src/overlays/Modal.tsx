@@ -67,7 +67,6 @@ export function Modal(props: PModal) {
           {closeButton && (
             <Button
               {...BUTTONS.CLOSE}
-              position="right"
               onClick={handleClose}
             />
           )}

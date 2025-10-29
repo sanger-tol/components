@@ -130,7 +130,6 @@ export function CellRendererModal(props: PCellRendererModal) {
   const SaveCellRendererButton = (
     <Button
       {...BUTTONS.ADD}
-      position="right"
       disabled={!rendererHasPendingChanges || requiredParamsCount > filledParamsCount}
       onClick={onAddNewRenderer}
     />
@@ -140,13 +139,11 @@ export function CellRendererModal(props: PCellRendererModal) {
     <>
       <Button
         {...BUTTONS.ADD}
-        position="right"
         disabled={!conditionHasPendingChanges}
         onClick={onConditionSave}
       />
       <Button
         {...BUTTONS.RETURN}
-        position="left"
         onClick={() => setSelectedConditionParam(undefined)}
       />
     </>

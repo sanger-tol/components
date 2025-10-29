@@ -78,7 +78,6 @@ export function Drawer(props: PDrawer) {
           </h5>
           <Button
             {...BUTTONS.CLOSE}
-            position="right"
             onClick={onClose}
           />
         </Header>
@@ -87,7 +86,6 @@ export function Drawer(props: PDrawer) {
           {onSave &&
             <Button
               {...BUTTONS.SAVE}
-              position="right"
               disabled={!hasPendingChanges}
               onClick={onSave}
               testid={onSaveTestId}
@@ -96,7 +94,6 @@ export function Drawer(props: PDrawer) {
           {onDiscard &&
             <Button
               {...BUTTONS.DISCARD}
-              position="right"
               disabled={!hasPendingChanges}
               onClick={onDiscard}
             />

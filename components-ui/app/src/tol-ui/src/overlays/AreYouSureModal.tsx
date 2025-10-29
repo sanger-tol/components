@@ -36,7 +36,6 @@ export function AreYouSureModal(props: PAreYouSureModalProps) {
       </p>
       <Button
         {...BUTTONS.SAVE}
-        position="right"
         onClick={() => {
           setOpen(false);
           onSave();
@@ -44,7 +43,6 @@ export function AreYouSureModal(props: PAreYouSureModalProps) {
       />
       <Button
         {...BUTTONS.DISCARD}
-        position="right"
         onClick={() => {
           setOpen(false);
           onDiscard();
@@ -52,7 +50,6 @@ export function AreYouSureModal(props: PAreYouSureModalProps) {
       />
       <Button
         {...BUTTONS.CANCEL}
-        position="right"
         onClick={() => {
           setOpen(false);
         }}

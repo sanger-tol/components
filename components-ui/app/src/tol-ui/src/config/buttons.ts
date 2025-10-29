@@ -12,18 +12,21 @@ export const BUTTONS: Record<string, PButton> = {
     icon: "add",
     tooltip: "Add",
     disabledTooltip: "No changes to add",
+    position: "right",
   },
   CONFIRM: {
     type: "success",
     icon: "check",
     tooltip: "Confirm",
     disabledTooltip: "No changes to confirm",
+    position: "right",
   },
   SAVE: {
     type: "success",
     icon: "save",
     tooltip: "Save Changes",
     disabledTooltip: "No changes to save",
+    position: "right",
   },
   RETURN: {
     outline: true,
@@ -42,17 +45,20 @@ export const BUTTONS: Record<string, PButton> = {
     icon: "trash",
     tooltip: "Discard Changes",
     disabledTooltip: "No changes to discard",
+    position: "right",
   },
   CLOSE: {
     outline: true,
     type: "error",
     icon: "xmark",
     tooltip: "Close",
+    position: "right",
   },
   CANCEL: {
     outline: true,
     type: "error",
     icon: "xmark",
     tooltip: "Cancel",
+    position: "right",
   },
 };
