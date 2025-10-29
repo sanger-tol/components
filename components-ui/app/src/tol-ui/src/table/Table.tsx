@@ -29,7 +29,7 @@ import {
   ITableConfigSave,
   RowCounter,
   RowExpander,
-  AttributeTitle
+  AttributeTitle,
 } from "..";
 import { Sort } from "./Sort";
 import { FieldDropdown } from "./FieldDropdown";
@@ -283,7 +283,7 @@ export function Table(props: Props) {
       />
       <ColumnConfigDrawer
         {...props}
-        title={"Table Configuration"}
+        title="Table Configuration"
         fieldMeta={fieldMeta}
         actions={actions}
         defaultSortByAttribute={defaultSortByAttribute}
@@ -460,8 +460,8 @@ export function Table(props: Props) {
                             <AttributeTitle
                               {...props}
                               field={key}
-                              titleElement="p"
-                              classname="tol-header-text"
+                              className="tol-header-text"
+                              rename={field.rename!}
                             />
                             {filterable && (
                               <span

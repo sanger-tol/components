@@ -11,32 +11,28 @@ import {
 } from "../..";
 
 
-export interface PBoolean extends PCell {
-  info?: boolean;
+export interface PTrafficLightStatus extends PCell {
   success?: boolean;
   warning?: boolean;
   danger?: boolean;
 }
 
-export function Status(props: PBoolean) {
+export function TrafficLightStatus(props: PTrafficLightStatus) {
   const {
     value,
-    info = false,
     success = false,
     warning = false,
     danger = false,
   } = props;
 
   const status: TMessageType | undefined = (
-    info
-      ? "info"
-      : success
-        ? "success"
-        : warning
-          ? "warning"
-          : danger
-            ? "error"
-            : undefined
+    success
+      ? "success"
+      : warning
+        ? "warning"
+        : danger
+          ? "error"
+          : undefined
   );
 
   if (!status) return <>{value}</>;

@@ -13,27 +13,29 @@ import {
 
 export interface PLink extends PCell {
   url: string;
-
   text?: string;
+  newTab?: boolean;
   buttonConfig?: PButton;
 }
 
 export function Link(props: PLink) {
-  const { value, url, text, buttonConfig } = props;
+  const { value, url, text, newTab, buttonConfig } = props;
   const t = text || value;
 
   const isExternal = () => {
     return /^(https?:\/\/|www\.|[a-zA-Z0-9-]+\.[a-zA-Z]{2,})/.test(url);
   };
 
+  const openInNewTab = newTab !== undefined ? newTab : isExternal();
+  
   const handleClick = () => {
-    if (isExternal()) {
+    if (openInNewTab) {
       window.open(url, "_blank", "noopener,noreferrer");
     } else {
       window.location.href = url;
     }
   };
-
+  
   if (buttonConfig) {
     return (
       <Button
@@ -43,8 +45,8 @@ export function Link(props: PLink) {
       />
     );
   }
-
-  return isExternal() ? (
+  
+  return openInNewTab ? (
     <a href={url} target="_blank" rel="noopener noreferrer">{t}</a>
   ) : (
     <a href={url}>{t}</a>

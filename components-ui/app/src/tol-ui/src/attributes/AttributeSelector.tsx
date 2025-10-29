@@ -136,6 +136,7 @@ export function AttributeSelector(props: PAttributeSelector) {
     <div className="tol-attribute-selector">
       <MultipleSelect
         className="tol-attribute-selector-select"
+        menuClassName={`tol-attribute-selector-menu${maxSelections === 1 && ' tol-single-selector'}`}
         block
         noSelectAll
         groupBy={groupBy ? "relationship_name" : undefined}

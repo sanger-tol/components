@@ -8,7 +8,6 @@ import { useState } from "react";
 import {
   CellRendererModal,
   FieldMeta,
-  ICellRenderer,
   Icon,
   IRemoteTarget,
 } from "../..";
@@ -17,15 +16,21 @@ import {
 export interface PCellRendererConfigurer extends IRemoteTarget {
   attributeId: string,
   fieldMeta: FieldMeta
-  onSave: (cellRenderers: ICellRenderer, attributeId: string) => void
+  setFieldMeta: (fieldMeta: FieldMeta) => void,
 }
 
 export function CellRendererConfigurer(props: PCellRendererConfigurer) {
+  const { attributeId, fieldMeta } = props;
   const [modelOpen, setModalOpen] = useState(false);
+
+  const cellRendererExists = !!fieldMeta.dataWithDefaults?.[attributeId]?.cellRenderer;
 
   const ConfigureCellRendererOpenIcon = (
     <div
-      className={"tol-active-column-btn tol-palette-icon"}
+      className={
+        "tol-active-column-btn tol-palette-icon"
+        + (cellRendererExists ? " active" : "")
+      }
       onClick={() => setModalOpen(true)}
     >
       <Icon icon="palette"/>

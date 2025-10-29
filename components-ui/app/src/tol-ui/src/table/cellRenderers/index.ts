@@ -8,10 +8,11 @@ export * from "./Cell";
 export * from "./Collection";
 export * from "./Boolean";
 export * from "./Datetime";
-export * from "./Expander";
+export * from "./LongText";
 export * from "./Float";
 export * from "./Image";
 export * from "./Integer";
 export * from "./Link";
-export * from "./Relationship"
+export * from "./Relationship";
+export * from "./TrafficLightStatus";
 export * from "./utils";
