@@ -23,8 +23,6 @@ import {
   deepCopy,
   ICustomCellRenderers,
   copyToClipboard,
-  INewCellRenderersToSave,
-  isEmptyObject
 } from "..";
 
 interface Rgb {
@@ -55,7 +53,7 @@ const sourceColours = {
   calculated: colours[13],
   genome_notes: colours[14],
   lrpacbio: colours[15],
-  other: colours[30],
+  other: "var(--tol-grey)",
 };
 
 export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
@@ -208,7 +206,7 @@ export function optimiseFieldMetaForSave(fieldMeta?: FieldMeta) {
 }
 
 function getTableConfigKey(id: string) {
-  return `${id}-9-25`;
+  return `${id}-10-25`;
 }
 
 export function setTableConfigLocalStorage(
@@ -252,12 +250,15 @@ function rgbToString(rgb: Rgb, opacity: number) {
 }
 
 export function getSourceColour(sourceName?: string): string {
-  const rgb =
+  const colour =
     sourceName && sourceColours[sourceName]
       ? sourceColours[sourceName]
       : sourceColours.other;
 
-  return rgbToString(rgb, 1);
+  if (typeof colour === "object" && colour !== null) {
+    return rgbToString(colour, 1);
+  }
+  return colour;
 }
 
 export function mapKeysToDisplayNames(data: any, displayNames: any): object {
@@ -343,24 +344,4 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
 
   const copyList = emptyStringsRemoval.join("\n");
   copyToClipboard(copyList);
-}
-
-export function addNewCellRenderersToFieldMeta(cellRenderers: INewCellRenderersToSave, fieldMeta: FieldMeta) {
-  for (const [attributeId, renderer] of Object.entries(cellRenderers)) {
-    if (renderer) {
-      fieldMeta.data![attributeId] = fieldMeta.data![attributeId] || {};
-      fieldMeta.data![attributeId].cellRenderer = renderer;
-      fieldMeta.dataWithDefaults![attributeId] = fieldMeta.dataWithDefaults![attributeId] || {};
-      fieldMeta.dataWithDefaults![attributeId].cellRenderer = renderer;
-    } else {
-      delete fieldMeta.data![attributeId].cellRenderer;
-      if (isEmptyObject(fieldMeta.data![attributeId])) {
-        delete fieldMeta.data![attributeId];
-      }
-      delete fieldMeta.dataWithDefaults![attributeId].cellRenderer;
-      if (isEmptyObject(fieldMeta.dataWithDefaults![attributeId])) {
-        delete fieldMeta.dataWithDefaults![attributeId];
-      }
-    }
-  }
 }

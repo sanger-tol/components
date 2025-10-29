@@ -11,18 +11,19 @@ import {
   Boolean,
   Collection,
   Datetime,
-  Expander,
   Float,
   Image,
   Integer,
   Link,
+  LongText,
   Relationship,
   ICustomCellRenderers,
   TsDataSource,
   getCellRendererPropValue,
   Icon
 } from "../..";
-import { Status } from "./Status";
+import { TrafficLightStatus } from "./TrafficLightStatus";
+
 
 export interface PCell {
   attribute: string,
@@ -44,13 +45,13 @@ export function Cell(props: PCell) {
     boolean: Boolean,
     collection: Collection,
     datetime: Datetime,
-    expander: Expander,
     float: Float,
     image: Image,
     integer: Integer,
     link: Link,
+    longText: LongText,
     relationship: Relationship,
-    status: Status
+    trafficLightStatus: TrafficLightStatus,
   };
 
   if (
@@ -78,24 +79,22 @@ export function Cell(props: PCell) {
   return (
     <>
       <renderer.element {...elementProps} />
-      <div>
-        {Array.isArray(value) && value.length > 1 &&
-          <Icon
-            icon={expanded ? "caret-up" : "caret-down"}
-            onClick={() => {
-              setExpanded(!expanded);
-              setExpandedRows((prev: string[]) => {
-                const id = elementProps.dataObject.id;
-                return prev.includes(id)
-                  ? prev.filter((existingId) => existingId !== id)
-                  : [...prev, id];
-              });
-            }}
-            size="1x"
-            className={"tol-table-image-cell-arrow"}
-          />
-        }
-      </div>
+      {Array.isArray(value) && value.length > 1 && renderer.type === "image" &&
+        <Icon
+          icon={expanded ? "caret-up" : "caret-down"}
+          onClick={() => {
+            setExpanded(!expanded);
+            setExpandedRows((prev: string[]) => {
+              const id = elementProps.dataObject.id;
+              return prev.includes(id)
+                ? prev.filter((existingId) => existingId !== id)
+                : [...prev, id];
+            });
+          }}
+          size="1x"
+          className={"tol-table-image-cell-arrow"}
+        />
+      }
     </>
   );
 }

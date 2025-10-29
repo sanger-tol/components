@@ -74,14 +74,12 @@ export function BoardTable(props: PBoardTable) {
     );
   };
 
-  const boardFilter = [
-    <span key="board-table-filter">
-      <BoardFilters
-        {...props}
-        open={openFilters}
-        setOpen={setOpenFilters}
-      />
-    </span>,
+  const BoardFilter = [
+    <BoardFilters
+      {...props}
+      open={openFilters}
+      setOpen={setOpenFilters}
+    />
   ];
 
   return (
@@ -109,7 +107,7 @@ export function BoardTable(props: PBoardTable) {
             saveTitle(value, id, boardObjectType, boardDataSource);
           }
         },
-        elements: boardFilter,
+        elements: BoardFilter,
         buttons: [privilege !== PRIVILEGE.BOARD.EDITABLE ? undefined : {
           outline: true,
           position: "right",

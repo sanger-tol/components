@@ -14,7 +14,7 @@ import {
 
 export function Footer() {
   return (
-    <footer className="footer">
+    <footer className="tol-footer">
       <Container>
         <Row sm={1} md={2}>
           <Col sm={6} md={4} lg={3}>

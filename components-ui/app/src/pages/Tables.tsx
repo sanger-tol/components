@@ -102,7 +102,7 @@ export function Tables() {
               },
               mlwh_position: {
                 rename: "Position",
-                filter: "boolean",
+                filter: "bool",
               },
               mlwh_tag_index: {
                 rename: "Tag",
