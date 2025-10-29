@@ -8,7 +8,6 @@ SPDX-License-Identifier: MIT
 import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
 import { PopUpMessage } from "..";
-import { IAllowedCardinality } from "..";
 
 
 export function formatPath(name: string) {
