@@ -75,7 +75,7 @@ export function Tables() {
                 cellRenderer: {
                   type: "relationship",
                   props: {
-                    detailPageIdAttribute: "mlwh_species.id"
+                    relationshipId: "${mlwh_species.id}",
                   }
                 }
               },
