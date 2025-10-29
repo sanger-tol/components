@@ -47,6 +47,7 @@ export function AutoComplete(props: PAutoComplete) {
         data={data}
         value={typeof value === "string" ? value : value?.value}
         onChange={onChange}
+        onKeyDown={(e) => e.stopPropagation()}
         renderMenu={(menu: any) => {
           if (loading === true) {
             return (

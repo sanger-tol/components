@@ -10,7 +10,6 @@ import {
   FieldMeta,
   isFloat,
   normaliseCaps,
-  IEntityMeta,
   colours,
   TsDataSource,
   IAttributeData,
@@ -172,20 +171,24 @@ export function addDefaultsFromEntityMeta(
   };
 }
 
-export function addFieldMetaDefaults(
+export async function addFieldMetaDefaults(
   objectType: string,
   fieldMeta: FieldMeta,
-  entityMeta: IEntityMeta
+  dataSource: TsDataSource,
 ) {
-  for (const [key, meta] of Object.entries(
-    entityMeta.flatAttributes[objectType]
-  )) {
-    if (
-      fieldMeta.order.active.includes(key) ||
-      fieldMeta.order.inactive?.includes(key)
-    ) {
-      addDefaultsFromEntityMeta(key, meta, fieldMeta);
-    }
+  const attributes = fieldMeta.order.active.concat(
+    fieldMeta.order.inactive || []
+  );
+  for (const key of attributes) {
+    const descriptor = dataSource.getAttributeDescriptor({
+      objectType: objectType,
+      field: key,
+    });
+    await descriptor.then((meta) => {
+      if (meta) {
+        addDefaultsFromEntityMeta(key, meta, fieldMeta);
+      }
+    })
   }
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
   return fieldMeta;

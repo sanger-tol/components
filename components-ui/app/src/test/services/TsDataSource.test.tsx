@@ -892,7 +892,7 @@ describe("Testing getFieldRelationshipValue", () => {
   });
 
   test('Returns correct value from a to many relationship field', async () => {
-    const mockAttValue = await mockDataSource.getFieldMetaData({
+    const mockAttValue = await mockDataSource.getAttributeDescriptor({
       objectType: 'species',
       field: 'benchling_specimens.benchling_samples.id'
     })
@@ -903,7 +903,7 @@ describe("Testing getFieldRelationshipValue", () => {
   })
 
   test('Returns correct value from a to one relationship field', async () => {
-    const mockAttValue = await mockDataSource.getFieldMetaData({
+    const mockAttValue = await mockDataSource.getAttributeDescriptor({
       objectType: 'sample',
       field: 'benchling_specimen.benchling_species.id'
     })
@@ -914,7 +914,7 @@ describe("Testing getFieldRelationshipValue", () => {
   })
 
   test('Returns undefined for non-existent relationship field', async () => {
-    const mockAttValue = await mockDataSource.getFieldMetaData({
+    const mockAttValue = await mockDataSource.getAttributeDescriptor({
       objectType: 'sample',
       field: 'benchling_specimen.non_existent_field'
     })

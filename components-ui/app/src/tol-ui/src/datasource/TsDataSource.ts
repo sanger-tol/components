@@ -565,25 +565,20 @@ export class TsDataSource {
     }
   }
 
-  private async getFieldRelationshipValue(
+  private async getAttributeDescriptorValue(
     field: string,
     objectType: string
   ): Promise<IAttributeDescriptor | undefined> {
     const attributes = await this.attributeMetadata();
-    const relationships = await this.relationshipConfig();
     const splitField = field.split(".");
-    if (splitField.length > 1) {
+    const combinedRelationships = await this.combineRelationships(objectType);
+    if (splitField.length > 1 && combinedRelationships) {
       // Checks if the object type exists in the relationships of previous "jump"
-      const objectRelationships = relationships[objectType];
-      const one = objectRelationships?.one ?? {};
-      const many = objectRelationships?.many ?? {};
-      const combinedRelationships = { ...one, ...many };
-
       // If relationship exists, get the related object type and continue down the field path
       if (splitField[0] in combinedRelationships) {
         const relatedObjectType = combinedRelationships[splitField[0]];
         const remainingField = splitField.slice(1).join(".");
-        return this.getFieldRelationshipValue(remainingField, relatedObjectType);
+        return this.getAttributeDescriptorValue(remainingField, relatedObjectType);
       }
     } else if (splitField.length === 1) {
       if (field in attributes[objectType]) {
@@ -592,14 +587,55 @@ export class TsDataSource {
     }
   }
 
-  public async getFieldMetaData({
+  public async getAttributeDescriptor({
     objectType,
     field,
   }: IGetAttributeDescriptor): Promise<IAttributeDescriptor | undefined> {
-    return this.getFieldRelationshipValue(
+    return this.getAttributeDescriptorValue(
       field,
       objectType
     );
+  }
+
+  private async combineRelationships(
+    objectType: string
+  ): Promise<{ [key: string]: string } | undefined> {
+    const relationships = await this.relationshipConfig();
+    const objectRelationships = relationships[objectType];
+    const one = objectRelationships?.one ?? {};
+    const many = objectRelationships?.many ?? {};
+    return { ...one, ...many }
+  }
+
+  // This function works in the same way as getAttributeDescriptorValue but returns available relationships
+  private async getAvailableRelationshipsRecursive(
+    field: string,
+    objectType: string
+  ): Promise<string[] | undefined> {
+    const splitField = field.split(".");
+    const combinedRelationships = await this.combineRelationships(objectType);
+    if (splitField.length > 1 && combinedRelationships) {
+      if (splitField[0] in combinedRelationships) {
+        const relatedObjectType = combinedRelationships[splitField[0]];
+        const remainingField = splitField.slice(1).join(".");
+        return this.getAvailableRelationshipsRecursive(remainingField, relatedObjectType);
+      }
+    } else if (splitField.length === 1) {
+      if (!combinedRelationships) return undefined;
+      const finalRelationshipObject = combinedRelationships[splitField[0]];
+      const availableRelationshipsObject = await this.combineRelationships(finalRelationshipObject);
+      return availableRelationshipsObject ? Object.keys(availableRelationshipsObject) : undefined;
+    }
+  }
+
+  public async getAvailableRelationships(
+    objectType: string,
+    field: string
+  ): Promise<string[] | undefined> {
+    return this.getAvailableRelationshipsRecursive(
+      field,
+      objectType
+    )
   }
 }
 
