@@ -192,8 +192,8 @@ export function TolApp(props: Props) {
                       </Route>,
                     );
 
-                    // detail page route
-                    if ('detail' in page && page.detail) {
+                    // dropdown detail page route
+                    if (dropdownPage.detail) {
                       routes.push(
                         <Route
                           exact
@@ -216,7 +216,7 @@ export function TolApp(props: Props) {
                       {authorised ? (
                         getElementDependingOnAuthStatus(loggedIn, page)
                       ) : (
-                        <Redirect to={`${uiPath ?? ''}/`} replace />
+                        <Redirect to={basePath} replace />
                       )}
                     </Route>,
                   );
