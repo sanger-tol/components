@@ -12,6 +12,7 @@ export interface Default {
 }
 
 export interface Page extends Default {
+  prefix?: string;
   element?: JSX.Element;
   detail?: JSX.Element;
   authElement?: JSX.Element;
