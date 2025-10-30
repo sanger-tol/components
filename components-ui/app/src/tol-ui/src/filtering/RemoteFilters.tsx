@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
-  Button,
-  useEffectUpdate,
   IRemoteTarget,
   IZone,
   defineZone,
@@ -17,27 +15,31 @@ import {
   Icon,
   getAttributeDetail,
   generateFilter,
+  TFilterOrUndefined,
+  deepCopy,
 } from "..";
 
 
-interface Props extends IRemoteTarget {
+export interface PRemoteFilters extends IRemoteTarget {
   filters?: IFilter;
+  setFilters: (filters: TFilterOrUndefined) => void;
   disabledFilterValues?: any;
-  filterPassThrough?: boolean;
-  onSaveText?: string;
-  onSave: (filters?: IFilter, passThrough?: boolean) => void;
+  open?: boolean;
+  setHasPendingChanges?: (hasPendingChanges: boolean) => void;
 }
 
-export function RemoteFilters(props: Props) {
+export function RemoteFilters(props: PRemoteFilters) {
   const {
     objectType,
     dataSource,
     filters = { and_: {} },
+    setFilters,
     disabledFilterValues,
-    filterPassThrough,
-    onSave,
-    onSaveText
+    open,
+    setHasPendingChanges,
   } = props;
+
+  const [initialFilters, setInitialFilters] = useState<IFilter>(deepCopy(filters));
 
   // zone component id pointer
   const filterComponentId = "remote-filters-component";
@@ -46,7 +48,6 @@ export function RemoteFilters(props: Props) {
   const [filterKeys, setFilterKeys] = useState(
     Object.keys(filters.and_ || {}),
   );
-  const [disabledApplyButton, setDisabledApplyButton] = useState(true);
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
 
@@ -64,10 +65,21 @@ export function RemoteFilters(props: Props) {
     });
   }, []);
 
-  // allow to apply when changes have been made
-  useEffectUpdate(() => {
-    setDisabledApplyButton(false);
-  }, [filterZone, filterPassThrough]);
+  useEffect(() => {
+    if (open) {
+      const newFilter = generateFilter(filterZone, filterComponentId);
+      setFilters(newFilter);
+      if (setHasPendingChanges) {
+        setHasPendingChanges(
+          JSON.stringify(newFilter) !== JSON.stringify(initialFilters),
+        );
+      }
+    }
+  }, [filterZone]);
+
+  useEffect(() => {
+    setInitialFilters(deepCopy(filters));
+  }, [open]);
 
   const removeFilter = (attribute: string) => {
     // update the filters that are shown
@@ -126,7 +138,7 @@ export function RemoteFilters(props: Props) {
           entityMeta?.flatAttributes?.[objectType]?.[attribute];
         const type =
           attributeMeta?.cardinality < 50 &&
-          attributeMeta?.python_type === "str"
+            attributeMeta?.python_type === "str"
             ? "multi"
             : attributeMeta?.python_type;
 
@@ -156,19 +168,6 @@ export function RemoteFilters(props: Props) {
           </div>
         );
       })}
-      <Button
-        disabled={disabledApplyButton}
-        type="success"
-        onClick={() =>
-          onSave(
-            generateFilter(filterZone, filterComponentId),
-            filterPassThrough
-          )
-        }
-        text={onSaveText || "Apply Filters"}
-        icon="floppy-disk"
-        testid="apply-filter-button"
-      />
     </div>
   );
 }

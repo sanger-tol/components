@@ -5,18 +5,19 @@ SPDX-License-Identifier: MIT
 */
 
 import { Modal as RSModal } from "rsuite";
-import { Button } from "..";
+import { Button, BUTTONS } from "..";
 
 export interface PModal {
   size?: string;
   open: boolean;
-  setOpen: any;
+  setOpen: (open: boolean) => void;
   children?: JSX.Element | JSX.Element[];
   header?: JSX.Element;
   overflow?: boolean;
   closeButton?: boolean;
   actionButton?: JSX.Element;
   className?: string;
+  hasPendingChanges?: boolean;
   onClose?: () => void;
   onEnter?: () => void;
   onExited?: () => void;
@@ -33,7 +34,8 @@ export function Modal(props: PModal) {
     overflow = true,
     actionButton,
     className,
-    onClose, 
+    hasPendingChanges = false,
+    onClose,
     onEnter,
     onExited
   } = props;
@@ -54,9 +56,9 @@ export function Modal(props: PModal) {
         className={className}
         onEnter={onEnter}
         onExited={onExited}
+        backdrop={hasPendingChanges ? "static" : true}
       >
         <RSModal.Header closeButton={false}>{header}</RSModal.Header>
-
         <RSModal.Body>{children}</RSModal.Body>
         <RSModal.Footer>
           {actionButton && (
@@ -64,10 +66,8 @@ export function Modal(props: PModal) {
           )}
           {closeButton && (
             <Button
-              type="error"
+              {...BUTTONS.CLOSE}
               onClick={handleClose}
-              icon="xmark"
-              position="right"
             />
           )}
         </RSModal.Footer>

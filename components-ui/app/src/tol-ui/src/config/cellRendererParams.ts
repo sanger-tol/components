@@ -14,9 +14,9 @@ export const cellRendererParams: IBoardCellRenderers = {
     allowedDataTypes: ["bool"]
   },
   datetime: {
+    rename: "DateTime",
     allowedDataTypes: ["datetime"]
   },
-  expander: {},
   float: {
     allowedDataTypes: ["float", "int"]
   },
@@ -33,7 +33,7 @@ export const cellRendererParams: IBoardCellRenderers = {
         type: "string",
         rename: "Caption",
         description: "The caption or list of captions for the image(s)",
-        placeholder: "This is an image of a cat",
+        placeholder: "This is an image of a forest",
       },
     },
     allowedDataTypes: ["str"]
@@ -58,37 +58,37 @@ export const cellRendererParams: IBoardCellRenderers = {
       },
     }
   },
-  list: {},
+  collection: {},
+  longText: {
+    rename: "Long Text",
+    allowedDataTypes: ["str", "float", "int"]
+  },
   none: {},
   relationship: {
     params: {
-      detailPageIdAttribute: {
+      relationshipId: {
         type: "string",
-        rename: "ID Attribute",
-        description: "The name of the field that holds the ID for the detail page link",
+        rename: "Relationship ID",
+        description: "The ID used in the detail page URL for the related object",
         placeholder: "id",
       },
     }
   },
-  status: {
+  trafficLightStatus: {
+    rename: "Traffic Light Status",
     params: {
-      info: {
-        type: "boolean",
-        rename: "Info",
-        description: "Condition for displaying an info status",
-      },
       success: {
-        type: "boolean",
+        type: "condition",
         rename: "Success",
         description: "Condition for displaying a success status",
       },
       warning: {
-        type: "boolean",
+        type: "condition",
         rename: "Warning",
         description: "Condition for displaying a warning status",
       },
       danger: {
-        type: "boolean",
+        type: "condition",
         rename: "Danger",
         description: "Condition for displaying a danger status",
       },

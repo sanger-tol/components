@@ -30,7 +30,6 @@ import {
   useEffectUpdate,
   useStateFallback,
   TsDataSource,
-  IEntityMeta,
   initialiseFieldMeta,
   TDataObjectListOrNull,
   ICustomCellRenderers,
@@ -68,6 +67,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone {
 
   rowSelection?: boolean;
   utilityBarConfig?: PUtilityBar;
+  advanceTab?: boolean;
   contents?: ReactNode;
   groupBy?: boolean;
   copySeparator?: string;
@@ -187,20 +187,13 @@ export function RemoteTable(props: PRemoteTable) {
 
   const initialSetup = async () => {
     if (!basic) {
-      dataSource
-        .getEntityMeta()
-        .then((em: IEntityMeta) => {
-          setFieldMeta(
-            addFieldMetaDefaults(
-              objectType,
-              fieldMeta,
-              em,
-            )
-          );
-        })
-        .catch((error: any) => {
-          setError(error.message);
-        })
+      setFieldMeta(
+        await addFieldMetaDefaults(
+          objectType,
+          fieldMeta,
+          dataSource,
+        )
+      )
     }
   }
 

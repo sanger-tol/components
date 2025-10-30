@@ -11,17 +11,16 @@ import {
   FormatTooltip,
   Loader,
   TDataObjectOrNull,
-  getFieldByName,
   sortObjectAlphabetically
 } from "../..";
 
 
 export interface PRelationship extends PCell {
-  detailPageIdAttribute?: string; // the id that the detail page uses
+  relationshipId?: string; // the id that the detail page uses
 }
 
 export function Relationship(props: PRelationship) {
-  const { attribute, value, dataObject, dataSource, detailPageIdAttribute } = props;
+  const { attribute, value, dataObject, dataSource, relationshipId } = props;
   const [contents, setContents] = useState<JSX.Element | string>(
     <Loader size="sm" />,
   );
@@ -72,9 +71,9 @@ export function Relationship(props: PRelationship) {
     </HoverOverlay>
   );
 
-  if (detailPageIdAttribute) {
+  if (relationshipId) {
     return (
-      <a href={`${relationshipObjectType}/${getFieldByName(dataObject, detailPageIdAttribute)}`}>
+      <a href={`${relationshipObjectType}/${relationshipId}`}>
         {Box}
       </a>
     );

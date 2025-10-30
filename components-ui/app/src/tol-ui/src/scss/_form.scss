@@ -35,3 +35,8 @@
 .tol-multiple-select-error-message .rs-form-error-message {
   margin-top: 11px;
 }
+
+.tol-required {
+  color: var(--tol-danger);
+  margin: 0 0.2rem;
+}

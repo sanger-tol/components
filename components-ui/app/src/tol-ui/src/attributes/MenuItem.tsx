@@ -41,8 +41,7 @@ export function MenuItem(props: PMenuItem) {
             objectType={objectType}
             dataSource={dataSource}
             field={field}
-            titleElement="p"
-            classname={disabled ? "disabled" : undefined}
+            className={disabled ? "disabled" : undefined}
           />
           <div className="tol-attribute-selector-display-key">
             {authoritative === true && <Icon icon="star" />}
