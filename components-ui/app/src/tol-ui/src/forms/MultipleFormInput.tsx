@@ -30,6 +30,16 @@ export function MultipleFormInput(props: PMultipleFormInput) {
     createNewInput(field.name, formData, setFormData);
   }
 
+  useEffect(() => {
+    // Want to remove any undefined entries that may have been created before
+    // fieldData was populated
+    for (const key in fieldData) {
+      if (key.includes("undefined")) {
+        handleDeleteInput(key, false);
+      }
+    }
+  }, [fieldData])
+
   const addButton: PButton = {
     onClick: () => {
       // uses a random 3 digit number as an id
@@ -46,7 +56,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
     position: "right",
   };
 
-  const handleDeleteInput = (input: string) => {
+  const handleDeleteInput = (input: string, modify: boolean) => {
     const updatedFormData = {
       ...formData,
       [field.name]: {
@@ -55,10 +65,12 @@ export function MultipleFormInput(props: PMultipleFormInput) {
     };
     delete updatedFormData[field.name][input];
     setFormData(updatedFormData);
-    setModifiedFields(prev => ({
-      ...prev,
-      [field.name]: updatedFormData[field.name],
-    }));
+    if (modify) {
+      setModifiedFields(prev => ({
+        ...prev,
+        [field.name]: updatedFormData[field.name],
+      }));
+    }
   }
 
   return (
@@ -86,7 +98,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
             <div style={{ alignSelf: "center" }}>
               <Button
                 {...minusButton}
-                onClick={() => handleDeleteInput(input)}
+                onClick={() => handleDeleteInput(input, true)}
               />
             </div>
           )}
