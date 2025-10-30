@@ -26,12 +26,9 @@ export function MultipleFormInput(props: PMultipleFormInput) {
   const { field, formData, setFormData, setModifiedFields, renderField, onChange, minOne } = props;
   const fieldData = formData[field.name] || {};
 
-  useEffect(() => {
-    // Ensure at least one input is present if minOne is true
-    if (minOne && Object.keys(fieldData).length === 0) {
-      createNewInput(field.name, formData, setFormData, setModifiedFields);
-    }
-  }, [])
+  if (minOne && Object.keys(fieldData).length === 0) {
+    createNewInput(field.name, formData, setFormData);
+  }
 
   const addButton: PButton = {
     onClick: () => {
