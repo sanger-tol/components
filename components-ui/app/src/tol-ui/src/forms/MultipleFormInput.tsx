@@ -16,25 +16,27 @@ export interface PMultipleFormInput {
   field: any;
   formData: object;
   setFormData: (data: object) => void;
+  setModifiedFields: (data: object) => void;
   renderField: (field: any) => JSX.Element | null;
+  onChange: (name: string, value: any) => void;
   minOne?: boolean;
 }
 
 export function MultipleFormInput(props: PMultipleFormInput) {
-  const { field, formData, setFormData, renderField, minOne } = props;
+  const { field, formData, setFormData, setModifiedFields, renderField, onChange, minOne } = props;
   const fieldData = formData[field.name] || {};
 
   useEffect(() => {
     // Ensure at least one input is present if minOne is true
     if (minOne && Object.keys(fieldData).length === 0) {
-      createNewInput(field.name, formData, setFormData);
+      createNewInput(field.name, formData, setFormData, setModifiedFields);
     }
   }, [])
 
   const addButton: PButton = {
     onClick: () => {
       // uses a random 3 digit number as an id
-      createNewInput(field.name, formData, setFormData);
+      createNewInput(field.name, formData, setFormData, setModifiedFields);
     },
     type: "success",
     icon: "plus",
@@ -56,6 +58,10 @@ export function MultipleFormInput(props: PMultipleFormInput) {
     };
     delete updatedFormData[field.name][input];
     setFormData(updatedFormData);
+    setModifiedFields(prev => ({
+      ...prev,
+      [field.name]: updatedFormData[field.name],
+    }));
   }
 
   return (
@@ -73,10 +79,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
               onChange: ((value: string) => {
                 const newValue = { [input]: value };
                 const values = formData[field.name];
-                setFormData({
-                  ...formData,
-                  [field.name]: { ...(values || {}), ...newValue }
-                });
+                onChange(field.name, { ...(values || {}), ...newValue });
               }),
               key: input,
               label: undefined

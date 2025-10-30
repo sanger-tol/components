@@ -82,7 +82,8 @@ export function validateForm (
 export function createNewInput (
   fieldName: string,
   formData: object,
-  setFormData: React.Dispatch<React.SetStateAction<object>>
+  setFormData: React.Dispatch<React.SetStateAction<object>>,
+  setModifiedFields: React.Dispatch<React.SetStateAction<object>>
 ) {
   const newInput = `${fieldName}${Math.floor(Math.random() * 900) + 100}`;
   const updatedFormData = {
@@ -92,5 +93,9 @@ export function createNewInput (
       [newInput]: "",
     },
   };
-  setFormData(updatedFormData); 
+  setFormData(updatedFormData);
+  setModifiedFields(prev => ({
+    ...prev,
+    [fieldName]: updatedFormData[fieldName],
+  }));
 }
