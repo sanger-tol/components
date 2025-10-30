@@ -75,7 +75,7 @@ export function Tables() {
                 cellRenderer: {
                   type: "relationship",
                   props: {
-                    detailPageIdAttribute: "mlwh_species.id"
+                    relationshipId: "${mlwh_species.id}",
                   }
                 }
               },
@@ -102,7 +102,7 @@ export function Tables() {
               },
               mlwh_position: {
                 rename: "Position",
-                filter: "boolean",
+                filter: "bool",
               },
               mlwh_tag_index: {
                 rename: "Tag",

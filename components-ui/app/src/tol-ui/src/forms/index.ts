@@ -19,3 +19,4 @@ export * from "./FormDatetime";
 export * from "./utils";
 export * from "./MultipleFormInput";
 export * from "./FormLabel";
+export * from "./RequiredAsterisk";

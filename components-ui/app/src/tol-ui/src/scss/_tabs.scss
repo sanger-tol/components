@@ -6,10 +6,16 @@
 
 .tol-tabs {
   .rs-nav-pills {
-    background-color: unset;
+    @extend .tol-widget;
+    padding: 4px !important;
+    margin: 0 !important;
 
     .rs-nav-item {
       color: var(--tol-text);
+
+      &:not(:first-child) {
+        margin-left: 4px;
+      }
 
       &.rs-nav-item-active {
         color: var(--tol-primary);
@@ -17,9 +23,28 @@
         border: 1px solid var(--tol-primary-translucent);
       }
 
+      &.rs-nav-item-disabled {
+        color: var(--tol-grey);
+      }
+
+      &:not(.rs-nav-item-disabled) {
+        border: 1px solid transparent;
+
+        &:hover {
+          border-color: var(--tol-grey-translucent);
+        }
+      }
+
       &:hover {
         color: var(--tol-primary);
       }
+    }
+
+    &.rs-nav-horizontal {
+      overflow-x: auto;
+      white-space: nowrap;
+      max-width: 100%;
+      display: block;
     }
   }
 }

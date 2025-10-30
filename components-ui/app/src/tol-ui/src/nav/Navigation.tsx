@@ -34,6 +34,7 @@ interface Props extends RouteComponentProps {
   login: boolean;
   register: boolean;
   customCallbackUrl?: string;
+  uiPath?: string;
 }
 
 interface Environment {
@@ -126,7 +127,7 @@ function Navigation(props: Props) {
         return (
           <Nav.Link
             key={page.name}
-            href={"link" in page ? page.link?.href : convertToPath(page.name)}
+            href={"link" in page ? page.link?.href : convertToPath(page.name, props.uiPath)}
             target={page.link?.target}
           >
             {page.name}
@@ -162,8 +163,8 @@ function Navigation(props: Props) {
                         key={page.name}
                         href={
                           "link" in page
-                            ? page.link?.href
-                            : convertToPath(page.name)
+                          ? page.link?.href
+                          : convertToPath(page.name, props.uiPath)
                         }
                         target={page.link?.target}
                       >

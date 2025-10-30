@@ -13,17 +13,19 @@ import {
   IRemoteTarget,
   IAttributeDetails,
   TRANSITION_TIME,
-  AttributeTitle
+  AttributeTitle,
+  FieldMeta
 } from "../index";
 
 export interface PSelectedAttributesContainer extends IRemoteTarget {
   attributes: readonly string[];
   setAttributes: (attributes: string[]) => void;
   additionalIcons?: any[];
+  fieldMeta?: FieldMeta; // temporary addition for table renames
 }
 
 export function SelectedAttributesContainer(props: PSelectedAttributesContainer) {
-  const { objectType, dataSource, attributes, setAttributes, additionalIcons } = props;
+  const { objectType, dataSource, attributes, setAttributes, additionalIcons, fieldMeta } = props;
   const [recentlyMoved, setRecentlyMoved] = useState<number | null>(null);
   const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
   const [objectAttributes, setObjectAttributes] = useState<IAttributeDetails>(
@@ -93,8 +95,8 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
                 objectType={objectType}
                 dataSource={dataSource}
                 field={attributeId}
-                titleElement="p"
-                classname="tol-config-drawer-selected-column-title"
+                className="tol-config-drawer-selected-column-title"
+                rename={fieldMeta?.[attributeId]?.rename}
               />
             </div>
           </span>
