@@ -17,11 +17,13 @@ import {
   IUpdatedZoneIds,
   IDBZone,
   getNextZoneOrder,
-  IconTooltip,
-  IDataspace,
-  TsDataSource,
+  BUTTONS,
+  RequiredAsterisk,
   TDataObjectListOrNull,
-  TDataObjectOrNull,
+  fetchPublishedDataspaces,
+  TLabelAndValueData,
+  TsDataSource,
+  normaliseCaps,
 } from "../..";
 
 
@@ -33,8 +35,6 @@ export interface PZoneModal extends PBoard {
   zoneOrder: IDBZoneView[];
   setZoneOrder: (zone: IDBZoneView[]) => void;
   viewId: string;
-  dataspace: IDataspace | undefined;
-  setDataspace: React.Dispatch<React.SetStateAction<IDataspace | undefined>>;
 }
 
 
@@ -47,110 +47,101 @@ export function ZoneModal(props: PZoneModal) {
     zoneOrder,
     setZoneOrder,
     viewId,
-    dataspace,
-    setDataspace,
     boardDataSource,
   } = props;
 
-  const [selectableDataspaces, setSelectableDataspaces] = useState<Record<string, IDataspace> | undefined>();
-  const [dataspaceNames, setDataspaceNames] = useState(["tol_production"]);
-  const [dataspaceName, setDataspaceName] = useState("tol_production");
+  const [dataSourceInstancesLoading, setDataSourceInstancesLoading] = useState(false);
+  const [dataSourceInstanceList, setDataSourceInstanceList] = useState<TLabelAndValueData>([]);
+  const [dataSourceInstance, setDataSourceInstance] = useState<TsDataSource>();
+  const [objectTypesLoading, setObjectTypesLoading] = useState(false);
+  const [objectTypesList, setObjectTypesList] = useState<TLabelAndValueData>([]);
   const [objectType, setObjectType] = useState("");
+
   const [title, setTitle] = useState("");
-  const [mandatoryFieldsFilled, setMandatoryFieldsFilled] = useState(false);
-  const [objectTypesList, setObjectTypesList] = useState<string[]>([]);
-
-  const reset = () => {
-    setDataspaceName("tol_production");
-    setTitle("");
-    setObjectType("");
-    setMandatoryFieldsFilled(false);
-  };
-
-  const validateForm = ({
-    newDataspace = dataspaceName,
-    newObjectType = objectType,
-    newTitle = title,
-  }) => {
-    if (!newDataspace || !newObjectType || !newTitle) {
-      setMandatoryFieldsFilled(false);
-      return false;
-    } else {
-      setMandatoryFieldsFilled(true);
-      return true;
-    }
-  };
-
-  // Queries the data_source_instance table to fetch all of the dataspaces the user can pick from
-  // This allows us to use their names as the data in the dataspace singleselect, and also lets
-  // us use their information (url, apiPath, apiDataPath, dataspace) to make a new IDataspace
-  // object (in `selectDataspace`) when the user selects one
-  const fetchSelectableDataspaces = () => {
-    boardDataSource
-      .getListPage({ 
-        objectType: "data_source_instance",
-        pageSize: 100,
-      })
-      .then((data: TDataObjectListOrNull) => {
-        let newSelectableDataspaces: Record<string, IDataspace> = {};
-        data?.forEach((instance: TDataObjectOrNull) => {
-          newSelectableDataspaces[instance?.api_details.dataspace] = {
-            dataSourceInstanceId: instance?.id as string,  // TODO: would the query every return undefined for id? It's a primary key
-            dataSource: new TsDataSource({
-              url: instance?.api_details.url,
-              apiPath: instance?.api_details.api_path,
-              apiDataPath: instance?.api_details.api_data_path,
-              dataspace: instance?.api_details.dataspace
-            })
-          }
-        });
-
-        setSelectableDataspaces(newSelectableDataspaces);
-        setDataspaceNames(Object.keys(newSelectableDataspaces));
-      })
-      .catch((error: any) => {
-        console.error("Error fetching data source instances:", error);
-        alert("There was an error fetching the required data for this form");
-      });
-  };
+  const [titleError, setTitleError] = useState(false);
+  const [fieldError, setFieldError] = useState(false);
 
   useEffect(() => {
     if (open) {
-      fetchSelectableDataspaces();
-    } else {  // Closed 
+      fetchPublishedDataspaces(
+        boardDataSource
+      )
+        .then((dataObjects) => {
+          if (dataObjects) {
+            setDataSourceInstanceList(
+              dataObjects.map((dsi) => ({
+                label: dsi.name,
+                value: {
+                  id: dsi.id,
+                  apiDetails: dsi.api_details,
+                }
+              }))
+            );
+          }
+        }).finally(() => {
+          setDataSourceInstancesLoading(false);
+        });
+    } else {
       reset();
     }
   }, [open]);
 
   useEffect(() => {
-    if (selectableDataspaces) {
-      // Select "tol_production" by default on form load
-      // Otherwise there would be no object types available even though "tol_production"
-      // appears to be selected
-      selectDataspace("tol_production");
+    if (dataSourceInstance) {
+      setObjectTypesLoading(true);
+      dataSourceInstance.attributeMetadata()
+        .then((am) => {
+          setObjectTypesList(
+            Object.keys(am).map((type) => ({
+              label: normaliseCaps(type),
+              value: type,
+            }))
+          );
+        })
+        .finally(() => {
+          setObjectTypesLoading(false);
+        });
+    } else {
+      setObjectTypesList([]);
+      setObjectType("");
     }
-  }, [selectableDataspaces]);
+  }, [dataSourceInstance]);
 
-  const selectDataspace = (dataspaceName: string) => {
-    // Fetch the dataspace with this name from the dataspaces fetched
-    const newDataspace: IDataspace = selectableDataspaces[dataspaceName];
-    setDataspace(newDataspace);
+  const onSelectDataspace = (dsi: any) => {
+    setDataSourceInstance(
+      dsi ? new TsDataSource(dsi.api_details) : undefined
+    );
+    console.log(dsi);
+  }
 
-    // Fetch the possible object types from this dataspace to fill the second dropdown
-    newDataspace.dataSource.attributeMetadata().then((am) => {
-      setObjectTypesList(
-        Object.keys(am)
-      );
-    });
+  const reset = () => {
+    setObjectType("");
+    setTitle("");
+    setTitleError(false);
+    setFieldError(false);
   };
 
-  const onAddZone = async () => {
-    if (!dataspace) return;  // Shouldn't happen
+  const validateInputs = () => {
+    setTitleError(false);
+    setFieldError(false);
+    let validId = true;
+    let validField = true;
 
-    if (validateForm({})) {
+    if (title === "") {
+      setTitleError(true);
+      validId = false;
+    }
+    if (objectType === "" || objectType === null) {
+      setFieldError(true);
+      validField = false;
+    }
+    return validId && validField;
+  }
+
+  const onAddZone = async () => {
+    if (validateInputs()) {
       const nextOrder = getNextZoneOrder(zoneOrder);
       const newZone: IUpdatedZoneIds = await upsertNewZone(
-        dataspace.dataSource,
         boardDataSource,
         objectType,
         title,
@@ -181,104 +172,73 @@ export function ZoneModal(props: PZoneModal) {
   const ActionButtons = (
     <div>
       <Button
-        position="right"
-        type="success"
+        {...BUTTONS.ADD}
         onClick={onAddZone}
-        icon="plus"
-        text="Add Zone"
         testid="confirm-zone-button"
-        disabled={!mandatoryFieldsFilled}
-        disabledTooltip="Please ensure all mandatory fields are filled"
       />
       <Button
-        position="right"
-        type="error"
+        {...BUTTONS.CANCEL}
         onClick={() => setOpen(false)}
-        icon="times"
-        text="Cancel"
       />
     </div>
   );
 
   return (
-    <div className="confirm-delete-buttons">
-      <Modal
-        open={open}
-        size="xs"
-        setOpen={setOpen}
-        actionButton={ActionButtons}
-        closeButton={false}
-        overflow={false}
-        data-testid="zoneModal"
-      >
-        <div>
-          <h4>Add New Zone</h4>
-          <p className="zone-modal-labels">
-            Select Dataspace
-            &nbsp;
-            <span className="tol-param-info">
-              <IconTooltip contents={"The set of data to pull from"} disableMarkdown />
-            </span>
-            &nbsp;
-            <span className="tol-danger-colour">*</span>
+    <Modal
+      open={open}
+      size="xs"
+      setOpen={setOpen}
+      actionButton={ActionButtons}
+      closeButton={false}
+      overflow={false}
+      data-testid="zoneModal"
+    >
+      <h4>Add New Zone</h4>
+      <p className="zone-modal-labels">
+        Select Dataspace <RequiredAsterisk />
+      </p>
+      <SingleSelect
+        block
+        data={dataSourceInstanceList}
+        placeholder="Dataspace"
+        value={dataSourceInstance?.id}
+        onChange={onSelectDataspace}
+      />
+      <br />
+      <p className="zone-modal-labels">
+        Select Object Type <RequiredAsterisk />
+      </p>
+      <SingleSelect
+        block
+        data={objectTypesList}
+        placeholder="Object Type"
+        value={objectType}
+        onChange={setObjectType}
+        disabled={!dataSourceInstance}
+      />
+      <br />
+      <p className="zone-modal-labels">
+        Enter Title <RequiredAsterisk />
+      </p>
+      <RSForm fluid>
+        <FormTextField
+          id="zone-title"
+          onChange={(value: any) => setTitle(value)}
+          name="Zone Title"
+          placeholder="Zone Title"
+          label=""
+        />
+      </RSForm>
+      <>
+        {titleError && (
+          <p className="tol-modal-error">Title cannot be blank</p>
+        )}
+        {fieldError && (
+          <p className="tol-modal-error">
+            Please ensure all mandatory fields are filled
           </p>
-          <SingleSelect
-            data={dataspaceNames}
-            placeholder="Dataspace"
-            value={dataspaceName}
-            onChange={(newValue) => {
-              validateForm({ newDataspace: newValue });
-              setDataspaceName(newValue);
-              selectDataspace(newValue);
-            }}
-            block
-          />
-          <br/>
-          <p className="zone-modal-labels">
-            Select Object Type
-            &nbsp;
-            <span className="tol-param-info">
-              <IconTooltip contents={"The type of data this zone will focus on"} disableMarkdown />
-            </span>
-            &nbsp;
-            <span className="tol-danger-colour">*</span>
-          </p>
-          <SingleSelect
-            data={objectTypesList}  // Which might be empty but that's okay
-            placeholder="Object Type"
-            value={objectType}
-            onChange={(newValue) => {
-              validateForm({ newObjectType: newValue });
-              setObjectType(newValue);
-            }}
-            disabled={!dataspaceName}
-            disabledTooltip="You must select a dataspace first"
-            block
-          />
-          <br />
-          <p className="zone-modal-labels">
-            Enter Title
-            &nbsp;
-            <span className="tol-param-info">
-              <IconTooltip contents={"The title to be displayed for this zone"} disableMarkdown />
-            </span>
-            &nbsp;
-            <span className="tol-danger-colour">*</span>
-          </p>
-          <RSForm fluid>
-            <FormTextField
-              id="zone-title"
-              onChange={(newValue: any) => {
-                validateForm({ newTitle: newValue });
-                setTitle(newValue);
-              }}
-              name="Zone Title"
-              placeholder={`Zone Title`}
-              label=""
-            />
-          </RSForm>
-        </div>
-      </Modal>
-    </div>
+        )}
+      </>
+    </Modal>
   );
 }

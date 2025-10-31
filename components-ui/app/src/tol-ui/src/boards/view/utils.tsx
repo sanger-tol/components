@@ -152,7 +152,6 @@ async function getZoneData(ids: string[], boardDataSource: TsDataSource) {
 
 
 export async function upsertNewZone(
-  dataSource: TsDataSource,
   boardDataSource: TsDataSource,
   objectType: string,
   title: string,
@@ -206,3 +205,16 @@ export async function upsertNewZone(
       throw new Error("Unexpected null response for Zone View creation");
     });
 }
+
+export async function fetchPublishedDataspaces(
+  boardDataSource: TsDataSource,
+): Promise<TDataObjectListOrNull> {
+ return await boardDataSource
+    .getListPage({
+      objectType: BOARDS.DATA_SOURCE_INSTANCE,
+      pageSize: 100,
+    })
+    .then((data: TDataObjectListOrNull) => {
+      return data;
+    });
+};

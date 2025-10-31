@@ -4,7 +4,16 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BOARDS, generateId, getUserFromLocalStorage, IComponentData, IDBZoneView, IZone, TsDataSource } from "../..";
+import {
+  BOARDS,
+  generateId,
+  getUserFromLocalStorage,
+  IComponentData,
+  IDBZoneView,
+  IZone,
+  TDataObjectOrNull,
+  TsDataSource
+} from "../..";
 
 
 export function getNextComponentOrder(zone: IZone) {
@@ -150,5 +159,19 @@ export async function upsertNewComponent(
         };
       }
       throw new Error("Unexpected null response for Component Zone creation");
+    });
+}
+
+export async function getDataspaceApiDetails(
+  dataspaceId: string,
+  dataSource: TsDataSource
+): Promise<TDataObjectOrNull> {
+  return await dataSource
+    .getOne({
+      objectType: BOARDS.BOARD,
+      id: dataspaceId,
+    })
+    .then((dataObject: TDataObjectOrNull) => {
+      return dataObject?.api_details;
     });
 }

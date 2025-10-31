@@ -71,7 +71,7 @@ def upgrade() -> None:
     conn.execute(
         text("""
         INSERT INTO data_source_instance (id, name, builtin_name, kwargs, publish, data_source_config_id, api_details)
-        VALUES ('1', 'tol_production', 'portal', '{"dataspace": "tol_production"}', 'false', NULL, '{"url": "https://portal.tol.sanger.ac.uk", "api_path": "/api/v1", "api_data_path": "/data", "dataspace": "tol_production"}')
+        VALUES ('1', 'tol_production', 'portal', '{"dataspace": "tol_production"}', 'true', NULL, '{"url": "https://portal.tol.sanger.ac.uk", "api_path": "/api/v1", "api_data_path": "/data", "dataspace": "tol_production"}')
         """)
     )
 
@@ -81,18 +81,36 @@ def upgrade() -> None:
 
     # Create new `data_source_instance_id` fields in their places,
     # with foreign keys linking to the `data_source_instance` table
-    op.add_column('component', sa.Column('data_source_instance_id', sa.Integer, nullable=False, server_default="1"))
+    op.add_column('component', sa.Column('data_source_instance_id', sa.Integer, nullable=True))
     op.create_foreign_key(
         'fk_component_data_source_instance',
         'component', 'data_source_instance',
         ['data_source_instance_id'], ['id']
     )
-    op.add_column('zone', sa.Column('data_source_instance_id', sa.Integer, nullable=False, server_default="1"))
+    op.add_column('zone', sa.Column('data_source_instance_id', sa.Integer, nullable=True))
     op.create_foreign_key(
         'fk_zone_data_source_instance',
         'zone', 'data_source_instance',
         ['data_source_instance_id'], ['id']
     )
+
+    # Pre-populate `datasource_instance_id` fields with `1` ('tol-production')
+    conn.execute(
+        text("""
+        UPDATE component
+        SET data_source_instance_id=1
+        """)
+    )
+    conn.execute(
+        text("""
+        UPDATE zone
+        SET data_source_instance_id=1
+        """)
+    )
+
+    # Set columns as NOT NULL now that data is populated
+    op.alter_column('component', 'data_source_instance_id', nullable=False)
+    op.alter_column('zone', 'data_source_instance_id', nullable=False)
 
 
 def downgrade() -> None:

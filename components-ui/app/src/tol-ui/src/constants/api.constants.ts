@@ -24,12 +24,15 @@ export const BOARDS = {
   VIEW_BOARD: "view_board",
   ZONE_VIEW: "zone_view",
   COMPONENT_ZONE: "component_zone",
+  DATA_SOURCE_INSTANCE: "data_source_instance",
 }
 
 export const ACTIONS = {
   ACTION: "action",
   RUN_ACTION: "run-action",
 }
+
+
 
 export const VALIDATION_ENDPOINTS = {
   UPLOAD: "local/upload",

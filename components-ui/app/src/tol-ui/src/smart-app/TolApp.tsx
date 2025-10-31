@@ -43,28 +43,24 @@ import {
   getUserPrivilege,
   PrivilegeContext,
   BoardPrivilegeContextProvider,
-  clearUnusedLocalStorage
+  clearUnusedLocalStorage,
+  PBoard
 } from "..";
 
 
-export interface BoardSources {
-  boardDataSource?: TsDataSource;
-}
-
-interface Props {
+export interface PTolApp {
   brand: string | JSX.Element;
   homePage: JSX.Element;
   pages: (Page | Dropdown)[];
   profilePages?: Page[];
   login?: boolean;
-  boards?: BoardSources;
+  boards?: PBoard;
   register?: boolean;
   customCallbackUrl?: string;
   uiPath?: string;
 }
 
-
-export function TolApp(props: Props) {
+export function TolApp(props: PTolApp) {
   const { customCallbackUrl, uiPath } = props;
 
   // ensure redirect targets are absolute; basePath will be '/' or '/<uiPath>/'
@@ -75,7 +71,7 @@ export function TolApp(props: Props) {
     boardDataSource: props.boards?.boardDataSource
       || new TsDataSource({
         apiPath: env.API_PATH,
-        apiDataPath: "boards"  // Not being passed in?
+        apiDataPath: BOARDS_API_PREFIX,
       }),
   } : undefined;
   const queryClient = new QueryClient();
@@ -146,7 +142,6 @@ export function TolApp(props: Props) {
                 {boards && loggedIn ? (
                   <BoardPrivilegeContextProvider>
                     <Board
-                      dataSource={boards.dataSource}
                       boardDataSource={boards.boardDataSource}
                     />
                   </BoardPrivilegeContextProvider>

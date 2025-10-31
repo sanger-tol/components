@@ -91,11 +91,18 @@ export interface IDatetimeField {
   icon?: IFormLabelIcon;
 }
 
+interface ILabelAndValueDataInstance {
+  label: string;
+  value: any;
+}
+
+export type TLabelAndValueData = ILabelAndValueDataInstance[];
+
 export interface ISingleselectField {
   name: string;
   type: "singleselect";
   label: string;
-  data: string[] | { label: string, value: string }[]; // Array of selectable options
+  data: string[] | TLabelAndValueData; // Array of selectable options
   placeholder?: string;
   block?: boolean;
   icon?: IFormLabelIcon;

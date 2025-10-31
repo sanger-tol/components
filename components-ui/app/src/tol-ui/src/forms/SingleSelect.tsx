@@ -5,20 +5,20 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Whisper, SelectPicker, Tooltip } from "rsuite";
+import { SelectPicker } from "rsuite";
+import { TLabelAndValueData } from "..";
+
 
 export interface PSingleSelect {
-  data: string[] | { label: string, value: string }[];
+  data: string[] | TLabelAndValueData;
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
   block?: boolean;
   disabled?: boolean;
-  disabledTooltip?: string;
 }
 
 export const SingleSelect = (props: PSingleSelect) => {
-  const { placeholder, onChange, value, block, disabled, disabledTooltip } = props;
   const [data, setData] = useState([{}]);
 
   useEffect(() => {
@@ -29,23 +29,10 @@ export const SingleSelect = (props: PSingleSelect) => {
     }
   }, [props.data]);
 
-  const DisabledTooltip = (
-    <Tooltip>{disabledTooltip}</Tooltip>
-  );
-
   return (
-    <Whisper open={disabled} speaker={DisabledTooltip}>
-      <span>
-        <SelectPicker
-          data={data}
-          searchable={false}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          disabled={disabled}
-          block={block}
-        />
-      </span>
-    </Whisper>
+    <SelectPicker
+      {...props}
+      data={data}
+    />
   );
 };

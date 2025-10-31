@@ -27,15 +27,11 @@ import {
 
 
 export interface PBoard {
-  dataSource: TsDataSource;
   boardDataSource: TsDataSource;
 }
 
 export function Board(props: PBoard) {
-  const {
-    dataSource,
-    boardDataSource,
-  } = props;
+  const { boardDataSource } = props;
 
   const { boardId, viewId } = useParams<any>();
   const [user, setUser] = useState<any>(null);
@@ -115,7 +111,6 @@ export function Board(props: PBoard) {
       <View
         id={boardData.views[0].id}
         defaultFilter={boardData.views[0].filter}
-        dataSource={dataSource}
         boardDataSource={boardDataSource}
         utilityBarConfig={UtilityBarConfig}
       />
