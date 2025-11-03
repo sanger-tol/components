@@ -231,7 +231,6 @@ export function FormAllInOne(props: PFormAllInOne) {
                 handleInputChange(remoteAutocompleteField.name, value)
               }
               errorText={errorText}
-              icon={remoteAutocompleteField.icon as PIcon}
             />
           );
         } else {
