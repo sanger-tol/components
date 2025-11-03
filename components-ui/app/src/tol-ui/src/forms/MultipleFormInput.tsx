@@ -16,25 +16,34 @@ export interface PMultipleFormInput {
   field: any;
   formData: object;
   setFormData: (data: object) => void;
+  setModifiedFields: (data: object) => void;
   renderField: (field: any) => JSX.Element | null;
+  onChange: (name: string, value: any) => void;
   minOne?: boolean;
 }
 
 export function MultipleFormInput(props: PMultipleFormInput) {
-  const { field, formData, setFormData, renderField, minOne } = props;
+  const { field, formData, setFormData, setModifiedFields, renderField, onChange, minOne } = props;
   const fieldData = formData[field.name] || {};
 
+  if (minOne && Object.keys(fieldData).length === 0) {
+    createNewInput(field.name, formData, setFormData);
+  }
+
   useEffect(() => {
-    // Ensure at least one input is present if minOne is true
-    if (minOne && Object.keys(fieldData).length === 0) {
-      createNewInput(field.name, formData, setFormData);
+    // Want to remove any undefined entries that may have been created before
+    // fieldData was populated
+    for (const key in fieldData) {
+      if (key.includes("undefined")) {
+        handleDeleteInput(key, false);
+      }
     }
-  }, [])
+  }, [fieldData])
 
   const addButton: PButton = {
     onClick: () => {
       // uses a random 3 digit number as an id
-      createNewInput(field.name, formData, setFormData);
+      createNewInput(field.name, formData, setFormData, setModifiedFields);
     },
     type: "success",
     icon: "plus",
@@ -47,7 +56,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
     position: "right",
   };
 
-  const handleDeleteInput = (input: string) => {
+  const handleDeleteInput = (input: string, modify: boolean) => {
     const updatedFormData = {
       ...formData,
       [field.name]: {
@@ -56,6 +65,12 @@ export function MultipleFormInput(props: PMultipleFormInput) {
     };
     delete updatedFormData[field.name][input];
     setFormData(updatedFormData);
+    if (modify) {
+      setModifiedFields(prev => ({
+        ...prev,
+        [field.name]: updatedFormData[field.name],
+      }));
+    }
   }
 
   return (
@@ -73,10 +88,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
               onChange: ((value: string) => {
                 const newValue = { [input]: value };
                 const values = formData[field.name];
-                setFormData({
-                  ...formData,
-                  [field.name]: { ...(values || {}), ...newValue }
-                });
+                onChange(field.name, { ...(values || {}), ...newValue });
               }),
               key: input,
               label: undefined
@@ -86,7 +98,7 @@ export function MultipleFormInput(props: PMultipleFormInput) {
             <div style={{ alignSelf: "center" }}>
               <Button
                 {...minusButton}
-                onClick={() => handleDeleteInput(input)}
+                onClick={() => handleDeleteInput(input, true)}
               />
             </div>
           )}

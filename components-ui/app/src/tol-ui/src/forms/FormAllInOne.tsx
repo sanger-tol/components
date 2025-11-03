@@ -334,7 +334,9 @@ export function FormAllInOne(props: PFormAllInOne) {
                 field={field}
                 formData={formData}
                 setFormData={setFormData}
+                setModifiedFields={setModifiedFields}
                 minOne={field.minOne}
+                onChange={handleInputChange}
               />
             ) : (
               renderField(field)
