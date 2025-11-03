@@ -29,13 +29,7 @@ export function VideoPlayer(props: PVideoPlayer) {
       }
     }
     return (
-      <div
-        style={{
-          width: width,
-          border: "2px solid var(--tol-grey-subtle)",
-          borderRadius: "6px",
-        }}
-      >
+      <div style={{ width: width }} className="tol-video-player-placeholder">
         <Placeholder message={"Video coming soon..."} height={height} />
       </div>
     );
@@ -57,9 +51,8 @@ export function VideoPlayer(props: PVideoPlayer) {
     }
   } else if (!width && height) {
     if (typeof height === "string") {
-    width = `${Number(height.replace("px", "")) * (16 / 9)}px`;
-    }
-    else{
+      width = `${Number(height.replace("px", "")) * (16 / 9)}px`;
+    } else {
       width = Number(height) * (16 / 9);
     }
   }
