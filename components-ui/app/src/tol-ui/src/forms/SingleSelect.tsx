@@ -16,6 +16,7 @@ export interface PSingleSelect {
   onChange: (value: string) => void;
   block?: boolean;
   disabled?: boolean;
+  loading?: boolean;
 }
 
 export const SingleSelect = (props: PSingleSelect) => {

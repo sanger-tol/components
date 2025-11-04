@@ -91,9 +91,10 @@ export interface IDatetimeField {
   icon?: IFormLabelIcon;
 }
 
-interface ILabelAndValueDataInstance {
+export interface ILabelAndValueDataInstance {
   label: string;
   value: any;
+  [otherParams: string]: any;
 }
 
 export type TLabelAndValueData = ILabelAndValueDataInstance[];

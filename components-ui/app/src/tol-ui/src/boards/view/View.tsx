@@ -20,7 +20,8 @@ import {
   UtilityBar,
   PButton,
   PRIVILEGE,
-  useBoardPrivilege
+  useBoardPrivilege,
+  TsDataSource
 } from "../..";
 
 
@@ -37,6 +38,7 @@ export function View(props: PView) {
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
+  const [dataspace, setDataspace] = useState<TsDataSource>();
   const { privilege } = useBoardPrivilege();
 
   useEffect(() => {
@@ -110,6 +112,8 @@ export function View(props: PView) {
         setZoneOrder={setZoneOrder}
         viewId={id}
         boardDataSource={boardDataSource}
+        dataspace={dataspace}
+        setDataspace={setDataspace}
       />
       {zones.length > 0 ? (
         <div className="tol-zones">

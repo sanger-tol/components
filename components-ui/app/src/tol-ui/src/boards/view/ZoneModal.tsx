@@ -19,7 +19,6 @@ import {
   getNextZoneOrder,
   BUTTONS,
   RequiredAsterisk,
-  TDataObjectListOrNull,
   fetchPublishedDataspaces,
   TLabelAndValueData,
   TsDataSource,
@@ -35,6 +34,8 @@ export interface PZoneModal extends PBoard {
   zoneOrder: IDBZoneView[];
   setZoneOrder: (zone: IDBZoneView[]) => void;
   viewId: string;
+  dataspace: TsDataSource;
+  setDataspace: (ds: TsDataSource) => void;
 }
 
 
@@ -47,12 +48,14 @@ export function ZoneModal(props: PZoneModal) {
     zoneOrder,
     setZoneOrder,
     viewId,
+    dataspace,
+    setDataspace,
     boardDataSource,
   } = props;
 
-  const [dataSourceInstancesLoading, setDataSourceInstancesLoading] = useState(false);
+  const [dataSourceInstancesLoading, setDataSourceInstancesLoading] = useState(true);
   const [dataSourceInstanceList, setDataSourceInstanceList] = useState<TLabelAndValueData>([]);
-  const [dataSourceInstance, setDataSourceInstance] = useState<TsDataSource>();
+  const [dataSourceInstance, setDataSourceInstance] = useState<string>("");
   const [objectTypesLoading, setObjectTypesLoading] = useState(false);
   const [objectTypesList, setObjectTypesList] = useState<TLabelAndValueData>([]);
   const [objectType, setObjectType] = useState("");
@@ -68,15 +71,13 @@ export function ZoneModal(props: PZoneModal) {
       )
         .then((dataObjects) => {
           if (dataObjects) {
-            setDataSourceInstanceList(
-              dataObjects.map((dsi) => ({
-                label: dsi.name,
-                value: {
-                  id: dsi.id,
-                  apiDetails: dsi.api_details,
-                }
-              }))
-            );
+            const dsiList = dataObjects.map((dsi) => ({
+              label: normaliseCaps(dsi.name),
+              value: dsi.id,
+              api_details: dsi.api_details,
+            }));
+            setDataSourceInstanceList(dsiList);
+            setDataSourceInstance(dsiList[0].value);
           }
         }).finally(() => {
           setDataSourceInstancesLoading(false);
@@ -86,10 +87,25 @@ export function ZoneModal(props: PZoneModal) {
     }
   }, [open]);
 
+  // assign the dataspace when the instance id changes
   useEffect(() => {
     if (dataSourceInstance) {
+      const apiDetails = dataSourceInstanceList.find((dsi) => dsi.value === dataSourceInstance)?.api_details;
+      setDataspace(
+        new TsDataSource({
+          url: apiDetails.url,
+          apiPath: apiDetails.api_path,
+          apiDataPath: apiDetails.api_data_path,
+          dataspace: apiDetails.dataspace,
+        })
+      );
+    }
+  }, [dataSourceInstance]);
+
+  useEffect(() => {
+    if (dataspace) {
       setObjectTypesLoading(true);
-      dataSourceInstance.attributeMetadata()
+      dataspace.attributeMetadata()
         .then((am) => {
           setObjectTypesList(
             Object.keys(am).map((type) => ({
@@ -105,14 +121,7 @@ export function ZoneModal(props: PZoneModal) {
       setObjectTypesList([]);
       setObjectType("");
     }
-  }, [dataSourceInstance]);
-
-  const onSelectDataspace = (dsi: any) => {
-    setDataSourceInstance(
-      dsi ? new TsDataSource(dsi.api_details) : undefined
-    );
-    console.log(dsi);
-  }
+  }, [dataspace]);
 
   const reset = () => {
     setObjectType("");
@@ -174,6 +183,7 @@ export function ZoneModal(props: PZoneModal) {
       <Button
         {...BUTTONS.ADD}
         onClick={onAddZone}
+        disabled={objectType === "" || title === ""}
         testid="confirm-zone-button"
       />
       <Button
@@ -201,8 +211,9 @@ export function ZoneModal(props: PZoneModal) {
         block
         data={dataSourceInstanceList}
         placeholder="Dataspace"
-        value={dataSourceInstance?.id}
-        onChange={onSelectDataspace}
+        value={dataSourceInstance}
+        onChange={setDataSourceInstance}
+        loading={dataSourceInstancesLoading}
       />
       <br />
       <p className="zone-modal-labels">
@@ -215,6 +226,7 @@ export function ZoneModal(props: PZoneModal) {
         value={objectType}
         onChange={setObjectType}
         disabled={!dataSourceInstance}
+        loading={objectTypesLoading}
       />
       <br />
       <p className="zone-modal-labels">
