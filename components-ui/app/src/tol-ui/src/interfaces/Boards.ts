@@ -29,8 +29,7 @@ export interface IComponentData {
   componentZoneId?: string;
   title?: string;
   objectType?: string;
-  baseUrl?: string;
-  apiPrefix?: string;
+  dataspace?: TsDataSource;
   config?: any;
 }
 
@@ -143,6 +142,7 @@ export interface IDBZone {
   objectType: string;
   title: string;
   filter?: IFilter;
+  dataspaceMeta: IDataspaceMeta;
 }
 
 export interface IDBZoneView {
@@ -156,7 +156,15 @@ export interface IUpdatedZoneIds {
   newZoneViewId: string;
 }
 
-export interface IDataspace {
+export interface IDBDataSourceInstanceApiDetails {
+  url: string;
+  apiPath: string;
+  apiDataPath: string;
+  dataspace: string;
+}
+
+export interface IDataspaceMeta {
   dataSourceInstanceId: string;
-  dataSource: TsDataSource;
+  apiDetails: IDBDataSourceInstanceApiDetails;
+  dataspace: TsDataSource;
 }

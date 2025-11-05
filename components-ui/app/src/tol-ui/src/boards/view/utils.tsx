@@ -8,6 +8,7 @@ import {
   BOARDS,
   generateId,
   getUserFromLocalStorage,
+  IDataspaceMeta,
   IDBZone,
   IDBZoneView,
   TDataObjectListOrNull,
@@ -147,9 +148,9 @@ async function getZoneData(ids: string[], boardDataSource: TsDataSource) {
           id: { in_list: { value: ids } },
         },
       },
+      requestedFields: "data_source_instance.api_details"
     })
 }
-
 
 export async function upsertNewZone(
   boardDataSource: TsDataSource,
@@ -157,6 +158,7 @@ export async function upsertNewZone(
   title: string,
   nextOrder: number,
   viewId: string,
+  dataSourceInstanceId: string,
 ) {
   const user = getUserFromLocalStorage();
   const newId = generateId("z");
@@ -172,10 +174,7 @@ export async function upsertNewZone(
             filter: { and_: {} },
             object_type: objectType,
             user_id: user.id,
-            datasource: {
-              base_url: dataSource.getBaseUrl(),
-              api_data_path: dataSource.getApiDataPath(),
-            },
+            data_source_instance_id: dataSourceInstanceId,
           },
         },
       ],

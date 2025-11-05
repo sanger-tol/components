@@ -23,6 +23,7 @@ import {
   TLabelAndValueData,
   TsDataSource,
   normaliseCaps,
+  IDataspaceMeta,
 } from "../..";
 
 
@@ -34,8 +35,6 @@ export interface PZoneModal extends PBoard {
   zoneOrder: IDBZoneView[];
   setZoneOrder: (zone: IDBZoneView[]) => void;
   viewId: string;
-  dataspace: TsDataSource;
-  setDataspace: (ds: TsDataSource) => void;
 }
 
 
@@ -48,14 +47,13 @@ export function ZoneModal(props: PZoneModal) {
     zoneOrder,
     setZoneOrder,
     viewId,
-    dataspace,
-    setDataspace,
     boardDataSource,
   } = props;
 
   const [dataSourceInstancesLoading, setDataSourceInstancesLoading] = useState(true);
   const [dataSourceInstanceList, setDataSourceInstanceList] = useState<TLabelAndValueData>([]);
   const [dataSourceInstance, setDataSourceInstance] = useState<string>("");
+  const [dataspaceMeta, setDataspaceMeta] = useState<IDataspaceMeta>();
   const [objectTypesLoading, setObjectTypesLoading] = useState(false);
   const [objectTypesList, setObjectTypesList] = useState<TLabelAndValueData>([]);
   const [objectType, setObjectType] = useState("");
@@ -87,25 +85,27 @@ export function ZoneModal(props: PZoneModal) {
     }
   }, [open]);
 
-  // assign the dataspace when the instance id changes
+  // update the dataspace meta when the instance id changes
   useEffect(() => {
     if (dataSourceInstance) {
       const apiDetails = dataSourceInstanceList.find((dsi) => dsi.value === dataSourceInstance)?.api_details;
-      setDataspace(
-        new TsDataSource({
+      setDataspaceMeta({
+        dataSourceInstanceId: dataSourceInstance,
+        apiDetails: apiDetails,
+        dataspace: new TsDataSource({
           url: apiDetails.url,
           apiPath: apiDetails.api_path,
           apiDataPath: apiDetails.api_data_path,
           dataspace: apiDetails.dataspace,
         })
-      );
+      });
     }
   }, [dataSourceInstance]);
 
   useEffect(() => {
-    if (dataspace) {
+    if (dataspaceMeta) {
       setObjectTypesLoading(true);
-      dataspace.attributeMetadata()
+      dataspaceMeta.dataspace.attributeMetadata()
         .then((am) => {
           setObjectTypesList(
             Object.keys(am).map((type) => ({
@@ -121,7 +121,7 @@ export function ZoneModal(props: PZoneModal) {
       setObjectTypesList([]);
       setObjectType("");
     }
-  }, [dataspace]);
+  }, [dataspaceMeta]);
 
   const reset = () => {
     setObjectType("");
@@ -156,12 +156,14 @@ export function ZoneModal(props: PZoneModal) {
         title,
         nextOrder,
         viewId,
+        dataspaceMeta!.dataSourceInstanceId
       );
       setZones([
         ...zones,
         {
           id: newZone.newZoneId,
           objectType: objectType,
+          dataspaceMeta: dataspaceMeta,
           title: title,
         },
       ]);

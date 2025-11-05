@@ -21,7 +21,8 @@ import {
   PButton,
   PRIVILEGE,
   useBoardPrivilege,
-  TsDataSource
+  IDataspaceMeta,
+  TsDataSource,
 } from "../..";
 
 
@@ -38,20 +39,31 @@ export function View(props: PView) {
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
-  const [dataspace, setDataspace] = useState<TsDataSource>();
   const { privilege } = useBoardPrivilege();
 
   useEffect(() => {
-    getZones(id, boardDataSource).then((res: any) => {
-      const initialZones = res.zones.map((zone: any) => {
+    getZones(id, boardDataSource).then((data: any) => {
+      const initialZones = data.zones.map((zone) => {
+        const apiDetails = zone.relationships.data_source_instance.api_details;
+
         return {
           id: zone.id,
           objectType: zone.object_type,
           title: zone.title,
           filter: zone.filter,
+          dataspaceMeta: {
+            dataSourceInstanceId: 1,
+            dataspace: new TsDataSource({
+              url: apiDetails.url,
+              apiPath: apiDetails.api_path,
+              apiDataPath: apiDetails.api_data_path,
+              dataspace: apiDetails.dataspace,
+            }),
+            apiDetails: apiDetails,
+          },
         };
       });
-      setZoneOrder(res.order);
+      setZoneOrder(data.order);
       setZones(initialZones);
     });
   }, []);
@@ -112,8 +124,6 @@ export function View(props: PView) {
         setZoneOrder={setZoneOrder}
         viewId={id}
         boardDataSource={boardDataSource}
-        dataspace={dataspace}
-        setDataspace={setDataspace}
       />
       {zones.length > 0 ? (
         <div className="tol-zones">
@@ -124,6 +134,7 @@ export function View(props: PView) {
                 id={zone.id}
                 title={zone.title}
                 objectType={zone.objectType}
+                dataspaceMeta={zone.dataspaceMeta}
                 filter={zone.filter}
                 onZoneReorder={onZoneReorder}
                 deleteZone={deleteZone}

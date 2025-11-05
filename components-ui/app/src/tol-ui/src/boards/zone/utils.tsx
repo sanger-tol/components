@@ -62,8 +62,9 @@ export async function getComponents(
           filter: componentDetails?.filter,
           title: componentDetails?.title,
           objectType: componentDetails?.object_type,
-          baseUrl: componentDetails?.datasource?.base_url,
-          apiPrefix: componentDetails?.datasource?.api_prefix,
+          // baseUrl: componentDetails?.datasource?.base_url,
+          // apiPrefix: componentDetails?.datasource?.api_prefix,
+          
           config: componentDetails?.config,
           size: componentDetails?.widget_type,
           filterPassThrough: componentDetails?.filter_pass_through,
