@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column('action', sa.Column('action_name', sa.String(), nullable=True))
+    op.add_column('action', sa.Column('class_name', sa.String(), nullable=True))
     op.alter_column('action', 'flow_name', nullable=True)
 
 

@@ -22,7 +22,7 @@ class Action(Base):
     object_type: Mapped[str] = mapped_column(nullable=False)
 
     flow_name: Mapped[str] = mapped_column(nullable=True)
-    action_name: Mapped[str] = mapped_column(nullable=True)
+    class_name: Mapped[str] = mapped_column(nullable=True)
     params: Mapped[dict] = mapped_column(
         JSONB,
         nullable=False,
