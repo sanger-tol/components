@@ -6,34 +6,17 @@ SPDX-License-Identifier: MIT
 
 import { Placeholder } from "..";
 
+
 export interface PVideoPlayer {
   host?: "youtube" | "vimeo";
   videoId?: string;
   width?: string | number;
   height?: string | number;
+  style?: React.CSSProperties;
 }
 
 export function VideoPlayer(props: PVideoPlayer) {
-  let { host = "youtube", videoId, width, height } = props;
-
-  if (!videoId) {
-    if (!width && !height) {
-      width = "300px";
-      height = `${Number(width.replace("px", "")) * (9 / 16)}px`;
-    }
-    if (height && !width) {
-      if (typeof height === "string") {
-        width = `${Number(height.replace("px", "")) * (16 / 9)}px`;
-      } else {
-        width = Number(height) * (16 / 9);
-      }
-    }
-    return (
-      <div style={{ width: width }} className="tol-video-player-placeholder">
-        <Placeholder message={"Video coming soon..."} height={height} />
-      </div>
-    );
-  }
+  let { host = "youtube", videoId, width, height, style } = props;
 
   let url = `https://www.youtube.com/embed/${videoId}`;
 
@@ -43,18 +26,10 @@ export function VideoPlayer(props: PVideoPlayer) {
     }
   }
 
-  if (!height && width) {
-    if (typeof width === "string") {
-      height = `${Number(width.replace("px", "")) * (9 / 16)}px`;
-    } else {
-      height = Number(width) * (9 / 16);
-    }
-  } else if (!width && height) {
-    if (typeof height === "string") {
-      width = `${Number(height.replace("px", "")) * (16 / 9)}px`;
-    } else {
-      width = Number(height) * (16 / 9);
-    }
+  if (!videoId) {
+    return (
+      <Placeholder message={"Video coming soon..."} {...props} />
+    );
   }
 
   return (
@@ -63,7 +38,7 @@ export function VideoPlayer(props: PVideoPlayer) {
       title="Tol Embedded Video Player"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowFullScreen
-      style={{ width: width, height: height }}
+      style={{ width: width, height: height, ...style }}
       className="tol-video-player"
     />
   );

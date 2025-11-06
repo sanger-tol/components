@@ -4,10 +4,11 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+export * from "./Accordion";
 export * from "./BoardCount";
 export * from "./BoardMarkdown";
 export * from "./Button";
-export * from "./CentreContents";
+export * from "./CenterContent";
 export * from "./ClickOverlay";
 export * from "./CustomIcons";
 export * from "./DropdownButtons";
