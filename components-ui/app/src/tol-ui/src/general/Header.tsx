@@ -12,7 +12,7 @@ export interface PHeader {
   subTitle?: string;
   image?: string;
   video?: string;
-  fade?: number;
+  overlayStyle?: React.CSSProperties;
   textLeft?: boolean;
   fullHeight?: boolean;
   children?: ReactNode;
@@ -24,7 +24,7 @@ export function Header(props: PHeader) {
     subTitle,
     image,
     video,
-    fade = 0,
+    overlayStyle = {},
     textLeft = false,
     fullHeight = false,
     children
@@ -42,7 +42,7 @@ export function Header(props: PHeader) {
 
   const Backing = (
     <div>
-      <div className="masthead-fade" style={{ background: `rgba(0, 0, 0, ${fade})` }} />
+      <div className="masthead-fade" style={overlayStyle} />
       {image && <img className="masthead-media" src={image} alt="background" />}
       {video && (
         <video className="masthead-media" autoPlay loop muted>
@@ -77,7 +77,11 @@ export function Header(props: PHeader) {
       <header
         id="tol-masthead"
         className="masthead"
-        style={fullHeight ? { height: "100vh" } : {}}
+        style={{
+          height: `${fullHeight ? "100vh" : ""}`,
+          // need blank background if video is loading in
+          background: `${image || video ? "black" : ""}`,
+        }}
       >
         <div style={{ height: navbarOffset }}></div>
         <div className={`masthead-content ${textLeft ? "" : "text-center"}`}>

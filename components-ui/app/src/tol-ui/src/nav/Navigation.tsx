@@ -228,7 +228,7 @@ function Navigation(props: Props) {
                   returnUrl={getReturnUrlFromLocalStorage()}
                 />
               </Nav.Link>
-            ) : user ? (
+            ) : props.login && user && (
               <div className="nav-right">
                 <ProfileDropdown
                   user={user}
@@ -239,16 +239,14 @@ function Navigation(props: Props) {
                         page.auth,
                         page.removeOnAuth,
                       );
-                      if (authorised) {
-                        return page;
-                      }
+                      if (authorised) return page;
                       return undefined;
                     })
                     .filter((page): page is Page => page !== undefined)}
                   onLogout={logout}
                 />
               </div>
-            ) : null}
+            )}
           </Navbar.Collapse>
         </Container>
       </Navbar>

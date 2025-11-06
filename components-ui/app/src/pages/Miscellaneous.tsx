@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import {
   Button,
-  CentreContents,
+  CenterContent,
   Modal,
   ObjectDetail,
   IconTooltip,
@@ -33,7 +33,7 @@ export function Miscellaneous() {
 
   return (
     <div>
-      <CentreContents>
+      <CenterContent>
         <h2>Modal</h2>
         <Modal size="full" open={modalOpen} setOpen={setModalOpen}>
           <h2>Test Modal</h2>
@@ -51,7 +51,7 @@ export function Miscellaneous() {
 
         <h2 className="mt-5">Object Detail</h2>
         <ObjectDetail data={jsonData} />
-      </CentreContents>
+      </CenterContent>
     </div>
   );
 }
