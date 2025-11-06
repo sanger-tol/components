@@ -18,6 +18,7 @@ import {
   ACTION_API_PREFIX,
   Placeholder,
   Table,
+  PopUpMessage,
   addRemoteActions,
   convertTableData,
   createSort,
@@ -289,7 +290,7 @@ export function RemoteTable(props: PRemoteTable) {
 
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
-    await actionDataSource!
+    const res = await actionDataSource!
       .custom({
         method: API_METHODS.POST,
         resource: ACTIONS.RUN_ACTION,
@@ -306,6 +307,17 @@ export function RemoteTable(props: PRemoteTable) {
         setSelectedRows([]);
         setLoading(false);
       });
+    if (Object.keys(res.data).includes('success')) {
+      PopUpMessage({
+        type: 'success',
+        message: `'${actionName}' ran successfully.`,
+      })
+    } else {
+      PopUpMessage({
+        type: 'error',
+        message: `'${actionName}' failed to run.`,
+      })
+    }
   };
 
   const convertedActions = addRemoteActions(
