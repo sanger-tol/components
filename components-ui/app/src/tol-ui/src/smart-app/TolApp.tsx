@@ -38,7 +38,7 @@ import {
   generatePagesThatRequireARoute,
   TsDataSource,
   API_METHODS,
-  BOARDS_API_PREFIX,
+  BOARDS_API_DATA_PATH,
   ValidationResultsViewer,
   getUserPrivilege,
   PrivilegeContext,
@@ -71,7 +71,7 @@ export function TolApp(props: PTolApp) {
     boardDataSource: props.boards?.boardDataSource
       || new TsDataSource({
         apiPath: env.API_PATH,
-        apiDataPath: BOARDS_API_PREFIX,
+        apiDataPath: BOARDS_API_DATA_PATH,
       }),
   } : undefined;
   const queryClient = new QueryClient();

@@ -109,7 +109,7 @@ async function getComponentData(
 }
 
 export async function upsertNewComponent(
-  dataSource: TsDataSource,
+  dataspace: TsDataSource,
   boardDataSource: TsDataSource,
   objectType: string,
   title: string,
@@ -134,10 +134,7 @@ export async function upsertNewComponent(
             widget_type: widgetType,
             filter: { and_: {} },
             config: {},
-            datasource: {
-              base_url: dataSource.getBaseUrl(),
-              api_prefix: dataSource.getApiPrefix(),
-            },
+            data_source_instance_id: dataspace.getDataSourceInstanceId(),
             user_id: user.id,
             filter_pass_through: false,
           },
