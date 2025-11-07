@@ -166,17 +166,3 @@ export async function upsertNewComponent(
       throw new Error("Unexpected null response for Component Zone creation");
     });
 }
-
-export async function getDataspaceApiDetails(
-  dataspaceId: string,
-  dataSource: TsDataSource
-): Promise<TDataObjectOrNull> {
-  return await dataSource
-    .getOne({
-      objectType: BOARDS.BOARD,
-      id: dataspaceId,
-    })
-    .then((dataObject: TDataObjectOrNull) => {
-      return dataObject?.api_details;
-    });
-}
