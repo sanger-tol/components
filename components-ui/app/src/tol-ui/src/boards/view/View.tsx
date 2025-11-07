@@ -21,7 +21,6 @@ import {
   PButton,
   PRIVILEGE,
   useBoardPrivilege,
-  IDataspaceMeta,
   TsDataSource,
 } from "../..";
 
@@ -44,23 +43,20 @@ export function View(props: PView) {
   useEffect(() => {
     getZones(id, boardDataSource).then((data: any) => {
       const initialZones = data.zones.map((zone) => {
-        const apiDetails = zone.relationships.data_source_instance.api_details;
+        const dsi = zone.relationships.data_source_instance;
 
         return {
           id: zone.id,
           objectType: zone.object_type,
           title: zone.title,
           filter: zone.filter,
-          dataspaceMeta: {
-            dataSourceInstanceId: 1,
-            dataspace: new TsDataSource({
-              url: apiDetails.url,
-              apiPath: apiDetails.api_path,
-              apiDataPath: apiDetails.api_data_path,
-              dataspace: apiDetails.dataspace,
-            }),
-            apiDetails: apiDetails,
-          },
+          dataspace: new TsDataSource({
+            url: dsi.api_details.url,
+            apiPath: dsi.api_details.api_path,
+            apiDataPath: dsi.api_details.api_data_path,
+            dataspace: dsi.api_details.dataspace,
+            dataSourceInstanceId: dsi.id,
+          }),
         };
       });
       setZoneOrder(data.order);
@@ -134,7 +130,7 @@ export function View(props: PView) {
                 id={zone.id}
                 title={zone.title}
                 objectType={zone.objectType}
-                dataspaceMeta={zone.dataspaceMeta}
+                dataspace={zone.dataspace}
                 filter={zone.filter}
                 onZoneReorder={onZoneReorder}
                 deleteZone={deleteZone}

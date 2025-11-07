@@ -34,8 +34,11 @@ export interface IDataSource {
   apiPath?: string;
   // The path, from the API root, to where data is served (e.g. "data")
   apiDataPath?: string;
-  // Which data space to source from (e.g. "tolproduction" or "treeofsex")
+  // Which data space to source from (e.g. "tol-production" or "treeofsex")
   dataspace?: string;
+  // An optional data source instance id to uniquely identify this data source in the db
+  dataSourceInstanceId?: string;
+  // To allow for testing with mock clients
   client?: any;
 }
 

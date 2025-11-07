@@ -11,6 +11,7 @@ import {
   IComponentData,
   IDBZoneView,
   IZone,
+  TDataObjectListOrNull,
   TDataObjectOrNull,
   TsDataSource
 } from "../..";
@@ -51,9 +52,10 @@ export async function getComponents(
     return Promise.all(
       componentZoneData.map(async (component) => {
         const componentId = (await component.fetchRelationships?.component)?.id;
-        const componentDetails = componentData.find(
+        const componentDetails = componentData?.find(
           (data) => data.id === componentId
         );
+        const dsi = componentDetails?.relationships?.data_source_instance;
         return {
           id: componentId,
           order: component.order,
@@ -62,9 +64,13 @@ export async function getComponents(
           filter: componentDetails?.filter,
           title: componentDetails?.title,
           objectType: componentDetails?.object_type,
-          // baseUrl: componentDetails?.datasource?.base_url,
-          // apiPrefix: componentDetails?.datasource?.api_prefix,
-          
+          dataspace: new TsDataSource({
+            url: dsi?.api_details.url,
+            apiPath: dsi?.api_details.api_path,
+            apiDataPath: dsi?.api_details.api_data_path,
+            dataspace: dsi?.api_details.dataspace,
+            dataSourceInstanceId: dsi?.id,
+          }),
           config: componentDetails?.config,
           size: componentDetails?.widget_type,
           filterPassThrough: componentDetails?.filter_pass_through,
@@ -89,7 +95,7 @@ async function getComponentZoneData(zoneId: string, boardDataSource: TsDataSourc
 async function getComponentData(
   componentIds: string[],
   boardDataSource: TsDataSource,
-): Promise<any> {
+): Promise<TDataObjectListOrNull> {
   return await boardDataSource
     .getListPage({
       objectType: BOARDS.COMPONENT,
@@ -98,6 +104,7 @@ async function getComponentData(
           id: { in_list: { value: componentIds } },
         },
       },
+      requestedFields: "data_source_instance.api_details"
     });
 }
 

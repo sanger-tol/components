@@ -32,7 +32,7 @@ import {
   normaliseCaps,
   IGetList,
   IGetAttributeDescriptor,
-  IAttributeDescriptor
+  IAttributeDescriptor,
 } from "..";
 
 
@@ -47,15 +47,17 @@ export class TsDataSource {
   private apiPath: string | undefined;
   private apiDataPath: string | undefined;
   private dataspace: string | undefined;
+  private dataSourceInstanceId: string | undefined;
   private baseUrl: string | undefined;
   private sourceKey: string;
 
-  constructor({ url, apiPath, apiDataPath, dataspace, client }: IDataSource = {}) {
+  constructor({ url, apiPath, apiDataPath, dataspace, dataSourceInstanceId, client }: IDataSource = {}) {
     this.client = client ?? httpClient;
     this.url = url;
     this.apiPath = apiPath;
     this.apiDataPath = apiDataPath;
     this.dataspace = dataspace;
+    this.dataSourceInstanceId = dataSourceInstanceId;
     this.baseUrl = this.makeBaseUrl();
     this.sourceKey = this.baseUrl ?? "default";
   }
@@ -111,6 +113,14 @@ export class TsDataSource {
 
   public setDataspace(dataspace: string) {
     this.dataspace = dataspace;
+  }
+
+  public getDataSourceInstanceId(): string | undefined {
+    return this.dataSourceInstanceId;
+  }
+
+  public setDataSourceInstanceId(dataSourceInstanceId: string) {
+    this.dataSourceInstanceId = dataSourceInstanceId;
   }
 
   public getBaseUrl(): string | undefined {

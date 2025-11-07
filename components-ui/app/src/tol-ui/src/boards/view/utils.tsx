@@ -8,7 +8,6 @@ import {
   BOARDS,
   generateId,
   getUserFromLocalStorage,
-  IDataspaceMeta,
   IDBZone,
   IDBZoneView,
   TDataObjectListOrNull,

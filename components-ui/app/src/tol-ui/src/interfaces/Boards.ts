@@ -142,7 +142,7 @@ export interface IDBZone {
   objectType: string;
   title: string;
   filter?: IFilter;
-  dataspaceMeta: IDataspaceMeta;
+  dataspace?: TsDataSource;
 }
 
 export interface IDBZoneView {
@@ -161,10 +161,4 @@ export interface IDBDataSourceInstanceApiDetails {
   apiPath: string;
   apiDataPath: string;
   dataspace: string;
-}
-
-export interface IDataspaceMeta {
-  dataSourceInstanceId: string;
-  apiDetails: IDBDataSourceInstanceApiDetails;
-  dataspace: TsDataSource;
 }
