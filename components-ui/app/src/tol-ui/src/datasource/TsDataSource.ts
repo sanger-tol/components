@@ -32,7 +32,7 @@ import {
   normaliseCaps,
   IGetList,
   IGetAttributeDescriptor,
-  IAttributeDescriptor
+  IAttributeDescriptor,
 } from "..";
 
 
@@ -47,15 +47,17 @@ export class TsDataSource {
   private apiPath: string | undefined;
   private apiDataPath: string | undefined;
   private dataspace: string | undefined;
+  private dataSourceInstanceId: string | undefined;
   private baseUrl: string | undefined;
   private sourceKey: string;
 
-  constructor({ url, apiPath, apiDataPath, dataspace, client }: IDataSource = {}) {
+  constructor({ url, apiPath, apiDataPath, dataspace, dataSourceInstanceId, client }: IDataSource = {}) {
     this.client = client ?? httpClient;
     this.url = url;
     this.apiPath = apiPath;
     this.apiDataPath = apiDataPath;
     this.dataspace = dataspace;
+    this.dataSourceInstanceId = dataSourceInstanceId;
     this.baseUrl = this.makeBaseUrl();
     this.sourceKey = this.baseUrl ?? "default";
   }
@@ -67,14 +69,18 @@ export class TsDataSource {
     }
 
     // Else join all parts together to form the baseUrl
-    return `${this.url}/${this.apiPath}/${this.apiDataPath}/${this.dataspace}`;
+    let baseUrl = "";
+    baseUrl += this.url ? `${this.url}/` : "";
+    baseUrl += this.apiPath ? `${this.apiPath}/` : "";
+    baseUrl += this.apiDataPath ? `${this.apiDataPath}/` : "";
+    baseUrl += this.dataspace ? `${this.dataspace}` : "";
+    return baseUrl;
   }
 
   public generateEndpoint(target?: string, suffix?: string): string {
-    const prefix = this.apiPath ? `/${this.apiPath}` : "";
     const tg = target ? `/${target}` : "";
     const sf = suffix ? `${suffix}` : "";
-    return `${prefix}${tg}${sf}`;
+    return `${tg}${sf}`;
   }
 
   public getUrl(): string | undefined {
@@ -107,6 +113,14 @@ export class TsDataSource {
 
   public setDataspace(dataspace: string) {
     this.dataspace = dataspace;
+  }
+
+  public getDataSourceInstanceId(): string | undefined {
+    return this.dataSourceInstanceId;
+  }
+
+  public setDataSourceInstanceId(dataSourceInstanceId: string) {
+    this.dataSourceInstanceId = dataSourceInstanceId;
   }
 
   public getBaseUrl(): string | undefined {
@@ -218,7 +232,7 @@ export class TsDataSource {
     anHourFromNow.setHours(anHourFromNow.getHours() + 1);
     if (!configPromises[key]) {
       configPromises[key] = this.client()
-        .get(endpoint, { url: this.url })
+        .get(endpoint, { baseURL: this.baseUrl })
         .then((config) => {
           const savedConfig = {
             expiry: anHourFromNow,
@@ -365,7 +379,7 @@ export class TsDataSource {
     if (!(id in detailPromises[this.sourceKey][objectType])) {
       detailPromises[this.sourceKey][objectType][id] = this.client()
         .get(this.generateEndpoint(objectType, `/${id}`), {
-          url: this.url,
+          baseURL: this.baseUrl,
         })
         .then((response: any) => {
           if (!EXCLUDED_DETAIL_CACHE_OBJECTS.includes(objectType)) {
@@ -398,7 +412,7 @@ export class TsDataSource {
   }: IGetToOneRelation): Promise<TDataObjectOrNull> {
     return await this.client()
       .get(this.generateEndpoint(objectType, `:to-one/${id}/${relation}`), {
-        url: this.url,
+        url: this.baseUrl,
       })
       .then((response: any) => {
         return new Proxy(response.data.data, this.dataObjectHandler);
@@ -429,7 +443,7 @@ export class TsDataSource {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
       .get(this.generateEndpoint(objectType), {
-        url: this.url,
+        baseURL: this.baseUrl,
         params: {
           page: page,
           page_size: pageSize,
@@ -513,7 +527,7 @@ export class TsDataSource {
         this.generateEndpoint(objectType, ":cursor"),
         { search_after: searchAfter },
         {
-          url: this.url,
+          baseURL: this.baseUrl,
           params: {
             page: page,
             page_size: pageSize,
@@ -538,7 +552,7 @@ export class TsDataSource {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
       .delete(this.generateEndpoint(objectType, `/${id}`), {
-        url: this.url,
+        baseURL: this.baseUrl,
       })
       .then(() => {
         if (id in detailCache[this.sourceKey][objectType]) {
@@ -560,7 +574,7 @@ export class TsDataSource {
       .post(
         this.generateEndpoint(objectType, ":upsert"),
         { data: payload },
-        { url: this.url }
+        { baseURL: this.baseUrl }
       )
       .then((response: any) => {
         return this.updateDetailCache(response, objectType);
@@ -582,30 +596,30 @@ export class TsDataSource {
     switch (method.toUpperCase()) {
       case API_METHODS.GET:
         return await this.client().get(url, {
-          url: this.url,
+          baseURL: this.baseUrl,
           params: params,
           ...options,
         });
       case API_METHODS.POST:
         return await this.client().post(url, body, {
-          url: this.url,
+          baseURL: this.baseUrl,
           params: params,
           ...options,
         });
       case API_METHODS.PUT:
         return await this.client().put(url, body, {
-          url: this.url,
+          baseURL: this.baseUrl,
           params: params,
           ...options,
         });
       case API_METHODS.PATCH:
         return await this.client().patch(url, body, {
-          url: this.url,
+          baseURL: this.baseUrl,
           params: params,
         });
       case API_METHODS.DELETE:
         return await this.client().delete(url, {
-          url: this.url,
+          baseURL: this.baseUrl,
           params: params,
         });
       default:

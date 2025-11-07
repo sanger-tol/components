@@ -109,7 +109,7 @@ export function generateLayout(zone: IZone) {
 export function generateVisualisations(
   zone: IZone,
   setZone: (zone: IZone) => void,
-  boardDataSource: TsDataSource
+  boardDataSource: TsDataSource,
 ) {
   return zone.order.map((componentId) => {
     const component = zone.components[componentId].data;
@@ -124,12 +124,7 @@ export function generateVisualisations(
           title={component.title!}
           config={component.config}
           objectType={component.objectType!}
-          dataSource={
-            new TsDataSource({
-              baseUrl: component.baseUrl,
-              apiPrefix: component.apiPrefix,
-            })
-          }
+          dataSource={component.dataspace!}
           boardDataSource={boardDataSource}
           boardObjectType={BOARDS.COMPONENT}
         />

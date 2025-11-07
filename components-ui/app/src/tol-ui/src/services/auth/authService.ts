@@ -14,8 +14,9 @@ import {
 
 
 const authDataSource = new TsDataSource({
-  apiPrefix: "auth"
-})
+  apiPath: "/api/v1",
+  apiDataPath: "auth"
+});
 
 export function getUrlLogin() {
   return authDataSource

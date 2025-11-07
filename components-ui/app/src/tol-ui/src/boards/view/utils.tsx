@@ -147,17 +147,17 @@ async function getZoneData(ids: string[], boardDataSource: TsDataSource) {
           id: { in_list: { value: ids } },
         },
       },
+      requestedFields: "data_source_instance.api_details"
     })
 }
 
-
 export async function upsertNewZone(
-  dataSource: TsDataSource,
   boardDataSource: TsDataSource,
   objectType: string,
   title: string,
   nextOrder: number,
   viewId: string,
+  dataSourceInstanceId: string,
 ) {
   const user = getUserFromLocalStorage();
   const newId = generateId("z");
@@ -173,10 +173,7 @@ export async function upsertNewZone(
             filter: { and_: {} },
             object_type: objectType,
             user_id: user.id,
-            datasource: {
-              base_url: dataSource.getBaseUrl(),
-              api_prefix: dataSource.getApiPrefix(),
-            },
+            data_source_instance_id: dataSourceInstanceId,
           },
         },
       ],
@@ -206,3 +203,16 @@ export async function upsertNewZone(
       throw new Error("Unexpected null response for Zone View creation");
     });
 }
+
+export async function fetchPublishedDataspaces(
+  boardDataSource: TsDataSource,
+): Promise<TDataObjectListOrNull> {
+ return await boardDataSource
+    .getListPage({
+      objectType: BOARDS.DATA_SOURCE_INSTANCE,
+      pageSize: 100,
+    })
+    .then((data: TDataObjectListOrNull) => {
+      return data;
+    });
+};

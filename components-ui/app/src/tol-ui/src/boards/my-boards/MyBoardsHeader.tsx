@@ -9,17 +9,13 @@ import { useHistory } from "react-router-dom";
 import {
   NewBoardModal,
   createBoardAndView,
-  TsDataSource,
   BOARDS,
   Button,
+  PBoard,
 } from "../..";
 
 
-export interface IMyBoardsHeader {
-  boardDataSource: TsDataSource;
-}
-
-export function MyBoardsHeader(props: IMyBoardsHeader) {
+export function MyBoardsHeader(props: PBoard) {
   const { boardDataSource } = props;
   const [newBoardModalOpen, setNewBoardModalOpen] = useState(false);
   const [modalError, setModalError] = useState("");

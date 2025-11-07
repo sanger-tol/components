@@ -8,7 +8,7 @@ import {
   MyBoards,
   Dropdown,
   Page,
-  BoardSources,
+  PBoard,
   TsDataSource,
   BOARDS,
   TDataObjectOrNull,
@@ -25,7 +25,7 @@ import {
  */
 export function addBoardPages(
   profilePages?: Page[],
-  boards?: BoardSources
+  boards?: PBoard
 ): Page[] {
   if (boards) {
     return [

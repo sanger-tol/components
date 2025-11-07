@@ -1,7 +1,7 @@
 """datasource_to_datasource_instance_fk
 
 Revision ID: b39604352175
-Revises: 5698bc61eed0
+Revises: 2b26f6f350ab
 Create Date: 2025-09-19 14:00:17.250971
 
 """
@@ -13,7 +13,7 @@ from sqlalchemy.sql import text
 
 # revision identifiers, used by Alembic.
 revision = 'b39604352175'
-down_revision = '5698bc61eed0'
+down_revision = '2b26f6f350ab'
 branch_labels = None
 depends_on = None
 
@@ -71,7 +71,7 @@ def upgrade() -> None:
     conn.execute(
         text("""
         INSERT INTO data_source_instance (id, name, builtin_name, kwargs, publish, data_source_config_id, api_details)
-        VALUES ('1', 'tol_production', 'portal', '{"dataspace": "tol_production"}', 'false', NULL, '{"url": "https://portal.tol.sanger.ac.uk", "api_path": "/api/v1", "api_data_path": "/data", "dataspace": "tol_production"}')
+        VALUES ('1', 'tol_production', 'portal', '{"dataspace": "tol_production"}', 'true', NULL, '{"url": "https://portal.tol.sanger.ac.uk", "api_path": "/api/v1", "api_data_path": "/data", "dataspace": "tol_production"}')
         """)
     )
 
@@ -81,13 +81,13 @@ def upgrade() -> None:
 
     # Create new `data_source_instance_id` fields in their places,
     # with foreign keys linking to the `data_source_instance` table
-    op.add_column('component', sa.Column('data_source_instance_id', sa.Integer, nullable=False))
+    op.add_column('component', sa.Column('data_source_instance_id', sa.Integer, nullable=True))
     op.create_foreign_key(
         'fk_component_data_source_instance',
         'component', 'data_source_instance',
         ['data_source_instance_id'], ['id']
     )
-    op.add_column('zone', sa.Column('data_source_instance_id', sa.Integer, nullable=False))
+    op.add_column('zone', sa.Column('data_source_instance_id', sa.Integer, nullable=True))
     op.create_foreign_key(
         'fk_zone_data_source_instance',
         'zone', 'data_source_instance',
@@ -107,6 +107,10 @@ def upgrade() -> None:
         SET data_source_instance_id=1
         """)
     )
+
+    # Set columns as NOT NULL now that data is populated
+    op.alter_column('component', 'data_source_instance_id', nullable=False)
+    op.alter_column('zone', 'data_source_instance_id', nullable=False)
 
 
 def downgrade() -> None:

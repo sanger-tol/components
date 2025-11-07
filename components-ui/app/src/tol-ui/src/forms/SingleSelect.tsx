@@ -6,17 +6,20 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { SelectPicker } from "rsuite";
+import { TLabelAndValueData } from "..";
+
 
 export interface PSingleSelect {
-  data: string[] | { label: string, value: string }[];
+  data: string[] | TLabelAndValueData;
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
   block?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
 }
 
 export const SingleSelect = (props: PSingleSelect) => {
-  const { placeholder, onChange, value, block } = props;
   const [data, setData] = useState([{}]);
 
   useEffect(() => {
@@ -29,12 +32,8 @@ export const SingleSelect = (props: PSingleSelect) => {
 
   return (
     <SelectPicker
+      {...props}
       data={data}
-      searchable={false}
-      value={value}
-      onChange={onChange}
-      placeholder={placeholder}
-      block={block}
     />
   );
 };

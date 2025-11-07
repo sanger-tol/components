@@ -20,7 +20,8 @@ import {
   UtilityBar,
   PButton,
   PRIVILEGE,
-  useBoardPrivilege
+  useBoardPrivilege,
+  TsDataSource,
 } from "../..";
 
 
@@ -33,23 +34,32 @@ export interface PView extends PBoard {
 }
 
 export function View(props: PView) {
-  const { id, dataSource, boardDataSource, utilityBarConfig } = props;
+  const { id, boardDataSource, utilityBarConfig } = props;
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
   const { privilege } = useBoardPrivilege();
 
   useEffect(() => {
-    getZones(id, boardDataSource).then((res: any) => {
-      const initialZones = res.zones.map((zone: any) => {
+    getZones(id, boardDataSource).then((data: any) => {
+      const initialZones = data.zones.map((zone) => {
+        const dsi = zone.relationships.data_source_instance;
+
         return {
           id: zone.id,
           objectType: zone.object_type,
           title: zone.title,
           filter: zone.filter,
+          dataspace: new TsDataSource({
+            url: dsi.api_details.url,
+            apiPath: dsi.api_details.api_path,
+            apiDataPath: dsi.api_details.api_data_path,
+            dataspace: dsi.api_details.dataspace,
+            dataSourceInstanceId: dsi.id,
+          }),
         };
       });
-      setZoneOrder(res.order);
+      setZoneOrder(data.order);
       setZones(initialZones);
     });
   }, []);
@@ -109,7 +119,6 @@ export function View(props: PView) {
         zoneOrder={zoneOrder}
         setZoneOrder={setZoneOrder}
         viewId={id}
-        dataSource={dataSource}
         boardDataSource={boardDataSource}
       />
       {zones.length > 0 ? (
@@ -121,10 +130,10 @@ export function View(props: PView) {
                 id={zone.id}
                 title={zone.title}
                 objectType={zone.objectType}
+                dataspace={zone.dataspace}
                 filter={zone.filter}
                 onZoneReorder={onZoneReorder}
                 deleteZone={deleteZone}
-                dataSource={dataSource}
                 boardDataSource={boardDataSource}
               />
             );

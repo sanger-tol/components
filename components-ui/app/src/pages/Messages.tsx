@@ -171,13 +171,13 @@ export function Messages() {
           data={toastPositions}
           value={toastPosition}
           placeholder="Select a position for the toast..."
-          setValue={setToastPosition}
+          onChange={setToastPosition}
         />
         <SingleSelect
           data={type}
           value={toastType}
           placeholder="Select a type for the toast..."
-          setValue={setToastType}
+          onChange={setToastType}
         />
         <Button
           type={"success"}

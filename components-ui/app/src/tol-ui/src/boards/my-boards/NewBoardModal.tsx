@@ -86,16 +86,14 @@ export function NewBoardModal(props: Props) {
   );
 
   return (
-    <div className="confirm-delete-buttons">
-      <Modal
-        setOpen={setOpen}
-        open={open}
-        size="xs"
-        children={body}
-        closeButton={false}
-        header={header}
-        actionButton={actionButtons}
-      />
-    </div>
+    <Modal
+      setOpen={setOpen}
+      open={open}
+      size="xs"
+      children={body}
+      closeButton={false}
+      header={header}
+      actionButton={actionButtons}
+    />
   );
 }

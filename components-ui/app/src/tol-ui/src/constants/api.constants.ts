@@ -12,9 +12,9 @@ export const API_METHODS = {
   PUT: "PUT",
 }
 
-export const BOARDS_API_PREFIX = "boards";
-export const LOCAL_API_PREFIX = "local";
-export const ACTION_API_PREFIX = "local";
+export const BOARDS_API_DATA_PATH = "boards";
+export const LOCAL_API_DATA_PATH = "local";
+export const ACTION_API_DATA_PATH = LOCAL_API_DATA_PATH;
 
 export const BOARDS = {
   BOARD: "board",
@@ -24,12 +24,15 @@ export const BOARDS = {
   VIEW_BOARD: "view_board",
   ZONE_VIEW: "zone_view",
   COMPONENT_ZONE: "component_zone",
+  DATA_SOURCE_INSTANCE: "data_source_instance",
 }
 
 export const ACTIONS = {
   ACTION: "action",
   RUN_ACTION: "run-action",
 }
+
+
 
 export const VALIDATION_ENDPOINTS = {
   UPLOAD: "local/upload",
