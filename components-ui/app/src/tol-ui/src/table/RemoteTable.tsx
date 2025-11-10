@@ -149,6 +149,7 @@ export function RemoteTable(props: PRemoteTable) {
 
   // action modal
   const [actionModalOpen, setActionModalOpen] = useState<boolean>(false);
+  const [actionParams, setActionParams] = useState<object>({});
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
@@ -299,6 +300,7 @@ export function RemoteTable(props: PRemoteTable) {
             ids: ids,
             action_name: actionName,
             object_type: objectType,
+            params: actionParams
           },
         },
       })
@@ -309,8 +311,8 @@ export function RemoteTable(props: PRemoteTable) {
       });
     if (Object.keys(res.data).includes('success')) {
       PopUpMessage({
-        type: 'success',
-        message: `'${actionName}' ran successfully.`,
+        type: 'info',
+        message: `'${actionName}' triggered.`,
       })
     } else {
       PopUpMessage({
