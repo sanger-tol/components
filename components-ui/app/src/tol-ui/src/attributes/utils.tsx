@@ -259,8 +259,7 @@ export function getReadOnlyAndFilterText(
   return prose;
 }
 
-// TODO: Rename?
-export function getReadOnlyFiltersText(filter: IFilter): TDescribedFilters {
+export function generateFilterDescriptions(filter: IFilter): TDescribedFilters {
   let describedFilters: TDescribedFilters = {};
   
   // `and_` filters.

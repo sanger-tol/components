@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { expect, test, describe } from "vitest";
 import {
   getReadOnlyAndFilterText,
-  getReadOnlyFiltersText,
+  generateFilterDescriptions,
   IFilter,
   IFilterOperatorOptions,
   TFilterOperatorType
@@ -115,7 +115,7 @@ describe("getReadOnlyFiltersText function", () => {
       "tolqclegacy_assembly_stage": "must not be one of RELEASED or DRAFT",
       "tolqc_scientific_name": "must have a value containing Abax",
     };
-    const generatedObject = getReadOnlyFiltersText(filter);
+    const generatedObject = generateFilterDescriptions(filter);
 
     expect(generatedObject).toEqual(expectedObject);
   });
