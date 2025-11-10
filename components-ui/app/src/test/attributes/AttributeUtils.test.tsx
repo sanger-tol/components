@@ -26,20 +26,23 @@ describe("getReadOnlyAndFilterText function", () => {
     negate: boolean,
     expectedProse: string
   ) {
-    const filterOperator: [TFilterOperatorType, IFilterOperatorOptions] = [
-      operatorType,
-      {
-        value: "VALUE",
-        negate,
+    test(
+      `Filter operator ${operatorType} generates correct prose${negate ? " when negated" : ""}`,
+      () => {
+        const filterOperator: [TFilterOperatorType, IFilterOperatorOptions] = [
+          operatorType,
+          {
+            value: "VALUE",
+            negate,
+          }
+        ];
+
+        const generatedProse = getReadOnlyAndFilterText(filterOperator);
+
+        expect(generatedProse).toBe(expectedProse);
       }
-    ];
-
-    const generatedProse = getReadOnlyAndFilterText(filterOperator);
-
-    expect(generatedProse).toBe(expectedProse);
+    );
   }
 
-  test("Direct value operator generates correct prose", () => {
-    generalizedTest("eq", false, "must equal VALUE");
-  })
+  generalizedTest("eq", false, "must equal VALUE");
 });
