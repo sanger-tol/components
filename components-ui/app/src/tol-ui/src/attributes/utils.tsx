@@ -196,7 +196,7 @@ export function renderTotalSelectedItems(
 };
 
 /**
- * Generates user-readable text ("prose") describing an `_and` filter
+ * Generates user-readable text ("prose") describing an `and_` filter
  * 
  * @param param0 An object entry representing one operator in a filter
  * @returns Prose to be displayed next to the operator in the filter
