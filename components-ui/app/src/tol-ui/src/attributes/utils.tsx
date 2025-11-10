@@ -9,7 +9,6 @@ import {
   IAllowedCardinality,
   IEntityMeta,
   PopUpMessage,
-  IDescribedFilterOperator,
   IFilterOperatorOptions,
   TFilterOperatorType,
 } from "..";
