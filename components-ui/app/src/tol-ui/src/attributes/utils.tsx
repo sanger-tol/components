@@ -231,10 +231,10 @@ export function getReadOnlyAndFilterText(
       prose += ` be greater than or equal to ${operatorOptions.value}`;
       break;
     case "lt":
-      prose += ` be greater than ${operatorOptions.value}`;
+      prose += ` be less than ${operatorOptions.value}`;
       break;
     case "lte":
-      prose += ` be greater than or equal to ${operatorOptions.value}`;
+      prose += ` be less than or equal to ${operatorOptions.value}`;
       break;
     case "in_list":
       prose += " is one of "
