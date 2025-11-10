@@ -117,6 +117,6 @@ describe("getReadOnlyFiltersText function", () => {
     };
     const generatedObject = getReadOnlyFiltersText(filter);
 
-    expect(generatedObject).toBe(expectedObject);
+    expect(generatedObject).toEqual(expectedObject);
   });
 });

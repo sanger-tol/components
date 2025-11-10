@@ -12,7 +12,6 @@ import {
   IFilterOperatorOptions,
   TFilterOperatorType,
   IFilter,
-  IAndAttributes,
   TDescribedFilters,
 } from "..";
 
@@ -267,8 +266,12 @@ export function getReadOnlyFiltersText(filter: IFilter): TDescribedFilters {
   // `and_` filters.
   // We first check to see whether they exist, to allow inner code to assume so
   if (filter.and_) {
-    for (const operator of Object.entries(filter.and_ as IAndAttributes)) {
-      describedFilters[operator[0] as TFilterOperatorType] = getReadOnlyAndFilterText(operator as [TFilterOperatorType, IFilterOperatorOptions]);
+    for (const [attribute, operators] of Object.entries(filter.and_)) {
+      for (const operator of Object.entries(operators)) {
+        describedFilters[attribute] = getReadOnlyAndFilterText(
+          operator as [TFilterOperatorType, IFilterOperatorOptions]
+        );
+      }
     }
   }
 
