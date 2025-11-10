@@ -13,7 +13,7 @@ import {
 
 describe("getReadOnlyAndFilterText function", () => {
   /**
-   * A function to perform tests on the getReadOnlyAndFilterText function (as all tests have the
+   * A function to perform tests on the getReadOnlyAndFilterText function (as most tests have the
    * same structure)
    * 
    * @param operatorType The type of filter operator used
