@@ -237,7 +237,7 @@ export function getReadOnlyAndFilterText(
       prose += ` be less than or equal to ${operatorOptions.value}`;
       break;
     case "in_list":
-      prose += " is one of "
+      prose += " be one of"
 
       operatorOptions.value.forEach((item, index) => {
         if (index == operatorOptions.value.length - 1) {

@@ -78,7 +78,7 @@ describe("getReadOnlyAndFilterText function", () => {
       "in_list",
       {
         value: ["DTOL", "PSYCHE", "BIOSCAN"],
-        negate: false,
+        negate: true,
       }
     ];
 
