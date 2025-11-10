@@ -11,7 +11,6 @@ import {
   PopUpMessage,
   IFilterOperatorOptions,
   TFilterOperatorType,
-  IDescribedFilterOperator,
   IFilter,
   IAndAttributes,
   TDescribedFilters,

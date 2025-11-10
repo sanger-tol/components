@@ -12,20 +12,14 @@ export interface IFilterOperatorOptions {
   negate?: boolean;
 }
 
-type TFilterOperators = Record<TFilterOperatorType, IFilterOperatorOptions>;
-
-// export interface IDescribedFilterOperators {
-//   [operator: string]
-// }
-export interface IDescribedFilterOperator {
-  operatorType: TFilterOperatorType;
-  prose: string;
+interface IFilterOperators {
+  // I would love to set this key as TFilterOperatorType instead, but that can't be used as an
+  // object key. Thus, instead, in code where this is used, `as TFilterOperatorType` must be used.
+  [operator: string]: IFilterOperatorOptions;
 }
 
 export interface IAndAttributes {
-  // I would love to set this as TFilterOperatorType instead, but that can't be used as an object
-  // key. Thus, instead, in code where this is used, `as TFilterOperatorType` must be used.
-  [attribute: string]: TFilterOperators;
+  [attribute: string]: IFilterOperators;
 }
 
 export interface IFilter { // TODO: check usages
