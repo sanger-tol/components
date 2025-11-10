@@ -11,6 +11,10 @@ import {
   PopUpMessage,
   IFilterOperatorOptions,
   TFilterOperatorType,
+  IDescribedFilterOperator,
+  IFilter,
+  IAndAttributes,
+  TDescribedFilters,
 } from "..";
 
 export function getFlattenedMetaData(
@@ -252,4 +256,19 @@ export function getReadOnlyAndFilterText(
   }
 
   return prose;
+}
+
+// TODO: Rename?
+export function getReadOnlyFiltersText(filter: IFilter): TDescribedFilters {
+  let describedFilters: TDescribedFilters = {};
+  
+  // `and_` filters.
+  // We first check to see whether they exist, to allow inner code to assume so
+  if (filter.and_) {
+    for (const operator of Object.entries(filter.and_ as IAndAttributes)) {
+      describedFilters[operator[0] as TFilterOperatorType] = getReadOnlyAndFilterText(operator as [TFilterOperatorType, IFilterOperatorOptions]);
+    }
+  }
+
+  return describedFilters;
 }
