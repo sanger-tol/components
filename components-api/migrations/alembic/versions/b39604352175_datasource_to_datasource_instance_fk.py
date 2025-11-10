@@ -58,20 +58,19 @@ def upgrade() -> None:
     # Create `data_source_instance` table
     op.create_table(
         'data_source_instance',
-        sa.Column('id', sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column('name', sa.String(), nullable=False),
+        sa.Column('id', sa.String(), primary_key=True),
         sa.Column('builtin_name', sa.String(), nullable=False),
         sa.Column('kwargs', JSONB(astext_type=sa.Text()), nullable=True),
         sa.Column('publish', sa.Boolean(), nullable=False, server_default=sa.text('false')),
         sa.Column('data_source_config_id', sa.Integer(), sa.ForeignKey('data_source_config.id'), nullable=True),
-        sa.Column('api_details', JSONB, nullable=True)
+        sa.Column('ui_api_details', JSONB, nullable=True)
     )
 
     # Insert 'tol_production' data source instance into table
     conn.execute(
         text("""
-        INSERT INTO data_source_instance (id, name, builtin_name, kwargs, publish, data_source_config_id, api_details)
-        VALUES ('1', 'tol_production', 'portal', '{"dataspace": "tol_production"}', 'true', NULL, '{"url": "https://portal.tol.sanger.ac.uk", "api_path": "/api/v1", "api_data_path": "/data", "dataspace": "tol_production"}')
+        INSERT INTO data_source_instance (id, builtin_name, kwargs, publish, data_source_config_id, ui_api_details)
+        VALUES ('tol_production', 'elastic', '{"dataspace": "tol_production"}', 'true', NULL, '{"url": "https://portal.tol.sanger.ac.uk", "apiPath": "/api/v1", "apiDataPath": "/data", "dataspace": "tol_production"}')
         """)
     )
 

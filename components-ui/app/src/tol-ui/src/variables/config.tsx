@@ -15,7 +15,7 @@ env.TOL_DATA = {
   url: env.PORTAL_URL,
   apiPath: env.PORTAL_API_PATH,
   apiDataPath: env.PORTAL_API_DATA_PATH,
-  dataspace: "tol-production"
+  dataspace: env.PORTAL_DATASPACE ?? "tol_production",
 };
 
 export { env };

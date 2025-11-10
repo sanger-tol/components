@@ -58,22 +58,22 @@ export class TsDataSource {
     this.apiDataPath = apiDataPath;
     this.dataspace = dataspace;
     this.dataSourceInstanceId = dataSourceInstanceId;
-    this.baseUrl = this.makeBaseUrl();
+    this.baseUrl = this.initialiseBaseUrl();
     this.sourceKey = this.baseUrl ?? "default";
   }
 
-  private makeBaseUrl(): string | undefined {
-    // If all parts passed in are undefined, then this should be undefined overall
+  private initialiseBaseUrl(): string | undefined {
+    // if all parts passed in are undefined, then this should be undefined overall
     if (!this.url && !this.apiPath && !this.apiDataPath && !this.dataspace) {
       return undefined;
     }
 
-    // Else join all parts together to form the baseUrl
+    // else join all parts together to form the baseUrl
     let baseUrl = "";
-    baseUrl += this.url ? `${this.url}/` : "";
-    baseUrl += this.apiPath ? `${this.apiPath}/` : "";
-    baseUrl += this.apiDataPath ? `${this.apiDataPath}/` : "";
-    baseUrl += this.dataspace ? `${this.dataspace}` : "";
+    baseUrl += this.url ? `${this.url}` : "";
+    baseUrl += this.apiPath ? `${this.apiPath}` : "";
+    baseUrl += this.apiDataPath ? `${this.apiDataPath}` : "";
+    baseUrl += this.dataspace ? `/${this.dataspace}` : "";
     return baseUrl;
   }
 
