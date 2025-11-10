@@ -14,7 +14,17 @@ export interface IFilterOperatorOptions {
 
 type TFilterOperators = Record<TFilterOperatorType, IFilterOperatorOptions>;
 
+// export interface IDescribedFilterOperators {
+//   [operator: string]
+// }
+export interface IDescribedFilterOperator {
+  operatorType: TFilterOperatorType;
+  prose: string;
+}
+
 export interface IAndAttributes {
+  // I would love to set this as TFilterOperatorType instead, but that can't be used as an object
+  // key. Thus, instead, in code where this is used, `as TFilterOperatorType` must be used.
   [attribute: string]: TFilterOperators;
 }
 
@@ -23,3 +33,5 @@ export interface IFilter { // TODO: check usages
 }
 
 export type TFilterOrUndefined = IFilter | undefined;
+
+export type TDescribedFilters = Record<string, string>;

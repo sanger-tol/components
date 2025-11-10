@@ -7,6 +7,8 @@ SPDX-License-Identifier: MIT
 import { expect, test, describe } from "vitest";
 import {
   getReadOnlyAndFilterText,
+  getReadOnlyFiltersText,
+  IFilter,
   IFilterOperatorOptions,
   TFilterOperatorType
 } from "../../tol-ui/src";
@@ -85,5 +87,37 @@ describe("getReadOnlyAndFilterText function", () => {
     const generatedProse = getReadOnlyAndFilterText(filterOperator);
 
     expect(generatedProse).toBe("must not be one of DTOL, PSYCHE, or BIOSCAN");
+  });
+});
+
+describe("getReadOnlyFiltersText function", () => {
+  // This is the only test needed, as the transformation into prose is handled by
+  // the getReadOnlyAndFilterText function, which is separately tested above
+  test("Function returns an object in the correct format", () => {
+    const filter: IFilter = {
+      and_: {
+        "tolqclegacy_assembly_stage": {
+          "in_list": {
+            "value": ["RELEASED", "DRAFT"],
+            "negate": true,
+          }
+        },
+        "tolqc_scientific_name": {
+          "contains": {
+            "value": "Abax",
+            "negate": false,
+          }
+        }
+      }
+    };
+
+    const expectedObject = {
+      // TODO: Remove Oxford Comma because it doesn't work in this case
+      "tolqclegacy_assembly_stage": "must not be one of RELEASED, OR DRAFT",
+      "tolqc_scientific_name": "must have a value containing Abax",
+    };
+    const generatedObject = getReadOnlyFiltersText(filter);
+
+    expect(generatedObject).toBe(expectedObject);
   });
 });
