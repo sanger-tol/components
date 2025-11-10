@@ -12,17 +12,34 @@ import {
 } from "../../tol-ui/src";
 
 describe("getReadOnlyAndFilterText function", () => {
-  test("Direct value operator generates correct prose", () => {
-    const operator: [TFilterOperatorType, IFilterOperatorOptions] = [
-      "eq",
+  /**
+   * A function to perform tests on the getReadOnlyAndFilterText function (as all tests have the
+   * same structure)
+   * 
+   * @param operatorType The type of filter operator used
+   * @param negate Whether the operator is negated
+   * @param expectedProse The prose expected to be returned by getReadOnlyAndFilterText. Where the
+   * operator value is expected, use `VALUE`
+   */
+  function generalizedTest(
+    operatorType: TFilterOperatorType,
+    negate: boolean,
+    expectedProse: string
+  ) {
+    const filterOperator: [TFilterOperatorType, IFilterOperatorOptions] = [
+      operatorType,
       {
-        value: "Abrostola",
-        negate: false,
+        value: "VALUE",
+        negate,
       }
     ];
 
-    const generatedProse = getReadOnlyAndFilterText(operator);
+    const generatedProse = getReadOnlyAndFilterText(filterOperator);
 
-    expect(generatedProse).toBe("must equal Abrostola");
+    expect(generatedProse).toBe(expectedProse);
+  }
+
+  test("Direct value operator generates correct prose", () => {
+    generalizedTest("eq", false, "must equal VALUE");
   })
 });
