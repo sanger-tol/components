@@ -241,7 +241,7 @@ export function getReadOnlyAndFilterText(
     case "in_list":
       prose += " be one of"
 
-      operatorOptions.value.forEach((item, index) => {
+      operatorOptions.value.forEach((item: string, index: number) => {
         if (index == 0) {
           // First item in the list
           prose += ` ${item}`;
