@@ -242,12 +242,15 @@ export function getReadOnlyAndFilterText(
       prose += " be one of"
 
       operatorOptions.value.forEach((item, index) => {
-        if (index == operatorOptions.value.length - 1) {
-          // Final item in the list
+        if (index == 0) {
+          // First item in the list
+          prose += ` ${item}`;
+        } else if (index == operatorOptions.value.length - 1) {
+          // Last item in the list
           prose += ` or ${item}`;
         } else {
-          // All other items in the list
-          prose += ` ${item},`;
+          // Middle items
+          prose += `, ${item}`;
         }
       });
 
