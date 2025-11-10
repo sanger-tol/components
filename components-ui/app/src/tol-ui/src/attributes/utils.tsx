@@ -222,7 +222,7 @@ export function getReadOnlyAndFilterText(
       prose += ` have a value containing ${operatorOptions.value}`;
       break;
     case "eq":
-      prose += ` equal to ${operatorOptions.value}`;
+      prose += ` equal ${operatorOptions.value}`;
       break;
     case "gt":
       prose += ` be greater than ${operatorOptions.value}`;

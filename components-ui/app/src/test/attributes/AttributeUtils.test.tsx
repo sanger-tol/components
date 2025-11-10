@@ -23,6 +23,6 @@ describe("getReadOnlyAndFilterText function", () => {
 
     const generatedProse = getReadOnlyAndFilterText(operator);
 
-    expect(generatedProse).toBe("must be equal to Abrostola");
+    expect(generatedProse).toBe("must equal Abrostola");
   })
 });
