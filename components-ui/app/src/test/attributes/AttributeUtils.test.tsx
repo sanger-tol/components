@@ -44,5 +44,18 @@ describe("getReadOnlyAndFilterText function", () => {
     );
   }
 
+  generalizedTest("exists", false, "must exist");
+  generalizedTest("exists", true, "must not exist");
+  generalizedTest("contains", false, "must have a value containing VALUE");
+  generalizedTest("contains", true, "must not have a value containing VALUE");
   generalizedTest("eq", false, "must equal VALUE");
+  generalizedTest("eq", true, "must not equal VALUE");
+  generalizedTest("gt", false, "must be greater than VALUE");
+  generalizedTest("gt", true, "must not be greater than VALUE");
+  generalizedTest("gte", false, "must be greater than or equal to VALUE");
+  generalizedTest("gte", true, "must not be greater than or equal to VALUE");
+  generalizedTest("lt", false, "must be less than VALUE");
+  generalizedTest("lt", true, "must not be less than VALUE");
+  generalizedTest("lte", false, "must be less than or equal to VALUE");
+  generalizedTest("lte", true, "must not be less than or equal to VALUE");
 });
