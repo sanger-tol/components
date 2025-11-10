@@ -12,15 +12,17 @@ import {
 
 export function processConditionToBoolean(conditionObj: IFilter, dataObject: TDataObjectOrNull) {
   if (Object.keys(conditionObj.and_ ?? {}).length === 0) return false;
-
   for (const [fieldSystemName, conditions] of Object.entries(conditionObj.and_!)) {
     let fieldValue = getFieldByName(dataObject, fieldSystemName);
-    if (dataObject && fieldValue) {
+    if (dataObject && (fieldValue !== undefined && fieldValue !== null)) {
       // normalize to array for easier processing
       fieldValue = Array.isArray(fieldValue) ? fieldValue : [fieldValue];
       for (const [operator, condition] of Object.entries(conditions)) {
         let result = false;
         switch (operator) {
+          case "exists":
+            result = fieldValue.some((v: any) => v !== undefined && v !== null);
+            break;
           case "contains":
             result = fieldValue.some((v: any) => typeof v === 'string' && v.includes(condition.value));
             break;
