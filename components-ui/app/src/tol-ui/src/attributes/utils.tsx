@@ -240,8 +240,10 @@ export function getReadOnlyAndFilterText(
 
       operatorOptions.value.forEach((item, index) => {
         if (index == operatorOptions.value.length - 1) {
+          // Final item in the list
           prose += ` or ${item}`;
         } else {
+          // All other items in the list
           prose += ` ${item},`;
         }
       });
