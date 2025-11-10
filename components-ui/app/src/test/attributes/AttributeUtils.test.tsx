@@ -72,7 +72,7 @@ describe("getReadOnlyAndFilterText function", () => {
 
     const generatedProse = getReadOnlyAndFilterText(filterOperator);
 
-    expect(generatedProse).toBe("must be one of DTOL, PSYCHE, or BIOSCAN");
+    expect(generatedProse).toBe("must be one of DTOL, PSYCHE or BIOSCAN");
   });
 
   test("Filter operator in_list generates correct prose when negated", () => {
@@ -86,7 +86,7 @@ describe("getReadOnlyAndFilterText function", () => {
 
     const generatedProse = getReadOnlyAndFilterText(filterOperator);
 
-    expect(generatedProse).toBe("must not be one of DTOL, PSYCHE, or BIOSCAN");
+    expect(generatedProse).toBe("must not be one of DTOL, PSYCHE or BIOSCAN");
   });
 });
 
@@ -112,8 +112,7 @@ describe("getReadOnlyFiltersText function", () => {
     };
 
     const expectedObject = {
-      // TODO: Remove Oxford Comma because it doesn't work in this case
-      "tolqclegacy_assembly_stage": "must not be one of RELEASED, OR DRAFT",
+      "tolqclegacy_assembly_stage": "must not be one of RELEASED or DRAFT",
       "tolqc_scientific_name": "must have a value containing Abax",
     };
     const generatedObject = getReadOnlyFiltersText(filter);
