@@ -58,4 +58,32 @@ describe("getReadOnlyAndFilterText function", () => {
   generalizedTest("lt", true, "must not be less than VALUE");
   generalizedTest("lte", false, "must be less than or equal to VALUE");
   generalizedTest("lte", true, "must not be less than or equal to VALUE");
+
+  test("Filter operator in_list generates correct prose", () => {
+    const filterOperator: [TFilterOperatorType, IFilterOperatorOptions] = [
+      "in_list",
+      {
+        value: ["DTOL", "PSYCHE", "BIOSCAN"],
+        negate: false,
+      }
+    ];
+
+    const generatedProse = getReadOnlyAndFilterText(filterOperator);
+
+    expect(generatedProse).toBe("must be one of DTOL, PSYCHE, or BIOSCAN");
+  });
+
+  test("Filter operator in_list generates correct prose when negated", () => {
+    const filterOperator: [TFilterOperatorType, IFilterOperatorOptions] = [
+      "in_list",
+      {
+        value: ["DTOL", "PSYCHE", "BIOSCAN"],
+        negate: false,
+      }
+    ];
+
+    const generatedProse = getReadOnlyAndFilterText(filterOperator);
+
+    expect(generatedProse).toBe("must not be one of DTOL, PSYCHE, or BIOSCAN");
+  });
 });
