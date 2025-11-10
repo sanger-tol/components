@@ -149,6 +149,8 @@ export function RemoteTable(props: PRemoteTable) {
 
   // action modal
   const [actionModalOpen, setActionModalOpen] = useState<boolean>(false);
+  // Ignore the setting of actionParams until it is needed in editable cells
+  // @ts-ignore
   const [actionParams, setActionParams] = useState<object>({});
 
   useEffect(() => {
