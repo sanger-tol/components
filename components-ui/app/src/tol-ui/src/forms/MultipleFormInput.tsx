@@ -26,13 +26,12 @@ export function MultipleFormInput(props: PMultipleFormInput) {
   const { field, formData, setFormData, setModifiedFields, renderField, onChange, minOne } = props;
   const fieldData = formData[field.name] || {};
 
-  if (minOne && Object.keys(fieldData).length === 0) {
-    createNewInput(field.name, formData, setFormData);
-  }
-
   useEffect(() => {
     // Want to remove any undefined entries that may have been created before
     // fieldData was populated
+    if (minOne && Object.keys(fieldData).length === 0) {
+      createNewInput(field.name, formData, setFormData);
+    }
     for (const key in fieldData) {
       if (key.includes("undefined")) {
         handleDeleteInput(key, false);
