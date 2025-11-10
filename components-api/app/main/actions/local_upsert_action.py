@@ -36,7 +36,7 @@ class LocalUpsertAction(Action):
         try:
             datasource.upsert_batch(object_type=object_type, objects=data_objects)
             return {'success': True}, 200
-        except Exception as e:
+        except Exception as e: # noqa
             return {'error': str(e)}, 500
 
     def __convert_to_data_objects(
