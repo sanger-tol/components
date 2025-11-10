@@ -6,13 +6,13 @@ SPDX-License-Identifier: MIT
 
 import { Container, Row, Col } from "..";
 
-export function CentreContents(props: any) {
+export function CenterContent(props: any) {
   const { children } = props;
   return (
     <Container>
       <Row>
         <Col>
-          <div className="p-1">{children}</div>
+          {children}
         </Col>
       </Row>
     </Container>

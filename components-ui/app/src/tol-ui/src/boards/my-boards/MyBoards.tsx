@@ -11,7 +11,7 @@ import {
   Widgets,
   Message,
   Toaster,
-  Accordion,
+  BoardAccordion,
   MyBoardsHeader,
   getUserFromLocalStorage,
   TsDataSource,
@@ -97,7 +97,7 @@ export function MyBoards(props: IMyBoards) {
   const Content = (
     <div className="my-boards-container">
       {boardDetails && boardDetails.length > 0 ? (
-        <Accordion
+        <BoardAccordion
           boardDetails={boardDetails}
           setBoardDetails={setBoardDetails}
           boardDataSource={boardDataSource}

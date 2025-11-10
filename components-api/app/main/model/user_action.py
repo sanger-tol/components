@@ -26,6 +26,7 @@ class UserAction(Base):
         default=datetime.now
     )
 
+    ids: Mapped[list[str]] = mapped_column(JSONB, nullable=False)
     action_id: Mapped[int] = mapped_column(
         ForeignKey('action.id'),
         nullable=False
