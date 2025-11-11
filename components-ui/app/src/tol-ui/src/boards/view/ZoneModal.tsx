@@ -70,7 +70,7 @@ export function ZoneModal(props: PZoneModal) {
             const dsiList = dataObjects.map((dsi) => ({
               label: normaliseCaps(dsi.name),
               value: dsi.id,
-              api_details: dsi.api_details,
+              api_details: dsi.ui_api_details,
             }));
             setDataSourceInstanceList(dsiList);
             setDataSourceInstance(dsiList[0].value);
@@ -87,13 +87,10 @@ export function ZoneModal(props: PZoneModal) {
   useEffect(() => {
     if (dataSourceInstance) {
       const apiDetails = dataSourceInstanceList
-        .find((dsi) => dsi.value === dataSourceInstance)?.api_details;
+        .find((dsi) => dsi.value === dataSourceInstance)?.ui_api_details;
       setDataspace(
         new TsDataSource({
-          url: apiDetails.url,
-          apiPath: apiDetails.api_path,
-          apiDataPath: apiDetails.api_data_path,
-          dataspace: apiDetails.dataspace,
+          ...apiDetails,
           dataSourceInstanceId: dataSourceInstance,
         })
       );

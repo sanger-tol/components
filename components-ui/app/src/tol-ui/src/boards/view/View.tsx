@@ -51,10 +51,7 @@ export function View(props: PView) {
           title: zone.title,
           filter: zone.filter,
           dataspace: new TsDataSource({
-            url: dsi.api_details.url,
-            apiPath: dsi.api_details.api_path,
-            apiDataPath: dsi.api_details.api_data_path,
-            dataspace: dsi.api_details.dataspace,
+            ...dsi.ui_api_details,
             dataSourceInstanceId: dsi.id,
           }),
         };
