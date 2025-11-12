@@ -8,7 +8,11 @@ import {
   normaliseCaps,
   IAllowedCardinality,
   IEntityMeta,
-  PopUpMessage
+  PopUpMessage,
+  IFilterOperatorOptions,
+  TFilterOperatorType,
+  IFilter,
+  TDescribedFilters,
 } from "..";
 
 export function getFlattenedMetaData(
@@ -190,3 +194,87 @@ export function renderTotalSelectedItems(
     } populated.`
     }`;
 };
+
+/**
+ * Generates user-readable text ("prose") describing an `and_` filter
+ * 
+ * @param param0 An object entry representing one operator in a filter
+ * @returns Prose to be displayed next to the operator in the filter
+ */
+export function getReadOnlyAndFilterText(
+  [operatorType, operatorOptions]: [TFilterOperatorType, IFilterOperatorOptions]
+): string {
+  // All proses start with "must" or "must not" to describe an operator
+  // (depending on whether it's negated)
+  let prose = "";
+  if (operatorOptions.negate) {
+    prose += "must not";
+  } else {
+    prose += "must";
+  }
+
+  // The rest of the message is shaped by the type of operator
+  switch (operatorType) {
+    case "exists":
+      // The "exists" operator does not concern the exact value. It simply checks that one exists
+      prose += " exist";
+      break;
+    case "contains":
+      prose += ` have a value containing ${operatorOptions.value}`;
+      break;
+    case "eq":
+      prose += ` equal ${operatorOptions.value}`;
+      break;
+    case "gt":
+      prose += ` be greater than ${operatorOptions.value}`;
+      break;
+    case "gte":
+      prose += ` be greater than or equal to ${operatorOptions.value}`;
+      break;
+    case "lt":
+      prose += ` be less than ${operatorOptions.value}`;
+      break;
+    case "lte":
+      prose += ` be less than or equal to ${operatorOptions.value}`;
+      break;
+    case "in_list":
+      prose += " be one of"
+
+      operatorOptions.value.forEach((item: string, index: number) => {
+        if (index == 0) {
+          // First item in the list
+          prose += ` ${item}`;
+        } else if (index == operatorOptions.value.length - 1) {
+          // Last item in the list
+          prose += ` or ${item}`;
+        } else {
+          // Middle items
+          prose += `, ${item}`;
+        }
+      });
+
+      break;
+  }
+
+  return prose;
+}
+
+export function generateFilterDescriptions(filter: IFilter): TDescribedFilters {
+  let describedFilters: TDescribedFilters = {};
+  
+  // `and_` filters.
+  // We first check to see whether they exist, to allow inner code to assume so
+  if (filter.and_) {
+    for (const [attribute, operators] of Object.entries(filter.and_)) {
+      for (const operator of Object.entries(operators)) {
+        if (!describedFilters[attribute]) describedFilters[attribute] = [];
+
+        describedFilters[attribute].push(getReadOnlyAndFilterText(
+          operator as [TFilterOperatorType, IFilterOperatorOptions]
+        ));
+      }
+    }
+  }
+
+  return describedFilters;
+}

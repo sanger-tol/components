@@ -94,7 +94,7 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
               <AttributeTitle
                 objectType={objectType}
                 dataSource={dataSource}
-                field={attributeId}
+                attributeId={attributeId}
                 className="tol-config-drawer-selected-column-title"
                 rename={fieldMeta?.[attributeId]?.rename}
               />

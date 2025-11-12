@@ -12,3 +12,4 @@ export * from "./SelectedAttributesContainer";
 export * from "./utils";
 export * from "./SourceContainer";
 export * from "./MenuItem";
+export * from "./ReadOnlyFilters";

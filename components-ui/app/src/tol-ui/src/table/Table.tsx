@@ -459,7 +459,7 @@ export function Table(props: Props) {
                           <HeaderCell>
                             <AttributeTitle
                               {...props}
-                              field={key}
+                              attributeId={key}
                               className="tol-header-text"
                               rename={field.rename!}
                             />
