@@ -12,13 +12,16 @@ export function ReadOnlyFilters(props: PReadOnlyFilters) {
   const filterDescriptions = generateFilterDescriptions(filter);
 
   return (
-    <div>
-      {filterDescriptions && Object.entries(filterDescriptions).map(([attribute, prose]) => (
-        <AttributeTitle
-          objectType={objectType}
-          dataSource={dataSource}
-          attributeId={`${attribute} ${prose}`}
-        />
+    <div className="tol-read-only-filters">
+      {filterDescriptions && Object.entries(filterDescriptions).map(([attributeId, prose]) => (
+        <div className="tol-read-only-filter">
+          <AttributeTitle
+            objectType={objectType}
+            dataSource={dataSource}
+            attributeId={attributeId}
+          />
+          &nbsp;{prose}
+        </div>
       ))}
     </div>
   )
