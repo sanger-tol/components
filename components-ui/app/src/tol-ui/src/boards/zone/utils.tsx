@@ -65,10 +65,7 @@ export async function getComponents(
           title: componentDetails?.title,
           objectType: componentDetails?.object_type,
           dataspace: new TsDataSource({
-            url: dsi?.api_details.url,
-            apiPath: dsi?.api_details.api_path,
-            apiDataPath: dsi?.api_details.api_data_path,
-            dataspace: dsi?.api_details.dataspace,
+            ...dsi?.ui_api_details,
             dataSourceInstanceId: dsi?.id,
           }),
           config: componentDetails?.config,
@@ -104,7 +101,7 @@ async function getComponentData(
           id: { in_list: { value: componentIds } },
         },
       },
-      requestedFields: "data_source_instance.api_details"
+      requestedFields: "data_source_instance.ui_api_details"
     });
 }
 

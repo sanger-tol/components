@@ -12,8 +12,10 @@ export const API_METHODS = {
   PUT: "PUT",
 }
 
-export const BOARDS_API_DATA_PATH = "boards";
-export const LOCAL_API_DATA_PATH = "local";
+
+export const AUTH_API_DATA_PATH = "/auth";
+export const BOARDS_API_DATA_PATH = "/boards";
+export const LOCAL_API_DATA_PATH = "/local";
 export const ACTION_API_DATA_PATH = LOCAL_API_DATA_PATH;
 
 export const BOARDS = {

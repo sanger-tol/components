@@ -23,6 +23,7 @@ import {
   TLabelAndValueData,
   TsDataSource,
   normaliseCaps,
+  PopUpMessage,
 } from "../..";
 
 
@@ -68,9 +69,9 @@ export function ZoneModal(props: PZoneModal) {
         .then((dataObjects) => {
           if (dataObjects) {
             const dsiList = dataObjects.map((dsi) => ({
-              label: normaliseCaps(dsi.name),
+              label: normaliseCaps(dsi.id),
               value: dsi.id,
-              api_details: dsi.api_details,
+              ui_api_details: dsi.ui_api_details,
             }));
             setDataSourceInstanceList(dsiList);
             setDataSourceInstance(dsiList[0].value);
@@ -87,13 +88,10 @@ export function ZoneModal(props: PZoneModal) {
   useEffect(() => {
     if (dataSourceInstance) {
       const apiDetails = dataSourceInstanceList
-        .find((dsi) => dsi.value === dataSourceInstance)?.api_details;
+        .find((dsi) => dsi.value === dataSourceInstance)?.ui_api_details;
       setDataspace(
         new TsDataSource({
-          url: apiDetails.url,
-          apiPath: apiDetails.api_path,
-          apiDataPath: apiDetails.api_data_path,
-          dataspace: apiDetails.dataspace,
+          ...apiDetails,
           dataSourceInstanceId: dataSourceInstance,
         })
       );
@@ -111,6 +109,17 @@ export function ZoneModal(props: PZoneModal) {
               value: type,
             }))
           );
+        })
+        .catch((err) => {
+          console.error("Error fetching attribute metadata:", err);
+          PopUpMessage({
+            type: "error",
+            message: `Failed to fetch Dataspace '${normaliseCaps(dataSourceInstance)}'.
+              Please refresh and try again.`,
+          });
+          setDataSourceInstance("");
+          setDataspace(undefined);
+          setObjectTypesList([]);
         })
         .finally(() => {
           setObjectTypesLoading(false);
@@ -225,7 +234,7 @@ export function ZoneModal(props: PZoneModal) {
         placeholder="Object Type"
         value={objectType}
         onChange={setObjectType}
-        disabled={!dataSourceInstance}
+        disabled={!dataspace}
         loading={objectTypesLoading}
       />
       <br />

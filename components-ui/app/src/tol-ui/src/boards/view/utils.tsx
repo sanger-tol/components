@@ -147,7 +147,7 @@ async function getZoneData(ids: string[], boardDataSource: TsDataSource) {
           id: { in_list: { value: ids } },
         },
       },
-      requestedFields: "data_source_instance.api_details"
+      requestedFields: "data_source_instance.ui_api_details"
     })
 }
 
@@ -211,6 +211,13 @@ export async function fetchPublishedDataspaces(
     .getListPage({
       objectType: BOARDS.DATA_SOURCE_INSTANCE,
       pageSize: 100,
+      filter: {
+        and_: {
+          ui_api_details: {
+            exists: {}
+          },
+        },
+      }
     })
     .then((data: TDataObjectListOrNull) => {
       return data;
