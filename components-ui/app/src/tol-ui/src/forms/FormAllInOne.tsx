@@ -231,7 +231,6 @@ export function FormAllInOne(props: PFormAllInOne) {
                 handleInputChange(remoteAutocompleteField.name, value)
               }
               errorText={errorText}
-              icon={remoteAutocompleteField.icon as PIcon}
             />
           );
         } else {
@@ -334,7 +333,9 @@ export function FormAllInOne(props: PFormAllInOne) {
                 field={field}
                 formData={formData}
                 setFormData={setFormData}
+                setModifiedFields={setModifiedFields}
                 minOne={field.minOne}
+                onChange={handleInputChange}
               />
             ) : (
               renderField(field)

@@ -20,6 +20,7 @@ export interface PRemoteAutoComplete extends PAutoComplete, IRemoteTarget {
   displayFields?: string[];
   displayFieldsTitle?: boolean;
   searchBy: string;
+  errorText?: string;
 }
 
 export function RemoteAutoComplete(props: PRemoteAutoComplete) {
@@ -97,6 +98,7 @@ export function RemoteAutoComplete(props: PRemoteAutoComplete) {
         displayFields={filteredData}
         displayFieldsTitle={displayFieldsTitle}
         loading={loading}
+        errorText={props.errorText}
       />
     </div>
   );

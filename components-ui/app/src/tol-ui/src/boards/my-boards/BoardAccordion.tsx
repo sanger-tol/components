@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from "react";
-import { Accordion as Acc } from "rsuite";
+import { Accordion } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartSimple, faTable } from "@fortawesome/free-solid-svg-icons";
 import { useHistory } from "react-router-dom";
@@ -57,7 +57,7 @@ interface ComponentsProps {
   componentIds: string[];
 }
 
-export function Accordion(props: BoardsAccordionProps) {
+export function BoardAccordion(props: BoardsAccordionProps) {
   const { boardDetails, setBoardDetails, boardDataSource } = props;
   const history = useHistory();
   const [openDelete, setOpenDelete] = useState(false);
@@ -173,12 +173,12 @@ export function Accordion(props: BoardsAccordionProps) {
     };
 
     return (
-      <Acc
+      <Accordion
         bordered
         style={{ flex: "1", overflow: "visible" }}
         onClick={handleExpand}
       >
-        <Acc.Panel
+        <Accordion.Panel
           style={{ overflow: "visible", flex: "1" }}
           header={
             <div onClick={clickable ? () => goToBoard(id) : undefined}>
@@ -191,8 +191,8 @@ export function Accordion(props: BoardsAccordionProps) {
           }
         >
           {loading ? <div>Loading...</div> : renderChildren(childIds)}
-        </Acc.Panel>
-      </Acc>
+        </Accordion.Panel>
+      </Accordion>
     );
   };
 
@@ -325,7 +325,7 @@ export function Accordion(props: BoardsAccordionProps) {
   return (
     <>
       {boardDetails.map((board: any) => (
-        <div data-testid={board.title} key={board.id} className="tol-accordion">
+        <div data-testid={board.title} key={board.id} className="tol-board-accordion">
           <div style={{ flex: "1" }}>
             <AccordionBase
               id={board.id}

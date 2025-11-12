@@ -4,15 +4,19 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Placeholder } from "..";
+
+
 export interface PVideoPlayer {
   host?: "youtube" | "vimeo";
-  videoId: string;
+  videoId?: string;
   width?: string | number;
   height?: string | number;
+  style?: React.CSSProperties;
 }
 
 export function VideoPlayer(props: PVideoPlayer) {
-  let { host = "youtube", videoId, width, height } = props;
+  let { host = "youtube", videoId, width, height, style } = props;
 
   let url = `https://www.youtube.com/embed/${videoId}`;
 
@@ -22,10 +26,10 @@ export function VideoPlayer(props: PVideoPlayer) {
     }
   }
 
-  if (!height && width) {
-    height = Number(width) * (9 / 16);
-  } else if (!width && height) {
-    width = Number(height) * (16 / 9);
+  if (!videoId) {
+    return (
+      <Placeholder message={"Video coming soon..."} {...props} />
+    );
   }
 
   return (
@@ -34,7 +38,7 @@ export function VideoPlayer(props: PVideoPlayer) {
       title="Tol Embedded Video Player"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
       allowFullScreen
-      style={{ width: width, height: height }}
+      style={{ width: width, height: height, ...style }}
       className="tol-video-player"
     />
   );

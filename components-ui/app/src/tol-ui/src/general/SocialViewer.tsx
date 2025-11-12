@@ -17,9 +17,9 @@ export function SocialViewer(props: PNameAndLinks) {
     <div>
       {data.map((item, topLevelIndex) => (
         <div className="tol-social-viewer-parent">
-          <h6 className="tol-social-viewer-title" key={topLevelIndex}>
+          <p className="tol-social-viewer-title" key={topLevelIndex}>
             {item.name}
-          </h6>
+          </p>
           <div className="tol-social-viewer-child">
             {item.links.map((link, bottomLevelIndex) => (
               <a

@@ -8,7 +8,7 @@ import { useState } from "react";
 import {
   Button,
   Modal,
-  CentreContents,
+  CenterContent,
   capitaliseFirstLetter
 } from "..";
 
@@ -114,7 +114,7 @@ export function OrgChart(props: Props) {
   );
 
   return (
-    <CentreContents>
+    <CenterContent>
       <div className={`tol-org-chart ${props.className} ${orgChartSize()}`}>
         {detailModal}
         <div
@@ -169,6 +169,6 @@ export function OrgChart(props: Props) {
           </div>
         </div>
       </div>
-    </CentreContents>
+    </CenterContent>
   );
 }

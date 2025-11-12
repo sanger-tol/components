@@ -18,6 +18,7 @@ import {
   ACTION_API_DATA_PATH,
   Placeholder,
   Table,
+  PopUpMessage,
   addRemoteActions,
   convertTableData,
   createSort,
@@ -148,6 +149,9 @@ export function RemoteTable(props: PRemoteTable) {
 
   // action modal
   const [actionModalOpen, setActionModalOpen] = useState<boolean>(false);
+  // Ignore the setting of actionParams until it is needed in editable cells
+  // @ts-ignore
+  const [actionParams, setActionParams] = useState<object>({});
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
@@ -289,7 +293,7 @@ export function RemoteTable(props: PRemoteTable) {
 
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
-    await actionDataSource!
+    const res = await actionDataSource!
       .custom({
         method: API_METHODS.POST,
         resource: ACTIONS.RUN_ACTION,
@@ -298,6 +302,7 @@ export function RemoteTable(props: PRemoteTable) {
             ids: ids,
             action_name: actionName,
             object_type: objectType,
+            params: actionParams
           },
         },
       })
@@ -306,6 +311,17 @@ export function RemoteTable(props: PRemoteTable) {
         setSelectedRows([]);
         setLoading(false);
       });
+    if (Object.keys(res.data).includes('success')) {
+      PopUpMessage({
+        type: 'info',
+        message: `'${actionName}' triggered.`,
+      })
+    } else {
+      PopUpMessage({
+        type: 'error',
+        message: `'${actionName}' failed to run.`,
+      })
+    }
   };
 
   const convertedActions = addRemoteActions(
