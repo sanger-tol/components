@@ -1,3 +1,9 @@
+/*
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
 import { IFilter, IRemoteTarget } from "src/interfaces";
 import { AttributeTitle } from "./AttributeTitle";
 import { generateFilterDescriptions } from "./utils";
