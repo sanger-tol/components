@@ -1,7 +1,7 @@
 """datasource_to_datasource_instance_fk
 
 Revision ID: b39604352175
-Revises: 2b26f6f350ab
+Revises: a6b5c9c1e45f
 Create Date: 2025-09-19 14:00:17.250971
 
 """
@@ -13,7 +13,7 @@ from sqlalchemy.sql import text
 
 # revision identifiers, used by Alembic.
 revision = 'b39604352175'
-down_revision = '2b26f6f350ab'
+down_revision = 'a6b5c9c1e45f'
 branch_labels = None
 depends_on = None
 
