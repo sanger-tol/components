@@ -23,6 +23,7 @@ import {
   TLabelAndValueData,
   TsDataSource,
   normaliseCaps,
+  PopUpMessage,
 } from "../..";
 
 
@@ -108,6 +109,17 @@ export function ZoneModal(props: PZoneModal) {
               value: type,
             }))
           );
+        })
+        .catch((err) => {
+          console.error("Error fetching attribute metadata:", err);
+          PopUpMessage({
+            type: "error",
+            message: `Failed to fetch Dataspace '${normaliseCaps(dataSourceInstance)}'.
+              Please refresh and try again.`,
+          });
+          setDataSourceInstance("");
+          setDataspace(undefined);
+          setObjectTypesList([]);
         })
         .finally(() => {
           setObjectTypesLoading(false);
@@ -222,7 +234,7 @@ export function ZoneModal(props: PZoneModal) {
         placeholder="Object Type"
         value={objectType}
         onChange={setObjectType}
-        disabled={!dataSourceInstance}
+        disabled={!dataspace}
         loading={objectTypesLoading}
       />
       <br />
