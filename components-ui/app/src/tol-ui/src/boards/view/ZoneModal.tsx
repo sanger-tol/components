@@ -68,9 +68,9 @@ export function ZoneModal(props: PZoneModal) {
         .then((dataObjects) => {
           if (dataObjects) {
             const dsiList = dataObjects.map((dsi) => ({
-              label: normaliseCaps(dsi.name),
+              label: normaliseCaps(dsi.id),
               value: dsi.id,
-              api_details: dsi.ui_api_details,
+              ui_api_details: dsi.ui_api_details,
             }));
             setDataSourceInstanceList(dsiList);
             setDataSourceInstance(dsiList[0].value);

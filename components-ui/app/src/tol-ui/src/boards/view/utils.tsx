@@ -211,6 +211,13 @@ export async function fetchPublishedDataspaces(
     .getListPage({
       objectType: BOARDS.DATA_SOURCE_INSTANCE,
       pageSize: 100,
+      filter: {
+        and_: {
+          ui_api_details: {
+            exists: {}
+          },
+        },
+      }
     })
     .then((data: TDataObjectListOrNull) => {
       return data;
