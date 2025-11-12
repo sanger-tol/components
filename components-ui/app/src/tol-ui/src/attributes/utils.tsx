@@ -267,9 +267,11 @@ export function generateFilterDescriptions(filter: IFilter): TDescribedFilters {
   if (filter.and_) {
     for (const [attribute, operators] of Object.entries(filter.and_)) {
       for (const operator of Object.entries(operators)) {
-        describedFilters[attribute] = getReadOnlyAndFilterText(
+        if (!describedFilters[attribute]) describedFilters[attribute] = [];
+
+        describedFilters[attribute].push(getReadOnlyAndFilterText(
           operator as [TFilterOperatorType, IFilterOperatorOptions]
-        );
+        ));
       }
     }
   }

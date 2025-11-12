@@ -28,4 +28,4 @@ export interface IFilter { // TODO: check usages
 
 export type TFilterOrUndefined = IFilter | undefined;
 
-export type TDescribedFilters = Record<string, string>;
+export type TDescribedFilters = Record<string, string[]>;
