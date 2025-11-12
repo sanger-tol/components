@@ -17,7 +17,7 @@ export function ReadOnlyFilters(props: PReadOnlyFilters) {
         <AttributeTitle
           objectType={objectType}
           dataSource={dataSource}
-          field={`${attribute} ${prose}`}
+          attributeId={`${attribute} ${prose}`}
         />
       ))}
     </div>

@@ -14,14 +14,14 @@ export interface PAttributeTitle extends PAttributeTooltip {
 }
 
 export function AttributeTitle(props: PAttributeTitle) {
-  const { field, dataSource, titleElement: TitleElement = 'p', className, rename } = props;
+  const { attributeId, dataSource, titleElement: TitleElement = 'p', className, rename } = props;
   const [fieldSource, setSource] = useState<string | undefined>(undefined);
   const [fieldDisplayName, setFieldDisplayName] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     dataSource.getEntityMeta()
       .then((data) => {
-        const attr = data.flatAttributes?.[props.objectType]?.[field];
+        const attr = data.flatAttributes?.[props.objectType]?.[attributeId];
         if (attr) {
           setSource(attr.source);
           setFieldDisplayName(attr.display_name);
@@ -45,7 +45,7 @@ export function AttributeTitle(props: PAttributeTitle) {
             />
           }
         />
-        {rename || fieldDisplayName || normaliseCaps(field)}
+        {rename || fieldDisplayName || normaliseCaps(attributeId)}
       </TitleElement>
     </div>
   );

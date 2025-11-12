@@ -40,7 +40,7 @@ export function MenuItem(props: PMenuItem) {
           <AttributeTitle
             objectType={objectType}
             dataSource={dataSource}
-            field={field}
+            attributeId={field}
             className={disabled ? "disabled" : undefined}
           />
           <div className="tol-attribute-selector-display-key">
