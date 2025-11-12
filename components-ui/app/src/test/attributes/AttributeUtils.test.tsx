@@ -97,23 +97,30 @@ describe("getReadOnlyFiltersText function", () => {
     const filter: IFilter = {
       and_: {
         "tolqclegacy_assembly_stage": {
-          "in_list": {
-            "value": ["RELEASED", "DRAFT"],
-            "negate": true,
+          in_list: {
+            value: ["RELEASED", "DRAFT"],
+            negate: true,
           }
         },
         "tolqc_scientific_name": {
-          "contains": {
-            "value": "Abax",
-            "negate": false,
+          contains: {
+            value: "Abax",
+            negate: false,
+          },
+          eq: {
+            value: "Abax parallelepipedus",
+            negate: true,
           }
         }
       }
     };
 
     const expectedObject = {
-      "tolqclegacy_assembly_stage": "must not be one of RELEASED or DRAFT",
-      "tolqc_scientific_name": "must have a value containing Abax",
+      "tolqclegacy_assembly_stage": ["must not be one of RELEASED or DRAFT"],
+      "tolqc_scientific_name": [
+        "must have a value containing Abax",
+        "must not equal Abax parallelepipedus"
+      ],
     };
     const generatedObject = generateFilterDescriptions(filter);
 
