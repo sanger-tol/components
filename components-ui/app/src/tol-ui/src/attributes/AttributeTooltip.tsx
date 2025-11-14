@@ -8,12 +8,12 @@ import { useEffect, useState } from "react";
 import { FormatTooltip, SourceTag, IRemoteTarget, IconTooltip } from "..";
 
 export interface PAttributeTooltip extends IRemoteTarget {
-  field: string;
+  attributeId: string;
   element?: React.ReactNode;
 }
 
 export function AttributeTooltip(props: PAttributeTooltip) {
-  const { field, element, objectType, dataSource } = props;
+  const { attributeId: field, element, objectType, dataSource } = props;
 
   const [details, setDetails] = useState<Record<string, React.ReactNode>>({});
 
