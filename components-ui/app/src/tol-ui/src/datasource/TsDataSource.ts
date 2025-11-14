@@ -83,52 +83,12 @@ export class TsDataSource {
     return `${tg}${sf}`;
   }
 
-  public getUrl(): string | undefined {
-    return this.url;
-  }
-
-  public setUrl(url: string) {
-    this.url = url;
-  }
-
-  public getApiPath(): string | undefined {
-    return this.apiPath;
-  }
-
-  public setApiPath(apiPath: string) {
-    this.apiPath = apiPath;
-  }
-
-  public getApiDataPath(): string | undefined {
-    return this.apiDataPath;
-  }
-
-  public setApiDataPath(apiDataPath: string) {
-    this.apiDataPath = apiDataPath;
-  }
-
-  public getDataspace(): string | undefined {
-    return this.dataspace
-  }
-
-  public setDataspace(dataspace: string) {
-    this.dataspace = dataspace;
-  }
-
   public getDataSourceInstanceId(): string | undefined {
     return this.dataSourceInstanceId;
   }
 
-  public setDataSourceInstanceId(dataSourceInstanceId: string) {
-    this.dataSourceInstanceId = dataSourceInstanceId;
-  }
-
   public getBaseUrl(): string | undefined {
     return this.baseUrl;
-  }
-
-  public getSourceKey(): string {
-    return this.sourceKey;
   }
 
   private fetchRelationshipHandler = {
@@ -261,11 +221,15 @@ export class TsDataSource {
   }
 
   public async attributeMetadata(): Promise<object> {
-    return this.getConfig(this.generateEndpoint("_config/attribute_metadata"));
+    return this.getConfig(
+      this.generateEndpoint("_config/attribute_metadata")
+    );
   }
 
   public async relationshipConfig(): Promise<object> {
-    return this.getConfig(this.generateEndpoint("_config/relationships"));
+    return this.getConfig(
+      this.generateEndpoint("_config/relationships")
+    );
   }
 
   private addIds(attributes: IAttributes) {
@@ -412,7 +376,7 @@ export class TsDataSource {
   }: IGetToOneRelation): Promise<TDataObjectOrNull> {
     return await this.client()
       .get(this.generateEndpoint(objectType, `:to-one/${id}/${relation}`), {
-        url: this.baseUrl,
+        baseURL: this.baseUrl,
       })
       .then((response: any) => {
         return new Proxy(response.data.data, this.dataObjectHandler);

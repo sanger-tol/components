@@ -13,7 +13,6 @@ import {
   AUTH_API_DATA_PATH,
 } from "../..";
 
-
 const authDataSource = new TsDataSource({
   apiPath: "/api/v1",
   apiDataPath: AUTH_API_DATA_PATH

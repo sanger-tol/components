@@ -12,9 +12,9 @@ const env: any = {
 };
 
 env.TOL_DATA = {
-  url: env.PORTAL_URL,
-  apiPath: env.PORTAL_API_PATH,
-  apiDataPath: env.PORTAL_API_DATA_PATH,
+  url: env.PORTAL_URL ?? "https://portal.tol.sanger.ac.uk",
+  apiPath: env.PORTAL_API_PATH ?? "/api/v1",
+  apiDataPath: env.PORTAL_API_DATA_PATH ?? "/data",
   dataspace: env.PORTAL_DATASPACE ?? "tol_production",
 };
 
