@@ -16,6 +16,7 @@ import {
   resizeListener,
   IconTooltip,
 } from "..";
+import { TitleTooltip } from "src/boards/TitleTooltip";
 
 export interface PUtilityBar {
   id?: string;
@@ -35,6 +36,13 @@ export function UtilityBar(props: PUtilityBar) {
     const width = document.getElementById(wrapperId)?.offsetWidth;
     if (width !== undefined) setSmallBreakpoint(width < 600);
   });
+
+  const Toolip = (
+    <TitleTooltip
+      title={title}
+      description={description}
+    />
+  );
 
   const Buttons = (
     // remove left-most button margin
@@ -77,7 +85,7 @@ export function UtilityBar(props: PUtilityBar) {
   return (
     <div className="tol-utility-bar" id={wrapperId}>
       {title && <InlineEdit {...title} size={smallBreakpoint ? "sm" : "md"} />}
-      {description && <IconTooltip contents={description} />}
+      {description && <IconTooltip contents={Toolip} />}
       {elements &&
         elements.map((element, index) => (
           <div key={index} style={{ float: "left" }}>
