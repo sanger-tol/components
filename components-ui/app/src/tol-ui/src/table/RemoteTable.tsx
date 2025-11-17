@@ -105,6 +105,8 @@ export function RemoteTable(props: PRemoteTable) {
     forceUpdate,
   } = props;
 
+  console.log(utilityBarConfig);
+
   // data and field information
   const [data, setData] = useState<any[]>([]);
   const [fieldMeta, setFieldMeta] = useState<FieldMeta>(

@@ -9,20 +9,18 @@ import {
   BoardFilters,
   RemoteCount,
   saveTitle,
-  IBoardTargetAndZone,
   PButton,
   useBoardPrivilege,
   PRIVILEGE,
+  PVisualisation,
 } from "..";
 
-export interface PBoardCount extends IBoardTargetAndZone {
-  id: string;
-  title: string;
+export interface PBoardCount extends PVisualisation {
   config: any;
 }
 
 export function BoardCount(props: PBoardCount) {
-  const { id, boardObjectType, boardDataSource } = props;
+  const { id, utilityBarConfig, boardObjectType, boardDataSource } = props;
   const [openFilters, setOpenFilters] = useState(false);
   const { privilege } = useBoardPrivilege();
 
@@ -44,13 +42,14 @@ export function BoardCount(props: PBoardCount) {
         {...props}
         utilityBarConfig={{
           title: {
-            text: props.title,
+            text: utilityBarConfig.title?.text,
             editable: privilege === PRIVILEGE.BOARD.EDITABLE,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);
             },
           },
           buttons: [filterButton],
+          ...utilityBarConfig,
         }}
       />
     </>

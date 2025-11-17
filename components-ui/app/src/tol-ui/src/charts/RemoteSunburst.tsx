@@ -214,6 +214,7 @@ export function RemoteSunburst(props: Props) {
           resetButton,
           downloadButton,
         ]}
+        {...utilityBarConfig}
       />
       <div className="tol-component-contents-with-offset">
         {contents ? contents :

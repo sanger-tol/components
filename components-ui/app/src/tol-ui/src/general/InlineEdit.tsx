@@ -9,7 +9,7 @@ import { InlineEdit as RSInlineEdit } from "rsuite";
 import { Toaster, Message } from "..";
 
 export interface PInlineEdit {
-  text: string;
+  text?: string;
   editable?: boolean;
   onSave?: (value: string) => void;
   onChange?: (value: string) => void;

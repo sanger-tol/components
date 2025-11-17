@@ -351,6 +351,7 @@ export function Table(props: Props) {
           actionDropdown,
           downloadButton,
         ]}
+        {...utilityBarConfig}
       />
       {contents ? (
         contents

@@ -10,25 +10,22 @@ import rehypeSanitize from "rehype-sanitize";
 import {
   Markdown,
   UtilityBar,
-  IBoardTargetAndZone,
   PButton,
   saveTitle,
   updateConfigAndUpsert,
   useBoardPrivilege,
   PRIVILEGE,
-  IMarkdownConfig
+  IMarkdownConfig,
+  PVisualisation
 } from "..";
 
 
-export interface PBoardMarkdown extends IBoardTargetAndZone {
-  id: string;
-  title: string;
+export interface PBoardMarkdown extends PVisualisation {
   config: IMarkdownConfig;
-  size: string;
 }
 
 export function BoardMarkdown(props: PBoardMarkdown) {
-  const { id, title, config, size, boardObjectType, boardDataSource, zone } = props;
+  const { id, utilityBarConfig, config, size, boardObjectType, boardDataSource, zone } = props;
 
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
@@ -78,12 +75,13 @@ export function BoardMarkdown(props: PBoardMarkdown) {
       id="editor-markdown"
       buttons={[editButton, previewButton]}
       title={{
-        text: title,
+        text: utilityBarConfig.title?.text,
         editable: privilege === PRIVILEGE.BOARD.EDITABLE,
         onSave: (value: string) => {
           saveTitle(value, id, boardObjectType, boardDataSource);
         },
       }}
+      {...utilityBarConfig}
     />
   );
 
