@@ -20,9 +20,9 @@ import {
   PButton,
   PBoard,
   addComponents,
-  normaliseCaps,
   useBoardPrivilege,
-  PRIVILEGE
+  PRIVILEGE,
+  TitleTooltip
 } from "../..";
 
 
@@ -204,7 +204,15 @@ export function Zone(props: PZone) {
             }
           }
         }}
-        description={normaliseCaps(objectType) + " Zone"}
+        description={
+          <TitleTooltip
+            title={title}
+            objectType={objectType}
+            dataSource={dataSource}
+            filter={filter}
+          />
+        }
+        // description={normaliseCaps(objectType) + " Zone"}
         buttons={!draggable ? [
           addButton,
           showEditButtons,
