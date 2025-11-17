@@ -18,9 +18,9 @@ export function ReadOnlyFilters(props: PReadOnlyFilters) {
   const filterDescriptions = generateFilterDescriptions(filter);
 
   return (
-    <div className="tol-read-only-filters">
+    <ul className="tol-read-only-filters">
       {filterDescriptions && Object.entries(filterDescriptions).map(([attributeId, proses]) => (
-        <div className="tol-read-only-filter">
+        <li className="tol-read-only-filter">
           <AttributeTitle
             objectType={objectType}
             dataSource={dataSource}
@@ -29,8 +29,8 @@ export function ReadOnlyFilters(props: PReadOnlyFilters) {
           {proses.map((prose, index) => <>
             &nbsp;{prose}{index != proses.length - 1 && " and"}
           </>)}
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   )
 }
