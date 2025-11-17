@@ -19,19 +19,22 @@ export function ReadOnlyFilters(props: PReadOnlyFilters) {
   const descriptionEntries = Object.entries(filterDescriptions);
 
   return (
-    <ul className="tol-read-only-filters">
-      {descriptionEntries.length > 0 ? descriptionEntries.map(([attributeId, proses]) => (
-        <li className="tol-read-only-filter">
-          <AttributeTitle
-            objectType={objectType}
-            dataSource={dataSource}
-            attributeId={attributeId}
-          />
-          {proses.map((prose, index) => <>
-            &nbsp;{prose}{index != proses.length - 1 && " and"}
-          </>)}
-        </li>
-      )) : <p>None</p>}
-    </ul>
+    descriptionEntries.length > 0 ?
+      <ul className="tol-read-only-filters">
+        {descriptionEntries.map(([attributeId, proses]) => (
+          <li className="tol-read-only-filter">
+            <AttributeTitle
+              objectType={objectType}
+              dataSource={dataSource}
+              attributeId={attributeId}
+            />
+            {proses.map((prose, index) => <>
+              &nbsp;{prose}{index != proses.length - 1 && " and"}
+            </>)}
+          </li>
+        ))}
+      </ul>
+    :
+      "None"
   )
 }

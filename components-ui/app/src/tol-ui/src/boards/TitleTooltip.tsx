@@ -16,20 +16,23 @@ interface PTitleTooltip {
 }
 
 export function TitleTooltip(props: PTitleTooltip) {
-  const { title, objectType, dataSource, filter, description } = props;
+  const { title, objectType, dataSource, filter } = props;
 
-  const isAnyPropNotUndefined = title || objectType || filter || description;
+  const isAnyPropNotUndefined = title || objectType || filter;
 
   return isAnyPropNotUndefined && (
     <div>
       <h5>{title}</h5>
       <p><b>Object Type:</b> {normaliseCaps(objectType)}</p>
-      <p><b>Filters:</b></p>
-      <ReadOnlyFilters
-        filter={filter}
-        objectType={objectType}
-        dataSource={dataSource}
-      />
+      <p>
+        <b>Filters:</b>
+        &nbsp;
+        <ReadOnlyFilters
+          filter={filter}
+          objectType={objectType}
+          dataSource={dataSource}
+        />
+      </p>
     </div>
   )
 }
