@@ -13,7 +13,6 @@ interface PTitleTooltip {
   objectType: string;
   dataSource: TsDataSource;
   filter: JSX.Element;
-  description: string;
 }
 
 export function TitleTooltip(props: PTitleTooltip) {
@@ -31,7 +30,6 @@ export function TitleTooltip(props: PTitleTooltip) {
         objectType={objectType}
         dataSource={dataSource}
       />
-      {/* {description} */}
     </div>
   )
 }
