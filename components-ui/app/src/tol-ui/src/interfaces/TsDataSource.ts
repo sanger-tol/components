@@ -61,7 +61,8 @@ export interface IUpsert {
 interface IUpsertData {
   type: string;
   id?: any;
-  attributes: object;
+  attributes?: object;
+  relationships?: object;
 }
 
 export interface IGetByIds {

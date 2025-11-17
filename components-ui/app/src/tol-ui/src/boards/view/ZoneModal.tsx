@@ -140,18 +140,16 @@ export function ZoneModal(props: PZoneModal) {
   const validateInputs = () => {
     setTitleError(false);
     setFieldError(false);
-    let validId = true;
-    let validField = true;
 
     if (title === "") {
       setTitleError(true);
-      validId = false;
+      return false;
     }
     if (objectType === "" || objectType === null) {
       setFieldError(true);
-      validField = false;
+      return false;
     }
-    return validId && validField;
+    return true;
   }
 
   const onAddZone = async () => {
@@ -193,7 +191,7 @@ export function ZoneModal(props: PZoneModal) {
         {...BUTTONS.ADD}
         onClick={onAddZone}
         disabled={objectType === "" || title === ""}
-        testid="confirm-zone-button"
+        testid="add-zone-button"
       />
       <Button
         {...BUTTONS.CANCEL}
@@ -223,6 +221,7 @@ export function ZoneModal(props: PZoneModal) {
         value={dataSourceInstance}
         onChange={setDataSourceInstance}
         loading={dataSourceInstancesLoading}
+        testid="dataspace-picker"
       />
       <br />
       <p className="zone-modal-labels">
@@ -236,6 +235,7 @@ export function ZoneModal(props: PZoneModal) {
         onChange={setObjectType}
         disabled={!dataspace}
         loading={objectTypesLoading}
+        testid="object-type-picker"
       />
       <br />
       <p className="zone-modal-labels">

@@ -89,8 +89,8 @@ export function View(props: PView) {
 
   const addZoneButton: PButton = {
     type: "success",
-    className: "add-zone-button", // temp placement
-    testid: "add-zone-button",
+    className: "open-add-zone-modal-button", // temp placement
+    testid: "open-add-zone-modal-button",
     icon: "plus",
     position: "right",
     visible: privilege === PRIVILEGE.BOARD.EDITABLE,
@@ -127,7 +127,7 @@ export function View(props: PView) {
                 id={zone.id}
                 title={zone.title}
                 objectType={zone.objectType}
-                dataspace={zone.dataspace}
+                dataspace={zone.dataspace!}
                 filter={zone.filter}
                 onZoneReorder={onZoneReorder}
                 deleteZone={deleteZone}

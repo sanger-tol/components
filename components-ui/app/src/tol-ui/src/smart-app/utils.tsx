@@ -90,8 +90,8 @@ export async function getUserPrivilege(
       objectType: BOARDS.BOARD,
       id: boardId,
     }).then(async (board: TDataObjectOrNull) => {
-      const board_user = await board?.relationships?.user;
-      if (board && (board_user?.id.toString() === user.id.toString() || user.roles.includes('admin'))) {
+      const boardUser = await board?.relationships?.user;
+      if (board && (boardUser?.id.toString() === user.id.toString() || user.roles.includes('admin'))) {
         return PRIVILEGE.BOARD.EDITABLE;
       } else {
         return PRIVILEGE.BOARD.VIEWABLE;

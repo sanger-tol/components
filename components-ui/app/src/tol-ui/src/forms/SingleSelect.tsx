@@ -17,9 +17,11 @@ export interface PSingleSelect {
   block?: boolean;
   disabled?: boolean;
   loading?: boolean;
+  testid?: string;
 }
 
 export const SingleSelect = (props: PSingleSelect) => {
+  const { testid } = props;
   const [data, setData] = useState([{}]);
 
   useEffect(() => {
@@ -34,6 +36,7 @@ export const SingleSelect = (props: PSingleSelect) => {
     <SelectPicker
       {...props}
       data={data}
+      data-testid={testid}
     />
   );
 };

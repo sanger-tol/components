@@ -12,6 +12,13 @@ export const API_METHODS = {
   PUT: "PUT",
 }
 
+export const API_OPERATIONS = {
+  UPSERT: ":upsert",
+  CURSOR: ":cursor",
+  COUNT: ":count",
+  AGGREGATIONS: ":aggregations",
+  TO_ONE: ":to-one",
+}
 
 export const AUTH_API_DATA_PATH = "/auth";
 export const BOARDS_API_DATA_PATH = "/boards";
@@ -33,8 +40,6 @@ export const ACTIONS = {
   ACTION: "action",
   RUN_ACTION: "run-action",
 }
-
-
 
 export const VALIDATION_ENDPOINTS = {
   UPLOAD: "local/upload",

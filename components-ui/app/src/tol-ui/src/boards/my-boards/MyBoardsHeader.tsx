@@ -36,7 +36,7 @@ export function MyBoardsHeader(props: PBoard) {
   ) => {
     await createBoardAndView(
       boardDataSource,
-      boardId, 
+      boardId,
       boardTitle,
       viewId,
       viewTitle
@@ -61,21 +61,20 @@ export function MyBoardsHeader(props: PBoard) {
   );
 
   return (
-      <div className="my-boards-header">
-        <>
-          <div className="my-boards-buttons" style={newBoardModalOpen ? { display: "none" } : {}}>
-            <Button
-              id="create-new-board-button"
-              icon="plus"
-              text="New Board"
-              type="success"
-              onClick={() => setNewBoardModalOpen(true)}
-            />
-          </div>
-          <h1>{TITLE}</h1>
-          <p>{SUB_TITLE}</p>
-        </>
-        {newBoardModalOpen && NewBoardModalContent()}
+    <div className="my-boards-header">
+      <div className="my-boards-buttons" style={newBoardModalOpen ? { display: "none" } : {}}>
+        <Button
+          id="create-new-board-button"
+          testid="create-new-board-button"
+          icon="plus"
+          text="New Board"
+          type="success"
+          onClick={() => setNewBoardModalOpen(true)}
+        />
       </div>
+      <h1>{TITLE}</h1>
+      <p>{SUB_TITLE}</p>
+      {newBoardModalOpen && NewBoardModalContent()}
+    </div>
   );
 }

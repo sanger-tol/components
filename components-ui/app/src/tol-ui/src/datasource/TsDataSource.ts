@@ -33,6 +33,7 @@ import {
   IGetList,
   IGetAttributeDescriptor,
   IAttributeDescriptor,
+  API_OPERATIONS,
 } from "..";
 
 
@@ -375,7 +376,7 @@ export class TsDataSource {
     relation,
   }: IGetToOneRelation): Promise<TDataObjectOrNull> {
     return await this.client()
-      .get(this.generateEndpoint(objectType, `:to-one/${id}/${relation}`), {
+      .get(this.generateEndpoint(objectType, `${API_OPERATIONS.TO_ONE}/${id}/${relation}`), {
         baseURL: this.baseUrl,
       })
       .then((response: any) => {
@@ -488,7 +489,7 @@ export class TsDataSource {
   }: IGetListCursor): Promise<TCursorObjectOrNull> {
     return await this.client()
       .post(
-        this.generateEndpoint(objectType, ":cursor"),
+        this.generateEndpoint(objectType, API_OPERATIONS.CURSOR),
         { search_after: searchAfter },
         {
           baseURL: this.baseUrl,
@@ -536,12 +537,16 @@ export class TsDataSource {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
       .post(
-        this.generateEndpoint(objectType, ":upsert"),
+        this.generateEndpoint(objectType, API_OPERATIONS.UPSERT),
         { data: payload },
         { baseURL: this.baseUrl }
       )
       .then((response: any) => {
-        return this.updateDetailCache(response, objectType);
+        // TODO: Add caching back in after SDK bug fix
+        // return this.updateDetailCache(response, objectType);
+        return response.data.data.map((object: any) => {
+          return new Proxy(object, this.dataObjectHandler);
+        });
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
