@@ -5,20 +5,35 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReadOnlyFilters } from "src/attributes";
+import { TsDataSource } from "src/datasource";
+import { normaliseCaps } from "src/general";
 
 interface PTitleTooltip {
   title: string;
+  boardComponentType: string;
   objectType: string;
-  filters: JSX.Element;
+  dataSource: TsDataSource;
+  filter: JSX.Element;
   description: string;
 }
 
 export function TitleTooltip(props: PTitleTooltip) {
-  const { title, objectType, filters, description } = props;
+  const { title, boardComponentType, objectType, dataSource, filter, description } = props;
 
-  return (
+  const anyPropNotUndefined = title || objectType || filter || description;
+
+  return anyPropNotUndefined && (
     <div>
-      {description}
+      <h5>{title}</h5>
+      <p><b>CT:</b> {boardComponentType}</p>
+      <p><b>Object Type:</b> {normaliseCaps(objectType)}</p>
+      <p><b>Filters:</b></p>
+      <ReadOnlyFilters
+        filter={filter}
+        objectType={objectType}
+        dataSource={dataSource}
+      />
+      {/* {description} */}
     </div>
   )
 }
