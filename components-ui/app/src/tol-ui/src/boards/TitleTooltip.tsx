@@ -22,7 +22,8 @@ export function TitleTooltip(props: PTitleTooltip) {
 
   return isAnyPropNotUndefined && (
     <div>
-      <h5>{title}</h5>
+      <h6>{title}</h6>
+      <hr style={{"margin": "0.4em 0"}} />
       <p><b>Object Type:</b> {normaliseCaps(objectType)}</p>
       <p>
         <b>Filters:</b>
