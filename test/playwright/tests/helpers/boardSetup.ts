@@ -63,7 +63,7 @@ export const deleteBoard = async ({ page, testID }) => {
   await page.locator('span').filter({ hasText: /^Delete$/, visible: true, exact: true }).click();
 
   // click the confirm button
-  await page.locator('span').filter({ hasText: /^Confirm$/, visible: true, exact: true }).click();
+  await page.getByTestId('confirm-delete-button').click();
 };
 
 export const setupBoard = async ({ page, testID }) => {
