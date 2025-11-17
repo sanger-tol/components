@@ -26,7 +26,6 @@ const createView = async ({ page, testID }) => { };
 const createZone = async ({ page, testID }) => {
   // click add zone button
   const addZoneButton = await page.getByTestId('open-add-zone-modal-button');
-  await addZoneButton.waitFor();
   await addZoneButton.click();
 
   // choose the dataspace picker
