@@ -10,7 +10,6 @@ import { normaliseCaps } from "src/general";
 
 interface PTitleTooltip {
   title: string;
-  boardComponentType: string;
   objectType: string;
   dataSource: TsDataSource;
   filter: JSX.Element;
@@ -18,14 +17,13 @@ interface PTitleTooltip {
 }
 
 export function TitleTooltip(props: PTitleTooltip) {
-  const { title, boardComponentType, objectType, dataSource, filter, description } = props;
+  const { title, objectType, dataSource, filter, description } = props;
 
   const anyPropNotUndefined = title || objectType || filter || description;
 
   return anyPropNotUndefined && (
     <div>
       <h5>{title}</h5>
-      <p><b>CT:</b> {boardComponentType}</p>
       <p><b>Object Type:</b> {normaliseCaps(objectType)}</p>
       <p><b>Filters:</b></p>
       <ReadOnlyFilters
