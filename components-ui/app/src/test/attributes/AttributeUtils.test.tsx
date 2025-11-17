@@ -88,6 +88,20 @@ describe("getReadOnlyAndFilterText function", () => {
 
     expect(generatedProse).toBe("must not be one of DTOL, PSYCHE or BIOSCAN");
   });
+
+  test("Filter operator in_list generates correct prose when there is only one item", () => {
+    const filterOperator: [TFilterOperatorType, IFilterOperatorOptions] = [
+      "in_list",
+      {
+        value: ["RELEASED"],
+        negate: false,
+      }
+    ];
+
+    const generatedProse = getReadOnlyAndFilterText(filterOperator);
+
+    expect(generatedProse).toBe("must be RELEASED");
+  });
 });
 
 describe("getReadOnlyFiltersText function", () => {
