@@ -25,21 +25,27 @@ const createView = async ({ page, testID }) => { };
 
 const createZone = async ({ page, testID }) => {
   // click add zone button
-  const addZoneButton = await page.getByTestId('add-zone-button');
+  const addZoneButton = await page.getByTestId('open-add-zone-modal-button');
   await addZoneButton.waitFor();
   await addZoneButton.click();
 
-  // choose the object type
-  await page.getByRole('combobox').click();
+  // choose the dataspace picker
+  await page.getByTestId('dataspace-picker').click();
+
+  // select the dataspace
+  await page.locator('[data-key="tol_production"]').click();
+
+  // choose the object type picker
+  await page.getByTestId('object-type-picker').click();
 
   // select the object type
-  await page.getByText('curation').click();
+  await page.getByText('Curation').click();
 
   // name the zone
   await page.getByRole('textbox').fill(testID);
 
   // click add zone button
-  const confirmZoneButton = await page.getByTestId('confirm-zone-button');
+  const confirmZoneButton = await page.getByTestId('add-zone-button');
   await confirmZoneButton.waitFor();
   await confirmZoneButton.click();
 };
