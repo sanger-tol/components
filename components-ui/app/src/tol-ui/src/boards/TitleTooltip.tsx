@@ -18,9 +18,7 @@ interface PTitleTooltip {
 export function TitleTooltip(props: PTitleTooltip) {
   const { title, objectType, dataSource, filter } = props;
 
-  const isAnyPropNotUndefined = title || objectType || filter;
-
-  return isAnyPropNotUndefined && (
+  return (
     <div>
       <h6>{title}</h6>
       <hr style={{"margin": "0.4em 0"}} />
