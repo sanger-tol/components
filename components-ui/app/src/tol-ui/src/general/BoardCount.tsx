@@ -15,9 +15,7 @@ import {
   PVisualisation,
 } from "..";
 
-export interface PBoardCount extends PVisualisation {
-  config: any;
-}
+export interface PBoardCount extends PVisualisation {}
 
 export function BoardCount(props: PBoardCount) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource } = props;

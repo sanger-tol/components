@@ -21,9 +21,7 @@ import {
 } from "..";
 
 
-interface Props extends PVisualisation {
-  config: any;
-}
+interface Props extends PVisualisation {}
 
 export function BoardSunburst(props: Props) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, size, zone } = props;
