@@ -5,16 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReactNode } from "react";
-import { 
-    UtilityBar,
-    TUtilityBarOrNull 
+import {
+  UtilityBar,
+  TUtilityBarOrNull
 } from "..";
 
 
-
-export interface PObjectDetail{
+export interface PObjectDetail {
   id: string;
-  data: Record <string, unknown>;
+  data: Record<string, ReactNode>;
   utilityBarConfig?: TUtilityBarOrNull;
   contents?: ReactNode;
   height?: any;
@@ -26,36 +25,36 @@ export function ObjectDetail(props: PObjectDetail) {
     utilityBarConfig,
     data,
     contents,
-    height="100%"
+    height = "100%"
   } = props;
 
-  const KeyValuePairs = (
-    <div className="tol-object-detail">
-            {Object.entries(data).map(([key, value]) => (
-                <p key={key}>
-                <strong>{key}:</strong> {value}
-        </p>
-      ))}
-    </div>
-  )
+  const KeyValuePairs = Object.entries(data).map(([key, value]) => (
+    <p key={key}>
+      <strong>{key}:</strong> {value}
+    </p>
+  ));
+
 
   return (
-    <div 
-        id={id}
-        style={{
-            height:height,
-        }}>
-        {utilityBarConfig &&
+    <div
+      className="tol-object-detail"
+      id={id}
+      style={{
+        height: height,
+      }}
+    >
+      {utilityBarConfig &&
         <UtilityBar
-            id={id}
-            {...utilityBarConfig}
-        />}
-        <div className={utilityBarConfig ? "tol-component-contents-with-offset" : "tol-component-contents"} style = {{overflow: 'auto'}}>
-            
-            {contents ? contents: 
-                KeyValuePairs
-            }
-        </div>
+          id={id}
+          {...utilityBarConfig}
+        />
+      }
+      <div
+        className={utilityBarConfig ? "tol-component-contents-with-offset" : "tol-component-contents"}
+        style={{ overflow: 'auto' }}
+      >
+        {contents ? contents : KeyValuePairs}
+      </div>
     </div>
   );
 }
