@@ -12,7 +12,6 @@ import {
   IDBZoneView,
   IZone,
   TDataObjectListOrNull,
-  TDataObjectOrNull,
   TsDataSource
 } from "../..";
 

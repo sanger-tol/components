@@ -50,6 +50,4 @@ export * from "./variables";
 export * from "./file-validation";
 
 import { TsDataSource, env } from ".";
-export const TOL_DS = new TsDataSource({
-  baseUrl: env.TOL_DATA,
-});
+export const TOL_DS = new TsDataSource(env.TOL_DATA);
