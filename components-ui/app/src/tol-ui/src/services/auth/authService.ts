@@ -10,12 +10,13 @@ import {
   Page,
   tokenHasExpired,
   API_METHODS,
+  AUTH_API_DATA_PATH,
 } from "../..";
 
-
 const authDataSource = new TsDataSource({
-  apiPrefix: "auth"
-})
+  apiPath: "/api/v1",
+  apiDataPath: AUTH_API_DATA_PATH
+});
 
 export function getUrlLogin() {
   return authDataSource

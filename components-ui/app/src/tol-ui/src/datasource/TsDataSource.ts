@@ -32,7 +32,8 @@ import {
   normaliseCaps,
   IGetList,
   IGetAttributeDescriptor,
-  IAttributeDescriptor
+  IAttributeDescriptor,
+  API_OPERATIONS,
 } from "..";
 
 
@@ -43,30 +44,52 @@ const entityMetaPromises: IEntityMetaPromises = {};
 
 export class TsDataSource {
   private client: any;
+  private url: string | undefined;
+  private apiPath: string | undefined;
+  private apiDataPath: string | undefined;
+  private dataspace: string | undefined;
+  private dataSourceInstanceId: string | undefined;
   private baseUrl: string | undefined;
-  private apiPrefix: string | undefined;
   private sourceKey: string;
 
-  constructor({ baseUrl, apiPrefix, client }: IDataSource = {}) {
+  constructor({ url, apiPath, apiDataPath, dataspace, dataSourceInstanceId, client }: IDataSource = {}) {
     this.client = client ?? httpClient;
-    this.baseUrl = baseUrl;
-    this.apiPrefix = apiPrefix;
-    this.sourceKey = `${baseUrl || "default"}/${apiPrefix || "default"}`;
+    this.url = url;
+    this.apiPath = apiPath;
+    this.apiDataPath = apiDataPath;
+    this.dataspace = dataspace;
+    this.dataSourceInstanceId = dataSourceInstanceId;
+    this.baseUrl = this.initialiseBaseUrl();
+    this.sourceKey = this.baseUrl ?? "default";
+  }
+
+  private initialiseBaseUrl(): string | undefined {
+    // if all parts passed in are undefined, then this should be undefined overall
+    if (!this.url && !this.apiPath && !this.apiDataPath && !this.dataspace) {
+      return undefined;
+    }
+
+    // else join all parts together to form the baseUrl
+    let baseUrl = "";
+    baseUrl += this.url ? `${this.url}` : "";
+    baseUrl += this.apiPath ? `${this.apiPath}` : "";
+    baseUrl += this.apiDataPath ? `${this.apiDataPath}` : "";
+    baseUrl += this.dataspace ? `/${this.dataspace}` : "";
+    return baseUrl;
   }
 
   public generateEndpoint(target?: string, suffix?: string): string {
-    const prefix = this.apiPrefix ? `/${this.apiPrefix}` : "";
     const tg = target ? `/${target}` : "";
     const sf = suffix ? `${suffix}` : "";
-    return `${prefix}${tg}${sf}`;
+    return `${tg}${sf}`;
+  }
+
+  public getDataSourceInstanceId(): string | undefined {
+    return this.dataSourceInstanceId;
   }
 
   public getBaseUrl(): string | undefined {
     return this.baseUrl;
-  }
-
-  public getApiPrefix(): string | undefined {
-    return this.apiPrefix;
   }
 
   private fetchRelationshipHandler = {
@@ -199,11 +222,15 @@ export class TsDataSource {
   }
 
   public async attributeMetadata(): Promise<object> {
-    return this.getConfig(this.generateEndpoint("_config/attribute_metadata"));
+    return this.getConfig(
+      this.generateEndpoint("_config/attribute_metadata")
+    );
   }
 
   public async relationshipConfig(): Promise<object> {
-    return this.getConfig(this.generateEndpoint("_config/relationships"));
+    return this.getConfig(
+      this.generateEndpoint("_config/relationships")
+    );
   }
 
   private addIds(attributes: IAttributes) {
@@ -349,7 +376,7 @@ export class TsDataSource {
     relation,
   }: IGetToOneRelation): Promise<TDataObjectOrNull> {
     return await this.client()
-      .get(this.generateEndpoint(objectType, `:to-one/${id}/${relation}`), {
+      .get(this.generateEndpoint(objectType, `${API_OPERATIONS.TO_ONE}/${id}/${relation}`), {
         baseURL: this.baseUrl,
       })
       .then((response: any) => {
@@ -462,7 +489,7 @@ export class TsDataSource {
   }: IGetListCursor): Promise<TCursorObjectOrNull> {
     return await this.client()
       .post(
-        this.generateEndpoint(objectType, ":cursor"),
+        this.generateEndpoint(objectType, API_OPERATIONS.CURSOR),
         { search_after: searchAfter },
         {
           baseURL: this.baseUrl,
@@ -510,12 +537,16 @@ export class TsDataSource {
     this.initializeDetailCacheAndPromises(objectType);
     return await this.client()
       .post(
-        this.generateEndpoint(objectType, ":upsert"),
+        this.generateEndpoint(objectType, API_OPERATIONS.UPSERT),
         { data: payload },
         { baseURL: this.baseUrl }
       )
       .then((response: any) => {
-        return this.updateDetailCache(response, objectType);
+        // TODO: Add caching back in after SDK bug fix
+        // return this.updateDetailCache(response, objectType);
+        return response.data.data.map((object: any) => {
+          return new Proxy(object, this.dataObjectHandler);
+        });
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;

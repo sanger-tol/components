@@ -7,7 +7,7 @@
 import { TsDataSource, DetailAttribute, Widgets, env } from "../tol-ui/src";
 
 export function DataSource() {
-  const ds1 = new TsDataSource({ baseUrl: env.TOL_DATA });
+  const ds1 = new TsDataSource(env.TOL_DATA);
 
   ds1
     .getOne({

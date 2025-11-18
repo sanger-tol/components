@@ -22,7 +22,7 @@ import {
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-interface PVisualisations {
+export interface PVisualisations {
   id: string;
   zone: IZone;
   setZone: (zone: IZone) => void;

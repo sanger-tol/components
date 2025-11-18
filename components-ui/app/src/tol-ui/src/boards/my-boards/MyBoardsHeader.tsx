@@ -9,17 +9,13 @@ import { useHistory } from "react-router-dom";
 import {
   NewBoardModal,
   createBoardAndView,
-  TsDataSource,
   BOARDS,
   Button,
+  PBoard,
 } from "../..";
 
 
-export interface IMyBoardsHeader {
-  boardDataSource: TsDataSource;
-}
-
-export function MyBoardsHeader(props: IMyBoardsHeader) {
+export function MyBoardsHeader(props: PBoard) {
   const { boardDataSource } = props;
   const [newBoardModalOpen, setNewBoardModalOpen] = useState(false);
   const [modalError, setModalError] = useState("");
@@ -40,7 +36,7 @@ export function MyBoardsHeader(props: IMyBoardsHeader) {
   ) => {
     await createBoardAndView(
       boardDataSource,
-      boardId, 
+      boardId,
       boardTitle,
       viewId,
       viewTitle
@@ -65,21 +61,20 @@ export function MyBoardsHeader(props: IMyBoardsHeader) {
   );
 
   return (
-      <div className="my-boards-header">
-        <>
-          <div className="my-boards-buttons" style={newBoardModalOpen ? { display: "none" } : {}}>
-            <Button
-              id="create-new-board-button"
-              icon="plus"
-              text="New Board"
-              type="success"
-              onClick={() => setNewBoardModalOpen(true)}
-            />
-          </div>
-          <h1>{TITLE}</h1>
-          <p>{SUB_TITLE}</p>
-        </>
-        {newBoardModalOpen && NewBoardModalContent()}
+    <div className="my-boards-header">
+      <div className="my-boards-buttons" style={newBoardModalOpen ? { display: "none" } : {}}>
+        <Button
+          id="create-new-board-button"
+          testid="create-new-board-button"
+          icon="plus"
+          text="New Board"
+          type="success"
+          onClick={() => setNewBoardModalOpen(true)}
+        />
       </div>
+      <h1>{TITLE}</h1>
+      <p>{SUB_TITLE}</p>
+      {newBoardModalOpen && NewBoardModalContent()}
+    </div>
   );
 }

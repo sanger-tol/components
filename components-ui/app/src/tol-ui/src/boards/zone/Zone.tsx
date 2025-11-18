@@ -22,7 +22,8 @@ import {
   addComponents,
   normaliseCaps,
   useBoardPrivilege,
-  PRIVILEGE
+  PRIVILEGE,
+  TsDataSource,
 } from "../..";
 
 
@@ -30,6 +31,7 @@ export interface PZone extends PBoard {
   id: string;
   title: string;
   objectType: string;
+  dataspace: TsDataSource;
   filter: any;
   onZoneReorder: any;
   deleteZone: any;
@@ -39,7 +41,7 @@ export function Zone(props: PZone) {
   const {
     id,
     objectType,
-    dataSource,
+    dataspace,
     boardDataSource,
     filter,
     onZoneReorder,
@@ -53,7 +55,7 @@ export function Zone(props: PZone) {
   const [saveLayout, setSaveLayout] = useState(false);
   const [title, setTitle] = useState(props.title);
   const z = useZone({
-    dataSource,
+    dataSource: dataspace,
     objectType,
     filter: filter,
     components: [],
@@ -220,6 +222,7 @@ export function Zone(props: PZone) {
           setOpen={setOpen}
           zoneId={id}
           boardDataSource={boardDataSource}
+          dataspace={dataspace}
           {...z}
         />
       </div>
