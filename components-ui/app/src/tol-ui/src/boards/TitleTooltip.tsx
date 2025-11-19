@@ -23,7 +23,7 @@ export function TitleTooltip(props: PTitleTooltip) {
       <h6>{title}</h6>
       <hr style={{"margin": "0.4em 0"}} />
       <p><b>Object Type:</b> {normaliseCaps(objectType)}</p>
-      <p>
+      <span>
         <b>Filters:</b>
         &nbsp;
         <ReadOnlyFilters
@@ -31,7 +31,7 @@ export function TitleTooltip(props: PTitleTooltip) {
           objectType={objectType}
           dataSource={dataSource}
         />
-      </p>
+      </span>
     </div>
   )
 }
