@@ -17,9 +17,9 @@ export function TitleTooltip(props: PTitleTooltip) {
   const { title, objectType, dataSource, filter } = props;
 
   return (
-    <div>
+    <div className="tol-utility-bar-title-tooltip">
       <h6>{title}</h6>
-      <hr style={{"margin": "0.4em 0"}} />
+      <hr />
       <p><b>Object Type:</b> {normaliseCaps(objectType)}</p>
       <>
         <b>Filters:</b>
