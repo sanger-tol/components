@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { ReadOnlyFilters, TsDataSource, normaliseCaps, IFilter } from "..";
 
-interface PTitleTooltip {
+export interface PTitleTooltip {
   title: string;
   objectType: string;
   dataSource: TsDataSource;
