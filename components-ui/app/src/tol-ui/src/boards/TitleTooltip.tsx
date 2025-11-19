@@ -7,12 +7,13 @@ SPDX-License-Identifier: MIT
 import { ReadOnlyFilters } from "src/attributes";
 import { TsDataSource } from "src/datasource";
 import { normaliseCaps } from "src/general";
+import { IFilter } from "src/interfaces";
 
 interface PTitleTooltip {
   title: string;
   objectType: string;
   dataSource: TsDataSource;
-  filter: JSX.Element;
+  filter: IFilter;
 }
 
 export function TitleTooltip(props: PTitleTooltip) {
