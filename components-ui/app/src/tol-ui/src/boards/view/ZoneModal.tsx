@@ -95,6 +95,8 @@ export function ZoneModal(props: PZoneModal) {
           dataSourceInstanceId: dataSourceInstance,
         })
       );
+    } else {
+      setDataspace(undefined);
     }
   }, [dataSourceInstance]);
 
