@@ -26,6 +26,9 @@ export function InlineEdit(props: PInlineEdit) {
 
   // Handles the save action
   const handleSave = () => {
+    // Account for possible undefined
+    if (!editedText) return;
+
     if (editedText.trim() === "") {
       toaster.push(ToastMessage, {
         placement: "topCenter",
