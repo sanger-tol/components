@@ -117,16 +117,11 @@ export function generateVisualisations(
     const component = zone.components[componentId].data;
     const filter = generateFilter(zone, component.id!);
 
-    const dataspace = new TsDataSource({
-      baseUrl: component.baseUrl,
-      apiPrefix: component.apiPrefix,
-    });
-
     const Description = (
       <TitleTooltip
         title={component.title!}
         objectType={component.objectType!}
-        dataSource={dataspace}
+        dataSource={component.dataspace!}
         filter={filter}
       />
     );
