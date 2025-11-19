@@ -13,7 +13,7 @@ interface PTitleTooltip {
   title: string;
   objectType: string;
   dataSource: TsDataSource;
-  filter: IFilter;
+  filter?: IFilter;
 }
 
 export function TitleTooltip(props: PTitleTooltip) {

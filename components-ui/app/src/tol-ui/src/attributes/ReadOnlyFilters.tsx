@@ -10,7 +10,7 @@ import { AttributeTitle } from "./AttributeTitle";
 import { generateFilterDescriptions } from "./utils";
 
 interface PReadOnlyFilters extends IRemoteTarget {
-  filter: IFilter
+  filter?: IFilter
 }
 
 export function ReadOnlyFilters(props: PReadOnlyFilters) {

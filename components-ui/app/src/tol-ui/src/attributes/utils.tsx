@@ -268,7 +268,12 @@ export function getReadOnlyAndFilterText(
   return prose;
 }
 
-export function generateFilterDescriptions(filter: IFilter): TDescribedFilters {
+export function generateFilterDescriptions(filter?: IFilter): TDescribedFilters {
+  // Account for `filter` being undefined
+  if (!filter) {
+    return {};
+  }
+
   let describedFilters: TDescribedFilters = {};
   
   // `and_` filters.
