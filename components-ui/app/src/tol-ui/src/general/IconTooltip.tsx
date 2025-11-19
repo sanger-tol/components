@@ -16,10 +16,11 @@ export interface PIconTooltip {
   contents: ReactNode;
   disableMarkdown?: boolean;
   icon?: ReactNode;
+  className: string;
 }
 
 export function IconTooltip(props: PIconTooltip) {
-  const { contents, disableMarkdown, icon } = props;
+  const { contents, disableMarkdown, icon, className } = props;
 
   let renderedContents = contents;
 
@@ -33,7 +34,7 @@ export function IconTooltip(props: PIconTooltip) {
   }
 
   return (
-    <span onClick={(e) => e.stopPropagation()}>
+    <span className={`tol-icon-tooltip ${className}`} onClick={(e) => e.stopPropagation()}>
       <HoverOverlay contents={renderedContents}>
         <span className="tooltip-wrapper">
           {icon || <Icon icon="circle-info" size="sm"/>}

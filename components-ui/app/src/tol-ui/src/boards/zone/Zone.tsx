@@ -210,7 +210,7 @@ export function Zone(props: PZone) {
           <TitleTooltip
             title={title}
             objectType={objectType}
-            dataSource={dataSource}
+            dataSource={dataspace}
             filter={filter}
           />
         }

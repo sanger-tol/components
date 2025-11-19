@@ -31,3 +31,7 @@
 .tol-component-contents-with-offset {
   height: calc(100% - var(--tol-utility-bar-offset));
 }
+
+.tol-utility-bar-tooltip {
+  margin-right: 16px;
+}

@@ -77,7 +77,7 @@ export function UtilityBar(props: PUtilityBar) {
   return (
     <div className="tol-utility-bar" id={wrapperId}>
       {title && <InlineEdit {...title} size={smallBreakpoint ? "sm" : "md"} />}
-      {description && <IconTooltip contents={description} />}
+      {description && <IconTooltip className="tol-utility-bar-tooltip" contents={description} />}
       {elements &&
         elements.map((element, index) => (
           <div key={index} style={{ float: "left" }}>
