@@ -9,24 +9,22 @@ import {
   BoardFilters,
   RemoteTable,
   saveTitle,
-  IBoardTargetAndZone,
   updateConfigAndUpsert,
   useBoardPrivilege,
   PRIVILEGE,
   ITableConfigSave,
   optimiseFieldMetaForSave,
   ITableDrawerSave,
+  PVisualisation,
 } from "..";
 
 
-export interface PBoardTable extends IBoardTargetAndZone {
-  id: string;
-  title: string;
+export interface PBoardTable extends PVisualisation {
   config: ITableConfigSave;
 }
 
 export function BoardTable(props: PBoardTable) {
-  const { id, title, boardObjectType, boardDataSource, zone } = props;
+  const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
   const [forceUpdate, setForceUpdate] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
@@ -100,8 +98,9 @@ export function BoardTable(props: PBoardTable) {
       // actions={config.actions}
       rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
       utilityBarConfig={{
+        ...utilityBarConfig,
         title: {
-          text: title,
+          text: utilityBarConfig.title?.text,
           editable: privilege === PRIVILEGE.BOARD.EDITABLE,
           onSave: (value: string) => {
             saveTitle(value, id, boardObjectType, boardDataSource);

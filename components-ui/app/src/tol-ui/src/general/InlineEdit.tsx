@@ -9,7 +9,7 @@ import { InlineEdit as RSInlineEdit } from "rsuite";
 import { Toaster, Message } from "..";
 
 export interface PInlineEdit {
-  text: string;
+  text?: string;
   editable?: boolean;
   onSave?: (value: string) => void;
   onChange?: (value: string) => void;
@@ -26,6 +26,9 @@ export function InlineEdit(props: PInlineEdit) {
 
   // Handles the save action
   const handleSave = () => {
+    // Account for possible undefined
+    if (!editedText) return;
+
     if (editedText.trim() === "") {
       toaster.push(ToastMessage, {
         placement: "topCenter",

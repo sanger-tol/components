@@ -238,6 +238,15 @@ export function getReadOnlyAndFilterText(
       prose += ` be less than or equal to ${operatorOptions.value}`;
       break;
     case "in_list":
+      // Even though this was from a multi-select,
+      // it's still very possible the user only selected one option.
+      // In that case, operate similarly to the "eq" operator.
+      // However, I have chosen to change the message to differentiate it from said operator
+      if ((operatorOptions.value as Array<any>).length == 1) {
+        prose += ` be ${operatorOptions.value}`;
+        break;
+      }
+
       prose += " be one of"
 
       operatorOptions.value.forEach((item: string, index: number) => {
@@ -259,7 +268,12 @@ export function getReadOnlyAndFilterText(
   return prose;
 }
 
-export function generateFilterDescriptions(filter: IFilter): TDescribedFilters {
+export function generateFilterDescriptions(filter?: IFilter): TDescribedFilters {
+  // Account for `filter` being undefined
+  if (!filter) {
+    return {};
+  }
+
   let describedFilters: TDescribedFilters = {};
   
   // `and_` filters.

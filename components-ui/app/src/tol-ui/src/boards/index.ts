@@ -11,3 +11,4 @@ export * from "./my-boards";
 export * from "./utils";
 export * from "./view";
 export * from "./zone";
+export * from "./TitleTooltip";

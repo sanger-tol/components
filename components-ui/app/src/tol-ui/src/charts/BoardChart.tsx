@@ -12,25 +12,20 @@ import {
   RemoteBarChart,
   deepCopy,
   saveTitle,
-  IBoardTargetAndZone,
   ChartConfigDrawer,
   IChartConfig,
   PButton,
   updateConfigAndUpsert,
   useBoardPrivilege,
-  PRIVILEGE
+  PRIVILEGE,
+  PVisualisation
 } from "..";
 
 
-interface Props extends IBoardTargetAndZone {
-  id: string;
-  title: string;
-  config: any;
-  size: string;
-}
+interface Props extends PVisualisation {}
 
 export function BoardChart(props: Props) {
-  const { id, title, boardObjectType, boardDataSource, zone } = props;
+  const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
   const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
@@ -117,8 +112,9 @@ export function BoardChart(props: Props) {
         type={config.grouping || ""}
         forceUpdate={forceUpdate}
         utilityBarConfig={{
+          ...utilityBarConfig,
           title: {
-            text: title,
+            text: utilityBarConfig.title?.text,
             editable: privilege == PRIVILEGE.BOARD.EDITABLE,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);

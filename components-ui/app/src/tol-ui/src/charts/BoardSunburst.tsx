@@ -12,24 +12,19 @@ import {
   RemoteSunburst,
   deepCopy,
   saveTitle,
-  IBoardTargetAndZone,
   SliceByDrawer,
   PButton,
   updateConfigAndUpsert,
   PRIVILEGE,
-  useBoardPrivilege
+  useBoardPrivilege,
+  PVisualisation
 } from "..";
 
 
-interface Props extends IBoardTargetAndZone {
-  id: string;
-  title: string;
-  config: any;
-  size: string;
-}
+interface Props extends PVisualisation {}
 
 export function BoardSunburst(props: Props) {
-  const { id, boardObjectType, boardDataSource, size, zone } = props;
+  const { id, utilityBarConfig, boardObjectType, boardDataSource, size, zone } = props;
   const [config, setConfig] = useState<any>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
@@ -115,8 +110,9 @@ export function BoardSunburst(props: Props) {
         legendPosition="top"
         noMini={size === "sm"}
         utilityBarConfig={{
+          ...utilityBarConfig,
           title: {
-            text: props.title,
+            text: utilityBarConfig.title?.text,
             editable: privilege === PRIVILEGE.BOARD.EDITABLE,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);

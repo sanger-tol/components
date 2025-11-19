@@ -7,9 +7,11 @@ SPDX-License-Identifier: MIT
 
 import {
   BOARDS,
+  generateFilter,
   IComponent,
   IComponentData,
   IZone,
+  TitleTooltip,
   TsDataSource,
   Visualisation,
 } from "../..";
@@ -113,6 +115,17 @@ export function generateVisualisations(
 ) {
   return zone.order.map((componentId) => {
     const component = zone.components[componentId].data;
+    const filter = generateFilter(zone, component.id!);
+
+    const Description = (
+      <TitleTooltip
+        title={component.title!}
+        objectType={component.objectType!}
+        dataSource={component.dataspace!}
+        filter={filter}
+      />
+    );
+    
     return (
       <div key={component.id} className="tol-visualisation">
         <Visualisation
@@ -121,12 +134,15 @@ export function generateVisualisations(
           zone={zone}
           setZone={setZone}
           componentType={component.type!}
-          title={component.title!}
           config={component.config}
           objectType={component.objectType!}
           dataSource={component.dataspace!}
           boardDataSource={boardDataSource}
           boardObjectType={BOARDS.COMPONENT}
+          utilityBarConfig={{
+            title: { text: component.title! },
+            description: Description,
+          }}
         />
       </div>
     )

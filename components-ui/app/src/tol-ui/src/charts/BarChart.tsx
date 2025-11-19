@@ -328,6 +328,7 @@ export function BarChart(props: Props) {
             disabledTooltip: "No data to download",
           },
         ]}
+        {...utilityBarConfig}
       />
       <div className="tol-component-contents-with-offset">
         {contents ? contents :

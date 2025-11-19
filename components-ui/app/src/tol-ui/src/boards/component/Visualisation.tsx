@@ -11,15 +11,16 @@ import {
   BoardChart,
   IBoardTargetAndZone,
   BoardMarkdown,
+  PUtilityBar,
 } from "../..";
 
 
 export interface PVisualisation extends IBoardTargetAndZone {
   id: string;
   config: any;
-  title: string;
   componentType: string;
-  size: string
+  size: string;
+  utilityBarConfig: PUtilityBar;
 }
 
 export function Visualisation(props: PVisualisation) {

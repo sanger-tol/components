@@ -129,7 +129,7 @@ export function Visualisations(props: PVisualisations) {
                 className="tol-draggable-widget"
                 key={element.props.children.props.id}
               >
-                <Placeholder message={element.props.children.props.title} />
+                <Placeholder message={element.props.children.props.utilityBarConfig.title.text} />
                 <Button
                   onClick={() => {
                     handleOpenModal(element.props.children.props.id);
