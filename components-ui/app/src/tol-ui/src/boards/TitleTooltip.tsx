@@ -4,10 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReadOnlyFilters } from "src/attributes";
-import { TsDataSource } from "src/datasource";
-import { normaliseCaps } from "src/general";
-import { IFilter } from "src/interfaces";
+import { ReadOnlyFilters, TsDataSource, normaliseCaps, IFilter } from "..";
 
 interface PTitleTooltip {
   title: string;
