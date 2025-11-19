@@ -142,7 +142,6 @@ export function generateVisualisations(
           utilityBarConfig={{
             title: { text: component.title! },
             description: Description,
-            // TODO: Then config and buttons are appended down the line?
           }}
         />
       </div>
