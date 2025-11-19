@@ -301,6 +301,7 @@ export function Table(props: Props) {
       />
       <UtilityBar
         id={id}
+        {...utilityBarConfig}
         title={utilityBarConfig.title}
         elements={
           !noPagination && fieldMeta?.order?.active?.length > 0
@@ -345,13 +346,12 @@ export function Table(props: Props) {
             : [...(utilityBarConfig.elements || [])]
         }
         buttons={[
+          ...(utilityBarConfig.buttons || []),
           configButton,
           filterButton,
-          ...(utilityBarConfig.buttons || []),
           actionDropdown,
           downloadButton,
         ]}
-        {...utilityBarConfig}
       />
       {contents ? (
         contents
