@@ -21,4 +21,5 @@ export interface IDropdownMainIconProps {
   position?: string;
   outline?: boolean;
   tooltip?: string;
+  text?: string;
 }

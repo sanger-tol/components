@@ -258,6 +258,7 @@ export function Table(props: Props) {
     actions && actions.length > 0
       ? {
         mainButtonIcon: {
+          id: "actions",
           icon: "paper-plane",
           type: "primary",
           position: "right",

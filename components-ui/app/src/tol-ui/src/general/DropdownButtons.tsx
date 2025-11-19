@@ -76,6 +76,7 @@ export function DropdownButtons(props: PDropdownButtons) {
       outline={mainButtonIcon.outline}
       tooltip={mainButtonIcon.tooltip}
       id={mainButtonIcon.id}
+      text={mainButtonIcon.text}
     />
   );
 

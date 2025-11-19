@@ -21,7 +21,11 @@ export interface PUtilityBar {
   id?: string;
   title?: PInlineEdit;
   description?: ReactNode;
-  buttons?: (PButton | PDropdownButtons | undefined)[];
+  buttons?: (
+    PButton |
+    PDropdownButtons |
+    undefined
+  )[];
   elements?: JSX.Element[];
 }
 
@@ -36,33 +40,37 @@ export function UtilityBar(props: PUtilityBar) {
     if (width !== undefined) setSmallBreakpoint(width < 600);
   });
 
-  const Buttons = (
+  // Separate dropdown buttons from regular buttons
+  const dropdownButtons = buttons?.filter(button => button && "dropdownButtons" in button);
+  const regularButtons = buttons?.filter(button => button && !("dropdownButtons" in button));
+
+  const ButtonsComponent = (
     // remove left-most button margin
     <div style={{ marginLeft: "-6px" }}>
-      {buttons &&
-        buttons.map((button, index) => {
-          if (button) {
-            if ("dropdownButtons" in button) {
-              return (
-                <div style={{ float: "right" }} key={index}>
-                  <DropdownButtons {...button} />
-                </div>
-              );
-            }
-            return (
-              <Button
-                key={index}
-                {...button}
-                className="tol-utility-bar-button"
-              />
-            );
-          }
-        })}
+      {regularButtons &&
+        regularButtons.map((button, index) => (
+          <Button
+            key={index}
+            {...button}
+            className="tol-utility-bar-button"
+          />
+        ))}
+    </div>
+  );
+
+  const DropdownButtonsComponent = (
+    <div style={{ marginLeft: "-6px" }}>
+      {dropdownButtons &&
+        dropdownButtons.map((button, index) => (
+          <div style={{ float: "right" }} key={`dropdown-${index}`}>
+            <DropdownButtons {...(button as PDropdownButtons)} />
+          </div>
+        ))}
     </div>
   );
 
   const CondensedButtons = (
-    <ClickOverlay contents={Buttons} closeOnClick>
+    <ClickOverlay contents={ButtonsComponent}>
       <div style={{ float: "right" }}>
         <Button
           outline
@@ -79,18 +87,16 @@ export function UtilityBar(props: PUtilityBar) {
       {title && <InlineEdit {...title} size={smallBreakpoint ? "sm" : "md"} />}
       {description && <IconTooltip className="tol-utility-bar-tooltip" contents={description} />}
       {elements &&
-        elements.map((element, index) => (
-          <div key={index} style={{ float: "left" }}>
-            {element}
-          </div>
+        elements.map((element) => (
+          element
         ))}
       <div className="tol-utility-bar-buttons">
-        {smallBreakpoint &&
-        buttons &&
-        // only takes into account buttons that are visible
-        buttons.filter((button) => button?.["visible"] !== false).length > 1
+        {smallBreakpoint && regularButtons &&
+          regularButtons.filter((button) => button?.["visible"] !== false).length > 1
           ? CondensedButtons
-          : Buttons}
+          : ButtonsComponent
+        }
+        {DropdownButtonsComponent}
       </div>
     </div>
   );

@@ -44,6 +44,7 @@ export function HoverOverlay(props: PHoverOverlay) {
       followCursor={followCursor ? true : false}
       onEntering={onHover ? onHover : () => { }}
       delayOpen={delay}
+      preventOverflow
     >
       {children}
     </Whisper>
