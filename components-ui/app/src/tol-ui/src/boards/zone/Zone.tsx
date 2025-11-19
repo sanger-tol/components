@@ -214,7 +214,6 @@ export function Zone(props: PZone) {
             filter={filter}
           />
         }
-        // description={normaliseCaps(objectType) + " Zone"}
         buttons={!draggable ? [
           addButton,
           showEditButtons,
