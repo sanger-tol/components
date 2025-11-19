@@ -28,8 +28,17 @@ export interface IEntityMetaPromises {
 }
 
 export interface IDataSource {
-  baseUrl?: string;
-  apiPrefix?: string;
+  // The URL of the website (e.g. "portal.tol.sanger.ac.uk")
+  url?: string;
+  // The path to the current API root (e.g. "api/v1")
+  apiPath?: string;
+  // The path, from the API root, to where data is served (e.g. "data")
+  apiDataPath?: string;
+  // Which data space to source from (e.g. "tol-production" or "treeofsex")
+  dataspace?: string;
+  // An optional data source instance id to uniquely identify this data source in the db
+  dataSourceInstanceId?: string;
+  // To allow for testing with mock clients
   client?: any;
 }
 
@@ -52,7 +61,8 @@ export interface IUpsert {
 interface IUpsertData {
   type: string;
   id?: any;
-  attributes: object;
+  attributes?: object;
+  relationships?: object;
 }
 
 export interface IGetByIds {

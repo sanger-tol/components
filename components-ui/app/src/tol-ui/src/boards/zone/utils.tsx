@@ -4,7 +4,16 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BOARDS, generateId, getUserFromLocalStorage, IComponentData, IDBZoneView, IZone, TsDataSource } from "../..";
+import {
+  BOARDS,
+  generateId,
+  getUserFromLocalStorage,
+  IComponentData,
+  IDBZoneView,
+  IZone,
+  TDataObjectListOrNull,
+  TsDataSource
+} from "../..";
 
 
 export function getNextComponentOrder(zone: IZone) {
@@ -42,9 +51,10 @@ export async function getComponents(
     return Promise.all(
       componentZoneData.map(async (component) => {
         const componentId = (await component.fetchRelationships?.component)?.id;
-        const componentDetails = componentData.find(
+        const componentDetails = componentData?.find(
           (data) => data.id === componentId
         );
+        const dsi = componentDetails?.relationships?.data_source_instance;
         return {
           id: componentId,
           order: component.order,
@@ -53,8 +63,10 @@ export async function getComponents(
           filter: componentDetails?.filter,
           title: componentDetails?.title,
           objectType: componentDetails?.object_type,
-          baseUrl: componentDetails?.datasource?.base_url,
-          apiPrefix: componentDetails?.datasource?.api_prefix,
+          dataspace: new TsDataSource({
+            ...dsi?.ui_api_details,
+            dataSourceInstanceId: dsi?.id,
+          }),
           config: componentDetails?.config,
           size: componentDetails?.widget_type,
           filterPassThrough: componentDetails?.filter_pass_through,
@@ -79,7 +91,7 @@ async function getComponentZoneData(zoneId: string, boardDataSource: TsDataSourc
 async function getComponentData(
   componentIds: string[],
   boardDataSource: TsDataSource,
-): Promise<any> {
+): Promise<TDataObjectListOrNull> {
   return await boardDataSource
     .getListPage({
       objectType: BOARDS.COMPONENT,
@@ -88,11 +100,12 @@ async function getComponentData(
           id: { in_list: { value: componentIds } },
         },
       },
+      requestedFields: "data_source_instance.ui_api_details"
     });
 }
 
 export async function upsertNewComponent(
-  dataSource: TsDataSource,
+  dataspace: TsDataSource,
   boardDataSource: TsDataSource,
   objectType: string,
   title: string,
@@ -117,10 +130,7 @@ export async function upsertNewComponent(
             widget_type: widgetType,
             filter: { and_: {} },
             config: {},
-            datasource: {
-              base_url: dataSource.getBaseUrl(),
-              api_prefix: dataSource.getApiPrefix(),
-            },
+            data_source_instance_id: dataspace.getDataSourceInstanceId(),
             user_id: user.id,
             filter_pass_through: false,
           },

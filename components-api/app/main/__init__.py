@@ -28,8 +28,8 @@ from tol.core.operator import Inserter
 from tol.sources.portal import portal
 from tol.sql import Model, create_sql_datasource
 from tol.sql.auth import db_auth_blueprint
-from tol.sql.board import create_board_models
 from tol.sql.pipeline_step import create_pipeline_step_models
+from tol.sql.standard import create_standard_models
 
 from .model import Base, MODELS, UserMixin
 from .playwright_ds import PlaywrightTestDataSource
@@ -84,13 +84,13 @@ def __mock_prefect_ds() -> OperableDataSource:
     return prefect_ds
 
 
-def __get_board_models(
+def __get_standard_models(
     base_model: type[Model],
 ) -> tuple[list[type[Model]], type[Model]]:
 
-    board_models = create_board_models(base_model)
+    standard_models = create_standard_models(base_model)
 
-    return list(board_models), board_models._user_mixin
+    return list(standard_models), standard_models._user_mixin
 
 
 def __get_pipeline_step_models(
@@ -105,7 +105,7 @@ def application():
     app = Flask(__name__)
 
     # the user-configurable dashboards
-    board_models, _board_user_mixin = __get_board_models(Base)
+    standard_models, _board_user_mixin = __get_standard_models(Base)
 
     # the pipeline, steps, and uploads models
     pipeline_models, _pipeline_user_mixin = __get_pipeline_step_models(Base)
@@ -133,7 +133,7 @@ def application():
     models = [
         *MODELS,
         auth_bp.models.user_class,
-        *board_models,
+        *standard_models,
         *pipeline_models,
     ]
 
