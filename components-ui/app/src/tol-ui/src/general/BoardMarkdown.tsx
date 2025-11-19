@@ -73,8 +73,8 @@ export function BoardMarkdown(props: PBoardMarkdown) {
   const MdUtilityBar = (
     <UtilityBar
       id="editor-markdown"
-      buttons={[editButton, previewButton]}
       {...utilityBarConfig}
+      buttons={[editButton, previewButton]}
       title={{
         text: utilityBarConfig.title?.text,
         editable: privilege === PRIVILEGE.BOARD.EDITABLE,
