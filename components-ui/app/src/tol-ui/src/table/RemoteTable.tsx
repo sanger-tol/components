@@ -65,6 +65,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone {
   noSorting?: boolean;
   noConfigModal?: boolean;
   noDownload?: boolean;
+  noActionsFooter?: boolean;
 
   rowSelection?: boolean;
   utilityBarConfig?: PUtilityBar;
@@ -94,6 +95,7 @@ export function RemoteTable(props: PRemoteTable) {
     onPageSizeChange,
     onToggleFilterVisibility,
     noDownload,
+    noActionsFooter,
     actionDataSource = new TsDataSource({
       apiDataPath: ACTION_API_DATA_PATH,
     }),
@@ -391,14 +393,15 @@ export function RemoteTable(props: PRemoteTable) {
         filter={filter}
         onConfigSave={onConfigSave}
         noDownload={noDownload || error !== ""}
+        utilityBarConfig={utilityBarConfig}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={convertedActions}
-        actionsFooter={{
-          name: "View Actions",
-          action: () => setActionModalOpen(true),
-        }}
-        utilityBarConfig={utilityBarConfig}
+        actionsFooter={
+          noActionsFooter ? undefined : {
+            name: "View Actions",
+            action: () => setActionModalOpen(true),
+          }}
       />
     </div>
   );
