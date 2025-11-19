@@ -74,6 +74,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
     <UtilityBar
       id="editor-markdown"
       buttons={[editButton, previewButton]}
+      {...utilityBarConfig}
       title={{
         text: utilityBarConfig.title?.text,
         editable: privilege === PRIVILEGE.BOARD.EDITABLE,
@@ -81,7 +82,6 @@ export function BoardMarkdown(props: PBoardMarkdown) {
           saveTitle(value, id, boardObjectType, boardDataSource);
         },
       }}
-      {...utilityBarConfig}
     />
   );
 

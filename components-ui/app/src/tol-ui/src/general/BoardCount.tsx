@@ -39,6 +39,7 @@ export function BoardCount(props: PBoardCount) {
       <RemoteCount
         {...props}
         utilityBarConfig={{
+          ...utilityBarConfig,
           title: {
             text: utilityBarConfig.title?.text,
             editable: privilege === PRIVILEGE.BOARD.EDITABLE,
@@ -47,7 +48,6 @@ export function BoardCount(props: PBoardCount) {
             },
           },
           buttons: [filterButton],
-          ...utilityBarConfig,
         }}
       />
     </>

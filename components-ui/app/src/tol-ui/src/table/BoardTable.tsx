@@ -98,6 +98,7 @@ export function BoardTable(props: PBoardTable) {
       // actions={config.actions}
       rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
       utilityBarConfig={{
+        ...utilityBarConfig,
         title: {
           text: utilityBarConfig.title?.text,
           editable: privilege === PRIVILEGE.BOARD.EDITABLE,
@@ -114,7 +115,6 @@ export function BoardTable(props: PBoardTable) {
           onClick: () => setOpenFilters(true),
           icon: "filter",
         }],
-        ...utilityBarConfig,
       }}
     />
   );

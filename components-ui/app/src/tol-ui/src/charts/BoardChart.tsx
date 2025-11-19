@@ -112,6 +112,7 @@ export function BoardChart(props: Props) {
         type={config.grouping || ""}
         forceUpdate={forceUpdate}
         utilityBarConfig={{
+          ...utilityBarConfig,
           title: {
             text: utilityBarConfig.title?.text,
             editable: privilege == PRIVILEGE.BOARD.EDITABLE,
@@ -123,7 +124,6 @@ export function BoardChart(props: Props) {
             configButton,
             filterButton,
           ],
-          ...utilityBarConfig,
         }}
       />
     </>

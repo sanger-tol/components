@@ -110,6 +110,7 @@ export function BoardSunburst(props: Props) {
         legendPosition="top"
         noMini={size === "sm"}
         utilityBarConfig={{
+          ...utilityBarConfig,
           title: {
             text: utilityBarConfig.title?.text,
             editable: privilege === PRIVILEGE.BOARD.EDITABLE,
@@ -121,7 +122,6 @@ export function BoardSunburst(props: Props) {
             configButton,
             filtersButton
           ],
-          ...utilityBarConfig,
         }}
       />
     </>
