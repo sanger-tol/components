@@ -37,6 +37,7 @@ import {
   ITableDrawerSave,
   ITableConfigSave,
   optimiseFieldMetaForSave,
+  env,
 } from '..';
 
 
@@ -97,6 +98,7 @@ export function RemoteTable(props: PRemoteTable) {
     noDownload,
     noActionsFooter,
     actionDataSource = new TsDataSource({
+      apiPath: env.API_PATH,
       apiDataPath: ACTION_API_DATA_PATH,
     }),
     actions,
