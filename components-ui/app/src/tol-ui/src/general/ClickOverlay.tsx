@@ -12,11 +12,10 @@ export interface PClickOverlay {
   children: JSX.Element;
   placement?: string;
   delay?: number;
-  closeOnClick?: boolean;
 }
 
 export function ClickOverlay(props: PClickOverlay) {
-  let { contents, children, placement = "auto", delay, closeOnClick } = props;
+  let { contents, children, placement = "auto", delay } = props;
   const overlayRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
 
@@ -36,12 +35,8 @@ export function ClickOverlay(props: PClickOverlay) {
     };
   }, []);
 
-  const RenderTooltip = () => (
-    <Popover
-      onClick={() => {
-        closeOnClick && setOpen(false);
-      }}
-    >
+  const RenderTooltip = (
+    <Popover>
       {contents}
     </Popover>
   );
@@ -53,13 +48,14 @@ export function ClickOverlay(props: PClickOverlay) {
         placement={placement}
         controlId="control-id-clickable"
         trigger="click"
-        speaker={RenderTooltip()}
+        speaker={RenderTooltip}
         delayOpen={delay}
         open={open}
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}
         onClick={() => setOpen(!open)}
         onMouseEnter={() => setOpen(true)}
+        preventOverflow
       >
         {children}
       </Whisper>

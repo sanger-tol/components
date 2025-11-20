@@ -65,7 +65,7 @@ export function ActionModal(props: Props) {
               rename: "IDs",
               width: 500,
             },
-            "status": {
+            params: {
               rename: "Status",
               width: 300,
               cellRenderer: {
@@ -80,7 +80,7 @@ export function ActionModal(props: Props) {
             active: [
               "action.name",
               "ids",
-              "status",
+              "params",
               "user.oidc_id"
             ]
           }

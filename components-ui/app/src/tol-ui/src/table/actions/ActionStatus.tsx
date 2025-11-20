@@ -9,7 +9,9 @@ import {
   StatusMessage,
   TsDataSource,
   Placeholder,
-  PCell
+  PCell,
+  env,
+  PREFECT_API_DATA_PATH
 } from "../..";
 
 
@@ -42,9 +44,12 @@ export function ActionStatus(props: PCell) {
 
   const getActionStatus = async () => {
     setLoading(true);
-    const ds = new TsDataSource();
+    const ds = new TsDataSource({
+      apiPath: env.API_PATH,
+      apiDataPath: PREFECT_API_DATA_PATH,
+    });
     return await ds.getOne({
-      objectType: "prefect/flow_run",
+      objectType: "flow_run",
       id: flowRunId,
     })
   }
