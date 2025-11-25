@@ -46,7 +46,6 @@ export const PIPELINE_DS = new TsDataSource();
 
 export function FileValidation(props: PFileValidation) {
   const {
-    objectType,
     validationConfig,
     pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
@@ -254,7 +253,7 @@ export function FileValidation(props: PFileValidation) {
         <p>Validate and submit</p>
       </div>
       <Dropzone
-        resource={objectType}
+        resource={""}
         dataSource={PIPELINE_DS}
         fileType={fileType}
         onFileDrop={(fileDropped: boolean) => setFileDropped(fileDropped)}

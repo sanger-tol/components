@@ -13,5 +13,5 @@ const VALIDATION_CONFIG = {
 };
 
 export function FileValidation() {
-  return <FV objectType="nothing_yet" validationConfig={VALIDATION_CONFIG} />;
+  return <FV validationConfig={VALIDATION_CONFIG} />;
 }
