@@ -21,7 +21,6 @@ export interface PValidationReport {
 
 export function ValidationReport(props: PValidationReport) {
   const { data, open, setOpen, uploadStatus } = props;
-  console.log(data);
 
   const ValidationReportHeader = (
     <h3>{`Validation Report for Pipeline #${data?.id}`}</h3>

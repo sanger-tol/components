@@ -20,7 +20,7 @@ import {
   TOL_LOADER_STYLES,
   VALIDATION_ENDPOINTS,
   BUTTON_TIMEOUT,
-  PIPELINE_DS
+  PIPELINE_DS,
 } from "..";
 
 export interface PPreviousUploadsModal {
@@ -40,7 +40,11 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
     const cacheBustedEndpoint = `${
       VALIDATION_ENDPOINTS.UPLOAD
     }?_cb=${Date.now()}`;
-    return await fetchAndNormaliseAllUploadResults(PIPELINE_DS, cacheBustedEndpoint, id);
+    return await fetchAndNormaliseAllUploadResults(
+      PIPELINE_DS,
+      cacheBustedEndpoint,
+      id
+    );
   };
 
   const {
@@ -123,7 +127,11 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
     <div className="tol-file-validation-previous-uploads-modal-header">
       <div className="tol-file-validation-previous-uploads-modal-header-content">
         <h3>Previous Validations</h3>
-        <p>Last updated at: {new Date(allUploadsUpdatedAt).toLocaleString()}</p>
+        {allUploadsUpdatedAt !== 0 && (
+          <p>
+            Last updated at: {new Date(allUploadsUpdatedAt).toLocaleString()}
+          </p>
+        )}
       </div>
       <div className="tol-file-validation-previous-uploads-modal-toggle">
         <p className="tol-file-validation-previous-uploads-modal-toggle-tag">

@@ -226,7 +226,10 @@ export function ValidationResultsViewer() {
   const Title = (
     <div className="tol-file-validation-results-viewer-title-container">
       <h3>Previous Validation Results</h3>
-      <Button text="View All" onClick={() => setOpenModal(true)} />
+      <div className="tol-file-validation-results-viewer-title-buttons">
+        <Button text="View All" onClick={() => setOpenModal(true)} />
+        <Button text="Back" icon="arrow-left" onClick={() => history.goBack()} />
+      </div>
     </div>
   );
 
