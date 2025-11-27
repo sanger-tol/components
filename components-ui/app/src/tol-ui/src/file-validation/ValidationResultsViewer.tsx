@@ -27,6 +27,7 @@ import {
   BUTTON_TIMEOUT,
   PIPELINE_DS,
   ValidationReport,
+  splitS3FilenameString,
 } from "..";
 
 export function ValidationResultsViewer() {
@@ -170,7 +171,7 @@ export function ValidationResultsViewer() {
                       )
                     }
                   >
-                    {latestPipelineResults.s3Filename}
+                    {splitS3FilenameString(String(latestPipelineResults.s3Filename))}
                   </a>
                 </p>
                 <p className="tol-file-validation-results-page-additional-info-updated-at">

@@ -52,6 +52,10 @@ export function getErrorWarningCounts(results: IValidationResult[]): {
   );
 }
 
+export function splitS3FilenameString(filename: string) {
+  return filename.split("_").slice(2).join("_");
+}
+
 export async function downloadFileFromS3(
   ds: TsDataSource,
   s3_bucket: string,
@@ -80,7 +84,7 @@ export async function downloadFileFromS3(
     const downloadUrl = window.URL.createObjectURL(blob);
     const downloadElement = document.createElement("a");
     downloadElement.href = downloadUrl;
-    downloadElement.download = filename;
+    downloadElement.download = splitS3FilenameString(String(filename));
     downloadElement.click();
     window.URL.revokeObjectURL(downloadUrl);
   } catch (error) {
@@ -339,16 +343,14 @@ export async function uploadPipelineConfig(
   uploadId?: string,
   spreadsheetConfig?: string
 ): Promise<string | null | undefined> {
-  const body = {
-    data: {
-      s3_url: config.s3_url,
-      s3_filename: file.name,
-      spreadsheet_config: spreadsheetConfig || null,
-      pipeline_id: config.pipeline_id,
-      dry_run: dry_run,
-      destination: config.destination,
-      upload_id: uploadId || null,
-    },
+  let s3Filename: string | undefined = undefined;
+  const data = {
+    s3_url: config.s3_url,
+    spreadsheet_config: spreadsheetConfig || null,
+    pipeline_id: config.pipeline_id,
+    dry_run: dry_run,
+    destination: config.destination,
+    upload_id: uploadId || null,
   };
 
   try {
@@ -367,6 +369,8 @@ export async function uploadPipelineConfig(
         return null;
       }
 
+      s3Filename = uploadResponse.data.file_name;
+
       PopUpMessage({
         type: "success",
         message: "File uploaded for validation successfully.",
@@ -377,7 +381,12 @@ export async function uploadPipelineConfig(
       const response = await ds.custom({
         method: API_METHODS.POST,
         resource: VALIDATION_ENDPOINTS.RUN_PIPELINE,
-        body: body,
+        body: {
+          data: {
+            ...data,
+            ...(s3Filename ? { s3_filename: s3Filename } : {}),
+          },
+        },
       });
 
       if (response && !uploadId) {

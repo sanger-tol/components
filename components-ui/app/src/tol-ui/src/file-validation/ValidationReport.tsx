@@ -10,6 +10,7 @@ import {
   IValidationResult,
   Modal,
   PIPELINE_DS,
+  splitS3FilenameString,
 } from "..";
 
 export interface PValidationReport {
@@ -66,7 +67,7 @@ export function ValidationReport(props: PValidationReport) {
                     )
                   }
                 >
-                  {data?.s3Filename}
+                  {splitS3FilenameString(String(data?.s3Filename))}
                 </a>
               </h6>
             </li>

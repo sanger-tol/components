@@ -21,6 +21,7 @@ import {
   normaliseCaps,
   truncateString,
   PIPELINE_DS,
+  splitS3FilenameString,
 } from "..";
 
 export interface PPreviousUploadsView {
@@ -119,7 +120,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
           <p>
             {
               <HoverOverlay contents={"download"}>
-                {data.s3Filename}
+                {splitS3FilenameString(String(data.s3Filename))}
               </HoverOverlay>
             }
           </p>
