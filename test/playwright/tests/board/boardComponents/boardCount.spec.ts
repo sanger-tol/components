@@ -3,8 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, test } from '@playwright/test';
-import { addComponent, setupBoard, deleteBoard, setAuth, addComponentFilter, sleep } from '../helpers'
-import { setBoard } from '../helpers/boardShortcut';
+import { addComponent, setBoard, deleteBoard, setAuth, addComponentFilter, sleep } from '../../helpers'
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 const BOARD_ID = crypto.randomUUID();
@@ -71,6 +70,4 @@ test('manage dashboard', async ({ page }) => {
   await filterCountComponent({page, testID});
   
   await deleteCountComponent({page, testID});
-
-  await deleteBoard({page, boardID: BOARD_ID});
 });

@@ -3,7 +3,15 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, test } from '@playwright/test';
-import { sleep } from './sleep';
+import { setAuth, setBoard } from '../helpers';
+
+const headless = !!(process.env.CI || process.env.HEADLESS);
+
+test.use({ headless: headless });
+
+test.beforeEach(async ({ page }) => {
+  await setAuth({ page });
+});
 
 const createBoard = async ({ page, testID }) => {
   await page.goto('/my-boards');
@@ -65,8 +73,8 @@ export const deleteBoard = async ({ page, boardID }) => {
   await page.getByTestId('confirm-delete-button').click();
 };
 
-export const setupBoard = async ({ page, testID }) => {
-  // create a board
+test('create dashboard', async ({ page }) => {
+  const testID = crypto.randomUUID();
   await createBoard({ page, testID });
 
   // create a view
@@ -74,4 +82,4 @@ export const setupBoard = async ({ page, testID }) => {
 
   // create a zone
   await createZone({ page, testID });
-}
+})
