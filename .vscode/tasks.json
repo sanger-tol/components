@@ -4,9 +4,9 @@
       {
         "label": "Playwright test (.env.dev)",
         "type": "shell",
-        "command": "export $(grep -E '^(POSTGRES_USER|POSTGRES_PASSWORD|POSTGRES_DB)=' ../../.env.dev | sed 's/\"/\\\\\"/g') && POSTGRES_HOST=localhost POSTGRES_PORT=5442 npx playwright test",
+        "command": "export $(grep -E '^(POSTGRES_USER|POSTGRES_PASSWORD|POSTGRES_DB)=' ../../../../../.env.dev | sed 's/\"/\\\\\"/g') && POSTGRES_HOST=localhost POSTGRES_PORT=5442 npx playwright test",
         "options": {
-          "cwd": "${workspaceFolder}/test/playwright"
+          "cwd": "${workspaceFolder}/components-ui/app/src/test/playwright"
         },
         "problemMatcher": []
       }
