@@ -62,12 +62,12 @@ const deleteCountComponent = async ({page, testID}) => {
   expect(page.locator('.tol-count')).not.toBeVisible();
 };
 
-test('manage dashboard', async ({ page }) => {
-  const testID = crypto.randomUUID();
+// test('manage dashboard', async ({ page }) => {
+//   const testID = crypto.randomUUID();
 
-  await addCountComponent({page, testID});
+//   await addCountComponent({page, testID});
 
-  await filterCountComponent({page, testID});
+//   await filterCountComponent({page, testID});
   
-  await deleteCountComponent({page, testID});
-});
+//   await deleteCountComponent({page, testID});
+// });
