@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { expect, test } from '@playwright/test';
-import { setAuth, setBoard } from '../helpers';
+import { test } from '@playwright/test';
+import { setAuth } from '../helpers';
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 
