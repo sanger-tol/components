@@ -1,11 +1,12 @@
-# SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+# SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 #
 # SPDX-License-Identifier: MIT
 
 from sqlalchemy.orm import (
     Mapped,
     declared_attr,
-    relationship
+    relationship,
+    mapped_column
 )
 
 
@@ -16,3 +17,7 @@ class UserMixin:
         return relationship(
             back_populates='user'
         )
+
+    @declared_attr
+    def tour_steps_seen(self) -> Mapped[list[str]]:
+        return mapped_column()
