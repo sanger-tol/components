@@ -7,12 +7,13 @@ import { addComponent, setupBoard, deleteBoard, setAuth, addComponentFilter, sle
 import { setBoard } from '../helpers/boardShortcut';
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
+const BOARD_ID = crypto.randomUUID();
 
 test.use({headless: headless});
 
 test.beforeEach(async ({ page }) => {
   await setAuth({page});
-  await setBoard({page});
+  await setBoard({page, boardID: BOARD_ID });
 });
 
 const addCountComponent = async ({page, testID}) => {
@@ -65,13 +66,11 @@ const deleteCountComponent = async ({page, testID}) => {
 test('manage dashboard', async ({ page }) => {
   const testID = crypto.randomUUID();
 
-  await setupBoard({page, testID});
-
   await addCountComponent({page, testID});
 
   await filterCountComponent({page, testID});
   
   await deleteCountComponent({page, testID});
 
-  await deleteBoard({page, testID});
+  await deleteBoard({page, boardID: BOARD_ID});
 });

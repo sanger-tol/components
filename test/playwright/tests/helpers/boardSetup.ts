@@ -49,11 +49,11 @@ const createZone = async ({ page, testID }) => {
   await confirmZoneButton.click();
 };
 
-export const deleteBoard = async ({ page, testID }) => {
+export const deleteBoard = async ({ page, boardID }) => {
   await page.goto('/my-boards');
 
   // find the correct board row
-  const boardRow = await page.getByTestId(testID);
+  const boardRow = await page.getByTestId(boardID);
 
   // click the dropdown button
   await boardRow.locator(".my-boards-dropdown-buttons").click();

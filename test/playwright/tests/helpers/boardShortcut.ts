@@ -7,15 +7,14 @@ globalThis.crypto ??= require("node:crypto").webcrypto
 
 const randomInt = () => Math.floor(Math.random() * 2_000_000_000);
 
-const insertBoardToDB = async (userID: string) => {
+const insertBoardToDB = async (userID: string, boardID: string) => {
   // insert the admin role if not there already
   try {
-    const boardID = randomInt();
     const zoneID = randomInt();
     const viewID = randomInt();
     await sql.unsafe(`
       INSERT INTO "board"
-      VALUES ('${boardID}', '${randomInt()}', '{"and_":{}}', ${userID});
+      VALUES ('${boardID}', '${boardID}', '{"and_":{}}', ${userID});
       INSERT INTO "view"
       VALUES (${viewID}, '${randomInt()}', '{"and_":{}}', ${userID});
       INSERT INTO "view_board"
@@ -33,12 +32,12 @@ const insertBoardToDB = async (userID: string) => {
 
 };
 
-export const setBoard = async ({ page }) => {
+export const setBoard = async ({ page, boardID }) => {
 
   const user = await page.evaluate(() => {
     return localStorage.getItem('user');
   });
   const userID = JSON.parse(user).id;
-  const boardId = await insertBoardToDB(userID);
+  const boardId = await insertBoardToDB(userID, boardID);
   await page.goto(`/board/${boardId}`);
 };
