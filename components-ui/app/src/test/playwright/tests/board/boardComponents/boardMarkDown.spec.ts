@@ -3,8 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, test } from '@playwright/test';
-import { addComponent, setBoard, deleteBoard, setAuth, addComponentFilter, sleep } from '../../helpers'
-import { Markdown } from '../../../../../tol-ui/src';
+import { addComponent, setBoard, setAuth, sleep } from '../../helpers'
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 const BOARD_ID = crypto.randomUUID();
@@ -24,17 +23,36 @@ const addMarkdownComponent = async ({page, testID}) => {
 }
 
 const editMarkDownComponent = async ({page}) => {
-  // get the count before filtering
   const mardownEditor = page.locator('.tol-markdown-viewer textarea');
-  await mardownEditor.type("mjk");
+  await mardownEditor.fill("Test Text");
   const condensedUtilityBarButton = page.getByTestId("condensed-utility-bar-button");
-  await condensedUtilityBarButton.waitFor({ state: 'visible' });
-  await condensedUtilityBarButton.click({ force: true });
+  // We have these try catches because for some reason firrefox sometimes thinks the element is not clickable
+  // But if you try to use force with Chrome it fails? Needs a bit more research
+  // check that the text is on the page
+  await expect(mardownEditor).toHaveValue('Test Text');
+  try {
+    await condensedUtilityBarButton.click();
+  } catch (e) {
+    await condensedUtilityBarButton.click({ force: true });
+  }
   const previewEdit = page.getByTestId("preview-markdown");
-  await previewEdit.click();
-  await condensedUtilityBarButton.waitFor({ state: 'visible' });
-  await condensedUtilityBarButton.click({ force: true });
+  try {
+    await previewEdit.click();
+  } catch (e) {
+    await previewEdit.click({force: true});
+  }
+  // once in editor, once in preview, once in viewer
+  await expect(page.getByText('Test Text')).toHaveCount(3);
+  try {
+    await condensedUtilityBarButton.click();
+  } catch (e) {
+    await condensedUtilityBarButton.click({ force: true });
+  }
   const saveEdit = page.getByTestId("save-markdown");
+  // Ensure save button is visible and stable before clicking
+  await saveEdit.waitFor({ state: 'visible' });
+  await page.waitForTimeout(100); // Small delay to ensure UI is stable
+  await saveEdit.scrollIntoViewIfNeeded();
   await saveEdit.click();
 
 }
