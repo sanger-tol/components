@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, test } from '@playwright/test';
-import { addComponent, setupBoard, deleteBoard, setAuth, addComponentFilter, sleep } from './helpers'
+import { addComponent, setupBoard, deleteBoard, setAuth, addComponentFilter, sleep } from '../helpers'
+import { setBoard } from '../helpers/boardShortcut';
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 
@@ -11,6 +12,7 @@ test.use({headless: headless});
 
 test.beforeEach(async ({ page }) => {
   await setAuth({page});
+  await setBoard({page});
 });
 
 const addCountComponent = async ({page, testID}) => {
