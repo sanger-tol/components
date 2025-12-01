@@ -184,6 +184,7 @@ export async function fetchSubItemId(
  * @returns Whether the value returned from the database is `true`
  */
 export async function fetchTourStepSeen(stepName: string, userId: string): Promise<boolean> {
+  // Fetch user details
   const localDataSource = new TsDataSource({
     apiPath: "/api/v1/local",
   });
@@ -193,6 +194,7 @@ export async function fetchTourStepSeen(stepName: string, userId: string): Promi
   });
   if (!user) return false;
 
+  // Check whether the tour step has been seen
   return user.tour_steps_seen[stepName] == true;
 }
 
@@ -202,6 +204,7 @@ export async function fetchTourStepSeen(stepName: string, userId: string): Promi
  * @param userId The string id of the user to set this data on
  */
 export async function registerTourStepAsSeen(stepName: string, userId: string): Promise<void> {
+  // Fetch user details
   const localDataSource = new TsDataSource({
     apiPath: "/api/v1/local",
   });
@@ -211,6 +214,7 @@ export async function registerTourStepAsSeen(stepName: string, userId: string): 
   });
   if (!user) return;
 
+  // Perform modification
   localDataSource.upsert({
     payload: [
       {
