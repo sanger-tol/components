@@ -179,7 +179,13 @@ SPDX-License-Identifier: MIT
   }
 }
 
-.tol-advance-search-tab {
+.tol-advance-search-tabs {
+  .rs-nav.rs-nav-pills.rs-nav-horizontal {
+    margin-left: 12px !important;
+  }
+}
+
+.tol-advance-search-tab-container {
   padding: 0px 12px 12px 12px;
 
   .tol-advance-search-tab-button {

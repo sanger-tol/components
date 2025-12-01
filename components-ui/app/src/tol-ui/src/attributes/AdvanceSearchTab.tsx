@@ -75,44 +75,46 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
   }
 
   return (
-    <Tabs defaultActiveKey="all">
-      <Tabs.Tab eventKey="all" title="All">
-        {MenuItem}
-      </Tabs.Tab>
-      <Tabs.Tab eventKey="advanced" title="Advanced Search">
-        <div className="tol-advance-search-tab">
-          <AutoComplete
-            label=""
-            // Add available relationships state in data
-            data={[]}
-            value={searchValue}
-            onChange={handleOnChange}
-            loading={false}
-          />
-          <span
-            className="tol-advance-search-tab-search"
-            onKeyDown={stopPropagation}
-          >
-            <div className="tol-advance-search-tab-tooltip">
-              <IconTooltip
-                contents="Add columns using system names, with relationships separated by periods.
+    <div className="tol-advance-search-tabs">
+      <Tabs defaultActiveKey="all">
+        <Tabs.Tab eventKey="all" title="All">
+          {MenuItem}
+        </Tabs.Tab>
+        <Tabs.Tab eventKey="advanced" title="Advanced Search">
+          <div className="tol-advance-search-tab-container">
+            <AutoComplete
+              label=""
+              // Add available relationships state in data
+              data={[]}
+              value={searchValue}
+              onChange={handleOnChange}
+              loading={false}
+            />
+            <span
+              className="tol-advance-search-tab-search"
+              onKeyDown={stopPropagation}
+            >
+              <div className="tol-advance-search-tab-tooltip">
+                <IconTooltip
+                  contents="Add columns using system names, with relationships separated by periods.
                 E.g. 'relationship1.relationship2.attribute_name'"
-              />
-            </div>
-            <div className='tol-advance-search-tab-button'>
-              <Button
-                onClick={handleOnAdd}
-                className="tol-advance-search-tab-button"
-                disabled={!attributeAvailable}
-                disabledTooltip="Attribute not found"
-                icon="plus"
-                type="success"
-                position="right"
-              />
-            </div>
-          </span>
-        </div>
-      </Tabs.Tab>
-    </Tabs>
+                />
+              </div>
+              <div className='tol-advance-search-tab-button'>
+                <Button
+                  onClick={handleOnAdd}
+                  className="tol-advance-search-tab-button"
+                  disabled={!attributeAvailable}
+                  disabledTooltip="Attribute not found"
+                  icon="plus"
+                  type="success"
+                  position="right"
+                />
+              </div>
+            </span>
+          </div>
+        </Tabs.Tab>
+      </Tabs>
+    </div>
   );
 }

@@ -84,6 +84,7 @@ export function BoardTable(props: PBoardTable) {
     <RemoteTable
       {...props}
       noConfigModal={privilege !== PRIVILEGE.BOARD.EDITABLE}
+      advanceTab
       displaySource
       fields={config.fieldMeta}
       pageSize={config.pageSize}
