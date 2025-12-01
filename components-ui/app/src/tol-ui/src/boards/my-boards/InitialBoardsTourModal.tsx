@@ -4,22 +4,25 @@ import {
   Button,
   BUTTONS,
   Modal,
+  registerTourStepAsSeen,
 } from "../..";
 
 
 export interface PInitialBoardsTourModal {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  userId: string;
 }
 
 export function InitialBoardsTourModal(props: PInitialBoardsTourModal) {
   const {
     open,
     setOpen,
+    userId,
   } = props;
 
   const [showTour, setShowTour] = useState(true);
-  
+
   const Header = (
     <h3>Boards</h3>
   );
@@ -31,12 +34,17 @@ export function InitialBoardsTourModal(props: PInitialBoardsTourModal) {
     </p>
   </>);
 
+  const handleClose = () => {
+    registerTourStepAsSeen("initial", userId);
+    setOpen(false);
+  };
+
   const ActionButton = (
     <span style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
       <Checkbox checked={showTour} onChange={setShowTour}>
         Continue Showing Tour (1/6)
       </Checkbox>
-      <Button {...BUTTONS.OK} onClick={() => setOpen(false)} />
+      <Button {...BUTTONS.OK} onClick={handleClose} />
     </span>
   );
 

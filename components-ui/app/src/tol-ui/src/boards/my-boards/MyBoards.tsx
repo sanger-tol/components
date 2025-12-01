@@ -31,7 +31,8 @@ export function MyBoards(props: IMyBoards) {
   const [boardDetails, setBoardDetails] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [initialBoardsTourModalOpen, setInitialBoardsTourModalOpen] = useState(true);
+  const [initialBoardsTourModalOpen, setInitialBoardsTourModalOpen] = useState(false);
+  const [userId, setUserId] = useState("");
   const toaster = Toaster();
 
   useEffect(() => {
@@ -73,7 +74,11 @@ export function MyBoards(props: IMyBoards) {
   }
 
   const fetchTourStatus = async () => {
-    const tourStepSeen = await fetchTourStepSeen("initial");
+    const id = getUserFromLocalStorage().id as string | undefined;
+    if (!id) return;
+    setUserId(id);
+
+    const tourStepSeen = await fetchTourStepSeen("initial", id);
     setInitialBoardsTourModalOpen(!tourStepSeen);
   }
 
@@ -131,6 +136,7 @@ export function MyBoards(props: IMyBoards) {
     <InitialBoardsTourModal
       open={initialBoardsTourModalOpen}
       setOpen={setInitialBoardsTourModalOpen}
+      userId={userId}
     />
   </>)
 }

@@ -183,10 +183,7 @@ export async function fetchSubItemId(
  * @param stepName String name of the tour step to check
  * @returns Whether the value returned from the database is `true`
  */
-export async function fetchTourStepSeen(stepName: string): Promise<boolean> {
-  const userId = getUserFromLocalStorage().id;
-  if (!userId) return false;
-
+export async function fetchTourStepSeen(stepName: string, userId: string): Promise<boolean> {
   const localDataSource = new TsDataSource({
     apiPath: "/api/v1/local",
   });
@@ -197,4 +194,31 @@ export async function fetchTourStepSeen(stepName: string): Promise<boolean> {
   if (!user) return false;
 
   return user.tour_steps_seen[stepName] == true;
+}
+
+export async function registerTourStepAsSeen(stepName: string, userId: string): Promise<void> {
+  const localDataSource = new TsDataSource({
+    apiPath: "/api/v1/local",
+  });
+  const user = await localDataSource.getOne({
+    objectType: "user",
+    id: userId,
+  });
+  if (!user) return;
+
+  localDataSource.upsert({
+    payload: [
+      {
+        type: "user",
+        id: userId,
+        attributes: {
+          tour_steps_seen: {
+            ...user.tour_steps_seen,
+            [stepName]: true,
+          }
+        }
+      }
+    ],
+    objectType: "user",
+  });
 }
