@@ -196,6 +196,11 @@ export async function fetchTourStepSeen(stepName: string, userId: string): Promi
   return user.tour_steps_seen[stepName] == true;
 }
 
+/**
+ * Updates tour_steps_seen in the user table to register a tour step as being viewed by the user
+ * @param stepName The name of the tour step to register as seen
+ * @param userId The string id of the user to set this data on
+ */
 export async function registerTourStepAsSeen(stepName: string, userId: string): Promise<void> {
   const localDataSource = new TsDataSource({
     apiPath: "/api/v1/local",
