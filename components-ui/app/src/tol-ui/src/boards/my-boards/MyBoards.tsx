@@ -17,7 +17,7 @@ import {
   TsDataSource,
   getBoardDetails,
   LoadingContent,
-  InitialBoardsTourModal,
+  InitialBoardsTourModal
 } from "../..";
 
 
@@ -35,6 +35,7 @@ export function MyBoards(props: IMyBoards) {
 
   useEffect(() => {
     fetchBoardDetails();
+    fetchTourStatus();
   }, []);
 
   useEffect(() => {
@@ -68,6 +69,22 @@ export function MyBoards(props: IMyBoards) {
       setErrorMessage("User not found. Please login and try again.");
       setLoading(false);
     }
+  }
+
+  const fetchTourStatus = async () => {
+    const userId = getUserFromLocalStorage().id;
+    if (!userId) return;
+
+    const localDataSource = new TsDataSource({
+      apiPath: "/api/v1/local",
+    });
+    const user = await localDataSource.getOne({
+      objectType: "user",
+      id: userId,
+    });
+    if (!user) return;
+
+    setInitialBoardsTourModalOpen(user.tour_steps_seen.initial != true);
   }
 
   if (loading) return <LoadingContent text={"Finding your Boards..."} />;
