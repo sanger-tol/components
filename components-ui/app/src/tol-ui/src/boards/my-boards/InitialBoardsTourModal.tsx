@@ -2,6 +2,7 @@ import { Checkbox } from "rsuite";
 import { useState, Dispatch, SetStateAction } from "react";
 import {
   Button,
+  BUTTONS,
   Modal,
 } from "../..";
 
@@ -35,7 +36,7 @@ export function InitialBoardsTourModal(props: PInitialBoardsTourModal) {
       <Checkbox checked={showTour} onChange={setShowTour}>
         Continue Showing Tour (1/6)
       </Checkbox>
-      <Button text="OK" onClick={() => setOpen(false)} />
+      <Button {...BUTTONS.OK} onClick={() => setOpen(false)} />
     </span>
   );
 
