@@ -3,6 +3,7 @@ import { useState, Dispatch, SetStateAction } from "react";
 import {
   Button,
   BUTTONS,
+  disableTour,
   Modal,
   registerTourStepAsSeen,
 } from "../..";
@@ -34,17 +35,22 @@ export function InitialBoardsTourModal(props: PInitialBoardsTourModal) {
     </p>
   </>);
 
-  const handleClose = () => {
-    registerTourStepAsSeen("initial", userId);
-    setOpen(false);
+  const handleClose = async () => {
+    // Register this specific tour step as seen
+    await registerTourStepAsSeen("initial", userId);
+
+    // Disable the whole tour if the checkbox was unchecked when the modal was closed
+    if (!showTour) {
+      await disableTour(userId);
+    }
   };
 
   const ActionButton = (
     <span style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
-      <Checkbox checked={showTour} onChange={setShowTour}>
+      <Checkbox checked={showTour} onChange={() => setShowTour(prev => !prev)}>
         Continue Showing Tour (1/6)
       </Checkbox>
-      <Button {...BUTTONS.OK} onClick={handleClose} />
+      <Button {...BUTTONS.OK} onClick={() => setOpen(false)} />
     </span>
   );
 
@@ -58,6 +64,7 @@ export function InitialBoardsTourModal(props: PInitialBoardsTourModal) {
       header={Header}
       size="sm"
       children={Content}
+      onExited={handleClose}
     />
   )
 }

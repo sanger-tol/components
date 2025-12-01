@@ -194,8 +194,8 @@ export async function fetchTourStepSeen(stepName: string, userId: string): Promi
   });
   if (!user) return false;
 
-  // Check whether the tour step has been seen
-  return user.tour_steps_seen[stepName] == true;
+  // Check whether the tour is enabled and the specified step has been completed
+  return user.tour_steps_seen.tour_disabled == true || user.tour_steps_seen[stepName] == true;
 }
 
 /**
@@ -215,7 +215,7 @@ export async function registerTourStepAsSeen(stepName: string, userId: string): 
   if (!user) return;
 
   // Perform modification
-  localDataSource.upsert({
+  await localDataSource.upsert({
     payload: [
       {
         type: "user",
@@ -230,4 +230,8 @@ export async function registerTourStepAsSeen(stepName: string, userId: string): 
     ],
     objectType: "user",
   });
+}
+
+export async function disableTour(userId: string): Promise<void> {
+  await registerTourStepAsSeen("tour_disabled", userId);
 }
