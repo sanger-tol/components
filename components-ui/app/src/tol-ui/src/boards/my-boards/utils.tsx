@@ -10,6 +10,8 @@ import {
   TDataObjectListOrNull,
   TDataObjectOrNull,
   BOARDS,
+  getUserFromLocalStorage,
+
 } from "../..";
 
 
@@ -175,3 +177,24 @@ export async function fetchSubItemId(
       return [];
     });
 };
+
+/**
+ * Checks whether a dashboard tour step (by name) has yet been viewed by the user
+ * @param stepName String name of the tour step to check
+ * @returns Whether the value returned from the database is `true`
+ */
+export async function fetchTourStepSeen(stepName: string): Promise<boolean> {
+  const userId = getUserFromLocalStorage().id;
+  if (!userId) return false;
+
+  const localDataSource = new TsDataSource({
+    apiPath: "/api/v1/local",
+  });
+  const user = await localDataSource.getOne({
+    objectType: "user",
+    id: userId,
+  });
+  if (!user) return false;
+
+  return user.tour_steps_seen[stepName] == true;
+}

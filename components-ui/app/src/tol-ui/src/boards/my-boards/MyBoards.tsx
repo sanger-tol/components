@@ -17,7 +17,8 @@ import {
   TsDataSource,
   getBoardDetails,
   LoadingContent,
-  InitialBoardsTourModal
+  InitialBoardsTourModal,
+  fetchTourStepSeen
 } from "../..";
 
 
@@ -72,19 +73,8 @@ export function MyBoards(props: IMyBoards) {
   }
 
   const fetchTourStatus = async () => {
-    const userId = getUserFromLocalStorage().id;
-    if (!userId) return;
-
-    const localDataSource = new TsDataSource({
-      apiPath: "/api/v1/local",
-    });
-    const user = await localDataSource.getOne({
-      objectType: "user",
-      id: userId,
-    });
-    if (!user) return;
-
-    setInitialBoardsTourModalOpen(user.tour_steps_seen.initial != true);
+    const tourStepSeen = await fetchTourStepSeen("initial");
+    setInitialBoardsTourModalOpen(!tourStepSeen);
   }
 
   if (loading) return <LoadingContent text={"Finding your Boards..."} />;
