@@ -1,12 +1,22 @@
 import { Checkbox } from "rsuite";
-import { useState } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import {
   Button,
   Modal,
 } from "../..";
 
 
-export function InitialBoardsTourModal() {
+export interface PInitialBoardsTourModal {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+export function InitialBoardsTourModal(props: PInitialBoardsTourModal) {
+  const {
+    open,
+    setOpen,
+  } = props;
+
   const [showTour, setShowTour] = useState(true);
   
   const Header = (
@@ -25,14 +35,15 @@ export function InitialBoardsTourModal() {
       <Checkbox checked={showTour} onChange={setShowTour}>
         Continue Showing Tour (1/6)
       </Checkbox>
-      <Button text="OK" />
+      <Button text="OK" onClick={() => setOpen(false)} />
     </span>
   );
 
   return (
     <Modal
       className="tol-initial-boards-tour-modal"
-      open={true}
+      open={open}
+      setOpen={setOpen}
       closeButton={false}
       actionButton={ActionButton}
       header={Header}

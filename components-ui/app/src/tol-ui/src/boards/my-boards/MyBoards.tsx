@@ -30,6 +30,7 @@ export function MyBoards(props: IMyBoards) {
   const [boardDetails, setBoardDetails] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [initialBoardsTourModalOpen, setInitialBoardsTourModalOpen] = useState(true);
   const toaster = Toaster();
 
   useEffect(() => {
@@ -120,6 +121,9 @@ export function MyBoards(props: IMyBoards) {
 
   return (<>
     <Widgets components={components} />
-    <InitialBoardsTourModal />
+    <InitialBoardsTourModal
+      open={initialBoardsTourModalOpen}
+      setOpen={setInitialBoardsTourModalOpen}
+    />
   </>)
 }
