@@ -117,7 +117,7 @@ services:
   components-playwright-test:
     # build: components-ui/app/src/test/playwright
     build:
-      context: components-ui/app/src/test/playwright
+      context: ./components-ui/app/src/test/playwright
       dockerfile: Dockerfile
     volumes:
       - "./components-ui/app/src/test/playwright:/usr/src/app:rw"
