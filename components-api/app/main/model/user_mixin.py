@@ -6,8 +6,9 @@ from sqlalchemy.orm import (
     Mapped,
     declared_attr,
     relationship,
-    mapped_column
+    mapped_column,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 
 
 class UserMixin:
@@ -19,5 +20,5 @@ class UserMixin:
         )
 
     @declared_attr
-    def tour_steps_seen(self) -> Mapped[list[str]]:
-        return mapped_column()
+    def tour_steps_seen(self) -> Mapped[dict]:
+        return mapped_column(JSONB, nullable=True, default=dict)

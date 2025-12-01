@@ -7,6 +7,7 @@ Create Date: 2025-12-01 12:51:40.713554
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.dialects.postgresql import JSONB
 
 
 # revision identifiers, used by Alembic.
@@ -17,7 +18,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column('user', sa.Column('tour_steps_seen', sa.String(), nullable=True))
+    op.add_column('user', sa.Column('tour_steps_seen', JSONB, nullable=True))
 
 
 def downgrade() -> None:
