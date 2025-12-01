@@ -17,6 +17,7 @@ import {
   TsDataSource,
   getBoardDetails,
   LoadingContent,
+  InitialBoardsTourModal,
 } from "../..";
 
 
@@ -117,5 +118,8 @@ export function MyBoards(props: IMyBoards) {
     },
   ];
 
-  return <Widgets components={components} />;
+  return (<>
+    <Widgets components={components} />
+    <InitialBoardsTourModal />
+  </>)
 }
