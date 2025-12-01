@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+//
+// SPDX-License-Identifier: MIT
+
 import { Checkbox } from "rsuite";
 import { useState, Dispatch, SetStateAction } from "react";
 import {

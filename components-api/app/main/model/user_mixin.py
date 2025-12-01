@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: MIT
 
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import (
     Mapped,
     declared_attr,
-    relationship,
     mapped_column,
+    relationship,
 )
-from sqlalchemy.dialects.postgresql import JSONB
 
 
 class UserMixin:
