@@ -115,7 +115,10 @@ services:
       - "../tol-sdk:/packages/tol-sdk:rw"
 
   components-playwright-test:
-    build: components-ui/app/src/test/playwright
+    # build: components-ui/app/src/test/playwright
+    build:
+      context: components-ui/app/src/test/playwright
+      dockerfile: Dockerfile.dev
     volumes:
       - "./components-ui/app/src/test/playwright:/usr/src/app:rw"
       - "/usr/src/app/node_modules"
