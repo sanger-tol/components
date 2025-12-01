@@ -115,9 +115,9 @@ services:
       - "../tol-sdk:/packages/tol-sdk:rw"
 
   components-playwright-test:
-    build: .components-ui/app/src/test/playwright
+    build: components-ui/app/src/test/playwright
     volumes:
-      - ".components-ui/app/src/test/playwright:/usr/src/app:rw"
+      - "./components-ui/app/src/test/playwright:/usr/src/app:rw"
       - "/usr/src/app/node_modules"
     environment:
       - PLAYWRIGHT_URL=https://host.docker.internal:3011
