@@ -9,4 +9,5 @@ export * from "./AccordionHeader";
 export * from "./MyBoards";
 export * from "./MyBoardsHeader";
 export * from "./NewBoardModal";
+export * from "./InitialBoardsTourModal";
 export * from "./utils";

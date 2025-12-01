@@ -61,4 +61,8 @@ export const BUTTONS: Record<string, PButton> = {
     tooltip: "Cancel",
     position: "right",
   },
+  OK: {
+    text: "OK",
+    position: "right",
+  }
 };

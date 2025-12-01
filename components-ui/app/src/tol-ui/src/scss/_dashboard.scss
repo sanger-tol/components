@@ -316,3 +316,14 @@
 .tol-zone-bar .tooltip-wrapper svg {
   margin-top: -3px;
 }
+
+.tol-initial-boards-tour-modal {
+  .rs-checkbox input {
+    margin: 0;
+    padding: 0;
+  }
+
+  .rs-modal-footer span {
+    margin: 0 !important;
+  }
+}

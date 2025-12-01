@@ -175,3 +175,61 @@ export async function fetchSubItemId(
       return [];
     });
 };
+
+/**
+ * Checks whether a dashboard tour step (by name) has yet been viewed by the user
+ * @param stepName String name of the tour step to check
+ * @returns Whether the value returned from the database is `true`
+ */
+export async function fetchTourStepSeen(stepName: string, userId: string): Promise<boolean> {
+  // Fetch user details
+  const localDataSource = new TsDataSource({
+    apiPath: "/api/v1/local",
+  });
+  const user = await localDataSource.getOne({
+    objectType: "user",
+    id: userId,
+  });
+  if (!user) return false;
+
+  // Check whether the tour is enabled and the specified step has been completed
+  return user.tour_steps_seen.tour_disabled == true || user.tour_steps_seen[stepName] == true;
+}
+
+/**
+ * Updates tour_steps_seen in the user table to register a tour step as being viewed by the user
+ * @param stepName The name of the tour step to register as seen
+ * @param userId The string id of the user to set this data on
+ */
+export async function registerTourStepAsSeen(stepName: string, userId: string): Promise<void> {
+  // Fetch user details
+  const localDataSource = new TsDataSource({
+    apiPath: "/api/v1/local",
+  });
+  const user = await localDataSource.getOne({
+    objectType: "user",
+    id: userId,
+  });
+  if (!user) return;
+
+  // Perform modification
+  await localDataSource.upsert({
+    payload: [
+      {
+        type: "user",
+        id: userId,
+        attributes: {
+          tour_steps_seen: {
+            ...user.tour_steps_seen,
+            [stepName]: true,
+          }
+        }
+      }
+    ],
+    objectType: "user",
+  });
+}
+
+export async function disableTour(userId: string): Promise<void> {
+  await registerTourStepAsSeen("tour_disabled", userId);
+}
