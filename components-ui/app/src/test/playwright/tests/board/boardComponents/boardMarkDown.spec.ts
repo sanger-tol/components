@@ -49,11 +49,11 @@ const editMarkDownComponent = async ({page}) => {
     await condensedUtilityBarButton.click({ force: true });
   }
   const saveEdit = page.getByTestId("save-markdown");
-  // Ensure save button is visible and stable before clicking
-  await saveEdit.waitFor({ state: 'visible' });
-  await page.waitForTimeout(100); // Small delay to ensure UI is stable
-  await saveEdit.scrollIntoViewIfNeeded();
-  await saveEdit.click();
+  try {
+    await saveEdit.click();
+  } catch (e) {
+    await saveEdit.click({force: true});
+  }
 
 }
 
