@@ -84,6 +84,10 @@ export class TsDataSource {
     return `${tg}${sf}`;
   }
 
+  private removeEmptyParams = (obj: Record<string, any>) => (
+    Object.fromEntries(Object.entries(obj).filter(([_, v]) => v))
+  );
+  
   public getDataSourceInstanceId(): string | undefined {
     return this.dataSourceInstanceId;
   }
@@ -409,13 +413,13 @@ export class TsDataSource {
     return await this.client()
       .get(this.generateEndpoint(objectType), {
         baseURL: this.baseUrl,
-        params: {
+        params: this.removeEmptyParams({
           page: page,
           page_size: pageSize,
           filter: filter,
           sort_by: sortBy,
           requested_fields: requestedFields,
-        },
+        })
       })
       .then((response: any) => {
         return this.updateDetailCache(response, objectType);
@@ -493,12 +497,12 @@ export class TsDataSource {
         { search_after: searchAfter },
         {
           baseURL: this.baseUrl,
-          params: {
+          params: this.removeEmptyParams({
             page: page,
             page_size: pageSize,
             filter: filter,
             requested_fields: requestedFields,
-          },
+          }),
         }
       )
       .then((response: any) => {
