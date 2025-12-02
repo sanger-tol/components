@@ -4,6 +4,10 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+/**
+ * @auto-doc
+ */
+
 import { ReactNode, useEffect, useState } from "react";
 import {
   ACTIONS,

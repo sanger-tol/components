@@ -22,7 +22,7 @@ export function AutoDocPage(props: PAutoDocPage) {
       <div className="tol-code-block">
         <CodeBlock
           text={documentation.filePath}
-          language="text"
+          language="javascript"
           showLineNumbers={false}
         />
         {documentation.description && <p style={{ marginTop: '12px' }}>{documentation.description}</p>}
