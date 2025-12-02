@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, test } from '@playwright/test';
-import { addComponent, setBoard, setAuth } from '../../helpers'
+import { addComponent, setBoard, setAuth, deleteFirstComponent } from '../../helpers'
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 const BOARD_ID = crypto.randomUUID();
@@ -21,9 +21,13 @@ const addMarkdownComponent = async ({ page, testID }) => {
 }
 
 const clickCondensedUtilityBarButton = async ({ page }) => {
-  // This test uses force true for clicking because fireFox can have issues clicking small elements
   const condensedUtilityBarButton = page.getByTestId("condensed-utility-bar-button");
-  await condensedUtilityBarButton.click();
+  await condensedUtilityBarButton.click({force: true});
+}
+
+const previewMarkDownComponent = async ({ page }) => {
+  const previewEdit = page.getByTestId("preview-markdown");
+  await previewEdit.click({force: true});
 }
 
 const editMarkDownComponent = async ({ page }) => {
@@ -39,12 +43,6 @@ const editMarkDownComponent = async ({ page }) => {
   clickCondensedUtilityBarButton({ page });
 }
 
-const previewMarkDownComponent = async ({ page }) => {
-  const previewEdit = page.getByTestId("preview-markdown");
-  // Should avoid using force: true where possible, but for overlays it is needed
-  await previewEdit.click({force: true});
-}
-
 const saveMarkDownComponent = async ({ page }) => {
   const saveEdit = page.getByTestId("save-markdown");
   await saveEdit.click({force: true});
@@ -56,5 +54,7 @@ test('manage dashboard', async ({ page }) => {
   await addMarkdownComponent({ page, testID });
   await editMarkDownComponent({ page });
   await saveMarkDownComponent({ page });
+  await deleteFirstComponent({ page});
+  expect(page.locator('.tol-markdown-viewer')).not.toBeVisible();
 });
 
