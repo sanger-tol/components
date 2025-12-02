@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+// tol-auto-doc
+
 import {
   BoardCount,
   BoardTable,
@@ -13,7 +15,6 @@ import {
   BoardMarkdown,
   PUtilityBar,
 } from "../..";
-
 
 export interface PVisualisation extends IBoardTargetAndZone {
   id: string;
