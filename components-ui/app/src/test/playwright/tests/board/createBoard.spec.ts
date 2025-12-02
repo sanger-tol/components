@@ -29,8 +29,6 @@ const createBoard = async ({ page, testID }) => {
   await page.getByRole('button', { name: 'Create' }).click();
 };
 
-const createView = async ({ page, testID }) => { };
-
 const createZone = async ({ page, testID }) => {
   // click add zone button
   const addZoneButton = await page.getByTestId('open-add-zone-modal-button');

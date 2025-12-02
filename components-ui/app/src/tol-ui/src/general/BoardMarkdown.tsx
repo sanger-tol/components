@@ -51,6 +51,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
   const previewButton: PButton = {
     position: "right",
     type: "primary",
+    testid: "preview-markdown",
     icon: showPreview ? "eye-slash" : "eye",
     onClick: () => setShowPreview(!showPreview),
     visible: !showMarkdownViewer && privilege === PRIVILEGE.BOARD.EDITABLE,
@@ -60,6 +61,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
   const editButton: PButton = {
     position: "right",
     type: "primary",
+    testid: showMarkdownViewer ? "edit-markdown" : "save-markdown",
     tooltip: showMarkdownViewer ? "Edit" : "Save",
     icon: showMarkdownViewer ? "edit" : "save",
     onClick: () => {

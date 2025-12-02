@@ -73,6 +73,7 @@ export function UtilityBar(props: PUtilityBar) {
     <ClickOverlay contents={ButtonsComponent}>
       <div style={{ float: "right" }}>
         <Button
+          testid="condensed-utility-bar-button"
           outline
           position="right"
           type="primary"
@@ -83,7 +84,7 @@ export function UtilityBar(props: PUtilityBar) {
   );
 
   return (
-    <div className="tol-utility-bar" id={wrapperId}>
+    <div className="tol-utility-bar" data-testid={id} id={wrapperId}>
       {title && <InlineEdit {...title} size={smallBreakpoint ? "sm" : "md"} />}
       {description && <IconTooltip className="tol-utility-bar-tooltip" contents={description} />}
       {elements &&

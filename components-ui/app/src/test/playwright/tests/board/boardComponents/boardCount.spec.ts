@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, test } from '@playwright/test';
-import { addComponent, setBoard, deleteBoard, setAuth, addComponentFilter, sleep } from '../../helpers'
+import { addComponent, setBoard, setAuth, addComponentFilter, sleep, deleteFirstComponent } from '../../helpers'
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 const BOARD_ID = crypto.randomUUID();
@@ -19,17 +19,15 @@ const addCountComponent = async ({page, testID}) => {
   addComponent({page, testID}, 'count', 'Small');
 
   // check count has rendered
-  await sleep(200);
   await expect(page.locator('.tol-count')).toBeVisible();
 }
 
-const filterCountComponent = async ({page, testID}) => {
+const filterCountComponent = async ({page}) => {
   // get the count before filtering
-  await sleep(200);
   const countBefore = await page.locator('.tol-count').textContent();
 
   await addComponentFilter(
-    {page, testID},
+    {page},
     'count',
     'grit_project',
     'ToL Rapid Curation',
@@ -37,37 +35,20 @@ const filterCountComponent = async ({page, testID}) => {
   );
 
   // check the count has changed
+  // This sleep should be removed at some point
   await sleep(200);
   const countAfter = await page.locator('.tol-count').textContent();
   expect(countAfter).not.toBe(countBefore);
 }
-
-const deleteCountComponent = async ({page, testID}) => {
-  // click show edit buttons button
-  await page.getByTestId('edit-zone-button').first().click();
-
-  // click the edit/move components button
-  await page.getByTestId('drag-components-button').first().click();
-
-  // click the delete button
-  await page.getByTestId('delete-component-button').first().click();
-
-  // confirm the delete
-  await page.getByTestId('confirm-delete-button').click();
-
-  // click the save button
-  await page.getByTestId('save-layout-button').click();
-
-  // check the count component has been deleted
-  expect(page.locator('.tol-count')).not.toBeVisible();
-};
 
 test('manage dashboard', async ({ page }) => {
   const testID = crypto.randomUUID();
 
   await addCountComponent({page, testID});
 
-  await filterCountComponent({page, testID});
+  await filterCountComponent({page});
   
-  await deleteCountComponent({page, testID});
+  // await deleteCountComponent({page, testID});
+  await deleteFirstComponent({ page});
+  expect(page.locator('.tol-count')).not.toBeVisible();
 });
