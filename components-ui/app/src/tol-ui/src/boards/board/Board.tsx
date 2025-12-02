@@ -4,8 +4,6 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-// tol-auto-doc
-
 import { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import {

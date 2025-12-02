@@ -11,7 +11,7 @@ import {
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page } from "./tol-ui/src";
-import { generateAutoDocPages } from "./auto-doc/utils";
+import { generateAutoDocPages } from "./auto-doc";
 import "./scss/styling.scss";
 
 
