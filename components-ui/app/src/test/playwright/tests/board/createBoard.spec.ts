@@ -71,13 +71,13 @@ export const deleteBoard = async ({ page, boardID }) => {
   await page.getByTestId('confirm-delete-button').click();
 };
 
-// test('create dashboard', async ({ page }) => {
-//   const testID = crypto.randomUUID();
-//   await createBoard({ page, testID });
+test('create dashboard', async ({ page }) => {
+  const testID = crypto.randomUUID();
+  await createBoard({ page, testID });
 
-//   // create a view
-//   // await createView({page, testID});
+  // create a view
+  // await createView({page, testID});
 
-//   // create a zone
-//   await createZone({ page, testID });
-// })
+  // create a zone
+  await createZone({ page, testID });
+})

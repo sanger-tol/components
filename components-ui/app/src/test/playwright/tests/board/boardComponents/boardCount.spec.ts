@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, test } from '@playwright/test';
-import { addComponent, setBoard, deleteBoard, setAuth, addComponentFilter, sleep } from '../../helpers'
+import { addComponent, setBoard, setAuth, addComponentFilter, sleep } from '../../helpers'
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 const BOARD_ID = crypto.randomUUID();
@@ -25,7 +25,6 @@ const addCountComponent = async ({page, testID}) => {
 
 const filterCountComponent = async ({page, testID}) => {
   // get the count before filtering
-  await sleep(200);
   const countBefore = await page.locator('.tol-count').textContent();
 
   await addComponentFilter(
@@ -62,12 +61,12 @@ const deleteCountComponent = async ({page, testID}) => {
   expect(page.locator('.tol-count')).not.toBeVisible();
 };
 
-// test('manage dashboard', async ({ page }) => {
-//   const testID = crypto.randomUUID();
+test('manage dashboard', async ({ page }) => {
+  const testID = crypto.randomUUID();
 
-//   await addCountComponent({page, testID});
+  await addCountComponent({page, testID});
 
-//   await filterCountComponent({page, testID});
+  await filterCountComponent({page, testID});
   
-//   await deleteCountComponent({page, testID});
-// });
+  await deleteCountComponent({page, testID});
+});
