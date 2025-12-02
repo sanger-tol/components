@@ -25,7 +25,7 @@ import {
 } from "../..";
 
 export interface PBoard {
-  boardDataSource: TsDataSource; // data source for the board
+  boardDataSource: TsDataSource;
 }
 
 export function Board(props: PBoard) {
