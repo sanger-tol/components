@@ -113,11 +113,6 @@ This document defines the architecture, naming conventions, file structure, and 
     - `const userName = 'Alice'`
     - `const [isOpen, setIsOpen] = useState(false)`
 
-
 ## Documentation
 - Use JSDoc for all utility functions and complex components.
 - Keep examples and filenames aligned with the rules above for quick discoverability.
-
-
-
-
