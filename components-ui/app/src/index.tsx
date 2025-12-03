@@ -10,8 +10,15 @@ import {
   Sandbox,
   CodeStyle
 } from "./pages";
+import {
+  TolApp,
+  Page,
+  Dropdown,
+  TsDataSource,
+  env,
+  LOCAL_API_DATA_PATH
+} from "./tol-ui/src";
 import reportWebVitals from "./reportWebVitals";
-import { TolApp, Page, Dropdown } from "./tol-ui/src";
 import { generateAutoDocPages } from "./auto-doc";
 import "./scss/styling.scss";
 
@@ -35,9 +42,15 @@ const developerDropdown: Dropdown = {
 
 const autoDocPages = generateAutoDocPages();
 
+const boardDataSource = new TsDataSource({
+  apiPath: env.API_PATH,
+  apiDataPath: LOCAL_API_DATA_PATH,
+})
+
 const root = createRoot(document.getElementById('root')!);
 root.render(
   <TolApp
+    boards={{boardDataSource}}
     brand="Components"
     homePage={<Home />}
     pages={[
