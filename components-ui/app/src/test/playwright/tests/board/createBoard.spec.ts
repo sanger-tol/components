@@ -2,8 +2,16 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { expect, test } from '@playwright/test';
-import { sleep } from './sleep';
+import { test } from '@playwright/test';
+import { setAuth } from '../helpers';
+
+const headless = !!(process.env.CI || process.env.HEADLESS);
+
+test.use({ headless: headless });
+
+test.beforeEach(async ({ page }) => {
+  await setAuth({ page });
+});
 
 const createBoard = async ({ page, testID }) => {
   await page.goto('/my-boards');
@@ -20,8 +28,6 @@ const createBoard = async ({ page, testID }) => {
   // save the board
   await page.getByRole('button', { name: 'Create' }).click();
 };
-
-const createView = async ({ page, testID }) => { };
 
 const createZone = async ({ page, testID }) => {
   // click add zone button
@@ -49,11 +55,11 @@ const createZone = async ({ page, testID }) => {
   await confirmZoneButton.click();
 };
 
-export const deleteBoard = async ({ page, testID }) => {
+export const deleteBoard = async ({ page, boardID }) => {
   await page.goto('/my-boards');
 
   // find the correct board row
-  const boardRow = await page.getByTestId(testID);
+  const boardRow = await page.getByTestId(boardID);
 
   // click the dropdown button
   await boardRow.locator(".my-boards-dropdown-buttons").click();
@@ -65,8 +71,8 @@ export const deleteBoard = async ({ page, testID }) => {
   await page.getByTestId('confirm-delete-button').click();
 };
 
-export const setupBoard = async ({ page, testID }) => {
-  // create a board
+test('create dashboard', async ({ page }) => {
+  const testID = crypto.randomUUID();
   await createBoard({ page, testID });
 
   // create a view
@@ -74,4 +80,4 @@ export const setupBoard = async ({ page, testID }) => {
 
   // create a zone
   await createZone({ page, testID });
-}
+})

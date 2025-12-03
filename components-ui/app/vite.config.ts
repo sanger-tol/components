@@ -45,6 +45,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/setupTests.ts"],
     testMatch: ["**/*.test.tsx"],
+    exclude: ["**/node_modules/**", "**/dist/**", "**/playwright/**"],
     globals: true,
     onConsoleLog(log: string, type: "stdout" | "stderr"): false | void {
       console.log("log in test: ", log);
