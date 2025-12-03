@@ -24,7 +24,8 @@ import {
   Messages,
   Factories,
   Plates,
-  FileValidation
+  FileValidation,
+  CodeStyle
 } from "./pages";
 import reportWebVitals from "./reportWebVitals";
 import { TolApp, Page, Dropdown, TOL_DS } from "./tol-ui/src";
@@ -126,6 +127,11 @@ const fileValidation: Page = {
   element: <FileValidation /> 
 }
 
+const codeStyle: Page = {
+  name: "Code Style",
+  element: <CodeStyle /> 
+}
+
 const otherDropdown: Dropdown = {
   name: "Other",
   pages: [colours, detail, factories, forms, messages, miscellaneous, tsds, widgets, plates, fileValidation, portal],
@@ -136,6 +142,12 @@ const sandbox: Page = {
   name: "Sandbox",
   element: <Sandbox />,
   hidden: true,
+};
+
+// developer-specific dropdown
+const developerDropdown: Dropdown = {
+  name: "Developer",
+  pages: [codeStyle],
 };
 
 
@@ -149,6 +161,7 @@ root.render(
       visualisationsDropdown,
       otherDropdown,
       sandbox,
+      developerDropdown,
     ]}
   />
 );
