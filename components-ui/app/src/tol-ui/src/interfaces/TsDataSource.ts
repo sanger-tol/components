@@ -5,19 +5,6 @@ SPDX-License-Identifier: MIT
 
 import { IEntityMeta, IFilter } from "..";
 
-export interface IDetailCache {
-  [baseUrl: string]: {
-    [objectType: string]: {
-      [id: string]: number;
-    };
-  };
-}
-
-export interface IDetailPromises {
-  [baseUrl: string]: {
-    [objectType: string]: Promise<object>;
-  };
-}
 
 export interface IConfigPromises {
   [baseUrl: string]: Promise<object>;
