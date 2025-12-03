@@ -17,14 +17,14 @@ const modules = import.meta.glob('../tol-ui/src/**/*.{tsx,jsx}', {
 });
 
 /**
- * Scans all TypeScript files in the tol-ui/src directory for components tagged with @auto-doc
+ * Scans all TypeScript files in the tol-ui/src directory for components tagged with @autodoc
  * @returns Array of component documentation objects
  */
 function scanForAutoDocComponents(): IComponentDocumentation[] {
   const components: IComponentDocumentation[] = [];
   
   for (const [path, content] of Object.entries(modules)) {
-    if (typeof content === 'string' && content.includes('@auto-doc')) {
+    if (typeof content === 'string' && content.includes('@autodoc')) {
       const relativePath = path.replace('../tol-ui/src/', '');
       const documentation = TSDocParser.parseFileContent(content, relativePath);
       

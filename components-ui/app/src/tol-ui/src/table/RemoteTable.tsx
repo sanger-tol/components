@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 /**
- * @auto-doc
+ * @autodoc
  */
 
 import { ReactNode, useEffect, useState } from "react";

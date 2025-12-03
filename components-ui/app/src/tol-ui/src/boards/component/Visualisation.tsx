@@ -8,7 +8,7 @@ SPDX-License-Identifier: MIT
  * A flexible visualization component that renders different types of board components based on the componentType prop.
  * This component acts as a factory that selects and renders the appropriate visualization component.
  * 
- * @auto-doc
+ * @autodoc
  * 
  * @prop id - Unique identifier for the visualization instance
  * @prop config - Configuration object containing settings for the visualization
@@ -20,15 +20,6 @@ SPDX-License-Identifier: MIT
  * This component uses a switch statement to determine which board component to render.
  * All props are passed through to the selected component using the spread operator.
  * The component extends IBoardTargetAndZone which provides additional board-related functionality.
- * 
- * @example Basic Table Visualization
- * <Visualisation
- *   id="table-1"
- *   componentType="table"
- *   config={{ columns: ['name', 'value'] }}
- *   size="large"
- *   utilityBarConfig={{ showExport: true }}
- * />
  */
 
 import {

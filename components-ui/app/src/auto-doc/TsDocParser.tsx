@@ -9,14 +9,14 @@ import { IComponentDocumentation, IComponentExample, IComponentProp } from "../i
 
 
 /**
- * Parses TSDoc comments tagged with @auto-doc to extract component documentation
+ * Parses TSDoc comments tagged with @autodoc to extract component documentation
  */
 export class TSDocParser {
   /**
    * Parses the content of a TypeScript file to extract component documentation
    * @param content - The file content as a string
    * @param filePath - The relative path to the file
-   * @returns Component documentation object or null if no @auto-doc tag found
+   * @returns Component documentation object or null if no @autodoc tag found
    */
   static parseFileContent(content: string, filePath: string): IComponentDocumentation | null {
     const autoDocMatch = content.match(AUTO_DOC_REGEX);
