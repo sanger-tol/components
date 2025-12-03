@@ -1,10 +1,11 @@
 /*
-SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
 import {
+  CELL_RENDERER_PROP_ATTRIBUTE,
   getFieldByName,
   IFilter,
   TDataObjectOrNull
@@ -64,7 +65,7 @@ export function getCellRendererPropValue(
 ) {
   if (typeof value === "string" && value.includes("${")) {
     // replace placeholders with values from dataObject
-    elementProps[prop] = value.replace(/\${(.*?)}/g, (_, key) =>
+    elementProps[prop] = value.replace(CELL_RENDERER_PROP_ATTRIBUTE, (_, key) =>
       getFieldByName(dataObject, key) || ""
     );
   } else if (typeof value === "object" && 'and_' in value) {

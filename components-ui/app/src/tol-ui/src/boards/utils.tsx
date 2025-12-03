@@ -142,6 +142,9 @@ export async function upsertComponent(
           attributes: attributes
         },
       ],
+      params: {
+        merge_collections: false,
+      },
     });
 }
 
