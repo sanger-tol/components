@@ -685,7 +685,7 @@ describe("Testing delete method", () => {
       id: "testSpeciesId",
     });
 
-    expect(dataObject).toBeUndefined();
+    expect(dataObject).toBeNull();
     expect(clientDeleteSpy).toHaveBeenCalledTimes(1);
   });
 });

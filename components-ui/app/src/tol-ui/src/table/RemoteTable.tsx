@@ -211,7 +211,6 @@ export function RemoteTable(props: PRemoteTable) {
     }
     setLoading(true);
 
-    // fetch data
     dataSource
       .getListPage({
         objectType,
