@@ -28,7 +28,8 @@
     "@uiw/react-md-editor":"4.0.7",
     "rehype-sanitize": "6.0.0",
     "xlsx": "0.18.5",
-    "@tanstack/react-query": "^5.81.5"
+    "@tanstack/react-query": "^5.81.5",
+    "nextstepjs": "^2.1.2"
   },
   "devDependencies": {
     "typescript": "5.6.3",
