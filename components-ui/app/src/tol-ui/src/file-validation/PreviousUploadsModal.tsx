@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { Toggle } from "rsuite";
-import { useQuery } from "@tanstack/react-query";
 import {
   Icon,
   Modal,
@@ -16,11 +15,11 @@ import {
   getUserFromLocalStorage,
   fetchAndNormaliseAllUploadResults,
   IPipelineUpload,
-  REFRESH_INTERVAL,
   TOL_LOADER_STYLES,
   VALIDATION_ENDPOINTS,
   BUTTON_TIMEOUT,
   PIPELINE_DS,
+  useQueryData,
 } from "..";
 
 export interface PPreviousUploadsModal {
@@ -47,19 +46,21 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
     );
   };
 
-  const {
-    data: userFileValidationUploadsData = [],
-    isLoading,
-    isError,
-    refetch: refetchAllUploads,
-    dataUpdatedAt: allUploadsUpdatedAt,
-  } = useQuery({
-    queryKey: ["userFileValidationUploads", id],
-    queryFn: fetchPreviousUploads,
-    enabled: (openModal === "results" || openModal === true) && id !== null,
-    refetchInterval: openModal === "results" ? REFRESH_INTERVAL : false,
-    staleTime: 0,
-  });
+  const userFileValidationUploads = useQueryData<IPipelineUpload[]>(
+    ["userFileValidationUploads", id],
+    fetchPreviousUploads,
+    {
+      enabled: (openModal === "results" || openModal === true) && id !== null,
+      refetchBackoff: {
+        enabled: true,
+        options: {
+          stopCondition: openModal !== "results",
+          limit: 15,
+        },
+      },
+      staleTime: 0,
+    }
+  );
 
   const handleToggleUploadResults = (id: string) => {
     setExpandedResults(expandedResults === id ? null : id);
@@ -70,14 +71,14 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
       className="tol-file-validation-previous-uploads-modal-container 
         tol-file-validation-scrollbar-fix"
     >
-      {isLoading ? (
+      {userFileValidationUploads.isLoading ? (
         <TolLoader
           size="lg"
           content="Loading..."
           vertical
           styles={TOL_LOADER_STYLES}
         />
-      ) : isError || !id ? (
+      ) : userFileValidationUploads.isError || !id ? (
         <div className="tol-file-validation-error-info">
           <span className="tol-file-validation-error-icon">
             <Icon icon="info" size="lg" />
@@ -88,8 +89,8 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
               : "Error loading uploads."}
           </h6>
         </div>
-      ) : userFileValidationUploadsData.length > 0 ? (
-        userFileValidationUploadsData
+      ) : userFileValidationUploads.data.length > 0 ? (
+        userFileValidationUploads.data
           .sort(
             (a: IPipelineUpload, b: IPipelineUpload) =>
               Number(b.id) - Number(a.id)
@@ -97,7 +98,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
           .map((upload: IPipelineUpload, index: number) => {
             return (
               <div
-                key={`${upload.id}-${allUploadsUpdatedAt}-${index}`}
+                key={`${upload.id}-${userFileValidationUploads.dataUpdatedAt}-${index}`}
                 className="tol-file-validation-previous-uploads-inner-container"
               >
                 <PreviousUploadsView
@@ -127,9 +128,10 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
     <div className="tol-file-validation-previous-uploads-modal-header">
       <div className="tol-file-validation-previous-uploads-modal-header-content">
         <h3>Previous Validations</h3>
-        {allUploadsUpdatedAt !== 0 && (
+        {userFileValidationUploads.dataUpdatedAt !== 0 && (
           <p>
-            Last updated at: {new Date(allUploadsUpdatedAt).toLocaleString()}
+            Last updated at:{" "}
+            {new Date(userFileValidationUploads.dataUpdatedAt).toLocaleString()}
           </p>
         )}
       </div>
@@ -146,7 +148,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
           <Button
             icon="rotate"
             tooltip="Refresh"
-            onClick={() => refetchAllUploads()}
+            onClick={() => userFileValidationUploads.refetch()}
             timeout={BUTTON_TIMEOUT}
           />
         </div>

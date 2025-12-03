@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 export const FILE_VALIDATION_PATH = "/file-validation/results/";
-export const REFRESH_INTERVAL = 5000;
+export const REFRESH_INTERVAL = 1000;
 export const MAX_ERRORS_TO_DISPLAY = 2;
 export const BUTTON_TIMEOUT = 3000;
 export const WIDTH_REDUCER = 40;

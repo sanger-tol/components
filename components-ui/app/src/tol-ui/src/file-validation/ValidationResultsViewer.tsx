@@ -6,7 +6,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import {
   getErrorWarningCounts,
@@ -22,12 +21,12 @@ import {
   LoadingContent,
   Icon,
   Button,
-  REFRESH_INTERVAL,
   VALIDATION_ENDPOINTS,
   BUTTON_TIMEOUT,
   PIPELINE_DS,
   ValidationReport,
   splitS3FilenameString,
+  useQueryData,
 } from "..";
 
 export function ValidationResultsViewer() {
@@ -77,46 +76,50 @@ export function ValidationResultsViewer() {
     return result;
   };
 
-  const {
-    data: latestPipelineResults = {} as IPipelineUpload | null,
-    refetch: refetchLatestPipelineResults,
-    dataUpdatedAt: latestResultsUpdatedAt,
-    isLoading,
-  } = useQuery({
-    queryKey: ["latestPipelineResults", uploadId],
-    queryFn: fetchLatestPipelineResults,
-    enabled: !hasErrors && uploadId !== null && !validated && !failedPipeline,
-    refetchInterval: (data: any) => {
-      return data && !data.completed ? REFRESH_INTERVAL : false;
-    },
-    staleTime: 0,
-  });
+  const latestPipelineResults = useQueryData<IPipelineUpload | null>(
+    ["latestPipelineResults", uploadId],
+    fetchLatestPipelineResults,
+    {
+      enabled: true,
+      refetchBackoff: {
+        enabled: true,
+        options: {
+          stopCondition: !validating || validated || failedPipeline,
+          limit: 15,
+        },
+      },
+      staleTime: 0,
+    }
+  );
 
   useEffect(() => {
-    if (!latestPipelineResults || !uploadId) return;
+    if (!latestPipelineResults.data || !uploadId) return;
 
-    if (!latestPipelineResults.completed && !validating) {
+    if (!latestPipelineResults.data.completed && !validating) {
       setValidating(true);
       setValidated(false);
-    } else if (latestPipelineResults.completed && validating) {
+    } else if (latestPipelineResults.data.completed && validating) {
       setValidating(false);
       setValidated(true);
     }
-  }, [latestPipelineResults, uploadId, validating]);
+  }, [latestPipelineResults.data, uploadId, validating]);
 
   useEffect(() => {
-    if (latestPipelineResults && latestPipelineResults.validationResults) {
+    if (
+      latestPipelineResults.data &&
+      latestPipelineResults.data.validationResults
+    ) {
       const counts = getErrorWarningCounts(
-        latestPipelineResults.validationResults
+        latestPipelineResults.data.validationResults
       );
       setErrorAndWarningCount(counts);
 
       setUploadStatus(
         determineUploadStatus(
-          latestPipelineResults.completed,
+          latestPipelineResults.data.completed,
           counts.errors,
           counts.warnings,
-          latestPipelineResults.failureMessage || null
+          latestPipelineResults.data.failureMessage || null
         )
       );
     }
@@ -133,7 +136,7 @@ export function ValidationResultsViewer() {
         search: searchParams.toString(),
       });
     }
-  }, [latestPipelineResults, stepName]);
+  }, [latestPipelineResults.data, stepName]);
 
   const Results = (
     <div className="tol-file-validation-results-page-container">
@@ -142,8 +145,8 @@ export function ValidationResultsViewer() {
           <>
             <div className="tol-file-validation-results-page-info-container">
               <div className="tol-file-validation-results-page-info-inner-container">
-                <h4>Results for Pipeline #{latestPipelineResults.id}</h4>
-                <h6>Pipeline: {latestPipelineResults.pipelineName}</h6>
+                <h4>Results for Pipeline #{latestPipelineResults.data.id}</h4>
+                <h6>Pipeline: {latestPipelineResults.data.pipeline}</h6>
               </div>
               <div>
                 <h4
@@ -152,13 +155,15 @@ export function ValidationResultsViewer() {
                   {uploadStatus.text}
                 </h4>
                 <p className="tol-file-validation-results-page-info-date">
-                  {new Date(latestPipelineResults.dateStarted).toLocaleString()}
+                  {new Date(
+                    latestPipelineResults.data.dateStarted
+                  ).toLocaleString()}
                 </p>
               </div>
             </div>
             <div className="tol-file-validation-results-page-additional-info">
               <div>
-                <h6>Flow ID: {latestPipelineResults.flowRunId}</h6>
+                <h6>Flow ID: {latestPipelineResults.data.flowRunId}</h6>
                 <p>
                   {"Download File: "}
                   <a
@@ -166,17 +171,21 @@ export function ValidationResultsViewer() {
                     onClick={() =>
                       downloadFileFromS3(
                         PIPELINE_DS,
-                        latestPipelineResults.s3Url,
-                        latestPipelineResults.s3Filename
+                        latestPipelineResults.data.s3Url,
+                        latestPipelineResults.data.s3Filename
                       )
                     }
                   >
-                    {splitS3FilenameString(String(latestPipelineResults.s3Filename))}
+                    {splitS3FilenameString(
+                      String(latestPipelineResults.data.s3Filename)
+                    )}
                   </a>
                 </p>
                 <p className="tol-file-validation-results-page-additional-info-updated-at">
                   Updated At:{" "}
-                  {new Date(latestResultsUpdatedAt).toLocaleString()}
+                  {new Date(
+                    latestPipelineResults.dataUpdatedAt
+                  ).toLocaleString()}
                 </p>
               </div>
               <div className="tol-file-validation-results-page-error-count-container">
@@ -191,8 +200,8 @@ export function ValidationResultsViewer() {
                   <Button
                     icon="rotate"
                     tooltip="Refresh"
-                    disabled={latestPipelineResults?.completed}
-                    onClick={() => refetchLatestPipelineResults()}
+                    disabled={latestPipelineResults?.data.completed}
+                    onClick={() => latestPipelineResults.refetch()}
                     timeout={BUTTON_TIMEOUT}
                   />
                 </span>
@@ -201,15 +210,15 @@ export function ValidationResultsViewer() {
           </>
         )}
       </div>
-      {latestPipelineResults?.validationResults && (
+      {latestPipelineResults?.data.validationResults && (
         <ValidateSteps
-          data={latestPipelineResults.validationResults}
+          data={latestPipelineResults.data.validationResults}
           expandedIndex={stepName}
-          steps={latestPipelineResults.pipelineSteps}
+          steps={latestPipelineResults.data.pipelineSteps}
           stepName={stepName}
           targetRef={targetRef}
-          completed={latestPipelineResults.completed}
-          failureMessage={latestPipelineResults.failureMessage}
+          completed={latestPipelineResults.data.completed}
+          failureMessage={latestPipelineResults.data.failureMessage}
         />
       )}
     </div>
@@ -229,7 +238,11 @@ export function ValidationResultsViewer() {
       <h3>Previous Validation Results</h3>
       <div className="tol-file-validation-results-viewer-title-buttons">
         <Button text="View All" onClick={() => setOpenModal(true)} />
-        <Button text="Back" icon="arrow-left" onClick={() => history.goBack()} />
+        <Button
+          text="Back"
+          icon="arrow-left"
+          onClick={() => history.goBack()}
+        />
       </div>
     </div>
   );
@@ -245,12 +258,12 @@ export function ValidationResultsViewer() {
     },
   ];
 
-  return isLoading && !latestPipelineResults ? (
+  return latestPipelineResults.isLoading && !latestPipelineResults ? (
     <LoadingContent text="Loading Results" />
   ) : (
     <>
       <ValidationReport
-        data={latestPipelineResults}
+        data={latestPipelineResults.data}
         open={reportOpen}
         setOpen={setReportOpen}
         uploadStatus={uploadStatus.text}
