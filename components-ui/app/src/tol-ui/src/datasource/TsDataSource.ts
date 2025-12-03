@@ -473,12 +473,16 @@ export class TsDataSource {
   public async upsert({
     payload,
     objectType,
+    params
   }: IUpsert): Promise<TDataObjectListOrNull> {
     return await this.client()
       .post(
         this.generateEndpoint(objectType, API_OPERATIONS.UPSERT),
         { data: payload },
-        { baseURL: this.baseUrl }
+        {
+          baseURL: this.baseUrl,
+          params: params,
+        }
       )
       .then((response: any) => {
         return response.data.data.map((object: any) => {

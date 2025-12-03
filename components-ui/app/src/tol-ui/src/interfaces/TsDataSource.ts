@@ -43,6 +43,7 @@ export interface IGetToOneRelation {
 export interface IUpsert {
   payload: IUpsertData[];
   objectType: string;
+  params?: Record<string, any>;
 }
 
 interface IUpsertData {
