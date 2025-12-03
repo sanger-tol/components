@@ -11,3 +11,4 @@ export * from "./messaging.constants";
 export * from "./privilege.constants";
 export * from "./general.constants";
 export * from "./file-validation.constants";
+export * from "./regex";

@@ -22,6 +22,8 @@ import {
   deepCopy,
   ICustomCellRenderers,
   copyToClipboard,
+  CELL_RENDERER_PROP_ATTRIBUTE,
+  IFilter,
 } from "..";
 
 interface Rgb {
@@ -347,4 +349,40 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
 
   const copyList = emptyStringsRemoval.join("\n");
   copyToClipboard(copyList);
+}
+
+function addFieldsFromTemplateProp(requestedFields: Set<string>, value: unknown) {
+  if (typeof value !== "string" || !value.includes("${")) return;
+
+  const matches = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
+  matches.forEach((match) => {
+    const key = match.replace("${", "").replace("}", "").trim();
+    if (key) requestedFields.add(key);
+  });
+}
+
+function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
+  if (typeof value !== "object" || value === null || !("and_" in (value as IFilter))) return;
+
+  const filter = value as IFilter;
+  Object.keys(filter.and_ || {}).forEach((fieldSystemName) => {
+    requestedFields.add(fieldSystemName);
+  });
+}
+
+export function amalgamateRequestedFields(fieldMeta: FieldMeta): string[] {
+  const requestedFields = new Set<string>(fieldMeta?.order.active || []);
+
+  const dataWithDefaults = fieldMeta?.dataWithDefaults || {};
+  Object.values<any>(dataWithDefaults).forEach((fieldConfig) => {
+    const cellRenderer = fieldConfig?.cellRenderer;
+    const props = cellRenderer?.props || {};
+
+    Object.values(props).forEach((value) => {
+      addFieldsFromTemplateProp(requestedFields, value);
+      addFieldsFromFilterProp(requestedFields, value);
+    });
+  });
+
+  return Array.from(requestedFields);
 }
