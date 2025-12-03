@@ -327,7 +327,7 @@ export function FileValidation(props: PFileValidation) {
               onClick={() =>
                 downloadFileFromS3(
                   PIPELINE_DS,
-                  validationConfig.s3_url,
+                  validationConfig.s3_bucket,
                   defaultFileTemplateName
                 )
               }

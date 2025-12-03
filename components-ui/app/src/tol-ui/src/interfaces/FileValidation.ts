@@ -18,7 +18,7 @@ export interface IUploadStatus {
 }
 
 export interface IValidationConfig {
-  s3_url: string;
+  s3_bucket: string;
   pipeline_id: number;
   destination: string;
 }
@@ -52,7 +52,7 @@ export interface IPipelineUploadAPI {
   date_started: string;
   flow_run_id: string;
   s3_filename: string;
-  s3_url: string;
+  s3_bucket: string;
   validation_results: IValidationResult[];
   failure_message: string | null;
 }

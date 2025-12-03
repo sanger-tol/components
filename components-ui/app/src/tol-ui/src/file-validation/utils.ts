@@ -158,7 +158,7 @@ export async function normalisePipelineUpload(
     pipelineId: pipeline?.id || "",
     pipelineSteps: pipelineSteps || [],
     s3Filename: upload?.s3_filename || "",
-    s3Url: upload?.s3_url || "",
+    s3Bucket: upload?.s3_bucket || "",
     validationResults:
       upload?.validation_results.map(normaliseValidationResult) || [],
     failureMessage: upload?.failure_message || null,
@@ -345,7 +345,7 @@ export async function uploadPipelineConfig(
 ): Promise<string | null | undefined> {
   let s3Filename: string | undefined = undefined;
   const data = {
-    s3_url: config.s3_url,
+    s3_bucket: config.s3_bucket,
     spreadsheet_config: spreadsheetConfig || null,
     pipeline_id: config.pipeline_id,
     dry_run: dry_run,
@@ -358,7 +358,7 @@ export async function uploadPipelineConfig(
       const uploadResponse = await uploadFileToS3(
         ds,
         file.blobFile,
-        config.s3_url
+        config.s3_bucket
       );
 
       if (uploadResponse.status !== 200) {
