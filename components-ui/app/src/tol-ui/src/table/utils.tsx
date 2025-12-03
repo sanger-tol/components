@@ -354,7 +354,7 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
 function addFieldsFromTemplateProp(requestedFields: Set<string>, value: unknown) {
   if (typeof value !== "string" || !value.includes("${")) return;
 
-  const matches = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
+  const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
   matches.forEach((match) => {
     const key = match.replace("${", "").replace("}", "").trim();
     if (key) requestedFields.add(key);
