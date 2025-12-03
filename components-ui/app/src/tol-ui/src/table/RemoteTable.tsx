@@ -4,10 +4,6 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-/**
- * @autodoc
- */
-
 import { ReactNode, useEffect, useState } from "react";
 import {
   ACTIONS,
@@ -42,6 +38,7 @@ import {
   ITableConfigSave,
   optimiseFieldMetaForSave,
   env,
+  amalgamateRequestedFields,
 } from '..';
 
 
@@ -215,7 +212,6 @@ export function RemoteTable(props: PRemoteTable) {
     }
     setLoading(true);
 
-    // fetch data
     dataSource
       .getListPage({
         objectType,
@@ -223,7 +219,7 @@ export function RemoteTable(props: PRemoteTable) {
         pageSize,
         filter,
         sortBy: createSort(sortByAttribute, sortByType),
-        requestedFields: (fieldMeta?.order.active || []).join(','),
+        requestedFields: amalgamateRequestedFields(fieldMeta).join(','),
       })
       .then((dataObjects: TDataObjectListOrNull) => {
         setError("");

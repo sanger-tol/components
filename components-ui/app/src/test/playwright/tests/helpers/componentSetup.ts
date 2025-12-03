@@ -2,7 +2,6 @@
 //
 // SPDX-License-Identifier: MIT
 
-import { expect, test } from '@playwright/test';
 
 export const addComponent = async (
   {page, testID},
@@ -26,7 +25,7 @@ export const addComponent = async (
 }
 
 export const addComponentFilter = async (
-  {page, testID},
+  {page},
   component: string,
   attribute: string,
   filterValue: string,
@@ -57,3 +56,20 @@ export const addComponentFilter = async (
   // Click Apply Filter button
   await page.getByTestId('apply-filter-button').click();
 }
+
+export const deleteFirstComponent = async ({page}) => {
+  // click show edit buttons button
+  await page.getByTestId('edit-zone-button').first().click();
+
+  // click the edit/move components button
+  await page.getByTestId('drag-components-button').first().click();
+
+  // click the delete button
+  await page.getByTestId('delete-component-button').first().click();
+
+  // confirm the delete
+  await page.getByTestId('confirm-delete-button').click();
+
+  // click the save button
+  await page.getByTestId('save-layout-button').click();
+};

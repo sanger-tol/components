@@ -31,7 +31,7 @@ tol test --type=playwright
 Only once, enter the directory, and install the dependencies and browsers
 
 ```bash
-cd test/playwright && npm i && npx playwright install --with-deps
+cd components-ui/app/src/test/playwright && npm i && npx playwright install --with-deps
 ```
 
 Then in VSCode, on MacOS:

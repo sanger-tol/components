@@ -26,7 +26,6 @@ export interface PBoardTable extends PVisualisation {
 export function BoardTable(props: PBoardTable) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
-  const [forceUpdate, setForceUpdate] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
   const { privilege } = useBoardPrivilege()
 
@@ -40,7 +39,6 @@ export function BoardTable(props: PBoardTable) {
     config["actions"] = actions;
     config["defaultSortByAttribute"] = defaultSortByAttribute;
     config["defaultSortByType"] = defaultSortByType;
-    setForceUpdate(!forceUpdate); // fetches new data on save
     setConfig({ ...config });
     updateConfigAndUpsert(
       id,
@@ -94,7 +92,6 @@ export function BoardTable(props: PBoardTable) {
       onConfigSave={onConfigSave}
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
-      forceUpdate={forceUpdate}
       // disabled temporarily
       // actions={config.actions}
       rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
