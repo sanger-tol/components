@@ -36,3 +36,4 @@ export * from "./Widgets";
 export * from "./PlaceholderIcon";
 export * from "./VideoPlayer";
 export * from "./SocialViewer";
+export * from "./RemotePlateSingle";

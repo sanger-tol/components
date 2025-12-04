@@ -270,6 +270,7 @@ export function Table(props: Props) {
       }
       : undefined;
 
+
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
       <DownloadModal

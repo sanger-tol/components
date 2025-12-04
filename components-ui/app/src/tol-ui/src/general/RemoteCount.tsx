@@ -85,7 +85,7 @@ export function RemoteCount(props: PRemoteCount) {
   return (
     <>
       <UtilityBar id={id} {...utilityBarConfig} />
-      <div className="tol-component-contents-with-offset">
+      <div className="tol-component-contents with-offset">
         <Contents />
       </div>
     </>
