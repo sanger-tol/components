@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, Query } from "@tanstack/react-query";
 import { REFRESH_INTERVAL } from "../constants";
 
 export interface RefetchBackoffOptions {
@@ -26,7 +26,7 @@ export function useQueryData<T>(
     enabled?: boolean;
     staleTime?: number;
     gcTime?: number;
-    refetchInterval?: number | boolean;
+    refetchInterval?: number | false;
     refetchOnWindowFocus?: boolean;
     refetchOnMount?: boolean;
     retry?: boolean | number;
@@ -50,7 +50,9 @@ export function useQueryData<T>(
     enabled: options?.enabled ?? !!queryKey[1],
     refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
     refetchInterval: options?.refetchBackoff?.enabled
-      ? (query: any) => {
+      ? (
+          query: Query<T, Error, T, string[]>
+        ): number | false | undefined => {
           const count = query.state.dataUpdateCount ?? 0;
           if (
             count > (options?.refetchBackoff?.options?.limit || 20) ||
@@ -66,6 +68,7 @@ export function useQueryData<T>(
     structuralSharing: false,
     ...options,
   });
+
   return {
     data,
     isLoading,

@@ -52,9 +52,7 @@ export function FileValidation(props: PFileValidation) {
   } = props;
 
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
-  const [currentUploadId, setCurrentUploadId] = useState<
-    string | null | undefined
-  >(null);
+  const [currentUploadId, setCurrentUploadId] = useState<string>(null);
   const [fileDropped, setFileDropped] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<string | boolean>(false);
@@ -90,7 +88,7 @@ export function FileValidation(props: PFileValidation) {
     ["latestPipelineResults", currentUploadId],
     fetchLatestPipelineResults,
     {
-      enabled: validating && currentUploadId !== null && !validated,
+      enabled: validating && !!currentUploadId && !validated,
       refetchBackoff: {
         enabled: true,
         options: {
@@ -276,7 +274,8 @@ export function FileValidation(props: PFileValidation) {
         <div>
           <h6>Results:</h6>
           <p>
-            Last updated at: {new Date(latestPipelineResults.dataUpdatedAt).toLocaleString()}
+            Last updated at:{" "}
+            {new Date(latestPipelineResults.dataUpdatedAt).toLocaleString()}
           </p>
         </div>
         <div className="tol-file-upload-results-viewer-content-inner-container">
