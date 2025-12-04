@@ -171,7 +171,7 @@ export function ValidationResultsViewer() {
                     onClick={() =>
                       downloadFileFromS3(
                         PIPELINE_DS,
-                        latestPipelineResults.data.s3Url,
+                        latestPipelineResults.data.s3Bucket,
                         latestPipelineResults.data.s3Filename
                       )
                     }

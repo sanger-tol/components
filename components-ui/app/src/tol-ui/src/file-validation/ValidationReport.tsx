@@ -62,7 +62,7 @@ export function ValidationReport(props: PValidationReport) {
                   onClick={() =>
                     downloadFileFromS3(
                       PIPELINE_DS,
-                      data?.s3Url || "",
+                      data?.s3Bucket || "",
                       data?.s3Filename || ""
                     )
                   }

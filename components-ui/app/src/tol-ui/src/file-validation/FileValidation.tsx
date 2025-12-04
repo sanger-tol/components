@@ -52,7 +52,7 @@ export function FileValidation(props: PFileValidation) {
   } = props;
 
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
-  const [currentUploadId, setCurrentUploadId] = useState<string>(null);
+  const [currentUploadId, setCurrentUploadId] = useState<string>("");
   const [fileDropped, setFileDropped] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<string | boolean>(false);
@@ -139,7 +139,7 @@ export function FileValidation(props: PFileValidation) {
       file,
       !validateAndUpload
     );
-    setCurrentUploadId(pipeline_id);
+    setCurrentUploadId(pipeline_id || "");
   };
 
   const handleReset = () => {
@@ -151,7 +151,7 @@ export function FileValidation(props: PFileValidation) {
       setResetKey((prev: number) => prev + 1);
       setValidating(false);
       setResetting(false);
-      setCurrentUploadId(null);
+      setCurrentUploadId("");
     }, 500);
   };
 

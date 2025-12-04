@@ -44,6 +44,7 @@ export function useQueryData<T>(
     isSuccess,
     refetch,
     dataUpdatedAt,
+    // @ts-ignore
   } = useQuery({
     queryKey,
     queryFn: fetchFn,

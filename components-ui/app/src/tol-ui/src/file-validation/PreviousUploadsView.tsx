@@ -115,7 +115,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
       <div className="tol-file-validation-previous-results-status-container">
         <a
           href="#"
-          onClick={() => downloadFileFromS3(PIPELINE_DS, data.s3Url, data.s3Filename)}
+          onClick={() => downloadFileFromS3(PIPELINE_DS, data.s3Bucket, data.s3Filename)}
         >
           <p>
             {

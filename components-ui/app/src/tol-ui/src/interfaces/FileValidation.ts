@@ -66,7 +66,7 @@ export interface IPipelineUpload {
   pipelineId: string;
   pipelineSteps: string[];
   s3Filename: string;
-  s3Url: string;
+  s3Bucket: string;
   validationResults: IValidationResult[];
   failureMessage: string | null;
 }
