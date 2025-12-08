@@ -14,7 +14,7 @@ import {
 } from "..";
 
 
-/**
+/** TEST
  * Parses TSDoc comments tagged with @-autodoc to extract component documentation
  */
 export class TSDocParser {
