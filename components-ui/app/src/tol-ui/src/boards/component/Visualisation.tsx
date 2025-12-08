@@ -14,7 +14,6 @@ import {
   PUtilityBar,
 } from "../..";
 
-
 export interface PVisualisation extends IBoardTargetAndZone {
   id: string;
   config: any;

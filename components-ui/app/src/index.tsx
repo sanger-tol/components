@@ -7,135 +7,26 @@ SPDX-License-Identifier: MIT
 import { createRoot } from "react-dom/client";
 import {
   Home,
-  BarCharts,
-  Colours,
-  DataSource,
-  Detail,
-  DetailInfo,
-  Filters,
-  Forms,
-  Miscellaneous,
-  Maps,
-  Tables,
-  Timelines,
   Sandbox,
-  Sunbursts,
-  Widgets,
-  Messages,
-  Factories,
-  Plates,
-  FileValidation,
   CodeStyle
 } from "./pages";
+import {
+  TolApp,
+  Page,
+  Dropdown,
+  TsDataSource,
+  env,
+  LOCAL_API_DATA_PATH,
+  generateAutoDocPages,
+} from "./tol-ui/src";
 import reportWebVitals from "./reportWebVitals";
-import { TolApp, Page, Dropdown, TOL_DS } from "./tol-ui/src";
 import "./scss/styling.scss";
 
-// main data-driven components
-const barCharts: Page = {
-  name: "BarCharts",
-  element: <BarCharts />,
-};
-
-const sunbursts: Page = {
-  name: "Sunbursts",
-  element: <Sunbursts />,
-};
-
-const tables: Page = {
-  name: "Tables",
-  element: <Tables />,
-};
-
-const filters: Page = {
-  name: "Filters",
-  element: <Filters />,
-};
-
-const maps: Page = {
-  name: "Maps",
-  element: <Maps />,
-};
-
-const portal: Page = {
-  name: "Portal",
-  link: {
-    href: "https://portal.tol.sanger.ac.uk",
-    target: "_blank",
-  },
-}
-
-const timelines: Page = {
-  name: "Timelines",
-  element: <Timelines />,
-};
-
-// other
-const colours: Page = {
-  name: "Colours",
-  element: <Colours />,
-};
-
-const detail: Page = {
-  name: "Detail",
-  element: <Detail />,
-  detail: <DetailInfo />,
-};
-
-const forms: Page = {
-  name: "Forms",
-  element: <Forms />,
-};
-
-const messages: Page = {
-  name: "Messages",
-  element: <Messages />,
-};
-
-const miscellaneous: Page = {
-  name: "Miscellaneous",
-  element: <Miscellaneous />,
-};
-
-const tsds: Page = {
-  name: "TsDataSource",
-  element: <DataSource />,
-};
-
-const widgets: Page = {
-  name: "Widgets",
-  element: <Widgets />,
-};
-
-const factories: Page = {
-  name: "Factories",
-  element: <Factories />
-}
-
-const visualisationsDropdown: Dropdown = {
-  name: "Visualisations",
-  pages: [barCharts, filters, maps, sunbursts, tables, timelines],
-};
-
-const plates: Page = {
-  name: "Plates",
-  element: <Plates />,
-};
-
-const fileValidation: Page = {
-  name: "File Validation",
-  element: <FileValidation /> 
-}
 
 const codeStyle: Page = {
-  name: "Code Style",
-  element: <CodeStyle /> 
+  name: "Code Style Guide",
+  element: <CodeStyle />
 }
-
-const otherDropdown: Dropdown = {
-  name: "Other",
-  pages: [colours, detail, factories, forms, messages, miscellaneous, tsds, widgets, plates, fileValidation, portal],
-};
 
 // dev sandbox - change element if needed
 const sandbox: Page = {
@@ -144,24 +35,28 @@ const sandbox: Page = {
   hidden: true,
 };
 
-// developer-specific dropdown
 const developerDropdown: Dropdown = {
   name: "Developer",
   pages: [codeStyle],
 };
 
+const autoDocPages = generateAutoDocPages();
+
+const boardDataSource = new TsDataSource({
+  apiPath: env.API_PATH,
+  apiDataPath: LOCAL_API_DATA_PATH,
+})
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
   <TolApp
-    boards={{dataSource: TOL_DS}}
+    boards={{boardDataSource}}
     brand="Components"
     homePage={<Home />}
     pages={[
-      visualisationsDropdown,
-      otherDropdown,
       sandbox,
       developerDropdown,
+      ...autoDocPages,
     ]}
   />
 );

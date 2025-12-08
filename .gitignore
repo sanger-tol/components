@@ -24,3 +24,5 @@ inject.js
 lib/
 yarn.lock
 package-lock.json
+playwright-report/
+test-results/

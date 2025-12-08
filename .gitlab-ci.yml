@@ -23,11 +23,7 @@ build-package-dummy:
     - qa
     - staging
     - production
-  needs:
-    - job: review_app
-      optional: true
-    - job: build-ui-dev
-      optional: true
+  needs: []
 
 deploy-package:
   stage: deploy

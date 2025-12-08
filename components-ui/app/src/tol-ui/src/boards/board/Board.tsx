@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-
 import { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import {
@@ -24,7 +23,6 @@ import {
   TBoardPrivilege,
   PRIVILEGE
 } from "../..";
-
 
 export interface PBoard {
   boardDataSource: TsDataSource;
