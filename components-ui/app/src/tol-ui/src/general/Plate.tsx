@@ -27,21 +27,22 @@ export function Plate(props: PPlate) {
     <div id={id} className="tol-plate-container">
       <div className="tol-plate">
         <div className="tol-plate-col-label">
-          {columnLabels.map((colLabel) => (
-            <p className="tol-plate-col-header">{colLabel}</p>
+          {columnLabels.map((colLabel, index) => (
+            <p key={index} className="tol-plate-col-header">{colLabel}</p>
           ))}
         </div>
         <div className="tol-plate-rows">
           <div className="tol-plate-row-label">
-            {rowLabels.map((rowLabel) => (
-              <p className="tol-plate-row-header">{rowLabel}</p>
+            {rowLabels.map((rowLabel, index) => (
+              <p key={index} className="tol-plate-row-header">{rowLabel}</p>
             ))}
           </div>
           <div className="tol-plate-wells">
-            { data.map((row) => (
-              <div className="tol-plate-wells-row">
+            {data.map((row, rowIndex) => (
+              <div key={rowIndex} className="tol-plate-wells-row">
                 {row.map((well) => (
-                  <Well
+                  <Well // @ts-ignore
+                    key={well.id}
                     data={well}
                     onClick={onWellClick}
                     HoverContents={WellHoverContents}
