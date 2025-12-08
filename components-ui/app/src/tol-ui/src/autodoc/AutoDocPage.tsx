@@ -14,6 +14,10 @@ import {
 } from "..";
 
 
+/**
+ * Inline styles need removing - currently for prototyping only
+ */
+
 export interface PAutoDocPage {
   documentation: IComponentDocumentation;
 }
