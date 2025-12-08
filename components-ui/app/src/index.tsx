@@ -16,10 +16,10 @@ import {
   Dropdown,
   TsDataSource,
   env,
-  LOCAL_API_DATA_PATH
+  LOCAL_API_DATA_PATH,
+  generateAutoDocPages,
 } from "./tol-ui/src";
 import reportWebVitals from "./reportWebVitals";
-import { generateAutoDocPages } from "./auto-doc";
 import "./scss/styling.scss";
 
 

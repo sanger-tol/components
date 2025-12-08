@@ -4,19 +4,25 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { AUTO_DOC_REGEX, EXAMPLE_REGEX, PROP_REGEX } from "../constants";
-import { IComponentDocumentation, IComponentExample, IComponentProp } from "../interfaces";
+import {
+  AUTO_DOC_REGEX,
+  EXAMPLE_REGEX,
+  PROP_REGEX,
+  IComponentDocumentation,
+  IComponentExample,
+  IComponentProp,
+} from "..";
 
 
 /**
- * Parses TSDoc comments tagged with @autodoc to extract component documentation
+ * Parses TSDoc comments tagged with @-autodoc to extract component documentation
  */
 export class TSDocParser {
   /**
    * Parses the content of a TypeScript file to extract component documentation
    * @param content - The file content as a string
    * @param filePath - The relative path to the file
-   * @returns Component documentation object or null if no @autodoc tag found
+   * @returns Component documentation object or null if no @-autodoc tag found
    */
   static parseFileContent(content: string, filePath: string): IComponentDocumentation | null {
     const autoDocMatch = content.match(AUTO_DOC_REGEX);
@@ -88,9 +94,6 @@ export class TSDocParser {
     
     // Then, get prop documentation from @prop tags
     const propDocs = this.extractPropDocumentation(docComment);
-
-    console.log('1', interfaceProps);
-    console.log('2', propDocs);
     
     // Merge interface definitions with documentation
     for (const interfaceProp of interfaceProps) {

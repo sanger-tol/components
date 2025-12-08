@@ -4,14 +4,16 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Page } from "../tol-ui/src";
-import { AutoDocPage } from "./AutoDocPage";
-import { TSDocParser } from "./TsDocParser";
-import { IComponentDocumentation } from "../interfaces";
+import { Page } from "..";
+import {
+  AutoDocPage,
+  TSDocParser,
+  IComponentDocumentation,
+} from "..";
 
 
 // Use Vite's glob import to get all tsx/jsx files as raw strings
-const modules = import.meta.glob('../tol-ui/src/**/*.{tsx,jsx}', { 
+const modules = import.meta.glob('../**/*.{tsx,jsx,ts,js}', { 
   as: 'raw',
   eager: true 
 });
@@ -25,7 +27,7 @@ function scanForAutoDocComponents(): IComponentDocumentation[] {
   
   for (const [path, content] of Object.entries(modules)) {
     if (typeof content === 'string' && content.includes('@autodoc')) {
-      const relativePath = path.replace('../tol-ui/src/', '');
+      const relativePath = path.replace('../', './');
       const documentation = TSDocParser.parseFileContent(content, relativePath);
       
       if (documentation) {

@@ -4,9 +4,14 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IComponentDocumentation } from "../interfaces";
-import { CenterContent, Widgets, IWidgetsComponent, RequiredAsterisk } from "../tol-ui/src";
 import { CodeBlock } from "react-code-blocks";
+import {
+  CenterContent,
+  Widgets,
+  IWidgetsComponent,
+  RequiredAsterisk,
+  IComponentDocumentation,
+} from "..";
 
 
 export interface PAutoDocPage {

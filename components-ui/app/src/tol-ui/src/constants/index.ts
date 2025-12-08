@@ -12,3 +12,4 @@ export * from "./privilege.constants";
 export * from "./general.constants";
 export * from "./file-validation.constants";
 export * from "./regex";
+export * from "./ts-doc-parser.constants";
