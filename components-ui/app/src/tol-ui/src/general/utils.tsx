@@ -4,11 +4,18 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
 import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
-import { PopUpMessage } from "..";
-
+import {
+  PopUpMessage,
+  TPlateSize,
+  ALPHABET,
+  PLATE_DIMENSIONS,
+  IEntityMeta,
+  TDataObjectListOrNull,
+  TPlateData,
+  getFieldByName
+} from "..";
 
 export function formatPath(name: string) {
   const path = name.toLowerCase();
@@ -228,8 +235,8 @@ export function copyToClipboard(text: string): void {
       .writeText(text)
       .catch((err) => console.error("Failed to copy text: ", err));
     PopUpMessage({
-      type: 'success',
-      message: 'Copied to clipboard',
+      type: "success",
+      message: "Copied to clipboard",
     });
   } else {
     console.warn("Clipboard API not available");
@@ -363,7 +370,9 @@ export function getHeight(type: string) {
   }
 }
 
-export function sortObjectAlphabetically(obj: Record<string, any>): Record<string, any> {
+export function sortObjectAlphabetically(
+  obj: Record<string, any>
+): Record<string, any> {
   return Object.keys(obj)
     .sort() // sort keys alphabetically
     .reduce((sortedObj: Record<string, any>, key: string) => {
