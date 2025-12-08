@@ -10,6 +10,7 @@ import {
   IValidationResult,
   Modal,
   PIPELINE_DS,
+  splitS3FilenameString,
 } from "..";
 
 export interface PValidationReport {
@@ -21,7 +22,6 @@ export interface PValidationReport {
 
 export function ValidationReport(props: PValidationReport) {
   const { data, open, setOpen, uploadStatus } = props;
-  console.log(data);
 
   const ValidationReportHeader = (
     <h3>{`Validation Report for Pipeline #${data?.id}`}</h3>
@@ -62,12 +62,12 @@ export function ValidationReport(props: PValidationReport) {
                   onClick={() =>
                     downloadFileFromS3(
                       PIPELINE_DS,
-                      data?.s3Url || "",
+                      data?.s3Bucket || "",
                       data?.s3Filename || ""
                     )
                   }
                 >
-                  {data?.s3Filename}
+                  {splitS3FilenameString(String(data?.s3Filename))}
                 </a>
               </h6>
             </li>

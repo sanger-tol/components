@@ -113,7 +113,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
   return (
     <>
       {MdUtilityBar}
-      <div className="tol-component-contents-with-offset tol-markdown">
+      <div className="tol-component-contents with-offset tol-markdown">
         {(showMarkdownViewer) ? MarkdownViewer : MarkdownEditor}
       </div>
     </>

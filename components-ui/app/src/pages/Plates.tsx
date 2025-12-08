@@ -14,55 +14,136 @@ const EXAMPLE_PLATE_DATA: TPlateData = [
       data: { concentration: "100%", size: "lg" },
     },
     {
-      id: "B1",
-      label: "B1",
+      id: "A2",
+      label: "A2",
       percentage: 20,
       data: { concentration: "20%", size: "sm" },
     },
     {
-      id: "C1",
-      label: "C1",
+      id: "A3",
+      label: "A3",
       className: "plate-well-success-test",
       data: { concentration: "40%", size: "sm" },
     },
     {
-      id: "D1",
-      label: "D1",
+      id: "A4",
+      label: "A4",
       className: "plate-well-success-test",
       percentage: 50,
       data: { concentration: "50%", size: "md" },
     },
     {
-      id: "E1",
-      label: "E1",
+      id: "A5",
+      label: "A5",
       className: "plate-well-success-test",
       percentage: 70,
       data: { concentration: "70%", size: "md" },
     },
     {
-      id: "F1",
-      label: "F1",
+      id: "A6",
+      label: "A6",
       className: "plate-well-success-test",
       percentage: 90,
       data: { concentration: "90%", size: "md" },
     },
     {
-      id: "G1",
-      label: "G1",
+      id: "A7",
+      label: "A7",
       percentage: 80,
       data: { concentration: "80%", size: "md" },
     },
     {
-      id: "H1",
-      label: "H1",
+      id: "A8",
+      label: "A8",
       percentage: 30,
       data: { concentration: "30%", size: "sm" },
+    },
+    {
+      id: "A9",
+      label: "A9",
+      percentage: 50,
+      data: { concentration: "50%", size: "sm" },
+    },
+    {
+      id: "A10",
+      label: "A10",
+      percentage: 60,
+      data: { concentration: "60%", size: "sm" },
+    },
+    {
+      id: "A11",
+      label: "A11",
+      percentage: 70,
+      data: { concentration: "70%", size: "sm" },
+    },
+    {
+      id: "A12",
+      label: "A12",
+      percentage: 80,
+      data: { concentration: "80%", size: "sm" },
+    },
+  ],
+  [
+    {
+      id: "B1",
+      label: "B1",
+      percentage: 50,
+      data: { concentration: "50%", size: "md" },
+    },
+  ],
+  [
+    {
+      id: "C1",
+      label: "C1",
+      percentage: 50,
+      data: { concentration: "50%", size: "sm" },
+    },
+  ],
+  [
+    {
+      id: "D1",
+      label: "D1",
+      percentage: 50,
+      data: { concentration: "50%", size: "sm" },
+    },
+  ],
+  [
+    {
+      id: "E1",
+      label: "E1",
+      percentage: 50,
+      data: { concentration: "50%", size: "sm" },
+    },
+  ],
+  [
+    {
+      id: "F1",
+      label: "F1",
+      percentage: 50,
+      data: { concentration: "50%", size: "sm" },
+    },
+  ],
+  [
+    {
+      id: "G1",
+      label: "G1",
+      percentage: 50,
+      data: { concentration: "50%", size: "sm" },
+    },
+  ],
+  [
+    {
+      id: "H1",
+      label: "H1",
+      percentage: 50,
+      className: "plate-well-success-test",
+      data: { concentration: "50%", size: "sm" },
     },
   ],
 ];
 
-const COL_NAMES = ["A", "B", "C", "D", "E", "F", "G", "H"];
-const ROW_NAMES = [
+const ROW_NAMES = ["A", "B", "C", "D", "E", "F", "G", "H"];
+const COL_NAMES = [
   "1",
   "2",
   "3",
@@ -96,9 +177,7 @@ export function Plates() {
     );
   };
 
-  const Title = (
-    <h2>Plate</h2>
-  );
+  const Title = <h2>Plate</h2>;
 
   const PlateComponent = (
     <Plate
@@ -122,7 +201,5 @@ export function Plates() {
     },
   ];
 
-  return (
-    <Widgets components={components} />
-  );
+  return <Widgets components={components} />;
 }

@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-
+import { useState } from "react";
 import { format } from "date-fns";
 import { customAlphabet } from "nanoid";
 import { PopUpMessage } from "..";
@@ -242,6 +242,72 @@ export function converterForElapsedTime(secondsElapsed: number): string {
     .padStart(2, "0");
   const seconds = (secondsElapsed % 60).toString().padStart(2, "0");
   return `${minutes}:${seconds}`;
+}
+
+export function identifyDimension(dimension: TPlateSize) {
+  const rowLabels: String[] = [];
+  [...ALPHABET].map((letter, index) => {
+    if (index < PLATE_DIMENSIONS[dimension]["y"]) rowLabels.push(letter);
+  });
+  const columnLabels = [...Array(PLATE_DIMENSIONS[dimension].x).keys()].map(
+    (i) => String(i + 1)
+  );
+  return [rowLabels, columnLabels];
+}
+
+export function baseDataGenerator(rowLabels, columnLabels) {
+  const dataFrame: any[] = [];
+  rowLabels.forEach((rows) => {
+    const cells: any[] = [];
+    columnLabels.forEach((columns) => {
+      const wellData = {};
+      wellData["id"] = rows + columns;
+      wellData["label"] = rows + columns;
+      cells.push(wellData);
+    });
+    dataFrame.push(cells);
+  });
+  return dataFrame;
+}
+
+export function generatePlateData(
+  objectType: string,
+  entityMeta: IEntityMeta,
+  dataObjects: TDataObjectListOrNull,
+  data: TPlateData,
+  wellPositionAttribute: string,
+  wellHoverAttributeKeys: string[]
+): TPlateData {
+  dataObjects?.forEach((obj) => {
+    const wellData = {};
+    const wellPosition = getFieldByName(obj, wellPositionAttribute);
+    const letter = wellPosition.match(/[a-zA-Z]/g);
+    const digits = wellPosition.match(/[0-9]/g);
+    wellHoverAttributeKeys.forEach((element) => {
+      const displayName =
+        entityMeta["flatAttributes"][objectType][element].display_name;
+      wellData[displayName] = getFieldByName(obj, element);
+    });
+    data[ALPHABET.indexOf(letter)][Number(digits) - 1] = {
+      id: wellPosition,
+      label: wellPosition,
+      className: "tol-primary-bg",
+      data: wellData,
+    };
+  });
+  return data;
+}
+
+export function generateWellFilter(
+  clickedOnWellId: string | undefined,
+  wellPositionAttribute: string
+) {
+  const localFilters = { and_: {} };
+  localFilters["and_"][wellPositionAttribute] = {
+    eq: { value: clickedOnWellId },
+  };
+
+  return localFilters;
 }
 
 export function updateContents(contents: object) {

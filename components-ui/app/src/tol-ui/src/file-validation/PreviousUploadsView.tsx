@@ -21,6 +21,7 @@ import {
   normaliseCaps,
   truncateString,
   PIPELINE_DS,
+  splitS3FilenameString,
 } from "..";
 
 export interface PPreviousUploadsView {
@@ -114,12 +115,12 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
       <div className="tol-file-validation-previous-results-status-container">
         <a
           href="#"
-          onClick={() => downloadFileFromS3(PIPELINE_DS, data.s3Url, data.s3Filename)}
+          onClick={() => downloadFileFromS3(PIPELINE_DS, data.s3Bucket, data.s3Filename)}
         >
           <p>
             {
               <HoverOverlay contents={"download"}>
-                {data.s3Filename}
+                {splitS3FilenameString(String(data.s3Filename))}
               </HoverOverlay>
             }
           </p>

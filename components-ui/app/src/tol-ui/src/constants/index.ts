@@ -9,6 +9,7 @@ export * from "./user.constants";
 export * from "./form.constants";
 export * from "./messaging.constants";
 export * from "./privilege.constants";
+export * from "./plates.constants";
 export * from "./general.constants";
 export * from "./file-validation.constants";
 export * from "./regex";

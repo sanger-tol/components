@@ -330,7 +330,7 @@ export function BarChart(props: Props) {
         ]}
         {...utilityBarConfig}
       />
-      <div className="tol-component-contents-with-offset">
+      <div className="tol-component-contents with-offset">
         {contents ? contents :
           <Chart
             type={chartType === "scatter" ? "line" : (chartType as keyof ChartTypeRegistry)}

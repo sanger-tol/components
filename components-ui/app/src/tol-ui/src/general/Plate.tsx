@@ -12,8 +12,8 @@ import {
 
 export interface PPlate {
   id: string;
-  rowLabels: string[];
-  columnLabels: string[];
+  rowLabels: String[];
+  columnLabels: String[];
   data: TPlateData;
   onWellClick?: (id: string) => void;
   WellHoverContents?: (props: IWellHoverContents) => JSX.Element;
@@ -38,7 +38,7 @@ export function Plate(props: PPlate) {
             ))}
           </div>
           <div className="tol-plate-wells">
-            {data.map((row) => (
+            { data.map((row) => (
               <div className="tol-plate-wells-row">
                 {row.map((well) => (
                   <Well

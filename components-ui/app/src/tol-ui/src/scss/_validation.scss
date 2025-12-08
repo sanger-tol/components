@@ -683,6 +683,11 @@
   justify-content: space-between;
   align-items: center;
 
+  .tol-file-validation-results-viewer-title-buttons {
+    display: flex;
+    gap: 5px;
+  }
+
   h3 {
     margin: 0;
   }

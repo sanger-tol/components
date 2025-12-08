@@ -218,7 +218,7 @@ export function Sunburst(props: Props) {
           ]}
         />
       }
-      <div className={utilityBarConfig !== null ? "tol-component-contents-with-offset" : "tol-component-contents"}>
+      <div className={utilityBarConfig !== null ? "tol-component-contents with-offset" : "tol-component-contents"}>
         {contents ? contents : 
           <Doughnut
             id={id}

@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Toggle } from "rsuite";
 import {
   ValidateSteps,
@@ -14,7 +13,6 @@ import {
   uploadPipelineConfig,
   fetchCurrentPipelineResults,
   constructCompletionMessage,
-  REFRESH_INTERVAL,
   determineUploadStatus,
   getErrorWarningCounts,
   PreviousUploadsModal,
@@ -32,6 +30,7 @@ import {
   TsDataSource,
   DEFAULT_FILE_TYPE,
   downloadFileFromS3,
+  useQueryData,
 } from "..";
 
 export interface PFileValidation {
@@ -46,7 +45,6 @@ export const PIPELINE_DS = new TsDataSource();
 
 export function FileValidation(props: PFileValidation) {
   const {
-    objectType,
     validationConfig,
     pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
@@ -54,7 +52,7 @@ export function FileValidation(props: PFileValidation) {
   } = props;
 
   const [validateAndUpload, setValidateAndUpload] = useState<boolean>(false);
-  const [currentUploadId, setCurrentUploadId] = useState<string | null | undefined>(null);
+  const [currentUploadId, setCurrentUploadId] = useState<string>("");
   const [fileDropped, setFileDropped] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<string | boolean>(false);
@@ -86,41 +84,44 @@ export function FileValidation(props: PFileValidation) {
     );
   };
 
-  const {
-    data: latestPipelineResults = {} as IPipelineUpload | null,
-    refetch: refetchLatestPipelineResults,
-    dataUpdatedAt: latestResultsUpdatedAt,
-  } = useQuery({
-    queryKey: ["latestPipelineResults", currentUploadId],
-    queryFn: fetchLatestPipelineResults,
-    enabled: validating && currentUploadId !== null && !validated,
-    refetchInterval: validating && stepsFound ? REFRESH_INTERVAL : false,
-    staleTime: 0,
-  });
+  const latestPipelineResults = useQueryData<IPipelineUpload | null>(
+    ["latestPipelineResults", currentUploadId],
+    fetchLatestPipelineResults,
+    {
+      enabled: validating && !!currentUploadId && !validated,
+      refetchBackoff: {
+        enabled: true,
+        options: {
+          stopCondition: !validating && !stepsFound,
+        },
+      },
+      staleTime: 0,
+    }
+  );
 
   useEffect(() => {
     if (latestPipelineResults) {
-      setStepsFound(latestPipelineResults.pipelineSteps?.length > 0);
+      setStepsFound(latestPipelineResults.data.pipelineSteps?.length > 0);
 
-      if (latestPipelineResults.completed) {
+      if (latestPipelineResults.data.completed) {
         setValidated(true);
 
         const counts = getErrorWarningCounts(
-          latestPipelineResults.validationResults
+          latestPipelineResults.data.validationResults
         );
 
         const status = determineUploadStatus(
-          latestPipelineResults.completed,
+          latestPipelineResults.data.completed,
           counts.errors,
           counts.warnings,
-          latestPipelineResults.failureMessage || null
+          latestPipelineResults.data.failureMessage || null
         );
 
         setValidationStatus(status);
 
         const completionMessage = constructCompletionMessage(
-          latestPipelineResults.validationResults,
-          latestPipelineResults.failureMessage
+          latestPipelineResults.data.validationResults,
+          latestPipelineResults.data.failureMessage
         );
 
         PopUpMessage({
@@ -138,7 +139,7 @@ export function FileValidation(props: PFileValidation) {
       file,
       !validateAndUpload
     );
-    setCurrentUploadId(pipeline_id);
+    setCurrentUploadId(pipeline_id || "");
   };
 
   const handleReset = () => {
@@ -150,7 +151,7 @@ export function FileValidation(props: PFileValidation) {
       setResetKey((prev: number) => prev + 1);
       setValidating(false);
       setResetting(false);
-      setCurrentUploadId(null);
+      setCurrentUploadId("");
     }, 500);
   };
 
@@ -254,7 +255,7 @@ export function FileValidation(props: PFileValidation) {
         <p>Validate and submit</p>
       </div>
       <Dropzone
-        resource={objectType}
+        resource={""}
         dataSource={PIPELINE_DS}
         fileType={fileType}
         onFileDrop={(fileDropped: boolean) => setFileDropped(fileDropped)}
@@ -273,20 +274,21 @@ export function FileValidation(props: PFileValidation) {
         <div>
           <h6>Results:</h6>
           <p>
-            Last updated at: {new Date(latestResultsUpdatedAt).toLocaleString()}
+            Last updated at:{" "}
+            {new Date(latestPipelineResults.dataUpdatedAt).toLocaleString()}
           </p>
         </div>
         <div className="tol-file-upload-results-viewer-content-inner-container">
           <h6 className="tol-file-upload-results-viewer-content-status">
-            {latestPipelineResults?.completed
+            {latestPipelineResults?.data.completed
               ? `${validationStatus.text}`
               : "In Progress"}
           </h6>
           <Button
             icon="rotate"
             tooltip="Refresh"
-            disabled={latestPipelineResults?.completed}
-            onClick={() => refetchLatestPipelineResults()}
+            disabled={latestPipelineResults?.data.completed}
+            onClick={() => latestPipelineResults.refetch()}
             timeout={BUTTON_TIMEOUT}
           />
         </div>
@@ -301,12 +303,12 @@ export function FileValidation(props: PFileValidation) {
           />
         </div>
       ) : Array.isArray(latestPipelineResults) ? null : (
-        latestPipelineResults?.validationResults && (
+        latestPipelineResults?.data.validationResults && (
           <ValidateSteps
-            data={latestPipelineResults.validationResults}
-            steps={latestPipelineResults.pipelineSteps}
-            completed={latestPipelineResults.completed}
-            failureMessage={latestPipelineResults.failureMessage}
+            data={latestPipelineResults.data.validationResults}
+            steps={latestPipelineResults.data.pipelineSteps}
+            completed={latestPipelineResults.data.completed}
+            failureMessage={latestPipelineResults.data.failureMessage}
           />
         )
       )}
@@ -324,7 +326,7 @@ export function FileValidation(props: PFileValidation) {
               onClick={() =>
                 downloadFileFromS3(
                   PIPELINE_DS,
-                  validationConfig.s3_url,
+                  validationConfig.s3_bucket,
                   defaultFileTemplateName
                 )
               }
