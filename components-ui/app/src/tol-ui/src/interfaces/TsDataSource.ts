@@ -112,6 +112,12 @@ export interface ISourceDataObject extends IDataObject {
   __sourceId: string;
 }
 
+export interface IIncludedLookup {
+  [objectType: string]: {
+    [id: string]: IDataObject;
+  };
+}
+
 export interface IAttributeDescriptor {
   authoritative: boolean;
   available_on_relationships: boolean;

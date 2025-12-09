@@ -31,6 +31,10 @@ import {
   IGetAttributeDescriptor,
   IAttributeDescriptor,
   API_OPERATIONS,
+  IIncludedLookup,
+  IJsonApiData,
+  IJsonApiResponse,
+  IJsonApiResponseData
 } from "..";
 
 
@@ -82,7 +86,7 @@ export class TsDataSource {
   private removeEmptyParams = (obj: Record<string, any>) => (
     Object.fromEntries(Object.entries(obj).filter(([_, v]) => v))
   );
-  
+
   public getDataSourceInstanceId(): string | undefined {
     return this.dataSourceInstanceId;
   }
@@ -91,60 +95,102 @@ export class TsDataSource {
     return this.baseUrl;
   }
 
-  private fetchRelationshipHandler = {
-    get: async (target: ISourceDataObject, key: string) => {
-      const targetValue = target?.[key];
+  private createRelationshipHandler(
+    fetchMissing?: (args: IGetToOneRelation) => Promise<TDataObjectOrNull>
+  ) {
+    return {
+      get: (target: ISourceDataObject, key: string) => {
+        const targetValue = target?.[key];
 
-      if (targetValue === null) return null;
+        if (targetValue === null) return null;
 
-      if (targetValue !== undefined)
-        return new Proxy(targetValue.data, this.dataObjectHandler);
+        if (targetValue !== undefined) {
+          return new Proxy(targetValue.data, this.dataObjectHandler);
+        }
 
-      return await this.getToOneRelation({
-        objectType: target.__sourceType,
-        id: target.__sourceId,
-        relation: key,
-      });
-    },
+        // if no fetcher supplied, just return undefined
+        if (!fetchMissing) return undefined;
+
+        // delegate to async fetcher; caller may await the result
+        return fetchMissing({
+          objectType: target.__sourceType,
+          id: target.__sourceId,
+          relation: key,
+        });
+      },
+    };
+  }
+
+  private relationshipHandler = this.createRelationshipHandler();
+
+  private fetchRelationshipHandler = this.createRelationshipHandler(
+    (args) => this.getToOneRelation(args)
+  );
+
+  private createRelationshipsProxy = (target: any, handler: any) => {
+    const relationshipsTarget: ISourceDataObject = {
+      ...(target?.relationships ?? {}),
+      __sourceType: target.type,
+      __sourceId: target.id,
+    };
+    return new Proxy(relationshipsTarget, handler);
   };
 
-  private relationshipHandler = {
-    get: (target: ISourceDataObject, key: string) => {
-      const targetValue = target?.[key];
+  private buildIncludedLookup(included: any[] | undefined): IIncludedLookup {
+    const lookup: IIncludedLookup = {};
+    if (!included) return lookup;
 
-      if (targetValue === null) return null;
+    for (const item of included) {
+      const type = item?.type;
+      const id = item?.id;
+      if (!type || !id) continue;
 
-      if (targetValue !== undefined)
-        return new Proxy(targetValue.data, this.dataObjectHandler);
-    },
-  };
+      const typeLookup = (lookup[type] ??= {});
+      typeLookup[id] = item;
+    }
+
+    return lookup;
+  }
 
   private dataObjectHandler = {
-    get: (target: any, key: string) => {
-      if (key === "objectType") return target.type;
-      if (key === "id") return target.id;
+    get: (data: IJsonApiData, key: string) => {
+      if (key === "objectType") return data.type;
+      if (key === "id") return data.id;
 
       if (key === "fetchRelationships") {
-        const relationshipsTarget: ISourceDataObject = {
-          ...(target?.relationships ?? {}),
-          __sourceType: target.type,
-          __sourceId: target.id,
-        };
-        return new Proxy(relationshipsTarget, this.fetchRelationshipHandler);
+        return this.createRelationshipsProxy(data, this.fetchRelationshipHandler);
       }
 
       if (key === "relationships") {
-        const relationshipsTarget: ISourceDataObject = {
-          ...(target?.relationships ?? {}),
-          __sourceType: target.type,
-          __sourceId: target.id,
-        };
-        return new Proxy(relationshipsTarget, this.relationshipHandler);
+        return this.createRelationshipsProxy(data, this.relationshipHandler);
       }
 
-      return target.attributes?.[key];
+      return data?.attributes?.[key];
     },
   };
+
+  private jsonApiResponseToDataObject = (response: IJsonApiResponse) => {
+    const responseData: IJsonApiResponseData = response.data;
+    const isSingleObject = !Array.isArray(responseData.data);
+
+    const data: IJsonApiData[] = isSingleObject
+      ? [responseData.data as IJsonApiData]
+      : responseData.data as IJsonApiData[];
+    const included: IIncludedLookup = this.buildIncludedLookup(responseData.included);
+    const meta = responseData.meta;
+
+    const dataObjects = data?.map((datum: IJsonApiData) => (
+      new Proxy(
+        {
+          ...datum,
+          __includedLookup: included,
+          __meta: meta,
+        },
+        this.dataObjectHandler
+      )
+    ));
+    return isSingleObject ? dataObjects[0] : dataObjects;
+  }
 
   private getLocalStorageKey(o: string): string {
     return `${o}-${this.sourceKey}`;
@@ -307,8 +353,8 @@ export class TsDataSource {
       .get(this.generateEndpoint(objectType, `/${id}`), {
         baseURL: this.baseUrl,
       })
-      .then((response: any) => {
-        return new Proxy(response.data.data, this.dataObjectHandler);
+      .then((response: IJsonApiResponse) => {
+        return this.jsonApiResponseToDataObject(response);
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
@@ -325,8 +371,8 @@ export class TsDataSource {
       .get(this.generateEndpoint(objectType, `${API_OPERATIONS.TO_ONE}/${id}/${relation}`), {
         baseURL: this.baseUrl,
       })
-      .then((response: any) => {
-        return new Proxy(response.data.data, this.dataObjectHandler);
+      .then((response: IJsonApiResponse) => {
+        return this.jsonApiResponseToDataObject(response);
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
@@ -361,10 +407,8 @@ export class TsDataSource {
           requested_fields: requestedFields,
         })
       })
-      .then((response: any) => {
-        return response.data.data.map((object: any) => {
-          return new Proxy(object, this.dataObjectHandler);
-        });
+      .then((response: IJsonApiResponse) => {
+        return this.jsonApiResponseToDataObject(response);
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
@@ -447,11 +491,11 @@ export class TsDataSource {
           }),
         }
       )
-      .then((response: any) => {
-        const dataObjects = response.data.data.map((object: any) => {
-          return new Proxy(object, this.dataObjectHandler);
-        });
-        return [dataObjects, response.data.meta.search_after];
+      .then((response: IJsonApiResponse) => {
+        return [
+          this.jsonApiResponseToDataObject(response),
+          response.data.meta.search_after
+        ];
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
