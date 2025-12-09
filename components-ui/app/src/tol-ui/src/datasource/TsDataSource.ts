@@ -18,7 +18,7 @@ import {
   IGetByIds,
   IGetListPage,
   ICustom,
-  ISourceDataObject,
+  IDataObjectExtra,
   TDataObjectOrNull,
   TDataObjectListOrNull,
   httpClient,
@@ -96,26 +96,27 @@ export class TsDataSource {
   }
 
   private createRelationshipHandler(
-    fetchMissing?: (args: IGetToOneRelation) => Promise<TDataObjectOrNull>
+    fetcher?: (args: IGetToOneRelation) => Promise<TDataObjectOrNull>
   ) {
     return {
-      get: (target: ISourceDataObject, key: string) => {
-        const targetValue = target?.[key];
+      get: (relationships: IDataObjectExtra, relationKey: string) => {
+        const relation = relationships?.[relationKey];
 
-        if (targetValue === null) return null;
+        if (relation === null) return null;
 
-        if (targetValue !== undefined) {
-          return new Proxy(targetValue.data, this.dataObjectHandler);
+        if (relation?.data?.id && relation?.data?.type) {
+          return new Proxy(
+            relationships.__includedLookup?.[relation.data.type]?.[relation.data.id] ?? {},
+            this.dataObjectHandler
+          );
         }
 
-        // if no fetcher supplied, just return undefined
-        if (!fetchMissing) return undefined;
+        if (!fetcher) return undefined;
 
-        // delegate to async fetcher; caller may await the result
-        return fetchMissing({
-          objectType: target.__sourceType,
-          id: target.__sourceId,
-          relation: key,
+        return fetcher({
+          objectType: relationships.__sourceType,
+          id: relationships.__sourceId,
+          relation: relationKey,
         });
       },
     };
@@ -128,10 +129,12 @@ export class TsDataSource {
   );
 
   private createRelationshipsProxy = (target: any, handler: any) => {
-    const relationshipsTarget: ISourceDataObject = {
+    const relationshipsTarget: IDataObjectExtra = {
       ...(target?.relationships ?? {}),
       __sourceType: target.type,
       __sourceId: target.id,
+      __includedLookup: target.__includedLookup,
+      __meta: target.__meta,
     };
     return new Proxy(relationshipsTarget, handler);
   };
@@ -528,10 +531,8 @@ export class TsDataSource {
           params: params,
         }
       )
-      .then((response: any) => {
-        return response.data.data.map((object: any) => {
-          return new Proxy(object, this.dataObjectHandler);
-        });
+      .then((response: IJsonApiResponse) => {
+        return this.jsonApiResponseToDataObject(response);
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;

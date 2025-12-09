@@ -107,9 +107,11 @@ export interface IDataObject {
   };
 }
 
-export interface ISourceDataObject extends IDataObject {
+export interface IDataObjectExtra extends IDataObject {
   __sourceType: string;
   __sourceId: string;
+  __includedLookup?: IIncludedLookup;
+  __meta?: Record<string, unknown>;
 }
 
 export interface IIncludedLookup {
