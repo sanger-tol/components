@@ -18,7 +18,7 @@ import {
   IGetByIds,
   IGetListPage,
   ICustom,
-  IDataObjectExtra,
+  ISourceDataObject,
   TDataObjectOrNull,
   TDataObjectListOrNull,
   httpClient,
@@ -99,7 +99,7 @@ export class TsDataSource {
     fetcher?: (args: IGetToOneRelation) => Promise<TDataObjectOrNull>
   ) {
     return {
-      get: (relationships: IDataObjectExtra, relationKey: string) => {
+      get: (relationships: ISourceDataObject, relationKey: string) => {
         const relation = relationships?.[relationKey];
 
         if (relation === null) return null;
@@ -136,7 +136,7 @@ export class TsDataSource {
   );
 
   private createRelationshipsProxy = (target: any, handler: any) => {
-    const relationshipsTarget: IDataObjectExtra = {
+    const relationshipsTarget: ISourceDataObject = {
       ...(target?.relationships ?? {}),
       __sourceType: target.type,
       __sourceId: target.id,
