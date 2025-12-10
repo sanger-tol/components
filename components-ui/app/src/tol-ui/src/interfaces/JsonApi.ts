@@ -4,13 +4,25 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export interface IJsonApiData {
+import { IDataObject } from "..";
+
+
+export interface IIncludedLookup {
+  [objectType: string]: {
+    [id: string]: IDataObject;
+  };
+}
+
+export interface IJsonApiDataExtra {
+  __includedLookup?: IIncludedLookup;
+  __meta?: Record<string, unknown>;
+}
+
+export interface IJsonApiData extends IJsonApiDataExtra {
   type: string;
   id: string;
   attributes?: Record<string, unknown>;
   relationships?: Record<string, unknown>;
-  __meta?: Record<string, unknown>;
-  __includedLookup?: Record<string, unknown>;
 }
 
 export type TJsonApiData = IJsonApiData | IJsonApiData[];
