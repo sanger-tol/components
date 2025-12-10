@@ -105,8 +105,15 @@ export class TsDataSource {
         if (relation === null) return null;
 
         if (relation?.data?.id && relation?.data?.type) {
+          const includedData = relationships.__includedLookup?.[relation.data.type]?.[relation.data.id];
           return new Proxy(
-            relationships.__includedLookup?.[relation.data.type]?.[relation.data.id] ?? {},
+            {
+              ...includedData,
+              id: relation.data.id,
+              type: relation.data.type,
+              __includedLookup: relationships.__includedLookup,
+              __meta: relationships.__meta,
+            },
             this.dataObjectHandler
           );
         }
