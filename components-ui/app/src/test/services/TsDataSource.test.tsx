@@ -118,24 +118,33 @@ const nestedRelationshipMockData = {
           data: {
             id: "nestedRelationships2",
             type: "specimen",
-            attributes: {
-              name: "specimenName",
-            },
-            relationships: {
-              species: {
-                data: {
-                  id: "nestedRelationships3",
-                  type: "species",
-                  attributes: {
-                    name: "speciesName",
-                  },
-                },
-              },
-            },
           },
         },
       },
     },
+    included: [
+      {
+        id: "nestedRelationships2",
+        type: "specimen",
+        attributes: {
+          name: "specimenName",
+        },
+        relationships: {
+          species: {
+            data: {
+              id: "nestedRelationships3",
+              type: "species",
+            },
+          },
+        },
+      },
+      {
+        id: "nestedRelationships3",
+        type: "species",
+        attributes: {
+          name: "speciesName",
+        },
+      }]
   },
 };
 

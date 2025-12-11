@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IEntityMeta, IFilter } from "..";
+import { IEntityMeta, IFilter, IJsonApiDataExtra } from "..";
 
 
 export interface IConfigPromises {
@@ -107,7 +107,7 @@ export interface IDataObject {
   };
 }
 
-export interface ISourceDataObject extends IDataObject {
+export interface ISourceDataObject extends IDataObject, IJsonApiDataExtra {
   __sourceType: string;
   __sourceId: string;
 }
