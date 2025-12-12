@@ -208,7 +208,7 @@ export function getReadOnlyAndFilterText(
   const valueAsDate = new Date(operatorOptions.value);
   const valueIsValidDate = valueAsDate instanceof Date && !isNaN(valueAsDate as any);
 
-  const formattedValue = valueIsValidDate ? valueAsDate.toLocaleString() : operatorOptions.value;
+  const formattedValue = valueIsValidDate ? valueAsDate.toLocaleDateString() : operatorOptions.value;
 
   // All proses start with "must" or "must not" to describe an operator
   // (depending on whether it's negated)
