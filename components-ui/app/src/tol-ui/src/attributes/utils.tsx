@@ -204,6 +204,12 @@ export function renderTotalSelectedItems(
 export function getReadOnlyAndFilterText(
   [operatorType, operatorOptions]: [TFilterOperatorType, IFilterOperatorOptions]
 ): string {
+  // Account for date edge case
+  const valueAsDate = new Date(operatorOptions.value);
+  const valueIsValidDate = valueAsDate instanceof Date && !isNaN(valueAsDate as any);
+
+  const formattedValue = valueIsValidDate ? valueAsDate.toLocaleString() : operatorOptions.value;
+
   // All proses start with "must" or "must not" to describe an operator
   // (depending on whether it's negated)
   let prose = "";
@@ -220,40 +226,40 @@ export function getReadOnlyAndFilterText(
       prose += " exist";
       break;
     case "contains":
-      prose += ` have a value containing ${operatorOptions.value}`;
+      prose += ` have a value containing ${formattedValue}`;
       break;
     case "eq":
-      prose += ` equal ${operatorOptions.value}`;
+      prose += ` equal ${formattedValue}`;
       break;
     case "gt":
-      prose += ` be greater than ${operatorOptions.value}`;
+      prose += ` be greater than ${formattedValue}`;
       break;
     case "gte":
-      prose += ` be greater than or equal to ${operatorOptions.value}`;
+      prose += ` be greater than or equal to ${formattedValue}`;
       break;
     case "lt":
-      prose += ` be less than ${operatorOptions.value}`;
+      prose += ` be less than ${formattedValue}`;
       break;
     case "lte":
-      prose += ` be less than or equal to ${operatorOptions.value}`;
+      prose += ` be less than or equal to ${formattedValue}`;
       break;
     case "in_list":
       // Even though this was from a multi-select,
       // it's still very possible the user only selected one option.
       // In that case, operate similarly to the "eq" operator.
       // However, I have chosen to change the message to differentiate it from said operator
-      if ((operatorOptions.value as Array<any>).length == 1) {
-        prose += ` be ${operatorOptions.value}`;
+      if ((formattedValue as Array<any>).length == 1) {
+        prose += ` be ${formattedValue}`;
         break;
       }
 
       prose += " be one of"
 
-      operatorOptions.value.forEach((item: string, index: number) => {
+      formattedValue.forEach((item: string, index: number) => {
         if (index == 0) {
           // First item in the list
           prose += ` ${item}`;
-        } else if (index == operatorOptions.value.length - 1) {
+        } else if (index == formattedValue.length - 1) {
           // Last item in the list
           prose += ` or ${item}`;
         } else {
