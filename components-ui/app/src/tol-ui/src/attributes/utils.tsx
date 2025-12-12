@@ -207,6 +207,7 @@ export function getReadOnlyAndFilterText(
   // Account for date edge case
   const valueAsDate = new Date(operatorOptions.value);
   const valueIsValidDate = valueAsDate instanceof Date && !isNaN(valueAsDate as any);
+  // const variableIForgotToDelete = "whoops";
 
   const formattedValue = valueIsValidDate ? valueAsDate.toLocaleDateString() : operatorOptions.value;
 
