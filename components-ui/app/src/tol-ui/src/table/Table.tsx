@@ -30,6 +30,7 @@ import {
   RowCounter,
   RowExpander,
   AttributeTitle,
+  TFieldDropdownChoices,
 } from "..";
 import { Sort } from "./Sort";
 import { FieldDropdown } from "./FieldDropdown";
@@ -62,6 +63,7 @@ interface Props extends IRemoteTargetAndZone {
   handleSortColumn: any;
   filter: any;
   copySeparator?: string;
+  fieldDropdownChoices?: TFieldDropdownChoices;
 
   onConfigSave: (config: ITableConfigSave) => void;
 
@@ -116,6 +118,7 @@ export function Table(props: Props) {
     filter,
     expandedRows,
     copySeparator,
+    fieldDropdownChoices,
 
     noFilter,
     noPagination,
@@ -488,12 +491,15 @@ export function Table(props: Props) {
                               attribute={key}
                               sortable={sortable}
                             />
-                            <FieldDropdown
-                              {...props}
-                              attribute={key}
-                              data={data}
-                              separator={copySeparator}
-                            />
+                            {!field.custom && (
+                              <FieldDropdown
+                                {...props}
+                                attribute={key}
+                                data={data}
+                                separator={copySeparator}
+                                choices={fieldDropdownChoices}
+                              />
+                            )}
                           </HeaderCell>
                           <Cell dataKey={key} />
                         </Column>
