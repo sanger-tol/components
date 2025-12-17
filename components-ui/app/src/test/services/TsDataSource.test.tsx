@@ -345,8 +345,8 @@ describe("generateEndpoint function", () => {
 
 describe("Testing basic getter functions", () => {
   test("getBaseUrl returns correct base URL", () => {
-    const baseUrl = mockDataSource.getBaseUrl();
-    expect(baseUrl).toBe("/test-data-path");
+    const baseURL = mockDataSource.getBaseUrl();
+    expect(baseURL).toBe("/test-data-path");
   });
 });
 

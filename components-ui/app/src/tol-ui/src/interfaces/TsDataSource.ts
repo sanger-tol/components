@@ -7,11 +7,11 @@ import { IEntityMeta, IFilter, IJsonApiDataExtra } from "..";
 
 
 export interface IConfigPromises {
-  [baseUrl: string]: Promise<object>;
+  [baseURL: string]: Promise<object>;
 }
 
 export interface IEntityMetaPromises {
-  [baseUrl: string]: Promise<IEntityMeta>;
+  [baseURL: string]: Promise<IEntityMeta>;
 }
 
 export interface IDataSource {
