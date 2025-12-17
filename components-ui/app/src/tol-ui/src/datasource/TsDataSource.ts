@@ -357,11 +357,15 @@ export class TsDataSource {
 
   public async getOne({
     objectType,
-    id
+    id,
+    requestedFields,
   }: IGetOne): Promise<TDataObjectOrNull> {
     return this.client()
       .get(this.generateEndpoint(objectType, `/${id}`), {
         baseURL: this.baseUrl,
+        params: this.removeEmptyParams({
+          requested_fields: requestedFields,
+        })
       })
       .then((response: IJsonApiResponse) => {
         return this.jsonApiResponseToDataObject(response);
