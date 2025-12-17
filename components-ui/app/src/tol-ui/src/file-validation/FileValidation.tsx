@@ -100,7 +100,7 @@ export function FileValidation(props: PFileValidation) {
   );
 
   useEffect(() => {
-    if (latestPipelineResults) {
+    if (latestPipelineResults.data) {
       setStepsFound(latestPipelineResults.data.pipelineSteps?.length > 0);
 
       if (latestPipelineResults.data.completed) {
@@ -130,7 +130,7 @@ export function FileValidation(props: PFileValidation) {
         });
       }
     }
-  }, [latestPipelineResults]);
+  }, [latestPipelineResults.data]);
 
   const handleValidation = async (file: IFileData) => {
     const pipeline_id = await uploadPipelineConfig(

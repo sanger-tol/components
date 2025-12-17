@@ -57,27 +57,29 @@ export function ValidateSteps(props: PValidateSteps) {
     >
       <div>
         <div className="tol-file-uploader-validate-steps-inner-container">
-          {steps.length > 0 ? steps.map((stepName: string) => {
-            const stepData = data.filter(
-              (result: IValidationResult) => result.stepName === stepName
-            );
-            return (
-              <div
-                key={stepName}
-                ref={props.stepName === stepName ? props.targetRef : null}
-              >
-                <ValidateStep
-                  id={`${stepName}`}
-                  stepName={stepName}
-                  results={stepData}
-                  expanded={expandedIndex === stepName}
-                  onSeeAllErrors={() => handleToggleExpanded(stepName)}
-                  completed={completed}
-                  failureMessage={failureMessage}
-                />
-              </div>
-            );
-          }): (
+          {steps.length > 0 ? (
+            steps.map((stepName: string) => {
+              const stepData = data.filter(
+                (result: IValidationResult) => result.stepName === stepName
+              );
+              return (
+                <div
+                  key={stepName}
+                  ref={props.stepName === stepName ? props.targetRef : null}
+                >
+                  <ValidateStep
+                    id={`${stepName}`}
+                    stepName={stepName}
+                    results={stepData.config?.is_validator ? stepData : null}
+                    expanded={expandedIndex === stepName}
+                    onSeeAllErrors={() => handleToggleExpanded(stepName)}
+                    completed={completed}
+                    failureMessage={failureMessage}
+                  />
+                </div>
+              );
+            })
+          ) : (
             <h6 className="tol-file-validation-previous-results-no-data">
               No pipeline steps found.
             </h6>

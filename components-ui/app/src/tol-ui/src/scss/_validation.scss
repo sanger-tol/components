@@ -389,7 +389,7 @@
 }
 
 .tol-file-validation-report-modal-results {
-  margin-bottom: 0;
+  margin: 15px 0 0 0;
 }
 
 .tol-file-validation-report-modal-details-para {
@@ -590,6 +590,7 @@
 
   .tol-file-uploader-previous-validations-dropdown-btn {
     background-color: transparent !important;
+    color: var(--tol-text) !important;
     border: none !important;
     padding: 0 !important;
     margin: 0 !important;

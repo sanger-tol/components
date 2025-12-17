@@ -557,7 +557,13 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
       },
     });
     return (
-      res?.map((step: TDataObjectOrNull) => (step ? step.step_name : "")) || []
+      res?.sort((a, b) => {
+        if (a.stage !== b.stage) {
+          return a.stage - b.stage;
+        } else {
+          return a.step_order - b.step_order;
+        }
+      }).map((step: TDataObjectOrNull) => (step ? step.step_name : "")) || []
     );
   })();
 
@@ -586,4 +592,17 @@ export function goToResults(
       errorWarningCount > 2 && stepName ? `?stepName=${stepName}` : ""
     }`
   );
+}
+
+export function aggregateRowsByIssue(
+  results: IValidationResult[]
+): Record<string, string[]> {
+  return results.reduce((acc, result) => {
+    const key = `${result.severity}|~${result.field}|~${result.detail}`;
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(result.objectId);
+    return acc;
+  }, {} as Record<string, string[]>);
 }
