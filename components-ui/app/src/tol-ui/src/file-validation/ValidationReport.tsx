@@ -6,11 +6,9 @@ SPDX-License-Identifier: MIT
 
 import { Panel } from "rsuite";
 import {
-  aggregateResultsByStep,
   aggregateRowsByIssue,
   downloadFileFromS3,
   IPipelineUpload,
-  IValidationResult,
   Modal,
   PIPELINE_DS,
   splitS3FilenameString,
@@ -69,7 +67,8 @@ export function ValidationReport(props: PValidationReport) {
                       }
                     >
                       {truncateString(
-                        splitS3FilenameString(String(data?.s3Filename)), 30
+                        splitS3FilenameString(String(data?.s3Filename)),
+                        30
                       )}
                     </a>
                   </strong>
@@ -100,7 +99,7 @@ export function ValidationReport(props: PValidationReport) {
         const aggregatedResults = aggregateRowsByIssue(stepErrors);
 
         return (
-          <div key={step}>
+          <div key={step} style={{ marginBottom: "10px" }}>
             <Panel header={`Step: ${step}`} bordered collapsible>
               {Object.entries(aggregatedResults).map(([k, objectIds]) => {
                 const [severity, field, detail] = k.split("|~", 3);
@@ -112,8 +111,13 @@ export function ValidationReport(props: PValidationReport) {
                     <div>
                       <strong>{`[${severity.toUpperCase()}] Column: ${field}`}</strong>
                     </div>
-                    <div>Issue: {detail}</div>
-                    <div>{`Affected Rows: ${sortedObjectIds.join(", ")}`}</div>
+                    <div style={{ marginBottom: "10px" }}>
+                      <strong>Issue:</strong> {detail}
+                    </div>
+                    <div>
+                      <strong>Affected Rows: </strong>
+                      {`${sortedObjectIds.join(", ")}`}
+                    </div>
                   </div>
                 );
               })}
