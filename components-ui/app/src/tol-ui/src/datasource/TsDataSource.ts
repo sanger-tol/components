@@ -48,7 +48,7 @@ export class TsDataSource {
   private apiDataPath: string | undefined;
   private dataspace: string | undefined;
   private dataSourceInstanceId: string | undefined;
-  private baseUrl: string | undefined;
+  private baseURL: string | undefined;
   private sourceKey: string;
 
   constructor({ url, apiPath, apiDataPath, dataspace, dataSourceInstanceId, client }: IDataSource = {}) {
@@ -58,8 +58,8 @@ export class TsDataSource {
     this.apiDataPath = apiDataPath;
     this.dataspace = dataspace;
     this.dataSourceInstanceId = dataSourceInstanceId;
-    this.baseUrl = this.initialiseBaseUrl();
-    this.sourceKey = this.baseUrl ?? "default";
+    this.baseURL = this.initialiseBaseUrl();
+    this.sourceKey = this.baseURL ?? "default";
   }
 
   private initialiseBaseUrl(): string | undefined {
@@ -68,13 +68,13 @@ export class TsDataSource {
       return undefined;
     }
 
-    // else join all parts together to form the baseUrl
-    let baseUrl = "";
-    baseUrl += this.url ? `${this.url}` : "";
-    baseUrl += this.apiPath ? `${this.apiPath}` : "";
-    baseUrl += this.apiDataPath ? `${this.apiDataPath}` : "";
-    baseUrl += this.dataspace ? `/${this.dataspace}` : "";
-    return baseUrl;
+    // else join all parts together to form the baseURL
+    let baseURL = "";
+    baseURL += this.url ? `${this.url}` : "";
+    baseURL += this.apiPath ? `${this.apiPath}` : "";
+    baseURL += this.apiDataPath ? `${this.apiDataPath}` : "";
+    baseURL += this.dataspace ? `/${this.dataspace}` : "";
+    return baseURL;
   }
 
   public getDataSourceInstanceId(): string | undefined {
@@ -82,7 +82,7 @@ export class TsDataSource {
   }
 
   public getBaseUrl(): string | undefined {
-    return this.baseUrl;
+    return this.baseURL;
   }
 
   public generateEndpoint(target?: string, suffix?: string): string {
@@ -91,9 +91,9 @@ export class TsDataSource {
     return `${tg}${sf}`;
   }
 
-  private normaliseParams = (params: Record<string, any>) => (
+  private normaliseParams = (params?: Record<string, any>) => (
     Object.fromEntries(
-      Object.entries(params)
+      Object.entries(params ?? {})
         .filter(([_, v]) => v !== undefined && v !== null && v !== "")
         .map(([k, v]) => {
           if (k === "requested_fields" && Array.isArray(v)) {
@@ -222,24 +222,25 @@ export class TsDataSource {
     params,
     options,
   }: ICustom): Promise<any> {
-    const url = this.generateEndpoint(resource);
+    const client = this.client();
+    const url = `/${resource}`;
     const config = {
-      baseURL: this.baseUrl,
+      baseURL: this.baseURL,
       params: this.normaliseParams(params),
       ...options,
     }
 
     switch (method.toUpperCase()) {
       case API_METHODS.GET:
-        return await this.client().get(url, config);
+        return await client.get(url, config);
       case API_METHODS.POST:
-        return await this.client().post(url, body, config);
+        return await client.post(url, body, config);
       case API_METHODS.PUT:
-        return await this.client().put(url, body, config);
+        return await client.put(url, body, config);
       case API_METHODS.PATCH:
-        return await this.client().patch(url, body, config);
+        return await client.patch(url, body, config);
       case API_METHODS.DELETE:
-        return await this.client().delete(url, config);
+        return await client.delete(url, config);
       default:
         throw new Error(`Unsupported method: ${method}`);
     }
