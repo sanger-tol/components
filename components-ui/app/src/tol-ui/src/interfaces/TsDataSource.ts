@@ -32,6 +32,7 @@ export interface IDataSource {
 export interface IGetOne {
   objectType: string;
   id: string;
+  requestedFields?: string;
 }
 
 export interface IGetToOneRelation {
