@@ -4,6 +4,12 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import {
+  VALIDATE_AND_MARK_AS_READY,
+  VALIDATE_AND_UPLOAD,
+  VALIDATE_ONLY
+} from "src/constants";
+
 export type TSeverity = "error" | "warning";
 export type TIconType = "check" | "xmark" | "exclamation" | "question";
 
@@ -70,3 +76,5 @@ export interface IPipelineUpload {
   validationResults: IValidationResult[];
   failureMessage: string | null;
 }
+
+export type TFileValidationPurpose = typeof VALIDATE_ONLY | typeof VALIDATE_AND_UPLOAD | typeof VALIDATE_AND_MARK_AS_READY;

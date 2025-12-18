@@ -19,6 +19,10 @@ import {
   FILE_VALIDATION_PATH,
   S3_ENDPOINTS,
   IFileData,
+  TFileValidationPurpose,
+  VALIDATE_AND_MARK_AS_READY,
+  VALIDATE_ONLY,
+  VALIDATE_AND_UPLOAD,
 } from "..";
 
 const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
@@ -582,8 +586,42 @@ export function goToResults(
   errorWarningCount: number = 0
 ) {
   history.push(
-    `${FILE_VALIDATION_PATH}${pipelineId}${
-      errorWarningCount > 2 && stepName ? `?stepName=${stepName}` : ""
+    `${FILE_VALIDATION_PATH}${pipelineId}${errorWarningCount > 2 && stepName ? `?stepName=${stepName}` : ""
     }`
   );
+}
+
+/**
+ * Returns `true` if the given validation purpose should be treated as a dry run.
+ *
+ * A dry run means the file is only validated and not uploaded/submitted.
+ *
+ * @param purpose - The current file validation purpose.
+ * @returns `true` if the purpose is {@link VALIDATE_ONLY} or {@link VALIDATE_AND_MARK_AS_READY}, otherwise `false`.
+ */
+export function isDryRun(purpose: TFileValidationPurpose): boolean {
+  return purpose === VALIDATE_ONLY || purpose === VALIDATE_AND_MARK_AS_READY;
+}
+
+/**
+ * Computes the next validation purpose based on the current purpose
+ * and whether the file is submittable.
+ *
+ * @param purpose - The current file validation purpose.
+ * @param submittable - Whether the file is currently eligible to be submitted/uploaded.
+ * @returns The next {@link TFileValidationPurpose} state.
+ *
+ * - If `purpose` is {@link VALIDATE_ONLY}:
+ *   - Returns {@link VALIDATE_AND_UPLOAD} when `submittable` is `true`.
+ *   - Returns {@link VALIDATE_AND_MARK_AS_READY} when `submittable` is `false`.
+ * - For any other `purpose`, returns {@link VALIDATE_ONLY}.
+ */
+export function getNextPurpose(
+  purpose: TFileValidationPurpose,
+  submittable?: boolean
+): TFileValidationPurpose {
+  if (purpose === VALIDATE_ONLY) {
+    return submittable ? VALIDATE_AND_UPLOAD : VALIDATE_AND_MARK_AS_READY;
+  }
+  return VALIDATE_ONLY;
 }
