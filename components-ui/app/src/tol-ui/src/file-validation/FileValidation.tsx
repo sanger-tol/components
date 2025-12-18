@@ -31,6 +31,7 @@ import {
   DEFAULT_FILE_TYPE,
   downloadFileFromS3,
   useQueryData,
+  ValidationReport,
 } from "..";
 
 export interface PFileValidation {
@@ -62,6 +63,7 @@ export function FileValidation(props: PFileValidation) {
   const [resetKey, setResetKey] = useState<number>(0);
   const [stepsFound, setStepsFound] = useState<boolean>(false);
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
+  const [openReport, setOpenReport] = useState<boolean>(false);
   const [validationStatus, setValidationStatus] = useState<{
     className: string;
     text: string;
@@ -128,6 +130,8 @@ export function FileValidation(props: PFileValidation) {
           type: completionMessage.messageType,
           message: `Validation completed. ${completionMessage.message}`,
         });
+
+        setOpenReport(true);
       }
     }
   }, [latestPipelineResults.data]);
@@ -174,6 +178,14 @@ export function FileValidation(props: PFileValidation) {
                 onClick={() => handleReset()}
               />
             )}
+            <Button
+              icon="clipboard-check"
+              tooltip="View results of latest validation"
+              onClick={() => {
+                setOpenReport((prev: boolean) => !prev);
+              }}
+              disabled={!validated}
+            />
             {!validateAndUpload && validating && (
               <Button
                 type="success"
@@ -415,6 +427,23 @@ export function FileValidation(props: PFileValidation) {
 
   return (
     <>
+      <ValidationReport
+        data={validated ? latestPipelineResults.data : null}
+        open={openReport}
+        setOpen={setOpenReport}
+        uploadStatus={
+          determineUploadStatus(
+            latestPipelineResults.data?.completed || false,
+            getErrorWarningCounts(
+              latestPipelineResults.data?.validationResults || []
+            ).errors,
+            getErrorWarningCounts(
+              latestPipelineResults.data?.validationResults || []
+            ).warnings,
+            latestPipelineResults.data?.failureMessage || null
+          ).text
+        }
+      />
       <PreviousUploadsModal openModal={openModal} setOpenModal={setOpenModal} />
       {helpModal}
       <Widgets components={Components} />

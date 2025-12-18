@@ -557,13 +557,15 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
       },
     });
     return (
-      res?.sort((a, b) => {
-        if (a.stage !== b.stage) {
-          return a.stage - b.stage;
-        } else {
-          return a.step_order - b.step_order;
-        }
-      }).map((step: TDataObjectOrNull) => (step ? step.step_name : "")) || []
+      res
+        ?.sort((a, b) => {
+          if (a.stage !== b.stage) {
+            return a.stage - b.stage;
+          } else {
+            return a.step_order - b.step_order;
+          }
+        })
+        .map((step: TDataObjectOrNull) => (step ? step.step_name : "")) || []
     );
   })();
 
@@ -594,15 +596,52 @@ export function goToResults(
   );
 }
 
-export function aggregateRowsByIssue(
+// Aggregates validation results by unique issue, grouping object IDs for each issue.
+export function aggregateObjectIdsByIssue(
   results: IValidationResult[]
 ): Record<string, string[]> {
   return results.reduce((acc, result) => {
+    // Create a unique key for each issue based on severity, field, and detail
     const key = `${result.severity}|~${result.field}|~${result.detail}`;
+
+    // Initialize the array if the key doesn't exist
     if (!acc[key]) {
       acc[key] = [];
     }
+
+    // Append the object ID to the corresponding issue key if not already present
     acc[key].push(result.objectId);
     return acc;
   }, {} as Record<string, string[]>);
+}
+
+// Formats and concatenates object IDs into a compact string representation with ranges.
+// e.g. [1,2,3,5,6,8] -> "1-3,5-6,8"
+export function formatAndConcatObjectIds(objectIds: string[]): string {
+  // Sort and remove duplicates
+  const sortedIds = [
+    ...new Set(objectIds.sort((a, b) => Number(a) - Number(b))),
+  ];
+
+  const ranges: string[] = [];
+  let start = sortedIds[0];
+  let end = start;
+
+  // Build ranges
+  for (let i = 1; i < sortedIds.length; i++) {
+    // Check if current ID is consecutive
+    if (sortedIds[i] === String(Number(end) + 1)) {
+      // Extend the current range if consecutive
+      end = sortedIds[i];
+    } else {
+      // If not, push the current range and reset
+      ranges.push(start === end ? `${start}` : `${start}-${end}`);
+      start = sortedIds[i];
+      end = start;
+    }
+  }
+
+  // Push the final range
+  ranges.push(start === end ? `${start}` : `${start}-${end}`);
+  return ranges.join(", ");
 }

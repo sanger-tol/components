@@ -27,6 +27,7 @@ import {
   ValidationReport,
   splitS3FilenameString,
   useQueryData,
+  truncateString,
 } from "..";
 
 export function ValidationResultsViewer() {
@@ -176,9 +177,9 @@ export function ValidationResultsViewer() {
                       )
                     }
                   >
-                    {splitS3FilenameString(
+                    {truncateString(splitS3FilenameString(
                       String(latestPipelineResults.data.s3Filename)
-                    )}
+                    ), 50)}
                   </a>
                 </p>
                 <p className="tol-file-validation-results-page-additional-info-updated-at">
@@ -194,8 +195,9 @@ export function ValidationResultsViewer() {
                 <span className="tol-file-validation-results-page-error-count-button">
                   <Button
                     icon="clipboard"
-                    tooltip="Show Report"
                     onClick={() => setReportOpen((prev: boolean) => !prev)}
+                    disabled={validating}
+                    tooltip={validating ? "Still Validating..." : "Show Report"}
                   />
                   <Button
                     icon="rotate"

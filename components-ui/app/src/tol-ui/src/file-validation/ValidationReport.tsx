@@ -6,8 +6,9 @@ SPDX-License-Identifier: MIT
 
 import { Panel } from "rsuite";
 import {
-  aggregateRowsByIssue,
+  aggregateObjectIdsByIssue,
   downloadFileFromS3,
+  formatAndConcatObjectIds,
   IPipelineUpload,
   Modal,
   PIPELINE_DS,
@@ -87,8 +88,10 @@ export function ValidationReport(props: PValidationReport) {
           </div>
         </Panel>
       </div>
-      <h5 className="tol-file-validation-report-modal-results">Results:</h5>
-      <p>Only steps with issues are shown here.</p>
+      <h5 className="tol-file-validation-report-modal-results">Issues:</h5>
+      {data?.validationResults && data?.validationResults.length === 0 && (
+        <p>No validation issues found for this upload.</p>
+      )}
       {data?.pipelineSteps?.map((step) => {
         const stepErrors = data.validationResults.filter(
           (result) => result.stepName === step
@@ -96,10 +99,13 @@ export function ValidationReport(props: PValidationReport) {
 
         if (stepErrors.length === 0) return null;
 
-        const aggregatedResults = aggregateRowsByIssue(stepErrors);
+        const aggregatedResults = aggregateObjectIdsByIssue(stepErrors);
 
         return (
-          <div key={step} style={{ marginBottom: "10px" }}>
+          <div
+            key={step}
+            className="tol-file-validation-report-modal-result-panel"
+          >
             <Panel header={`Step: ${step}`} bordered collapsible>
               {Object.entries(aggregatedResults).map(([k, objectIds]) => {
                 const [severity, field, detail] = k.split("|~", 3);
@@ -111,12 +117,12 @@ export function ValidationReport(props: PValidationReport) {
                     <div>
                       <strong>{`[${severity.toUpperCase()}] Column: ${field}`}</strong>
                     </div>
-                    <div style={{ marginBottom: "10px" }}>
+                    <div>
                       <strong>Issue:</strong> {detail}
                     </div>
                     <div>
                       <strong>Affected Rows: </strong>
-                      {`${sortedObjectIds.join(", ")}`}
+                      {`${formatAndConcatObjectIds(sortedObjectIds)}`}
                     </div>
                   </div>
                 );
@@ -124,7 +130,7 @@ export function ValidationReport(props: PValidationReport) {
             </Panel>
           </div>
         );
-      }) || <strong>No steps available.</strong>}
+      }) || <p>Cannot find any pipeline steps...</p>}
     </div>
   );
   return (
