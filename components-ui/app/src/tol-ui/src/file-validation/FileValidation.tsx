@@ -36,10 +36,6 @@ import {
 } from "..";
 
 
-/** 
- * @prop submittable - Indicates if the user can directly submit after validation, or only mark as ready.
- */
-
 export interface PFileValidation {
   objectType: string;
   validationConfig: IValidationConfig;
