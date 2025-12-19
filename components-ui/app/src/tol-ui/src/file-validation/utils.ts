@@ -636,7 +636,22 @@ export function goToResults(
   );
 }
 
-// Aggregates validation results by unique issue, grouping object IDs for each issue.
+/**
+ * Aggregates validation results by unique issue and collects the affected object IDs.
+ *
+ * Builds a stable “issue key” from `severity`, `field`, and `detail`, then groups all
+ * `objectId`s for results sharing the same key.
+ *
+ * The returned record uses keys of the form:
+ * `${severity}|~${field}|~${detail}`
+ *
+ * Example:
+ * - Two results with the same severity/field/detail but different `objectId`s will
+ *   produce one entry with both IDs in the array.
+ *
+ * @param results - Validation results to group.
+ * @returns A map of issue key → array of object IDs affected by that issue.
+ */
 export function aggregateObjectIdsByIssue(
   results: IValidationResult[]
 ): Record<string, string[]> {
@@ -655,8 +670,22 @@ export function aggregateObjectIdsByIssue(
   }, {} as Record<string, string[]>);
 }
 
-// Formats and concatenates object IDs into a compact string representation with ranges.
-// e.g. [1,2,3,5,6,8] -> "1-3,5-6,8"
+/**
+ * Formats an array of row/object IDs into a compact, human-readable range string.
+ *
+ * Sorts the IDs numerically, removes duplicates, and collapses consecutive values
+ * into ranges.
+ *
+ * Examples:
+ * - `["1", "2", "3", "5", "6", "8"]` → `"1-3,5-6,8"`
+ * - `["4"]` → `"4"`
+ * - `["2", "2", "1"]` → `"1-2"`
+ *
+ * Note: IDs are treated as numeric strings (converted with `Number(...)`).
+ *
+ * @param objectIds - Array of IDs (as strings) to format.
+ * @returns A comma-separated string of IDs and ranges.
+ */
 export function formatAndConcatObjectIds(objectIds: string[]): string {
   // Sort and remove duplicates
   const sortedIds = [
