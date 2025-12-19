@@ -46,7 +46,6 @@ export interface PFileValidation {
   fileType?: string;
   pageTitle?: string;
   defaultFileTemplateName?: string;
-  submittable?: boolean;
 }
 
 export const PIPELINE_DS = new TsDataSource();
@@ -57,7 +56,6 @@ export function FileValidation(props: PFileValidation) {
     pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
     defaultFileTemplateName = "",
-    submittable = true,
   } = props;
 
   // TODO: re-enable type checking when mode toggle is re-introduced
@@ -170,7 +168,7 @@ export function FileValidation(props: PFileValidation) {
     return onSubmission(
       validationConfig,
       fileList,
-      submittable,
+      false,
       currentUploadId,
       setFileUploaded,
       () => setValidationStatus({
@@ -202,9 +200,7 @@ export function FileValidation(props: PFileValidation) {
             {validated && (
               <Button
                 type="success"
-                text={
-                  submittable ? "Submit" : "Mark as Ready"
-                }
+                text={"Mark As Ready"}
                 disabled={
                   !validated ||
                   !validationStatus.text.includes("Passed") ||
