@@ -73,7 +73,6 @@ export function FileValidation(props: PFileValidation) {
   const [resetKey, setResetKey] = useState<number>(0);
   const [stepsFound, setStepsFound] = useState<boolean>(false);
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
-  const [markedAsReady, setMarkedAsReady] = useState<boolean>(false);
   const [validationStatus, setValidationStatus] = useState<{
     className: string;
     text: string;
@@ -174,7 +173,10 @@ export function FileValidation(props: PFileValidation) {
       submittable,
       currentUploadId,
       setFileUploaded,
-      setMarkedAsReady
+      () => setValidationStatus({
+        className: "marked-as-ready",
+        text: "Marked as Ready",
+      }),
     );
   }
 
@@ -207,7 +209,7 @@ export function FileValidation(props: PFileValidation) {
                   !validated ||
                   !validationStatus.text.includes("Passed") ||
                   fileUploaded ||
-                  markedAsReady
+                  validationStatus.text === "Marked as Ready"
                 }
                 onClick={onSubmissionClick}
               />
@@ -291,7 +293,12 @@ export function FileValidation(props: PFileValidation) {
           </p>
         </div>
         <div className="tol-file-upload-results-viewer-content-inner-container">
-          <h6 className="tol-file-upload-results-viewer-content-status">
+          <h6
+            className={
+              `tol-file-upload-results-viewer-content-status
+              tol-file-validation-results-status
+              ${validationStatus.className}`
+            }>
             {latestPipelineResults?.data.completed
               ? `${validationStatus.text}`
               : "In Progress"}

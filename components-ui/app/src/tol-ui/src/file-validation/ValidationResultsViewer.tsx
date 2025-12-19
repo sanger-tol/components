@@ -162,7 +162,7 @@ export function ValidationResultsViewer() {
               </div>
               <div>
                 <h4
-                  className={`tol-file-validation-previous-results-results-status ${uploadStatus.className}`}
+                  className={`tol-file-validation-results-status ${uploadStatus.className}`}
                 >
                   {uploadStatus.text}
                 </h4>
@@ -220,7 +220,6 @@ export function ValidationResultsViewer() {
                     <Button
                       type="success"
                       text="Mark As Ready"
-                      tooltip="Show Report"
                       onClick={onMarkAsReadyClick}
                     />
                   )}

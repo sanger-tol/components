@@ -128,7 +128,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
         </a>
         <div className="tol-file-validation-previous-results-failure-info">
           <h6
-            className={`tol-file-validation-previous-results-results-status 
+            className={`tol-file-validation-results-status 
             ${uploadStatus.className}
             `}
           >
