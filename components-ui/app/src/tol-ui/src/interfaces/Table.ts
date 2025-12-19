@@ -19,3 +19,7 @@ export interface ITableOtherSave {
 }
 
 export interface ITableConfigSave extends ITableDrawerSave, ITableOtherSave {}
+
+export type TFieldDropdownChoices = IFieldDropdownChoices[];
+
+export type IFieldDropdownChoices = "copyValues";
