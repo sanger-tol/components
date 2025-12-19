@@ -360,6 +360,10 @@ export function FileValidation(props: PFileValidation) {
           <h6>Status Messages:</h6>{" "}
           <ul>
             <li>
+              <strong>Marked as Ready:</strong> The file has been marked as
+              ready for submission and can be processed further.
+            </li>
+            <li>
               <strong>Passed:</strong> The file passed validation. If you
               haven't chosen to submit automatically, you can submit it now.
             </li>
