@@ -8,11 +8,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 export type TimeoutCallback = () => void | Promise<void>;
 
-export interface UseTimeoutOptions {
-  enabled?: boolean;
-  startOnMount?: boolean;
-}
-
 /**
  * A custom React hook that manages a timeout with start, clear, and reset capabilities.
  *
@@ -29,10 +24,15 @@ export interface UseTimeoutOptions {
  * - `isRunning`: Boolean indicating whether a timeout is currently active.
  */
 
+export interface IUseTimeoutOptions {
+  enabled?: boolean;
+  startOnMount?: boolean;
+}
+
 export function useTimeout(
   callback: TimeoutCallback,
   delayMs: number | null,
-  options: UseTimeoutOptions = {}
+  options: IUseTimeoutOptions = {}
 ) {
   const { enabled = true, startOnMount = true } = options;
 

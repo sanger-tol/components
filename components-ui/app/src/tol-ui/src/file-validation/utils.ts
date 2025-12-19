@@ -588,7 +588,7 @@ export async function setValidationTimeout(
       and_: {
         user_id: { eq: { value: userId } },
         completed: { eq: { value: false } },
-        // fail a validation if it has been running for more than 5 minutes.
+        // fail a validation if it has been running for more than 8 minutes past start time.
         date_started: { lt: { value: new Date(Date.now() - VALIDATION_TIMEOUT_MS) } },
         failure_message: { eq: { value: null } },
       },
