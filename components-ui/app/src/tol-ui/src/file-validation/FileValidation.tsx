@@ -34,6 +34,8 @@ import {
   ValidationReport,
   getUserFromLocalStorage,
   setValidationTimeout,
+  useTimeout,
+  VALIDATION_TIMEOUT_MS,
 } from "..";
 
 export interface PFileValidation {
@@ -66,6 +68,7 @@ export function FileValidation(props: PFileValidation) {
   const [stepsFound, setStepsFound] = useState<boolean>(false);
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
   const [openReport, setOpenReport] = useState<boolean>(false);
+  const [pipelineFailed, setPipelineFailed] = useState<boolean>(false);
   const [validationStatus, setValidationStatus] = useState<{
     className: string;
     text: string;
@@ -73,6 +76,16 @@ export function FileValidation(props: PFileValidation) {
     className: "",
     text: "",
   });
+
+  useEffect(() => {
+    async function cleanUpValidations() {
+      await setValidationTimeout(
+        PIPELINE_DS,
+        getUserFromLocalStorage()?.id || ""
+      );
+    }
+    cleanUpValidations();
+  }, []);
 
   const fetchLatestPipelineResults = async () => {
     const cacheBustedEndpoint = `${
@@ -103,11 +116,27 @@ export function FileValidation(props: PFileValidation) {
     }
   );
 
+  const timeoutEnabled = validating && !!currentUploadId && !validated;
+
+  useTimeout(
+    async () => {
+      await setValidationTimeout(
+        PIPELINE_DS,
+        getUserFromLocalStorage()?.id || "",
+        currentUploadId
+      );
+      await latestPipelineResults.refetch();
+      setPipelineFailed(true);
+    },
+    VALIDATION_TIMEOUT_MS,
+    { enabled: timeoutEnabled, startOnMount: timeoutEnabled }
+  );
+
   useEffect(() => {
     if (latestPipelineResults.data) {
       setStepsFound(latestPipelineResults.data.pipelineSteps?.length > 0);
 
-      if (latestPipelineResults.data.completed) {
+      if (latestPipelineResults.data.completed || pipelineFailed) {
         setValidated(true);
 
         const counts = getErrorWarningCounts(
@@ -133,10 +162,10 @@ export function FileValidation(props: PFileValidation) {
           message: `Validation completed. ${completionMessage.message}`,
         });
 
-        setOpenReport(true);
+        if (!pipelineFailed) setOpenReport(true);
       }
     }
-  }, [latestPipelineResults.data]);
+  }, [latestPipelineResults.data, pipelineFailed]);
 
   const handleValidation = async (file: IFileData) => {
     const pipeline_id = await uploadPipelineConfig(
@@ -294,7 +323,7 @@ export function FileValidation(props: PFileValidation) {
         </div>
         <div className="tol-file-upload-results-viewer-content-inner-container">
           <h6 className="tol-file-upload-results-viewer-content-status">
-            {latestPipelineResults?.data.completed
+            {latestPipelineResults?.data.completed || pipelineFailed
               ? `${validationStatus.text}`
               : "In Progress"}
           </h6>

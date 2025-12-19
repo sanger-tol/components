@@ -19,6 +19,7 @@ import {
   FILE_VALIDATION_PATH,
   S3_ENDPOINTS,
   IFileData,
+  VALIDATION_TIMEOUT_MS,
 } from "..";
 
 const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
@@ -575,21 +576,27 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
   return stepPromise;
 }
 
-export async function setValidationTimeout(ds: TsDataSource, userId: string) {
+export async function setValidationTimeout(
+  ds: TsDataSource,
+  userId: string,
+  currentPipelineId?: string
+) {
+  if (!userId) return;
   const res = await ds.getListPage({
     objectType: VALIDATION_ENDPOINTS.UPLOAD,
     filter: {
       and_: {
         user_id: { eq: { value: userId } },
         completed: { eq: { value: false } },
-        // fail a validation if it has been running for more than 10 minutes.
-        date_started: { lt: { value: new Date(Date.now() - 10 * 60 * 1000) } },
+        // fail a validation if it has been running for more than 5 minutes.
+        date_started: { lt: { value: new Date(Date.now() - VALIDATION_TIMEOUT_MS) } },
         failure_message: { eq: { value: null } },
       },
     },
   });
 
   const ids = res?.map((upload: TDataObjectOrNull) => upload?.id || "");
+  if (currentPipelineId) ids?.push(currentPipelineId);
 
   if (!ids || ids.length === 0) return;
 

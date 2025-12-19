@@ -28,6 +28,10 @@ import {
   splitS3FilenameString,
   useQueryData,
   truncateString,
+  useTimeout,
+  VALIDATION_TIMEOUT_MS,
+  getUserFromLocalStorage,
+  setValidationTimeout,
 } from "..";
 
 export function ValidationResultsViewer() {
@@ -139,6 +143,22 @@ export function ValidationResultsViewer() {
     }
   }, [latestPipelineResults.data, stepName]);
 
+  const timeoutEnabled = validating && !!uploadId && !validated;
+
+  useTimeout(
+    async () => {
+      await setValidationTimeout(
+        PIPELINE_DS,
+        getUserFromLocalStorage()?.id || "",
+        uploadId
+      );
+      await latestPipelineResults.refetch();
+      setFailedPipeline(true);
+    },
+    VALIDATION_TIMEOUT_MS,
+    { enabled: timeoutEnabled, startOnMount: timeoutEnabled }
+  );
+
   const Results = (
     <div className="tol-file-validation-results-page-container">
       <div>
@@ -200,7 +220,9 @@ export function ValidationResultsViewer() {
                     icon="clipboard"
                     onClick={() => setReportOpen((prev: boolean) => !prev)}
                     disabled={validating}
-                    tooltip={validating ? "Still Validating..." : "Show Report"}
+                    tooltip={
+                      validating ? "Currently Validating..." : "Show Report"
+                    }
                   />
                   <Button
                     icon="rotate"
