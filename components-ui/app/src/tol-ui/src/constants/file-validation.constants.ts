@@ -20,3 +20,5 @@ export const TOL_LOADER_STYLES = {
 };
 export const DEFAULT_FILE_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
+export const VALIDATION_TIMEOUT_MS = 8 * 60 * 1000; // 8 minutes
+  

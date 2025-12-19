@@ -152,11 +152,10 @@
 
 .tol-file-uploader-validate-steps-outer-container {
   display: flex;
-  background: var(--tol-grey-subtle);
   width: fit-content;
   max-width: 100%;
-  padding: 20px;
-  margin-top: 20px;
+  padding: 12px;
+  margin-top: 10px;
   overflow: auto;
   border-radius: 6px;
   transition: padding-bottom 0.3s ease;
@@ -168,11 +167,17 @@
   }
 
   &.expanded {
-    padding-bottom: 160px;
+    padding-bottom: 220px;
   }
 
   .tol-file-upload-results-viewer-container {
     min-height: 250px;
+  }
+}
+
+@media(prefers-color-scheme: dark) {
+  .tol-file-uploader-validate-steps-outer-container {
+    background: var(--tol-grey-subtle);
   }
 }
 
@@ -208,13 +213,13 @@
   border-radius: 6px;
   margin-top: 8px;
   padding: 16px;
-  background-color: var(--tol-grey);
+  background-color: var(--tol-grey-subtle);
   position: absolute;
   width: 96%;
   overflow-x: hidden;
   overflow-y: scroll;
   z-index: 1000;
-  max-height: 140px;
+  max-height: 220px;
 
   &.full-width {
     width: 100%;
@@ -348,7 +353,7 @@
   overflow-y: auto;
 
   .tol-file-validation-previous-uploads-inner-container {
-    margin: 0 5px;
+    margin-right: 5px;
   }
 }
 
@@ -357,7 +362,6 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
-  padding-left: 10px;
 }
 
 .tol-file-validation-previous-uploads-modal-header-content {
@@ -389,7 +393,7 @@
 }
 
 .tol-file-validation-report-modal-results {
-  margin-bottom: 0;
+  margin: 15px 0 0 0;
 }
 
 .tol-file-validation-report-modal-details-para {
@@ -398,6 +402,12 @@
 
 .tol-file-validation-report-modal-details-detail {
   margin: 0;
+}
+
+.tol-file-validation-report-modal {
+  .rs-panel {
+    margin: 5px 10px 10px 0;
+  }
 }
 
 .tol-file-validation-error-info {
@@ -590,6 +600,7 @@
 
   .tol-file-uploader-previous-validations-dropdown-btn {
     background-color: transparent !important;
+    color: var(--tol-text) !important;
     border: none !important;
     padding: 0 !important;
     margin: 0 !important;

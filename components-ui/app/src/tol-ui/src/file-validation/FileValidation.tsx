@@ -33,6 +33,11 @@ import {
   TFileValidationPurpose,
   VALIDATE_ONLY,
   onSubmission,
+  ValidationReport,
+  getUserFromLocalStorage,
+  setValidationTimeout,
+  useTimeout,
+  VALIDATION_TIMEOUT_MS,
 } from "..";
 
 
@@ -67,6 +72,8 @@ export function FileValidation(props: PFileValidation) {
   const [resetKey, setResetKey] = useState<number>(0);
   const [stepsFound, setStepsFound] = useState<boolean>(false);
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
+  const [openReport, setOpenReport] = useState<boolean>(false);
+  const [pipelineFailed, setPipelineFailed] = useState<boolean>(false);
   const [validationStatus, setValidationStatus] = useState<{
     className: string;
     text: string;
@@ -74,6 +81,16 @@ export function FileValidation(props: PFileValidation) {
     className: "",
     text: "",
   });
+
+  useEffect(() => {
+    async function cleanUpValidations() {
+      await setValidationTimeout(
+        PIPELINE_DS,
+        getUserFromLocalStorage()?.id || ""
+      );
+    }
+    cleanUpValidations();
+  }, []);
 
   const fetchLatestPipelineResults = async () => {
     const cacheBustedEndpoint = `${VALIDATION_ENDPOINTS.UPLOAD
@@ -103,11 +120,27 @@ export function FileValidation(props: PFileValidation) {
     }
   );
 
+  const timeoutEnabled = validating && !!currentUploadId && !validated;
+
+  useTimeout(
+    async () => {
+      await setValidationTimeout(
+        PIPELINE_DS,
+        getUserFromLocalStorage()?.id || "",
+        currentUploadId
+      );
+      await latestPipelineResults.refetch();
+      setPipelineFailed(true);
+    },
+    VALIDATION_TIMEOUT_MS,
+    { enabled: timeoutEnabled, startOnMount: timeoutEnabled }
+  );
+
   useEffect(() => {
     if (latestPipelineResults.data) {
       setStepsFound(latestPipelineResults.data.pipelineSteps?.length > 0);
 
-      if (latestPipelineResults.data.completed) {
+      if (latestPipelineResults.data.completed || pipelineFailed) {
         setValidated(true);
 
         const counts = getErrorWarningCounts(
@@ -133,9 +166,11 @@ export function FileValidation(props: PFileValidation) {
           type: completionMessage.messageType,
           message: `Validation completed. ${completionMessage.message}`,
         });
+
+        if (!pipelineFailed) setOpenReport(true);
       }
     }
-  }, [latestPipelineResults.data]);
+  }, [latestPipelineResults.data, pipelineFailed]);
 
   const handleValidation = async (file: IFileData) => {
     const pipeline_id = await uploadPipelineConfig(
@@ -191,6 +226,14 @@ export function FileValidation(props: PFileValidation) {
                 onClick={() => handleReset()}
               />
             )}
+            <Button
+              icon="clipboard-check"
+              tooltip="View results of latest validation"
+              onClick={() => {
+                setOpenReport((prev: boolean) => !prev);
+              }}
+              disabled={!validated}
+            />
             {/* TODO: Re-enable when mode toggle is re-introduced */}
             {/* {(purpose === VALIDATE_AND_MARK_AS_READY || purpose === VALIDATE_AND_UPLOAD) && validating && ( */}
             {validated && (
@@ -291,7 +334,7 @@ export function FileValidation(props: PFileValidation) {
               tol-file-validation-results-status
               ${validationStatus.className}`
             }>
-            {latestPipelineResults?.data.completed
+            {latestPipelineResults?.data.completed || pipelineFailed
               ? `${validationStatus.text}`
               : "In Progress"}
           </h6>
@@ -428,7 +471,34 @@ export function FileValidation(props: PFileValidation) {
 
   return (
     <>
-      <PreviousUploadsModal openModal={openModal} setOpenModal={setOpenModal} />
+      <ValidationReport
+        data={validated ? latestPipelineResults.data : null}
+        open={openReport}
+        setOpen={setOpenReport}
+        uploadStatus={
+          determineUploadStatus(
+            latestPipelineResults.data?.completed || false,
+            getErrorWarningCounts(
+              latestPipelineResults.data?.validationResults || []
+            ).errors,
+            getErrorWarningCounts(
+              latestPipelineResults.data?.validationResults || []
+            ).warnings,
+            latestPipelineResults.data?.failureMessage || null,
+            latestPipelineResults.data?.is_ready || false
+          ).text
+        }
+      />
+      <PreviousUploadsModal
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        onEnter={async () =>
+          await setValidationTimeout(
+            PIPELINE_DS,
+            getUserFromLocalStorage()?.id || ""
+          )
+        }
+      />
       {HelpModal}
       <Widgets components={Components} />
       {validating && (

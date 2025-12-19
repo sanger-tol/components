@@ -24,6 +24,7 @@ import {
   VALIDATE_ONLY,
   VALIDATE_AND_UPLOAD,
   PIPELINE_DS,
+  VALIDATION_TIMEOUT_MS,
 } from "..";
 
 const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
@@ -563,17 +564,64 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
       filter: {
         and_: {
           pipeline_id: { eq: { value: pipelineId } },
+          is_visible: { eq: { value: true } },
         },
       },
     });
     return (
-      res?.map((step: TDataObjectOrNull) => (step ? step.step_name : "")) || []
+      res
+        ?.sort((a, b) => {
+          if (a.stage !== b.stage) {
+            return a.stage - b.stage;
+          } else {
+            return a.step_order - b.step_order;
+          }
+        })
+        .map((step: TDataObjectOrNull) => (step ? step.step_name : "")) || []
     );
   })();
 
   pipelineStepsPromiseCache.set(pipelineId, stepPromise);
 
   return stepPromise;
+}
+
+export async function setValidationTimeout(
+  ds: TsDataSource,
+  userId: string,
+  currentPipelineId?: string
+) {
+  if (!userId) return;
+  const res = await ds.getListPage({
+    objectType: VALIDATION_ENDPOINTS.UPLOAD,
+    filter: {
+      and_: {
+        user_id: { eq: { value: userId } },
+        completed: { eq: { value: false } },
+        // fail a validation if it has been running for more than 8 minutes past start time.
+        date_started: { lt: { value: new Date(Date.now() - VALIDATION_TIMEOUT_MS) } },
+        failure_message: { eq: { value: null } },
+      },
+    },
+  });
+
+  const ids = res?.map((upload: TDataObjectOrNull) => upload?.id || "");
+  if (currentPipelineId) ids?.push(currentPipelineId);
+
+  if (!ids || ids.length === 0) return;
+
+  const data = ids?.map((id: string) => ({
+    id: id,
+    type: "upload",
+    attributes: {
+      failure_message: "Validation timed out.",
+    },
+  }));
+
+  await ds.upsert({
+    objectType: VALIDATION_ENDPOINTS.UPLOAD,
+    payload: data,
+  });
 }
 
 /**
@@ -753,4 +801,83 @@ export function onSubmission(
       message: "Cannot mark file as ready: upload ID is missing.",
     });
   }
+}
+
+/**
+ * Aggregates validation results by unique issue and collects the affected object IDs.
+ *
+ * Builds a stable “issue key” from `severity`, `field`, and `detail`, then groups all
+ * `objectId`s for results sharing the same key.
+ *
+ * The returned record uses keys of the form:
+ * `${severity}|~${field}|~${detail}`
+ *
+ * Example:
+ * - Two results with the same severity/field/detail but different `objectId`s will
+ *   produce one entry with both IDs in the array.
+ *
+ * @param results - Validation results to group.
+ * @returns A map of issue key → array of object IDs affected by that issue.
+ */
+export function aggregateObjectIdsByIssue(
+  results: IValidationResult[]
+): Record<string, string[]> {
+  return results.reduce((acc, result) => {
+    // Create a unique key for each issue based on severity, field, and detail
+    const key = `${result.severity}|~${result.field}|~${result.detail}`;
+
+    // Initialize the array if the key doesn't exist
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+
+    // Append the object ID to the corresponding issue key if not already present
+    acc[key].push(result.objectId);
+    return acc;
+  }, {} as Record<string, string[]>);
+}
+
+/**
+ * Formats an array of row/object IDs into a compact, human-readable range string.
+ *
+ * Sorts the IDs numerically, removes duplicates, and collapses consecutive values
+ * into ranges.
+ *
+ * Examples:
+ * - `["1", "2", "3", "5", "6", "8"]` → `"1-3,5-6,8"`
+ * - `["4"]` → `"4"`
+ * - `["2", "2", "1"]` → `"1-2"`
+ *
+ * Note: IDs are treated as numeric strings (converted with `Number(...)`).
+ *
+ * @param objectIds - Array of IDs (as strings) to format.
+ * @returns A comma-separated string of IDs and ranges.
+ */
+export function formatAndConcatObjectIds(objectIds: string[]): string {
+  // Sort and remove duplicates
+  const sortedIds = [
+    ...new Set(objectIds.sort((a, b) => Number(a) - Number(b))),
+  ];
+
+  const ranges: string[] = [];
+  let start = sortedIds[0];
+  let end = start;
+
+  // Build ranges
+  for (let i = 1; i < sortedIds.length; i++) {
+    // Check if current ID is consecutive
+    if (sortedIds[i] === String(Number(end) + 1)) {
+      // Extend the current range if consecutive
+      end = sortedIds[i];
+    } else {
+      // If not, push the current range and reset
+      ranges.push(start === end ? `${start}` : `${start}-${end}`);
+      start = sortedIds[i];
+      end = start;
+    }
+  }
+
+  // Push the final range
+  ranges.push(start === end ? `${start}` : `${start}-${end}`);
+  return ranges.join(", ");
 }
