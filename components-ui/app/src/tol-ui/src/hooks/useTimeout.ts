@@ -37,7 +37,7 @@ export function useTimeout(
   const { enabled = true, startOnMount = true } = options;
 
   const callbackRef = useRef<TimeoutCallback>(callback);
-  const timeoutIdRef = useRef<ReturnType<typeof window.setTimeout> | null>(
+  const timeoutIdRef = useRef<ReturnType<typeof setTimeout> | null>(
     null
   );
   const [isRunning, setIsRunning] = useState(false);
@@ -48,7 +48,7 @@ export function useTimeout(
 
   const clear = useCallback(() => {
     if (timeoutIdRef.current !== null) {
-      window.clearTimeout(timeoutIdRef.current);
+      clearTimeout(timeoutIdRef.current);
       timeoutIdRef.current = null;
     }
     setIsRunning(false);
@@ -60,7 +60,7 @@ export function useTimeout(
       if (restart) clear();
       if (timeoutIdRef.current !== null) return;
 
-      timeoutIdRef.current = window.setTimeout(async () => {
+      timeoutIdRef.current = setTimeout(async () => {
         try {
           await callbackRef.current();
         } finally {
