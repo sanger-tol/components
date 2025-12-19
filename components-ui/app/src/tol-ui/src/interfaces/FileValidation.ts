@@ -8,7 +8,7 @@ import {
   VALIDATE_AND_MARK_AS_READY,
   VALIDATE_AND_UPLOAD,
   VALIDATE_ONLY
-} from "src/constants";
+} from "../constants";
 
 export type TSeverity = "error" | "warning";
 export type TIconType = "check" | "xmark" | "exclamation" | "question";
