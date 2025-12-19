@@ -25,11 +25,11 @@ import {
 export interface PPreviousUploadsModal {
   openModal: boolean | string;
   setOpenModal: (open: boolean | string) => void;
+  onEnter?: () => void;
 }
 
 export function PreviousUploadsModal(props: PPreviousUploadsModal) {
-  const { openModal, setOpenModal } = props;
-
+  const { openModal, setOpenModal, onEnter } = props;
   const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
   const [expandedResults, setExpandedResults] = useState<string | null>(null);
   const user = getUserFromLocalStorage();
@@ -159,6 +159,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
   return (
     <div>
       <Modal
+        onEnter={onEnter}
         open={openModal === "results" || openModal === true}
         header={ResultsModalHeader}
         children={ResultsModalContent}

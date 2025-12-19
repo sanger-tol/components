@@ -121,7 +121,7 @@ export function ValidationReport(props: PValidationReport) {
                       <strong>Issue:</strong> {detail}
                     </div>
                     <div>
-                      <strong>Affected Rows: </strong>
+                      <strong>Affected Row Number(s): </strong>
                       {`${formatAndConcatObjectIds(sortedObjectIds)}`}
                     </div>
                   </div>

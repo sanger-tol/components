@@ -147,7 +147,7 @@ export function ValidationResultsViewer() {
             <div className="tol-file-validation-results-page-info-container">
               <div className="tol-file-validation-results-page-info-inner-container">
                 <h4>Results for Pipeline #{latestPipelineResults.data.id}</h4>
-                <h6>Pipeline: {latestPipelineResults.data.pipeline}</h6>
+                <h6>Pipeline: {latestPipelineResults.data?.pipelineName}</h6>
               </div>
               <div>
                 <h4
@@ -177,9 +177,12 @@ export function ValidationResultsViewer() {
                       )
                     }
                   >
-                    {truncateString(splitS3FilenameString(
-                      String(latestPipelineResults.data.s3Filename)
-                    ), 50)}
+                    {truncateString(
+                      splitS3FilenameString(
+                        String(latestPipelineResults.data.s3Filename)
+                      ),
+                      50
+                    )}
                   </a>
                 </p>
                 <p className="tol-file-validation-results-page-additional-info-updated-at">
@@ -202,7 +205,10 @@ export function ValidationResultsViewer() {
                   <Button
                     icon="rotate"
                     tooltip="Refresh"
-                    disabled={latestPipelineResults?.data.completed}
+                    disabled={
+                      latestPipelineResults?.data.completed ||
+                      latestPipelineResults?.data.failureMessage !== null
+                    }
                     onClick={() => latestPipelineResults.refetch()}
                     timeout={BUTTON_TIMEOUT}
                   />

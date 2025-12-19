@@ -553,6 +553,7 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
       filter: {
         and_: {
           pipeline_id: { eq: { value: pipelineId } },
+          is_visible: { eq: { value: true } },
         },
       },
     });
@@ -572,6 +573,38 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
   pipelineStepsPromiseCache.set(pipelineId, stepPromise);
 
   return stepPromise;
+}
+
+export async function setValidationTimeout(ds: TsDataSource, userId: string) {
+  const res = await ds.getListPage({
+    objectType: VALIDATION_ENDPOINTS.UPLOAD,
+    filter: {
+      and_: {
+        user_id: { eq: { value: userId } },
+        completed: { eq: { value: false } },
+        // fail a validation if it has been running for more than 10 minutes.
+        date_started: { lt: { value: new Date(Date.now() - 10 * 60 * 1000) } },
+        failure_message: { eq: { value: null } },
+      },
+    },
+  });
+
+  const ids = res?.map((upload: TDataObjectOrNull) => upload?.id || "");
+
+  if (!ids || ids.length === 0) return;
+
+  const data = ids?.map((id: string) => ({
+    id: id,
+    type: "upload",
+    attributes: {
+      failure_message: "Validation timed out.",
+    },
+  }));
+
+  await ds.upsert({
+    objectType: VALIDATION_ENDPOINTS.UPLOAD,
+    payload: data,
+  });
 }
 
 /**

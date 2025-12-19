@@ -32,6 +32,8 @@ import {
   downloadFileFromS3,
   useQueryData,
   ValidationReport,
+  getUserFromLocalStorage,
+  setValidationTimeout,
 } from "..";
 
 export interface PFileValidation {
@@ -444,7 +446,16 @@ export function FileValidation(props: PFileValidation) {
           ).text
         }
       />
-      <PreviousUploadsModal openModal={openModal} setOpenModal={setOpenModal} />
+      <PreviousUploadsModal
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        onEnter={async () =>
+          await setValidationTimeout(
+            PIPELINE_DS,
+            getUserFromLocalStorage()?.id || ""
+          )
+        }
+      />
       {helpModal}
       <Widgets components={Components} />
       {validating && (
