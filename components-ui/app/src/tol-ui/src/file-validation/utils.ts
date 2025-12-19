@@ -23,6 +23,7 @@ import {
   VALIDATE_AND_MARK_AS_READY,
   VALIDATE_ONLY,
   VALIDATE_AND_UPLOAD,
+  PIPELINE_DS,
 } from "..";
 
 const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
@@ -166,6 +167,7 @@ export async function normalisePipelineUpload(
     validationResults:
       upload?.validation_results.map(normaliseValidationResult) || [],
     failureMessage: upload?.failure_message || null,
+    isReady: upload?.is_ready,
   };
 }
 
@@ -355,6 +357,7 @@ export async function uploadPipelineConfig(
     dry_run: dry_run,
     destination: config.destination,
     upload_id: uploadId || null,
+    completed: true,
   };
 
   try {
@@ -495,10 +498,13 @@ export function determineUploadStatus(
   completedStatus: boolean,
   overallErrors: number,
   overallWarnings: number,
-  failureMessage: string | null
+  failureMessage: string | null,
+  isReady: boolean,
 ): { className: string; text: string } {
   if (failureMessage) {
     return { className: "failed", text: "Failed" };
+  } else if (isReady) {
+    return { className: "marked-as-ready", text: "Marked as Ready" };
   } else if (completedStatus && overallErrors === 0 && overallWarnings === 0) {
     return { className: "passed", text: "Passed" };
   } else if (completedStatus && overallErrors > 0) {
@@ -592,29 +598,26 @@ export function goToResults(
 }
 
 /**
- * Returns `true` if the given validation purpose should be treated as a dry run.
- *
- * A dry run means the file is only validated and not uploaded/submitted.
- *
- * @param purpose - The current file validation purpose.
- * @returns `true` if the purpose is {@link VALIDATE_ONLY} or {@link VALIDATE_AND_MARK_AS_READY}, otherwise `false`.
+ * Determines if the file validation purpose represents a dry run operation.
+ * 
+ * A dry run operation is one that validates files without performing actual modifications
+ * or side effects beyond marking files as ready.
+ * 
+ * @param purpose - The file validation purpose to check
+ * @returns `true` if the purpose is VALIDATE_ONLY or VALIDATE_AND_MARK_AS_READY, `false` otherwise
  */
 export function isDryRun(purpose: TFileValidationPurpose): boolean {
   return purpose === VALIDATE_ONLY || purpose === VALIDATE_AND_MARK_AS_READY;
 }
 
 /**
- * Computes the next validation purpose based on the current purpose
- * and whether the file is submittable.
- *
- * @param purpose - The current file validation purpose.
- * @param submittable - Whether the file is currently eligible to be submitted/uploaded.
- * @returns The next {@link TFileValidationPurpose} state.
- *
- * - If `purpose` is {@link VALIDATE_ONLY}:
- *   - Returns {@link VALIDATE_AND_UPLOAD} when `submittable` is `true`.
- *   - Returns {@link VALIDATE_AND_MARK_AS_READY} when `submittable` is `false`.
- * - For any other `purpose`, returns {@link VALIDATE_ONLY}.
+ * Determines the next file validation purpose based on the current purpose and submittable state.
+ * 
+ * @param purpose - The current file validation purpose
+ * @param submittable - Optional flag indicating whether the file can be submitted
+ * @returns The next file validation purpose. If current purpose is VALIDATE_ONLY and submittable is true,
+ *          returns VALIDATE_AND_UPLOAD. If current purpose is VALIDATE_ONLY and submittable is false or undefined,
+ *          returns VALIDATE_AND_MARK_AS_READY. Otherwise, returns VALIDATE_ONLY.
  */
 export function getNextPurpose(
   purpose: TFileValidationPurpose,
@@ -624,4 +627,130 @@ export function getNextPurpose(
     return submittable ? VALIDATE_AND_UPLOAD : VALIDATE_AND_MARK_AS_READY;
   }
   return VALIDATE_ONLY;
+}
+
+/**
+ * Submits a file for validation by uploading it through the pipeline configuration.
+ * 
+ * @param validationConfig - The validation configuration to apply to the file upload
+ * @param fileList - An array of file data objects, where the first file will be submitted
+ * @param currentUploadId - The ID of the current upload session, or null if not available
+ * @param setFileUploaded - Callback function to update the file upload status
+ * @returns void
+ * 
+ * @remarks
+ * This function uploads the first file from the fileList using the pipeline configuration.
+ * On success, it sets the uploaded status to true and displays a success message.
+ * On failure, it logs the error and displays an error message to the user.
+ */
+export function submitFile(
+  validationConfig: IValidationConfig,
+  fileList: IFileData[],
+  currentUploadId: string | null,
+  setFileUploaded: (uploaded: boolean) => void
+): void {
+  uploadPipelineConfig(
+    PIPELINE_DS,
+    validationConfig,
+    fileList[0],
+    true,
+    currentUploadId ?? undefined
+  )
+    .then(() => {
+      setFileUploaded(true);
+      PopUpMessage({
+        type: "success",
+        message: "File submitted successfully.",
+      });
+    })
+    .catch((err) => {
+      console.error("Error submitting file:", err);
+      PopUpMessage({
+        type: "error",
+        message: "Failed to submit file. Please try again.",
+      });
+    });
+}
+
+/**
+ * Marks a file upload as ready for submission by updating its status in the pipeline.
+ * 
+ * This function performs an upsert operation to set the `is_ready` attribute to `true`
+ * for the specified upload. It displays a success popup message on completion or an
+ * error popup message if the operation fails.
+ * 
+ * @param currentUploadId - The unique identifier of the upload to mark as ready
+ * @param setMarkedAsReady - Callback function to update the marked-as-ready state, 
+ *                           invoked with `true` upon successful operation
+ * @returns void
+ */
+export function markFileAsReady(
+  currentUploadId: string,
+  setMarkedAsReady: () => void
+): void {
+  PIPELINE_DS.upsert({
+    objectType: VALIDATION_ENDPOINTS.UPLOAD,
+    payload: [
+      {
+        type: "upload",
+        id: currentUploadId,
+        attributes: {
+          is_ready: true,
+        },
+      },
+    ],
+  })
+    .then(() => {
+      setMarkedAsReady();
+      PopUpMessage({
+        type: "success",
+        message: "File marked as ready for submission.",
+      });
+    })
+    .catch((err) => {
+      console.error("Error marking file as ready:", err);
+      PopUpMessage({
+        type: "error",
+        message: "Failed to mark file as ready. Please try again.",
+      });
+    });
+}
+
+/**
+ * Handles file submission logic based on validation state and upload status.
+ * 
+ * If the file is submittable, it initiates the file submission process.
+ * If the file is not submittable, it marks the file as ready.
+ * Otherwise, it logs an error and displays an error popup message.
+ * 
+ * @param validationConfig - Configuration object containing validation rules and settings
+ * @param fileList - Array of file data objects to be processed
+ * @param submittable - Flag indicating whether the file can be submitted
+ * @param currentUploadId - The unique identifier for the current upload, or null if not available
+ * @param setFileUploaded - Callback function to update the file uploaded state
+ * @param setMarkedAsReady - Callback function to update the marked as ready state
+ * 
+ * @returns void
+ * 
+ * @throws Will log an error and show a popup if currentUploadId is null when trying to mark as ready
+ */
+export function onSubmission(
+  validationConfig: IValidationConfig,
+  fileList: IFileData[],
+  submittable: boolean,
+  currentUploadId: string | null,
+  setFileUploaded: (uploaded: boolean) => void,
+  setMarkedAsReady: () => void
+): void {
+  if (submittable) {
+    submitFile(validationConfig, fileList, currentUploadId, setFileUploaded);
+  } else if (currentUploadId) {
+    markFileAsReady(currentUploadId, setMarkedAsReady);
+  } else {
+    console.error("currentUploadId is required to mark file as ready.");
+    PopUpMessage({
+      type: "error",
+      message: "Cannot mark file as ready: upload ID is missing.",
+    });
+  }
 }

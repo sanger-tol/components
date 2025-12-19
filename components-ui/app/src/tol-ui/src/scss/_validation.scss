@@ -716,6 +716,10 @@
   &.in-progress {
     color: var(--tol-warning-light);
   }
+
+  &.marked-as-ready {
+    color: var(--tol-success-light);
+  }
 }
 
 .tol-file-validation-previous-results-icon-tooltip {

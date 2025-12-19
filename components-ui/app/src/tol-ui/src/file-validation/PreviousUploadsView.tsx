@@ -55,7 +55,8 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
     data.completed,
     errorsAndWarningCounts.errors,
     errorsAndWarningCounts.warnings,
-    data.failureMessage || null
+    data.failureMessage || null,
+    data.isReady
   );
 
   const ValidationIconTooltip = (

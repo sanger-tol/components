@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import React, { useState, useEffect } from "react";
-import { Toggle } from "rsuite";
 import {
   ValidateSteps,
   IValidationConfig,
@@ -33,10 +32,7 @@ import {
   useQueryData,
   TFileValidationPurpose,
   VALIDATE_ONLY,
-  VALIDATE_AND_MARK_AS_READY,
-  VALIDATE_AND_UPLOAD,
-  isDryRun,
-  getNextPurpose,
+  onSubmission,
 } from "..";
 
 
@@ -64,6 +60,8 @@ export function FileValidation(props: PFileValidation) {
     submittable = true,
   } = props;
 
+  // TODO: re-enable type checking when mode toggle is re-introduced
+  // @ts-ignore
   const [purpose, setPurpose] = useState<TFileValidationPurpose>(VALIDATE_ONLY);
   const [currentUploadId, setCurrentUploadId] = useState<string>("");
   const [fileDropped, setFileDropped] = useState<boolean>(false);
@@ -75,6 +73,7 @@ export function FileValidation(props: PFileValidation) {
   const [resetKey, setResetKey] = useState<number>(0);
   const [stepsFound, setStepsFound] = useState<boolean>(false);
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
+  const [markedAsReady, setMarkedAsReady] = useState<boolean>(false);
   const [validationStatus, setValidationStatus] = useState<{
     className: string;
     text: string;
@@ -112,7 +111,7 @@ export function FileValidation(props: PFileValidation) {
   );
 
   useEffect(() => {
-    if (latestPipelineResults) {
+    if (latestPipelineResults.data) {
       setStepsFound(latestPipelineResults.data.pipelineSteps?.length > 0);
 
       if (latestPipelineResults.data.completed) {
@@ -126,7 +125,8 @@ export function FileValidation(props: PFileValidation) {
           latestPipelineResults.data.completed,
           counts.errors,
           counts.warnings,
-          latestPipelineResults.data.failureMessage || null
+          latestPipelineResults.data.failureMessage || null,
+          latestPipelineResults.data.is_ready
         );
 
         setValidationStatus(status);
@@ -142,14 +142,14 @@ export function FileValidation(props: PFileValidation) {
         });
       }
     }
-  }, [latestPipelineResults]);
+  }, [latestPipelineResults.data]);
 
   const handleValidation = async (file: IFileData) => {
     const pipeline_id = await uploadPipelineConfig(
       PIPELINE_DS,
       validationConfig,
       file,
-      isDryRun(purpose),
+      true,
     );
     setCurrentUploadId(pipeline_id || "");
   };
@@ -166,6 +166,17 @@ export function FileValidation(props: PFileValidation) {
       setCurrentUploadId("");
     }, 500);
   };
+
+  const onSubmissionClick = () => {
+    return onSubmission(
+      validationConfig,
+      fileList,
+      submittable,
+      currentUploadId,
+      setFileUploaded,
+      setMarkedAsReady
+    );
+  }
 
   const TitleBar = (
     <div className="tol-file-upload-title-bar-container">
@@ -184,30 +195,21 @@ export function FileValidation(props: PFileValidation) {
                 onClick={() => handleReset()}
               />
             )}
-            {(purpose === VALIDATE_AND_MARK_AS_READY || purpose === VALIDATE_AND_UPLOAD) && validating && (
+            {/* TODO: Re-enable when mode toggle is re-introduced */}
+            {/* {(purpose === VALIDATE_AND_MARK_AS_READY || purpose === VALIDATE_AND_UPLOAD) && validating && ( */}
+            {validated && (
               <Button
                 type="success"
                 text={
-                  purpose === VALIDATE_AND_MARK_AS_READY
-                    ? "Mark as Ready"
-                    : "Submit File"
+                  submittable ? "Submit" : "Mark as Ready"
                 }
                 disabled={
                   !validated ||
                   !validationStatus.text.includes("Passed") ||
-                  fileUploaded
+                  fileUploaded ||
+                  markedAsReady
                 }
-                onClick={async () => {
-                  await uploadPipelineConfig(
-                    PIPELINE_DS,
-                    validationConfig,
-                    fileList[0],
-                    isDryRun(purpose),
-                    currentUploadId ?? undefined
-                  ).finally(() => {
-                    setFileUploaded(true);
-                  });
-                }}
+                onClick={onSubmissionClick}
               />
             )}
           </div>
@@ -246,7 +248,7 @@ export function FileValidation(props: PFileValidation) {
 
   const FileUploader = (
     <div>
-      <div className="tol-file-upload-uploader-container">
+      {/* <div className="tol-file-upload-uploader-container"> TODO: Re-add if we re-introduce mode toggle
         <p>{VALIDATE_ONLY}</p>
         <Toggle
           key="validation-type-toggle"
@@ -263,7 +265,7 @@ export function FileValidation(props: PFileValidation) {
           }}
         />
         <p>{submittable ? VALIDATE_AND_UPLOAD : VALIDATE_AND_MARK_AS_READY}</p>
-      </div>
+      </div> */}
       <Dropzone
         resource={""}
         dataSource={PIPELINE_DS}
@@ -343,7 +345,7 @@ export function FileValidation(props: PFileValidation) {
             You can download a template file for uploading spreadsheet files{" "}
             <a href="#">here</a>.
           </h6>
-          <h6>Modes:</h6>
+          {/* <h6>Modes:</h6> TODO: Re-add if we re-introduce mode toggle
           <ul>
             <li>
               <strong>Validate only:</strong> Your file will only be
@@ -355,7 +357,7 @@ export function FileValidation(props: PFileValidation) {
               <strong>Validate and submit:</strong> Your file will be
               validated and submitted automatically if it passes validation.
             </li>
-          </ul>
+          </ul> */}
           <h6>Status Messages:</h6>{" "}
           <ul>
             <li>
