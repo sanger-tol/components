@@ -693,7 +693,7 @@
   }
 }
 
-.tol-file-validation-previous-results-results-status {
+.tol-file-validation-results-status {
   margin: 0;
   text-align: right;
 
@@ -715,6 +715,10 @@
 
   &.in-progress {
     color: var(--tol-warning-light);
+  }
+
+  &.marked-as-ready {
+    color: var(--tol-success-light);
   }
 }
 

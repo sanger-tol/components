@@ -4,6 +4,9 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+export const VALIDATE_ONLY = "Validate"; // TODO: Re-add "Only" if we re-introduce mode toggle
+export const VALIDATE_AND_UPLOAD = "Validate and Upload";
+export const VALIDATE_AND_MARK_AS_READY = "Validate and Mark as Ready";
 export const FILE_VALIDATION_PATH = "/file-validation/results/";
 export const REFRESH_INTERVAL = 1000;
 export const MAX_ERRORS_TO_DISPLAY = 2;

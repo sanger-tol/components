@@ -27,6 +27,7 @@ import {
   ValidationReport,
   splitS3FilenameString,
   useQueryData,
+  markFileAsReady,
 } from "..";
 
 export function ValidationResultsViewer() {
@@ -119,7 +120,8 @@ export function ValidationResultsViewer() {
           latestPipelineResults.data.completed,
           counts.errors,
           counts.warnings,
-          latestPipelineResults.data.failureMessage || null
+          latestPipelineResults.data.failureMessage || null,
+          latestPipelineResults.data.isReady
         )
       );
     }
@@ -138,6 +140,16 @@ export function ValidationResultsViewer() {
     }
   }, [latestPipelineResults.data, stepName]);
 
+  const onMarkAsReadyClick = () => {
+    markFileAsReady(
+      uploadId!,
+      () => setUploadStatus({
+        className: "marked-as-ready",
+        text: "Marked as Ready",
+      })
+    )
+  }
+
   const Results = (
     <div className="tol-file-validation-results-page-container">
       <div>
@@ -150,7 +162,7 @@ export function ValidationResultsViewer() {
               </div>
               <div>
                 <h4
-                  className={`tol-file-validation-previous-results-results-status ${uploadStatus.className}`}
+                  className={`tol-file-validation-results-status ${uploadStatus.className}`}
                 >
                   {uploadStatus.text}
                 </h4>
@@ -204,6 +216,13 @@ export function ValidationResultsViewer() {
                     onClick={() => latestPipelineResults.refetch()}
                     timeout={BUTTON_TIMEOUT}
                   />
+                  {latestPipelineResults?.data.completed && uploadStatus.text !== "Marked as Ready" && (
+                    <Button
+                      type="success"
+                      text="Mark As Ready"
+                      onClick={onMarkAsReadyClick}
+                    />
+                  )}
                 </span>
               </div>
             </div>

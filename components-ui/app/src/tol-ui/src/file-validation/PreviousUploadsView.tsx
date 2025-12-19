@@ -55,7 +55,8 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
     data.completed,
     errorsAndWarningCounts.errors,
     errorsAndWarningCounts.warnings,
-    data.failureMessage || null
+    data.failureMessage || null,
+    data.isReady
   );
 
   const ValidationIconTooltip = (
@@ -127,7 +128,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
         </a>
         <div className="tol-file-validation-previous-results-failure-info">
           <h6
-            className={`tol-file-validation-previous-results-results-status 
+            className={`tol-file-validation-results-status 
             ${uploadStatus.className}
             `}
           >
