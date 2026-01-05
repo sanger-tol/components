@@ -86,7 +86,7 @@ export class TsDataSource {
   }
 
   public generateEndpoint(target?: string, suffix?: string): string {
-    const tg = target ? `/${target}` : "";
+    const tg = target ? `${target}` : "";
     const sf = suffix ? `${suffix}` : "";
     return `${tg}${sf}`;
   }
@@ -282,27 +282,23 @@ export class TsDataSource {
   }
 
   @retry(3)
-  public getConfig(endpoint: string): Promise<object> {
-    const key = this.getLocalStorageKey(endpoint);
+  public getConfig(resource: string): Promise<object> {
+    const key = this.getLocalStorageKey(resource);
     const savedConfig = this.getSavedConfig(key);
 
     if (savedConfig && !this.isConfigExpired(savedConfig.expiry)) {
       return Promise.resolve(savedConfig.data);
     } else {
-      return this.fetchAndSaveConfig(endpoint, key);
+      return this.fetchAndSaveConfig(resource, key);
     }
   }
 
   public async attributeMetadata(): Promise<object> {
-    return this.getConfig(
-      this.generateEndpoint("_config/attribute_metadata")
-    );
+    return this.getConfig("_config/attribute_metadata");
   }
 
   public async relationshipConfig(): Promise<object> {
-    return this.getConfig(
-      this.generateEndpoint("_config/relationships")
-    );
+    return this.getConfig("_config/relationships");
   }
 
   private addIds(attributes: IAttributes) {
