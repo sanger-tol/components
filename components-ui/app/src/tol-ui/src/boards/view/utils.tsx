@@ -147,7 +147,7 @@ async function getZoneData(ids: string[], boardDataSource: TsDataSource) {
           id: { in_list: { value: ids } },
         },
       },
-      requestedFields: "data_source_instance.ui_api_details"
+      requestedFields: ["data_source_instance.ui_api_details"]
     })
 }
 
