@@ -9,7 +9,7 @@ import {
   aggregateObjectIdsByIssue,
   downloadFileFromS3,
   formatAndConcatObjectIds,
-  IPipelineUpload,
+  IAllValidationData,
   IStepData,
   Modal,
   PIPELINE_DS,
@@ -17,7 +17,7 @@ import {
 } from "..";
 
 export interface PValidationReport {
-  data: IPipelineUpload | null;
+  data: IAllValidationData | null;
   open: boolean;
   setOpen: (open: boolean) => void;
   uploadStatus: string;

@@ -14,7 +14,7 @@ import {
   TDataObjectOrNull,
   IValidationResult,
   IValidationResultAPI,
-  IPipelineUpload,
+  IAllValidationData,
   IValidationConfig,
   FILE_VALIDATION_PATH,
   S3_ENDPOINTS,
@@ -142,12 +142,12 @@ export function normaliseValidationResult(
 }
 
 /**
- * Normalises a pipeline upload object and its relationships into the internal IPipelineUpload format.
+ * Normalises a pipeline upload object and its relationships into the internal IAllValidationData format.
  *
  * @param ds - The TsDataSource instance used for fetching related pipeline steps.
  * @param upload - The raw upload object to normalise.
  * @param relationships - An object containing promises for related entities, such as the pipeline.
- * @returns A Promise that resolves to an IPipelineUpload object with all fields mapped and normalised.
+ * @returns A Promise that resolves to an IAllValidationData object with all fields mapped and normalised.
  *
  * This function fetches pipeline steps if a pipeline relationship exists,
  * and maps all relevant fields from the raw upload and its relationships.
@@ -157,7 +157,7 @@ export async function normalisePipelineUpload(
   ds: TsDataSource,
   upload: TDataObjectOrNull,
   relationships: any
-): Promise<IPipelineUpload> {
+): Promise<IAllValidationData> {
   const pipeline = await relationships?.pipeline;
   const pipelineSteps = pipeline
     ? await getStepsInPipeline(ds, pipeline.id)
@@ -188,7 +188,7 @@ export async function normalisePipelineUpload(
  * @param setPipelineResult - Optional callback to set the normalised pipeline result in state.
  * @param setHasErrors - Optional callback to set error state if the fetch fails.
  * @param setLoading - Optional callback to set loading state during the fetch.
- * @returns A Promise that resolves to an IPipelineUpload object if successful, or null if not.
+ * @returns A Promise that resolves to an IAllValidationData object if successful, or null if not.
  *
  * If the fetch fails, this function will trigger a popup error message and update error/loading state if callbacks are provided.
  */
@@ -197,10 +197,10 @@ export async function fetchCurrentPipelineResults(
   ds: TsDataSource,
   endpoint: string,
   uploadId: string,
-  setPipelineResult?: (results: IPipelineUpload | null) => void,
+  setPipelineResult?: (results: IAllValidationData | null) => void,
   setHasErrors?: (hasErrors: boolean) => void,
   setLoading?: (loading: boolean) => void | null
-): Promise<IPipelineUpload | null> {
+): Promise<IAllValidationData | null> {
   try {
     const results = await ds.getListPage({
       objectType: endpoint,
@@ -252,7 +252,7 @@ export async function fetchAndNormaliseUploadResult(
   ds: TsDataSource,
   endpoint: string,
   uploadId: string,
-  setPipelineResult: (results: IPipelineUpload | null) => void,
+  setPipelineResult: (results: IAllValidationData | null) => void,
   setHasErrors: (hasErrors: boolean) => void,
   setLoading?: (loading: boolean) => void | null
 ): Promise<void> {
@@ -291,7 +291,7 @@ export async function fetchAndNormaliseUploadResult(
  * @param setAllUploadResults - Optional callback to set the array of normalised pipeline upload results in state.
  * @param setHasErrors - Optional callback to set error state if the fetch fails.
  * @param setLoading - Optional callback to set loading state during the fetch.
- * @returns A Promise that resolves to an array of IPipelineUpload objects if successful, or an empty array if not.
+ * @returns A Promise that resolves to an array of IAllValidationData objects if successful, or an empty array if not.
  *
  * If the fetch fails, this function will trigger a popup error message and update error/loading state via the provided callbacks.
  */
@@ -300,7 +300,7 @@ export async function fetchAndNormaliseAllUploadResults(
   ds: TsDataSource,
   endpoint: string,
   userId: string,
-  setAllUploadResults?: (results: IPipelineUpload[]) => void,
+  setAllUploadResults?: (results: IAllValidationData[]) => void,
   setHasErrors?: (hasErrors: boolean) => void,
   setLoading?: (loading: boolean) => void
 ) {
@@ -899,4 +899,116 @@ export function formatAndConcatObjectIds(objectIds: string[]): string {
   // Push the final range
   ranges.push(start === end ? `${start}` : `${start}-${end}`);
   return ranges.join(", ");
+}
+
+export type TValidationIssue = {
+  severity: string;
+  field: string;
+  detail: string;
+  rows: string;
+};
+
+export type TValidationIssues = Record<string, Array<TValidationIssue>> | [];
+
+export type TValidatedDataReport = {
+  title: string;
+  uploadDetails: {};
+  issues: TValidationIssues;
+};
+
+export function constructValidationReport(validationData: IAllValidationData) {
+  const { validationResults, pipelineSteps, s3Filename, ...rest } =
+    validationData;
+
+  let validationReport: TValidatedDataReport = {
+    title: "Validation Report",
+    uploadDetails: {
+      s3Filename: splitS3FilenameString(s3Filename),
+      pipelineSteps: pipelineSteps
+        ? pipelineSteps.map((step: IStepData) => step.name).join(", ")
+        : "",
+      ...rest,
+    },
+    issues: {} as TValidationIssues,
+  };
+
+  validationData?.pipelineSteps?.map((step: IStepData) => {
+    const stepErrors = validationData.validationResults.filter(
+      (result: IValidationResult) => result.stepName === step.name
+    );
+
+    if (stepErrors.length === 0) return;
+
+    const aggregatedResults = aggregateObjectIdsByIssue(stepErrors);
+
+    Object.entries(aggregatedResults).map(([k, objectIds]) => {
+      const [severity, field, detail] = k.split("|~");
+      if (!validationReport.issues[step.name]) {
+        validationReport.issues[step.name] = [];
+      }
+
+      validationReport.issues[step.name].push({
+        severity: severity,
+        field: field,
+        detail: detail,
+        rows: formatAndConcatObjectIds(objectIds),
+      });
+    });
+  });
+
+  console.log(validationReport);
+
+  return validationReport;
+}
+
+export function downloadReportFile(data: IAllValidationData) {
+  const jsonReport = constructValidationReport(data);
+
+  // create readable report from json
+  // start report
+  let report: string = `${jsonReport["title"]} for ${
+    jsonReport["uploadDetails"]["s3Filename"]
+  }\n${"=".repeat(50)}\n\n`;
+
+  // upload details
+  report += `Upload Details:\n${"-".repeat(20)}\n`;
+  report += `Validation ID: ${jsonReport["uploadDetails"]["id"]}\n`;
+  report += `Date Started: ${jsonReport["uploadDetails"]["dateStarted"]}\n`;
+  report += `Pipeline Name: ${jsonReport["uploadDetails"]["pipelineName"]}\n`;
+  report += `File Name: ${jsonReport["uploadDetails"]["s3Filename"]}\n\n`;
+
+  // issues
+  report += `Validation Issues:\n${"-".repeat(20)}\n`;
+
+  Object.entries(jsonReport.issues).length > 0
+    ? Object.entries(jsonReport.issues).map(([stepName, issuesArray]) => {
+        report += `Step: ${stepName} -\n`;
+        issuesArray.forEach((issue, index) => {
+          report += `${index + 1}. [${issue.severity}] | Column: ${
+            issue.field
+          }\n`;
+          report += `  - Issue: ${issue.detail}\n`;
+          report += `  - Affected Row Number(s): ${issue.rows}\n\n`;
+        });
+      })
+    : (report += "No issues found.\n");
+
+  //end report
+  report += `${"-".repeat(20)}\n`;
+  report += "End of report.";
+
+  const blob = new Blob([report], {
+    type: "text/plain; charset=utf-8",
+  });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `validation-report-${jsonReport["uploadDetails"]["s3Filename"]}.txt`;
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+
+  a.remove();
+  URL.revokeObjectURL(url);
 }

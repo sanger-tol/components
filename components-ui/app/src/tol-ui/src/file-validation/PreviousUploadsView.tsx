@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
-  IPipelineUpload,
+  IAllValidationData,
   IValidationResult,
   ValidationIcon,
   getErrorWarningCounts,
@@ -27,7 +27,7 @@ import {
 
 export interface PPreviousUploadsView {
   id: string;
-  data: IPipelineUpload;
+  data: IAllValidationData;
   expanded: boolean;
   onToggle: (id: string) => void;
   showPassedSteps?: boolean;

@@ -53,7 +53,7 @@ export interface IValidationResult {
   stepName: string;
 }
 
-export interface IPipelineUploadAPI {
+export interface IAllValidationDataAPI {
   id: string;
   completed: boolean;
   date_started: string;
@@ -64,7 +64,7 @@ export interface IPipelineUploadAPI {
   failure_message: string | null;
 }
 
-export interface IPipelineUpload {
+export interface IAllValidationData {
   id: string;
   completed: boolean;
   dateStarted: string;

@@ -15,7 +15,7 @@ import {
   IErrorWarningCount,
   fetchCurrentPipelineResults,
   ValidateSteps,
-  IPipelineUpload,
+  IAllValidationData,
   PreviousUploadsModal,
   Widgets,
   LoadingContent,
@@ -32,6 +32,7 @@ import {
   VALIDATION_TIMEOUT_MS,
   getUserFromLocalStorage,
   setValidationTimeout,
+  downloadReportFile,
 } from "..";
 
 export function ValidationResultsViewer() {
@@ -81,7 +82,7 @@ export function ValidationResultsViewer() {
     return result;
   };
 
-  const latestPipelineResults = useQueryData<IPipelineUpload | null>(
+  const latestPipelineResults = useQueryData<IAllValidationData | null>(
     ["latestPipelineResults", uploadId],
     fetchLatestPipelineResults,
     {
@@ -232,6 +233,16 @@ export function ValidationResultsViewer() {
                     }
                   />
                   <Button
+                    icon="download"
+                    tooltip={"Download Validation Report"}
+                    onClick={() => {
+                      downloadReportFile(latestPipelineResults.data);
+                    }}
+                    disabled={
+                      validating || latestPipelineResults.data.failureMessage
+                    }
+                  />
+                  <Button
                     icon="rotate"
                     tooltip="Refresh"
                     disabled={
@@ -241,14 +252,14 @@ export function ValidationResultsViewer() {
                     onClick={() => latestPipelineResults.refetch()}
                     timeout={BUTTON_TIMEOUT}
                   />
-                  {latestPipelineResults?.data.completed &&
-                    uploadStatus.text !== "Marked as Ready" && (
-                      <Button
-                        type="success"
-                        text="Mark As Ready"
-                        onClick={onMarkAsReadyClick}
-                      />
-                    )}
+                  {latestPipelineResults?.data.completed && (
+                    <Button
+                      type="success"
+                      text="Mark As Ready"
+                      disabled={uploadStatus.text === "Marked as Ready"}
+                      onClick={onMarkAsReadyClick}
+                    />
+                  )}
                 </span>
               </div>
             </div>

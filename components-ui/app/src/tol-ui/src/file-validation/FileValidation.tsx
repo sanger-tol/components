@@ -8,7 +8,7 @@ import React, { useState, useEffect } from "react";
 import {
   ValidateSteps,
   IValidationConfig,
-  IPipelineUpload,
+  IAllValidationData,
   uploadPipelineConfig,
   fetchCurrentPipelineResults,
   constructCompletionMessage,
@@ -105,7 +105,7 @@ export function FileValidation(props: PFileValidation) {
     );
   };
 
-  const latestPipelineResults = useQueryData<IPipelineUpload | null>(
+  const latestPipelineResults = useQueryData<IAllValidationData | null>(
     ["latestPipelineResults", currentUploadId],
     fetchLatestPipelineResults,
     {
