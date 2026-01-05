@@ -5,20 +5,28 @@ SPDX-License-Identifier: MIT
 */
 
 import { Dropdown } from "rsuite";
-import { Icon, stopPropagation, copyPageColumnValues } from "..";
+import { Icon, stopPropagation, copyPageColumnValues, TFieldDropdownChoices } from "..";
 
 export interface FieldDropdown {
   attribute: string;
   data: any;
   separator?: string;
+  choices?: TFieldDropdownChoices;
 }
 
 export function FieldDropdown(props: FieldDropdown) {
-  const { attribute, data, separator } = props;
+  const {
+    attribute,
+    data,
+    separator,
+    choices
+  } = props;
 
   const onClick = (e) => {
     stopPropagation(e);
   };
+
+  if (choices && choices.length === 0) return;
 
   return (
     <span className="tol-field-dropdown" onClick={onClick}>
@@ -27,12 +35,14 @@ export function FieldDropdown(props: FieldDropdown) {
         noCaret
         placement="bottomEnd"
       >
-        <Dropdown.Item
-          icon={<Icon icon="share-from-square" size="sm" />}
-          onClick={() => copyPageColumnValues(data, attribute, separator)}
-        >
-          Copy Column Values (Page)
-        </Dropdown.Item>
+        {!choices || choices.includes("copyValues") && (
+          <Dropdown.Item
+            icon={<Icon icon="copy" size="sm" />}
+            onClick={() => copyPageColumnValues(data, attribute, separator)}
+          >
+            Copy Values
+          </Dropdown.Item>
+        )}
       </Dropdown>
     </span>
   );

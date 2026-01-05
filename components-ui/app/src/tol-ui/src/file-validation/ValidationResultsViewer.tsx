@@ -27,6 +27,12 @@ import {
   ValidationReport,
   splitS3FilenameString,
   useQueryData,
+  markFileAsReady,
+  truncateString,
+  useTimeout,
+  VALIDATION_TIMEOUT_MS,
+  getUserFromLocalStorage,
+  setValidationTimeout,
 } from "..";
 
 export function ValidationResultsViewer() {
@@ -119,7 +125,8 @@ export function ValidationResultsViewer() {
           latestPipelineResults.data.completed,
           counts.errors,
           counts.warnings,
-          latestPipelineResults.data.failureMessage || null
+          latestPipelineResults.data.failureMessage || null,
+          latestPipelineResults.data.isReady
         )
       );
     }
@@ -138,6 +145,32 @@ export function ValidationResultsViewer() {
     }
   }, [latestPipelineResults.data, stepName]);
 
+  const onMarkAsReadyClick = () => {
+    markFileAsReady(
+      uploadId!,
+      () => setUploadStatus({
+        className: "marked-as-ready",
+        text: "Marked as Ready",
+      })
+    )
+  }
+
+  const timeoutEnabled = validating && !!uploadId && !validated;
+
+  useTimeout(
+    async () => {
+      await setValidationTimeout(
+        PIPELINE_DS,
+        getUserFromLocalStorage()?.id || "",
+        uploadId
+      );
+      await latestPipelineResults.refetch();
+      setFailedPipeline(true);
+    },
+    VALIDATION_TIMEOUT_MS,
+    { enabled: timeoutEnabled, startOnMount: timeoutEnabled }
+  );
+
   const Results = (
     <div className="tol-file-validation-results-page-container">
       <div>
@@ -146,11 +179,11 @@ export function ValidationResultsViewer() {
             <div className="tol-file-validation-results-page-info-container">
               <div className="tol-file-validation-results-page-info-inner-container">
                 <h4>Results for Pipeline #{latestPipelineResults.data.id}</h4>
-                <h6>Pipeline: {latestPipelineResults.data.pipeline}</h6>
+                <h6>Pipeline: {latestPipelineResults.data?.pipelineName}</h6>
               </div>
               <div>
                 <h4
-                  className={`tol-file-validation-previous-results-results-status ${uploadStatus.className}`}
+                  className={`tol-file-validation-results-status ${uploadStatus.className}`}
                 >
                   {uploadStatus.text}
                 </h4>
@@ -176,8 +209,11 @@ export function ValidationResultsViewer() {
                       )
                     }
                   >
-                    {splitS3FilenameString(
-                      String(latestPipelineResults.data.s3Filename)
+                    {truncateString(
+                      splitS3FilenameString(
+                        String(latestPipelineResults.data.s3Filename)
+                      ),
+                      50
                     )}
                   </a>
                 </p>
@@ -194,16 +230,29 @@ export function ValidationResultsViewer() {
                 <span className="tol-file-validation-results-page-error-count-button">
                   <Button
                     icon="clipboard"
-                    tooltip="Show Report"
                     onClick={() => setReportOpen((prev: boolean) => !prev)}
+                    disabled={validating}
+                    tooltip={
+                      validating ? "Currently Validating..." : "Show Report"
+                    }
                   />
                   <Button
                     icon="rotate"
                     tooltip="Refresh"
-                    disabled={latestPipelineResults?.data.completed}
+                    disabled={
+                      latestPipelineResults?.data.completed ||
+                      latestPipelineResults?.data.failureMessage !== null
+                    }
                     onClick={() => latestPipelineResults.refetch()}
                     timeout={BUTTON_TIMEOUT}
                   />
+                  {latestPipelineResults?.data.completed && uploadStatus.text !== "Marked as Ready" && (
+                    <Button
+                      type="success"
+                      text="Mark As Ready"
+                      onClick={onMarkAsReadyClick}
+                    />
+                  )}
                 </span>
               </div>
             </div>

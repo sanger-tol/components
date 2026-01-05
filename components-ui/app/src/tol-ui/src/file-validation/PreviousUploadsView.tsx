@@ -55,7 +55,8 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
     data.completed,
     errorsAndWarningCounts.errors,
     errorsAndWarningCounts.warnings,
-    data.failureMessage || null
+    data.failureMessage || null,
+    data.isReady
   );
 
   const ValidationIconTooltip = (
@@ -115,19 +116,24 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
       <div className="tol-file-validation-previous-results-status-container">
         <a
           href="#"
-          onClick={() => downloadFileFromS3(PIPELINE_DS, data.s3Bucket, data.s3Filename)}
+          onClick={() =>
+            downloadFileFromS3(PIPELINE_DS, data.s3Bucket, data.s3Filename)
+          }
         >
           <p>
             {
               <HoverOverlay contents={"download"}>
-                {splitS3FilenameString(String(data.s3Filename))}
+                {truncateString(
+                  splitS3FilenameString(String(data.s3Filename)),
+                  50
+                )}
               </HoverOverlay>
             }
           </p>
         </a>
         <div className="tol-file-validation-previous-results-failure-info">
           <h6
-            className={`tol-file-validation-previous-results-results-status 
+            className={`tol-file-validation-results-status 
             ${uploadStatus.className}
             `}
           >
@@ -182,13 +188,13 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
                           result.stepName === stepName
                       );
                       const issueCount = getErrorWarningCounts(stepResults);
-                      const iconType =
-                      data.failureMessage ? "question" :
-                        issueCount.errors > 0
-                          ? "xmark"
-                          : issueCount.warnings > 0
-                          ? "exclamation"
-                          : "check";
+                      const iconType = data.failureMessage
+                        ? "question"
+                        : issueCount.errors > 0
+                        ? "xmark"
+                        : issueCount.warnings > 0
+                        ? "exclamation"
+                        : "check";
                       const stepStatus = determineStepStatus(issueCount);
                       return (
                         <div

@@ -39,6 +39,7 @@ import {
   optimiseFieldMetaForSave,
   env,
   amalgamateRequestedFields,
+  TFieldDropdownChoices,
 } from '..';
 
 
@@ -75,6 +76,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone {
   contents?: ReactNode;
   groupBy?: boolean;
   copySeparator?: string;
+  fieldDropdownChoices?: TFieldDropdownChoices;
 
   actionDataSource?: TsDataSource;
   actions?: (string | IDropdownButtonConfig)[];
