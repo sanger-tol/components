@@ -12,8 +12,7 @@ import {
   IPipelineUpload,
   Modal,
   PIPELINE_DS,
-  splitS3FilenameString,
-  truncateString,
+  splitS3FilenameString
 } from "..";
 
 export interface PValidationReport {
@@ -27,7 +26,10 @@ export function ValidationReport(props: PValidationReport) {
   const { data, open, setOpen, uploadStatus } = props;
 
   const ValidationReportHeader = (
-    <h3>{`Validation Report for Pipeline #${data?.id}`}</h3>
+    <>
+    <h3>Validation Report</h3>
+    <h6>{`Manifest: ${splitS3FilenameString(String(data?.s3Filename))}`}</h6>
+    </>
   );
 
   const ValidationReportContent = (
@@ -67,10 +69,7 @@ export function ValidationReport(props: PValidationReport) {
                         )
                       }
                     >
-                      {truncateString(
-                        splitS3FilenameString(String(data?.s3Filename)),
-                        30
-                      )}
+                      {splitS3FilenameString(String(data?.s3Filename))}
                     </a>
                   </strong>
                 </li>

@@ -68,12 +68,19 @@ export function ValidateSteps(props: PValidateSteps) {
               >
                 <ValidateStep
                   id={`${stepName}`}
-                  stepName={stepName}
-                  results={stepData}
+                  stepDetails={
+                    {
+                      stepName: stepName,
+                      results: stepData,
+                      description: "",
+                      validationDetails: {
+                        completed: completed || false,
+                        failureMessage: failureMessage,
+                      },
+                    }
+                  }
                   expanded={expandedIndex === stepName}
                   onSeeAllErrors={() => handleToggleExpanded(stepName)}
-                  completed={completed}
-                  failureMessage={failureMessage}
                 />
               </div>
             );

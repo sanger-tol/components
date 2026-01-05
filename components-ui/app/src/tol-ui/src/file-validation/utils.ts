@@ -468,12 +468,12 @@ export function constructCompletionMessage(
     };
   } else if (errorsAndWarnings.errors > 0) {
     return {
-      message: `Validation failed with ${errorsAndWarnings.errors} error(s). File cannot be uploaded.`,
+      message: `File failed validation with ${errorsAndWarnings.errors} error(s). File cannot be uploaded.`,
       messageType: "error",
     };
   } else if (errorsAndWarnings.warnings > 0) {
     return {
-      message: `Validation completed with ${errorsAndWarnings.warnings} warning(s).`,
+      message: `File passed validation with ${errorsAndWarnings.warnings} warning(s).`,
       messageType: "warning",
     };
   }

@@ -123,10 +123,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
           <p>
             {
               <HoverOverlay contents={"download"}>
-                {truncateString(
-                  splitS3FilenameString(String(data.s3Filename)),
-                  50
-                )}
+                {splitS3FilenameString(String(data.s3Filename))}
               </HoverOverlay>
             }
           </p>

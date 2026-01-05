@@ -28,7 +28,6 @@ import {
   splitS3FilenameString,
   useQueryData,
   markFileAsReady,
-  truncateString,
   useTimeout,
   VALIDATION_TIMEOUT_MS,
   getUserFromLocalStorage,
@@ -146,14 +145,13 @@ export function ValidationResultsViewer() {
   }, [latestPipelineResults.data, stepName]);
 
   const onMarkAsReadyClick = () => {
-    markFileAsReady(
-      uploadId!,
-      () => setUploadStatus({
+    markFileAsReady(uploadId!, () =>
+      setUploadStatus({
         className: "marked-as-ready",
         text: "Marked as Ready",
       })
-    )
-  }
+    );
+  };
 
   const timeoutEnabled = validating && !!uploadId && !validated;
 
@@ -209,11 +207,8 @@ export function ValidationResultsViewer() {
                       )
                     }
                   >
-                    {truncateString(
-                      splitS3FilenameString(
-                        String(latestPipelineResults.data.s3Filename)
-                      ),
-                      50
+                    {splitS3FilenameString(
+                      String(latestPipelineResults.data.s3Filename)
                     )}
                   </a>
                 </p>
@@ -246,13 +241,14 @@ export function ValidationResultsViewer() {
                     onClick={() => latestPipelineResults.refetch()}
                     timeout={BUTTON_TIMEOUT}
                   />
-                  {latestPipelineResults?.data.completed && uploadStatus.text !== "Marked as Ready" && (
-                    <Button
-                      type="success"
-                      text="Mark As Ready"
-                      onClick={onMarkAsReadyClick}
-                    />
-                  )}
+                  {latestPipelineResults?.data.completed &&
+                    uploadStatus.text !== "Marked as Ready" && (
+                      <Button
+                        type="success"
+                        text="Mark As Ready"
+                        onClick={onMarkAsReadyClick}
+                      />
+                    )}
                 </span>
               </div>
             </div>
