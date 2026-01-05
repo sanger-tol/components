@@ -912,9 +912,12 @@ export type TValidationIssues = Record<string, Array<TValidationIssue>> | [];
 
 export type TValidatedDataReport = {
   title: string;
-  uploadDetails: {};
+  uploadDetails: {}; // TODO: FIX and add type.
   issues: TValidationIssues;
 };
+
+//TODO: use construct validation report in validation report
+
 
 export function constructValidationReport(validationData: IAllValidationData) {
   const { validationResults, pipelineSteps, s3Filename, ...rest } =

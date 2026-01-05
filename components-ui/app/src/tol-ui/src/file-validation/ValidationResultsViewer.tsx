@@ -256,7 +256,13 @@ export function ValidationResultsViewer() {
                     <Button
                       type="success"
                       text="Mark As Ready"
-                      disabled={uploadStatus.text === "Marked as Ready"}
+                      disabled={
+                        uploadStatus.text === "Marked as Ready" ||
+                        (latestPipelineResults.data.validationResults.length >
+                          0 &&
+                          validated) ||
+                        validating
+                      }
                       onClick={onMarkAsReadyClick}
                     />
                   )}
