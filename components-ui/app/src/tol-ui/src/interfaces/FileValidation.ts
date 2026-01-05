@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { TStepsData } from "src/file-validation";
 import {
   VALIDATE_AND_MARK_AS_READY,
   VALIDATE_AND_UPLOAD,
@@ -70,7 +71,7 @@ export interface IPipelineUpload {
   flowRunId: string;
   pipelineName: string;
   pipelineId: string;
-  pipelineSteps: string[];
+  pipelineSteps: TStepsData;
   s3Filename: string;
   s3Bucket: string;
   validationResults: IValidationResult[];

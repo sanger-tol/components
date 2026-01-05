@@ -10,9 +10,10 @@ import {
   downloadFileFromS3,
   formatAndConcatObjectIds,
   IPipelineUpload,
+  IStepData,
   Modal,
   PIPELINE_DS,
-  splitS3FilenameString
+  splitS3FilenameString,
 } from "..";
 
 export interface PValidationReport {
@@ -27,8 +28,8 @@ export function ValidationReport(props: PValidationReport) {
 
   const ValidationReportHeader = (
     <>
-    <h3>Validation Report</h3>
-    <h6>{`Manifest: ${splitS3FilenameString(String(data?.s3Filename))}`}</h6>
+      <h3>Validation Report</h3>
+      <h6>{`Manifest: ${splitS3FilenameString(String(data?.s3Filename))}`}</h6>
     </>
   );
 
@@ -76,7 +77,9 @@ export function ValidationReport(props: PValidationReport) {
                 <li>
                   <strong>
                     Steps in Pipeline:{" "}
-                    {data?.pipelineSteps?.join(", ") || "No steps available."}
+                    {data?.pipelineSteps
+                      ?.map((step: IStepData) => step.name)
+                      .join(", ") || "No steps available."}
                   </strong>
                 </li>
               </ul>
@@ -91,9 +94,9 @@ export function ValidationReport(props: PValidationReport) {
       {data?.validationResults && data?.validationResults.length === 0 && (
         <p>No validation issues found for this upload.</p>
       )}
-      {data?.pipelineSteps?.map((step) => {
+      {data?.pipelineSteps?.map((step: IStepData) => {
         const stepErrors = data.validationResults.filter(
-          (result) => result.stepName === step
+          (result) => result.stepName === step.name
         );
 
         if (stepErrors.length === 0) return null;
@@ -102,10 +105,10 @@ export function ValidationReport(props: PValidationReport) {
 
         return (
           <div
-            key={step}
+            key={step.name}
             className="tol-file-validation-report-modal-result-panel"
           >
-            <Panel header={`Step: ${step}`} bordered collapsible>
+            <Panel header={`Step: ${step.name}`} bordered collapsible>
               {Object.entries(aggregatedResults).map(([k, objectIds]) => {
                 const [severity, field, detail] = k.split("|~", 3);
                 const sortedObjectIds = [...objectIds].sort(

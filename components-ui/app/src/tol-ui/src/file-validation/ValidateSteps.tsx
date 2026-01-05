@@ -11,11 +11,13 @@ import {
   resizeListener,
   IValidationResult,
   WIDTH_REDUCER,
+  IStepData,
+  TStepsData,
 } from "..";
 
 export interface PValidateSteps {
   data: IValidationResult[];
-  steps: string[];
+  steps: TStepsData;
   expandedIndex?: string;
   stepName?: string;
   targetRef?: React.RefObject<HTMLDivElement>;
@@ -57,34 +59,34 @@ export function ValidateSteps(props: PValidateSteps) {
     >
       <div>
         <div className="tol-file-uploader-validate-steps-inner-container">
-          {steps.length > 0 ? steps.map((stepName: string) => {
-            const stepData = data.filter(
-              (result: IValidationResult) => result.stepName === stepName
-            );
-            return (
-              <div
-                key={stepName}
-                ref={props.stepName === stepName ? props.targetRef : null}
-              >
-                <ValidateStep
-                  id={`${stepName}`}
-                  stepDetails={
-                    {
-                      stepName: stepName,
+          {steps.length > 0 ? (
+            (steps.map((step: IStepData) => {
+              const stepData = data.filter(
+                (result: IValidationResult) => result.stepName === step.name
+              );
+              return (
+                <div
+                  key={step.name}
+                  ref={props.stepName === step.name ? props.targetRef : null}
+                >
+                  <ValidateStep
+                    id={`${step.name}`}
+                    stepDetails={{
+                      stepName: step.name,
                       results: stepData,
-                      description: "",
+                      description: step.description,
                       validationDetails: {
                         completed: completed || false,
                         failureMessage: failureMessage,
                       },
-                    }
-                  }
-                  expanded={expandedIndex === stepName}
-                  onSeeAllErrors={() => handleToggleExpanded(stepName)}
-                />
-              </div>
-            );
-          }): (
+                    }}
+                    expanded={expandedIndex === step.name}
+                    onSeeAllErrors={() => handleToggleExpanded(step.name)}
+                  />
+                </div>
+              );
+            }) as TStepsData)
+          ) : (
             <h6 className="tol-file-validation-previous-results-no-data">
               No pipeline steps found.
             </h6>

@@ -27,7 +27,14 @@ import {
   VALIDATION_TIMEOUT_MS,
 } from "..";
 
-const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
+const pipelineStepsPromiseCache = new Map<string, Promise<TStepsData>>();
+
+export interface IStepData {
+  name: string;
+  description: string;
+}
+
+export type TStepsData = IStepData[] | [];
 
 /**
  * Counts the number of errors and warnings in a list of validation results.
@@ -500,7 +507,7 @@ export function determineUploadStatus(
   overallErrors: number,
   overallWarnings: number,
   failureMessage: string | null,
-  isReady: boolean,
+  isReady: boolean
 ): { className: string; text: string } {
   if (failureMessage) {
     return { className: "failed", text: "Failed" };
@@ -577,7 +584,16 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
             return a.step_order - b.step_order;
           }
         })
-        .map((step: TDataObjectOrNull) => (step ? step.step_name : "")) || []
+        .flatMap((step: TDataObjectOrNull) =>
+          step
+            ? [
+                {
+                  name: step.step_name,
+                  description: step.step_description || "",
+                },
+              ]
+            : []
+        ) || []
     );
   })();
 
@@ -599,7 +615,9 @@ export async function setValidationTimeout(
         user_id: { eq: { value: userId } },
         completed: { eq: { value: false } },
         // fail a validation if it has been running for more than 8 minutes past start time.
-        date_started: { lt: { value: new Date(Date.now() - VALIDATION_TIMEOUT_MS) } },
+        date_started: {
+          lt: { value: new Date(Date.now() - VALIDATION_TIMEOUT_MS) },
+        },
         failure_message: { eq: { value: null } },
       },
     },
@@ -640,17 +658,18 @@ export function goToResults(
   errorWarningCount: number = 0
 ) {
   history.push(
-    `${FILE_VALIDATION_PATH}${pipelineId}${errorWarningCount > 2 && stepName ? `?stepName=${stepName}` : ""
+    `${FILE_VALIDATION_PATH}${pipelineId}${
+      errorWarningCount > 2 && stepName ? `?stepName=${stepName}` : ""
     }`
   );
 }
 
 /**
  * Determines if the file validation purpose represents a dry run operation.
- * 
+ *
  * A dry run operation is one that validates files without performing actual modifications
  * or side effects beyond marking files as ready.
- * 
+ *
  * @param purpose - The file validation purpose to check
  * @returns `true` if the purpose is VALIDATE_ONLY or VALIDATE_AND_MARK_AS_READY, `false` otherwise
  */
@@ -660,7 +679,7 @@ export function isDryRun(purpose: TFileValidationPurpose): boolean {
 
 /**
  * Determines the next file validation purpose based on the current purpose and submittable state.
- * 
+ *
  * @param purpose - The current file validation purpose
  * @param submittable - Optional flag indicating whether the file can be submitted
  * @returns The next file validation purpose. If current purpose is VALIDATE_ONLY and submittable is true,
@@ -679,13 +698,13 @@ export function getNextPurpose(
 
 /**
  * Submits a file for validation by uploading it through the pipeline configuration.
- * 
+ *
  * @param validationConfig - The validation configuration to apply to the file upload
  * @param fileList - An array of file data objects, where the first file will be submitted
  * @param currentUploadId - The ID of the current upload session, or null if not available
  * @param setFileUploaded - Callback function to update the file upload status
  * @returns void
- * 
+ *
  * @remarks
  * This function uploads the first file from the fileList using the pipeline configuration.
  * On success, it sets the uploaded status to true and displays a success message.
@@ -722,13 +741,13 @@ export function submitFile(
 
 /**
  * Marks a file upload as ready for submission by updating its status in the pipeline.
- * 
+ *
  * This function performs an upsert operation to set the `is_ready` attribute to `true`
  * for the specified upload. It displays a success popup message on completion or an
  * error popup message if the operation fails.
- * 
+ *
  * @param currentUploadId - The unique identifier of the upload to mark as ready
- * @param setMarkedAsReady - Callback function to update the marked-as-ready state, 
+ * @param setMarkedAsReady - Callback function to update the marked-as-ready state,
  *                           invoked with `true` upon successful operation
  * @returns void
  */
@@ -766,20 +785,20 @@ export function markFileAsReady(
 
 /**
  * Handles file submission logic based on validation state and upload status.
- * 
+ *
  * If the file is submittable, it initiates the file submission process.
  * If the file is not submittable, it marks the file as ready.
  * Otherwise, it logs an error and displays an error popup message.
- * 
+ *
  * @param validationConfig - Configuration object containing validation rules and settings
  * @param fileList - Array of file data objects to be processed
  * @param submittable - Flag indicating whether the file can be submitted
  * @param currentUploadId - The unique identifier for the current upload, or null if not available
  * @param setFileUploaded - Callback function to update the file uploaded state
  * @param setMarkedAsReady - Callback function to update the marked as ready state
- * 
+ *
  * @returns void
- * 
+ *
  * @throws Will log an error and show a popup if currentUploadId is null when trying to mark as ready
  */
 export function onSubmission(
