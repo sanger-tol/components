@@ -237,7 +237,7 @@ export function FileValidation(props: PFileValidation) {
             />
             <Button
               icon="download"
-              tooltip="Dwonload results of latest validation"
+              tooltip="Download results of latest validation"
               onClick={() => downloadReportFile(latestPipelineResults.data)}
               disabled={!validated}
             />
