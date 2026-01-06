@@ -16,6 +16,7 @@ import {
 } from "..";
 
 export interface PValidateStep {
+    description?: string;
   id: string;
   stepName: string;
   results?: IValidationResult[];
@@ -29,6 +30,7 @@ export function ValidateStep(props: PValidateStep) {
   const {
     id,
     stepName,
+    description,
     onSeeAllErrors,
     results = [],
     expanded = false,
@@ -59,6 +61,13 @@ export function ValidateStep(props: PValidateStep) {
         <div className="tol-file-uploader-validate-step-title-container">
           <h6 className="tol-file-uploader-validate-step-title">
             {truncateString(normaliseCaps(stepName))}
+            {description && (
+              <span className="tol-file-uploader-validate-step-description">
+                &nbsp;
+                <i className="icon-info" title={description} />
+                <span style={{ marginLeft: 4 }}>{description}</span>
+              </span>
+            )}
           </h6>
           <ValidationIcon
             iconType={iconType}

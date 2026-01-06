@@ -15,7 +15,7 @@ import {
 
 export interface PValidateSteps {
   data: IValidationResult[];
-  steps: string[];
+  steps: Array<string | { stepName: string; description?: string }>;
   expandedIndex?: string;
   stepName?: string;
   targetRef?: React.RefObject<HTMLDivElement>;
@@ -57,7 +57,15 @@ export function ValidateSteps(props: PValidateSteps) {
     >
       <div>
         <div className="tol-file-uploader-validate-steps-inner-container">
-          {steps.length > 0 ? steps.map((stepName: string) => {
+          {steps.length > 0 ? steps.map((step) => {
+            let stepName, description;
+            if (typeof step === "string") {
+              stepName = step;
+              description = undefined;
+            } else {
+              stepName = step.stepName;
+              description = step.description;
+            }
             const stepData = data.filter(
               (result: IValidationResult) => result.stepName === stepName
             );
@@ -69,6 +77,7 @@ export function ValidateSteps(props: PValidateSteps) {
                 <ValidateStep
                   id={`${stepName}`}
                   stepName={stepName}
+                  description={description}
                   results={stepData}
                   expanded={expandedIndex === stepName}
                   onSeeAllErrors={() => handleToggleExpanded(stepName)}
