@@ -45,12 +45,34 @@ export interface IValidationResultAPI {
 }
 
 export interface IValidationResult {
-  code: string;
+  code?: string;
   detail: string;
   field: string | null;
   objectId: string;
   severity: TSeverity;
-  stepName: string;
+  stepName?: string;
+}
+
+export interface IValidationUploadDetails {
+  id: string;
+  s3Filename: string;
+  pipelineSteps: string;
+  completed: boolean;
+  dateStarted: string;
+  flowRunId: string;
+  pipelineName: string;
+  pipelineId: string;
+  s3Bucket: string;
+  failureMessage: string | null;
+  isReady: boolean;
+}
+
+export type TValidationIssues = Record<string, IValidationResult[]>;
+
+export interface IValidatedDataReport {
+  title: string;
+  uploadDetails: IValidationUploadDetails;
+  issues: TValidationIssues;
 }
 
 export interface IAllValidationDataAPI {
@@ -60,7 +82,7 @@ export interface IAllValidationDataAPI {
   flow_run_id: string;
   s3_filename: string;
   s3_bucket: string;
-  validation_results: IValidationResult[];
+  validation_results: IValidationResultAPI[];
   failure_message: string | null;
 }
 

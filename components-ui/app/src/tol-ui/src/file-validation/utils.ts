@@ -25,6 +25,9 @@ import {
   VALIDATE_AND_UPLOAD,
   PIPELINE_DS,
   VALIDATION_TIMEOUT_MS,
+  IValidatedDataReport,
+  TSeverity,
+  TValidationIssues,
 } from "..";
 
 const pipelineStepsPromiseCache = new Map<string, Promise<TStepsData>>();
@@ -901,29 +904,13 @@ export function formatAndConcatObjectIds(objectIds: string[]): string {
   return ranges.join(", ");
 }
 
-export type TValidationIssue = {
-  severity: string;
-  field: string;
-  detail: string;
-  rows: string;
-};
-
-export type TValidationIssues = Record<string, Array<TValidationIssue>> | [];
-
-export type TValidatedDataReport = {
-  title: string;
-  uploadDetails: {}; // TODO: FIX and add type.
-  issues: TValidationIssues;
-};
-
 //TODO: use construct validation report in validation report
-
 
 export function constructValidationReport(validationData: IAllValidationData) {
   const { validationResults, pipelineSteps, s3Filename, ...rest } =
     validationData;
 
-  let validationReport: TValidatedDataReport = {
+  let validationReport: IValidatedDataReport = {
     title: "Validation Report",
     uploadDetails: {
       s3Filename: splitS3FilenameString(s3Filename),
@@ -951,15 +938,13 @@ export function constructValidationReport(validationData: IAllValidationData) {
       }
 
       validationReport.issues[step.name].push({
-        severity: severity,
+        severity: severity as TSeverity,
         field: field,
         detail: detail,
-        rows: formatAndConcatObjectIds(objectIds),
+        objectId: formatAndConcatObjectIds(objectIds),
       });
     });
   });
-
-  console.log(validationReport);
 
   return validationReport;
 }
@@ -982,7 +967,6 @@ export function downloadReportFile(data: IAllValidationData) {
 
   // issues
   report += `Validation Issues:\n${"-".repeat(20)}\n`;
-
   Object.entries(jsonReport.issues).length > 0
     ? Object.entries(jsonReport.issues).map(([stepName, issuesArray]) => {
         report += `Step: ${stepName} -\n`;
@@ -991,7 +975,7 @@ export function downloadReportFile(data: IAllValidationData) {
             issue.field
           }\n`;
           report += `  - Issue: ${issue.detail}\n`;
-          report += `  - Affected Row Number(s): ${issue.rows}\n\n`;
+          report += `  - Affected Row Number(s): ${issue.objectId}\n\n`;
         });
       })
     : (report += "No issues found.\n");
@@ -1003,12 +987,14 @@ export function downloadReportFile(data: IAllValidationData) {
   const blob = new Blob([report], {
     type: "text/plain; charset=utf-8",
   });
-  const url = URL.createObjectURL(blob);
 
+  const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
+
   a.href = url;
   a.download = `validation-report-${jsonReport["uploadDetails"]["s3Filename"]}.txt`;
   a.style.display = "none";
+
   document.body.appendChild(a);
   a.click();
 
