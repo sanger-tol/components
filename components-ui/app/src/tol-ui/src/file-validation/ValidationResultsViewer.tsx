@@ -225,7 +225,7 @@ export function ValidationResultsViewer() {
                 <p>Number of Errors: {errorAndWarningCount.errors}</p>
                 <span className="tol-file-validation-results-page-error-count-button">
                   <Button
-                    icon="clipboard"
+                    icon="clipboard-check"
                     onClick={() => setReportOpen((prev: boolean) => !prev)}
                     disabled={validating}
                     tooltip={
@@ -320,7 +320,7 @@ export function ValidationResultsViewer() {
     },
   ];
 
-  return latestPipelineResults.isLoading && !latestPipelineResults ? (
+  return !latestPipelineResults.isSuccess ? (
     <LoadingContent text="Loading Results" />
   ) : (
     <>

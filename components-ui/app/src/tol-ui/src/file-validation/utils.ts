@@ -904,8 +904,6 @@ export function formatAndConcatObjectIds(objectIds: string[]): string {
   return ranges.join(", ");
 }
 
-//TODO: use construct validation report in validation report
-
 export function constructValidationReport(validationData: IAllValidationData) {
   const { validationResults, pipelineSteps, s3Filename, ...rest } =
     validationData;
@@ -913,7 +911,7 @@ export function constructValidationReport(validationData: IAllValidationData) {
   let validationReport: IValidatedDataReport = {
     title: "Validation Report",
     uploadDetails: {
-      s3Filename: splitS3FilenameString(s3Filename),
+      s3Filename: splitS3FilenameString(s3Filename || ""),
       pipelineSteps: pipelineSteps
         ? pipelineSteps.map((step: IStepData) => step.name).join(", ")
         : "",
@@ -961,7 +959,9 @@ export function downloadReportFile(data: IAllValidationData) {
   // upload details
   report += `Upload Details:\n${"-".repeat(20)}\n`;
   report += `Validation ID: ${jsonReport["uploadDetails"]["id"]}\n`;
-  report += `Date Started: ${jsonReport["uploadDetails"]["dateStarted"]}\n`;
+  report += `Date Started: ${new Date(
+    jsonReport["uploadDetails"]["dateStarted"]
+  ).toString()}\n`;
   report += `Pipeline Name: ${jsonReport["uploadDetails"]["pipelineName"]}\n`;
   report += `File Name: ${jsonReport["uploadDetails"]["s3Filename"]}\n\n`;
 
@@ -969,7 +969,7 @@ export function downloadReportFile(data: IAllValidationData) {
   report += `Validation Issues:\n${"-".repeat(20)}\n`;
   Object.entries(jsonReport.issues).length > 0
     ? Object.entries(jsonReport.issues).map(([stepName, issuesArray]) => {
-        report += `Step: ${stepName} -\n`;
+        report += `Validation: ${stepName} -\n`;
         issuesArray.forEach((issue, index) => {
           report += `${index + 1}. [${issue.severity}] | Column: ${
             issue.field

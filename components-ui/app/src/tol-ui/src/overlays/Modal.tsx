@@ -16,6 +16,7 @@ export interface PModal {
   overflow?: boolean;
   closeButton?: boolean;
   actionButton?: JSX.Element;
+  actionButtonInline?: boolean;
   className?: string;
   hasPendingChanges?: boolean;
   onClose?: () => void;
@@ -33,11 +34,12 @@ export function Modal(props: PModal) {
     closeButton = true,
     overflow = true,
     actionButton,
+    actionButtonInline = false,
     className,
     hasPendingChanges = false,
     onClose,
     onEnter,
-    onExited
+    onExited,
   } = props;
 
   const handleClose = () => {
@@ -61,15 +63,20 @@ export function Modal(props: PModal) {
         <RSModal.Header closeButton={false}>{header}</RSModal.Header>
         <RSModal.Body>{children}</RSModal.Body>
         <RSModal.Footer>
-          {actionButton && (
-            <span style={{ margin: "6px" }}>{actionButton}</span>
-          )}
-          {closeButton && (
-            <Button
-              {...BUTTONS.CLOSE}
-              onClick={handleClose}
-            />
-          )}
+          <div
+            className={
+              actionButtonInline ? "tol-modal-inline-action-button" : ""
+            }
+          >
+            {actionButton && (
+              <span
+                className={!actionButtonInline ? "tol-modal-action-button" : ""}
+              >
+                {actionButton}
+              </span>
+            )}
+            {closeButton && <Button {...BUTTONS.CLOSE} onClick={handleClose} />}
+          </div>
         </RSModal.Footer>
       </RSModal>
     </>

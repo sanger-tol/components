@@ -38,6 +38,7 @@ import {
   setValidationTimeout,
   useTimeout,
   VALIDATION_TIMEOUT_MS,
+  downloadReportFile,
 } from "..";
 
 
@@ -232,6 +233,12 @@ export function FileValidation(props: PFileValidation) {
               onClick={() => {
                 setOpenReport((prev: boolean) => !prev);
               }}
+              disabled={!validated}
+            />
+            <Button
+              icon="download"
+              tooltip="Dwonload results of latest validation"
+              onClick={() => downloadReportFile(latestPipelineResults.data)}
               disabled={!validated}
             />
             {/* TODO: Re-enable when mode toggle is re-introduced */}
