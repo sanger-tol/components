@@ -85,7 +85,7 @@ export function ValidateSteps(props: PValidateSteps) {
                   />
                 </div>
               );
-            }) as TStepsData)
+            }))
           ) : (
             <h6 className="tol-file-validation-previous-results-no-data">
               No pipeline steps found.
