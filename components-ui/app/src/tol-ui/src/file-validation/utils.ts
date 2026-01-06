@@ -904,6 +904,16 @@ export function formatAndConcatObjectIds(objectIds: string[]): string {
   return ranges.join(", ");
 }
 
+/**
+ * Constructs a structured validation report from raw validation data.
+ * 
+ * This function processes validation data and organizes it into a structured report format
+ * suitable for display or export. It aggregates validation results by pipeline step,
+ * groups similar issues together, and formats object IDs into readable ranges.
+ *
+ * @param validationData - The complete validation data object containing upload details and validation results
+ * @returns A structured validation report object with upload details and organized issues
+ */
 export function constructValidationReport(validationData: IAllValidationData) {
   const { validationResults, pipelineSteps, s3Filename, ...rest } =
     validationData;
@@ -926,7 +936,6 @@ export function constructValidationReport(validationData: IAllValidationData) {
     );
 
     if (stepErrors.length === 0) return;
-
     const aggregatedResults = aggregateObjectIdsByIssue(stepErrors);
 
     Object.entries(aggregatedResults).map(([k, objectIds]) => {
@@ -947,6 +956,16 @@ export function constructValidationReport(validationData: IAllValidationData) {
   return validationReport;
 }
 
+/**
+ * Downloads a validation report file as a formatted text document.
+ * 
+ * This function generates a comprehensive validation report from the provided validation data,
+ * formats it as a human-readable text file, and triggers a browser download. The report includes
+ * upload details, pipeline information, and a structured list of all validation issues organized by step.
+ *
+ * @param data - The validation data object containing all upload and validation information
+ * @returns void - The function doesn't return a value but triggers a file download
+ */
 export function downloadReportFile(data: IAllValidationData) {
   const jsonReport = constructValidationReport(data);
 

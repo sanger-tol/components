@@ -225,6 +225,16 @@ export function ValidationResultsViewer() {
                 <p>Number of Errors: {errorAndWarningCount.errors}</p>
                 <span className="tol-file-validation-results-page-error-count-button">
                   <Button
+                    icon="rotate"
+                    tooltip="Refresh"
+                    disabled={
+                      latestPipelineResults?.data.completed ||
+                      latestPipelineResults?.data.failureMessage !== null
+                    }
+                    onClick={() => latestPipelineResults.refetch()}
+                    timeout={BUTTON_TIMEOUT}
+                  />
+                  <Button
                     icon="clipboard-check"
                     onClick={() => setReportOpen((prev: boolean) => !prev)}
                     disabled={validating}
@@ -243,29 +253,11 @@ export function ValidationResultsViewer() {
                     }
                   />
                   <Button
-                    icon="rotate"
-                    tooltip="Refresh"
-                    disabled={
-                      latestPipelineResults?.data.completed ||
-                      latestPipelineResults?.data.failureMessage !== null
-                    }
-                    onClick={() => latestPipelineResults.refetch()}
-                    timeout={BUTTON_TIMEOUT}
+                    type="success"
+                    text="Mark As Ready"
+                    disabled={uploadStatus.text !== "Passed"}
+                    onClick={onMarkAsReadyClick}
                   />
-                  {latestPipelineResults?.data.completed && (
-                    <Button
-                      type="success"
-                      text="Mark As Ready"
-                      disabled={
-                        uploadStatus.text === "Marked as Ready" ||
-                        (latestPipelineResults.data.validationResults.length >
-                          0 &&
-                          validated) ||
-                        validating
-                      }
-                      onClick={onMarkAsReadyClick}
-                    />
-                  )}
                 </span>
               </div>
             </div>
