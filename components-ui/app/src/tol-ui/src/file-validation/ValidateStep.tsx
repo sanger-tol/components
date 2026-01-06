@@ -27,6 +27,7 @@ export interface IStepDetails {
 }
 
 export interface PValidateStep {
+    description?: string;
   id: string;
   expanded?: boolean;
   onSeeAllErrors?: () => void;
