@@ -262,7 +262,7 @@
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px,
       rgba(0, 0, 0, 0.23) 0px 6px 6px;
     border-radius: 6px;
-    min-height: 210px;
+    min-height: 225px;
     margin-right: 10px;
 
     &.passed {
@@ -298,7 +298,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 15px 0;
+    padding: 10px 0 15px 0;
+    min-height: 90px;
   }
 
   .tol-file-uploader-validate-step-title {
@@ -331,7 +332,7 @@
     justify-content: center;
     flex-direction: row;
     align-items: center;
-    min-height: 100px;
+    height: 80px;
     margin: 10px;
   }
 

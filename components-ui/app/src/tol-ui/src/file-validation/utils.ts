@@ -592,7 +592,7 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
             ? [
                 {
                   name: step.step_name,
-                  description: step.step_description || "",
+                  description: step.description || "",
                 },
               ]
             : []
@@ -990,7 +990,7 @@ export function downloadReportFile(data: IAllValidationData) {
     ? Object.entries(jsonReport.issues).map(([stepName, issuesArray]) => {
         report += `Validation: ${stepName} -\n`;
         issuesArray.forEach((issue, index) => {
-          report += `${index + 1}. [${issue.severity}] | Column: ${
+          report += `${index + 1}. [${issue.severity}] Column: ${
             issue.field
           }\n`;
           report += `  - Issue: ${issue.detail}\n`;

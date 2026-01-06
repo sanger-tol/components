@@ -71,12 +71,12 @@ export function ValidateStep(props: PValidateStep) {
             : stepStatus.className
         }`}
       >
+
         <div className="tol-file-uploader-validate-step-title-container">
           <h6 className="tol-file-uploader-validate-step-title">
-            {normaliseCaps(stepDetails.stepName)}{" "}
-            <IconTooltip
-              contents={stepDetails.description || "No description provided."}
-            />
+                       <IconTooltip
+          contents={stepDetails.description || "No description provided."}
+        /> {" "} {normaliseCaps(stepDetails.stepName)}
           </h6>
           <ValidationIcon
             iconType={iconType}
