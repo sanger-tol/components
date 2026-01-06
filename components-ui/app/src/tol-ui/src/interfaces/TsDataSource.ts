@@ -7,11 +7,11 @@ import { IEntityMeta, IFilter, IJsonApiDataExtra } from "..";
 
 
 export interface IConfigPromises {
-  [baseUrl: string]: Promise<object>;
+  [baseURL: string]: Promise<object>;
 }
 
 export interface IEntityMetaPromises {
-  [baseUrl: string]: Promise<IEntityMeta>;
+  [baseURL: string]: Promise<IEntityMeta>;
 }
 
 export interface IDataSource {
@@ -32,6 +32,7 @@ export interface IDataSource {
 export interface IGetOne {
   objectType: string;
   id: string;
+  requestedFields?: string[];
 }
 
 export interface IGetToOneRelation {
@@ -64,13 +65,13 @@ export interface IGetListPage {
   pageSize?: number;
   filter?: IFilter;
   sortBy?: string;
-  requestedFields?: string;
+  requestedFields?: string[];
 }
 
 export interface IGetList {
   objectType: string;
   filter?: IFilter;
-  requestedFields?: string;
+  requestedFields?: string[];
 }
 
 export interface IGetListCursor {
@@ -78,7 +79,7 @@ export interface IGetListCursor {
   page?: number;
   pageSize?: number;
   filter?: IFilter;
-  requestedFields?: string;
+  requestedFields?: string[];
   searchAfter?: string[];
 }
 
