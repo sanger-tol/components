@@ -8,7 +8,7 @@ import React, { useState, useEffect } from "react";
 import {
   ValidateSteps,
   IValidationConfig,
-  IPipelineUpload,
+  IAllValidationData,
   uploadPipelineConfig,
   fetchCurrentPipelineResults,
   constructCompletionMessage,
@@ -38,6 +38,7 @@ import {
   setValidationTimeout,
   useTimeout,
   VALIDATION_TIMEOUT_MS,
+  downloadReportFile,
 } from "..";
 
 
@@ -105,7 +106,7 @@ export function FileValidation(props: PFileValidation) {
     );
   };
 
-  const latestPipelineResults = useQueryData<IPipelineUpload | null>(
+  const latestPipelineResults = useQueryData<IAllValidationData | null>(
     ["latestPipelineResults", currentUploadId],
     fetchLatestPipelineResults,
     {
@@ -234,6 +235,12 @@ export function FileValidation(props: PFileValidation) {
               }}
               disabled={!validated}
             />
+            <Button
+              icon="download"
+              tooltip="Download results of latest validation"
+              onClick={() => downloadReportFile(latestPipelineResults.data)}
+              disabled={!validated}
+            />
             {/* TODO: Re-enable when mode toggle is re-introduced */}
             {/* {(purpose === VALIDATE_AND_MARK_AS_READY || purpose === VALIDATE_AND_UPLOAD) && validating && ( */}
             {validated && (
@@ -334,14 +341,14 @@ export function FileValidation(props: PFileValidation) {
               tol-file-validation-results-status
               ${validationStatus.className}`
             }>
-            {latestPipelineResults?.data.completed || pipelineFailed
+            {latestPipelineResults?.data?.completed || pipelineFailed
               ? `${validationStatus.text}`
               : "In Progress"}
           </h6>
           <Button
             icon="rotate"
             tooltip="Refresh"
-            disabled={latestPipelineResults?.data.completed}
+            disabled={latestPipelineResults?.data?.completed}
             onClick={() => latestPipelineResults.refetch()}
             timeout={BUTTON_TIMEOUT}
           />
@@ -357,7 +364,7 @@ export function FileValidation(props: PFileValidation) {
           />
         </div>
       ) : Array.isArray(latestPipelineResults) ? null : (
-        latestPipelineResults?.data.validationResults && (
+        latestPipelineResults?.data?.validationResults && (
           <ValidateSteps
             data={latestPipelineResults.data.validationResults}
             steps={latestPipelineResults.data.pipelineSteps}

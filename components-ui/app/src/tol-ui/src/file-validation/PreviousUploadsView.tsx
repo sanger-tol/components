@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
-  IPipelineUpload,
+  IAllValidationData,
   IValidationResult,
   ValidationIcon,
   getErrorWarningCounts,
@@ -22,11 +22,12 @@ import {
   truncateString,
   PIPELINE_DS,
   splitS3FilenameString,
+  IStepData,
 } from "..";
 
 export interface PPreviousUploadsView {
   id: string;
-  data: IPipelineUpload;
+  data: IAllValidationData;
   expanded: boolean;
   onToggle: (id: string) => void;
   showPassedSteps?: boolean;
@@ -123,10 +124,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
           <p>
             {
               <HoverOverlay contents={"download"}>
-                {truncateString(
-                  splitS3FilenameString(String(data.s3Filename)),
-                  50
-                )}
+                {splitS3FilenameString(String(data.s3Filename))}
               </HoverOverlay>
             }
           </p>
@@ -162,30 +160,30 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
               {data.pipelineSteps.length > 0 ? (
                 (() => {
                   const uniqueSteps = Array.from(new Set(data.pipelineSteps));
-                  const allStepsPassed = uniqueSteps.every((stepName) => {
+                  const allStepsPassed = uniqueSteps.every((step) => {
                     const stepResults = data.validationResults.filter(
                       (result: IValidationResult) =>
-                        result.stepName === stepName
+                        result.stepName === step.name
                     );
                     const issueCount = getErrorWarningCounts(stepResults);
                     return issueCount.errors === 0 && issueCount.warnings === 0;
                   });
 
                   return uniqueSteps
-                    .filter((stepName: string) => {
+                    .filter((step: IStepData) => {
                       if (allStepsPassed) return true;
                       if (showPassedSteps) return true;
                       const stepResults = data.validationResults.filter(
                         (result: IValidationResult) =>
-                          result.stepName === stepName
+                          result.stepName === step.name
                       );
                       const issueCount = getErrorWarningCounts(stepResults);
                       return issueCount.errors > 0 || issueCount.warnings > 0;
                     })
-                    .map((stepName: string, index: number) => {
+                    .map((step: IStepData, index: number) => {
                       const stepResults = data.validationResults.filter(
                         (result: IValidationResult) =>
-                          result.stepName === stepName
+                          result.stepName === step.name
                       );
                       const issueCount = getErrorWarningCounts(stepResults);
                       const iconType = data.failureMessage
@@ -198,10 +196,10 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
                       const stepStatus = determineStepStatus(issueCount);
                       return (
                         <div
-                          key={`${stepName}-${index}`}
+                          key={`${step.name}-${index}`}
                           onClick={() => {
                             setExpandedId(
-                              expandedId === stepName ? null : stepName
+                              expandedId === step.name ? null : step.name
                             );
                           }}
                         >
@@ -210,7 +208,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
                               tooltip={ValidationIconTooltip(
                                 issueCount.errors,
                                 issueCount.warnings,
-                                stepName
+                                step.name
                               )}
                               iconType={iconType}
                               size="lg"

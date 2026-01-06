@@ -14,7 +14,7 @@ import {
   PreviousUploadsView,
   getUserFromLocalStorage,
   fetchAndNormaliseAllUploadResults,
-  IPipelineUpload,
+  IAllValidationData,
   TOL_LOADER_STYLES,
   VALIDATION_ENDPOINTS,
   BUTTON_TIMEOUT,
@@ -46,7 +46,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
     );
   };
 
-  const userFileValidationUploads = useQueryData<IPipelineUpload[]>(
+  const userFileValidationUploads = useQueryData<IAllValidationData[]>(
     ["userFileValidationUploads", id],
     fetchPreviousUploads,
     {
@@ -92,10 +92,10 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
       ) : userFileValidationUploads.data.length > 0 ? (
         userFileValidationUploads.data
           .sort(
-            (a: IPipelineUpload, b: IPipelineUpload) =>
+            (a: IAllValidationData, b: IAllValidationData) =>
               Number(b.id) - Number(a.id)
           )
-          .map((upload: IPipelineUpload, index: number) => {
+          .map((upload: IAllValidationData, index: number) => {
             return (
               <div
                 key={`${upload.id}-${userFileValidationUploads.dataUpdatedAt}-${index}`}

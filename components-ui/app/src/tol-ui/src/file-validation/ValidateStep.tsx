@@ -11,73 +11,86 @@ import {
   IValidationResult,
   determineStepStatus,
   normaliseCaps,
-  truncateString,
   MAX_ERRORS_TO_DISPLAY,
+  IconTooltip,
 } from "..";
+
+export interface IStepValidationDetails {
+  completed: boolean;
+  failureMessage?: string | null;
+}
+
+export interface IStepDetails {
+  stepName: string;
+  results: IValidationResult[];
+  description?: string;
+  validationDetails?: IStepValidationDetails;
+}
 
 export interface PValidateStep {
     description?: string;
   id: string;
-  stepName: string;
-  results?: IValidationResult[];
   expanded?: boolean;
   onSeeAllErrors?: () => void;
-  completed?: boolean;
-  failureMessage?: string | null;
+  stepDetails?: IStepDetails;
 }
 
 export function ValidateStep(props: PValidateStep) {
   const {
     id,
-    stepName,
-    description,
     onSeeAllErrors,
-    results = [],
     expanded = false,
-    completed = false,
-    failureMessage = null,
+    stepDetails = {
+      stepName: "",
+      results: [],
+      description: "",
+      validationDetails: {
+        completed: false,
+        failureMessage: null,
+      },
+    },
   } = props;
 
-  const issueCount = getErrorWarningCounts(results);
+  const issueCount = getErrorWarningCounts(stepDetails.results);
   const hasErrors = issueCount.errors > 0 || issueCount.warnings > 0;
   const stepStatus = determineStepStatus(issueCount);
 
-  const iconType =
-    failureMessage ? "question" :
-    issueCount.errors > 0
-      ? "xmark"
-      : issueCount.warnings > 0
-      ? "exclamation"
-      : "check";
+  const iconType = stepDetails.validationDetails?.failureMessage
+    ? "question"
+    : issueCount.errors > 0
+    ? "xmark"
+    : issueCount.warnings > 0
+    ? "exclamation"
+    : "check";
 
   return (
     <div className="tol-file-uploader-validate-step-outer-container">
       <div
         id={id}
         className={`tol-file-uploader-validate-step-inner-container ${
-          !completed && !hasErrors ? "in-progress" : stepStatus.className
+          !stepDetails.validationDetails?.completed && !hasErrors
+            ? "in-progress"
+            : stepStatus.className
         }`}
       >
+
         <div className="tol-file-uploader-validate-step-title-container">
           <h6 className="tol-file-uploader-validate-step-title">
-            {truncateString(normaliseCaps(stepName))}
-            {description && (
-              <span className="tol-file-uploader-validate-step-description">
-                &nbsp;
-                <i className="icon-info" title={description} />
-                <span style={{ marginLeft: 4 }}>{description}</span>
-              </span>
-            )}
+                       <IconTooltip
+          contents={stepDetails.description || "No description provided."}
+        /> {" "} {normaliseCaps(stepDetails.stepName)}
           </h6>
           <ValidationIcon
             iconType={iconType}
             size="lg"
             className={`tol-file-uploader-validate-step-icon ${
-              completed ? stepStatus.className : "in-progress"
+              stepDetails.validationDetails?.completed
+                ? stepStatus.className
+                : "in-progress"
             }`}
-            completed={completed}
+            completed={stepDetails.validationDetails?.completed}
             completedCheck={true}
-            failed={!!failureMessage}
+            failed={!!stepDetails.validationDetails?.failureMessage}
           />
         </div>
         {hasErrors ? (
@@ -89,7 +102,7 @@ export function ValidateStep(props: PValidateStep) {
                 {issueCount.errors}{" "}
                 {issueCount.errors !== 1 ? "Errors" : "Error"}:
               </p>
-              {results
+              {stepDetails.results
                 .sort((a, b) => {
                   if (a.severity !== b.severity) {
                     return a.severity === "error" ? -1 : 1;
@@ -116,7 +129,7 @@ export function ValidateStep(props: PValidateStep) {
                 ))}
             </div>
             <div>
-              {results.length > MAX_ERRORS_TO_DISPLAY ? (
+              {stepDetails.results.length > MAX_ERRORS_TO_DISPLAY ? (
                 <div
                   className="tol-file-uploader-validate-step-see-all-container"
                   onClick={onSeeAllErrors}
@@ -134,8 +147,8 @@ export function ValidateStep(props: PValidateStep) {
               )}
             </div>
           </div>
-        ) : !completed ? (
-          failureMessage ? (
+        ) : !stepDetails.validationDetails?.completed ? (
+          stepDetails.validationDetails?.failureMessage ? (
             <div className="tol-file-uploader-validate-step-failed-container">
               <h6>Pipeline Failed</h6>
               <p>
