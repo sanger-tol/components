@@ -19,6 +19,7 @@ export interface IStepValidationDetails {
   completed: boolean;
   failureMessage?: string | null;
 }
+
 export interface IStepDetails {
   stepName: string;
   results: IValidationResult[];
