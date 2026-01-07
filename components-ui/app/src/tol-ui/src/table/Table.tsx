@@ -34,9 +34,12 @@ import {
   DEFAULT_ROW_HEIGHT,
   AutoHeightCell,
   TCellHeights,
+  COLLAPSED_ROW_MAX_HEIGHT,
+  Icon,
 } from "..";
 import { Sort } from "./Sort";
 import { FieldDropdown } from "./FieldDropdown";
+
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
 interface Props extends IRemoteTargetAndZone {
@@ -148,6 +151,10 @@ export function Table(props: Props) {
     props.setSelectedRows,
     []
   );
+  // which rows are expanded height‑wise
+  const [heightExpandedRows, setHeightExpandedRows] = useState<
+    Record<string, boolean>
+  >({});
 
   // @ts-ignore - temp turned off
   const [bulkSelect, setBulkSelect] = useState(false);
@@ -168,13 +175,13 @@ export function Table(props: Props) {
   }
 
   // @ts-ignore
-  const handleCheckAll = (value: any, checked: boolean) => {
-    const keys = checked ? data.map((item) => item.key) : [];
+  const handleCheckAll = (value: any, checkedVal: boolean) => {
+    const keys = checkedVal ? data.map((item: any) => item.key) : [];
     setSelectedRows && setSelectedRows(keys);
   };
 
-  const handleCheck = (value: any, checked: boolean) => {
-    const keys = checked
+  const handleCheck = (value: any, checkedVal: boolean) => {
+    const keys = checkedVal
       ? [...selectedRows, value]
       : selectedRows.filter((item) => item !== value);
     setSelectedRows(keys);
@@ -439,17 +446,20 @@ export function Table(props: Props) {
                   rowHeight={(rowData: any) => {
                     const rowId = rowData?.key;
                     const row = cellHeights[rowId];
-                    if (!row) return DEFAULT_ROW_HEIGHT;
-                    return Math.max(
-                      DEFAULT_ROW_HEIGHT,
-                      ...Object.values(row)
-                    );
+                    const fullHeight = row
+                      ? Math.max(DEFAULT_ROW_HEIGHT, ...Object.values(row))
+                      : DEFAULT_ROW_HEIGHT;
+
+                    if (heightExpandedRows[rowId]) {
+                      return fullHeight;
+                    }
+                    return Math.min(fullHeight, COLLAPSED_ROW_MAX_HEIGHT);
                   }}
                   renderLoading={() => (
                     <Placeholder loader opacity={0.8} squareCorners />
                   )}
                 >
-                  {rowSelection && (
+                  {true && (
                     <Column key="rowSelection" width={58}>
                       <HeaderCell>
                         <Checkbox
@@ -463,17 +473,46 @@ export function Table(props: Props) {
                       </HeaderCell>
                       <Cell>
                         {(rowData: any) => {
+                          const rowId = rowData.key;
+                          const row = cellHeights[rowId];
+                          const fullHeight = row
+                            ? Math.max(
+                                DEFAULT_ROW_HEIGHT,
+                                ...Object.values(row)
+                              )
+                            : DEFAULT_ROW_HEIGHT;
+                          const isExpanded = !!heightExpandedRows[rowId];
+                          const canExpand =
+                            fullHeight > COLLAPSED_ROW_MAX_HEIGHT;
+
+                          const toggleExpand = () => {
+                            if (!canExpand) return;
+                            setHeightExpandedRows((prev) => ({
+                              ...prev,
+                              [rowId]: !prev[rowId],
+                            }));
+                          };
+
                           return (
-                            <Checkbox
-                              className="tol-table-row-selection"
-                              value={rowData.key}
-                              checked={
-                                bulkSelect ||
-                                selectedRows.some((item) => item === rowData.key)
-                              }
-                              disabled={bulkSelect}
-                              onChange={handleCheck}
-                            />
+                            <div className="tol-row-select-cell">
+                              <Checkbox
+                                className="tol-table-row-selection"
+                                value={rowId}
+                                checked={
+                                  bulkSelect ||
+                                  selectedRows.some((item) => item === rowId)
+                                }
+                                disabled={bulkSelect}
+                                onChange={handleCheck}
+                              />
+                              {canExpand && (
+                                <Icon
+                                  icon={isExpanded ? "minus" : "plus"}
+                                  className="tol-row-expand-btn"
+                                  onClick={toggleExpand}
+                                />
+                              )}
+                            </div>
                           );
                         }}
                       </Cell>
