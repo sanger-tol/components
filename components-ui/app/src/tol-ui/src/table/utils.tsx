@@ -186,11 +186,12 @@ export async function addFieldMetaDefaults(
       objectType: objectType,
       field: key,
     });
-    await descriptor.then((meta) => {
-      if (meta) {
-        addDefaultsFromEntityMeta(key, meta, fieldMeta);
-      }
-    })
+    await descriptor
+      .then((meta) => {
+        if (meta) {
+          addDefaultsFromEntityMeta(key, meta, fieldMeta);
+        }
+      })
   }
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
   return fieldMeta;

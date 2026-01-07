@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useRef, useLayoutEffect, useCallback } from "react";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
@@ -31,10 +31,12 @@ import {
   RowExpander,
   AttributeTitle,
   TFieldDropdownChoices,
+  RowHeights,
+  DEFAULT_ROW_HEIGHT,
+  AutoHeightCell,
 } from "..";
 import { Sort } from "./Sort";
 import { FieldDropdown } from "./FieldDropdown";
-
 export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
 interface Props extends IRemoteTargetAndZone {
@@ -140,9 +142,7 @@ export function Table(props: Props) {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
   const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
-  noFilter = !!noFilter;
-
-  // row selection
+  const [rowHeights, setRowHeights] = useState<RowHeights>({});
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
     props.selectedRows,
     props.setSelectedRows,
@@ -153,6 +153,8 @@ export function Table(props: Props) {
   const [bulkSelect, setBulkSelect] = useState(false);
   let checked = false;
   let indeterminate = false;
+
+  noFilter = !!noFilter;
 
   const noFieldsSelected = fieldMeta?.order?.active?.length === 0;
   const wrapperId = "tol-table-wrapper-" + id;
@@ -177,6 +179,17 @@ export function Table(props: Props) {
       : selectedRows.filter((item) => item !== value);
     setSelectedRows(keys);
   };
+
+  const handleRowHeightChange = useCallback(
+    (rowId: string, height: number) => {
+      if (!rowId || !height) return;
+      const next = Math.max(height, DEFAULT_ROW_HEIGHT);
+      setRowHeights((prev) =>
+        prev[rowId] === next ? prev : { ...prev, [rowId]: next }
+      );
+    },
+    []
+  );
 
   resizeListener(() => {
     const width = document.getElementById(wrapperId)?.offsetWidth;
@@ -272,7 +285,6 @@ export function Table(props: Props) {
         placement: "leftStart",
       }
       : undefined;
-
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
@@ -414,6 +426,9 @@ export function Table(props: Props) {
                   }}
                   fillHeight
                   wordWrap
+                  rowHeight={(rowData: any) =>
+                    rowHeights[rowData?.key] ?? DEFAULT_ROW_HEIGHT
+                  }
                   renderLoading={() => (
                     <Placeholder loader opacity={0.8} squareCorners />
                   )}
@@ -501,7 +516,16 @@ export function Table(props: Props) {
                               />
                             )}
                           </HeaderCell>
-                          <Cell dataKey={key} />
+                          <Cell>
+                            {(rowData: any) => (
+                              <AutoHeightCell
+                                rowId={rowData?.key}
+                                onHeightChange={handleRowHeightChange}
+                              >
+                                {rowData[key]}
+                              </AutoHeightCell>
+                            )}
+                          </Cell>
                         </Column>
                       );
                     }

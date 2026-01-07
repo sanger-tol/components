@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./actions";
+export * from "./AutoHeightCell";
 export * from "./cellRenderers"
 export * from "./rowExpanders";
 export * from "./BoardTable";

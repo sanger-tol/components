@@ -203,7 +203,10 @@ export function RemoteTable(props: PRemoteTable) {
           objectType,
           fieldMeta,
           dataSource,
-        )
+        ).catch((error) => {
+          console.error("Error in addFieldMetaDefaults:", error);
+          return fieldMeta;
+        })
       )
     }
   }
