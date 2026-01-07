@@ -1,10 +1,11 @@
 /*
-SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
 import { useRef, useLayoutEffect } from "react";
+import { CELL_PADDING } from "..";
 
 
 export interface PAutoHeightCell {
@@ -25,7 +26,7 @@ export function AutoHeightCell(props: PAutoHeightCell) {
     const el = ref.current;
 
     const measure = () => {
-      const h = el.offsetHeight + 24; // padding fudge
+      const h = el.offsetHeight + CELL_PADDING;
       if (h) onHeightChange(rowId, columnId, h);
     };
 
