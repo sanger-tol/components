@@ -15,7 +15,7 @@ import {
   IErrorWarningCount,
   fetchCurrentPipelineResults,
   ValidateSteps,
-  IPipelineUpload,
+  IAllValidationData,
   PreviousUploadsModal,
   Widgets,
   LoadingContent,
@@ -28,11 +28,11 @@ import {
   splitS3FilenameString,
   useQueryData,
   markFileAsReady,
-  truncateString,
   useTimeout,
   VALIDATION_TIMEOUT_MS,
   getUserFromLocalStorage,
   setValidationTimeout,
+  downloadReportFile,
 } from "..";
 
 export function ValidationResultsViewer() {
@@ -82,7 +82,7 @@ export function ValidationResultsViewer() {
     return result;
   };
 
-  const latestPipelineResults = useQueryData<IPipelineUpload | null>(
+  const latestPipelineResults = useQueryData<IAllValidationData | null>(
     ["latestPipelineResults", uploadId],
     fetchLatestPipelineResults,
     {
@@ -146,14 +146,13 @@ export function ValidationResultsViewer() {
   }, [latestPipelineResults.data, stepName]);
 
   const onMarkAsReadyClick = () => {
-    markFileAsReady(
-      uploadId!,
-      () => setUploadStatus({
+    markFileAsReady(uploadId!, () =>
+      setUploadStatus({
         className: "marked-as-ready",
         text: "Marked as Ready",
       })
-    )
-  }
+    );
+  };
 
   const timeoutEnabled = validating && !!uploadId && !validated;
 
@@ -209,11 +208,8 @@ export function ValidationResultsViewer() {
                       )
                     }
                   >
-                    {truncateString(
-                      splitS3FilenameString(
-                        String(latestPipelineResults.data.s3Filename)
-                      ),
-                      50
+                    {splitS3FilenameString(
+                      String(latestPipelineResults.data.s3Filename)
                     )}
                   </a>
                 </p>
@@ -229,14 +225,6 @@ export function ValidationResultsViewer() {
                 <p>Number of Errors: {errorAndWarningCount.errors}</p>
                 <span className="tol-file-validation-results-page-error-count-button">
                   <Button
-                    icon="clipboard"
-                    onClick={() => setReportOpen((prev: boolean) => !prev)}
-                    disabled={validating}
-                    tooltip={
-                      validating ? "Currently Validating..." : "Show Report"
-                    }
-                  />
-                  <Button
                     icon="rotate"
                     tooltip="Refresh"
                     disabled={
@@ -246,13 +234,30 @@ export function ValidationResultsViewer() {
                     onClick={() => latestPipelineResults.refetch()}
                     timeout={BUTTON_TIMEOUT}
                   />
-                  {latestPipelineResults?.data.completed && uploadStatus.text !== "Marked as Ready" && (
-                    <Button
-                      type="success"
-                      text="Mark As Ready"
-                      onClick={onMarkAsReadyClick}
-                    />
-                  )}
+                  <Button
+                    icon="clipboard-check"
+                    onClick={() => setReportOpen((prev: boolean) => !prev)}
+                    disabled={validating}
+                    tooltip={
+                      validating ? "Currently Validating..." : "Show Report"
+                    }
+                  />
+                  <Button
+                    icon="download"
+                    tooltip={"Download Validation Report"}
+                    onClick={() => {
+                      downloadReportFile(latestPipelineResults.data);
+                    }}
+                    disabled={
+                      validating || latestPipelineResults.data.failureMessage
+                    }
+                  />
+                  <Button
+                    type="success"
+                    text="Mark As Ready"
+                    disabled={uploadStatus.text !== "Passed"}
+                    onClick={onMarkAsReadyClick}
+                  />
                 </span>
               </div>
             </div>
@@ -307,7 +312,7 @@ export function ValidationResultsViewer() {
     },
   ];
 
-  return latestPipelineResults.isLoading && !latestPipelineResults ? (
+  return !latestPipelineResults.isSuccess ? (
     <LoadingContent text="Loading Results" />
   ) : (
     <>
