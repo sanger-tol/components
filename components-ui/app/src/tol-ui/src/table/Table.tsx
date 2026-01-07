@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useState, useRef, useLayoutEffect, useCallback } from "react";
+import { ReactNode, useState, useCallback } from "react";
 import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
@@ -31,9 +31,9 @@ import {
   RowExpander,
   AttributeTitle,
   TFieldDropdownChoices,
-  RowHeights,
   DEFAULT_ROW_HEIGHT,
   AutoHeightCell,
+  TCellHeights,
 } from "..";
 import { Sort } from "./Sort";
 import { FieldDropdown } from "./FieldDropdown";
@@ -142,7 +142,7 @@ export function Table(props: Props) {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
   const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
-  const [rowHeights, setRowHeights] = useState<RowHeights>({});
+  const [cellHeights, setCellHeights] = useState<TCellHeights>({});
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
     props.selectedRows,
     props.setSelectedRows,
@@ -180,13 +180,23 @@ export function Table(props: Props) {
     setSelectedRows(keys);
   };
 
-  const handleRowHeightChange = useCallback(
-    (rowId: string, height: number) => {
-      if (!rowId || !height) return;
-      const next = Math.max(height, DEFAULT_ROW_HEIGHT);
-      setRowHeights((prev) =>
-        prev[rowId] === next ? prev : { ...prev, [rowId]: next }
-      );
+  // Called by each AutoHeightCell when its size changes
+  const handleCellHeightChange = useCallback(
+    (rowId: string, columnId: string, height: number) => {
+      if (!rowId || !columnId || !height) return;
+
+      setCellHeights((prev) => {
+        const prevRow = prev[rowId] ?? {};
+        if (prevRow[columnId] === height) return prev;
+
+        return {
+          ...prev,
+          [rowId]: {
+            ...prevRow,
+            [columnId]: height,
+          },
+        };
+      });
     },
     []
   );
@@ -214,76 +224,76 @@ export function Table(props: Props) {
 
   const configButton: PButton = !noConfigModal
     ? {
-      visible: true,
-      position: "right",
-      type: "primary",
-      tooltip: "Configure Table",
-      onClick: () => {
-        setOpen(true);
-      },
-      icon: "sliders",
-      outline: true,
-      disabled: loading
-    }
+        visible: true,
+        position: "right",
+        type: "primary",
+        tooltip: "Configure Table",
+        onClick: () => {
+          setOpen(true);
+        },
+        icon: "sliders",
+        outline: true,
+        disabled: loading
+      }
     : {
-      visible: false,
-    };
+        visible: false,
+      };
 
   const filterButton: PButton =
     (!noFilter &&
       fieldMeta.order.active.length !== 0 &&
       privilege === PRIVILEGE.BOARD.EDITABLE) ||
-      privilege === undefined
+    privilege === undefined
       ? {
-        visible: true,
-        position: "right",
-        type: "primary",
-        onClick: () => {
-          setFilterVisibility(!filterVisibility);
-        },
-        icon: filterVisibility ? "eye-slash" : "eye",
-        tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
-        outline: true,
-      }
+          visible: true,
+          position: "right",
+          type: "primary",
+          onClick: () => {
+            setFilterVisibility(!filterVisibility);
+          },
+          icon: filterVisibility ? "eye-slash" : "eye",
+          tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
+          outline: true,
+        }
       : {
-        visible: false,
-      };
+          visible: false,
+        };
 
   const downloadButton: PButton = !noDownload
     ? {
-      visible: true,
-      position: "right",
-      type: "primary",
-      tooltip: "Download the tables current state in various formats",
-      onClick: () => {
-        setDownloadOpen(!downloadOpen);
-      },
-      disabled: totalSize <= 0 || noFieldsSelected || loading,
-      icon: "download",
-      disabledTooltip:
-        totalSize >= 1
-          ? "Must have at least one row to download."
-          : undefined,
-      outline: true,
-    }
+        visible: true,
+        position: "right",
+        type: "primary",
+        tooltip: "Download the tables current state in various formats",
+        onClick: () => {
+          setDownloadOpen(!downloadOpen);
+        },
+        disabled: totalSize <= 0 || noFieldsSelected || loading,
+        icon: "download",
+        disabledTooltip:
+          totalSize >= 1
+            ? "Must have at least one row to download."
+            : undefined,
+        outline: true,
+      }
     : {
-      visible: false,
-    };
+        visible: false,
+      };
 
   const actionDropdown: PDropdownButtons | undefined =
     actions && actions.length > 0
       ? {
-        mainButtonIcon: {
-          id: "actions",
-          icon: "paper-plane",
-          type: "primary",
-          position: "right",
-          outline: selectedRows.length === 0,
-        },
-        dropdownButtons: actionDropDownButtons,
-        footer: actionsFooter,
-        placement: "leftStart",
-      }
+          mainButtonIcon: {
+            id: "actions",
+            icon: "paper-plane",
+            type: "primary",
+            position: "right",
+            outline: selectedRows.length === 0,
+          },
+          dropdownButtons: actionDropDownButtons,
+          footer: actionsFooter,
+          placement: "leftStart",
+        }
       : undefined;
 
   return (
@@ -323,43 +333,43 @@ export function Table(props: Props) {
         elements={
           !noPagination && fieldMeta?.order?.active?.length > 0
             ? [
-              <span className="tol-page-size">
-                {!smallBreakpoint &&
-                  (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
-                    <SelectPicker
-                      value={pageSize}
-                      onChange={setPageSize}
-                      size="sm"
-                      cleanable={false}
-                      searchable={false}
-                      data={[
-                        { label: "25", value: 25 },
-                        { label: "50", value: 50 },
-                        { label: "100", value: 100 },
-                        { label: "250", value: 250 },
-                      ]}
-                    />
-                  )}
-              </span>,
-              <Pagination
-                className="tol-pagination"
-                size="sm"
-                layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
-                total={totalSize <= 10000 ? totalSize : 10000}
-                activePage={page}
-                onChangePage={setPage}
-                limit={pageSize}
-                onChangeLimit={setPageSize}
-                prev
-                next
-                first={!mediumBreakpoint}
-                last={!mediumBreakpoint}
-                ellipsis={!mediumBreakpoint}
-                boundaryLinks
-                maxButtons={mediumBreakpoint ? 1 : 3}
-              />,
-              ...(utilityBarConfig.elements || []),
-            ]
+                <span className="tol-page-size">
+                  {!smallBreakpoint &&
+                    (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
+                      <SelectPicker
+                        value={pageSize}
+                        onChange={setPageSize}
+                        size="sm"
+                        cleanable={false}
+                        searchable={false}
+                        data={[
+                          { label: "25", value: 25 },
+                          { label: "50", value: 50 },
+                          { label: "100", value: 100 },
+                          { label: "250", value: 250 },
+                        ]}
+                      />
+                    )}
+                </span>,
+                <Pagination
+                  className="tol-pagination"
+                  size="sm"
+                  layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
+                  total={totalSize <= 10000 ? totalSize : 10000}
+                  activePage={page}
+                  onChangePage={setPage}
+                  limit={pageSize}
+                  onChangeLimit={setPageSize}
+                  prev
+                  next
+                  first={!mediumBreakpoint}
+                  last={!mediumBreakpoint}
+                  ellipsis={!mediumBreakpoint}
+                  boundaryLinks
+                  maxButtons={mediumBreakpoint ? 1 : 3}
+                />,
+                ...(utilityBarConfig.elements || []),
+              ]
             : [...(utilityBarConfig.elements || [])]
         }
         buttons={[
@@ -426,9 +436,15 @@ export function Table(props: Props) {
                   }}
                   fillHeight
                   wordWrap
-                  rowHeight={(rowData: any) =>
-                    rowHeights[rowData?.key] ?? DEFAULT_ROW_HEIGHT
-                  }
+                  rowHeight={(rowData: any) => {
+                    const rowId = rowData?.key;
+                    const row = cellHeights[rowId];
+                    if (!row) return DEFAULT_ROW_HEIGHT;
+                    return Math.max(
+                      DEFAULT_ROW_HEIGHT,
+                      ...Object.values(row)
+                    );
+                  }}
                   renderLoading={() => (
                     <Placeholder loader opacity={0.8} squareCorners />
                   )}
@@ -520,7 +536,8 @@ export function Table(props: Props) {
                             {(rowData: any) => (
                               <AutoHeightCell
                                 rowId={rowData?.key}
-                                onHeightChange={handleRowHeightChange}
+                                columnId={key}
+                                onHeightChange={handleCellHeightChange}
                               >
                                 {rowData[key]}
                               </AutoHeightCell>

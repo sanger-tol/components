@@ -9,30 +9,33 @@ import { useRef, useLayoutEffect } from "react";
 
 export interface PAutoHeightCell {
   rowId?: string;
-  onHeightChange: (rowId: string, height: number) => void;
+  columnId?: string;
+  onHeightChange: (rowId: string, columnId: string, height: number) => void;
   children: React.ReactNode;
 }
 
 export function AutoHeightCell(props: PAutoHeightCell) {
-  const { rowId, onHeightChange, children } = props;
+  const { rowId, columnId, onHeightChange, children } = props;
+
   const ref = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
-    if (!ref.current || !rowId) return;
+    if (!ref.current || !rowId || !columnId) return;
+
+    const el = ref.current;
 
     const measure = () => {
-      const h = ref.current!.offsetHeight + 24; // padding fudge
-      console.log(h);
-      if (h) onHeightChange(rowId, h);
+      const h = el.offsetHeight + 24; // padding fudge
+      if (h) onHeightChange(rowId, columnId, h);
     };
 
     measure();
 
     const observer = new ResizeObserver(measure);
-    observer.observe(ref.current);
+    observer.observe(el);
 
     return () => observer.disconnect();
-  }, [rowId, onHeightChange]);
+  }, [rowId, columnId, onHeightChange]);
 
   return <div ref={ref}>{children}</div>;
 }
