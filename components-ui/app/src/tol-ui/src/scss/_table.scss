@@ -107,7 +107,6 @@
     .rs-table-body-row-wrapper .rs-table-cell {
       font-size: 14px;
       color: var(--tol-text);
-      background: var(--tol-bg);
     }
 
     .rs-table-cell-full-text:hover {
@@ -117,12 +116,6 @@
 
     .rs-table-cell.rs-table-cell-full-text {
       background-color: var(--tol-bg);
-    }
-
-    .rs-table-cell:hover {
-      outline: 1px dashed var(--tol-text) !important;
-      outline-offset: -2px;
-      border-radius: 6px;
     }
 
     // header
@@ -157,6 +150,10 @@
       }
     }
 
+    .rs-table-body-row-wrapper .rs-table-cell-content {
+      padding: 12px !important;
+    }
+
     // rows per page
     .tol-page-size {
       float: left;
@@ -173,6 +170,10 @@
 
     // row hover
     --rs-state-hover-bg: none;
+
+    .rs-table-hover .rs-table-row:not(.rs-table-row-header):hover {
+      background-color: var(--tol-grey-translucent) !important;
+    }
 
     // row resize
     --rs-row-resize: var(--tol-primary);
@@ -207,9 +208,14 @@
       padding: 5px 10px;
     }
 
+    .rs-table-cell-content:has(.tol-table-row-selection) {
+      padding-top: 30px;
+      padding: 6px !important;
+    }
+
     // re-position the checkboxes
     .tol-table-row-selection .rs-checkbox-checker {
-      margin-top: -6px;
+      margin-top: -4px;
       align-items: center;
       cursor: pointer !important;
     }
@@ -408,6 +414,19 @@ span.rs-dropdown-toggle-icon {
 
 .rs-table-row-expanded:has(.tol-table-expanded-row) {
   padding: 0 !important;
+}
+
+.tol-row-expand-btn {
+  position: relative;
+  top: 0;
+  left: 12px;
+  z-index: 1;
+  cursor: pointer;
+  color: var(--tol-grey);
+
+  &:hover {
+    color: var(--tol-primary);
+  }
 }
 
 // pagination buttons on smaller devices
