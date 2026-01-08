@@ -96,7 +96,7 @@
     }
 
     .rs-table-cell {
-      border-bottom: transparent;
+      background-color: unset !important;
     }
 
     // text properties
@@ -171,8 +171,10 @@
     // row hover
     --rs-state-hover-bg: none;
 
-    .rs-table-hover .rs-table-row:not(.rs-table-row-header):hover {
-      background-color: var(--tol-grey-translucent) !important;
+    .rs-table-hover .rs-table-row {
+      &:not(.rs-table-row-header):hover {
+        background-color: var(--tol-grey-translucent) !important;
+      }
     }
 
     // row resize
@@ -332,7 +334,7 @@ span.rs-dropdown-toggle-icon {
 }
 
 // row selection
-.tol-selected-row .rs-table-cell {
+.tol-selected-row {
   background-color: var(--tol-primary-translucent) !important;
 }
 

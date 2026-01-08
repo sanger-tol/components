@@ -460,7 +460,7 @@ export function Table(props: Props) {
                   )}
                 >
                   {true && (
-                    <Column key="rowSelection" width={58}>
+                    <Column key="rowSelection" width={40}>
                       <HeaderCell>
                         <Checkbox
                           className="tol-table-row-selection"
