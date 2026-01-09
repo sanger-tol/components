@@ -39,7 +39,7 @@ import {
   useTimeout,
   VALIDATION_TIMEOUT_MS,
   downloadReportFile,
-  USER_SEEN_FILE_TYPE_DEFAULTS,
+  USER_SHOWN_FILE_TYPE_DEFAULTS,
   MAX_FILE_SIZE,
   DEFAULT_SHEET_NAME,
 } from "..";
@@ -420,7 +420,7 @@ export function FileValidation(props: PFileValidation) {
             }`}</li>
             <li>{`Allowed File Types: ${
               validationConfig.allowed_file_types ||
-              USER_SEEN_FILE_TYPE_DEFAULTS
+              USER_SHOWN_FILE_TYPE_DEFAULTS
             }`}</li>
             <li>{`Only data under sheet name: "${
               validationConfig.max_file_size || DEFAULT_SHEET_NAME
