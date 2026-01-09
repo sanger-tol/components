@@ -55,7 +55,7 @@ export function Dropzone(props: PDropzone) {
     validating = false,
     allowedSize = MAX_FILE_SIZE,
     allowedFileTypes = USER_SHOWN_FILE_TYPE_DEFAULTS, // This is more concise than the actual allowed file list,
-                                     // found under the prop 'fileType'.
+                                                      // found under the prop 'fileType'.
   } = props;
 
   const [fileList, setFileList] = useStateFallback<IFileData[]>(
