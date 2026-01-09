@@ -19,7 +19,7 @@ import {
   IFileData,
   RSForm,
   MAX_FILE_SIZE,
-  USER_SEEN_FILE_TYPE_DEFAULTS,
+  USER_SHOWN_FILE_TYPE_DEFAULTS,
 } from "..";
 
 export interface PDropzone {
@@ -54,7 +54,7 @@ export function Dropzone(props: PDropzone) {
     resetKey,
     validating = false,
     allowedSize = MAX_FILE_SIZE,
-    allowedFileTypes = USER_SEEN_FILE_TYPE_DEFAULTS, // This is more concise than the actual allowed file list,
+    allowedFileTypes = USER_SHOWN_FILE_TYPE_DEFAULTS, // This is more concise than the actual allowed file list,
                                      // found under the prop 'fileType'.
   } = props;
 
