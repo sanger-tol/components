@@ -24,9 +24,6 @@ import {
   copyToClipboard,
   CELL_RENDERER_PROP_ATTRIBUTE,
   IFilter,
-  COLLAPSED_ROW_MAX_HEIGHT,
-  DEFAULT_ROW_HEIGHT,
-  TCellHeights,
 } from "..";
 
 interface Rgb {
