@@ -1,3 +1,9 @@
+/*
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
 import { Table as RSTable } from "rsuite";
 import {
 	AttributeTitle,
@@ -11,8 +17,8 @@ import {
 } from "..";
 
 
-export interface DataColumnProps extends PTable {
-	key: string;
+export interface PDataColumn extends PTable {
+	fieldKey: string;
 	field: Field;
 	sortable: boolean;
 	filterable: boolean;
@@ -23,11 +29,11 @@ export interface DataColumnProps extends PTable {
 	) => void;
 }
 
-export function DataColumn(props: DataColumnProps) {
+export function DataColumn(props: PDataColumn) {
 	const {
 		id,
 		data,
-		key,
+		fieldKey,
 		field,
 		sortable,
 		filterable,
@@ -41,7 +47,7 @@ export function DataColumn(props: DataColumnProps) {
 
 	return (
 		<Column
-			key={key}
+			key={fieldKey}
 			width={field.width || 200}
 			sortable={sortable}
 			fixed={field.fixed}
@@ -49,7 +55,7 @@ export function DataColumn(props: DataColumnProps) {
 			<HeaderCell>
 				<AttributeTitle
 					{...props}
-					attributeId={key}
+					attributeId={fieldKey}
 					className="tol-header-text"
 					rename={field.rename!}
 				/>
@@ -61,7 +67,7 @@ export function DataColumn(props: DataColumnProps) {
 					>
 						<Filter
 							{...props}
-							attribute={key}
+							attribute={fieldKey}
 							rename={field.rename!}
 							type={field.filter as IFilterInputType}
 							componentId={id}
@@ -70,13 +76,13 @@ export function DataColumn(props: DataColumnProps) {
 				)}
 				<Sort
 					{...props}
-					attribute={key}
+					attribute={fieldKey}
 					sortable={sortable}
 				/>
 				{!field.custom && (
 					<FieldDropdown
 						{...props}
-						attribute={key}
+						attribute={fieldKey}
 						data={data}
 						separator={copySeparator}
 						choices={fieldDropdownChoices}
@@ -87,10 +93,10 @@ export function DataColumn(props: DataColumnProps) {
 				{(rowData: any) => (
 					<AutoHeightCell
 						rowId={rowData?.key}
-						columnId={key}
+						columnId={fieldKey}
 						onHeightChange={handleCellHeightChange}
 					>
-						{rowData[key]}
+						{rowData[fieldKey]}
 					</AutoHeightCell>
 				)}
 			</Cell>

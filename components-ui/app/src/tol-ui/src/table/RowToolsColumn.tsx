@@ -1,14 +1,21 @@
+/*
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+
+SPDX-License-Identifier: MIT
+*/
+
 import { Dispatch, SetStateAction } from "react";
 import { Table as RSTable, Checkbox } from "rsuite";
 import {
-  Icon,
   TCellHeights,
   DEFAULT_ROW_HEIGHT,
   COLLAPSED_ROW_MAX_HEIGHT,
+  RowHeightExpandIcon,
+  PTable,
 } from "..";
 
 
-export interface RowSelectionColumnProps {
+export interface PRowToolsColumn extends PTable {
   data: any[];
   checked: boolean;
   indeterminate: boolean;
@@ -23,7 +30,7 @@ export interface RowSelectionColumnProps {
   handleToggleAllRowHeights: () => void;
 }
 
-export function RowSelectionColumn(props: RowSelectionColumnProps) {
+export function RowToolsColumn(props: PRowToolsColumn) {
   const {
     data,
     checked,
@@ -37,30 +44,28 @@ export function RowSelectionColumn(props: RowSelectionColumnProps) {
     handleCheck,
     setHeightExpandedRows,
     handleToggleAllRowHeights,
+    rowSelection,
   } = props;
 
   const { Column, HeaderCell, Cell } = RSTable;
 
   return (
-    <Column key="rowSelection" width={40}>
+    <Column key="rowTools" width={40}>
       <HeaderCell>
-        <div className="tol-row-select-header">
-          <Checkbox
-            className="tol-table-row-selection"
-            checked={checked}
-            indeterminate={indeterminate}
-            disabled={bulkSelect || data.length === 0}
-            onChange={handleCheckAll}
-            style={data.length === 0 ? { display: "none" } : {}}
-          />
+        <div className="tol-row-tools-header">
+          {rowSelection && (
+            <Checkbox
+              className="tol-table-row-selection"
+              checked={checked}
+              indeterminate={indeterminate}
+              disabled={bulkSelect || data.length === 0}
+              onChange={handleCheckAll}
+              style={data.length === 0 ? { display: "none" } : {}}
+            />
+          )}
           {Array.isArray(data) && data.length > 0 && (
-            <Icon
-              icon={
-                allRowsExpanded
-                  ? "down-left-and-up-right-to-center"
-                  : "up-right-and-down-left-from-center"
-              }
-              className="tol-row-expand-btn"
+            <RowHeightExpandIcon
+              expanded={allRowsExpanded}
               onClick={handleToggleAllRowHeights}
             />
           )}
@@ -85,25 +90,22 @@ export function RowSelectionColumn(props: RowSelectionColumnProps) {
           };
 
           return (
-            <div className="tol-row-select-cell">
-              <Checkbox
-                className="tol-table-row-selection"
-                value={rowId}
-                checked={
-                  bulkSelect ||
-                  selectedRows.some((item) => item === rowId)
-                }
-                disabled={bulkSelect}
-                onChange={handleCheck}
-              />
-              {canExpand && (
-                <Icon
-                  icon={
-                    isExpanded
-                      ? "down-left-and-up-right-to-center"
-                      : "up-right-and-down-left-from-center"
+            <div className="tol-row-tools-cell">
+              {rowSelection && (
+                <Checkbox
+                  className="tol-table-row-selection"
+                  value={rowId}
+                  checked={
+                    bulkSelect ||
+                    selectedRows.some((item) => item === rowId)
                   }
-                  className="tol-row-expand-btn"
+                  disabled={bulkSelect}
+                  onChange={handleCheck}
+                />
+              )}
+              {canExpand && (
+                <RowHeightExpandIcon
+                  expanded={isExpanded}
                   onClick={toggleExpand}
                 />
               )}

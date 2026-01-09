@@ -22,3 +22,6 @@ export * from "./cellRenderers/CellRendererModal";
 export * from "./ImageModal";
 export * from "./Sort";
 export * from "./FieldDropdown";
+export * from "./RowToolsColumn";
+export * from "./RowHeightExpandIcon";
+export * from "./DataColumn";

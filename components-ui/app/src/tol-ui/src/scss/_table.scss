@@ -216,10 +216,49 @@
     }
 
     // re-position the checkboxes
-    .tol-table-row-selection .rs-checkbox-checker {
-      margin-top: -4px;
-      align-items: center;
-      cursor: pointer !important;
+    .tol-table-row-selection {
+      width: 50%;
+      float: left;
+
+      .rs-checkbox-checker {
+        padding-top: unset !important;
+        padding-bottom: unset !important;
+        padding-left: unset !important;
+
+        .rs-checkbox-control [type='checkbox'] {
+          min-height: unset !important;
+          min-width: unset !important;
+          top: unset !important;
+          left: unset !important;
+          right: unset !important;
+          bottom: unset !important;
+        }
+      }
+    }
+
+    // Move the checkbox only when .tol-table-row-selection has an adjacent .tol-row-expand-btn
+    .rs-table-cell-content:has(.tol-table-row-selection + .tol-row-expand-btn) {
+      .tol-table-row-selection .rs-checkbox-checker {
+        left: -8px;
+      }
+    }
+
+    // expanded row height
+    .rs-table-row-expanded:has(.tol-table-expanded-row) {
+      padding: 0 !important;
+    }
+
+    .tol-row-expand-btn {
+      width: 20%;
+      float: left;
+      margin-top: 7px;
+      margin-left: 30%;
+      cursor: pointer;
+      color: var(--tol-grey);
+
+      &:hover {
+        color: var(--tol-primary);
+      }
     }
   }
 
@@ -412,23 +451,6 @@ span.rs-dropdown-toggle-icon {
   left: auto;
   padding: 4px 8px;
   backdrop-filter: blur(8px);
-}
-
-.rs-table-row-expanded:has(.tol-table-expanded-row) {
-  padding: 0 !important;
-}
-
-.tol-row-expand-btn {
-  position: relative;
-  top: 0;
-  left: 11px;
-  z-index: 1;
-  cursor: pointer;
-  color: var(--tol-grey);
-
-  &:hover {
-    color: var(--tol-primary);
-  }
 }
 
 // pagination buttons on smaller devices

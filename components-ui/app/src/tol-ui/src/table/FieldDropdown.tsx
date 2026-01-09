@@ -35,7 +35,7 @@ export function FieldDropdown(props: FieldDropdown) {
         noCaret
         placement="bottomEnd"
       >
-        {!choices || choices.includes("copyValues") && (
+        {(!choices || choices.includes("copyValues")) && (
           <Dropdown.Item
             icon={<Icon icon="copy" size="sm" />}
             onClick={() => copyPageColumnValues(data, attribute, separator)}

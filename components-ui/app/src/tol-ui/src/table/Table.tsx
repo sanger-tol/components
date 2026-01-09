@@ -31,7 +31,7 @@ import {
   DEFAULT_ROW_HEIGHT,
   TCellHeights,
   COLLAPSED_ROW_MAX_HEIGHT,
-  RowSelectionColumn,
+  RowToolsColumn,
   DataColumn,
 } from "..";
 
@@ -115,15 +115,12 @@ export function Table(props: PTable) {
     handleSortColumn,
     filter,
     expandedRows,
-    copySeparator,
-    fieldDropdownChoices,
 
     noFilter,
     noPagination,
     noSorting,
     noConfigModal,
     noDownload,
-    rowSelection,
     actions,
     actionsFooter,
     utilityBarConfig = {},
@@ -483,8 +480,8 @@ export function Table(props: PTable) {
                   )}
                 >
                   {/* Has to be a function as only rsuite components can be children on their Table */}
-                  {RowSelectionColumn({
-                    data,
+                  {RowToolsColumn({
+                    ...props,
                     checked,
                     indeterminate,
                     bulkSelect,
@@ -507,7 +504,7 @@ export function Table(props: PTable) {
 
                     return DataColumn({
                       ...props,
-                      key,
+                      fieldKey: key,
                       field,
                       sortable,
                       filterable,
