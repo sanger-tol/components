@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { ReactNode, useState, useCallback } from "react";
-import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
+import { Table as RSTable, Pagination, SelectPicker } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -15,8 +15,6 @@ import {
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
-  Filter,
-  IFilterInputType,
   FieldMeta,
   IDropdownButtonConfig,
   useStateFallback,
@@ -29,15 +27,12 @@ import {
   ITableConfigSave,
   RowCounter,
   RowExpander,
-  AttributeTitle,
   TFieldDropdownChoices,
   DEFAULT_ROW_HEIGHT,
-  AutoHeightCell,
   TCellHeights,
   COLLAPSED_ROW_MAX_HEIGHT,
-  Icon,
-  Sort,
-  FieldDropdown,
+  RowSelectionColumn,
+  DataColumn,
 } from "..";
 
 
@@ -94,7 +89,6 @@ export interface PTable extends IRemoteTargetAndZone {
 }
 
 export function Table(props: PTable) {
-  const { Column, HeaderCell, Cell } = RSTable;
   let {
     /* eslint-disable */
     id,
@@ -169,7 +163,6 @@ export function Table(props: PTable) {
   } else if (selectedRows.length > 0 && selectedRows.length < data.length) {
     indeterminate = true;
   }
-
 
   useEffectUpdate(() => {
     checked = false;
@@ -489,141 +482,37 @@ export function Table(props: PTable) {
                     <Placeholder loader opacity={0.8} squareCorners />
                   )}
                 >
-                  <Column key="rowSelection" width={40}>
-                    <HeaderCell>
-                      <div className="tol-row-select-header">
-                        <Checkbox
-                          className="tol-table-row-selection"
-                          checked={checked}
-                          indeterminate={indeterminate}
-                          disabled={bulkSelect || data.length === 0}
-                          onChange={handleCheckAll}
-                          style={
-                            data.length === 0 ? { display: "none" } : {}
-                          }
-                        />
-                        {Array.isArray(data) && data.length > 0 && (
-                          <Icon
-                            icon={allRowsExpanded ? "down-left-and-up-right-to-center" : "up-right-and-down-left-from-center"}
-                            className="tol-row-expand-btn"
-                            onClick={handleToggleAllRowHeights}
-                          />
-                        )}
-                      </div>
-                    </HeaderCell>
-                    <Cell>
-                      {(rowData: any) => {
-                        const rowId = rowData.key;
-                        const row = cellHeights[rowId];
-                        const fullHeight = row
-                          ? Math.max(
-                            DEFAULT_ROW_HEIGHT,
-                            ...Object.values(row)
-                          )
-                          : DEFAULT_ROW_HEIGHT;
-                        const isExpanded = !!heightExpandedRows[rowId];
-                        const canExpand =
-                          fullHeight > COLLAPSED_ROW_MAX_HEIGHT;
-
-                        const toggleExpand = () => {
-                          if (!canExpand) return;
-                          setHeightExpandedRows((prev) => ({
-                            ...prev,
-                            [rowId]: !prev[rowId],
-                          }));
-                        };
-
-                        return (
-                          <div className="tol-row-select-cell">
-                            <Checkbox
-                              className="tol-table-row-selection"
-                              value={rowId}
-                              checked={
-                                bulkSelect ||
-                                selectedRows.some((item) => item === rowId)
-                              }
-                              disabled={bulkSelect}
-                              onChange={handleCheck}
-                            />
-                            {canExpand && (
-                              <Icon
-                                icon={isExpanded ? "down-left-and-up-right-to-center" : "up-right-and-down-left-from-center"}
-                                className="tol-row-expand-btn"
-                                onClick={toggleExpand}
-                              />
-                            )}
-                          </div>
-                        );
-                      }}
-                    </Cell>
-                  </Column>
+                  {/* Has to be a function as only rsuite components can be children on their Table */}
+                  {RowSelectionColumn({
+                    data,
+                    checked,
+                    indeterminate,
+                    bulkSelect,
+                    selectedRows,
+                    cellHeights,
+                    heightExpandedRows,
+                    allRowsExpanded,
+                    handleCheckAll,
+                    handleCheck,
+                    setHeightExpandedRows,
+                    handleToggleAllRowHeights,
+                  })}
                   {fieldMeta!.order.active.map((key: string) => {
                     const field = fieldMeta.dataWithDefaults![key];
-                    if (field) {
-                      const sortable: boolean =
-                        (!noSorting && field.sort) ?? false;
-                      const filterable = !noFilter && field.filter;
+                    if (!field) return null;
 
-                      return (
-                        <Column
-                          key={key}
-                          width={field.width || 200}
-                          sortable={sortable}
-                          fixed={field.fixed}
-                        >
-                          <HeaderCell>
-                            <AttributeTitle
-                              {...props}
-                              attributeId={key}
-                              className="tol-header-text"
-                              rename={field.rename!}
-                            />
-                            {filterable && (
-                              <span
-                                className={
-                                  filterVisibility
-                                    ? "tol-filter"
-                                    : "tol-filter-hide"
-                                }
-                              >
-                                <Filter
-                                  {...props}
-                                  attribute={key}
-                                  rename={field.rename!}
-                                  type={field.filter as IFilterInputType}
-                                  componentId={id}
-                                />
-                              </span>
-                            )}
-                            <Sort
-                              {...props}
-                              attribute={key}
-                              sortable={sortable}
-                            />
-                            {!field.custom && (
-                              <FieldDropdown
-                                {...props}
-                                attribute={key}
-                                data={data}
-                                separator={copySeparator}
-                                choices={fieldDropdownChoices}
-                              />
-                            )}
-                          </HeaderCell>
-                          <Cell>
-                            {(rowData: any) => (
-                              <AutoHeightCell
-                                rowId={rowData?.key}
-                                columnId={key}
-                                onHeightChange={handleCellHeightChange}
-                              >
-                                {rowData[key]}
-                              </AutoHeightCell>
-                            )}
-                          </Cell>
-                        </Column>
-                      );
-                    }
+                    const sortable: boolean =
+                      (!noSorting && field.sort) ?? false;
+                    const filterable = !noFilter && !!field.filter;
+
+                    return DataColumn({
+                      ...props,
+                      key,
+                      field,
+                      sortable,
+                      filterable,
+                      handleCellHeightChange,
+                    });
                   })}
                 </RSTable>
               </div>
