@@ -162,7 +162,6 @@ export function addDefaultsFromEntityMeta(
     rename: meta.display_name || normaliseCaps(key),
     sort: true,
     type: meta.python_type,
-    width: 200,
     description: meta.description,
     source: meta.source,
   };
@@ -186,11 +185,12 @@ export async function addFieldMetaDefaults(
       objectType: objectType,
       field: key,
     });
-    await descriptor.then((meta) => {
-      if (meta) {
-        addDefaultsFromEntityMeta(key, meta, fieldMeta);
-      }
-    })
+    await descriptor
+      .then((meta) => {
+        if (meta) {
+          addDefaultsFromEntityMeta(key, meta, fieldMeta);
+        }
+      })
   }
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
   return fieldMeta;
