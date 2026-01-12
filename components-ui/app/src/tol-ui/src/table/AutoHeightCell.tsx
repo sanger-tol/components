@@ -23,17 +23,17 @@ export function AutoHeightCell(props: PAutoHeightCell) {
   useLayoutEffect(() => {
     if (!ref.current || !rowId || !columnId) return;
 
-    const el = ref.current;
+    const element = ref.current;
 
     const measure = () => {
-      const h = el.offsetHeight + CELL_PADDING;
-      if (h) onHeightChange(rowId, columnId, h);
+      const height = element.offsetHeight + CELL_PADDING;
+      if (height) onHeightChange(rowId, columnId, height);
     };
 
     measure();
 
     const observer = new ResizeObserver(measure);
-    observer.observe(el);
+    observer.observe(element);
 
     return () => observer.disconnect();
   }, [rowId, columnId, onHeightChange]);
