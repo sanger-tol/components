@@ -8,7 +8,7 @@ import React from "react";
 import { TMessageType, PButton, TsDataSource, PIcon } from "..";
 
 export interface IWaitingUpload {
-  message: string | React.Node;
+  message: string | React.ReactElement;
 }
 
 export interface IMessage {
