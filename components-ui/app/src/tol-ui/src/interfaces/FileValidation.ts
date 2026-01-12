@@ -28,9 +28,9 @@ export interface IValidationConfig {
   s3_bucket: string;
   pipeline_id: number;
   destination: string;
-  sheet_name?: string;
-  max_file_size?: string;
-  allowed_file_types?: string;
+  sheetName?: string;
+  maxFileSize?: string;
+  allowedFileTypes?: string;
 }
 
 export interface IErrorWarningCount {

@@ -7,8 +7,6 @@ SPDX-License-Identifier: MIT
 import React, { useState, useEffect } from "react";
 import {
   ValidateSteps,
-  IValidationConfig,
-  IAllValidationData,
   uploadPipelineConfig,
   fetchCurrentPipelineResults,
   constructCompletionMessage,
@@ -25,12 +23,10 @@ import {
   Modal,
   TolLoader,
   VALIDATION_ENDPOINTS,
-  IFileData,
   TsDataSource,
   DEFAULT_FILE_TYPE,
   downloadFileFromS3,
   useQueryData,
-  TFileValidationPurpose,
   VALIDATE_ONLY,
   onSubmission,
   ValidationReport,
@@ -42,6 +38,13 @@ import {
   USER_SHOWN_FILE_TYPE_DEFAULTS,
   MAX_FILE_SIZE,
   DEFAULT_SHEET_NAME,
+} from "..";
+
+import type {
+  IFileData,
+  IValidationConfig,
+  IAllValidationData,
+  TFileValidationPurpose,
 } from "..";
 
 export interface PFileValidation {
@@ -56,11 +59,17 @@ export const PIPELINE_DS = new TsDataSource();
 
 export function FileValidation(props: PFileValidation) {
   const {
-    validationConfig,
     pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
     defaultFileTemplateName = "",
   } = props;
+
+  const validationConfig = {
+    sheetName: DEFAULT_SHEET_NAME,
+    maxFileSize: MAX_FILE_SIZE,
+    allowedFileTypes: USER_SHOWN_FILE_TYPE_DEFAULTS,
+    ...props.validationConfig,
+  };
 
   // TODO: re-enable type checking when mode toggle is re-introduced
   // @ts-ignore
@@ -415,16 +424,9 @@ export function FileValidation(props: PFileValidation) {
           <h6>Requirements:</h6>
           <ul>
             {" "}
-            <li>{`Max file size: ${
-              validationConfig.max_file_size || MAX_FILE_SIZE
-            }`}</li>
-            <li>{`Allowed File Types: ${
-              validationConfig.allowed_file_types ||
-              USER_SHOWN_FILE_TYPE_DEFAULTS
-            }`}</li>
-            <li>{`Only data under sheet name: "${
-              validationConfig.max_file_size || DEFAULT_SHEET_NAME
-            }" will be valid.`}</li>
+            <li>{`Max file size: ${validationConfig.maxFileSize}`}</li>
+            <li>{`Allowed File Types: ${validationConfig.allowedFileTypes}`}</li>
+            <li>{`Only data under sheet name: "${validationConfig.sheetName}" will be valid.`}</li>
           </ul>
           <h6>Status Messages:</h6>{" "}
           <ul>
