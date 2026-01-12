@@ -40,19 +40,6 @@ services:
       - "../tol-sdk:/packages/tol-sdk:rw"
       - ./components-api/migrations/alembic/versions:/migrations/alembic/versions
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:latest
-    container_name: keycloak
-    command: start-dev
-    environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_HOSTNAME: 0.0.0.0
-      KC_HOSTNAME_URL: http://0.0.0.0:8080
-      KC_HOSTNAME_STRICT: false
-    ports:
-      - "8080:8080"
-
   components-ui:
     build:
       context: components-ui/.
