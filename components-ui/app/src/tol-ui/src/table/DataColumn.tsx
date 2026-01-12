@@ -13,7 +13,8 @@ import {
   FieldDropdown,
   AutoHeightCell,
   PTable,
-  Field
+  Field,
+  DEFAULT_FIELD_WIDTH
 } from "..";
 
 
@@ -34,7 +35,6 @@ export function DataColumn(props: PDataColumn) {
     id,
     data,
     fieldKey,
-    field,
     sortable,
     filterable,
     filterVisibility,
@@ -43,12 +43,17 @@ export function DataColumn(props: PDataColumn) {
     handleCellHeightChange,
   } = props;
 
+  const field = {
+    width: DEFAULT_FIELD_WIDTH,
+    ...props.field,
+  }
+
   const { Column, HeaderCell, Cell } = RSTable;
 
   return (
     <Column
       key={fieldKey}
-      width={field.width || 200}
+      width={field.width}
       sortable={sortable}
       fixed={field.fixed}
     >

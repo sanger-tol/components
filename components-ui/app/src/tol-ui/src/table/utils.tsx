@@ -162,7 +162,6 @@ export function addDefaultsFromEntityMeta(
     rename: meta.display_name || normaliseCaps(key),
     sort: true,
     type: meta.python_type,
-    width: 200,
     description: meta.description,
     source: meta.source,
   };
