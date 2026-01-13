@@ -159,6 +159,7 @@
   .rs-modal {
     margin: 30px auto 30px auto;
     transition: transform 0.3s ease-out, width 0.3s ease, height 0.3s ease;
+    padding-right: 10px !important;
 
     // stop blue box showing on modal opening
     *:focus {

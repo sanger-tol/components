@@ -61,7 +61,7 @@ export function useQueryData<T>(
           ) {
             return false;
           } else {
-            const interval = Math.min(REFRESH_INTERVAL * 2 ** count, 20000);
+            const interval = Math.min(REFRESH_INTERVAL * 2 ** count, 10000);
             return interval;
           }
         }

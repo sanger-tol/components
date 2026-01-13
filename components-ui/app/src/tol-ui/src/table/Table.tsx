@@ -4,8 +4,8 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useState } from "react";
-import { Table as RSTable, Pagination, SelectPicker, Checkbox } from "rsuite";
+import { ReactNode, useState, useCallback } from "react";
+import { Table as RSTable, Pagination, SelectPicker } from "rsuite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -15,8 +15,6 @@ import {
   UtilityBar,
   resizeListener,
   ColumnConfigDrawer,
-  Filter,
-  IFilterInputType,
   FieldMeta,
   IDropdownButtonConfig,
   useStateFallback,
@@ -29,14 +27,16 @@ import {
   ITableConfigSave,
   RowCounter,
   RowExpander,
-  AttributeTitle,
+  TFieldDropdownChoices,
+  DEFAULT_ROW_HEIGHT,
+  TCellHeights,
+  COLLAPSED_ROW_MAX_HEIGHT,
+  RowToolsColumn,
+  DataColumn,
 } from "..";
-import { Sort } from "./Sort";
-import { FieldDropdown } from "./FieldDropdown";
 
-export type NumRows = 25 | 50 | 100 | 250 | 1000;
 
-interface Props extends IRemoteTargetAndZone {
+export interface PTable extends IRemoteTargetAndZone {
   id: string;
   data: any;
   fieldMeta: FieldMeta;
@@ -62,6 +62,7 @@ interface Props extends IRemoteTargetAndZone {
   handleSortColumn: any;
   filter: any;
   copySeparator?: string;
+  fieldDropdownChoices?: TFieldDropdownChoices;
 
   onConfigSave: (config: ITableConfigSave) => void;
 
@@ -87,8 +88,7 @@ interface Props extends IRemoteTargetAndZone {
   setDownloadInProgress: (downloadInProgress: boolean) => void;
 }
 
-export function Table(props: Props) {
-  const { Column, HeaderCell, Cell } = RSTable;
+export function Table(props: PTable) {
   let {
     /* eslint-disable */
     id,
@@ -115,14 +115,12 @@ export function Table(props: Props) {
     handleSortColumn,
     filter,
     expandedRows,
-    copySeparator,
 
     noFilter,
     noPagination,
     noSorting,
     noConfigModal,
     noDownload,
-    rowSelection,
     actions,
     actionsFooter,
     utilityBarConfig = {},
@@ -137,9 +135,8 @@ export function Table(props: Props) {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
   const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
-  noFilter = !!noFilter;
-
-  // row selection
+  const [cellHeights, setCellHeights] = useState<TCellHeights>({});
+  const [heightExpandedRows, setHeightExpandedRows] = useState<Record<string, boolean>>({});
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
     props.selectedRows,
     props.setSelectedRows,
@@ -148,8 +145,10 @@ export function Table(props: Props) {
 
   // @ts-ignore - temp turned off
   const [bulkSelect, setBulkSelect] = useState(false);
+
   let checked = false;
   let indeterminate = false;
+  noFilter = !!noFilter;
 
   const noFieldsSelected = fieldMeta?.order?.active?.length === 0;
   const wrapperId = "tol-table-wrapper-" + id;
@@ -162,18 +161,10 @@ export function Table(props: Props) {
     indeterminate = true;
   }
 
-  // @ts-ignore
-  const handleCheckAll = (value: any, checked: boolean) => {
-    const keys = checked ? data.map((item) => item.key) : [];
-    setSelectedRows && setSelectedRows(keys);
-  };
-
-  const handleCheck = (value: any, checked: boolean) => {
-    const keys = checked
-      ? [...selectedRows, value]
-      : selectedRows.filter((item) => item !== value);
-    setSelectedRows(keys);
-  };
+  useEffectUpdate(() => {
+    checked = false;
+    setSelectedRows([]);
+  }, [page, pageSize, filter, sortByAttribute, sortByType]);
 
   resizeListener(() => {
     const width = document.getElementById(wrapperId)?.offsetWidth;
@@ -183,10 +174,64 @@ export function Table(props: Props) {
     }
   });
 
-  useEffectUpdate(() => {
-    checked = false;
-    setSelectedRows([]);
-  }, [page, pageSize, filter, sortByAttribute, sortByType]);
+  // @ts-ignore
+  const handleCheckAll = (value: any, checkedVal: boolean) => {
+    const keys = checkedVal ? data.map((item: any) => item.key) : [];
+    setSelectedRows && setSelectedRows(keys);
+  };
+
+  const handleCheck = (value: any, checkedVal: boolean) => {
+    const keys = checkedVal
+      ? [...selectedRows, value]
+      : selectedRows.filter((item) => item !== value);
+    setSelectedRows(keys);
+  };
+
+  // Called by each AutoHeightCell when its size changes
+  const handleCellHeightChange = useCallback(
+    (rowId: string, columnId: string, height: number) => {
+      if (!rowId || !columnId || !height) return;
+
+      setCellHeights((prev) => {
+        const prevRow = prev[rowId] ?? {};
+        if (prevRow[columnId] === height) return prev;
+
+        return {
+          ...prev,
+          [rowId]: {
+            ...prevRow,
+            [columnId]: height,
+          },
+        };
+      });
+    },
+    []
+  );
+
+  // Toggle expand/collapse for all rows in the table
+  const handleToggleAllRowHeights = useCallback(() => {
+    setHeightExpandedRows((prev) => {
+      if (!Array.isArray(data) || data.length === 0) return {};
+
+      const allExpanded = data.every(
+        (row: any) => !!(row?.key && prev[row.key])
+      );
+
+      if (allExpanded) {
+        // collapse all
+        return {};
+      }
+
+      // expand all
+      const next: Record<string, boolean> = {};
+      data.forEach((row: any) => {
+        if (row?.key) {
+          next[row.key] = true;
+        }
+      });
+      return next;
+    });
+  }, [data]);
 
   const actionDropDownButtons = actions?.map((button) => ({
     ...button,
@@ -270,6 +315,13 @@ export function Table(props: Props) {
       }
       : undefined;
 
+  const allRowsExpanded = (
+    Array.isArray(data) &&
+    data.length > 0 &&
+    data.every(
+      (row: any) => !!(row?.key && heightExpandedRows[row.key])
+    )
+  );
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
@@ -411,94 +463,53 @@ export function Table(props: Props) {
                   }}
                   fillHeight
                   wordWrap
+                  rowHeight={(rowData: any) => {
+                    const rowId = rowData?.key;
+                    const row = cellHeights[rowId];
+                    const fullHeight = row
+                      ? Math.max(DEFAULT_ROW_HEIGHT, ...Object.values(row))
+                      : DEFAULT_ROW_HEIGHT;
+
+                    if (heightExpandedRows[rowId]) {
+                      return fullHeight;
+                    }
+                    return Math.min(fullHeight, COLLAPSED_ROW_MAX_HEIGHT);
+                  }}
                   renderLoading={() => (
                     <Placeholder loader opacity={0.8} squareCorners />
                   )}
                 >
-                  {rowSelection && (
-                    <Column key="rowSelection" width={58}>
-                      <HeaderCell>
-                        <Checkbox
-                          className="tol-table-row-selection"
-                          checked={checked}
-                          indeterminate={indeterminate}
-                          disabled={bulkSelect || data.length === 0}
-                          onChange={handleCheckAll}
-                          style={data.length === 0 ? { display: "none" } : {}}
-                        />
-                      </HeaderCell>
-                      <Cell>
-                        {(rowData: any) => {
-                          return (
-                            <Checkbox
-                              className="tol-table-row-selection"
-                              value={rowData.key}
-                              checked={
-                                bulkSelect ||
-                                selectedRows.some((item) => item === rowData.key)
-                              }
-                              disabled={bulkSelect}
-                              onChange={handleCheck}
-                            />
-                          );
-                        }}
-                      </Cell>
-                    </Column>
-                  )}
+                  {/* Has to be a function as only rsuite components can be children on their Table */}
+                  {RowToolsColumn({
+                    ...props,
+                    checked,
+                    indeterminate,
+                    bulkSelect,
+                    selectedRows,
+                    cellHeights,
+                    heightExpandedRows,
+                    allRowsExpanded,
+                    handleCheckAll,
+                    handleCheck,
+                    setHeightExpandedRows,
+                    handleToggleAllRowHeights,
+                  })}
                   {fieldMeta!.order.active.map((key: string) => {
                     const field = fieldMeta.dataWithDefaults![key];
-                    if (field) {
-                      const sortable: boolean =
-                        (!noSorting && field.sort) ?? false;
-                      const filterable = !noFilter && field.filter;
+                    if (!field) return null;
 
-                      return (
-                        <Column
-                          key={key}
-                          width={field.width || 200}
-                          sortable={sortable}
-                          fixed={field.fixed}
-                        >
-                          <HeaderCell>
-                            <AttributeTitle
-                              {...props}
-                              attributeId={key}
-                              className="tol-header-text"
-                              rename={field.rename!}
-                            />
-                            {filterable && (
-                              <span
-                                className={
-                                  filterVisibility
-                                    ? "tol-filter"
-                                    : "tol-filter-hide"
-                                }
-                              >
-                                <Filter
-                                  {...props}
-                                  attribute={key}
-                                  rename={field.rename!}
-                                  type={field.filter as IFilterInputType}
-                                  componentId={id}
-                                />
-                              </span>
-                            )}
-                            <Sort
-                              {...props}
-                              attribute={key}
-                              sortable={sortable}
-                            />
-                            <FieldDropdown
-                              {...props}
-                              attribute={key}
-                              data={data}
-                              separator={copySeparator}
-                            />
-                          </HeaderCell>
-                          <Cell dataKey={key} />
-                        </Column>
-                      );
-                    }
+                    const sortable: boolean =
+                      (!noSorting && field.sort) ?? false;
+                    const filterable = !noFilter && !!field.filter;
+
+                    return DataColumn({
+                      ...props,
+                      fieldKey: key,
+                      field,
+                      sortable,
+                      filterable,
+                      handleCellHeightChange,
+                    });
                   })}
                 </RSTable>
               </div>

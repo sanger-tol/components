@@ -14,7 +14,7 @@ import {
   PreviousUploadsView,
   getUserFromLocalStorage,
   fetchAndNormaliseAllUploadResults,
-  IPipelineUpload,
+  IAllValidationData,
   TOL_LOADER_STYLES,
   VALIDATION_ENDPOINTS,
   BUTTON_TIMEOUT,
@@ -25,11 +25,11 @@ import {
 export interface PPreviousUploadsModal {
   openModal: boolean | string;
   setOpenModal: (open: boolean | string) => void;
+  onEnter?: () => void;
 }
 
 export function PreviousUploadsModal(props: PPreviousUploadsModal) {
-  const { openModal, setOpenModal } = props;
-
+  const { openModal, setOpenModal, onEnter } = props;
   const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
   const [expandedResults, setExpandedResults] = useState<string | null>(null);
   const user = getUserFromLocalStorage();
@@ -46,7 +46,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
     );
   };
 
-  const userFileValidationUploads = useQueryData<IPipelineUpload[]>(
+  const userFileValidationUploads = useQueryData<IAllValidationData[]>(
     ["userFileValidationUploads", id],
     fetchPreviousUploads,
     {
@@ -92,10 +92,10 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
       ) : userFileValidationUploads.data.length > 0 ? (
         userFileValidationUploads.data
           .sort(
-            (a: IPipelineUpload, b: IPipelineUpload) =>
+            (a: IAllValidationData, b: IAllValidationData) =>
               Number(b.id) - Number(a.id)
           )
-          .map((upload: IPipelineUpload, index: number) => {
+          .map((upload: IAllValidationData, index: number) => {
             return (
               <div
                 key={`${upload.id}-${userFileValidationUploads.dataUpdatedAt}-${index}`}
@@ -159,6 +159,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
   return (
     <div>
       <Modal
+        onEnter={onEnter}
         open={openModal === "results" || openModal === true}
         header={ResultsModalHeader}
         children={ResultsModalContent}

@@ -100,7 +100,7 @@ async function getComponentData(
           id: { in_list: { value: componentIds } },
         },
       },
-      requestedFields: "data_source_instance.ui_api_details"
+      requestedFields: ["data_source_instance.ui_api_details"],
     });
 }
 

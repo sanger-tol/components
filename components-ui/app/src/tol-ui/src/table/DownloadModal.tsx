@@ -84,10 +84,6 @@ export function DownloadModal(props: Props) {
     }
   }, [objectType, filter, requestedFields, totalSize, stopDownload]);
 
-  const stringifyRequestedFields = (requestedFields: string[]) => {
-    return requestedFields.join(",");
-  };
-
   const stringifyFilter = (filter: any) => {
     if (!filter) {
       return "None";
@@ -121,7 +117,7 @@ tol data \
 --operation=list \
 --type=${objectType} \
 --filter='${JSON.stringify(filter) || '{"and":{}}'}' \
---fields=${stringifyRequestedFields(requestedFields)} \
+--fields=${requestedFields.join(",")} \
 --output=tsv 
   `;
 
@@ -155,7 +151,7 @@ tol data \
     const gen = dataSource.getListByCursor({
       objectType: frozenObjectType,
       filter: frozenFilter,
-      requestedFields: stringifyRequestedFields(frozenRequestedFields),
+      requestedFields: frozenRequestedFields,
     });
 
     const interval = setInterval(() => {

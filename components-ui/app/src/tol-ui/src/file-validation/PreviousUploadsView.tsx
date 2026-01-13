@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
-  IPipelineUpload,
+  IAllValidationData,
   IValidationResult,
   ValidationIcon,
   getErrorWarningCounts,
@@ -22,11 +22,12 @@ import {
   truncateString,
   PIPELINE_DS,
   splitS3FilenameString,
+  IStepData,
 } from "..";
 
 export interface PPreviousUploadsView {
   id: string;
-  data: IPipelineUpload;
+  data: IAllValidationData;
   expanded: boolean;
   onToggle: (id: string) => void;
   showPassedSteps?: boolean;
@@ -55,7 +56,8 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
     data.completed,
     errorsAndWarningCounts.errors,
     errorsAndWarningCounts.warnings,
-    data.failureMessage || null
+    data.failureMessage || null,
+    data.isReady
   );
 
   const ValidationIconTooltip = (
@@ -115,7 +117,9 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
       <div className="tol-file-validation-previous-results-status-container">
         <a
           href="#"
-          onClick={() => downloadFileFromS3(PIPELINE_DS, data.s3Bucket, data.s3Filename)}
+          onClick={() =>
+            downloadFileFromS3(PIPELINE_DS, data.s3Bucket, data.s3Filename)
+          }
         >
           <p>
             {
@@ -127,7 +131,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
         </a>
         <div className="tol-file-validation-previous-results-failure-info">
           <h6
-            className={`tol-file-validation-previous-results-results-status 
+            className={`tol-file-validation-results-status 
             ${uploadStatus.className}
             `}
           >
@@ -156,46 +160,46 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
               {data.pipelineSteps.length > 0 ? (
                 (() => {
                   const uniqueSteps = Array.from(new Set(data.pipelineSteps));
-                  const allStepsPassed = uniqueSteps.every((stepName) => {
+                  const allStepsPassed = uniqueSteps.every((step) => {
                     const stepResults = data.validationResults.filter(
                       (result: IValidationResult) =>
-                        result.stepName === stepName
+                        result.stepName === step.name
                     );
                     const issueCount = getErrorWarningCounts(stepResults);
                     return issueCount.errors === 0 && issueCount.warnings === 0;
                   });
 
                   return uniqueSteps
-                    .filter((stepName: string) => {
+                    .filter((step: IStepData) => {
                       if (allStepsPassed) return true;
                       if (showPassedSteps) return true;
                       const stepResults = data.validationResults.filter(
                         (result: IValidationResult) =>
-                          result.stepName === stepName
+                          result.stepName === step.name
                       );
                       const issueCount = getErrorWarningCounts(stepResults);
                       return issueCount.errors > 0 || issueCount.warnings > 0;
                     })
-                    .map((stepName: string, index: number) => {
+                    .map((step: IStepData, index: number) => {
                       const stepResults = data.validationResults.filter(
                         (result: IValidationResult) =>
-                          result.stepName === stepName
+                          result.stepName === step.name
                       );
                       const issueCount = getErrorWarningCounts(stepResults);
-                      const iconType =
-                      data.failureMessage ? "question" :
-                        issueCount.errors > 0
-                          ? "xmark"
-                          : issueCount.warnings > 0
-                          ? "exclamation"
-                          : "check";
+                      const iconType = data.failureMessage
+                        ? "question"
+                        : issueCount.errors > 0
+                        ? "xmark"
+                        : issueCount.warnings > 0
+                        ? "exclamation"
+                        : "check";
                       const stepStatus = determineStepStatus(issueCount);
                       return (
                         <div
-                          key={`${stepName}-${index}`}
+                          key={`${step.name}-${index}`}
                           onClick={() => {
                             setExpandedId(
-                              expandedId === stepName ? null : stepName
+                              expandedId === step.name ? null : step.name
                             );
                           }}
                         >
@@ -204,7 +208,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
                               tooltip={ValidationIconTooltip(
                                 issueCount.errors,
                                 issueCount.warnings,
-                                stepName
+                                step.name
                               )}
                               iconType={iconType}
                               size="lg"

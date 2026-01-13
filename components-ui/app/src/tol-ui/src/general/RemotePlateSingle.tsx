@@ -51,7 +51,7 @@ export function RemotePlateSingle(Props: PRemotePlateSingle) {
     plateAttribute,
     wellPositionAttribute,
     ...wellHoverAttributeKeys,
-  ].join(",");
+  ];
   const pageSize = 1000;
 
   const [rowLabels, setRowLabels] = useState<String[]>([]);

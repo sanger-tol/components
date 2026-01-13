@@ -31,6 +31,10 @@ import {
   IGetAttributeDescriptor,
   IAttributeDescriptor,
   API_OPERATIONS,
+  IIncludedLookup,
+  IJsonApiData,
+  IJsonApiResponse,
+  IJsonApiResponseData
 } from "..";
 
 
@@ -44,7 +48,7 @@ export class TsDataSource {
   private apiDataPath: string | undefined;
   private dataspace: string | undefined;
   private dataSourceInstanceId: string | undefined;
-  private baseUrl: string | undefined;
+  private baseURL: string | undefined;
   private sourceKey: string;
 
   constructor({ url, apiPath, apiDataPath, dataspace, dataSourceInstanceId, client }: IDataSource = {}) {
@@ -54,8 +58,8 @@ export class TsDataSource {
     this.apiDataPath = apiDataPath;
     this.dataspace = dataspace;
     this.dataSourceInstanceId = dataSourceInstanceId;
-    this.baseUrl = this.initialiseBaseUrl();
-    this.sourceKey = this.baseUrl ?? "default";
+    this.baseURL = this.initialiseBaseUrl();
+    this.sourceKey = this.baseURL ?? "default";
   }
 
   private initialiseBaseUrl(): string | undefined {
@@ -64,90 +68,182 @@ export class TsDataSource {
       return undefined;
     }
 
-    // else join all parts together to form the baseUrl
-    let baseUrl = "";
-    baseUrl += this.url ? `${this.url}` : "";
-    baseUrl += this.apiPath ? `${this.apiPath}` : "";
-    baseUrl += this.apiDataPath ? `${this.apiDataPath}` : "";
-    baseUrl += this.dataspace ? `/${this.dataspace}` : "";
-    return baseUrl;
+    // else join all parts together to form the baseURL
+    let baseURL = "";
+    baseURL += this.url ? `${this.url}` : "";
+    baseURL += this.apiPath ? `${this.apiPath}` : "";
+    baseURL += this.apiDataPath ? `${this.apiDataPath}` : "";
+    baseURL += this.dataspace ? `/${this.dataspace}` : "";
+    return baseURL;
   }
 
-  public generateEndpoint(target?: string, suffix?: string): string {
-    const tg = target ? `/${target}` : "";
-    const sf = suffix ? `${suffix}` : "";
-    return `${tg}${sf}`;
-  }
-
-  private removeEmptyParams = (obj: Record<string, any>) => (
-    Object.fromEntries(Object.entries(obj).filter(([_, v]) => v))
-  );
-  
   public getDataSourceInstanceId(): string | undefined {
     return this.dataSourceInstanceId;
   }
 
   public getBaseUrl(): string | undefined {
-    return this.baseUrl;
+    return this.baseURL;
   }
 
-  private fetchRelationshipHandler = {
-    get: async (target: ISourceDataObject, key: string) => {
-      const targetValue = target?.[key];
+  public generateEndpoint(target?: string, suffix?: string): string {
+    const tg = target ? `${target}` : "";
+    const sf = suffix ? `${suffix}` : "";
+    return `${tg}${sf}`;
+  }
 
-      if (targetValue === null) return null;
+  private normaliseParams = (params?: Record<string, any>) => (
+    Object.fromEntries(
+      Object.entries(params ?? {})
+        .filter(([_, v]) => v !== undefined && v !== null && v !== "")
+        .map(([k, v]) => {
+          if (k === "requested_fields" && Array.isArray(v)) {
+            return [k, v.join(",")];
+          }
+          return [k, v];
+        })
+    )
+  );
 
-      if (targetValue !== undefined)
-        return new Proxy(targetValue.data, this.dataObjectHandler);
+  private createRelationshipHandler(
+    fetcher?: (args: IGetToOneRelation) => Promise<TDataObjectOrNull>
+  ) {
+    return {
+      get: (relationships: ISourceDataObject, relationKey: string) => {
+        const relation = relationships?.[relationKey];
 
-      return await this.getToOneRelation({
-        objectType: target.__sourceType,
-        id: target.__sourceId,
-        relation: key,
-      });
-    },
+        if (relation === null) return null;
+
+        if (relation?.data?.id && relation?.data?.type) {
+          const includedData = relationships.__includedLookup?.[relation.data.type]?.[relation.data.id];
+          return new Proxy(
+            {
+              ...includedData,
+              id: relation.data.id,
+              type: relation.data.type,
+              __includedLookup: relationships.__includedLookup,
+              __meta: relationships.__meta,
+            },
+            this.dataObjectHandler
+          );
+        }
+
+        if (!fetcher) return undefined;
+
+        return fetcher({
+          objectType: relationships.__sourceType,
+          id: relationships.__sourceId,
+          relation: relationKey,
+        });
+      },
+    };
+  }
+
+  private relationshipHandler = this.createRelationshipHandler();
+
+  private fetchRelationshipHandler = this.createRelationshipHandler(
+    (args) => this.getToOneRelation(args)
+  );
+
+  private createRelationshipsProxy = (target: any, handler: any) => {
+    const relationshipsTarget: ISourceDataObject = {
+      ...(target?.relationships ?? {}),
+      __sourceType: target.type,
+      __sourceId: target.id,
+      __includedLookup: target.__includedLookup,
+      __meta: target.__meta,
+    };
+    return new Proxy(relationshipsTarget, handler);
   };
 
-  private relationshipHandler = {
-    get: (target: ISourceDataObject, key: string) => {
-      const targetValue = target?.[key];
+  private buildIncludedLookup(included: any[] | undefined): IIncludedLookup {
+    const lookup: IIncludedLookup = {};
+    if (!included) return lookup;
 
-      if (targetValue === null) return null;
+    for (const item of included) {
+      const type = item?.type;
+      const id = item?.id;
+      if (!type || !id) continue;
 
-      if (targetValue !== undefined)
-        return new Proxy(targetValue.data, this.dataObjectHandler);
-    },
-  };
+      const typeLookup = (lookup[type] ??= {});
+      typeLookup[id] = item;
+    }
+
+    return lookup;
+  }
 
   private dataObjectHandler = {
-    get: (target: any, key: string) => {
-      if (key === "objectType") return target.type;
-      if (key === "id") return target.id;
+    get: (data: IJsonApiData, key: string) => {
+      if (key === "objectType") return data.type;
+      if (key === "id") return data.id;
 
       if (key === "fetchRelationships") {
-        const relationshipsTarget: ISourceDataObject = {
-          ...(target?.relationships ?? {}),
-          __sourceType: target.type,
-          __sourceId: target.id,
-        };
-        return new Proxy(relationshipsTarget, this.fetchRelationshipHandler);
+        return this.createRelationshipsProxy(data, this.fetchRelationshipHandler);
       }
 
       if (key === "relationships") {
-        const relationshipsTarget: ISourceDataObject = {
-          ...(target?.relationships ?? {}),
-          __sourceType: target.type,
-          __sourceId: target.id,
-        };
-        return new Proxy(relationshipsTarget, this.relationshipHandler);
+        return this.createRelationshipsProxy(data, this.relationshipHandler);
       }
 
-      return target.attributes?.[key];
+      return data?.attributes?.[key];
     },
   };
 
+  private jsonApiResponseToDataObject = (response: IJsonApiResponse) => {
+    const responseData: IJsonApiResponseData = response.data;
+    const isSingleObject = !Array.isArray(responseData.data);
+
+    const data: IJsonApiData[] = isSingleObject
+      ? [responseData.data as IJsonApiData]
+      : responseData.data as IJsonApiData[];
+    const included: IIncludedLookup = this.buildIncludedLookup(responseData.included);
+    const meta = responseData.meta;
+
+    const dataObjects = data?.map((datum: IJsonApiData) => (
+      new Proxy(
+        {
+          ...datum,
+          __includedLookup: included,
+          __meta: meta,
+        },
+        this.dataObjectHandler
+      )
+    ));
+    return isSingleObject ? dataObjects[0] : dataObjects;
+  }
+
   private getLocalStorageKey(o: string): string {
     return `${o}-${this.sourceKey}`;
+  }
+
+  public async custom({
+    method,
+    resource,
+    body,
+    params,
+    options,
+  }: ICustom): Promise<any> {
+    const client = this.client();
+    const url = `/${resource}`;
+    const config = {
+      baseURL: this.baseURL,
+      params: this.normaliseParams(params),
+      ...options,
+    }
+
+    switch (method.toUpperCase()) {
+      case API_METHODS.GET:
+        return await client.get(url, config);
+      case API_METHODS.POST:
+        return await client.post(url, body, config);
+      case API_METHODS.PUT:
+        return await client.put(url, body, config);
+      case API_METHODS.PATCH:
+        return await client.patch(url, body, config);
+      case API_METHODS.DELETE:
+        return await client.delete(url, config);
+      default:
+        throw new Error(`Unsupported method: ${method}`);
+    }
   }
 
   private getSavedConfig(key: string): { data: object; expiry: Date } | null {
@@ -162,12 +258,14 @@ export class TsDataSource {
     return !(expiry && now < expiry);
   }
 
-  private fetchAndSaveConfig(endpoint: string, key: string): Promise<object> {
+  private fetchAndSaveConfig(resource: string, key: string): Promise<object> {
     const anHourFromNow = new Date();
     anHourFromNow.setHours(anHourFromNow.getHours() + 1);
     if (!configPromises[key]) {
-      configPromises[key] = this.client()
-        .get(endpoint, { baseURL: this.baseUrl })
+      configPromises[key] = this.custom({
+        method: API_METHODS.GET,
+        resource,
+      })
         .then((config) => {
           const savedConfig = {
             expiry: anHourFromNow,
@@ -184,27 +282,23 @@ export class TsDataSource {
   }
 
   @retry(3)
-  public getConfig(endpoint: string): Promise<object> {
-    const key = this.getLocalStorageKey(endpoint);
+  public getConfig(resource: string): Promise<object> {
+    const key = this.getLocalStorageKey(resource);
     const savedConfig = this.getSavedConfig(key);
 
     if (savedConfig && !this.isConfigExpired(savedConfig.expiry)) {
       return Promise.resolve(savedConfig.data);
     } else {
-      return this.fetchAndSaveConfig(endpoint, key);
+      return this.fetchAndSaveConfig(resource, key);
     }
   }
 
   public async attributeMetadata(): Promise<object> {
-    return this.getConfig(
-      this.generateEndpoint("_config/attribute_metadata")
-    );
+    return this.getConfig("_config/attribute_metadata");
   }
 
   public async relationshipConfig(): Promise<object> {
-    return this.getConfig(
-      this.generateEndpoint("_config/relationships")
-    );
+    return this.getConfig("_config/relationships");
   }
 
   private addIds(attributes: IAttributes) {
@@ -301,14 +395,18 @@ export class TsDataSource {
 
   public async getOne({
     objectType,
-    id
+    id,
+    requestedFields,
   }: IGetOne): Promise<TDataObjectOrNull> {
-    return this.client()
-      .get(this.generateEndpoint(objectType, `/${id}`), {
-        baseURL: this.baseUrl,
-      })
-      .then((response: any) => {
-        return new Proxy(response.data.data, this.dataObjectHandler);
+    return this.custom({
+      method: API_METHODS.GET,
+      resource: this.generateEndpoint(objectType, `/${id}`),
+      params: {
+        requested_fields: requestedFields,
+      },
+    })
+      .then((response: IJsonApiResponse) => {
+        return this.jsonApiResponseToDataObject(response) as unknown as TDataObjectOrNull;
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
@@ -321,12 +419,12 @@ export class TsDataSource {
     id,
     relation,
   }: IGetToOneRelation): Promise<TDataObjectOrNull> {
-    return await this.client()
-      .get(this.generateEndpoint(objectType, `${API_OPERATIONS.TO_ONE}/${id}/${relation}`), {
-        baseURL: this.baseUrl,
-      })
-      .then((response: any) => {
-        return new Proxy(response.data.data, this.dataObjectHandler);
+    return this.custom({
+      method: API_METHODS.GET,
+      resource: this.generateEndpoint(objectType, `${API_OPERATIONS.TO_ONE}/${id}/${relation}`),
+    })
+      .then((response: IJsonApiResponse) => {
+        return this.jsonApiResponseToDataObject(response) as unknown as TDataObjectOrNull;
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
@@ -350,21 +448,19 @@ export class TsDataSource {
     sortBy,
     requestedFields,
   }: IGetListPage): Promise<TDataObjectListOrNull> {
-    return await this.client()
-      .get(this.generateEndpoint(objectType), {
-        baseURL: this.baseUrl,
-        params: this.removeEmptyParams({
-          page: page,
-          page_size: pageSize,
-          filter: filter,
-          sort_by: sortBy,
-          requested_fields: requestedFields,
-        })
-      })
-      .then((response: any) => {
-        return response.data.data.map((object: any) => {
-          return new Proxy(object, this.dataObjectHandler);
-        });
+    return this.custom({
+      method: API_METHODS.GET,
+      resource: this.generateEndpoint(objectType),
+      params: {
+        page: page,
+        page_size: pageSize,
+        filter: filter,
+        sort_by: sortBy,
+        requested_fields: requestedFields,
+      },
+    })
+      .then((response: IJsonApiResponse) => {
+        return this.jsonApiResponseToDataObject(response) as unknown as TDataObjectListOrNull;
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
@@ -433,25 +529,22 @@ export class TsDataSource {
     requestedFields,
     searchAfter,
   }: IGetListCursor): Promise<TCursorObjectOrNull> {
-    return await this.client()
-      .post(
-        this.generateEndpoint(objectType, API_OPERATIONS.CURSOR),
-        { search_after: searchAfter },
-        {
-          baseURL: this.baseUrl,
-          params: this.removeEmptyParams({
-            page: page,
-            page_size: pageSize,
-            filter: filter,
-            requested_fields: requestedFields,
-          }),
-        }
-      )
-      .then((response: any) => {
-        const dataObjects = response.data.data.map((object: any) => {
-          return new Proxy(object, this.dataObjectHandler);
-        });
-        return [dataObjects, response.data.meta.search_after];
+    return this.custom({
+      method: API_METHODS.POST,
+      resource: this.generateEndpoint(objectType, API_OPERATIONS.CURSOR),
+      body: { search_after: searchAfter },
+      params: {
+        page: page,
+        page_size: pageSize,
+        filter: filter,
+        requested_fields: requestedFields,
+      },
+    })
+      .then((response: IJsonApiResponse) => {
+        return [
+          this.jsonApiResponseToDataObject(response),
+          response.data.meta.search_after,
+        ] as unknown as TCursorObjectOrNull;
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
@@ -460,10 +553,10 @@ export class TsDataSource {
   }
 
   public async deleteByID({ objectType, id }: IGetOne): Promise<void> {
-    return await this.client()
-      .delete(this.generateEndpoint(objectType, `/${id}`), {
-        baseURL: this.baseUrl,
-      })
+    return this.custom({
+      method: API_METHODS.DELETE,
+      resource: this.generateEndpoint(objectType, `/${id}`),
+    })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
         throw error;
@@ -475,66 +568,19 @@ export class TsDataSource {
     objectType,
     params
   }: IUpsert): Promise<TDataObjectListOrNull> {
-    return await this.client()
-      .post(
-        this.generateEndpoint(objectType, API_OPERATIONS.UPSERT),
-        { data: payload },
-        {
-          baseURL: this.baseUrl,
-          params: params,
-        }
-      )
-      .then((response: any) => {
-        return response.data.data.map((object: any) => {
-          return new Proxy(object, this.dataObjectHandler);
-        });
+    return this.custom({
+      method: API_METHODS.POST,
+      resource: this.generateEndpoint(objectType, API_OPERATIONS.UPSERT),
+      body: { data: payload },
+      params,
+    })
+      .then((response: IJsonApiResponse) => {
+        return this.jsonApiResponseToDataObject(response) as unknown as TDataObjectListOrNull;
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
         throw error;
       });
-  }
-
-  public async custom({
-    method,
-    resource,
-    body,
-    params,
-    options,
-  }: ICustom): Promise<any> {
-    const url = this.generateEndpoint(resource);
-    switch (method.toUpperCase()) {
-      case API_METHODS.GET:
-        return await this.client().get(url, {
-          baseURL: this.baseUrl,
-          params: params,
-          ...options,
-        });
-      case API_METHODS.POST:
-        return await this.client().post(url, body, {
-          baseURL: this.baseUrl,
-          params: params,
-          ...options,
-        });
-      case API_METHODS.PUT:
-        return await this.client().put(url, body, {
-          baseURL: this.baseUrl,
-          params: params,
-          ...options,
-        });
-      case API_METHODS.PATCH:
-        return await this.client().patch(url, body, {
-          baseURL: this.baseUrl,
-          params: params,
-        });
-      case API_METHODS.DELETE:
-        return await this.client().delete(url, {
-          baseURL: this.baseUrl,
-          params: params,
-        });
-      default:
-        throw new Error(`Unsupported method: ${method}`);
-    }
   }
 
   private async getAttributeDescriptorValue(

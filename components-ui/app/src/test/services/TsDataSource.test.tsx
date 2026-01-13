@@ -118,24 +118,33 @@ const nestedRelationshipMockData = {
           data: {
             id: "nestedRelationships2",
             type: "specimen",
-            attributes: {
-              name: "specimenName",
-            },
-            relationships: {
-              species: {
-                data: {
-                  id: "nestedRelationships3",
-                  type: "species",
-                  attributes: {
-                    name: "speciesName",
-                  },
-                },
-              },
-            },
           },
         },
       },
     },
+    included: [
+      {
+        id: "nestedRelationships2",
+        type: "specimen",
+        attributes: {
+          name: "specimenName",
+        },
+        relationships: {
+          species: {
+            data: {
+              id: "nestedRelationships3",
+              type: "species",
+            },
+          },
+        },
+      },
+      {
+        id: "nestedRelationships3",
+        type: "species",
+        attributes: {
+          name: "speciesName",
+        },
+      }]
   },
 };
 
@@ -321,7 +330,7 @@ describe("generateEndpoint function", () => {
       apiPath: "api",
     });
     const endpoint = mockDataSource.generateEndpoint("target");
-    expect(endpoint).toBe("/target");
+    expect(endpoint).toBe("target");
   });
 
   test("Returns correct endpoint with apiPrefix, target, and objectId", () => {
@@ -329,15 +338,14 @@ describe("generateEndpoint function", () => {
       apiDataPath: "/test-data-path",
     });
     const endpoint = mockDataSource.generateEndpoint("target", "/123");
-    expect(endpoint).toBe("/target/123");
+    expect(endpoint).toBe("target/123");
   });
 });
 
-
 describe("Testing basic getter functions", () => {
   test("getBaseUrl returns correct base URL", () => {
-    const baseUrl = mockDataSource.getBaseUrl();
-    expect(baseUrl).toBe("/test-data-path");
+    const baseURL = mockDataSource.getBaseUrl();
+    expect(baseURL).toBe("/test-data-path");
   });
 });
 
@@ -846,12 +854,6 @@ describe("Testing temp getFieldByName function", async () => {
 })
 
 describe("Testing getFieldRelationshipValue", () => {
-  const mockClientInstance = mockClient();
-  const mockDataSource = new TsDataSource({
-    apiDataPath: "/test-data-path",
-    client: () => mockClientInstance,
-  });
-
   test('Returns correct value from a to many relationship field', async () => {
     const mockAttValue = await mockDataSource.getAttributeDescriptor({
       objectType: 'species',

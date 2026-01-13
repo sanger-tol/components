@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Fragment } from "react";
-import { IFilter, IRemoteTarget } from "src/interfaces";
+import { IFilter, IRemoteTarget } from "../interfaces";
 import { AttributeTitle } from "./AttributeTitle";
 import { generateFilterDescriptions } from "./utils";
 

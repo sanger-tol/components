@@ -39,6 +39,7 @@ import {
   optimiseFieldMetaForSave,
   env,
   amalgamateRequestedFields,
+  TFieldDropdownChoices,
 } from '..';
 
 
@@ -75,6 +76,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone {
   contents?: ReactNode;
   groupBy?: boolean;
   copySeparator?: string;
+  fieldDropdownChoices?: TFieldDropdownChoices;
 
   actionDataSource?: TsDataSource;
   actions?: (string | IDropdownButtonConfig)[];
@@ -201,7 +203,10 @@ export function RemoteTable(props: PRemoteTable) {
           objectType,
           fieldMeta,
           dataSource,
-        )
+        ).catch((error) => {
+          console.error("Error in addFieldMetaDefaults:", error);
+          return fieldMeta;
+        })
       )
     }
   }
@@ -219,7 +224,7 @@ export function RemoteTable(props: PRemoteTable) {
         pageSize,
         filter,
         sortBy: createSort(sortByAttribute, sortByType),
-        requestedFields: amalgamateRequestedFields(fieldMeta).join(','),
+        requestedFields: amalgamateRequestedFields(fieldMeta),
       })
       .then((dataObjects: TDataObjectListOrNull) => {
         setError("");

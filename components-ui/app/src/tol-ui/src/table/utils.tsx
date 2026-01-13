@@ -162,7 +162,6 @@ export function addDefaultsFromEntityMeta(
     rename: meta.display_name || normaliseCaps(key),
     sort: true,
     type: meta.python_type,
-    width: 200,
     description: meta.description,
     source: meta.source,
   };
@@ -186,11 +185,12 @@ export async function addFieldMetaDefaults(
       objectType: objectType,
       field: key,
     });
-    await descriptor.then((meta) => {
-      if (meta) {
-        addDefaultsFromEntityMeta(key, meta, fieldMeta);
-      }
-    })
+    await descriptor
+      .then((meta) => {
+        if (meta) {
+          addDefaultsFromEntityMeta(key, meta, fieldMeta);
+        }
+      })
   }
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
   return fieldMeta;
@@ -370,12 +370,18 @@ function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
   });
 }
 
+
 export function amalgamateRequestedFields(fieldMeta: FieldMeta): string[] {
   const requestedFields = new Set<string>(fieldMeta?.order.active || []);
 
   const dataWithDefaults = fieldMeta?.dataWithDefaults || {};
-  Object.values<any>(dataWithDefaults).forEach((fieldConfig) => {
-    const cellRenderer = fieldConfig?.cellRenderer;
+  Object.entries<any>(dataWithDefaults).forEach(([fieldName, meta]) => {
+    if (meta?.custom === true) {
+      requestedFields.delete(fieldName);
+      return;
+    }
+
+    const cellRenderer = meta?.cellRenderer;
     const props = cellRenderer?.props || {};
 
     Object.values(props).forEach((value) => {

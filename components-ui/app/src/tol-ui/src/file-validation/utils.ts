@@ -14,14 +14,30 @@ import {
   TDataObjectOrNull,
   IValidationResult,
   IValidationResultAPI,
-  IPipelineUpload,
+  IAllValidationData,
   IValidationConfig,
   FILE_VALIDATION_PATH,
   S3_ENDPOINTS,
   IFileData,
+  TFileValidationPurpose,
+  VALIDATE_AND_MARK_AS_READY,
+  VALIDATE_ONLY,
+  VALIDATE_AND_UPLOAD,
+  PIPELINE_DS,
+  VALIDATION_TIMEOUT_MS,
+  IValidatedDataReport,
+  TSeverity,
+  TValidationIssues,
 } from "..";
 
-const pipelineStepsPromiseCache = new Map<string, Promise<string[]>>();
+const pipelineStepsPromiseCache = new Map<string, Promise<TStepsData>>();
+
+export interface IStepData {
+  name: string;
+  description: string;
+}
+
+export type TStepsData = IStepData[] | [];
 
 /**
  * Counts the number of errors and warnings in a list of validation results.
@@ -129,12 +145,12 @@ export function normaliseValidationResult(
 }
 
 /**
- * Normalises a pipeline upload object and its relationships into the internal IPipelineUpload format.
+ * Normalises a pipeline upload object and its relationships into the internal IAllValidationData format.
  *
  * @param ds - The TsDataSource instance used for fetching related pipeline steps.
  * @param upload - The raw upload object to normalise.
  * @param relationships - An object containing promises for related entities, such as the pipeline.
- * @returns A Promise that resolves to an IPipelineUpload object with all fields mapped and normalised.
+ * @returns A Promise that resolves to an IAllValidationData object with all fields mapped and normalised.
  *
  * This function fetches pipeline steps if a pipeline relationship exists,
  * and maps all relevant fields from the raw upload and its relationships.
@@ -144,7 +160,7 @@ export async function normalisePipelineUpload(
   ds: TsDataSource,
   upload: TDataObjectOrNull,
   relationships: any
-): Promise<IPipelineUpload> {
+): Promise<IAllValidationData> {
   const pipeline = await relationships?.pipeline;
   const pipelineSteps = pipeline
     ? await getStepsInPipeline(ds, pipeline.id)
@@ -162,6 +178,7 @@ export async function normalisePipelineUpload(
     validationResults:
       upload?.validation_results.map(normaliseValidationResult) || [],
     failureMessage: upload?.failure_message || null,
+    isReady: upload?.is_ready,
   };
 }
 
@@ -174,7 +191,7 @@ export async function normalisePipelineUpload(
  * @param setPipelineResult - Optional callback to set the normalised pipeline result in state.
  * @param setHasErrors - Optional callback to set error state if the fetch fails.
  * @param setLoading - Optional callback to set loading state during the fetch.
- * @returns A Promise that resolves to an IPipelineUpload object if successful, or null if not.
+ * @returns A Promise that resolves to an IAllValidationData object if successful, or null if not.
  *
  * If the fetch fails, this function will trigger a popup error message and update error/loading state if callbacks are provided.
  */
@@ -183,10 +200,10 @@ export async function fetchCurrentPipelineResults(
   ds: TsDataSource,
   endpoint: string,
   uploadId: string,
-  setPipelineResult?: (results: IPipelineUpload | null) => void,
+  setPipelineResult?: (results: IAllValidationData | null) => void,
   setHasErrors?: (hasErrors: boolean) => void,
   setLoading?: (loading: boolean) => void | null
-): Promise<IPipelineUpload | null> {
+): Promise<IAllValidationData | null> {
   try {
     const results = await ds.getListPage({
       objectType: endpoint,
@@ -238,7 +255,7 @@ export async function fetchAndNormaliseUploadResult(
   ds: TsDataSource,
   endpoint: string,
   uploadId: string,
-  setPipelineResult: (results: IPipelineUpload | null) => void,
+  setPipelineResult: (results: IAllValidationData | null) => void,
   setHasErrors: (hasErrors: boolean) => void,
   setLoading?: (loading: boolean) => void | null
 ): Promise<void> {
@@ -277,7 +294,7 @@ export async function fetchAndNormaliseUploadResult(
  * @param setAllUploadResults - Optional callback to set the array of normalised pipeline upload results in state.
  * @param setHasErrors - Optional callback to set error state if the fetch fails.
  * @param setLoading - Optional callback to set loading state during the fetch.
- * @returns A Promise that resolves to an array of IPipelineUpload objects if successful, or an empty array if not.
+ * @returns A Promise that resolves to an array of IAllValidationData objects if successful, or an empty array if not.
  *
  * If the fetch fails, this function will trigger a popup error message and update error/loading state via the provided callbacks.
  */
@@ -286,7 +303,7 @@ export async function fetchAndNormaliseAllUploadResults(
   ds: TsDataSource,
   endpoint: string,
   userId: string,
-  setAllUploadResults?: (results: IPipelineUpload[]) => void,
+  setAllUploadResults?: (results: IAllValidationData[]) => void,
   setHasErrors?: (hasErrors: boolean) => void,
   setLoading?: (loading: boolean) => void
 ) {
@@ -351,6 +368,7 @@ export async function uploadPipelineConfig(
     dry_run: dry_run,
     destination: config.destination,
     upload_id: uploadId || null,
+    completed: true,
   };
 
   try {
@@ -460,12 +478,12 @@ export function constructCompletionMessage(
     };
   } else if (errorsAndWarnings.errors > 0) {
     return {
-      message: `Validation failed with ${errorsAndWarnings.errors} error(s). File cannot be uploaded.`,
+      message: `File failed validation with ${errorsAndWarnings.errors} error(s). File cannot be uploaded.`,
       messageType: "error",
     };
   } else if (errorsAndWarnings.warnings > 0) {
     return {
-      message: `Validation completed with ${errorsAndWarnings.warnings} warning(s).`,
+      message: `File passed validation with ${errorsAndWarnings.warnings} warning(s).`,
       messageType: "warning",
     };
   }
@@ -491,10 +509,13 @@ export function determineUploadStatus(
   completedStatus: boolean,
   overallErrors: number,
   overallWarnings: number,
-  failureMessage: string | null
+  failureMessage: string | null,
+  isReady: boolean
 ): { className: string; text: string } {
   if (failureMessage) {
     return { className: "failed", text: "Failed" };
+  } else if (isReady) {
+    return { className: "marked-as-ready", text: "Marked as Ready" };
   } else if (completedStatus && overallErrors === 0 && overallWarnings === 0) {
     return { className: "passed", text: "Passed" };
   } else if (completedStatus && overallErrors > 0) {
@@ -553,17 +574,75 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
       filter: {
         and_: {
           pipeline_id: { eq: { value: pipelineId } },
+          is_visible: { eq: { value: true } },
         },
       },
     });
     return (
-      res?.map((step: TDataObjectOrNull) => (step ? step.step_name : "")) || []
+      res
+        ?.sort((a, b) => {
+          if (a.stage !== b.stage) {
+            return a.stage - b.stage;
+          } else {
+            return a.step_order - b.step_order;
+          }
+        })
+        .flatMap((step: TDataObjectOrNull) =>
+          step
+            ? [
+                {
+                  name: step.step_name,
+                  description: step.description || "",
+                },
+              ]
+            : []
+        ) || []
     );
   })();
 
   pipelineStepsPromiseCache.set(pipelineId, stepPromise);
 
   return stepPromise;
+}
+
+export async function setValidationTimeout(
+  ds: TsDataSource,
+  userId: string,
+  currentPipelineId?: string
+) {
+  if (!userId) return;
+  const res = await ds.getListPage({
+    objectType: VALIDATION_ENDPOINTS.UPLOAD,
+    filter: {
+      and_: {
+        user_id: { eq: { value: userId } },
+        completed: { eq: { value: false } },
+        // fail a validation if it has been running for more than 8 minutes past start time.
+        date_started: {
+          lt: { value: new Date(Date.now() - VALIDATION_TIMEOUT_MS) },
+        },
+        failure_message: { eq: { value: null } },
+      },
+    },
+  });
+
+  const ids = res?.map((upload: TDataObjectOrNull) => upload?.id || "");
+  if (currentPipelineId) ids?.push(currentPipelineId);
+
+  if (!ids || ids.length === 0) return;
+
+  const data = ids?.map((id: string) => ({
+    id: id,
+    type: "upload",
+    attributes: {
+      failure_message: "Validation timed out.",
+    },
+  }));
+
+  await ds.upsert({
+    objectType: VALIDATION_ENDPOINTS.UPLOAD,
+    payload: data,
+  });
 }
 
 /**
@@ -586,4 +665,358 @@ export function goToResults(
       errorWarningCount > 2 && stepName ? `?stepName=${stepName}` : ""
     }`
   );
+}
+
+/**
+ * Determines if the file validation purpose represents a dry run operation.
+ *
+ * A dry run operation is one that validates files without performing actual modifications
+ * or side effects beyond marking files as ready.
+ *
+ * @param purpose - The file validation purpose to check
+ * @returns `true` if the purpose is VALIDATE_ONLY or VALIDATE_AND_MARK_AS_READY, `false` otherwise
+ */
+export function isDryRun(purpose: TFileValidationPurpose): boolean {
+  return purpose === VALIDATE_ONLY || purpose === VALIDATE_AND_MARK_AS_READY;
+}
+
+/**
+ * Determines the next file validation purpose based on the current purpose and submittable state.
+ *
+ * @param purpose - The current file validation purpose
+ * @param submittable - Optional flag indicating whether the file can be submitted
+ * @returns The next file validation purpose. If current purpose is VALIDATE_ONLY and submittable is true,
+ *          returns VALIDATE_AND_UPLOAD. If current purpose is VALIDATE_ONLY and submittable is false or undefined,
+ *          returns VALIDATE_AND_MARK_AS_READY. Otherwise, returns VALIDATE_ONLY.
+ */
+export function getNextPurpose(
+  purpose: TFileValidationPurpose,
+  submittable?: boolean
+): TFileValidationPurpose {
+  if (purpose === VALIDATE_ONLY) {
+    return submittable ? VALIDATE_AND_UPLOAD : VALIDATE_AND_MARK_AS_READY;
+  }
+  return VALIDATE_ONLY;
+}
+
+/**
+ * Submits a file for validation by uploading it through the pipeline configuration.
+ *
+ * @param validationConfig - The validation configuration to apply to the file upload
+ * @param fileList - An array of file data objects, where the first file will be submitted
+ * @param currentUploadId - The ID of the current upload session, or null if not available
+ * @param setFileUploaded - Callback function to update the file upload status
+ * @returns void
+ *
+ * @remarks
+ * This function uploads the first file from the fileList using the pipeline configuration.
+ * On success, it sets the uploaded status to true and displays a success message.
+ * On failure, it logs the error and displays an error message to the user.
+ */
+export function submitFile(
+  validationConfig: IValidationConfig,
+  fileList: IFileData[],
+  currentUploadId: string | null,
+  setFileUploaded: (uploaded: boolean) => void
+): void {
+  uploadPipelineConfig(
+    PIPELINE_DS,
+    validationConfig,
+    fileList[0],
+    true,
+    currentUploadId ?? undefined
+  )
+    .then(() => {
+      setFileUploaded(true);
+      PopUpMessage({
+        type: "success",
+        message: "File submitted successfully.",
+      });
+    })
+    .catch((err) => {
+      console.error("Error submitting file:", err);
+      PopUpMessage({
+        type: "error",
+        message: "Failed to submit file. Please try again.",
+      });
+    });
+}
+
+/**
+ * Marks a file upload as ready for submission by updating its status in the pipeline.
+ *
+ * This function performs an upsert operation to set the `is_ready` attribute to `true`
+ * for the specified upload. It displays a success popup message on completion or an
+ * error popup message if the operation fails.
+ *
+ * @param currentUploadId - The unique identifier of the upload to mark as ready
+ * @param setMarkedAsReady - Callback function to update the marked-as-ready state,
+ *                           invoked with `true` upon successful operation
+ * @returns void
+ */
+export function markFileAsReady(
+  currentUploadId: string,
+  setMarkedAsReady: () => void
+): void {
+  PIPELINE_DS.upsert({
+    objectType: VALIDATION_ENDPOINTS.UPLOAD,
+    payload: [
+      {
+        type: "upload",
+        id: currentUploadId,
+        attributes: {
+          is_ready: true,
+        },
+      },
+    ],
+  })
+    .then(() => {
+      setMarkedAsReady();
+      PopUpMessage({
+        type: "success",
+        message: "File marked as ready for submission.",
+      });
+    })
+    .catch((err) => {
+      console.error("Error marking file as ready:", err);
+      PopUpMessage({
+        type: "error",
+        message: "Failed to mark file as ready. Please try again.",
+      });
+    });
+}
+
+/**
+ * Handles file submission logic based on validation state and upload status.
+ *
+ * If the file is submittable, it initiates the file submission process.
+ * If the file is not submittable, it marks the file as ready.
+ * Otherwise, it logs an error and displays an error popup message.
+ *
+ * @param validationConfig - Configuration object containing validation rules and settings
+ * @param fileList - Array of file data objects to be processed
+ * @param submittable - Flag indicating whether the file can be submitted
+ * @param currentUploadId - The unique identifier for the current upload, or null if not available
+ * @param setFileUploaded - Callback function to update the file uploaded state
+ * @param setMarkedAsReady - Callback function to update the marked as ready state
+ *
+ * @returns void
+ *
+ * @throws Will log an error and show a popup if currentUploadId is null when trying to mark as ready
+ */
+export function onSubmission(
+  validationConfig: IValidationConfig,
+  fileList: IFileData[],
+  submittable: boolean,
+  currentUploadId: string | null,
+  setFileUploaded: (uploaded: boolean) => void,
+  setMarkedAsReady: () => void
+): void {
+  if (submittable) {
+    submitFile(validationConfig, fileList, currentUploadId, setFileUploaded);
+  } else if (currentUploadId) {
+    markFileAsReady(currentUploadId, setMarkedAsReady);
+  } else {
+    console.error("currentUploadId is required to mark file as ready.");
+    PopUpMessage({
+      type: "error",
+      message: "Cannot mark file as ready: upload ID is missing.",
+    });
+  }
+}
+
+/**
+ * Aggregates validation results by unique issue and collects the affected object IDs.
+ *
+ * Builds a stable “issue key” from `severity`, `field`, and `detail`, then groups all
+ * `objectId`s for results sharing the same key.
+ *
+ * The returned record uses keys of the form:
+ * `${severity}|~${field}|~${detail}`
+ *
+ * Example:
+ * - Two results with the same severity/field/detail but different `objectId`s will
+ *   produce one entry with both IDs in the array.
+ *
+ * @param results - Validation results to group.
+ * @returns A map of issue key → array of object IDs affected by that issue.
+ */
+export function aggregateObjectIdsByIssue(
+  results: IValidationResult[]
+): Record<string, string[]> {
+  return results.reduce((acc, result) => {
+    // Create a unique key for each issue based on severity, field, and detail
+    const key = `${result.severity}|~${result.field}|~${result.detail}`;
+
+    // Initialize the array if the key doesn't exist
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+
+    // Append the object ID to the corresponding issue key if not already present
+    acc[key].push(result.objectId);
+    return acc;
+  }, {} as Record<string, string[]>);
+}
+
+/**
+ * Formats an array of row/object IDs into a compact, human-readable range string.
+ *
+ * Sorts the IDs numerically, removes duplicates, and collapses consecutive values
+ * into ranges.
+ *
+ * Examples:
+ * - `["1", "2", "3", "5", "6", "8"]` → `"1-3,5-6,8"`
+ * - `["4"]` → `"4"`
+ * - `["2", "2", "1"]` → `"1-2"`
+ *
+ * Note: IDs are treated as numeric strings (converted with `Number(...)`).
+ *
+ * @param objectIds - Array of IDs (as strings) to format.
+ * @returns A comma-separated string of IDs and ranges.
+ */
+export function formatAndConcatObjectIds(objectIds: string[]): string {
+  // Sort and remove duplicates
+  const sortedIds = [
+    ...new Set(objectIds.sort((a, b) => Number(a) - Number(b))),
+  ];
+
+  const ranges: string[] = [];
+  let start = sortedIds[0];
+  let end = start;
+
+  // Build ranges
+  for (let i = 1; i < sortedIds.length; i++) {
+    // Check if current ID is consecutive
+    if (sortedIds[i] === String(Number(end) + 1)) {
+      // Extend the current range if consecutive
+      end = sortedIds[i];
+    } else {
+      // If not, push the current range and reset
+      ranges.push(start === end ? `${start}` : `${start}-${end}`);
+      start = sortedIds[i];
+      end = start;
+    }
+  }
+
+  // Push the final range
+  ranges.push(start === end ? `${start}` : `${start}-${end}`);
+  return ranges.join(", ");
+}
+
+/**
+ * Constructs a structured validation report from raw validation data.
+ * 
+ * This function processes validation data and organizes it into a structured report format
+ * suitable for display or export. It aggregates validation results by pipeline step,
+ * groups similar issues together, and formats object IDs into readable ranges.
+ *
+ * @param validationData - The complete validation data object containing upload details and validation results
+ * @returns A structured validation report object with upload details and organized issues
+ */
+export function constructValidationReport(validationData: IAllValidationData) {
+  const { validationResults, pipelineSteps, s3Filename, ...rest } =
+    validationData;
+
+  let validationReport: IValidatedDataReport = {
+    title: "Validation Report",
+    uploadDetails: {
+      s3Filename: splitS3FilenameString(s3Filename || ""),
+      pipelineSteps: pipelineSteps
+        ? pipelineSteps.map((step: IStepData) => step.name).join(", ")
+        : "",
+      ...rest,
+    },
+    issues: {} as TValidationIssues,
+  };
+
+  validationData?.pipelineSteps?.map((step: IStepData) => {
+    const stepErrors = validationData.validationResults.filter(
+      (result: IValidationResult) => result.stepName === step.name
+    );
+
+    if (stepErrors.length === 0) return;
+    const aggregatedResults = aggregateObjectIdsByIssue(stepErrors);
+
+    Object.entries(aggregatedResults).map(([k, objectIds]) => {
+      const [severity, field, detail] = k.split("|~");
+      if (!validationReport.issues[step.name]) {
+        validationReport.issues[step.name] = [];
+      }
+
+      validationReport.issues[step.name].push({
+        severity: severity as TSeverity,
+        field: field,
+        detail: detail,
+        objectId: formatAndConcatObjectIds(objectIds),
+      });
+    });
+  });
+
+  return validationReport;
+}
+
+/**
+ * Downloads a validation report file as a formatted text document.
+ * 
+ * This function generates a comprehensive validation report from the provided validation data,
+ * formats it as a human-readable text file, and triggers a browser download. The report includes
+ * upload details, pipeline information, and a structured list of all validation issues organized by step.
+ *
+ * @param data - The validation data object containing all upload and validation information
+ * @returns void - The function doesn't return a value but triggers a file download
+ */
+export function downloadReportFile(data: IAllValidationData) {
+  const jsonReport = constructValidationReport(data);
+
+  // create readable report from json
+  // start report
+  let report: string = `${jsonReport["title"]} for ${
+    jsonReport["uploadDetails"]["s3Filename"]
+  }\n${"=".repeat(50)}\n\n`;
+
+  // upload details
+  report += `Upload Details:\n${"-".repeat(20)}\n`;
+  report += `Validation ID: ${jsonReport["uploadDetails"]["id"]}\n`;
+  report += `Date Started: ${new Date(
+    jsonReport["uploadDetails"]["dateStarted"]
+  ).toString()}\n`;
+  report += `Pipeline Name: ${jsonReport["uploadDetails"]["pipelineName"]}\n`;
+  report += `File Name: ${jsonReport["uploadDetails"]["s3Filename"]}\n\n`;
+
+  // issues
+  report += `Validation Issues:\n${"-".repeat(20)}\n`;
+  Object.entries(jsonReport.issues).length > 0
+    ? Object.entries(jsonReport.issues).map(([stepName, issuesArray]) => {
+        report += `Validation: ${stepName} -\n`;
+        issuesArray.forEach((issue, index) => {
+          report += `${index + 1}. [${issue.severity}] Column: ${
+            issue.field
+          }\n`;
+          report += `  - Issue: ${issue.detail}\n`;
+          report += `  - Affected Row Number(s): ${issue.objectId}\n\n`;
+        });
+      })
+    : (report += "No issues found.\n");
+
+  //end report
+  report += `${"-".repeat(20)}\n`;
+  report += "End of report.";
+
+  const blob = new Blob([report], {
+    type: "text/plain; charset=utf-8",
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  a.href = url;
+  a.download = `validation-report-${jsonReport["uploadDetails"]["s3Filename"]}.txt`;
+  a.style.display = "none";
+
+  document.body.appendChild(a);
+  a.click();
+
+  a.remove();
+  URL.revokeObjectURL(url);
 }

@@ -4,6 +4,13 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { TStepsData } from "src/file-validation";
+import {
+  VALIDATE_AND_MARK_AS_READY,
+  VALIDATE_AND_UPLOAD,
+  VALIDATE_ONLY,
+} from "../constants";
+
 export type TSeverity = "error" | "warning";
 export type TIconType = "check" | "xmark" | "exclamation" | "question";
 
@@ -21,6 +28,9 @@ export interface IValidationConfig {
   s3_bucket: string;
   pipeline_id: number;
   destination: string;
+  sheetName?: string;
+  maxFileSize?: string;
+  allowedFileTypes?: string;
 }
 
 export interface IErrorWarningCount {
@@ -38,35 +48,63 @@ export interface IValidationResultAPI {
 }
 
 export interface IValidationResult {
-  code: string;
+  code?: string;
   detail: string;
   field: string | null;
   objectId: string;
   severity: TSeverity;
-  stepName: string;
+  stepName?: string;
 }
 
-export interface IPipelineUploadAPI {
+export interface IValidationUploadDetails {
+  id: string;
+  s3Filename: string;
+  pipelineSteps: string;
+  completed: boolean;
+  dateStarted: string;
+  flowRunId: string;
+  pipelineName: string;
+  pipelineId: string;
+  s3Bucket: string;
+  failureMessage: string | null;
+  isReady: boolean;
+}
+
+export type TValidationIssues = Record<string, IValidationResult[]>;
+
+export interface IValidatedDataReport {
+  title: string;
+  uploadDetails: IValidationUploadDetails;
+  issues: TValidationIssues;
+}
+
+export interface IAllValidationDataAPI {
   id: string;
   completed: boolean;
   date_started: string;
   flow_run_id: string;
   s3_filename: string;
   s3_bucket: string;
-  validation_results: IValidationResult[];
+  validation_results: IValidationResultAPI[];
   failure_message: string | null;
 }
 
-export interface IPipelineUpload {
+export interface IAllValidationData {
   id: string;
   completed: boolean;
   dateStarted: string;
   flowRunId: string;
   pipelineName: string;
   pipelineId: string;
-  pipelineSteps: string[];
+  pipelineSteps: TStepsData;
   s3Filename: string;
   s3Bucket: string;
   validationResults: IValidationResult[];
   failureMessage: string | null;
+  isReady: boolean;
 }
+
+export type TFileValidationPurpose =
+  | typeof VALIDATE_ONLY
+  | typeof VALIDATE_AND_UPLOAD
+  | typeof VALIDATE_AND_MARK_AS_READY;

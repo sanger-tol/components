@@ -19,3 +19,9 @@ export interface ITableOtherSave {
 }
 
 export interface ITableConfigSave extends ITableDrawerSave, ITableOtherSave {}
+
+export type TCellHeights = Record<string, Record<string, number>>;
+
+export type TFieldDropdownChoices = IFieldDropdownChoices[];
+
+export type IFieldDropdownChoices = "copyValues";
