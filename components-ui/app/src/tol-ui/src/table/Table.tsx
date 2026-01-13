@@ -59,14 +59,14 @@ export interface PTable extends IRemoteTargetAndZone {
   sortByType?: any;
   defaultSortByAttribute?: string;
   defaultSortByType?: string;
-  onSortColumn?: (dataKey: string, sortType: string) => void;
+  onSortColumn?: (dataKey: string, sortType?: "asc" | "desc") => void;
 
   filter: any;
   copySeparator?: string;
   fieldDropdownChoices?: TFieldDropdownChoices;
 
   onConfigSave: (config: ITableConfigSave) => void;
-  onResizeColumn?: (columnWidth?: string, dataKey?: string) => void;
+  onResizeColumn?: (columnWidth?: number, dataKey?: string, fieldMeta?: FieldMeta) => void;
 
   noFilter?: boolean;
   noPagination?: boolean;

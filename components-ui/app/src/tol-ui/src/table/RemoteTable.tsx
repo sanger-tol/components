@@ -383,6 +383,7 @@ export function RemoteTable(props: PRemoteTable) {
         data={data}
         fieldMeta={fieldMeta!}
         expandedRows={expandedRows}
+        onResizeColumn={onResizeColumn}
         height={height}
         loading={loading}
         page={page}
