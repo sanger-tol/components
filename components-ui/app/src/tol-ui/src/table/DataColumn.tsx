@@ -23,6 +23,8 @@ export interface PDataColumn extends PTable {
   field: Field;
   sortable: boolean;
   filterable: boolean;
+  resizeable?: boolean;
+  onResize?: (columnWidth?: string, dataKey?: string) => void;
   handleCellHeightChange: (
     rowId: string,
     columnId: string,
@@ -37,6 +39,8 @@ export function DataColumn(props: PDataColumn) {
     fieldKey,
     sortable,
     filterable,
+    resizeable = false,
+    onResize,
     filterVisibility,
     copySeparator,
     fieldDropdownChoices,
@@ -53,6 +57,8 @@ export function DataColumn(props: PDataColumn) {
   return (
     <Column
       key={fieldKey}
+      resizable={resizeable}
+      onResize={onResize}
       width={field.width}
       sortable={sortable}
       fixed={field.fixed}
@@ -94,7 +100,7 @@ export function DataColumn(props: PDataColumn) {
           />
         )}
       </HeaderCell>
-      <Cell>
+      <Cell dataKey={fieldKey}>
         {(rowData: any) => (
           <AutoHeightCell
             rowId={rowData?.key}

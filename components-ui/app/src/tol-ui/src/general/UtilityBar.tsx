@@ -87,10 +87,9 @@ export function UtilityBar(props: PUtilityBar) {
     <div className="tol-utility-bar" data-testid={id} id={wrapperId}>
       {title && <InlineEdit {...title} size={smallBreakpoint ? "sm" : "md"} />}
       {description && <IconTooltip className="tol-utility-bar-tooltip" contents={description} />}
-      {elements &&
-        elements.map((element) => (
-          element
-        ))}
+      {elements && elements.map(
+        (element, index) => <span key={index}>{element}</span>
+      )}
       <div className="tol-utility-bar-buttons">
         {smallBreakpoint && regularButtons &&
           regularButtons.filter((button) => button?.["visible"] !== false).length > 1
