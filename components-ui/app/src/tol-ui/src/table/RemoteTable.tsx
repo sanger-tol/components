@@ -59,7 +59,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone {
   onConfigSave?: (config: ITableDrawerSave) => void;
   onPageSizeChange?: (pageSize: number) => void;
   onToggleFilterVisibility?: (visible: boolean) => void;
-  onResizeColumn?: (columnWidth?: string, dataKey?: string) => void;
+  onResizeColumn?: (columnWidth?: number, dataKey?: string) => void;
 
   pageSize?: number;
   filterVisibility?: boolean;
@@ -297,7 +297,7 @@ export function RemoteTable(props: PRemoteTable) {
     setFullLoad(true);
   };
 
-  const onSortColumn = (dataKey: string, sortType: string) => {
+  const onSortColumn = (dataKey: string, sortType: "asc" | "desc") => {
     setSortByAttribute(dataKey);
     setSortByType(sortType);
   };
@@ -383,7 +383,6 @@ export function RemoteTable(props: PRemoteTable) {
         data={data}
         fieldMeta={fieldMeta!}
         expandedRows={expandedRows}
-        onResizeColumn={onResizeColumn}
         height={height}
         loading={loading}
         page={page}

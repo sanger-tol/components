@@ -50,7 +50,7 @@ export function RowToolsColumn(props: PRowToolsColumn) {
   const { Column, HeaderCell, Cell } = RSTable;
 
   return (
-    <Column key="rowTools" width={40}>
+    <Column key="rowTools" width={rowSelection ? 40 : 26}>
       <HeaderCell>
         <div className="tol-row-tools-header">
           {rowSelection && (

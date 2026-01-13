@@ -66,7 +66,7 @@ export interface PTable extends IRemoteTargetAndZone {
   fieldDropdownChoices?: TFieldDropdownChoices;
 
   onConfigSave: (config: ITableConfigSave) => void;
-  onResizeColumn?: (columnWidth?: number, dataKey?: string, fieldMeta?: FieldMeta) => void;
+  onResizeColumn?: (columnWidth?: number, dataKey?: string) => void;
 
   noFilter?: boolean;
   noPagination?: boolean;
