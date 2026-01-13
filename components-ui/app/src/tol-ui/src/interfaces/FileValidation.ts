@@ -8,7 +8,7 @@ import { TStepsData } from "src/file-validation";
 import {
   VALIDATE_AND_MARK_AS_READY,
   VALIDATE_AND_UPLOAD,
-  VALIDATE_ONLY
+  VALIDATE_ONLY,
 } from "../constants";
 
 export type TSeverity = "error" | "warning";
@@ -28,6 +28,9 @@ export interface IValidationConfig {
   s3_bucket: string;
   pipeline_id: number;
   destination: string;
+  sheetName?: string;
+  maxFileSize?: string;
+  allowedFileTypes?: string;
 }
 
 export interface IErrorWarningCount {
@@ -101,4 +104,7 @@ export interface IAllValidationData {
   isReady: boolean;
 }
 
-export type TFileValidationPurpose = typeof VALIDATE_ONLY | typeof VALIDATE_AND_UPLOAD | typeof VALIDATE_AND_MARK_AS_READY;
+export type TFileValidationPurpose =
+  | typeof VALIDATE_ONLY
+  | typeof VALIDATE_AND_UPLOAD
+  | typeof VALIDATE_AND_MARK_AS_READY;

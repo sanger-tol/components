@@ -7,8 +7,6 @@ SPDX-License-Identifier: MIT
 import React, { useState, useEffect } from "react";
 import {
   ValidateSteps,
-  IValidationConfig,
-  IAllValidationData,
   uploadPipelineConfig,
   fetchCurrentPipelineResults,
   constructCompletionMessage,
@@ -25,12 +23,10 @@ import {
   Modal,
   TolLoader,
   VALIDATION_ENDPOINTS,
-  IFileData,
   TsDataSource,
   DEFAULT_FILE_TYPE,
   downloadFileFromS3,
   useQueryData,
-  TFileValidationPurpose,
   VALIDATE_ONLY,
   onSubmission,
   ValidationReport,
@@ -39,8 +35,17 @@ import {
   useTimeout,
   VALIDATION_TIMEOUT_MS,
   downloadReportFile,
+  USER_SHOWN_FILE_TYPE_DEFAULTS,
+  MAX_FILE_SIZE,
+  DEFAULT_SHEET_NAME,
 } from "..";
 
+import type {
+  IFileData,
+  IValidationConfig,
+  IAllValidationData,
+  TFileValidationPurpose,
+} from "..";
 
 export interface PFileValidation {
   objectType: string;
@@ -54,11 +59,17 @@ export const PIPELINE_DS = new TsDataSource();
 
 export function FileValidation(props: PFileValidation) {
   const {
-    validationConfig,
     pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
     defaultFileTemplateName = "",
   } = props;
+
+  const validationConfig = {
+    sheetName: DEFAULT_SHEET_NAME,
+    maxFileSize: MAX_FILE_SIZE,
+    allowedFileTypes: USER_SHOWN_FILE_TYPE_DEFAULTS,
+    ...props.validationConfig,
+  };
 
   // TODO: re-enable type checking when mode toggle is re-introduced
   // @ts-ignore
@@ -94,8 +105,9 @@ export function FileValidation(props: PFileValidation) {
   }, []);
 
   const fetchLatestPipelineResults = async () => {
-    const cacheBustedEndpoint = `${VALIDATION_ENDPOINTS.UPLOAD
-      }?_cb=${Date.now()}`;
+    const cacheBustedEndpoint = `${
+      VALIDATION_ENDPOINTS.UPLOAD
+    }?_cb=${Date.now()}`;
     if (!currentUploadId) {
       return null;
     }
@@ -178,7 +190,7 @@ export function FileValidation(props: PFileValidation) {
       PIPELINE_DS,
       validationConfig,
       file,
-      true,
+      true
     );
     setCurrentUploadId(pipeline_id || "");
   };
@@ -203,12 +215,13 @@ export function FileValidation(props: PFileValidation) {
       false,
       currentUploadId,
       setFileUploaded,
-      () => setValidationStatus({
-        className: "marked-as-ready",
-        text: "Marked as Ready",
-      }),
+      () =>
+        setValidationStatus({
+          className: "marked-as-ready",
+          text: "Marked as Ready",
+        })
     );
-  }
+  };
 
   const TitleBar = (
     <div className="tol-file-upload-title-bar-container">
@@ -216,9 +229,11 @@ export function FileValidation(props: PFileValidation) {
       <div className="tol-file-upload-title-btn-container">
         <div className="tol-file-upload-btn-inner-container">
           <div
-            className={`tol-file-upload-additional-btn-container ${validating ? "tol-file-upload-btn-dropdown-animation" : ""
-              } ${resetting ? "tol-file-upload-btn-dropdown-hide-animation" : ""
-              }`}
+            className={`tol-file-upload-additional-btn-container ${
+              validating ? "tol-file-upload-btn-dropdown-animation" : ""
+            } ${
+              resetting ? "tol-file-upload-btn-dropdown-hide-animation" : ""
+            }`}
           >
             {validating && (
               <Button
@@ -336,11 +351,10 @@ export function FileValidation(props: PFileValidation) {
         </div>
         <div className="tol-file-upload-results-viewer-content-inner-container">
           <h6
-            className={
-              `tol-file-upload-results-viewer-content-status
+            className={`tol-file-upload-results-viewer-content-status
               tol-file-validation-results-status
-              ${validationStatus.className}`
-            }>
+              ${validationStatus.className}`}
+          >
             {latestPipelineResults?.data?.completed || pipelineFailed
               ? `${validationStatus.text}`
               : "In Progress"}
@@ -407,6 +421,13 @@ export function FileValidation(props: PFileValidation) {
               validated and submitted automatically if it passes validation.
             </li>
           </ul> */}
+          <h6>Requirements:</h6>
+          <ul>
+            {" "}
+            <li>{`Max file size: ${validationConfig.maxFileSize}`}</li>
+            <li>{`Allowed File Types: ${validationConfig.allowedFileTypes}`}</li>
+            <li>{`Only data under sheet name: "${validationConfig.sheetName}" will be valid.`}</li>
+          </ul>
           <h6>Status Messages:</h6>{" "}
           <ul>
             <li>
@@ -425,13 +446,13 @@ export function FileValidation(props: PFileValidation) {
             </li>
             <li>
               <strong>Completed with Errors:</strong> The file validation
-              completed, but there were errors. Please review the error
-              messages and fix the errors before trying again.
+              completed, but there were errors. Please review the error messages
+              and fix the errors before trying again.
             </li>
             <li>
-              <strong>Passed with warnings:</strong> The file passed
-              validation, but there are warnings. These may be minor issues
-              that do not prevent submission.
+              <strong>Passed with warnings:</strong> The file passed validation,
+              but there are warnings. These may be minor issues that do not
+              prevent submission.
             </li>
             <li>
               <strong>In Progress: </strong> The file is currently being
@@ -447,8 +468,8 @@ export function FileValidation(props: PFileValidation) {
             </li>
             <li>
               {" "}
-              You can click on "View Report" on any specific submission page
-              to see a breakdown of the validation results.
+              You can click on "View Report" on any specific submission page to
+              see a breakdown of the validation results.
             </li>
           </ul>
         </>
@@ -511,8 +532,9 @@ export function FileValidation(props: PFileValidation) {
       {validating && (
         <div
           className={`tol-file-upload-results-container tol-file-upload-results-dropdown-animation
-          ${resetting ? "tol-file-upload-results-dropdown-hide-animation" : ""
-            }`}
+          ${
+            resetting ? "tol-file-upload-results-dropdown-hide-animation" : ""
+          }`}
         >
           <Widgets components={currentUploadId ? ValidationSteps : []} />
         </div>

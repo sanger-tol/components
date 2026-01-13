@@ -17,10 +17,10 @@ import {
   IMessage,
   IWaitingUpload,
   IFileData,
-  RSForm
+  RSForm,
+  MAX_FILE_SIZE,
+  USER_SHOWN_FILE_TYPE_DEFAULTS,
 } from "..";
-
-
 
 export interface PDropzone {
   resource: string;
@@ -36,6 +36,8 @@ export interface PDropzone {
   parentToSubmit?: boolean;
   resetKey?: string | number;
   validating?: boolean;
+  allowedSize?: string;
+  allowedFileTypes?: string;
 }
 
 export function Dropzone(props: PDropzone) {
@@ -51,6 +53,9 @@ export function Dropzone(props: PDropzone) {
     parentToSubmit = false,
     resetKey,
     validating = false,
+    allowedSize = MAX_FILE_SIZE,
+    allowedFileTypes = USER_SHOWN_FILE_TYPE_DEFAULTS, // This is more concise than the actual allowed file list,
+                                                      // found under the prop 'fileType'.
   } = props;
 
   const [fileList, setFileList] = useStateFallback<IFileData[]>(
@@ -166,9 +171,14 @@ export function Dropzone(props: PDropzone) {
                 ) : (
                   <WaitingUpload
                     message={
-                      fileList.length > 0 && validating
-                        ? "Please reset to upload a new file."
-                        : "Click or drag file to this area to upload"
+                      fileList.length > 0 && validating ? (
+                        "Please reset to upload a new file."
+                      ) : (
+                        <div>
+                          <p>Click or drag file to this area to upload.</p>
+                          <p>{`Allowed file types: ${allowedFileTypes}. Max Size: ${allowedSize}`}</p>
+                        </div>
+                      )
                     }
                   />
                 )}
@@ -192,7 +202,9 @@ export function Dropzone(props: PDropzone) {
           <></>
         )}
       </div>
-      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">{errorText}</RSForm.ErrorMessage>
+      <RSForm.ErrorMessage show={Boolean(errorText)} placement="bottomStart">
+        {errorText}
+      </RSForm.ErrorMessage>
     </RSForm.Group>
   );
 }
