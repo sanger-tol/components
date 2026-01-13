@@ -12,6 +12,7 @@ import {
   COLLAPSED_ROW_MAX_HEIGHT,
   RowHeightExpandIcon,
   PTable,
+  hasExpandableRows,
 } from "..";
 
 
@@ -49,8 +50,14 @@ export function RowToolsColumn(props: PRowToolsColumn) {
 
   const { Column, HeaderCell, Cell } = RSTable;
 
+  const getColumnWidth = () => {
+    if (!rowSelection && !hasExpandableRows(data, cellHeights)) return 0;
+    if (rowSelection) return 40;
+    return 26;
+  }
+
   return (
-    <Column key="rowTools" width={rowSelection ? 40 : 26}>
+    <Column key="rowTools" width={getColumnWidth()}>
       <HeaderCell>
         <div className="tol-row-tools-header">
           {rowSelection && (
@@ -63,7 +70,7 @@ export function RowToolsColumn(props: PRowToolsColumn) {
               style={data.length === 0 ? { display: "none" } : {}}
             />
           )}
-          {Array.isArray(data) && data.length > 0 && (
+          {hasExpandableRows(data, cellHeights) && (
             <RowHeightExpandIcon
               expanded={allRowsExpanded}
               onClick={handleToggleAllRowHeights}
