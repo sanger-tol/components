@@ -24,6 +24,9 @@ import {
   copyToClipboard,
   CELL_RENDERER_PROP_ATTRIBUTE,
   IFilter,
+  TCellHeights,
+  DEFAULT_ROW_HEIGHT,
+  COLLAPSED_ROW_MAX_HEIGHT,
 } from "..";
 
 interface Rgb {
@@ -391,4 +394,23 @@ export function amalgamateRequestedFields(fieldMeta: FieldMeta): string[] {
   });
 
   return Array.from(requestedFields);
+}
+
+export function hasExpandableRows(
+  data: any[],
+  cellHeights: TCellHeights
+): boolean {
+  return (
+    Array.isArray(data) &&
+    data.some((row: any) => {
+      const rowId = row.key;
+      const rowHeights = cellHeights[rowId];
+      if (!rowHeights) return false;
+      const fullHeight = Math.max(
+        DEFAULT_ROW_HEIGHT,
+        ...Object.values(rowHeights)
+      );
+      return fullHeight > COLLAPSED_ROW_MAX_HEIGHT;
+    })
+  )
 }
