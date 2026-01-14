@@ -53,7 +53,7 @@ interface Props extends IRemoteTargetAndZone {
  * @prop id - Unique identifier for this chart instance; used as the key for persisted configuration
  * @prop objectType - Remote object type name utilized when fetching agregation data from the API
  * @prop dataSource - Data source for executing API requests to fetch the bar chart's data
- * @prop zone - Current filter zone object used to generate the compounf dilter data for this chart
+ * @prop zone - Current filter zone object used to generate the compound filter data for this chart
  * @prop setZone - Setter used to update the zone when configuration changes reset downstream filters
  * 
  * @prop breakDownBy - The field used to segment the data for the bars in the chart
