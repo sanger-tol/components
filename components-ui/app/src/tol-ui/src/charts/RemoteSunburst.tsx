@@ -48,7 +48,7 @@ interface Props extends IRemoteTargetAndZone {
 /**
  * @autodoc
  * 
- * RemoteSunburt is a sunburst chart component that visualizes hierarchical data using segments.
+ * RemoteSunburst is a sunburst chart component that visualizes hierarchical data using segments.
  * It retrieves its data from a remote API via the provided `dataSource``,
  * supporting dynamic filter generation based on user interactions with the chart slices.
  * 
