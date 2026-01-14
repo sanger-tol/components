@@ -14,7 +14,7 @@ import {
   AutoHeightCell,
   PTable,
   Field,
-  DEFAULT_FIELD_WIDTH,
+  DEFAULT_COLUMN_WIDTH,
   MIN_COLUMN_WIDTH,
   MAX_COLUMN_WIDTH,
   PopUpMessage,
@@ -54,7 +54,7 @@ export function DataColumn(props: PDataColumn) {
   } = props;
 
   const field = {
-    width: DEFAULT_FIELD_WIDTH,
+    width: DEFAULT_COLUMN_WIDTH,
     ...props.field,
   };
 

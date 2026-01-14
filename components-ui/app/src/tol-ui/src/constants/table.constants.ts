@@ -5,8 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 export const DEFAULT_ROW_HEIGHT = 60;
-export const DEFAULT_FIELD_WIDTH = 200;
 export const COLLAPSED_ROW_MAX_HEIGHT = 150;
+
 export const CELL_PADDING = 24;
+
+export const DEFAULT_COLUMN_WIDTH = 200;
 export const MIN_COLUMN_WIDTH = 120;
 export const MAX_COLUMN_WIDTH = 500;
+export const ROW_TOOLS_COLUMN_FULL_WIDTH = 40;
+export const ROW_TOOLS_COLUMN_MEDIUM_WIDTH = 26;
