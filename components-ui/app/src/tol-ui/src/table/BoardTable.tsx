@@ -16,7 +16,6 @@ import {
   optimiseFieldMetaForSave,
   ITableDrawerSave,
   PVisualisation,
-  FieldMeta,
   updateFieldMetaAttribute,
 } from "..";
 
