@@ -45,7 +45,7 @@ interface Props extends IRemoteTargetAndZone {
 /**
  * @autodoc
  * 
- * RemoteBarChart is a bar chart componentthat fetches its data from a remote API
+ * RemoteBarChart is a bar chart component that fetches its data from a remote API
  * using the provided `dataSource`, supporting various aggregation and filtering options.
  * The chart dynamically updates based on changes to filters and zone settings
  * and can be configured to display cumulative or stacked data representations.
