@@ -94,7 +94,12 @@ export class TsDataSource {
   private normaliseParams = (params?: Record<string, any>) => (
     Object.fromEntries(
       Object.entries(params ?? {})
-        .filter(([_, v]) => v !== undefined && v !== null && v !== "")
+        .filter(([_, v]) => {
+          if (v === undefined || v === null) return false;
+          if (typeof v === "string" && v.trim() === "") return false;
+          if (Array.isArray(v) && v.length === 0) return false; // drop empty arrays
+          return true;
+        })
         .map(([k, v]) => {
           if (k === "requested_fields" && Array.isArray(v)) {
             return [k, v.join(",")];

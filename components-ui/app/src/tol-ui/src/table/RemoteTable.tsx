@@ -52,12 +52,14 @@ export interface PRemoteTable extends IRemoteTargetAndZone {
   defaultSortByType?: string;
   cellRenderers?: ICustomCellRenderers;
   height?: any;
+  resizeableColumns?: boolean;
   basic?: boolean;
   forceUpdate?: boolean;
 
   onConfigSave?: (config: ITableDrawerSave) => void;
   onPageSizeChange?: (pageSize: number) => void;
   onToggleFilterVisibility?: (visible: boolean) => void;
+  onResizeColumn?: (columnWidth?: number, dataKey?: string) => void;
 
   pageSize?: number;
   filterVisibility?: boolean;
@@ -295,9 +297,9 @@ export function RemoteTable(props: PRemoteTable) {
     setFullLoad(true);
   };
 
-  const handleSortColumn = (column: string, type: string) => {
-    setSortByAttribute(column);
-    setSortByType(type);
+  const onSortColumn = (dataKey: string, sortType: "asc" | "desc") => {
+    setSortByAttribute(dataKey);
+    setSortByType(sortType);
   };
 
   const completeAction = async (actionName: string, ids: string[]) => {
@@ -396,7 +398,7 @@ export function RemoteTable(props: PRemoteTable) {
         sortByType={sortByType}
         defaultSortByAttribute={defaultSortByAttribute}
         defaultSortByType={defaultSortByType}
-        handleSortColumn={handleSortColumn}
+        onSortColumn={onSortColumn}
         filter={filter}
         onConfigSave={onConfigSave}
         noDownload={noDownload || error !== ""}

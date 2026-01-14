@@ -14,7 +14,7 @@ import {
   AutoHeightCell,
   PTable,
   Field,
-  DEFAULT_FIELD_WIDTH
+  DEFAULT_FIELD_WIDTH,
 } from "..";
 
 
@@ -23,6 +23,8 @@ export interface PDataColumn extends PTable {
   field: Field;
   sortable: boolean;
   filterable: boolean;
+  resizeable?: boolean;
+  onResize?: (columnWidth?: number, dataKey?: string) => void;
   handleCellHeightChange: (
     rowId: string,
     columnId: string,
@@ -37,6 +39,8 @@ export function DataColumn(props: PDataColumn) {
     fieldKey,
     sortable,
     filterable,
+    onResize,
+    resizeable = false,
     filterVisibility,
     copySeparator,
     fieldDropdownChoices,
@@ -46,13 +50,15 @@ export function DataColumn(props: PDataColumn) {
   const field = {
     width: DEFAULT_FIELD_WIDTH,
     ...props.field,
-  }
+  };
 
   const { Column, HeaderCell, Cell } = RSTable;
 
   return (
     <Column
       key={fieldKey}
+      resizable={resizeable}
+      onResize={onResize}
       width={field.width}
       sortable={sortable}
       fixed={field.fixed}
@@ -94,7 +100,7 @@ export function DataColumn(props: PDataColumn) {
           />
         )}
       </HeaderCell>
-      <Cell>
+      <Cell dataKey={fieldKey}>
         {(rowData: any) => (
           <AutoHeightCell
             rowId={rowData?.key}
