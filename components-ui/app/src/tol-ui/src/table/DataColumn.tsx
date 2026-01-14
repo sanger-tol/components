@@ -63,7 +63,9 @@ export function DataColumn(props: PDataColumn) {
   // table and field unique key
   const columnKey = `${id}:${fieldKey}`;
 
-  const onResize = (columnWidth: number, dataKey?: string) => {
+  const onResize = (columnWidth?: number, dataKey?: string) => {
+    if (!columnWidth || !dataKey) return;
+
     if (columnWidth > MAX_COLUMN_WIDTH) {
       PopUpMessage({
         type: "info",

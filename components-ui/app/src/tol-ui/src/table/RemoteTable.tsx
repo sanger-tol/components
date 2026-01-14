@@ -60,7 +60,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone {
   onConfigSave?: (config: ITableDrawerSave) => void;
   onPageSizeChange?: (pageSize: number) => void;
   onToggleFilterVisibility?: (visible: boolean) => void;
-  onResizeColumn?: (columnWidth?: number, dataKey?: string) => void;
+  onResizeColumn?: (columnWidth: number, dataKey: string) => void;
 
   pageSize?: number;
   filterVisibility?: boolean;

@@ -72,12 +72,12 @@ export function BoardTable(props: PBoardTable) {
   };
 
   const onResizeColumn = (
-    columnWidth?: number,
-    dataKey?: string,
+    columnWidth: number,
+    dataKey: string,
   ) => {
     updateFieldMetaAttribute(
       config["fieldMeta"]!,
-      dataKey!,
+      dataKey,
       "width",
       columnWidth
     );
