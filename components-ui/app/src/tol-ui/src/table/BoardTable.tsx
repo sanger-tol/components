@@ -16,6 +16,8 @@ import {
   optimiseFieldMetaForSave,
   ITableDrawerSave,
   PVisualisation,
+  FieldMeta,
+  updateFieldMetaAttribute,
 } from "..";
 
 
@@ -30,12 +32,12 @@ export function BoardTable(props: PBoardTable) {
   const { privilege } = useBoardPrivilege()
 
   const onConfigSave = ({
-    fieldMeta: fm,
+    fieldMeta,
     actions,
     defaultSortByAttribute,
     defaultSortByType
   }: ITableDrawerSave) => {
-    config["fieldMeta"] = optimiseFieldMetaForSave(fm);
+    config["fieldMeta"] = optimiseFieldMetaForSave(fieldMeta);
     config["actions"] = actions;
     config["defaultSortByAttribute"] = defaultSortByAttribute;
     config["defaultSortByType"] = defaultSortByType;
@@ -70,6 +72,25 @@ export function BoardTable(props: PBoardTable) {
     );
   };
 
+  const onResizeColumn = (
+    columnWidth?: number,
+    dataKey?: string,
+  ) => {
+    updateFieldMetaAttribute(
+      config["fieldMeta"]!,
+      dataKey!,
+      "width",
+      columnWidth
+    );
+    setConfig({ ...config });
+    updateConfigAndUpsert(
+      id,
+      config,
+      zone,
+      boardDataSource
+    );
+  }
+
   const BoardFilter = [
     <BoardFilters
       {...props}
@@ -82,6 +103,8 @@ export function BoardTable(props: PBoardTable) {
     <RemoteTable
       {...props}
       noConfigModal={privilege !== PRIVILEGE.BOARD.EDITABLE}
+      resizeableColumns={privilege === PRIVILEGE.BOARD.EDITABLE}
+      onResizeColumn={onResizeColumn}
       advanceTab
       displaySource
       fields={config.fieldMeta}
