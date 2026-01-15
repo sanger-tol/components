@@ -55,7 +55,7 @@ import {
  * @prop height - Height of the chart container, expressed as an inline CSS style (e.g. "100%")
  */
 
-interface Props extends IRemoteTargetAndZone {
+interface PRemoteSunburst extends IRemoteTargetAndZone {
   id: string;
   sliceBy: string[];
   height?: any;
@@ -68,7 +68,7 @@ interface Props extends IRemoteTargetAndZone {
   contents?: ReactNode;
 }
 
-export function RemoteSunburst(props: Props) {
+export function RemoteSunburst(props: PRemoteSunburst) {
   const {
     id,
     objectType,

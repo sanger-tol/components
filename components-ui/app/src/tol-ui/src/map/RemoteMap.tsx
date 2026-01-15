@@ -36,7 +36,7 @@ import {
  * @prop markerRenderer - Optional function to apply custom legend keys and rendering logic for markers based on the returned data set
  */
 
-interface Props extends IRemoteTargetAndZone {
+interface PRemoteMap extends IRemoteTargetAndZone {
   id: string;
   bubble?: boolean;
   longitudeKey: string;
@@ -49,7 +49,7 @@ interface Props extends IRemoteTargetAndZone {
   markerRenderer?: Function;
 }
 
-export function RemoteMap(props: Props) {
+export function RemoteMap(props: PRemoteMap) {
   const {
     id,
     objectType,

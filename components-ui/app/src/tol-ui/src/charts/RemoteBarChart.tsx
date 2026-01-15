@@ -55,7 +55,7 @@ import {
  * @prop height - Height of the chart container, expressed as an inline CSS style (e.g. "100%")ß
  */
 
-interface Props extends IRemoteTargetAndZone {
+interface PRemoteBarChart extends IRemoteTargetAndZone {
   id: string;
   breakDownBy: string;
   xAxis: string;
@@ -71,7 +71,7 @@ interface Props extends IRemoteTargetAndZone {
   chartType?: string;
 }
 
-export function RemoteBarChart(props: Props) {
+export function RemoteBarChart(props: PRemoteBarChart) {
   const {
     id,
     objectType,
