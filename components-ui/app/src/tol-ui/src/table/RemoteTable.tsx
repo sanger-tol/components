@@ -40,6 +40,7 @@ import {
   env,
   amalgamateRequestedFields,
   TFieldDropdownChoices,
+  updateFieldMetaAttribute,
 } from '..';
 
 
@@ -59,7 +60,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone {
   onConfigSave?: (config: ITableDrawerSave) => void;
   onPageSizeChange?: (pageSize: number) => void;
   onToggleFilterVisibility?: (visible: boolean) => void;
-  onResizeColumn?: (columnWidth?: number, dataKey?: string) => void;
+  onResizeColumn?: (columnWidth: number, dataKey: string) => void;
 
   pageSize?: number;
   filterVisibility?: boolean;
@@ -302,6 +303,25 @@ export function RemoteTable(props: PRemoteTable) {
     setSortByType(sortType);
   };
 
+  const onResizeColumn = (columnWidth?: number, dataKey?: string) => {
+    if (!columnWidth || !dataKey) return;
+
+    updateFieldMetaAttribute(
+      fieldMeta,
+      dataKey,
+      "width",
+      columnWidth,
+      true
+    )
+
+    if (props.onResizeColumn) {
+      props.onResizeColumn(columnWidth, dataKey);
+    } else {
+      setTableConfigLocalStorage(id, "fieldMeta", optimiseFieldMetaForSave(fieldMeta));
+    }
+    setFieldMeta({ ...fieldMeta });
+  }
+
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
     const res = await actionDataSource!
@@ -401,6 +421,7 @@ export function RemoteTable(props: PRemoteTable) {
         onSortColumn={onSortColumn}
         filter={filter}
         onConfigSave={onConfigSave}
+        onResizeColumn={onResizeColumn}
         noDownload={noDownload || error !== ""}
         utilityBarConfig={utilityBarConfig}
         selectedRows={selectedRows}
