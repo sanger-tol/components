@@ -43,7 +43,69 @@ import {
   updateFieldMetaAttribute,
 } from '..';
 
-
+/**
+ * @autodoc
+ *
+ * RemoteTable is a data table component that loads its rows from a remote API
+ * via `TsDataSource`, with server-side pagination, sorting, filtering, and
+ * configurable columns. It can also trigger remote actions on selected rows.
+ *
+ * Table configuration (field meta, sort, filters, page size, filter visibility)
+ * is persisted to local storage keyed by `id`, unless external handlers are
+ * provided to control those behaviours.
+ *
+ * @prop id - Unique identifier for this table instance; used as the key for persisted configuration.
+ * @prop objectType - Remote object type name used when fetching data and running actions.
+ * @prop dataSource - Data source used to fetch table pages and counts from the API.
+ * @prop zone - Current filter zone object used to generate the compound filter for this table.
+ * @prop setZone - Setter used to update the zone when configuration changes reset downstream filters.
+ * @prop source - Optional label or description of the data source, shown where supported by `Table`.
+ *
+ * @prop fields - Initial field metadata for columns; overridden by any saved configuration for this table `id`.
+ * @prop defaultSortByAttribute - Default sort attribute when no saved sort configuration exists.
+ * @prop defaultSortByType - Default sort direction (`"asc"` or `"desc"`) when no saved configuration exists.
+ * @prop cellRenderers - Custom cell renderers by field key to override default cell display.
+ * @prop height - Height of the table container (e.g. `"100%"`, `"400px"` or numeric value).
+ * @prop basic - If true, disables automatic enrichment of `fieldMeta` with remote metadata.
+ * @prop forceUpdate - When changed, forces the table to re-fetch its data from the server.
+ *
+ * @prop onConfigSave - Called with updated table configuration instead of storing it in local storage.
+ * @prop onPageSizeChange - Called when page size changes; if set, page size is not persisted locally.
+ * @prop onToggleFilterVisibility - Called when filter bar visibility toggles; overrides local storage persistence.
+ *
+ * @prop pageSize - Initial page size if none is stored already for this table `id`.
+ * @prop filterVisibility - Initial filter bar visibility if none is stored already.
+ * @prop displaySource - If true, allows the UI to display the `source` information where supported.
+ *
+ * @prop noFilter - If true, hides or disables the filter UI for this table.
+ * @prop noPagination - If true, disables pagination controls and shows all available rows in one page.
+ * @prop noSorting - If true, disables interactive column sorting.
+ * @prop noConfigModal - If true, hides the column/configuration drawer.
+ * @prop noDownload - If true, hides export or download controls.
+ * @prop noActionsFooter - If true, hides the footer button that opens the actions modal.
+ *
+ * @prop rowSelection - If true, enables row selection checkboxes and selection state.
+ * @prop utilityBarConfig - Configuration for the utility bar rendered above the table.
+ * @prop advanceTab - Enables advanced or secondary configuration/filter tabs where supported.
+ * @prop contents - Optional custom overlay or placeholder content shown while loading or on error.
+ * @prop groupBy - If true, enables row grouping support where provided by the underlying `Table`.
+ * @prop copySeparator - String used to separate values when copying multiple cells or rows.
+ *
+ * @prop actionDataSource - Data source used to run remote actions, separate from the main `dataSource`.
+ * @prop actions - List of action identifiers or dropdown button configurations available for this table.
+ * @prop selectedRows - Controlled list of currently selected row identifiers.
+ * @prop setSelectedRows - Controlled setter for selected row identifiers; if omitted, selection is internal.
+ *
+ * @remarks
+ * RemoteTable expects server-side pagination and filtering: it requests pages
+ * via `dataSource.getListPage` and separately queries a `:count` endpoint for
+ * the total row count.
+ *
+ * @remarks
+ * When `onConfigSave`, `onPageSizeChange`, or `onToggleFilterVisibility` are not
+ * provided, RemoteTable persists the corresponding settings to local storage
+ * using the given `id` as the key namespace.
+ */
 export interface PRemoteTable extends IRemoteTargetAndZone {
   id: string;
   source?: string;
