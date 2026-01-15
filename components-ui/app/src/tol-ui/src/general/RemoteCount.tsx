@@ -27,8 +27,8 @@ export interface PRemoteCount extends IRemoteTargetAndZone {
 /**
  * @autodoc
  * 
- * RemoteCount is a component tha retrieves and displays the count of items from a remote
- * `dataSource`, updating dynamically based on applies filters and selected zones.
+ * RemoteCount is a component that retrieves and displays the count of items from a remote
+ * `dataSource`, updating dynamically based on applied filters and selected zones.
  * 
  * @prop id - Unique identifier for this count instance, utilized in the utility bar and various internal functions
  * @prop objectType - Specifies the type of remote object for count retrieval via the API

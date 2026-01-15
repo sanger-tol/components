@@ -35,8 +35,8 @@ export interface PRemoteFilters extends IRemoteTarget {
  * a remote `dataSource`. It allows users to dynamically add or remove filters, with support for
  * various attribute types and loading states.
  * 
- * @prop objectType - Remote object type name utilized when fetching agregation data from the API
- * @prop dataSource - The data source utilized fo querying metadata and filtering data from the API
+ * @prop objectType - Remote object type name utilised when fetching aggregation data from the API
+ * @prop dataSource - The data source utilised for querying metadata and filtering data from the API
  * @prop filters - Optional initial filters applied to the component; defaults to an empty filter
  * @prop setFilters - State setter for updating the active filters in the parent component
  * @prop disabledFilterValues - Optional array of filter values to disable in the field selction UI
