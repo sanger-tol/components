@@ -48,7 +48,7 @@ const docsDropdown: Dropdown = {
 const boardDataSource = new TsDataSource({
   apiPath: env.API_PATH,
   apiDataPath: LOCAL_API_DATA_PATH,
-})
+});
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
