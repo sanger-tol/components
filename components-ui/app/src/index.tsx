@@ -40,7 +40,10 @@ const developerDropdown: Dropdown = {
   pages: [codeStyle],
 };
 
-const autoDocPages = generateAutoDocPages();
+const docsDropdown: Dropdown = {
+  name: "Docs",
+  pages: generateAutoDocPages(),
+};
 
 const boardDataSource = new TsDataSource({
   apiPath: env.API_PATH,
@@ -56,7 +59,7 @@ root.render(
     pages={[
       sandbox,
       developerDropdown,
-      ...autoDocPages,
+      docsDropdown,
     ]}
   />
 );
