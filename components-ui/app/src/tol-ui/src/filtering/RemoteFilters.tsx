@@ -28,6 +28,25 @@ export interface PRemoteFilters extends IRemoteTarget {
   setHasPendingChanges?: (hasPendingChanges: boolean) => void;
 }
 
+/**
+ * @autodoc
+ * 
+ * RemoteFilters is a component designed for managing and applying filters to data retrieved from
+ * a remote `dataSource`. It allows users to dynamically add or remove filters, with support for
+ * various attribute types and loading states.
+ * 
+ * @prop objectType - Remote object type name utilized when fetching agregation data from the API
+ * @prop dataSource - The data source utilized fo querying metadata and filtering data from the API
+ * @prop filters - Optional initial filters applied to the component; defaults to an empty filter
+ * @prop setFilters - State setter for updating the active filters in the parent component
+ * @prop disabledFilterValues - Optional array of filter values to disable in the field selction UI
+ * @prop open - Boolean indicating whether the filter selection interface is open/visible
+ * @prop setHasPendingChanges - Optional state setter for the parent component to indicate whether there are any pending filter changes
+ * 
+ * @remarks
+ * RemoteFilters retrieves entity metadata on mount, displaying it through the filter and 
+ * attribute selection UI
+ */
 export function RemoteFilters(props: PRemoteFilters) {
   const {
     objectType,
