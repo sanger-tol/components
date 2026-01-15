@@ -39,12 +39,12 @@ interface Props extends IRemoteTargetAndZone {
  * 
  * @prop id - Unique identifier for this map instance, utilised in API interactions and state management
  * @prop objectType - The type of remote object being retrieved and displayed on the map
- * @prop dataSource - The data source utilised for executing API requests to fetch data for rendering map markers
+ * @prop dataSource - Data source for executing API requests to fetch map data
  * @prop longitudeKey - The key used to extract longitude values from the data
  * @prop latitudeKey - The key used to extract latitude values from the data
  * @prop attributeKeys - Optional string representing additional attribute keys for customising marker appearances
  * @prop zone - Current filter zone object affecting the data retrieved for the map
- * @prop height - The height of the map container, expressed in a CSS unit
+ * @prop height - The height of the map container, expressed as an inline CSS style (e.g. "100%")
  * @prop pageSize - Optional parameter to limit the number of data points retrieved for rendering markers (default is set to 2500)
  * @prop markerRenderer - Optional function to apply custom legend keys and rendering logic for markers based on the returned data set
  */

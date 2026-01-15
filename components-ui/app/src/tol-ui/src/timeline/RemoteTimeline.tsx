@@ -27,8 +27,7 @@ interface PRemoteTimeline extends IRemoteTarget {
  * @autodoc
  * 
  * RemoteTimeline visualises a timeline of events sourced from a remote `dataSource`.
- * Utilizing the provided data, it creates a chronological representation of events,
- * complete with titles, descriptions, and customisable icons.
+ * It creates a chronological representation of events, complete with titles, descriptions, and customisable icons.
  * 
  * @prop id - Unique identifier for the timeline instance, used in generating element IDs and for API interactions
  * @prop objectType - The type of remote object being fetched, influencing the structure of the timeline based on API responses

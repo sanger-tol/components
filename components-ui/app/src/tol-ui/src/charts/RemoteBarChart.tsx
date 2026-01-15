@@ -45,13 +45,12 @@ interface Props extends IRemoteTargetAndZone {
 /**
  * @autodoc
  * 
- * RemoteBarChart is a bar chart component that fetches its data from a remote API
- * using the provided `dataSource`, supporting various aggregation and filtering options.
- * The chart dynamically updates based on changes to filters and zone settings
- * and can be configured to display cumulative or stacked data representations.
+ * RemoteBarChart is a chart component that fetches its data from a remote API using the provided `dataSource`,
+ * supporting various aggregation and filtering options. The chart dynamically updates
+ * based on changes to filters and zone settings and can be configured to display cumulative or stacked data representations.
  * 
  * @prop id - Unique identifier for this chart instance; used as the key for persisted configuration
- * @prop objectType - Remote object type name utilised when fetching aggregation data from the API
+ * @prop objectType - The object type requested when fetching aggregation data from the API
  * @prop dataSource - Data source for executing API requests to fetch the bar chart's data
  * @prop zone - Current filter zone object used to generate the compound filter data for this chart
  * @prop setZone - Setter used to update the zone when configuration changes reset downstream filters
@@ -69,7 +68,7 @@ interface Props extends IRemoteTargetAndZone {
  * @prop buttons - Optional array of JSX elements representing additional action buttons rendered alongside the chart
  * @prop utilityBarConfig - Configuration for the utility bar rendered above the cahrt
  * @prop contents - Optinal custom overlay or content displayed while loading or handling errors
- * @prop height - Height of the chart container, expressed in a CSS unit
+ * @prop height - Height of the chart container, expressed as an inline CSS style (e.g. "100%")ß
  */
 export function RemoteBarChart(props: Props) {
   const {

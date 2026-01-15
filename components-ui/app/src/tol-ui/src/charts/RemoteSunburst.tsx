@@ -48,24 +48,24 @@ interface Props extends IRemoteTargetAndZone {
 /**
  * @autodoc
  * 
- * RemoteSunburst is a sunburst chart component that visualizes hierarchical data using segments.
+ * RemoteSunburst is a sunburst chart component that visualises hierarchical data using segments.
  * It retrieves its data from a remote API via the provided `dataSource`,
  * supporting dynamic filter generation based on user interactions with the chart slices.
  * 
  * @prop id - Unique identifier for this chart instance; used as the key for persisted configuration
- * @prop objectType - Remote object type name utilised when fetching agregation data from the API
- * @prop dataSource - Data source for executing API requests to fetch the bar chart's data
+ * @prop objectType - The object type requested when fetching aggregation data from the API
+ * @prop dataSource - Data source for executing API requests to fetch the chart's data
  * 
- * @prop sliceBy - Array of fields utilised for slicing the data segments in the chart
+ * @prop sliceBy - Array of fields by which the data segments in the chart are sliced
  * 
  * @prop noLabel - If true, suppresses labels on the segments of the sunburst
  * @prop noMini - If true, disables the mini sunburst view for nested data exploration
  * @prop noDownload - If true, hides the download button for exporting chart data
- * @prop forceUpdate - Optional flat to trigger a re-fetch of the chart data from the server upon changes
+ * @prop forceUpdate - Optional flag to trigger a re-fetch of the chart data from the server upon changes
  * 
  * @prop utilityBarConfig - Configuration for the utility bar rendered above the chart
  * @prop contents - Optinal custom overlay or content displayed while loading or handling errors
- * @prop height - Height of the chart container, expressed in a CSS unit
+ * @prop height - Height of the chart container, expressed as an inline CSS style (e.g. "100%")
  */
 export function RemoteSunburst(props: Props) {
   const {
