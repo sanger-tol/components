@@ -20,14 +20,6 @@ import {
 } from "..";
 
 
-export interface PRemoteFilters extends IRemoteTarget {
-  filters?: IFilter;
-  setFilters: (filters: TFilterOrUndefined) => void;
-  disabledFilterValues?: any;
-  open?: boolean;
-  setHasPendingChanges?: (hasPendingChanges: boolean) => void;
-}
-
 /**
  * @autodoc
  * 
@@ -47,6 +39,15 @@ export interface PRemoteFilters extends IRemoteTarget {
  * RemoteFilters retrieves entity metadata on mount, displaying it through the filter and 
  * attribute selection UI
  */
+
+export interface PRemoteFilters extends IRemoteTarget {
+  filters?: IFilter;
+  setFilters: (filters: TFilterOrUndefined) => void;
+  disabledFilterValues?: any;
+  open?: boolean;
+  setHasPendingChanges?: (hasPendingChanges: boolean) => void;
+}
+
 export function RemoteFilters(props: PRemoteFilters) {
   const {
     objectType,

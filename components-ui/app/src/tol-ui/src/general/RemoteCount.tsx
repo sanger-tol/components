@@ -19,10 +19,6 @@ import {
   IRemoteTargetAndZone,
 } from "..";
 
-export interface PRemoteCount extends IRemoteTargetAndZone {
-  id: string;
-  utilityBarConfig?: PUtilityBar;
-}
 
 /**
  * @autodoc
@@ -37,6 +33,12 @@ export interface PRemoteCount extends IRemoteTargetAndZone {
  * @prop setZone - Function to update the zone state, affecting the filters applied below this instance
  * @prop utilityBarConfig - Optional configuration for the utility bar rendered above the count display, including additional action buttons
  */
+
+export interface PRemoteCount extends IRemoteTargetAndZone {
+  id: string;
+  utilityBarConfig?: PUtilityBar;
+}
+
 export function RemoteCount(props: PRemoteCount) {
   const { id, objectType, dataSource, zone, setZone, utilityBarConfig } = props;
   const [count, setCount] = useState<number>(0);

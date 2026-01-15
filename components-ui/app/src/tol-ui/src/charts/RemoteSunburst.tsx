@@ -32,19 +32,6 @@ import {
 } from "..";
 
 
-interface Props extends IRemoteTargetAndZone {
-  id: string;
-  sliceBy: string[];
-  height?: any;
-  legendPosition?: string;
-  noLabel?: boolean;
-  noMini?: boolean;
-  noDownload?: boolean;
-  forceUpdate?: boolean;
-  utilityBarConfig?: PUtilityBar;
-  contents?: ReactNode;
-}
-
 /**
  * @autodoc
  * 
@@ -67,6 +54,20 @@ interface Props extends IRemoteTargetAndZone {
  * @prop contents - Optinal custom overlay or content displayed while loading or handling errors
  * @prop height - Height of the chart container, expressed as an inline CSS style (e.g. "100%")
  */
+
+interface Props extends IRemoteTargetAndZone {
+  id: string;
+  sliceBy: string[];
+  height?: any;
+  legendPosition?: string;
+  noLabel?: boolean;
+  noMini?: boolean;
+  noDownload?: boolean;
+  forceUpdate?: boolean;
+  utilityBarConfig?: PUtilityBar;
+  contents?: ReactNode;
+}
+
 export function RemoteSunburst(props: Props) {
   const {
     id,

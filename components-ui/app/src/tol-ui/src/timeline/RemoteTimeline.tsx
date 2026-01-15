@@ -15,14 +15,6 @@ import {
 } from "..";
 
 
-interface PRemoteTimeline extends IRemoteTarget {
-  id: string;
-  data: TimeLineData;
-  dateWithDay?: boolean;
-  defaultIcon?: boolean;
-  titleDataPoint: string;
-}
-
 /**
  * @autodoc
  * 
@@ -41,6 +33,15 @@ interface PRemoteTimeline extends IRemoteTarget {
  * This component handles various types of objects, automatically generating titles based on 
  * the object type and its ID, making it flexible for different contexts.
  */
+
+interface PRemoteTimeline extends IRemoteTarget {
+  id: string;
+  data: TimeLineData;
+  dateWithDay?: boolean;
+  defaultIcon?: boolean;
+  titleDataPoint: string;
+}
+
 export function RemoteTimeline(props: PRemoteTimeline) {
   const {
     id,

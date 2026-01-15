@@ -26,22 +26,6 @@ import {
 } from "..";
 
 
-interface Props extends IRemoteTargetAndZone {
-  id: string;
-  breakDownBy: string;
-  xAxis: string;
-  type: HistogramGrouping;
-  shortDate?: boolean;
-  height?: any;
-  stacked?: boolean;
-  cumulative?: boolean;
-  buttons?: JSX.Element[];
-  forceUpdate?: boolean;
-  utilityBarConfig?: PUtilityBar;
-  contents?: ReactNode;
-  chartType?: string;
-}
-
 /**
  * @autodoc
  * 
@@ -70,6 +54,23 @@ interface Props extends IRemoteTargetAndZone {
  * @prop contents - Optinal custom overlay or content displayed while loading or handling errors
  * @prop height - Height of the chart container, expressed as an inline CSS style (e.g. "100%")ß
  */
+
+interface Props extends IRemoteTargetAndZone {
+  id: string;
+  breakDownBy: string;
+  xAxis: string;
+  type: HistogramGrouping;
+  shortDate?: boolean;
+  height?: any;
+  stacked?: boolean;
+  cumulative?: boolean;
+  buttons?: JSX.Element[];
+  forceUpdate?: boolean;
+  utilityBarConfig?: PUtilityBar;
+  contents?: ReactNode;
+  chartType?: string;
+}
+
 export function RemoteBarChart(props: Props) {
   const {
     id,

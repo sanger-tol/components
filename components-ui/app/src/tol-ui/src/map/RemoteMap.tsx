@@ -16,19 +16,6 @@ import {
 } from "..";
 
 
-interface Props extends IRemoteTargetAndZone {
-  id: string;
-  bubble?: boolean;
-  longitudeKey: string;
-  latitudeKey: string;
-  attributeKeys?: string;
-  height?: any;
-  pageSize?: number;
-  // Used to apply custom legend keys based on whats is returned,
-  // must return an object in format {key: string, colour: string}
-  markerRenderer?: Function;
-}
-
 /**
  * @autodoc
  * 
@@ -48,6 +35,20 @@ interface Props extends IRemoteTargetAndZone {
  * @prop pageSize - Optional parameter to limit the number of data points retrieved for rendering markers (default is set to 2500)
  * @prop markerRenderer - Optional function to apply custom legend keys and rendering logic for markers based on the returned data set
  */
+
+interface Props extends IRemoteTargetAndZone {
+  id: string;
+  bubble?: boolean;
+  longitudeKey: string;
+  latitudeKey: string;
+  attributeKeys?: string;
+  height?: any;
+  pageSize?: number;
+  // Used to apply custom legend keys based on whats is returned,
+  // must return an object in format {key: string, colour: string}
+  markerRenderer?: Function;
+}
+
 export function RemoteMap(props: Props) {
   const {
     id,
