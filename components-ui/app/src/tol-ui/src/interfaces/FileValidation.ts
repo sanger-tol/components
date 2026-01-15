@@ -5,11 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { TStepsData } from "src/file-validation";
-import {
-  VALIDATE_AND_MARK_AS_READY,
-  VALIDATE_AND_UPLOAD,
-  VALIDATE_ONLY,
-} from "../constants";
+import { VALIDATION_PURPOSE, VALIDATION_STATUSES } from "../constants";
 
 export type TSeverity = "error" | "warning";
 export type TIconType = "check" | "xmark" | "exclamation" | "question";
@@ -105,6 +101,13 @@ export interface IAllValidationData {
 }
 
 export type TFileValidationPurpose =
-  | typeof VALIDATE_ONLY
-  | typeof VALIDATE_AND_UPLOAD
-  | typeof VALIDATE_AND_MARK_AS_READY;
+  (typeof VALIDATION_PURPOSE)[keyof typeof VALIDATION_PURPOSE];
+
+export type TFileValidationStatus = {
+  validationStatus: (typeof VALIDATION_STATUSES)[keyof typeof VALIDATION_STATUSES];
+  description: string;
+  textColor: string;
+  callback: (...args: any) => void;
+};
+
+export type TFileValidationStatuses = TFileValidationStatus[];

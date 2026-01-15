@@ -20,14 +20,12 @@ import {
   S3_ENDPOINTS,
   IFileData,
   TFileValidationPurpose,
-  VALIDATE_AND_MARK_AS_READY,
-  VALIDATE_ONLY,
-  VALIDATE_AND_UPLOAD,
   PIPELINE_DS,
   VALIDATION_TIMEOUT_MS,
   IValidatedDataReport,
   TSeverity,
   TValidationIssues,
+  VALIDATION_PURPOSE,
 } from "..";
 
 const pipelineStepsPromiseCache = new Map<string, Promise<TStepsData>>();
@@ -677,7 +675,10 @@ export function goToResults(
  * @returns `true` if the purpose is VALIDATE_ONLY or VALIDATE_AND_MARK_AS_READY, `false` otherwise
  */
 export function isDryRun(purpose: TFileValidationPurpose): boolean {
-  return purpose === VALIDATE_ONLY || purpose === VALIDATE_AND_MARK_AS_READY;
+  return (
+    purpose === VALIDATION_PURPOSE.VALIDATE_ONLY ||
+    purpose === VALIDATION_PURPOSE.VALIDATE_AND_MARK_AS_READY
+  );
 }
 
 /**
@@ -693,10 +694,12 @@ export function getNextPurpose(
   purpose: TFileValidationPurpose,
   submittable?: boolean
 ): TFileValidationPurpose {
-  if (purpose === VALIDATE_ONLY) {
-    return submittable ? VALIDATE_AND_UPLOAD : VALIDATE_AND_MARK_AS_READY;
+  if (purpose === VALIDATION_PURPOSE.VALIDATE_ONLY) {
+    return submittable
+      ? VALIDATION_PURPOSE.VALIDATE_AND_UPLOAD
+      : VALIDATION_PURPOSE.VALIDATE_AND_MARK_AS_READY;
   }
-  return VALIDATE_ONLY;
+  return VALIDATION_PURPOSE.VALIDATE_ONLY;
 }
 
 /**
@@ -906,7 +909,7 @@ export function formatAndConcatObjectIds(objectIds: string[]): string {
 
 /**
  * Constructs a structured validation report from raw validation data.
- * 
+ *
  * This function processes validation data and organizes it into a structured report format
  * suitable for display or export. It aggregates validation results by pipeline step,
  * groups similar issues together, and formats object IDs into readable ranges.
@@ -958,7 +961,7 @@ export function constructValidationReport(validationData: IAllValidationData) {
 
 /**
  * Downloads a validation report file as a formatted text document.
- * 
+ *
  * This function generates a comprehensive validation report from the provided validation data,
  * formats it as a human-readable text file, and triggers a browser download. The report includes
  * upload details, pipeline information, and a structured list of all validation issues organized by step.

@@ -27,7 +27,7 @@ import {
   DEFAULT_FILE_TYPE,
   downloadFileFromS3,
   useQueryData,
-  VALIDATE_ONLY,
+  VALIDATION_PURPOSE,
   onSubmission,
   ValidationReport,
   getUserFromLocalStorage,
@@ -38,6 +38,7 @@ import {
   USER_SHOWN_FILE_TYPE_DEFAULTS,
   MAX_FILE_SIZE,
   DEFAULT_SHEET_NAME,
+  VALIDATION_CONFIG,
 } from "..";
 
 import type {
@@ -73,7 +74,9 @@ export function FileValidation(props: PFileValidation) {
 
   // TODO: re-enable type checking when mode toggle is re-introduced
   // @ts-ignore
-  const [purpose, setPurpose] = useState<TFileValidationPurpose>(VALIDATE_ONLY);
+  const [purpose, setPurpose] = useState<TFileValidationPurpose>(
+    VALIDATION_PURPOSE.VALIDATE_ONLY
+  );
   const [currentUploadId, setCurrentUploadId] = useState<string>("");
   const [fileDropped, setFileDropped] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
@@ -308,10 +311,10 @@ export function FileValidation(props: PFileValidation) {
   const FileUploader = (
     <div>
       {/* <div className="tol-file-upload-uploader-container"> TODO: Re-add if we re-introduce mode toggle
-        <p>{VALIDATE_ONLY}</p>
+        <p>{VALIDATION_PURPOSE.VALIDATE_ONLY}</p>
         <Toggle
           key="validation-type-toggle"
-          checked={purpose !== VALIDATE_ONLY}
+          checked={purpose !== VALIDATION_PURPOSE.VALIDATE_ONLY}
           disabled={validating}
           onChange={() => {
             const newPurpose = getNextPurpose(purpose, submittable);
@@ -428,36 +431,18 @@ export function FileValidation(props: PFileValidation) {
             <li>{`Allowed File Types: ${validationConfig.allowedFileTypes}`}</li>
             <li>{`Only data under sheet name: "${validationConfig.sheetName}" will be valid.`}</li>
           </ul>
-          <h6>Status Messages:</h6>{" "}
+          <h6>Status Messages:</h6>
           <ul>
-            <li>
-              <strong>Marked as Ready:</strong> The file has been marked as
-              ready for submission and can be processed further.
-            </li>
-            <li>
-              <strong>Passed:</strong> The file passed validation. If you
-              haven't chosen to submit automatically, you can submit it now.
-            </li>
-            <li>
-              <strong>Failed:</strong> The entire file validation pipeline has
-              failed. This is usually due to a server error. If the issue
-              persists, please contact an admin. Your file will not be
-              submitted.
-            </li>
-            <li>
-              <strong>Completed with Errors:</strong> The file validation
-              completed, but there were errors. Please review the error messages
-              and fix the errors before trying again.
-            </li>
-            <li>
-              <strong>Passed with warnings:</strong> The file passed validation,
-              but there are warnings. These may be minor issues that do not
-              prevent submission.
-            </li>
-            <li>
-              <strong>In Progress: </strong> The file is currently being
-              validated and results should be coming through in real-time.
-            </li>
+            {VALIDATION_CONFIG.map((validation) => {
+              return (
+                <li>
+                  <strong style={{ color: `${validation.textColor}` }}>
+                    {validation.validationStatus}
+                  </strong>
+                  : {validation.description}
+                </li>
+              );
+            })}
           </ul>
           <h6>Additional:</h6>
           <ul>
