@@ -29,6 +29,27 @@ interface Props extends IRemoteTargetAndZone {
   markerRenderer?: Function;
 }
 
+/**
+ * @autodoc
+ * 
+ * RemoteMap is a component that visualizes geographical data on a map based on the data retrieved
+ * from a remote `dataSource`. It fetched location data using specified latitude and longitude keys,
+ * dynamically generating map markers.
+ * 
+ * Users can also customize the appearance of markers through a provided renderer function, 
+ * allowing tailored representations of data points on the map.
+ * 
+ * @prop id - Unique identifier for this map instance, utilized in API interactions and state management
+ * @prop objectType - The type of remote object being retrieved and displayed on the map
+ * @prop dataSource - The data source utilized for executing API requests to fetch data for rendering map markers
+ * @prop longitudeKey - The key used to extract longitude values from the data
+ * @prop latitudeKey - The key used to extract latitude values from the data
+ * @prop attributeKeys - Optional string representing additional attribute keys for customizing marker appearances
+ * @prop zone - Current filter zone object affecting the data retrieved for the map
+ * @prop height - The height of the map container, expressed in a CSS unit
+ * @prop pageSize - Optional parameter to limit the number of data points retrieved for rendering markers (default is set to 2500)
+ * @prop markerRenderer - Optional function to apply custom legend keys and rendering logic for markers based on the returned data set
+ */
 export function RemoteMap(props: Props) {
   const {
     id,
