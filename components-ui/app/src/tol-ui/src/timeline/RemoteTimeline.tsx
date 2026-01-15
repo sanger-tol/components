@@ -15,7 +15,7 @@ import {
 } from "..";
 
 
-interface IRemoteTimeline extends IRemoteTarget {
+interface PRemoteTimeline extends IRemoteTarget {
   id: string;
   data: TimeLineData;
   dateWithDay?: boolean;
@@ -42,7 +42,7 @@ interface IRemoteTimeline extends IRemoteTarget {
  * This component handles various types of objects, automatically generating titles based on 
  * the object type and its ID, making it flexible for different contexts.
  */
-export function RemoteTimeline(props: IRemoteTimeline) {
+export function RemoteTimeline(props: PRemoteTimeline) {
   const {
     id,
     objectType,
