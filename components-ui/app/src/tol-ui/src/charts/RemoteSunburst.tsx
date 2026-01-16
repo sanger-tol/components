@@ -47,7 +47,7 @@ import {
  * 
  * @prop noLabel - If true, suppresses labels on the segments of the sunburst
  * @prop noMini - If true, disables the mini sunburst view for nested data exploration
- * @prop noDownload - If true, hides the download button for exporting chart data
+ * @prop noDownload - If true, hides the download button for exporting chart data (as an image)
  * @prop forceUpdate - Optional flag to trigger a re-fetch of the chart data from the server upon changes
  * 
  * @prop utilityBarConfig - Configuration for the utility bar rendered above the chart
