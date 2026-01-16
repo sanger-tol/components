@@ -34,10 +34,6 @@ import {
  * @prop disabledFilterValues - Optional array of filter values to disable in the field selction UI
  * @prop open - Boolean indicating whether the filter selection interface is open/visible
  * @prop setHasPendingChanges - Optional state setter for the parent component to indicate whether there are any pending filter changes
- * 
- * @remarks
- * RemoteFilters retrieves entity metadata on mount, displaying it through the filter and 
- * attribute selection UI
  */
 
 export interface PRemoteFilters extends IRemoteTarget {
