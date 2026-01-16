@@ -28,7 +28,7 @@ import {
  * various attribute types and loading states.
  * 
  * @prop objectType - Remote object type name utilised when fetching aggregation data from the API
- * @prop dataSource - The object type requested when fetching aggregation data from the API
+ * @prop dataSource - Data source for executing API requests
  * @prop filters - Optional initial filters applied to the component; defaults to an empty filter
  * @prop setFilters - State setter for updating the active filters in the parent component
  * @prop disabledFilterValues - Optional array of filter values to disable in the field selction UI
