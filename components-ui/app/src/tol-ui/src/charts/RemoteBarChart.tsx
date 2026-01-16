@@ -46,7 +46,7 @@ import {
  * 
  * @prop shortDate - Optional flag to display dates in a shortened format
  * @prop stacked - Optional flag to present bars in a stacked format
- * @prop cumulative - Optional flag to display values cumulatively
+ * @prop cumulative - Optional flag to display values on the chart cumulatively
  * @prop forceUpdate - Optional flat to trigger a re-fetch of the chart data from the server upon changes
  * 
  * @prop buttons - Optional array of JSX elements representing additional action buttons rendered alongside the chart
