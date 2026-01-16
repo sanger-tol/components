@@ -50,7 +50,7 @@ import {
  * @prop forceUpdate - Optional flat to trigger a re-fetch of the chart data from the server upon changes
  * 
  * @prop buttons - Optional array of JSX elements representing additional action buttons rendered alongside the chart
- * @prop utilityBarConfig - Configuration for the utility bar rendered above the cahrt
+ * @prop utilityBarConfig - Configuration for the utility bar rendered above the chart
  * @prop contents - Optinal custom overlay or content displayed while loading or handling errors
  * @prop height - Height of the chart container, expressed as an inline CSS style (e.g. "100%")ß
  */
