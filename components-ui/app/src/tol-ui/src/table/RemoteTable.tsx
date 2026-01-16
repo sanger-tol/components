@@ -87,7 +87,7 @@ import {
  *
  * @prop rowSelection - If true, enables row selection checkboxes and selection state
  * @prop utilityBarConfig - Configuration for the utility bar rendered above the table
- * @prop advanceTab - Enables advanced or secondary configuration/filter tabs where supported
+ * @prop advanceTab - Enables advanced tab on column selection drawer
  * @prop contents - Optional custom overlay or placeholder content shown while loading or on error
  * @prop groupBy - If true, enables row grouping support where provided by the underlying `Table`
  * @prop copySeparator - String used to separate values when copying multiple cells or rows
