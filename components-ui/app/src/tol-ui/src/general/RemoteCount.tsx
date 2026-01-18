@@ -19,6 +19,7 @@ import {
   IRemoteTargetAndZone,
 } from "..";
 
+export type TCountStatType = "count" | "min" | "max" | "avg" | "sum";
 
 /**
  * @autodoc
@@ -37,11 +38,19 @@ import {
 export interface PRemoteCount extends IRemoteTargetAndZone {
   id: string;
   utilityBarConfig?: PUtilityBar;
+  type?: TCountStatType;
+  field?: string;
+}
+
+function formatValue(n: number) {
+  if (!Number.isFinite(n)) return "";
+  if (Number.isInteger(n)) return numberWithSpaces(n);
+  return new Intl.NumberFormat("en-GB", { maximumFractionDigits: 2 }).format(n);
 }
 
 export function RemoteCount(props: PRemoteCount) {
-  const { id, objectType, dataSource, zone, setZone, utilityBarConfig } = props;
-  const [count, setCount] = useState<number>(0);
+  const { id, objectType, dataSource, zone, setZone, utilityBarConfig, type: statType = "count", field } = props;
+  const [value, setValue] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState<TFilterOrUndefined>({});
@@ -57,25 +66,57 @@ export function RemoteCount(props: PRemoteCount) {
 
   useEffectUpdate(() => {
     setLoading(true);
+    setError("");
+
+    if (statType !== "count" && (!field || field.trim() === "")) {
+      setError("No field selected. Please click to configure.");
+      setLoading(false);
+      return;
+    }
+
+    const resource =
+      statType === "count" ? `${objectType}:count` : `${objectType}:stats`;
+
+    const params: any =
+      statType === "count"
+        ? { filter }
+        : {
+            filter,
+            stats: statType,
+            stats_fields: field!.trim(),
+          };
+
     dataSource
       .custom({
         method: API_METHODS.GET,
-        resource: `${objectType}:count`,
-        params: {
-          filter: filter,
-        },
+        resource,
+        params,
       })
       .then((res: any) => {
-        const total = res.data.meta.total;
-        setCount(total);
-        setLoading(false);
+        if (statType === "count") {
+          const total = res?.data?.meta?.total ?? 0;
+          setValue(Number(total) || 0);
+          return;
+        }
+
+        const stats = res?.data?.meta?.stats || {};
+        const statValue = stats?.[field!.trim()]?.[statType];
+
+        if (statValue === undefined || statValue === null) {
+          setError("No stats available for the selected field.");
+          return;
+        }
+
+        setValue(Number(statValue) || 0);
       })
       .catch((error: any) => {
+        console.error(error?.message);
+        setError(error?.message ?? "Request failed");
+      })
+      .finally(() => {
         setLoading(false);
-        setError(error.message);
-        console.error(error.message);
       });
-  }, [filter]);
+  }, [filter, statType, field]);
 
   const Contents = () => {
     if (error !== "") {
@@ -84,14 +125,15 @@ export function RemoteCount(props: PRemoteCount) {
     if (loading) {
       return <Placeholder loader />;
     }
+
     return (
       <div id={id} className="tol-count">
-        <h1 className="count">{numberWithSpaces(count)}</h1>
+        <h1 className="count">{formatValue(value)}</h1>
         <div
           className={!utilityBarConfig ? "faded" : "faded count-utility-bar"}
           aria-hidden="true"
         >
-          <h1>{count}</h1>
+          <h1>{value}</h1>
         </div>
       </div>
     );
