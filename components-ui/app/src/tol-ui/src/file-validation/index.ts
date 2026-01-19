@@ -14,3 +14,4 @@ export * from "./FileValidation";
 export * from "./PreviousUploadsModal";
 export * from "./ValidationReport";
 export * from "./utils";
+export * from "./validation-config"

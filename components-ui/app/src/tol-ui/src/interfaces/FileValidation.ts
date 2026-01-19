@@ -27,6 +27,7 @@ export interface IValidationConfig {
   sheetName?: string;
   maxFileSize?: string;
   allowedFileTypes?: string;
+  project?: string; // TODO: Decide if this needs to be an array
 }
 
 export interface IErrorWarningCount {
@@ -107,6 +108,7 @@ export type TFileValidationStatus = {
   validationStatus: (typeof VALIDATION_STATUSES)[keyof typeof VALIDATION_STATUSES];
   description: string;
   textColor: string;
+  projects: string[]
   callback: (...args: any) => void;
 };
 

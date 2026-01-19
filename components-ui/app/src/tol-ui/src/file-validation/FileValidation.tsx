@@ -433,7 +433,13 @@ export function FileValidation(props: PFileValidation) {
           </ul>
           <h6>Status Messages:</h6>
           <ul>
-            {VALIDATION_CONFIG.map((validation) => {
+            {VALIDATION_CONFIG.filter((validation) => {
+              return (
+                // return items for all projects and this specific project
+                validation.projects.length === 0 ||
+                validation.projects.includes(validationConfig.project || "")
+              );
+            }).map((validation) => {
               return (
                 <li>
                   <strong style={{ color: `${validation.textColor}` }}>
