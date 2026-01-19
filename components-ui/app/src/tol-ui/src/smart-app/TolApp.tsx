@@ -47,6 +47,7 @@ import {
   clearUnusedLocalStorage,
   PBoard,
 } from "..";
+import { boardTour } from "src/boards/tour/tour-config";
 
 export interface PTolApp {
   brand: string | JSX.Element;
@@ -125,7 +126,7 @@ export function TolApp(props: PTolApp) {
           }}
         >
           <NextStepProvider>
-            <NextStep steps={[]}>
+            <NextStep steps={boardTour}>
               <Router>
                 <Navigation
                   brand={props.brand}

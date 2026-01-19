@@ -6,19 +6,27 @@ SPDX-License-Identifier: MIT
 
 import { Tour } from "nextstepjs";
 
-const steps: Tour[] = [
+export const boardTour: Tour[] = [
   {
     tour: "initialTour",
     steps: [
       {
+        icon: "😎",
         title: "1",
         content: "2",
-        selector: "3",
+        selector: "#step1",
+        side: "right",
+        showControls: true,
+        showSkip: true,
       },
       {
-        title: "1",
-        content: "2",
-        selector: "3",
+        icon: "🙈",
+        title: "4",
+        content: "5",
+        selector: "#step2",
+        side: "right",
+        showControls: true,
+        showSkip: true,
       },
     ],
   },

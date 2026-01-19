@@ -26,7 +26,6 @@ import {
   PopUpMessage,
 } from "../..";
 
-
 export interface PZoneModal extends PBoard {
   open: boolean;
   setOpen: any;
@@ -35,6 +34,7 @@ export interface PZoneModal extends PBoard {
   zoneOrder: IDBZoneView[];
   setZoneOrder: (zone: IDBZoneView[]) => void;
   viewId: string;
+  handleStartTour?: () => {};
 }
 
 export function ZoneModal(props: PZoneModal) {
@@ -47,14 +47,19 @@ export function ZoneModal(props: PZoneModal) {
     setZoneOrder,
     viewId,
     boardDataSource,
+    handleStartTour,
   } = props;
 
-  const [dataSourceInstancesLoading, setDataSourceInstancesLoading] = useState(true);
-  const [dataSourceInstanceList, setDataSourceInstanceList] = useState<TLabelAndValueData>([]);
+  const [dataSourceInstancesLoading, setDataSourceInstancesLoading] =
+    useState(true);
+  const [dataSourceInstanceList, setDataSourceInstanceList] =
+    useState<TLabelAndValueData>([]);
   const [dataSourceInstance, setDataSourceInstance] = useState<string>("");
   const [dataspace, setDataspace] = useState<TsDataSource>();
   const [objectTypesLoading, setObjectTypesLoading] = useState(false);
-  const [objectTypesList, setObjectTypesList] = useState<TLabelAndValueData>([]);
+  const [objectTypesList, setObjectTypesList] = useState<TLabelAndValueData>(
+    []
+  );
   const [objectType, setObjectType] = useState("");
 
   const [title, setTitle] = useState("");
@@ -63,9 +68,8 @@ export function ZoneModal(props: PZoneModal) {
 
   useEffect(() => {
     if (open) {
-      fetchPublishedDataspaces(
-        boardDataSource
-      )
+      handleStartTour?.();
+      fetchPublishedDataspaces(boardDataSource)
         .then((dataObjects) => {
           if (dataObjects) {
             const dsiList = dataObjects.map((dsi) => ({
@@ -76,7 +80,8 @@ export function ZoneModal(props: PZoneModal) {
             setDataSourceInstanceList(dsiList);
             setDataSourceInstance(dsiList[0].value);
           }
-        }).finally(() => {
+        })
+        .finally(() => {
           setDataSourceInstancesLoading(false);
         });
     } else {
@@ -87,8 +92,9 @@ export function ZoneModal(props: PZoneModal) {
   // update the dataspace meta when the instance id changes
   useEffect(() => {
     if (dataSourceInstance) {
-      const apiDetails = dataSourceInstanceList
-        .find((dsi) => dsi.value === dataSourceInstance)?.ui_api_details;
+      const apiDetails = dataSourceInstanceList.find(
+        (dsi) => dsi.value === dataSourceInstance
+      )?.ui_api_details;
       setDataspace(
         new TsDataSource({
           ...apiDetails,
@@ -103,7 +109,8 @@ export function ZoneModal(props: PZoneModal) {
   useEffect(() => {
     if (dataspace) {
       setObjectTypesLoading(true);
-      dataspace.attributeMetadata()
+      dataspace
+        .attributeMetadata()
         .then((am) => {
           setObjectTypesList(
             Object.keys(am).map((type) => ({
@@ -116,7 +123,9 @@ export function ZoneModal(props: PZoneModal) {
           console.error("Error fetching attribute metadata:", err);
           PopUpMessage({
             type: "error",
-            message: `Failed to fetch Dataspace '${normaliseCaps(dataSourceInstance)}'.
+            message: `Failed to fetch Dataspace '${normaliseCaps(
+              dataSourceInstance
+            )}'.
               Please refresh and try again.`,
           });
           setDataSourceInstance("");
@@ -152,7 +161,7 @@ export function ZoneModal(props: PZoneModal) {
       return false;
     }
     return true;
-  }
+  };
 
   const onAddZone = async () => {
     if (validateInputs()) {
@@ -163,7 +172,7 @@ export function ZoneModal(props: PZoneModal) {
         title,
         nextOrder,
         viewId,
-        dataspace!.getDataSourceInstanceId()!,
+        dataspace!.getDataSourceInstanceId()!
       );
       setZones([
         ...zones,
@@ -195,10 +204,7 @@ export function ZoneModal(props: PZoneModal) {
         disabled={objectType === "" || title === ""}
         testid="add-zone-button"
       />
-      <Button
-        {...BUTTONS.CANCEL}
-        onClick={() => setOpen(false)}
-      />
+      <Button {...BUTTONS.CANCEL} onClick={() => setOpen(false)} />
     </div>
   );
 
@@ -212,33 +218,37 @@ export function ZoneModal(props: PZoneModal) {
       overflow={false}
       data-testid="zoneModal"
     >
-      <h4>Add New Zone</h4>
-      <p className="zone-modal-labels">
-        Select Dataspace <RequiredAsterisk />
-      </p>
-      <SingleSelect
-        block
-        data={dataSourceInstanceList}
-        placeholder="Dataspace"
-        value={dataSourceInstance}
-        onChange={setDataSourceInstance}
-        loading={dataSourceInstancesLoading}
-        testid="dataspace-picker"
-      />
+      <div id="step1">
+        <h4>Add New Zone</h4>
+        <p className="zone-modal-labels">
+          Select Dataspace <RequiredAsterisk />
+        </p>
+        <SingleSelect
+          block
+          data={dataSourceInstanceList}
+          placeholder="Dataspace"
+          value={dataSourceInstance}
+          onChange={setDataSourceInstance}
+          loading={dataSourceInstancesLoading}
+          testid="dataspace-picker"
+        />
+      </div>
       <br />
-      <p className="zone-modal-labels">
-        Select Object Type <RequiredAsterisk />
-      </p>
-      <SingleSelect
-        block
-        data={objectTypesList}
-        placeholder="Object Type"
-        value={objectType}
-        onChange={setObjectType}
-        disabled={!dataspace}
-        loading={objectTypesLoading}
-        testid="object-type-picker"
-      />
+      <div id="step2">
+        <p className="zone-modal-labels">
+          Select Object Type <RequiredAsterisk />
+        </p>
+        <SingleSelect
+          block
+          data={objectTypesList}
+          placeholder="Object Type"
+          value={objectType}
+          onChange={setObjectType}
+          disabled={!dataspace}
+          loading={objectTypesLoading}
+          testid="object-type-picker"
+        />
+      </div>
       <br />
       <p className="zone-modal-labels">
         Enter Title <RequiredAsterisk />
@@ -253,9 +263,7 @@ export function ZoneModal(props: PZoneModal) {
         />
       </RSForm>
       <>
-        {titleError && (
-          <p className="tol-modal-error">Title cannot be blank</p>
-        )}
+        {titleError && <p className="tol-modal-error">Title cannot be blank</p>}
         {fieldError && (
           <p className="tol-modal-error">
             Please ensure all mandatory fields are filled

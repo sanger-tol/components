@@ -22,14 +22,16 @@ import {
   PRIVILEGE,
   useBoardPrivilege,
   TsDataSource,
+  getUserFromLocalStorage,
+  fetchTourStepSeen,
 } from "../..";
-
+import { useNextStep } from "nextstepjs";
 
 export interface PView extends PBoard {
   // extends but excludes setPrivilege
   id: string;
   defaultFilter?: IFilter;
-  utilityBarConfig?: PUtilityBar
+  utilityBarConfig?: PUtilityBar;
   // title: string;
 }
 
@@ -39,6 +41,20 @@ export function View(props: PView) {
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
   const { privilege } = useBoardPrivilege();
+
+  const { startNextStep, closeNextStep } = useNextStep();
+
+  const handleStartTour = async () => {
+    const seen = await fetchTourStepSeen(
+      "initialTour",
+      getUserFromLocalStorage().id
+    );
+
+    if (!seen) {
+      console.log("tour started!");
+      startNextStep("initialTour");
+    }
+  };
 
   useEffect(() => {
     getZones(id, boardDataSource).then((data: any) => {
@@ -62,29 +78,24 @@ export function View(props: PView) {
   }, []);
 
   const deleteZone = (id: string) => {
-    boardDataSource
-      .deleteByID({
-        objectType: BOARDS.ZONE,
-        id
-      })
+    boardDataSource.deleteByID({
+      objectType: BOARDS.ZONE,
+      id,
+    });
     const newZones = zones.filter((zone) => zone.id !== id);
     setZones(newZones);
   };
 
   const onZoneReorder = async (id: string, direction: string) => {
-    reorderZoneAndUpsert(
-      id,
-      direction,
-      zones,
-      zoneOrder,
-      boardDataSource,
-    ).then((data) => {
-      if (data) {
-        const { zones: updatedZones, zoneOrder: updatedZoneOrder } = data;
-        setZones(updatedZones);
-        setZoneOrder(updatedZoneOrder);
+    reorderZoneAndUpsert(id, direction, zones, zoneOrder, boardDataSource).then(
+      (data) => {
+        if (data) {
+          const { zones: updatedZones, zoneOrder: updatedZoneOrder } = data;
+          setZones(updatedZones);
+          setZoneOrder(updatedZoneOrder);
+        }
       }
-    });
+    );
   };
 
   const addZoneButton: PButton = {
@@ -97,7 +108,7 @@ export function View(props: PView) {
     onClick: () => {
       setOpen(true);
     },
-  }
+  };
 
   return (
     <div className="tol-view">
@@ -117,6 +128,7 @@ export function View(props: PView) {
         setZoneOrder={setZoneOrder}
         viewId={id}
         boardDataSource={boardDataSource}
+        handleStartTour={handleStartTour}
       />
       {zones.length > 0 ? (
         <div className="tol-zones">
