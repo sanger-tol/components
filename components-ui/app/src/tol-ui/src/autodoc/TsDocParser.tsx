@@ -86,10 +86,10 @@ export class TsDocParser {
     examples: IComponentExample[],
     remarks?: string[]
   } {
-    function extract(autodocComment: string, regex: RegExp): string[] | undefined {
+    function extract(autodocComment: string, regex: RegExp): string[] {
       // Perform search
       const matches = autodocComment.match(regex);
-      if (!matches) return;
+      if (!matches) return [];
 
       // Sanitise TSDoc artefacts out of results
       return matches.map(match => match
@@ -100,14 +100,15 @@ export class TsDocParser {
     }
 
     // The description is the text after @autodoc but before @props start
-    const description = extract(autodocComment, /(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*\s*@prop)/);
+    const description = extract(autodocComment, /(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*\s*@prop)/)[0] || undefined;
 
-    // The remarks begin with @remarks,
-    // TODO
+    // The remarks begin with @remarks, and end either at the end of the comment (*/) or the next tag (@)
+    const remarks = extract(autodocComment, /(?<=@remarks\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
 
     return {
       description,
-      examples: []
+      examples: [],
+      remarks,
     };
   }
 
@@ -118,5 +119,6 @@ export class TsDocParser {
     // if (!propsInterfaceMatch) {
     //   throw new TsDocParseError(`Unable to find the props interface definition (P${componentName})`);
     // }
+    // TODO
   }
 }
