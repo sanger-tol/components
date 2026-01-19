@@ -93,7 +93,7 @@ export class TsDocParser {
     return [];
   }
 
-  private static extractComponentRemarks(docComment: string): string[] | undefined {
+  private static extractComponentRemarks(autodocComment: string): string[] | undefined {
     // TODO
     return undefined;
   }
