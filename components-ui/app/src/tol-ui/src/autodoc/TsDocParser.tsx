@@ -87,23 +87,24 @@ export class TSDocParser {
    * @returns Array of component props with types and descriptions
    */
   private static extractPropsFromTSDoc(content: string, docComment: string, componentName: string): IComponentProp[] {
-    const props: IComponentProp[] = [];
-    
-    // First, get prop definitions from the interface
-    const interfaceProps = this.extractPropsFromInterface(content, componentName);
-    
-    // Then, get prop documentation from @prop tags
+    // First, get prop names and documentation from @prop tags
     const propDocs = this.extractPropDocumentation(docComment);
-    
-    // Merge interface definitions with documentation
-    for (const interfaceProp of interfaceProps) {
-      const doc = propDocs.get(interfaceProp.name);
-      props.push({
-        ...interfaceProp,
-        description: doc?.description
-      });
-    }
 
+    // Then get the rest of the prop information from the props interface
+    const propData = this.extractRemainingPropInformationFromInterface(content, componentName);
+
+    // Merge prop documentation with interface definitions
+    const props: IComponentProp[] = [];
+    for (const propName in propDocs) {
+      const rest = propData.get(propName);
+      if (rest) {
+        props.push({
+          description: propDocs.get(propName)?.description,
+          ...rest
+        });
+      }
+    }
+  
     return props;
   }
 
@@ -113,8 +114,9 @@ export class TSDocParser {
  * @param componentName - The name of the component
  * @returns Array of props with type information from the interface
  */
-private static extractPropsFromInterface(content: string, componentName: string): IComponentProp[] {
-  const props: IComponentProp[] = [];
+private static extractRemainingPropInformationFromInterface(content: string, componentName: string): Map<string, IComponentProp> {
+  // const props: IComponentProp[] = [];
+  const props: Map<string, IComponentProp> = new Map();
   
   // Find interface definition (P prefix for props interfaces)
   const interfaceRegex = new RegExp(`interface\\s+P${componentName}[^{]*\\{([^}]+)\\}`, "s");
@@ -129,7 +131,7 @@ private static extractPropsFromInterface(content: string, componentName: string)
     // Remove inline comments for parsing
     const cleanLine = line.replace(/\/\/.*$/, "").trim();
     const prop = this.parsePropDefinition(cleanLine);
-    if (prop) props.push(prop);
+    if (prop) props.set(prop.name, prop);
   }
 
   return props;
