@@ -39,30 +39,24 @@ export class TsDocParser {
     const autodocMatch = fileContent.match(/\/\*\*[\s\S]*?@autodoc[\s\S]*?\*\//g);
     if (!autodocMatch) return null;
 
-    // This is extracted here rather than later as it will be needed to find the props interface
+    // Extract the documentation information contained in the autodoc comment
+    const autodocComment = autodocMatch[0];
+    const { description, examples, remarks } = this.extractFromAutodocComment(autodocComment);
+
+    // Derive the name of the component to be documented from its file path
     const componentName = this.extractComponentName(filePath);
 
-    // Search for the interface block (from "interface" to the final "}"). Checks specifically for `P{componentName}`
-    const propsInterfaceRegex = new RegExp(`interface\\s+P${componentName}[^{]*\\{([^}]+)\\}`, "s");
-    const propsInterfaceMatch = fileContent.match(propsInterfaceRegex);
-    if (!propsInterfaceMatch) {
-      throw new TsDocParseError(`Unable to find the props interface definition (P${componentName})`);
-    }
-
-    // Using the previous regular expression matches, extract the information from the file required to build documentation.
-    // These strings, along with the parameters to this method, will be the strings handled by the extraction functions below,
-    // which extract the information we need to construct the final documentation object
-    const autodocComment = autodocMatch[0];
-    const propsInterface = propsInterfaceMatch[0];
+    // Crawl through interfaces to finalize documentation for every immediate and inherited prop
+    const propDocumentation = this.parsePropDocumentation(fileContent, componentName);
 
     // Construct and return final documentation object
     return {
-      name: componentName,  // This was extracted earlier as it was needed to get the props interface
+      name: componentName,
       filePath,
-      description: this.extractComponentDescription(autodocComment),
-      props: this.extractPropsDocumentation(autodocComment, propsInterface),
-      examples: this.extractExamplesDocumentation(autodocComment),
-      remarks: this.extractComponentRemarks(autodocComment),
+      description,
+      props: propDocumentation,
+      examples,
+      remarks,
     };
   }
 
@@ -82,29 +76,25 @@ export class TsDocParser {
       )
     }
   }
-  
+
   /**
-   * Extracts the description of the component to be documented from the autodoc comment
+   * Extracts the component description, example usages, and further remarks from the autodoc comment
    */
-  private static extractComponentDescription(autodocComment: string): string | undefined {
+  private static extractFromAutodocComment(autodocComment: string): {
+    description?: string,
+    examples: IComponentExample[],
+    remarks?: string[]
+  } {
     // TODO
-    return undefined;
+    return { examples: [] };
   }
 
-  private static extractPropsDocumentation(
-    autodocComment: string, propsInterface: string
-  ): IComponentProp[] {
-    // TODO
-    return [];
-  }
-
-  private static extractExamplesDocumentation(autodocComment: string): IComponentExample[] {
-    // TODO
-    return [];
-  }
-
-  private static extractComponentRemarks(autodocComment: string): string[] | undefined {
-    // TODO
-    return undefined;
+  private static parsePropDocumentation(fileContent: string, componentName: string): IComponentProp[] {
+    // Search for the interface block (from "interface" to the final "}"). Checks specifically for `P{componentName}`
+    // const propsInterfaceRegex = new RegExp(`interface\\s+P${componentName}[^{]*\\{([^}]+)\\}`, "s");
+    // const propsInterfaceMatch = fileContent.match(propsInterfaceRegex);
+    // if (!propsInterfaceMatch) {
+    //   throw new TsDocParseError(`Unable to find the props interface definition (P${componentName})`);
+    // }
   }
 }
