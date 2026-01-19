@@ -5,5 +5,5 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./AutoDocPage";
-export * from "./TsDocParser";
+export * from "./OldTsDocParser";
 export * from "./utils";

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { Page } from "..";
 import {
   AutoDocPage,
-  TSDocParser,
+  OldTSDocParser,
   IComponentDocumentation,
 } from "..";
 
@@ -28,7 +28,7 @@ function scanForAutoDocComponents(): IComponentDocumentation[] {
   for (const [path, content] of Object.entries(modules)) {
     if (typeof content === 'string' && content.includes('@autodoc')) {
       const relativePath = path.replace('../', './');
-      const documentation = TSDocParser.parseFileContent(content, relativePath);
+      const documentation = OldTSDocParser.parseFileContent(content, relativePath);
       
       if (documentation) {
         components.push(documentation);

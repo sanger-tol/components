@@ -17,7 +17,7 @@ import {
 /**
  * Parses TSDoc comments tagged with @-autodoc to extract component documentation
  */
-export class TSDocParser {
+export class OldTSDocParser {
   /**
    * Parses the content of a TypeScript file to extract component documentation
    * @param content - The file content as a string
