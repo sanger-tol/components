@@ -86,8 +86,9 @@ export class TsDocParser {
     examples: IComponentExample[],
     remarks?: string[]
   } {
-    function extract(autodocComment: string, regex: RegExp): string[] {
+    function extractTag(autodocComment: string, tag: string): string[] {
       // Perform search
+      const regex = new RegExp(`(?<=@${tag}\\s*\\*\\s*)([\\s\\S]*?)(?=\\s*\\*?\\s*@|\s*\\*\\/)`);
       const matches = autodocComment.match(regex);
       if (!matches) return [];
 
@@ -99,15 +100,19 @@ export class TsDocParser {
       );
     }
 
-    // The description is the text after @autodoc but before @props start
-    const description = extract(autodocComment, /(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*\s*@prop)/)[0] || undefined;
+    // The description is the text after @autodoc
+    const description = extractTag(autodocComment, "autodoc")[0] || undefined;
 
-    // The remarks begin with @remarks, and end either at the end of the comment (*/) or the next tag (@)
-    const remarks = extract(autodocComment, /(?<=@remarks\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
+    // TODO: This only parses code for examples. Allow for titles too
+    const examples: IComponentExample[] = extractTag(autodocComment, "example").map(exampleCode => ({
+      code: exampleCode
+    }));
+
+    const remarks = extractTag(autodocComment, "remarks");
 
     return {
       description,
-      examples: [],
+      examples,
       remarks,
     };
   }
