@@ -24,6 +24,9 @@ import {
   copyToClipboard,
   CELL_RENDERER_PROP_ATTRIBUTE,
   IFilter,
+  TCellHeights,
+  DEFAULT_ROW_HEIGHT,
+  COLLAPSED_ROW_MAX_HEIGHT,
 } from "..";
 
 interface Rgb {
@@ -391,4 +394,70 @@ export function amalgamateRequestedFields(fieldMeta: FieldMeta): string[] {
   });
 
   return Array.from(requestedFields);
+}
+
+/**
+ * Determines whether any rows in the dataset can be expanded based on their cell heights.
+ * This is used to determine if the row height expand/collapse control should be displayed in table header.
+ * 
+ * A row is considered expandable if its calculated height (the maximum of all cell heights
+ * in that row) exceeds the collapsed row maximum height threshold.
+ * 
+ * @param data - An array of row objects, each containing at minimum a `key` property for identification
+ * @param cellHeights - A map of row IDs to their respective cell heights, where each entry contains
+ *                      height values for the cells in that row
+ * @returns `true` if at least one row has a height greater than `COLLAPSED_ROW_MAX_HEIGHT`, `false` otherwise
+ */
+export function hasExpandableRows(
+  data: any[],
+  cellHeights: TCellHeights
+): boolean {
+  return (
+    Array.isArray(data) &&
+    data.some((row: any) => {
+      const rowId = row.key;
+      const rowHeights = cellHeights[rowId];
+      if (!rowHeights) return false;
+      const fullHeight = Math.max(
+        DEFAULT_ROW_HEIGHT,
+        ...Object.values(rowHeights)
+      );
+      return fullHeight > COLLAPSED_ROW_MAX_HEIGHT;
+    })
+  )
+}
+
+/**
+ * Updates a specific attribute of a field within the FieldMeta object.
+ * 
+ * @param fieldMeta - The field metadata object to be updated
+ * @param dataKey - The key identifying the specific field within the metadata
+ * @param attribute - The attribute name to be updated
+ * @param value - The new value to assign to the attribute
+ * @param dataWithDefaults - Optional flag to also update the dataWithDefaults target. Defaults to false
+ * 
+ * @remarks
+ * This function modifies the `fieldMeta` object in place by updating the specified attribute
+ * for the given data key. It updates the "data" target by default, and optionally updates
+ * the "dataWithDefaults" target if the corresponding flag is set to true.
+ */
+export function updateFieldMetaAttribute(
+  fieldMeta: FieldMeta,
+  dataKey: string,
+  attribute: any,
+  value: any,
+  dataWithDefaults?: boolean
+) {
+  const updateTarget = (target: string) => {
+    fieldMeta[target] = {
+      ...fieldMeta[target],
+      [dataKey]: {
+        ...fieldMeta[target]![dataKey],
+        [attribute]: value,
+      },
+    } as any;
+  };
+
+  updateTarget("data");
+  if (dataWithDefaults) updateTarget("dataWithDefaults");
 }

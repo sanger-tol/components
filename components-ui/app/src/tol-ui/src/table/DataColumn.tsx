@@ -14,15 +14,24 @@ import {
   AutoHeightCell,
   PTable,
   Field,
-  DEFAULT_FIELD_WIDTH
+  DEFAULT_COLUMN_WIDTH,
+  MIN_COLUMN_WIDTH,
+  MAX_COLUMN_WIDTH,
+  PopUpMessage,
 } from "..";
 
+
+// static map to track last width per column
+// state and ref fails
+const lastWidths = new Map<string, number>();
 
 export interface PDataColumn extends PTable {
   fieldKey: string;
   field: Field;
   sortable: boolean;
   filterable: boolean;
+  resizeable?: boolean;
+  onResize?: (columnWidth?: number, dataKey?: string) => void;
   handleCellHeightChange: (
     rowId: string,
     columnId: string,
@@ -37,6 +46,7 @@ export function DataColumn(props: PDataColumn) {
     fieldKey,
     sortable,
     filterable,
+    resizeable = false,
     filterVisibility,
     copySeparator,
     fieldDropdownChoices,
@@ -44,18 +54,50 @@ export function DataColumn(props: PDataColumn) {
   } = props;
 
   const field = {
-    width: DEFAULT_FIELD_WIDTH,
+    width: DEFAULT_COLUMN_WIDTH,
     ...props.field,
-  }
+  };
 
   const { Column, HeaderCell, Cell } = RSTable;
+
+  // table and field unique key
+  const columnKey = `${id}:${fieldKey}`;
+
+  const onResize = (columnWidth?: number, dataKey?: string) => {
+    if (!columnWidth || !dataKey) return;
+
+    if (columnWidth > MAX_COLUMN_WIDTH) {
+      PopUpMessage({
+        type: "info",
+        message: "Maximum column width has been reached",
+      });
+    };
+
+    let clampedWidth = Math.min(
+      Math.max(columnWidth, MIN_COLUMN_WIDTH),
+      MAX_COLUMN_WIDTH
+    );
+
+    // ensure width change to trigger re-render
+    // rerender fails visually without this
+    const lastWidth = lastWidths.get(columnKey);
+
+    // also considers empty of first time or no change
+    if (!lastWidth || lastWidth === clampedWidth) clampedWidth -= 1;
+
+    lastWidths.set(columnKey, clampedWidth);
+    props.onResize?.(clampedWidth, dataKey);
+  };
 
   return (
     <Column
       key={fieldKey}
+      resizable={resizeable}
+      onResize={onResize}
       width={field.width}
       sortable={sortable}
       fixed={field.fixed}
+      minWidth={MIN_COLUMN_WIDTH}
     >
       <HeaderCell>
         <AttributeTitle
@@ -94,7 +136,7 @@ export function DataColumn(props: PDataColumn) {
           />
         )}
       </HeaderCell>
-      <Cell>
+      <Cell dataKey={fieldKey}>
         {(rowData: any) => (
           <AutoHeightCell
             rowId={rowData?.key}

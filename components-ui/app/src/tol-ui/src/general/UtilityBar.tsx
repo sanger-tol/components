@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReactNode, useState } from "react";
+import { Fragment, ReactNode, useState } from "react";
 import {
   ClickOverlay,
   InlineEdit,
@@ -87,10 +87,9 @@ export function UtilityBar(props: PUtilityBar) {
     <div className="tol-utility-bar" data-testid={id} id={wrapperId}>
       {title && <InlineEdit {...title} size={smallBreakpoint ? "sm" : "md"} />}
       {description && <IconTooltip className="tol-utility-bar-tooltip" contents={description} />}
-      {elements &&
-        elements.map((element) => (
-          element
-        ))}
+      {elements && elements.map(
+        (element, index) => <Fragment key={index}>{element}</Fragment>
+      )}
       <div className="tol-utility-bar-buttons">
         {smallBreakpoint && regularButtons &&
           regularButtons.filter((button) => button?.["visible"] !== false).length > 1

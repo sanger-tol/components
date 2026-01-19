@@ -59,7 +59,7 @@ export class TSDocParser {
     if (constMatch) return constMatch[1];
 
     // Fallback to filename
-    const fileName = filePath.split('/').pop()?.replace(/\.(tsx|jsx)$/, '');
+    const fileName = filePath.split("/").pop()?.replace(/\.(tsx|jsx)$/, "");
     return fileName || null;
   }
 
@@ -74,9 +74,9 @@ export class TSDocParser {
     if (!descMatch) return undefined;
 
     return descMatch[1]
-      .replace(/\s*\*\s?/g, ' ')
+      .replace(/\s*\*\s?/g, " ")
       .trim()
-      .replace(/\s+/g, ' ') || undefined;
+      .replace(/\s+/g, " ") || undefined;
   }
 
   /**
@@ -117,17 +117,17 @@ private static extractPropsFromInterface(content: string, componentName: string)
   const props: IComponentProp[] = [];
   
   // Find interface definition (P prefix for props interfaces)
-  const interfaceRegex = new RegExp(`interface\\s+P${componentName}[^{]*\\{([^}]+)\\}`, 's');
+  const interfaceRegex = new RegExp(`interface\\s+P${componentName}[^{]*\\{([^}]+)\\}`, "s");
   const interfaceMatch = content.match(interfaceRegex);
   
   if (!interfaceMatch) return props;
 
   const interfaceContent = interfaceMatch[1];
-  const propLines = interfaceContent.split('\n').map(line => line.trim()).filter(Boolean);
+  const propLines = interfaceContent.split("\n").map(line => line.trim()).filter(Boolean);
 
   for (const line of propLines) {
     // Remove inline comments for parsing
-    const cleanLine = line.replace(/\/\/.*$/, '').trim();
+    const cleanLine = line.replace(/\/\/.*$/, "").trim();
     const prop = this.parsePropDefinition(cleanLine);
     if (prop) props.push(prop);
   }
@@ -150,7 +150,7 @@ private static extractPropsFromInterface(content: string, componentName: string)
     
     while ((match = PROP_REGEX.exec(docComment)) !== null) {
       const propName = match[1]?.trim();
-      const description = match[2]?.replace(/\s*\*\s?/gm, ' ').trim();
+      const description = match[2]?.replace(/\s*\*\s?/gm, " ").trim();
       
       if (propName && description) {
         propDocs.set(propName, { description });
@@ -167,11 +167,11 @@ private static extractPropsFromInterface(content: string, componentName: string)
    */
   private static parsePropDefinition(propDef: string): IComponentProp | null {
     // Remove semicolon and whitespace
-    propDef = propDef.replace(/[;,]$/, '').trim();
+    propDef = propDef.replace(/[;,]$/, "").trim();
     
     // Check for optional properties
-    const isOptional = propDef.includes('?:');
-    const [namePart, typePart] = propDef.split(isOptional ? '?:' : ':').map(s => s.trim());
+    const isOptional = propDef.includes("?:");
+    const [namePart, typePart] = propDef.split(isOptional ? "?:" : ":").map(s => s.trim());
     
     if (!namePart || !typePart) return null;
 
@@ -179,8 +179,8 @@ private static extractPropsFromInterface(content: string, componentName: string)
     let type = typePart;
     let defaultValue: string | undefined;
     
-    if (type.includes('=')) {
-      [type, defaultValue] = type.split('=').map(s => s.trim());
+    if (type.includes("=")) {
+      [type, defaultValue] = type.split("=").map(s => s.trim());
     }
 
     return {
@@ -205,7 +205,7 @@ private static extractPropsFromInterface(content: string, componentName: string)
     
     while ((match = EXAMPLE_REGEX.exec(docComment)) !== null) {
       const title = match[1]?.trim() || undefined;
-      const code = match[2]?.replace(/\s*\*\s?/gm, '').trim() || '';
+      const code = match[2]?.replace(/\s*\*\s?/gm, "").trim() || "";
       
       if (code) {
         examples.push({ title, code });
@@ -225,7 +225,7 @@ private static extractPropsFromInterface(content: string, componentName: string)
     const remarkMatches = docComment.matchAll(/@remarks?\s+(.*?)(?=@\w+|$)/gs);
     
     for (const match of remarkMatches) {
-      const remark = match[1]?.replace(/\s*\*\s?/gm, ' ').trim();
+      const remark = match[1]?.replace(/\s*\*\s?/gm, " ").trim();
       if (remark) remarks.push(remark);
     }
 

@@ -243,7 +243,7 @@
       }
     }
 
-    // expanded row height
+    // Expanded row height
     .rs-table-row-expanded:has(.tol-table-expanded-row) {
       padding: 0 !important;
     }
@@ -252,12 +252,18 @@
       width: 20%;
       float: left;
       margin-top: 7px;
-      margin-left: 30%;
       cursor: pointer;
       color: var(--tol-grey);
 
       &:hover {
         color: var(--tol-primary);
+      }
+    }
+
+    // Only add margin-left when .tol-table-row-selection is the previous sibling
+    .rs-table-cell-content:has(.tol-table-row-selection + .tol-row-expand-btn) {
+      .tol-row-expand-btn {
+        margin-left: 30%;
       }
     }
   }

@@ -42,7 +42,7 @@ export interface PTable extends IRemoteTargetAndZone {
   fieldMeta: FieldMeta;
   height: any;
   loading: boolean;
-
+  resizeableColumns?: boolean;
   source?: string;
 
   page: number;
@@ -59,12 +59,14 @@ export interface PTable extends IRemoteTargetAndZone {
   sortByType?: any;
   defaultSortByAttribute?: string;
   defaultSortByType?: string;
-  handleSortColumn: any;
+  onSortColumn?: (dataKey: string, sortType?: "asc" | "desc") => void;
+
   filter: any;
   copySeparator?: string;
   fieldDropdownChoices?: TFieldDropdownChoices;
 
   onConfigSave: (config: ITableConfigSave) => void;
+  onResizeColumn?: (columnWidth?: number, dataKey?: string) => void;
 
   noFilter?: boolean;
   noPagination?: boolean;
@@ -73,6 +75,7 @@ export interface PTable extends IRemoteTargetAndZone {
   noDownload?: boolean;
   rowSelection?: boolean;
   rowExpansion?: boolean;
+
   actions?: IDropdownButtonConfig[];
   actionChoices?: string[];
   actionsFooter?: IDropdownButtonConfig;
@@ -96,6 +99,7 @@ export function Table(props: PTable) {
     fieldMeta,
     height,
     loading,
+    resizeableColumns = false,
     source,
 
     page,
@@ -112,9 +116,11 @@ export function Table(props: PTable) {
     sortByType,
     defaultSortByAttribute,
     defaultSortByType,
-    handleSortColumn,
+    onSortColumn,
     filter,
     expandedRows,
+
+    onResizeColumn,
 
     noFilter,
     noPagination,
@@ -439,16 +445,18 @@ export function Table(props: PTable) {
               <div className="tol-table-inner">
                 <RSTable
                   bordered
+                  fillHeight
+                  wordWrap
+                  rowKey={"key"}
                   data={data}
                   headerHeight={!noFilter && filterVisibility ? 85 : 42}
                   loading={loading}
                   sortColumn={sortByAttribute}
                   sortType={sortByType}
-                  onSortColumn={handleSortColumn!}
+                  onSortColumn={onSortColumn}
                   expandedRowKeys={expandedRows}
                   renderRowExpanded={RowExpander}
                   shouldUpdateScroll={false}
-                  rowKey={"key"}
                   rowClassName={(rowData: any) => {
                     if (rowData) {
                       if (bulkSelect) {
@@ -461,8 +469,6 @@ export function Table(props: PTable) {
                     }
                     return "";
                   }}
-                  fillHeight
-                  wordWrap
                   rowHeight={(rowData: any) => {
                     const rowId = rowData?.key;
                     const row = cellHeights[rowId];
@@ -501,13 +507,15 @@ export function Table(props: PTable) {
                     const sortable: boolean =
                       (!noSorting && field.sort) ?? false;
                     const filterable = !noFilter && !!field.filter;
-
+                    // Has to be a function as only rsuite components can be children on their Table
                     return DataColumn({
                       ...props,
                       fieldKey: key,
                       field,
                       sortable,
                       filterable,
+                      resizeable: resizeableColumns,
+                      onResize: onResizeColumn,
                       handleCellHeightChange,
                     });
                   })}

@@ -19,6 +19,21 @@ import {
   IRemoteTargetAndZone,
 } from "..";
 
+
+/**
+ * @autodoc
+ * 
+ * RemoteCount is a component that retrieves and displays the count of items from a remote
+ * `dataSource`, updating dynamically based on applied filters and selected zones.
+ * 
+ * @prop id - Unique identifier for this count instance, utilized in the utility bar and various internal functions
+ * @prop objectType - Specifies the type of remote object for count retrieval via the API
+ * @prop dataSource - The data source used to execute API requests to gather the item count
+ * @prop zone - Current filter zone object that influences the data fetched
+ * @prop setZone - Function to update the zone state, affecting the filters applied below this instance
+ * @prop utilityBarConfig - Optional configuration for the utility bar rendered above the count display, including additional action buttons
+ */
+
 export interface PRemoteCount extends IRemoteTargetAndZone {
   id: string;
   utilityBarConfig?: PUtilityBar;
