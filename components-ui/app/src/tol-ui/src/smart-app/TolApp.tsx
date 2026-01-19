@@ -17,6 +17,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { NextStepProvider, NextStep } from "nextstepjs";
 import Navigation from "../nav/Navigation";
 import {
   Callback,
@@ -44,9 +45,8 @@ import {
   PrivilegeContext,
   BoardPrivilegeContextProvider,
   clearUnusedLocalStorage,
-  PBoard
+  PBoard,
 } from "..";
-
 
 export interface PTolApp {
   brand: string | JSX.Element;
@@ -67,13 +67,16 @@ export function TolApp(props: PTolApp) {
   const basePath = uiPath ? `/${uiPath}/` : "/";
 
   // setting a default for the boardDataSource
-  const boards = props.boards ? {
-    boardDataSource: props.boards?.boardDataSource
-      || new TsDataSource({
-        apiPath: env.API_PATH,
-        apiDataPath: BOARDS_API_DATA_PATH,
-      }),
-  } : undefined;
+  const boards = props.boards
+    ? {
+        boardDataSource:
+          props.boards?.boardDataSource ||
+          new TsDataSource({
+            apiPath: env.API_PATH,
+            apiDataPath: BOARDS_API_DATA_PATH,
+          }),
+      }
+    : undefined;
   const queryClient = new QueryClient();
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
@@ -104,144 +107,166 @@ export function TolApp(props: PTolApp) {
   }
 
   const profilePages = addBoardPages(props.profilePages, boards);
-  const allPageRoutes = generatePagesThatRequireARoute(props.pages, profilePages);
+  const allPageRoutes = generatePagesThatRequireARoute(
+    props.pages,
+    profilePages
+  );
   const loggedIn = user && !tokenHasExpired();
 
   return (
     <div id="tol-app-background">
       <QueryClientProvider client={queryClient}>
-      <AuthProvider
-        value={{
-          token,
-          setToken,
-          user,
-          setUser,
-        }}
-      >
-        <Router>
-          <Navigation
-            brand={props.brand}
-            uiPath={uiPath}
-            pages={props.pages}
-            profilePages={profilePages}
-            login={login}
-            register={register}
-            customCallbackUrl={customCallbackUrl}
-          />
-          <div className="tol-app">
-            <Switch>
-              <Route
-                path={[`${basePath}`,]}
-                exact
-                render={() => props.homePage}
-              />
-              <Route path={`${basePath}callback`} exact>
-                <Callback />
-              </Route>
-              <Route path={`${basePath}board/:boardId`}>
-                {boards && loggedIn ? (
-                  <BoardPrivilegeContextProvider>
-                    <Board
-                      boardDataSource={boards.boardDataSource}
+        <AuthProvider
+          value={{
+            token,
+            setToken,
+            user,
+            setUser,
+          }}
+        >
+          <NextStepProvider>
+            <NextStep steps={{}}>
+              <Router>
+                <Navigation
+                  brand={props.brand}
+                  uiPath={uiPath}
+                  pages={props.pages}
+                  profilePages={profilePages}
+                  login={login}
+                  register={register}
+                  customCallbackUrl={customCallbackUrl}
+                />
+                <div className="tol-app">
+                  <Switch>
+                    <Route
+                      path={[`${basePath}`]}
+                      exact
+                      render={() => props.homePage}
                     />
-                  </BoardPrivilegeContextProvider>
-                ) : (
-                  <Redirect to={basePath} replace />
-                )}
-              </Route>
-              <Route path={`${basePath}file-validation/results/:uploadId`} render={(routeProps) => {
-                return loggedIn ? (
-                  <ValidationResultsViewer {...routeProps} />
-                ) : (
-                  <Redirect to={basePath} replace />
-                )
-              }} />
-              {allPageRoutes.map((page) => {
-                const path = convertToPath(page.name, uiPath);
-                const routes = [];
-                const authorised = confirmAuthorised(
-                  user,
-                  page.auth,
-                  page.removeOnAuth,
-                );
-
-                // dropdown routes
-                if ('pages' in page && page.pages) {
-                  page.pages.forEach((dropdownPage: Page) => {
-                    const individualPageAuthorised = confirmAuthorised(
-                      user,
-                      dropdownPage.auth,
-                      dropdownPage.removeOnAuth,
-                    );
-                    const dropdownPath =
-                      convertToPath(dropdownPage.name, uiPath);
-                    // dropdown page route
-                    routes.push(
-                      <Route exact path={dropdownPath} key={dropdownPage.name}>
-                        {authorised ? (
-                          getElementDependingOnAuthStatus(loggedIn, dropdownPage)
-                        ) : (
-                          <Redirect to={`${uiPath ?? ''}/`} replace />
-                        )}
-                      </Route>,
-                    );
-
-                    // dropdown detail page route
-                    if (dropdownPage.detail) {
-                      routes.push(
-                        <Route
-                          exact
-                          path={`${dropdownPath}/:id`}
-                          key={`${page.name}-detail`}
-                        >
-                          {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user?.id) ? (
-                            dropdownPage.detail
-                          ) : (
-                            <Redirect to={`${uiPath ?? ''}/`} replace />
-                          )}
-                        </Route>,
-                      );
-                    }
-                  });
-                } else {
-                  // regular page route
-                  routes.push(
-                    <Route exact path={path} key={page.name}>
-                      {authorised ? (
-                        getElementDependingOnAuthStatus(loggedIn, page)
+                    <Route path={`${basePath}callback`} exact>
+                      <Callback />
+                    </Route>
+                    <Route path={`${basePath}board/:boardId`}>
+                      {boards && loggedIn ? (
+                        <BoardPrivilegeContextProvider>
+                          <Board boardDataSource={boards.boardDataSource} />
+                        </BoardPrivilegeContextProvider>
                       ) : (
                         <Redirect to={basePath} replace />
                       )}
-                    </Route>,
-                  );
-
-                  // detail page route
-                  if ('detail' in page && page.detail) {
-                    routes.push(
-                      <Route
-                        exact
-                        path={`${path}/:id`}
-                        key={`${page.name}-detail`}
-                      >
-                          {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to={basePath} replace />}
-                        </Route>,
+                    </Route>
+                    <Route
+                      path={`${basePath}file-validation/results/:uploadId`}
+                      render={(routeProps) => {
+                        return loggedIn ? (
+                          <ValidationResultsViewer {...routeProps} />
+                        ) : (
+                          <Redirect to={basePath} replace />
+                        );
+                      }}
+                    />
+                    {allPageRoutes.map((page) => {
+                      const path = convertToPath(page.name, uiPath);
+                      const routes = [];
+                      const authorised = confirmAuthorised(
+                        user,
+                        page.auth,
+                        page.removeOnAuth
                       );
-                    }
-                }
-                return routes;
-              })}
-              <Route
-                path={`/page-not-found`}
-                component={() => <PageNotFound />}
-              />
-              <Route path="*">
-                <Redirect to={`/page-not-found`} />
-              </Route>
-            </Switch>
-          </div>
-          <Footer />
-        </Router>
-      </AuthProvider>
+
+                      // dropdown routes
+                      if ("pages" in page && page.pages) {
+                        page.pages.forEach((dropdownPage: Page) => {
+                          const individualPageAuthorised = confirmAuthorised(
+                            user,
+                            dropdownPage.auth,
+                            dropdownPage.removeOnAuth
+                          );
+                          const dropdownPath = convertToPath(
+                            dropdownPage.name,
+                            uiPath
+                          );
+                          // dropdown page route
+                          routes.push(
+                            <Route
+                              exact
+                              path={dropdownPath}
+                              key={dropdownPage.name}
+                            >
+                              {authorised ? (
+                                getElementDependingOnAuthStatus(
+                                  loggedIn,
+                                  dropdownPage
+                                )
+                              ) : (
+                                <Redirect to={`${uiPath ?? ""}/`} replace />
+                              )}
+                            </Route>
+                          );
+
+                          // dropdown detail page route
+                          if (dropdownPage.detail) {
+                            routes.push(
+                              <Route
+                                exact
+                                path={`${dropdownPath}/:id`}
+                                key={`${page.name}-detail`}
+                              >
+                                {!dropdownPage.detailAuth ||
+                                (dropdownPage.detailAuth && user?.id) ? (
+                                  dropdownPage.detail
+                                ) : (
+                                  <Redirect to={`${uiPath ?? ""}/`} replace />
+                                )}
+                              </Route>
+                            );
+                          }
+                        });
+                      } else {
+                        // regular page route
+                        routes.push(
+                          <Route exact path={path} key={page.name}>
+                            {authorised ? (
+                              getElementDependingOnAuthStatus(loggedIn, page)
+                            ) : (
+                              <Redirect to={basePath} replace />
+                            )}
+                          </Route>
+                        );
+
+                        // detail page route
+                        if ("detail" in page && page.detail) {
+                          routes.push(
+                            <Route
+                              exact
+                              path={`${path}/:id`}
+                              key={`${page.name}-detail`}
+                            >
+                              {!page.detailAuth || (page.detailAuth && user) ? (
+                                page.detail
+                              ) : (
+                                <Redirect to={basePath} replace />
+                              )}
+                            </Route>
+                          );
+                        }
+                      }
+                      return routes;
+                    })}
+                    <Route
+                      path={`/page-not-found`}
+                      component={() => <PageNotFound />}
+                    />
+                    <Route path="*">
+                      <Redirect to={`/page-not-found`} />
+                    </Route>
+                  </Switch>
+                </div>
+                <Footer />
+              </Router>
+            </NextStep>
+          </NextStepProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </div>
   );

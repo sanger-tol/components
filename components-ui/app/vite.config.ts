@@ -8,6 +8,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import viteTsconfigPaths from "vite-tsconfig-paths";
 import fs from "fs";
+import path from "node:path";
 
 // Paths to the key and certificate files
 const keyPath = "/localhost.key";
@@ -27,6 +28,22 @@ export default defineConfig({
   build: {
     emptyOutDir: true,
     outDir: "build",
+  },
+  resolve: {
+    alias: [
+      // Mock Next.js navigation imports that nextstepjs might try to access
+      {
+        find: 'next/navigation',
+        replacement: path.join(process.cwd(), 'src/mocks/next-navigation.ts'),
+      },
+    ]
+  },
+  ssr: {
+    noExternal: ['nextstepjs', 'motion']
+  },
+  optimizeDeps: {
+    exclude: ["nextstepjs"],
+    include: ["react", "react-dom"]
   },
   server: {
     host: "0.0.0.0",

@@ -14,7 +14,9 @@
     "web-vitals": "^0.2.4",
     "react-markdown": "10.1.0",
     "xlsx": "0.18.5",
-    "@fortawesome/free-brands-svg-icons": "6.7.2"
+    "@fortawesome/free-brands-svg-icons": "6.7.2",
+    "nextstepjs": "^2.1.2",
+    "motion": "10.18.0"
   },
   "devDependencies": {
     "vite": "5.3.5",
@@ -27,10 +29,13 @@
     "@testing-library/jest-dom": "5.16.1",
     "lorem-ipsum": "2.0.8",
     "@uiw/react-md-editor": "4.0.7",
-    "rehype-sanitize":"6.0.0",
-    "rsuite": "5.75.0"
+    "rehype-sanitize": "6.0.0",
+    "rsuite": "5.75.0",
+    "motion": "10.18.0"
   },
-
+  "peerDependencies": {
+    "motion": "10.18.0"
+  },
   "scripts": {
     "start": "vite",
     "build": "vite build",
