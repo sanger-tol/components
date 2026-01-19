@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { TsDataSource, DetailAttribute, Widgets, env } from "../tol-ui/src";
+import { TsDataSource, DetailAttribute, Widgets, env } from "../../tol-ui/src";
 
 export function DataSource() {
   const ds1 = new TsDataSource(env.TOL_DATA);

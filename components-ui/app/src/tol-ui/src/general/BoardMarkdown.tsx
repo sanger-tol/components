@@ -105,9 +105,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
   );
 
   const MarkdownViewer = (
-    <div className="tol-markdown-viewer">
-      <Markdown contents={content} />
-    </div>
+    <Markdown contents={content} />
   );
 
   return (

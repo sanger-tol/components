@@ -5,11 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { createRoot } from "react-dom/client";
-import {
-  Home,
-  Sandbox,
-  CodeStyle
-} from "./pages";
+import reportWebVitals from "./reportWebVitals";
+import "./scss/styling.scss";
 import {
   TolApp,
   Page,
@@ -19,30 +16,39 @@ import {
   LOCAL_API_DATA_PATH,
   generateAutoDocPages,
 } from "./tol-ui/src";
-import reportWebVitals from "./reportWebVitals";
-import "./scss/styling.scss";
+import {
+  Home,
+  Sandbox,
+  MarkdownDocumentation,
+} from "./pages";
+import codeStyleGuideContent from "./docs/code-style-guide.md?raw";
+import howToDocumentContent from "./docs/how-to-document.md?raw";
 
 
-const codeStyle: Page = {
+const codeStyleGuide: Page = {
   name: "Code Style Guide",
-  element: <CodeStyle />
+  element: <MarkdownDocumentation content={codeStyleGuideContent} />
 }
 
-// dev sandbox - change element if needed
-const sandbox: Page = {
-  name: "Sandbox",
-  element: <Sandbox />,
-  hidden: true,
-};
+const howToDocument: Page = {
+  name: "How To Document",
+  element: <MarkdownDocumentation content={howToDocumentContent} />
+}
 
 const developerDropdown: Dropdown = {
   name: "Developer",
-  pages: [codeStyle],
+  pages: [codeStyleGuide, howToDocument],
 };
 
 const docsDropdown: Dropdown = {
   name: "Docs",
   pages: generateAutoDocPages(),
+};
+
+const sandbox: Page = {
+  name: "Sandbox",
+  element: <Sandbox />,
+  hidden: true,
 };
 
 const boardDataSource = new TsDataSource({

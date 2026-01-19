@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, Widgets } from "../tol-ui/src";
+import { Button, Widgets } from "../../tol-ui/src";
 import { Link } from "react-router-dom";
 
 const buttonStyle = {
