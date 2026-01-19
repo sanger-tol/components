@@ -125,7 +125,7 @@ export function TolApp(props: PTolApp) {
           }}
         >
           <NextStepProvider>
-            <NextStep steps={{}}>
+            <NextStep steps={[]}>
               <Router>
                 <Navigation
                   brand={props.brand}

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "motion": "^12.27.0",
+    "nextstepjs": "^2.2.0"
+  }
+}

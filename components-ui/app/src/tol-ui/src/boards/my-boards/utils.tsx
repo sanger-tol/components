@@ -193,7 +193,8 @@ export async function fetchTourStepSeen(stepName: string, userId: string): Promi
   if (!user) return false;
 
   // Check whether the tour is enabled and the specified step has been completed
-  return user.tour_steps_seen.tour_disabled == true || user.tour_steps_seen[stepName] == true;
+  
+  return user.tour_steps_seen?.tour_disabled === true || user.tour_steps_seen[stepName] === true;
 }
 
 /**
