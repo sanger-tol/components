@@ -96,11 +96,10 @@ export class TSDocParser {
     const propDocs = this.extractPropDocumentation(docComment);
     
     // Merge interface definitions with documentation
-    for (const interfaceProp of interfaceProps) {
-      const doc = propDocs[interfaceProp.name];
+    for (const propName in propDocs) {
       props.push({
-        ...interfaceProp,
-        description: doc?.description
+        ...interfaceProps.find(prop => prop.name == propName)!,
+        description: propDocs[propName].description
       });
     }
 
