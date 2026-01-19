@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Page, TsDocParser } from "..";
+import { Page, TsDocParseError, TsDocParser } from "..";
 import {
   AutoDocPage,
   OldTSDocParser,
@@ -28,10 +28,16 @@ function scanForAutoDocComponents(): IComponentDocumentation[] {
   for (const [path, content] of Object.entries(modules)) {
     if (typeof content === 'string' && content.includes('@autodoc')) {
       const relativePath = path.replace('../', './');
-      const documentation = TsDocParser.parseFileContent(content, relativePath);
-      
-      if (documentation) {
-        components.push(documentation);
+
+      try {
+        const documentation = TsDocParser.parseFileContent(content, relativePath);
+        if (documentation) {
+          components.push(documentation);
+        }
+      } catch (error) {
+        if (error instanceof TsDocParseError) {
+          console.error(`Could not generate autodocs for component at path ${relativePath}:\n`)
+        }
       }
     }
   }
