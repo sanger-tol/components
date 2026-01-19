@@ -19,7 +19,7 @@ const modules = import.meta.glob("../**/*.{tsx,jsx,ts,js}", {
 });
 
 /**
- * Scans all TypeScript files in the tol-ui/src directory for components tagged with @autodoc
+ * Scans all TypeScript files in the tol-ui/src directory for components tagged with @-autodoc
  * @returns Array of component documentation objects
  */
 function scanForAutoDocComponents(): IComponentDocumentation[] {
