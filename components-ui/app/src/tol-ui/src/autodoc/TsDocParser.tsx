@@ -50,7 +50,7 @@ export class TsDocParser {
     // Construct and return final documentation object
     return {
       name: this.extractComponentName(filePath),
-      filePath: filePath,
+      filePath,
       description: this.extractComponentDescription(autodocComment),
       props: this.extractPropsDocumentation(),
       examples: this.extractExamplesDocumentation(),
