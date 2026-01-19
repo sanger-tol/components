@@ -8,21 +8,11 @@ import { useState } from "react";
 import {
   TDataObjectOrNull,
   TCellRenderer,
-  Boolean,
-  Collection,
-  Datetime,
-  Float,
-  Image,
-  Integer,
-  Link,
-  LongText,
-  Relationship,
   ICustomCellRenderers,
   TsDataSource,
-  getCellRendererPropValue,
-  Icon
+  CellDisplay,
+  InlineEdit,
 } from "../..";
-import { TrafficLightStatus } from "./TrafficLightStatus";
 
 
 export interface PCell {
@@ -36,65 +26,25 @@ export interface PCell {
 }
 
 export function Cell(props: PCell) {
-  const { value, dataObject, renderer, customCellRenderers, setExpandedRows } = props;
-  const [expanded, setExpanded] = useState(false);
+  const [value, setValue] = useState(props.value);
+  const [editable, setEditable] = useState(false);
 
-  const DefaultCell = ({ value }) => <>{value ?? ""}</>;
-
-  const preDefinedElements = {
-    boolean: Boolean,
-    collection: Collection,
-    datetime: Datetime,
-    float: Float,
-    image: Image,
-    integer: Integer,
-    link: Link,
-    longText: LongText,
-    relationship: Relationship,
-    trafficLightStatus: TrafficLightStatus,
-  };
-
-  if (
-    // renderer type is not defined
-    !renderer ||
-    !renderer.type ||
-    renderer.type === "none" ||
-    // no value and not a custom renderer as custom renderers may not require a value
-    // no need to to deal with empty values with pre-defined cellRenderers
-    ((value === null || value === undefined) && (renderer.type) in preDefinedElements)
-  )
-    return <DefaultCell value={value} />;
-
-  const elements = { ...preDefinedElements, ...customCellRenderers };
-  renderer.element = elements[renderer.type] || DefaultCell;
-
-  const elementProps: Record<string, any> = { ...props };
-
-  if (renderer.props) {
-    Object.entries(renderer.props).forEach(([prop, value]) => {
-      getCellRendererPropValue(prop, value, elementProps, dataObject);
-    });
+  if (editable) {
+    return (
+      <InlineEdit
+        editable
+        text={value}
+        onSave={(newValue: string) => {
+          setValue(newValue);
+          setEditable(false);
+        }}
+      />
+    );
   }
 
   return (
-    <>
-      <renderer.element {...elementProps} />
-      {Array.isArray(value) && value.length > 1 && renderer.type === "image" &&
-        <Icon
-          icon={expanded ? "caret-up" : "caret-down"}
-          onClick={() => {
-            setExpanded(!expanded);
-            setExpandedRows((prev: string[]) => {
-              const id = elementProps.dataObject.id;
-              return prev.includes(id)
-                ? prev.filter((existingId) => existingId !== id)
-                : [...prev, id];
-            });
-          }}
-          size="1x"
-          className={"tol-table-image-cell-arrow"}
-        />
-      }
-    </>
-  );
+    <span onClick={() => setEditable(true)}>
+      <CellDisplay {...props} />
+    </span>
+  )
 }
