@@ -267,15 +267,7 @@
   }
 }
 
-.tol-inline-edit-sm {
-  @extend .tol-inline-edit;
-
-  .rs-plaintext {
-    max-width: 150px;
-  }
-}
-
-.tol-inline-edit-md {
+.tol-inline-edit {
   @extend .tol-inline-edit;
 
   .rs-plaintext {
