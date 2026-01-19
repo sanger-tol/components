@@ -17,7 +17,7 @@ export interface PInlineEdit {
 }
 
 export function InlineEdit(props: PInlineEdit) {
-  const { text, onSave, onChange, editable, size = "md" } = props;
+  const { text, editable } = props;
   const [editedText, setEditedText] = useState(text);
   const [prevText, setPrevText] = useState(text);
   const [errorMessage, setErrorMessage] = useState("");
@@ -25,7 +25,7 @@ export function InlineEdit(props: PInlineEdit) {
   const toaster = Toaster();
 
   // Handles the save action
-  const handleSave = () => {
+  const onSave = () => {
     // Account for possible undefined
     if (!editedText) return;
 
@@ -38,8 +38,15 @@ export function InlineEdit(props: PInlineEdit) {
       return;
     }
 
-    onSave?.(editedText);
+    props.onSave?.(editedText);
   };
+
+  const onChange = (newValue: any) => {
+    errorMessage && setErrorMessage("");
+    setEditedText(newValue);
+    props.onChange?.(newValue);
+  }
+
 
   const ToastMessage = (
     <Message
@@ -54,16 +61,11 @@ export function InlineEdit(props: PInlineEdit) {
   return (
     <div>
       <RSInlineEdit
-        showControls={false}
-        className={`tol-inline-edit-${size}`}
+        className="tol-inline-edit"
         value={editedText}
         disabled={!editable}
-        onChange={(newValue) => {
-          errorMessage && setErrorMessage("");
-          setEditedText(newValue);
-          onChange?.(newValue);
-        }}
-        onSave={handleSave}
+        onChange={onChange}
+        onSave={onSave}
         onEdit={() => setPrevText(editedText)} // Store title before edit
         onCancel={() => setEditedText(prevText)} // Revert to previous title
       />
