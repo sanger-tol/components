@@ -36,7 +36,7 @@ function scanForAutoDocComponents(): IComponentDocumentation[] {
         }
       } catch (error) {
         if (error instanceof TsDocParseError) {
-          console.error(`Could not generate autodocs for component at path ${relativePath}:\n`)
+          console.error(`Could not generate autodocs for component at path ${relativePath}:\n${error.message}`);
         }
       }
     }
