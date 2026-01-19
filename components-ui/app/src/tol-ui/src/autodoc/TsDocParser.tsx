@@ -97,7 +97,7 @@ export class TSDocParser {
     
     // Merge interface definitions with documentation
     for (const interfaceProp of interfaceProps) {
-      const doc = propDocs.get(interfaceProp.name);
+      const doc = propDocs[interfaceProp.name];
       props.push({
         ...interfaceProp,
         description: doc?.description
@@ -139,10 +139,10 @@ private static extractPropsFromInterface(content: string, componentName: string)
    * Extracts prop documentation from @prop tags in TSDoc comments
    * Format: @prop propName - Description
    * @param docComment - The TSDoc comment block
-   * @returns Map of prop names to their documentation
+   * @returns Record of prop names to their documentation
    */
-  private static extractPropDocumentation(docComment: string): Map<string, { description: string }> {
-    const propDocs = new Map<string, { description: string }>();
+  private static extractPropDocumentation(docComment: string): Record<string, { description: string }> {
+    const propDocs: Record<string, { description: string }> = {};
     let match;
 
     // Reset regex state
@@ -153,7 +153,7 @@ private static extractPropsFromInterface(content: string, componentName: string)
       const description = match[2]?.replace(/\s*\*\s?/gm, " ").trim();
       
       if (propName && description) {
-        propDocs.set(propName, { description });
+        propDocs[propName] =  { description };
       }
     }
 
