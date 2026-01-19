@@ -12,9 +12,9 @@ import {
 } from "..";
 
 
-// @ts-ignore - Use Vite's glob import to get all tsx/jsx files as raw strings
-const modules = import.meta.glob('../**/*.{tsx,jsx,ts,js}', { 
-  as: 'raw',
+// @ts-ignore - Use Vite"s glob import to get all tsx/jsx files as raw strings
+const modules = import.meta.glob("../**/*.{tsx,jsx,ts,js}", { 
+  as: "raw",
   eager: true 
 });
 
@@ -26,8 +26,8 @@ function scanForAutoDocComponents(): IComponentDocumentation[] {
   const components: IComponentDocumentation[] = [];
   
   for (const [path, content] of Object.entries(modules)) {
-    if (typeof content === 'string' && content.includes('@autodoc')) {
-      const relativePath = path.replace('../', './');
+    if (typeof content === "string" && content.includes("@autodoc")) {
+      const relativePath = path.replace("../", "./");
 
       try {
         const documentation = TsDocParser.parseFileContent(content, relativePath);
