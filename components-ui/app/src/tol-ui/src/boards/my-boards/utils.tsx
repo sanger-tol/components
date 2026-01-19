@@ -12,8 +12,7 @@ import {
   BOARDS,
 } from "../..";
 
-
-export async function getBoardDetails (
+export async function getBoardDetails(
   boardDataSource: TsDataSource,
   userId: string,
   setErrorMessage: any
@@ -37,11 +36,11 @@ export async function getBoardDetails (
       console.error("Error fetching boards:", error);
       setErrorMessage("Error fetching boards. Please try again later.");
     });
-};
+}
 
-export function useItemData<T,> (
+export function useItemData<T>(
   ids: string[],
-  fetchFunction: (id: string) => Promise<T> | T,
+  fetchFunction: (id: string) => Promise<T> | T
 ) {
   const [itemData, setItemData] = useState<{ [key: string]: T }>({});
   const [loading, setLoading] = useState(true);
@@ -57,7 +56,7 @@ export function useItemData<T,> (
           ids.map(async (id) => {
             const data = await fetchFunction(id);
             return { [id]: data };
-          }),
+          })
         );
 
         if (mounted) {
@@ -78,10 +77,12 @@ export function useItemData<T,> (
   }, [ids]);
 
   return { itemData, loading };
-};
+}
 
-
-export async function returnViewInfo(boardDataSource: TsDataSource, viewId: string) {
+export async function returnViewInfo(
+  boardDataSource: TsDataSource,
+  viewId: string
+) {
   return boardDataSource
     .getListPage({
       objectType: BOARDS.VIEW,
@@ -100,7 +101,10 @@ export async function returnViewInfo(boardDataSource: TsDataSource, viewId: stri
     });
 }
 
-export async function returnZoneInfo(boardDataSource: TsDataSource, zoneId: string) {
+export async function returnZoneInfo(
+  boardDataSource: TsDataSource,
+  zoneId: string
+) {
   return boardDataSource
     .getListPage({
       objectType: BOARDS.ZONE,
@@ -122,7 +126,10 @@ export async function returnZoneInfo(boardDataSource: TsDataSource, zoneId: stri
     });
 }
 
-export async function returnComponentInfo(boardDataSource: TsDataSource, componentId: string) {
+export async function returnComponentInfo(
+  boardDataSource: TsDataSource,
+  componentId: string
+) {
   return boardDataSource
     .getListPage({
       objectType: BOARDS.COMPONENT,
@@ -149,7 +156,7 @@ export async function fetchSubItemId(
   objectType: string,
   boardDataSource: TsDataSource,
   filterKey: string,
-  itemType: any,
+  itemType: any
 ) {
   return boardDataSource
     .getListPage({
@@ -159,7 +166,8 @@ export async function fetchSubItemId(
           [filterKey]: { eq: { value: id } },
         },
       },
-    }).then(async (data: TDataObjectListOrNull) => {
+    })
+    .then(async (data: TDataObjectListOrNull) => {
       return await Promise.all(
         data?.map(async (item: TDataObjectOrNull) => {
           const relationshipData = await item?.fetchRelationships?.[itemType];
@@ -169,19 +177,22 @@ export async function fetchSubItemId(
           };
         }) || []
       );
-    }
-    ).catch((error: any) => {
+    })
+    .catch((error: any) => {
       console.error(error);
       return [];
     });
-};
+}
 
 /**
  * Checks whether a dashboard tour step (by name) has yet been viewed by the user
  * @param stepName String name of the tour step to check
  * @returns Whether the value returned from the database is `true`
  */
-export async function fetchTourStepSeen(stepName: string, userId: string): Promise<boolean> {
+export async function fetchTourStepSeen(
+  stepName: string,
+  userId: string
+): Promise<boolean> {
   // Fetch user details
   const localDataSource = new TsDataSource({
     apiPath: "/api/v1/local",
@@ -192,9 +203,16 @@ export async function fetchTourStepSeen(stepName: string, userId: string): Promi
   });
   if (!user) return false;
 
-  // Check whether the tour is enabled and the specified step has been completed
+  // if tour_steps_seen is null, no tour has been started, so it must be initiated.
+  if (!user.tour_steps_seen && stepName === "initial") {
+    return false;
+  }
   
-  return user.tour_steps_seen?.tour_disabled === true || user.tour_steps_seen[stepName] === true;
+  // Check whether the tour is enabled and the specified step has been completed
+  return (
+    user.tour_steps_seen?.tour_disabled === true ||
+    user.tour_steps_seen[stepName] === true
+  );
 }
 
 /**
@@ -202,7 +220,10 @@ export async function fetchTourStepSeen(stepName: string, userId: string): Promi
  * @param stepName The name of the tour step to register as seen
  * @param userId The string id of the user to set this data on
  */
-export async function registerTourStepAsSeen(stepName: string, userId: string): Promise<void> {
+export async function registerTourStepAsSeen(
+  stepName: string,
+  userId: string
+): Promise<void> {
   // Fetch user details
   const localDataSource = new TsDataSource({
     apiPath: "/api/v1/local",
@@ -223,9 +244,9 @@ export async function registerTourStepAsSeen(stepName: string, userId: string): 
           tour_steps_seen: {
             ...user.tour_steps_seen,
             [stepName]: true,
-          }
-        }
-      }
+          },
+        },
+      },
     ],
     objectType: "user",
   });
