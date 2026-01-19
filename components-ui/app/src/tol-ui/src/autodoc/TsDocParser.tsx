@@ -78,15 +78,37 @@ export class TsDocParser {
   }
 
   /**
-   * Extracts the component description, example usages, and further remarks from the autodoc comment
+   * Extracts the component description, example usages, and further remarks from the autodoc comment.
+   * This is done by using a regular expression for each piece of information to be extracted
    */
   private static extractFromAutodocComment(autodocComment: string): {
     description?: string,
     examples: IComponentExample[],
     remarks?: string[]
   } {
+    function extract(autodocComment: string, regex: RegExp): string[] | undefined {
+      // Perform search
+      const matches = autodocComment.match(regex);
+      if (!matches) return;
+
+      // Sanitise TSDoc artefacts out of results
+      return matches.map(match => match
+        .replace(/\s*\*\s?/g, " ")
+        .trim()
+        .replace(/\s+/g, " ")
+      );
+    }
+
+    // The description is the text after @autodoc but before @props start
+    const description = extract(autodocComment, /(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*\s*@prop)/);
+
+    // The remarks begin with @remarks,
     // TODO
-    return { examples: [] };
+
+    return {
+      description,
+      examples: []
+    };
   }
 
   private static parsePropDocumentation(fileContent: string, componentName: string): IComponentProp[] {
