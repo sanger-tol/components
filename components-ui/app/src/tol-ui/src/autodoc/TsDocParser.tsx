@@ -21,9 +21,6 @@ export class TsDocParseError extends Error {
   }
 }
 
-// TODO EXPL HERE. SIMILAR TO PREVIOUS SOLUTION BUT SLIGHTLY MORE UPGRADABLE AND MORE COMMENTS. EXPLAIN HOW EXTRACTION WORKS. DO THIS IN DOC COMMENT FOR CLASS
-// Mention to Kiernan I ended up making something very similar so sorry. But it's well-commented and is indeed a bit more extendable
-
 /**
  * Parses TSDoc comments tagged with autodoc to extract component documentation.
  * From the provided file contents, it extracts the autodoc comment as well as the interface,
@@ -46,14 +43,15 @@ export class TsDocParser {
     // These strings, along with the parameters to this metho, will be the strings handled by the extraction functions below,
     // which extract the information we need to construct the final documentation object
     const autodocComment = autodocMatch[0];
+    const propsInterface = "";  // TODO
 
     // Construct and return final documentation object
     return {
       name: this.extractComponentName(filePath),
       filePath,
       description: this.extractComponentDescription(autodocComment),
-      props: this.extractPropsDocumentation(),
-      examples: this.extractExamplesDocumentation(),
+      props: this.extractPropsDocumentation(autodocComment, propsInterface),
+      examples: this.extractExamplesDocumentation(autodocComment),
       remarks: this.extractComponentRemarks(autodocComment),
     };
   }
@@ -83,12 +81,14 @@ export class TsDocParser {
     return undefined;
   }
 
-  private static extractPropsDocumentation(): IComponentProp[] {
+  private static extractPropsDocumentation(
+    autodocComment: string, propsInterface: string
+  ): IComponentProp[] {
     // TODO
     return [];
   }
 
-  private static extractExamplesDocumentation(): IComponentExample[] {
+  private static extractExamplesDocumentation(autodocComment: string): IComponentExample[] {
     // TODO
     return [];
   }
