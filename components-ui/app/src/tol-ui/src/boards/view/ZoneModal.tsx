@@ -218,12 +218,13 @@ export function ZoneModal(props: PZoneModal) {
       overflow={false}
       data-testid="zoneModal"
     >
-      <div id="step1">
+      <div>
         <h4>Add New Zone</h4>
         <p className="zone-modal-labels">
           Select Dataspace <RequiredAsterisk />
         </p>
         <SingleSelect
+          id="step1"
           block
           data={dataSourceInstanceList}
           placeholder="Dataspace"
@@ -234,11 +235,12 @@ export function ZoneModal(props: PZoneModal) {
         />
       </div>
       <br />
-      <div id="step2">
+      <div>
         <p className="zone-modal-labels">
           Select Object Type <RequiredAsterisk />
         </p>
         <SingleSelect
+          id="step2"
           block
           data={objectTypesList}
           placeholder="Object Type"
@@ -250,18 +252,22 @@ export function ZoneModal(props: PZoneModal) {
         />
       </div>
       <br />
-      <p className="zone-modal-labels">
-        Enter Title <RequiredAsterisk />
-      </p>
-      <RSForm fluid>
-        <FormTextField
-          id="zone-title"
-          onChange={(value: any) => setTitle(value)}
-          name="Zone Title"
-          placeholder="Zone Title"
-          label=""
-        />
-      </RSForm>
+      <div>
+        <p className="zone-modal-labels">
+          Enter Title <RequiredAsterisk />
+        </p>
+        <div id="step3">
+          <RSForm fluid>
+            <FormTextField
+              id="zone-title"
+              onChange={(value: any) => setTitle(value)}
+              name="Zone Title"
+              placeholder="Zone Title"
+              label=""
+            />
+          </RSForm>
+        </div>
+      </div>
       <>
         {titleError && <p className="tol-modal-error">Title cannot be blank</p>}
         {fieldError && (

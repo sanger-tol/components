@@ -19,6 +19,14 @@ import {
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { NextStepProvider, NextStep } from "nextstepjs";
 import Navigation from "../nav/Navigation";
+
+// Dynamically load NextStep CSS
+if (typeof window !== "undefined") {
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "https://cdn.jsdelivr.net/npm/nextstepjs@latest/dist/index.css";
+  document.head.appendChild(link);
+}
 import {
   Callback,
   PageNotFound,
