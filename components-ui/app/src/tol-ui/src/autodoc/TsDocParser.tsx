@@ -141,8 +141,50 @@ export class TsDocParser {
       }
     }
     
+    /**
+     * Extracts prop information from an interface into `IComponentProp`s
+     * @param interfaceText The block of text where the interface is defined. The information to extract is in here
+     * @returns An array of all of the props defined in *this* interface
+     */
     function extractPropsFromInterface(interfaceText: string): IComponentProp[] {
+      // Set up the regex patterns we'll be using
+      const propDocCommentRegex = /\*\*([\s\S]*?)\*\//g;
+      const propDefinitionRegex = /(\w+:\s*[\w<>,\s|]+)(?=\s*(;|\n))/g;
       
+      // Loop through all lines in the interface.
+      // If the line is a doc comment, store it, because the next match will be the prop
+      // that this comment is describing.
+      // Once we get to said line, we can use the gathered information to form an IComponentProp.
+      // We then reset ready to do it again. This is done until the interface is complete
+      const props: IComponentProp[] = [];
+      let currentDocComment: string | undefined;
+      for (const line of interfaceText.split("\n")) {
+        // Check for doc comment
+        const docCommentMatch = propDocCommentRegex.exec(line);
+        if (docCommentMatch) {
+          currentDocComment = docCommentMatch[1].trim();  // Store the last found comment
+        }
+
+        // Check for prop definition
+        const propDefinitionMatch = propDefinitionRegex.exec(line);
+        if (propDefinitionMatch) {
+          // TODO: There may still be an issue here if the type is a lambda
+          // Split by the colon to get the name and type
+          const [propName, propType] = propDefinitionMatch[0].split(":").map(s => s.trim());
+
+          // Construct an IComponentProp
+          // TODO: What about default value and description?
+          props.push({
+            name: propName,
+            type: propType,
+            required: !propType.includes("?"),
+            description: currentDocComment,
+            // TODO: Handle default value
+          });
+        }
+      }
+
+      return props;
     }
     
     // Search for the interface block (from "interface" to the final "}"). Checks specifically for `P{componentName}`
@@ -152,5 +194,7 @@ export class TsDocParser {
     //   throw new TsDocParseError(`Unable to find the props interface definition (P${componentName})`);
     // }
     // TODO
+    // const props: IComponentProp[] = [];
+    // return props.concat(extractPropsFromInterface(next));
   }
 }
