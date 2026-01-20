@@ -17,31 +17,33 @@ import {
   TFilterOrUndefined,
   API_METHODS,
   IRemoteTargetAndZone,
+  TCountStatType,
 } from "..";
-
 
 /**
  * @autodoc
- * 
- * RemoteCount is a component that retrieves and displays the count of items from a remote
- * `dataSource`, updating dynamically based on applied filters and selected zones.
- * 
+ * RemoteCount retrieves and displays count or stats from a remote dataSource,
+ * updating based on applied filters and selected zones.
+ *  
  * @prop id - Unique identifier for this count instance, utilized in the utility bar and various internal functions
  * @prop objectType - Specifies the type of remote object for count retrieval via the API
  * @prop dataSource - The data source used to execute API requests to gather the item count
  * @prop zone - Current filter zone object that influences the data fetched
  * @prop setZone - Function to update the zone state, affecting the filters applied below this instance
  * @prop utilityBarConfig - Optional configuration for the utility bar rendered above the count display, including additional action buttons
+ * @prop type - The statistic to display: "count", "min", "max", "avg", or "sum"
+ * @prop field - The field to apply the statistic to (required when type is not "count")
  */
-
 export interface PRemoteCount extends IRemoteTargetAndZone {
   id: string;
   utilityBarConfig?: PUtilityBar;
+  type?: TCountStatType;
+  field?: string;
 }
 
 export function RemoteCount(props: PRemoteCount) {
-  const { id, objectType, dataSource, zone, setZone, utilityBarConfig } = props;
-  const [count, setCount] = useState<number>(0);
+  const { id, objectType, dataSource, zone, setZone, utilityBarConfig, type = "count", field } = props;
+  const [value, setValue] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filter, setFilter] = useState<TFilterOrUndefined>({});
@@ -57,25 +59,65 @@ export function RemoteCount(props: PRemoteCount) {
 
   useEffectUpdate(() => {
     setLoading(true);
+    setError("");
+
+    if (type !== "count" && (!field || field.trim() === "")) {
+      setError("No field selected.");
+      setLoading(false);
+      return;
+    }
+
+    const resource =
+      type === "count" ? `${objectType}:count` : `${objectType}:stats`;
+
+    const params: any =
+      type === "count"
+        ? { filter }
+        : {
+            filter,
+            stats: type,
+            stats_fields: field!.trim(),
+          };
+
     dataSource
       .custom({
         method: API_METHODS.GET,
-        resource: `${objectType}:count`,
-        params: {
-          filter: filter,
-        },
+        resource,
+        params,
       })
       .then((res: any) => {
-        const total = res.data.meta.total;
-        setCount(total);
-        setLoading(false);
+        if (type === "count") {
+          const total = res?.data?.meta?.total;
+          if (total === undefined || total === null || Number.isNaN(Number(total))) {
+            setError("Unable to read total count.");
+            return;
+          }
+          setValue(Number(total));
+          return;
+        }
+
+        const stats = res?.data?.meta?.stats || {};
+        const statValue = stats?.[field!.trim()]?.[type];
+
+        if (
+          statValue === undefined ||
+          statValue === null ||
+          Number.isNaN(Number(statValue))
+        ) {
+          setError("No stats available for the selected field.");
+          return;
+        }
+
+        setValue(Number(statValue));
       })
       .catch((error: any) => {
+        console.error(error?.message);
+        setError(error?.message ?? "Request failed");
+      })
+      .finally(() => {
         setLoading(false);
-        setError(error.message);
-        console.error(error.message);
       });
-  }, [filter]);
+  }, [filter, type, field]);
 
   const Contents = () => {
     if (error !== "") {
@@ -84,14 +126,15 @@ export function RemoteCount(props: PRemoteCount) {
     if (loading) {
       return <Placeholder loader />;
     }
+
     return (
       <div id={id} className="tol-count">
-        <h1 className="count">{numberWithSpaces(count)}</h1>
+        <h1 className="count">{numberWithSpaces(value)}</h1>
         <div
           className={!utilityBarConfig ? "faded" : "faded count-utility-bar"}
           aria-hidden="true"
         >
-          <h1>{count}</h1>
+          <h1>{value}</h1>
         </div>
       </div>
     );
