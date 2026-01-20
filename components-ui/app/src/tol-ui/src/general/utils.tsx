@@ -140,7 +140,11 @@ export function matomoAnalytics(siteId: number) {
 }
 
 export function numberWithSpaces(num: number) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  if (!Number.isFinite(num)) return "";
+  const [whole, fraction] = num.toString().split(".");
+  const spacedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  if (!fraction) return spacedWhole;
+  return `${spacedWhole}.${fraction}`;
 }
 
 export function isInt(n: any) {
