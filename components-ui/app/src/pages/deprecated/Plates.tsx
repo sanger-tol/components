@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IWellHoverContents, Plate, TPlateData, Widgets } from "../tol-ui/src";
+import { IWellHoverContents, Plate, TPlateData, Widgets } from "../../tol-ui/src";
 
 const EXAMPLE_PLATE_DATA: TPlateData = [
   [
