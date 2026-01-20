@@ -68,3 +68,11 @@
   font-weight: bold;
   margin-right: 6px;
 }
+
+.tol-cell-editable-controls {
+  margin-top: 6px;
+
+  &:not(.floating) {
+    height: 30px;
+  }
+}

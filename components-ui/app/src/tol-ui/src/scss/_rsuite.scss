@@ -412,4 +412,15 @@
   svg {
     fill: var(--tol-primary) !important;
   }
+
+  &[aria-label="Save"] {
+    svg {
+      fill: var(--tol-success) !important;
+    }
+  }
+  &[aria-label="Cancel"] {
+    svg {
+      fill: var(--tol-danger) !important;
+    }
+  }
 }

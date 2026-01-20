@@ -47,7 +47,7 @@
   margin: 6px;
   border-radius: 0;
 
-  .tol-inline-edit {
+  .tol-editable-title {
     color: var(--tol-primary);
   }
 }
@@ -255,7 +255,7 @@
   font-size: 14px;
 }
 
-.tol-inline-edit.rs-inline-edit {
+.tol-editable-title.rs-inline-edit {
   font-weight: bolder !important;
   display: block;
   margin-right: 10px;
@@ -267,8 +267,8 @@
   }
 }
 
-.tol-inline-edit {
-  @extend .tol-inline-edit;
+.tol-editable-title {
+  @extend .tol-editable-title;
 
   .rs-plaintext {
     max-width: 250px;
