@@ -139,6 +139,9 @@ export function matomoAnalytics(siteId: number) {
   }
 }
 
+/**
+ * Format a number with spaces as thousands separators while preserving decimals.
+ */
 export function numberWithSpaces(num: number) {
   if (!Number.isFinite(num)) return "";
   const [whole, fraction] = num.toString().split(".");

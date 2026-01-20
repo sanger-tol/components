@@ -32,6 +32,8 @@ import {
  * @prop zone - Current filter zone object that influences the data fetched
  * @prop setZone - Function to update the zone state, affecting the filters applied below this instance
  * @prop utilityBarConfig - Optional configuration for the utility bar rendered above the count display, including additional action buttons
+ * @prop type - The statistic to display: "count", "min", "max", "avg", or "sum"
+ * @prop field - The field to apply the statistic to (required when type is not "count")
  */
 
 export interface PRemoteCount extends IRemoteTargetAndZone {
@@ -87,20 +89,28 @@ export function RemoteCount(props: PRemoteCount) {
       })
       .then((res: any) => {
         if (type === "count") {
-          const total = res?.data?.meta?.total ?? 0;
-          setValue(Number(total) || 0);
+          const total = res?.data?.meta?.total;
+          if (total === undefined || total === null || Number.isNaN(Number(total))) {
+            setError("Unable to read total count.");
+            return;
+          }
+          setValue(Number(total));
           return;
         }
 
         const stats = res?.data?.meta?.stats || {};
         const statValue = stats?.[field!.trim()]?.[type];
 
-        if (statValue === undefined || statValue === null) {
+        if (
+          statValue === undefined ||
+          statValue === null ||
+          Number.isNaN(Number(statValue))
+        ) {
           setError("No stats available for the selected field.");
           return;
         }
 
-        setValue(Number(statValue) || 0);
+        setValue(Number(statValue));
       })
       .catch((error: any) => {
         console.error(error?.message);
