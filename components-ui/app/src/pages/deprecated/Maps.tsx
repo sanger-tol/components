@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Map, Widgets, RemoteMap, useZone, TOL_DS } from "../tol-ui/src";
+import { Map, Widgets, RemoteMap, useZone, TOL_DS } from "../../tol-ui/src";
 
 export function Maps() {
   // fake data for BubbleMap component

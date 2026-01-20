@@ -11,7 +11,7 @@ import {
   faTruck,
   faExclamation,
 } from "@fortawesome/free-solid-svg-icons";
-import { Timeline, RemoteTimeline, Widgets, TimeLineData, TOL_DS } from "../tol-ui/src";
+import { Timeline, RemoteTimeline, Widgets, TimeLineData, TOL_DS } from "../../tol-ui/src";
 
 
 // Test Remote Timeline Data

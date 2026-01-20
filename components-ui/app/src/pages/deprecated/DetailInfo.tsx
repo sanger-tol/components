@@ -14,7 +14,7 @@ import {
   formatDate,
   Timeline,
   TOL_DS,
-} from "../tol-ui/src";
+} from "../../tol-ui/src";
 
 export function DetailInfo() {
   const { id } = useParams<{ id: string }>();

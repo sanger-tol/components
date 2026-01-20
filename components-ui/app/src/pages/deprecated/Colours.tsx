@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Widgets } from "../tol-ui/src";
+import { Widgets } from "../../tol-ui/src";
 
 const ColourBox = ({ colourClass }: { colourClass: string }) => (
   <div style={{ boxSizing: "border-box", padding: "10px" }}>

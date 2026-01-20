@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { Button, RemoteTable, Widgets, useZone, TOL_DS } from "../tol-ui/src";
+import { Button, RemoteTable, Widgets, useZone, TOL_DS } from "../../tol-ui/src";
 
 
 export function Tables() {
