@@ -88,6 +88,7 @@ export class TsDocParser {
   } {
     function extractTag(autodocComment: string, tag: string): string[] {
       // Perform search
+      // TODO Address ReDoS
       const regex = new RegExp(`(?<=@${tag}\\s*\\*\\s*)([\\s\\S]*?)(?=\\s*\\*?\\s*@|\s*\\*\\/)`);
       const matches = autodocComment.match(regex);
       if (!matches) return [];
@@ -118,6 +119,32 @@ export class TsDocParser {
   }
 
   private static parsePropDocumentation(fileContent: string, componentName: string): IComponentProp[] {
+    /**
+     * Uses regex extract an interface from a file contents string
+     * @param fileContents 
+     * @param interfaceName 
+     * @returns The whole block of the interface with this name
+     */
+    function extractInterfaceFromFile(fileContents: string, interfaceName: string): string {
+      // Make the interface name safe to use in regex
+      const escapedInterfaceName = interfaceName.replace(/[-/\\^$.*+?()[\]{}|]/g, "\\$&");
+
+      // Run regex pattern
+      const regex = new RegExp(`interface\\s+${escapedInterfaceName}\\s*{[^}]*}`, "g");
+      const matches = fileContents.match(regex);
+      
+      // Return the match if there was one
+      if (matches) {
+        return matches[0];
+      } else {
+        throw new TsDocParseError(`Unable to find the interface ${interfaceName}`);
+      }
+    }
+    
+    function extractPropsFromInterface(interfaceText: string): IComponentProp[] {
+      
+    }
+    
     // Search for the interface block (from "interface" to the final "}"). Checks specifically for `P{componentName}`
     // const propsInterfaceRegex = new RegExp(`interface\\s+P${componentName}[^{]*\\{([^}]+)\\}`, "s");
     // const propsInterfaceMatch = fileContent.match(propsInterfaceRegex);
