@@ -22,10 +22,9 @@ import {
 
 /**
  * @autodoc
- * 
- * RemoteCount is a component that retrieves and displays the count of items from a remote
- * `dataSource`, updating dynamically based on applied filters and selected zones.
- * 
+ * RemoteCount retrieves and displays count or stats from a remote dataSource,
+ * updating based on applied filters and selected zones.
+ *  
  * @prop id - Unique identifier for this count instance, utilized in the utility bar and various internal functions
  * @prop objectType - Specifies the type of remote object for count retrieval via the API
  * @prop dataSource - The data source used to execute API requests to gather the item count
@@ -35,7 +34,6 @@ import {
  * @prop type - The statistic to display: "count", "min", "max", "avg", or "sum"
  * @prop field - The field to apply the statistic to (required when type is not "count")
  */
-
 export interface PRemoteCount extends IRemoteTargetAndZone {
   id: string;
   utilityBarConfig?: PUtilityBar;

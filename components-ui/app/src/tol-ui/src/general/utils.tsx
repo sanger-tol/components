@@ -141,6 +141,8 @@ export function matomoAnalytics(siteId: number) {
 
 /**
  * Format a number with spaces as thousands separators while preserving decimals.
+ * @param num The number to format.
+ * @returns The formatted string.
  */
 export function numberWithSpaces(num: number) {
   if (!Number.isFinite(num)) return "";
