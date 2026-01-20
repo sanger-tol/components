@@ -198,7 +198,7 @@ export class TsDocParser {
     // the current interface each iteration. Each iteration is a "deeper" interface, starting
     // with the main props interface "P{COMPONENT NAME}" then following the chain of interfaces it extends from
     // TODO: There's likely a cleaner way to do this
-    let currentInterface: string | null = propsInterfaceMatch[0];
+    let currentInterface = propsInterfaceMatch[0];
     let propsDocumentation: IComponentProp[] = [];
     do {
       // Add the documentation for the props in the current interface to the list
@@ -207,12 +207,14 @@ export class TsDocParser {
       // Check whether there's a deeper interface. If there is, get its name
       const deeperInterfaceMatch = currentInterface.match(/extends\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
 
-      // Set the next interface to check as the deeper interface.
-      // If there was not a deeper interface, set this to `null` to terminate the loop
-      currentInterface = deeperInterfaceMatch ? deeperInterfaceMatch[0] : null;
-    } while (currentInterface != null);
+      // If there is not a deeper interface, we're done
+      if (!deeperInterfaceMatch) return propsDocumentation;
 
-    // We've now built up the complete list, so return it
-    return propsDocumentation;
+      // Else there is a deeper interface to explore
+      currentInterface = deeperInterfaceMatch[0];
+      
+      // TODO NEXT TIME: Store the current file, then get the path here, open it, extract the interface, then continue
+      // Then/right now refactor to not use do-while because it's not the easiest to follow
+    } while (true);
   }
 }
