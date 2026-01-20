@@ -173,7 +173,6 @@ export class TsDocParser {
           const [propName, propType] = propDefinitionMatch[0].split(":").map(s => s.trim());
 
           // Construct an IComponentProp
-          // TODO: What about default value and description?
           props.push({
             name: propName,
             type: propType,
@@ -187,14 +186,33 @@ export class TsDocParser {
       return props;
     }
     
-    // Search for the interface block (from "interface" to the final "}"). Checks specifically for `P{componentName}`
-    // const propsInterfaceRegex = new RegExp(`interface\\s+P${componentName}[^{]*\\{([^}]+)\\}`, "s");
-    // const propsInterfaceMatch = fileContent.match(propsInterfaceRegex);
-    // if (!propsInterfaceMatch) {
-    //   throw new TsDocParseError(`Unable to find the props interface definition (P${componentName})`);
-    // }
-    // TODO
-    // const props: IComponentProp[] = [];
-    // return props.concat(extractPropsFromInterface(next));
+    // Search for the interface block (from "interface" to the final "}").
+    // Checks specifically for `P{componentName}` in the original file
+    const propsInterfaceRegex = new RegExp(`interface\\s+P${componentName}[^{]*\\{([^}]+)\\}`, "s");
+    const propsInterfaceMatch = fileContent.match(propsInterfaceRegex);
+    if (!propsInterfaceMatch) {
+      throw new TsDocParseError(`Unable to find the props interface definition (P${componentName})`);
+    }
+
+    // We have an array of propsDocumentation, which gets amended to with the documentation for
+    // the current interface each iteration. Each iteration is a "deeper" interface, starting
+    // with the main props interface "P{COMPONENT NAME}" then following the chain of interfaces it extends from
+    // TODO: There's likely a cleaner way to do this
+    let currentInterface: string | null = propsInterfaceMatch[0];
+    let propsDocumentation: IComponentProp[] = [];
+    do {
+      // Add the documentation for the props in the current interface to the list
+      propsDocumentation = propsDocumentation.concat(extractPropsFromInterface(currentInterface));
+
+      // Check whether there's a deeper interface. If there is, get its name
+      const deeperInterfaceMatch = currentInterface.match(/extends\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
+
+      // Set the next interface to check as the deeper interface.
+      // If there was not a deeper interface, set this to `null` to terminate the loop
+      currentInterface = deeperInterfaceMatch ? deeperInterfaceMatch[0] : null;
+    } while (currentInterface != null);
+
+    // We've now built up the complete list, so return it
+    return propsDocumentation;
   }
 }
