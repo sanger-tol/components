@@ -8,6 +8,7 @@ import { HistogramGrouping } from '..';
 
 
 export type TChart = 'bar' | 'line' | 'scatter';
+export type TCountStatType = "count" | "min" | "max" | "avg" | "sum";
 
 export interface IChartConfig {
   breakDownBy: string,
