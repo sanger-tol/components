@@ -121,7 +121,7 @@ export class TsDocParser {
      */
     function extractTag(autodocComment: string, tag: string): string[] {
       // Perform search
-      const regex = new RegExp(`(?<=@${tag}\\s*\\*\\s*)([\\s\\S]*?)(?=\\s*\\*?\\s*@|\s*\\*\\/)`);
+      const regex = new RegExp(`(?<=@${tag}\\s*\\*\\s*)([\\s\\S]*?)(?=\\s*\\*?\\s*@|\s*\\*\\/)`, "g");
       const matches = autodocComment.match(regex);
       if (!matches) return [];
 
