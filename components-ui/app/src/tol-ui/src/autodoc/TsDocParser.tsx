@@ -40,13 +40,19 @@ export class TsDocParser {
    * @returns Component documentation for this file, or `null` if no autodoc tag found
    */
   public static parseFileContent(fileContent: string, filePath: string): IComponentDocumentation | null {
-    // Use a RegEx pattern on the whole file contents to see whether auto-documentation is being used.
-    // This searches for the whole TSDoc block comment, containing "@autodoc"
-    const autodocMatch = fileContent.match(/\/\*\*[\s\S]*?@autodoc[\s\S]*?\*\//g);
+    // Use a regular expression on the whole file contents to get all TSDoc comments
+    const autodocMatch = fileContent.match(/\/\*\*\s*\n?([\s\S]*?\*\/)/g);
     if (!autodocMatch) return null;
 
+    // We're not just looking at TSDoc comments, we're looking for autodoc comments,
+    // which are TSDoc comments containing @autodoc
+    const autodocComments = autodocMatch.filter(comment => /@autodoc/.test(comment));
+    if (autodocComments.length < 1) return null;
+
+    // Accept only the first match
+    const autodocComment = autodocComments[0];
+
     // Extract the documentation information contained in the autodoc comment
-    const autodocComment = autodocMatch[0];
     const { description, examples, remarks } = this.extractFromAutodocComment(autodocComment);
 
     // Derive the name of the component to be documented from its file path
