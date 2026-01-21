@@ -180,7 +180,7 @@ export class TsDocParser {
     if (matches) {
       return matches[0];
     } else {
-      throw new TsDocParseError(`Unable to find the interface ${interfaceName}`);
+      throw new TsDocParseError(`Unable to find the interface ${escapedInterfaceName}`);
     }
   }
 
