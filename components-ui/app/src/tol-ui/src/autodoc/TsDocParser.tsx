@@ -8,7 +8,7 @@ import {
   IComponentDocumentation, 
   IComponentExample, 
   IComponentProp
- } from "..";
+} from "..";
 
 /**
  * Error thrown by methods of {@link TsDocParser}
@@ -20,6 +20,12 @@ export class TsDocParseError extends Error {
     Object.setPrototypeOf(this, TsDocParseError.prototype);
   }
 }
+
+// @ts-ignore - Use Vite's glob import to get all tsx/jsx files as raw strings
+const modules = import.meta.glob("../**/*.{tsx,jsx,ts,js}", { 
+  as: "raw",
+  eager: true 
+});
 
 /**
  * Parses TSDoc comments tagged with autodoc to extract component documentation.
@@ -143,9 +149,16 @@ export class TsDocParser {
     // If there is, get its name. If there isn't, we're done
     const deeperInterfaceMatch = interfaceText.match(/extends\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
     if (!deeperInterfaceMatch) return propDocs;
+    const deeperInterfaceName = deeperInterfaceMatch[0];
 
-    // Now we know there's a deeper interface, find the path of the file it resides in
-    // TODO: How on earth do I do that? There are ..s and everything!
+    // Now we know there's a deeper interface, get the contents of the file it's defined in
+    const deeperInterfaceFileContents = this.getTheContentsOfTheFileAnInterfaceIsDefinedIn(deeperInterfaceName);
+    if (!deeperInterfaceFileContents) {
+      throw new TsDocParseError(`Unable to find a file containing the interface ${deeperInterfaceName}`);
+    }
+
+    // Resursively search this file too
+    return propDocs.concat(this.parsePropDocumentation(deeperInterfaceFileContents, deeperInterfaceName));
   }
 
   /**
@@ -215,5 +228,22 @@ export class TsDocParser {
     }
 
     return props;
+  }
+
+  /**
+   * Helper function for parsePropDocumentation.
+   * Uses black magic to... well... getTheContentsOfTheFileAnInterfaceIsDefinedIn
+   * @param interfaceName The interface to look for
+   * @returns The file contents as a string, or null if no file was found with a definition of an interface with this name
+   */
+  // TODO: Revisit this method!
+  private static getTheContentsOfTheFileAnInterfaceIsDefinedIn(interfaceName: string): string | null {
+    for (const fileContent of Object.values(modules)) {
+      if ((fileContent as string).includes(`export interface ${interfaceName}`)) {
+        return fileContent as string;
+      }
+    }
+
+    return null;
   }
 }
