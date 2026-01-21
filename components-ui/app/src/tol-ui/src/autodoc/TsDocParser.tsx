@@ -214,10 +214,6 @@ export class TsDocParser {
    * @returns An array of all of the props defined in *this* interface
    */
   private static extractPropsFromInterface(interfaceText: string): IComponentProp[] {
-    // Set up the regex patterns we'll be using
-    const propDocCommentRegex = /\*\*([\s\S]*?)\*\//g;
-    const propDefinitionRegex = /(\w+:\s*[\w<>,\s|]+)(?=\s*(;|\n))/g;
-    
     // Loop through all lines in the interface.
     // If the line is a doc comment, store it, because the next match will be the prop
     // that this comment is describing.
@@ -227,13 +223,14 @@ export class TsDocParser {
     let currentDocComment: string | undefined;
     for (const line of interfaceText.split("\n")) {
       // Check for doc comment
-      const docCommentMatch = propDocCommentRegex.exec(line);
+      const docCommentMatch = line.match(/\*\*([\s\S]*?)\*\//g);
       if (docCommentMatch) {
         currentDocComment = docCommentMatch[1].trim();  // Store the last found comment
+        throw new TsDocParseError(currentDocComment);
       }
 
       // Check for prop definition
-      const propDefinitionMatch = propDefinitionRegex.exec(line);
+      const propDefinitionMatch = line.match(/(\w+:\s*[\w<>,\s|]+)(?=\s*(;|\n))/g);
       if (propDefinitionMatch) {
         // TODO: There may still be an issue here if the type is a lambda
         // Split by the colon to get the name and type
