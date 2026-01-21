@@ -255,11 +255,10 @@ export class TsDocParser {
 
   /**
    * Helper function for parsePropDocumentation.
-   * Uses black magic to... well... getTheContentsOfTheFileAnInterfaceIsDefinedIn
+   * Uses Vite's glob import to check the file contents of every file in the codebase to see if it contains the interface
    * @param interfaceName The interface to look for
    * @returns The file contents as a string, or null if no file was found with a definition of an interface with this name
    */
-  // TODO: Revisit this method!
   private static getTheContentsOfTheFileAnInterfaceIsDefinedIn(interfaceName: string): string | null {
     for (const fileContent of Object.values(modules)) {
       if ((fileContent as string).includes(`export interface ${interfaceName}`)) {
