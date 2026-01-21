@@ -28,7 +28,8 @@ import {
   UtilityBar,
   TFilterOrUndefined,
   API_METHODS,
-  IRemoteTargetAndZone
+  IRemoteTargetAndZone,
+  IHeight
 } from "..";
 
 
@@ -38,33 +39,44 @@ import {
  * RemoteSunburst is a sunburst chart component that visualises hierarchical data using segments.
  * It retrieves its data from a remote API via the provided `dataSource`,
  * supporting dynamic filter generation based on user interactions with the chart slices.
- * 
- * @prop id - Unique identifier for this chart instance; used as the key for persisted configuration
- * @prop objectType - The object type requested when fetching aggregation data from the API
- * @prop dataSource - Data source for executing API requests to fetch the chart's data
- * 
- * @prop sliceBy - Array of fields by which the data segments in the chart are sliced
- * 
- * @prop noLabel - If true, suppresses labels on the segments of the sunburst
- * @prop noMini - If true, disables the mini sunburst view for nested data exploration
- * @prop noDownload - If true, hides the download button for exporting chart data (as an image)
- * @prop forceUpdate - Optional flag to trigger a re-fetch of the chart data from the server upon changes
- * 
- * @prop utilityBarConfig - Configuration for the utility bar rendered above the chart
- * @prop contents - Optinal custom overlay or content displayed while loading or handling errors
- * @prop height - Height of the chart container, expressed as an inline CSS style (e.g. "100%")
  */
 
-interface PRemoteSunburst extends IRemoteTargetAndZone {
+interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
+  /**
+   * Unique identifier for this chart instance; used as the key for persisted configuration
+   */
   id: string;
+  /**
+   * Array of fields by which the data segments in the chart are sliced
+   */
   sliceBy: string[];
-  height?: any;
-  legendPosition?: string;
+  /**
+   * Describes where to position the legend
+   */
+  legendPosition?: "top" | "left" | "right" | "bottom";
+  /**
+   * If true, suppresses labels on the segments of the sunburst
+   */
   noLabel?: boolean;
+  /**
+   * If true, disables the mini sunburst view for nested data exploration
+   */
   noMini?: boolean;
+  /**
+   * If true, hides the download button for exporting chart data (as an image)
+   */
   noDownload?: boolean;
+  /**
+   * Optional flag to trigger a re-fetch of the chart data from the server upon changes
+   */
   forceUpdate?: boolean;
+  /**
+   * Configuration for the utility bar rendered above the chart
+   */
   utilityBarConfig?: PUtilityBar;
+  /**
+   * Optional custom overlay or content displayed while loading or handling errors
+   */
   contents?: ReactNode;
 }
 
