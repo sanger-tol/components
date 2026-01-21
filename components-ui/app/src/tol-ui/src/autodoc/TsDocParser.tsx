@@ -121,7 +121,6 @@ export class TsDocParser {
      */
     function extractTag(autodocComment: string, tag: string): string[] {
       // Perform search
-      // TODO Address ReDoS
       const regex = new RegExp(`(?<=@${tag}\\s*\\*\\s*)([\\s\\S]*?)(?=\\s*\\*?\\s*@|\s*\\*\\/)`);
       const matches = autodocComment.match(regex);
       if (!matches) return [];
@@ -137,7 +136,6 @@ export class TsDocParser {
     // The description is the text after @autodoc
     const description = extractTag(autodocComment, "autodoc")[0] || undefined;
 
-    // TODO: This only parses code for examples. Allow for titles too
     const examples: IComponentExample[] = extractTag(autodocComment, "example").map(exampleCode => ({
       code: exampleCode
     }));
@@ -259,7 +257,6 @@ export class TsDocParser {
         type: propType,
         required: propIsRequired,
         description: propDocComment,
-        // TODO: Handle default value
       });
     }
 
