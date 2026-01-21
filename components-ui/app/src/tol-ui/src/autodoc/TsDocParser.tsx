@@ -220,7 +220,8 @@ export class TsDocParser {
     const propDefinitions = interfaceText.match(/(\w+\??:\s*[^;]+?)(?=\s*(;|\n))/g);
     const propDocComments = interfaceText.match(/\*\*([\s\S]*?)\*\//g);
     if (!propDefinitions || !propDocComments) {
-      throw new TsDocParseError(`No props found in interface ${interfaceName}`);
+      // This is not an error because you can have interfaces like IRemoteTargetAndZone that are only there to extend off of others
+      return [];
     }
 
     // They should be one to one
