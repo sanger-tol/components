@@ -173,7 +173,10 @@ export class TsDocParser {
     const escapedInterfaceName = interfaceName.replace(/[-/\\^$.*+?()[\]{}|]/g, "\\$&");
 
     // Run regex pattern
-    const regex = new RegExp(`interface\\s+${escapedInterfaceName}\\s*{[^}]*}`, "g");
+    const regex = new RegExp(
+      `interface\\s+${escapedInterfaceName}(?:\\s+extends\\s+([a-zA-Z0-9_]+(?:\\s*,\\s*[a-zA-Z0-9_]+)*))?\\s*{[^}]*}`,
+      "g"
+    );
     const matches = fileContent.match(regex);
     
     // Return the match if there was one
