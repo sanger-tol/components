@@ -224,7 +224,7 @@ export class TsDocParser {
       return [];
     }
 
-    // They should be one to one
+    // The following loop depends on a specific index in both arrays referring to the same prop
     if (propDefinitions.length != propDocComments.length) {
       throw new TsDocParseError(
         `The number of props and the number of documentation comments in the interface ${interfaceName} do not match`
