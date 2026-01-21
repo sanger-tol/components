@@ -22,7 +22,8 @@ import {
   PUtilityBar,
   IRemoteTargetAndZone,
   TFilterOrUndefined,
-  API_METHODS
+  API_METHODS,
+  IHeight
 } from "..";
 
 
@@ -34,7 +35,7 @@ import {
  * based on changes to filters and zone settings and can be configured to display cumulative or stacked data representations.
  */
 
-interface PRemoteBarChart extends IRemoteTargetAndZone {
+interface PRemoteBarChart extends IRemoteTargetAndZone, IHeight {
   /**
    * Unique identifier for this chart instance; used as the key for persisted configuration
    */
@@ -55,10 +56,6 @@ interface PRemoteBarChart extends IRemoteTargetAndZone {
    * Optional flag to display dates in a shortened format
    */
   shortDate?: boolean;
-  /**
-   * Height of the chart container, expressed as an inline CSS style (e.g. "100%")
-   */
-  height?: any;
   /**
    * Optional flag to present bars in a stacked format
    */
