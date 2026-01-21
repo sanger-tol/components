@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { Page, TsDocParseError, TsDocParser } from "..";
 import {
   AutoDocPage,
-  OldTSDocParser,
   IComponentDocumentation,
 } from "..";
 
