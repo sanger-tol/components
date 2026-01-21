@@ -121,7 +121,13 @@ export interface IRemoteTarget {
 }
 
 export interface IZoneControl {
+  /**
+   * The current filter zone
+   */
   zone: IZone;
+  /**
+   * Setter used to update the zone when configuration changes reset downstream filters 
+   */
   setZone: (zone: IZone) => void;
 }
 
