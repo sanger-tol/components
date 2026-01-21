@@ -40,17 +40,10 @@ export class TsDocParser {
    * @returns Component documentation for this file, or `null` if no autodoc tag found
    */
   public static parseFileContent(fileContent: string, filePath: string): IComponentDocumentation | null {
-    // Use a regular expression on the whole file contents to get all TSDoc comments
-    const autodocMatch = fileContent.match(/\/\*\*\s*\n?([\s\S]*?\*\/)/g);
-    if (!autodocMatch) return null;
-
-    // We're not just looking at TSDoc comments, we're looking for autodoc comments,
-    // which are TSDoc comments containing @autodoc
-    const autodocComments = autodocMatch.filter(comment => /@autodoc/.test(comment));
-    if (autodocComments.length < 1) return null;
-
-    // Accept only the first match
-    const autodocComment = autodocComments[0];
+    // Check whether this file has an autodoc comment.
+    // If it does, get the comment. If it does not, there is no parsing to do
+    const autodocComment = this.extractAutodocCommentFromFileContent(fileContent);
+    if (!autodocComment) return null;
 
     // Extract the documentation information contained in the autodoc comment
     const { description, examples, remarks } = this.extractFromAutodocComment(autodocComment);
@@ -70,6 +63,27 @@ export class TsDocParser {
       examples,
       remarks,
     };
+  }
+
+  /**
+   * Extracts the autodoc comment from a file
+   * @param fileContent The text contents of the file potentially containing the autodoc comment
+   * @returns The autodoc comment as a string, or `null` if one was not found
+   */
+  private static extractAutodocCommentFromFileContent(fileContent: string): string | null {
+    // Use a regular expression on the whole file contents to get all TSDoc comments
+    const autodocMatch = fileContent.match(/\/\*\*\s*\n?([\s\S]*?\*\/)/g);
+    if (!autodocMatch) return null;
+
+    // We're not just looking at TSDoc comments, we're looking for autodoc comments,
+    // which are TSDoc comments containing @autodoc
+    const autodocComments = autodocMatch.filter(comment => /@autodoc/.test(comment));
+    if (autodocComments.length < 1) return null;
+
+    // Accept only the first match
+    const autodocComment = autodocComments[0];
+
+    return autodocComment;
   }
 
   /**
