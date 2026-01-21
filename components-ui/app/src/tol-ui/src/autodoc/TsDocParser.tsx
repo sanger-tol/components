@@ -87,10 +87,11 @@ export class TsDocParser {
     remarks?: string[]
   } {
     /**
-     * Extracts the text under a paricular tag in the autodoc comment
+     * Extracts the text under a paricular tag in the autodoc comment.
+     * Works only for tags whose text is under them
      * @param autodocComment The whole autodoc comment text
      * @param tag The TSDoc tag in the form of an @ followed by a tag name
-     * @returns The text found after the tag
+     * @returns The text found under the tag
      */
     function extractTag(autodocComment: string, tag: string): string[] {
       // Perform search
