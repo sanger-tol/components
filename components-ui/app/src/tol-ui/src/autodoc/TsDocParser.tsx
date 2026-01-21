@@ -51,7 +51,7 @@ export class TsDocParser {
     // Derive the name of the component to be documented from its file path
     const componentName = this.extractComponentName(filePath);
 
-    // Crawl through interfaces to finalize documentation for every immediate and inherited prop
+    // Crawl through interfaces to generate documentation for every immediate and inherited prop
     const propDocumentation = this.parsePropDocumentation(fileContent, "P" + componentName);
 
     // Construct and return final documentation object
