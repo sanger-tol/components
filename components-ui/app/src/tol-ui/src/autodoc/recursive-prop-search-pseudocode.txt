@@ -1,0 +1,20 @@
+getPropsDocs(fileContent, interfaceName) -> IComponentProp[]:
+    # Get interface
+    interfaceText = regexSearch(/sfsdkfjhl${interfaceName}sdlfjdfhsl/, fileContent)
+    
+    # Extract props from interface
+    propDocs = extractPropsFromInterface(interfaceText)
+
+    # Check if there's a deeper interface
+    deeperInterface = regexSearch(/extends asdkajsd/, interfaceText)
+    if not deeperInterface:
+        return propDocs
+    
+    # If there is one, find where it is
+    path = regexSearch(/IMPORT deeperInterface/, fileContent)
+
+    # Get file content
+    nextFileContent = readFile(path)
+
+    # Recurse to that too
+    return propDocs.concat(getPropsDocs(nextFileContent, deeperInterface))
