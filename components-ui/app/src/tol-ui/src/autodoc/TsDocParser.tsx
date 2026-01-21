@@ -234,15 +234,26 @@ export class TsDocParser {
     // The prop definition at an index should correspond to the prop doc comment at the same index
     const props: IComponentProp[] = [];
     for (const [index, propDefinition] of propDefinitions.entries()) {
-      // Split the prop defintion by the colon to get the name and type
-      // TODO: There may still be an issue here if the type is a lambda
-      const [propName, propType] = propDefinition.split(":").map(s => s.trim());
+      // The documentation comment associated with this prop should be at the same index in its array
+      const propDocComment = propDocComments[index];
+
+      // Split the prop definition by the *first* colon to get the name and type
+      const [unsanitisedPropName, ...rest] = propDefinition.split(":").map(s => s.trim());
+
+      // The prop name may have a "?", which is type information, so remove it
+      const propName = unsanitisedPropName.replace("?", "");
+
+      // While we're at it, this same "?" tells us whether or not the prop is required
+      const propIsRequired = !unsanitisedPropName.includes("?");
+
+      // The prop type is everything after the colon, so re-combine `rest` into a single string
+      const propType = rest.join("");
 
       props.push({
         name: propName,
         type: propType,
-        required: !propType.includes("?"),
-        description: propDocComments[index],
+        required: propIsRequired,
+        description: propDocComment,
         // TODO: Handle default value
       });
     }
