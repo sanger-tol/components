@@ -236,10 +236,11 @@ export class TsDocParser {
     const props: IComponentProp[] = [];
     for (const [index, propDefinition] of propDefinitions.entries()) {
       // The documentation comment associated with this prop should be at the same index in its array.
-      // The `replace`s remove the artefacts from the TSDoc comment (so it is readable as a description)
+      // The transformations remove the artefacts from the TSDoc comment (so it is readable as a description)
       const propDocComment = propDocComments[index]
-        .replace(/^\s*\*\s*\*\s*/m, "")  // Remove leading "** * "
-        .replace(/\s*\*\/\s*$/, "");  // Remove trailing " */";
+        .slice(5, -3)
+        .trim()
+        .slice(2);
 
       // Split the prop definition by the *first* colon to get the name and type
       const [unsanitisedPropName, ...rest] = propDefinition.split(":");
