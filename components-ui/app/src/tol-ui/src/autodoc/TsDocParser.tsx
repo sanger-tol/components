@@ -86,6 +86,12 @@ export class TsDocParser {
     examples: IComponentExample[],
     remarks?: string[]
   } {
+    /**
+     * Extracts the text under a paricular tag in the autodoc comment
+     * @param autodocComment The whole autodoc comment text
+     * @param tag The TSDoc tag in the form of an @ followed by a tag name
+     * @returns The text found after the tag
+     */
     function extractTag(autodocComment: string, tag: string): string[] {
       // Perform search
       // TODO Address ReDoS
