@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Sunburst, Widgets } from "../tol-ui/src";
+import { Sunburst, Widgets } from "../../tol-ui/src";
 import { useState } from "react";
 
 const datasets = {

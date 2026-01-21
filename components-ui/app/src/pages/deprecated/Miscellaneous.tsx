@@ -11,7 +11,7 @@ import {
   ObjectDetail,
   IconTooltip,
   createTextGeneratorFactory
-} from "../tol-ui/src";
+} from "../../tol-ui/src";
 import { useState } from "react";
 
 const jsonData = {

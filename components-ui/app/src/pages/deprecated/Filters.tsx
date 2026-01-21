@@ -17,7 +17,7 @@ import {
   resetZone,
   useTranslator,
   TOL_DS,
-} from "../tol-ui/src";
+} from "../../tol-ui/src";
 
 export function Filters() {
   const speciesZone = useZone({

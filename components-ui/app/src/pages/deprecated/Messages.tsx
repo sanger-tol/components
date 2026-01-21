@@ -14,7 +14,7 @@ import {
   Toaster,
   StaticMessage,
   PopUpMessage,
-} from "../tol-ui/src";
+} from "../../tol-ui/src";
 import { Slider } from "rsuite";
 
 export function Messages() {
