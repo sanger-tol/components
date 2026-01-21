@@ -47,7 +47,7 @@ export class TsDocParser {
     const componentName = this.extractComponentName(filePath);
 
     // Crawl through interfaces to finalize documentation for every immediate and inherited prop
-    const propDocumentation = this.parsePropDocumentation(fileContent, componentName);
+    const propDocumentation = this.parsePropDocumentation(fileContent, "P" + componentName);
 
     // Construct and return final documentation object
     return {
@@ -126,19 +126,42 @@ export class TsDocParser {
   }
 
   /**
+   * Recursive method that extracts documentation about props from a specific interface in a file.
+   * Starting with the props interface in the same file as the component, it crawls through deeper extended interfaces,
+   * building up the full array of prop documentation
+   * @param fileContent The content of the file to search on this call
+   * @param interfaceName The name of the interface to extract prop documentation from
+   */
+  private static parsePropDocumentation(fileContent: string, interfaceName: string): IComponentProp[] {
+    // Extract the interface from the file
+    const interfaceText = this.extractInterfaceFromFile(fileContent, interfaceName);
+    
+    // Extract the documentation for the props in this interface
+    const propDocs = this.extractPropsFromInterface(interfaceText);
+
+    // Check if there's a deeper interface.
+    // If there is, get its name. If there isn't, we're done
+    const deeperInterfaceMatch = interfaceText.match(/extends\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
+    if (!deeperInterfaceMatch) return propDocs;
+
+    // Now we know there's a deeper interface, find the path of the file it resides in
+    // TODO: How on earth do I do that? There are ..s and everything!
+  }
+
+  /**
    * Helper method for parsePropDocumentation.
    * Uses regex extract an interface from a file contents string
-   * @param fileContents 
+   * @param fileContent 
    * @param interfaceName 
    * @returns The whole block of the interface with this name
    */
-  private static extractInterfaceFromFile(fileContents: string, interfaceName: string): string {
+  private static extractInterfaceFromFile(fileContent: string, interfaceName: string): string {
     // Make the interface name safe to use in regex
     const escapedInterfaceName = interfaceName.replace(/[-/\\^$.*+?()[\]{}|]/g, "\\$&");
 
     // Run regex pattern
     const regex = new RegExp(`interface\\s+${escapedInterfaceName}\\s*{[^}]*}`, "g");
-    const matches = fileContents.match(regex);
+    const matches = fileContent.match(regex);
     
     // Return the match if there was one
     if (matches) {
@@ -192,38 +215,5 @@ export class TsDocParser {
     }
 
     return props;
-  }
-
-  private static parsePropDocumentation(fileContent: string, componentName: string): IComponentProp[] {    
-    // Search for the interface block (from "interface" to the final "}").
-    // Checks specifically for `P{componentName}` in the original file
-    const propsInterfaceRegex = new RegExp(`interface\\s+P${componentName}[^{]*\\{([^}]+)\\}`, "s");
-    const propsInterfaceMatch = fileContent.match(propsInterfaceRegex);
-    if (!propsInterfaceMatch) {
-      throw new TsDocParseError(`Unable to find the props interface definition (P${componentName})`);
-    }
-
-    // We have an array of propsDocumentation, which gets amended to with the documentation for
-    // the current interface each iteration. Each iteration is a "deeper" interface, starting
-    // with the main props interface "P{COMPONENT NAME}" then following the chain of interfaces it extends from
-    // TODO: There's likely a cleaner way to do this
-    let currentInterface = propsInterfaceMatch[0];
-    let propsDocumentation: IComponentProp[] = [];
-    do {
-      // Add the documentation for the props in the current interface to the list
-      propsDocumentation = propsDocumentation.concat(this.extractPropsFromInterface(currentInterface));
-
-      // Check whether there's a deeper interface. If there is, get its name
-      const deeperInterfaceMatch = currentInterface.match(/extends\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
-
-      // If there is not a deeper interface, we're done
-      if (!deeperInterfaceMatch) return propsDocumentation;
-
-      // Else there is a deeper interface to explore
-      currentInterface = deeperInterfaceMatch[0];
-      
-      // TODO NEXT TIME: Store the current file, then get the path here, open it, extract the interface, then continue
-      // Then/right now refactor to not use do-while because it's not the easiest to follow
-    } while (true);
   }
 }
