@@ -235,8 +235,11 @@ export class TsDocParser {
     // The prop definition at an index should correspond to the prop doc comment at the same index
     const props: IComponentProp[] = [];
     for (const [index, propDefinition] of propDefinitions.entries()) {
-      // The documentation comment associated with this prop should be at the same index in its array
-      const propDocComment = propDocComments[index];
+      // The documentation comment associated with this prop should be at the same index in its array.
+      // The `replace`s remove the artefacts from the TSDoc comment (so it is readable as a description)
+      const propDocComment = propDocComments[index]
+        .replace(/^\s*\*\s*\*\s*/m, "")  // Remove leading "** * "
+        .replace(/\s*\*\/\s*$/, "");  // Remove trailing " */";
 
       // Split the prop definition by the *first* colon to get the name and type
       const [unsanitisedPropName, ...rest] = propDefinition.split(":");
