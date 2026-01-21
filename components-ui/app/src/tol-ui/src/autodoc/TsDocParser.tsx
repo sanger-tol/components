@@ -163,7 +163,7 @@ export class TsDocParser {
     const interfaceText = this.extractInterfaceFromFile(fileContent, interfaceName);
     
     // Extract the documentation for the props in this interface
-    const propDocs = this.extractPropsFromInterface(interfaceText);
+    const propDocs = this.extractPropsFromInterface(interfaceText, interfaceName);
 
     // Check if there's a deeper interface.
     // If there is, get its name. If there isn't, we're done
@@ -211,39 +211,40 @@ export class TsDocParser {
    * Helper method for parsePropDocumentation.
    * Extracts prop information from an interface into `IComponentProp`s
    * @param interfaceText The block of text where the interface is defined. The information to extract is in here
+   * @param interfaceName The name of the interface. Used in errors
    * @returns An array of all of the props defined in *this* interface
    */
-  private static extractPropsFromInterface(interfaceText: string): IComponentProp[] {
-    // Loop through all lines in the interface.
-    // If the line is a doc comment, store it, because the next match will be the prop
-    // that this comment is describing.
-    // Once we get to said line, we can use the gathered information to form an IComponentProp.
-    // We then reset ready to do it again. This is done until the interface is complete
+  private static extractPropsFromInterface(interfaceText: string, interfaceName: string): IComponentProp[] {
+    // Extract the members of the interface as well astheir corresponding documentation comments
+    // const propDefinitions = interfaceText.match(/(\w+:\s*[\w<>,\s|]+)(?=\s*(;|\n))/g);
+    const propDefinitions = interfaceText.match(/(\w+\??:\s*[^;]+(?:;)?)/g);
+    const propDocComments = interfaceText.match(/\*\*([\s\S]*?)\*\//g);
+    if (!propDefinitions || !propDocComments) {
+      throw new TsDocParseError(`No props found in interface ${interfaceName}`);
+    }
+
+    // They should be one to one
+    if (propDefinitions.length != propDocComments.length) {
+      throw new TsDocParseError(
+        `The number of props and the number of documentation comments in the interface ${interfaceName} do not match`
+      );
+    }
+
+    // Combine the two collections into an array of prop documentations.
+    // The prop definition at an index should correspond to the prop doc comment at the same index
     const props: IComponentProp[] = [];
-    let currentDocComment: string | undefined;
-    for (const line of interfaceText.split("\n")) {
-      // Check for doc comment
-      const docCommentMatch = line.match(/\*\*([\s\S]*?)\*\//g);
-      if (docCommentMatch) {
-        currentDocComment = docCommentMatch[1].trim();  // Store the last found comment
-      }
+    for (const [index, propDefinition] of propDefinitions.entries()) {
+      // Split the prop defintion by the colon to get the name and type
+      // TODO: There may still be an issue here if the type is a lambda
+      const [propName, propType] = propDefinition.split(":").map(s => s.trim());
 
-      // Check for prop definition
-      const propDefinitionMatch = line.match(/(\w+:\s*[\w<>,\s|]+)(?=\s*(;|\n))/g);
-      if (propDefinitionMatch) {
-        // TODO: There may still be an issue here if the type is a lambda
-        // Split by the colon to get the name and type
-        const [propName, propType] = propDefinitionMatch[0].split(":").map(s => s.trim());
-
-        // Construct an IComponentProp
-        props.push({
-          name: propName,
-          type: propType,
-          required: !propType.includes("?"),
-          description: currentDocComment,
-          // TODO: Handle default value
-        });
-      }
+      props.push({
+        name: propName,
+        type: propType,
+        required: !propType.includes("?"),
+        description: propDocComments[index],
+        // TODO: Handle default value
+      });
     }
 
     return props;
