@@ -110,7 +110,13 @@ export const exampleBoard: Board = {
 */
 
 export interface IRemoteTarget {
+  /**
+   * Object type name used when fetching data from the dataSource
+   */
   objectType: string;
+  /**
+   * Data source for executing API requests
+   */
   dataSource: TsDataSource;
 }
 
