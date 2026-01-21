@@ -226,7 +226,6 @@ export class TsDocParser {
       const docCommentMatch = line.match(/\*\*([\s\S]*?)\*\//g);
       if (docCommentMatch) {
         currentDocComment = docCommentMatch[1].trim();  // Store the last found comment
-        throw new TsDocParseError(currentDocComment);
       }
 
       // Check for prop definition
