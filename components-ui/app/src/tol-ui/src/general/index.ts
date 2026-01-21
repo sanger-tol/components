@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 export * from "./Accordion";
 export * from "./BoardCount";
+export * from "./CountConfigDrawer";
 export * from "./BoardMarkdown";
 export * from "./Button";
 export * from "./CenterContent";

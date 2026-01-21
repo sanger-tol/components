@@ -17,3 +17,8 @@ export interface IChartConfig {
   grouping: HistogramGrouping,
   chartType: TChart,
 }
+
+export interface ICountConfig {
+  type?: TCountStatType;
+  field?: string;
+}
