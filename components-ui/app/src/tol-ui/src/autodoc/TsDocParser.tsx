@@ -217,7 +217,7 @@ export class TsDocParser {
   private static extractPropsFromInterface(interfaceText: string, interfaceName: string): IComponentProp[] {
     // Extract the members of the interface as well astheir corresponding documentation comments
     // const propDefinitions = interfaceText.match(/(\w+:\s*[\w<>,\s|]+)(?=\s*(;|\n))/g);
-    const propDefinitions = interfaceText.match(/(\w+\??:\s*[^;]+(?:;)?)/g);
+    const propDefinitions = interfaceText.match(/(\w+\??:\s*[^;]+?)(?=\s*(;|\n))/g);
     const propDocComments = interfaceText.match(/\*\*([\s\S]*?)\*\//g);
     if (!propDefinitions || !propDocComments) {
       throw new TsDocParseError(`No props found in interface ${interfaceName}`);
