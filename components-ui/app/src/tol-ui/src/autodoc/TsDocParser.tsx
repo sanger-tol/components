@@ -147,9 +147,9 @@ export class TsDocParser {
 
     // Check if there's a deeper interface.
     // If there is, get its name. If there isn't, we're done
-    const deeperInterfaceMatch = interfaceText.match(/extends\s+([a-zA-Z_][a-zA-Z0-9_]*)/);
+    const deeperInterfaceMatch = interfaceText.match(/(?:extends\s+)([a-zA-Z_][a-zA-Z0-9_]*)/);
     if (!deeperInterfaceMatch) return propDocs;
-    const deeperInterfaceName = deeperInterfaceMatch[0];
+    const deeperInterfaceName = deeperInterfaceMatch[1];
 
     // Now we know there's a deeper interface, get the contents of the file it's defined in
     const deeperInterfaceFileContents = this.getTheContentsOfTheFileAnInterfaceIsDefinedIn(deeperInterfaceName);
