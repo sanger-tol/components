@@ -238,7 +238,7 @@ export class TsDocParser {
       const propDocComment = propDocComments[index];
 
       // Split the prop definition by the *first* colon to get the name and type
-      const [unsanitisedPropName, ...rest] = propDefinition.split(":").map(s => s.trim());
+      const [unsanitisedPropName, ...rest] = propDefinition.split(":");
 
       // The prop name may have a "?", which is type information, so remove it
       const propName = unsanitisedPropName.replace("?", "");
@@ -247,7 +247,7 @@ export class TsDocParser {
       const propIsRequired = !unsanitisedPropName.includes("?");
 
       // The prop type is everything after the colon, so re-combine `rest` into a single string
-      const propType = rest.join("");
+      const propType = rest.join(":");
 
       props.push({
         name: propName,
