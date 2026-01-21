@@ -118,6 +118,7 @@ export interface PRemoteTable extends IRemoteTargetAndZone {
   cellRenderers?: ICustomCellRenderers;
   height?: any;
   resizeableColumns?: boolean;
+  editableCells?: boolean;
   basic?: boolean;
   forceUpdate?: boolean;
 
@@ -157,6 +158,7 @@ export function RemoteTable(props: PRemoteTable) {
     objectType,
     dataSource,
     basic,
+    editableCells,
     zone,
     setZone,
     fields,
@@ -302,6 +304,7 @@ export function RemoteTable(props: PRemoteTable) {
             fieldMeta!,
             setExpandedRows,
             cellRenderers,
+            editableCells,
           )
         );
         // fetch count

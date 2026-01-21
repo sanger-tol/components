@@ -13,8 +13,6 @@ import {
   CellDisplay,
   PopUpMessage,
   CellEditable,
-  useBoardPrivilege,
-  PRIVILEGE,
 } from "../..";
 
 
@@ -26,24 +24,24 @@ export interface PCell {
   renderer: TCellRenderer;
   setExpandedRows: any,
   customCellRenderers?: ICustomCellRenderers;
+  editable?: boolean;
 }
 
 export function Cell(props: PCell) {
-  const { dataObject, dataSource } = props;
+  const { dataObject, dataSource, editable } = props;
   const [value, setValue] = useState(props.value);
   const [prevValue, setPrevValue] = useState(props.value);
-  const [editable, setEditable] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { privilege } = useBoardPrivilege();
 
-  const userCanEdit = (
-    (typeof value === "string" || value instanceof String) &&
-    privilege === PRIVILEGE.BOARD.EDITABLE
+  const canEdit = (
+    typeof value === "string" || value instanceof String
   );
 
   const onDoubleClick = () => {
-    if (userCanEdit) {
-      setEditable(true);
+    if (!editable) return;
+    if (canEdit) {
+      setEditMode(true);
     } else {
       PopUpMessage({
         type: "info",
@@ -57,11 +55,12 @@ export function Cell(props: PCell) {
   }
 
   const onCancel = () => {
-    setEditable(false);
+    setEditMode(false);
     setValue(prevValue);
   };
 
   const onSave = () => {
+    console.log('Saving value:', value);
     // prevent saving blank values
     if (typeof value === "string" && value.trim() === "") {
       PopUpMessage({
@@ -89,7 +88,7 @@ export function Cell(props: PCell) {
         ],
       })
       .then(() => {
-        setEditable(false)
+        setEditMode(false);
         setPrevValue(value);
         PopUpMessage({
           type: "success",
@@ -103,14 +102,14 @@ export function Cell(props: PCell) {
         });
         // revert to previous value on error
         setValue(prevValue);
-        setEditable(false);
+        setEditMode(false);
       })
       .finally(() => {
         setLoading(false);
       });
   }
 
-  if (editable) {
+  if (editMode) {
     return (
       <CellEditable
         {...props}

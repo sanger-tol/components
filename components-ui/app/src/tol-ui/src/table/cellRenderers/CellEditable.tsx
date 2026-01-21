@@ -29,8 +29,6 @@ export function CellEditable(props: PCellEditable) {
         autoFocus
         value={value}
         onChange={onChange}
-        // revert to previous value on clicking outside input
-        onBlur={onCancel}
         onPressEnter={onSave}
       />
       <div
