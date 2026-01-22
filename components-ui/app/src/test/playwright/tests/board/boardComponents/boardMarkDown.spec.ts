@@ -22,7 +22,9 @@ const addMarkdownComponent = async ({ page, testID }) => {
 
 const clickCondensedUtilityBarButton = async ({ page }) => {
   const condensedUtilityBarButton = page.getByTestId("condensed-utility-bar-button");
-  await condensedUtilityBarButton.click({force: true});
+  if (await condensedUtilityBarButton.isVisible()) {
+    await condensedUtilityBarButton.click({ force: true });
+  }
 }
 
 const previewMarkDownComponent = async ({ page }) => {
@@ -36,11 +38,11 @@ const editMarkDownComponent = async ({ page }) => {
   await mardownEditor.click();
   await mardownEditor.pressSequentially("Test Text", { delay: 50 });
   await expect(mardownEditor).toHaveValue('Test Text');
-  clickCondensedUtilityBarButton({ page });
-  previewMarkDownComponent({ page });
+  await clickCondensedUtilityBarButton({ page });
+  await previewMarkDownComponent({ page });
   // Count is 3, once for preview, editor and saved view (even though only two are visible)
   await expect(page.getByText('Test Text')).toHaveCount(3);
-  clickCondensedUtilityBarButton({ page });
+  await clickCondensedUtilityBarButton({ page });
 }
 
 const saveMarkDownComponent = async ({ page }) => {
@@ -57,4 +59,3 @@ test('manage dashboard', async ({ page }) => {
   await deleteFirstComponent({ page});
   expect(page.locator('.tol-markdown-viewer')).not.toBeVisible();
 });
-
