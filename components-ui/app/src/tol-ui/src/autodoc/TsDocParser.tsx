@@ -117,10 +117,9 @@ export class TsDocParser {
     const description = descriptionMatch ? descriptionMatch[0].split("\n").map(line => line.slice(3)).join("\n") : undefined;
 
     // Examples come after @example tags.
-    // Slice needs to be called because a list of regex matches starts at index 1,
-    // then we map over each example to split it into title and code and remove TsDoc artefacts
+    // We map over each example to split it into title and code and remove TsDoc artefacts
     const exampleMatches = autodocComment.match(/(?<=@example\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
-    const examples: IComponentExample[] = exampleMatches?.slice(1).map(example => {
+    const examples: IComponentExample[] = exampleMatches?.map(example => {
       const [firstLine, ...restOfLines] = example.split("\n");
 
       return {
