@@ -26,11 +26,9 @@ export interface PBoardCount extends PVisualisation {}
 
 export function BoardCount(props: PBoardCount) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
-  const initialConfig = props.config ? props.config : {};
+  const initialConfig = props.config && props.config.type ? props.config : { type: "count" };
   const [config, setConfig] = useState<ICountConfig>(initialConfig);
-  const [hasConfigured, setHasConfigured] = useState(
-    !!(props.config && props.config.type)
-  );
+  const [hasConfigured, setHasConfigured] = useState(!!initialConfig.type);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const { privilege } = useBoardPrivilege();

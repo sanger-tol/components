@@ -49,28 +49,24 @@ export function CountConfigDrawer(props: PCountConfigDrawer) {
     config,
   } = props;  
 
-  const [type, setType] = useState<TCountStatType | "">(config.type ?? "");
+  const [type, setType] = useState<TCountStatType>(config.type ?? "count");
   const [field, setField] = useState<string[]>(
     config.field ? [config.field] : []
   );
 
-  const requiresField = type !== "" && type !== "count";
-  const hasUpdated =
-    type !== config.type || field[0] !== config.field || !config.type;
-  const hasRequiredFields = !!type && (!requiresField || field.length > 0);
+  const requiresField = type !== "count";
+  const hasUpdated = type !== config.type || field[0] !== config.field;
+  const hasRequiredFields = !requiresField || field.length > 0;
   const hasPendingChanges = hasUpdated && hasRequiredFields;
 
   useEffect(() => {
     if (open) {
-      setType(config.type ?? "");
+      setType(config.type ?? "count");
       setField(config.field ? [config.field] : []);
     }
   }, [open, config.field, config.type]);
 
   const onSave = () => {
-    if (!type) {
-      return;
-    }
     onConfigSave({
       type,
       field: requiresField ? field[0] : undefined,
