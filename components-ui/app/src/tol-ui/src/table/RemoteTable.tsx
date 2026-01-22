@@ -41,6 +41,7 @@ import {
   amalgamateRequestedFields,
   TFieldDropdownChoices,
   updateFieldMetaAttribute,
+  IHeight,
 } from '..';
 
 
@@ -55,48 +56,6 @@ import {
  * is persisted to local storage keyed by `id`, unless external handlers are
  * provided to control those behaviours.
  *
- * @prop id - Unique identifier for this table instance; used as the key for persisted configuration
- * @prop objectType - Remote object type name used when fetching data and running actions
- * @prop dataSource - Data source used to fetch table pages and counts from the API
- * @prop zone - Current filter zone object used to generate the compound filter for this table
- * @prop setZone - Setter used to update the zone when configuration changes reset downstream filters
- * @prop source - Optional label or description of the data source, shown where supported by `Table`
- *
- * @prop fields - Initial field metadata for columns; overridden by any saved configuration for this table `id`
- * @prop defaultSortByAttribute - Default sort attribute when no saved sort configuration exists
- * @prop defaultSortByType - Default sort direction (`"asc"` or `"desc"`) when no saved configuration exists
- * @prop cellRenderers - Custom cell renderers by field key to override default cell display
- * @prop height - Height of the table container, expressed in a CSS unit
- * @prop basic - If true, disables automatic enrichment of `fieldMeta` with remote metadata
- * @prop forceUpdate - When changed, forces the table to re-fetch its data from the server
- *
- * @prop onConfigSave - Called with updated table configuration instead of storing it in local storage
- * @prop onPageSizeChange - Called when page size changes; if set, page size is not persisted locally
- * @prop onToggleFilterVisibility - Called when filter bar visibility toggles; overrides local storage persistence
- *
- * @prop pageSize - Initial page size if none is stored already for this table `id`
- * @prop filterVisibility - Initial filter bar visibility if none is stored already
- * @prop displaySource - If true, allows the UI to display the `source` information where supported
- *
- * @prop noFilter - If true, hides or disables the filter UI for this table
- * @prop noPagination - If true, disables pagination controls and shows all available rows in one page
- * @prop noSorting - If true, disables interactive column sorting
- * @prop noConfigModal - If true, hides the column/configuration drawer
- * @prop noDownload - If true, hides export or download controls
- * @prop noActionsFooter - If true, hides the footer button that opens the actions modal
- *
- * @prop rowSelection - If true, enables row selection checkboxes and selection state
- * @prop utilityBarConfig - Configuration for the utility bar rendered above the table
- * @prop advanceTab - Enables advanced tab on column selection drawer
- * @prop contents - Optional custom overlay or placeholder content shown while loading or on error
- * @prop groupBy - If true, enables row grouping support where provided by the underlying `Table`
- * @prop copySeparator - String used to separate values when copying multiple cells or rows
- *
- * @prop actionDataSource - Data source used to run remote actions, separate from the main `dataSource`
- * @prop actions - List of action identifiers or dropdown button configurations available for this table
- * @prop selectedRows - Controlled list of currently selected row identifiers
- * @prop setSelectedRows - Controlled setter for selected row identifiers; if omitted, selection is internal
- *
  * @remarks
  * RemoteTable expects server-side pagination and filtering: it requests pages
  * via `dataSource.getListPage` and separately queries a `:count` endpoint for
@@ -108,47 +67,148 @@ import {
  * using the given `id` as the key namespace.
  */
 
-export interface PRemoteTable extends IRemoteTargetAndZone {
+export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
+  /**
+   * Unique identifier for this table instance; used as the key for persisted configuration
+   */
   id: string;
+  /**
+   * Optional label or description of the data source, shown where supported by `Table`
+   */
   source?: string;
 
+  /**
+   * Initial field metadata for columns; overridden by any saved configuration for this table `id`
+   */
   fields?: FieldMeta;
+  /**
+   * Default sort attribute when no saved sort configuration exists
+   */
   defaultSortByAttribute?: string;
+  /**
+   * Default sort direction ("asc" or "desc") when no saved configuration exists
+   */
   defaultSortByType?: string;
+  /**
+   * Custom cell renderers by field key to override default cell display
+   */
   cellRenderers?: ICustomCellRenderers;
-  height?: any;
+  /**
+   * Whether the width of columns are allowed to be manually resized by users
+   */
   resizeableColumns?: boolean;
+  /**
+   * Whether a 'super-user' can edit data directly on tables with a double-click
+   */
   editableCells?: boolean;
+  /**
+   * If true, disables automatic enrichment of `fieldMeta` with remote metadata
+   */
   basic?: boolean;
+  /**
+   * When changed, forces the table to re-fetch its data from the server
+   */
   forceUpdate?: boolean;
 
+  /**
+   * Called with updated table configuration instead of storing it in local storage
+   */
   onConfigSave?: (config: ITableDrawerSave) => void;
+  /**
+   * Called when page size changes; if set, page size is not persisted locally
+   */
   onPageSizeChange?: (pageSize: number) => void;
+  /**
+   * Called when filter bar visibility toggles; overrides local storage persistence
+   */
   onToggleFilterVisibility?: (visible: boolean) => void;
+  /**
+   * Called when the user resizes the width of a column
+   */
   onResizeColumn?: (columnWidth: number, dataKey: string) => void;
 
+  /**
+   * Initial page size if none is stored already for this table `id`
+   */
   pageSize?: number;
+  /**
+   * Initial filter bar visibility if none is stored already
+   */
   filterVisibility?: boolean;
+  /**
+   * If true, allows the UI to display the `source` information where supported
+   */
   displaySource?: boolean;
 
+  /**
+   * If true, hides or disables the filter UI for this table
+   */
   noFilter?: boolean;
+  /**
+   * If true, disables pagination controls and shows all available rows in one page
+   */
   noPagination?: boolean;
+  /**
+   * If true, disables interactive column sorting
+   */
   noSorting?: boolean;
+  /**
+   * If true, hides the column/configuration drawer
+   */
   noConfigModal?: boolean;
+  /**
+   * If true, hides export or download controls
+   */
   noDownload?: boolean;
+  /**
+   * If true, hides the footer button that opens the actions modal
+   */
   noActionsFooter?: boolean;
 
+  /**
+   * If true, enables row selection checkboxes and selection state
+   */
   rowSelection?: boolean;
+  /**
+   * Configuration for the utility bar rendered above the table
+   */
   utilityBarConfig?: PUtilityBar;
+  /**
+   * Enables advanced tab on column selection drawer
+   */
   advanceTab?: boolean;
+  /**
+   * Optional custom overlay or placeholder content shown while loading or on error
+   */
   contents?: ReactNode;
+  /**
+   * If true, enables row grouping support where provided by the underlying `Table`
+   */
   groupBy?: boolean;
+  /**
+   * String used to separate values when copying multiple cells or rows
+   */
   copySeparator?: string;
+  /**
+   * Fields allowed to be selected in the choice dropdown
+   */
   fieldDropdownChoices?: TFieldDropdownChoices;
 
+  /**
+   * Data source used to run remote actions, separate from the main `dataSource`
+   */
   actionDataSource?: TsDataSource;
+  /**
+   * List of action identifiers or dropdown button configurations available for this table
+   */
   actions?: (string | IDropdownButtonConfig)[];
+  /**
+   * Controlled list of currently selected row identifiers
+   */
   selectedRows?: string[];
+  /**
+   * Controlled setter for selected row identifiers; if omitted, selection is internal
+   */
   setSelectedRows?: (selectedRows: string[]) => void;
 }
 
