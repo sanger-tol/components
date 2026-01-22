@@ -118,31 +118,35 @@ export class TsDocParser {
      * @returns The text, sanitised
      */
     function sanitiseTsDocArtefacts(text: string): string {
-      return text
-        .replace(/\s*\*\s?/g, " ")
-        .trim()
-        .replace(/\s+/g, " ");
+      // return text
+      //   .replace(/\s*\*\s?/g, " ")
+      //   .trim()
+      //   .replace(/\s+/g, " ");
+      return text;
     }
     // The description is the text after @autodoc
     const descriptionMatch = autodocComment.match(/(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
-    const description = descriptionMatch ? sanitiseTsDocArtefacts(descriptionMatch[0]) : undefined;
+    // TODO
+    const description = descriptionMatch ? descriptionMatch[0].split("\n").map(line => line.slice(3)).join("\n") : undefined;
 
     // Examples come after @example tags.
     // Slice needs to be called because a list of regex matches starts at index 1
     const exampleMatches = autodocComment.match(/(?<=@example\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
+    // TODO
     const examples: IComponentExample[] = exampleMatches?.slice(1).map(example => {
       const [firstLine, ...restOfLines] = example.split("\n");
 
       return {
         title: sanitiseTsDocArtefacts(firstLine),
-        code: restOfLines.map(sanitiseTsDocArtefacts).join("\n"),
+        code: restOfLines.map(line => line.slice(3)).join("\n"),
       };
     }) || [];
 
     // Remarks come after @remarks tags.
     // Slice needs to be called because a list of regex matches starts at index 1
     const remarksMatches = autodocComment.match(/(?<=@remarks\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/);
-    const remarks = remarksMatches?.slice(1).map(sanitiseTsDocArtefacts) || undefined;
+    // TODO
+    const remarks = remarksMatches?.slice(1).map(remark => remark.split("\n").map(line => line.slice(1)).join("\n")) || undefined;
 
     return {
       description,
