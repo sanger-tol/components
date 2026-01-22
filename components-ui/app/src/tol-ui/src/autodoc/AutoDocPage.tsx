@@ -81,7 +81,6 @@ export function AutoDocPage(props: PAutoDocPage) {
     </>
   ) : null;
 
-  // @ts-ignore
   const ExamplesWidget = documentation.examples.length > 0 ? (
     <>
       <h4>Examples</h4>
@@ -106,7 +105,7 @@ export function AutoDocPage(props: PAutoDocPage) {
   components.push({ component: HeaderWidget, type: "full" });
   if (PropsWidget) components.push({ component: PropsWidget, type: "full" });
   if (RemarksWidget) components.push({ component: RemarksWidget, type: "full" });
-  // if (ExamplesWidget) components.push({ component: ExamplesWidget, type: "full" });
+  if (ExamplesWidget) components.push({ component: ExamplesWidget, type: "full" });
 
   return (
     <CenterContent>

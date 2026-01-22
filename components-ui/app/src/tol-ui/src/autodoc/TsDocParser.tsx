@@ -113,34 +113,36 @@ export class TsDocParser {
     remarks?: string[]
   } {
     /**
-     * Extracts the text under a paricular tag in the autodoc comment.
-     * Works only for tags whose text is under them
-     * @param autodocComment The whole autodoc comment text
-     * @param tag The TSDoc tag in the form of an @ followed by a tag name
-     * @returns The text found under the tag
+     * Removes comment artefacts from a TsDoc line, leaving just the text
+     * @param text The text to sanitise
+     * @returns The text, sanitised
      */
-    function extractTag(autodocComment: string, tag: string): string[] {
-      // Perform search
-      const regex = new RegExp(`(?<=@${tag}\\s*\\*\\s*)([\\s\\S]*?)(?=\\s*\\*?\\s*@|\s*\\*\\/)`, "g");
-      const matches = autodocComment.match(regex);
-      if (!matches) return [];
-
-      // Sanitise TSDoc artefacts out of results
-      return matches.map(match => match
+    function sanitiseTsDocArtefacts(text: string): string {
+      return text
         .replace(/\s*\*\s?/g, " ")
         .trim()
-        .replace(/\s+/g, " ")
-      );
+        .replace(/\s+/g, " ");
     }
-
     // The description is the text after @autodoc
-    const description = extractTag(autodocComment, "autodoc")[0] || undefined;
+    const descriptionMatch = autodocComment.match(/(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/);
+    const description = descriptionMatch ? sanitiseTsDocArtefacts(descriptionMatch[0]) : undefined;
 
-    const examples: IComponentExample[] = extractTag(autodocComment, "example").map(exampleCode => ({
-      code: exampleCode
-    }));
+    // Examples come after @example tags.
+    // Slice needs to be called because a list of regex matches starts at index 1
+    const exampleMatches = autodocComment.match(/(?<=@example\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/);
+    const examples: IComponentExample[] = exampleMatches?.slice(1).map(example => {
+      const [firstLine, ...restOfLines] = example.split("\n");
 
-    const remarks = extractTag(autodocComment, "remarks");
+      return {
+        title: sanitiseTsDocArtefacts(firstLine),
+        code: restOfLines.map(sanitiseTsDocArtefacts).join("\n"),
+      };
+    }) || [];
+
+    // Remarks come after @remarks tags.
+    // Slice needs to be called because a list of regex matches starts at index 1
+    const remarksMatches = autodocComment.match(/(?<=@remarks\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/);
+    const remarks = remarksMatches?.slice(1).map(sanitiseTsDocArtefacts) || undefined;
 
     return {
       description,
