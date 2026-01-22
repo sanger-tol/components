@@ -124,12 +124,12 @@ export class TsDocParser {
         .replace(/\s+/g, " ");
     }
     // The description is the text after @autodoc
-    const descriptionMatch = autodocComment.match(/(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/);
+    const descriptionMatch = autodocComment.match(/(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
     const description = descriptionMatch ? sanitiseTsDocArtefacts(descriptionMatch[0]) : undefined;
 
     // Examples come after @example tags.
     // Slice needs to be called because a list of regex matches starts at index 1
-    const exampleMatches = autodocComment.match(/(?<=@example\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/);
+    const exampleMatches = autodocComment.match(/(?<=@example\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
     const examples: IComponentExample[] = exampleMatches?.slice(1).map(example => {
       const [firstLine, ...restOfLines] = example.split("\n");
 
