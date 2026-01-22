@@ -112,41 +112,35 @@ export class TsDocParser {
     examples: IComponentExample[],
     remarks?: string[]
   } {
-    /**
-     * Removes comment artefacts from a TsDoc line, leaving just the text
-     * @param text The text to sanitise
-     * @returns The text, sanitised
-     */
-    function sanitiseTsDocArtefacts(text: string): string {
-      // return text
-      //   .replace(/\s*\*\s?/g, " ")
-      //   .trim()
-      //   .replace(/\s+/g, " ");
-      return text;
-    }
     // The description is the text after @autodoc
     const descriptionMatch = autodocComment.match(/(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
-    // TODO
     const description = descriptionMatch ? descriptionMatch[0].split("\n").map(line => line.slice(3)).join("\n") : undefined;
 
     // Examples come after @example tags.
-    // Slice needs to be called because a list of regex matches starts at index 1
+    // Slice needs to be called because a list of regex matches starts at index 1,
+    // then we map over each example to split it into title and code and remove TsDoc artefacts
     const exampleMatches = autodocComment.match(/(?<=@example\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
-    // TODO
     const examples: IComponentExample[] = exampleMatches?.slice(1).map(example => {
       const [firstLine, ...restOfLines] = example.split("\n");
 
       return {
-        title: sanitiseTsDocArtefacts(firstLine),
+        title: firstLine,
+        // Join back together the rest of the code, where the first 3 characters of each line are cut off
+        // (as they are artefacts of the TsDoc comment)
         code: restOfLines.map(line => line.slice(3)).join("\n"),
       };
     }) || [];
 
     // Remarks come after @remarks tags.
-    // Slice needs to be called because a list of regex matches starts at index 1
+    // Slice needs to be called because a list of regex matches starts at index 1,
+    // then we map over each remark to remove TsDoc artefacts
     const remarksMatches = autodocComment.match(/(?<=@remarks\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/);
-    // TODO
-    const remarks = remarksMatches?.slice(1).map(remark => remark.split("\n").map(line => line.slice(1)).join("\n")) || undefined;
+    const remarks = remarksMatches?.slice(1).map(remark => 
+      // Remove the artefacts at the start of each line
+      remark.split("\n")
+        .map(line => line.slice(1))
+        .join("\n")
+    ) || undefined;
 
     return {
       description,
