@@ -133,8 +133,8 @@ export class TsDocParser {
     // Remarks come after @remarks tags.
     // Slice needs to be called because a list of regex matches starts at index 1,
     // then we map over each remark to remove TsDoc artefacts
-    const remarksMatches = autodocComment.match(/(?<=@remarks\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/);
-    const remarks = remarksMatches?.slice(1).map(remark => 
+    const remarksMatches = autodocComment.match(/(?<=@remarks\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
+    const remarks = remarksMatches?.map(remark => 
       // Remove the artefacts at the start of each line
       remark.split("\n")
         .map(line => line.slice(1))
