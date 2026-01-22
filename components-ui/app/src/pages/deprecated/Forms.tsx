@@ -18,7 +18,7 @@ import {
   Notification,
   Toaster,
   TsDataSource,
-} from "../tol-ui/src";
+} from "../../tol-ui/src";
 
 const { StringType } = Schema.Types;
 

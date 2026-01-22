@@ -2,7 +2,9 @@
 
 This document defines the architecture, naming conventions, file structure, and documentation rules for all frontend components and utilities.
 
-## 1. File Structure
+---
+
+### 1. File Structure
 - License
 - Imports
 - Providers
@@ -28,14 +30,18 @@ This document defines the architecture, naming conventions, file structure, and 
     - If loading: return loading screen
     - Return main block
 
-## 2. Functions
+---
+
+### 2. Functions
 - Placement Rules:
     - Put functions in the most appropriate `utils.tsx` file.
     - Any function used in multiple places → place in top-level `utils` file.
 - Documentation:
     - All functions must include JSDoc docstrings.
 
-## 3. Interfaces & Types
+---
+
+### 3. Interfaces & Types
 - Main component props follow the pattern:
     - `ComponentName` → `PComponentName`
     - Example: `RemoteTable` → `PRemoteTable`
@@ -46,7 +52,9 @@ This document defines the architecture, naming conventions, file structure, and 
     - Interfaces are prefixed with `I`.
     - Types are prefixed with `T`.
 
-## 4. Constants
+---
+
+### 4. Constants
 - Location: `/constants` directory.
 - Each constant file should be closely related to the feature or component it supports.
 - Constant variable names must use ANGRY_SNAKE_CASE.
@@ -55,7 +63,9 @@ This document defines the architecture, naming conventions, file structure, and 
     - `name.constants.ts`
     - Example: `api.constants.ts`
 
-## 5. Config
+---
+
+### 5. Config
 - Location: `/config` directory.
 - Each config file must have a name closely related to the feature or component it configures.
 - All config variables must use ANGRY_SNAKE_CASE.
@@ -63,43 +73,45 @@ This document defines the architecture, naming conventions, file structure, and 
 - Config filenames use a descriptive camelCase pattern.
     - Example: `cellRendererParams.ts`
 
-## 6. Naming Conventions
+---
+
+### 6. Naming Conventions
 - Rule: Anything that directly returns a JSX element must be PascalCase (e.g., `ConfigButton`).
 
-### Components
+##### Components
 - Anything returning JSX → PascalCase
 - File: `PascalCase.tsx`
 - Example: `UserCard.tsx`, `function UserCard() { ... }`
 
-### Props Interfaces
+##### Props Interfaces
 - Prefix: `P` + `ComponentName`
 - Example: `export interface PUserCard { name: string }`
 
-### General Interfaces
+##### General Interfaces
 - Prefix: `I`
 - Stored in: `/interfaces`
 - File: closely related to the entity (e.g., `table.interfaces.ts`)
 - Example: `export interface ITable { rows: number }`
 
-### Types
+##### Types
 - Prefix: `T`
 - Stored in: `/interfaces`
 - File: closely related to the entity (e.g., `user.interfaces.ts`)
 - Example: `export type TUserID = string | number`
 
-### Constants
+##### Constants
 - Case: ANGRY_SNAKE_CASE
 - Stored in: `/constants`
 - Filename: `camelCase.constants.ts`
 - Example: `api.constants.ts`
 
-### Configs
+##### Configs
 - Case: ANGRY_SNAKE_CASE
 - Stored in: `/config`
 - Filename: `descriptive camelCase`
 - Example: `cellRendererParams.ts`
 
-### Functions
+##### Functions
 1. Standard functions → camelCase
      - Example: `fetchData()`
      - Used for utilities and logic.
@@ -107,12 +119,12 @@ This document defines the architecture, naming conventions, file structure, and 
      - Example: `ConfigButton()`
      - Used for React components or functions that return JSX.
 
-### Variables
+##### Variables
 - Local / state / helpers: camelCase
 - Examples:
     - `const userName = 'Alice'`
     - `const [isOpen, setIsOpen] = useState(false)`
 
-## Documentation
+#### Documentation
 - Use JSDoc for all utility functions and complex components.
 - Keep examples and filenames aligned with the rules above for quick discoverability.

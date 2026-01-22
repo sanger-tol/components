@@ -15,9 +15,11 @@ export function Markdown(props: PMarkdown) {
   const { contents } = props;
 
   return (
-    // @ts-ignore
-    <ReactMarkdown>
-      {contents}
-    </ReactMarkdown>
+    <div className="tol-markdown-viewer">
+      {/* @ts-ignore */}
+      <ReactMarkdown>
+        {contents}
+      </ReactMarkdown>
+    </div>
   );
 }

@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Widgets as W } from "../tol-ui/src";
+import { Widgets as W } from "../../tol-ui/src";
 
 const randomColour = () =>
   "#" + (((1 << 24) * Math.random()) | 0).toString(16).padStart(6, "0");

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { BarChart, Widgets } from "../tol-ui/src";
+import { BarChart, Widgets } from "../../tol-ui/src";
 
 // fake data for BarChart component
 const labels = ["January", "February", "March", "April", "May", "June", "July"];

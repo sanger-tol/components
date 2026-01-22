@@ -139,8 +139,17 @@ export function matomoAnalytics(siteId: number) {
   }
 }
 
+/**
+ * Format a number with spaces as thousands separators while preserving decimals.
+ * @param num The number to format.
+ * @returns The formatted string.
+ */
 export function numberWithSpaces(num: number) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  if (!Number.isFinite(num)) return "";
+  const [whole, fraction] = num.toString().split(".");
+  const spacedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  if (!fraction) return spacedWhole;
+  return `${spacedWhole}.${fraction}`;
 }
 
 export function isInt(n: any) {

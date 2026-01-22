@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { createTextGeneratorFactory, Widgets } from "../tol-ui/src";
+import { createTextGeneratorFactory, Widgets } from "../../tol-ui/src";
 import { CodeBlock } from "react-code-blocks";
-import { truncateString } from "../tol-ui/src/general/utils";
+import { truncateString } from "../../tol-ui/src/general/utils";
 
 export function Factories() {
   const words = createTextGeneratorFactory();
