@@ -34,7 +34,7 @@ export const VALIDATION_CONFIG: TFileValidationStatuses = [
   {
     validationStatus: VALIDATION_STATUSES.PASSED_WITH_WARNINGS,
     description:
-      "The file may have some formatting issues, that you may wish to fix, but you can submit if you wish to do so.",
+      "The file may have some formatting issues, that you may wish to fix, but you can submit if you would like to.",
     textColor: "var(--tol-warning)",
     projects: [],
     callback: () => {},
