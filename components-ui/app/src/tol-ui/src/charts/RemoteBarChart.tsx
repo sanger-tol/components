@@ -26,15 +26,6 @@ import {
   IHeight
 } from "..";
 
-
-/**
- * @autodoc
- * 
- * RemoteBarChart is a chart component that fetches its data from a remote API using the provided `dataSource`,
- * supporting various aggregation and filtering options. The chart dynamically updates
- * based on changes to filters and zone settings and can be configured to display cumulative or stacked data representations.
- */
-
 interface PRemoteBarChart extends IRemoteTargetAndZone, IHeight {
   /**
    * Unique identifier for this chart instance; used as the key for persisted configuration
@@ -86,6 +77,13 @@ interface PRemoteBarChart extends IRemoteTargetAndZone, IHeight {
   chartType?: string;
 }
 
+/**
+ * @autodoc
+ * 
+ * RemoteBarChart is a chart component that fetches its data from a remote API using the provided `dataSource`,
+ * supporting various aggregation and filtering options. The chart dynamically updates
+ * based on changes to filters and zone settings and can be configured to display cumulative or stacked data representations.
+ */
 export function RemoteBarChart(props: PRemoteBarChart) {
   const {
     id,
