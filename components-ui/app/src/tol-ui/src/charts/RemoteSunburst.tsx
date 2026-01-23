@@ -32,15 +32,6 @@ import {
   IHeight
 } from "..";
 
-
-/**
- * @autodoc
- * 
- * RemoteSunburst is a sunburst chart component that visualises hierarchical data using segments.
- * It retrieves its data from a remote API via the provided `dataSource`,
- * supporting dynamic filter generation based on user interactions with the chart slices.
- */
-
 interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
   /**
    * Unique identifier for this chart instance; used as the key for persisted configuration
@@ -80,6 +71,13 @@ interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
   contents?: ReactNode;
 }
 
+/**
+ * @autodoc
+ * 
+ * RemoteSunburst is a sunburst chart component that visualises hierarchical data using segments.
+ * It retrieves its data from a remote API via the provided `dataSource`,
+ * supporting dynamic filter generation based on user interactions with the chart slices.
+ */
 export function RemoteSunburst(props: PRemoteSunburst) {
   const {
     id,

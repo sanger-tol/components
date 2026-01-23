@@ -14,18 +14,6 @@ import {
   TDataObjectOrNull
 } from "..";
 
-
-/**
- * @autodoc
- * 
- * RemoteTimeline visualises a timeline of events sourced from a remote `dataSource`.
- * It creates a chronological representation of events, complete with titles, descriptions, and customisable icons.
- * 
- * @remarks
- * This component handles various types of objects, automatically generating titles based on 
- * the object type and its ID, making it flexible for different contexts.
- */
-
 interface PRemoteTimeline extends IRemoteTarget {
   /**
    * Unique identifier for the timeline instance, used in generating element IDs and for API interactions
@@ -49,6 +37,16 @@ interface PRemoteTimeline extends IRemoteTarget {
   titleDataPoint: string;
 }
 
+/**
+ * @autodoc
+ * 
+ * RemoteTimeline visualises a timeline of events sourced from a remote `dataSource`.
+ * It creates a chronological representation of events, complete with titles, descriptions, and customisable icons.
+ * 
+ * @remarks
+ * This component handles various types of objects, automatically generating titles based on 
+ * the object type and its ID, making it flexible for different contexts.
+ */
 export function RemoteTimeline(props: PRemoteTimeline) {
   const {
     id,
