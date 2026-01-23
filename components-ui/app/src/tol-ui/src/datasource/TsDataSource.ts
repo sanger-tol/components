@@ -34,7 +34,8 @@ import {
   IIncludedLookup,
   IJsonApiData,
   IJsonApiResponse,
-  IJsonApiResponseData
+  IJsonApiResponseData,
+  clearExpiredToken
 } from "..";
 
 
@@ -220,6 +221,7 @@ export class TsDataSource {
     return `${o}-${this.sourceKey}`;
   }
 
+  @clearExpiredToken()
   public async custom({
     method,
     resource,
