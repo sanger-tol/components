@@ -198,6 +198,7 @@ export class TsDocParser {
       );
     }
 
+    // Return all prop docs from this interface as well as any parent interfaces
     return propDocs;
   }
 
