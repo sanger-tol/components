@@ -60,7 +60,6 @@ export function Cell(props: PCell) {
   };
 
   const onSave = () => {
-    console.log('Saving value:', value);
     // prevent saving blank values
     if (typeof value === "string" && value.trim() === "") {
       PopUpMessage({
