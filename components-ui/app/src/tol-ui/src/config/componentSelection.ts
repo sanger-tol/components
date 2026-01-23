@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 export const componentOptions = [
   {
     type: "count",
-    text: "Count",
+    text: "Statistics",
     icon: "hashtag",
     disabled: false,
   },
