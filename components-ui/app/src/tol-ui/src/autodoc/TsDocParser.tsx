@@ -118,7 +118,7 @@ export class TsDocParser {
     const descriptionMatch = autodocComment.match(
       /(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g
     );
-    // If a description was found, remove the first 3 characters (TsDoc artefacts)
+    // If a description was found, remove the first 3 characters of each line (TsDoc artefacts)
     const description = descriptionMatch ?
       descriptionMatch[0].split("\n").map(line => line.slice(3)).join("\n")
       : undefined;
