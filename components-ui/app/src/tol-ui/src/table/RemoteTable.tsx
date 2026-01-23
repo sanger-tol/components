@@ -98,6 +98,10 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    */
   resizeableColumns?: boolean;
   /**
+   * Whether a 'super-user' can edit data directly on tables with a double-click
+   */
+  editableCells?: boolean;
+  /**
    * If true, disables automatic enrichment of `fieldMeta` with remote metadata
    */
   basic?: boolean;
@@ -214,6 +218,8 @@ export function RemoteTable(props: PRemoteTable) {
     objectType,
     dataSource,
     basic,
+    editableCells,
+    resizeableColumns = true,
     zone,
     setZone,
     fields,
@@ -359,6 +365,7 @@ export function RemoteTable(props: PRemoteTable) {
             fieldMeta!,
             setExpandedRows,
             cellRenderers,
+            editableCells,
           )
         );
         // fetch count
@@ -524,6 +531,7 @@ export function RemoteTable(props: PRemoteTable) {
         data={data}
         fieldMeta={fieldMeta!}
         expandedRows={expandedRows}
+        resizeableColumns={resizeableColumns}
         height={height}
         loading={loading}
         page={page}

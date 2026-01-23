@@ -102,7 +102,8 @@ export function BoardTable(props: PBoardTable) {
     <RemoteTable
       {...props}
       noConfigModal={privilege !== PRIVILEGE.BOARD.EDITABLE}
-      resizeableColumns={privilege === PRIVILEGE.BOARD.EDITABLE}
+      // RemoteTable defaults to true for resizeableColumns, we want to default to false
+      resizeableColumns={privilege === PRIVILEGE.BOARD.EDITABLE || false}
       onResizeColumn={onResizeColumn}
       advanceTab
       displaySource

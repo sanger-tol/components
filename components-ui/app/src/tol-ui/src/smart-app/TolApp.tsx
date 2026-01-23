@@ -110,138 +110,140 @@ export function TolApp(props: PTolApp) {
   return (
     <div id="tol-app-background">
       <QueryClientProvider client={queryClient}>
-      <AuthProvider
-        value={{
-          token,
-          setToken,
-          user,
-          setUser,
-        }}
-      >
-        <Router>
-          <Navigation
-            brand={props.brand}
-            uiPath={uiPath}
-            pages={props.pages}
-            profilePages={profilePages}
-            login={login}
-            register={register}
-            customCallbackUrl={customCallbackUrl}
-          />
-          <div className="tol-app">
-            <Switch>
-              <Route
-                path={[`${basePath}`,]}
-                exact
-                render={() => props.homePage}
-              />
-              <Route path={`${basePath}callback`} exact>
-                <Callback />
-              </Route>
-              <Route path={`${basePath}board/:boardId`}>
-                {boards && loggedIn ? (
-                  <BoardPrivilegeContextProvider>
-                    <Board
-                      boardDataSource={boards.boardDataSource}
-                    />
-                  </BoardPrivilegeContextProvider>
-                ) : (
-                  <Redirect to={basePath} replace />
-                )}
-              </Route>
-              <Route path={`${basePath}file-validation/results/:uploadId`} render={(routeProps) => {
-                return loggedIn ? (
-                  <ValidationResultsViewer {...routeProps} />
-                ) : (
-                  <Redirect to={basePath} replace />
-                )
-              }} />
-              {allPageRoutes.map((page) => {
-                const path = convertToPath(page.name, uiPath);
-                const routes = [];
-                const authorised = confirmAuthorised(
-                  user,
-                  page.auth,
-                  page.removeOnAuth,
-                );
-
-                // dropdown routes
-                if ('pages' in page && page.pages) {
-                  page.pages.forEach((dropdownPage: Page) => {
-                    const individualPageAuthorised = confirmAuthorised(
+        <AuthProvider
+          value={{
+            token,
+            setToken,
+            user,
+            setUser,
+          }}
+        >
+          <Router>
+            <Navigation
+              brand={props.brand}
+              uiPath={uiPath}
+              pages={props.pages}
+              profilePages={profilePages}
+              login={login}
+              register={register}
+              customCallbackUrl={customCallbackUrl}
+            />
+            <div className="tol-app">
+              <div className="tol-app-content">
+                <Switch>
+                  <Route
+                    path={[`${basePath}`,]}
+                    exact
+                    render={() => props.homePage}
+                  />
+                  <Route path={`${basePath}callback`} exact>
+                    <Callback />
+                  </Route>
+                  <Route path={`${basePath}board/:boardId`}>
+                    {boards && loggedIn ? (
+                      <BoardPrivilegeContextProvider>
+                        <Board
+                          boardDataSource={boards.boardDataSource}
+                        />
+                      </BoardPrivilegeContextProvider>
+                    ) : (
+                      <Redirect to={basePath} replace />
+                    )}
+                  </Route>
+                  <Route path={`${basePath}file-validation/results/:uploadId`} render={(routeProps) => {
+                    return loggedIn ? (
+                      <ValidationResultsViewer {...routeProps} />
+                    ) : (
+                      <Redirect to={basePath} replace />
+                    )
+                  }} />
+                  {allPageRoutes.map((page) => {
+                    const path = convertToPath(page.name, uiPath);
+                    const routes = [];
+                    const authorised = confirmAuthorised(
                       user,
-                      dropdownPage.auth,
-                      dropdownPage.removeOnAuth,
-                    );
-                    const dropdownPath =
-                      convertToPath(dropdownPage.name, uiPath);
-                    // dropdown page route
-                    routes.push(
-                      <Route exact path={dropdownPath} key={dropdownPage.name}>
-                        {authorised ? (
-                          getElementDependingOnAuthStatus(loggedIn, dropdownPage)
-                        ) : (
-                          <Redirect to={`${uiPath ?? ''}/`} replace />
-                        )}
-                      </Route>,
+                      page.auth,
+                      page.removeOnAuth,
                     );
 
-                    // dropdown detail page route
-                    if (dropdownPage.detail) {
+                    // dropdown routes
+                    if ('pages' in page && page.pages) {
+                      page.pages.forEach((dropdownPage: Page) => {
+                        const individualPageAuthorised = confirmAuthorised(
+                          user,
+                          dropdownPage.auth,
+                          dropdownPage.removeOnAuth,
+                        );
+                        const dropdownPath =
+                          convertToPath(dropdownPage.name, uiPath);
+                        // dropdown page route
+                        routes.push(
+                          <Route exact path={dropdownPath} key={dropdownPage.name}>
+                            {authorised ? (
+                              getElementDependingOnAuthStatus(loggedIn, dropdownPage)
+                            ) : (
+                              <Redirect to={`${uiPath ?? ''}/`} replace />
+                            )}
+                          </Route>,
+                        );
+
+                        // dropdown detail page route
+                        if (dropdownPage.detail) {
+                          routes.push(
+                            <Route
+                              exact
+                              path={`${dropdownPath}/:id`}
+                              key={`${page.name}-detail`}
+                            >
+                              {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user?.id) ? (
+                                dropdownPage.detail
+                              ) : (
+                                <Redirect to={`${uiPath ?? ''}/`} replace />
+                              )}
+                            </Route>,
+                          );
+                        }
+                      });
+                    } else {
+                      // regular page route
                       routes.push(
-                        <Route
-                          exact
-                          path={`${dropdownPath}/:id`}
-                          key={`${page.name}-detail`}
-                        >
-                          {!dropdownPage.detailAuth || (dropdownPage.detailAuth && user?.id) ? (
-                            dropdownPage.detail
+                        <Route exact path={path} key={page.name}>
+                          {authorised ? (
+                            getElementDependingOnAuthStatus(loggedIn, page)
                           ) : (
-                            <Redirect to={`${uiPath ?? ''}/`} replace />
+                            <Redirect to={basePath} replace />
                           )}
                         </Route>,
                       );
-                    }
-                  });
-                } else {
-                  // regular page route
-                  routes.push(
-                    <Route exact path={path} key={page.name}>
-                      {authorised ? (
-                        getElementDependingOnAuthStatus(loggedIn, page)
-                      ) : (
-                        <Redirect to={basePath} replace />
-                      )}
-                    </Route>,
-                  );
 
-                  // detail page route
-                  if ('detail' in page && page.detail) {
-                    routes.push(
-                      <Route
-                        exact
-                        path={`${path}/:id`}
-                        key={`${page.name}-detail`}
-                      >
-                          {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to={basePath} replace />}
-                        </Route>,
-                      );
+                      // detail page route
+                      if ('detail' in page && page.detail) {
+                        routes.push(
+                          <Route
+                            exact
+                            path={`${path}/:id`}
+                            key={`${page.name}-detail`}
+                          >
+                            {!page.detailAuth || (page.detailAuth && user) ? page.detail : <Redirect to={basePath} replace />}
+                          </Route>,
+                        );
+                      }
                     }
-                }
-                return routes;
-              })}
-              <Route
-                path={`/page-not-found`}
-                component={() => <PageNotFound />}
-              />
-              <Route path="*">
-                <Redirect to={`/page-not-found`} />
-              </Route>
-            </Switch>
-          </div>
-          <Footer />
-        </Router>
-      </AuthProvider>
+                    return routes;
+                  })}
+                  <Route
+                    path={`/page-not-found`}
+                    component={() => <PageNotFound />}
+                  />
+                  <Route path="*">
+                    <Redirect to={`/page-not-found`} />
+                  </Route>
+                </Switch>
+              </div>
+            </div>
+            <Footer />
+          </Router>
+        </AuthProvider>
       </QueryClientProvider>
     </div>
   );

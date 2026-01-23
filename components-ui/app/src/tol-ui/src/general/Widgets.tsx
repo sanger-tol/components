@@ -15,7 +15,11 @@ import {
   getHeight,
 } from "..";
 
+
 export interface PWidgets {
+  /**
+   * The components to be displayed within the widget layout
+   */
   components: IWidgetsComponent[];
 }
 

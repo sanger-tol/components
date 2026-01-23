@@ -401,3 +401,26 @@
     fill: var(--tol-primary);
   }
 }
+
+// inline edit
+.rs-inline-edit-controls .rs-btn {
+  background-color: var(--tol-bg) !important;
+  border: 1px solid var(--tol-grey) !important;
+  height: 30px !important;
+  width: 30px !important;
+
+  svg {
+    fill: var(--tol-primary) !important;
+  }
+
+  &[aria-label="Save"] {
+    svg {
+      fill: var(--tol-success) !important;
+    }
+  }
+  &[aria-label="Cancel"] {
+    svg {
+      fill: var(--tol-danger) !important;
+    }
+  }
+}
