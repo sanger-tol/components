@@ -19,15 +19,6 @@ import {
   deepCopy,
 } from "..";
 
-
-/**
- * @autodoc
- * 
- * RemoteFilters is a component designed for managing and applying filters to data retrieved from
- * a remote `dataSource`. It allows users to dynamically add or remove filters, with support for
- * various attribute types and loading states.
- */
-
 export interface PRemoteFilters extends IRemoteTarget {
   /**
    * Optional initial filters applied to the component; defaults to an empty filter
@@ -51,6 +42,13 @@ export interface PRemoteFilters extends IRemoteTarget {
   setHasPendingChanges?: (hasPendingChanges: boolean) => void;
 }
 
+/**
+ * @autodoc
+ * 
+ * RemoteFilters is a component designed for managing and applying filters to data retrieved from
+ * a remote `dataSource`. It allows users to dynamically add or remove filters, with support for
+ * various attribute types and loading states.
+ */
 export function RemoteFilters(props: PRemoteFilters) {
   const {
     objectType,
