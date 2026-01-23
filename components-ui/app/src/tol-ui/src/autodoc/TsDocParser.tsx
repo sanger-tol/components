@@ -39,7 +39,9 @@ export class TsDocParser {
    * @param filePath The relative path of the file containing the component to document
    * @returns Component documentation for this file, or `null` if no autodoc tag found
    */
-  public static parseFileContent(fileContent: string, filePath: string): IComponentDocumentation | null {
+  public static parseFileContent(
+    fileContent: string, filePath: string
+  ): IComponentDocumentation | null {
     // Check whether this file has an autodoc comment.
     // If it does, get the comment. If it does not, there is no parsing to do
     const autodocComment = this.extractAutodocCommentFromFileContent(fileContent);
@@ -113,18 +115,26 @@ export class TsDocParser {
     remarks?: string[]
   } {
     // The description is the text after @autodoc
-    const descriptionMatch = autodocComment.match(/(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
-    const description = descriptionMatch ? descriptionMatch[0].split("\n").map(line => line.slice(3)).join("\n") : undefined;
+    const descriptionMatch = autodocComment.match(
+      /(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g
+    );
+    // If a description was found, remove the first 3 characters (TsDoc artefacts)
+    const description = descriptionMatch ?
+      descriptionMatch[0].split("\n").map(line => line.slice(3)).join("\n")
+      : undefined;
 
     // Examples come after @example tags.
     // We map over each example to split it into title and code and remove TsDoc artefacts
-    const exampleMatches = autodocComment.match(/(?<=@example\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
+    const exampleMatches = autodocComment.match(
+      /(?<=@example\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g
+    );
     const examples: IComponentExample[] = exampleMatches?.map(example => {
       const [firstLine, ...restOfLines] = example.split("\n");
 
       return {
         title: firstLine,
-        // Join back together the rest of the code, where the first 3 characters of each line are cut off
+        // Join back together the rest of the code,
+        // where the first 3 characters of each line are cut off
         // (as they are artefacts of the TsDoc comment)
         code: restOfLines.map(line => line.slice(3)).join("\n"),
       };
@@ -132,7 +142,9 @@ export class TsDocParser {
 
     // Remarks come after @remarks tags.
     // We map over each remark to remove TsDoc artefacts
-    const remarksMatches = autodocComment.match(/(?<=@remarks\s)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g);
+    const remarksMatches = autodocComment.match(
+      /(?<=@remarks\s)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g
+    );
     const remarks = remarksMatches?.map(remark => 
       // Remove the artefacts at the start of each line (the first 3 characters)
       remark.split("\n")
@@ -154,7 +166,9 @@ export class TsDocParser {
    * @param fileContent The content of the file to search on this call
    * @param interfaceName The name of the interface to extract prop documentation from
    */
-  private static parsePropDocumentation(fileContent: string, interfaceName: string): IComponentProp[] {
+  private static parsePropDocumentation(
+    fileContent: string, interfaceName: string
+  ): IComponentProp[] {
     // Extract the interface from the file
     const interfaceText = this.extractInterfaceFromFile(fileContent, interfaceName);
     
@@ -168,13 +182,19 @@ export class TsDocParser {
     const deeperInterfaceName = deeperInterfaceMatch[1];
 
     // Now we know there's a deeper interface, get the contents of the file it's defined in
-    const deeperInterfaceFileContents = this.getTheContentsOfTheFileAnInterfaceIsDefinedIn(deeperInterfaceName);
+    const deeperInterfaceFileContents = this.getTheContentsOfTheFileAnInterfaceIsDefinedIn(
+      deeperInterfaceName
+    );
     if (!deeperInterfaceFileContents) {
-      throw new TsDocParseError(`Unable to find a file containing the interface ${deeperInterfaceName}`);
+      throw new TsDocParseError(
+        `Unable to find a file containing the interface ${deeperInterfaceName}`
+      );
     }
 
     // Resursively search this file too
-    return propDocs.concat(this.parsePropDocumentation(deeperInterfaceFileContents, deeperInterfaceName));
+    return propDocs.concat(
+      this.parsePropDocumentation(deeperInterfaceFileContents, deeperInterfaceName)
+    );
   }
 
   /**
@@ -267,7 +287,9 @@ export class TsDocParser {
    * @param interfaceName The interface to look for
    * @returns The file contents as a string, or null if no file was found with a definition of an interface with this name
    */
-  private static getTheContentsOfTheFileAnInterfaceIsDefinedIn(interfaceName: string): string | null {
+  private static getTheContentsOfTheFileAnInterfaceIsDefinedIn(
+    interfaceName: string
+  ): string | null {
     for (const fileContent of Object.values(modules)) {
       if ((fileContent as string).includes(`export interface ${interfaceName}`)) {
         return fileContent as string;
