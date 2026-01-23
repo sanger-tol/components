@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { retry } from "../services/http/retry";
+import { clearExpiredToken } from "../services/auth/clearExpiredToken";
 import {
   IEntityMeta,
   IAttributes,
@@ -35,7 +36,6 @@ import {
   IJsonApiData,
   IJsonApiResponse,
   IJsonApiResponseData,
-  clearExpiredToken
 } from "..";
 
 

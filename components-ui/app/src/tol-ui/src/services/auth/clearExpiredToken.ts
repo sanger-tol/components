@@ -33,10 +33,11 @@ export function clearExpiredToken() {
       try {
         return await originalMethod.apply(this, args);
       } catch (error) {
-        if (error.response.status === 401) {
+        if (error.response?.status === 401) {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
         }
+        throw error;
       }
     };
 

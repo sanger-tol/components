@@ -67,7 +67,7 @@ describe('clearExpiredToken decorator', () => {
     }
 
     const service = new TestService();
-    await service.unauthorizedMethod();
+    await expect(service.unauthorizedMethod()).rejects.toThrow('Unauthorized');
 
     expect(localStorageMock.removeItem).toHaveBeenCalledWith('token');
     expect(localStorageMock.removeItem).toHaveBeenCalledWith('user');
@@ -85,7 +85,7 @@ describe('clearExpiredToken decorator', () => {
     }
 
     const service = new TestService();
-    await service.serverErrorMethod();
+    await expect(service.serverErrorMethod()).rejects.toThrow('Server Error');
 
     expect(localStorageMock.removeItem).not.toHaveBeenCalled();
   });
