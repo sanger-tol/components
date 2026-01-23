@@ -22,11 +22,13 @@ $tol-emphasis-DARK-MODE: $tol-light !default;
 $tol-grey-LIGHT-MODE: #c2c8cd !default;
 $tol-grey-translucent-LIGHT-MODE: rgba($tol-grey-LIGHT-MODE, 0.2) !default;
 $tol-grey-subtle-LIGHT-MODE: lighten($tol-grey-LIGHT-MODE, 15%) !default;
+$tol-grey-subtle-plus-LIGHT-MODE: lighten($tol-grey-LIGHT-MODE, 18%) !default;
 $tol-grey-light-LIGHT-MODE: lighten($tol-grey-LIGHT-MODE, 15%) !default;
 
 $tol-grey-DARK-MODE: #424b52 !default;
 $tol-grey-translucent-DARK-MODE: rgba($tol-grey-DARK-MODE, 0.3) !default;
 $tol-grey-subtle-DARK-MODE: darken($tol-grey-DARK-MODE, 8%) !default;
+$tol-grey-subtle-plus-DARK-MODE: darken($tol-grey-DARK-MODE, 11%) !default;
 $tol-grey-light-DARK-MODE: lighten($tol-grey-DARK-MODE, 15%) !default;
 
 // ToL Colours
@@ -73,6 +75,7 @@ $tol-royal-dark: darken($tol-royal, 15%) !default;
   --tol-grey: #{$tol-grey-LIGHT-MODE};
   --tol-grey-translucent: #{$tol-grey-translucent-LIGHT-MODE};
   --tol-grey-subtle: #{$tol-grey-subtle-LIGHT-MODE};
+  --tol-grey-subtle-plus: #{$tol-grey-subtle-plus-LIGHT-MODE};
   --tol-grey-light: #{$tol-grey-light-LIGHT-MODE};
 
   --tol-primary: #{$tol-primary};
@@ -116,6 +119,7 @@ $tol-royal-dark: darken($tol-royal, 15%) !default;
     --tol-grey: #{$tol-grey-DARK-MODE};
     --tol-grey-translucent: #{$tol-grey-translucent-DARK-MODE};
     --tol-grey-subtle: #{$tol-grey-subtle-DARK-MODE};
+    --tol-grey-subtle-plus: #{$tol-grey-subtle-plus-DARK-MODE};
     --tol-grey-light: #{$tol-grey-light-DARK-MODE};
   }
 }
