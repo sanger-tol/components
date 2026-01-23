@@ -219,6 +219,7 @@ export function RemoteTable(props: PRemoteTable) {
     dataSource,
     basic,
     editableCells,
+    resizeableColumns = true,
     zone,
     setZone,
     fields,
@@ -530,6 +531,7 @@ export function RemoteTable(props: PRemoteTable) {
         data={data}
         fieldMeta={fieldMeta!}
         expandedRows={expandedRows}
+        resizeableColumns={resizeableColumns}
         height={height}
         loading={loading}
         page={page}
