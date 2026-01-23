@@ -10,13 +10,13 @@
   height: 100vh;
 }
 
-#tol-app-background {
+#tol-smart-app-background {
   min-height: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.tol-app {
+.tol-smart-app {
   margin: 10px;
   width: calc(100% - 20px);
   flex: 1 1 auto;

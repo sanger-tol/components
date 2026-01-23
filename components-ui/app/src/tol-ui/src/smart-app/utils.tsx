@@ -12,7 +12,9 @@ import {
   TsDataSource,
   BOARDS,
   TDataObjectOrNull,
-  PRIVILEGE
+  PRIVILEGE,
+  env,
+  BOARDS_API_DATA_PATH
 } from "..";
 
 
@@ -112,7 +114,7 @@ export async function getUserPrivilege(
 export function clearUnusedLocalStorage() {
   // The number of hours old a key must be before it is deleted
   const hoursAgeLimit = 1;
-  
+
   // The prefixes of keys we're checking which may be cleared
   const prefixesOfKeysToClear = [
     "/_config/attribute_metadata-",
@@ -126,7 +128,7 @@ export function clearUnusedLocalStorage() {
   for (let i = 0; i < localStorage.length; i++) {
     // Get storage key
     const storageKey = localStorage.key(i);
-  
+
     // Check if this is one of the keys we're looking for
     // (by skipping ones that aren't)
     if (!(storageKey && prefixesOfKeysToClear.some(prefix => storageKey.includes(prefix)))) {
@@ -148,9 +150,36 @@ export function clearUnusedLocalStorage() {
     // Delete this key if the time difference exceeds the limit
     if (hoursPassed >= hoursAgeLimit) {
       localStorage.removeItem(storageKey);
-      
+
       // We need to adjust the index one back after removing an item
       i--;
     }
   }
+}
+
+/**
+ * Sets up board configuration for the 'SmartApp'.
+ * 
+ * @param boards - Optional board configuration. Can be either:
+ *   - A boolean value: if `true`, creates a default board with a new TsDataSource
+ *   - A PBoard object: returns the object as-is
+ *   - undefined/false: returns undefined
+ * 
+ * @returns A PBoard object with configured data source, the provided PBoard object, 
+ *          or undefined if boards is falsy.
+ */
+export function setupBoards(boards?: PBoard | boolean): PBoard | undefined {
+  if (boards) {
+    if (typeof boards === 'boolean') {
+      return {
+        boardDataSource: new TsDataSource({
+          apiPath: env.API_PATH,
+          apiDataPath: BOARDS_API_DATA_PATH,
+        }),
+      };
+    } else {
+      return boards;
+    }
+  }
+  return undefined;
 }

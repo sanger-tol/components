@@ -59,11 +59,11 @@ export interface INavBase {
 /**
  * A single leaf page in the navigation tree
  */
-export interface INavPage extends INavBase {
+export interface IPage extends INavBase {
   /**
    * Either a page element reference or a boardId
    */
-  pageReference: string;
+  pageElementReference: string;
 }
 
 /**
@@ -73,7 +73,7 @@ export interface INavDropdown extends INavBase {
   /**
    * A group of pages within a dropdown, keyed by page nav name.
    */
-  pages: INavCollection<INavPage>;
+  pages: INavCollection<IPage>;
 }
 
 /**
@@ -95,18 +95,34 @@ export interface INavCollection<TItem> {
 /**
  * A top‑level navigation item can be either a page or a dropdown.
  */
-export type TRootNavItem = INavPage | INavDropdown;
+export type TPageOrDropdown = IPage | INavDropdown;
 
 /**
  * The full navigation configuration.
  */
-export type INavConfig = INavCollection<TRootNavItem>;
+export type TNavConfig = INavCollection<TPageOrDropdown>;
 
-export const EXAMPLE: INavConfig = {
+/**
+ * A page element can be either a React node or a boardId reference.
+ */
+export type TPageElement = React.ReactNode | string;
+
+/**
+ * A mapping of page element references to their corresponding JSX elements.
+ */
+export type TPageElements = Record<string, TPageElement>;
+
+/**
+ * The brand displayed in the navigation bar, either as a string title or a React node.
+ */
+export type TNavBrand = string | React.ReactNode;
+
+// @ts-ignore - example documentation
+const EXAMPLE: TNavConfig = {
   data: {
     "Dropdown Example 1": {
       path: {
-        route: "/dropdown-path"
+        route: "dropdown-path"
       },
       access: "public",
       pages: {
@@ -116,7 +132,7 @@ export const EXAMPLE: INavConfig = {
               route: "/page-example"
             },
             access: "public",
-            pageReference: "el1"
+            pageElementReference: "el1"
           }
         },
         order: ["Page Example 2"]
@@ -124,10 +140,10 @@ export const EXAMPLE: INavConfig = {
     },
     "Page Example 1": {
       path: {
-        route: "/page-example"
+        route: "page-example"
       },
       access: "public",
-      pageReference: "el1"
+      pageElementReference: "el1"
     }
   },
   order: ["Dropdown Example", "Page Example 1"]

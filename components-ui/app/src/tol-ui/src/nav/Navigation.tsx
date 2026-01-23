@@ -16,74 +16,24 @@ import {
   setUserToLocalStorage,
   tokenHasExpired,
   Login,
-  Dropdown,
-  Page,
   convertToPath,
   env,
   confirmAuthorised,
   LoginIcon,
   RegisterIcon,
   ProfileDropdown,
+  PSmartApp,
+  fetchEnvironment,
+  getNavBackgroundClass,
 } from "..";
 
 
-interface Props extends RouteComponentProps {
-  brand: string | JSX.Element;
-  pages: (Page | Dropdown)[];
-  profilePages?: Page[];
-  login: boolean;
-  register: boolean;
-  customCallbackUrl?: string;
-  uiPath?: string;
-}
+export interface PNavigation extends PSmartApp, RouteComponentProps {}
 
-interface Environment {
-  environment?: string;
-}
-
-const assumeProduction = (): string => {
-  console.warn("Error fetching environment. Assuming production.");
-  return "production";
-};
-
-const fetchEnvironment = (): Promise<string> => {
-  return fetch(env.API_PATH + "/system/environment")
-    .then((res) => {
-      if (res.ok) {
-        return res.json() as Promise<Environment>;
-      }
-      return null;
-    })
-    .then((res: Environment | null) => {
-      if (!res?.environment) {
-        return assumeProduction();
-      }
-      return res.environment;
-    })
-    .catch(() => {
-      return assumeProduction();
-    });
-};
-
-const getBackgroundClass = (environment: string): string => {
-  if (environment.startsWith("review")) return "bg-danger";
-  switch (environment) {
-    case "dev":
-    case "testing":
-    case "qa":
-      return "bg-danger";
-    case "staging":
-      return "bg-success";
-    default:
-      return "";
-  }
-};
-
-// on page change update returnUrl to page route
-function Navigation(props: Props) {
-  const { setToken, user, setUser } = useAuth();
+function Navigation(props: PNavigation) {
   const [environment, setEnvironment] = useState("");
   const [navbarOffset, setNavbarOffset] = useState<number>(0);
+  const { setToken, user, setUser } = useAuth();
 
   useEffect(() => {
     fetchEnvironment().then((fetchedEnvironment: string) => {
@@ -97,10 +47,6 @@ function Navigation(props: Props) {
       setNavbarOffset(navbar.offsetHeight);
     }
   }, []);
-
-  const isProduction = () => {
-    return environment === "production";
-  };
 
   const revokeOicd = (token: string) => {
     fetch(env.API_PATH + "/auth/logout", {
@@ -186,7 +132,7 @@ function Navigation(props: Props) {
       <Navbar
         id="tol-navbar"
         className={
-          "navbar-dark " + getBackgroundClass(environment) + " tol-navbar"
+          "navbar-dark " + getNavBackgroundClass(environment) + " tol-navbar"
         }
         expand="lg"
       >
@@ -196,7 +142,7 @@ function Navigation(props: Props) {
             style={{padding: typeof props.brand === "string" ? 10 : 0}}
           >
             {props.brand}
-            {environment && !isProduction() && " " + environment}
+            {environment && environment !== "production" && " " + environment}
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
