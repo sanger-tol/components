@@ -7,10 +7,14 @@ SPDX-License-Identifier: MIT
 // This no check will need to be removed at some point
 // It is in to prevent build errors to do with the Dropdown type
 // not containing detail and element props
-// @ts-nocheck
 
-import { useState, useEffect, createContext } from "react";
-import { Route as ReactRouter, BrowserRouter as Router, Switch, Redirect } from "react-router-dom";
+import { useState, useEffect } from "react";
+import {
+  Route as ReactRouter,
+  BrowserRouter as Router,
+  Switch,
+  Redirect,
+} from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import Navigation from "../nav/Navigation";
 import {
@@ -18,30 +22,18 @@ import {
   PageNotFound,
   getTokenFromLocalStorage,
   getUserFromLocalStorage,
-  tokenHasExpired,
-  confirmAuthorised,
-  getElementDependingOnAuthStatus,
   AuthProvider,
   Footer,
-  Dropdown,
-  Page,
-  convertToPath,
   matomoAnalytics,
   env,
   Board,
-  addBoardPages,
-  TsDataSource,
-  API_METHODS,
-  BOARDS_API_DATA_PATH,
   ValidationResultsViewer,
-  getUserPrivilege,
-  PrivilegeContext,
   BoardPrivilegeContextProvider,
   clearUnusedLocalStorage,
   PBoard,
+  TNavBrand,
   TNavConfig,
   TPageElements,
-  IPage,
   setupBoards,
   Route,
   systemNavConfig,
@@ -88,12 +80,18 @@ export interface PSmartApp {
 }
 
 export function SmartApp(props: PSmartApp) {
-  const {
-    login = true,
-    register = false,
-    customCallbackUrl,
-    uiPath,
-  } = props;
+  const { login = true, register = false, customCallbackUrl, uiPath } = props;
+
+  const [token, setToken] = useState(getTokenFromLocalStorage);
+  const [user, setUser] = useState(getUserFromLocalStorage);
+
+  const queryClient = new QueryClient();
+
+  useEffect(() => {
+    const siteId = env.MATOMO_SITE_ID;
+    matomoAnalytics(siteId);
+    clearUnusedLocalStorage();
+  }, []);
 
   // Setting a default for the boardDataSource else boards will be off
   const boards = setupBoards(props.boards);
@@ -104,23 +102,18 @@ export function SmartApp(props: PSmartApp) {
       ...systemNavConfig.data,
       ...(props.navigation?.data ?? {}),
     },
-    order: [
-      ...systemNavConfig.order,
-      ...(props.navigation?.order ?? []),
-    ],
+    order: [...systemNavConfig.order, ...(props.navigation?.order ?? [])],
   };
 
   // Always merge default page elements + incoming (incoming overrides defaults)
   const pageElements: TPageElements = {
-    boardDetail: (
+    boardDetail: boards ? (
       <BoardPrivilegeContextProvider>
         <Board {...boards} />
       </BoardPrivilegeContextProvider>
-    ),
+    ) : null,
     validationResultsDetail: <ValidationResultsViewer />,
     callback: <Callback />,
-    pageNotFound: <PageNotFound />,
-    wildcard: <Redirect to="/page-not-found" />,
     ...(props.pageElements ?? {}),
   };
 
@@ -136,16 +129,38 @@ export function SmartApp(props: PSmartApp) {
     uiPath,
   };
 
-  const [token, setToken] = useState(getTokenFromLocalStorage);
-  const [user, setUser] = useState(getUserFromLocalStorage);
+  /**
+   * Recursively collect all <Route /> nodes from the nav tree (pages and dropdowns at any level).
+   * Returns a flat list suitable for rendering inside <Switch>.
+   */
+  const collectRoutes = (
+    collection: TNavConfig,
+    parentTrail: string[] = [],
+  ) => {
+    return Object.entries(collection.data).flatMap(([navKey, navItem]) => {
+      const trail = [...parentTrail, navKey];
+      const routeKey = trail.join(" > ");
 
-  const queryClient = new QueryClient();
+      const routes = [
+        Route({
+          ...mergedProps,
+          ...navItem,
+          boards: boards!,
+          navigation,
+          pageElements,
+          key: navKey,
+          routeKey, // unique react key for across nesting
+        }),
+      ];
 
-  useEffect(() => {
-    const siteId = env.MATOMO_SITE_ID;
-    matomoAnalytics(siteId);
-    clearUnusedLocalStorage();
-  }, []);
+      // Recurse into dropdown children
+      if (navItem && typeof navItem === "object" && "pages" in navItem && navItem.pages) {
+        routes.push(...collectRoutes(navItem.pages, trail));
+      }
+
+      return routes;
+    });
+  };
 
   return (
     <div id="tol-smart-app-background">
@@ -162,17 +177,7 @@ export function SmartApp(props: PSmartApp) {
             <div className="tol-smart-app">
               <Navigation {...mergedProps} />
               <Switch>
-                {/* Build routes from *all* data entries (order only controls nav display) */}
-                {Object.entries(navigation.data).map(([navKey, navItem]) => {
-                  return Route({
-                    ...mergedProps,
-                    ...navItem,
-                    boards,
-                    navigation,
-                    pageElements,
-                    key: navKey,
-                  });
-                })}
+                {collectRoutes(navigation)}
                 <ReactRouter
                   path={`/page-not-found`}
                   component={() => <PageNotFound />}

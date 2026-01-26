@@ -65,7 +65,7 @@ export interface INavDropdown extends IPage {
   /**
    * A group of pages within a dropdown, keyed by page nav display name.
    */
-  pages: INavCollection<IPage>;
+  pages: INavCollection<TPageOrDropdown>;
 }
 
 /**
