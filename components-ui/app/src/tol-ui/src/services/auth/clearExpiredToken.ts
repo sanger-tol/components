@@ -3,6 +3,10 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import {
+  PopUpMessage,
+} from "../..";
+
 /**
  * Decorator that retries an asynchronous method upon failure.
  *
@@ -36,6 +40,7 @@ export function clearExpiredToken() {
         if (error.response?.status === 401) {
           localStorage.removeItem('token');
           localStorage.removeItem('user');
+          PopUpMessage({ type: "error", message: "Your session has expired. Please log in again." });
         }
         throw error;
       }
