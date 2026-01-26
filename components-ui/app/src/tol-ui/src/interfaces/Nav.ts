@@ -4,13 +4,19 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export type TPagePath = IPageRoute | IPageLink;
+export type TPagePath = IPageElement | IPageLink;
 
-export interface IPageRoute {
+export interface IPageElement {
+  /**
+   * Reference to a specific page element or boardId
+   * Optional for dropdowns
+   */
+  pageElementReference?: string;
   /**
    * The route path within the app
+   * Will default to the name of the nav item in implementation
    */
-  route: string;
+  route?: string;
 }
 
 export interface IPageLink {
@@ -39,55 +45,41 @@ export type TPageAccess =
   string[];
 
 /**
- * Base interface for navigation items
+ * Base interface for navigation page items
  */
-export interface INavBase {
-  /**
-   * The route or link for the page
-   */
-  path?: TPagePath;
+export interface IPage {
   /**
    * The access level required to view the page
    */
   access: TPageAccess;
   /**
-   * Whether to hide this page from the navigation
+   * The route or link for the page
    */
-  hideInNav?: boolean;
-}
-
-/**
- * A single leaf page in the navigation tree
- */
-export interface IPage extends INavBase {
-  /**
-   * Either a page element reference or a boardId
-   */
-  pageElementReference: string;
+  path?: TPagePath;
 }
 
 /**
  * A dropdown containing a collection of pages.
  */
-export interface INavDropdown extends INavBase {
+export interface INavDropdown extends IPage {
   /**
-   * A group of pages within a dropdown, keyed by page nav name.
+   * A group of pages within a dropdown, keyed by page nav display name.
    */
   pages: INavCollection<IPage>;
 }
 
 /**
- * A named, ordered collection of items, keyed by their nav name.
+ * A named, ordered collection of items, keyed by their nav display name.
  *
- * The keys of `data` are the nav names, e.g. "Extractions".
+ * The keys of `data` are the nav display names, e.g. "Extractions".
  */
 export interface INavCollection<TItem> {
   /**
-   * Items keyed by their nav name
+   * Items keyed by their nav display name
    */
   data: Record<string, TItem>;
   /**
-   * Display order of the keys in `data`
+   * Order of items to be displayed in the navigation
    */
   order: string[];
 }
@@ -121,30 +113,30 @@ export type TNavBrand = string | React.ReactNode;
 const EXAMPLE: TNavConfig = {
   data: {
     "Dropdown Example 1": {
-      path: {
-        route: "dropdown-path"
-      },
       access: "public",
+      path: {
+        route: "dropdown-path",
+      },
       pages: {
         data: {
           "Page Example 2": {
-            path: {
-              route: "/page-example"
-            },
             access: "public",
-            pageElementReference: "el1"
-          }
+            path: {
+              pageElementReference: "el1",
+              route: "/page-example",
+            },
+          },
         },
-        order: ["Page Example 2"]
-      }
+        order: ["Page Example 2"],
+      },
     },
     "Page Example 1": {
-      path: {
-        route: "page-example"
-      },
       access: "public",
-      pageElementReference: "el1"
-    }
+      path: {
+        pageElementReference: "el1",
+        route: "page-example",
+      },
+    },
   },
-  order: ["Dropdown Example", "Page Example 1"]
+  order: ["Dropdown Example 1", "Page Example 1"],
 };

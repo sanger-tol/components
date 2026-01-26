@@ -7,3 +7,4 @@ SPDX-License-Identifier: MIT
 export * from "./buttons.config";
 export * from "./componentSelection.config";
 export * from "./cellRendererParams.config";
+export * from "./nav.config";

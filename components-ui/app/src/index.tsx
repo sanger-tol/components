@@ -15,10 +15,10 @@ import {
 } from "./pages";
 import codeStyleGuideContent from "./docs/code-style-guide.md?raw";
 import howToDocumentContent from "./docs/how-to-document.md?raw";
+import { navConfig } from "./config";
 
 
 // TODO: generateAutoDocPages
-
 const pageElements = {
   home: <Home />,
   sandbox: <Sandbox />,
@@ -31,8 +31,7 @@ root.render(
   <SmartApp
     boards
     brand="Components"
-    home={}
-    navigation={}
+    navigation={navConfig}
     pageElements={pageElements}
   />
 );

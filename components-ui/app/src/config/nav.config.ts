@@ -8,25 +8,33 @@ import { TNavConfig } from "../tol-ui/src";
 
 export const navConfig: TNavConfig = {
   data: {
+    "Home": {
+      access: "public",
+      path: {
+        pageElementReference: "home",
+        route: "/"
+      }
+    },
     "Developer": {
       access: "public",
       pages: {
         data: {
           "Code Style Guide": {
-            path: {
-              route: "species"
-            },
             access: "public",
-            pageElementReference: "b_123456"
+            path: {
+              pageElementReference: "codeStyleGuide",
+            },
           },
           "How To Document": {
             access: "public",
-            pageElementReference: "howToDocument"
+            path: {
+              pageElementReference: "howToDocument",
+            },
           }
         },
         order: ["Code Style Guide", "How To Document"]
       }
     }
   },
-  order: ["Developer"]
+  order: ["Home", "Developer"]
 };

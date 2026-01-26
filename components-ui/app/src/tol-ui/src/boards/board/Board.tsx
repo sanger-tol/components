@@ -25,19 +25,29 @@ import {
 } from "../..";
 
 export interface PBoard {
+  /**
+   * The ID of the board to be displayed.
+   */
+  boardId?: string;
+  /**
+   * The data source for fetching board data.
+   */
   boardDataSource: TsDataSource;
 }
 
 export function Board(props: PBoard) {
   const { boardDataSource } = props;
 
-  const { boardId, viewId } = useParams<any>();
+  const { boardId: paramBoardId, viewId } = useParams<any>();
   const [user, setUser] = useState<any>(null);
   const [boardData, setBoardData] = useState<any>({});
   const [view, setView] = useState(viewId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { privilege, setPrivilege } = useBoardPrivilege();
+
+  // Ability to override boardId from props over URL params
+  const boardId = props.boardId ?? paramBoardId;
 
   themeListener(() => {
     try {
