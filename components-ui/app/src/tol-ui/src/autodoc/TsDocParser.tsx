@@ -173,28 +173,33 @@ export class TsDocParser {
     const interfaceText = this.extractInterfaceFromFile(fileContent, interfaceName);
     
     // Extract the documentation for the props in this interface
-    const propDocs = this.extractPropsFromInterface(interfaceText, interfaceName);
+    let propDocs = this.extractPropsFromInterface(interfaceText, interfaceName);
 
-    // Check if there's a deeper interface.
-    // If there is, get its name. If there isn't, we're done
-    const deeperInterfaceMatch = interfaceText.match(/(?:extends\s+)([a-zA-Z_][a-zA-Z0-9_]*)/);
-    if (!deeperInterfaceMatch) return propDocs;
-    const deeperInterfaceName = deeperInterfaceMatch[1];
+    // Check if there are any deeper interfaces.
+    const deeperInterfacesMatch = interfaceText.match(/(?:extends\s+)(([a-zA-Z_][a-zA-Z0-9_]*(, )*)*)/);
+    if (!deeperInterfacesMatch) return propDocs;
+    
+    // If there are any deeper interfaces, add the documentation of their members to `propDocs`
+    const deeperInterfaceNames = deeperInterfacesMatch[1].split(", ");
+    for (const deeperInterfaceName of deeperInterfaceNames) {
+      // Get the contents of the file this interface is defined in
+      const deeperInterfaceFileContents = this.getTheContentsOfTheFileAnInterfaceIsDefinedIn(
+        deeperInterfaceName
+      );
+      if (!deeperInterfaceFileContents) {
+        throw new TsDocParseError(
+          `Unable to find a file containing the interface ${deeperInterfaceName}`
+        );
+      }
 
-    // Now we know there's a deeper interface, get the contents of the file it's defined in
-    const deeperInterfaceFileContents = this.getTheContentsOfTheFileAnInterfaceIsDefinedIn(
-      deeperInterfaceName
-    );
-    if (!deeperInterfaceFileContents) {
-      throw new TsDocParseError(
-        `Unable to find a file containing the interface ${deeperInterfaceName}`
+      // Resursively search this file too
+      propDocs = propDocs.concat(
+        this.parsePropDocumentation(deeperInterfaceFileContents, deeperInterfaceName)
       );
     }
 
-    // Resursively search this file too
-    return propDocs.concat(
-      this.parsePropDocumentation(deeperInterfaceFileContents, deeperInterfaceName)
-    );
+    // Return all prop docs from this interface as well as any parent interfaces
+    return propDocs;
   }
 
   /**
