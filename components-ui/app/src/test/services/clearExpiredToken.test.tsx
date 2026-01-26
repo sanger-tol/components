@@ -4,6 +4,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { describe, test, expect, beforeEach, vi } from 'vitest';
+
+// Mock the entire tol-ui/src module to prevent circular dependency issues
+vi.mock('../../tol-ui/src', () => ({
+  PopUpMessage: vi.fn(),
+}));
+
+// Import the decorator after mocking to avoid circular dependencies
 import { clearExpiredToken } from '../../tol-ui/src/services/auth/clearExpiredToken';
 
 describe('clearExpiredToken decorator', () => {
