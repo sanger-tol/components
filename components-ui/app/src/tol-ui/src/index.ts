@@ -44,6 +44,7 @@ export * from "./nav";
 export * from "./overlays";
 export * from "./services";
 export { retry } from "./services/http";
+export { clearExpiredToken } from "./services/auth";
 export * from "./smart-app";
 export * from "./table";
 export * from "./timeline";
