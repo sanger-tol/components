@@ -36,6 +36,12 @@ export const componentOptions = [
     disabled: false,
   },
   {
+    type: "filterBlock",
+    text: "Filter Block",
+    icon: "filter",
+    disabled: false,
+  },
+  {
     type: "map",
     text: "Map",
     icon: "location-dot",

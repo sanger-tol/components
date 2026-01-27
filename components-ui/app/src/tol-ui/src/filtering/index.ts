@@ -5,8 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./BoardFilters";
+export * from "./BoardFilterBlock";
 export * from "./Filter";
 export * from "./FilterBlock";
+export * from "./FilterBlockConfigDrawer";
 export * from "./FilterBoolean";
 export * from "./FilterBooleanPicker";
 export * from "./FilterDatePicker";

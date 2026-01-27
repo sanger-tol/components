@@ -6,26 +6,38 @@ SPDX-License-Identifier: MIT
 
 import {
   IRemoteTargetAndZone,
-  IFilterInput,
   Filter,
   Row,
-  Col
+  Col,
+  PUtilityBar,
+  UtilityBar,
+  IFilterBlockFilters
 } from "..";
 
 
-export interface IFilterBlock extends IRemoteTargetAndZone {
-  filters: IFilterInput[];
+export interface PFilterBlock extends IRemoteTargetAndZone {
+  filters: IFilterBlockFilters;
+  utilityBarConfig?: PUtilityBar;
 }
 
-export function FilterBlock(props: IFilterBlock) {
-  const { filters } = props;
+export function FilterBlock(props: PFilterBlock) {
+  const { filters, utilityBarConfig } = props;
   return (
-    <Row>
-      {filters.map((filter) => (
-        <Col>
-          <Filter key={filter.componentId} {...filter} />
-        </Col>
-      ))}
-    </Row>
+    <>
+      <UtilityBar {...utilityBarConfig} />
+      <Row>
+        {filters.order.map((filter) => (
+          <Col key={filters.attributes[filter].attribute}>
+            <Filter
+              objectType={props.objectType}
+              dataSource={props.dataSource}
+              zone={props.zone}
+              setZone={props.setZone}
+              {...filters.attributes[filter]}
+            />
+          </Col>
+        ))}
+      </Row>
+    </>
   );
 }
