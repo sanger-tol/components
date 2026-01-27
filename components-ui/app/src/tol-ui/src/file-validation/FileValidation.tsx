@@ -38,7 +38,7 @@ import {
   USER_SHOWN_FILE_TYPE_DEFAULTS,
   MAX_FILE_SIZE,
   DEFAULT_SHEET_NAME,
-  VALIDATION_CONFIG,
+  BASE_VALIDATION_POLICY_MAP,
 } from "..";
 
 import type {
@@ -46,6 +46,8 @@ import type {
   IValidationConfig,
   IAllValidationData,
   TFileValidationPurpose,
+  TFileValidationStatus,
+  TFileValidationStatusPolicy,
 } from "..";
 
 export interface PFileValidation {
@@ -75,7 +77,7 @@ export function FileValidation(props: PFileValidation) {
   // TODO: re-enable type checking when mode toggle is re-introduced
   // @ts-ignore
   const [purpose, setPurpose] = useState<TFileValidationPurpose>(
-    VALIDATION_PURPOSE.VALIDATE_ONLY
+    VALIDATION_PURPOSE.VALIDATE_ONLY,
   );
   const [currentUploadId, setCurrentUploadId] = useState<string>("");
   const [fileDropped, setFileDropped] = useState<boolean>(false);
@@ -101,7 +103,7 @@ export function FileValidation(props: PFileValidation) {
     async function cleanUpValidations() {
       await setValidationTimeout(
         PIPELINE_DS,
-        getUserFromLocalStorage()?.id || ""
+        getUserFromLocalStorage()?.id || "",
       );
     }
     cleanUpValidations();
@@ -117,7 +119,7 @@ export function FileValidation(props: PFileValidation) {
     return await fetchCurrentPipelineResults(
       PIPELINE_DS,
       cacheBustedEndpoint,
-      currentUploadId
+      currentUploadId,
     );
   };
 
@@ -133,7 +135,7 @@ export function FileValidation(props: PFileValidation) {
         },
       },
       staleTime: 0,
-    }
+    },
   );
 
   const timeoutEnabled = validating && !!currentUploadId && !validated;
@@ -143,13 +145,13 @@ export function FileValidation(props: PFileValidation) {
       await setValidationTimeout(
         PIPELINE_DS,
         getUserFromLocalStorage()?.id || "",
-        currentUploadId
+        currentUploadId,
       );
       await latestPipelineResults.refetch();
       setPipelineFailed(true);
     },
     VALIDATION_TIMEOUT_MS,
-    { enabled: timeoutEnabled, startOnMount: timeoutEnabled }
+    { enabled: timeoutEnabled, startOnMount: timeoutEnabled },
   );
 
   useEffect(() => {
@@ -160,7 +162,7 @@ export function FileValidation(props: PFileValidation) {
         setValidated(true);
 
         const counts = getErrorWarningCounts(
-          latestPipelineResults.data.validationResults
+          latestPipelineResults.data.validationResults,
         );
 
         const status = determineUploadStatus(
@@ -168,14 +170,14 @@ export function FileValidation(props: PFileValidation) {
           counts.errors,
           counts.warnings,
           latestPipelineResults.data.failureMessage || null,
-          latestPipelineResults.data.is_ready
+          latestPipelineResults.data.is_ready,
         );
 
         setValidationStatus(status);
 
         const completionMessage = constructCompletionMessage(
           latestPipelineResults.data.validationResults,
-          latestPipelineResults.data.failureMessage
+          latestPipelineResults.data.failureMessage,
         );
 
         PopUpMessage({
@@ -193,7 +195,7 @@ export function FileValidation(props: PFileValidation) {
       PIPELINE_DS,
       validationConfig,
       file,
-      true
+      true,
     );
     setCurrentUploadId(pipeline_id || "");
   };
@@ -222,7 +224,7 @@ export function FileValidation(props: PFileValidation) {
         setValidationStatus({
           className: "marked-as-ready",
           text: "Marked as Ready",
-        })
+        }),
     );
   };
 
@@ -404,7 +406,7 @@ export function FileValidation(props: PFileValidation) {
               downloadFileFromS3(
                 PIPELINE_DS,
                 validationConfig.s3_bucket,
-                defaultFileTemplateName
+                defaultFileTemplateName,
               )
             }
           >
@@ -432,24 +434,31 @@ export function FileValidation(props: PFileValidation) {
             <li>{`Only data under sheet name: "${validationConfig.sheetName}" will be valid.`}</li>
           </ul>
           <h6>Status Messages:</h6>
-          <ul>
-            {VALIDATION_CONFIG.filter((validation) => {
-              return (
-                // return items for all projects and this specific project
-                validation.projects.length === 0 ||
-                validation.projects.includes(validationConfig.project || "")
-              );
-            }).map((validation) => {
-              return (
-                <li>
-                  <strong style={{ color: `${validation.textColor}` }}>
-                    {validation.validationStatus}
-                  </strong>
-                  : {validation.description}
-                </li>
-              );
-            })}
-          </ul>
+          <div className="tol-file-upload-status-table">
+            {" "}
+            <table>
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Summary</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(BASE_VALIDATION_POLICY_MAP).map(
+                  ([_, validation]) => (
+                    <tr key={validation.rename}>
+                      <td>
+                        <strong style={{ color: `${validation.textColor}` }}>
+                          {validation.rename}
+                        </strong>
+                      </td>
+                      <td>{validation.summary}</td>
+                    </tr>
+                  ),
+                )}
+              </tbody>
+            </table>
+          </div>
           <h6>Additional:</h6>
           <ul>
             <li>
@@ -498,13 +507,13 @@ export function FileValidation(props: PFileValidation) {
           determineUploadStatus(
             latestPipelineResults.data?.completed || false,
             getErrorWarningCounts(
-              latestPipelineResults.data?.validationResults || []
+              latestPipelineResults.data?.validationResults || [],
             ).errors,
             getErrorWarningCounts(
-              latestPipelineResults.data?.validationResults || []
+              latestPipelineResults.data?.validationResults || [],
             ).warnings,
             latestPipelineResults.data?.failureMessage || null,
-            latestPipelineResults.data?.is_ready || false
+            latestPipelineResults.data?.is_ready || false,
           ).text
         }
       />
@@ -514,7 +523,7 @@ export function FileValidation(props: PFileValidation) {
         onEnter={async () =>
           await setValidationTimeout(
             PIPELINE_DS,
-            getUserFromLocalStorage()?.id || ""
+            getUserFromLocalStorage()?.id || "",
           )
         }
       />

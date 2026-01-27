@@ -4,25 +4,6 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export const VALIDATION_PURPOSE = {
-  VALIDATE_ONLY: "Validate",
-  VALIDATE_AND_UPLOAD: "Validate and Upload",
-  VALIDATE_AND_MARK_AS_READY: "Validate and Mark as Ready",
-};
-
-export const VALIDATION_STATUSES = {
-  IN_PROGRESS: "In Progress",
-  FAILED: "Failed",
-  PASSED: "Passed",
-  PASSED_WITH_WARNINGS: "Passed with Warnings",
-  COMPLETED_WITH_ERRORS: "Completed with Errors",
-  MARKED_AS_READY: "Marked as Ready",
-
-  UPLOADED_TO_STS: "Uploaded to STS",
-  REJECTED: "Rejected",
-  ADDED_TO_DATABASE: "Added to Database",
-};
-
 export const FILE_VALIDATION_PATH = "/file-validation/results/";
 export const REFRESH_INTERVAL = 1000;
 export const MAX_ERRORS_TO_DISPLAY = 2;

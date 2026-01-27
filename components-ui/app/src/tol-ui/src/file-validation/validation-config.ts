@@ -4,76 +4,70 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TFileValidationStatuses, VALIDATION_STATUSES } from "..";
+import { TFileValidationStatusPolicyMap, FILE_VALIDATION_STATUS } from "..";
 
-export const VALIDATION_CONFIG: TFileValidationStatuses = [
-  {
-    validationStatus: VALIDATION_STATUSES.IN_PROGRESS,
-    description:
+export const BASE_VALIDATION_POLICY_MAP: TFileValidationStatusPolicyMap = {
+  [FILE_VALIDATION_STATUS.IN_PROGRESS]: {
+    status: FILE_VALIDATION_STATUS.IN_PROGRESS,
+    rename: "Validation in Progress",
+    summary:
       "The file is being validated and results should be available shortly.",
     textColor: "var(--tol-info)",
-    projects: [],
-    callback: () => {},
+    allowedActions: [],
   },
-  {
-    validationStatus: VALIDATION_STATUSES.FAILED,
-    description:
-      "The validation process has failed. This is usually due to a server error. If it persists, speak to your Sanger contact.",
-    textColor: "var(--tol-danger-light)",
-    projects: [],
-    callback: () => {},
-  },
-  {
-    validationStatus: VALIDATION_STATUSES.PASSED,
-    description:
-      "The file has passed validation with no errors or warnings. You may now continue the submission process, if you have chosen not to do so automatically.",
+  [FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES]: {
+    status: FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES,
+    rename: "Validation Completed - Passed (No Issues)",
+    summary:
+      "The file has passed validation with no errors or warnings. Please mark as ready to inform an admin that it is ready for further processing.",
     textColor: "var(--tol-success)",
-    projects: [],
-    callback: () => {},
+    allowedActions: ["mark_as_ready", "downloadReport", "viewReport"],
   },
-  {
-    validationStatus: VALIDATION_STATUSES.PASSED_WITH_WARNINGS,
-    description:
-      "The file may have some formatting issues, that you may wish to fix, but you can submit if you would like to.",
+  [FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS]: {
+    status: FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS,
+    rename: "Validation Completed - Passed With Warnings",
+    summary:
+      "The file may have some formatting or minor issues. Please fix these, or mark as ready to inform an admin that it is ready for further processing.",
     textColor: "var(--tol-warning)",
-    projects: [],
-    callback: () => {},
+    allowedActions: ["mark_as_ready", "downloadReport", "viewReport"],
   },
-  {
-    validationStatus: VALIDATION_STATUSES.COMPLETED_WITH_ERRORS,
-    description:
-      "There are major issues with the data provided in the file, please check the interface or report and fix before re-submitting.",
+  [FILE_VALIDATION_STATUS.COMPLETED_FAILED_ERRORS]: {
+    status: FILE_VALIDATION_STATUS.COMPLETED_FAILED_ERRORS,
+    rename: "Validation Completed - Failed with Errors",
+    summary:
+      "There are major issues with the data provided in the file, please check the report and fix before re-submitting.",
     textColor: "var(--tol-danger)",
-    projects: [],
-    callback: () => {},
+    allowedActions: ["downloadReport", "viewReport"],
   },
-  {
-    validationStatus: VALIDATION_STATUSES.MARKED_AS_READY,
-    description: "The file has been marked as ready for further processing.",
-    textColor: "var(--tol-success-light)",
-    projects: ["portal"],
-    callback: () => {},
+  [FILE_VALIDATION_STATUS.SYSTEM_ERROR]: {
+    status: FILE_VALIDATION_STATUS.SYSTEM_ERROR,
+    rename: "System Error",
+    summary:
+      "The validation process has failed due to a system error. Please try again and contact an admin if the issue persists.",
+    textColor: "var(--tol-danger-light)",
+    allowedActions: ["revalidate"],
   },
-  {
-    validationStatus: VALIDATION_STATUSES.UPLOADED_TO_STS,
-    description: "The manifest has been uploaded to STS.",
-    textColor: "var(--tol-info-light)",
-    projects: ["portal"],
-    callback: () => {},
+  [FILE_VALIDATION_STATUS.TIMEOUT]: {
+    status: FILE_VALIDATION_STATUS.TIMEOUT,
+    rename: "Validation Timed Out",
+    summary:
+      "The validation process has timed out. Please try again and contact an admin if the issue persists.",
+    textColor: "var(--tol-danger-dark)",
+    allowedActions: ["revalidate"],
   },
-  {
-    validationStatus: VALIDATION_STATUSES.ADDED_TO_DATABASE,
-    description: "The data from spreadsheet has been added to the database.",
-    textColor: "var(--tol-info-light)",
-    projects: ["treeofsex"],
-    callback: () => {},
-  },
-  {
-    validationStatus: VALIDATION_STATUSES.REJECTED,
-    description:
-      "Your submission has been rejected, please check the results page for a reason.",
+  [FILE_VALIDATION_STATUS.FILE_REJECTED]: {
+    status: FILE_VALIDATION_STATUS.FILE_REJECTED,
+    rename: "File Submission Rejected",
+    summary:
+      "The provided file has been rejected by an admin. Please see the rejection reason for further information.",
     textColor: "var(--tol-royal)",
-    projects: [],
-    callback: () => {},
+    allowedActions: [],
   },
-];
+  [FILE_VALIDATION_STATUS.MARKED_AS_READY]: {
+    status: FILE_VALIDATION_STATUS.MARKED_AS_READY,
+    rename: "Marked as Ready",
+    summary: "The file has been marked as ready for further processing.",
+    textColor: "var(--tol-success-light)",
+    allowedActions: ["unmark_as_ready"],
+  },
+};

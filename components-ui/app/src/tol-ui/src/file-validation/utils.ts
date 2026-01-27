@@ -634,6 +634,7 @@ export async function setValidationTimeout(
     type: "upload",
     attributes: {
       failure_message: "Validation timed out.",
+      validation_status: "validation_timeout"
     },
   }));
 

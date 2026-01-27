@@ -175,7 +175,7 @@
   }
 }
 
-@media(prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
   .tol-file-uploader-validate-steps-outer-container {
     background: var(--tol-grey-subtle);
   }
@@ -243,6 +243,15 @@
   }
 }
 
+.tol-file-upload-status-table {
+  margin-bottom: 5px;
+
+  table, tr, th, td {
+    border: 1px solid var(--tol-text);
+    padding: 6px;
+  }
+}
+
 .tol-file-validation-previous-results-no-data {
   color: var(--tol-danger);
   display: flex;
@@ -259,7 +268,8 @@
     height: fit-content;
     width: 250px;
     padding: 5px 15px;
-    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px,
+    box-shadow:
+      rgba(0, 0, 0, 0.19) 0px 10px 20px,
       rgba(0, 0, 0, 0.23) 0px 6px 6px;
     border-radius: 6px;
     min-height: 225px;
@@ -499,7 +509,9 @@
 }
 
 .tol-file-uploader-dropdown-btn-icon-transition {
-  transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
+  transition:
+    transform 0.3s ease-in-out,
+    opacity 0.2s ease-in-out;
   opacity: 1;
 }
 
@@ -605,7 +617,9 @@
     border: none !important;
     padding: 0 !important;
     margin: 0 !important;
-    transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    transition:
+      transform 0.3s ease-in-out,
+      opacity 0.2s ease-in-out;
 
     &:hover {
       opacity: 0.8;
@@ -614,7 +628,9 @@
     &.icon-rotate {
       transform: rotate(180deg);
       opacity: 0.8;
-      transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
+      transition:
+        transform 0.3s ease-in-out,
+        opacity 0.2s ease-in-out;
     }
 
     &.icon-rotate:hover {
