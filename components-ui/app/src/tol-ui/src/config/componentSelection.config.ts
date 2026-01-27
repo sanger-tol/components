@@ -41,6 +41,12 @@ export const componentOptions = [
     defaultSize: "md",
   },
   {
+    type: "filterBlock",
+    text: "Filter Block",
+    icon: "filter",
+    disabled: false,
+  },
+  {
     type: "map",
     text: "Map",
     icon: "location-dot",

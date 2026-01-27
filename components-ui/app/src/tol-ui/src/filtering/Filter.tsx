@@ -21,12 +21,21 @@ export type IFilterInputType =
   | "bool"
   | "multi";
 
-export interface IFilterInput extends IRemoteTargetAndZone {
+export interface IFilterInput extends IRemoteTargetAndZone, IFilterInputBase {}
+
+export interface IFilterInputBase {
   attribute: string;
   rename: string;
-  type?: IFilterInputType;
   componentId: string;
+  type?: IFilterInputType;
   delay?: number;
+}
+
+export interface IFilterBlockFilters {
+  order: string[];
+  attributes: {
+    [attributeName: string]: IFilterInputBase;
+  };
 }
 
 export function Filter(props: IFilterInput) {
