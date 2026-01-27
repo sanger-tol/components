@@ -8,7 +8,7 @@ import React from "react";
 import { expect, test, describe } from "vitest";
 import { setupNavigationConfig, TNavConfig, collectNavigationItems } from "../../tol-ui/src";
 import { findDropdownByTitle, findLinkByText, navConfigMock } from "..";
-import { testUser } from "../mocks/user.mock";
+import { adminUser } from "../mocks/user.mock";
 
 
 const navWithDefaults: TNavConfig = setupNavigationConfig(navConfigMock);
@@ -57,39 +57,36 @@ describe("collectNavigationItems function", () => {
 });
 
 describe("test navigation access control", () => {
-  test("collectNavigationItems respects access control for public pages", () => {
-    const navItems = collectNavigationItems(navWithDefaults, null);
+  const navItems = collectNavigationItems(navWithDefaults, null);
+  const navItemsWhenAdmin = collectNavigationItems(navWithDefaults, adminUser);
+
+  test("collectNavigationItems returns public pages when not logged in", () => {
     const home = findLinkByText(navItems, "Home");
     expect(home).toBeTruthy();
   });
 
-  test("collectNavigationItems respects access control for public pages as a logged in user", () => {
-    const navItems = collectNavigationItems(navWithDefaults, testUser);
-    const home = findLinkByText(navItems, "Home");
+  test("collectNavigationItems returns public pages when logged in", () => {
+    const home = findLinkByText(navItemsWhenAdmin, "Home");
     expect(home).toBeTruthy();
   });
 
-  test("collectNavigationItems respects access control for authenticated pages", () => {
-    const navItems = collectNavigationItems(navWithDefaults, null);
+  test("collectNavigationItems does not return authenticated pages when not logged in", () => {
     const authPage = findLinkByText(navItems, "Authenticated Page");
     expect(authPage).toBeUndefined();
   });
 
-  test("collectNavigationItems respects access control for authenticated pages as a logged in user", () => {
-    const navItems = collectNavigationItems(navWithDefaults, testUser);
-    const authPage = findLinkByText(navItems, "Authenticated Page");
+  test("collectNavigationItems returns authenticated pages when logged in", () => {
+    const authPage = findLinkByText(navItemsWhenAdmin, "Authenticated Page");
     expect(authPage).toBeTruthy();
   });
 
-  test("collectNavigationItems respects access control for role-specific pages", () => {
-    const navItems = collectNavigationItems(navWithDefaults, null);
+  test("collectNavigationItems does not return role-specific pages when not logged in", () => {
     const rolePage = findLinkByText(navItems, "Role Specific Page");
     expect(rolePage).toBeUndefined();
   });
 
-  test("collectNavigationItems respects access control for role-specific pages as a logged in user", () => {
-    const navItems = collectNavigationItems(navWithDefaults, testUser);
-    const rolePage = findLinkByText(navItems, "Role Specific Page");
+  test("collectNavigationItems returns role-specific pages when logged in", () => {
+    const rolePage = findLinkByText(navItemsWhenAdmin, "Role Specific Page");
     expect(rolePage).toBeTruthy();
   });
 });

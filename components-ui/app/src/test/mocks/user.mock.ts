@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { User } from "../../tol-ui/src";
 
-export const testUser: User = {
+export const adminUser: User = {
   email: "user@test.ac.uk",
   name: "Test User",
   organisation: "Test Organisation",
