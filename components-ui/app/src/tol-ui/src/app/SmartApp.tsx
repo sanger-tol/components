@@ -144,6 +144,7 @@ export function SmartApp(props: PSmartApp) {
           pageElements,
           navKey,
           routeKey, // unique react key for across nesting
+          user,
         }),
       ];
 

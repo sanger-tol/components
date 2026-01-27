@@ -4,13 +4,8 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-/*
-SPDX-FileCopyrightText: 2026 Genome Research Ltd.
-
-SPDX-License-Identifier: MIT
-*/
-
 import { TNavConfig } from "../../tol-ui/src";
+
 
 export const navConfigMock: TNavConfig = {
   data: {

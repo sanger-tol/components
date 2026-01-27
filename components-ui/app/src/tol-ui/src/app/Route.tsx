@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Route as ReactRoute } from "react-router-dom";
-import { Board, IPage, isPageAccessible, PBoard, PSmartApp, useAuth } from "..";
+import { Board, IPage, isPageAccessible, PBoard, PSmartApp, User } from "..";
 
 export interface PRoute extends PSmartApp, IPage {
   /**
@@ -21,20 +21,21 @@ export interface PRoute extends PSmartApp, IPage {
    * Parameters for board pages
    */
   boards: PBoard;
+  /**
+   * The current user object, can't use useAuth hook here as it's treated as a pure function.
+   */
+  user: User | null;
 }
 
 export function Route(props: PRoute) {
-  const { navKey, routeKey, boards, path, pageElements } = props;
-  const { user } = useAuth();
+  const { navKey, routeKey, boards, path, pageElements, user } = props;
 
-  console.log(navKey, user, !isPageAccessible(user, props));
+  // ignore routes without a path e.g. external links
+  if (!(path && 'route' in path)) return;
 
   // Check if user has access to the page
   if (!isPageAccessible(user, props)) return;
 
-  // ignore routes without a path e.g. external links
-  if (!(path && 'route' in path)) return;
-;
   let element: React.ReactNode = undefined;
 
   // Check if there is a pageElementReference in the path

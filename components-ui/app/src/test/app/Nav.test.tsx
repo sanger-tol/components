@@ -7,7 +7,8 @@ SPDX-License-Identifier: MIT
 import React from "react";
 import { expect, test, describe } from "vitest";
 import { setupNavigationConfig, TNavConfig, collectNavigationItems } from "../../tol-ui/src";
-import { findDropdownByTitle, findLinkByText, navConfigMock } from ".";
+import { findDropdownByTitle, findLinkByText, navConfigMock } from "..";
+import { testUser } from "../mocks/user.mock";
 
 
 const navWithDefaults: TNavConfig = setupNavigationConfig(navConfigMock);
@@ -52,5 +53,43 @@ describe("collectNavigationItems function", () => {
 
     expect(page1).toBeTruthy();
     expect(page1?.props?.href).toBe("/page-name-1");
+  });
+});
+
+describe("test navigation access control", () => {
+  test("collectNavigationItems respects access control for public pages", () => {
+    const navItems = collectNavigationItems(navWithDefaults, null);
+    const home = findLinkByText(navItems, "Home");
+    expect(home).toBeTruthy();
+  });
+
+  test("collectNavigationItems respects access control for public pages as a logged in user", () => {
+    const navItems = collectNavigationItems(navWithDefaults, testUser);
+    const home = findLinkByText(navItems, "Home");
+    expect(home).toBeTruthy();
+  });
+
+  test("collectNavigationItems respects access control for authenticated pages", () => {
+    const navItems = collectNavigationItems(navWithDefaults, null);
+    const authPage = findLinkByText(navItems, "Authenticated Page");
+    expect(authPage).toBeUndefined();
+  });
+
+  test("collectNavigationItems respects access control for authenticated pages as a logged in user", () => {
+    const navItems = collectNavigationItems(navWithDefaults, testUser);
+    const authPage = findLinkByText(navItems, "Authenticated Page");
+    expect(authPage).toBeTruthy();
+  });
+
+  test("collectNavigationItems respects access control for role-specific pages", () => {
+    const navItems = collectNavigationItems(navWithDefaults, null);
+    const rolePage = findLinkByText(navItems, "Role Specific Page");
+    expect(rolePage).toBeUndefined();
+  });
+
+  test("collectNavigationItems respects access control for role-specific pages as a logged in user", () => {
+    const navItems = collectNavigationItems(navWithDefaults, testUser);
+    const rolePage = findLinkByText(navItems, "Role Specific Page");
+    expect(rolePage).toBeTruthy();
   });
 });
