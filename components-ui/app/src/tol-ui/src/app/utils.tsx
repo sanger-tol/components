@@ -19,6 +19,7 @@ import {
   convertToPath,
   TPageOrDropdown,
   PAGE_ACCESS,
+  User,
 } from "..";
 
 
@@ -229,17 +230,19 @@ export function setupNavigationConfig(navigation: TNavConfig | undefined): TNavC
  * @param navigation - Navigation configuration to render. If `undefined`, returns an empty array.
  * @returns An array of React nodes representing navigation links and dropdowns in the configured order.
  */
-export function collectNavigationItems(navigation: TNavConfig | undefined): ReactNode[] {
+export function collectNavigationItems(navigation: TNavConfig | undefined, user: User | null): ReactNode[] {
   const navButtons: ReactNode[] = [];
 
   navigation?.order.map((navItemName: string) => {
     const navItem = navigation.data[navItemName];
 
+    if (!isPageAccessible(user, navItem)) return;
+
     // Dropdown menu
     if ("pages" in navItem) {
       navButtons.push(
         <NavDropdown title={navItemName}>
-          {collectNavigationItems(navItem.pages)}
+          {collectNavigationItems(navItem.pages, user)}
         </NavDropdown>
       )
       // Single page link
@@ -272,33 +275,20 @@ export function collectNavigationItems(navigation: TNavConfig | undefined): Reac
 
 /**
  * Determines whether a given page is accessible to the provided user based on the page's access rules.
- *
- * Access rules are evaluated in the following order:
- * - If the page has no access requirement or is {@link PAGE_ACCESS.PUBLIC}, access is granted.
- * - If the page requires any authentication/roles and the user is not present, access is denied.
- * - If the page is {@link PAGE_ACCESS.AUTHENTICATED}, access is granted for any logged-in user.
- * - If the page access is an array of roles, access is granted when the user has at least one required role.
- * - Otherwise, access is denied.
- *
+ * 
  * @param user - The current user object; if falsy, the user is treated as not logged in. Expected to contain a `roles` array.
  * @param page - The page or dropdown definition containing an `access` field that specifies the access policy.
  * @returns `true` if the user is allowed to access the page; otherwise `false`.
  */
-export function isPageAccessible(user: any, page: TPageOrDropdown): boolean {
+export function isPageAccessible(user: User | null, page: TPageOrDropdown): boolean {
   // If no auth required, allow access
-  if (!page.access || page.access === PAGE_ACCESS.PUBLIC) {
-    return true;
-  }
+  if (!page.access || page.access === PAGE_ACCESS.PUBLIC) return true;
 
   // If user not logged in, deny access
-  if (!user) {
-    return false;
-  }
+  if (!user) return false;
 
   // If page requires login, allow access
-  if (page.access === PAGE_ACCESS.AUTHENTICATED) {
-    return true;
-  }
+  if (page.access === PAGE_ACCESS.AUTHENTICATED) return true;
 
   // If page requires specific roles, check user roles
   if (Array.isArray(page.access)) {

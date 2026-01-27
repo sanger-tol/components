@@ -23,6 +23,7 @@ import {
   fetchEnvironment,
   getNavBackgroundClass,
   collectNavigationItems,
+  ProfileDropdown,
 } from "..";
 
 
@@ -86,7 +87,7 @@ function Navigation(props: PNavigation) {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            {collectNavigationItems(navigation)}
+            {collectNavigationItems(navigation, user)}
             {props.register && tokenHasExpired() ? (
               <Nav.Link className="nav-right" key="Register">
                 <Login
@@ -108,21 +109,10 @@ function Navigation(props: PNavigation) {
               </Nav.Link>
             ) : props.login && user && (
               <div className="nav-right">
-                {/* <ProfileDropdown
+                <ProfileDropdown
                   user={user}
-                  pages={props.profileNavigation
-                    ?.map((page: Page) => {
-                      const authorised = confirmAuthorised(
-                        user,
-                        page.auth,
-                        page.removeOnAuth,
-                      );
-                      if (authorised) return page;
-                      return undefined;
-                    })
-                    .filter((page): page is Page => page !== undefined)}
                   onLogout={logout}
-                /> */}
+                />
               </div>
             )}
           </Navbar.Collapse>

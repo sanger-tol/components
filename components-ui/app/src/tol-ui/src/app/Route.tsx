@@ -5,13 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { Route as ReactRoute } from "react-router-dom";
-import { Board, IPage, PBoard, PSmartApp, useAuth } from "..";
+import { Board, IPage, isPageAccessible, PBoard, PSmartApp, useAuth } from "..";
 
 export interface PRoute extends PSmartApp, IPage {
   /**
    * A unique key for the page which acts as the display name in the navigation.
    */
-  key: string;
+  navKey: string;
   /**
    * Optional unique key for React rendering.
    * Useful for nested nav trees where `key` can repeat.
@@ -24,8 +24,13 @@ export interface PRoute extends PSmartApp, IPage {
 }
 
 export function Route(props: PRoute) {
-  const { key, routeKey, boards, path, pageElements } = props;
-  //const { user } = useAuth();
+  const { navKey, routeKey, boards, path, pageElements } = props;
+  const { user } = useAuth();
+
+  console.log(navKey, user, !isPageAccessible(user, props));
+
+  // Check if user has access to the page
+  if (!isPageAccessible(user, props)) return;
 
   // ignore routes without a path e.g. external links
   if (!(path && 'route' in path)) return;
@@ -46,7 +51,7 @@ export function Route(props: PRoute) {
   return (
     <ReactRoute
       exact
-      key={routeKey ?? key}
+      key={routeKey ?? navKey}
       path={path.route}
       render={() => element}
     />

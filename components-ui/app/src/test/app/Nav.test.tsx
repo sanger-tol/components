@@ -11,7 +11,6 @@ import { findDropdownByTitle, findLinkByText, navConfigMock } from ".";
 
 
 const navWithDefaults: TNavConfig = setupNavigationConfig(navConfigMock);
-const navItems = collectNavigationItems(navWithDefaults);
 
 describe("setupNavigationConfig function", () => {
   test("Function returns the new navigation config with default routes", () => {
@@ -31,8 +30,11 @@ describe("setupNavigationConfig function", () => {
 });
 
 describe("collectNavigationItems function", () => {
+  const navItems = collectNavigationItems(navWithDefaults, null);
+  const emptyNavItems = collectNavigationItems(undefined, null);
+
   test("returns empty array when navigation is undefined", () => {
-    expect(collectNavigationItems(undefined)).toEqual([]);
+    expect(emptyNavItems).toEqual([]);
   });
 
   test("collects top-level links (e.g. Home) with correct href", () => {

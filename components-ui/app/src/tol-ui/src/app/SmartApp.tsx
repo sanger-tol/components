@@ -142,7 +142,7 @@ export function SmartApp(props: PSmartApp) {
           boards: boards!,
           navigation,
           pageElements,
-          key: navKey,
+          navKey,
           routeKey, // unique react key for across nesting
         }),
       ];
