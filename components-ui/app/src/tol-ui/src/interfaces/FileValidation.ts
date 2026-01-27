@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TStepsData } from "../file-validation";
+import type { TsDataSource } from "..";
 
 export type TSeverity = "error" | "warning";
 export type TIconType = "check" | "xmark" | "exclamation" | "question";
@@ -63,7 +63,6 @@ export interface IValidationUploadDetails {
   pipelineId: string;
   s3Bucket: string;
   failureMessage: string | null;
-  isReady: boolean;
 }
 
 export type TValidationIssues = Record<string, IValidationResult[]>;
@@ -93,12 +92,19 @@ export interface IAllValidationData {
   pipelineName: string;
   pipelineId: string;
   pipelineSteps: TStepsData;
+  validationStatus: string;
   s3Filename: string;
   s3Bucket: string;
   validationResults: IValidationResult[];
   failureMessage: string | null;
-  isReady: boolean;
 }
+
+export interface IStepData {
+  name: string;
+  description: string;
+}
+
+export type TStepsData = IStepData[] | [];
 
 /* 
   <----- VALIDATION STATUS SYSTEM ----->
@@ -150,14 +156,7 @@ export type TFileValidationStatusPolicy = {
 
 export type TValidationActionContext = {
   item: IAllValidationData;
-  api: {
-    reject: (id: string, reason?: string) => Promise<void>;
-    markAsReady: (id: string) => Promise<void>;
-    unmarkAsReady: (id: string) => Promise<void>;
-    revalidate: () => Promise<void>;
-    viewReport: (data: IAllValidationData) => Promise<void>;
-    downloadReport: (data: IAllValidationData) => Promise<void>;
-  };
+  dataSource: TsDataSource;
   user?: { roles: string[] };
 };
 
@@ -171,4 +170,9 @@ export type TFileValidationAction = {
 export type TFileValidationStatusPolicyMap = Record<
   TFileValidationStatus,
   TFileValidationStatusPolicy
+>;
+
+export type TValidationActionMap = Record<
+  TValidationActionId,
+  TFileValidationAction
 >;
