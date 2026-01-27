@@ -14,7 +14,12 @@ import {
   TDataObjectOrNull,
   PRIVILEGE,
   env,
-  BOARDS_API_DATA_PATH
+  BOARDS_API_DATA_PATH,
+  TNavConfig,
+  systemNavConfig,
+  convertToPath,
+  TPageOrDropdown,
+  TPagePath
 } from "..";
 
 
@@ -142,4 +147,64 @@ export function setupBoards(boards?: PBoard | boolean): PBoard | undefined {
     }
   }
   return undefined;
+}
+
+/**
+ * Adds missing default values to a navigation configuration recursively.
+ * 
+ * @param navigation - The navigation config to normalize. If `undefined`, a default empty config is used.
+ * 
+ * @returns A new navigation config with defaults applied.
+ */
+export function addDefaultsToNavigationConfig(navigation: TNavConfig | undefined): TNavConfig {
+  const nav: TNavConfig = navigation ?? { data: {}, order: [] };
+
+  const data = Object.fromEntries(
+    Object.entries(nav.data ?? {}).map(([navName, navItem]) => {
+      if (!navItem || typeof navItem !== "object") return [navName, navItem];
+
+      const nextNavItem: TPageOrDropdown = { ...navItem };
+
+      // If it has a pageElementReference but no route, add a default
+      if (nextNavItem.path && 'pageElementReference' in nextNavItem.path) {
+
+        // Generate a route path with the key as a fallback
+        nextNavItem.path.route = (
+          navItem.path && 'route' in navItem.path ? navItem.path.route : undefined
+        ) ?? convertToPath(navName);
+      }
+
+      // Recurse into dropdown children (do not build routes from dropdown names)
+      if ("pages" in nextNavItem && nextNavItem.pages) {
+        nextNavItem.pages = addDefaultsToNavigationConfig(nextNavItem.pages as TNavConfig);
+      }
+
+      return [navName, nextNavItem];
+    }),
+  );
+
+  return {
+    ...nav,
+    data,
+    order: nav.order ?? [],
+  };
+}
+
+/**
+ * Builds a complete navigation configuration by merging the provided partial config
+ * with the system defaults and then applying any additional defaulting/normalization.
+ *
+ * @param navigation - Optional, partial navigation configuration to merge with system defaults.
+ * 
+ * @returns A finalized {@link TNavConfig} with defaults applied via `addDefaultsToNavigationConfig`.
+ */
+export function setupNavigationConfig(navigation: TNavConfig | undefined): TNavConfig {
+  navigation = {
+    data: {
+      ...systemNavConfig.data,
+      ...(navigation?.data ?? {}),
+    },
+    order: [...systemNavConfig.order, ...(navigation?.order ?? [])]
+  }
+  return addDefaultsToNavigationConfig(navigation);
 }

@@ -37,6 +37,7 @@ import {
   setupBoards,
   Route,
   systemNavConfig,
+  setupNavigationConfig,
 } from "..";
 
 export interface PSmartApp {
@@ -96,14 +97,8 @@ export function SmartApp(props: PSmartApp) {
   // Setting a default for the boardDataSource else boards will be off
   const boards = setupBoards(props.boards);
 
-  // Always merge system + incoming navigation (destructuring defaults only apply when props.navigation is undefined)
-  const navigation: TNavConfig = {
-    data: {
-      ...systemNavConfig.data,
-      ...(props.navigation?.data ?? {}),
-    },
-    order: [...systemNavConfig.order, ...(props.navigation?.order ?? [])],
-  };
+  // Merge system navigation config and add default routes
+  const navigation: TNavConfig = setupNavigationConfig(props.navigation);
 
   // Always merge default page elements + incoming (incoming overrides defaults)
   const pageElements: TPageElements = {
@@ -176,16 +171,18 @@ export function SmartApp(props: PSmartApp) {
           <Router>
             <div className="tol-smart-app">
               <Navigation {...mergedProps} />
-              <Switch>
-                {collectRoutes(navigation)}
-                <ReactRouter
-                  path={`/page-not-found`}
-                  component={() => <PageNotFound />}
-                />
-                <ReactRouter path="*">
-                  <Redirect to={`/page-not-found`} />
-                </ReactRouter>
-              </Switch>
+              <div className="tol-smart-app-content">
+                <Switch>
+                  {collectRoutes(navigation)}
+                  <ReactRouter
+                    path={`/page-not-found`}
+                    component={() => <PageNotFound />}
+                  />
+                  <ReactRouter path="*">
+                    <Redirect to={`/page-not-found`} />
+                  </ReactRouter>
+                </Switch>
+              </div>
             </div>
             <Footer />
           </Router>

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Route as ReactRoute } from "react-router-dom";
-import { Board, convertToPath, IPage, PBoard, PSmartApp, useAuth } from "..";
+import { Board, IPage, PBoard, PSmartApp, useAuth } from "..";
 
 export interface PRoute extends PSmartApp, IPage {
   /**
@@ -21,13 +21,15 @@ export interface PRoute extends PSmartApp, IPage {
    * Parameters for board pages
    */
   boards: PBoard;
-  //TODO: nesting
 }
 
 export function Route(props: PRoute) {
   const { key, routeKey, boards, path, pageElements } = props;
   //const { user } = useAuth();
 
+  // ignore routes without a path e.g. external links
+  if (!(path && 'route' in path)) return;
+;
   let element: React.ReactNode = undefined;
 
   // Check if there is a pageElementReference in the path
@@ -41,16 +43,11 @@ export function Route(props: PRoute) {
     }
   }
 
-  // Generate a route path with the key as a fallback
-  const route = (
-    path && 'route' in path ? path.route : undefined
-  ) ?? convertToPath(key);
-
   return (
     <ReactRoute
       exact
       key={routeKey ?? key}
-      path={route}
+      path={path.route}
       render={() => element}
     />
   );
