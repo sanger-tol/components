@@ -16,7 +16,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import Navigation from "../nav/Navigation";
+import Navigation from "./Navigation";
 import {
   Callback,
   PageNotFound,
@@ -36,7 +36,6 @@ import {
   TPageElements,
   setupBoards,
   Route,
-  systemNavConfig,
   setupNavigationConfig,
 } from "..";
 

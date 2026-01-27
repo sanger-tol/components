@@ -36,5 +36,5 @@ export const navConfig: TNavConfig = {
       }
     }
   },
-  order: ["Home", "Developer"]
+  order: ["Developer"]
 };

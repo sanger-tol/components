@@ -1,13 +1,12 @@
 /*
-SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
+import { ReactNode } from "react";
+import { Nav, NavDropdown } from "react-bootstrap";
 import {
-  MyBoards,
-  Dropdown,
-  Page,
   PBoard,
   TsDataSource,
   BOARDS,
@@ -19,33 +18,47 @@ import {
   systemNavConfig,
   convertToPath,
   TPageOrDropdown,
-  TPagePath
+  PAGE_ACCESS,
 } from "..";
 
 
-/**
- * Adds a "My Boards" page to the profile pages if the boards prop is provided.
- *
- * @param {Page[]} [profilePages] - An optional array of profile pages.
- * @param {BoardsObject} [boards] - An optional boards object.
- * @returns {Page[]} - A new array containing the "My Boards" page (if boards exist) followed by the original profile pages.
- */
-export function addBoardPages(
-  profilePages?: Page[],
-  boards?: PBoard
-): Page[] {
-  if (boards) {
-    return [
-      {
-        name: "My Boards",
-        element: <MyBoards boardDataSource={boards.boardDataSource!} />,
-        auth: true,
-      },
-      ...(profilePages ?? []),
-    ];
+export const assumeProduction = (): string => {
+  console.warn("Error fetching environment. Assuming production.");
+  return "production";
+};
+
+export const fetchEnvironment = (): Promise<string> => {
+  return fetch(env.API_PATH + "/system/environment")
+    .then((res) => {
+      if (res.ok) {
+        return res.json() as Promise<any>;
+      }
+      return null;
+    })
+    .then((res: any) => {
+      if (!res?.environment) {
+        return assumeProduction();
+      }
+      return res.environment;
+    })
+    .catch(() => {
+      return assumeProduction();
+    });
+};
+
+export const getNavBackgroundClass = (environment: string): string => {
+  if (environment.startsWith("review")) return "bg-danger";
+  switch (environment) {
+    case "dev":
+    case "testing":
+    case "qa":
+      return "bg-danger";
+    case "staging":
+      return "bg-success";
+    default:
+      return "";
   }
-  return profilePages ?? [];
-}
+};
 
 export async function getUserPrivilege(
   user: any,
@@ -207,4 +220,93 @@ export function setupNavigationConfig(navigation: TNavConfig | undefined): TNavC
     order: [...systemNavConfig.order, ...(navigation?.order ?? [])]
   }
   return addDefaultsToNavigationConfig(navigation);
+}
+
+/**
+ * Recursively collects an ordered list of React navigation elements from a navigation configuration.
+ * Iterates over `navigation.order` to maintain the specified order of items and to control what can be seen in the nav.
+ *
+ * @param navigation - Navigation configuration to render. If `undefined`, returns an empty array.
+ * @returns An array of React nodes representing navigation links and dropdowns in the configured order.
+ */
+export function collectNavigationItems(navigation: TNavConfig | undefined): ReactNode[] {
+  const navButtons: ReactNode[] = [];
+
+  navigation?.order.map((navItemName: string) => {
+    const navItem = navigation.data[navItemName];
+
+    // Dropdown menu
+    if ("pages" in navItem) {
+      navButtons.push(
+        <NavDropdown title={navItemName}>
+          {collectNavigationItems(navItem.pages)}
+        </NavDropdown>
+      )
+      // Single page link
+    } else {
+      // Alter depending on whether it's a route or an external link
+      let href = "";
+      let target = "";
+      if (navItem.path) {
+        if ("route" in navItem.path && navItem.path.route) {
+          href = navItem.path.route;
+        } else if ('href' in navItem.path && navItem.path.href) {
+          href = navItem.path.href;
+          target = navItem.path.target ?? "_blank";
+        }
+      }
+
+      navButtons.push(
+        <Nav.Link
+          key={navItemName}
+          href={href}
+          target={target}
+        >
+          {navItemName}
+        </Nav.Link>
+      )
+    }
+  });
+  return navButtons;
+};
+
+/**
+ * Determines whether a given page is accessible to the provided user based on the page's access rules.
+ *
+ * Access rules are evaluated in the following order:
+ * - If the page has no access requirement or is {@link PAGE_ACCESS.PUBLIC}, access is granted.
+ * - If the page requires any authentication/roles and the user is not present, access is denied.
+ * - If the page is {@link PAGE_ACCESS.AUTHENTICATED}, access is granted for any logged-in user.
+ * - If the page access is an array of roles, access is granted when the user has at least one required role.
+ * - Otherwise, access is denied.
+ *
+ * @param user - The current user object; if falsy, the user is treated as not logged in. Expected to contain a `roles` array.
+ * @param page - The page or dropdown definition containing an `access` field that specifies the access policy.
+ * @returns `true` if the user is allowed to access the page; otherwise `false`.
+ */
+export function isPageAccessible(user: any, page: TPageOrDropdown): boolean {
+  // If no auth required, allow access
+  if (!page.access || page.access === PAGE_ACCESS.PUBLIC) {
+    return true;
+  }
+
+  // If user not logged in, deny access
+  if (!user) {
+    return false;
+  }
+
+  // If page requires login, allow access
+  if (page.access === PAGE_ACCESS.AUTHENTICATED) {
+    return true;
+  }
+
+  // If page requires specific roles, check user roles
+  if (Array.isArray(page.access)) {
+    return page.access.some((requiredRole) =>
+      user.roles?.includes(requiredRole)
+    );
+  }
+
+  // Default deny
+  return false;
 }

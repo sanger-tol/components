@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState, useEffect } from "react";
 import { withRouter, RouteComponentProps } from "react-router-dom";
-import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
+import { Container, Navbar, Nav } from "react-bootstrap";
 import {
   useAuth,
   getReturnUrlFromLocalStorage,
@@ -16,21 +16,21 @@ import {
   setUserToLocalStorage,
   tokenHasExpired,
   Login,
-  convertToPath,
   env,
-  confirmAuthorised,
   LoginIcon,
   RegisterIcon,
-  ProfileDropdown,
   PSmartApp,
   fetchEnvironment,
   getNavBackgroundClass,
+  collectNavigationItems,
 } from "..";
 
 
-export interface PNavigation extends PSmartApp, RouteComponentProps {}
+export interface PNavigation extends PSmartApp, RouteComponentProps { }
 
 function Navigation(props: PNavigation) {
+  const { navigation } = props;
+
   const [environment, setEnvironment] = useState("");
   const [navbarOffset, setNavbarOffset] = useState<number>(0);
   const { setToken, user, setUser } = useAuth();
@@ -66,66 +66,6 @@ function Navigation(props: PNavigation) {
     setUser(null);
   };
 
-  const addPage = (page: Page) => {
-    if (!page.hidden) {
-      const authorised = confirmAuthorised(user, page.auth, page.removeOnAuth);
-      if (authorised) {
-        return (
-          <Nav.Link
-            key={page.name}
-            href={"link" in page ? page.link?.href : convertToPath(page.name, props.uiPath)}
-            target={page.link?.target}
-          >
-            {page.name}
-          </Nav.Link>
-        );
-      }
-    }
-  };
-
-  const addDropdown = (dropdown: Dropdown) => {
-    if (!dropdown.hidden) {
-      const dropdownAuthorised = confirmAuthorised(
-        user,
-        dropdown.auth,
-        dropdown.removeOnAuth,
-      );
-      if (dropdownAuthorised) {
-        return (
-          <NavDropdown title={dropdown.name}>
-            {dropdown.pages &&
-              Array.isArray(dropdown.pages) &&
-              dropdown.pages.map((page: Page, index) => {
-                const pageAuthorised = confirmAuthorised(
-                  user,
-                  page.auth,
-                  page.removeOnAuth,
-                );
-                if (pageAuthorised) {
-                  return (
-                    // eslint-disable-next-line
-                    <div className="nav-dropdown-box" key={index}>
-                      <Nav.Link
-                        key={page.name}
-                        href={
-                          "link" in page
-                          ? page.link?.href
-                          : convertToPath(page.name, props.uiPath)
-                        }
-                        target={page.link?.target}
-                      >
-                        {page.name}
-                      </Nav.Link>
-                    </div>
-                  );
-                }
-              })}
-          </NavDropdown>
-        );
-      }
-    }
-  };
-
   return (
     <div className="tol-navigation">
       <div className="tol-navbar-offset" style={{ height: navbarOffset }}></div>
@@ -139,24 +79,16 @@ function Navigation(props: PNavigation) {
         <Container>
           <Navbar.Brand
             href="/"
-            style={{padding: typeof props.brand === "string" ? 10 : 0}}
+            style={{ padding: typeof props.brand === "string" ? 10 : 0 }}
           >
             {props.brand}
             {environment && environment !== "production" && " " + environment}
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            {props.pages.map((page, index) => {
-              // @ts-ignore
-              if (page.pages !== undefined) {
-                return <span key={index}>{addDropdown(page)}</span>;
-              } else {
-                return <span key={index}>{addPage(page)}</span>;
-              }
-            })}
+            {collectNavigationItems(navigation)}
             {props.register && tokenHasExpired() ? (
               <Nav.Link className="nav-right" key="Register">
-                {/* @ts-ignore */}
                 <Login
                   buttonIcon={RegisterIcon}
                   returnUrl={props.customCallbackUrl ?? "/"}
@@ -176,9 +108,9 @@ function Navigation(props: PNavigation) {
               </Nav.Link>
             ) : props.login && user && (
               <div className="nav-right">
-                <ProfileDropdown
+                {/* <ProfileDropdown
                   user={user}
-                  pages={props.profilePages
+                  pages={props.profileNavigation
                     ?.map((page: Page) => {
                       const authorised = confirmAuthorised(
                         user,
@@ -190,7 +122,7 @@ function Navigation(props: PNavigation) {
                     })
                     .filter((page): page is Page => page !== undefined)}
                   onLogout={logout}
-                />
+                /> */}
               </div>
             )}
           </Navbar.Collapse>

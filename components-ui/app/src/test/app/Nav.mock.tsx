@@ -21,6 +21,18 @@ export const navConfigMock: TNavConfig = {
         route: "/"
       }
     },
+    "Authenticated Page": {
+      access: "authenticated",
+      path: {
+        pageElementReference: "authenticatedPage",
+      }
+    },
+    "Role Specific Page": {
+      access: ["admin"],
+      path: {
+        pageElementReference: "roleSpecificPage",
+      }
+    },
     "Dropdown Name 1": {
       access: "public",
       pages: {
