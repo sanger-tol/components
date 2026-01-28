@@ -18,7 +18,9 @@ import {
   upsertComponent,
   IFilter,
   deepCopy,
-  resetFiltersBelow
+  resetFiltersBelow,
+  Placeholder,
+  Icon
 } from "..";
 
 export interface PBoardFilterBlock extends PVisualisation {
@@ -30,7 +32,6 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
   const [open, setOpen] = useState(false);
   const [filterBlockConfig, setFilterBlockConfig] = useState<PFilterBlock>(config);
   const [currentFilterValues, setCurrentFilterValues] = useState<IFilter | undefined>();
-  const [currentDefaultFilterValues, setCurrentDefaultFilterValues] = useState<IFilter | undefined>();
   const { privilege } = useBoardPrivilege();
 
   const configButton: PButton = {
@@ -54,35 +55,68 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
 
 
   // This useEffect is a slim version of the BoardFilters logic to track filter changes and upsert them
-  // Exists because the filterBlock does not have filters applied to it, but is the filter itself (so has no need for BoardFilters)
+  // Exists because the filterBlock does not have filters applied to it, but is the filter itself
   useEffect(() => {
     const componentData = zone.components[id]?.data;
     if (!componentData) return;
 
-    const newFilterValues = deepCopy(componentData.filter);
-    const newDefaultFilterValues = deepCopy(componentData.defaultFilter);
+    let newFilterValues = deepCopy(componentData.filter);
+
+    // Remove any filter attributes that are no longer in the filterBlockConfig
+    const configuredAttributes = filterBlockConfig.filters?.attributes || {};
+    const validAttributeKeys = Object.keys(configuredAttributes).map(key => configuredAttributes[key].attribute);
+    if (newFilterValues?.and_) {
+      newFilterValues.and_ = Object.fromEntries(
+        Object.entries(newFilterValues.and_).filter(([key]) => validAttributeKeys.includes(key))
+      );
+    }
 
     // Check if filter has changed
     const filterChanged = JSON.stringify(newFilterValues) !== JSON.stringify(currentFilterValues);
-    const defaultFilterChanged = JSON.stringify(newDefaultFilterValues) !== JSON.stringify(currentDefaultFilterValues);
 
-    if (filterChanged || defaultFilterChanged) {
+    if (filterChanged ) {
+      // If filter has changed, reset filters below and upsert
       if (filterChanged) {
+        // Reset filters below this component when the filter changes
         resetFiltersBelow({ id: id, zone: zone });
         setZone({ ...zone });
 
         let attributes = {
           filter: newFilterValues,
-          default_filter: newDefaultFilterValues
         };
 
         upsertComponent(boardDataSource, id, attributes);
       }
 
       setCurrentFilterValues(newFilterValues);
-      setCurrentDefaultFilterValues(newDefaultFilterValues);
     }
-  }, [zone]);
+  }, [zone, filterBlockConfig]);
+
+
+  const Contents = () => {
+      if (Object.keys(filterBlockConfig.filters.attributes).length === 0) {
+        return (
+          <div style={{ height: '60%' }}>
+            <Placeholder
+              message={
+                <>
+                  {privilege === PRIVILEGE.BOARD.EDITABLE ? (
+                    <>
+                      Please add attributes to get started. Click <Icon icon="sliders" size="sm" /> to configure.
+                    </>
+                  ) : (
+                    <>
+                      No attributes selected.
+                    </>
+                  )}
+                </>
+              }
+            />
+          </div>
+        )
+      }
+      return null;
+    }
 
   return (
     <>
@@ -97,6 +131,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
       <FilterBlock
         {...props}
         filters={filterBlockConfig.filters || { order: [], attributes: {} }}
+        contents={Contents()}
         utilityBarConfig={{
           ...utilityBarConfig,
           title: {
