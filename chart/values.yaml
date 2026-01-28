@@ -147,3 +147,8 @@ tolcore:
     api_data_path: ""
   oidc:
     enabled: true
+    url:
+      auth: https://auth.tol.sanger.ac.uk/auth/realms/staging/protocol/openid-connect/auth
+      token: https://auth.tol.sanger.ac.uk/auth/realms/staging/protocol/openid-connect/token
+      revoke: https://auth.tol.sanger.ac.uk/auth/realms/staging/protocol/openid-connect/revoke
+      userinfo: https://auth.tol.sanger.ac.uk/auth/realms/staging/protocol/openid-connect/userinfo
