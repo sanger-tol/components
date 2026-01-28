@@ -24,6 +24,7 @@ export interface PFilterBlockConfigDrawer extends IRemoteTarget {
   filterBlockConfig: PFilterBlock;
   customAttributeSelection?: string[];
   onConfigSave: (config: PFilterBlock) => void;
+  id: string;
 }
 
 export function FilterBlockConfigDrawer(props: PFilterBlockConfigDrawer) {
@@ -33,7 +34,8 @@ export function FilterBlockConfigDrawer(props: PFilterBlockConfigDrawer) {
     title,
     onConfigSave,
     customAttributeSelection,
-    filterBlockConfig
+    filterBlockConfig,
+    id
   } = props;
 
   const [newFilterBlockConfig, setNewFilterBlockConfig] = useState<PFilterBlock>();
@@ -58,10 +60,10 @@ export function FilterBlockConfigDrawer(props: PFilterBlockConfigDrawer) {
       newFilterBlockConfig!.filters.order = attributes;
       newFilterBlockConfig!.filters.attributes = attributes.reduce((acc, attribute) => {
         acc[attribute] = {
-          componentId: title,
+          componentId: id,
           attribute: attribute,
           rename: attributeMeta[attribute]?.display_name || attribute,
-          type: attributeMeta[attribute]?.type || "str",
+          type: attributeMeta[attribute]?.python_type || "str",
         };
         return acc;
       }, {} as { [attributeName: string]: any });
@@ -88,6 +90,7 @@ export function FilterBlockConfigDrawer(props: PFilterBlockConfigDrawer) {
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
           customAttributeSelection={customAttributeSelection}
+          maxSelections={5}
         />
       </div>
       <SelectedAttributesContainer
