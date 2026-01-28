@@ -13,7 +13,7 @@ import {
   normaliseCaps,
   MAX_ERRORS_TO_DISPLAY,
   IconTooltip,
-} from "..";
+} from "../..";
 
 export interface IStepValidationDetails {
   completed: boolean;

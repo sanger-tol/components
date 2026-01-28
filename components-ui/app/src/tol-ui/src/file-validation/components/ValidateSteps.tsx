@@ -13,7 +13,7 @@ import {
   WIDTH_REDUCER,
   IStepData,
   TStepsData,
-} from "..";
+} from "../..";
 
 export interface PValidateSteps {
   data: IValidationResult[];

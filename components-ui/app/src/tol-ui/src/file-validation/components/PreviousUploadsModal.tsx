@@ -20,7 +20,8 @@ import {
   BUTTON_TIMEOUT,
   PIPELINE_DS,
   useQueryData,
-} from "..";
+  FILE_VALIDATION_STATUS,
+} from "../..";
 
 export interface PPreviousUploadsModal {
   openModal: boolean | string;
@@ -42,9 +43,13 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
     return await fetchAndNormaliseAllUploadResults(
       PIPELINE_DS,
       cacheBustedEndpoint,
-      id
+      id,
     );
   };
+
+  const isResultsOpen = openModal === "results";
+  const isModalOpen =
+    isResultsOpen || (typeof openModal === "boolean" && openModal === true);
 
   const userFileValidationUploads = useQueryData<IAllValidationData[]>(
     ["userFileValidationUploads", id],
@@ -54,12 +59,25 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
       refetchBackoff: {
         enabled: true,
         options: {
-          stopCondition: openModal !== "results",
+          // Check the query and return ( a. is modal closed? ||
+          // b. are all results no longer 'in progress'? )
+          // If either are false, stop querying.
+          stopCondition: (query) => {
+            const data = query.state.data as IAllValidationData[] | undefined;
+            const hasInProgress =
+              data?.some(
+                (upload) =>
+                  upload.validationStatus ===
+                  FILE_VALIDATION_STATUS.IN_PROGRESS,
+              ) ?? false;
+
+            return !isModalOpen || !hasInProgress;
+          },
           limit: 15,
         },
       },
       staleTime: 0,
-    }
+    },
   );
 
   const handleToggleUploadResults = (id: string) => {
@@ -93,7 +111,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
         userFileValidationUploads.data
           .sort(
             (a: IAllValidationData, b: IAllValidationData) =>
-              Number(b.id) - Number(a.id)
+              Number(b.id) - Number(a.id),
           )
           .map((upload: IAllValidationData, index: number) => {
             return (

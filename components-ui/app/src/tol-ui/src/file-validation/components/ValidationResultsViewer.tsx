@@ -10,7 +10,6 @@ import { useParams } from "react-router";
 import {
   getErrorWarningCounts,
   downloadFileFromS3,
-  determineUploadStatus,
   IUploadStatus,
   IErrorWarningCount,
   fetchCurrentPipelineResults,
@@ -33,7 +32,10 @@ import {
   getUserFromLocalStorage,
   setValidationTimeout,
   downloadReportFile,
-} from "..";
+  TFileValidationStatus,
+  BASE_POLICIES_MAP,
+  DropdownButtons,
+} from "../..";
 
 export function ValidationResultsViewer() {
   const { uploadId } = useParams<{ uploadId: string }>();
@@ -68,7 +70,7 @@ export function ValidationResultsViewer() {
     const result = await fetchCurrentPipelineResults(
       PIPELINE_DS,
       cacheBustedEndpoint,
-      uploadId
+      uploadId,
     );
 
     if (result?.failureMessage) {
@@ -95,7 +97,7 @@ export function ValidationResultsViewer() {
         },
       },
       staleTime: 0,
-    }
+    },
   );
 
   useEffect(() => {
@@ -116,19 +118,13 @@ export function ValidationResultsViewer() {
       latestPipelineResults.data.validationResults
     ) {
       const counts = getErrorWarningCounts(
-        latestPipelineResults.data.validationResults
+        latestPipelineResults.data.validationResults,
       );
       setErrorAndWarningCount(counts);
 
-      setUploadStatus(
-        determineUploadStatus(
-          latestPipelineResults.data.completed,
-          counts.errors,
-          counts.warnings,
-          latestPipelineResults.data.failureMessage || null,
-          latestPipelineResults.data.isReady
-        )
-      );
+      const statusKey = latestPipelineResults.data
+        .validationStatus as TFileValidationStatus;
+      setUploadStatus(BASE_POLICIES_MAP[statusKey]);
     }
 
     if (stepName !== undefined && targetRef.current) {
@@ -150,7 +146,7 @@ export function ValidationResultsViewer() {
       setUploadStatus({
         className: "marked-as-ready",
         text: "Marked as Ready",
-      })
+      }),
     );
   };
 
@@ -161,13 +157,13 @@ export function ValidationResultsViewer() {
       await setValidationTimeout(
         PIPELINE_DS,
         getUserFromLocalStorage()?.id || "",
-        uploadId
+        uploadId,
       );
       await latestPipelineResults.refetch();
       setFailedPipeline(true);
     },
     VALIDATION_TIMEOUT_MS,
-    { enabled: timeoutEnabled, startOnMount: timeoutEnabled }
+    { enabled: timeoutEnabled, startOnMount: timeoutEnabled },
   );
 
   const Results = (
@@ -181,14 +177,12 @@ export function ValidationResultsViewer() {
                 <h6>Pipeline: {latestPipelineResults.data?.pipelineName}</h6>
               </div>
               <div>
-                <h4
-                  className={`tol-file-validation-results-status ${uploadStatus.className}`}
-                >
-                  {uploadStatus.text}
+                <h4 style={{ color: `${uploadStatus.textColor}` }}>
+                  {uploadStatus.rename}
                 </h4>
                 <p className="tol-file-validation-results-page-info-date">
                   {new Date(
-                    latestPipelineResults.data.dateStarted
+                    latestPipelineResults.data.dateStarted,
                   ).toLocaleString()}
                 </p>
               </div>
@@ -204,19 +198,19 @@ export function ValidationResultsViewer() {
                       downloadFileFromS3(
                         PIPELINE_DS,
                         latestPipelineResults.data.s3Bucket,
-                        latestPipelineResults.data.s3Filename
+                        latestPipelineResults.data.s3Filename,
                       )
                     }
                   >
                     {splitS3FilenameString(
-                      String(latestPipelineResults.data.s3Filename)
+                      String(latestPipelineResults.data.s3Filename),
                     )}
                   </a>
                 </p>
                 <p className="tol-file-validation-results-page-additional-info-updated-at">
                   Updated At:{" "}
                   {new Date(
-                    latestPipelineResults.dataUpdatedAt
+                    latestPipelineResults.dataUpdatedAt,
                   ).toLocaleString()}
                 </p>
               </div>
@@ -224,6 +218,14 @@ export function ValidationResultsViewer() {
                 <p>Number of Warnings: {errorAndWarningCount.warnings}</p>
                 <p>Number of Errors: {errorAndWarningCount.errors}</p>
                 <span className="tol-file-validation-results-page-error-count-button">
+                  <DropdownButtons
+                    mainButtonIcon={{ icon: "bars" }}
+                    placement="leftStart"
+                    menuStyle={{ marginRight: "5px" }}
+                    dropdownButtons={[
+                      
+                    ]}
+                  />
                   <Button
                     icon="rotate"
                     tooltip="Refresh"

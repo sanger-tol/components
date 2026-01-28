@@ -11,29 +11,41 @@ import {
   PIPELINE_DS,
   VALIDATION_TIMEOUT_MS,
   PopUpMessage,
-  splitS3FilenameString,
-  normaliseValidationResult,
-} from "..";
+  FILE_VALIDATION_STATUS,
+} from "../../";
+
+import { splitS3FilenameString, normaliseValidationResult } from "./utils";
 
 import type {
   IFileData,
   TStepsData,
-  TFileValidationStatus,
-  TValidationActionId,
-  TFileValidationAction,
   TsDataSource,
   TDataObjectOrNull,
   IValidationConfig,
   IAllValidationData,
-} from "..";
+} from "../..";
 
+// Caches steps in pipeline, as they won't change very often, reduces call number.
 const pipelineStepsPromiseCache = new Map<string, Promise<TStepsData>>();
+
+/**
+ * Downloads a file from an S3 bucket via the API and triggers a browser download.
+ *
+ * Queries the S3 download endpoint to retrieve the file as a blob. It then creates a temporary
+ * anchor element to programmatically trigger the download in the browser, using a cleaned
+ * version of the filename.
+ *
+ * @param ds - The TsDataSource instance used to perform the API request.
+ * @param s3_bucket - The name of the S3 bucket where the file is stored.
+ * @param filename - The full name of the file in S3 (including prefixes).
+ * @returns A Promise that resolves when the download initiation is complete.
+ */
 
 export async function downloadFileFromS3(
   ds: TsDataSource,
   s3_bucket: string,
   filename: string,
-) {
+): Promise<void> {
   const body = {
     data: {
       file_name: filename,
@@ -69,11 +81,23 @@ export async function downloadFileFromS3(
   }
 }
 
+/**
+ * Uploads a file to an S3 bucket via the API.
+ *
+ * Constructs a FormData payload containing the file and the target S3 bucket name,
+ * then sends a POST request to the configured S3 upload endpoint.
+ *
+ * @param ds - The TsDataSource instance used to perform the API request.
+ * @param file - The standard File object to be uploaded.
+ * @param s3Bucket - The name of the target S3 bucket.
+ * @returns A Promise that resolves to the API response containing upload details.
+ */
+
 export async function uploadFileToS3(
   ds: TsDataSource,
   file: File,
   s3Bucket: string,
-) {
+): Promise<TDataObjectOrNull> {
   const body = new FormData();
   body.append("file", file);
   body.append("s3_bucket", s3Bucket);
@@ -319,7 +343,7 @@ export async function uploadPipelineConfig(
         config.s3_bucket,
       );
 
-      if (uploadResponse.status !== 200) {
+      if (!uploadResponse || uploadResponse.status !== 200) {
         PopUpMessage({
           type: "error",
           message: "Failed to upload file. Please try again.",
@@ -439,11 +463,24 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
   return stepPromise;
 }
 
+/**
+ * Checks for and marks long-running incomplete uploads as timed out in the database.
+ *
+ * Fetches all active uploads for the given user that have exceeded the `VALIDATION_TIMEOUT_MS`.
+ * It then constructs a payload to update these uploads (plus an optional current pipeline ID)
+ * to a "validation_timeout" status with a relevant failure message.
+ *
+ * @param ds - The datasource used to query and update upload records.
+ * @param userId - The ID of the user whose uploads should be checked.
+ * @param currentPipelineId - (Optional) ID of a specific pipeline run to include in the timeout check.
+ * @returns A promise that resolves when the update operation is complete.
+ */
+
 export async function setValidationTimeout(
   ds: TsDataSource,
   userId: string,
   currentPipelineId?: string,
-) {
+): Promise<void> {
   if (!userId) return;
   const res = await ds.getListPage({
     objectType: VALIDATION_ENDPOINTS.UPLOAD,
@@ -469,7 +506,7 @@ export async function setValidationTimeout(
     type: "upload",
     attributes: {
       failure_message: "Validation timed out.",
-      validation_status: "validation_timeout",
+      validation_status: FILE_VALIDATION_STATUS.TIMEOUT,
     },
   }));
 
@@ -536,11 +573,11 @@ export async function submitFile(
  * @returns void
  */
 
-export function markFileAsReady(
+export async function markFileAsReady(
   currentUploadId: string,
   setMarkedAsReady: () => void,
-): void {
-  PIPELINE_DS.upsert({
+): Promise<void> {
+  await PIPELINE_DS.upsert({
     objectType: VALIDATION_ENDPOINTS.UPLOAD,
     payload: [
       {
@@ -566,28 +603,4 @@ export function markFileAsReady(
         message: "Failed to mark file as ready. Please try again.",
       });
     });
-}
-
-export function setValidationStatusAction(
-  action: { id: TValidationActionId; label: string },
-  status: TFileValidationStatus,
-): TFileValidationAction {
-  return {
-    id: action.id,
-    label: action.label,
-    callback: async ({ item, dataSource }) => {
-      await dataSource.upsert({
-        objectType: VALIDATION_ENDPOINTS.UPLOAD,
-        payload: [
-          {
-            type: "upload",
-            id: item.id,
-            attributes: {
-              validation_status: status,
-            },
-          },
-        ],
-      });
-    },
-  };
 }

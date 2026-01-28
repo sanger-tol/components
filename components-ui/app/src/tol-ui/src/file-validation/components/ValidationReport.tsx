@@ -14,7 +14,7 @@ import {
   Modal,
   PIPELINE_DS,
   splitS3FilenameString,
-} from "..";
+} from "../..";
 
 export interface PValidationReport {
   data: IAllValidationData | null;

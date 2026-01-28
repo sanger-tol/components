@@ -10,8 +10,6 @@ import {
   uploadPipelineConfig,
   fetchCurrentPipelineResults,
   constructCompletionMessage,
-  determineUploadStatus,
-  getErrorWarningCounts,
   PreviousUploadsModal,
   TOL_LOADER_STYLES,
   BUTTON_TIMEOUT,
@@ -38,7 +36,8 @@ import {
   USER_SHOWN_FILE_TYPE_DEFAULTS,
   MAX_FILE_SIZE,
   DEFAULT_SHEET_NAME,
-  BASE_VALIDATION_POLICY_MAP,
+  BASE_POLICIES_MAP,
+  useValidationModule
 } from "..";
 
 import type {
@@ -46,8 +45,6 @@ import type {
   IValidationConfig,
   IAllValidationData,
   TFileValidationPurpose,
-  TFileValidationStatus,
-  TFileValidationStatusPolicy,
 } from "..";
 
 export interface PFileValidation {
@@ -98,6 +95,10 @@ export function FileValidation(props: PFileValidation) {
     className: "",
     text: "",
   });
+
+  const policy = useValidationModule();
+
+  console.log(policy);
 
   useEffect(() => {
     async function cleanUpValidations() {
@@ -161,17 +162,17 @@ export function FileValidation(props: PFileValidation) {
       if (latestPipelineResults.data.completed || pipelineFailed) {
         setValidated(true);
 
-        const counts = getErrorWarningCounts(
-          latestPipelineResults.data.validationResults,
-        );
+        // const counts = getErrorWarningCounts(
+        //   latestPipelineResults.data.validationResults,
+        // );
 
-        const status = determineUploadStatus(
-          latestPipelineResults.data.completed,
-          counts.errors,
-          counts.warnings,
-          latestPipelineResults.data.failureMessage || null,
-          latestPipelineResults.data.is_ready,
-        );
+        // const status = determineUploadStatus(
+        //   latestPipelineResults.data.completed,
+        //   counts.errors,
+        //   counts.warnings,
+        //   latestPipelineResults.data.failureMessage || null,
+        //   latestPipelineResults.data.is_ready,
+        // );
 
         setValidationStatus(status);
 
@@ -220,11 +221,11 @@ export function FileValidation(props: PFileValidation) {
       false,
       currentUploadId,
       setFileUploaded,
-      () =>
-        setValidationStatus({
-          className: "marked-as-ready",
-          text: "Marked as Ready",
-        }),
+      //   () =>
+      //     setValidationStatus({
+      //       className: "marked-as-ready",
+      //       text: "Marked as Ready",
+      //     }),
     );
   };
 
@@ -261,8 +262,6 @@ export function FileValidation(props: PFileValidation) {
               onClick={() => downloadReportFile(latestPipelineResults.data)}
               disabled={!validated}
             />
-            {/* TODO: Re-enable when mode toggle is re-introduced */}
-            {/* {(purpose === VALIDATE_AND_MARK_AS_READY || purpose === VALIDATE_AND_UPLOAD) && validating && ( */}
             {validated && (
               <Button
                 type="success"
@@ -279,7 +278,7 @@ export function FileValidation(props: PFileValidation) {
           </div>
           <Button
             type="primary"
-            text={purpose}
+            text={"Validate"}
             disabled={!fileDropped || validating}
             onClick={() => {
               setValidating(true);
@@ -413,20 +412,7 @@ export function FileValidation(props: PFileValidation) {
             You can download a template file for uploading spreadsheet files{" "}
             <a href="#">here</a>.
           </h6>
-          {/* <h6>Modes:</h6> TODO: Re-add if we re-introduce mode toggle
-          <ul>
-            <li>
-              <strong>Validate only:</strong> Your file will only be
-              validated, you will receive results as to whether it passes
-              validation. You can choose to submit afterwards, if validation
-              passes successfully.
-            </li>
-            <li>
-              <strong>Validate and submit:</strong> Your file will be
-              validated and submitted automatically if it passes validation.
-            </li>
-          </ul> */}
-          <h6>Requirements:</h6>
+          .<h6>Requirements:</h6>
           <ul>
             {" "}
             <li>{`Max file size: ${validationConfig.maxFileSize}`}</li>
@@ -444,18 +430,16 @@ export function FileValidation(props: PFileValidation) {
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(BASE_VALIDATION_POLICY_MAP).map(
-                  ([_, validation]) => (
-                    <tr key={validation.rename}>
-                      <td>
-                        <strong style={{ color: `${validation.textColor}` }}>
-                          {validation.rename}
-                        </strong>
-                      </td>
-                      <td>{validation.summary}</td>
-                    </tr>
-                  ),
-                )}
+                {Object.entries(BASE_POLICIES_MAP).map(([_, validation]) => (
+                  <tr key={validation.rename}>
+                    <td>
+                      <strong style={{ color: `${validation.textColor}` }}>
+                        {validation.rename}
+                      </strong>
+                    </td>
+                    <td>{validation.summary}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -503,19 +487,7 @@ export function FileValidation(props: PFileValidation) {
         data={validated ? latestPipelineResults.data : null}
         open={openReport}
         setOpen={setOpenReport}
-        uploadStatus={
-          determineUploadStatus(
-            latestPipelineResults.data?.completed || false,
-            getErrorWarningCounts(
-              latestPipelineResults.data?.validationResults || [],
-            ).errors,
-            getErrorWarningCounts(
-              latestPipelineResults.data?.validationResults || [],
-            ).warnings,
-            latestPipelineResults.data?.failureMessage || null,
-            latestPipelineResults.data?.is_ready || false,
-          ).text
-        }
+        uploadStatus={latestPipelineResults.data.validationStatus}
       />
       <PreviousUploadsModal
         openModal={openModal}

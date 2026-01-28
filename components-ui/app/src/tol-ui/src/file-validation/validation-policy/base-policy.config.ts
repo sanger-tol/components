@@ -4,15 +4,10 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import {
-  TFileValidationStatusPolicyMap,
-  FILE_VALIDATION_STATUS,
-  TValidationActionMap,
-  VALIDATION_ENDPOINTS,
-  setValidationStatusAction,
-} from "..";
+import { FILE_VALIDATION_STATUS } from "./validation-policy.types";
+import { TFileValidationStatusPolicyMap } from "../..";
 
-export const BASE_VALIDATION_POLICY_MAP: TFileValidationStatusPolicyMap = {
+export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
   [FILE_VALIDATION_STATUS.IN_PROGRESS]: {
     status: FILE_VALIDATION_STATUS.IN_PROGRESS,
     rename: "Validation in Progress",
@@ -78,46 +73,4 @@ export const BASE_VALIDATION_POLICY_MAP: TFileValidationStatusPolicyMap = {
   },
 };
 
-export const BASE_ACTIONS_MAP: TValidationActionMap = {
-  viewReport: {
-    id: "viewReport",
-    label: "View Report",
-    callback: ({ item, dataSource }) => api.viewReport(item),
-  },
-  downloadReport: {
-    id: "downloadReport",
-    label: "Download Report",
-    callback: ({ item, dataSource }) => api.downloadReport(item),
-  },
-  revalidate: {
-    id: "revalidate",
-    label: "Revalidate",
-    callback: ({ item, dataSource }) => api.revalidate(item.id),
-  },
-  mark_as_ready: {
-    ...setValidationStatusAction(
-      { id: "mark_as_ready", label: "Mark as Ready" },
-      "marked_as_ready",
-    ),
-    isAvailable: ({ item }) =>
-      item.validationStatus ===
-        FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES ||
-      item.validationStatus ===
-        FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS,
-  },
-  unmark_as_ready: {
-    ...setValidationStatusAction(
-      { id: "unmark_as_ready", label: "Unmark as Ready" },
-      "validation_completed_passed_no_issues", // not easy to determine previous status
-    ),
-    isAvailable: ({ item }) =>
-      item.validationStatus === FILE_VALIDATION_STATUS.MARKED_AS_READY,
-  },
-  reject: { // TODO: Add rejection reason to DB
-    ...setValidationStatusAction(
-      { id: "reject", label: "Reject File" },
-      "file_rejected",
-    ),
-    isAvailable: ({ user }) => user?.roles.includes("admin") ?? false,
-  },
-};
+export const BASE_MODES_MAP = {};

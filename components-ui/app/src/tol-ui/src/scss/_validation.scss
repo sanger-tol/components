@@ -246,7 +246,10 @@
 .tol-file-upload-status-table {
   margin-bottom: 5px;
 
-  table, tr, th, td {
+  table,
+  tr,
+  th,
+  td {
     border: 1px solid var(--tol-text);
     padding: 6px;
   }
@@ -371,12 +374,11 @@
 .tol-file-validation-previous-uploads-modal-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: 15px;
 }
 
 .tol-file-validation-previous-uploads-modal-header-content {
-  p {
+  p, h3 {
     margin: 0;
   }
 }
@@ -721,32 +723,13 @@
   }
 }
 
-.tol-file-validation-results-status {
-  margin: 0;
-  text-align: right;
+.tol-file-validation-results-status-container {
+  display: flex;
+  gap: 5px;
 
-  &.passed {
-    color: var(--tol-success);
-  }
-
-  &.completed-with-errors {
-    color: var(--tol-danger);
-  }
-
-  &.completed-with-warnings {
-    color: var(--tol-warning);
-  }
-
-  &.failed {
-    color: var(--tol-danger-light);
-  }
-
-  &.in-progress {
-    color: var(--tol-warning-light);
-  }
-
-  &.marked-as-ready {
-    color: var(--tol-success-light);
+  .tol-file-validation-results-status {
+    margin: 0;
+    text-align: right;
   }
 }
 

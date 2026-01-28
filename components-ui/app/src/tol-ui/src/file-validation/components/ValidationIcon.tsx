@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import React from "react";
-import { Icon, HoverOverlay, TolLoader, TIconType } from "..";
+import { Icon, HoverOverlay, TolLoader, TIconType } from "../..";
 
 export interface PValidationIcon {
   iconType: TIconType;

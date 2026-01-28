@@ -12,7 +12,7 @@ import {
   ValidationIcon,
   capitaliseFirstLetter,
   ICellId,
-} from "..";
+} from "../..";
 
 export interface PErrorViewer {
   key?: string;

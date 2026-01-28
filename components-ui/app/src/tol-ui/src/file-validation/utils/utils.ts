@@ -10,7 +10,7 @@ import {
   FILE_VALIDATION_PATH,
   submitFile,
   markFileAsReady,
-} from "..";
+} from "../..";
 
 import type {
   TSeverity,
@@ -23,7 +23,7 @@ import type {
   IAllValidationData,
   IValidatedDataReport,
   IValidationResultAPI,
-} from "..";
+} from "../..";
 
 /**
  * Counts the number of errors and warnings in a list of validation results.
@@ -200,13 +200,13 @@ export function onSubmission(
   fileList: IFileData[],
   submittable: boolean,
   currentUploadId: string | null,
-  setFileUploaded: (uploaded: boolean) => void,
-  setMarkedAsReady: () => void,
+  setFileUploaded: (uploaded: boolean) => void
+  // setMarkedAsReady: () => void,
 ): void {
   if (submittable) {
     submitFile(validationConfig, fileList, currentUploadId, setFileUploaded);
   } else if (currentUploadId) {
-    markFileAsReady(currentUploadId, setMarkedAsReady);
+    // markFileAsReady(currentUploadId, setMarkedAsReady);
   } else {
     console.error("currentUploadId is required to mark file as ready.");
     PopUpMessage({
