@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   saveTitle,
   PButton,
@@ -14,7 +14,10 @@ import {
   PFilterBlock,
   FilterBlock,
   FilterBlockConfigDrawer,
-  updateConfigAndUpsert
+  updateConfigAndUpsert,
+  upsertComponent,
+  IFilter,
+  deepCopy
 } from "..";
 
 export interface PBoardFilterBlock extends PVisualisation {
@@ -25,6 +28,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, config, zone } = props;
   const [open, setOpen] = useState(false);
   const [filterBlockConfig, setFilterBlockConfig] = useState<PFilterBlock>(config);
+  const [currentFilterValues, setCurrentFilterValues] = useState<IFilter | undefined>();
   const { privilege } = useBoardPrivilege();
 
   const configButton: PButton = {
@@ -45,6 +49,17 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
       boardDataSource
     )
   };
+
+  useEffect(() => {
+    const newFilterValues = deepCopy(zone.components[id]?.data.filter);
+    if (newFilterValues !== currentFilterValues) {
+      let attributes = {
+        filter: newFilterValues
+      };
+      upsertComponent(boardDataSource, id, attributes);
+      setCurrentFilterValues(newFilterValues);
+    }
+  }, [zone]);
 
   return (
     <>
