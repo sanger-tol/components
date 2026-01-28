@@ -83,9 +83,16 @@ export function generateLayout(zone: IZone) {
   zone.order.forEach((componentId) => {
     const component = zone.components[componentId].data;
 
-    const type = component.size || "sm";
+    const size = component.size || "sm";
     ["lg", "md", "sm"].forEach((breakpoint) => {
-      const { w, h } = types[type][breakpoint];
+      let w, h;
+      // filterBlock components have lg width but sm height
+      if (component.type === "filterBlock") {
+        w = types.lg[breakpoint].w;
+        h = 0.75;
+      } else {
+        ({ w, h } = types[size][breakpoint]);
+      }
       // if the widget won't fit on the current row, move it to the next row
       if (
         x[breakpoint] + w >

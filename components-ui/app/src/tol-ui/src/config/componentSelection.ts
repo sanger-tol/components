@@ -54,17 +54,17 @@ export const sizeOptions = (componentType: string) => {
     {
       type: "sm",
       text: "Small",
-      disabled: componentType === "table" || componentType == "chart",
+      disabled: componentType === "table" || componentType === "chart",
     },
     {
       type: "md",
       text: "Medium",
-      disabled: componentType === "count",
+      disabled: componentType === "count" || componentType === "filterBlock",
     },
     {
       type: "lg",
       text: "Large",
-      disabled: componentType === "count",
+      disabled: componentType === "count" || componentType === "filterBlock",
     },
   ]
 }
