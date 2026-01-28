@@ -1,5 +1,5 @@
 /*
-SPDX-FileCopyrightText: 2023 Genome Research Ltd.
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
@@ -27,7 +27,7 @@ export function FilterBlock(props: PFilterBlock) {
       <UtilityBar {...utilityBarConfig} />
       <Row>
         {filters.order.map((filter) => (
-          <Col key={filters.attributes[filter].attribute}>
+          <Col key={filters.attributes[filter].attribute} className="tol-block-filter-col">
             <Filter
               objectType={props.objectType}
               dataSource={props.dataSource}

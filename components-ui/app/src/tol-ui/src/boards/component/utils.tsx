@@ -89,7 +89,7 @@ export function generateLayout(zone: IZone) {
       // filterBlock components have lg width but sm height
       if (component.type === "filterBlock") {
         w = types.lg[breakpoint].w;
-        h = 0.75;
+        h = breakpoint === "lg" ? 0.75 : breakpoint === "md" ? 1 : 1.75;
       } else {
         ({ w, h } = types[size][breakpoint]);
       }

@@ -90,7 +90,7 @@ export function FilterBlockConfigDrawer(props: PFilterBlockConfigDrawer) {
           populatedFieldType={"column"}
           additionalPopulatedFieldData={"."}
           customAttributeSelection={customAttributeSelection}
-          maxSelections={5}
+          maxSelections={4}
         />
       </div>
       <SelectedAttributesContainer
