@@ -9,6 +9,7 @@ import {
   BASE_MODES_MAP,
   FILE_VALIDATION_STATUS,
   VALIDATION_ENDPOINTS,
+  PopUpMessage,
 } from "../..";
 
 import type {
@@ -16,7 +17,7 @@ import type {
   TFileValidationStatus,
   TValidationActionId,
   TValidationActionMap,
-  TValidationModule,
+  TValidationPolicyModule,
 } from "../..";
 
 /**
@@ -39,18 +40,37 @@ export function setValidationStatusAction(
     id: action.id,
     label: action.label,
     callback: async ({ item, dataSource }) => {
-      await dataSource.upsert({
-        objectType: VALIDATION_ENDPOINTS.UPLOAD,
-        payload: [
-          {
-            type: "upload",
-            id: item.id,
-            attributes: {
-              validation_status: status,
+      try {
+        const res = await dataSource.upsert({
+          objectType: VALIDATION_ENDPOINTS.UPLOAD,
+          payload: [
+            {
+              type: "upload",
+              id: item.id,
+              attributes: { validation_status: status },
             },
-          },
-        ],
-      });
+          ],
+        });
+
+        if (!res) {
+          PopUpMessage({
+            type: "error",
+            message: `Could not complete - ${action.label} (not found)`,
+          });
+          return;
+        }
+
+        PopUpMessage({
+          type: "success",
+          message: `${action.label} completed.`,
+        });
+      } catch (e) {
+        console.error(e);
+        PopUpMessage({
+          type: "error",
+          message: `Could not complete - ${action.label}`,
+        });
+      }
     },
   };
 }
@@ -111,7 +131,7 @@ export function createBaseModes() {
   return BASE_MODES_MAP;
 }
 
-export function createBaseValidationModule(): TValidationModule {
+export function createBaseValidationModule(): TValidationPolicyModule {
   return {
     actions: createBaseActions(),
     policies: createBasePolicies(),

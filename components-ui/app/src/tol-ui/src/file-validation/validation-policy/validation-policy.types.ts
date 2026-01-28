@@ -66,7 +66,7 @@ export type TValidationActionMap = Record<
   TFileValidationAction
 >;
 
-export type TValidationModule = {
+export type TValidationPolicyModule = {
   actions: Record<TValidationActionId, TFileValidationAction>;
   policies: Record<TFileValidationStatus, TFileValidationStatusPolicy>;
 };

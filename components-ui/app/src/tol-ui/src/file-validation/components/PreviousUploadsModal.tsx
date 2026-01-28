@@ -59,8 +59,8 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
       refetchBackoff: {
         enabled: true,
         options: {
-          // Check the query and return ( a. is modal closed? ||
-          // b. are all results no longer 'in progress'? )
+          // Check the query and return ( a. is modal open? ||
+          // b. are any results 'in progress'? )
           // If either are false, stop querying.
           stopCondition: (query) => {
             const data = query.state.data as IAllValidationData[] | undefined;

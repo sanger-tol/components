@@ -37,7 +37,7 @@ import {
   MAX_FILE_SIZE,
   DEFAULT_SHEET_NAME,
   BASE_POLICIES_MAP,
-  useValidationModule
+  useValidationPolicyModule
 } from "..";
 
 import type {
@@ -96,7 +96,7 @@ export function FileValidation(props: PFileValidation) {
     text: "",
   });
 
-  const policy = useValidationModule();
+  const policy = useValidationPolicyModule();
 
   console.log(policy);
 

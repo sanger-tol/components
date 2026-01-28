@@ -6,6 +6,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import {
   getErrorWarningCounts,
@@ -35,6 +36,11 @@ import {
   TFileValidationStatus,
   BASE_POLICIES_MAP,
   DropdownButtons,
+  useValidationPolicyModule,
+  TValidationPolicyModule,
+  TFileValidationStatusPolicy,
+  TFileValidationAction,
+  TValidationActionId,
 } from "../..";
 
 export function ValidationResultsViewer() {
@@ -55,10 +61,12 @@ export function ValidationResultsViewer() {
   const [reportOpen, setReportOpen] = useState<boolean>(false);
   const [errorAndWarningCount, setErrorAndWarningCount] =
     useState<IErrorWarningCount>({ errors: 0, warnings: 0 });
-  const [uploadStatus, setUploadStatus] = useState<IUploadStatus>({
-    className: "",
-    text: "",
-  });
+  const [uploadStatus, setUploadStatus] =
+    useState<TFileValidationStatusPolicy>();
+
+  const { actions, policies } = useValidationPolicyModule();
+  const user = getUserFromLocalStorage();
+  const queryClient = useQueryClient();
 
   const fetchLatestPipelineResults = async () => {
     const cacheBustedEndpoint = `${
@@ -124,7 +132,7 @@ export function ValidationResultsViewer() {
 
       const statusKey = latestPipelineResults.data
         .validationStatus as TFileValidationStatus;
-      setUploadStatus(BASE_POLICIES_MAP[statusKey]);
+      setUploadStatus(policies[statusKey]);
     }
 
     if (stepName !== undefined && targetRef.current) {
@@ -140,15 +148,6 @@ export function ValidationResultsViewer() {
       });
     }
   }, [latestPipelineResults.data, stepName]);
-
-  const onMarkAsReadyClick = () => {
-    markFileAsReady(uploadId!, () =>
-      setUploadStatus({
-        className: "marked-as-ready",
-        text: "Marked as Ready",
-      }),
-    );
-  };
 
   const timeoutEnabled = validating && !!uploadId && !validated;
 
@@ -166,6 +165,34 @@ export function ValidationResultsViewer() {
     { enabled: timeoutEnabled, startOnMount: timeoutEnabled },
   );
 
+  const actionContext =
+    latestPipelineResults.data && user
+      ? {
+          item: latestPipelineResults.data,
+          dataSource: PIPELINE_DS,
+          user,
+        }
+      : null;
+
+  const dropdownActions =
+    uploadStatus && actionContext
+      ? uploadStatus.allowedActions
+          .map((actionId: TValidationActionId) => actions[actionId])
+          .filter((action: TFileValidationAction) => {
+            if (!action) return false;
+            return !action.isAvailable || action.isAvailable(actionContext);
+          })
+          .map((action: TFileValidationAction) => ({
+            name: action.label,
+            action: async () => {
+              await action.callback(actionContext);
+              await queryClient.invalidateQueries({
+                queryKey: ["latestPipelineResults", uploadId],
+              });
+            },
+          }))
+      : [];
+
   const Results = (
     <div className="tol-file-validation-results-page-container">
       <div>
@@ -177,8 +204,8 @@ export function ValidationResultsViewer() {
                 <h6>Pipeline: {latestPipelineResults.data?.pipelineName}</h6>
               </div>
               <div>
-                <h4 style={{ color: `${uploadStatus.textColor}` }}>
-                  {uploadStatus.rename}
+                <h4 style={{ color: `${uploadStatus?.textColor}` }}>
+                  {uploadStatus?.rename}
                 </h4>
                 <p className="tol-file-validation-results-page-info-date">
                   {new Date(
@@ -218,14 +245,6 @@ export function ValidationResultsViewer() {
                 <p>Number of Warnings: {errorAndWarningCount.warnings}</p>
                 <p>Number of Errors: {errorAndWarningCount.errors}</p>
                 <span className="tol-file-validation-results-page-error-count-button">
-                  <DropdownButtons
-                    mainButtonIcon={{ icon: "bars" }}
-                    placement="leftStart"
-                    menuStyle={{ marginRight: "5px" }}
-                    dropdownButtons={[
-                      
-                    ]}
-                  />
                   <Button
                     icon="rotate"
                     tooltip="Refresh"
@@ -236,29 +255,11 @@ export function ValidationResultsViewer() {
                     onClick={() => latestPipelineResults.refetch()}
                     timeout={BUTTON_TIMEOUT}
                   />
-                  <Button
-                    icon="clipboard-check"
-                    onClick={() => setReportOpen((prev: boolean) => !prev)}
-                    disabled={validating}
-                    tooltip={
-                      validating ? "Currently Validating..." : "Show Report"
-                    }
-                  />
-                  <Button
-                    icon="download"
-                    tooltip={"Download Validation Report"}
-                    onClick={() => {
-                      downloadReportFile(latestPipelineResults.data);
-                    }}
-                    disabled={
-                      validating || latestPipelineResults.data.failureMessage
-                    }
-                  />
-                  <Button
-                    type="success"
-                    text="Mark As Ready"
-                    disabled={uploadStatus.text !== "Passed"}
-                    onClick={onMarkAsReadyClick}
+                  <DropdownButtons
+                    mainButtonIcon={{ icon: "bars" }}
+                    placement="leftStart"
+                    menuStyle={{ marginRight: "5px" }}
+                    dropdownButtons={dropdownActions}
                   />
                 </span>
               </div>
@@ -322,7 +323,7 @@ export function ValidationResultsViewer() {
         data={latestPipelineResults.data}
         open={reportOpen}
         setOpen={setReportOpen}
-        uploadStatus={uploadStatus.text}
+        uploadStatus={uploadStatus?.rename}
       />
       <PreviousUploadsModal
         openModal={openModal}

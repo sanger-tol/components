@@ -11,7 +11,7 @@ import type {
   IAllValidationData,
   IValidationResult,
   TFileValidationStatus,
-  TValidationModule,
+  TValidationPolicyModule,
 } from "../..";
 import {
   ValidationIcon,
@@ -26,7 +26,7 @@ import {
   truncateString,
   PIPELINE_DS,
   splitS3FilenameString,
-  useValidationModule,
+  useValidationPolicyModule,
 } from "../..";
 
 export interface PPreviousUploadsView {
@@ -53,7 +53,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const history = useHistory();
-  const policy = useValidationModule() as TValidationModule;
+  const policy = useValidationPolicyModule() as TValidationPolicyModule;
 
   console.log(policy);
 

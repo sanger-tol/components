@@ -5,15 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import React, { useContext, createContext } from "react";
-import type { TValidationModule } from "..";
+import type { TValidationPolicyModule } from "..";
 
-const ValidationModuleContext = createContext<TValidationModule | null>(null);
+const ValidationModuleContext = createContext<TValidationPolicyModule | null>(null);
 
 export function ValidationModuleProvider({
   module,
   children,
 }: {
-  module: TValidationModule;
+  module: TValidationPolicyModule;
   children: React.ReactNode;
 }) {
   console.log("HI FROM CONTEXT!");
@@ -24,8 +24,8 @@ export function ValidationModuleProvider({
   );
 }
 
-export function useValidationModule() {
+export function useValidationPolicyModule() {
   const mod = useContext(ValidationModuleContext);
   if (!mod) throw new Error("ValidationModuleProvider is missing.");
-  return mod;
+  return mod as TValidationPolicyModule;
 }
