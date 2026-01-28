@@ -66,7 +66,7 @@ export function BoardFilters(props: PBoardFilters) {
     );
     setDisabledFilterValues(
       removeCurrentEntityFiltersForDisabledFilters(
-        generateFilter(zone, undefined, true)?.and_!,
+        generateFilter(zone, id, true)?.and_!,
         filters?.and_!,
       ),
     );

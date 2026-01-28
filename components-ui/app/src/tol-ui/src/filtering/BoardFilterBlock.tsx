@@ -17,7 +17,8 @@ import {
   updateConfigAndUpsert,
   upsertComponent,
   IFilter,
-  deepCopy
+  deepCopy,
+  resetFiltersBelow
 } from "..";
 
 export interface PBoardFilterBlock extends PVisualisation {
@@ -25,10 +26,11 @@ export interface PBoardFilterBlock extends PVisualisation {
 }
 
 export function BoardFilterBlock(props: PBoardFilterBlock) {
-  const { id, utilityBarConfig, boardObjectType, boardDataSource, config, zone } = props;
+  const { id, utilityBarConfig, boardObjectType, boardDataSource, config, zone, setZone } = props;
   const [open, setOpen] = useState(false);
   const [filterBlockConfig, setFilterBlockConfig] = useState<PFilterBlock>(config);
   const [currentFilterValues, setCurrentFilterValues] = useState<IFilter | undefined>();
+  const [currentDefaultFilterValues, setCurrentDefaultFilterValues] = useState<IFilter | undefined>();
   const { privilege } = useBoardPrivilege();
 
   const configButton: PButton = {
@@ -50,14 +52,35 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
     )
   };
 
+
+  // This useEffect is a slim version of the BoardFilters logic to track filter changes and upsert them
+  // Exists because the filterBlock does not have filters applied to it, but is the filter itself (so has no need for BoardFilters)
   useEffect(() => {
-    const newFilterValues = deepCopy(zone.components[id]?.data.filter);
-    if (newFilterValues !== currentFilterValues) {
-      let attributes = {
-        filter: newFilterValues
-      };
-      upsertComponent(boardDataSource, id, attributes);
+    const componentData = zone.components[id]?.data;
+    if (!componentData) return;
+
+    const newFilterValues = deepCopy(componentData.filter);
+    const newDefaultFilterValues = deepCopy(componentData.defaultFilter);
+
+    // Check if filter has changed
+    const filterChanged = JSON.stringify(newFilterValues) !== JSON.stringify(currentFilterValues);
+    const defaultFilterChanged = JSON.stringify(newDefaultFilterValues) !== JSON.stringify(currentDefaultFilterValues);
+
+    if (filterChanged || defaultFilterChanged) {
+      if (filterChanged) {
+        resetFiltersBelow({ id: id, zone: zone });
+        setZone({ ...zone });
+
+        let attributes = {
+          filter: newFilterValues,
+          default_filter: newDefaultFilterValues
+        };
+
+        upsertComponent(boardDataSource, id, attributes);
+      }
+
       setCurrentFilterValues(newFilterValues);
+      setCurrentDefaultFilterValues(newDefaultFilterValues);
     }
   }, [zone]);
 
