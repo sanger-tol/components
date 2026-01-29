@@ -50,7 +50,7 @@ export function BoardCount(props: PBoardCount) {
     onClick: () => setOpenFilters(true),
     icon: "filter",
     className: "count-filter-button",
-    testid: "count-filter-button",
+    testid: "statistics-filter-button",
     visible: privilege === PRIVILEGE.BOARD.EDITABLE,
   };
 

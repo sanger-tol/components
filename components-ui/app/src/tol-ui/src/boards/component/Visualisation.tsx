@@ -29,6 +29,7 @@ export function Visualisation(props: PVisualisation) {
     case "table":
       return <BoardTable {...props} />;
     case "count":
+    case "statistics":
       return <BoardCount {...props} />;
     case "sunburst":
       return <BoardSunburst {...props} />;
