@@ -90,7 +90,8 @@ export function convertTableData(
   dataSource: TsDataSource,
   fieldMeta: FieldMeta,
   setExpandedRows: (expandedRows: string[]) => void,
-  customCellRenderers?: ICustomCellRenderers
+  customCellRenderers?: ICustomCellRenderers,
+  editableCells?: boolean,
 ): ITableData {
   if (!dataObjects) return [];
   const data: ITableData = [];
@@ -112,6 +113,7 @@ export function convertTableData(
           renderer={fieldMeta.dataWithDefaults?.[attribute]?.cellRenderer}
           setExpandedRows={setExpandedRows}
           customCellRenderers={customCellRenderers}
+          editable={editableCells}
         />
       );
     });

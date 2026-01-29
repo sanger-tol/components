@@ -20,27 +20,31 @@ import {
   TCountStatType,
 } from "..";
 
-/**
- * @autodoc
- * RemoteCount retrieves and displays count or stats from a remote dataSource,
- * updating based on applied filters and selected zones.
- *  
- * @prop id - Unique identifier for this count instance, utilized in the utility bar and various internal functions
- * @prop objectType - Specifies the type of remote object for count retrieval via the API
- * @prop dataSource - The data source used to execute API requests to gather the item count
- * @prop zone - Current filter zone object that influences the data fetched
- * @prop setZone - Function to update the zone state, affecting the filters applied below this instance
- * @prop utilityBarConfig - Optional configuration for the utility bar rendered above the count display, including additional action buttons
- * @prop type - The statistic to display: "count", "min", "max", "avg", or "sum"
- * @prop field - The field to apply the statistic to (required when type is not "count")
- */
 export interface PRemoteCount extends IRemoteTargetAndZone {
+  /**
+   * Unique identifier for this count instance, utilized in the utility bar and various internal functions
+   */
   id: string;
+  /**
+   * Optional configuration for the utility bar rendered above the count display, including additional action buttons
+   */
   utilityBarConfig?: PUtilityBar;
+  /**
+   * The statistic to display - "count", "min", "max", "avg", or "sum"
+   */
   type?: TCountStatType;
+  /**
+   * The field to apply the statistic to (required when type is not "count")
+   */
   field?: string;
 }
 
+/**
+ * @autodoc
+ * 
+ * RemoteCount retrieves and displays count or stats from a remote dataSource,
+ * updating based on applied filters and selected zones.
+ */
 export function RemoteCount(props: PRemoteCount) {
   const { id, objectType, dataSource, zone, setZone, utilityBarConfig, type = "count", field } = props;
   const [value, setValue] = useState<number>(0);

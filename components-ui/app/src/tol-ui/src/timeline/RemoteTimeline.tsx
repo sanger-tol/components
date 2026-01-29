@@ -14,6 +14,28 @@ import {
   TDataObjectOrNull
 } from "..";
 
+interface PRemoteTimeline extends IRemoteTarget {
+  /**
+   * Unique identifier for the timeline instance, used in generating element IDs and for API interactions
+   */
+  id: string;
+  /**
+   * The data structure required to generate timeline items, containing titles, descriptions, and optional icons and colors for each event
+   */
+  data: TimeLineData;
+  /**
+   * Optional boolean indicating whether dates should be displayed with the respective weekday
+   */
+  dateWithDay?: boolean;
+  /**
+   * Optional boolean to control whether a default icon should be displayed for timeline items that do not specify one
+   */
+  defaultIcon?: boolean;
+  /**
+   * The key used to fetch the title for the timeline from the data object, providing context for the displayed events
+   */
+  titleDataPoint: string;
+}
 
 /**
  * @autodoc
@@ -21,27 +43,10 @@ import {
  * RemoteTimeline visualises a timeline of events sourced from a remote `dataSource`.
  * It creates a chronological representation of events, complete with titles, descriptions, and customisable icons.
  * 
- * @prop id - Unique identifier for the timeline instance, used in generating element IDs and for API interactions
- * @prop objectType - The type of remote object being fetched, influencing the structure of the timeline based on API responses
- * @prop dataSource - The data source utilised for API requests to retrieve timeline data
- * @prop data - The data structure required to generate timeline items, containing titles, descriptions, and optional icons and colors for each event
- * @prop dateWithDay - Optional boolean indicating whether dates should be displayed with the respective weekday
- * @prop defaultIcon - Optional boolean to control whether a default icon should be displayed for timeline items that do not specify one
- * @prop titleDataPoint - The key used to fetch the title for the timeline from the data object, providing context for the displayed events
- * 
  * @remarks
  * This component handles various types of objects, automatically generating titles based on 
  * the object type and its ID, making it flexible for different contexts.
  */
-
-interface PRemoteTimeline extends IRemoteTarget {
-  id: string;
-  data: TimeLineData;
-  dateWithDay?: boolean;
-  defaultIcon?: boolean;
-  titleDataPoint: string;
-}
-
 export function RemoteTimeline(props: PRemoteTimeline) {
   const {
     id,
