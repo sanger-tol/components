@@ -61,32 +61,39 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
     if (!componentData) return;
 
     let newFilterValues = deepCopy(componentData.filter);
+    const defaultFilters = deepCopy(zone.defaultFilter);
 
-    // Remove any filter attributes that are no longer in the filterBlockConfig
+    // Remove any filter attributes that are no longer in the filterBlockConfig (including defaults)
     const configuredAttributes = filterBlockConfig.filters?.attributes || {};
     const validAttributeKeys = Object.keys(configuredAttributes).map(key => configuredAttributes[key].attribute);
+    const defaultFilterKeys = Object.keys(defaultFilters?.and_ || {});
     if (newFilterValues?.and_) {
       newFilterValues.and_ = Object.fromEntries(
-        Object.entries(newFilterValues.and_).filter(([key]) => validAttributeKeys.includes(key))
+        Object.entries(newFilterValues.and_).filter(([key]) => 
+          validAttributeKeys.includes(key) && !defaultFilterKeys.includes(key)
+        )
       );
     }
 
     // Check if filter has changed
     const filterChanged = JSON.stringify(newFilterValues) !== JSON.stringify(currentFilterValues);
 
-    if (filterChanged ) {
+    // Update the zone with cleaned filter values to trigger re-render
+    if (filterChanged && zone.components[id]?.data) {
+      zone.components[id].data.filter = newFilterValues;
+    }
+
+    if (filterChanged) {
       // If filter has changed, reset filters below and upsert
-      if (filterChanged) {
-        // Reset filters below this component when the filter changes
-        resetFiltersBelow({ id: id, zone: zone });
-        setZone({ ...zone });
+      // Reset filters below this component when the filter changes
+      resetFiltersBelow({ id: id, zone: zone });
+      setZone({ ...zone });
 
-        let attributes = {
-          filter: newFilterValues,
-        };
+      let attributes = {
+        filter: newFilterValues,
+      };
 
-        upsertComponent(boardDataSource, id, attributes);
-      }
+      upsertComponent(boardDataSource, id, attributes);
 
       setCurrentFilterValues(newFilterValues);
     }
@@ -94,29 +101,29 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
 
 
   const Contents = () => {
-      if (Object.keys(filterBlockConfig.filters.attributes).length === 0) {
-        return (
-          <div style={{ height: '60%' }}>
-            <Placeholder
-              message={
-                <>
-                  {privilege === PRIVILEGE.BOARD.EDITABLE ? (
-                    <>
-                      Please add attributes to get started. Click <Icon icon="sliders" size="sm" /> to configure.
-                    </>
-                  ) : (
-                    <>
-                      No attributes selected.
-                    </>
-                  )}
-                </>
-              }
-            />
-          </div>
-        )
-      }
-      return null;
+    if (filterBlockConfig.filters && Object.keys(filterBlockConfig.filters.attributes).length === 0) {
+      return (
+        <div style={{ height: '60%' }}>
+          <Placeholder
+            message={
+              <>
+                {privilege === PRIVILEGE.BOARD.EDITABLE ? (
+                  <>
+                    Please add attributes to get started. Click <Icon icon="sliders" size="sm" /> to configure.
+                  </>
+                ) : (
+                  <>
+                    No attributes selected.
+                  </>
+                )}
+              </>
+            }
+          />
+        </div>
+      )
     }
+    return null;
+  }
 
   return (
     <>
