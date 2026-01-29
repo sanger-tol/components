@@ -199,9 +199,14 @@ export function normaliseNavConfig(navigation: TNavConfig | undefined, user: Use
       navItem.pages = normaliseNavConfig(navItem.pages, user);
     }
 
+    // Add to result and only add to order if it was in source order (thus not hidden on nav)
     result.data[navName] = navItem;
-    result.order.push(navName);
+    if (source.order.includes(navName)) {
+      result.order.push(navName);
+    }
   }
+
+  console.log(result);
 
   return result;
 }
@@ -227,6 +232,38 @@ export function setupNavigationConfig(navigation: TNavConfig | undefined, user: 
 }
 
 /**
+ * Type guard that checks whether a value is a non-null object containing a non-empty `route` string.
+ *
+ * @param path - The value to validate.
+ * @returns `true` if `path` is an object with a non-empty string `route` property; otherwise `false`.
+ */
+export function hasRoute(path: unknown): path is { route: string; pageElementReference?: string } {
+  return (
+    !!path &&
+    typeof path === "object" &&
+    "route" in path &&
+    typeof (path as any).route === "string" &&
+    (path as any).route.length > 0
+  );
+}
+
+/**
+ * Type guard that checks whether a value is a non-null object containing a non-empty `href` string.
+ *
+ * @param path - The value to validate.
+ * @returns `true` if `path` is an object with a non-empty string `href` property; otherwise `false`.
+ */
+export function hasLink(path: unknown): path is { href: string; target?: string } {
+  return (
+    !!path &&
+    typeof path === "object" &&
+    "href" in path &&
+    typeof (path as any).href === "string" &&
+    (path as any).href.length > 0
+  );
+}
+
+/**
  * Recursively collects an ordered list of React navigation elements from a navigation configuration.
  * Iterates over `navigation.order` to maintain the specified order of items and to control what can be seen in the nav.
  *
@@ -238,8 +275,6 @@ export function collectNavigationItems(navigation: TNavConfig | undefined, user:
 
   navigation?.order.map((navItemName: string) => {
     const navItem = navigation.data[navItemName];
-
-    if (!isPageAccessible(user, navItem)) return;
 
     // Dropdown menu
     if ("pages" in navItem) {
@@ -253,13 +288,14 @@ export function collectNavigationItems(navigation: TNavConfig | undefined, user:
       // Alter depending on whether it's a route or an external link
       let href = "";
       let target = "";
-      if (navItem.path) {
-        if ("route" in navItem.path && navItem.path.route) {
-          href = navItem.path.route;
-        } else if ('href' in navItem.path && navItem.path.href) {
-          href = navItem.path.href;
-          target = navItem.path.target ?? "_blank";
-        }
+
+      const path = navItem.path;
+
+      if (hasRoute(path)) {
+        href = path.route;
+      } else if (hasLink(path)) {
+        href = path.href;
+        target = path.target ?? "_blank";
       }
 
       navButtons.push(

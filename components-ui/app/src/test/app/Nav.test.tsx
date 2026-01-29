@@ -21,6 +21,7 @@ import {
 
 const navConfigWithDefaults: TNavConfig = setupNavigationConfig(navInputConfigMock, null);
 
+
 describe("setupNavigationConfig function", () => {
   test("Check explicit routes aren't overwritten", () => {
     // Public page route check
@@ -43,6 +44,7 @@ describe("setupNavigationConfig function", () => {
   });
 });
 
+
 describe("Ensure normaliseNavConfig prunes inaccessible pages", () => {
   test("Confirm a public user's config", () => {
     const publicNavConfig = normaliseNavConfig(navInputConfigMock, null);
@@ -61,67 +63,33 @@ describe("Ensure normaliseNavConfig prunes inaccessible pages", () => {
 });
 
 
+describe("collectNavigationItems function", () => {
+  const navItems = collectNavigationItems(navConfigWithDefaults, null);
 
+  test("returns empty array when navigation is undefined", () => {
+    const emptyNavItems = collectNavigationItems(undefined, null);
+    expect(emptyNavItems).toEqual([]);
+  });
 
-// describe("collectNavigationItems function", () => {
-//   const navItems = collectNavigationItems(navConfig, null);
-//   const emptyNavItems = collectNavigationItems(undefined, null);
+  test("collects top-level links (e.g. Public Page) with correct href", () => {
+    const home = findLinkByText(navItems, "Public Page");
+    expect(home).toBeTruthy();
+    expect(home?.props?.href).toBe("/");
+  });
 
-//   test("returns empty array when navigation is undefined", () => {
-//     expect(emptyNavItems).toEqual([]);
-//   });
+  test("collects dropdowns and recursively collects child links", () => {
+    const dropdown = findDropdownByTitle(navItems, "Public Dropdown");
+    expect(dropdown).toBeTruthy();
 
-//   test("collects top-level links (e.g. Home) with correct href", () => {
-//     const home = findLinkByText(navItems, "Home");
-//     expect(home).toBeTruthy();
-//     expect(home?.props?.href).toBe("/");
-//   });
+    const dropdownChildren = React.Children.toArray(dropdown!.props.children);
+    const page1 = findLinkByText(dropdownChildren, "Nested Public Page");
+    expect(page1).toBeTruthy();
+    expect(page1?.props?.href).toBe("/nested-public-page");
+  });
 
-//   test("collects dropdowns and recursively collects child links", () => {
-//     const dropdown = findDropdownByTitle(navItems, "Dropdown Name 1");
-//     expect(dropdown).toBeTruthy();
-
-//     const dropdownChildren = React.Children.toArray(dropdown!.props.children);
-//     const page1 = findLinkByText(dropdownChildren, "Page Name 1");
-
-//     expect(page1).toBeTruthy();
-//     expect(page1?.props?.href).toBe("/page-name-1");
-//   });
-// });
-
-
-
-// describe("test navigation access control", () => {
-//   const navItems = collectNavigationItems(navConfig, null);
-//   const navItemsWhenAdmin = collectNavigationItems(navConfig, mockAdminUser);
-
-//   test("collectNavigationItems returns public pages when not logged in", () => {
-//     const home = findLinkByText(navItems, "Home");
-//     expect(home).toBeTruthy();
-//   });
-
-//   test("collectNavigationItems returns public pages when logged in", () => {
-//     const home = findLinkByText(navItemsWhenAdmin, "Home");
-//     expect(home).toBeTruthy();
-//   });
-
-//   test("collectNavigationItems does not return authenticated pages when not logged in", () => {
-//     const authPage = findLinkByText(navItems, "Authenticated Page");
-//     expect(authPage).toBeUndefined();
-//   });
-
-//   test("collectNavigationItems returns authenticated pages when logged in", () => {
-//     const authPage = findLinkByText(navItemsWhenAdmin, "Authenticated Page");
-//     expect(authPage).toBeTruthy();
-//   });
-
-//   test("collectNavigationItems does not return role-specific pages when not logged in", () => {
-//     const rolePage = findLinkByText(navItems, "Role Specific Page");
-//     expect(rolePage).toBeUndefined();
-//   });
-
-//   test("collectNavigationItems returns role-specific pages when logged in", () => {
-//     const rolePage = findLinkByText(navItemsWhenAdmin, "Role Specific Page");
-//     expect(rolePage).toBeTruthy();
-//   });
-// });
+  test("ensure pages visible on the nav are only generated from the config order", () => {
+    // hidden pages aren't included in the config order and so shouldn't appear in the nav
+    const callback = findLinkByText(navItems, "Callback");
+    expect(callback).toBeFalsy();
+  });
+});
