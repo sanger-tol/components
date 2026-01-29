@@ -29,7 +29,7 @@ export interface PRoute {
 export function Route(props: PRoute) {
   const { routeKey, boards, path, pageElements } = props;
 
-  let element: React.ReactNode = undefined;
+  let element: React.ReactNode;
 
   // Check if there is a pageElementReference in the path
   if (path && "pageElementReference" in path && path.pageElementReference) {

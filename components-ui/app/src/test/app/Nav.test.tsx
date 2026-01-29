@@ -6,7 +6,12 @@ SPDX-License-Identifier: MIT
 
 import React from "react";
 import { expect, test, describe } from "vitest";
-import { setupNavigationConfig, TNavConfig, collectNavigationItems, normaliseNavConfig } from "../../tol-ui/src";
+import {
+  setupNavigationConfig,
+  TNavConfig,
+  collectNavigationItems,
+  normaliseNavConfig
+} from "../../tol-ui/src";
 import {
   findDropdownByTitle,
   findLinkByText,
