@@ -6,10 +6,19 @@ SPDX-License-Identifier: MIT
 
 import { User } from "../../tol-ui/src";
 
-export const adminUser: User = {
-  email: "user@test.ac.uk",
+
+export const mockAuthenticatedUser: User = {
+  email: "user@test.com",
   name: "Test User",
   organisation: "Test Organisation",
-  roles: ["admin"],
+  roles: [],
   oidc_id: "12345",
+};
+
+export const mockAdminUser: User = {
+  email: "admin@test.com",
+  name: "Admin User",
+  organisation: "Test Organisation",
+  roles: ["admin"],
+  oidc_id: "67890",
 };

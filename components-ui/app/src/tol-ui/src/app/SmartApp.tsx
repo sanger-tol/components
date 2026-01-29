@@ -97,7 +97,7 @@ export function SmartApp(props: PSmartApp) {
   const boards = setupBoards(props.boards);
 
   // Merge system navigation config and add default routes
-  const navigation: TNavConfig = setupNavigationConfig(props.navigation);
+  const navigation: TNavConfig = setupNavigationConfig(props.navigation, user);
 
   // Always merge default page elements + incoming (incoming overrides defaults)
   const pageElements: TPageElements = {

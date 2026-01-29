@@ -20,6 +20,7 @@ import {
   TPageOrDropdown,
   PAGE_ACCESS,
   User,
+  deepCopy,
 } from "..";
 
 
@@ -167,41 +168,42 @@ export function setupBoards(boards?: PBoard | boolean): PBoard | undefined {
  * Adds missing default values to a navigation configuration recursively.
  * 
  * @param navigation - The navigation config to normalize. If `undefined`, a default empty config is used.
+ * @param user - The current user object; used to determine page accessibility.
  * 
- * @returns A new navigation config with defaults applied.
+ * @returns A new navigation config with defaults applied and pruned inaccessible pages.
  */
-export function addDefaultsToNavigationConfig(navigation: TNavConfig | undefined): TNavConfig {
+export function normaliseNavConfig(navigation: TNavConfig | undefined, user: User | null): TNavConfig {
   const nav: TNavConfig = navigation ?? { data: {}, order: [] };
 
-  const data = Object.fromEntries(
-    Object.entries(nav.data ?? {}).map(([navName, navItem]) => {
-      if (!navItem || typeof navItem !== "object") return [navName, navItem];
+  for (const [navName, originalNavItem] of Object.entries(nav.data ?? {})) {
+    if (
+      !isPageAccessible(user, originalNavItem) ||
+      (!originalNavItem || typeof originalNavItem !== "object")
+    ) continue;
 
-      const nextNavItem: TPageOrDropdown = { ...navItem };
+    nav.data[navName] = deepCopy(originalNavItem);
+    nav.order.push(navName);
 
-      // If it has a pageElementReference but no route, add a default
-      if (nextNavItem.path && 'pageElementReference' in nextNavItem.path) {
+    const navItem = Object.values(nav.data)[navName];
 
-        // Generate a route path with the key as a fallback
-        nextNavItem.path.route = (
-          navItem.path && 'route' in navItem.path ? navItem.path.route : undefined
-        ) ?? convertToPath(navName);
-      }
+    console.log(navItem, nav);
 
-      // Recurse into dropdown children (do not build routes from dropdown names)
-      if ("pages" in nextNavItem && nextNavItem.pages) {
-        nextNavItem.pages = addDefaultsToNavigationConfig(nextNavItem.pages as TNavConfig);
-      }
+    // If it has a pageElementReference but no route, add a default
+    if (navItem.path && 'pageElementReference' in navItem.path) {
 
-      return [navName, nextNavItem];
-    }),
-  );
+      // Generate a route path with the key as a fallback
+      navItem.path.route = (
+        navItem.path && 'route' in navItem.path ? navItem.path.route : undefined
+      ) ?? convertToPath(navName);
+    }
 
-  return {
-    ...nav,
-    data,
-    order: nav.order ?? [],
-  };
+    // Recurse into dropdown children (do not build routes from dropdown names)
+    if ("pages" in navItem && navItem.pages) {
+      navItem.pages = normaliseNavConfig(navItem.pages, user);
+    }
+  }
+
+  return nav;
 }
 
 /**
@@ -210,9 +212,10 @@ export function addDefaultsToNavigationConfig(navigation: TNavConfig | undefined
  *
  * @param navigation - Optional, partial navigation configuration to merge with system defaults.
  * 
- * @returns A finalized {@link TNavConfig} with defaults applied via `addDefaultsToNavigationConfig`.
+ * @returns A finalized {@link TNavConfig} with defaults applied via `normaliseNavConfigForUser`.
  */
-export function setupNavigationConfig(navigation: TNavConfig | undefined): TNavConfig {
+export function setupNavigationConfig(navigation: TNavConfig | undefined, user: User | null): TNavConfig {
+  // Combine system nav config with incoming config
   navigation = {
     data: {
       ...systemNavConfig.data,
@@ -220,7 +223,7 @@ export function setupNavigationConfig(navigation: TNavConfig | undefined): TNavC
     },
     order: [...systemNavConfig.order, ...(navigation?.order ?? [])]
   }
-  return addDefaultsToNavigationConfig(navigation);
+  return normaliseNavConfig(navigation, user);
 }
 
 /**
