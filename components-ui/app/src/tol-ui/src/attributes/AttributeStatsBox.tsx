@@ -5,10 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { API_METHODS, numberWithSpaces } from "..";
-import { PAttributeTooltip } from "./AttributeTooltip";
+import { API_METHODS, numberWithSpaces, IRemoteTarget } from "..";
 
-export function AttributeStatsBox(props: PAttributeTooltip) {
+interface PAttributeStatsBox extends IRemoteTarget {
+  attributeId: string;
+}
+
+export function AttributeStatsBox(props: PAttributeStatsBox) {
   const { attributeId: field, objectType, dataSource } = props;
 
   const [isNumeric, setIsNumeric] = useState(false);
