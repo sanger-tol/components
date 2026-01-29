@@ -28,13 +28,13 @@ describe("setupNavigationConfig function", () => {
   });
 
   test("Check generated routes are correctly created", () => {
-    // Page Name 1 route check
+    // Public Dropdown -> Nested Public Page route check
     expect(
-      navConfigWithDefaults.data["Dropdown Name 1"]["pages"].data["Page Name 1"].path?.["route"]
-    ).toEqual("/page-name-1");
+      navConfigWithDefaults.data["Public Dropdown"]["pages"].data["Nested Public Page"].path?.["route"]
+    ).toEqual("/nested-public-page");
   });
 
-  test("Function ensures a combination of app and defauly configs", () => {
+  test("Function ensures a combination of app and default configs", () => {
     // App page route check
     expect(navConfigWithDefaults.data["Public Page"].path?.["route"]).toEqual("/");
 
@@ -43,7 +43,7 @@ describe("setupNavigationConfig function", () => {
   });
 });
 
-describe("normaliseNavConfig function", () => {
+describe("Ensure normaliseNavConfig prunes inaccessible pages", () => {
   test("Confirm a public user's config", () => {
     const publicNavConfig = normaliseNavConfig(navInputConfigMock, null);
     expect(publicNavConfig).toEqual(navOutputConfigPublicMock);

@@ -173,37 +173,37 @@ export function setupBoards(boards?: PBoard | boolean): PBoard | undefined {
  * @returns A new navigation config with defaults applied and pruned inaccessible pages.
  */
 export function normaliseNavConfig(navigation: TNavConfig | undefined, user: User | null): TNavConfig {
-  const nav: TNavConfig = navigation ?? { data: {}, order: [] };
+  const source: TNavConfig = navigation ?? { data: {}, order: [] };
 
-  for (const [navName, originalNavItem] of Object.entries(nav.data ?? {})) {
-    if (
-      !isPageAccessible(user, originalNavItem) ||
-      (!originalNavItem || typeof originalNavItem !== "object")
-    ) continue;
+  // Build a fresh config so we can add only accessible pages with defaults
+  const result: TNavConfig = { data: {}, order: [] };
 
-    nav.data[navName] = deepCopy(originalNavItem);
-    nav.order.push(navName);
+  for (const navName of Object.keys(source.data)) {
+    const originalNavItem = source.data?.[navName];
 
-    const navItem = Object.values(nav.data)[navName];
+    // Skip if no nav item or not accessible to this user
+    if (!originalNavItem || typeof originalNavItem !== "object") continue;
+    if (!isPageAccessible(user, originalNavItem)) continue;
 
-    console.log(navItem, nav);
+    const navItem = deepCopy(originalNavItem);
 
     // If it has a pageElementReference but no route, add a default
-    if (navItem.path && 'pageElementReference' in navItem.path) {
-
-      // Generate a route path with the key as a fallback
-      navItem.path.route = (
-        navItem.path && 'route' in navItem.path ? navItem.path.route : undefined
-      ) ?? convertToPath(navName);
+    if (navItem.path && "pageElementReference" in navItem.path) {
+      navItem.path.route =
+        ("route" in navItem.path ? navItem.path.route : undefined) ??
+        convertToPath(navName);
     }
 
     // Recurse into dropdown children (do not build routes from dropdown names)
     if ("pages" in navItem && navItem.pages) {
       navItem.pages = normaliseNavConfig(navItem.pages, user);
     }
+
+    result.data[navName] = navItem;
+    result.order.push(navName);
   }
 
-  return nav;
+  return result;
 }
 
 /**
