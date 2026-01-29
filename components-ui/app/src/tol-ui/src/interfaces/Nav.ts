@@ -109,6 +109,24 @@ export type TPageElements = Record<string, TPageElement>;
  */
 export type TNavBrand = string | React.ReactNode;
 
+/**
+ * Navigation destination details for nav items.
+ */
+export interface INavDestination {
+  /**
+   * The URL or route to navigate to.
+   */
+  destination: string;
+  /**
+   * The target attribute for links (e.g., "_blank" for new tab).
+   */
+  target?: string;
+}
+
+/**
+ * Example navigation configuration illustrating the structure of TNavConfig.
+ */
+
 // @ts-ignore - example documentation
 const EXAMPLE: TNavConfig = {
   data: {

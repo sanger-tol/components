@@ -82,9 +82,9 @@ describe("collectNavigationItems function", () => {
     expect(dropdown).toBeTruthy();
 
     const dropdownChildren = React.Children.toArray(dropdown!.props.children);
-    const page1 = findLinkByText(dropdownChildren, "Nested Public Page");
-    expect(page1).toBeTruthy();
-    expect(page1?.props?.href).toBe("/nested-public-page");
+    const page = findLinkByText(dropdownChildren, "Nested Public Page");
+    expect(page).toBeTruthy();
+    expect(page?.props?.href).toBe("/nested-public-page");
   });
 
   test("ensure pages visible on the nav are only generated from the config order", () => {

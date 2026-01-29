@@ -21,6 +21,12 @@ import {
   PAGE_ACCESS,
   User,
   deepCopy,
+  IPageLink,
+  IPageElement,
+  TPageElements,
+  INavDropdown,
+  Route,
+  INavDestination
 } from "..";
 
 
@@ -206,8 +212,6 @@ export function normaliseNavConfig(navigation: TNavConfig | undefined, user: Use
     }
   }
 
-  console.log(result);
-
   return result;
 }
 
@@ -237,7 +241,7 @@ export function setupNavigationConfig(navigation: TNavConfig | undefined, user: 
  * @param path - The value to validate.
  * @returns `true` if `path` is an object with a non-empty string `route` property; otherwise `false`.
  */
-export function hasRoute(path: unknown): path is { route: string; pageElementReference?: string } {
+export function isRoute(path: unknown): path is IPageElement {
   return (
     !!path &&
     typeof path === "object" &&
@@ -253,7 +257,7 @@ export function hasRoute(path: unknown): path is { route: string; pageElementRef
  * @param path - The value to validate.
  * @returns `true` if `path` is an object with a non-empty string `href` property; otherwise `false`.
  */
-export function hasLink(path: unknown): path is { href: string; target?: string } {
+export function isLink(path: unknown): path is IPageLink {
   return (
     !!path &&
     typeof path === "object" &&
@@ -261,6 +265,29 @@ export function hasLink(path: unknown): path is { href: string; target?: string 
     typeof (path as any).href === "string" &&
     (path as any).href.length > 0
   );
+}
+
+/**
+ * Type guard: checks whether a value is a non-null object containing a `pages` nav config.
+ */
+export function isDropdown(value: unknown): value is INavDropdown {
+  return (
+    !!value &&
+    typeof value === "object" &&
+    "pages" in value
+  );
+}
+
+/**
+ * Resolves a navigation destination object from a route or link type.
+ *
+ * @param path - A value expected to be either a route object or a link object.
+ * @returns An {@link INavDestination} containing the resolved `destination` and optional `target`.
+ */
+export function getNavDestination(path: unknown): INavDestination {
+  if (isRoute(path)) return { destination: path.route! };
+  if (isLink(path)) return { destination: path.href, target: path.target ?? "_blank" };
+  return { destination: "" };
 }
 
 /**
@@ -277,31 +304,20 @@ export function collectNavigationItems(navigation: TNavConfig | undefined, user:
     const navItem = navigation.data[navItemName];
 
     // Dropdown menu
-    if ("pages" in navItem) {
+    if (isDropdown(navItem)) {
       navButtons.push(
         <NavDropdown title={navItemName}>
           {collectNavigationItems(navItem.pages, user)}
         </NavDropdown>
       )
-      // Single page link
+      // Single page nav item
     } else {
-      // Alter depending on whether it's a route or an external link
-      let href = "";
-      let target = "";
-
-      const path = navItem.path;
-
-      if (hasRoute(path)) {
-        href = path.route;
-      } else if (hasLink(path)) {
-        href = path.href;
-        target = path.target ?? "_blank";
-      }
+      const { destination, target } = getNavDestination(navItem.path);
 
       navButtons.push(
         <Nav.Link
           key={navItemName}
-          href={href}
+          href={destination}
           target={target}
         >
           {navItemName}
@@ -309,6 +325,7 @@ export function collectNavigationItems(navigation: TNavConfig | undefined, user:
       )
     }
   });
+
   return navButtons;
 };
 
@@ -339,3 +356,48 @@ export function isPageAccessible(user: User | null, page: TPageOrDropdown): bool
   // Default deny
   return false;
 }
+
+
+/**
+ * Builds a flat list of React Router route nodes from a nested navigation configuration.
+ *
+ * @param navigation - Navigation configuration tree to traverse.
+ * @param pageElements - Mapping/registry of page elements used to render routes.
+ * @param boards - Optional board configuration passed through to `Route`.
+ * @param parentTrail - Accumulated navigation keys representing the current traversal path.
+ * @returns A flattened array of `React.ReactNode` route elements for all valid routes in the tree.
+ */
+export const collectRoutes = (
+  navigation: TNavConfig,
+  pageElements: TPageElements,
+  boards?: PBoard,
+  parentTrail: string[] = [],
+): React.ReactNode[] => {
+  return Object.entries(navigation.data).flatMap(([navKey, navItem]) => {
+    const trail = [...parentTrail, navKey];
+    const routeKey = trail.join(" > ");
+
+    const routes: React.ReactNode[] = [];
+
+    // Add a route for this item if it has one
+    if (isRoute(navItem.path)) {
+      routes.push(
+        Route({
+          routeKey,
+          path: navItem.path,
+          pageElements,
+          boards,
+        }),
+      );
+    }
+
+    // Recurse into dropdown children
+    if (isDropdown(navItem)) {
+      routes.push(
+        ...collectRoutes(navItem.pages, pageElements, boards, trail),
+      );
+    }
+
+    return routes;
+  });
+};

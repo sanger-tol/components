@@ -35,8 +35,8 @@ import {
   TNavConfig,
   TPageElements,
   setupBoards,
-  Route,
   setupNavigationConfig,
+  collectRoutes,
 } from "..";
 
 export interface PSmartApp {
@@ -79,6 +79,10 @@ export interface PSmartApp {
   uiPath?: string;
 }
 
+
+/**
+ * Root application component that composes routing, navigation, and default page elements.
+ */
 export function SmartApp(props: PSmartApp) {
   const { login = true, register = false, customCallbackUrl, uiPath } = props;
 
@@ -123,39 +127,6 @@ export function SmartApp(props: PSmartApp) {
     uiPath,
   };
 
-  /**
-   * Recursively collect all <Route /> nodes from the nav tree (pages and dropdowns at any level).
-   * Returns a flat list suitable for rendering inside <Switch>.
-   */
-  const collectRoutes = (
-    collection: TNavConfig,
-    parentTrail: string[] = [],
-  ) => {
-    return Object.entries(collection.data).flatMap(([navKey, navItem]) => {
-      const trail = [...parentTrail, navKey];
-      const routeKey = trail.join(" > ");
-
-      const routes = [
-        Route({
-          ...mergedProps,
-          ...navItem,
-          boards: boards!,
-          navigation,
-          pageElements,
-          navKey,
-          routeKey, // unique react key for across nesting
-        }),
-      ];
-
-      // Recurse into dropdown children
-      if (navItem && typeof navItem === "object" && "pages" in navItem && navItem.pages) {
-        routes.push(...collectRoutes(navItem.pages, trail));
-      }
-
-      return routes;
-    });
-  };
-
   return (
     <div id="tol-smart-app-background">
       <QueryClientProvider client={queryClient}>
@@ -172,7 +143,11 @@ export function SmartApp(props: PSmartApp) {
               <Navigation {...mergedProps} />
               <div className="tol-smart-app-content">
                 <Switch>
-                  {collectRoutes(navigation)}
+                  {collectRoutes(
+                    navigation,
+                    pageElements,
+                    boards
+                  )}
                   <ReactRouter
                     path={`/page-not-found`}
                     component={() => <PageNotFound />}

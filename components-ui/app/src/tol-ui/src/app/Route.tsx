@@ -5,29 +5,29 @@ SPDX-License-Identifier: MIT
 */
 
 import { Route as ReactRoute } from "react-router-dom";
-import { Board, IPage, isPageAccessible, PBoard, PSmartApp, User } from "..";
+import { Board, IPageElement, PBoard, TPageElements } from "..";
 
-export interface PRoute extends PSmartApp, IPage {
+export interface PRoute {
   /**
-   * A unique key for the page which acts as the display name in the navigation.
+   * Unique key for React rendering.
    */
-  navKey: string;
+  routeKey: string;
   /**
-   * Optional unique key for React rendering.
-   * Useful for nested nav trees where `key` can repeat.
+   * Includes the route and pageElementReference.
    */
-  routeKey?: string;
+  path: IPageElement;
   /**
-   * Parameters for board pages
-   */
-  boards: PBoard;
+  * A React node mapping for page element references.
+  */
+  pageElements?: TPageElements;
+  /**
+  * Parameters for board pages.
+  */
+  boards?: PBoard;
 }
 
 export function Route(props: PRoute) {
-  const { navKey, routeKey, boards, path, pageElements } = props;
-
-  // ignore routes without a path e.g. external links
-  if (!(path && 'route' in path)) return;
+  const { routeKey, boards, path, pageElements } = props;
 
   let element: React.ReactNode = undefined;
 
@@ -37,7 +37,7 @@ export function Route(props: PRoute) {
     if (pageElements && path.pageElementReference in pageElements) {
       element = pageElements[path.pageElementReference];
       // If not, assume it's a boardId and render a Board component
-    } else {
+    } else if (boards) {
       element = <Board {...boards} boardId={path.pageElementReference} />;
     }
   }
@@ -45,7 +45,7 @@ export function Route(props: PRoute) {
   return (
     <ReactRoute
       exact
-      key={routeKey ?? navKey}
+      key={routeKey}
       path={path.route}
       render={() => element}
     />
