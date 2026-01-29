@@ -8,6 +8,7 @@ export * from "./AdvanceSearchTab";
 export * from "./AttributeSelector";
 export * from "./AttributeTooltip";
 export * from "./AttributeTitle";
+export * from "./AttributeStatsBox";
 export * from "./SelectedAttributesContainer";
 export * from "./utils";
 export * from "./SourceContainer";
