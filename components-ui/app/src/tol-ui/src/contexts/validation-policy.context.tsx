@@ -16,7 +16,6 @@ export function ValidationModuleProvider({
   module: TValidationPolicyModule;
   children: React.ReactNode;
 }) {
-  console.log("HI FROM CONTEXT!");
   return (
     <ValidationModuleContext.Provider value={module}>
       {children}

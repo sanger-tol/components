@@ -40,6 +40,7 @@ export type TFileValidationStatusPolicy = {
   rename: string;
   summary: string;
   textColor: string;
+  isFailureStatus: boolean;
   allowedActions: TValidationActionId[];
 };
 
@@ -48,6 +49,7 @@ export type TValidationActionContext = {
   dataSource: TsDataSource;
   user?: { roles: string[] };
   setReportOpen?: (open: boolean) => void;
+  setSubmissionRejectModalOpen?: (open: boolean) => void;
 };
 
 export type TFileValidationAction = {

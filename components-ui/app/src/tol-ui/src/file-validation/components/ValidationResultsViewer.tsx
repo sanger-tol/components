@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useHistory } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
+
 import {
   getErrorWarningCounts,
   downloadFileFromS3,
@@ -30,6 +31,7 @@ import {
   setValidationTimeout,
   DropdownButtons,
   useValidationPolicyModule,
+  SubmissionRejectModal,
 } from "../..";
 
 import type {
@@ -56,6 +58,8 @@ export function ValidationResultsViewer() {
   const user = getUserFromLocalStorage();
 
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [submissionRejectModalOpen, setSubmissionRejectModalOpen] =
+    useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
   const [validated, setValidated] = useState<boolean>(false);
   const [hasErrors, setHasErrors] = useState<boolean>(false);
@@ -173,6 +177,7 @@ export function ValidationResultsViewer() {
           dataSource: PIPELINE_DS,
           user,
           setReportOpen,
+          setSubmissionRejectModalOpen,
         }
       : null;
 
@@ -261,7 +266,11 @@ export function ValidationResultsViewer() {
                     mainButtonIcon={{ icon: "bars" }}
                     placement="leftStart"
                     menuStyle={{ marginRight: "5px" }}
-                    dropdownButtons={dropdownActions}
+                    dropdownButtons={
+                      dropdownActions.length > 0
+                        ? dropdownActions
+                        : [{ name: "No Actions Available", disabled: true }]
+                    }
                   />
                 </span>
               </div>
@@ -326,6 +335,11 @@ export function ValidationResultsViewer() {
         open={reportOpen}
         setOpen={setReportOpen}
         uploadStatus={uploadStatus?.rename}
+      />
+      <SubmissionRejectModal
+        open={submissionRejectModalOpen}
+        setOpen={setSubmissionRejectModalOpen}
+        uploadId={uploadId}
       />
       <PreviousUploadsModal
         openModal={openModal}

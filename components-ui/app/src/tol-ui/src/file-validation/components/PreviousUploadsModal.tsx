@@ -59,7 +59,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
       refetchBackoff: {
         enabled: true,
         options: {
-          // Check the query and return ( a. is modal open? ||
+          // Check the query and return ( a. is modal open? or
           // b. are any results 'in progress'? )
           // If either are false, stop querying.
           stopCondition: (query) => {

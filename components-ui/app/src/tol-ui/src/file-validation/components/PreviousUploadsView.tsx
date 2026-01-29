@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
+
 import type {
   IStepData,
   IAllValidationData,
@@ -13,6 +14,7 @@ import type {
   TFileValidationStatus,
   TValidationPolicyModule,
 } from "../..";
+
 import {
   ValidationIcon,
   getErrorWarningCounts,
@@ -137,8 +139,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
             </h6>
             <IconTooltip contents={uploadStatus.summary} disableMarkdown />
           </div>
-          {(uploadStatus.rename === "validation_system_error" ||
-            uploadStatus.rename === "validation_timeout") && (
+          {uploadStatus.isFailureStatus && (
             <IconTooltip
               contents={`Reason: ${truncateString(data.failureMessage || "")}`}
               disableMarkdown

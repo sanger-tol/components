@@ -11,6 +11,7 @@ import {
   VALIDATION_ENDPOINTS,
   PopUpMessage,
   downloadReportFile,
+  PIPELINE_DS,
 } from "../..";
 
 import type {
@@ -75,6 +76,46 @@ export function setValidationStatusAction(
   };
 }
 
+export async function rejectSubmission(
+  rejectionReason: string,
+  uploadId: string,
+): Promise<void> {
+  if (rejectionReason === "") {
+    PopUpMessage({
+      type: "error",
+      message: "Please enter a rejection reason before submitting.",
+    });
+    return;
+  }
+
+  try {
+    await PIPELINE_DS.upsert({
+      objectType: VALIDATION_ENDPOINTS.UPLOAD,
+      payload: [
+        {
+          type: "upload",
+          id: uploadId,
+          attributes: {
+            validation_status: "file_rejected",
+            rejection_reason: rejectionReason,
+          },
+        },
+      ],
+    });
+
+    PopUpMessage({
+      type: "success",
+      message: "Submission rejected successfully.",
+    });
+
+  } catch (e) {
+    PopUpMessage({
+      type: "error",
+      message: "Could not reject submission, please try again.",
+    });
+  }
+}
+
 export function createBaseActions(): TValidationActionMap {
   return {
     viewReport: {
@@ -114,11 +155,11 @@ export function createBaseActions(): TValidationActionMap {
         item.validationStatus === FILE_VALIDATION_STATUS.MARKED_AS_READY,
     },
     reject: {
-      // TODO: Add rejection reason to DB
-      ...setValidationStatusAction(
-        { id: "reject", label: "Reject File" },
-        "file_rejected",
-      ),
+      id: "reject",
+      label: "Reject Submission",
+      callback: ({ setSubmissionRejectModalOpen }) => {
+        if (setSubmissionRejectModalOpen) setSubmissionRejectModalOpen(true);
+      },
       isAvailable: ({ user }) => user?.roles.includes("admin") ?? false,
     },
   };
