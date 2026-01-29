@@ -41,13 +41,6 @@ export interface IGetToOneRelation {
   relation: string;
 }
 
-export interface IGetToManyRelation {
-  objectType: string;
-  id: string;
-  relation: string;
-  requestedFields?: string[];
-}
-
 export interface IUpsert {
   payload: IUpsertData[];
   objectType: string;

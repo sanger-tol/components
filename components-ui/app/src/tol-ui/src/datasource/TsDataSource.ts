@@ -15,7 +15,6 @@ import {
   IDataSource,
   IGetOne,
   IGetToOneRelation,
-  IGetToManyRelation,
   IUpsert,
   IGetByIds,
   IGetListPage,
@@ -112,8 +111,6 @@ export class TsDataSource {
   );
 
   private createRelationshipHandler(
-    dataSource?: TsDataSource,
-    fetcherToMany?: (args: IGetToManyRelation) => Promise<TDataObjectListOrNull>,
     fetcher?: (args: IGetToOneRelation) => Promise<TDataObjectOrNull>
     ) {
     return {
@@ -138,10 +135,10 @@ export class TsDataSource {
 
         if (Array.isArray(relation?.data)) {
           return relation.data.map((item: {id: string, type: string}) => {
-            const includedItem = relationships.__includedLookup?.[item.type]?.[item.id];
+            const includedData = relationships.__includedLookup?.[item.type]?.[item.id];
           return new Proxy(
               {
-                ...includedItem,
+                ...includedData,
                 id: item.id,
                 type: item.type,
                 __includedLookup: relationships.__includedLookup,
@@ -152,30 +149,13 @@ export class TsDataSource {
           });
         }
 
-        if (dataSource && (fetcherToMany || fetcher)) {
-          return (async () => {
-            const config = await dataSource.relationshipConfig();
-            const objectRelationships = config[relationships.__sourceType];
-            const isToMany = relationKey in (objectRelationships?.many ?? {});
-            
-            if (isToMany && fetcherToMany) {
-              return fetcherToMany({
-                objectType: relationships.__sourceType,
-                id: relationships.__sourceId,
-                relation: relationKey,
-              });
-            } else if (fetcher) {
-              return fetcher({
-                objectType: relationships.__sourceType,
-                id: relationships.__sourceId,
-                relation: relationKey,
-              });
-            }
-            return undefined;
-          })();
-        }
+       if (!fetcher) return undefined;
 
-        return undefined;
+        return fetcher({
+          objectType: relationships.__sourceType,
+          id: relationships.__sourceId,
+          relation: relationKey,
+        });
       },
     };
   }
@@ -183,8 +163,6 @@ export class TsDataSource {
   private relationshipHandler = this.createRelationshipHandler();
 
   private fetchRelationshipHandler = this.createRelationshipHandler(
-    this,
-    (args) => this.getToManyRelation(args),
     (args) => this.getToOneRelation(args)
   );
 
@@ -470,28 +448,6 @@ export class TsDataSource {
     })
       .then((response: IJsonApiResponse) => {
         return this.jsonApiResponseToDataObject(response) as unknown as TDataObjectOrNull;
-      })
-      .catch((error: any) => {
-        if (error?.response?.status === 404) return null;
-        throw error;
-      });
-  }
-
-  public async getToManyRelation({
-    objectType,
-    id,
-    relation,
-    requestedFields,
-  }: IGetToManyRelation): Promise<TDataObjectListOrNull> {
-    return this.custom({    
-      method: API_METHODS.GET,
-      resource: this.generateEndpoint(objectType, `${API_OPERATIONS.TO_MANY}/${id}/${relation}`),
-      params: {
-        requested_fields: requestedFields,
-      },
-    })
-      .then((response: IJsonApiResponse) => {
-        return this.jsonApiResponseToDataObject(response) as unknown as TDataObjectListOrNull;
       })
       .catch((error: any) => {
         if (error?.response?.status === 404) return null;
