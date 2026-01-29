@@ -9,8 +9,6 @@ import {
   BoardFilters,
   CountConfigDrawer,
   ICountConfig,
-  Icon,
-  Placeholder,
   RemoteCount,
   deepCopy,
   saveTitle,
@@ -18,7 +16,6 @@ import {
   useBoardPrivilege,
   PRIVILEGE,
   PVisualisation,
-  UtilityBar,
   updateConfigAndUpsert,
 } from "..";
 
@@ -28,14 +25,12 @@ export function BoardCount(props: PBoardCount) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
   const initialConfig = props.config && props.config.type ? props.config : { type: "count" };
   const [config, setConfig] = useState<ICountConfig>(initialConfig);
-  const [hasConfigured, setHasConfigured] = useState(!!initialConfig.type);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const { privilege } = useBoardPrivilege();
 
   const onConfigSave = (updatedConfig: ICountConfig) => {
     setConfig({ ...updatedConfig });
-    setHasConfigured(true);
     updateConfigAndUpsert(id, { ...updatedConfig }, zone, boardDataSource);
   };
 
@@ -71,28 +66,6 @@ export function BoardCount(props: PBoardCount) {
     buttons: [configButton, filterButton],
   };
 
-  const isConfigured =
-    hasConfigured && (config.type === "count" || !!config.field);
-
-  const EmptyState = () => (
-    <div style={{ height: "100%" }}>
-      <Placeholder
-        bar
-        message={
-          <>
-            {privilege === PRIVILEGE.BOARD.EDITABLE ? (
-              <>
-                Please add attributes to get started. Click <Icon icon="sliders" size="lg" /> to configure.
-              </>
-            ) : (
-              <>No attributes selected.</>
-            )}
-          </>
-        }
-      />
-    </div>
-  );
-
   return (
     <>
       <BoardFilters
@@ -108,21 +81,12 @@ export function BoardCount(props: PBoardCount) {
         config={deepCopy(config)}
         onConfigSave={onConfigSave}
       />
-      {isConfigured ? (
-        <RemoteCount
-          {...props}
-          type={config.type}
-          field={config.field}
-          utilityBarConfig={utilityBarProps}
-        />
-      ) : (
-        <>
-          <UtilityBar id={id} {...utilityBarProps} />
-          <div className="tol-component-contents with-offset">
-            <EmptyState />
-          </div>
-        </>
-      )}
+      <RemoteCount
+        {...props}
+        type={config.type}
+        field={config.field}
+        utilityBarConfig={utilityBarProps}
+      />
     </>
   );
 }

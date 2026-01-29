@@ -13,32 +13,17 @@ import {
   IRemoteTargetAndZone,
   RequiredAsterisk,
   TCountStatType,
+  COUNT_STAT_TYPES,
 } from "..";
 
-/**
- * @autodoc
- * CountConfigDrawer provides a configuration UI for RemoteCount stats selection.
- */
+
 export interface PCountConfigDrawer extends IRemoteTargetAndZone {
-  /** Whether the drawer is open. */
   open: boolean;
-  /** Handler to toggle the drawer. */
   setOpen: (open: boolean) => void;
-  /** Drawer title. */
   title: string;
-  /** The current count configuration. */
   config: ICountConfig;
-  /** Handler invoked when a valid configuration is saved. */
   onConfigSave: (config: ICountConfig) => void;
 }
-
-const STAT_TYPES: Array<{ label: string; value: TCountStatType }> = [
-  { label: "Count", value: "count" },
-  { label: "Minimum", value: "min" },
-  { label: "Maximum", value: "max" },
-  { label: "Average", value: "avg" },
-  { label: "Sum", value: "sum" },
-];
 
 export function CountConfigDrawer(props: PCountConfigDrawer) {
   const {
@@ -86,7 +71,7 @@ export function CountConfigDrawer(props: PCountConfigDrawer) {
         <RequiredAsterisk />
       </h6>
       <div className="tol-board-chart-interval-btn-container">
-        {STAT_TYPES.map((stat) => (
+        {COUNT_STAT_TYPES.map((stat) => (
           <Button
             outline
             key={stat.value}
