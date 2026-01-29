@@ -119,34 +119,48 @@ export class TsDataSource {
 
         if (relation === null) return null;
 
-        if (relation?.data?.id && relation?.data?.type) {
-          const includedData = relationships.__includedLookup?.[relation.data.type]?.[relation.data.id];
+        //  {
+        //   const includedData = relationships.__includedLookup?.[relation.data.type]?.[relation.data.id];
+        //   return new Proxy(
+        //     {
+        //       ...includedData,
+        //       id: relation.data.id,
+        //       type: relation.data.type,
+        //       __includedLookup: relationships.__includedLookup,
+        //       __meta: relationships.__meta,
+        //     },
+        //     this.dataObjectHandler
+        //   );
+        // }
+
+        // {
+        //   return relation.data.map((item: {id: string, type: string}) => {
+        //     const includedData = relationships.__includedLookup?.[item.type]?.[item.id]; //
+        //   });
+        // }
+
+        const createDataProxy = (id: string, type: string) => {
+          const includedData = relationships.__includedLookup?.[type]?.[id];
           return new Proxy(
             {
               ...includedData,
-              id: relation.data.id,
-              type: relation.data.type,
+              id,
+              type,
               __includedLookup: relationships.__includedLookup,
               __meta: relationships.__meta,
             },
             this.dataObjectHandler
           );
+        };
+        
+        if (relation?.data?.id && relation?.data?.type) {
+          return createDataProxy(relation.data.type, relation.data.id);
         }
-
+        
         if (Array.isArray(relation?.data)) {
-          return relation.data.map((item: {id: string, type: string}) => {
-            const includedData = relationships.__includedLookup?.[item.type]?.[item.id];
-          return new Proxy(
-              {
-                ...includedData,
-                id: item.id,
-                type: item.type,
-                __includedLookup: relationships.__includedLookup,
-                __meta: relationships.__meta,
-              },
-              this.dataObjectHandler
-            );
-          });
+          return relation.data.map((item: {id: string, type: string}) => 
+            createDataProxy(item.type, item.id)
+          );
         }
 
        if (!fetcher) return undefined;
