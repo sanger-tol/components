@@ -69,7 +69,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
     rename: "Marked as Ready",
     summary: "The file has been marked as ready for further processing.",
     textColor: "var(--tol-success-light)",
-    allowedActions: ["unmark_as_ready"],
+    allowedActions: ["unmark_as_ready", "downloadReport", "viewReport"],
   },
 };
 

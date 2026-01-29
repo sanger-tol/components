@@ -55,8 +55,6 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
   const history = useHistory();
   const policy = useValidationPolicyModule() as TValidationPolicyModule;
 
-  console.log(policy);
-
   const statusKey = data.validationStatus as TFileValidationStatus;
   const uploadStatus = policy.policies[statusKey];
 

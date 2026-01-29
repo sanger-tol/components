@@ -47,13 +47,14 @@ export type TValidationActionContext = {
   item: IAllValidationData;
   dataSource: TsDataSource;
   user?: { roles: string[] };
+  setReportOpen?: (open: boolean) => void;
 };
 
 export type TFileValidationAction = {
   id: TValidationActionId;
   label: string;
   isAvailable?: (ctx: TValidationActionContext) => boolean;
-  callback: (ctx: TValidationActionContext) => Promise<void>;
+  callback: (ctx: TValidationActionContext) => Promise<void> | void;
 };
 
 export type TFileValidationStatusPolicyMap = Record<

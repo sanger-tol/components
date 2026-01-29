@@ -11,11 +11,8 @@ import { useParams } from "react-router";
 import {
   getErrorWarningCounts,
   downloadFileFromS3,
-  IUploadStatus,
-  IErrorWarningCount,
   fetchCurrentPipelineResults,
   ValidateSteps,
-  IAllValidationData,
   PreviousUploadsModal,
   Widgets,
   LoadingContent,
@@ -27,17 +24,18 @@ import {
   ValidationReport,
   splitS3FilenameString,
   useQueryData,
-  markFileAsReady,
   useTimeout,
   VALIDATION_TIMEOUT_MS,
   getUserFromLocalStorage,
   setValidationTimeout,
-  downloadReportFile,
-  TFileValidationStatus,
-  BASE_POLICIES_MAP,
   DropdownButtons,
   useValidationPolicyModule,
-  TValidationPolicyModule,
+} from "../..";
+
+import type {
+  IAllValidationData,
+  IErrorWarningCount,
+  TFileValidationStatus,
   TFileValidationStatusPolicy,
   TFileValidationAction,
   TValidationActionId,
@@ -45,13 +43,17 @@ import {
 
 export function ValidationResultsViewer() {
   const { uploadId } = useParams<{ uploadId: string }>();
+  const { actions, policies } = useValidationPolicyModule();
 
   const location = useLocation();
   const history = useHistory();
+  const queryClient = useQueryClient();
   const targetRef = useRef<HTMLDivElement | null>(null);
 
   const searchParams = new URLSearchParams(location.search);
   const stepName = searchParams.get("stepName") || undefined;
+
+  const user = getUserFromLocalStorage();
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
@@ -64,9 +66,7 @@ export function ValidationResultsViewer() {
   const [uploadStatus, setUploadStatus] =
     useState<TFileValidationStatusPolicy>();
 
-  const { actions, policies } = useValidationPolicyModule();
-  const user = getUserFromLocalStorage();
-  const queryClient = useQueryClient();
+  const timeoutEnabled = validating && !!uploadId && !validated;
 
   const fetchLatestPipelineResults = async () => {
     const cacheBustedEndpoint = `${
@@ -75,6 +75,7 @@ export function ValidationResultsViewer() {
     if (!uploadId) {
       return null;
     }
+
     const result = await fetchCurrentPipelineResults(
       PIPELINE_DS,
       cacheBustedEndpoint,
@@ -110,7 +111,6 @@ export function ValidationResultsViewer() {
 
   useEffect(() => {
     if (!latestPipelineResults.data || !uploadId) return;
-
     if (!latestPipelineResults.data.completed && !validating) {
       setValidating(true);
       setValidated(false);
@@ -128,11 +128,14 @@ export function ValidationResultsViewer() {
       const counts = getErrorWarningCounts(
         latestPipelineResults.data.validationResults,
       );
+
       setErrorAndWarningCount(counts);
 
-      const statusKey = latestPipelineResults.data
-        .validationStatus as TFileValidationStatus;
-      setUploadStatus(policies[statusKey]);
+      setUploadStatus(
+        policies[
+          latestPipelineResults.data.validationStatus as TFileValidationStatus
+        ],
+      );
     }
 
     if (stepName !== undefined && targetRef.current) {
@@ -148,8 +151,6 @@ export function ValidationResultsViewer() {
       });
     }
   }, [latestPipelineResults.data, stepName]);
-
-  const timeoutEnabled = validating && !!uploadId && !validated;
 
   useTimeout(
     async () => {
@@ -171,6 +172,7 @@ export function ValidationResultsViewer() {
           item: latestPipelineResults.data,
           dataSource: PIPELINE_DS,
           user,
+          setReportOpen,
         }
       : null;
 

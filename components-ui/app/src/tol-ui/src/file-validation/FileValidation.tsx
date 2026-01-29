@@ -98,8 +98,6 @@ export function FileValidation(props: PFileValidation) {
 
   const policy = useValidationPolicyModule();
 
-  console.log(policy);
-
   useEffect(() => {
     async function cleanUpValidations() {
       await setValidationTimeout(

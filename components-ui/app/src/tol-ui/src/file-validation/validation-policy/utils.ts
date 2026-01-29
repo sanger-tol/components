@@ -10,6 +10,7 @@ import {
   FILE_VALIDATION_STATUS,
   VALIDATION_ENDPOINTS,
   PopUpMessage,
+  downloadReportFile,
 } from "../..";
 
 import type {
@@ -62,10 +63,9 @@ export function setValidationStatusAction(
 
         PopUpMessage({
           type: "success",
-          message: `${action.label} completed.`,
+          message: `${action.label} successful.`,
         });
       } catch (e) {
-        console.error(e);
         PopUpMessage({
           type: "error",
           message: `Could not complete - ${action.label}`,
@@ -80,17 +80,19 @@ export function createBaseActions(): TValidationActionMap {
     viewReport: {
       id: "viewReport",
       label: "View Report",
-      callback: ({ item, dataSource }) => dataSource.viewReport(item),
+      callback: ({ setReportOpen }) => {
+        if (setReportOpen) setReportOpen(true);
+      },
     },
     downloadReport: {
       id: "downloadReport",
       label: "Download Report",
-      callback: ({ item, dataSource }) => dataSource.downloadReport(item),
+      callback: ({ item }) => downloadReportFile(item),
     },
     revalidate: {
       id: "revalidate",
       label: "Revalidate",
-      callback: ({ item, dataSource }) => dataSource.custom({}),
+      callback: ({ item }) => dataSource.custom({}),
     },
     mark_as_ready: {
       ...setValidationStatusAction(
