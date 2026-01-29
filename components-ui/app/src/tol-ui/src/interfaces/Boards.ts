@@ -110,12 +110,24 @@ export const exampleBoard: Board = {
 */
 
 export interface IRemoteTarget {
+  /**
+   * Object type name used when fetching data from the dataSource
+   */
   objectType: string;
+  /**
+   * Data source for executing API requests
+   */
   dataSource: TsDataSource;
 }
 
 export interface IZoneControl {
+  /**
+   * The current filter zone
+   */
   zone: IZone;
+  /**
+   * Setter used to update the zone when configuration changes reset downstream filters 
+   */
   setZone: (zone: IZone) => void;
 }
 

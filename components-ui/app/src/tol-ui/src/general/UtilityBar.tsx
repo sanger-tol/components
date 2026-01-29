@@ -7,8 +7,8 @@ SPDX-License-Identifier: MIT
 import { Fragment, ReactNode, useState } from "react";
 import {
   ClickOverlay,
-  InlineEdit,
-  PInlineEdit,
+  EditableTitle,
+  PEditableTitle,
   PButton,
   PDropdownButtons,
   Button,
@@ -19,7 +19,7 @@ import {
 
 export interface PUtilityBar {
   id?: string;
-  title?: PInlineEdit;
+  title?: PEditableTitle;
   description?: ReactNode;
   buttons?: (
     PButton |
@@ -85,7 +85,7 @@ export function UtilityBar(props: PUtilityBar) {
 
   return (
     <div className="tol-utility-bar" data-testid={id} id={wrapperId}>
-      {title && <InlineEdit {...title} size={smallBreakpoint ? "sm" : "md"} />}
+      {title && <EditableTitle {...title} />}
       {description && <IconTooltip className="tol-utility-bar-tooltip" contents={description} />}
       {elements && elements.map(
         (element, index) => <Fragment key={index}>{element}</Fragment>

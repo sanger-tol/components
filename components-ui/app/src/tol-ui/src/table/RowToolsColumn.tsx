@@ -13,8 +13,8 @@ import {
   RowHeightExpandIcon,
   PTable,
   hasExpandableRows,
-  ROW_TOOLS_COLUMN_FULL_WIDTH,
-  ROW_TOOLS_COLUMN_MEDIUM_WIDTH,
+  ROW_TOOLS_COLUMN_MAX_WIDTH,
+  ROW_TOOLS_COLUMN_SINGLE_ITEM_WIDTH,
 } from "..";
 
 
@@ -53,13 +53,15 @@ export function RowToolsColumn(props: PRowToolsColumn) {
   const { Column, HeaderCell, Cell } = RSTable;
 
   const getColumnWidth = () => {
-    if (!rowSelection && !hasExpandableRows(data, cellHeights)) return 0;
-    if (rowSelection) return ROW_TOOLS_COLUMN_FULL_WIDTH;
-    return ROW_TOOLS_COLUMN_MEDIUM_WIDTH;
+    let width = 0;
+    if (rowSelection) width += ROW_TOOLS_COLUMN_SINGLE_ITEM_WIDTH;
+    if (hasExpandableRows(data, cellHeights)) width += ROW_TOOLS_COLUMN_SINGLE_ITEM_WIDTH;
+    // cap at max width
+    return Math.min(width, ROW_TOOLS_COLUMN_MAX_WIDTH);
   }
 
   return (
-    <Column key="rowTools" width={getColumnWidth()}>
+    <Column fixed key="rowTools" width={getColumnWidth()}>
       <HeaderCell>
         <div className="tol-row-tools-header">
           {rowSelection && (

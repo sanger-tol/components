@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { retry } from "../services/http/retry";
+import { clearExpiredToken } from "../services/auth/clearExpiredToken";
 import {
   IEntityMeta,
   IAttributes,
@@ -34,7 +35,7 @@ import {
   IIncludedLookup,
   IJsonApiData,
   IJsonApiResponse,
-  IJsonApiResponseData
+  IJsonApiResponseData,
 } from "..";
 
 
@@ -220,6 +221,7 @@ export class TsDataSource {
     return `${o}-${this.sourceKey}`;
   }
 
+  @clearExpiredToken()
   public async custom({
     method,
     resource,

@@ -8,21 +8,12 @@ import { useState } from "react";
 import {
   TDataObjectOrNull,
   TCellRenderer,
-  Boolean,
-  Collection,
-  Datetime,
-  Float,
-  Image,
-  Integer,
-  Link,
-  LongText,
-  Relationship,
   ICustomCellRenderers,
   TsDataSource,
-  getCellRendererPropValue,
-  Icon
+  CellDisplay,
+  PopUpMessage,
+  CellEditable,
 } from "../..";
-import { TrafficLightStatus } from "./TrafficLightStatus";
 
 
 export interface PCell {
@@ -33,68 +24,109 @@ export interface PCell {
   renderer: TCellRenderer;
   setExpandedRows: any,
   customCellRenderers?: ICustomCellRenderers;
+  editable?: boolean;
 }
 
 export function Cell(props: PCell) {
-  const { value, dataObject, renderer, customCellRenderers, setExpandedRows } = props;
-  const [expanded, setExpanded] = useState(false);
+  const { dataObject, dataSource, editable } = props;
+  const [value, setValue] = useState(props.value);
+  const [prevValue, setPrevValue] = useState(props.value);
+  const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const DefaultCell = ({ value }) => <>{value ?? ""}</>;
+  const canEdit = (
+    typeof value === "string" || value instanceof String
+  );
 
-  const preDefinedElements = {
-    boolean: Boolean,
-    collection: Collection,
-    datetime: Datetime,
-    float: Float,
-    image: Image,
-    integer: Integer,
-    link: Link,
-    longText: LongText,
-    relationship: Relationship,
-    trafficLightStatus: TrafficLightStatus,
+  const onDoubleClick = () => {
+    if (!editable) return;
+    if (canEdit) {
+      setEditMode(true);
+    } else {
+      PopUpMessage({
+        type: "info",
+        message: "Only string cells are editable currently.",
+      })
+    }
+  }
+
+  const onChange = (newValue: string) => {
+    setValue(newValue);
+  }
+
+  const onCancel = () => {
+    setEditMode(false);
+    setValue(prevValue);
   };
 
-  if (
-    // renderer type is not defined
-    !renderer ||
-    !renderer.type ||
-    renderer.type === "none" ||
-    // no value and not a custom renderer as custom renderers may not require a value
-    // no need to to deal with empty values with pre-defined cellRenderers
-    ((value === null || value === undefined) && (renderer.type) in preDefinedElements)
-  )
-    return <DefaultCell value={value} />;
+  const onSave = () => {
+    // prevent saving blank values
+    if (typeof value === "string" && value.trim() === "") {
+      PopUpMessage({
+        type: "error",
+        message: "Value cannot be blank.",
+      });
+      return;
+    }
 
-  const elements = { ...preDefinedElements, ...customCellRenderers };
-  renderer.element = elements[renderer.type] || DefaultCell;
+    if (!dataObject) return;
+    setLoading(true);
 
-  const elementProps: Record<string, any> = { ...props };
 
-  if (renderer.props) {
-    Object.entries(renderer.props).forEach(([prop, value]) => {
-      getCellRendererPropValue(prop, value, elementProps, dataObject);
-    });
+    dataSource
+      ?.upsert({
+        objectType: dataObject?.objectType,
+        payload: [
+          {
+            type: dataObject?.objectType,
+            id: dataObject?.id,
+            attributes: {
+              [props.attribute]: value,
+            },
+          },
+        ],
+      })
+      .then(() => {
+        setEditMode(false);
+        setPrevValue(value);
+        PopUpMessage({
+          type: "success",
+          message: "Value saved successfully.",
+        });
+      })
+      .catch((error: any) => {
+        PopUpMessage({
+          type: "error",
+          message: `Error saving: ${error.message}`,
+        });
+        // revert to previous value on error
+        setValue(prevValue);
+        setEditMode(false);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  if (editMode) {
+    return (
+      <CellEditable
+        {...props}
+        value={value}
+        loading={loading}
+        onChange={onChange}
+        onCancel={onCancel}
+        onSave={onSave}
+      />
+    );
   }
 
   return (
-    <>
-      <renderer.element {...elementProps} />
-      {Array.isArray(value) && value.length > 1 && renderer.type === "image" &&
-        <Icon
-          icon={expanded ? "caret-up" : "caret-down"}
-          onClick={() => {
-            setExpanded(!expanded);
-            setExpandedRows((prev: string[]) => {
-              const id = elementProps.dataObject.id;
-              return prev.includes(id)
-                ? prev.filter((existingId) => existingId !== id)
-                : [...prev, id];
-            });
-          }}
-          size="1x"
-          className={"tol-table-image-cell-arrow"}
-        />
-      }
-    </>
-  );
+    <span onDoubleClick={onDoubleClick}>
+      <CellDisplay
+        {...props}
+        value={value}
+      />
+    </span>
+  )
 }

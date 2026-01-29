@@ -26,3 +26,4 @@ export * from "./SocialViewer";
 export * from "./Cells";
 export * from "./TsDocParser";
 export * from "./JsonApi";
+export * from "./General";
