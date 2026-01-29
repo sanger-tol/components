@@ -247,6 +247,11 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
               Failure reason: <span>{truncateString(data.failureMessage)}</span>
             </p>
           )}
+                    {data.rejectionReason && (
+            <p>
+              Rejection reason: <span>{truncateString(data.rejectionReason)}</span>
+            </p>
+          )}
         </div>
       </div>
     </div>

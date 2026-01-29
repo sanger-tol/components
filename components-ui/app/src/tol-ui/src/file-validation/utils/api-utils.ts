@@ -138,6 +138,7 @@ export async function normalisePipelineUpload(
     pipelineName: pipeline?.name || "",
     pipelineId: pipeline?.id || "",
     pipelineSteps: pipelineSteps || [],
+    rejectionReason: upload?.rejection_reason || "",
     validationStatus: upload?.validation_status,
     s3Filename: upload?.s3_filename || "",
     s3Bucket: upload?.s3_bucket || "",

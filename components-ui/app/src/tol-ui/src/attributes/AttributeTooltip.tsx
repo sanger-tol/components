@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormatTooltip, SourceTag, IRemoteTarget, IconTooltip } from "..";
 
 export interface PAttributeTooltip extends IRemoteTarget {

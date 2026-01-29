@@ -5,20 +5,20 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  BASE_POLICIES_MAP,
+  PIPELINE_DS,
   BASE_MODES_MAP,
-  FILE_VALIDATION_STATUS,
+  BASE_POLICIES_MAP,
   VALIDATION_ENDPOINTS,
+  FILE_VALIDATION_STATUS,
   PopUpMessage,
   downloadReportFile,
-  PIPELINE_DS,
 } from "../..";
 
 import type {
-  TFileValidationAction,
-  TFileValidationStatus,
   TValidationActionId,
   TValidationActionMap,
+  TFileValidationAction,
+  TFileValidationStatus,
   TValidationPolicyModule,
 } from "../..";
 
@@ -79,6 +79,7 @@ export function setValidationStatusAction(
 export async function rejectSubmission(
   rejectionReason: string,
   uploadId: string,
+  setOpen: (open: boolean) => void,
 ): Promise<void> {
   if (rejectionReason === "") {
     PopUpMessage({
@@ -108,6 +109,7 @@ export async function rejectSubmission(
       message: "Submission rejected successfully.",
     });
 
+    setOpen?.(false);
   } catch (e) {
     PopUpMessage({
       type: "error",

@@ -362,6 +362,10 @@
   }
 }
 
+.tol-file-validation-rejection-reason {
+  margin-bottom: 0 !important;
+}
+
 .tol-file-validation-previous-uploads-modal-container {
   max-height: 65vh;
   overflow-y: auto;
@@ -378,7 +382,8 @@
 }
 
 .tol-file-validation-previous-uploads-modal-header-content {
-  p, h3 {
+  p,
+  h3 {
     margin: 0;
   }
 }
@@ -559,6 +564,12 @@
       display: flex;
       flex-direction: column;
     }
+  }
+
+  .tol-file-validation-results-page-status {
+    display: flex;
+    gap: 5px;
+    align-items: center;
   }
 
   .tol-file-validation-results-page-status-indicator {

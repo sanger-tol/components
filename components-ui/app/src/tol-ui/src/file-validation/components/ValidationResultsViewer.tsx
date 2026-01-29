@@ -32,6 +32,7 @@ import {
   DropdownButtons,
   useValidationPolicyModule,
   SubmissionRejectModal,
+  IconTooltip,
 } from "../..";
 
 import type {
@@ -211,9 +212,23 @@ export function ValidationResultsViewer() {
                 <h6>Pipeline: {latestPipelineResults.data?.pipelineName}</h6>
               </div>
               <div>
-                <h4 style={{ color: `${uploadStatus?.textColor}` }}>
-                  {uploadStatus?.rename}
-                </h4>
+                <div className="tol-file-validation-results-page-status">
+                  <h4 style={{ color: `${uploadStatus?.textColor}` }}>
+                    {uploadStatus?.rename}
+                  </h4>
+                  {latestPipelineResults.data.failureMessage && (
+                    <IconTooltip
+                      contents={`Failure reason: ${latestPipelineResults.data.failureMessage}`}
+                      disableMarkdown
+                    />
+                  )}
+                  {latestPipelineResults.data.rejectionReason && (
+                    <IconTooltip
+                      contents={`Rejection reason: ${latestPipelineResults.data.rejectionReason}`}
+                      disableMarkdown
+                    />
+                  )}
+                </div>
                 <p className="tol-file-validation-results-page-info-date">
                   {new Date(
                     latestPipelineResults.data.dateStarted,

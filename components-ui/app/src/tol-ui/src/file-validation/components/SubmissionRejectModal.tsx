@@ -22,18 +22,17 @@ export function SubmissionRejectModal(props: PSubmissionRejectModal) {
   const [rejectionReason, setRejectionReason] = useState<string>("");
 
   const handleRejection = async () => {
-    await rejectSubmission(rejectionReason, uploadId);
+    await rejectSubmission(rejectionReason, uploadId, setOpen);
     await queryClient.invalidateQueries({
       queryKey: ["latestPipelineResults", uploadId],
     });
-    setOpen(false);
   };
 
   const ModalHeader = <h3>Rejection Reason</h3>;
 
   const ModalContent = (
     <>
-      <p style={{ marginBottom: 0 }}>
+      <p className="tol-file-validation-rejection-reason">
         Please enter a reason for rejecting this submission:
       </p>
       <InputGroup>
@@ -47,7 +46,11 @@ export function SubmissionRejectModal(props: PSubmissionRejectModal) {
   );
 
   const ActionButton = (
-    <Button icon="check" onClick={async () => await handleRejection()} />
+    <Button
+      icon="check"
+      onClick={async () => await handleRejection()}
+      timeout={2000}
+    />
   );
 
   return (

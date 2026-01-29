@@ -91,6 +91,7 @@ export interface IAllValidationData {
   pipelineId: string;
   pipelineSteps: TStepsData;
   validationStatus: string;
+  rejectionReason: string;
   s3Filename: string;
   s3Bucket: string;
   validationResults: IValidationResult[];
@@ -100,6 +101,18 @@ export interface IAllValidationData {
 export interface IStepData {
   name: string;
   description: string;
+}
+
+export interface IStepValidationDetails {
+  completed: boolean;
+  failureMessage?: string | null;
+}
+
+export interface IStepDetails {
+  stepName: string;
+  results: IValidationResult[];
+  description?: string;
+  validationDetails?: IStepValidationDetails;
 }
 
 export type TStepsData = IStepData[] | [];
