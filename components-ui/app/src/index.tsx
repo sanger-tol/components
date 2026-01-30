@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { createRoot } from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import "./scss/styling.scss";
-import { SmartApp } from "./tol-ui/src";
+import { generateAutoDocNavigation, mergeNavConfigs, SmartApp } from "./tol-ui/src";
 import {
   Home,
   Sandbox,
@@ -18,20 +18,27 @@ import howToDocumentContent from "./docs/how-to-document.md?raw";
 import { navConfig } from "./config";
 
 
-// TODO: generateAutoDocPages
+const {
+  pageElements: autoDocPageElements,
+  navConfig: autoDocNavConfig
+} = generateAutoDocNavigation();
+
 const pageElements = {
   home: <Home />,
   sandbox: <Sandbox />,
   codeStyleGuide: <MarkdownDocumentation content={codeStyleGuideContent} />,
   howToDocument: <MarkdownDocumentation content={howToDocumentContent} />,
+  ...autoDocPageElements,
 };
+
+const navigation = mergeNavConfigs(navConfig, autoDocNavConfig);
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
   <SmartApp
     boards
     brand="Components"
-    navigation={navConfig}
+    navigation={navigation}
     pageElements={pageElements}
   />
 );

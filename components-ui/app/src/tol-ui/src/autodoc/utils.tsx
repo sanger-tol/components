@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Page, TsDocParseError, TsDocParser } from "..";
+import { IPage, TNavConfig, TPageElements, TsDocParseError, TsDocParser } from "..";
 import {
   AutoDocPage,
   IComponentDocumentation,
@@ -45,15 +45,48 @@ function scanForAutoDocComponents(): IComponentDocumentation[] {
 }
 
 /**
- * Generates documentation pages for all auto-documented components
- * @returns Array of Page objects for the navigation system
+ * Generates navigation configuration and page element mappings for all discovered autodoc components.
+ *
+ * @returns An object containing:
+ * - `pageElements`: A {@link TPageElements} mapping from `pageElementReference` to the corresponding React element.
+ * - `navConfig`: A {@link TNavConfig} with a single `"Docs"` section containing pages data and order.
  */
-export function generateAutoDocPages(): Page[] {
-  const autoDocComponents = scanForAutoDocComponents();
-  
-  return autoDocComponents.map((component) => ({
-    name: `${component.name}`,
-    element: <AutoDocPage documentation={component} />,
-    hidden: false
-  }));
+export function generateAutoDocNavigation() {
+  const autoDocComponents = scanForAutoDocComponents().sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+
+  const pageElements: TPageElements = {};
+  const pagesData: TNavConfig["data"] = {};
+  const pagesOrder: string[] = [];
+
+  for (const component of autoDocComponents) {
+    // The display name shown in the navigation
+    const displayName = component.name;
+    // Used to look up the React element
+    const pageElementReference = `autodoc:${component.name}`;
+    pageElements[pageElementReference] = <AutoDocPage documentation={component} />;
+
+    pagesData[displayName] = {
+      access: "public",
+      path: { pageElementReference },
+    };
+
+    pagesOrder.push(displayName);
+  }
+
+  const navConfig: TNavConfig = {
+    data: {
+      Docs: {
+        access: "public",
+        pages: {
+          data: pagesData,
+          order: pagesOrder,
+        },
+      },
+    },
+    order: ["Docs"],
+  };
+
+  return { pageElements, navConfig };
 }
