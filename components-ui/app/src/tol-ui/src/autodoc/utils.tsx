@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { IPage, TNavConfig, TPageElements, TsDocParseError, TsDocParser } from "..";
+import { TNavConfig, TPageElements, TsDocParseError, TsDocParser } from "..";
 import {
   AutoDocPage,
   IComponentDocumentation,
