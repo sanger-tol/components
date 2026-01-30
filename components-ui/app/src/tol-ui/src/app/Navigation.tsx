@@ -30,7 +30,7 @@ import {
 export interface PNavigation extends PSmartApp, RouteComponentProps { }
 
 function Navigation(props: PNavigation) {
-  const { navigation } = props;
+  const { navigation, profileNavigation } = props;
 
   const [environment, setEnvironment] = useState("");
   const [navbarOffset, setNavbarOffset] = useState<number>(0);
@@ -112,6 +112,7 @@ function Navigation(props: PNavigation) {
                 <ProfileDropdown
                   user={user}
                   onLogout={logout}
+                  navigation={profileNavigation}
                 />
               </div>
             )}
