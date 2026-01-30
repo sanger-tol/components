@@ -7,9 +7,9 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import {
   BoardFilters,
-  CountConfigDrawer,
+  StatisticsConfigDrawer,
   ICountConfig,
-  RemoteCount,
+  RemoteStatistics,
   deepCopy,
   saveTitle,
   PButton,
@@ -19,9 +19,9 @@ import {
   updateConfigAndUpsert,
 } from "..";
 
-export interface PBoardCount extends PVisualisation {}
+export interface PBoardStatistics extends PVisualisation {}
 
-export function BoardCount(props: PBoardCount) {
+export function BoardStatistics(props: PBoardStatistics) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
   const initialConfig = props.config && props.config.type ? props.config : { type: "count" };
   const [config, setConfig] = useState<ICountConfig>(initialConfig);
@@ -73,7 +73,7 @@ export function BoardCount(props: PBoardCount) {
         open={openFilters}
         setOpen={setOpenFilters}
       />
-      <CountConfigDrawer
+      <StatisticsConfigDrawer
         {...props}
         open={openConfig}
         setOpen={setOpenConfig}
@@ -81,7 +81,7 @@ export function BoardCount(props: PBoardCount) {
         config={deepCopy(config)}
         onConfigSave={onConfigSave}
       />
-      <RemoteCount
+      <RemoteStatistics
         {...props}
         type={config.type}
         field={config.field}

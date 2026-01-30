@@ -16,7 +16,7 @@ import {
   COUNT_STAT_TYPES,
 } from "..";
 
-export interface PCountConfigDrawer extends IRemoteTargetAndZone {
+export interface PStatisticsConfigDrawer extends IRemoteTargetAndZone {
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
@@ -28,7 +28,7 @@ export interface PCountConfigDrawer extends IRemoteTargetAndZone {
  * StatisticsConfigDrawer provides configuration controls for statistics selection
  * used by BoardStatistics/RemoteStatistics.
  */
-export function CountConfigDrawer(props: PCountConfigDrawer) {
+export function StatisticsConfigDrawer(props: PStatisticsConfigDrawer) {
   const {
     open,
     setOpen,

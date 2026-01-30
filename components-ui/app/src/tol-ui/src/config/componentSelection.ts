@@ -53,12 +53,12 @@ export const sizeOptions = (componentType: string) => {
     {
       type: "md",
       text: "Medium",
-      disabled: componentType === "count" || componentType === "statistics",
+      disabled: componentType === "statistics",
     },
     {
       type: "lg",
       text: "Large",
-      disabled: componentType === "count" || componentType === "statistics",
+      disabled: componentType === "statistics",
     },
   ]
 }
