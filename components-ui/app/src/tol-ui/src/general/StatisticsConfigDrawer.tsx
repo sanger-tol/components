@@ -13,7 +13,7 @@ import {
   IRemoteTargetAndZone,
   RequiredAsterisk,
   TCountStatType,
-  COUNT_STAT_TYPES,
+  STATISTICS_STAT_TYPES,
 } from "..";
 
 export interface PStatisticsConfigDrawer extends IRemoteTargetAndZone {
@@ -74,7 +74,7 @@ export function StatisticsConfigDrawer(props: PStatisticsConfigDrawer) {
         <RequiredAsterisk />
       </h6>
       <div className="tol-board-chart-interval-btn-container">
-        {COUNT_STAT_TYPES.map((stat) => (
+        {STATISTICS_STAT_TYPES.map((stat) => (
           <Button
             outline
             key={stat.value}
