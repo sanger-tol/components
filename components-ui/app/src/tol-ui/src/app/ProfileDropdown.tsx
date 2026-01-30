@@ -8,20 +8,20 @@ import { useEffect, useState } from "react";
 import { Nav, NavDropdown } from "react-bootstrap";
 import { Avatar } from "rsuite";
 import {
-  Page,
+  collectNavigationItems,
+  TNavConfig,
   User,
-  convertToPath,
 } from "..";
 
 
-interface Props {
+export interface PProfileDropdown {
+  navigation?: TNavConfig;
   user: User;
-  pages?: Page[] | undefined;
   onLogout: () => void;
 }
 
-export function ProfileDropdown(props: Props) {
-  const { user, pages, onLogout } = props;
+export function ProfileDropdown(props: PProfileDropdown) {
+  const { navigation, user, onLogout } = props;
 
   const [userName, setUserName] = useState<string>("");
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -91,19 +91,9 @@ export function ProfileDropdown(props: Props) {
     <div className="initials-avatar">{getInitials(userName)}</div>
   );
 
-  const dropdownPages = pages?.map((page) => {
-    if(!page || !page.name) return null;
-    const link = convertToPath(page.name);
-    return (
-      <Nav.Link key={page.name} href={link}>
-        {page.name}
-      </Nav.Link>
-    );
-  });
-
   const dropdownContents = (
     <div className="nav-dropdown-box">
-      {dropdownPages || undefined}
+      {collectNavigationItems(navigation)}
       <Nav.Link
         className="logout"
         key="logout"

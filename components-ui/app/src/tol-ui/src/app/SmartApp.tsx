@@ -35,8 +35,12 @@ import {
   TNavConfig,
   TPageElements,
   setupBoards,
-  setupNavigationConfig,
+  systemDefaultNavConfig,
   collectRoutes,
+  setupNavigationConfig,
+  profileDefaultNavConfig,
+  MyBoards,
+  mergeNavConfigs,
 } from "..";
 
 export interface PSmartApp {
@@ -84,7 +88,7 @@ export interface PSmartApp {
  * Root application component that composes routing, navigation, and default page elements.
  */
 export function SmartApp(props: PSmartApp) {
-  const { login = true, register = false, customCallbackUrl, uiPath } = props;
+  const { login = true, register = false } = props;
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
@@ -100,8 +104,14 @@ export function SmartApp(props: PSmartApp) {
   // Setting a default for the boardDataSource else boards will be off
   const boards = setupBoards(props.boards);
 
-  // Merge system navigation config and add default routes
-  const navigation: TNavConfig = setupNavigationConfig(props.navigation, user);
+  // Merge system navigation config and add defaults
+  const navigation: TNavConfig = setupNavigationConfig(props.navigation, systemDefaultNavConfig, user);
+
+  // Merge system navigation config and add defaults
+  const profileNavigation: TNavConfig = setupNavigationConfig(props.profileNavigation, profileDefaultNavConfig, user);
+
+  // Merging configs to collect all the routes
+  const mergedNavigation: TNavConfig = mergeNavConfigs(navigation, profileNavigation);
 
   // Always merge default page elements + incoming (incoming overrides defaults)
   const pageElements: TPageElements = {
@@ -110,6 +120,7 @@ export function SmartApp(props: PSmartApp) {
         <Board {...boards} />
       </BoardPrivilegeContextProvider>
     ) : null,
+    myBoards: boards ? <MyBoards {...boards} /> : null,
     validationResultsDetail: <ValidationResultsViewer />,
     callback: <Callback />,
     ...(props.pageElements ?? {}),
@@ -119,12 +130,11 @@ export function SmartApp(props: PSmartApp) {
   const mergedProps: PSmartApp = {
     ...props,
     boards,
-    customCallbackUrl,
-    login,
     navigation,
+    profileNavigation,
     pageElements,
+    login,
     register,
-    uiPath,
   };
 
   return (
@@ -144,7 +154,7 @@ export function SmartApp(props: PSmartApp) {
               <div className="tol-smart-app-content">
                 <Switch>
                   {collectRoutes(
-                    navigation,
+                    mergedNavigation,
                     pageElements,
                     boards
                   )}

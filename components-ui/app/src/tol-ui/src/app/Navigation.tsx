@@ -87,7 +87,7 @@ function Navigation(props: PNavigation) {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            {collectNavigationItems(navigation, user)}
+            {collectNavigationItems(navigation)}
             {props.register && tokenHasExpired() ? (
               <Nav.Link className="nav-right" key="Register">
                 <Login

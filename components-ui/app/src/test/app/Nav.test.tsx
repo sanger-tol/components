@@ -7,10 +7,11 @@ SPDX-License-Identifier: MIT
 import React from "react";
 import { expect, test, describe } from "vitest";
 import {
-  setupNavigationConfig,
+  systemDefaultNavConfig,
   TNavConfig,
   collectNavigationItems,
   normaliseNavConfig,
+  setupNavigationConfig,
 } from "../../tol-ui/src";
 import {
   findDropdownByTitle,
@@ -26,9 +27,9 @@ import {
 import { navOutputConfigRoleRequiredMock } from "../mocks/nav/role-required-output";
 
 
-const navConfigWithDefaults: TNavConfig = setupNavigationConfig(navInputConfigMock, null);
+const navConfigWithDefaults: TNavConfig = setupNavigationConfig(navInputConfigMock, systemDefaultNavConfig, null);
 
-describe("setupNavigationConfig function", () => {
+describe("systemDefaultNavConfig function", () => {
   test("Check explicit routes aren't overwritten", () => {
     // Public page route check
     expect(navConfigWithDefaults.data["Public Page"].path?.["route"]).toEqual("/");
@@ -52,32 +53,32 @@ describe("setupNavigationConfig function", () => {
 });
 
 describe("Ensure normaliseNavConfig prunes inaccessible pages", () => {
-  test("Confirm a public user's config", () => {
+  test("Confirm public access", () => {
     const publicNavConfig = normaliseNavConfig(navInputConfigMock, null);
     expect(publicNavConfig).toEqual(navOutputConfigPublicMock);
   });
 
-  test("Confirm an authenticated user's config", () => {
+  test("Confirm authenticated access", () => {
     const authenticatedNavConfig = normaliseNavConfig(navInputConfigMock, mockNoRoleUser);
     expect(authenticatedNavConfig).toEqual(navOutputConfigAuthenticatedMock);
   });
 
-  test("Confirm a basic user's config", () => {
+  test("Confirm role required access", () => {
     const basicUserConfig = normaliseNavConfig(navInputConfigMock, mockBasicUser);
     expect(basicUserConfig).toEqual(navOutputConfigRoleRequiredMock);
   });
 
-  test("Confirm an admin user's config", () => {
+  test("Confirm a role's access", () => {
     const adminNavConfig = normaliseNavConfig(navInputConfigMock, mockAdminUser);
     expect(adminNavConfig).toEqual(navOutputConfigAdminMock);
   });
 });
 
 describe("collectNavigationItems function", () => {
-  const navItems = collectNavigationItems(navConfigWithDefaults, null);
+  const navItems = collectNavigationItems(navConfigWithDefaults);
 
   test("returns empty array when navigation is undefined", () => {
-    const emptyNavItems = collectNavigationItems(undefined, null);
+    const emptyNavItems = collectNavigationItems(undefined);
     expect(emptyNavItems).toEqual([]);
   });
 

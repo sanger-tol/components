@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { TNavConfig } from "..";
 
-export const systemNavConfig: TNavConfig = {
+export const systemDefaultNavConfig: TNavConfig = {
   data: {
     "Board": {
       access: "public",
@@ -32,4 +32,17 @@ export const systemNavConfig: TNavConfig = {
   },
   // Not included in order => not shown in the main navigation
   order: [],
+};
+
+export const profileDefaultNavConfig: TNavConfig = {
+  data: {
+    "My Boards": {
+      access: "role_required",
+      path: {
+        pageElementReference: "myBoards",
+        route: "/my-boards",
+      },
+    },
+  },
+  order: ["My Boards"],
 };

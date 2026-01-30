@@ -15,7 +15,6 @@ import {
   env,
   BOARDS_API_DATA_PATH,
   TNavConfig,
-  systemNavConfig,
   convertToPath,
   TPageOrDropdown,
   PAGE_ACCESS,
@@ -216,29 +215,52 @@ export function normaliseNavConfig(navigation: TNavConfig | undefined, user: Use
 }
 
 /**
+ * Shallow merges two navigation configuration objects into a single configuration.
+ * 
+ * @param baseConfig - The base navigation configuration to start from.
+ * @param additionalConfig - The navigation configuration to merge into the base.
+ * 
+ * @returns A new {@link TNavConfig} containing the merged `data` and concatenated `order`.
+ */
+export function mergeNavConfigs(
+  baseConfig: TNavConfig | undefined,
+  additionalConfig: TNavConfig | undefined,
+): TNavConfig {
+  const mergedConfig: TNavConfig = {
+    data: {
+      ...baseConfig?.data,
+      ...additionalConfig?.data,
+    },
+    order: [...baseConfig?.order ?? [], ...additionalConfig?.order ?? []]
+  };
+  return mergedConfig;
+}
+
+/**
  * Builds a complete navigation configuration by merging the provided partial config
  * with the system defaults and then applying any additional defaulting/normalization.
  *
  * @param navigation - Optional, partial navigation configuration to merge with system defaults.
+ * @param defaultNavigation - The default navigation configuration to merge with.
+ * @param user - The current user object; used to determine page accessibility.
  * 
  * @returns A finalized {@link TNavConfig} with defaults applied via `normaliseNavConfigForUser`.
  */
-export function setupNavigationConfig(navigation: TNavConfig | undefined, user: User | null): TNavConfig {
+export function setupNavigationConfig(
+  navigation: TNavConfig | undefined,
+  defaultNavigation: TNavConfig,
+  user: User | null
+): TNavConfig {
   // Combine system nav config with incoming config
-  navigation = {
-    data: {
-      ...systemNavConfig.data,
-      ...(navigation?.data ?? {}),
-    },
-    order: [...systemNavConfig.order, ...(navigation?.order ?? [])]
-  }
-  return normaliseNavConfig(navigation, user);
+  const combinedNavConfig = mergeNavConfigs(navigation, defaultNavigation);
+  return normaliseNavConfig(combinedNavConfig, user);
 }
 
 /**
  * Type guard that checks whether a value is a non-null object containing a non-empty `route` string.
  *
  * @param path - The value to validate.
+ * 
  * @returns `true` if `path` is an object with a non-empty string `route` property; otherwise `false`.
  */
 export function isRoute(path: unknown): path is IPageElement {
@@ -255,6 +277,7 @@ export function isRoute(path: unknown): path is IPageElement {
  * Type guard that checks whether a value is a non-null object containing a non-empty `href` string.
  *
  * @param path - The value to validate.
+ * 
  * @returns `true` if `path` is an object with a non-empty string `href` property; otherwise `false`.
  */
 export function isLink(path: unknown): path is IPageLink {
@@ -282,6 +305,7 @@ export function isDropdown(value: unknown): value is INavDropdown {
  * Resolves a navigation destination object from a route or link type.
  *
  * @param path - A value expected to be either a route object or a link object.
+ * 
  * @returns An {@link INavDestination} containing the resolved `destination` and optional `target`.
  */
 export function getNavDestination(path: unknown): INavDestination {
@@ -295,9 +319,10 @@ export function getNavDestination(path: unknown): INavDestination {
  * Iterates over `navigation.order` to maintain the specified order of items and to control what can be seen in the nav.
  *
  * @param navigation - Navigation configuration to render. If `undefined`, returns an empty array.
+ * 
  * @returns An array of React nodes representing navigation links and dropdowns in the configured order.
  */
-export function collectNavigationItems(navigation: TNavConfig | undefined, user: User | null): ReactNode[] {
+export function collectNavigationItems(navigation: TNavConfig | undefined): ReactNode[] {
   const navButtons: ReactNode[] = [];
 
   navigation?.order.map((navItemName: string) => {
@@ -307,7 +332,7 @@ export function collectNavigationItems(navigation: TNavConfig | undefined, user:
     if (isDropdown(navItem)) {
       navButtons.push(
         <NavDropdown title={navItemName}>
-          {collectNavigationItems(navItem.pages, user)}
+          {collectNavigationItems(navItem.pages)}
         </NavDropdown>
       )
       // Single page nav item
@@ -334,6 +359,7 @@ export function collectNavigationItems(navigation: TNavConfig | undefined, user:
  * 
  * @param user - The current user object; if falsy, the user is treated as not logged in. Expected to contain a `roles` array.
  * @param page - The page or dropdown definition containing an `access` field that specifies the access policy.
+ * 
  * @returns `true` if the user is allowed to access the page; otherwise `false`.
  */
 export function isPageAccessible(user: User | null, page: TPageOrDropdown): boolean {
@@ -368,14 +394,15 @@ export function isPageAccessible(user: User | null, page: TPageOrDropdown): bool
  * @param pageElements - Mapping/registry of page elements used to render routes.
  * @param boards - Optional board configuration passed through to `Route`.
  * @param parentTrail - Accumulated navigation keys representing the current traversal path.
+ * 
  * @returns A flattened array of `React.ReactNode` route elements for all valid routes in the tree.
  */
-export const collectRoutes = (
+export function collectRoutes(
   navigation: TNavConfig,
   pageElements: TPageElements,
   boards?: PBoard,
   parentTrail: string[] = [],
-): React.ReactNode[] => {
+): React.ReactNode[] {
   return Object.entries(navigation.data).flatMap(([navKey, navItem]) => {
     const trail = [...parentTrail, navKey];
     const routeKey = trail.join(" > ");
