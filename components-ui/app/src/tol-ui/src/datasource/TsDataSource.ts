@@ -36,6 +36,7 @@ import {
   IJsonApiData,
   IJsonApiResponse,
   IJsonApiResponseData,
+  IRelationshipPointer,
 } from "..";
 
 
@@ -117,32 +118,30 @@ export class TsDataSource {
       get: (relationships: ISourceDataObject, relationKey: string) => {
         const relation = relationships?.[relationKey];
 
-      const createIncludedProxy = (
-        data: { id: string; type: string },
-        relationships: ISourceDataObject
-      )=> {
-        const includedData = relationships.__includedLookup?.[data.type]?.[data.id];
-        return new Proxy(
-          {
-            ...includedData,
-            id: data.id,
-            type: data.type,
-            __includedLookup: relationships.__includedLookup,
-            __meta: relationships.__meta,
-          },
-          this.dataObjectHandler
-        );
-      }
+        const createIncludedProxy = (data: IRelationshipPointer) => {
+          const includedData =
+            relationships.__includedLookup?.[data.type]?.[data.id];
+          return new Proxy(
+            {
+              ...includedData,
+              id: data.id,
+              type: data.type,
+              __includedLookup: relationships.__includedLookup,
+              __meta: relationships.__meta,
+            },
+            this.dataObjectHandler
+          );
+        };
 
         if (relation === null) return null;
-        
+
         if (relation?.data?.id && relation?.data?.type) {
-          return createIncludedProxy(relation.data, relationships);
+          return createIncludedProxy(relation.data);
         }
 
         if (Array.isArray(relation?.data)) {
-          return relation.data.map((item: { id: string; type: string }) =>
-            createIncludedProxy(item, relationships)
+          return relation.data.map((item: IRelationshipPointer) =>
+            createIncludedProxy(item)
           );
         }
 
