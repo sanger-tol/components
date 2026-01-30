@@ -10,7 +10,7 @@ import {
   setupNavigationConfig,
   TNavConfig,
   collectNavigationItems,
-  normaliseNavConfig
+  normaliseNavConfig,
 } from "../../tol-ui/src";
 import {
   findDropdownByTitle,
@@ -20,12 +20,13 @@ import {
   navInputConfigMock,
   navOutputConfigAdminMock,
   navOutputConfigAuthenticatedMock,
-  mockAuthenticatedUser
+  mockBasicUser,
+  mockNoRoleUser,
 } from "..";
+import { navOutputConfigRoleRequiredMock } from "../mocks/nav/role-required-output";
 
 
 const navConfigWithDefaults: TNavConfig = setupNavigationConfig(navInputConfigMock, null);
-
 
 describe("setupNavigationConfig function", () => {
   test("Check explicit routes aren't overwritten", () => {
@@ -34,10 +35,11 @@ describe("setupNavigationConfig function", () => {
   });
 
   test("Check generated routes are correctly created", () => {
-    // Public Dropdown -> Nested Public Page route check
+    // Public Dropdown -> Public Dropdown Public Page route check
     expect(
-      navConfigWithDefaults.data["Public Dropdown"]["pages"].data["Nested Public Page"].path?.["route"]
-    ).toEqual("/nested-public-page");
+      navConfigWithDefaults.data["Public Dropdown"]["pages"]
+        .data["Public Dropdown Public Page"].path?.["route"]
+    ).toEqual("/public-dropdown-public-page");
   });
 
   test("Function ensures a combination of app and default configs", () => {
@@ -49,24 +51,27 @@ describe("setupNavigationConfig function", () => {
   });
 });
 
-
 describe("Ensure normaliseNavConfig prunes inaccessible pages", () => {
   test("Confirm a public user's config", () => {
     const publicNavConfig = normaliseNavConfig(navInputConfigMock, null);
     expect(publicNavConfig).toEqual(navOutputConfigPublicMock);
   });
 
+  test("Confirm an authenticated user's config", () => {
+    const authenticatedNavConfig = normaliseNavConfig(navInputConfigMock, mockNoRoleUser);
+    expect(authenticatedNavConfig).toEqual(navOutputConfigAuthenticatedMock);
+  });
+
+  test("Confirm a basic user's config", () => {
+    const basicUserConfig = normaliseNavConfig(navInputConfigMock, mockBasicUser);
+    expect(basicUserConfig).toEqual(navOutputConfigRoleRequiredMock);
+  });
+
   test("Confirm an admin user's config", () => {
     const adminNavConfig = normaliseNavConfig(navInputConfigMock, mockAdminUser);
     expect(adminNavConfig).toEqual(navOutputConfigAdminMock);
   });
-
-  test("Confirm an authenticated user's config", () => {
-    const authenticatedNavConfig = normaliseNavConfig(navInputConfigMock, mockAuthenticatedUser);
-    expect(authenticatedNavConfig).toEqual(navOutputConfigAuthenticatedMock);
-  });
 });
-
 
 describe("collectNavigationItems function", () => {
   const navItems = collectNavigationItems(navConfigWithDefaults, null);
@@ -87,9 +92,9 @@ describe("collectNavigationItems function", () => {
     expect(dropdown).toBeTruthy();
 
     const dropdownChildren = React.Children.toArray(dropdown!.props.children);
-    const page = findLinkByText(dropdownChildren, "Nested Public Page");
+    const page = findLinkByText(dropdownChildren, "Public Dropdown Public Page");
     expect(page).toBeTruthy();
-    expect(page?.props?.href).toBe("/nested-public-page");
+    expect(page?.props?.href).toBe("/public-dropdown-public-page");
   });
 
   test("ensure pages visible on the nav are only generated from the config order", () => {

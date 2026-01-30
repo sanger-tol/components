@@ -15,6 +15,7 @@ export const navOutputConfigAuthenticatedMock: TNavConfig = {
         route: "/",
       },
     },
+
     "Authenticated Page": {
       access: "authenticated",
       path: {
@@ -22,48 +23,53 @@ export const navOutputConfigAuthenticatedMock: TNavConfig = {
         route: "/authenticated-page",
       },
     },
+
     "Public Dropdown": {
       access: "public",
       pages: {
         data: {
-          "Nested Public Page": {
+          "Public Dropdown Public Page": {
             access: "public",
             path: {
-              pageElementReference: "nestedPublicPage",
-              route: "/nested-public-page",
+              pageElementReference: "publicDropdownPublicPage",
+              route: "/public-dropdown-public-page",
             },
           },
-          "Nested Authenticated Page": {
+          "Public Dropdown Authenticated Page": {
             access: "authenticated",
             path: {
-              pageElementReference: "nestedAuthenticatedPage",
-              route: "/nested-authenticated-page",
+              pageElementReference: "publicDropdownAuthenticatedPage",
+              route: "/public-dropdown-authenticated-page",
             },
           },
         },
-        order: ["Nested Public Page", "Nested Authenticated Page"],
+        order: ["Public Dropdown Public Page", "Public Dropdown Authenticated Page"],
       },
     },
+
     "Authenticated Dropdown": {
       access: "authenticated",
       pages: {
         data: {
-          "Nested Public Page": {
+          "Authenticated Dropdown Public Page": {
             access: "public",
             path: {
-              pageElementReference: "nestedPublicPage",
-              route: "/nested-public-page",
+              pageElementReference: "authenticatedDropdownPublicPage",
+              route: "/authenticated-dropdown-public-page",
             },
           },
-          "Nested Authenticated Page": {
+          "Authenticated Dropdown Authenticated Page": {
             access: "authenticated",
             path: {
-              pageElementReference: "nestedAuthenticatedPage",
-              route: "/nested-authenticated-page",
+              pageElementReference: "authenticatedDropdownAuthenticatedPage",
+              route: "/authenticated-dropdown-authenticated-page",
             },
           },
         },
-        order: ["Nested Public Page", "Nested Authenticated Page"],
+        order: [
+          "Authenticated Dropdown Public Page",
+          "Authenticated Dropdown Authenticated Page",
+        ],
       },
     },
   },

@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { TNavConfig } from "../../../tol-ui/src";
 
-export const navOutputConfigAdminMock: TNavConfig = {
+export const navOutputConfigRoleRequiredMock: TNavConfig = {
   data: {
     "Public Page": {
       access: "public",
@@ -29,14 +29,6 @@ export const navOutputConfigAdminMock: TNavConfig = {
       path: {
         pageElementReference: "roleRequiredPage",
         route: "/role-required-page",
-      },
-    },
-
-    "Admin Page": {
-      access: ["admin"],
-      path: {
-        pageElementReference: "adminPage",
-        route: "/admin-page",
       },
     },
 
@@ -65,19 +57,11 @@ export const navOutputConfigAdminMock: TNavConfig = {
               route: "/public-dropdown-role-required-page",
             },
           },
-          "Public Dropdown Admin Page": {
-            access: ["admin"],
-            path: {
-              pageElementReference: "publicDropdownAdminPage",
-              route: "/public-dropdown-admin-page",
-            },
-          },
         },
         order: [
           "Public Dropdown Public Page",
           "Public Dropdown Authenticated Page",
           "Public Dropdown Role Required Page",
-          "Public Dropdown Admin Page",
         ],
       },
     },
@@ -107,19 +91,11 @@ export const navOutputConfigAdminMock: TNavConfig = {
               route: "/authenticated-dropdown-role-required-page",
             },
           },
-          "Authenticated Dropdown Admin Page": {
-            access: ["admin"],
-            path: {
-              pageElementReference: "authenticatedDropdownAdminPage",
-              route: "/authenticated-dropdown-admin-page",
-            },
-          },
         },
         order: [
           "Authenticated Dropdown Public Page",
           "Authenticated Dropdown Authenticated Page",
           "Authenticated Dropdown Role Required Page",
-          "Authenticated Dropdown Admin Page",
         ],
       },
     },
@@ -149,61 +125,11 @@ export const navOutputConfigAdminMock: TNavConfig = {
               route: "/role-required-dropdown-role-required-page",
             },
           },
-          "Role Required Dropdown Admin Page": {
-            access: ["admin"],
-            path: {
-              pageElementReference: "roleRequiredDropdownAdminPage",
-              route: "/role-required-dropdown-admin-page",
-            },
-          },
         },
         order: [
           "Role Required Dropdown Public Page",
           "Role Required Dropdown Authenticated Page",
           "Role Required Dropdown Role Required Page",
-          "Role Required Dropdown Admin Page",
-        ],
-      },
-    },
-
-    "Admin Dropdown": {
-      access: ["admin"],
-      pages: {
-        data: {
-          "Admin Dropdown Public Page": {
-            access: "public",
-            path: {
-              pageElementReference: "adminDropdownPublicPage",
-              route: "/admin-dropdown-public-page",
-            },
-          },
-          "Admin Dropdown Authenticated Page": {
-            access: "authenticated",
-            path: {
-              pageElementReference: "adminDropdownAuthenticatedPage",
-              route: "/admin-dropdown-authenticated-page",
-            },
-          },
-          "Admin Dropdown Role Required Page": {
-            access: "role_required",
-            path: {
-              pageElementReference: "adminDropdownRoleRequiredPage",
-              route: "/admin-dropdown-role-required-page",
-            },
-          },
-          "Admin Dropdown Admin Page": {
-            access: ["admin"],
-            path: {
-              pageElementReference: "adminDropdownAdminPage",
-              route: "/admin-dropdown-admin-page",
-            },
-          },
-        },
-        order: [
-          "Admin Dropdown Public Page",
-          "Admin Dropdown Authenticated Page",
-          "Admin Dropdown Role Required Page",
-          "Admin Dropdown Admin Page",
         ],
       },
     },
@@ -212,10 +138,8 @@ export const navOutputConfigAdminMock: TNavConfig = {
     "Public Page",
     "Authenticated Page",
     "Role Required Page",
-    "Admin Page",
     "Public Dropdown",
     "Authenticated Dropdown",
     "Role Required Dropdown",
-    "Admin Dropdown",
   ],
 };

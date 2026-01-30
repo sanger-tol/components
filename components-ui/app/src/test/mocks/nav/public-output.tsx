@@ -15,19 +15,20 @@ export const navOutputConfigPublicMock: TNavConfig = {
         route: "/",
       },
     },
+
     "Public Dropdown": {
       access: "public",
       pages: {
         data: {
-          "Nested Public Page": {
+          "Public Dropdown Public Page": {
             access: "public",
             path: {
-              pageElementReference: "nestedPublicPage",
-              route: "/nested-public-page",
+              pageElementReference: "publicDropdownPublicPage",
+              route: "/public-dropdown-public-page",
             },
           },
         },
-        order: ["Nested Public Page"],
+        order: ["Public Dropdown Public Page"],
       },
     },
   },

@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { PAGE_ACCESS } from "src";
+
 export type TPagePath = IPageElement | IPageLink;
 
 export interface IPageElement {
@@ -31,18 +33,12 @@ export interface IPageLink {
 }
 
 export type TPageAccess =
+  (typeof PAGE_ACCESS)[keyof typeof PAGE_ACCESS] |
   /**
-   * Open to all users, including non-logged in users
-   */
-  "public" |
-  /**
-   * Only logged in users can access
-   */
-  "authenticated" |
-  /**
-   * Array of roles that can access, e.g. ['tol-lab']
+   * Array of roles that can access, e.g. ['lab']
    */
   string[];
+  
 
 /**
  * Base interface for navigation page items

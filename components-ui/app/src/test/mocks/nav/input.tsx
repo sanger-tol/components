@@ -6,163 +6,275 @@ SPDX-License-Identifier: MIT
 
 import { TNavConfig } from "../../../tol-ui/src";
 
-
 export const navInputConfigMock: TNavConfig = {
   data: {
     "Public Page": {
       access: "public",
       path: {
         pageElementReference: "publicPage",
-        route: "/"
-      }
+        route: "/",
+      },
     },
     "Authenticated Page": {
       access: "authenticated",
       path: {
         pageElementReference: "authenticatedPage",
-      }
+      },
+    },
+    "Role Required Page": {
+      access: "role_required",
+      path: {
+        pageElementReference: "roleRequiredPage",
+      },
     },
     "Admin Page": {
       access: ["admin"],
       path: {
         pageElementReference: "adminPage",
-      }
+      },
     },
     "Super Admin Page": {
       access: ["super-admin"],
       path: {
         pageElementReference: "superAdminPage",
-      }
+      },
     },
+
     "Public Dropdown": {
       access: "public",
       pages: {
         data: {
-          "Nested Public Page": {
+          "Public Dropdown Public Page": {
             access: "public",
             path: {
-              pageElementReference: "nestedPublicPage",
+              pageElementReference: "publicDropdownPublicPage",
             },
           },
-          "Nested Authenticated Page": {
+          "Public Dropdown Authenticated Page": {
             access: "authenticated",
             path: {
-              pageElementReference: "nestedAuthenticatedPage",
+              pageElementReference: "publicDropdownAuthenticatedPage",
             },
           },
-          "Nested Admin Page": {
+          "Public Dropdown Role Required Page": {
+            access: "role_required",
+            path: {
+              pageElementReference: "publicDropdownRoleRequiredPage",
+            },
+          },
+          "Public Dropdown Admin Page": {
             access: ["admin"],
             path: {
-              pageElementReference: "nestedAdminPage",
+              pageElementReference: "publicDropdownAdminPage",
             },
           },
-          "Nested Super Admin Page": {
+          "Public Dropdown Super Admin Page": {
             access: ["super-admin"],
             path: {
-              pageElementReference: "nestedSuperAdminPage",
+              pageElementReference: "publicDropdownSuperAdminPage",
             },
           },
         },
-        order: ["Nested Public Page", "Nested Authenticated Page", "Nested Admin Page", "Nested Super Admin Page"]
-      }
+        order: [
+          "Public Dropdown Public Page",
+          "Public Dropdown Authenticated Page",
+          "Public Dropdown Role Required Page",
+          "Public Dropdown Admin Page",
+          "Public Dropdown Super Admin Page",
+        ],
+      },
     },
+
     "Authenticated Dropdown": {
       access: "authenticated",
       pages: {
         data: {
-          "Nested Public Page": {
+          "Authenticated Dropdown Public Page": {
             access: "public",
             path: {
-              pageElementReference: "nestedPublicPage",
+              pageElementReference: "authenticatedDropdownPublicPage",
             },
           },
-          "Nested Authenticated Page": {
+          "Authenticated Dropdown Authenticated Page": {
             access: "authenticated",
             path: {
-              pageElementReference: "nestedAuthenticatedPage",
+              pageElementReference: "authenticatedDropdownAuthenticatedPage",
             },
           },
-          "Nested Admin Page": {
+          "Authenticated Dropdown Role Required Page": {
+            access: "role_required",
+            path: {
+              pageElementReference: "authenticatedDropdownRoleRequiredPage",
+            },
+          },
+          "Authenticated Dropdown Admin Page": {
             access: ["admin"],
             path: {
-              pageElementReference: "nestedAdminPage",
+              pageElementReference: "authenticatedDropdownAdminPage",
             },
           },
-          "Nested Super Admin Page": {
+          "Authenticated Dropdown Super Admin Page": {
             access: ["super-admin"],
             path: {
-              pageElementReference: "nestedSuperAdminPage",
+              pageElementReference: "authenticatedDropdownSuperAdminPage",
             },
           },
         },
-        order: ["Nested Public Page", "Nested Authenticated Page", "Nested Admin Page", "Nested Super Admin Page"]
-      }
+        order: [
+          "Authenticated Dropdown Public Page",
+          "Authenticated Dropdown Authenticated Page",
+          "Authenticated Dropdown Role Required Page",
+          "Authenticated Dropdown Admin Page",
+          "Authenticated Dropdown Super Admin Page",
+        ],
+      },
     },
+
+    "Role Required Dropdown": {
+      access: "role_required",
+      pages: {
+        data: {
+          "Role Required Dropdown Public Page": {
+            access: "public",
+            path: {
+              pageElementReference: "roleRequiredDropdownPublicPage",
+            },
+          },
+          "Role Required Dropdown Authenticated Page": {
+            access: "authenticated",
+            path: {
+              pageElementReference: "roleRequiredDropdownAuthenticatedPage",
+            },
+          },
+          "Role Required Dropdown Role Required Page": {
+            access: "role_required",
+            path: {
+              pageElementReference: "roleRequiredDropdownRoleRequiredPage",
+            },
+          },
+          "Role Required Dropdown Admin Page": {
+            access: ["admin"],
+            path: {
+              pageElementReference: "roleRequiredDropdownAdminPage",
+            },
+          },
+          "Role Required Dropdown Super Admin Page": {
+            access: ["super-admin"],
+            path: {
+              pageElementReference: "roleRequiredDropdownSuperAdminPage",
+            },
+          },
+        },
+        order: [
+          "Role Required Dropdown Public Page",
+          "Role Required Dropdown Authenticated Page",
+          "Role Required Dropdown Role Required Page",
+          "Role Required Dropdown Admin Page",
+          "Role Required Dropdown Super Admin Page",
+        ],
+      },
+    },
+
     "Admin Dropdown": {
       access: ["admin"],
       pages: {
         data: {
-          "Nested Public Page": {
+          "Admin Dropdown Public Page": {
             access: "public",
             path: {
-              pageElementReference: "nestedPublicPage",
+              pageElementReference: "adminDropdownPublicPage",
             },
           },
-          "Nested Authenticated Page": {
+          "Admin Dropdown Authenticated Page": {
             access: "authenticated",
             path: {
-              pageElementReference: "nestedAuthenticatedPage",
+              pageElementReference: "adminDropdownAuthenticatedPage",
             },
           },
-          "Nested Admin Page": {
+          "Admin Dropdown Role Required Page": {
+            access: "role_required",
+            path: {
+              pageElementReference: "adminDropdownRoleRequiredPage",
+            },
+          },
+          "Admin Dropdown Admin Page": {
             access: ["admin"],
             path: {
-              pageElementReference: "nestedAdminPage",
+              pageElementReference: "adminDropdownAdminPage",
             },
           },
-          "Nested Super Admin Page": {
+          "Admin Dropdown Super Admin Page": {
             access: ["super-admin"],
             path: {
-              pageElementReference: "nestedSuperAdminPage",
+              pageElementReference: "adminDropdownSuperAdminPage",
             },
           },
         },
-        order: ["Nested Public Page", "Nested Authenticated Page", "Nested Admin Page", "Nested Super Admin Page"]
-      }
+        order: [
+          "Admin Dropdown Public Page",
+          "Admin Dropdown Authenticated Page",
+          "Admin Dropdown Role Required Page",
+          "Admin Dropdown Admin Page",
+          "Admin Dropdown Super Admin Page",
+        ],
+      },
     },
+
     "Super Admin Dropdown": {
       access: ["super-admin"],
       pages: {
         data: {
-          "Nested Public Page": {
+          "Super Admin Dropdown Public Page": {
             access: "public",
             path: {
-              pageElementReference: "nestedPublicPage",
+              pageElementReference: "superAdminDropdownPublicPage",
             },
           },
-          "Nested Authenticated Page": {
+          "Super Admin Dropdown Authenticated Page": {
             access: "authenticated",
             path: {
-              pageElementReference: "nestedAuthenticatedPage",
+              pageElementReference: "superAdminDropdownAuthenticatedPage",
             },
           },
-          "Nested Admin Page": {
+          "Super Admin Dropdown Role Required Page": {
+            access: "role_required",
+            path: {
+              pageElementReference: "superAdminDropdownRoleRequiredPage",
+            },
+          },
+          "Super Admin Dropdown Admin Page": {
             access: ["admin"],
             path: {
-              pageElementReference: "nestedAdminPage",
+              pageElementReference: "superAdminDropdownAdminPage",
             },
           },
-          "Nested Super Admin Page": {
+          "Super Admin Dropdown Super Admin Page": {
             access: ["super-admin"],
             path: {
-              pageElementReference: "nestedSuperAdminPage",
+              pageElementReference: "superAdminDropdownSuperAdminPage",
             },
           },
         },
-        order: ["Nested Public Page", "Nested Authenticated Page", "Nested Admin Page", "Nested Super Admin Page"]
-      }
+        order: [
+          "Super Admin Dropdown Public Page",
+          "Super Admin Dropdown Authenticated Page",
+          "Super Admin Dropdown Role Required Page",
+          "Super Admin Dropdown Admin Page",
+          "Super Admin Dropdown Super Admin Page",
+        ],
+      },
     },
   },
-  order: ["Public Page", "Authenticated Page", "Admin Page", "Public Dropdown", "Authenticated Dropdown", "Admin Dropdown", "Super Admin Dropdown"]
+  order: [
+    "Public Page",
+    "Authenticated Page",
+    "Role Required Page",
+    "Admin Page",
+    "Super Admin Page",
+    "Public Dropdown",
+    "Authenticated Dropdown",
+    "Role Required Dropdown",
+    "Admin Dropdown",
+    "Super Admin Dropdown",
+  ],
 };
-

@@ -346,6 +346,9 @@ export function isPageAccessible(user: User | null, page: TPageOrDropdown): bool
   // If page requires login, allow access
   if (page.access === PAGE_ACCESS.AUTHENTICATED) return true;
 
+  // If page requires a role and user has a role, allow access
+  if (page.access === PAGE_ACCESS.ROLE_REQUIRED && user.roles.length > 0) return true;
+
   // If page requires specific roles, check user roles
   if (Array.isArray(page.access)) {
     return page.access.some((requiredRole) =>
