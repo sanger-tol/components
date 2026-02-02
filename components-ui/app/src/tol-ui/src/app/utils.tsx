@@ -26,7 +26,6 @@ import {
   Route,
   INavDestination,
   formatPath,
-  IPage
 } from "..";
 
 
@@ -193,10 +192,15 @@ export function generateRoutePath(
  * 
  * @param navigation - The navigation config to normalize. If `undefined`, a default empty config is used.
  * @param user - The current user object; used to determine page accessibility.
+ * @param routePrefix - An optional prefix to prepend to all routes.
  * 
  * @returns A new navigation config with defaults applied and pruned inaccessible pages.
  */
-export function normaliseNavConfig(navigation: TNavConfig | undefined, user: User | null, routePrefix: string = ""): TNavConfig {
+export function normaliseNavConfig(
+  navigation: TNavConfig | undefined,
+  user: User | null,
+  routePrefix: string = ""
+): TNavConfig {
   const source: TNavConfig = navigation ?? { data: {}, order: [] };
 
   // Build a fresh config so we can add only accessible pages with defaults

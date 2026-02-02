@@ -26,6 +26,7 @@ import {
   mockNoRoleUser,
 } from "..";
 import { navOutputConfigRoleRequiredMock } from "../mocks/nav/role-required-output";
+import { navOutputConfigPublicRoutePrefixMock } from "../mocks/nav/public-output-route-prefix";
 
 
 const navConfigWithDefaults: TNavConfig = setupNavigationConfig(navInputConfigMock, systemDefaultNavConfig, null);
@@ -72,6 +73,13 @@ describe("Ensure normaliseNavConfig prunes inaccessible pages", () => {
   test("Confirm a role's access", () => {
     const adminNavConfig = normaliseNavConfig(navInputConfigMock, mockAdminUser);
     expect(adminNavConfig).toEqual(navOutputConfigAdminMock);
+  });
+});
+
+describe("Ensure normaliseNavConfig adds correct route prefixes", () => {
+  test("Confirm public access with route prefix", () => {
+    const publicNavConfig = normaliseNavConfig(navInputConfigMock, null, "v2");
+    expect(publicNavConfig).toEqual(navOutputConfigPublicRoutePrefixMock);
   });
 });
 
