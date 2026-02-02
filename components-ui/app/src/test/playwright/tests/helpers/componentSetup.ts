@@ -24,31 +24,37 @@ export const addComponent = async (
 };
 
 export const addComponentFilter = async (
-  { page },
+  {page},
   component: string,
   attribute: string,
-  filterType: string,
-  filterValue: string
+  filterValue: string,
+  filterType: string
 ) => {
-      // click the filter button
-      await page.getByTestId(`${component}-filter-button`).first().click();
-      switch (filterType) {
-        case "multiselect":
-          // click the attribute selector dropdown
-          await page.getByRole("combobox").first().click();
-          // choose specific attribute
-          await page.locator(".rs-search-box-input").fill(attribute);
-          await page.getByText(attribute).click();
-          // click again to hide dropdown
-          await page.getByRole("combobox").first().click();
-          // Give filter a value
-          await page.getByRole("combobox").nth(1).click();
-          await page.getByText(filterValue).click();
-          await page.getByRole("combobox").nth(1).click();
-      }
-      // Click Apply Filter button
-      await page.getByTestId("apply-filter-button").click();
-};
+  // click the filter button
+  await page.getByTestId(`${component}-filter-button`).first().click();
+
+  switch (filterType) {
+    case 'multiselect':
+    // click the attribute selector dropdown
+    await page.getByRole('combobox').first().click();
+    
+    // choose specific attribute
+    await page.locator('.rs-search-box-input').fill(attribute);
+    await page.getByText(attribute).click();
+
+    // click again to hide dropdown
+    await page.getByRole('combobox').first().click();
+
+
+    // Give filter a value
+    await page.getByRole('combobox').nth(1).click();
+    await page.getByText(filterValue).click();
+    await page.getByRole('combobox').nth(1).click();
+  }
+
+  // Click Apply Filter button
+  await page.getByTestId('apply-filter-button').click();
+}
 
 export const createTable = async (
   { page },
