@@ -17,7 +17,7 @@ import {
   TFilterOrUndefined,
   API_METHODS,
   IRemoteTargetAndZone,
-  TCountStatType,
+  TStatisticsType,
 } from "..";
 
 export interface PRemoteStatistics extends IRemoteTargetAndZone {
@@ -32,7 +32,7 @@ export interface PRemoteStatistics extends IRemoteTargetAndZone {
   /**
    * The statistic to display - "count", "min", "max", "avg", or "sum"
    */
-  type?: TCountStatType;
+  type?: TStatisticsType;
   /**
    * The field to apply the statistic to (required when type is not "count")
    */

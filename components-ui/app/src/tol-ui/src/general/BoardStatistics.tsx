@@ -8,7 +8,7 @@ import { useState } from "react";
 import {
   BoardFilters,
   StatisticsConfigDrawer,
-  ICountConfig,
+  IStatisticsConfig,
   RemoteStatistics,
   deepCopy,
   saveTitle,
@@ -24,12 +24,12 @@ export interface PBoardStatistics extends PVisualisation {}
 export function BoardStatistics(props: PBoardStatistics) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
   const initialConfig = props.config && props.config.type ? props.config : { type: "count" };
-  const [config, setConfig] = useState<ICountConfig>(initialConfig);
+  const [config, setConfig] = useState<IStatisticsConfig>(initialConfig);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const { privilege } = useBoardPrivilege();
 
-  const onConfigSave = (updatedConfig: ICountConfig) => {
+  const onConfigSave = (updatedConfig: IStatisticsConfig) => {
     setConfig({ ...updatedConfig });
     updateConfigAndUpsert(id, { ...updatedConfig }, zone, boardDataSource);
   };

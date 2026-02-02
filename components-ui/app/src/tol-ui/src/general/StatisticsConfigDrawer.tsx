@@ -9,10 +9,10 @@ import {
   AttributeSelector,
   Button,
   Drawer,
-  ICountConfig,
+  IStatisticsConfig,
   IRemoteTargetAndZone,
   RequiredAsterisk,
-  TCountStatType,
+  TStatisticsType,
   STATISTICS_STAT_TYPES,
 } from "..";
 
@@ -20,8 +20,8 @@ export interface PStatisticsConfigDrawer extends IRemoteTargetAndZone {
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string;
-  config: ICountConfig;
-  onConfigSave: (config: ICountConfig) => void;
+  config: IStatisticsConfig;
+  onConfigSave: (config: IStatisticsConfig) => void;
 }
 
 /**
@@ -37,7 +37,7 @@ export function StatisticsConfigDrawer(props: PStatisticsConfigDrawer) {
     config,
   } = props;  
 
-  const [type, setType] = useState<TCountStatType>(config.type ?? "count");
+  const [type, setType] = useState<TStatisticsType>(config.type ?? "count");
   const [field, setField] = useState<string[]>(
     config.field ? [config.field] : []
   );
