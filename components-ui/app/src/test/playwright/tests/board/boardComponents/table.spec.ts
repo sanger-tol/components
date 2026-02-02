@@ -29,19 +29,17 @@ const addTableComponent = async ({ page, testID }) => {
   await sleep(200);
 };
 
-const editTableComponent = async ({ page }) => {
-  createTable({ page }, "table", "grit_accession_data");
-};
-
-const checkTableTitleComponent = async ({ page }) => {
+const checkTableTitleComponent = async ({ page , attribute}) => {
+  createTable({ page }, "table", attribute);
   await expect(page.locator(".tol-table")).toBeVisible();
-  await expect(page.locator(".tol-header-text")).toContainText("Accession Data");
+  await expect(page.locator(".tol-header-text")).toContainText(attribute);
 };
 
 test("manage dashboard", async ({ page }) => {
-  const testID = crypto.randomUUID();
+  let testID = crypto.randomUUID();
 
   await addTableComponent({ page, testID });
-  await editTableComponent({ page });
-  await checkTableTitleComponent({ page });
+  await checkTableTitleComponent({ page, attribute: 'Accession Data'});
+  await deleteFirstComponent({ page});
+  expect(page.locator('.tol-table')).not.toBeVisible();
 });

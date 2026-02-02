@@ -62,8 +62,9 @@ export const createTable = async (
       // enter the attribute
       await page.locator(".rs-search-box-input").fill(attribute);
       await page.getByText(attribute).click();
+      const text = await page.locator(".tol-attribute-selector-display-key").textContent();
       // check the checkbox for the attribute
-      await page.locator(`[role="checkbox"][value="${attribute}"]`).first().setChecked({force:true});
+      await page.locator(`[role="checkbox"][value="${text}"]`).first().setChecked({force:true});
       // click again to hide dropdown
       await page.getByRole("combobox").nth(1).click();
       // click to save the table
@@ -78,7 +79,7 @@ export const deleteFirstComponent = async ({ page }) => {
   await page.getByTestId("drag-components-button").first().click();
 
   // click the delete button
-  await page.getByTestId("delete-component-button").nth().click();
+  await page.getByTestId("delete-component-button").click();
 
   // confirm the delete
   await page.getByTestId("confirm-delete-button").click();
