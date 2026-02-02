@@ -107,7 +107,7 @@
 }
 
 // clear navbar with header
-.tol-navigation:has(+ .tol-smart-app-content .masthead) .tol-navbar {
+.tol-navigation:has(+ .tol-smart-app .masthead) .tol-navbar {
   background-color: unset;
 }
 
