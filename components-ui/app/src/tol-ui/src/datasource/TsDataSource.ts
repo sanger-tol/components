@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { retry } from "../services/http/retry";
+import { clearExpiredToken } from "../services/auth/clearExpiredToken";
 import {
   IEntityMeta,
   IAttributes,
@@ -34,7 +35,8 @@ import {
   IIncludedLookup,
   IJsonApiData,
   IJsonApiResponse,
-  IJsonApiResponseData
+  IJsonApiResponseData,
+  IRelationshipPointer,
 } from "..";
 
 
@@ -116,19 +118,30 @@ export class TsDataSource {
       get: (relationships: ISourceDataObject, relationKey: string) => {
         const relation = relationships?.[relationKey];
 
-        if (relation === null) return null;
-
-        if (relation?.data?.id && relation?.data?.type) {
-          const includedData = relationships.__includedLookup?.[relation.data.type]?.[relation.data.id];
+        const createIncludedProxy = (data: IRelationshipPointer) => {
+          const includedData =
+            relationships.__includedLookup?.[data.type]?.[data.id];
           return new Proxy(
             {
               ...includedData,
-              id: relation.data.id,
-              type: relation.data.type,
+              id: data.id,
+              type: data.type,
               __includedLookup: relationships.__includedLookup,
               __meta: relationships.__meta,
             },
             this.dataObjectHandler
+          );
+        };
+
+        if (relation === null) return null;
+
+        if (relation?.data?.id && relation?.data?.type) {
+          return createIncludedProxy(relation.data);
+        }
+
+        if (Array.isArray(relation?.data)) {
+          return relation.data.map((item: IRelationshipPointer) =>
+            createIncludedProxy(item)
           );
         }
 
@@ -220,6 +233,7 @@ export class TsDataSource {
     return `${o}-${this.sourceKey}`;
   }
 
+  @clearExpiredToken()
   public async custom({
     method,
     resource,

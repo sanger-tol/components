@@ -44,29 +44,6 @@ import {
   IHeight,
 } from '..';
 
-
-/**
- * @autodoc
- *
- * RemoteTable is a data table component that loads its rows from a remote API
- * via `TsDataSource`, with server-side pagination, sorting, filtering, and
- * configurable columns. It can also trigger remote actions on selected rows.
- *
- * Table configuration (field meta, sort, filters, page size, filter visibility)
- * is persisted to local storage keyed by `id`, unless external handlers are
- * provided to control those behaviours.
- *
- * @remarks
- * RemoteTable expects server-side pagination and filtering: it requests pages
- * via `dataSource.getListPage` and separately queries a `:count` endpoint for
- * the total row count.
- *
- * @remarks
- * When `onConfigSave`, `onPageSizeChange`, or `onToggleFilterVisibility` are not
- * provided, RemoteTable persists the corresponding settings to local storage
- * using the given `id` as the key namespace.
- */
-
 export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
   /**
    * Unique identifier for this table instance; used as the key for persisted configuration
@@ -97,6 +74,10 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Whether the width of columns are allowed to be manually resized by users
    */
   resizeableColumns?: boolean;
+  /**
+   * Whether a 'super-user' can edit data directly on tables with a double-click
+   */
+  editableCells?: boolean;
   /**
    * If true, disables automatic enrichment of `fieldMeta` with remote metadata
    */
@@ -208,12 +189,35 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
   setSelectedRows?: (selectedRows: string[]) => void;
 }
 
+/**
+ * @autodoc
+ *
+ * RemoteTable is a data table component that loads its rows from a remote API
+ * via `TsDataSource`, with server-side pagination, sorting, filtering, and
+ * configurable columns. It can also trigger remote actions on selected rows.
+ *
+ * Table configuration (field meta, sort, filters, page size, filter visibility)
+ * is persisted to local storage keyed by `id`, unless external handlers are
+ * provided to control those behaviours.
+ *
+ * @remarks
+ * RemoteTable expects server-side pagination and filtering: it requests pages
+ * via `dataSource.getListPage` and separately queries a `:count` endpoint for
+ * the total row count.
+ *
+ * @remarks
+ * When `onConfigSave`, `onPageSizeChange`, or `onToggleFilterVisibility` are not
+ * provided, RemoteTable persists the corresponding settings to local storage
+ * using the given `id` as the key namespace.
+ */
 export function RemoteTable(props: PRemoteTable) {
   const {
     id,
     objectType,
     dataSource,
     basic,
+    editableCells,
+    resizeableColumns = true,
     zone,
     setZone,
     fields,
@@ -359,6 +363,7 @@ export function RemoteTable(props: PRemoteTable) {
             fieldMeta!,
             setExpandedRows,
             cellRenderers,
+            editableCells,
           )
         );
         // fetch count
@@ -524,6 +529,7 @@ export function RemoteTable(props: PRemoteTable) {
         data={data}
         fieldMeta={fieldMeta!}
         expandedRows={expandedRows}
+        resizeableColumns={resizeableColumns}
         height={height}
         loading={loading}
         page={page}

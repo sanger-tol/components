@@ -41,6 +41,11 @@ export interface IGetToOneRelation {
   relation: string;
 }
 
+export interface IRelationshipPointer {
+  id: string;
+  type: string;
+}
+
 export interface IUpsert {
   payload: IUpsertData[];
   objectType: string;

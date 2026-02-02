@@ -20,6 +20,13 @@
   margin: 10px;
   width: calc(100% - 20px);
   flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+
+  .tol-app-content {
+    max-width: 1320px;
+    width: 100%;
+  }
 }
 
 body {

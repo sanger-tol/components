@@ -44,6 +44,7 @@ export * from "./interfaces";
 export * from "./overlays";
 export * from "./services";
 export { retry } from "./services/http";
+export { clearExpiredToken } from "./services/auth";
 export * from "./table";
 export * from "./timeline";
 export * from "./variables";

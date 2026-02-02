@@ -16,16 +16,6 @@ import {
   IHeight
 } from "..";
 
-
-/**
- * @autodoc
- * 
- * RemoteMap is a component that visualises geographical data on a map based on the data retrieved
- * from a remote `dataSource`. It fetches location data using specified latitude and longitude keys,
- * dynamically generating map markers.
- * Users can also customise the appearance of markers through a provided renderer function.
- */
-
 interface PRemoteMap extends IRemoteTargetAndZone, IHeight {
   /**
    * Unique identifier for this map instance, utilised in API interactions and state management
@@ -57,6 +47,14 @@ interface PRemoteMap extends IRemoteTargetAndZone, IHeight {
   markerRenderer?: Function;
 }
 
+/**
+ * @autodoc
+ * 
+ * RemoteMap is a component that visualises geographical data on a map based on the data retrieved
+ * from a remote `dataSource`. It fetches location data using specified latitude and longitude keys,
+ * dynamically generating map markers.
+ * Users can also customise the appearance of markers through a provided renderer function.
+ */
 export function RemoteMap(props: PRemoteMap) {
   const {
     id,

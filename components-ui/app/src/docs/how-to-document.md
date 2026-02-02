@@ -10,10 +10,15 @@ larger architectural implementations to ensure consistency and clarity.
 
 Components adhere to a TSDoc-like system. The syntax is as follows, in this order:
 
-1. Use `@autodoc` above the props interface to display the documentation on the component’s web app as a page.
-2. Provide a description of the component.
-3. Inside the props interface, add a description of each prop before its definition.
+1. Inside the props interface, add a description of each prop before its definition.
     - For frequently used props, create a new interface to inherit from that also includes the relevant descriptions.
+2. Use `@autodoc` above the component definition to display the documentation on the component’s web app as a page.
+3. Provide a description of the component
+4. (Optionally) add one or more remarks using `@remarks` tags
+5. (Optionally) add examples:
+    - An `@example` tag
+    - The title of the example on the line below
+    - The rest of the lines contain the code for the example
 
 Example:
 ```
@@ -21,6 +26,13 @@ Example:
  * @autodoc
  * BoardTable is a thin wrapper around RemoteTable that handles
  * the saving and updating of table configuration for use in a board.
+ *
+ * @remarks
+ * Here are some remarks
+ *
+ * @example
+ * Basic usage
+ * <BoardTable config={...} />
  */
 export interface PBoardTable extends PVisualisation {
   /** The database configuration save for a table */

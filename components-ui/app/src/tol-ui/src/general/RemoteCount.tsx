@@ -20,12 +20,6 @@ import {
   TCountStatType,
 } from "..";
 
-/**
- * @autodoc
- * 
- * RemoteCount retrieves and displays count or stats from a remote dataSource,
- * updating based on applied filters and selected zones.
- */
 export interface PRemoteCount extends IRemoteTargetAndZone {
   /**
    * Unique identifier for this count instance, utilized in the utility bar and various internal functions
@@ -45,6 +39,12 @@ export interface PRemoteCount extends IRemoteTargetAndZone {
   field?: string;
 }
 
+/**
+ * @autodoc
+ * 
+ * RemoteCount retrieves and displays count or stats from a remote dataSource,
+ * updating based on applied filters and selected zones.
+ */
 export function RemoteCount(props: PRemoteCount) {
   const { id, objectType, dataSource, zone, setZone, utilityBarConfig, type = "count", field } = props;
   const [value, setValue] = useState<number>(0);

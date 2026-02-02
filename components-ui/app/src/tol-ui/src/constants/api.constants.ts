@@ -18,6 +18,7 @@ export const API_OPERATIONS = {
   COUNT: ":count",
   AGGREGATIONS: ":aggregations",
   TO_ONE: ":to-one",
+  TO_MANY: ":to-many",
 }
 
 export const AUTH_API_DATA_PATH = "/auth";

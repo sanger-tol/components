@@ -94,7 +94,7 @@ export async function getUserPrivilege(
  * Deletes cache stored in localStorage more than the set age limit.
  * This age limit is defined at the top of this function.
  * 
- * This function is designed to be called in `TolApp` as it mounts
+ * This function is designed to be called in `SmartApp` as it mounts
  */
 export function clearUnusedLocalStorage() {
   // The number of hours old a key must be before it is deleted
