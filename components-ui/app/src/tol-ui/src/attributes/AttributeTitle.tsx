@@ -30,7 +30,7 @@ export function AttributeTitle(props: PAttributeTitle) {
   }, [])
 
   return (
-    <div className="tol-attribute-title">
+    <div className="tol-attribute-title" role="columnheader">
       <TitleElement className={className}>
         <AttributeTooltip
           {...props}

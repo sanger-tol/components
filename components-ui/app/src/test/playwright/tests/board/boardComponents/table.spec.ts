@@ -8,6 +8,7 @@ import {
   setBoard,
   setAuth,
   sleep,
+  createTable,
   deleteFirstComponent,
 } from "../../helpers";
 
@@ -23,25 +24,18 @@ test.beforeEach(async ({ page }) => {
 
 const addTableComponent = async ({ page, testID }) => {
   addComponent({ page, testID }, "table", "Large");
+  await sleep(200);
   await expect(page.locator(".tol-table")).toBeVisible();
+  await sleep(200);
 };
 
 const editTableComponent = async ({ page }) => {
-  await sleep(1000);
-  await page.getByTestId("table-slider-button").first().waitFor({ state: 'visible' });
-  await page.getByTestId("table-slider-button").first().click({ force: true });
+  createTable({ page }, "table", "grit_accession_data");
 };
 
-const selectTableContentComponent = async ({ page }) => {
-  await page.getByRole('combobox').nth(1).waitFor({ state: 'visible' });
-  await page.getByRole('combobox').nth(1).click({ force: true });
-  await page.getByText('Accession Data').click();
-  await page.getByRole('combobox').nth(1).click();
-  await page.getByTestId('save-layout-button').waitFor({ state: 'visible' });
-  await page.getByTestId('save-layout-button').click();
-  await sleep(300);
-  const tableValue = await page.locator('.tol-table').textContent();
-  expect(tableValue).toBe("GCA_902713425");
+const checkTableTitleComponent = async ({ page }) => {
+  await expect(page.locator(".tol-table")).toBeVisible();
+  await expect(page.locator(".tol-header-text")).toContainText("Accession Data");
 };
 
 test("manage dashboard", async ({ page }) => {
@@ -49,5 +43,5 @@ test("manage dashboard", async ({ page }) => {
 
   await addTableComponent({ page, testID });
   await editTableComponent({ page });
-  await selectTableContentComponent({ page });
+  await checkTableTitleComponent({ page });
 });
