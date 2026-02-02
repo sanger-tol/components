@@ -16,11 +16,27 @@ import {
   STATISTICS_STAT_TYPES,
 } from "..";
 
+
 export interface PStatisticsConfigDrawer extends IRemoteTargetAndZone {
+  /**
+   * Whether the configuration drawer is open
+   */
   open: boolean;
+  /**
+   * Callback to open the drawer
+   */
   setOpen: (open: boolean) => void;
+  /**
+   * Title shown at the top of the drawer
+   */
   title: string;
+  /**
+   * The current statistics configuration values
+   */
   config: IStatisticsConfig;
+  /**
+   * Called when a valid configuration is saved
+   */
   onConfigSave: (config: IStatisticsConfig) => void;
 }
 
