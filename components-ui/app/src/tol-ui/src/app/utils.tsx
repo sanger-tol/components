@@ -432,7 +432,6 @@ export function isPageAccessible(user: User | null, page: TPageOrDropdown): bool
   return false;
 }
 
-
 /**
  * Builds a flat list of React Router route nodes from a nested navigation configuration.
  *

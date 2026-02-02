@@ -83,7 +83,6 @@ export interface PSmartApp {
   routePrefix?: string;
 }
 
-
 /**
  * Root application component that composes routing, navigation, and default page elements.
  */
@@ -126,7 +125,7 @@ export function SmartApp(props: PSmartApp) {
     ...(props.pageElements ?? {}),
   };
 
-  // One merged props object to pass downstream so consumers see the merged values
+  // Merged props object to pass downstream so consumers see the merged values
   const mergedProps: PSmartApp = {
     ...props,
     boards,

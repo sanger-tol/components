@@ -35,6 +35,9 @@ export interface PBoard {
   boardDataSource: TsDataSource;
 }
 
+/**
+ * Component to render a board based on its ID and TSDataSource.
+ */
 export function Board(props: PBoard) {
   const { boardDataSource } = props;
 

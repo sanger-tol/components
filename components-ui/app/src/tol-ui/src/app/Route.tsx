@@ -26,6 +26,10 @@ export interface PRoute {
   boards?: PBoard;
 }
 
+/**
+ * Route component that will directly ouput a React Router Route with the correct
+ * component based on the path's pageElementReference.
+ */
 export function Route(props: PRoute) {
   const { routeKey, boards, path, pageElements } = props;
 
