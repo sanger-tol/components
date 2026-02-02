@@ -78,9 +78,9 @@ export interface PSmartApp {
    */
   customCallbackUrl?: string;
   /**
-   * An optional UI path prefix for routing.
+   * An optional prefix for routing.
    */
-  uiPath?: string;
+  routePrefix?: string;
 }
 
 

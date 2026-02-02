@@ -12,6 +12,7 @@ import {
   collectNavigationItems,
   normaliseNavConfig,
   setupNavigationConfig,
+  generateRoutePath,
 } from "../../tol-ui/src";
 import {
   findDropdownByTitle,
@@ -102,5 +103,33 @@ describe("collectNavigationItems function", () => {
     // hidden pages aren't included in the config order and so shouldn't appear in the nav
     const callback = findLinkByText(navItems, "Callback");
     expect(callback).toBeFalsy();
+  });
+});
+
+describe("generateRoutePath function", () => {
+  test("generates route when no route is given", () => {
+    const path = {
+      pageElementReference: "testPage",
+    };
+    const route = generateRoutePath("Test Page", path);
+    expect(route).toBe("/test-page");
+  });
+
+  test("route is not overwritten when given", () => {
+    const path = {
+      pageElementReference: "testPage",
+      route: "/custom-page"
+    };
+    const route = generateRoutePath("Test Page", path);
+    expect(route).toBe("/custom-page");
+  });
+
+  test("route prefix formats correctly", () => {
+    const path = {
+      pageElementReference: "testPage",
+      route: "/custom-page"
+    };
+    const route = generateRoutePath("Test Page v2", path, "v2");
+    expect(route).toBe("/v2/custom-page");
   });
 });

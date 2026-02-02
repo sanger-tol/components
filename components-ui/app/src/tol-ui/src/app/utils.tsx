@@ -15,7 +15,6 @@ import {
   env,
   BOARDS_API_DATA_PATH,
   TNavConfig,
-  convertToPath,
   TPageOrDropdown,
   PAGE_ACCESS,
   User,
@@ -25,7 +24,9 @@ import {
   TPageElements,
   INavDropdown,
   Route,
-  INavDestination
+  INavDestination,
+  formatPath,
+  IPage
 } from "..";
 
 
@@ -170,6 +171,24 @@ export function setupBoards(boards?: PBoard | boolean): PBoard | undefined {
 }
 
 /**
+ * Generates a route path string for a page element.
+ *
+ * @param displayName - Human-readable name used to derive a route when `path` is not given.
+ * @param path - Optional page element that may provide an explicit route.
+ * @param routePrefix - Optional prefix to prepend to the generated route.
+ * 
+ * @returns The generated route path string.
+ */
+export function generateRoutePath(
+  displayName: string,
+  path: IPageElement | undefined,
+  routePrefix: string = "",
+): string {
+  const mainRoute: string = isRoute(path) ? path.route! : formatPath(displayName);
+  return routePrefix ? `/${routePrefix}${mainRoute}` : mainRoute;
+}
+
+/**
  * Adds missing default values to a navigation configuration recursively.
  * 
  * @param navigation - The navigation config to normalize. If `undefined`, a default empty config is used.
@@ -177,37 +196,35 @@ export function setupBoards(boards?: PBoard | boolean): PBoard | undefined {
  * 
  * @returns A new navigation config with defaults applied and pruned inaccessible pages.
  */
-export function normaliseNavConfig(navigation: TNavConfig | undefined, user: User | null): TNavConfig {
+export function normaliseNavConfig(navigation: TNavConfig | undefined, user: User | null, routePrefix: string = ""): TNavConfig {
   const source: TNavConfig = navigation ?? { data: {}, order: [] };
 
   // Build a fresh config so we can add only accessible pages with defaults
   const result: TNavConfig = { data: {}, order: [] };
 
-  for (const navName of Object.keys(source.data)) {
-    const originalNavItem = source.data?.[navName];
+  for (const displayName of Object.keys(source.data)) {
+    const originalNavItem = source.data?.[displayName];
 
     // Skip if no nav item or not accessible to this user
     if (!originalNavItem || typeof originalNavItem !== "object") continue;
     if (!isPageAccessible(user, originalNavItem)) continue;
 
-    const navItem = deepCopy(originalNavItem);
+    const navItem: TPageOrDropdown = deepCopy(originalNavItem);
 
     // If it has a pageElementReference but no route, add a default
-    if (navItem.path && "pageElementReference" in navItem.path) {
-      navItem.path.route =
-        ("route" in navItem.path ? navItem.path.route : undefined) ??
-        convertToPath(navName);
+    if (isPageElementReference(navItem.path)) {
+      navItem.path.route = generateRoutePath(displayName, navItem.path, routePrefix);
     }
 
     // Recurse into dropdown children (do not build routes from dropdown names)
-    if ("pages" in navItem && navItem.pages) {
-      navItem.pages = normaliseNavConfig(navItem.pages, user);
+    if (isDropdown(navItem)) {
+      navItem.pages = normaliseNavConfig(navItem.pages, user, routePrefix);
     }
 
     // Add to result and only add to order if it was in source order (thus not hidden on nav)
-    result.data[navName] = navItem;
-    if (source.order.includes(navName)) {
-      result.order.push(navName);
+    result.data[displayName] = navItem;
+    if (source.order.includes(displayName)) {
+      result.order.push(displayName);
     }
   }
 
@@ -243,17 +260,19 @@ export function mergeNavConfigs(
  * @param navigation - Optional, partial navigation configuration to merge with system defaults.
  * @param defaultNavigation - The default navigation configuration to merge with.
  * @param user - The current user object; used to determine page accessibility.
+ * @param routePrefix - An optional prefix to prepend to all routes.
  * 
  * @returns A finalized {@link TNavConfig} with defaults applied via `normaliseNavConfigForUser`.
  */
 export function setupNavigationConfig(
   navigation: TNavConfig | undefined,
   defaultNavigation: TNavConfig,
-  user: User | null
+  user: User | null,
+  routePrefix: string = "",
 ): TNavConfig {
   // Combine system nav config with incoming config
   const combinedNavConfig = mergeNavConfigs(navigation, defaultNavigation);
-  return normaliseNavConfig(combinedNavConfig, user);
+  return normaliseNavConfig(combinedNavConfig, user, routePrefix);
 }
 
 /**
@@ -292,12 +311,35 @@ export function isLink(path: unknown): path is IPageLink {
 
 /**
  * Type guard: checks whether a value is a non-null object containing a `pages` nav config.
+ * 
+ * @param value - The value to validate.
+ * 
+ * @returns `true` if `value` is an object with a `pages` property; otherwise `false`.
  */
 export function isDropdown(value: unknown): value is INavDropdown {
   return (
     !!value &&
     typeof value === "object" &&
     "pages" in value
+  );
+}
+
+/**
+ * Type guard that checks whether a value is a non-null object containing a non-empty
+ * `pageElementReference` string.
+ *
+ * @param path - The value to validate.
+ *
+ * @returns `true` if `path` is an object with a non-empty string `pageElementReference` property;
+ * otherwise `false`.
+ */
+export function isPageElementReference(path: unknown): path is IPageElement {
+  return (
+    !!path &&
+    typeof path === "object" &&
+    "pageElementReference" in path &&
+    typeof (path as any).pageElementReference === "string" &&
+    (path as any).pageElementReference.length > 0
   );
 }
 
