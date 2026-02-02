@@ -15,11 +15,24 @@ import {
 
 
 export interface PProfileDropdown {
+  /**
+   * Navigation configuration for profile dropdown
+   */
   navigation?: TNavConfig;
+  /**
+   * The authenticated user information.
+   */
   user: User;
+  /**
+   * Callback function to handle user logout.
+   */
   onLogout: () => void;
 }
 
+/**
+ * The ProfileDropdown component renders a profile dropdown menu in the navigation bar when a user is logged in.
+ * It displays the user's initials and provides navigation items along with a logout option.
+ */
 export function ProfileDropdown(props: PProfileDropdown) {
   const { navigation, user, onLogout } = props;
 

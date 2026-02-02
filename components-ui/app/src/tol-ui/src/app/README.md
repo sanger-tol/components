@@ -26,3 +26,40 @@ If a dropdown is inaccessible, the whole dropdown is removed.
 
 - Routes are only registered for leaf pages that have `path.route` (explicit or generated).
 - Dropdown child routes are generated from the *child key* (the key in `pages.data`), e.g. `"Public Dropdown Public Page"` → `"/public-dropdown-public-page"`.
+
+
+### Example
+Example navigation configuration illustrating an example structure of TNavConfig.
+
+````ts
+const EXAMPLE: TNavConfig = {
+  data: {
+    "Dropdown Example 1": {
+      access: "public",
+      path: {
+        route: "dropdown-path",
+      },
+      pages: {
+        data: {
+          "Page Example 2": {
+            access: "public",
+            path: {
+              pageElementReference: "elementOne",
+              route: "/page-example",
+            },
+          },
+        },
+        order: ["Page Example 2"],
+      },
+    },
+    "Page Example 1": {
+      access: "public",
+      path: {
+        pageElementReference: "boardId34",
+        route: "page-example",
+      },
+    },
+  },
+  order: ["Dropdown Example 1", "Page Example 1"],
+};
+````

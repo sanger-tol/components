@@ -33,6 +33,9 @@ export interface IPageLink {
 }
 
 export type TPageAccess =
+  /**
+   * Predefined access levels
+   */
   (typeof PAGE_ACCESS)[keyof typeof PAGE_ACCESS] |
   /**
    * Array of roles that can access, e.g. ['lab']
@@ -118,39 +121,3 @@ export interface INavDestination {
    */
   target?: string;
 }
-
-/**
- * Example navigation configuration illustrating the structure of TNavConfig.
- */
-
-// @ts-ignore - example documentation
-const EXAMPLE: TNavConfig = {
-  data: {
-    "Dropdown Example 1": {
-      access: "public",
-      path: {
-        route: "dropdown-path",
-      },
-      pages: {
-        data: {
-          "Page Example 2": {
-            access: "public",
-            path: {
-              pageElementReference: "el1",
-              route: "/page-example",
-            },
-          },
-        },
-        order: ["Page Example 2"],
-      },
-    },
-    "Page Example 1": {
-      access: "public",
-      path: {
-        pageElementReference: "el1",
-        route: "page-example",
-      },
-    },
-  },
-  order: ["Dropdown Example 1", "Page Example 1"],
-};

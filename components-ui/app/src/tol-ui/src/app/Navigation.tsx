@@ -29,6 +29,10 @@ import {
 
 export interface PNavigation extends PSmartApp, RouteComponentProps { }
 
+/**
+ * The Navigation component renders the navigation bar for the application.
+ * It includes brand display, navigation items, and login functionality.
+ */
 function Navigation(props: PNavigation) {
   const { navigation, profileNavigation } = props;
 
