@@ -98,6 +98,8 @@
 }
 
 .tol-navigation {
+  margin: var(--tol-nav-margin);
+
   a:active,
   a:focus {
     text-decoration: none;

@@ -149,8 +149,8 @@ export function SmartApp(props: PSmartApp) {
           }}
         >
           <Router>
+            <Navigation {...mergedProps} />
             <div className="tol-smart-app">
-              <Navigation {...mergedProps} />
               <div className="tol-smart-app-content">
                 <Switch>
                   {collectRoutes(
