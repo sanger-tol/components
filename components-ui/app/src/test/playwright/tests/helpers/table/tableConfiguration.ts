@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: MIT
 
-export const createTable = async (
+export const configureTable = async (
   { page },
   component: string,
   attribute: string,

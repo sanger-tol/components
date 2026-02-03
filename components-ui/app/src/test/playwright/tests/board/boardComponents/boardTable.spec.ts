@@ -8,7 +8,7 @@ import {
   setBoard,
   setAuth,
   sleep,
-  createTable,
+  configureTable,
   deleteFirstComponent,
 } from "../../helpers";
 
@@ -30,7 +30,7 @@ const addTableComponent = async ({ page, testID }) => {
 };
 
 const checkTableTitleComponent = async ({ page , attribute}) => {
-  createTable({ page }, "table", attribute);
+  configureTable({ page }, "table", attribute);
   await expect(page.locator(".tol-table")).toBeVisible();
   await expect(page.locator(".tol-header-text")).toContainText(attribute);
 };

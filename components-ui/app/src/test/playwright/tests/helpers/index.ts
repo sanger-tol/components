@@ -6,4 +6,4 @@ export * from './auth.ts';
 export * from './componentSetup.ts';
 export * from './sleep.ts';
 export * from './boardShortcut.ts';
-export * from './table/tableConfiguration.js';
+export * from './table/tableConfiguration.ts';
