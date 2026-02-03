@@ -29,9 +29,9 @@ const filterCountComponent = async ({page}) => {
   await addComponentFilter(
     {page},
     'count',
+    'grit_project',
     'ToL Rapid Curation',
-    'multiselect',
-    'grit_project'
+    'multiselect'
   );
 
   // check the count has changed
