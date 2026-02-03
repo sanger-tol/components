@@ -14,19 +14,15 @@ import {
   BoardAccordion,
   MyBoardsHeader,
   getUserFromLocalStorage,
-  TsDataSource,
   getBoardDetails,
   LoadingContent,
   InitialBoardsTourModal,
-  fetchTourStepSeen
+  fetchTourStepSeen,
+  PBoard
 } from "../..";
 
 
-export interface IMyBoards {
-  boardDataSource: TsDataSource;
-}
-
-export function MyBoards(props: IMyBoards) {
+export function MyBoards(props: PBoard) {
   const { boardDataSource } = props;
   const [boardDetails, setBoardDetails] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

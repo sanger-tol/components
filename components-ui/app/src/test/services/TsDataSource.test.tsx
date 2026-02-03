@@ -148,6 +148,49 @@ const nestedRelationshipMockData = {
   },
 };
 
+const toManyRelationshipMockData = {
+  data: {
+    data: {
+      id: "SAN1",
+      type: "specimen",
+      attributes: {
+        name: "specimenName",
+      },
+      relationships: {
+        samples: {
+          data: [
+            {
+              id: "FF123",
+              type: "sample",
+            },
+            {            
+              id: "FF124",
+              type: "sample", 
+            },
+          ],
+        },
+      },
+    },
+    included: [
+      {
+        id: "FF123",
+        type: "sample",
+        attributes: {
+          rackPosition: "A3",
+        },
+      },
+      {
+        id: "FF124",
+        type: "sample",
+        attributes: {
+          rackPosition: "A4",
+        },
+      },
+    ]
+  },
+};
+
+
 const attributeMetadataMockData = {
   specimen: {
     id: {
@@ -266,6 +309,8 @@ const mockClient = () => ({
       return Promise.resolve(speciesMockData);
     } else if (endpoint === "/noCacheTest/nestedRelationships1" && baseURL === "/test-data-path") {
       return Promise.resolve(nestedRelationshipMockData);
+    }else if (endpoint === "/specimen/SAN1" && baseURL === "/test-data-path") {
+      return Promise.resolve(toManyRelationshipMockData);
     } else if (endpoint === "/specimen/testSpecimenId" && baseURL === "/test-data-path") {
       return Promise.resolve(specimenMockData);
     } else if (endpoint === "/sample/testSampleId" && baseURL === "/test-data-path") {
@@ -763,6 +808,53 @@ describe("Testing relationships getting", () => {
 
     expect(sample).not.toBeNull();
     expect(sample?.relationships?.random_attribute).toBeUndefined();
+  });
+});
+
+describe("Testing to many relationships getting", () => {
+  test("Testing fetching to many relationship attributes", async () => {
+    const mockClientInstance = mockClient();
+    const clientGetSpy = vitest.spyOn(mockClientInstance, "get");
+
+    const mockDataSource = new TsDataSource({
+      apiDataPath: "/test-data-path",
+      client: () => mockClientInstance,
+    });
+
+    const specimen = await mockDataSource.getOne({
+      objectType: "specimen",
+      id: "SAN1",
+      requestedFields: ["name" ,"samples.rackPosition"],
+    });
+
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
+    expect(specimen).not.toBeNull();
+    const samples = specimen?.relationships?.samples;
+    expect(Array.isArray(samples)).toBe(true);
+    expect(samples?.length).toEqual(2);
+    expect(samples?.[0].id).toEqual("FF123");
+    expect(samples?.[1].id).toEqual("FF124");
+    expect(samples?.[0].rackPosition).toEqual("A3");
+    expect(samples?.[1].rackPosition).toEqual("A4");
+    expect(clientGetSpy).toHaveBeenCalledTimes(1);
+  });
+
+  test("Ensure missing attribute is undefined", async () => {
+    const mockClientInstance = mockClient();
+    const mockDataSource = new TsDataSource({
+      apiDataPath: "/test-data-path",
+      client: () => mockClientInstance,
+    });
+
+    const specimen = await mockDataSource.getOne({
+      objectType: "specimen",
+      id: "SAN1",
+      requestedFields: ["name" ,"samples.rackPosition"],
+    });
+
+    expect(specimen).not.toBeNull();
+    const samples = specimen?.relationships?.samples;
+    expect(samples?.[0].missingAttribute).toBeUndefined();
   });
 });
 

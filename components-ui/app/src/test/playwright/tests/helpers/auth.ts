@@ -38,7 +38,7 @@ export const setAuth = async ({page}) => {
       "token_created_at": "2025-03-31T14:13:36.345558",
       "token_expires_at": "2090-04-07T14:13:36.345581",
       "id": userID,
-      "roles": []
+      "roles": ["admin"],
     },
     'token': token,
   };

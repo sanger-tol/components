@@ -6,8 +6,8 @@ SPDX-License-Identifier: MIT
 
 export const componentOptions = [
   {
-    type: "count",
-    text: "Count",
+    type: "statistics",
+    text: "Statistics",
     icon: "hashtag",
     disabled: false,
   },
@@ -53,12 +53,12 @@ export const sizeOptions = (componentType: string) => {
     {
       type: "md",
       text: "Medium",
-      disabled: componentType === "count",
+      disabled: componentType === "statistics",
     },
     {
       type: "lg",
       text: "Large",
-      disabled: componentType === "count",
+      disabled: componentType === "statistics",
     },
   ]
 }

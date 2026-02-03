@@ -22,11 +22,6 @@ export function formatPath(name: string) {
   return "/" + path.replace(/\s+/g, "-");
 }
 
-export function convertToPath(pathname: string, uiPath?: string) {
-  const convertedPath = formatPath(pathname);
-  return uiPath ? `/${uiPath}${convertedPath}` : convertedPath;
-}
-
 export function convertToName(path: string) {
   const name = path
     .replace(/^\//, "") // Remove leading slash
@@ -146,7 +141,8 @@ export function matomoAnalytics(siteId: number) {
  */
 export function numberWithSpaces(num: number) {
   if (!Number.isFinite(num)) return "";
-  const [whole, fraction] = num.toString().split(".");
+  const rounded = Number(num.toFixed(2));
+  const [whole, fraction] = rounded.toString().split(".");
   const spacedWhole = whole.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   if (!fraction) return spacedWhole;
   return `${spacedWhole}.${fraction}`;

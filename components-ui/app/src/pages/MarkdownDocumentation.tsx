@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Markdown, Widgets, CenterContent } from "../tol-ui/src";
+import { Markdown, Widgets } from "../tol-ui/src";
 
 
 export interface PMarkdownDocumentation {
@@ -22,11 +22,7 @@ export function MarkdownDocumentation(props: PMarkdownDocumentation) {
   ];
 
   return (
-    <div className="code-style">
-      <CenterContent>
-        <Widgets components={components} />
-      </CenterContent>
-    </div>
+    <Widgets components={components} />
   );
 }
 

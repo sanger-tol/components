@@ -7,15 +7,7 @@ SPDX-License-Identifier: MIT
 import { createRoot } from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import "./scss/styling.scss";
-import {
-  TolApp,
-  Page,
-  Dropdown,
-  TsDataSource,
-  env,
-  LOCAL_API_DATA_PATH,
-  generateAutoDocPages,
-} from "./tol-ui/src";
+import { generateAutoDocNavigation, mergeNavConfigs, SmartApp } from "./tol-ui/src";
 import {
   Home,
   Sandbox,
@@ -23,50 +15,31 @@ import {
 } from "./pages";
 import codeStyleGuideContent from "./docs/code-style-guide.md?raw";
 import howToDocumentContent from "./docs/how-to-document.md?raw";
+import { navConfig } from "./config";
 
 
-const codeStyleGuide: Page = {
-  name: "Code Style Guide",
-  element: <MarkdownDocumentation content={codeStyleGuideContent} />
-}
+const {
+  pageElements: autoDocPageElements,
+  navConfig: autoDocNavConfig
+} = generateAutoDocNavigation();
 
-const howToDocument: Page = {
-  name: "How To Document",
-  element: <MarkdownDocumentation content={howToDocumentContent} />
-}
-
-const developerDropdown: Dropdown = {
-  name: "Developer",
-  pages: [codeStyleGuide, howToDocument],
+const pageElements = {
+  home: <Home />,
+  sandbox: <Sandbox />,
+  codeStyleGuide: <MarkdownDocumentation content={codeStyleGuideContent} />,
+  howToDocument: <MarkdownDocumentation content={howToDocumentContent} />,
+  ...autoDocPageElements,
 };
 
-const docsDropdown: Dropdown = {
-  name: "Docs",
-  pages: generateAutoDocPages(),
-};
-
-const sandbox: Page = {
-  name: "Sandbox",
-  element: <Sandbox />,
-  hidden: true,
-};
-
-const boardDataSource = new TsDataSource({
-  apiPath: env.API_PATH,
-  apiDataPath: LOCAL_API_DATA_PATH,
-});
+const navigation = mergeNavConfigs(navConfig, autoDocNavConfig);
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
-  <TolApp
-    boards={{boardDataSource}}
+  <SmartApp
+    boards
     brand="Components"
-    homePage={<Home />}
-    pages={[
-      sandbox,
-      developerDropdown,
-      docsDropdown,
-    ]}
+    navigation={navigation}
+    pageElements={pageElements}
   />
 );
 
