@@ -377,7 +377,10 @@ export function collectNavigationItems(navigation: TNavConfig | undefined): Reac
     // Dropdown menu
     if (isDropdown(navItem)) {
       navButtons.push(
-        <NavDropdown title={navItemName}>
+        <NavDropdown
+          key={navItemName}
+          title={navItemName}
+        >
           {collectNavigationItems(navItem.pages)}
         </NavDropdown>
       )
@@ -413,7 +416,7 @@ export function isPageAccessible(user: User | null, page: TPageOrDropdown): bool
   if (!page.access || page.access === PAGE_ACCESS.PUBLIC) return true;
 
   // If user not logged in, deny access
-  if (!user) return false;
+  if (!user?.id) return false;
 
   // If page requires login, allow access
   if (page.access === PAGE_ACCESS.AUTHENTICATED) return true;
