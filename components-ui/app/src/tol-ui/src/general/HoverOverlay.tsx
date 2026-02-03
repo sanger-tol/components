@@ -32,7 +32,7 @@ export function HoverOverlay(props: PHoverOverlay) {
   );
 
   if (!contents) return children;
-  console.log
+
   return (
     <Whisper
       // @ts-ignore

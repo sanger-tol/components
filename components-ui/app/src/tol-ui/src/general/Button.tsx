@@ -92,7 +92,7 @@ export function Button(props: PButton) {
       </span>
     );
   };
-  console.log("here", testid)
+
   const ButtonContent = (
     <>
       {visible && (
