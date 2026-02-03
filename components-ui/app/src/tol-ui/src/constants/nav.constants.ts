@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 export const PAGE_ACCESS = {
   /**
-   * Open to all users, including non-logged in users
+   * Open to all users
    */
   PUBLIC: "public",
   /**
