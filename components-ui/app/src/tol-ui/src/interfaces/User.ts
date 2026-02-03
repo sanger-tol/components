@@ -11,6 +11,6 @@ export interface User {
   name: string | any;
   organisation: string;
   roles: string[];
-  token_created_at: string;
-  token_expires_at: string;
+  token_created_at?: string;
+  token_expires_at?: string;
 } // eslint-disable-line
