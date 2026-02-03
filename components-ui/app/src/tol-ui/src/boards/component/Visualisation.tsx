@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  BoardCount,
+  BoardStatistics,
   BoardTable,
   BoardSunburst,
   BoardChart,
@@ -29,7 +29,8 @@ export function Visualisation(props: PVisualisation) {
     case "table":
       return <BoardTable {...props} />;
     case "count":
-      return <BoardCount {...props} />;
+    case "statistics":
+      return <BoardStatistics {...props} />;
     case "sunburst":
       return <BoardSunburst {...props} />;
     case "chart":
