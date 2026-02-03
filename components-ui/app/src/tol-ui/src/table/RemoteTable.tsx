@@ -295,6 +295,10 @@ export function RemoteTable(props: PRemoteTable) {
     // resetFiltersBelow({id: id, zone: zone!}); occurs in <Filter />: onFilter()
   }, [zone]);
 
+  useEffect(() => {
+    console.log(selectedRows);
+  }, [selectedRows])
+
   useEffectUpdate(() => {
     renderTable();
   }, [page, sortByAttribute, sortByType, filter, forceUpdate]);

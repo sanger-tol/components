@@ -11,8 +11,6 @@ import type {
   IStepData,
   IAllValidationData,
   IValidationResult,
-  TFileValidationStatus,
-  TValidationPolicyModule,
 } from "../..";
 
 import {
@@ -55,10 +53,9 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const history = useHistory();
-  const policy = useValidationPolicyModule() as TValidationPolicyModule;
+  const policy = useValidationPolicyModule();
 
-  const statusKey = data.validationStatus as TFileValidationStatus;
-  const uploadStatus = policy.policies[statusKey];
+  const uploadStatus = policy.policies[data.validationStatus];
 
   const ValidationIconTooltip = (
     errorCount: number,
