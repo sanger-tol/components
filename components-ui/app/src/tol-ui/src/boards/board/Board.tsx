@@ -25,13 +25,23 @@ import {
 } from "../..";
 
 export interface PBoard {
+  /**
+   * The ID of the board to be displayed.
+   */
+  boardId?: string;
+  /**
+   * The data source for fetching board data.
+   */
   boardDataSource: TsDataSource;
 }
 
+/**
+ * Component to render a board based on its ID and TSDataSource.
+ */
 export function Board(props: PBoard) {
   const { boardDataSource } = props;
 
-  const { boardId, viewId } = useParams<any>();
+  const { boardId: paramBoardId, viewId } = useParams<any>();
   const [user, setUser] = useState<any>(null);
   const [boardData, setBoardData] = useState<any>({});
   const [view, setView] = useState(viewId);
@@ -39,9 +49,12 @@ export function Board(props: PBoard) {
   const [error, setError] = useState("");
   const { privilege, setPrivilege } = useBoardPrivilege();
 
+  // Ability to override boardId from props over URL params
+  const boardId = props.boardId ?? paramBoardId;
+
   themeListener(() => {
     try {
-      const backing = document.getElementById("tol-app-background");
+      const backing = document.getElementById("tol-smart-app-background");
       backing!.style.backgroundColor = getCssVarValue("--tol-bg-dark");
     } catch {
       return;

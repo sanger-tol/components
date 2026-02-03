@@ -28,7 +28,7 @@ export function Widgets(props: PWidgets) {
 
   themeListener(() => {
     try {
-      const backing = document.getElementById("tol-app-background");
+      const backing = document.getElementById("tol-smart-app-background");
       backing!.style.backgroundColor = getCssVarValue("--tol-bg-dark");
     } catch {
       return;
