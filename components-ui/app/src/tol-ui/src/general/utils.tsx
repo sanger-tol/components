@@ -22,11 +22,6 @@ export function formatPath(name: string) {
   return "/" + path.replace(/\s+/g, "-");
 }
 
-export function convertToPath(pathname: string, uiPath?: string) {
-  const convertedPath = formatPath(pathname);
-  return uiPath ? `/${uiPath}${convertedPath}` : convertedPath;
-}
-
 export function convertToName(path: string) {
   const name = path
     .replace(/^\//, "") // Remove leading slash

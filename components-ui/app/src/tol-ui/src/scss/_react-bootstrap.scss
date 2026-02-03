@@ -72,18 +72,42 @@
   0% {
     opacity: 0;
   }
+
   20% {
     opacity: 1;
   }
+
   80% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
   }
 }
 
-// dropdown color
+// dropdown alterations
 .dropdown-menu.show {
   background-color: black;
+  border: 1px solid var(--tol-grey-subtle);
+
+  .nav-link {
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: var(--tol-primary) !important;
+    }
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    margin-left: 165px;
+    margin-top: -25px;
+  }
+
+  // rotate nested dropdown arrow
+  .dropdown-toggle::after {
+    transform: rotate(-90deg);
+  }
 }

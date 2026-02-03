@@ -44,7 +44,7 @@ export function Callback() {
           })
           .finally(() => {
             setTimeout(() => {
-              let targetUrl = getReturnUrlFromLocalStorage() || "";
+              const targetUrl = getReturnUrlFromLocalStorage() || "";
               window.location.href = targetUrl;
             }, 500);
           });
