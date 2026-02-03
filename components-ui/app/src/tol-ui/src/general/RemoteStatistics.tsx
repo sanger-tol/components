@@ -17,10 +17,10 @@ import {
   TFilterOrUndefined,
   API_METHODS,
   IRemoteTargetAndZone,
-  TCountStatType,
+  TStatisticsType,
 } from "..";
 
-export interface PRemoteCount extends IRemoteTargetAndZone {
+export interface PRemoteStatistics extends IRemoteTargetAndZone {
   /**
    * Unique identifier for this count instance, utilized in the utility bar and various internal functions
    */
@@ -32,7 +32,7 @@ export interface PRemoteCount extends IRemoteTargetAndZone {
   /**
    * The statistic to display - "count", "min", "max", "avg", or "sum"
    */
-  type?: TCountStatType;
+  type?: TStatisticsType;
   /**
    * The field to apply the statistic to (required when type is not "count")
    */
@@ -42,10 +42,10 @@ export interface PRemoteCount extends IRemoteTargetAndZone {
 /**
  * @autodoc
  * 
- * RemoteCount retrieves and displays count or stats from a remote dataSource,
+ * RemoteStatistics retrieves and displays count or stats from a remote dataSource,
  * updating based on applied filters and selected zones.
  */
-export function RemoteCount(props: PRemoteCount) {
+export function RemoteStatistics(props: PRemoteStatistics) {
   const { id, objectType, dataSource, zone, setZone, utilityBarConfig, type = "count", field } = props;
   const [value, setValue] = useState<number>(0);
   const [loading, setLoading] = useState(true);
