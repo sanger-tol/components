@@ -13,5 +13,6 @@ export * from "./nav.constants";
 export * from "./plates.constants";
 export * from "./privilege.constants";
 export * from "./regex.constants";
+export * from "./statistics.constants";
 export * from "./table.constants";
 export * from "./user.constants";

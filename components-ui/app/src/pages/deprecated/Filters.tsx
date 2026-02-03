@@ -6,7 +6,7 @@
 
 import {
   Button,
-  RemoteCount,
+  RemoteStatistics,
   RemoteMap,
   Filter,
   RemoteTable,
@@ -174,7 +174,7 @@ export function Filters() {
       />
       <p style={{ marginTop: 10 }}>Filter Level 5:</p>
       <div style={{ height: 110, marginTop: 20 }}>
-        <RemoteCount
+        <RemoteStatistics
           id="count"
           utilityBarConfig={{
             title: {text: "Total Species"}
