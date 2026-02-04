@@ -14,7 +14,10 @@ import {
 export function Datetime(props: PCell) {
   const { value } = props;
 
-  const date = new Date(value!);
+  const dateValue = Array.isArray(value) ? value[0] : value;
+  const date = new Date(dateValue!);
+  if (isNaN(date.getTime())) return null;
+  
   const dateText = format(date, "dd/MM/yyyy");
   const dateContents = format(date, "dd/MM/yyyy HH:mm");
   return <CellTooltip followCursor value={dateText} contents={dateContents} />;
