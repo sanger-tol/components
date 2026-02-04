@@ -122,7 +122,7 @@ export function convertTableData(
   return data;
 }
 
-function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
+function addDefaultCellRenderer(type: string): TCellRenderer {
   switch (type) {
     case "datetime":
       return { type: "datetime" };
@@ -155,7 +155,7 @@ export function addDefaultsFromEntityMeta(
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
   const defaults = {
-    cellRenderer: addDefaultCellRenderer(key, meta.python_type),
+    cellRenderer: addDefaultCellRenderer(meta.python_type),
     filter: addRemoteFilterType(meta.python_type, meta.cardinality),
     isAttribute: isRelationship(key),
     rename: meta.display_name || normaliseCaps(key),
