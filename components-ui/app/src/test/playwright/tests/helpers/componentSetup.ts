@@ -2,14 +2,13 @@
 //
 // SPDX-License-Identifier: MIT
 
-
 export const addComponent = async (
-  {page, testID},
+  { page, testID },
   component: string,
-  size: string = 'Small'
+  size: string = "Small"
 ) => {
   // click the add component button
-  await page.getByTestId('add-component-button').first().click();
+  await page.getByTestId("add-component-button").first().click();
 
   // select the component type
   await page.getByTestId(`component-option-${component}`).click();
@@ -18,11 +17,11 @@ export const addComponent = async (
   await page.getByText(size).click();
 
   // enter the title
-  await page.getByRole('textbox').fill(testID);
+  await page.getByRole("textbox").fill(testID);
 
   // click the add component button
-  await page.getByTestId('confirm-add-component-button').click();
-}
+  await page.getByTestId("confirm-add-component-button").click();
+};
 
 export const addComponentFilter = async (
   {page},
@@ -57,19 +56,19 @@ export const addComponentFilter = async (
   await page.getByTestId('apply-filter-button').click();
 }
 
-export const deleteFirstComponent = async ({page}) => {
+export const deleteFirstComponent = async ({ page }) => {
   // click show edit buttons button
-  await page.getByTestId('edit-zone-button').first().click();
+  await page.getByTestId("edit-zone-button").first().click();
 
   // click the edit/move components button
-  await page.getByTestId('drag-components-button').first().click();
+  await page.getByTestId("drag-components-button").first().click();
 
   // click the delete button
-  await page.getByTestId('delete-component-button').first().click();
+  await page.getByTestId("delete-component-button").click();
 
   // confirm the delete
-  await page.getByTestId('confirm-delete-button').click();
+  await page.getByTestId("confirm-delete-button").click();
 
   // click the save button
-  await page.getByTestId('save-layout-button').click();
+  await page.getByTestId("save-layout-button").click();
 };
