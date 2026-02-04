@@ -17,3 +17,4 @@ export * from "./FilterTextInput";
 export * from "./FilterToggle";
 export * from "./RemoteFilters";
 export * from "./utils";
+export * from "./AttributeFilters";

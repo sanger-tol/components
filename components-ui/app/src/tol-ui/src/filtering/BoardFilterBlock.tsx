@@ -11,26 +11,23 @@ import {
   useBoardPrivilege,
   PRIVILEGE,
   PVisualisation,
-  PFilterBlock,
-  FilterBlock,
   FilterBlockConfigDrawer,
   updateConfigAndUpsert,
   upsertComponent,
   IFilter,
-  deepCopy,
-  resetFiltersBelow,
   Placeholder,
-  Icon
+  Icon,
+  AttributeFilters
 } from "..";
 
 export interface PBoardFilterBlock extends PVisualisation {
-  config: PFilterBlock
+  config: {attributes: string[]};
 }
 
 export function BoardFilterBlock(props: PBoardFilterBlock) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, config, zone, setZone } = props;
   const [open, setOpen] = useState(false);
-  const [filterBlockConfig, setFilterBlockConfig] = useState<PFilterBlock>(config);
+  const [filterBlockConfig, setFilterBlockConfig] = useState<{attributes: string[]}>(config);
   const [currentFilterValues, setCurrentFilterValues] = useState<IFilter | undefined>();
   const { privilege } = useBoardPrivilege();
 
@@ -43,65 +40,22 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
     visible: privilege == PRIVILEGE.BOARD.EDITABLE,
   }
 
-  const onConfigSave = (updatedConfig: PFilterBlock) => {
-    setFilterBlockConfig({ ...updatedConfig });
+  const onConfigSave = (updatedConfig: string[]) => {
+    setFilterBlockConfig({ attributes: updatedConfig });
     updateConfigAndUpsert(
       id,
-      { ...updatedConfig },
+      { attributes: updatedConfig },
       zone,
       boardDataSource
     )
   };
 
-
-  // This useEffect is a slim version of the BoardFilters logic to track filter changes and upsert them
-  // Exists because the filterBlock does not have filters applied to it, but is the filter itself
   useEffect(() => {
-    const componentData = zone.components[id]?.data;
-    if (!componentData) return;
-
-    let newFilterValues = deepCopy(componentData.filter);
-    const defaultFilters = deepCopy(zone.defaultFilter);
-
-    // Remove any filter attributes that are no longer in the filterBlockConfig (including defaults)
-    const configuredAttributes = filterBlockConfig.filters?.attributes || {};
-    const validAttributeKeys = Object.keys(configuredAttributes).map(key => configuredAttributes[key].attribute);
-    const defaultFilterKeys = Object.keys(defaultFilters?.and_ || {});
-    if (newFilterValues?.and_) {
-      newFilterValues.and_ = Object.fromEntries(
-        Object.entries(newFilterValues.and_).filter(([key]) => 
-          validAttributeKeys.includes(key) && !defaultFilterKeys.includes(key)
-        )
-      );
-    }
-
-    // Check if filter has changed
-    const filterChanged = JSON.stringify(newFilterValues) !== JSON.stringify(currentFilterValues);
-
-    // Update the zone with cleaned filter values to trigger re-render
-    if (filterChanged && zone.components[id]?.data) {
-      zone.components[id].data.filter = newFilterValues;
-    }
-
-    if (filterChanged) {
-      // If filter has changed, reset filters below and upsert
-      // Reset filters below this component when the filter changes
-      resetFiltersBelow({ id: id, zone: zone });
-      setZone({ ...zone });
-
-      let attributes = {
-        filter: newFilterValues,
-      };
-
-      upsertComponent(boardDataSource, id, attributes);
-
-      setCurrentFilterValues(newFilterValues);
-    }
-  }, [zone, filterBlockConfig]);
-
+    upsertComponent(boardDataSource, id, { filter: currentFilterValues })
+  }, [currentFilterValues]);
 
   const Contents = () => {
-    if (filterBlockConfig.filters && Object.keys(filterBlockConfig.filters.attributes).length === 0) {
+    if (filterBlockConfig && filterBlockConfig.attributes.length === 0) {
       return (
         <div style={{ height: '60%' }}>
           <Placeholder
@@ -131,14 +85,16 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
         open={open}
         setOpen={setOpen}
         title="Filter Configuration"
-        filterBlockConfig={filterBlockConfig}
+        filterBlockConfig={filterBlockConfig.attributes}
         onConfigSave={onConfigSave}
         {...props}
       />
-      <FilterBlock
+      <AttributeFilters
         {...props}
-        filters={filterBlockConfig.filters || { order: [], attributes: {} }}
-        contents={Contents()}
+        // contents={Contents()}
+        attributes={filterBlockConfig.attributes || []}
+        componentId={id}
+        setFilters={setCurrentFilterValues}
         utilityBarConfig={{
           ...utilityBarConfig,
           title: {
@@ -151,6 +107,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
           buttons: [configButton],
         }}
       />
+      <Contents />
     </>
   );
 }

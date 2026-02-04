@@ -11,7 +11,6 @@ import {
   SelectedAttributesContainer,
   IRemoteTarget,
   deepCopy,
-  PFilterBlock,
 } from "..";
 
 
@@ -21,9 +20,9 @@ export interface PFilterBlockConfigDrawer extends IRemoteTarget {
   title: string;
   displaySource?: boolean;
   sticky?: boolean;
-  filterBlockConfig: PFilterBlock;
+  filterBlockConfig: string[];
   customAttributeSelection?: string[];
-  onConfigSave: (config: PFilterBlock) => void;
+  onConfigSave: (config: string[]) => void;
   id: string;
 }
 
@@ -35,39 +34,27 @@ export function FilterBlockConfigDrawer(props: PFilterBlockConfigDrawer) {
     onConfigSave,
     customAttributeSelection,
     filterBlockConfig,
-    id
   } = props;
 
-  const [newFilterBlockConfig, setNewFilterBlockConfig] = useState<PFilterBlock>();
+  const [newFilterBlockConfig, setNewFilterBlockConfig] = useState<string[]>();
   const [attributes, setAttributes] = useState<string[]>([]);
-  const [attributeMeta, setAttributeMeta] = useState<any>(null);
 
   const hasPendingChanges = (
     JSON.stringify(newFilterBlockConfig) !== JSON.stringify(filterBlockConfig) ||
-    JSON.stringify(attributes) !== JSON.stringify(newFilterBlockConfig?.filters?.order)
+    JSON.stringify(attributes) !== JSON.stringify(newFilterBlockConfig)
   );
 
   useEffect(() => {
-    setAttributes(filterBlockConfig.filters?.order || []);
+    setAttributes(filterBlockConfig || []);
     setNewFilterBlockConfig(deepCopy(filterBlockConfig));
   }, [open]);
 
   const onSave = () => {
     if (hasPendingChanges) {
-      if (!newFilterBlockConfig!.filters) {
-        newFilterBlockConfig!.filters = { order: [], attributes: {} };
+      if (!newFilterBlockConfig) {
+        setNewFilterBlockConfig([]);
       }
-      newFilterBlockConfig!.filters.order = attributes;
-      newFilterBlockConfig!.filters.attributes = attributes.reduce((acc, attribute) => {
-        acc[attribute] = {
-          componentId: id,
-          attribute: attribute,
-          rename: attributeMeta[attribute]?.display_name || attribute,
-          type: attributeMeta[attribute]?.python_type || "str",
-        };
-        return acc;
-      }, {} as { [attributeName: string]: any });
-      onConfigSave(newFilterBlockConfig!);
+      onConfigSave(attributes);
     }
   };
 
@@ -84,7 +71,6 @@ export function FilterBlockConfigDrawer(props: PFilterBlockConfigDrawer) {
           placeholder="Select filters to display..."
           attribute={attributes}
           setAttributes={setAttributes}
-          setAttributeMeta={setAttributeMeta}
           disabledValues={null}
           numPopulatedFields={0}
           populatedFieldType={"column"}
