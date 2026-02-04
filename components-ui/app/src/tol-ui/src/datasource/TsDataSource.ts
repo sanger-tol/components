@@ -679,8 +679,13 @@ export class TsDataSource {
 export function getFieldByName(object: TDataObjectOrNull, field: string): any {
   if (field.includes(".")) {
     const [relationship, ...rest] = field.split(".");
-    const relationshipObject = object?.relationships?.[relationship];
+    const relationshipObject = object?.relationships?.[relationship];   
     if (relationshipObject) {
+      if (Array.isArray(relationshipObject)) {
+        return relationshipObject.map((item) =>
+          getFieldByName(item, rest.join("."))
+        );
+      }
       return getFieldByName(relationshipObject, rest.join("."));
     }
   }
