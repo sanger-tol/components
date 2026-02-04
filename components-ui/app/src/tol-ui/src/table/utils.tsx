@@ -123,13 +123,6 @@ export function convertTableData(
 }
 
 function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
-  // relationship ids have relationship boxes by default
-  const splitKey = key.split(".");
-  //removing relationship id renderer as it breaks to-many relationships
-  // if (isRelationship(key) && splitKey[splitKey.length - 1] === "id") {
-  //   return { type: "relationship" };
-  // }
-
   switch (type) {
     case "datetime":
       return { type: "datetime" };
