@@ -17,7 +17,7 @@ import {
   IFilter,
   Placeholder,
   Icon,
-  AttributeFilters
+  RemoteFilters
 } from "..";
 
 export interface PBoardFilterBlock extends PVisualisation {
@@ -25,7 +25,7 @@ export interface PBoardFilterBlock extends PVisualisation {
 }
 
 export function BoardFilterBlock(props: PBoardFilterBlock) {
-  const { id, utilityBarConfig, boardObjectType, boardDataSource, config, zone, setZone } = props;
+  const { id, utilityBarConfig, boardObjectType, boardDataSource, config, zone } = props;
   const [open, setOpen] = useState(false);
   const [filterBlockConfig, setFilterBlockConfig] = useState<{attributes: string[]}>(config);
   const [currentFilterValues, setCurrentFilterValues] = useState<IFilter | undefined>();
@@ -55,7 +55,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
   }, [currentFilterValues]);
 
   const Contents = () => {
-    if (filterBlockConfig && filterBlockConfig.attributes.length === 0) {
+    if (!filterBlockConfig.attributes || filterBlockConfig.attributes.length === 0) {
       return (
         <div style={{ height: '60%' }}>
           <Placeholder
@@ -89,9 +89,9 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
         onConfigSave={onConfigSave}
         {...props}
       />
-      <AttributeFilters
+      <RemoteFilters
         {...props}
-        // contents={Contents()}
+        customClassname="tol-block-filter-col"
         attributes={filterBlockConfig.attributes || []}
         componentId={id}
         setFilters={setCurrentFilterValues}
