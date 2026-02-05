@@ -14,8 +14,8 @@ import {
 export function Datetime(props: PCell) {
   const { value } = props;
 
-  const dateValue = Array.isArray(value) ? value[0] : value;
-  const date = new Date(dateValue!);
+  //const dateValue = Array.isArray(value) ? value[0] : value;
+  const date = new Date(value!);
   if (isNaN(date.getTime())) return null;
   
   const dateText = format(date, "dd/MM/yyyy");
