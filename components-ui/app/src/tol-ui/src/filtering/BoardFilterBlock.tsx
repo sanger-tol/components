@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   saveTitle,
   PButton,
@@ -13,8 +13,6 @@ import {
   PVisualisation,
   FilterBlockConfigDrawer,
   updateConfigAndUpsert,
-  upsertComponent,
-  IFilter,
   Placeholder,
   Icon,
   RemoteFilters
@@ -28,7 +26,6 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, config, zone } = props;
   const [open, setOpen] = useState(false);
   const [filterBlockConfig, setFilterBlockConfig] = useState<{attributes: string[]}>(config);
-  const [currentFilterValues, setCurrentFilterValues] = useState<IFilter | undefined>();
   const { privilege } = useBoardPrivilege();
 
   const configButton: PButton = {
@@ -49,10 +46,6 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
       boardDataSource
     )
   };
-
-  useEffect(() => {
-    upsertComponent(boardDataSource, id, { filter: currentFilterValues })
-  }, [currentFilterValues]);
 
   const Contents = () => {
     if (!filterBlockConfig.attributes || filterBlockConfig.attributes.length === 0) {
@@ -94,7 +87,6 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
         customClassname="tol-block-filter-col"
         attributes={filterBlockConfig.attributes || []}
         componentId={id}
-        setFilters={setCurrentFilterValues}
         utilityBarConfig={{
           ...utilityBarConfig,
           title: {

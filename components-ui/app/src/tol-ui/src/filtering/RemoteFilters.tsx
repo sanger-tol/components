@@ -7,8 +7,6 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import {
   Filter,
-  IFilter,
-  TFilterOrUndefined,
   IRemoteTargetAndZone,
   PUtilityBar,
   UtilityBar,
@@ -18,14 +16,6 @@ import {
 } from "..";
 
 export interface PRemoteFilters extends IRemoteTargetAndZone {
-  /**
-   * Optional initial filters applied to the component; defaults to an empty filter
-   */
-  filters?: IFilter;
-  /**
-   * State setter for updating the active filters in the parent component
-   */
-  setFilters: (filters: TFilterOrUndefined) => void;
   /**
    * Optional array of filter values to disable in the field selction UI
    */

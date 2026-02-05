@@ -43,21 +43,21 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   } = props;
 
   // the fixed filter present on the component
-  const [filters, setFilters] = useState(
+  const [prevFilters, setFilters] = useState(
     deepCopy(
       boardObjectType === "zone"
         ? zone.defaultFilter
         : zone.components[id].data.defaultFilter,
     ),
   );
-  const [attributes, setAttributes] = useState<string[]>(Object.keys(filters.and_ || {}));
+  const [attributes, setAttributes] = useState<string[]>(Object.keys(prevFilters.and_ || {}));
   const [passThrough, setPassThrough] = useState<boolean>(false);
   const [filterHasPendingChanges, setFilterHasPendingChanges] = useState(false);
   // Local state for the filter zone if this is a zone level filter, otherwise use the passed zone/setZone
   const zoneFilterId = "filter-zone-component";
   const [filterZone, setFilterZone] = useState<IZone>(
     defineZone("dummy-object-for-remote-filters", [
-      { id: zoneFilterId, filter: filters },
+      { id: zoneFilterId, filter: prevFilters },
     ]),
   );
 
@@ -79,7 +79,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setDisabledFilterValues(
       removeCurrentEntityFiltersForDisabledFilters(
         generateFilter(zone, id, true)?.and_!,
-        filters?.and_!,
+        prevFilters?.and_!,
       ),
     );
     setPassThrough(
@@ -98,7 +98,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     }
     setFilters(newFilter);
     setFilterHasPendingChanges(
-      JSON.stringify(newFilter) !== JSON.stringify(filters),
+      JSON.stringify(newFilter) !== JSON.stringify(prevFilters),
     );
   }, [zone, filterZone]);
 
@@ -116,7 +116,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   const [disabledFilterValues, setDisabledFilterValues] = useState(
     removeCurrentEntityFiltersForDisabledFilters(
       generateFilter(zone, undefined, true)?.and_!,
-      filters?.and_!,
+      prevFilters?.and_!,
     ),
   );
 
@@ -168,13 +168,8 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
 
   // Element to be passed to each remote filter to allow for individual removal of filters
   const removeCross = ({ attribute }: { attribute: string }) => (
-    < span
-      className="remove-filter-button"
-      onClick={() => { removeFilter(attribute) }}
-    >
-      <Icon icon="close" />
-    </span >
-  )
+    <Icon icon="close" onClick={() => { removeFilter(attribute) }} className="remove-filter-button" />
+  );
 
   const PLACEHOLDER = "No filters applied, click here to add...";
   const TOOLTIP_CONTENT =
@@ -186,7 +181,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         title={`Filtering on a ${objectType} ${boardObjectType}`}
         open={open}
         setOpen={setOpen}
-        onSave={() => onSave(filters, passThrough)}
+        onSave={() => onSave(prevFilters, passThrough)}
         hasPendingChanges={hasPendingChanges}
         onSaveTestId="apply-filter-button"
       >
@@ -234,9 +229,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           zone={boardObjectType == "zone" ? filterZone : zone}
           setZone={boardObjectType == "zone" ? setFilterZone : setZone}
           componentId={boardObjectType == "zone" ? zoneFilterId : id}
-          filters={filters}
           attributes={attributes}
-          setFilters={setFilters}
           disabledFilterValues={disabledFilterValues}
           setHasPendingChanges={setFilterHasPendingChanges}
           ExtraElement={removeCross}
