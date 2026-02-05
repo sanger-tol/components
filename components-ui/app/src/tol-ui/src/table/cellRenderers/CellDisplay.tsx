@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import {
   Boolean,
-  Collection,
   Datetime,
   Float,
   Image,
@@ -18,7 +17,9 @@ import {
   getCellRendererPropValue,
   Icon,
   TrafficLightStatus,
-  PCell
+  PCell,
+  ListItem,
+  Collection
 } from "../..";
 
 
@@ -62,17 +63,25 @@ export function CellDisplay(props: PCell) {
       getCellRendererPropValue(prop, value, elementProps, dataObject);
     });
   }
-  // const valueArray = NORMALISE valueArray as an array
-  const valueArray = Array.isArray(value) ? value : [value];  
 
-  console.log(valueArray);
+  const collectElements = () => {
+    if (Array.isArray(value)) {
+      return value.map((val) => (
+        <ListItem
+          key={val}
+          value={
+            <renderer.element {...elementProps} value={val} />
+          }
+        />
+      ));
+    }
+    return <renderer.element {...elementProps} />;
+  }
+
+  console.log(value);
   return (
     <>
-      {/* Map over renderer.element with v in valueArray */}
-      {valueArray.map((v, index) => (
-        <renderer.element key={index} {...elementProps} value={v ? v : ""} />
-      ))}
-      <renderer.element {...elementProps} />
+      {collectElements()}
       {Array.isArray(value) && value.length > 1 && renderer.type === "image" &&
         <Icon
           icon={expanded ? "caret-up" : "caret-down"}
