@@ -75,7 +75,7 @@ function addValueBasedCellRenderer(
   meta: Field,
 ) {
   if (value) {
-    if (Array.isArray(value) || typeof value === "object") {
+    if (typeof value === "object") {
       meta.cellRenderer = { type: "collection" };
     } else if (value.length > 32) {
       meta.cellRenderer = { type: "expander" };

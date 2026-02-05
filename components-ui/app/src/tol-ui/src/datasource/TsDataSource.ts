@@ -687,14 +687,6 @@ export function getFieldByName(object: TDataObjectOrNull, field: string): any {
         );
       }
       return getFieldByName(relationshipObject, rest.join("."));
-      
-
-
-
-
-
-
-
 
       //const items = Array.isArray(relationshipObject) ? relationshipObject : [relationshipObject];
       //return items.map((item) => getFieldByName(item, rest.join(".")));
