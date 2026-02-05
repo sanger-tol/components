@@ -325,6 +325,14 @@
   display: inline;
 }
 
+.tol-attribute-tooltip-divider {
+  width: 100%;
+  height: 10px;
+  margin: 6px 0;
+  color: red !important;
+  fill: var(--tol-text);
+}
+
 .tol-field-dropdown {
   position: absolute;
   top: 7px;

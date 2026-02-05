@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { API_METHODS, numberWithSpaces, IRemoteTarget } from "..";
 
 interface PAttributeStatsBox extends IRemoteTarget {
@@ -18,7 +18,6 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
   const [stats, setStats] = useState<Record<string, number> | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
   const [statsError, setStatsError] = useState<string>("");
-  const [statsExpanded, setStatsExpanded] = useState(false);
   const isMountedRef = useRef(true);
 
   const statsKeys = useMemo(() => ["min", "max", "avg", "sum"], []);
@@ -29,7 +28,6 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
     setStats(null);
     setStatsLoading(false);
     setStatsError("");
-    setStatsExpanded(false);
 
     dataSource.getEntityMeta().then((meta) => {
       const attribute = meta.flatAttributes[objectType][field];
@@ -44,9 +42,10 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
     };
   }, [dataSource, field, objectType]);
 
-  const fetchStats = () => {
-    if (!isNumeric || statsLoading || stats || statsError) return;
+  const fetchStats = useCallback(() => {
+    if (!isNumeric || statsLoading || stats) return;
 
+    setStatsError("");
     setStatsLoading(true);
     dataSource.custom({
       method: API_METHODS.GET,
@@ -73,7 +72,20 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
         if (!isMountedRef.current) return;
         setStatsLoading(false);
       });
-  };
+  }, [
+    dataSource,
+    field,
+    isNumeric,
+    objectType,
+    stats,
+    statsKeys,
+    statsLoading,
+  ]);
+
+  useEffect(() => {
+    if (!isNumeric) return;
+    fetchStats();
+  }, [fetchStats, isNumeric]);
 
   const statsContents = useMemo(() => {
     if (!isNumeric) return null;
@@ -126,14 +138,6 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
 
   if (!isNumeric) return null;
 
-  const statsBoxLabel = statsLoading
-    ? "Loading..."
-    : statsError
-      ? "Retry"
-      : statsExpanded
-        ? "Hide"
-        : "Click to view";
-
   return (
     <div
       className="tol-attribute-tooltip-stats-box"
@@ -143,33 +147,20 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
         borderRadius: "0px",
         background: "var(--tol-overlay)",
       }}
-      aria-expanded={statsExpanded}
     >
-      <div
-        className="tol-attribute-tooltip-stats-header"
-        onClick={(event) => {
-          event.stopPropagation();
-          if (!stats) fetchStats();
-          setStatsExpanded((prev) => !prev);
-        }}
-        style={{ cursor: "pointer" }}
-        role="button"
-      >
+      <div className="tol-attribute-tooltip-stats-header">
         <span className="tooltip-key">Statistics (Global)</span>
-        <span className="tooltip-value">{statsBoxLabel}</span>
       </div>
-      {statsExpanded && (
-        <div
-          onClick={(event) => event.stopPropagation()}
-          style={{
-            marginTop: "4px",
-            paddingLeft: "8px",
-            borderLeft: "2px solid var(--tol-border)",
-          }}
-        >
-          {statsContents}
-        </div>
-      )}
+      <div
+        onClick={(event) => event.stopPropagation()}
+        style={{
+          marginTop: "4px",
+          paddingLeft: "8px",
+          borderLeft: "2px solid var(--tol-border)",
+        }}
+      >
+        {statsContents}
+      </div>
     </div>
   );
 }

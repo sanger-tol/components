@@ -58,6 +58,7 @@ export function AttributeTooltip(props: PAttributeTooltip) {
   const tooltipContents = (
     <div>
       {Tooltip}
+      <div className="tol-attribute-tooltip-divider" />
       <AttributeStatsBox {...props} />
     </div>
   );
