@@ -68,18 +68,15 @@ export function RemoteFilters(props: PRemoteFilters) {
   const {
     objectType,
     dataSource,
-    filters = { and_: {} },
-    setFilters,
-    setHasPendingChanges,
     zone,
     setZone,
     componentId,
     attributes,
     customClassname,
+    utilityBarConfig,
     ExtraElement
   } = props;
 
-  const [initialFilters, setInitialFilters] = useState<IFilter>(deepCopy(filters));
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
 
@@ -89,24 +86,13 @@ export function RemoteFilters(props: PRemoteFilters) {
       setEntityMeta(em);
       setLoading(false);
     });
-    setInitialFilters(deepCopy(filters));
   }, []);
-
-  useEffect(() => {
-    const newFilter = generateFilter(zone, componentId);
-    setFilters(newFilter);
-    if (setHasPendingChanges) {
-      setHasPendingChanges(
-        JSON.stringify(newFilter) !== JSON.stringify(initialFilters),
-      );
-    }
-  }, [zone]);
 
   if (loading) return <></>;
 
   return (
     <div>
-      {props.utilityBarConfig && <UtilityBar {...props.utilityBarConfig} />}
+      {utilityBarConfig && <UtilityBar {...utilityBarConfig} />}
       <Row>
         {attributes.map((attribute) => {
           const attributeMeta =

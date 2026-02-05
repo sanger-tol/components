@@ -89,6 +89,19 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     );
   }, [open]);
 
+  useEffect(() => {
+    let newFilter
+    if (boardObjectType !== "zone") {
+      newFilter = generateFilter(zone, id);
+    } else {
+      newFilter = generateFilter(filterZone, zoneFilterId);
+    }
+    setFilters(newFilter);
+    setFilterHasPendingChanges(
+      JSON.stringify(newFilter) !== JSON.stringify(filters),
+    );
+  }, [zone, filterZone]);
+
   const removeCurrentEntityFiltersForDisabledFilters = (
     source: object = {},
     remove?: object,
