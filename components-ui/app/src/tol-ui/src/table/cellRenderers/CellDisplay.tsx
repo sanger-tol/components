@@ -62,9 +62,16 @@ export function CellDisplay(props: PCell) {
       getCellRendererPropValue(prop, value, elementProps, dataObject);
     });
   }
+  // const valueArray = NORMALISE valueArray as an array
+  const valueArray = Array.isArray(value) ? value : [value];  
 
+  console.log(valueArray);
   return (
     <>
+      {/* Map over renderer.element with v in valueArray */}
+      {valueArray.map((v, index) => (
+        <renderer.element key={index} {...elementProps} value={v ? v : ""} />
+      ))}
       <renderer.element {...elementProps} />
       {Array.isArray(value) && value.length > 1 && renderer.type === "image" &&
         <Icon
