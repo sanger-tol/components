@@ -118,28 +118,26 @@ export function RemoteFilters(props: PRemoteFilters) {
               : attributeMeta?.python_type;
 
           return (
-            <>
-              <Col key={attribute} className={customClassname}>
-                <AttributeTitle attributeId={attribute} objectType={objectType} dataSource={dataSource} className="tol-attribute-filter-title" />
-                <div className="tol-remote-filters-container">
-                  <div className="tol-remote-filters-filter">
-                    <Filter
-                      key={`filter-${attribute}`}
-                      attribute={attribute}
-                      rename={attributeMeta?.display_name}
-                      type={type}
-                      componentId={componentId}
-                      objectType={objectType}
-                      dataSource={dataSource}
-                      zone={zone}
-                      setZone={setZone}
-                      delay={0}
-                    />
-                  </div>
-                  {ExtraElement && <ExtraElement attribute={attribute} />}
+            <Col key={attribute} className={customClassname}>
+              <AttributeTitle attributeId={attribute} objectType={objectType} dataSource={dataSource} className="tol-attribute-filter-title" />
+              <div className="tol-remote-filters-container">
+                <div className="tol-remote-filters-filter">
+                  <Filter
+                    key={`filter-${attribute}`}
+                    attribute={attribute}
+                    rename={attributeMeta?.display_name}
+                    type={type}
+                    componentId={componentId}
+                    objectType={objectType}
+                    dataSource={dataSource}
+                    zone={zone}
+                    setZone={setZone}
+                    delay={0}
+                  />
                 </div>
-              </Col>
-            </>
+                {ExtraElement && <ExtraElement attribute={attribute} />}
+              </div>
+            </Col>
           );
         })}
       </Row>
