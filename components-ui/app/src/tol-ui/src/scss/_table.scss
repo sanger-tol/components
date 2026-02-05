@@ -327,10 +327,53 @@
 
 .tol-attribute-tooltip-divider {
   width: 100%;
-  height: 10px;
+  height: 0;
   margin: 6px 0;
-  color: red !important;
-  fill: var(--tol-text);
+  border-top: 1px solid var(--tol-border);
+}
+
+.tol-attribute-tooltip-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.tol-attribute-tooltip-stat-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  color: var(--tol-light);
+  font-weight: normal;
+  font-size: 12px;
+}
+
+.tol-attribute-tooltip-stat-label {
+  letter-spacing: 0.2px;
+}
+
+.tol-attribute-tooltip-stat-value {
+  font-weight: normal;
+}
+
+.tol-attribute-tooltip-stat-card--min {
+  background-color: var(--tol-success-dark);
+}
+
+.tol-attribute-tooltip-stat-card--max {
+  background-color: var(--tol-danger-dark);
+}
+
+.tol-attribute-tooltip-stat-card--avg {
+  background-color: var(--tol-info-dark);
+}
+
+.tol-attribute-tooltip-stat-card--sum {
+  background-color: var(--tol-royal-dark);
 }
 
 .tol-field-dropdown {

@@ -103,10 +103,18 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
     }
 
     const labels: Record<string, string> = {
-      min: "Minimum",
-      max: "Maximum",
-      avg: "Average",
+      min: "Min",
+      max: "Max",
+      avg: "Mean",
       sum: "Sum",
+    };
+
+    const order = ["min", "max", "avg", "sum"] as const;
+    const classByKey: Record<(typeof order)[number], string> = {
+      min: "tol-attribute-tooltip-stat-card--min",
+      max: "tol-attribute-tooltip-stat-card--max",
+      avg: "tol-attribute-tooltip-stat-card--avg",
+      sum: "tol-attribute-tooltip-stat-card--sum",
     };
 
     const formatStatValue = (value: number) => {
@@ -117,8 +125,8 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
     };
 
     return (
-      <div className="tol-attribute-tooltip-stats">
-        {statsKeys.map((key) => {
+      <div className="tol-attribute-tooltip-stats-grid">
+        {order.map((key) => {
           const rawValue = stats[key];
           const displayValue =
             rawValue === undefined || rawValue === null || Number.isNaN(Number(rawValue))
@@ -126,9 +134,12 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
               : formatStatValue(Number(rawValue));
 
           return (
-            <div key={key} className="tol-attribute-tooltip-stat">
-              <span className="tooltip-key">{labels[key]}:</span>
-              <span className="tooltip-value">{displayValue}</span>
+            <div
+              key={key}
+              className={`tol-attribute-tooltip-stat-card ${classByKey[key]}`}
+            >
+              <span className="tol-attribute-tooltip-stat-label">{labels[key]}</span>
+              <span className="tol-attribute-tooltip-stat-value">{displayValue}</span>
             </div>
           );
         })}
@@ -145,7 +156,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
         marginTop: "0px",
         padding: "0px 6px",
         borderRadius: "0px",
-        background: "var(--tol-overlay)",
+        background: "var(--tol-grey-translucent)",
       }}
     >
       <div className="tol-attribute-tooltip-stats-header">
@@ -155,8 +166,6 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
         onClick={(event) => event.stopPropagation()}
         style={{
           marginTop: "4px",
-          paddingLeft: "8px",
-          borderLeft: "2px solid var(--tol-border)",
         }}
       >
         {statsContents}
