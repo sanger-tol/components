@@ -295,11 +295,6 @@
     display: inline-block;
     width: calc(100% - 22px);
   }
-
-  .remove-filter-button {
-    margin-left: 10px;
-    cursor: pointer;
-  }
 }
 
 .pass-through-toggle {
@@ -325,4 +320,29 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-bottom: auto;
+}
+
+.tol-filter-config-remote-filter {
+  display: block;
+  min-width: max-content;
+}
+
+.tol-remote-filters-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .remove-filter-button {
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  .remove-filter-button:hover {
+    color: var(--tol-danger);
+  }
+}
+
+.tol-remote-filters-filter {
+  flex: 1;
 }

@@ -18,7 +18,9 @@ import {
   deepCopy,
   IFilter,
   AttributeSelector,
-  Icon
+  Icon,
+  defineZone,
+  IZone
 } from ".."
 
 
@@ -51,6 +53,13 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   const [attributes, setAttributes] = useState<string[]>(Object.keys(filters.and_ || {}));
   const [passThrough, setPassThrough] = useState<boolean>(false);
   const [filterHasPendingChanges, setFilterHasPendingChanges] = useState(false);
+  // Local state for the filter zone if this is a zone level filter, otherwise use the passed zone/setZone
+  const zoneFilterId = "filter-zone-component";
+  const [filterZone, setFilterZone] = useState<IZone>(
+    defineZone("dummy-object-for-remote-filters", [
+      { id: zoneFilterId, filter: filters },
+    ]),
+  );
 
   const hasPendingChanges = (
     filterHasPendingChanges ||
@@ -120,26 +129,28 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
 
   // Function passed to attribute selector to remove all filters
   const onClean = () => {
-    if (zone.components[id].data.filter) {
-      zone.components[id].data.filter.and_ = {};
-    }
-    if (zone.components[id].data.defaultFilter) {
-      zone.components[id].data.defaultFilter.and_ = {};
+    if (boardObjectType === "zone") {
+      zone.filter = { and_: {} };
+      zone.defaultFilter = { and_: {} };
+    } else {
+      if (zone.components[id].data.filter) {
+        zone.components[id].data.filter.and_ = {};
+      }
+      if (zone.components[id].data.defaultFilter) {
+        zone.components[id].data.defaultFilter.and_ = {};
+      }
     }
     setZone({ ...zone });
   };
 
   const removeFilter = (attribute: string) => {
-    // update the zone state which builds the filter ready for the api
-    if (boardObjectType !== "zone" && zone.components[id].data.filter?.and_?.[attribute]) {
-      const updatedComponents = { ...zone.components };
-      delete updatedComponents[id].data.filter?.and_?.[attribute];
-      setZone({
-        ...zone,
-        components: updatedComponents,
-      });
-    }
     setAttributes(attributes.filter((str) => str !== attribute));
+    setFilters((prev) => {
+      const updatedFilter = deepCopy(prev);
+      delete updatedFilter.and_?.[attribute];
+      return updatedFilter;
+    });
+    setFilterHasPendingChanges(true);
   };
 
   // Element to be passed to each remote filter to allow for individual removal of filters
@@ -207,12 +218,16 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         }
         <RemoteFilters
           {...props}
+          zone={boardObjectType == "zone" ? filterZone : zone}
+          setZone={boardObjectType == "zone" ? setFilterZone : setZone}
+          componentId={boardObjectType == "zone" ? zoneFilterId : id}
           filters={filters}
           attributes={attributes}
           setFilters={setFilters}
           disabledFilterValues={disabledFilterValues}
           setHasPendingChanges={setFilterHasPendingChanges}
           ExtraElement={removeCross}
+          customClassname={"tol-filter-config-remote-filter"}
         />
       </Drawer>
     </div>

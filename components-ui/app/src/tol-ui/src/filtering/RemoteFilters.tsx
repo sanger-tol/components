@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
-  IZone,
-  defineZone,
   Filter,
   IFilter,
   generateFilter,
@@ -45,7 +43,7 @@ export interface PRemoteFilters extends IRemoteTargetAndZone {
   /**
    * Optional unique identifier for the component within the zone
    */
-  componentId?: string;
+  componentId: string;
   /**
    * Array of attributes used as the filters
    */
@@ -82,24 +80,8 @@ export function RemoteFilters(props: PRemoteFilters) {
   } = props;
 
   const [initialFilters, setInitialFilters] = useState<IFilter>(deepCopy(filters));
-
-  // zone component id pointer
-  const filterComponentId = componentId || "remote-filters-component";
-
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
-
-  // repurposed zone so filters correctly interact with the state
-  const [filterZone, setFilterZone] = useState<IZone>(
-    defineZone("dummy-object-for-remote-filters", [
-      { id: filterComponentId, filter: filters },
-    ]),
-  );
-
-  // Use passed zone/setZone only if componentId is also defined, otherwise use local state
-  // Could have used useStateFallback here but this logic required the additional check with componentId
-  const activeZone = (zone && componentId) ? zone : filterZone;
-  const activeSetZone = (componentId) ? setZone : setFilterZone;
 
 
   useEffect(() => {
@@ -111,20 +93,20 @@ export function RemoteFilters(props: PRemoteFilters) {
   }, []);
 
   useEffect(() => {
-    const newFilter = generateFilter(activeZone, filterComponentId);
+    const newFilter = generateFilter(zone, componentId);
     setFilters(newFilter);
     if (setHasPendingChanges) {
       setHasPendingChanges(
         JSON.stringify(newFilter) !== JSON.stringify(initialFilters),
       );
     }
-  }, [activeZone]);
+  }, [zone]);
 
   if (loading) return <></>;
 
   return (
     <div>
-      <UtilityBar {...props.utilityBarConfig} />
+      {props.utilityBarConfig && <UtilityBar {...props.utilityBarConfig} />}
       <Row>
         {attributes.map((attribute) => {
           const attributeMeta =
@@ -139,22 +121,24 @@ export function RemoteFilters(props: PRemoteFilters) {
             <>
               <Col key={attribute} className={customClassname}>
                 <AttributeTitle attributeId={attribute} objectType={objectType} dataSource={dataSource} className="tol-attribute-filter-title" />
-                <div>
-                  <Filter
-                    key={`filter-${attribute}`}
-                    attribute={attribute}
-                    rename={attributeMeta?.display_name}
-                    type={type}
-                    componentId={filterComponentId}
-                    objectType={objectType}
-                    dataSource={dataSource}
-                    zone={activeZone}
-                    setZone={activeSetZone}
-                    delay={0}
-                  />
+                <div className="tol-remote-filters-container">
+                  <div className="tol-remote-filters-filter">
+                    <Filter
+                      key={`filter-${attribute}`}
+                      attribute={attribute}
+                      rename={attributeMeta?.display_name}
+                      type={type}
+                      componentId={componentId}
+                      objectType={objectType}
+                      dataSource={dataSource}
+                      zone={zone}
+                      setZone={setZone}
+                      delay={0}
+                    />
+                  </div>
+                  {ExtraElement && <ExtraElement attribute={attribute} />}
                 </div>
               </Col>
-              {ExtraElement && <ExtraElement attribute={attribute} />}
             </>
           );
         })}
