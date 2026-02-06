@@ -21,10 +21,6 @@ export interface PRemoteFilters extends IRemoteTargetAndZone {
    */
   disabledFilterValues?: any;
   /**
-   * Optional state setter for the parent component to indicate whether there are any pending filter changes
-   */
-  setHasPendingChanges?: (hasPendingChanges: boolean) => void;
-  /**
    * Optional utility bar configuration (includes title, buttons, etc.)
    */
   utilityBarConfig?: PUtilityBar;
