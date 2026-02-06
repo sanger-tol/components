@@ -8,7 +8,7 @@ import { expect, test, describe, vitest } from "vitest";
 import "@testing-library/jest-dom";
 
 // Mock the getFieldByName function from utils.tsx
-vitest.mock("../../tol-ui/src/table/utils", async(importOriginal) => {
+vitest.mock("../../../tol-ui/src/table/utils", async(importOriginal) => {
   const actual = await importOriginal(); 
   return {
     ...actual,
@@ -21,7 +21,7 @@ vitest.mock("../../tol-ui/src/table/utils", async(importOriginal) => {
 // Have to import after the mock to ensure the mock is applied
 import {
   processConditionToBoolean,
-} from "../../tol-ui/src";
+} from "../../../tol-ui/src";
 
 describe("Testing processConditionToBoolean function", () => {
   test("in_list True", () => {
