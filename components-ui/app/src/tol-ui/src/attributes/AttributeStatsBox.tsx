@@ -154,8 +154,8 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
       className="tol-attribute-tooltip-stats-box"
       style={{
         marginTop: "0px",
-        padding: "0px 6px",
-        borderRadius: "0px",
+        padding: "3px 12px 14px",
+        borderRadius: "6px",
         background: "var(--tol-grey-translucent)",
       }}
     >
@@ -165,7 +165,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
       <div
         onClick={(event) => event.stopPropagation()}
         style={{
-          marginTop: "4px",
+          marginTop: "8px",
         }}
       >
         {statsContents}
