@@ -5,17 +5,21 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { FormatTooltip, SourceTag, IconTooltip, IRemoteTarget } from "..";
+import { FormatTooltip, SourceTag, IconTooltip, IRemoteTarget, IZone } from "..";
 import { AttributeStatsBox } from "./AttributeStatsBox";
 import type { ReactNode } from "react";
 
 export interface PAttributeTooltip extends IRemoteTarget {
   attributeId: string;
   element?: ReactNode;
+  id?: string;
+  componentId?: string;
+  zone?: IZone;
 }
 
 export function AttributeTooltip(props: PAttributeTooltip) {
-  const { attributeId: field, element, objectType, dataSource } = props;
+  const {
+    attributeId: field, element, objectType, dataSource, id, componentId, zone } = props;
 
   const [details, setDetails] = useState<Record<string, React.ReactNode>>({});
   useEffect(() => {
@@ -58,7 +62,11 @@ export function AttributeTooltip(props: PAttributeTooltip) {
   const tooltipContents = (
     <div>
       {Tooltip}
-      <AttributeStatsBox {...props} />
+      <AttributeStatsBox
+        {...props}
+        componentId={componentId ?? id}
+        zone={zone}
+      />
     </div>
   );
 

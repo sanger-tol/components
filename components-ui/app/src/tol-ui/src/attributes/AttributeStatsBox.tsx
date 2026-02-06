@@ -5,19 +5,22 @@ SPDX-License-Identifier: MIT
 */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { API_METHODS, numberWithSpaces, IRemoteTarget } from "..";
+import { API_METHODS, numberWithSpaces, IRemoteTarget, IZone, TFilterOrUndefined, generateFilter, filterHasUpdated } from "..";
 
 interface PAttributeStatsBox extends IRemoteTarget {
   attributeId: string;
+  componentId?: string;
+  zone?: IZone;
 }
 
 export function AttributeStatsBox(props: PAttributeStatsBox) {
-  const { attributeId: field, objectType, dataSource } = props;
+  const { attributeId: field, objectType, dataSource, componentId, zone } = props;
 
   const [isNumeric, setIsNumeric] = useState(false);
   const [stats, setStats] = useState<Record<string, number> | null>(null);
   const [statsLoading, setStatsLoading] = useState(false);
   const [statsError, setStatsError] = useState<string>("");
+  const [filter, setFilter] = useState<TFilterOrUndefined>(undefined);
   const isMountedRef = useRef(true);
 
   const statsKeys = useMemo(() => ["min", "max", "avg", "sum"], []);
@@ -42,18 +45,36 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
     };
   }, [dataSource, field, objectType]);
 
+  useEffect(() => {
+    if (!zone || !componentId) {
+      setFilter(undefined);
+      return;
+    }
+    const compoundedFilter = generateFilter(zone, componentId);
+    filterHasUpdated(setFilter, filter, compoundedFilter);
+  }, [zone, componentId]);
+
+  useEffect(() => {
+    setStats(null);
+    setStatsError("");
+  }, [filter]);
+
   const fetchStats = useCallback(() => {
     if (!isNumeric || statsLoading || stats) return;
 
     setStatsError("");
     setStatsLoading(true);
+    const params: any = {
+      stats: statsKeys.join(","),
+      stats_fields: field,
+    };
+    if (filter !== undefined) {
+      params.filter = filter;
+    }
     dataSource.custom({
       method: API_METHODS.GET,
       resource: `${objectType}:stats`,
-      params: {
-        stats: statsKeys.join(","),
-        stats_fields: field,
-      },
+      params,
     })
       .then((res: any) => {
         if (!isMountedRef.current) return;
@@ -80,6 +101,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
     stats,
     statsKeys,
     statsLoading,
+    filter,
   ]);
 
   useEffect(() => {
@@ -160,7 +182,9 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
       }}
     >
       <div className="tol-attribute-tooltip-stats-header">
-        <span className="tooltip-key">Statistics (Global)</span>
+        <span className="tooltip-key">
+          Statistics
+        </span>
       </div>
       <div
         onClick={(event) => event.stopPropagation()}
