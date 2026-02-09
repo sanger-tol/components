@@ -7,14 +7,14 @@ SPDX-License-Identifier: MIT
 export class DataObject {
   private _objectType: string;
   private _id: string;
-  private _attributes: Map<string, any>;
-  private _relationships?: Map<string, DataObject>;
+  private _attributes?: Record<string, any>;
+  private _relationships?: Record<string, DataObject>;
 
   constructor(
     objectType: string,
     id: string,
-    attributes: Map<string, any>,
-    relationships?: Map<string, DataObject>,
+    attributes?: Record<string, any>,
+    relationships?: Record<string, DataObject>,
   ) {
     this._objectType = objectType;
     this._id = id;
@@ -26,9 +26,12 @@ export class DataObject {
   public set objectType(type: string) { this._objectType = type; }
   public get id(): string { return this._id; }
   public set id(id: string) { this._id = id; }
-  public get relationships(): Map<string, DataObject> | undefined { return this._relationships }
+  public get attributes(): Record<string, any> | undefined { return this._attributes; }
+  public get relationships(): Record<string, DataObject> | undefined { return this._relationships; }
 
-  public getFieldByName(field: string): any {
+  public getFieldByName(field: string): any | undefined {
+    if (!this._attributes) return undefined;
+
     if (field.includes(".")) {
       const [relationship, ...rest] = field.split(".");
       const relationshipObject = this._relationships?.[relationship];
