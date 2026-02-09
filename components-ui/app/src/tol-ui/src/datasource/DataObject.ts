@@ -5,10 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 export class DataObject {
-  private objectType: string;
-  private id: string;
-  private attributes: Map<string, any>;
-  private relationships: Map<string, DataObject>;
+  private _objectType: string;
+  private _id: string;
+  private _attributes: Map<string, any>;
+  private _relationships: Map<string, DataObject>;
 
   constructor(
     objectType: string,
@@ -16,10 +16,16 @@ export class DataObject {
     attributes: Map<string, any>,
     relationships: Map<string, DataObject> | undefined,
   ) {
-    this.objectType = objectType;
-    this.id = id;
-    this.attributes = attributes;
-    this.relationships = new Map();
-    this.relationships = relationships || new Map();
+    this._objectType = objectType;
+    this._id = id;
+    this._attributes = attributes;
+    this._relationships = relationships || new Map();
   }
+
+  public get objectType(): string { return this._objectType; }
+  public set objectType(type: string) { this._objectType = type; }
+  public get id(): string { return this._id; }
+  public set id(id: string) { this._id = id; }
+  // TODO NOT DOING IT FOR ATTRBIUTES; getFieldByName WILL BE IMPLEMENTED INSTEAD
+  public get relationships(): Map<string, DataObject> { return this._relationships }
 }
