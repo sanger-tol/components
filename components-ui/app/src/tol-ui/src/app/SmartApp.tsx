@@ -41,21 +41,23 @@ import {
   profileDefaultNavConfig,
   MyBoards,
   mergeNavConfigs,
+  TsDataSource,
 } from "..";
 
 export interface PSmartApp {
   /**
+   * The web_app id to fetch the nav configs.
+   * This includes navigation and profile navigation configs.
+   */
+  id: string;
+  /**
+   * The datasource for configuring the app.
+   */
+  configDataSource?: TsDataSource;
+  /**
    * The brand to display in the navigation bar.
    */
   brand: TNavBrand;
-  /**
-   * The main navigation configuration.
-   */
-  navigation?: TNavConfig;
-  /**
-   * The profile navigation configuration. Can only add pages, not dropdowns.
-   */
-  profileNavigation?: TNavConfig;
   /**
    * A React node mapping for page element references.
    */
@@ -70,9 +72,9 @@ export interface PSmartApp {
   register?: boolean;
   /**
    * Configuration for user boards. If true, boards are enabled with default settings.
-   * If a PBoard object is provided, it customizes the board settings.
+   * Its DataSource can be overidden by passing dataSource to SmartApp.
    */
-  boards?: boolean | PBoard;
+  boards?: boolean;
   /**
    * An optional custom callback URL for authentication.
    */

@@ -24,10 +24,20 @@ import {
   getNavBackgroundClass,
   collectNavigationItems,
   ProfileDropdown,
+  TNavConfig,
 } from "..";
 
 
-export interface PNavigation extends PSmartApp, RouteComponentProps { }
+export interface PNavigation extends PSmartApp, RouteComponentProps {
+  /**
+  * The main navigation configuration.
+  */
+  navigation?: TNavConfig;
+  /**
+   * The profile navigation configuration. Can only add pages, not dropdowns.
+   */
+  profileNavigation?: TNavConfig;
+}
 
 /**
  * The Navigation component renders the navigation bar for the application.
