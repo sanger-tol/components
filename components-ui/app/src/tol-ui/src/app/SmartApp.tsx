@@ -30,11 +30,9 @@ import {
   ValidationResultsViewer,
   BoardPrivilegeContextProvider,
   clearUnusedLocalStorage,
-  PBoard,
   TNavBrand,
   TNavConfig,
   TPageElements,
-  setupBoards,
   systemDefaultNavConfig,
   collectRoutes,
   setupNavigationConfig,
@@ -42,6 +40,11 @@ import {
   MyBoards,
   mergeNavConfigs,
   TsDataSource,
+  TDataObjectOrNull,
+  PopUpMessage,
+  BOARDS_API_DATA_PATH,
+  WEB_APP,
+  LoadingContent,
 } from "..";
 
 export interface PSmartApp {
@@ -71,10 +74,9 @@ export interface PSmartApp {
    */
   register?: boolean;
   /**
-   * Configuration for user boards. If true, boards are enabled with default settings.
-   * Its DataSource can be overidden by passing dataSource to SmartApp.
+   * Whether boards can be configured for other apps.
    */
-  boards?: boolean;
+  configurableBoards?: boolean;
   /**
    * An optional custom callback URL for authentication.
    */
@@ -89,10 +91,24 @@ export interface PSmartApp {
  * Root application component that composes routing, navigation, and default page elements.
  */
 export function SmartApp(props: PSmartApp) {
-  const { login = true, register = false } = props;
+  const {
+    id,
+    configDataSource = new TsDataSource({
+      apiPath: env.API_PATH,
+      apiDataPath: BOARDS_API_DATA_PATH,
+    }),
+    login = true,
+    register = false,
+    configurableBoards = false,
+  } = props;
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
+
+  const [loading, setLoading] = useState(true);
+
+  const [navigation, setNavigation] = useState<TNavConfig>(systemDefaultNavConfig);
+  const [profileNavigation, setProfileNavigation] = useState<TNavConfig>(profileDefaultNavConfig);
 
   const queryClient = new QueryClient();
 
@@ -102,41 +118,60 @@ export function SmartApp(props: PSmartApp) {
     clearUnusedLocalStorage();
   }, []);
 
-  // Setting a default for the boardDataSource else boards will be off
-  const boards = setupBoards(props.boards);
+  useEffect(() => {
+    configDataSource.getOne({
+      objectType: WEB_APP,
+      id,
+    }).then((obj: TDataObjectOrNull) => {
+      const fetchedNav = obj?.navigation as TNavConfig | undefined;
+      const fetchedProfileNav = obj?.profile_navigation as TNavConfig | undefined;
 
-  // Merge system navigation config and add defaults
-  const navigation: TNavConfig = setupNavigationConfig(props.navigation, systemDefaultNavConfig, user);
+      // Merge system navigation config and add defaults
+      setNavigation(
+        setupNavigationConfig(fetchedNav, systemDefaultNavConfig, user)
+      );
 
-  // Merge system navigation config and add defaults
-  const profileNavigation: TNavConfig = setupNavigationConfig(props.profileNavigation, profileDefaultNavConfig, user);
+      // Merge system navigation config and add defaults
+      setProfileNavigation(
+        setupNavigationConfig(fetchedProfileNav, profileDefaultNavConfig, user)
+      );
+    }).catch(() => {
+      PopUpMessage({
+        type: "error",
+        message: "Failed to fetch navigation configuration. Please try again later.",
+      })
+    }).finally(() => {
+      setLoading(false);
+    });
+  }, []);
 
   // Merging configs to collect all the routes
   const mergedNavigation: TNavConfig = mergeNavConfigs(navigation, profileNavigation);
 
   // Always merge default page elements + incoming (incoming overrides defaults)
   const pageElements: TPageElements = {
-    boardDetail: boards ? (
+    boardDetail: (
       <BoardPrivilegeContextProvider>
-        <Board {...boards} />
+        <Board boardDataSource={configDataSource} />
       </BoardPrivilegeContextProvider>
-    ) : null,
-    myBoards: boards ? <MyBoards {...boards} /> : null,
+    ),
+    myBoards: configurableBoards ? <MyBoards boardDataSource={configDataSource} /> : null,
     validationResultsDetail: <ValidationResultsViewer />,
     callback: <Callback />,
     ...(props.pageElements ?? {}),
   };
 
   // Merged props object to pass downstream so consumers see the merged values
-  const mergedProps: PSmartApp = {
+  const mergedProps = {
     ...props,
-    boards,
     navigation,
     profileNavigation,
     pageElements,
     login,
     register,
   };
+
+  if (loading) return <LoadingContent />;
 
   return (
     <div id="tol-smart-app-background">
@@ -157,7 +192,7 @@ export function SmartApp(props: PSmartApp) {
                   {collectRoutes(
                     mergedNavigation,
                     pageElements,
-                    boards
+                    configDataSource
                   )}
                   <ReactRouter
                     path={`/page-not-found`}

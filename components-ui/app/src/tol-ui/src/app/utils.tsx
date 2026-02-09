@@ -143,33 +143,6 @@ export function clearUnusedLocalStorage() {
 }
 
 /**
- * Sets up board configuration for the 'SmartApp'.
- * 
- * @param boards - Optional board configuration. Can be either:
- *   - A boolean value: if `true`, creates a default board with a new TsDataSource
- *   - A PBoard object: returns the object as-is
- *   - undefined/false: returns undefined
- * 
- * @returns A PBoard object with configured data source, the provided PBoard object, 
- *          or undefined if boards is falsy.
- */
-export function setupBoards(boards?: PBoard | boolean): PBoard | undefined {
-  if (boards) {
-    if (typeof boards === 'boolean') {
-      return {
-        boardDataSource: new TsDataSource({
-          apiPath: env.API_PATH,
-          apiDataPath: BOARDS_API_DATA_PATH,
-        }),
-      };
-    } else {
-      return boards;
-    }
-  }
-  return undefined;
-}
-
-/**
  * Generates a route path string for a page element.
  *
  * @param displayName - Human-readable name used to derive a route when `path` is not given.
@@ -448,7 +421,7 @@ export function isPageAccessible(user: User | null, page: TPageOrDropdown): bool
 export function collectRoutes(
   navigation: TNavConfig,
   pageElements: TPageElements,
-  boards?: PBoard,
+  boardDataSource?: TsDataSource,
   parentTrail: string[] = [],
 ): React.ReactNode[] {
   return Object.entries(navigation.data).flatMap(([navKey, navItem]) => {
@@ -464,7 +437,7 @@ export function collectRoutes(
           routeKey,
           path: navItem.path,
           pageElements,
-          boards,
+          boardDataSource,
         }),
       );
     }
@@ -472,7 +445,7 @@ export function collectRoutes(
     // Recurse into dropdown children
     if (isDropdown(navItem)) {
       routes.push(
-        ...collectRoutes(navItem.pages, pageElements, boards, trail),
+        ...collectRoutes(navItem.pages, pageElements, boardDataSource, trail),
       );
     }
 
