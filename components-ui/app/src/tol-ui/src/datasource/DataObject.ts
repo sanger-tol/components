@@ -36,7 +36,7 @@ export class DataObject {
       const [relationship, ...rest] = field.split(".");
       const relationshipObject = this._relationships?.[relationship];
       if (relationshipObject) {
-        return this.getFieldByName(rest.join("."));
+        return relationshipObject.getFieldByName(rest.join("."));
       }
     }
     return this._attributes[field];
