@@ -4,10 +4,6 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-// This no check will need to be removed at some point
-// It is in to prevent build errors to do with the Dropdown type
-// not containing detail and element props
-
 import { useState, useEffect } from "react";
 import {
   Route as ReactRouter,
@@ -33,10 +29,10 @@ import {
   TNavBrand,
   TNavConfig,
   TPageElements,
-  systemDefaultNavConfig,
+  getSystemDefaultNavConfig,
   collectRoutes,
   setupNavigationConfig,
-  profileDefaultNavConfig,
+  getProfileDefaultNavConfig,
   MyBoards,
   mergeNavConfigs,
   TsDataSource,
@@ -61,6 +57,14 @@ export interface PSmartApp {
    * The brand to display in the navigation bar.
    */
   brand: TNavBrand;
+  /**
+   * A navigation configuration.
+   */
+  navigation?: TNavConfig;
+  /**
+   * A profile navigation configuration.
+   */
+  profileNavigation?: TNavConfig;
   /**
    * A React node mapping for page element references.
    */
@@ -104,11 +108,22 @@ export function SmartApp(props: PSmartApp) {
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
-
   const [loading, setLoading] = useState(true);
 
-  const [navigation, setNavigation] = useState<TNavConfig>(systemDefaultNavConfig);
-  const [profileNavigation, setProfileNavigation] = useState<TNavConfig>(profileDefaultNavConfig);
+  // Combines the system defaults and incoming config
+  const defaultNavigation = setupNavigationConfig(
+    props.navigation,
+    getSystemDefaultNavConfig(configurableBoards),
+    user
+  );
+  const defaultProfileNavigation = setupNavigationConfig(
+    props.profileNavigation,
+    getProfileDefaultNavConfig(configurableBoards),
+    user
+  );
+
+  const [navigation, setNavigation] = useState<TNavConfig>(defaultNavigation);
+  const [profileNavigation, setProfileNavigation] = useState<TNavConfig>(defaultProfileNavigation);
 
   const queryClient = new QueryClient();
 
@@ -128,12 +143,12 @@ export function SmartApp(props: PSmartApp) {
 
       // Merge system navigation config and add defaults
       setNavigation(
-        setupNavigationConfig(fetchedNav, systemDefaultNavConfig, user)
+        setupNavigationConfig(fetchedNav, defaultNavigation, user)
       );
 
-      // Merge system navigation config and add defaults
+      // Merge profile system navigation config and add defaults
       setProfileNavigation(
-        setupNavigationConfig(fetchedProfileNav, profileDefaultNavConfig, user)
+        setupNavigationConfig(fetchedProfileNav, defaultProfileNavigation, user)
       );
     }).catch(() => {
       PopUpMessage({
@@ -155,7 +170,7 @@ export function SmartApp(props: PSmartApp) {
         <Board boardDataSource={configDataSource} />
       </BoardPrivilegeContextProvider>
     ),
-    myBoards: configurableBoards ? <MyBoards boardDataSource={configDataSource} /> : null,
+    myBoards: <MyBoards boardDataSource={configDataSource} />,
     validationResultsDetail: <ValidationResultsViewer />,
     callback: <Callback />,
     ...(props.pageElements ?? {}),
