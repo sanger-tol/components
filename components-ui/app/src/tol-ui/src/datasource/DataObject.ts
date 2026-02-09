@@ -5,14 +5,14 @@ SPDX-License-Identifier: MIT
 */
 
 export class DataObject {
-  private _objectType: string;
   private _id: string;
+  private _objectType: string;
   private _attributes?: Record<string, any>;
   private _relationships?: Record<string, DataObject>;
 
   constructor(
-    objectType: string,
     id: string,
+    objectType: string,
     attributes?: Record<string, any>,
     relationships?: Record<string, DataObject>,
   ) {
@@ -22,10 +22,10 @@ export class DataObject {
     this._relationships = relationships;
   }
 
-  public get objectType(): string { return this._objectType; }
-  public set objectType(type: string) { this._objectType = type; }
   public get id(): string { return this._id; }
   public set id(id: string) { this._id = id; }
+  public get objectType(): string { return this._objectType; }
+  public set objectType(type: string) { this._objectType = type; }
   public get attributes(): Record<string, any> | undefined { return this._attributes; }
   public get relationships(): Record<string, DataObject> | undefined { return this._relationships; }
 
