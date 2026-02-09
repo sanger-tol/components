@@ -13,6 +13,11 @@ describe("getFieldByName method", () => {
     expect(obj.getFieldByName("name")).toBe("sampleName");
   });
 
+  test("Ensures an attribute from a relationship is fetched correctly", () => {
+    const obj = mockDataObject();
+    expect(obj.getFieldByName("specimen.name")).toBe("specimenName");
+  });
+
   test("Ensures a field's value is undefined if it does not exist", () => {
     const obj = mockDataObject();
     expect(obj.getFieldByName("doesNotExist.alsoDoesNotExist")).toBeUndefined();
