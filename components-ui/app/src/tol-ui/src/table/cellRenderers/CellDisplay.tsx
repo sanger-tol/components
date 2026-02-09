@@ -56,7 +56,7 @@ export function CellDisplay(props: PCell) {
   const elements = { ...preDefinedElements, ...customCellRenderers };
   renderer.element = elements[renderer.type] || DefaultCell;
 
-  const elementProps: Record<string, any> = { ...props };
+  const elementProps: PCell & Record<string, any> = { ...props };
 
   if (renderer.props) {
     Object.entries(renderer.props).forEach(([prop, value]) => {
@@ -68,6 +68,7 @@ export function CellDisplay(props: PCell) {
     if (Array.isArray(value)) {
       return value.map((val) => (
         <ListItem
+          {...elementProps}
           key={val}
           value={
             <renderer.element {...elementProps} value={val} />
@@ -88,7 +89,7 @@ export function CellDisplay(props: PCell) {
           onClick={() => {
             setExpanded(!expanded);
             setExpandedRows((prev: string[]) => {
-              const id = elementProps.dataObject.id;
+              const id = elementProps.dataObject!.id;
               return prev.includes(id)
                 ? prev.filter((existingId) => existingId !== id)
                 : [...prev, id];
