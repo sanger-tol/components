@@ -18,6 +18,11 @@ describe("getFieldByName method", () => {
     expect(obj.getFieldByName("specimen.name")).toBe("specimenName");
   });
 
+  test("Ensures an attribute from a doubly-nested relationship is fetched correctly", () => {
+    const obj = mockDataObject();
+    expect(obj.getFieldByName("specimen.species.name")).toBe("speciesName");
+  });
+
   test("Ensures a field's value is undefined if it does not exist", () => {
     const obj = mockDataObject();
     expect(obj.getFieldByName("doesNotExist.alsoDoesNotExist")).toBeUndefined();
