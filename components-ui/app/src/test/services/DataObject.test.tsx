@@ -9,22 +9,26 @@ import { mockDataObject } from "../mocks";
 
 describe("getFieldByName method", () => {
   test("Ensures an attribute is fetched correctly", () => {
-    const obj = mockDataObject();
-    expect(obj.getFieldByName("name")).toBe("sampleName");
+    expect(
+      mockDataObject().getFieldByName("name")
+    ).toBe("sampleName");
   });
 
   test("Ensures an attribute from a relationship is fetched correctly", () => {
-    const obj = mockDataObject();
-    expect(obj.getFieldByName("specimen.name")).toBe("specimenName");
+    expect(
+      mockDataObject().getFieldByName("specimen.name")
+    ).toBe("specimenName");
   });
 
   test("Ensures an attribute from a doubly-nested relationship is fetched correctly", () => {
-    const obj = mockDataObject();
-    expect(obj.getFieldByName("specimen.species.name")).toBe("speciesName");
+    expect(
+      mockDataObject().getFieldByName("specimen.species.name")
+    ).toBe("speciesName");
   });
 
   test("Ensures a field's value is undefined if it does not exist", () => {
-    const obj = mockDataObject();
-    expect(obj.getFieldByName("doesNotExist.alsoDoesNotExist")).toBeUndefined();
+    expect(
+      mockDataObject().getFieldByName("doesNotExist.alsoDoesNotExist")
+    ).toBeUndefined();
   });
 });
