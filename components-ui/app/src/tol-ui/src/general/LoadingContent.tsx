@@ -11,13 +11,13 @@ export interface PLoadingContent {
 }
 
 export function LoadingContent(props: PLoadingContent) {
-  const { text } = props;
+  const { text = "Loading..." } = props;
   return (
     <div className="fixed-full-page">
       <div className="fixed-centered-loader">
         <Loader />
       </div>
-      <div className="fixed-centered-text">{text || "Loading..."}</div>
+      <div className="fixed-centered-text">{text}</div>
     </div>
   );
 }

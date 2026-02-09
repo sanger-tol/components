@@ -15,7 +15,6 @@ import {
 } from "./pages";
 import codeStyleGuideContent from "./docs/code-style-guide.md?raw";
 import howToDocumentContent from "./docs/how-to-document.md?raw";
-import { navConfig } from "./config";
 
 
 const {
@@ -31,14 +30,14 @@ const pageElements = {
   ...autoDocPageElements,
 };
 
-const navigation = mergeNavConfigs(navConfig, autoDocNavConfig);
+// const navigation = mergeNavConfigs(navConfig, autoDocNavConfig);
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
   <SmartApp
-    boards
+    id="components"
+    configurableBoards
     brand="Components"
-    navigation={navigation}
     pageElements={pageElements}
   />
 );

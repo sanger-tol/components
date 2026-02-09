@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Route as ReactRoute } from "react-router-dom";
-import { Board, IPageElement, PBoard, TPageElements } from "..";
+import { Board, IPageElement, TPageElements, TsDataSource } from "..";
 
 export interface PRoute {
   /**
@@ -23,7 +23,7 @@ export interface PRoute {
   /**
   * Parameters for board pages.
   */
-  boards?: PBoard;
+  boardDataSource?: TsDataSource;
 }
 
 /**
@@ -31,7 +31,7 @@ export interface PRoute {
  * component based on the path's pageElementReference.
  */
 export function Route(props: PRoute) {
-  const { routeKey, boards, path, pageElements } = props;
+  const { routeKey, boardDataSource, path, pageElements } = props;
 
   let element: React.ReactNode;
 
@@ -41,8 +41,8 @@ export function Route(props: PRoute) {
     if (pageElements && path.pageElementReference in pageElements) {
       element = pageElements[path.pageElementReference];
       // If not, assume it's a boardId and render a Board component
-    } else if (boards) {
-      element = <Board {...boards} boardId={path.pageElementReference} />;
+    } else if (boardDataSource) {
+      element = <Board boardDataSource={boardDataSource} boardId={path.pageElementReference} />;
     }
   }
 
