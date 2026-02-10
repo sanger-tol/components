@@ -38,10 +38,11 @@ import {
   TsDataSource,
   TDataObjectOrNull,
   PopUpMessage,
-  BOARDS_API_DATA_PATH,
   WEB_APP,
   LoadingContent,
+  CORE_CONFIG_DS,
 } from "..";
+
 
 export interface PSmartApp {
   /**
@@ -97,10 +98,7 @@ export interface PSmartApp {
 export function SmartApp(props: PSmartApp) {
   const {
     id,
-    configDataSource = new TsDataSource({
-      apiPath: env.API_PATH,
-      apiDataPath: BOARDS_API_DATA_PATH,
-    }),
+    configDataSource = CORE_CONFIG_DS,
     brand,
     login = true,
     register = false,
