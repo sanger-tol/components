@@ -17,10 +17,6 @@ import {
 
 export interface PRemoteFilters extends IRemoteTargetAndZone {
   /**
-   * Optional array of filter values to disable in the field selction UI
-   */
-  disabledFilterValues?: any;
-  /**
    * Optional utility bar configuration (includes title, buttons, etc.)
    */
   utilityBarConfig?: PUtilityBar;

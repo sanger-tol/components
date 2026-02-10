@@ -20,7 +20,7 @@ import {
   AttributeSelector,
   Icon,
   defineZone,
-  IZone
+  IZone,
 } from ".."
 
 
@@ -39,7 +39,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     boardObjectType,
     boardDataSource,
     open,
-    setOpen
+    setOpen,
   } = props;
 
   // the fixed filter present on the component
@@ -54,10 +54,10 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   const [passThrough, setPassThrough] = useState<boolean>(false);
   const [filterHasPendingChanges, setFilterHasPendingChanges] = useState(false);
   // Local state for the filter zone if this is a zone level filter, otherwise use the passed zone/setZone
-  const zoneFilterId = "filter-zone-component";
+  // const zoneFilterId = "filter-zone-component";
   const [filterZone, setFilterZone] = useState<IZone>(
     defineZone("dummy-object-for-remote-filters", [
-      { id: zoneFilterId, filter: prevFilters },
+      { id: id, filter: prevFilters },
     ]),
   );
 
@@ -92,9 +92,9 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   useEffect(() => {
     let newFilter
     if (boardObjectType !== "zone") {
-      newFilter = generateFilter(zone, id);
+      newFilter = generateFilter(filterZone, id);
     } else {
-      newFilter = generateFilter(filterZone, zoneFilterId);
+      newFilter = generateFilter(filterZone, id);
     }
     setFilters(newFilter);
     setFilterHasPendingChanges(
@@ -115,7 +115,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   // getting the disabled filter values (currently all other entity filters)
   const [disabledFilterValues, setDisabledFilterValues] = useState(
     removeCurrentEntityFiltersForDisabledFilters(
-      generateFilter(zone, undefined, true)?.and_!,
+      generateFilter(filterZone, undefined, true)?.and_!,
       prevFilters?.and_!,
     ),
   );
@@ -143,17 +143,16 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   // Function passed to attribute selector to remove all filters
   const onClean = () => {
     if (boardObjectType === "zone") {
-      zone.filter = { and_: {} };
-      zone.defaultFilter = { and_: {} };
+      filterZone.filter = { and_: {} };
+      filterZone.defaultFilter = { and_: {} };
     } else {
-      if (zone.components[id].data.filter) {
-        zone.components[id].data.filter.and_ = {};
+      if (filterZone.components[id].data.filter) {
+        filterZone.components[id].data.filter.and_ = {};
       }
-      if (zone.components[id].data.defaultFilter) {
-        zone.components[id].data.defaultFilter.and_ = {};
+      if (filterZone.components[id].data.defaultFilter) {
+        filterZone.components[id].data.defaultFilter.and_ = {};
       }
     }
-    setZone({ ...zone });
   };
 
   const removeFilter = (attribute: string) => {
@@ -226,9 +225,10 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         }
         <RemoteFilters
           {...props}
-          zone={boardObjectType == "zone" ? filterZone : zone}
-          setZone={boardObjectType == "zone" ? setFilterZone : setZone}
-          componentId={boardObjectType == "zone" ? zoneFilterId : id}
+          utilityBarConfig={undefined}
+          zone={filterZone}
+          setZone={setFilterZone}
+          componentId={id}
           attributes={attributes}
           disabledFilterValues={disabledFilterValues}
           ExtraElement={removeCross}
