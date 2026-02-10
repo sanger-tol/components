@@ -21,20 +21,28 @@
   transform: translate(-50%, -50%);
 }
 
-.fixed-full-page {
+.tol-fixed-full-page {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background-color: var(--tol-bg);
-  opacity: 0.5;
+
+  .fixed-centered-brand {
+    position: absolute;
+    top: calc(50% - 150px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: inline-block;
+  }
 
   .fixed-centered-loader {
     position: absolute;
     top: calc(50% - 100px);
     left: 50%;
     transform: translate(-50%, -50%);
+    display: inline-block;
   }
 
   .fixed-centered-text {
@@ -42,6 +50,34 @@
     top: calc(50% - 60px);
     left: 50%;
     transform: translate(-50%, -50%);
+  }
+
+  // Fade-out support
+  transition: opacity 200ms ease,
+  visibility 0s linear 200ms;
+  visibility: visible;
+
+  &.is-fading-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  // Ensure the loader is above all content, including the navbar
+  &.overlay-nav {
+    background-color: var(--tol-dark);
+    z-index: 1050;
+
+    .fixed-centered-loader .spinner-border,
+    .fixed-centered-text {
+      color: var(--tol-light);
+      border-color: var(--tol-light);
+      border-right-color: transparent;
+    }
+
+    .navbar-brand {
+      color: var(--tol-primary);
+    }
   }
 }
 
