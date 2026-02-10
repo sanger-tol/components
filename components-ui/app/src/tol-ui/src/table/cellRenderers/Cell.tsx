@@ -122,11 +122,11 @@ export function Cell(props: PCell) {
   }
 
   return (
-    <span onDoubleClick={onDoubleClick}>
+    <div className="tol-cell" onDoubleClick={onDoubleClick}>
       <CellDisplay
         {...props}
         value={value}
       />
-    </span>
+    </div>
   )
 }

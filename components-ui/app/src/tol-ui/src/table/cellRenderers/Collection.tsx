@@ -5,8 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Fragment } from "react";
-import { PCell, ListItem } from "..";
-
+import { PCell, Tag } from "../..";
 
 export function Collection(props: PCell) {
   const { value } = props;
@@ -15,7 +14,7 @@ export function Collection(props: PCell) {
     if (Array.isArray(val)) {
       return val.map((item, idx) => (
         <Fragment key={idx}>
-          <ListItem value={renderValue(item)} />
+          <Tag value={renderValue(item)} />
         </Fragment>
       ));
     }

@@ -18,8 +18,8 @@ import {
   Icon,
   TrafficLightStatus,
   PCell,
-  ListItem,
-  Collection
+  Collection,
+  Tag
 } from "../..";
 
 
@@ -43,12 +43,12 @@ export function CellDisplay(props: PCell) {
   };
 
   if (
-    // renderer type is not defined
+    // Renderer type is not defined
     !renderer ||
     !renderer.type ||
     renderer.type === "none" ||
-    // no value and not a custom renderer as custom renderers may not require a value
-    // no need to to deal with empty values with pre-defined cellRenderers
+    // No value and not a custom renderer as custom renderers may not require a value
+    // No need to to deal with empty values with pre-defined cellRenderers
     ((value === null || value === undefined) && (renderer.type) in preDefinedElements)
   )
     return <DefaultCell value={value} />;
@@ -66,20 +66,27 @@ export function CellDisplay(props: PCell) {
 
   const collectElements = () => {
     if (Array.isArray(value)) {
-      return value.map((val) => (
-        <ListItem
-          {...elementProps}
-          key={val}
-          value={
-            <renderer.element {...elementProps} value={val} />
-          }
-        />
-      ));
+      // Use a set to remove duplicates
+      const set_ = new Set(value);
+
+      return Array.from(set_).map((val) => {
+        // Only return elements for where a value exists
+
+        if (val) return (
+          // Return lists inside of tags
+          <Tag
+            {...elementProps}
+            key={val}
+            value={
+              <renderer.element {...elementProps} value={val} />
+            }
+          />
+        )
+      });
     }
     return <renderer.element {...elementProps} />;
   }
 
-  console.log(value);
   return (
     <>
       {collectElements()}
