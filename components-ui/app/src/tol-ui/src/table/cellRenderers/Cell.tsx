@@ -121,12 +121,21 @@ export function Cell(props: PCell) {
     );
   }
 
+  const collectDisplays = () => {
+    // Normalise value to an array to allow for consistent handling of multiple values and single values
+    if (Array.isArray(value)) {
+      const valueSet = new Set(value);
+
+      return Array.from(valueSet).map((val) => (
+        <CellDisplay {...props} tag value={val} />
+      ));
+    }
+    return <CellDisplay {...props} value={value} />;
+  };
+
   return (
     <div className="tol-cell" onDoubleClick={onDoubleClick}>
-      <CellDisplay
-        {...props}
-        value={value}
-      />
+      {collectDisplays()}
     </div>
   )
 }
