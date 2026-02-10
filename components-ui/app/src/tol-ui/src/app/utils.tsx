@@ -7,13 +7,11 @@ SPDX-License-Identifier: MIT
 import { ReactNode } from "react";
 import { Nav, NavDropdown } from "react-bootstrap";
 import {
-  PBoard,
   TsDataSource,
   BOARDS,
   TDataObjectOrNull,
   PRIVILEGE,
   env,
-  BOARDS_API_DATA_PATH,
   TNavConfig,
   TPageOrDropdown,
   PAGE_ACCESS,
