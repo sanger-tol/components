@@ -230,7 +230,6 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           setZone={setFilterZone}
           componentId={id}
           attributes={attributes}
-          disabledFilterValues={disabledFilterValues}
           ExtraElement={removeCross}
           customClassname={"tol-filter-config-remote-filter"}
         />
