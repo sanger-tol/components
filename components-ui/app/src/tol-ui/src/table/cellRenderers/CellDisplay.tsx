@@ -23,8 +23,15 @@ import {
 } from "../..";
 
 
-export function CellDisplay(props: PCell) {
-  const { value, dataObject, renderer, customCellRenderers, setExpandedRows } = props;
+export interface PCellDisplay extends PCell {
+  /**
+   * Whether to wrap the CellDisplay in a Tag component.
+   */
+  tag?: boolean;
+}
+
+export function CellDisplay(props: PCellDisplay) {
+  const { value, dataObject, renderer, customCellRenderers, setExpandedRows, tag } = props;
   const [expanded, setExpanded] = useState(false);
 
   const DefaultCell = ({ value }) => <>{value ?? ""}</>;
@@ -64,32 +71,9 @@ export function CellDisplay(props: PCell) {
     });
   }
 
-  const collectElements = () => {
-    if (Array.isArray(value)) {
-      // Use a set to remove duplicates
-      const set_ = new Set(value);
-
-      return Array.from(set_).map((val) => {
-        // Only return elements for where a value exists
-
-        if (val) return (
-          // Return lists inside of tags
-          <Tag
-            {...elementProps}
-            key={val}
-            value={
-              <renderer.element {...elementProps} value={val} />
-            }
-          />
-        )
-      });
-    }
-    return <renderer.element {...elementProps} />;
-  }
-
-  return (
+  const Contents = (
     <>
-      {collectElements()}
+      <renderer.element {...elementProps} />
       {Array.isArray(value) && value.length > 1 && renderer.type === "image" &&
         <Icon
           icon={expanded ? "caret-up" : "caret-down"}
@@ -108,4 +92,6 @@ export function CellDisplay(props: PCell) {
       }
     </>
   );
+
+  return tag ? <Tag>{Contents}</Tag> : Contents;
 }
