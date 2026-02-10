@@ -14,7 +14,7 @@ export function Collection(props: PCell) {
     if (Array.isArray(val)) {
       return val.map((item, idx) => (
         <Fragment key={idx}>
-          <Tag value={renderValue(item)} />
+          <Tag>{renderValue(item)}</Tag>
         </Fragment>
       ));
     }
