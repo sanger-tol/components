@@ -30,10 +30,6 @@ export class DataObject {
   public get relationships(): Record<string, DataObject> | undefined { return this._relationships; }
 
   public getFieldByName(field: string): any | undefined {
-    // No need to check through attributes if there aren't any.
-    // Having this here also allows the rest of the method to assume there ARE attributes.
-    if (!this._attributes) return undefined;
-
     // If there is a dot in the field name, then all words except the final one are actually
     // names of relationships.
     if (field.includes(".")) {
@@ -51,6 +47,8 @@ export class DataObject {
     // If there was no dot, the field relates to this data object. So search this object's
     // attributes resulting in the value of the field or `undefined` depending on whether the field
     // actually exists in this object
-    return this._attributes[field];
+    // (TERMINATING CLAUSE)
+    if (!this._attributes) return undefined;
+    else return this._attributes[field];
   }
 }
