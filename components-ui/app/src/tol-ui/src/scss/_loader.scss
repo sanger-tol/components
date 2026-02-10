@@ -22,6 +22,8 @@
 }
 
 .tol-fixed-full-page {
+  --tol-load-fade: 200ms;
+
   position: fixed;
   top: 0;
   left: 0;
@@ -53,8 +55,8 @@
   }
 
   // Fade-out support
-  transition: opacity 200ms ease,
-  visibility 0s linear 200ms;
+  transition: opacity var(--tol-load-fade) ease,
+  visibility 0s linear var(--tol-load-fade);
   visibility: visible;
 
   &.is-fading-out {
