@@ -101,6 +101,7 @@ export function SmartApp(props: PSmartApp) {
       apiPath: env.API_PATH,
       apiDataPath: BOARDS_API_DATA_PATH,
     }),
+    brand,
     login = true,
     register = false,
     configurableBoards = false,
@@ -109,6 +110,7 @@ export function SmartApp(props: PSmartApp) {
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
   const [loading, setLoading] = useState(true);
+  const [loadingFade, setLoadingFade] = useState(false);
 
   // Combines the system defaults and incoming config
   const defaultNavigation = setupNavigationConfig(
@@ -150,14 +152,20 @@ export function SmartApp(props: PSmartApp) {
       setProfileNavigation(
         setupNavigationConfig(fetchedProfileNav, defaultProfileNavigation, user)
       );
-    }).catch(() => {
-      PopUpMessage({
-        type: "error",
-        message: "Failed to fetch navigation configuration. Please try again later.",
-      })
-    }).finally(() => {
+
       setLoading(false);
-    });
+      setLoadingFade(true);
+
+      // If nav not found the object will be null
+      if (!obj) {
+        PopUpMessage({
+          type: "warning",
+          message: "Failed to fetch navigation configuration. Only using defaults.",
+        })
+      }
+    }).catch((error) => {
+      console.error(error);
+    })
   }, []);
 
   // Merging configs to collect all the routes
@@ -186,7 +194,14 @@ export function SmartApp(props: PSmartApp) {
     register,
   };
 
-  if (loading) return <LoadingContent />;
+  const LoadingScreen = (
+    <LoadingContent
+      overlayNav
+      brand={brand}
+      className={loadingFade ? "is-fading-out" : ""}
+      text=""
+    />
+  )
 
   return (
     <div id="tol-smart-app-background">
@@ -203,20 +218,26 @@ export function SmartApp(props: PSmartApp) {
             <Navigation {...mergedProps} />
             <div className="tol-smart-app">
               <div className="tol-smart-app-content">
-                <Switch>
-                  {collectRoutes(
-                    mergedNavigation,
-                    pageElements,
-                    configDataSource
-                  )}
-                  <ReactRouter
-                    path={`/page-not-found`}
-                    component={() => <PageNotFound />}
-                  />
-                  <ReactRouter path="*">
-                    <Redirect to={`/page-not-found`} />
-                  </ReactRouter>
-                </Switch>
+                {/* Switch also needs loading screen to ensure smooth transition */}
+                {loading ? LoadingScreen : (
+                  <>
+                    {LoadingScreen}
+                    <Switch>
+                      {collectRoutes(
+                        mergedNavigation,
+                        pageElements,
+                        configDataSource
+                      )}
+                      <ReactRouter
+                        path={`/page-not-found`}
+                        component={() => <PageNotFound />}
+                      />
+                      <ReactRouter path="*">
+                        <Redirect to={`/page-not-found`} />
+                      </ReactRouter>
+                    </Switch>
+                  </>
+                )}
               </div>
             </div>
             <Footer />

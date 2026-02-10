@@ -25,15 +25,6 @@
     align-items: flex-start;
   }
 
-  .navbar-brand {
-    text-transform: uppercase;
-    font-size: 1rem;
-    letter-spacing: 0.1rem;
-    font-weight: 1000;
-    padding: 0 !important;
-    align-self: center;
-  }
-
   .navbar-brand:hover {
     color: var(--tol-primary);
   }
@@ -86,6 +77,16 @@
   .navbar-toggler:focus {
     box-shadow: none;
   }
+}
+
+// Also used on loader overlay
+.navbar-brand {
+  text-transform: uppercase;
+  font-size: 1rem;
+  letter-spacing: 0.1rem;
+  font-weight: 1000;
+  padding: 0 !important;
+  align-self: center;
 }
 
 .navbar-item-colour {
