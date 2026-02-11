@@ -79,6 +79,7 @@ function Navigation(props: PNavigation) {
     setUserToLocalStorage(null);
     setToken("");
     setUser(null);
+    
   };
 
   return (

@@ -11,6 +11,7 @@ import {
   BOARDS,
   TDataObjectOrNull,
   PRIVILEGE,
+  TBoardPrivilege,
   env,
   TNavConfig,
   TPageOrDropdown,
@@ -66,26 +67,23 @@ export const getNavBackgroundClass = (environment: string): string => {
 };
 
 export async function getUserPrivilege(
-  user: any,
-  boardDataSource: TsDataSource,
-  boardId: string
-) {
-  if (user && boardDataSource && boardId) {
-    return boardDataSource.getOne({
-      objectType: BOARDS.BOARD,
-      id: boardId,
-    }).then(async (board: TDataObjectOrNull) => {
-      const boardUser = await board?.relationships?.user;
-      if (board && (boardUser?.id?.toString() === user?.id?.toString() || user?.roles?.includes('admin'))) {
-        return PRIVILEGE.BOARD.EDITABLE;
-      } else {
-        return PRIVILEGE.BOARD.VIEWABLE;
-      }
-    });
-  } else {
-    // If no user or boardDataSource, return hidden
-    return PRIVILEGE.BOARD.HIDDEN;
-  }
+  user: User | null | undefined,
+  boardDataSource: TsDataSource | null | undefined,
+  boardId: string | null | undefined,
+): Promise<TBoardPrivilege> {
+  if (!user?.id || !boardDataSource || !boardId) return PRIVILEGE.BOARD.VIEWABLE;
+
+  const board: TDataObjectOrNull = await boardDataSource.getOne({
+    objectType: BOARDS.BOARD,
+    id: boardId,
+  });
+
+  const boardUser = await board?.relationships?.user;
+  const isOwner = boardUser?.id?.toString() === user.id.toString();
+  const isAdmin = user.roles?.includes("admin") ?? false;
+
+  if (board && (isOwner || isAdmin)) return PRIVILEGE.BOARD.EDITABLE;
+  return PRIVILEGE.BOARD.VIEWABLE;
 }
 
 /**

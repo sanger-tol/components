@@ -73,7 +73,7 @@ export function Board(props: PBoard) {
   }, []);
 
   useEffect(() => {
-    if (boardId && user) {
+    if (boardId) {
       getBoard(boardId, boardDataSource!)
         .then((data: any) => {
           if (!view) setView(data.views[0].id);
@@ -87,7 +87,7 @@ export function Board(props: PBoard) {
     }
   }, [boardId, user]);
 
-  if (error !== "" || privilege === PRIVILEGE.BOARD.HIDDEN) {
+  if (error !== "") {
     return <Redirect to="/page-not-found" />;
   }
 
