@@ -137,7 +137,7 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
         <Row>
           {componentOptions.map((option, index) => {
             return (
-              <Col lg={4} md={4} sm={12} className="tol-button-col" key={index}>
+              <Col lg={3} md={3} sm={6} className="tol-button-col" key={index}>
                 {!option.disabled ? (
                   <div
                     className={
@@ -145,7 +145,10 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
                         ? "tol-component-modal-btn"
                         : "tol-component-modal-btn-clicked"
                     }
-                    onClick={() => setComponentType(option.type)}
+                    onClick={() => {
+                      setComponentType(option.type)
+                      setWidgetType(option.defaultSize)
+                    }}
                     data-testid={`component-option-${option.type}`}
                   >
                     <Icon icon={option.icon} size="4x" />
