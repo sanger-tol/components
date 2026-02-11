@@ -162,7 +162,9 @@ export function SmartApp(props: PSmartApp) {
       })
     }).finally(() => {
       setLoading(false);
-      setLoadingFade(true);
+
+      // Small delay as loading screen can feel abrupt if it disappears immediately
+      setTimeout(() => setLoadingFade(true), 300);
     });
   }, []);
 
@@ -217,9 +219,9 @@ export function SmartApp(props: PSmartApp) {
             <div className="tol-smart-app">
               <div className="tol-smart-app-content">
                 {/* Switch also needs loading screen to ensure smooth transition */}
-                {loading ? LoadingScreen : (
+                {LoadingScreen}
+                {!loading && (
                   <>
-                    {LoadingScreen}
                     <Switch>
                       {collectRoutes(
                         mergedNavigation,
