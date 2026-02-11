@@ -10,36 +10,42 @@ export const componentOptions = [
     text: "Statistics",
     icon: "hashtag",
     disabled: false,
+    defaultSize: "sm",
   },
   {
     type: "sunburst",
     text: "Sunburst",
     icon: "chart-pie",
     disabled: false,
+    defaultSize: "lg",
   },
   {
     type: "table",
     text: "Table",
     icon: "table",
     disabled: false,
+    defaultSize: "lg",
   },
   {
     type: "chart",
     text: "Chart",
     icon: "chart-column",
     disabled: false,
+    defaultSize: "lg",
   },
   {
     type: "text",
     text: "Text",
     icon: "font",
     disabled: false,
+    defaultSize: "md",
   },
   {
     type: "map",
     text: "Map",
     icon: "location-dot",
     disabled: true,
+    defaultSize: "lg",
   },
 ];
 
