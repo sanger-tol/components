@@ -89,13 +89,30 @@ export function CellRendererModal(props: PCellRendererModal) {
     setSelectedConditionParam(undefined);
   }, [open]);
 
+  // Checks that the condition exists and has a value, stops the condition filters spreading across all conditions
+  useEffect(() => {
+    if (renderer?.props?.[selectedConditionParam!] && selectedConditionParam) {
+      const paramValue = renderer.props[selectedConditionParam];
+      const filterValue = typeof paramValue === 'object' ? paramValue as IFilter : { and_: {} };
+      setAttributes(Object.keys(filterValue.and_ || {}) || []);
+      setFilterConditions(filterValue);
+      setFilterZone(defineZone("dummy-object-for-remote-filters", [
+        { id: zoneFilterId, filter: filterValue },
+      ]));
+    } else {
+      setAttributes([]);
+      setFilterConditions({ and_: {} });
+    }
+  }, [selectedConditionParam]);
+
   useEffect(() => {
     const newFilter = generateFilter(filterZone, zoneFilterId);
     setFilterConditions(newFilter);
     setConditionHasPendingChanges(() => {
       if (!renderer || !selectedConditionParam) return false;
-      const currentConditions = renderer.props?.[selectedConditionParam] as IFilter || { and_: {} };
-      return JSON.stringify(newFilter) !== JSON.stringify(currentConditions);
+      renderer!.props![selectedConditionParam!] = newFilter ?? {};
+      setRenderer({ ...renderer });
+      return JSON.stringify(previousRenderer?.props?.[selectedConditionParam]) !== JSON.stringify(renderer.props?.[selectedConditionParam])
     });
   }, [filterZone]);
 
