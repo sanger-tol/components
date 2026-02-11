@@ -122,7 +122,8 @@ export function Cell(props: PCell) {
   }
 
   const collectDisplays = () => {
-    // Normalise value to an array to allow for consistent handling of multiple values and single values
+    // Add multiple values as tags
+    // Tags added in CellDisplay as CellDisplay already deals with falsy values
     if (Array.isArray(value)) {
       const valueSet = new Set(value);
 
