@@ -21,7 +21,7 @@ export interface PRemoteFilters extends IRemoteTargetAndZone {
    */
   utilityBarConfig?: PUtilityBar;
   /**
-   * Optional unique identifier for the component within the zone
+   * Unique identifier for the component within the zone
    */
   componentId: string;
   /**
@@ -92,7 +92,7 @@ export function RemoteFilters(props: PRemoteFilters) {
                     key={`filter-${attribute}`}
                     attribute={attribute}
                     rename={attributeMeta?.display_name}
-                    type={type}
+                    type={type === "double" ? "float" : type}
                     componentId={componentId}
                     objectType={objectType}
                     dataSource={dataSource}
