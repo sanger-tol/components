@@ -30,6 +30,10 @@ export interface PCellDisplay extends PCell {
   tag?: boolean;
 }
 
+/**
+ * Component to display the contents of a cell based on the provided renderer configuration. Handles both pre-defined renderers and custom renderers.
+ * If no renderer is provided, it will default to displaying the value as a string.
+ */
 export function CellDisplay(props: PCellDisplay) {
   const { value, dataObject, renderer, customCellRenderers, setExpandedRows, tag } = props;
   const [expanded, setExpanded] = useState(false);
