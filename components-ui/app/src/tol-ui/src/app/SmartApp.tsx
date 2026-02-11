@@ -150,20 +150,20 @@ export function SmartApp(props: PSmartApp) {
       setProfileNavigation(
         setupNavigationConfig(fetchedProfileNav, defaultProfileNavigation, user)
       );
-
-      setLoading(false);
-      setLoadingFade(true);
-
       // If nav not found the object will be null
       if (!obj) {
-        PopUpMessage({
-          type: "warning",
-          message: "Failed to fetch navigation configuration. Only using defaults.",
-        })
+        throw Error(`No configuration found for web app with id: ${id}`);
       }
     }).catch((error) => {
       console.error(error);
-    })
+      PopUpMessage({
+        type: "warning",
+        message: "Failed to fetch navigation configuration. Only using defaults.",
+      })
+    }).finally(() => {
+      setLoading(false);
+      setLoadingFade(true);
+    });
   }, []);
 
   // Merging configs to collect all the routes
