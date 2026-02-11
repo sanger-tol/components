@@ -4,8 +4,8 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { PCell } from "../..";
-
+import { Fragment } from "react";
+import { PCell, Tag } from "../..";
 
 export function Collection(props: PCell) {
   const { value } = props;
@@ -13,9 +13,9 @@ export function Collection(props: PCell) {
   const renderValue = (val: any) => {
     if (Array.isArray(val)) {
       return val.map((item, idx) => (
-        <div className="tol-collection-list-item" key={idx}>
-          {renderValue(item)}
-        </div>
+        <Fragment key={idx}>
+          <Tag>{renderValue(item)}</Tag>
+        </Fragment>
       ));
     }
     if (val && typeof val === "object") {

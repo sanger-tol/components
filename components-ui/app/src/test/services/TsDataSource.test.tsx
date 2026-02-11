@@ -943,6 +943,30 @@ describe("Testing temp getFieldByName function", async () => {
     expect(getFieldByName(testDataObject, "doesNotExist.alsoDoesNotExist")).toBeUndefined();
     // check if null obj
   });
+
+  test("Returns a list of values when traversing a to-many relationship", async () => {
+    const toManyDataObject = await mockDataSource.getOne({
+      objectType: "specimen",
+      id: "SAN1",
+    });
+
+    expect(toManyDataObject).toBeDefined();
+    const tubosPositions = getFieldByName(toManyDataObject, "samples.rackPosition");
+    expect(Array.isArray(tubosPositions)).toBe(true);
+    expect(tubosPositions).toEqual(["A3", "A4"]);
+  });
+
+  test("Returns undefined for non-existent field in to-many relationship", async () => {
+    const toManyDataObject = await mockDataSource.getOne({
+      objectType: "specimen",
+      id: "SAN1",
+    });
+
+    expect(toManyDataObject).toBeDefined();
+    const nonExistentValues = getFieldByName(toManyDataObject, "samples.nonExistentField");
+    expect(Array.isArray(nonExistentValues)).toBe(true);
+    expect(nonExistentValues).toEqual([undefined, undefined]);
+  });
 })
 
 describe("Testing getFieldRelationshipValue", () => {

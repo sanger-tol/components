@@ -681,6 +681,11 @@ export function getFieldByName(object: TDataObjectOrNull, field: string): any {
     const [relationship, ...rest] = field.split(".");
     const relationshipObject = object?.relationships?.[relationship];
     if (relationshipObject) {
+      if (Array.isArray(relationshipObject)) {
+        return relationshipObject.map((item) =>
+          getFieldByName(item, rest.join("."))
+        );
+      }
       return getFieldByName(relationshipObject, rest.join("."));
     }
   }

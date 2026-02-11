@@ -29,6 +29,7 @@ export * from "./RemoteStatistics";
 export * from "./RemoteGet";
 export * from "./SourceTag";
 export * from "./Tabs";
+export * from "./Tag";
 export * from "./TolLoader";
 export * from "./UtilityBar";
 export * from "./utils";
