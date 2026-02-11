@@ -45,6 +45,7 @@ export const componentOptions = [
     text: "Filter Block",
     icon: "filter",
     disabled: false,
+    defaultSize: "lg"
   },
   {
     type: "map",
@@ -60,7 +61,7 @@ export const sizeOptions = (componentType: string) => {
     {
       type: "sm",
       text: "Small",
-      disabled: componentType === "table" || componentType === "chart",
+      disabled: componentType === "table" || componentType === "chart" || componentType === "filterBlock",
     },
     {
       type: "md",
@@ -70,7 +71,7 @@ export const sizeOptions = (componentType: string) => {
     {
       type: "lg",
       text: "Large",
-      disabled: componentType === "statistics" || componentType === "count" || componentType === "filterBlock",
+      disabled: componentType === "statistics" || componentType === "count",
     },
   ]
 }

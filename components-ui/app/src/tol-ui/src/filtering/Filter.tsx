@@ -16,6 +16,7 @@ import {
 export type IFilterInputType =
   | "str"
   | "int"
+  | "double"
   | "float"
   | "datetime"
   | "bool"
@@ -42,6 +43,7 @@ export function Filter(props: IFilterInput) {
   switch (props.type) {
     case "str":
     case "int":
+    case "double":
     case "float":
       return <FilterTextInput {...props} />;
     case "datetime":

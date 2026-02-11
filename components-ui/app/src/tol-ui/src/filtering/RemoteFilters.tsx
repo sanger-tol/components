@@ -92,7 +92,7 @@ export function RemoteFilters(props: PRemoteFilters) {
                     key={`filter-${attribute}`}
                     attribute={attribute}
                     rename={attributeMeta?.display_name}
-                    type={type === "double" ? "float" : type}
+                    type={type}
                     componentId={componentId}
                     objectType={objectType}
                     dataSource={dataSource}

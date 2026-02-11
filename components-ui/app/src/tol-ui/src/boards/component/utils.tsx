@@ -71,9 +71,9 @@ export function getWidgetOrder(layout: any) {
 export function generateLayout(zone: IZone) {
   // left hand side are the component types, right are the breakpoints
   const types = {
-    sm: { lg: { w: 1, h: 1 }, md: { w: 1, h: 1 }, sm: { w: 1, h: 1 } },
-    md: { lg: { w: 2, h: 3 }, md: { w: 2, h: 3 }, sm: { w: 1, h: 3 } },
-    lg: { lg: { w: 4, h: 4 }, md: { w: 2, h: 4 }, sm: { w: 1, h: 4 } },
+    sm: { lg: { w: 1, h: 10 }, md: { w: 1, h: 10 }, sm: { w: 1, h: 10 } },
+    md: { lg: { w: 2, h: 30 }, md: { w: 2, h: 30 }, sm: { w: 1, h: 30 } },
+    lg: { lg: { w: 4, h: 40 }, md: { w: 2, h: 40 }, sm: { w: 1, h: 40 } },
   };
 
   const layout = { lg: [], md: [], sm: [] };
@@ -89,7 +89,7 @@ export function generateLayout(zone: IZone) {
       // filterBlock components have lg width but sm height
       if (component.type === "filterBlock") {
         w = types.lg[breakpoint].w;
-        h = breakpoint === "lg" ? 1 : breakpoint === "md" ? 2 : 3;
+        h = breakpoint === "lg" ? 9 : breakpoint === "md" ? 15 : 26;
       } else {
         ({ w, h } = types[size][breakpoint]);
       }
