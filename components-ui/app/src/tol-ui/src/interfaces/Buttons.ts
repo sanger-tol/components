@@ -8,6 +8,11 @@ export interface IDropdownButtonConfig {
   name: string;
   icon?: string;
   disabled?: boolean;
+  /**
+   * Optional predicate: returns true if the action should be shown
+   * for the currently selected rows.
+   */
+  isVisibleAction?: (...args: any[]) => boolean;
   action: (...args: any[]) => void;
 }
 

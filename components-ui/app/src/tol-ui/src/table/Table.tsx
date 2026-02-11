@@ -35,7 +35,6 @@ import {
   DataColumn,
 } from "..";
 
-
 export interface PTable extends IRemoteTargetAndZone {
   id: string;
   data: any;
@@ -131,7 +130,7 @@ export function Table(props: PTable) {
     actionsFooter,
     utilityBarConfig = {},
     contents,
-    groupBy
+    groupBy,
     /* eslint-enable */
   } = props;
 
@@ -142,11 +141,13 @@ export function Table(props: PTable) {
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
   const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
   const [cellHeights, setCellHeights] = useState<TCellHeights>({});
-  const [heightExpandedRows, setHeightExpandedRows] = useState<Record<string, boolean>>({});
+  const [heightExpandedRows, setHeightExpandedRows] = useState<
+    Record<string, boolean>
+  >({});
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
     props.selectedRows,
     props.setSelectedRows,
-    []
+    [],
   );
 
   // @ts-ignore - temp turned off
@@ -182,15 +183,21 @@ export function Table(props: PTable) {
 
   // @ts-ignore
   const handleCheckAll = (value: any, checkedVal: boolean) => {
-    const keys = checkedVal ? data.map((item: any) => item.key) : [];
-    setSelectedRows && setSelectedRows(keys);
+    const vals = checkedVal
+      ? data.map((item: any) => {
+          return { [item.key]: item };
+        })
+      : [];
+    setSelectedRows && setSelectedRows(vals);
   };
 
   const handleCheck = (value: any, checkedVal: boolean) => {
-    const keys = checkedVal
+    const vals = checkedVal
       ? [...selectedRows, value]
-      : selectedRows.filter((item) => item !== value);
-    setSelectedRows(keys);
+      : selectedRows.filter(
+          (item) => Object.keys(item)[0] !== Object.keys(value)[0],
+        );
+    setSelectedRows(vals);
   };
 
   // Called by each AutoHeightCell when its size changes
@@ -211,7 +218,7 @@ export function Table(props: PTable) {
         };
       });
     },
-    []
+    [],
   );
 
   // Toggle expand/collapse for all rows in the table
@@ -220,7 +227,7 @@ export function Table(props: PTable) {
       if (!Array.isArray(data) || data.length === 0) return {};
 
       const allExpanded = data.every(
-        (row: any) => !!(row?.key && prev[row.key])
+        (row: any) => !!(row?.key && prev[row.key]),
       );
 
       if (allExpanded) {
@@ -239,96 +246,102 @@ export function Table(props: PTable) {
     });
   }, [data]);
 
-  const actionDropDownButtons = actions?.map((button) => ({
-    ...button,
-    action: () => {
-      button.action(selectedRows, filter);
-    },
-    disabled: selectedRows.length === 0,
-  }));
+  const selectedRowData = selectedRows.map((row) => {
+    const key = Object.keys(row)[0];
+    return data.find((d: any) => d.key === key) ?? Object.values(row)[0];
+  });
+  const actionDropDownButtons = actions
+    ?.filter(
+      (button) =>
+        !button.isVisibleAction || button.isVisibleAction(selectedRowData),
+    )
+    .map((button) => ({
+      ...button,
+      action: () => {
+        button.action(selectedRowData, filter);
+      },
+      disabled: selectedRowData.length === 0 || button.disabled === true,
+    }));
 
   const configButton: PButton = !noConfigModal
     ? {
-      visible: true,
-      position: "right",
-      type: "primary",
-      testid: "table-slider-button",
-      tooltip: "Configure Table",
-      onClick: () => {
-        setOpen(true);
-      },
-      icon: "sliders",
-      outline: true,
-      disabled: loading,
-    }
+        visible: true,
+        position: "right",
+        type: "primary",
+        testid: "table-slider-button",
+        tooltip: "Configure Table",
+        onClick: () => {
+          setOpen(true);
+        },
+        icon: "sliders",
+        outline: true,
+        disabled: loading,
+      }
     : {
-      visible: false,
-    };
+        visible: false,
+      };
 
   const filterButton: PButton =
     (!noFilter &&
       fieldMeta.order.active.length !== 0 &&
       privilege === PRIVILEGE.BOARD.EDITABLE) ||
-      privilege === undefined
+    privilege === undefined
       ? {
-        visible: true,
-        position: "right",
-        type: "primary",
-        onClick: () => {
-          setFilterVisibility(!filterVisibility);
-        },
-        icon: filterVisibility ? "eye-slash" : "eye",
-        tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
-        outline: true,
-      }
+          visible: true,
+          position: "right",
+          type: "primary",
+          onClick: () => {
+            setFilterVisibility(!filterVisibility);
+          },
+          icon: filterVisibility ? "eye-slash" : "eye",
+          tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
+          outline: true,
+        }
       : {
-        visible: false,
-      };
+          visible: false,
+        };
 
   const downloadButton: PButton = !noDownload
     ? {
-      visible: true,
-      position: "right",
-      type: "primary",
-      tooltip: "Download the tables current state in various formats",
-      onClick: () => {
-        setDownloadOpen(!downloadOpen);
-      },
-      disabled: totalSize <= 0 || noFieldsSelected || loading,
-      icon: "download",
-      disabledTooltip:
-        totalSize >= 1
-          ? "Must have at least one row to download."
-          : undefined,
-      outline: true,
-    }
+        visible: true,
+        position: "right",
+        type: "primary",
+        tooltip: "Download the tables current state in various formats",
+        onClick: () => {
+          setDownloadOpen(!downloadOpen);
+        },
+        disabled: totalSize <= 0 || noFieldsSelected || loading,
+        icon: "download",
+        disabledTooltip:
+          totalSize >= 1
+            ? "Must have at least one row to download."
+            : undefined,
+        outline: true,
+      }
     : {
-      visible: false,
-    };
+        visible: false,
+      };
 
   const actionDropdown: PDropdownButtons | undefined =
     actions && actions.length > 0
       ? {
-        mainButtonIcon: {
-          id: "actions",
-          icon: "paper-plane",
-          type: "primary",
-          position: "right",
-          outline: selectedRows.length === 0,
-        },
-        dropdownButtons: actionDropDownButtons,
-        footer: actionsFooter,
-        placement: "leftStart",
-      }
+          mainButtonIcon: {
+            id: "actions",
+            icon: "paper-plane",
+            type: "primary",
+            position: "right",
+            outline: selectedRows.length === 0,
+          },
+          dropdownButtons: actionDropDownButtons,
+          footer: actionsFooter,
+          placement: "leftStart",
+        }
       : undefined;
 
-  const allRowsExpanded = (
+  const allRowsExpanded =
     Array.isArray(data) &&
     data.length > 0 &&
-    data.every(
-      (row: any) => !!(row?.key && heightExpandedRows[row.key])
-    )
-  );
+    data.every((row: any) => !!(row?.key && heightExpandedRows[row.key]));
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
@@ -367,43 +380,43 @@ export function Table(props: PTable) {
         elements={
           !noPagination && fieldMeta?.order?.active?.length > 0
             ? [
-              <span className="tol-page-size">
-                {!smallBreakpoint &&
-                  (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
-                    <SelectPicker
-                      value={pageSize}
-                      onChange={setPageSize}
-                      size="sm"
-                      cleanable={false}
-                      searchable={false}
-                      data={[
-                        { label: "25", value: 25 },
-                        { label: "50", value: 50 },
-                        { label: "100", value: 100 },
-                        { label: "250", value: 250 },
-                      ]}
-                    />
-                  )}
-              </span>,
-              <Pagination
-                className="tol-pagination"
-                size="sm"
-                layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
-                total={totalSize <= 10000 ? totalSize : 10000}
-                activePage={page}
-                onChangePage={setPage}
-                limit={pageSize}
-                onChangeLimit={setPageSize}
-                prev
-                next
-                first={!mediumBreakpoint}
-                last={!mediumBreakpoint}
-                ellipsis={!mediumBreakpoint}
-                boundaryLinks
-                maxButtons={mediumBreakpoint ? 1 : 3}
-              />,
-              ...(utilityBarConfig.elements || []),
-            ]
+                <span className="tol-page-size">
+                  {!smallBreakpoint &&
+                    (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
+                      <SelectPicker
+                        value={pageSize}
+                        onChange={setPageSize}
+                        size="sm"
+                        cleanable={false}
+                        searchable={false}
+                        data={[
+                          { label: "25", value: 25 },
+                          { label: "50", value: 50 },
+                          { label: "100", value: 100 },
+                          { label: "250", value: 250 },
+                        ]}
+                      />
+                    )}
+                </span>,
+                <Pagination
+                  className="tol-pagination"
+                  size="sm"
+                  layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
+                  total={totalSize <= 10000 ? totalSize : 10000}
+                  activePage={page}
+                  onChangePage={setPage}
+                  limit={pageSize}
+                  onChangeLimit={setPageSize}
+                  prev
+                  next
+                  first={!mediumBreakpoint}
+                  last={!mediumBreakpoint}
+                  ellipsis={!mediumBreakpoint}
+                  boundaryLinks
+                  maxButtons={mediumBreakpoint ? 1 : 3}
+                />,
+                ...(utilityBarConfig.elements || []),
+              ]
             : [...(utilityBarConfig.elements || [])]
         }
         buttons={[
@@ -463,7 +476,9 @@ export function Table(props: PTable) {
                       if (bulkSelect) {
                         return "tol-selected-row disabled";
                       } else if (
-                        selectedRows.some((item) => item === rowData.key)
+                        selectedRows.some(
+                          (item) => Object.keys(item)[0] === rowData.key,
+                        )
                       ) {
                         return "tol-selected-row";
                       }
@@ -474,7 +489,10 @@ export function Table(props: PTable) {
                     const rowId = rowData?.key;
                     const row = cellHeights[rowId];
                     const fullHeight = row
-                      ? Math.max(DEFAULT_ROW_HEIGHT, ...Object.values(row))
+                      ? Math.max(
+                          DEFAULT_ROW_HEIGHT,
+                          Number(...Object.values(row)),
+                        )
                       : DEFAULT_ROW_HEIGHT;
 
                     if (heightExpandedRows[rowId]) {

@@ -11,7 +11,6 @@ import { useParams } from "react-router";
 
 import {
   getErrorWarningCounts,
-  downloadFileFromS3,
   fetchCurrentPipelineResults,
   ValidateSteps,
   PreviousUploadsModal,
@@ -23,7 +22,6 @@ import {
   BUTTON_TIMEOUT,
   PIPELINE_DS,
   ValidationReport,
-  splitS3FilenameString,
   useQueryData,
   useTimeout,
   VALIDATION_TIMEOUT_MS,
@@ -55,6 +53,7 @@ export function ValidationResultsViewer() {
 
   const searchParams = new URLSearchParams(location.search);
   const stepName = searchParams.get("stepName") || undefined;
+  const tab = searchParams.get("t") || undefined;
 
   const user = getUserFromLocalStorage();
 
@@ -174,7 +173,7 @@ export function ValidationResultsViewer() {
   const actionContext =
     latestPipelineResults.data && user
       ? {
-          item: latestPipelineResults.data,
+          items: [latestPipelineResults.data],
           dataSource: PIPELINE_DS,
           user,
           setReportOpen,
@@ -240,23 +239,6 @@ export function ValidationResultsViewer() {
               <div>
                 <h6>Flow ID: {latestPipelineResults.data.flowRunId}</h6>
                 <p>
-                  {"Download File: "}
-                  <a
-                    href="#"
-                    onClick={() =>
-                      downloadFileFromS3(
-                        PIPELINE_DS,
-                        latestPipelineResults.data.s3Bucket,
-                        latestPipelineResults.data.s3Filename,
-                      )
-                    }
-                  >
-                    {splitS3FilenameString(
-                      String(latestPipelineResults.data.s3Filename),
-                    )}
-                  </a>
-                </p>
-                <p className="tol-file-validation-results-page-additional-info-updated-at">
                   Updated At:{" "}
                   {new Date(
                     latestPipelineResults.dataUpdatedAt,
@@ -324,7 +306,10 @@ export function ValidationResultsViewer() {
         <Button
           text="Back"
           icon="arrow-left"
-          onClick={() => history.goBack()}
+          onClick={() => {
+            if (tab !== undefined) history.push("/manifest-validation?t=2");
+            else history.push("/manifest-validation");
+          }}
         />
       </div>
     </div>
@@ -354,7 +339,7 @@ export function ValidationResultsViewer() {
       <SubmissionRejectModal
         open={submissionRejectModalOpen}
         setOpen={setSubmissionRejectModalOpen}
-        uploadId={uploadId}
+        uploadIds={[uploadId]}
       />
       <PreviousUploadsModal
         openModal={openModal}

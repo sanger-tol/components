@@ -10,6 +10,8 @@ import {
   FILE_VALIDATION_PATH,
   submitFile,
   markFileAsReady,
+  PIPELINE_DS,
+  getUserFromLocalStorage,
 } from "../..";
 
 import type {
@@ -23,6 +25,10 @@ import type {
   IAllValidationData,
   IValidatedDataReport,
   IValidationResultAPI,
+  TFileValidationAction,
+  TsDataSource,
+  TValidationActionMap,
+  TFileValidationStatusPolicyMap,
 } from "../..";
 
 /**
@@ -200,7 +206,7 @@ export function onSubmission(
   fileList: IFileData[],
   submittable: boolean,
   currentUploadId: string | null,
-  setFileUploaded: (uploaded: boolean) => void
+  setFileUploaded: (uploaded: boolean) => void,
   // setMarkedAsReady: () => void,
 ): void {
   if (submittable) {
@@ -418,3 +424,83 @@ export function downloadReportFile(data: IAllValidationData) {
   a.remove();
   URL.revokeObjectURL(url);
 }
+
+/**
+* Builds dropdown action configurations for the validation uploads table.
+* Each returned action is only shown when all selected rows’ validation_status policies allow it.
+* 
+* Invokes the underlying TFileValidationAction with a normalised context
+* containing the selected row IDs, shared TsDataSource, current user, and
+* any additional context (e.g. modal setters, table refresh).
+* 
+* @param actions - Map of validation action IDs to their action definitions.
+* @param policies - Map of validation statuses to their policy metadata, including allowed actions.
+* @param dataSource - Data source used by actions to perform remote operations.
+* @param additionalCtx - Extra context merged into each action callback (e.g. UI state setters).
+* @returns An array of IDropdownButtonConfig objects, including a 
+* fallback “No Actions Available for Selection” entry when nothing is applicable.
+*/
+
+export const createValidationActions = (
+  actions: TValidationActionMap,
+  policies: TFileValidationStatusPolicyMap,
+  dataSource: TsDataSource,
+  additionalCtx: any,
+) => {
+  // Get user for action callback context
+  const user = getUserFromLocalStorage();
+  // TODO: Allowed actions might not be showing the correct actions...
+  // Render table actions based on current validation status
+  const baseValidationActions = Object.values(actions).map(
+    (action: TFileValidationAction) => ({
+      name: action.label,
+      isVisibleAction: (selectedRows: any[] = []) =>
+        selectedRows.length > 0 &&
+        // Make sure the action can be completed by every selected row before rendering it
+        selectedRows.every((row) => {
+          // Get the validation status of the row
+          const status = row?.validation_status?.props?.value;
+
+          // Check against the allowed actions of that particular status
+          const allowed = policies[status]?.allowedActions ?? [];
+
+          // Return all allowed actions of that policy
+          return allowed.includes(action.id);
+        }),
+      // Perform the selected action upon click
+      action: async (selectedRows: any[] = []) => {
+        // TODO: Make any callback functions robust enough, that they fetch the required data if only an ID has been provided.
+        const rowIds = Object.values(selectedRows).map((row) => ({
+          id: row.key,
+        }));
+        // Provide the action callback with the required context to perform the action.
+        action.callback({
+          items: rowIds,
+          dataSource: dataSource,
+          user: user,
+          ...additionalCtx,
+        });
+      },
+    }),
+  );
+
+  // Fallback "no actions available" dropdown list
+  const noActionsAvailableAction = {
+    name: "No Actions Available for Selection",
+    disabled: true,
+    isVisibleAction: (selectedRows: any[] = []) =>
+      // If no valid actions are available, return true to show this placeholder action
+      // Also show if no actions have been selected
+      !baseValidationActions.some((action) =>
+        action.isVisibleAction ? action.isVisibleAction(selectedRows) : true,
+      ),
+  };
+
+  // build and return final actions array
+  const validationActions = [
+    ...baseValidationActions,
+    noActionsAvailableAction,
+  ];
+
+  return validationActions;
+};

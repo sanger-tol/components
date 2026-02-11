@@ -191,6 +191,12 @@
   justify-content: space-between;
 }
 
+.tol-file-validation-upload-table-id-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .tol-file-upload-results-viewer-content-inner-container {
   display: flex;
   gap: 10px;
@@ -588,10 +594,6 @@
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-
-    .tol-file-validation-results-page-additional-info-updated-at {
-      margin-top: 15px;
-    }
   }
 
   .tol-file-validation-results-page-error-count-container {

@@ -37,7 +37,7 @@ import {
   MAX_FILE_SIZE,
   DEFAULT_SHEET_NAME,
   BASE_POLICIES_MAP,
-  useValidationPolicyModule
+  useValidationPolicyModule,
 } from "..";
 
 import type {
@@ -47,9 +47,9 @@ import type {
   TFileValidationPurpose,
 } from "..";
 
-export interface PFileValidation {
-  objectType: string;
+export interface PFileValidationUploadAndResults {
   validationConfig: IValidationConfig;
+  objectType?: string;
   fileType?: string;
   pageTitle?: string;
   defaultFileTemplateName?: string;
@@ -57,7 +57,9 @@ export interface PFileValidation {
 
 export const PIPELINE_DS = new TsDataSource();
 
-export function FileValidation(props: PFileValidation) {
+export function FileValidationUploadAndResults(
+  props: PFileValidationUploadAndResults,
+) {
   const {
     pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
@@ -190,6 +192,10 @@ export function FileValidation(props: PFileValidation) {
   }, [latestPipelineResults.data, pipelineFailed]);
 
   const handleValidation = async (file: IFileData) => {
+    PopUpMessage({
+      type: "info",
+      message: "Starting validation process...",
+    });
     const pipeline_id = await uploadPipelineConfig(
       PIPELINE_DS,
       validationConfig,
