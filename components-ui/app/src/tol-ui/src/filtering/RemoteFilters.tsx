@@ -35,7 +35,12 @@ export interface PRemoteFilters extends IRemoteTargetAndZone {
   /**
    * Optional extra element to render alongside each filter, receives the attribute as a prop
    */
-  ExtraElement?: React.ComponentType<{ attribute: string }>;
+  ExtraElement?: React.ComponentType<{
+    /**
+   * The attribute that is passed to the element as a prop
+   */
+    attribute: string
+  }>;
 }
 
 /**
