@@ -30,11 +30,11 @@ export function BoardMarkdown(props: PBoardMarkdown) {
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [showMarkdownViewer, setShowMarkdownViewer] = useState<boolean>(false);
-  const { privilege } = useBoard();
+  const { privilege, editMode} = useBoard();
 
 
   useEffect(() => {
-    (config.content || !(privilege === PRIVILEGE.BOARD.EDITABLE)) && setShowMarkdownViewer(true);
+    (config.content || !(editMode)) && setShowMarkdownViewer(true);
   }, []);
 
   const onMarkdownSave = (config: IMarkdownConfig) => {
@@ -54,7 +54,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
     testid: "preview-markdown",
     icon: showPreview ? "eye-slash" : "eye",
     onClick: () => setShowPreview(!showPreview),
-    visible: !showMarkdownViewer && privilege === PRIVILEGE.BOARD.EDITABLE,
+    visible: !showMarkdownViewer,
     outline: true,
   }
 
@@ -69,17 +69,17 @@ export function BoardMarkdown(props: PBoardMarkdown) {
       onMarkdownSave({ content: content });
     },
     outline: true,
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
+    visible: editMode,
   }
 
-  const MdUtilityBar = (
+  const Bar = (
     <UtilityBar
       id="editor-markdown"
       {...utilityBarConfig}
       buttons={[editButton, previewButton]}
       title={{
         text: utilityBarConfig.title?.text,
-        editable: privilege === PRIVILEGE.BOARD.EDITABLE,
+        editable: editMode,
         onSave: (value: string) => {
           saveTitle(value, id, boardObjectType, boardDataSource);
         },
@@ -110,7 +110,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
 
   return (
     <>
-      {MdUtilityBar}
+      {Bar}
       <div className="tol-component-contents with-offset tol-markdown">
         {(showMarkdownViewer) ? MarkdownViewer : MarkdownEditor}
       </div>

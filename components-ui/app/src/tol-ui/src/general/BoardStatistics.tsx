@@ -19,15 +19,17 @@ import {
   updateConfigAndUpsert,
 } from "..";
 
-export interface PBoardStatistics extends PVisualisation {}
+export interface PBoardStatistics extends PVisualisation { }
 
 export function BoardStatistics(props: PBoardStatistics) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
+
+  const { privilege, editMode } = useBoard();
+
   const initialConfig = props.config && props.config.type ? props.config : { type: "count" };
   const [config, setConfig] = useState<IStatisticsConfig>(initialConfig);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
-  const { privilege } = useBoard();
 
   const onConfigSave = (updatedConfig: IStatisticsConfig) => {
     setConfig({ ...updatedConfig });
@@ -40,7 +42,7 @@ export function BoardStatistics(props: PBoardStatistics) {
     type: "primary",
     onClick: () => setOpenConfig(true),
     icon: "sliders",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
+    visible: editMode,
   };
 
   const filterButton: PButton = {
@@ -51,14 +53,14 @@ export function BoardStatistics(props: PBoardStatistics) {
     icon: "filter",
     className: "count-filter-button",
     testid: "statistics-filter-button",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
+    visible: editMode,
   };
 
   const utilityBarProps = {
     ...utilityBarConfig,
     title: {
       text: utilityBarConfig.title?.text,
-      editable: privilege === PRIVILEGE.BOARD.EDITABLE,
+      editable: editMode,
       onSave: (value: string) => {
         saveTitle(value, id, boardObjectType, boardDataSource);
       },

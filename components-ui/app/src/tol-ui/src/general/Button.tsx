@@ -94,56 +94,51 @@ export function Button(props: PButton) {
   };
 
   const ButtonContent = (
-    <>
-      {visible && (
-        <RsButton
-          key={`button-${text || icon}`}
-          id={id}
-          onClick={handleClick}
-          disabled={
-            disabled ||
-            (loading && timeout > 0) ||
-            (limit > 0 && buttonClicked >= limit) ||
-            timeoutDisabled
-          }
-          active={active}
-          className={`icon-button-${type || "primary"}-${
-            size || "md"
-          }${outlineClass} ${className ? className : ""}`}
-          data-testid={testid}
-        >
-          {Loader()}
-          {position === "right" ? (
-            <>
-              {text && (
-                <span style={{ marginRight: icon ? "6px" : "0px" }}>
-                  {text}
-                </span>
-              )}
-              {icon && (
-                <div>
-                  <Icon icon={icon} size={size} />
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              {icon && (
-                <div>
-                  <Icon icon={icon} size={size} />
-                </div>
-              )}
-              {text && (
-                <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>
-              )}
-            </>
+    <RsButton
+      key={`button-${text || icon}`}
+      id={id}
+      onClick={handleClick}
+      disabled={
+        disabled ||
+        (loading && timeout > 0) ||
+        (limit > 0 && buttonClicked >= limit) ||
+        timeoutDisabled
+      }
+      active={active}
+      className={`icon-button-${type || "primary"}-${size || "md"
+        }${outlineClass} ${className ? className : ""}`}
+      data-testid={testid}
+    >
+      {Loader()}
+      {position === "right" ? (
+        <>
+          {text && (
+            <span style={{ marginRight: icon ? "6px" : "0px" }}>
+              {text}
+            </span>
           )}
-        </RsButton>
+          {icon && (
+            <div>
+              <Icon icon={icon} size={size} />
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          {icon && (
+            <div>
+              <Icon icon={icon} size={size} />
+            </div>
+          )}
+          {text && (
+            <span style={{ marginLeft: icon ? "6px" : "0px" }}>{text}</span>
+          )}
+        </>
       )}
-    </>
+    </RsButton>
   );
 
-  return (
+  if (visible) return (
     <div
       style={{
         float: position,

@@ -21,15 +21,17 @@ import {
 } from "..";
 
 
-interface Props extends PVisualisation {}
+interface Props extends PVisualisation { }
 
 export function BoardSunburst(props: Props) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, size, zone } = props;
+
+  const { privilege, editMode } = useBoard();
+
   const [config, setConfig] = useState<any>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
-  const { privilege } = useBoard()
 
   const onConfigSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });
@@ -49,7 +51,7 @@ export function BoardSunburst(props: Props) {
           pie
           message={
             <>
-              {privilege === PRIVILEGE.BOARD.EDITABLE ? (
+              {editMode ? (
                 <>
                   Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
                 </>
@@ -73,7 +75,7 @@ export function BoardSunburst(props: Props) {
     onClick: () => setOpenConfig(true),
     icon: "sliders",
     className: "count-filter-button",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
+    visible: editMode,
   }
 
   const filtersButton: PButton = {
@@ -83,7 +85,7 @@ export function BoardSunburst(props: Props) {
     onClick: () => setOpenFilters(true),
     icon: "filter",
     className: "count-filter-button",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
+    visible: editMode,
   }
 
   return (
@@ -113,7 +115,7 @@ export function BoardSunburst(props: Props) {
           ...utilityBarConfig,
           title: {
             text: utilityBarConfig.title?.text,
-            editable: privilege === PRIVILEGE.BOARD.EDITABLE,
+            editable: editMode,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);
             }

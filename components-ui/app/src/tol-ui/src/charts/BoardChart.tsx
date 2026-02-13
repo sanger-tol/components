@@ -22,15 +22,17 @@ import {
 } from "..";
 
 
-interface Props extends PVisualisation {}
+interface Props extends PVisualisation { }
 
 export function BoardChart(props: Props) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
+
+  const { privilege, editMode } = useBoard();
+
   const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
-  const { privilege } = useBoard()
 
   const onConfigSave = (updatedConfig: IChartConfig) => {
     setConfig({ ...updatedConfig });
@@ -69,7 +71,7 @@ export function BoardChart(props: Props) {
             bar
             message={
               <>
-                {privilege === PRIVILEGE.BOARD.EDITABLE ? (
+                {editMode ? (
                   <>
                     Please add attributes to get started. Click <Icon icon="sliders" size="lg" /> to configure.
                   </>

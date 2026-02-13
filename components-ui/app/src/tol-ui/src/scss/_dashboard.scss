@@ -4,317 +4,320 @@
  * SPDX-License-Identifier: MIT
  */
 
-.tol-boards-widget {
-  @extend .tol-widget;
-  margin: 0px !important;
-  margin-bottom: 10px !important;
-}
+.tol-board {
 
-// layout of the grid
-.tol-responsive-grid {
-  position: relative;
-  margin: -10px; // compensate for padding on children
-  margin-bottom: -28px !important;
-}
+  &.tol-edit-mode {
+    .tol-boards-widget {
+      border: 1px dashed var(--tol-primary) !important;
+    }
+  }
 
-.tol-visualisation {
-  @extend .tol-boards-widget;
-  position: relative;
-  margin: 0px !important;
-}
+  .tol-boards-widget {
+    @extend .tol-widget;
+    margin: 0px !important;
+    margin-bottom: 10px !important;
+  }
 
-.widget-delete-btn {
-  height: 30px;
-  width: 30px;
-  position: absolute;
-  padding: 0;
-  top: 0;
-  right: 0;
-  margin: 12px;
-}
+  // layout of the grid
+  .tol-responsive-grid {
+    position: relative;
+    margin: -10px; // compensate for padding on children
+    margin-bottom: -28px !important;
+  }
 
-.tol-draggable-widget {
-  background-color: var(--tol-bg);
-  border-radius: 6px;
-}
+  .tol-visualisation {
+    @extend .tol-boards-widget;
+    position: relative;
+    margin: 0px !important;
+  }
 
-.tol-draggable-widget:hover {
-  cursor: move;
-}
+  .widget-delete-btn {
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    padding: 0;
+    top: 0;
+    right: 0;
+    margin: 12px;
+  }
 
-.tol-board-bar {
-  @extend .tol-boards-widget;
-  margin: 6px;
-  border-radius: 0;
+  .tol-draggable-widget {
+    background-color: var(--tol-bg);
+    border-radius: 6px;
+  }
 
-  .tol-editable-title {
+  .tol-draggable-widget:hover {
+    cursor: move;
+  }
+
+  .tol-board-bar {
+    @extend .tol-boards-widget;
+    margin: 6px;
+    border-radius: 0;
+  }
+
+  .tol-board-bar {
+    @extend .tol-boards-widget;
+    border-radius: 0;
+  }
+
+  .tol-board-bar>div {
+    margin-bottom: 0;
+  }
+
+  // buttons and modals etc
+  .inverted-config-button {
+    float: right;
+    padding: 0;
+    height: 30px;
+    width: 30px;
+    margin-left: 6px;
+
+    border-color: var(--tol-primary) !important;
+    text-decoration: none;
+    color: white;
+    fill: white;
+  }
+
+  .inverted-config-button:hover {
     color: var(--tol-primary);
+    fill: var(--tol-primary);
+    background-color: transparent;
+    border-color: var(--tol-grey);
   }
-}
 
-.tol-view-bar,
-.tol-zone-bar {
-  @extend .tol-boards-widget;
-  border-radius: 0;
-}
+  .dashboard-component-modal-full {
+    .rs-modal-content .rs-modal-body {
+      height: auto !important;
+      overflow: hidden !important;
+    }
+  }
 
-.tol-view-bar>div,
-.tol-zone-bar>div {
-  margin-bottom: 0;
-}
+  .inverted-config-button:active {
+    background-color: var(--tol-grey) !important;
+    border-color: var(--tol-grey);
+    color: var(--tol-bg) !important;
+    fill: var(--tol-bg) !important;
+    background-color: transparent;
+  }
 
-// buttons and modals etc
-.inverted-config-button {
-  float: right;
-  padding: 0;
-  height: 30px;
-  width: 30px;
-  margin-left: 6px;
+  .config-button:disabled {
+    border-color: unset !important;
+    text-decoration: none;
+    color: var(--tol-primary);
+    fill: var(--tol-primary);
+  }
 
-  border-color: var(--tol-primary) !important;
-  text-decoration: none;
-  color: white;
-  fill: white;
-}
+  .open-add-zone-modal-button {
+    position: absolute;
+    right: 20px;
+    top: 94px;
+  }
 
-.inverted-config-button:hover {
-  color: var(--tol-primary);
-  fill: var(--tol-primary);
-  background-color: transparent;
-  border-color: var(--tol-grey);
-}
+  .edit-config-button {
+    float: right;
+    padding: 0;
+    height: 30px;
+    width: 30px;
+    margin-right: 12px;
+  }
 
-.dashboard-component-modal-full {
-  .rs-modal-content .rs-modal-body {
+  .tol-delete-warning {
+    @extend .edit-config-button;
+    width: auto;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 3px;
+
+    p {
+      font-size: 14px;
+      font-weight: bolder;
+    }
+  }
+
+  .my-boards-buttons {
+    float: right;
+    margin: 2px
+  }
+
+  .my-boards-container {
+    overflow: auto;
+    min-height: 200px;
+  }
+
+  .my-boards-dropdown-buttons {
+    border: 0px !important;
+    font-size: 20px !important;
+  }
+
+  .my-boards-dropdown-buttons {
+    @media (prefers-color-scheme: dark) {
+      color: #fff;
+    }
+  }
+
+  .zone-edit-button {
+    @extend .edit-config-button;
+    background-color: darkmagenta;
+    border-color: darken(darkmagenta, 10%);
+  }
+
+  .zone-edit-button:hover {
+    background-color: darken(darkmagenta, 5%);
+    border-color: darken(darkmagenta, 10%);
+  }
+
+  .zone-edit-button:active {
+    background-color: darken(darkmagenta, 5%) !important;
+    border-color: darken(darkmagenta, 10%) !important;
+    fill: darken(darkmagenta, 10%) !important;
+  }
+
+  .tol-button-col {
+    margin-bottom: 15px;
+  }
+
+  .tol-component-modal-btn {
+    cursor: pointer;
+    width: auto;
+    border-radius: 6px;
+    text-align: center;
+    background-color: var(--tol-grey-subtle);
+    position: relative !important;
     height: auto !important;
-    overflow: hidden !important;
+    min-height: 100% !important;
+    padding: 15px;
+    border: 2px solid var(--tol-grey-subtle) !important;
+
+    h6 {
+      margin-top: 10px;
+    }
+
+    h5,
+    h6 {
+      margin-bottom: 0;
+    }
   }
-}
 
-.inverted-config-button:active {
-  background-color: var(--tol-grey) !important;
-  border-color: var(--tol-grey);
-  color: var(--tol-bg) !important;
-  fill: var(--tol-bg) !important;
-  background-color: transparent;
-}
-
-.config-button:disabled {
-  border-color: unset !important;
-  text-decoration: none;
-  color: var(--tol-primary);
-  fill: var(--tol-primary);
-}
-
-.open-add-zone-modal-button {
-  position: absolute;
-  right: 20px;
-  top: 94px;
-}
-
-.edit-config-button {
-  float: right;
-  padding: 0;
-  height: 30px;
-  width: 30px;
-  margin-right: 12px;
-}
-
-.tol-delete-warning {
-  @extend .edit-config-button;
-  width: auto;
-  padding-left: 5px;
-  padding-right: 5px;
-  padding-top: 3px;
-
-  p {
-    font-size: 14px;
-    font-weight: bolder;
+  // Temporary class as only table is useable
+  .tol-component-modal-btn-disabled {
+    @extend .tol-component-modal-btn;
+    cursor: not-allowed;
+    color: var(--tol-bg) !important;
   }
-}
 
-.my-boards-buttons {
-  float: right;
-  margin: 2px
-}
-
-.my-boards-container {
-  overflow: auto;
-  min-height: 200px;
-}
-
-.my-boards-dropdown-buttons {
-  border: 0px !important;
-  font-size: 20px !important;
-}
-
-.my-boards-dropdown-buttons {
-  @media (prefers-color-scheme: dark) {
-    color: #fff;
+  .tol-component-modal-btn:hover {
+    &:not(.tol-component-modal-btn-disabled, .tol-component-modal-btn-clicked) {
+      background-color: var(--tol-grey-translucent);
+    }
   }
-}
 
-.zone-edit-button {
-  @extend .edit-config-button;
-  background-color: darkmagenta;
-  border-color: darken(darkmagenta, 10%);
-}
+  .tol-component-modal-btn-clicked {
+    @extend .tol-component-modal-btn;
+    background-color: var(--tol-primary-translucent);
+    border: 2px solid var(--tol-primary) !important;
+  }
 
-.zone-edit-button:hover {
-  background-color: darken(darkmagenta, 5%);
-  border-color: darken(darkmagenta, 10%);
-}
-
-.zone-edit-button:active {
-  background-color: darken(darkmagenta, 5%) !important;
-  border-color: darken(darkmagenta, 10%) !important;
-  fill: darken(darkmagenta, 10%) !important;
-}
-
-.tol-button-col {
-  margin-bottom: 15px;
-}
-
-.tol-component-modal-btn {
-  cursor: pointer;
-  width: auto;
-  border-radius: 6px;
-  text-align: center;
-  background-color: var(--tol-grey-subtle);
-  position: relative !important;
-  height: auto !important;
-  min-height: 100% !important;
-  padding: 15px;
-  border: 2px solid var(--tol-grey-subtle) !important;
-
-  h6 {
+  .tol-zone {
     margin-top: 10px;
   }
 
-  h5,
-  h6 {
+  .tol-zones .tol-zone:not(:first-child) {
+    margin-top: 28px;
+  }
+
+  .tol-zone-empty {
+    text-align: center;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    p {
+      font-size: 14px;
+      font-weight: bolder;
+    }
+  }
+
+  .tol-placeholder {
+    h5 {
+      margin-top: 5px;
+    }
+  }
+
+  .dashboard-modal-input.form-control {
+    font-size: 14px;
+    color: var(--tol-primary);
+  }
+
+  .tol-modal-error {
+    color: var(--tol-danger);
+    font-size: 14px;
+  }
+
+  .tol-editable-title.rs-inline-edit {
+    font-weight: bolder !important;
+    display: block;
+    margin-right: 10px;
+
+    .rs-plaintext {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .tol-editable-title {
+    @extend .tol-editable-title;
+
+    .rs-plaintext {
+      max-width: 250px;
+    }
+  }
+
+  // Large header for view mode
+  h3 {
     margin-bottom: 0;
   }
-}
 
-// Temporary class as only table is useable
-.tol-component-modal-btn-disabled {
-  @extend .tol-component-modal-btn;
-  cursor: not-allowed;
-  color: var(--tol-bg) !important;
-}
+  .character-counter {
+    position: absolute;
+    bottom: -20px;
+    right: 12px;
+    font-size: 12px;
+    color: var(--rs-text-secondary);
+    background: var(--tol-bg);
+    padding: 4px 8px;
+    border-radius: 4px;
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+  }
 
-.tol-component-modal-btn:hover {
-  &:not(.tol-component-modal-btn-disabled, .tol-component-modal-btn-clicked) {
+  .character-counter-warning {
+    color: var(--rs-form-errormessage-text);
+  }
+
+  .zone-modal-labels {
+    margin-bottom: 5px !important;
+  }
+
+  // temp - accordion header hover
+  .rs-panel-btn:hover,
+  .rs-panel-btn:focus,
+  .rs-panel-btn:active {
     background-color: var(--tol-grey-translucent);
-  }
-}
-
-.tol-component-modal-btn-clicked {
-  @extend .tol-component-modal-btn;
-  background-color: var(--tol-primary-translucent);
-  border: 2px solid var(--tol-primary) !important;
-}
-
-.tol-zone {
-  margin-top: 10px;
-}
-
-.tol-zones .tol-zone:not(:first-child) {
-  margin-top: 28px;
-}
-
-.tol-zone-empty {
-  text-align: center;
-  height: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-
-  p {
-    font-size: 14px;
-    font-weight: bolder;
-  }
-}
-
-.tol-placeholder {
-  h5 {
-    margin-top: 5px;
-  }
-}
-
-.dashboard-modal-input.form-control {
-  font-size: 14px;
-  color: var(--tol-primary);
-}
-
-.tol-modal-error {
-  color: var(--tol-danger);
-  font-size: 14px;
-}
-
-.tol-editable-title.rs-inline-edit {
-  font-weight: bolder !important;
-  display: block;
-  margin-right: 10px;
-
-  .rs-plaintext {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-.tol-editable-title {
-  @extend .tol-editable-title;
-
-  .rs-plaintext {
-    max-width: 250px;
-  }
-}
-
-.character-counter {
-  position: absolute;
-  bottom: -20px;
-  right: 12px;
-  font-size: 12px;
-  color: var(--rs-text-secondary);
-  background: var(--tol-bg);
-  padding: 4px 8px;
-  border-radius: 4px;
-  box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-}
-
-.character-counter-warning {
-  color: var(--rs-form-errormessage-text);
-}
-
-.zone-modal-labels {
-  margin-bottom: 5px !important;
-}
-
-// temp - accordion header hover
-.rs-panel-btn:hover,
-.rs-panel-btn:focus,
-.rs-panel-btn:active {
-  background-color: var(--tol-grey-translucent);
-  color: var(--tol-primary);
-}
-
-// temp for info on zone bar
-.tol-zone-bar .tooltip-wrapper svg {
-  margin-top: -3px;
-}
-
-.tol-initial-boards-tour-modal {
-  .rs-checkbox input {
-    margin: 0;
-    padding: 0;
+    color: var(--tol-primary);
   }
 
-  .rs-modal-footer span {
-    margin: 0 !important;
+  .tol-initial-boards-tour-modal {
+    .rs-checkbox input {
+      margin: 0;
+      padding: 0;
+    }
+
+    .rs-modal-footer span {
+      margin: 0 !important;
+    }
   }
 }

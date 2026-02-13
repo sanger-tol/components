@@ -26,9 +26,11 @@ export interface PBoardTable extends PVisualisation {
 
 export function BoardTable(props: PBoardTable) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
+
+  const { privilege, editMode } = useBoard();
+
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
-  const { privilege } = useBoard()
 
   const onConfigSave = ({
     fieldMeta,
@@ -101,9 +103,9 @@ export function BoardTable(props: PBoardTable) {
   return (
     <RemoteTable
       {...props}
-      noConfigModal={privilege !== PRIVILEGE.BOARD.EDITABLE}
+      noConfigModal={!editMode}
       // RemoteTable defaults to true for resizeableColumns, we want to default to false
-      resizeableColumns={privilege === PRIVILEGE.BOARD.EDITABLE || false}
+      resizeableColumns={editMode || false}
       onResizeColumn={onResizeColumn}
       advanceTab
       displaySource
@@ -122,20 +124,20 @@ export function BoardTable(props: PBoardTable) {
         ...utilityBarConfig,
         title: {
           text: utilityBarConfig.title?.text,
-          editable: privilege === PRIVILEGE.BOARD.EDITABLE,
+          editable: editMode,
           onSave: (value: string) => {
             saveTitle(value, id, boardObjectType, boardDataSource);
           }
         },
         elements: BoardFilter,
-        buttons: [privilege !== PRIVILEGE.BOARD.EDITABLE ? undefined : {
+        buttons: [editMode ? {
           outline: true,
           position: "right",
           type: "primary",
           tooltip: "Open filter config",
           onClick: () => setOpenFilters(true),
           icon: "filter",
-        }],
+        } : undefined],
       }}
     />
   );

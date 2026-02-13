@@ -135,7 +135,7 @@ export function Table(props: PTable) {
     /* eslint-enable */
   } = props;
 
-  const { privilege } = useBoard();
+  const { privilege, editMode } = useBoard();
 
   const [open, setOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
@@ -266,24 +266,19 @@ export function Table(props: PTable) {
     };
 
   const filterButton: PButton =
-    (!noFilter &&
-      fieldMeta.order.active.length !== 0 &&
-      privilege === PRIVILEGE.BOARD.EDITABLE) ||
-      privilege === undefined
-      ? {
-        visible: true,
-        position: "right",
-        type: "primary",
-        onClick: () => {
-          setFilterVisibility(!filterVisibility);
-        },
-        icon: filterVisibility ? "eye-slash" : "eye",
-        tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
-        outline: true,
-      }
-      : {
-        visible: false,
-      };
+    (!noFilter && fieldMeta.order.active.length !== 0 && editMode) ? {
+      visible: true,
+      position: "right",
+      type: "primary",
+      onClick: () => {
+        setFilterVisibility(!filterVisibility);
+      },
+      icon: filterVisibility ? "eye-slash" : "eye",
+      tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
+      outline: true,
+    } : {
+      visible: false,
+    };
 
   const downloadButton: PButton = !noDownload
     ? {
@@ -368,22 +363,21 @@ export function Table(props: PTable) {
           !noPagination && fieldMeta?.order?.active?.length > 0
             ? [
               <span className="tol-page-size">
-                {!smallBreakpoint &&
-                  (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
-                    <SelectPicker
-                      value={pageSize}
-                      onChange={setPageSize}
-                      size="sm"
-                      cleanable={false}
-                      searchable={false}
-                      data={[
-                        { label: "25", value: 25 },
-                        { label: "50", value: 50 },
-                        { label: "100", value: 100 },
-                        { label: "250", value: 250 },
-                      ]}
-                    />
-                  )}
+                {!smallBreakpoint && editMode && (
+                  <SelectPicker
+                    value={pageSize}
+                    onChange={setPageSize}
+                    size="sm"
+                    cleanable={false}
+                    searchable={false}
+                    data={[
+                      { label: "25", value: 25 },
+                      { label: "50", value: 50 },
+                      { label: "100", value: 100 },
+                      { label: "250", value: 250 },
+                    ]}
+                  />
+                )}
               </span>,
               <Pagination
                 className="tol-pagination"
@@ -423,7 +417,7 @@ export function Table(props: PTable) {
               message={
                 <>
                   {/* Assume that when privilege is undefined, the table is not in a board */}
-                  {privilege === PRIVILEGE.BOARD.EDITABLE || !privilege ? (
+                  {editMode ? (
                     <>
                       No fields selected. Please click
                       <FontAwesomeIcon
