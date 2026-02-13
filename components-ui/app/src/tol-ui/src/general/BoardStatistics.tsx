@@ -14,7 +14,6 @@ import {
   saveTitle,
   PButton,
   useBoard,
-  PRIVILEGE,
   PVisualisation,
   updateConfigAndUpsert,
 } from "..";
@@ -24,7 +23,7 @@ export interface PBoardStatistics extends PVisualisation { }
 export function BoardStatistics(props: PBoardStatistics) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
 
-  const { privilege, editMode } = useBoard();
+  const { editMode } = useBoard();
 
   const initialConfig = props.config && props.config.type ? props.config : { type: "count" };
   const [config, setConfig] = useState<IStatisticsConfig>(initialConfig);

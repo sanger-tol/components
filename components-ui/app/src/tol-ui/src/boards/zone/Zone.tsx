@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import {
   useZone,
   BoardFilters,
@@ -21,7 +21,6 @@ import {
   PBoard,
   addComponents,
   useBoard,
-  PRIVILEGE,
   TitleTooltip,
   TsDataSource,
 } from "../..";
@@ -96,7 +95,8 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "Add Component",
     testid: "add-component-button",
-    visible: editMode
+    visible: editMode,
+    text: "Add Component",
   };
 
   const editButton: PButton = {

@@ -19,7 +19,6 @@ import {
   getUserPrivilege,
   useBoard,
   copyToClipboard,
-  PUtilityBar,
   TBoardPrivilege,
   PRIVILEGE,
   TNavBrand,

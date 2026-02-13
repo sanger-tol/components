@@ -11,7 +11,6 @@ import {
   saveTitle,
   updateConfigAndUpsert,
   useBoard,
-  PRIVILEGE,
   ITableConfigSave,
   optimiseFieldMetaForSave,
   ITableDrawerSave,
@@ -27,7 +26,7 @@ export interface PBoardTable extends PVisualisation {
 export function BoardTable(props: PBoardTable) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
 
-  const { privilege, editMode } = useBoard();
+  const { editMode } = useBoard();
 
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
   const [openFilters, setOpenFilters] = useState(false);

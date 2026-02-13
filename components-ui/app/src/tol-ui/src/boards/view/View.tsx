@@ -16,14 +16,10 @@ import {
   PBoard,
   reorderZoneAndUpsert,
   getSortedZones,
-  PButton,
-  PRIVILEGE,
   useBoard,
   TsDataSource,
   UtilityBar,
-  PUtilityBar,
   BUTTONS,
-  saveTitle,
 } from "../..";
 
 
@@ -35,7 +31,7 @@ export interface PView extends PBoard {
 export function View(props: PView) {
   const { id, boardDataSource } = props;
 
-  const { privilege, editMode } = useBoard();
+  const { editMode } = useBoard();
 
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);

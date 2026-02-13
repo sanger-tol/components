@@ -15,7 +15,6 @@ import {
   SliceByDrawer,
   PButton,
   updateConfigAndUpsert,
-  PRIVILEGE,
   useBoard,
   PVisualisation
 } from "..";
@@ -26,7 +25,7 @@ interface Props extends PVisualisation { }
 export function BoardSunburst(props: Props) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, size, zone } = props;
 
-  const { privilege, editMode } = useBoard();
+  const { editMode } = useBoard();
 
   const [config, setConfig] = useState<any>(props.config);
   const [openFilters, setOpenFilters] = useState(false);

@@ -17,7 +17,6 @@ import {
   PButton,
   updateConfigAndUpsert,
   useBoard,
-  PRIVILEGE,
   PVisualisation
 } from "..";
 
@@ -27,7 +26,7 @@ interface Props extends PVisualisation { }
 export function BoardChart(props: Props) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
 
-  const { privilege, editMode } = useBoard();
+  const { editMode } = useBoard();
 
   const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
@@ -51,7 +50,7 @@ export function BoardChart(props: Props) {
     type: "primary",
     onClick: () => setOpenConfig(true),
     icon: "sliders",
-    visible: privilege == PRIVILEGE.BOARD.EDITABLE,
+    visible: editMode,
   }
 
   const filterButton: PButton = {
@@ -60,7 +59,7 @@ export function BoardChart(props: Props) {
     type: "primary",
     onClick: () => setOpenFilters(true),
     icon: "filter",
-    visible: privilege == PRIVILEGE.BOARD.EDITABLE,
+    visible: editMode,
   }
 
   const Contents = () => {
@@ -117,7 +116,7 @@ export function BoardChart(props: Props) {
           ...utilityBarConfig,
           title: {
             text: utilityBarConfig.title?.text,
-            editable: privilege == PRIVILEGE.BOARD.EDITABLE,
+            editable: editMode,
             onSave: (value: string) => {
               saveTitle(value, id, boardObjectType, boardDataSource);
             }
