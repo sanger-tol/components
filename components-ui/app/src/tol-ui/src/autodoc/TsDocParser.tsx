@@ -5,8 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  IComponentDocumentation, 
-  IComponentExample, 
+  IComponentDocumentation,
+  IComponentExample,
   IComponentProp
 } from "..";
 
@@ -22,9 +22,10 @@ export class TsDocParseError extends Error {
 }
 
 // @ts-ignore - Use Vite's glob import to get all tsx/jsx files as raw strings
-const modules = import.meta.glob("../**/*.{tsx,jsx,ts,js}", { 
-  as: "raw",
-  eager: true 
+const modules = import.meta.glob("../**/*.{tsx,jsx,ts,js}", {
+  query: "?raw",
+  import: "default",
+  eager: true
 });
 
 /**
@@ -145,7 +146,7 @@ export class TsDocParser {
     const remarksMatches = autodocComment.match(
       /(?<=@remarks\s)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g
     );
-    const remarks = remarksMatches?.map(remark => 
+    const remarks = remarksMatches?.map(remark =>
       // Remove the artefacts at the start of each line (the first 3 characters)
       remark.split("\n")
         .map(line => line.slice(3))
@@ -171,14 +172,14 @@ export class TsDocParser {
   ): IComponentProp[] {
     // Extract the interface from the file
     const interfaceText = this.extractInterfaceFromFile(fileContent, interfaceName);
-    
+
     // Extract the documentation for the props in this interface
     let propDocs = this.extractPropsFromInterface(interfaceText, interfaceName);
 
     // Check if there are any deeper interfaces.
     const deeperInterfacesMatch = interfaceText.match(/(?:extends\s+)(([a-zA-Z_][a-zA-Z0-9_]*(, )*)*)/);
     if (!deeperInterfacesMatch) return propDocs;
-    
+
     // If there are any deeper interfaces, add the documentation of their members to `propDocs`
     const deeperInterfaceNames = deeperInterfacesMatch[1].split(", ");
     for (const deeperInterfaceName of deeperInterfaceNames) {
@@ -219,7 +220,7 @@ export class TsDocParser {
       "g"
     );
     const matches = fileContent.match(regex);
-    
+
     // Return the match if there was one
     if (matches) {
       return matches[0];
