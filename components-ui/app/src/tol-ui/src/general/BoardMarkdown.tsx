@@ -13,7 +13,7 @@ import {
   PButton,
   saveTitle,
   updateConfigAndUpsert,
-  useBoardPrivilege,
+  useBoard,
   PRIVILEGE,
   IMarkdownConfig,
   PVisualisation
@@ -30,7 +30,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [showMarkdownViewer, setShowMarkdownViewer] = useState<boolean>(false);
-  const { privilege } = useBoardPrivilege();
+  const { privilege } = useBoard();
 
 
   useEffect(() => {

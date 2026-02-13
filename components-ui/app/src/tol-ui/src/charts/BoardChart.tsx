@@ -16,7 +16,7 @@ import {
   IChartConfig,
   PButton,
   updateConfigAndUpsert,
-  useBoardPrivilege,
+  useBoard,
   PRIVILEGE,
   PVisualisation
 } from "..";
@@ -30,7 +30,7 @@ export function BoardChart(props: Props) {
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
-  const { privilege } = useBoardPrivilege()
+  const { privilege } = useBoard()
 
   const onConfigSave = (updatedConfig: IChartConfig) => {
     setConfig({ ...updatedConfig });

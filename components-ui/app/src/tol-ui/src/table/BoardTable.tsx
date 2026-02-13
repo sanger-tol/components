@@ -10,7 +10,7 @@ import {
   RemoteTable,
   saveTitle,
   updateConfigAndUpsert,
-  useBoardPrivilege,
+  useBoard,
   PRIVILEGE,
   ITableConfigSave,
   optimiseFieldMetaForSave,
@@ -28,7 +28,7 @@ export function BoardTable(props: PBoardTable) {
   const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
   const [openFilters, setOpenFilters] = useState(false);
-  const { privilege } = useBoardPrivilege()
+  const { privilege } = useBoard()
 
   const onConfigSave = ({
     fieldMeta,

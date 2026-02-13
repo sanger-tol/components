@@ -16,7 +16,7 @@ import {
   PButton,
   updateConfigAndUpsert,
   PRIVILEGE,
-  useBoardPrivilege,
+  useBoard,
   PVisualisation
 } from "..";
 
@@ -29,7 +29,7 @@ export function BoardSunburst(props: Props) {
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
-  const { privilege } = useBoardPrivilege()
+  const { privilege } = useBoard()
 
   const onConfigSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });

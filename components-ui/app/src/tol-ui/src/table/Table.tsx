@@ -22,7 +22,7 @@ import {
   PUtilityBar,
   PButton,
   PDropdownButtons,
-  useBoardPrivilege,
+  useBoard,
   PRIVILEGE,
   ITableConfigSave,
   RowCounter,
@@ -135,7 +135,7 @@ export function Table(props: PTable) {
     /* eslint-enable */
   } = props;
 
-  const { privilege } = useBoardPrivilege();
+  const { privilege } = useBoard();
 
   const [open, setOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);

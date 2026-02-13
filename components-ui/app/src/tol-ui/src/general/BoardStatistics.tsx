@@ -13,7 +13,7 @@ import {
   deepCopy,
   saveTitle,
   PButton,
-  useBoardPrivilege,
+  useBoard,
   PRIVILEGE,
   PVisualisation,
   updateConfigAndUpsert,
@@ -27,7 +27,7 @@ export function BoardStatistics(props: PBoardStatistics) {
   const [config, setConfig] = useState<IStatisticsConfig>(initialConfig);
   const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
-  const { privilege } = useBoardPrivilege();
+  const { privilege } = useBoard();
 
   const onConfigSave = (updatedConfig: IStatisticsConfig) => {
     setConfig({ ...updatedConfig });

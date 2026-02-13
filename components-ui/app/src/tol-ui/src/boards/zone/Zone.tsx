@@ -20,7 +20,7 @@ import {
   PButton,
   PBoard,
   addComponents,
-  useBoardPrivilege,
+  useBoard,
   PRIVILEGE,
   TitleTooltip,
   TsDataSource,
@@ -60,7 +60,7 @@ export function Zone(props: PZone) {
     filter: filter,
     components: [],
   });
-  const { privilege } = useBoardPrivilege();
+  const { privilege } = useBoard();
 
   useEffect(() => {
     getComponents(id, boardDataSource).then((components) => {

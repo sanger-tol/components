@@ -17,7 +17,7 @@ import {
   TsDataSource,
   View,
   getUserPrivilege,
-  useBoardPrivilege,
+  useBoard,
   copyToClipboard,
   PUtilityBar,
   TBoardPrivilege,
@@ -52,7 +52,7 @@ export function Board(props: PBoard) {
   const [view, setView] = useState(viewId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { privilege, setPrivilege } = useBoardPrivilege();
+  const { privilege, setPrivilege } = useBoard();
 
   // Ability to override boardId from props over URL params
   const boardId = props.boardId ?? paramBoardId;
