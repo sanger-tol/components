@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import {
   LoadingContent,
   getProfile,
@@ -16,10 +17,14 @@ import {
   setTokenToLocalStorage,
   setUserToLocalStorage,
   tokenHasExpired,
+  PSmartApp,
 } from "..";
 
+export function Callback(props: PSmartApp) {
+  const { brand } = props;
 
-export function Callback() {
+  const history = useHistory();
+
   const { setToken, token, setUser } = useAuth();
   const [state] = useState(useQuery().get("state") || undefined);
   const [tokenCode] = useState(useQuery().get("code") || undefined);
@@ -31,10 +36,10 @@ export function Callback() {
         code: tokenCode,
       };
       getToken(stateToken).then((res: any) => {
-        const tokenData = res.data;
-        setTokenToLocalStorage(tokenData.access_token);
-        setToken(tokenData.access_token);
-        getProfile(tokenData.access_token)
+        const token = res.data.access_token;
+        setTokenToLocalStorage(token);
+        setToken(token);
+        getProfile(token)
           .then((profileData: any) => {
             getRoles().then((rolesData: any) => {
               const userData = { ...profileData.data, ...rolesData.data };
@@ -45,7 +50,7 @@ export function Callback() {
           .finally(() => {
             setTimeout(() => {
               const targetUrl = getReturnUrlFromLocalStorage() || "";
-              window.location.href = targetUrl;
+              history.replace(targetUrl);
             }, 500);
           });
       });
@@ -53,5 +58,11 @@ export function Callback() {
     // eslint-disable-next-line
   }, []);
 
-  return <LoadingContent text="Logging in..." />;
+  return (
+    <LoadingContent
+      brand={brand}
+      overlayNav
+      text="Logging in..."
+    />
+  );
 }

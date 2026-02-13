@@ -9,6 +9,6 @@ export type TBoardPrivilege = "hidden" | "viewable" | "editable";
 export type TBoardPrivilegeOrUndefined = TBoardPrivilege | undefined;
 
 export interface IBoardPrivilegeContextValue {
-    privilege: TBoardPrivilegeOrUndefined;
-    setPrivilege: (privilege: TBoardPrivilegeOrUndefined) => void;
+  privilege: TBoardPrivilegeOrUndefined;
+  setPrivilege: (privilege: TBoardPrivilegeOrUndefined) => void;
 }

@@ -25,6 +25,7 @@ import {
   Route,
   INavDestination,
   formatPath,
+  TNavBrand,
 } from "..";
 
 
@@ -194,12 +195,14 @@ export function normaliseNavConfig(
       navItem.pages = normaliseNavConfig(navItem.pages, user, routePrefix);
     }
 
-    // Add to result and only add to order if it was in source order (thus not hidden on nav)
+    // Add to result
     result.data[displayName] = navItem;
-    if (source.order.includes(displayName)) {
-      result.order.push(displayName);
-    }
   }
+
+  // Maintain the order specified in the source config, but filter out any items that were not added to result
+  result.order = source.order.filter(
+    (id) => Object.prototype.hasOwnProperty.call(result.data, id)
+  );
 
   return result;
 }
@@ -237,7 +240,7 @@ export function mergeNavConfigs(
  * 
  * @returns A finalized {@link TNavConfig} with defaults applied via `normaliseNavConfigForUser`.
  */
-export function setupNavigationConfig(
+export function mergeAndNormaliseNavConfig(
   navigation: TNavConfig | undefined,
   defaultNavigation: TNavConfig,
   user: User | null,
@@ -409,7 +412,8 @@ export function isPageAccessible(user: User | null, page: TPageOrDropdown): bool
  *
  * @param navigation - Navigation configuration tree to traverse.
  * @param pageElements - Mapping/registry of page elements used to render routes.
- * @param boards - Optional board configuration passed through to `Route`.
+ * @param brand - Brand to pass to `Route` for rendering in loading states.
+ * @param boardDataSource - Optional data source for board pages, passed to `Route` for rendering.
  * @param parentTrail - Accumulated navigation keys representing the current traversal path.
  * 
  * @returns A flattened array of `React.ReactNode` route elements for all valid routes in the tree.
@@ -417,6 +421,7 @@ export function isPageAccessible(user: User | null, page: TPageOrDropdown): bool
 export function collectRoutes(
   navigation: TNavConfig,
   pageElements: TPageElements,
+  brand: TNavBrand,
   boardDataSource?: TsDataSource,
   parentTrail: string[] = [],
 ): React.ReactNode[] {
@@ -434,6 +439,7 @@ export function collectRoutes(
           path: navItem.path,
           pageElements,
           boardDataSource,
+          brand,
         }),
       );
     }
@@ -441,7 +447,7 @@ export function collectRoutes(
     // Recurse into dropdown children
     if (isDropdown(navItem)) {
       routes.push(
-        ...collectRoutes(navItem.pages, pageElements, boardDataSource, trail),
+        ...collectRoutes(navItem.pages, pageElements, brand, boardDataSource, trail),
       );
     }
 

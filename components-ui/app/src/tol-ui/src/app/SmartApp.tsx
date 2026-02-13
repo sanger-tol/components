@@ -31,7 +31,6 @@ import {
   TPageElements,
   getSystemDefaultNavConfig,
   collectRoutes,
-  setupNavigationConfig,
   getProfileDefaultNavConfig,
   MyBoards,
   mergeNavConfigs,
@@ -41,6 +40,8 @@ import {
   WEB_APP,
   LoadingContent,
   CORE_CONFIG_DS,
+  mergeAndNormaliseNavConfig,
+  GlobalLoadingProvider,
 } from "..";
 
 
@@ -103,29 +104,26 @@ export function SmartApp(props: PSmartApp) {
     login = true,
     register = false,
     configurableBoards = false,
+    routePrefix,
   } = props;
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
-  const [loading, setLoading] = useState(true);
-  const [loadingFade, setLoadingFade] = useState(false);
-
-  // Combines the system defaults and incoming config
-  const defaultNavigation = setupNavigationConfig(
-    props.navigation,
-    getSystemDefaultNavConfig(configurableBoards),
-    user
-  );
-  const defaultProfileNavigation = setupNavigationConfig(
-    props.profileNavigation,
-    getProfileDefaultNavConfig(configurableBoards),
-    user
-  );
-
-  const [navigation, setNavigation] = useState<TNavConfig>(defaultNavigation);
-  const [profileNavigation, setProfileNavigation] = useState<TNavConfig>(defaultProfileNavigation);
+  const [globalLoading, setGlobalLoading] = useState(true);
+  const [fetchedNavigation, setFetchedNavigation] = useState<TNavConfig>();
+  const [fetchedProfileNavigation, setFetchedProfileNavigation] = useState<TNavConfig>();
 
   const queryClient = new QueryClient();
+
+  // Combines the system defaults and incoming config
+  const defaultNavigation = mergeNavConfigs(
+    props.navigation,
+    getSystemDefaultNavConfig(configurableBoards),
+  );
+  const defaultProfileNavigation = mergeNavConfigs(
+    props.profileNavigation,
+    getProfileDefaultNavConfig(configurableBoards),
+  );
 
   useEffect(() => {
     const siteId = env.MATOMO_SITE_ID;
@@ -138,18 +136,9 @@ export function SmartApp(props: PSmartApp) {
       objectType: WEB_APP,
       id,
     }).then((obj: TDataObjectOrNull) => {
-      const fetchedNav = obj?.navigation as TNavConfig | undefined;
-      const fetchedProfileNav = obj?.profile_navigation as TNavConfig | undefined;
+      setFetchedNavigation(obj?.navigation);
+      setFetchedProfileNavigation(obj?.profile_navigation);
 
-      // Merge system navigation config and add defaults
-      setNavigation(
-        setupNavigationConfig(fetchedNav, defaultNavigation, user)
-      );
-
-      // Merge profile system navigation config and add defaults
-      setProfileNavigation(
-        setupNavigationConfig(fetchedProfileNav, defaultProfileNavigation, user)
-      );
       // If nav not found the object will be null
       if (!obj) {
         throw Error(`No configuration found for web app with id: ${id}`);
@@ -161,12 +150,13 @@ export function SmartApp(props: PSmartApp) {
         message: "Failed to fetch navigation configuration. Only using defaults.",
       })
     }).finally(() => {
-      setLoading(false);
-
       // Small delay as loading screen can feel abrupt if it disappears immediately
-      setTimeout(() => setLoadingFade(true), 300);
+      setTimeout(() => setGlobalLoading(false), 300);
     });
   }, []);
+
+  const navigation = mergeAndNormaliseNavConfig(fetchedNavigation, defaultNavigation, user, routePrefix);
+  const profileNavigation = mergeAndNormaliseNavConfig(fetchedProfileNavigation, defaultProfileNavigation, user, routePrefix);
 
   // Merging configs to collect all the routes
   const mergedNavigation: TNavConfig = mergeNavConfigs(navigation, profileNavigation);
@@ -175,17 +165,17 @@ export function SmartApp(props: PSmartApp) {
   const pageElements: TPageElements = {
     boardDetail: (
       <BoardPrivilegeContextProvider>
-        <Board boardDataSource={configDataSource} />
+        <Board boardDataSource={configDataSource} brand={brand} />
       </BoardPrivilegeContextProvider>
     ),
     myBoards: <MyBoards boardDataSource={configDataSource} />,
     validationResultsDetail: <ValidationResultsViewer />,
-    callback: <Callback />,
+    callback: <Callback {...props} />,
     ...(props.pageElements ?? {}),
   };
 
   // Merged props object to pass downstream so consumers see the merged values
-  const mergedProps = {
+  const navProps = {
     ...props,
     navigation,
     profileNavigation,
@@ -198,8 +188,7 @@ export function SmartApp(props: PSmartApp) {
     <LoadingContent
       overlayNav
       brand={brand}
-      className={loadingFade ? "is-fading-out" : ""}
-      text=""
+      className={!globalLoading ? "is-fading-out" : ""}
     />
   )
 
@@ -214,34 +203,42 @@ export function SmartApp(props: PSmartApp) {
             setUser,
           }}
         >
-          <Router>
-            <Navigation {...mergedProps} />
-            <div className="tol-smart-app">
-              <div className="tol-smart-app-content">
-                {/* Switch also needs loading screen to ensure smooth transition */}
-                {LoadingScreen}
-                {!loading && (
-                  <>
-                    <Switch>
-                      {collectRoutes(
-                        mergedNavigation,
-                        pageElements,
-                        configDataSource
-                      )}
-                      <ReactRouter
-                        path={`/page-not-found`}
-                        component={() => <PageNotFound />}
-                      />
-                      <ReactRouter path="*">
-                        <Redirect to={`/page-not-found`} />
-                      </ReactRouter>
-                    </Switch>
-                  </>
-                )}
+          <GlobalLoadingProvider
+            value={{
+              globalLoading,
+              setGlobalLoading,
+            }}
+          >
+            <Router>
+              <Navigation {...navProps} />
+              <div className="tol-smart-app">
+                <div className="tol-smart-app-content">
+                  {/* Switch also needs loading screen to ensure smooth transition */}
+                  {LoadingScreen}
+                  {!globalLoading && (
+                    <>
+                      <Switch>
+                        {collectRoutes(
+                          mergedNavigation,
+                          pageElements,
+                          brand,
+                          configDataSource
+                        )}
+                        <ReactRouter
+                          path={`/page-not-found`}
+                          component={() => <PageNotFound />}
+                        />
+                        <ReactRouter path="*">
+                          <Redirect to={`/page-not-found`} />
+                        </ReactRouter>
+                      </Switch>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-            <Footer />
-          </Router>
+              <Footer />
+            </Router>
+          </GlobalLoadingProvider>
         </AuthProvider>
       </QueryClientProvider>
     </div>

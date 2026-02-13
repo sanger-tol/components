@@ -10,7 +10,7 @@ import {
   TNavConfig,
   collectNavigationItems,
   normaliseNavConfig,
-  setupNavigationConfig,
+  mergeAndNormaliseNavConfig,
   generateRoutePath,
   getSystemDefaultNavConfig,
 } from "../../tol-ui/src";
@@ -29,7 +29,7 @@ import { navOutputConfigRoleRequiredMock } from "../mocks/nav/role-required-outp
 import { navOutputConfigPublicRoutePrefixMock } from "../mocks/nav/public-output-route-prefix";
 
 
-const navConfigWithDefaults: TNavConfig = setupNavigationConfig(navInputConfigMock, getSystemDefaultNavConfig(true), null);
+const navConfigWithDefaults: TNavConfig = mergeAndNormaliseNavConfig(navInputConfigMock, getSystemDefaultNavConfig(true), null);
 
 describe("getSystemDefaultNavConfig function", () => {
   test("Check explicit routes aren't overwritten", () => {
