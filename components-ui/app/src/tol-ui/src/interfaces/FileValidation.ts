@@ -71,17 +71,6 @@ export interface IValidatedDataReport {
   issues: TValidationIssues;
 }
 
-export interface IAllValidationDataAPI {
-  id: string;
-  completed: boolean;
-  date_started: string;
-  flow_run_id: string;
-  s3_filename: string;
-  s3_bucket: string;
-  validation_results: IValidationResultAPI[];
-  failure_message: string | null;
-}
-
 export interface IAllValidationData {
   id: string;
   completed: boolean;
@@ -96,6 +85,8 @@ export interface IAllValidationData {
   s3Bucket: string;
   validationResults: IValidationResult[];
   failureMessage: string | null;
+  hidden: boolean;
+  oidcId: string;
 }
 
 export interface IStepData {

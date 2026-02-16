@@ -3,8 +3,9 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router-dom";
+import { Toggle } from "rsuite";
 import {
   Button,
   createValidationActions,
@@ -81,12 +82,43 @@ export function FileValidationHome(props: PFileValidationHome) {
   // Update table on table tab selection
   const [forceTableUpdate, setForceTableUpdate] = useState<boolean>(false);
 
+  // toggles hidden uploads on table
+  const [showHiddenUploads, setShowHiddenUploads] = useState<boolean>(false);
+
   // Modals state
   const [reportOpen, setReportOpen] = useState<boolean>(false);
   const [submissionRejectModalOpen, setSubmissionRejectModalOpen] =
     useState<boolean>(false);
 
   const userIsAdmin = getUserFromLocalStorage().roles.includes("admin");
+
+  // Define the zone with the default filter of hidden: false
+  const uploadsZone = useZone({
+    objectType: "upload",
+    dataSource: new TsDataSource({
+      apiPath: "/api/v1/local",
+    }),
+    filter: {
+      and_: {
+        hidden: { eq: { value: showHiddenUploads } },
+      },
+    },
+    components: [
+      {
+        id: "uploads-table",
+      },
+    ],
+  });
+
+  // update the zone filter on showHiddenUploads boolean change
+  useEffect(() => {
+    uploadsZone.zone.filter = {
+      and_: {
+        hidden: { eq: { value: showHiddenUploads } },
+      },
+    };
+    uploadsZone.setZone({ ...uploadsZone.zone });
+  }, [showHiddenUploads]);
 
   // Remove the env identifier and random id from file name
   const FileNameSplitCell = ({ fileName }) => {
@@ -130,6 +162,7 @@ export function FileValidationHome(props: PFileValidationHome) {
           setReportOpen,
           setSubmissionRejectModalOpen,
           setForceTableUpdate,
+          setSelectedRows
         }) as IDropdownButtonConfig[]
       }
       noConfigModal
@@ -192,6 +225,13 @@ export function FileValidationHome(props: PFileValidationHome) {
               props: { validationStatus: "${validation_status}" },
             },
           },
+          hidden: {
+            filter: "bool",
+            rename: "Hidden From View",
+            cellRenderer: {
+              type: "boolean"
+            }
+          },
           ...additionalTableConfig?.fields,
         },
         order: {
@@ -205,20 +245,11 @@ export function FileValidationHome(props: PFileValidationHome) {
             "flow_run_id",
             "failure_message",
             ...additionalTableConfig?.order,
+            "hidden"
           ],
         },
       }}
-      {...useZone({
-        objectType: "upload",
-        dataSource: new TsDataSource({
-          apiPath: "/api/v1/local",
-        }),
-        components: [
-          {
-            id: "uploads-table",
-          },
-        ],
-      })}
+      {...uploadsZone}
     />
   );
 
@@ -257,7 +288,31 @@ export function FileValidationHome(props: PFileValidationHome) {
         <Widgets
           components={[
             { component: intro, type: "full" },
-            { component: <h2>{tabTitles.titleTwo}</h2>, type: "full" },
+            {
+              component: (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <h2>{tabTitles.titleTwo}</h2>
+                  <div style={{ display: "flex", gap: "5px" }}>
+                    <p>Show Hidden Uploads</p>
+                    <Toggle
+                      onChange={() => {
+                        setShowHiddenUploads((prev) => !prev);
+                        // Force update table to use updated zone filter
+                        setForceTableUpdate((prev) => !prev);
+                      }}
+                      checked={showHiddenUploads}
+                    />
+                  </div>
+                </div>
+              ),
+              type: "full",
+            },
             { component: AllValidationUploadsTable, type: "full" },
           ]}
         />
@@ -280,6 +335,7 @@ export function FileValidationHome(props: PFileValidationHome) {
           return Object.keys(row);
         })}
         setForceTableUpdate={setForceTableUpdate}
+        setSelectedRows={setSelectedRows}
       />
       {PageTabs}
     </>

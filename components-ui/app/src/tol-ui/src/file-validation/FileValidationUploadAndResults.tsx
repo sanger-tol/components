@@ -117,11 +117,9 @@ export function FileValidationUploadAndResults(
     if (!currentUploadId) {
       return null;
     }
-    return await fetchCurrentPipelineResults(
-      PIPELINE_DS,
-      cacheBustedEndpoint,
-      currentUploadId,
-    );
+    return await fetchCurrentPipelineResults(PIPELINE_DS, cacheBustedEndpoint, {
+      id: { eq: { value: currentUploadId } },
+    });
   };
 
   const latestPipelineResults = useQueryData<IAllValidationData | null>(
@@ -184,6 +182,7 @@ export function FileValidationUploadAndResults(
         PopUpMessage({
           type: completionMessage.messageType,
           message: `Validation completed. ${completionMessage.message}`,
+          persist: completionMessage.messageType === "error" ? true : false,
         });
 
         if (!pipelineFailed) setOpenReport(true);

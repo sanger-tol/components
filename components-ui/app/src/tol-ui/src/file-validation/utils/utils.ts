@@ -9,8 +9,6 @@ import {
   PopUpMessage,
   FILE_VALIDATION_PATH,
   submitFile,
-  markFileAsReady,
-  PIPELINE_DS,
   getUserFromLocalStorage,
 } from "../..";
 
@@ -69,7 +67,7 @@ export function getErrorWarningCounts(results: IValidationResult[]): {
  * @returns The cleaned filename.
  */
 
-export function splitS3FilenameString(filename: string) {
+export function splitS3FilenameString(filename: string = "") {
   return filename.split("_").slice(2).join("_");
 }
 
@@ -425,21 +423,28 @@ export function downloadReportFile(data: IAllValidationData) {
   URL.revokeObjectURL(url);
 }
 
+// Helper to determine whether 'showItem' or 'hideItem' should be visible
+const isToggleAllowedForRow = (actionId: string, isHiddenUpload: boolean) => {
+  if (actionId === "showItem") return isHiddenUpload;
+  if (actionId === "hideItem") return !isHiddenUpload;
+  return true;
+};
+
 /**
-* Builds dropdown action configurations for the validation uploads table.
-* Each returned action is only shown when all selected rows’ validation_status policies allow it.
-* 
-* Invokes the underlying TFileValidationAction with a normalised context
-* containing the selected row IDs, shared TsDataSource, current user, and
-* any additional context (e.g. modal setters, table refresh).
-* 
-* @param actions - Map of validation action IDs to their action definitions.
-* @param policies - Map of validation statuses to their policy metadata, including allowed actions.
-* @param dataSource - Data source used by actions to perform remote operations.
-* @param additionalCtx - Extra context merged into each action callback (e.g. UI state setters).
-* @returns An array of IDropdownButtonConfig objects, including a 
-* fallback “No Actions Available for Selection” entry when nothing is applicable.
-*/
+ * Builds dropdown action configurations for the validation uploads table.
+ * Each returned action is only shown when all selected rows’ validation_status policies allow it.
+ *
+ * Invokes the underlying TFileValidationAction with a normalised context
+ * containing the selected row IDs, shared TsDataSource, current user, and
+ * any additional context (e.g. modal setters, table refresh).
+ *
+ * @param actions - Map of validation action IDs to their action definitions.
+ * @param policies - Map of validation statuses to their policy metadata, including allowed actions.
+ * @param dataSource - Data source used by actions to perform remote operations.
+ * @param additionalCtx - Extra context merged into each action callback (e.g. UI state setters).
+ * @returns An array of IDropdownButtonConfig objects, including a
+ * fallback “No Actions Available for Selection” entry when nothing is applicable.
+ */
 
 export const createValidationActions = (
   actions: TValidationActionMap,
@@ -449,27 +454,44 @@ export const createValidationActions = (
 ) => {
   // Get user for action callback context
   const user = getUserFromLocalStorage();
-  // TODO: Allowed actions might not be showing the correct actions...
   // Render table actions based on current validation status
   const baseValidationActions = Object.values(actions).map(
     (action: TFileValidationAction) => ({
       name: action.label,
+      // Check visibility of an action in the dropdown
       isVisibleAction: (selectedRows: any[] = []) =>
         selectedRows.length > 0 &&
-        // Make sure the action can be completed by every selected row before rendering it
+        // Make sure the action can be completed by every selected row before showing it
         selectedRows.every((row) => {
           // Get the validation status of the row
           const status = row?.validation_status?.props?.value;
 
-          // Check against the allowed actions of that particular status
+          // Check against the allowed actions of the current status
           const allowed = policies[status]?.allowedActions ?? [];
 
           // Return all allowed actions of that policy
+          // After checking which hidden status action is allowed
+          // hidden -> showItem | shown -> hideItem
           return allowed.includes(action.id);
-        }),
+        }) && // Check if the action itself declares an its availability
+        (action.isAvailable
+          ? action.isAvailable({
+              items: Object.values(selectedRows).map((row) =>
+                row.key
+                  ? {
+                      id: row.key,
+                      validationStatus: row?.validation_status?.props?.value,
+                      hidden: row?.hidden?.props?.value,
+                    }
+                  : row,
+              ),
+              user: user,
+            })
+          : // If it doesn't, then return true and constrain against something else if necessary
+            true),
       // Perform the selected action upon click
       action: async (selectedRows: any[] = []) => {
-        // TODO: Make any callback functions robust enough, that they fetch the required data if only an ID has been provided.
+        // Extract the ids to satisfy the { id: string }[] type
         const rowIds = Object.values(selectedRows).map((row) => ({
           id: row.key,
         }));
@@ -497,6 +519,7 @@ export const createValidationActions = (
   };
 
   // build and return final actions array
+  // BaseValidationActions and noActionsAvailableAction are mutually exclusive
   const validationActions = [
     ...baseValidationActions,
     noActionsAvailableAction,

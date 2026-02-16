@@ -43,7 +43,9 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
     return await fetchAndNormaliseAllUploadResults(
       PIPELINE_DS,
       cacheBustedEndpoint,
-      id,
+      {
+        user_id: { eq: { value: id } },
+      },
     );
   };
 

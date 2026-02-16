@@ -143,8 +143,10 @@ export async function normalisePipelineUpload(
     s3Filename: upload?.s3_filename || "",
     s3Bucket: upload?.s3_bucket || "",
     validationResults:
-      upload?.validation_results.map(normaliseValidationResult) || [],
+      upload?.validation_results?.map(normaliseValidationResult) || [],
     failureMessage: upload?.failure_message || null,
+    hidden: upload?.hidden || false,
+    oidcId: upload?.relationships?.user?.oidc_id || "",
   };
 }
 
@@ -153,10 +155,7 @@ export async function normalisePipelineUpload(
  *
  * @param ds - The TsDataSource instance used to perform the API request.
  * @param endpoint - The API endpoint to query for pipeline results.
- * @param uploadId - The ID of the upload to fetch results for.
- * @param setPipelineResult - Optional callback to set the normalised pipeline result in state.
- * @param setHasErrors - Optional callback to set error state if the fetch fails.
- * @param setLoading - Optional callback to set loading state during the fetch.
+ * @param andFilter - The filter used for fetching the required information, usually user_id
  * @returns A Promise that resolves to an IAllValidationData object if successful, or null if not.
  *
  * If the fetch fails, this function will trigger a popup error message and update error/loading state if callbacks are provided.
@@ -165,18 +164,13 @@ export async function normalisePipelineUpload(
 export async function fetchCurrentPipelineResults(
   ds: TsDataSource,
   endpoint: string,
-  uploadId: string,
-  setPipelineResult?: (results: IAllValidationData | null) => void,
-  setHasErrors?: (hasErrors: boolean) => void,
-  setLoading?: (loading: boolean) => void | null,
+  andFilter: any,
 ): Promise<IAllValidationData | null> {
   try {
     const results = await ds.getListPage({
       objectType: endpoint,
       filter: {
-        and_: {
-          id: { eq: { value: uploadId } },
-        },
+        and_: andFilter,
       },
     });
     if (results) {
@@ -185,7 +179,6 @@ export async function fetchCurrentPipelineResults(
         results[0],
         results[0].relationships,
       );
-      if (setPipelineResult) setPipelineResult(normalisedResults);
       return normalisedResults;
     }
     return null;
@@ -195,59 +188,7 @@ export async function fetchCurrentPipelineResults(
       type: "error",
       message: "Failed to fetch pipeline results. Please try again.",
     });
-    if (setPipelineResult) setPipelineResult(null);
-    if (setHasErrors) setHasErrors(true);
     return null;
-  } finally {
-    if (setLoading) setLoading(false);
-  }
-}
-
-/**
- * Fetches and normalises the upload result for a given upload ID from the API.
- *
- * @param ds - The TsDataSource instance used to perform the API request.
- * @param endpoint - The API endpoint to query for the upload result.
- * @param uploadId - The ID of the upload to fetch results for.
- * @param setPipelineResult - Callback to set the normalised pipeline result in state.
- * @param setHasErrors - Callback to set error state if the fetch fails.
- * @param setLoading - Optional callback to set loading state during the fetch.
- * @returns A Promise that resolves when the operation is complete.
- *
- * If the fetch fails, this function will trigger a popup error message and update error/loading state via the provided callbacks.
- */
-
-export async function fetchAndNormaliseUploadResult(
-  ds: TsDataSource,
-  endpoint: string,
-  uploadId: string,
-  setPipelineResult: (results: IAllValidationData | null) => void,
-  setHasErrors: (hasErrors: boolean) => void,
-  setLoading?: (loading: boolean) => void | null,
-): Promise<void> {
-  try {
-    const results = await ds.getOne({
-      objectType: endpoint,
-      id: uploadId,
-    });
-    if (results) {
-      const normalisedResults = await normalisePipelineUpload(
-        ds,
-        results,
-        results.relationships,
-      );
-      setPipelineResult(normalisedResults);
-    }
-  } catch (error) {
-    console.error("Error fetching upload results:", error);
-    PopUpMessage({
-      type: "error",
-      message: "Failed to fetch upload result. Please try again.",
-    });
-    setPipelineResult(null);
-    setHasErrors(true);
-  } finally {
-    if (setLoading) setLoading(false);
   }
 }
 
@@ -256,10 +197,7 @@ export async function fetchAndNormaliseUploadResult(
  *
  * @param ds - The TsDataSource instance used to perform the API request.
  * @param endpoint - The API endpoint to query for upload results.
- * @param userId - The ID of the user whose uploads are to be fetched.
- * @param setAllUploadResults - Optional callback to set the array of normalised pipeline upload results in state.
- * @param setHasErrors - Optional callback to set error state if the fetch fails.
- * @param setLoading - Optional callback to set loading state during the fetch.
+ * @param andFilter - The filter used to get the required data, usually based on the users id.
  * @returns A Promise that resolves to an array of IAllValidationData objects if successful, or an empty array if not.
  *
  * If the fetch fails, this function will trigger a popup error message and update error/loading state via the provided callbacks.
@@ -267,27 +205,23 @@ export async function fetchAndNormaliseUploadResult(
 export async function fetchAndNormaliseAllUploadResults(
   ds: TsDataSource,
   endpoint: string,
-  userId: string,
-  setAllUploadResults?: (results: IAllValidationData[]) => void,
-  setHasErrors?: (hasErrors: boolean) => void,
-  setLoading?: (loading: boolean) => void,
+  andFilter: any,
+  requestedFields?: string[],
 ) {
   try {
     const results = await ds.getListPage({
       objectType: endpoint,
       filter: {
-        and_: {
-          user_id: { eq: { value: userId } },
-        },
+        and_: andFilter,
       },
+      requestedFields: requestedFields,
     });
     if (results) {
       const normalisedResults = await Promise.all(
         results.map((upload) =>
-          normalisePipelineUpload(ds, upload, upload.relationships),
+          normalisePipelineUpload(ds, upload, upload.relationships || {}),
         ),
       );
-      if (setAllUploadResults) setAllUploadResults(normalisedResults);
       return [...normalisedResults];
     }
     return [];
@@ -297,11 +231,7 @@ export async function fetchAndNormaliseAllUploadResults(
       type: "error",
       message: "Failed to fetch upload results. Please try again.",
     });
-    if (setAllUploadResults) setAllUploadResults([]);
-    if (setHasErrors) setHasErrors(true);
     return [];
-  } finally {
-    if (setLoading) setLoading(false);
   }
 }
 

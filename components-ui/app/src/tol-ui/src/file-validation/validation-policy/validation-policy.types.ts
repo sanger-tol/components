@@ -4,18 +4,20 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import {Dispatch, SetStateAction} from "react";
+import { Dispatch, SetStateAction } from "react";
 import type { IAllValidationData, TsDataSource } from "../..";
 
 // Types related to file validation policies, actions, and their contexts.
-export type TValidationActionId = 
+export type TValidationActionId =
   | "viewReport"
   | "downloadReport"
   | "reject"
   | "revalidate"
   | "markAsReady"
   | "unmarkAsReady"
-  | "downloadFile";
+  | "downloadFile"
+  | "hideItem"
+  | "showItem";
 
 // Constants related to what a user can do when they click 'validate'
 export const VALIDATION_PURPOSE = [
@@ -46,7 +48,7 @@ export type TFileValidationStatus =
 
 // All the required fields for each defined policy
 export type TFileValidationStatusPolicy = {
-  /** 
+  /**
    * One of the predefined file validation statuses
    */
   status: TFileValidationStatus;
@@ -62,32 +64,44 @@ export type TFileValidationStatusPolicy = {
    * The color the text is on the UI
    */
   textColor: string;
-  /** 
-   * Whether it's a status that requires additional UI elements rendered 
+  /**
+   * Whether it's a status that requires additional UI elements rendered
    * i.e. <InfoTooltip /> with a failure reason attached
    */
   isFailureStatus: boolean;
   /**
    * The allowed actions mapped to this status, this stops users from trying to
-   * perform an action they won't be able to complete, 
+   * perform an action they won't be able to complete,
    * i.e. "validation_timeout" status cannot use "markAsReady" action
    */
   allowedActions: TValidationActionId[];
 };
 
+export type TValidationContextItem =
+  | IAllValidationData
+  | Partial<IAllValidationData>;
+
+export type TValidationContextItems = TValidationContextItem[];
+
 export type TValidationActionContext = {
-  items: IAllValidationData[];
+  items: TValidationContextItems;
   dataSource: TsDataSource;
   user?: { roles: string[] };
   setReportOpen?: (open: boolean) => void;
   setSubmissionRejectModalOpen?: (open: boolean) => void;
   setForceTableUpdate?: Dispatch<SetStateAction<boolean>>;
+  setSelectedRows?: Dispatch<SetStateAction<string[]>>;
+};
+
+export type TValidationUserContext = {
+  items: TValidationContextItems;
+  user?: { roles: string[] };
 };
 
 export type TFileValidationAction = {
   id: TValidationActionId;
   label: string;
-  isAvailable?: (ctx: TValidationActionContext) => boolean;
+  isAvailable?: (ctx: TValidationUserContext) => boolean;
   callback: (ctx: TValidationActionContext) => Promise<void> | void;
 };
 

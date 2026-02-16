@@ -83,7 +83,9 @@ export function ValidationResultsViewer() {
     const result = await fetchCurrentPipelineResults(
       PIPELINE_DS,
       cacheBustedEndpoint,
-      uploadId,
+      {
+        id: { eq: { value: uploadId } },
+      },
     );
 
     if (result?.failureMessage) {

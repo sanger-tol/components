@@ -15,7 +15,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "The file is being validated and results should be available shortly.",
     textColor: "var(--tol-info)",
     isFailureStatus: false,
-    allowedActions: ["downloadFile"],
+    allowedActions: ["downloadFile", "hideItem", "showItem"],
   },
   [FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES]: {
     status: FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES,
@@ -24,7 +24,14 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "The file has passed validation with no errors or warnings. Please mark as ready to inform an admin that it is ready for further processing.",
     textColor: "var(--tol-success)",
     isFailureStatus: false,
-    allowedActions: ["markAsReady", "downloadReport", "viewReport", "downloadFile"],
+    allowedActions: [
+      "markAsReady",
+      "downloadReport",
+      "viewReport",
+      "downloadFile",
+      "hideItem",
+      "showItem",
+    ],
   },
   [FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS]: {
     status: FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS,
@@ -33,7 +40,14 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "The file may have some formatting or minor issues. Please fix these, or mark as ready to inform an admin that it is ready for further processing.",
     textColor: "var(--tol-warning)",
     isFailureStatus: false,
-    allowedActions: ["markAsReady", "downloadReport", "viewReport", "downloadFile"],
+    allowedActions: [
+      "markAsReady",
+      "downloadReport",
+      "viewReport",
+      "downloadFile",
+      "hideItem",
+      "showItem",
+    ],
   },
   [FILE_VALIDATION_STATUS.COMPLETED_FAILED_ERRORS]: {
     status: FILE_VALIDATION_STATUS.COMPLETED_FAILED_ERRORS,
@@ -42,7 +56,13 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "There are major issues with the data provided in the file, please check the report and fix before re-submitting.",
     textColor: "var(--tol-danger)",
     isFailureStatus: false,
-    allowedActions: ["downloadReport", "viewReport", "downloadFile"],
+    allowedActions: [
+      "downloadReport",
+      "viewReport",
+      "downloadFile",
+      "hideItem",
+      "showItem",
+    ],
   },
   [FILE_VALIDATION_STATUS.SYSTEM_ERROR]: {
     status: FILE_VALIDATION_STATUS.SYSTEM_ERROR,
@@ -51,7 +71,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "The validation process has failed due to a system error. Please try again and contact an admin if the issue persists.",
     textColor: "var(--tol-danger-light)",
     isFailureStatus: true,
-    allowedActions: ["revalidate", "downloadFile"],
+    allowedActions: ["revalidate", "downloadFile", "hideItem", "showItem"],
   },
   [FILE_VALIDATION_STATUS.TIMEOUT]: {
     status: FILE_VALIDATION_STATUS.TIMEOUT,
@@ -60,7 +80,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "The validation process has timed out. Please try again and contact an admin if the issue persists.",
     textColor: "var(--tol-danger-light)",
     isFailureStatus: false,
-    allowedActions: ["revalidate", "downloadFile"],
+    allowedActions: ["revalidate", "downloadFile", "hideItem", "showItem"],
   },
   [FILE_VALIDATION_STATUS.FILE_REJECTED]: {
     status: FILE_VALIDATION_STATUS.FILE_REJECTED,
@@ -69,7 +89,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "The provided file has been rejected by an admin. Please see the rejection reason for further information.",
     textColor: "var(--tol-royal)",
     isFailureStatus: false,
-    allowedActions: ["downloadFile"],
+    allowedActions: ["downloadFile", "hideItem", "showItem"],
   },
   [FILE_VALIDATION_STATUS.MARKED_AS_READY]: {
     status: FILE_VALIDATION_STATUS.MARKED_AS_READY,
@@ -77,7 +97,15 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
     summary: "The file has been marked as ready for further processing.",
     textColor: "var(--tol-success-light)",
     isFailureStatus: false,
-    allowedActions: ["unmarkAsReady", "downloadReport", "viewReport", "reject", "downloadFile"],
+    allowedActions: [
+      "unmarkAsReady",
+      "downloadReport",
+      "viewReport",
+      "reject",
+      "downloadFile",
+      "hideItem",
+      "showItem",
+    ],
   },
 };
 
