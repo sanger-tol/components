@@ -23,7 +23,7 @@ export interface PBoardTable extends PVisualisation {
 }
 
 export function BoardTable(props: PBoardTable) {
-  const { id, boardDataSource, zone } = props;
+  const { id, utilityBarConfig, boardDataSource, zone } = props;
 
   const { editMode } = useBoard();
 
@@ -119,6 +119,7 @@ export function BoardTable(props: PBoardTable) {
       // actions={config.actions}
       rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
       utilityBarConfig={{
+        ...utilityBarConfig,
         elements: BoardFilter,
         buttons: [editMode ? {
           outline: true,
