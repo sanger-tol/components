@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  BoardFilters,
+  FilterConfigDrawer,
   StatisticsConfigDrawer,
   IStatisticsConfig,
   RemoteStatistics,
@@ -68,7 +68,7 @@ export function BoardStatistics(props: PBoardStatistics) {
 
   return (
     <>
-      <BoardFilters
+      <FilterConfigDrawer
         {...props}
         open={openFilters}
         setOpen={setOpenFilters}

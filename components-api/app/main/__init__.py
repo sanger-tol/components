@@ -124,7 +124,6 @@ def application():
         Base,
         os.environ['DB_URI'],
         url_prefix=os.getenv('API_PATH') + '/auth',
-        oidc_id_target='id',
         user_mixin_class=user_mixin_class
     )
     app.register_blueprint(auth_bp)

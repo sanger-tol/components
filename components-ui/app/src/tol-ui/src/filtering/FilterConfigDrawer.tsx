@@ -17,16 +17,20 @@ import {
   resetFiltersBelow,
   deepCopy,
   IFilter,
+  AttributeSelector,
+  Icon,
+  defineZone,
+  IZone,
 } from ".."
 
 
-export interface PBoardFilters extends IBoardTargetAndZone {
+export interface PFilterConfigDrawer extends IBoardTargetAndZone {
   id: string;
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-export function BoardFilters(props: PBoardFilters) {
+export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   const {
     id,
     objectType,
@@ -35,19 +39,27 @@ export function BoardFilters(props: PBoardFilters) {
     boardObjectType,
     boardDataSource,
     open,
-    setOpen
+    setOpen,
   } = props;
 
   // the fixed filter present on the component
-  const [filters, setFilters] = useState(
+  const [prevFilters, setFilters] = useState(
     deepCopy(
       boardObjectType === "zone"
         ? zone.defaultFilter
         : zone.components[id].data.defaultFilter,
     ),
   );
+  const [attributes, setAttributes] = useState<string[]>(Object.keys(prevFilters.and_ || {}));
   const [passThrough, setPassThrough] = useState<boolean>(false);
   const [filterHasPendingChanges, setFilterHasPendingChanges] = useState(false);
+  // Local state for the filter zone if this is a zone level filter, otherwise use the passed zone/setZone
+  // const zoneFilterId = "filter-zone-component";
+  const [filterZone, setFilterZone] = useState<IZone>(
+    defineZone("dummy-object-for-remote-filters", [
+      { id: id, filter: prevFilters },
+    ]),
+  );
 
   const hasPendingChanges = (
     filterHasPendingChanges ||
@@ -66,8 +78,8 @@ export function BoardFilters(props: PBoardFilters) {
     );
     setDisabledFilterValues(
       removeCurrentEntityFiltersForDisabledFilters(
-        generateFilter(zone, undefined, true)?.and_!,
-        filters?.and_!,
+        generateFilter(zone, id, true)?.and_!,
+        prevFilters?.and_!,
       ),
     );
     setPassThrough(
@@ -76,6 +88,19 @@ export function BoardFilters(props: PBoardFilters) {
         : deepCopy(zone.components[id].data).filterPassThrough,
     );
   }, [open]);
+
+  useEffect(() => {
+    let newFilter
+    if (boardObjectType !== "zone") {
+      newFilter = generateFilter(filterZone, id);
+    } else {
+      newFilter = generateFilter(filterZone, id);
+    }
+    setFilters(newFilter);
+    setFilterHasPendingChanges(
+      JSON.stringify(newFilter) !== JSON.stringify(prevFilters),
+    );
+  }, [zone, filterZone]);
 
   const removeCurrentEntityFiltersForDisabledFilters = (
     source: object = {},
@@ -90,8 +115,8 @@ export function BoardFilters(props: PBoardFilters) {
   // getting the disabled filter values (currently all other entity filters)
   const [disabledFilterValues, setDisabledFilterValues] = useState(
     removeCurrentEntityFiltersForDisabledFilters(
-      generateFilter(zone, undefined, true)?.and_!,
-      filters?.and_!,
+      generateFilter(filterZone, undefined, true)?.and_!,
+      prevFilters?.and_!,
     ),
   );
 
@@ -115,16 +140,68 @@ export function BoardFilters(props: PBoardFilters) {
     upserter(boardDataSource, id, attributes);
   };
 
+  // Function passed to attribute selector to remove all filters
+  const onClean = () => {
+    if (boardObjectType === "zone") {
+      filterZone.filter = { and_: {} };
+      filterZone.defaultFilter = { and_: {} };
+    } else {
+      if (filterZone.components[id].data.filter) {
+        filterZone.components[id].data.filter.and_ = {};
+      }
+      if (filterZone.components[id].data.defaultFilter) {
+        filterZone.components[id].data.defaultFilter.and_ = {};
+      }
+    }
+  };
+
+  const removeFilter = (attribute: string) => {
+    setAttributes(attributes.filter((str) => str !== attribute));
+    setFilters((prev) => {
+      const updatedFilter = deepCopy(prev);
+      delete updatedFilter.and_?.[attribute];
+      return updatedFilter;
+    });
+    setFilterHasPendingChanges(true);
+  };
+
+  // Element to be passed to each remote filter to allow for individual removal of filters
+  const removeCross = ({ attribute }: { attribute: string }) => (
+    <Icon icon="close" onClick={() => { removeFilter(attribute) }} className="remove-filter-button" />
+  );
+
+  const PLACEHOLDER = "No filters applied, click here to add...";
+  const TOOLTIP_CONTENT =
+    "A filter already exists in the filtering system. Please remove it before adding this filter.";
+
   return (
     <div>
       <Drawer
         title={`Filtering on a ${objectType} ${boardObjectType}`}
         open={open}
         setOpen={setOpen}
-        onSave={() => onSave(filters, passThrough)}
+        onSave={() => onSave(prevFilters, passThrough)}
         hasPendingChanges={hasPendingChanges}
         onSaveTestId="apply-filter-button"
       >
+        <AttributeSelector
+          {...props}
+          displaySource
+          recommendedFilterAvailable
+          renderSearchBySource
+          disabledValues={disabledFilterValues}
+          placeholder={PLACEHOLDER}
+          attribute={attributes}
+          setAttributes={setAttributes}
+          populatedFieldType="filter"
+          numPopulatedFields={
+            Object.keys(
+              zone.components[id]?.data.filter?.and_ || {},
+            ).length
+          }
+          tooltipContent={TOOLTIP_CONTENT}
+          onClean={onClean}
+        />
         {boardObjectType !== "zone" &&
           <div className="pass-through-toggle">
             <Toggle
@@ -148,11 +225,13 @@ export function BoardFilters(props: PBoardFilters) {
         }
         <RemoteFilters
           {...props}
-          filters={filters}
-          setFilters={setFilters}
-          disabledFilterValues={disabledFilterValues}
-          open={open}
-          setHasPendingChanges={setFilterHasPendingChanges}
+          utilityBarConfig={undefined}
+          zone={filterZone}
+          setZone={setFilterZone}
+          componentId={id}
+          attributes={attributes}
+          ExtraElement={removeCross}
+          className={"tol-filter-config-remote-filter"}
         />
       </Drawer>
     </div>
