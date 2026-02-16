@@ -17,6 +17,8 @@ import {
   TFilterOrUndefined,
   generateFilter,
   filterHasUpdated,
+  appendKeywordIfNeeded,
+  removeAttributeFromFilter,
 } from "..";
 
 
@@ -63,26 +65,12 @@ export function FilterMultiSelect(props: IFilterInput) {
     errorMessage && PopUpMessage({ message: errorMessage, type: "error" });
   }, [errorMessage]);
 
-  const removeAttributeFromFilter = (
-    filter: TFilterOrUndefined,
-    attr: string,
-  ) => {
-    if (!filter || !("and_" in filter)) return filter;
-    if (!filter.and_ || !(attr in filter.and_)) return filter;
-    const next = {
-      ...filter,
-      and_: { ...filter.and_ },
-    };
-    delete next.and_[attr];
-    return next;
-  };
-
   const fetchValues = () => {
     if (!fetched) {
       setLoading(true);
       const aggs = { aggs: {} };
       aggs["aggs"][attribute] = {
-        terms: { field: `${attribute}.keyword`, size: 500 },
+        terms: { field: appendKeywordIfNeeded(attribute), size: 500 },
       };
       dataSource
         .custom({
