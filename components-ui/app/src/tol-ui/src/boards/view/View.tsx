@@ -97,6 +97,7 @@ export function View(props: PView) {
             onClick: () => {
               setOpen(true);
             },
+            tooltip: "",
             text: "Add Zone",
           },
         ]}

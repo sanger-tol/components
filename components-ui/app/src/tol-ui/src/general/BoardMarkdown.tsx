@@ -11,7 +11,6 @@ import {
   Markdown,
   UtilityBar,
   PButton,
-  saveTitle,
   updateConfigAndUpsert,
   useBoard,
   IMarkdownConfig,
@@ -24,7 +23,7 @@ export interface PBoardMarkdown extends PVisualisation {
 }
 
 export function BoardMarkdown(props: PBoardMarkdown) {
-  const { id, utilityBarConfig, config, size, boardObjectType, boardDataSource, zone } = props;
+  const { id, utilityBarConfig, config, size, boardDataSource, zone } = props;
 
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
@@ -76,13 +75,6 @@ export function BoardMarkdown(props: PBoardMarkdown) {
       id="editor-markdown"
       {...utilityBarConfig}
       buttons={[editButton, previewButton]}
-      title={{
-        text: utilityBarConfig.title?.text,
-        editable: editMode,
-        onSave: (value: string) => {
-          saveTitle(value, id, boardObjectType, boardDataSource);
-        },
-      }}
     />
   );
 

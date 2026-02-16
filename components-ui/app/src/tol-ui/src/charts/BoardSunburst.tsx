@@ -11,7 +11,6 @@ import {
   Icon,
   RemoteSunburst,
   deepCopy,
-  saveTitle,
   SliceByDrawer,
   PButton,
   updateConfigAndUpsert,
@@ -23,7 +22,7 @@ import {
 interface Props extends PVisualisation { }
 
 export function BoardSunburst(props: Props) {
-  const { id, utilityBarConfig, boardObjectType, boardDataSource, size, zone } = props;
+  const { id, utilityBarConfig, boardDataSource, size, zone } = props;
 
   const { editMode } = useBoard();
 
@@ -112,13 +111,6 @@ export function BoardSunburst(props: Props) {
         noMini={size === "sm"}
         utilityBarConfig={{
           ...utilityBarConfig,
-          title: {
-            text: utilityBarConfig.title?.text,
-            editable: editMode,
-            onSave: (value: string) => {
-              saveTitle(value, id, boardObjectType, boardDataSource);
-            }
-          },
           buttons: [
             configButton,
             filtersButton

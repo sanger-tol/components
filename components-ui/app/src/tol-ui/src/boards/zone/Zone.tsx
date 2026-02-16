@@ -93,7 +93,7 @@ export function Zone(props: PZone) {
     type: "success",
     icon: "plus",
     position: "right",
-    tooltip: "Add Component",
+    tooltip: "",
     testid: "add-component-button",
     visible: editMode,
     text: "Add Component",
@@ -182,7 +182,7 @@ export function Zone(props: PZone) {
           editable: editMode,
           onSave: (value: string) => {
             if (value !== title) {
-              saveTitle(value, id, BOARDS.ZONE, boardDataSource);
+              saveTitle(value, id, boardDataSource, BOARDS.ZONE);
               setTitle(value);
             }
           }
@@ -196,8 +196,8 @@ export function Zone(props: PZone) {
           />
         }
         buttons={!draggable ? [
-          filtersButton,
           addButton,
+          filtersButton,
           deleteButton,
           editButton,
           downButton,
@@ -219,7 +219,7 @@ export function Zone(props: PZone) {
 
   return (
     <div className="tol-zone">
-      {bar}
+      {(title || editMode) && bar}
       {z.zone.order.length > 0 ? (
         <Visualisations
           id={id}

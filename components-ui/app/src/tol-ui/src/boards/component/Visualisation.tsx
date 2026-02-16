@@ -12,6 +12,9 @@ import {
   IBoardTargetAndZone,
   BoardMarkdown,
   PUtilityBar,
+  useBoard,
+  saveTitle,
+  BOARDS,
 } from "../..";
 
 export interface PVisualisation extends IBoardTargetAndZone {
@@ -23,19 +26,51 @@ export interface PVisualisation extends IBoardTargetAndZone {
 }
 
 export function Visualisation(props: PVisualisation) {
-  const { componentType } = props;
+  const {
+    id,
+    componentType,
+    boardDataSource,
+    utilityBarConfig: ubc
+  } = props;
+
+  const { editMode } = useBoard();
+
+  const utilityBarConfig = {
+    ...ubc,
+    title: ubc.title?.text || editMode ? {
+      text: ubc.title?.text,
+      editable: editMode,
+      onSave: (value: string) => {
+        saveTitle(value, id, boardDataSource, BOARDS.COMPONENT);
+      }
+    } : undefined,
+  }
+
+  let Element;
 
   switch (componentType) {
     case "table":
-      return <BoardTable {...props} />;
+      Element = BoardTable;
+      break;
     case "count":
     case "statistics":
-      return <BoardStatistics {...props} />;
+      Element = BoardStatistics;
+      break;
     case "sunburst":
-      return <BoardSunburst {...props} />;
+      Element = BoardSunburst;
+      break;
     case "chart":
-      return <BoardChart {...props} />;
+      Element = BoardChart;
+      break;
     case "text":
-      return <BoardMarkdown {...props} />;
+      Element = BoardMarkdown;
+      break;
   }
+
+  return (
+    <Element
+      {...props}
+      utilityBarConfig={utilityBarConfig}
+    />
+  )
 }

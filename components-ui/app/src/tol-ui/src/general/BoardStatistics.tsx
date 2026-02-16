@@ -11,7 +11,6 @@ import {
   IStatisticsConfig,
   RemoteStatistics,
   deepCopy,
-  saveTitle,
   PButton,
   useBoard,
   PVisualisation,
@@ -21,7 +20,7 @@ import {
 export interface PBoardStatistics extends PVisualisation { }
 
 export function BoardStatistics(props: PBoardStatistics) {
-  const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
+  const { id, utilityBarConfig, boardDataSource, zone } = props;
 
   const { editMode } = useBoard();
 
@@ -57,13 +56,6 @@ export function BoardStatistics(props: PBoardStatistics) {
 
   const utilityBarProps = {
     ...utilityBarConfig,
-    title: {
-      text: utilityBarConfig.title?.text,
-      editable: editMode,
-      onSave: (value: string) => {
-        saveTitle(value, id, boardObjectType, boardDataSource);
-      },
-    },
     buttons: [configButton, filterButton],
   };
 

@@ -11,7 +11,6 @@ import {
   Placeholder,
   RemoteBarChart,
   deepCopy,
-  saveTitle,
   ChartConfigDrawer,
   IChartConfig,
   PButton,
@@ -21,10 +20,10 @@ import {
 } from "..";
 
 
-interface Props extends PVisualisation { }
+interface Props extends PVisualisation {}
 
 export function BoardChart(props: Props) {
-  const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
+  const { id, utilityBarConfig, boardDataSource, zone } = props;
 
   const { editMode } = useBoard();
 
@@ -114,13 +113,6 @@ export function BoardChart(props: Props) {
         forceUpdate={forceUpdate}
         utilityBarConfig={{
           ...utilityBarConfig,
-          title: {
-            text: utilityBarConfig.title?.text,
-            editable: editMode,
-            onSave: (value: string) => {
-              saveTitle(value, id, boardObjectType, boardDataSource);
-            }
-          },
           buttons: [
             configButton,
             filterButton,

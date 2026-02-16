@@ -10,6 +10,7 @@ import {
   TsDataSource,
   BOARDS,
   IZone,
+  PEditableTitle,
 } from "..";
 
 
@@ -91,8 +92,8 @@ export async function upsertNewView(
 export function saveTitle(
   title: string,
   id: string,
-  boardObjectType: string,
   boardDataSource: TsDataSource,
+  boardObjectType: string,
 ) {
   boardDataSource.upsert({
     objectType: boardObjectType,

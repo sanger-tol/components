@@ -73,6 +73,10 @@
     }
   }
 
+  .rs-plaintext.rs-plaintext-empty {
+    color: var(--tol-grey);
+  }
+
   .rs-inline-edit .rs-plaintext:hover {
     border: 1px solid transparent !important;
   }

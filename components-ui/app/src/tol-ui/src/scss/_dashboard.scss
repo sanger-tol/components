@@ -6,16 +6,53 @@
 
 .tol-board {
 
-  &.tol-edit-mode {
-    .tol-boards-widget {
-      border: 1px dashed var(--tol-primary) !important;
-    }
-  }
-
+  // Base widget: dashed overlay (hidden by default)
   .tol-boards-widget {
     @extend .tol-widget;
     margin: 0px !important;
     margin-bottom: 10px !important;
+
+    position: relative; // needed for ::after positioning
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px dashed var(--tol-primary);
+      border-radius: inherit;
+      pointer-events: none;
+
+      opacity: 0; // hidden when not in edit mode
+      will-change: opacity;
+    }
+  }
+
+  // Edit mode: pulse the dashed overlay (fade in + out)
+  &.tol-edit-mode {
+    .tol-boards-widget::after {
+      animation: tol-dash-pulse 3s ease-in-out infinite;
+    }
+  }
+
+  @keyframes tol-dash-pulse {
+    0% {
+      opacity: 0.2;
+    }
+
+    50% {
+      opacity: 1;
+    }
+
+    100% {
+      opacity: 0.2;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &.tol-edit-mode .tol-boards-widget::after {
+      animation: none;
+      opacity: 1;
+    }
   }
 
   // layout of the grid
@@ -259,12 +296,12 @@
   .tol-editable-title.rs-inline-edit {
     font-weight: bolder !important;
     display: block;
-    margin-right: 10px;
 
     .rs-plaintext {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+
     }
   }
 

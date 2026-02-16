@@ -52,6 +52,7 @@ export function Board(props: PBoard) {
   const { boardId: paramBoardId, viewId } = useParams<any>();
   const [user, setUser] = useState<any>(null);
   const [boardData, setBoardData] = useState<any>({});
+  const [title, setTitle] = useState("");
   const [view, setView] = useState(viewId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -85,6 +86,7 @@ export function Board(props: PBoard) {
         .then((data: any) => {
           if (!view) setView(data.views[0].id);
           setBoardData(data);
+          setTitle(data.boardTitle);
         })
         .catch((e: any) => {
           setError(e);
@@ -112,25 +114,26 @@ export function Board(props: PBoard) {
 
   const editOrExitButton = editMode ? {
     ...BUTTONS.CONFIRM,
-    tooltip: "Exit Edit Mode",
+    text: "Exit Edit Mode",
   } : {
     ...BUTTONS.EDIT,
-    tooltip: "Edit Board",
+    text: "Edit",
   };
 
   // Different format used for the main Board title
   const editModeTitle = editMode ? {
-    text: boardData.boardTitle,
+    text: title,
     editable: editMode,
     onSave: (value: string) => {
-      saveTitle(value, boardId, BOARDS.BOARD, boardDataSource);
+      saveTitle(value, boardId, boardDataSource, BOARDS.BOARD);
+      setTitle(value);
     }
   } : undefined;
 
   // Large header for view mode
   const viewModeTitle = !editMode ? [(
     <h3>
-      {boardData.boardTitle}
+      {title}
     </h3>
   )] : undefined;
 
@@ -145,6 +148,7 @@ export function Board(props: PBoard) {
             onClick: () => {
               setEditMode(!editMode);
             },
+            tooltip: "",
           },
           {
             ...BUTTONS.SHARE,

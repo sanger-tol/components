@@ -8,7 +8,6 @@ import { useState } from "react";
 import {
   BoardFilters,
   RemoteTable,
-  saveTitle,
   updateConfigAndUpsert,
   useBoard,
   ITableConfigSave,
@@ -24,7 +23,7 @@ export interface PBoardTable extends PVisualisation {
 }
 
 export function BoardTable(props: PBoardTable) {
-  const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
+  const { id, boardDataSource, zone } = props;
 
   const { editMode } = useBoard();
 
@@ -120,14 +119,6 @@ export function BoardTable(props: PBoardTable) {
       // actions={config.actions}
       rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
       utilityBarConfig={{
-        ...utilityBarConfig,
-        title: {
-          text: utilityBarConfig.title?.text,
-          editable: editMode,
-          onSave: (value: string) => {
-            saveTitle(value, id, boardObjectType, boardDataSource);
-          }
-        },
         elements: BoardFilter,
         buttons: [editMode ? {
           outline: true,
