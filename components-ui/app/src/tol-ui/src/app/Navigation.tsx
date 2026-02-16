@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState, useEffect } from "react";
-import { withRouter, RouteComponentProps } from "react-router-dom";
+import { withRouter, RouteComponentProps, useHistory } from "react-router-dom";
 import { Container, Navbar, Nav } from "react-bootstrap";
 import {
   useAuth,
@@ -24,10 +24,20 @@ import {
   getNavBackgroundClass,
   collectNavigationItems,
   ProfileDropdown,
+  TNavConfig,
 } from "..";
 
 
-export interface PNavigation extends PSmartApp, RouteComponentProps { }
+export interface PNavigation extends PSmartApp, RouteComponentProps {
+  /**
+  * The main navigation configuration.
+  */
+  navigation: TNavConfig;
+  /**
+   * The profile navigation configuration. Can only add pages, not dropdowns.
+   */
+  profileNavigation: TNavConfig;
+}
 
 /**
  * The Navigation component renders the navigation bar for the application.
@@ -36,8 +46,11 @@ export interface PNavigation extends PSmartApp, RouteComponentProps { }
 function Navigation(props: PNavigation) {
   const { navigation, profileNavigation } = props;
 
+  const history = useHistory();
+
   const [environment, setEnvironment] = useState("");
   const [navbarOffset, setNavbarOffset] = useState<number>(0);
+
   const { setToken, user, setUser } = useAuth();
 
   useEffect(() => {
@@ -61,7 +74,7 @@ function Navigation(props: PNavigation) {
     });
   };
 
-  const logout = () => {
+  const onLogout = () => {
     setReturnUrlFromLocalStorage(window.location.pathname);
     const token = getTokenFromLocalStorage();
     if (token) revokeOicd(token);
@@ -69,6 +82,7 @@ function Navigation(props: PNavigation) {
     setUserToLocalStorage(null);
     setToken("");
     setUser(null);
+    history.push("/");
   };
 
   return (
@@ -115,7 +129,7 @@ function Navigation(props: PNavigation) {
               <div className="nav-right">
                 <ProfileDropdown
                   user={user}
-                  onLogout={logout}
+                  onLogout={onLogout}
                   navigation={profileNavigation}
                 />
               </div>

@@ -21,7 +21,8 @@ import {
   copyToClipboard,
   PUtilityBar,
   TBoardPrivilege,
-  PRIVILEGE
+  PRIVILEGE,
+  TNavBrand
 } from "../..";
 
 export interface PBoard {
@@ -33,13 +34,17 @@ export interface PBoard {
    * The data source for fetching board data.
    */
   boardDataSource: TsDataSource;
+  /**
+   * The brand to display in the loading screen.
+   */
+  brand?: TNavBrand;
 }
 
 /**
  * Component to render a board based on its ID and TSDataSource.
  */
 export function Board(props: PBoard) {
-  const { boardDataSource } = props;
+  const { boardDataSource, brand } = props;
 
   const { boardId: paramBoardId, viewId } = useParams<any>();
   const [user, setUser] = useState<any>(null);
@@ -73,26 +78,34 @@ export function Board(props: PBoard) {
   }, []);
 
   useEffect(() => {
-    if (boardId && user) {
+    if (boardId) {
       getBoard(boardId, boardDataSource!)
         .then((data: any) => {
           if (!view) setView(data.views[0].id);
           setBoardData(data);
-          setLoading(false);
         })
         .catch((e: any) => {
           setError(e);
           console.error(e);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   }, [boardId, user]);
 
-  if (error !== "" || privilege === PRIVILEGE.BOARD.HIDDEN) {
+  if (error !== "") {
     return <Redirect to="/page-not-found" />;
   }
 
   if (loading) {
-    return <LoadingContent text="Finding Board..." />;
+    return (
+      <LoadingContent
+        overlayNav
+        brand={brand}
+        text="Finding Board..."
+      />
+    );
   }
 
   const UtilityBarConfig: PUtilityBar = {
