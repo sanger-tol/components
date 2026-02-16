@@ -4,54 +4,51 @@
  * SPDX-License-Identifier: MIT
  */
 
-.tol-board {
+.tol-boards-widget {
+  @extend .tol-widget;
+  margin: 0px !important;
+  margin-bottom: 10px !important;
 
-  .tol-boards-widget {
-    @extend .tol-widget;
-    margin: 0px !important;
-    margin-bottom: 10px !important;
+  position: relative; // needed for ::after positioning
 
-    position: relative; // needed for ::after positioning
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px dashed var(--tol-primary);
+    border-radius: inherit;
+    pointer-events: none;
 
-    &::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border: 1px dashed var(--tol-primary);
-      border-radius: inherit;
-      pointer-events: none;
+    opacity: 0; // hidden when not in edit mode
+    will-change: opacity;
+  }
+}
 
-      opacity: 0; // hidden when not in edit mode
-      will-change: opacity;
-    }
+// Edit mode: pulse the dashed overlay (fade in + out)
+.tol-board.tol-edit-mode {
+  .tol-boards-widget::after {
+    animation: tol-dash-pulse 3s ease-in-out infinite;
+  }
+}
+
+@keyframes tol-dash-pulse {
+  0% {
+    opacity: 0.2;
   }
 
-  // Edit mode: pulse the dashed overlay (fade in + out)
-  .tol-edit-mode {
-    .tol-boards-widget::after {
-      animation: tol-dash-pulse 3s ease-in-out infinite;
-    }
+  50% {
+    opacity: 1;
   }
 
-  @keyframes tol-dash-pulse {
-    0% {
-      opacity: 0.2;
-    }
-
-    50% {
-      opacity: 1;
-    }
-
-    100% {
-      opacity: 0.2;
-    }
+  100% {
+    opacity: 0.2;
   }
+}
 
-  @media (prefers-reduced-motion: reduce) {
-    .tol-edit-mode .tol-boards-widget::after {
-      animation: none;
-      opacity: 1;
-    }
+@media (prefers-reduced-motion: reduce) {
+  .tol-board.tol-edit-mode .tol-boards-widget::after {
+    animation: none;
+    opacity: 1;
   }
 }
 
