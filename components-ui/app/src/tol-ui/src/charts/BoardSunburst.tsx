@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  BoardFilters,
+  FilterConfigDrawer,
   Placeholder,
   Icon,
   RemoteSunburst,
@@ -88,7 +88,7 @@ export function BoardSunburst(props: Props) {
 
   return (
     <>
-      <BoardFilters
+      <FilterConfigDrawer
         {...props}
         open={openFilters}
         setOpen={setOpenFilters}

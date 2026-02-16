@@ -12,6 +12,7 @@ import {
   IBoardTargetAndZone,
   BoardMarkdown,
   PUtilityBar,
+  BoardFilterBlock
 } from "../..";
 
 export interface PVisualisation extends IBoardTargetAndZone {
@@ -37,5 +38,7 @@ export function Visualisation(props: PVisualisation) {
       return <BoardChart {...props} />;
     case "text":
       return <BoardMarkdown {...props} />;
+    case "filterBlock":
+      return <BoardFilterBlock {...props} />;
   }
 }

@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import {
   useZone,
-  BoardFilters,
+  FilterConfigDrawer,
   ComponentPickerModal,
   Visualisations,
   ConfirmationModal,
@@ -280,7 +280,7 @@ export function Zone(props: PZone) {
         </div>
       )}
       {ConfirmModal}
-      <BoardFilters
+      <FilterConfigDrawer
         {...props}
         id={id}
         boardObjectType={BOARDS.ZONE}
