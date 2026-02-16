@@ -14,6 +14,9 @@ import {
   stopPropagation,
   PopUpMessage,
   API_METHODS,
+  TFilterOrUndefined,
+  generateFilter,
+  filterHasUpdated,
 } from "..";
 
 
@@ -36,6 +39,9 @@ export function FilterMultiSelect(props: IFilterInput) {
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [aggregationFilter, setAggregationFilter] = useState<TFilterOrUndefined>(
+    {},
+  );
   const operator = "in_list";
 
   useEffect(() => {
@@ -45,8 +51,31 @@ export function FilterMultiSelect(props: IFilterInput) {
   }, [values]);
 
   useEffect(() => {
+    const compoundedFilter = generateFilter(zone, componentId, true);
+    const nextFilter = removeAttributeFromFilter(compoundedFilter, attribute);
+    if (filterHasUpdated(setAggregationFilter, aggregationFilter, nextFilter)) {
+      setFetched(false);
+      setData([]);
+    }
+  }, [zone]);
+
+  useEffect(() => {
     errorMessage && PopUpMessage({ message: errorMessage, type: "error" });
   }, [errorMessage]);
+
+  const removeAttributeFromFilter = (
+    filter: TFilterOrUndefined,
+    attr: string,
+  ) => {
+    if (!filter || !("and_" in filter)) return filter;
+    if (!filter.and_ || !(attr in filter.and_)) return filter;
+    const next = {
+      ...filter,
+      and_: { ...filter.and_ },
+    };
+    delete next.and_[attr];
+    return next;
+  };
 
   const fetchValues = () => {
     if (!fetched) {
@@ -60,6 +89,9 @@ export function FilterMultiSelect(props: IFilterInput) {
           method: API_METHODS.POST,
           resource: `${objectType}:aggregations`,
           body: aggs,
+          params: {
+            filter: aggregationFilter,
+          },
         })
         .then((res: any) => {
           const aggValues = res.data.meta.aggregations[attribute].buckets;
