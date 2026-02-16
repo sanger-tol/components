@@ -43,16 +43,25 @@ import type {
 } from "../..";
 
 export function ValidationResultsViewer() {
+  // Captures upload id passed to the page parameters
+  // /file-validation/results/<uploadId>
   const { uploadId } = useParams<{ uploadId: string }>();
+
+  // Get the actions and policies from the module, which has been set by the provider
   const { actions, policies } = useValidationPolicyModule();
 
   const location = useLocation();
   const history = useHistory();
   const queryClient = useQueryClient();
-  const targetRef = useRef<HTMLDivElement | null>(null);
 
+  // Captures which (if any) step name needs to be expanded and scrolled to (horizontally)
   const searchParams = new URLSearchParams(location.search);
   const stepName = searchParams.get("stepName") || undefined;
+
+  // Used to scroll to the correct element on page load
+  const targetRef = useRef<HTMLDivElement | null>(null);
+
+  // Captures which (if any) tab needs to be returned to on using the back button
   const tab = searchParams.get("t") || undefined;
 
   const user = getUserFromLocalStorage();
@@ -70,28 +79,27 @@ export function ValidationResultsViewer() {
   const [uploadStatus, setUploadStatus] =
     useState<TFileValidationStatusPolicy>();
 
+  // timeout is enabled if we're validating, an upload ID is present and we haven't finished validating
+  // validating and validated are independent and should be treated as such here.
   const timeoutEnabled = validating && !!uploadId && !validated;
 
+  // Fetch latest results
   const fetchLatestPipelineResults = async () => {
-    const cacheBustedEndpoint = `${
-      VALIDATION_ENDPOINTS.UPLOAD
-    }?_cb=${Date.now()}`;
-    if (!uploadId) {
-      return null;
-    }
-
+    // Fetch and normalise result
     const result = await fetchCurrentPipelineResults(
       PIPELINE_DS,
-      cacheBustedEndpoint,
+      VALIDATION_ENDPOINTS.UPLOAD,
       {
         id: { eq: { value: uploadId } },
       },
     );
 
+    // Each check, see whether we have a failure
     if (result?.failureMessage) {
       setFailedPipeline(true);
     }
 
+    // If we have no result, something has gone very wrong
     if (!result) {
       setHasErrors(true);
       return null;
@@ -99,34 +107,46 @@ export function ValidationResultsViewer() {
     return result;
   };
 
+  // Continuously poll the database for information, getting longer between polls each time
   const latestPipelineResults = useQueryData<IAllValidationData | null>(
+    // Define cache query keys
     ["latestPipelineResults", uploadId],
+    // Function to run on each query
     fetchLatestPipelineResults,
     {
       enabled: true,
       refetchBackoff: {
         enabled: true,
         options: {
+          // If we aren't validating, validation has completed or the pipeline (prefect) has failed - stop.
           stopCondition: !validating || validated || failedPipeline,
+          // Maximum 15 polls of the database
           limit: 15,
         },
       },
+      // Ignore any cached version and keep polling based on other factors/parameters
       staleTime: 0,
     },
   );
 
   useEffect(() => {
+    // If we have no data, don't do anything yet
     if (!latestPipelineResults.data || !uploadId) return;
+    // If we're not currently validating and pipeline isn't complete, start validating
     if (!latestPipelineResults.data.completed && !validating) {
       setValidating(true);
       setValidated(false);
-    } else if (latestPipelineResults.data.completed && validating) {
+    }
+    // If we are currently validating, but we're finished, stop validating
+    else if (latestPipelineResults.data.completed && validating) {
       setValidating(false);
       setValidated(true);
     }
   }, [latestPipelineResults.data, uploadId, validating]);
 
   useEffect(() => {
+    // If we have data, and specifically something in the validation results column
+    // Start counting the errors and warnings
     if (
       latestPipelineResults.data &&
       latestPipelineResults.data.validationResults
@@ -135,8 +155,10 @@ export function ValidationResultsViewer() {
         latestPipelineResults.data.validationResults,
       );
 
+      // Set the errors and warnings to display on the UI
       setErrorAndWarningCount(counts);
 
+      // Set the upload status policy to the current validation status
       setUploadStatus(
         policies[
           latestPipelineResults.data.validationStatus as TFileValidationStatus
@@ -144,6 +166,8 @@ export function ValidationResultsViewer() {
       );
     }
 
+    // If a user has clicked 'goto' on a previous page, scroll to it on this page
+    // The scroll occurs horizontally, so will only occur if there are more than 5-6 steps in a pipeline
     if (stepName !== undefined && targetRef.current) {
       targetRef.current.scrollIntoView({
         behavior: "smooth",
@@ -151,13 +175,19 @@ export function ValidationResultsViewer() {
         inline: "nearest",
       });
 
+      // Remove the param from the URL, as it's no longer needed
       searchParams.delete("stepName");
+
+      // Set the url again minus the removed part
       history.replace({
         search: searchParams.toString(),
       });
     }
   }, [latestPipelineResults.data, stepName]);
 
+  // Set a timeout to do a pseudo check whether a prefect run has failed.
+  // This is less necessary now, because prefect emits errors on failure,
+  // But is useful for timing out when in development as Prefect won't send data to local DB.
   useTimeout(
     async () => {
       await setValidationTimeout(
@@ -165,6 +195,7 @@ export function ValidationResultsViewer() {
         getUserFromLocalStorage()?.id || "",
         uploadId,
       );
+      // Refetch after successful timeout
       await latestPipelineResults.refetch();
       setFailedPipeline(true);
     },
@@ -172,9 +203,11 @@ export function ValidationResultsViewer() {
     { enabled: timeoutEnabled, startOnMount: timeoutEnabled },
   );
 
+  // Create an action context if data and user is available
   const actionContext =
     latestPipelineResults.data && user
       ? {
+          // Everything uses arrays, even if we're dealing with a singular item
           items: [latestPipelineResults.data],
           dataSource: PIPELINE_DS,
           user,
@@ -183,18 +216,25 @@ export function ValidationResultsViewer() {
         }
       : null;
 
+  // Create page dropown actions
   const dropdownActions =
+    // Ensure there is a status and context
     uploadStatus && actionContext
       ? uploadStatus.allowedActions
+          // Map over each action id and return the action of that ID
           .map((actionId: TValidationActionId) => actions[actionId])
+          // Filter out any actions not available
           .filter((action: TFileValidationAction) => {
             if (!action) return false;
             return !action.isAvailable || action.isAvailable(actionContext);
           })
+          // Map over the rest of the available actions
           .map((action: TFileValidationAction) => ({
             name: action.label,
             action: async () => {
+              // Complete the action
               await action.callback(actionContext);
+              // Invalidate the query in cache to update the page
               await queryClient.invalidateQueries({
                 queryKey: ["latestPipelineResults", uploadId],
               });
@@ -309,6 +349,7 @@ export function ValidationResultsViewer() {
           text="Back"
           icon="arrow-left"
           onClick={() => {
+            // Return user to previous page and goto tab 2 - (E.g. 'Uploaded Manifests' in Portal)
             if (tab !== undefined) history.push("/manifest-validation?t=2");
             else history.push("/manifest-validation");
           }}
@@ -323,13 +364,15 @@ export function ValidationResultsViewer() {
       type: "full",
     },
     {
+      // If there are no errors, return results, otherwise show only an error popup
       component: !hasErrors ? Results : Errors,
       type: "full",
     },
   ];
 
+  // If we didn't get a 200 status back, wait for results
   return !latestPipelineResults.isSuccess ? (
-    <LoadingContent text="Loading Results" />
+    <LoadingContent text="Loading Results..." />
   ) : (
     <>
       <ValidationReport

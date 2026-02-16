@@ -26,11 +26,11 @@ import {
 // TODO: Remove inline classes
 export interface PSubmissionRejectModal {
   /**
-   * Actual modal open state.
+   * Modal open boolean.
    */
   open: boolean;
   /**
-   * Function to set modal open state.
+   * Function to set modal open boolean state.
    */
   setOpen: (open: boolean) => void;
   /**
