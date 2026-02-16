@@ -31,7 +31,7 @@ export interface PRemoteFilters extends IRemoteTargetAndZone {
   /**
    * Optional custom classname for the filter columns
    */
-  customClassname?: string;
+  className?: string;
   /**
    * Optional extra element to render alongside each filter, receives the attribute as a prop
    */
@@ -57,7 +57,7 @@ export function RemoteFilters(props: PRemoteFilters) {
     setZone,
     componentId,
     attributes,
-    customClassname,
+    className,
     utilityBarConfig,
     ExtraElement
   } = props;
@@ -89,7 +89,7 @@ export function RemoteFilters(props: PRemoteFilters) {
               : attributeMeta?.python_type;
 
           return (
-            <Col key={attribute} className={customClassname}>
+            <Col key={attribute} className={className}>
               <AttributeTitle attributeId={attribute} objectType={objectType} dataSource={dataSource} className="tol-attribute-filter-title" />
               <div className="tol-remote-filters-container">
                 <div className="tol-remote-filters-filter">

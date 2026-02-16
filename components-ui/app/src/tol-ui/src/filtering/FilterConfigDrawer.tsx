@@ -231,7 +231,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           componentId={id}
           attributes={attributes}
           ExtraElement={removeCross}
-          customClassname={"tol-filter-config-remote-filter"}
+          className={"tol-filter-config-remote-filter"}
         />
       </Drawer>
     </div>

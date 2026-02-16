@@ -92,7 +92,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
       />
       <RemoteFilters
         {...props}
-        customClassname="tol-block-filter-col"
+        className="tol-block-filter-col"
         attributes={filterBlockConfig.attributes || []}
         componentId={id}
         utilityBarConfig={{
