@@ -61,6 +61,24 @@ export function mergeAndFilters(target: object, incoming: object) {
   return output as IAndAttributes;
 }
 
+export function appendKeywordIfNeeded(field: string): string {
+  return field.startsWith("calc_") ? field : `${field}.keyword`;
+}
+
+export function removeAttributeFromFilter(
+  filter: IFilter | undefined,
+  attr: string,
+): IFilter | undefined {
+  if (!filter || !("and_" in filter)) return filter;
+  if (!filter.and_ || !(attr in filter.and_)) return filter;
+  const next = {
+    ...filter,
+    and_: { ...filter.and_ },
+  };
+  delete next.and_[attr];
+  return next;
+}
+
 // removes 'exists' operators if there are other operators for the same attribute
 export function removeSuperfluousExists(filter: IAndAttributes) {
   Object.keys(filter).forEach((attribute) => {
