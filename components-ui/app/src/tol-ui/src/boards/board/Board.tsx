@@ -148,6 +148,7 @@ export function Board(props: PBoard) {
             onClick: () => {
               setEditMode(!editMode);
             },
+            testid: "board-edit-mode-button",
             tooltip: "",
           },
           {

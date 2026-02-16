@@ -300,9 +300,10 @@ export function BarChart(props: Props) {
   return (
     <div style={{ height: height }}>
       <UtilityBar
+        {...utilityBarConfig}
         id={id}
-        title={utilityBarConfig.title}
         buttons={[
+          ...utilityBarConfig?.buttons || [],
           {
             outline: true,
             position: "right",
@@ -315,7 +316,6 @@ export function BarChart(props: Props) {
             icon: "undo",
             visible: isPropDefined(setBarData) && datasets.length > 0,
           },
-          ...(utilityBarConfig.buttons || []),
           {
             outline: true,
             position: "right",
@@ -328,7 +328,6 @@ export function BarChart(props: Props) {
             disabledTooltip: "No data to download",
           },
         ]}
-        {...utilityBarConfig}
       />
       <div className="tol-component-contents with-offset">
         {contents ? contents :

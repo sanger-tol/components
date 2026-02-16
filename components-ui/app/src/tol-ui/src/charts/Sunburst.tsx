@@ -193,9 +193,11 @@ export function Sunburst(props: Props) {
     <div style={{ height: height }}>
       {utilityBarConfig !== null &&
         <UtilityBar
+          {...utilityBarConfig}
           id={id}
           title={utilityBarConfig?.title}
           buttons={[
+            ...utilityBarConfig?.buttons || [],
             {
               icon: "undo",
               position: "right",
@@ -214,12 +216,12 @@ export function Sunburst(props: Props) {
                 downloadItem(props.id, downloadName);
               },
               disabled: noDownload,
-            }
+            },
           ]}
         />
       }
       <div className={utilityBarConfig !== null ? "tol-component-contents with-offset" : "tol-component-contents"}>
-        {contents ? contents : 
+        {contents ? contents :
           <Doughnut
             id={id}
             responsive="true"

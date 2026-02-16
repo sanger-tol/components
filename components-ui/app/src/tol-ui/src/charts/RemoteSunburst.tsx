@@ -240,14 +240,14 @@ export function RemoteSunburst(props: PRemoteSunburst) {
       style={{ height: height, position: miniActive ? "relative" : undefined }}
     >
       <UtilityBar
+        {...utilityBarConfig}
         id={id}
         title={utilityBarConfig?.title}
         buttons={[
-          ...(utilityBarConfig?.buttons || []),
+          ...utilityBarConfig?.buttons || [],
           resetButton,
           downloadButton,
         ]}
-        {...utilityBarConfig}
       />
       <div className="tol-component-contents with-offset">
         {contents ? contents :

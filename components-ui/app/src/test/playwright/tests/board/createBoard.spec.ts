@@ -30,6 +30,10 @@ const createBoard = async ({ page, testID }) => {
 };
 
 const createZone = async ({ page, testID }) => {
+  // click the board edit mode button
+  const editButton = await page.getByTestId('board-edit-mode-button');
+  await editButton.click();
+
   // click add zone button
   const addZoneButton = await page.getByTestId('open-add-zone-modal-button');
   await addZoneButton.click();
