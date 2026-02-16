@@ -50,5 +50,11 @@ export * from "./timeline";
 export * from "./variables";
 export * from "./file-validation";
 
-import { TsDataSource, env } from ".";
+import { TsDataSource, env, BOARDS_API_DATA_PATH } from ".";
+
 export const TOL_DS = new TsDataSource(env.TOL_DATA);
+export const CORE_CONFIG_DS = new TsDataSource({
+  ...env.TOL_DATA,
+  apiDataPath: BOARDS_API_DATA_PATH,
+  dataspace: '',
+});

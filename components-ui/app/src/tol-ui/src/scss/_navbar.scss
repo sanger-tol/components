@@ -20,18 +20,10 @@
   right: 0;
   margin: var(--tol-nav-margin);
   border-radius: 6px;
+  min-height: 80px;
 
   .container {
     align-items: flex-start;
-  }
-
-  .navbar-brand {
-    text-transform: uppercase;
-    font-size: 1rem;
-    letter-spacing: 0.1rem;
-    font-weight: 1000;
-    padding: 0 !important;
-    align-self: center;
   }
 
   .navbar-brand:hover {
@@ -86,6 +78,16 @@
   .navbar-toggler:focus {
     box-shadow: none;
   }
+}
+
+// Also used on loader overlay
+.navbar-brand {
+  text-transform: uppercase;
+  font-size: 1rem;
+  letter-spacing: 0.1rem;
+  font-weight: 1000;
+  padding: 0 !important;
+  align-self: center;
 }
 
 .navbar-item-colour {
