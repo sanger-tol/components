@@ -213,7 +213,7 @@ export function Sunburst(props: Props) {
   };
 
   const ubc = mergeUtilityBarConfigs(
-    utilityBarConfig,
+    utilityBarConfig || undefined,
     {
       buttons: [
         undoButton,

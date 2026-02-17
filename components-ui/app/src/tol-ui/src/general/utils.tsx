@@ -15,7 +15,6 @@ import {
   TDataObjectListOrNull,
   TPlateData,
   getFieldByName,
-  PUtilityBar
 } from "..";
 
 export function formatPath(name: string) {
