@@ -61,10 +61,10 @@ export function mergeAndFilters(target: object, incoming: object) {
   return output as IAndAttributes;
 }
 
-export function appendKeywordIfNeeded(field: string): string {
-  return field.startsWith("calc_") ? field : `${field}.keyword`;
-}
-
+/**
+* Remove a specific attribute from an `and_` filter block
+* Returns the original filter if it doesn't match the expected structure
+*/
 export function removeAttributeFromFilter(
   filter: IFilter | undefined,
   attr: string,
