@@ -69,8 +69,7 @@ export function removeAttributeFromFilter(
   filter: IFilter | undefined,
   attr: string,
 ): IFilter | undefined {
-  if (!filter || !("and_" in filter)) return filter;
-  if (!filter.and_ || !(attr in filter.and_)) return filter;
+  if (!filter || !("and_" in filter) || !filter.and_ || !(attr in filter.and_)) return filter;
   const next = {
     ...filter,
     and_: { ...filter.and_ },
