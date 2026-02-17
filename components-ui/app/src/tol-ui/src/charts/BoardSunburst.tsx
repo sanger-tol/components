@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  BoardFilters,
   Placeholder,
   Icon,
   RemoteSunburst,
@@ -15,19 +14,17 @@ import {
   PButton,
   updateConfigAndUpsert,
   useBoard,
-  PVisualisation
+  PVisualisation,
+  mergeUtilityBarConfigs
 } from "..";
 
 
-interface Props extends PVisualisation { }
-
-export function BoardSunburst(props: Props) {
+export function BoardSunburst(props: PVisualisation) {
   const { id, utilityBarConfig, boardDataSource, size, zone } = props;
 
   const { editMode } = useBoard();
 
   const [config, setConfig] = useState<any>(props.config);
-  const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
 
@@ -76,23 +73,17 @@ export function BoardSunburst(props: Props) {
     visible: editMode,
   }
 
-  const filtersButton: PButton = {
-    outline: true,
-    position: "right",
-    type: "primary",
-    onClick: () => setOpenFilters(true),
-    icon: "filter",
-    className: "count-filter-button",
-    visible: editMode,
-  }
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      buttons: [
+        configButton,
+      ],
+    }
+  );
 
   return (
     <>
-      <BoardFilters
-        {...props}
-        open={openFilters}
-        setOpen={setOpenFilters}
-      />
       <SliceByDrawer
         {...props}
         sliceBy={config.sliceBy || []} // Pass in a blank array to account for no config
@@ -109,13 +100,7 @@ export function BoardSunburst(props: Props) {
         forceUpdate={forceUpdate}
         legendPosition="top"
         noMini={size === "sm"}
-        utilityBarConfig={{
-          ...utilityBarConfig,
-          buttons: [
-            configButton,
-            filtersButton
-          ],
-        }}
+        utilityBarConfig={ubc}
       />
     </>
   );

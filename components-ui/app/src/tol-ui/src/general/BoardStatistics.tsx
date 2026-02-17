@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  BoardFilters,
   StatisticsConfigDrawer,
   IStatisticsConfig,
   RemoteStatistics,
@@ -15,18 +14,17 @@ import {
   useBoard,
   PVisualisation,
   updateConfigAndUpsert,
+  mergeUtilityBarConfigs,
 } from "..";
 
-export interface PBoardStatistics extends PVisualisation { }
 
-export function BoardStatistics(props: PBoardStatistics) {
+export function BoardStatistics(props: PVisualisation) {
   const { id, utilityBarConfig, boardDataSource, zone } = props;
 
   const { editMode } = useBoard();
 
   const initialConfig = props.config && props.config.type ? props.config : { type: "count" };
   const [config, setConfig] = useState<IStatisticsConfig>(initialConfig);
-  const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
 
   const onConfigSave = (updatedConfig: IStatisticsConfig) => {
@@ -43,29 +41,17 @@ export function BoardStatistics(props: PBoardStatistics) {
     visible: editMode,
   };
 
-  const filterButton: PButton = {
-    outline: true,
-    position: "right",
-    type: "primary",
-    onClick: () => setOpenFilters(true),
-    icon: "filter",
-    className: "count-filter-button",
-    testid: "statistics-filter-button",
-    visible: editMode,
-  };
-
-  const utilityBarProps = {
-    ...utilityBarConfig,
-    buttons: [configButton, filterButton],
-  };
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      buttons: [
+        configButton,
+      ],
+    }
+  );
 
   return (
     <>
-      <BoardFilters
-        {...props}
-        open={openFilters}
-        setOpen={setOpenFilters}
-      />
       <StatisticsConfigDrawer
         {...props}
         open={openConfig}
@@ -78,7 +64,7 @@ export function BoardStatistics(props: PBoardStatistics) {
         {...props}
         type={config.type}
         field={config.field}
-        utilityBarConfig={utilityBarProps}
+        utilityBarConfig={ubc}
       />
     </>
   );

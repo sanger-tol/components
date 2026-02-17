@@ -106,20 +106,6 @@ export function Zone(props: PZone) {
     text: "Add Component",
   };
 
-  const editButton: PButton = {
-    outline: true,
-    onClick: () => {
-      setDraggable(!draggable);
-    },
-    disabled: z.zone.order.length < 1,
-    type: "edit",
-    icon: "up-down-left-right",
-    position: "right",
-    tooltip: "Edit Widgets",
-    testid: "drag-components-button",
-    visible: editMode
-  };
-
   const deleteButton: PButton = {
     outline: true,
     onClick: () => {
@@ -156,20 +142,6 @@ export function Zone(props: PZone) {
     visible: editMode
   };
 
-  const saveButton: PButton = {
-    outline: false,
-    onClick: () => {
-      setSaveLayout(true);
-      setDraggable(false);
-    },
-    type: "success",
-    icon: "floppy-disk",
-    position: "right",
-    tooltip: "Save Layout",
-    testid: "save-layout-button",
-    visible: editMode
-  };
-
   const filtersButton: PButton = {
     outline: true,
     onClick: () => setOpenFilters(true),
@@ -202,14 +174,13 @@ export function Zone(props: PZone) {
             filter={filter}
           />
         }
-        buttons={!draggable ? [
+        buttons={[
           addButton,
           filtersButton,
-          deleteButton,
-          editButton,
           downButton,
           upButton,
-        ] : [saveButton]}
+          deleteButton,
+        ]}
       />
       <div id="component-modal">
         <ComponentPickerModal

@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  BoardFilters,
   RemoteTable,
   updateConfigAndUpsert,
   useBoard,
@@ -23,12 +22,11 @@ export interface PBoardTable extends PVisualisation {
 }
 
 export function BoardTable(props: PBoardTable) {
-  const { id, utilityBarConfig, boardDataSource, zone } = props;
+  const { id, boardDataSource, zone } = props;
 
   const { editMode } = useBoard();
 
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
-  const [openFilters, setOpenFilters] = useState(false);
 
   const onConfigSave = ({
     fieldMeta,
@@ -90,14 +88,6 @@ export function BoardTable(props: PBoardTable) {
     );
   }
 
-  const BoardFilter = [
-    <BoardFilters
-      {...props}
-      open={openFilters}
-      setOpen={setOpenFilters}
-    />
-  ];
-
   return (
     <RemoteTable
       {...props}
@@ -118,18 +108,6 @@ export function BoardTable(props: PBoardTable) {
       // disabled temporarily
       // actions={config.actions}
       rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
-      utilityBarConfig={{
-        ...utilityBarConfig,
-        elements: BoardFilter,
-        buttons: [editMode ? {
-          outline: true,
-          position: "right",
-          type: "primary",
-          tooltip: "Open filter config",
-          onClick: () => setOpenFilters(true),
-          icon: "filter",
-        } : undefined],
-      }}
     />
   );
 }

@@ -6,30 +6,24 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  BoardFilters,
   Icon,
   Placeholder,
   RemoteBarChart,
   deepCopy,
   ChartConfigDrawer,
   IChartConfig,
-  PButton,
   updateConfigAndUpsert,
   useBoard,
-  PVisualisation
+  PVisualisation,
 } from "..";
-import { mergeUtilityBarConfigs } from "src/utility-bar/utils";
 
 
-interface Props extends PVisualisation {}
-
-export function BoardChart(props: Props) {
-  const { id, utilityBarConfig, boardDataSource, zone } = props;
+export function BoardChart(props: PVisualisation) {
+  const { id, boardDataSource, zone } = props;
 
   const { editMode } = useBoard();
 
   const [config, setConfig] = useState<IChartConfig>(props.config);
-  const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
 
@@ -43,24 +37,6 @@ export function BoardChart(props: Props) {
     )
     setForceUpdate(!forceUpdate);
   };
-
-  const configButton: PButton = {
-    outline: true,
-    position: "right",
-    type: "primary",
-    onClick: () => setOpenConfig(true),
-    icon: "sliders",
-    visible: editMode,
-  }
-
-  const filterButton: PButton = {
-    outline: true,
-    position: "right",
-    type: "primary",
-    onClick: () => setOpenFilters(true),
-    icon: "filter",
-    visible: editMode,
-  }
 
   const Contents = () => {
     if (!config.xAxis && !config.breakDownBy) {
@@ -88,23 +64,8 @@ export function BoardChart(props: Props) {
     return null;
   }
 
-  const ubc = mergeUtilityBarConfigs(
-    utilityBarConfig,
-    {
-      buttons: [
-        configButton,
-        filterButton,
-      ],
-    }
-  )
-
   return (
     <>
-      <BoardFilters
-        {...props}
-        open={openFilters}
-        setOpen={setOpenFilters}
-      />
       <ChartConfigDrawer
         {...props}
         open={openConfig}
@@ -122,7 +83,6 @@ export function BoardChart(props: Props) {
         stacked={config.stacked || false}
         type={config.grouping || ""}
         forceUpdate={forceUpdate}
-        utilityBarConfig={ubc}
       />
     </>
   );

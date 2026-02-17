@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { ReactNode } from "react";
 import {
   UtilityBar,
-  TUtilityBarOrNull
+  TUtilityBarOrNull,
 } from "..";
 
 
@@ -33,7 +33,6 @@ export function ObjectDetail(props: PObjectDetail) {
       <strong>{key}:</strong> {value}
     </p>
   ));
-
 
   return (
     <div

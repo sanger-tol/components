@@ -34,9 +34,10 @@ import {
   isPropDefined,
   getCssVarValue,
   themeListener,
-  PUtilityBar
+  PUtilityBar,
+  mergeUtilityBarConfigs,
+  PButton
 } from "..";
-import { mergeUtilityBarConfigs } from "src/utility-bar/utils";
 
 
 ChartJS.register(
@@ -298,33 +299,37 @@ export function BarChart(props: Props) {
     },
   };
 
+  const resetButton: PButton = {
+    outline: true,
+    position: "right",
+    type: "primary",
+    onClick: () => {
+      resetItemClickedData(setBarData);
+      setMaxHeight(null);
+      setDatasets(originDatasets);
+    },
+    icon: "undo",
+    visible: isPropDefined(setBarData) && datasets.length > 0,
+  }
+
+  const downloadButton: PButton = {
+    outline: true,
+    position: "right",
+    type: "primary",
+    onClick: () => {
+      downloadItem(props.id, downloadName);
+    },
+    icon: "download",
+    disabled: datasets.length === 0,
+    disabledTooltip: "No data to download",
+  }
+
   const ubc = mergeUtilityBarConfigs(
     utilityBarConfig,
     {
       buttons: [
-        {
-          outline: true,
-          position: "right",
-          type: "primary",
-          onClick: () => {
-            resetItemClickedData(setBarData);
-            setMaxHeight(null);
-            setDatasets(originDatasets);
-          },
-          icon: "undo",
-          visible: isPropDefined(setBarData) && datasets.length > 0,
-        },
-        {
-          outline: true,
-          position: "right",
-          type: "primary",
-          onClick: () => {
-            downloadItem(props.id, downloadName);
-          },
-          icon: "download",
-          disabled: datasets.length === 0,
-          disabledTooltip: "No data to download",
-        },
+        resetButton,
+        downloadButton,
       ],
     }
   )

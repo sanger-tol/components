@@ -19,19 +19,19 @@ import { PUtilityBar } from "..";
  * @returns A merged {@link PUtilityBar} configuration containing the resolved metadata and concatenated arrays.
  */
 export function mergeUtilityBarConfigs(
-  initial: PUtilityBar,
+  initial?: PUtilityBar,
   additions?: PUtilityBar
 ): PUtilityBar {
   return {
-    id: initial.id,
-    title: additions?.title || initial.title,
-    description: additions?.description || initial.description,
+    id: initial?.id,
+    title: additions?.title || initial?.title,
+    description: additions?.description || initial?.description,
     elements: [
-      ...(initial.elements || []),
+      ...(initial?.elements || []),
       ...(additions?.elements || []),
     ],
     buttons: [
-      ...(initial.buttons || []),
+      ...(initial?.buttons || []),
       ...(additions?.buttons || []),
     ],
   };

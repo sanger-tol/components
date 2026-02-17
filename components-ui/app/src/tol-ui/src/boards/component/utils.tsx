@@ -7,11 +7,9 @@ SPDX-License-Identifier: MIT
 
 import {
   BOARDS,
-  generateFilter,
   IComponent,
   IComponentData,
   IZone,
-  TitleTooltip,
   TsDataSource,
   Visualisation,
 } from "../..";

@@ -19,7 +19,10 @@ import {
   PButton,
   TitleTooltip,
   generateFilter,
+  mergeUtilityBarConfigs,
+  BoardFilters,
 } from "../..";
+
 
 export interface PVisualisation extends IBoardTargetAndZone {
   id: string;
@@ -27,6 +30,7 @@ export interface PVisualisation extends IBoardTargetAndZone {
   componentType: string;
   size: string;
   title: string;
+  utilityBarConfig?: PUtilityBar;
 }
 
 export function Visualisation(props: PVisualisation) {
@@ -37,9 +41,11 @@ export function Visualisation(props: PVisualisation) {
     boardDataSource,
     zone,
     dataSource,
+    utilityBarConfig,
   } = props;
 
   const [title, setTitle] = useState(props.title);
+  const [openFilters, setOpenFilters] = useState(false);
 
   const { editMode } = useBoard();
 
@@ -54,6 +60,23 @@ export function Visualisation(props: PVisualisation) {
     visible: editMode,
   }
 
+  const filterButton: PButton = {
+    outline: true,
+    position: "right",
+    type: "primary",
+    onClick: () => setOpenFilters(true),
+    icon: "filter",
+    visible: editMode,
+  }
+
+  const FilterDrawer = (
+    <BoardFilters
+      {...props}
+      open={openFilters}
+      setOpen={setOpenFilters}
+    />
+  )
+
   const Description = (
     <TitleTooltip
       title={title}
@@ -63,20 +86,27 @@ export function Visualisation(props: PVisualisation) {
     />
   );
 
-  const ubc = {
-    title: title || editMode ? {
-      text: title,
-      editable: editMode,
-      onSave: (value: string) => {
-        saveTitle(value, id, boardDataSource, BOARDS.COMPONENT);
-        setTitle(value);
-      }
-    } : undefined,
-    description: Description,
-    buttons: [
-      dragButton,
-    ]
-  }
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      title: title || editMode ? {
+        text: title,
+        editable: editMode,
+        onSave: (value: string) => {
+          saveTitle(value, id, boardDataSource, BOARDS.COMPONENT);
+          setTitle(value);
+        }
+      } : undefined,
+      description: Description,
+      buttons: [
+        dragButton,
+        filterButton,
+      ],
+      elements: [
+        FilterDrawer
+      ]
+    }
+  )
 
   let Element: JSX.ElementType = BoardTable;
 

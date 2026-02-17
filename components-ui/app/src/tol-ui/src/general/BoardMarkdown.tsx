@@ -14,7 +14,8 @@ import {
   updateConfigAndUpsert,
   useBoard,
   IMarkdownConfig,
-  PVisualisation
+  PVisualisation,
+  mergeUtilityBarConfigs
 } from "..";
 
 
@@ -70,13 +71,15 @@ export function BoardMarkdown(props: PBoardMarkdown) {
     visible: editMode,
   }
 
-  const Bar = (
-    <UtilityBar
-      id="editor-markdown"
-      {...utilityBarConfig}
-      buttons={[editButton, previewButton]}
-    />
-  );
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      buttons: [
+        previewButton,
+        editButton
+      ],
+    }
+  )
 
   const MarkdownEditor = (
     <>
@@ -101,7 +104,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
 
   return (
     <>
-      {Bar}
+      <UtilityBar id={id} {...ubc} />
       <div className="tol-component-contents with-offset tol-markdown">
         {(showMarkdownViewer) ? MarkdownViewer : MarkdownEditor}
       </div>
