@@ -26,6 +26,7 @@ import {
   PUtilityBar,
   PButton,
   UtilityBar,
+  SunburstChildFilter,
   TFilterOrUndefined,
   API_METHODS,
   IRemoteTargetAndZone,
@@ -69,6 +70,10 @@ interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
    * Optional custom overlay or content displayed while loading or handling errors
    */
   contents?: ReactNode;
+  /**
+   * Optional filter to decide whether to include child buckets for a given slice
+   */
+  childFilter?: SunburstChildFilter;
 }
 
 /**
@@ -91,6 +96,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
     contents,
     height = "100%",
     noLabel,
+    childFilter,
   } = props;
   const wrapperId = "tol-sunburst-wrapper-" + id;
   const [datasets, setDatasets] = useState({});
@@ -136,7 +142,13 @@ export function RemoteSunburst(props: PRemoteSunburst) {
           const aggs = res.data.meta.aggregations;
           setErrorMessage("");
           setWarningMessage(isChartDataEmpty(aggs));
-          const data = aggsToSunburstData(aggs, sliceBy);
+          const data = aggsToSunburstData(
+            aggs,
+            sliceBy,
+            undefined,
+            undefined,
+            childFilter,
+          );
           setDatasets(data);
           setSliceData({});
           setLoading(false);
@@ -182,7 +194,13 @@ export function RemoteSunburst(props: PRemoteSunburst) {
             const aggs = res.data.meta.aggregations;
             setErrorMessage("");
             setWarningMessage(isChartDataEmpty(aggs));
-            const data = aggsToSunburstData(aggs, sliceBy);
+            const data = aggsToSunburstData(
+              aggs,
+              sliceBy,
+              undefined,
+              undefined,
+              childFilter,
+            );
             setSubDatasets(data);
             setSubLoading(false);
           })

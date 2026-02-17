@@ -604,6 +604,13 @@ interface SunburstData {
   child?: SunburstData;
 }
 
+export type SunburstChildFilter = (params: {
+  depth: number;
+  key: string;
+  childKey?: string;
+  bucketKey: string;
+}) => boolean;
+
 interface DoughnutDataCJS {
   id: string;
   data: number[];
@@ -844,6 +851,7 @@ export function aggsToSunburstData(
   sliceBy: string[],
   depth?: number,
   parentDocCount?: number,
+  childFilter?: SunburstChildFilter,
 ) {
   depth = initialiseOrIncrementDepth(depth);
 
@@ -886,7 +894,18 @@ export function aggsToSunburstData(
     };
 
     // this means the bucket has a child
-    if (childKey) {
+    const allowChild =
+      childKey === undefined
+        ? false
+        : childFilter
+          ? childFilter({
+              depth,
+              key,
+              childKey,
+              bucketKey: bucket.key,
+            })
+          : true;
+    if (allowChild) {
       const child = {};
       child[childKey] = bucket[childKey];
       dataPoint["child"] = aggsToSunburstData(
@@ -894,6 +913,7 @@ export function aggsToSunburstData(
         sliceBy,
         depth,
         bucket.doc_count,
+        childFilter,
       );
     }
     outputData[key].push(dataPoint);
