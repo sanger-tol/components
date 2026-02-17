@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { API_METHODS, numberWithSpaces, IRemoteTarget, IZone, TFilterOrUndefined, generateFilter, filterHasUpdated } from "..";
 
 /**
@@ -35,18 +35,18 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
   const [statsLoading, setStatsLoading] = useState(false);
   const [statsError, setStatsError] = useState<string>("");
   const [filter, setFilter] = useState<TFilterOrUndefined>(undefined);
-  const isMountedRef = useRef(true);
 
   const statsKeys = useMemo(() => ["min", "max", "avg", "sum"], []);
 
   useEffect(() => {
-    isMountedRef.current = true;
+    let isMounted = true;
     setIsNumeric(false);
     setStats(null);
     setStatsLoading(false);
     setStatsError("");
 
     dataSource.getEntityMeta().then((meta) => {
+      if (!isMounted) return;
       const attribute = meta.flatAttributes[objectType][field];
       if (!attribute) return;
       const pythonType = (attribute.python_type ?? "").toLowerCase();
@@ -55,7 +55,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
     });
 
     return () => {
-      isMountedRef.current = false;
+      isMounted = false;
     };
   }, [dataSource, field, objectType]);
 
@@ -74,7 +74,8 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
   }, [filter]);
 
   useEffect(() => {
-    if (!isNumeric || statsLoading || stats) return;
+    let isMounted = true;
+    if (!isNumeric || stats) return;
 
     setStatsError("");
     setStatsLoading(true);
@@ -91,7 +92,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
       params,
     })
       .then((res: any) => {
-        if (!isMountedRef.current) return;
+        if (!isMounted) return;
         const statsPayload = res?.data?.meta?.stats?.[field];
         if (!statsPayload) {
           setStatsError("No stats available.");
@@ -100,14 +101,17 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
         setStats(statsPayload);
       })
       .catch((error: any) => {
-        if (!isMountedRef.current) return;
+        if (!isMounted) return;
         setStatsError(error?.message ?? "Stats request failed");
       })
       .finally(() => {
-        if (!isMountedRef.current) return;
+        if (!isMounted) return;
         setStatsLoading(false);
       });
-  }, [dataSource, field, filter, isNumeric, objectType, stats, statsKeys, statsLoading]);
+    return () => {
+      isMounted = false;
+    };
+  }, [dataSource, field, filter, isNumeric, objectType, stats, statsKeys]);
 
   const statsContents = useMemo(() => {
     if (!isNumeric) return null;
