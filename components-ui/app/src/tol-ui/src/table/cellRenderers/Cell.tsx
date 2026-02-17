@@ -18,7 +18,6 @@ import {
 
 export interface PCell {
   attribute: string,
-  value?: any,
   dataObject: TDataObjectOrNull,
   dataSource?: TsDataSource,
   renderer: TCellRenderer;
@@ -29,13 +28,15 @@ export interface PCell {
 
 export function Cell(props: PCell) {
   const { dataObject, dataSource, editable } = props;
-  const [value, setValue] = useState(props.value);
-  const [prevValue, setPrevValue] = useState(props.value);
+  const [value, setValue] = useState("");
+  const [prevValue, setPrevValue] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  console.log(dataObject?.relationships?.["samples"]);
+
   const canEdit = (
-    typeof value === "string" || value instanceof String
+    typeof value === "string"
   );
 
   const onDoubleClick = () => {
@@ -127,8 +128,13 @@ export function Cell(props: PCell) {
     if (Array.isArray(value)) {
       const valueSet = new Set(value);
 
-      return Array.from(valueSet).map((val) => (
-        <CellDisplay {...props} tag value={val} />
+      return Array.from(valueSet).map((val, index) => (
+        <CellDisplay
+          {...props}
+          tag
+          value={val}
+          key={`${val}-${index}`}
+        />
       ));
     }
     return <CellDisplay {...props} value={value} />;

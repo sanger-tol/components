@@ -100,14 +100,12 @@ export function convertTableData(
     const row: ITableRecord = { key: obj.id };
     // loop over each field
     fieldMeta.order.active.forEach((attribute) => {
-      const value = getFieldByName(obj, attribute);
-      if (!fieldMeta.dataWithDefaults![attribute]?.cellRenderer) {
-        addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![attribute]);
-      }
+      // if (!fieldMeta.dataWithDefaults![attribute]?.cellRenderer) {
+      //   addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![attribute]);
+      // }
       row[attribute] = (
         <Cell
           attribute={attribute}
-          value={value}
           dataObject={obj}
           dataSource={dataSource}
           renderer={fieldMeta.dataWithDefaults?.[attribute]?.cellRenderer}
