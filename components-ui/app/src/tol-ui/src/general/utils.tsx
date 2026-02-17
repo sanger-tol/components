@@ -14,7 +14,8 @@ import {
   IEntityMeta,
   TDataObjectListOrNull,
   TPlateData,
-  getFieldByName
+  getFieldByName,
+  PUtilityBar
 } from "..";
 
 export function formatPath(name: string) {

@@ -16,6 +16,9 @@ import {
   useBoard,
   saveTitle,
   BOARDS,
+  PButton,
+  TitleTooltip,
+  generateFilter,
 } from "../..";
 
 export interface PVisualisation extends IBoardTargetAndZone {
@@ -23,23 +26,44 @@ export interface PVisualisation extends IBoardTargetAndZone {
   config: any;
   componentType: string;
   size: string;
-  utilityBarConfig: PUtilityBar;
+  title: string;
 }
 
 export function Visualisation(props: PVisualisation) {
   const {
     id,
+    objectType,
     componentType,
     boardDataSource,
-    utilityBarConfig: ubc
+    zone,
+    dataSource,
   } = props;
 
-  const [title, setTitle] = useState(ubc.title?.text);
+  const [title, setTitle] = useState(props.title);
 
   const { editMode } = useBoard();
 
-  const utilityBarConfig = {
-    ...ubc,
+  const filter = generateFilter(zone, id);
+
+  const dragButton: PButton = {
+    outline: true,
+    position: "right",
+    type: "edit",
+    icon: "up-down-left-right",
+    className: "tol-drag-handle",
+    visible: editMode,
+  }
+
+  const Description = (
+    <TitleTooltip
+      title={title}
+      objectType={objectType}
+      dataSource={dataSource}
+      filter={filter}
+    />
+  );
+
+  const ubc = {
     title: title || editMode ? {
       text: title,
       editable: editMode,
@@ -48,14 +72,15 @@ export function Visualisation(props: PVisualisation) {
         setTitle(value);
       }
     } : undefined,
+    description: Description,
+    buttons: [
+      dragButton,
+    ]
   }
 
-  let Element: JSX.ElementType;
+  let Element: JSX.ElementType = BoardTable;
 
   switch (componentType) {
-    case "table":
-      Element = BoardTable;
-      break;
     case "count":
     case "statistics":
       Element = BoardStatistics;
@@ -74,7 +99,7 @@ export function Visualisation(props: PVisualisation) {
   return (
     <Element
       {...props}
-      utilityBarConfig={utilityBarConfig}
+      utilityBarConfig={ubc}
     />
   )
 }

@@ -65,22 +65,7 @@
   margin: 0px !important;
 }
 
-.widget-delete-btn {
-  height: 30px;
-  width: 30px;
-  position: absolute;
-  padding: 0;
-  top: 0;
-  right: 0;
-  margin: 12px;
-}
-
-.tol-draggable-widget {
-  background-color: var(--tol-bg);
-  border-radius: 6px;
-}
-
-.tol-draggable-widget:hover {
+.tol-drag-handle {
   cursor: move;
 }
 

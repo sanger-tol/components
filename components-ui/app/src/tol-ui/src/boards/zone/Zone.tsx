@@ -72,6 +72,13 @@ export function Zone(props: PZone) {
     });
   }, []);
 
+  useEffect(() => {
+    // if not in edit mode, ensure draggable is false
+    if (!editMode) {
+      setDraggable(false);
+    }
+  }, [editMode]);
+
   const onAddComponent = () => {
     setOpen(true);
   };

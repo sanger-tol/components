@@ -36,6 +36,7 @@ import {
   themeListener,
   PUtilityBar
 } from "..";
+import { mergeUtilityBarConfigs } from "src/utility-bar/utils";
 
 
 ChartJS.register(
@@ -297,38 +298,40 @@ export function BarChart(props: Props) {
     },
   };
 
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      buttons: [
+        {
+          outline: true,
+          position: "right",
+          type: "primary",
+          onClick: () => {
+            resetItemClickedData(setBarData);
+            setMaxHeight(null);
+            setDatasets(originDatasets);
+          },
+          icon: "undo",
+          visible: isPropDefined(setBarData) && datasets.length > 0,
+        },
+        {
+          outline: true,
+          position: "right",
+          type: "primary",
+          onClick: () => {
+            downloadItem(props.id, downloadName);
+          },
+          icon: "download",
+          disabled: datasets.length === 0,
+          disabledTooltip: "No data to download",
+        },
+      ],
+    }
+  )
+
   return (
     <div style={{ height: height }}>
-      <UtilityBar
-        {...utilityBarConfig}
-        id={id}
-        buttons={[
-          ...utilityBarConfig?.buttons || [],
-          {
-            outline: true,
-            position: "right",
-            type: "primary",
-            onClick: () => {
-              resetItemClickedData(setBarData);
-              setMaxHeight(null);
-              setDatasets(originDatasets);
-            },
-            icon: "undo",
-            visible: isPropDefined(setBarData) && datasets.length > 0,
-          },
-          {
-            outline: true,
-            position: "right",
-            type: "primary",
-            onClick: () => {
-              downloadItem(props.id, downloadName);
-            },
-            icon: "download",
-            disabled: datasets.length === 0,
-            disabledTooltip: "No data to download",
-          },
-        ]}
-      />
+      <UtilityBar id={id} {...ubc} />
       <div className="tol-component-contents with-offset">
         {contents ? contents :
           <Chart

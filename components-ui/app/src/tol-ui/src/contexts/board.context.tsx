@@ -18,7 +18,7 @@ export interface IBoardContextValue {
 export const BoardContext = createContext<IBoardContextValue | undefined>(undefined);
 
 export function BoardContextProvider({ children }: { children: ReactNode }) {
-  const [editMode, setEditMode] = useState<boolean>(false);
+  const [editMode, setEditMode] = useState<boolean>(true);
   const [privilege, setPrivilege] = useState<TBoardPrivilegeOrUndefined>(undefined);
 
   return (

@@ -114,7 +114,7 @@ export function Board(props: PBoard) {
 
   const editOrExitButton = editMode ? {
     ...BUTTONS.CONFIRM,
-    text: "Exit Edit Mode",
+    text: "View & Exit Edit Mode",
   } : {
     ...BUTTONS.EDIT,
     text: "Edit",

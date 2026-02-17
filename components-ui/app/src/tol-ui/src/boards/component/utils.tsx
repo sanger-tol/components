@@ -115,16 +115,6 @@ export function generateVisualisations(
 ) {
   return zone.order.map((componentId) => {
     const component = zone.components[componentId].data;
-    const filter = generateFilter(zone, component.id!);
-
-    const Description = (
-      <TitleTooltip
-        title={component.title!}
-        objectType={component.objectType!}
-        dataSource={component.dataspace!}
-        filter={filter}
-      />
-    );
     
     return (
       <div key={component.id} className="tol-visualisation">
@@ -139,10 +129,7 @@ export function generateVisualisations(
           dataSource={component.dataspace!}
           boardDataSource={boardDataSource}
           boardObjectType={BOARDS.COMPONENT}
-          utilityBarConfig={{
-            title: { text: component.title! },
-            description: Description,
-          }}
+          title={component.title!}
         />
       </div>
     )

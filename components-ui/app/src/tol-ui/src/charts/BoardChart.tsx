@@ -18,6 +18,7 @@ import {
   useBoard,
   PVisualisation
 } from "..";
+import { mergeUtilityBarConfigs } from "src/utility-bar/utils";
 
 
 interface Props extends PVisualisation {}
@@ -87,6 +88,16 @@ export function BoardChart(props: Props) {
     return null;
   }
 
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      buttons: [
+        configButton,
+        filterButton,
+      ],
+    }
+  )
+
   return (
     <>
       <BoardFilters
@@ -111,13 +122,7 @@ export function BoardChart(props: Props) {
         stacked={config.stacked || false}
         type={config.grouping || ""}
         forceUpdate={forceUpdate}
-        utilityBarConfig={{
-          ...utilityBarConfig,
-          buttons: [
-            configButton,
-            filterButton,
-          ],
-        }}
+        utilityBarConfig={ubc}
       />
     </>
   );
