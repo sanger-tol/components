@@ -87,7 +87,7 @@ export function Visualisations(props: PVisualisations) {
         isDraggable={editMode}
         draggableHandle=".tol-drag-handle"
         compactType="vertical"
-        rowHeight={150}
+        rowHeight={5}
         onLayoutChange={(layout: any) => setNewLayout(layout)}
         onBreakpointChange={onBreakpointChange}
       >

@@ -20,7 +20,8 @@ import {
   TitleTooltip,
   generateFilter,
   mergeUtilityBarConfigs,
-  BoardFilters,
+  BoardFilterBlock,
+  FilterConfigDrawer
 } from "../..";
 
 
@@ -70,7 +71,7 @@ export function Visualisation(props: PVisualisation) {
   }
 
   const FilterDrawer = (
-    <BoardFilters
+    <FilterConfigDrawer
       {...props}
       open={openFilters}
       setOpen={setOpenFilters}
@@ -108,26 +109,29 @@ export function Visualisation(props: PVisualisation) {
     }
   )
 
-  let Element: JSX.ElementType = BoardTable;
+  let Component: JSX.ElementType = BoardTable;
 
   switch (componentType) {
     case "count":
     case "statistics":
-      Element = BoardStatistics;
+      Component = BoardStatistics;
       break;
     case "sunburst":
-      Element = BoardSunburst;
+      Component = BoardSunburst;
       break;
     case "chart":
-      Element = BoardChart;
+      Component = BoardChart;
       break;
     case "text":
-      Element = BoardMarkdown;
+      Component = BoardMarkdown;
+      break;
+    case "filterBlock":
+      Component = BoardFilterBlock;
       break;
   }
 
   return (
-    <Element
+    <Component
       {...props}
       utilityBarConfig={ubc}
     />

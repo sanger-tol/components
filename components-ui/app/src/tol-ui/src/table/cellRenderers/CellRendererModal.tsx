@@ -20,6 +20,10 @@ import {
   IFilter,
   isEmptyObject,
   BUTTONS,
+  defineZone,
+  AttributeSelector,
+  IZone,
+  generateFilter
 } from "../..";
 import { CellRendererParam } from "./CellRendererParam";
 
@@ -39,7 +43,14 @@ export function CellRendererModal(props: PCellRendererModal) {
   const [entityMeta, setEntityMeta] = useState<IEntityMeta>();
   const [selectedConditionParam, setSelectedConditionParam] = useState<string | undefined>();
   const [filterConditions, setFilterConditions] = useState<IFilter>();
+  const [attributes, setAttributes] = useState<string[]>(Object.keys(filterConditions?.and_ || {}));
   const [conditionHasPendingChanges, setConditionHasPendingChanges] = useState<boolean>(false);
+  const zoneFilterId = "cell-renderer-zone"
+  const [filterZone, setFilterZone] = useState<IZone>(
+    defineZone("dummy-object-for-remote-filters", [
+      { id: zoneFilterId, filter: renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} } },
+    ]),
+  );
 
   const requiredParamKeys = renderer && cellRendererParams[renderer.type]
     ? Object.entries(cellRendererParams[renderer.type].params || {})
@@ -77,6 +88,33 @@ export function CellRendererModal(props: PCellRendererModal) {
     }
     setSelectedConditionParam(undefined);
   }, [open]);
+
+  // Checks that the condition exists and has a value, stops the condition filters spreading across all conditions
+  useEffect(() => {
+    if (renderer?.props?.[selectedConditionParam!] && selectedConditionParam) {
+      const paramValue = renderer.props[selectedConditionParam];
+      const filterValue = typeof paramValue === 'object' ? paramValue as IFilter : { and_: {} };
+      setAttributes(Object.keys(filterValue.and_ || {}) || []);
+      setFilterConditions(filterValue);
+      setFilterZone(defineZone("dummy-object-for-remote-filters", [
+        { id: zoneFilterId, filter: filterValue },
+      ]));
+    } else {
+      setAttributes([]);
+      setFilterConditions({ and_: {} });
+    }
+  }, [selectedConditionParam]);
+
+  useEffect(() => {
+    const newFilter = generateFilter(filterZone, zoneFilterId);
+    setFilterConditions(newFilter);
+    setConditionHasPendingChanges(() => {
+      if (!renderer || !selectedConditionParam) return false;
+      renderer!.props![selectedConditionParam!] = newFilter ?? {};
+      setRenderer({ ...renderer });
+      return JSON.stringify(previousRenderer?.props?.[selectedConditionParam]) !== JSON.stringify(renderer.props?.[selectedConditionParam])
+    });
+  }, [filterZone]);
 
   const onTypeChange = (type: string) => {
     setRenderer(
@@ -162,6 +200,14 @@ export function CellRendererModal(props: PCellRendererModal) {
       value: cellRendererType
     }));
 
+  const onClean = () => {
+    const component = filterZone.components[zoneFilterId];
+    // We know that the component exists because it is set by default (filterZone state)
+    component.data.filter!.and_ = {};
+    component.data.defaultFilter!.and_ = {};
+    setFilterZone({ ...filterZone });
+  };
+
   return (
     <Modal
       header={Header}
@@ -194,12 +240,24 @@ export function CellRendererModal(props: PCellRendererModal) {
               Parameter
             </h6>
           </div>
+          <AttributeSelector
+            {...props}
+            displaySource
+            recommendedFilterAvailable
+            renderSearchBySource
+            placeholder={'This is a placeholder'}
+            attribute={attributes}
+            setAttributes={setAttributes}
+            populatedFieldType="filter"
+            onClean={onClean}
+          />
           <RemoteFilters
             {...props}
-            filters={renderer?.props?.[selectedConditionParam!] as IFilter}
-            setFilters={setFilterConditions}
-            open={open}
-            setHasPendingChanges={setConditionHasPendingChanges}
+            utilityBarConfig={undefined}
+            zone={filterZone}
+            setZone={setFilterZone}
+            componentId={zoneFilterId}
+            attributes={attributes}
           />
           {ConditionButtons}
         </div>
