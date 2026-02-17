@@ -7,13 +7,12 @@ SPDX-License-Identifier: MIT
 import { ReactNode } from "react";
 import { Nav, NavDropdown } from "react-bootstrap";
 import {
-  PBoard,
   TsDataSource,
   BOARDS,
   TDataObjectOrNull,
   PRIVILEGE,
+  TBoardPrivilege,
   env,
-  BOARDS_API_DATA_PATH,
   TNavConfig,
   TPageOrDropdown,
   PAGE_ACCESS,
@@ -26,6 +25,7 @@ import {
   Route,
   INavDestination,
   formatPath,
+  TNavBrand,
 } from "..";
 
 
@@ -68,26 +68,23 @@ export const getNavBackgroundClass = (environment: string): string => {
 };
 
 export async function getUserPrivilege(
-  user: any,
-  boardDataSource: TsDataSource,
-  boardId: string
-) {
-  if (user && boardDataSource && boardId) {
-    return boardDataSource.getOne({
-      objectType: BOARDS.BOARD,
-      id: boardId,
-    }).then(async (board: TDataObjectOrNull) => {
-      const boardUser = await board?.relationships?.user;
-      if (board && (boardUser?.id?.toString() === user?.id?.toString() || user?.roles?.includes('admin'))) {
-        return PRIVILEGE.BOARD.EDITABLE;
-      } else {
-        return PRIVILEGE.BOARD.VIEWABLE;
-      }
-    });
-  } else {
-    // If no user or boardDataSource, return hidden
-    return PRIVILEGE.BOARD.HIDDEN;
-  }
+  user: User | null | undefined,
+  boardDataSource: TsDataSource | null | undefined,
+  boardId: string | null | undefined,
+): Promise<TBoardPrivilege> {
+  if (!user?.id || !boardDataSource || !boardId) return PRIVILEGE.BOARD.VIEWABLE;
+
+  const board: TDataObjectOrNull = await boardDataSource.getOne({
+    objectType: BOARDS.BOARD,
+    id: boardId,
+  });
+
+  const boardUser = await board?.relationships?.user;
+  const isOwner = boardUser?.id?.toString() === user.id.toString();
+  const isAdmin = user.roles?.includes("admin") ?? false;
+
+  if (board && (isOwner || isAdmin)) return PRIVILEGE.BOARD.EDITABLE;
+  return PRIVILEGE.BOARD.VIEWABLE;
 }
 
 /**
@@ -140,33 +137,6 @@ export function clearUnusedLocalStorage() {
       i--;
     }
   }
-}
-
-/**
- * Sets up board configuration for the 'SmartApp'.
- * 
- * @param boards - Optional board configuration. Can be either:
- *   - A boolean value: if `true`, creates a default board with a new TsDataSource
- *   - A PBoard object: returns the object as-is
- *   - undefined/false: returns undefined
- * 
- * @returns A PBoard object with configured data source, the provided PBoard object, 
- *          or undefined if boards is falsy.
- */
-export function setupBoards(boards?: PBoard | boolean): PBoard | undefined {
-  if (boards) {
-    if (typeof boards === 'boolean') {
-      return {
-        boardDataSource: new TsDataSource({
-          apiPath: env.API_PATH,
-          apiDataPath: BOARDS_API_DATA_PATH,
-        }),
-      };
-    } else {
-      return boards;
-    }
-  }
-  return undefined;
 }
 
 /**
@@ -225,12 +195,14 @@ export function normaliseNavConfig(
       navItem.pages = normaliseNavConfig(navItem.pages, user, routePrefix);
     }
 
-    // Add to result and only add to order if it was in source order (thus not hidden on nav)
+    // Add to result
     result.data[displayName] = navItem;
-    if (source.order.includes(displayName)) {
-      result.order.push(displayName);
-    }
   }
+
+  // Maintain the order specified in the source config, but filter out any items that were not added to result
+  result.order = source.order.filter(
+    (id) => Object.prototype.hasOwnProperty.call(result.data, id)
+  );
 
   return result;
 }
@@ -268,7 +240,7 @@ export function mergeNavConfigs(
  * 
  * @returns A finalized {@link TNavConfig} with defaults applied via `normaliseNavConfigForUser`.
  */
-export function setupNavigationConfig(
+export function mergeAndNormaliseNavConfig(
   navigation: TNavConfig | undefined,
   defaultNavigation: TNavConfig,
   user: User | null,
@@ -440,7 +412,8 @@ export function isPageAccessible(user: User | null, page: TPageOrDropdown): bool
  *
  * @param navigation - Navigation configuration tree to traverse.
  * @param pageElements - Mapping/registry of page elements used to render routes.
- * @param boards - Optional board configuration passed through to `Route`.
+ * @param brand - Brand to pass to `Route` for rendering in loading states.
+ * @param boardDataSource - Optional data source for board pages, passed to `Route` for rendering.
  * @param parentTrail - Accumulated navigation keys representing the current traversal path.
  * 
  * @returns A flattened array of `React.ReactNode` route elements for all valid routes in the tree.
@@ -448,7 +421,8 @@ export function isPageAccessible(user: User | null, page: TPageOrDropdown): bool
 export function collectRoutes(
   navigation: TNavConfig,
   pageElements: TPageElements,
-  boards?: PBoard,
+  brand: TNavBrand,
+  boardDataSource?: TsDataSource,
   parentTrail: string[] = [],
 ): React.ReactNode[] {
   return Object.entries(navigation.data).flatMap(([navKey, navItem]) => {
@@ -464,7 +438,8 @@ export function collectRoutes(
           routeKey,
           path: navItem.path,
           pageElements,
-          boards,
+          boardDataSource,
+          brand,
         }),
       );
     }
@@ -472,7 +447,7 @@ export function collectRoutes(
     // Recurse into dropdown children
     if (isDropdown(navItem)) {
       routes.push(
-        ...collectRoutes(navItem.pages, pageElements, boards, trail),
+        ...collectRoutes(navItem.pages, pageElements, brand, boardDataSource, trail),
       );
     }
 

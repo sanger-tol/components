@@ -185,7 +185,7 @@
   height: auto !important;
   min-height: 100% !important;
   padding: 15px;
-  border-width: 2px;
+  border: 2px solid var(--tol-grey-subtle) !important;
 
   h6 {
     margin-top: 10px;
@@ -213,14 +213,13 @@
 .tol-component-modal-btn-clicked {
   @extend .tol-component-modal-btn;
   background-color: var(--tol-primary-translucent);
-  border-color: var(--tol-primary) !important;
-  border-width: 2px;
-  border-style: solid;
+  border: 2px solid var(--tol-primary) !important;
 }
 
 .tol-zone {
   margin-top: 10px;
 }
+
 .tol-zones .tol-zone:not(:first-child) {
   margin-top: 28px;
 }

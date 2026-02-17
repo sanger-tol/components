@@ -31,6 +31,10 @@
   --rs-picker-value: var(--tol-primary);
   --rs-picker-count-bg: var(--tol-primary);
 
+  // multiselect search highlight
+  --bs-highlight-bg: var(--tol-grey);
+  --bs-highlight-color: var(--tol-text);
+
   .rs-picker-value-item {
     font-size: 14px !important;
   }

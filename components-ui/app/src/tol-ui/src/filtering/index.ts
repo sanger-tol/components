@@ -4,8 +4,10 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export * from "./BoardFilters";
+export * from "./FilterConfigDrawer";
+export * from "./BoardFilterBlock";
 export * from "./Filter";
+export * from "./FilterBlockConfigDrawer";
 export * from "./FilterBoolean";
 export * from "./FilterBooleanPicker";
 export * from "./FilterDatePicker";

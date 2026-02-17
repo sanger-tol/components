@@ -114,7 +114,7 @@ export function Visualisations(props: PVisualisations) {
         cols={{ lg: 4, md: 2, sm: 1 }}
         isDraggable={draggable}
         compactType="vertical"
-        rowHeight={150}
+        rowHeight={5}
         onLayoutChange={(layout: any) => setNewLayout(layout)}
         onBreakpointChange={onBreakpointChange}
         draggableCancel=".widget-delete-btn"

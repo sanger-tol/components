@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: MIT
  */
 
+.tol-cell {
+  display: table-cell;
+}
+
 .tol-cell-renderer-modal-selector {
   margin: 12px 0 20px 0;
 }
@@ -30,6 +34,7 @@
   border-top: 1px solid var(--tol-grey);
   padding-top: 20px;
   margin-top: 20px;
+  overflow: hidden;
 
   .tol-param-header {
     height: 50px;
@@ -47,17 +52,6 @@
 
 .rs-table-cell-wrap:has(.tol-collection) {
   margin: -4px !important;
-}
-
-.tol-collection-list-item {
-  background-color: var(--tol-bg-dark);
-  color: var(--tol-emphasis);
-  border-radius: 6px;
-  padding: 2px 4px;
-  margin: 2px;
-  float: left;
-  display: table-cell;
-  border: 1px solid var(--tol-grey-subtle);
 }
 
 .tol-collection-object-entry {

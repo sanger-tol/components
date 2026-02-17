@@ -75,7 +75,7 @@ function addValueBasedCellRenderer(
   meta: Field,
 ) {
   if (value) {
-    if (Array.isArray(value) || typeof value === "object") {
+    if (typeof value === "object") {
       meta.cellRenderer = { type: "collection" };
     } else if (value.length > 32) {
       meta.cellRenderer = { type: "expander" };
@@ -122,13 +122,7 @@ export function convertTableData(
   return data;
 }
 
-function addDefaultCellRenderer(key: string, type: string): TCellRenderer {
-  // relationship ids have relationship boxes by default
-  const splitKey = key.split(".");
-  if (isRelationship(key) && splitKey[splitKey.length - 1] === "id") {
-    return { type: "relationship" };
-  }
-
+function addDefaultCellRenderer(type: string): TCellRenderer {
   switch (type) {
     case "datetime":
       return { type: "datetime" };
@@ -161,7 +155,7 @@ export function addDefaultsFromEntityMeta(
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
   const defaults = {
-    cellRenderer: addDefaultCellRenderer(key, meta.python_type),
+    cellRenderer: addDefaultCellRenderer(meta.python_type),
     filter: addRemoteFilterType(meta.python_type, meta.cardinality),
     isAttribute: isRelationship(key),
     rename: meta.display_name || normaliseCaps(key),
