@@ -377,6 +377,10 @@
 }
 
 .tol-attribute-tooltip-stats-box {
+  margin-top: 0;
+  padding: 3px 12px 14px;
+  border-radius: 6px;
+  background: var(--tol-grey-translucent);
   border: 1px solid var(--tol-grey);
 }
 

@@ -4,15 +4,29 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { API_METHODS, numberWithSpaces, IRemoteTarget, IZone, TFilterOrUndefined, generateFilter, filterHasUpdated } from "..";
 
+/**
+ * Props for `AttributeStatsBox`.
+ * Extends `IRemoteTarget` to access the datasource and entity type context.
+ */
 interface PAttributeStatsBox extends IRemoteTarget {
+  /** Attribute field id used to look up metadata and fetch stats. */
   attributeId: string;
+  /** Optional component id used to derive the compounded zone filter. */
   componentId?: string;
+  /** Optional zone context used to build the scoped filter for stats calls. */
   zone?: IZone;
 }
 
+/**
+ * Renders summary statistics (min, max, mean, sum) for numeric attributes.
+ *
+ * Resolves attribute metadata first and only renders for numeric fields.
+ * Builds a compounded filter from `zone` + `componentId` when provided.
+ * Fetches stats from `${objectType}:stats` and formats values for display.
+ */
 export function AttributeStatsBox(props: PAttributeStatsBox) {
   const { attributeId: field, objectType, dataSource, componentId, zone } = props;
 
@@ -59,7 +73,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
     setStatsError("");
   }, [filter]);
 
-  const fetchStats = useCallback(() => {
+  useEffect(() => {
     if (!isNumeric || statsLoading || stats) return;
 
     setStatsError("");
@@ -93,21 +107,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
         if (!isMountedRef.current) return;
         setStatsLoading(false);
       });
-  }, [
-    dataSource,
-    field,
-    isNumeric,
-    objectType,
-    stats,
-    statsKeys,
-    statsLoading,
-    filter,
-  ]);
-
-  useEffect(() => {
-    if (!isNumeric) return;
-    fetchStats();
-  }, [fetchStats, isNumeric]);
+  }, [dataSource, field, filter, isNumeric, objectType, stats, statsKeys, statsLoading]);
 
   const statsContents = useMemo(() => {
     if (!isNumeric) return null;
@@ -124,20 +124,12 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
       return null;
     }
 
-    const labels: Record<string, string> = {
-      min: "Min",
-      max: "Max",
-      avg: "Mean",
-      sum: "Sum",
-    };
-
-    const order = ["min", "max", "avg", "sum"] as const;
-    const classByKey: Record<(typeof order)[number], string> = {
-      min: "tol-attribute-tooltip-stat-card--min",
-      max: "tol-attribute-tooltip-stat-card--max",
-      avg: "tol-attribute-tooltip-stat-card--avg",
-      sum: "tol-attribute-tooltip-stat-card--sum",
-    };
+    const statCards = [
+      { key: "min", label: "Min", className: "tol-attribute-tooltip-stat-card--min" },
+      { key: "max", label: "Max", className: "tol-attribute-tooltip-stat-card--max" },
+      { key: "avg", label: "Mean", className: "tol-attribute-tooltip-stat-card--avg" },
+      { key: "sum", label: "Sum", className: "tol-attribute-tooltip-stat-card--sum" },
+    ] as const;
 
     const formatStatValue = (value: number) => {
       if (!Number.isFinite(value)) return "None";
@@ -148,7 +140,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
 
     return (
       <div className="tol-attribute-tooltip-stats-grid">
-        {order.map((key) => {
+        {statCards.map(({ key, label, className }) => {
           const rawValue = stats[key];
           const displayValue =
             rawValue === undefined || rawValue === null || Number.isNaN(Number(rawValue))
@@ -158,9 +150,9 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
           return (
             <div
               key={key}
-              className={`tol-attribute-tooltip-stat-card ${classByKey[key]}`}
+              className={`tol-attribute-tooltip-stat-card ${className}`}
             >
-              <span className="tol-attribute-tooltip-stat-label">{labels[key]}</span>
+              <span className="tol-attribute-tooltip-stat-label">{label}</span>
               <span className="tol-attribute-tooltip-stat-value">{displayValue}</span>
             </div>
           );
@@ -172,15 +164,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
   if (!isNumeric) return null;
 
   return (
-    <div
-      className="tol-attribute-tooltip-stats-box"
-      style={{
-        marginTop: "0px",
-        padding: "3px 12px 14px",
-        borderRadius: "6px",
-        background: "var(--tol-grey-translucent)",
-      }}
-    >
+    <div className="tol-attribute-tooltip-stats-box">
       <div className="tol-attribute-tooltip-stats-header">
         <span className="tooltip-key">
           Statistics
