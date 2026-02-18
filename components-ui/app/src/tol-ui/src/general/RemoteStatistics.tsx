@@ -10,7 +10,6 @@ import {
   filterHasUpdated,
   resetFiltersBelow,
   Placeholder,
-  numberWithSpaces,
   useEffectUpdate,
   UtilityBar,
   PUtilityBar,
@@ -18,7 +17,8 @@ import {
   API_METHODS,
   IRemoteTargetAndZone,
   TStatisticsType,
-  normaliseNumber
+  normaliseNumber,
+  HoverOverlay
 } from "..";
 
 export interface PRemoteStatistics extends IRemoteTargetAndZone {
@@ -79,10 +79,10 @@ export function RemoteStatistics(props: PRemoteStatistics) {
       type === "count"
         ? { filter }
         : {
-            filter,
-            stats: type,
-            stats_fields: field!.trim(),
-          };
+          filter,
+          stats: type,
+          stats_fields: field!.trim(),
+        };
 
     dataSource
       .custom({
@@ -134,7 +134,9 @@ export function RemoteStatistics(props: PRemoteStatistics) {
 
     return (
       <div id={id} className="tol-count">
-        <h1 className="count">{normaliseNumber(value)}</h1>
+        <HoverOverlay contents={value} followCursor>
+          <h1 className="count">{normaliseNumber(value)}</h1>
+        </HoverOverlay>
         <div
           className={!utilityBarConfig ? "faded" : "faded count-utility-bar"}
           aria-hidden="true"
