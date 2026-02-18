@@ -385,3 +385,21 @@ export function sortObjectAlphabetically(
       return sortedObj;
     }, {});
 }
+
+export function normaliseNumber(value: number) {
+  const numberLength = String(value).length;
+  if (numberLength > 6) {
+    return normaliseLargeNumber(value);
+  } else {
+    return String(value);
+  }
+}
+
+function normaliseLargeNumber(value: number, iteration: number = 0) {
+  let normalisedValue = String(value);
+  if (normalisedValue.length > 6 && iteration < 5) {
+    normalisedValue = normalisedValue.slice(0, -3);
+    return normaliseLargeNumber(Number(normalisedValue), iteration + 1);
+  }
+  return numberWithSpaces(Number(normalisedValue)) + ["", "K", "M", "G", "T", "P"][iteration];
+}

@@ -18,6 +18,7 @@ import {
   API_METHODS,
   IRemoteTargetAndZone,
   TStatisticsType,
+  normaliseNumber
 } from "..";
 
 export interface PRemoteStatistics extends IRemoteTargetAndZone {
@@ -133,7 +134,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
 
     return (
       <div id={id} className="tol-count">
-        <h1 className="count">{numberWithSpaces(value)}</h1>
+        <h1 className="count">{normaliseNumber(value)}</h1>
         <div
           className={!utilityBarConfig ? "faded" : "faded count-utility-bar"}
           aria-hidden="true"
