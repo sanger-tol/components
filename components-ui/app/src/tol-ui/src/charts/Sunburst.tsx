@@ -143,12 +143,33 @@ export function Sunburst(props: Props) {
         callbacks: {
           title: (context: any) => {
             const dataPointIndex = context[0].dataIndex;
-            const labels = context[0].dataset.labels;
-            const value = context[0].formattedValue;
             const percentages = context[0].dataset.percentages;
-            return `${labels[dataPointIndex]}: ${value} (${percentages[dataPointIndex]}%)`;
+            const labels = context[0].dataset.labels;
+            const datasetId = context[0].dataset.id;
+
+            if (datasetId === "bold_bin_uri") {
+              return `bin_uri: ${labels[dataPointIndex]}`;
+            }
+
+            const value = context[0].formattedValue;
+            const uniqueCounts = context[0].dataset.uniqueCounts ?? [];
+            const uniqueCount = uniqueCounts[dataPointIndex];
+            const uniqueLabel =
+              uniqueCount !== undefined && uniqueCount > 0
+                ? ` ${uniqueCount} unique`
+                : "";
+            return `${labels[dataPointIndex]}: ${value} (${percentages[dataPointIndex]}%)${uniqueLabel}`;
           },
           label: (context: any) => {
+            if (context.dataset.id === "bold_bin_uri") {
+              const ringPct = context.dataset.percentages[context.dataIndex];
+              const chartDatasets = context.chart.data.datasets;
+              const rootTotal =
+                chartDatasets[chartDatasets.length - 1]?.total ??
+                context.dataset.total;
+              const overallPct = ((context.raw / rootTotal) * 100).toFixed(0);
+              return `Record Count: ${context.formattedValue} (${ringPct}% | ${overallPct}%)`;
+            }
             if (noLabel) return null;
             const label = context.dataset.label;
             return " " + normaliseCaps(label);

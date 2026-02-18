@@ -601,12 +601,13 @@ function setDateRangeFilter(
 interface SunburstData {
   key: string;
   value: number;
-  child?: SunburstData;
+  child?: { [key: string]: SunburstData[] };
 }
 
 interface DoughnutDataCJS {
   id: string;
   data: number[];
+  uniqueCounts: number[];
   total: number;
   percentages: string[];
   label: string;
@@ -656,13 +657,14 @@ export function convertSunburstDatasets(
   // the data of the slices
   const buckets: SunburstData[] = datasets[key];
   // only append the origin dict on the first iteration
-  initialiseOriginDataset(outputData, key, colourIndex, depth);
+  initialiseOriginDataset(outputData, key, depth);
 
   // create output data with colours etc
   for (const bucket of buckets) {
-    const colour = getChartColour(colourIndex);
-    const hoverColour = getChartColour(colourIndex, 0.75);
+    const colour = key === "bold_bin_uri" ? getChartColour(colourIndex, 0.35) : getChartColour(colourIndex);
+    const hoverColour = key === "bold_bin_uri" ? getChartColour(colourIndex, 0.5) : getChartColour(colourIndex, 0.75);
     outputData![depth].data.push(bucket.value);
+    outputData![depth].uniqueCounts.push(getChildUniqueCount(bucket.child));
     outputData![depth].total += bucket.value;
     outputData![depth].backgroundColor.push(colour);
     outputData![depth].hoverBackgroundColor.push(hoverColour);
@@ -688,13 +690,13 @@ export function convertSunburstDatasets(
 function initialiseOriginDataset(
   outputData: DoughnutDataCJS[],
   key: string,
-  colourIndex: number,
   depth: number,
 ) {
-  if (colourIndex === 0 && outputData.length === depth) {
+  if (outputData.length === depth) {
     outputData.push({
       id: key,
       data: [],
+      uniqueCounts: [],
       total: 0,
       percentages: [],
       label: key,
@@ -707,6 +709,14 @@ function initialiseOriginDataset(
       hoverOffset: 0,
     });
   }
+}
+
+function getChildUniqueCount(child?: { [key: string]: SunburstData[] }) {
+  if (!child) return 0;
+  const childKey = Object.keys(child)[0];
+  if (!childKey || !Array.isArray(child[childKey])) return 0;
+  return child[childKey].filter((item: SunburstData) => item.key !== "More")
+    .length;
 }
 
 function addPercentages(outputData: DoughnutDataCJS[]) {
@@ -756,6 +766,7 @@ export function createAggsViaSliceBy(
   terms[sliceBy[depth]] = {
     terms: {
       field: appendKeywordIfNeeded(field),
+      missing: "Unknown",
       order: {
         _count: "desc",
       },
@@ -863,7 +874,12 @@ export function aggsToSunburstData(
   }
 
   // adding an 'unknown' bucket where parent > sum of children
-  if (parentDocCount !== 0 && parentDocCount !== undefined) {
+  const hasUnknownBucket = buckets.some((bucket: any) => bucket.key === "Unknown");
+  if (
+    !hasUnknownBucket &&
+    parentDocCount !== 0 &&
+    parentDocCount !== undefined
+  ) {
     const bucketsDocCount = calcBucketDocCountTotal(buckets);
     addExtraDocCount(
       "Unknown",
@@ -886,7 +902,14 @@ export function aggsToSunburstData(
     };
 
     // this means the bucket has a child
-    if (childKey) {
+    if (
+      childKey &&
+      !(
+        key === "bold_species" &&
+        childKey === "bold_bin_uri" &&
+        bucket.key !== "Unknown"
+      )
+    ) {
       const child = {};
       child[childKey] = bucket[childKey];
       dataPoint["child"] = aggsToSunburstData(
