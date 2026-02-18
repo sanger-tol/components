@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { ReactNode, useState, useCallback } from "react";
 import { Table as RSTable, Pagination, SelectPicker } from "rsuite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import {
   Placeholder,
   useEffectUpdate,
@@ -33,6 +31,7 @@ import {
   RowToolsColumn,
   DataColumn,
   mergeUtilityBarConfigs,
+  NoAttributesPlaceholder,
 } from "..";
 
 
@@ -389,7 +388,7 @@ export function Table(props: PTable) {
         setOpen={setDownloadOpen}
         source={source}
         requestedFields={fieldMeta?.order?.active}
-        title={utilityBarConfig.title}
+        title={ubc.title}
         fieldMeta={fieldMeta}
       />
       <ColumnConfigDrawer
@@ -415,29 +414,7 @@ export function Table(props: PTable) {
         contents
       ) : (
         <>
-          {noFieldsSelected ? (
-            <Placeholder
-              message={
-                <>
-                  {/* Assume that when privilege is undefined, the table is not in a board */}
-                  {editMode ? (
-                    <>
-                      No fields selected. Please click
-                      <FontAwesomeIcon
-                        icon={faSliders}
-                        size="lg"
-                        style={{ padding: "0 10" }}
-                      />
-                      to configure.
-                    </>
-                  ) : (
-                    <>No fields available.</>
-                  )}
-                </>
-              }
-              height={height}
-            />
-          ) : (
+          {noFieldsSelected ? <NoAttributesPlaceholder /> : (
             <>
               <RowCounter {...props} />
               <div className="tol-table-inner">

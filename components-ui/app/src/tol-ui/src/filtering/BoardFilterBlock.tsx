@@ -11,11 +11,10 @@ import {
   PVisualisation,
   FilterBlockConfigDrawer,
   updateConfigAndUpsert,
-  Placeholder,
-  Icon,
   RemoteFilters,
   upsertComponent,
-  mergeUtilityBarConfigs
+  mergeUtilityBarConfigs,
+  NoAttributesPlaceholder
 } from "..";
 
 
@@ -57,27 +56,8 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
 
   const Contents = () => {
     if (!filterBlockConfig.attributes || filterBlockConfig.attributes.length === 0) {
-      return (
-        <div style={{ height: '60%' }}>
-          <Placeholder
-            message={
-              <>
-                {editMode ? (
-                  <>
-                    Please add attributes to get started. Click <Icon icon="sliders" size="sm" /> to configure.
-                  </>
-                ) : (
-                  <>
-                    No attributes selected.
-                  </>
-                )}
-              </>
-            }
-          />
-        </div>
-      )
+      return <NoAttributesPlaceholder />;
     }
-    return null;
   }
 
   const ubc = mergeUtilityBarConfigs(
@@ -90,7 +70,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
   )
 
   return (
-    <>
+    <div className="tol-component-contents with-offset">
       <FilterBlockConfigDrawer
         {...props}
         open={open}
@@ -107,6 +87,6 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
         utilityBarConfig={ubc}
       />
       <Contents />
-    </>
+    </div>
   );
 }

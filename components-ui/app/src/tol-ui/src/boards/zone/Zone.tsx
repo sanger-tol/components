@@ -153,7 +153,7 @@ export function Zone(props: PZone) {
   };
 
   const bar = (
-    <div className="tol-board-bar">
+    <div className="tol-zone-bar">
       <UtilityBar
         id="zone-utility-bar"
         title={{

@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  Placeholder,
-  Icon,
   RemoteSunburst,
   deepCopy,
   SliceByDrawer,
@@ -15,7 +13,8 @@ import {
   updateConfigAndUpsert,
   useBoard,
   PVisualisation,
-  mergeUtilityBarConfigs
+  mergeUtilityBarConfigs,
+  NoAttributesPlaceholder
 } from "..";
 
 
@@ -41,26 +40,8 @@ export function BoardSunburst(props: PVisualisation) {
 
   const Contents = () => {
     if (!config.sliceBy || config.sliceBy.length <= 0) {
-      return (
-        <Placeholder
-          pie
-          message={
-            <>
-              {editMode ? (
-                <>
-                  Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
-                </>
-              ) : (
-                <>
-                  No attributes selected.
-                </>
-              )}
-            </>
-          }
-        />
-      );
+      return <NoAttributesPlaceholder />;
     }
-    return null;
   }
 
   const configButton: PButton = {

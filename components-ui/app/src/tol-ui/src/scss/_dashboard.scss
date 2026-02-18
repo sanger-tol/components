@@ -75,9 +75,8 @@
   border-radius: 0;
 }
 
-.tol-board-bar {
-  @extend .tol-boards-widget;
-  border-radius: 0;
+.tol-zone-bar {
+  @extend .tol-board-bar;
 }
 
 .tol-board-bar>div {
