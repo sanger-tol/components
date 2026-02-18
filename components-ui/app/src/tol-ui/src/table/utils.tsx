@@ -18,7 +18,7 @@ import {
   ITableData,
   ITableRecord,
   TCellRenderer,
-  Cell,
+  DataPoints,
   deepCopy,
   ICustomCellRenderers,
   copyToClipboard,
@@ -97,18 +97,18 @@ export function convertTableData(
   const data: ITableData = [];
   // loop over each data object
   dataObjects!.forEach((obj) => {
-    const row: ITableRecord = { key: obj.id };
+    const row: ITableRecord = { key: obj?.id };
     // loop over each field
-    fieldMeta.order.active.forEach((attribute) => {
+    fieldMeta.order.active.forEach((field) => {
       // if (!fieldMeta.dataWithDefaults![attribute]?.cellRenderer) {
       //   addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![attribute]);
       // }
-      row[attribute] = (
-        <Cell
-          attribute={attribute}
+      row[field] = (
+        <DataPoints
+          field={field}
           dataObject={obj}
           dataSource={dataSource}
-          renderer={fieldMeta.dataWithDefaults?.[attribute]?.cellRenderer}
+          renderer={fieldMeta.dataWithDefaults?.[field]?.cellRenderer}
           setExpandedRows={setExpandedRows}
           customCellRenderers={customCellRenderers}
           editable={editableCells}
@@ -291,7 +291,7 @@ export async function getActions(
   });
 
   actions?.forEach((action) => {
-    actionsList.push(action.name);
+    actionsList.push(action?.name);
   });
 
   return actionsList;

@@ -106,10 +106,10 @@ export interface IDataObject {
   id: string;
   [attribute: string]: any;
   relationships?: {
-    [key: string]: IDataObject;
+    [key: string]: TDataObjectOrNull | TDataObjectListOrNull;
   };
   fetchRelationships?: {
-    [key: string]: Promise<IDataObject>;
+    [key: string]: Promise<TDataObjectOrNull | TDataObjectListOrNull>;
   };
 }
 
@@ -129,7 +129,7 @@ export interface IAttributeDescriptor {
 }
 
 export type TDataObjectOrNull = IDataObject | null;
-export type TDataObjectListOrNull = IDataObject[] | null;
+export type TDataObjectListOrNull = TDataObjectOrNull[] | null;
 
 export type TCursorSearchAfterOrNull = string[] | null;
 export type TCursorObjectOrNull = [TDataObjectListOrNull, TCursorSearchAfterOrNull] | null

@@ -691,3 +691,49 @@ export function getFieldByName(object: TDataObjectOrNull, field: string): any {
   }
   return object?.[field];
 }
+
+/**
+ * Resolves and returns the child data object(s) reached by following a dot-delimited relationship path.
+ *
+ * - If `field` contains dots (e.g., `"author.address.city"`), each segment is treated as a relationship name
+ *   to traverse via `object.relationships[segment]`.
+ * - Relationship values may be either a single object or an array of objects; arrays are recursively mapped and
+ *   flattened into a single list.
+ * - If `field` does not contain a dot, the current `object` is returned as a single-item list (even if `object` is `null`).
+ *
+ * @param object - The starting data object from which to traverse relationships.
+ * @param field - Dot-delimited relationship path to traverse. If no dot is present, no traversal occurs.
+ * @returns A list of resolved child objects, or `null` if any relationship segment is missing/undefined along the path.
+ */
+export function getChildObjectsByName(object: TDataObjectOrNull, field: string): TDataObjectListOrNull {
+  if (field.includes(".")) {
+    const [relationship, ...rest] = field.split(".");
+    const relationshipObject = object?.relationships?.[relationship];
+    if (relationshipObject) {
+      // If the relationship is an array, we need to recursively resolve the rest of the path for each item and flatten the results
+      if (Array.isArray(relationshipObject)) {
+        return relationshipObject.map((item) =>
+          getChildObjectsByName(item, rest.join("."))
+        ).flat() as TDataObjectListOrNull;
+      }
+      // If it's a single object, just resolve the rest of the path for that object
+      return getChildObjectsByName(relationshipObject, rest.join("."));
+    }
+    // If any relationship segment is missing/undefined, return null
+    return [null] as TDataObjectListOrNull;
+  }
+  // if the field does not include a dot, we assume it's a field on the current object
+  return [object] as TDataObjectListOrNull;
+}
+
+// /**
+//  * Extracts the last objectType of a dot-separated field name.
+//  * @param field - A dot-separated field path (e.g., "parent.child.property")
+//  * @returns The objectType corresponding to the last relationship in the path, or the original field if no dot is present.
+//  */
+// export function getChildObjectTypeByName(field: string): string {
+//   if (field.includes(".")) {
+//     return field.split(".").slice(-2, -1)[0];
+//   }
+//   return field;
+// }

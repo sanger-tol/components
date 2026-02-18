@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import "@testing-library/jest-dom";
 import { expect, test, vitest, describe } from "vitest";
-import { TsDataSource, getFieldByName } from "../../tol-ui/src";
+import { TDataObjectOrNull, TsDataSource, getChildObjectsByName, getFieldByName } from "../../tol-ui/src";
 
 
 const speciesMockData = {
@@ -787,8 +787,8 @@ describe("Testing relationships getting", () => {
 
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
     expect(sample).not.toBeNull();
-    expect(sample?.relationships?.specimen.id!).toEqual("nestedRelationships2");
-    expect(sample?.relationships?.specimen.relationships?.species.name).toEqual(
+    expect(sample?.relationships?.specimen?.["id"]).toEqual("nestedRelationships2");
+    expect(sample?.relationships?.specimen?.["relationships"]?.species?.["name"]).toEqual(
       "speciesName"
     );
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
@@ -894,8 +894,8 @@ describe("Testing fetchRelationships getting", () => {
     expect(specimen).not.toBeNull();
 
     const presentSpecies1 = await specimen?.fetchRelationships?.present_species;
-    expect(presentSpecies1?.id).toEqual("present");
-    expect(presentSpecies1?.objectType).toEqual("species");
+    expect(presentSpecies1?.["id"]).toEqual("present");
+    expect(presentSpecies1?.["objectType"]).toEqual("species");
   });
 
   test("Lazily fetch missing relation", async () => {
@@ -914,9 +914,9 @@ describe("Testing fetchRelationships getting", () => {
 
     const lazySpecies1 = await specimen?.fetchRelationships?.lazy_species;
 
-    expect(lazySpecies1?.id).toEqual("lazy");
-    expect(lazySpecies1?.objectType).toEqual("species");
-    expect(lazySpecies1?.lazy).toEqual(true);
+    expect(lazySpecies1?.["id"]).toEqual("lazy");
+    expect(lazySpecies1?.["objectType"]).toEqual("species");
+    expect(lazySpecies1?.["lazy"]).toEqual(true);
   });
 });
 
@@ -968,6 +968,71 @@ describe("Testing temp getFieldByName function", async () => {
     expect(nonExistentValues).toEqual([undefined, undefined]);
   });
 })
+
+describe("Testing temp getChildObjectsByName function", () => {
+  test("Returns the current object wrapped in an array when field has no dot (including null)", () => {
+    const obj: TDataObjectOrNull = { id: "1", objectType: "test", relationships: {} };
+    expect(getChildObjectsByName(obj, "name")).toEqual([obj]);
+
+    const nil: TDataObjectOrNull = null;
+    expect(getChildObjectsByName(nil, "name")).toEqual([null]);
+  });
+
+  test("Traverses a single relationship segment when field contains a dot, returning the related object", () => {
+    const child: TDataObjectOrNull = { id: "c1", objectType: "child", relationships: {} };
+    const root: TDataObjectOrNull = {
+      id: "r1",
+      objectType: "root",
+      relationships: {
+        child,
+      },
+    };
+
+    // last segment is treated as a field; traversal stops at `child`
+    expect(getChildObjectsByName(root, "child.name")).toEqual([child]);
+  });
+
+  test("Traverses multiple relationship segments, returning the object at the end of the relationship path", () => {
+    const address: TDataObjectOrNull = { id: "addr1", objectType: "address", relationships: {} };
+    const author: TDataObjectOrNull = { id: "a1", objectType: "author", relationships: { address } };
+    const root: TDataObjectOrNull = { id: "r1", objectType: "root", relationships: { author } };
+
+    // author -> address, last segment ("city") is treated as a field
+    expect(getChildObjectsByName(root, "author.address.city")).toEqual([address]);
+  });
+
+  test("Maps over array relationships and flattens results into a single list", () => {
+    const pet1: TDataObjectOrNull = { id: "p1", objectType: "pet", relationships: {} };
+    const pet2: TDataObjectOrNull = { id: "p2", objectType: "pet", relationships: {} };
+
+    const child1: TDataObjectOrNull = { id: "c1", objectType: "child", relationships: { pet: pet1 } };
+    const child2: TDataObjectOrNull = { id: "c2", objectType: "child", relationships: { pet: pet2 } };
+
+    const root: TDataObjectOrNull = {
+      id: "r1",
+      objectType: "root",
+      relationships: {
+        children: [child1, child2],
+      },
+    };
+
+    expect(getChildObjectsByName(root, "children.pet.name")).toEqual([pet1, pet2]);
+  });
+
+  test("Falls back to returning [null] when a relationship segment is missing", () => {
+    const root: TDataObjectOrNull = { id: "r1", objectType: "root", relationships: {} };
+
+    // missing relationship => fallthrough to return [null]
+    expect(getChildObjectsByName(root, "missing.id")).toEqual([null]);
+  });
+
+  test("Falls back to returning [null] when a relationship segment is null", () => {
+    const root: TDataObjectOrNull = { id: "r1", objectType: "root", relationships: { child: null } };
+
+    // null relationship => fallthrough to return [null]
+    expect(getChildObjectsByName(root, "child.name")).toEqual([null]);
+  });
+});
 
 describe("Testing getFieldRelationshipValue", () => {
   test('Returns correct value from a to many relationship field', async () => {

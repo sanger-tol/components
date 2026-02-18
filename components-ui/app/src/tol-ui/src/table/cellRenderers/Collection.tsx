@@ -5,9 +5,9 @@ SPDX-License-Identifier: MIT
 */
 
 import { Fragment } from "react";
-import { PCell, Tag } from "../..";
+import { PCellDisplay, Tag } from "../..";
 
-export function Collection(props: PCell) {
+export function Collection(props: PCellDisplay) {
   const { value } = props;
 
   const renderValue = (val: any) => {

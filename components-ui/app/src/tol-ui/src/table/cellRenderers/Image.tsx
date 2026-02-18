@@ -4,10 +4,10 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { PCell, Icon, ImageModal } from "../..";
+import { Icon, ImageModal, PCellDisplay } from "../..";
 import { useState } from "react";
 
-export interface PImage extends PCell {
+export interface PImage extends PCellDisplay {
   value: string | string[];
   captions: string | string[];
 }

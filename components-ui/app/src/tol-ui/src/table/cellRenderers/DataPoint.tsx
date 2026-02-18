@@ -6,34 +6,27 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  TDataObjectOrNull,
-  TCellRenderer,
-  ICustomCellRenderers,
-  TsDataSource,
   CellDisplay,
   PopUpMessage,
   CellEditable,
+  getFieldByName,
 } from "../..";
+import { PDataPoints } from "./DataPoints";
 
 
-export interface PCell {
-  attribute: string,
-  dataObject: TDataObjectOrNull,
-  dataSource?: TsDataSource,
-  renderer: TCellRenderer;
-  setExpandedRows: any,
-  customCellRenderers?: ICustomCellRenderers;
-  editable?: boolean;
-}
+/**
+ * Singular data point renderer. Used within DataPoints to render each individual data point.
+ * Can take a renderer to allow for custom rendering of the data point.
+ */
+export function DataPoint(props: PDataPoints) {
+  const { field, dataObject, dataSource, editable } = props;
 
-export function Cell(props: PCell) {
-  const { dataObject, dataSource, editable } = props;
-  const [value, setValue] = useState("");
-  const [prevValue, setPrevValue] = useState("");
+  const v = getFieldByName(dataObject, field);
+
+  const [value, setValue] = useState(v);
+  const [prevValue, setPrevValue] = useState(v);
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  console.log(dataObject?.relationships?.["samples"]);
 
   const canEdit = (
     typeof value === "string"
@@ -46,7 +39,7 @@ export function Cell(props: PCell) {
     } else {
       PopUpMessage({
         type: "info",
-        message: "Only string cells are editable currently.",
+        message: "Only string values are editable currently.",
       })
     }
   }
@@ -82,7 +75,7 @@ export function Cell(props: PCell) {
             type: dataObject?.objectType,
             id: dataObject?.id,
             attributes: {
-              [props.attribute]: value,
+              [props.field]: value,
             },
           },
         ],
@@ -122,27 +115,12 @@ export function Cell(props: PCell) {
     );
   }
 
-  const collectDisplays = () => {
-    // Add multiple values as tags
-    // Tags added in CellDisplay as CellDisplay already deals with falsy values
-    if (Array.isArray(value)) {
-      const valueSet = new Set(value);
-
-      return Array.from(valueSet).map((val, index) => (
-        <CellDisplay
-          {...props}
-          tag
-          value={val}
-          key={`${val}-${index}`}
-        />
-      ));
-    }
-    return <CellDisplay {...props} value={value} />;
-  };
-
   return (
-    <div className="tol-cell" onDoubleClick={onDoubleClick}>
-      {collectDisplays()}
+    <div className="tol-data-point" onDoubleClick={onDoubleClick}>
+      <CellDisplay
+        {...props}
+        value={value}
+      />
     </div>
   )
 }

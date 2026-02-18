@@ -7,11 +7,11 @@ SPDX-License-Identifier: MIT
 import { format } from "date-fns";
 import {
   CellTooltip,
-  PCell
+  PCellDisplay
 } from "../..";
 
 
-export function Datetime(props: PCell) {
+export function Datetime(props: PCellDisplay) {
   const { value } = props;
 
   const date = new Date(value!);

@@ -42,7 +42,7 @@ export async function getComponents(
     const componentIds = (
       await Promise.all(
         componentZoneData.map(
-          async (componentZone) => (await componentZone.fetchRelationships?.component)?.id
+          async (componentZone) => (await componentZone?.fetchRelationships?.component)?.["id"]
         )
       )
     ).filter((id): id is string => typeof id === "string"); // remove undefined values
@@ -50,22 +50,22 @@ export async function getComponents(
 
     return Promise.all(
       componentZoneData.map(async (component) => {
-        const componentId = (await component.fetchRelationships?.component)?.id;
+        const componentId = (await component?.fetchRelationships?.component)?.["id"];
         const componentDetails = componentData?.find(
-          (data) => data.id === componentId
+          (data) => data?.id === componentId
         );
         const dsi = componentDetails?.relationships?.data_source_instance;
         return {
           id: componentId,
-          order: component.order,
-          componentZoneId: component.id,
+          order: component?.order,
+          componentZoneId: component?.id,
           type: componentDetails?.component_type,
           filter: componentDetails?.filter,
           title: componentDetails?.title,
           objectType: componentDetails?.object_type,
           dataspace: new TsDataSource({
-            ...dsi?.ui_api_details,
-            dataSourceInstanceId: dsi?.id,
+            ...dsi?.["ui_api_details"],
+            dataSourceInstanceId: dsi?.["id"],
           }),
           config: componentDetails?.config,
           size: componentDetails?.widget_type,

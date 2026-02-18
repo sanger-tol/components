@@ -8,11 +8,11 @@ import { Input } from "rsuite";
 import {
   Button,
   BUTTONS,
-  PCell
+  PCellDisplay
 } from "../..";
 
 
-export interface PCellEditable extends PCell {
+export interface PCellEditable extends PCellDisplay {
   loading: boolean;
   floatingControls?: boolean;
   onChange: (newValue: string) => void;
@@ -32,7 +32,7 @@ export function CellEditable(props: PCellEditable) {
         onPressEnter={onSave}
       />
       <div
-        className={`tol-cell-editable-controls${floatingControls ? " floating" : ""}`}
+        className={`tol-data-point-editable-controls${floatingControls ? " floating" : ""}`}
       >
         <Button
           {...BUTTONS.CANCEL}

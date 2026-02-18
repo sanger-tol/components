@@ -14,7 +14,6 @@ import {
   Button,
   deepCopy,
   TCellRenderer,
-  IEntityMeta,
   IRemoteTarget,
   RemoteFilters,
   IFilter,
@@ -23,7 +22,8 @@ import {
   defineZone,
   AttributeSelector,
   IZone,
-  generateFilter
+  generateFilter,
+  AttributeTitle,
 } from "../..";
 import { CellRendererParam } from "./CellRendererParam";
 
@@ -40,7 +40,6 @@ export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, attributeId, fieldMeta, setFieldMeta, objectType, dataSource } = props;
   const [renderer, setRenderer] = useState<TCellRenderer>();
   const [previousRenderer, setPreviousRenderer] = useState<TCellRenderer>();
-  const [entityMeta, setEntityMeta] = useState<IEntityMeta>();
   const [selectedConditionParam, setSelectedConditionParam] = useState<string | undefined>();
   const [filterConditions, setFilterConditions] = useState<IFilter>();
   const [attributes, setAttributes] = useState<string[]>(Object.keys(filterConditions?.and_ || {}));
@@ -65,13 +64,6 @@ export function CellRendererModal(props: PCellRendererModal) {
   const rendererHasPendingChanges = (
     JSON.stringify(renderer) !== JSON.stringify(previousRenderer)
   );
-
-  useEffect(() => {
-    dataSource
-      .getEntityMeta().then((em) => {
-        setEntityMeta(em);
-      });
-  }, []);
 
   useEffect(() => {
     if (open) {
@@ -155,14 +147,19 @@ export function CellRendererModal(props: PCellRendererModal) {
   }
 
   const Header = (
-    <h5>
-      Configure
-      {
-        ` '${entityMeta?.flatAttributes[objectType][attributeId]?.display_name
-        || normaliseCaps(attributeId)}' `
-      }
-      Cell Renderer
-    </h5>
+    <>
+      <h5>
+        Configure Cell Renderer for
+        <AttributeTitle
+          objectType={objectType}
+          dataSource={dataSource}
+          attributeId={attributeId}
+        />
+      </h5>
+      <p className="tol-grey-colour">
+        Please be aware that the selected Data Point Renderer works on a current Data Object.
+      </p>
+    </>
   );
 
   const SaveCellRendererButton = (
@@ -219,7 +216,7 @@ export function CellRendererModal(props: PCellRendererModal) {
       hasPendingChanges={rendererHasPendingChanges || conditionHasPendingChanges}
     >
       {!selectedConditionParam ? (
-        <div className="tol-cell-renderer-modal-selector">
+        <div className="tol-data-point-renderer-modal-selector">
           <SingleSelect
             block
             placeholder="Default Cell Renderer"
@@ -232,7 +229,7 @@ export function CellRendererModal(props: PCellRendererModal) {
         </div>
       ) : <></>}
       {selectedConditionParam ? (
-        <div className="tol-cell-renderer-modal-condition-params">
+        <div className="tol-data-point-renderer-modal-condition-params">
           <div className="tol-param-header">
             <h6 className="tol-param-title">
               Configure Condition for
@@ -245,7 +242,6 @@ export function CellRendererModal(props: PCellRendererModal) {
             displaySource
             recommendedFilterAvailable
             renderSearchBySource
-            placeholder={'This is a placeholder'}
             attribute={attributes}
             setAttributes={setAttributes}
             populatedFieldType="filter"
@@ -265,7 +261,7 @@ export function CellRendererModal(props: PCellRendererModal) {
         <>
           {renderer &&
             Object.keys(cellRendererParams[renderer?.type]?.params || {}).length > 0 && (
-              <div className="tol-cell-renderer-modal-params">
+              <div className="tol-data-point-renderer-modal-params">
                 {Object.entries(cellRendererParams[renderer.type].params || {}).map(([param, meta]) => {
                   return (
                     <CellRendererParam

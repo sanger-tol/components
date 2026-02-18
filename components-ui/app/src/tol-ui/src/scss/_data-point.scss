@@ -4,15 +4,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-.tol-cell {
-  display: table-cell;
-}
-
-.tol-cell-renderer-modal-selector {
+.tol-data-point-renderer-modal-selector {
   margin: 12px 0 20px 0;
 }
 
-.tol-cell-renderer-modal-params {
+.tol-data-point-renderer-modal-params {
   border-top: 1px solid var(--tol-grey);
   padding-top: 16px;
 
@@ -30,7 +26,7 @@
   }
 }
 
-.tol-cell-renderer-modal-condition-params {
+.tol-data-point-renderer-modal-condition-params {
   border-top: 1px solid var(--tol-grey);
   padding-top: 20px;
   margin-top: 20px;
@@ -63,7 +59,7 @@
   margin-right: 6px;
 }
 
-.tol-cell-editable-controls {
+.tol-data-point-editable-controls {
   margin-top: 6px;
 
   &:not(.floating) {

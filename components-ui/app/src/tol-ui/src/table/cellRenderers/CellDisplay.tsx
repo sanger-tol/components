@@ -13,21 +13,19 @@ import {
   Integer,
   Link,
   LongText,
-  Relationship,
   getCellRendererPropValue,
   Icon,
   TrafficLightStatus,
-  PCell,
   Collection,
-  Tag
+  PDataPoints,
 } from "../..";
 
 
-export interface PCellDisplay extends PCell {
+export interface PCellDisplay extends PDataPoints {
   /**
-   * Whether to wrap the CellDisplay in a Tag component.
+   * The main value to be displayed in the cell.
    */
-  tag?: boolean;
+  value: any;
 }
 
 /**
@@ -35,7 +33,7 @@ export interface PCellDisplay extends PCell {
  * If no renderer is provided, it will default to displaying the value as a string.
  */
 export function CellDisplay(props: PCellDisplay) {
-  const { value, dataObject, renderer, customCellRenderers, setExpandedRows, tag } = props;
+  const { value, dataObject, renderer, customCellRenderers, setExpandedRows } = props;
   const [expanded, setExpanded] = useState(false);
 
   const DefaultCell = ({ value }) => <>{value ?? ""}</>;
@@ -49,7 +47,6 @@ export function CellDisplay(props: PCellDisplay) {
     integer: Integer,
     link: Link,
     longText: LongText,
-    relationship: Relationship,
     trafficLightStatus: TrafficLightStatus,
   };
 
@@ -67,7 +64,7 @@ export function CellDisplay(props: PCellDisplay) {
   const elements = { ...preDefinedElements, ...customCellRenderers };
   renderer.element = elements[renderer.type] || DefaultCell;
 
-  const elementProps: PCell & Record<string, any> = { ...props };
+  const elementProps: PDataPoints & Record<string, any> = { ...props };
 
   if (renderer.props) {
     Object.entries(renderer.props).forEach(([prop, value]) => {
@@ -75,7 +72,7 @@ export function CellDisplay(props: PCellDisplay) {
     });
   }
 
-  const Contents = (
+  return (
     <>
       <renderer.element {...elementProps} />
       {Array.isArray(value) && value.length > 1 && renderer.type === "image" &&
@@ -96,6 +93,4 @@ export function CellDisplay(props: PCellDisplay) {
       }
     </>
   );
-
-  return tag ? <Tag>{Contents}</Tag> : Contents;
 }
