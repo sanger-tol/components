@@ -34,28 +34,22 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
 
   const [isNumeric, setIsNumeric] = useState(false);
   const [stats, setStats] = useState<Record<string, number> | null>(null);
-  const [statsLoading, setStatsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [statsError, setStatsError] = useState<string>("");
   const [filter, setFilter] = useState<TFilterOrUndefined>(undefined);
 
   useEffect(() => {
-    let isMounted = true;
     setIsNumeric(false);
     setStats(null);
-    setStatsLoading(false);
+    setLoading(false);
     setStatsError("");
 
     dataSource.getEntityMeta().then((meta) => {
-      if (!isMounted) return;
       const attribute = meta.flatAttributes[objectType][field];
       if (!attribute) return;
       const pythonType = (attribute.python_type ?? "").toLowerCase();
       setIsNumeric(NUMERIC_PYTHON_TYPES.has(pythonType));
     });
-
-    return () => {
-      isMounted = false;
-    };
   }, [dataSource, field, objectType]);
 
   useEffect(() => {
@@ -73,11 +67,10 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
   }, [filter]);
 
   useEffect(() => {
-    let isMounted = true;
     if (!isNumeric || stats) return;
 
     setStatsError("");
-    setStatsLoading(true);
+    setLoading(true);
     const params: any = {
       stats: ATTRIBUTE_STATS_KEYS.join(","),
       stats_fields: field,
@@ -91,7 +84,6 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
       params,
     })
       .then((res: any) => {
-        if (!isMounted) return;
         const statsPayload = res?.data?.meta?.stats?.[field];
         if (!statsPayload) {
           setStatsError("No stats available.");
@@ -100,22 +92,17 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
         setStats(statsPayload);
       })
       .catch((error: any) => {
-        if (!isMounted) return;
         setStatsError(error?.message ?? "Stats request failed");
       })
       .finally(() => {
-        if (!isMounted) return;
-        setStatsLoading(false);
+        setLoading(false);
       });
-    return () => {
-      isMounted = false;
-    };
   }, [dataSource, field, filter, isNumeric, objectType, stats]);
 
   const statsContents = useMemo(() => {
     if (!isNumeric) return null;
 
-    if (statsLoading) {
+    if (loading) {
       return <span className="tooltip-value-none">Loading...</span>;
     }
 
@@ -148,7 +135,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
         })}
       </div>
     );
-  }, [isNumeric, stats, statsError, statsLoading]);
+  }, [isNumeric, loading, stats, statsError]);
 
   if (!isNumeric) return null;
 
