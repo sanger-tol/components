@@ -31,7 +31,7 @@
     "rsuite": "5.75.0"
   },
   "resolutions": {
-    "react-code-blocks@*/styled-components": "^6.1.0"
+    "react-code-blocks/styled-components": "^6.1.0"
   },
   "scripts": {
     "start": "vite",
