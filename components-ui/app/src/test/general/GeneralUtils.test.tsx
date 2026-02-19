@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { expect, test, vitest } from "vitest";
+import { expect, test, vi } from "vitest";
 import {
   isPropDefined,
   falseIfUndefined,
@@ -47,8 +47,8 @@ test("normailseCaps function", () => {
 });
 
 test("timeout function", () => {
-  vitest.useFakeTimers();
-  vitest.spyOn(global, "setTimeout");
+  vi.useFakeTimers();
+  vi.spyOn(global, "setTimeout");
   timeout(1);
   expect(setTimeout).toHaveBeenCalledTimes(1);
 });
