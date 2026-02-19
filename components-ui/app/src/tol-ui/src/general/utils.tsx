@@ -388,7 +388,7 @@ export function sortObjectAlphabetically(
 
 export function normaliseNumber(value: number) {
   // Handles whole numbers
-  if (Math.round(value) > 999999) {
+  if (value > 999999) {
     return normaliseLargeNumber(value);
   // Handles decimals
   } else if (value < 0.01) {
