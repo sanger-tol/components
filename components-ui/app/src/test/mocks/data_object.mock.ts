@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { DataObject } from "../../tol-ui/src/datasource";
+import { DataObject } from "../../tol-ui/src";
 
 
 export const mockDataObject = () => new DataObject(
