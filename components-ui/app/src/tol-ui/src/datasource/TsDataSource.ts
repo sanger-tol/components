@@ -726,14 +726,17 @@ export function getChildObjectsByName(object: TDataObjectOrNull, field: string):
   return [object] as TDataObjectListOrNull;
 }
 
-// /**
-//  * Extracts the last objectType of a dot-separated field name.
-//  * @param field - A dot-separated field path (e.g., "parent.child.property")
-//  * @returns The objectType corresponding to the last relationship in the path, or the original field if no dot is present.
-//  */
-// export function getChildObjectTypeByName(field: string): string {
-//   if (field.includes(".")) {
-//     return field.split(".").slice(-2, -1)[0];
-//   }
-//   return field;
-// }
+/**
+ * Extracts the relationship name from a field path by removing the last segment.
+ * @param field - A field path that may contain dot-separated segments (e.g., "relationship.field")
+ * @returns The relationship name (all segments except the last one joined by dots), or an empty string if the field contains no dots
+ * @example
+ * getRelationshipNameByField("user.profile.name") // returns "user.profile"
+ * getRelationshipNameByField("name") // returns ""
+ */
+export function getRelationshipNameByField(field: string): string {
+  if (field.includes(".")) {
+    return field.split(".").slice(0, -1).join(".");
+  }
+  return "";
+}

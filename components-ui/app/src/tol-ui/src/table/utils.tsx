@@ -27,6 +27,7 @@ import {
   TCellHeights,
   DEFAULT_ROW_HEIGHT,
   COLLAPSED_ROW_MAX_HEIGHT,
+  getRelationshipNameByField,
 } from "..";
 
 interface Rgb {
@@ -348,13 +349,18 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
   copyToClipboard(copyList);
 }
 
-function addFieldsFromTemplateProp(requestedFields: Set<string>, value: unknown) {
+function addFieldsFromTemplateProp(requestedFields: Set<string>, value: unknown, fieldName: string) {
   if (typeof value !== "string" || !value.includes("${")) return;
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
   matches.forEach((match) => {
-    const key = match.replace("${", "").replace("}", "").trim();
-    if (key) requestedFields.add(key);
+    const relativeAttribute = match
+      .replace("${", "")
+      .replace("}", "")
+      .trim();
+    const relationship = getRelationshipNameByField(fieldName);
+    const field = relationship ? `${relationship}.${relativeAttribute}` : relativeAttribute;
+    if (field) requestedFields.add(field);
   });
 }
 
@@ -373,6 +379,7 @@ export function amalgamateRequestedFields(fieldMeta: FieldMeta): string[] {
 
   const dataWithDefaults = fieldMeta?.dataWithDefaults || {};
   Object.entries<any>(dataWithDefaults).forEach(([fieldName, meta]) => {
+    // Check if the field is a custom field which won't be on the api
     if (meta?.custom === true) {
       requestedFields.delete(fieldName);
       return;
@@ -382,7 +389,7 @@ export function amalgamateRequestedFields(fieldMeta: FieldMeta): string[] {
     const props = cellRenderer?.props || {};
 
     Object.values(props).forEach((value) => {
-      addFieldsFromTemplateProp(requestedFields, value);
+      addFieldsFromTemplateProp(requestedFields, value, fieldName);
       addFieldsFromFilterProp(requestedFields, value);
     });
   });
