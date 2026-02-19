@@ -62,9 +62,13 @@ export function mergeAndFilters(target: object, incoming: object) {
 }
 
 /**
-* Remove a specific attribute from an `and_` filter block
-* Returns the original filter if it doesn't match the expected structure
-*/
+ * Removes a specific attribute from an `and_` filter block
+ *
+ * @param filter - The filter object that may contain an `and_` block
+ * @param attr - The attribute key to remove from `filter.and_`
+ * 
+ * @returns A shallow-cloned filter without the provided attribute when possible; otherwise, the original filter
+ */
 export function removeAttributeFromFilter(
   filter: IFilter | undefined,
   attr: string,
