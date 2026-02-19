@@ -386,6 +386,12 @@ export function sortObjectAlphabetically(
     }, {});
 }
 
+
+/**
+  * Formats very large or very small numbers with SI prefix (e.g. 1K, 1M, 1G or 1m, 1µ, 1n).
+ * @param value The number to format.
+ * @returns The formatted string.
+ */
 export function normaliseNumber(value: number) {
   // Handles whole numbers
   if (value > 999999) {
