@@ -18,7 +18,7 @@ import {
   getAttributeSources,
   getFlattenedMetaData,
   getAttributeDetail,
-  FieldMeta,
+  normaliseNumber,
 } from "../../tol-ui/src";
 
 test("isPropDefined function", () => {
@@ -157,4 +157,21 @@ test("getAttributeDetail function", () => {
   );
   expect(getAttributeDetail(entityMeta, "endpoint1", "attr3", 'display_name')).toBe("Attr3");
   expect(getAttributeDetail(entityMeta, "endpoint2", "attr1", 'display_name')).toBe("Attr1");
+});
+
+test("normaliseNumber function", () => {
+  expect(normaliseNumber(5)).toBe("5");
+  expect(normaliseNumber(1000000)).toBe("1 000K");
+  expect(normaliseNumber(1000000000)).toBe("1 000M");
+  expect(normaliseNumber(1000000000000)).toBe("1 000G");
+  expect(normaliseNumber(1000000000000000)).toBe("1 000T");
+  expect(normaliseNumber(1000000000000000000)).toBe("1 000P");
+
+  expect(normaliseNumber(0.05)).toBe("0.05");
+  expect(normaliseNumber(0.001234)).toBe("1.23m");
+  expect(normaliseNumber(0.000001)).toBe("1µ");
+  expect(normaliseNumber(0.000000001)).toBe("1n");
+  expect(normaliseNumber(0.000000000001234)).toBe("1.23p");
+  expect(normaliseNumber(0.000000000000001)).toBe("1f");
+  expect(normaliseNumber(0.000000000000001234)).toBe("1.23f");
 });

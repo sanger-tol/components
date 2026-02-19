@@ -387,11 +387,14 @@ export function sortObjectAlphabetically(
 }
 
 export function normaliseNumber(value: number) {
-  const numberLength = String(value).length;
-  if (numberLength > 6) {
+  // Handles whole numbers
+  if (Math.round(value) > 999999) {
     return normaliseLargeNumber(value);
+  // Handles decimals
+  } else if (value < 0.01) {
+    return normaliseDecimalNumber(value);
   } else {
-    return String(value);
+    return numberWithSpaces(value);
   }
 }
 
@@ -402,4 +405,12 @@ function normaliseLargeNumber(value: number, iteration: number = 0) {
     return normaliseLargeNumber(Number(normalisedValue), iteration + 1);
   }
   return numberWithSpaces(Number(normalisedValue)) + ["", "K", "M", "G", "T", "P"][iteration];
+}
+
+function normaliseDecimalNumber(value: number, iteration: number = 0) {
+  if ((String(value).length - 1 > 6 || value < 0.01) && iteration < 5) {
+    const normalisedValue = Number((value * 1000).toPrecision(12));
+    return normaliseDecimalNumber(normalisedValue, iteration + 1);
+  }
+  return numberWithSpaces(value) + ["", "m", "µ", "n", "p", "f"][iteration];
 }

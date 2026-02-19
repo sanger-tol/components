@@ -134,7 +134,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
 
     return (
       <div id={id} className="tol-count">
-        <HoverOverlay contents={value} followCursor>
+        <HoverOverlay contents={value}>
           <h1 className="count">{normaliseNumber(value)}</h1>
         </HoverOverlay>
         <div
