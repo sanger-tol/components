@@ -5,18 +5,20 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useMemo, useState } from "react";
-import { API_METHODS, numberWithSpaces, IRemoteTarget, IZone, TFilterOrUndefined, generateFilter, filterHasUpdated } from "..";
+import { API_METHODS, numberWithSpaces, IRemoteTarget, IZone, TFilterOrUndefined, generateFilter, filterHasUpdated, ATTRIBUTE_STATS_CARDS, ATTRIBUTE_STATS_KEYS, NUMERIC_PYTHON_TYPES} from "..";
 
-/**
- * Props for `AttributeStatsBox`.
- * Extends `IRemoteTarget` to access the datasource and entity type context.
- */
 interface PAttributeStatsBox extends IRemoteTarget {
-  /** Attribute field id used to look up metadata and fetch stats. */
+  /** 
+  * Attribute field id used to look up metadata and fetch stats. 
+  */
   attributeId: string;
-  /** Optional component id used to derive the compounded zone filter. */
+  /** 
+  * Optional component id used to derive the compounded zone filter. 
+  */
   componentId?: string;
-  /** Optional zone context used to build the scoped filter for stats calls. */
+  /** 
+  * Optional zone context used to build the scoped filter for stats calls. 
+  */
   zone?: IZone;
 }
 
@@ -36,8 +38,6 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
   const [statsError, setStatsError] = useState<string>("");
   const [filter, setFilter] = useState<TFilterOrUndefined>(undefined);
 
-  const statsKeys = useMemo(() => ["min", "max", "avg", "sum"], []);
-
   useEffect(() => {
     let isMounted = true;
     setIsNumeric(false);
@@ -50,8 +50,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
       const attribute = meta.flatAttributes[objectType][field];
       if (!attribute) return;
       const pythonType = (attribute.python_type ?? "").toLowerCase();
-      const numericTypes = new Set(["int","integer","float","double","decimal","number","long","short"]);
-      setIsNumeric(numericTypes.has(pythonType));
+      setIsNumeric(NUMERIC_PYTHON_TYPES.has(pythonType));
     });
 
     return () => {
@@ -80,7 +79,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
     setStatsError("");
     setStatsLoading(true);
     const params: any = {
-      stats: statsKeys.join(","),
+      stats: ATTRIBUTE_STATS_KEYS.join(","),
       stats_fields: field,
     };
     if (filter !== undefined) {
@@ -111,7 +110,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
     return () => {
       isMounted = false;
     };
-  }, [dataSource, field, filter, isNumeric, objectType, stats, statsKeys]);
+  }, [dataSource, field, filter, isNumeric, objectType, stats]);
 
   const statsContents = useMemo(() => {
     if (!isNumeric) return null;
@@ -128,28 +127,14 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
       return null;
     }
 
-    const statCards = [
-      { key: "min", label: "Min", className: "tol-attribute-tooltip-stat-card--min" },
-      { key: "max", label: "Max", className: "tol-attribute-tooltip-stat-card--max" },
-      { key: "avg", label: "Mean", className: "tol-attribute-tooltip-stat-card--avg" },
-      { key: "sum", label: "Sum", className: "tol-attribute-tooltip-stat-card--sum" },
-    ] as const;
-
-    const formatStatValue = (value: number) => {
-      if (!Number.isFinite(value)) return "None";
-      const isWhole = Number.isInteger(value);
-      const rounded = isWhole ? value : Number(value.toFixed(2));
-      return numberWithSpaces(rounded);
-    };
-
     return (
       <div className="tol-attribute-tooltip-stats-grid">
-        {statCards.map(({ key, label, className }) => {
+        {ATTRIBUTE_STATS_CARDS.map(({ key, label, className }) => {
           const rawValue = stats[key];
           const displayValue =
             rawValue === undefined || rawValue === null || Number.isNaN(Number(rawValue))
               ? "None"
-              : formatStatValue(Number(rawValue));
+              : numberWithSpaces(Number(rawValue));
 
           return (
             <div
@@ -163,7 +148,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
         })}
       </div>
     );
-  }, [isNumeric, stats, statsError, statsKeys, statsLoading]);
+  }, [isNumeric, stats, statsError, statsLoading]);
 
   if (!isNumeric) return null;
 
