@@ -14,7 +14,6 @@ import {
 // @ts-ignore - Use Vite's glob import to get all tsx/jsx files as raw strings
 const modules = import.meta.glob("../**/*.{tsx,jsx,ts,js}", {
   query: "?raw",
-  import: "default",
   eager: true
 });
 
