@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import React, { useState, Dispatch, SetStateAction } from "react";
 import { Input, InputGroup } from "rsuite";
 import { useQueryClient } from "@tanstack/react-query";
+
 import {
   Modal,
   Button,
@@ -15,15 +16,18 @@ import {
   VALIDATION_ENDPOINTS,
   fetchAndNormaliseAllUploadResults,
   PIPELINE_DS,
-  IAllValidationData,
   getUserFromLocalStorage,
   useQueryData,
   splitS3FilenameString,
   TolLoader,
 } from "../..";
 
-// TODO: Create interface/types for rejectionReasons
-// TODO: Remove inline classes
+import type {
+  IValidationRejectionReason,
+  TValidationRejectionReasons,
+  IAllValidationData,
+} from "../..";
+
 export interface PSubmissionRejectModal {
   /**
    * Modal open boolean.
@@ -52,24 +56,19 @@ export function SubmissionRejectModal(props: PSubmissionRejectModal) {
     props;
   const queryClient = useQueryClient();
 
-  // Array of {uploadId, rejectionReason} objects
-  const [rejectionReasons, setRejectionReasons] = useState<
-    { id: string; reason: string }[]
-  >([]);
+  const [rejectionReasons, setRejectionReasons] =
+    useState<TValidationRejectionReasons>([]);
 
   const user = getUserFromLocalStorage();
 
   const fetchPipelineData = async () => {
-    const cacheBustedEndpoint = `${
-      VALIDATION_ENDPOINTS.UPLOAD
-    }?_cb=${Date.now()}`;
     if (!uploadIds) {
       return null;
     }
 
     const result = await fetchAndNormaliseAllUploadResults(
       PIPELINE_DS,
-      cacheBustedEndpoint,
+      VALIDATION_ENDPOINTS.UPLOAD,
       {
         id: { in_list: { value: [...uploadIds] } },
       },
@@ -93,7 +92,9 @@ export function SubmissionRejectModal(props: PSubmissionRejectModal) {
   const handleReasonChange = (id: string, value: string) => {
     setRejectionReasons((prev: [{ id: string; reason: string }]) => {
       //find the index with id
-      const index = prev.findIndex((entry) => entry.id === id);
+      const index = prev.findIndex(
+        (entry: IValidationRejectionReason) => entry.id === id,
+      );
 
       // if this id is new, append to array
       if (index === -1) {
@@ -130,14 +131,11 @@ export function SubmissionRejectModal(props: PSubmissionRejectModal) {
         .sort((a: string, b: string) => Number(b) - Number(a))
         .map((id: string, index: number) => {
           return (
-            <div key={id} style={{ marginBottom: "10px" }}>
-              <h6
-                className="tol-file-validation-rejection-reason"
-                style={{ margin: 0 }}
-              >
+            <div key={id} className="tol-file-validation-rejection-box">
+              <h6 className="tol-file-validation-rejection-reason">
                 {`Please enter a reason for rejecting submission ${id}:`}
               </h6>
-              <p style={{ marginTop: 0, marginBottom: "4px" }}>
+              <p>
                 {splitS3FilenameString(
                   uploadResults?.data?.[index]?.s3Filename,
                 )}{" "}
@@ -152,7 +150,7 @@ export function SubmissionRejectModal(props: PSubmissionRejectModal) {
                   placeholder="Rejection reason..."
                   value={
                     rejectionReasons.find(
-                      (r: { id: string; reason: string }) => r.id === id,
+                      (r: IValidationRejectionReason) => r.id === id,
                     )?.reason ?? ""
                   }
                   onChange={(value: string) => handleReasonChange(id, value)}

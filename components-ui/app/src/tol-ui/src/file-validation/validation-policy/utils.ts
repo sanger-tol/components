@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import {
   PIPELINE_DS,
-  BASE_MODES_MAP,
   BASE_POLICIES_MAP,
   VALIDATION_ENDPOINTS,
   FILE_VALIDATION_STATUS,
@@ -16,16 +15,20 @@ import {
   API_METHODS,
   fetchCurrentPipelineResults,
   getErrorWarningCounts,
+  VALIDATIONS,
+  // BASE_MODES_MAP,
 } from "../..";
 
 import type {
-  TValidationActionId,
-  TValidationActionMap,
+  TFileValidationActionId,
+  TFileValidationActionMap,
   TFileValidationAction,
   TFileValidationStatus,
-  TValidationPolicyModule,
+  TFileValidationPolicyModule,
   IAllValidationData,
   TValidationContextItem,
+  TFileValidationPolicyModuleOverrides,
+  TFileValidationStatusPolicyMap,
 } from "../..";
 
 /**
@@ -41,7 +44,7 @@ import type {
  */
 
 export function setValidationStatusAction(
-  action: { id: TValidationActionId; label: string },
+  action: { id: TFileValidationActionId; label: string },
   status: TFileValidationStatus,
 ): TFileValidationAction {
   return {
@@ -55,7 +58,7 @@ export function setValidationStatusAction(
     }) => {
       const payload = items.map((item: TValidationContextItem) => ({
         id: item.id,
-        type: "upload", // TODO: Change to a constant
+        type: VALIDATIONS.UPLOAD,
         attributes: { validation_status: status },
       }));
 
@@ -129,7 +132,7 @@ export async function rejectSubmission(
   }
 }
 
-export function createBaseActions(): TValidationActionMap {
+export function createBaseActions(): TFileValidationActionMap {
   return {
     viewReport: {
       id: "viewReport",
@@ -178,7 +181,7 @@ export function createBaseActions(): TValidationActionMap {
         // Create bulk upsert payload
         const payload = items.map((item) => ({
           id: item.id,
-          type: "upload", // TODO: Change to a constant
+          type: VALIDATIONS.UPLOAD,
           attributes: { hidden: true },
         }));
         try {
@@ -213,7 +216,7 @@ export function createBaseActions(): TValidationActionMap {
         // Create bulk upsert payload
         const payload = items.map((item) => ({
           id: item.id,
-          type: "upload", // TODO: Change to a constant
+          type: VALIDATIONS.UPLOAD,
           attributes: { hidden: false },
         }));
         try {
@@ -356,7 +359,7 @@ export function createBaseActions(): TValidationActionMap {
                 ? FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS
                 : FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES;
 
-            // Return the payload for that item
+            // Return the payload for that item with determined status
             return {
               id: item.id,
               type: "upload",
@@ -408,7 +411,9 @@ export function createBaseActions(): TValidationActionMap {
         setSubmissionRejectModalOpen?.(true);
       },
       // Only admins can reject a submission
-      isAvailable: ({ user }) => user?.roles.includes("admin") ?? false,
+      isAvailable: ({ user }) => {
+        return user?.roles.includes("admin") ?? false;
+      },
     },
   };
 }
@@ -417,14 +422,60 @@ export function createBasePolicies() {
   return BASE_POLICIES_MAP;
 }
 
-// TODO: Implement modes
-export function createBaseModes() {
-  return BASE_MODES_MAP;
-}
+// Leaving here to show how we're going to implement 'modes'
+// export function createBaseModes() {
+//   return BASE_MODES_MAP;
+// }
 
-export function createBaseValidationModule(): TValidationPolicyModule {
-  return {
+export function createValidationModule<TCustom extends string = never>(
+  overrides?: TFileValidationPolicyModuleOverrides,
+): TFileValidationPolicyModule<TCustom> {
+  // Create the base module with actions & policies
+  const baseModule: TFileValidationPolicyModule = {
     actions: createBaseActions(),
     policies: createBasePolicies(),
   };
+
+  // If no overrides are passed, return the base module
+  if (!overrides) return baseModule as TFileValidationPolicyModule<TCustom>;
+
+  // Otherwise expand the actions & policies with the overrides
+  const actions = { ...baseModule.actions, ...(overrides.actions ?? {}) };
+  const policies = {
+    ...baseModule.policies,
+    ...(overrides.policies ?? {}),
+  } as unknown as TFileValidationStatusPolicyMap<TCustom>;
+
+  // If allowed actions have been expanded, create a new set of allowed actions for that status
+  if (overrides.extendAllowedActions) {
+    // Map over the overrides and extract status, e.g. "in_progress" & extra, e.g. "downloadReport"
+    for (const [status, extra] of Object.entries(
+      overrides.extendAllowedActions,
+    ) as Array<[TFileValidationStatus<TCustom>, TFileValidationActionId[]]>) {
+      // Set the status in the policy to the old policy item, expand allowed actions
+      // Does not work with removing actions (This can be added later if necessary)
+      const existing = policies[status];
+
+      // Make a check to see if the all the required actions/policies/statuses are available
+      if (!existing) {
+        throw new Error(
+          `extendAllowedActions references missing policy for status ${status}`,
+        );
+      }
+
+      // Overwrite the actions allowed by that specific policy
+      policies[status] = {
+        ...policies[status],
+        allowedActions: Array.from(
+          new Set([...policies[status].allowedActions, ...extra]),
+        ),
+      };
+    }
+  }
+
+  // Return expanded/custom actions and policies
+  return {
+    actions,
+    policies,
+  } as TFileValidationPolicyModule<TCustom>;
 }

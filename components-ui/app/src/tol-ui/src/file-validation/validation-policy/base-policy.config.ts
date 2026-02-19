@@ -21,7 +21,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
     status: FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES,
     rename: "Validation Completed - Passed (No Issues)",
     summary:
-      "The file has passed validation with no errors or warnings. Please mark as ready to inform an admin that it is ready for further processing.",
+      "The file has passed validation with no errors or warnings. Please 'Mark as Ready' after which it will be uploaded to the next stage of sample submission and no further edits to this manifest / sample set will be possible.",
     textColor: "var(--tol-success)",
     isFailureStatus: false,
     allowedActions: [
@@ -37,7 +37,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
     status: FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS,
     rename: "Validation Completed - Passed With Warnings",
     summary:
-      "The file may have some formatting or minor issues. Please fix these, or mark as ready to inform an admin that it is ready for further processing.",
+      "There are minor issues with some data in the manifest. You may fix these or 'Mark as Ready'. Refer to the Manifest SOP for guidance.",
     textColor: "var(--tol-warning)",
     isFailureStatus: false,
     allowedActions: [
@@ -53,7 +53,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
     status: FILE_VALIDATION_STATUS.COMPLETED_FAILED_ERRORS,
     rename: "Validation Completed - Failed with Errors",
     summary:
-      "There are major issues with the data provided in the file, please check the report and fix before re-submitting.",
+      "There are major issues with the data provided in the file. Check the report and fix before re-submitting. Refer to the Manifest SOP for guidance.",
     textColor: "var(--tol-danger)",
     isFailureStatus: false,
     allowedActions: [
@@ -94,7 +94,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
   [FILE_VALIDATION_STATUS.MARKED_AS_READY]: {
     status: FILE_VALIDATION_STATUS.MARKED_AS_READY,
     rename: "Marked as Ready",
-    summary: "The file has been marked as ready for further processing.",
+      summary: "Manifest has been 'Marked as Ready' and will be uploaded to the next stage of sample submission.",
     textColor: "var(--tol-success-light)",
     isFailureStatus: false,
     allowedActions: [
@@ -109,4 +109,5 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
   },
 };
 
-export const BASE_MODES_MAP = {};
+// Leaving here to show how we're going to implement 'modes'
+// export const BASE_MODES_MAP = {};

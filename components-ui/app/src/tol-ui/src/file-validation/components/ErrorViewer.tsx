@@ -5,22 +5,45 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
+
 import {
   Modal,
   Button,
   truncateString,
   ValidationIcon,
   capitaliseFirstLetter,
-  ICellId,
 } from "../..";
 
+import type { ICellId } from "../..";
+
 export interface PErrorViewer {
+  /**
+   * Key associated with the component
+   */
   key?: string;
+  /**
+   * Id associated with the component
+   */
   id?: string;
+  /**
+   * Warning or error (used for CSS)
+   */
   errorType?: string;
+  /**
+   * The error/warning message
+   */
   message?: string;
+  /**
+   * The step associated with the error message
+   */
   stepName?: string;
+  /**
+   * Row ID & Column ID
+   */
   cellId: ICellId;
+  /**
+   * Whether to truncate the error/warning message
+   */
   truncate?: boolean;
 }
 

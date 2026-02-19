@@ -24,10 +24,11 @@ import {
   useValidationPolicyModule,
   useZone,
   ValidationReport,
+  VALIDATIONS,
   Widgets,
 } from "..";
 
-import type { TValidationPolicyModule } from "@tol/tol-ui";
+import type { TFileValidationPolicyModule } from "@tol/tol-ui";
 
 /**
  * This component handles the file upload component, live upload result, uploads table
@@ -45,7 +46,7 @@ export interface PFileValidationHome {
    * yet Tree of Sex will not, so having the ability to change titles is useful.
    */
   tabTitles?: { titleOne: string; titleTwo: string };
-  policyModule?: TValidationPolicyModule;
+  policyModule?: TFileValidationPolicyModule;
   additionalTableConfig?: { cellRenderers: any; fields: any; order: any };
 }
 
@@ -94,7 +95,7 @@ export function FileValidationHome(props: PFileValidationHome) {
 
   // Define the zone with the default filter of hidden: false
   const uploadsZone = useZone({
-    objectType: "upload",
+    objectType: VALIDATIONS.UPLOAD,
     dataSource: new TsDataSource({
       apiPath: "/api/v1/local",
     }),
@@ -105,7 +106,7 @@ export function FileValidationHome(props: PFileValidationHome) {
     },
     components: [
       {
-        id: "uploads-table",
+        id: "validation-uploads-table",
       },
     ],
   });
@@ -134,8 +135,8 @@ export function FileValidationHome(props: PFileValidationHome) {
     );
   };
 
-  // Create an easy to access 'view' button, which pushes
-  // /manifest-validation/result/<id> url
+  // Create an easy to access 'view upload' button, which pushes to
+  // /manifest-validation/result/<uploadId> url
   const IdAndViewButtonCell = ({ dataObject }) => {
     const id = dataObject?.id;
 
@@ -153,16 +154,17 @@ export function FileValidationHome(props: PFileValidationHome) {
 
   // Table for viewing all previous validaitons, admins can see all
   // validation uploads, normal users can only see their own.
+  // This is done on the API.
   const AllValidationUploadsTable = (
     <RemoteTable
-      id="uploads-table"
+      id="validation-uploads-table"
       height={500}
       actions={
         createValidationActions(actions, policies, PIPELINE_DS, {
           setReportOpen,
           setSubmissionRejectModalOpen,
           setForceTableUpdate,
-          setSelectedRows
+          setSelectedRows,
         }) as IDropdownButtonConfig[]
       }
       noConfigModal
@@ -188,7 +190,6 @@ export function FileValidationHome(props: PFileValidationHome) {
               type: "idAndViewButton",
             },
           },
-          // Return an OIDC column only if the user is an admin
           ...(userIsAdmin
             ? {
                 "user.oidc_id": {
@@ -229,8 +230,8 @@ export function FileValidationHome(props: PFileValidationHome) {
             filter: "bool",
             rename: "Hidden From View",
             cellRenderer: {
-              type: "boolean"
-            }
+              type: "boolean",
+            },
           },
           ...additionalTableConfig?.fields,
         },
@@ -238,6 +239,7 @@ export function FileValidationHome(props: PFileValidationHome) {
           active: [
             "id",
             "s3_filename",
+            // Return an OIDC ID column only if the user is an admin
             ...(userIsAdmin ? ["user.oidc_id"] : []),
             "pipeline.name",
             "date_started",
@@ -245,7 +247,7 @@ export function FileValidationHome(props: PFileValidationHome) {
             "flow_run_id",
             "failure_message",
             ...additionalTableConfig?.order,
-            "hidden"
+            "hidden",
           ],
         },
       }}
@@ -290,21 +292,15 @@ export function FileValidationHome(props: PFileValidationHome) {
             { component: intro, type: "full" },
             {
               component: (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
+                <div className="tol-file-validation-home-header-bar">
                   <h2>{tabTitles.titleTwo}</h2>
-                  <div style={{ display: "flex", gap: "5px" }}>
+                  <div className="tol-file-validation-home-header-bar-toggle">
                     <p>Show Hidden Uploads</p>
                     <Toggle
                       onChange={() => {
-                        setShowHiddenUploads((prev) => !prev);
-                        // Force update table to use updated zone filter
-                        setForceTableUpdate((prev) => !prev);
+                        // Force update table to use updated zone filter set in the useEffect
+                        setShowHiddenUploads((prev: boolean) => !prev);
+                        setForceTableUpdate((prev: boolean) => !prev);
                       }}
                       checked={showHiddenUploads}
                     />
@@ -323,10 +319,11 @@ export function FileValidationHome(props: PFileValidationHome) {
   return (
     <>
       <ValidationReport
-        data={[]}
+        data={selectedRows.flatMap((row: ITableRecord) => {
+          return { id: Object.keys(row) };
+        })}
         open={reportOpen}
         setOpen={setReportOpen}
-        uploadStatus={""}
       />
       <SubmissionRejectModal
         open={submissionRejectModalOpen}

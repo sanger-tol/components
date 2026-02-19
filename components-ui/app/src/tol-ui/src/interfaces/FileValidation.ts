@@ -24,7 +24,6 @@ export interface IValidationConfig {
   sheetName?: string;
   maxFileSize?: string;
   allowedFileTypes?: string;
-  project?: string; // TODO: Decide if this needs to be an array
 }
 
 export interface IErrorWarningCount {
@@ -62,6 +61,13 @@ export interface IValidationUploadDetails {
   s3Bucket: string;
   failureMessage: string | null;
 }
+
+export interface IValidationRejectionReason {
+  id: string;
+  reason: string;
+}
+
+export type TValidationRejectionReasons = IValidationRejectionReason[];
 
 export type TValidationIssues = Record<string, IValidationResult[]>;
 

@@ -39,7 +39,7 @@ import type {
   TFileValidationStatus,
   TFileValidationStatusPolicy,
   TFileValidationAction,
-  TValidationActionId,
+  TFileValidationActionId,
 } from "../..";
 
 export function ValidationResultsViewer() {
@@ -222,7 +222,7 @@ export function ValidationResultsViewer() {
     uploadStatus && actionContext
       ? uploadStatus.allowedActions
           // Map over each action id and return the action of that ID
-          .map((actionId: TValidationActionId) => actions[actionId])
+          .map((actionId: TFileValidationActionId) => actions[actionId])
           // Filter out any actions not available
           .filter((action: TFileValidationAction) => {
             if (!action) return false;
@@ -370,16 +370,15 @@ export function ValidationResultsViewer() {
     },
   ];
 
-  // If we didn't get a 200 status back, wait for results
+  // If no 200 status is returned, wait for results
   return !latestPipelineResults.isSuccess ? (
     <LoadingContent text="Loading Results..." />
   ) : (
     <>
       <ValidationReport
-        data={latestPipelineResults.data}
+        data={[latestPipelineResults.data]}
         open={reportOpen}
         setOpen={setReportOpen}
-        uploadStatus={uploadStatus?.rename}
       />
       <SubmissionRejectModal
         open={submissionRejectModalOpen}

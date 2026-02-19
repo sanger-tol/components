@@ -25,7 +25,7 @@ import type {
   IValidationResultAPI,
   TFileValidationAction,
   TsDataSource,
-  TValidationActionMap,
+  TFileValidationActionMap,
   TFileValidationStatusPolicyMap,
 } from "../..";
 
@@ -384,7 +384,9 @@ export function downloadReportFile(data: IAllValidationData) {
     jsonReport["uploadDetails"]["dateStarted"],
   ).toString()}\n`;
   report += `Pipeline Name: ${jsonReport["uploadDetails"]["pipelineName"]}\n`;
-  report += `File Name: ${jsonReport["uploadDetails"]["s3Filename"]}\n\n`;
+  report += `File Name: ${jsonReport["uploadDetails"]["s3Filename"]}\n`;
+  report += `Failure Reason: ${jsonReport["uploadDetails"]["failureMessage"] || "None"}\n`;
+  report += `Rejection Reason: ${jsonReport["uploadDetails"]["rejectionReason"] || "None"}\n\n`;
 
   // issues
   report += `Validation Issues:\n${"-".repeat(20)}\n`;
@@ -423,13 +425,6 @@ export function downloadReportFile(data: IAllValidationData) {
   URL.revokeObjectURL(url);
 }
 
-// Helper to determine whether 'showItem' or 'hideItem' should be visible
-const isToggleAllowedForRow = (actionId: string, isHiddenUpload: boolean) => {
-  if (actionId === "showItem") return isHiddenUpload;
-  if (actionId === "hideItem") return !isHiddenUpload;
-  return true;
-};
-
 /**
  * Builds dropdown action configurations for the validation uploads table.
  * Each returned action is only shown when all selected rows’ validation_status policies allow it.
@@ -447,7 +442,7 @@ const isToggleAllowedForRow = (actionId: string, isHiddenUpload: boolean) => {
  */
 
 export const createValidationActions = (
-  actions: TValidationActionMap,
+  actions: TFileValidationActionMap,
   policies: TFileValidationStatusPolicyMap,
   dataSource: TsDataSource,
   additionalCtx: any,

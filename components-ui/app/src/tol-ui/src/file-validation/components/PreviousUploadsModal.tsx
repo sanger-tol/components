@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { Toggle } from "rsuite";
+
 import {
   Icon,
   Modal,
@@ -14,7 +15,6 @@ import {
   PreviousUploadsView,
   getUserFromLocalStorage,
   fetchAndNormaliseAllUploadResults,
-  IAllValidationData,
   TOL_LOADER_STYLES,
   VALIDATION_ENDPOINTS,
   BUTTON_TIMEOUT,
@@ -22,6 +22,8 @@ import {
   useQueryData,
   FILE_VALIDATION_STATUS,
 } from "../..";
+
+import type { IAllValidationData } from "../..";
 
 export interface PPreviousUploadsModal {
   openModal: boolean | string;
@@ -33,19 +35,20 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
   const { openModal, setOpenModal, onEnter } = props;
   const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
   const [expandedResults, setExpandedResults] = useState<string | null>(null);
+  const [showHiddenUploads, setShowHiddenUploads] = useState<boolean>(false);
   const user = getUserFromLocalStorage();
   const id = user ? user.id : null;
 
+  let andFilter = {
+    user_id: { eq: { value: id } },
+    ...(!showHiddenUploads && { hidden: { eq: { value: false } } }),
+  };
+
   const fetchPreviousUploads = async () => {
-    const cacheBustedEndpoint = `${
-      VALIDATION_ENDPOINTS.UPLOAD
-    }?_cb=${Date.now()}`;
     return await fetchAndNormaliseAllUploadResults(
       PIPELINE_DS,
-      cacheBustedEndpoint,
-      {
-        user_id: { eq: { value: id } },
-      },
+      VALIDATION_ENDPOINTS.UPLOAD,
+      { ...andFilter },
     );
   };
 
@@ -54,7 +57,8 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
     isResultsOpen || (typeof openModal === "boolean" && openModal === true);
 
   const userFileValidationUploads = useQueryData<IAllValidationData[]>(
-    ["userFileValidationUploads", id],
+    // add showHiddenUploads to the dependancy array, so it updates when the state changes
+    ["userFileValidationUploads", id, showHiddenUploads],
     fetchPreviousUploads,
     {
       enabled: (openModal === "results" || openModal === true) && id !== null,
@@ -111,6 +115,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
         </div>
       ) : userFileValidationUploads.data.length > 0 ? (
         userFileValidationUploads.data
+          // Sort newest to oldest via id
           .sort(
             (a: IAllValidationData, b: IAllValidationData) =>
               Number(b.id) - Number(a.id),
@@ -156,11 +161,21 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
         )}
       </div>
       <div className="tol-file-validation-previous-uploads-modal-toggle">
+        {" "}
+        <p className="tol-file-validation-previous-uploads-modal-toggle-tag">
+          Show Hidden Uploads
+        </p>
+        <Toggle
+          key="passed-steps-toggle"
+          checked={showHiddenUploads}
+          onChange={() => setShowHiddenUploads((prev: boolean) => !prev)}
+        />
         <p className="tol-file-validation-previous-uploads-modal-toggle-tag">
           Show passed steps
         </p>
         <Toggle
           key="passed-steps-toggle"
+          defaultChecked={false}
           checked={showPassedSteps}
           onChange={() => setShowPassedSteps((prev: boolean) => !prev)}
         />

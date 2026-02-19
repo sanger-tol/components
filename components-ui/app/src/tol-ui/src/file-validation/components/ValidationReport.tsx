@@ -4,146 +4,289 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Dispatch, SetStateAction } from "react";
 import { Panel } from "rsuite";
 import {
   Button,
   constructValidationReport,
   downloadFileFromS3,
   downloadReportFile,
+  fetchAndNormaliseAllUploadResults,
+  getUserFromLocalStorage,
   IAllValidationData,
   Modal,
   PIPELINE_DS,
   splitS3FilenameString,
+  useQueryData,
+  useValidationPolicyModule,
+  VALIDATION_ENDPOINTS,
 } from "../..";
 
 export interface PValidationReport {
-  data: IAllValidationData | null;
+  /**
+   * The data passed to the component.
+   * It can either be a full object or an id object, which partially satisfies IAllValidationData
+   */
+  data: IAllValidationData[] | Partial<IAllValidationData>[];
+  /**
+   * The open state of the modal
+   */
   open: boolean;
-  setOpen: (open: boolean) => void;
-  uploadStatus: string;
+  /**
+   * The state action to open/close the modal
+   */
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export function ValidationReport(props: PValidationReport) {
-  const { data, open, setOpen, uploadStatus } = props;
+  const { open, setOpen } = props;
 
-  const validationReport = data ? constructValidationReport(data) : null;
+  const { policies } = useValidationPolicyModule();
+  const user = getUserFromLocalStorage();
 
-  const ValidationReportHeader = (
-    <>
-      <h3>Validation Report</h3>
-      <h6>{`Manifest: ${splitS3FilenameString(String(data?.s3Filename))}`}</h6>
-    </>
+  // Check if the first object has the expected properties
+  // If it does not, we know it's a table action
+  const hasRequiredAttributes = (
+    data: IAllValidationData[] | Partial<IAllValidationData>[],
+  ): boolean => {
+    if (data.length === 0) return false;
+    return typeof data[0] === "object" && "validationStatus" in data[0];
+  };
+  const hasCompleteData = hasRequiredAttributes(props.data);
+
+  const fetchPipelineData = async () => {
+    if (!props.data) {
+      return null;
+    }
+
+    const result = await fetchAndNormaliseAllUploadResults(
+      PIPELINE_DS,
+      VALIDATION_ENDPOINTS.UPLOAD,
+      {
+        id: {
+          in_list: {
+            value: props.data.flatMap((item: { id: string }) => item.id),
+          },
+        },
+      },
+    );
+
+    return result;
+  };
+
+  const fetchedResults = useQueryData<IAllValidationData[] | null>(
+    ["uploadResults", user.id],
+    fetchPipelineData,
+    {
+      // Fetch only if an ID is present and the modal is open
+      enabled: !hasCompleteData && open === true,
+      staleTime: 0,
+    },
   );
 
-  const ValidationReportContent = (
-    <div className="tol-file-validation-report-modal">
-      <div>
-        <Panel header="Upload Details" bordered collapsible>
-          <div className="tol-file-validation-report-modal-details">
-            <div>
-              <ul>
-                <li>
-                  <strong>{`Upload ID: ${validationReport?.uploadDetails.id}`}</strong>
-                </li>
-                <li>
-                  <strong>{`Pipeline ID: ${validationReport?.uploadDetails.pipelineId}`}</strong>
-                </li>
-                <li>
-                  <strong>{`Upload Status: ${uploadStatus}`}</strong>
-                </li>
-                <li>
-                  <strong>{`Date Started: ${new Date(
-                    validationReport?.uploadDetails.dateStarted || 0
-                  ).toLocaleString()}`}</strong>
-                </li>
-                <li>
-                  <strong>{`Pipeline Name: ${validationReport?.uploadDetails.pipelineName}`}</strong>
-                </li>
-                <li>
-                  <strong>
-                    File:{" "}
-                    <a
-                      href="#"
-                      onClick={() =>
-                        downloadFileFromS3(
-                          PIPELINE_DS,
-                          data?.s3Bucket || "",
-                          data?.s3Filename || ""
-                        )
-                      }
+  // Determine which data to use (whichever is more complete)
+  const data =
+    fetchedResults.data && fetchedResults.isSuccess
+      ? fetchedResults.data
+      : props.data;
+
+  const ValidationReportHeader = <h3>Validation Report(s)</h3>;
+  const singleReport = data.length === 1;
+
+  const validationReportContent = (
+    validationReport: any,
+    validation: IAllValidationData,
+    index: number,
+  ) => {
+    const validationPolicy = policies[
+      validationReport?.uploadDetails.validationStatus
+    ] || {
+      textColor: "var(--tol-text)",
+      rename: "Unknown Status",
+    };
+    return (
+      <>
+        <div>
+          <Panel header="Upload Details" bordered collapsible>
+            <div className="tol-file-validation-report-modal-details">
+              <div>
+                <ul>
+                  <li>
+                    <strong>{`Upload ID: ${validationReport?.uploadDetails.id}`}</strong>
+                  </li>
+                  <li>
+                    <strong>{`Pipeline ID: ${validationReport?.uploadDetails.pipelineId}`}</strong>
+                  </li>
+                  <li>
+                    <strong>
+                      Upload Status:{" "}
+                      <strong
+                        style={{ color: `${validationPolicy.textColor}` }}
+                      >{`${validationPolicy.rename}`}</strong>
+                    </strong>
+                  </li>
+                  <li>
+                    <strong>{`Date Started: ${new Date(
+                      validationReport?.uploadDetails.dateStarted || 0,
+                    ).toLocaleString()}`}</strong>
+                  </li>
+                  <li>
+                    <strong>{`Pipeline Name: ${validationReport?.uploadDetails.pipelineName}`}</strong>
+                  </li>
+                  <li>
+                    <strong>
+                      Filename:{" "}
+                      <a
+                        href="#"
+                        onClick={() =>
+                          downloadFileFromS3(
+                            PIPELINE_DS,
+                            data?.[index]?.s3Bucket || "",
+                            data?.[index]?.s3Filename || "",
+                          )
+                        }
+                      >
+                        {validationReport?.uploadDetails.s3Filename}
+                      </a>
+                    </strong>
+                  </li>
+                  <li>
+                    <strong>
+                      Steps in Pipeline:{" "}
+                      {validationReport?.uploadDetails.pipelineSteps ||
+                        "No steps available."}
+                    </strong>
+                  </li>
+                  <li>
+                    <strong>{`Rejection Reason: ${validationReport?.uploadDetails.rejectionReason || "None"}`}</strong>
+                  </li>
+                  <li>
+                    <strong>{`System Failure Reason: ${validationReport?.uploadDetails.failureMessage || "None"}`}</strong>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <ul></ul>
+              </div>
+            </div>
+          </Panel>
+        </div>
+        <h5 className="tol-file-validation-report-modal-results">Issues:</h5>
+        {Object.keys(validationReport?.issues || {}).length === 0 && (
+          <p>No specific step validation issues found for this upload.</p>
+        )}
+        {validationReport?.uploadDetails.failureMessage && (
+          <p>
+            A system issue has occurred and validation could not finish. Reason:{" "}
+            {validationReport?.uploadDetails.failureMessage}
+          </p>
+        )}
+        {validationReport?.issues &&
+          Object.entries(validationReport.issues).map(([stepName, issues]) => (
+            <div
+              key={stepName}
+              className="tol-file-validation-report-modal-result-panel"
+            >
+              <Panel header={`Step: ${stepName}`} bordered collapsible>
+                {Array.isArray(issues) &&
+                  issues.map((issue, index) => (
+                    <div
+                      key={`${stepName}-${index}`}
+                      style={{ marginBottom: "15px" }}
                     >
-                      {validationReport?.uploadDetails.s3Filename}
-                    </a>
-                  </strong>
-                </li>
-                <li>
-                  <strong>
-                    Steps in Pipeline:{" "}
-                    {validationReport?.uploadDetails.pipelineSteps ||
-                      "No steps available."}
-                  </strong>
-                </li>
-              </ul>
+                      <div>
+                        <strong>{`[${issue.severity.toUpperCase()}] Column: ${
+                          issue.field
+                        }`}</strong>
+                      </div>
+                      <div>
+                        <strong>Issue:</strong> {issue.detail}
+                      </div>
+                      <div>
+                        <strong>Affected Row Number(s): </strong>
+                        {issue.objectId}
+                      </div>
+                    </div>
+                  ))}
+              </Panel>
             </div>
-            <div>
-              <ul></ul>
-            </div>
+          ))}
+        {data.length > 0 && !singleReport && (
+          <div className="tol-file-validation-report-download-button">
+            <Button
+              text="Download"
+              icon="download"
+              tooltip={"Download Validation Report"}
+              onClick={() => {
+                downloadReportFile(validation || ({} as IAllValidationData));
+              }}
+            />
           </div>
-        </Panel>
-      </div>
-      <h5 className="tol-file-validation-report-modal-results">Issues:</h5>
-      {Object.keys(validationReport?.issues || {}).length === 0 && (
-        <p>No validation issues found for this upload.</p>
-      )}
-      {validationReport?.issues &&
-        Object.entries(validationReport.issues).map(([stepName, issues]) => (
+        )}
+      </>
+    );
+  };
+
+  const validationReports = (
+    validationData: IAllValidationData[] | null | undefined,
+  ) => {
+    if (!validationData || validationData.length === 0) {
+      return fetchedResults.isLoading ? (
+        <p>Loading validation data...</p>
+      ) : (
+        <h6>No Report Data Found...</h6>
+      );
+    }
+
+    return validationData?.map(
+      (validation: IAllValidationData, index: number) => {
+        const validationReport = constructValidationReport(validation);
+        return (
           <div
-            key={stepName}
-            className="tol-file-validation-report-modal-result-panel"
+            key={`${validation.id}-${index}`}
+            className="tol-file-validation-report-modal"
           >
-            <Panel header={`Step: ${stepName}`} bordered collapsible>
-              {issues.map((issue, index) => (
-                <div
-                  key={`${stepName}-${index}`}
-                  style={{ marginBottom: "15px" }}
-                >
-                  <div>
-                    <strong>{`[${issue.severity.toUpperCase()}] Column: ${
-                      issue.field
-                    }`}</strong>
-                  </div>
-                  <div>
-                    <strong>Issue:</strong> {issue.detail}
-                  </div>
-                  <div>
-                    <strong>Affected Row Number(s): </strong>
-                    {issue.objectId}
-                  </div>
-                </div>
-              ))}
-            </Panel>
+            {!singleReport ? (
+              <Panel
+                header={`Manifest: ${splitS3FilenameString(String(validation?.s3Filename))}`}
+                bordered
+                collapsible
+              >
+                {validationReportContent(validationReport, validation, index)}
+              </Panel>
+            ) : (
+              <div>
+                <h6>{`Manifest: ${splitS3FilenameString(String(validation?.s3Filename))}`}</h6>
+                {validationReportContent(validationReport, validation, index)}
+              </div>
+            )}
+            {!validationReport && <p>Cannot generate validation report...</p>}
           </div>
-        ))}
-      {!validationReport && <p>Cannot generate validation report...</p>}
-    </div>
-  );
+        );
+      },
+    );
+  };
 
   return (
     <Modal
+      // Show the action button only if a single data point is provided
       actionButton={
-        <Button
-          icon="download"
-          tooltip={"Download Validation Report"}
-          onClick={() => {
-            downloadReportFile(data || {} as IAllValidationData);
-          }}
-        />
+        singleReport && (
+          <Button
+            text="Download"
+            icon="download"
+            tooltip={"Download Validation Report"}
+            onClick={() => {
+              downloadReportFile(data[0] || ({} as IAllValidationData));
+            }}
+          />
+        )
       }
       actionButtonInline
       open={open}
       setOpen={setOpen}
       header={ValidationReportHeader}
-      children={ValidationReportContent}
+      children={validationReports(data)}
     />
   );
 }

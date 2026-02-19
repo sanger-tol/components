@@ -7,12 +7,6 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 
-import type {
-  IStepData,
-  IAllValidationData,
-  IValidationResult,
-} from "../..";
-
 import {
   ValidationIcon,
   getErrorWarningCounts,
@@ -27,6 +21,12 @@ import {
   PIPELINE_DS,
   splitS3FilenameString,
   useValidationPolicyModule,
+} from "../..";
+
+import type {
+  IStepData,
+  IAllValidationData,
+  IValidationResult,
 } from "../..";
 
 export interface PPreviousUploadsView {

@@ -487,10 +487,9 @@ export function FileValidationUploadAndResults(
   return (
     <>
       <ValidationReport
-        data={validated ? latestPipelineResults.data : null}
+        data={validated ? [latestPipelineResults.data] : []}
         open={openReport}
         setOpen={setOpenReport}
-        uploadStatus={latestPipelineResults.data.validationStatus}
       />
       <PreviousUploadsModal
         openModal={openModal}

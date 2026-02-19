@@ -8,7 +8,7 @@ import { Dispatch, SetStateAction } from "react";
 import type { IAllValidationData, TsDataSource } from "../..";
 
 // Types related to file validation policies, actions, and their contexts.
-export type TValidationActionId =
+export type TFileValidationActionId =
   | "viewReport"
   | "downloadReport"
   | "reject"
@@ -19,7 +19,8 @@ export type TValidationActionId =
   | "hideItem"
   | "showItem";
 
-// Constants related to what a user can do when they click 'validate'
+// Constants related to what a user can do when they click 'validate'.
+// Will be used in conjunction with 'modes'.
 export const VALIDATION_PURPOSE = [
   "Validate",
   "Validate and Upload",
@@ -27,7 +28,7 @@ export const VALIDATION_PURPOSE = [
 ] as const;
 
 // Constants for the base validation statuses (generic enough to be used across all apps
-// that use the validation component)
+// that use the validation component).
 export const FILE_VALIDATION_STATUS = {
   IN_PROGRESS: "validation_in_progress",
   SYSTEM_ERROR: "validation_system_error",
@@ -42,16 +43,17 @@ export const FILE_VALIDATION_STATUS = {
 // Can only be one of VALIDATION_PURPOSE
 export type TFileValidationPurpose = (typeof VALIDATION_PURPOSE)[number];
 
-// Can only be one of FILE_VALIDATION_STATUS
-export type TFileValidationStatus =
-  (typeof FILE_VALIDATION_STATUS)[keyof typeof FILE_VALIDATION_STATUS];
+// Can only be one of FILE_VALIDATION_STATUS or a custom status
+export type TFileValidationStatus<TCustom extends string = never> =
+  | (typeof FILE_VALIDATION_STATUS)[keyof typeof FILE_VALIDATION_STATUS]
+  | TCustom;
 
 // All the required fields for each defined policy
-export type TFileValidationStatusPolicy = {
+export type TFileValidationStatusPolicy<TCustom extends string = never> = {
   /**
-   * One of the predefined file validation statuses
+   * One of the predefined file validation statuses or custom
    */
-  status: TFileValidationStatus;
+  status: TFileValidationStatus<TCustom>;
   /**
    * The renamed status as shown on the UI
    */
@@ -74,9 +76,12 @@ export type TFileValidationStatusPolicy = {
    * perform an action they won't be able to complete,
    * i.e. "validation_timeout" status cannot use "markAsReady" action
    */
-  allowedActions: TValidationActionId[];
+  allowedActions: TFileValidationActionId[];
 };
 
+// When an item is passed to an action via its context (ctx),
+// it will either be the full validation data item,
+// or a subset, based on what's needed for the action.
 export type TValidationContextItem =
   | IAllValidationData
   | Partial<IAllValidationData>;
@@ -99,28 +104,40 @@ export type TValidationUserContext = {
 };
 
 export type TFileValidationAction = {
-  id: TValidationActionId;
+  id: TFileValidationActionId;
   label: string;
   isAvailable?: (ctx: TValidationUserContext) => boolean;
   callback: (ctx: TValidationActionContext) => Promise<void> | void;
 };
 
 // A map of validation statuses to their corresponding policies
-export type TFileValidationStatusPolicyMap = Record<
-  TFileValidationStatus,
-  TFileValidationStatusPolicy
->;
+export type TFileValidationStatusPolicyMap<TCustom extends string = never> =
+  Record<TFileValidationStatus<TCustom>, TFileValidationStatusPolicy<TCustom>>;
 
 // A map of action ids to their corresponding action objects
-export type TValidationActionMap = Record<
-  TValidationActionId,
+export type TFileValidationActionMap = Record<
+  TFileValidationActionId,
   TFileValidationAction
 >;
 
 // A 'module' containing all the base policies and base actions related to file validation,
 // this is what gets imported into the main Provider component and used to determine
 // what to render and how the actions work based on the validation status of an upload
-export type TValidationPolicyModule = {
-  actions: Record<TValidationActionId, TFileValidationAction>;
-  policies: Record<TFileValidationStatus, TFileValidationStatusPolicy>;
+export type TFileValidationPolicyModule<TCustom extends string = never> = {
+  actions: Record<TFileValidationActionId, TFileValidationAction>;
+  policies: TFileValidationStatusPolicyMap<TCustom>;
 };
+
+// An overwrite module type, that allows individual apps to extend base polcies and actions
+export type TFileValidationPolicyModuleOverrides<
+  TCustom extends string = never,
+> = Partial<{
+  // Update policies
+  policies: Partial<TFileValidationStatusPolicyMap<TCustom>>;
+  // Update actions
+  actions: Partial<TFileValidationActionMap>;
+  // Update allowed actions for certain policies
+  extendAllowedActions: Partial<
+    Record<TFileValidationStatus<TCustom>, TFileValidationActionId[]>
+  >;
+}>;
