@@ -92,52 +92,6 @@ export function normaliseValidationResult(
 }
 
 /**
- * Constructs a completion message and message type based on validation results and failure status.
- *
- * @param validationResults - An array of IValidationResult objects to analyze for errors and warnings.
- * @param failureMessage - An optional failure message string indicating early termination.
- * @returns An object containing a user-friendly message and its corresponding message type.
- *
- * The returned message and type reflect whether validation passed, failed, completed with warnings,
- * or was terminated early due to a failure.
- */
-
-export function constructCompletionMessage(
-  validationResults: IValidationResult[],
-  failureMessage: string | null,
-): { message: string; messageType: TMessageType } {
-  const errorsAndWarnings = getErrorWarningCounts(validationResults);
-  if (failureMessage) {
-    return {
-      message: `Validation terminated early: ${failureMessage}. File cannot be uploaded`,
-      messageType: "error",
-    };
-  } else if (
-    errorsAndWarnings.errors === 0 &&
-    errorsAndWarnings.warnings === 0
-  ) {
-    return {
-      message: "Validation passed successfully with no issues.",
-      messageType: "success",
-    };
-  } else if (errorsAndWarnings.errors > 0) {
-    return {
-      message: `File failed validation with ${errorsAndWarnings.errors} error(s). File cannot be uploaded.`,
-      messageType: "error",
-    };
-  } else if (errorsAndWarnings.warnings > 0) {
-    return {
-      message: `File passed validation with ${errorsAndWarnings.warnings} warning(s).`,
-      messageType: "warning",
-    };
-  }
-  return {
-    message: "Could not detemine completion status.",
-    messageType: "info",
-  };
-}
-
-/**
  * Determines the status of a pipeline step based on the number of errors and warnings.
  *
  * @param errorCount - An object containing the number of errors and warnings for the step.

@@ -9,7 +9,6 @@ import {
   ValidateSteps,
   uploadPipelineConfig,
   fetchCurrentPipelineResults,
-  constructCompletionMessage,
   PreviousUploadsModal,
   TOL_LOADER_STYLES,
   BUTTON_TIMEOUT,
@@ -25,7 +24,6 @@ import {
   DEFAULT_FILE_TYPE,
   downloadFileFromS3,
   useQueryData,
-  VALIDATION_PURPOSE,
   onSubmission,
   ValidationReport,
   getUserFromLocalStorage,
@@ -36,7 +34,6 @@ import {
   USER_SHOWN_FILE_TYPE_DEFAULTS,
   MAX_FILE_SIZE,
   DEFAULT_SHEET_NAME,
-  BASE_POLICIES_MAP,
   useValidationPolicyModule,
 } from "..";
 
@@ -44,7 +41,7 @@ import type {
   IFileData,
   IValidationConfig,
   IAllValidationData,
-  TFileValidationPurpose,
+  TFileValidationStatusPolicy,
 } from "..";
 
 export interface PFileValidationUploadAndResults {
@@ -73,11 +70,6 @@ export function FileValidationUploadAndResults(
     ...props.validationConfig,
   };
 
-  // TODO: re-enable type checking when mode toggle is re-introduced
-  // @ts-ignore
-  const [purpose, setPurpose] = useState<TFileValidationPurpose>(
-    VALIDATION_PURPOSE.VALIDATE_ONLY,
-  );
   const [currentUploadId, setCurrentUploadId] = useState<string>("");
   const [fileDropped, setFileDropped] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
@@ -89,16 +81,10 @@ export function FileValidationUploadAndResults(
   const [stepsFound, setStepsFound] = useState<boolean>(false);
   const [fileUploaded, setFileUploaded] = useState<boolean>(false);
   const [openReport, setOpenReport] = useState<boolean>(false);
-  const [pipelineFailed, setPipelineFailed] = useState<boolean>(false);
-  const [validationStatus, setValidationStatus] = useState<{
-    className: string;
-    text: string;
-  }>({
-    className: "",
-    text: "",
-  });
+  const [validationStatus, setValidationStatus] =
+    useState<TFileValidationStatusPolicy>({});
 
-  const policy = useValidationPolicyModule();
+  const { actions, policies } = useValidationPolicyModule();
 
   useEffect(() => {
     async function cleanUpValidations() {
@@ -111,15 +97,32 @@ export function FileValidationUploadAndResults(
   }, []);
 
   const fetchLatestPipelineResults = async () => {
-    const cacheBustedEndpoint = `${
-      VALIDATION_ENDPOINTS.UPLOAD
-    }?_cb=${Date.now()}`;
-    if (!currentUploadId) {
-      return null;
+    const data = await fetchCurrentPipelineResults(
+      PIPELINE_DS,
+      VALIDATION_ENDPOINTS.UPLOAD,
+      {
+        id: { eq: { value: currentUploadId } },
+      },
+    );
+
+    if (data) {
+      const status = policies[data.validationStatus];
+      setValidationStatus(status);
+      setStepsFound(data.pipelineSteps?.length > 0);
+
+      if (data.completed || status?.isFailureStatus) {
+        setValidated(true);
+        PopUpMessage({
+          type: status?.messageType,
+          message: `${status?.message}`,
+          persist: status?.isFailureStatus,
+        });
+
+        if (!status?.isFailureStatus) setOpenReport(true);
+      }
     }
-    return await fetchCurrentPipelineResults(PIPELINE_DS, cacheBustedEndpoint, {
-      id: { eq: { value: currentUploadId } },
-    });
+
+    return data;
   };
 
   const latestPipelineResults = useQueryData<IAllValidationData | null>(
@@ -147,48 +150,10 @@ export function FileValidationUploadAndResults(
         currentUploadId,
       );
       await latestPipelineResults.refetch();
-      setPipelineFailed(true);
     },
     VALIDATION_TIMEOUT_MS,
     { enabled: timeoutEnabled, startOnMount: timeoutEnabled },
   );
-
-  useEffect(() => {
-    if (latestPipelineResults.data) {
-      setStepsFound(latestPipelineResults.data.pipelineSteps?.length > 0);
-
-      if (latestPipelineResults.data.completed || pipelineFailed) {
-        setValidated(true);
-
-        // const counts = getErrorWarningCounts(
-        //   latestPipelineResults.data.validationResults,
-        // );
-
-        // const status = determineUploadStatus(
-        //   latestPipelineResults.data.completed,
-        //   counts.errors,
-        //   counts.warnings,
-        //   latestPipelineResults.data.failureMessage || null,
-        //   latestPipelineResults.data.is_ready,
-        // );
-
-        setValidationStatus(status);
-
-        const completionMessage = constructCompletionMessage(
-          latestPipelineResults.data.validationResults,
-          latestPipelineResults.data.failureMessage,
-        );
-
-        PopUpMessage({
-          type: completionMessage.messageType,
-          message: `Validation completed. ${completionMessage.message}`,
-          persist: completionMessage.messageType === "error" ? true : false,
-        });
-
-        if (!pipelineFailed) setOpenReport(true);
-      }
-    }
-  }, [latestPipelineResults.data, pipelineFailed]);
 
   const handleValidation = async (file: IFileData) => {
     PopUpMessage({
@@ -224,11 +189,6 @@ export function FileValidationUploadAndResults(
       false,
       currentUploadId,
       setFileUploaded,
-      //   () =>
-      //     setValidationStatus({
-      //       className: "marked-as-ready",
-      //       text: "Marked as Ready",
-      //     }),
     );
   };
 
@@ -271,9 +231,9 @@ export function FileValidationUploadAndResults(
                 text={"Mark As Ready"}
                 disabled={
                   !validated ||
-                  !validationStatus.text.includes("Passed") ||
+                  !validationStatus?.rename?.includes("passed") ||
                   fileUploaded ||
-                  validationStatus.text === "Marked as Ready"
+                  validationStatus?.rename === "Marked as Ready"
                 }
                 onClick={onSubmissionClick}
               />
@@ -314,24 +274,6 @@ export function FileValidationUploadAndResults(
 
   const FileUploader = (
     <div>
-      {/* <div className="tol-file-upload-uploader-container"> TODO: Re-add if we re-introduce mode toggle
-        <p>{VALIDATION_PURPOSE.VALIDATE_ONLY}</p>
-        <Toggle
-          key="validation-type-toggle"
-          checked={purpose !== VALIDATION_PURPOSE.VALIDATE_ONLY}
-          disabled={validating}
-          onChange={() => {
-            const newPurpose = getNextPurpose(purpose, submittable);
-            setPurpose(newPurpose);
-            setValidating(false);
-            PopUpMessage({
-              type: "info",
-              message: `Mode changed to ${newPurpose}`,
-            });
-          }}
-        />
-        <p>{submittable ? VALIDATE_AND_UPLOAD : VALIDATE_AND_MARK_AS_READY}</p>
-      </div> */}
       <Dropzone
         resource={""}
         dataSource={PIPELINE_DS}
@@ -358,13 +300,10 @@ export function FileValidationUploadAndResults(
         </div>
         <div className="tol-file-upload-results-viewer-content-inner-container">
           <h6
-            className={`tol-file-upload-results-viewer-content-status
-              tol-file-validation-results-status
-              ${validationStatus.className}`}
+            className="tol-file-upload-results-viewer-content-status tol-file-validation-results-status"
+            style={{ color: `${validationStatus?.textColor}` }}
           >
-            {latestPipelineResults?.data?.completed || pipelineFailed
-              ? `${validationStatus.text}`
-              : "In Progress"}
+            {validationStatus?.rename}
           </h6>
           <Button
             icon="rotate"
@@ -375,7 +314,7 @@ export function FileValidationUploadAndResults(
           />
         </div>
       </div>
-      {!latestPipelineResults ? (
+      {!latestPipelineResults.data ? (
         <div className="tol-file-upload-results-viewer-container">
           <TolLoader
             size="lg"
@@ -403,19 +342,21 @@ export function FileValidationUploadAndResults(
       header={<h3>File Validation Help</h3>}
       children={
         <>
-          <h6
-            onClick={() =>
-              downloadFileFromS3(
-                PIPELINE_DS,
-                validationConfig.s3_bucket,
-                defaultFileTemplateName,
-              )
-            }
-          >
-            You can download a template file for uploading spreadsheet files{" "}
-            <a href="#">here</a>.
-          </h6>
-          .<h6>Requirements:</h6>
+          {defaultFileTemplateName && (
+            <h6
+              onClick={() =>
+                downloadFileFromS3(
+                  PIPELINE_DS,
+                  validationConfig.s3_bucket,
+                  defaultFileTemplateName,
+                )
+              }
+            >
+              You can download a template file for uploading spreadsheet files{" "}
+              <a href="#">here</a>.
+            </h6>
+          )}
+          <h6>Requirements:</h6>
           <ul>
             {" "}
             <li>{`Max file size: ${validationConfig.maxFileSize}`}</li>
@@ -433,7 +374,7 @@ export function FileValidationUploadAndResults(
                 </tr>
               </thead>
               <tbody>
-                {Object.entries(BASE_POLICIES_MAP).map(([_, validation]) => (
+                {Object.entries(policies).map(([_, validation]) => (
                   <tr key={validation.rename}>
                     <td>
                       <strong style={{ color: `${validation.textColor}` }}>

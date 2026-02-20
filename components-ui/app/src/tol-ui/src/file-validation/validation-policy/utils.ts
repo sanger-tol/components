@@ -29,6 +29,7 @@ import type {
   TValidationContextItem,
   TFileValidationPolicyModuleOverrides,
   TFileValidationStatusPolicyMap,
+  TFileValidationStatusPolicy,
 } from "../..";
 
 /**
@@ -443,8 +444,30 @@ export function createValidationModule<TCustom extends string = never>(
   const actions = { ...baseModule.actions, ...(overrides.actions ?? {}) };
   const policies = {
     ...baseModule.policies,
-    ...(overrides.policies ?? {}),
   } as unknown as TFileValidationStatusPolicyMap<TCustom>;
+
+  // We can overwrite attributes of specific policies, or add custom policies/statuses
+  if (overrides.policies) {
+    for (const [status, override] of Object.entries(
+      overrides.policies
+    ) as Array<[TFileValidationStatus<TCustom>, Partial<TFileValidationStatusPolicy<TCustom>>]>) {
+      // get each status in policy
+      const base = policies[status]
+
+      // If base policy isn't available, it's a new policy, but must be complete, with all required attributes
+      if(!base) {
+        policies[status] = override as TFileValidationStatusPolicy<TCustom>
+      } else {
+        // Otherwise we override specific attributes of existing policies
+        policies[status] = {
+          ...base,
+          ...override,
+          // Would be best to be explicit about the status if not explicitly overridden.
+          status: override.status ?? base.status,
+        }
+      }
+    }
+  }
 
   // If allowed actions have been expanded, create a new set of allowed actions for that status
   if (overrides.extendAllowedActions) {

@@ -32,6 +32,8 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "hideItem",
       "showItem",
     ],
+    messageType: "success",
+    message: "Validation Completed. Validation has passed with no issues.",
   },
   [FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS]: {
     status: FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS,
@@ -48,6 +50,8 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "hideItem",
       "showItem",
     ],
+    messageType: "warning",
+    message: "Validation Completed. Validation has passed some warnings.",
   },
   [FILE_VALIDATION_STATUS.COMPLETED_FAILED_ERRORS]: {
     status: FILE_VALIDATION_STATUS.COMPLETED_FAILED_ERRORS,
@@ -63,6 +67,9 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "hideItem",
       "showItem",
     ],
+    messageType: "error",
+    message:
+      "Validation Completed. Validation has failed with errors. Please fix before resubmitting.",
   },
   [FILE_VALIDATION_STATUS.SYSTEM_ERROR]: {
     status: FILE_VALIDATION_STATUS.SYSTEM_ERROR,
@@ -72,6 +79,9 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
     textColor: "var(--tol-danger-light)",
     isFailureStatus: true,
     allowedActions: ["revalidate", "downloadFile", "hideItem", "showItem"],
+    messageType: "error",
+    message:
+      "Validation Could not complete. A system error has occurred. Please try again.",
   },
   [FILE_VALIDATION_STATUS.TIMEOUT]: {
     status: FILE_VALIDATION_STATUS.TIMEOUT,
@@ -81,6 +91,9 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
     textColor: "var(--tol-danger-light)",
     isFailureStatus: false,
     allowedActions: ["revalidate", "downloadFile", "hideItem", "showItem"],
+    messageType: "error",
+    message:
+      "Validation Could not complete. The system has timed out. Please try again.",
   },
   [FILE_VALIDATION_STATUS.FILE_REJECTED]: {
     status: FILE_VALIDATION_STATUS.FILE_REJECTED,
@@ -94,7 +107,8 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
   [FILE_VALIDATION_STATUS.MARKED_AS_READY]: {
     status: FILE_VALIDATION_STATUS.MARKED_AS_READY,
     rename: "Marked as Ready",
-      summary: "Manifest has been 'Marked as Ready' and will be uploaded to the next stage of sample submission.",
+    summary:
+      "Manifest has been 'Marked as Ready' and will be uploaded to the next stage of sample submission.",
     textColor: "var(--tol-success-light)",
     isFailureStatus: false,
     allowedActions: [

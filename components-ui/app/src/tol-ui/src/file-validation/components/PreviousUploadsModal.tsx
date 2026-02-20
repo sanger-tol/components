@@ -39,7 +39,8 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
   const user = getUserFromLocalStorage();
   const id = user ? user.id : null;
 
-  let andFilter = {
+  // If not showHiddenUploads, then add hidden filter, otherwise don't add
+  const andFilter = {
     user_id: { eq: { value: id } },
     ...(!showHiddenUploads && { hidden: { eq: { value: false } } }),
   };
@@ -97,7 +98,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
     >
       {userFileValidationUploads.isLoading ? (
         <TolLoader
-          size="lg"
+          size="md"
           content="Loading..."
           vertical
           styles={TOL_LOADER_STYLES}
@@ -115,7 +116,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
         </div>
       ) : userFileValidationUploads.data.length > 0 ? (
         userFileValidationUploads.data
-          // Sort newest to oldest via id
+          // Sort newest to oldest via id (might cause issues with a revalidated upload)
           .sort(
             (a: IAllValidationData, b: IAllValidationData) =>
               Number(b.id) - Number(a.id),
@@ -166,7 +167,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
           Show Hidden Uploads
         </p>
         <Toggle
-          key="passed-steps-toggle"
+          key="hidden-uploads-toggle"
           checked={showHiddenUploads}
           onChange={() => setShowHiddenUploads((prev: boolean) => !prev)}
         />
@@ -175,7 +176,6 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
         </p>
         <Toggle
           key="passed-steps-toggle"
-          defaultChecked={false}
           checked={showPassedSteps}
           onChange={() => setShowPassedSteps((prev: boolean) => !prev)}
         />

@@ -10,7 +10,7 @@ export const MAX_ERRORS_TO_DISPLAY = 2;
 export const BUTTON_TIMEOUT = 3000;
 export const WIDTH_REDUCER = 40;
 export const TOL_LOADER_STYLES = {
-  minHeight: "250px",
+  minHeight: "160px",
   flexDirection: "column" as "column",
   alignItems: "center" as "center",
   display: "flex" as "flex",

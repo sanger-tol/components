@@ -12,6 +12,7 @@ import {
   VALIDATION_TIMEOUT_MS,
   PopUpMessage,
   FILE_VALIDATION_STATUS,
+  VALIDATIONS,
 } from "../../";
 
 import { splitS3FilenameString, normaliseValidationResult } from "./utils";
@@ -261,6 +262,7 @@ export async function uploadPipelineConfig(
     spreadsheet_config: spreadsheetConfig || null,
     pipeline_id: config.pipeline_id,
     dry_run: dry_run,
+    upload_name: "whatchagonnado",
     destination: config.destination,
     upload_id: uploadId || null,
     completed: true,
@@ -434,10 +436,11 @@ export async function setValidationTimeout(
 
   const data = ids?.map((id: string) => ({
     id: id,
-    type: "upload",
+    type: VALIDATIONS.UPLOAD,
     attributes: {
       failure_message: "Validation timed out.",
       validation_status: FILE_VALIDATION_STATUS.TIMEOUT,
+      completed: true,
     },
   }));
 

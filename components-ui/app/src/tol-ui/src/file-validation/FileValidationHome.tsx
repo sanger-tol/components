@@ -261,6 +261,7 @@ export function FileValidationHome(props: PFileValidationHome) {
       <Tabs.Tab eventKey="1" title={tabTitles.titleOne}>
         <Widgets
           components={[
+            { component: intro, type: "full" },
             {
               component: (
                 <FileValidationUploadAndResults
@@ -289,7 +290,6 @@ export function FileValidationHome(props: PFileValidationHome) {
       >
         <Widgets
           components={[
-            { component: intro, type: "full" },
             {
               component: (
                 <div className="tol-file-validation-home-header-bar">

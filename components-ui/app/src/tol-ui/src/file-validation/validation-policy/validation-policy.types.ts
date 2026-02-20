@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { Dispatch, SetStateAction } from "react";
-import type { IAllValidationData, TsDataSource } from "../..";
+import type { IAllValidationData, TMessageType, TsDataSource } from "../..";
 
 // Types related to file validation policies, actions, and their contexts.
 export type TFileValidationActionId =
@@ -77,6 +77,14 @@ export type TFileValidationStatusPolicy<TCustom extends string = never> = {
    * i.e. "validation_timeout" status cannot use "markAsReady" action
    */
   allowedActions: TFileValidationActionId[];
+  /**
+   * If the status is going to show up in messages, what color should the message be?
+   */
+  messageType?: TMessageType;
+  /**
+   * If the status is going to show up in a message, what should the text of the message be?
+   */
+  message?: string;
 };
 
 // When an item is passed to an action via its context (ctx),
