@@ -84,6 +84,7 @@ export function ImageListComponent(props: PImageListComponent) {
         setOpen={setModalOpen}
         links={links}
         link={selectedLink}
+        onLinkChange={setSelectedLink}
       />
     </>
   );

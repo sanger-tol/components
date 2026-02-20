@@ -30,20 +30,24 @@ export interface PImageModalComponent {
    * Current selected image link
    */
   link: string;
+  /**
+   * Optional callback to keep parent state in sync with selected image
+   */
+  onLinkChange?: (link: string) => void;
 }
 
 export function ImageModalComponent(props: PImageModalComponent) {
-  const { open, setOpen, links, link } = props;
+  const { open, setOpen, links, link, onLinkChange } = props;
 
   return (
     <Modal
       open={open}
       setOpen={setOpen}
-      size="lg"
+      size="xl"
       className="tol-image-modal"
     >
-      <div style={{ textAlign: "center", minHeight: "400px" }}>
-        <ImageCarouselComponent links={links} link={link} height="80vh" />
+      <div style={{ textAlign: "center", minHeight: "600px" }}>
+        <ImageCarouselComponent links={links} link={link} height="85vh" onLinkChange={onLinkChange} />
       </div>
     </Modal>
   );

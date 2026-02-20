@@ -59,6 +59,21 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
     onLinkChange(links[index]);
   }, [index, links, onLinkChange]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") {
+        handlePrevious();
+      } else if (event.key === "ArrowRight") {
+        handleNext();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [links.length, index]);
+
   const showArrows = links.length > 1;
 
   const handlePrevious = () => {
