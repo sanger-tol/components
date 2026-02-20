@@ -5,15 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import { Modal } from "..";
-import { ImageCarousel } from "./ImageCarouselComponent";
+import { ImageCarouselComponent } from "./ImageCarouselComponent";
 
 /**
- * Effectively just an ImageCarousel in a modal to create a larger view on an image.
+ * Effectively just an ImageCarouselComponent in a modal to create a larger view on an image.
  * Use our Modal component.
  *
  */
 
-export interface PImageModal {
+export interface PImageModalComponent {
   /**
    * Whether the modal is open
    */
@@ -32,7 +32,7 @@ export interface PImageModal {
   link: string;
 }
 
-export function ImageModal(props: PImageModal) {
+export function ImageModalComponent(props: PImageModalComponent) {
   const { open, setOpen, links, link } = props;
 
   return (
@@ -43,7 +43,7 @@ export function ImageModal(props: PImageModal) {
       className="tol-image-modal"
     >
       <div style={{ textAlign: "center", minHeight: "400px" }}>
-        <ImageCarousel links={links} link={link} height="80vh" />
+        <ImageCarouselComponent links={links} link={link} height="80vh" />
       </div>
     </Modal>
   );

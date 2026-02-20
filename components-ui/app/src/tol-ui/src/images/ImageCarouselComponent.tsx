@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon, IHeight } from "..";
 import { ImageComponent } from "./ImageComponent";
 
@@ -16,7 +16,7 @@ import { ImageComponent } from "./ImageComponent";
  *
  */
 
-export interface PImageCarousel extends IHeight {
+export interface PImageCarouselComponent extends IHeight {
   /**
    * Array of hrefs for the images, in order
    */
@@ -29,23 +29,51 @@ export interface PImageCarousel extends IHeight {
    * If true, the default is that the image should be 100% the height of the div, but allow for filling to the width instead
    */
   fill?: boolean;
+  /**
+   * Optional callback to keep parent state in sync with selected image
+   */
+  onLinkChange?: (link: string) => void;
 }
 
-export function ImageCarousel(props: PImageCarousel) {
-  const { links, link, height, fill = false } = props;
-  
+export function ImageCarouselComponent(props: PImageCarouselComponent) {
+  const { links, link, height, fill = false, onLinkChange } = props;
+
   const currentIndex = links.indexOf(link);
-  const [index, setIndex] = useState(currentIndex >= 0 ? currentIndex : 0);
+  const [index, setIndex] = useState(() => (currentIndex >= 0 ? currentIndex : 0));
+
+  useEffect(() => {
+    if (links.length === 0) {
+      return;
+    }
+    if (currentIndex >= 0) {
+      setIndex(currentIndex);
+      return;
+    }
+    setIndex(0);
+  }, [currentIndex, links]);
+
+  useEffect(() => {
+    if (links.length === 0 || index < 0 || index >= links.length || !onLinkChange) {
+      return;
+    }
+    onLinkChange(links[index]);
+  }, [index, links, onLinkChange]);
 
   const showArrows = links.length > 1;
 
   const handlePrevious = () => {
+    if (links.length === 0) return;
     setIndex((prevIndex) => (prevIndex === 0 ? links.length - 1 : prevIndex - 1));
   };
 
   const handleNext = () => {
+    if (links.length === 0) return;
     setIndex((prevIndex) => (prevIndex === links.length - 1 ? 0 : prevIndex + 1));
   };
+
+  if (links.length === 0) {
+    return <div className="tol-image-carousel">No images available</div>;
+  }
 
   return (
     <div className="tol-image-carousel" style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", height: height || "100%" }}>

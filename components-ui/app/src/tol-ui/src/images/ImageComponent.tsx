@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { IHeight } from "..";
+import type { CSSProperties, MouseEventHandler } from "react";
 
 /**
  * A single image that has been formatted correctly.
@@ -23,13 +24,13 @@ export interface PImageComponent extends IHeight {
   /**
    * What to do when clicking the image
    */
-  onClick?: (e: any) => void;
+  onClick?: MouseEventHandler<HTMLImageElement>;
 }
 
 export function ImageComponent(props: PImageComponent) {
   const { link, height, fill = false, onClick } = props;
 
-  const imageStyle: React.CSSProperties = {
+  const imageStyle: CSSProperties = {
     height: fill ? "auto" : (height || "100%"),
     width: fill ? "100%" : "auto",
     maxWidth: "100%",

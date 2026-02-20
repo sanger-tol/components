@@ -4,8 +4,8 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ImageCarousel } from "./ImageCarouselComponent";
-
+import { useEffect, useState } from "react";
+import { ImageCarouselComponent } from "./ImageCarouselComponent";
 /**
  * Combines ImageCarousel and ImagesModal to create the main images component.
  * Create the main state pair for [link, setLink] here and pass it to both
@@ -13,7 +13,7 @@ import { ImageCarousel } from "./ImageCarouselComponent";
  * 
  */
 
-export interface PImages {
+export interface PImagesComponent {
   /**
    * Array of image links
    */
@@ -28,16 +28,32 @@ export interface PImages {
   fill?: boolean;
 }
 
-export function Images(props: PImages) {
+export function ImagesComponent(props: PImagesComponent) {
   const { links, height, fill } = props;
+  const [link, setLink] = useState(links[0] || "");
+
+  useEffect(() => {
+    if (!links || links.length === 0) {
+      setLink("");
+      return;
+    }
+    if (!links.includes(link)) {
+      setLink(links[0]);
+    }
+  }, [links, link]);
+
+  if (!links || links.length === 0) {
+    return <div className="tol-images">No images available</div>;
+  }
 
   return (
     <div className="tol-images">
-      <ImageCarousel
+      <ImageCarouselComponent
         links={links}
-        link={links[0]}
+        link={link}
         height={height}
         fill={fill}
+        onLinkChange={setLink}
       />
     </div>
   );

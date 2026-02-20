@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ImageComponent } from "./ImageComponent";
-import { ImageModal } from "./ImageModalComponent";
+import { ImageModalComponent } from "./ImageModalComponent";
 
 /**
  * Formats the images 1 after. Overflow will be auto when the list of images will
@@ -15,7 +15,7 @@ import { ImageModal } from "./ImageModalComponent";
  *
  */
 
-export interface PImageList {
+export interface PImageListComponent {
   /**
    * Array of image links
    */
@@ -26,10 +26,25 @@ export interface PImageList {
   height?: any;
 }
 
-export function ImageList(props: PImageList) {
+export function ImageListComponent(props: PImageListComponent) {
   const { links, height = "150px" } = props;
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLink, setSelectedLink] = useState(links[0] || "");
+
+  useEffect(() => {
+    if (!links || links.length === 0) {
+      setSelectedLink("");
+      setModalOpen(false);
+      return;
+    }
+    if (!links.includes(selectedLink)) {
+      setSelectedLink(links[0]);
+    }
+  }, [links, selectedLink]);
+
+  if (!links || links.length === 0) {
+    return <div className="tol-image-list">No images available</div>;
+  }
 
   const handleImageClick = (link: string) => {
     setSelectedLink(link);
@@ -64,7 +79,7 @@ export function ImageList(props: PImageList) {
           </div>
         ))}
       </div>
-      <ImageModal
+      <ImageModalComponent
         open={modalOpen}
         setOpen={setModalOpen}
         links={links}
