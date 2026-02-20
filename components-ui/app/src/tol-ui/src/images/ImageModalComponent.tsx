@@ -45,8 +45,33 @@ export function ImageModalComponent(props: PImageModalComponent) {
       setOpen={setOpen}
       size="xl"
       className="tol-image-modal"
+      closeButton={false}
     >
-      <div style={{ textAlign: "center", minHeight: "600px" }}>
+      <div style={{ position: "relative", textAlign: "center", minHeight: "600px" }}>
+        <button
+          onClick={() => setOpen(false)}
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            background: "rgba(0, 0, 0, 0.5)",
+            color: "white",
+            border: "none",
+            borderRadius: "50%",
+            width: "40px",
+            height: "40px",
+            fontSize: "24px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: 0,
+          }}
+          aria-label="Close"
+        >
+          ×
+        </button>
         <ImageCarouselComponent links={links} link={link} height="85vh" onLinkChange={onLinkChange} />
       </div>
     </Modal>

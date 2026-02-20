@@ -24,10 +24,14 @@ export interface PImageListComponent {
    * Height for the images
    */
   height?: any;
+  /**
+   * If true, clicking an image will open it in a larger modal view with navigation. Default is true.
+   */
+  enableModal?: boolean;
 }
 
 export function ImageListComponent(props: PImageListComponent) {
-  const { links, height = "150px" } = props;
+  const { links, height = "150px", enableModal = true } = props;
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLink, setSelectedLink] = useState(links[0] || "");
 
@@ -47,8 +51,10 @@ export function ImageListComponent(props: PImageListComponent) {
   }
 
   const handleImageClick = (link: string) => {
-    setSelectedLink(link);
-    setModalOpen(true);
+    if (enableModal) {
+      setSelectedLink(link);
+      setModalOpen(true);
+    }
   };
 
   return (
@@ -68,24 +74,26 @@ export function ImageListComponent(props: PImageListComponent) {
             style={{
               flexShrink: 0,
               height: height,
-              cursor: "pointer",
+              cursor: enableModal ? "pointer" : "default",
             }}
           >
             <ImageComponent
               link={link}
               height={height}
-              onClick={() => handleImageClick(link)}
+              onClick={enableModal ? () => handleImageClick(link) : undefined}
             />
           </div>
         ))}
       </div>
-      <ImageModalComponent
-        open={modalOpen}
-        setOpen={setModalOpen}
-        links={links}
-        link={selectedLink}
-        onLinkChange={setSelectedLink}
-      />
+      {enableModal && (
+        <ImageModalComponent
+          open={modalOpen}
+          setOpen={setModalOpen}
+          links={links}
+          link={selectedLink}
+          onLinkChange={setSelectedLink}
+        />
+      )}
     </>
   );
 }
