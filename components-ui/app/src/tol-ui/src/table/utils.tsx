@@ -349,7 +349,7 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
   copyToClipboard(copyList);
 }
 
-function addFieldsFromTemplateProp(requestedFields: Set<string>, value: unknown, fieldName: string) {
+function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, fieldName: string) {
   if (typeof value !== "string" || !value.includes("${")) return;
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
@@ -389,7 +389,7 @@ export function amalgamateRequestedFields(fieldMeta: FieldMeta): string[] {
     const props = cellRenderer?.props || {};
 
     Object.values(props).forEach((value) => {
-      addFieldsFromTemplateProp(requestedFields, value, fieldName);
+      addFieldsFromStringProp(requestedFields, value, fieldName);
       addFieldsFromFilterProp(requestedFields, value);
     });
   });
