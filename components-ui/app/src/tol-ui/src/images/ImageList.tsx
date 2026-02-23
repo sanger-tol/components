@@ -84,7 +84,7 @@ export function ImageListComponent(props: PImageListComponent) {
           background: transparent;
         }
         .tol-image-list::-webkit-scrollbar-thumb {
-          background: ç;
+          background: var(--tol-grey-light);
           border-radius: 4px;
         }
         .tol-image-list::-webkit-scrollbar-thumb:hover {
