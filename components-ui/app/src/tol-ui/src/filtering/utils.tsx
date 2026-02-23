@@ -108,6 +108,7 @@ export function generateFilter(
   zone: IZone,
   id?: string,
   includeSubFilter?: boolean,
+  ignoredAttributes: string[] = [],
 ) {
   if (zone === undefined) return undefined;
   const z = zone as IZone;
@@ -132,6 +133,13 @@ export function generateFilter(
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
   removeSuperfluousExists(compoundedFilter);
+  if (ignoredAttributes.length > 0) {
+    ignoredAttributes.forEach((attribute) => {
+      if (attribute in compoundedFilter) {
+        delete compoundedFilter[attribute];
+      }
+    });
+  }
   // TODO: update when api supports upsert with empty objects
   // return (isEmptyObject(compoundedFilter)) ? {} : { and_: compoundedFilter } as IFilter;
   return {
