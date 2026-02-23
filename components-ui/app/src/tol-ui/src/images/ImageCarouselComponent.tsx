@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Icon, IHeight } from "..";
 import { ImageComponent } from "./ImageComponent";
 
@@ -32,15 +32,23 @@ export interface PImageCarouselComponent extends IHeight {
   /**
    * Optional callback to keep parent state in sync with selected image
    */
-  onLinkChange?: (link: string) => void;
+  setLink?: (link: string) => void;
   /**
    * Optional callback when the image itself is clicked
    */
   onImageClick?: (link: string) => void;
+  /**
+   * Optional className to apply to the carousel container
+   */
+  className?: string;
+  /**
+   * Optional style overrides for the carousel container
+   */
+  style?: React.CSSProperties;
 }
 
 export function ImageCarouselComponent(props: PImageCarouselComponent) {
-  const { links, link, height, fill = false, onLinkChange, onImageClick } = props;
+  const { links, link, height, fill = false, setLink, onImageClick, className, style } = props;
 
   const currentIndex = links.indexOf(link);
   const [index, setIndex] = useState(() => (currentIndex >= 0 ? currentIndex : 0));
@@ -57,11 +65,11 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
   }, [currentIndex, links]);
 
   useEffect(() => {
-    if (links.length === 0 || index < 0 || index >= links.length || !onLinkChange) {
+    if (links.length === 0 || index < 0 || index >= links.length || !setLink) {
       return;
     }
-    onLinkChange(links[index]);
-  }, [index, links, onLinkChange]);
+    setLink(links[index]);
+  }, [index, links, setLink]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -93,7 +101,7 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
   const handleImageClick = () => {
     if (links.length === 0) return;
     const selected = links[index];
-    if (onLinkChange) onLinkChange(selected);
+    if (setLink) setLink(selected);
     if (onImageClick) onImageClick(selected);
   };
 
@@ -101,8 +109,20 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
     return <div className="tol-image-carousel">No images available</div>;
   }
 
+  const containerStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    height: height || "100%",
+    ...style,
+  };
+
   return (
-    <div className="tol-image-carousel" style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", height: height || "100%" }}>
+    <div
+      className={`tol-image-carousel tol-component-content${className ? ` ${className}` : ""}`}
+      style={containerStyle}
+    >
       {showArrows && (
         <Icon
           icon="caret-left"

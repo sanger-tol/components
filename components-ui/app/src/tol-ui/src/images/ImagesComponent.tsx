@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
-import { ImageCarouselComponent } from "./ImageCarouselComponent";
-import { ImageModalComponent } from "./ImageModalComponent";
+import React, { useEffect, useState } from "react";
+import { ImageCarouselComponent, PImageCarouselComponent } from "./ImageCarouselComponent";
+import { ImagesModalComponent } from "./ImagesModalComponent";
 /**
  * Combines ImageCarousel and ImagesModal to create the main images component.
  * Create the main state pair for [link, setLink] here and pass it to both
@@ -14,27 +14,23 @@ import { ImageModalComponent } from "./ImageModalComponent";
  * 
  */
 
-export interface PImagesComponent {
-  /**
-   * Array of image links
-   */
-  links: string[];
-  /**
-   * Height for the carousel
-   */
-  height?: any;
-  /**
-   * Fill option for images
-   */
-  fill?: boolean;
+export interface PImagesComponent extends Omit<PImageCarouselComponent, "link" | "setLink" | "onImageClick"> {
   /**
    * If true, clicking an image will open it in a larger modal view. Default is true.
    */
   enableModal?: boolean;
+  /**
+   * Optional className for the component wrapper
+   */
+  className?: string;
+  /**
+   * Optional style overrides for the component wrapper
+   */
+  style?: React.CSSProperties;
 }
 
 export function ImagesComponent(props: PImagesComponent) {
-  const { links, height, fill, enableModal = true } = props;
+  const { links, height, fill, enableModal = true, className, style } = props;
   const [link, setLink] = useState(links[0] || "");
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -53,25 +49,25 @@ export function ImagesComponent(props: PImagesComponent) {
   }
 
   return (
-    <div className="tol-images">
+    <div className={`tol-images${className ? ` ${className}` : ""}`} style={style}>
       <ImageCarouselComponent
         links={links}
         link={link}
         height={height}
         fill={fill}
-        onLinkChange={setLink}
+        setLink={setLink}
         onImageClick={enableModal ? (selected) => {
           setLink(selected);
           setModalOpen(true);
         } : undefined}
       />
       {enableModal && (
-        <ImageModalComponent
+        <ImagesModalComponent
           open={modalOpen}
           setOpen={setModalOpen}
           links={links}
           link={link}
-          onLinkChange={setLink}
+          setLink={setLink}
         />
       )}
     </div>

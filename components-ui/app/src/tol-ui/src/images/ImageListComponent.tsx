@@ -4,9 +4,10 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ImageComponent } from "./ImageComponent";
-import { ImageModalComponent } from "./ImageModalComponent";
+import type { PImageCarouselComponent } from "./ImageCarouselComponent";
+import { ImagesModalComponent } from "./ImagesModalComponent";
 
 /**
  * Formats the images 1 after. Overflow will be auto when the list of images will
@@ -15,27 +16,19 @@ import { ImageModalComponent } from "./ImageModalComponent";
  *
  */
 
-export interface PImageListComponent {
-  /**
-   * Array of image links
-   */
-  links: string[];
-  /**
-   * Height for the images
-   */
-  height?: any;
-  /**
-   * If true, the default is that the image should be 100% the height of the div, but allow for filling to the width instead
-   */
-  fill?: boolean;
-  /**
-   * Current selected image link
-   */
-  link?: string;
+export interface PImageListComponent extends Omit<PImageCarouselComponent, "onImageClick"> {
   /**
    * Optional callback to keep parent state in sync with selected image
    */
-  onLinkChange?: (link: string) => void;
+  setLink: (link: string) => void;
+  /**
+   * Optional className for the list container
+   */
+  className?: string;
+  /**
+   * Optional style overrides for the list container
+   */
+  style?: React.CSSProperties;
   /**
    * If true, clicking an image will open it in a larger modal view with navigation. Default is true.
    */
@@ -43,30 +36,19 @@ export interface PImageListComponent {
 }
 
 export function ImageListComponent(props: PImageListComponent) {
-  const { links, height = "150px", fill = false, link, onLinkChange, enableModal = true } = props;
+  const { links, height = "150px", fill = false, link, setLink, enableModal = true, className, style } = props;
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedLink, setSelectedLink] = useState(links[0] || "");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const isControlled = typeof onLinkChange === "function";
-  const activeLink = isControlled ? (link || "") : selectedLink;
 
   useEffect(() => {
     if (!links || links.length === 0) {
-      if (!isControlled) setSelectedLink("");
       setModalOpen(false);
       return;
     }
     const nextLink = links[0];
-    if (isControlled) {
-      if (activeLink && links.includes(activeLink)) return;
-      onLinkChange?.(nextLink);
-      return;
-    }
-    if (!links.includes(selectedLink)) {
-      setSelectedLink(nextLink);
-    }
-  }, [links, selectedLink, activeLink, isControlled, onLinkChange]);
+    if (link && links.includes(link)) return;
+    setLink(nextLink);
+  }, [links, link, setLink]);
 
   // Add mouse wheel horizontal scrolling
   useEffect(() => {
@@ -90,11 +72,7 @@ export function ImageListComponent(props: PImageListComponent) {
 
   const handleImageClick = (link: string) => {
     if (enableModal) {
-      if (isControlled) {
-        onLinkChange?.(link);
-      } else {
-        setSelectedLink(link);
-      }
+      setLink(link);
       setModalOpen(true);
     }
   };
@@ -118,13 +96,14 @@ export function ImageListComponent(props: PImageListComponent) {
       `}</style>
       <div
         ref={scrollContainerRef}
-        className="tol-image-list"
+        className={`tol-image-list${className ? ` ${className}` : ""}`}
         style={{
           display: "flex",
           overflowX: "auto",
           gap: "10px",
           padding: "10px 0",
           background: "transparent",
+          ...style,
         }}
       >
         {links.map((link, index) => (
@@ -146,12 +125,12 @@ export function ImageListComponent(props: PImageListComponent) {
         ))}
       </div>
       {enableModal && (
-        <ImageModalComponent
+        <ImagesModalComponent
           open={modalOpen}
           setOpen={setModalOpen}
           links={links}
-          link={activeLink}
-          onLinkChange={isControlled ? onLinkChange : setSelectedLink}
+          link={link}
+          setLink={setLink}
         />
       )}
     </>

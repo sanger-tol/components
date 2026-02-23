@@ -4,10 +4,10 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { IHeight } from "..";
-import type { CSSProperties, MouseEventHandler } from "react";
-import { ImageModalComponent } from "./ImageModalComponent";
+import type { MouseEventHandler } from "react";
+import { ImagesModalComponent } from "./ImagesModalComponent";
 
 /**
  * A single image that has been formatted correctly.
@@ -31,13 +31,21 @@ export interface PImageComponent extends IHeight {
    * If true, clicking the image will open it in a larger modal view
    */
   enableModal?: boolean;
+  /**
+   * Optional className to apply to the image
+   */
+  className?: string;
+  /**
+   * Optional style overrides for the image
+   */
+  style?: React.CSSProperties;
 }
 
 export function ImageComponent(props: PImageComponent) {
-  const { link, height, fill = false, onClick, enableModal = false } = props;
+  const { link, height, fill = false, onClick, enableModal = false, className, style } = props;
   const [modalOpen, setModalOpen] = useState(false);
 
-  const imageStyle: CSSProperties = {
+  const imageStyle: React.CSSProperties = {
     height: fill ? "auto" : (height || "100%"),
     width: fill ? "100%" : "auto",
     maxWidth: "100%",
@@ -59,13 +67,13 @@ export function ImageComponent(props: PImageComponent) {
     <>
       <img
         src={link}
-        style={imageStyle}
+        style={{ ...imageStyle, ...style }}
         onClick={handleClick}
         alt="Image"
-        className="tol-image"
+        className={`tol-image tol-component-content${className ? ` ${className}` : ""}`}
       />
       {enableModal && (
-        <ImageModalComponent
+        <ImagesModalComponent
           open={modalOpen}
           setOpen={setModalOpen}
           links={[link]}

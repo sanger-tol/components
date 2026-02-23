@@ -7,6 +7,6 @@ SPDX-License-Identifier: MIT
 export * from "./ImageComponent";
 export * from "./ImageCarouselComponent";
 export * from "./ImagesComponent";
-export * from "./ImageModalComponent";
+export * from "./ImagesModalComponent";
 export * from "./ImageListComponent";
 export * from "./utils";

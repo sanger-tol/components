@@ -4,8 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import React from "react";
 import { Modal } from "..";
-import { ImageCarouselComponent } from "./ImageCarouselComponent";
+import { ImageCarouselComponent, PImageCarouselComponent } from "./ImageCarouselComponent";
 
 /**
  * Effectively just an ImageCarouselComponent in a modal to create a larger view on an image.
@@ -13,7 +14,7 @@ import { ImageCarouselComponent } from "./ImageCarouselComponent";
  *
  */
 
-export interface PImageModalComponent {
+export interface PImagesModalComponent extends PImageCarouselComponent {
   /**
    * Whether the modal is open
    */
@@ -23,31 +24,42 @@ export interface PImageModalComponent {
    */
   setOpen: (open: boolean) => void;
   /**
-   * Array of image links
+   * Optional modal size (passed to Modal)
    */
-  links: string[];
+  modalSize?: string;
   /**
-   * Current selected image link
+   * Optional className for the modal
    */
-  link: string;
+  modalClassName?: string;
   /**
-   * Optional callback to keep parent state in sync with selected image
+   * Optional style overrides for the modal content wrapper
    */
-  onLinkChange?: (link: string) => void;
+  contentStyle?: React.CSSProperties;
 }
 
-export function ImageModalComponent(props: PImageModalComponent) {
-  const { open, setOpen, links, link, onLinkChange } = props;
+export function ImagesModalComponent(props: PImagesModalComponent) {
+  const {
+    open,
+    setOpen,
+    links,
+    link,
+    setLink,
+    height = "85vh",
+    fill,
+    modalSize = "xl",
+    modalClassName,
+    contentStyle,
+  } = props;
 
   return (
     <Modal
       open={open}
       setOpen={setOpen}
-      size="xl"
-      className="tol-image-modal"
+      size={modalSize}
+      className={`tol-image-modal${modalClassName ? ` ${modalClassName}` : ""}`}
       closeButton={false}
     >
-      <div style={{ position: "relative", textAlign: "center", minHeight: "600px" }}>
+      <div style={{ position: "relative", textAlign: "center", minHeight: "600px", ...contentStyle }}>
         <button
           onClick={() => setOpen(false)}
           style={{
@@ -72,7 +84,7 @@ export function ImageModalComponent(props: PImageModalComponent) {
         >
           ×
         </button>
-        <ImageCarouselComponent links={links} link={link} height="85vh" onLinkChange={onLinkChange} />
+        <ImageCarouselComponent links={links} link={link} height={height} fill={fill} setLink={setLink} />
       </div>
     </Modal>
   );
