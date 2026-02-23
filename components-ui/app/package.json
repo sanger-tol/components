@@ -31,7 +31,8 @@
     "rsuite": "5.75.0"
   },
   "resolutions": {
-    "styled-components": "~6.1.0"
+    "styled-components": "~6.1.0",
+    "filelist": "1.0.4"
   },
   "scripts": {
     "start": "vite",
