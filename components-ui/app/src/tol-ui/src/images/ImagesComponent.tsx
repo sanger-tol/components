@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { ImageCarouselComponent } from "./ImageCarouselComponent";
+import { ImageModalComponent } from "./ImageModalComponent";
 /**
  * Combines ImageCarousel and ImagesModal to create the main images component.
  * Create the main state pair for [link, setLink] here and pass it to both
@@ -26,11 +27,16 @@ export interface PImagesComponent {
    * Fill option for images
    */
   fill?: boolean;
+  /**
+   * If true, clicking an image will open it in a larger modal view. Default is true.
+   */
+  enableModal?: boolean;
 }
 
 export function ImagesComponent(props: PImagesComponent) {
-  const { links, height, fill } = props;
+  const { links, height, fill, enableModal = true } = props;
   const [link, setLink] = useState(links[0] || "");
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     if (!links || links.length === 0) {
@@ -54,7 +60,20 @@ export function ImagesComponent(props: PImagesComponent) {
         height={height}
         fill={fill}
         onLinkChange={setLink}
+        onImageClick={enableModal ? (selected) => {
+          setLink(selected);
+          setModalOpen(true);
+        } : undefined}
       />
+      {enableModal && (
+        <ImageModalComponent
+          open={modalOpen}
+          setOpen={setModalOpen}
+          links={links}
+          link={link}
+          onLinkChange={setLink}
+        />
+      )}
     </div>
   );
 }

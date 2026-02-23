@@ -33,10 +33,14 @@ export interface PImageCarouselComponent extends IHeight {
    * Optional callback to keep parent state in sync with selected image
    */
   onLinkChange?: (link: string) => void;
+  /**
+   * Optional callback when the image itself is clicked
+   */
+  onImageClick?: (link: string) => void;
 }
 
 export function ImageCarouselComponent(props: PImageCarouselComponent) {
-  const { links, link, height, fill = false, onLinkChange } = props;
+  const { links, link, height, fill = false, onLinkChange, onImageClick } = props;
 
   const currentIndex = links.indexOf(link);
   const [index, setIndex] = useState(() => (currentIndex >= 0 ? currentIndex : 0));
@@ -86,6 +90,13 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
     setIndex((prevIndex) => (prevIndex === links.length - 1 ? 0 : prevIndex + 1));
   };
 
+  const handleImageClick = () => {
+    if (links.length === 0) return;
+    const selected = links[index];
+    if (onLinkChange) onLinkChange(selected);
+    if (onImageClick) onImageClick(selected);
+  };
+
   if (links.length === 0) {
     return <div className="tol-image-carousel">No images available</div>;
   }
@@ -101,7 +112,7 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
         />
       )}
       <div style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <ImageComponent link={links[index]} height={height} fill={fill} />
+        <ImageComponent link={links[index]} height={height} fill={fill} onClick={handleImageClick} />
       </div>
       {showArrows && (
         <Icon

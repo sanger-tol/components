@@ -25,27 +25,48 @@ export interface PImageListComponent {
    */
   height?: any;
   /**
+   * If true, the default is that the image should be 100% the height of the div, but allow for filling to the width instead
+   */
+  fill?: boolean;
+  /**
+   * Current selected image link
+   */
+  link?: string;
+  /**
+   * Optional callback to keep parent state in sync with selected image
+   */
+  onLinkChange?: (link: string) => void;
+  /**
    * If true, clicking an image will open it in a larger modal view with navigation. Default is true.
    */
   enableModal?: boolean;
 }
 
 export function ImageListComponent(props: PImageListComponent) {
-  const { links, height = "150px", enableModal = true } = props;
+  const { links, height = "150px", fill = false, link, onLinkChange, enableModal = true } = props;
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLink, setSelectedLink] = useState(links[0] || "");
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
+  const isControlled = typeof onLinkChange === "function";
+  const activeLink = isControlled ? (link || "") : selectedLink;
+
   useEffect(() => {
     if (!links || links.length === 0) {
-      setSelectedLink("");
+      if (!isControlled) setSelectedLink("");
       setModalOpen(false);
       return;
     }
-    if (!links.includes(selectedLink)) {
-      setSelectedLink(links[0]);
+    const nextLink = links[0];
+    if (isControlled) {
+      if (activeLink && links.includes(activeLink)) return;
+      onLinkChange?.(nextLink);
+      return;
     }
-  }, [links, selectedLink]);
+    if (!links.includes(selectedLink)) {
+      setSelectedLink(nextLink);
+    }
+  }, [links, selectedLink, activeLink, isControlled, onLinkChange]);
 
   // Add mouse wheel horizontal scrolling
   useEffect(() => {
@@ -69,7 +90,11 @@ export function ImageListComponent(props: PImageListComponent) {
 
   const handleImageClick = (link: string) => {
     if (enableModal) {
-      setSelectedLink(link);
+      if (isControlled) {
+        onLinkChange?.(link);
+      } else {
+        setSelectedLink(link);
+      }
       setModalOpen(true);
     }
   };
@@ -114,6 +139,7 @@ export function ImageListComponent(props: PImageListComponent) {
             <ImageComponent
               link={link}
               height={height}
+              fill={fill}
               onClick={enableModal ? () => handleImageClick(link) : undefined}
             />
           </div>
@@ -124,8 +150,8 @@ export function ImageListComponent(props: PImageListComponent) {
           open={modalOpen}
           setOpen={setModalOpen}
           links={links}
-          link={selectedLink}
-          onLinkChange={setSelectedLink}
+          link={activeLink}
+          onLinkChange={isControlled ? onLinkChange : setSelectedLink}
         />
       )}
     </>
