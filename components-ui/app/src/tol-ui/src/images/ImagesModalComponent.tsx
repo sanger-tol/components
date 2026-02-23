@@ -35,6 +35,18 @@ export interface PImagesModalComponent extends PImageCarouselComponent {
    * Optional style overrides for the modal content wrapper
    */
   contentStyle?: React.CSSProperties;
+  /**
+   * Optional className for the close button
+   */
+  closeButtonClassName?: string;
+  /**
+   * Optional style overrides for the close button
+   */
+  closeButtonStyle?: React.CSSProperties;
+  /**
+   * Optional content for the close button
+   */
+  closeButtonContent?: React.ReactNode;
 }
 
 export function ImagesModalComponent(props: PImagesModalComponent) {
@@ -49,6 +61,9 @@ export function ImagesModalComponent(props: PImagesModalComponent) {
     modalSize = "xl",
     modalClassName,
     contentStyle,
+    closeButtonClassName,
+    closeButtonStyle,
+    closeButtonContent,
   } = props;
 
   return (
@@ -79,10 +94,12 @@ export function ImagesModalComponent(props: PImagesModalComponent) {
             justifyContent: "center",
             zIndex: 1000,
             padding: 0,
+            ...closeButtonStyle,
           }}
+          className={closeButtonClassName}
           aria-label="Close"
         >
-          ×
+          {closeButtonContent ?? "×"}
         </button>
         <ImageCarouselComponent links={links} link={link} height={height} fill={fill} setLink={setLink} />
       </div>

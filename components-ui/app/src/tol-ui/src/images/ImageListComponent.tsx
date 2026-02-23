@@ -30,13 +30,42 @@ export interface PImageListComponent extends Omit<PImageCarouselComponent, "onIm
    */
   style?: React.CSSProperties;
   /**
+   * Optional scrollbar height (e.g. "6px")
+   */
+  scrollbarHeight?: string;
+  /**
+   * Optional scrollbar track color
+   */
+  scrollbarTrackColor?: string;
+  /**
+   * Optional scrollbar thumb color
+   */
+  scrollbarThumbColor?: string;
+  /**
+   * Optional scrollbar thumb hover color
+   */
+  scrollbarThumbHoverColor?: string;
+  /**
    * If true, clicking an image will open it in a larger modal view with navigation. Default is true.
    */
   enableModal?: boolean;
 }
 
 export function ImageListComponent(props: PImageListComponent) {
-  const { links, height = "150px", fill = false, link, setLink, enableModal = true, className, style } = props;
+  const {
+    links,
+    height = "150px",
+    fill = false,
+    link,
+    setLink,
+    enableModal = true,
+    className,
+    style,
+    scrollbarHeight = "6px",
+    scrollbarTrackColor = "transparent",
+    scrollbarThumbColor = "var(--tol-grey-light)",
+    scrollbarThumbHoverColor = "var(--tol-grey)",
+  } = props;
   const [modalOpen, setModalOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -81,17 +110,17 @@ export function ImageListComponent(props: PImageListComponent) {
     <>
       <style>{`
         .tol-image-list::-webkit-scrollbar {
-          height: 6px;
+          height: var(--tol-image-list-scrollbar-height, 6px);
         }
         .tol-image-list::-webkit-scrollbar-track {
-          background: transparent;
+          background: var(--tol-image-list-scrollbar-track, transparent);
         }
         .tol-image-list::-webkit-scrollbar-thumb {
-          background: var(--tol-grey-light);
+          background: var(--tol-image-list-scrollbar-thumb, var(--tol-grey-light));
           border-radius: 4px;
         }
         .tol-image-list::-webkit-scrollbar-thumb:hover {
-          background: var(--tol-grey);
+          background: var(--tol-image-list-scrollbar-thumb-hover, var(--tol-grey));
         }
       `}</style>
       <div
@@ -103,6 +132,10 @@ export function ImageListComponent(props: PImageListComponent) {
           gap: "10px",
           padding: "10px 0",
           background: "transparent",
+          ["--tol-image-list-scrollbar-height" as string]: scrollbarHeight,
+          ["--tol-image-list-scrollbar-track" as string]: scrollbarTrackColor,
+          ["--tol-image-list-scrollbar-thumb" as string]: scrollbarThumbColor,
+          ["--tol-image-list-scrollbar-thumb-hover" as string]: scrollbarThumbHoverColor,
           ...style,
         }}
       >
