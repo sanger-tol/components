@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ImageComponent } from "./ImageComponent";
 import { ImageModalComponent } from "./ImageModalComponent";
 
@@ -34,6 +34,7 @@ export function ImageListComponent(props: PImageListComponent) {
   const { links, height = "150px", enableModal = true } = props;
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLink, setSelectedLink] = useState(links[0] || "");
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!links || links.length === 0) {
@@ -45,6 +46,22 @@ export function ImageListComponent(props: PImageListComponent) {
       setSelectedLink(links[0]);
     }
   }, [links, selectedLink]);
+
+  // Add mouse wheel horizontal scrolling
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        scrollContainer.scrollLeft += e.deltaY;
+      }
+    };
+
+    scrollContainer.addEventListener("wheel", handleWheel, { passive: false });
+    return () => scrollContainer.removeEventListener("wheel", handleWheel);
+  }, []);
 
   if (!links || links.length === 0) {
     return <div className="tol-image-list">No images available</div>;
@@ -59,13 +76,30 @@ export function ImageListComponent(props: PImageListComponent) {
 
   return (
     <>
+      <style>{`
+        .tol-image-list::-webkit-scrollbar {
+          height: 6px;
+        }
+        .tol-image-list::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .tol-image-list::-webkit-scrollbar-thumb {
+          background: ç;
+          border-radius: 4px;
+        }
+        .tol-image-list::-webkit-scrollbar-thumb:hover {
+          background: var(--tol-grey);
+        }
+      `}</style>
       <div
+        ref={scrollContainerRef}
         className="tol-image-list"
         style={{
           display: "flex",
           overflowX: "auto",
           gap: "10px",
           padding: "10px 0",
+          background: "transparent",
         }}
       >
         {links.map((link, index) => (

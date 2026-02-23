@@ -9,7 +9,7 @@ import { ImageCarouselComponent } from "./ImageCarouselComponent";
 
 /**
  * Effectively just an ImageCarouselComponent in a modal to create a larger view on an image.
- * Use our Modal component.
+ * Uses our Modal component.
  *
  */
 
@@ -54,8 +54,8 @@ export function ImageModalComponent(props: PImageModalComponent) {
             position: "absolute",
             top: "10px",
             right: "10px",
-            background: "rgba(0, 0, 0, 0.5)",
-            color: "white",
+            background: "var(--tol-grey)",
+            color: "var(--tol-light)",
             border: "none",
             borderRadius: "50%",
             width: "40px",

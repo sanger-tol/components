@@ -18,7 +18,7 @@ import { ImageComponent } from "./ImageComponent";
 
 export interface PImageCarouselComponent extends IHeight {
   /**
-   * Array of hrefs for the images, in order
+   * Array of hrefs for the images
    */
   links: string[];
   /**
