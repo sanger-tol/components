@@ -25,7 +25,6 @@ export function addRemoteActions(
   actions: (string | IDropdownButtonConfig)[] = [],
 ) {
   const runAction = async (actionName: string, ids: string[]) => {
-    console.log(ids);
     setLoading(true);
     const formattedIds = 
       ids.map((item: any) => item.key);
