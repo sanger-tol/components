@@ -477,6 +477,7 @@ export async function submitFile(
     PIPELINE_DS,
     validationConfig,
     fileList[0],
+    fileList[0].name,
     true,
     currentUploadId ?? undefined,
   )

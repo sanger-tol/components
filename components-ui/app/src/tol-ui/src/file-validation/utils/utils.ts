@@ -505,7 +505,7 @@ export const createValidationActions = (
  */
 
 export function createPageActions(
-  uploadStatus: TFileValidationStatusPolicy | null,
+  uploadStatus: TFileValidationStatusPolicy | undefined,
   actionContext: TValidationActionContext | null,
   allActions: TFileValidationActionMap,
   setCurrentActionId: Dispatch<SetStateAction<string | null>>,

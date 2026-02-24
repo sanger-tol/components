@@ -22,24 +22,27 @@ export function addRemoteActions(
   setLoading: (loading: boolean) => void,
   idsWithReqNotMet: object,
   completeAction: (actionName: string, ids: string[]) => Promise<void>,
-  actions: (string | IDropdownButtonConfig)[] = []
+  actions: (string | IDropdownButtonConfig)[] = [],
 ) {
   const runAction = async (actionName: string, ids: string[]) => {
+    console.log(ids);
     setLoading(true);
+    const formattedIds = 
+      ids.map((item: any) => item.key);
     try {
       setCurrentActionName(actionName);
       const itemRequirements = await checkActionHasExportCriteria(actionName);
 
       if (Object.keys(itemRequirements).length === 0) {
-        await completeAction(actionName, ids);
+        await completeAction(actionName, formattedIds);
       } else {
         PopUpMessage({
           type: "warning",
           message: "Checking export items meet criteria...",
         });
         const allItemsMeetCriteria = await checkIdsMeetCriteria(
-          ids,
-          itemRequirements
+          formattedIds,
+          itemRequirements,
         );
         if (!allItemsMeetCriteria) {
           PopUpMessage({
@@ -53,7 +56,7 @@ export function addRemoteActions(
             type: "success",
             message: "All items meet criteria. Exporting...",
           });
-          await completeAction(actionName, ids).then(() => {
+          await completeAction(actionName, formattedIds).then(() => {
             PopUpMessage({
               type: "success",
               message: `Action "${actionName}" completed successfully.`,
@@ -73,7 +76,7 @@ export function addRemoteActions(
   };
 
   const checkActionHasExportCriteria = async (
-    actionName: string
+    actionName: string,
   ): Promise<object> => {
     try {
       const res = await actionDataSource.custom({
@@ -94,7 +97,7 @@ export function addRemoteActions(
     } catch (error) {
       console.error(
         "Error fetching data for checking action requirements",
-        error
+        error,
       );
       setLoading(false);
       return {};
@@ -103,7 +106,7 @@ export function addRemoteActions(
 
   const checkIdsMeetCriteria = async (
     ids: string[],
-    itemRequirements: any
+    itemRequirements: any,
   ): Promise<boolean> => {
     try {
       const failedRequirementsMap: Record<string, string[]> = {};
@@ -129,20 +132,19 @@ export function addRemoteActions(
           // @ts-ignore
           const data = res.data.data;
           const failedIds = ids.filter(
-            (id) => !data.map((item: any) => item.id).includes(id)
+            (id) => !data.map((item: any) => item.id).includes(id),
           );
 
           if (failedIds.length > 0) {
             failedRequirementsMap[field] = failedIds;
           }
-        }
-
+        },
       );
 
       await Promise.all(requests);
 
       const allFailingIds = Array.from(
-        new Set(Object.values(failedRequirementsMap).flat())
+        new Set(Object.values(failedRequirementsMap).flat()),
       );
 
       if (allFailingIds.length === 0) {
@@ -158,7 +160,7 @@ export function addRemoteActions(
     } catch (error) {
       console.error(
         "Error fetching data for checking action requirements",
-        error
+        error,
       );
       setLoading(false);
       return false;
@@ -173,7 +175,7 @@ export function addRemoteActions(
   };
 
   const convertAction = (
-    action: string | IDropdownButtonConfig
+    action: string | IDropdownButtonConfig,
   ): IDropdownButtonConfig => {
     return typeof action === "string" ? convertStringAction(action) : action;
   };

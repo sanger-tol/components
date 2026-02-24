@@ -92,7 +92,7 @@ export function FileValidationUploadAndResults(
   const [uploadName, setUploadName] = useState<string>("");
   const [buttonLoading, setButtonLoading] = useState<boolean>(false);
   const [validationStatus, setValidationStatus] =
-    useState<TFileValidationStatusPolicy | null>(null);
+    useState<TFileValidationStatusPolicy | undefined>(undefined);
   const [isInitialValidation, setIsInitialValidation] = useState<boolean>(true);
 
   const { actions, policies } = useValidationPolicyModule();

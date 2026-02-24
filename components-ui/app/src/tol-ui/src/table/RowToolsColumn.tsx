@@ -105,6 +105,7 @@ export function RowToolsColumn(props: PRowToolsColumn) {
               {rowSelection && (
                 <Checkbox
                   className="tol-table-row-selection"
+                  // @ts-ignore
                   value={{ [rowId]: rowData }}
                   checked={
                     bulkSelect ||

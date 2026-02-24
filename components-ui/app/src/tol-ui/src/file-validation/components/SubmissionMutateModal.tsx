@@ -186,10 +186,10 @@ export function SubmissionMutateModal(props: PSubmissionMutateModal) {
                   }
                   value={
                     attributes.find(
-                      (r: IValidationSubmissionMutation) => r.id === id,
+                      (r: IValidationSubmissionMutation) => r.id === item.id,
                     )?.attributeValue ?? ""
                   }
-                  onChange={(value: string) => handleMutation(id, value)}
+                  onChange={(value: string) => handleMutation(item.id, value)}
                 />
               </InputGroup>
             </div>
