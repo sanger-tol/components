@@ -12,4 +12,4 @@ export * from "./PreviousUploadsView";
 export * from "./ValidationResultsViewer";
 export * from "./PreviousUploadsModal";
 export * from "./ValidationReport";
-export * from "./SubmissionRejectModal";
+export * from "./SubmissionMutateModal";

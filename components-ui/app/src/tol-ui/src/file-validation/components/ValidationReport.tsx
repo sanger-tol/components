@@ -90,8 +90,10 @@ export function ValidationReport(props: PValidationReport) {
       ? fetchedResults.data
       : props.data;
 
-  const ValidationReportHeader = <h3>Validation Report(s)</h3>;
   const singleReport = data.length === 1;
+  const ValidationReportHeader = (
+    <h3>Validation Report{singleReport ? "s" : ""}:</h3>
+  );
 
   const validationReportContent = (
     validationReport: any,
@@ -173,7 +175,7 @@ export function ValidationReport(props: PValidationReport) {
         </div>
         <h5 className="tol-file-validation-report-modal-results">Issues:</h5>
         {Object.keys(validationReport?.issues || {}).length === 0 && (
-          <p>No specific step validation issues found for this upload.</p>
+          <p>Could not find any issues: {validationPolicy.rename}</p>
         )}
         {validationReport?.uploadDetails.failureMessage && (
           <p>
@@ -271,7 +273,7 @@ export function ValidationReport(props: PValidationReport) {
     <Modal
       // Show the action button only if a single data point is provided
       actionButton={
-        singleReport && (
+        singleReport ? (
           <Button
             text="Download"
             icon="download"
@@ -280,7 +282,7 @@ export function ValidationReport(props: PValidationReport) {
               downloadReportFile(data[0] || ({} as IAllValidationData));
             }}
           />
-        )
+        ) : undefined
       }
       actionButtonInline
       open={open}

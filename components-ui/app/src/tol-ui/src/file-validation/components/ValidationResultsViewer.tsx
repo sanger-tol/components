@@ -29,8 +29,9 @@ import {
   setValidationTimeout,
   DropdownButtons,
   useValidationPolicyModule,
-  SubmissionRejectModal,
+  SubmissionMutateModal,
   IconTooltip,
+  createPageActions,
 } from "../..";
 
 import type {
@@ -38,7 +39,6 @@ import type {
   IErrorWarningCount,
   TFileValidationStatus,
   TFileValidationStatusPolicy,
-  TFileValidationAction,
   TFileValidationActionId,
 } from "../..";
 
@@ -67,7 +67,7 @@ export function ValidationResultsViewer() {
   const user = getUserFromLocalStorage();
 
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [submissionRejectModalOpen, setSubmissionRejectModalOpen] =
+  const [submissionMutateModalOpen, setSubmissionMutateModalOpen] =
     useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
   const [validated, setValidated] = useState<boolean>(false);
@@ -76,8 +76,10 @@ export function ValidationResultsViewer() {
   const [reportOpen, setReportOpen] = useState<boolean>(false);
   const [errorAndWarningCount, setErrorAndWarningCount] =
     useState<IErrorWarningCount>({ errors: 0, warnings: 0 });
-  const [uploadStatus, setUploadStatus] =
+  const [validationStatus, setValidationStatus] =
     useState<TFileValidationStatusPolicy>();
+  const [currentActionId, setCurrentActionId] =
+    useState<TFileValidationActionId | null>(null);
 
   // timeout is enabled if we're validating, an upload ID is present and we haven't finished validating
   // validating and validated are independent and should be treated as such here.
@@ -159,7 +161,7 @@ export function ValidationResultsViewer() {
       setErrorAndWarningCount(counts);
 
       // Set the upload status policy to the current validation status
-      setUploadStatus(
+      setValidationStatus(
         policies[
           latestPipelineResults.data.validationStatus as TFileValidationStatus
         ],
@@ -212,35 +214,18 @@ export function ValidationResultsViewer() {
           dataSource: PIPELINE_DS,
           user,
           setReportOpen,
-          setSubmissionRejectModalOpen,
+          setSubmissionMutateModalOpen,
         }
       : null;
 
-  // Create page dropown actions
-  const dropdownActions =
-    // Ensure there is a status and context
-    uploadStatus && actionContext
-      ? uploadStatus.allowedActions
-          // Map over each action id and return the action of that ID
-          .map((actionId: TFileValidationActionId) => actions[actionId])
-          // Filter out any actions not available
-          .filter((action: TFileValidationAction) => {
-            if (!action) return false;
-            return !action.isAvailable || action.isAvailable(actionContext);
-          })
-          // Map over the rest of the available actions
-          .map((action: TFileValidationAction) => ({
-            name: action.label,
-            action: async () => {
-              // Complete the action
-              await action.callback(actionContext);
-              // Invalidate the query in cache to update the page
-              await queryClient.invalidateQueries({
-                queryKey: ["latestPipelineResults", uploadId],
-              });
-            },
-          }))
-      : [];
+  const dropdownActions = createPageActions(
+    validationStatus,
+    actionContext,
+    actions,
+    setCurrentActionId,
+    uploadId,
+    queryClient,
+  );
 
   const Results = (
     <div className="tol-file-validation-results-page-container">
@@ -249,13 +234,16 @@ export function ValidationResultsViewer() {
           <>
             <div className="tol-file-validation-results-page-info-container">
               <div className="tol-file-validation-results-page-info-inner-container">
-                <h4>Results for Pipeline #{latestPipelineResults.data.id}</h4>
+                <h4>
+                  Results for #{latestPipelineResults.data.id} -{" "}
+                  {latestPipelineResults.data.uploadName}
+                </h4>
                 <h6>Pipeline: {latestPipelineResults.data?.pipelineName}</h6>
               </div>
               <div>
                 <div className="tol-file-validation-results-page-status">
-                  <h4 style={{ color: `${uploadStatus?.textColor}` }}>
-                    {uploadStatus?.rename}
+                  <h4 style={{ color: `${validationStatus?.textColor}` }}>
+                    {validationStatus?.rename}
                   </h4>
                   {latestPipelineResults.data.failureMessage && (
                     <IconTooltip
@@ -302,7 +290,7 @@ export function ValidationResultsViewer() {
                     timeout={BUTTON_TIMEOUT}
                   />
                   <DropdownButtons
-                    mainButtonIcon={{ icon: "bars" }}
+                    mainButtonIcon={{ icon: "paper-plane", text: "Actions" }}
                     placement="leftStart"
                     menuStyle={{ marginRight: "5px" }}
                     dropdownButtons={
@@ -380,10 +368,13 @@ export function ValidationResultsViewer() {
         open={reportOpen}
         setOpen={setReportOpen}
       />
-      <SubmissionRejectModal
-        open={submissionRejectModalOpen}
-        setOpen={setSubmissionRejectModalOpen}
+      <SubmissionMutateModal
+        open={submissionMutateModalOpen}
+        setOpen={setSubmissionMutateModalOpen}
         uploadIds={[uploadId]}
+        attribute={
+          currentActionId === "reject" ? "rejection_reason" : "upload_name"
+        }
       />
       <PreviousUploadsModal
         openModal={openModal}

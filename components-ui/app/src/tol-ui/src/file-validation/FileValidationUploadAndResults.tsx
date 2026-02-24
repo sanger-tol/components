@@ -4,7 +4,9 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
+import { Input, InputGroup } from "rsuite";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   ValidateSteps,
   uploadPipelineConfig,
@@ -24,17 +26,15 @@ import {
   DEFAULT_FILE_TYPE,
   downloadFileFromS3,
   useQueryData,
-  onSubmission,
-  ValidationReport,
   getUserFromLocalStorage,
   setValidationTimeout,
   useTimeout,
   VALIDATION_TIMEOUT_MS,
-  downloadReportFile,
   USER_SHOWN_FILE_TYPE_DEFAULTS,
   MAX_FILE_SIZE,
   DEFAULT_SHEET_NAME,
   useValidationPolicyModule,
+  createPageActions,
 } from "..";
 
 import type {
@@ -46,10 +46,15 @@ import type {
 
 export interface PFileValidationUploadAndResults {
   validationConfig: IValidationConfig;
+  setReportOpen: Dispatch<SetStateAction<boolean>>;
+  setSubmissionMutateModalOpen: Dispatch<SetStateAction<boolean>>;
+  setCurrentActionId: Dispatch<SetStateAction<string>>;
+  setValidationData: Dispatch<SetStateAction<IAllValidationData | null>>;
   objectType?: string;
   fileType?: string;
   pageTitle?: string;
   defaultFileTemplateName?: string;
+  setRefetchFn?: Dispatch<SetStateAction<(() => void) | null>>;
 }
 
 export const PIPELINE_DS = new TsDataSource();
@@ -58,9 +63,14 @@ export function FileValidationUploadAndResults(
   props: PFileValidationUploadAndResults,
 ) {
   const {
+    setReportOpen,
+    setSubmissionMutateModalOpen,
+    setCurrentActionId,
+    setValidationData,
     pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
     defaultFileTemplateName = "",
+    setRefetchFn,
   } = props;
 
   const validationConfig = {
@@ -70,7 +80,7 @@ export function FileValidationUploadAndResults(
     ...props.validationConfig,
   };
 
-  const [currentUploadId, setCurrentUploadId] = useState<string>("");
+  const [uploadId, setUploadId] = useState<string>("");
   const [fileDropped, setFileDropped] = useState<boolean>(false);
   const [validating, setValidating] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<string | boolean>(false);
@@ -79,19 +89,20 @@ export function FileValidationUploadAndResults(
   const [fileList, setFileList] = useState<IFileData[]>([]);
   const [resetKey, setResetKey] = useState<number>(0);
   const [stepsFound, setStepsFound] = useState<boolean>(false);
-  const [fileUploaded, setFileUploaded] = useState<boolean>(false);
-  const [openReport, setOpenReport] = useState<boolean>(false);
+  const [uploadName, setUploadName] = useState<string>("");
+  const [buttonLoading, setButtonLoading] = useState<boolean>(false);
   const [validationStatus, setValidationStatus] =
-    useState<TFileValidationStatusPolicy>({});
+    useState<TFileValidationStatusPolicy | null>(null);
+  const [isInitialValidation, setIsInitialValidation] = useState<boolean>(true);
 
   const { actions, policies } = useValidationPolicyModule();
+  const user = getUserFromLocalStorage();
+  const queryClient = useQueryClient();
 
+  // Clear up any validations that have been going for more than 8 minutes
   useEffect(() => {
     async function cleanUpValidations() {
-      await setValidationTimeout(
-        PIPELINE_DS,
-        getUserFromLocalStorage()?.id || "",
-      );
+      await setValidationTimeout(PIPELINE_DS, user?.id || "");
     }
     cleanUpValidations();
   }, []);
@@ -101,7 +112,7 @@ export function FileValidationUploadAndResults(
       PIPELINE_DS,
       VALIDATION_ENDPOINTS.UPLOAD,
       {
-        id: { eq: { value: currentUploadId } },
+        id: { eq: { value: uploadId } },
       },
     );
 
@@ -109,16 +120,18 @@ export function FileValidationUploadAndResults(
       const status = policies[data.validationStatus];
       setValidationStatus(status);
       setStepsFound(data.pipelineSteps?.length > 0);
+      setValidationData(data);
 
-      if (data.completed || status?.isFailureStatus) {
+      if (isInitialValidation && (data.completed || status?.isFailureStatus)) {
         setValidated(true);
+        setIsInitialValidation(false);
         PopUpMessage({
           type: status?.messageType,
           message: `${status?.message}`,
           persist: status?.isFailureStatus,
         });
 
-        if (!status?.isFailureStatus) setOpenReport(true);
+        if (!status?.isFailureStatus) setReportOpen(true);
       }
     }
 
@@ -126,10 +139,10 @@ export function FileValidationUploadAndResults(
   };
 
   const latestPipelineResults = useQueryData<IAllValidationData | null>(
-    ["latestPipelineResults", currentUploadId],
+    ["latestPipelineResults", uploadId],
     fetchLatestPipelineResults,
     {
-      enabled: validating && !!currentUploadId && !validated,
+      enabled: validating && !!uploadId && !validated,
       refetchBackoff: {
         enabled: true,
         options: {
@@ -140,15 +153,17 @@ export function FileValidationUploadAndResults(
     },
   );
 
-  const timeoutEnabled = validating && !!currentUploadId && !validated;
+  useEffect(() => {
+    if (setRefetchFn) {
+      setRefetchFn(() => latestPipelineResults.refetch);
+    }
+  }, [latestPipelineResults.refetch, setRefetchFn]);
+
+  const timeoutEnabled = validating && !!uploadId && !validated;
 
   useTimeout(
     async () => {
-      await setValidationTimeout(
-        PIPELINE_DS,
-        getUserFromLocalStorage()?.id || "",
-        currentUploadId,
-      );
+      await setValidationTimeout(PIPELINE_DS, user?.id || "", uploadId);
       await latestPipelineResults.refetch();
     },
     VALIDATION_TIMEOUT_MS,
@@ -156,6 +171,7 @@ export function FileValidationUploadAndResults(
   );
 
   const handleValidation = async (file: IFileData) => {
+    setIsInitialValidation(true);
     PopUpMessage({
       type: "info",
       message: "Starting validation process...",
@@ -164,33 +180,45 @@ export function FileValidationUploadAndResults(
       PIPELINE_DS,
       validationConfig,
       file,
-      true,
+      uploadName ?? file.name,
     );
-    setCurrentUploadId(pipeline_id || "");
+    setUploadId(pipeline_id || "");
   };
 
   const handleReset = () => {
     setResetting(true);
     setTimeout(() => {
+      setValidating(false);
+      setButtonLoading(false);
       setFileDropped(false);
       setValidated(false);
       setFileList([]);
       setResetKey((prev: number) => prev + 1);
-      setValidating(false);
       setResetting(false);
-      setCurrentUploadId("");
+      setUploadId("");
     }, 500);
   };
 
-  const onSubmissionClick = () => {
-    return onSubmission(
-      validationConfig,
-      fileList,
-      false,
-      currentUploadId,
-      setFileUploaded,
-    );
-  };
+  const actionContext =
+    latestPipelineResults.data && user
+      ? {
+          items: [latestPipelineResults.data],
+          dataSource: PIPELINE_DS,
+          user,
+          setReportOpen,
+          setSubmissionMutateModalOpen,
+        }
+      : null;
+
+  const dropdownActions = createPageActions(
+    validationStatus,
+    actionContext,
+    actions,
+    setCurrentActionId,
+    uploadId,
+    queryClient,
+    latestPipelineResults.refetch,
+  );
 
   const TitleBar = (
     <div className="tol-file-upload-title-bar-container">
@@ -204,52 +232,35 @@ export function FileValidationUploadAndResults(
               resetting ? "tol-file-upload-btn-dropdown-hide-animation" : ""
             }`}
           >
-            {validating && (
+            {(validating || fileDropped) && (
               <Button
                 type="error"
                 text={"Reset"}
                 onClick={() => handleReset()}
               />
             )}
-            <Button
-              icon="clipboard-check"
-              tooltip="View results of latest validation"
-              onClick={() => {
-                setOpenReport((prev: boolean) => !prev);
-              }}
-              disabled={!validated}
-            />
-            <Button
-              icon="download"
-              tooltip="Download results of latest validation"
-              onClick={() => downloadReportFile(latestPipelineResults.data)}
-              disabled={!validated}
-            />
-            {validated && (
+            {(validating || validated) && (
+              <DropdownButtons
+                mainButtonIcon={{ icon: "paper-plane", text: "Actions" }}
+                placement="leftStart"
+                menuStyle={{ marginRight: "5px" }}
+                dropdownButtons={dropdownActions}
+              />
+            )}
+            {(!uploadId || !validating) && (
               <Button
-                type="success"
-                text={"Mark As Ready"}
-                disabled={
-                  !validated ||
-                  !validationStatus?.rename?.includes("passed") ||
-                  fileUploaded ||
-                  validationStatus?.rename === "Marked as Ready"
-                }
-                onClick={onSubmissionClick}
+                type="primary"
+                text={"Validate"}
+                loading={buttonLoading}
+                disabled={!fileDropped || buttonLoading}
+                onClick={() => {
+                  setOpenModal("nameUpload");
+                }}
               />
             )}
           </div>
-          <Button
-            type="primary"
-            text={"Validate"}
-            disabled={!fileDropped || validating}
-            onClick={() => {
-              setValidating(true);
-              handleValidation(fileList[0]);
-            }}
-          />
           <DropdownButtons
-            mainButtonIcon={{ icon: "bars" }}
+            mainButtonIcon={{ icon: "bars", text: "More" }}
             placement="leftStart"
             menuStyle={{ marginRight: "5px" }}
             dropdownButtons={[
@@ -292,7 +303,7 @@ export function FileValidationUploadAndResults(
     <div>
       <div className="tol-file-upload-results-viewer-outer-container">
         <div>
-          <h6>Results:</h6>
+          <h6>Results for {latestPipelineResults?.data?.uploadName}:</h6>
           <p>
             Last updated at:{" "}
             {new Date(latestPipelineResults.dataUpdatedAt).toLocaleString()}
@@ -407,6 +418,50 @@ export function FileValidationUploadAndResults(
     />
   );
 
+  const NameUploadModal = (
+    <Modal
+      open={openModal === "nameUpload"}
+      header={<h3>Name your submission:</h3>}
+      children={
+        <div className="tol-file-validation-name-upload-modal-container">
+          <p className="tol-file-validation-name-upload-modal-p1">
+            Would you like to name your upload before submitting?
+          </p>
+          <p className="tol-file-validation-name-upload-modal-p2">
+            If you do not provide a name, the default will be the name of the
+            submitted file.
+          </p>
+          <InputGroup>
+            <Input
+              name="upload-name-input"
+              placeholder={"Upload name..."}
+              value={uploadName}
+              onChange={(value) => setUploadName(value)}
+            />
+          </InputGroup>
+        </div>
+      }
+      setOpen={setOpenModal}
+      onClose={() => setOpenModal(false)}
+      actionButtonInline
+      onEnter={() => setUploadName(fileList?.[0]?.name)}
+      actionButton={
+        <Button
+          icon="check"
+          text="submit"
+          onClick={() => {
+            setButtonLoading(true);
+            setValidating(true);
+            handleValidation(fileList[0]);
+            setOpenModal(false);
+          }}
+        />
+      }
+      closeButton={false}
+      size="sm"
+    />
+  );
+
   const Components = [
     {
       component: TitleBar,
@@ -427,22 +482,15 @@ export function FileValidationUploadAndResults(
 
   return (
     <>
-      <ValidationReport
-        data={validated ? [latestPipelineResults.data] : []}
-        open={openReport}
-        setOpen={setOpenReport}
-      />
       <PreviousUploadsModal
         openModal={openModal}
         setOpenModal={setOpenModal}
         onEnter={async () =>
-          await setValidationTimeout(
-            PIPELINE_DS,
-            getUserFromLocalStorage()?.id || "",
-          )
+          await setValidationTimeout(PIPELINE_DS, user?.id || "")
         }
       />
       {HelpModal}
+      {NameUploadModal}
       <Widgets components={Components} />
       {validating && (
         <div
@@ -451,7 +499,7 @@ export function FileValidationUploadAndResults(
             resetting ? "tol-file-upload-results-dropdown-hide-animation" : ""
           }`}
         >
-          <Widgets components={currentUploadId ? ValidationSteps : []} />
+          <Widgets components={uploadId ? ValidationSteps : []} />
         </div>
       )}
     </>

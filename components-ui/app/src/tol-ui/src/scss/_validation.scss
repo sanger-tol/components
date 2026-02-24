@@ -723,6 +723,16 @@
     p {
       margin: 0;
     }
+
+    .tol-file-validation-previous-results-show-title {
+      h6 {
+        margin-bottom: 0;
+      }
+
+      p {
+        margin-top: 0;
+      }
+    }
   }
 
   .tol-file-validation-previous-results-show-results-inner {
@@ -762,6 +772,15 @@
 
   h3 {
     margin: 0;
+  }
+}
+
+.tol-file-validation-name-upload-modal-container {
+  .tol-file-validation-name-upload-modal-p1 {
+    margin-bottom: 0 !important;
+  }
+  .tol-file-validation-name-upload-modal-p2 {
+    margin-top: 0 !important;
   }
 }
 

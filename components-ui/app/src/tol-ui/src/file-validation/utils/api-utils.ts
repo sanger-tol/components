@@ -148,6 +148,7 @@ export async function normalisePipelineUpload(
     failureMessage: upload?.failure_message || null,
     hidden: upload?.hidden || false,
     oidcId: upload?.relationships?.user?.oidc_id || "",
+    uploadName: upload?.upload_name || ""
   };
 }
 
@@ -252,6 +253,7 @@ export async function uploadPipelineConfig(
   ds: TsDataSource,
   config: IValidationConfig,
   file: IFileData,
+  uploadName: string,
   dry_run: boolean = true,
   uploadId?: string,
   spreadsheetConfig?: string,
@@ -262,7 +264,7 @@ export async function uploadPipelineConfig(
     spreadsheet_config: spreadsheetConfig || null,
     pipeline_id: config.pipeline_id,
     dry_run: dry_run,
-    upload_name: "whatchagonnado",
+    upload_name: uploadName,
     destination: config.destination,
     upload_id: uploadId || null,
     completed: true,

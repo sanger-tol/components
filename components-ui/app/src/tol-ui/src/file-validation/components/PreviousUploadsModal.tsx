@@ -26,16 +26,27 @@ import {
 import type { IAllValidationData } from "../..";
 
 export interface PPreviousUploadsModal {
+  /**
+   * Open modal state
+   */
   openModal: boolean | string;
+  /**
+   * Open modal state setter
+   */
   setOpenModal: (open: boolean | string) => void;
+  /**
+   * Callback that fires when modal opens
+   */
   onEnter?: () => void;
 }
 
 export function PreviousUploadsModal(props: PPreviousUploadsModal) {
   const { openModal, setOpenModal, onEnter } = props;
+
   const [showPassedSteps, setShowPassedSteps] = useState<boolean>(true);
   const [expandedResults, setExpandedResults] = useState<string | null>(null);
   const [showHiddenUploads, setShowHiddenUploads] = useState<boolean>(false);
+
   const user = getUserFromLocalStorage();
   const id = user ? user.id : null;
 

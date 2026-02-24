@@ -62,12 +62,12 @@ export interface IValidationUploadDetails {
   failureMessage: string | null;
 }
 
-export interface IValidationRejectionReason {
+export interface IValidationSubmissionMutation {
   id: string;
-  reason: string;
+  attributeValue: string;
 }
 
-export type TValidationRejectionReasons = IValidationRejectionReason[];
+export type TValidationSubmissionMutations = IValidationSubmissionMutation[];
 
 export type TValidationIssues = Record<string, IValidationResult[]>;
 
@@ -93,6 +93,7 @@ export interface IAllValidationData {
   failureMessage: string | null;
   hidden: boolean;
   oidcId: string;
+  uploadName: string;
 }
 
 export interface IStepData {

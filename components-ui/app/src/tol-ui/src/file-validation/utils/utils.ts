@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { Dispatch, SetStateAction } from "react";
 import { History } from "history";
 import {
   PopUpMessage,
@@ -14,7 +15,6 @@ import {
 
 import type {
   TSeverity,
-  TMessageType,
   TValidationIssues,
   IStepData,
   IFileData,
@@ -27,6 +27,10 @@ import type {
   TsDataSource,
   TFileValidationActionMap,
   TFileValidationStatusPolicyMap,
+  TValidationActionContext,
+  TFileValidationStatusPolicy,
+  TFileValidationActionId,
+  IDropdownButtonConfig,
 } from "../..";
 
 /**
@@ -392,7 +396,7 @@ export function downloadReportFile(data: IAllValidationData) {
  * @param dataSource - Data source used by actions to perform remote operations.
  * @param additionalCtx - Extra context merged into each action callback (e.g. UI state setters).
  * @returns An array of IDropdownButtonConfig objects, including a
- * fallback “No Actions Available for Selection” entry when nothing is applicable.
+ *          fallback “No Actions Available for Selection” entry when nothing is applicable.
  */
 
 export const createValidationActions = (
@@ -400,12 +404,16 @@ export const createValidationActions = (
   policies: TFileValidationStatusPolicyMap,
   dataSource: TsDataSource,
   additionalCtx: any,
+  setActionId?: Dispatch<SetStateAction<string>>,
 ) => {
   // Get user for action callback context
   const user = getUserFromLocalStorage();
   // Render table actions based on current validation status
-  const baseValidationActions = Object.values(actions).map(
-    (action: TFileValidationAction) => ({
+  const baseValidationActions = Object.values(actions)
+    .sort((a, b) => {
+      return ("" + a.label).localeCompare(b.label);
+    })
+    .map((action: TFileValidationAction) => ({
       name: action.label,
       // Check visibility of an action in the dropdown
       isVisibleAction: (selectedRows: any[] = []) =>
@@ -444,6 +452,8 @@ export const createValidationActions = (
         const rowIds = Object.values(selectedRows).map((row) => ({
           id: row.key,
         }));
+        setActionId?.(action.id);
+        console.log(action.id);
         // Provide the action callback with the required context to perform the action.
         action.callback({
           items: rowIds,
@@ -452,8 +462,7 @@ export const createValidationActions = (
           ...additionalCtx,
         });
       },
-    }),
-  );
+    }));
 
   // Fallback "no actions available" dropdown list
   const noActionsAvailableAction = {
@@ -476,3 +485,70 @@ export const createValidationActions = (
 
   return validationActions;
 };
+
+/**
+ * Creates dropdown action configurations for a single validation upload page.
+ *
+ * Generates a list of allowed actions based on the current upload's validation status policy.
+ * Each action is filtered by availability and mapped to a dropdown button configuration.
+ * When an action is clicked, it executes the action callback and invalidates the related
+ * query cache to trigger a page update.
+ *
+ * @param uploadStatus - The validation status policy for the current upload, containing allowed actions.
+ * @param actionContext - The context object passed to action callbacks, containing upload and user details.
+ * @param allActions - Map of all available validation actions indexed by action ID.
+ * @param setCurrentActionId - State setter to track the currently executing action ID.
+ * @param uploadId - The unique identifier of the upload being acted upon.
+ * @param queryClient - The TanStack React Query client instance used to invalidate cache.
+ * @returns An array of IDropdownButtonConfig objects representing available dropdown actions,
+ *          or an empty array if uploadStatus or actionContext is undefined.
+ */
+
+export function createPageActions(
+  uploadStatus: TFileValidationStatusPolicy | null,
+  actionContext: TValidationActionContext | null,
+  allActions: TFileValidationActionMap,
+  setCurrentActionId: Dispatch<SetStateAction<string | null>>,
+  uploadId: string,
+  queryClient: any,
+  refetch?: () => Promise<any>,
+): IDropdownButtonConfig[] {
+  // Create page dropown actions
+  if (!uploadStatus || !actionContext) return [];
+  const dropdownActions =
+    // Ensure there is a status and context
+    uploadStatus && actionContext
+      ? uploadStatus.allowedActions
+          // Sort actions alphabetically
+          .sort((a: string, b: string) => {
+            return ("" + a).localeCompare(b);
+          })
+          // Map over each action id and return the action of that ID
+          .map((actionId: TFileValidationActionId) => allActions[actionId])
+          // Filter out any actions not available
+          .filter((action: TFileValidationAction) => {
+            if (!action) return false;
+            return !action.isAvailable || action.isAvailable(actionContext);
+          })
+          // Map over the rest of the available actions
+          .map((action: TFileValidationAction) => ({
+            name: action.label,
+            action: async () => {
+              // Complete the action
+              setCurrentActionId(action.id);
+              await action.callback(actionContext);
+              if (refetch) {
+                // Manually refetch data, once useQueryData stops querying
+                await refetch();
+              } else {
+                // Invalidate the query in cache to update the page
+                await queryClient.invalidateQueries({
+                  queryKey: ["latestPipelineResults", uploadId],
+                });
+              }
+            },
+          }))
+      : [];
+
+  return dropdownActions;
+}

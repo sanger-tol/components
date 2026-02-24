@@ -17,7 +17,8 @@ export type TFileValidationActionId =
   | "unmarkAsReady"
   | "downloadFile"
   | "hideItem"
-  | "showItem";
+  | "showItem"
+  | "rename";
 
 // Constants related to what a user can do when they click 'validate'.
 // Will be used in conjunction with 'modes'.
@@ -101,7 +102,7 @@ export type TValidationActionContext = {
   dataSource: TsDataSource;
   user?: { roles: string[] };
   setReportOpen?: (open: boolean) => void;
-  setSubmissionRejectModalOpen?: (open: boolean) => void;
+  setSubmissionMutateModalOpen?: (open: boolean) => void;
   setForceTableUpdate?: Dispatch<SetStateAction<boolean>>;
   setSelectedRows?: Dispatch<SetStateAction<string[]>>;
 };

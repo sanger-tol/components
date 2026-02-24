@@ -15,7 +15,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "The file is being validated and results should be available shortly.",
     textColor: "var(--tol-info)",
     isFailureStatus: false,
-    allowedActions: ["downloadFile", "hideItem", "showItem"],
+    allowedActions: ["downloadFile", "hideItem", "showItem", "rename"],
   },
   [FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES]: {
     status: FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES,
@@ -31,6 +31,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "downloadFile",
       "hideItem",
       "showItem",
+      "rename",
     ],
     messageType: "success",
     message: "Validation Completed. Validation has passed with no issues.",
@@ -49,6 +50,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "downloadFile",
       "hideItem",
       "showItem",
+      "rename",
     ],
     messageType: "warning",
     message: "Validation Completed. Validation has passed some warnings.",
@@ -66,6 +68,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "downloadFile",
       "hideItem",
       "showItem",
+      "rename",
     ],
     messageType: "error",
     message:
@@ -78,7 +81,13 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "The validation process has failed due to a system error. Please try again and contact an admin if the issue persists.",
     textColor: "var(--tol-danger-light)",
     isFailureStatus: true,
-    allowedActions: ["revalidate", "downloadFile", "hideItem", "showItem"],
+    allowedActions: [
+      "revalidate",
+      "downloadFile",
+      "hideItem",
+      "showItem",
+      "rename",
+    ],
     messageType: "error",
     message:
       "Validation Could not complete. A system error has occurred. Please try again.",
@@ -90,7 +99,13 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "The validation process has timed out. Please try again and contact an admin if the issue persists.",
     textColor: "var(--tol-danger-light)",
     isFailureStatus: false,
-    allowedActions: ["revalidate", "downloadFile", "hideItem", "showItem"],
+    allowedActions: [
+      "revalidate",
+      "downloadFile",
+      "hideItem",
+      "showItem",
+      "rename",
+    ],
     messageType: "error",
     message:
       "Validation Could not complete. The system has timed out. Please try again.",
@@ -119,6 +134,7 @@ export const BASE_POLICIES_MAP: TFileValidationStatusPolicyMap = {
       "downloadFile",
       "hideItem",
       "showItem",
+      "rename",
     ],
   },
 };

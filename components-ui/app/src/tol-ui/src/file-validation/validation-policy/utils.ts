@@ -30,6 +30,8 @@ import type {
   TFileValidationPolicyModuleOverrides,
   TFileValidationStatusPolicyMap,
   TFileValidationStatusPolicy,
+  TValidationSubmissionMutations,
+  IValidationSubmissionMutation,
 } from "../..";
 
 /**
@@ -95,18 +97,22 @@ export function setValidationStatusAction(
   };
 }
 
-export async function rejectSubmission(
-  rejections: { id: string; reason: string }[],
+export async function mutateSubmission(
+  mutations: TValidationSubmissionMutations,
+  messages: { success: string; error: string },
+  attribute: string,
   setOpen: (open: boolean) => void,
 ): Promise<void> {
-  const rejectionsPayload = rejections.map(
-    (rejectedItem: { id: string; reason: string }) => {
+  const mutatedPayload = mutations.map(
+    (mutatedItem: IValidationSubmissionMutation) => {
       return {
-        id: rejectedItem.id,
+        id: mutatedItem.id,
         type: "upload",
         attributes: {
-          validation_status: FILE_VALIDATION_STATUS.FILE_REJECTED,
-          rejection_reason: rejectedItem.reason,
+          ...(attribute === "rejection_reason" && {
+            validation_status: FILE_VALIDATION_STATUS.FILE_REJECTED,
+          }),
+          [attribute]: mutatedItem.attributeValue,
         },
       };
     },
@@ -115,12 +121,12 @@ export async function rejectSubmission(
   try {
     await PIPELINE_DS.upsert({
       objectType: VALIDATION_ENDPOINTS.UPLOAD,
-      payload: rejectionsPayload,
+      payload: mutatedPayload,
     });
 
     PopUpMessage({
       type: "success",
-      message: "Submission rejected successfully.",
+      message: messages.success,
     });
 
     setOpen?.(false);
@@ -128,7 +134,7 @@ export async function rejectSubmission(
     console.error(e);
     PopUpMessage({
       type: "error",
-      message: "Could not reject submission, please try again.",
+      message: messages.error,
     });
   }
 }
@@ -137,14 +143,14 @@ export function createBaseActions(): TFileValidationActionMap {
   return {
     viewReport: {
       id: "viewReport",
-      label: "View Report",
+      label: "View Report(s)",
       callback: ({ setReportOpen }) => {
         setReportOpen?.(true);
       },
     },
     downloadReport: {
       id: "downloadReport",
-      label: "Download Report",
+      label: "Download Report(s)",
       callback: async ({ items }) => {
         await Promise.all(
           items.map(async (item: IAllValidationData) => {
@@ -172,7 +178,7 @@ export function createBaseActions(): TFileValidationActionMap {
     },
     hideItem: {
       id: "hideItem",
-      label: "Hide From View",
+      label: "Hide Item(s) From View",
       callback: async ({
         items,
         dataSource,
@@ -207,7 +213,7 @@ export function createBaseActions(): TFileValidationActionMap {
     },
     showItem: {
       id: "showItem",
-      label: "Show in View",
+      label: "Show Item(s) in View",
       callback: async ({
         items,
         dataSource,
@@ -242,7 +248,7 @@ export function createBaseActions(): TFileValidationActionMap {
     },
     downloadFile: {
       id: "downloadFile",
-      label: "Download Submitted File",
+      label: "Download File(s)",
       callback: async ({ items, dataSource }) => {
         await Promise.all(
           // We need to map over items and fetch details for any items that only have an id,
@@ -279,7 +285,7 @@ export function createBaseActions(): TFileValidationActionMap {
     },
     revalidate: {
       id: "revalidate",
-      label: "Revalidate",
+      label: "Revalidate Submission(s)",
       callback: async ({
         items,
         dataSource,
@@ -313,7 +319,7 @@ export function createBaseActions(): TFileValidationActionMap {
     },
     markAsReady: {
       ...setValidationStatusAction(
-        { id: "markAsReady", label: "Mark as Ready" },
+        { id: "markAsReady", label: "Mark Item(s) as Ready" },
         "marked_as_ready",
       ),
       isAvailable: ({ items }) =>
@@ -327,7 +333,7 @@ export function createBaseActions(): TFileValidationActionMap {
     },
     unmarkAsReady: {
       id: "unmarkAsReady",
-      label: "Unmark as Ready",
+      label: "Unmark Item(s) as Ready",
       callback: async ({
         items,
         dataSource,
@@ -408,12 +414,19 @@ export function createBaseActions(): TFileValidationActionMap {
     reject: {
       id: "reject",
       label: "Reject Submission(s)",
-      callback: ({ setSubmissionRejectModalOpen }) => {
-        setSubmissionRejectModalOpen?.(true);
+      callback: ({ setSubmissionMutateModalOpen }) => {
+        setSubmissionMutateModalOpen?.(true);
       },
       // Only admins can reject a submission
       isAvailable: ({ user }) => {
         return user?.roles.includes("admin") ?? false;
+      },
+    },
+    rename: {
+      id: "rename",
+      label: "Rename Submission(s)",
+      callback: ({ setSubmissionMutateModalOpen }) => {
+        setSubmissionMutateModalOpen?.(true);
       },
     },
   };
@@ -449,14 +462,19 @@ export function createValidationModule<TCustom extends string = never>(
   // We can overwrite attributes of specific policies, or add custom policies/statuses
   if (overrides.policies) {
     for (const [status, override] of Object.entries(
-      overrides.policies
-    ) as Array<[TFileValidationStatus<TCustom>, Partial<TFileValidationStatusPolicy<TCustom>>]>) {
+      overrides.policies,
+    ) as Array<
+      [
+        TFileValidationStatus<TCustom>,
+        Partial<TFileValidationStatusPolicy<TCustom>>,
+      ]
+    >) {
       // get each status in policy
-      const base = policies[status]
+      const base = policies[status];
 
       // If base policy isn't available, it's a new policy, but must be complete, with all required attributes
-      if(!base) {
-        policies[status] = override as TFileValidationStatusPolicy<TCustom>
+      if (!base) {
+        policies[status] = override as TFileValidationStatusPolicy<TCustom>;
       } else {
         // Otherwise we override specific attributes of existing policies
         policies[status] = {
@@ -464,7 +482,7 @@ export function createValidationModule<TCustom extends string = never>(
           ...override,
           // Would be best to be explicit about the status if not explicitly overridden.
           status: override.status ?? base.status,
-        }
+        };
       }
     }
   }

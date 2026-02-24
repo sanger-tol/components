@@ -11,14 +11,14 @@ import {
   createValidationActions,
   FileValidationUploadAndResults,
   getUserFromLocalStorage,
+  IAllValidationData,
   IDropdownButtonConfig,
-  ITableRecord,
   IValidationConfig,
   normaliseCaps,
   PIPELINE_DS,
   RemoteTable,
   splitS3FilenameString,
-  SubmissionRejectModal,
+  SubmissionMutateModal,
   Tabs,
   TsDataSource,
   useValidationPolicyModule,
@@ -28,7 +28,7 @@ import {
   Widgets,
 } from "..";
 
-import type { TFileValidationPolicyModule } from "@tol/tol-ui";
+import type { TFileValidationPolicyModule } from "..";
 
 /**
  * This component handles the file upload component, live upload result, uploads table
@@ -78,7 +78,13 @@ export function FileValidationHome(props: PFileValidationHome) {
   const { actions, policies } = policyModule;
 
   // Capture Row IDs on selection to be used with modals
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [selectedRows, setSelectedRows] = useState<string[] | { id: string }[]>(
+    [],
+  );
+
+  // Capture validation to be used with modals, if the action isn't coming from tables
+  const [validationData, setValidationData] =
+    useState<IAllValidationData | null>(null);
 
   // Update table on table tab selection
   const [forceTableUpdate, setForceTableUpdate] = useState<boolean>(false);
@@ -88,8 +94,13 @@ export function FileValidationHome(props: PFileValidationHome) {
 
   // Modals state
   const [reportOpen, setReportOpen] = useState<boolean>(false);
-  const [submissionRejectModalOpen, setSubmissionRejectModalOpen] =
+  const [submissionMutateModalOpen, setSubmissionMutateModalOpen] =
     useState<boolean>(false);
+
+  // Current Action ID
+  const [currentActionId, setCurrentActionId] = useState<string>("");
+
+  const [refetchFn, setRefetchFn] = useState<(() => void) | null>(null);
 
   const userIsAdmin = getUserFromLocalStorage().roles.includes("admin");
 
@@ -160,19 +171,25 @@ export function FileValidationHome(props: PFileValidationHome) {
       id="validation-uploads-table"
       height={500}
       actions={
-        createValidationActions(actions, policies, PIPELINE_DS, {
-          setReportOpen,
-          setSubmissionRejectModalOpen,
-          setForceTableUpdate,
-          setSelectedRows,
-        }) as IDropdownButtonConfig[]
+        createValidationActions(
+          actions,
+          policies,
+          PIPELINE_DS,
+          {
+            setReportOpen,
+            setSubmissionMutateModalOpen,
+            setForceTableUpdate,
+            setSelectedRows,
+          },
+          setCurrentActionId,
+        ) as IDropdownButtonConfig[]
       }
       noConfigModal
       defaultSortByAttribute="id"
       defaultSortByType="desc"
       rowSelection
       forceUpdate={forceTableUpdate}
-      selectedRows={selectedRows}
+      selectedRows={selectedRows as string[]}
       setSelectedRows={setSelectedRows}
       noActionsFooter
       cellRenderers={{
@@ -198,12 +215,16 @@ export function FileValidationHome(props: PFileValidationHome) {
               }
             : null),
           s3_filename: {
-            rename: "Manifest Name",
+            rename: "File Name",
             cellRenderer: {
               type: "fileNameSplit",
               props: { fileName: "${s3_filename}" },
             },
             width: 250,
+          },
+          upload_name: {
+            rename: "Submission Name",
+            width: 220,
           },
           "pipeline.name": {
             rename: "Pipeline",
@@ -219,7 +240,7 @@ export function FileValidationHome(props: PFileValidationHome) {
             rename: "Flow Run ID",
           },
           validation_status: {
-            rename: "Manifest Status",
+            rename: "Validation Status",
             width: 200,
             cellRenderer: {
               type: "validationStatus",
@@ -238,12 +259,13 @@ export function FileValidationHome(props: PFileValidationHome) {
         order: {
           active: [
             "id",
+            "upload_name",
             "s3_filename",
             // Return an OIDC ID column only if the user is an admin
             ...(userIsAdmin ? ["user.oidc_id"] : []),
+            "validation_status",
             "pipeline.name",
             "date_started",
-            "validation_status",
             "flow_run_id",
             "failure_message",
             ...additionalTableConfig?.order,
@@ -261,12 +283,17 @@ export function FileValidationHome(props: PFileValidationHome) {
       <Tabs.Tab eventKey="1" title={tabTitles.titleOne}>
         <Widgets
           components={[
-            { component: intro, type: "full" },
+            { component: <>{intro}</>, type: "full" },
             {
               component: (
                 <FileValidationUploadAndResults
+                  setReportOpen={setReportOpen}
+                  setSubmissionMutateModalOpen={setSubmissionMutateModalOpen}
+                  setCurrentActionId={setCurrentActionId}
+                  setValidationData={setValidationData}
                   validationConfig={validationConfig}
                   pageTitle="Manifest Validation Portal"
+                  setRefetchFn={setRefetchFn}
                 />
               ),
               type: "full",
@@ -319,20 +346,42 @@ export function FileValidationHome(props: PFileValidationHome) {
   return (
     <>
       <ValidationReport
-        data={selectedRows.flatMap((row: ITableRecord) => {
-          return { id: Object.keys(row) };
-        })}
+        data={
+          selectedRows.length > 0
+            ? selectedRows.flatMap((row: any) => {
+                return { id: Object.keys(row)[0] };
+              })
+            : validationData
+              ? [validationData]
+              : []
+        }
         open={reportOpen}
         setOpen={setReportOpen}
       />
-      <SubmissionRejectModal
-        open={submissionRejectModalOpen}
-        setOpen={setSubmissionRejectModalOpen}
-        uploadIds={selectedRows.flatMap((row: ITableRecord) => {
-          return Object.keys(row);
-        })}
+      <SubmissionMutateModal
+        open={submissionMutateModalOpen}
+        setOpen={setSubmissionMutateModalOpen}
+        uploadIds={
+          selectedRows.length > 0
+            ? selectedRows.flatMap((row: any) => {
+                return { id: Object.keys(row)[0] };
+              })
+            : validationData
+              ? [validationData]
+              : []
+        }
+        attribute={
+          currentActionId === "reject" ? "rejection_reason" : "upload_name"
+        }
         setForceTableUpdate={setForceTableUpdate}
         setSelectedRows={setSelectedRows}
+        onSuccess={() => {
+          if (validationData && refetchFn) {
+            refetchFn();
+          } else {
+            setForceTableUpdate((prev: boolean) => !prev);
+          }
+        }}
       />
       {PageTabs}
     </>

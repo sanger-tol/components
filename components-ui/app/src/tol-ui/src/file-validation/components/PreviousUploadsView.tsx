@@ -23,11 +23,7 @@ import {
   useValidationPolicyModule,
 } from "../..";
 
-import type {
-  IStepData,
-  IAllValidationData,
-  IValidationResult,
-} from "../..";
+import type { IStepData, IAllValidationData, IValidationResult } from "../..";
 
 export interface PPreviousUploadsView {
   id: string;
@@ -94,7 +90,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
     <div className="tol-file-validation-previous-results-container">
       <div className="tol-file-validation-previous-results-title">
         <h6 className="tol-file-validation-previous-results-title-text">
-          ID: #{id} - {data.pipelineName}
+          #{id} - {data.uploadName}
         </h6>
         <div className="tol-file-validation-previous-results-date-container">
           <p className="tol-file-validation-previous-results-date-text">
@@ -150,7 +146,12 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
         }`}
       >
         <div className="tol-file-validation-previous-results-show-results-container">
-          <h6>Results:</h6>
+          <div className="tol-file-validation-previous-results-show-title">
+            <h6>Results:</h6>
+            <p>
+              Pipeline: {data.pipelineName}
+            </p>
+          </div>
           <div className="tol-file-validation-previous-results-show-results-inner">
             <div
               className="tol-file-validation-scrollbar-fix 
@@ -244,9 +245,10 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
               Failure reason: <span>{truncateString(data.failureMessage)}</span>
             </p>
           )}
-                    {data.rejectionReason && (
+          {data.rejectionReason && (
             <p>
-              Rejection reason: <span>{truncateString(data.rejectionReason)}</span>
+              Rejection reason:{" "}
+              <span>{truncateString(data.rejectionReason)}</span>
             </p>
           )}
         </div>
