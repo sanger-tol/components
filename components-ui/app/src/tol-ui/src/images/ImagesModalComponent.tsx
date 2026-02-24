@@ -10,7 +10,6 @@ import { ImageCarouselComponent, PImageCarouselComponent } from "./ImageCarousel
 
 /**
  * Effectively just an ImageCarouselComponent in a modal to create a larger view on an image.
- * Uses our Modal component.
  *
  */
 

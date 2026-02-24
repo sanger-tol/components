@@ -30,22 +30,6 @@ export interface PImageListComponent extends Omit<PImageCarouselComponent, "onIm
    */
   style?: React.CSSProperties;
   /**
-   * Optional scrollbar height (e.g. "6px")
-   */
-  scrollbarHeight?: string;
-  /**
-   * Optional scrollbar track color
-   */
-  scrollbarTrackColor?: string;
-  /**
-   * Optional scrollbar thumb color
-   */
-  scrollbarThumbColor?: string;
-  /**
-   * Optional scrollbar thumb hover color
-   */
-  scrollbarThumbHoverColor?: string;
-  /**
    * If true, clicking an image will open it in a larger modal view with navigation. Default is true.
    */
   enableModal?: boolean;
@@ -61,10 +45,6 @@ export function ImageListComponent(props: PImageListComponent) {
     enableModal = true,
     className,
     style,
-    scrollbarHeight = "6px",
-    scrollbarTrackColor = "transparent",
-    scrollbarThumbColor = "var(--tol-grey-light)",
-    scrollbarThumbHoverColor = "var(--tol-grey)",
   } = props;
   const [modalOpen, setModalOpen] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -112,10 +92,6 @@ export function ImageListComponent(props: PImageListComponent) {
         ref={scrollContainerRef}
         className={`tol-image-list${className ? ` ${className}` : ""}`}
         style={{
-          ["--tol-image-list-scrollbar-height" as string]: scrollbarHeight,
-          ["--tol-image-list-scrollbar-track" as string]: scrollbarTrackColor,
-          ["--tol-image-list-scrollbar-thumb" as string]: scrollbarThumbColor,
-          ["--tol-image-list-scrollbar-thumb-hover" as string]: scrollbarThumbHoverColor,
           ["--tol-image-list-item-height" as string]: height,
           ...style,
         }}
