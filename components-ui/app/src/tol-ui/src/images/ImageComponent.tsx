@@ -46,13 +46,17 @@ export function ImageComponent(props: PImageComponent) {
   const [modalOpen, setModalOpen] = useState(false);
 
   const imageStyle: React.CSSProperties = {
-    height: fill ? "auto" : (height || "100%"),
-    width: fill ? "100%" : "auto",
-    maxWidth: "100%",
-    maxHeight: "100%",
-    objectFit: "contain",
-    cursor: (onClick || enableModal) ? "pointer" : "default",
+    ...(height ? { ["--tol-image-height" as string]: height } : {}),
+    ...style,
   };
+
+  const imageClassName = [
+    "tol-image",
+    "tol-component-content",
+    fill ? "tol-image--fill" : "",
+    (onClick || enableModal) ? "tol-image--clickable" : "",
+    className || "",
+  ].filter(Boolean).join(" ");
 
   const handleClick: MouseEventHandler<HTMLImageElement> = (e) => {
     if (onClick) {
@@ -67,10 +71,10 @@ export function ImageComponent(props: PImageComponent) {
     <>
       <img
         src={link}
-        style={{ ...imageStyle, ...style }}
+        style={imageStyle}
         onClick={handleClick}
         alt="Image"
-        className={`tol-image tol-component-content${className ? ` ${className}` : ""}`}
+        className={imageClassName}
       />
       {enableModal && (
         <ImagesModalComponent

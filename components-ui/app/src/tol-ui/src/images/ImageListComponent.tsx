@@ -108,45 +108,22 @@ export function ImageListComponent(props: PImageListComponent) {
 
   return (
     <>
-      <style>{`
-        .tol-image-list::-webkit-scrollbar {
-          height: var(--tol-image-list-scrollbar-height, 6px);
-        }
-        .tol-image-list::-webkit-scrollbar-track {
-          background: var(--tol-image-list-scrollbar-track, transparent);
-        }
-        .tol-image-list::-webkit-scrollbar-thumb {
-          background: var(--tol-image-list-scrollbar-thumb, var(--tol-grey-light));
-          border-radius: 4px;
-        }
-        .tol-image-list::-webkit-scrollbar-thumb:hover {
-          background: var(--tol-image-list-scrollbar-thumb-hover, var(--tol-grey));
-        }
-      `}</style>
       <div
         ref={scrollContainerRef}
         className={`tol-image-list${className ? ` ${className}` : ""}`}
         style={{
-          display: "flex",
-          overflowX: "auto",
-          gap: "10px",
-          padding: "10px 0",
-          background: "transparent",
           ["--tol-image-list-scrollbar-height" as string]: scrollbarHeight,
           ["--tol-image-list-scrollbar-track" as string]: scrollbarTrackColor,
           ["--tol-image-list-scrollbar-thumb" as string]: scrollbarThumbColor,
           ["--tol-image-list-scrollbar-thumb-hover" as string]: scrollbarThumbHoverColor,
+          ["--tol-image-list-item-height" as string]: height,
           ...style,
         }}
       >
         {links.map((link, index) => (
           <div
             key={index}
-            style={{
-              flexShrink: 0,
-              height: height,
-              cursor: enableModal ? "pointer" : "default",
-            }}
+            className={`tol-image-list__item${enableModal ? " tol-image-list__item--clickable" : ""}`}
           >
             <ImageComponent
               link={link}

@@ -66,6 +66,15 @@ export function ImagesModalComponent(props: PImagesModalComponent) {
     closeButtonContent,
   } = props;
 
+  const contentStyles: React.CSSProperties = {
+    ...(contentStyle?.minHeight ? {} : { ["--tol-image-modal-content-min-height" as string]: "600px" }),
+    ...contentStyle,
+  };
+
+  const closeButtonStyles: React.CSSProperties = {
+    ...closeButtonStyle,
+  };
+
   return (
     <Modal
       open={open}
@@ -74,29 +83,11 @@ export function ImagesModalComponent(props: PImagesModalComponent) {
       className={`tol-image-modal${modalClassName ? ` ${modalClassName}` : ""}`}
       closeButton={false}
     >
-      <div style={{ position: "relative", textAlign: "center", minHeight: "600px", ...contentStyle }}>
+      <div className="tol-image-modal__content" style={contentStyles}>
         <button
           onClick={() => setOpen(false)}
-          style={{
-            position: "absolute",
-            top: "10px",
-            right: "10px",
-            background: "var(--tol-grey)",
-            color: "var(--tol-light)",
-            border: "none",
-            borderRadius: "50%",
-            width: "40px",
-            height: "40px",
-            fontSize: "24px",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-            padding: 0,
-            ...closeButtonStyle,
-          }}
-          className={closeButtonClassName}
+          style={closeButtonStyles}
+          className={`tol-image-modal__close${closeButtonClassName ? ` ${closeButtonClassName}` : ""}`}
           aria-label="Close"
         >
           {closeButtonContent ?? "×"}

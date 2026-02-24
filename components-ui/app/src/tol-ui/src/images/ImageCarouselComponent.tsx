@@ -110,11 +110,7 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
   }
 
   const containerStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-    height: height || "100%",
+    ...(height ? { ["--tol-image-carousel-height" as string]: height } : {}),
     ...style,
   };
 
@@ -128,10 +124,11 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
           icon="caret-left"
           onClick={handlePrevious}
           size="2x"
+          aria-label="Previous image"
           className="tol-image-carousel-arrow tol-image-carousel-arrow-left"
         />
       )}
-      <div style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <div className="tol-image-carousel__viewport">
         <ImageComponent link={links[index]} height={height} fill={fill} onClick={handleImageClick} />
       </div>
       {showArrows && (
@@ -139,6 +136,7 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
           icon="caret-right"
           onClick={handleNext}
           size="2x"
+          aria-label="Next image"
           className="tol-image-carousel-arrow tol-image-carousel-arrow-right"
         />
       )}
