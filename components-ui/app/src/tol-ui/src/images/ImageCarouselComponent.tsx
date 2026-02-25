@@ -118,6 +118,7 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onMouseEnter={() => containerRef.current?.focus()}
+      onMouseLeave={() => containerRef.current?.blur()}
       aria-label="Image carousel"
     >
       {showArrows && (
