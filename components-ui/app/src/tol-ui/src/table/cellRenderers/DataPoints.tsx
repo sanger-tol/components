@@ -11,6 +11,7 @@ import {
   TsDataSource,
   getChildObjectsByName,
   DataPoint,
+  getAttributeNameByField,
 } from "../..";
 
 
@@ -52,10 +53,14 @@ export interface PDataPoints {
 export function DataPoints(props: PDataPoints) {
   const { dataObject, field } = props;
 
+  // get the child objects based on the field
   const childObjects = getChildObjectsByName(dataObject, field);
 
   // get the attribute part of the field
-  const attribute = field.split(".").slice(-1)[0];
+  const attribute = getAttributeNameByField(field);
+
+  // temp solution to determine if we are dealing with a "many" relationship
+  //const isManyRelationship = Array.isArray(getFieldByName(dataObject, field));
 
   const collectDataPoints = childObjects?.map((obj, index) => (
     <DataPoint
@@ -63,6 +68,7 @@ export function DataPoints(props: PDataPoints) {
       key={`${field}-${index}`}
       dataObject={obj}
       field={attribute}
+      isTag={childObjects.length > 1}
     />
   ))
 

@@ -16,8 +16,8 @@ import {
   getCellRendererPropValue,
   Icon,
   TrafficLightStatus,
-  Collection,
   PDataPoints,
+  Default,
 } from "../..";
 
 
@@ -33,14 +33,18 @@ export interface PCellDisplay extends PDataPoints {
  * If no renderer is provided, it will default to displaying the value as a string.
  */
 export function CellDisplay(props: PCellDisplay) {
-  const { value, dataObject, renderer, customCellRenderers, setExpandedRows } = props;
-  const [expanded, setExpanded] = useState(false);
+  const {
+    value,
+    dataObject,
+    renderer,
+    customCellRenderers,
+    setExpandedRows,
+  } = props;
 
-  const DefaultCell = ({ value }) => <>{value ?? ""}</>;
+  const [expanded, setExpanded] = useState(false);
 
   const preDefinedElements = {
     boolean: Boolean,
-    collection: Collection,
     datetime: Datetime,
     float: Float,
     image: Image,
@@ -54,16 +58,15 @@ export function CellDisplay(props: PCellDisplay) {
     // Renderer type is not defined
     !renderer ||
     !renderer.type ||
-    renderer.type === "none" ||
-    // No value and not a custom renderer as custom renderers may not require a value
-    // No need to to deal with empty values with pre-defined cellRenderers
-    ((value === null || value === undefined) && (renderer.type) in preDefinedElements)
+    renderer.type === "none"
   )
-    return <DefaultCell value={value} />;
+    return <Default {...props} value={value} />;
 
+  // Determine the appropriate renderer element
   const elements = { ...preDefinedElements, ...customCellRenderers };
-  renderer.element = elements[renderer.type] || DefaultCell;
+  renderer.element = elements[renderer.type];
 
+  // Get the props for the renderer element
   const elementProps: PDataPoints & Record<string, any> = { ...props };
 
   if (renderer.props) {

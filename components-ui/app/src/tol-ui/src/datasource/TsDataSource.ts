@@ -727,6 +727,18 @@ export function getChildObjectsByName(object: TDataObjectOrNull, field: string):
 }
 
 /**
+ * Extracts the attribute name from a field path by returning the last segment.
+ * @param field - A dot-separated field path (e.g., "user.profile.name")
+ * @returns The last segment of the field path (e.g., "name")
+ * @example
+ * getAttributeNameByField("user.profile.name") // returns "name"
+ * getAttributeNameByField("id") // returns "id"
+ */
+export function getAttributeNameByField(field: string): string {
+  return field.split(".").slice(-1)[0];
+}
+
+/**
  * Extracts the relationship name from a field path by removing the last segment.
  * @param field - A field path that may contain dot-separated segments (e.g., "relationship.field")
  * @returns The relationship name (all segments except the last one joined by dots), or an empty string if the field contains no dots

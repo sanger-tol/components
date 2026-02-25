@@ -157,7 +157,7 @@ export function CellRendererModal(props: PCellRendererModal) {
         />
       </h5>
       <p className="tol-grey-colour">
-        Please be aware that the selected Data Point Renderer works on a current Data Object.
+        Please be aware that the selected Cell Renderer works on a current Data Object.
       </p>
     </>
   );

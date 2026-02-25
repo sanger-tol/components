@@ -58,7 +58,6 @@ export const cellRendererParams: IBoardCellRenderers = {
       },
     }
   },
-  collection: {},
   longText: {
     rename: "Long Text",
     allowedDataTypes: ["str", "float", "int"]

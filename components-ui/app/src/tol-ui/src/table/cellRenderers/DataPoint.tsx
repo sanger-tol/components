@@ -10,16 +10,30 @@ import {
   PopUpMessage,
   CellEditable,
   getFieldByName,
+  PDataPoints,
+  Tag,
 } from "../..";
-import { PDataPoints } from "./DataPoints";
 
+
+export interface PDataPoint extends PDataPoints {
+  /**
+   * Whether to wrap the value in a tag element.
+   */
+  isTag?: boolean,
+}
 
 /**
  * Singular data point renderer. Used within DataPoints to render each individual data point.
  * Can take a renderer to allow for custom rendering of the data point.
  */
-export function DataPoint(props: PDataPoints) {
-  const { field, dataObject, dataSource, editable } = props;
+export function DataPoint(props: PDataPoint) {
+  const {
+    field,
+    dataObject,
+    dataSource,
+    editable,
+    isTag = false,
+  } = props;
 
   const v = getFieldByName(dataObject, field);
 
@@ -33,8 +47,8 @@ export function DataPoint(props: PDataPoints) {
   );
 
   const onDoubleClick = () => {
-    if (!editable) return;
-    if (canEdit) {
+    //if (!editable) return;
+    if (true) {
       setEditMode(true);
     } else {
       PopUpMessage({
@@ -115,12 +129,23 @@ export function DataPoint(props: PDataPoints) {
     );
   }
 
-  return (
+  let DataDisplay = (
+    <CellDisplay
+      {...props}
+      value={value}
+    />
+  )
+
+  // deal with falsy values
+  if (!value) {
+    DataDisplay = <span className="tol-data-point-empty">None</span>;
+  }
+
+  const Content = (
     <div className="tol-data-point" onDoubleClick={onDoubleClick}>
-      <CellDisplay
-        {...props}
-        value={value}
-      />
+      {DataDisplay}
     </div>
   )
+
+  return isTag ? <Tag>{Content}</Tag> : Content;
 }

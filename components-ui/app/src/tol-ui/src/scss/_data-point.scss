@@ -4,6 +4,15 @@
  * SPDX-License-Identifier: MIT
  */
 
+.tol-data-points {
+  display: inline-block;
+}
+
+.tol-data-point-empty {
+  color: var(--tol-grey);
+  cursor: default;
+}
+
 .tol-data-point-renderer-modal-selector {
   margin: 12px 0 20px 0;
 }
@@ -42,27 +51,64 @@
   }
 }
 
-.tol-collection {
-  display: table-cell;
-}
-
-.rs-table-cell-wrap:has(.tol-collection) {
-  margin: -4px !important;
-}
-
-.tol-collection-object-entry {
-  margin-bottom: 6px;
-}
-
-.tol-collection-object-key {
-  font-weight: bold;
-  margin-right: 6px;
-}
-
 .tol-data-point-editable-controls {
   margin-top: 6px;
 
   &:not(.floating) {
     height: 30px;
   }
+}
+
+// Default renderer, deals with nested objects and arrays
+.tol-default-renderer-object-entry {
+  display: table;
+  width: 100%;
+  clear: both; /* hard stop after any floated tags above */
+  margin-bottom: 6px;
+}
+
+.tol-default-renderer-object-key {
+  display: table-cell;
+  white-space: nowrap;
+  vertical-align: top;
+  padding-right: 8px;
+}
+
+.tol-default-renderer-object-value {
+  display: table-cell;
+  width: 100%;
+  vertical-align: top;
+}
+
+.tol-default-renderer-array {
+  display: block;
+}
+
+.tol-default-renderer-array::after {
+  content: "";
+  display: block;
+  clear: both; /* contains float:left tol-tag children */
+}
+
+.tol-default-renderer-array > * {
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.tol-default-renderer-clear {
+  display: block;
+  clear: both;
+  height: 0;
+  line-height: 0;
+  font-size: 0;
+}
+
+.tol-default-renderer-object-entry--nested > .tol-default-renderer-object-key {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.tol-default-renderer-object-entry--nested > .tol-default-renderer-object-value {
+  display: block;
+  clear: both; /* important with float:left tol-tag */
 }
