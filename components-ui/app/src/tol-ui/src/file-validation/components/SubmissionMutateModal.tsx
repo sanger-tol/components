@@ -202,7 +202,7 @@ export function SubmissionMutateModal(props: PSubmissionMutateModal) {
     <Button
       icon="check"
       onClick={async () => {
-        // Ensure users enter a rejection reason for all submissions.
+        // Ensure users enters data for all submissions.
         if (uploadIds.length !== attributes.length) {
           PopUpMessage({
             type: "error",

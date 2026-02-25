@@ -49,9 +49,9 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const history = useHistory();
-  const policy = useValidationPolicyModule();
+  const { policies } = useValidationPolicyModule();
 
-  const uploadStatus = policy.policies[data.validationStatus];
+  const uploadStatus = policies[data.validationStatus];
 
   const ValidationIconTooltip = (
     errorCount: number,
