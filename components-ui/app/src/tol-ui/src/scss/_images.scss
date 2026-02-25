@@ -28,6 +28,11 @@
   justify-content: center;
   position: relative;
   height: var(--tol-image-carousel-height, 100%);
+  outline: none;
+}
+
+.tol-image-carousel:focus {
+  outline: none;
 }
 
 .tol-image-carousel__viewport {

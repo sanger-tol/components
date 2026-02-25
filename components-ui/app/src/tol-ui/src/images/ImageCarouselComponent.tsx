@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Icon, IHeight } from "..";
 import { ImageComponent } from "./ImageComponent";
 
@@ -49,6 +49,7 @@ export interface PImageCarouselComponent extends IHeight {
 
 export function ImageCarouselComponent(props: PImageCarouselComponent) {
   const { links, link, height, fill = false, setLink, onImageClick, className, style } = props;
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const currentIndex = links.indexOf(link);
   const [index, setIndex] = useState(() => (currentIndex >= 0 ? currentIndex : 0));
@@ -71,21 +72,6 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
     setLink(links[index]);
   }, [index, links, setLink]);
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft") {
-        handlePrevious();
-      } else if (event.key === "ArrowRight") {
-        handleNext();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [links.length, index]);
-
   const showArrows = links.length > 1;
 
   const handlePrevious = () => {
@@ -96,6 +82,16 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
   const handleNext = () => {
     if (links.length === 0) return;
     setIndex((prevIndex) => (prevIndex === links.length - 1 ? 0 : prevIndex + 1));
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      handlePrevious();
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      handleNext();
+    }
   };
 
   const handleImageClick = () => {
@@ -116,8 +112,13 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
 
   return (
     <div
+      ref={containerRef}
       className={`tol-image-carousel tol-component-content${className ? ` ${className}` : ""}`}
       style={containerStyle}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      onMouseEnter={() => containerRef.current?.focus()}
+      aria-label="Image carousel"
     >
       {showArrows && (
         <Icon
