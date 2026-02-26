@@ -23,7 +23,8 @@ import {
   PRIVILEGE,
   TNavBrand,
   BUTTONS,
-  UtilityBar
+  UtilityBar,
+  PButton
 } from "../..";
 
 export interface PBoard {
@@ -47,7 +48,7 @@ export interface PBoard {
 export function Board(props: PBoard) {
   const { boardDataSource, brand } = props;
 
-  const { privilege, setPrivilege, editMode, setEditMode } = useBoard();
+  const { privilege, setPrivilege, editMode, setEditMode, layoutMode, setLayoutMode } = useBoard();
 
   const { boardId: paramBoardId, viewId } = useParams<any>();
   const [user, setUser] = useState<any>(null);
@@ -112,13 +113,54 @@ export function Board(props: PBoard) {
     );
   }
 
-  const editOrExitButton = editMode ? {
+  const onLayoutModeToggle = () => {
+    setLayoutMode(!layoutMode);
+    const el = document.getElementById("tol-layout-mode");
+    const scale = layoutMode ? "1" : "0.75";
+    if (el) el.style.transform = `scale(${scale})`;
+  };
+
+  const layoutOrExitLogic: PButton = layoutMode ? {
+    ...BUTTONS.CONFIRM,
+    text: "Exit Layout Mode",
+  } : {
+    ...BUTTONS.EDIT,
+    text: "Change Layout",
+  };
+
+  const layoutOrExitButton: PButton = {
+    ...layoutOrExitLogic,
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE && editMode,
+    onClick: onLayoutModeToggle,
+    testid: "board-layout-mode-button",
+    tooltip: "",
+  }
+
+  const editOrExitLogic: PButton = editMode ? {
     ...BUTTONS.CONFIRM,
     text: "Exit Edit Mode",
   } : {
     ...BUTTONS.EDIT,
     text: "Edit",
   };
+
+  const editOrExitButton: PButton = {
+    ...editOrExitLogic,
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
+    disabled: layoutMode,
+    onClick: () => {
+      setEditMode(!editMode);
+    },
+    testid: "board-edit-mode-button",
+    tooltip: "",
+  }
+
+  const shareButton: PButton = {
+    ...BUTTONS.SHARE,
+    onClick: () => {
+      copyToClipboard(location.href);
+    },
+  }
 
   // Different format used for the main Board title
   const editModeTitle = editMode ? {
@@ -142,21 +184,9 @@ export function Board(props: PBoard) {
       <UtilityBar
         id="board-utility-bar"
         buttons={[
-          {
-            ...editOrExitButton,
-            visible: privilege === PRIVILEGE.BOARD.EDITABLE,
-            onClick: () => {
-              setEditMode(!editMode);
-            },
-            testid: "board-edit-mode-button",
-            tooltip: "",
-          },
-          {
-            ...BUTTONS.SHARE,
-            onClick: () => {
-              copyToClipboard(location.href);
-            },
-          },
+          editOrExitButton,
+          layoutOrExitButton,
+          shareButton,
         ]}
         title={editModeTitle}
         elements={viewModeTitle}

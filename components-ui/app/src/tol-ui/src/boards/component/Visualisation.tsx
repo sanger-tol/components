@@ -21,7 +21,10 @@ import {
   generateFilter,
   mergeUtilityBarConfigs,
   BoardFilterBlock,
-  FilterConfigDrawer
+  FilterConfigDrawer,
+  removeComponent,
+  BUTTONS,
+  ConfirmationModal
 } from "../..";
 
 
@@ -41,25 +44,28 @@ export function Visualisation(props: PVisualisation) {
     componentType,
     boardDataSource,
     zone,
+    setZone,
     dataSource,
     utilityBarConfig,
   } = props;
 
   const [title, setTitle] = useState(props.title);
   const [openFilters, setOpenFilters] = useState(false);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
   const { editMode } = useBoard();
 
   const filter = generateFilter(zone, id);
 
-  const dragButton: PButton = {
-    outline: true,
-    position: "right",
-    type: "edit",
-    icon: "up-down-left-right",
-    className: "tol-drag-handle",
-    visible: editMode,
-  }
+  const onDelete = () => {
+    boardDataSource
+      .deleteByID({
+        objectType: BOARDS.COMPONENT,
+        id: id,
+      })
+    removeComponent(id, zone);
+    setZone({ ...zone });
+  };
 
   const filterButton: PButton = {
     outline: true,
@@ -67,6 +73,13 @@ export function Visualisation(props: PVisualisation) {
     type: "primary",
     onClick: () => setOpenFilters(true),
     icon: "filter",
+    visible: editMode,
+  }
+
+  const deleteButton: PButton = {
+    ...BUTTONS.DISCARD,
+    onClick: () => setConfirmationModalOpen(true),
+    tooltip: "Delete Component",
     visible: editMode,
   }
 
@@ -100,7 +113,7 @@ export function Visualisation(props: PVisualisation) {
       } : undefined,
       description: Description,
       buttons: [
-        dragButton,
+        deleteButton,
         filterButton,
       ],
       elements: [
@@ -131,9 +144,17 @@ export function Visualisation(props: PVisualisation) {
   }
 
   return (
-    <Component
-      {...props}
-      utilityBarConfig={ubc}
-    />
-  )
+    <>
+      <Component
+        {...props}
+        utilityBarConfig={ubc}
+      />
+      <ConfirmationModal
+        setOpen={setConfirmationModalOpen}
+        open={confirmationModalOpen}
+        onConfirmClick={onDelete}
+        itemType={BOARDS.COMPONENT}
+      />
+    </>
+  );
 }

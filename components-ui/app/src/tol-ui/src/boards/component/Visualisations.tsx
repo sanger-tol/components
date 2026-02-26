@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, cloneElement } from "react";
 import { WidthProvider, Responsive, Layouts } from "react-grid-layout";
 import {
   generateLayout,
@@ -13,6 +13,7 @@ import {
   generateVisualisations,
   updateLayout,
   useBoard,
+  Placeholder,
 } from "../..";
 
 
@@ -37,8 +38,8 @@ export function Visualisations(props: PVisualisations) {
     boardDataSource,
   } = props;
 
-  const { editMode } = useBoard();
- 
+  const { editMode, layoutMode } = useBoard();
+
   const [layoutsState, setLayouts] = useState<Layouts>();
   // newLayout is used to store the layout when the user is dragging widgets, and is emtptied once a user saves
   const [newLayout, setNewLayout] = useState(undefined);
@@ -79,13 +80,15 @@ export function Visualisations(props: PVisualisations) {
   };
 
   return (
-    <div className="tol-responsive-grid">
+    <div
+      id="tol-layout-mode"
+      className="tol-responsive-grid"
+    >
       <ResponsiveReactGridLayout
         layouts={layoutsState}
         breakpoints={{ lg: 992, md: 576, sm: 0 }}
         cols={{ lg: 4, md: 2, sm: 1 }}
-        isDraggable={editMode}
-        draggableHandle=".tol-drag-handle"
+        isDraggable={layoutMode}
         compactType="vertical"
         rowHeight={5}
         onLayoutChange={(layout: any) => setNewLayout(layout)}

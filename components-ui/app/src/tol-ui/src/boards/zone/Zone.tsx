@@ -23,6 +23,7 @@ import {
   useBoard,
   TitleTooltip,
   TsDataSource,
+  BUTTONS,
 } from "../..";
 
 
@@ -107,13 +108,8 @@ export function Zone(props: PZone) {
   };
 
   const deleteButton: PButton = {
-    outline: true,
-    onClick: () => {
-      setConfirmationModalOpen(true);
-    },
-    type: "error",
-    icon: "trash",
-    position: "right",
+    ...BUTTONS.DISCARD,
+    onClick: () => setConfirmationModalOpen(true),
     tooltip: "Delete Zone",
     visible: editMode
   };
