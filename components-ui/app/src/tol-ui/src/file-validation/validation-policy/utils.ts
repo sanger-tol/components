@@ -101,7 +101,7 @@ export async function mutateSubmission(
   mutations: TValidationSubmissionMutations,
   messages: { success: string; error: string },
   attribute: string,
-  setOpen: (open: boolean) => void,
+  setOpen?: (open: boolean) => void,
 ): Promise<void> {
   const mutatedPayload = mutations.map(
     (mutatedItem: IValidationSubmissionMutation) => {

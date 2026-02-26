@@ -3,7 +3,7 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { Toggle } from "rsuite";
 import {
@@ -86,7 +86,7 @@ export function FileValidationHome(props: PFileValidationHome) {
   const [validationData, setValidationData] =
     useState<IAllValidationData | null>(null);
 
-  // Update table on table tab selection
+  // Update table on table tab selection (will do when fixed)
   const [forceTableUpdate, setForceTableUpdate] = useState<boolean>(false);
 
   // toggles hidden uploads on table
@@ -100,7 +100,14 @@ export function FileValidationHome(props: PFileValidationHome) {
   // Current Action ID
   const [currentActionId, setCurrentActionId] = useState<string>("");
 
-  const [refetchFn, setRefetchFn] = useState<(() => void) | null>(null);
+  // Temp table update state change (will change value of key)
+  const [tableKey, setTableKey] = useState<boolean>(false);
+
+  // Captures the refetch function when using actions on the manifest validation homepage
+  const refetchFnRef = useRef<(() => void) | null>(null);
+  const setRefetchFn = (fn: (() => void) | null) => {
+    refetchFnRef.current = fn;
+  };
 
   const userIsAdmin = getUserFromLocalStorage().roles.includes("admin");
 
@@ -149,15 +156,15 @@ export function FileValidationHome(props: PFileValidationHome) {
   // Create an easy to access 'view upload' button, which pushes to
   // /manifest-validation/result/<uploadId> url
   const IdAndViewButtonCell = ({ dataObject }) => {
-    const id = dataObject?.id;
+    const uploadId = dataObject?.id;
 
     const handleViewResults = () => {
-      history.push(`/file-validation/results/${id}?t=2`);
+      history.push(`/file-validation/results/${uploadId}?t=2`);
     };
 
     return (
       <div className="tol-file-validation-upload-table-id-cell">
-        <p>{id}</p>
+        <p>{uploadId}</p>
         <Button text="View" onClick={handleViewResults} />
       </div>
     );
@@ -168,6 +175,9 @@ export function FileValidationHome(props: PFileValidationHome) {
   // This is done on the API.
   const AllValidationUploadsTable = (
     <RemoteTable
+      // Temp fix - table re-renders, but for some reason data won't refresh.
+      // Will need to look into this more.
+      key={`uploads-table-${tableKey}`}
       id="validation-uploads-table"
       height={500}
       actions={
@@ -352,7 +362,7 @@ export function FileValidationHome(props: PFileValidationHome) {
                 return { id: Object.keys(row)[0] };
               })
             : validationData
-              ? [validationData]
+              ? [{ id: validationData.id }]
               : []
         }
         open={reportOpen}
@@ -367,19 +377,18 @@ export function FileValidationHome(props: PFileValidationHome) {
                 return { id: Object.keys(row)[0] };
               })
             : validationData
-              ? [validationData]
+              ? [{ id: validationData.id }]
               : []
         }
         attribute={
           currentActionId === "reject" ? "rejection_reason" : "upload_name"
         }
-        setForceTableUpdate={setForceTableUpdate}
         setSelectedRows={setSelectedRows}
         onSuccess={() => {
-          if (validationData && refetchFn) {
-            refetchFn();
-          } else {
-            setForceTableUpdate((prev: boolean) => !prev);
+          // setForceTableUpdate((prev: boolean) => !prev);
+          setTableKey((prev: boolean) => !prev);
+          if (validationData && refetchFnRef.current) {
+            refetchFnRef.current();
           }
         }}
       />

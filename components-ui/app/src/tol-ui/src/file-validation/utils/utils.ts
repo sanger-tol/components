@@ -453,7 +453,6 @@ export const createValidationActions = (
           id: row.key,
         }));
         setActionId?.(action.id);
-        console.log(action.id);
         // Provide the action callback with the required context to perform the action.
         action.callback({
           items: rowIds,

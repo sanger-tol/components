@@ -44,10 +44,6 @@ export interface PSubmissionMutateModal {
    */
   attribute: "rejection_reason" | "upload_name";
   /**
-   * Force table update to refresh data after rejection submission
-   */
-  setForceTableUpdate?: Dispatch<SetStateAction<boolean>>;
-  /**
    * Callback to clear the selected rows after performing a status update
    */
   setSelectedRows?: Dispatch<SetStateAction<string[]>>;
@@ -63,7 +59,6 @@ export function SubmissionMutateModal(props: PSubmissionMutateModal) {
     setOpen,
     uploadIds,
     attribute,
-    setForceTableUpdate,
     setSelectedRows,
     onSuccess,
   } = props;
@@ -85,14 +80,9 @@ export function SubmissionMutateModal(props: PSubmissionMutateModal) {
       {
         id: {
           in_list: {
-            value:
-              uploadIds.length > 1
-                ? [
-                    ...uploadIds.map(
-                      (item: Partial<IAllValidationData>) => item?.id,
-                    ),
-                  ]
-                : [...uploadIds],
+            value: Object.values(uploadIds).map(
+              (upload: Partial<IAllValidationData>) => upload.id,
+            ),
           },
         },
       },
@@ -168,9 +158,10 @@ export function SubmissionMutateModal(props: PSubmissionMutateModal) {
                 } submission ${item?.id}:`}
               </h6>
               <p>
-                {uploadResults?.data?.[index]?.uploadName} -{" "}
-                {user?.roles?.includes("admin") &&
-                  uploadResults?.data?.[index]?.oidcId}{" "}
+                {uploadResults?.data?.[index]?.uploadName}
+                {user?.roles?.includes("admin")
+                  ? ` - ${uploadResults?.data?.[index]?.oidcId}`
+                  : ""}{" "}
                 -{" "}
                 {new Date(
                   uploadResults?.data?.[index]?.dateStarted,
@@ -215,9 +206,9 @@ export function SubmissionMutateModal(props: PSubmissionMutateModal) {
           return;
         }
         await handleAttributeSet();
+
         setSelectedRows?.([]);
         setAttributes([]);
-        setForceTableUpdate?.((prev: boolean) => !prev);
       }}
       timeout={2000}
     />

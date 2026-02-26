@@ -5,9 +5,8 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation, useHistory, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router";
 
 import {
   getErrorWarningCounts,
@@ -45,6 +44,7 @@ import type {
 export function ValidationResultsViewer() {
   // Captures upload id passed to the page parameters
   // /file-validation/results/<uploadId>
+
   const { uploadId } = useParams<{ uploadId: string }>();
 
   // Get the actions and policies from the module, which has been set by the provider
