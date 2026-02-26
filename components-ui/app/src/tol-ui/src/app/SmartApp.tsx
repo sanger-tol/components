@@ -132,6 +132,13 @@ export function SmartApp(props: PSmartApp) {
   }, []);
 
   useEffect(() => {
+
+    // No web app id provided, skip remote nav fetch
+    if (!id?.trim()) {
+      setTimeout(() => setGlobalLoading(false), 300);
+      return;
+    }
+
     configDataSource.getOne({
       objectType: WEB_APP,
       id,
@@ -153,7 +160,7 @@ export function SmartApp(props: PSmartApp) {
       // Small delay as loading screen can feel abrupt if it disappears immediately
       setTimeout(() => setGlobalLoading(false), 300);
     });
-  }, []);
+  }, [configDataSource, id]);
 
   const navigation = mergeAndNormaliseNavConfig(fetchedNavigation, defaultNavigation, user, routePrefix);
   const profileNavigation = mergeAndNormaliseNavConfig(fetchedProfileNavigation, defaultProfileNavigation, user, routePrefix);
