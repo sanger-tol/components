@@ -14,6 +14,11 @@ import {
   stopPropagation,
   PopUpMessage,
   API_METHODS,
+  TFilterOrUndefined,
+  generateFilter,
+  filterHasUpdated,
+  appendKeywordIfNeeded,
+  removeAttributeFromFilter,
 } from "..";
 
 
@@ -36,6 +41,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [aggregationFilter, setAggregationFilter] = useState<TFilterOrUndefined>({});
   const operator = "in_list";
 
   useEffect(() => {
@@ -43,6 +49,17 @@ export function FilterMultiSelect(props: IFilterInput) {
       fetchValues();
     }
   }, [values]);
+
+  useEffect(() => {
+    const nextFilter = removeAttributeFromFilter(
+      generateFilter(zone, componentId, true),
+        attribute,
+    );
+    if (filterHasUpdated(setAggregationFilter, aggregationFilter, nextFilter)) {
+      setFetched(false);
+      setData([]);
+    }
+  }, [zone]);
 
   useEffect(() => {
     errorMessage && PopUpMessage({ message: errorMessage, type: "error" });
@@ -53,13 +70,16 @@ export function FilterMultiSelect(props: IFilterInput) {
       setLoading(true);
       const aggs = { aggs: {} };
       aggs["aggs"][attribute] = {
-        terms: { field: `${attribute}.keyword`, size: 500 },
+        terms: { field: appendKeywordIfNeeded(attribute), size: 500 },
       };
       dataSource
         .custom({
           method: API_METHODS.POST,
           resource: `${objectType}:aggregations`,
           body: aggs,
+          params: {
+            filter: aggregationFilter,
+          },
         })
         .then((res: any) => {
           const aggValues = res.data.meta.aggregations[attribute].buckets;

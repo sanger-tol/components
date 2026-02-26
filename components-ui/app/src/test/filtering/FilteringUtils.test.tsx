@@ -339,6 +339,51 @@ describe("Testing generateFilter function", () => {
     const testCall1 = generateFilter(mockZone, "component1", true);
     expect(testCall1).toEqual(combinedFilterValue);
   });
+
+  test("Generates filter correctly with ignored attributes", () => {
+    const filterValue1: IFilter = {
+      and_: {
+        attribute1: {
+          op1: {
+            value: 10,
+            negate: false,
+          },
+        },
+        attribute2: {
+          op2: {
+            value: 20,
+            negate: false,
+          },
+        },
+      },
+    };
+
+    const mockZone: IZone = {
+      components: {
+        component1: {
+          data: {
+            filter: filterValue1,
+          },
+        },
+      },
+      order: ["component1"],
+      type: "dashboard",
+    };
+
+    const expectedFilter: IFilter = {
+      and_: {
+        attribute2: {
+          op2: {
+            value: 20,
+            negate: false,
+          },
+        },
+      },
+    };
+
+    const testCall1 = generateFilter(mockZone, "component1", false, ["attribute1"]);
+    expect(testCall1).toEqual(expectedFilter);
+  });
 });
 
 describe("Testing addValueBelow function", () => {
