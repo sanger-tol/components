@@ -693,6 +693,25 @@ export function getFieldByName(object: TDataObjectOrNull, field: string): any {
 }
 
 /**
+ * Filters a list of data objects so only the first occurrence of each `id` is kept.
+ *
+ * @param items - List of data objects (or null list) to filter.
+ * @returns A list containing unique objects by `id`.
+ */
+function filterUniqueById(items: TDataObjectListOrNull): TDataObjectListOrNull {
+  if (!items) return [null] as TDataObjectListOrNull;
+
+  const seenIds = new Set<string>();
+
+  return items.filter((item) => {
+    if (!item?.id) return false;
+    if (seenIds.has(item.id)) return false;
+    seenIds.add(item.id);
+    return true;
+  }) as TDataObjectListOrNull;
+}
+
+/**
  * Resolves and returns the child data object(s) reached by following a dot-delimited relationship path.
  *
  * - If `field` contains dots (e.g., `"author.address.city"`), each segment is treated as a relationship name
@@ -712,9 +731,10 @@ export function getChildObjectsByName(object: TDataObjectOrNull, field: string):
     if (relationshipObject) {
       // If the relationship is an array, we need to recursively resolve the rest of the path for each item and flatten the results
       if (Array.isArray(relationshipObject)) {
-        return relationshipObject.map((item) =>
-          getChildObjectsByName(item, rest.join("."))
-        ).flat() as TDataObjectListOrNull;
+        const objects = relationshipObject.flatMap(
+          (item) => getChildObjectsByName(item, rest.join(".")) ?? []
+        );
+        return filterUniqueById(objects as TDataObjectListOrNull);
       }
       // If it's a single object, just resolve the rest of the path for that object
       return getChildObjectsByName(relationshipObject, rest.join("."));

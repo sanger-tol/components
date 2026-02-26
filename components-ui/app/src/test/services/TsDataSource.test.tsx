@@ -163,9 +163,9 @@ const toManyRelationshipMockData = {
               id: "FF123",
               type: "sample",
             },
-            {            
+            {
               id: "FF124",
-              type: "sample", 
+              type: "sample",
             },
           ],
         },
@@ -309,7 +309,7 @@ const mockClient = () => ({
       return Promise.resolve(speciesMockData);
     } else if (endpoint === "/noCacheTest/nestedRelationships1" && baseURL === "/test-data-path") {
       return Promise.resolve(nestedRelationshipMockData);
-    }else if (endpoint === "/specimen/SAN1" && baseURL === "/test-data-path") {
+    } else if (endpoint === "/specimen/SAN1" && baseURL === "/test-data-path") {
       return Promise.resolve(toManyRelationshipMockData);
     } else if (endpoint === "/specimen/testSpecimenId" && baseURL === "/test-data-path") {
       return Promise.resolve(specimenMockData);
@@ -824,7 +824,7 @@ describe("Testing to many relationships getting", () => {
     const specimen = await mockDataSource.getOne({
       objectType: "specimen",
       id: "SAN1",
-      requestedFields: ["name" ,"samples.rackPosition"],
+      requestedFields: ["name", "samples.rackPosition"],
     });
 
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
@@ -849,7 +849,7 @@ describe("Testing to many relationships getting", () => {
     const specimen = await mockDataSource.getOne({
       objectType: "specimen",
       id: "SAN1",
-      requestedFields: ["name" ,"samples.rackPosition"],
+      requestedFields: ["name", "samples.rackPosition"],
     });
 
     expect(specimen).not.toBeNull();
@@ -1017,6 +1017,23 @@ describe("Testing temp getChildObjectsByName function", () => {
     };
 
     expect(getChildObjectsByName(root, "children.pet.name")).toEqual([pet1, pet2]);
+  });
+
+  test("Ignores duplicates of objects", () => {
+    const pet1: TDataObjectOrNull = { id: "p1", objectType: "pet", relationships: {} };
+
+    const child1: TDataObjectOrNull = { id: "c1", objectType: "child", relationships: { pet: pet1 } };
+    const child2: TDataObjectOrNull = { id: "c2", objectType: "child", relationships: { pet: pet1 } };
+
+    const root: TDataObjectOrNull = {
+      id: "r1",
+      objectType: "root",
+      relationships: {
+        children: [child1, child2],
+      },
+    };
+
+    expect(getChildObjectsByName(root, "children.pet.name")).toEqual([pet1]);
   });
 
   test("Falls back to returning [null] when a relationship segment is missing", () => {

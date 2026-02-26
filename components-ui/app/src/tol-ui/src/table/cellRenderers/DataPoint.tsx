@@ -20,6 +20,14 @@ export interface PDataPoint extends PDataPoints {
    * Whether to wrap the value in a tag element.
    */
   isTag?: boolean,
+  /**
+   * The id of the currently active data point. Initially used for images.
+   */
+  activeObjectId?: string | null,
+  /**
+   * Setter function to set the active data point id.
+   */
+  setActiveObjectId?: React.Dispatch<React.SetStateAction<string | null>>,
 }
 
 /**
@@ -33,6 +41,7 @@ export function DataPoint(props: PDataPoint) {
     dataSource,
     editable,
     isTag = false,
+    setActiveObjectId = () => { },
   } = props;
 
   const v = getFieldByName(dataObject, field);
@@ -46,9 +55,13 @@ export function DataPoint(props: PDataPoint) {
     typeof value === "string"
   );
 
+  const onClick = () => {
+    setActiveObjectId((prev) => (prev === value ? null : value));
+  }
+
   const onDoubleClick = () => {
-    //if (!editable) return;
-    if (true) {
+    if (!editable) return;
+    if (canEdit) {
       setEditMode(true);
     } else {
       PopUpMessage({
@@ -142,7 +155,11 @@ export function DataPoint(props: PDataPoint) {
   }
 
   const Content = (
-    <div className="tol-data-point" onDoubleClick={onDoubleClick}>
+    <div
+      className="tol-data-point"
+      onClick={onClick}
+      onDoubleClick={onDoubleClick}
+    >
       {DataDisplay}
     </div>
   )

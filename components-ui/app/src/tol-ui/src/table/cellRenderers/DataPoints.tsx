@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useState } from "react";
 import {
   TDataObjectOrNull,
   TCellRenderer,
@@ -53,6 +54,8 @@ export interface PDataPoints {
 export function DataPoints(props: PDataPoints) {
   const { dataObject, field } = props;
 
+  const [activeObjectId, setActiveObjectId] = useState<string | null>(null);
+
   // get the child objects based on the field
   const childObjects = getChildObjectsByName(dataObject, field);
 
@@ -69,6 +72,8 @@ export function DataPoints(props: PDataPoints) {
       dataObject={obj}
       field={attribute}
       isTag={childObjects.length > 1}
+      activeObjectId={activeObjectId}
+      setActiveObjectId={setActiveObjectId}
     />
   ))
 
