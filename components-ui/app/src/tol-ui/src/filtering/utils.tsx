@@ -92,6 +92,12 @@ export function removeSuperfluousExists(filter: IAndAttributes) {
   });
 }
 
+/**
+ * Removes ignored attributes from the provided `and_` filter block.
+ *
+ * @param filter - The filter attributes to mutate in place.
+ * @param ignoredAttributes - Attribute keys to remove when present.
+ */
 export function removeIgnoredAttributes(
   filter: IAndAttributes,
   ignoredAttributes: string[] = [],
