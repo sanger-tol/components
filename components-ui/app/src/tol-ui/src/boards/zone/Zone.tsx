@@ -48,7 +48,7 @@ export function Zone(props: PZone) {
     deleteZone,
   } = props;
 
-  const { editMode } = useBoard();
+  const { editMode, layoutMode } = useBoard();
 
   const [draggable, setDraggable] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
@@ -93,6 +93,13 @@ export function Zone(props: PZone) {
     />
   );
 
+  const deleteButton: PButton = {
+    ...BUTTONS.DISCARD,
+    onClick: () => setConfirmationModalOpen(true),
+    tooltip: "Delete Zone",
+    visible: editMode && !layoutMode,
+  };
+
   const addButton: PButton = {
     outline: true,
     onClick: () => {
@@ -103,15 +110,8 @@ export function Zone(props: PZone) {
     position: "right",
     tooltip: "",
     testid: "add-component-button",
-    visible: editMode,
+    visible: editMode && !layoutMode,
     text: "Add Component",
-  };
-
-  const deleteButton: PButton = {
-    ...BUTTONS.DISCARD,
-    onClick: () => setConfirmationModalOpen(true),
-    tooltip: "Delete Zone",
-    visible: editMode
   };
 
   const upButton: PButton = {
@@ -123,7 +123,7 @@ export function Zone(props: PZone) {
     icon: "arrow-up",
     position: "right",
     tooltip: "Move Zone Up",
-    visible: editMode
+    visible: layoutMode,
   };
 
   const downButton: PButton = {
@@ -135,7 +135,7 @@ export function Zone(props: PZone) {
     icon: "arrow-down",
     position: "right",
     tooltip: "Move Zone Down",
-    visible: editMode
+    visible: layoutMode,
   };
 
   const filtersButton: PButton = {
@@ -145,7 +145,7 @@ export function Zone(props: PZone) {
     icon: "filter",
     position: "right",
     tooltip: "Add filters to the Zone",
-    visible: editMode
+    visible: editMode && !layoutMode,
   };
 
   const bar = (
@@ -171,11 +171,11 @@ export function Zone(props: PZone) {
           />
         }
         buttons={[
+          deleteButton,
           addButton,
           filtersButton,
           downButton,
           upButton,
-          deleteButton,
         ]}
       />
       <div id="component-modal">

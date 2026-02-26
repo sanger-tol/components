@@ -31,7 +31,7 @@ export interface PView extends PBoard {
 export function View(props: PView) {
   const { id, boardDataSource } = props;
 
-  const { editMode } = useBoard();
+  const { editMode, layoutMode } = useBoard();
 
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
@@ -93,7 +93,7 @@ export function View(props: PView) {
             ...BUTTONS.ADD,
             outline: true,
             testid: "open-add-zone-modal-button",
-            visible: editMode,
+            visible: editMode && !layoutMode,
             onClick: () => {
               setOpen(true);
             },

@@ -24,7 +24,9 @@ import {
   TNavBrand,
   BUTTONS,
   UtilityBar,
-  PButton
+  PButton,
+  LAYOUT_MODE_SCALE_ORIGIN,
+  LAYOUT_MODE_SCALE
 } from "../..";
 
 export interface PBoard {
@@ -114,10 +116,14 @@ export function Board(props: PBoard) {
   }
 
   const onLayoutModeToggle = () => {
-    setLayoutMode(!layoutMode);
+    const next = !layoutMode;
+    setLayoutMode(next);
     const el = document.getElementById("tol-layout-mode");
-    const scale = layoutMode ? "1" : "0.75";
-    if (el) el.style.transform = `scale(${scale})`;
+    const scale = next ? LAYOUT_MODE_SCALE : LAYOUT_MODE_SCALE_ORIGIN;
+    if (el) {
+      el.style.transform = `scale(${scale})`;
+      el.style.transformOrigin = "top center";
+    }
   };
 
   const layoutOrExitLogic: PButton = layoutMode ? {
@@ -146,8 +152,7 @@ export function Board(props: PBoard) {
 
   const editOrExitButton: PButton = {
     ...editOrExitLogic,
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
-    disabled: layoutMode,
+    visible: privilege === PRIVILEGE.BOARD.EDITABLE && !layoutMode,
     onClick: () => {
       setEditMode(!editMode);
     },
@@ -194,9 +199,14 @@ export function Board(props: PBoard) {
     </div>
   )
 
+  const classMode = () => {
+    if (editMode) return "tol-edit-mode";
+    return "";
+  }
+
   // returns the first view at the moment
   return (
-    <div className={`tol-board ${editMode ? "tol-edit-mode" : ""}`} >
+    <div className={`tol-board ${classMode()}`} >
       {Bar}
       < View
         id={boardData.views[0].id}

@@ -49,11 +49,11 @@ export function Visualisation(props: PVisualisation) {
     utilityBarConfig,
   } = props;
 
+  const { editMode, layoutMode } = useBoard();
+
   const [title, setTitle] = useState(props.title);
   const [openFilters, setOpenFilters] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
-
-  const { editMode } = useBoard();
 
   const filter = generateFilter(zone, id);
 
@@ -73,14 +73,14 @@ export function Visualisation(props: PVisualisation) {
     type: "primary",
     onClick: () => setOpenFilters(true),
     icon: "filter",
-    visible: editMode,
+    visible: editMode && !layoutMode,
   }
 
   const deleteButton: PButton = {
     ...BUTTONS.DISCARD,
     onClick: () => setConfirmationModalOpen(true),
     tooltip: "Delete Component",
-    visible: editMode,
+    visible: editMode && !layoutMode,
   }
 
   const FilterDrawer = (
@@ -143,12 +143,30 @@ export function Visualisation(props: PVisualisation) {
       break;
   }
 
+  const Visualisation = (
+    <Component
+      {...props}
+      utilityBarConfig={ubc}
+    />
+  );
+
+  if (layoutMode) {
+    return (
+      <div className="tol-draggable-widget">
+        <div className="tol-draggable-widget-content">
+          {Visualisation}
+        </div>
+        <div
+          className="tol-draggable-widget-overlay"
+          aria-hidden="true"
+        />
+      </div>
+    );
+  }
+
   return (
     <>
-      <Component
-        {...props}
-        utilityBarConfig={ubc}
-      />
+      {Visualisation}
       <ConfirmationModal
         setOpen={setConfirmationModalOpen}
         open={confirmationModalOpen}

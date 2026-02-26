@@ -14,6 +14,8 @@ import {
   updateLayout,
   useBoard,
   Placeholder,
+  LAYOUT_MODE_SCALE_ORIGIN,
+  LAYOUT_MODE_SCALE,
 } from "../..";
 
 
@@ -38,7 +40,7 @@ export function Visualisations(props: PVisualisations) {
     boardDataSource,
   } = props;
 
-  const { editMode, layoutMode } = useBoard();
+  const { layoutMode } = useBoard();
 
   const [layoutsState, setLayouts] = useState<Layouts>();
   // newLayout is used to store the layout when the user is dragging widgets, and is emtptied once a user saves
@@ -89,12 +91,13 @@ export function Visualisations(props: PVisualisations) {
         breakpoints={{ lg: 992, md: 576, sm: 0 }}
         cols={{ lg: 4, md: 2, sm: 1 }}
         isDraggable={layoutMode}
+        transformScale={layoutMode ? LAYOUT_MODE_SCALE : LAYOUT_MODE_SCALE_ORIGIN}
         compactType="vertical"
         rowHeight={5}
         onLayoutChange={(layout: any) => setNewLayout(layout)}
         onBreakpointChange={onBreakpointChange}
       >
-        {elements.map((element) => element)}
+        {elements.map((element) => cloneElement(element))}
       </ResponsiveReactGridLayout>
     </div>
   );
