@@ -38,10 +38,11 @@ export interface PImageListComponent extends Omit<PImageCarouselComponent, "onIm
 export function ImageListComponent(props: PImageListComponent) {
   const {
     links,
-    height = "150px",
+    height = "100%",
     fill = false,
     link,
     setLink,
+    alt,
     enableModal = true,
     className,
     style,
@@ -98,13 +99,14 @@ export function ImageListComponent(props: PImageListComponent) {
       >
         {links.map((link, index) => (
           <div
-            key={index}
+            key={link || `image-${index}`}
             className={`tol-image-list__item${enableModal ? " tol-image-list__item--clickable" : ""}`}
           >
             <ImageComponent
               link={link}
               height={height}
               fill={fill}
+              alt={alt ?? `Image ${index + 1}`}
               onClick={enableModal ? () => handleImageClick(link) : undefined}
             />
           </div>

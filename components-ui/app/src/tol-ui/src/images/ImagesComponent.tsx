@@ -30,7 +30,7 @@ export interface PImagesComponent extends Omit<PImageCarouselComponent, "link" |
 }
 
 export function ImagesComponent(props: PImagesComponent) {
-  const { links, height, fill, enableModal = true, className, style } = props;
+  const { links, height, fill, alt, enableModal = true, className, style } = props;
   const [link, setLink] = useState(links[0] || "");
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -55,6 +55,7 @@ export function ImagesComponent(props: PImagesComponent) {
         link={link}
         height={height}
         fill={fill}
+        alt={alt}
         setLink={setLink}
         onImageClick={enableModal ? (selected) => {
           setLink(selected);
@@ -67,6 +68,7 @@ export function ImagesComponent(props: PImagesComponent) {
           setOpen={setModalOpen}
           links={links}
           link={link}
+          alt={alt}
           setLink={setLink}
         />
       )}

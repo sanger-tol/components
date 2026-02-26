@@ -30,9 +30,13 @@ export interface PImageCarouselComponent extends IHeight {
    */
   fill?: boolean;
   /**
-   * Optional callback to keep parent state in sync with selected image
+   * Callback to keep parent state in sync with selected image
    */
-  setLink?: (link: string) => void;
+  setLink: (link: string) => void;
+  /**
+   * Optional image alt text for accessibility
+   */
+  alt?: string;
   /**
    * Optional callback when the image itself is clicked
    */
@@ -48,7 +52,7 @@ export interface PImageCarouselComponent extends IHeight {
 }
 
 export function ImageCarouselComponent(props: PImageCarouselComponent) {
-  const { links, link, height, fill = false, setLink, onImageClick, className, style } = props;
+  const { links, link, height, fill = false, setLink, onImageClick, alt, className, style } = props;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const currentIndex = links.indexOf(link);
@@ -66,7 +70,7 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
   }, [currentIndex, links]);
 
   useEffect(() => {
-    if (links.length === 0 || index < 0 || index >= links.length || !setLink) {
+    if (links.length === 0 || index < 0 || index >= links.length) {
       return;
     }
     setLink(links[index]);
@@ -97,7 +101,7 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
   const handleImageClick = () => {
     if (links.length === 0) return;
     const selected = links[index];
-    if (setLink) setLink(selected);
+    setLink(selected);
     if (onImageClick) onImageClick(selected);
   };
 
@@ -131,7 +135,13 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
         />
       )}
       <div className="tol-image-carousel__viewport">
-        <ImageComponent link={links[index]} height={height} fill={fill} onClick={handleImageClick} />
+        <ImageComponent
+          link={links[index]}
+          height={height}
+          fill={fill}
+          alt={alt ?? `Image ${index + 1}`}
+          onClick={handleImageClick}
+        />
       </div>
       {showArrows && (
         <Icon

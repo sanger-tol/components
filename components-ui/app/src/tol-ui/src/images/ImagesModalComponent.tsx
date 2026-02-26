@@ -35,17 +35,9 @@ export interface PImagesModalComponent extends PImageCarouselComponent {
    */
   contentStyle?: React.CSSProperties;
   /**
-   * Optional className for the close button
+   * Optional content shown above the carousel
    */
-  closeButtonClassName?: string;
-  /**
-   * Optional style overrides for the close button
-   */
-  closeButtonStyle?: React.CSSProperties;
-  /**
-   * Optional content for the close button
-   */
-  closeButtonContent?: React.ReactNode;
+  headerContent?: React.ReactNode;
 }
 
 export function ImagesModalComponent(props: PImagesModalComponent) {
@@ -57,21 +49,16 @@ export function ImagesModalComponent(props: PImagesModalComponent) {
     setLink,
     height = "85vh",
     fill,
+    alt,
     modalSize = "xl",
     modalClassName,
     contentStyle,
-    closeButtonClassName,
-    closeButtonStyle,
-    closeButtonContent,
+    headerContent,
   } = props;
 
   const contentStyles: React.CSSProperties = {
     ...(contentStyle?.minHeight ? {} : { ["--tol-image-modal-content-min-height" as string]: "600px" }),
     ...contentStyle,
-  };
-
-  const closeButtonStyles: React.CSSProperties = {
-    ...closeButtonStyle,
   };
 
   return (
@@ -80,18 +67,10 @@ export function ImagesModalComponent(props: PImagesModalComponent) {
       setOpen={setOpen}
       size={modalSize}
       className={`tol-image-modal${modalClassName ? ` ${modalClassName}` : ""}`}
-      closeButton={false}
     >
       <div className="tol-image-modal__content" style={contentStyles}>
-        <button
-          onClick={() => setOpen(false)}
-          style={closeButtonStyles}
-          className={`tol-image-modal__close${closeButtonClassName ? ` ${closeButtonClassName}` : ""}`}
-          aria-label="Close"
-        >
-          {closeButtonContent ?? "×"}
-        </button>
-        <ImageCarouselComponent links={links} link={link} height={height} fill={fill} setLink={setLink} />
+        {headerContent}
+        <ImageCarouselComponent links={links} link={link} height={height} fill={fill} alt={alt} setLink={setLink} />
       </div>
     </Modal>
   );
