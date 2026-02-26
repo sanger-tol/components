@@ -92,6 +92,18 @@ export function removeSuperfluousExists(filter: IAndAttributes) {
   });
 }
 
+export function removeIgnoredAttributes(
+  filter: IAndAttributes,
+  ignoredAttributes: string[] = [],
+) {
+  if (ignoredAttributes.length === 0) return;
+  ignoredAttributes.forEach((attribute) => {
+    if (attribute in filter) {
+      delete filter[attribute];
+    }
+  });
+}
+
 /**
  * Determines whether a filter operation should pass through based on the provided conditions.
  *
@@ -133,13 +145,7 @@ export function generateFilter(
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
   removeSuperfluousExists(compoundedFilter);
-  if (ignoredAttributes.length > 0) {
-    ignoredAttributes.forEach((attribute) => {
-      if (attribute in compoundedFilter) {
-        delete compoundedFilter[attribute];
-      }
-    });
-  }
+  removeIgnoredAttributes(compoundedFilter, ignoredAttributes);
   // TODO: update when api supports upsert with empty objects
   // return (isEmptyObject(compoundedFilter)) ? {} : { and_: compoundedFilter } as IFilter;
   return {
