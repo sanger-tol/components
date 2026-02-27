@@ -217,7 +217,7 @@ export async function fetchCurrentPipelineResults(
       const normalisedResults = await normalisePipelineUpload(
         ds,
         results[0],
-        results[0].relationships
+        results[0]?.relationships
       );
       if (setPipelineResult) setPipelineResult(normalisedResults);
       return normalisedResults;
@@ -319,7 +319,7 @@ export async function fetchAndNormaliseAllUploadResults(
     if (results) {
       const normalisedResults = await Promise.all(
         results.map((upload) =>
-          normalisePipelineUpload(ds, upload, upload.relationships)
+          normalisePipelineUpload(ds, upload, upload?.relationships)
         )
       );
       if (setAllUploadResults) setAllUploadResults(normalisedResults);
@@ -581,10 +581,10 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
     return (
       res
         ?.sort((a, b) => {
-          if (a.stage !== b.stage) {
-            return a.stage - b.stage;
+          if (a?.stage !== b?.stage) {
+            return a?.stage - b?.stage;
           } else {
-            return a.step_order - b.step_order;
+            return a?.step_order - b?.step_order;
           }
         })
         .flatMap((step: TDataObjectOrNull) =>
