@@ -78,7 +78,7 @@ export function CellDisplay(props: PCellDisplay) {
   return (
     <>
       <renderer.element {...elementProps} />
-      {Array.isArray(value) && value.length > 1 && renderer.type === "image" &&
+      {false && // ignoring for now
         <Icon
           icon={expanded ? "caret-up" : "caret-down"}
           onClick={() => {
