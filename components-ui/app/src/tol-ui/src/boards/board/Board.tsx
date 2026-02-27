@@ -118,17 +118,17 @@ export function Board(props: PBoard) {
   const onLayoutModeToggle = () => {
     const next = !layoutMode;
     setLayoutMode(next);
-    const el = document.getElementById("tol-layout-mode");
+    const el = document.getElementsByClassName("tol-responsive-grid");
     const scale = next ? LAYOUT_MODE_SCALE : LAYOUT_MODE_SCALE_ORIGIN;
-    if (el) {
-      el.style.transform = `scale(${scale})`;
-      el.style.transformOrigin = "top center";
-    }
+    Array.from(el).forEach((el) => {
+      const htmlEl = el as HTMLElement;
+      htmlEl.style.transform = `scale(${scale})`;
+    });
   };
 
   const layoutOrExitLogic: PButton = layoutMode ? {
-    ...BUTTONS.CONFIRM,
-    text: "Exit Layout Mode",
+    ...BUTTONS.SAVE,
+    text: "Save Layouts",
   } : {
     ...BUTTONS.EDIT,
     text: "Change Layout",

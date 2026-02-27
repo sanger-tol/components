@@ -15,4 +15,4 @@ export const PRIVILEGE = {
 }
 
 export const LAYOUT_MODE_SCALE_ORIGIN = 1;
-export const LAYOUT_MODE_SCALE = 0.6;
+export const LAYOUT_MODE_SCALE = 0.8;

@@ -17,7 +17,6 @@ import {
 
 export async function updateLayout(
   layout,
-  setSaveLayout: (value: boolean) => void,
   zone: IZone,
   setZone: (zone: IZone) => void,
   boardDataSource: TsDataSource,
@@ -48,7 +47,6 @@ export async function updateLayout(
     objectType: BOARDS.COMPONENT_ZONE,
     payload: payloadData,
   });
-  setSaveLayout(false);
   zone.order = order.order;
   setZone({ ...zone });
 };

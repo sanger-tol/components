@@ -83,10 +83,14 @@
     position: absolute;
     inset: 0;
     z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     pointer-events: auto; // captures clicks
     cursor: move;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(4px);
     border-radius: 6px;
+    background-color: color-mix(in srgb, var(--tol-bg) 80%, transparent);
   }
 }
 

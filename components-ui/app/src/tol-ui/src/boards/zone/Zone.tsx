@@ -50,11 +50,9 @@ export function Zone(props: PZone) {
 
   const { editMode, layoutMode } = useBoard();
 
-  const [draggable, setDraggable] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
-  const [saveLayout, setSaveLayout] = useState(false);
   const [title, setTitle] = useState(props.title);
 
   const z = useZone({
@@ -72,13 +70,6 @@ export function Zone(props: PZone) {
       z.setZone({ ...z.zone });
     });
   }, []);
-
-  useEffect(() => {
-    // if not in edit mode, ensure draggable is false
-    if (!editMode) {
-      setDraggable(false);
-    }
-  }, [editMode]);
 
   const onAddComponent = () => {
     setOpen(true);
@@ -199,9 +190,6 @@ export function Zone(props: PZone) {
           id={id}
           zone={z.zone}
           setZone={z.setZone}
-          draggable={draggable}
-          saveLayout={saveLayout}
-          setSaveLayout={setSaveLayout}
           boardDataSource={boardDataSource}
         />
       ) : (

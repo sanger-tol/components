@@ -159,7 +159,11 @@ export function Visualisation(props: PVisualisation) {
         <div
           className="tol-draggable-widget-overlay"
           aria-hidden="true"
-        />
+        >
+          <h3>
+            {title}
+          </h3>
+        </div>
       </div>
     );
   }
