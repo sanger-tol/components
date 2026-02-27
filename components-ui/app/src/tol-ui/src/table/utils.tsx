@@ -71,21 +71,6 @@ export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
   } as FieldMeta;
 }
 
-function addValueBasedCellRenderer(
-  value: any,
-  meta: Field,
-) {
-  if (value) {
-    if (typeof value === "object") {
-      meta.cellRenderer = { type: "collection" };
-    } else if (value.length > 32) {
-      meta.cellRenderer = { type: "expander" };
-    } else if (isFloat(value)) {
-      meta.cellRenderer = { type: "float" };
-    }
-  }
-}
-
 export function convertTableData(
   dataObjects: TDataObjectListOrNull,
   dataSource: TsDataSource,
@@ -101,9 +86,6 @@ export function convertTableData(
     const row: ITableRecord = { key: obj?.id };
     // loop over each field
     fieldMeta.order.active.forEach((field) => {
-      // if (!fieldMeta.dataWithDefaults![attribute]?.cellRenderer) {
-      //   addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![attribute]);
-      // }
       row[field] = (
         <DataPoints
           field={field}
