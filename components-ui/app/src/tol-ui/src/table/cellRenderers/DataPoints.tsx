@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   TDataObjectOrNull,
   TCellRenderer,
@@ -52,8 +52,11 @@ export interface PDataPoints {
  * Can take a renderer to allow for custom rendering of each data point.
  */
 export function DataPoints(props: PDataPoints) {
-  const { dataObject, field } = props;
+  const { field, dataObject, dataSource } = props;
 
+  // State to track whether there could be multiple data points to render.
+  const [isMany, setIsMany] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeObjectId, setActiveObjectId] = useState<string | null>(null);
 
   // get the child objects based on the field
@@ -62,8 +65,30 @@ export function DataPoints(props: PDataPoints) {
   // get the attribute part of the field
   const attribute = getAttributeNameByField(field);
 
-  // temp solution to determine if we are dealing with a "many" relationship
-  //const isManyRelationship = Array.isArray(getFieldByName(dataObject, field));
+  useEffect(() => {
+    if (dataObject) {
+      dataSource
+        .isManyDataPointsByName(
+          dataObject.objectType,
+          field
+        )
+        .then(isMany => {
+          setIsMany(isMany);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
+    }
+  }, [field, dataObject]);
+
+  /**
+   * getRelationshipConfig (used in isManyDataPointsByName) is already stored in cache
+   * when this component is used so we don't need a loading wheel - although it still 
+   * needs to be async.
+   */
+  if (loading) return;
 
   const collectDataPoints = childObjects?.map((obj, index) => (
     <DataPoint
@@ -71,7 +96,7 @@ export function DataPoints(props: PDataPoints) {
       key={`${field}-${index}`}
       dataObject={obj}
       field={attribute}
-      isTag={childObjects.length > 1}
+      isMany={isMany}
       activeObjectId={activeObjectId}
       setActiveObjectId={setActiveObjectId}
     />

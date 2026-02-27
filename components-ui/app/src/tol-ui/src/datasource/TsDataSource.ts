@@ -674,7 +674,37 @@ export class TsDataSource {
       objectType
     )
   }
+
+  /**
+   * Determines whether a dot-delimited relationship path resolves to a `many` relationship.
+   *
+   * @param objectType - Root object type to start traversal from.
+   * @param field - Dot-delimited relationship path (for example: `"samples.accession.id"`).
+   * @returns `true` if the path contains/reaches a `many` relationship, otherwise `false`.
+   */
+  public async isManyDataPointsByName(
+    objectType: string,
+    field: string
+  ): Promise<boolean> {
+    const relationshipConfig = await this.relationshipConfig() as IRelationships;
+    const [relationship, ...rest] = field.split(".");
+    const hasMoreRelationshipJumps = rest.length > 1;
+
+    if (relationshipConfig[objectType]?.one?.[relationship]) {
+      if (hasMoreRelationshipJumps) {
+        const relatedObjectType = relationshipConfig[objectType].one[relationship];
+        const remainingField = rest.join(".");
+        return this.isManyDataPointsByName(relatedObjectType, remainingField);
+      }
+      return false;
+    } else if (relationshipConfig[objectType]?.many?.[relationship]) {
+      return true;
+    }
+
+    return false;
+  }
 }
+
 
 export function getFieldByName(object: TDataObjectOrNull, field: string): any {
   if (field.includes(".")) {

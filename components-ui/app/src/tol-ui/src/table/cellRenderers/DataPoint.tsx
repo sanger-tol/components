@@ -17,9 +17,9 @@ import {
 
 export interface PDataPoint extends PDataPoints {
   /**
-   * Whether to wrap the value in a tag element.
+   * Whether the data point is being rendered within a tag component. Used for styling purposes.
    */
-  isTag?: boolean,
+  isMany?: boolean,
   /**
    * The id of the currently active data point. Initially used for images.
    */
@@ -40,7 +40,7 @@ export function DataPoint(props: PDataPoint) {
     dataObject,
     dataSource,
     editable,
-    isTag = false,
+    isMany = false,
     setActiveObjectId = () => { },
   } = props;
 
@@ -164,5 +164,5 @@ export function DataPoint(props: PDataPoint) {
     </div>
   )
 
-  return isTag ? <Tag>{Content}</Tag> : Content;
+  return isMany ? <Tag>{Content}</Tag> : Content;
 }
