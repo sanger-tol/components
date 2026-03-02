@@ -93,7 +93,7 @@
   color: var(--bs-navbar-brand-color);
 }
 
-.nav-dropdown-box {
+.dropdown-menu .nav-link {
   margin-left: 5px;
 }
 
@@ -107,7 +107,7 @@
 }
 
 // clear navbar with header
-.tol-navigation:has(+ .tol-app .masthead) .tol-navbar {
+.tol-navigation:has(+ .tol-smart-app .masthead) .tol-navbar {
   background-color: unset;
 }
 
@@ -203,7 +203,6 @@
   .rs-avatar.rs-avatar-sm.rs-avatar-circle,
   .initials-avatar {
     color: var(--tol-emphasis);
-    background-color: var(--tol-grey) !important;
   }
 
   @media (min-width: 992px) {

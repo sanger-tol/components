@@ -12,9 +12,40 @@ import {
   API_METHODS,
   Placeholder,
   generateFilter,
-  createMapMarkers
+  createMapMarkers,
+  IHeight
 } from "..";
 
+interface PRemoteMap extends IRemoteTargetAndZone, IHeight {
+  /**
+   * Unique identifier for this map instance, utilised in API interactions and state management
+   */
+  id: string;
+  /**
+   * Whether the map should bubble
+   */
+  bubble?: boolean;
+  /**
+   * The key used to extract longitude values from the data
+   */
+  longitudeKey: string;
+  /**
+   * The key used to extract latitude values from the data
+   */
+  latitudeKey: string;
+  /**
+   * Optional string representing additional attribute keys for customising marker appearances. These populate the marker tooltip
+   */
+  attributeKeys?: string;
+  /**
+   * Optional parameter to limit the number of data points retrieved for rendering markers (default is set to 2500)
+   */
+  pageSize?: number;
+  /**
+   * Used to apply custom legend keys based on whats is returned, must return an object in format {key: string, colour: string}
+   */
+  markerRenderer?: Function;
+}
 
 /**
  * @autodoc
@@ -23,32 +54,7 @@ import {
  * from a remote `dataSource`. It fetches location data using specified latitude and longitude keys,
  * dynamically generating map markers.
  * Users can also customise the appearance of markers through a provided renderer function.
- * 
- * @prop id - Unique identifier for this map instance, utilised in API interactions and state management
- * @prop objectType - The type of remote object being retrieved and displayed on the map
- * @prop dataSource - Data source for executing API requests to fetch map data
- * @prop longitudeKey - The key used to extract longitude values from the data
- * @prop latitudeKey - The key used to extract latitude values from the data
- * @prop attributeKeys - Optional string representing additional attribute keys for customising marker appearances. These populate the marker tooltip
- * @prop zone - Current filter zone object affecting the data retrieved for the map
- * @prop height - The height of the map container, expressed as an inline CSS style (e.g. "100%")
- * @prop pageSize - Optional parameter to limit the number of data points retrieved for rendering markers (default is set to 2500)
- * @prop markerRenderer - Optional function to apply custom legend keys and rendering logic for markers based on the returned data set
  */
-
-interface PRemoteMap extends IRemoteTargetAndZone {
-  id: string;
-  bubble?: boolean;
-  longitudeKey: string;
-  latitudeKey: string;
-  attributeKeys?: string;
-  height?: any;
-  pageSize?: number;
-  // Used to apply custom legend keys based on whats is returned,
-  // must return an object in format {key: string, colour: string}
-  markerRenderer?: Function;
-}
-
 export function RemoteMap(props: PRemoteMap) {
   const {
     id,

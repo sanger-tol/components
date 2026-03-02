@@ -24,6 +24,7 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 // Add icons to the library
 library.add(fas, fab);
 
+export * from "./app";
 export * from "./attributes";
 export * from "./autodoc";
 export * from "./boards";
@@ -40,11 +41,10 @@ export * from "./hooks";
 export * from "./map";
 export * from "./messaging";
 export * from "./interfaces";
-export * from "./nav";
 export * from "./overlays";
 export * from "./services";
 export { retry } from "./services/http";
-export * from "./smart-app";
+export { clearExpiredToken } from "./services/auth";
 export * from "./table";
 export * from "./timeline";
 export * from "./variables";

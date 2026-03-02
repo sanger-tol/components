@@ -48,7 +48,7 @@ export function AutoDocPage(props: PAutoDocPage) {
             <tr>
               <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--tol-grey)' }}>Name</th>
               <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--tol-grey)' }}>Type</th>
-              <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--tol-grey)' }}>Default</th>
+              {/* <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--tol-grey)' }}>Default</th> */}
               <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid var(--tol-grey)' }}>Description</th>
             </tr>
           </thead>
@@ -60,7 +60,7 @@ export function AutoDocPage(props: PAutoDocPage) {
                   {prop.required && <RequiredAsterisk />}
                 </td>
                 <td style={{ padding: '12px', borderBottom: '1px solid var(--tol-grey-translucent)' }}>{prop.type}</td>
-                <td style={{ padding: '12px', borderBottom: '1px solid var(--tol-grey-translucent)' }}>{prop.defaultValue || '—'}</td>
+                {/* <td style={{ padding: '12px', borderBottom: '1px solid var(--tol-grey-translucent)' }}>{prop.defaultValue || '—'}</td> */}
                 <td style={{ padding: '12px', borderBottom: '1px solid var(--tol-grey-translucent)' }}>{prop.description || '—'}</td>
               </tr>
             ))}
@@ -81,7 +81,6 @@ export function AutoDocPage(props: PAutoDocPage) {
     </>
   ) : null;
 
-  // @ts-ignore
   const ExamplesWidget = documentation.examples.length > 0 ? (
     <>
       <h4>Examples</h4>
@@ -106,7 +105,7 @@ export function AutoDocPage(props: PAutoDocPage) {
   components.push({ component: HeaderWidget, type: "full" });
   if (PropsWidget) components.push({ component: PropsWidget, type: "full" });
   if (RemarksWidget) components.push({ component: RemarksWidget, type: "full" });
-  // if (ExamplesWidget) components.push({ component: ExamplesWidget, type: "full" });
+  if (ExamplesWidget) components.push({ component: ExamplesWidget, type: "full" });
 
   return (
     <CenterContent>

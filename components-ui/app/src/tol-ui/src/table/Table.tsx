@@ -252,13 +252,14 @@ export function Table(props: PTable) {
       visible: true,
       position: "right",
       type: "primary",
+      testid: "table-slider-button",
       tooltip: "Configure Table",
       onClick: () => {
         setOpen(true);
       },
       icon: "sliders",
       outline: true,
-      disabled: loading
+      disabled: loading,
     }
     : {
       visible: false,

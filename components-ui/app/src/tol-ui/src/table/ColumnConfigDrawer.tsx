@@ -186,6 +186,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
       setOpen={setOpen}
       onSave={onSave}
       hasPendingChanges={hasPendingChanges}
+      onSaveTestId={"save-table-button"}
     >
       {AttributeSelecting}
     </Drawer>

@@ -5,9 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 export interface User {
+  id: string;
+  oidc_id?: string;
   email: string;
   name: string | any;
   organisation: string;
   roles: string[];
-  oidc_id?: string;
+  token_created_at?: string;
+  token_expires_at?: string;
 } // eslint-disable-line

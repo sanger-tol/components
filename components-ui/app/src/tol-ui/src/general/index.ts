@@ -5,7 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./Accordion";
-export * from "./BoardCount";
+export * from "./BoardStatistics";
+export * from "./StatisticsConfigDrawer";
 export * from "./BoardMarkdown";
 export * from "./Button";
 export * from "./CenterContent";
@@ -18,13 +19,13 @@ export * from "./Header";
 export * from "./HoverOverlay";
 export * from "./Icon";
 export * from "./IconTooltip";
-export * from "./InlineEdit";
+export * from "./EditableTitle";
 export * from "./LoadingContent";
 export * from "./Markdown";
 export * from "./ObjectDetail";
 export * from "./Placeholder";
 export * from "./Plate";
-export * from "./RemoteCount";
+export * from "./RemoteStatistics";
 export * from "./RemoteGet";
 export * from "./SourceTag";
 export * from "./Tabs";

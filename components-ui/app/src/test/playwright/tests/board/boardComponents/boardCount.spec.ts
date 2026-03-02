@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 const addCountComponent = async ({page, testID}) => {
-  addComponent({page, testID}, 'count', 'Small');
+  addComponent({page, testID}, 'statistics', 'Small');
 
   // check count has rendered
   await expect(page.locator('.tol-count')).toBeVisible();
@@ -28,7 +28,7 @@ const filterCountComponent = async ({page}) => {
 
   await addComponentFilter(
     {page},
-    'count',
+    'statistics',
     'grit_project',
     'ToL Rapid Curation',
     'multiselect'

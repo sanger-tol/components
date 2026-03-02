@@ -8,6 +8,7 @@ import { HistogramGrouping } from '..';
 
 
 export type TChart = 'bar' | 'line' | 'scatter';
+export type TStatisticsType = "count" | "min" | "max" | "avg" | "sum";
 
 export interface IChartConfig {
   breakDownBy: string,
@@ -15,4 +16,9 @@ export interface IChartConfig {
   stacked: boolean,
   grouping: HistogramGrouping,
   chartType: TChart,
+}
+
+export interface IStatisticsConfig {
+  type?: TStatisticsType;
+  field?: string;
 }

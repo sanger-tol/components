@@ -5,62 +5,41 @@ SPDX-License-Identifier: MIT
 */
 
 import { createRoot } from "react-dom/client";
+import reportWebVitals from "./reportWebVitals";
+import "./scss/styling.scss";
+import { generateAutoDocNavigation, mergeNavConfigs, SmartApp } from "./tol-ui/src";
 import {
   Home,
   Sandbox,
-  CodeStyle
+  MarkdownDocumentation,
 } from "./pages";
-import {
-  TolApp,
-  Page,
-  Dropdown,
-  TsDataSource,
-  env,
-  LOCAL_API_DATA_PATH,
-  generateAutoDocPages,
-} from "./tol-ui/src";
-import reportWebVitals from "./reportWebVitals";
-import "./scss/styling.scss";
+import codeStyleGuideContent from "./docs/code-style-guide.md?raw";
+import howToDocumentContent from "./docs/how-to-document.md?raw";
+import { navConfig } from "./config";
 
 
-const codeStyle: Page = {
-  name: "Code Style Guide",
-  element: <CodeStyle />
-}
+const {
+  pageElements: autoDocPageElements,
+  navConfig: autoDocNavConfig
+} = generateAutoDocNavigation();
 
-// dev sandbox - change element if needed
-const sandbox: Page = {
-  name: "Sandbox",
-  element: <Sandbox />,
-  hidden: true,
+const pageElements = {
+  home: <Home />,
+  sandbox: <Sandbox />,
+  codeStyleGuide: <MarkdownDocumentation content={codeStyleGuideContent} />,
+  howToDocument: <MarkdownDocumentation content={howToDocumentContent} />,
+  ...autoDocPageElements,
 };
 
-const developerDropdown: Dropdown = {
-  name: "Developer",
-  pages: [codeStyle],
-};
-
-const docsDropdown: Dropdown = {
-  name: "Docs",
-  pages: generateAutoDocPages(),
-};
-
-const boardDataSource = new TsDataSource({
-  apiPath: env.API_PATH,
-  apiDataPath: LOCAL_API_DATA_PATH,
-});
+const navigation = mergeNavConfigs(navConfig, autoDocNavConfig);
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
-  <TolApp
-    boards={{boardDataSource}}
+  <SmartApp
+    boards
     brand="Components"
-    homePage={<Home />}
-    pages={[
-      sandbox,
-      developerDropdown,
-      docsDropdown,
-    ]}
+    navigation={navigation}
+    pageElements={pageElements}
   />
 );
 

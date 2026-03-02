@@ -1,234 +1,306 @@
 /*
-SPDX-FileCopyrightText: 2025 Genome Research Ltd.
+SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 
 SPDX-License-Identifier: MIT
 */
 
 import {
-  AUTO_DOC_REGEX,
-  EXAMPLE_REGEX,
-  PROP_REGEX,
-  IComponentDocumentation,
-  IComponentExample,
-  IComponentProp,
+  IComponentDocumentation, 
+  IComponentExample, 
+  IComponentProp
 } from "..";
 
+/**
+ * Error thrown by methods of {@link TsDocParser}
+ */
+export class TsDocParseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "TsDocParseError";
+    Object.setPrototypeOf(this, TsDocParseError.prototype);
+  }
+}
+
+// @ts-ignore - Use Vite's glob import to get all tsx/jsx files as raw strings
+const modules = import.meta.glob("../**/*.{tsx,jsx,ts,js}", { 
+  as: "raw",
+  eager: true 
+});
 
 /**
- * Parses TSDoc comments tagged with @-autodoc to extract component documentation
+ * Parses TSDoc comments tagged with autodoc to extract component documentation.
+ * From the provided file contents, it extracts the autodoc comment as well as the interface,
+ * which are then passed to extraction functions that use regular expressions to get the specific information needed
  */
-export class TSDocParser {
+export class TsDocParser {
   /**
-   * Parses the content of a TypeScript file to extract component documentation
-   * @param content - The file content as a string
-   * @param filePath - The relative path to the file
-   * @returns Component documentation object or null if no @-autodoc tag found
+   * Entry-point to the parser.
+   * @param fileContent The string contents of the file containing the component to document
+   * @param filePath The relative path of the file containing the component to document
+   * @returns Component documentation for this file, or `null` if no autodoc tag found
    */
-  static parseFileContent(content: string, filePath: string): IComponentDocumentation | null {
-    const autoDocMatch = content.match(AUTO_DOC_REGEX);
-    if (!autoDocMatch) return null;
+  public static parseFileContent(
+    fileContent: string, filePath: string
+  ): IComponentDocumentation | null {
+    // Check whether this file has an autodoc comment.
+    // If it does, get the comment. If it does not, there is no parsing to do
+    const autodocComment = this.extractAutodocCommentFromFileContent(fileContent);
+    if (!autodocComment) return null;
 
-    const docComment = autoDocMatch[0];
-    const componentName = this.extractComponentName(content, filePath);
-    
-    if (!componentName) return null;
+    // Extract the documentation information contained in the autodoc comment
+    const { description, examples, remarks } = this.extractFromAutodocComment(autodocComment);
 
+    // Derive the name of the component to be documented from its file path
+    const componentName = this.extractComponentName(filePath);
+
+    // Crawl through interfaces to generate documentation for every immediate and inherited prop
+    const propDocumentation = this.parsePropDocumentation(fileContent, "P" + componentName);
+
+    // Construct and return final documentation object
     return {
       name: componentName,
       filePath,
-      description: this.extractDescription(docComment),
-      props: this.extractPropsFromTSDoc(content, docComment, componentName),
-      examples: this.extractExamples(docComment),
-      remarks: this.extractRemarks(docComment)
+      description,
+      props: propDocumentation,
+      examples,
+      remarks,
     };
   }
 
   /**
-   * Extracts the component name from the file content or filename
-   * @param content - The file content as a string
-   * @param filePath - The relative path to the file
-   * @returns The component name or null if not found
+   * Extracts the autodoc comment from a file
+   * @param fileContent The text contents of the file potentially containing the autodoc comment
+   * @returns The autodoc comment as a string, or `null` if one was not found
    */
-  private static extractComponentName(content: string, filePath: string): string | null {
-    // Try to find function component declaration
-    const functionMatch = content.match(/export\s+function\s+([A-Z][a-zA-Z0-9]*)/);
-    if (functionMatch) return functionMatch[1];
+  private static extractAutodocCommentFromFileContent(fileContent: string): string | null {
+    // Use a regular expression on the whole file contents to get all TSDoc comments
+    const autodocMatch = fileContent.match(/\/\*\*\s*\n?([\s\S]*?\*\/)/g);
+    if (!autodocMatch) return null;
 
-    // Try to find const component declaration
-    const constMatch = content.match(/export\s+const\s+([A-Z][a-zA-Z0-9]*)\s*[:=]/);
-    if (constMatch) return constMatch[1];
+    // We're not just looking at TSDoc comments, we're looking for autodoc comments,
+    // which are TSDoc comments containing @autodoc
+    const autodocComments = autodocMatch.filter(comment => /@autodoc/.test(comment));
+    if (autodocComments.length < 1) return null;
 
-    // Fallback to filename
-    const fileName = filePath.split("/").pop()?.replace(/\.(tsx|jsx)$/, "");
-    return fileName || null;
+    // Accept only the first match
+    const autodocComment = autodocComments[0];
+
+    return autodocComment;
   }
 
   /**
-   * Extracts the main description from a TSDoc comment
-   * @param docComment - The complete TSDoc comment block
-   * @returns The description text or undefined if not found
+   * Extracts the name of the component to be documented from the path of the file containing the component
    */
-  private static extractDescription(docComment: string): string | undefined {
-    // Extract text before any @tags
-    const descMatch = docComment.match(/\/\*\*\s*([\s\S]*?)(?=@|$)/);
-    if (!descMatch) return undefined;
+  private static extractComponentName(filePath: string): string {
+    // Use a regular expression to extract the file name (without extension) from the file path.
+    // The component name should be the same as the file name
+    const componentNameMatch = filePath.match(/[^\\/]+(?=\.tsx$)/);
 
-    return descMatch[1]
-      .replace(/\s*\*\s?/g, " ")
-      .trim()
-      .replace(/\s+/g, " ") || undefined;
+    if (componentNameMatch) {
+      return componentNameMatch[0];
+    } else {
+      throw new TsDocParseError(
+        `Unable to extract the component name from file path '${filePath}'`
+      )
+    }
   }
 
   /**
-   * Extracts and merges prop information from interface definitions and TSDoc comments
-   * @param content - The file content as a string
-   * @param docComment - The TSDoc comment block
-   * @param componentName - The name of the component
-   * @returns Array of component props with types and descriptions
+   * Extracts the component description, example usages, and further remarks from the autodoc comment.
+   * This is done by using a regular expression for each piece of information to be extracted
    */
-  private static extractPropsFromTSDoc(content: string, docComment: string, componentName: string): IComponentProp[] {
+  private static extractFromAutodocComment(autodocComment: string): {
+    description?: string,
+    examples: IComponentExample[],
+    remarks?: string[]
+  } {
+    // The description is the text after @autodoc
+    const descriptionMatch = autodocComment.match(
+      /(?<=@autodoc\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g
+    );
+    // If a description was found, remove the first 3 characters of each line (TsDoc artefacts)
+    const description = descriptionMatch ?
+      descriptionMatch[0].split("\n").map(line => line.slice(3)).join("\n")
+      : undefined;
+
+    // Examples come after @example tags.
+    // We map over each example to split it into title and code and remove TsDoc artefacts
+    const exampleMatches = autodocComment.match(
+      /(?<=@example\s*\*\s*)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g
+    );
+    const examples: IComponentExample[] = exampleMatches?.map(example => {
+      const [firstLine, ...restOfLines] = example.split("\n");
+
+      return {
+        title: firstLine,
+        // Join back together the rest of the code,
+        // where the first 3 characters of each line are cut off
+        // (as they are artefacts of the TsDoc comment)
+        code: restOfLines.map(line => line.slice(3)).join("\n"),
+      };
+    }) || [];
+
+    // Remarks come after @remarks tags.
+    // We map over each remark to remove TsDoc artefacts
+    const remarksMatches = autodocComment.match(
+      /(?<=@remarks\s)([\s\S]*?)(?=\s*\*?\s*@|\s*\*\/)/g
+    );
+    const remarks = remarksMatches?.map(remark => 
+      // Remove the artefacts at the start of each line (the first 3 characters)
+      remark.split("\n")
+        .map(line => line.slice(3))
+        .join("\n")
+    ) || undefined;
+
+    return {
+      description,
+      examples,
+      remarks,
+    };
+  }
+
+  /**
+   * Recursive method that extracts documentation about props from a specific interface in a file.
+   * Starting with the props interface in the same file as the component, it crawls through deeper extended interfaces,
+   * building up the full array of prop documentation
+   * @param fileContent The content of the file to search on this call
+   * @param interfaceName The name of the interface to extract prop documentation from
+   */
+  private static parsePropDocumentation(
+    fileContent: string, interfaceName: string
+  ): IComponentProp[] {
+    // Extract the interface from the file
+    const interfaceText = this.extractInterfaceFromFile(fileContent, interfaceName);
+    
+    // Extract the documentation for the props in this interface
+    let propDocs = this.extractPropsFromInterface(interfaceText, interfaceName);
+
+    // Check if there are any deeper interfaces.
+    const deeperInterfacesMatch = interfaceText.match(/(?:extends\s+)(([a-zA-Z_][a-zA-Z0-9_]*(, )*)*)/);
+    if (!deeperInterfacesMatch) return propDocs;
+    
+    // If there are any deeper interfaces, add the documentation of their members to `propDocs`
+    const deeperInterfaceNames = deeperInterfacesMatch[1].split(", ");
+    for (const deeperInterfaceName of deeperInterfaceNames) {
+      // Get the contents of the file this interface is defined in
+      const deeperInterfaceFileContents = this.getTheContentsOfTheFileAnInterfaceIsDefinedIn(
+        deeperInterfaceName
+      );
+      if (!deeperInterfaceFileContents) {
+        throw new TsDocParseError(
+          `Unable to find a file containing the interface ${deeperInterfaceName}`
+        );
+      }
+
+      // Resursively search this file too
+      propDocs = propDocs.concat(
+        this.parsePropDocumentation(deeperInterfaceFileContents, deeperInterfaceName)
+      );
+    }
+
+    // Return all prop docs from this interface as well as any parent interfaces
+    return propDocs;
+  }
+
+  /**
+   * Helper method for parsePropDocumentation.
+   * Uses regex extract an interface from a file contents string
+   * @param fileContent 
+   * @param interfaceName 
+   * @returns The whole block of the interface with this name
+   */
+  private static extractInterfaceFromFile(fileContent: string, interfaceName: string): string {
+    // Make the interface name safe to use in regex
+    const escapedInterfaceName = interfaceName.replace(/[-/\\^$.*+?()[\]{}|]/g, "\\$&");
+
+    // Run regex pattern
+    const regex = new RegExp(
+      `interface\\s+${escapedInterfaceName}(?:\\s+extends\\s+([a-zA-Z0-9_]+(?:\\s*,\\s*[a-zA-Z0-9_]+)*))?\\s*{[^}]*}`,
+      "g"
+    );
+    const matches = fileContent.match(regex);
+    
+    // Return the match if there was one
+    if (matches) {
+      return matches[0];
+    } else {
+      throw new TsDocParseError(`Unable to find the interface ${escapedInterfaceName}`);
+    }
+  }
+
+  /**
+   * Helper method for parsePropDocumentation.
+   * Extracts prop information from an interface into `IComponentProp`s
+   * @param interfaceText The block of text where the interface is defined. The information to extract is in here
+   * @param interfaceName The name of the interface. Used in errors
+   * @returns An array of all of the props defined in *this* interface
+   */
+  private static extractPropsFromInterface(interfaceText: string, interfaceName: string): IComponentProp[] {
+    // Extract the members of the interface as well astheir corresponding documentation comments
+    // const propDefinitions = interfaceText.match(/(\w+:\s*[\w<>,\s|]+)(?=\s*(;|\n))/g);
+    const propDefinitions = interfaceText.match(/(\w+\??:\s*[^;]+?)(?=\s*(;|\n))/g);
+    const propDocComments = interfaceText.match(/\*\*([\s\S]*?)\*\//g);
+    if (!propDefinitions || !propDocComments) {
+      // This is not an error because you can have interfaces like IRemoteTargetAndZone that are only there to extend off of others
+      return [];
+    }
+
+    // The following loop depends on a specific index in both arrays referring to the same prop
+    if (propDefinitions.length != propDocComments.length) {
+      throw new TsDocParseError(
+        `The number of props and the number of documentation comments in the interface ${interfaceName} do not match`
+      );
+    }
+
+    // Combine the two collections into an array of prop documentations.
+    // The prop definition at an index should correspond to the prop doc comment at the same index
     const props: IComponentProp[] = [];
-    
-    // First, get prop definitions from the interface
-    const interfaceProps = this.extractPropsFromInterface(content, componentName);
-    
-    // Then, get prop documentation from @prop tags
-    const propDocs = this.extractPropDocumentation(docComment);
-    
-    // Merge interface definitions with documentation
-    for (const interfaceProp of interfaceProps) {
-      const doc = propDocs.get(interfaceProp.name);
+    for (const [index, propDefinition] of propDefinitions.entries()) {
+      // The documentation comment associated with this prop should be at the same index in its array.
+      // The transformations remove the artefacts from the TSDoc comment (so it is readable as a description)
+      const propDocComment = propDocComments[index]
+        .slice(5, -3)
+        .trim()
+        .slice(2);
+
+      // Split the prop definition by the *first* colon to get the name and type
+      const [unsanitisedPropName, ...rest] = propDefinition.split(":");
+
+      // The prop name may have a "?", which is type information, so remove it
+      const propName = unsanitisedPropName.replace("?", "");
+
+      // While we're at it, this same "?" tells us whether or not the prop is required
+      const propIsRequired = !unsanitisedPropName.includes("?");
+
+      // The prop type is everything after the colon, so re-combine `rest` into a single string
+      const propType = rest.join(":");
+
       props.push({
-        ...interfaceProp,
-        description: doc?.description
+        name: propName,
+        type: propType,
+        required: propIsRequired,
+        description: propDocComment,
       });
     }
 
     return props;
   }
 
-/**
- * Extracts prop definitions from TypeScript interface declarations
- * @param content - The file content as a string
- * @param componentName - The name of the component
- * @returns Array of props with type information from the interface
- */
-private static extractPropsFromInterface(content: string, componentName: string): IComponentProp[] {
-  const props: IComponentProp[] = [];
-  
-  // Find interface definition (P prefix for props interfaces)
-  const interfaceRegex = new RegExp(`interface\\s+P${componentName}[^{]*\\{([^}]+)\\}`, "s");
-  const interfaceMatch = content.match(interfaceRegex);
-  
-  if (!interfaceMatch) return props;
-
-  const interfaceContent = interfaceMatch[1];
-  const propLines = interfaceContent.split("\n").map(line => line.trim()).filter(Boolean);
-
-  for (const line of propLines) {
-    // Remove inline comments for parsing
-    const cleanLine = line.replace(/\/\/.*$/, "").trim();
-    const prop = this.parsePropDefinition(cleanLine);
-    if (prop) props.push(prop);
-  }
-
-  return props;
-}
-
   /**
-   * Extracts prop documentation from @prop tags in TSDoc comments
-   * Format: @prop propName - Description
-   * @param docComment - The TSDoc comment block
-   * @returns Map of prop names to their documentation
+   * Helper function for parsePropDocumentation.
+   * Uses Vite's glob import to check the file contents of every file in the codebase to see if it contains the interface
+   * @param interfaceName The interface to look for
+   * @returns The file contents as a string, or null if no file was found with a definition of an interface with this name
    */
-  private static extractPropDocumentation(docComment: string): Map<string, { description: string }> {
-    const propDocs = new Map<string, { description: string }>();
-    let match;
-
-    // Reset regex state
-    PROP_REGEX.lastIndex = 0;
-    
-    while ((match = PROP_REGEX.exec(docComment)) !== null) {
-      const propName = match[1]?.trim();
-      const description = match[2]?.replace(/\s*\*\s?/gm, " ").trim();
-      
-      if (propName && description) {
-        propDocs.set(propName, { description });
+  private static getTheContentsOfTheFileAnInterfaceIsDefinedIn(
+    interfaceName: string
+  ): string | null {
+    for (const fileContent of Object.values(modules)) {
+      if ((fileContent as string).includes(`export interface ${interfaceName}`)) {
+        return fileContent as string;
       }
     }
 
-    return propDocs;
-  }
-
-  /**
-   * Parses a single prop definition line from an interface
-   * @param propDef - A single line defining a prop (e.g., "name: string" or "optional?: number")
-   * @returns Parsed prop information or null if invalid
-   */
-  private static parsePropDefinition(propDef: string): IComponentProp | null {
-    // Remove semicolon and whitespace
-    propDef = propDef.replace(/[;,]$/, "").trim();
-    
-    // Check for optional properties
-    const isOptional = propDef.includes("?:");
-    const [namePart, typePart] = propDef.split(isOptional ? "?:" : ":").map(s => s.trim());
-    
-    if (!namePart || !typePart) return null;
-
-    // Handle default values
-    let type = typePart;
-    let defaultValue: string | undefined;
-    
-    if (type.includes("=")) {
-      [type, defaultValue] = type.split("=").map(s => s.trim());
-    }
-
-    return {
-      name: namePart,
-      type: type,
-      required: !isOptional,
-      defaultValue
-    };
-  }
-
-  /**
-   * Extracts code examples from @example tags in TSDoc comments
-   * @param docComment - The TSDoc comment block
-   * @returns Array of examples with optional titles and code content
-   */
-  private static extractExamples(docComment: string): IComponentExample[] {
-    const examples: IComponentExample[] = [];
-    let match;
-
-    // Reset regex state
-    EXAMPLE_REGEX.lastIndex = 0;
-    
-    while ((match = EXAMPLE_REGEX.exec(docComment)) !== null) {
-      const title = match[1]?.trim() || undefined;
-      const code = match[2]?.replace(/\s*\*\s?/gm, "").trim() || "";
-      
-      if (code) {
-        examples.push({ title, code });
-      }
-    }
-
-    return examples;
-  }
-
-  /**
-   * Extracts remarks from @remarks tags in TSDoc comments
-   * @param docComment - The TSDoc comment block
-   * @returns Array of remark strings or undefined if none found
-   */
-  private static extractRemarks(docComment: string): string[] | undefined {
-    const remarks: string[] = [];
-    const remarkMatches = docComment.matchAll(/@remarks?\s+(.*?)(?=@\w+|$)/gs);
-    
-    for (const match of remarkMatches) {
-      const remark = match[1]?.replace(/\s*\*\s?/gm, " ").trim();
-      if (remark) remarks.push(remark);
-    }
-
-    return remarks.length > 0 ? remarks : undefined;
+    return null;
   }
 }
