@@ -1,4 +1,4 @@
 
 {
-  "extends": ["gitlab>tol/platoforms/renovate"]
+  "extends": ["gitlab>tol/platforms/renovate"]
 }
