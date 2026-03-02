@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-FROM node:23-slim
+FROM node:25-slim
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y curl
 

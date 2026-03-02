@@ -4,7 +4,7 @@
 
 # This is used for a production build
 # stage 1 as builder
-FROM node:18.16.0-alpine as builder
+FROM node:18.20.8-alpine as builder
 
 RUN apk add yarn
 RUN mkdir /workspace
@@ -19,7 +19,7 @@ RUN yarn build
 
 
 # Stage 2
-FROM gitlab-registry.internal.sanger.ac.uk/tol/tol-core/web-base:1.0.4
+FROM gitlab-registry.internal.sanger.ac.uk/tol/tol-core/web-base:1.0.5
 
 # Copy from the stage 1
 COPY --from=builder /workspace/build/ /var/www/

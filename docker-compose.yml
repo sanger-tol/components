@@ -7,7 +7,7 @@ version: "3.1"
 
 services:
   components-db:
-    image: postgres:12
+    image: postgres:18
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
@@ -87,7 +87,7 @@ services:
       - "/usr/src/app/node_modules"
 
   components-dbutils:
-    image: gitlab-registry.internal.sanger.ac.uk/tol/tol-core/dbutils:1.0.4
+    image: gitlab-registry.internal.sanger.ac.uk/tol/tol-core/dbutils:1.0.5
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD

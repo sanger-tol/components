@@ -4,35 +4,35 @@
   "private": true,
   "proxy": "http://components-api:80",
   "dependencies": {
-    "@tol/tol-ui": "2.8.1",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "react-bootstrap": "2.8.0",
-    "react-router-dom": "^5.2.0",
+    "@tol/tol-ui": "2.9.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-bootstrap": "2.10.10",
+    "react-router-dom": "^7.0.0",
     "react-scripts": "5.0.1",
-    "typescript": "5.6.3",
-    "web-vitals": "^0.2.4",
+    "typescript": "5.9.3",
+    "web-vitals": "^5.0.0",
     "react-markdown": "10.1.0",
     "xlsx": "0.18.5",
-    "@fortawesome/free-brands-svg-icons": "6.7.2"
+    "@fortawesome/free-brands-svg-icons": "7.2.0"
   },
   "devDependencies": {
-    "vite": "5.3.5",
-    "vitest": "2.0.5",
-    "vite-tsconfig-paths": "4.3.2",
-    "@vitejs/plugin-react": "4.3.1",
-    "@vitejs/plugin-basic-ssl": "1.1.0",
-    "@testing-library/react": "12.1.2",
-    "@testing-library/user-event": "14.5.2",
-    "@testing-library/jest-dom": "5.16.1",
+    "vite": "5.4.21",
+    "vitest": "2.1.9",
+    "vite-tsconfig-paths": "6.1.1",
+    "@vitejs/plugin-react": "4.7.0",
+    "@vitejs/plugin-basic-ssl": "1.2.0",
+    "@testing-library/react": "12.1.5",
+    "@testing-library/user-event": "14.6.1",
+    "@testing-library/jest-dom": "5.17.0",
     "lorem-ipsum": "2.0.8",
-    "@uiw/react-md-editor": "4.0.7",
+    "@uiw/react-md-editor": "4.0.11",
     "rehype-sanitize": "6.0.0",
-    "rsuite": "5.75.0"
+    "rsuite": "5.83.4"
   },
   "resolutions": {
-    "styled-components": "~6.1.0",
-    "filelist": "1.0.4"
+    "styled-components": "~6.3.0",
+    "filelist": "1.0.6"
   },
   "scripts": {
     "start": "vite",
