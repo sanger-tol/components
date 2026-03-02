@@ -12,6 +12,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { NextStepProvider, NextStep } from "nextstepjs";
 import Navigation from "./Navigation";
 import {
   Callback,
@@ -42,7 +43,9 @@ import {
   CORE_CONFIG_DS,
   mergeAndNormaliseNavConfig,
   GlobalLoadingProvider,
+  registerTourStepAsSeen,
 } from "..";
+import { boardTour } from "src/boards/tour/tour-config";
 
 
 export interface PSmartApp {
@@ -190,7 +193,12 @@ export function SmartApp(props: PSmartApp) {
       brand={brand}
       className={!globalLoading ? "is-fading-out" : ""}
     />
-  )
+  );
+
+  const handleRegisterTourStepAsSeen = (_step: number, tourName?: string | null) => {
+    if (!tourName) return;
+    registerTourStepAsSeen(tourName, getUserFromLocalStorage());
+  };
 
   return (
     <div id="tol-smart-app-background">
@@ -209,35 +217,43 @@ export function SmartApp(props: PSmartApp) {
               setGlobalLoading,
             }}
           >
-            <Router>
-              <Navigation {...navProps} />
-              <div className="tol-smart-app">
-                <div className="tol-smart-app-content">
-                  {/* Switch also needs loading screen to ensure smooth transition */}
-                  {LoadingScreen}
-                  {!globalLoading && (
-                    <>
-                      <Switch>
-                        {collectRoutes(
-                          mergedNavigation,
-                          pageElements,
-                          brand,
-                          configDataSource
-                        )}
-                        <ReactRouter
-                          path={`/page-not-found`}
-                          component={() => <PageNotFound />}
-                        />
-                        <ReactRouter path="*">
-                          <Redirect to={`/page-not-found`} />
-                        </ReactRouter>
-                      </Switch>
-                    </>
-                  )}
-                </div>
-              </div>
-              <Footer />
-            </Router>
+            <NextStepProvider>
+              <NextStep
+                steps={boardTour}
+                onSkip={handleRegisterTourStepAsSeen}
+                onComplete={handleRegisterTourStepAsSeen}
+              >
+                <Router>
+                  <Navigation {...navProps} />
+                  <div className="tol-smart-app">
+                    <div className="tol-smart-app-content">
+                      {/* Switch also needs loading screen to ensure smooth transition */}
+                      {LoadingScreen}
+                      {!globalLoading && (
+                        <>
+                          <Switch>
+                            {collectRoutes(
+                              mergedNavigation,
+                              pageElements,
+                              brand,
+                              configDataSource
+                            )}
+                            <ReactRouter
+                              path={`/page-not-found`}
+                              component={() => <PageNotFound />}
+                            />
+                            <ReactRouter path="*">
+                              <Redirect to={`/page-not-found`} />
+                            </ReactRouter>
+                          </Switch>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <Footer />
+                </Router>
+              </NextStep>
+            </NextStepProvider>
           </GlobalLoadingProvider>
         </AuthProvider>
       </QueryClientProvider>
