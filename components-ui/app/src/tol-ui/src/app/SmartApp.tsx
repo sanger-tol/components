@@ -132,6 +132,11 @@ export function SmartApp(props: PSmartApp) {
     const siteId = env.MATOMO_SITE_ID;
     matomoAnalytics(siteId);
     clearUnusedLocalStorage();
+
+    // For some reason nextstepjs forces these inline styles that mess up our layout,
+    // so remove those
+    document.querySelectorAll('[data-name="nextstep-wrapper"]').forEach(e => e.removeAttribute("style"));
+    document.querySelectorAll('[data-name="nextstep-site"]').forEach(e => e.removeAttribute("style"));
   }, []);
 
   useEffect(() => {
@@ -217,15 +222,15 @@ export function SmartApp(props: PSmartApp) {
               setGlobalLoading,
             }}
           >
-            <NextStepProvider>
-              <NextStep
-                steps={boardTour}
-                onSkip={handleRegisterTourStepAsSeen}
-                onComplete={handleRegisterTourStepAsSeen}
-              >
-                <Router>
-                  <Navigation {...navProps} />
-                  <div className="tol-smart-app">
+            <Router>
+              <Navigation {...navProps} />
+              <div className="tol-smart-app">
+                <NextStepProvider>
+                  <NextStep
+                    steps={boardTour}
+                    onComplete={handleRegisterTourStepAsSeen}
+                    onSkip={handleRegisterTourStepAsSeen}
+                  >
                     <div className="tol-smart-app-content">
                       {/* Switch also needs loading screen to ensure smooth transition */}
                       {LoadingScreen}
@@ -249,14 +254,14 @@ export function SmartApp(props: PSmartApp) {
                         </>
                       )}
                     </div>
-                  </div>
-                  <Footer />
-                </Router>
-              </NextStep>
-            </NextStepProvider>
+                  </NextStep>
+                </NextStepProvider>
+              </div>
+              <Footer />
+            </Router>
           </GlobalLoadingProvider>
         </AuthProvider>
       </QueryClientProvider>
-    </div>
+    </div >
   );
 }
