@@ -58,6 +58,10 @@ export function isEmptyObject(x: object) {
   return Object.keys(x).length === 0;
 }
 
+export function appendKeywordIfNeeded(field: string): string {
+  return field.startsWith("calc_") ? field : `${field}.keyword`;
+}
+
 export function normaliseCaps(name: string, prefix?: string) {
   if (!name) return "";
   // make object ids clear (for auto load)
