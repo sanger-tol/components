@@ -8,7 +8,7 @@ import { Tour } from "nextstepjs";
 
 export const boardTour: Tour[] = [
   {
-    tour: "initialTour",
+    tour: "addZone",
     steps: [
       {
         title: " Select Dataspace",

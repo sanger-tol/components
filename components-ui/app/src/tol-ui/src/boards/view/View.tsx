@@ -46,13 +46,13 @@ export function View(props: PView) {
 
   const handleStartTour = async () => {
     const seen = await fetchTourStepSeen(
-      "initialTour",
+      "addZone",
       getUserFromLocalStorage().id
     );
 
     if (!seen) {
       console.log("tour started!");
-      startNextStep("initialTour");
+      startNextStep("addZone");
     }
   };
 
