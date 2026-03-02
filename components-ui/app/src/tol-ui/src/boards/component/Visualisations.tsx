@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, cloneElement } from "react";
 import { WidthProvider, Responsive, Layouts } from "react-grid-layout";
 import {
   generateLayout,
@@ -14,6 +14,8 @@ import {
   updateLayout,
   useBoard,
   useEffectUpdate,
+  LAYOUT_MODE_SCALE,
+  LAYOUT_MODE_SCALE_ORIGIN,
 } from "../..";
 
 
@@ -83,12 +85,14 @@ export function Visualisations(props: PVisualisations) {
         breakpoints={{ lg: 992, md: 576, sm: 0 }}
         cols={{ lg: 4, md: 2, sm: 1 }}
         isDraggable={layoutMode}
+        isResizable={false}
+        transformScale={layoutMode ? LAYOUT_MODE_SCALE : LAYOUT_MODE_SCALE_ORIGIN}
         compactType="vertical"
         rowHeight={5}
         onLayoutChange={(layout: any) => setNewLayout(layout)}
         onBreakpointChange={onBreakpointChange}
       >
-        {elements.map((element) => element)}
+        {elements.map((element) => cloneElement(element))}
       </ResponsiveReactGridLayout>
     </div>
   );
