@@ -4,10 +4,6 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-// This no check will need to be removed at some point
-// It is in to prevent build errors to do with the Dropdown type
-// not containing detail and element props
-
 import { useState, useEffect } from "react";
 import {
   Route as ReactRouter,
@@ -30,30 +26,45 @@ import {
   ValidationResultsViewer,
   BoardPrivilegeContextProvider,
   clearUnusedLocalStorage,
-  PBoard,
   TNavBrand,
   TNavConfig,
   TPageElements,
-  setupBoards,
-  systemDefaultNavConfig,
+  getSystemDefaultNavConfig,
   collectRoutes,
-  setupNavigationConfig,
-  profileDefaultNavConfig,
+  getProfileDefaultNavConfig,
   MyBoards,
   mergeNavConfigs,
+  TsDataSource,
+  TDataObjectOrNull,
+  PopUpMessage,
+  WEB_APP,
+  LoadingContent,
+  CORE_CONFIG_DS,
+  mergeAndNormaliseNavConfig,
+  GlobalLoadingProvider,
 } from "..";
 
+
 export interface PSmartApp {
+  /**
+   * The web_app id to fetch the nav configs.
+   * This includes navigation and profile navigation configs.
+   */
+  id: string;
+  /**
+   * The datasource for configuring the app.
+   */
+  configDataSource?: TsDataSource;
   /**
    * The brand to display in the navigation bar.
    */
   brand: TNavBrand;
   /**
-   * The main navigation configuration.
+   * A navigation configuration.
    */
   navigation?: TNavConfig;
   /**
-   * The profile navigation configuration. Can only add pages, not dropdowns.
+   * A profile navigation configuration.
    */
   profileNavigation?: TNavConfig;
   /**
@@ -69,10 +80,9 @@ export interface PSmartApp {
    */
   register?: boolean;
   /**
-   * Configuration for user boards. If true, boards are enabled with default settings.
-   * If a PBoard object is provided, it customizes the board settings.
+   * Whether boards can be configured for other apps.
    */
-  boards?: boolean | PBoard;
+  configurableBoards?: boolean;
   /**
    * An optional custom callback URL for authentication.
    */
@@ -87,12 +97,33 @@ export interface PSmartApp {
  * Root application component that composes routing, navigation, and default page elements.
  */
 export function SmartApp(props: PSmartApp) {
-  const { login = true, register = false } = props;
+  const {
+    id,
+    configDataSource = CORE_CONFIG_DS,
+    brand,
+    login = true,
+    register = false,
+    configurableBoards = false,
+    routePrefix,
+  } = props;
 
   const [token, setToken] = useState(getTokenFromLocalStorage);
   const [user, setUser] = useState(getUserFromLocalStorage);
+  const [globalLoading, setGlobalLoading] = useState(true);
+  const [fetchedNavigation, setFetchedNavigation] = useState<TNavConfig>();
+  const [fetchedProfileNavigation, setFetchedProfileNavigation] = useState<TNavConfig>();
 
   const queryClient = new QueryClient();
+
+  // Combines the system defaults and incoming config
+  const defaultNavigation = mergeNavConfigs(
+    props.navigation,
+    getSystemDefaultNavConfig(configurableBoards),
+  );
+  const defaultProfileNavigation = mergeNavConfigs(
+    props.profileNavigation,
+    getProfileDefaultNavConfig(configurableBoards),
+  );
 
   useEffect(() => {
     const siteId = env.MATOMO_SITE_ID;
@@ -100,41 +131,66 @@ export function SmartApp(props: PSmartApp) {
     clearUnusedLocalStorage();
   }, []);
 
-  // Setting a default for the boardDataSource else boards will be off
-  const boards = setupBoards(props.boards);
+  useEffect(() => {
+    configDataSource.getOne({
+      objectType: WEB_APP,
+      id,
+    }).then((obj: TDataObjectOrNull) => {
+      setFetchedNavigation(obj?.navigation);
+      setFetchedProfileNavigation(obj?.profile_navigation);
 
-  // Merge system navigation config and add defaults
-  const navigation: TNavConfig = setupNavigationConfig(props.navigation, systemDefaultNavConfig, user);
+      // If nav not found the object will be null
+      if (!obj) {
+        throw Error(`No configuration found for web app with id: ${id}`);
+      }
+    }).catch((error) => {
+      console.error(error);
+      PopUpMessage({
+        type: "warning",
+        message: "Failed to fetch navigation configuration. Only using defaults.",
+      })
+    }).finally(() => {
+      // Small delay as loading screen can feel abrupt if it disappears immediately
+      setTimeout(() => setGlobalLoading(false), 300);
+    });
+  }, []);
 
-  // Merge system navigation config and add defaults
-  const profileNavigation: TNavConfig = setupNavigationConfig(props.profileNavigation, profileDefaultNavConfig, user);
+  const navigation = mergeAndNormaliseNavConfig(fetchedNavigation, defaultNavigation, user, routePrefix);
+  const profileNavigation = mergeAndNormaliseNavConfig(fetchedProfileNavigation, defaultProfileNavigation, user, routePrefix);
 
   // Merging configs to collect all the routes
   const mergedNavigation: TNavConfig = mergeNavConfigs(navigation, profileNavigation);
 
   // Always merge default page elements + incoming (incoming overrides defaults)
   const pageElements: TPageElements = {
-    boardDetail: boards ? (
+    boardDetail: (
       <BoardPrivilegeContextProvider>
-        <Board {...boards} />
+        <Board boardDataSource={configDataSource} brand={brand} />
       </BoardPrivilegeContextProvider>
-    ) : null,
-    myBoards: boards ? <MyBoards {...boards} /> : null,
+    ),
+    myBoards: <MyBoards boardDataSource={configDataSource} />,
     validationResultsDetail: <ValidationResultsViewer />,
-    callback: <Callback />,
+    callback: <Callback {...props} />,
     ...(props.pageElements ?? {}),
   };
 
   // Merged props object to pass downstream so consumers see the merged values
-  const mergedProps: PSmartApp = {
+  const navProps = {
     ...props,
-    boards,
     navigation,
     profileNavigation,
     pageElements,
     login,
     register,
   };
+
+  const LoadingScreen = (
+    <LoadingContent
+      overlayNav
+      brand={brand}
+      className={!globalLoading ? "is-fading-out" : ""}
+    />
+  )
 
   return (
     <div id="tol-smart-app-background">
@@ -147,28 +203,42 @@ export function SmartApp(props: PSmartApp) {
             setUser,
           }}
         >
-          <Router>
-            <Navigation {...mergedProps} />
-            <div className="tol-smart-app">
-              <div className="tol-smart-app-content">
-                <Switch>
-                  {collectRoutes(
-                    mergedNavigation,
-                    pageElements,
-                    boards
+          <GlobalLoadingProvider
+            value={{
+              globalLoading,
+              setGlobalLoading,
+            }}
+          >
+            <Router>
+              <Navigation {...navProps} />
+              <div className="tol-smart-app">
+                <div className="tol-smart-app-content">
+                  {/* Switch also needs loading screen to ensure smooth transition */}
+                  {LoadingScreen}
+                  {!globalLoading && (
+                    <>
+                      <Switch>
+                        {collectRoutes(
+                          mergedNavigation,
+                          pageElements,
+                          brand,
+                          configDataSource
+                        )}
+                        <ReactRouter
+                          path={`/page-not-found`}
+                          component={() => <PageNotFound />}
+                        />
+                        <ReactRouter path="*">
+                          <Redirect to={`/page-not-found`} />
+                        </ReactRouter>
+                      </Switch>
+                    </>
                   )}
-                  <ReactRouter
-                    path={`/page-not-found`}
-                    component={() => <PageNotFound />}
-                  />
-                  <ReactRouter path="*">
-                    <Redirect to={`/page-not-found`} />
-                  </ReactRouter>
-                </Switch>
+                </div>
               </div>
-            </div>
-            <Footer />
-          </Router>
+              <Footer />
+            </Router>
+          </GlobalLoadingProvider>
         </AuthProvider>
       </QueryClientProvider>
     </div>

@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import {
   Boolean,
-  Collection,
   Datetime,
   Float,
   Image,
@@ -18,12 +17,25 @@ import {
   getCellRendererPropValue,
   Icon,
   TrafficLightStatus,
-  PCell
+  PCell,
+  Collection,
+  Tag
 } from "../..";
 
 
-export function CellDisplay(props: PCell) {
-  const { value, dataObject, renderer, customCellRenderers, setExpandedRows } = props;
+export interface PCellDisplay extends PCell {
+  /**
+   * Whether to wrap the CellDisplay in a Tag component.
+   */
+  tag?: boolean;
+}
+
+/**
+ * Component to display the contents of a cell based on the provided renderer configuration. Handles both pre-defined renderers and custom renderers.
+ * If no renderer is provided, it will default to displaying the value as a string.
+ */
+export function CellDisplay(props: PCellDisplay) {
+  const { value, dataObject, renderer, customCellRenderers, setExpandedRows, tag } = props;
   const [expanded, setExpanded] = useState(false);
 
   const DefaultCell = ({ value }) => <>{value ?? ""}</>;
@@ -42,12 +54,12 @@ export function CellDisplay(props: PCell) {
   };
 
   if (
-    // renderer type is not defined
+    // Renderer type is not defined
     !renderer ||
     !renderer.type ||
     renderer.type === "none" ||
-    // no value and not a custom renderer as custom renderers may not require a value
-    // no need to to deal with empty values with pre-defined cellRenderers
+    // No value and not a custom renderer as custom renderers may not require a value
+    // No need to to deal with empty values with pre-defined cellRenderers
     ((value === null || value === undefined) && (renderer.type) in preDefinedElements)
   )
     return <DefaultCell value={value} />;
@@ -55,7 +67,7 @@ export function CellDisplay(props: PCell) {
   const elements = { ...preDefinedElements, ...customCellRenderers };
   renderer.element = elements[renderer.type] || DefaultCell;
 
-  const elementProps: Record<string, any> = { ...props };
+  const elementProps: PCell & Record<string, any> = { ...props };
 
   if (renderer.props) {
     Object.entries(renderer.props).forEach(([prop, value]) => {
@@ -63,7 +75,7 @@ export function CellDisplay(props: PCell) {
     });
   }
 
-  return (
+  const Contents = (
     <>
       <renderer.element {...elementProps} />
       {Array.isArray(value) && value.length > 1 && renderer.type === "image" &&
@@ -72,7 +84,7 @@ export function CellDisplay(props: PCell) {
           onClick={() => {
             setExpanded(!expanded);
             setExpandedRows((prev: string[]) => {
-              const id = elementProps.dataObject.id;
+              const id = elementProps.dataObject!.id;
               return prev.includes(id)
                 ? prev.filter((existingId) => existingId !== id)
                 : [...prev, id];
@@ -84,4 +96,6 @@ export function CellDisplay(props: PCell) {
       }
     </>
   );
+
+  return tag ? <Tag>{Contents}</Tag> : Contents;
 }

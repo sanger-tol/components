@@ -61,12 +61,51 @@ export function mergeAndFilters(target: object, incoming: object) {
   return output as IAndAttributes;
 }
 
+/**
+ * Removes a specific attribute from an `and_` filter block
+ *
+ * @param filter - The filter object that may contain an `and_` block
+ * @param attr - The attribute key to remove from `filter.and_`
+ * 
+ * @returns A shallow-cloned filter without the provided attribute when possible; otherwise, the original filter
+ */
+export function removeAttributeFromFilter(
+  filter: IFilter | undefined,
+  attr: string,
+): IFilter | undefined {
+  if (!filter || !("and_" in filter) || !filter.and_ || !(attr in filter.and_)) return filter;
+  const next = {
+    ...filter,
+    and_: { ...filter.and_ },
+  };
+  delete next.and_[attr];
+  return next;
+}
+
 // removes 'exists' operators if there are other operators for the same attribute
 export function removeSuperfluousExists(filter: IAndAttributes) {
   Object.keys(filter).forEach((attribute) => {
     const operators = Object.keys(filter[attribute]);
     if (operators.length >= 2 && "exists" in filter[attribute]) {
       delete filter[attribute]["exists"];
+    }
+  });
+}
+
+/**
+ * Removes ignored attributes from the provided `and_` filter block.
+ *
+ * @param filter - The filter attributes to mutate in place.
+ * @param ignoredAttributes - Attribute keys to remove when present.
+ */
+export function removeIgnoredAttributes(
+  filter: IAndAttributes,
+  ignoredAttributes: string[] = [],
+) {
+  if (ignoredAttributes.length === 0) return;
+  ignoredAttributes.forEach((attribute) => {
+    if (attribute in filter) {
+      delete filter[attribute];
     }
   });
 }
@@ -87,6 +126,7 @@ export function generateFilter(
   zone: IZone,
   id?: string,
   includeSubFilter?: boolean,
+  ignoredAttributes: string[] = [],
 ) {
   if (zone === undefined) return undefined;
   const z = zone as IZone;
@@ -111,6 +151,7 @@ export function generateFilter(
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
   removeSuperfluousExists(compoundedFilter);
+  removeIgnoredAttributes(compoundedFilter, ignoredAttributes);
   // TODO: update when api supports upsert with empty objects
   // return (isEmptyObject(compoundedFilter)) ? {} : { and_: compoundedFilter } as IFilter;
   return {

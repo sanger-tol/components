@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  BoardFilters,
+  FilterConfigDrawer,
   RemoteTable,
   saveTitle,
   updateConfigAndUpsert,
@@ -91,7 +91,7 @@ export function BoardTable(props: PBoardTable) {
   }
 
   const BoardFilter = [
-    <BoardFilters
+    <FilterConfigDrawer
       {...props}
       open={openFilters}
       setOpen={setOpenFilters}

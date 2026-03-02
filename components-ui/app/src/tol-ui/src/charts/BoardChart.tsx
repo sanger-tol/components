@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  BoardFilters,
+  FilterConfigDrawer,
   Icon,
   Placeholder,
   RemoteBarChart,
@@ -89,7 +89,7 @@ export function BoardChart(props: Props) {
 
   return (
     <>
-      <BoardFilters
+      <FilterConfigDrawer
         {...props}
         open={openFilters}
         setOpen={setOpenFilters}

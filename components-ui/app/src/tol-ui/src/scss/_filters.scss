@@ -10,6 +10,7 @@
 }
 
 .tol-table {
+
   // dealing with dropdown overflow issue
   .rs-table-cell-content,
   .rs-table-cell,
@@ -23,6 +24,7 @@
 }
 
 .tol-text-filter {
+
   .rs-input,
   .rs-input-group,
   .rs-picker-toggle {
@@ -32,6 +34,7 @@
 
 .tol-date-filter,
 .tol-multi-filter {
+
   .rs-input,
   .rs-input-group,
   .rs-picker-toggle {
@@ -42,6 +45,7 @@
 .tol-text-filter,
 .tol-date-filter,
 .tol-multi-filter {
+
   // reduce padding on dropdown items
   .rs-dropdown-item {
     padding: 2px 10px !important;
@@ -82,10 +86,12 @@
   .tol-in-list-button:hover {
     border-color: var(--tol-primary) !important;
     background-color: var(--tol-primary) !important;
+
     svg {
       fill: white;
       color: white;
     }
+
     padding-right: 12px;
   }
 
@@ -234,6 +240,7 @@
 
 // boolean filters
 .rs-checkbox-checker:has(.tol-status) {
+
   // slim down statuses
   .tol-status .alert {
     padding: 2px 10px;
@@ -267,8 +274,7 @@
   }
 }
 
-.rs-picker-disabled
-  .rs-message.rs-message-success.rs-message-show.rs-message-has-icon {
+.rs-picker-disabled .rs-message.rs-message-success.rs-message-show.rs-message-has-icon {
   opacity: 0.5;
 }
 
@@ -289,11 +295,6 @@
     display: inline-block;
     width: calc(100% - 22px);
   }
-
-  .remove-filter-button {
-    margin-left: 10px;
-    cursor: pointer;
-  }
 }
 
 .pass-through-toggle {
@@ -308,4 +309,40 @@
   .tol-read-only-filter {
     display: flex;
   }
+}
+
+.tol-block-filter-col {
+  min-width: 245px;
+  margin-bottom: 10px;
+}
+
+.tol-attribute-filter-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: auto;
+}
+
+.tol-filter-config-remote-filter {
+  display: block;
+  min-width: max-content;
+}
+
+.tol-remote-filters-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .remove-filter-button {
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  .remove-filter-button:hover {
+    color: var(--tol-danger);
+  }
+}
+
+.tol-remote-filters-filter {
+  flex: 1;
 }

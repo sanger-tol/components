@@ -5,21 +5,28 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { FormatTooltip, SourceTag, IRemoteTarget, IconTooltip } from "..";
+import { FormatTooltip, SourceTag, IconTooltip, IRemoteTarget, IZone } from "..";
+import { AttributeStatsBox } from "./AttributeStatsBox";
+import type { ReactNode } from "react";
 
 export interface PAttributeTooltip extends IRemoteTarget {
   attributeId: string;
-  element?: React.ReactNode;
+  element?: ReactNode;
+  id?: string;
+  componentId?: string;
+  zone?: IZone;
 }
 
 export function AttributeTooltip(props: PAttributeTooltip) {
-  const { attributeId: field, element, objectType, dataSource } = props;
+  const {
+    attributeId: field, element, objectType, dataSource, id, componentId, zone } = props;
 
   const [details, setDetails] = useState<Record<string, React.ReactNode>>({});
-
   useEffect(() => {
     let isMounted = true;
     if (isMounted) {
+      setDetails({});
+
       dataSource.getEntityMeta().then((meta) => {
         const attribute = meta.flatAttributes[objectType][field];
         if (attribute) {
@@ -46,16 +53,27 @@ export function AttributeTooltip(props: PAttributeTooltip) {
     return () => {
       isMounted = false;
     };
-  }, [field]);
+  }, [dataSource, field, objectType]);
 
   const Tooltip = <FormatTooltip contents={details} />;
 
   if (Object.keys(details).length === 0) return <></>;
 
+  const tooltipContents = (
+    <div>
+      {Tooltip}
+      <AttributeStatsBox
+        {...props}
+        componentId={componentId ?? id}
+        zone={zone}
+      />
+    </div>
+  );
+
   return (
     <IconTooltip
       icon={element}
-      contents={Tooltip}
+      contents={tooltipContents}
     />
   );
 }

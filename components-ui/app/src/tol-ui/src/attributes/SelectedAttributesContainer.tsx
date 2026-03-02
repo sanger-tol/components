@@ -147,7 +147,7 @@ export function SelectedAttributesContainer(props: PSelectedAttributesContainer)
           springConfig={{ stiffness: 500, damping: 100 }}
         />
       </div>
-      {attributes.length === 0 && (
+      {(attributes.length === 0 && fieldMeta) && (
         <p>
           <i>No active columns. Select columns to display...</i>
         </p>

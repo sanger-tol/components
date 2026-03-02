@@ -6,78 +6,65 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
-  IRemoteTarget,
-  IZone,
-  defineZone,
   Filter,
-  IFilter,
-  AttributeSelector,
-  Icon,
-  getAttributeDetail,
-  generateFilter,
-  TFilterOrUndefined,
-  deepCopy,
+  IRemoteTargetAndZone,
+  PUtilityBar,
+  UtilityBar,
+  Row,
+  Col,
+  AttributeTitle,
 } from "..";
 
-export interface PRemoteFilters extends IRemoteTarget {
+export interface PRemoteFilters extends IRemoteTargetAndZone {
   /**
-   * Optional initial filters applied to the component; defaults to an empty filter
+   * Optional utility bar configuration (includes title, buttons, etc.)
    */
-  filters?: IFilter;
+  utilityBarConfig?: PUtilityBar;
   /**
-   * State setter for updating the active filters in the parent component
+   * Unique identifier for the component within the zone
    */
-  setFilters: (filters: TFilterOrUndefined) => void;
+  componentId: string;
   /**
-   * Optional array of filter values to disable in the field selction UI
+   * Array of attributes used as the filters
    */
-  disabledFilterValues?: any;
+  attributes: string[];
   /**
-   * Boolean indicating whether the filter selection interface is open/visible
+   * Optional custom classname for the filter columns
    */
-  open?: boolean;
+  className?: string;
   /**
-   * Optional state setter for the parent component to indicate whether there are any pending filter changes
+   * Optional extra element to render alongside each filter, receives the attribute as a prop
    */
-  setHasPendingChanges?: (hasPendingChanges: boolean) => void;
+  ExtraElement?: React.ComponentType<{
+    /**
+   * The attribute that is passed to the element as a prop
+   */
+    attribute: string
+  }>;
 }
 
 /**
  * @autodoc
  * 
  * RemoteFilters is a component designed for managing and applying filters to data retrieved from
- * a remote `dataSource`. It allows users to dynamically add or remove filters, with support for
- * various attribute types and loading states.
+ * a remote `dataSource`. It provides dropdowns for selecting filter values based on specified attributes.
  */
 export function RemoteFilters(props: PRemoteFilters) {
   const {
     objectType,
     dataSource,
-    filters = { and_: {} },
-    setFilters,
-    disabledFilterValues,
-    open,
-    setHasPendingChanges,
+    zone,
+    setZone,
+    componentId,
+    attributes,
+    className,
+    utilityBarConfig,
+    ExtraElement
   } = props;
 
-  const [initialFilters, setInitialFilters] = useState<IFilter>(deepCopy(filters));
-
-  // zone component id pointer
-  const filterComponentId = "remote-filters-component";
-
-  // just keeps track of the filter ids and their order
-  const [filterKeys, setFilterKeys] = useState(
-    Object.keys(filters.and_ || {}),
-  );
   const [loading, setLoading] = useState(true);
   const [entityMeta, setEntityMeta] = useState<any>({});
 
-  // repurposed zone so filters correctly interact with the state
-  const [filterZone, setFilterZone] = useState<IZone>(
-    defineZone("dummy-object-for-remote-filters", [
-      { id: filterComponentId, filter: filters },
-    ]),
-  );
 
   useEffect(() => {
     dataSource.getEntityMeta().then((em) => {
@@ -86,109 +73,45 @@ export function RemoteFilters(props: PRemoteFilters) {
     });
   }, []);
 
-  useEffect(() => {
-    if (open) {
-      const newFilter = generateFilter(filterZone, filterComponentId);
-      setFilters(newFilter);
-      if (setHasPendingChanges) {
-        setHasPendingChanges(
-          JSON.stringify(newFilter) !== JSON.stringify(initialFilters),
-        );
-      }
-    }
-  }, [filterZone]);
-
-  useEffect(() => {
-    setInitialFilters(deepCopy(filters));
-  }, [open]);
-
-  const removeFilter = (attribute: string) => {
-    // update the filters that are shown
-    const f = filterKeys.filter((str) => str !== attribute);
-    setFilterKeys(f);
-
-    // update the zone state which builds the filter ready for the api
-    if (filterZone.components[filterComponentId].data.filter?.and_?.[attribute]) {
-      const updatedComponents = { ...filterZone.components };
-      delete updatedComponents[filterComponentId].data.filter?.and_?.[attribute];
-      setFilterZone({
-        ...filterZone,
-        components: updatedComponents,
-      });
-    }
-  };
-
-  const onClean = () => {
-    if (filterZone.components[filterComponentId].data.filter) {
-      filterZone.components[filterComponentId].data.filter.and_ = {};
-    }
-    if (filterZone.components[filterComponentId].data.defaultFilter) {
-      filterZone.components[filterComponentId].data.defaultFilter.and_ = {};
-    }
-    setFilterZone({ ...filterZone });
-  };
-
   if (loading) return <></>;
-
-  const PLACEHOLDER = "No filters applied, click here to add...";
-  const TOOLTIP_CONTENT =
-    "A filter already exists in the filtering system. Please remove it before adding this filter.";
 
   return (
     <div>
-      <AttributeSelector
-        {...props}
-        displaySource
-        recommendedFilterAvailable
-        renderSearchBySource
-        disabledValues={disabledFilterValues}
-        placeholder={PLACEHOLDER}
-        attribute={filterKeys}
-        setAttributes={setFilterKeys}
-        populatedFieldType="filter"
-        numPopulatedFields={
-          Object.keys(
-            filterZone.components[filterComponentId].data.filter?.and_ || {},
-          ).length
-        }
-        tooltipContent={TOOLTIP_CONTENT}
-        onClean={onClean}
-      />
-      {filterKeys.map((attribute) => {
-        const attributeMeta =
-          entityMeta?.flatAttributes?.[objectType]?.[attribute];
-        const type =
-          attributeMeta?.cardinality < 50 &&
-            attributeMeta?.python_type === "str"
-            ? "multi"
-            : attributeMeta?.python_type;
+      {utilityBarConfig && <UtilityBar {...utilityBarConfig} />}
+      <Row>
+        {attributes.map((attribute) => {
+          const attributeMeta =
+            entityMeta?.flatAttributes?.[objectType]?.[attribute];
+          const type =
+            attributeMeta?.cardinality < 50 &&
+              attributeMeta?.python_type === "str"
+              ? "multi"
+              : attributeMeta?.python_type;
 
-        return (
-          <div className="tol-filters" key={attribute}>
-            {`${getAttributeDetail(entityMeta, objectType, attribute, 'display_name')}:`}
-            <div className="filter">
-              <Filter
-                key={`filter-${attribute}`}
-                attribute={attribute}
-                rename={attributeMeta?.display_name}
-                type={type}
-                componentId={filterComponentId}
-                objectType={objectType}
-                dataSource={dataSource}
-                zone={filterZone}
-                setZone={setFilterZone}
-                delay={0}
-              />
-            </div>
-            <span
-              className="remove-filter-button"
-              onClick={() => removeFilter(attribute)}
-            >
-              <Icon icon="close" />
-            </span>
-          </div>
-        );
-      })}
+          return (
+            <Col key={attribute} className={className}>
+              <AttributeTitle attributeId={attribute} objectType={objectType} dataSource={dataSource} className="tol-attribute-filter-title" />
+              <div className="tol-remote-filters-container">
+                <div className="tol-remote-filters-filter">
+                  <Filter
+                    key={`filter-${attribute}`}
+                    attribute={attribute}
+                    rename={attributeMeta?.display_name}
+                    type={type}
+                    componentId={componentId}
+                    objectType={objectType}
+                    dataSource={dataSource}
+                    zone={zone}
+                    setZone={setZone}
+                    delay={0}
+                  />
+                </div>
+                {ExtraElement && <ExtraElement attribute={attribute} />}
+              </div>
+            </Col>
+          );
+        })}
+      </Row>
     </div>
   );
 }

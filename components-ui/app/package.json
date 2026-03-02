@@ -1,10 +1,10 @@
 {
   "name": "components-ui",
-  "version": "2.8.1",
+  "version": "2.9.0",
   "private": true,
   "proxy": "http://components-api:80",
   "dependencies": {
-    "@tol/tol-ui": "2.8.0",
+    "@tol/tol-ui": "2.8.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-bootstrap": "2.8.0",
@@ -31,7 +31,12 @@
     "@uiw/react-md-editor": "4.0.7",
     "rehype-sanitize": "6.0.0",
     "rsuite": "5.75.0",
-    "motion": "11.11.17"
+    "motion": "11.11.17",
+    "rsuite": "5.75.0"
+  },
+  "resolutions": {
+    "styled-components": "~6.1.0",
+    "filelist": "1.0.4"
   },
   "scripts": {
     "start": "vite",

@@ -15,6 +15,7 @@ export function Datetime(props: PCell) {
   const { value } = props;
 
   const date = new Date(value!);
+  
   const dateText = format(date, "dd/MM/yyyy");
   const dateContents = format(date, "dd/MM/yyyy HH:mm");
   return <CellTooltip followCursor value={dateText} contents={dateContents} />;

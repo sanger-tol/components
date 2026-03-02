@@ -58,6 +58,10 @@ export function isEmptyObject(x: object) {
   return Object.keys(x).length === 0;
 }
 
+export function appendKeywordIfNeeded(field: string): string {
+  return field.startsWith("calc_") ? field : `${field}.keyword`;
+}
+
 export function normaliseCaps(name: string, prefix?: string) {
   if (!name) return "";
   // make object ids clear (for auto load)
@@ -384,4 +388,39 @@ export function sortObjectAlphabetically(
       sortedObj[key] = obj[key]; // rebuild the object with sorted keys
       return sortedObj;
     }, {});
+}
+
+
+/**
+  * Formats very large or very small numbers with SI prefix (e.g. 1K, 1M, 1G or 1m, 1µ, 1n).
+ * @param value The number to format.
+ * @returns The formatted string.
+ */
+export function normaliseNumber(value: number) {
+  // Handles whole numbers
+  if (value > 999999) {
+    return normaliseLargeNumber(value);
+  // Handles decimals
+  } else if (value < 0.01) {
+    return normaliseDecimalNumber(value);
+  } else {
+    return numberWithSpaces(value);
+  }
+}
+
+function normaliseLargeNumber(value: number, iteration: number = 0) {
+  let normalisedValue = value;
+  if (normalisedValue > 999999 && iteration < 5) {
+    normalisedValue = Number((normalisedValue / 1000));
+    return normaliseLargeNumber(Math.round(normalisedValue), iteration + 1);
+  }
+  return numberWithSpaces(Number(normalisedValue)) + ["", "K", "M", "G", "T", "P"][iteration];
+}
+
+function normaliseDecimalNumber(value: number, iteration: number = 0) {
+  if ((String(value).length - 1 > 6 || value < 0.01) && iteration < 5) {
+    const normalisedValue = Number((value * 1000).toPrecision(12));
+    return normaliseDecimalNumber(normalisedValue, iteration + 1);
+  }
+  return numberWithSpaces(value) + ["", "m", "µ", "n", "p", "f"][iteration];
 }

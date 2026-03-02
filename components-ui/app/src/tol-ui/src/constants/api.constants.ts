@@ -38,6 +38,8 @@ export const BOARDS = {
   DATA_SOURCE_INSTANCE: "data_source_instance",
 }
 
+export const WEB_APP = "web_app";
+
 export const ACTIONS = {
   ACTION: "action",
   RUN_ACTION: "run-action",
