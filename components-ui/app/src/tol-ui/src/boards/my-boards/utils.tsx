@@ -189,7 +189,7 @@ export async function fetchSubItemId(
  * @param stepName String name of the tour step to check
  * @returns Whether the value returned from the database is `true`
  */
-export async function fetchTourStepSeen(
+export async function fetchHasTourStepBeenSeen(
   stepName: string,
   userId: string
 ): Promise<boolean> {

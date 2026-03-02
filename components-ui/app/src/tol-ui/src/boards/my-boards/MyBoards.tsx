@@ -18,7 +18,7 @@ import {
   getBoardDetails,
   LoadingContent,
   InitialBoardsTourModal,
-  fetchTourStepSeen
+  fetchHasTourStepBeenSeen
 } from "../..";
 
 
@@ -78,7 +78,7 @@ export function MyBoards(props: IMyBoards) {
     if (!id) return;
     setUserId(id);
 
-    const tourStepSeen = await fetchTourStepSeen("initial", id);
+    const tourStepSeen = await fetchHasTourStepBeenSeen("initial", id);
     setInitialBoardsTourModalOpen(!tourStepSeen);
   }
 

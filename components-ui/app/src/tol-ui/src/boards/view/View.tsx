@@ -23,7 +23,7 @@ import {
   useBoardPrivilege,
   TsDataSource,
   getUserFromLocalStorage,
-  fetchTourStepSeen,
+  fetchHasTourStepBeenSeen,
 } from "../..";
 import { useNextStep } from "nextstepjs";
 
@@ -45,7 +45,7 @@ export function View(props: PView) {
   const { startNextStep, closeNextStep } = useNextStep();
 
   const handleStartTour = async () => {
-    const seen = await fetchTourStepSeen(
+    const seen = await fetchHasTourStepBeenSeen(
       "addZone",
       getUserFromLocalStorage().id
     );

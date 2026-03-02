@@ -54,6 +54,7 @@ import {
   BoardPrivilegeContextProvider,
   clearUnusedLocalStorage,
   PBoard,
+  registerTourStepAsSeen,
 } from "..";
 import { boardTour } from "src/boards/tour/tour-config";
 
@@ -122,6 +123,11 @@ export function TolApp(props: PTolApp) {
   );
   const loggedIn = user && !tokenHasExpired();
 
+  const handleRegisterTourStepAsSeen = (step: number, tourName?: string | null) => {
+    if (!tourName) return;
+    registerTourStepAsSeen(tourName, getUserFromLocalStorage());
+  };
+
   return (
     <div id="tol-app-background">
       <QueryClientProvider client={queryClient}>
@@ -134,7 +140,11 @@ export function TolApp(props: PTolApp) {
           }}
         >
           <NextStepProvider>
-            <NextStep steps={boardTour}>
+            <NextStep
+              steps={boardTour}
+              onSkip={handleRegisterTourStepAsSeen}
+              onComplete={handleRegisterTourStepAsSeen}
+            >
               <Router>
                 <Navigation
                   brand={props.brand}
