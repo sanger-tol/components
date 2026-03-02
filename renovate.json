@@ -1,4 +1,0 @@
-
-{
-  "extends": ["gitlab>tol/platforms/renovate"]
-}
