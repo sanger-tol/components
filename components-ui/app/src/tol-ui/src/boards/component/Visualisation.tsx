@@ -152,12 +152,20 @@ export function Visualisation(props: PVisualisation) {
 
   if (layoutMode) {
     return (
-      <div className="tol-layout-mode">
-        <h3>
-          {title}
-        </h3>
+      <div className="tol-draggable-widget">
+        <div className="tol-draggable-widget-content">
+          {Visualisation}
+        </div>
+        <div
+          className="tol-draggable-widget-overlay"
+          aria-hidden="true"
+        >
+          <h3>
+            {title}
+          </h3>
+        </div>
       </div>
-    );
+    )
   }
 
   return (

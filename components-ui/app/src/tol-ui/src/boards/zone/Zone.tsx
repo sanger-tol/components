@@ -92,12 +92,11 @@ export function Zone(props: PZone) {
   };
 
   const addButton: PButton = {
-    outline: true,
     onClick: () => {
       onAddComponent();
     },
     type: "success",
-    icon: "plus",
+    icon: "cube",
     position: "right",
     tooltip: "",
     testid: "add-component-button",

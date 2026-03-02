@@ -13,6 +13,3 @@ export const PRIVILEGE = {
     EDITABLE: "editable" as TBoardPrivilege
   }
 }
-
-export const LAYOUT_MODE_SCALE_ORIGIN = 1;
-export const LAYOUT_MODE_SCALE = 0.8;

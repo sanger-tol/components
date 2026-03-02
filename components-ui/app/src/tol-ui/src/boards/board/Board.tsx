@@ -25,8 +25,6 @@ import {
   BUTTONS,
   UtilityBar,
   PButton,
-  LAYOUT_MODE_SCALE_ORIGIN,
-  LAYOUT_MODE_SCALE
 } from "../..";
 
 export interface PBoard {
@@ -116,14 +114,7 @@ export function Board(props: PBoard) {
   }
 
   const onLayoutModeToggle = () => {
-    const next = !layoutMode;
-    setLayoutMode(next);
-    const el = document.getElementsByClassName("tol-responsive-grid");
-    const scale = next ? LAYOUT_MODE_SCALE : LAYOUT_MODE_SCALE_ORIGIN;
-    Array.from(el).forEach((el) => {
-      const htmlEl = el as HTMLElement;
-      htmlEl.style.transform = `scale(${scale})`;
-    });
+    setLayoutMode(!layoutMode);
   };
 
   const layoutOrExitLogic: PButton = layoutMode ? {
@@ -144,6 +135,7 @@ export function Board(props: PBoard) {
 
   const editOrExitLogic: PButton = editMode ? {
     ...BUTTONS.CONFIRM,
+    type: "primary",
     text: "Exit Edit Mode",
   } : {
     ...BUTTONS.EDIT,

@@ -8,6 +8,7 @@
   // Hover colour for placeholders when dragging
   .react-grid-item.react-grid-placeholder {
     background-color: var(--tol-primary) !important;
+    border-radius: 6px !important;
   }
 }
 
@@ -104,9 +105,9 @@
     justify-content: center;
     pointer-events: auto; // captures clicks
     cursor: move;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(2px);
     border-radius: 6px;
-    background-color: color-mix(in srgb, var(--tol-bg) 80%, transparent);
+    background-color: color-mix(in srgb, var(--tol-bg) 50%, transparent);
   }
 }
 

@@ -63,7 +63,6 @@ export function getWidgetOrder(layout: any) {
   };
 }
 
-
 export function generateLayout(zone: IZone) {
   // left hand side are the component types, right are the breakpoints
   const types = {

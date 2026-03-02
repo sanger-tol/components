@@ -155,7 +155,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
 
   return (
     <>
-      <UtilityBar id={id} {...utilityBarConfig} />
+      <UtilityBar {...utilityBarConfig} id={id} />
       <div className="tol-component-contents with-offset">
         <Contents />
       </div>

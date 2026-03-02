@@ -44,8 +44,8 @@ export function ObjectDetail(props: PObjectDetail) {
     >
       {utilityBarConfig &&
         <UtilityBar
-          id={id}
           {...utilityBarConfig}
+          id={id}
         />
       }
       <div

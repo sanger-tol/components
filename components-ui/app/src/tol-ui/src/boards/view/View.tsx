@@ -91,7 +91,6 @@ export function View(props: PView) {
         buttons={[
           {
             ...BUTTONS.ADD,
-            outline: true,
             testid: "open-add-zone-modal-button",
             visible: editMode && !layoutMode,
             onClick: () => {
@@ -99,6 +98,7 @@ export function View(props: PView) {
             },
             tooltip: "",
             text: "Add Zone",
+            icon: "object-group",
           },
         ]}
       />

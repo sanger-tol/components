@@ -14,8 +14,6 @@ import {
   updateLayout,
   useBoard,
   useEffectUpdate,
-  LAYOUT_MODE_SCALE,
-  LAYOUT_MODE_SCALE_ORIGIN,
 } from "../..";
 
 
@@ -77,16 +75,13 @@ export function Visualisations(props: PVisualisations) {
   };
 
   return (
-    <div
-      className="tol-responsive-grid"
-    >
+    <div className="tol-responsive-grid">
       <ResponsiveReactGridLayout
         layouts={layoutsState}
         breakpoints={{ lg: 992, md: 576, sm: 0 }}
         cols={{ lg: 4, md: 2, sm: 1 }}
         isDraggable={layoutMode}
         isResizable={false}
-        transformScale={layoutMode ? LAYOUT_MODE_SCALE : LAYOUT_MODE_SCALE_ORIGIN}
         compactType="vertical"
         rowHeight={5}
         onLayoutChange={(layout: any) => setNewLayout(layout)}
