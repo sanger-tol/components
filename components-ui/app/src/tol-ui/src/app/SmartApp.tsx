@@ -135,7 +135,6 @@ export function SmartApp(props: PSmartApp) {
 
     // No web app id provided, skip remote nav fetch
     if (!id?.trim()) {
-      setTimeout(() => setGlobalLoading(false), 300);
       return;
     }
 
