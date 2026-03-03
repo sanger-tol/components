@@ -433,7 +433,7 @@ export function unmarkAsReadyAction(): TFileValidationAction {
   };
 }
 
-export function rejectAction(): TFileValidationAction {
+export function rejectItemAction(): TFileValidationAction {
   return {
     id: "reject",
     label: "Reject Submission(s)",
@@ -447,7 +447,7 @@ export function rejectAction(): TFileValidationAction {
   };
 }
 
-export function renameAction(): TFileValidationAction {
+export function renameItemAction(): TFileValidationAction {
   return {
     id: "rename",
     label: "Rename Submission(s)",
@@ -467,8 +467,8 @@ export function createBaseActions(): TFileValidationActionMap {
     revalidate: revalidateAction(),
     markAsReady: markAsReadyAction(),
     unmarkAsReady: unmarkAsReadyAction(),
-    reject: rejectAction(),
-    rename: renameAction(),
+    reject: rejectItemAction(),
+    rename: renameItemAction(),
   };
 }
 
