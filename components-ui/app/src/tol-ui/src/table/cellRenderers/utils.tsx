@@ -57,20 +57,34 @@ export function processConditionToBoolean(conditionObj: IFilter, dataObject: TDa
   return true;
 }
 
+/**
+ * Processes and assigns a prop value to an elementProps object, handling template strings and conditional logic.
+ * 
+ * @param field - The field name associated with the value
+ * @param value - The original value of the field - might be 1 value from an array
+ * @param prop - The property name to set on the elementProps object
+ * @param propValue - The value to process, either a string (potentially with placeholders), a filter object, or a primitive
+ * @param elementProps - The object to assign the processed value to
+ * @param dataObject - The data object used to resolve placeholder values and evaluate conditions
+ */
 export function getCellRendererPropValue(
+  field: string,
+  value: any,
   prop: string,
-  value: string | IFilter,
+  propValue: string | IFilter,
   elementProps: Record<string, any>,
   dataObject: TDataObjectOrNull,
 ) {
-  if (typeof value === "string" && value.includes("${")) {
+  if (typeof propValue === "string" && propValue.includes("${")) {
     // replace placeholders with values from dataObject
-    elementProps[prop] = value.replace(CELL_RENDERER_PROP_ATTRIBUTE, (_, key) =>
-      getFieldByName(dataObject, key) || ""
-    );
-  } else if (typeof value === "object" && 'and_' in value) {
-    elementProps[prop] = processConditionToBoolean(value, dataObject);
+    elementProps[prop] = propValue.replace(CELL_RENDERER_PROP_ATTRIBUTE, (_, key) => {
+      // if the key matches the field, return the value (which might be a single value from an array of values)
+      if (key === field) return value;
+      return getFieldByName(dataObject, key) || "";
+    });
+  } else if (typeof propValue === "object" && 'and_' in propValue) {
+    elementProps[prop] = processConditionToBoolean(propValue, dataObject);
   } else {
-    elementProps[prop] = value;
+    elementProps[prop] = propValue;
   }
 }

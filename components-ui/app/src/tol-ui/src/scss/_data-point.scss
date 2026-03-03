@@ -4,13 +4,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-.tol-data-points {
+.tol-data-points,
+.tol-data-point {
   display: inline-block;
-}
-
-.tol-data-point-empty {
-  color: var(--tol-grey);
-  cursor: default;
 }
 
 .tol-data-point-renderer-modal-selector {
@@ -59,11 +55,17 @@
   }
 }
 
+.tol-display-empty {
+  color: var(--tol-grey);
+  cursor: default;
+}
+
 // Default renderer, deals with nested objects and arrays
 .tol-default-renderer-object-entry {
   display: table;
   width: 100%;
-  clear: both; /* hard stop after any floated tags above */
+  clear: both;
+  /* hard stop after any floated tags above */
   margin-bottom: 6px;
 }
 
@@ -87,10 +89,11 @@
 .tol-default-renderer-array::after {
   content: "";
   display: block;
-  clear: both; /* contains float:left tol-tag children */
+  clear: both;
+  /* contains float:left tol-tag children */
 }
 
-.tol-default-renderer-array > * {
+.tol-default-renderer-array>* {
   margin-right: 8px;
   margin-bottom: 8px;
 }
@@ -103,12 +106,13 @@
   font-size: 0;
 }
 
-.tol-default-renderer-object-entry--nested > .tol-default-renderer-object-key {
+.tol-default-renderer-object-entry--nested>.tol-default-renderer-object-key {
   display: block;
   margin-bottom: 4px;
 }
 
-.tol-default-renderer-object-entry--nested > .tol-default-renderer-object-value {
+.tol-default-renderer-object-entry--nested>.tol-default-renderer-object-value {
   display: block;
-  clear: both; /* important with float:left tol-tag */
+  clear: both;
+  /* important with float:left tol-tag */
 }

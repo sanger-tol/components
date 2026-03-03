@@ -11,7 +11,6 @@ import {
   CellEditable,
   getFieldByName,
   PDataPoints,
-  Tag,
 } from "../..";
 
 
@@ -20,14 +19,6 @@ export interface PDataPoint extends PDataPoints {
    * Whether the data point is being rendered within a tag component. Used for styling purposes.
    */
   isMany?: boolean,
-  /**
-   * The id of the currently active data point. Initially used for images.
-   */
-  activeObjectId?: string | null,
-  /**
-   * Setter function to set the active data point id.
-   */
-  setActiveObjectId?: React.Dispatch<React.SetStateAction<string | null>>,
 }
 
 /**
@@ -40,24 +31,19 @@ export function DataPoint(props: PDataPoint) {
     dataObject,
     dataSource,
     editable,
-    isMany = false,
-    setActiveObjectId = () => { },
+    isMany,
   } = props;
 
-  const v = getFieldByName(dataObject, field);
+  const attributeValue = getFieldByName(dataObject, field);
 
-  const [value, setValue] = useState(v);
-  const [prevValue, setPrevValue] = useState(v);
+  const [value, setValue] = useState(attributeValue);
+  const [prevValue, setPrevValue] = useState(attributeValue);
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const canEdit = (
     typeof value === "string"
   );
-
-  const onClick = () => {
-    setActiveObjectId((prev) => (prev === value ? null : value));
-  }
 
   const onDoubleClick = () => {
     if (!editable) return;
@@ -142,27 +128,27 @@ export function DataPoint(props: PDataPoint) {
     );
   }
 
-  let DataDisplay = (
-    <CellDisplay
-      {...props}
-      value={value}
-    />
-  )
+  // If the value is an array we produce separate CellDisplays for each item in the array.
+  const normalisedValue = Array.isArray(value) ? value : [value];
+  const DataDisplays = (
+    <>
+      {normalisedValue.map((v, index) => (
+        <CellDisplay
+          {...props}
+          key={`${field}-${index}`}
+          value={v}
+          isMany={isMany || Array.isArray(value)}
+        />
+      ))}
+    </>
+  );
 
-  // deal with falsy values
-  if (!value) {
-    DataDisplay = <span className="tol-data-point-empty">None</span>;
-  }
-
-  const Content = (
+  return (
     <div
       className="tol-data-point"
-      onClick={onClick}
       onDoubleClick={onDoubleClick}
     >
-      {DataDisplay}
+      {DataDisplays}
     </div>
   )
-
-  return isMany ? <Tag>{Content}</Tag> : Content;
 }

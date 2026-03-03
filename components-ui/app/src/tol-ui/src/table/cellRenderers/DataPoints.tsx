@@ -97,8 +97,6 @@ export function DataPoints(props: PDataPoints) {
       dataObject={obj}
       field={attribute}
       isMany={isMany}
-      activeObjectId={activeObjectId}
-      setActiveObjectId={setActiveObjectId}
     />
   ))
 

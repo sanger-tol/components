@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
 import {
   Boolean,
   Datetime,
@@ -14,14 +13,15 @@ import {
   Link,
   LongText,
   getCellRendererPropValue,
-  Icon,
   TrafficLightStatus,
   PDataPoints,
   Default,
+  PDataPoint,
+  Tag,
 } from "../..";
 
 
-export interface PCellDisplay extends PDataPoints {
+export interface PCellDisplay extends PDataPoint {
   /**
    * The main value to be displayed in the cell.
    */
@@ -34,14 +34,13 @@ export interface PCellDisplay extends PDataPoints {
  */
 export function CellDisplay(props: PCellDisplay) {
   const {
+    field,
     value,
     dataObject,
     renderer,
     customCellRenderers,
-    setExpandedRows,
+    isMany = false,
   } = props;
-
-  const [expanded, setExpanded] = useState(false);
 
   const preDefinedElements = {
     boolean: Boolean,
@@ -70,30 +69,16 @@ export function CellDisplay(props: PCellDisplay) {
   const elementProps: PDataPoints & Record<string, any> = { ...props };
 
   if (renderer.props) {
-    Object.entries(renderer.props).forEach(([prop, value]) => {
-      getCellRendererPropValue(prop, value, elementProps, dataObject);
+    Object.entries(renderer.props).forEach(([prop, propValue]) => {
+      getCellRendererPropValue(field, value, prop, propValue, elementProps, dataObject);
     });
   }
 
-  return (
-    <>
-      <renderer.element {...elementProps} />
-      {false && // ignoring for now
-        <Icon
-          icon={expanded ? "caret-up" : "caret-down"}
-          onClick={() => {
-            setExpanded(!expanded);
-            setExpandedRows((prev: string[]) => {
-              const id = elementProps.dataObject!.id;
-              return prev.includes(id)
-                ? prev.filter((existingId) => existingId !== id)
-                : [...prev, id];
-            });
-          }}
-          size="1x"
-          className={"tol-table-image-cell-arrow"}
-        />
-      }
-    </>
-  );
+  let Display = <renderer.element {...elementProps} />;
+
+  if (!value) {
+    Display = <span className="tol-display-empty">None</span>;
+  }
+
+  return isMany ? <Tag>{Display}</Tag> : Display;
 }
