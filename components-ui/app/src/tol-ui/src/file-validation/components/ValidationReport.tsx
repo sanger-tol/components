@@ -62,9 +62,11 @@ export function ValidationReport(props: PValidationReport) {
       PIPELINE_DS,
       VALIDATION_ENDPOINTS.UPLOAD,
       {
-        id: {
-          in_list: {
-            value: props.data.flatMap((item: { id: string }) => item.id),
+        and_: {
+          id: {
+            in_list: {
+              value: props.data.flatMap((item: { id: string }) => item.id),
+            },
           },
         },
       },

@@ -9,12 +9,6 @@ export const REFRESH_INTERVAL = 1000;
 export const MAX_ERRORS_TO_DISPLAY = 2;
 export const BUTTON_TIMEOUT = 3000;
 export const WIDTH_REDUCER = 40;
-export const TOL_LOADER_STYLES = {
-  minHeight: "160px",
-  flexDirection: "column" as "column",
-  alignItems: "center" as "center",
-  display: "flex" as "flex",
-};
 export const DEFAULT_FILE_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
 export const USER_SHOWN_FILE_TYPE_DEFAULTS = ".xlsx/.csv";

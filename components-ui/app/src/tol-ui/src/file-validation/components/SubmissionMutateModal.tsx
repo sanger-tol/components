@@ -54,14 +54,8 @@ export interface PSubmissionMutateModal {
 }
 
 export function SubmissionMutateModal(props: PSubmissionMutateModal) {
-  const {
-    open,
-    setOpen,
-    uploadIds,
-    attribute,
-    setSelectedRows,
-    onSuccess,
-  } = props;
+  const { open, setOpen, uploadIds, attribute, setSelectedRows, onSuccess } =
+    props;
 
   const [attributes, setAttributes] = useState<TValidationSubmissionMutations>(
     [],
@@ -69,20 +63,30 @@ export function SubmissionMutateModal(props: PSubmissionMutateModal) {
 
   const user = getUserFromLocalStorage();
 
+  console.log(uploadIds)
+
   const fetchPipelineData = async () => {
     if (!uploadIds) {
       return null;
+    }
+
+    let idsToFetch: string[] = [];
+
+    if (typeof uploadIds[0] === 'object' && 'id' in (uploadIds[0] as any)) {
+      idsToFetch = (uploadIds as Partial<IAllValidationData>[]).map((u) => u.id!);
+    } else {
+      idsToFetch = uploadIds as unknown as string[];
     }
 
     const result = await fetchAndNormaliseAllUploadResults(
       PIPELINE_DS,
       VALIDATION_ENDPOINTS.UPLOAD,
       {
-        id: {
-          in_list: {
-            value: Object.values(uploadIds).map(
-              (upload: Partial<IAllValidationData>) => upload.id,
-            ),
+        and_: {
+          id: {
+            in_list: {
+              value: idsToFetch,
+            },
           },
         },
       },

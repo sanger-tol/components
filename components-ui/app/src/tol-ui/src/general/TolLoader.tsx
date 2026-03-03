@@ -12,13 +12,13 @@ export interface PTolLoader {
   content?: string;
   vertical?: boolean;
   styles?: React.CSSProperties;
+  className?: string;
 }
 
 export function TolLoader(props: PTolLoader) {
-  const { size, content, vertical, styles } = props;
-
+  const { size, content, vertical, styles, className } = props;
   return (
-    <div className="tol-loader" style={{ ...styles }}>
+    <div className={`tol-loader ${className ?? ""}`} style={{ ...styles }}>
       <RSLoader
         // @ts-ignore
         size={size}

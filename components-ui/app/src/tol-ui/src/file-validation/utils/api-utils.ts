@@ -13,9 +13,9 @@ import {
   PopUpMessage,
   FILE_VALIDATION_STATUS,
   VALIDATIONS,
+  splitS3FilenameString, 
+  normaliseValidationResult
 } from "../../";
-
-import { splitS3FilenameString, normaliseValidationResult } from "./utils";
 
 import type {
   IFileData,
@@ -24,6 +24,7 @@ import type {
   TDataObjectOrNull,
   IValidationConfig,
   IAllValidationData,
+  IFilter,
 } from "../..";
 
 // Caches steps in pipeline, as they won't change very often, reduces call number.
@@ -36,14 +37,14 @@ const pipelineStepsPromiseCache = new Map<string, Promise<TStepsData>>();
  * anchor element to programmatically trigger the download in the browser, using a cleaned
  * version of the filename.
  *
- * @param ds - The TsDataSource instance used to perform the API request.
+ * @param dataSource - The TsDataSource instance used to perform the API request.
  * @param s3_bucket - The name of the S3 bucket where the file is stored.
  * @param filename - The full name of the file in S3 (including prefixes).
  * @returns A Promise that resolves when the download initiation is complete.
  */
 
 export async function downloadFileFromS3(
-  ds: TsDataSource,
+  dataSource: TsDataSource,
   s3_bucket: string,
   filename: string,
 ): Promise<void> {
@@ -54,7 +55,7 @@ export async function downloadFileFromS3(
     },
   };
   try {
-    const response = await ds.custom({
+    const response = await dataSource.custom({
       method: API_METHODS.POST,
       resource: S3_ENDPOINTS.DOWNLOAD,
       body: body,
@@ -88,14 +89,14 @@ export async function downloadFileFromS3(
  * Constructs a FormData payload containing the file and the target S3 bucket name,
  * then sends a POST request to the configured S3 upload endpoint.
  *
- * @param ds - The TsDataSource instance used to perform the API request.
+ * @param dataSource - The TsDataSource instance used to perform the API request.
  * @param file - The standard File object to be uploaded.
  * @param s3Bucket - The name of the target S3 bucket.
  * @returns A Promise that resolves to the API response containing upload details.
  */
 
 export async function uploadFileToS3(
-  ds: TsDataSource,
+  dataSource: TsDataSource,
   file: File,
   s3Bucket: string,
 ): Promise<TDataObjectOrNull> {
@@ -103,7 +104,7 @@ export async function uploadFileToS3(
   body.append("file", file);
   body.append("s3_bucket", s3Bucket);
 
-  return await ds.custom({
+  return await dataSource.custom({
     method: API_METHODS.POST,
     resource: S3_ENDPOINTS.UPLOAD,
     body: body,
@@ -113,7 +114,7 @@ export async function uploadFileToS3(
 /**
  * Normalises a pipeline upload object and its relationships into the internal IAllValidationData format.
  *
- * @param ds - The TsDataSource instance used for fetching related pipeline steps.
+ * @param dataSource - The TsDataSource instance used for fetching related pipeline steps.
  * @param upload - The raw upload object to normalise.
  * @param relationships - An object containing promises for related entities, such as the pipeline.
  * @returns A Promise that resolves to an IAllValidationData object with all fields mapped and normalised.
@@ -123,13 +124,13 @@ export async function uploadFileToS3(
  */
 
 export async function normalisePipelineUpload(
-  ds: TsDataSource,
+  dataSource: TsDataSource,
   upload: TDataObjectOrNull,
   relationships: any,
 ): Promise<IAllValidationData> {
   const pipeline = await relationships?.pipeline;
   const pipelineSteps = pipeline
-    ? await getStepsInPipeline(ds, pipeline.id)
+    ? await getStepsInPipeline(dataSource, pipeline.id)
     : [];
   return {
     completed: upload?.completed || false,
@@ -155,7 +156,7 @@ export async function normalisePipelineUpload(
 /**
  * Fetches the current pipeline results for a given upload ID from the API and normalises the response.
  *
- * @param ds - The TsDataSource instance used to perform the API request.
+ * @param dataSource - The TsDataSource instance used to perform the API request.
  * @param endpoint - The API endpoint to query for pipeline results.
  * @param andFilter - The filter used for fetching the required information, usually user_id
  * @returns A Promise that resolves to an IAllValidationData object if successful, or null if not.
@@ -164,12 +165,12 @@ export async function normalisePipelineUpload(
  */
 
 export async function fetchCurrentPipelineResults(
-  ds: TsDataSource,
+  dataSource: TsDataSource,
   endpoint: string,
   andFilter: any,
 ): Promise<IAllValidationData | null> {
   try {
-    const results = await ds.getListPage({
+    const results = await dataSource.getListPage({
       objectType: endpoint,
       filter: {
         and_: andFilter,
@@ -177,7 +178,7 @@ export async function fetchCurrentPipelineResults(
     });
     if (results) {
       const normalisedResults = await normalisePipelineUpload(
-        ds,
+        dataSource,
         results[0],
         results[0].relationships,
       );
@@ -197,7 +198,7 @@ export async function fetchCurrentPipelineResults(
 /**
  * Fetches and normalises all upload results for a given user ID from the API.
  *
- * @param ds - The TsDataSource instance used to perform the API request.
+ * @param dataSource - The TsDataSource instance used to perform the API request.
  * @param endpoint - The API endpoint to query for upload results.
  * @param andFilter - The filter used to get the required data, usually based on the users id.
  * @returns A Promise that resolves to an array of IAllValidationData objects if successful, or an empty array if not.
@@ -205,23 +206,23 @@ export async function fetchCurrentPipelineResults(
  * If the fetch fails, this function will trigger a popup error message and update error/loading state via the provided callbacks.
  */
 export async function fetchAndNormaliseAllUploadResults(
-  ds: TsDataSource,
+  dataSource: TsDataSource,
   endpoint: string,
-  andFilter: any,
+  andFilter: IFilter,
   requestedFields?: string[],
 ) {
   try {
-    const results = await ds.getListPage({
+    const results = await dataSource.getListPage({
       objectType: endpoint,
       filter: {
-        and_: andFilter,
+        ...andFilter,
       },
       requestedFields: requestedFields,
     });
     if (results) {
       const normalisedResults = await Promise.all(
         results.map((upload) =>
-          normalisePipelineUpload(ds, upload, upload.relationships || {}),
+          normalisePipelineUpload(dataSource, upload, upload.relationships || {}),
         ),
       );
       return [...normalisedResults];
@@ -240,7 +241,7 @@ export async function fetchAndNormaliseAllUploadResults(
 /**
  * Initiates a pipeline validation run by uploading the configuration and file information to the API.
  *
- * @param ds - The TsDataSource instance used to perform the API request.
+ * @param dataSource - The TsDataSource instance used to perform the API request.
  * @param config - The validation configuration containing pipeline and destination details.
  * @param fileName - The name of the file to be validated.
  * @param spreadsheetConfig - The spreadsheet configuration string.
@@ -250,7 +251,7 @@ export async function fetchAndNormaliseAllUploadResults(
  */
 
 export async function uploadPipelineConfig(
-  ds: TsDataSource,
+  dataSource: TsDataSource,
   config: IValidationConfig,
   file: IFileData,
   uploadName: string,
@@ -273,7 +274,7 @@ export async function uploadPipelineConfig(
   try {
     if (!uploadId) {
       const uploadResponse = await uploadFileToS3(
-        ds,
+        dataSource,
         file.blobFile,
         config.s3_bucket,
       );
@@ -295,7 +296,7 @@ export async function uploadPipelineConfig(
     }
 
     try {
-      const response = await ds.custom({
+      const response = await dataSource.custom({
         method: API_METHODS.POST,
         resource: VALIDATION_ENDPOINTS.RUN_PIPELINE,
         body: {
@@ -349,7 +350,7 @@ export async function uploadPipelineConfig(
 /**
  * Retrieves the step names for a given pipeline ID, using a cache to avoid redundant API requests.
  *
- * @param ds - The TsDataSource instance used to perform the API request.
+ * @param dataSource - The TsDataSource instance used to perform the API request.
  * @param pipelineId - The ID of the pipeline whose steps are to be fetched.
  * @returns A Promise that resolves to an array of step name strings.
  *
@@ -357,12 +358,12 @@ export async function uploadPipelineConfig(
  * Otherwise, the steps are fetched from the API and cached before returning.
  */
 
-export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
+export async function getStepsInPipeline(dataSource: TsDataSource, pipelineId: string) {
   if (pipelineStepsPromiseCache.has(pipelineId))
     return pipelineStepsPromiseCache.get(pipelineId);
 
   const stepPromise = (async () => {
-    const res = await ds.getListPage({
+    const res = await dataSource.getListPage({
       objectType: VALIDATION_ENDPOINTS.PIPELINE_STEPS,
       filter: {
         and_: {
@@ -405,19 +406,19 @@ export async function getStepsInPipeline(ds: TsDataSource, pipelineId: string) {
  * It then constructs a payload to update these uploads (plus an optional current pipeline ID)
  * to a "validation_timeout" status with a relevant failure message.
  *
- * @param ds - The datasource used to query and update upload records.
+ * @param dataSource - The datasource used to query and update upload records.
  * @param userId - The ID of the user whose uploads should be checked.
  * @param currentPipelineId - (Optional) ID of a specific pipeline run to include in the timeout check.
  * @returns A promise that resolves when the update operation is complete.
  */
 
 export async function setValidationTimeout(
-  ds: TsDataSource,
+  dataSource: TsDataSource,
   userId: string,
   currentPipelineId?: string,
 ): Promise<void> {
   if (!userId) return;
-  const res = await ds.getListPage({
+  const res = await dataSource.getListPage({
     objectType: VALIDATION_ENDPOINTS.UPLOAD,
     filter: {
       and_: {
@@ -446,7 +447,7 @@ export async function setValidationTimeout(
     },
   }));
 
-  await ds.upsert({
+  await dataSource.upsert({
     objectType: VALIDATION_ENDPOINTS.UPLOAD,
     payload: data,
   });

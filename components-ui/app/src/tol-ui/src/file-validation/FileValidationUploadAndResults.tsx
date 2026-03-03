@@ -12,7 +12,6 @@ import {
   uploadPipelineConfig,
   fetchCurrentPipelineResults,
   PreviousUploadsModal,
-  TOL_LOADER_STYLES,
   BUTTON_TIMEOUT,
   Widgets,
   Dropzone,
@@ -58,8 +57,6 @@ export interface PFileValidationUploadAndResults {
   defaultFileTemplateName?: string;
   setRefetchFn?: Dispatch<SetStateAction<(() => void) | null>>;
 }
-
-export const PIPELINE_DS = new TsDataSource();
 
 export function FileValidationUploadAndResults(
   props: PFileValidationUploadAndResults,
@@ -341,7 +338,7 @@ export function FileValidationUploadAndResults(
             size="lg"
             content="Waiting for Results..."
             vertical
-            styles={{ ...(TOL_LOADER_STYLES as React.CSSProperties) }}
+            className="tol-file-validation-loader-style"
           />
         </div>
       ) : Array.isArray(latestPipelineResults) ? null : (

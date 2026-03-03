@@ -139,296 +139,336 @@ export async function mutateSubmission(
   }
 }
 
-export function createBaseActions(): TFileValidationActionMap {
+export function viewReportAction(): TFileValidationAction {
   return {
-    viewReport: {
-      id: "viewReport",
-      label: "View Report(s)",
-      callback: ({ setReportOpen }) => {
-        setReportOpen?.(true);
-      },
+    id: "viewReport",
+    label: "View Report(s)",
+    callback: ({ setReportOpen }) => {
+      setReportOpen?.(true);
     },
-    downloadReport: {
-      id: "downloadReport",
-      label: "Download Report(s)",
-      callback: async ({ items }) => {
-        await Promise.all(
-          items.map(async (item: IAllValidationData) => {
-            // Fetch the item from the DB if only an ID is provided.
-            if (Object.keys(item).length === 1 && item.id) {
-              item = (await fetchCurrentPipelineResults(
-                PIPELINE_DS,
-                VALIDATION_ENDPOINTS.UPLOAD,
-                {
-                  id: { eq: { value: item.id } },
-                },
-              )) as unknown as IAllValidationData;
-            }
-            if (!item.validationResults) {
-              PopUpMessage({
-                type: "error",
-                message: `Error Creating Report for ${item.id}.`,
-              });
-              return;
-            }
-            return downloadReportFile(item);
-          }),
-        );
-      },
-    },
-    hideItem: {
-      id: "hideItem",
-      label: "Hide Item(s) From View",
-      callback: async ({
-        items,
-        dataSource,
-        setForceTableUpdate,
-        setSelectedRows,
-      }) => {
-        // Create bulk upsert payload
-        const payload = items.map((item) => ({
-          id: item.id,
-          type: VALIDATIONS.UPLOAD,
-          attributes: { hidden: true },
-        }));
-        try {
-          await dataSource.upsert({
-            objectType: VALIDATION_ENDPOINTS.UPLOAD,
-            payload: payload,
-          });
-          PopUpMessage({
-            type: "success",
-            message: "Item(s) hidden successfully.",
-          });
-          setForceTableUpdate?.((prev: boolean) => !prev);
-          setSelectedRows?.([]);
-        } catch (e) {
-          PopUpMessage({
-            type: "error",
-            message: "Could not hide item(s), please try again.",
-          });
-        }
-      },
-      isAvailable: ({ items }) => items.every((item) => item.hidden === false),
-    },
-    showItem: {
-      id: "showItem",
-      label: "Show Item(s) in View",
-      callback: async ({
-        items,
-        dataSource,
-        setForceTableUpdate,
-        setSelectedRows,
-      }) => {
-        // Create bulk upsert payload
-        const payload = items.map((item) => ({
-          id: item.id,
-          type: VALIDATIONS.UPLOAD,
-          attributes: { hidden: false },
-        }));
-        try {
-          await dataSource.upsert({
-            objectType: VALIDATION_ENDPOINTS.UPLOAD,
-            payload: payload,
-          });
-          PopUpMessage({
-            type: "success",
-            message: "Item(s) set to visible.",
-          });
-          setForceTableUpdate?.((prev: boolean) => !prev);
-          setSelectedRows?.([]);
-        } catch (e) {
-          PopUpMessage({
-            type: "error",
-            message: "Could not set item(s) to visible, please try again.",
-          });
-        }
-      },
-      isAvailable: ({ items }) => items.every((item) => item.hidden === true),
-    },
-    downloadFile: {
-      id: "downloadFile",
-      label: "Download File(s)",
-      callback: async ({ items, dataSource }) => {
-        await Promise.all(
-          // We need to map over items and fetch details for any items that only have an id,
-          // as we need s3 info to proceed with download
-          items.map(async (item: IAllValidationData) => {
-            // If the item only has an id, we need to fetch full details to get s3 info
-            if (Object.keys(item).length === 1 && item.id) {
-              item = (await fetchCurrentPipelineResults(
-                dataSource,
-                VALIDATION_ENDPOINTS.UPLOAD,
-                {
-                  id: { eq: { value: item.id } },
-                },
-              )) as unknown as IAllValidationData;
-            }
-            // If after fetching details we still don't have s3 info,
-            // we cannot proceed with download
-            if (!item.s3Bucket || !item.s3Filename) {
-              PopUpMessage({
-                type: "error",
-                message: "Could not download file, missing file information.",
-              });
-              return;
-            }
-            // Proceed with download if we have s3 info
-            return await downloadFileFromS3(
+  };
+}
+
+export function downloadReportAction(): TFileValidationAction {
+  return {
+    id: "downloadReport",
+    label: "Download Report(s)",
+    callback: async ({ items, dataSource }) => {
+      await Promise.all(
+        items.map(async (item: IAllValidationData) => {
+          // Fetch the item from the DB if only an ID is provided.
+          if (Object.keys(item).length === 1 && item.id) {
+            item = (await fetchCurrentPipelineResults(
               dataSource,
-              item.s3Bucket,
-              item.s3Filename,
-            );
-          }),
-        );
-      },
-    },
-    revalidate: {
-      id: "revalidate",
-      label: "Revalidate Submission(s)",
-      callback: async ({
-        items,
-        dataSource,
-        setForceTableUpdate,
-        setSelectedRows,
-      }) => {
-        const itemIds = items.map((item) => item.id);
-        try {
-          await dataSource.custom({
-            method: API_METHODS.POST,
-            resource: VALIDATION_ENDPOINTS.REVALIDATE,
-            body: {
-              data: {
-                upload_ids: itemIds,
+              VALIDATION_ENDPOINTS.UPLOAD,
+              {
+                id: { eq: { value: item.id } },
               },
-            },
-          });
-          PopUpMessage({
-            type: "success",
-            message: "Revalidation started successfully.",
-          });
-          setForceTableUpdate?.((prev: boolean) => !prev);
-          setSelectedRows?.([]);
-        } catch (e) {
-          PopUpMessage({
-            type: "error",
-            message: "Could not revalidate, please try again.",
-          });
-        }
-      },
-    },
-    markAsReady: {
-      ...setValidationStatusAction(
-        { id: "markAsReady", label: "Mark Item(s) as Ready" },
-        "marked_as_ready",
-      ),
-      isAvailable: ({ items }) =>
-        items.every(
-          (item) =>
-            item.validationStatus ===
-              FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES ||
-            item.validationStatus ===
-              FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS,
-        ),
-    },
-    unmarkAsReady: {
-      id: "unmarkAsReady",
-      label: "Unmark Item(s) as Ready",
-      callback: async ({
-        items,
-        dataSource,
-        setForceTableUpdate,
-        setSelectedRows,
-      }) => {
-        // Determine previous status and create payload array
-        const payload = await Promise.all(
-          items.map(async (item: TValidationContextItem) => {
-            // If no validation results are provided for an item, we will need to query the database
-            // This generally occurs when the action is being submitted from the table vs the viewing page.
-            let result = {} as IAllValidationData | null;
-            if (!item.validationResults) {
-              result = await fetchCurrentPipelineResults(
-                dataSource,
-                VALIDATION_ENDPOINTS.UPLOAD,
-                { id: { eq: { value: item.id } } },
-              );
-            }
-
-            // Determine if the upload has warnings or not (we only need to check warnings vs no warnings)
-            // Pass in the item, or failing that the found results
-            const { warnings } = getErrorWarningCounts(
-              item.validationResults || result?.validationResults || [],
-            );
-
-            // If warnings > 0, then previous status must have been validation_completed_passed_with_warnings
-            const previousStatus =
-              warnings > 0
-                ? FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS
-                : FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES;
-
-            // Return the payload for that item with determined status
-            return {
-              id: item.id,
-              type: "upload",
-              attributes: { validation_status: previousStatus },
-            };
-          }),
-        );
-
-        try {
-          const res = await dataSource.upsert({
-            objectType: VALIDATION_ENDPOINTS.UPLOAD,
-            payload: payload,
-          });
-
-          if (!res) {
+            )) as unknown as IAllValidationData;
+          }
+          if (!item.validationResults) {
             PopUpMessage({
               type: "error",
-              message: "Could not complete - Unmark as Ready.",
+              message: `Error Creating Report for ${item.id}.`,
             });
             return;
           }
+          return downloadReportFile(item);
+        }),
+      );
+    },
+  };
+}
 
-          PopUpMessage({
-            type: "success",
-            message: "Unmark as Ready Successful.",
-          });
+export function hideItemAction(): TFileValidationAction {
+  return {
+    id: "hideItem",
+    label: "Hide Item(s) From View",
+    callback: async ({
+      items,
+      dataSource,
+      setForceTableUpdate,
+      setSelectedRows,
+    }) => {
+      // Create bulk upsert payload
+      const payload = items.map((item) => ({
+        id: item.id,
+        type: VALIDATIONS.UPLOAD,
+        attributes: { hidden: true },
+      }));
+      try {
+        await dataSource.upsert({
+          objectType: VALIDATION_ENDPOINTS.UPLOAD,
+          payload: payload,
+        });
+        PopUpMessage({
+          type: "success",
+          message: "Item(s) hidden successfully.",
+        });
+        setForceTableUpdate?.((prev: boolean) => !prev);
+        setSelectedRows?.([]);
+      } catch (e) {
+        PopUpMessage({
+          type: "error",
+          message: "Could not hide item(s), please try again.",
+        });
+      }
+    },
+    isAvailable: ({ items }) => items.every((item) => item.hidden === false),
+  };
+}
 
-          // Re-render the table and unselect the rows
-          setForceTableUpdate?.((prev: boolean) => !prev);
-          setSelectedRows?.([]);
-        } catch {
+export function showItemAction(): TFileValidationAction {
+  return {
+    id: "showItem",
+    label: "Show Item(s) in View",
+    callback: async ({
+      items,
+      dataSource,
+      setForceTableUpdate,
+      setSelectedRows,
+    }) => {
+      // Create bulk upsert payload
+      const payload = items.map((item) => ({
+        id: item.id,
+        type: VALIDATIONS.UPLOAD,
+        attributes: { hidden: false },
+      }));
+      try {
+        await dataSource.upsert({
+          objectType: VALIDATION_ENDPOINTS.UPLOAD,
+          payload: payload,
+        });
+        PopUpMessage({
+          type: "success",
+          message: "Item(s) set to visible.",
+        });
+        setForceTableUpdate?.((prev: boolean) => !prev);
+        setSelectedRows?.([]);
+      } catch (e) {
+        PopUpMessage({
+          type: "error",
+          message: "Could not set item(s) to visible, please try again.",
+        });
+      }
+    },
+    isAvailable: ({ items }) => items.every((item) => item.hidden === true),
+  };
+}
+
+export function downloadFileAction(): TFileValidationAction {
+  return {
+    id: "downloadFile",
+    label: "Download File(s)",
+    callback: async ({ items, dataSource }) => {
+      await Promise.all(
+        // We need to map over items and fetch details for any items that only have an id,
+        // as we need s3 info to proceed with download
+        items.map(async (item: IAllValidationData) => {
+          // If the item only has an id, we need to fetch full details to get s3 info
+          if (Object.keys(item).length === 1 && item.id) {
+            item = (await fetchCurrentPipelineResults(
+              dataSource,
+              VALIDATION_ENDPOINTS.UPLOAD,
+              {
+                id: { eq: { value: item.id } },
+              },
+            )) as unknown as IAllValidationData;
+          }
+          // If after fetching details we still don't have s3 info,
+          // we cannot proceed with download
+          if (!item.s3Bucket || !item.s3Filename) {
+            PopUpMessage({
+              type: "error",
+              message: "Could not download file, missing file information.",
+            });
+            return;
+          }
+          // Proceed with download if we have s3 info
+          return await downloadFileFromS3(
+            dataSource,
+            item.s3Bucket,
+            item.s3Filename,
+          );
+        }),
+      );
+    },
+  };
+}
+
+export function revalidateAction(): TFileValidationAction {
+  return {
+    id: "revalidate",
+    label: "Revalidate Submission(s)",
+    callback: async ({
+      items,
+      dataSource,
+      setForceTableUpdate,
+      setSelectedRows,
+    }) => {
+      const itemIds = items.map((item) => item.id);
+      try {
+        await dataSource.custom({
+          method: API_METHODS.POST,
+          resource: VALIDATION_ENDPOINTS.REVALIDATE,
+          body: {
+            data: {
+              upload_ids: itemIds,
+            },
+          },
+        });
+        PopUpMessage({
+          type: "success",
+          message: "Revalidation started successfully.",
+        });
+        setForceTableUpdate?.((prev: boolean) => !prev);
+        setSelectedRows?.([]);
+      } catch (e) {
+        PopUpMessage({
+          type: "error",
+          message: "Could not revalidate, please try again.",
+        });
+      }
+    },
+  };
+}
+
+export function markAsReadyAction(): TFileValidationAction {
+  return {
+    ...setValidationStatusAction(
+      { id: "markAsReady", label: "Mark Item(s) as Ready" },
+      "marked_as_ready",
+    ),
+    isAvailable: ({ items }) =>
+      items.every(
+        (item) =>
+          item.validationStatus ===
+            FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES ||
+          item.validationStatus ===
+            FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS,
+      ),
+  };
+}
+
+export function unmarkAsReadyAction(): TFileValidationAction {
+  return {
+    id: "unmarkAsReady",
+    label: "Unmark Item(s) as Ready",
+    callback: async ({
+      items,
+      dataSource,
+      setForceTableUpdate,
+      setSelectedRows,
+    }) => {
+      // Determine previous status and create payload array
+      const payload = await Promise.all(
+        items.map(async (item: TValidationContextItem) => {
+          // If no validation results are provided for an item, we will need to query the database
+          // This generally occurs when the action is being submitted from the table vs the viewing page.
+          let result = {} as IAllValidationData | null;
+          if (!item.validationResults) {
+            result = await fetchCurrentPipelineResults(
+              dataSource,
+              VALIDATION_ENDPOINTS.UPLOAD,
+              { id: { eq: { value: item.id } } },
+            );
+          }
+
+          // Determine if the upload has warnings or not (we only need to check warnings vs no warnings)
+          // Pass in the item, or failing that the found results
+          const { warnings } = getErrorWarningCounts(
+            item.validationResults || result?.validationResults || [],
+          );
+
+          // If warnings > 0, then previous status must have been validation_completed_passed_with_warnings
+          const previousStatus =
+            warnings > 0
+              ? FILE_VALIDATION_STATUS.COMPLETED_PASSED_WARNINGS
+              : FILE_VALIDATION_STATUS.COMPLETED_PASSED_NO_ISSUES;
+
+          // Return the payload for that item with determined status
+          return {
+            id: item.id,
+            type: "upload",
+            attributes: { validation_status: previousStatus },
+          };
+        }),
+      );
+
+      try {
+        const res = await dataSource.upsert({
+          objectType: VALIDATION_ENDPOINTS.UPLOAD,
+          payload: payload,
+        });
+
+        if (!res) {
           PopUpMessage({
             type: "error",
-            message: "Could not complete - Unmark as Ready",
+            message: "Could not complete - Unmark as Ready.",
           });
+          return;
         }
-      },
-      isAvailable: ({ items }) => {
-        return items.every(
-          (item) =>
-            item.validationStatus === FILE_VALIDATION_STATUS.MARKED_AS_READY,
-        );
-      },
+
+        PopUpMessage({
+          type: "success",
+          message: "Unmark as Ready Successful.",
+        });
+
+        // Re-render the table and unselect the rows
+        setForceTableUpdate?.((prev: boolean) => !prev);
+        setSelectedRows?.([]);
+      } catch {
+        PopUpMessage({
+          type: "error",
+          message: "Could not complete - Unmark as Ready",
+        });
+      }
     },
-    reject: {
-      id: "reject",
-      label: "Reject Submission(s)",
-      callback: ({ setSubmissionMutateModalOpen }) => {
-        setSubmissionMutateModalOpen?.(true);
-      },
-      // Only admins can reject a submission
-      isAvailable: ({ user }) => {
-        return user?.roles.includes("admin") ?? false;
-      },
+    isAvailable: ({ items }) => {
+      return items.every(
+        (item) =>
+          item.validationStatus === FILE_VALIDATION_STATUS.MARKED_AS_READY,
+      );
     },
-    rename: {
-      id: "rename",
-      label: "Rename Submission(s)",
-      callback: ({ setSubmissionMutateModalOpen }) => {
-        setSubmissionMutateModalOpen?.(true);
-      },
+  };
+}
+
+export function rejectAction(): TFileValidationAction {
+  return {
+    id: "reject",
+    label: "Reject Submission(s)",
+    callback: ({ setSubmissionMutateModalOpen }) => {
+      setSubmissionMutateModalOpen?.(true);
     },
+    // Only admins can reject a submission
+    isAvailable: ({ user }) => {
+      return user?.roles.includes("admin") ?? false;
+    },
+  };
+}
+
+export function renameAction(): TFileValidationAction {
+  return {
+    id: "rename",
+    label: "Rename Submission(s)",
+    callback: ({ setSubmissionMutateModalOpen }) => {
+      setSubmissionMutateModalOpen?.(true);
+    },
+  };
+}
+
+export function createBaseActions(): TFileValidationActionMap {
+  return {
+    viewReport: viewReportAction(),
+    downloadReport: downloadReportAction(),
+    hideItem: hideItemAction(),
+    showItem: showItemAction(),
+    downloadFile: downloadFileAction(),
+    revalidate: revalidateAction(),
+    markAsReady: markAsReadyAction(),
+    unmarkAsReady: unmarkAsReadyAction(),
+    reject: rejectAction(),
+    rename: renameAction(),
   };
 }
 

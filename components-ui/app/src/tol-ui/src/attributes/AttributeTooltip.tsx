@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FormatTooltip, SourceTag, IconTooltip, IRemoteTarget, IZone } from "..";
 import { AttributeStatsBox } from "./AttributeStatsBox";
 import type { ReactNode } from "react";
@@ -21,7 +21,7 @@ export function AttributeTooltip(props: PAttributeTooltip) {
   const {
     attributeId: field, element, objectType, dataSource, id, componentId, zone } = props;
 
-  const [details, setDetails] = useState<Record<string, React.ReactNode>>({});
+  const [details, setDetails] = useState<Record<string, ReactNode>>({});
   useEffect(() => {
     let isMounted = true;
     if (isMounted) {

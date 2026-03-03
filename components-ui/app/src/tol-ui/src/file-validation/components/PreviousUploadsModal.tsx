@@ -15,7 +15,6 @@ import {
   PreviousUploadsView,
   getUserFromLocalStorage,
   fetchAndNormaliseAllUploadResults,
-  TOL_LOADER_STYLES,
   VALIDATION_ENDPOINTS,
   BUTTON_TIMEOUT,
   PIPELINE_DS,
@@ -23,7 +22,7 @@ import {
   FILE_VALIDATION_STATUS,
 } from "../..";
 
-import type { IAllValidationData } from "../..";
+import type { IAllValidationData, IFilter } from "../..";
 
 export interface PPreviousUploadsModal {
   /**
@@ -51,16 +50,18 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
   const id = user ? user.id : null;
 
   // If not showHiddenUploads, then add hidden filter, otherwise don't add
-  const andFilter = {
-    user_id: { eq: { value: id } },
-    ...(!showHiddenUploads && { hidden: { eq: { value: false } } }),
+  const andFilter: IFilter = {
+    and_: {
+      user_id: { eq: { value: id } },
+      ...(!showHiddenUploads && { hidden: { eq: { value: false } } }),
+    },
   };
 
   const fetchPreviousUploads = async () => {
     return await fetchAndNormaliseAllUploadResults(
       PIPELINE_DS,
       VALIDATION_ENDPOINTS.UPLOAD,
-      { ...andFilter },
+       andFilter,
     );
   };
 
@@ -112,7 +113,7 @@ export function PreviousUploadsModal(props: PPreviousUploadsModal) {
           size="md"
           content="Loading..."
           vertical
-          styles={TOL_LOADER_STYLES}
+          className="tol-file-validation-loader-style"
         />
       ) : userFileValidationUploads.isError || !id ? (
         <div className="tol-file-validation-error-info">

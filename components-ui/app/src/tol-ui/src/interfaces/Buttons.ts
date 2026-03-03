@@ -10,7 +10,7 @@ export interface IDropdownButtonConfig {
   disabled?: boolean;
   /**
    * Optional predicate: returns true if the action should be shown
-   * for the currently selected rows.
+   * for the currently selected rows. Mainly used with DropdownButtons.
    */
   isVisibleAction?: (...args: any[]) => boolean;
   action: (...args: any[]) => void;
