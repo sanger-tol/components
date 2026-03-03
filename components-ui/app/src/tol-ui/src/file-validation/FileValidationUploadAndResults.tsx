@@ -250,14 +250,12 @@ export function FileValidationUploadAndResults(
               />
             )}
             {(validating || validated) && (
-              <div onClick={() => setSelectedRows?.([])}>
-                <DropdownButtons
-                  mainButtonIcon={{ icon: "paper-plane", text: "Actions" }}
-                  placement="leftStart"
-                  menuStyle={{ marginRight: "5px" }}
-                  dropdownButtons={dropdownActions}
-                />
-              </div>
+              <DropdownButtons
+                mainButtonIcon={{ icon: "paper-plane", text: "Actions" }}
+                placement="leftStart"
+                menuStyle={{ marginRight: "5px" }}
+                dropdownButtons={dropdownActions}
+              />
             )}
             {(!uploadId || !validating) && (
               <Button
