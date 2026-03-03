@@ -18,23 +18,23 @@ import type { ICellId } from "../..";
 
 export interface PErrorViewer {
   /**
-   * Key associated with the component
+   * Optional key associated with the component
    */
   key?: string;
   /**
-   * Id associated with the component
+   * Optional Id associated with the component
    */
   id?: string;
   /**
-   * Warning or error (used for CSS)
+   * Optional Warning or error (used for CSS)
    */
   errorType?: string;
   /**
-   * The error/warning message
+   * Optional error/warning message
    */
   message?: string;
   /**
-   * The step associated with the error message
+   * Optional step associated with the error message
    */
   stepName?: string;
   /**
@@ -42,7 +42,7 @@ export interface PErrorViewer {
    */
   cellId: ICellId;
   /**
-   * Whether to truncate the error/warning message
+   * Optional Determines whether to truncate the error/warning message
    */
   truncate?: boolean;
 }

@@ -26,12 +26,33 @@ import {
 import type { IStepData, IAllValidationData, IValidationResult } from "../..";
 
 export interface PPreviousUploadsView {
+  /**
+   * Id of the upload, used for routing to results page and as a key for the component
+   */
   id: string;
+  /**
+   * Data associated with the upload
+   */
   data: IAllValidationData;
+  /**
+   * Whether the upload view is expanded
+   */
   expanded: boolean;
+  /**
+   * Callback to toggle the expanded state
+   */
   onToggle: (id: string) => void;
+  /**
+   * Optional whether to show passed steps
+   */
   showPassedSteps?: boolean;
+  /**
+   * Optional has validation completed, used to show particular statuses
+   */
   completed?: boolean;
+  /**
+   * Optional callback to set the open modal state
+   */
   setOpenModal?: (open: boolean) => void;
 }
 

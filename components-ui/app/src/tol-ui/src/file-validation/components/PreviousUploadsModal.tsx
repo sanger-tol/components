@@ -35,7 +35,7 @@ export interface PPreviousUploadsModal {
    */
   setOpenModal: (open: boolean | string) => void;
   /**
-   * Callback that fires when modal opens
+   * Optional callback that fires when modal opens
    */
   onEnter?: () => void;
 }

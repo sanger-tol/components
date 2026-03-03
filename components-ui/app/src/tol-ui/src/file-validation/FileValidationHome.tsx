@@ -36,17 +36,28 @@ import type { TFileValidationPolicyModule } from "..";
  */
 
 export interface PFileValidationHome {
+  /**
+   * The configuration for the file validation app, including API endpoints and other config values.
+   */
   validationConfig: IValidationConfig;
   /**
-   * An intro component containing additional information pertinent to that specific app.
+   * Optional An intro component containing additional information pertinent to that specific app.
    */
   intro?: React.ReactNode;
   /**
-   * Props to allow different titles of tabs for different apps, Portal has the concept of 'manifests',
+   * Optional props to allow different titles of tabs for different apps, Portal has the concept of 'manifests',
    * yet Tree of Sex will not, so having the ability to change titles is useful.
    */
   tabTitles?: { titleOne: string; titleTwo: string };
+  /**
+   * Optional policy module to pass down, if not passed down it will use the default one created for file validation.
+   * This allows for different apps to have different policies and actions if needed.
+   */
   policyModule?: TFileValidationPolicyModule;
+  /** Optional additional table config to be passed down to the uploads table, 
+   * this allows for additional fields, custom cell renderers and different column order 
+   * if needed for different apps using the file validation homepage. 
+  */
   additionalTableConfig?: { cellRenderers: any; fields: any; order: any };
 }
 
@@ -301,6 +312,8 @@ export function FileValidationHome(props: PFileValidationHome) {
                   setSubmissionMutateModalOpen={setSubmissionMutateModalOpen}
                   setCurrentActionId={setCurrentActionId}
                   setValidationData={setValidationData}
+                  setForceTableUpdate={setForceTableUpdate}
+                  setSelectedRows={setSelectedRows}
                   validationConfig={validationConfig}
                   pageTitle="Manifest Validation Portal"
                   setRefetchFn={setRefetchFn}
@@ -335,7 +348,7 @@ export function FileValidationHome(props: PFileValidationHome) {
                     <p>Show Hidden Uploads</p>
                     <Toggle
                       onChange={() => {
-                        // Force update table to use updated zone filter set in the useEffect
+                        // Force update the table to use updated zone filter set in the useEffect
                         setShowHiddenUploads((prev: boolean) => !prev);
                         setForceTableUpdate((prev: boolean) => !prev);
                       }}
@@ -385,7 +398,6 @@ export function FileValidationHome(props: PFileValidationHome) {
         }
         setSelectedRows={setSelectedRows}
         onSuccess={() => {
-          // setForceTableUpdate((prev: boolean) => !prev);
           setTableKey((prev: boolean) => !prev);
           if (validationData && refetchFnRef.current) {
             refetchFnRef.current();

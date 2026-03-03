@@ -44,11 +44,11 @@ export interface PSubmissionMutateModal {
    */
   attribute: "rejection_reason" | "upload_name";
   /**
-   * Callback to clear the selected rows after performing a status update
+   * Optional callback to clear the selected rows after performing a status update
    */
   setSelectedRows?: Dispatch<SetStateAction<string[]>>;
   /**
-   * manually refetches results when useQuery is disabled on validation completion
+   * Optional callback to manually refetch results when useQuery is disabled on validation completion
    */
   onSuccess?: () => void;
 }

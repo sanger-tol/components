@@ -49,7 +49,9 @@ export interface PFileValidationUploadAndResults {
   setReportOpen: Dispatch<SetStateAction<boolean>>;
   setSubmissionMutateModalOpen: Dispatch<SetStateAction<boolean>>;
   setCurrentActionId: Dispatch<SetStateAction<string>>;
+  setForceTableUpdate?: Dispatch<SetStateAction<boolean>>;
   setValidationData: Dispatch<SetStateAction<IAllValidationData | null>>;
+  setSelectedRows?: Dispatch<SetStateAction<string[]>>;
   objectType?: string;
   fileType?: string;
   pageTitle?: string;
@@ -67,6 +69,8 @@ export function FileValidationUploadAndResults(
     setSubmissionMutateModalOpen,
     setCurrentActionId,
     setValidationData,
+    setForceTableUpdate,
+    setSelectedRows,
     pageTitle = "File Validation / Manifest Validation",
     fileType = DEFAULT_FILE_TYPE,
     defaultFileTemplateName = "",
@@ -91,8 +95,9 @@ export function FileValidationUploadAndResults(
   const [stepsFound, setStepsFound] = useState<boolean>(false);
   const [uploadName, setUploadName] = useState<string>("");
   const [buttonLoading, setButtonLoading] = useState<boolean>(false);
-  const [validationStatus, setValidationStatus] =
-    useState<TFileValidationStatusPolicy | undefined>(undefined);
+  const [validationStatus, setValidationStatus] = useState<
+    TFileValidationStatusPolicy | undefined
+  >(undefined);
   const [isInitialValidation, setIsInitialValidation] = useState<boolean>(true);
 
   const { actions, policies } = useValidationPolicyModule();
@@ -128,10 +133,15 @@ export function FileValidationUploadAndResults(
         PopUpMessage({
           type: status?.messageType,
           message: `${status?.message}`,
-          persist: status?.isFailureStatus,
+          persist: true,
         });
 
         if (!status?.isFailureStatus) setReportOpen(true);
+      }
+
+      if (data.completed || status?.isFailureStatus) {
+        setForceTableUpdate?.((prev: boolean) => !prev);
+        setSelectedRows?.([]);
       }
     }
 
@@ -240,12 +250,14 @@ export function FileValidationUploadAndResults(
               />
             )}
             {(validating || validated) && (
-              <DropdownButtons
-                mainButtonIcon={{ icon: "paper-plane", text: "Actions" }}
-                placement="leftStart"
-                menuStyle={{ marginRight: "5px" }}
-                dropdownButtons={dropdownActions}
-              />
+              <div onClick={() => setSelectedRows?.([])}>
+                <DropdownButtons
+                  mainButtonIcon={{ icon: "paper-plane", text: "Actions" }}
+                  placement="leftStart"
+                  menuStyle={{ marginRight: "5px" }}
+                  dropdownButtons={dropdownActions}
+                />
+              </div>
             )}
             {(!uploadId || !validating) && (
               <Button
@@ -448,7 +460,7 @@ export function FileValidationUploadAndResults(
       actionButton={
         <Button
           icon="check"
-          text="submit"
+          text="Validate"
           onClick={() => {
             setButtonLoading(true);
             setValidating(true);

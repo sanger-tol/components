@@ -16,7 +16,6 @@ import {
   IAllValidationData,
   Modal,
   PIPELINE_DS,
-  splitS3FilenameString,
   useQueryData,
   useValidationPolicyModule,
   VALIDATION_ENDPOINTS,
@@ -92,7 +91,7 @@ export function ValidationReport(props: PValidationReport) {
 
   const singleReport = data.length === 1;
   const ValidationReportHeader = (
-    <h3>Validation Report{singleReport ? "s" : ""}:</h3>
+    <h3>Validation Report{singleReport ? "" : "s"}:</h3>
   );
 
   const validationReportContent = (
@@ -250,7 +249,7 @@ export function ValidationReport(props: PValidationReport) {
           >
             {!singleReport ? (
               <Panel
-                header={`Manifest: ${splitS3FilenameString(String(validation?.s3Filename))}`}
+                header={`Upload: ${validation?.uploadName}`}
                 bordered
                 collapsible
               >
@@ -258,7 +257,7 @@ export function ValidationReport(props: PValidationReport) {
               </Panel>
             ) : (
               <div>
-                <h6>{`Manifest: ${splitS3FilenameString(String(validation?.s3Filename))}`}</h6>
+                <h6>{`Upload: ${validation?.uploadName}`}</h6>
                 {validationReportContent(validationReport, validation, index)}
               </div>
             )}

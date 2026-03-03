@@ -17,11 +17,26 @@ import {
 import type { IValidationResult, IStepDetails } from "../..";
 
 export interface PValidateStep {
-  description?: string;
+  /**
+   * Id of the step, used as a key for the component
+   */
   id: string;
-  expanded?: boolean;
+  /**
+   * Optional callback when clicking to see all errors for the step
+   */
   onSeeAllErrors?: () => void;
+  /**
+   * Optional whether the step details are expanded
+   */
+  expanded?: boolean;
+  /**
+   * Optional details of the validation step, if not provided will default to empty values and not show any errors
+   */
   stepDetails?: IStepDetails;
+  /**
+   * Optional description of the step, shown in an info tooltip next to the step name
+   */
+  description?: string;
 }
 
 export function ValidateStep(props: PValidateStep) {
