@@ -47,6 +47,10 @@ export interface PErrorViewer {
   truncate?: boolean;
 }
 
+/**
+ * Component that shows the details of a particular error, which comes from the results column
+ * in the uploads database. Also contains a modal that opens once the component has been clicked.
+ */
 export function ErrorViewer(props: PErrorViewer) {
   const { id, errorType, message, stepName, cellId, truncate = false } = props;
 

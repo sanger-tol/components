@@ -41,6 +41,10 @@ import type {
   TFileValidationActionId,
 } from "../..";
 
+/**
+ * Validation Results Viewer. The main component where users' can view uploads, if not present in the
+ * File Validation home component. It has very similar functionality, with no ability to upload results.
+ */
 export function ValidationResultsViewer() {
   // Captures upload id passed to the page parameters
   // /file-validation/results/<uploadId>

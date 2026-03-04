@@ -56,6 +56,10 @@ export interface PPreviousUploadsView {
   setOpenModal?: (open: boolean) => void;
 }
 
+/**
+ * Shows an individual upload, which maps to multiple on `PreviousUploadsModal` component, 
+ * incorporates multiple validationIcons to show a quick view of each step in the uploads pipeline
+ */
 export function PreviousUploadsView(props: PPreviousUploadsView) {
   const {
     id,

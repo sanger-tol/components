@@ -39,6 +39,11 @@ export interface PValidateStep {
   description?: string;
 }
 
+/**
+ * Validation step component. Used to help visualise the status of each individual
+ * step in a pipeline, Will show a users the first couple of errors (if any), as well as
+ * a validation icon indicating the status (error, warning, unknown).
+ */
 export function ValidateStep(props: PValidateStep) {
   const {
     id,

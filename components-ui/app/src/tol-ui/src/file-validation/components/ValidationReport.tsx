@@ -37,6 +37,10 @@ export interface PValidationReport {
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
+/**
+ * Validation Report Modal. Used to show the report data for an upload, or multiple uploads.
+ * The multiple upload functionality usually occurs because a user has selected multiple rows from a table.
+ */
 export function ValidationReport(props: PValidationReport) {
   const { open, setOpen } = props;
 

@@ -45,6 +45,10 @@ export interface PValidationIcon {
   failed?: boolean;
 }
 
+/**
+ * Validation icon component. Used by the validate step & previous uploads view component, will show
+ * different icon images & colours depending on the status of that particular pipeline step.
+ */
 export function ValidationIcon(props: PValidationIcon) {
   const {
     iconType,

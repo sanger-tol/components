@@ -58,6 +58,10 @@ export interface PFileValidationUploadAndResults {
   setRefetchFn?: Dispatch<SetStateAction<(() => void) | null>>;
 }
 
+/**
+ * File validation uploader and results viewer. A component that wraps both the 
+ * upload component, as well as the displaying of realtime results after a validation has begun.
+ */
 export function FileValidationUploadAndResults(
   props: PFileValidationUploadAndResults,
 ) {

@@ -53,6 +53,10 @@ export interface PValidateSteps {
   failureMessage?: string | null;
 }
 
+/**
+ * Validate steps component. Takes upload data and renders a selection single
+ * ValidateSteps components, along with containing resize and expansion logic.
+ */
 export function ValidateSteps(props: PValidateSteps) {
   const { data, steps, completed, failureMessage } = props;
 

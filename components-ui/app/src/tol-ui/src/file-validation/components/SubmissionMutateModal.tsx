@@ -53,6 +53,11 @@ export interface PSubmissionMutateModal {
   onSuccess?: () => void;
 }
 
+/**
+ * Modal used for mutating a particular attribute of a validation upload.
+ * Can only manipulate 'rejection_reason & 'upload_name' currently, but can be
+ * refactored to be more generic and work for more attributes.
+ */
 export function SubmissionMutateModal(props: PSubmissionMutateModal) {
   const { open, setOpen, uploadIds, attribute, setSelectedRows, onSuccess } =
     props;

@@ -410,6 +410,7 @@ export const createValidationActions = (
   const user = getUserFromLocalStorage();
   // Render table actions based on current validation status
   const baseValidationActions = Object.values(actions)
+    // Sort in alphabetical order, so renders in the same order each time
     .sort((a, b) => {
       return ("" + a.label).localeCompare(b.label);
     })

@@ -39,6 +39,12 @@ export interface PPreviousUploadsModal {
   onEnter?: () => void;
 }
 
+/**
+ * A modal that contains all of the results for previous users uploads.
+ * Shows multiple `PreviousUploadsView` components. Is responsible for
+ * The toggle buttons to show passed steps (in previous uploads view) &
+ * whether to show user hidden uploads or not.
+ */
 export function PreviousUploadsModal(props: PPreviousUploadsModal) {
   const { openModal, setOpenModal, onEnter } = props;
 
