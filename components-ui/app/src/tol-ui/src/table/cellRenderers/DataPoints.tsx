@@ -57,7 +57,6 @@ export function DataPoints(props: PDataPoints) {
   // State to track whether there could be multiple data points to render.
   const [isMany, setIsMany] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [activeObjectId, setActiveObjectId] = useState<string | null>(null);
 
   // get the child objects based on the field
   const childObjects = getChildObjectsByName(dataObject, field);

@@ -28,6 +28,7 @@ import {
   DEFAULT_ROW_HEIGHT,
   COLLAPSED_ROW_MAX_HEIGHT,
   getRelationshipNameByField,
+  CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
 } from "..";
 
 interface Rgb {
@@ -339,6 +340,8 @@ function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, f
     const relativeAttribute = match
       .replace("${", "")
       .replace("}", "")
+      .replace('...', '')
+      .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, '')
       .trim();
     const relationship = getRelationshipNameByField(fieldName);
     const field = relationship ? `${relationship}.${relativeAttribute}` : relativeAttribute;

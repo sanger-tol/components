@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { ReactNode } from "react";
 import {
   Boolean,
   Datetime,
@@ -53,28 +54,32 @@ export function CellDisplay(props: PCellDisplay) {
     trafficLightStatus: TrafficLightStatus,
   };
 
+  // Initialise the Display variable which will hold the final renderer element to be returned
+  let Display: ReactNode;
+
   if (
     // Renderer type is not defined
     !renderer ||
     !renderer.type ||
     renderer.type === "none"
-  )
-    return <Default {...props} value={value} />;
+  ) {
+    Display = <Default {...props} value={value} />;
+  } else {
+    // Determine the appropriate renderer element
+    const elements = { ...preDefinedElements, ...customCellRenderers };
+    renderer.element = elements[renderer.type];
 
-  // Determine the appropriate renderer element
-  const elements = { ...preDefinedElements, ...customCellRenderers };
-  renderer.element = elements[renderer.type];
+    // Get the props for the renderer element
+    const elementProps: PDataPoints & Record<string, any> = { ...props };
 
-  // Get the props for the renderer element
-  const elementProps: PDataPoints & Record<string, any> = { ...props };
+    if (renderer.props) {
+      Object.entries(renderer.props).forEach(([prop, propValue]) => {
+        getCellRendererPropValue(field, value, prop, propValue, elementProps, dataObject);
+      });
+    }
 
-  if (renderer.props) {
-    Object.entries(renderer.props).forEach(([prop, propValue]) => {
-      getCellRendererPropValue(field, value, prop, propValue, elementProps, dataObject);
-    });
+    Display = <renderer.element {...elementProps} />;
   }
-
-  let Display = <renderer.element {...elementProps} />;
 
   if (!value) {
     Display = <span className="tol-display-empty">None</span>;

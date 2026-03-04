@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import {
   CELL_RENDERER_PROP_ATTRIBUTE,
+  CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
   getFieldByName,
   IFilter,
   TDataObjectOrNull
@@ -76,11 +77,34 @@ export function getCellRendererPropValue(
   dataObject: TDataObjectOrNull,
 ) {
   if (typeof propValue === "string" && propValue.includes("${")) {
-    // replace placeholders with values from dataObject
+    // replace placeholders '${}' with values from dataObject
     elementProps[prop] = propValue.replace(CELL_RENDERER_PROP_ATTRIBUTE, (_, key) => {
-      // if the key matches the field, return the value (which might be a single value from an array of values)
-      if (key === field) return value;
-      return getFieldByName(dataObject, key) || "";
+      let newPropValue: any;
+
+      const isList = key.includes('...');
+      const keyWithoutSpread = key.replace('...', ''); // remove spread operator if present
+      const fieldName = keyWithoutSpread.replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, '').trim();
+
+      // If spread operator is used for this field, return the current value
+      if (isList && fieldName === field) {
+        newPropValue = value;
+      } else {
+        newPropValue = getFieldByName(dataObject, key) || "";
+      }
+
+      console.log(newPropValue, key, fieldName);
+
+      // // Object key matching
+      // const objectKeys: string[] = key.match(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY) || [];
+      // objectKeys.forEach((k) => {
+      //   newPropValue = k
+      //     .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, (_, objectKey) => {
+      //       return newPropValue?.[objectKey] ?? "";
+      //     })
+      //     .trim();
+      // });
+
+      return newPropValue.toString();
     });
   } else if (typeof propValue === "object" && 'and_' in propValue) {
     elementProps[prop] = processConditionToBoolean(propValue, dataObject);
