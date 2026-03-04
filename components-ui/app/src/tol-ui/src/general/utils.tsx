@@ -418,7 +418,7 @@ function normaliseLargeNumber(value: number, iteration: number = 0) {
 }
 
 function normaliseDecimalNumber(value: number, iteration: number = 0) {
-  if ((String(value).length - 1 > 6 || value < 0.01) && iteration < 5) {
+  if (value < 0.01 && iteration < 5) {
     const normalisedValue = Number((value * 1000).toPrecision(12));
     return normaliseDecimalNumber(normalisedValue, iteration + 1);
   }
