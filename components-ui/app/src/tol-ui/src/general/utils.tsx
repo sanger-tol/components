@@ -401,7 +401,7 @@ export function normaliseNumber(value: number) {
   if (value > 999999) {
     return normaliseLargeNumber(value);
   // Handles decimals
-  } else if (value < 0.01) {
+  } else if (value < 0.01 && value !== 0) {
     return normaliseDecimalNumber(value);
   } else {
     return numberWithSpaces(value);
