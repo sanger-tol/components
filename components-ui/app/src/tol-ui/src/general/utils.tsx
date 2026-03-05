@@ -414,7 +414,7 @@ function normaliseLargeNumber(value: number, iteration: number = 0) {
     normalisedValue = Number((normalisedValue / 1000));
     return normaliseLargeNumber(Math.round(normalisedValue), iteration + 1);
   }
-  return numberWithSpaces(Number(normalisedValue)) + ["", "K", "M", "G", "T", "P"][iteration];
+  return numberWithSpaces(Number(normalisedValue)) + ["", "k", "M", "G", "T", "P"][iteration];
 }
 
 function normaliseDecimalNumber(value: number, iteration: number = 0) {
