@@ -80,7 +80,7 @@ export async function getUserPrivilege(
   });
 
   const boardUser = await board?.relationships?.user;
-  const isOwner = boardUser?.id?.toString() === user.id.toString();
+  const isOwner = boardUser?.["id"].toString() === user.id.toString();
   const isAdmin = user.roles?.includes("admin") ?? false;
 
   if (board && (isOwner || isAdmin)) return PRIVILEGE.BOARD.EDITABLE;

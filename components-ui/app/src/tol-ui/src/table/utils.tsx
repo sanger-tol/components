@@ -6,9 +6,7 @@ SPDX-License-Identifier: MIT
 
 import * as XLSX from "xlsx";
 import {
-  Field,
   FieldMeta,
-  isFloat,
   normaliseCaps,
   colours,
   TsDataSource,
