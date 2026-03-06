@@ -30,9 +30,7 @@ test.afterEach(async ({ page }) => {
 });
 
 const addCountComponent = async ({ page }) => {
-  addComponent({ page }, 'statistics', 'Small');
-
-  // check count has rendered
+  await addComponent({ page }, 'statistics', 'Small');
   await expect(page.locator('.tol-count')).toBeVisible();
 }
 

@@ -21,13 +21,13 @@ test.afterEach(async ({ page }) => {
 });
 
 const addMarkdownComponent = async ({ page }) => {
-  addComponent({ page }, 'text', 'Small');
+  await addComponent({ page }, 'text', 'Small');
   await expect(page.locator('.tol-markdown-viewer')).toBeVisible();
 }
 
 const editMarkDownComponent = async ({ page }) => {
   // click the edit button
-  clickUtilityBarButton({ page, testId: "edit-markdown" });
+  await clickUtilityBarButton({ page, testId: "edit-markdown" });
 
   // get the markdown editor textarea
   const mardownEditor = page.locator('.tol-markdown-viewer textarea');

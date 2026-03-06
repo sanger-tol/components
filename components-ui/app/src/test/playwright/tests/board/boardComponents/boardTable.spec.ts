@@ -29,8 +29,7 @@ test.afterEach(async ({ page }) => {
 });
   
 const addTableComponent = async ({ page }) => {
-  addComponent({ page }, "table", "Large");
-  await sleep(200);
+  await addComponent({ page }, "table", "Large");
   await expect(page.locator(".tol-table")).toBeVisible();
 };
 

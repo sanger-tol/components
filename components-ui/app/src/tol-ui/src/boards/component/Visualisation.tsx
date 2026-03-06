@@ -82,7 +82,7 @@ export function Visualisation(props: PVisualisation) {
     onClick: () => setConfirmationModalOpen(true),
     tooltip: "Delete Component",
     visible: editMode && !layoutMode,
-    testid: `${componentType}-delete-button`
+    testid: `delete-${componentType}-button`
   }
 
   const FilterDrawer = (
