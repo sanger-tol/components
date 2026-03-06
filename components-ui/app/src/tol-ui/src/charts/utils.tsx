@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from "date-fns";
-import { getCssVarValue, isPropDefined } from "..";
+import { appendKeywordIfNeeded, getCssVarValue, isPropDefined } from "..";
 
 // ------------------//
 //      GENERAL      //
@@ -484,10 +484,6 @@ export function generateBarLabels(chart: any, titleColour: any) {
 // ---------------------------------//
 //   DATE & CATEGORICAL BARCHART   //
 // -------------------------------//
-
-function appendKeywordIfNeeded(field: string): string {
-  return field.startsWith("calc_") ? field : `${field}.keyword`;
-}
 
 export function generateChartAgg(
   breakDownBy: string,
