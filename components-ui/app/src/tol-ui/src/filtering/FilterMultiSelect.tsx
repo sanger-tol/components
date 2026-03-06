@@ -17,7 +17,6 @@ import {
   TFilterOrUndefined,
   generateFilter,
   filterHasUpdated,
-  appendKeywordIfNeeded,
   removeAttributeFromFilter,
   API_OPERATIONS,
 } from "..";
