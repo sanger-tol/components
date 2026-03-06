@@ -3,31 +3,45 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, test } from '@playwright/test';
-import { addComponent, setBoard, setAuth, addComponentFilter, sleep, deleteFirstComponent } from '../../helpers'
+import {
+  addComponent,
+  setBoard,
+  setAuth,
+  addComponentFilter,
+  sleep,
+  deleteFirstComponent,
+  enterEditMode,
+  exitEditMode
+} from '../../helpers'
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 const BOARD_ID = crypto.randomUUID();
 
-test.use({headless: headless});
+test.use({ headless: headless });
 
 test.beforeEach(async ({ page }) => {
-  await setAuth({page});
-  await setBoard({page, boardID: BOARD_ID });
+  await setAuth({ page });
+  await setBoard({ page, boardID: BOARD_ID });
+  await enterEditMode({ page });
 });
 
-const addCountComponent = async ({page, testID}) => {
-  addComponent({page, testID}, 'statistics', 'Small');
+test.afterEach(async ({ page }) => {
+  await exitEditMode({ page });
+});
+
+const addCountComponent = async ({ page }) => {
+  addComponent({ page }, 'statistics', 'Small');
 
   // check count has rendered
   await expect(page.locator('.tol-count')).toBeVisible();
 }
 
-const filterCountComponent = async ({page}) => {
+const filterCountComponent = async ({ page }) => {
   // get the count before filtering
   const countBefore = await page.locator('.tol-count').textContent();
 
   await addComponentFilter(
-    {page},
+    { page },
     'statistics',
     'grit_project',
     'ToL Rapid Curation',
@@ -42,13 +56,11 @@ const filterCountComponent = async ({page}) => {
 }
 
 test('manage dashboard', async ({ page }) => {
-  const testID = crypto.randomUUID();
+  await addCountComponent({ page });
 
-  await addCountComponent({page, testID});
+  await filterCountComponent({ page });
 
-  await filterCountComponent({page});
-  
   // await deleteCountComponent({page, testID});
-  await deleteFirstComponent({ page});
+  await deleteFirstComponent({ page, componentType: "statistics" });
   expect(page.locator('.tol-count')).not.toBeVisible();
 });

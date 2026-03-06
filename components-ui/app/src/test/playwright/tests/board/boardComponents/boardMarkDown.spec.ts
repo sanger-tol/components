@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import { expect, test } from '@playwright/test';
-import { addComponent, setBoard, setAuth, deleteFirstComponent } from '../../helpers'
+import { addComponent, setBoard, setAuth, deleteFirstComponent, clickUtilityBarButton, sleep, enterEditMode, exitEditMode } from '../../helpers'
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 const BOARD_ID = crypto.randomUUID();
@@ -13,49 +13,46 @@ test.use({ headless: headless });
 test.beforeEach(async ({ page }) => {
   await setAuth({ page });
   await setBoard({ page, boardID: BOARD_ID });
+  await enterEditMode({ page });
 });
 
-const addMarkdownComponent = async ({ page, testID }) => {
-  addComponent({ page, testID }, 'text', 'Small');
+test.afterEach(async ({ page }) => {
+  await exitEditMode({ page });
+});
+
+const addMarkdownComponent = async ({ page }) => {
+  addComponent({ page }, 'text', 'Small');
   await expect(page.locator('.tol-markdown-viewer')).toBeVisible();
 }
 
-const clickCondensedUtilityBarButton = async ({ page }) => {
-  const condensedUtilityBarButton = page.getByTestId("condensed-utility-bar-button");
-  if (await condensedUtilityBarButton.isVisible()) {
-    await condensedUtilityBarButton.click({ force: true });
-  }
-}
-
-const previewMarkDownComponent = async ({ page }) => {
-  const previewEdit = page.getByTestId("preview-markdown");
-  await previewEdit.click({force: true});
-}
-
 const editMarkDownComponent = async ({ page }) => {
+  // click the edit button
+  clickUtilityBarButton({ page, testId: "edit-markdown" });
+
+  // get the markdown editor textarea
   const mardownEditor = page.locator('.tol-markdown-viewer textarea');
+
   // click into the markdown editor and type text to simulate real user input
   await mardownEditor.click();
-  await mardownEditor.pressSequentially("Test Text", { delay: 50 });
+  await page.keyboard.type("Test Text", { delay: 10 });
+  await sleep(1000);
   await expect(mardownEditor).toHaveValue('Test Text');
-  await clickCondensedUtilityBarButton({ page });
-  await previewMarkDownComponent({ page });
+
+  // click the preview button
+  await clickUtilityBarButton({ page, testId: "preview-markdown" });
+
   // Count is 3, once for preview, editor and saved view (even though only two are visible)
   await expect(page.getByText('Test Text')).toHaveCount(3);
-  await clickCondensedUtilityBarButton({ page });
 }
 
 const saveMarkDownComponent = async ({ page }) => {
-  const saveEdit = page.getByTestId("save-markdown");
-  await saveEdit.click({force: true});
+  await clickUtilityBarButton({ page, testId: "save-markdown" });
 }
 
 test('manage dashboard', async ({ page }) => {
-  const testID = crypto.randomUUID();
-
-  await addMarkdownComponent({ page, testID });
+  await addMarkdownComponent({ page });
   await editMarkDownComponent({ page });
   await saveMarkDownComponent({ page });
-  await deleteFirstComponent({ page});
+  await deleteFirstComponent({ page, componentType: "text" });
   expect(page.locator('.tol-markdown-viewer')).not.toBeVisible();
 });

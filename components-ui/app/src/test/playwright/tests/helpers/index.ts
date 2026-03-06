@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: MIT
 
 export * from './auth.ts';
-export * from './componentSetup.ts';
-export * from './sleep.ts';
 export * from './boardShortcut.ts';
-export * from './table/tableConfiguration.ts';
+export * from './components';
+export * from './editMode.js';
+export * from './sleep.ts';
+export * from './table';
+export * from './utility-bar';

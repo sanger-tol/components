@@ -251,7 +251,7 @@ export function Table(props: PTable) {
       visible: true,
       position: "right",
       type: "primary",
-      testid: "table-slider-button",
+      testid: "table-config-button",
       tooltip: "Configure Table",
       onClick: () => {
         setOpen(true);

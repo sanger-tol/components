@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT
 
 import { test } from '@playwright/test';
-import { setAuth } from '../helpers';
+import { enterEditMode, exitEditMode, setAuth } from '../helpers';
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
 
@@ -30,9 +30,8 @@ const createBoard = async ({ page, testID }) => {
 };
 
 const createZone = async ({ page, testID }) => {
-  // click the board edit mode button
-  const editButton = await page.getByTestId('board-edit-mode-button');
-  await editButton.click();
+  // enter edit mode
+  await enterEditMode({ page });
 
   // click add zone button
   const addZoneButton = await page.getByTestId('open-add-zone-modal-button');
@@ -53,10 +52,13 @@ const createZone = async ({ page, testID }) => {
   // name the zone
   await page.getByRole('textbox').fill(testID);
 
-  // click add zone button
+  // click confirm add zone button
   const confirmZoneButton = await page.getByTestId('add-zone-button');
   await confirmZoneButton.waitFor();
   await confirmZoneButton.click();
+
+  // exit edit mode
+  await exitEditMode({ page });
 };
 
 export const deleteBoard = async ({ page, boardID }) => {
@@ -77,6 +79,7 @@ export const deleteBoard = async ({ page, boardID }) => {
 
 test('create dashboard', async ({ page }) => {
   const testID = crypto.randomUUID();
+
   await createBoard({ page, testID });
 
   // create a view

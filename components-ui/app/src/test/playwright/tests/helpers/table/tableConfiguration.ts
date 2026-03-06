@@ -7,23 +7,23 @@ export const configureTable = async (
   component: string,
   attribute: string,
 ) => {
-      // click the slider button
-      await page.getByTestId(`${component}-slider-button`).first().click();
+  // click the config button
+  await page.getByTestId(`${component}-config-button`).first().click();
 
-      // click the second attribute selector dropdown
-      await page.getByRole("combobox").nth(1).click();
-      
-      // enter the attribute
-      await page.locator(".rs-search-box-input").fill(attribute);
-      await page.getByText(attribute).click();
-      const text = await page.locator(".tol-attribute-selector-display-key").textContent();
+  // click the second attribute selector dropdown
+  await page.getByRole("combobox").nth(1).click();
 
-      // check the checkbox for the attribute
-      await page.locator(`[role="checkbox"][value="${text}"]`).first().setChecked({force:true});
+  // enter the attribute
+  await page.locator(".rs-search-box-input").fill(attribute);
+  await page.getByText(attribute).click();
+  const text = await page.locator(".tol-attribute-selector-display-key").textContent();
 
-      // click again to hide dropdown
-      await page.getByRole("combobox").nth(1).click();
+  // check the checkbox for the attribute
+  await page.locator(`[role="checkbox"][value="${text}"]`).first().setChecked({ force: true });
 
-      // click to save the table
-      await page.getByTestId(`save-${component}-button`).click();
+  // click again to hide dropdown
+  await page.getByRole("combobox").nth(1).click();
+
+  // click to save the table
+  await page.getByTestId(`save-${component}-button`).click();
 };
