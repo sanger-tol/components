@@ -7,7 +7,6 @@ import {
   addComponent,
   setBoard,
   setAuth,
-  sleep,
   deleteFirstComponent,
   exitEditMode,
   enterEditMode,
