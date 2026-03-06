@@ -19,6 +19,7 @@ import {
   filterHasUpdated,
   appendKeywordIfNeeded,
   removeAttributeFromFilter,
+  API_OPERATIONS,
 } from "..";
 
 
@@ -68,22 +69,26 @@ export function FilterMultiSelect(props: IFilterInput) {
   const fetchValues = () => {
     if (!fetched) {
       setLoading(true);
-      const aggs = { aggs: {} };
-      aggs["aggs"][attribute] = {
-        terms: { field: appendKeywordIfNeeded(attribute), size: 500 },
-      };
+      // TEMPORARY FIX:
+      // Construct a URL param string and append it to the resource, because:
+      // a. The API doesn't handle empty strings/arrays for this resource very well
+      // b. Empty arrays are being parsed out, and the params are required on the API
+      // c. Should switch to a POST method in the near future.
+      // TODO: Remove on POST method implementation
+      const queryParamsString = new URLSearchParams({
+        group_by: attribute,
+        stats_fields: "",
+        stats: "",
+        object_filters: JSON.stringify(aggregationFilter),
+      }).toString();
       dataSource
         .custom({
-          method: API_METHODS.POST,
-          resource: `${objectType}:aggregations`,
-          body: aggs,
-          params: {
-            filter: aggregationFilter,
-          },
+          method: API_METHODS.GET,
+          resource: `${objectType}${API_OPERATIONS.GROUP_STATS}?${queryParamsString}`,
         })
         .then((res: any) => {
-          const aggValues = res.data.meta.aggregations[attribute].buckets;
-          setData(aggValues.map((item) => item.key));
+          const statsValues = res.data.meta.stats;
+          setData(statsValues.map((item: any) => item.key[attribute]));
           setLoading(false);
           setFetched(true);
           updateDropdownText("No results found");

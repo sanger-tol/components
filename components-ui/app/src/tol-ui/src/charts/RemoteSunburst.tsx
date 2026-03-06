@@ -29,7 +29,8 @@ import {
   TFilterOrUndefined,
   API_METHODS,
   IRemoteTargetAndZone,
-  IHeight
+  IHeight,
+  API_OPERATIONS
 } from "..";
 
 interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
@@ -126,7 +127,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
       dataSource
         .custom({
           method: API_METHODS.POST,
-          resource: `${objectType}:aggregations`,
+          resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
           body: aggs,
           params: {
             filter: generateFilter(zone, id, true),
@@ -172,7 +173,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
         dataSource
           .custom({
             method: API_METHODS.POST,
-            resource: `${objectType}:aggregations`,
+            resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
             body: aggs,
             params: {
               filter: generateFilter(zone, id, true),
