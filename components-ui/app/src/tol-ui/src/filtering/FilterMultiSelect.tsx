@@ -41,7 +41,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [aggregationFilter, setAggregationFilter] = useState<TFilterOrUndefined>({});
+  const [statsFilter, setStatsFilter] = useState<TFilterOrUndefined>({});
   const operator = "in_list";
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export function FilterMultiSelect(props: IFilterInput) {
       generateFilter(zone, componentId, true),
         attribute,
     );
-    if (filterHasUpdated(setAggregationFilter, aggregationFilter, nextFilter)) {
+    if (filterHasUpdated(setStatsFilter, statsFilter, nextFilter)) {
       setFetched(false);
       setData([]);
     }
@@ -78,7 +78,7 @@ export function FilterMultiSelect(props: IFilterInput) {
         group_by: attribute,
         stats_fields: "",
         stats: "",
-        object_filters: JSON.stringify(aggregationFilter),
+        object_filters: JSON.stringify(statsFilter),
       }).toString();
       dataSource
         .custom({
