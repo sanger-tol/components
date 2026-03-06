@@ -11,8 +11,6 @@ import { TolLoader, HoverOverlay, Icon } from "..";
 export interface PButton {
   icon?: string;
   onClick?: (...args: any[]) => void;
-  onMouseDown?: (...args: any[]) => void;
-  onMouseUp?: (...args: any[]) => void;
   className?: string;
   text?: string;
   disabled?: boolean;
@@ -35,8 +33,6 @@ export function Button(props: PButton) {
   const {
     icon,
     onClick,
-    onMouseDown,
-    onMouseUp,
     className,
     text,
     disabled,
@@ -95,30 +91,6 @@ export function Button(props: PButton) {
     }
   };
 
-  const handleMouseDown = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    ...args: any[]
-  ) => {
-    onMouseDown?.(event, ...args);
-
-    if (!onMouseUp || typeof window === "undefined") return;
-
-    clearMouseUpListener();
-    mouseUpListenerRef.current = (upEvent: MouseEvent) => {
-      onMouseUp(upEvent, ...args);
-      clearMouseUpListener();
-    };
-    window.addEventListener("mouseup", mouseUpListenerRef.current);
-  };
-
-  const handleMouseUp = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    ...args: any[]
-  ) => {
-    clearMouseUpListener();
-    onMouseUp?.(event, ...args);
-  };
-
   const outlineClass = outline ? "-outline" : "";
   const contents = disabled && disabledTooltip ? disabledTooltip : tooltip;
   const isDisabled =
@@ -131,8 +103,6 @@ export function Button(props: PButton) {
     <RsButton
       id={id}
       onClick={handleClick}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
       disabled={isDisabled}
       active={active}
       className={`icon-button-${type}-${size || "md"}${outlineClass} ${className || ""}`}
