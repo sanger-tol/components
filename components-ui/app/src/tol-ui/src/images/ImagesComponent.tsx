@@ -7,12 +7,6 @@ SPDX-License-Identifier: MIT
 import React, { useEffect, useState } from "react";
 import { ImageCarouselComponent, PImageCarouselComponent } from "./ImageCarouselComponent";
 import { ImagesModalComponent } from "./ImagesModalComponent";
-/**
- * Combines ImageCarousel and ImagesModal to create the main images component.
- * Create the main state pair for [link, setLink] here and pass it to both
- * components to keep them in sync.
- * 
- */
 
 export interface PImagesComponent extends Omit<PImageCarouselComponent, "link" | "setLink" | "onImageClick"> {
   /**
@@ -29,6 +23,12 @@ export interface PImagesComponent extends Omit<PImageCarouselComponent, "link" |
   style?: React.CSSProperties;
 }
 
+/**
+ * Combines ImageCarousel and ImagesModal to create the main images component.
+ * Create the main state pair for [link, setLink] here and pass it to both
+ * components to keep them in sync.
+ * 
+ */
 export function ImagesComponent(props: PImagesComponent) {
   const { links, height, fill, alt, enableModal = true, className, style } = props;
   const [link, setLink] = useState(links[0] || "");

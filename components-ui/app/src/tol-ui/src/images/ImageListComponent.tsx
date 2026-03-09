@@ -9,13 +9,6 @@ import { ImageComponent } from "./ImageComponent";
 import type { PImageCarouselComponent } from "./ImageCarouselComponent";
 import { ImagesModalComponent } from "./ImagesModalComponent";
 
-/**
- * Formats the images 1 after. Overflow will be auto when the list of images will
- * become larger the component width. Use the Image pointer. This will be used
- * to go to the right image for the ImageModal.
- *
- */
-
 export interface PImageListComponent extends Omit<PImageCarouselComponent, "onImageClick"> {
   /**
    * Optional callback to keep parent state in sync with selected image
@@ -35,6 +28,12 @@ export interface PImageListComponent extends Omit<PImageCarouselComponent, "onIm
   enableModal?: boolean;
 }
 
+/**
+ * Formats the images 1 after. Overflow will be auto when the list of images will
+ * become larger the component width. Use the Image pointer. This will be used
+ * to go to the right image for the ImageModal.
+ *
+ */
 export function ImageListComponent(props: PImageListComponent) {
   const {
     links,

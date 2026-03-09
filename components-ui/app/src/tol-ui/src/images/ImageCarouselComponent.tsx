@@ -8,14 +8,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Icon, IHeight } from "..";
 import { ImageComponent } from "./ImageComponent";
 
-/**
- * A list of images that can be looked through using arrows. When you reach the last
- * image you should be able to go back to the start. Use our Icon component for the
- * arrows. The arrows should be fixed. If there's only 1 image, arrows should not show.
- * Use the Image onClick to set the link pointer.
- *
- */
-
 export interface PImageCarouselComponent extends IHeight {
   /**
    * Array of hrefs for the images
@@ -51,6 +43,13 @@ export interface PImageCarouselComponent extends IHeight {
   style?: React.CSSProperties;
 }
 
+/**
+ * A list of images that can be looked through using arrows. When you reach the last
+ * image you should be able to go back to the start. Use our Icon component for the
+ * arrows. The arrows should be fixed. If there's only 1 image, arrows should not show.
+ * Use the Image onClick to set the link pointer.
+ *
+ */
 export function ImageCarouselComponent(props: PImageCarouselComponent) {
   const { links, link, height, fill = false, setLink, onImageClick, alt, className, style } = props;
   const containerRef = useRef<HTMLDivElement>(null);

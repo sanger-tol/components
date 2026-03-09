@@ -8,11 +8,6 @@ import React from "react";
 import { Modal } from "..";
 import { ImageCarouselComponent, PImageCarouselComponent } from "./ImageCarouselComponent";
 
-/**
- * Effectively just an ImageCarouselComponent in a modal to create a larger view on an image.
- *
- */
-
 export interface PImagesModalComponent extends PImageCarouselComponent {
   /**
    * Whether the modal is open
@@ -40,6 +35,10 @@ export interface PImagesModalComponent extends PImageCarouselComponent {
   headerContent?: React.ReactNode;
 }
 
+/**
+ * Effectively just an ImageCarouselComponent in a modal to create a larger view on an image.
+ *
+ */
 export function ImagesModalComponent(props: PImagesModalComponent) {
   const {
     open,

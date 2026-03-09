@@ -8,11 +8,6 @@ import React from "react";
 import { IHeight } from "..";
 import type { MouseEventHandler } from "react";
 
-/**
- * A single image that has been formatted correctly.
- *
- */
-
 export interface PImageComponent extends IHeight {
   /**
    * The href for the image
@@ -40,6 +35,10 @@ export interface PImageComponent extends IHeight {
   style?: React.CSSProperties;
 }
 
+/**
+ * A single image that has been formatted correctly.
+ *
+ */
 export function ImageComponent(props: PImageComponent) {
   const { link, height, fill = false, onClick, alt, className, style } = props;
 
