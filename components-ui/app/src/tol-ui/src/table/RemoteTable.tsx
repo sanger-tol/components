@@ -295,6 +295,10 @@ export function RemoteTable(props: PRemoteTable) {
   }, [zone]);
 
   useEffectUpdate(() => {
+    setPage(1);
+  }, [sortByAttribute, sortByType, filter, forceUpdate]);
+
+  useEffectUpdate(() => {
     renderTable();
   }, [page, sortByAttribute, sortByType, filter, forceUpdate]);
 

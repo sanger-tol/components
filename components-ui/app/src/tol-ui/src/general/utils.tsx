@@ -401,7 +401,7 @@ export function normaliseNumber(value: number) {
   if (value > 999999) {
     return normaliseLargeNumber(value);
   // Handles decimals
-  } else if (value < 0.01) {
+  } else if (value < 0.01 && value !== 0) {
     return normaliseDecimalNumber(value);
   } else {
     return numberWithSpaces(value);
@@ -414,11 +414,11 @@ function normaliseLargeNumber(value: number, iteration: number = 0) {
     normalisedValue = Number((normalisedValue / 1000));
     return normaliseLargeNumber(Math.round(normalisedValue), iteration + 1);
   }
-  return numberWithSpaces(Number(normalisedValue)) + ["", "K", "M", "G", "T", "P"][iteration];
+  return numberWithSpaces(Number(normalisedValue)) + ["", "k", "M", "G", "T", "P"][iteration];
 }
 
 function normaliseDecimalNumber(value: number, iteration: number = 0) {
-  if ((String(value).length - 1 > 6 || value < 0.01) && iteration < 5) {
+  if (value < 0.01 && iteration < 5) {
     const normalisedValue = Number((value * 1000).toPrecision(12));
     return normaliseDecimalNumber(normalisedValue, iteration + 1);
   }
