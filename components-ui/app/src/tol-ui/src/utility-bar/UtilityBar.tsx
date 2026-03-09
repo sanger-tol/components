@@ -52,7 +52,11 @@ export function UtilityBar(props: PUtilityBar) {
           <Button
             key={index}
             {...button}
-            className="tol-utility-bar-button"
+            className={
+              `tol-utility-bar-button ${
+                button && "className" in button ? button.className : ""
+              }`
+            }
           />
         ))}
     </div>

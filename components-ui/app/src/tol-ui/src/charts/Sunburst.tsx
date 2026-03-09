@@ -23,7 +23,9 @@ import {
   getCssVarValue,
   normaliseCaps,
   themeListener,
-  TUtilityBarOrNull
+  TUtilityBarOrNull,
+  mergeUtilityBarConfigs,
+  PButton
 } from "..";
 
 
@@ -189,37 +191,47 @@ export function Sunburst(props: Props) {
     onHover: handlePlaneHover,
   };
 
+  const undoButton: PButton = {
+    icon: "undo",
+    position: "right",
+    type: "primary",
+    onClick: () => {
+      resetItemClickedData(setSliceData);
+      setDatasets(originDatasets);
+    },
+    disabled: noRefresh,
+  };
+
+  const downloadButton: PButton = {
+    icon: "download",
+    position: "right",
+    type: "primary",
+    onClick: () => {
+      downloadItem(id, downloadName);
+    },
+    disabled: noDownload,
+  };
+
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig || undefined,
+    {
+      buttons: [
+        undoButton,
+        downloadButton
+      ],
+    }
+  )
+
   return (
     <div style={{ height: height }}>
       {utilityBarConfig !== null &&
         <UtilityBar
           id={id}
-          title={utilityBarConfig?.title}
-          buttons={[
-            {
-              icon: "undo",
-              position: "right",
-              type: "primary",
-              onClick: () => {
-                resetItemClickedData(setSliceData);
-                setDatasets(originDatasets);
-              },
-              disabled: noRefresh,
-            },
-            {
-              icon: "download",
-              position: "right",
-              type: "primary",
-              onClick: () => {
-                downloadItem(props.id, downloadName);
-              },
-              disabled: noDownload,
-            }
-          ]}
+          {...ubc}
         />
       }
       <div className={utilityBarConfig !== null ? "tol-component-contents with-offset" : "tol-component-contents"}>
-        {contents ? contents : 
+        {contents ? contents :
           <Doughnut
             id={id}
             responsive="true"

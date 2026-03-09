@@ -11,12 +11,11 @@ import {
   Markdown,
   UtilityBar,
   PButton,
-  saveTitle,
   updateConfigAndUpsert,
-  useBoardPrivilege,
-  PRIVILEGE,
+  useBoard,
   IMarkdownConfig,
-  PVisualisation
+  PVisualisation,
+  mergeUtilityBarConfigs
 } from "..";
 
 
@@ -25,16 +24,16 @@ export interface PBoardMarkdown extends PVisualisation {
 }
 
 export function BoardMarkdown(props: PBoardMarkdown) {
-  const { id, utilityBarConfig, config, size, boardObjectType, boardDataSource, zone } = props;
+  const { id, utilityBarConfig, config, size, boardDataSource, zone } = props;
 
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
   const [showMarkdownViewer, setShowMarkdownViewer] = useState<boolean>(false);
-  const { privilege } = useBoardPrivilege();
+  const { editMode} = useBoard();
 
 
   useEffect(() => {
-    (config.content || !(privilege === PRIVILEGE.BOARD.EDITABLE)) && setShowMarkdownViewer(true);
+    (config.content || !(editMode)) && setShowMarkdownViewer(true);
   }, []);
 
   const onMarkdownSave = (config: IMarkdownConfig) => {
@@ -54,7 +53,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
     testid: "preview-markdown",
     icon: showPreview ? "eye-slash" : "eye",
     onClick: () => setShowPreview(!showPreview),
-    visible: !showMarkdownViewer && privilege === PRIVILEGE.BOARD.EDITABLE,
+    visible: !showMarkdownViewer,
     outline: true,
   }
 
@@ -69,23 +68,18 @@ export function BoardMarkdown(props: PBoardMarkdown) {
       onMarkdownSave({ content: content });
     },
     outline: true,
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
+    visible: editMode,
   }
 
-  const MdUtilityBar = (
-    <UtilityBar
-      id="editor-markdown"
-      {...utilityBarConfig}
-      buttons={[editButton, previewButton]}
-      title={{
-        text: utilityBarConfig.title?.text,
-        editable: privilege === PRIVILEGE.BOARD.EDITABLE,
-        onSave: (value: string) => {
-          saveTitle(value, id, boardObjectType, boardDataSource);
-        },
-      }}
-    />
-  );
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      buttons: [
+        previewButton,
+        editButton
+      ],
+    }
+  )
 
   const MarkdownEditor = (
     <>
@@ -110,7 +104,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
 
   return (
     <>
-      {MdUtilityBar}
+      <UtilityBar id={id} {...ubc} />
       <div className="tol-component-contents with-offset tol-markdown">
         {(showMarkdownViewer) ? MarkdownViewer : MarkdownEditor}
       </div>

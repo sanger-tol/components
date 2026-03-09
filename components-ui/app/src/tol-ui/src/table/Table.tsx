@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { ReactNode, useState, useCallback } from "react";
 import { Table as RSTable, Pagination, SelectPicker } from "rsuite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import {
   Placeholder,
   useEffectUpdate,
@@ -22,8 +20,7 @@ import {
   PUtilityBar,
   PButton,
   PDropdownButtons,
-  useBoardPrivilege,
-  PRIVILEGE,
+  useBoard,
   ITableConfigSave,
   RowCounter,
   RowExpander,
@@ -33,6 +30,8 @@ import {
   COLLAPSED_ROW_MAX_HEIGHT,
   RowToolsColumn,
   DataColumn,
+  mergeUtilityBarConfigs,
+  NoAttributesPlaceholder,
 } from "..";
 
 
@@ -135,7 +134,7 @@ export function Table(props: PTable) {
     /* eslint-enable */
   } = props;
 
-  const { privilege } = useBoardPrivilege();
+  const { editMode } = useBoard();
 
   const [open, setOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
@@ -252,7 +251,7 @@ export function Table(props: PTable) {
       visible: true,
       position: "right",
       type: "primary",
-      testid: "table-slider-button",
+      testid: "table-config-button",
       tooltip: "Configure Table",
       onClick: () => {
         setOpen(true);
@@ -266,24 +265,19 @@ export function Table(props: PTable) {
     };
 
   const filterButton: PButton =
-    (!noFilter &&
-      fieldMeta.order.active.length !== 0 &&
-      privilege === PRIVILEGE.BOARD.EDITABLE) ||
-      privilege === undefined
-      ? {
-        visible: true,
-        position: "right",
-        type: "primary",
-        onClick: () => {
-          setFilterVisibility(!filterVisibility);
-        },
-        icon: filterVisibility ? "eye-slash" : "eye",
-        tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
-        outline: true,
-      }
-      : {
-        visible: false,
-      };
+    (!noFilter && fieldMeta.order.active.length !== 0 && editMode) ? {
+      visible: true,
+      position: "right",
+      type: "primary",
+      onClick: () => {
+        setFilterVisibility(!filterVisibility);
+      },
+      icon: filterVisibility ? "eye-slash" : "eye",
+      tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
+      outline: true,
+    } : {
+      visible: false,
+    };
 
   const downloadButton: PButton = !noDownload
     ? {
@@ -330,6 +324,61 @@ export function Table(props: PTable) {
     )
   );
 
+  const PageSizePicker = (
+    <span className="tol-page-size">
+      <SelectPicker
+        value={pageSize}
+        onChange={setPageSize}
+        size="sm"
+        cleanable={false}
+        searchable={false}
+        data={[
+          { label: "25", value: 25 },
+          { label: "50", value: 50 },
+          { label: "100", value: 100 },
+          { label: "250", value: 250 },
+        ]}
+      />
+    </span>
+  );
+
+  const PaginationPicker = (
+    <Pagination
+      className="tol-pagination"
+      size="sm"
+      layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
+      total={totalSize <= 10000 ? totalSize : 10000}
+      activePage={page}
+      onChangePage={setPage}
+      limit={pageSize}
+      onChangeLimit={setPageSize}
+      prev
+      next
+      first={!mediumBreakpoint}
+      last={!mediumBreakpoint}
+      ellipsis={!mediumBreakpoint}
+      boundaryLinks
+      maxButtons={mediumBreakpoint ? 1 : 3}
+    />
+  )
+
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      buttons: [
+        configButton,
+        filterButton,
+        actionDropdown,
+        downloadButton,
+      ],
+      elements:
+        !noPagination && fieldMeta?.order?.active?.length > 0 ? [
+          ...(!smallBreakpoint && editMode ? [PageSizePicker] : []),
+          PaginationPicker,
+        ] : [],
+    }
+  )
+
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
       <DownloadModal
@@ -339,7 +388,7 @@ export function Table(props: PTable) {
         setOpen={setDownloadOpen}
         source={source}
         requestedFields={fieldMeta?.order?.active}
-        title={utilityBarConfig.title}
+        title={ubc.title}
         fieldMeta={fieldMeta}
       />
       <ColumnConfigDrawer
@@ -360,87 +409,12 @@ export function Table(props: PTable) {
             : undefined
         }
       />
-      <UtilityBar
-        id={id}
-        {...utilityBarConfig}
-        title={utilityBarConfig.title}
-        elements={
-          !noPagination && fieldMeta?.order?.active?.length > 0
-            ? [
-              <span className="tol-page-size">
-                {!smallBreakpoint &&
-                  (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
-                    <SelectPicker
-                      value={pageSize}
-                      onChange={setPageSize}
-                      size="sm"
-                      cleanable={false}
-                      searchable={false}
-                      data={[
-                        { label: "25", value: 25 },
-                        { label: "50", value: 50 },
-                        { label: "100", value: 100 },
-                        { label: "250", value: 250 },
-                      ]}
-                    />
-                  )}
-              </span>,
-              <Pagination
-                className="tol-pagination"
-                size="sm"
-                layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
-                total={totalSize <= 10000 ? totalSize : 10000}
-                activePage={page}
-                onChangePage={setPage}
-                limit={pageSize}
-                onChangeLimit={setPageSize}
-                prev
-                next
-                first={!mediumBreakpoint}
-                last={!mediumBreakpoint}
-                ellipsis={!mediumBreakpoint}
-                boundaryLinks
-                maxButtons={mediumBreakpoint ? 1 : 3}
-              />,
-              ...(utilityBarConfig.elements || []),
-            ]
-            : [...(utilityBarConfig.elements || [])]
-        }
-        buttons={[
-          ...(utilityBarConfig.buttons || []),
-          configButton,
-          filterButton,
-          actionDropdown,
-          downloadButton,
-        ]}
-      />
+      <UtilityBar id={id} {...ubc} />
       {contents ? (
         contents
       ) : (
         <>
-          {noFieldsSelected ? (
-            <Placeholder
-              message={
-                <>
-                  {/* Assume that when privilege is undefined, the table is not in a board */}
-                  {privilege === PRIVILEGE.BOARD.EDITABLE || !privilege ? (
-                    <>
-                      No fields selected. Please click
-                      <FontAwesomeIcon
-                        icon={faSliders}
-                        size="lg"
-                        style={{ padding: "0 10" }}
-                      />
-                      to configure.
-                    </>
-                  ) : (
-                    <>No fields available.</>
-                  )}
-                </>
-              }
-              height={height}
-            />
-          ) : (
+          {noFieldsSelected ? <NoAttributesPlaceholder /> : (
             <>
               <RowCounter {...props} />
               <div className="tol-table-inner">
