@@ -2,4 +2,4 @@
 //
 // SPDX-License-Identifier: MIT
 
-export * from './tableConfiguration.js';
+export * from './tableConfiguration';

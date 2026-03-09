@@ -2,5 +2,5 @@
 //
 // SPDX-License-Identifier: MIT
 
-export * from './componentSetup.js';
-export * from './componentUpdates.js';
+export * from './componentSetup';
+export * from './componentUpdates';
