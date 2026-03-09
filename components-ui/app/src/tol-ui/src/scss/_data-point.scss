@@ -60,6 +60,11 @@
   cursor: default;
 }
 
+.tol-display-error {
+  color: var(--tol-error);
+  cursor: default;
+}
+
 // Default renderer, deals with nested objects and arrays
 .tol-default-renderer-object-entry {
   display: table;

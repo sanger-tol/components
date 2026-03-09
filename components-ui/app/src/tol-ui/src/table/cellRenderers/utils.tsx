@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import {
   CELL_RENDERER_PROP_ATTRIBUTE,
   CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
+  CELL_RENDERER_SPREAD_OPERATOR,
   getFieldByName,
   IFilter,
   TDataObjectOrNull
@@ -59,6 +60,60 @@ export function processConditionToBoolean(conditionObj: IFilter, dataObject: TDa
 }
 
 /**
+ * Resolves nested object values by traversing bracket-notation keys left to right.
+ * e.g. given value = { address: { city: "London" } } and keyPath = "field[address][city]",
+ * returns "London". If the value is not an object, returns it unchanged.
+ *
+ * @param value - The object to traverse, or a primitive to return as-is
+ * @param keyPath - A string containing bracket-notation keys, e.g. "field[address][city]"
+ * @returns The resolved nested value, the original value if not an object, or "" if a key is not found
+ */
+export function resolveObjectKeys(value: any, keyPath: string): any {
+  if (typeof value !== 'object' || value === null) return value;
+  for (const match of keyPath.matchAll(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY)) {
+    const objectKey = match[0].slice(1, -1);
+    value = value?.[objectKey];
+    if (value === undefined || value === null) return "";
+  }
+  return value;
+}
+
+/**
+ * Resolves a single template placeholder key to its corresponding field value.
+ * Handles spread operators and nested object key access.
+ *
+ * @param key - The captured placeholder key from inside `${}`
+ * @param field - The current field name being rendered
+ * @param value - The current field value (used when spread operator matches)
+ * @param dataObject - The data object to resolve field values from
+ */
+export function processTagsToValues(
+  key: string,
+  field: string,
+  value: any,
+  dataObject: TDataObjectOrNull,
+): any {
+  const isList = key.includes(CELL_RENDERER_SPREAD_OPERATOR);
+
+  // remove spread operator if present - still includes object keys
+  const keyWithoutSpread = key.replace(CELL_RENDERER_SPREAD_OPERATOR, '');
+
+  // remove the attribute object key prefixes to get the actual field name
+  const fieldName = keyWithoutSpread.replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, '').trim();
+
+  // If spread operator is used for this field, return the current value
+  let newPropValue: any;
+  if (isList && fieldName === field) {
+    newPropValue = value;
+  } else {
+    newPropValue = getFieldByName(dataObject, fieldName) || "";
+  }
+
+  // If the key includes any object keys, retrieve the value
+  return resolveObjectKeys(newPropValue, keyWithoutSpread);
+}
+
+/**
  * Processes and assigns a prop value to an elementProps object, handling template strings and conditional logic.
  * 
  * @param field - The field name associated with the value
@@ -78,34 +133,9 @@ export function getCellRendererPropValue(
 ) {
   if (typeof propValue === "string" && propValue.includes("${")) {
     // replace placeholders '${}' with values from dataObject
-    elementProps[prop] = propValue.replace(CELL_RENDERER_PROP_ATTRIBUTE, (_, key) => {
-      let newPropValue: any;
-
-      const isList = key.includes('...');
-      const keyWithoutSpread = key.replace('...', ''); // remove spread operator if present
-      const fieldName = keyWithoutSpread.replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, '').trim();
-
-      // If spread operator is used for this field, return the current value
-      if (isList && fieldName === field) {
-        newPropValue = value;
-      } else {
-        newPropValue = getFieldByName(dataObject, key) || "";
-      }
-
-      console.log(newPropValue, key, fieldName);
-
-      // // Object key matching
-      // const objectKeys: string[] = key.match(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY) || [];
-      // objectKeys.forEach((k) => {
-      //   newPropValue = k
-      //     .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, (_, objectKey) => {
-      //       return newPropValue?.[objectKey] ?? "";
-      //     })
-      //     .trim();
-      // });
-
-      return newPropValue.toString();
-    });
+    elementProps[prop] = propValue.replace(CELL_RENDERER_PROP_ATTRIBUTE, (_, key) =>
+      processTagsToValues(key, field, value, dataObject)
+    );
   } else if (typeof propValue === "object" && 'and_' in propValue) {
     elementProps[prop] = processConditionToBoolean(propValue, dataObject);
   } else {

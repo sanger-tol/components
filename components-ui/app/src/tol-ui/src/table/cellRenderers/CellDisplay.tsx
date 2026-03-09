@@ -57,33 +57,39 @@ export function CellDisplay(props: PCellDisplay) {
   // Initialise the Display variable which will hold the final renderer element to be returned
   let Display: ReactNode;
 
-  if (
-    // Renderer type is not defined
-    !renderer ||
-    !renderer.type ||
-    renderer.type === "none"
-  ) {
-    Display = <Default {...props} value={value} />;
-  } else {
-    // Determine the appropriate renderer element
-    const elements = { ...preDefinedElements, ...customCellRenderers };
-    renderer.element = elements[renderer.type];
+  try {
+    if (
+      // Renderer type is not defined
+      !renderer ||
+      !renderer.type ||
+      renderer.type === "none"
+    ) {
+      Display = <Default {...props} value={value} />;
+    } else {
+      // Determine the appropriate renderer element
+      const elements = { ...preDefinedElements, ...customCellRenderers };
+      renderer.element = elements[renderer.type];
 
-    // Get the props for the renderer element
-    const elementProps: PDataPoints & Record<string, any> = { ...props };
+      // Get the props for the renderer element
+      const elementProps: PDataPoints & Record<string, any> = { ...props };
 
-    if (renderer.props) {
-      Object.entries(renderer.props).forEach(([prop, propValue]) => {
-        getCellRendererPropValue(field, value, prop, propValue, elementProps, dataObject);
-      });
+      if (renderer.props) {
+        Object.entries(renderer.props).forEach(([prop, propValue]) => {
+          getCellRendererPropValue(field, value, prop, propValue, elementProps, dataObject);
+        });
+      }
+
+      Display = <renderer.element {...elementProps} />;
     }
-
-    Display = <renderer.element {...elementProps} />;
+  } catch (error) {
+    return <span className="tol-display-error">Error Configuring Renderer</span>;
   }
 
   if (!value) {
     Display = <span className="tol-display-empty">None</span>;
   }
+
+  console.log('HELLO!', value, Display)
 
   return isMany ? <Tag>{Display}</Tag> : Display;
 }
