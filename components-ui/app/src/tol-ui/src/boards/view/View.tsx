@@ -16,29 +16,26 @@ import {
   PBoard,
   reorderZoneAndUpsert,
   getSortedZones,
-  PUtilityBar,
-  UtilityBar,
-  PButton,
-  PRIVILEGE,
-  useBoardPrivilege,
+  useBoard,
   TsDataSource,
+  UtilityBar,
+  BUTTONS,
 } from "../..";
 
 
 export interface PView extends PBoard {
-  // extends but excludes setPrivilege
   id: string;
   defaultFilter?: IFilter;
-  utilityBarConfig?: PUtilityBar
-  // title: string;
 }
 
 export function View(props: PView) {
-  const { id, boardDataSource, utilityBarConfig } = props;
+  const { id, boardDataSource } = props;
+
+  const { editMode, layoutMode } = useBoard();
+
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
-  const { privilege } = useBoardPrivilege();
 
   useEffect(() => {
     getZones(id, boardDataSource).then((data: any) => {
@@ -87,27 +84,30 @@ export function View(props: PView) {
     });
   };
 
-  const addZoneButton: PButton = {
-    type: "success",
-    className: "open-add-zone-modal-button", // temp placement
-    testid: "open-add-zone-modal-button",
-    icon: "plus",
-    position: "right",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
-    onClick: () => {
-      setOpen(true);
-    },
-  }
+  const Bar = (
+    <div className="tol-board-bar">
+      <UtilityBar
+        id="view-utility-bar"
+        buttons={[
+          {
+            ...BUTTONS.ADD,
+            testid: "open-add-zone-modal-button",
+            visible: editMode && !layoutMode,
+            onClick: () => {
+              setOpen(true);
+            },
+            tooltip: "",
+            text: "Add Zone",
+            icon: "object-group",
+          },
+        ]}
+      />
+    </div>
+  )
 
   return (
     <div className="tol-view">
-      <div className="tol-view-bar">
-        <UtilityBar
-          id={utilityBarConfig?.id}
-          buttons={[addZoneButton, ...(utilityBarConfig?.buttons || [])]}
-          title={utilityBarConfig?.title}
-        />
-      </div>
+      {editMode && Bar}
       <ZoneModal
         open={open}
         setOpen={setOpen}
@@ -138,7 +138,7 @@ export function View(props: PView) {
         </div>
       ) : (
         <div className="tol-zone-empty">
-          {privilege === PRIVILEGE.BOARD.EDITABLE ? (
+          {editMode ? (
             <p>Click the + button to add a Zone</p>
           ) : (
             <p>No zones found</p>

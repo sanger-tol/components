@@ -12,8 +12,6 @@ import {
   Col,
   Icon,
   HoverOverlay,
-  FormTextField,
-  RSForm,
   addComponent,
   IZone,
   componentOptions,
@@ -22,6 +20,8 @@ import {
   PBoard,
   getNextComponentOrder,
   TsDataSource,
+  RequiredAsterisk,
+  BUTTONS,
 } from "../..";
 
 
@@ -46,9 +46,6 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
   } = props;
   const [componentType, setComponentType] = useState("");
   const [widgetType, setWidgetType] = useState("");
-  const [title, setTitle] = useState<string>("");
-  const [idError, setIdError] = useState(false);
-  const [fieldError, setFieldError] = useState(false);
 
   useEffect(() => {
     if (!open) {
@@ -59,34 +56,18 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
   function reset() {
     setComponentType("");
     setWidgetType("");
-    setTitle("");
-    setIdError(false);
   }
 
-  function checkStates() {
-    setIdError(false);
-    setFieldError(false);
-    let validId = true;
-    let validField = true;
-    if (title === "") {
-      setIdError(true);
-      validId = false;
-    }
-    if (componentType === "" || widgetType === "") {
-      setFieldError(true);
-      validField = false;
-    }
-    return validId && validField;
-  }
+  const canAddComponent = componentType !== "" && widgetType !== "";
 
   const onAddComponent = async () => {
-    if (checkStates()) {
+    if (canAddComponent) {
       const nextOrder = getNextComponentOrder(zone);
       const newComponent = await upsertNewComponent(
         dataspace,
         boardDataSource,
         zone.type!,
-        title,
+        "",
         nextOrder,
         componentType,
         widgetType,
@@ -99,7 +80,7 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
         order: nextOrder,
         componentZoneId: newComponent.newComponentZoneId,
         filter: { and_: {} },
-        title: title,
+        title: "",
         objectType: zone.type,
         dataspace: dataspace,
         config: {},
@@ -113,11 +94,10 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
 
   const PlusButton = (
     <Button
-      type="success"
+      {...BUTTONS.CONFIRM}
       onClick={onAddComponent}
-      icon="plus"
-      position="right"
       testid="confirm-add-component-button"
+      disabled={!canAddComponent}
     />
   );
 
@@ -132,7 +112,7 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
     >
       <>
         <h6>
-          Select Component <span className="tol-danger-colour">*</span>
+          Select Component <RequiredAsterisk />
         </h6>
         <Row>
           {componentOptions.map((option, index) => {
@@ -170,7 +150,7 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
         </Row>
         <br />
         <h6>
-          Select Size <span className="tol-danger-colour">*</span>
+          Select Size <RequiredAsterisk />
         </h6>
         <Row>
           {sizeOptions(componentType).map((option, index) => {
@@ -200,29 +180,6 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
             );
           })}
         </Row>
-        <br />
-        <h6>
-          Enter Title <span className="tol-danger-colour">*</span>
-        </h6>
-        <RSForm fluid>
-          <FormTextField
-            id="component-title"
-            onChange={(value: any) => setTitle(value)}
-            name="Board Title"
-            placeholder={`Title`}
-            label=""
-            value={title}
-          />
-        </RSForm>
-
-        {idError ? (
-          <p className="tol-modal-error">Title cannot be blank</p>
-        ) : null}
-        {fieldError ? (
-          <p className="tol-modal-error">
-            Please ensure all mandatory fields are filled
-          </p>
-        ) : null}
       </>
     </Modal>
   );

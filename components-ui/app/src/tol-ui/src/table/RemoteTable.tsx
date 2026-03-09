@@ -233,7 +233,6 @@ export function RemoteTable(props: PRemoteTable) {
       apiDataPath: ACTION_API_DATA_PATH,
     }),
     actions,
-    utilityBarConfig,
     cellRenderers,
     contents,
     height = "100%",
@@ -554,7 +553,6 @@ export function RemoteTable(props: PRemoteTable) {
         onConfigSave={onConfigSave}
         onResizeColumn={onResizeColumn}
         noDownload={noDownload || error !== ""}
-        utilityBarConfig={utilityBarConfig}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={convertedActions}

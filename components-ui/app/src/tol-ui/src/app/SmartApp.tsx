@@ -24,7 +24,7 @@ import {
   env,
   Board,
   ValidationResultsViewer,
-  BoardPrivilegeContextProvider,
+  BoardContextProvider,
   clearUnusedLocalStorage,
   TNavBrand,
   TNavConfig,
@@ -164,9 +164,9 @@ export function SmartApp(props: PSmartApp) {
   // Always merge default page elements + incoming (incoming overrides defaults)
   const pageElements: TPageElements = {
     boardDetail: (
-      <BoardPrivilegeContextProvider>
+      <BoardContextProvider>
         <Board boardDataSource={configDataSource} brand={brand} />
-      </BoardPrivilegeContextProvider>
+      </BoardContextProvider>
     ),
     myBoards: <MyBoards boardDataSource={configDataSource} />,
     validationResultsDetail: <ValidationResultsViewer />,

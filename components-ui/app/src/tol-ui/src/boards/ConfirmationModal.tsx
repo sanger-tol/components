@@ -17,8 +17,22 @@ export interface PConfirmationModal {
 export function ConfirmationModal(props: PConfirmationModal) {
   const { open, setOpen, onConfirmClick, itemType } = props;
 
-  const Buttons = (
-    <div style={{ paddingBottom: "35px" }}>
+  return (
+    <Modal
+      hasPendingChanges
+      open={open}
+      setOpen={setOpen}
+      size="xs"
+      closeButton={false}
+    >
+      <h5>Confirm Deletion</h5>
+      <p>
+        Are you sure you want to delete this {itemType ?? "item"}?
+      </p>
+      <p className="tol-danger-colour">
+        Warning: If you delete this {itemType ?? "item"}, you will not be able
+        to retrieve it later.
+      </p>
       <Button
         {...BUTTONS.CONFIRM}
         onClick={() => {
@@ -30,29 +44,6 @@ export function ConfirmationModal(props: PConfirmationModal) {
         {...BUTTONS.CANCEL}
         onClick={() => setOpen(false)}
       />
-    </div>
-  );
-
-  const Header = (
-    <h4>Confirm Deletion</h4>
-  );
-
-  return (
-    <Modal
-      setOpen={setOpen}
-      open={open}
-      size={"sm"}
-      closeButton={false}
-      header={Header}
-      actionButton={Buttons}
-    >
-      <p style={{ marginBottom: "-6px" }}>
-        Are you sure you want to delete this {itemType ?? "item"}?
-      </p>
-      <p className="tol-danger-colour">
-        Warning: If you delete this {itemType ?? "item"}, you will not be able
-        to retrieve it later.
-      </p>
     </Modal>
   );
 }

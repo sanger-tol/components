@@ -47,7 +47,17 @@ export interface PRemoteStatistics extends IRemoteTargetAndZone {
  * updating based on applied filters and selected zones.
  */
 export function RemoteStatistics(props: PRemoteStatistics) {
-  const { id, objectType, dataSource, zone, setZone, utilityBarConfig, type = "count", field } = props;
+  const {
+    id,
+    objectType,
+    dataSource,
+    zone,
+    setZone,
+    utilityBarConfig,
+    type = "count",
+    field
+  } = props;
+
   const [value, setValue] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -104,11 +114,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
         const stats = res?.data?.meta?.stats || {};
         const statValue = stats?.[field!.trim()]?.[type];
 
-        if (
-          statValue === undefined ||
-          statValue === null ||
-          Number.isNaN(Number(statValue))
-        ) {
+        if (!statValue || Number.isNaN(Number(statValue))) {
           setError("No stats available for the selected field.");
           return;
         }
@@ -149,7 +155,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
 
   return (
     <>
-      <UtilityBar id={id} {...utilityBarConfig} />
+      <UtilityBar {...utilityBarConfig} id={id} />
       <div className="tol-component-contents with-offset">
         <Contents />
       </div>
