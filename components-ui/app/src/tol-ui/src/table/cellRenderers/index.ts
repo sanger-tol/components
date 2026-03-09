@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./Boolean";
+export * from "./DataPoints";
 export * from "./DataPoint";
 export * from "./CellDisplay";
 export * from "./CellEditable";
