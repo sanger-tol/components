@@ -132,7 +132,7 @@ export function getCellRendererPropValue(
   dataObject: TDataObjectOrNull,
 ) {
   if (typeof propValue === "string" && propValue.includes("${")) {
-    // replace placeholders '${}' with values from dataObject
+    // replace placeholders '${}' with values from a dataObject
     elementProps[prop] = propValue.replace(CELL_RENDERER_PROP_ATTRIBUTE, (_, key) =>
       processTagsToValues(key, field, value, dataObject)
     );
