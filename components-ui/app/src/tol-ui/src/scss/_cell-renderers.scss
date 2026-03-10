@@ -10,8 +10,6 @@
   min-height: 200px;
   min-width: 200px;
   border-radius: 6px;
-  padding-left: 10px;
-  padding-right: 10px;
 }
 
 .tol-table-image-modal-caption {
@@ -26,13 +24,9 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-}
 
-.tol-table-image-cell-arrow {
-  cursor: pointer;
-  color: var(--tol-grey);
-
-  &:hover {
-    color: var(--tol-primary);
+  img {
+    max-height: 80px;
+    max-width: 120px;
   }
 }
