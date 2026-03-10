@@ -68,8 +68,6 @@ export function SubmissionMutateModal(props: PSubmissionMutateModal) {
 
   const user = getUserFromLocalStorage();
 
-  console.log(uploadIds)
-
   const fetchPipelineData = async () => {
     if (!uploadIds) {
       return null;

@@ -337,8 +337,7 @@ export function Table(props: PTable) {
     data.length > 0 &&
     data.every(
       (row: any) => !!(row?.key && heightExpandedRows[row.key])
-    )
-  );
+    );
 
   const PageSizePicker = (
     <span className="tol-page-size">
