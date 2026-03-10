@@ -33,7 +33,7 @@ import {
   DEFAULT_SHEET_NAME,
   useValidationPolicyModule,
   createPageActions,
-  PIPELINE_DS
+  PIPELINE_DS,
 } from "..";
 
 import type {
@@ -59,7 +59,7 @@ export interface PFileValidationUploadAndResults {
 }
 
 /**
- * File validation uploader and results viewer. A component that wraps both the 
+ * File validation uploader and results viewer. A component that wraps both the
  * upload component, as well as the displaying of realtime results after a validation has begun.
  */
 export function FileValidationUploadAndResults(
@@ -436,11 +436,14 @@ export function FileValidationUploadAndResults(
       children={
         <div className="tol-file-validation-name-upload-modal-container">
           <p className="tol-file-validation-name-upload-modal-p1">
-            Would you like to name your upload before submitting?
+            Would you like to name your manifest upload before submitting?
           </p>
-          <p className="tol-file-validation-name-upload-modal-p2">
-            If you do not provide a name, the default will be the name of the
-            submitted file.
+          <p>
+            If your sample manifest is saved with the name given it when shared
+            with you by the ToL Sample Management team e.g. "DToL SAMPLE
+            MANIFEST_V2.6_NHM_000234", no need to rename your submission.  It
+            is recommended to include at least your ‘SAMPLE_SET_ID’ in the
+            submission name.
           </p>
           <InputGroup>
             <Input
