@@ -64,5 +64,19 @@ export const BUTTONS: Record<string, PButton> = {
   OK: {
     text: "OK",
     position: "right",
-  }
+  },
+  EDIT: {
+    outline: true,
+    type: "warning",
+    icon: "pen-to-square",
+    tooltip: "Edit",
+    position: "right",
+  },
+  SHARE: {
+    outline: true,
+    type: "primary",
+    icon: "share-from-square",
+    tooltip: "Share",
+    position: "right",
+  },
 };

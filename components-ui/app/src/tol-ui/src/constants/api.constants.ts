@@ -46,9 +46,14 @@ export const ACTIONS = {
   RUN_ACTION: "run-action",
 }
 
+export const VALIDATIONS = {
+  UPLOAD: "upload",
+}
+
 export const VALIDATION_ENDPOINTS = {
   UPLOAD: "local/upload",
   RUN_PIPELINE: "run-pipeline",
+  REVALIDATE: "run-pipeline/revalidate",
   PIPELINE_STEPS: "local/pipeline_steps",
 }
 

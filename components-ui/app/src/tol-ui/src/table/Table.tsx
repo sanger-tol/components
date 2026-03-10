@@ -6,8 +6,6 @@ SPDX-License-Identifier: MIT
 
 import { ReactNode, useState, useCallback } from "react";
 import { Table as RSTable, Pagination, SelectPicker } from "rsuite";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import {
   Placeholder,
   useEffectUpdate,
@@ -22,8 +20,7 @@ import {
   PUtilityBar,
   PButton,
   PDropdownButtons,
-  useBoardPrivilege,
-  PRIVILEGE,
+  useBoard,
   ITableConfigSave,
   RowCounter,
   RowExpander,
@@ -33,8 +30,9 @@ import {
   COLLAPSED_ROW_MAX_HEIGHT,
   RowToolsColumn,
   DataColumn,
+  mergeUtilityBarConfigs,
+  NoAttributesPlaceholder,
 } from "..";
-
 
 export interface PTable extends IRemoteTargetAndZone {
   id: string;
@@ -131,22 +129,24 @@ export function Table(props: PTable) {
     actionsFooter,
     utilityBarConfig = {},
     contents,
-    groupBy
+    groupBy,
     /* eslint-enable */
   } = props;
 
-  const { privilege } = useBoardPrivilege();
+  const { editMode } = useBoard();
 
   const [open, setOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
   const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
   const [cellHeights, setCellHeights] = useState<TCellHeights>({});
-  const [heightExpandedRows, setHeightExpandedRows] = useState<Record<string, boolean>>({});
+  const [heightExpandedRows, setHeightExpandedRows] = useState<
+    Record<string, boolean>
+  >({});
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
     props.selectedRows,
     props.setSelectedRows,
-    []
+    [],
   );
 
   // @ts-ignore - temp turned off
@@ -182,15 +182,21 @@ export function Table(props: PTable) {
 
   // @ts-ignore
   const handleCheckAll = (value: any, checkedVal: boolean) => {
-    const keys = checkedVal ? data.map((item: any) => item.key) : [];
-    setSelectedRows && setSelectedRows(keys);
+    const vals = checkedVal
+      ? data.map((item: any) => {
+          return { [item.key]: item };
+        })
+      : [];
+    setSelectedRows && setSelectedRows(vals);
   };
 
   const handleCheck = (value: any, checkedVal: boolean) => {
-    const keys = checkedVal
+    const vals = checkedVal
       ? [...selectedRows, value]
-      : selectedRows.filter((item) => item !== value);
-    setSelectedRows(keys);
+      : selectedRows.filter(
+          (item) => Object.keys(item)[0] !== Object.keys(value)[0],
+        );
+    setSelectedRows(vals);
   };
 
   // Called by each AutoHeightCell when its size changes
@@ -211,7 +217,7 @@ export function Table(props: PTable) {
         };
       });
     },
-    []
+    [],
   );
 
   // Toggle expand/collapse for all rows in the table
@@ -220,7 +226,7 @@ export function Table(props: PTable) {
       if (!Array.isArray(data) || data.length === 0) return {};
 
       const allExpanded = data.every(
-        (row: any) => !!(row?.key && prev[row.key])
+        (row: any) => !!(row?.key && prev[row.key]),
       );
 
       if (allExpanded) {
@@ -239,20 +245,29 @@ export function Table(props: PTable) {
     });
   }, [data]);
 
-  const actionDropDownButtons = actions?.map((button) => ({
-    ...button,
-    action: () => {
-      button.action(selectedRows, filter);
-    },
-    disabled: selectedRows.length === 0,
-  }));
+  const selectedRowData = selectedRows.map((row) => {
+    const key = Object.keys(row)[0];
+    return data.find((d: any) => d.key === key) ?? Object.values(row)[0];
+  });
+  const actionDropDownButtons = actions
+    ?.filter(
+      (button) =>
+        !button.isVisibleAction || button.isVisibleAction(selectedRowData),
+    )
+    .map((button) => ({
+      ...button,
+      action: () => {
+        button.action(selectedRowData, filter);
+      },
+      disabled: selectedRowData.length === 0 || button.disabled === true,
+    }));
 
   const configButton: PButton = !noConfigModal
     ? {
       visible: true,
       position: "right",
       type: "primary",
-      testid: "table-slider-button",
+      testid: "table-config-button",
       tooltip: "Configure Table",
       onClick: () => {
         setOpen(true);
@@ -262,73 +277,122 @@ export function Table(props: PTable) {
       disabled: loading,
     }
     : {
-      visible: false,
-    };
-
-  const filterButton: PButton =
-    (!noFilter &&
-      fieldMeta.order.active.length !== 0 &&
-      privilege === PRIVILEGE.BOARD.EDITABLE) ||
-      privilege === undefined
-      ? {
-        visible: true,
-        position: "right",
-        type: "primary",
-        onClick: () => {
-          setFilterVisibility(!filterVisibility);
-        },
-        icon: filterVisibility ? "eye-slash" : "eye",
-        tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
-        outline: true,
-      }
-      : {
         visible: false,
       };
 
-  const downloadButton: PButton = !noDownload
-    ? {
+  const filterButton: PButton =
+    (!noFilter && fieldMeta.order.active.length !== 0 && editMode) ? {
       visible: true,
       position: "right",
       type: "primary",
-      tooltip: "Download the tables current state in various formats",
       onClick: () => {
-        setDownloadOpen(!downloadOpen);
+        setFilterVisibility(!filterVisibility);
       },
-      disabled: totalSize <= 0 || noFieldsSelected || loading,
-      icon: "download",
-      disabledTooltip:
-        totalSize >= 1
-          ? "Must have at least one row to download."
-          : undefined,
+      icon: filterVisibility ? "eye-slash" : "eye",
+      tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
       outline: true,
-    }
-    : {
+    } : {
       visible: false,
     };
+
+  const downloadButton: PButton = !noDownload
+    ? {
+        visible: true,
+        position: "right",
+        type: "primary",
+        tooltip: "Download the tables current state in various formats",
+        onClick: () => {
+          setDownloadOpen(!downloadOpen);
+        },
+        disabled: totalSize <= 0 || noFieldsSelected || loading,
+        icon: "download",
+        disabledTooltip:
+          totalSize >= 1
+            ? "Must have at least one row to download."
+            : undefined,
+        outline: true,
+      }
+    : {
+        visible: false,
+      };
 
   const actionDropdown: PDropdownButtons | undefined =
     actions && actions.length > 0
       ? {
-        mainButtonIcon: {
-          id: "actions",
-          icon: "paper-plane",
-          type: "primary",
-          position: "right",
-          outline: selectedRows.length === 0,
-        },
-        dropdownButtons: actionDropDownButtons,
-        footer: actionsFooter,
-        placement: "leftStart",
-      }
+          mainButtonIcon: {
+            id: "actions",
+            icon: "paper-plane",
+            type: "primary",
+            position: "right",
+            outline: selectedRows.length === 0,
+          },
+          dropdownButtons: actionDropDownButtons,
+          footer: actionsFooter,
+          placement: "leftStart",
+        }
       : undefined;
 
-  const allRowsExpanded = (
+  const allRowsExpanded =
     Array.isArray(data) &&
     data.length > 0 &&
     data.every(
       (row: any) => !!(row?.key && heightExpandedRows[row.key])
-    )
+    );
+
+  const PageSizePicker = (
+    <span className="tol-page-size">
+      <SelectPicker
+        value={pageSize}
+        onChange={setPageSize}
+        size="sm"
+        cleanable={false}
+        searchable={false}
+        data={[
+          { label: "25", value: 25 },
+          { label: "50", value: 50 },
+          { label: "100", value: 100 },
+          { label: "250", value: 250 },
+        ]}
+      />
+    </span>
   );
+
+  const PaginationPicker = (
+    <Pagination
+      className="tol-pagination"
+      size="sm"
+      layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
+      total={totalSize <= 10000 ? totalSize : 10000}
+      activePage={page}
+      onChangePage={setPage}
+      limit={pageSize}
+      onChangeLimit={setPageSize}
+      prev
+      next
+      first={!mediumBreakpoint}
+      last={!mediumBreakpoint}
+      ellipsis={!mediumBreakpoint}
+      boundaryLinks
+      maxButtons={mediumBreakpoint ? 1 : 3}
+    />
+  )
+
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      buttons: [
+        configButton,
+        filterButton,
+        actionDropdown,
+        downloadButton,
+      ],
+      elements:
+        !noPagination && fieldMeta?.order?.active?.length > 0 ? [
+          ...(!smallBreakpoint && editMode ? [PageSizePicker] : []),
+          PaginationPicker,
+        ] : [],
+    }
+  )
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
@@ -339,7 +403,7 @@ export function Table(props: PTable) {
         setOpen={setDownloadOpen}
         source={source}
         requestedFields={fieldMeta?.order?.active}
-        title={utilityBarConfig.title}
+        title={ubc.title}
         fieldMeta={fieldMeta}
       />
       <ColumnConfigDrawer
@@ -360,87 +424,12 @@ export function Table(props: PTable) {
             : undefined
         }
       />
-      <UtilityBar
-        id={id}
-        {...utilityBarConfig}
-        title={utilityBarConfig.title}
-        elements={
-          !noPagination && fieldMeta?.order?.active?.length > 0
-            ? [
-              <span className="tol-page-size">
-                {!smallBreakpoint &&
-                  (privilege === PRIVILEGE.BOARD.EDITABLE || !privilege) && (
-                    <SelectPicker
-                      value={pageSize}
-                      onChange={setPageSize}
-                      size="sm"
-                      cleanable={false}
-                      searchable={false}
-                      data={[
-                        { label: "25", value: 25 },
-                        { label: "50", value: 50 },
-                        { label: "100", value: 100 },
-                        { label: "250", value: 250 },
-                      ]}
-                    />
-                  )}
-              </span>,
-              <Pagination
-                className="tol-pagination"
-                size="sm"
-                layout={mediumBreakpoint ? ["pager"] : ["pager", "skip"]}
-                total={totalSize <= 10000 ? totalSize : 10000}
-                activePage={page}
-                onChangePage={setPage}
-                limit={pageSize}
-                onChangeLimit={setPageSize}
-                prev
-                next
-                first={!mediumBreakpoint}
-                last={!mediumBreakpoint}
-                ellipsis={!mediumBreakpoint}
-                boundaryLinks
-                maxButtons={mediumBreakpoint ? 1 : 3}
-              />,
-              ...(utilityBarConfig.elements || []),
-            ]
-            : [...(utilityBarConfig.elements || [])]
-        }
-        buttons={[
-          ...(utilityBarConfig.buttons || []),
-          configButton,
-          filterButton,
-          actionDropdown,
-          downloadButton,
-        ]}
-      />
+      <UtilityBar id={id} {...ubc} />
       {contents ? (
         contents
       ) : (
         <>
-          {noFieldsSelected ? (
-            <Placeholder
-              message={
-                <>
-                  {/* Assume that when privilege is undefined, the table is not in a board */}
-                  {privilege === PRIVILEGE.BOARD.EDITABLE || !privilege ? (
-                    <>
-                      No fields selected. Please click
-                      <FontAwesomeIcon
-                        icon={faSliders}
-                        size="lg"
-                        style={{ padding: "0 10" }}
-                      />
-                      to configure.
-                    </>
-                  ) : (
-                    <>No fields available.</>
-                  )}
-                </>
-              }
-              height={height}
-            />
-          ) : (
+          {noFieldsSelected ? <NoAttributesPlaceholder /> : (
             <>
               <RowCounter {...props} />
               <div className="tol-table-inner">
@@ -463,7 +452,9 @@ export function Table(props: PTable) {
                       if (bulkSelect) {
                         return "tol-selected-row disabled";
                       } else if (
-                        selectedRows.some((item) => item === rowData.key)
+                        selectedRows.some(
+                          (item) => Object.keys(item)[0] === rowData.key,
+                        )
                       ) {
                         return "tol-selected-row";
                       }
@@ -474,7 +465,10 @@ export function Table(props: PTable) {
                     const rowId = rowData?.key;
                     const row = cellHeights[rowId];
                     const fullHeight = row
-                      ? Math.max(DEFAULT_ROW_HEIGHT, ...Object.values(row))
+                      ? Math.max(
+                          DEFAULT_ROW_HEIGHT,
+                          Number(...Object.values(row)),
+                        )
                       : DEFAULT_ROW_HEIGHT;
 
                     if (heightExpandedRows[rowId]) {

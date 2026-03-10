@@ -73,6 +73,10 @@
     }
   }
 
+  .rs-plaintext.rs-plaintext-empty {
+    color: var(--tol-grey);
+  }
+
   .rs-inline-edit .rs-plaintext:hover {
     border: 1px solid transparent !important;
   }
@@ -395,6 +399,7 @@
 
 // dropdowns
 .rs-picker-popup {
+  background-color: var(--tol-grey-subtle) !important;
   border: var(--tol-grey) 1px solid !important;
 }
 
