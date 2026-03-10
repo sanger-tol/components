@@ -43,7 +43,7 @@ export function ImageComponent(props: PImageComponent) {
   const { link, height, fill = false, onClick, alt, className, style } = props;
 
   const imageStyle: React.CSSProperties = {
-    ...(height ? { ["--tol-image-height" as string]: height } : {}),
+    ...(height ? { height } : {}),
     ...style,
   };
 

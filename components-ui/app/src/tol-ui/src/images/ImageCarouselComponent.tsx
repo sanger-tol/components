@@ -109,7 +109,7 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
   }
 
   const containerStyle: React.CSSProperties = {
-    ...(height ? { ["--tol-image-carousel-height" as string]: height } : {}),
+    ...(height ? { height } : {}),
     ...style,
   };
 

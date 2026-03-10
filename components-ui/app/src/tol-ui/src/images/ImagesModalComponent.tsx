@@ -56,7 +56,7 @@ export function ImagesModalComponent(props: PImagesModalComponent) {
   } = props;
 
   const contentStyles: React.CSSProperties = {
-    ...(contentStyle?.minHeight ? {} : { ["--tol-image-modal-content-min-height" as string]: "600px" }),
+    minHeight: "600px",
     ...contentStyle,
   };
 
