@@ -148,7 +148,7 @@ export async function normalisePipelineUpload(
       upload?.validation_results?.map(normaliseValidationResult) || [],
     failureMessage: upload?.failure_message || null,
     hidden: upload?.hidden || false,
-    oidcId: upload?.relationships?.user?.oidc_id || "",
+    oidcId: upload?.relationships?.user?.["oidc_id"] || "",
     uploadName: upload?.upload_name || ""
   };
 }
@@ -180,7 +180,7 @@ export async function fetchCurrentPipelineResults(
       const normalisedResults = await normalisePipelineUpload(
         dataSource,
         results[0],
-        results[0].relationships,
+        results[0]?.relationships,
       );
       return normalisedResults;
     }
@@ -222,7 +222,7 @@ export async function fetchAndNormaliseAllUploadResults(
     if (results) {
       const normalisedResults = await Promise.all(
         results.map((upload) =>
-          normalisePipelineUpload(dataSource, upload, upload.relationships || {}),
+          normalisePipelineUpload(dataSource, upload, upload?.relationships || {}),
         ),
       );
       return [...normalisedResults];
@@ -375,10 +375,10 @@ export async function getStepsInPipeline(dataSource: TsDataSource, pipelineId: s
     return (
       res
         ?.sort((a, b) => {
-          if (a.stage !== b.stage) {
-            return a.stage - b.stage;
+          if (a?.stage !== b?.stage) {
+            return (a?.stage || 0) - (b?.stage || 0);
           } else {
-            return a.step_order - b.step_order;
+            return (a?.step_order || 0) - (b?.step_order || 0);
           }
         })
         .flatMap((step: TDataObjectOrNull) =>
