@@ -10,16 +10,17 @@ export const API_METHODS = {
   DELETE: "DELETE",
   PATCH: "PATCH",
   PUT: "PUT",
-}
+} as const;
 
 export const API_OPERATIONS = {
   UPSERT: ":upsert",
   CURSOR: ":cursor",
   COUNT: ":count",
   AGGREGATIONS: ":aggregations",
+  GROUP_STATS: ":group-stats",
   TO_ONE: ":to-one",
   TO_MANY: ":to-many",
-}
+} as const;
 
 export const AUTH_API_DATA_PATH = "/auth";
 export const BOARDS_API_DATA_PATH = "/boards";
@@ -36,7 +37,7 @@ export const BOARDS = {
   ZONE_VIEW: "zone_view",
   COMPONENT_ZONE: "component_zone",
   DATA_SOURCE_INSTANCE: "data_source_instance",
-}
+} as const;
 
 export const WEB_APP = "web_app";
 
