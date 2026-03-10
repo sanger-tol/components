@@ -11,7 +11,7 @@ export * from "./CellDisplay";
 export * from "./CellEditable";
 export * from "./DataPoints";
 export * from "./Datetime";
-export * from "./Default";
+export * from "./DataPointDefaultDisplay";
 export * from "./LongText";
 export * from "./Float";
 export * from "./Image";

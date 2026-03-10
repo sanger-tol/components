@@ -16,7 +16,7 @@ import {
   getCellRendererPropValue,
   TrafficLightStatus,
   PDataPoints,
-  Default,
+  DataPointDefaultDisplay,
   PDataPoint,
   Tag,
   ErrorBoundary,
@@ -64,7 +64,7 @@ export function CellDisplay(props: PCellDisplay) {
     !renderer.type ||
     renderer.type === "none"
   ) {
-    Display = <Default {...props} value={value} />;
+    Display = <DataPointDefaultDisplay {...props} value={value} />;
   } else {
     // Determine the appropriate renderer element
     const elements = { ...preDefinedElements, ...customCellRenderers };
