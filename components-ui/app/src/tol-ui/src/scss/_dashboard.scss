@@ -63,8 +63,7 @@
 // layout of the grid
 .tol-responsive-grid {
   position: relative;
-  margin: -10px; // compensate for padding on children
-  margin-bottom: -28px !important;
+  margin: -10px -10px -28px -10px; // compensate for padding on children
 }
 
 .tol-visualisation {
@@ -283,12 +282,13 @@
   border: 2px solid var(--tol-primary) !important;
 }
 
-.tol-zone {
-  margin-top: 10px;
-}
-
-.tol-zones .tol-zone:not(:first-child) {
-  margin-top: 28px;
+.tol-zones {
+  .tol-zone:not(:first-child) {
+    margin-top: 20px;
+    &:has(.tol-zone-bar) {
+      margin-top: 28px !important;
+    }
+  }
 }
 
 .tol-zone-empty {
@@ -340,8 +340,6 @@
     max-width: 250px;
   }
 }
-
-
 
 .character-counter {
   position: absolute;
