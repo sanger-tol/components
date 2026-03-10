@@ -10,7 +10,9 @@ import { REFRESH_INTERVAL } from "../constants";
 export interface RefetchBackoffOptions {
   limit?: number;
   initialInterval?: number;
-  stopCondition?: boolean;
+  stopCondition?:
+    | boolean
+    | ((query: Query<any, Error, any, string[]>) => boolean);
 }
 
 export interface RefetchBackoff {
@@ -33,7 +35,7 @@ export function useQueryData<T>(
     retryDelay?: number | ((attemptIndex: number) => number);
     placeholderData?: T;
     refetchBackoff?: RefetchBackoff;
-  }
+  },
 ) {
   const {
     data = [],
@@ -51,13 +53,18 @@ export function useQueryData<T>(
     enabled: options?.enabled ?? !!queryKey[1],
     refetchOnWindowFocus: options?.refetchOnWindowFocus ?? false,
     refetchInterval: options?.refetchBackoff?.enabled
-      ? (
-          query: Query<T, Error, T, string[]>
-        ): number | false | undefined => {
+      ? (query: Query<T, Error, T, string[]>): number | false | undefined => {
           const count = query.state.dataUpdateCount ?? 0;
+
+          const stopCondition = options?.refetchBackoff?.options?.stopCondition;
+          const shouldStop =
+            typeof stopCondition === "function"
+              ? stopCondition(query)
+              : stopCondition;
+
           if (
             count > (options?.refetchBackoff?.options?.limit || 20) ||
-            options?.refetchBackoff?.options?.stopCondition
+            shouldStop
           ) {
             return false;
           } else {

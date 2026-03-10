@@ -233,7 +233,6 @@ export function RemoteTable(props: PRemoteTable) {
       apiDataPath: ACTION_API_DATA_PATH,
     }),
     actions,
-    utilityBarConfig,
     cellRenderers,
     contents,
     height = "100%",
@@ -294,6 +293,10 @@ export function RemoteTable(props: PRemoteTable) {
     filterHasUpdated(setFilter, filter, compoundedFilter);
     // resetFiltersBelow({id: id, zone: zone!}); occurs in <Filter />: onFilter()
   }, [zone]);
+
+  useEffectUpdate(() => {
+    setPage(1);
+  }, [sortByAttribute, sortByType, filter, forceUpdate]);
 
   useEffectUpdate(() => {
     renderTable();
@@ -550,7 +553,6 @@ export function RemoteTable(props: PRemoteTable) {
         onConfigSave={onConfigSave}
         onResizeColumn={onResizeColumn}
         noDownload={noDownload || error !== ""}
-        utilityBarConfig={utilityBarConfig}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={convertedActions}

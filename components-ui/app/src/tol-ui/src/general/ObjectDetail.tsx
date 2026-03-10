@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { ReactNode } from "react";
 import {
   UtilityBar,
-  TUtilityBarOrNull
+  TUtilityBarOrNull,
 } from "..";
 
 
@@ -34,7 +34,6 @@ export function ObjectDetail(props: PObjectDetail) {
     </p>
   ));
 
-
   return (
     <div
       className="tol-object-detail"
@@ -45,8 +44,8 @@ export function ObjectDetail(props: PObjectDetail) {
     >
       {utilityBarConfig &&
         <UtilityBar
-          id={id}
           {...utilityBarConfig}
+          id={id}
         />
       }
       <div

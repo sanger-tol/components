@@ -47,7 +47,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     deepCopy(
       boardObjectType === "zone"
         ? zone.defaultFilter
-        : zone.components[id].data.defaultFilter,
+        : zone.components[id]?.data?.defaultFilter,
     ),
   );
   const [attributes, setAttributes] = useState<string[]>(Object.keys(prevFilters.and_ || {}));
@@ -65,7 +65,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     filterHasPendingChanges ||
     passThrough !== (boardObjectType === "zone"
       ? false
-      : zone.components[id].data.filterPassThrough)
+      : zone.components[id]?.data?.filterPassThrough)
   );
 
   useEffect(() => {

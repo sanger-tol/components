@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { FileValidation as FV } from "../../tol-ui/src";
+import { FileValidationHome } from "../../tol-ui/src";
 
 const VALIDATION_CONFIG = {
   s3_bucket: "your_s3_bucket_here",
@@ -13,5 +13,5 @@ const VALIDATION_CONFIG = {
 };
 
 export function FileValidation() {
-  return <FV validationConfig={VALIDATION_CONFIG} />;
+  return <FileValidationHome validationConfig={VALIDATION_CONFIG} />;
 }

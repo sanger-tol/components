@@ -5,25 +5,52 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
+
 import {
   Modal,
   Button,
   truncateString,
   ValidationIcon,
   capitaliseFirstLetter,
-  ICellId,
-} from "..";
+} from "../..";
+
+import type { ICellId } from "../..";
 
 export interface PErrorViewer {
+  /**
+   * Optional key associated with the component
+   */
   key?: string;
+  /**
+   * Optional Id associated with the component
+   */
   id?: string;
+  /**
+   * Optional Warning or error (used for CSS)
+   */
   errorType?: string;
+  /**
+   * Optional error/warning message
+   */
   message?: string;
+  /**
+   * Optional step associated with the error message
+   */
   stepName?: string;
+  /**
+   * Row ID & Column ID
+   */
   cellId: ICellId;
+  /**
+   * Optional Determines whether to truncate the error/warning message
+   */
   truncate?: boolean;
 }
 
+/**
+ * Component that shows the details of a particular error, which comes from the results column
+ * in the uploads database. Also contains a modal that opens once the component has been clicked.
+ */
 export function ErrorViewer(props: PErrorViewer) {
   const { id, errorType, message, stepName, cellId, truncate = false } = props;
 

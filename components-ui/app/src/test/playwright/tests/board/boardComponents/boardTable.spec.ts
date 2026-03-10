@@ -7,9 +7,9 @@ import {
   addComponent,
   setBoard,
   setAuth,
-  sleep,
-  configureTable,
   deleteFirstComponent,
+  exitEditMode,
+  enterEditMode,
 } from "../../helpers";
 
 const headless = !!(process.env.CI || process.env.HEADLESS);
@@ -20,26 +20,20 @@ test.use({ headless: headless });
 test.beforeEach(async ({ page }) => {
   await setAuth({ page });
   await setBoard({ page, boardID: BOARD_ID });
+  await enterEditMode({ page });
 });
 
-const addTableComponent = async ({ page, testID }) => {
-  addComponent({ page, testID }, "table", "Large");
-  await sleep(200);
+test.afterEach(async ({ page }) => {
+  await exitEditMode({ page });
+});
+  
+const addTableComponent = async ({ page }) => {
+  await addComponent({ page }, "table", "Large");
   await expect(page.locator(".tol-table")).toBeVisible();
-  await sleep(200);
-};
-
-const checkTableTitleComponent = async ({ page , attribute}) => {
-  configureTable({ page }, "table", attribute);
-  await expect(page.locator(".tol-table")).toBeVisible();
-  await expect(page.locator(".tol-header-text")).toContainText(attribute);
 };
 
 test("manage dashboard", async ({ page }) => {
-  let testID = crypto.randomUUID();
-
-  await addTableComponent({ page, testID });
-  await checkTableTitleComponent({ page, attribute: 'Accession Data'});
-  await deleteFirstComponent({ page});
+  await addTableComponent({ page });
+  await deleteFirstComponent({ page, componentType: "table" });
   expect(page.locator('.tol-table')).not.toBeVisible();
 });

@@ -4,13 +4,6 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TStepsData } from "src/file-validation";
-import {
-  VALIDATE_AND_MARK_AS_READY,
-  VALIDATE_AND_UPLOAD,
-  VALIDATE_ONLY,
-} from "../constants";
-
 export type TSeverity = "error" | "warning";
 export type TIconType = "check" | "xmark" | "exclamation" | "question";
 
@@ -67,8 +60,14 @@ export interface IValidationUploadDetails {
   pipelineId: string;
   s3Bucket: string;
   failureMessage: string | null;
-  isReady: boolean;
 }
+
+export interface IValidationSubmissionMutation {
+  id: string;
+  attributeValue: string;
+}
+
+export type TValidationSubmissionMutations = IValidationSubmissionMutation[];
 
 export type TValidationIssues = Record<string, IValidationResult[]>;
 
@@ -76,17 +75,6 @@ export interface IValidatedDataReport {
   title: string;
   uploadDetails: IValidationUploadDetails;
   issues: TValidationIssues;
-}
-
-export interface IAllValidationDataAPI {
-  id: string;
-  completed: boolean;
-  date_started: string;
-  flow_run_id: string;
-  s3_filename: string;
-  s3_bucket: string;
-  validation_results: IValidationResultAPI[];
-  failure_message: string | null;
 }
 
 export interface IAllValidationData {
@@ -97,14 +85,32 @@ export interface IAllValidationData {
   pipelineName: string;
   pipelineId: string;
   pipelineSteps: TStepsData;
+  validationStatus: string;
+  rejectionReason: string;
   s3Filename: string;
   s3Bucket: string;
   validationResults: IValidationResult[];
   failureMessage: string | null;
-  isReady: boolean;
+  hidden: boolean;
+  oidcId: string;
+  uploadName: string;
 }
 
-export type TFileValidationPurpose =
-  | typeof VALIDATE_ONLY
-  | typeof VALIDATE_AND_UPLOAD
-  | typeof VALIDATE_AND_MARK_AS_READY;
+export interface IStepData {
+  name: string;
+  description: string;
+}
+
+export interface IStepValidationDetails {
+  completed: boolean;
+  failureMessage?: string | null;
+}
+
+export interface IStepDetails {
+  stepName: string;
+  results: IValidationResult[];
+  description?: string;
+  validationDetails?: IStepValidationDetails;
+}
+
+export type TStepsData = IStepData[] | [];
