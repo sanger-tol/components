@@ -12,10 +12,11 @@ export interface PPopUpMessage {
   message: string;
   header?: boolean;
   onClose?: () => void;
+  persist?: boolean;
 }
 
-export function PopUpMessage(props: PPopUpMessage){
-  const { type, message, header, onClose } = props;
+export function PopUpMessage(props: PPopUpMessage) {
+  const { type, message, header, onClose, persist = false } = props;
   toaster.push(
     <StaticMessage
       message={message}
@@ -25,8 +26,8 @@ export function PopUpMessage(props: PPopUpMessage){
       onClose={onClose}
     />,
     {
-      duration: getDuration(type),
+      duration: persist ? getDuration("persist") : getDuration(type),
       placement: "bottomEnd",
     },
   );
-};
+}

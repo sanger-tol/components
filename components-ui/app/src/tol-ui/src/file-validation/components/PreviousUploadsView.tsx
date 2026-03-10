@@ -6,12 +6,10 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
+
 import {
-  IAllValidationData,
-  IValidationResult,
   ValidationIcon,
   getErrorWarningCounts,
-  determineUploadStatus,
   determineStepStatus,
   downloadFileFromS3,
   goToResults,
@@ -22,19 +20,46 @@ import {
   truncateString,
   PIPELINE_DS,
   splitS3FilenameString,
-  IStepData,
-} from "..";
+  useValidationPolicyModule,
+} from "../..";
+
+import type { IStepData, IAllValidationData, IValidationResult } from "../..";
 
 export interface PPreviousUploadsView {
+  /**
+   * Id of the upload, used for routing to results page and as a key for the component
+   */
   id: string;
+  /**
+   * Data associated with the upload
+   */
   data: IAllValidationData;
+  /**
+   * Whether the upload view is expanded
+   */
   expanded: boolean;
+  /**
+   * Callback to toggle the expanded state
+   */
   onToggle: (id: string) => void;
+  /**
+   * Optional whether to show passed steps
+   */
   showPassedSteps?: boolean;
+  /**
+   * Optional has validation completed, used to show particular statuses
+   */
   completed?: boolean;
+  /**
+   * Optional callback to set the open modal state
+   */
   setOpenModal?: (open: boolean) => void;
 }
 
+/**
+ * Shows an individual upload, which maps to multiple on `PreviousUploadsModal` component, 
+ * incorporates multiple validationIcons to show a quick view of each step in the uploads pipeline
+ */
 export function PreviousUploadsView(props: PPreviousUploadsView) {
   const {
     id,
@@ -49,21 +74,14 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const history = useHistory();
+  const { policies } = useValidationPolicyModule();
 
-  const errorsAndWarningCounts = getErrorWarningCounts(data.validationResults);
-
-  const uploadStatus = determineUploadStatus(
-    data.completed,
-    errorsAndWarningCounts.errors,
-    errorsAndWarningCounts.warnings,
-    data.failureMessage || null,
-    data.isReady
-  );
+  const uploadStatus = policies[data.validationStatus];
 
   const ValidationIconTooltip = (
     errorCount: number,
     warningCount: number,
-    stepName: string
+    stepName: string,
   ) => {
     const hasIssues = errorCount > 0 || warningCount > 0;
     const totalIssues = errorCount + warningCount;
@@ -75,10 +93,10 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
           {data.failureMessage
             ? "Pipeline Failed..."
             : hasIssues
-            ? `${errorCount} Errors, ${warningCount} Warnings`
-            : completed
-            ? "Passed - No Issues"
-            : "No issues found yet..."}
+              ? `${errorCount} Errors, ${warningCount} Warnings`
+              : completed
+                ? "Passed - No Issues"
+                : "No issues found yet..."}
         </p>
         <a
           href="#"
@@ -97,7 +115,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
     <div className="tol-file-validation-previous-results-container">
       <div className="tol-file-validation-previous-results-title">
         <h6 className="tol-file-validation-previous-results-title-text">
-          ID: #{id} - {data.pipelineName}
+          #{id} - {data.uploadName}
         </h6>
         <div className="tol-file-validation-previous-results-date-container">
           <p className="tol-file-validation-previous-results-date-text">
@@ -130,14 +148,16 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
           </p>
         </a>
         <div className="tol-file-validation-previous-results-failure-info">
-          <h6
-            className={`tol-file-validation-results-status 
-            ${uploadStatus.className}
-            `}
-          >
-            {`${uploadStatus.text}`}
-          </h6>
-          {uploadStatus.text === "Failed" && (
+          <div className="tol-file-validation-results-status-container">
+            <h6
+              className={"tol-file-validation-results-status"}
+              style={{ color: `${uploadStatus.textColor}` }}
+            >
+              {`${uploadStatus.rename}`}
+            </h6>
+            <IconTooltip contents={uploadStatus.summary} disableMarkdown />
+          </div>
+          {uploadStatus.isFailureStatus && (
             <IconTooltip
               contents={`Reason: ${truncateString(data.failureMessage || "")}`}
               disableMarkdown
@@ -151,7 +171,12 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
         }`}
       >
         <div className="tol-file-validation-previous-results-show-results-container">
-          <h6>Results:</h6>
+          <div className="tol-file-validation-previous-results-show-title">
+            <h6>Results:</h6>
+            <p>
+              Pipeline: {data.pipelineName}
+            </p>
+          </div>
           <div className="tol-file-validation-previous-results-show-results-inner">
             <div
               className="tol-file-validation-scrollbar-fix 
@@ -163,7 +188,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
                   const allStepsPassed = uniqueSteps.every((step) => {
                     const stepResults = data.validationResults.filter(
                       (result: IValidationResult) =>
-                        result.stepName === step.name
+                        result.stepName === step.name,
                     );
                     const issueCount = getErrorWarningCounts(stepResults);
                     return issueCount.errors === 0 && issueCount.warnings === 0;
@@ -175,7 +200,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
                       if (showPassedSteps) return true;
                       const stepResults = data.validationResults.filter(
                         (result: IValidationResult) =>
-                          result.stepName === step.name
+                          result.stepName === step.name,
                       );
                       const issueCount = getErrorWarningCounts(stepResults);
                       return issueCount.errors > 0 || issueCount.warnings > 0;
@@ -183,23 +208,23 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
                     .map((step: IStepData, index: number) => {
                       const stepResults = data.validationResults.filter(
                         (result: IValidationResult) =>
-                          result.stepName === step.name
+                          result.stepName === step.name,
                       );
                       const issueCount = getErrorWarningCounts(stepResults);
                       const iconType = data.failureMessage
                         ? "question"
                         : issueCount.errors > 0
-                        ? "xmark"
-                        : issueCount.warnings > 0
-                        ? "exclamation"
-                        : "check";
+                          ? "xmark"
+                          : issueCount.warnings > 0
+                            ? "exclamation"
+                            : "check";
                       const stepStatus = determineStepStatus(issueCount);
                       return (
                         <div
                           key={`${step.name}-${index}`}
                           onClick={() => {
                             setExpandedId(
-                              expandedId === step.name ? null : step.name
+                              expandedId === step.name ? null : step.name,
                             );
                           }}
                         >
@@ -208,7 +233,7 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
                               tooltip={ValidationIconTooltip(
                                 issueCount.errors,
                                 issueCount.warnings,
-                                step.name
+                                step.name,
                               )}
                               iconType={iconType}
                               size="lg"
@@ -243,6 +268,12 @@ export function PreviousUploadsView(props: PPreviousUploadsView) {
           {data.failureMessage && (
             <p>
               Failure reason: <span>{truncateString(data.failureMessage)}</span>
+            </p>
+          )}
+          {data.rejectionReason && (
+            <p>
+              Rejection reason:{" "}
+              <span>{truncateString(data.rejectionReason)}</span>
             </p>
           )}
         </div>

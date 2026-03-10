@@ -13,18 +13,50 @@ import {
   WIDTH_REDUCER,
   IStepData,
   TStepsData,
-} from "..";
+} from "../..";
 
 export interface PValidateSteps {
+  /**
+   * Data for all validation results, used to pull out the errors/warnings for each 
+   * step and display in the expanded view
+   */
   data: IValidationResult[];
+  /**
+   * Data for the steps, used to display the step name and description
+   */
   steps: TStepsData;
+  /**
+   * Optional index to scroll into view and expand on load, used for 
+   * linking from the error viewer to the relevant step
+   */
   expandedIndex?: string;
+  /**
+   * Optional step name to scroll into view when expandedIndex is provided, 
+   * used for linking from the error viewer to the relevant step
+   */
   stepName?: string;
+  /**
+   * Optional ref to scroll into view when expandedIndex is provided, used for 
+   * linking from the error viewer to the relevant step
+   */
   targetRef?: React.RefObject<HTMLDivElement>;
+  /**
+   * Optional whether validation has completed, used to determine whether to show the option to 
+   * see all errors/warnings and show particular messages in the expanded view
+   */
   completed?: boolean;
+  /**
+   * Optional failure message from the validation details, 
+   * used to show in the expanded view if validation has failed without any 
+   * specific errors (e.g. a pipeline step has failed without returning any specific error messages)
+   */
   failureMessage?: string | null;
 }
 
+/**
+ * Validate steps component. Takes upload data and renders a selection single
+ * ValidateSteps components, along with containing resize and expansion logic.
+ */
 export function ValidateSteps(props: PValidateSteps) {
   const { data, steps, completed, failureMessage } = props;
 
@@ -32,7 +64,7 @@ export function ValidateSteps(props: PValidateSteps) {
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [expandedIndex, setExpandedIndex] = useState<string | null>(
-    props.expandedIndex || null
+    props.expandedIndex || null,
   );
 
   const handleResize = useCallback(() => {
@@ -60,9 +92,9 @@ export function ValidateSteps(props: PValidateSteps) {
       <div>
         <div className="tol-file-uploader-validate-steps-inner-container">
           {steps.length > 0 ? (
-            (steps.map((step: IStepData) => {
+            steps.map((step: IStepData) => {
               const stepData = data.filter(
-                (result: IValidationResult) => result.stepName === step.name
+                (result: IValidationResult) => result.stepName === step.name,
               );
               return (
                 <div
@@ -85,7 +117,7 @@ export function ValidateSteps(props: PValidateSteps) {
                   />
                 </div>
               );
-            }))
+            })
           ) : (
             <h6 className="tol-file-validation-previous-results-no-data">
               No pipeline steps found.
