@@ -44,11 +44,11 @@ export function ActionStatus(props: PCellDisplay) {
 
   const getActionStatus = async () => {
     setLoading(true);
-    const ds = new TsDataSource({
+    const dataSource = new TsDataSource({
       apiPath: env.API_PATH,
       apiDataPath: PREFECT_API_DATA_PATH,
     });
-    return await ds.getOne({
+    return await dataSource.getOne({
       objectType: "flow_run",
       id: flowRunId,
     })

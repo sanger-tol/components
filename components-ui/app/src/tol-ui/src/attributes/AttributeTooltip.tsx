@@ -21,7 +21,7 @@ export function AttributeTooltip(props: PAttributeTooltip) {
   const {
     attributeId: field, element, objectType, dataSource, id, componentId, zone } = props;
 
-  const [details, setDetails] = useState<Record<string, React.ReactNode>>({});
+  const [details, setDetails] = useState<Record<string, ReactNode>>({});
   useEffect(() => {
     let isMounted = true;
     if (isMounted) {

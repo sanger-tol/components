@@ -8,33 +8,42 @@ import {
   ValidationIcon,
   ErrorViewer,
   getErrorWarningCounts,
-  IValidationResult,
   determineStepStatus,
   normaliseCaps,
   MAX_ERRORS_TO_DISPLAY,
   IconTooltip,
-} from "..";
+} from "../..";
 
-export interface IStepValidationDetails {
-  completed: boolean;
-  failureMessage?: string | null;
-}
-
-export interface IStepDetails {
-  stepName: string;
-  results: IValidationResult[];
-  description?: string;
-  validationDetails?: IStepValidationDetails;
-}
+import type { IValidationResult, IStepDetails } from "../..";
 
 export interface PValidateStep {
-    description?: string;
+  /**
+   * Id of the step, used as a key for the component
+   */
   id: string;
-  expanded?: boolean;
+  /**
+   * Optional callback when clicking to see all errors for the step
+   */
   onSeeAllErrors?: () => void;
+  /**
+   * Optional whether the step details are expanded
+   */
+  expanded?: boolean;
+  /**
+   * Optional details of the validation step, if not provided will default to empty values and not show any errors
+   */
   stepDetails?: IStepDetails;
+  /**
+   * Optional description of the step, shown in an info tooltip next to the step name
+   */
+  description?: string;
 }
 
+/**
+ * Validation step component. Used to help visualise the status of each individual
+ * step in a pipeline, Will show a users the first couple of errors (if any), as well as
+ * a validation icon indicating the status (error, warning, unknown).
+ */
 export function ValidateStep(props: PValidateStep) {
   const {
     id,
@@ -58,33 +67,35 @@ export function ValidateStep(props: PValidateStep) {
   const iconType = stepDetails.validationDetails?.failureMessage
     ? "question"
     : issueCount.errors > 0
-    ? "xmark"
-    : issueCount.warnings > 0
-    ? "exclamation"
-    : "check";
+      ? "xmark"
+      : issueCount.warnings > 0
+        ? "exclamation"
+        : "check";
 
   return (
     <div className="tol-file-uploader-validate-step-outer-container">
       <div
         id={id}
         className={`tol-file-uploader-validate-step-inner-container ${
-          !stepDetails.validationDetails?.completed && !hasErrors
+          (!stepDetails.validationDetails?.completed && !hasErrors) ||
+          stepDetails.validationDetails?.failureMessage
             ? "in-progress"
             : stepStatus.className
         }`}
       >
-
         <div className="tol-file-uploader-validate-step-title-container">
           <h6 className="tol-file-uploader-validate-step-title">
-                       <IconTooltip
-          contents={stepDetails.description || "No description provided."}
-        /> {" "} {normaliseCaps(stepDetails.stepName)}
+            <IconTooltip
+              contents={stepDetails.description || "No description provided."}
+            />{" "}
+            {normaliseCaps(stepDetails.stepName)}
           </h6>
           <ValidationIcon
             iconType={iconType}
             size="lg"
             className={`tol-file-uploader-validate-step-icon ${
-              stepDetails.validationDetails?.completed
+              stepDetails.validationDetails?.completed &&
+              !stepDetails.validationDetails?.failureMessage
                 ? stepStatus.className
                 : "in-progress"
             }`}
@@ -148,19 +159,17 @@ export function ValidateStep(props: PValidateStep) {
             </div>
           </div>
         ) : !stepDetails.validationDetails?.completed ? (
-          stepDetails.validationDetails?.failureMessage ? (
-            <div className="tol-file-uploader-validate-step-failed-container">
-              <h6>Pipeline Failed</h6>
-              <p>
-                Could not validate before the overall pipeline failed. Please
-                re-upload and try again.
-              </p>
-            </div>
-          ) : (
-            <div className="tol-file-uploader-validate-step-passed-container">
-              <h6>Waiting for some Results...</h6>
-            </div>
-          )
+          <div className="tol-file-uploader-validate-step-passed-container">
+            <h6>Waiting for some Results...</h6>
+          </div>
+        ) : stepDetails.validationDetails?.failureMessage ? (
+          <div className="tol-file-uploader-validate-step-failed-container">
+            <h6>Pipeline Failed</h6>
+            <p>
+              Could not validate before the overall pipeline failed. Please
+              re-upload and try again.
+            </p>
+          </div>
         ) : (
           <div className="tol-file-uploader-validate-step-passed-container">
             <h6>Validation Passed 🎉</h6>

@@ -18,7 +18,7 @@ export const getSystemDefaultNavConfig = (
   const config: TNavConfig = {
     data: {
       "File Validation Results": {
-        access: "public",
+        access: "authenticated",
         path: {
           pageElementReference: "validationResultsDetail",
           route: "/file-validation/results/:uploadId",

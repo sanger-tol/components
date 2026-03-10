@@ -17,7 +17,6 @@ import {
   ROW_TOOLS_COLUMN_SINGLE_ITEM_WIDTH,
 } from "..";
 
-
 export interface PRowToolsColumn extends PTable {
   data: any[];
   checked: boolean;
@@ -55,10 +54,11 @@ export function RowToolsColumn(props: PRowToolsColumn) {
   const getColumnWidth = () => {
     let width = 0;
     if (rowSelection) width += ROW_TOOLS_COLUMN_SINGLE_ITEM_WIDTH;
-    if (hasExpandableRows(data, cellHeights)) width += ROW_TOOLS_COLUMN_SINGLE_ITEM_WIDTH;
+    if (hasExpandableRows(data, cellHeights))
+      width += ROW_TOOLS_COLUMN_SINGLE_ITEM_WIDTH;
     // cap at max width
     return Math.min(width, ROW_TOOLS_COLUMN_MAX_WIDTH);
-  }
+  };
 
   return (
     <Column fixed key="rowTools" width={getColumnWidth()}>
@@ -105,10 +105,11 @@ export function RowToolsColumn(props: PRowToolsColumn) {
               {rowSelection && (
                 <Checkbox
                   className="tol-table-row-selection"
-                  value={rowId}
+                  // @ts-ignore
+                  value={{ [rowId]: rowData }}
                   checked={
                     bulkSelect ||
-                    selectedRows.some((item) => item === rowId)
+                    selectedRows.some((row) => Object.keys(row)[0] === rowId)
                   }
                   disabled={bulkSelect}
                   onChange={handleCheck}

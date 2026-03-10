@@ -54,6 +54,7 @@ export * from "./variables";
 import { TsDataSource, env, BOARDS_API_DATA_PATH } from ".";
 
 export const TOL_DS = new TsDataSource(env.TOL_DATA);
+export const PIPELINE_DS = new TsDataSource();
 export const CORE_CONFIG_DS = new TsDataSource({
   ...env.TOL_DATA,
   apiDataPath: BOARDS_API_DATA_PATH,
