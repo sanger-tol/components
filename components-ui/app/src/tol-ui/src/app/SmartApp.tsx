@@ -132,9 +132,9 @@ export function SmartApp(props: PSmartApp) {
   }, []);
 
   useEffect(() => {
-
-    // No web app id provided, skip remote nav fetch
-    if (!id?.trim()) {
+    // If no id provided, skip fetching and just use local config
+    if (!id) {
+      setTimeout(() => setGlobalLoading(false), 100);
       return;
     }
 
