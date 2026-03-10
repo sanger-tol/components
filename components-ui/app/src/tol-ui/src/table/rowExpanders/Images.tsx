@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import { ImageModal } from "../..";
 
+
 export interface PImages {
   value: any;
   captions: any;
@@ -16,7 +17,6 @@ export function Images(props: PImages) {
   const { value, captions } = props;
 
   const [open, setOpen] = useState<boolean>(false);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   // could be single or multiple images
   const urlList = Array.isArray(value) ? value : [value];
@@ -24,10 +24,9 @@ export function Images(props: PImages) {
     <div className="tol-table-expanded-row">
       <ImageModal
         value={value}
-        captions={captions}
+        caption={captions}
         open={open}
         setOpen={setOpen}
-        currentIndex={currentIndex}
       />
       {urlList.map((url, index) => (
         <img
@@ -37,7 +36,6 @@ export function Images(props: PImages) {
           src={url}
           alt={captions[index] || url}
           onClick={() => {
-            setCurrentIndex(index);
             setOpen(true)
           }}
         />
