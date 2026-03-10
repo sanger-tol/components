@@ -259,7 +259,7 @@ export function showItemAction(): TFileValidationAction {
 export function downloadFileAction(): TFileValidationAction {
   return {
     id: "downloadFile",
-    label: "Download File(s)",
+    label: "Download Manifest(s)",
     callback: async ({ items, dataSource }) => {
       await Promise.all(
         // We need to map over items and fetch details for any items that only have an id,
