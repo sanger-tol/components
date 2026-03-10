@@ -34,6 +34,7 @@ export * from "./constants";
 export * from "./contexts";
 export * from "./datasource";
 export * from "./factories";
+export * from "./file-validation";
 export * from "./filtering";
 export * from "./forms";
 export * from "./general";
@@ -47,8 +48,8 @@ export { retry } from "./services/http";
 export { clearExpiredToken } from "./services/auth";
 export * from "./table";
 export * from "./timeline";
+export * from "./utility-bar";
 export * from "./variables";
-export * from "./file-validation";
 
 import { TsDataSource, env, BOARDS_API_DATA_PATH } from ".";
 

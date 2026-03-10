@@ -6,30 +6,26 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  FilterConfigDrawer,
-  Placeholder,
-  Icon,
   RemoteSunburst,
   deepCopy,
-  saveTitle,
   SliceByDrawer,
   PButton,
   updateConfigAndUpsert,
-  PRIVILEGE,
-  useBoardPrivilege,
-  PVisualisation
+  useBoard,
+  PVisualisation,
+  mergeUtilityBarConfigs,
+  NoAttributesPlaceholder
 } from "..";
 
 
-interface Props extends PVisualisation {}
+export function BoardSunburst(props: PVisualisation) {
+  const { id, utilityBarConfig, boardDataSource, size, zone } = props;
 
-export function BoardSunburst(props: Props) {
-  const { id, utilityBarConfig, boardObjectType, boardDataSource, size, zone } = props;
+  const { editMode } = useBoard();
+
   const [config, setConfig] = useState<any>(props.config);
-  const [openFilters, setOpenFilters] = useState(false);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
-  const { privilege } = useBoardPrivilege()
 
   const onConfigSave = (updatedConfig: object) => {
     setConfig({ ...updatedConfig });
@@ -44,26 +40,8 @@ export function BoardSunburst(props: Props) {
 
   const Contents = () => {
     if (!config.sliceBy || config.sliceBy.length <= 0) {
-      return (
-        <Placeholder
-          pie
-          message={
-            <>
-              {privilege === PRIVILEGE.BOARD.EDITABLE ? (
-                <>
-                  Please add an attribute to get started. Click <Icon icon="sliders" size="lg" /> to configure.
-                </>
-              ) : (
-                <>
-                  No attributes selected.
-                </>
-              )}
-            </>
-          }
-        />
-      );
+      return <NoAttributesPlaceholder />;
     }
-    return null;
   }
 
   const configButton: PButton = {
@@ -73,26 +51,20 @@ export function BoardSunburst(props: Props) {
     onClick: () => setOpenConfig(true),
     icon: "sliders",
     className: "count-filter-button",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
+    visible: editMode,
   }
 
-  const filtersButton: PButton = {
-    outline: true,
-    position: "right",
-    type: "primary",
-    onClick: () => setOpenFilters(true),
-    icon: "filter",
-    className: "count-filter-button",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE,
-  }
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      buttons: [
+        configButton,
+      ],
+    }
+  );
 
   return (
     <>
-      <FilterConfigDrawer
-        {...props}
-        open={openFilters}
-        setOpen={setOpenFilters}
-      />
       <SliceByDrawer
         {...props}
         sliceBy={config.sliceBy || []} // Pass in a blank array to account for no config
@@ -109,20 +81,7 @@ export function BoardSunburst(props: Props) {
         forceUpdate={forceUpdate}
         legendPosition="top"
         noMini={size === "sm"}
-        utilityBarConfig={{
-          ...utilityBarConfig,
-          title: {
-            text: utilityBarConfig.title?.text,
-            editable: privilege === PRIVILEGE.BOARD.EDITABLE,
-            onSave: (value: string) => {
-              saveTitle(value, id, boardObjectType, boardDataSource);
-            }
-          },
-          buttons: [
-            configButton,
-            filtersButton
-          ],
-        }}
+        utilityBarConfig={ubc}
       />
     </>
   );

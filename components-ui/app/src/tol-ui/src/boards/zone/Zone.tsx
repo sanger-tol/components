@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import {
   useZone,
   FilterConfigDrawer,
@@ -20,10 +20,10 @@ import {
   PButton,
   PBoard,
   addComponents,
-  useBoardPrivilege,
-  PRIVILEGE,
+  useBoard,
   TitleTooltip,
   TsDataSource,
+  BUTTONS,
 } from "../..";
 
 
@@ -47,20 +47,20 @@ export function Zone(props: PZone) {
     onZoneReorder,
     deleteZone,
   } = props;
-  const [draggable, setDraggable] = useState(false);
+
+  const { editMode, layoutMode } = useBoard();
+
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
-  const [editBtnsVisible, setEditBtnsVisible] = useState(false);
-  const [saveLayout, setSaveLayout] = useState(false);
   const [title, setTitle] = useState(props.title);
+
   const z = useZone({
     dataSource: dataspace,
     objectType,
     filter: filter,
     components: [],
   });
-  const { privilege } = useBoardPrivilege();
 
   useEffect(() => {
     getComponents(id, boardDataSource).then((components) => {
@@ -70,14 +70,6 @@ export function Zone(props: PZone) {
       z.setZone({ ...z.zone });
     });
   }, []);
-
-  const handleOpenModal = () => {
-    setConfirmationModalOpen(true);
-  };
-
-  const handleBtnsVisible = () => {
-    setEditBtnsVisible(!editBtnsVisible);
-  };
 
   const onAddComponent = () => {
     setOpen(true);
@@ -92,43 +84,24 @@ export function Zone(props: PZone) {
     />
   );
 
+  const deleteButton: PButton = {
+    ...BUTTONS.DISCARD,
+    onClick: () => setConfirmationModalOpen(true),
+    tooltip: "Delete Zone",
+    visible: editMode && !layoutMode,
+  };
+
   const addButton: PButton = {
-    outline: true,
     onClick: () => {
       onAddComponent();
     },
     type: "success",
-    icon: "plus",
+    icon: "cube",
     position: "right",
-    tooltip: "Add Component",
+    tooltip: "",
     testid: "add-component-button",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE
-  };
-
-  const editButton: PButton = {
-    outline: true,
-    onClick: () => {
-      setDraggable(!draggable);
-    },
-    disabled: z.zone.order.length < 1,
-    type: "edit",
-    icon: "up-down-left-right",
-    position: "right",
-    tooltip: "Edit Widgets",
-    testid: "drag-components-button",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE
-  };
-
-  const deleteButton: PButton = {
-    outline: true,
-    onClick: () => {
-      handleOpenModal();
-    },
-    type: "error",
-    icon: "trash",
-    position: "right",
-    tooltip: "Delete Zone",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE
+    visible: editMode && !layoutMode,
+    text: "Add Component",
   };
 
   const upButton: PButton = {
@@ -140,7 +113,7 @@ export function Zone(props: PZone) {
     icon: "arrow-up",
     position: "right",
     tooltip: "Move Zone Up",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE
+    visible: layoutMode,
   };
 
   const downButton: PButton = {
@@ -152,21 +125,7 @@ export function Zone(props: PZone) {
     icon: "arrow-down",
     position: "right",
     tooltip: "Move Zone Down",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE
-  };
-
-  const saveButton: PButton = {
-    outline: false,
-    onClick: () => {
-      setSaveLayout(true);
-      setDraggable(false);
-    },
-    type: "success",
-    icon: "floppy-disk",
-    position: "right",
-    tooltip: "Save Layout",
-    testid: "save-layout-button",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE
+    visible: layoutMode,
   };
 
   const filtersButton: PButton = {
@@ -176,32 +135,19 @@ export function Zone(props: PZone) {
     icon: "filter",
     position: "right",
     tooltip: "Add filters to the Zone",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE
+    visible: editMode && !layoutMode,
   };
 
-  const showEditButtons: PButton = {
-    outline: !editBtnsVisible,
-    onClick: () => {
-      handleBtnsVisible();
-    },
-    type: editBtnsVisible ? "success" : "warning",
-    icon: editBtnsVisible ? "check" : "pen-to-square",
-    position: "right",
-    tooltip: editBtnsVisible ? "Save Changes" : "Edit Zone",
-    testid: "edit-zone-button",
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE
-  };
-
-  const buttons = (
+  const bar = (
     <div className="tol-zone-bar">
       <UtilityBar
         id="zone-utility-bar"
         title={{
           text: title,
-          editable: privilege === PRIVILEGE.BOARD.EDITABLE,
+          editable: editMode,
           onSave: (value: string) => {
             if (value !== title) {
-              saveTitle(value, id, BOARDS.ZONE, boardDataSource);
+              saveTitle(value, id, boardDataSource, BOARDS.ZONE);
               setTitle(value);
             }
           }
@@ -214,14 +160,13 @@ export function Zone(props: PZone) {
             filter={filter}
           />
         }
-        buttons={!draggable ? [
+        buttons={[
+          deleteButton,
           addButton,
-          showEditButtons,
-          ...(editBtnsVisible
-            ? [deleteButton, editButton, downButton, upButton]
-            : []),
-          filtersButton
-        ] : [saveButton]}
+          filtersButton,
+          downButton,
+          upButton,
+        ]}
       />
       <div id="component-modal">
         <ComponentPickerModal
@@ -238,20 +183,17 @@ export function Zone(props: PZone) {
 
   return (
     <div className="tol-zone">
-      {buttons}
+      {(title || editMode) && bar}
       {z.zone.order.length > 0 ? (
         <Visualisations
           id={id}
           zone={z.zone}
           setZone={z.setZone}
-          draggable={draggable}
-          saveLayout={saveLayout}
-          setSaveLayout={setSaveLayout}
           boardDataSource={boardDataSource}
         />
       ) : (
         <div className="tol-zone-empty">
-          {privilege === PRIVILEGE.BOARD.EDITABLE ? (
+          {editMode ? (
             <>
               <p>
                 Click the
@@ -262,17 +204,6 @@ export function Zone(props: PZone) {
                 />
                 to add a new Component to the Zone.
               </p>
-              {!editBtnsVisible && (
-                <p>
-                  Click the
-                  <FontAwesomeIcon
-                    icon={faPenToSquare}
-                    size="lg"
-                    style={{ padding: "0 8" }}
-                  />
-                  to edit the Zone.
-                </p>
-              )}
             </>
           ) : (
             <p>No components found</p>

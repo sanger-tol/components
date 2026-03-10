@@ -31,7 +31,6 @@ export * from "./SourceTag";
 export * from "./Tabs";
 export * from "./Tag";
 export * from "./TolLoader";
-export * from "./UtilityBar";
 export * from "./utils";
 export * from "./Well";
 export * from "./Widgets";
