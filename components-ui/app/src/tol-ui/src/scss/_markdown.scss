@@ -20,6 +20,12 @@
   .tol-markdown-viewer {
     border-radius: 6px;
     padding-left: 8px;
+
+    img {
+      max-height: 400px;
+      max-width: 400px;
+      border-radius: 6px;
+    }
   }
 }
 
