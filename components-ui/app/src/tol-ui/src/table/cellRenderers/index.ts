@@ -9,6 +9,7 @@ export * from "./DataPoints";
 export * from "./DataPoint";
 export * from "./CellDisplay";
 export * from "./CellEditable";
+export * from "./CellRendererParam";
 export * from "./DataPoints";
 export * from "./Datetime";
 export * from "./DataPointDefaultDisplay";

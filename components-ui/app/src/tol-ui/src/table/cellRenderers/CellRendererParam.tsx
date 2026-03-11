@@ -21,8 +21,8 @@ export interface PCellRendererParam extends IRemoteTarget {
   meta: IBoardCellRendererParam,
   renderer: TCellRenderer
   setRenderer: Dispatch<SetStateAction<TCellRenderer>>;
-  selectedConditionParam: string | undefined;
-  setSelectedConditionParam: Dispatch<SetStateAction<string | undefined>>;
+  selectedParam: string | undefined;
+  setSelectedParam: Dispatch<SetStateAction<string | undefined>>;
 }
 
 export function CellRendererParam(props: PCellRendererParam) {
@@ -31,12 +31,58 @@ export function CellRendererParam(props: PCellRendererParam) {
     meta,
     renderer,
     setRenderer,
-    selectedConditionParam,
-    setSelectedConditionParam
+    selectedParam,
+    setSelectedParam
   } = props;
 
   const paramValue = renderer?.props![param];
   const conditionPresent = Object.keys((paramValue as IFilter || {}).and_ || {}).length > 0;
+
+  const renderInput = () => {
+    switch (meta.type) {
+      case "string":
+        return (
+          <Input
+            value={paramValue as string}
+            onChange={(newValue: string) => {
+              if (renderer) {
+                renderer.props![param] = newValue;
+                setRenderer({ ...renderer });
+              }
+            }}
+            placeholder={meta.placeholder}
+          />
+        );
+      case "condition":
+        return (
+          <Button
+            outline
+            text={conditionPresent ? "Edit Condition" : "Set Condition"}
+            icon="puzzle-piece"
+            type={conditionPresent ? "warning" : "success"}
+            onClick={() => {
+              setSelectedParam(
+                param === selectedParam ? undefined : param
+              );
+            }}
+          />
+        );
+      case "markdown":
+        return (
+          <Button
+            outline
+            text={paramValue ? "Edit Markdown" : "Set Markdown"}
+            icon="file-text"
+            type={paramValue ? "warning" : "success"}
+            onClick={() => {
+              setSelectedParam(
+                param === selectedParam ? undefined : param
+              );
+            }}
+          />
+        );
+    }
+  }
 
   return (
     <div key={param}>
@@ -50,30 +96,7 @@ export function CellRendererParam(props: PCellRendererParam) {
         <IconTooltip contents={meta.description} disableMarkdown />
       </span>
       <div className="tol-param">
-        {meta.type === "string" ? (
-          <Input
-            value={paramValue as string}
-            onChange={(newValue: string) => {
-              if (renderer) {
-                renderer.props![param] = newValue;
-                setRenderer({ ...renderer });
-              }
-            }}
-            placeholder={meta.placeholder}
-          />
-        ) : meta.type === "condition" ? (
-          <Button
-            outline
-            text={conditionPresent ? "Edit Condition" : "Set Condition"}
-            icon="puzzle-piece"
-            type={conditionPresent ? "warning" : "success"}
-            onClick={() => {
-              setSelectedConditionParam(
-                param === selectedConditionParam ? undefined : param
-              );
-            }}
-          />
-        ) : null}
+        {renderInput()}
       </div>
     </div>
   );

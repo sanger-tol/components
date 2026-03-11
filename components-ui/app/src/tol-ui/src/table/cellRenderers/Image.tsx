@@ -30,6 +30,7 @@ export function Image(props: PImage) {
         onClick={() => setOpen(true)}
       >
         <img src={value} />
+        <p>{captions}</p>
       </span>
     </div>
   );

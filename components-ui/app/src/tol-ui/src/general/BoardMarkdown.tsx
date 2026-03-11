@@ -28,7 +28,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
 
   const [content, setContent] = useState<string>(config.content || "");
   const [showPreview, setShowPreview] = useState<boolean>(false);
-  const [showMarkdownViewer, setShowMarkdownViewer] = useState<boolean>(false);
+  const [showMarkdownViewer, setShowMarkdownViewer] = useState<boolean>(true);
   const { editMode} = useBoard();
 
 

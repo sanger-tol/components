@@ -11,6 +11,7 @@ import {
   Modal,
   normaliseCaps,
   cellRendererParams,
+  CellRendererParam,
   Button,
   deepCopy,
   TCellRenderer,
@@ -25,7 +26,6 @@ import {
   generateFilter,
   AttributeTitle,
 } from "../..";
-import { CellRendererParam } from "./CellRendererParam";
 
 
 export interface PCellRendererModal extends IRemoteTarget {
@@ -40,14 +40,14 @@ export function CellRendererModal(props: PCellRendererModal) {
   const { open, setOpen, attributeId, fieldMeta, setFieldMeta, objectType, dataSource } = props;
   const [renderer, setRenderer] = useState<TCellRenderer>();
   const [previousRenderer, setPreviousRenderer] = useState<TCellRenderer>();
-  const [selectedConditionParam, setSelectedConditionParam] = useState<string | undefined>();
+  const [selectedParam, setSelectedParam] = useState<string | undefined>();
   const [filterConditions, setFilterConditions] = useState<IFilter>();
   const [attributes, setAttributes] = useState<string[]>(Object.keys(filterConditions?.and_ || {}));
   const [conditionHasPendingChanges, setConditionHasPendingChanges] = useState<boolean>(false);
   const zoneFilterId = "cell-renderer-zone"
   const [filterZone, setFilterZone] = useState<IZone>(
     defineZone("dummy-object-for-remote-filters", [
-      { id: zoneFilterId, filter: renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} } },
+      { id: zoneFilterId, filter: renderer?.props?.[selectedParam!] as IFilter || { and_: {} } },
     ]),
   );
 
@@ -78,13 +78,13 @@ export function CellRendererModal(props: PCellRendererModal) {
         )
       );
     }
-    setSelectedConditionParam(undefined);
+    setSelectedParam(undefined);
   }, [open]);
 
   // Checks that the condition exists and has a value, stops the condition filters spreading across all conditions
   useEffect(() => {
-    if (renderer?.props?.[selectedConditionParam!] && selectedConditionParam) {
-      const paramValue = renderer.props[selectedConditionParam];
+    if (renderer?.props?.[selectedParam!] && selectedParam) {
+      const paramValue = renderer.props[selectedParam];
       const filterValue = typeof paramValue === 'object' ? paramValue as IFilter : { and_: {} };
       setAttributes(Object.keys(filterValue.and_ || {}) || []);
       setFilterConditions(filterValue);
@@ -95,16 +95,16 @@ export function CellRendererModal(props: PCellRendererModal) {
       setAttributes([]);
       setFilterConditions({ and_: {} });
     }
-  }, [selectedConditionParam]);
+  }, [selectedParam]);
 
   useEffect(() => {
     const newFilter = generateFilter(filterZone, zoneFilterId);
     setFilterConditions(newFilter);
     setConditionHasPendingChanges(() => {
-      if (!renderer || !selectedConditionParam) return false;
-      renderer!.props![selectedConditionParam!] = newFilter ?? {};
+      if (!renderer || !selectedParam) return false;
+      renderer!.props![selectedParam!] = newFilter ?? {};
       setRenderer({ ...renderer });
-      return JSON.stringify(previousRenderer?.props?.[selectedConditionParam]) !== JSON.stringify(renderer.props?.[selectedConditionParam])
+      return JSON.stringify(previousRenderer?.props?.[selectedParam]) !== JSON.stringify(renderer.props?.[selectedParam])
     });
   }, [filterZone]);
 
@@ -137,12 +137,12 @@ export function CellRendererModal(props: PCellRendererModal) {
   const onConditionSave = () => {
     // delete empty params if no condition present
     if (isEmptyObject(filterConditions?.and_ || {})) {
-      delete renderer!.props![selectedConditionParam!];
+      delete renderer!.props![selectedParam!];
     } else {
-      renderer!.props![selectedConditionParam!] = filterConditions ?? {};
+      renderer!.props![selectedParam!] = filterConditions ?? {};
     }
     setRenderer({ ...renderer! });
-    setSelectedConditionParam(undefined);
+    setSelectedParam(undefined);
     setConditionHasPendingChanges(false);
   }
 
@@ -179,7 +179,7 @@ export function CellRendererModal(props: PCellRendererModal) {
       />
       <Button
         {...BUTTONS.RETURN}
-        onClick={() => setSelectedConditionParam(undefined)}
+        onClick={() => setSelectedParam(undefined)}
       />
     </>
   );
@@ -210,12 +210,12 @@ export function CellRendererModal(props: PCellRendererModal) {
       header={Header}
       open={open}
       setOpen={setOpen}
-      size={selectedConditionParam ? "sm" : "xs"}
-      closeButton={!selectedConditionParam}
-      actionButton={selectedConditionParam ? undefined : SaveCellRendererButton}
+      size={selectedParam ? "sm" : "xs"}
+      closeButton={!selectedParam}
+      actionButton={selectedParam ? undefined : SaveCellRendererButton}
       hasPendingChanges={rendererHasPendingChanges || conditionHasPendingChanges}
     >
-      {!selectedConditionParam ? (
+      {!selectedParam ? (
         <div className="tol-data-point-renderer-modal-selector">
           <SingleSelect
             block
@@ -228,12 +228,12 @@ export function CellRendererModal(props: PCellRendererModal) {
           />
         </div>
       ) : <></>}
-      {selectedConditionParam ? (
+      {selectedParam ? (
         <div className="tol-data-point-renderer-modal-condition-params">
           <div className="tol-param-header">
             <h6 className="tol-param-title">
               Configure Condition for
-              '{cellRendererParams[renderer?.type!].params?.[selectedConditionParam]?.rename}'
+              '{cellRendererParams[renderer?.type!].params?.[selectedParam]?.rename}'
               Parameter
             </h6>
           </div>
@@ -271,8 +271,8 @@ export function CellRendererModal(props: PCellRendererModal) {
                       meta={meta}
                       renderer={renderer}
                       setRenderer={setRenderer}
-                      selectedConditionParam={selectedConditionParam}
-                      setSelectedConditionParam={setSelectedConditionParam}
+                      selectedParam={selectedParam}
+                      setSelectedParam={setSelectedParam}
                     />
                   )
                 })}
