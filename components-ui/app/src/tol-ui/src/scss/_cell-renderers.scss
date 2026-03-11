@@ -20,14 +20,12 @@
 }
 
 .tol-table-image-cell {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
   width: 100%;
   cursor: pointer;
 
   img {
     max-height: 80px;
     max-width: 120px;
+    border-radius: 6px;
   }
 }

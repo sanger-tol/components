@@ -467,7 +467,7 @@ export function Table(props: PTable) {
                     const fullHeight = row
                       ? Math.max(
                           DEFAULT_ROW_HEIGHT,
-                          Number(...Object.values(row)),
+                          ...Object.values(row),
                         )
                       : DEFAULT_ROW_HEIGHT;
 
