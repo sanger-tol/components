@@ -604,11 +604,13 @@ describe("Testing getListPage function", () => {
   test("Calls get correct page size", async () => {
     const dataObjects1 = await mockDataSource.getListPage({
       objectType: "species",
+      filter: {},
       pageSize: 1,
     });
 
     const dataObjects2 = await mockDataSource.getListPage({
       objectType: "species",
+      filter: {},
       pageSize: 20,
     });
 

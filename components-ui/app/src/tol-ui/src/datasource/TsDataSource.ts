@@ -465,7 +465,7 @@ export class TsDataSource {
     pageSize,
     filter,
     sortBy,
-    requestedFields,
+    requestedFields
   }: IGetListPage): Promise<TDataObjectListOrNull> {
     return this.custom({
       method: API_METHODS.POST,
