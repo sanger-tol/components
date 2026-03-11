@@ -30,8 +30,8 @@ import {
   API_METHODS,
   IRemoteTargetAndZone,
   IHeight,
-  mergeUtilityBarConfigs,
-  API_OPERATIONS
+  API_OPERATIONS,
+  mergeUtilityBarConfigs
 } from "..";
 
 interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
@@ -129,10 +129,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
         .custom({
           method: API_METHODS.POST,
           resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
-          body: aggs,
-          params: {
-            filter: generateFilter(zone, id, true),
-          },
+          body: {...aggs, filter: generateFilter(zone, id, true)},
         })
         .then((res: any) => {
           const aggs = res.data.meta.aggregations;
@@ -175,10 +172,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
           .custom({
             method: API_METHODS.POST,
             resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
-            body: aggs,
-            params: {
-              filter: generateFilter(zone, id, true),
-            },
+            body: {...aggs, filter: generateFilter(zone, id, true)},
           })
           .then((res: any) => {
             const aggs = res.data.meta.aggregations;
