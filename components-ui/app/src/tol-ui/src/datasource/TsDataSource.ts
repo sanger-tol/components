@@ -468,14 +468,16 @@ export class TsDataSource {
     requestedFields,
   }: IGetListPage): Promise<TDataObjectListOrNull> {
     return this.custom({
-      method: API_METHODS.GET,
+      method: API_METHODS.POST,
       resource: this.generateEndpoint(objectType),
-      params: {
-        page: page,
-        page_size: pageSize,
+      body: {
         filter: filter,
         sort_by: sortBy,
+      },
+      params: {
+        page: page,
         requested_fields: requestedFields,
+        page_size: pageSize,
       },
     })
       .then((response: IJsonApiResponse) => {
