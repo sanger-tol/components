@@ -473,10 +473,10 @@ export class TsDataSource {
       body: {
         filter: filter,
         sort_by: sortBy,
+        requested_fields: requestedFields?.join(","),
       },
       params: {
         page: page,
-        requested_fields: requestedFields,
         page_size: pageSize,
       },
     })
