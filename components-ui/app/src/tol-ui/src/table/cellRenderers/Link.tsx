@@ -7,11 +7,11 @@ SPDX-License-Identifier: MIT
 import {
   Button,
   PButton,
-  PCell
+  PCellDisplay
 } from "../..";
 
 
-export interface PLink extends PCell {
+export interface PLink extends PCellDisplay {
   url: string;
   text?: string;
   newTab?: boolean;

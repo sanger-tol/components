@@ -5,13 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  PCell,
+  PCellDisplay,
   StatusMessage,
   TMessageType
 } from "../..";
 
 
-export interface PTrafficLightStatus extends PCell {
+export interface PTrafficLightStatus extends PCellDisplay {
   success?: boolean;
   warning?: boolean;
   danger?: boolean;

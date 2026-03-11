@@ -15,8 +15,6 @@ import {
   getSystemDefaultNavConfig,
 } from "../../tol-ui/src";
 import {
-  findDropdownByTitle,
-  findLinkByText,
   mockAdminUser,
   navOutputConfigPublicMock,
   navInputConfigMock,
@@ -24,9 +22,10 @@ import {
   navOutputConfigAuthenticatedMock,
   mockBasicUser,
   mockNoRoleUser,
+  navOutputConfigRoleRequiredMock,
+  navOutputConfigPublicRoutePrefixMock,
 } from "..";
-import { navOutputConfigRoleRequiredMock } from "../mocks/nav/role-required-output";
-import { navOutputConfigPublicRoutePrefixMock } from "../mocks/nav/public-output-route-prefix";
+import { findDropdownByTitle, findLinkByText } from "./utils";
 
 
 const navConfigWithDefaults: TNavConfig = mergeAndNormaliseNavConfig(navInputConfigMock, getSystemDefaultNavConfig(true), null);

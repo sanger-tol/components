@@ -22,19 +22,26 @@ import {
 } from "..";
 
 
-export function FilterTextInput(props: IFilterInput) {
-  const { attribute, componentId, rename, type, zone, setZone, delay } = props;
+export interface PFilterTextInput extends IFilterInput {
+  /**
+   * Whether the filter is for a numerical field. Used to determine if operator dropdown should be shown.
+   */
+  isNumber?: boolean;
+}
+
+export function FilterTextInput(props: PFilterTextInput) {
+  const { attribute, componentId, rename, type, zone, setZone, delay, isNumber } = props;
   // contains filtering needs adding to specific datasources
   const [values, setValues] = useState([""]);
   const [disabled, setDisabled] = useState(false);
-  const [operator, setOperator] = useState(type === "str" ? "" : "=");
+  const [operator, setOperator] = useState(!isNumber ? "" : "=");
   const [exists, setExists] = useState<boolean>(false);
   const [negate, setNegate] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [listValue, setListValue] = useState<string>("");
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
-  const isNum = type === "int" || type === "float";
-  const operators = isNum ? ["=", "<", ">", "≤", "≥"] : ["contains"];
+
+  const operators = isNumber ? ["=", "<", ">", "≤", "≥"] : ["contains"];
 
   filterListener(
     {
@@ -218,10 +225,10 @@ export function FilterTextInput(props: IFilterInput) {
 
   return (
     <div
-      className={isNum ? "tol-num-filter" : "tol-text-filter"}
+      className={isNumber ? "tol-num-filter" : "tol-text-filter"}
       onClick={stopPropagation}
     >
-      {isNum && (
+      {isNumber && (
         <Dropdown title={operator} noCaret>
           {operators.map((op, i) => {
             if (op !== operator) {
@@ -234,7 +241,7 @@ export function FilterTextInput(props: IFilterInput) {
           })}
         </Dropdown>
       )}
-      {type === "str" && values.length <= 1 && (
+      {!isNumber && values.length <= 1 && (
         <BSButton
           className="tol-in-list-button"
           disabled={disabled}
@@ -243,7 +250,7 @@ export function FilterTextInput(props: IFilterInput) {
           <FontAwesomeIcon icon={faList} size="sm" />
         </BSButton>
       )}
-      {type === "str" && values.length > 1 ? (
+      {!isNumber && values.length > 1 ? (
         <span className="tol-multi-filter">
           <MultipleSelect
             block

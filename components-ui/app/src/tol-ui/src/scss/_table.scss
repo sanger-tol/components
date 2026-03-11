@@ -441,7 +441,7 @@ span.rs-dropdown-toggle-icon {
   flex-direction: column;
 }
 
-.rs-table-cell-content:has(.tol-cell-renderer-integer) {
+.rs-table-cell-content:has(.tol-data-point-renderer-integer) {
   justify-items: end !important;
   padding-right: 25px !important;
 }

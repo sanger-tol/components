@@ -93,7 +93,7 @@ export async function returnViewInfo(
       },
     })
     .then((data: TDataObjectListOrNull) => {
-      return data?.[0].title; // temporary assumption - only one view per ID
+      return data?.[0]?.title; // temporary assumption - only one view per ID
     })
     .catch((error: any) => {
       console.error("Error fetching view info:", error);
@@ -172,7 +172,7 @@ export async function fetchSubItemId(
         data?.map(async (item: TDataObjectOrNull) => {
           const relationshipData = await item?.fetchRelationships?.[itemType];
           return {
-            id: relationshipData?.id,
+            id: relationshipData?.["id"],
             order: item?.order,
           };
         }) || [],

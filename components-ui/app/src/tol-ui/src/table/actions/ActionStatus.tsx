@@ -9,13 +9,13 @@ import {
   StatusMessage,
   TsDataSource,
   Placeholder,
-  PCell,
   env,
-  PREFECT_API_DATA_PATH
+  PREFECT_API_DATA_PATH,
+  PCellDisplay
 } from "../..";
 
 
-export function ActionStatus(props: PCell) {
+export function ActionStatus(props: PCellDisplay) {
   // inherits from PCell which sets dataObject as TDataObjectOrNull, assume not null here
   const flowRunId = props.dataObject?.params.flow_run_id;
   const flowRunName = props.dataObject?.params.flow_run_name;

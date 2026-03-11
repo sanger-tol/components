@@ -6,9 +6,7 @@ SPDX-License-Identifier: MIT
 
 import * as XLSX from "xlsx";
 import {
-  Field,
   FieldMeta,
-  isFloat,
   normaliseCaps,
   colours,
   TsDataSource,
@@ -18,7 +16,7 @@ import {
   ITableData,
   ITableRecord,
   TCellRenderer,
-  Cell,
+  DataPoints,
   deepCopy,
   ICustomCellRenderers,
   copyToClipboard,
@@ -27,6 +25,9 @@ import {
   TCellHeights,
   DEFAULT_ROW_HEIGHT,
   COLLAPSED_ROW_MAX_HEIGHT,
+  getRelationshipNameByField,
+  CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
+  CELL_RENDERER_SPREAD_OPERATOR,
 } from "..";
 
 interface Rgb {
@@ -70,21 +71,6 @@ export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
   } as FieldMeta;
 }
 
-function addValueBasedCellRenderer(
-  value: any,
-  meta: Field,
-) {
-  if (value) {
-    if (typeof value === "object") {
-      meta.cellRenderer = { type: "collection" };
-    } else if (value.length > 32) {
-      meta.cellRenderer = { type: "expander" };
-    } else if (isFloat(value)) {
-      meta.cellRenderer = { type: "float" };
-    }
-  }
-}
-
 export function convertTableData(
   dataObjects: TDataObjectListOrNull,
   dataSource: TsDataSource,
@@ -97,20 +83,15 @@ export function convertTableData(
   const data: ITableData = [];
   // loop over each data object
   dataObjects!.forEach((obj) => {
-    const row: ITableRecord = { key: obj.id };
+    const row: ITableRecord = { key: obj?.id };
     // loop over each field
-    fieldMeta.order.active.forEach((attribute) => {
-      const value = getFieldByName(obj, attribute);
-      if (!fieldMeta.dataWithDefaults![attribute]?.cellRenderer) {
-        addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![attribute]);
-      }
-      row[attribute] = (
-        <Cell
-          attribute={attribute}
-          value={value}
+    fieldMeta.order.active.forEach((field) => {
+      row[field] = (
+        <DataPoints
+          field={field}
           dataObject={obj}
           dataSource={dataSource}
-          renderer={fieldMeta.dataWithDefaults?.[attribute]?.cellRenderer}
+          renderer={fieldMeta.dataWithDefaults?.[field]?.cellRenderer}
           setExpandedRows={setExpandedRows}
           customCellRenderers={customCellRenderers}
           editable={editableCells}
@@ -293,7 +274,7 @@ export async function getActions(
   });
 
   actions?.forEach((action) => {
-    actionsList.push(action.name);
+    actionsList.push(action?.name);
   });
 
   return actionsList;
@@ -350,13 +331,20 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
   copyToClipboard(copyList);
 }
 
-function addFieldsFromTemplateProp(requestedFields: Set<string>, value: unknown) {
+function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, fieldName: string) {
   if (typeof value !== "string" || !value.includes("${")) return;
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
   matches.forEach((match) => {
-    const key = match.replace("${", "").replace("}", "").trim();
-    if (key) requestedFields.add(key);
+    const relativeAttribute = match
+      .replace("${", "")
+      .replace("}", "")
+      .replace(CELL_RENDERER_SPREAD_OPERATOR, '')
+      .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, '')
+      .trim();
+    const relationship = getRelationshipNameByField(fieldName);
+    const field = relationship ? `${relationship}.${relativeAttribute}` : relativeAttribute;
+    if (field) requestedFields.add(field);
   });
 }
 
@@ -375,6 +363,7 @@ export function amalgamateRequestedFields(fieldMeta: FieldMeta): string[] {
 
   const dataWithDefaults = fieldMeta?.dataWithDefaults || {};
   Object.entries<any>(dataWithDefaults).forEach(([fieldName, meta]) => {
+    // Check if the field is a custom field which won't be on the api
     if (meta?.custom === true) {
       requestedFields.delete(fieldName);
       return;
@@ -384,7 +373,7 @@ export function amalgamateRequestedFields(fieldMeta: FieldMeta): string[] {
     const props = cellRenderer?.props || {};
 
     Object.values(props).forEach((value) => {
-      addFieldsFromTemplateProp(requestedFields, value);
+      addFieldsFromStringProp(requestedFields, value, fieldName);
       addFieldsFromFilterProp(requestedFields, value);
     });
   });
