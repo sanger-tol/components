@@ -334,10 +334,6 @@ const mockClient = () => ({
       baseURL === "/test-data-path"
     ) {
       return Promise.resolve(sampleMockData);
-    } else if (endpoint === "/species" && baseURL === "/test-data-path") {
-      const pageSize = params?.page_size || 10;
-      const mockPageData = Array(pageSize).fill(speciesMockData.data.data);
-      return Promise.resolve({ data: { data: mockPageData } });
     } else if (
       endpoint === "/specimen:to-one/testSpecimenId/lazy_species" &&
       baseURL === "/test-data-path"
@@ -366,11 +362,10 @@ const mockClient = () => ({
       config.baseURL === "/test-data-path"
     ) {
       return Promise.resolve(speciesUpsertMockData);
-    } else if (
-      endpoint === "/species/testSpeciesId" &&
-      config.baseURL === "/test-data-path"
-    ) {
-      return Promise.resolve(speciesMockData);
+    } else if (endpoint === "/species" && config.baseURL === "/test-data-path") {
+      const pageSize = payload?.page_size || 10;
+      const mockPageData = Array(pageSize).fill(speciesMockData.data.data);
+      return Promise.resolve({ data: { data: mockPageData } });
     } else if (endpoint === "/species:cursor" && payload.search_after == null) {
       return Promise.resolve(speciesCursorMockData1);
     } else if (
