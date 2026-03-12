@@ -92,16 +92,14 @@ export function Sunburst(props: Props) {
     chart: any,
     item: any,
   ) {
-    if (item !== undefined) {
-      return;
-    }
+    if (item !== undefined) return;
 
     // only clickable if setBarData is defined
     if (isPropDefined(setSliceData)) {
       if (chartElement.length) {
         const { datasetIndex, index } = chartElement[0];
         const clickKey = chart.data.datasets[datasetIndex].labels[index];
-        if (clickKey !== "More" && clickKey !== "Unknown") {
+        if (clickKey !== "Unknown") {
           // fade non-clicked bars
           updateChartColours(chart, false, 0.25);
           // setting clicked bar as its original colour
@@ -124,7 +122,7 @@ export function Sunburst(props: Props) {
         const { datasetIndex, index } = chartElement[0];
         const clickKey = event.chart.data.datasets[datasetIndex].labels[index];
         event.native.target.style.cursor =
-          clickKey !== "More" && clickKey !== "Unknown" ? "pointer" : "default";
+          clickKey !== "Unknown" ? "pointer" : "default";
       }
     }
   }
