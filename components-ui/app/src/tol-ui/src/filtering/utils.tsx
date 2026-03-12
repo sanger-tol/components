@@ -122,6 +122,22 @@ function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThro
   return filterPassThrough && id !== currentId
 }
 
+function getComponentFilterAttributes(
+  z: IZone,
+  currentId: string,
+  includeSubFilter?: boolean,
+  useDefaultFilter?: boolean,
+) {
+  const componentData = z.components[currentId].data;
+  let currentFilter: IAndAttributes =
+    (useDefaultFilter ? componentData.defaultFilter : componentData.filter)?.and_ || {};
+  const subFilter = componentData.subFilter;
+  if (includeSubFilter && !useDefaultFilter && subFilter) {
+    currentFilter = mergeAndFilters(currentFilter, subFilter.and_ ?? {});
+  }
+  return currentFilter;
+}
+
 export function generateFilter(
   zone: IZone,
   id?: string,
@@ -132,6 +148,8 @@ export function generateFilter(
   const z = zone as IZone;
   const aboveComponents = id ? getComponentsAbove(id, z.order) : z.order;
   let compoundedFilter: IAndAttributes = z.filter && z.filter.and_ ? z.filter.and_ : {};
+  let defaultCompoundedFilter: IAndAttributes =
+    z.defaultFilter && z.defaultFilter.and_ ? z.defaultFilter.and_ : {};
   // loop through 'above' components
   for (const currentId of aboveComponents) {
     // exclude pass throughs except self
@@ -142,16 +160,33 @@ export function generateFilter(
     ) {
       continue;
     }
-    let currentFilter: IAndAttributes = z.components[currentId].data.filter?.and_ || {};
-    // include sub filter if required
-    const subFilter = z.components[currentId].data.subFilter;
-    if ((currentId !== id || includeSubFilter) && subFilter) {
-      currentFilter = mergeAndFilters(currentFilter, subFilter.and_ ?? {});
-    }
+    const currentFilter = getComponentFilterAttributes(
+      z,
+      currentId,
+      currentId !== id || includeSubFilter,
+    );
+    const currentDefaultFilter = getComponentFilterAttributes(
+      z,
+      currentId,
+      false,
+      true,
+    );
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
+    defaultCompoundedFilter = mergeAndFilters(
+      currentDefaultFilter,
+      defaultCompoundedFilter,
+    );
   }
   removeSuperfluousExists(compoundedFilter);
-  removeIgnoredAttributes(compoundedFilter, ignoredAttributes);
+  ignoredAttributes.forEach((attribute) => {
+    if (attribute in defaultCompoundedFilter) {
+      compoundedFilter[attribute] = deepCopy(defaultCompoundedFilter[attribute]);
+      return;
+    }
+    if (attribute in compoundedFilter) {
+      delete compoundedFilter[attribute];
+    }
+  });
   // TODO: update when api supports upsert with empty objects
   // return (isEmptyObject(compoundedFilter)) ? {} : { and_: compoundedFilter } as IFilter;
   return {

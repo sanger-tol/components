@@ -17,7 +17,6 @@ import {
   TFilterOrUndefined,
   generateFilter,
   filterHasUpdated,
-  removeAttributeFromFilter,
   API_OPERATIONS,
 } from "..";
 
@@ -51,10 +50,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   }, [values]);
 
   useEffect(() => {
-    const nextFilter = removeAttributeFromFilter(
-      generateFilter(zone, componentId, true),
-        attribute,
-    );
+    const nextFilter = generateFilter(zone, componentId, true, [attribute]);
     if (filterHasUpdated(setStatsFilter, statsFilter, nextFilter)) {
       setFetched(false);
       setData([]);
@@ -78,7 +74,7 @@ export function FilterMultiSelect(props: IFilterInput) {
         group_by: attribute,
         stats_fields: "",
         stats: "",
-        object_filters: JSON.stringify(statsFilter),
+        filter: JSON.stringify(statsFilter),
       }).toString();
       dataSource
         .custom({
