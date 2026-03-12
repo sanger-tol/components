@@ -6,8 +6,12 @@ SPDX-License-Identifier: MIT
 
 import "@testing-library/jest-dom";
 import { expect, test, vitest, describe } from "vitest";
-import { TDataObjectOrNull, TsDataSource, getChildObjectsByName, getFieldByName } from "../../tol-ui/src";
-
+import {
+  TDataObjectOrNull,
+  TsDataSource,
+  getChildObjectsByName,
+  getFieldByName,
+} from "../../tol-ui/src";
 
 const speciesMockData = {
   data: {
@@ -144,7 +148,8 @@ const nestedRelationshipMockData = {
         attributes: {
           name: "speciesName",
         },
-      }]
+      },
+    ],
   },
 };
 
@@ -186,10 +191,9 @@ const toManyRelationshipMockData = {
           rackPosition: "A4",
         },
       },
-    ]
+    ],
   },
 };
-
 
 const attributeMetadataMockData = {
   specimen: {
@@ -197,30 +201,30 @@ const attributeMetadataMockData = {
       authoritative: null,
       available_on_relationships: null,
       cardinality: 10,
-      description: 'This is a specimen id',
+      description: "This is a specimen id",
       display_name: null,
       python_type: "int",
-    }
+    },
   },
   species: {
     id: {
       authoritative: null,
       available_on_relationships: null,
       cardinality: 10,
-      description: 'This is a species id',
+      description: "This is a species id",
       display_name: null,
       python_type: "int",
-    }
+    },
   },
   sample: {
     id: {
       authoritative: null,
       available_on_relationships: null,
       cardinality: 10,
-      description: 'This is a sample id',
+      description: "This is a sample id",
       display_name: null,
       python_type: "int",
-    }
+    },
   },
   barcoding_run_data: {
     bioscan_c: {
@@ -295,25 +299,40 @@ const relationshipConfigMockData = {
     one: {
       benchling_specimen: "specimen",
     },
-  }
+  },
 };
 
 const mockClient = () => ({
   get(
     endpoint: string,
-    { baseURL, params }: { baseURL: string; params?: any }
+    { baseURL, params }: { baseURL: string; params?: any },
   ) {
-    if (endpoint === "/_config/attribute_metadata" && baseURL === "/test-data-path") {
+    if (
+      endpoint === "/_config/attribute_metadata" &&
+      baseURL === "/test-data-path"
+    ) {
       return Promise.resolve({ data: attributeMetadataMockData });
-    } else if (endpoint === "/species/testSpeciesId" && baseURL === "/test-data-path") {
+    } else if (
+      endpoint === "/species/testSpeciesId" &&
+      baseURL === "/test-data-path"
+    ) {
       return Promise.resolve(speciesMockData);
-    } else if (endpoint === "/noCacheTest/nestedRelationships1" && baseURL === "/test-data-path") {
+    } else if (
+      endpoint === "/noCacheTest/nestedRelationships1" &&
+      baseURL === "/test-data-path"
+    ) {
       return Promise.resolve(nestedRelationshipMockData);
     } else if (endpoint === "/specimen/SAN1" && baseURL === "/test-data-path") {
       return Promise.resolve(toManyRelationshipMockData);
-    } else if (endpoint === "/specimen/testSpecimenId" && baseURL === "/test-data-path") {
+    } else if (
+      endpoint === "/specimen/testSpecimenId" &&
+      baseURL === "/test-data-path"
+    ) {
       return Promise.resolve(specimenMockData);
-    } else if (endpoint === "/sample/testSampleId" && baseURL === "/test-data-path") {
+    } else if (
+      endpoint === "/sample/testSampleId" &&
+      baseURL === "/test-data-path"
+    ) {
       return Promise.resolve(sampleMockData);
     } else if (endpoint === "/species" && baseURL === "/test-data-path") {
       const pageSize = params?.page_size || 10;
@@ -324,20 +343,34 @@ const mockClient = () => ({
       baseURL === "/test-data-path"
     ) {
       return Promise.resolve(toOneSpeciesMockData);
-    } else if (endpoint === "/_config/relationships" && baseURL === "/test-data-path") {
+    } else if (
+      endpoint === "/_config/relationships" &&
+      baseURL === "/test-data-path"
+    ) {
       return Promise.resolve({ data: relationshipConfigMockData });
     }
     return Promise.reject({ response: { status: 404 } });
   },
   delete(endpoint: string, { baseURL }: { baseURL: string; params?: any }) {
-    if (endpoint === "/species/testSpeciesId" && baseURL === "/test-data-path") {
+    if (
+      endpoint === "/species/testSpeciesId" &&
+      baseURL === "/test-data-path"
+    ) {
       return Promise.resolve(null);
     }
     return Promise.reject({ response: { status: 404 } });
   },
   post(endpoint: string, payload, config: { baseURL: string }) {
-    if (endpoint === "/species:upsert" && config.baseURL === "/test-data-path") {
+    if (
+      endpoint === "/species:upsert" &&
+      config.baseURL === "/test-data-path"
+    ) {
       return Promise.resolve(speciesUpsertMockData);
+    } else if (
+      endpoint === "/species/testSpeciesId" &&
+      config.baseURL === "/test-data-path"
+    ) {
+      return Promise.resolve(speciesMockData);
     } else if (endpoint === "/species:cursor" && payload.search_after == null) {
       return Promise.resolve(speciesCursorMockData1);
     } else if (
@@ -364,7 +397,7 @@ const mockDataSource = new TsDataSource({
 describe("generateEndpoint function", () => {
   test("Returns empty string with no objectType or suffix", () => {
     const mockDataSource = new TsDataSource({
-      apiDataPath: "/test-data-path"
+      apiDataPath: "/test-data-path",
     });
     const endpoint = mockDataSource.generateEndpoint();
     expect(endpoint).toBe("");
@@ -654,10 +687,10 @@ describe("Testing getList function", () => {
     if (cursorDataObjects) {
       expect(cursorDataObjects).toBeDefined();
       expect(clientCursorPostSpy).toHaveBeenCalledTimes(3);
-      expect(cursorDataObjects[0].id).toEqual("newTestSpeciesId");
-      expect(cursorDataObjects[0].objectType).toEqual("species");
-      expect(cursorDataObjects[0].name).toEqual("test species");
-      expect(cursorDataObjects[1].id).toEqual("newTestSpeciesIdX2");
+      expect(cursorDataObjects[0]!.id).toEqual("newTestSpeciesId");
+      expect(cursorDataObjects[0]!.objectType).toEqual("species");
+      expect(cursorDataObjects[0]!.name).toEqual("test species");
+      expect(cursorDataObjects[1]!.id).toEqual("newTestSpeciesIdX2");
       expect(cursorDataObjects).toHaveLength(2);
     }
   });
@@ -767,7 +800,7 @@ describe("Testing upsert method", () => {
         },
       ],
     });
-    expect(dataObject![0].id).toEqual("newTestSpeciesId");
+    expect(dataObject![0]!.id).toEqual("newTestSpeciesId");
     expect(clientPostSpy).toHaveBeenCalledTimes(1);
   });
 });
@@ -789,10 +822,12 @@ describe("Testing relationships getting", () => {
 
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
     expect(sample).not.toBeNull();
-    expect(sample?.relationships?.specimen?.["id"]).toEqual("nestedRelationships2");
-    expect(sample?.relationships?.specimen?.["relationships"]?.species?.["name"]).toEqual(
-      "speciesName"
+    expect(sample?.relationships?.specimen?.["id"]).toEqual(
+      "nestedRelationships2",
     );
+    expect(
+      sample?.relationships?.specimen?.["relationships"]?.species?.["name"],
+    ).toEqual("speciesName");
     expect(clientGetSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -932,17 +967,23 @@ describe("Testing temp getFieldByName function", async () => {
   const testDataObject = await mockDataSource.getOne({
     objectType: "noCacheTest",
     id: "nestedRelationships1",
-  })
+  });
 
   test("Returns correct value from an attribute or related attribute", () => {
     expect(testDataObject).toBeDefined();
     expect(getFieldByName(testDataObject, "name")).toBe("sampleName");
-    expect(getFieldByName(testDataObject, "specimen.name")).toBe("specimenName");
-    expect(getFieldByName(testDataObject, "specimen.species.name")).toBe("speciesName");
+    expect(getFieldByName(testDataObject, "specimen.name")).toBe(
+      "specimenName",
+    );
+    expect(getFieldByName(testDataObject, "specimen.species.name")).toBe(
+      "speciesName",
+    );
   });
 
   test("Ensures a field's value is undefined if it does not exist", () => {
-    expect(getFieldByName(testDataObject, "doesNotExist.alsoDoesNotExist")).toBeUndefined();
+    expect(
+      getFieldByName(testDataObject, "doesNotExist.alsoDoesNotExist"),
+    ).toBeUndefined();
     // check if null obj
   });
 
@@ -953,7 +994,10 @@ describe("Testing temp getFieldByName function", async () => {
     });
 
     expect(toManyDataObject).toBeDefined();
-    const tubosPositions = getFieldByName(toManyDataObject, "samples.rackPosition");
+    const tubosPositions = getFieldByName(
+      toManyDataObject,
+      "samples.rackPosition",
+    );
     expect(Array.isArray(tubosPositions)).toBe(true);
     expect(tubosPositions).toEqual(["A3", "A4"]);
   });
@@ -965,15 +1009,22 @@ describe("Testing temp getFieldByName function", async () => {
     });
 
     expect(toManyDataObject).toBeDefined();
-    const nonExistentValues = getFieldByName(toManyDataObject, "samples.nonExistentField");
+    const nonExistentValues = getFieldByName(
+      toManyDataObject,
+      "samples.nonExistentField",
+    );
     expect(Array.isArray(nonExistentValues)).toBe(true);
     expect(nonExistentValues).toEqual([undefined, undefined]);
   });
-})
+});
 
 describe("Testing temp getChildObjectsByName function", () => {
   test("Returns the current object wrapped in an array when field has no dot (including null)", () => {
-    const obj: TDataObjectOrNull = { id: "1", objectType: "test", relationships: {} };
+    const obj: TDataObjectOrNull = {
+      id: "1",
+      objectType: "test",
+      relationships: {},
+    };
     expect(getChildObjectsByName(obj, "name")).toEqual([obj]);
 
     const nil: TDataObjectOrNull = null;
@@ -981,7 +1032,11 @@ describe("Testing temp getChildObjectsByName function", () => {
   });
 
   test("Traverses a single relationship segment when field contains a dot, returning the related object", () => {
-    const child: TDataObjectOrNull = { id: "c1", objectType: "child", relationships: {} };
+    const child: TDataObjectOrNull = {
+      id: "c1",
+      objectType: "child",
+      relationships: {},
+    };
     const root: TDataObjectOrNull = {
       id: "r1",
       objectType: "root",
@@ -995,20 +1050,50 @@ describe("Testing temp getChildObjectsByName function", () => {
   });
 
   test("Traverses multiple relationship segments, returning the object at the end of the relationship path", () => {
-    const address: TDataObjectOrNull = { id: "addr1", objectType: "address", relationships: {} };
-    const author: TDataObjectOrNull = { id: "a1", objectType: "author", relationships: { address } };
-    const root: TDataObjectOrNull = { id: "r1", objectType: "root", relationships: { author } };
+    const address: TDataObjectOrNull = {
+      id: "addr1",
+      objectType: "address",
+      relationships: {},
+    };
+    const author: TDataObjectOrNull = {
+      id: "a1",
+      objectType: "author",
+      relationships: { address },
+    };
+    const root: TDataObjectOrNull = {
+      id: "r1",
+      objectType: "root",
+      relationships: { author },
+    };
 
     // author -> address, last segment ("city") is treated as a field
-    expect(getChildObjectsByName(root, "author.address.city")).toEqual([address]);
+    expect(getChildObjectsByName(root, "author.address.city")).toEqual([
+      address,
+    ]);
   });
 
   test("Maps over array relationships and flattens results into a single list", () => {
-    const pet1: TDataObjectOrNull = { id: "p1", objectType: "pet", relationships: {} };
-    const pet2: TDataObjectOrNull = { id: "p2", objectType: "pet", relationships: {} };
+    const pet1: TDataObjectOrNull = {
+      id: "p1",
+      objectType: "pet",
+      relationships: {},
+    };
+    const pet2: TDataObjectOrNull = {
+      id: "p2",
+      objectType: "pet",
+      relationships: {},
+    };
 
-    const child1: TDataObjectOrNull = { id: "c1", objectType: "child", relationships: { pet: pet1 } };
-    const child2: TDataObjectOrNull = { id: "c2", objectType: "child", relationships: { pet: pet2 } };
+    const child1: TDataObjectOrNull = {
+      id: "c1",
+      objectType: "child",
+      relationships: { pet: pet1 },
+    };
+    const child2: TDataObjectOrNull = {
+      id: "c2",
+      objectType: "child",
+      relationships: { pet: pet2 },
+    };
 
     const root: TDataObjectOrNull = {
       id: "r1",
@@ -1018,14 +1103,29 @@ describe("Testing temp getChildObjectsByName function", () => {
       },
     };
 
-    expect(getChildObjectsByName(root, "children.pet.name")).toEqual([pet1, pet2]);
+    expect(getChildObjectsByName(root, "children.pet.name")).toEqual([
+      pet1,
+      pet2,
+    ]);
   });
 
   test("Ignores duplicates of objects", () => {
-    const pet1: TDataObjectOrNull = { id: "p1", objectType: "pet", relationships: {} };
+    const pet1: TDataObjectOrNull = {
+      id: "p1",
+      objectType: "pet",
+      relationships: {},
+    };
 
-    const child1: TDataObjectOrNull = { id: "c1", objectType: "child", relationships: { pet: pet1 } };
-    const child2: TDataObjectOrNull = { id: "c2", objectType: "child", relationships: { pet: pet1 } };
+    const child1: TDataObjectOrNull = {
+      id: "c1",
+      objectType: "child",
+      relationships: { pet: pet1 },
+    };
+    const child2: TDataObjectOrNull = {
+      id: "c2",
+      objectType: "child",
+      relationships: { pet: pet1 },
+    };
 
     const root: TDataObjectOrNull = {
       id: "r1",
@@ -1039,14 +1139,22 @@ describe("Testing temp getChildObjectsByName function", () => {
   });
 
   test("Falls back to returning [null] when a relationship segment is missing", () => {
-    const root: TDataObjectOrNull = { id: "r1", objectType: "root", relationships: {} };
+    const root: TDataObjectOrNull = {
+      id: "r1",
+      objectType: "root",
+      relationships: {},
+    };
 
     // missing relationship => fallthrough to return [null]
     expect(getChildObjectsByName(root, "missing.id")).toEqual([null]);
   });
 
   test("Falls back to returning [null] when a relationship segment is null", () => {
-    const root: TDataObjectOrNull = { id: "r1", objectType: "root", relationships: { child: null } };
+    const root: TDataObjectOrNull = {
+      id: "r1",
+      objectType: "root",
+      relationships: { child: null },
+    };
 
     // null relationship => fallthrough to return [null]
     expect(getChildObjectsByName(root, "child.name")).toEqual([null]);
@@ -1054,33 +1162,33 @@ describe("Testing temp getChildObjectsByName function", () => {
 });
 
 describe("Testing getFieldRelationshipValue", () => {
-  test('Returns correct value from a to many relationship field', async () => {
+  test("Returns correct value from a to many relationship field", async () => {
     const mockAttValue = await mockDataSource.getAttributeDescriptor({
-      objectType: 'species',
-      field: 'benchling_specimens.benchling_samples.id'
-    })
+      objectType: "species",
+      field: "benchling_specimens.benchling_samples.id",
+    });
     expect(mockAttValue).toBeDefined();
     expect(mockAttValue?.cardinality).toBe(10);
     expect(mockAttValue?.python_type).toBe("int");
-    expect(mockAttValue?.description).toBe('This is a sample id');
-  })
+    expect(mockAttValue?.description).toBe("This is a sample id");
+  });
 
-  test('Returns correct value from a to one relationship field', async () => {
+  test("Returns correct value from a to one relationship field", async () => {
     const mockAttValue = await mockDataSource.getAttributeDescriptor({
-      objectType: 'sample',
-      field: 'benchling_specimen.benchling_species.id'
-    })
+      objectType: "sample",
+      field: "benchling_specimen.benchling_species.id",
+    });
     expect(mockAttValue).toBeDefined();
     expect(mockAttValue?.cardinality).toBe(10);
     expect(mockAttValue?.python_type).toBe("int");
-    expect(mockAttValue?.description).toBe('This is a species id');
-  })
+    expect(mockAttValue?.description).toBe("This is a species id");
+  });
 
-  test('Returns undefined for non-existent relationship field', async () => {
+  test("Returns undefined for non-existent relationship field", async () => {
     const mockAttValue = await mockDataSource.getAttributeDescriptor({
-      objectType: 'sample',
-      field: 'benchling_specimen.non_existent_field'
-    })
+      objectType: "sample",
+      field: "benchling_specimen.non_existent_field",
+    });
     expect(mockAttValue).toBeUndefined();
-  })
-})
+  });
+});
