@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Modal } from "..";
+import { Modal, encodeImageSrc } from "..";
 
 
 export interface PImageModal {
@@ -25,7 +25,7 @@ export function ImageModal(props: PImageModal) {
     >
       <div style={{ textAlign: "center" }}>
         <img
-          src={value}
+          src={encodeImageSrc(value)}
           className="tol-table-image-modal-image"
           title={value}
         />

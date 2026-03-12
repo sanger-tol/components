@@ -238,6 +238,14 @@ export function truncateString(str: string, maxLength: number = 50) {
   return str;
 }
 
+export function encodeImageSrc(url: string): string {
+  const match = url.match(/^(https?:\/\/[^/]+)(\/.*)$/);
+  if (!match) return url;
+  const origin = match[1];
+  const path = match[2];
+  return origin + path.split("/").map(s => encodeURIComponent(s)).join("/");
+}
+
 export function copyToClipboard(text: string): void {
   if (navigator.clipboard) {
     navigator.clipboard

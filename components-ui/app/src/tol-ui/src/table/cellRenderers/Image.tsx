@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ImageModal, PCellDisplay } from "../..";
+import { ImageModal, PCellDisplay, encodeImageSrc } from "../..";
 import { useState } from "react";
 
 export interface PImage extends PCellDisplay {
@@ -29,7 +29,7 @@ export function Image(props: PImage) {
         className={"tol-table-image-cell"}
         onClick={() => setOpen(true)}
       >
-        <img src={value} />
+        <img src={encodeImageSrc(value)} />
       </span>
     </div>
   );
