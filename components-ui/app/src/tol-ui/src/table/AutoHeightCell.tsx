@@ -19,6 +19,7 @@ export function AutoHeightCell(props: PAutoHeightCell) {
   const { rowId, columnId, onHeightChange, children } = props;
 
   const ref = useRef<HTMLDivElement | null>(null);
+  const lastReportedHeight = useRef<number>(0);
 
   useLayoutEffect(() => {
     if (!ref.current || !rowId || !columnId) return;
@@ -26,8 +27,11 @@ export function AutoHeightCell(props: PAutoHeightCell) {
     const element = ref.current;
 
     const measure = () => {
-      const height = element.offsetHeight + CELL_PADDING;
-      if (height) onHeightChange(rowId, columnId, height);
+      const height = Math.ceil(element.scrollHeight) + CELL_PADDING;
+      if (height && height !== lastReportedHeight.current) {
+        lastReportedHeight.current = height;
+        onHeightChange(rowId, columnId, height);
+      }
     };
 
     measure();
