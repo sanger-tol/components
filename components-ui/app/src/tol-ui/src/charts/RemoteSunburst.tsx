@@ -138,11 +138,13 @@ export function RemoteSunburst(props: PRemoteSunburst) {
           const data = aggsToSunburstData(aggs, sliceBy);
           setDatasets(data);
           setSliceData({});
-          setLoading(false);
         })
         .catch((error: any) => {
           setErrorMessage(error.message);
           console.error(error.message);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   }, [filter, forceUpdate]);
@@ -150,7 +152,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   // for sub sunburst updates
   useEffectUpdate(() => {
     if (!contents) {
-      const localFilter = generateFilterFromSunburstClick(sliceData);
+      const localFilter = generateFilterFromSunburstClick(sliceData, datasets);
       // this also resets components below
       addSubFilter({
         id: id,

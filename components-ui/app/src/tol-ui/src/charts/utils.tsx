@@ -733,10 +733,8 @@ export function generateSunburstLabels(chart: any, titleColour: any) {
   );
 }
 
-function initialiseOrIncrementDepth(depth: number | undefined) {
-  if (depth === undefined) {
-    return 0;
-  }
+function initialiseOrIncrementDepth(depth?: number) {
+  if (depth === undefined) return 0;
   return depth + 1;
 }
 
@@ -859,7 +857,7 @@ export function aggsToSunburstData(
   }
 
   // adding an 'unknown' bucket where parent > sum of children
-  if (parentDocCount !== 0 && parentDocCount !== undefined) {
+  if (parentDocCount) {
     const bucketsDocCount = calcBucketDocCountTotal(buckets);
     addExtraDocCount(
       "Unknown",
@@ -922,7 +920,6 @@ export function setSliceClickedData(
   }
 }
 
-// will be required for the 'MORE' filter
 export function getAllBucketsOfRing(bucket: string, datasets: any): string[] {
   const keys: any = [];
 
@@ -951,11 +948,22 @@ export function getAllBucketsOfRing(bucket: string, datasets: any): string[] {
   return keys;
 }
 
-export function generateFilterFromSunburstClick(sliceData: any) {
-  if (sliceData["bucket"] !== undefined) {
+export function generateFilterFromSunburstClick(sliceData: any, datasets: any) {
+  if (sliceData["bucket"]) {
     const filter = {};
-    filter[sliceData["bucket"]] = {};
-    filter[sliceData["bucket"]]["eq"] = { value: sliceData["clickKey"] };
+    if (sliceData["clickKey"] === "More") {
+      filter[sliceData["bucket"]] = {};
+      filter[sliceData["bucket"]]["in_list"] = {
+        value: getAllBucketsOfRing(sliceData["bucket"], datasets),
+        negate: true,
+      };
+    } else {
+      filter[sliceData["bucket"]] = {};
+      filter[sliceData["bucket"]]["eq"] = {
+        value: sliceData["clickKey"]
+      };
+    }
+    console.log(filter);
     return { and_: filter };
   }
   return {};
