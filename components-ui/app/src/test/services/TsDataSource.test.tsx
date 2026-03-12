@@ -356,14 +356,14 @@ const mockClient = () => ({
     }
     return Promise.reject({ response: { status: 404 } });
   },
-  post(endpoint: string, payload, config: { baseURL: string }) {
+  post(endpoint: string, payload, config: { baseURL: string, params?: any }) {
     if (
       endpoint === "/species:upsert" &&
       config.baseURL === "/test-data-path"
     ) {
       return Promise.resolve(speciesUpsertMockData);
     } else if (endpoint === "/species" && config.baseURL === "/test-data-path") {
-      const pageSize = payload?.page_size || 10;
+      const pageSize = config?.params?.page_size || 10;
       const mockPageData = Array(pageSize).fill(speciesMockData.data.data);
       return Promise.resolve({ data: { data: mockPageData } });
     } else if (endpoint === "/species:cursor" && payload.search_after == null) {
