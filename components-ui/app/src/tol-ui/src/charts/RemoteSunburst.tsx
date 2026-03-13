@@ -152,7 +152,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   // for sub sunburst updates
   useEffectUpdate(() => {
     if (!contents) {
-      const localFilter = generateFilterFromSunburstClick(sliceData, datasets);
+      const localFilter = generateFilterFromSunburstClick(sliceData, sliceBy, datasets);
       // this also resets components below
       addSubFilter({
         id: id,
