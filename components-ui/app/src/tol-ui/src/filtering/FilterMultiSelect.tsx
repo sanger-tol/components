@@ -18,7 +18,10 @@ import {
   generateFilter,
   filterHasUpdated,
   API_OPERATIONS,
+  resetFiltersBelow,
+  useEffectUpdate,
 } from "..";
+import { stat } from "node:fs";
 
 
 export function FilterMultiSelect(props: IFilterInput) {
@@ -39,30 +42,34 @@ export function FilterMultiSelect(props: IFilterInput) {
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [statsFilter, setStatsFilter] = useState<TFilterOrUndefined>({});
   const operator = "in_list";
 
-  useEffect(() => {
-    if (!fetched && values.length !== 0) {
-      fetchValues();
-    }
-  }, [values]);
+  // be aware of fetching on first load
 
   useEffect(() => {
-    const nextFilter = generateFilter(zone, componentId, true, [attribute]);
+    const nextFilter = generateFilter(zone, componentId, false, [attribute]);
     if (filterHasUpdated(setStatsFilter, statsFilter, nextFilter)) {
-      setFetched(false);
-      setData([]);
+      if (attribute === "sts_gal_name") {
+        console.log(nextFilter?.and_?.["sts_gal_name"]?.["in_list"]?.value, 'nextFilter');
+      }
+      resetFiltersBelow({ id: componentId, zone: zone });
+      setZone({ ...zone });
     }
   }, [zone]);
+
+  useEffectUpdate(() => {
+    fetchValues();
+  }, [statsFilter]);
 
   useEffect(() => {
     errorMessage && PopUpMessage({ message: errorMessage, type: "error" });
   }, [errorMessage]);
 
   const fetchValues = () => {
-    if (!fetched) {
+    //if (!fetched) {
       setLoading(true);
       // TEMPORARY FIX:
       // Construct a URL param string and append it to the resource, because:
@@ -70,6 +77,9 @@ export function FilterMultiSelect(props: IFilterInput) {
       // b. Empty arrays are being parsed out, and the params are required on the API
       // c. Should switch to a POST method in the near future.
       // TODO: Remove on POST method implementation
+      if (attribute === "sts_gal_name") {
+        console.log(statsFilter?.and_?.["sts_gal_name"]?.["in_list"]?.value, 'statsFilter');
+      }
       const queryParamsString = new URLSearchParams({
         group_by: attribute,
         stats_fields: "",
@@ -84,8 +94,6 @@ export function FilterMultiSelect(props: IFilterInput) {
         .then((res: any) => {
           const statsValues = res.data.meta.stats;
           setData(statsValues.map((item: any) => item.key[attribute]));
-          setLoading(false);
-          setFetched(true);
           updateDropdownText("No results found");
         })
         .catch((error: any) => {
@@ -99,11 +107,13 @@ export function FilterMultiSelect(props: IFilterInput) {
               ".",
           );
           console.error(error.message);
+          updateDropdownText("Error fetching values");
+        })
+        .finally(() => {
           setLoading(false);
           setFetched(true);
-          updateDropdownText("Error fetching values");
         });
-    }
+    //}
   };
 
   filterListener(
@@ -194,9 +204,11 @@ export function FilterMultiSelect(props: IFilterInput) {
         setValue={onFilter}
         loading={loading}
         onEntering={() => setDropdownText()}
+        onOpen={() => setIsOpen(true)}
+        onClose={() => setIsOpen(false)}
         onClick={(e) => {
           e.stopPropagation();
-          fetchValues();
+          //fetchValues();
         }}
       />
       <FilterToggle

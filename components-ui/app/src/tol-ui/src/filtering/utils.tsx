@@ -51,63 +51,14 @@ export function filterHasUpdated(
   return hasUpdated;
 }
 
-export function mergeAndFilters(target: object, incoming: object) {
+export function mergeAndFilters(target: object, override: object) {
   const output = deepCopy(target);
-  for (const id in incoming) {
+  for (const id in override) {
     const currentOut = id in output ? output[id] : {};
-    const currentIn = id in incoming ? incoming[id] : {};
+    const currentIn = id in override ? override[id] : {};
     output[id] = Object.assign(currentOut, currentIn);
   }
   return output as IAndAttributes;
-}
-
-/**
- * Removes a specific attribute from an `and_` filter block
- *
- * @param filter - The filter object that may contain an `and_` block
- * @param attr - The attribute key to remove from `filter.and_`
- * 
- * @returns A shallow-cloned filter without the provided attribute when possible; otherwise, the original filter
- */
-export function removeAttributeFromFilter(
-  filter: IFilter | undefined,
-  attr: string,
-): IFilter | undefined {
-  if (!filter || !("and_" in filter) || !filter.and_ || !(attr in filter.and_)) return filter;
-  const next = {
-    ...filter,
-    and_: { ...filter.and_ },
-  };
-  delete next.and_[attr];
-  return next;
-}
-
-// removes 'exists' operators if there are other operators for the same attribute
-export function removeSuperfluousExists(filter: IAndAttributes) {
-  Object.keys(filter).forEach((attribute) => {
-    const operators = Object.keys(filter[attribute]);
-    if (operators.length >= 2 && "exists" in filter[attribute]) {
-      delete filter[attribute]["exists"];
-    }
-  });
-}
-
-/**
- * Removes ignored attributes from the provided `and_` filter block.
- *
- * @param filter - The filter attributes to mutate in place.
- * @param ignoredAttributes - Attribute keys to remove when present.
- */
-export function removeIgnoredAttributes(
-  filter: IAndAttributes,
-  ignoredAttributes: string[] = [],
-) {
-  if (ignoredAttributes.length === 0) return;
-  ignoredAttributes.forEach((attribute) => {
-    if (attribute in filter) {
-      delete filter[attribute];
-    }
-  });
 }
 
 /**
@@ -121,74 +72,73 @@ export function removeIgnoredAttributes(
 function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThrough?: boolean) {
   return filterPassThrough && id !== currentId
 }
-
-function getComponentFilterAttributes(
-  z: IZone,
+ 
+function useDefaultFilterWhereNecessary(
+  id: string,
   currentId: string,
-  includeSubFilter?: boolean,
-  useDefaultFilter?: boolean,
+  andFilter: IAndAttributes,
+  defaultAndFilter: IAndAttributes,
+  useDefaultFilterOnly: string[] = [],
 ) {
-  const componentData = z.components[currentId].data;
-  let currentFilter: IAndAttributes =
-    (useDefaultFilter ? componentData.defaultFilter : componentData.filter)?.and_ || {};
-  const subFilter = componentData.subFilter;
-  if (includeSubFilter && !useDefaultFilter && subFilter) {
-    currentFilter = mergeAndFilters(currentFilter, subFilter.and_ ?? {});
+  const updatedAndFilter = deepCopy(andFilter);
+  if (id === currentId) {
+    for (const attribute of useDefaultFilterOnly) {
+      // If the attribute is in the default filter, use that value
+      if (attribute in defaultAndFilter) {
+        updatedAndFilter[attribute] = mergeAndFilters(
+          updatedAndFilter[attribute] || {},
+          defaultAndFilter[attribute]
+        );
+        continue;
+      }
+    }
   }
-  return currentFilter;
+  return updatedAndFilter;
 }
 
 export function generateFilter(
   zone: IZone,
   id?: string,
-  includeSubFilter?: boolean,
-  ignoredAttributes: string[] = [],
+  includeOwnSubFilter?: boolean,
+  useDefaultFilterOnly: string[] = [],
 ) {
   if (zone === undefined) return undefined;
   const z = zone as IZone;
+
+  // Get the list of components above the current component in the zone's order, including itself
   const aboveComponents = id ? getComponentsAbove(id, z.order) : z.order;
-  let compoundedFilter: IAndAttributes = z.filter && z.filter.and_ ? z.filter.and_ : {};
-  let defaultCompoundedFilter: IAndAttributes =
-    z.defaultFilter && z.defaultFilter.and_ ? z.defaultFilter.and_ : {};
-  // loop through 'above' components
+
+  // Start with zone filter
+  let compoundedFilter: IAndAttributes = z.filter && z.filter.and_ ? z.filter.and_ : {}; 
+
+  // Loop through 'above' components
   for (const currentId of aboveComponents) {
-    // exclude pass throughs except self
-    if (
-      shouldFilterPassThrough(
-        id, currentId, z.components[currentId].data.filterPassThrough
-      )
-    ) {
+    // Exclude pass throughs except self
+    if (shouldFilterPassThrough(
+      id, currentId, z.components[currentId].data.filterPassThrough
+    )) {
       continue;
     }
-    const currentFilter = getComponentFilterAttributes(
-      z,
+
+    // Current filter for the currentId
+    let currentFilter: IAndAttributes = useDefaultFilterWhereNecessary(
+      id!,
       currentId,
-      currentId !== id || includeSubFilter,
-    );
-    const currentDefaultFilter = getComponentFilterAttributes(
-      z,
-      currentId,
-      false,
-      true,
-    );
+      z.components[currentId].data.filter?.and_ || {},
+      z.components[currentId].data.defaultFilter?.and_ || {},
+      useDefaultFilterOnly,
+    ) as IAndAttributes;
+
+    // Include sub filter if required
+    const subFilter = z.components[currentId].data.subFilter;
+    if ((currentId !== id || includeOwnSubFilter) && subFilter) {
+      currentFilter = mergeAndFilters(currentFilter, subFilter.and_ ?? {});
+    }
+
+    // Add current filter to the compounded filter
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
-    defaultCompoundedFilter = mergeAndFilters(
-      currentDefaultFilter,
-      defaultCompoundedFilter,
-    );
   }
-  removeSuperfluousExists(compoundedFilter);
-  ignoredAttributes.forEach((attribute) => {
-    if (attribute in defaultCompoundedFilter) {
-      compoundedFilter[attribute] = deepCopy(defaultCompoundedFilter[attribute]);
-      return;
-    }
-    if (attribute in compoundedFilter) {
-      delete compoundedFilter[attribute];
-    }
-  });
-  // TODO: update when api supports upsert with empty objects
-  // return (isEmptyObject(compoundedFilter)) ? {} : { and_: compoundedFilter } as IFilter;
+
   return {
     and_: compoundedFilter,
   } as IFilter;
