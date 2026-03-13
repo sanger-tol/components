@@ -82,16 +82,6 @@ export function removeAttributeFromFilter(
   return next;
 }
 
-// removes 'exists' operators if there are other operators for the same attribute
-export function removeSuperfluousExists(filter: IAndAttributes) {
-  Object.keys(filter).forEach((attribute) => {
-    const operators = Object.keys(filter[attribute]);
-    if (operators.length >= 2 && "exists" in filter[attribute]) {
-      delete filter[attribute]["exists"];
-    }
-  });
-}
-
 /**
  * Removes ignored attributes from the provided `and_` filter block.
  *
@@ -150,10 +140,7 @@ export function generateFilter(
     }
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
-  removeSuperfluousExists(compoundedFilter);
   removeIgnoredAttributes(compoundedFilter, ignoredAttributes);
-  // TODO: update when api supports upsert with empty objects
-  // return (isEmptyObject(compoundedFilter)) ? {} : { and_: compoundedFilter } as IFilter;
   return {
     and_: compoundedFilter,
   } as IFilter;
