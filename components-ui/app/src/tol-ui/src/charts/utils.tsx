@@ -953,6 +953,7 @@ export function generateFilterFromSunburstClick(sliceData: any, datasets: any) {
     const filter = {};
     if (sliceData["clickKey"] === "More") {
       filter[sliceData["bucket"]] = {};
+      filter[sliceData["bucket"]]["exists"] = {};
       filter[sliceData["bucket"]]["in_list"] = {
         value: getAllBucketsOfRing(sliceData["bucket"], datasets),
         negate: true,
