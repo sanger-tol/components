@@ -165,10 +165,11 @@ export function RemoteSunburst(props: PRemoteSunburst) {
         setSubDatasets({});
         // go deeper into the sunburst if not outer ring
       } else if (sliceData["datasetIndex"] !== 0) {
+        const subSliceBy = removeSliceBySingles(sliceBy, sliceData["depth"]);
         setSubLoading(true);
         const aggs = createAggsViaSliceBy(
           objectType,
-          removeSliceBySingles(sliceBy, sliceData["depth"]),
+          subSliceBy,
         );
         dataSource
           .custom({
@@ -180,7 +181,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
             const aggs = res.data.meta.aggregations;
             setErrorMessage("");
             setWarningMessage(isChartDataEmpty(aggs));
-            const data = aggsToSunburstData(aggs, sliceBy);
+            const data = aggsToSunburstData(aggs, subSliceBy);
             setSubDatasets(data);
             setSubLoading(false);
           })
@@ -202,7 +203,6 @@ export function RemoteSunburst(props: PRemoteSunburst) {
       return <Placeholder pie />
     }
   }
-
 
   const resetButton: PButton = (!isEmptyObject(datasets) ? {
     outline: true,
