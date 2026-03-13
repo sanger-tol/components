@@ -963,16 +963,21 @@ export function generateFilterFromSunburstClick(sliceData: any, datasets: any) {
         value: sliceData["clickKey"]
       };
     }
-    console.log(filter);
     return { and_: filter };
   }
   return {};
 }
 
-// note: had issues with .slice()
+/**
+ * Returns a new array with the first `depth` elements removed.
+ * Does not mutate the original array.
+ * 
+ * @param sliceBy - The original array to slice.
+ * @param depth - The number of elements to remove from the start of the array.
+ * @returns A new array with single rings removed based on the depth.
+ */
 export function removeSliceBySingles(sliceBy: string[], depth: number) {
-  for (let x = 0; x <= depth - 1; x++) sliceBy.shift();
-  return sliceBy;
+  return sliceBy.slice(depth);
 }
 
 export function downloadItem(chartId: string, chartTitle: string) {
