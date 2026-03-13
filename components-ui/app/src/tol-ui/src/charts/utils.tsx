@@ -948,16 +948,24 @@ export function getAllBucketsOfRing(bucket: string, datasets: any): string[] {
   return keys;
 }
 
-export function generateFilterFromSunburstClick(sliceData: any, datasets: any) {
+export function generateFilterFromSunburstClick(
+  sliceData: any,
+  sliceBy: string[],
+  datasets: any
+) {
   if (sliceData["bucket"]) {
     const filter = {};
     if (sliceData["clickKey"] === "More") {
-      filter[sliceData["bucket"]] = {};
-      filter[sliceData["bucket"]]["exists"] = {};
-      filter[sliceData["bucket"]]["in_list"] = {
-        value: getAllBucketsOfRing(sliceData["bucket"], datasets),
-        negate: true,
-      };
+      // not working yet... need to consider children and depth etc...
+      const selfAndParentBuckets = sliceBy.slice(0, sliceData["depth"]);
+      for (const bucket of selfAndParentBuckets) {
+        filter[sliceData[bucket]] = {};
+        filter[sliceData[bucket]]["exists"] = {};
+        filter[sliceData[bucket]]["in_list"] = {
+          value: getAllBucketsOfRing(sliceData[bucket], datasets),
+          negate: true,
+        };
+      }
     } else {
       filter[sliceData["bucket"]] = {};
       filter[sliceData["bucket"]]["eq"] = {
