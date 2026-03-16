@@ -36,7 +36,11 @@ import {
   themeListener,
   PUtilityBar,
   mergeUtilityBarConfigs,
-  PButton
+  PButton,
+  prepareChartDataForExport,
+  exportDataToSpreadsheet,
+  DownloadModal,
+  calculateTotalAggsSize
 } from "..";
 
 
@@ -66,6 +70,7 @@ interface Props {
   utilityBarConfig?: PUtilityBar;
   contents?: ReactNode;
   chartType?: string;
+  objectType?: string;
 }
 
 export function BarChart(props: Props) {
@@ -79,15 +84,27 @@ export function BarChart(props: Props) {
     utilityBarConfig = {},
     contents,
     chartType = 'bar',
-    downloadName = 'barchart'
+    downloadName = 'barchart',
+    objectType
   } = props;
   const originDatasets = initialiseDatasets(props.datasets);
+
+  console.log(labels)
+  console.log(originDatasets)
+  const testDownload = () => {
+    const data = prepareChartDataForExport(originDatasets, labels)
+    exportDataToSpreadsheet(data, downloadName)
+  }
+
 
   const [datasets, setDatasets] = useState(originDatasets);
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
   // Used to change the height of the y-axis when selecting a legend
   const [maxHeight, setMaxHeight] = useState<number | null>(null);
+
+  const [downloadOpen, setDownloadOpen] = useState<Boolean>(false)
+  const [downloadInProgress, setDownloadInProgress] = useState<Boolean>(false)
 
   // colours
   const [titleColour, setTitleColour] = useState("");
@@ -317,7 +334,8 @@ export function BarChart(props: Props) {
     position: "right",
     type: "primary",
     onClick: () => {
-      downloadItem(props.id, downloadName);
+      setDownloadOpen(true)
+      // downloadItem(props.id, downloadName);
     },
     icon: "download",
     disabled: datasets.length === 0,
@@ -336,6 +354,18 @@ export function BarChart(props: Props) {
 
   return (
     <div style={{ height: height }}>
+      <DownloadModal
+        size="sm"
+        open={downloadOpen}
+        setOpen={setDownloadOpen}
+        title={ubc.title}
+        requestedFields={[]}
+        objectType={objectType || ""}
+        downloadInProgress={downloadInProgress}
+        setDownloadInProgress={setDownloadInProgress}
+        componentType="barchart"
+        totalSize={calculateTotalAggsSize(datasets)}
+      />
       <UtilityBar id={id} {...ubc} />
       <div className="tol-component-contents with-offset">
         {contents ? contents :

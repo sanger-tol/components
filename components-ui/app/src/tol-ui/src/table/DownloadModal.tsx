@@ -18,26 +18,38 @@ import {
   FieldMeta,
   converterForElapsedTime,
   deepCopy,
-  Tabs
+  Tabs,
+  generateSDKScript,
+  generateCLICommand,
+  downloadForTable,
+  IChartDataset,
+  downloadForChart
 } from "..";
 
 interface Props {
+  downloadInProgress: boolean;
+  setDownloadInProgress: (downloadInProgress: boolean) => void;
+  
   size: string;
   open: boolean;
   setOpen: any;
+  totalSize: number;
+  
+  // Tabe specific props 
   objectType: string;
   filter?: any;
 
   source?: string;
-  dataSource: TsDataSource;
+  dataSource?: TsDataSource;
   requestedFields: string[];
   title?: PEditableTitle;
-  fieldMeta: FieldMeta;
+  fieldMeta?: FieldMeta;
 
-  downloadInProgress: boolean;
-  setDownloadInProgress: (downloadInProgress: boolean) => void;
+  componentType?: string
 
-  totalSize: number;
+  // Chart specific props
+  datasets: IChartDataset[]
+  labels: string[]
 }
 
 export function DownloadModal(props: Props) {
@@ -55,6 +67,9 @@ export function DownloadModal(props: Props) {
     totalSize,
     downloadInProgress,
     setDownloadInProgress,
+    componentType = 'table',
+    datasets,
+    labels
   } = props;
   const [fetchCount, setFetchCount] = useState<number>(0);
   const [percentageComplete, setPercentageComplete] = useState<number>(0);
@@ -84,62 +99,11 @@ export function DownloadModal(props: Props) {
     }
   }, [objectType, filter, requestedFields, totalSize, stopDownload]);
 
-  const stringifyFilter = (filter: any) => {
-    if (!filter) {
-      return "None";
-    }
-    // @ts-ignore
-    return JSON.stringify(filter, (key, value) => {
-      if (typeof value === "boolean") {
-        return value ? "True" : "False";
-      }
-      return value;
-    })
-      .replace(/"True"/g, "True")
-      .replace(/"False"/g, "False");
-  };
-
   const sourceToUse = source || "portal";
 
-  const SDKText = `from tol.core import DataSourceFilter
-from tol.sources.${sourceToUse} import ${sourceToUse}
+  const SDKText = generateSDKScript(sourceToUse, filter, objectType)
 
-src = ${sourceToUse}()
-f = DataSourceFilter(
-    and_ = ${stringifyFilter(filter?.and_)}
-)
-objs = src.get_list('${objectType}', object_filters=f) 
-  `;
-
-  const CLICommand = `
-tol data \
---source=${sourceToUse || "portal"} \
---operation=list \
---type=${objectType} \
---filter='${JSON.stringify(filter) || '{"and":{}}'}' \
---fields=${requestedFields.join(",")} \
---output=tsv 
-  `;
-
-  const onClick = (text: string) => {
-    copyToClipboard(text.trim());
-  };
-
-  const fetchSpreadSheetDataObjects = async (gen: AsyncGenerator) => {
-    const results: any[] = []; // TODO: add type - kh16
-
-    for await (const item of gen) {
-      setFetchCount((prev) => {
-        const next = prev + 1;
-        const percentage = Math.floor((next / frozenTotalSize) * 100);
-        setPercentageComplete(percentage);
-        results.push(item);
-        return next;
-      });
-      if (stopDownloadRef.current) throw Error();
-    }
-    return results;
-  };
+  const CLICommand = generateCLICommand(sourceToUse, filter, objectType, requestedFields)
 
   const onDownloadSpreadsheet = async () => {
     setDownloadInProgress(true);
@@ -148,37 +112,37 @@ tol data \
     setSecondsElapsed(0);
     setPercentageComplete(0);
 
-    const gen = dataSource.getListByCursor({
-      objectType: frozenObjectType,
-      filter: frozenFilter,
-      requestedFields: frozenRequestedFields,
-    });
-
     const interval = setInterval(() => {
       setSecondsElapsed((prev) => prev + 1);
     }, 1000);
 
-    fetchSpreadSheetDataObjects(gen)
-      .then((results) => {
-        dataObjectToSpreadsheetData(results, frozenRequestedFields, fieldMeta)
-          .then((info) => {
-            exportDataToSpreadsheet(info, title?.text || frozenObjectType);
-          })
-          .finally(() => {
-            setDownloadComplete(true);
-            setDownloadInProgress(false);
-          });
-      })
-      .catch(() => {
-        setStopDownload(false);
-        stopDownloadRef.current = false;
-        setDownloadComplete(false);
-        setDownloadInProgress(false);
-        setStopDownloadLoading(false);
-      })
-      .finally(() => {
-        clearInterval(interval);
-      });
+    if (componentType == 'table' && fieldMeta && dataSource) {
+      downloadForTable(
+        dataSource,
+        frozenObjectType,
+        frozenFilter,
+        frozenRequestedFields,
+        fieldMeta,
+        title,
+        stopDownloadRef,
+        setFetchCount,
+        setPercentageComplete,
+        frozenTotalSize,
+        setDownloadComplete,
+        setStopDownload,
+        setDownloadInProgress,
+        setStopDownloadLoading,
+        interval
+      )
+    } else if (componentType == 'barchart' && datasets && labels) {
+      downloadForChart(
+        datasets,
+        labels,
+        setFetchCount,
+        setPercentageComplete,
+        frozenTotalSize,
+      )
+    }
   };
 
   const MinimizeButton = (
@@ -281,7 +245,7 @@ tol data \
             </div>
             <br />
             <Button
-              onClick={() => onClick(SDKText)}
+              onClick={() => copyToClipboard(SDKText.trim())}
               icon="copy"
               text="Copy to Clipboard"
             />
@@ -298,11 +262,11 @@ tol data \
             </div>
             <br />
             <Button
-              onClick={() => onClick(CLICommand)}
+              onClick={() => copyToClipboard(CLICommand.trim())}
               icon="copy"
               text="Copy to Clipboard"
             />
-            <br/>
+            <br />
             {instructions}
           </Tabs.Tab>
         </Tabs>

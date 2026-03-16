@@ -28,6 +28,8 @@ import {
   getRelationshipNameByField,
   CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
   CELL_RENDERER_SPREAD_OPERATOR,
+  PEditableTitle,
+  IChartDataset
 } from "..";
 
 interface Rgb {
@@ -445,4 +447,182 @@ export function updateFieldMetaAttribute(
 
   updateTarget("data");
   if (dataWithDefaults) updateTarget("dataWithDefaults");
+}
+
+const stringifyFilter = (filter: any) => {
+  if (!filter) {
+    return "None";
+  }
+  // @ts-ignore
+  return JSON.stringify(filter, (key, value) => {
+    if (typeof value === "boolean") {
+      return value ? "True" : "False";
+    }
+    return value;
+  })
+    .replace(/"True"/g, "True")
+    .replace(/"False"/g, "False");
+};
+
+export function generateSDKScript(source: string, filter: IFilter, objectType: string) {
+  return `from tol.core import DataSourceFilter
+from tol.sources.${source} import ${source}
+
+src = ${source}()
+f = DataSourceFilter(
+    and_ = ${stringifyFilter(filter?.and_)}
+)
+objs = src.get_list('${objectType}', object_filters=f) 
+  `;
+}
+
+export function generateCLICommand(
+  source: string,
+  filter: IFilter,
+  objectType: string,
+  requestedFields: string[]
+) {
+  return `
+tol data \
+--source=${source || "portal"} \
+--operation=list \
+--type=${objectType} \
+--filter='${JSON.stringify(filter) || '{"and":{}}'}' \
+--fields=${requestedFields.join(",")} \
+--output=tsv 
+  `;
+}
+
+function updateDownloadCountProgress(
+  setFetchCount: (count: any) => void,
+  setPercentageComplete: (percent: any) => void,
+  frozenTotalSize: number,
+  item: any,
+  results: any[]
+) {
+  setFetchCount((prev) => {
+    const next = prev + 1;
+    const percentage = Math.floor((next / frozenTotalSize) * 100);
+    setPercentageComplete(percentage);
+    results.push(item);
+    return next;
+  });
+}
+
+const fetchSpreadSheetDataObjects = async (
+  gen: AsyncGenerator,
+  setFetchCount: (count: any) => void,
+  setPercentageComplete: (percent: any) => void,
+  stopDownloadRef: any,
+  frozenTotalSize: number
+) => {
+  const results: any[] = []; // TODO: add type - kh16
+  for await (const item of gen) {
+    updateDownloadCountProgress(
+      setFetchCount,
+      setPercentageComplete,
+      frozenTotalSize,
+      item,
+      results
+    )
+    if (stopDownloadRef.current) throw Error();
+  }
+  return results;
+};
+
+export function downloadForTable(
+  dataSource: TsDataSource,
+  frozenObjectType: string,
+  frozenFilter: IFilter,
+  frozenRequestedFields: string[],
+  fieldMeta: FieldMeta,
+  title: PEditableTitle | undefined,
+  stopDownloadRef: any,
+  setFetchCount: (count: any) => void,
+  setPercentageComplete: (percent: any) => void,
+  frozenTotalSize: number,
+  setDownloadComplete: (complete: boolean) => void,
+  setStopDownload: (stopped: boolean) => void,
+  setDownloadInProgress: (inProgress: boolean) => void,
+  setStopDownloadLoading: (stopDownloadLoading: boolean) => void,
+  interval: number
+) {
+
+  const gen = dataSource.getListByCursor({
+    objectType: frozenObjectType,
+    filter: frozenFilter,
+    requestedFields: frozenRequestedFields,
+  });
+
+  fetchSpreadSheetDataObjects(
+    gen,
+    setFetchCount,
+    setPercentageComplete,
+    stopDownloadRef,
+    frozenTotalSize
+  )
+    .then((results) => {
+      dataObjectToSpreadsheetData(results, frozenRequestedFields, fieldMeta)
+        .then((info) => {
+          exportDataToSpreadsheet(info, title?.text || frozenObjectType);
+        })
+        .finally(() => {
+          setDownloadComplete(true);
+          setDownloadInProgress(false);
+        });
+    })
+    .catch(() => {
+      setStopDownload(false);
+      stopDownloadRef.current = false;
+      setDownloadComplete(false);
+      setDownloadInProgress(false);
+      setStopDownloadLoading(false);
+    })
+    .finally(() => {
+      clearInterval(interval);
+    });
+}
+
+export function prepareChartDataForExport(
+  datasets: IChartDataset[],
+  labels: string[],
+  setFetchCount: (count: any) => void,
+  setPercentageComplete: (percent: any) => void,
+  frozenTotalSize: number,
+): Array<Record<string, string>> {
+
+  return datasets.map((dataset) => {
+    const row: Record<string, string> = { Dataset: dataset.label };
+    labels.forEach((label, index) => {
+      row[label] = String(dataset.data[index] ?? "");
+    });
+    updateDownloadCountProgress(
+      setFetchCount,
+      setPercentageComplete,
+      frozenTotalSize,
+      dataset,
+      []
+    )
+    return row;
+  });
+}
+
+export function downloadForChart(
+  datasets: IChartDataset[],
+  labels: string[],
+  setFetchCount: (count: any) => void,
+  setPercentageComplete: (percent: any) => void,
+  frozenTotalSize: number,
+) {
+  // Use a try and finally here
+  // try the converted data and download and then finally set the states back, similar to how they are done in table
+
+  const convertedData = prepareChartDataForExport(
+    datasets,
+    labels,
+    setFetchCount,
+    setPercentageComplete,
+    frozenTotalSize
+  )
+
 }

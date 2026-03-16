@@ -8,6 +8,7 @@ export * from "./Attribute";
 export * from "./Boards";
 export * from "./Buttons";
 export * from "./Cells";
+export * from "./Chart"
 export * from "./Drawer";
 export * from "./EntityMeta";
 export * from "./FileValidation";
