@@ -6,9 +6,9 @@ SPDX-License-Identifier: MIT
 
 import React from "react";
 import { Modal } from "..";
-import { ImageCarouselComponent, PImageCarouselComponent } from "./ImageCarouselComponent";
+import { ImageCarousel, PImageCarousel } from "./ImageCarousel";
 
-export interface PImagesModalComponent extends PImageCarouselComponent {
+export interface PImagesModal extends PImageCarousel {
   /**
    * Whether the modal is open
    */
@@ -39,7 +39,7 @@ export interface PImagesModalComponent extends PImageCarouselComponent {
  * Effectively just an ImageCarouselComponent in a modal to create a larger view on an image.
  *
  */
-export function ImagesModalComponent(props: PImagesModalComponent) {
+export function ImagesModal(props: PImagesModal) {
   const {
     open,
     setOpen,
@@ -69,7 +69,7 @@ export function ImagesModalComponent(props: PImagesModalComponent) {
     >
       <div className="tol-image-modal__content" style={contentStyles}>
         {headerContent}
-        <ImageCarouselComponent links={links} link={link} height={height} fill={fill} alt={alt} setLink={setLink} />
+        <ImageCarousel links={links} link={link} height={height} fill={fill} alt={alt} setLink={setLink} />
       </div>
     </Modal>
   );

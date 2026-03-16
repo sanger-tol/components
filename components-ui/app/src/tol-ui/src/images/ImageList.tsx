@@ -5,11 +5,11 @@ SPDX-License-Identifier: MIT
 */
 
 import React, { useEffect, useRef, useState } from "react";
-import { ImageComponent } from "./ImageComponent";
-import type { PImageCarouselComponent } from "./ImageCarouselComponent";
-import { ImagesModalComponent } from "./ImagesModalComponent";
+import { Image } from "./Image";
+import type { PImageCarousel } from "./ImageCarousel";
+import { ImagesModal } from "./ImagesModal";
 
-export interface PImageListComponent extends Omit<PImageCarouselComponent, "onImageClick"> {
+export interface PImageList extends Omit<PImageCarousel, "onImageClick"> {
   /**
    * Optional callback to keep parent state in sync with selected image
    */
@@ -34,7 +34,7 @@ export interface PImageListComponent extends Omit<PImageCarouselComponent, "onIm
  * to go to the right image for the ImageModal.
  *
  */
-export function ImageListComponent(props: PImageListComponent) {
+export function ImageList(props: PImageList) {
   const {
     links,
     height = "100%",
@@ -101,7 +101,7 @@ export function ImageListComponent(props: PImageListComponent) {
             key={link || `image-${index}`}
             className={`tol-image-list__item${enableModal ? " tol-image-list__item--clickable" : ""}`}
           >
-            <ImageComponent
+            <Image
               link={link}
               height={height}
               fill={fill}
@@ -112,7 +112,7 @@ export function ImageListComponent(props: PImageListComponent) {
         ))}
       </div>
       {enableModal && (
-        <ImagesModalComponent
+        <ImagesModal
           open={modalOpen}
           setOpen={setModalOpen}
           links={links}

@@ -5,15 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import { useState } from "react";
-import { ImageModal } from "../..";
+import { ImageModal_old } from "../..";
 
 
-export interface PImages {
+export interface PImages_old {
   value: any;
   captions: any;
 }
 
-export function Images(props: PImages) {
+export function Images_old(props: PImages_old) {
   const { value, captions } = props;
 
   const [open, setOpen] = useState<boolean>(false);
@@ -22,7 +22,7 @@ export function Images(props: PImages) {
   const urlList = Array.isArray(value) ? value : [value];
   return (
     <div className="tol-table-expanded-row">
-      <ImageModal
+      <ImageModal_old
         value={value}
         caption={captions}
         open={open}

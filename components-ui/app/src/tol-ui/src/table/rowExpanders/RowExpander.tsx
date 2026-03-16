@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  Images,
+  Images_old,
   PCellDisplay,
   // getCellRendererPropValue,
 } from "../..";
@@ -21,7 +21,7 @@ export function RowExpander(rowData: PRowExpander) {
   const renderer = value.props.renderer;
 
   const preDefinedElements = {
-    image: Images,
+    image: Images_old,
   };
   if (
     // renderer type is not defined

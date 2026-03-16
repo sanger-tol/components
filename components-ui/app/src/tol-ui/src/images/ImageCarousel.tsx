@@ -6,9 +6,9 @@ SPDX-License-Identifier: MIT
 
 import React, { useEffect, useRef, useState } from "react";
 import { Icon, IHeight } from "..";
-import { ImageComponent } from "./ImageComponent";
+import { Image } from "./Image";
 
-export interface PImageCarouselComponent extends IHeight {
+export interface PImageCarousel extends IHeight {
   /**
    * Array of hrefs for the images
    */
@@ -50,7 +50,7 @@ export interface PImageCarouselComponent extends IHeight {
  * Use the Image onClick to set the link pointer.
  *
  */
-export function ImageCarouselComponent(props: PImageCarouselComponent) {
+export function ImageCarousel(props: PImageCarousel) {
   const { links, link, height, fill = false, setLink, onImageClick, alt, className, style } = props;
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -134,7 +134,7 @@ export function ImageCarouselComponent(props: PImageCarouselComponent) {
         />
       )}
       <div className="tol-image-carousel__viewport">
-        <ImageComponent
+        <Image
           link={links[index]}
           height={height}
           fill={fill}

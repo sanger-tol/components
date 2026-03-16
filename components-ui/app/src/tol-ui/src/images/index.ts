@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export * from "./ImageComponent";
-export * from "./ImageCarouselComponent";
-export * from "./ImagesComponent";
-export * from "./ImagesModalComponent";
-export * from "./ImageListComponent";
+export * from "./Image";
+export * from "./ImageCarousel";
+export * from "./Images";
+export * from "./ImagesModal";
+export * from "./ImageList";
 export * from "./utils";

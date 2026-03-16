@@ -5,10 +5,10 @@ SPDX-License-Identifier: MIT
 */
 
 import React, { useEffect, useState } from "react";
-import { ImageCarouselComponent, PImageCarouselComponent } from "./ImageCarouselComponent";
-import { ImagesModalComponent } from "./ImagesModalComponent";
+import { ImageCarousel, PImageCarousel } from "./ImageCarousel";
+import { ImagesModal } from "./ImagesModal";
 
-export interface PImagesComponent extends Omit<PImageCarouselComponent, "link" | "setLink" | "onImageClick"> {
+export interface PImages extends Omit<PImageCarousel, "link" | "setLink" | "onImageClick"> {
   /**
    * If true, clicking an image will open it in a larger modal view. Default is true.
    */
@@ -29,7 +29,7 @@ export interface PImagesComponent extends Omit<PImageCarouselComponent, "link" |
  * components to keep them in sync.
  * 
  */
-export function ImagesComponent(props: PImagesComponent) {
+export function Images(props: PImages) {
   const { links, height, fill, alt, enableModal = true, className, style } = props;
   const [link, setLink] = useState(links[0] || "");
   const [modalOpen, setModalOpen] = useState(false);
@@ -50,7 +50,7 @@ export function ImagesComponent(props: PImagesComponent) {
 
   return (
     <div className={`tol-images${className ? ` ${className}` : ""}`} style={style}>
-      <ImageCarouselComponent
+      <ImageCarousel
         links={links}
         link={link}
         height={height}
@@ -63,7 +63,7 @@ export function ImagesComponent(props: PImagesComponent) {
         } : undefined}
       />
       {enableModal && (
-        <ImagesModalComponent
+        <ImagesModal
           open={modalOpen}
           setOpen={setModalOpen}
           links={links}
