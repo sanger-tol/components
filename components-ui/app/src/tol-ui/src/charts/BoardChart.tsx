@@ -13,11 +13,17 @@ import {
   updateConfigAndUpsert,
   PVisualisation,
   NoAttributesPlaceholder,
+  useBoard,
+  PButton,
+  mergeUtilityBarConfigs
 } from "..";
 
 
 export function BoardChart(props: PVisualisation) {
-  const { id, boardDataSource, zone } = props;
+  const { id, utilityBarConfig, boardDataSource, zone } = props;
+
+  const { editMode } = useBoard();
+
 
   const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openConfig, setOpenConfig] = useState(false);
@@ -33,6 +39,25 @@ export function BoardChart(props: PVisualisation) {
     )
     setForceUpdate(!forceUpdate);
   };
+
+  const configButton: PButton = {
+    outline: true,
+    position: "right",
+    type: "primary",
+    onClick: () => setOpenConfig(true),
+    icon: "sliders",
+    className: "count-filter-button",
+    visible: editMode,
+  }
+
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      buttons: [
+        configButton,
+      ],
+    }
+  );
 
   const Contents = () => {
     if (!config.xAxis && !config.breakDownBy) {
@@ -59,6 +84,7 @@ export function BoardChart(props: PVisualisation) {
         stacked={config.stacked || false}
         type={config.grouping || ""}
         forceUpdate={forceUpdate}
+        utilityBarConfig={ubc}
       />
     </>
   );
