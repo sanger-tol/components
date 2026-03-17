@@ -23,7 +23,8 @@ import {
   generateCLICommand,
   downloadForTable,
   IChartDataset,
-  downloadForChart
+  downloadForChart,
+  PopUpMessage
 } from "..";
 
 interface Props {
@@ -138,9 +139,17 @@ export function DownloadModal(props: Props) {
       downloadForChart(
         datasets,
         labels,
+        title,
         setFetchCount,
         setPercentageComplete,
         frozenTotalSize,
+        frozenObjectType,
+        setDownloadComplete,
+        setStopDownload,
+        setDownloadInProgress,
+        setStopDownloadLoading,
+        interval,
+        stopDownloadRef,
       )
     }
   };

@@ -84,17 +84,9 @@ export function BarChart(props: Props) {
     utilityBarConfig = {},
     contents,
     chartType = 'bar',
-    downloadName = 'barchart',
     objectType
   } = props;
   const originDatasets = initialiseDatasets(props.datasets);
-
-  console.log(labels)
-  console.log(originDatasets)
-  const testDownload = () => {
-    const data = prepareChartDataForExport(originDatasets, labels)
-    exportDataToSpreadsheet(data, downloadName)
-  }
 
 
   const [datasets, setDatasets] = useState(originDatasets);
@@ -365,6 +357,8 @@ export function BarChart(props: Props) {
         setDownloadInProgress={setDownloadInProgress}
         componentType="barchart"
         totalSize={calculateTotalAggsSize(datasets)}
+        datasets={datasets}
+        labels={labels}
       />
       <UtilityBar id={id} {...ubc} />
       <div className="tol-component-contents with-offset">

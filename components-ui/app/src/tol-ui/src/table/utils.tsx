@@ -610,19 +610,38 @@ export function prepareChartDataForExport(
 export function downloadForChart(
   datasets: IChartDataset[],
   labels: string[],
+  title: PEditableTitle | undefined,
   setFetchCount: (count: any) => void,
   setPercentageComplete: (percent: any) => void,
   frozenTotalSize: number,
+  frozenObjectType: string,
+  setDownloadComplete: (complete: boolean) => void,
+  setStopDownload: (stopped: boolean) => void,
+  setDownloadInProgress: (inProgress: boolean) => void,
+  setStopDownloadLoading: (stopDownloadLoading: boolean) => void,
+  interval: number,
+  stopDownloadRef: any
 ) {
-  // Use a try and finally here
-  // try the converted data and download and then finally set the states back, similar to how they are done in table
+  try {
+    const convertedData = prepareChartDataForExport(
+      datasets,
+      labels,
+      setFetchCount,
+      setPercentageComplete,
+      frozenTotalSize
+    )
+    exportDataToSpreadsheet(convertedData, title?.text || frozenObjectType);
+    setDownloadComplete(true);
+    setDownloadInProgress(false);
+  } catch {
+    setStopDownload(false);
+    stopDownloadRef.current = false;
+    setDownloadComplete(false);
+    setDownloadInProgress(false);
+    setStopDownloadLoading(false);
+  } finally {
+    clearInterval(interval);
+  }
 
-  const convertedData = prepareChartDataForExport(
-    datasets,
-    labels,
-    setFetchCount,
-    setPercentageComplete,
-    frozenTotalSize
-  )
 
 }
