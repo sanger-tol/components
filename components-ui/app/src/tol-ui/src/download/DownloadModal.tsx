@@ -17,34 +17,93 @@ import {
 import { CommandLineTab, ImageTab, SDKTab, SpreadsheetTab } from "./tabs";
 
 export interface PDownloadModal {
-  downloadInProgress: boolean;
-  setDownloadInProgress: (downloadInProgress: boolean) => void;
-  componentId: string
 
+  /**
+   * List of tabs to disable
+   */
+  disabledTabs?: TDisabledTab[]
+  /**
+   * State indicating whether a download is currently in progress, used to disable interactions and show loading states as needed
+   */
+  downloadInProgress: boolean;
+  /**
+   * Function to update the downloadInProgress state
+   */
+  setDownloadInProgress: (downloadInProgress: boolean) => void;
+  /**
+   * Unique identifier for the component, mostly used for downloading images
+   */
+  componentId: string
+  /**
+   * Specifies which component the modal is being used for,
+   * will default to table
+   */
+  componentType?: string
+  /**
+   * Specifies the size of the modal
+   */
   size: string;
+  /**
+   * Specifies whether the modal is open or closed
+   */
   open: boolean;
+  /**
+   * Function to update the open state of the modal
+   */
   setOpen: any;
+  /**
+   * Specifies the total size of data objects being downloaded,
+   * used to inform users about the scale of their download and potentially trigger warnings for large downloads
+   */
   totalSize: number;
+  /**
+   * Title of the component, used in the header of the modal and in generated file names for downloads
+   */
+  title?: PEditableTitle;
 
   // Tabe specific props 
+  /**
+   * Object type of the data being downloaded
+   */
   objectType: string;
+  /**
+   * Any filters applied to the component itself, used when retrieving data for download
+   */
   filter?: any;
-
+  /**
+   * DataSource used to retrieve data,
+   * needed for SDK and CLI tabs to generate appropriate commands and scripts
+   */
   source?: string;
+  /**
+   * The actual TSDataSource instance, used for fetching metadata and data for downloads when necessary (Table Only)
+   */
   dataSource?: TsDataSource;
+  /**
+   * Specifies the fields to be requested for download (Table Only)
+   */
   requestedFields: string[];
-  title?: PEditableTitle;
+  /**
+   * Field meta for the data being downloaded (Table Only)
+   */
   fieldMeta?: FieldMeta;
 
-  componentType?: string
-
   // Chart specific props
+  /**
+   * Datasets being downloaded from a chart (Chart Only)
+   */
   datasets?: IChartDataset[]
+  /**
+   * Labels for the chart, typically the x axis values (Chart Only)
+   */
   labels?: string[]
-
-  disabledTabs?: TDisabledTab[]
 }
 
+/**
+ * @autodoc
+ * 
+ * DownloadModal is a reusable component that provides a modal with tabs for downloading data in various formats (Spreadsheet, SDK, CLI, Image).
+ */
 export function DownloadModal(props: PDownloadModal) {
   const {
     size,
