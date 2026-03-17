@@ -19,7 +19,7 @@ export * from "./RemoteTable";
 export * from "./DownloadModal";
 export * from "./cellRenderers/CellRendererConfigurer";
 export * from "./cellRenderers/CellRendererModal";
-export * from "./ImageModal_old";
+export * from "./OldImageModal";
 export * from "./Sort";
 export * from "./FieldDropdown";
 export * from "./RowToolsColumn";

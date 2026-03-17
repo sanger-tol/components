@@ -14,7 +14,7 @@ export * from "./Datetime";
 export * from "./DataPointDefaultDisplay";
 export * from "./LongText";
 export * from "./Float";
-export * from "./Image_old";
+export * from "./OldImage";
 export * from "./Integer";
 export * from "./Link";
 export * from "./TrafficLightStatus";
