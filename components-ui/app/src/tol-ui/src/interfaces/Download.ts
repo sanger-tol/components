@@ -4,5 +4,4 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-export * from "./DownloadModal";
-export * from "./utils";
+export type TDisabledTab = "CLI" | "SDK" | "Image" | "Spreadsheet"

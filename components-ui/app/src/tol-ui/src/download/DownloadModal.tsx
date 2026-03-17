@@ -12,6 +12,7 @@ import {
   FieldMeta,
   Tabs,
   IChartDataset,
+  TDisabledTab,
 } from "..";
 import { CommandLineTab, ImageTab, SDKTab, SpreadsheetTab } from "./tabs";
 
@@ -40,6 +41,8 @@ export interface PDownloadModal {
   // Chart specific props
   datasets?: IChartDataset[]
   labels?: string[]
+
+  disabledTabs?: TDisabledTab[]
 }
 
 export function DownloadModal(props: PDownloadModal) {
@@ -52,7 +55,8 @@ export function DownloadModal(props: PDownloadModal) {
     source,
     requestedFields,
     title,
-    componentId
+    componentId,
+    disabledTabs
   } = props;
 
   const sourceToUse = source || "portal";
@@ -76,18 +80,26 @@ export function DownloadModal(props: PDownloadModal) {
         closeButton={false}
       >
         <Tabs defaultActiveKey="1">
-          <Tabs.Tab eventKey="1" title="Spreadsheet">
-            <SpreadsheetTab {...props} />
-          </Tabs.Tab>
-          <Tabs.Tab eventKey="2" title="SDK">
-            <SDKTab source={sourceToUse} objectType={objectType} filter={filter} />
-          </Tabs.Tab>
-          <Tabs.Tab eventKey="3" title="CLI">
-            <CommandLineTab source={sourceToUse} objectType={objectType} filter={filter} requestedFields={requestedFields} />
-          </Tabs.Tab>
-          <Tabs.Tab eventKey="4" title="Image">
-            <ImageTab objectType={objectType} title={title} componentId={componentId} />
-          </Tabs.Tab>
+          {disabledTabs?.includes("Spreadsheet") ? null : (
+            <Tabs.Tab eventKey="1" title="Spreadsheet">
+              <SpreadsheetTab {...props} />
+            </Tabs.Tab>
+          )}
+          {disabledTabs?.includes("SDK") ? null : (
+            <Tabs.Tab eventKey="2" title="SDK">
+              <SDKTab source={sourceToUse} objectType={objectType} filter={filter} />
+            </Tabs.Tab>
+          )}
+          {disabledTabs?.includes("CLI") ? null : (
+            <Tabs.Tab eventKey="3" title="CLI">
+              <CommandLineTab source={sourceToUse} objectType={objectType} filter={filter} requestedFields={requestedFields} />
+            </Tabs.Tab>
+          )}
+          {disabledTabs?.includes("Image") ? null : (
+            <Tabs.Tab eventKey="4" title="Image">
+              <ImageTab objectType={objectType} title={title} componentId={componentId} />
+            </Tabs.Tab>
+          )}
         </Tabs>
       </Modal>
     </>

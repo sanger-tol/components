@@ -360,6 +360,7 @@ export function BarChart(props: Props) {
         totalSize={calculateTotalAggsSize(datasets)}
         datasets={datasets}
         labels={labels}
+        disabledTabs={["CLI", "SDK"]}
       />
       <UtilityBar id={id} {...ubc} />
       <div className="tol-component-contents with-offset">
