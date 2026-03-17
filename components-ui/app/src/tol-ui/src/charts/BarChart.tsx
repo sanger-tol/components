@@ -30,15 +30,12 @@ import {
   generateBarLabels,
   updateOpacitys,
   resetItemClickedData,
-  downloadItem,
   isPropDefined,
   getCssVarValue,
   themeListener,
   PUtilityBar,
   mergeUtilityBarConfigs,
   PButton,
-  prepareChartDataForExport,
-  exportDataToSpreadsheet,
   DownloadModal,
   calculateTotalAggsSize
 } from "..";
@@ -95,8 +92,8 @@ export function BarChart(props: Props) {
   // Used to change the height of the y-axis when selecting a legend
   const [maxHeight, setMaxHeight] = useState<number | null>(null);
 
-  const [downloadOpen, setDownloadOpen] = useState<Boolean>(false)
-  const [downloadInProgress, setDownloadInProgress] = useState<Boolean>(false)
+  const [downloadOpen, setDownloadOpen] = useState<boolean>(false)
+  const [downloadInProgress, setDownloadInProgress] = useState<boolean>(false)
 
   // colours
   const [titleColour, setTitleColour] = useState("");
