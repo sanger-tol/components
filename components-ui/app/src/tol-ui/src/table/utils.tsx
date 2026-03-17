@@ -541,11 +541,9 @@ export function downloadForTable(
   setFetchCount: (count: any) => void,
   setPercentageComplete: (percent: any) => void,
   frozenTotalSize: number,
-  setDownloadComplete: (complete: boolean) => void,
-  setStopDownload: (stopped: boolean) => void,
-  setDownloadInProgress: (inProgress: boolean) => void,
-  setStopDownloadLoading: (stopDownloadLoading: boolean) => void,
-  interval: number
+  interval: number,
+  onDownloadFail: () => void,
+  onDownloadComplete: () => void
 ) {
 
   const gen = dataSource.getListByCursor({
@@ -567,16 +565,11 @@ export function downloadForTable(
           exportDataToSpreadsheet(info, title?.text || frozenObjectType);
         })
         .finally(() => {
-          setDownloadComplete(true);
-          setDownloadInProgress(false);
+          onDownloadComplete()
         });
     })
     .catch(() => {
-      setStopDownload(false);
-      stopDownloadRef.current = false;
-      setDownloadComplete(false);
-      setDownloadInProgress(false);
-      setStopDownloadLoading(false);
+      onDownloadFail()
     })
     .finally(() => {
       clearInterval(interval);
@@ -615,12 +608,9 @@ export function downloadForChart(
   setPercentageComplete: (percent: any) => void,
   frozenTotalSize: number,
   frozenObjectType: string,
-  setDownloadComplete: (complete: boolean) => void,
-  setStopDownload: (stopped: boolean) => void,
-  setDownloadInProgress: (inProgress: boolean) => void,
-  setStopDownloadLoading: (stopDownloadLoading: boolean) => void,
   interval: number,
-  stopDownloadRef: any
+  onDownloadFail: () => void,
+  onDownloadComplete: () => void
 ) {
   try {
     const convertedData = prepareChartDataForExport(
@@ -631,14 +621,9 @@ export function downloadForChart(
       frozenTotalSize
     )
     exportDataToSpreadsheet(convertedData, title?.text || frozenObjectType);
-    setDownloadComplete(true);
-    setDownloadInProgress(false);
+    onDownloadComplete()
   } catch {
-    setStopDownload(false);
-    stopDownloadRef.current = false;
-    setDownloadComplete(false);
-    setDownloadInProgress(false);
-    setStopDownloadLoading(false);
+    onDownloadFail()
   } finally {
     clearInterval(interval);
   }

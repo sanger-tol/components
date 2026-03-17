@@ -33,6 +33,7 @@ export * from "./config";
 export * from "./constants";
 export * from "./contexts";
 export * from "./datasource";
+export * from "./download"
 export * from "./factories";
 export * from "./file-validation";
 export * from "./filtering";

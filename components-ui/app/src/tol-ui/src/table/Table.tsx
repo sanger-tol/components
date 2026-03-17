@@ -399,6 +399,7 @@ export function Table(props: PTable) {
       <DownloadModal
         {...props}
         size="sm"
+        componentId={id}
         open={downloadOpen}
         setOpen={setDownloadOpen}
         source={source}

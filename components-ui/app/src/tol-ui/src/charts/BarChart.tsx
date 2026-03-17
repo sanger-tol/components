@@ -347,6 +347,7 @@ export function BarChart(props: Props) {
   return (
     <div style={{ height: height }}>
       <DownloadModal
+        componentId={id}
         size="sm"
         open={downloadOpen}
         setOpen={setDownloadOpen}
