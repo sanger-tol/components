@@ -108,7 +108,7 @@ export function downloadForTable(
   setFetchCount: (count: any) => void,
   setPercentageComplete: (percent: any) => void,
   frozenTotalSize: number,
-  interval: number,
+  interval: any,
   onDownloadFail: () => void,
   onDownloadComplete: () => void
 ) {
@@ -205,7 +205,7 @@ export function downloadForChart(
   setPercentageComplete: (percent: any) => void,
   frozenTotalSize: number,
   frozenObjectType: string,
-  interval: number,
+  interval: any,
   onDownloadFail: () => void,
   onDownloadComplete: () => void
 ) {
