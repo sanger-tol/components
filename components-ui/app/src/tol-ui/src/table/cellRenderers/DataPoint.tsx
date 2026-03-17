@@ -6,11 +6,14 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
+  ACTIONS,
+  API_METHODS,
   CellDisplay,
-  PopUpMessage,
   CellEditable,
+  CellEditableStatus,
   getFieldByName,
   PDataPoints,
+  PopUpMessage,
 } from "../..";
 
 
@@ -32,6 +35,7 @@ export function DataPoint(props: PDataPoint) {
     dataSource,
     editable,
     isMany,
+    actsAs,
   } = props;
 
   const attributeValue = getFieldByName(dataObject, field);
@@ -42,7 +46,7 @@ export function DataPoint(props: PDataPoint) {
   const [loading, setLoading] = useState(false);
 
   const canEdit = (
-    typeof value === "string"
+    actsAs === "status" || typeof value === "string"
   );
 
   const onDoubleClick = () => {
@@ -64,6 +68,37 @@ export function DataPoint(props: PDataPoint) {
   const onCancel = () => {
     setEditMode(false);
     setValue(prevValue);
+  };
+
+  const onSaveStatus = (selectedStatusTypeId: string) => {
+    if (!dataObject) return;
+    setLoading(true);
+    // Derive the parent object type by stripping the "_status" suffix,
+    // e.g. "metagenome_status" → "metagenome".
+    const parentObjectType = dataObject.objectType.replace(/_status$/, "");
+
+    dataSource
+      .custom({
+        method: API_METHODS.POST,
+        resource: ACTIONS.RUN_ACTION,
+        body: {
+          data: {
+            ids: [dataObject.id],
+            action_name: "SetStatusAction",
+            object_type: parentObjectType,
+            params: { status: selectedStatusTypeId },
+          },
+        },
+      })
+      .then(() => {
+        setEditMode(false);
+        PopUpMessage({ type: "success", message: "Status updated successfully." });
+      })
+      .catch((error: any) => {
+        PopUpMessage({ type: "error", message: `Error saving: ${error.message}` });
+        setEditMode(false);
+      })
+      .finally(() => setLoading(false));
   };
 
   const onSave = () => {
@@ -116,6 +151,18 @@ export function DataPoint(props: PDataPoint) {
   }
 
   if (editMode) {
+    if (actsAs === "status") {
+      return (
+        <CellEditableStatus
+          {...props}
+          value={value}
+          loading={loading}
+          statusTypeObjectType={`${dataObject?.objectType}_type`}
+          onCancel={onCancel}
+          onSave={onSaveStatus}
+        />
+      );
+    }
     return (
       <CellEditable
         {...props}

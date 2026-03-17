@@ -94,6 +94,7 @@ export function convertTableData(
           setExpandedRows={setExpandedRows}
           customCellRenderers={customCellRenderers}
           editable={editableCells}
+          actsAs={fieldMeta.dataWithDefaults?.[field]?.acts_as}
         />
       );
     });
@@ -143,6 +144,7 @@ export function addDefaultsFromEntityMeta(
     type: meta.python_type,
     description: meta.description,
     source: meta.source,
+    acts_as: meta.acts_as,
   };
   // customised field config overrides the defaults
   fieldMeta.dataWithDefaults[key] = {
