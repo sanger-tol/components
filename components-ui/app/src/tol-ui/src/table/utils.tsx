@@ -344,6 +344,7 @@ function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, f
       .trim();
     const relationship = getRelationshipNameByField(fieldName);
     const field = relationship ? `${relationship}.${relativeAttribute}` : relativeAttribute;
+    console.log(field);
     if (field) requestedFields.add(field);
   });
 }
