@@ -347,6 +347,8 @@ export function RemoteTable(props: PRemoteTable) {
       await initialSetup();
     }
     setLoading(true);
+    
+    console.log(await dataSource.isManyDataPointsByName('tolid', 'grit_curations'));
 
     dataSource
       .getListPage({
@@ -355,7 +357,7 @@ export function RemoteTable(props: PRemoteTable) {
         pageSize,
         filter,
         sortBy: createSort(sortByAttribute, sortByType),
-        requestedFields: amalgamateRequestedFields(fieldMeta),
+        requestedFields: amalgamateRequestedFields(fieldMeta, dataSource, objectType),
       })
       .then((dataObjects: TDataObjectListOrNull) => {
         setError("");
@@ -389,7 +391,7 @@ export function RemoteTable(props: PRemoteTable) {
         if (errorMsg.includes("Empty element in path")) {
           setData([]);
           return;
-        }
+        };
         setError(error.message);
         setData([]);
         console.error(error);
