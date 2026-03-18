@@ -324,7 +324,6 @@ export function BarChart(props: Props) {
     type: "primary",
     onClick: () => {
       setDownloadOpen(true)
-      // downloadItem(props.id, downloadName);
     },
     icon: "download",
     disabled: datasets.length === 0,
