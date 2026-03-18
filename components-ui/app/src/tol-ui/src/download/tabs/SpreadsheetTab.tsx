@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { MutableRefObject } from "react"
+import { MutableRefObject, Dispatch, SetStateAction } from "react"
 import { Progress } from "rsuite";
 import {
   downloadForChart,
@@ -38,7 +38,7 @@ export interface PSpreadsheetTab {
   percentageComplete: number
   setPercentageComplete: (n: number) => void
   secondsElapsed: number
-  setSecondsElapsed: (secondsElapsed: number) => void
+  setSecondsElapsed: Dispatch<SetStateAction<number>>
   downloadComplete: boolean
   setDownloadComplete: (b: boolean) => void
   stopDownload: boolean
