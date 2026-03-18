@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { useState, useRef, useEffect } from "react";
 import {
   Button,
   Modal,
@@ -13,6 +14,7 @@ import {
   Tabs,
   IChartDataset,
   TDisabledTab,
+  deepCopy,
 } from "..";
 import { CommandLineTab, ImageTab, SDKTab, SpreadsheetTab } from "./tabs";
 
@@ -115,10 +117,38 @@ export function DownloadModal(props: PDownloadModal) {
     requestedFields,
     title,
     componentId,
-    disabledTabs
+    disabledTabs,
+    downloadInProgress,
+    totalSize,
   } = props;
 
   const sourceToUse = source || "portal";
+
+  // Spreadsheet progress state lives here so it survives the modal being closed/unmounted
+  const [fetchCount, setFetchCount] = useState<number>(0);
+  const [percentageComplete, setPercentageComplete] = useState<number>(0);
+  const [secondsElapsed, setSecondsElapsed] = useState<number>(0);
+  const [downloadComplete, setDownloadComplete] = useState<boolean>(false);
+  const [stopDownload, setStopDownload] = useState<boolean>(false);
+  const [stopDownloadLoading, setStopDownloadLoading] = useState<boolean>(false);
+  const stopDownloadRef = useRef<boolean>(false);
+  const [frozenObjectType, setFrozenObjectType] = useState<string>(objectType);
+  const [frozenFilter, setFrozenFilter] = useState<object>(deepCopy(filter));
+  const [frozenTotalSize, setFrozenTotalSize] = useState<number>(totalSize);
+  const [frozenRequestedFields, setFrozenRequestedFields] = useState<string[]>(deepCopy(requestedFields));
+
+  useEffect(() => {
+    stopDownloadRef.current = stopDownload;
+  }, [stopDownload]);
+
+  useEffect(() => {
+    if (!downloadInProgress) {
+      setFrozenObjectType(objectType);
+      setFrozenFilter(deepCopy(filter));
+      setFrozenRequestedFields(deepCopy(requestedFields));
+      setFrozenTotalSize(totalSize);
+    }
+  }, [objectType, filter, requestedFields, totalSize, stopDownload]);
 
   const MinimizeButton = (
     <Button
@@ -141,7 +171,30 @@ export function DownloadModal(props: PDownloadModal) {
         <Tabs defaultActiveKey="1">
           {disabledTabs?.includes("Spreadsheet") ? null : (
             <Tabs.Tab eventKey="1" title="Spreadsheet">
-              <SpreadsheetTab {...props} />
+              <SpreadsheetTab
+                {...props}
+                fetchCount={fetchCount}
+                setFetchCount={setFetchCount}
+                percentageComplete={percentageComplete}
+                setPercentageComplete={setPercentageComplete}
+                secondsElapsed={secondsElapsed}
+                setSecondsElapsed={setSecondsElapsed}
+                downloadComplete={downloadComplete}
+                setDownloadComplete={setDownloadComplete}
+                stopDownload={stopDownload}
+                setStopDownload={setStopDownload}
+                stopDownloadLoading={stopDownloadLoading}
+                setStopDownloadLoading={setStopDownloadLoading}
+                stopDownloadRef={stopDownloadRef}
+                frozenObjectType={frozenObjectType}
+                setFrozenObjectType={setFrozenObjectType}
+                frozenFilter={frozenFilter}
+                setFrozenFilter={setFrozenFilter}
+                frozenTotalSize={frozenTotalSize}
+                setFrozenTotalSize={setFrozenTotalSize}
+                frozenRequestedFields={frozenRequestedFields}
+                setFrozenRequestedFields={setFrozenRequestedFields}
+              />
             </Tabs.Tab>
           )}
           {disabledTabs?.includes("SDK") ? null : (

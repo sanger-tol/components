@@ -4,10 +4,9 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useRef, useEffect } from 'react'
+import { MutableRefObject } from "react"
 import { Progress } from "rsuite";
 import {
-  deepCopy,
   downloadForChart,
   downloadForTable,
   FieldMeta,
@@ -32,14 +31,34 @@ export interface PSpreadsheetTab {
   title?: PEditableTitle
   fieldMeta?: FieldMeta
   dataSource?: TsDataSource
+  // These must live in DownloadModal as SpreadhseetTab is unmounted
+  // whenever the Modal is closed, which resets the states
+  fetchCount: number
+  setFetchCount: (n: number) => void
+  percentageComplete: number
+  setPercentageComplete: (n: number) => void
+  secondsElapsed: number
+  setSecondsElapsed: (secondsElapsed: number) => void
+  downloadComplete: boolean
+  setDownloadComplete: (b: boolean) => void
+  stopDownload: boolean
+  setStopDownload: (b: boolean) => void
+  stopDownloadLoading: boolean
+  setStopDownloadLoading: (b: boolean) => void
+  stopDownloadRef: MutableRefObject<boolean>
+  frozenObjectType: string
+  setFrozenObjectType: (s: string) => void
+  frozenFilter: object
+  setFrozenFilter: (f: object) => void
+  frozenTotalSize: number
+  setFrozenTotalSize: (n: number) => void
+  frozenRequestedFields: string[]
+  setFrozenRequestedFields: (f: string[]) => void
 }
 
 export function SpreadsheetTab(props: PSpreadsheetTab) {
   const {
-    objectType,
-    requestedFields,
     totalSize,
-    filter,
     downloadInProgress,
     setDownloadInProgress,
     componentType = "table",
@@ -47,36 +66,24 @@ export function SpreadsheetTab(props: PSpreadsheetTab) {
     datasets,
     fieldMeta,
     title,
-    dataSource
+    dataSource,
+    fetchCount,
+    setFetchCount,
+    percentageComplete,
+    setPercentageComplete,
+    secondsElapsed,
+    setSecondsElapsed,
+    downloadComplete,
+    setDownloadComplete,
+    setStopDownload,
+    stopDownloadLoading,
+    setStopDownloadLoading,
+    stopDownloadRef,
+    frozenObjectType,
+    frozenFilter,
+    frozenTotalSize,
+    frozenRequestedFields,
   } = props;
-
-  const [fetchCount, setFetchCount] = useState<number>(0);
-  const [percentageComplete, setPercentageComplete] = useState<number>(0);
-  const [secondsElapsed, setSecondsElapsed] = useState<number>(0);
-  const [downloadComplete, setDownloadComplete] = useState<boolean>(false);
-  const [stopDownload, setStopDownload] = useState<boolean>(false);
-  const [stopDownloadLoading, setStopDownloadLoading] =
-    useState<boolean>(false);
-  const stopDownloadRef = useRef<boolean>(false);
-  const [frozenObjectType, setFrozenObjectType] = useState<string>(objectType);
-  const [frozenFilter, setFrozenFilter] = useState<object>(deepCopy(filter));
-  const [frozenTotalSize, setFrozenTotalSize] = useState<number>(totalSize);
-  const [frozenRequestedFields, setFrozenRequestedFields] = useState<string[]>(
-    deepCopy(requestedFields)
-  );
-
-  useEffect(() => {
-    stopDownloadRef.current = stopDownload;
-  }, [stopDownload]);
-
-  useEffect(() => {
-    if (!downloadInProgress) {
-      setFrozenObjectType(objectType);
-      setFrozenFilter(deepCopy(filter));
-      setFrozenRequestedFields(deepCopy(requestedFields));
-      setFrozenTotalSize(totalSize);
-    }
-  }, [objectType, filter, requestedFields, totalSize, stopDownload]);
 
   const onDownloadComplete = () => {
     setDownloadComplete(true);
