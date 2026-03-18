@@ -347,8 +347,6 @@ export function RemoteTable(props: PRemoteTable) {
       await initialSetup();
     }
     setLoading(true);
-    
-    console.log(await dataSource.isManyDataPointsByName('tolid', 'grit_curations'));
 
     dataSource
       .getListPage({
