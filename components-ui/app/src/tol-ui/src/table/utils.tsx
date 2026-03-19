@@ -300,19 +300,21 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
   copyToClipboard(copyList);
 }
 
-function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, fieldName: string) {
+async function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, fieldName: string, dataSource: TsDataSource, objectType: string) {
   if (typeof value !== "string" || !value.includes("${")) return;
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
-  matches.forEach((match) => {
+  matches.forEach(async (match) => {
     const relativeAttribute = match
       .replace("${", "")
       .replace("}", "")
       .replace(CELL_RENDERER_SPREAD_OPERATOR, '')
       .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, '')
       .trim();
+
     const relationship = getRelationshipNameByField(fieldName);
-    const field = relationship ? `${relationship}.${relativeAttribute}` : relativeAttribute;
+    const isMany = await dataSource.isManyDataPointsByName(objectType, fieldName.split(".")[0])
+    const field = (relationship && !!isMany) ? `${relationship}.${relativeAttribute}` : relativeAttribute;
     if (field) requestedFields.add(field);
   });
 }
@@ -327,7 +329,7 @@ function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
 }
 
 
-export function amalgamateRequestedFields(fieldMeta: FieldMeta): string[] {
+export function amalgamateRequestedFields(fieldMeta: FieldMeta, dataSource: TsDataSource, objectType: string): string[] {
   const requestedFields = new Set<string>(fieldMeta?.order.active || []);
 
   const dataWithDefaults = fieldMeta?.dataWithDefaults || {};
@@ -342,7 +344,7 @@ export function amalgamateRequestedFields(fieldMeta: FieldMeta): string[] {
     const props = cellRenderer?.props || {};
 
     Object.values(props).forEach((value) => {
-      addFieldsFromStringProp(requestedFields, value, fieldName);
+      addFieldsFromStringProp(requestedFields, value, fieldName, dataSource, objectType);
       addFieldsFromFilterProp(requestedFields, value);
     });
   });
