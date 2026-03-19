@@ -30,13 +30,14 @@ import {
   generateBarLabels,
   updateOpacitys,
   resetItemClickedData,
-  downloadItem,
   isPropDefined,
   getCssVarValue,
   themeListener,
   PUtilityBar,
   mergeUtilityBarConfigs,
-  PButton
+  PButton,
+  DownloadModal,
+  calculateTotalAggsSize
 } from "..";
 
 
@@ -66,6 +67,7 @@ interface Props {
   utilityBarConfig?: PUtilityBar;
   contents?: ReactNode;
   chartType?: string;
+  objectType?: string;
 }
 
 export function BarChart(props: Props) {
@@ -79,15 +81,19 @@ export function BarChart(props: Props) {
     utilityBarConfig = {},
     contents,
     chartType = 'bar',
-    downloadName = 'barchart'
+    objectType
   } = props;
   const originDatasets = initialiseDatasets(props.datasets);
+
 
   const [datasets, setDatasets] = useState(originDatasets);
   const [prevOrder, setPrevOrder] = useState(null);
   const [prevLegendItemIndex, setPrevLegendItemIndex] = useState(null);
   // Used to change the height of the y-axis when selecting a legend
   const [maxHeight, setMaxHeight] = useState<number | null>(null);
+
+  const [downloadOpen, setDownloadOpen] = useState<boolean>(false)
+  const [downloadInProgress, setDownloadInProgress] = useState<boolean>(false)
 
   // colours
   const [titleColour, setTitleColour] = useState("");
@@ -317,14 +323,14 @@ export function BarChart(props: Props) {
     position: "right",
     type: "primary",
     onClick: () => {
-      downloadItem(props.id, downloadName);
+      setDownloadOpen(true)
     },
     icon: "download",
     disabled: datasets.length === 0,
     disabledTooltip: "No data to download",
   }
 
-  const ubc = mergeUtilityBarConfigs(
+  const newUtilityBarConfig = mergeUtilityBarConfigs(
     utilityBarConfig,
     {
       buttons: [
@@ -336,7 +342,23 @@ export function BarChart(props: Props) {
 
   return (
     <div style={{ height: height }}>
-      <UtilityBar id={id} {...ubc} />
+      <DownloadModal
+        componentId={id}
+        size="sm"
+        open={downloadOpen}
+        setOpen={setDownloadOpen}
+        title={newUtilityBarConfig.title}
+        requestedFields={[]}
+        objectType={objectType || ""}
+        downloadInProgress={downloadInProgress}
+        setDownloadInProgress={setDownloadInProgress}
+        componentType="barchart"
+        totalSize={calculateTotalAggsSize(datasets)}
+        datasets={datasets}
+        labels={labels}
+        disabledTabs={["CLI", "SDK"]}
+      />
+      <UtilityBar id={id} {...newUtilityBarConfig} />
       <div className="tol-component-contents with-offset">
         {contents ? contents :
           <Chart

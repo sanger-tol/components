@@ -398,7 +398,9 @@ export function Table(props: PTable) {
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
       <DownloadModal
         {...props}
+        disabledTabs={['Image']}
         size="sm"
+        componentId={id}
         open={downloadOpen}
         setOpen={setDownloadOpen}
         source={source}

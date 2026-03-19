@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import * as XLSX from "xlsx";
 import {
   FieldMeta,
   normaliseCaps,
@@ -278,36 +277,6 @@ export async function getActions(
   });
 
   return actionsList;
-}
-
-export async function dataObjectToSpreadsheetData(
-  dataObjects: TDataObjectListOrNull,
-  requestedFields: string[],
-  fieldMeta: FieldMeta
-) {
-  const spreadsheetData: any[] = [];
-  dataObjects?.forEach((obj) => {
-    const flatData = {};
-    requestedFields.forEach((field) => {
-      flatData[fieldMeta.dataWithDefaults?.[field].rename ?? field] =
-        Array.isArray(getFieldByName(obj, field))
-          ? getFieldByName(obj, field).toString()
-          : getFieldByName(obj, field);
-    });
-    spreadsheetData.push(flatData);
-  });
-  return spreadsheetData;
-}
-
-export function exportDataToSpreadsheet(
-  spreadsheetData: Array<Record<string, string>>,
-  title: string
-) {
-  const heading = `${title.replace(/\s+/g, "_")}.xlsx`;
-  const worksheet = XLSX.utils.json_to_sheet(spreadsheetData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "ToLTable");
-  XLSX.writeFile(workbook, heading, { compression: true });
 }
 
 export function formatTotalSize(totalSize: number) {
