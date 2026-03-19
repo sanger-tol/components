@@ -16,7 +16,7 @@ import {
   TDisabledTab,
   deepCopy,
 } from "..";
-import { CommandLineTab, ImageTab, SDKTab, SpreadsheetTab } from "./tabs";
+import { CommandLineTab, ImageTab, SdkTab, SpreadsheetTab } from "./tabs";
 
 export interface PDownloadModal {
 
@@ -199,7 +199,7 @@ export function DownloadModal(props: PDownloadModal) {
           )}
           {disabledTabs?.includes("SDK") ? null : (
             <Tabs.Tab eventKey="2" title="SDK">
-              <SDKTab source={sourceToUse} objectType={objectType} filter={filter} />
+              <SdkTab source={sourceToUse} objectType={objectType} filter={filter} />
             </Tabs.Tab>
           )}
           {disabledTabs?.includes("CLI") ? null : (

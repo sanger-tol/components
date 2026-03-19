@@ -330,7 +330,7 @@ export function BarChart(props: Props) {
     disabledTooltip: "No data to download",
   }
 
-  const ubc = mergeUtilityBarConfigs(
+  const newUtilityBarConfig = mergeUtilityBarConfigs(
     utilityBarConfig,
     {
       buttons: [
@@ -347,7 +347,7 @@ export function BarChart(props: Props) {
         size="sm"
         open={downloadOpen}
         setOpen={setDownloadOpen}
-        title={ubc.title}
+        title={newUtilityBarConfig.title}
         requestedFields={[]}
         objectType={objectType || ""}
         downloadInProgress={downloadInProgress}
@@ -358,7 +358,7 @@ export function BarChart(props: Props) {
         labels={labels}
         disabledTabs={["CLI", "SDK"]}
       />
-      <UtilityBar id={id} {...ubc} />
+      <UtilityBar id={id} {...newUtilityBarConfig} />
       <div className="tol-component-contents with-offset">
         {contents ? contents :
           <Chart

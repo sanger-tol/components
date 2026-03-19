@@ -7,19 +7,19 @@ SPDX-License-Identifier: MIT
 import { CodeBlock } from "react-code-blocks";
 import {
   Button,
-  generateSDKScript,
+  generateSdkScript,
   IFilter,
   copyToClipboard
 } from "../..";
-import { SDKInstructions } from ".";
+import { SdkInstructions } from ".";
 
-export interface PSDKTab {
+export interface PSdkTab {
   source: string,
   filter: IFilter,
   objectType: string
 }
 
-export function SDKTab(props: PSDKTab) {
+export function SdkTab(props: PSdkTab) {
   const {
     source,
     filter,
@@ -27,7 +27,7 @@ export function SDKTab(props: PSDKTab) {
   } = props;
   const sourceToUse = source || "portal";
 
-  const SDKText = generateSDKScript(sourceToUse, filter, objectType)
+  const SDKText = generateSdkScript(sourceToUse, filter, objectType)
 
   return (
     <>
@@ -45,7 +45,7 @@ export function SDKTab(props: PSDKTab) {
         text="Copy to Clipboard"
       />
       <br />
-      <SDKInstructions/>
+      <SdkInstructions/>
     </>
   );
 }

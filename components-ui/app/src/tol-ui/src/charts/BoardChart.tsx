@@ -50,7 +50,7 @@ export function BoardChart(props: PVisualisation) {
     visible: editMode,
   }
 
-  const ubc = mergeUtilityBarConfigs(
+  const newUtilityBarConfig = mergeUtilityBarConfigs(
     utilityBarConfig,
     {
       buttons: [
@@ -84,7 +84,7 @@ export function BoardChart(props: PVisualisation) {
         stacked={config.stacked || false}
         type={config.grouping || ""}
         forceUpdate={forceUpdate}
-        utilityBarConfig={ubc}
+        utilityBarConfig={newUtilityBarConfig}
       />
     </>
   );

@@ -11,7 +11,7 @@ import {
   copyToClipboard,
   generateCLICommand
 } from "../..";
-import { SDKInstructions } from ".";
+import { SdkInstructions } from ".";
 
 export interface PCommandLineTab {
   source: string,
@@ -47,7 +47,7 @@ export function CommandLineTab(props: PCommandLineTab) {
         text="Copy to Clipboard"
       />
       <br />
-      <SDKInstructions/>
+      <SdkInstructions/>
     </>
   );
 }

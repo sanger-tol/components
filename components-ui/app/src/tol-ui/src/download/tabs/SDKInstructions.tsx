@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { CodeBlock } from "react-code-blocks";
 
 
-export function SDKInstructions() {
+export function SdkInstructions() {
 
   return (
     <>

@@ -31,7 +31,7 @@ const stringifyFilter = (filter: any) => {
     .replace(/"False"/g, "False");
 };
 
-export function generateSDKScript(source: string, filter: IFilter, objectType: string) {
+export function generateSdkScript(source: string, filter: IFilter, objectType: string) {
   return `from tol.core import DataSourceFilter
 from tol.sources.${source} import ${source}
 
