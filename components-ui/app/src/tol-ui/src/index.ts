@@ -51,6 +51,7 @@ export * from "./table";
 export * from "./timeline";
 export * from "./utility-bar";
 export * from "./variables";
+export * from "./images";
 
 import { TsDataSource, env, BOARDS_API_DATA_PATH } from ".";
 

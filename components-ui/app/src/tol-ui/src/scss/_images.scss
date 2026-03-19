@@ -1,0 +1,173 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Genome Research Ltd.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+.tol-image {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 6px;
+  object-fit: contain;
+  display: block;
+  cursor: default;
+}
+
+.tol-image--fill {
+  width: 100%;
+  height: auto;
+  max-height: none;
+}
+
+.tol-image--clickable {
+  cursor: pointer;
+}
+
+.tol-images {
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.tol-images .tol-image-carousel {
+  height: 100%;
+}
+
+.tol-image-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  outline: none;
+}
+
+.tol-image-carousel:focus {
+  outline: none;
+}
+
+.tol-image-carousel-arrow {
+  cursor: pointer;
+}
+
+.tol-image-carousel-arrow-left {
+  margin-right: 6px;
+}
+
+.tol-image-carousel-arrow-right {
+  margin-left: 6px;
+}
+
+.tol-image-carousel__viewport {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.tol-image-modal__content {
+  position: relative;
+  text-align: center;
+  min-height: 600px;
+}
+
+.tol-image-modal .rs-modal-body {
+  scrollbar-color: var(--tol-image-list-scrollbar-thumb, var(--tol-grey-light))
+    var(--tol-image-list-scrollbar-track, transparent);
+}
+
+.tol-image-modal .rs-modal-body::-webkit-scrollbar {
+  width: var(--tol-image-list-scrollbar-height, 6px);
+}
+
+.tol-image-modal .rs-modal-body::-webkit-scrollbar-track {
+  background: var(--tol-image-list-scrollbar-track, transparent);
+}
+
+.tol-image-modal .rs-modal-body::-webkit-scrollbar-thumb {
+  background: var(--tol-image-list-scrollbar-thumb, var(--tol-grey-light));
+  border-radius: 4px;
+}
+
+.tol-image-modal .rs-modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--tol-image-list-scrollbar-thumb-hover, var(--tol-grey));
+}
+
+.tol-image-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--tol-grey);
+  color: var(--tol-light);
+  border: none;
+  border-radius: 50%;
+  width: var(--tol-image-modal-close-size, 40px);
+  height: var(--tol-image-modal-close-size, 40px);
+  font-size: var(--tol-image-modal-close-font-size, 24px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 0;
+  outline: none;
+}
+
+.tol-image-modal__close:focus-visible {
+  box-shadow: 0 0 0 3px var(--tol-focus-ring, rgba(59, 130, 246, 0.6));
+}
+
+.tol-image-list {
+  display: flex;
+  overflow-x: auto;
+  gap: var(--tol-image-list-gap, 10px);
+  padding: var(--tol-image-list-padding, 10px 0);
+  background: var(--tol-image-list-background, transparent);
+  height: 100%;
+  align-items: center;
+}
+
+.tol-image-list__item {
+  flex-shrink: 0;
+  height: var(--tol-image-list-item-height, auto);
+  max-height: 100%;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: default;
+}
+
+.tol-image-list__item--clickable {
+  cursor: pointer;
+}
+
+.tol-image-list::-webkit-scrollbar {
+  height: var(--tol-image-list-scrollbar-height, 6px);
+}
+
+.tol-image-list::-webkit-scrollbar-track {
+  background: var(--tol-image-list-scrollbar-track, transparent);
+}
+
+.tol-image-list::-webkit-scrollbar-thumb {
+  background: var(--tol-image-list-scrollbar-thumb, var(--tol-grey-light));
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tol-image-list::-webkit-scrollbar-thumb:hover {
+  background: var(--tol-image-list-scrollbar-thumb-hover, var(--tol-grey));
+}

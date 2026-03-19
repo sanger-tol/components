@@ -4,22 +4,22 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ImageModal, PCellDisplay, encodeImageSrc } from "../..";
+import { OldImageModal, PCellDisplay, encodeImageSrc } from "../..";
 import { useState } from "react";
 
-export interface PImage extends PCellDisplay {
+export interface POldImage extends PCellDisplay {
   value: string;
   captions: string; // kept as plural to avoid alembic upgrade for now
 }
 
-export function Image(props: PImage) {
+export function OldImage(props: POldImage) {
   const { value, captions } = props;
 
   const [open, setOpen] = useState<boolean>(false);
 
   return (
     <div>
-      <ImageModal
+      <OldImageModal
         value={value}
         caption={captions}
         open={open}
