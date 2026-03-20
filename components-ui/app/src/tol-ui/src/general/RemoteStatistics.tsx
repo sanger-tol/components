@@ -19,6 +19,7 @@ import {
   TStatisticsType,
   normaliseNumber,
   HoverOverlay,
+  API_OPERATIONS,
 } from "..";
 
 export interface PRemoteStatistics extends IRemoteTargetAndZone {
@@ -83,9 +84,11 @@ export function RemoteStatistics(props: PRemoteStatistics) {
     }
 
     const resource =
-      type === "count" ? `${objectType}:count` : `${objectType}:stats`;
+      type === "count" ? `${objectType}${API_OPERATIONS.COUNT}` : `${objectType}${API_OPERATIONS.STATS}`;
 
-    const additionallParams: any =
+    const apiMethod = type === "count" ? API_METHODS.POST : API_METHODS.GET;
+
+    const additionalParams: any =
       type !== "count"
         ? {
             params: {
@@ -98,9 +101,9 @@ export function RemoteStatistics(props: PRemoteStatistics) {
 
     dataSource
       .custom({
-        method: API_METHODS.POST,
+        method: apiMethod,
         resource,
-        ...additionallParams,
+        ...additionalParams,
       })
       .then((res: any) => {
         if (type === "count") {
