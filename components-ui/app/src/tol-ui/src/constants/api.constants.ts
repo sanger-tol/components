@@ -18,6 +18,7 @@ export const API_OPERATIONS = {
   COUNT: ":count",
   AGGREGATIONS: ":aggregations",
   GROUP_STATS: ":group-stats",
+  STATS: ":stats",
   TO_ONE: ":to-one",
   TO_MANY: ":to-many",
 } as const;

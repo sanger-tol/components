@@ -553,11 +553,10 @@ export class TsDataSource {
     return this.custom({
       method: API_METHODS.POST,
       resource: this.generateEndpoint(objectType, API_OPERATIONS.CURSOR),
-      body: { search_after: searchAfter },
+      body: { search_after: searchAfter, filter: filter },
       params: {
         page: page,
         page_size: pageSize,
-        filter: filter,
         requested_fields: requestedFields,
       },
     })

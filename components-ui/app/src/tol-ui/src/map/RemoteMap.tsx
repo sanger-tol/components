@@ -89,9 +89,9 @@ export function RemoteMap(props: PRemoteMap) {
     setErrorMessage("");
     dataSource
       .custom({
-        method: API_METHODS.GET,
+        method: API_METHODS.POST,
         resource: `${objectType}:count`,
-        params: {
+        body: {
           filter: filter,
         },
       })
