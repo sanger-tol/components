@@ -372,9 +372,9 @@ export function RemoteTable(props: PRemoteTable) {
         // fetch count
         dataSource
           .custom({
-            method: API_METHODS.GET,
+            method: API_METHODS.POST,
             resource: `${objectType}:count`,
-            params: {
+            body: {
               filter: filter,
             },
           })

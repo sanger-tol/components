@@ -18,7 +18,7 @@ import {
   IRemoteTargetAndZone,
   TStatisticsType,
   normaliseNumber,
-  HoverOverlay
+  HoverOverlay,
 } from "..";
 
 export interface PRemoteStatistics extends IRemoteTargetAndZone {
@@ -42,7 +42,7 @@ export interface PRemoteStatistics extends IRemoteTargetAndZone {
 
 /**
  * @autodoc
- * 
+ *
  * RemoteStatistics retrieves and displays count or stats from a remote dataSource,
  * updating based on applied filters and selected zones.
  */
@@ -55,7 +55,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
     setZone,
     utilityBarConfig,
     type = "count",
-    field
+    field,
   } = props;
 
   const [value, setValue] = useState<number>(0);
@@ -85,25 +85,31 @@ export function RemoteStatistics(props: PRemoteStatistics) {
     const resource =
       type === "count" ? `${objectType}:count` : `${objectType}:stats`;
 
-    const params: any =
-      type === "count"
-        ? { filter }
-        : {
-          filter,
-          stats: type,
-          stats_fields: field!.trim(),
-        };
+    const additionallParams: any =
+      type !== "count"
+        ? {
+            params: {
+              filter,
+              stats: type,
+              stats_fields: field!.trim(),
+            },
+          }
+        : { body: { filter: filter } };
 
     dataSource
       .custom({
-        method: API_METHODS.GET,
+        method: API_METHODS.POST,
         resource,
-        params,
+        ...additionallParams,
       })
       .then((res: any) => {
         if (type === "count") {
           const total = res?.data?.meta?.total;
-          if (total === undefined || total === null || Number.isNaN(Number(total))) {
+          if (
+            total === undefined ||
+            total === null ||
+            Number.isNaN(Number(total))
+          ) {
             setError("Unable to read total count.");
             return;
           }
