@@ -73,7 +73,7 @@ export function BoardMap(props: PVisualisation) {
         open={openConfig}
         setOpen={setOpenConfig}
         onConfigSave={onConfigSave}
-        title="Chart Configuration"
+        title="Map Configuration"
         config={deepCopy(config)}
       />
       <UtilityBar id={id} {...utilityBarConfigMerged} />
