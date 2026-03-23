@@ -14,7 +14,7 @@ import {
 } from "..";
 
 
-export interface PStatisticsConfigDrawer extends IRemoteTargetAndZone {
+export interface PMapConfigDrawer extends IRemoteTargetAndZone {
   /**
    * Whether the configuration drawer is open
    */
@@ -41,7 +41,7 @@ export interface PStatisticsConfigDrawer extends IRemoteTargetAndZone {
  * MapConfigDrawer provides configuration controls for map selection
  * used by BoardMap.
  */
-export function MapConfigDrawer(props: PStatisticsConfigDrawer) {
+export function MapConfigDrawer(props: PMapConfigDrawer) {
   const {
     open,
     setOpen,
