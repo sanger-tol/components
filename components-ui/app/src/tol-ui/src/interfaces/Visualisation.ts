@@ -26,4 +26,5 @@ export interface IStatisticsConfig {
 export interface IMapConfig {
   longitudeKey: string;
   latitudeKey: string;
+  attributeKeys?: string;
 }

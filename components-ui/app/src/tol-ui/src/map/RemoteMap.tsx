@@ -49,6 +49,10 @@ interface PRemoteMap extends IRemoteTargetAndZone, IHeight {
    * Optional custom overlay or content displayed while loading or handling errors
    */
   contents?: ReactNode;
+  /**
+   * Optional flag to trigger a re-fetch of the chart data from the server upon changes
+   */
+  forceUpdate?: boolean;
 }
 
 /**
@@ -69,7 +73,8 @@ export function RemoteMap(props: PRemoteMap) {
     attributeKeys,
     zone,
     markerRenderer,
-    contents
+    contents,
+    forceUpdate
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const [markers, setMarkers] = useState<object[]>([]);
@@ -143,7 +148,7 @@ export function RemoteMap(props: PRemoteMap) {
         setErrorMessage(error.message);
         console.error(error.message);
       });
-  }, [zone]);
+  }, [zone, forceUpdate]);
 
   const map = <Map {...props} markers={markers} />;
 
@@ -169,12 +174,12 @@ export function RemoteMap(props: PRemoteMap) {
     );
   }
 
-  if (loading) {
-    return <Placeholder loader opacity={0.8} backing={map} height={height} />;
-  }
-
   if (contents) {
     return <>{contents}</>
+  }
+
+  if (loading) {
+    return <Placeholder loader opacity={0.8} backing={map} height={height} />;
   }
 
   if (count === undefined) {

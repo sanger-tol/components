@@ -25,11 +25,14 @@ export function BoardMap(props: PVisualisation) {
 
   const [config, setConfig] = useState<IMapConfig>(props.config);
   const [openConfig, setOpenConfig] = useState(false);
+  const [forceUpdate, setForceUpdate] = useState(false);
   const { editMode } = useBoard();
 
   const Contents = () => {
     if (!config.longitudeKey || !config.latitudeKey) {
       return <NoAttributesPlaceholder />;
+    } else {
+      return null;
     }
   }
 
@@ -41,6 +44,7 @@ export function BoardMap(props: PVisualisation) {
       zone,
       boardDataSource
     )
+    setForceUpdate(!forceUpdate);
   };
 
   const configButton: PButton = {
@@ -77,7 +81,9 @@ export function BoardMap(props: PVisualisation) {
         <RemoteMap
           latitudeKey={config.latitudeKey}
           longitudeKey={config.longitudeKey}
+          attributeKeys={config.attributeKeys}
           contents={Contents()}
+          forceUpdate={forceUpdate}
           {...props}
         />
       </div>

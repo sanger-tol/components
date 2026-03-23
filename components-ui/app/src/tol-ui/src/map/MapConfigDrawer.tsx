@@ -52,22 +52,26 @@ export function MapConfigDrawer(props: PMapConfigDrawer) {
 
   const [longitudeKey, setLongitudeKey] = useState<string[]>(config.longitudeKey ? [config.longitudeKey] : []);
   const [latitudeKey, setLatitudeKey] = useState<string[]>(config.latitudeKey ? [config.latitudeKey] : []);
+  const [attributeKeys, setAttributeKeys] = useState<string[]>(config.attributeKeys ? [config.attributeKeys] : []);
 
   const longChanged = longitudeKey[0] !== config.longitudeKey;
   const latChanged = latitudeKey[0] !== config.latitudeKey;
-  const hasPendingChanges = (longChanged || latChanged) && longitudeKey.length > 0 && latitudeKey.length > 0;
+  const attrChanged = attributeKeys.join(",") !== config.attributeKeys;
+  const hasPendingChanges = (longChanged || latChanged || attrChanged) && longitudeKey.length > 0 && latitudeKey.length > 0;
 
   useEffect(() => {
     if (open) {
       setLongitudeKey(config.longitudeKey ? [config.longitudeKey] : []);
       setLatitudeKey(config.latitudeKey ? [config.latitudeKey] : []);
+      setAttributeKeys(config.attributeKeys ? [config.attributeKeys] : []);
     }
-  }, [open, config.longitudeKey, config.latitudeKey]);
+  }, [open, config.longitudeKey, config.latitudeKey, config.attributeKeys]);
 
   const onSave = () => {
     onConfigSave({
       longitudeKey: longitudeKey[0],
       latitudeKey: latitudeKey[0],
+      attributeKeys: attributeKeys.join(","),
     });
   };
 
@@ -112,6 +116,20 @@ export function MapConfigDrawer(props: PMapConfigDrawer) {
         populatedFieldType={"column"}
         additionalPopulatedFieldData={"."}
         allowedTypes={["int", "str"]}
+      />
+      <h6>
+        Attribute Keys
+      </h6>
+      <AttributeSelector
+        {...props}
+        sticky
+        renderSearchBySource
+        displaySource
+        placeholder="Select Attribute Keys..."
+        attribute={attributeKeys}
+        setAttributes={setAttributeKeys}
+        populatedFieldType={"column"}
+        additionalPopulatedFieldData={"."}
       />
     </Drawer>
   );
