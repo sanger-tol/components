@@ -73,12 +73,14 @@ export function BoardMap(props: PVisualisation) {
         config={deepCopy(config)}
       />
       <UtilityBar id={id} {...utilityBarConfigMerged} />
-      <RemoteMap
-        latitudeKey={config.latitudeKey}
-        longitudeKey={config.longitudeKey}
-        contents={Contents()}
-        {...props}
-      />
+      <div className="tol-component-contents with-offset">
+        <RemoteMap
+          latitudeKey={config.latitudeKey}
+          longitudeKey={config.longitudeKey}
+          contents={Contents()}
+          {...props}
+        />
+      </div>
     </>
   );
 }
