@@ -22,3 +22,8 @@ export interface IStatisticsConfig {
   type?: TStatisticsType;
   field?: string;
 }
+
+export interface IMapConfig {
+  longitudeKey: string;
+  latitudeKey: string;
+}

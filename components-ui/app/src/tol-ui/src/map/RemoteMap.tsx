@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import {
   IRemoteTargetAndZone,
   TFilterOrUndefined,
@@ -45,6 +45,10 @@ interface PRemoteMap extends IRemoteTargetAndZone, IHeight {
    * Used to apply custom legend keys based on whats is returned, must return an object in format {key: string, colour: string}
    */
   markerRenderer?: Function;
+  /**
+   * Optional custom overlay or content displayed while loading or handling errors
+   */
+  contents?: ReactNode;
 }
 
 /**
@@ -65,6 +69,7 @@ export function RemoteMap(props: PRemoteMap) {
     attributeKeys,
     zone,
     markerRenderer,
+    contents
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const [markers, setMarkers] = useState<object[]>([]);
@@ -166,6 +171,10 @@ export function RemoteMap(props: PRemoteMap) {
 
   if (loading) {
     return <Placeholder loader opacity={0.8} backing={map} height={height} />;
+  }
+
+  if (contents) {
+    return <>{contents}</>
   }
 
   if (count === undefined) {
