@@ -5,12 +5,12 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  PCell,
+  PCellDisplay,
   StatusMessage
 } from "../..";
 
 
-export function Boolean(props: PCell) {
+export function Boolean(props: PCellDisplay) {
   const { value } = props;
 
   switch (value) {
@@ -19,5 +19,5 @@ export function Boolean(props: PCell) {
     case false:
       return <StatusMessage message="False" status="error" />;
   }
-  return "";
+  return null;
 }

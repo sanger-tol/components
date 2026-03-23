@@ -8,5 +8,5 @@ export interface IHeight {
   /**
    * The height of this component as a CSS unit (e.g. "100%")
    */
-  height?: any;
+  height?: string | number;
 }

@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from "date-fns";
-import { appendKeywordIfNeeded, getCssVarValue, isPropDefined } from "..";
+import { appendKeywordIfNeeded, getCssVarValue, IChartDataset, isPropDefined } from "..";
 
 // ------------------//
 //      GENERAL      //
@@ -1134,4 +1134,12 @@ export function createMapMarkers(
     }
   }
   return markers;
+}
+
+export function calculateTotalAggsSize(datasets: IChartDataset[]) {
+  let total = 0;
+  datasets.forEach((dataset: IChartDataset) => {
+    total = total + dataset.data.length
+  })
+  return total
 }

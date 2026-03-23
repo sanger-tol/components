@@ -175,7 +175,7 @@
   }
 }
 
-@media(prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
   .tol-file-uploader-validate-steps-outer-container {
     background: var(--tol-grey-subtle);
   }
@@ -189,6 +189,13 @@
 .tol-file-upload-results-viewer-content-container {
   display: flex;
   justify-content: space-between;
+}
+
+.tol-file-validation-upload-table-id-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
 }
 
 .tol-file-upload-results-viewer-content-inner-container {
@@ -243,6 +250,18 @@
   }
 }
 
+.tol-file-upload-status-table {
+  margin-bottom: 5px;
+
+  table,
+  tr,
+  th,
+  td {
+    border: 1px solid var(--tol-text);
+    padding: 6px;
+  }
+}
+
 .tol-file-validation-previous-results-no-data {
   color: var(--tol-danger);
   display: flex;
@@ -259,7 +278,8 @@
     height: fit-content;
     width: 250px;
     padding: 5px 15px;
-    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px,
+    box-shadow:
+      rgba(0, 0, 0, 0.19) 0px 10px 20px,
       rgba(0, 0, 0, 0.23) 0px 6px 6px;
     border-radius: 6px;
     min-height: 225px;
@@ -349,6 +369,28 @@
   }
 }
 
+.tol-file-validation-home-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .tol-file-validation-home-header-bar-toggle {
+    display: flex;
+    gap: 5px;
+  }
+}
+
+.tol-file-validation-rejection-reason {
+  h6 {
+    margin: 0 !important;
+  }
+
+  p {
+    margin-top: 0 !important;
+    margin-bottom: 4px !important;
+  }
+}
+
 .tol-file-validation-previous-uploads-modal-container {
   max-height: 65vh;
   overflow-y: auto;
@@ -358,17 +400,28 @@
   }
 }
 
+.tol-file-validation-rejection-box {
+  margin-bottom: 10px;
+}
+
 .tol-file-validation-previous-uploads-modal-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: 15px;
 }
 
 .tol-file-validation-previous-uploads-modal-header-content {
-  p {
+  p,
+  h3 {
     margin: 0;
   }
+}
+
+.tol-file-validation-loader-style {
+  min-height: 160px;
+  flex-direction: column;
+  align-items: center;
+  display: flex;
 }
 
 .tol-file-validation-previous-uploads-modal-toggle {
@@ -378,6 +431,12 @@
   width: fit-content;
   margin-left: auto;
   margin-right: -10px;
+}
+
+.tol-file-validation-report-download-button {
+  display: flex;
+  justify-content: flex-end;
+  margin: 15px 10px 0 0;
 }
 
 .tol-file-validation-previous-uploads-modal-toggle-tag {
@@ -499,7 +558,9 @@
 }
 
 .tol-file-uploader-dropdown-btn-icon-transition {
-  transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
+  transition:
+    transform 0.3s ease-in-out,
+    opacity 0.2s ease-in-out;
   opacity: 1;
 }
 
@@ -547,6 +608,12 @@
     }
   }
 
+  .tol-file-validation-results-page-status {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+
   .tol-file-validation-results-page-status-indicator {
     color: var(--tol-success);
 
@@ -563,10 +630,6 @@
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
-
-    .tol-file-validation-results-page-additional-info-updated-at {
-      margin-top: 15px;
-    }
   }
 
   .tol-file-validation-results-page-error-count-container {
@@ -605,7 +668,9 @@
     border: none !important;
     padding: 0 !important;
     margin: 0 !important;
-    transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    transition:
+      transform 0.3s ease-in-out,
+      opacity 0.2s ease-in-out;
 
     &:hover {
       opacity: 0.8;
@@ -614,7 +679,9 @@
     &.icon-rotate {
       transform: rotate(180deg);
       opacity: 0.8;
-      transition: transform 0.3s ease-in-out, opacity 0.2s ease-in-out;
+      transition:
+        transform 0.3s ease-in-out,
+        opacity 0.2s ease-in-out;
     }
 
     &.icon-rotate:hover {
@@ -663,6 +730,16 @@
     p {
       margin: 0;
     }
+
+    .tol-file-validation-previous-results-show-title {
+      h6 {
+        margin-bottom: 0;
+      }
+
+      p {
+        margin-top: 0;
+      }
+    }
   }
 
   .tol-file-validation-previous-results-show-results-inner {
@@ -705,32 +782,22 @@
   }
 }
 
-.tol-file-validation-results-status {
-  margin: 0;
-  text-align: right;
-
-  &.passed {
-    color: var(--tol-success);
+.tol-file-validation-name-upload-modal-container {
+  .tol-file-validation-name-upload-modal-p1 {
+    margin-bottom: 0 !important;
   }
-
-  &.completed-with-errors {
-    color: var(--tol-danger);
+  .tol-file-validation-name-upload-modal-p2 {
+    margin-top: 0 !important;
   }
+}
 
-  &.completed-with-warnings {
-    color: var(--tol-warning);
-  }
+.tol-file-validation-results-status-container {
+  display: flex;
+  gap: 5px;
 
-  &.failed {
-    color: var(--tol-danger-light);
-  }
-
-  &.in-progress {
-    color: var(--tol-warning-light);
-  }
-
-  &.marked-as-ready {
-    color: var(--tol-success-light);
+  .tol-file-validation-results-status {
+    margin: 0;
+    text-align: right;
   }
 }
 

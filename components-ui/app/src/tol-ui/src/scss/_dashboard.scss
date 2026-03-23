@@ -4,17 +4,66 @@
  * SPDX-License-Identifier: MIT
  */
 
+.tol-board {
+  // Hover colour for placeholders when dragging
+  .react-grid-item.react-grid-placeholder {
+    background-color: var(--tol-primary) !important;
+    border-radius: 6px !important;
+  }
+}
+
 .tol-boards-widget {
   @extend .tol-widget;
   margin: 0px !important;
   margin-bottom: 10px !important;
+
+  position: relative; // needed for ::after positioning
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px dashed var(--tol-primary);
+    border-radius: inherit;
+    pointer-events: none;
+
+    opacity: 0; // hidden when not in edit mode
+    will-change: opacity;
+  }
+}
+
+// Edit mode: pulse the dashed overlay (fade in + out)
+.tol-board.tol-edit-mode {
+  .tol-boards-widget::after {
+    animation: tol-dash-pulse 3s ease-in-out infinite;
+  }
+}
+
+@keyframes tol-dash-pulse {
+  0% {
+    opacity: 0.2;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tol-board.tol-edit-mode .tol-boards-widget::after {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 // layout of the grid
 .tol-responsive-grid {
   position: relative;
-  margin: -10px; // compensate for padding on children
-  margin-bottom: -28px !important;
+  margin: -10px -10px -28px -10px; // compensate for padding on children
 }
 
 .tol-visualisation {
@@ -23,23 +72,42 @@
   margin: 0px !important;
 }
 
-.widget-delete-btn {
-  height: 30px;
-  width: 30px;
-  position: absolute;
-  padding: 0;
-  top: 0;
-  right: 0;
-  margin: 12px;
+.tol-layout-mode {
+  cursor: move;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }
 
 .tol-draggable-widget {
-  background-color: var(--tol-bg);
-  border-radius: 6px;
-}
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 
-.tol-draggable-widget:hover {
-  cursor: move;
+  .tol-draggable-widget-content {
+    width: 100%;
+    height: 100%;
+    filter: blur(2px);
+    pointer-events: none; // prevents table clicks
+    user-select: none;
+  }
+
+  .tol-draggable-widget-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto; // captures clicks
+    cursor: move;
+    backdrop-filter: blur(2px);
+    border-radius: 6px;
+    background-color: color-mix(in srgb, var(--tol-bg) 50%, transparent);
+  }
 }
 
 .tol-board-bar {
@@ -47,19 +115,17 @@
   margin: 6px;
   border-radius: 0;
 
-  .tol-editable-title {
-    color: var(--tol-primary);
+  // Large header for view mode
+  h3 {
+    margin-bottom: 0;
   }
 }
 
-.tol-view-bar,
 .tol-zone-bar {
-  @extend .tol-boards-widget;
-  border-radius: 0;
+  @extend .tol-board-bar;
 }
 
-.tol-view-bar>div,
-.tol-zone-bar>div {
+.tol-board-bar>div {
   margin-bottom: 0;
 }
 
@@ -216,12 +282,13 @@
   border: 2px solid var(--tol-primary) !important;
 }
 
-.tol-zone {
-  margin-top: 10px;
-}
-
-.tol-zones .tol-zone:not(:first-child) {
-  margin-top: 28px;
+.tol-zones {
+  .tol-zone:not(:first-child) {
+    margin-top: 20px;
+    &:has(.tol-zone-bar) {
+      margin-top: 28px !important;
+    }
+  }
 }
 
 .tol-zone-empty {
@@ -257,12 +324,12 @@
 .tol-editable-title.rs-inline-edit {
   font-weight: bolder !important;
   display: block;
-  margin-right: 10px;
 
   .rs-plaintext {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
   }
 }
 
@@ -301,11 +368,6 @@
 .rs-panel-btn:active {
   background-color: var(--tol-grey-translucent);
   color: var(--tol-primary);
-}
-
-// temp for info on zone bar
-.tol-zone-bar .tooltip-wrapper svg {
-  margin-top: -3px;
 }
 
 .tol-initial-boards-tour-modal {

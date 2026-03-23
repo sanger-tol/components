@@ -29,7 +29,7 @@ export const cellRendererParams: IBoardCellRenderers = {
         description: "The URL or list of URLs of the image(s) to display",
         placeholder: "www.example.com/image.png"
       },
-      names: {
+      captions: {
         type: "string",
         rename: "Caption",
         description: "The caption or list of captions for the image(s)",
@@ -58,7 +58,6 @@ export const cellRendererParams: IBoardCellRenderers = {
       },
     }
   },
-  collection: {},
   longText: {
     rename: "Long Text",
     allowedDataTypes: ["str", "float", "int"]

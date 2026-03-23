@@ -6,12 +6,9 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  FilterConfigDrawer,
   RemoteTable,
-  saveTitle,
   updateConfigAndUpsert,
-  useBoardPrivilege,
-  PRIVILEGE,
+  useBoard,
   ITableConfigSave,
   optimiseFieldMetaForSave,
   ITableDrawerSave,
@@ -25,10 +22,11 @@ export interface PBoardTable extends PVisualisation {
 }
 
 export function BoardTable(props: PBoardTable) {
-  const { id, utilityBarConfig, boardObjectType, boardDataSource, zone } = props;
+  const { id, boardDataSource, zone } = props;
+
+  const { editMode } = useBoard();
+
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
-  const [openFilters, setOpenFilters] = useState(false);
-  const { privilege } = useBoardPrivilege()
 
   const onConfigSave = ({
     fieldMeta,
@@ -90,20 +88,12 @@ export function BoardTable(props: PBoardTable) {
     );
   }
 
-  const BoardFilter = [
-    <FilterConfigDrawer
-      {...props}
-      open={openFilters}
-      setOpen={setOpenFilters}
-    />
-  ];
-
   return (
     <RemoteTable
       {...props}
-      noConfigModal={privilege !== PRIVILEGE.BOARD.EDITABLE}
+      noConfigModal={!editMode}
       // RemoteTable defaults to true for resizeableColumns, we want to default to false
-      resizeableColumns={privilege === PRIVILEGE.BOARD.EDITABLE || false}
+      resizeableColumns={editMode || false}
       onResizeColumn={onResizeColumn}
       advanceTab
       displaySource
@@ -118,25 +108,6 @@ export function BoardTable(props: PBoardTable) {
       // disabled temporarily
       // actions={config.actions}
       rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
-      utilityBarConfig={{
-        ...utilityBarConfig,
-        title: {
-          text: utilityBarConfig.title?.text,
-          editable: privilege === PRIVILEGE.BOARD.EDITABLE,
-          onSave: (value: string) => {
-            saveTitle(value, id, boardObjectType, boardDataSource);
-          }
-        },
-        elements: BoardFilter,
-        buttons: [privilege !== PRIVILEGE.BOARD.EDITABLE ? undefined : {
-          outline: true,
-          position: "right",
-          type: "primary",
-          tooltip: "Open filter config",
-          onClick: () => setOpenFilters(true),
-          icon: "filter",
-        }],
-      }}
     />
   );
 }

@@ -8,6 +8,8 @@
 
 @import "bootstrap/scss/bootstrap.scss";
 @import "rsuite/dist/rsuite.css";
+@import "react-grid-layout/css/styles.css";
+@import "react-resizable/css/styles.css";
 
 @import "variables.scss";
 
@@ -19,16 +21,17 @@ $color-mode-type: media-query;
 @import "actions.scss";
 @import "attribute-selector.scss";
 @import "buttons.scss";
-@import "cells.scss";
 @import "cell-renderers.scss";
 @import "chart.scss";
 @import "count.scss";
 @import "dashboard.scss";
+@import "data-point.scss";
 @import "drawer.scss";
 @import "dropzone.scss";
 @import "filters.scss";
 @import "form.scss";
 @import "global.scss";
+@import "images.scss";
 @import "loader.scss";
 @import "map-legend.scss";
 @import "map.scss";

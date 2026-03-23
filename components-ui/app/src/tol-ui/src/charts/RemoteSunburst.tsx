@@ -29,7 +29,9 @@ import {
   TFilterOrUndefined,
   API_METHODS,
   IRemoteTargetAndZone,
-  IHeight
+  IHeight,
+  API_OPERATIONS,
+  mergeUtilityBarConfigs
 } from "..";
 
 interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
@@ -126,11 +128,16 @@ export function RemoteSunburst(props: PRemoteSunburst) {
       dataSource
         .custom({
           method: API_METHODS.POST,
+<<<<<<< HEAD
           resource: `${objectType}:aggregations_legacy`,
           body: aggs,
           params: {
             filter: generateFilter(zone, id, true),
           },
+=======
+          resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
+          body: {...aggs, filter: generateFilter(zone, id, true)},
+>>>>>>> dev
         })
         .then((res: any) => {
           const aggs = res.data.meta.aggregations;
@@ -172,11 +179,8 @@ export function RemoteSunburst(props: PRemoteSunburst) {
         dataSource
           .custom({
             method: API_METHODS.POST,
-            resource: `${objectType}:aggregations_legacy`,
-            body: aggs,
-            params: {
-              filter: generateFilter(zone, id, true),
-            },
+            resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
+            body: {...aggs, filter: generateFilter(zone, id, true)},
           })
           .then((res: any) => {
             const aggs = res.data.meta.aggregations;
@@ -234,21 +238,22 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   const setter = setZone === undefined ? undefined : setSliceData;
   const mainPlacement = noLegend ? { paddingTop: 150 } : { paddingLeft: 150 };
 
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      buttons: [
+        resetButton,
+        downloadButton,
+      ]
+    }
+  )
+
   return (
     <div
       id={wrapperId}
       style={{ height: height, position: miniActive ? "relative" : undefined }}
     >
-      <UtilityBar
-        id={id}
-        title={utilityBarConfig?.title}
-        buttons={[
-          ...(utilityBarConfig?.buttons || []),
-          resetButton,
-          downloadButton,
-        ]}
-        {...utilityBarConfig}
-      />
+      <UtilityBar id={id} {...ubc} />
       <div className="tol-component-contents with-offset">
         {contents ? contents :
           <>

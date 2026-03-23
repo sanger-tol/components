@@ -6,11 +6,11 @@ SPDX-License-Identifier: MIT
 
 import {
   CellTooltip,
-  PCell
+  PCellDisplay
 } from "../..";
 
 
-export function Float(props: PCell) {
+export function Float(props: PCellDisplay) {
   const { value } = props;
 
   return (

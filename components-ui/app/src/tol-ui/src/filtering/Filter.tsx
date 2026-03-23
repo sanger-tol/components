@@ -33,10 +33,11 @@ export interface IFilterInput extends IRemoteTargetAndZone {
 export function Filter(props: IFilterInput) {
   switch (props.type) {
     case "str":
+      return <FilterTextInput {...props} />;
     case "int":
     case "double":
     case "float":
-      return <FilterTextInput {...props} />;
+      return <FilterTextInput isNumber {...props} />;
     case "datetime":
       return <FilterDatePicker {...props} />;
     case "bool":

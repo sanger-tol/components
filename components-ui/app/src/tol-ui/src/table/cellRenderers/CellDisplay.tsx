@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
+import { ReactNode } from "react";
 import {
   Boolean,
   Datetime,
@@ -13,89 +13,98 @@ import {
   Integer,
   Link,
   LongText,
-  Relationship,
   getCellRendererPropValue,
-  Icon,
   TrafficLightStatus,
-  PCell,
-  Collection,
-  Tag
+  PDataPoints,
+  DataPointDefaultDisplay,
+  PDataPoint,
+  Tag,
+  ErrorBoundary,
 } from "../..";
 
-
-export interface PCellDisplay extends PCell {
+export interface PCellDisplay extends PDataPoint {
   /**
-   * Whether to wrap the CellDisplay in a Tag component.
+   * The main value to be displayed in the cell.
    */
-  tag?: boolean;
+  value: any;
 }
+
+const preDefinedElements = {
+  boolean: Boolean,
+  datetime: Datetime,
+  float: Float,
+  image: Image,
+  integer: Integer,
+  link: Link,
+  longText: LongText,
+  trafficLightStatus: TrafficLightStatus,
+};
 
 /**
  * Component to display the contents of a cell based on the provided renderer configuration. Handles both pre-defined renderers and custom renderers.
  * If no renderer is provided, it will default to displaying the value as a string.
  */
 export function CellDisplay(props: PCellDisplay) {
-  const { value, dataObject, renderer, customCellRenderers, setExpandedRows, tag } = props;
-  const [expanded, setExpanded] = useState(false);
+  const {
+    field,
+    value,
+    dataObject,
+    renderer,
+    customCellRenderers,
+    isMany = false,
+  } = props;
 
-  const DefaultCell = ({ value }) => <>{value ?? ""}</>;
-
-  const preDefinedElements = {
-    boolean: Boolean,
-    collection: Collection,
-    datetime: Datetime,
-    float: Float,
-    image: Image,
-    integer: Integer,
-    link: Link,
-    longText: LongText,
-    relationship: Relationship,
-    trafficLightStatus: TrafficLightStatus,
-  };
+  // Initialise the Display variable which will hold the final renderer element to be returned
+  let Display: ReactNode;
 
   if (
     // Renderer type is not defined
     !renderer ||
     !renderer.type ||
-    renderer.type === "none" ||
-    // No value and not a custom renderer as custom renderers may not require a value
-    // No need to to deal with empty values with pre-defined cellRenderers
-    ((value === null || value === undefined) && (renderer.type) in preDefinedElements)
-  )
-    return <DefaultCell value={value} />;
+    renderer.type === "none"
+  ) {
+    Display = <DataPointDefaultDisplay {...props} value={value} />;
+  } else {
+    // Determine the appropriate renderer element
+    const elements = { ...preDefinedElements, ...customCellRenderers };
+    const ResolvedElement = elements[renderer.type];
 
-  const elements = { ...preDefinedElements, ...customCellRenderers };
-  renderer.element = elements[renderer.type] || DefaultCell;
+    if (!ResolvedElement) {
+      // Renderer type was specified but no matching component was found — fall back to default
+      console.warn(
+        `CellDisplay: Unknown renderer type "${renderer.type}" for field "${field}". Falling back to default display.`,
+      );
+      Display = <DataPointDefaultDisplay {...props} value={value} />;
+    } else {
+      // Get the props for the renderer element
+      const elementProps: PDataPoints & Record<string, any> = { ...props };
 
-  const elementProps: PCell & Record<string, any> = { ...props };
+      if (renderer.props) {
+        Object.entries(renderer.props).forEach(([prop, propValue]) => {
+          getCellRendererPropValue(
+            field,
+            value,
+            prop,
+            propValue,
+            elementProps,
+            dataObject,
+          );
+        });
+      }
 
-  if (renderer.props) {
-    Object.entries(renderer.props).forEach(([prop, value]) => {
-      getCellRendererPropValue(prop, value, elementProps, dataObject);
-    });
+      Display = <ResolvedElement {...elementProps} />;
+    }
   }
 
-  const Contents = (
-    <>
-      <renderer.element {...elementProps} />
-      {Array.isArray(value) && value.length > 1 && renderer.type === "image" &&
-        <Icon
-          icon={expanded ? "caret-up" : "caret-down"}
-          onClick={() => {
-            setExpanded(!expanded);
-            setExpandedRows((prev: string[]) => {
-              const id = elementProps.dataObject!.id;
-              return prev.includes(id)
-                ? prev.filter((existingId) => existingId !== id)
-                : [...prev, id];
-            });
-          }}
-          size="1x"
-          className={"tol-table-image-cell-arrow"}
-        />
-      }
-    </>
-  );
+  if (!value) {
+    Display = <span className="tol-display-empty">None</span>;
+  }
 
-  return tag ? <Tag>{Contents}</Tag> : Contents;
+  /**
+   * Wrap the Display in an error boundary to catch any errors
+   * thrown by custom renderers and prevent the entire table from breaking
+   */
+  Display = <ErrorBoundary>{Display}</ErrorBoundary>;
+
+  return isMany ? <Tag>{Display}</Tag> : Display;
 }

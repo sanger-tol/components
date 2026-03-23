@@ -9,13 +9,13 @@ import {
   StatusMessage,
   TsDataSource,
   Placeholder,
-  PCell,
   env,
-  PREFECT_API_DATA_PATH
+  PREFECT_API_DATA_PATH,
+  PCellDisplay
 } from "../..";
 
 
-export function ActionStatus(props: PCell) {
+export function ActionStatus(props: PCellDisplay) {
   // inherits from PCell which sets dataObject as TDataObjectOrNull, assume not null here
   const flowRunId = props.dataObject?.params.flow_run_id;
   const flowRunName = props.dataObject?.params.flow_run_name;
@@ -44,11 +44,11 @@ export function ActionStatus(props: PCell) {
 
   const getActionStatus = async () => {
     setLoading(true);
-    const ds = new TsDataSource({
+    const dataSource = new TsDataSource({
       apiPath: env.API_PATH,
       apiDataPath: PREFECT_API_DATA_PATH,
     });
-    return await ds.getOne({
+    return await dataSource.getOne({
       objectType: "flow_run",
       id: flowRunId,
     })
