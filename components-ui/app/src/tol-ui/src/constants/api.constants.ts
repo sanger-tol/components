@@ -16,7 +16,7 @@ export const API_OPERATIONS = {
   UPSERT: ":upsert",
   CURSOR: ":cursor",
   COUNT: ":count",
-  AGGREGATIONS: ":aggregations",
+  AGGREGATIONS: ":aggregations_legacy",
   TO_ONE: ":to-one",
   TO_MANY: ":to-many",
 }

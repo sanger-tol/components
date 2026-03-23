@@ -126,7 +126,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
       dataSource
         .custom({
           method: API_METHODS.POST,
-          resource: `${objectType}:aggregations`,
+          resource: `${objectType}:aggregations_legacy`,
           body: aggs,
           params: {
             filter: generateFilter(zone, id, true),
@@ -172,7 +172,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
         dataSource
           .custom({
             method: API_METHODS.POST,
-            resource: `${objectType}:aggregations`,
+            resource: `${objectType}:aggregations_legacy`,
             body: aggs,
             params: {
               filter: generateFilter(zone, id, true),
