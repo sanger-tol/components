@@ -128,16 +128,8 @@ export function RemoteSunburst(props: PRemoteSunburst) {
       dataSource
         .custom({
           method: API_METHODS.POST,
-<<<<<<< HEAD
-          resource: `${objectType}:aggregations_legacy`,
-          body: aggs,
-          params: {
-            filter: generateFilter(zone, id, true),
-          },
-=======
           resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
           body: {...aggs, filter: generateFilter(zone, id, true)},
->>>>>>> dev
         })
         .then((res: any) => {
           const aggs = res.data.meta.aggregations;
