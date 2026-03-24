@@ -118,7 +118,7 @@ export function MapConfigDrawer(props: PMapConfigDrawer) {
         allowedTypes={["int", "str"]}
       />
       <h6>
-        Attribute Keys
+        Map Marker ToolTip Attributes
       </h6>
       <AttributeSelector
         {...props}

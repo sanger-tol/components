@@ -20,6 +20,12 @@ import {
 } from "..";
 
 
+/**
+ * @autodoc
+ * 
+ * BoardMap is a wrapper around RemoteMap that provides configuration controls for map selection
+ * to be used within a Board.
+ */
 export function BoardMap(props: PVisualisation) {
   const { id, utilityBarConfig, boardDataSource, zone } = props;
 
@@ -27,14 +33,6 @@ export function BoardMap(props: PVisualisation) {
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);
   const { editMode } = useBoard();
-
-  const Contents = () => {
-    if (!config.longitudeKey || !config.latitudeKey) {
-      return <NoAttributesPlaceholder />;
-    } else {
-      return null;
-    }
-  }
 
   const onConfigSave = (updatedConfig: IMapConfig) => {
     setConfig({ ...updatedConfig });
@@ -66,6 +64,14 @@ export function BoardMap(props: PVisualisation) {
     }
   )
 
+  const Contents = () => {
+    if (!config.longitudeKey || !config.latitudeKey) {
+      return <NoAttributesPlaceholder />;
+    } else {
+      return null;
+    }
+  }
+
   return (
     <>
       <MapConfigDrawer
@@ -79,12 +85,12 @@ export function BoardMap(props: PVisualisation) {
       <UtilityBar id={id} {...utilityBarConfigMerged} />
       <div className="tol-component-contents with-offset">
         <RemoteMap
+          {...props}
           latitudeKey={config.latitudeKey}
           longitudeKey={config.longitudeKey}
           attributeKeys={config.attributeKeys}
           contents={Contents()}
           forceUpdate={forceUpdate}
-          {...props}
         />
       </div>
     </>
