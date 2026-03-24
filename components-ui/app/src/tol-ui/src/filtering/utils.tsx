@@ -375,8 +375,8 @@ export function filterListener(
 }
 export function addSubFilter(params: {
   id: string;
-  filter: object;
-  zone: object;
+  filter: IFilter;
+  zone: IZone;
 }) {
   const { id, filter, zone } = params;
   const z = zone as IZone;

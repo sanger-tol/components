@@ -25,13 +25,14 @@ import {
   themeListener,
   TUtilityBarOrNull,
   mergeUtilityBarConfigs,
-  PButton
+  PButton,
+  ISunburstBucketData
 } from "..";
 
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-interface Props {
+export interface PSunburst {
   id: string;
   datasets: object;
   height?: any;
@@ -41,13 +42,13 @@ interface Props {
   noLegend?: boolean;
   noLabel?: boolean;
   noRefresh?: boolean;
-  setSliceData?: any;
+  setSliceData?: React.Dispatch<React.SetStateAction<ISunburstBucketData>>;
   resetChart?: boolean; // a change in this prop will reset the chart
   utilityBarConfig?: TUtilityBarOrNull;
   contents?: ReactNode;
 }
 
-export function Sunburst(props: Props) {
+export function Sunburst(props: PSunburst) {
   const {
     id,
     setSliceData,
@@ -95,7 +96,7 @@ export function Sunburst(props: Props) {
     if (item !== undefined) return;
 
     // only clickable if setBarData is defined
-    if (isPropDefined(setSliceData)) {
+    if (setSliceData) {
       if (chartElement.length) {
         const { datasetIndex, index } = chartElement[0];
         const clickKey = chart.data.datasets[datasetIndex].labels[index];
@@ -114,7 +115,7 @@ export function Sunburst(props: Props) {
   }
 
   function handlePlaneHover(event: any, chartElement: any) {
-    if (isPropDefined(setSliceData)) {
+    if (setSliceData) {
       event.native.target.style.cursor = chartElement[0]
         ? "pointer"
         : "default";

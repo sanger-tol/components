@@ -9,7 +9,6 @@ import {
   aggsToSunburstData,
   createAggsViaSliceBy,
   isChartDataEmpty,
-  generateFilterFromSunburstClick,
   removeSliceBySingles,
   downloadItem,
   Sunburst,
@@ -31,7 +30,8 @@ import {
   IRemoteTargetAndZone,
   IHeight,
   API_OPERATIONS,
-  mergeUtilityBarConfigs
+  mergeUtilityBarConfigs,
+  TSunburstBucketDataOrUndefined
 } from "..";
 
 interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
@@ -103,7 +103,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   const [subLoading, setSubLoading] = useState(true);
   const [warningMessage, setWarningMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [sliceData, setSliceData] = useState({});
+  const [sliceData, setSliceData] = useState<TSunburstBucketDataOrUndefined>();
   const [filter, setFilter] = useState<TFilterOrUndefined>({});
   const [noLegend, setNoLegend] = useState(false);
 
@@ -129,15 +129,16 @@ export function RemoteSunburst(props: PRemoteSunburst) {
         .custom({
           method: API_METHODS.POST,
           resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
-          body: {...aggs, filter: generateFilter(zone, id, true)},
+          body: { ...aggs, filter: generateFilter(zone, id, true) },
         })
         .then((res: any) => {
           const aggs = res.data.meta.aggregations;
           setErrorMessage("");
           setWarningMessage(isChartDataEmpty(aggs));
           const data = aggsToSunburstData(aggs, sliceBy);
+          console.log(data);
           setDatasets(data);
-          setSliceData({});
+          setSliceData(undefined);
         })
         .catch((error: any) => {
           setErrorMessage(error.message);
@@ -151,17 +152,17 @@ export function RemoteSunburst(props: PRemoteSunburst) {
 
   // for sub sunburst updates
   useEffectUpdate(() => {
-    if (!contents) {
-      const localFilter = generateFilterFromSunburstClick(sliceData, sliceBy, datasets);
+    if (!contents && sliceData) {
+      console.log(JSON.stringify(sliceData.filter));
       // this also resets components below
       addSubFilter({
         id: id,
-        filter: localFilter,
+        filter: sliceData.filter,
         zone: zone,
       });
       setZone({ ...zone });
       // clear sub sunburst
-      if (isEmptyObject(sliceData)) {
+      if (!sliceData) {
         setSubDatasets({});
         // go deeper into the sunburst if not outer ring
       } else if (sliceData["datasetIndex"] !== 0) {
@@ -175,7 +176,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
           .custom({
             method: API_METHODS.POST,
             resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
-            body: {...aggs, filter: generateFilter(zone, id, true)},
+            body: { ...aggs, filter: generateFilter(zone, id, true) },
           })
           .then((res: any) => {
             const aggs = res.data.meta.aggregations;
