@@ -21,8 +21,6 @@ import {
 
 
 /**
- * @autodoc
- * 
  * BoardMap is a wrapper around RemoteMap that provides configuration controls for map selection
  * to be used within a Board.
  */
