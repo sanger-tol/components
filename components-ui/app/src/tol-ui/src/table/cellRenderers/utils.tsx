@@ -10,14 +10,19 @@ import {
   CELL_RENDERER_SPREAD_OPERATOR,
   getFieldByName,
   IFilter,
-  TDataObjectOrNull
+  TDataObjectOrNull,
 } from "../..";
 
-export function processConditionToBoolean(conditionObj: IFilter, dataObject: TDataObjectOrNull) {
+export function processConditionToBoolean(
+  conditionObj: IFilter,
+  dataObject: TDataObjectOrNull,
+) {
   if (Object.keys(conditionObj.and_ ?? {}).length === 0) return false;
-  for (const [fieldSystemName, conditions] of Object.entries(conditionObj.and_!)) {
+  for (const [fieldSystemName, conditions] of Object.entries(
+    conditionObj.and_!,
+  )) {
     let fieldValue = getFieldByName(dataObject, fieldSystemName);
-    if (dataObject && (fieldValue !== undefined && fieldValue !== null)) {
+    if (dataObject && fieldValue !== undefined && fieldValue !== null) {
       // normalize to array for easier processing
       fieldValue = Array.isArray(fieldValue) ? fieldValue : [fieldValue];
       for (const [operator, condition] of Object.entries(conditions)) {
@@ -27,7 +32,9 @@ export function processConditionToBoolean(conditionObj: IFilter, dataObject: TDa
             result = fieldValue.some((v: any) => v !== undefined && v !== null);
             break;
           case "contains":
-            result = fieldValue.some((v: any) => typeof v === 'string' && v.includes(condition.value));
+            result = fieldValue.some(
+              (v: any) => typeof v === "string" && v.includes(condition.value),
+            );
             break;
           case "eq":
             result = fieldValue.some((v: any) => v === condition.value);
@@ -45,7 +52,10 @@ export function processConditionToBoolean(conditionObj: IFilter, dataObject: TDa
             result = fieldValue.some((v: any) => v <= condition.value);
             break;
           case "in_list":
-            result = fieldValue.some((v: any) => Array.isArray(condition.value) && condition.value.includes(v));
+            result = fieldValue.some(
+              (v: any) =>
+                Array.isArray(condition.value) && condition.value.includes(v),
+            );
             break;
         }
         // Handle negate
@@ -69,8 +79,10 @@ export function processConditionToBoolean(conditionObj: IFilter, dataObject: TDa
  * @returns The resolved nested value, the original value if not an object, or "" if a key is not found
  */
 export function resolveObjectKeys(value: any, keyPath: string): any {
-  if (typeof value !== 'object' || value === null) return value;
-  for (const match of keyPath.matchAll(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY)) {
+  if (typeof value !== "object" || value === null) return value;
+  for (const match of keyPath.matchAll(
+    CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
+  )) {
     const objectKey = match[0].slice(1, -1);
     value = value?.[objectKey];
     if (value === undefined || value === null) return "";
@@ -96,10 +108,12 @@ export function processTagsToValues(
   const isList = key.includes(CELL_RENDERER_SPREAD_OPERATOR);
 
   // remove spread operator if present - still includes object keys
-  const keyWithoutSpread = key.replace(CELL_RENDERER_SPREAD_OPERATOR, '');
+  const keyWithoutSpread = key.replace(CELL_RENDERER_SPREAD_OPERATOR, "");
 
   // remove the attribute object key prefixes to get the actual field name
-  const fieldName = keyWithoutSpread.replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, '').trim();
+  const fieldName = keyWithoutSpread
+    .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, "")
+    .trim();
 
   // If spread operator is used for this field, return the current value
   let newPropValue: any;
@@ -115,7 +129,7 @@ export function processTagsToValues(
 
 /**
  * Processes and assigns a prop value to an elementProps object, handling template strings and conditional logic.
- * 
+ *
  * @param field - The field name associated with the value
  * @param value - The original value of the field - might be 1 value from an array
  * @param prop - The property name to set on the elementProps object
@@ -133,12 +147,23 @@ export function getCellRendererPropValue(
 ) {
   if (typeof propValue === "string" && propValue.includes("${")) {
     // replace placeholders '${}' with values from a dataObject
-    elementProps[prop] = propValue.replace(CELL_RENDERER_PROP_ATTRIBUTE, (_, key) =>
-      processTagsToValues(key, field, value, dataObject)
+    elementProps[prop] = propValue.replace(
+      CELL_RENDERER_PROP_ATTRIBUTE,
+      (_, key) => processTagsToValues(key, field, value, dataObject),
     );
-  } else if (typeof propValue === "object" && 'and_' in propValue) {
+  } else if (typeof propValue === "object" && "and_" in propValue) {
     elementProps[prop] = processConditionToBoolean(propValue, dataObject);
   } else {
     elementProps[prop] = propValue;
   }
 }
+
+/**
+ * Checks whether a given string can be parsed into a valid Date.
+ *
+ * @param date - The string to validate as a date
+ * @returns `true` if the string is a valid date, `false` otherwise
+ */
+export const isValidDate = (date: string) => {
+  return !isNaN(Number(new Date(date)));
+};
