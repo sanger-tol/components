@@ -598,7 +598,10 @@ interface SunburstData {
   key: string;
   value: number;
   child?: SunburstData;
-  filter: TFilterOrUndefined;
+  /**
+   * Filter object for this bucket
+   */
+  filter: IFilter;
 }
 
 interface DoughnutDataChartJS {
@@ -668,7 +671,7 @@ export function convertSunburstDatasets(
     outputData![depth].backgroundColor.push(colour);
     outputData![depth].hoverBackgroundColor.push(hoverColour);
     outputData![depth].labels.push(bucket.key);
-    outputData![depth].filter = bucket.filter; // NEEDS TO BE A LIST TO MATCH DPs
+    outputData![depth].filter.push(bucket.filter);
     if (bucket.child) {
       outputData = convertSunburstDatasets(
         bucket.child,
@@ -707,7 +710,7 @@ function initialiseOriginDataset(
       borderWidth: 0.2,
       borderAlign: "centre",
       hoverOffset: 0,
-      filter: {},
+      filter: [],
     });
   }
 }
@@ -981,8 +984,8 @@ export function setSliceClickedData(
   const bucket = chart.data.datasets[datasetIndex].label;
   const value = chart.data.datasets[datasetIndex].data[index];
   const clickKey = chart.data.datasets[datasetIndex].labels[index];
-  console.log(chart.data.datasets[datasetIndex]);
   const depth = chart.data.datasets.length - datasetIndex;
+  const filter = chart.data.datasets[datasetIndex].filter[index];
 
   if (setSliceData) {
     setSliceData({
@@ -991,7 +994,7 @@ export function setSliceClickedData(
       clickKey: clickKey,
       datasetIndex: datasetIndex,
       depth: depth,
-      filter: {},
+      filter: filter,
     });
   }
 }

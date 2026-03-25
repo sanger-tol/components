@@ -136,7 +136,6 @@ export function RemoteSunburst(props: PRemoteSunburst) {
           setErrorMessage("");
           setWarningMessage(isChartDataEmpty(aggs));
           const data = aggsToSunburstData(aggs, sliceBy);
-          console.log(data);
           setDatasets(data);
           setSliceData(undefined);
         })

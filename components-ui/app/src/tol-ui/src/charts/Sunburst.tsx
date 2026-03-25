@@ -19,7 +19,6 @@ import {
   downloadItem,
   useEffectUpdate,
   UtilityBar,
-  isPropDefined,
   getCssVarValue,
   normaliseCaps,
   themeListener,
