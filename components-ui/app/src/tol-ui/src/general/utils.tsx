@@ -347,7 +347,7 @@ export function updateContents(contents: object) {
         break;
     }
     // make nulls show a faded 'None'
-    if (!value) {
+    if (value === null || value === undefined) {
       contents[key] = <span className="tooltip-value-none">None</span>;
     }
   }
