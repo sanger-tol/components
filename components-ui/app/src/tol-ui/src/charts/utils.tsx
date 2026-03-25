@@ -915,7 +915,7 @@ export function aggsToSunburstData(
   const childKey = sliceBy[depth + 1];
 
   // elastic bucket data
-  const agg: SunburstData[] = aggsResponse[key];
+  const agg: any[] = aggsResponse[key];
   const buckets = agg["buckets"];
 
   // temp 'more' fix
@@ -946,7 +946,7 @@ export function aggsToSunburstData(
     const filter = generateFilterFromSunburstBucket(
       key,
       bucket.key,
-      buckets.map((b) => b.key),
+      buckets.map((b: any) => b.key),
       ancestorFilters
     );
 
