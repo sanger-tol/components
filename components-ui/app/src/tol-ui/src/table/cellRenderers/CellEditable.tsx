@@ -6,8 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import { Input, DatePicker } from "rsuite";
-import { Button, BUTTONS, PCellDisplay } from "../..";
-import { isValidDate } from "./utils";
+import { Button, BUTTONS, PCellDisplay, isValidDate } from "../..";
 
 export interface PCellEditable extends PCellDisplay {
   loading: boolean;
