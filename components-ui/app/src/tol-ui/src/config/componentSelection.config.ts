@@ -51,27 +51,31 @@ export const componentOptions = [
     type: "map",
     text: "Map",
     icon: "location-dot",
-    disabled: true,
+    disabled: false,
     defaultSize: "lg",
   },
 ];
+
+const SMALL_DISABLED = ["table", "chart", "filterBlock", "map"];
+const MEDIUM_DISABLED = ["count", "filterBlock", "statistics"];
+const LARGE_DISABLED = ["statistics", "count"];
 
 export const sizeOptions = (componentType: string) => {
   return [
     {
       type: "sm",
       text: "Small",
-      disabled: componentType === "table" || componentType === "chart" || componentType === "filterBlock",
+      disabled: SMALL_DISABLED.includes(componentType),
     },
     {
       type: "md",
       text: "Medium",
-      disabled: componentType === "count" || componentType === "filterBlock" || componentType === "statistics",
+      disabled: MEDIUM_DISABLED.includes(componentType),
     },
     {
       type: "lg",
       text: "Large",
-      disabled: componentType === "statistics" || componentType === "count",
+      disabled: LARGE_DISABLED.includes(componentType),
     },
   ]
 }
