@@ -25,7 +25,7 @@ import {
   TUtilityBarOrNull,
   mergeUtilityBarConfigs,
   PButton,
-  ISunburstBucketData
+  ISunburstSectionClickedData
 } from "..";
 
 
@@ -41,7 +41,7 @@ export interface PSunburst {
   noLegend?: boolean;
   noLabel?: boolean;
   noRefresh?: boolean;
-  setSliceData?: React.Dispatch<React.SetStateAction<ISunburstBucketData>>;
+  setSliceData?: React.Dispatch<React.SetStateAction<ISunburstSectionClickedData>>;
   resetChart?: boolean; // a change in this prop will reset the chart
   utilityBarConfig?: TUtilityBarOrNull;
   contents?: ReactNode;

@@ -168,6 +168,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
         setSubFilter(undefined);
       }
     }
+    console.log(sliceData);
   }, [sliceData]);
 
   useEffectUpdate(() => {

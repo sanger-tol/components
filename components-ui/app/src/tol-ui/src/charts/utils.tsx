@@ -11,7 +11,7 @@ import {
   IChartDataset,
   IFilter,
   isPropDefined,
-  ISunburstBucketData,
+  ISunburstSectionClickedData,
   mergeAndFilters,
   NO_DATA_FOUND_MESSAGE
 } from "..";
@@ -992,7 +992,7 @@ export function aggsToSunburstData(
 export function setSliceClickedData(
   chart: any,
   chartElement: any,
-  setSliceData?: React.Dispatch<React.SetStateAction<ISunburstBucketData>>,
+  setSliceData?: React.Dispatch<React.SetStateAction<ISunburstSectionClickedData>>,
 ) {
   const { datasetIndex, index } = chartElement[0];
 
