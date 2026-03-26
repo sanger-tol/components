@@ -85,13 +85,13 @@ export function Sunburst(props: PSunburst) {
   });
 
   // @ts-ignore
-  function handlePlaneClick(
+  const handlePlaneClick = (
     // @ts-ignore
     event: any,
     chartElement: any,
     chart: any,
     item: any,
-  ) {
+  ) => {
     if (item !== undefined) return;
 
     // only clickable if setBarData is defined
@@ -108,15 +108,12 @@ export function Sunburst(props: PSunburst) {
     }
     // workaround for when 'datasets' reset
     setDatasets(chart.data.datasets);
-  }
+  };
 
-  function handlePlaneHover(event: any, chartElement: any) {
-    if (setSliceData) {
-      event.native.target.style.cursor = chartElement[0]
-        ? "pointer"
-        : "default";
-    }
-  }
+  const handlePlaneHover = (event: any, chartElement: any) => {
+    event.native.target.style.cursor =
+      setSliceData && chartElement[0] ? "pointer" : "default";
+  };
 
   // sunburst options
   const options = {
