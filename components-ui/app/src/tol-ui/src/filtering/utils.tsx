@@ -51,7 +51,7 @@ export function filterHasUpdated(
   return hasUpdated;
 }
 
-export function mergeAndFilters(target: object, incoming: object) {
+export function mergeAndFilters(target: IAndAttributes, incoming: IAndAttributes) {
   const output = deepCopy(target);
   for (const id in incoming) {
     const currentOut = id in output ? output[id] : {};
@@ -59,6 +59,16 @@ export function mergeAndFilters(target: object, incoming: object) {
     output[id] = Object.assign(currentOut, currentIn);
   }
   return output as IAndAttributes;
+}
+
+export function mergeFilters(target: IFilter, incoming: IFilter) {
+  const output = deepCopy(target);
+  if (target.and_ && incoming.and_) {
+    output.and_ = mergeAndFilters(target.and_, incoming.and_);
+  } else if (incoming.and_) {
+    output.and_ = deepCopy(incoming.and_);
+  }
+  return output as IFilter;
 }
 
 /**
