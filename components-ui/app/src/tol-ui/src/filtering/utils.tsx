@@ -12,6 +12,7 @@ import {
   IAndAttributes,
   deepCopy,
   isEmptyObject,
+  TFilterOrUndefined,
 } from "..";
 
 
@@ -61,11 +62,11 @@ export function mergeAndFilters(target: IAndAttributes, incoming: IAndAttributes
   return output as IAndAttributes;
 }
 
-export function mergeFilters(target: IFilter, incoming: IFilter) {
+export function mergeFilters(target: TFilterOrUndefined, incoming: TFilterOrUndefined) {
   const output = deepCopy(target);
-  if (target.and_ && incoming.and_) {
+  if (target?.and_ && incoming?.and_) {
     output.and_ = mergeAndFilters(target.and_, incoming.and_);
-  } else if (incoming.and_) {
+  } else if (incoming?.and_) {
     output.and_ = deepCopy(incoming.and_);
   }
   return output as IFilter;

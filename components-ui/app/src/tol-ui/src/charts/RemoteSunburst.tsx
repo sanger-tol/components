@@ -140,7 +140,6 @@ export function RemoteSunburst(props: PRemoteSunburst) {
           setErrorMessage("");
           setWarningMessage(isChartDataEmpty(aggs));
           const data = aggsToSunburstData(aggs, sliceBy);
-          console.log("Sunburst data", data);
           setDatasets(data);
           setSliceData(undefined);
         })
@@ -154,54 +153,72 @@ export function RemoteSunburst(props: PRemoteSunburst) {
     }
   }, [filter, forceUpdate]);
 
-  // for sub sunburst updates
-  // addSubFilter also resets the filters below
   useEffectUpdate(() => {
-    if (!contents && sliceData) {
-      // clear sub sunburst
-      if (isEmptyObject(sliceData)) {
-        setSubDatasets({});
-        setPrevSubFilter(undefined);
-        // 
-        addSubFilter({
-          id: id,
-          filter: {},
-          zone: zone,
-        });
-        setZone({ ...zone });
-        // go deeper into the sunburst if not outer ring
-      } else if (sliceData["datasetIndex"] !== 0) {
-        const subSliceBy = removeSliceBySingles(sliceBy, sliceData["depth"]);
-        setSubLoading(true);
-        const aggs = createAggsViaSliceBy(
-          objectType,
-          subSliceBy,
+    if (sliceData && !contents) {
+      if (sliceData.filter) {
+        /**
+         * onClick of a slice, generate the filter for that slice and save to state.
+         * Compounds the existing filter with the new slice filter, ensuring that interactions
+         * with the sunburst build upon each other rather than replacing filters at each depth level.
+         */
+        setSubFilter(
+          mergeFilters(
+            subFilter,
+            sliceData.filter
+          )
         );
-        dataSource
-          .custom({
-            method: API_METHODS.POST,
-            resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
-            body: { ...aggs, filter: generateFilter(zone, id, true) },
-          })
-          .then((res: any) => {
-            const aggs = res.data.meta.aggregations;
-            setErrorMessage("");
-            setWarningMessage(isChartDataEmpty(aggs));
-            const data = aggsToSunburstData(aggs, subSliceBy);
-            setSubDatasets(data);
-            setSubLoading(false);
-          })
-          .catch((error: any) => {
-            // forces an error in the main sunburst
-            setErrorMessage(error.message);
-            console.error(error.message);
-          });
+      } else {
+        setSubFilter(undefined);
       }
     }
   }, [sliceData]);
 
   useEffectUpdate(() => {
-    
+    console.log("Slice filter: \n\n", JSON.stringify(sliceData?.filter), "\n\nSub filter: \n\n", JSON.stringify(subFilter));
+
+    // Also resets the filters below
+    addSubFilter({
+      id: id,
+      filter: subFilter || {},
+      zone: zone,
+    });
+    setZone({ ...zone });
+
+    // Clear sub sunburst
+    if (isEmptyObject(sliceData!)) {
+      setSubDatasets({});
+      // Go deeper into the sunburst if not outer ring
+    } else if (sliceData!["datasetIndex"] !== 0) {
+      // Reset errors and set loading
+      setSubLoading(true);
+      setErrorMessage("");
+
+      const subSliceBy = removeSliceBySingles(sliceBy, sliceData!["depth"]);
+      const aggs = createAggsViaSliceBy(
+        objectType,
+        subSliceBy,
+      );
+      dataSource
+        .custom({
+          method: API_METHODS.POST,
+          resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
+          body: { ...aggs, filter: generateFilter(zone, id, true) },
+        })
+        .then((res: any) => {
+          const aggs = res.data.meta.aggregations;
+          setWarningMessage(isChartDataEmpty(aggs));
+          const data = aggsToSunburstData(aggs, subSliceBy);
+          setSubDatasets(data);
+        })
+        .catch((error: any) => {
+          // forces an error in the main sunburst
+          setErrorMessage(error.message);
+          console.error(error.message);
+        })
+        .finally(() => {
+          setSubLoading(false);
+        });
+    }
   }, [subFilter]);
 
   const Contents = () => {
