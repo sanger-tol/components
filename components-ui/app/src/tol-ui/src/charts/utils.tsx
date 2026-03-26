@@ -13,7 +13,7 @@ import {
   isPropDefined,
   ISunburstBucketData,
   mergeAndFilters,
-  ISunburstTwoDimensionalBuckets
+  NO_DATA_FOUND_MESSAGE
 } from "..";
 
 // ------------------//
@@ -262,7 +262,7 @@ export function setBorderColour(datasets: any, borderColour: string) {
 
 export function isChartDataEmpty(aggs: any) {
   const data = Object.values(aggs)[0]!["buckets"];
-  if (data.length === 0) return "No data found";
+  if (data.length === 0) return NO_DATA_FOUND_MESSAGE;
   return "";
 }
 
@@ -889,6 +889,7 @@ export function generateFilterFromSunburstBucket(
           negate: true,
         }
       };
+      break;
     default:
       andFilter[field] = {
         eq: { value: bucket }

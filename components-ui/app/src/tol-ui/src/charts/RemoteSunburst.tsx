@@ -32,8 +32,6 @@ import {
   API_OPERATIONS,
   mergeUtilityBarConfigs,
   TSunburstBucketDataOrUndefined,
-  IAndAttributes,
-  IFilter,
   mergeFilters
 } from "..";
 
@@ -138,7 +136,6 @@ export function RemoteSunburst(props: PRemoteSunburst) {
         .then((res: any) => {
           const aggs = res.data.meta.aggregations;
           setErrorMessage("");
-          setWarningMessage(isChartDataEmpty(aggs));
           const data = aggsToSunburstData(aggs, sliceBy);
           setDatasets(data);
           setSliceData(undefined);
@@ -174,8 +171,6 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   }, [sliceData]);
 
   useEffectUpdate(() => {
-    console.log("Slice filter: \n\n", JSON.stringify(sliceData?.filter), "\n\nSub filter: \n\n", JSON.stringify(subFilter));
-
     // Also resets the filters below
     addSubFilter({
       id: id,
@@ -187,8 +182,12 @@ export function RemoteSunburst(props: PRemoteSunburst) {
     // Clear sub sunburst
     if (isEmptyObject(sliceData!)) {
       setSubDatasets({});
-      // Go deeper into the sunburst if not outer ring
-    } else if (sliceData!["datasetIndex"] !== 0) {
+      /**
+       * Go deeper into the sunburst if not outer ring and not an unknown slice
+       * as unknown sections are missing data and would result in a
+       * no data warning if queried against
+       */
+    } else if (sliceData!["datasetIndex"] !== 0 && sliceData?.clickKey !== "Unknown") {
       // Reset errors and set loading
       setSubLoading(true);
       setErrorMessage("");

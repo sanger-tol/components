@@ -20,9 +20,9 @@ import {
   resetFiltersBelow,
   TFilterOrUndefined,
   useEffectUpdate,
-  mergeAndFilters,
   addSubFilter,
   generateWellFilter,
+  mergeFilters,
 } from "..";
 
 export interface PRemotePlateSingle extends IRemoteTargetAndZone {
@@ -79,7 +79,7 @@ export function RemotePlateSingle(Props: PRemotePlateSingle) {
         },
       },
     };
-    const compoundFilter = mergeAndFilters(filter || {}, singlePlateFilter);
+    const compoundFilter = mergeFilters(filter || {}, singlePlateFilter);
     const [rows, columns] = identifyDimension(size);
     setRowLabels(rows);
     setColumnLabels(columns);

@@ -115,9 +115,6 @@ export function Sunburst(props: PSunburst) {
       event.native.target.style.cursor = chartElement[0]
         ? "pointer"
         : "default";
-      if (chartElement[0]) {
-        event.native.target.style.cursor = "pointer";
-      }
     }
   }
 
