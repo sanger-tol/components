@@ -5,7 +5,16 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from "date-fns";
-import { appendKeywordIfNeeded, getCssVarValue, IChartDataset, IFilter, isPropDefined, ISunburstBucketData, mergeAndFilters, TFilterOrUndefined, TSunburstBucketDataOrUndefined } from "..";
+import {
+  appendKeywordIfNeeded,
+  getCssVarValue,
+  IChartDataset,
+  IFilter,
+  isPropDefined,
+  ISunburstBucketData,
+  mergeAndFilters,
+  ISunburstTwoDimensionalBuckets
+} from "..";
 
 // ------------------//
 //      GENERAL      //
@@ -875,9 +884,13 @@ export function generateFilterFromSunburstBucket(
       };
       break;
     case "Unknown":
-      return {};
+      andFilter[field] = {
+        exists: {
+          negate: true,
+        }
+      };
     default:
-      andFilter[field] = { 
+      andFilter[field] = {
         eq: { value: bucket }
       };
   }
@@ -899,6 +912,7 @@ export function generateFilterFromSunburstBucket(
  * @param depth - Current recursion depth; omit on the initial call.
  * @param parentDocCount - Doc count of the parent bucket, used to calculate `"Unknown"` counts.
  * @param ancestorFilters - Accumulated filter from parent bucket selections, passed down recursively.
+ * @param twoDimensionalBucketKeys - Internal accumulator for bucket keys at each level, used to generate `"More"` bucket filters.
  * @returns A nested object keyed by field name, containing the structured sunburst data for each level.
  */
 export function aggsToSunburstData(
@@ -908,6 +922,7 @@ export function aggsToSunburstData(
   parentDocCount?: number,
   ancestorFilters?: IFilter,
 ) {
+  // initialise depth on first call, increment on recursive calls
   depth = initialiseOrIncrementDepth(depth);
 
   // sliceBy keys

@@ -31,7 +31,10 @@ import {
   IHeight,
   API_OPERATIONS,
   mergeUtilityBarConfigs,
-  TSunburstBucketDataOrUndefined
+  TSunburstBucketDataOrUndefined,
+  IAndAttributes,
+  IFilter,
+  mergeFilters
 } from "..";
 
 interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
@@ -105,6 +108,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   const [errorMessage, setErrorMessage] = useState("");
   const [sliceData, setSliceData] = useState<TSunburstBucketDataOrUndefined>();
   const [filter, setFilter] = useState<TFilterOrUndefined>({});
+  const [subFilter, setSubFilter] = useState<TFilterOrUndefined>();
   const [noLegend, setNoLegend] = useState(false);
 
   resizeListener(() => {
@@ -136,6 +140,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
           setErrorMessage("");
           setWarningMessage(isChartDataEmpty(aggs));
           const data = aggsToSunburstData(aggs, sliceBy);
+          console.log("Sunburst data", data);
           setDatasets(data);
           setSliceData(undefined);
         })
@@ -150,19 +155,20 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   }, [filter, forceUpdate]);
 
   // for sub sunburst updates
+  // addSubFilter also resets the filters below
   useEffectUpdate(() => {
     if (!contents && sliceData) {
-      console.log(JSON.stringify(sliceData.filter));
-      // this also resets components below
-      addSubFilter({
-        id: id,
-        filter: sliceData.filter,
-        zone: zone,
-      });
-      setZone({ ...zone });
       // clear sub sunburst
-      if (!sliceData) {
+      if (isEmptyObject(sliceData)) {
         setSubDatasets({});
+        setPrevSubFilter(undefined);
+        // 
+        addSubFilter({
+          id: id,
+          filter: {},
+          zone: zone,
+        });
+        setZone({ ...zone });
         // go deeper into the sunburst if not outer ring
       } else if (sliceData["datasetIndex"] !== 0) {
         const subSliceBy = removeSliceBySingles(sliceBy, sliceData["depth"]);
@@ -193,6 +199,10 @@ export function RemoteSunburst(props: PRemoteSunburst) {
       }
     }
   }, [sliceData]);
+
+  useEffectUpdate(() => {
+    
+  }, [subFilter]);
 
   const Contents = () => {
     if (errorMessage !== "") {

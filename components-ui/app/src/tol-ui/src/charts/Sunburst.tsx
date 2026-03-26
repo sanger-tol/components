@@ -97,15 +97,12 @@ export function Sunburst(props: PSunburst) {
     // only clickable if setBarData is defined
     if (setSliceData) {
       if (chartElement.length) {
-        const { datasetIndex, index } = chartElement[0];
-        const clickKey = chart.data.datasets[datasetIndex].labels[index];
-        if (clickKey !== "Unknown") {
-          // fade non-clicked bars
-          updateChartColours(chart, false, 0.25);
-          // setting clicked bar as its original colour
-          setClickedSectionToSolid(chart, chartElement);
-          setSliceClickedData(chart, chartElement, setSliceData);
-        }
+        // fade non-clicked bars
+        updateChartColours(chart, false, 0.25);
+        // setting clicked bar as its original colour
+        setClickedSectionToSolid(chart, chartElement);
+        setSliceClickedData(chart, chartElement, setSliceData);
+
       }
       chart.update();
     }
@@ -119,10 +116,7 @@ export function Sunburst(props: PSunburst) {
         ? "pointer"
         : "default";
       if (chartElement[0]) {
-        const { datasetIndex, index } = chartElement[0];
-        const clickKey = event.chart.data.datasets[datasetIndex].labels[index];
-        event.native.target.style.cursor =
-          clickKey !== "Unknown" ? "pointer" : "default";
+        event.native.target.style.cursor = "pointer";
       }
     }
   }
