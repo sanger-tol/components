@@ -21,7 +21,6 @@ import {
   resetFiltersBelow,
   useEffectUpdate,
 } from "..";
-import { stat } from "node:fs";
 
 
 export function FilterMultiSelect(props: IFilterInput) {
@@ -51,12 +50,11 @@ export function FilterMultiSelect(props: IFilterInput) {
 
   useEffect(() => {
     const nextFilter = generateFilter(zone, componentId, false, [attribute]);
+    console.log(JSON.stringify(nextFilter), 'nextFilter');
     if (filterHasUpdated(setStatsFilter, statsFilter, nextFilter)) {
-      if (attribute === "sts_gal_name") {
-        console.log(nextFilter?.and_?.["sts_gal_name"]?.["in_list"]?.value, 'nextFilter');
-      }
       resetFiltersBelow({ id: componentId, zone: zone });
       setZone({ ...zone });
+      console.log(nextFilter, 'nextFilter');
     }
   }, [zone]);
 
@@ -70,49 +68,49 @@ export function FilterMultiSelect(props: IFilterInput) {
 
   const fetchValues = () => {
     //if (!fetched) {
-      setLoading(true);
-      // TEMPORARY FIX:
-      // Construct a URL param string and append it to the resource, because:
-      // a. The API doesn't handle empty strings/arrays for this resource very well
-      // b. Empty arrays are being parsed out, and the params are required on the API
-      // c. Should switch to a POST method in the near future.
-      // TODO: Remove on POST method implementation
-      if (attribute === "sts_gal_name") {
-        console.log(statsFilter?.and_?.["sts_gal_name"]?.["in_list"]?.value, 'statsFilter');
-      }
-      const queryParamsString = new URLSearchParams({
-        group_by: attribute,
-        stats_fields: "",
-        stats: "",
-        filter: JSON.stringify(statsFilter),
-      }).toString();
-      dataSource
-        .custom({
-          method: API_METHODS.GET,
-          resource: `${objectType}${API_OPERATIONS.GROUP_STATS}?${queryParamsString}`,
-        })
-        .then((res: any) => {
-          const statsValues = res.data.meta.stats;
-          setData(statsValues.map((item: any) => item.key[attribute]));
-          updateDropdownText("No results found");
-        })
-        .catch((error: any) => {
-          setErrorMessage(
-            "Error fetching unique values for " +
-              attribute +
-              " in " +
-              objectType +
-              ". " +
-              error.message +
-              ".",
-          );
-          console.error(error.message);
-          updateDropdownText("Error fetching values");
-        })
-        .finally(() => {
-          setLoading(false);
-          setFetched(true);
-        });
+    setLoading(true);
+    // TEMPORARY FIX:
+    // Construct a URL param string and append it to the resource, because:
+    // a. The API doesn't handle empty strings/arrays for this resource very well
+    // b. Empty arrays are being parsed out, and the params are required on the API
+    // c. Should switch to a POST method in the near future.
+    // TODO: Remove on POST method implementation
+    if (attribute === "sts_gal_name") {
+      console.log(statsFilter?.and_?.["sts_gal_name"]?.["in_list"]?.value, 'statsFilter');
+    }
+    const queryParamsString = new URLSearchParams({
+      group_by: attribute,
+      stats_fields: "",
+      stats: "",
+      filter: JSON.stringify(statsFilter),
+    }).toString();
+    dataSource
+      .custom({
+        method: API_METHODS.GET,
+        resource: `${objectType}${API_OPERATIONS.GROUP_STATS}?${queryParamsString}`,
+      })
+      .then((res: any) => {
+        const statsValues = res.data.meta.stats;
+        setData(statsValues.map((item: any) => item.key[attribute]));
+        updateDropdownText("No results found");
+      })
+      .catch((error: any) => {
+        setErrorMessage(
+          "Error fetching unique values for " +
+          attribute +
+          " in " +
+          objectType +
+          ". " +
+          error.message +
+          ".",
+        );
+        console.error(error.message);
+        updateDropdownText("Error fetching values");
+      })
+      .finally(() => {
+        setLoading(false);
+        setFetched(true);
+      });
     //}
   };
 
@@ -130,12 +128,14 @@ export function FilterMultiSelect(props: IFilterInput) {
       zoneToValue: (filterValue: any) => {
         return filterValue;
       },
+      onlyDisplayMyFilter: true,
     },
     [zone],
   );
 
   const onFilter = (input: string[]) => {
     setValues(input);
+    console.log('set')
     const delay = input.length === 0 ? 0 : props.delay;
     clearTimeout(timeoutValue!);
     setTimeoutValue(
@@ -199,7 +199,6 @@ export function FilterMultiSelect(props: IFilterInput) {
         block
         data={data}
         placeholder={rename}
-        disabled={disabled}
         value={values}
         setValue={onFilter}
         loading={loading}

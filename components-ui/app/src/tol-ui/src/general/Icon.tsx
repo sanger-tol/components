@@ -15,7 +15,7 @@ export interface PIcon {
 }
 
 export function Icon(props: PIcon) {
-  const { icon, size="md", config = "solid", className, onClick } = props;
+  const { icon, size, config = "solid", className, onClick } = props;
 
   return (
     <span className={className} onClick={onClick}>

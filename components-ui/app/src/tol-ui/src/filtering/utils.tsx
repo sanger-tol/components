@@ -72,7 +72,7 @@ export function mergeAndFilters(target: object, override: object) {
 function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThrough?: boolean) {
   return filterPassThrough && id !== currentId
 }
- 
+
 function useDefaultFilterWhereNecessary(
   id: string,
   currentId: string,
@@ -85,10 +85,7 @@ function useDefaultFilterWhereNecessary(
     for (const attribute of useDefaultFilterOnly) {
       // If the attribute is in the default filter, use that value
       if (attribute in defaultAndFilter) {
-        updatedAndFilter[attribute] = mergeAndFilters(
-          updatedAndFilter[attribute] || {},
-          defaultAndFilter[attribute]
-        );
+        updatedAndFilter[attribute] = defaultAndFilter[attribute];
         continue;
       }
     }
@@ -109,7 +106,7 @@ export function generateFilter(
   const aboveComponents = id ? getComponentsAbove(id, z.order) : z.order;
 
   // Start with zone filter
-  let compoundedFilter: IAndAttributes = z.filter && z.filter.and_ ? z.filter.and_ : {}; 
+  let compoundedFilter: IAndAttributes = z.filter && z.filter.and_ ? z.filter.and_ : {};
 
   // Loop through 'above' components
   for (const currentId of aboveComponents) {
@@ -136,8 +133,10 @@ export function generateFilter(
     }
 
     // Add current filter to the compounded filter
-    compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
+    compoundedFilter = mergeAndFilters(compoundedFilter, currentFilter);
   }
+
+  if (id === "report-card-sunburst") console.log(compoundedFilter, id)
 
   return {
     and_: compoundedFilter,
@@ -307,13 +306,15 @@ export function filterListener(
     operators: string[];
     // filter state
     zone: IZone;
-    setValue: any;
+    setValue?: any;
     setExists?: any;
     setNegate?: any;
     setOperator?: any;
     setDisabled?: any;
     emptyValue: any;
     zoneToValue: (filterValue: any, exisitingValue?: any) => any;
+    // only sets the value for the current component
+    onlyDisplayMyFilter?: boolean;
   },
   dependencies: any[],
 ) {
@@ -327,13 +328,16 @@ export function filterListener(
     setNegate,
     setOperator,
     setDisabled,
+    emptyValue,
     zoneToValue,
+    onlyDisplayMyFilter,
   } = params;
 
   useEffect(() => {
+    //console.log('filter listener update', { attribute, componentId, operators, zone });
     // initialise - use an object to take advantage of reference type
     const filterMeta = {
-      values: params.emptyValue,
+      values: emptyValue,
       exists: false,
       negate: false,
       disabled: false,
@@ -351,6 +355,10 @@ export function filterListener(
 
     const aboveComponents = getComponentsAbove(componentId, zone.order);
     for (const currentId of aboveComponents) {
+
+      // Don't update value if onlyDisplayMyFilter is true and it's not the current component
+      if (onlyDisplayMyFilter && componentId !== currentId) continue;
+
       const componentData = zone.components[currentId].data;
       filterListenerUpdater({
         filter: componentData.filter,
@@ -364,11 +372,12 @@ export function filterListener(
         zoneToValue,
       });
     }
-    setValue(filterMeta.values);
+    if (setValue) setValue(filterMeta.values);
     if (setExists) setExists(filterMeta.exists);
     if (setNegate) setNegate(filterMeta.negate);
     if (setDisabled) setDisabled(filterMeta.disabled);
-    if (setOperator && 'currentOperator' in filterMeta) setOperator(filterMeta.currentOperator);
+    if (setOperator && 'currentOperator' in filterMeta)
+      setOperator(filterMeta.currentOperator);
   }, dependencies);
 }
 export function addSubFilter(params: {
