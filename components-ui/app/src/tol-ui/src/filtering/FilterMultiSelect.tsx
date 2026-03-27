@@ -50,11 +50,10 @@ export function FilterMultiSelect(props: IFilterInput) {
 
   useEffect(() => {
     const nextFilter = generateFilter(zone, componentId, false, [attribute]);
-    console.log(JSON.stringify(nextFilter), 'nextFilter');
     if (filterHasUpdated(setStatsFilter, statsFilter, nextFilter)) {
       resetFiltersBelow({ id: componentId, zone: zone });
       setZone({ ...zone });
-      console.log(nextFilter, 'nextFilter');
+      console.log(JSON.stringify(nextFilter), 'nextFilter');
     }
   }, [zone]);
 
@@ -76,7 +75,7 @@ export function FilterMultiSelect(props: IFilterInput) {
     // c. Should switch to a POST method in the near future.
     // TODO: Remove on POST method implementation
     if (attribute === "sts_gal_name") {
-      console.log(statsFilter?.and_?.["sts_gal_name"]?.["in_list"]?.value, 'statsFilter');
+      //console.log(statsFilter?.and_?.["sts_gal_name"]?.["in_list"]?.value, 'statsFilter');
     }
     const queryParamsString = new URLSearchParams({
       group_by: attribute,
@@ -135,7 +134,6 @@ export function FilterMultiSelect(props: IFilterInput) {
 
   const onFilter = (input: string[]) => {
     setValues(input);
-    console.log('set')
     const delay = input.length === 0 ? 0 : props.delay;
     clearTimeout(timeoutValue!);
     setTimeoutValue(

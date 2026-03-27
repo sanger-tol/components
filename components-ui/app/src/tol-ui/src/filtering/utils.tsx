@@ -63,7 +63,7 @@ export function mergeAndFilters(target: object, override: object) {
 
 /**
  * Determines whether a filter operation should pass through based on the provided conditions.
- *
+ * 
  * @param filterPassThrough - A boolean indicating if the filter should pass through.
  * @param id - The identifier of the current item being evaluated.
  * @param currentId - The identifier of the item to compare against.
@@ -73,6 +73,16 @@ function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThro
   return filterPassThrough && id !== currentId
 }
 
+/**
+ * Replaces attributes in the current filter with their default values if specified.
+ * 
+ * @param id - The identifier of the current component item being evaluated.
+ * @param currentId - The identifier of the component item to compare against.
+ * @param andFilter - The current filter object containing attributes to potentially replace.
+ * @param defaultAndFilter - The default filter object containing default attribute values.
+ * @param useDefaultFilterOnly - An array of attribute names that should be replaced with default values if the `id` matches `currentId`.
+ * @returns An updated filter object with specified attributes replaced by their default values where applicable.
+ */
 function useDefaultFilterWhereNecessary(
   id: string,
   currentId: string,
@@ -81,18 +91,36 @@ function useDefaultFilterWhereNecessary(
   useDefaultFilterOnly: string[] = [],
 ) {
   const updatedAndFilter = deepCopy(andFilter);
-  if (id === currentId) {
-    for (const attribute of useDefaultFilterOnly) {
-      // If the attribute is in the default filter, use that value
+  for (const attribute of useDefaultFilterOnly) {
+    /**
+     * If the attribute is in the current filter, it will be removed
+     * and replaced with the default filter value (if it exists).
+     */
+    if (currentId === id) {
+      if (attribute in defaultAndFilter) {
+        delete updatedAndFilter[attribute];
+        updatedAndFilter[attribute] = defaultAndFilter[attribute];
+      }
+    } else if (!(attribute in updatedAndFilter)) {
+      // if the attribute is not in the current filter, but is in the default filter, it will be added
       if (attribute in defaultAndFilter) {
         updatedAndFilter[attribute] = defaultAndFilter[attribute];
-        continue;
       }
     }
   }
+
   return updatedAndFilter;
 }
 
+/**
+ * Generates a compounded filter for a given zone or component.
+ * 
+ * @param zone - The zone object containing components and their filters.
+ * @param id - The identifier of the current component.
+ * @param includeOwnSubFilter - A boolean indicating whether to include the component's own sub-filter.
+ * @param useDefaultFilterOnly - An array of attribute names that should use default filter values for the current component.
+ * @returns The compounded filter object.
+ */
 export function generateFilter(
   zone: IZone,
   id?: string,
@@ -135,8 +163,6 @@ export function generateFilter(
     // Add current filter to the compounded filter
     compoundedFilter = mergeAndFilters(compoundedFilter, currentFilter);
   }
-
-  if (id === "report-card-sunburst") console.log(compoundedFilter, id)
 
   return {
     and_: compoundedFilter,
