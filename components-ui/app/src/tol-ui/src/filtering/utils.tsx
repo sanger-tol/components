@@ -93,19 +93,20 @@ function useDefaultFilterWhereNecessary(
   const updatedAndFilter = deepCopy(andFilter);
   for (const attribute of useDefaultFilterOnly) {
     /**
-     * If the attribute is in the current filter, it will be removed
-     * and replaced with the default filter value (if it exists).
+     * The filter for the current component item will be replaced with defaultFilter
+     * of the mentioned attribute if the `id` matches `currentId`.
      */
     if (currentId === id) {
-      if (attribute in defaultAndFilter) {
-        delete updatedAndFilter[attribute];
-        updatedAndFilter[attribute] = defaultAndFilter[attribute];
-      }
-    } else if (!(attribute in updatedAndFilter)) {
-      // if the attribute is not in the current filter, but is in the default filter, it will be added
-      if (attribute in defaultAndFilter) {
-        updatedAndFilter[attribute] = defaultAndFilter[attribute];
-      }
+      delete updatedAndFilter[attribute];
+      updatedAndFilter[attribute] = defaultAndFilter[attribute];
+      /**
+       * For other component items, the filter will only be updated
+       * with default values if the attribute is not already present in the current filter.
+       * This is useful for multiselect filters when we unselect all options
+       * and want to reset the filter to the above defaultFilter.
+       */
+    } else if (!(attribute in updatedAndFilter) && attribute in defaultAndFilter) {
+      updatedAndFilter[attribute] = defaultAndFilter[attribute];
     }
   }
 
