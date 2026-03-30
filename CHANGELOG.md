@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
 - `More` & `Unknown` sections of the Sunburst visualisation are now clickable (TOLP-7103)
 - Deal with the 0 vs null/undefined DataPoint issue (TOLP-9664)
 - Removed max-width for content on SmartApp
+- Date picker for dates on editable cells (TOLP-9645)
 
 ## tol-ui `3.2.3`
 26-03-2026
