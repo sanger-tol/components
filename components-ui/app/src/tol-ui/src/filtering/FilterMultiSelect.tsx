@@ -53,7 +53,6 @@ export function FilterMultiSelect(props: IFilterInput) {
     if (filterHasUpdated(setStatsFilter, statsFilter, nextFilter)) {
       resetFiltersBelow({ id: componentId, zone: zone });
       setZone({ ...zone });
-      console.log(JSON.stringify(nextFilter), 'nextFilter');
     }
   }, [zone]);
 
@@ -74,9 +73,6 @@ export function FilterMultiSelect(props: IFilterInput) {
     // b. Empty arrays are being parsed out, and the params are required on the API
     // c. Should switch to a POST method in the near future.
     // TODO: Remove on POST method implementation
-    if (attribute === "sts_gal_name") {
-      //console.log(statsFilter?.and_?.["sts_gal_name"]?.["in_list"]?.value, 'statsFilter');
-    }
     const queryParamsString = new URLSearchParams({
       group_by: attribute,
       stats_fields: "",

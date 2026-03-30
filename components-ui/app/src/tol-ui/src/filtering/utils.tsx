@@ -410,7 +410,6 @@ export function filterListener(
   } = params;
 
   useEffect(() => {
-    //console.log('filter listener update', { attribute, componentId, operators, zone });
     // initialise - use an object to take advantage of reference type
     const filterMeta = {
       values: emptyValue,
