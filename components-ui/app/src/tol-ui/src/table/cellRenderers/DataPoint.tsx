@@ -42,7 +42,8 @@ export function DataPoint(props: PDataPoint) {
   const [loading, setLoading] = useState(false);
 
   const canEdit = (
-    typeof value === "string"
+    typeof value === "string" ||
+    value instanceof Date
   );
 
   const onDoubleClick = () => {
@@ -52,12 +53,12 @@ export function DataPoint(props: PDataPoint) {
     } else {
       PopUpMessage({
         type: "info",
-        message: "Only string values are editable currently.",
+        message: "Only string & Date values are editable currently.",
       })
     }
   }
 
-  const onChange = (newValue: string) => {
+  const onChange = (newValue: string | Date) => {
     setValue(newValue);
   }
 
