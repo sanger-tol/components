@@ -49,16 +49,16 @@ export interface PFileValidationHome {
    * This allows for different apps to have different policies and actions if needed.
    */
   policyModule?: TFileValidationPolicyModule;
-  /** 
-   * Optional additional table config to be passed down to the uploads table, 
-   * this allows for additional fields, custom cell renderers and different column order 
-   * if needed for different apps using the file validation homepage. 
-  */
+  /**
+   * Optional additional table config to be passed down to the uploads table,
+   * this allows for additional fields, custom cell renderers and different column order
+   * if needed for different apps using the file validation homepage.
+   */
   additionalTableConfig?: { cellRenderers: any; fields: any; order: any };
 }
 
 /**
- * File validation home. This component handles the file upload component, live upload result, 
+ * File validation home. This component handles the file upload component, live upload result,
  * uploads table and modals for actions, including report modals, as well as attribute mutate modal.
  */
 export function FileValidationHome(props: PFileValidationHome) {
@@ -159,7 +159,9 @@ export function FileValidationHome(props: PFileValidationHome) {
   const ValidationStatusCell = ({ validationStatus }) => {
     return (
       <p
-        style={{ color: `${policies[validationStatus].textColor}` }}
+        style={{
+          color: `${policies[validationStatus]?.textColor || "var(--tol-text)"}`,
+        }}
       >{`${normaliseCaps(validationStatus)}`}</p>
     );
   };

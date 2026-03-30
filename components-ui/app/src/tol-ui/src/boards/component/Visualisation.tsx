@@ -24,7 +24,8 @@ import {
   FilterConfigDrawer,
   removeComponent,
   BUTTONS,
-  ConfirmationModal
+  ConfirmationModal,
+  BoardMap
 } from "../..";
 
 
@@ -143,6 +144,8 @@ export function Visualisation(props: PVisualisation) {
     case "filterBlock":
       Component = BoardFilterBlock;
       break;
+    case "map":
+      Component = BoardMap;
   }
 
   const Visualisation = (
