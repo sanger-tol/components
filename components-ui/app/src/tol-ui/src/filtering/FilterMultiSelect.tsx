@@ -46,6 +46,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   const operator = "in_list";
 
   useEffect(() => {
+    // Only fetch values if there is values from a pre-defined filter
     if (!fetched && values.length !== 0) {
       fetchValues();
     }
@@ -61,7 +62,8 @@ export function FilterMultiSelect(props: IFilterInput) {
   }, [zone]);
 
   useEffectUpdate(() => {
-    fetchValues();
+    // Reset fetched status on filter change to ensure new values are fetched on next dropdown open
+    setFetched(false);
   }, [statsFilter]);
 
   useEffect(() => {
