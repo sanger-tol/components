@@ -853,6 +853,21 @@ function addExtraDocCount(
 }
 
 /**
+ * Checks whether any attribute in the filter already has an `exists: { negate: true }` condition.
+ * Unknown buckets don't require additional child filters.
+ *
+ * @param filter - The accumulated ancestor filter to inspect.
+ * @returns `true` if at least one attribute has `exists: { negate: true }`; otherwise `false`.
+ */
+function unknownFilterAlreadyExists(filter?: IFilter): boolean {
+  const and_ = filter?.and_;
+  if (!and_) return false;
+  return Object.values(and_).some(
+    (attr: any) => attr?.exists?.negate === true
+  );
+}
+
+/**
  * Builds an `IFilter` for a clicked sunburst bucket, merged with any ancestor filters.
  *
  * - `"More"`: matches all values not already shown as named siblings (negated `in_list`).
@@ -884,11 +899,18 @@ export function generateFilterFromSunburstBucket(
       };
       break;
     case "Unknown":
-      andFilter[field] = {
-        exists: {
-          negate: true,
-        }
-      };
+      /**
+       * If an "Unknown" bucket already exists in the ancestor filters, we can skip adding an additional
+       * filter for this bucket. It would produce an incorrect number of results if we add the same filter
+       * to the children as the data isn't always hierarchical.
+       */
+      if (!unknownFilterAlreadyExists(ancestorFilters)) {
+        andFilter[field] = {
+          exists: {
+            negate: true,
+          }
+        };
+      }
       break;
     default:
       andFilter[field] = {
