@@ -12,6 +12,7 @@ import {
   IAndAttributes,
   deepCopy,
   isEmptyObject,
+  TFilterOrUndefined,
 } from "..";
 
 
@@ -59,6 +60,55 @@ export function mergeAndFilters(target: object, override: object) {
     output[id] = Object.assign(currentOut, currentIn);
   }
   return output as IAndAttributes;
+}
+
+export function mergeFilters(target: TFilterOrUndefined, incoming: TFilterOrUndefined) {
+  const output = deepCopy(target);
+  if (target?.and_ && incoming?.and_) {
+    output.and_ = mergeAndFilters(target.and_, incoming.and_);
+  } else if (incoming?.and_) {
+    output.and_ = deepCopy(incoming.and_);
+  }
+  return output as IFilter;
+}
+
+/**
+ * Removes a specific attribute from an `and_` filter block
+ *
+ * @param filter - The filter object that may contain an `and_` block
+ * @param attr - The attribute key to remove from `filter.and_`
+ * 
+ * @returns A shallow-cloned filter without the provided attribute when possible; otherwise, the original filter
+ */
+export function removeAttributeFromFilter(
+  filter: IFilter | undefined,
+  attr: string,
+): IFilter | undefined {
+  if (!filter || !("and_" in filter) || !filter.and_ || !(attr in filter.and_)) return filter;
+  const next = {
+    ...filter,
+    and_: { ...filter.and_ },
+  };
+  delete next.and_[attr];
+  return next;
+}
+
+/**
+ * Removes ignored attributes from the provided `and_` filter block.
+ *
+ * @param filter - The filter attributes to mutate in place.
+ * @param ignoredAttributes - Attribute keys to remove when present.
+ */
+export function removeIgnoredAttributes(
+  filter: IAndAttributes,
+  ignoredAttributes: string[] = [],
+) {
+  if (ignoredAttributes.length === 0) return;
+  ignoredAttributes.forEach((attribute) => {
+    if (attribute in filter) {
+      delete filter[attribute];
+    }
+  });
 }
 
 /**
@@ -164,7 +214,6 @@ export function generateFilter(
     // Add current filter to the compounded filter
     compoundedFilter = mergeAndFilters(compoundedFilter, currentFilter);
   }
-
   return {
     and_: compoundedFilter,
   } as IFilter;
@@ -409,8 +458,8 @@ export function filterListener(
 }
 export function addSubFilter(params: {
   id: string;
-  filter: object;
-  zone: object;
+  filter: IFilter;
+  zone: IZone;
 }) {
   const { id, filter, zone } = params;
   const z = zone as IZone;
