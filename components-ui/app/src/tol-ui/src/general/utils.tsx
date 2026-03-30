@@ -432,3 +432,13 @@ function normaliseDecimalNumber(value: number, iteration: number = 0) {
   }
   return numberWithSpaces(value) + ["", "m", "µ", "n", "p", "f"][iteration];
 }
+
+/**
+ * Checks whether a given string can be parsed into a valid Date.
+ *
+ * @param date - The string to validate as a date
+ * @returns `true` if the string is a valid date, `false` otherwise
+ */
+export const isValidDate = (date: string) => {
+  return !isNaN(Number(new Date(date)));
+};
