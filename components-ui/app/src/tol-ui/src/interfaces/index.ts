@@ -8,7 +8,7 @@ export * from "./Attribute";
 export * from "./Boards";
 export * from "./Buttons";
 export * from "./Cells";
-export * from "./Chart"
+export * from "./Chart";
 export * from "./Drawer";
 export * from "./Download";
 export * from "./EntityMeta";
@@ -23,6 +23,7 @@ export * from "./Messaging";
 export * from "./Nav";
 export * from "./Plate";
 export * from "./Privilege";
+export * from "./Sunburst";
 export * from "./SocialViewer";
 export * from "./Table";
 export * from "./TsDataSource";

@@ -12,6 +12,7 @@ import {
   IAndAttributes,
   deepCopy,
   isEmptyObject,
+  TFilterOrUndefined,
 } from "..";
 
 
@@ -51,7 +52,7 @@ export function filterHasUpdated(
   return hasUpdated;
 }
 
-export function mergeAndFilters(target: object, incoming: object) {
+export function mergeAndFilters(target: IAndAttributes, incoming: IAndAttributes) {
   const output = deepCopy(target);
   for (const id in incoming) {
     const currentOut = id in output ? output[id] : {};
@@ -59,6 +60,16 @@ export function mergeAndFilters(target: object, incoming: object) {
     output[id] = Object.assign(currentOut, currentIn);
   }
   return output as IAndAttributes;
+}
+
+export function mergeFilters(target: TFilterOrUndefined, incoming: TFilterOrUndefined) {
+  const output = deepCopy(target);
+  if (target?.and_ && incoming?.and_) {
+    output.and_ = mergeAndFilters(target.and_, incoming.and_);
+  } else if (incoming?.and_) {
+    output.and_ = deepCopy(incoming.and_);
+  }
+  return output as IFilter;
 }
 
 /**
@@ -80,16 +91,6 @@ export function removeAttributeFromFilter(
   };
   delete next.and_[attr];
   return next;
-}
-
-// removes 'exists' operators if there are other operators for the same attribute
-export function removeSuperfluousExists(filter: IAndAttributes) {
-  Object.keys(filter).forEach((attribute) => {
-    const operators = Object.keys(filter[attribute]);
-    if (operators.length >= 2 && "exists" in filter[attribute]) {
-      delete filter[attribute]["exists"];
-    }
-  });
 }
 
 /**
@@ -150,10 +151,7 @@ export function generateFilter(
     }
     compoundedFilter = mergeAndFilters(currentFilter, compoundedFilter);
   }
-  removeSuperfluousExists(compoundedFilter);
   removeIgnoredAttributes(compoundedFilter, ignoredAttributes);
-  // TODO: update when api supports upsert with empty objects
-  // return (isEmptyObject(compoundedFilter)) ? {} : { and_: compoundedFilter } as IFilter;
   return {
     and_: compoundedFilter,
   } as IFilter;
@@ -388,8 +386,8 @@ export function filterListener(
 }
 export function addSubFilter(params: {
   id: string;
-  filter: object;
-  zone: object;
+  filter: IFilter;
+  zone: IZone;
 }) {
   const { id, filter, zone } = params;
   const z = zone as IZone;
