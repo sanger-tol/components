@@ -167,7 +167,9 @@ def application():
     blueprint_data = data_blueprint(
         playwright_ds,
         portal_ds,
-        url_prefix=os.environ['API_PATH']
+        url_prefix=os.environ['API_PATH'],
+        flow_ds=__mock_prefect_ds(),
+        action_ds=sql_datasource
     )
     app.register_blueprint(
         blueprint_data,
