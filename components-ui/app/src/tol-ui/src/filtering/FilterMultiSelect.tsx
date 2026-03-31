@@ -53,7 +53,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   }, [values]);
 
   useEffect(() => {
-    const nextFilter = generateFilter(zone, componentId, false, [attribute]);
+    const nextFilter = generateFilter(zone, componentId, false, true);
     if (filterHasUpdated(setStatsFilter, statsFilter, nextFilter)) {
       setFetched(false);
       resetFiltersBelow({ id: componentId, zone: zone });

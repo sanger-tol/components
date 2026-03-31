@@ -52,22 +52,26 @@ export function filterHasUpdated(
   return hasUpdated;
 }
 
-export function mergeAndFilters(target: object, override: object) {
+export function mergeAndFilters(target: IAndAttributes, override: IAndAttributes) {
   const output = deepCopy(target);
-  for (const id in override) {
-    const currentOut = id in output ? output[id] : {};
-    const currentIn = id in override ? override[id] : {};
-    output[id] = Object.assign(currentOut, currentIn);
+  for (const attribute in override) {
+    const currentTarget = attribute in output ? output[attribute] : {};
+    const currentOverride = override[attribute];
+    for (const op in currentOverride) {
+      const opTarget = op in currentTarget ? currentTarget[op] : {};
+      currentTarget[op] = Object.assign(opTarget, currentOverride[op]);
+    }
+    output[attribute] = currentTarget;
   }
   return output as IAndAttributes;
 }
 
-export function mergeFilters(target: TFilterOrUndefined, incoming: TFilterOrUndefined) {
+export function mergeFilters(target: TFilterOrUndefined, override: TFilterOrUndefined) {
   const output = deepCopy(target);
-  if (target?.and_ && incoming?.and_) {
-    output.and_ = mergeAndFilters(target.and_, incoming.and_);
-  } else if (incoming?.and_) {
-    output.and_ = deepCopy(incoming.and_);
+  if (target?.and_ && override?.and_) {
+    output.and_ = mergeAndFilters(target.and_, override.and_);
+  } else if (override?.and_) {
+    output.and_ = deepCopy(override.and_);
   }
   return output as IFilter;
 }
@@ -126,41 +130,20 @@ function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThro
 /**
  * Replaces attributes in the current filter with their default values if specified.
  * 
- * @param id - The identifier of the current component item being evaluated.
- * @param currentId - The identifier of the component item to compare against.
  * @param andFilter - The current filter object containing attributes to potentially replace.
  * @param defaultAndFilter - The default filter object containing default attribute values.
- * @param useDefaultFilterOnly - An array of attribute names that should be replaced with default values if the `id` matches `currentId`.
+ * 
  * @returns An updated filter object with specified attributes replaced by their default values where applicable.
  */
 function useDefaultFilterWhereNecessary(
-  id: string,
-  currentId: string,
   andFilter: IAndAttributes,
   defaultAndFilter: IAndAttributes,
-  useDefaultFilterOnly: string[] = [],
-) {
-  const updatedAndFilter = deepCopy(andFilter);
-  for (const attribute of useDefaultFilterOnly) {
-    /**
-     * The filter for the current component item will be replaced with defaultFilter
-     * of the mentioned attribute if the `id` matches `currentId`.
-     */
-    if (currentId === id) {
-      delete updatedAndFilter[attribute];
-      updatedAndFilter[attribute] = defaultAndFilter[attribute];
-      /**
-       * For other component items, the filter will only be updated
-       * with default values if the attribute is not already present in the current filter.
-       * This is useful for multiselect filters when we unselect all options
-       * and want to reset the filter to the above defaultFilter.
-       */
-    } else if (!(attribute in updatedAndFilter) && attribute in defaultAndFilter) {
-      updatedAndFilter[attribute] = defaultAndFilter[attribute];
-    }
+  defaultFilterFallback: boolean = false,
+): IAndAttributes {
+  if (defaultFilterFallback) {
+    return mergeAndFilters(andFilter, defaultAndFilter);
   }
-
-  return updatedAndFilter;
+  return andFilter;
 }
 
 /**
@@ -169,14 +152,14 @@ function useDefaultFilterWhereNecessary(
  * @param zone - The zone object containing components and their filters.
  * @param id - The identifier of the current component.
  * @param includeOwnSubFilter - A boolean indicating whether to include the component's own sub-filter.
- * @param useDefaultFilterOnly - An array of attribute names that should use default filter values for the current component.
+ * 
  * @returns The compounded filter object.
  */
 export function generateFilter(
   zone: IZone,
   id?: string,
-  includeOwnSubFilter?: boolean,
-  useDefaultFilterOnly: string[] = [],
+  includeOwnSubFilter: boolean = false,
+  defaultFilterFallback: boolean = false,
 ) {
   if (zone === undefined) return undefined;
   const z = zone as IZone;
@@ -198,12 +181,10 @@ export function generateFilter(
 
     // Current filter for the currentId
     let currentFilter: IAndAttributes = useDefaultFilterWhereNecessary(
-      id!,
-      currentId,
       z.components[currentId].data.filter?.and_ || {},
       z.components[currentId].data.defaultFilter?.and_ || {},
-      useDefaultFilterOnly,
-    ) as IAndAttributes;
+      defaultFilterFallback,
+    );
 
     // Include sub filter if required
     const subFilter = z.components[currentId].data.subFilter;
