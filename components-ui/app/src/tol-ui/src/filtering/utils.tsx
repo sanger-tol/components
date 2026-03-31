@@ -132,7 +132,7 @@ function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThro
  * 
  * @param andFilter - The current filter object containing attributes to potentially replace.
  * @param defaultAndFilter - The default filter object containing default attribute values.
- * 
+ * @param defaultFilterFallback - A boolean indicating whether to use default filters as a fallback.
  * @returns An updated filter object with specified attributes replaced by their default values where applicable.
  */
 function useDefaultFilterWhereNecessary(
@@ -152,7 +152,7 @@ function useDefaultFilterWhereNecessary(
  * @param zone - The zone object containing components and their filters.
  * @param id - The identifier of the current component.
  * @param includeOwnSubFilter - A boolean indicating whether to include the component's own sub-filter.
- * 
+ * @param defaultFilterFallback - A boolean indicating whether to use default filters as a fallback.
  * @returns The compounded filter object.
  */
 export function generateFilter(
