@@ -9,7 +9,7 @@ import { DateRangePicker } from "rsuite";
 import {
   stopPropagation,
   IFilterInput,
-  setFilter,
+  setFilterInput,
   filterListener,
   FilterToggle,
 } from "..";
@@ -44,7 +44,7 @@ export function FilterDatePicker(props: IFilterInput) {
     if (from !== null) from.setHours(0, 0, 0, 0);
     if (to !== null) to.setHours(23, 59, 59, 999);
     setValue(input);
-    setFilter({
+    setFilterInput({
       operator: "gte",
       value: from,
       negate: negate,
@@ -53,7 +53,7 @@ export function FilterDatePicker(props: IFilterInput) {
       zone: zone,
       valueExists: from !== null,
     });
-    setFilter({
+    setFilterInput({
       operator: "lt",
       value: to,
       negate: negate,
@@ -68,7 +68,7 @@ export function FilterDatePicker(props: IFilterInput) {
   const onExists = (ex: boolean) => {
     setExists(!ex);
     setValue(null);
-    setFilter({
+    setFilterInput({
       operator: "exists",
       negate: negate,
       exists: !ex,
@@ -85,7 +85,7 @@ export function FilterDatePicker(props: IFilterInput) {
     if (from !== null) from.setHours(0, 0, 0, 0);
     if (to !== null) to.setHours(23, 59, 59, 999);
     setNegate(!ng);
-    setFilter({
+    setFilterInput({
       operator: exists ? "exists" : "gte",
       value: from,
       negate: !ng,
@@ -95,7 +95,7 @@ export function FilterDatePicker(props: IFilterInput) {
       zone: zone,
       valueExists: from !== null,
     });
-    setFilter({
+    setFilterInput({
       operator: exists ? "exists" : "lt",
       value: to,
       negate: !ng,
@@ -125,7 +125,6 @@ export function FilterDatePicker(props: IFilterInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
-        disabled={disabled}
       />
     </div>
   );

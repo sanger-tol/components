@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import {
   IFilterInput,
-  setFilter,
+  setFilterInput,
   filterListener,
   MultipleSelect,
   FilterToggle,
@@ -35,14 +35,13 @@ export function FilterMultiSelect(props: IFilterInput) {
   } = props;
   const [data, setData] = useState<string[]>([]);
   const [values, setValues] = useState<string[]>([]);
-  const [disabled, setDisabled] = useState(false);
   const [exists, setExists] = useState<boolean>(false);
   const [negate, setNegate] = useState<boolean>(false);
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [statsFilter, setStatsFilter] = useState<TFilterOrUndefined>({});
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
   const operator = "in_list";
 
   useEffect(() => {
@@ -53,8 +52,8 @@ export function FilterMultiSelect(props: IFilterInput) {
   }, [values]);
 
   useEffect(() => {
-    const nextFilter = generateFilter(zone, componentId, false, true);
-    if (filterHasUpdated(setStatsFilter, statsFilter, nextFilter)) {
+    const nextFilter = generateFilter(zone, componentId);
+    if (filterHasUpdated(setFilter, filter, nextFilter)) {
       setFetched(false);
       resetFiltersBelow({ id: componentId, zone: zone });
       setZone({ ...zone });
@@ -64,7 +63,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   useEffectUpdate(() => {
     // Reset fetched status on filter change to ensure new values are fetched on next dropdown open
     setFetched(false);
-  }, [statsFilter]);
+  }, [filter]);
 
   useEffect(() => {
     errorMessage && PopUpMessage({ message: errorMessage, type: "error" });
@@ -83,7 +82,7 @@ export function FilterMultiSelect(props: IFilterInput) {
         group_by: attribute,
         stats_fields: "",
         stats: "",
-        filter: JSON.stringify(statsFilter),
+        filter: JSON.stringify(filter),
       }).toString();
       dataSource
         .custom({
@@ -123,12 +122,10 @@ export function FilterMultiSelect(props: IFilterInput) {
     setValue: setValues,
     setExists: setExists,
     setNegate: setNegate,
-    setDisabled: setDisabled,
     emptyValue: [],
     zoneToValue: (filterValue: any) => {
       return filterValue;
     },
-    onlyDisplayMyFilter: true,
   });
 
   const onFilter = (input: string[]) => {
@@ -137,7 +134,7 @@ export function FilterMultiSelect(props: IFilterInput) {
     clearTimeout(timeoutValue!);
     setTimeoutValue(
       setTimeout(() => {
-        setFilter({
+        setFilterInput({
           operator: operator,
           value: input,
           negate: negate,
@@ -154,7 +151,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   const onExists = (ex: boolean) => {
     setExists(!ex);
     setValues([]);
-    setFilter({
+    setFilterInput({
       operator: "exists",
       negate: negate,
       exists: !ex,
@@ -167,7 +164,7 @@ export function FilterMultiSelect(props: IFilterInput) {
 
   const onNegate = (ng: boolean) => {
     setNegate(!ng);
-    setFilter({
+    setFilterInput({
       operator: exists ? "exists" : operator,
       value: values,
       negate: !ng,
@@ -201,6 +198,7 @@ export function FilterMultiSelect(props: IFilterInput) {
         loading={loading}
         onEntering={() => setDropdownText()}
         onClick={(e) => {
+          console.log(filter)
           e.stopPropagation();
           fetchValues();
         }}
@@ -210,7 +208,6 @@ export function FilterMultiSelect(props: IFilterInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
-        disabled={disabled}
       />
     </div>
   );

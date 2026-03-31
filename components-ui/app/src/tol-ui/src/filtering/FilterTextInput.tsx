@@ -13,7 +13,7 @@ import {
   Button,
   stopPropagation,
   IFilterInput,
-  setFilter,
+  setFilterInput,
   filterListener,
   symbolToOperator,
   FilterToggle,
@@ -84,7 +84,7 @@ export function FilterTextInput(props: PFilterTextInput) {
       clearTimeout(timeoutValue!);
       setTimeoutValue(
         setTimeout(() => {
-          setFilter({
+          setFilterInput({
             operator: symbolToOperator(operator, values),
             value: input,
             negate: negate,
@@ -102,7 +102,7 @@ export function FilterTextInput(props: PFilterTextInput) {
   const onOperator = (op: string) => {
     // reset value and old operator when changing operator
     setValues([""]);
-    setFilter({
+    setFilterInput({
       operator: symbolToOperator(operator, values), // previous operator
       value: "", // resets value
       negate: negate,
@@ -118,7 +118,7 @@ export function FilterTextInput(props: PFilterTextInput) {
   const onExists = (ex: boolean) => {
     setExists(!ex);
     setValues([""]);
-    setFilter({
+    setFilterInput({
       operator: "exists",
       negate: negate,
       exists: !ex,
@@ -131,7 +131,7 @@ export function FilterTextInput(props: PFilterTextInput) {
 
   const onNegate = (ng: boolean) => {
     setNegate(!ng);
-    setFilter({
+    setFilterInput({
       operator: exists ? "exists" : symbolToOperator(operator, values),
       value: values.length > 1 ? values : values[0],
       negate: !ng,
@@ -149,7 +149,7 @@ export function FilterTextInput(props: PFilterTextInput) {
     const input = splitValues(listValue);
     setValues(input);
     if (input.length > 1) {
-      setFilter({
+      setFilterInput({
         operator: "in_list",
         value: input,
         negate: negate,
@@ -159,7 +159,7 @@ export function FilterTextInput(props: PFilterTextInput) {
         valueExists: true,
       });
     } else {
-      setFilter({
+      setFilterInput({
         operator: symbolToOperator(operator, values),
         value: input[0],
         negate: negate,
@@ -175,7 +175,7 @@ export function FilterTextInput(props: PFilterTextInput) {
   const inListOnChange = (input: string[]) => {
     if (input.length === 0) {
       setValues([""]);
-      setFilter({
+      setFilterInput({
         operator: "in_list",
         value: "", // resets value
         negate: negate,
@@ -274,7 +274,6 @@ export function FilterTextInput(props: PFilterTextInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
-        disabled={disabled}
       />
       <Modal
         size="md"
