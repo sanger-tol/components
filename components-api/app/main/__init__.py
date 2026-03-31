@@ -26,6 +26,7 @@ from tol.core import (
 )
 from tol.core.operator import Inserter
 from tol.sources.portal import portal
+from tol.sql.action import create_action_models
 from tol.sql import Model, create_sql_datasource
 from tol.sql.auth import db_auth_blueprint
 from tol.sql.pipeline_step import create_pipeline_step_models
@@ -109,6 +110,8 @@ def application():
 
     # the pipeline, steps, and uploads models
     pipeline_models, _pipeline_user_mixin = __get_pipeline_step_models(Base)
+    
+    action_models = create_action_models(Base)
 
     # the user Mixin
     user_mixin_class = type(
@@ -118,6 +121,12 @@ def application():
          _pipeline_user_mixin),
         {}
     )
+    
+    role_mixin_class = type(
+        '',
+        (action_models._role_mixin,),
+        {}
+    )
 
     # authentication and authorisation
     auth_bp = db_auth_blueprint(
@@ -125,14 +134,17 @@ def application():
         os.environ['DB_URI'],
         url_prefix=os.getenv('API_PATH') + '/auth',
         oidc_id_target='email',
-        user_mixin_class=user_mixin_class
+        user_mixin_class=user_mixin_class,
+        role_mixin_class=role_mixin_class
     )
     app.register_blueprint(auth_bp)
     auth_bp.register_authenticator(app)
 
     models = [
         *MODELS,
+        *action_models,
         auth_bp.models.user_class,
+        auth_bp.models.role_class,
         *standard_models,
         *pipeline_models,
     ]
