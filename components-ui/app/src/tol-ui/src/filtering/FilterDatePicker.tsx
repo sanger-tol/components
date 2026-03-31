@@ -22,24 +22,21 @@ export function FilterDatePicker(props: IFilterInput) {
   const [exists, setExists] = useState<boolean>(false);
   const [negate, setNegate] = useState<boolean>(false);
 
-  filterListener(
-    {
-      attribute: attribute,
-      componentId: componentId,
-      operators: ["gte", "lt"],
-      zone: zone,
-      setValue: setValue,
-      setExists: setExists,
-      setNegate: setNegate,
-      setDisabled: setDisabled,
-      emptyValue: null,
-      zoneToValue: (filterValue: any, exisitingValue: any) => {
-        if (exisitingValue === null) return filterValue; // first iteration
-        return [new Date(exisitingValue), new Date(filterValue)]; // second iteration
-      },
+  filterListener({
+    attribute: attribute,
+    componentId: componentId,
+    operators: ["gte", "lt"],
+    zone: zone,
+    setValue: setValue,
+    setExists: setExists,
+    setNegate: setNegate,
+    setDisabled: setDisabled,
+    emptyValue: null,
+    zoneToValue: (filterValue: any, exisitingValue: any) => {
+      if (exisitingValue === null) return filterValue; // first iteration
+      return [new Date(exisitingValue), new Date(filterValue)]; // second iteration
     },
-    [zone],
-  );
+  });
 
   const onFilter = (input: string[]) => {
     const from = input !== null ? new Date(input[0]) : null;

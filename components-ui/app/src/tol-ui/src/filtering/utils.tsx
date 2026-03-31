@@ -392,7 +392,7 @@ export function filterListener(
     // only sets the value for the current component
     onlyDisplayMyFilter?: boolean;
   },
-  dependencies: any[],
+  dependencies?: any[],
 ) {
   const {
     attribute,
@@ -453,7 +453,7 @@ export function filterListener(
     if (setDisabled) setDisabled(filterMeta.disabled);
     if (setOperator && 'currentOperator' in filterMeta)
       setOperator(filterMeta.currentOperator);
-  }, dependencies);
+  }, [zone, ...(dependencies || [])]);
 }
 export function addSubFilter(params: {
   id: string;

@@ -48,21 +48,18 @@ export function FilterBoolean(props: IFilterInput) {
     return convertedValues;
   };
 
-  filterListener(
-    {
-      attribute: attribute,
-      componentId: componentId,
-      operators: [operator],
-      zone: zone,
-      setValue: setValues,
-      setDisabled: setDisabled,
-      emptyValue: [],
-      zoneToValue: (filterValue: any) => {
-        return flipValues(filterValue);
-      },
+  filterListener({
+    attribute: attribute,
+    componentId: componentId,
+    operators: [operator],
+    zone: zone,
+    setValue: setValues,
+    setDisabled: setDisabled,
+    emptyValue: [],
+    zoneToValue: (filterValue: any) => {
+      return flipValues(filterValue);
     },
-    [zone],
-  );
+  });
 
   const onFilter = (input: string[]) => {
     setValues(input);

@@ -43,28 +43,25 @@ export function FilterTextInput(props: PFilterTextInput) {
 
   const operators = isNumber ? ["=", "<", ">", "≤", "≥"] : ["contains"];
 
-  filterListener(
-    {
-      attribute: attribute,
-      componentId: componentId,
-      operators: [
-        "in_list",
-        ...operators.map((op) => symbolToOperator(op)),
-      ],
-      zone: zone,
-      setValue: setValues,
-      setDisabled: setDisabled,
-      setExists: setExists,
-      setNegate: setNegate,
-      setOperator: setOperator,
-      emptyValue: [""],
-      zoneToValue: (filterValue: any) => {
-        if (Array.isArray(filterValue)) return filterValue;
-        return [filterValue];
-      },
+  filterListener({
+    attribute: attribute,
+    componentId: componentId,
+    operators: [
+      "in_list",
+      ...operators.map((op) => symbolToOperator(op)),
+    ],
+    zone: zone,
+    setValue: setValues,
+    setDisabled: setDisabled,
+    setExists: setExists,
+    setNegate: setNegate,
+    setOperator: setOperator,
+    emptyValue: [""],
+    zoneToValue: (filterValue: any) => {
+      if (Array.isArray(filterValue)) return filterValue;
+      return [filterValue];
     },
-    [zone],
-  );
+  });
 
   const validateInput = (input: string) => {
     const intRegex = /^[-]?[0-9\b]*$|^$/;

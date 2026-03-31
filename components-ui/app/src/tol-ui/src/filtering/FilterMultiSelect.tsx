@@ -115,24 +115,21 @@ export function FilterMultiSelect(props: IFilterInput) {
     }
   };
 
-  filterListener(
-    {
-      attribute: attribute,
-      componentId: componentId,
-      operators: [operator],
-      zone: zone,
-      setValue: setValues,
-      setExists: setExists,
-      setNegate: setNegate,
-      setDisabled: setDisabled,
-      emptyValue: [],
-      zoneToValue: (filterValue: any) => {
-        return filterValue;
-      },
-      onlyDisplayMyFilter: true,
+  filterListener({
+    attribute: attribute,
+    componentId: componentId,
+    operators: [operator],
+    zone: zone,
+    setValue: setValues,
+    setExists: setExists,
+    setNegate: setNegate,
+    setDisabled: setDisabled,
+    emptyValue: [],
+    zoneToValue: (filterValue: any) => {
+      return filterValue;
     },
-    [zone],
-  );
+    onlyDisplayMyFilter: true,
+  });
 
   const onFilter = (input: string[]) => {
     setValues(input);
