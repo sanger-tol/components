@@ -73,14 +73,15 @@ export function DataPoint(props: PDataPoint) {
   const onSaveStatus = (selectedStatusTypeId: string) => {
     if (!dataObject) return;
     setLoading(true);
-    // Derive the parent object type by stripping the "_status" suffix,
-    // e.g. "metagenome_status" → "metagenome".
     const parentObjectType = dataObject.objectType.replace(/_status$/, "");
+    const actionBaseUrl = dataSource
+      .getBaseUrl()
+      ?.replace(/\/data(?:\/[^/]+)?$/, "");
 
     dataSource
       .custom({
         method: API_METHODS.POST,
-        resource: ACTIONS.RUN_ACTION,
+        resource: `local/${ACTIONS.RUN_ACTION}`,
         body: {
           data: {
             ids: [dataObject.id],
@@ -89,6 +90,7 @@ export function DataPoint(props: PDataPoint) {
             params: { status: selectedStatusTypeId },
           },
         },
+        options: actionBaseUrl ? { baseURL: actionBaseUrl } : undefined,
       })
       .then(() => {
         setEditMode(false);
@@ -113,8 +115,6 @@ export function DataPoint(props: PDataPoint) {
 
     if (!dataObject) return;
     setLoading(true);
-
-
     dataSource
       ?.upsert({
         objectType: dataObject?.objectType,
@@ -157,7 +157,7 @@ export function DataPoint(props: PDataPoint) {
           {...props}
           value={value}
           loading={loading}
-          statusTypeObjectType={`${dataObject?.objectType}_type`}
+          statusTypeObjectType={dataObject.objectType}
           onCancel={onCancel}
           onSave={onSaveStatus}
         />

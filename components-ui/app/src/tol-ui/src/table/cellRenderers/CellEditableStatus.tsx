@@ -37,27 +37,41 @@ export function CellEditableStatus(props: PCellEditableStatus) {
     loading,
     floatingControls,
     statusTypeObjectType,
+    value,
     onCancel,
     onSave,
   } = props;
 
-  const [selected, setSelected] = useState<string | null>(null);
+  const initialValue = typeof value === "string" ? value : null;
+  const [selected, setSelected] = useState<string | null>(initialValue);
   const [options, setOptions] = useState<{ label: string; value: string }[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
+
+  useEffect(() => {
+    setSelected(initialValue);
+  }, [initialValue]);
 
   useEffect(() => {
     dataSource
       .getListPage({ objectType: statusTypeObjectType })
       .then((items: any) => {
-        setOptions(
-          (items ?? []).map((item: any) => ({
-            label: item.id,
-            value: item.id,
-          }))
-        );
+        const fetchedOptions = (items ?? []).map((item: any) => ({
+          label: item.id,
+          value: item.id,
+        }));
+        if (
+          initialValue &&
+          !fetchedOptions.some((option) => option.value === initialValue)
+        ) {
+          fetchedOptions.unshift({
+            label: initialValue,
+            value: initialValue,
+          });
+        }
+        setOptions(fetchedOptions);
       })
       .finally(() => setLoadingOptions(false));
-  }, [statusTypeObjectType]);
+  }, [dataSource, initialValue, statusTypeObjectType]);
 
   return (
     <>
