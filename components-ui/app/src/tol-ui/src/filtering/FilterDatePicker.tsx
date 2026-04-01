@@ -125,6 +125,7 @@ export function FilterDatePicker(props: IFilterInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
+        disabled={disabled}
       />
     </div>
   );

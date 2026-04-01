@@ -274,6 +274,7 @@ export function FilterTextInput(props: PFilterTextInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
+        disabled={disabled}
       />
       <Modal
         size="md"
