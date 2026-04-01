@@ -35,7 +35,6 @@ export function FilterMultiSelect(props: IFilterInput) {
   } = props;
   const [data, setData] = useState<string[]>([]);
   const [values, setValues] = useState<string[]>([]);
-  const [disabled, setDisabled] = useState(false);
   const [exists, setExists] = useState<boolean>(false);
   const [negate, setNegate] = useState<boolean>(false);
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
@@ -66,6 +65,11 @@ export function FilterMultiSelect(props: IFilterInput) {
     setFetched(false);
   }, [filter]);
 
+  useEffectUpdate(() => {
+    // Reset data options when fetched is set to false to prevent showing incorrect options on dropdown open
+    if (!fetched) setData([]);
+  }, [fetched]);
+
   useEffect(() => {
     errorMessage && PopUpMessage({ message: errorMessage, type: "error" });
   }, [errorMessage]);
@@ -73,45 +77,47 @@ export function FilterMultiSelect(props: IFilterInput) {
   const fetchValues = () => {
     if (!fetched) {
       setLoading(true);
-      // TEMPORARY FIX:
-      // Construct a URL param string and append it to the resource, because:
-      // a. The API doesn't handle empty strings/arrays for this resource very well
-      // b. Empty arrays are being parsed out, and the params are required on the API
-      // c. Should switch to a POST method in the near future.
-      // TODO: Remove on POST method implementation
-      const queryParamsString = new URLSearchParams({
-        group_by: attribute,
-        stats_fields: "",
-        stats: "",
-        filter: JSON.stringify(filter),
-      }).toString();
-      dataSource
-        .custom({
-          method: API_METHODS.GET,
-          resource: `${objectType}${API_OPERATIONS.GROUP_STATS}?${queryParamsString}`,
-        })
-        .then((res: any) => {
-          const statsValues = res.data.meta.stats;
-          setData(statsValues.map((item: any) => item.key[attribute]));
-          updateDropdownText("No results found");
-        })
-        .catch((error: any) => {
-          setErrorMessage(
-            "Error fetching unique values for " +
-            attribute +
-            " in " +
-            objectType +
-            ". " +
-            error.message +
-            ".",
-          );
-          console.error(error.message);
-          updateDropdownText("Error fetching values");
-        })
-        .finally(() => {
-          setLoading(false);
-          setFetched(true);
-        });
+      setTimeout(() => {
+        // TEMPORARY FIX:
+        // Construct a URL param string and append it to the resource, because:
+        // a. The API doesn't handle empty strings/arrays for this resource very well
+        // b. Empty arrays are being parsed out, and the params are required on the API
+        // c. Should switch to a POST method in the near future.
+        // TODO: Remove on POST method implementation
+        const queryParamsString = new URLSearchParams({
+          group_by: attribute,
+          stats_fields: "",
+          stats: "",
+          filter: JSON.stringify(filter),
+        }).toString();
+        dataSource
+          .custom({
+            method: API_METHODS.GET,
+            resource: `${objectType}${API_OPERATIONS.GROUP_STATS}?${queryParamsString}`,
+          })
+          .then((res: any) => {
+            const statsValues = res.data.meta.stats;
+            setData(statsValues.map((item: any) => item.key[attribute]));
+            updateDropdownText("No results found");
+          })
+          .catch((error: any) => {
+            setErrorMessage(
+              "Error fetching unique values for " +
+              attribute +
+              " in " +
+              objectType +
+              ". " +
+              error.message +
+              ".",
+            );
+            console.error(error.message);
+            updateDropdownText("Error fetching values");
+          })
+          .finally(() => {
+            setLoading(false);
+            setFetched(true);
+          });
+      }, 5000);
     }
   };
 
@@ -121,7 +127,6 @@ export function FilterMultiSelect(props: IFilterInput) {
     operators: [operator],
     zone: zone,
     setValue: setValues,
-    setDisabled: setDisabled,
     setExists: setExists,
     setNegate: setNegate,
     emptyValue: [],
@@ -200,15 +205,16 @@ export function FilterMultiSelect(props: IFilterInput) {
         setValue={onFilter}
         loading={loading}
         onEntering={() => setDropdownText()}
-        onOpen={() => fetchValues()}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          fetchValues();
+        }}
       />
       <FilterToggle
         negate={negate}
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
-        disabled={disabled}
       />
     </div>
   );
