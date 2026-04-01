@@ -21,9 +21,9 @@ export function getComponentAbove(id: string, list: string[]) {
   return list[index - 1];
 }
 
-export function getComponentsAbove(id: string, list: string[]) {
+export function getComponentsAbove(id: string, list: string[], includeSelf: boolean = true) {
   const index = list.indexOf(id);
-  return list.slice(0, index + 1);
+  return includeSelf ? list.slice(0, index + 1) : list.slice(0, index);
 }
 
 export function getComponentsBelow(
@@ -97,37 +97,36 @@ function shouldFilterPassThrough(id?: string, currentId?: string, filterPassThro
  * @returns The compounded filter object.
  */
 export function generateFilter(
-  zone: IZone,
+  zone?: IZone,
   id?: string,
-  // TODO: USE THIS INSTEAD AND REVERT BACK TO FILTER TYPE IN FILTER LISTENER
   includeOwnSubFilter: boolean = false,
+  includeSelf: boolean = true,
 ) {
-  if (zone === undefined) return undefined;
-  const z = zone as IZone;
+  if (!zone) return undefined;
 
   // Get the list of components above the current component in the zone's order, including itself
-  const aboveComponents = id ? getComponentsAbove(id, z.order) : z.order;
+  const aboveComponents = id ? getComponentsAbove(id, zone.order, includeSelf) : zone.order;
 
   // Start with zone filter
-  let compoundedFilter: IFilter = z.filter || {};
+  let compoundedFilter: IFilter = zone.filter || {};
 
   // Loop through 'above' components
   for (const currentId of aboveComponents) {
     // Exclude pass throughs except self
-    if (shouldFilterPassThrough(
-      id, currentId, z.components[currentId].data.filterPassThrough
-    )) {
-      continue;
-    }
+    if (
+      shouldFilterPassThrough(
+        id, currentId, zone.components[currentId].data.filterPassThrough
+      )
+    ) continue;
 
     // Get the current filter, using the default filter as a base if necessary
     let currentFilter: IFilter = mergeFilters(
-      z.components[currentId].data.defaultFilter || {},
-      z.components[currentId].data.filter || {},
+      zone.components[currentId].data.defaultFilter || {},
+      zone.components[currentId].data.filter || {},
     );
 
     // Include sub filter if required
-    const subFilter = z.components[currentId].data.subFilter;
+    const subFilter = zone.components[currentId].data.subFilter;
     if ((currentId !== id || includeOwnSubFilter) && subFilter) {
       currentFilter = mergeFilters(currentFilter, subFilter);
     }
@@ -244,18 +243,26 @@ export function setFilterInput(params: {
   }
 }
 
+/**
+ * Custom hook to listen for changes in the filter state and update the component's values,
+ * existence, negation, operator, and disabled state accordingly.
+ * 
+ * @param params - The parameters for the filter listener updater.
+ */
 function filterListenerUpdater(params: {
-  // whole filter data
+  // Whole filter data
   filter?: IFilter;
   filterPassThrough?: boolean;
-  // filter location
+  // Filter location
   attribute: string;
   operators: string[];
-  // filter state
+  // Filter state
   filterMeta: any;
   disableCondition?: boolean;
-  // differentials
+  // Differentials
   zoneToValue: (filterValue: any, exisitingValue?: any) => any;
+  // Whether to update the component's values based on the filter changes, or just update the other variables
+  updateValues: boolean;
 }) {
   let {
     filter,
@@ -265,6 +272,7 @@ function filterListenerUpdater(params: {
     operators,
     disableCondition,
     zoneToValue,
+    updateValues,
   } = params;
 
   const and_ = filter?.and_;
@@ -276,7 +284,7 @@ function filterListenerUpdater(params: {
         operatorFound = true;
         const filter = and_[attribute][op];
         filterMeta.disabled = disableCondition;
-        filterMeta.values = zoneToValue(filter.value, filterMeta.values);
+        if (updateValues) filterMeta.values = zoneToValue(filter.value, filterMeta.values);
         filterMeta.exists = false;
         filterMeta.negate = filter.negate || filterMeta.negate;
         filterMeta.currentOperator = operatorToSymbol(op, [filterMeta.values]);
@@ -286,18 +294,24 @@ function filterListenerUpdater(params: {
       filterMeta.exists = true;
       filterMeta.negate = and_[attribute]["exists"].negate || filterMeta.negate;
       // only disables on exist filter if negate is true
-      filterMeta.disabled = filterMeta.negate ? disableCondition : false;
+      filterMeta.disabled = disableCondition;
     }
   }
 }
 
+/**
+ * Listens for changes in the zone state and updates the component's filter metadata accordingly.
+ * 
+ * @param params - The parameters for the filter listener.
+ * @param dependencies - Optional dependencies for the useEffect hook.
+ */
 export function filterListener(
   params: {
-    // filter location
+    // Filter location
     attribute: string;
     componentId: string;
     operators: string[];
-    // filter state
+    // Filter state and setters
     zone: IZone;
     setValue?: any;
     setExists?: any;
@@ -306,6 +320,8 @@ export function filterListener(
     setDisabled?: any;
     emptyValue: any;
     zoneToValue: (filterValue: any, exisitingValue?: any) => any;
+    // Whether to only listen to the component's own filter changes, ignoring changes from components above in the hierarchy
+    onlyUpdateMyValues?: boolean;
   },
   dependencies?: any[],
 ) {
@@ -320,6 +336,7 @@ export function filterListener(
     setOperator,
     setDisabled,
     emptyValue,
+    onlyUpdateMyValues = false,
     zoneToValue,
   } = params;
 
@@ -340,6 +357,7 @@ export function filterListener(
       filterMeta,
       disableCondition: true,
       zoneToValue,
+      updateValues: !onlyUpdateMyValues,
     });
 
     const aboveComponents = getComponentsAbove(componentId, zone.order);
@@ -356,6 +374,7 @@ export function filterListener(
         filterMeta,
         disableCondition: currentId !== componentId,
         zoneToValue,
+        updateValues: currentId === componentId && onlyUpdateMyValues,
       });
     }
     if (setValue) setValue(filterMeta.values);

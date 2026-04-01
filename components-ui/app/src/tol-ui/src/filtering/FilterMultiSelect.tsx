@@ -35,6 +35,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   } = props;
   const [data, setData] = useState<string[]>([]);
   const [values, setValues] = useState<string[]>([]);
+  const [disabled, setDisabled] = useState(false);
   const [exists, setExists] = useState<boolean>(false);
   const [negate, setNegate] = useState<boolean>(false);
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
@@ -52,7 +53,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   }, [values]);
 
   useEffect(() => {
-    const nextFilter = generateFilter(zone, componentId);
+    const nextFilter = generateFilter(zone, componentId, false, false);
     if (filterHasUpdated(setFilter, filter, nextFilter)) {
       setFetched(false);
       resetFiltersBelow({ id: componentId, zone: zone });
@@ -120,12 +121,14 @@ export function FilterMultiSelect(props: IFilterInput) {
     operators: [operator],
     zone: zone,
     setValue: setValues,
+    setDisabled: setDisabled,
     setExists: setExists,
     setNegate: setNegate,
     emptyValue: [],
     zoneToValue: (filterValue: any) => {
       return filterValue;
     },
+    onlyUpdateMyValues: true,
   });
 
   const onFilter = (input: string[]) => {
@@ -197,17 +200,15 @@ export function FilterMultiSelect(props: IFilterInput) {
         setValue={onFilter}
         loading={loading}
         onEntering={() => setDropdownText()}
-        onClick={(e) => {
-          console.log(filter)
-          e.stopPropagation();
-          fetchValues();
-        }}
+        onOpen={() => fetchValues()}
+        onClick={(e) => e.stopPropagation()}
       />
       <FilterToggle
         negate={negate}
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
+        disabled={disabled}
       />
     </div>
   );
