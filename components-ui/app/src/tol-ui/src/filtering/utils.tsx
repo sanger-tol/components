@@ -293,7 +293,6 @@ function filterListenerUpdater(params: {
     if (!operatorFound && "exists" in and_[attribute]) {
       filterMeta.exists = true;
       filterMeta.negate = and_[attribute]["exists"].negate || filterMeta.negate;
-      // only disables on exist filter if negate is true
       filterMeta.disabled = disableCondition;
     }
   }
