@@ -182,6 +182,10 @@ export function generateFilter(
     // Add current filter to the compounded filter
     compoundedFilter = mergeFilters(compoundedFilter, currentFilter);
   }
+
+  // If the compounded filter has no "and" attributes, return empty object to avoid unnecessary filtering
+  if (isEmptyObject(compoundedFilter.and_)) return {};
+
   return compoundedFilter;
 }
 

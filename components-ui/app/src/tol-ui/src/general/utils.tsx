@@ -54,8 +54,8 @@ export function falseIfUndefined(prop: any) {
   return false;
 }
 
-export function isEmptyObject(x: object) {
-  return Object.keys(x).length === 0;
+export function isEmptyObject(x: object|undefined) {
+  return Object.keys(x || {}).length === 0;
 }
 
 export function appendKeywordIfNeeded(field: string): string {
