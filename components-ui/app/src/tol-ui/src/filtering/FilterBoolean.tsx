@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState, useEffect } from "react";
 import {
   IFilterInput,
-  setFilter,
+  setFilterInput,
   filterListener,
   MultipleSelect,
   StatusMessage,
@@ -48,21 +48,18 @@ export function FilterBoolean(props: IFilterInput) {
     return convertedValues;
   };
 
-  filterListener(
-    {
-      attribute: attribute,
-      componentId: componentId,
-      operators: [operator],
-      zone: zone,
-      setValue: setValues,
-      setDisabled: setDisabled,
-      emptyValue: [],
-      zoneToValue: (filterValue: any) => {
-        return flipValues(filterValue);
-      },
+  filterListener({
+    attribute: attribute,
+    componentId: componentId,
+    operators: [operator],
+    zone: zone,
+    setValue: setValues,
+    setDisabled: setDisabled,
+    emptyValue: [],
+    zoneToValue: (filterValue: any) => {
+      return flipValues(filterValue);
     },
-    [zone],
-  );
+  });
 
   const onFilter = (input: string[]) => {
     setValues(input);
@@ -70,7 +67,7 @@ export function FilterBoolean(props: IFilterInput) {
     setTimeoutValue(
       setTimeout(() => {
         setValues(input);
-        setFilter({
+        setFilterInput({
           operator: operator,
           value: flipValues(input),
           negate: false,

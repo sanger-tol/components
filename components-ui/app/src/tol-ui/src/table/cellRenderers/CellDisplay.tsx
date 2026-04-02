@@ -9,7 +9,7 @@ import {
   Boolean,
   Datetime,
   Float,
-  Image,
+  OldImage,
   Integer,
   Link,
   LongText,
@@ -33,7 +33,7 @@ const preDefinedElements = {
   boolean: Boolean,
   datetime: Datetime,
   float: Float,
-  image: Image,
+  image: OldImage,
   integer: Integer,
   link: Link,
   longText: LongText,
@@ -96,7 +96,7 @@ export function CellDisplay(props: PCellDisplay) {
     }
   }
 
-  if (!value) {
+  if (value === null || value === undefined) {
     Display = <span className="tol-display-empty">None</span>;
   }
 
