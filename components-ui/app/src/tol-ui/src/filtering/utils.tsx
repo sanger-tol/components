@@ -16,25 +16,59 @@ import {
 } from "..";
 
 
+/**
+ * Retrieves the identifier of the component located directly above the specified component in the given list.
+ * 
+ * @param id The identifier of the current component.
+ * @param list The list of component identifiers.
+ * @returns The identifier of the component above the specified component, or `undefined` if not found.
+ */
 export function getComponentAbove(id: string, list: string[]) {
   const index = list.indexOf(id);
   return list[index - 1];
 }
 
+/**
+ * Retrieves the list of component identifiers above the current component in the given list.
+ * Includes itself by default.
+ * 
+ * @param id The identifier of the current component.
+ * @param list The list of component identifiers.
+ * @param includeSelf Whether to include the current component in the result.
+ * @returns An array of component identifiers above the current component.
+ */
 export function getComponentsAbove(id: string, list: string[], includeSelf: boolean = true) {
   const index = list.indexOf(id);
   return includeSelf ? list.slice(0, index + 1) : list.slice(0, index);
 }
 
+/**
+ * Retrieves the list of component identifiers below the current component in the given list.
+ * 
+ * @param id The identifier of the current component.
+ * @param list The list of component identifiers.
+ * @param indexOffset The number of components to skip below the current component.
+ * @returns An array of component identifiers below the current component.
+ */
 export function getComponentsBelow(
   id: string,
   list: string[],
   indexOffset: number = 0,
 ) {
   const index = list.indexOf(id);
-  return index === -1 ? [] : list.slice(index + indexOffset + 1); // adding 1, as by default we want the next component
+  // Adding 1, as by default we want the next component
+  return index === -1 ? [] : list.slice(index + indexOffset + 1);
 }
 
+/**
+ * Determines whether a filter has been updated by comparing the existing filter with the incoming filter.
+ * If the filter has been updated, it sets the new filter using the provided `setFilter` function.
+ * 
+ * @param setFilter The function to update the filter.
+ * @param exisitingFilter The current filter object.
+ * @param incomingFilter The new filter object to compare against.
+ * @returns `true` if the filter has been updated; otherwise, `false`.
+ */
 export function filterHasUpdated(
   setFilter: any,
   exisitingFilter?: object,
@@ -52,6 +86,13 @@ export function filterHasUpdated(
   return hasUpdated;
 }
 
+/**
+ * Merges two sets of "and" filters, combining their attributes and operations.
+ * 
+ * @param target The target set of "and" filters to merge into.
+ * @param override The set of "and" filters to add to the target.
+ * @returns The merged set of "and" filters.
+ */
 export function mergeAndFilters(target: IAndAttributes, override: IAndAttributes) {
   const output = deepCopy(target);
   for (const attribute in override) {
@@ -66,6 +107,13 @@ export function mergeAndFilters(target: IAndAttributes, override: IAndAttributes
   return output as IAndAttributes;
 }
 
+/**
+ * Merges two filters, combining their "and" attributes if they exist.
+ * 
+ * @param target The target filter to merge into.
+ * @param override The filter to add to the target.
+ * @returns The merged filter.
+ */
 export function mergeFilters(target: TFilterOrUndefined, override: TFilterOrUndefined) {
   const output = deepCopy(target);
   if (target?.and_ && override?.and_) {
@@ -119,7 +167,7 @@ export function generateFilter(
       )
     ) continue;
 
-    // Get the current filter, using the default filter as a base if necessary
+    // Get the current filter, using the default filter as a base
     let currentFilter: IFilter = mergeFilters(
       zone.components[currentId].data.defaultFilter || {},
       zone.components[currentId].data.filter || {},
@@ -137,13 +185,27 @@ export function generateFilter(
   return compoundedFilter;
 }
 
-// insert a value in a list after an id located
+/**
+ * Inserts a value in a list immediately after the specified id.
+ * 
+ * @param id The identifier after which the value should be inserted.
+ * @param value The value to insert.
+ * @param list The list in which to insert the value.
+ * @returns The updated list with the value inserted.
+ */
 export function addValueBelow(id: string, value: string, list: string[]) {
   const idIndex = list.indexOf(id);
   list.splice(idIndex + 1, 0, value);
   return list;
 }
 
+/**
+ * Adds a new component below the specified component in the given zone, and updates the zone's order accordingly.
+ * 
+ * @param id The identifier of the component below which the new component should be added.
+ * @param newId The identifier of the new component to add.
+ * @param zone The zone object containing the components and their order.
+ */
 export function addComponentBelow(id: string, newId: string, zone: IZone) {
   defineComponent(
     {
@@ -155,6 +217,14 @@ export function addComponentBelow(id: string, newId: string, zone: IZone) {
   zone.order = addValueBelow(id, newId, zone.order);
 }
 
+/**
+ * Resets the filters of all components below the specified component in the given zone, starting from a certain index offset.
+ * 
+ * @param params An object containing the parameters for resetting filters below a component.
+ * - `id`: The identifier of the component below which filters should be reset.
+ * - `zone`: The zone containing the components and their order.
+ * - `indexOffset`: The number of components to skip before starting to reset filters (default is 0).
+ */
 export function resetFiltersBelow(params: {
   id: string;
   zone?: object;
@@ -171,6 +241,11 @@ export function resetFiltersBelow(params: {
   }
 }
 
+/**
+ * Resets all filters in the given zone to their default states, including the filters of all components within the zone.
+ * 
+ * @param zone The zone object containing the components and their filters to reset.
+ */
 export function resetAllFilters(zone: IZone) {
   zone.filter = deepCopy(zone.defaultFilter!);
   for (const currentId of zone.order) {
@@ -181,11 +256,22 @@ export function resetAllFilters(zone: IZone) {
   }
 }
 
+/**
+ * Removes a component with the specified identifier from the given zone, and updates the zone's order accordingly.
+ * 
+ * @param id The identifier of the component to remove.
+ * @param zone The zone containing the components and their order.
+ */
 export function removeComponent(id: string, zone: IZone) {
   delete zone.components[id];
   zone.order = zone.order.filter((currentId) => currentId !== id);
 }
 
+/**
+ * Sets the filter input for a specific component in a zone.
+ * 
+ * @param params An object containing the parameters for setting the filter input.
+ */
 export function setFilterInput(params: {
   // and_ filter attributes
   operator: string;
@@ -348,7 +434,7 @@ export function filterListener(
       disabled: false,
     };
 
-    // do for the top level filter
+    // Perform updates for top-level zone filter
     filterListenerUpdater({
       filter: zone.filter,
       attribute,
@@ -356,11 +442,17 @@ export function filterListener(
       filterMeta,
       disableCondition: true,
       zoneToValue,
+      /**
+       * If onlyUpdateMyValues is true, we only want to update the component's
+       * values based on its own filter, not the filters of components above it in the hierarchy
+       */
       updateValues: !onlyUpdateMyValues,
     });
 
+    // Be aware of components above in the hierarchy, including itself by default
     const aboveComponents = getComponentsAbove(componentId, zone.order);
 
+    // Loop through 'above' components and perform updates based on their filters, including itself by default
     for (const currentId of aboveComponents) {
       const componentData = zone.components[currentId].data;
       filterListenerUpdater({
@@ -373,7 +465,11 @@ export function filterListener(
         filterMeta,
         disableCondition: currentId !== componentId,
         zoneToValue,
-        updateValues: currentId === componentId && onlyUpdateMyValues,
+        /**
+         * Always update the current component by its own filter, but only update based on other components
+         * filters if onlyUpdateMyValues is false
+         */
+        updateValues: currentId === componentId || !onlyUpdateMyValues,
       });
     }
     if (setValue) setValue(filterMeta.values);
@@ -384,6 +480,15 @@ export function filterListener(
       setOperator(filterMeta.currentOperator);
   }, [zone, ...(dependencies || [])]);
 }
+
+/**
+ * Adds a sub-filter to a specific component in a zone, and resets the filters of all components below it.
+ * 
+ * @param params An object containing the parameters for adding a sub-filter.
+ * - `id`: The identifier of the component to which the sub-filter should be added.
+ * - `filter`: The filter object to add as a sub-filter.
+ * - `zone`: The zone containing the components and their filters.
+ */
 export function addSubFilter(params: {
   id: string;
   filter: IFilter;
@@ -396,12 +501,26 @@ export function addSubFilter(params: {
   z.components[id].data.subFilter = f;
 }
 
+/**
+ * Resets all filters in the given zone to their default states, including the filters of all components within the zone.
+ * 
+ * @param params An object containing the parameters for resetting the zone.
+ * - `zone`: The zone object containing the components and their filters to reset.
+ * - `setZone`: A function to update the zone state.
+ */
 export function resetZone(params: { zone: IZone; setZone: any }) {
   const { zone, setZone } = params;
   resetAllFilters(zone);
   setZone({ ...zone });
 }
 
+/**
+ * Converts a filter operator symbol to its corresponding string representation used in the filter logic.
+ * 
+ * @param operator The operator symbol to convert (e.g., "=", "<", ">", etc.).
+ * @param values Optional array of values to determine if the operator should be "in_list" or "contains".
+ * @returns The string representation of the operator (e.g., "eq", "lt", "gt", etc.).
+ */
 export function symbolToOperator(operator: string, values?: string[]) {
   switch (operator) {
     case "=":
@@ -420,6 +539,13 @@ export function symbolToOperator(operator: string, values?: string[]) {
   }
 };
 
+/**
+ * Converts a filter operator string to its corresponding symbol representation for display purposes.
+ * 
+ * @param operator The operator string to convert (e.g., "eq", "lt", "gt", etc.).
+ * @param values Optional array of values to determine if the operator should be "in_list" or "contains".
+ * @returns The symbol representation of the operator (e.g., "=", "<", ">", etc.).
+ */
 export function operatorToSymbol(operator: string, values?: string[]) {
   switch (operator) {
     case "eq":
