@@ -5,7 +5,17 @@ SPDX-License-Identifier: MIT
 */
 
 import { format } from "date-fns";
-import { appendKeywordIfNeeded, getCssVarValue, IChartDataset, isPropDefined } from "..";
+import {
+  appendKeywordIfNeeded,
+  getCssVarValue,
+  IChartDataset,
+  IFilter,
+  isEmptyObject,
+  isPropDefined,
+  ISunburstSectionClickedData,
+  mergeAndFilters,
+  NO_DATA_FOUND_MESSAGE
+} from "..";
 
 // ------------------//
 //      GENERAL      //
@@ -253,7 +263,7 @@ export function setBorderColour(datasets: any, borderColour: string) {
 
 export function isChartDataEmpty(aggs: any) {
   const data = Object.values(aggs)[0]!["buckets"];
-  if (data.length === 0) return "No data found";
+  if (isEmptyObject(data)) return NO_DATA_FOUND_MESSAGE;
   return "";
 }
 
@@ -598,9 +608,13 @@ interface SunburstData {
   key: string;
   value: number;
   child?: SunburstData;
+  /**
+   * Filter object for this bucket
+   */
+  filter: IFilter;
 }
 
-interface DoughnutDataCJS {
+interface DoughnutDataChartJS {
   id: string;
   data: number[];
   total: number;
@@ -613,6 +627,10 @@ interface DoughnutDataCJS {
   borderWidth: number;
   borderAlign: string;
   hoverOffset: number;
+  /**
+   * List of filters in order of the data points
+   */
+  filter: IFilter[];
 }
 
 // removing single rings to show as much detail as possible
@@ -629,7 +647,7 @@ function removeSingleDatasets(datasets: object) {
 
 export function convertSunburstDatasets(
   datasets: object,
-  outputData?: DoughnutDataCJS[],
+  outputData?: DoughnutDataChartJS[],
   colourIndex?: number,
   depth?: number,
 ) {
@@ -663,6 +681,7 @@ export function convertSunburstDatasets(
     outputData![depth].backgroundColor.push(colour);
     outputData![depth].hoverBackgroundColor.push(hoverColour);
     outputData![depth].labels.push(bucket.key);
+    outputData![depth].filter.push(bucket.filter);
     if (bucket.child) {
       outputData = convertSunburstDatasets(
         bucket.child,
@@ -682,7 +701,7 @@ export function convertSunburstDatasets(
 }
 
 function initialiseOriginDataset(
-  outputData: DoughnutDataCJS[],
+  outputData: DoughnutDataChartJS[],
   key: string,
   colourIndex: number,
   depth: number,
@@ -701,11 +720,12 @@ function initialiseOriginDataset(
       borderWidth: 0.2,
       borderAlign: "centre",
       hoverOffset: 0,
+      filter: [],
     });
   }
 }
 
-function addPercentages(outputData: DoughnutDataCJS[]) {
+function addPercentages(outputData: DoughnutDataChartJS[]) {
   for (const entry of outputData) {
     for (const dataPoint of entry.data) {
       const percentage = (dataPoint / entry.total) * 100;
@@ -733,10 +753,8 @@ export function generateSunburstLabels(chart: any, titleColour: any) {
   );
 }
 
-function initialiseOrIncrementDepth(depth: number | undefined) {
-  if (depth === undefined) {
-    return 0;
-  }
+function initialiseOrIncrementDepth(depth?: number) {
+  if (depth === undefined) return 0;
   return depth + 1;
 }
 
@@ -835,12 +853,100 @@ function addExtraDocCount(
   }
 }
 
+/**
+ * Checks whether any attribute in the filter already has an `exists: { negate: true }` condition.
+ * Unknown buckets don't require additional child filters.
+ *
+ * @param filter - The accumulated ancestor filter to inspect.
+ * @returns `true` if at least one attribute has `exists: { negate: true }`; otherwise `false`.
+ */
+function unknownFilterAlreadyExists(filter?: IFilter): boolean {
+  const and_ = filter?.and_;
+  if (!and_) return false;
+  return Object.values(and_).some(
+    (attr: any) => attr?.exists?.negate === true
+  );
+}
+
+/**
+ * Builds an `IFilter` for a clicked sunburst bucket, merged with any ancestor filters.
+ *
+ * - `"More"`: matches all values not already shown as named siblings (negated `in_list`).
+ * - `"Unknown"`: returns an empty filter, as it represents missing/unknown values.
+ * - Any other value: matches the exact bucket value via `eq`.
+ *
+ * @param field - The field name this bucket represents (e.g. `"genus"`).
+ * @param bucket - The clicked bucket key (e.g. `"Homo"`, `"More"`, `"Unknown"`).
+ * @param siblingBucketKeys - All bucket keys at the same depth, used to build the negation list for `"More"`.
+ * @param ancestorFilters - Optional accumulated filter from parent bucket selections.
+ * @returns A merged `IFilter` representing the full selection path including this bucket.
+ */
+export function generateFilterFromSunburstBucket(
+  field: string,
+  bucket: string,
+  siblingBucketKeys: string[],
+  ancestorFilters?: IFilter
+): IFilter {
+  const andFilter = {};
+
+  switch (bucket) {
+    case "More":
+      andFilter[field] = {
+        exists: {},
+        in_list: {
+          value: [...siblingBucketKeys.filter((key) => key !== "More" && key !== "Unknown")],
+          negate: true,
+        },
+      };
+      break;
+    case "Unknown":
+      /**
+       * If an "Unknown" bucket already exists in the ancestor filters, we can skip adding an additional
+       * filter for this bucket. It would produce an incorrect number of results if we add the same filter
+       * to the children as the data isn't always hierarchical.
+       */
+      if (!unknownFilterAlreadyExists(ancestorFilters)) {
+        andFilter[field] = {
+          exists: {
+            negate: true,
+          }
+        };
+      }
+      break;
+    default:
+      andFilter[field] = {
+        eq: { value: bucket }
+      };
+  }
+
+  return {
+    and_: mergeAndFilters(ancestorFilters?.and_ ?? {}, andFilter)
+  };
+}
+
+/**
+ * Recursively converts an Elasticsearch aggregation response into structured sunburst chart data.
+ *
+ * Injects synthetic `"More"` buckets for truncated results and `"Unknown"` buckets where
+ * the sum of its children is less than the parent doc count. Each bucket is assigned a filter
+ * representing its full selection path for use when the slice is clicked.
+ *
+ * @param aggsResponse - The raw aggregation response object from Elasticsearch.
+ * @param sliceBy - Ordered array of field names defining the sunburst hierarchy levels.
+ * @param depth - Current recursion depth; omit on the initial call.
+ * @param parentDocCount - Doc count of the parent bucket, used to calculate `"Unknown"` counts.
+ * @param ancestorFilters - Accumulated filter from parent bucket selections, passed down recursively.
+ * @param twoDimensionalBucketKeys - Internal accumulator for bucket keys at each level, used to generate `"More"` bucket filters.
+ * @returns A nested object keyed by field name, containing the structured sunburst data for each level.
+ */
 export function aggsToSunburstData(
-  aggsRes: any,
+  aggsResponse: any,
   sliceBy: string[],
   depth?: number,
   parentDocCount?: number,
+  ancestorFilters?: IFilter,
 ) {
+  // initialise depth on first call, increment on recursive calls
   depth = initialiseOrIncrementDepth(depth);
 
   // sliceBy keys
@@ -848,7 +954,7 @@ export function aggsToSunburstData(
   const childKey = sliceBy[depth + 1];
 
   // elastic bucket data
-  const agg: SunburstData[] = aggsRes[key];
+  const agg: any[] = aggsResponse[key];
   const buckets = agg["buckets"];
 
   // temp 'more' fix
@@ -859,7 +965,7 @@ export function aggsToSunburstData(
   }
 
   // adding an 'unknown' bucket where parent > sum of children
-  if (parentDocCount !== 0 && parentDocCount !== undefined) {
+  if (parentDocCount) {
     const bucketsDocCount = calcBucketDocCountTotal(buckets);
     addExtraDocCount(
       "Unknown",
@@ -876,9 +982,17 @@ export function aggsToSunburstData(
   outputData[key] = [];
 
   for (const bucket of buckets) {
+    const filter = generateFilterFromSunburstBucket(
+      key,
+      bucket.key,
+      buckets.map((b: any) => b.key),
+      ancestorFilters
+    );
+
     const dataPoint = {
       key: bucket.key,
       value: bucket.doc_count,
+      filter: filter,
     };
 
     // this means the bucket has a child
@@ -890,6 +1004,7 @@ export function aggsToSunburstData(
         sliceBy,
         depth,
         bucket.doc_count,
+        filter,
       );
     }
     outputData[key].push(dataPoint);
@@ -900,7 +1015,7 @@ export function aggsToSunburstData(
 export function setSliceClickedData(
   chart: any,
   chartElement: any,
-  setSliceData?: React.Dispatch<any>,
+  setSliceData?: React.Dispatch<React.SetStateAction<ISunburstSectionClickedData>>,
 ) {
   const { datasetIndex, index } = chartElement[0];
 
@@ -908,63 +1023,31 @@ export function setSliceClickedData(
   const bucket = chart.data.datasets[datasetIndex].label;
   const value = chart.data.datasets[datasetIndex].data[index];
   const clickKey = chart.data.datasets[datasetIndex].labels[index];
-  // depth inner ring to outer
   const depth = chart.data.datasets.length - datasetIndex;
+  const filter = chart.data.datasets[datasetIndex].filter[index];
 
-  if (isPropDefined(setSliceData)) {
-    setSliceData!({
+  if (setSliceData) {
+    setSliceData({
       bucket: bucket,
       value: value,
       clickKey: clickKey,
       datasetIndex: datasetIndex,
       depth: depth,
+      filter: filter,
     });
   }
 }
 
-// will be required for the 'MORE' filter
-export function getAllBucketsOfRing(bucket: string, datasets: any): string[] {
-  const keys: any = [];
-
-  for (const key in datasets) {
-    if (key === bucket) {
-      keys.push(
-        ...datasets[key]
-          .map((item: any) => {
-            if (item.key !== "More" && item.key !== "Unknown") {
-              return item.key;
-            }
-          })
-          .filter(Boolean),
-      );
-    }
-
-    if (Array.isArray(datasets[key])) {
-      datasets[key].forEach((item: any) => {
-        if (item.child) {
-          keys.push(...getAllBucketsOfRing(bucket, item.child));
-        }
-      });
-    }
-  }
-
-  return keys;
-}
-
-export function generateFilterFromSunburstClick(sliceData: any) {
-  if (sliceData["bucket"] !== undefined) {
-    const filter = {};
-    filter[sliceData["bucket"]] = {};
-    filter[sliceData["bucket"]]["eq"] = { value: sliceData["clickKey"] };
-    return { and_: filter };
-  }
-  return {};
-}
-
-// note: had issues with .slice()
+/**
+ * Returns a new array with the first `depth` elements removed.
+ * Does not mutate the original array.
+ * 
+ * @param sliceBy - The original array to slice.
+ * @param depth - The number of elements to remove from the start of the array.
+ * @returns A new array with single rings removed based on the depth.
+ */
 export function removeSliceBySingles(sliceBy: string[], depth: number) {
-  for (let x = 0; x <= depth - 1; x++) sliceBy.shift();
-  return sliceBy;
+  return sliceBy.slice(depth);
 }
 
 export function downloadItem(chartId: string, chartTitle: string) {

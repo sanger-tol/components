@@ -6,11 +6,14 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
+  ACTIONS,
+  API_METHODS,
   CellDisplay,
-  PopUpMessage,
   CellEditable,
+  CellEditableStatus,
   getFieldByName,
   PDataPoints,
+  PopUpMessage,
 } from "../..";
 
 
@@ -32,6 +35,7 @@ export function DataPoint(props: PDataPoint) {
     dataSource,
     editable,
     isMany,
+    actsAs,
   } = props;
 
   const attributeValue = getFieldByName(dataObject, field);
@@ -42,8 +46,7 @@ export function DataPoint(props: PDataPoint) {
   const [loading, setLoading] = useState(false);
 
   const canEdit = (
-    typeof value === "string" ||
-    value instanceof Date
+    actsAs === "status" || typeof value === "string" || value instanceof Date
   );
 
   const onDoubleClick = () => {
@@ -67,6 +70,39 @@ export function DataPoint(props: PDataPoint) {
     setValue(prevValue);
   };
 
+  const onSaveStatus = (selectedStatusTypeId: string) => {
+    if (!dataObject) return;
+    setLoading(true);
+    const parentObjectType = dataObject.objectType.replace(/_status$/, "");
+    const actionBaseUrl = dataSource
+      .getBaseUrl()
+      ?.replace(/\/data(?:\/[^/]+)?$/, "");
+
+    dataSource
+      .custom({
+        method: API_METHODS.POST,
+        resource: `local/${ACTIONS.RUN_ACTION}`,
+        body: {
+          data: {
+            ids: [dataObject.id],
+            action_name: "SetStatusAction",
+            object_type: parentObjectType,
+            params: { status: selectedStatusTypeId },
+          },
+        },
+        options: actionBaseUrl ? { baseURL: actionBaseUrl } : undefined,
+      })
+      .then(() => {
+        setEditMode(false);
+        PopUpMessage({ type: "success", message: "Status updated successfully." });
+      })
+      .catch((error: any) => {
+        PopUpMessage({ type: "error", message: `Error saving: ${error.message}` });
+        setEditMode(false);
+      })
+      .finally(() => setLoading(false));
+  };
+
   const onSave = () => {
     // prevent saving blank values
     if (typeof value === "string" && value.trim() === "") {
@@ -79,8 +115,6 @@ export function DataPoint(props: PDataPoint) {
 
     if (!dataObject) return;
     setLoading(true);
-
-
     dataSource
       ?.upsert({
         objectType: dataObject?.objectType,
@@ -117,6 +151,18 @@ export function DataPoint(props: PDataPoint) {
   }
 
   if (editMode) {
+    if (actsAs === "status" && dataObject) {
+      return (
+        <CellEditableStatus
+          {...props}
+          value={value}
+          loading={loading}
+          statusTypeObjectType={dataObject.objectType}
+          onCancel={onCancel}
+          onSave={onSaveStatus}
+        />
+      );
+    }
     return (
       <CellEditable
         {...props}

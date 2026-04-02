@@ -54,8 +54,8 @@ export function falseIfUndefined(prop: any) {
   return false;
 }
 
-export function isEmptyObject(x: object) {
-  return Object.keys(x).length === 0;
+export function isEmptyObject(x: object|undefined) {
+  return Object.keys(x || {}).length === 0;
 }
 
 export function appendKeywordIfNeeded(field: string): string {
@@ -347,7 +347,7 @@ export function updateContents(contents: object) {
         break;
     }
     // make nulls show a faded 'None'
-    if (!value) {
+    if (value === null || value === undefined) {
       contents[key] = <span className="tooltip-value-none">None</span>;
     }
   }

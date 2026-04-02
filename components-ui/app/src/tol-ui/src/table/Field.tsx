@@ -48,6 +48,7 @@ export interface Field {
   width?: number;
   description?: string;
   source?: string;
+  acts_as?: string;
   custom?: boolean;
 }
 

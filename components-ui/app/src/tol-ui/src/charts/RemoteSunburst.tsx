@@ -9,7 +9,6 @@ import {
   aggsToSunburstData,
   createAggsViaSliceBy,
   isChartDataEmpty,
-  generateFilterFromSunburstClick,
   removeSliceBySingles,
   downloadItem,
   Sunburst,
@@ -17,7 +16,6 @@ import {
   useEffectUpdate,
   resizeListener,
   useZoneStateFallback,
-  isEmptyObject,
   normaliseCaps,
   generateFilter,
   addSubFilter,
@@ -31,7 +29,10 @@ import {
   IRemoteTargetAndZone,
   IHeight,
   API_OPERATIONS,
-  mergeUtilityBarConfigs
+  mergeUtilityBarConfigs,
+  TSunburstBucketDataOrUndefined,
+  mergeFilters,
+  isEmptyObject
 } from "..";
 
 interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
@@ -103,8 +104,9 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   const [subLoading, setSubLoading] = useState(true);
   const [warningMessage, setWarningMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [sliceData, setSliceData] = useState({});
+  const [sliceData, setSliceData] = useState<TSunburstBucketDataOrUndefined>();
   const [filter, setFilter] = useState<TFilterOrUndefined>({});
+  const [subFilter, setSubFilter] = useState<TFilterOrUndefined>();
   const [noLegend, setNoLegend] = useState(false);
 
   resizeListener(() => {
@@ -123,73 +125,104 @@ export function RemoteSunburst(props: PRemoteSunburst) {
 
   useEffectUpdate(() => {
     if (!contents) {
+      setErrorMessage("");
       setLoading(true);
       const aggs = createAggsViaSliceBy(objectType, sliceBy);
       dataSource
         .custom({
           method: API_METHODS.POST,
           resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
-          body: {...aggs, filter: generateFilter(zone, id, true)},
+          body: { ...aggs, filter: generateFilter(zone, id, true) },
         })
         .then((res: any) => {
           const aggs = res.data.meta.aggregations;
-          setErrorMessage("");
           setWarningMessage(isChartDataEmpty(aggs));
           const data = aggsToSunburstData(aggs, sliceBy);
           setDatasets(data);
-          setSliceData({});
-          setLoading(false);
+          setSliceData(undefined);
         })
         .catch((error: any) => {
           setErrorMessage(error.message);
           console.error(error.message);
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   }, [filter, forceUpdate]);
 
-  // for sub sunburst updates
   useEffectUpdate(() => {
-    if (!contents) {
-      const localFilter = generateFilterFromSunburstClick(sliceData);
-      // this also resets components below
-      addSubFilter({
-        id: id,
-        filter: localFilter,
-        zone: zone,
-      });
-      setZone({ ...zone });
-      // clear sub sunburst
-      if (isEmptyObject(sliceData)) {
-        setSubDatasets({});
-        // go deeper into the sunburst if not outer ring
-      } else if (sliceData["datasetIndex"] !== 0) {
-        setSubLoading(true);
-        const aggs = createAggsViaSliceBy(
-          objectType,
-          removeSliceBySingles(sliceBy, sliceData["depth"]),
+    if (sliceData && !contents && !warningMessage) {
+      if (sliceData.filter) {
+        /**
+         * onClick of a slice, generate the filter for that slice and save to state.
+         * Compounds the existing filter with the new slice filter, ensuring that interactions
+         * with the sunburst build upon each other rather than replacing filters at each depth level.
+         */
+        setSubFilter(
+          mergeFilters(
+            /**
+             * Only compound with the previous filter if a sub sunburst exists.
+             */
+            isEmptyObject(subDatasets) ? {} : subFilter,
+            sliceData.filter
+          )
         );
-        dataSource
-          .custom({
-            method: API_METHODS.POST,
-            resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
-            body: {...aggs, filter: generateFilter(zone, id, true)},
-          })
-          .then((res: any) => {
-            const aggs = res.data.meta.aggregations;
-            setErrorMessage("");
-            setWarningMessage(isChartDataEmpty(aggs));
-            const data = aggsToSunburstData(aggs, sliceBy);
-            setSubDatasets(data);
-            setSubLoading(false);
-          })
-          .catch((error: any) => {
-            // forces an error in the main sunburst
-            setErrorMessage(error.message);
-            console.error(error.message);
-          });
+      } else {
+        setSubFilter(undefined);
       }
     }
   }, [sliceData]);
+
+  useEffectUpdate(() => {
+    // Also resets the filters below
+    addSubFilter({
+      id: id,
+      filter: subFilter || {},
+      zone: zone,
+    });
+    setZone({ ...zone });
+
+    // Clear sub sunburst
+    if (isEmptyObject(sliceData!)) {
+      setSubDatasets({});
+      /**
+       * Go deeper into the sunburst if not outer ring and not an unknown slice
+       * as unknown sections are missing data and would result in a
+       * no data warning if queried against
+       */
+    } else if (sliceData!["datasetIndex"] !== 0 && sliceData?.clickKey !== "Unknown") {
+      // Reset errors and set loading
+      setSubLoading(true);
+      setErrorMessage("");
+
+      const subSliceBy = removeSliceBySingles(sliceBy, sliceData!["depth"]);
+      const aggs = createAggsViaSliceBy(
+        objectType,
+        subSliceBy,
+      );
+      dataSource
+        .custom({
+          method: API_METHODS.POST,
+          resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
+          body: { ...aggs, filter: generateFilter(zone, id, true) },
+        })
+        .then((res: any) => {
+          const aggs = res.data.meta.aggregations;
+          setWarningMessage(isChartDataEmpty(aggs));
+          const data = aggsToSunburstData(aggs, subSliceBy);
+          setSubDatasets(data);
+        })
+        .catch((error: any) => {
+          // forces an error in the main sunburst
+          setErrorMessage(error.message);
+          console.error(error.message);
+        })
+        .finally(() => {
+          setSubLoading(false);
+        });
+    }
+  }, [subFilter]);
 
   const Contents = () => {
     if (errorMessage !== "") {
@@ -200,7 +233,6 @@ export function RemoteSunburst(props: PRemoteSunburst) {
       return <Placeholder pie />
     }
   }
-
 
   const resetButton: PButton = (!isEmptyObject(datasets) ? {
     outline: true,

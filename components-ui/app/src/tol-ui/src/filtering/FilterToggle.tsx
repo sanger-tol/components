@@ -13,11 +13,11 @@ interface Props {
   onNegate: any;
   exists: boolean;
   onExists: any;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 export function FilterToggle(props: Props) {
-  const { negate, onNegate, exists, onExists, disabled } = props;
+  const { negate, onNegate, exists, onExists, disabled = false } = props;
 
   const existsButton = (
     <Button

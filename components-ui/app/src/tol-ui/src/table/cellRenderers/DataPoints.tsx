@@ -45,6 +45,11 @@ export interface PDataPoints {
    * Flag to indicate if the cell is editable.
    */
   editable?: boolean;
+  /**
+   * Semantic role of the field (e.g. "status"), used to apply special
+   * editing behaviour such as a status-type dropdown.
+   */
+  actsAs?: string;
 }
 
 /**
