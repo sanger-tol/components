@@ -151,7 +151,7 @@ export function DataPoint(props: PDataPoint) {
   }
 
   if (editMode) {
-    if (actsAs === "status") {
+    if (actsAs === "status" && dataObject) {
       return (
         <CellEditableStatus
           {...props}

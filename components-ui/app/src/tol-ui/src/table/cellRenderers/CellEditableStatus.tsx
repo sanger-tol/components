@@ -76,7 +76,6 @@ export function CellEditableStatus(props: PCellEditableStatus) {
   return (
     <>
       <SelectPicker
-        autoFocus
         data={options}
         value={selected}
         onChange={(v) => setSelected(v)}
