@@ -125,6 +125,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
 
   useEffectUpdate(() => {
     if (!contents) {
+      setErrorMessage("");
       setLoading(true);
       const aggs = createAggsViaSliceBy(objectType, sliceBy);
       dataSource
@@ -135,7 +136,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
         })
         .then((res: any) => {
           const aggs = res.data.meta.aggregations;
-          setErrorMessage("");
+          setWarningMessage(isChartDataEmpty(aggs));
           const data = aggsToSunburstData(aggs, sliceBy);
           setDatasets(data);
           setSliceData(undefined);
@@ -151,7 +152,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   }, [filter, forceUpdate]);
 
   useEffectUpdate(() => {
-    if (sliceData && !contents) {
+    if (sliceData && !contents && !warningMessage) {
       if (sliceData.filter) {
         /**
          * onClick of a slice, generate the filter for that slice and save to state.

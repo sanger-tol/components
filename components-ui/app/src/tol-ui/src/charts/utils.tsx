@@ -10,6 +10,7 @@ import {
   getCssVarValue,
   IChartDataset,
   IFilter,
+  isEmptyObject,
   isPropDefined,
   ISunburstSectionClickedData,
   mergeAndFilters,
@@ -262,7 +263,7 @@ export function setBorderColour(datasets: any, borderColour: string) {
 
 export function isChartDataEmpty(aggs: any) {
   const data = Object.values(aggs)[0]!["buckets"];
-  if (data.length === 0) return NO_DATA_FOUND_MESSAGE;
+  if (isEmptyObject(data)) return NO_DATA_FOUND_MESSAGE;
   return "";
 }
 
