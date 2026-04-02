@@ -20,7 +20,7 @@ import {
   removeComponent,
   addSubFilter,
   resetZone,
-  setFilter,
+  setFilterInput,
   filterListener,
   IZone,
   IFilter,
@@ -590,7 +590,7 @@ describe("Testing setFilter function", () => {
       },
     };
 
-    setFilter({
+    setFilterInput({
       componentId: "component1",
       value: 10,
       zone: mockZone,
@@ -616,7 +616,7 @@ describe("Testing setFilter function", () => {
       type: "dashboard",
     };
 
-    setFilter({
+    setFilterInput({
       componentId: "component1",
       value: 10,
       zone: mockZone,
@@ -654,7 +654,7 @@ describe("Testing setFilter function", () => {
       },
     };
 
-    setFilter({
+    setFilterInput({
       componentId: "component1",
       value: 10,
       zone: mockZone,
@@ -691,7 +691,7 @@ describe("Testing setFilter function", () => {
       },
     };
 
-    setFilter({
+    setFilterInput({
       componentId: "component1",
       value: 10,
       zone: mockZone,
@@ -722,7 +722,7 @@ describe("Testing setFilter function", () => {
       type: "dashboard",
     };
 
-    setFilter({
+    setFilterInput({
       componentId: "component1",
       value: 10,
       zone: mockZone,
