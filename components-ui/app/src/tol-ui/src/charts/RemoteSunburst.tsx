@@ -16,7 +16,6 @@ import {
   useEffectUpdate,
   resizeListener,
   useZoneStateFallback,
-  isEmptyObject,
   normaliseCaps,
   generateFilter,
   addSubFilter,
@@ -32,7 +31,8 @@ import {
   API_OPERATIONS,
   mergeUtilityBarConfigs,
   TSunburstBucketDataOrUndefined,
-  mergeFilters
+  mergeFilters,
+  isEmptyObject
 } from "..";
 
 interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
@@ -161,7 +161,10 @@ export function RemoteSunburst(props: PRemoteSunburst) {
          */
         setSubFilter(
           mergeFilters(
-            subFilter,
+            /**
+             * Only compound with the previous filter if a sub sunburst exists.
+             */
+            isEmptyObject(subDatasets) ? {} : subFilter,
             sliceData.filter
           )
         );
