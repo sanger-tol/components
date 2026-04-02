@@ -16,7 +16,6 @@ import {
   useEffectUpdate,
   resizeListener,
   useZoneStateFallback,
-  isEmptyObject,
   normaliseCaps,
   generateFilter,
   addSubFilter,
@@ -32,7 +31,8 @@ import {
   API_OPERATIONS,
   mergeUtilityBarConfigs,
   TSunburstBucketDataOrUndefined,
-  mergeFilters
+  mergeFilters,
+  isEmptyObject
 } from "..";
 
 interface PRemoteSunburst extends IRemoteTargetAndZone, IHeight {
@@ -125,6 +125,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
 
   useEffectUpdate(() => {
     if (!contents) {
+      setErrorMessage("");
       setLoading(true);
       const aggs = createAggsViaSliceBy(objectType, sliceBy);
       dataSource
@@ -135,7 +136,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
         })
         .then((res: any) => {
           const aggs = res.data.meta.aggregations;
-          setErrorMessage("");
+          setWarningMessage(isChartDataEmpty(aggs));
           const data = aggsToSunburstData(aggs, sliceBy);
           setDatasets(data);
           setSliceData(undefined);
@@ -151,7 +152,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   }, [filter, forceUpdate]);
 
   useEffectUpdate(() => {
-    if (sliceData && !contents) {
+    if (sliceData && !contents && !warningMessage) {
       if (sliceData.filter) {
         /**
          * onClick of a slice, generate the filter for that slice and save to state.
@@ -160,7 +161,10 @@ export function RemoteSunburst(props: PRemoteSunburst) {
          */
         setSubFilter(
           mergeFilters(
-            subFilter,
+            /**
+             * Only compound with the previous filter if a sub sunburst exists.
+             */
+            isEmptyObject(subDatasets) ? {} : subFilter,
             sliceData.filter
           )
         );

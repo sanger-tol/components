@@ -74,7 +74,12 @@ export function ZoneModal(props: PZoneModal) {
               };
             });
             setDataSourceInstanceList(dsiList);
-            setDataSourceInstance(dsiList[0].value);
+            // TODO: new solution for pre-selecting tol data
+            if (dsiList.map((dsi) => dsi.value).includes("tol_production")) {
+              setDataSourceInstance("tol_production");
+            } else {
+              setDataSourceInstance(dsiList[0].value);
+            }
           }
         }).finally(() => {
           setDataSourceInstancesLoading(false);

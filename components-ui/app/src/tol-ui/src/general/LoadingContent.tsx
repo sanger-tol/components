@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Loader, TNavBrand } from "../index";
+import { Loader, TNavBrand } from "..";
 
 export interface PLoadingContent {
   /**

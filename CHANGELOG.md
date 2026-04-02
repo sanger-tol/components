@@ -6,6 +6,11 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.4.0`
+02-04-2026
+- Multi-select filter options are now filterable (TOLP-8099)
+- `generateFilter` now reverts to the defaultFilter if no other filters are present (at a attribute and operator level)
+
 ## tol-ui `3.3.0`
 26-03-2026
 
