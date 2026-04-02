@@ -26,8 +26,8 @@ from tol.core import (
 )
 from tol.core.operator import Inserter
 from tol.sources.portal import portal
-from tol.sql.action import create_action_models
 from tol.sql import Model, create_sql_datasource
+from tol.sql.action import create_action_models
 from tol.sql.auth import db_auth_blueprint
 from tol.sql.pipeline_step import create_pipeline_step_models
 from tol.sql.standard import create_standard_models
@@ -110,7 +110,7 @@ def application():
 
     # the pipeline, steps, and uploads models
     pipeline_models, _pipeline_user_mixin = __get_pipeline_step_models(Base)
-    
+
     action_models = create_action_models(Base)
 
     # the user Mixin
@@ -121,7 +121,7 @@ def application():
          _pipeline_user_mixin),
         {}
     )
-    
+
     role_mixin_class = type(
         '',
         (action_models._role_mixin,),
