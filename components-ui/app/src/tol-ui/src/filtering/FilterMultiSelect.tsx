@@ -41,7 +41,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [filter, setFilter] = useState<TFilterOrUndefined>({});
+  const [filter, setFilter] = useState<TFilterOrUndefined>();
   const operator = "in_list";
 
   useEffect(() => {

@@ -107,7 +107,7 @@ export function RemoteBarChart(props: PRemoteBarChart) {
   const [warningMessage, setWarningMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [barData, setBarData] = useState<object>({});
-  const [filter, setFilter] = useState<TFilterOrUndefined>({});
+  const [filter, setFilter] = useState<TFilterOrUndefined>();
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);

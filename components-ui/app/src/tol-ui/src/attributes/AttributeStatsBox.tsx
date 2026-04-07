@@ -36,7 +36,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
   const [stats, setStats] = useState<Record<string, number> | null>(null);
   const [loading, setLoading] = useState(false);
   const [statsError, setStatsError] = useState<string>("");
-  const [filter, setFilter] = useState<TFilterOrUndefined>(undefined);
+  const [filter, setFilter] = useState<TFilterOrUndefined>();
 
   useEffect(() => {
     setIsNumeric(false);

@@ -13,10 +13,13 @@ import {
   Placeholder,
   generateFilter,
   createMapMarkers,
-  IHeight
+  IHeight,
+  filterHasUpdated,
+  resetFiltersBelow,
+  useEffectUpdate
 } from "..";
 
-interface PRemoteMap extends IRemoteTargetAndZone, IHeight {
+export interface PRemoteMap extends IRemoteTargetAndZone, IHeight {
   /**
    * Unique identifier for this map instance, utilised in API interactions and state management
    */
@@ -71,7 +74,9 @@ export function RemoteMap(props: PRemoteMap) {
     longitudeKey,
     latitudeKey,
     attributeKeys,
+    pageSize = 2500,
     zone,
+    setZone,
     markerRenderer,
     contents,
     forceUpdate
@@ -83,17 +88,18 @@ export function RemoteMap(props: PRemoteMap) {
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState<number | undefined>(undefined);
   const [legendKey, setLegendKey] = useState<object[]>([]);
-  const filter: TFilterOrUndefined = zone !== undefined
-    ? generateFilter(zone, id)
-    : {};
-
-  // providing a pageSize default
-  let pageSize = 2500;
-  if (props.pageSize !== undefined) {
-    pageSize = props.pageSize;
-  }
+  const [filter, setFilter] = useState<TFilterOrUndefined>();
 
   useEffect(() => {
+    const compoundedFilter = generateFilter(zone, id);
+    // will trigger [filter] useEffect if update has occured
+    if (filterHasUpdated(setFilter, filter, compoundedFilter)) {
+      resetFiltersBelow({ id: id, zone: zone });
+      setZone({ ...zone });
+    }
+  }, [zone]);
+
+  useEffectUpdate(() => {
     setLoading(true);
     setWarningMessage("");
     setErrorMessage("");
@@ -148,7 +154,7 @@ export function RemoteMap(props: PRemoteMap) {
         setErrorMessage(error.message);
         console.error(error.message);
       });
-  }, [zone, forceUpdate]);
+  }, [filter, forceUpdate]);
 
   const map = <Map {...props} markers={markers} />;
 
