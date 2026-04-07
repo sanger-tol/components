@@ -50,7 +50,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
         : zone.components[id]?.data?.defaultFilter,
     ),
   );
-  const [attributes, setAttributes] = useState<string[]>(Object.keys(prevFilters.and_ || {}));
+  const [attributes, setAttributes] = useState<string[]>(Object.keys(prevFilters?.and_ || {}));
   const [passThrough, setPassThrough] = useState<boolean>(false);
   const [filterHasPendingChanges, setFilterHasPendingChanges] = useState(false);
   // Local state for the filter zone if this is a zone level filter, otherwise use the passed zone/setZone

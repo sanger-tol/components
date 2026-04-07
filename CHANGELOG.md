@@ -6,6 +6,10 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.4.2`
+07-04-2026
+- Fixed bug: FilterConfigDrawer deals with undefined filters
+
 ## tol-ui `3.4.1`
 07-04-2026
 - Fixed bug: components not loading when no filter is passed to a zone (TOLP-9700)
