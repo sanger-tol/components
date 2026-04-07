@@ -27,7 +27,13 @@ export function MapLegend(props: Props) {
       let htmlContent = "";
 
       config.map((legendObject: LegendObject) => {
-        htmlContent += `<i style="background: ${legendObject.colour}"></i> ${legendObject.key}<br>`;
+        htmlContent += (
+          `
+            <div class="tol-map-legend-item">
+              <i style="background: ${legendObject.colour}"></i> ${legendObject.key}<br>
+            </div>
+          `
+        );
       });
 
       div.innerHTML = htmlContent;

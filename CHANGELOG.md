@@ -6,6 +6,11 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.4.1`
+07-04-2026
+- Fixed bug: components not loading when no filter is passed to a zone (TOLP-9700)
+- Updated map overlay styling for dark mode
+
 ## tol-ui `3.4.0`
 02-04-2026
 - Multi-select filter options are now filterable (TOLP-8099)

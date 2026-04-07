@@ -106,7 +106,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
   const [errorMessage, setErrorMessage] = useState("");
   const [sliceData, setSliceData] = useState<TSunburstBucketDataOrUndefined>();
   const [filter, setFilter] = useState<TFilterOrUndefined>({});
-  const [subFilter, setSubFilter] = useState<TFilterOrUndefined>();
+  const [subFilter, setSubFilter] = useState<TFilterOrUndefined>({});
   const [noLegend, setNoLegend] = useState(false);
 
   resizeListener(() => {
