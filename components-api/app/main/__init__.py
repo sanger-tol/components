@@ -177,7 +177,11 @@ def application():
     )
 
     # Data endpoints
-    blueprint_data_local = data_blueprint(sql_datasource, action_ds=sql_datasource, flow_ds=__mock_prefect_ds())
+    blueprint_data_local = data_blueprint(
+        sql_datasource,
+        action_ds=sql_datasource,
+        flow_ds=__mock_prefect_ds()
+    )
     app.register_blueprint(blueprint_data_local, name='local',
                            url_prefix=os.getenv('API_PATH') + '/local')
 
