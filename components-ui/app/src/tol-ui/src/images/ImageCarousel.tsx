@@ -41,6 +41,18 @@ export interface PImageCarousel extends IHeight {
    * Optional style overrides for the carousel container
    */
   style?: React.CSSProperties;
+  /**
+   * If true, automatically advance to the next image on a timer
+   */
+  autoPlay?: boolean;
+  /**
+   * Timer interval for autoPlay in milliseconds
+   */
+  autoPlayIntervalMs?: number;
+  /**
+   * If true, pause autoPlay while hovering the carousel
+   */
+  pauseOnHover?: boolean;
 }
 
 /**
@@ -51,11 +63,25 @@ export interface PImageCarousel extends IHeight {
  *
  */
 export function ImageCarousel(props: PImageCarousel) {
-  const { links, link, height, fill = false, setLink, onImageClick, alt, className, style } = props;
+  const {
+    links,
+    link,
+    height,
+    fill = false,
+    setLink,
+    onImageClick,
+    alt,
+    className,
+    style,
+    autoPlay = false,
+    autoPlayIntervalMs = 5000,
+    pauseOnHover = true,
+  } = props;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const currentIndex = links.indexOf(link);
   const [index, setIndex] = useState(() => (currentIndex >= 0 ? currentIndex : 0));
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     if (links.length === 0) {
@@ -74,6 +100,21 @@ export function ImageCarousel(props: PImageCarousel) {
     }
     setLink(links[index]);
   }, [index, links, setLink]);
+
+  useEffect(() => {
+    if (!autoPlay || links.length <= 1 || autoPlayIntervalMs <= 0) {
+      return;
+    }
+    if (pauseOnHover && isHovered) {
+      return;
+    }
+
+    const id = window.setInterval(() => {
+      setIndex((prevIndex) => (prevIndex === links.length - 1 ? 0 : prevIndex + 1));
+    }, autoPlayIntervalMs);
+
+    return () => window.clearInterval(id);
+  }, [autoPlay, links.length, autoPlayIntervalMs, pauseOnHover, isHovered]);
 
   const showArrows = links.length > 1;
 
@@ -120,8 +161,14 @@ export function ImageCarousel(props: PImageCarousel) {
       style={containerStyle}
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      onMouseEnter={() => containerRef.current?.focus()}
-      onMouseLeave={() => containerRef.current?.blur()}
+      onMouseEnter={() => {
+        setIsHovered(true);
+        containerRef.current?.focus();
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        containerRef.current?.blur();
+      }}
       aria-label="Image carousel"
     >
       {showArrows && (
