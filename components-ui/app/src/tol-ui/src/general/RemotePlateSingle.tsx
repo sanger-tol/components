@@ -57,7 +57,7 @@ export function RemotePlateSingle(Props: PRemotePlateSingle) {
   const [rowLabels, setRowLabels] = useState<String[]>([]);
   const [columnLabels, setColumnLabels] = useState<String[]>([]);
   const [wellData, setWellData] = useState<TPlateData>([]);
-  const [filter, setFilter] = useState<TFilterOrUndefined>();
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
   const [clickedOnWellId, setClickedOnWellId] = useState<string | undefined>();
 
   useEffect(() => {

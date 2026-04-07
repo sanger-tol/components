@@ -62,7 +62,7 @@ export function RemoteStatistics(props: PRemoteStatistics) {
   const [value, setValue] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [filter, setFilter] = useState<TFilterOrUndefined>();
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);

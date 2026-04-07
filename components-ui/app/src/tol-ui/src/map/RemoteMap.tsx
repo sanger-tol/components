@@ -88,7 +88,7 @@ export function RemoteMap(props: PRemoteMap) {
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState<number | undefined>(undefined);
   const [legendKey, setLegendKey] = useState<object[]>([]);
-  const [filter, setFilter] = useState<TFilterOrUndefined>();
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
