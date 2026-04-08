@@ -40,3 +40,73 @@
   color: var(--tol-danger);
   margin: 0 0.2rem;
 }
+
+.tol-colour-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tol-colour-picker__label {
+  font-weight: 600;
+  color: var(--tol-text);
+}
+
+.tol-colour-picker__controls {
+  display: grid;
+  grid-template-columns: 200px auto;
+  align-items: start;
+  gap: 8px;
+}
+
+.tol-colour-picker__picker {
+  width: 200px;
+}
+
+.tol-colour-picker__picker .react-colorful {
+  width: 200px;
+  height: 150px;
+}
+
+.tol-colour-picker__picker .react-colorful__saturation {
+  border-radius: 6px 6px 0 0;
+}
+
+.tol-colour-picker__picker .react-colorful__hue {
+  margin-top: 8px;
+  border-radius: 6px;
+  height: 14px;
+}
+
+.tol-colour-picker__picker--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.tol-colour-picker__hex {
+  width: 120px;
+  border: 1px solid var(--tol-grey-light);
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: var(--tol-text);
+  background: var(--tol-bg);
+}
+
+.tol-colour-picker__swatches {
+  display: grid;
+  grid-template-columns: repeat(6, 24px);
+  gap: 8px;
+}
+
+.tol-colour-picker__swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid var(--tol-grey-light);
+  cursor: pointer;
+}
+
+.tol-colour-picker__swatch--selected {
+  outline: 2px solid var(--tol-primary);
+  outline-offset: 1px;
+}

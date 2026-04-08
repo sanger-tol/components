@@ -10,6 +10,7 @@ export * from "./BoardMarkdown";
 export * from "./Button";
 export * from "./CenterContent";
 export * from "./ClickOverlay";
+export * from "./ColourPicker";
 export * from "./CustomIcons";
 export * from "./DropdownButtons";
 export * from "./ErrorBoundary";
