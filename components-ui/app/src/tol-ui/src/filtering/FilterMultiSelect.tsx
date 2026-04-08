@@ -87,7 +87,7 @@ export function FilterMultiSelect(props: IFilterInput) {
         group_by: attribute,
         stats_fields: "",
         stats: "",
-        filter: JSON.stringify(filter),
+        ...(filter ? { filter: JSON.stringify(filter) } : null),
       }).toString();
       dataSource
         .custom({
