@@ -38,7 +38,7 @@ export function Images(props: PImages) {
     enableModal = true,
     className,
     style,
-    autoPlayIntervalMs,
+    autoPlayIntervalMs = 0,
     pauseOnHover,
   } = props;
   const [link, setLink] = useState(links[0] || "");
