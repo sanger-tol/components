@@ -42,11 +42,8 @@ export interface PImageCarousel extends IHeight {
    */
   style?: React.CSSProperties;
   /**
-   * If true, automatically advance to the next image on a timer
-   */
-  autoPlay?: boolean;
-  /**
-   * Timer interval for autoPlay in milliseconds
+    * Automatically advance to the next image on this interval in milliseconds.
+    * Leave unset, or set to 0 or less, to disable autoplay.
    */
   autoPlayIntervalMs?: number;
   /**
@@ -73,8 +70,7 @@ export function ImageCarousel(props: PImageCarousel) {
     alt,
     className,
     style,
-    autoPlay = false,
-    autoPlayIntervalMs = 5000,
+    autoPlayIntervalMs,
     pauseOnHover = true,
   } = props;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -102,7 +98,7 @@ export function ImageCarousel(props: PImageCarousel) {
   }, [index, links, setLink]);
 
   useEffect(() => {
-    if (!autoPlay || links.length <= 1 || autoPlayIntervalMs <= 0) {
+    if (links.length <= 1 || autoPlayIntervalMs == null || autoPlayIntervalMs <= 0) {
       return;
     }
     if (pauseOnHover && isHovered) {
@@ -114,7 +110,7 @@ export function ImageCarousel(props: PImageCarousel) {
     }, autoPlayIntervalMs);
 
     return () => window.clearInterval(id);
-  }, [autoPlay, links.length, autoPlayIntervalMs, pauseOnHover, isHovered]);
+  }, [links.length, autoPlayIntervalMs, pauseOnHover, isHovered]);
 
   const showArrows = links.length > 1;
 

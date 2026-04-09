@@ -38,7 +38,6 @@ export function Images(props: PImages) {
     enableModal = true,
     className,
     style,
-    autoPlay,
     autoPlayIntervalMs,
     pauseOnHover,
   } = props;
@@ -67,7 +66,6 @@ export function Images(props: PImages) {
         height={height}
         fill={fill}
         alt={alt}
-        autoPlay={autoPlay}
         autoPlayIntervalMs={autoPlayIntervalMs}
         pauseOnHover={pauseOnHover}
         setLink={setLink}
