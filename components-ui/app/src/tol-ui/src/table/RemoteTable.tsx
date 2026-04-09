@@ -42,6 +42,7 @@ import {
   TFieldDropdownChoices,
   updateFieldMetaAttribute,
   IHeight,
+  TFilterOrUndefined,
 } from '..';
 
 export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
@@ -255,7 +256,7 @@ export function RemoteTable(props: PRemoteTable) {
   const [totalSize, setTotalSize] = useState<number>(0);
 
   // filtering/sorting
-  const [filter, setFilter] = useState<object | undefined>({});
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
   const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(
     defaultSortByAttribute ?? fieldMeta?.order?.active?.[0]
   );

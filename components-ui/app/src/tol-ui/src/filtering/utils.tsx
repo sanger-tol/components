@@ -184,7 +184,7 @@ export function generateFilter(
   }
 
   // If the compounded filter has no "and" attributes, return empty object to avoid unnecessary filtering
-  if (isEmptyObject(compoundedFilter.and_)) return {};
+  if (isEmptyObject(compoundedFilter.and_)) return undefined;
 
   return compoundedFilter;
 }
