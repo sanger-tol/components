@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.4.3`
+08-04-2026
+- Fixed bug: Fixed MVP table actions. It now uses props.dataObject.'attribute' instead of props.value
+- Fixed bug: Dark mode key bug on map tooltips
+- Fixed bug: Amalgamate requested fields race condition
+- Fixed bug: `Undefined` filter causing 500 on group stats endpoint
+
 ## tol-ui `3.4.2`
 07-04-2026
 - Fixed bug: FilterConfigDrawer deals with undefined filters

@@ -306,19 +306,21 @@ async function addFieldsFromStringProp(requestedFields: Set<string>, value: unkn
   if (typeof value !== "string" || !value.includes("${")) return;
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
-  matches.forEach(async (match) => {
+
+  for (const match of matches) {
     const relativeAttribute = match
       .replace("${", "")
       .replace("}", "")
-      .replace(CELL_RENDERER_SPREAD_OPERATOR, '')
-      .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, '')
+      .replace(CELL_RENDERER_SPREAD_OPERATOR, "")
+      .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, "")
       .trim();
 
+    // Ensure we request the field for the original objectType and not the related objectType
     const relationship = getRelationshipNameByField(fieldName);
-    const isMany = await dataSource.isManyDataPointsByName(objectType, fieldName.split(".")[0])
+    const isMany = await dataSource.isManyDataPointsByName(objectType, fieldName.split(".")[0]);
     const field = (relationship && !!isMany) ? `${relationship}.${relativeAttribute}` : relativeAttribute;
     if (field) requestedFields.add(field);
-  });
+  }
 }
 
 function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
@@ -331,25 +333,25 @@ function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
 }
 
 
-export function amalgamateRequestedFields(fieldMeta: FieldMeta, dataSource: TsDataSource, objectType: string): string[] {
+export async function amalgamateRequestedFields(fieldMeta: FieldMeta, dataSource: TsDataSource, objectType: string): Promise<string[]> {
   const requestedFields = new Set<string>(fieldMeta?.order.active || []);
 
   const dataWithDefaults = fieldMeta?.dataWithDefaults || {};
-  Object.entries<any>(dataWithDefaults).forEach(([fieldName, meta]) => {
+  for (const [fieldName, meta] of Object.entries<any>(dataWithDefaults)) {
     // Check if the field is a custom field which won't be on the api
     if (meta?.custom === true) {
       requestedFields.delete(fieldName);
-      return;
+      continue;
     }
 
     const cellRenderer = meta?.cellRenderer;
     const props = cellRenderer?.props || {};
 
-    Object.values(props).forEach((value) => {
-      addFieldsFromStringProp(requestedFields, value, fieldName, dataSource, objectType);
+    for (const value of Object.values(props)) {
+      await addFieldsFromStringProp(requestedFields, value, fieldName, dataSource, objectType);
       addFieldsFromFilterProp(requestedFields, value);
-    });
-  });
+    }
+  }
 
   return Array.from(requestedFields);
 }

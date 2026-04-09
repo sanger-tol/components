@@ -103,10 +103,6 @@ tolcore:
     user: "components"
     password: "components"
     name: "components"
-  dbutils:
-    image:
-      repository: ""
-      tag: "1.0.4"
   schemaspy:
     enabled: false # disable schemaspy (there is no DB to spy on)
     image:

@@ -422,7 +422,7 @@ export const createValidationActions = (
         // Make sure the action can be completed by every selected row before showing it
         selectedRows.every((row) => {
           // Get the validation status of the row
-          const status = row?.validation_status?.props?.value;
+          const status = row?.validation_status?.props?.dataObject?.validation_status;
 
           // Check against the allowed actions of the current status
           const allowed = policies[status]?.allowedActions ?? [];
@@ -438,8 +438,8 @@ export const createValidationActions = (
                 row.key
                   ? {
                       id: row.key,
-                      validationStatus: row?.validation_status?.props?.value,
-                      hidden: row?.hidden?.props?.value,
+                      validationStatus: row?.validation_status?.props?.dataObject?.validation_status,
+                      hidden: row?.hidden?.props?.dataObject?.hidden,
                     }
                   : row,
               ),

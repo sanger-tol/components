@@ -87,7 +87,7 @@ services:
       - "/usr/src/app/node_modules"
 
   components-dbutils:
-    image: gitlab-registry.internal.sanger.ac.uk/tol/tol-core/dbutils:1.0.4
+    image: gitlab-registry.internal.sanger.ac.uk/tol/tol-core/dbutils:1.0.6
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
