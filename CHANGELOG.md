@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.4.4`
+10-04-2026
+- Fixed bug: NormaliseCaps only replacing the first period in a system name
+- Fixed bug: Link renderer's display value defaulting to `value` even when of type object
+- Fixed bug: Image renderer - cannot click on whole image to open modal
+
+
 ## tol-ui `3.4.3`
 08-04-2026
 - Fixed bug: Fixed MVP table actions. It now uses props.dataObject.'attribute' instead of props.value
