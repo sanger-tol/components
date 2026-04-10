@@ -96,6 +96,7 @@ export function BoardTable(props: PBoardTable) {
       resizeableColumns={editMode || false}
       onResizeColumn={onResizeColumn}
       advanceTab
+      editableCells
       displaySource
       fields={config.fieldMeta}
       pageSize={config.pageSize}

@@ -81,7 +81,7 @@ export function DataPoint(props: PDataPoint) {
     dataSource
       .custom({
         method: API_METHODS.POST,
-        resource: `local/${ACTIONS.RUN_ACTION}`,
+        resource: `local/${parentObjectType}:action`,
         body: {
           data: {
             ids: [dataObject.id],
