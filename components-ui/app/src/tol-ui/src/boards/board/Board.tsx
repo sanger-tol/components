@@ -48,7 +48,14 @@ export interface PBoard {
 export function Board(props: PBoard) {
   const { boardDataSource, brand } = props;
 
-  const { privilege, setPrivilege, editMode, setEditMode, layoutMode, setLayoutMode } = useBoard();
+  const {
+    privilege,
+    setPrivilege,
+    editMode,
+    setEditMode,
+    layoutMode,
+    setLayoutMode,
+  } = useBoard();
 
   const { boardId: paramBoardId, viewId } = useParams<any>();
   const [user, setUser] = useState<any>(null);
@@ -200,7 +207,7 @@ export function Board(props: PBoard) {
   return (
     <div className={`tol-board ${classMode()}`} >
       {Bar}
-      < View
+      <View
         id={boardData.views[0].id}
         defaultFilter={boardData.views[0].filter}
         boardDataSource={boardDataSource}

@@ -79,4 +79,11 @@ export const BUTTONS: Record<string, PButton> = {
     tooltip: "Share",
     position: "right",
   },
+  TRANSLATORS: {
+    outline: true,
+    type: "primary",
+    icon: "arrow-down-wide-short",
+    tooltip: "Translate Filters from one Object Type to another",
+    position: "right",
+  }
 };

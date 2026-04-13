@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import {
-  useZone,
   FilterConfigDrawer,
   ComponentPickerModal,
   Visualisations,
@@ -24,6 +23,10 @@ import {
   TitleTooltip,
   TsDataSource,
   BUTTONS,
+  IView,
+  useBoardState,
+  defineZone,
+  IUseZoneMeta
 } from "../..";
 
 
@@ -35,6 +38,8 @@ export interface PZone extends PBoard {
   filter: any;
   onZoneReorder: any;
   deleteZone: any;
+  view: IView;
+  setView: (view: IView) => void;
 }
 
 export function Zone(props: PZone) {
@@ -46,6 +51,8 @@ export function Zone(props: PZone) {
     filter,
     onZoneReorder,
     deleteZone,
+    view,
+    setView
   } = props;
 
   const { editMode, layoutMode } = useBoard();
@@ -55,12 +62,45 @@ export function Zone(props: PZone) {
   const [openFilters, setOpenFilters] = useState(false);
   const [title, setTitle] = useState(props.title);
 
-  const z = useZone({
-    dataSource: dataspace,
-    objectType,
-    filter: filter,
-    components: [],
-  });
+  const definedZone = defineZone(objectType, [], filter)
+  const [zone, setZone] = useBoardState(
+    "zones",
+    id,
+    view,
+    setView,
+    definedZone
+  );
+
+  
+  // UseZone will eventually be phased out as the useBoardState hook
+  // allows access to other zones (outside of itself) which is needed
+  // for translators to work
+  
+  // const z = useZone({
+    //   dataSource: dataspace,
+    //   objectType,
+    //   filter: filter,
+    //   components: [],
+    // });
+    
+    const z = {
+      objectType: objectType,
+      dataSource: dataspace,
+      zone: zone || {
+        objectType: objectType,
+        components: [],
+        filter: filter,
+        defaultFilter: filter,
+        order: []
+      },
+      setZone: setZone
+    } as IUseZoneMeta;
+
+    // TODO: This z variable sets the zone key with empty values on the initial load
+    // This prevents 'not found' errors when getting default filters etc
+    // However, it does then not re-render even after the zone (from the Board state hook) is updated
+    // To fix this it needs to be updated in a useEffect like the one below but it circular
+    // calls
 
   useEffect(() => {
     getComponents(id, boardDataSource).then((components) => {
@@ -138,6 +178,12 @@ export function Zone(props: PZone) {
     visible: editMode && !layoutMode,
   };
 
+  // const translatorsButton: PButton = {
+  //   ...BUTTONS.TRANSLATORS,
+  //   visible: editMode && !layoutMode,
+  //   onClick: () => { },
+  // };
+
   const bar = (
     <div className="tol-zone-bar">
       <UtilityBar
@@ -166,6 +212,7 @@ export function Zone(props: PZone) {
           filtersButton,
           downButton,
           upButton,
+          // translatorsButton
         ]}
       />
       <div id="component-modal">
@@ -184,7 +231,7 @@ export function Zone(props: PZone) {
   return (
     <div className="tol-zone">
       {(title || editMode) && bar}
-      {z.zone.order.length > 0 ? (
+      {(z.zone && z.zone.order.length > 0) ? (
         <Visualisations
           id={id}
           zone={z.zone}

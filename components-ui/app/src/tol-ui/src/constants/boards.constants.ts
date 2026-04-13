@@ -13,3 +13,5 @@ export const PRIVILEGE = {
     EDITABLE: "editable" as TBoardPrivilege
   }
 }
+
+export type BOARD_LEVEL = "views" | "zones" | "components";
