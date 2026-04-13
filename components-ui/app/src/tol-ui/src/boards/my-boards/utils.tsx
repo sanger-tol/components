@@ -203,20 +203,20 @@ export async function fetchHasTourStepBeenSeen(
   });
   if (!user) return false;
 
-  // if tour_steps_seen is null, no tour has been started, so it must be initiated.
-  if (!user.tour_steps_seen && stepName === "initial") {
+  // if tours_seen is null, no tour has been started, so it must be initiated.
+  if (!user.tours_seen && stepName === "initial") {
     return false;
   }
   
   // Check whether the tour is enabled and the specified step has been completed
   return (
-    user.tour_steps_seen.tour_disabled == true ||
-    user.tour_steps_seen[stepName] == true
+    user.tours_seen?.tour_disabled == true ||
+    user.tours_seen?.[stepName] == true
   );
 }
 
 /**
- * Updates tour_steps_seen in the user table to register a tour step as being viewed by the user
+ * Updates tours_seen in the user table to register a tour step as being viewed by the user
  * @param stepName The name of the tour step to register as seen
  * @param userId The string id of the user to set this data on
  */
@@ -242,7 +242,7 @@ export async function registerTourStepAsSeen(
         id: userId,
         attributes: {
           tour_steps_seen: {
-            ...user.tour_steps_seen,
+            ...(user.tours_seen || {}),
             [stepName]: true,
           },
         },
