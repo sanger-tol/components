@@ -18,8 +18,8 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.add_column('user', sa.Column('tour_steps_seen', JSONB, nullable=True))
+    op.add_column('user', sa.Column('tours_seen', JSONB, nullable=True))
 
 
 def downgrade() -> None:
-    op.drop_column('user', 'tour_steps_seen')
+    op.drop_column('user', 'tours_seen')
