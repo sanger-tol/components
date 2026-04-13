@@ -18,12 +18,9 @@ import {
   getSortedZones,
   useBoard,
   TsDataSource,
-  getUserFromLocalStorage,
-  fetchHasTourStepBeenSeen,
   UtilityBar,
   BUTTONS,
 } from "../..";
-import { useNextStep } from "nextstepjs";
 
 export interface PView extends PBoard {
   id: string;
@@ -38,20 +35,6 @@ export function View(props: PView) {
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
   const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
-
-  const { startNextStep, closeNextStep } = useNextStep();
-
-  const handleStartTour = async () => {
-    const seen = await fetchHasTourStepBeenSeen(
-      "addZone",
-      getUserFromLocalStorage().id
-    );
-
-    if (!seen) {
-      console.log("tour started!");
-      startNextStep("addZone");
-    }
-  };
 
   useEffect(() => {
     getZones(id, boardDataSource).then((data: any) => {
@@ -128,7 +111,6 @@ export function View(props: PView) {
         setZoneOrder={setZoneOrder}
         viewId={id}
         boardDataSource={boardDataSource}
-        handleStartTour={handleStartTour}
       />
       {zones.length > 0 ? (
         <div className="tol-zones">

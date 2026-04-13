@@ -14,9 +14,7 @@
     "web-vitals": "^0.2.4",
     "react-markdown": "10.1.0",
     "xlsx": "0.18.5",
-    "@fortawesome/free-brands-svg-icons": "6.7.2",
-    "nextstepjs": "^2.2.0",
-    "motion": "^12.38.0"
+    "@fortawesome/free-brands-svg-icons": "6.7.2"
   },
   "devDependencies": {
     "vite": "5.3.5",
@@ -30,8 +28,7 @@
     "lorem-ipsum": "2.0.8",
     "@uiw/react-md-editor": "4.0.7",
     "rehype-sanitize": "6.0.0",
-    "rsuite": "5.75.0",
-    "motion": "11.11.17"
+    "rsuite": "5.75.0"
   },
   "resolutions": {
     "styled-components": "~6.1.0",

@@ -12,7 +12,6 @@ import {
   Redirect,
 } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { NextStepProvider, NextStepReact } from "nextstepjs";
 import Navigation from "./Navigation";
 import {
   Callback,
@@ -43,9 +42,7 @@ import {
   CORE_CONFIG_DS,
   mergeAndNormaliseNavConfig,
   GlobalLoadingProvider,
-  registerTourStepAsSeen,
 } from "..";
-import { boardTour } from "src/boards/tour/tour-config";
 
 
 export interface PSmartApp {
@@ -132,11 +129,6 @@ export function SmartApp(props: PSmartApp) {
     const siteId = env.MATOMO_SITE_ID;
     matomoAnalytics(siteId);
     clearUnusedLocalStorage();
-
-    // For some reason nextstepjs forces these inline styles that mess up our layout,
-    // so remove those
-    document.querySelectorAll('[data-name="nextstep-wrapper"]').forEach(e => e.removeAttribute("style"));
-    document.querySelectorAll('[data-name="nextstep-site"]').forEach(e => e.removeAttribute("style"));
   }, []);
 
   useEffect(() => {
@@ -206,11 +198,6 @@ export function SmartApp(props: PSmartApp) {
     />
   );
 
-  const handleRegisterTourStepAsSeen = (_step: number, tourName?: string | null) => {
-    if (!tourName) return;
-    registerTourStepAsSeen(tourName, getUserFromLocalStorage());
-  };
-
   return (
     <div id="tol-smart-app-background">
       <QueryClientProvider client={queryClient}>
@@ -231,37 +218,29 @@ export function SmartApp(props: PSmartApp) {
             <Router>
               <Navigation {...navProps} />
               <div className="tol-smart-app">
-                <NextStepProvider>
-                  <NextStepReact
-                    steps={boardTour}
-                    onComplete={handleRegisterTourStepAsSeen}
-                    onSkip={handleRegisterTourStepAsSeen}
-                  >
-                    <div className="tol-smart-app-content">
-                      {/* Switch also needs loading screen to ensure smooth transition */}
-                      {LoadingScreen}
-                      {!globalLoading && (
-                        <>
-                          <Switch>
-                            {collectRoutes(
-                              mergedNavigation,
-                              pageElements,
-                              brand,
-                              configDataSource
-                            )}
-                            <ReactRouter
-                              path={`/page-not-found`}
-                              component={() => <PageNotFound />}
-                            />
-                            <ReactRouter path="*">
-                              <Redirect to={`/page-not-found`} />
-                            </ReactRouter>
-                          </Switch>
-                        </>
-                      )}
-                    </div>
-                  </NextStepReact>
-                </NextStepProvider>
+                <div className="tol-smart-app-content">
+                  {/* Switch also needs loading screen to ensure smooth transition */}
+                  {LoadingScreen}
+                  {!globalLoading && (
+                    <>
+                      <Switch>
+                        {collectRoutes(
+                          mergedNavigation,
+                          pageElements,
+                          brand,
+                          configDataSource
+                        )}
+                        <ReactRouter
+                          path={`/page-not-found`}
+                          component={() => <PageNotFound />}
+                        />
+                        <ReactRouter path="*">
+                          <Redirect to={`/page-not-found`} />
+                        </ReactRouter>
+                      </Switch>
+                    </>
+                  )}
+                </div>
               </div>
               <Footer />
             </Router>
