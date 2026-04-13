@@ -34,7 +34,7 @@ export default defineConfig({
       // Mock Next.js navigation imports that nextstepjs might try to access
       {
         find: 'next/navigation',
-        replacement: path.join(process.cwd(), 'src/mocks/next-navigation.ts'),
+        replacement: path.join(process.cwd(), 'src/boards/tour/mock-next-navigation.ts'),
       },
     ]
   },
