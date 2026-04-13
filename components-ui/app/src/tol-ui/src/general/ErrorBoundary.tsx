@@ -39,7 +39,7 @@ export class ErrorBoundary extends Component<PErrorBoundary, ErrorBoundaryState>
   render() {
     if (this.state.hasError) {
       return this.props.fallback ?? (
-        <span className="tol-display-error">Error Configuring Renderer</span>
+        <span className="tol-display-error">Renderer Error</span>
       );
     }
     return this.props.children;

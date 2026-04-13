@@ -8,7 +8,6 @@ import { OldImageModal, PCellDisplay, encodeImageSrc } from "../..";
 import { useState } from "react";
 
 export interface POldImage extends PCellDisplay {
-  value: string;
   captions: string; // kept as plural to avoid alembic upgrade for now
 }
 
@@ -25,12 +24,13 @@ export function OldImage(props: POldImage) {
         open={open}
         setOpen={setOpen}
       />
-      <span
-        className={"tol-table-image-cell"}
+      <div
+        className="tol-table-image-cell"
         onClick={() => setOpen(true)}
       >
-        <img src={encodeImageSrc(value)} />
-      </span>
+        <img
+          src={encodeImageSrc(value)} />
+      </div>
     </div>
   );
 }
