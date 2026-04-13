@@ -12,7 +12,7 @@ import {
   Redirect,
 } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { NextStepProvider, NextStep } from "nextstepjs";
+import { NextStepProvider, NextStepReact } from "nextstepjs";
 import Navigation from "./Navigation";
 import {
   Callback,
@@ -232,7 +232,7 @@ export function SmartApp(props: PSmartApp) {
               <Navigation {...navProps} />
               <div className="tol-smart-app">
                 <NextStepProvider>
-                  <NextStep
+                  <NextStepReact
                     steps={boardTour}
                     onComplete={handleRegisterTourStepAsSeen}
                     onSkip={handleRegisterTourStepAsSeen}
@@ -260,7 +260,7 @@ export function SmartApp(props: PSmartApp) {
                         </>
                       )}
                     </div>
-                  </NextStep>
+                  </NextStepReact>
                 </NextStepProvider>
               </div>
               <Footer />

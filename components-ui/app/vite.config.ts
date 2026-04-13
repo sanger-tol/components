@@ -39,7 +39,7 @@ export default defineConfig({
     ]
   },
   ssr: {
-    noExternal: ['nextstepjs', 'motion']
+    noExternal: ['motion']
   },
   optimizeDeps: {
     exclude: ["nextstepjs"],

@@ -15,8 +15,8 @@
     "react-markdown": "10.1.0",
     "xlsx": "0.18.5",
     "@fortawesome/free-brands-svg-icons": "6.7.2",
-    "nextstepjs": "^2.1.2",
-    "motion": "11.11.17"
+    "nextstepjs": "^2.2.0",
+    "motion": "^12.38.0"
   },
   "devDependencies": {
     "vite": "5.3.5",
