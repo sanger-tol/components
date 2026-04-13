@@ -37,6 +37,7 @@ export const BOARDS = {
   VIEW_BOARD: "view_board",
   ZONE_VIEW: "zone_view",
   COMPONENT_ZONE: "component_zone",
+  BOARD_DIFF: "board_diff",
   DATA_SOURCE_INSTANCE: "data_source_instance",
 } as const;
 

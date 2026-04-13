@@ -12,7 +12,6 @@ import {
   IZone,
 } from "..";
 
-
 export async function createBoardAndView(
   boardDataSource: TsDataSource,
   id: string,
@@ -64,7 +63,7 @@ export async function createBoardAndView(
 export async function upsertNewView(
   boardDataSource: TsDataSource,
   id: string,
-  title: string = "View 1"
+  title: string = "View 1",
 ) {
   const user = getUserFromLocalStorage();
   const viewId = id ?? generateId("v");
@@ -113,39 +112,68 @@ export async function upsertZone(
   zoneId: string,
   attributes: object,
 ) {
-  return await boardDataSource
-    .upsert({
-      objectType: BOARDS.ZONE,
-      payload: [
-        {
-          type: BOARDS.ZONE,
-          id: zoneId,
-          attributes: attributes
-        },
-      ],
-    });
+  return await boardDataSource.upsert({
+    objectType: BOARDS.ZONE,
+    payload: [
+      {
+        type: BOARDS.ZONE,
+        id: zoneId,
+        attributes: attributes,
+      },
+    ],
+  });
 }
-
 
 export async function upsertComponent(
   boardDataSource: TsDataSource,
   componentId: string,
   attributes: object,
+  editMode?: boolean,
 ) {
-  return await boardDataSource
-    .upsert({
-      objectType: BOARDS.COMPONENT,
-      payload: [
-        {
-          type: BOARDS.COMPONENT,
-          id: componentId,
-          attributes: attributes
+  // use editMode to determine which call to make
+  // if editMode is false, we need to get the 'id' of the record with the 'component' id then upsert the diff
+  editMode
+    ? await boardDataSource.upsert({
+        objectType: BOARDS.COMPONENT,
+        payload: [
+          {
+            type: BOARDS.COMPONENT,
+            id: componentId,
+            attributes: attributes,
+          },
+        ],
+        params: {
+          merge_collections: false,
         },
-      ],
-      params: {
-        merge_collections: false,
-      },
-    });
+      })
+    : await boardDataSource
+        .getList({
+          objectType: BOARDS.BOARD_DIFF,
+          filter: {
+            and_: {
+              component_id: { eq: { value: componentId } },
+              user_id: { eq: { value: getUserFromLocalStorage().id } },
+            },
+          },
+          requestedFields: ["id"],
+        })
+        .then(async (res) => {
+          const id = res?.[0]?.id;
+          await boardDataSource.upsert({
+            objectType: BOARDS.BOARD_DIFF,
+            payload: [
+              {
+                type: BOARDS.BOARD_DIFF,
+                ...(id && { id: id }),
+                attributes: {
+                  ...attributes,
+                  component_id: componentId,
+                  user_id: getUserFromLocalStorage().id,
+                },
+              },
+            ],
+          });
+        });
 }
 
 export async function updateConfigAndUpsert(
@@ -153,11 +181,13 @@ export async function updateConfigAndUpsert(
   config: object,
   zone: IZone,
   boardDataSource: TsDataSource,
+  editMode?: boolean,
 ) {
   zone.components[componentId].data.config = config;
   return await upsertComponent(
     boardDataSource,
     componentId,
-    { config: config }
+    { config: config },
+    editMode,
   );
 }

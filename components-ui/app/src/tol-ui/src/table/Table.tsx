@@ -262,8 +262,8 @@ export function Table(props: PTable) {
       disabled: selectedRowData.length === 0 || button.disabled === true,
     }));
 
-  const configButton: PButton = !noConfigModal
-    ? {
+    const configButton: PButton =
+     {
       visible: true,
       position: "right",
       type: "primary",
@@ -276,9 +276,6 @@ export function Table(props: PTable) {
       outline: true,
       disabled: loading,
     }
-    : {
-        visible: false,
-      };
 
   const filterButton: PButton =
     (!noFilter && fieldMeta.order.active.length !== 0 && editMode) ? {
@@ -418,6 +415,7 @@ export function Table(props: PTable) {
         open={open}
         groupBy={groupBy}
         setOpen={setOpen}
+        editMode={editMode}
         displaySource={displaySource}
         // fetches all if inactive isn't specified
         customAttributeSelection={

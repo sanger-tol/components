@@ -26,13 +26,14 @@ export function BoardTable(props: PBoardTable) {
 
   const { editMode } = useBoard();
 
+
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
 
   const onConfigSave = ({
     fieldMeta,
     actions,
     defaultSortByAttribute,
-    defaultSortByType
+    defaultSortByType,
   }: ITableDrawerSave) => {
     config["fieldMeta"] = optimiseFieldMetaForSave(fieldMeta);
     config["actions"] = actions;
@@ -43,7 +44,8 @@ export function BoardTable(props: PBoardTable) {
       id,
       config,
       zone,
-      boardDataSource
+      boardDataSource,
+      editMode
     );
   };
 
@@ -54,7 +56,8 @@ export function BoardTable(props: PBoardTable) {
       id,
       config,
       zone,
-      boardDataSource
+      boardDataSource,
+      editMode
     );
   };
 
@@ -65,7 +68,8 @@ export function BoardTable(props: PBoardTable) {
       id,
       config,
       zone,
-      boardDataSource
+      boardDataSource,
+      editMode
     );
   };
 
@@ -84,7 +88,8 @@ export function BoardTable(props: PBoardTable) {
       id,
       config,
       zone,
-      boardDataSource
+      boardDataSource,
+      editMode
     );
   }
 

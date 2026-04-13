@@ -406,7 +406,8 @@ export function RemoteTable(props: PRemoteTable) {
     fieldMeta: fm,
     actions,
     defaultSortByAttribute,
-    defaultSortByType
+    defaultSortByType,
+    editMode,
   }: ITableConfigSave) => {
     resetFiltersBelow({
       id: id,
@@ -420,12 +421,14 @@ export function RemoteTable(props: PRemoteTable) {
         fieldMeta: fm,
         actions,
         defaultSortByAttribute: defaultSortByAttribute,
-        defaultSortByType: defaultSortByType
+        defaultSortByType: defaultSortByType,
+        editMode,
       });
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", optimiseFieldMetaForSave(fm));
       setTableConfigLocalStorage(id, "defaultSortByAttribute", defaultSortByAttribute);
       setTableConfigLocalStorage(id, "defaultSortByType", defaultSortByType);
+      // TODO: Deal with local storage
     }
 
     setSortByAttribute(defaultSortByAttribute ?? fm?.order?.active?.[0]);
