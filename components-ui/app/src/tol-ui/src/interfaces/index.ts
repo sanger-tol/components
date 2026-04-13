@@ -26,6 +26,7 @@ export * from "./Privilege";
 export * from "./Sunburst";
 export * from "./SocialViewer";
 export * from "./Table";
+export * from "./Tours";
 export * from "./TsDataSource";
 export * from "./TsDocParser";
 export * from "./User";
