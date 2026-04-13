@@ -20,6 +20,7 @@ import {
   TsDataSource,
   UtilityBar,
   BUTTONS,
+  useBoardState
 } from "../..";
 
 
@@ -31,7 +32,15 @@ export interface PView extends PBoard {
 export function View(props: PView) {
   const { id, boardDataSource } = props;
 
-  const { editMode, layoutMode } = useBoard();
+  const { editMode, layoutMode, board, setBoard } = useBoard();
+
+  const [view, setView] = useBoardState(
+    "views",
+    id,
+    board,
+    setBoard,
+    {zones: {}, order: []}
+  );
 
   const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
@@ -124,7 +133,7 @@ export function View(props: PView) {
             return (
               <Zone
                 key={zone.id}
-                id={zone.id}
+                id={zone.id} 
                 title={zone.title}
                 objectType={zone.objectType}
                 dataspace={zone.dataspace!}
@@ -132,6 +141,8 @@ export function View(props: PView) {
                 onZoneReorder={onZoneReorder}
                 deleteZone={deleteZone}
                 boardDataSource={boardDataSource}
+                view={view}
+                setView={setView}
               />
             );
           })}

@@ -10,6 +10,9 @@ import {
   TsDataSource,
   BOARDS,
   IZone,
+  IBoard,
+  IView,
+  BOARD_LEVEL
 } from "..";
 
 
@@ -160,4 +163,36 @@ export async function updateConfigAndUpsert(
     componentId,
     { config: config }
   );
+}
+
+export function useBoardState(
+  boardLevel: BOARD_LEVEL,
+  id: string,
+  boardValue: IBoard | IView | IZone,
+  setBoardValue: (newValue: IBoard | IView | IZone) => void,
+  initialSetup?: object
+) {
+  if (initialSetup && boardValue[boardLevel][id] == undefined) {
+    const newValue = {
+      ...boardValue,
+      [boardLevel]: {
+        ...boardValue[boardLevel],
+        [id]: initialSetup
+      },
+      order: [...(boardValue.order ?? []), id]
+    }
+    setBoardValue(newValue);
+  }
+  const value = boardValue[boardLevel][id];
+  const setValue = (newValue: IBoard | IView | IZone) => {
+    setBoardValue({
+      ...boardValue,
+      [boardLevel]: {
+        ...boardValue[boardLevel],
+        [id]: newValue
+      },
+      order: [...(boardValue.order ?? []), id]
+    });
+  }
+  return [value, setValue] as const;
 }
