@@ -18,24 +18,16 @@ import {
   getSortedZones,
   useBoard,
   TsDataSource,
-<<<<<<< HEAD
   getUserFromLocalStorage,
   fetchHasTourStepBeenSeen,
-=======
   UtilityBar,
   BUTTONS,
->>>>>>> dev
 } from "../..";
 import { useNextStep } from "nextstepjs";
 
 export interface PView extends PBoard {
   id: string;
   defaultFilter?: IFilter;
-<<<<<<< HEAD
-  utilityBarConfig?: PUtilityBar;
-  // title: string;
-=======
->>>>>>> dev
 }
 
 export function View(props: PView) {
