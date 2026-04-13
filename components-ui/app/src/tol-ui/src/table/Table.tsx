@@ -32,6 +32,9 @@ import {
   DataColumn,
   mergeUtilityBarConfigs,
   NoAttributesPlaceholder,
+  Modal,
+  Button,
+  BUTTONS,
 } from "..";
 
 export interface PTable extends IRemoteTargetAndZone {
@@ -87,6 +90,7 @@ export interface PTable extends IRemoteTargetAndZone {
 
   downloadInProgress: boolean;
   setDownloadInProgress: (downloadInProgress: boolean) => void;
+  onReset?: () => void;
 }
 
 export function Table(props: PTable) {
@@ -130,12 +134,14 @@ export function Table(props: PTable) {
     utilityBarConfig = {},
     contents,
     groupBy,
+    onReset,
     /* eslint-enable */
   } = props;
 
   const { editMode } = useBoard();
 
   const [open, setOpen] = useState(false);
+  const [resetConfirmationOpen, setResetConfirmationOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
   const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
@@ -262,7 +268,24 @@ export function Table(props: PTable) {
       disabled: selectedRowData.length === 0 || button.disabled === true,
     }));
 
-    const configButton: PButton =
+    const configResetButton: PButton = !noConfigModal?
+     {
+      visible: true,
+      position: "right",
+      type: "primary",
+      testid: "table-config-reset-button",
+      tooltip: "Reset Table Configuration to Default",
+      onClick: () => {
+        setResetConfirmationOpen(true);
+      },
+      icon: "arrow-rotate-left",
+      outline: true,
+      disabled: loading,
+    } : {
+      visible: false,
+    };
+
+    const configButton: PButton = !noConfigModal?
      {
       visible: true,
       position: "right",
@@ -275,7 +298,9 @@ export function Table(props: PTable) {
       icon: "sliders",
       outline: true,
       disabled: loading,
-    }
+    } : {
+      visible: false,
+    };
 
   const filterButton: PButton =
     (!noFilter && fieldMeta.order.active.length !== 0 && editMode) ? {
@@ -382,6 +407,7 @@ export function Table(props: PTable) {
         filterButton,
         actionDropdown,
         downloadButton,
+        configResetButton,
       ],
       elements:
         !noPagination && fieldMeta?.order?.active?.length > 0 ? [
@@ -393,6 +419,31 @@ export function Table(props: PTable) {
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
+      <Modal
+        hasPendingChanges
+        open={resetConfirmationOpen}
+        setOpen={setResetConfirmationOpen}
+        size="xs"
+        closeButton={false}
+      >
+        <h5>Reset Table Configuration</h5>
+        <p>Are you sure you want to reset this table to its default configuration?</p>
+        <p className="tol-danger-colour">
+          Warning: Your current column settings, filters, and sort order will be lost.
+        </p>
+        <Button
+          {...BUTTONS.CONFIRM}
+          onClick={() => {
+            setResetConfirmationOpen(false);
+            onReset?.();
+          }}
+          testid="confirm-reset-button"
+        />
+        <Button
+          {...BUTTONS.CANCEL}
+          onClick={() => setResetConfirmationOpen(false)}
+        />
+      </Modal>
       <DownloadModal
         {...props}
         disabledTabs={['Image']}

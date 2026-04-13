@@ -421,3 +421,30 @@ export function updateFieldMetaAttribute(
   updateTarget("data");
   if (dataWithDefaults) updateTarget("dataWithDefaults");
 }
+
+export async function resetTableConfigToDefault(
+  componentId: string,
+  boardDataSource: TsDataSource,
+  userId: string,
+)  {
+  await boardDataSource
+    .getList({
+      objectType: "board_diff",
+      filter: {
+        and_: {
+          component_id: { eq: { value: componentId } },
+          user_id: { eq: { value: userId } },
+        },
+      },
+      requestedFields: ["id"],
+    })
+    .then(async (res) => {
+      const id = res?.[0]?.id;
+      if (id) {
+        await boardDataSource.deleteByID({
+          objectType: "board_diff",
+          id: id,
+        });
+      }
+    });
+}

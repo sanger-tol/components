@@ -152,7 +152,7 @@ export async function upsertComponent(
           filter: {
             and_: {
               component_id: { eq: { value: componentId } },
-              user_id: { eq: { value: getUserFromLocalStorage().id } },
+              user_id: { eq: { value: getUserFromLocalStorage()?.id } },
             },
           },
           requestedFields: ["id"],
@@ -168,12 +168,47 @@ export async function upsertComponent(
                 attributes: {
                   ...attributes,
                   component_id: componentId,
-                  user_id: getUserFromLocalStorage().id,
+                  user_id: getUserFromLocalStorage()?.id,
                 },
               },
             ],
           });
         });
+}
+
+export async function deleteComponentDiff(
+  componentId: string,
+  boardDataSource: TsDataSource,
+) {
+  // The board_diff endpoint does not support DELETE, so we upsert with config: null.
+  // getComponentData skips the proxy when diff.config is null, restoring the original config.
+  const res = await boardDataSource.getList({
+    objectType: BOARDS.BOARD_DIFF,
+    filter: {
+      and_: {
+        component_id: { eq: { value: componentId } },
+        user_id: { eq: { value: getUserFromLocalStorage()?.id } },
+      },
+    },
+    requestedFields: ["id"],
+  });
+  const diffId = res?.[0]?.id;
+  if (diffId) {
+    await boardDataSource.upsert({
+      objectType: BOARDS.BOARD_DIFF,
+      payload: [
+        {
+          type: BOARDS.BOARD_DIFF,
+          id: diffId,
+          attributes: {
+            config: null,
+            component_id: componentId,
+            user_id: getUserFromLocalStorage()?.id,
+          },
+        },
+      ],
+    });
+  }
 }
 
 export async function updateConfigAndUpsert(

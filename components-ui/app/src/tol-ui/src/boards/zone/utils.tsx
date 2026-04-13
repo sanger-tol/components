@@ -113,7 +113,7 @@ async function getComponentData(
     filter: {
       and_: {
         component_id: { in_list: { value: componentIds } },
-        user_id: { eq: { value: getUserFromLocalStorage().id } },
+        user_id: { eq: { value: getUserFromLocalStorage()?.id } },
       },
     },
     requestedFields: ["config", "component_id"],
@@ -123,7 +123,8 @@ async function getComponentData(
   return boardData?.map((component) => {
     if (!component) return component;
     const diff = boardDiff?.find((d) => d?.["component_id"] === component.id);
-    if (diff) {
+    // Only apply the diff when config is non-null; null means the diff was reset
+    if (diff && diff.config != null) {
       // Create new proxy and intercept get method to return new config
       return new Proxy(component, {
         get(target, prop, receiver) {

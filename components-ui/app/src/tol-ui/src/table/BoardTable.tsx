@@ -8,6 +8,7 @@ import { useState } from "react";
 import {
   RemoteTable,
   updateConfigAndUpsert,
+  deleteComponentDiff,
   useBoard,
   ITableConfigSave,
   optimiseFieldMetaForSave,
@@ -28,6 +29,7 @@ export function BoardTable(props: PBoardTable) {
 
 
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
+  const [resetKey, setResetKey] = useState(0);
 
   const onConfigSave = ({
     fieldMeta,
@@ -91,15 +93,32 @@ export function BoardTable(props: PBoardTable) {
       boardDataSource,
       editMode
     );
-  }
+  };
+
+  const onReset = async () => {
+    if (!editMode) {
+      await deleteComponentDiff(id, boardDataSource);
+    }
+    // Fetch the original component config directly from the server (bypasses any diff)
+    const originalComponents = await boardDataSource.getList({
+      objectType: "component",
+      filter: { and_: { id: { eq: { value: id } } } },
+      requestedFields: ["config"],
+    });
+    const originalConfig = originalComponents?.[0]?.config ?? props.config;
+    zone.components[id].data.config = originalConfig;
+    setConfig({ ...originalConfig });
+    setResetKey((k) => k + 1);
+  };
 
   return (
     <RemoteTable
+      key={resetKey}
       {...props}
-      noConfigModal={!editMode}
       // RemoteTable defaults to true for resizeableColumns, we want to default to false
       resizeableColumns={editMode || false}
       onResizeColumn={onResizeColumn}
+      onReset={onReset}
       advanceTab
       displaySource
       fields={config.fieldMeta}

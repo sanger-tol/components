@@ -87,7 +87,10 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * When changed, forces the table to re-fetch its data from the server
    */
   forceUpdate?: boolean;
-
+  /**
+   * Called when the user confirms the reset in the reset confirmation modal
+   */
+  onReset?: () => void;
   /**
    * Called with updated table configuration instead of storing it in local storage
    */
@@ -238,6 +241,7 @@ export function RemoteTable(props: PRemoteTable) {
     contents,
     height = "100%",
     forceUpdate,
+    onReset,
   } = props;
 
   // data and field information
@@ -572,6 +576,7 @@ export function RemoteTable(props: PRemoteTable) {
             name: "View Actions",
             action: () => setActionModalOpen(true),
           }}
+        onReset={onReset}
       />
     </div>
   );
