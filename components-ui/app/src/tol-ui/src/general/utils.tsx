@@ -67,7 +67,7 @@ export function normaliseCaps(name: string, prefix?: string) {
   // make object ids clear (for auto load)
   if (prefix && name === "id") return normaliseCaps(prefix) + " ID";
   // replace relationship '.' with underscore ready to split
-  name = name.replace(".", "_");
+  name = name.replace(/\./g, "_");
   const words = name.split("_");
   for (let count = 0; count < words.length; count++) {
     words[count] = normaliseWords(words[count]);
