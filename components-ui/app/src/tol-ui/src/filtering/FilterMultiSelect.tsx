@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import {
   IFilterInput,
-  setFilter,
+  setFilterInput,
   filterListener,
   MultipleSelect,
   FilterToggle,
@@ -17,8 +17,9 @@ import {
   TFilterOrUndefined,
   generateFilter,
   filterHasUpdated,
-  appendKeywordIfNeeded,
-  removeAttributeFromFilter,
+  API_OPERATIONS,
+  resetFiltersBelow,
+  useEffectUpdate,
 } from "..";
 
 
@@ -34,32 +35,40 @@ export function FilterMultiSelect(props: IFilterInput) {
   } = props;
   const [data, setData] = useState<string[]>([]);
   const [values, setValues] = useState<string[]>([]);
-  const [disabled, setDisabled] = useState(false);
   const [exists, setExists] = useState<boolean>(false);
   const [negate, setNegate] = useState<boolean>(false);
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [fetched, setFetched] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [aggregationFilter, setAggregationFilter] = useState<TFilterOrUndefined>({});
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
   const operator = "in_list";
 
   useEffect(() => {
+    // Only fetch values if there is values from a pre-defined filter
     if (!fetched && values.length !== 0) {
       fetchValues();
     }
   }, [values]);
 
   useEffect(() => {
-    const nextFilter = removeAttributeFromFilter(
-      generateFilter(zone, componentId, true),
-        attribute,
-    );
-    if (filterHasUpdated(setAggregationFilter, aggregationFilter, nextFilter)) {
+    const nextFilter = generateFilter(zone, componentId, false, false);
+    if (filterHasUpdated(setFilter, filter, nextFilter)) {
       setFetched(false);
-      setData([]);
+      resetFiltersBelow({ id: componentId, zone: zone });
+      setZone({ ...zone });
     }
   }, [zone]);
+
+  useEffectUpdate(() => {
+    // Reset fetched status on filter change to ensure new values are fetched on next dropdown open
+    setFetched(false);
+  }, [filter]);
+
+  useEffectUpdate(() => {
+    // Reset data options when fetched is set to false to prevent showing incorrect options on dropdown open
+    if (!fetched) setData([]);
+  }, [fetched]);
 
   useEffect(() => {
     errorMessage && PopUpMessage({ message: errorMessage, type: "error" });
@@ -68,61 +77,62 @@ export function FilterMultiSelect(props: IFilterInput) {
   const fetchValues = () => {
     if (!fetched) {
       setLoading(true);
-      const aggs = { aggs: {} };
-      aggs["aggs"][attribute] = {
-        terms: { field: appendKeywordIfNeeded(attribute), size: 500 },
-      };
+      // TEMPORARY FIX:
+      // Construct a URL param string and append it to the resource, because:
+      // a. The API doesn't handle empty strings/arrays for this resource very well
+      // b. Empty arrays are being parsed out, and the params are required on the API
+      // c. Should switch to a POST method in the near future.
+      // TODO: Remove on POST method implementation
+      const queryParamsString = new URLSearchParams({
+        group_by: attribute,
+        stats_fields: "",
+        stats: "",
+        ...(filter ? { filter: JSON.stringify(filter) } : null),
+      }).toString();
       dataSource
         .custom({
-          method: API_METHODS.POST,
-          resource: `${objectType}:aggregations`,
-          body: aggs,
-          params: {
-            filter: aggregationFilter,
-          },
+          method: API_METHODS.GET,
+          resource: `${objectType}${API_OPERATIONS.GROUP_STATS}?${queryParamsString}`,
         })
         .then((res: any) => {
-          const aggValues = res.data.meta.aggregations[attribute].buckets;
-          setData(aggValues.map((item) => item.key));
-          setLoading(false);
-          setFetched(true);
+          const statsValues = res.data.meta.stats;
+          setData(statsValues.map((item: any) => item.key[attribute]));
           updateDropdownText("No results found");
         })
         .catch((error: any) => {
           setErrorMessage(
             "Error fetching unique values for " +
-              attribute +
-              " in " +
-              objectType +
-              ". " +
-              error.message +
-              ".",
+            attribute +
+            " in " +
+            objectType +
+            ". " +
+            error.message +
+            ".",
           );
           console.error(error.message);
+          updateDropdownText("Error fetching values");
+        })
+        .finally(() => {
           setLoading(false);
           setFetched(true);
-          updateDropdownText("Error fetching values");
         });
     }
   };
 
-  filterListener(
-    {
-      attribute: attribute,
-      componentId: componentId,
-      operators: [operator],
-      zone: zone,
-      setValue: setValues,
-      setExists: setExists,
-      setNegate: setNegate,
-      setDisabled: setDisabled,
-      emptyValue: [],
-      zoneToValue: (filterValue: any) => {
-        return filterValue;
-      },
+  filterListener({
+    attribute: attribute,
+    componentId: componentId,
+    operators: [operator],
+    zone: zone,
+    setValue: setValues,
+    setExists: setExists,
+    setNegate: setNegate,
+    emptyValue: [],
+    zoneToValue: (filterValue: any) => {
+      return filterValue;
     },
-    [zone],
-  );
+    onlyUpdateMyValues: true,
+  });
 
   const onFilter = (input: string[]) => {
     setValues(input);
@@ -130,7 +140,7 @@ export function FilterMultiSelect(props: IFilterInput) {
     clearTimeout(timeoutValue!);
     setTimeoutValue(
       setTimeout(() => {
-        setFilter({
+        setFilterInput({
           operator: operator,
           value: input,
           negate: negate,
@@ -147,7 +157,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   const onExists = (ex: boolean) => {
     setExists(!ex);
     setValues([]);
-    setFilter({
+    setFilterInput({
       operator: "exists",
       negate: negate,
       exists: !ex,
@@ -160,7 +170,7 @@ export function FilterMultiSelect(props: IFilterInput) {
 
   const onNegate = (ng: boolean) => {
     setNegate(!ng);
-    setFilter({
+    setFilterInput({
       operator: exists ? "exists" : operator,
       value: values,
       negate: !ng,
@@ -179,7 +189,7 @@ export function FilterMultiSelect(props: IFilterInput) {
   };
 
   const setDropdownText = () => {
-    if (!fetched) updateDropdownText("Loading values...");
+    if (!fetched) updateDropdownText("Loading options...");
     else if (errorMessage !== "") updateDropdownText("Error fetching values");
   };
 
@@ -189,7 +199,6 @@ export function FilterMultiSelect(props: IFilterInput) {
         block
         data={data}
         placeholder={rename}
-        disabled={disabled}
         value={values}
         setValue={onFilter}
         loading={loading}
@@ -204,7 +213,6 @@ export function FilterMultiSelect(props: IFilterInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
-        disabled={disabled}
       />
     </div>
   );

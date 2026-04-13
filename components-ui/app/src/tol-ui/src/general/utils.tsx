@@ -14,7 +14,7 @@ import {
   IEntityMeta,
   TDataObjectListOrNull,
   TPlateData,
-  getFieldByName
+  getFieldByName,
 } from "..";
 
 export function formatPath(name: string) {
@@ -54,8 +54,8 @@ export function falseIfUndefined(prop: any) {
   return false;
 }
 
-export function isEmptyObject(x: object) {
-  return Object.keys(x).length === 0;
+export function isEmptyObject(x: object|undefined) {
+  return Object.keys(x || {}).length === 0;
 }
 
 export function appendKeywordIfNeeded(field: string): string {
@@ -238,6 +238,14 @@ export function truncateString(str: string, maxLength: number = 50) {
   return str;
 }
 
+export function encodeImageSrc(url: string): string {
+  const match = url.match(/^(https?:\/\/[^/]+)(\/.*)$/);
+  if (!match) return url;
+  const origin = match[1];
+  const path = match[2];
+  return origin + path.split("/").map(s => encodeURIComponent(s)).join("/");
+}
+
 export function copyToClipboard(text: string): void {
   if (navigator.clipboard) {
     navigator.clipboard
@@ -339,7 +347,7 @@ export function updateContents(contents: object) {
         break;
     }
     // make nulls show a faded 'None'
-    if (!value) {
+    if (value === null || value === undefined) {
       contents[key] = <span className="tooltip-value-none">None</span>;
     }
   }
@@ -401,7 +409,7 @@ export function normaliseNumber(value: number) {
   if (value > 999999) {
     return normaliseLargeNumber(value);
   // Handles decimals
-  } else if (value < 0.01) {
+  } else if (value < 0.01 && value !== 0) {
     return normaliseDecimalNumber(value);
   } else {
     return numberWithSpaces(value);
@@ -414,13 +422,23 @@ function normaliseLargeNumber(value: number, iteration: number = 0) {
     normalisedValue = Number((normalisedValue / 1000));
     return normaliseLargeNumber(Math.round(normalisedValue), iteration + 1);
   }
-  return numberWithSpaces(Number(normalisedValue)) + ["", "K", "M", "G", "T", "P"][iteration];
+  return numberWithSpaces(Number(normalisedValue)) + ["", "k", "M", "G", "T", "P"][iteration];
 }
 
 function normaliseDecimalNumber(value: number, iteration: number = 0) {
-  if ((String(value).length - 1 > 6 || value < 0.01) && iteration < 5) {
+  if (value < 0.01 && iteration < 5) {
     const normalisedValue = Number((value * 1000).toPrecision(12));
     return normaliseDecimalNumber(normalisedValue, iteration + 1);
   }
   return numberWithSpaces(value) + ["", "m", "µ", "n", "p", "f"][iteration];
 }
+
+/**
+ * Checks whether a given string can be parsed into a valid Date.
+ *
+ * @param date - The string to validate as a date
+ * @returns `true` if the string is a valid date, `false` otherwise
+ */
+export const isValidDate = (date: string) => {
+  return !isNaN(Number(new Date(date)));
+};

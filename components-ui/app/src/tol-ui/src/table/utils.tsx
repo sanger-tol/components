@@ -4,11 +4,8 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import * as XLSX from "xlsx";
 import {
-  Field,
   FieldMeta,
-  isFloat,
   normaliseCaps,
   colours,
   TsDataSource,
@@ -18,7 +15,7 @@ import {
   ITableData,
   ITableRecord,
   TCellRenderer,
-  Cell,
+  DataPoints,
   deepCopy,
   ICustomCellRenderers,
   copyToClipboard,
@@ -27,6 +24,9 @@ import {
   TCellHeights,
   DEFAULT_ROW_HEIGHT,
   COLLAPSED_ROW_MAX_HEIGHT,
+  getRelationshipNameByField,
+  CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
+  CELL_RENDERER_SPREAD_OPERATOR,
 } from "..";
 
 interface Rgb {
@@ -70,21 +70,6 @@ export function initialiseFieldMeta(fieldMeta?: FieldMeta): FieldMeta {
   } as FieldMeta;
 }
 
-function addValueBasedCellRenderer(
-  value: any,
-  meta: Field,
-) {
-  if (value) {
-    if (typeof value === "object") {
-      meta.cellRenderer = { type: "collection" };
-    } else if (value.length > 32) {
-      meta.cellRenderer = { type: "expander" };
-    } else if (isFloat(value)) {
-      meta.cellRenderer = { type: "float" };
-    }
-  }
-}
-
 export function convertTableData(
   dataObjects: TDataObjectListOrNull,
   dataSource: TsDataSource,
@@ -97,23 +82,19 @@ export function convertTableData(
   const data: ITableData = [];
   // loop over each data object
   dataObjects!.forEach((obj) => {
-    const row: ITableRecord = { key: obj.id };
+    const row: ITableRecord = { key: obj?.id };
     // loop over each field
-    fieldMeta.order.active.forEach((attribute) => {
-      const value = getFieldByName(obj, attribute);
-      if (!fieldMeta.dataWithDefaults![attribute]?.cellRenderer) {
-        addValueBasedCellRenderer(value, fieldMeta.dataWithDefaults![attribute]);
-      }
-      row[attribute] = (
-        <Cell
-          attribute={attribute}
-          value={value}
+    fieldMeta.order.active.forEach((field) => {
+      row[field] = (
+        <DataPoints
+          field={field}
           dataObject={obj}
           dataSource={dataSource}
-          renderer={fieldMeta.dataWithDefaults?.[attribute]?.cellRenderer}
+          renderer={fieldMeta.dataWithDefaults?.[field]?.cellRenderer}
           setExpandedRows={setExpandedRows}
           customCellRenderers={customCellRenderers}
           editable={editableCells}
+          actsAs={fieldMeta.dataWithDefaults?.[field]?.acts_as}
         />
       );
     });
@@ -163,6 +144,7 @@ export function addDefaultsFromEntityMeta(
     type: meta.python_type,
     description: meta.description,
     source: meta.source,
+    acts_as: meta.acts_as,
   };
   // customised field config overrides the defaults
   fieldMeta.dataWithDefaults[key] = {
@@ -293,40 +275,10 @@ export async function getActions(
   });
 
   actions?.forEach((action) => {
-    actionsList.push(action.name);
+    actionsList.push(action?.name);
   });
 
   return actionsList;
-}
-
-export async function dataObjectToSpreadsheetData(
-  dataObjects: TDataObjectListOrNull,
-  requestedFields: string[],
-  fieldMeta: FieldMeta
-) {
-  const spreadsheetData: any[] = [];
-  dataObjects?.forEach((obj) => {
-    const flatData = {};
-    requestedFields.forEach((field) => {
-      flatData[fieldMeta.dataWithDefaults?.[field].rename ?? field] =
-        Array.isArray(getFieldByName(obj, field))
-          ? getFieldByName(obj, field).toString()
-          : getFieldByName(obj, field);
-    });
-    spreadsheetData.push(flatData);
-  });
-  return spreadsheetData;
-}
-
-export function exportDataToSpreadsheet(
-  spreadsheetData: Array<Record<string, string>>,
-  title: string
-) {
-  const heading = `${title.replace(/\s+/g, "_")}.xlsx`;
-  const worksheet = XLSX.utils.json_to_sheet(spreadsheetData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "ToLTable");
-  XLSX.writeFile(workbook, heading, { compression: true });
 }
 
 export function formatTotalSize(totalSize: number) {
@@ -350,14 +302,25 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
   copyToClipboard(copyList);
 }
 
-function addFieldsFromTemplateProp(requestedFields: Set<string>, value: unknown) {
+async function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, fieldName: string, dataSource: TsDataSource, objectType: string) {
   if (typeof value !== "string" || !value.includes("${")) return;
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
-  matches.forEach((match) => {
-    const key = match.replace("${", "").replace("}", "").trim();
-    if (key) requestedFields.add(key);
-  });
+
+  for (const match of matches) {
+    const relativeAttribute = match
+      .replace("${", "")
+      .replace("}", "")
+      .replace(CELL_RENDERER_SPREAD_OPERATOR, "")
+      .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, "")
+      .trim();
+
+    // Ensure we request the field for the original objectType and not the related objectType
+    const relationship = getRelationshipNameByField(fieldName);
+    const isMany = await dataSource.isManyDataPointsByName(objectType, fieldName.split(".")[0]);
+    const field = (relationship && !!isMany) ? `${relationship}.${relativeAttribute}` : relativeAttribute;
+    if (field) requestedFields.add(field);
+  }
 }
 
 function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
@@ -370,24 +333,25 @@ function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
 }
 
 
-export function amalgamateRequestedFields(fieldMeta: FieldMeta): string[] {
+export async function amalgamateRequestedFields(fieldMeta: FieldMeta, dataSource: TsDataSource, objectType: string): Promise<string[]> {
   const requestedFields = new Set<string>(fieldMeta?.order.active || []);
 
   const dataWithDefaults = fieldMeta?.dataWithDefaults || {};
-  Object.entries<any>(dataWithDefaults).forEach(([fieldName, meta]) => {
+  for (const [fieldName, meta] of Object.entries<any>(dataWithDefaults)) {
+    // Check if the field is a custom field which won't be on the api
     if (meta?.custom === true) {
       requestedFields.delete(fieldName);
-      return;
+      continue;
     }
 
     const cellRenderer = meta?.cellRenderer;
     const props = cellRenderer?.props || {};
 
-    Object.values(props).forEach((value) => {
-      addFieldsFromTemplateProp(requestedFields, value);
+    for (const value of Object.values(props)) {
+      await addFieldsFromStringProp(requestedFields, value, fieldName, dataSource, objectType);
       addFieldsFromFilterProp(requestedFields, value);
-    });
-  });
+    }
+  }
 
   return Array.from(requestedFields);
 }

@@ -72,13 +72,20 @@ export function ZoneModal(props: PZoneModal) {
       fetchPublishedDataspaces(boardDataSource)
         .then((dataObjects) => {
           if (dataObjects) {
-            const dsiList = dataObjects.map((dsi) => ({
-              label: normaliseCaps(dsi.id),
-              value: dsi.id,
-              ui_api_details: dsi.ui_api_details,
-            }));
+            const dsiList = dataObjects.map((dsi) => {
+              return {
+                label: normaliseCaps(dsi!.id),
+                value: dsi!.id,
+                ui_api_details: dsi!.ui_api_details,
+              };
+            });
             setDataSourceInstanceList(dsiList);
-            setDataSourceInstance(dsiList[0].value);
+            // TODO: new solution for pre-selecting tol data
+            if (dsiList.map((dsi) => dsi.value).includes("tol_production")) {
+              setDataSourceInstance("tol_production");
+            } else {
+              setDataSourceInstance(dsiList[0].value);
+            }
           }
         })
         .finally(() => {

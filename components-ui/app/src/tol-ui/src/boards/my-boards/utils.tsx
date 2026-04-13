@@ -15,7 +15,7 @@ import {
 export async function getBoardDetails(
   boardDataSource: TsDataSource,
   userId: string,
-  setErrorMessage: any
+  setErrorMessage: any,
 ) {
   return boardDataSource
     .getListPage({
@@ -81,7 +81,7 @@ export function useItemData<T>(
 
 export async function returnViewInfo(
   boardDataSource: TsDataSource,
-  viewId: string
+  viewId: string,
 ) {
   return boardDataSource
     .getListPage({
@@ -93,7 +93,7 @@ export async function returnViewInfo(
       },
     })
     .then((data: TDataObjectListOrNull) => {
-      return data?.[0].title; // temporary assumption - only one view per ID
+      return data?.[0]?.title; // temporary assumption - only one view per ID
     })
     .catch((error: any) => {
       console.error("Error fetching view info:", error);
@@ -103,7 +103,7 @@ export async function returnViewInfo(
 
 export async function returnZoneInfo(
   boardDataSource: TsDataSource,
-  zoneId: string
+  zoneId: string,
 ) {
   return boardDataSource
     .getListPage({
@@ -128,7 +128,7 @@ export async function returnZoneInfo(
 
 export async function returnComponentInfo(
   boardDataSource: TsDataSource,
-  componentId: string
+  componentId: string,
 ) {
   return boardDataSource
     .getListPage({
@@ -172,10 +172,10 @@ export async function fetchSubItemId(
         data?.map(async (item: TDataObjectOrNull) => {
           const relationshipData = await item?.fetchRelationships?.[itemType];
           return {
-            id: relationshipData?.id,
+            id: relationshipData?.["id"],
             order: item?.order,
           };
-        }) || []
+        }) || [],
       );
     })
     .catch((error: any) => {
@@ -191,7 +191,7 @@ export async function fetchSubItemId(
  */
 export async function fetchHasTourStepBeenSeen(
   stepName: string,
-  userId: string
+  userId: string,
 ): Promise<boolean> {
   // Fetch user details
   const localDataSource = new TsDataSource({
@@ -210,8 +210,8 @@ export async function fetchHasTourStepBeenSeen(
   
   // Check whether the tour is enabled and the specified step has been completed
   return (
-    user.tour_steps_seen?.tour_disabled === true ||
-    user.tour_steps_seen[stepName] === true
+    user.tour_steps_seen.tour_disabled == true ||
+    user.tour_steps_seen[stepName] == true
   );
 }
 
@@ -222,7 +222,7 @@ export async function fetchHasTourStepBeenSeen(
  */
 export async function registerTourStepAsSeen(
   stepName: string,
-  userId: string
+  userId: string,
 ): Promise<void> {
   // Fetch user details
   const localDataSource = new TsDataSource({

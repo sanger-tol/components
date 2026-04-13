@@ -73,6 +73,10 @@
     }
   }
 
+  .rs-plaintext.rs-plaintext-empty {
+    color: var(--tol-grey);
+  }
+
   .rs-inline-edit .rs-plaintext:hover {
     border: 1px solid transparent !important;
   }
@@ -162,7 +166,10 @@
   // modal
   .rs-modal {
     margin: 30px auto 30px auto;
-    transition: transform 0.3s ease-out, width 0.3s ease, height 0.3s ease;
+    transition:
+      transform 0.3s ease-out,
+      width 0.3s ease,
+      height 0.3s ease;
     padding-right: 10px !important;
 
     // stop blue box showing on modal opening
@@ -207,24 +214,34 @@
     }
   }
 
-  .rs-popover[class*="placement-left"]>.rs-popover-arrow::after {
+  .rs-popover[class*="placement-left"] > .rs-popover-arrow::after {
     border-left-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 
-  .rs-popover[class*="placement-top"]>.rs-popover-arrow::after {
+  .rs-popover[class*="placement-top"] > .rs-popover-arrow::after {
     border-top-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 
-  .rs-popover[class*="placement-right"]>.rs-popover-arrow::after {
+  .rs-popover[class*="placement-right"] > .rs-popover-arrow::after {
     border-right-color: var(--tol-tooltip-colour);
     border-radius: 6px;
   }
 
-  .rs-popover[class*="placement-bottom"]>.rs-popover-arrow::after {
+  .rs-popover[class*="placement-bottom"] > .rs-popover-arrow::after {
     border-bottom-color: var(--tol-tooltip-colour);
     border-radius: 6px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .rs-calendar-table-header-cell-content,
+  .rs-calendar-header-backward,
+  .rs-calendar-header-forward,
+  .rs-calendar-header-title,
+  .rs-calendar-table-cell-un-same-month > .rs-calendar-table-cell-content {
+    color: var(--tol-grey-light);
   }
 }
 
@@ -274,7 +291,7 @@
   color: var(--tol-primary) !important;
 }
 
-.rs-form-control>.rs-input.rs-input:-webkit-autofill,
+.rs-form-control > .rs-input.rs-input:-webkit-autofill,
 .rs-input.rs-input:-webkit-autofill:hover,
 .rs-input.rs-input:-webkit-autofill:focus,
 .rs-input.rs-input:-webkit-autofill:active {
@@ -336,7 +353,9 @@
 }
 
 // checkboxes on pickers
-.rs-checkbox-disabled:not(.rs-checkbox-checked):not(.rs-checkbox-indeterminate) .rs-checkbox-control .rs-checkbox-inner::before {
+.rs-checkbox-disabled:not(.rs-checkbox-checked):not(.rs-checkbox-indeterminate)
+  .rs-checkbox-control
+  .rs-checkbox-inner::before {
   background-color: var(--rs-input-disabled-bg) !important;
   border-color: var(--rs-input-disabled-bg) !important;
 }
@@ -395,6 +414,7 @@
 
 // dropdowns
 .rs-picker-popup {
+  background-color: var(--tol-grey-subtle) !important;
   border: var(--tol-grey) 1px solid !important;
 }
 

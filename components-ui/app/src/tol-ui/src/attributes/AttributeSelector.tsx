@@ -31,7 +31,7 @@ export interface PAttributeSelector extends IRemoteTarget {
   displaySource?: boolean;
   maxSelections?: number;
   numPopulatedFields?: number;
-  placeholder: string;
+  placeholder?: string;
   populatedFieldType?: string;
   recommendedFilterAvailable?: boolean;
   renderSearchBySource?: boolean;
@@ -57,7 +57,6 @@ export function AttributeSelector(props: PAttributeSelector) {
     displaySource,
     numPopulatedFields,
     maxSelections,
-    placeholder,
     populatedFieldType = "value",
     recommendedFilterAvailable,
     setAttributes,
@@ -77,6 +76,10 @@ export function AttributeSelector(props: PAttributeSelector) {
     localStorage.getItem("attribute-selector-recommended-columns") === "true"
   );
   const [selectedSources, setSelectedSources] = useState<string[]>([]);
+
+  const placeholder = maxSelections && maxSelections === 1
+    ? "Select an attribute"
+    : props.placeholder || "Select attributes";
 
   useEffect(() => {
     dataSource

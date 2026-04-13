@@ -42,6 +42,7 @@ import {
   TFieldDropdownChoices,
   updateFieldMetaAttribute,
   IHeight,
+  TFilterOrUndefined,
 } from '..';
 
 export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
@@ -233,7 +234,6 @@ export function RemoteTable(props: PRemoteTable) {
       apiDataPath: ACTION_API_DATA_PATH,
     }),
     actions,
-    utilityBarConfig,
     cellRenderers,
     contents,
     height = "100%",
@@ -256,7 +256,7 @@ export function RemoteTable(props: PRemoteTable) {
   const [totalSize, setTotalSize] = useState<number>(0);
 
   // filtering/sorting
-  const [filter, setFilter] = useState<object | undefined>({});
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
   const [sortByAttribute, setSortByAttribute] = useState<string | undefined>(
     defaultSortByAttribute ?? fieldMeta?.order?.active?.[0]
   );
@@ -294,6 +294,10 @@ export function RemoteTable(props: PRemoteTable) {
     filterHasUpdated(setFilter, filter, compoundedFilter);
     // resetFiltersBelow({id: id, zone: zone!}); occurs in <Filter />: onFilter()
   }, [zone]);
+
+  useEffectUpdate(() => {
+    setPage(1);
+  }, [sortByAttribute, sortByType, filter, forceUpdate]);
 
   useEffectUpdate(() => {
     renderTable();
@@ -352,7 +356,7 @@ export function RemoteTable(props: PRemoteTable) {
         pageSize,
         filter,
         sortBy: createSort(sortByAttribute, sortByType),
-        requestedFields: amalgamateRequestedFields(fieldMeta),
+        requestedFields: await amalgamateRequestedFields(fieldMeta, dataSource, objectType),
       })
       .then((dataObjects: TDataObjectListOrNull) => {
         setError("");
@@ -369,9 +373,9 @@ export function RemoteTable(props: PRemoteTable) {
         // fetch count
         dataSource
           .custom({
-            method: API_METHODS.GET,
+            method: API_METHODS.POST,
             resource: `${objectType}:count`,
-            params: {
+            body: {
               filter: filter,
             },
           })
@@ -380,6 +384,13 @@ export function RemoteTable(props: PRemoteTable) {
           });
       })
       .catch((error: any) => {
+        // Temp fix for 500 errors, due to empty requested fields
+        // TODO: Remove when the SDK handles empty requested fields better.
+        const errorMsg = error.response.data.errors[0].detail;
+        if (errorMsg.includes("Empty element in path")) {
+          setData([]);
+          return;
+        };
         setError(error.message);
         setData([]);
         console.error(error);
@@ -550,7 +561,6 @@ export function RemoteTable(props: PRemoteTable) {
         onConfigSave={onConfigSave}
         onResizeColumn={onResizeColumn}
         noDownload={noDownload || error !== ""}
-        utilityBarConfig={utilityBarConfig}
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         actions={convertedActions}

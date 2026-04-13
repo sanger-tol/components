@@ -5,15 +5,15 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  PCell
+  PCellDisplay
 } from "../..";
 
 
-export function Integer(props: PCell) {
+export function Integer(props: PCellDisplay) {
   const { value } = props;
 
   return (
-    <div className="tol-cell-renderer-integer">
+    <div className="tol-data-point-renderer-integer">
       {value.toLocaleString()}
     </div>
   );

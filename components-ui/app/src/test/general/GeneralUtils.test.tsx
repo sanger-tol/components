@@ -161,7 +161,7 @@ test("getAttributeDetail function", () => {
 
 test("normaliseNumber function", () => {
   expect(normaliseNumber(5)).toBe("5");
-  expect(normaliseNumber(1000000)).toBe("1 000K");
+  expect(normaliseNumber(1000000)).toBe("1 000k");
   expect(normaliseNumber(1000000000)).toBe("1 000M");
   expect(normaliseNumber(1000000000000)).toBe("1 000G");
   expect(normaliseNumber(1000000000000000)).toBe("1 000T");

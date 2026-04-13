@@ -5,22 +5,23 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  Images,
-  getCellRendererPropValue,
-  PCell
+  OldImages,
+  PCellDisplay,
+  // getCellRendererPropValue,
 } from "../..";
 
 export type PRowExpander<Extra = Record<string, unknown>> = {
   key: string;
-} & Record<string, { props: PCell & Extra }>;
+} & Record<string, { props: PCellDisplay & Extra }>;
 
 export function RowExpander(rowData: PRowExpander) {
+  return; // TODO: implement row expanders
   const key: string = Object.keys(rowData).find(k => k !== 'key')!;
   const value: any = rowData[key];
   const renderer = value.props.renderer;
 
   const preDefinedElements = {
-    image: Images,
+    image: OldImages,
   };
   if (
     // renderer type is not defined
@@ -41,11 +42,11 @@ export function RowExpander(rowData: PRowExpander) {
 
   const elementProps: Record<string, any> = { ...renderer.props };
 
-  if (renderer.props) {
-    Object.entries(renderer.props).forEach(([prop]) => {
-      getCellRendererPropValue(prop, value.props.value, elementProps, value.props.dataObject);
-    });
-  }
+  // if (renderer.props) {
+  //   Object.entries(renderer.props).forEach(([prop]) => {
+  //     getCellRendererPropValue(prop, value.props.value, elementProps, value.props.dataObject);
+  //   });
+  // }
 
   return (
     <>

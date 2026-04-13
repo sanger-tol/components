@@ -7,11 +7,9 @@ SPDX-License-Identifier: MIT
 
 import {
   BOARDS,
-  generateFilter,
   IComponent,
   IComponentData,
   IZone,
-  TitleTooltip,
   TsDataSource,
   Visualisation,
 } from "../..";
@@ -19,7 +17,6 @@ import {
 
 export async function updateLayout(
   layout,
-  setSaveLayout: (value: boolean) => void,
   zone: IZone,
   setZone: (zone: IZone) => void,
   boardDataSource: TsDataSource,
@@ -50,7 +47,6 @@ export async function updateLayout(
     objectType: BOARDS.COMPONENT_ZONE,
     payload: payloadData,
   });
-  setSaveLayout(false);
   zone.order = order.order;
   setZone({ ...zone });
 };
@@ -66,7 +62,6 @@ export function getWidgetOrder(layout: any) {
     order: widgetOrder,
   };
 }
-
 
 export function generateLayout(zone: IZone) {
   // left hand side are the component types, right are the breakpoints
@@ -122,16 +117,6 @@ export function generateVisualisations(
 ) {
   return zone.order.map((componentId) => {
     const component = zone.components[componentId].data;
-    const filter = generateFilter(zone, component.id!);
-
-    const Description = (
-      <TitleTooltip
-        title={component.title!}
-        objectType={component.objectType!}
-        dataSource={component.dataspace!}
-        filter={filter}
-      />
-    );
     
     return (
       <div key={component.id} className="tol-visualisation">
@@ -146,10 +131,7 @@ export function generateVisualisations(
           dataSource={component.dataspace!}
           boardDataSource={boardDataSource}
           boardObjectType={BOARDS.COMPONENT}
-          utilityBarConfig={{
-            title: { text: component.title! },
-            description: Description,
-          }}
+          title={component.title!}
         />
       </div>
     )

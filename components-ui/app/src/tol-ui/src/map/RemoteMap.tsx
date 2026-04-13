@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2023 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import {
   IRemoteTargetAndZone,
   TFilterOrUndefined,
@@ -13,10 +13,13 @@ import {
   Placeholder,
   generateFilter,
   createMapMarkers,
-  IHeight
+  IHeight,
+  filterHasUpdated,
+  resetFiltersBelow,
+  useEffectUpdate
 } from "..";
 
-interface PRemoteMap extends IRemoteTargetAndZone, IHeight {
+export interface PRemoteMap extends IRemoteTargetAndZone, IHeight {
   /**
    * Unique identifier for this map instance, utilised in API interactions and state management
    */
@@ -45,6 +48,14 @@ interface PRemoteMap extends IRemoteTargetAndZone, IHeight {
    * Used to apply custom legend keys based on whats is returned, must return an object in format {key: string, colour: string}
    */
   markerRenderer?: Function;
+  /**
+   * Optional custom overlay or content displayed while loading or handling errors
+   */
+  contents?: ReactNode;
+  /**
+   * Optional flag to trigger a re-fetch of the chart data from the server upon changes
+   */
+  forceUpdate?: boolean;
 }
 
 /**
@@ -63,8 +74,12 @@ export function RemoteMap(props: PRemoteMap) {
     longitudeKey,
     latitudeKey,
     attributeKeys,
+    pageSize = 2500,
     zone,
+    setZone,
     markerRenderer,
+    contents,
+    forceUpdate
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
   const [markers, setMarkers] = useState<object[]>([]);
@@ -73,25 +88,26 @@ export function RemoteMap(props: PRemoteMap) {
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState<number | undefined>(undefined);
   const [legendKey, setLegendKey] = useState<object[]>([]);
-  const filter: TFilterOrUndefined = zone !== undefined
-    ? generateFilter(zone, id)
-    : {};
-
-  // providing a pageSize default
-  let pageSize = 2500;
-  if (props.pageSize !== undefined) {
-    pageSize = props.pageSize;
-  }
+  const [filter, setFilter] = useState<TFilterOrUndefined>({});
 
   useEffect(() => {
+    const compoundedFilter = generateFilter(zone, id);
+    // will trigger [filter] useEffect if update has occured
+    if (filterHasUpdated(setFilter, filter, compoundedFilter)) {
+      resetFiltersBelow({ id: id, zone: zone });
+      setZone({ ...zone });
+    }
+  }, [zone]);
+
+  useEffectUpdate(() => {
     setLoading(true);
     setWarningMessage("");
     setErrorMessage("");
     dataSource
       .custom({
-        method: API_METHODS.GET,
+        method: API_METHODS.POST,
         resource: `${objectType}:count`,
-        params: {
+        body: {
           filter: filter,
         },
       })
@@ -138,7 +154,7 @@ export function RemoteMap(props: PRemoteMap) {
         setErrorMessage(error.message);
         console.error(error.message);
       });
-  }, [zone]);
+  }, [filter, forceUpdate]);
 
   const map = <Map {...props} markers={markers} />;
 
@@ -162,6 +178,10 @@ export function RemoteMap(props: PRemoteMap) {
         height={height}
       />
     );
+  }
+
+  if (contents) {
+    return <>{contents}</>
   }
 
   if (loading) {

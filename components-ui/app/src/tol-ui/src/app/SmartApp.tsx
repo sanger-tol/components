@@ -25,7 +25,7 @@ import {
   env,
   Board,
   ValidationResultsViewer,
-  BoardPrivilegeContextProvider,
+  BoardContextProvider,
   clearUnusedLocalStorage,
   TNavBrand,
   TNavConfig,
@@ -140,6 +140,12 @@ export function SmartApp(props: PSmartApp) {
   }, []);
 
   useEffect(() => {
+    // If no id provided, skip fetching and just use local config
+    if (!id) {
+      setTimeout(() => setGlobalLoading(false), 100);
+      return;
+    }
+
     configDataSource.getOne({
       objectType: WEB_APP,
       id,
@@ -161,7 +167,7 @@ export function SmartApp(props: PSmartApp) {
       // Small delay as loading screen can feel abrupt if it disappears immediately
       setTimeout(() => setGlobalLoading(false), 300);
     });
-  }, []);
+  }, [configDataSource, id]);
 
   const navigation = mergeAndNormaliseNavConfig(fetchedNavigation, defaultNavigation, user, routePrefix);
   const profileNavigation = mergeAndNormaliseNavConfig(fetchedProfileNavigation, defaultProfileNavigation, user, routePrefix);
@@ -172,9 +178,9 @@ export function SmartApp(props: PSmartApp) {
   // Always merge default page elements + incoming (incoming overrides defaults)
   const pageElements: TPageElements = {
     boardDetail: (
-      <BoardPrivilegeContextProvider>
+      <BoardContextProvider>
         <Board boardDataSource={configDataSource} brand={brand} />
-      </BoardPrivilegeContextProvider>
+      </BoardContextProvider>
     ),
     myBoards: <MyBoards boardDataSource={configDataSource} />,
     validationResultsDetail: <ValidationResultsViewer />,

@@ -9,11 +9,11 @@ import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import {
   CellTooltip,
   copyToClipboard,
-  PCell
+  PCellDisplay
 } from "../..";
 
 
-export function LongText(props: PCell) {
+export function LongText(props: PCellDisplay) {
   const { value } = props;
   const CHAR_LIMIT = 32;
 

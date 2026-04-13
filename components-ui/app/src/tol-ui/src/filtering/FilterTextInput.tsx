@@ -13,7 +13,7 @@ import {
   Button,
   stopPropagation,
   IFilterInput,
-  setFilter,
+  setFilterInput,
   filterListener,
   symbolToOperator,
   FilterToggle,
@@ -22,42 +22,46 @@ import {
 } from "..";
 
 
-export function FilterTextInput(props: IFilterInput) {
-  const { attribute, componentId, rename, type, zone, setZone, delay } = props;
+export interface PFilterTextInput extends IFilterInput {
+  /**
+   * Whether the filter is for a numerical field. Used to determine if operator dropdown should be shown.
+   */
+  isNumber?: boolean;
+}
+
+export function FilterTextInput(props: PFilterTextInput) {
+  const { attribute, componentId, rename, type, zone, setZone, delay, isNumber } = props;
   // contains filtering needs adding to specific datasources
   const [values, setValues] = useState([""]);
   const [disabled, setDisabled] = useState(false);
-  const [operator, setOperator] = useState(type === "str" ? "" : "=");
+  const [operator, setOperator] = useState(!isNumber ? "" : "=");
   const [exists, setExists] = useState<boolean>(false);
   const [negate, setNegate] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [listValue, setListValue] = useState<string>("");
   const [timeoutValue, setTimeoutValue] = useState<any>(null);
-  const isNum = type === "int" || type === "float";
-  const operators = isNum ? ["=", "<", ">", "≤", "≥"] : ["contains"];
 
-  filterListener(
-    {
-      attribute: attribute,
-      componentId: componentId,
-      operators: [
-        "in_list",
-        ...operators.map((op) => symbolToOperator(op)),
-      ],
-      zone: zone,
-      setValue: setValues,
-      setDisabled: setDisabled,
-      setExists: setExists,
-      setNegate: setNegate,
-      setOperator: setOperator,
-      emptyValue: [""],
-      zoneToValue: (filterValue: any) => {
-        if (Array.isArray(filterValue)) return filterValue;
-        return [filterValue];
-      },
+  const operators = isNumber ? ["=", "<", ">", "≤", "≥"] : ["contains"];
+
+  filterListener({
+    attribute: attribute,
+    componentId: componentId,
+    operators: [
+      "in_list",
+      ...operators.map((op) => symbolToOperator(op)),
+    ],
+    zone: zone,
+    setValue: setValues,
+    setDisabled: setDisabled,
+    setExists: setExists,
+    setNegate: setNegate,
+    setOperator: setOperator,
+    emptyValue: [""],
+    zoneToValue: (filterValue: any) => {
+      if (Array.isArray(filterValue)) return filterValue;
+      return [filterValue];
     },
-    [zone],
-  );
+  });
 
   const validateInput = (input: string) => {
     const intRegex = /^[-]?[0-9\b]*$|^$/;
@@ -80,7 +84,7 @@ export function FilterTextInput(props: IFilterInput) {
       clearTimeout(timeoutValue!);
       setTimeoutValue(
         setTimeout(() => {
-          setFilter({
+          setFilterInput({
             operator: symbolToOperator(operator, values),
             value: input,
             negate: negate,
@@ -98,7 +102,7 @@ export function FilterTextInput(props: IFilterInput) {
   const onOperator = (op: string) => {
     // reset value and old operator when changing operator
     setValues([""]);
-    setFilter({
+    setFilterInput({
       operator: symbolToOperator(operator, values), // previous operator
       value: "", // resets value
       negate: negate,
@@ -114,7 +118,7 @@ export function FilterTextInput(props: IFilterInput) {
   const onExists = (ex: boolean) => {
     setExists(!ex);
     setValues([""]);
-    setFilter({
+    setFilterInput({
       operator: "exists",
       negate: negate,
       exists: !ex,
@@ -127,7 +131,7 @@ export function FilterTextInput(props: IFilterInput) {
 
   const onNegate = (ng: boolean) => {
     setNegate(!ng);
-    setFilter({
+    setFilterInput({
       operator: exists ? "exists" : symbolToOperator(operator, values),
       value: values.length > 1 ? values : values[0],
       negate: !ng,
@@ -145,7 +149,7 @@ export function FilterTextInput(props: IFilterInput) {
     const input = splitValues(listValue);
     setValues(input);
     if (input.length > 1) {
-      setFilter({
+      setFilterInput({
         operator: "in_list",
         value: input,
         negate: negate,
@@ -155,7 +159,7 @@ export function FilterTextInput(props: IFilterInput) {
         valueExists: true,
       });
     } else {
-      setFilter({
+      setFilterInput({
         operator: symbolToOperator(operator, values),
         value: input[0],
         negate: negate,
@@ -171,7 +175,7 @@ export function FilterTextInput(props: IFilterInput) {
   const inListOnChange = (input: string[]) => {
     if (input.length === 0) {
       setValues([""]);
-      setFilter({
+      setFilterInput({
         operator: "in_list",
         value: "", // resets value
         negate: negate,
@@ -218,10 +222,10 @@ export function FilterTextInput(props: IFilterInput) {
 
   return (
     <div
-      className={isNum ? "tol-num-filter" : "tol-text-filter"}
+      className={isNumber ? "tol-num-filter" : "tol-text-filter"}
       onClick={stopPropagation}
     >
-      {isNum && (
+      {isNumber && (
         <Dropdown title={operator} noCaret>
           {operators.map((op, i) => {
             if (op !== operator) {
@@ -234,7 +238,7 @@ export function FilterTextInput(props: IFilterInput) {
           })}
         </Dropdown>
       )}
-      {type === "str" && values.length <= 1 && (
+      {!isNumber && values.length <= 1 && (
         <BSButton
           className="tol-in-list-button"
           disabled={disabled}
@@ -243,7 +247,7 @@ export function FilterTextInput(props: IFilterInput) {
           <FontAwesomeIcon icon={faList} size="sm" />
         </BSButton>
       )}
-      {type === "str" && values.length > 1 ? (
+      {!isNumber && values.length > 1 ? (
         <span className="tol-multi-filter">
           <MultipleSelect
             block
@@ -270,7 +274,6 @@ export function FilterTextInput(props: IFilterInput) {
         onNegate={onNegate}
         exists={exists}
         onExists={onExists}
-        disabled={disabled}
       />
       <Modal
         size="md"
