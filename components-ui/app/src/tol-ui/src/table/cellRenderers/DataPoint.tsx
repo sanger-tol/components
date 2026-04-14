@@ -6,12 +6,12 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  ACTIONS,
   API_METHODS,
   CellDisplay,
   CellEditable,
   CellEditableStatus,
   getFieldByName,
+  getUserFromLocalStorage,
   PDataPoints,
   PopUpMessage,
 } from "../..";
@@ -22,6 +22,10 @@ export interface PDataPoint extends PDataPoints {
    * Whether the data point is being rendered within a tag component. Used for styling purposes.
    */
   isMany?: boolean,
+  /**
+   * Id of the parent DataObject, used for upsert calls when saving edits to the data point.
+   */
+  parentObjectId?: string;
 }
 
 /**
@@ -36,6 +40,7 @@ export function DataPoint(props: PDataPoint) {
     editable,
     isMany,
     actsAs,
+    parentObjectId,
   } = props;
 
   const attributeValue = getFieldByName(dataObject, field);
@@ -73,22 +78,21 @@ export function DataPoint(props: PDataPoint) {
   const onSaveStatus = (selectedStatusTypeId: string) => {
     if (!dataObject) return;
     setLoading(true);
-    const parentObjectType = dataObject.objectType.replace(/_status$/, "");
+    const parentObjectType = dataObject.objectType.replace(/_status.*$/, "");
     const actionBaseUrl = dataSource
       .getBaseUrl()
       ?.replace(/\/data(?:\/[^/]+)?$/, "");
 
+    const user = getUserFromLocalStorage();
     dataSource
       .custom({
         method: API_METHODS.POST,
         resource: `local/${parentObjectType}:action`,
         body: {
-          data: {
-            ids: [dataObject.id],
-            action_name: "SetStatusAction",
-            object_type: parentObjectType,
-            params: { status: selectedStatusTypeId },
-          },
+          ids: [parentObjectId],
+          action_name: "SetStatusAction",
+          object_type: parentObjectType,
+          params: { status: selectedStatusTypeId, user_id: user?.id },
         },
         options: actionBaseUrl ? { baseURL: actionBaseUrl } : undefined,
       })
