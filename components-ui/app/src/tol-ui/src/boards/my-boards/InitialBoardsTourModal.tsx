@@ -9,7 +9,7 @@ import {
   BUTTONS,
   disableTour,
   Modal,
-  registerTourStepAsSeen,
+  registerTourAsSeen,
 } from "../..";
 
 
@@ -41,7 +41,7 @@ export function InitialBoardsTourModal(props: PInitialBoardsTourModal) {
 
   const handleClose = async () => {
     // Register this specific tour step as seen
-    await registerTourStepAsSeen("initial", userId);
+    await registerTourAsSeen("initial", userId);
 
     // Disable the whole tour if the checkbox was unchecked when the modal was closed
     if (!showTour) {

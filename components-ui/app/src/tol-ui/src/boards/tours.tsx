@@ -10,11 +10,11 @@ import "driver.js/dist/driver.css";
 
 /**
  * Checks whether a dashboard tour step (by name) has yet been viewed by the user
- * @param stepName String name of the tour step to check
+ * @param tourName String name of the tour to check
  * @returns Whether the value returned from the database is `true`
  */
-export async function fetchHasTourStepBeenSeen(
-  stepName: string,
+export async function hasTourBeenSeen(
+  tourName: string,
   userId: string,
 ): Promise<boolean> {
   // Fetch user details
@@ -28,14 +28,14 @@ export async function fetchHasTourStepBeenSeen(
   if (!user) return false;
 
   // if tours_seen is null, no tour has been started, so it must be initiated.
-  if (!user.tours_seen && stepName === "initial") {
+  if (!user.tours_seen && tourName === "initial") {
     return false;
   }
 
   // Check whether the tour is enabled and the specified step has been completed
   return (
     user.tours_seen?.tour_disabled == true ||
-    user.tours_seen?.[stepName] == true
+    user.tours_seen?.[tourName] == true
   );
 }
 
@@ -44,7 +44,7 @@ export async function fetchHasTourStepBeenSeen(
  * @param stepName The name of the tour step to register as seen
  * @param userId The string id of the user to set this data on
  */
-export async function registerTourStepAsSeen(
+export async function registerTourAsSeen(
   stepName: string,
   userId: string,
 ): Promise<void> {
@@ -76,14 +76,15 @@ export async function registerTourStepAsSeen(
   });
 }
 
+// TODO Deprecated
 export async function disableTour(userId: string): Promise<void> {
-  await registerTourStepAsSeen("tour_disabled", userId);
+  await registerTourAsSeen("tour_disabled", userId);
 }
 
 export async function processTour(tourName: string, tourConfig: ITourStep[]) {
   const userID = getUserFromLocalStorage().id;
 
-  const seen = await fetchHasTourStepBeenSeen(tourName, userID);
+  const seen = await hasTourBeenSeen(tourName, userID);
   if (seen) return;
 
   const driverObj = driver({
@@ -94,7 +95,7 @@ export async function processTour(tourName: string, tourConfig: ITourStep[]) {
     })),
     buttons: ["previous", "next", "close"],
     onDestroyStarted: () => {
-      registerTourStepAsSeen(tourName, userID);
+      registerTourAsSeen(tourName, userID);
       driverObj.destroy();
     },
   });
