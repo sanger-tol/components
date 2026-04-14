@@ -27,6 +27,7 @@ import {
   getRelationshipNameByField,
   CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
   CELL_RENDERER_SPREAD_OPERATOR,
+  BOARDS,
 } from "..";
 
 interface Rgb {
@@ -422,6 +423,14 @@ export function updateFieldMetaAttribute(
   if (dataWithDefaults) updateTarget("dataWithDefaults");
 }
 
+/**
+ * Resets a component's table configuration to its default state by deleting
+ * the user-specific board diff record from the data source.
+ *
+ * @param componentId - The ID of the component whose table config should be reset
+ * @param boardDataSource - The data source used to query and delete board diff records
+ * @param userId - The ID of the user whose table config customisation should be removed
+ */
 export async function resetTableConfigToDefault(
   componentId: string,
   boardDataSource: TsDataSource,
@@ -429,7 +438,7 @@ export async function resetTableConfigToDefault(
 )  {
   await boardDataSource
     .getList({
-      objectType: "board_diff",
+      objectType: BOARDS.BOARD_DIFF,
       filter: {
         and_: {
           component_id: { eq: { value: componentId } },
@@ -438,11 +447,11 @@ export async function resetTableConfigToDefault(
       },
       requestedFields: ["id"],
     })
-    .then(async (res) => {
-      const id = res?.[0]?.id;
+    .then(async (res: TDataObjectListOrNull) => {
+      const id: string = res?.["id"];
       if (id) {
         await boardDataSource.deleteByID({
-          objectType: "board_diff",
+          objectType: BOARDS.BOARD_DIFF,
           id: id,
         });
       }

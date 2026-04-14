@@ -12,6 +12,7 @@ import {
   IDBZoneView,
   IZone,
   TDataObjectListOrNull,
+  TDataObjectOrNull,
   TsDataSource,
 } from "../..";
 
@@ -92,6 +93,20 @@ async function getComponentZoneData(
   });
 }
 
+/**
+ * Fetches board component data and merges with any user-specific configuration diffs.
+ *
+ * Retrieves the base component records for the given IDs, then fetches any saved
+ * diff records for the current user. If a diff exists for a component and its config
+ * is non-null, the component is wrapped in a `Proxy` that overrides the `config`
+ * property with the diff's value. A null diff config indicates the config was reset
+ * and is therefore not applied.
+ *
+ * @param componentIds - The IDs of the components to fetch
+ * @param boardDataSource - The data source used to query component and diff records
+ * @returns A list of component data objects, with user diffs applied where present,
+ * or `null` if no component data was returned
+ */
 async function getComponentData(
   componentIds: string[],
   boardDataSource: TsDataSource,
@@ -119,22 +134,26 @@ async function getComponentData(
     requestedFields: ["config", "component_id"],
   });
 
-  // Map over each component and replace diff config if exists
-  return boardData?.map((component) => {
-    if (!component) return component;
-    const diff = boardDiff?.find((d) => d?.["component_id"] === component.id);
-    // Only apply the diff when config is non-null; null means the diff was reset
-    if (diff && diff.config != null) {
-      // Create new proxy and intercept get method to return new config
-      return new Proxy(component, {
-        get(target, prop, receiver) {
-          if (prop === "config") return diff.config;
-          return Reflect.get(target, prop, receiver);
-        },
-      });
-    }
-    return component;
-  }) ?? null;
+  return (
+    // Map over each component and replace diff config if exists
+    boardData?.map((component: TDataObjectOrNull) => {
+      if (!component) return component;
+      const diff = boardDiff?.find(
+        (d: TDataObjectOrNull) => d?.["component_id"] === component.id,
+      );
+      // Only apply the diff when config is non-null; null means the diff was reset
+      if (diff && diff.config != null) {
+        // Create new proxy and intercept get method to return new config
+        return new Proxy(component, {
+          get(target, prop, receiver) {
+            if (prop === "config") return diff.config;
+            return Reflect.get(target, prop, receiver);
+          },
+        });
+      }
+      return component;
+    }) ?? null
+  );
 }
 
 export async function upsertNewComponent(

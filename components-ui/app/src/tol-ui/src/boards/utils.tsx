@@ -158,7 +158,7 @@ export async function upsertComponent(
           requestedFields: ["id"],
         })
         .then(async (res) => {
-          const id = res?.[0]?.id;
+          const id = res?.["id"];
           await boardDataSource.upsert({
             objectType: BOARDS.BOARD_DIFF,
             payload: [
