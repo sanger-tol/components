@@ -81,7 +81,9 @@ export async function disableTour(userId: string): Promise<void> {
 }
 
 export async function processTour(tourName: string, tourConfig: ITourStep[]) {
-  const seen = await fetchHasTourStepBeenSeen(tourName, getUserFromLocalStorage().id);
+  const userID = getUserFromLocalStorage().id;
+
+  const seen = await fetchHasTourStepBeenSeen(tourName, userID);
   if (seen) return;
 
   const driverObj = driver({
@@ -92,7 +94,7 @@ export async function processTour(tourName: string, tourConfig: ITourStep[]) {
     })),
     buttons: ["previous", "next", "close"],
     onDestroyStarted: () => {
-      console.log("YOU HAVE BEEN DESTROYED");
+      registerTourStepAsSeen(tourName, userID);
       driverObj.destroy();
     },
   });
