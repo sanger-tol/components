@@ -49,6 +49,7 @@ export function DataPoint(props: PDataPoint) {
   const [prevValue, setPrevValue] = useState(attributeValue);
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hasChanged, setHasChanged] = useState(false);
 
   const canEdit = (
     actsAs === "status" || typeof value === "string" || value instanceof Date
@@ -72,10 +73,18 @@ export function DataPoint(props: PDataPoint) {
 
   const onCancel = () => {
     setEditMode(false);
-    setValue(prevValue);
+    if (!hasChanged) {
+      setValue(prevValue);
+    }
   };
 
   const onSaveStatus = (selectedStatusTypeId: string) => {
+
+    if (selectedStatusTypeId == value) {
+      PopUpMessage({type: "info", message: "Status value is unchanged"});
+      return;
+    }
+
     if (!dataObject) return;
     setLoading(true);
     const parentObjectType = dataObject.objectType.replace(/_status.*$/, "");
@@ -99,12 +108,16 @@ export function DataPoint(props: PDataPoint) {
       .then(() => {
         setEditMode(false);
         PopUpMessage({ type: "success", message: "Status updated successfully." });
+        setValue(selectedStatusTypeId);
+        setHasChanged(true);
       })
       .catch((error: any) => {
         PopUpMessage({ type: "error", message: `Error saving: ${error.message}` });
         setEditMode(false);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false)
+      });
   };
 
   const onSave = () => {
