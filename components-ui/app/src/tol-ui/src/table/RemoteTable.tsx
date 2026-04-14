@@ -25,6 +25,7 @@ import {
   filterHasUpdated,
   generateFilter,
   getTableConfigLocalStorage,
+  clearTableConfigLocalStorage,
   resetFiltersBelow,
   setTableConfigLocalStorage,
   addFieldMetaDefaults,
@@ -241,7 +242,7 @@ export function RemoteTable(props: PRemoteTable) {
     contents,
     height = "100%",
     forceUpdate,
-    onReset,
+    onReset: propOnReset,
   } = props;
 
   // data and field information
@@ -346,6 +347,24 @@ export function RemoteTable(props: PRemoteTable) {
       )
     }
   }
+
+  const onReset = propOnReset ?? (async () => {
+    clearTableConfigLocalStorage(id);
+    const resetFieldMeta = initialiseFieldMeta(fields);
+    setFieldMeta(resetFieldMeta);
+    setPageSize(props.pageSize ?? 50);
+    setSortByAttribute(props.defaultSortByAttribute ?? fields?.order?.active?.[0]);
+    setSortByType(props.defaultSortByType ?? "asc");
+    setFilterVisibility(props.filterVisibility ?? true);
+    setPage(1);
+    // Re-enrich fieldMeta and explicitly re-render so changes are visible immediately
+    // without requiring a page refresh
+    const enrichedFieldMeta = !basic
+      ? await addFieldMetaDefaults(objectType, resetFieldMeta, dataSource).catch(() => resetFieldMeta)
+      : resetFieldMeta;
+    setFieldMeta(enrichedFieldMeta);
+    setFullLoad(true);
+  });
 
   const renderTable = async () => {
     if (fullLoad) {

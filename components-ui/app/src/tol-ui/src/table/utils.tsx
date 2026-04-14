@@ -222,6 +222,10 @@ export function getTableConfigLocalStorage(tableId: string, key?: string) {
   }
 }
 
+export function clearTableConfigLocalStorage(tableId: string) {
+  localStorage.removeItem(getTableConfigKey(tableId));
+}
+
 function rgbToString(rgb: Rgb, opacity: number) {
   return (
     "rgba(" +
