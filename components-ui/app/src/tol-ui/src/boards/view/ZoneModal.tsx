@@ -24,6 +24,7 @@ import {
   TsDataSource,
   normaliseCaps,
   PopUpMessage,
+  processTour,
 } from "../..";
 
 export interface PZoneModal extends PBoard {
@@ -47,7 +48,6 @@ export function ZoneModal(props: PZoneModal) {
     setZoneOrder,
     viewId,
     boardDataSource,
-    handleStartTour,
   } = props;
 
   const [dataSourceInstancesLoading, setDataSourceInstancesLoading] =
@@ -68,7 +68,16 @@ export function ZoneModal(props: PZoneModal) {
 
   useEffect(() => {
     if (open) {
-      handleStartTour?.();
+      processTour(
+        "addZone",
+        [
+          {
+            testid: "object-type-picker",
+            title: "TOUR STEP",
+            description: "This is an Object Type picker!! wow",
+          }
+        ]
+      );
       fetchPublishedDataspaces(boardDataSource)
         .then((dataObjects) => {
           if (dataObjects) {
