@@ -21,11 +21,17 @@ export interface IComponentData {
   defaultFilter?: IFilter;
   subFilter?: IFilter;
   filterPassThrough?: boolean;
-  type?: string; // component type e.g. table
-  size?: string; // component size e.g. sm
+  /**
+   * The component type e.g. table
+   */
+  type?: string;
+  /**
+   * The size of the component e.g. sm, md, lg
+   */
+  size?: string;
   order?: number;
 
-  // used for boards
+  // extras required just for boards
   componentZoneId?: string;
   title?: string;
   objectType?: string;
@@ -37,22 +43,35 @@ export interface IComponents {
   [id: string]: IComponent;
 }
 
-// filtering is at the zone level
 export interface IZone {
   components: IComponents;
   order: string[];
   filter?: IFilter;
   defaultFilter?: IFilter;
-  type?: string;
+  objectType?: string;
+
+  // extras required just for boards
+  id?: string;
+  title?: string;
+  dataspace?: TsDataSource;
 }
 
 export interface IZones {
   [id: string]: IZone;
 }
 
+export interface IDBZoneView {
+  zoneId: string;
+  order: number;
+  zoneViewId: string;
+}
+
+export type TDBZoneViews = IDBZoneView[];
+
 export interface IView {
   zones: IZones;
   order: string[];
+  dbOrder?: TDBZoneViews;
 }
 
 export interface IViews {
@@ -131,14 +150,14 @@ export interface IZoneControl {
   setZone: (zone: IZone) => void;
 }
 
-export interface IRemoteTargetAndZone extends IRemoteTarget, IZoneControl {}
+export interface IRemoteTargetAndZone extends IRemoteTarget, IZoneControl { }
 
 export interface IBoardTarget {
   boardObjectType: string;
   boardDataSource: TsDataSource;
 }
 
-export interface IBoardTargetAndZone extends IRemoteTargetAndZone, IBoardTarget {}
+export interface IBoardTargetAndZone extends IRemoteTargetAndZone, IBoardTarget { }
 
 export type TUtilityBarOrNull = PUtilityBar | null;
 
@@ -149,19 +168,7 @@ export interface IUseZoneMeta {
   setZone: (zone: IZone) => void;
 }
 
-export interface IDBZone {
-  id: string;
-  objectType: string;
-  title: string;
-  filter?: IFilter;
-  dataspace?: TsDataSource;
-}
-
-export interface IDBZoneView {
-  zoneId: string;
-  order: number;
-  zoneViewId: string;
-}
+export type TBoardLevel = "views" | "zones" | "components";
 
 export interface IUpdatedZoneIds {
   newZoneId: string;

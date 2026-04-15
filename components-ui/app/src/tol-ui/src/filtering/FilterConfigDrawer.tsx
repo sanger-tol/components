@@ -19,7 +19,7 @@ import {
   IFilter,
   AttributeSelector,
   Icon,
-  defineZone,
+  defineZoneWithComponentList,
   IZone,
 } from ".."
 
@@ -56,7 +56,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   // Local state for the filter zone if this is a zone level filter, otherwise use the passed zone/setZone
   // const zoneFilterId = "filter-zone-component";
   const [filterZone, setFilterZone] = useState<IZone>(
-    defineZone("dummy-object-for-remote-filters", [
+    defineZoneWithComponentList("dummy-object-for-remote-filters", [
       { id: id, filter: prevFilters },
     ]),
   );

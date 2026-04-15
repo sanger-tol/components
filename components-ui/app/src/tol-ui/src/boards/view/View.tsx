@@ -11,8 +11,6 @@ import {
   getZones,
   Zone,
   BOARDS,
-  IDBZone,
-  IDBZoneView,
   PBoard,
   reorderZoneAndUpsert,
   getSortedZones,
@@ -20,7 +18,10 @@ import {
   TsDataSource,
   UtilityBar,
   BUTTONS,
-  useBoardState
+  useBoardState,
+  IBoard,
+  IZone,
+  IView,
 } from "../..";
 
 
@@ -34,21 +35,18 @@ export function View(props: PView) {
 
   const { editMode, layoutMode, board, setBoard } = useBoard();
 
-  const [view, setView] = useBoardState(
+  const [view, setView] = useBoardState<IBoard, IView>(
     "views",
     id,
     board,
     setBoard,
-    {zones: {}, order: []}
+    { zones: {}, order: [], dbOrder: [] }
   );
-
-  const [zones, setZones] = useState<IDBZone[]>([]);
   const [open, setOpen] = useState(false);
-  const [zoneOrder, setZoneOrder] = useState<IDBZoneView[]>([]);
 
   useEffect(() => {
     getZones(id, boardDataSource).then((data: any) => {
-      const initialZones = data.zones.map((zone) => {
+      const initialZones = data.zones.map((zone: any) => {
         const dsi = zone.relationships.data_source_instance;
 
         return {
@@ -60,13 +58,16 @@ export function View(props: PView) {
             ...dsi.ui_api_details,
             dataSourceInstanceId: dsi.id,
           }),
-        };
+        } as IZone;
       });
-      setZoneOrder(data.order);
-      setZones(initialZones);
+      console.log(data);
+      console.log(initialZones);
+      // view.zones = (initialZones);
+      // view.zoneDbOrder = data.zoneViewOrder;
     });
   }, []);
 
+  /*
   const deleteZone = (id: string) => {
     boardDataSource
       .deleteByID({
@@ -113,10 +114,11 @@ export function View(props: PView) {
       />
     </div>
   )
+  */
 
   return (
     <div className="tol-view">
-      {editMode && Bar}
+      {/* {editMode && Bar}
       <ZoneModal
         open={open}
         setOpen={setOpen}
@@ -126,14 +128,14 @@ export function View(props: PView) {
         setZoneOrder={setZoneOrder}
         viewId={id}
         boardDataSource={boardDataSource}
-      />
-      {zones.length > 0 ? (
+      /> */}
+      {/* {view.zones.length > 0 ? (
         <div className="tol-zones">
           {getSortedZones(zones, zoneOrder).map((zone) => {
             return (
               <Zone
                 key={zone.id}
-                id={zone.id} 
+                id={zone.id}
                 title={zone.title}
                 objectType={zone.objectType}
                 dataspace={zone.dataspace!}
@@ -155,7 +157,7 @@ export function View(props: PView) {
             <p>No zones found</p>
           )}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

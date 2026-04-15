@@ -28,7 +28,7 @@ export function useZone(params: {
 }) {
   const { objectType, dataSource, components, filter } = params;
   const [zone, setZone] = useState(
-    defineZone(
+    defineZoneWithComponentList(
       objectType,
       components,
       filter
@@ -90,15 +90,15 @@ export function useTranslator(params: {
 }
 
 export function defineComponent(component: IComponentData, zone: IZone) {
-	// setting default as empty if no filter provided
-	const f = component.filter === undefined ? { and_: {} } : component.filter;
-	zone.components[component.id!] = {
-		data: {
-			filter: deepCopy(f),
-			defaultFilter: deepCopy(f),
-			...component,
-		},
-	};
+  // setting default as empty if no filter provided
+  const f = component.filter === undefined ? { and_: {} } : component.filter;
+  zone.components[component.id!] = {
+    data: {
+      filter: deepCopy(f),
+      defaultFilter: deepCopy(f),
+      ...component,
+    },
+  };
 }
 
 export function addComponent(component: IComponentData, zone: IZone) {
@@ -112,46 +112,80 @@ export function addComponents(components: IComponentData[], zone: IZone) {
   }
 }
 
-export function defineZone(
+/**
+ * Defines a zone with the given parameters and adds the specified components to it.
+ * @param objectType - The type of the zone object.
+ * @param components - An object containing the components to be added to the zone.
+ * @param objectType - The type of the zone object.
+ * @param filter - An optional filter to be applied to the zone.
+ * @returns The defined zone with the added components.
+ */
+export function defineZone({
+  components = {},
+  order = [],
+  objectType,
+  filter = { and_: {} },
+  ...rest
+}: IZone): IZone {
+  const zone: IZone = {
+    components: components,
+    order: order,
+    objectType: objectType,
+    filter: deepCopy(filter),
+    defaultFilter: deepCopy(filter),
+    ...rest
+  };
+  addComponents(order.map(id => (components[id].data)), zone);
+  return zone;
+}
+
+/**
+ * Simplified of defineZone for when you just want to pass a list of components without needing to worry about the structure of the zone object.
+ * 
+ * @param objectType - The type of the zone object.
+ * @param components - An array of component data to be added to the zone.
+ * @param filter - An optional filter to be applied to the zone.
+ * 
+ * @returns The defined zone with the added components.
+ */
+export function defineZoneWithComponentList(
   objectType: string,
   components: IComponentData[],
   filter?: IFilter,
 ) {
-  const f = filter === undefined ? { and_: {} } : filter;
-  const zone: IZone = {
-    components: {},
-    order: [],
-    type: objectType,
-    filter: deepCopy(f),
-    defaultFilter: deepCopy(f),
-  };
-  addComponents(components, zone);
-  return zone;
+  return defineZone({
+    objectType,
+    filter,
+    components: components.reduce((acc, component) => {
+      acc[component.id!] = { data: component };
+      return acc;
+    }, {} as { [id: string]: { data: IComponentData } }),
+    order: components.map(component => component.id!),
+  });
 }
 
 /**
  * A custom hook that provides a fallback mechanism for managing the state of a zone.
  *
- * @param {IRemoteTargetAndZone & { id: string }} params - The parameters for the hook.
- * @param {string} params.id - The unique identifier for the component.
- * @param {string} params.objectType - The type of the object associated with the zone.
- * @param {any} params.zone - The current state of the zone.
- * @param {(state: any) => void} params.setZone - A function to update the state of the zone.
+ * @param id - The unique identifier for the component.
+ * @param objectType - The type of the object associated with the zone.
+ * @param zone - The current state of the zone.
+ * @param setZone - A function to update the state of the zone.
  * 
- * @returns {[any, (state: any) => void]} - A tuple containing the current state of the zone and a function to update it.
+ * @returns A tuple containing the current state of the zone and a function to update it.
  */
 export function useZoneStateFallback({
   id,
   objectType,
   zone,
   setZone,
-}: IRemoteTargetAndZone & {id: string}): [any, (state: any) => void] {
+}: IRemoteTargetAndZone & { id: string }): [any, (state: any) => void] {
   return useStateFallback(
     zone,
     setZone,
-    defineZone(
+    defineZoneWithComponentList(
       objectType,
-      [{id: id}],
+      [{ id: id }],
     ),
   );
 }

@@ -13,12 +13,17 @@ export const useBoard = () => {
 
   if (context === undefined) {
     return {
+      board: {
+        views: {},
+        order: []
+      },
+      setBoard: () => { },
       privilege: undefined,
-      setPrivilege: () => {},
+      setPrivilege: () => { },
       editMode: false,
-      setEditMode: () => {},
+      setEditMode: () => { },
       layoutMode: false,
-      setLayoutMode: () => {}
+      setLayoutMode: () => { }
     };
   }
 

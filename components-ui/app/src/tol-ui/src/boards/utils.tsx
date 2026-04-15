@@ -12,7 +12,8 @@ import {
   IZone,
   IBoard,
   IView,
-  BOARD_LEVEL
+  TBoardLevel,
+  IComponent
 } from "..";
 
 
@@ -157,7 +158,7 @@ export async function updateConfigAndUpsert(
   zone: IZone,
   boardDataSource: TsDataSource,
 ) {
-  zone.components[componentId].data.config = config;
+  if (zone.components) zone.components[componentId].data.config = config;
   return await upsertComponent(
     boardDataSource,
     componentId,
@@ -165,34 +166,36 @@ export async function updateConfigAndUpsert(
   );
 }
 
-export function useBoardState(
-  boardLevel: BOARD_LEVEL,
+/**
+ * Custom hook for managing board state at different levels (board, view, zone). It initializes state if not already set and provides a setter function to update the state.
+ * 
+ * @param boardLevel - The level of the board to manage (e.g zone will be 'zones' so it can see its siblings).
+ * @param id - The ID of the board element to manage.
+ * @param parentStateValue - The current state of the board (IBoard, IView, or IZone).
+ * @param setParentStateValue - The setter function to update the board state.
+ * @param initialSetup - Optional initial setup for the board element if it doesn't already exist in the state.
+ * 
+ * @returns A tuple containing the current value of the board element and a setter function to update it.
+ */
+export function useBoardState<TParent extends IBoard | IView | IZone, TChildren extends IView | IZone | IComponent>(
+  boardLevel: TBoardLevel,
   id: string,
-  boardValue: IBoard | IView | IZone,
-  setBoardValue: (newValue: IBoard | IView | IZone) => void,
-  initialSetup?: object
-) {
-  if (initialSetup && boardValue[boardLevel][id] == undefined) {
-    const newValue = {
-      ...boardValue,
-      [boardLevel]: {
-        ...boardValue[boardLevel],
-        [id]: initialSetup
-      },
-      order: [...(boardValue.order ?? []), id]
-    }
-    setBoardValue(newValue);
+  parentStateValue: TParent,
+  setParentStateValue: (newValue: TParent) => void,
+  initialSetup?: TChildren
+): [TChildren, (newValue: TChildren) => void] {
+  const buildValue = (entry: TChildren) => ({
+    ...parentStateValue,
+    [boardLevel]: { ...parentStateValue[boardLevel], [id]: entry },
+    order: [...(parentStateValue.order ?? []), id],
+  }) as TParent;
+
+  if (initialSetup && parentStateValue[boardLevel][id] == undefined) {
+    setParentStateValue(buildValue(initialSetup));
   }
-  const value = boardValue[boardLevel][id];
-  const setValue = (newValue: IBoard | IView | IZone) => {
-    setBoardValue({
-      ...boardValue,
-      [boardLevel]: {
-        ...boardValue[boardLevel],
-        [id]: newValue
-      },
-      order: [...(boardValue.order ?? []), id]
-    });
-  }
-  return [value, setValue] as const;
+
+  const value = parentStateValue[boardLevel][id] as TChildren;
+  const setValue = (newValue: TChildren) => setParentStateValue(buildValue(newValue));
+
+  return [value, setValue];
 }
