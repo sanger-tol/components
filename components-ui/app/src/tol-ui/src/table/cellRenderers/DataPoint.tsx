@@ -56,19 +56,15 @@ export function DataPoint(props: PDataPoint) {
   const [loading, setLoading] = useState(false);
   const [hasChanged, setHasChanged] = useState(false);
 
+  // TODO: Make sure that string and date upserts have a role binding
   const canEdit = (
-    actsAs === "status" || typeof value === "string" || value instanceof Date
+    actsAs === "status" //|| typeof value === "string" || value instanceof Date
   );
 
   const onDoubleClick = () => {
     if (!editable) return;
     if (canEdit) {
       setEditMode(true);
-    } else {
-      PopUpMessage({
-        type: "info",
-        message: "Only string & Date values are editable currently.",
-      })
     }
   }
 
