@@ -27,7 +27,7 @@ export async function processTour(tourName: string, tourConfig: ITourStep[]) {
       element: `[data-testid="${step.testid}"]`,
       popover: { title: step.title, description: step.description },
     })),
-    buttons: ["previous", "next", "close"],
+    showButtons: ["previous", "next", "close"],
     onDestroyStarted: () => {
       // registerTourAsSeen(tourName, userID);
       console.log("YOU HAVE BEEN DESTROYED!");
