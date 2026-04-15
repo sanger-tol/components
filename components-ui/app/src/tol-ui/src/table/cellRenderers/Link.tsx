@@ -19,8 +19,8 @@ export interface PLink extends PCellDisplay {
 }
 
 export function Link(props: PLink) {
-  const { value, url, text, newTab, buttonConfig } = props;
-  const t = text || value;
+  const { url, text, newTab, buttonConfig } = props;
+  const t = text || url;
 
   const isExternal = () => {
     return /^(https?:\/\/|www\.|[a-zA-Z0-9-]+\.[a-zA-Z]{2,})/.test(url);

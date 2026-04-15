@@ -30,7 +30,17 @@ export interface PImages extends Omit<PImageCarousel, "link" | "setLink" | "onIm
  * 
  */
 export function Images(props: PImages) {
-  const { links, height, fill, alt, enableModal = true, className, style } = props;
+  const {
+    links,
+    height,
+    fill,
+    alt,
+    enableModal = true,
+    className,
+    style,
+    autoPlayIntervalMs = 0,
+    pauseOnHover,
+  } = props;
   const [link, setLink] = useState(links[0] || "");
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -56,6 +66,8 @@ export function Images(props: PImages) {
         height={height}
         fill={fill}
         alt={alt}
+        autoPlayIntervalMs={autoPlayIntervalMs}
+        pauseOnHover={pauseOnHover}
         setLink={setLink}
         onImageClick={enableModal ? (selected) => {
           setLink(selected);

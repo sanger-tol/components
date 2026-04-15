@@ -81,7 +81,7 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
           {MenuItem}
         </Tabs.Tab>
         <Tabs.Tab eventKey="advanced" title="Advanced Search">
-          <div className="tol-advance-search-tab-container">
+          <div className="tol-advance-search-tab-container" onKeyDown={stopPropagation}>
             <AutoComplete
               label=""
               // Add available relationships state in data
@@ -92,7 +92,6 @@ export function AdvanceSearchTab(props: PAdvanceSearchTab) {
             />
             <span
               className="tol-advance-search-tab-search"
-              onKeyDown={stopPropagation}
             >
               <div className="tol-advance-search-tab-tooltip">
                 <IconTooltip

@@ -6,6 +6,20 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.4.4`
+10-04-2026
+- Fixed bug: NormaliseCaps only replacing the first period in a system name
+- Fixed bug: Link renderer's display value defaulting to `value` even when of type object (TOLP-9731)
+- Fixed bug: Image renderer - cannot click on whole image to open modal
+- Fixed bug: Advanced search removing all selected fields (TOLP-9702)
+
+## tol-ui `3.4.3`
+08-04-2026
+- Fixed bug: Fixed MVP table actions. It now uses props.dataObject.'attribute' instead of props.value
+- Fixed bug: Dark mode key bug on map tooltips
+- Fixed bug: Amalgamate requested fields race condition
+- Fixed bug: `Undefined` filter causing 500 on group stats endpoint
+
 ## tol-ui `3.4.2`
 07-04-2026
 - Fixed bug: FilterConfigDrawer deals with undefined filters
