@@ -86,7 +86,8 @@ export function DataPoint(props: PDataPoint) {
   const onSaveStatus = (selectedStatusTypeId: string) => {
 
     if (selectedStatusTypeId == value) {
-      PopUpMessage({type: "info", message: "Status value is unchanged"});
+      PopUpMessage({ type: "success", message: "Status updated successfully." })
+      setEditMode(false);
       return;
     }
 
