@@ -118,7 +118,7 @@ export async function getZones(viewId: string, boardDataSource: TsDataSource) {
       const ids: string[] = Array.from(new Set(allIds));
       const zoneData = await getZoneData(ids, boardDataSource);
       return {
-        order: await formatZoneOrders(data),
+        zoneDbOrder: await formatZoneOrders(data),
         zones: zoneData,
       };
     });

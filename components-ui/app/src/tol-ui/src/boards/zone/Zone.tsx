@@ -57,11 +57,6 @@ export function Zone(props: PZone) {
 
   const { editMode, layoutMode } = useBoard();
 
-  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [openFilters, setOpenFilters] = useState(false);
-  const [title, setTitle] = useState(props.title);
-
   const definedZone = defineZone(objectType, [], filter)
   const [zone, setZone] = useBoardState(
     "zones",
@@ -71,36 +66,40 @@ export function Zone(props: PZone) {
     definedZone
   );
 
-  
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [openFilters, setOpenFilters] = useState(false);
+  const [title, setTitle] = useState(props.title);
+
   // UseZone will eventually be phased out as the useBoardState hook
   // allows access to other zones (outside of itself) which is needed
   // for translators to work
-  
-  // const z = useZone({
-    //   dataSource: dataspace,
-    //   objectType,
-    //   filter: filter,
-    //   components: [],
-    // });
-    
-    const z = {
-      objectType: objectType,
-      dataSource: dataspace,
-      zone: zone || {
-        objectType: objectType,
-        components: [],
-        filter: filter,
-        defaultFilter: filter,
-        order: []
-      },
-      setZone: setZone
-    } as IUseZoneMeta;
 
-    // TODO: This z variable sets the zone key with empty values on the initial load
-    // This prevents 'not found' errors when getting default filters etc
-    // However, it does then not re-render even after the zone (from the Board state hook) is updated
-    // To fix this it needs to be updated in a useEffect like the one below but it circular
-    // calls
+  // const z = useZone({
+  //   dataSource: dataspace,
+  //   objectType,
+  //   filter: filter,
+  //   components: [],
+  // });
+
+  const z = {
+    objectType: objectType,
+    dataSource: dataspace,
+    zone: zone || {
+      objectType: objectType,
+      components: [],
+      filter: filter,
+      defaultFilter: filter,
+      order: []
+    },
+    setZone: setZone
+  } as IUseZoneMeta;
+
+  // TODO: This z variable sets the zone key with empty values on the initial load
+  // This prevents 'not found' errors when getting default filters etc
+  // However, it does then not re-render even after the zone (from the Board state hook) is updated
+  // To fix this it needs to be updated in a useEffect like the one below but it circular
+  // calls
 
   useEffect(() => {
     getComponents(id, boardDataSource).then((components) => {

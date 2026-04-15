@@ -19,7 +19,7 @@ import {
   IFilter,
   isEmptyObject,
   BUTTONS,
-  defineZone,
+  defineZoneWithComponentList,
   AttributeSelector,
   IZone,
   generateFilter,
@@ -46,7 +46,7 @@ export function CellRendererModal(props: PCellRendererModal) {
   const [conditionHasPendingChanges, setConditionHasPendingChanges] = useState<boolean>(false);
   const zoneFilterId = "cell-renderer-zone"
   const [filterZone, setFilterZone] = useState<IZone>(
-    defineZone("dummy-object-for-remote-filters", [
+    defineZoneWithComponentList("dummy-object-for-remote-filters", [
       { id: zoneFilterId, filter: renderer?.props?.[selectedConditionParam!] as IFilter || { and_: {} } },
     ]),
   );
@@ -88,7 +88,7 @@ export function CellRendererModal(props: PCellRendererModal) {
       const filterValue = typeof paramValue === 'object' ? paramValue as IFilter : { and_: {} };
       setAttributes(Object.keys(filterValue.and_ || {}) || []);
       setFilterConditions(filterValue);
-      setFilterZone(defineZone("dummy-object-for-remote-filters", [
+      setFilterZone(defineZoneWithComponentList("dummy-object-for-remote-filters", [
         { id: zoneFilterId, filter: filterValue },
       ]));
     } else {
