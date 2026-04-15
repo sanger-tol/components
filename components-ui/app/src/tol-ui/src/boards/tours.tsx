@@ -9,6 +9,36 @@ import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
 /**
+ * Begins a UI tour from the given config, but only if it hasn't yet been seen by the user
+ * @param tourName The name to identify this tour by
+ * (used to know whether the user has already seen this tour)
+ * @param tourConfig Each step forming the content of the tour. This includes which element to
+ * highlight each time, and what description it's given.
+ */
+export async function processTour(tourName: string, tourConfig: ITourStep[]) {
+  const userID = getUserFromLocalStorage().id;
+
+  const seen = await hasTourBeenSeen(tourName, userID);
+  if (seen) return;
+
+  const driverObj = driver({
+    showProgress: true,
+    steps: tourConfig.map(step => ({
+      element: `[data-testid="${step.testid}"]`,
+      popover: { title: step.title, description: step.description },
+    })),
+    buttons: ["previous", "next", "close"],
+    onDestroyStarted: () => {
+      // registerTourAsSeen(tourName, userID);
+      console.log("YOU HAVE BEEN DESTROYED!");
+      driverObj.destroy();
+    },
+  });
+
+  driverObj.drive();
+}
+
+/**
  * Checks whether a dashboard tour step (by name) has yet been viewed by the user
  * @param tourName String name of the tour to check
  * @returns Whether the value returned from the database is `true`
@@ -79,26 +109,4 @@ export async function registerTourAsSeen(
 // TODO Deprecated
 export async function disableTour(userId: string): Promise<void> {
   await registerTourAsSeen("tour_disabled", userId);
-}
-
-export async function processTour(tourName: string, tourConfig: ITourStep[]) {
-  const userID = getUserFromLocalStorage().id;
-
-  const seen = await hasTourBeenSeen(tourName, userID);
-  if (seen) return;
-
-  const driverObj = driver({
-    showProgress: true,
-    steps: tourConfig.map(step => ({
-      element: `[data-testid="${step.testid}"]`,
-      popover: { title: step.title, description: step.description },
-    })),
-    buttons: ["previous", "next", "close"],
-    onDestroyStarted: () => {
-      registerTourAsSeen(tourName, userID);
-      driverObj.destroy();
-    },
-  });
-
-  driverObj.drive();
 }
