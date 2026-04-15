@@ -26,6 +26,10 @@ export interface PDataPoint extends PDataPoints {
    * Id of the parent DataObject, used for upsert calls when saving edits to the data point.
    */
   parentObjectId?: string;
+  /**
+   * Object Type of the parent DataObject, used for upsert calls when saving edits to the data point.
+   */
+  parentObjectType?: string;
 }
 
 /**
@@ -41,6 +45,7 @@ export function DataPoint(props: PDataPoint) {
     isMany,
     actsAs,
     parentObjectId,
+    parentObjectType
   } = props;
 
   const attributeValue = getFieldByName(dataObject, field);
@@ -87,7 +92,6 @@ export function DataPoint(props: PDataPoint) {
 
     if (!dataObject) return;
     setLoading(true);
-    const parentObjectType = dataObject.objectType.replace(/_status.*$/, "");
     const actionBaseUrl = dataSource
       .getBaseUrl()
       ?.replace(/\/data(?:\/[^/]+)?$/, "");
