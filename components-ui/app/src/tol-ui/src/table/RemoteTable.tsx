@@ -192,6 +192,12 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * Controlled setter for selected row identifiers; if omitted, selection is internal
    */
   setSelectedRows?: (selectedRows: string[]) => void;
+  /**
+   * Controls visibility of the reset-to-default button. When true (or omitted), the
+   * button is shown; when false, it is hidden. Pass false when there are no stored
+   * differences to reset.
+   */
+  showConfigReset?: boolean;
 }
 
 /**
@@ -243,6 +249,7 @@ export function RemoteTable(props: PRemoteTable) {
     height = "100%",
     forceUpdate,
     onReset: propOnReset,
+    showConfigReset,
   } = props;
 
   // data and field information
@@ -293,6 +300,12 @@ export function RemoteTable(props: PRemoteTable) {
   // @ts-ignore
   const [actionParams, setActionParams] = useState<object>({});
 
+  // When showConfigReset is not controlled by the caller, derive it from localStorage.
+  const [localHasDiff, setLocalHasDiff] = useState<boolean>(
+    showConfigReset === undefined ? !!getTableConfigLocalStorage(id) : false
+  );
+  const resolvedShowConfigReset = showConfigReset ?? localHasDiff;
+
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
     // will trigger [filter] useEffect if update has occured
@@ -322,6 +335,7 @@ export function RemoteTable(props: PRemoteTable) {
       onPageSizeChange(pageSize);
     } else {
       setTableConfigLocalStorage(id, "pageSize", pageSize);
+      if (showConfigReset === undefined) setLocalHasDiff(true);
     }
   }, [pageSize]);
 
@@ -330,6 +344,7 @@ export function RemoteTable(props: PRemoteTable) {
       onToggleFilterVisibility(filterVisibility);
     } else {
       setTableConfigLocalStorage(id, "filterVisibility", filterVisibility);
+      if (showConfigReset === undefined) setLocalHasDiff(true);
     }
   }, [filterVisibility]);
 
@@ -350,6 +365,7 @@ export function RemoteTable(props: PRemoteTable) {
 
   const onReset = propOnReset ?? (async () => {
     clearTableConfigLocalStorage(id);
+    if (showConfigReset === undefined) setLocalHasDiff(false);
     const resetFieldMeta = initialiseFieldMeta(fields);
     setFieldMeta(resetFieldMeta);
     setPageSize(props.pageSize ?? 50);
@@ -451,6 +467,7 @@ export function RemoteTable(props: PRemoteTable) {
       setTableConfigLocalStorage(id, "fieldMeta", optimiseFieldMetaForSave(fm));
       setTableConfigLocalStorage(id, "defaultSortByAttribute", defaultSortByAttribute);
       setTableConfigLocalStorage(id, "defaultSortByType", defaultSortByType);
+      if (showConfigReset === undefined) setLocalHasDiff(true);
       // TODO: Deal with local storage
     }
 
@@ -481,6 +498,7 @@ export function RemoteTable(props: PRemoteTable) {
       props.onResizeColumn(columnWidth, dataKey);
     } else {
       setTableConfigLocalStorage(id, "fieldMeta", optimiseFieldMetaForSave(fieldMeta));
+      if (showConfigReset === undefined) setLocalHasDiff(true);
     }
     setFieldMeta({ ...fieldMeta });
   }
@@ -596,6 +614,7 @@ export function RemoteTable(props: PRemoteTable) {
             action: () => setActionModalOpen(true),
           }}
         onReset={onReset}
+        showConfigReset={resolvedShowConfigReset}
       />
     </div>
   );

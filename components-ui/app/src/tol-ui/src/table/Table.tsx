@@ -91,6 +91,7 @@ export interface PTable extends IRemoteTargetAndZone {
   downloadInProgress: boolean;
   setDownloadInProgress: (downloadInProgress: boolean) => void;
   onReset?: () => void;
+  showConfigReset?: boolean;
 }
 
 export function Table(props: PTable) {
@@ -135,6 +136,7 @@ export function Table(props: PTable) {
     contents,
     groupBy,
     onReset,
+    showConfigReset,
     /* eslint-enable */
   } = props;
 
@@ -270,7 +272,7 @@ export function Table(props: PTable) {
 
     const configResetButton: PButton = !noConfigModal?
      {
-      visible: true,
+      visible: showConfigReset ?? false,
       position: "right",
       type: "primary",
       testid: "table-config-reset-button",
@@ -429,7 +431,7 @@ export function Table(props: PTable) {
         <h5>Reset Table Configuration</h5>
         <p>Are you sure you want to reset this table to its default configuration?</p>
         <p className="tol-danger-colour">
-          Warning: Your current column settings, filters, and sort order will be lost.
+          Warning: Your current column settings will be lost.
         </p>
         <Button
           {...BUTTONS.CONFIRM}
