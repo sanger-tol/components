@@ -83,7 +83,7 @@ export const BUTTONS: Record<string, PButton> = {
     outline: true,
     type: "primary",
     icon: "arrow-down-wide-short",
-    tooltip: "Translate Filters from one Object Type to another",
+    tooltip: "Translate filters from one Zone to another",
     position: "right",
   }
 };

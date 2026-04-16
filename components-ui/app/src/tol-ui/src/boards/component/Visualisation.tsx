@@ -18,7 +18,6 @@ import {
   BOARDS,
   PButton,
   TitleTooltip,
-  generateFilter,
   mergeUtilityBarConfigs,
   BoardFilterBlock,
   FilterConfigDrawer,
@@ -41,12 +40,10 @@ export interface PVisualisation extends IBoardTargetAndZone {
 export function Visualisation(props: PVisualisation) {
   const {
     id,
-    objectType,
     componentType,
     boardDataSource,
     zone,
     setZone,
-    dataSource,
     utilityBarConfig,
   } = props;
 
@@ -55,8 +52,6 @@ export function Visualisation(props: PVisualisation) {
   const [title, setTitle] = useState(props.title);
   const [openFilters, setOpenFilters] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
-
-  const filter = generateFilter(zone, id);
 
   const onDelete = () => {
     boardDataSource
@@ -96,10 +91,7 @@ export function Visualisation(props: PVisualisation) {
 
   const Description = (
     <TitleTooltip
-      title={title}
-      objectType={objectType}
-      dataSource={dataSource}
-      filter={filter}
+      {...zone}
     />
   );
 
