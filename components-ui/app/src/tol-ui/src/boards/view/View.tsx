@@ -70,11 +70,11 @@ export function View(props: PView) {
   }, []);
 
   const onDeleteZone = (id: string) => {
-    // boardDataSource
-    //   .deleteByID({
-    //     objectType: BOARDS.ZONE,
-    //     id
-    //   })
+    boardDataSource
+      .deleteByID({
+        objectType: BOARDS.ZONE,
+        id
+      })
     // const newZones = zones.filter((zone) => zone.id !== id);
     // setZones(newZones);
   };
