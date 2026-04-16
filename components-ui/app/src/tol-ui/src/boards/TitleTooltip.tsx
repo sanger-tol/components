@@ -4,29 +4,28 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ReadOnlyFilters, TsDataSource, normaliseCaps, IFilter } from "..";
+import { ReadOnlyFilters, normaliseCaps, IZone } from "..";
 
-export interface PTitleTooltip {
-  title: string;
-  objectType: string;
-  dataSource: TsDataSource;
-  filter?: IFilter;
-}
 
-export function TitleTooltip(props: PTitleTooltip) {
-  const { title, objectType, dataSource, filter } = props;
+export function TitleTooltip(props: IZone) {
+  const {
+    title,
+    objectType,
+    dataspace,
+    filter
+  } = props;
 
   return (
     <div className="tol-utility-bar-title-tooltip">
       <h6>{title}</h6>
-      <p><b>Object Type:</b> {normaliseCaps(objectType)}</p>
+      <p><b>Object Type:</b> {normaliseCaps(objectType!)}</p>
       <>
         <b>Filters:</b>
         &nbsp;
         <ReadOnlyFilters
           filter={filter}
-          objectType={objectType}
-          dataSource={dataSource}
+          objectType={objectType!}
+          dataSource={dataspace!}
         />
       </>
     </div>

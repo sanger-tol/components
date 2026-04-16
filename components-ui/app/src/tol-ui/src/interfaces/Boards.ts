@@ -66,12 +66,10 @@ export interface IDBZoneView {
   zoneViewId: string;
 }
 
-export type TDBZoneViews = IDBZoneView[];
-
 export interface IView {
   zones: IZones;
   order: string[];
-  dbOrder?: TDBZoneViews;
+  dbOrder?: IDBZoneView[];
 }
 
 export interface IViews {

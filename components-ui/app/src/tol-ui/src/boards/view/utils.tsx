@@ -8,19 +8,14 @@ import {
   BOARDS,
   generateId,
   getUserFromLocalStorage,
-  IDBZone,
   IDBZoneView,
   TDataObjectListOrNull,
   TsDataSource
 } from "../..";
 
 
-export function getSortedZones(zones: IDBZone[], zoneOrder: IDBZoneView[]) {
-  return [...zones].sort((a, b) => {
-    const orderA = zoneOrder.find((zone) => zone.zoneId === a.id)?.order || 0;
-    const orderB = zoneOrder.find((zone) => zone.zoneId === b.id)?.order || 0;
-    return orderA - orderB;
-  });
+export function getSortedZones(zoneOrder: IDBZoneView[]): string[] {
+  return zoneOrder.sort((a, b) => a.order - b.order).map((z) => z.zoneId);
 };
 
 export async function reorderZoneAndUpsert(
@@ -118,8 +113,8 @@ export async function getZones(viewId: string, boardDataSource: TsDataSource) {
       const ids: string[] = Array.from(new Set(allIds));
       const zoneData = await getZoneData(ids, boardDataSource);
       return {
-        zoneDbOrder: await formatZoneOrders(data),
         zones: zoneData,
+        zoneOrder: await formatZoneOrders(data),
       };
     });
 }
@@ -207,7 +202,7 @@ export async function upsertNewZone(
 export async function fetchPublishedDataspaces(
   boardDataSource: TsDataSource,
 ): Promise<TDataObjectListOrNull> {
- return await boardDataSource
+  return await boardDataSource
     .getListPage({
       objectType: BOARDS.DATA_SOURCE_INSTANCE,
       pageSize: 100,

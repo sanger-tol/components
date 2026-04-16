@@ -67,23 +67,17 @@ export const getNavBackgroundClass = (environment: string): string => {
   }
 };
 
-export async function getUserPrivilege(
+export function getUserPrivilege(
   user: User | null | undefined,
-  boardDataSource: TsDataSource | null | undefined,
+  boardUserId: string | null | undefined,
   boardId: string | null | undefined,
-): Promise<TBoardPrivilege> {
-  if (!user?.id || !boardDataSource || !boardId) return PRIVILEGE.BOARD.VIEWABLE;
+): TBoardPrivilege {
+  if (!user?.id || !boardUserId || !boardId) return PRIVILEGE.BOARD.VIEWABLE;
 
-  const board: TDataObjectOrNull = await boardDataSource.getOne({
-    objectType: BOARDS.BOARD,
-    id: boardId,
-  });
-
-  const boardUser = await board?.relationships?.user;
-  const isOwner = boardUser?.["id"].toString() === user.id.toString();
+  const isOwner = boardUserId === user.id.toString();
   const isAdmin = user.roles?.includes("admin") ?? false;
 
-  if (board && (isOwner || isAdmin)) return PRIVILEGE.BOARD.EDITABLE;
+  if (isOwner || isAdmin) return PRIVILEGE.BOARD.EDITABLE;
   return PRIVILEGE.BOARD.VIEWABLE;
 }
 

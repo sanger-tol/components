@@ -15,7 +15,7 @@ import {
 export async function getBoard(
   id: string,
   boardDataSource: TsDataSource
-): Promise<{ boardTitle: any; boardFilter: any; views: TDataObjectListOrNull } | undefined> {
+): Promise<{ boardTitle: any; boardFilter: any; boardUserId: any; views: TDataObjectListOrNull } | undefined> {
   return await boardDataSource
     .getOne({
       objectType: BOARDS.BOARD,
@@ -24,9 +24,11 @@ export async function getBoard(
     .then(async (board: TDataObjectOrNull) => {
       if (!board) return;
       const views = await getViews(board.id, boardDataSource);
+
       return {
         boardTitle: board.title,
         boardFilter: board.filter,
+        boardUserId: board.relationships?.["user"]?.["id"],
         views: views,
       };
     });
