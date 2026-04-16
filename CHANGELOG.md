@@ -6,6 +6,11 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.4.5`
+16-04-2026
+- Adding editable cells to Board Table
+- Fixed status editing to work with the backend on :action endpoint
+
 ## tol-ui `3.4.4`
 10-04-2026
 - Fixed bug: NormaliseCaps only replacing the first period in a system name
