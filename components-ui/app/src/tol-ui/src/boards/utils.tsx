@@ -35,7 +35,6 @@ export async function createBoardAndView(
           id: boardId,
           attributes: {
             title: title,
-            filter: { and_: {} },
             user_id: user.id,
           },
         },
@@ -130,7 +129,6 @@ export async function upsertZone(
     });
 }
 
-
 export async function upsertComponent(
   boardDataSource: TsDataSource,
   componentId: string,
@@ -177,25 +175,23 @@ export async function updateConfigAndUpsert(
  * 
  * @returns A tuple containing the current value of the board element and a setter function to update it.
  */
-export function useBoardState<TParent extends IBoard | IView | IZone, TChildren extends IView | IZone | IComponent>(
+export function useBoardState<
+  TParent extends IBoard | IView | IZone,
+  TChildren extends IView | IZone | IComponent
+>(
   boardLevel: TBoardLevel,
   id: string,
   parentStateValue: TParent,
   setParentStateValue: (newValue: TParent) => void,
-  initialSetup?: TChildren
 ): [TChildren, (newValue: TChildren) => void] {
-  const buildValue = (entry: TChildren) => ({
-    ...parentStateValue,
-    [boardLevel]: { ...parentStateValue[boardLevel], [id]: entry },
-    order: [...(parentStateValue.order ?? []), id],
-  }) as TParent;
-
-  if (initialSetup && parentStateValue[boardLevel][id] == undefined) {
-    setParentStateValue(buildValue(initialSetup));
-  }
-
   const value = parentStateValue[boardLevel][id] as TChildren;
-  const setValue = (newValue: TChildren) => setParentStateValue(buildValue(newValue));
+  const setValue = (newValue: TChildren) => setParentStateValue({
+    ...parentStateValue,
+    [boardLevel]: {
+      ...parentStateValue[boardLevel],
+      [id]: newValue
+    },
+  } as TParent);
 
   return [value, setValue];
 }

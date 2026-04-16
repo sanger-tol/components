@@ -25,6 +25,7 @@ import {
   BUTTONS,
   UtilityBar,
   PButton,
+  useAuth,
 } from "../..";
 
 export interface PBoard {
@@ -48,6 +49,7 @@ export interface PBoard {
 export function Board(props: PBoard) {
   const { boardDataSource, brand } = props;
 
+  const { user } = useAuth();
   const {
     privilege,
     setPrivilege,
@@ -58,7 +60,6 @@ export function Board(props: PBoard) {
   } = useBoard();
 
   const { boardId: paramBoardId, viewId } = useParams<any>();
-  const [user, setUser] = useState<any>(null);
   const [boardData, setBoardData] = useState<any>({});
   const [title, setTitle] = useState("");
   const [view, setView] = useState(viewId);
@@ -78,23 +79,16 @@ export function Board(props: PBoard) {
   });
 
   useEffect(() => {
-    const u = getUserFromLocalStorage();
-    if (u) setUser(u);
-
-    const awaitUserPrivilege = async () => {
-      const userPrivilege: TBoardPrivilege = await getUserPrivilege(u, boardDataSource!, boardId)
-      setPrivilege(userPrivilege);
-    };
-    awaitUserPrivilege();
-  }, []);
-
-  useEffect(() => {
     if (boardId) {
       getBoard(boardId, boardDataSource!)
         .then((data: any) => {
           if (!view) setView(data.views[0].id);
           setBoardData(data);
           setTitle(data.boardTitle);
+
+          setPrivilege(
+            getUserPrivilege(user, data.boardUserId, boardId)
+          );
         })
         .catch((e: any) => {
           setError(e);
@@ -104,7 +98,7 @@ export function Board(props: PBoard) {
           setLoading(false);
         });
     }
-  }, [boardId, user]);
+  }, [boardId]);
 
   if (error !== "") {
     return <Redirect to="/page-not-found" />;

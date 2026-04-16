@@ -19,29 +19,26 @@ import {
   upsertNewComponent,
   PBoard,
   getNextComponentOrder,
-  TsDataSource,
   RequiredAsterisk,
   BUTTONS,
 } from "../..";
 
 
 export interface PComponentPickerModal extends PBoard {
+  zoneId: string;
   open: boolean;
   setOpen: any;
   zone: IZone;
   setZone: any;
-  zoneId: string;
-  dataspace: TsDataSource;
 }
 
 export function ComponentPickerModal(props: PComponentPickerModal) {
   const {
+    zoneId,
     open,
     setOpen,
     zone,
     setZone,
-    zoneId,
-    dataspace,
     boardDataSource,
   } = props;
   const [componentType, setComponentType] = useState("");
@@ -64,9 +61,9 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
     if (canAddComponent) {
       const nextOrder = getNextComponentOrder(zone);
       const newComponent = await upsertNewComponent(
-        dataspace,
+        zone.dataspace!,
         boardDataSource,
-        zone.type!,
+        zone.objectType!,
         "",
         nextOrder,
         componentType,
@@ -81,8 +78,8 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
         componentZoneId: newComponent.newComponentZoneId,
         filter: { and_: {} },
         title: "",
-        objectType: zone.type,
-        dataspace: dataspace,
+        objectType: zone.objectType,
+        dataspace: zone.dataspace,
         config: {},
         filterPassThrough: false,
       }, zone);

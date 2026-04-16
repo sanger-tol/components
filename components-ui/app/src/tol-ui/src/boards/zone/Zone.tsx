@@ -21,23 +21,17 @@ import {
   addComponents,
   useBoard,
   TitleTooltip,
-  TsDataSource,
   BUTTONS,
   IView,
   useBoardState,
-  defineZone,
-  IUseZoneMeta
+  IZone
 } from "../..";
 
 
 export interface PZone extends PBoard {
   id: string;
-  title: string;
-  objectType: string;
-  dataspace: TsDataSource;
-  filter: any;
-  onZoneReorder: any;
-  deleteZone: any;
+  onZoneReorder?: any;
+  onDeleteZone?: any;
   view: IView;
   setView: (view: IView) => void;
 }
@@ -45,68 +39,32 @@ export interface PZone extends PBoard {
 export function Zone(props: PZone) {
   const {
     id,
-    objectType,
-    dataspace,
     boardDataSource,
-    filter,
     onZoneReorder,
-    deleteZone,
+    onDeleteZone,
     view,
     setView
   } = props;
 
   const { editMode, layoutMode } = useBoard();
 
-  const definedZone = defineZone(objectType, [], filter)
-  const [zone, setZone] = useBoardState(
+  const [zone, setZone] = useBoardState<IView, IZone>(
     "zones",
     id,
     view,
     setView,
-    definedZone
   );
-
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
-  const [title, setTitle] = useState(props.title);
-
-  // UseZone will eventually be phased out as the useBoardState hook
-  // allows access to other zones (outside of itself) which is needed
-  // for translators to work
-
-  // const z = useZone({
-  //   dataSource: dataspace,
-  //   objectType,
-  //   filter: filter,
-  //   components: [],
-  // });
-
-  const z = {
-    objectType: objectType,
-    dataSource: dataspace,
-    zone: zone || {
-      objectType: objectType,
-      components: [],
-      filter: filter,
-      defaultFilter: filter,
-      order: []
-    },
-    setZone: setZone
-  } as IUseZoneMeta;
-
-  // TODO: This z variable sets the zone key with empty values on the initial load
-  // This prevents 'not found' errors when getting default filters etc
-  // However, it does then not re-render even after the zone (from the Board state hook) is updated
-  // To fix this it needs to be updated in a useEffect like the one below but it circular
-  // calls
+  const [title, setTitle] = useState(zone.title);
 
   useEffect(() => {
     getComponents(id, boardDataSource).then((components) => {
       // sort the widgets based on the order value
       const sortedComponents = components!.sort((a, b) => a.order! - b.order!);
-      addComponents(sortedComponents, z.zone);
-      z.setZone({ ...z.zone });
+      addComponents(sortedComponents, zone);
+      setZone({ ...zone });
     });
   }, []);
 
@@ -118,7 +76,7 @@ export function Zone(props: PZone) {
     <ConfirmationModal
       setOpen={setConfirmationModalOpen}
       open={confirmationModalOpen}
-      onConfirmClick={() => deleteZone(id)}
+      onConfirmClick={() => onDeleteZone(id)}
       itemType={BOARDS.ZONE}
     />
   );
@@ -198,12 +156,7 @@ export function Zone(props: PZone) {
           }
         }}
         description={
-          <TitleTooltip
-            title={title}
-            objectType={objectType}
-            dataSource={dataspace}
-            filter={filter}
-          />
+          <TitleTooltip {...zone} />
         }
         buttons={[
           deleteButton,
@@ -220,8 +173,8 @@ export function Zone(props: PZone) {
           setOpen={setOpen}
           zoneId={id}
           boardDataSource={boardDataSource}
-          dataspace={dataspace}
-          {...z}
+          zone={zone}
+          setZone={setZone}
         />
       </div>
     </div>
@@ -230,11 +183,11 @@ export function Zone(props: PZone) {
   return (
     <div className="tol-zone">
       {(title || editMode) && bar}
-      {(z.zone && z.zone.order.length > 0) ? (
+      {(zone && zone.order.length > 0) ? (
         <Visualisations
           id={id}
-          zone={z.zone}
-          setZone={z.setZone}
+          zone={zone}
+          setZone={setZone}
           boardDataSource={boardDataSource}
         />
       ) : (
@@ -258,12 +211,15 @@ export function Zone(props: PZone) {
       )}
       {ConfirmModal}
       <FilterConfigDrawer
-        {...props}
         id={id}
         boardObjectType={BOARDS.ZONE}
+        boardDataSource={boardDataSource}
+        dataSource={zone.dataspace!}
+        objectType={zone.objectType!}
         open={openFilters}
         setOpen={setOpenFilters}
-        {...z}
+        zone={zone}
+        setZone={setZone}
       />
     </div>
   );

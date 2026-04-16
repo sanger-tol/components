@@ -22,6 +22,7 @@ import {
   IBoard,
   IZone,
   IView,
+  defineZone,
 } from "../..";
 
 
@@ -40,58 +41,58 @@ export function View(props: PView) {
     id,
     board,
     setBoard,
-    { zones: {}, order: [], dbOrder: [] }
   );
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     getZones(id, boardDataSource).then((data: any) => {
-      const initialZones = data.zones.map((zone: any) => {
-        const dsi = zone.relationships.data_source_instance;
+      const zones = Object.fromEntries(
+        data.zones.map((zoneData: any) => {
+          const dsi = zoneData.relationships.data_source_instance;
+          const zone = defineZone({
+            ...zoneData,
+            objectType: zoneData.object_type,
+            dataspace: new TsDataSource({
+              ...dsi.ui_api_details,
+              dataSourceInstanceId: dsi.id,
+            }),
+          } as IZone);
+          return [zoneData.id, zone];
+        })
+      );
 
-        return {
-          id: zone.id,
-          objectType: zone.object_type,
-          title: zone.title,
-          filter: zone.filter,
-          dataspace: new TsDataSource({
-            ...dsi.ui_api_details,
-            dataSourceInstanceId: dsi.id,
-          }),
-        } as IZone;
+      setView({
+        zones,
+        order: getSortedZones(data.zoneOrder),
+        dbOrder: data.zoneOrder
       });
-      console.log(data);
-      console.log(initialZones);
-      // view.zones = (initialZones);
-      // view.zoneDbOrder = data.zoneViewOrder;
     });
   }, []);
 
-  /*
-  const deleteZone = (id: string) => {
-    boardDataSource
-      .deleteByID({
-        objectType: BOARDS.ZONE,
-        id
-      })
-    const newZones = zones.filter((zone) => zone.id !== id);
-    setZones(newZones);
+  const onDeleteZone = (id: string) => {
+    // boardDataSource
+    //   .deleteByID({
+    //     objectType: BOARDS.ZONE,
+    //     id
+    //   })
+    // const newZones = zones.filter((zone) => zone.id !== id);
+    // setZones(newZones);
   };
 
   const onZoneReorder = async (id: string, direction: string) => {
-    reorderZoneAndUpsert(
-      id,
-      direction,
-      zones,
-      zoneOrder,
-      boardDataSource,
-    ).then((data) => {
-      if (data) {
-        const { zones: updatedZones, zoneOrder: updatedZoneOrder } = data;
-        setZones(updatedZones);
-        setZoneOrder(updatedZoneOrder);
-      }
-    });
+    // reorderZoneAndUpsert(
+    //   id,
+    //   direction,
+    //   zones,
+    //   zoneOrder,
+    //   boardDataSource,
+    // ).then((data) => {
+    //   if (data) {
+    //     const { zones: updatedZones, zoneOrder: updatedZoneOrder } = data;
+    //     setZones(updatedZones);
+    //     setZoneOrder(updatedZoneOrder);
+    //   }
+    // });
   };
 
   const Bar = (
@@ -114,7 +115,6 @@ export function View(props: PView) {
       />
     </div>
   )
-  */
 
   return (
     <div className="tol-view">
@@ -129,19 +129,16 @@ export function View(props: PView) {
         viewId={id}
         boardDataSource={boardDataSource}
       /> */}
-      {/* {view.zones.length > 0 ? (
+      {(view?.order?.length ?? 0) > 0 ? (
         <div className="tol-zones">
-          {getSortedZones(zones, zoneOrder).map((zone) => {
+          {view.order.map((zoneId) => {
+            const zone = view.zones[zoneId];
             return (
               <Zone
                 key={zone.id}
-                id={zone.id}
-                title={zone.title}
-                objectType={zone.objectType}
-                dataspace={zone.dataspace!}
-                filter={zone.filter}
+                id={zone.id!}
                 onZoneReorder={onZoneReorder}
-                deleteZone={deleteZone}
+                onDeleteZone={onDeleteZone}
                 boardDataSource={boardDataSource}
                 view={view}
                 setView={setView}
@@ -157,7 +154,7 @@ export function View(props: PView) {
             <p>No zones found</p>
           )}
         </div>
-      )} */}
+      )}
     </div>
   );
 }

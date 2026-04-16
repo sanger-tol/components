@@ -8,7 +8,7 @@ import { expect, test, describe } from "vitest";
 import {
   deepCopy,
   defineComponent,
-  defineZone,
+  defineZoneWithComponentList,
   getWidgetOrder,
   IComponentData,
 } from "../../tol-ui/src";
@@ -62,7 +62,7 @@ describe("defineComponent function", () => {
   });
 });
 
-describe("defineZone function", () => {
+describe("defineZoneWithComponentList function", () => {
   test("should create a zone", () => {
     // Arrange
     const mockComponents: IComponentData[] = [
@@ -77,10 +77,10 @@ describe("defineZone function", () => {
     const objectType = "mockObjectType";
 
     // Act
-    const zone = defineZone(objectType, mockComponents);
+    const zone = defineZoneWithComponentList(objectType, mockComponents);
 
     // Assert
-    expect(zone.type).toEqual(objectType);
+    expect(zone.objectType).toEqual(objectType);
     expect(zone.order).toEqual(mockComponents.map((c) => c.id));
     for (const component of mockComponents) {
       expect(zone.components).toHaveProperty(String(component.id));
@@ -95,10 +95,10 @@ describe("defineZone function", () => {
     const objectType = "mockObjectType";
 
     // Act
-    const zone = defineZone(objectType, mockComponents);
+    const zone = defineZoneWithComponentList(objectType, mockComponents);
 
     // Assert
-    expect(zone.type).toEqual(objectType);
+    expect(zone.objectType).toEqual(objectType);
     expect(zone.order).toEqual([]);
     expect(zone.components).toEqual({});
   });
