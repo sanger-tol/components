@@ -57,3 +57,28 @@ export function getRoles() {
       resource: "roles",
     });
 }
+
+export function getRoleIdsByNames(
+  roleNames: string[],
+  dataSource: TsDataSource,
+) {
+  return dataSource
+    .custom({
+      method: API_METHODS.POST,
+      resource: "role",
+      body: {
+        filter: {
+          "and_": {
+            "name": {
+              "in_list": {
+                "value": roleNames,
+              },
+            },
+          }
+        }
+      },
+    })
+    .then((res: any) => {
+      return res.data.data.map((role: any) => role.id);
+    });
+}

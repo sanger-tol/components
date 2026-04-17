@@ -17,7 +17,8 @@ import {
   TsDataSource,
   API_METHODS,
   useAuth,
-  PopUpMessage
+  PopUpMessage,
+  getRoleIdsByNames
 } from "..";
 
 
@@ -26,12 +27,13 @@ export interface PBoardTable extends PVisualisation {
 }
 
 export function BoardTable(props: PBoardTable) {
-  const { id, boardDataSource, zone } = props;
+  const { id, boardDataSource, zone, objectType } = props;
 
   const { user } = useAuth();
   const { editMode } = useBoard();
 
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
+  const [actionList, setActionList] = useState<string[] | undefined>(undefined);
   const localDataSource = new TsDataSource({
     apiPath: "/api/v1/local",
   });
@@ -42,45 +44,38 @@ export function BoardTable(props: PBoardTable) {
   // use the results of the role action table to get the actions
   // pass the list of action names into the remote table
   useEffect(() => {
-    localDataSource.custom({
-      method: API_METHODS.POST,
-      resource: `role_action`,
-      body: {
-        filter: {
-          "and_": {
-            "role_id": {
-              "eq": {
-                "value": user.role_id
-              },
-            },
-          }
-        }
-      }
-    }).then((res: any) => {
-      console.log(res.data);
-
+    const fetchActions = async () => {
+      const roleids = await getRoleIdsByNames(user.roles, localDataSource);
       localDataSource.custom({
         method: API_METHODS.POST,
-        resource: `action`,
+        resource: `role_action`,
         body: {
           filter: {
             "and_": {
-              "id": {
+              "role_id": {
                 "in_list": {
-                  "value": 'LIST HERE'
+                  "value": roleids
                 },
               },
             }
           }
         }
-      })
+      }).then((res: any) => {
+        const actionNames = res.data.included.map((relatedObj: any) => {
+          if (relatedObj.type === "action" && relatedObj.attributes.object_type == objectType) {
+            return relatedObj.attributes.name;
+          }
+        })
+        setActionList(actionNames.filter((name: string | undefined): name is string => name !== undefined));
 
-    }).catch((error: any) => {
-      PopUpMessage({
-        type: "error",
-        message: `Error Fetching Actions: ${error}`,
-      });
-    })
+      }).catch((error: any) => {
+        PopUpMessage({
+          type: "error",
+          message: `Error Fetching Actions: ${error}`,
+        });
+      })
+    }
+    fetchActions();
   }, [])
 
   const onConfigSave = ({
@@ -160,9 +155,9 @@ export function BoardTable(props: PBoardTable) {
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
     // disabled temporarily
-    // actions
+      actions={actionList}
     // This will change depending on if the user actually has any available actions
-    // rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
+    rowSelection={actionList && actionList.length > 0}
     />
   );
 }
