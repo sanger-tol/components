@@ -10,6 +10,7 @@ import {
   TsDataSource,
   BOARDS,
   IZone,
+  BOARD_DIFF_API_PATH,
 } from "..";
 
 export async function createBoardAndView(
@@ -158,7 +159,7 @@ export async function upsertComponent(
           requestedFields: ["id"],
         })
         .then(async (res) => {
-          const id = res?.["id"];
+          const id = res?.[0]?.["id"];
           await boardDataSource.upsert({
             objectType: BOARDS.BOARD_DIFF,
             payload: [
@@ -168,7 +169,7 @@ export async function upsertComponent(
                 attributes: {
                   ...attributes,
                   component_id: componentId,
-                  user_id: getUserFromLocalStorage()?.id,
+                  user_id: getUserFromLocalStorage()?.id, //TODO: change to context
                 },
               },
             ],
@@ -193,20 +194,11 @@ export async function deleteComponentDiff(
     requestedFields: ["id"],
   });
   const diffId = res?.[0]?.id;
+  const localDataSource = new TsDataSource({ apiPath: BOARD_DIFF_API_PATH });
   if (diffId) {
-    await boardDataSource.upsert({
+    await localDataSource.deleteByID({
       objectType: BOARDS.BOARD_DIFF,
-      payload: [
-        {
-          type: BOARDS.BOARD_DIFF,
-          id: diffId,
-          attributes: {
-            config: null,
-            component_id: componentId,
-            user_id: getUserFromLocalStorage()?.id,
-          },
-        },
-      ],
+      id: diffId,
     });
   }
 }
@@ -217,8 +209,12 @@ export async function updateConfigAndUpsert(
   zone: IZone,
   boardDataSource: TsDataSource,
   editMode?: boolean,
+  setHasDiff?: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   zone.components[componentId].data.config = config;
+  if (!editMode) {
+    setHasDiff?.(true);
+  }
   return await upsertComponent(
     boardDataSource,
     componentId,

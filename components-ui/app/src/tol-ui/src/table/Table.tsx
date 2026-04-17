@@ -270,9 +270,9 @@ export function Table(props: PTable) {
       disabled: selectedRowData.length === 0 || button.disabled === true,
     }));
 
-    const configResetButton: PButton = !noConfigModal?
+    const configResetButton: PButton = !noConfigModal && !editMode && showConfigReset ? 
      {
-      visible: showConfigReset ?? false,
+      visible: true,
       position: "right",
       type: "primary",
       testid: "table-config-reset-button",

@@ -59,7 +59,7 @@ export function BoardTable(props: PBoardTable) {
         })
         .catch(() => setHasDiff(false));
     } else {
-      setHasDiff(!!getTableConfigLocalStorage(id));
+      setHasDiff(!!getTableConfigLocalStorage(`board_diff_${id}`));
     }
   }, []);
 
@@ -67,7 +67,12 @@ export function BoardTable(props: PBoardTable) {
   // Edit mode: show original base config so edits target the component directly.
   // View mode: re-apply the user's board_diff overlay on top of the base config.
   useEffectUpdate(() => {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn) {
+      if (hasDiff){
+        getTableConfigLocalStorage(`board_diff_${id}`)
+      }
+      return;
+    }
 
     if (editMode) {
       // Entering edit mode – fetch base component config (no diff applied)
@@ -117,7 +122,8 @@ export function BoardTable(props: PBoardTable) {
         })
         .catch(() => {});
     }
-  }, [editMode]);
+  }, [editMode, hasDiff, isLoggedIn]);
+
 
   // ── Logged-in handlers: persist exclusively to board_diff ────────────────
 
@@ -132,29 +138,25 @@ export function BoardTable(props: PBoardTable) {
     config["defaultSortByAttribute"] = defaultSortByAttribute;
     config["defaultSortByType"] = defaultSortByType;
     setConfig({ ...config });
-    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode);
-    setHasDiff(true);
+    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode, setHasDiff);
   };
 
   const onToggleFilterVisibilityLoggedIn = (visible: boolean) => {
     config["filterVisibility"] = visible;
     setConfig({ ...config });
-    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode);
-    setHasDiff(true);
+    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode, setHasDiff);
   };
 
   const onPageSizeChangeLoggedIn = (pageSize: number) => {
     config["pageSize"] = pageSize;
     setConfig({ ...config });
-    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode);
-    setHasDiff(true);
+    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode, setHasDiff);
   };
 
   const onResizeColumnLoggedIn = (columnWidth: number, dataKey: string) => {
     updateFieldMetaAttribute(config["fieldMeta"]!, dataKey, "width", columnWidth);
     setConfig({ ...config });
-    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode);
-    setHasDiff(true);
+    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode, setHasDiff);
   };
 
   // ── Not-logged-in handlers: persist exclusively to localStorage ──────────
@@ -171,32 +173,32 @@ export function BoardTable(props: PBoardTable) {
     config["defaultSortByAttribute"] = defaultSortByAttribute;
     config["defaultSortByType"] = defaultSortByType;
     setConfig({ ...config });
-    setTableConfigLocalStorage(id, "fieldMeta", meta);
+    setTableConfigLocalStorage(`board_diff_${id}`, "fieldMeta", meta);
     if (defaultSortByAttribute !== undefined)
-      setTableConfigLocalStorage(id, "defaultSortByAttribute", defaultSortByAttribute);
+      setTableConfigLocalStorage(`board_diff_${id}`, "defaultSortByAttribute", defaultSortByAttribute);
     if (defaultSortByType !== undefined)
-      setTableConfigLocalStorage(id, "defaultSortByType", defaultSortByType);
+      setTableConfigLocalStorage(`board_diff_${id}`, "defaultSortByType", defaultSortByType);
     setHasDiff(true);
   };
 
   const onToggleFilterVisibilityAnon = (visible: boolean) => {
     config["filterVisibility"] = visible;
     setConfig({ ...config });
-    setTableConfigLocalStorage(id, "filterVisibility", visible);
+    setTableConfigLocalStorage(`board_diff_${id}`, "filterVisibility", visible);
     setHasDiff(true);
   };
 
   const onPageSizeChangeAnon = (pageSize: number) => {
     config["pageSize"] = pageSize;
     setConfig({ ...config });
-    setTableConfigLocalStorage(id, "pageSize", pageSize);
+    setTableConfigLocalStorage(`board_diff_${id}`, "pageSize", pageSize);
     setHasDiff(true);
   };
 
   const onResizeColumnAnon = (columnWidth: number, dataKey: string) => {
     updateFieldMetaAttribute(config["fieldMeta"]!, dataKey, "width", columnWidth);
     setConfig({ ...config });
-    setTableConfigLocalStorage(id, "fieldMeta", optimiseFieldMetaForSave(config["fieldMeta"]!));
+    setTableConfigLocalStorage(`board_diff_${id}`, "fieldMeta", optimiseFieldMetaForSave(config["fieldMeta"]!));
     setHasDiff(true);
   };
 
@@ -217,9 +219,15 @@ export function BoardTable(props: PBoardTable) {
       zone.components[id].data.config = originalConfig;
       setConfig({ ...originalConfig });
     } else {
-      clearTableConfigLocalStorage(id);
-      zone.components[id].data.config = props.config;
-      setConfig({ ...props.config });
+      clearTableConfigLocalStorage(`board_diff_${id}`);
+      const originalComponents = await boardDataSource.getList({
+        objectType: "component",
+        filter: { and_: { id: { eq: { value: id } } } },
+        requestedFields: ["config"],
+      });
+      const originalConfig = originalComponents?.[0]?.config ?? props.config;
+      zone.components[id].data.config = originalConfig;
+      setConfig({ ...originalConfig });
     }
     setResetKey((k) => k + 1);
     setHasDiff(false);

@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { env } from "../variables";
+
 export const API_METHODS = {
   GET: "GET",
   POST: "POST",
@@ -28,6 +30,8 @@ export const BOARDS_API_DATA_PATH = "/boards";
 export const LOCAL_API_DATA_PATH = "/local";
 export const ACTION_API_DATA_PATH = LOCAL_API_DATA_PATH;
 export const PREFECT_API_DATA_PATH = "/prefect";
+export const API_PATH = env.API_PATH;
+export const BOARD_DIFF_API_PATH = API_PATH + LOCAL_API_DATA_PATH;
 
 export const BOARDS = {
   BOARD: "board",
