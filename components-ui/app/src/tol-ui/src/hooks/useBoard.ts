@@ -17,6 +17,8 @@ export const useBoard = () => {
       setPrivilege: () => {},
       editMode: false,
       setEditMode: () => {},
+      tableLoading: false,
+      setTableLoading: () => {},
       layoutMode: false,
       setLayoutMode: () => {}
     };

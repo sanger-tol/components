@@ -44,6 +44,7 @@ import {
   updateFieldMetaAttribute,
   IHeight,
   TFilterOrUndefined,
+  useBoard,
 } from '..';
 
 export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
@@ -198,6 +199,10 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
    * differences to reset.
    */
   showConfigReset?: boolean;
+  /**
+   * Number of columns in the configuration that reset will restore.
+   */
+  resetConfigColumnCount?: number;
 }
 
 /**
@@ -222,6 +227,8 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
  * using the given `id` as the key namespace.
  */
 export function RemoteTable(props: PRemoteTable) {
+  const { editMode, setTableLoading } = useBoard();
+
   const {
     id,
     objectType,
@@ -305,6 +312,16 @@ export function RemoteTable(props: PRemoteTable) {
     showConfigReset === undefined ? !!getTableConfigLocalStorage(id) : false
   );
   const resolvedShowConfigReset = showConfigReset ?? localHasDiff;
+
+  useEffect(() => {
+    setTableLoading(id, editMode && (loading || fullLoad));
+  }, [id, editMode, loading, fullLoad, setTableLoading]);
+
+  useEffect(() => {
+    return () => {
+      setTableLoading(id, false);
+    };
+  }, [id, setTableLoading]);
 
   useEffect(() => {
     const compoundedFilter = generateFilter(zone, id);
@@ -554,7 +571,14 @@ export function RemoteTable(props: PRemoteTable) {
       return <Placeholder errorMessage={error} height={height} />;
     }
     if (fullLoad) {
-      return <Placeholder loader height={height} />;
+      return (
+        <Placeholder
+          loader
+          height={height}
+          message={editMode ? "Entering edit mode..." : undefined}
+          messagePosition="top"
+        />
+      );
     }
     return null;
   };

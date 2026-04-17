@@ -92,6 +92,7 @@ export interface PTable extends IRemoteTargetAndZone {
   setDownloadInProgress: (downloadInProgress: boolean) => void;
   onReset?: () => void;
   showConfigReset?: boolean;
+  resetConfigColumnCount?: number;
 }
 
 export function Table(props: PTable) {
@@ -137,6 +138,7 @@ export function Table(props: PTable) {
     groupBy,
     onReset,
     showConfigReset,
+    resetConfigColumnCount,
     /* eslint-enable */
   } = props;
 
@@ -165,6 +167,8 @@ export function Table(props: PTable) {
   noFilter = !!noFilter;
 
   const noFieldsSelected = fieldMeta?.order?.active?.length === 0;
+  const selectedColumnCount = fieldMeta?.order?.active?.length ?? 0;
+  const resetColumnCount = resetConfigColumnCount ?? selectedColumnCount;
   const wrapperId = "tol-table-wrapper-" + id;
 
   if (selectedRows.length === data.length || bulkSelect) {
@@ -269,23 +273,6 @@ export function Table(props: PTable) {
       },
       disabled: selectedRowData.length === 0 || button.disabled === true,
     }));
-
-    const configResetButton: PButton = !noConfigModal && !editMode && showConfigReset ? 
-     {
-      visible: true,
-      position: "right",
-      type: "primary",
-      testid: "table-config-reset-button",
-      tooltip: "Reset Table Configuration to Default",
-      onClick: () => {
-        setResetConfirmationOpen(true);
-      },
-      icon: "arrow-rotate-left",
-      outline: true,
-      disabled: loading,
-    } : {
-      visible: false,
-    };
 
     const configButton: PButton = !noConfigModal?
      {
@@ -409,7 +396,6 @@ export function Table(props: PTable) {
         filterButton,
         actionDropdown,
         downloadButton,
-        configResetButton,
       ],
       elements:
         !noPagination && fieldMeta?.order?.active?.length > 0 ? [
@@ -429,14 +415,21 @@ export function Table(props: PTable) {
         closeButton={false}
       >
         <h5>Reset Table Configuration</h5>
-        <p>Are you sure you want to reset this table to its default configuration?</p>
+        <p>
+          Are you sure you want to reset this table to the published configuration?
+        </p>
+        <p>
+          The published configuration currently has {resetColumnCount} selected{" "}
+          {resetColumnCount === 1 ? "column" : "columns"}.
+        </p>
         <p className="tol-danger-colour">
-          Warning: Your current column settings will be lost.
+          Warning: Your current table configuration will be lost.
         </p>
         <Button
           {...BUTTONS.CONFIRM}
           onClick={() => {
             setResetConfirmationOpen(false);
+            setOpen(false);
             onReset?.();
           }}
           testid="confirm-reset-button"
@@ -470,6 +463,12 @@ export function Table(props: PTable) {
         setOpen={setOpen}
         editMode={editMode}
         displaySource={displaySource}
+        onReset={
+          !noConfigModal && !editMode && showConfigReset
+            ? () => setResetConfirmationOpen(true)
+            : undefined
+        }
+        showConfigReset={!noConfigModal && !editMode && showConfigReset}
         // fetches all if inactive isn't specified
         customAttributeSelection={
           fieldMeta.order.inactive && fieldMeta.order.inactive.length > 0
@@ -530,7 +529,13 @@ export function Table(props: PTable) {
                     return Math.min(fullHeight, COLLAPSED_ROW_MAX_HEIGHT);
                   }}
                   renderLoading={() => (
-                    <Placeholder loader opacity={0.8} squareCorners />
+                    <Placeholder
+                      loader
+                      opacity={0.8}
+                      squareCorners
+                      message={editMode ? "Entering edit mode" : undefined}
+                      messagePosition="top"
+                    />
                   )}
                 >
                   {/* Has to be a function as only rsuite components can be children on their Table */}

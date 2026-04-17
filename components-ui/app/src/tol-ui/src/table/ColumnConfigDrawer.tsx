@@ -17,6 +17,10 @@ import {
   ITableConfigSave,
   CellRendererConfigurer,
   deepCopy,
+  PButton,
+  Message,
+  useBoard,
+  PRIVILEGE,
 } from "..";
 
 
@@ -34,6 +38,10 @@ export interface PColumnConfigDrawer extends IRemoteTarget {
   defaultSortByAttribute?: string;
   defaultSortByType?: string;
   onConfigSave: (config: ITableConfigSave) => void;
+  onReset?: () => void;
+  showConfigReset?: boolean;
+  loading?: boolean;
+  editMode?: boolean;
 }
 
 export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
@@ -48,7 +56,19 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
     defaultSortByAttribute,
     defaultSortByType,
     actionChoices,
+    onReset,
+    showConfigReset,
+    loading,
+    editMode,
   } = props;
+
+  const { privilege } = useBoard();
+  const isEditable = privilege === PRIVILEGE.BOARD.EDITABLE;
+
+  const WARNING_KEY = "tol_table_config_session_warning_dismissed";
+  const [warningDismissed, setWarningDismissed] = useState(
+    () => localStorage.getItem(WARNING_KEY) === "true"
+  );
 
   const [newFieldMeta, setNewFieldMeta] = useState<FieldMeta>();
   const [attributes, setAttributes] = useState<string[]>(fieldMeta.order.active);
@@ -122,8 +142,54 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
     CellRendererConfigurerWrapper,
   ];
 
+  const resetButton: PButton = {
+    visible: !!showConfigReset,
+    position: "right",
+    type: "primary",
+    testid: "table-config-reset-button",
+    tooltip: "Reset Table Configuration to Default",
+    onClick: onReset,
+    icon: "arrow-rotate-left",
+    outline: true,
+    disabled: loading,
+  };
+
   const AttributeSelecting = (
     <>
+      {isEditable && (
+        <div style={{ marginBottom: "15px" }}>
+          <Message
+            type="info"
+            showIcon
+            bordered
+            header={false}
+            closable={false}
+            hidePrefix
+          >
+            {editMode
+              ? "Please be aware that you are editing the table for all viewers of the board."
+              : "Please be aware that you are editing a version of this table for your user. If you want to edit the table for all board viewers please switch to edit mode."}
+          </Message>
+        </div>
+      )}
+      {!editMode && !warningDismissed && (
+        <div style={{ marginBottom: "15px" }}>
+          <Message
+            type="warning"
+            showIcon
+            bordered
+            header={false}
+            closable
+            hidePrefix
+            onClose={() => {
+              localStorage.setItem(WARNING_KEY, "true");
+              setWarningDismissed(true);
+            }}
+          >
+            {"Table configuration is saved separately for logged-in and logged-out sessions. Changes made in one will not carry over to the other."}
+          </Message>
+        </div>
+      )}
       <h6>Default Sort:</h6>
       <AttributeSelector
         {...props}
@@ -187,6 +253,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
       onSave={onSave}
       hasPendingChanges={hasPendingChanges}
       onSaveTestId={"save-table-button"}
+      actionButtons={[resetButton]}
     >
       {AttributeSelecting}
     </Drawer>

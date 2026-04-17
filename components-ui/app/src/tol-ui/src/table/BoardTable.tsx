@@ -40,8 +40,28 @@ export function BoardTable(props: PBoardTable) {
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
   const [resetKey, setResetKey] = useState(0);
   const [hasDiff, setHasDiff] = useState(false);
+  const [publishedColumnCount, setPublishedColumnCount] = useState(
+    props.config.fieldMeta?.order?.active?.length ?? 0
+  );
+
+  const updatePublishedColumnCount = (publishedConfig?: ITableConfigSave) => {
+    setPublishedColumnCount(
+      publishedConfig?.fieldMeta?.order?.active?.length ?? 0
+    );
+  };
 
   useEffect(() => {
+    boardDataSource
+      .getList({
+        objectType: BOARDS.COMPONENT,
+        filter: { and_: { id: { eq: { value: id } } } },
+        requestedFields: ["config"],
+      })
+      .then((components: TDataObjectListOrNull) => {
+        updatePublishedColumnCount(components?.[0]?.config);
+      })
+      .catch(() => {});
+
     if (isLoggedIn) {
       boardDataSource
         .getList({
@@ -86,6 +106,7 @@ export function BoardTable(props: PBoardTable) {
           const originalConfig = res?.[0]?.config;
           if (originalConfig) {
             zone.components[id].data.config = originalConfig;
+            updatePublishedColumnCount(originalConfig);
             setConfig({ ...originalConfig });
             setResetKey((k) => k + 1);
           }
@@ -114,6 +135,7 @@ export function BoardTable(props: PBoardTable) {
           const baseConfig = components?.[0]?.config;
           const diffConfig = diffs?.find((d: any) => d?.config != null)?.config;
           const effectiveConfig = diffConfig ?? baseConfig;
+          updatePublishedColumnCount(baseConfig);
           if (effectiveConfig) {
             zone.components[id].data.config = effectiveConfig;
             setConfig({ ...effectiveConfig });
@@ -217,6 +239,7 @@ export function BoardTable(props: PBoardTable) {
       });
       const originalConfig = originalComponents?.[0]?.config ?? props.config;
       zone.components[id].data.config = originalConfig;
+      updatePublishedColumnCount(originalConfig);
       setConfig({ ...originalConfig });
     } else {
       clearTableConfigLocalStorage(`board_diff_${id}`);
@@ -227,6 +250,7 @@ export function BoardTable(props: PBoardTable) {
       });
       const originalConfig = originalComponents?.[0]?.config ?? props.config;
       zone.components[id].data.config = originalConfig;
+      updatePublishedColumnCount(originalConfig);
       setConfig({ ...originalConfig });
     }
     setResetKey((k) => k + 1);
@@ -241,6 +265,7 @@ export function BoardTable(props: PBoardTable) {
       resizeableColumns={editMode || false}
       onReset={onReset}
       showConfigReset={hasDiff}
+      resetConfigColumnCount={publishedColumnCount}
       advanceTab
       displaySource
       fields={config.fieldMeta}
