@@ -24,29 +24,26 @@ import {
   TsDataSource,
   normaliseCaps,
   PopUpMessage,
+  IView,
 } from "../..";
 
 
 export interface PZoneModal extends PBoard {
   open: boolean;
   setOpen: any;
-  zones: IDBZone[];
-  setZones: (zone: IDBZone[]) => void;
-  zoneOrder: IDBZoneView[];
-  setZoneOrder: (zone: IDBZoneView[]) => void;
   viewId: string;
+  view: IView;
+  setView: (view: IView) => void;
 }
 
 export function ZoneModal(props: PZoneModal) {
   const {
     open,
     setOpen,
-    setZones,
-    zones,
-    zoneOrder,
-    setZoneOrder,
     viewId,
     boardDataSource,
+    view,
+    setView,
   } = props;
 
   const [dataSourceInstancesLoading, setDataSourceInstancesLoading] = useState(true);

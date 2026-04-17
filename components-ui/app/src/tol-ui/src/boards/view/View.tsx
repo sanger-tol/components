@@ -12,8 +12,6 @@ import {
   Zone,
   BOARDS,
   PBoard,
-  reorderZoneAndUpsert,
-  getSortedZones,
   useBoard,
   TsDataSource,
   UtilityBar,
@@ -23,6 +21,8 @@ import {
   IZone,
   IView,
   defineZone,
+  deleteBoardEntity,
+  reorderBoardEntityItem,
 } from "../..";
 
 
@@ -45,27 +45,8 @@ export function View(props: PView) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    getZones(id, boardDataSource).then((data: any) => {
-      const zones = Object.fromEntries(
-        data.zones.map((zoneData: any) => {
-          const dsi = zoneData.relationships.data_source_instance;
-          const zone = defineZone({
-            ...zoneData,
-            objectType: zoneData.object_type,
-            dataspace: new TsDataSource({
-              ...dsi.ui_api_details,
-              dataSourceInstanceId: dsi.id,
-            }),
-          } as IZone);
-          return [zoneData.id, zone];
-        })
-      );
-
-      setView({
-        zones,
-        order: getSortedZones(data.zoneOrder),
-        dbOrder: data.zoneOrder
-      });
+    getZones(id, boardDataSource).then((view: IView) => {
+      setView(view);
     });
   }, []);
 
@@ -75,24 +56,16 @@ export function View(props: PView) {
         objectType: BOARDS.ZONE,
         id
       })
-    // const newZones = zones.filter((zone) => zone.id !== id);
-    // setZones(newZones);
+    deleteBoardEntity<IView>("zones", id, view);
   };
 
-  const onZoneReorder = async (id: string, direction: string) => {
-    // reorderZoneAndUpsert(
-    //   id,
-    //   direction,
-    //   zones,
-    //   zoneOrder,
-    //   boardDataSource,
-    // ).then((data) => {
-    //   if (data) {
-    //     const { zones: updatedZones, zoneOrder: updatedZoneOrder } = data;
-    //     setZones(updatedZones);
-    //     setZoneOrder(updatedZoneOrder);
-    //   }
-    // });
+  const onZoneReorder = async (id: string, orderChange: number) => {
+    const newOrder = reorderBoardEntityItem(
+      id,
+      view.order,
+      orderChange,
+    );
+    // TODO: update state
   };
 
   const Bar = (
@@ -118,17 +91,15 @@ export function View(props: PView) {
 
   return (
     <div className="tol-view">
-      {/* {editMode && Bar}
+      {editMode && Bar}
       <ZoneModal
         open={open}
         setOpen={setOpen}
-        setZones={setZones}
-        zones={zones}
-        zoneOrder={zoneOrder}
-        setZoneOrder={setZoneOrder}
         viewId={id}
+        view={view}
+        setView={setView}
         boardDataSource={boardDataSource}
-      /> */}
+      />
       {(view?.order?.length ?? 0) > 0 ? (
         <div className="tol-zones">
           {view.order.map((zoneId) => {

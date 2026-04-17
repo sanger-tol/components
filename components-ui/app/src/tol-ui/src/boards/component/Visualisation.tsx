@@ -21,10 +21,11 @@ import {
   mergeUtilityBarConfigs,
   BoardFilterBlock,
   FilterConfigDrawer,
-  removeComponent,
+  deleteBoardEntity,
   BUTTONS,
   ConfirmationModal,
-  BoardMap
+  BoardMap,
+  IZone
 } from "../..";
 
 
@@ -59,7 +60,7 @@ export function Visualisation(props: PVisualisation) {
         objectType: BOARDS.COMPONENT,
         id: id,
       })
-    removeComponent(id, zone);
+    deleteBoardEntity<IZone>("components", id, zone);
     setZone({ ...zone });
   };
 

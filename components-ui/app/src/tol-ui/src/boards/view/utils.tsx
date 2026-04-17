@@ -8,91 +8,57 @@ import {
   BOARDS,
   generateId,
   getUserFromLocalStorage,
-  IDBZoneView,
+  IDataObject,
+  IView,
+  IZone,
   TDataObjectListOrNull,
-  TsDataSource
+  TDataObjectOrNull,
+  TsDataSource,
 } from "../..";
 
 
-export function getSortedZones(zoneOrder: IDBZoneView[]): string[] {
-  return zoneOrder.sort((a, b) => a.order - b.order).map((z) => z.zoneId);
-};
+// export function getSortedZones(zoneOrder: IDBZoneView[]): string[] {
+//   return zoneOrder.sort((a, b) => a.order - b.order).map((z) => z.zoneId);
+// };
 
-export async function reorderZoneAndUpsert(
-  id: string,
-  direction: string,
-  zones: IDBZone[],
-  zoneOrder: IDBZoneView[],
-  boardDataSource: TsDataSource
-) {
-  // Sort a copy of zoneOrder array by order
-  const updatedZoneOrder = [...zoneOrder];
-  updatedZoneOrder.sort((a, b) => a.order - b.order);
+// export async function upsertZoneOrder(
+//   zoneId: string,
+//   direction: TZoneReorderDirection,
+//   view: IView,
+//   boardDataSource: TsDataSource
+// ) {
 
-  // Find the index of the zone order to move
-  const moverIndex = updatedZoneOrder.findIndex((zone) => zone.zoneId === id);
+//   // Sort again
+//   updatedZoneOrder.sort((a, b) => a.order - b.order);
 
-  const delta = direction === "up" ? -1 : 1;
+//   // Get the maximum order value
+//   const orders = updatedZoneOrder.map((zone) => {
+//     return zone.order;
+//   });
+//   const maxOrder = Math.max(...orders);
 
-  // Find the zone order to move and the zone order to move it to
-  const mover = updatedZoneOrder[moverIndex];
-  const moved = updatedZoneOrder[moverIndex + delta];
+//   // Add the max offset value to each zone order (This avoids integrity issues in the DB)
+//   updatedZoneOrder.forEach((zone) => {
+//     zone.order += maxOrder + 1;
+//   });
 
-  // Bounds check
-  if (!moved) return;
+//   const data = updatedZoneOrder.map((zone) => ({
+//     type: BOARDS.ZONE_VIEW as string,
+//     id: zone.zoneViewId,
+//     attributes: {
+//       order: zone.order,
+//     },
+//   }));
 
-  // Swap the order values
-  const oldMoverOrder = mover.order;
-  const oldMovedOrder = moved.order;
+//   await boardDataSource.upsert({
+//     objectType: BOARDS.ZONE_VIEW,
+//     payload: data,
+//   })
 
-  mover.order = oldMovedOrder;
-  moved.order = oldMoverOrder;
+//   return Promise.resolve(view);
+// };
 
-  // Sort again
-  updatedZoneOrder.sort((a, b) => a.order - b.order);
-
-  // Get the maximum order value
-  const orders = updatedZoneOrder.map((zone) => {
-    return zone.order;
-  });
-  const maxOrder = Math.max(...orders);
-
-  // Add the max offset value to each zone order (This avoids integrity issues in the DB)
-  updatedZoneOrder.forEach((zone) => {
-    zone.order += maxOrder + 1;
-  });
-
-  const payloadData = updatedZoneOrder.map((zone) => {
-    return {
-      type: BOARDS.ZONE_VIEW as string,
-      id: zone.zoneViewId,
-      attributes: {
-        order: zone.order,
-      },
-    };
-  });
-
-  await boardDataSource.upsert({
-    objectType: BOARDS.ZONE_VIEW,
-    payload: payloadData,
-  })
-
-  // Reorder the zones state based on the updated zoneOrder
-  const updatedZones = [...zones].sort((a, b) => {
-    const orderA = // @ts-ignore
-      updatedZoneOrder.find((zone) => zone.id === a.id)?.order || 0;
-    const orderB = // @ts-ignore
-      updatedZoneOrder.find((zone) => zone.id === b.id)?.order || 0;
-    return orderA - orderB;
-  });
-
-  return Promise.resolve({
-    zones: updatedZones,
-    zoneOrder: updatedZoneOrder,
-  })
-};
-
-export async function getZones(viewId: string, boardDataSource: TsDataSource) {
+export async function getZones(viewId: string, boardDataSource: TsDataSource): Promise<IView> {
   return await boardDataSource
     .getListPage({
       objectType: BOARDS.ZONE_VIEW,
@@ -102,38 +68,19 @@ export async function getZones(viewId: string, boardDataSource: TsDataSource) {
         },
       },
     })
-    .then(async (data: TDataObjectListOrNull) => {
-      const allIds = await Promise.all(
-        data?.map(async (zoneView: any) => {
-          const zone = await zoneView.fetchRelationships.zone;
-          return zone.id;
-        }) || []
-      );
-      // removes duplicate values
-      const ids: string[] = Array.from(new Set(allIds));
-      const zoneData = await getZoneData(ids, boardDataSource);
-      return {
-        zones: zoneData,
-        zoneOrder: await formatZoneOrders(data),
-      };
+    .then(async (zoneView: TDataObjectListOrNull) => {
+      return await getZoneData(zoneView, boardDataSource) as unknown as Promise<IView>;
     });
 }
 
-async function formatZoneOrders(data: TDataObjectListOrNull) {
-  const formattedData = await Promise.all(
-    data?.map(async (zone: any) => {
-      const zoneRelationships = await zone.fetchRelationships.zone;
-      return {
-        zoneId: zoneRelationships.id,
-        order: zone.order,
-        zoneViewId: zone.id,
-      };
-    }) || []
-  );
-  return formattedData;
-}
+async function getZoneData(zoneView: TDataObjectListOrNull, boardDataSource: TsDataSource): Promise<IView> {
+  const ids = zoneView
+    ?.sort((a, b) => a?.order - b?.order)
+    .map((z) => {
+      const zone = z?.relationships?.zone as IDataObject;
+      return zone.id;
+    });
 
-async function getZoneData(ids: string[], boardDataSource: TsDataSource) {
   return await boardDataSource
     .getListPage({
       objectType: BOARDS.ZONE,
@@ -144,6 +91,12 @@ async function getZoneData(ids: string[], boardDataSource: TsDataSource) {
       },
       requestedFields: ["data_source_instance.ui_api_details"]
     })
+    .then((zones: TDataObjectListOrNull) => {
+      return {
+        zones: {}, //TODO: add zones with zone_view id etc
+        order: ids,
+      } as IView;
+    });
 }
 
 export async function upsertNewZone(
