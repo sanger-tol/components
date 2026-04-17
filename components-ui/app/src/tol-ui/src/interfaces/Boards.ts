@@ -10,6 +10,7 @@ import {
   PUtilityBar,
 } from '..';
 
+export type TBoardEntityOrder = string[];
 
 export interface IComponent {
   data: IComponentData;
@@ -44,32 +45,29 @@ export interface IComponents {
 }
 
 export interface IZone {
+  id?: string;
   components: IComponents;
-  order: string[];
+  order: TBoardEntityOrder;
   filter?: IFilter;
   defaultFilter?: IFilter;
   objectType?: string;
 
   // extras required just for boards
-  id?: string;
   title?: string;
   dataspace?: TsDataSource;
+
+  // used for reordering in the db
+  zoneViewId?: string;
+  zoneViewOrder?: number;
 }
 
 export interface IZones {
   [id: string]: IZone;
 }
 
-export interface IDBZoneView {
-  zoneId: string;
-  order: number;
-  zoneViewId: string;
-}
-
 export interface IView {
   zones: IZones;
-  order: string[];
-  dbOrder?: IDBZoneView[];
+  order: TBoardEntityOrder;
 }
 
 export interface IViews {
@@ -78,7 +76,7 @@ export interface IViews {
 
 export interface IBoard {
   views: IViews;
-  order: string[];
+  order: TBoardEntityOrder;
 }
 
 /*

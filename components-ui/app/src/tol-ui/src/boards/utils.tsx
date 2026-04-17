@@ -13,7 +13,9 @@ import {
   IBoard,
   IView,
   TBoardLevel,
-  IComponent
+  IComponent,
+  TZoneReorderDirection,
+  TBoardEntityOrder
 } from "..";
 
 
@@ -194,4 +196,53 @@ export function useBoardState<
   } as TParent);
 
   return [value, setValue];
+}
+
+/**
+ * Removes a component, view, or zone from the board state and updates the order of the remaining elements accordingly.
+ * 
+ * @param id The identifier of the component, view, or zone to be removed.
+ * @param boardEntity The current state of the board entity (IBoard, IView, or IZone) from which the element will be removed.
+ * @param boardLevel The level of the board entity (e.g., 'zones' for a zone, 'views' for a view) to identify which collection to update.
+ */
+export function deleteBoardEntity<
+  TParent extends IBoard | IView | IZone
+>(
+  boardLevel: TBoardLevel,
+  id: string,
+  boardEntity: TParent,
+) {
+  delete boardEntity[boardLevel][id];
+  boardEntity.order = boardEntity.order.filter((currentId) => currentId !== id);
+}
+
+/**
+ * Reorders a component, view, or zone within the board state by a specified change in order.
+ * @param id The identifier of the component, view, or zone to be reordered.
+ * @param order The current order array
+ * @param orderChange The number of positions to move the element (positive for down, negative for up).
+ * @returns void
+ */
+export function reorderBoardEntityItem(
+  id: string,
+  order: TBoardEntityOrder,
+  orderChange: number,
+) {
+  // Create a copy of the current order to modify
+  const newOrder = [...order];
+
+  // Find the current index of the element to be moved
+  const currentIndex = newOrder.findIndex((currentId) => currentId === id);
+
+  // Calculate the new index based on the order change
+  const newIndex = currentIndex + orderChange;
+
+  // Bounds check
+  if (newIndex < 0 || newIndex >= newOrder.length) return order;
+
+  // Remove from current position, insert at new position
+  const [moved] = newOrder.splice(currentIndex, 1);
+  newOrder.splice(newIndex, 0, moved);
+
+  return newOrder;
 }

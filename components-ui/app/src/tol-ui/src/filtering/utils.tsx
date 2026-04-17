@@ -261,17 +261,6 @@ export function resetAllFilters(zone: IZone) {
 }
 
 /**
- * Removes a component with the specified identifier from the given zone, and updates the zone's order accordingly.
- * 
- * @param id The identifier of the component to remove.
- * @param zone The zone containing the components and their order.
- */
-export function removeComponent(id: string, zone: IZone) {
-  delete zone.components[id];
-  zone.order = zone.order.filter((currentId) => currentId !== id);
-}
-
-/**
  * Sets the filter input for a specific component in a zone.
  * 
  * @param params An object containing the parameters for setting the filter input.
