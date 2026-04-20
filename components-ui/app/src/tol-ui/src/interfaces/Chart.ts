@@ -33,6 +33,7 @@ export interface IAggregation {
   break_down_by?: string;
   stat?: string;
   stat_field?: string;
+  cumulative?: boolean;
   maximum_categories?: number;
 }
 

@@ -123,7 +123,7 @@ export function RemoteBarChart(props: PRemoteBarChart) {
   useEffectUpdate(() => {
     if (!contents) { // This is to stop calls being made when the bar chart is not visible
       setLoading(true);
-      const aggs = generateChartAgg(breakDownBy, xAxis, type);
+      const aggs = generateChartAgg(breakDownBy, xAxis, type, cumulative);
       dataSource
         .custom({
           method: API_METHODS.POST,
@@ -135,7 +135,7 @@ export function RemoteBarChart(props: PRemoteBarChart) {
           setErrorMessage("");
           setWarningMessage(response ? "" : NO_DATA_FOUND_MESSAGE);
 
-          const aggs = aggsToBarChartData(response, type, shortDate, cumulative);
+          const aggs = aggsToBarChartData(response, type, shortDate);
           setDatasets(aggs.datasets);
           setLabels(aggs.labels);
           setLoading(false);

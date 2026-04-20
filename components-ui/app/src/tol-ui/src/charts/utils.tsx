@@ -385,12 +385,10 @@ function formatLabels(
 }
 
 // would need adapting for multiple aggs in 1 api call
-// TODO: The backend handles cumulative now so it shouldn't be used here
 export function aggsToBarChartData(
   aggs: TAggregationResult,
   grouping: HistogramGrouping,
   shortDate?: boolean,
-  cumulative?: boolean,
 ): IChartData {
   const datasets: object[] = [];
   const sortedAggs: IAggData = getSortedAggData(aggs);
@@ -403,12 +401,7 @@ export function aggsToBarChartData(
     let prevTotal = 0;
     for (const key of sortedAggs.keys) {
       if (key in agg) {
-        if (cumulative) {
-          data.push(prevTotal + agg[key]);
-          prevTotal += agg[key];
-        } else {
-          data.push(agg[key]);
-        }
+        data.push(agg[key]);
       } else {
         data.push(prevTotal);
       }
@@ -504,13 +497,15 @@ export function generateBarLabels(chart: any, titleColour: any) {
 export function generateChartAgg(
   breakDownBy: string,
   xAxis: string,
-  grouping: HistogramGrouping
+  grouping: HistogramGrouping,
+  cumulative?: boolean,
 ): IAggregation {
   if (grouping == "categorical") {
     // Categorical aggregation
     return {
       x_axis: xAxis,
       break_down_by: breakDownBy,
+      cumulative,
     }
   } else {
     // Date aggregation
@@ -518,6 +513,7 @@ export function generateChartAgg(
       x_axis: xAxis,
       break_down_by: breakDownBy,
       date_interval: "1" + grouping,
+      cumulative,
     }
   }
 }
