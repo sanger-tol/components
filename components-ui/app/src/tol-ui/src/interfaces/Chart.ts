@@ -16,3 +16,10 @@ export interface IChartDataset {
   pointHoverRadius: number[],
   pointRadius: number[]
 }
+
+export interface IAggregationSegment {
+  key: string;
+  data: Array<{x: any, y: any}>
+}
+
+export type TAggregation = IAggregationSegment[];
