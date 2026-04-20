@@ -392,7 +392,6 @@ export function aggsToBarChartData(
 ): IChartData {
   const datasets: object[] = [];
   const sortedAggs: IAggData = getSortedAggData(aggs);
-  console.log(sortedAggs)
   const labels = sortedAggs.keys;
 
   for (const [bucket, agg] of Object.entries(sortedAggs.aggs)) {
