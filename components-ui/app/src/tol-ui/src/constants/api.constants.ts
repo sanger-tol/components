@@ -46,6 +46,7 @@ export const WEB_APP = "web_app";
 export const ACTIONS = {
   ACTION: "action",
   RUN_ACTION: "run-action",
+  ROLE_ACTION: "role_action",
 }
 
 export const VALIDATIONS = {
@@ -62,4 +63,8 @@ export const VALIDATION_ENDPOINTS = {
 export const S3_ENDPOINTS = {
   UPLOAD: "data-upload/upload",
   DOWNLOAD: "data-upload/download",
+}
+
+export const USER = {
+  ROLE: "role",
 }
