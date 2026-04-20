@@ -32,7 +32,7 @@ export interface IAggregation {
 }
 
 export interface IAggregationSegment {
-  key: string;
+  key?: string;
   data: Array<{x: any, y: any}>
 }
 
