@@ -28,7 +28,8 @@
     "@uiw/react-md-editor": "4.0.7",
     "rehype-sanitize": "6.0.0",
     "xlsx": "0.18.5",
-    "@tanstack/react-query": "^5.81.5"
+    "@tanstack/react-query": "^5.81.5",
+    "json-edit-react": "1.29.0"
   },
   "devDependencies": {
     "typescript": "5.6.3",
@@ -48,7 +49,8 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-router-dom": "^5.2.0",
-    "react-markdown": "10.1.0"
+    "react-markdown": "10.1.0",
+    "json-edit-react": "1.29.0"
   },
   "scripts": {
     "build": "yarn build:esm && yarn build:cjs",
