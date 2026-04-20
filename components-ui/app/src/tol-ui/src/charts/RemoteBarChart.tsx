@@ -24,7 +24,8 @@ import {
   TFilterOrUndefined,
   API_METHODS,
   IHeight,
-  API_OPERATIONS
+  API_OPERATIONS,
+  TAggregationResult
 } from "..";
 
 interface PRemoteBarChart extends IRemoteTargetAndZone, IHeight {
@@ -125,14 +126,14 @@ export function RemoteBarChart(props: PRemoteBarChart) {
       dataSource
         .custom({
           method: API_METHODS.POST,
-          resource: `${objectType}${API_OPERATIONS.AGGREGATIONS_LEGACY}`,
+          resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
           body: {...aggs, filter: filter},
         })
         .then((res: any) => {
-          let aggs = res.data.meta.aggregations;
+          const response = res.data;
           setErrorMessage("");
-          setWarningMessage(isChartDataEmpty(aggs));
-          aggs = aggsToBarChartData(aggs, type, shortDate, cumulative);
+          setWarningMessage(isChartDataEmpty(response));
+          const aggs = aggsToBarChartData(response, type, shortDate, cumulative);
           setDatasets(aggs.datasets);
           setLabels(aggs.labels);
           setLoading(false);

@@ -15,7 +15,8 @@ import {
   isPropDefined,
   ISunburstSectionClickedData,
   mergeAndFilters,
-  NO_DATA_FOUND_MESSAGE
+  NO_DATA_FOUND_MESSAGE,
+  TAggregationResult
 } from "..";
 
 // ------------------//
@@ -263,9 +264,11 @@ export function setBorderColour(datasets: any, borderColour: string) {
 }
 
 export function isChartDataEmpty(aggs: any) {
-  const data = Object.values(aggs)[0]!["buckets"];
-  if (isEmptyObject(data)) return NO_DATA_FOUND_MESSAGE;
-  return "";
+  if (!aggs) return NO_DATA_FOUND_MESSAGE;
+  else return "";
+  // const data = Object.values(aggs)[0]!["buckets"];
+  // if (isEmptyObject(data)) return NO_DATA_FOUND_MESSAGE;
+  // return "";
 }
 
 // ------------------//
@@ -307,22 +310,23 @@ export function initialiseDatasets(datasets: any[]) {
   return datasets;
 }
 
-function getSortedAggData(buckets: object) {
+//
+function getSortedAggData(aggs: TAggregationResult) {
   const keys = new Set();
-  const aggs = {};
-  for (const bucket of Object.values(buckets)) {
-    aggs[bucket["key"]] = {};
-    const data: object[] = bucket["1"]["buckets"];
+  const sortedAggs = {};
+  for (const bucket of aggs) {
+    sortedAggs[bucket.key] = {};
+    const data: object[] = bucket.data;
     for (const datapoint of data) {
-      keys.add(datapoint["key"]);
-      aggs[bucket["key"]][datapoint["key"]] = datapoint["doc_count"];
+      keys.add(datapoint["x"]);
+      sortedAggs[bucket.key][datapoint["x"]] = datapoint["y"];
     }
   }
   return {
     keys: Array.from(keys).sort((a: any, b: any) => {
       return a - b;
     }),
-    aggs: aggs,
+    aggs: sortedAggs,
   } as AggData;
 }
 
@@ -391,14 +395,15 @@ function formatLabels(
 
 // would need adapting for multiple aggs in 1 api call
 export function aggsToBarChartData(
-  aggs: object,
+  aggs: TAggregationResult,
   grouping: HistogramGrouping,
   shortDate?: boolean,
   cumulative?: boolean,
 ): ChartData {
+  //
   const datasets: object[] = [];
-  const buckets: object = aggs["agg"]["buckets"];
-  const sortedAggs: AggData = getSortedAggData(buckets);
+  const sortedAggs: AggData = getSortedAggData(aggs);
+  console.log(sortedAggs)
   const labels = sortedAggs.keys;
 
   for (const [bucket, agg] of Object.entries(sortedAggs.aggs)) {
