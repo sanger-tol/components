@@ -394,21 +394,11 @@ export function aggsToBarChartData(
   const sortedAggs: IAggData = getSortedAggData(aggs);
   const labels = sortedAggs.keys;
 
-  for (const [bucket, agg] of Object.entries(sortedAggs.aggs)) {
-    const data: number[] = [];
-
-    let prevTotal = 0;
-    for (const key of sortedAggs.keys) {
-      if (key in agg) {
-        data.push(agg[key]);
-      } else {
-        data.push(prevTotal);
-      }
-    }
-
+  for (const [breakDownBy, datum] of Object.entries(sortedAggs.aggs)) {
+    const data: number[] = sortedAggs.keys.map(key => datum[key]);
     const dataset = {
-      id: bucket,
-      label: bucket,
+      id: breakDownBy,
+      label: breakDownBy,
       data: data,
     };
     datasets.push(dataset);

@@ -55,7 +55,7 @@ export interface IAggData {
   /** The actual aggregation data. A condensed version of an aggregation response */
   aggs: {
     [breakDownBy: string]: {
-      [x: string]: any
+      [key: string]: any
     }
   };
 }
