@@ -302,7 +302,6 @@ export function initialiseDatasets(datasets: any[]) {
   return datasets;
 }
 
-//
 function getSortedAggData(aggs: TAggregationResult) {
   const keys = new Set();
   const sortedAggs = {};
@@ -386,13 +385,13 @@ function formatLabels(
 }
 
 // would need adapting for multiple aggs in 1 api call
+// TODO: The backend handles cumulative now so it shouldn't be used here
 export function aggsToBarChartData(
   aggs: TAggregationResult,
   grouping: HistogramGrouping,
   shortDate?: boolean,
   cumulative?: boolean,
 ): IChartData {
-  //
   const datasets: object[] = [];
   const sortedAggs: IAggData = getSortedAggData(aggs);
   console.log(sortedAggs)
