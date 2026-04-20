@@ -41,7 +41,7 @@ export function BoardTable(props: PBoardTable) {
 
   useEffect(() => {
     const fetchActions = async () => {
-      const roleids = await getRoleIdsByNames(user.roles, localDataSource);
+      const roleids = await getRoleIdsByNames(user?.roles, localDataSource);
       localDataSource.custom({
         method: API_METHODS.POST,
         resource: `role_action`,
