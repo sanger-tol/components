@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   RemoteTable,
   updateConfigAndUpsert,
@@ -15,10 +15,12 @@ import {
   PVisualisation,
   updateFieldMetaAttribute,
   TsDataSource,
-  API_METHODS,
+  TDataObjectListOrNull,
   useAuth,
   PopUpMessage,
-  getRoleIdsByNames
+  getRoleIdsByNames,
+  useQueryData,
+  LOCAL_API_DATA_PATH,
 } from "..";
 
 
@@ -35,49 +37,57 @@ export function BoardTable(props: PBoardTable) {
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
   const [actionList, setActionList] = useState<string[] | undefined>(undefined);
   const localDataSource = new TsDataSource({
-    apiPath: "/api/v1/local",
+    apiPath: `/api/v1/${LOCAL_API_DATA_PATH}`,
   });
 
-
-  useEffect(() => {
-    const fetchActions = async () => {
-      if (!user) return;
-      const roleids = await getRoleIdsByNames(user.roles, localDataSource);
-      localDataSource.custom({
-        method: API_METHODS.POST,
-        resource: `role_action`,
-        body: {
-          filter: {
-            "and_": {
-              "role_id": {
-                "in_list": {
-                  "value": roleids
-                },
-              },
-            }
-          }
+  const fetchActions = async (): Promise<string[]> => {
+    if (!user) return [];
+    const roleids = await getRoleIdsByNames(user.roles, localDataSource);
+    return localDataSource.getListPage({
+      objectType: "role_action",
+      filter: {
+        "and_": {
+          "role_id": {
+            "in_list": {
+              "value": roleids
+            },
+          },
         }
-      }).then((res: any) => {
-        if (!res.data.included || res.data.included.length === 0) {
-          setActionList([]);
-          return;
+      }
+    }).then(async (res: TDataObjectListOrNull) => {
+      const data = await Promise.all(res?.map(async (item: any) => {
+        const action = await item.fetchRelationships.action;
+        return action;
+      }) || []);
+      if (data.length === 0) {
+        setActionList([]);
+        return [];
+      }
+      const actionNames: string[] = []
+      for (const action of data) {
+        if (action.object_type == objectType) {
+          actionNames.push(action.name);
         }
-        const actionNames = res.data.included.map((relatedObj: any) => {
-          if (relatedObj.type === "action" && relatedObj.attributes.object_type == objectType) {
-            return relatedObj.attributes.name;
-          }
-        })
-        setActionList(actionNames.filter((name: string | undefined): name is string => name !== undefined));
+      }
+      setActionList(actionNames);
+      return actionNames;
+    }).catch((error: any) => {
+      PopUpMessage({
+        type: "error",
+        message: `Error Fetching Actions: ${error}`,
+      });
+      return [];
+    })
+  }
 
-      }).catch((error: any) => {
-        PopUpMessage({
-          type: "error",
-          message: `Error Fetching Actions: ${error}`,
-        });
-      })
-    }
-    fetchActions();
-  }, [])
+  useQueryData<string[]>(
+    ["actionsList", id],
+    fetchActions,
+    {
+      enabled: !!user,
+      staleTime: 0,
+    },
+  );
 
   const onConfigSave = ({
     fieldMeta,
@@ -156,8 +166,8 @@ export function BoardTable(props: PBoardTable) {
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
       actions={actionList}
-    // This will change depending on if the user actually has any available actions
-    rowSelection={actionList && actionList.length > 0}
+      // This will change depending on if the user actually has any available actions
+      rowSelection={actionList && actionList.length > 0}
     />
   );
 }
