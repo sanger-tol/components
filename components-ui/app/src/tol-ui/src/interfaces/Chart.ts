@@ -17,9 +17,20 @@ export interface IChartDataset {
   pointRadius: number[]
 }
 
+/** Aggregation request object sent to ":aggregations" */
+export interface IAggregation {
+  xAxis: string;
+  yAxis?: string;
+  dateInterval?: string;
+  breakDownBy?: string;
+  stat?: string;
+  statField?: string;
+  maximumCategories?: number;
+}
+
 export interface IAggregationSegment {
   key: string;
   data: Array<{x: any, y: any}>
 }
 
-export type TAggregation = IAggregationSegment[];
+export type TAggregationResult = IAggregationSegment[];
