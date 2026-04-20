@@ -134,6 +134,7 @@ export function RemoteBarChart(props: PRemoteBarChart) {
           const response = res.data;
           setErrorMessage("");
           setWarningMessage(response ? "" : NO_DATA_FOUND_MESSAGE);
+
           const aggs = aggsToBarChartData(response, type, shortDate, cumulative);
           setDatasets(aggs.datasets);
           setLabels(aggs.labels);

@@ -6,7 +6,9 @@ SPDX-License-Identifier: MIT
 
 import { format } from "date-fns";
 import {
+  IAggData,
   appendKeywordIfNeeded,
+  IChartData,
   getCssVarValue,
   IAggregation,
   IChartDataset,
@@ -275,16 +277,6 @@ export function isChartDataEmpty(aggs: any) {
 //      BARCHART     //
 // ------------------//
 
-interface ChartData {
-  datasets: object[];
-  labels: string[];
-}
-
-interface AggData {
-  keys: any[];
-  aggs: object[];
-}
-
 export type HistogramGrouping = "d" | "w" | "M" | "y" | "categorical";
 
 export function initialiseDatasets(datasets: any[]) {
@@ -327,7 +319,7 @@ function getSortedAggData(aggs: TAggregationResult) {
       return a - b;
     }),
     aggs: sortedAggs,
-  } as AggData;
+  } as IAggData;
 }
 
 function isDateString(label: string): boolean {
@@ -399,10 +391,10 @@ export function aggsToBarChartData(
   grouping: HistogramGrouping,
   shortDate?: boolean,
   cumulative?: boolean,
-): ChartData {
+): IChartData {
   //
   const datasets: object[] = [];
-  const sortedAggs: AggData = getSortedAggData(aggs);
+  const sortedAggs: IAggData = getSortedAggData(aggs);
   console.log(sortedAggs)
   const labels = sortedAggs.keys;
 
@@ -434,7 +426,7 @@ export function aggsToBarChartData(
   return {
     datasets: datasets,
     labels: formatLabels(labels, grouping, shortDate),
-  } as ChartData;
+  } as IChartData;
 }
 
 function formatDateRangeWithInterval(

@@ -4,6 +4,11 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+export interface IChartData {
+  datasets: object[];
+  labels: string[];
+}
+
 export interface IChartDataset {
   backgroundColor: string[],
   borderColor: string[],
@@ -37,3 +42,19 @@ export interface IAggregationSegment {
 }
 
 export type TAggregationResult = IAggregationSegment[];
+
+/**
+ * The format aggregations are stored in to be displayed in charts.
+ * Derived from `TAggregationResult`, containing a condensed version of `aggs`, and a keys set
+ * for utility (displayed along the x axis)
+ */
+export interface IAggData {
+  /** Every unique x value (in the `{x: ..., y: ...}` of an aggregation response) */
+  keys: any[];
+  /** The actual aggregation data. A condensed version of an aggregation response */
+  aggs: {
+    [breakDownBy: string]: {
+      [x: string]: any
+    }
+  };
+}
