@@ -513,15 +513,15 @@ export function generateChartAgg(
   if (grouping == "categorical") {
     // Categorical aggregation
     return {
-      xAxis,
-      breakDownBy,
+      x_axis: xAxis,
+      break_down_by: breakDownBy,
     }
   } else {
     // Date aggregation
     return {
-      xAxis,
-      breakDownBy,
-      dateInterval: "1" + grouping,
+      x_axis: xAxis,
+      break_down_by: breakDownBy,
+      date_interval: "1" + grouping,
     }
   }
 }

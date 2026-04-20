@@ -17,15 +17,18 @@ export interface IChartDataset {
   pointRadius: number[]
 }
 
-/** Aggregation request object sent to ":aggregations" */
+/**
+ * Aggregation request object sent to ":aggregations".
+ * It thus uses the back-end naming conventions
+ */
 export interface IAggregation {
-  xAxis: string;
-  yAxis?: string;
-  dateInterval?: string;
-  breakDownBy?: string;
+  x_axis: string;
+  y_axis?: string;
+  date_interval?: string;
+  break_down_by?: string;
   stat?: string;
-  statField?: string;
-  maximumCategories?: number;
+  stat_field?: string;
+  maximum_categories?: number;
 }
 
 export interface IAggregationSegment {
