@@ -128,7 +128,7 @@ export function RemoteBarChart(props: PRemoteBarChart) {
         .custom({
           method: API_METHODS.POST,
           resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
-          body: {...aggs, filter: filter},
+          body: {...aggs, filter: JSON.stringify(filter)},
         })
         .then((res: any) => {
           const response = res.data;
