@@ -131,7 +131,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
       dataSource
         .custom({
           method: API_METHODS.POST,
-          resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
+          resource: `${objectType}${API_OPERATIONS.AGGREGATIONS_LEGACY}`,
           body: { ...aggs, filter: generateFilter(zone, id, true) },
         })
         .then((res: any) => {
@@ -204,7 +204,7 @@ export function RemoteSunburst(props: PRemoteSunburst) {
       dataSource
         .custom({
           method: API_METHODS.POST,
-          resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
+          resource: `${objectType}${API_OPERATIONS.AGGREGATIONS_LEGACY}`,
           body: { ...aggs, filter: generateFilter(zone, id, true) },
         })
         .then((res: any) => {

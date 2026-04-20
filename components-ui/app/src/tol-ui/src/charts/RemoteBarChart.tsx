@@ -125,7 +125,7 @@ export function RemoteBarChart(props: PRemoteBarChart) {
       dataSource
         .custom({
           method: API_METHODS.POST,
-          resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
+          resource: `${objectType}${API_OPERATIONS.AGGREGATIONS_LEGACY}`,
           body: {...aggs, filter: filter},
         })
         .then((res: any) => {
