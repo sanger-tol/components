@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import {
   appendKeywordIfNeeded,
   getCssVarValue,
+  IAggregation,
   IChartDataset,
   IFilter,
   isEmptyObject,
@@ -495,50 +496,34 @@ export function generateBarLabels(chart: any, titleColour: any) {
 //   DATE & CATEGORICAL BARCHART   //
 // -------------------------------//
 
+/**
+ * Generates an aggregation request body to send to the `:aggregations` endpoint,
+ * for a categorical aggregation or a date aggregation
+ * @param breakDownBy The field by which to break down the data
+ * @param xAxis The field to use on the x axis
+ * @param grouping The date interval if a date aggregation, or "categorical" to for a
+ * categorical aggregation
+ * @returns 
+ */
 export function generateChartAgg(
   breakDownBy: string,
   xAxis: string,
-  grouping: HistogramGrouping,
-) {
-  const baseAgg = {
-    terms: {
-      field: appendKeywordIfNeeded(breakDownBy),
-      size: 25,
-    },
-  };
-
-  let innerAgg;
-
-  if (grouping === "categorical") {
-    innerAgg = {
-      terms: {
-        field: appendKeywordIfNeeded(xAxis),
-        order: {
-          _key: "asc",
-        },
-        size: 25,
-      },
-    };
+  grouping: HistogramGrouping
+): IAggregation {
+  if (grouping == "categorical") {
+    // Categorical aggregation
+    return {
+      xAxis,
+      breakDownBy,
+    }
   } else {
-    innerAgg = {
-      date_histogram: {
-        field: xAxis,
-        calendar_interval: "1" + grouping,
-        time_zone: "Europe/London",
-      },
-    };
+    // Date aggregation
+    return {
+      xAxis,
+      breakDownBy,
+      dateInterval: "1" + grouping,
+    }
   }
-
-  return {
-    aggs: {
-      agg: {
-        ...baseAgg,
-        aggs: {
-          "1": innerAgg,
-        },
-      },
-    },
-  };
 }
 
 export function generateChartFilterFromBar(
