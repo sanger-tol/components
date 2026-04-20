@@ -10,7 +10,6 @@ import {
   generateChartFilterFromBar,
   HistogramGrouping,
   aggsToBarChartData,
-  isChartDataEmpty,
   BarChart,
   useEffectUpdate,
   normaliseCaps,
@@ -25,7 +24,6 @@ import {
   API_METHODS,
   IHeight,
   API_OPERATIONS,
-  TAggregationResult,
   NO_DATA_FOUND_MESSAGE
 } from "..";
 
