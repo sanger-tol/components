@@ -15,12 +15,10 @@ import {
   PVisualisation,
   updateFieldMetaAttribute,
   TsDataSource,
-  TDataObjectListOrNull,
   useAuth,
-  PopUpMessage,
-  getRoleIdsByNames,
   useQueryData,
   LOCAL_API_DATA_PATH,
+  fetchActions
 } from "..";
 
 
@@ -35,54 +33,13 @@ export function BoardTable(props: PBoardTable) {
   const { editMode } = useBoard();
 
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
-  const [actionList, setActionList] = useState<string[] | undefined>(undefined);
   const localDataSource = new TsDataSource({
     apiPath: `/api/v1/${LOCAL_API_DATA_PATH}`,
   });
 
-  const fetchActions = async (): Promise<string[]> => {
-    if (!user) return [];
-    const roleids = await getRoleIdsByNames(user.roles, localDataSource);
-    return localDataSource.getListPage({
-      objectType: "role_action",
-      filter: {
-        "and_": {
-          "role_id": {
-            "in_list": {
-              "value": roleids
-            },
-          },
-        }
-      }
-    }).then(async (res: TDataObjectListOrNull) => {
-      const data = await Promise.all(res?.map(async (item: any) => {
-        const action = await item.fetchRelationships.action;
-        return action;
-      }) || []);
-      if (data.length === 0) {
-        setActionList([]);
-        return [];
-      }
-      const actionNames: string[] = []
-      for (const action of data) {
-        if (action.object_type == objectType) {
-          actionNames.push(action.name);
-        }
-      }
-      setActionList(actionNames);
-      return actionNames;
-    }).catch((error: any) => {
-      PopUpMessage({
-        type: "error",
-        message: `Error Fetching Actions: ${error}`,
-      });
-      return [];
-    })
-  }
-
-  useQueryData<string[]>(
+  const actionList = useQueryData<string[]>(
     ["actionsList", id],
-    fetchActions,
+    () => fetchActions(user, localDataSource, objectType),
     {
       enabled: !!user,
       staleTime: 0,
@@ -165,9 +122,9 @@ export function BoardTable(props: PBoardTable) {
       onConfigSave={onConfigSave}
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
-      actions={actionList}
+      actions={actionList.data}
       // This will change depending on if the user actually has any available actions
-      rowSelection={actionList && actionList.length > 0}
+      rowSelection={actionList.data && actionList.data.length > 0}
     />
   );
 }

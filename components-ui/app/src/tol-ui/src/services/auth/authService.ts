@@ -9,7 +9,8 @@ import {
   TsDataSource,
   API_METHODS,
   AUTH_API_DATA_PATH,
-  TDataObjectListOrNull
+  TDataObjectListOrNull,
+  USER
 } from "../..";
 
 const authDataSource = new TsDataSource({
@@ -65,7 +66,7 @@ export function getRoleIdsByNames(
 ) {
 
   return dataSource.getListPage({
-    objectType: "role",
+    objectType: USER.ROLE,
     filter: {
       "and_": {
         "name": {
