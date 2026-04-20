@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "http://components-api:80",
   "dependencies": {
-    "@tol/tol-ui": "3.0.0",
+    "@tol/tol-ui": "3.4.4",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-bootstrap": "2.8.0",
