@@ -27,6 +27,10 @@ import {
   getRelationshipNameByField,
   CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
   CELL_RENDERER_SPREAD_OPERATOR,
+  getRoleIdsByNames,
+  PopUpMessage,
+  User,
+  ACTIONS
 } from "..";
 
 interface Rgb {
@@ -420,4 +424,47 @@ export function updateFieldMetaAttribute(
 
   updateTarget("data");
   if (dataWithDefaults) updateTarget("dataWithDefaults");
+}
+
+
+export async function fetchActions(
+  user: User | null,
+  localDataSource: TsDataSource,
+  objectType: string,
+): Promise<string[]> {
+  if (!user) return [];
+  const roleids = await getRoleIdsByNames(user.roles, localDataSource);
+  return localDataSource.getListPage({
+    objectType: ACTIONS.ROLE_ACTION,
+    filter: {
+      "and_": {
+        "role_id": {
+          "in_list": {
+            "value": roleids
+          },
+        },
+      }
+    }
+  }).then(async (res: TDataObjectListOrNull) => {
+    const data = await Promise.all(res?.map(async (item: any) => {
+      const action = await item.fetchRelationships.action;
+      return action;
+    }) || []);
+    if (data.length === 0) {
+      return [];
+    }
+    const actionNames: string[] = []
+    for (const action of data) {
+      if (action.object_type == objectType) {
+        actionNames.push(action.name);
+      }
+    }
+    return actionNames;
+  }).catch((error: any) => {
+    PopUpMessage({
+      type: "error",
+      message: `Error Fetching Actions: ${error}`,
+    });
+    return [];
+  })
 }

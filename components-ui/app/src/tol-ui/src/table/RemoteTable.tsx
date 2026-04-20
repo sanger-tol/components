@@ -404,7 +404,6 @@ export function RemoteTable(props: PRemoteTable) {
 
   const onConfigSave = ({
     fieldMeta: fm,
-    actions,
     defaultSortByAttribute,
     defaultSortByType
   }: ITableConfigSave) => {
@@ -418,7 +417,6 @@ export function RemoteTable(props: PRemoteTable) {
     if (props.onConfigSave) {
       props.onConfigSave({
         fieldMeta: fm,
-        actions,
         defaultSortByAttribute: defaultSortByAttribute,
         defaultSortByType: defaultSortByType
       });

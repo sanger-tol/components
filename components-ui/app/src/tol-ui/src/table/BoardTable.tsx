@@ -14,6 +14,11 @@ import {
   ITableDrawerSave,
   PVisualisation,
   updateFieldMetaAttribute,
+  TsDataSource,
+  useAuth,
+  useQueryData,
+  LOCAL_API_DATA_PATH,
+  fetchActions
 } from "..";
 
 
@@ -22,20 +27,31 @@ export interface PBoardTable extends PVisualisation {
 }
 
 export function BoardTable(props: PBoardTable) {
-  const { id, boardDataSource, zone } = props;
+  const { id, boardDataSource, zone, objectType } = props;
 
+  const { user } = useAuth();
   const { editMode } = useBoard();
 
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
+  const localDataSource = new TsDataSource({
+    apiPath: `/api/v1/${LOCAL_API_DATA_PATH}`,
+  });
+
+  const actionList = useQueryData<string[]>(
+    ["actionsList", id],
+    () => fetchActions(user, localDataSource, objectType),
+    {
+      enabled: !!user,
+      staleTime: 0,
+    },
+  );
 
   const onConfigSave = ({
     fieldMeta,
-    actions,
     defaultSortByAttribute,
     defaultSortByType
   }: ITableDrawerSave) => {
     config["fieldMeta"] = optimiseFieldMetaForSave(fieldMeta);
-    config["actions"] = actions;
     config["defaultSortByAttribute"] = defaultSortByAttribute;
     config["defaultSortByType"] = defaultSortByType;
     setConfig({ ...config });
@@ -96,6 +112,7 @@ export function BoardTable(props: PBoardTable) {
       resizeableColumns={editMode || false}
       onResizeColumn={onResizeColumn}
       advanceTab
+      editableCells
       displaySource
       fields={config.fieldMeta}
       pageSize={config.pageSize}
@@ -105,9 +122,9 @@ export function BoardTable(props: PBoardTable) {
       onConfigSave={onConfigSave}
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
-      // disabled temporarily
-      // actions={config.actions}
-      rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
+      actions={actionList.data}
+      // This will change depending on if the user actually has any available actions
+      rowSelection={actionList.data && actionList.data.length > 0}
     />
   );
 }
