@@ -25,7 +25,8 @@ import {
   API_METHODS,
   IHeight,
   API_OPERATIONS,
-  TAggregationResult
+  TAggregationResult,
+  NO_DATA_FOUND_MESSAGE
 } from "..";
 
 interface PRemoteBarChart extends IRemoteTargetAndZone, IHeight {
@@ -132,7 +133,7 @@ export function RemoteBarChart(props: PRemoteBarChart) {
         .then((res: any) => {
           const response = res.data;
           setErrorMessage("");
-          setWarningMessage(isChartDataEmpty(response));
+          setWarningMessage(response ? "" : NO_DATA_FOUND_MESSAGE);
           const aggs = aggsToBarChartData(response, type, shortDate, cumulative);
           setDatasets(aggs.datasets);
           setLabels(aggs.labels);

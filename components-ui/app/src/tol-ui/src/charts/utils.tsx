@@ -11,7 +11,6 @@ import {
   IAggregation,
   IChartDataset,
   IFilter,
-  isEmptyObject,
   isPropDefined,
   ISunburstSectionClickedData,
   mergeAndFilters,
@@ -263,6 +262,7 @@ export function setBorderColour(datasets: any, borderColour: string) {
   return datasets;
 }
 
+// TODO Remove when not used by sunburst
 export function isChartDataEmpty(aggs: any) {
   if (!aggs) return NO_DATA_FOUND_MESSAGE;
   else return "";
