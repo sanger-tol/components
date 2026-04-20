@@ -494,7 +494,7 @@ export function generateBarLabels(chart: any, titleColour: any) {
 // -------------------------------//
 
 /**
- * Generates an aggregation request body to send to the `:aggregations` endpoint,
+ * Generates the aggregation portion of the request body to send to the `:aggregations` endpoint,
  * for a categorical aggregation or a date aggregation
  * @param breakDownBy The field by which to break down the data
  * @param xAxis The field to use on the x axis
