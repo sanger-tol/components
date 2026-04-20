@@ -57,6 +57,10 @@ export function BoardTable(props: PBoardTable) {
           }
         }
       }).then((res: any) => {
+        if (!res.data.included || res.data.included.length === 0) {
+          setActionList([]);
+          return;
+        }
         const actionNames = res.data.included.map((relatedObj: any) => {
           if (relatedObj.type === "action" && relatedObj.attributes.object_type == objectType) {
             return relatedObj.attributes.name;
