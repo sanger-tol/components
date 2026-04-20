@@ -302,23 +302,34 @@ export function initialiseDatasets(datasets: any[]) {
   return datasets;
 }
 
-function getSortedAggData(aggs: TAggregationResult) {
+/**
+ * Transforms a response from the `:aggregations` endpoint to an `IAggData`.
+ * 
+ * Note that this is for a bar chart aggregation, so a breakDownBy is expected.
+ */
+function getSortedAggData(aggs: TAggregationResult): IAggData {
   const keys = new Set();
   const sortedAggs = {};
-  for (const bucket of aggs) {
-    sortedAggs[bucket.key] = {};
-    const data: object[] = bucket.data;
-    for (const datapoint of data) {
-      keys.add(datapoint["x"]);
-      sortedAggs[bucket.key][datapoint["x"]] = datapoint["y"];
+
+  // For each segment, store all keys we find in the `keys` set, and all of the data
+  // (in the form {x: ..., y: ...}) to key-value pairs under the breakDownBy of this segment in
+  // the sortedAggs object
+  for (const segment of aggs) {
+    const breakDownBy = segment.key!;
+    sortedAggs[breakDownBy] = {};
+    for (const datapoint of segment.data) {
+      keys.add(datapoint.x);
+      sortedAggs[breakDownBy][datapoint.x] = datapoint.y;
     }
   }
+
+  // Return this new data, but order the keys from smallest to largest
   return {
     keys: Array.from(keys).sort((a: any, b: any) => {
       return a - b;
     }),
     aggs: sortedAggs,
-  } as IAggData;
+  };
 }
 
 function isDateString(label: string): boolean {
