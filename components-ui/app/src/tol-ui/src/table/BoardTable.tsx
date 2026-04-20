@@ -39,10 +39,6 @@ export function BoardTable(props: PBoardTable) {
   });
 
 
-  // Need a new function that returns role ids based on the list of roles that are in the useAuth context
-  // use the role_ids to filter the role_action table
-  // use the results of the role action table to get the actions
-  // pass the list of action names into the remote table
   useEffect(() => {
     const fetchActions = async () => {
       const roleids = await getRoleIdsByNames(user.roles, localDataSource);
@@ -154,7 +150,6 @@ export function BoardTable(props: PBoardTable) {
       onConfigSave={onConfigSave}
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
-    // disabled temporarily
       actions={actionList}
     // This will change depending on if the user actually has any available actions
     rowSelection={actionList && actionList.length > 0}

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 # Changelog
 
 ## tol-ui `3.5.0`
-17-04-2026
+20-04-2026
 - Adding actions to BoardTables using role and action tables
 
 ## tol-ui `3.4.5`
