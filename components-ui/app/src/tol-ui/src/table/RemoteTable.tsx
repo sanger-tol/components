@@ -485,7 +485,6 @@ export function RemoteTable(props: PRemoteTable) {
       setTableConfigLocalStorage(id, "defaultSortByAttribute", defaultSortByAttribute);
       setTableConfigLocalStorage(id, "defaultSortByType", defaultSortByType);
       if (showConfigReset === undefined) setLocalHasDiff(true);
-      // TODO: Deal with local storage
     }
 
     setSortByAttribute(defaultSortByAttribute ?? fm?.order?.active?.[0]);

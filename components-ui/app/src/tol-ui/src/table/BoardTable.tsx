@@ -10,18 +10,20 @@ import {
   updateConfigAndUpsert,
   deleteComponentDiff,
   useBoard,
-  ITableConfigSave,
   optimiseFieldMetaForSave,
-  ITableDrawerSave,
-  PVisualisation,
   updateFieldMetaAttribute,
-  getUserFromLocalStorage,
+  useAuth,
   BOARDS,
   getTableConfigLocalStorage,
   setTableConfigLocalStorage,
   clearTableConfigLocalStorage,
-  TDataObjectListOrNull,
   useEffectUpdate,
+} from "..";
+import type {
+  ITableConfigSave,
+  ITableDrawerSave,
+  PVisualisation,
+  TDataObjectListOrNull,
 } from "..";
 
 
@@ -33,14 +35,14 @@ export function BoardTable(props: PBoardTable) {
   const { id, boardDataSource, zone } = props;
 
   const { editMode } = useBoard();
+  const { user } = useAuth();
 
-  const user = getUserFromLocalStorage();
   const isLoggedIn = !!user?.id;
 
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
-  const [resetKey, setResetKey] = useState(0);
-  const [hasDiff, setHasDiff] = useState(false);
-  const [publishedColumnCount, setPublishedColumnCount] = useState(
+  const [resetKey, setResetKey] = useState<number>(0);
+  const [hasDiff, setHasDiff] = useState<boolean>(false);
+  const [publishedColumnCount, setPublishedColumnCount] = useState<number>(
     props.config.fieldMeta?.order?.active?.length ?? 0
   );
 
@@ -160,25 +162,25 @@ export function BoardTable(props: PBoardTable) {
     config["defaultSortByAttribute"] = defaultSortByAttribute;
     config["defaultSortByType"] = defaultSortByType;
     setConfig({ ...config });
-    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode, setHasDiff);
+    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode, setHasDiff, user?.id);
   };
 
   const onToggleFilterVisibilityLoggedIn = (visible: boolean) => {
     config["filterVisibility"] = visible;
     setConfig({ ...config });
-    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode, setHasDiff);
+    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode, setHasDiff, user?.id);
   };
 
   const onPageSizeChangeLoggedIn = (pageSize: number) => {
     config["pageSize"] = pageSize;
     setConfig({ ...config });
-    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode, setHasDiff);
+    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode, setHasDiff, user?.id);
   };
 
   const onResizeColumnLoggedIn = (columnWidth: number, dataKey: string) => {
     updateFieldMetaAttribute(config["fieldMeta"]!, dataKey, "width", columnWidth);
     setConfig({ ...config });
-    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode, setHasDiff);
+    updateConfigAndUpsert(id, config, zone, boardDataSource, editMode, setHasDiff, user?.id);
   };
 
   // ── Not-logged-in handlers: persist exclusively to localStorage ──────────
@@ -229,7 +231,7 @@ export function BoardTable(props: PBoardTable) {
   const onReset = async () => {
     if (isLoggedIn) {
       if (!editMode) {
-        await deleteComponentDiff(id, boardDataSource);
+        await deleteComponentDiff(id, boardDataSource, user?.id);
       }
       // Fetch the original config from the server (bypasses any diff)
       const originalComponents = await boardDataSource.getList({

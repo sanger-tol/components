@@ -4,14 +4,25 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { expect, test, describe } from "vitest";
+import { expect, test, describe, vi } from "vitest";
 import {
   deepCopy,
   defineComponent,
   defineZone,
   getWidgetOrder,
   IComponentData,
+  updateConfigAndUpsert,
 } from "../../tol-ui/src";
+
+vi.mock("rsuite", async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    toaster: {
+      push: vi.fn(),
+    },
+  };
+});
 
 
 describe("defineComponent function", () => {
@@ -127,5 +138,69 @@ describe("getWidgetOrder function", () => {
     // Act
     const order = getWidgetOrder(mockLayout);
     expect(order.order).toEqual([1, 2]);
+  });
+});
+
+describe("updateConfigAndUpsert function", () => {
+  test("marks a component as having a diff after the config save completes", async () => {
+    let resolveUpsert: (value: unknown) => void = () => {};
+    const upsertPromise = new Promise((resolve) => {
+      resolveUpsert = resolve;
+    });
+    const boardDataSource = {
+      getList: vi.fn().mockResolvedValue([]),
+      upsert: vi.fn().mockReturnValue(upsertPromise),
+    };
+    const setHasDiff = vi.fn();
+    const zone = {
+      components: {
+        component1: {
+          data: {
+            config: {},
+          },
+        },
+      },
+    };
+
+    const savePromise = updateConfigAndUpsert(
+      "component1",
+      { fieldMeta: { order: { active: ["a"] } } },
+      zone as any,
+      boardDataSource as any,
+      false,
+      setHasDiff,
+      "user1",
+    );
+
+    await Promise.resolve();
+    expect(setHasDiff).not.toHaveBeenCalled();
+
+    resolveUpsert({});
+    await savePromise;
+
+    expect(boardDataSource.getList).toHaveBeenCalledWith({
+      objectType: "board_diff",
+      filter: {
+        and_: {
+          component_id: { eq: { value: "component1" } },
+          user_id: { eq: { value: "user1" } },
+        },
+      },
+      requestedFields: ["id"],
+    });
+    expect(boardDataSource.upsert).toHaveBeenCalledWith({
+      objectType: "board_diff",
+      payload: [
+        {
+          type: "board_diff",
+          attributes: {
+            config: { fieldMeta: { order: { active: ["a"] } } },
+            component_id: "component1",
+            user_id: "user1",
+          },
+        },
+      ],
+    });
+    expect(setHasDiff).toHaveBeenCalledWith(true);
   });
 });

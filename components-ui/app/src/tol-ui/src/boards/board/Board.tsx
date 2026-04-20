@@ -150,7 +150,7 @@ export function Board(props: PBoard) {
       setEditMode(!editMode);
     },
     testid: `board-${editMode ? "exit" : "enter"}-edit-mode-button`,
-    tooltip: editMode && tableLoading ? "Wait for the table to load before exiting edit mode." : "",
+    tooltip: editMode && tableLoading ? "Please wait for the table to load before exiting edit mode." : "",
   }
 
   const shareButton: PButton = {

@@ -21,6 +21,7 @@ import {
   Message,
   useBoard,
   PRIVILEGE,
+  TABLE_CONFIG_DIFF_LOGGED_IN_OUT_SESSIONS_NOTICE_DISMISSED_LOCAL_STORAGE_KEY,
 } from "..";
 
 
@@ -65,9 +66,11 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   const { privilege } = useBoard();
   const isEditable = privilege === PRIVILEGE.BOARD.EDITABLE;
 
-  const WARNING_KEY = "tol_table_config_session_warning_dismissed";
   const [warningDismissed, setWarningDismissed] = useState(
-    () => localStorage.getItem(WARNING_KEY) === "true"
+    () =>
+      localStorage.getItem(
+        TABLE_CONFIG_DIFF_LOGGED_IN_OUT_SESSIONS_NOTICE_DISMISSED_LOCAL_STORAGE_KEY,
+      ) === "true"
   );
 
   const [newFieldMeta, setNewFieldMeta] = useState<FieldMeta>();
@@ -168,7 +171,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
           >
             {editMode
               ? "Please be aware that you are editing the table for all viewers of the board."
-              : "Please be aware that you are editing a version of this table for your user. If you want to edit the table for all board viewers please switch to edit mode."}
+              : "Please be aware that you are editing a version of this table for yourself. If you want to edit the table for all board viewers please switch to edit mode."}
           </Message>
         </div>
       )}
@@ -182,7 +185,10 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
             closable
             hidePrefix
             onClose={() => {
-              localStorage.setItem(WARNING_KEY, "true");
+              localStorage.setItem(
+                TABLE_CONFIG_LOGGED_IN_OUT_SESSIONS_NOTICE_DISMISSED_LOCAL_STORAGE_KEY,
+                "true",
+              );
               setWarningDismissed(true);
             }}
           >

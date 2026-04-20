@@ -14,3 +14,6 @@ export const MIN_COLUMN_WIDTH = 120;
 export const MAX_COLUMN_WIDTH = 500;
 export const ROW_TOOLS_COLUMN_MAX_WIDTH = 50;
 export const ROW_TOOLS_COLUMN_SINGLE_ITEM_WIDTH = 34;
+
+export const TABLE_CONFIG_DIFF_LOGGED_IN_OUT_SESSIONS_NOTICE_DISMISSED_LOCAL_STORAGE_KEY =
+  "tol_table_config_diff_logged_in_out_sessions_notice_dismissed";

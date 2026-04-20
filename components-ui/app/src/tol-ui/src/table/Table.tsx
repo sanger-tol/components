@@ -135,12 +135,13 @@ export function Table(props: PTable) {
     actionsFooter,
     utilityBarConfig = {},
     contents,
-    groupBy,
-    onReset,
-    showConfigReset,
-    resetConfigColumnCount,
     /* eslint-enable */
   } = props;
+
+  const groupBy: boolean | undefined = props.groupBy;
+  const onReset: (() => void) | undefined = props.onReset;
+  const showConfigReset: boolean | undefined = props.showConfigReset;
+  const resetConfigColumnCount: number | undefined = props.resetConfigColumnCount;
 
   const { editMode } = useBoard();
 
@@ -419,7 +420,7 @@ export function Table(props: PTable) {
           Are you sure you want to reset this table to the published configuration?
         </p>
         <p>
-          The published configuration currently has {resetColumnCount} selected{" "}
+          The published configuration currently has {resetColumnCount} {" "}
           {resetColumnCount === 1 ? "column" : "columns"}.
         </p>
         <p className="tol-danger-colour">
