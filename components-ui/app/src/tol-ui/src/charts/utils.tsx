@@ -396,6 +396,14 @@ function formatLabels(
 }
 
 // would need adapting for multiple aggs in 1 api call
+/**
+ * Transforms aggregation response data from the `:aggregations` endpoint to the format needed
+ * to display a bar chart in the UI
+ * @param aggs The response body from the `:aggregations` endpoint
+ * @param grouping Categorical or date grouping, used to format labels
+ * @param shortDate Whether date labels should be in a shortened format
+ * @returns An `IChartData` object containing the data ready to be set to state in the chart
+ */
 export function aggsToBarChartData(
   aggs: TAggregationResult,
   grouping: HistogramGrouping,
@@ -418,7 +426,7 @@ export function aggsToBarChartData(
   return {
     datasets: datasets,
     labels: formatLabels(labels, grouping, shortDate),
-  } as IChartData;
+  };
 }
 
 function formatDateRangeWithInterval(
