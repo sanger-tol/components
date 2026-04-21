@@ -65,6 +65,14 @@ export interface PJsonEditor {
   options?: IJsonEditorOptions;
 }
 
+/**
+ * @autodoc
+ * 
+ * JsonEditor is a component that renders a JSON editor interface using the `json-edit-react` library.
+ * It allows users to view and optionally edit JSON data, with support for various configuration options
+ * such as clipboard functionality, collection counts, and array indices. 
+ * The editor's theme adapts to the user's preferred color scheme.
+ */
 export function JsonEditor(props: PJsonEditor & IJsonEditorOptions) {
   const {
     viewOnly = true,
