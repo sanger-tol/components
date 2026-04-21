@@ -6,6 +6,10 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.5.1`
+21-04-2026
+- Added JsonEdit component
+
 ## tol-ui `3.5.0`
 20-04-2026
 - Adding actions to BoardTables using role and action tables
