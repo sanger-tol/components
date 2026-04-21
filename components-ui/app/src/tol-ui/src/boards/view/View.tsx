@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import {
   ZoneModal,
   IFilter,
-  getZones,
   Zone,
   BOARDS,
   PBoard,
@@ -23,6 +22,8 @@ import {
   defineZone,
   deleteBoardEntity,
   reorderBoardEntityItem,
+  getBoardEntity,
+  IDataObject,
 } from "../..";
 
 
@@ -45,7 +46,31 @@ export function View(props: PView) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    getZones(id, boardDataSource).then((view: IView) => {
+    const dataObjectsToZone = (dataObject: IDataObject, joiningObject: IDataObject): IZone => {
+      const dsi = dataObject?.relationships?.data_source_instance as IDataObject;
+      return defineZone({
+        id: dataObject.id,
+        title: dataObject.title,
+        objectType: dataObject.object_type,
+        filter: dataObject.filter,
+        zoneViewId: joiningObject?.id,
+        zoneViewOrder: joiningObject?.order,
+        dataspace: new TsDataSource({
+          dataSourceInstanceId: dsi?.id,
+          ...dsi?.ui_api_details,
+        }),
+      });
+    }
+
+    getBoardEntity<IView, IZone>(
+      id,
+      "view_id",
+      BOARDS.ZONE_VIEW,
+      BOARDS.ZONE,
+      dataObjectsToZone,
+      boardDataSource,
+      ["zone.data_source_instance.ui_api_details"]
+    ).then((view: IView) => {
       setView(view);
     });
   }, []);

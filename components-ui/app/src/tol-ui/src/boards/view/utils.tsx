@@ -6,20 +6,19 @@ SPDX-License-Identifier: MIT
 
 import {
   BOARDS,
+  defineZone,
   generateId,
+  getOrderedIdsViaBoardJoiningEntity,
   getUserFromLocalStorage,
   IDataObject,
   IView,
   IZone,
+  IZones,
   TDataObjectListOrNull,
   TDataObjectOrNull,
   TsDataSource,
 } from "../..";
 
-
-// export function getSortedZones(zoneOrder: IDBZoneView[]): string[] {
-//   return zoneOrder.sort((a, b) => a.order - b.order).map((z) => z.zoneId);
-// };
 
 // export async function upsertZoneOrder(
 //   zoneId: string,
@@ -57,47 +56,6 @@ import {
 
 //   return Promise.resolve(view);
 // };
-
-export async function getZones(viewId: string, boardDataSource: TsDataSource): Promise<IView> {
-  return await boardDataSource
-    .getListPage({
-      objectType: BOARDS.ZONE_VIEW,
-      filter: {
-        and_: {
-          view_id: { eq: { value: viewId } },
-        },
-      },
-    })
-    .then(async (zoneView: TDataObjectListOrNull) => {
-      return await getZoneData(zoneView, boardDataSource) as unknown as Promise<IView>;
-    });
-}
-
-async function getZoneData(zoneView: TDataObjectListOrNull, boardDataSource: TsDataSource): Promise<IView> {
-  const ids = zoneView
-    ?.sort((a, b) => a?.order - b?.order)
-    .map((z) => {
-      const zone = z?.relationships?.zone as IDataObject;
-      return zone.id;
-    });
-
-  return await boardDataSource
-    .getListPage({
-      objectType: BOARDS.ZONE,
-      filter: {
-        and_: {
-          id: { in_list: { value: ids } },
-        },
-      },
-      requestedFields: ["data_source_instance.ui_api_details"]
-    })
-    .then((zones: TDataObjectListOrNull) => {
-      return {
-        zones: {}, //TODO: add zones with zone_view id etc
-        order: ids,
-      } as IView;
-    });
-}
 
 export async function upsertNewZone(
   boardDataSource: TsDataSource,

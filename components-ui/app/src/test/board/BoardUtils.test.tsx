@@ -7,14 +7,14 @@ SPDX-License-Identifier: MIT
 import { expect, test, describe } from "vitest";
 import {
   deepCopy,
-  defineComponent,
+  addComponentToZone,
   defineZoneWithComponentList,
   getWidgetOrder,
   IComponentData,
 } from "../../tol-ui/src";
 
 
-describe("defineComponent function", () => {
+describe("addComponentToZone function", () => {
   test("should add a component to the zone", () => {
     const mockComponent: IComponentData = {
       id: "1",
@@ -28,7 +28,7 @@ describe("defineComponent function", () => {
     };
 
     // Act
-    defineComponent(mockComponent, mockZone);
+    addComponentToZone(mockComponent, mockZone);
 
     // Assert
     expect(mockZone.components).toHaveProperty(String(mockComponent.id));
@@ -51,7 +51,7 @@ describe("defineComponent function", () => {
     };
 
     // Act
-    defineComponent(mockComponent, mockZone);
+    addComponentToZone(mockComponent, mockZone);
 
     // Assert
     expect(mockZone.components).toHaveProperty(String(mockComponent.id));

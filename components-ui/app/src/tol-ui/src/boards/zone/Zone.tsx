@@ -12,19 +12,22 @@ import {
   ComponentPickerModal,
   Visualisations,
   ConfirmationModal,
-  getComponents,
   saveTitle,
   BOARDS,
   UtilityBar,
   PButton,
   PBoard,
-  addComponents,
   useBoard,
   TitleTooltip,
   BUTTONS,
   IView,
   useBoardState,
-  IZone
+  IZone,
+  IDataObject,
+  IComponent,
+  getBoardEntity,
+  TsDataSource,
+  defineComponent
 } from "../..";
 
 
@@ -57,14 +60,39 @@ export function Zone(props: PZone) {
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
-  const [title, setTitle] = useState(zone.title);
+  const [title, setTitle] = useState(zone?.title);
 
   useEffect(() => {
-    getComponents(id, boardDataSource).then((components) => {
-      // sort the widgets based on the order value
-      const sortedComponents = components!.sort((a, b) => a.order! - b.order!);
-      addComponents(sortedComponents, zone);
-      setZone({ ...zone });
+    const dataObjectsToComponent = (dataObject: IDataObject, joiningObject: IDataObject): IComponent => {
+      const dsi = dataObject?.relationships?.data_source_instance as IDataObject;
+      return defineComponent({
+        id: dataObject.id,
+        title: dataObject.title,
+        objectType: dataObject.object_type,
+        filter: dataObject.filter,
+        componentZoneId: joiningObject?.id,
+        componentZoneOrder: joiningObject?.order,
+        dataspace: new TsDataSource({
+          dataSourceInstanceId: dsi?.id,
+          ...dsi?.ui_api_details,
+        }),
+        type: dataObject.component_type,
+        config: dataObject.config,
+        size: dataObject.widget_type,
+        filterPassThrough: dataObject.filter_pass_through,
+      });
+    }
+
+    getBoardEntity<IZone, IComponent>(
+      id,
+      "zone_id",
+      BOARDS.COMPONENT_ZONE,
+      BOARDS.COMPONENT,
+      dataObjectsToComponent,
+      boardDataSource,
+      ["component.data_source_instance.ui_api_details"]
+    ).then((zone: IZone) => {
+      setZone(zone);
     });
   }, []);
 
@@ -183,7 +211,7 @@ export function Zone(props: PZone) {
   return (
     <div className="tol-zone">
       {(title || editMode) && bar}
-      {(zone && zone.order.length > 0) ? (
+      {(zone && zone.order && zone.order.length > 0) ? (
         <Visualisations
           id={id}
           zone={zone}
