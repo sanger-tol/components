@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useEffect } from "react";
 import {
   IZone,
-  defineComponent,
+  addComponentToZone,
   IFilter,
   IAndAttributes,
   deepCopy,
@@ -211,7 +211,7 @@ export function addValueBelow(id: string, value: string, list: string[]) {
  * @param zone The zone object containing the components and their order.
  */
 export function addComponentBelow(id: string, newId: string, zone: IZone) {
-  defineComponent(
+  addComponentToZone(
     {
       id: newId,
       filterPassThrough: zone.components[id].data.filterPassThrough,

@@ -30,14 +30,16 @@ export interface IComponentData {
    * The size of the component e.g. sm, md, lg
    */
   size?: string;
-  order?: number;
 
   // extras required just for boards
-  componentZoneId?: string;
   title?: string;
   objectType?: string;
   dataspace?: TsDataSource;
   config?: any;
+
+  // used for reordering in the db
+  componentZoneId?: string;
+  componentZoneOrder?: number;
 }
 
 export interface IComponents {
@@ -46,8 +48,8 @@ export interface IComponents {
 
 export interface IZone {
   id?: string;
-  components: IComponents;
-  order: TBoardEntityOrder;
+  components?: IComponents;
+  order?: TBoardEntityOrder;
   filter?: IFilter;
   defaultFilter?: IFilter;
   objectType?: string;

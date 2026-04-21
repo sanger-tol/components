@@ -8,10 +8,7 @@ import {
   BOARDS,
   generateId,
   getUserFromLocalStorage,
-  IComponentData,
-  IDBZoneView,
   IZone,
-  TDataObjectListOrNull,
   TsDataSource
 } from "../..";
 
@@ -31,77 +28,6 @@ export function getNextZoneOrder(zoneOrder: IDBZoneView[]) {
     return zone.order;
   });
   return orders.length > 0 ? Math.max(...orders) + 1 : 1;
-}
-
-export async function getComponents(
-  zoneId: string,
-  boardDataSource: TsDataSource
-): Promise<IComponentData[] | undefined> {
-  const componentZoneData = await getComponentZoneData(zoneId, boardDataSource);
-  if (componentZoneData) {
-    const componentIds = (
-      await Promise.all(
-        componentZoneData.map(
-          async (componentZone) => (await componentZone?.fetchRelationships?.component)?.["id"]
-        )
-      )
-    ).filter((id): id is string => typeof id === "string"); // remove undefined values
-    const componentData = await getComponentData(componentIds, boardDataSource);
-
-    return Promise.all(
-      componentZoneData.map(async (component) => {
-        const componentId = (await component?.fetchRelationships?.component)?.["id"];
-        const componentDetails = componentData?.find(
-          (data) => data?.id === componentId
-        );
-        const dsi = componentDetails?.relationships?.data_source_instance;
-        return {
-          id: componentId,
-          order: component?.order,
-          componentZoneId: component?.id,
-          type: componentDetails?.component_type,
-          filter: componentDetails?.filter,
-          title: componentDetails?.title,
-          objectType: componentDetails?.object_type,
-          dataspace: new TsDataSource({
-            ...dsi?.["ui_api_details"],
-            dataSourceInstanceId: dsi?.["id"],
-          }),
-          config: componentDetails?.config,
-          size: componentDetails?.widget_type,
-          filterPassThrough: componentDetails?.filter_pass_through,
-        };
-      })
-    );
-  }
-}
-
-async function getComponentZoneData(zoneId: string, boardDataSource: TsDataSource) {
-  return await boardDataSource
-    .getListPage({
-      objectType: BOARDS.COMPONENT_ZONE,
-      filter: {
-        and_: {
-          zone_id: { eq: { value: zoneId } },
-        },
-      },
-    });
-}
-
-async function getComponentData(
-  componentIds: string[],
-  boardDataSource: TsDataSource,
-): Promise<TDataObjectListOrNull> {
-  return await boardDataSource
-    .getListPage({
-      objectType: BOARDS.COMPONENT,
-      filter: {
-        and_: {
-          id: { in_list: { value: componentIds } },
-        },
-      },
-      requestedFields: ["data_source_instance.ui_api_details"],
-    });
 }
 
 export async function upsertNewComponent(

@@ -15,7 +15,11 @@ import {
   TBoardLevel,
   IComponent,
   TZoneReorderDirection,
-  TBoardEntityOrder
+  TBoardEntityOrder,
+  IDataObject,
+  TDataObjectListOrNull,
+  IZones,
+  defineZone
 } from "..";
 
 
@@ -245,4 +249,71 @@ export function reorderBoardEntityItem(
   newOrder.splice(newIndex, 0, moved);
 
   return newOrder;
+}
+
+/**
+ * Retrieves the ordered IDs of related board entities from a joining table.
+ * @param obj The list of data objects representing the joining table entries.
+ * @param objectType The type of the related board entity (e.g., 'zone', 'view') to extract IDs for.
+ * @returns An array of ordered IDs or undefined if the input is null.
+ */
+export function getOrderedIdsViaBoardJoiningEntity(dataObjects: TDataObjectListOrNull, objectType: string): string[] | undefined {
+  return dataObjects
+    // sort by order attribute in joining table (e.g. zone_view) to get the correct order of ids
+    ?.sort((a, b) => a?.order - b?.order)
+    .map((item) => {
+      const relatedObj = item?.relationships?.[objectType] as IDataObject;
+      return relatedObj.id;
+    });
+}
+
+/**
+ * Fetches board entities and its order based on the joining table entries (e.g. zone_views for zones in a view) and defines the entities using a provided function.
+ * @param parentId The ID of the parent entity (e.g. view ID for zones).
+ * @param parentIdField The field name in the joining table that references the parent entity (e.g. 'view_id').
+ * @param joiningObjectType The type of the joining table entries (e.g. 'zone_view').
+ * @param objectType The type of the related board entity to fetch (e.g. 'zone').
+ * @param defineEntity A function that takes the core data object and its corresponding joining table entry to define the board entity.
+ * @param boardDataSource The data source instance to use for fetching board config data.
+ * @param requestedFields Optional array of specific fields to request for the joining table entries.
+ * @returns A promise that resolves to the defined board entities along with their order.
+ */
+export async function getBoardEntity<TParent, TChild>(
+  parentId: string,
+  parentIdField: string,
+  joiningObjectType: string,
+  objectType: string,
+  dataObjectsToBoardEntities: (dataObjects: IDataObject, joiningObject: IDataObject) => TChild,
+  boardDataSource: TsDataSource,
+  requestedFields?: string[],
+): Promise<TParent> {
+  return await boardDataSource
+    .getListPage({
+      objectType: joiningObjectType,
+      requestedFields: requestedFields,
+      filter: {
+        and_: {
+          [parentIdField]: { eq: { value: parentId } },
+        },
+      },
+    })
+    .then(async (joiningObjects: TDataObjectListOrNull) => {
+      const orderedIds = getOrderedIdsViaBoardJoiningEntity(joiningObjects, objectType);
+      const definedBoardEntities = {};
+      joiningObjects?.forEach((joiningObject) => {
+        if (joiningObject) {
+          // retrieve the core object
+          const obj = joiningObject?.relationships?.[objectType] as IDataObject;
+          // const dataSourceInstance = obj?.relationships?.data_source_instance as IDataObject;
+
+          // define the board entity (e.g. zone) using the retrieved object and its corresponding joining table entry (e.g. zone_view)
+          definedBoardEntities[obj.id] = dataObjectsToBoardEntities(obj, joiningObject);
+        }
+      });
+      // return the defined board entities in the correct order based on the joining table order
+      return {
+        [`${objectType}s`]: definedBoardEntities,
+        order: orderedIds,
+      } as TParent;
+    });
 }

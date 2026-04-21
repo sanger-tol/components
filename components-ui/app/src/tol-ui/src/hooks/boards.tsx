@@ -17,6 +17,7 @@ import {
   deepCopy,
   useStateFallback,
   IUseZoneMeta,
+  IComponent,
 } from "..";
 
 
@@ -89,10 +90,29 @@ export function useTranslator(params: {
   }, [source.zone]);
 }
 
-export function defineComponent(component: IComponentData, zone: IZone) {
+/**
+ * Defines a component with the given parameters, setting default values for the filter values.
+ * @param id - The unique identifier for the component.
+ * @returns The defined component with default filter values.
+ */
+export function defineComponent({
+  filter = { and_: {} },
+  title = "",
+  ...rest
+}: IComponentData): IComponent {
+  const component: IComponentData = {
+    filter: deepCopy(filter),
+    defaultFilter: deepCopy(filter),
+    title: title,
+    ...rest
+  };
+  return { data: component };
+}
+
+export function addComponentToZone(component: IComponentData, zone: IZone) {
   // setting default as empty if no filter provided
   const f = component.filter === undefined ? { and_: {} } : component.filter;
-  zone.components[component.id!] = {
+  zone.components![component.id!] = {
     data: {
       filter: deepCopy(f),
       defaultFilter: deepCopy(f),
@@ -102,8 +122,8 @@ export function defineComponent(component: IComponentData, zone: IZone) {
 }
 
 export function addComponent(component: IComponentData, zone: IZone) {
-  defineComponent(component, zone);
-  zone.order.push(component.id!);
+  addComponentToZone(component, zone);
+  zone?.order?.push(component.id!);
 }
 
 export function addComponents(components: IComponentData[], zone: IZone) {
@@ -117,6 +137,7 @@ export function addComponents(components: IComponentData[], zone: IZone) {
  * @param objectType - The type of the zone object.
  * @param components - An object containing the components to be added to the zone.
  * @param objectType - The type of the zone object.
+ * @param title - The title of the zone.
  * @param filter - An optional filter to be applied to the zone.
  * @returns The defined zone with the added components.
  */
@@ -124,6 +145,7 @@ export function defineZone({
   components = {},
   order = [],
   objectType,
+  title = "",
   filter = { and_: {} },
   ...rest
 }: IZone): IZone {
@@ -133,6 +155,7 @@ export function defineZone({
     objectType: objectType,
     filter: deepCopy(filter),
     defaultFilter: deepCopy(filter),
+    title: title,
     ...rest
   };
   addComponents(order.map(id => (components[id].data)), zone);
