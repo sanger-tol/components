@@ -8,26 +8,31 @@ import {
   FieldMeta,
   normaliseCaps,
   colours,
-  TsDataSource,
-  IAttributeData,
-  TDataObjectListOrNull,
   getFieldByName,
-  ITableData,
-  ITableRecord,
-  TCellRenderer,
   DataPoints,
   deepCopy,
-  ICustomCellRenderers,
   copyToClipboard,
   CELL_RENDERER_PROP_ATTRIBUTE,
-  IFilter,
-  TCellHeights,
   DEFAULT_ROW_HEIGHT,
   COLLAPSED_ROW_MAX_HEIGHT,
   getRelationshipNameByField,
   CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
   CELL_RENDERER_SPREAD_OPERATOR,
   BOARDS,
+} from "..";
+
+import type {
+  TsDataSource,
+  IAttributeData,
+  TDataObjectListOrNull,
+  ITableData,
+  ITableRecord,
+  TCellRenderer,
+  ICustomCellRenderers,
+  IFilter,
+  TCellHeights,
+  ITableConfigSave,
+  TDataObjectOrNull,
 } from "..";
 
 interface Rgb {
@@ -133,7 +138,7 @@ function sortFieldsByRename(fieldMeta: FieldMeta) {
 export function addDefaultsFromEntityMeta(
   key: string,
   meta: IAttributeData,
-  fieldMeta: FieldMeta
+  fieldMeta: FieldMeta,
 ) {
   if (!fieldMeta.dataWithDefaults) fieldMeta.dataWithDefaults = {};
   const defaults = {
@@ -160,19 +165,18 @@ export async function addFieldMetaDefaults(
   dataSource: TsDataSource,
 ) {
   const attributes = fieldMeta.order.active.concat(
-    fieldMeta.order.inactive || []
+    fieldMeta.order.inactive || [],
   );
   for (const key of attributes) {
     const descriptor = dataSource.getAttributeDescriptor({
       objectType: objectType,
       field: key,
     });
-    await descriptor
-      .then((meta) => {
-        if (meta) {
-          addDefaultsFromEntityMeta(key, meta, fieldMeta);
-        }
-      })
+    await descriptor.then((meta) => {
+      if (meta) {
+        addDefaultsFromEntityMeta(key, meta, fieldMeta);
+      }
+    });
   }
   fieldMeta.order.inactive = sortFieldsByRename(fieldMeta);
   return fieldMeta;
@@ -198,12 +202,20 @@ function getTableConfigKey(id: string) {
 
 export function setTableConfigLocalStorage(
   tableId: string,
-  key: string,
-  value: any
+  key: string | string[],
+  value: any | any[],
 ) {
+  if (!tableId || !key || value === undefined || value === null) return;
   let config = getTableConfigLocalStorage(tableId);
   if (!config) config = {};
-  config[key] = value;
+  if (Array.isArray(key)) {
+    key.forEach((k, index) => {
+      if (value[index] !== undefined && value[index] !== null)
+        config[k] = value[index];
+    });
+  } else {
+    config[key] = value;
+  }
   localStorage.setItem(getTableConfigKey(tableId), JSON.stringify(config));
 }
 
@@ -267,7 +279,7 @@ export function mapKeysToDisplayNames(data: any, displayNames: any): object {
 
 export async function getActions(
   objectType: string,
-  actionDataSource: TsDataSource
+  actionDataSource: TsDataSource,
 ): Promise<string[]> {
   const actionsList: string[] = [];
   const actions = await actionDataSource.getListPage({
@@ -291,15 +303,25 @@ export function formatTotalSize(totalSize: number) {
   return totalSize.toLocaleString() + " Rows";
 }
 
-export function copyPageColumnValues(data: any, fieldHeader: string, separator?: string) {
+export function copyPageColumnValues(
+  data: any,
+  fieldHeader: string,
+  separator?: string,
+) {
   const copySet = new Set<string>(
     data.flatMap((element) =>
       Array.isArray(
-        getFieldByName(element[fieldHeader].props.dataObject, fieldHeader)
+        getFieldByName(element[fieldHeader].props.dataObject, fieldHeader),
       )
-        ? getFieldByName(element[fieldHeader].props.dataObject, fieldHeader).join(',')
-        : [getFieldByName(element[fieldHeader].props.dataObject, fieldHeader) + (separator || '')]
-    )
+        ? getFieldByName(
+            element[fieldHeader].props.dataObject,
+            fieldHeader,
+          ).join(",")
+        : [
+            getFieldByName(element[fieldHeader].props.dataObject, fieldHeader) +
+              (separator || ""),
+          ],
+    ),
   );
   const emptyStringsRemoval = Array.from(copySet).filter(Boolean);
 
@@ -307,7 +329,13 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
   copyToClipboard(copyList);
 }
 
-async function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, fieldName: string, dataSource: TsDataSource, objectType: string) {
+async function addFieldsFromStringProp(
+  requestedFields: Set<string>,
+  value: unknown,
+  fieldName: string,
+  dataSource: TsDataSource,
+  objectType: string,
+) {
   if (typeof value !== "string" || !value.includes("${")) return;
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
@@ -322,14 +350,25 @@ async function addFieldsFromStringProp(requestedFields: Set<string>, value: unkn
 
     // Ensure we request the field for the original objectType and not the related objectType
     const relationship = getRelationshipNameByField(fieldName);
-    const isMany = await dataSource.isManyDataPointsByName(objectType, fieldName.split(".")[0]);
-    const field = (relationship && !!isMany) ? `${relationship}.${relativeAttribute}` : relativeAttribute;
+    const isMany = await dataSource.isManyDataPointsByName(
+      objectType,
+      fieldName.split(".")[0],
+    );
+    const field =
+      relationship && !!isMany
+        ? `${relationship}.${relativeAttribute}`
+        : relativeAttribute;
     if (field) requestedFields.add(field);
   }
 }
 
 function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
-  if (typeof value !== "object" || value === null || !("and_" in (value as IFilter))) return;
+  if (
+    typeof value !== "object" ||
+    value === null ||
+    !("and_" in (value as IFilter))
+  )
+    return;
 
   const filter = value as IFilter;
   Object.keys(filter.and_ || {}).forEach((fieldSystemName) => {
@@ -337,8 +376,11 @@ function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
   });
 }
 
-
-export async function amalgamateRequestedFields(fieldMeta: FieldMeta, dataSource: TsDataSource, objectType: string): Promise<string[]> {
+export async function amalgamateRequestedFields(
+  fieldMeta: FieldMeta,
+  dataSource: TsDataSource,
+  objectType: string,
+): Promise<string[]> {
   const requestedFields = new Set<string>(fieldMeta?.order.active || []);
 
   const dataWithDefaults = fieldMeta?.dataWithDefaults || {};
@@ -353,7 +395,13 @@ export async function amalgamateRequestedFields(fieldMeta: FieldMeta, dataSource
     const props = cellRenderer?.props || {};
 
     for (const value of Object.values(props)) {
-      await addFieldsFromStringProp(requestedFields, value, fieldName, dataSource, objectType);
+      await addFieldsFromStringProp(
+        requestedFields,
+        value,
+        fieldName,
+        dataSource,
+        objectType,
+      );
       addFieldsFromFilterProp(requestedFields, value);
     }
   }
@@ -364,10 +412,10 @@ export async function amalgamateRequestedFields(fieldMeta: FieldMeta, dataSource
 /**
  * Determines whether any rows in the dataset can be expanded based on their cell heights.
  * This is used to determine if the row height expand/collapse control should be displayed in table header.
- * 
+ *
  * A row is considered expandable if its calculated height (the maximum of all cell heights
  * in that row) exceeds the collapsed row maximum height threshold.
- * 
+ *
  * @param data - An array of row objects, each containing at minimum a `key` property for identification
  * @param cellHeights - A map of row IDs to their respective cell heights, where each entry contains
  *                      height values for the cells in that row
@@ -375,7 +423,7 @@ export async function amalgamateRequestedFields(fieldMeta: FieldMeta, dataSource
  */
 export function hasExpandableRows(
   data: any[],
-  cellHeights: TCellHeights
+  cellHeights: TCellHeights,
 ): boolean {
   return (
     Array.isArray(data) &&
@@ -385,22 +433,22 @@ export function hasExpandableRows(
       if (!rowHeights) return false;
       const fullHeight = Math.max(
         DEFAULT_ROW_HEIGHT,
-        ...Object.values(rowHeights)
+        ...Object.values(rowHeights),
       );
       return fullHeight > COLLAPSED_ROW_MAX_HEIGHT;
     })
-  )
+  );
 }
 
 /**
  * Updates a specific attribute of a field within the FieldMeta object.
- * 
+ *
  * @param fieldMeta - The field metadata object to be updated
  * @param dataKey - The key identifying the specific field within the metadata
  * @param attribute - The attribute name to be updated
  * @param value - The new value to assign to the attribute
  * @param dataWithDefaults - Optional flag to also update the dataWithDefaults target. Defaults to false
- * 
+ *
  * @remarks
  * This function modifies the `fieldMeta` object in place by updating the specified attribute
  * for the given data key. It updates the "data" target by default, and optionally updates
@@ -411,7 +459,7 @@ export function updateFieldMetaAttribute(
   dataKey: string,
   attribute: any,
   value: any,
-  dataWithDefaults?: boolean
+  dataWithDefaults?: boolean,
 ) {
   const updateTarget = (target: string) => {
     fieldMeta[target] = {
@@ -439,7 +487,7 @@ export async function resetTableConfigToDefault(
   componentId: string,
   boardDataSource: TsDataSource,
   userId: string,
-)  {
+) {
   await boardDataSource
     .getList({
       objectType: BOARDS.BOARD_DIFF,
@@ -461,3 +509,100 @@ export async function resetTableConfigToDefault(
       }
     });
 }
+
+export const getComponentConfig = async (
+  dataSource: TsDataSource,
+  componentId: string,
+): Promise<ITableConfigSave | null> => {
+  return await dataSource
+    .getOne({
+      objectType: BOARDS.COMPONENT,
+      id: componentId,
+      requestedFields: ["config"],
+    })
+    .then((res: TDataObjectOrNull) => {
+      return res?.config || null;
+    });
+};
+
+export interface IDiffState {
+  publishedColumnCount: number;
+  hasDiff: boolean;
+  currentConfig: ITableConfigSave | null;
+}
+
+export const getInitialDiffState = async (
+  dataSource: TsDataSource,
+  componentId: string,
+  userId: string,
+  isLoggedIn: boolean,
+  editMode?: boolean,
+): Promise<IDiffState> => {
+  const component = await getComponentConfig(dataSource, componentId);
+  const publishedColumnCount = component?.fieldMeta?.order?.active?.length ?? 0;
+  // First, check for a diff in the database if the user is logged in
+  let { hasDiff, currentConfig } = isLoggedIn
+    ? await setDiffState(dataSource, componentId, userId)
+    : {
+        hasDiff: !!getTableConfigLocalStorage(
+          `${BOARDS.BOARD_DIFF}_${componentId}`,
+        ),
+        currentConfig: null,
+      };
+
+  // If in edit mode and has a diff, fetch current config
+  // If there is no diff, but is logged in, also fetch current config to allow editing of the published config
+  // If a user is not logged in and there is no diff, load the default config
+  if (
+    (editMode && hasDiff) ||
+    (!hasDiff && isLoggedIn) ||
+    (!hasDiff && !isLoggedIn)
+  ) {
+    currentConfig = await getComponentConfig(dataSource, componentId);
+  }
+
+  // If the user is not logged in and there is a diff, check local storage for the config
+  let localConfig = null;
+  if (!isLoggedIn && hasDiff) {
+    localConfig = getTableConfigLocalStorage(
+      `${BOARDS.BOARD_DIFF}_${componentId}`,
+    );
+  }
+
+  const stuff = {
+    publishedColumnCount,
+    hasDiff: hasDiff || !!localConfig,
+    currentConfig: localConfig ? localConfig : (currentConfig ?? null),
+  };
+
+  console.log(stuff);
+  return stuff;
+};
+
+export const setDiffState = async (
+  dataSource: TsDataSource,
+  componentId: string,
+  userId: string,
+): Promise<Partial<IDiffState>> => {
+  return await dataSource
+    .getList({
+      objectType: BOARDS.BOARD_DIFF,
+      filter: {
+        and_: {
+          component_id: { eq: { value: componentId } },
+          user_id: { eq: { value: userId } },
+        },
+      },
+      requestedFields: ["id", "config"],
+    })
+    .then((diffs: TDataObjectListOrNull) => {
+      return {
+        hasDiff:
+          diffs?.some((d: TDataObjectOrNull) => d?.config != null) ?? false,
+        currentConfig:
+          diffs?.find((d: TDataObjectOrNull) => d?.config != null)?.config ??
+          null,
+      };
+    })
+    .catch(() => ({ hasDiff: false, currentConfig: null }));
+};

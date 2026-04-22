@@ -145,11 +145,11 @@ export function Table(props: PTable) {
 
   const { editMode } = useBoard();
 
-  const [open, setOpen] = useState(false);
-  const [resetConfirmationOpen, setResetConfirmationOpen] = useState(false);
-  const [downloadOpen, setDownloadOpen] = useState(false);
-  const [smallBreakpoint, setSmallBreakpoint] = useState(true);
-  const [mediumBreakpoint, setMediumBreakpoint] = useState(true);
+  const [open, setOpen] = useState<boolean>(false);
+  const [resetConfirmationOpen, setResetConfirmationOpen] = useState<boolean>(false);
+  const [downloadOpen, setDownloadOpen] = useState<boolean>(false);
+  const [smallBreakpoint, setSmallBreakpoint] = useState<boolean>(true);
+  const [mediumBreakpoint, setMediumBreakpoint] = useState<boolean>(true);
   const [cellHeights, setCellHeights] = useState<TCellHeights>({});
   const [heightExpandedRows, setHeightExpandedRows] = useState<
     Record<string, boolean>
@@ -161,7 +161,7 @@ export function Table(props: PTable) {
   );
 
   // @ts-ignore - temp turned off
-  const [bulkSelect, setBulkSelect] = useState(false);
+  const [bulkSelect, setBulkSelect] = useState<boolean>(false);
 
   let checked = false;
   let indeterminate = false;
