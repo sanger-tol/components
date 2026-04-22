@@ -6,14 +6,63 @@ SPDX-License-Identifier: MIT
 
 
 import {
+  BOARD_LEVELS,
   BOARDS,
+  deepCopy,
+  IBoard,
   IComponent,
-  IComponentData,
+  IView,
   IZone,
+  TBoardLevel,
   TsDataSource,
   Visualisation,
 } from "../..";
 
+/**
+ * Defines a component with the given parameters, setting default values for the filter values.
+ * @param title - The title of the component.
+ * @param filter - An optional filter to be applied to the component.
+ * @param rest - Any additional properties to be included in the component data.
+ * @returns The defined component with default filter values.
+ */
+export function defineComponent({
+  filter = { and_: {} },
+  ...rest
+}: IComponent): IComponent {
+  return {
+    filter: deepCopy(filter),
+    defaultFilter: deepCopy(filter),
+    ...rest
+  };
+}
+
+/**
+ * Defines a zone with the given parameters and adds the specified components to it.
+ * @param objectType - The type of the zone object.
+ * @param components - An object containing the components to be added to the zone.
+ * @param objectType - The type of the zone object.
+ * @param title - The title of the zone.
+ * @param filter - An optional filter to be applied to the zone.
+ * @returns The defined zone with the added components.
+ */
+export function defineZone({
+  components = {},
+  order = [],
+  title = "",
+  filter = { and_: {} },
+  ...rest
+}: IZone): IZone {
+  const zone: IZone = {
+    components: components,
+    order: order,
+    filter: deepCopy(filter),
+    defaultFilter: deepCopy(filter),
+    title: title,
+    ...rest
+  };
+  addComponents(order.map(id => (components[id].data)), zone);
+  return zone;
+}
 
 export async function updateLayout(
   layout,
@@ -117,7 +166,7 @@ export function generateVisualisations(
 ) {
   return zone.order.map((componentId) => {
     const component = zone.components[componentId].data;
-    
+
     return (
       <div key={component.id} className="tol-visualisation">
         <Visualisation

@@ -19,7 +19,9 @@ import {
   IDataObject,
   TDataObjectListOrNull,
   IZones,
-  defineZone
+  defineZone,
+  BOARD_LEVELS,
+  deepCopy
 } from "..";
 
 
@@ -210,11 +212,11 @@ export function useBoardState<
  * @param boardLevel The level of the board entity (e.g., 'zones' for a zone, 'views' for a view) to identify which collection to update.
  */
 export function deleteBoardEntity<
-  TParent extends IBoard | IView | IZone
+  TEntity extends IBoard | IView | IZone
 >(
   boardLevel: TBoardLevel,
   id: string,
-  boardEntity: TParent,
+  boardEntity: TEntity,
 ) {
   delete boardEntity[boardLevel][id];
   boardEntity.order = boardEntity?.order?.filter((currentId) => currentId !== id);
@@ -279,7 +281,10 @@ export function getOrderedIdsViaBoardJoiningEntity(dataObjects: TDataObjectListO
  * @param requestedFields Optional array of specific fields to request for the joining table entries.
  * @returns A promise that resolves to the defined board entities along with their order.
  */
-export async function getBoardEntity<TParent, TChild>(
+export async function getBoardEntity<
+  TParent extends IBoard | IView | IZone,
+  TChild extends IView | IZone | IComponent,
+>(
   boardEntity: TParent,
   parentId: string,
   parentIdField: string,
@@ -318,4 +323,44 @@ export async function getBoardEntity<TParent, TChild>(
         order: orderedIds,
       } as TParent;
     });
+}
+
+/**
+ * TODO
+ */
+export function defineBoardEntity<
+  TEntity extends IView | IZone | IComponent,
+  TParentEntity extends IBoard | IView | IZone,
+>(
+  entity: TEntity,
+  objectType: string,
+  parentEntity: TParentEntity,
+  childrenKey: TBoardLevel,
+) {
+  // TODO
+  let defaults = {}
+  if (objectType === BOARDS.COMPONENT || objectType === BOARDS.ZONE) {
+    const e = entity as IZone | IComponent;
+    defaults = {
+      filter: e.filter ? deepCopy(e.filter) : { and_: {} },
+      defaultFilter: e.filter ? deepCopy(e.filter) : { and_: {} },
+      title: e.title || "",
+    }
+  }
+
+  // If the objectType is not component, we need to set up an empty object for the child board level
+  // and an empty order array in the parent board entity
+  if (objectType !== BOARDS.COMPONENT) {
+    defaults = {
+      ...defaults,
+      [childrenKey]: {},
+      order: [],
+    }
+  }
+
+  parentEntity[childrenKey][entity.id] = {
+    ...defaults,
+    ...entity,
+  } as TEntity;
+  parentEntity?.order?.push(entity.id!);
 }

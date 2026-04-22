@@ -26,6 +26,12 @@ import {
   UtilityBar,
   PButton,
   useAuth,
+  IDataObject,
+  IZone,
+  getBoardEntity,
+  IView,
+  BOARD_ID_FIELDS,
+  IBoard,
 } from "../..";
 
 export interface PBoard {
@@ -47,7 +53,7 @@ export interface PBoard {
  * Component to render a board based on its ID and TSDataSource.
  */
 export function Board(props: PBoard) {
-  const { boardDataSource, brand } = props;
+  const { boardId, boardDataSource, brand } = props;
 
   const { user } = useAuth();
   const {
@@ -57,17 +63,16 @@ export function Board(props: PBoard) {
     setEditMode,
     layoutMode,
     setLayoutMode,
+    board,
+    setBoard
   } = useBoard();
 
-  const { boardId: paramBoardId, viewId } = useParams<any>();
-  const [boardData, setBoardData] = useState<any>({});
-  const [title, setTitle] = useState("");
-  const [view, setView] = useState(viewId);
+  const { boardId: paramBoardId } = useParams<any>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   // Ability to override boardId from props over URL params
-  const boardId = props.boardId ?? paramBoardId;
+  const id = boardId ?? paramBoardId;
 
   themeListener(() => {
     try {
@@ -79,26 +84,48 @@ export function Board(props: PBoard) {
   });
 
   useEffect(() => {
-    if (boardId) {
-      getBoard(boardId, boardDataSource!)
-        .then((data: any) => {
-          if (!view) setView(data.views[0].id);
-          setBoardData(data);
-          setTitle(data.boardTitle);
+    // if (boardId) {
+    //   getBoard(boardId, boardDataSource!)
+    //     .then((data: any) => {
+    //       if (!view) setView(data.views[0].id);
+    //       setBoardData(data);
+    //       setTitle(data.boardTitle);
 
-          setPrivilege(
-            getUserPrivilege(user, data.boardUserId, boardId)
-          );
-        })
-        .catch((e: any) => {
-          setError(e);
-          console.error(e);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+    //       setPrivilege(
+    //         getUserPrivilege(user, data.boardUserId, boardId)
+    //       );
+    //     })
+    //     .catch((e: any) => {
+    //       setError(e);
+    //       console.error(e);
+    //     })
+    //     .finally(() => {
+    //       setLoading(false);
+    //     });
+    // }
+
+    const dataObjectsToView = (dataObject: IDataObject, joiningObject: IDataObject): IView => {
+      return defineView({
+        id: dataObject.id,
+        title: dataObject.title,
+        filter: dataObject.filter,
+        zoneViewId: joiningObject?.id,
+        zoneViewOrder: joiningObject?.order,
+      });
     }
-  }, [boardId]);
+
+    getBoardEntity<IBoard, IView>(
+      board,
+      id,
+      BOARD_ID_FIELDS.BOARD,
+      BOARDS.VIEW_BOARD,
+      BOARDS.VIEW,
+      dataObjectsToView,
+      boardDataSource
+    ).then((b: IBoard) => {
+      setBoard(b);
+    });
+  }, [id]);
 
   if (error !== "") {
     return <Redirect to="/page-not-found" />;
@@ -202,9 +229,9 @@ export function Board(props: PBoard) {
     <div className={`tol-board ${classMode()}`} >
       {Bar}
       <View
-        id={boardData.views[0].id}
-        defaultFilter={boardData.views[0].filter}
-        boardDataSource={boardDataSource}
+        id={board.views[0].id}
+        defaultFilter={board.views[0].filter}
+        boardDataSource={board}
       />
     </div >
   );

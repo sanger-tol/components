@@ -8,15 +8,12 @@ import {
   TsDataSource,
   IFilter,
   PUtilityBar,
+  BOARD_LEVELS,
 } from '..';
 
 export type TBoardEntityOrder = string[];
 
 export interface IComponent {
-  data: IComponentData;
-}
-
-export interface IComponentData {
   id?: string;
   filter?: IFilter;
   defaultFilter?: IFilter;
@@ -68,6 +65,7 @@ export interface IZones {
 }
 
 export interface IView {
+  id?: string;
   zones: IZones;
   order: TBoardEntityOrder;
 }
@@ -77,6 +75,7 @@ export interface IViews {
 }
 
 export interface IBoard {
+  id?: string;
   views: IViews;
   order: TBoardEntityOrder;
 }
@@ -91,29 +90,27 @@ export const exampleBoard: Board = {
         'zoneIdOne': {
           components: {
             'componentIdOne': {
-              data: {
-                filter: {
-                  and_: {
-                    'attributeId': {
-                      eq: {
-                        value: 'hello',
-                        negate: true
-                      }
-                    }
-                  }
-                },
-                defaultFilter: {
-                  and_: {
-                    'attributeId': {
-                      eq: {
-                        value: 'hello',
-                        negate: true
-                      }
+              filter: {
+                and_: {
+                  'attributeId': {
+                    eq: {
+                      value: 'hello',
+                      negate: true
                     }
                   }
                 }
               },
-            }
+              defaultFilter: {
+                and_: {
+                  'attributeId': {
+                    eq: {
+                      value: 'hello',
+                      negate: true
+                    }
+                  }
+                }
+              }
+            },
           },
           order: ['componentIdOne'],
           type: 'species'
@@ -166,7 +163,7 @@ export interface IUseZoneMeta {
   setZone: (zone: IZone) => void;
 }
 
-export type TBoardLevel = "views" | "zones" | "components";
+export type TBoardLevel = (typeof BOARD_LEVELS)[keyof typeof BOARD_LEVELS];
 
 export interface IUpdatedZoneIds {
   newZoneId: string;

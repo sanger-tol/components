@@ -20,3 +20,9 @@ export const BOARD_ID_FIELDS = {
   ZONE: "zone_id",
   COMPONENT: "component_id",
 }
+
+export const BOARD_LEVELS = {
+  VIEWS: "views",
+  ZONES: "zones",
+  COMPONENTS: "components",
+} as const;
