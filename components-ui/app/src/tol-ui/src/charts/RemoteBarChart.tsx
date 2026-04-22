@@ -101,8 +101,8 @@ export function RemoteBarChart(props: PRemoteBarChart) {
     contents,
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
-  const [labels, setLabels] = useState([]);
-  const [datasets, setDatasets] = useState([]);
+  const [datasets, setDatasets] = useState<object[]>([]);
+  const [labels, setLabels] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [warningMessage, setWarningMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
