@@ -9,6 +9,7 @@ SPDX-License-Identifier: MIT
 ## tol-ui `3.5.1`
 21-04-2026
 - Added JsonEdit component
+- Removed the need to be in edit mode to change page sizes on tables
 
 ## tol-ui `3.5.0`
 20-04-2026
