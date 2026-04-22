@@ -24,6 +24,7 @@ import {
   reorderBoardEntityItem,
   getBoardEntity,
   IDataObject,
+  BOARD_ID_FIELDS,
 } from "../..";
 
 
@@ -65,7 +66,7 @@ export function View(props: PView) {
     getBoardEntity<IView, IZone>(
       view,
       id,
-      "view_id",
+      BOARD_ID_FIELDS.VIEW,
       BOARDS.ZONE_VIEW,
       BOARDS.ZONE,
       dataObjectsToZone,

@@ -273,7 +273,7 @@ export function getOrderedIdsViaBoardJoiningEntity(dataObjects: TDataObjectListO
  * @param parentId The ID of the parent entity (e.g. view ID for zones).
  * @param parentIdField The field name in the joining table that references the parent entity (e.g. 'view_id').
  * @param joiningObjectType The type of the joining table entries (e.g. 'zone_view').
- * @param objectType The type of the related board entity to fetch (e.g. 'zone').
+ * @param childObjectType The type of the related board entity to fetch (e.g. 'zone').
  * @param dataObjectsToBoardEntities A function that takes the core data object and its corresponding joining table entry to define the board entity.
  * @param boardDataSource The data source instance to use for fetching board config data.
  * @param requestedFields Optional array of specific fields to request for the joining table entries.
@@ -284,7 +284,7 @@ export async function getBoardEntity<TParent, TChild>(
   parentId: string,
   parentIdField: string,
   joiningObjectType: string,
-  objectType: string,
+  childObjectType: string,
   dataObjectsToBoardEntities: (dataObjects: IDataObject, joiningObject: IDataObject) => TChild,
   boardDataSource: TsDataSource,
   requestedFields?: string[],
@@ -300,12 +300,12 @@ export async function getBoardEntity<TParent, TChild>(
       },
     })
     .then(async (joiningObjects: TDataObjectListOrNull) => {
-      const orderedIds = getOrderedIdsViaBoardJoiningEntity(joiningObjects, objectType);
+      const orderedIds = getOrderedIdsViaBoardJoiningEntity(joiningObjects, childObjectType);
       const definedBoardEntities = {};
       joiningObjects?.forEach((joiningObject) => {
         if (joiningObject) {
           // retrieve the core object
-          const obj = joiningObject?.relationships?.[objectType] as IDataObject;
+          const obj = joiningObject?.relationships?.[childObjectType] as IDataObject;
 
           // define the board entity (e.g. zone) using the retrieved object and its corresponding joining table entry (e.g. zone_view)
           definedBoardEntities[obj.id] = dataObjectsToBoardEntities(obj, joiningObject);
@@ -314,7 +314,7 @@ export async function getBoardEntity<TParent, TChild>(
       // return the defined board entities in the correct order based on the joining table order
       return {
         ...boardEntity,
-        [`${objectType}s`]: definedBoardEntities,
+        [`${childObjectType}s`]: definedBoardEntities,
         order: orderedIds,
       } as TParent;
     });

@@ -13,3 +13,10 @@ export const PRIVILEGE = {
     EDITABLE: "editable" as TBoardPrivilege
   }
 }
+
+export const BOARD_ID_FIELDS = {
+  BOARD: "board_id",
+  VIEW: "view_id",
+  ZONE: "zone_id",
+  COMPONENT: "component_id",
+}

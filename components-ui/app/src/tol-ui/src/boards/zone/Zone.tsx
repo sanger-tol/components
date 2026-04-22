@@ -27,7 +27,8 @@ import {
   IComponent,
   getBoardEntity,
   TsDataSource,
-  defineComponent
+  defineComponent,
+  BOARD_ID_FIELDS
 } from "../..";
 
 
@@ -86,7 +87,7 @@ export function Zone(props: PZone) {
     getBoardEntity<IZone, IComponent>(
       zone,
       id,
-      "zone_id",
+      BOARD_ID_FIELDS.ZONE,
       BOARDS.COMPONENT_ZONE,
       BOARDS.COMPONENT,
       dataObjectsToComponent,
