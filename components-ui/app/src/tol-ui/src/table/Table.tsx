@@ -388,7 +388,7 @@ export function Table(props: PTable) {
       ],
       elements:
         !noPagination && fieldMeta?.order?.active?.length > 0 ? [
-          ...(!smallBreakpoint && editMode ? [PageSizePicker] : []),
+          ...(!smallBreakpoint ? [PageSizePicker] : []),
           PaginationPicker,
         ] : [],
     }
