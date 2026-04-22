@@ -84,6 +84,7 @@ export function Zone(props: PZone) {
     }
 
     getBoardEntity<IZone, IComponent>(
+      zone,
       id,
       "zone_id",
       BOARDS.COMPONENT_ZONE,
@@ -91,8 +92,8 @@ export function Zone(props: PZone) {
       dataObjectsToComponent,
       boardDataSource,
       ["component.data_source_instance.ui_api_details"]
-    ).then((zone: IZone) => {
-      setZone(zone);
+    ).then((z: IZone) => {
+      setZone(z);
     });
   }, []);
 

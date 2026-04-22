@@ -63,6 +63,7 @@ export function View(props: PView) {
     }
 
     getBoardEntity<IView, IZone>(
+      view,
       id,
       "view_id",
       BOARDS.ZONE_VIEW,
@@ -70,8 +71,8 @@ export function View(props: PView) {
       dataObjectsToZone,
       boardDataSource,
       ["zone.data_source_instance.ui_api_details"]
-    ).then((view: IView) => {
-      setView(view);
+    ).then((v: IView) => {
+      setView(v);
     });
   }, []);
 
