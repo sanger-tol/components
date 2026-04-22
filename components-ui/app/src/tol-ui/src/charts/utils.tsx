@@ -6,15 +6,18 @@ SPDX-License-Identifier: MIT
 
 import { format } from "date-fns";
 import {
+  IAggData,
   appendKeywordIfNeeded,
+  IChartData,
   getCssVarValue,
+  IAggregation,
   IChartDataset,
   IFilter,
-  isEmptyObject,
   isPropDefined,
   ISunburstSectionClickedData,
   mergeAndFilters,
-  NO_DATA_FOUND_MESSAGE
+  NO_DATA_FOUND_MESSAGE,
+  TAggregationResult
 } from "..";
 
 // ------------------//
@@ -261,25 +264,18 @@ export function setBorderColour(datasets: any, borderColour: string) {
   return datasets;
 }
 
+// TODO Remove when not used by sunburst
 export function isChartDataEmpty(aggs: any) {
-  const data = Object.values(aggs)[0]!["buckets"];
-  if (isEmptyObject(data)) return NO_DATA_FOUND_MESSAGE;
-  return "";
+  if (!aggs) return NO_DATA_FOUND_MESSAGE;
+  else return "";
+  // const data = Object.values(aggs)[0]!["buckets"];
+  // if (isEmptyObject(data)) return NO_DATA_FOUND_MESSAGE;
+  // return "";
 }
 
 // ------------------//
 //      BARCHART     //
 // ------------------//
-
-interface ChartData {
-  datasets: object[];
-  labels: string[];
-}
-
-interface AggData {
-  keys: any[];
-  aggs: object[];
-}
 
 export type HistogramGrouping = "d" | "w" | "M" | "y" | "categorical";
 
@@ -306,23 +302,34 @@ export function initialiseDatasets(datasets: any[]) {
   return datasets;
 }
 
-function getSortedAggData(buckets: object) {
+/**
+ * Transforms a response from the `:aggregations` endpoint to an `IAggData`.
+ * 
+ * Note that this is for a bar chart aggregation, so a breakDownBy is expected.
+ */
+function getSortedAggData(aggs: TAggregationResult): IAggData {
   const keys = new Set();
-  const aggs = {};
-  for (const bucket of Object.values(buckets)) {
-    aggs[bucket["key"]] = {};
-    const data: object[] = bucket["1"]["buckets"];
-    for (const datapoint of data) {
-      keys.add(datapoint["key"]);
-      aggs[bucket["key"]][datapoint["key"]] = datapoint["doc_count"];
+  const sortedAggs = {};
+
+  // For each segment, store all keys we find in the `keys` set, and all of the data
+  // (in the form {x: ..., y: ...}) to key-value pairs under the breakDownBy of this segment in
+  // the sortedAggs object
+  for (const segment of aggs) {
+    const breakDownBy = segment.key!;
+    sortedAggs[breakDownBy] = {};
+    for (const datapoint of segment.data) {
+      keys.add(datapoint.x);
+      sortedAggs[breakDownBy][datapoint.x] = datapoint.y;
     }
   }
+
+  // Return this new data, but order the keys from smallest to largest
   return {
     keys: Array.from(keys).sort((a: any, b: any) => {
       return a - b;
     }),
-    aggs: aggs,
-  } as AggData;
+    aggs: sortedAggs,
+  };
 }
 
 function isDateString(label: string): boolean {
@@ -389,37 +396,28 @@ function formatLabels(
 }
 
 // would need adapting for multiple aggs in 1 api call
+/**
+ * Transforms aggregation response data from the `:aggregations` endpoint to the format needed
+ * to display a bar chart in the UI
+ * @param aggs The response body from the `:aggregations` endpoint
+ * @param grouping Categorical or date grouping, used to format labels
+ * @param shortDate Whether date labels should be in a shortened format
+ * @returns An `IChartData` object containing the data ready to be set to state in the chart
+ */
 export function aggsToBarChartData(
-  aggs: object,
+  aggs: TAggregationResult,
   grouping: HistogramGrouping,
   shortDate?: boolean,
-  cumulative?: boolean,
-): ChartData {
+): IChartData {
   const datasets: object[] = [];
-  const buckets: object = aggs["agg"]["buckets"];
-  const sortedAggs: AggData = getSortedAggData(buckets);
+  const sortedAggs: IAggData = getSortedAggData(aggs);
   const labels = sortedAggs.keys;
 
-  for (const [bucket, agg] of Object.entries(sortedAggs.aggs)) {
-    const data: number[] = [];
-
-    let prevTotal = 0;
-    for (const key of sortedAggs.keys) {
-      if (key in agg) {
-        if (cumulative) {
-          data.push(prevTotal + agg[key]);
-          prevTotal += agg[key];
-        } else {
-          data.push(agg[key]);
-        }
-      } else {
-        data.push(prevTotal);
-      }
-    }
-
+  for (const [breakDownBy, datum] of Object.entries(sortedAggs.aggs)) {
+    const data: number[] = sortedAggs.keys.map(key => datum[key]);
     const dataset = {
-      id: bucket,
-      label: bucket,
+      id: breakDownBy,
+      label: breakDownBy,
       data: data,
     };
     datasets.push(dataset);
@@ -428,7 +426,7 @@ export function aggsToBarChartData(
   return {
     datasets: datasets,
     labels: formatLabels(labels, grouping, shortDate),
-  } as ChartData;
+  };
 }
 
 function formatDateRangeWithInterval(
@@ -495,50 +493,37 @@ export function generateBarLabels(chart: any, titleColour: any) {
 //   DATE & CATEGORICAL BARCHART   //
 // -------------------------------//
 
+/**
+ * Generates the aggregation portion of the request body to send to the `:aggregations` endpoint,
+ * for a categorical aggregation or a date aggregation
+ * @param breakDownBy The field by which to break down the data
+ * @param xAxis The field to use on the x axis
+ * @param grouping The date interval if a date aggregation, or "categorical" to for a
+ * categorical aggregation
+ * @returns 
+ */
 export function generateChartAgg(
   breakDownBy: string,
   xAxis: string,
   grouping: HistogramGrouping,
-) {
-  const baseAgg = {
-    terms: {
-      field: appendKeywordIfNeeded(breakDownBy),
-      size: 25,
-    },
-  };
-
-  let innerAgg;
-
-  if (grouping === "categorical") {
-    innerAgg = {
-      terms: {
-        field: appendKeywordIfNeeded(xAxis),
-        order: {
-          _key: "asc",
-        },
-        size: 25,
-      },
-    };
+  cumulative?: boolean,
+): IAggregation {
+  if (grouping == "categorical") {
+    // Categorical aggregation
+    return {
+      x_axis: xAxis,
+      break_down_by: breakDownBy,
+      cumulative,
+    }
   } else {
-    innerAgg = {
-      date_histogram: {
-        field: xAxis,
-        calendar_interval: "1" + grouping,
-        time_zone: "Europe/London",
-      },
-    };
+    // Date aggregation
+    return {
+      x_axis: xAxis,
+      break_down_by: breakDownBy,
+      date_interval: "1" + grouping,
+      cumulative,
+    }
   }
-
-  return {
-    aggs: {
-      agg: {
-        ...baseAgg,
-        aggs: {
-          "1": innerAgg,
-        },
-      },
-    },
-  };
 }
 
 export function generateChartFilterFromBar(
