@@ -27,8 +27,8 @@ import {
   IComponent,
   getBoardEntity,
   TsDataSource,
-  defineComponent,
-  BOARD_ID_FIELDS
+  BOARD_ID_FIELDS,
+  BOARD_CHILDREN_KEYS
 } from "../..";
 
 
@@ -53,7 +53,7 @@ export function Zone(props: PZone) {
   const { editMode, layoutMode } = useBoard();
 
   const [zone, setZone] = useBoardState<IView, IZone>(
-    "zones",
+    BOARD_CHILDREN_KEYS.ZONES,
     id,
     view,
     setView,

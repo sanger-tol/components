@@ -12,7 +12,6 @@ import {
   Col,
   Icon,
   HoverOverlay,
-  addComponent,
   IZone,
   componentOptions,
   sizeOptions,

@@ -8,30 +8,28 @@ import { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import {
   BOARDS,
-  getBoard,
   getCssVarValue,
-  getUserFromLocalStorage,
   LoadingContent,
   saveTitle,
   themeListener,
   TsDataSource,
   View,
-  getUserPrivilege,
   useBoard,
   copyToClipboard,
-  TBoardPrivilege,
   PRIVILEGE,
   TNavBrand,
   BUTTONS,
   UtilityBar,
   PButton,
   useAuth,
-  IDataObject,
-  IZone,
   getBoardEntity,
   IView,
   BOARD_ID_FIELDS,
   IBoard,
+  dataObjectsToViewParams,
+  BOARD_CHILDREN_KEYS,
+  dataObjectToBoardParams,
+  getUserPrivilege,
 } from "../..";
 
 export interface PBoard {
@@ -84,46 +82,28 @@ export function Board(props: PBoard) {
   });
 
   useEffect(() => {
-    // if (boardId) {
-    //   getBoard(boardId, boardDataSource!)
-    //     .then((data: any) => {
-    //       if (!view) setView(data.views[0].id);
-    //       setBoardData(data);
-    //       setTitle(data.boardTitle);
-
-    //       setPrivilege(
-    //         getUserPrivilege(user, data.boardUserId, boardId)
-    //       );
-    //     })
-    //     .catch((e: any) => {
-    //       setError(e);
-    //       console.error(e);
-    //     })
-    //     .finally(() => {
-    //       setLoading(false);
-    //     });
-    // }
-
-    const dataObjectsToView = (dataObject: IDataObject, joiningObject: IDataObject): IView => {
-      return defineView({
-        id: dataObject.id,
-        title: dataObject.title,
-        filter: dataObject.filter,
-        zoneViewId: joiningObject?.id,
-        zoneViewOrder: joiningObject?.order,
-      });
-    }
-
     getBoardEntity<IBoard, IView>(
+      boardDataSource,
       board,
       id,
       BOARD_ID_FIELDS.BOARD,
+      BOARDS.BOARD,
       BOARDS.VIEW_BOARD,
       BOARDS.VIEW,
-      dataObjectsToView,
-      boardDataSource
+      BOARD_CHILDREN_KEYS.VIEWS,
+      dataObjectsToViewParams,
+      dataObjectToBoardParams,
+      ["board.user.id"]
     ).then((b: IBoard) => {
       setBoard(b);
+      setPrivilege(
+        getUserPrivilege(user, b.ownerUserId, id)
+      );
+    }).finally(() => {
+      setLoading(false);
+    }).catch((e) => {
+      console.error("Error fetching board data:", e);
+      setError("Failed to load board.");
     });
   }, [id]);
 
@@ -189,18 +169,21 @@ export function Board(props: PBoard) {
 
   // Different format used for the main Board title
   const editModeTitle = editMode ? {
-    text: title,
+    text: board.title,
     editable: editMode,
     onSave: (value: string) => {
-      saveTitle(value, boardId, boardDataSource, BOARDS.BOARD);
-      setTitle(value);
+      saveTitle(value, id, boardDataSource, BOARDS.BOARD);
+      setBoard({
+        ...board,
+        title: value,
+      });
     }
   } : undefined;
 
   // Large header for view mode
   const viewModeTitle = !editMode ? [(
     <h3>
-      {title}
+      {board.title}
     </h3>
   )] : undefined;
 
@@ -228,11 +211,12 @@ export function Board(props: PBoard) {
   return (
     <div className={`tol-board ${classMode()}`} >
       {Bar}
-      <View
-        id={board.views[0].id}
-        defaultFilter={board.views[0].filter}
-        boardDataSource={board}
-      />
+      {board?.views?.id &&
+        <View
+          id={board.views?.[0].id!}
+          boardDataSource={boardDataSource}
+        />
+      }
     </div >
   );
 }

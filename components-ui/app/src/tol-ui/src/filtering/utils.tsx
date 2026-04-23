@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { useEffect } from "react";
 import {
   IZone,
-  addComponentToZone,
   IFilter,
   IAndAttributes,
   deepCopy,

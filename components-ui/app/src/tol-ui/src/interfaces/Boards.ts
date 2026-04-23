@@ -8,7 +8,7 @@ import {
   TsDataSource,
   IFilter,
   PUtilityBar,
-  BOARD_LEVELS,
+  BOARD_CHILDREN_KEYS,
 } from '..';
 
 export type TBoardEntityOrder = string[];
@@ -66,8 +66,15 @@ export interface IZones {
 
 export interface IView {
   id?: string;
-  zones: IZones;
-  order: TBoardEntityOrder;
+  zones?: IZones;
+  order?: TBoardEntityOrder;
+
+  // extras required just for boards
+  title?: string;
+
+  // used for reordering in the db
+  viewBoardId?: string;
+  viewBoardOrder?: number;
 }
 
 export interface IViews {
@@ -76,8 +83,12 @@ export interface IViews {
 
 export interface IBoard {
   id?: string;
-  views: IViews;
-  order: TBoardEntityOrder;
+  views?: IViews;
+  order?: TBoardEntityOrder;
+
+  // extras required just for boards
+  title?: string;
+  ownerUserId?: string;
 }
 
 /*
@@ -163,7 +174,7 @@ export interface IUseZoneMeta {
   setZone: (zone: IZone) => void;
 }
 
-export type TBoardLevel = (typeof BOARD_LEVELS)[keyof typeof BOARD_LEVELS];
+export type TChildrenKey = (typeof BOARD_CHILDREN_KEYS)[keyof typeof BOARD_CHILDREN_KEYS];
 
 export interface IUpdatedZoneIds {
   newZoneId: string;

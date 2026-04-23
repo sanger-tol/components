@@ -6,19 +6,36 @@ SPDX-License-Identifier: MIT
 
 import {
   BOARDS,
-  defineZone,
   generateId,
-  getOrderedIdsViaBoardJoiningEntity,
   getUserFromLocalStorage,
   IDataObject,
-  IView,
   IZone,
-  IZones,
   TDataObjectListOrNull,
-  TDataObjectOrNull,
+  defineBoardEntity,
+  BOARD_CHILDREN_KEYS,
   TsDataSource,
 } from "../..";
 
+
+export function dataObjectsToZoneParams(zoneDataObject: IDataObject, zoneViewDataObject: IDataObject): Partial<IZone> {
+  const dsi = zoneDataObject?.relationships?.data_source_instance as IDataObject;
+  return defineBoardEntity<IZone>(
+    {
+      id: zoneDataObject.id,
+      title: zoneDataObject.title,
+      objectType: zoneDataObject.object_type,
+      filter: zoneDataObject.filter,
+      zoneViewId: zoneViewDataObject?.id,
+      zoneViewOrder: zoneViewDataObject?.order,
+      dataspace: new TsDataSource({
+        dataSourceInstanceId: dsi?.id,
+        ...dsi?.ui_api_details,
+      }),
+    },
+    BOARDS.ZONE,
+    BOARD_CHILDREN_KEYS.COMPONENTS
+  );
+}
 
 // export async function upsertZoneOrder(
 //   zoneId: string,

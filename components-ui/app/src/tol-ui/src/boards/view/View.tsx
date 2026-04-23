@@ -19,18 +19,17 @@ import {
   IBoard,
   IZone,
   IView,
-  defineZone,
   deleteBoardEntity,
   reorderBoardEntityItem,
   getBoardEntity,
-  IDataObject,
   BOARD_ID_FIELDS,
+  BOARD_CHILDREN_KEYS,
+  dataObjectsToViewParams,
 } from "../..";
 
 
 export interface PView extends PBoard {
   id: string;
-  defaultFilter?: IFilter;
 }
 
 export function View(props: PView) {
@@ -39,7 +38,7 @@ export function View(props: PView) {
   const { editMode, layoutMode, board, setBoard } = useBoard();
 
   const [view, setView] = useBoardState<IBoard, IView>(
-    "views",
+    BOARD_CHILDREN_KEYS.VIEWS,
     id,
     board,
     setBoard,
@@ -47,34 +46,22 @@ export function View(props: PView) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const dataObjectsToZone = (dataObject: IDataObject, joiningObject: IDataObject): IZone => {
-      const dsi = dataObject?.relationships?.data_source_instance as IDataObject;
-      return defineZone({
-        id: dataObject.id,
-        title: dataObject.title,
-        objectType: dataObject.object_type,
-        filter: dataObject.filter,
-        zoneViewId: joiningObject?.id,
-        zoneViewOrder: joiningObject?.order,
-        dataspace: new TsDataSource({
-          dataSourceInstanceId: dsi?.id,
-          ...dsi?.ui_api_details,
-        }),
-      });
-    }
-
     getBoardEntity<IView, IZone>(
+      boardDataSource,
       view,
       id,
       BOARD_ID_FIELDS.VIEW,
+      BOARDS.VIEW,
       BOARDS.ZONE_VIEW,
       BOARDS.ZONE,
-      dataObjectsToZone,
-      boardDataSource,
+      BOARD_CHILDREN_KEYS.ZONES,
+      dataObjectsToViewParams,
+      undefined,
       ["zone.data_source_instance.ui_api_details"]
     ).then((v: IView) => {
+      console.log(v);
       setView(v);
-    });
+    })
   }, []);
 
   const onDeleteZone = (id: string) => {

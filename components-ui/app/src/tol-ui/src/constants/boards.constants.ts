@@ -21,7 +21,7 @@ export const BOARD_ID_FIELDS = {
   COMPONENT: "component_id",
 }
 
-export const BOARD_LEVELS = {
+export const BOARD_CHILDREN_KEYS = {
   VIEWS: "views",
   ZONES: "zones",
   COMPONENTS: "components",

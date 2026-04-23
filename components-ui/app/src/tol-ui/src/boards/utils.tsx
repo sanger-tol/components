@@ -12,16 +12,14 @@ import {
   IZone,
   IBoard,
   IView,
-  TBoardLevel,
+  TChildrenKey,
   IComponent,
-  TZoneReorderDirection,
   TBoardEntityOrder,
   IDataObject,
   TDataObjectListOrNull,
   IZones,
-  defineZone,
-  BOARD_LEVELS,
-  deepCopy
+  deepCopy,
+  PopUpMessage
 } from "..";
 
 
@@ -173,38 +171,6 @@ export async function updateConfigAndUpsert(
 }
 
 /**
- * Custom hook for managing board state at different levels (board, view, zone). It initializes state if not already set and provides a setter function to update the state.
- * 
- * @param boardLevel - The level of the board to manage (e.g zone will be 'zones' so it can see its siblings).
- * @param id - The ID of the board element to manage.
- * @param parentStateValue - The current state of the board (IBoard, IView, or IZone).
- * @param setParentStateValue - The setter function to update the board state.
- * @param initialSetup - Optional initial setup for the board element if it doesn't already exist in the state.
- * 
- * @returns A tuple containing the current value of the board element and a setter function to update it.
- */
-export function useBoardState<
-  TParent extends IBoard | IView | IZone,
-  TChildren extends IView | IZone | IComponent
->(
-  boardLevel: TBoardLevel,
-  id: string,
-  parentStateValue: TParent,
-  setParentStateValue: (newValue: TParent) => void,
-): [TChildren, (newValue: TChildren) => void] {
-  const value = parentStateValue[boardLevel][id] as TChildren;
-  const setValue = (newValue: TChildren) => setParentStateValue({
-    ...parentStateValue,
-    [boardLevel]: {
-      ...parentStateValue[boardLevel],
-      [id]: newValue
-    },
-  } as TParent);
-
-  return [value, setValue];
-}
-
-/**
  * Removes a component, view, or zone from the board state and updates the order of the remaining elements accordingly.
  * 
  * @param id The identifier of the component, view, or zone to be removed.
@@ -214,7 +180,7 @@ export function useBoardState<
 export function deleteBoardEntity<
   TEntity extends IBoard | IView | IZone
 >(
-  boardLevel: TBoardLevel,
+  boardLevel: TChildrenKey,
   id: string,
   boardEntity: TEntity,
 ) {
@@ -224,6 +190,7 @@ export function deleteBoardEntity<
 
 /**
  * Reorders a component, view, or zone within the board state by a specified change in order.
+ * 
  * @param id The identifier of the component, view, or zone to be reordered.
  * @param order The current order array
  * @param orderChange The number of positions to move the element (positive for down, negative for up).
@@ -255,6 +222,7 @@ export function reorderBoardEntityItem(
 
 /**
  * Retrieves the ordered IDs of related board entities from a joining table.
+ * 
  * @param obj The list of data objects representing the joining table entries.
  * @param objectType The type of the related board entity (e.g., 'zone', 'view') to extract IDs for.
  * @returns An array of ordered IDs or undefined if the input is null.
@@ -271,33 +239,40 @@ export function getOrderedIdsViaBoardJoiningEntity(dataObjects: TDataObjectListO
 
 /**
  * Fetches board entities and its order based on the joining table entries (e.g. zone_views for zones in a view) and defines the entities using a provided function.
- * @param boardEntity The current board entity (e.g. View) to which the related entities belong.
+ * 
+ * @param parentEntity The current board entity (e.g. View) to which the related entities belong.
  * @param parentId The ID of the parent entity (e.g. view ID for zones).
  * @param parentIdField The field name in the joining table that references the parent entity (e.g. 'view_id').
+ * @param parentRelationship The relationship name to fetch the parent entity from the joining table entries (e.g. 'view' in zone_view).
  * @param joiningObjectType The type of the joining table entries (e.g. 'zone_view').
- * @param childObjectType The type of the related board entity to fetch (e.g. 'zone').
- * @param dataObjectsToBoardEntities A function that takes the core data object and its corresponding joining table entry to define the board entity.
+ * @param childRelationship The relationship name to fetch the child entity from the joining table entries (e.g. 'zone' in zone_view).
+ * @param childrenKey The key in the parent entity where the child entities will be stored (e.g. 'zones' in a view).
+ * @param dataObjectToChildParams A function that takes the core data object and its corresponding joining table entry to define a child entity.
+ * @param dataObjectToParentParams A function that takes the parent data object to extract necessary parameters for defining the parent entity.
  * @param boardDataSource The data source instance to use for fetching board config data.
- * @param requestedFields Optional array of specific fields to request for the joining table entries.
+ * @param joiningObjectTypeRequestedFields Optional array of specific fields to request for the joining table entries.
  * @returns A promise that resolves to the defined board entities along with their order.
  */
 export async function getBoardEntity<
   TParent extends IBoard | IView | IZone,
   TChild extends IView | IZone | IComponent,
 >(
-  boardEntity: TParent,
+  boardDataSource: TsDataSource,
+  parentEntity: TParent,
   parentId: string,
   parentIdField: string,
+  parentRelationship: string,
   joiningObjectType: string,
-  childObjectType: string,
-  dataObjectsToBoardEntities: (dataObjects: IDataObject, joiningObject: IDataObject) => TChild,
-  boardDataSource: TsDataSource,
-  requestedFields?: string[],
+  childRelationship: string,
+  childrenKey: TChildrenKey,
+  dataObjectToChildParams: (childDataObjects: IDataObject, joiningObject: IDataObject) => Partial<TChild>,
+  dataObjectToParentParams?: (parentDataObject: IDataObject) => Partial<TParent>,
+  joiningObjectTypeRequestedFields?: string[],
 ): Promise<TParent> {
   return await boardDataSource
     .getListPage({
       objectType: joiningObjectType,
-      requestedFields: requestedFields,
+      requestedFields: joiningObjectTypeRequestedFields,
       filter: {
         and_: {
           [parentIdField]: { eq: { value: parentId } },
@@ -305,39 +280,52 @@ export async function getBoardEntity<
       },
     })
     .then(async (joiningObjects: TDataObjectListOrNull) => {
-      const orderedIds = getOrderedIdsViaBoardJoiningEntity(joiningObjects, childObjectType);
+      const parentDataObject = joiningObjects?.[0]?.relationships?.[parentRelationship] as IDataObject;
+      const orderedIds = getOrderedIdsViaBoardJoiningEntity(joiningObjects, childRelationship);
+
       const definedBoardEntities = {};
       joiningObjects?.forEach((joiningObject) => {
         if (joiningObject) {
-          // retrieve the core object
-          const obj = joiningObject?.relationships?.[childObjectType] as IDataObject;
+          // retrieve the core child object
+          const obj = joiningObject?.relationships?.[childRelationship] as IDataObject;
 
           // define the board entity (e.g. zone) using the retrieved object and its corresponding joining table entry (e.g. zone_view)
-          definedBoardEntities[obj.id] = dataObjectsToBoardEntities(obj, joiningObject);
+          definedBoardEntities[obj.id] = dataObjectToChildParams(obj, joiningObject);
         }
       });
+
       // return the defined board entities in the correct order based on the joining table order
       return {
-        ...boardEntity,
-        [`${childObjectType}s`]: definedBoardEntities,
+        ...parentEntity,
+        ...dataObjectToParentParams?.(parentDataObject) || {},
+        [childrenKey]: definedBoardEntities,
         order: orderedIds,
       } as TParent;
+    })
+    .catch((e: any) => {
+      console.error(e);
+      PopUpMessage({
+        type: "error",
+        message: `Error fetching ${parentRelationship} ${parentId}. Please refresh and try again.`,
+      });
+      throw e;
     });
 }
 
 /**
- * TODO
+ * Defines a board entity (view, zone, or component) by adding it to its parent entity and setting default
+ * values for certain properties based on the entity type.
+ * 
+ * @param entity The board entity to be defined (view, zone, or component).
+ * @param objectType The type of the board entity (e.g. 'view', 'zone', 'component').
+ * @param childrenKey The key to initialise the children for each entity type (e.g. 'zones' for a view, 'components' for a zone).
  */
-export function defineBoardEntity<
-  TEntity extends IView | IZone | IComponent,
-  TParentEntity extends IBoard | IView | IZone,
->(
+export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
   entity: TEntity,
   objectType: string,
-  parentEntity: TParentEntity,
-  childrenKey: TBoardLevel,
+  childrenKey: TChildrenKey,
 ) {
-  // TODO
+  // Add default values for filter and title if the entity is a zone or component
   let defaults = {}
   if (objectType === BOARDS.COMPONENT || objectType === BOARDS.ZONE) {
     const e = entity as IZone | IComponent;
@@ -358,9 +346,33 @@ export function defineBoardEntity<
     }
   }
 
-  parentEntity[childrenKey][entity.id] = {
-    ...defaults,
+  // Return the defined board entity with defaults and necessary properties for it to be added to the parent entity
+  return {
     ...entity,
-  } as TEntity;
+    ...defaults,
+  }
+}
+
+/**
+ * Defines a board entity (view, zone, or component) and adds it to its parent entity
+ * 
+ * @param entity The board entity to be defined (view, zone, or component).
+ * @param objectType The type of the board entity (e.g. 'view', 'zone', 'component').
+ * @param parentEntity The parent entity (board, view, or zone) to which the new entity will be added.
+ * @param childrenKey The key in the parent entity where the child entities are stored (e.g. 'views' for a view, 'zones' for a zone).
+ * @returns The updated parent entity with the new board entity added.
+ */
+export function defineBoardEntityInParent<
+  TEntity extends IView | IZone | IComponent,
+  TParentEntity extends IBoard | IView | IZone,
+>(
+  entity: TEntity,
+  objectType: string,
+  parentEntity: TParentEntity,
+  childrenKey: TChildrenKey,
+) {
+  const definedEntity = defineBoardEntity(entity, objectType, childrenKey);
+  parentEntity[childrenKey][entity.id] = definedEntity;
   parentEntity?.order?.push(entity.id!);
+  return parentEntity;
 }
