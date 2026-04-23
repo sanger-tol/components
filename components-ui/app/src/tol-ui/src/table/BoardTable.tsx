@@ -24,6 +24,7 @@ import type {
   ITableDrawerSave,
   PVisualisation,
   IDiffState,
+  IConfigDifferences,
 } from "..";
 
 export interface PBoardTable extends PVisualisation {
@@ -39,25 +40,26 @@ export function BoardTable(props: PBoardTable) {
   const isLoggedIn: boolean = !!user?.id;
 
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
+
+  // Trigger a re-render of of the RemoteTable
   const [resetKey, setResetKey] = useState<number>(0);
+
+  // Trigger a new fetch query for the diff state
   const [reset, setReset] = useState<boolean>(false);
   const [hasDiff, setHasDiff] = useState<boolean>(false);
-  const [publishedColumnCount, setPublishedColumnCount] = useState<number>(
-    props.config.fieldMeta?.order?.active?.length ?? 0,
-  );
-
-  const updatePublishedColumnCount = (publishedConfig?: ITableConfigSave) => {
-    setPublishedColumnCount(
-      publishedConfig?.fieldMeta?.order?.active?.length ?? 0,
-    );
-  };
+  const [configDifferences, setConfigDifferences] = useState<IConfigDifferences>({
+    add: [],
+    remove: [],
+  });
 
   const initialisedRef = useRef(false);
 
-  // ── Fetch diff state (if applicable) ─────────────────────────────────────
+  // ── Fetch diff state ─────────────────────────────────────────────────────
 
   const { data: diffState } = useQueryData<IDiffState>(
     [
+      // This is the key for the query,
+      // it will change as state updates, triggering a new function call
       BOARDS.BOARD_DIFF,
       id,
       user?.id ?? "anon",
@@ -71,6 +73,7 @@ export function BoardTable(props: PBoardTable) {
         id,
         user?.id ?? "",
         isLoggedIn,
+        props.objectType,
         editMode,
       ),
     { enabled: true },
@@ -81,7 +84,7 @@ export function BoardTable(props: PBoardTable) {
 
   useEffect(() => {
     if (!diffState) return;
-    setPublishedColumnCount(diffState.publishedColumnCount);
+    setConfigDifferences(diffState.configDifferences);
     setConfig({ ...diffState.currentConfig });
     setHasDiff(diffState.hasDiff);
     if (initialisedRef.current) setResetKey((k) => k + 1);
@@ -212,11 +215,10 @@ export function BoardTable(props: PBoardTable) {
       {...props}
       // RemoteTable defaults to true for resizeableColumns, we want to default to false.
       // Non-logged in users cannot resize columns, as they don't have access to 'Edit Mode'.
-      // We can possibly change this in the future.
       resizeableColumns={editMode || false}
       onReset={onReset}
       showConfigReset={hasDiff}
-      resetConfigColumnCount={publishedColumnCount}
+      resetConfigDifferences={configDifferences}
       advanceTab
       displaySource
       fields={config.fieldMeta}

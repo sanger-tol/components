@@ -19,6 +19,9 @@ import {
   CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
   CELL_RENDERER_SPREAD_OPERATOR,
   BOARDS,
+  TOL_DS,
+  AttributeTooltip,
+  AttributeTitle,
 } from "..";
 
 import type {
@@ -33,6 +36,8 @@ import type {
   TCellHeights,
   ITableConfigSave,
   TDataObjectOrNull,
+  IDiffState,
+  IConfigDifferences,
 } from "..";
 
 interface Rgb {
@@ -525,22 +530,16 @@ export const getComponentConfig = async (
     });
 };
 
-export interface IDiffState {
-  publishedColumnCount: number;
-  hasDiff: boolean;
-  currentConfig: ITableConfigSave | null;
-}
-
 export const getInitialDiffState = async (
   dataSource: TsDataSource,
   componentId: string,
   userId: string,
   isLoggedIn: boolean,
+  objectType: string,
   editMode?: boolean,
 ): Promise<IDiffState> => {
   const component = await getComponentConfig(dataSource, componentId);
-  const publishedColumnCount = component?.fieldMeta?.order?.active?.length ?? 0;
-  // First, check for a diff in the database if the user is logged in
+  // Check for a diff in the database if the user is logged in
   // Or if the user is not logged in, check local storage for a diff
   let { hasDiff, currentConfig } = isLoggedIn
     ? await setDiffState(dataSource, componentId, userId)
@@ -558,12 +557,40 @@ export const getInitialDiffState = async (
   }
 
   // If the user is not logged in and there is a diff, get the diff from local storage
-  let localConfig = null;
+  let localConfig = null as ITableConfigSave | null;
   if (!isLoggedIn && hasDiff) {
     localConfig = getTableConfigLocalStorage(
       `${BOARDS.BOARD_DIFF}_${componentId}`,
     );
   }
+
+  const getConfigDifferences = async (): Promise<IConfigDifferences> => {
+    const currentColumns = isLoggedIn
+      ? currentConfig?.fieldMeta?.order?.active || []
+      : localConfig?.fieldMeta?.order?.active || [];
+    const publishedColumns = component?.fieldMeta?.order?.active || [];
+    return {
+      remove: currentColumns
+        .filter((col: string) => !publishedColumns.includes(col))
+        .map((col: string) => (
+          <AttributeTitle
+            attributeId={col}
+            dataSource={TOL_DS}
+            objectType={objectType}
+          />
+        )),
+      add: publishedColumns
+        .filter((col: string) => !currentColumns.includes(col))
+        .map((col: string) => (
+          <AttributeTitle
+            attributeId={col}
+            dataSource={TOL_DS}
+            objectType={objectType}
+          />
+        )),
+    };
+  };
+
   /**
    * Return number of published columns, whether there is a diff, and the current config, which can either be:
    *   1. the original config if there is no diff, or the user is in edit mode and has a diff
@@ -571,7 +598,7 @@ export const getInitialDiffState = async (
    *   3. the diff config from the database if there is a diff, the user is logged in and is not in edit mode
    */
   return {
-    publishedColumnCount,
+    configDifferences: await getConfigDifferences(),
     hasDiff: hasDiff || !!localConfig,
     currentConfig: localConfig ? localConfig : (currentConfig ?? null),
   };

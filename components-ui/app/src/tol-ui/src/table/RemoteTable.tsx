@@ -45,6 +45,7 @@ import {
   IHeight,
   TFilterOrUndefined,
   useBoard,
+  IConfigDifferences,
 } from '..';
 
 export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
@@ -196,13 +197,15 @@ export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
   /**
    * Controls visibility of the reset-to-default button. When true (or omitted), the
    * button is shown; when false, it is hidden. Pass false when there are no stored
-   * differences to reset.
+   * differences to reset
    */
   showConfigReset?: boolean;
   /**
-   * Number of columns in the configuration that reset will restore.
+   * Shows the differences between the current configuration and the default configuration, 
+   * used to inform users what will be reset when they click the reset button. 
+   * This is used in conjunction with `showConfigReset`
    */
-  resetConfigColumnCount?: number;
+  resetConfigDifferences?: IConfigDifferences;
 }
 
 /**

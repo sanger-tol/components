@@ -35,6 +35,7 @@ import {
   Modal,
   Button,
   BUTTONS,
+  IConfigDifferences,
 } from "..";
 
 export interface PTable extends IRemoteTargetAndZone {
@@ -92,7 +93,7 @@ export interface PTable extends IRemoteTargetAndZone {
   setDownloadInProgress: (downloadInProgress: boolean) => void;
   onReset?: () => void;
   showConfigReset?: boolean;
-  resetConfigColumnCount?: number;
+  resetConfigDifferences?: IConfigDifferences;
 }
 
 export function Table(props: PTable) {
@@ -141,12 +142,14 @@ export function Table(props: PTable) {
   const groupBy: boolean | undefined = props.groupBy;
   const onReset: (() => void) | undefined = props.onReset;
   const showConfigReset: boolean | undefined = props.showConfigReset;
-  const resetConfigColumnCount: number | undefined = props.resetConfigColumnCount;
+  const resetConfigDifferences: IConfigDifferences | undefined =
+    props.resetConfigDifferences;
 
   const { editMode } = useBoard();
 
   const [open, setOpen] = useState<boolean>(false);
-  const [resetConfirmationOpen, setResetConfirmationOpen] = useState<boolean>(false);
+  const [resetConfirmationOpen, setResetConfirmationOpen] =
+    useState<boolean>(false);
   const [downloadOpen, setDownloadOpen] = useState<boolean>(false);
   const [smallBreakpoint, setSmallBreakpoint] = useState<boolean>(true);
   const [mediumBreakpoint, setMediumBreakpoint] = useState<boolean>(true);
@@ -168,8 +171,6 @@ export function Table(props: PTable) {
   noFilter = !!noFilter;
 
   const noFieldsSelected = fieldMeta?.order?.active?.length === 0;
-  const selectedColumnCount = fieldMeta?.order?.active?.length ?? 0;
-  const resetColumnCount = resetConfigColumnCount ?? selectedColumnCount;
   const wrapperId = "tol-table-wrapper-" + id;
 
   if (selectedRows.length === data.length || bulkSelect) {
@@ -275,37 +276,40 @@ export function Table(props: PTable) {
       disabled: selectedRowData.length === 0 || button.disabled === true,
     }));
 
-    const configButton: PButton = !noConfigModal?
-     {
-      visible: true,
-      position: "right",
-      type: "primary",
-      testid: "table-config-button",
-      tooltip: "Configure Table",
-      onClick: () => {
-        setOpen(true);
-      },
-      icon: "sliders",
-      outline: true,
-      disabled: loading,
-    } : {
-      visible: false,
-    };
+  const configButton: PButton = !noConfigModal
+    ? {
+        visible: true,
+        position: "right",
+        type: "primary",
+        testid: "table-config-button",
+        tooltip: "Configure Table",
+        onClick: () => {
+          setOpen(true);
+        },
+        icon: "sliders",
+        outline: true,
+        disabled: loading,
+      }
+    : {
+        visible: false,
+      };
 
   const filterButton: PButton =
-    (!noFilter && fieldMeta.order.active.length !== 0 && editMode) ? {
-      visible: true,
-      position: "right",
-      type: "primary",
-      onClick: () => {
-        setFilterVisibility(!filterVisibility);
-      },
-      icon: filterVisibility ? "eye-slash" : "eye",
-      tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
-      outline: true,
-    } : {
-      visible: false,
-    };
+    !noFilter && fieldMeta.order.active.length !== 0 && editMode
+      ? {
+          visible: true,
+          position: "right",
+          type: "primary",
+          onClick: () => {
+            setFilterVisibility(!filterVisibility);
+          },
+          icon: filterVisibility ? "eye-slash" : "eye",
+          tooltip: filterVisibility ? "Hide Filters" : "Show Filters",
+          outline: true,
+        }
+      : {
+          visible: false,
+        };
 
   const downloadButton: PButton = !noDownload
     ? {
@@ -347,9 +351,7 @@ export function Table(props: PTable) {
   const allRowsExpanded =
     Array.isArray(data) &&
     data.length > 0 &&
-    data.every(
-      (row: any) => !!(row?.key && heightExpandedRows[row.key])
-    );
+    data.every((row: any) => !!(row?.key && heightExpandedRows[row.key]));
 
   const PageSizePicker = (
     <span className="tol-page-size">
@@ -387,24 +389,18 @@ export function Table(props: PTable) {
       boundaryLinks
       maxButtons={mediumBreakpoint ? 1 : 3}
     />
-  )
+  );
 
-  const ubc = mergeUtilityBarConfigs(
-    utilityBarConfig,
-    {
-      buttons: [
-        configButton,
-        filterButton,
-        actionDropdown,
-        downloadButton,
-      ],
-      elements:
-        !noPagination && fieldMeta?.order?.active?.length > 0 ? [
-          ...(!smallBreakpoint && editMode ? [PageSizePicker] : []),
-          PaginationPicker,
-        ] : [],
-    }
-  )
+  const ubc = mergeUtilityBarConfigs(utilityBarConfig, {
+    buttons: [configButton, filterButton, actionDropdown, downloadButton],
+    elements:
+      !noPagination && fieldMeta?.order?.active?.length > 0
+        ? [
+            ...(!smallBreakpoint && editMode ? [PageSizePicker] : []),
+            PaginationPicker,
+          ]
+        : [],
+  });
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
@@ -412,37 +408,65 @@ export function Table(props: PTable) {
         hasPendingChanges
         open={resetConfirmationOpen}
         setOpen={setResetConfirmationOpen}
-        size="xs"
+        size="sm"
         closeButton={false}
       >
-        <h5>Reset Table Configuration</h5>
-        <p>
-          Are you sure you want to reset this table to the published configuration?
-        </p>
-        <p>
-          The published configuration currently has {resetColumnCount} {" "}
-          {resetColumnCount === 1 ? "column" : "columns"}.
-        </p>
-        <p className="tol-danger-colour">
-          Warning: Your current table configuration will be lost.
-        </p>
-        <Button
-          {...BUTTONS.CONFIRM}
-          onClick={() => {
-            setResetConfirmationOpen(false);
-            setOpen(false);
-            onReset?.();
-          }}
-          testid="confirm-reset-button"
-        />
-        <Button
-          {...BUTTONS.CANCEL}
-          onClick={() => setResetConfirmationOpen(false)}
-        />
+        {resetConfigDifferences ? (
+          <div className="tol-table-reset-config">
+            <h5>Reset Table Configuration</h5>
+            <p>
+              Are you sure you want to reset this table to the published
+              configuration?
+            </p>
+            {resetConfigDifferences?.remove?.length > 0 && (
+              <div>
+                <h6>
+                  This action will <strong>remove</strong> the following
+                  columns:
+                </h6>
+                {resetConfigDifferences?.remove.map(
+                  (col: React.ReactNode, idx: number) => (
+                    <span key={idx}>{col}</span>
+                  ),
+                )}
+              </div>
+            )}
+            {resetConfigDifferences?.add?.length > 0 && (
+              <div className="tol-table-reset-config-additions">
+                <h6 className="tol-table-reset-config-headings">
+                  This action will <strong>add</strong> the following columns:
+                </h6>
+                {resetConfigDifferences?.add.map(
+                  (col: React.ReactNode, idx: number) => (
+                    <span key={idx}>{col}</span>
+                  ),
+                )}
+              </div>
+            )}
+            <p className="tol-danger-colour">
+              Warning: Your current table configuration will be lost.
+            </p>
+            <Button
+              {...BUTTONS.CONFIRM}
+              onClick={() => {
+                setResetConfirmationOpen(false);
+                setOpen(false);
+                onReset?.();
+              }}
+              testid="confirm-reset-button"
+            />
+            <Button
+              {...BUTTONS.CANCEL}
+              onClick={() => setResetConfirmationOpen(false)}
+            />
+          </div>
+        ) : (
+          <p>No differences found. Please close this pop-up.</p>
+        )}
       </Modal>
       <DownloadModal
         {...props}
-        disabledTabs={['Image']}
+        disabledTabs={["Image"]}
         size="sm"
         componentId={id}
         open={downloadOpen}
@@ -482,7 +506,9 @@ export function Table(props: PTable) {
         contents
       ) : (
         <>
-          {noFieldsSelected ? <NoAttributesPlaceholder /> : (
+          {noFieldsSelected ? (
+            <NoAttributesPlaceholder />
+          ) : (
             <>
               <RowCounter {...props} />
               <div className="tol-table-inner">
@@ -518,10 +544,7 @@ export function Table(props: PTable) {
                     const rowId = rowData?.key;
                     const row = cellHeights[rowId];
                     const fullHeight = row
-                      ? Math.max(
-                          DEFAULT_ROW_HEIGHT,
-                          ...Object.values(row),
-                        )
+                      ? Math.max(DEFAULT_ROW_HEIGHT, ...Object.values(row))
                       : DEFAULT_ROW_HEIGHT;
 
                     if (heightExpandedRows[rowId]) {

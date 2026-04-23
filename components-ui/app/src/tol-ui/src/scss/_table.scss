@@ -31,7 +31,8 @@
 
   // dropdown box shadow
   .rs-dropdown.rs-dropdown-menu {
-    box-shadow: 0 0 10px rgba(255, 255, 255, 1),
+    box-shadow:
+      0 0 10px rgba(255, 255, 255, 1),
       0 4px 4px rgba(255, 255, 255, 0.12) !important;
   }
 
@@ -224,7 +225,6 @@
     }
 
     .tol-table-row-selection {
-
       .rs-checkbox-checker,
       .rs-checkbox-control,
       input {
@@ -277,6 +277,22 @@
     svg:hover {
       color: var(--tol-primary) !important;
       cursor: pointer;
+    }
+  }
+}
+
+.tol-table-reset-config {
+  .tol-table-reset-config-headings {
+    margin-top: 8px !important;
+  }
+
+  .tol-table-reset-config-additions {
+    margin-bottom: 8px !important;
+  }
+
+  .tol-attribute-title {
+    p {
+      margin-bottom: 0 !important;
     }
   }
 }
