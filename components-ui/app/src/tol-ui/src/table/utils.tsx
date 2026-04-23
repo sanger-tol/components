@@ -20,7 +20,6 @@ import {
   CELL_RENDERER_SPREAD_OPERATOR,
   BOARDS,
   TOL_DS,
-  AttributeTooltip,
   AttributeTitle,
 } from "..";
 
@@ -515,6 +514,13 @@ export async function resetTableConfigToDefault(
     });
 }
 
+/**
+ * Fetches the saved table configuration for a given component.
+ *
+ * @param dataSource - The data source used to query the component record
+ * @param componentId - The ID of the component whose config should be retrieved
+ * @returns The component's table config, or `null` if none exists
+ */
 export const getComponentConfig = async (
   dataSource: TsDataSource,
   componentId: string,
@@ -530,6 +536,27 @@ export const getComponentConfig = async (
     });
 };
 
+/**
+ * Computes the initial diff state for a component's table configuration.
+ *
+ * Determines whether a user has a customised config (diff) relative to the published
+ * component config, sourcing it from the database for logged-in users or from local
+ * storage for anonymous users. Also calculates the columns added/removed relative to
+ * the published config.
+ *
+ * The resolved `currentConfig` will be:
+ * 1. The published config — if there is no diff, or the user is in edit mode with a diff.
+ * 2. The diff config from local storage — if there is a diff and the user is not logged in.
+ * 3. The diff config from the database — if there is a diff and the user is logged in (non-edit mode).
+ *
+ * @param dataSource - The data source used to query component and board diff records
+ * @param componentId - The ID of the component whose config state is being resolved
+ * @param userId - The ID of the current user
+ * @param isLoggedIn - Whether the user is currently authenticated
+ * @param objectType - The object type used to resolve attribute titles in config differences
+ * @param editMode - Optional flag indicating whether the table is in edit mode
+ * @returns The resolved diff state, including the current config, diff flag, and column differences
+ */
 export const getInitialDiffState = async (
   dataSource: TsDataSource,
   componentId: string,
@@ -564,6 +591,9 @@ export const getInitialDiffState = async (
     );
   }
 
+  // Calculate the config differences for the reset confirmation display
+  // Return a configDifferences object with the columns to add and remove,
+  // represented as AttributeTitle components to show the source colour and provide on hover tooltips
   const getConfigDifferences = async (): Promise<IConfigDifferences> => {
     const currentColumns = isLoggedIn
       ? currentConfig?.fieldMeta?.order?.active || []
@@ -591,12 +621,6 @@ export const getInitialDiffState = async (
     };
   };
 
-  /**
-   * Return number of published columns, whether there is a diff, and the current config, which can either be:
-   *   1. the original config if there is no diff, or the user is in edit mode and has a diff
-   *   2. the diff config from local storage if there is a diff and the user is not logged in
-   *   3. the diff config from the database if there is a diff, the user is logged in and is not in edit mode
-   */
   return {
     configDifferences: await getConfigDifferences(),
     hasDiff: hasDiff || !!localConfig,
@@ -604,6 +628,18 @@ export const getInitialDiffState = async (
   };
 };
 
+/**
+ * Checks the database for a user-specific board diff for a given component.
+ *
+ * Queries the `BOARD_DIFF` records filtered by `componentId` and `userId`, returning
+ * whether a diff exists and the associated config if so.
+ *
+ * @param dataSource - The data source used to query board diff records
+ * @param componentId - The ID of the component to check for a diff
+ * @param userId - The ID of the user whose diff should be checked
+ * @returns A partial `IDiffState` with `hasDiff` and `currentConfig`, defaulting to
+ *          `{ hasDiff: false, currentConfig: null }` on error
+ */
 export const setDiffState = async (
   dataSource: TsDataSource,
   componentId: string,
