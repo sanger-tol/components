@@ -14,6 +14,7 @@ import {
   updateLayout,
   useBoard,
   useEffectUpdate,
+  ACTIONS_DS,
 } from "../..";
 
 
@@ -24,7 +25,7 @@ export interface PVisualisations {
   zone: IZone;
   setZone: (zone: IZone) => void;
   boardDataSource: TsDataSource;
-  actionsDataSource: TsDataSource;
+  actionsDataSource?: TsDataSource;
 }
 
 export function Visualisations(props: PVisualisations) {
@@ -32,7 +33,7 @@ export function Visualisations(props: PVisualisations) {
     zone,
     setZone,
     boardDataSource,
-    actionsDataSource,
+    actionsDataSource = ACTIONS_DS,
   } = props;
 
   const { layoutMode } = useBoard();
