@@ -39,7 +39,7 @@ export interface PBoard {
   /**
    * The data source for fetching actions.
    */
-  actionsDataSource: TsDataSource;
+  actionsDataSource?: TsDataSource;
   /**
    * The brand to display in the loading screen.
    */
