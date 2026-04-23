@@ -541,6 +541,7 @@ export const getInitialDiffState = async (
   const component = await getComponentConfig(dataSource, componentId);
   const publishedColumnCount = component?.fieldMeta?.order?.active?.length ?? 0;
   // First, check for a diff in the database if the user is logged in
+  // Or if the user is not logged in, check local storage for a diff
   let { hasDiff, currentConfig } = isLoggedIn
     ? await setDiffState(dataSource, componentId, userId)
     : {
@@ -551,32 +552,29 @@ export const getInitialDiffState = async (
       };
 
   // If in edit mode and has a diff, fetch current config
-  // If there is no diff, but is logged in, also fetch current config to allow editing of the published config
-  // If a user is not logged in and there is no diff, load the default config
-  if (
-    (editMode && hasDiff) ||
-    (!hasDiff && isLoggedIn) ||
-    (!hasDiff && !isLoggedIn)
-  ) {
+  // Or if there is no diff, fetch current config
+  if ((editMode && hasDiff) || !hasDiff) {
     currentConfig = await getComponentConfig(dataSource, componentId);
   }
 
-  // If the user is not logged in and there is a diff, check local storage for the config
+  // If the user is not logged in and there is a diff, get the diff from local storage
   let localConfig = null;
   if (!isLoggedIn && hasDiff) {
     localConfig = getTableConfigLocalStorage(
       `${BOARDS.BOARD_DIFF}_${componentId}`,
     );
   }
-
-  const stuff = {
+  /**
+   * Return number of published columns, whether there is a diff, and the current config, which can either be:
+   *   1. the original config if there is no diff, or the user is in edit mode and has a diff
+   *   2. the diff config from local storage if there is a diff and the user is not logged in
+   *   3. the diff config from the database if there is a diff, the user is logged in and is not in edit mode
+   */
+  return {
     publishedColumnCount,
     hasDiff: hasDiff || !!localConfig,
     currentConfig: localConfig ? localConfig : (currentConfig ?? null),
   };
-
-  console.log(stuff);
-  return stuff;
 };
 
 export const setDiffState = async (
@@ -584,6 +582,7 @@ export const setDiffState = async (
   componentId: string,
   userId: string,
 ): Promise<Partial<IDiffState>> => {
+  // Check for a diff in the database for the logged-in user
   return await dataSource
     .getList({
       objectType: BOARDS.BOARD_DIFF,
@@ -595,13 +594,15 @@ export const setDiffState = async (
       },
       requestedFields: ["id", "config"],
     })
+    // If a diff exists, set hasDiff to true and return the current config from the database
     .then((diffs: TDataObjectListOrNull) => {
       return {
         hasDiff:
-          diffs?.some((d: TDataObjectOrNull) => d?.config != null) ?? false,
+          diffs?.some((diff: TDataObjectOrNull) => diff?.config != null) ??
+          false,
         currentConfig:
-          diffs?.find((d: TDataObjectOrNull) => d?.config != null)?.config ??
-          null,
+          diffs?.find((diff: TDataObjectOrNull) => diff?.config != null)
+            ?.config ?? null,
       };
     })
     .catch(() => ({ hasDiff: false, currentConfig: null }));

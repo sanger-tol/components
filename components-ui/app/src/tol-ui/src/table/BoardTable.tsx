@@ -40,6 +40,7 @@ export function BoardTable(props: PBoardTable) {
 
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
   const [resetKey, setResetKey] = useState<number>(0);
+  const [reset, setReset] = useState<boolean>(false);
   const [hasDiff, setHasDiff] = useState<boolean>(false);
   const [publishedColumnCount, setPublishedColumnCount] = useState<number>(
     props.config.fieldMeta?.order?.active?.length ?? 0,
@@ -53,8 +54,17 @@ export function BoardTable(props: PBoardTable) {
 
   const initialisedRef = useRef(false);
 
+  // ── Fetch diff state (if applicable) ─────────────────────────────────────
+
   const { data: diffState } = useQueryData<IDiffState>(
-    [BOARDS.BOARD_DIFF, id, user?.id ?? "anon", String(editMode)],
+    [
+      BOARDS.BOARD_DIFF,
+      id,
+      user?.id ?? "anon",
+      String(editMode),
+      String(isLoggedIn),
+      String(reset),
+    ],
     () =>
       getInitialDiffState(
         boardDataSource,
@@ -66,6 +76,9 @@ export function BoardTable(props: PBoardTable) {
     { enabled: true },
   );
 
+  // If the diffState changes (e.g. user logs in and there is a diff, or user logs out),
+  // update the config and hasDiff state accordingly
+
   useEffect(() => {
     if (!diffState) return;
     setPublishedColumnCount(diffState.publishedColumnCount);
@@ -75,9 +88,9 @@ export function BoardTable(props: PBoardTable) {
     initialisedRef.current = true;
   }, [diffState]);
 
-  // ── Logged-in handlers: persist exclusively to board_diff ────────────────
+  // ── Handlers: persist changes ────────────────────────────────────────────
 
-  const onConfigSaveLoggedIn = (
+  const onConfigSave = (
     {
       fieldMeta,
       actions,
@@ -174,35 +187,23 @@ export function BoardTable(props: PBoardTable) {
 
   // ── Reset ────────────────────────────────────────────────────────────────
 
-  const onReset = async () => {
-    if (isLoggedIn) {
-      if (!editMode) {
-        await deleteComponentDiff(id, boardDataSource, user?.id);
-      }
-      // Fetch the original config from the server (bypasses any diff)
-      const originalComponents = await boardDataSource.getList({
-        objectType: "component",
-        filter: { and_: { id: { eq: { value: id } } } },
-        requestedFields: ["config"],
-      });
-      const originalConfig = originalComponents?.[0]?.config ?? props.config;
-      zone.components[id].data.config = originalConfig;
-      updatePublishedColumnCount(originalConfig);
-      setConfig({ ...originalConfig });
-    } else {
-      clearTableConfigLocalStorage(`board_diff_${id}`);
-      const originalComponents = await boardDataSource.getList({
-        objectType: "component",
-        filter: { and_: { id: { eq: { value: id } } } },
-        requestedFields: ["config"],
-      });
-      const originalConfig = originalComponents?.[0]?.config ?? props.config;
-      zone.components[id].data.config = originalConfig;
-      updatePublishedColumnCount(originalConfig);
-      setConfig({ ...originalConfig });
-    }
-    setResetKey((k) => k + 1);
+  const resetDiffState = () => {
     setHasDiff(false);
+    setReset((prev: boolean) => !prev);
+    setResetKey((k) => k + 1);
+  };
+
+  const onReset = async () => {
+    console.log("resetting", isLoggedIn, hasDiff);
+    isLoggedIn && hasDiff
+      ? await deleteComponentDiff(id, boardDataSource, user?.id ?? "").then(
+          () => {
+            resetDiffState();
+          },
+        )
+      : hasDiff
+        ? (clearTableConfigLocalStorage(`board_diff_${id}`), resetDiffState())
+        : null;
   };
 
   return (
@@ -223,7 +224,7 @@ export function BoardTable(props: PBoardTable) {
       filterVisibility={config.filterVisibility}
       defaultSortByAttribute={config.defaultSortByAttribute}
       defaultSortByType={config.defaultSortByType}
-      onConfigSave={(config) => onConfigSaveLoggedIn({ ...config }, isLoggedIn)}
+      onConfigSave={(config) => onConfigSave({ ...config }, isLoggedIn)}
       onToggleFilterVisibility={(visible: boolean) =>
         onFilterVisibilityChange(visible, isLoggedIn)
       }
