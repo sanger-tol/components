@@ -43,6 +43,7 @@ import {
   updateFieldMetaAttribute,
   IHeight,
   TFilterOrUndefined,
+  API_OPERATIONS,
 } from '..';
 
 export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
@@ -231,7 +232,7 @@ export function RemoteTable(props: PRemoteTable) {
     noActionsFooter,
     actionDataSource = new TsDataSource({
       apiPath: env.API_PATH,
-      apiDataPath: ACTION_API_DATA_PATH,
+      apiDataPath: env.API_DATA_PATH,
     }),
     actions,
     cellRenderers,
@@ -462,14 +463,12 @@ export function RemoteTable(props: PRemoteTable) {
     const res = await actionDataSource!
       .custom({
         method: API_METHODS.POST,
-        resource: ACTIONS.RUN_ACTION,
+        resource: `${objectType}${API_OPERATIONS.ACTION}`,
         body: {
-          data: {
-            ids: ids,
-            action_name: actionName,
-            object_type: objectType,
-            params: actionParams
-          },
+          ids: ids,
+          action_name: actionName,
+          object_type: objectType,
+          params: actionParams
         },
       })
       .finally(() => {

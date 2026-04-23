@@ -414,6 +414,7 @@ export function isPageAccessible(user: User | null, page: TPageOrDropdown): bool
  * @param pageElements - Mapping/registry of page elements used to render routes.
  * @param brand - Brand to pass to `Route` for rendering in loading states.
  * @param boardDataSource - Optional data source for board pages, passed to `Route` for rendering.
+ * @param actionsDataSource - Optional data source for fetching actions.
  * @param parentTrail - Accumulated navigation keys representing the current traversal path.
  * 
  * @returns A flattened array of `React.ReactNode` route elements for all valid routes in the tree.
@@ -423,6 +424,7 @@ export function collectRoutes(
   pageElements: TPageElements,
   brand: TNavBrand,
   boardDataSource?: TsDataSource,
+  actionsDataSource?: TsDataSource,
   parentTrail: string[] = [],
 ): React.ReactNode[] {
   return Object.entries(navigation.data).flatMap(([navKey, navItem]) => {
@@ -439,6 +441,7 @@ export function collectRoutes(
           path: navItem.path,
           pageElements,
           boardDataSource,
+          actionsDataSource,
           brand,
         }),
       );
@@ -447,7 +450,7 @@ export function collectRoutes(
     // Recurse into dropdown children
     if (isDropdown(navItem)) {
       routes.push(
-        ...collectRoutes(navItem.pages, pageElements, brand, boardDataSource, trail),
+        ...collectRoutes(navItem.pages, pageElements, brand, boardDataSource, actionsDataSource, trail),
       );
     }
 

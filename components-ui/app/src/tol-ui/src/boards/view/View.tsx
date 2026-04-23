@@ -29,7 +29,7 @@ export interface PView extends PBoard {
 }
 
 export function View(props: PView) {
-  const { id, boardDataSource } = props;
+  const { id, boardDataSource, actionsDataSource } = props;
 
   const { editMode, layoutMode } = useBoard();
 
@@ -132,6 +132,7 @@ export function View(props: PView) {
                 onZoneReorder={onZoneReorder}
                 deleteZone={deleteZone}
                 boardDataSource={boardDataSource}
+                actionsDataSource={actionsDataSource}
               />
             );
           })}
