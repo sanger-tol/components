@@ -44,6 +44,7 @@ import {
   IHeight,
   TFilterOrUndefined,
   API_OPERATIONS,
+  ACTIONS_DS,
 } from '..';
 
 export interface PRemoteTable extends IRemoteTargetAndZone, IHeight {
@@ -230,16 +231,18 @@ export function RemoteTable(props: PRemoteTable) {
     onToggleFilterVisibility,
     noDownload,
     noActionsFooter,
-    actionDataSource = new TsDataSource({
-      apiPath: env.API_PATH,
-      apiDataPath: env.API_DATA_PATH,
-    }),
+    actionDataSource = ACTIONS_DS,
     actions,
     cellRenderers,
     contents,
     height = "100%",
     forceUpdate,
   } = props;
+
+  const runActionDatasource = new TsDataSource({
+    apiPath: env.API_PATH,
+    apiDataPath: ACTION_API_DATA_PATH,
+  })
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
@@ -460,15 +463,17 @@ export function RemoteTable(props: PRemoteTable) {
 
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
-    const res = await actionDataSource!
+    const res = await runActionDatasource!
       .custom({
         method: API_METHODS.POST,
-        resource: `${objectType}${API_OPERATIONS.ACTION}`,
+        resource: ACTIONS.RUN_ACTION,
         body: {
-          ids: ids,
-          action_name: actionName,
-          object_type: objectType,
-          params: actionParams
+          data: {
+            ids: ids,
+            action_name: actionName,
+            object_type: objectType,
+            params: actionParams
+          }
         },
       })
       .finally(() => {
