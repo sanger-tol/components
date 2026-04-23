@@ -25,6 +25,10 @@ export interface PRoute {
   */
   boardDataSource?: TsDataSource;
   /**
+   * The data source for fetching actions.
+   */
+  actionsDataSource?: TsDataSource;
+  /**
    * The brand to display in the loading screen.
    */
   brand?: TNavBrand;
@@ -35,7 +39,7 @@ export interface PRoute {
  * component based on the path's pageElementReference.
  */
 export function Route(props: PRoute) {
-  const { routeKey, boardDataSource, path, pageElements, brand } = props;
+  const { routeKey, boardDataSource, actionsDataSource, path, pageElements, brand } = props;
 
   let element: React.ReactNode;
 
@@ -51,6 +55,7 @@ export function Route(props: PRoute) {
           boardDataSource={boardDataSource}
           boardId={path.pageElementReference}
           brand={brand}
+          actionsDataSource={actionsDataSource!}
         />
       );
     }

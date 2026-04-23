@@ -7,6 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import {
   API_METHODS,
+  API_OPERATIONS,
   CellDisplay,
   CellEditable,
   CellEditableStatus,
@@ -89,22 +90,18 @@ export function DataPoint(props: PDataPoint) {
 
     if (!dataObject) return;
     setLoading(true);
-    const actionBaseUrl = dataSource
-      .getBaseUrl()
-      ?.replace(/\/data(?:\/[^/]+)?$/, "");
 
     const user = getUserFromLocalStorage();
     dataSource
       .custom({
         method: API_METHODS.POST,
-        resource: `local/${parentObjectType}:action`,
+        resource: `${parentObjectType}${API_OPERATIONS.ACTION}`,
         body: {
           ids: [parentObjectId],
           action_name: "SetStatusAction",
           object_type: parentObjectType,
           params: { status: selectedStatusTypeId, user_id: user?.id },
         },
-        options: actionBaseUrl ? { baseURL: actionBaseUrl } : undefined,
       })
       .then(() => {
         setEditMode(false);

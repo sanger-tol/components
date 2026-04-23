@@ -12,6 +12,9 @@ SPDX-License-Identifier: MIT
 
 - Added JsonEdit component
 - Removed the need to be in edit mode to change page sizes on tables
+- Added actionDataSource to change how actions are fetched
+- Added the option to use the new :aggregations endpoint. The previous endpoint by this name has been renamed to :aggregations_legacy.
+  Bar charts now use the new endpoint, but sunbursts remain on the old on
 
 ## tol-ui `3.5.0`
 
