@@ -123,7 +123,7 @@ async function getComponentData(
   });
 
   //Fetch diff's based on component id's
-  const boardDiff = await boardDataSource.getList({
+  const boardDiff = await boardDataSource.getListPage({
     objectType: BOARDS.BOARD_DIFF,
     filter: {
       and_: {

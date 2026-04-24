@@ -497,7 +497,7 @@ export async function resetTableConfigToDefault(
   userId: string,
 ) {
   await boardDataSource
-    .getList({
+    .getListPage({
       objectType: BOARDS.BOARD_DIFF,
       filter: {
         and_: {
@@ -569,7 +569,8 @@ export const getInitialDiffState = async (
   objectType: string,
   editMode?: boolean,
 ): Promise<IDiffState> => {
-  const component = await getComponentConfig(dataSource, componentId);
+  console.log("Getting initial diff state for component", componentId);
+  const componentBaseConfig = await getComponentConfig(dataSource, componentId);
   // Check for a diff in the database if the user is logged in
   // Or if the user is not logged in, check local storage for a diff
   let { hasDiff, currentConfig } = isLoggedIn
@@ -584,7 +585,7 @@ export const getInitialDiffState = async (
   // If in edit mode and has a diff, fetch current config
   // Or if there is no diff, fetch current config
   if ((editMode && hasDiff) || !hasDiff) {
-    currentConfig = await getComponentConfig(dataSource, componentId);
+    currentConfig = componentBaseConfig || null;
   }
 
   // If the user is not logged in and there is a diff, get the diff from local storage
@@ -602,7 +603,7 @@ export const getInitialDiffState = async (
     const currentColumns = isLoggedIn
       ? currentConfig?.fieldMeta?.order?.active || []
       : localConfig?.fieldMeta?.order?.active || [];
-    const publishedColumns = component?.fieldMeta?.order?.active || [];
+    const publishedColumns = componentBaseConfig?.fieldMeta?.order?.active || [];
     return {
       remove: currentColumns
         .filter((col: string) => !publishedColumns.includes(col))
@@ -651,7 +652,7 @@ export const setDiffState = async (
 ): Promise<Partial<IDiffState>> => {
   // Check for a diff in the database for the logged-in user
   return await dataSource
-    .getList({
+    .getListPage({
       objectType: BOARDS.BOARD_DIFF,
       filter: {
         and_: {

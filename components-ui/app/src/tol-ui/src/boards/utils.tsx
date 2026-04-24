@@ -222,7 +222,7 @@ export async function upsertComponent(
   }
 
   return await boardDataSource
-    .getList({
+    .getListPage({
       objectType: BOARDS.BOARD_DIFF,
       filter: {
         and_: {
@@ -273,7 +273,7 @@ export async function deleteComponentDiff(
 
   // The board_diff endpoint does not support DELETE, so we upsert with config: null.
   // getComponentData skips the proxy when diff.config is null, restoring the original config.
-  const res = await boardDataSource.getList({
+  const res = await boardDataSource.getListPage({
     objectType: BOARDS.BOARD_DIFF,
     filter: {
       and_: {
