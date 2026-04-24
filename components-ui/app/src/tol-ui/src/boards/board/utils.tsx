@@ -16,7 +16,10 @@ import {
 
 export function dataObjectsToViewParams(viewDataObject: IDataObject): Partial<IView> {
   return defineBoardEntity<IView>(
-    { id: viewDataObject.id },
+    {
+      id: viewDataObject.id,
+      title: viewDataObject.title,
+    },
     BOARDS.VIEW,
     BOARD_CHILDREN_KEYS.ZONES
   );

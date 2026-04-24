@@ -19,7 +19,8 @@ import {
   TDataObjectListOrNull,
   IZones,
   deepCopy,
-  PopUpMessage
+  PopUpMessage,
+  boardFetchParams
 } from "..";
 
 
@@ -240,17 +241,12 @@ export function getOrderedIdsViaBoardJoiningEntity(dataObjects: TDataObjectListO
 /**
  * Fetches board entities and its order based on the joining table entries (e.g. zone_views for zones in a view) and defines the entities using a provided function.
  * 
+ * @param boardDataSource The data source instance to use for fetching board config data.
+ * @param parentId The ID of the parent entity (e.g. the view id for zones).
+ * @param parentObjectType The object type of the parent entity (e.g. 'view').
  * @param parentEntity The current board entity (e.g. View) to which the related entities belong.
- * @param parentId The ID of the parent entity (e.g. view ID for zones).
- * @param parentIdField The field name in the joining table that references the parent entity (e.g. 'view_id').
- * @param parentRelationship The relationship name to fetch the parent entity from the joining table entries (e.g. 'view' in zone_view).
- * @param joiningObjectType The type of the joining table entries (e.g. 'zone_view').
- * @param childRelationship The relationship name to fetch the child entity from the joining table entries (e.g. 'zone' in zone_view).
- * @param childrenKey The key in the parent entity where the child entities will be stored (e.g. 'zones' in a view).
  * @param dataObjectToChildParams A function that takes the core data object and its corresponding joining table entry to define a child entity.
  * @param dataObjectToParentParams A function that takes the parent data object to extract necessary parameters for defining the parent entity.
- * @param boardDataSource The data source instance to use for fetching board config data.
- * @param joiningObjectTypeRequestedFields Optional array of specific fields to request for the joining table entries.
  * @returns A promise that resolves to the defined board entities along with their order.
  */
 export async function getBoardEntity<
@@ -258,21 +254,25 @@ export async function getBoardEntity<
   TChild extends IView | IZone | IComponent,
 >(
   boardDataSource: TsDataSource,
-  parentEntity: TParent,
   parentId: string,
-  parentIdField: string,
-  parentRelationship: string,
-  joiningObjectType: string,
-  childRelationship: string,
-  childrenKey: TChildrenKey,
+  parentObjectType: string,
+  parentEntity: TParent,
   dataObjectToChildParams: (childDataObjects: IDataObject, joiningObject: IDataObject) => Partial<TChild>,
   dataObjectToParentParams?: (parentDataObject: IDataObject) => Partial<TParent>,
-  joiningObjectTypeRequestedFields?: string[],
 ): Promise<TParent> {
+  const {
+    parentIdField,
+    parentRelationship,
+    childRelationship,
+    joiningObjectType,
+    childrenKey,
+    joiningObjectRequestedFields
+  } = boardFetchParams[parentObjectType];
+
   return await boardDataSource
     .getListPage({
       objectType: joiningObjectType,
-      requestedFields: joiningObjectTypeRequestedFields,
+      requestedFields: joiningObjectRequestedFields,
       filter: {
         and_: {
           [parentIdField]: { eq: { value: parentId } },
@@ -321,12 +321,12 @@ export async function getBoardEntity<
  * @param childrenKey The key to initialise the children for each entity type (e.g. 'zones' for a view, 'components' for a zone).
  */
 export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
-  entity: TEntity,
+  entity: Partial<TEntity>,
   objectType: string,
-  childrenKey: TChildrenKey,
+  childrenKey?: TChildrenKey,
 ) {
   // Add default values for filter and title if the entity is a zone or component
-  let defaults = {}
+  let defaults = {};
   if (objectType === BOARDS.COMPONENT || objectType === BOARDS.ZONE) {
     const e = entity as IZone | IComponent;
     defaults = {
@@ -338,7 +338,7 @@ export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
 
   // If the objectType is not component, we need to set up an empty object for the child board level
   // and an empty order array in the parent board entity
-  if (objectType !== BOARDS.COMPONENT) {
+  if (objectType !== BOARDS.COMPONENT && childrenKey) {
     defaults = {
       ...defaults,
       [childrenKey]: {},
@@ -373,6 +373,6 @@ export function defineBoardEntityInParent<
 ) {
   const definedEntity = defineBoardEntity(entity, objectType, childrenKey);
   parentEntity[childrenKey][entity.id] = definedEntity;
-  parentEntity?.order?.push(entity.id!);
+  parentEntity.order.push(entity.id!);
   return parentEntity;
 }

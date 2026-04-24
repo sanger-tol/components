@@ -107,15 +107,15 @@ export function defineZoneWithComponentList(
   components: IComponentData[],
   filter?: IFilter,
 ) {
-  return defineZone({
-    objectType,
-    filter,
-    components: components.reduce((acc, component) => {
-      acc[component.id!] = { data: component };
-      return acc;
-    }, {} as { [id: string]: { data: IComponentData } }),
-    order: components.map(component => component.id!),
-  });
+  // return defineZone({
+  //   objectType,
+  //   filter,
+  //   components: components.reduce((acc, component) => {
+  //     acc[component.id!] = { data: component };
+  //     return acc;
+  //   }, {} as { [id: string]: { data: IComponentData } }),
+  //   order: components.map(component => component.id!),
+  // });
 }
 
 /**

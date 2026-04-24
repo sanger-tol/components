@@ -47,7 +47,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     deepCopy(
       boardObjectType === "zone"
         ? zone.defaultFilter
-        : zone.components[id]?.data?.defaultFilter,
+        : zone.components[id].defaultFilter,
     ),
   );
   const [attributes, setAttributes] = useState<string[]>(Object.keys(prevFilters?.and_ || {}));
@@ -73,7 +73,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       deepCopy(
         boardObjectType === "zone"
           ? zone.defaultFilter
-          : zone.components[id].data.defaultFilter,
+          : zone.components[id].defaultFilter,
       ),
     );
     setDisabledFilterValues(
@@ -85,7 +85,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setPassThrough(
       boardObjectType === "zone"
         ? false
-        : deepCopy(zone.components[id].data).filterPassThrough,
+        : zone.components[id].filterPassThrough || false,
     );
   }, [open]);
 
@@ -130,9 +130,9 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
     } else {
-      zone.components[id].data.filter = deepCopy(filter);
-      zone.components[id].data.defaultFilter = deepCopy(filter);
-      zone.components[id].data.filterPassThrough = filterPassThrough;
+      zone.components[id].filter = deepCopy(filter);
+      zone.components[id].defaultFilter = deepCopy(filter);
+      zone.components[id].filterPassThrough = filterPassThrough;
       attributes["filter_pass_through"] = filterPassThrough;
     }
     resetFiltersBelow({ id: id, zone: zone });
@@ -146,11 +146,11 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       filterZone.filter = { and_: {} };
       filterZone.defaultFilter = { and_: {} };
     } else {
-      if (filterZone.components[id].data.filter) {
-        filterZone.components[id].data.filter.and_ = {};
+      if (filterZone.components[id].filter) {
+        filterZone.components[id].filter.and_ = {};
       }
-      if (filterZone.components[id].data.defaultFilter) {
-        filterZone.components[id].data.defaultFilter.and_ = {};
+      if (filterZone.components[id].defaultFilter) {
+        filterZone.components[id].defaultFilter.and_ = {};
       }
     }
   };
@@ -196,7 +196,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           populatedFieldType="filter"
           numPopulatedFields={
             Object.keys(
-              zone.components[id]?.data.filter?.and_ || {},
+              zone.components[id].filter?.and_ || {},
             ).length
           }
           tooltipContent={TOOLTIP_CONTENT}

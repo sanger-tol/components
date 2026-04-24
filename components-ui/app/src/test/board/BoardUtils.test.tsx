@@ -7,16 +7,16 @@ SPDX-License-Identifier: MIT
 import { expect, test, describe } from "vitest";
 import {
   deepCopy,
-  addComponentToZone,
   defineZoneWithComponentList,
   getWidgetOrder,
-  IComponentData,
+  IComponent,
+  IZone,
 } from "../../tol-ui/src";
 
 
 describe("addComponentToZone function", () => {
   test("should add a component to the zone", () => {
-    const mockComponent: IComponentData = {
+    const mockComponent: IComponent = {
       id: "1",
       filter: {
         and_: {},
@@ -32,10 +32,10 @@ describe("addComponentToZone function", () => {
 
     // Assert
     expect(mockZone.components).toHaveProperty(String(mockComponent.id));
-    const addedComponent = mockZone.components[mockComponent.id!];
+    const addedComponent: IComponent = mockZone.components[mockComponent.id!];
     expect(addedComponent).toBeDefined();
-    expect(addedComponent.data.filter).toEqual(deepCopy(mockComponent.filter));
-    expect(addedComponent.data.defaultFilter).toEqual(
+    expect(addedComponent.filter).toEqual(deepCopy(mockComponent.filter));
+    expect(addedComponent.defaultFilter).toEqual(
       deepCopy(mockComponent.filter),
     );
   });
@@ -55,10 +55,10 @@ describe("addComponentToZone function", () => {
 
     // Assert
     expect(mockZone.components).toHaveProperty(String(mockComponent.id));
-    const addedComponent = mockZone.components[mockComponent.id];
+    const addedComponent: IComponent = mockZone.components[mockComponent.id];
     expect(addedComponent).toBeDefined();
-    expect(addedComponent.data.filter).toEqual({ and_: {} });
-    expect(addedComponent.data.defaultFilter).toEqual({ and_: {} });
+    expect(addedComponent.filter).toEqual({ and_: {} });
+    expect(addedComponent.defaultFilter).toEqual({ and_: {} });
   });
 });
 
@@ -95,7 +95,7 @@ describe("defineZoneWithComponentList function", () => {
     const objectType = "mockObjectType";
 
     // Act
-    const zone = defineZoneWithComponentList(objectType, mockComponents);
+    const zone: IZone = defineZoneWithComponentList(objectType, mockComponents);
 
     // Assert
     expect(zone.objectType).toEqual(objectType);

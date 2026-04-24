@@ -246,18 +246,14 @@ describe("Testing generateFilter function", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            filter: filterValue1,
-          },
+          filter: filterValue1,
         },
         component2: {
-          data: {
-            filter: filterValue2,
-          },
+          filter: filterValue2,
         },
       },
       order: ["component1", "component2"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     const expectedCombined: IFilter = {
@@ -325,15 +321,13 @@ describe("Testing generateFilter function", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            id: "component1",
-            filter: filterValue,
-            subFilter: subFilterValue,
-          },
+          id: "component1",
+          filter: filterValue,
+          subFilter: subFilterValue,
         },
       },
       order: ["component1"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     const testCall1 = generateFilter(mockZone, "component1", true);
@@ -374,20 +368,18 @@ describe("Testing addComponentBelow function", () => {
   test("Adds component below id correctly", () => {
     const mockZone = {
       components: {
-        id: {
-          data: {
-            filterPassThrough: false,
-          },
+        id_1: {
+          filterPassThrough: false,
         },
       },
-      order: ["id"],
+      order: ["id_1"],
     };
 
-    addComponentBelow("id", "newId", mockZone);
+    addComponentBelow("id_1", "newId", mockZone);
     expect(mockZone.components).toHaveProperty("newId");
     expect(mockZone.components["newId"]).toBeDefined();
-    expect(mockZone.components["newId"].data.filterPassThrough).toEqual(false);
-    expect(mockZone.order).toEqual(["id", "newId"]);
+    expect(mockZone.components["newId"].filterPassThrough).toEqual(false);
+    expect(mockZone.order).toEqual(["id_1", "newId"]);
   });
 });
 
@@ -428,54 +420,50 @@ describe("Testing resetAllFilters function", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            id: "component1",
-            filter: expectedFilterValue,
-            subFilter: {
-              and_: {
-                attribute1: { operator1: { value: "value1", negate: false } },
-              },
+          id: "component1",
+          filter: expectedFilterValue,
+          subFilter: {
+            and_: {
+              attribute1: { operator1: { value: "value1", negate: false } },
             },
           },
         },
       },
       order: ["component1"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     resetAllFilters(mockZone);
-    expect(mockZone.components["component1"].data.filter).toEqual({});
-    expect(mockZone.components["component1"].data.subFilter).toEqual(undefined);
+    expect(mockZone.components["component1"].filter).toEqual({});
+    expect(mockZone.components["component1"].subFilter).toEqual(undefined);
   });
 
   test("Resets all filters correctly with default filter", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            id: "component1",
-            filter: expectedFilterValue,
-            defaultFilter: expectedDefaultFilterValue,
-            subFilter: {
-              and_: {
-                attribute1: { operator1: { value: "value1", negate: false } },
-              },
+          id: "component1",
+          filter: expectedFilterValue,
+          defaultFilter: expectedDefaultFilterValue,
+          subFilter: {
+            and_: {
+              attribute1: { operator1: { value: "value1", negate: false } },
             },
           },
         },
       },
       order: ["component1"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     resetAllFilters(mockZone);
-    expect(mockZone.components["component1"].data.filter).toEqual(
+    expect(mockZone.components["component1"].filter).toEqual(
       expectedDefaultFilterValue,
     );
-    expect(mockZone.components["component1"].data.defaultFilter).toEqual(
+    expect(mockZone.components["component1"].defaultFilter).toEqual(
       expectedDefaultFilterValue,
     );
-    expect(mockZone.components["component1"].data.subFilter).toEqual(undefined);
+    expect(mockZone.components["component1"].subFilter).toEqual(undefined);
   });
 });
 
@@ -484,20 +472,16 @@ describe("Testing removeComponent function", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            id: "component1",
-            filter: { and_: {} },
-          },
+          id: "component1",
+          filter: { and_: {} },
         },
         component2: {
-          data: {
-            id: "component2",
-            filter: { and_: {} },
-          },
+          id: "component2",
+          filter: { and_: {} },
         },
       },
       order: ["component1", "component2"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     removeComponent("component1", mockZone);
@@ -511,14 +495,12 @@ describe("Testing addSubFilter function", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            id: "component1",
-            filter: { and_: {} },
-          },
+          id: "component1",
+          filter: { and_: {} },
         },
       },
       order: ["component1"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     const filterValue: IFilter = {
@@ -533,7 +515,7 @@ describe("Testing addSubFilter function", () => {
     };
 
     addSubFilter({ id: "component1", filter: filterValue, zone: mockZone });
-    expect(mockZone.components["component1"].data.subFilter).toEqual(
+    expect(mockZone.components["component1"].subFilter).toEqual(
       filterValue,
     );
   });
@@ -544,14 +526,12 @@ describe("Testing resetZone function", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            id: "component1",
-            filter: { and_: {} },
-          },
+          id: "component1",
+          filter: { and_: {} },
         },
       },
       order: ["component1"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     const setZone = vitest.fn();
@@ -569,14 +549,12 @@ describe("Testing setFilter function", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            id: "component1",
-            filter: { and_: {} },
-          },
+          id: "component1",
+          filter: { and_: {} },
         },
       },
       order: ["component1"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     const filterValue: IFilter = {
@@ -600,20 +578,18 @@ describe("Testing setFilter function", () => {
       valueExists: true,
     });
 
-    expect(mockZone.components["component1"].data.filter).toEqual(filterValue);
+    expect(mockZone.components["component1"].filter).toEqual(filterValue);
   });
 
   test("Sets filter correctly when value does not exist", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            filter: { and_: {} },
-          },
+          filter: { and_: {} },
         },
       },
       order: ["component1"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     setFilterInput({
@@ -626,21 +602,19 @@ describe("Testing setFilter function", () => {
       valueExists: false,
     });
 
-    expect(mockZone.components["component1"].data.filter).toEqual({ and_: {} });
+    expect(mockZone.components["component1"].filter).toEqual({ and_: {} });
   });
 
   test("Sets filter correctly", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            id: "component1",
-            filter: { and_: {} },
-          },
+          id: "component1",
+          filter: { and_: {} },
         },
       },
       order: ["component1"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     const filterValue2: IFilter = {
@@ -664,21 +638,19 @@ describe("Testing setFilter function", () => {
       valueExists: true,
     });
 
-    expect(mockZone.components["component1"].data.filter).toEqual(filterValue2);
+    expect(mockZone.components["component1"].filter).toEqual(filterValue2);
   });
 
   test("Sets filter correctly with exists", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            id: "component1",
-            filter: { and_: {} },
-          },
+          id: "component1",
+          filter: { and_: {} },
         },
       },
       order: ["component1"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     const filterValue: IFilter = {
@@ -701,25 +673,23 @@ describe("Testing setFilter function", () => {
       exists: true,
     });
 
-    expect(mockZone.components["component1"].data.filter).toEqual(filterValue);
+    expect(mockZone.components["component1"].filter).toEqual(filterValue);
   });
 
   test("Removes empty filter", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            id: "component1",
-            filter: {
-              and_: {
-                attribute1: {},
-              },
+          id: "component1",
+          filter: {
+            and_: {
+              attribute1: {},
             },
           },
         },
       },
       order: ["component1"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     setFilterInput({
@@ -731,7 +701,7 @@ describe("Testing setFilter function", () => {
       operator: "test_operator",
     });
 
-    expect(mockZone.components["component1"].data.filter).toEqual({ and_: {} });
+    expect(mockZone.components["component1"].filter).toEqual({ and_: {} });
   });
 });
 
@@ -767,14 +737,12 @@ describe("Testing filterListener function", () => {
     const mockZone: IZone = {
       components: {
         component1: {
-          data: {
-            id: "component1",
-            filter: {
-              and_: {
-                attribute1: {
-                  exists: {
-                    negate: true,
-                  },
+          id: "component1",
+          filter: {
+            and_: {
+              attribute1: {
+                exists: {
+                  negate: true,
                 },
               },
             },
@@ -782,7 +750,7 @@ describe("Testing filterListener function", () => {
         },
       },
       order: ["component1"],
-      type: "dashboard",
+      objectType: "dashboard",
     };
 
     const { rerender } = render(
@@ -803,7 +771,7 @@ describe("Testing filterListener function", () => {
     expect(screen.getByTestId("exists")).toHaveTextContent("true");
     expect(screen.getByTestId("negate")).toHaveTextContent("true");
 
-    mockZone.components["component1"].data.filter = { and_: {} };
+    mockZone.components["component1"].filter = { and_: {} };
 
     act(() => {
       rerender(

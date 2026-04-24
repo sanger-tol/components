@@ -7,24 +7,19 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import {
   ZoneModal,
-  IFilter,
   Zone,
   BOARDS,
   PBoard,
   useBoard,
-  TsDataSource,
   UtilityBar,
   BUTTONS,
   useBoardState,
   IBoard,
   IZone,
   IView,
-  deleteBoardEntity,
-  reorderBoardEntityItem,
   getBoardEntity,
-  BOARD_ID_FIELDS,
   BOARD_CHILDREN_KEYS,
-  dataObjectsToViewParams,
+  dataObjectsToZoneParams,
 } from "../..";
 
 
@@ -48,37 +43,30 @@ export function View(props: PView) {
   useEffect(() => {
     getBoardEntity<IView, IZone>(
       boardDataSource,
-      view,
       id,
-      BOARD_ID_FIELDS.VIEW,
       BOARDS.VIEW,
-      BOARDS.ZONE_VIEW,
-      BOARDS.ZONE,
-      BOARD_CHILDREN_KEYS.ZONES,
-      dataObjectsToViewParams,
-      undefined,
-      ["zone.data_source_instance.ui_api_details"]
+      view,
+      dataObjectsToZoneParams
     ).then((v: IView) => {
-      console.log(v);
       setView(v);
     })
   }, []);
 
   const onDeleteZone = (id: string) => {
-    boardDataSource
-      .deleteByID({
-        objectType: BOARDS.ZONE,
-        id
-      })
-    deleteBoardEntity<IView>("zones", id, view);
+    // boardDataSource
+    //   .deleteByID({
+    //     objectType: BOARDS.ZONE,
+    //     id
+    //   })
+    // deleteBoardEntity<IView>("zones", id, view);
   };
 
   const onZoneReorder = async (id: string, orderChange: number) => {
-    const newOrder = reorderBoardEntityItem(
-      id,
-      view.order,
-      orderChange,
-    );
+    // const newOrder = reorderBoardEntityItem(
+    //   id,
+    //   view.order,
+    //   orderChange,
+    // );
     // TODO: update state
   };
 
@@ -106,29 +94,23 @@ export function View(props: PView) {
   return (
     <div className="tol-view">
       {editMode && Bar}
-      <ZoneModal
-        open={open}
-        setOpen={setOpen}
-        viewId={id}
-        view={view}
-        setView={setView}
-        boardDataSource={boardDataSource}
-      />
-      {(view?.order?.length ?? 0) > 0 ? (
+      {(view.order.length) > 0 ? (
         <div className="tol-zones">
-          {view.order.map((zoneId) => {
-            const zone = view.zones[zoneId];
-            return (
-              <Zone
-                key={zone.id}
-                id={zone.id!}
-                onZoneReorder={onZoneReorder}
-                onDeleteZone={onDeleteZone}
-                boardDataSource={boardDataSource}
-                view={view}
-                setView={setView}
-              />
-            );
+          {view.order?.map((zoneId) => {
+            const zone = view.zones?.[zoneId];
+            if (zone) {
+              return (
+                <Zone
+                  key={zone.id}
+                  id={zone.id!}
+                  onZoneReorder={onZoneReorder}
+                  onDeleteZone={onDeleteZone}
+                  boardDataSource={boardDataSource}
+                  view={view}
+                  setView={setView}
+                />
+              );
+            }
           })}
         </div>
       ) : (
@@ -140,6 +122,14 @@ export function View(props: PView) {
           )}
         </div>
       )}
+      <ZoneModal
+        open={open}
+        setOpen={setOpen}
+        viewId={id}
+        view={view}
+        setView={setView}
+        boardDataSource={boardDataSource}
+      />
     </div>
   );
 }

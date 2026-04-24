@@ -24,10 +24,8 @@ import {
   useAuth,
   getBoardEntity,
   IView,
-  BOARD_ID_FIELDS,
   IBoard,
   dataObjectsToViewParams,
-  BOARD_CHILDREN_KEYS,
   dataObjectToBoardParams,
   getUserPrivilege,
 } from "../..";
@@ -72,6 +70,8 @@ export function Board(props: PBoard) {
   // Ability to override boardId from props over URL params
   const id = boardId ?? paramBoardId;
 
+  console.log(board);
+
   themeListener(() => {
     try {
       const backing = document.getElementById("tol-smart-app-background");
@@ -84,16 +84,11 @@ export function Board(props: PBoard) {
   useEffect(() => {
     getBoardEntity<IBoard, IView>(
       boardDataSource,
-      board,
       id,
-      BOARD_ID_FIELDS.BOARD,
       BOARDS.BOARD,
-      BOARDS.VIEW_BOARD,
-      BOARDS.VIEW,
-      BOARD_CHILDREN_KEYS.VIEWS,
+      board,
       dataObjectsToViewParams,
       dataObjectToBoardParams,
-      ["board.user.id"]
     ).then((b: IBoard) => {
       setBoard(b);
       setPrivilege(
@@ -211,9 +206,9 @@ export function Board(props: PBoard) {
   return (
     <div className={`tol-board ${classMode()}`} >
       {Bar}
-      {board?.views?.id &&
+      {board?.order?.[0] &&
         <View
-          id={board.views?.[0].id!}
+          id={board?.order?.[0]}
           boardDataSource={boardDataSource}
         />
       }

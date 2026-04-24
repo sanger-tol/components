@@ -200,8 +200,8 @@ export function CellRendererModal(props: PCellRendererModal) {
   const onClean = () => {
     const component = filterZone.components[zoneFilterId];
     // We know that the component exists because it is set by default (filterZone state)
-    component.data.filter!.and_ = {};
-    component.data.defaultFilter!.and_ = {};
+    component.filter!.and_ = {};
+    component.defaultFilter!.and_ = {};
     setFilterZone({ ...filterZone });
   };
 

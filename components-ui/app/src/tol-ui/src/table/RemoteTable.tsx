@@ -348,6 +348,7 @@ export function RemoteTable(props: PRemoteTable) {
       await initialSetup();
     }
     setLoading(true);
+    setError("");
 
     dataSource
       .getListPage({

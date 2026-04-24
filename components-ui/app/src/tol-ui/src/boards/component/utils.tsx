@@ -6,14 +6,9 @@ SPDX-License-Identifier: MIT
 
 
 import {
-  BOARD_LEVELS,
   BOARDS,
-  deepCopy,
-  IBoard,
   IComponent,
-  IView,
   IZone,
-  TChildrenKey,
   TsDataSource,
   Visualisation,
 } from "../..";
@@ -30,15 +25,15 @@ export async function updateLayout(
 
   // finds the highest order value in the current widgets, based off the db
   const orderValues = Object.values(zone.components).map((component: IComponent) => {
-    const order = component.data.order;
+    const order = component.componentZoneOrder;
     return Number(order);
   });
   const highestPreviousOrder = Math.max(...orderValues);
 
   // maps through the order and upserts based on the componentId
   const payloadData = order.order.map((componentId, index) => {
-    const component: IComponentData = zone.components[componentId].data;
-    component!.order = highestPreviousOrder + 1 + index;
+    const component: IComponent = zone.components[componentId];
+    component!.componentZoneOrder = highestPreviousOrder + 1 + index;
     return {
       type: BOARDS.COMPONENT_ZONE,
       id: component!.componentZoneId,
@@ -80,7 +75,7 @@ export function generateLayout(zone: IZone) {
   const x = { lg: 0, md: 0, sm: 0 };
 
   zone.order.forEach((componentId) => {
-    const component = zone.components[componentId].data;
+    const component = zone.components[componentId];
 
     const size = component.size || "sm";
     ["lg", "md", "sm"].forEach((breakpoint) => {
@@ -120,7 +115,7 @@ export function generateVisualisations(
   boardDataSource: TsDataSource,
 ) {
   return zone.order.map((componentId) => {
-    const component = zone.components[componentId].data;
+    const component = zone.components[componentId];
 
     return (
       <div key={component.id} className="tol-visualisation">

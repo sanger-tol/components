@@ -49,7 +49,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
 
   useEffect(() => {
     let attributes = {
-      filter: zone.components[id].data.filter
+      filter: zone.components[id].filter
     };
     upsertComponent(boardDataSource, id, attributes);
   }, [zone]);

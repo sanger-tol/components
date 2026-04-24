@@ -23,12 +23,10 @@ import {
   IView,
   useBoardState,
   IZone,
-  IDataObject,
   IComponent,
   getBoardEntity,
-  TsDataSource,
-  BOARD_ID_FIELDS,
-  BOARD_CHILDREN_KEYS
+  BOARD_CHILDREN_KEYS,
+  dataObjectsToComponentParams
 } from "../..";
 
 
@@ -64,38 +62,15 @@ export function Zone(props: PZone) {
   const [title, setTitle] = useState(zone?.title);
 
   useEffect(() => {
-    const dataObjectsToComponent = (dataObject: IDataObject, joiningObject: IDataObject): IComponent => {
-      const dsi = dataObject?.relationships?.data_source_instance as IDataObject;
-      return defineComponent({
-        id: dataObject.id,
-        title: dataObject.title,
-        objectType: dataObject.object_type,
-        filter: dataObject.filter,
-        componentZoneId: joiningObject?.id,
-        componentZoneOrder: joiningObject?.order,
-        dataspace: new TsDataSource({
-          dataSourceInstanceId: dsi?.id,
-          ...dsi?.ui_api_details,
-        }),
-        type: dataObject.component_type,
-        config: dataObject.config,
-        size: dataObject.widget_type,
-        filterPassThrough: dataObject.filter_pass_through,
-      });
-    }
-
     getBoardEntity<IZone, IComponent>(
-      zone,
-      id,
-      BOARD_ID_FIELDS.ZONE,
-      BOARDS.COMPONENT_ZONE,
-      BOARDS.COMPONENT,
-      dataObjectsToComponent,
       boardDataSource,
-      ["component.data_source_instance.ui_api_details"]
+      id,
+      BOARDS.ZONE,
+      zone,
+      dataObjectsToComponentParams
     ).then((z: IZone) => {
       setZone(z);
-    });
+    })
   }, []);
 
   const onAddComponent = () => {
@@ -240,7 +215,7 @@ export function Zone(props: PZone) {
         </div>
       )}
       {ConfirmModal}
-      <FilterConfigDrawer
+      {/* <FilterConfigDrawer
         id={id}
         boardObjectType={BOARDS.ZONE}
         boardDataSource={boardDataSource}
@@ -250,7 +225,7 @@ export function Zone(props: PZone) {
         setOpen={setOpenFilters}
         zone={zone}
         setZone={setZone}
-      />
+      /> */}
     </div>
   );
 }

@@ -18,7 +18,6 @@ export const BOARD_ID_FIELDS = {
   BOARD: "board_id",
   VIEW: "view_id",
   ZONE: "zone_id",
-  COMPONENT: "component_id",
 }
 
 export const BOARD_CHILDREN_KEYS = {
