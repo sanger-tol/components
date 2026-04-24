@@ -205,7 +205,6 @@ export function BoardTable(props: PBoardTable) {
   };
 
   const onReset = async () => {
-    console.log("resetting", isLoggedIn, hasDiff);
     isLoggedIn && hasDiff
       ? await deleteComponentDiff(id, boardDataSource, user?.id ?? "").then(
           () => {
