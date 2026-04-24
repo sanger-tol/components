@@ -38,7 +38,7 @@ const addTableComponent = async ({ page }) => {
 test("manage dashboard", async ({ page }) => {
   await addTableComponent({ page });
   await deleteFirstComponent({ page, componentType: "table" });
-  expect(page.locator('.tol-table')).not.toBeVisible();
+  await expect(page.locator('.tol-table')).not.toBeVisible();
 });
 
 test("shows personal table configuration notices outside edit mode", async ({ page }) => {
@@ -48,9 +48,9 @@ test("shows personal table configuration notices outside edit mode", async ({ pa
   await clickUtilityBarButton({ page, testId: "table-config-button" });
 
   await expect(
-    page.getByText("Please be aware you are editing a version of this table for your user."),
+    page.getByText("Please be aware that you are editing a version of this table for yourself. If you want to edit the table for all board viewers please switch to edit mode."),
   ).toBeVisible();
   await expect(
-    page.getByText("Table configuration is saved separately for logged-in and logged-out sessions."),
+    page.getByText("Table configuration is saved separately for logged-in and logged-out sessions. Changes made in one will not carry over to the other."),
   ).toBeVisible();
 });

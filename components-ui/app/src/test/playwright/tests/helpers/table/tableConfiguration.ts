@@ -19,7 +19,7 @@ export const configureTable = async (
   const text = await page.locator(".tol-attribute-selector-display-key").textContent();
 
   // check the checkbox for the attribute
-  await page.locator(`[role="checkbox"][value="${text}"]`).first().setChecked({ force: true });
+  await page.locator(`[role="checkbox"][value="${text}"]`).first().setChecked();
 
   // click again to hide dropdown
   await page.getByRole("combobox").nth(1).click();

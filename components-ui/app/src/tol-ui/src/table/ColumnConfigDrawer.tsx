@@ -186,7 +186,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
             hidePrefix
             onClose={() => {
               localStorage.setItem(
-                TABLE_CONFIG_LOGGED_IN_OUT_SESSIONS_NOTICE_DISMISSED_LOCAL_STORAGE_KEY,
+                TABLE_CONFIG_DIFF_AUTH_VS_NO_AUTH_NOTICE_DISMISSED_KEY,
                 "true",
               );
               setWarningDismissed(true);

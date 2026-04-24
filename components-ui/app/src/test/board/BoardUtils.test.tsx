@@ -149,6 +149,7 @@ describe("updateConfigAndUpsert function", () => {
     });
     const boardDataSource = {
       getList: vi.fn().mockResolvedValue([]),
+      getListPage: vi.fn().mockResolvedValue({ data: [] }),
       upsert: vi.fn().mockReturnValue(upsertPromise),
     };
     const setHasDiff = vi.fn();
@@ -178,7 +179,7 @@ describe("updateConfigAndUpsert function", () => {
     resolveUpsert({});
     await savePromise;
 
-    expect(boardDataSource.getList).toHaveBeenCalledWith({
+    expect(boardDataSource.getListPage).toHaveBeenCalledWith({
       objectType: "board_diff",
       filter: {
         and_: {
