@@ -38,7 +38,7 @@ const addTableComponent = async ({ page }) => {
 test("manage dashboard", async ({ page }) => {
   await addTableComponent({ page });
   await deleteFirstComponent({ page, componentType: "table" });
-  await expect(page.locator('.tol-table')).not.toBeVisible();
+  await expect(page.locator('.tol-table')).not.toBeVisible({timeout: 1000});
 });
 
 test("shows personal table configuration notices outside edit mode", async ({ page }) => {
