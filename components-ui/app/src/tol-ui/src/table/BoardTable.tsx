@@ -18,6 +18,7 @@ import {
   clearTableConfigLocalStorage,
   useQueryData,
   getInitialDiffState,
+  fetchActions,
 } from "..";
 import type {
   ITableConfigSave,
@@ -32,14 +33,23 @@ export interface PBoardTable extends PVisualisation {
 }
 
 export function BoardTable(props: PBoardTable) {
-  const { id, boardDataSource, zone } = props;
+  const { id, boardDataSource, zone, objectType, actionsDataSource } = props;
 
-  const { editMode } = useBoard();
   const { user } = useAuth();
+  const { editMode } = useBoard();
 
   const isLoggedIn: boolean = !!user?.id;
 
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
+
+  const actionList = useQueryData<string[]>(
+    ["actionsList", id],
+    () => fetchActions(user, actionsDataSource, objectType),
+    {
+      enabled: !!user,
+      staleTime: 0,
+    },
+  );
 
   // Trigger a re-render of of the RemoteTable
   const [resetKey, setResetKey] = useState<number>(0);
@@ -96,14 +106,12 @@ export function BoardTable(props: PBoardTable) {
   const onConfigSave = (
     {
       fieldMeta,
-      actions,
-      defaultSortByAttribute,
+        defaultSortByAttribute,
       defaultSortByType,
     }: ITableDrawerSave,
     isLoggedIn: boolean,
   ) => {
     config["fieldMeta"] = optimiseFieldMetaForSave(fieldMeta);
-    config["actions"] = actions;
     config["defaultSortByAttribute"] = defaultSortByAttribute;
     config["defaultSortByType"] = defaultSortByType;
     setConfig({ ...config });
@@ -220,12 +228,17 @@ export function BoardTable(props: PBoardTable) {
       showConfigReset={hasDiff}
       resetConfigDifferences={configDifferences}
       advanceTab
+      editableCells
       displaySource
       fields={config.fieldMeta}
       pageSize={config.pageSize}
       filterVisibility={config.filterVisibility}
       defaultSortByAttribute={config.defaultSortByAttribute}
       defaultSortByType={config.defaultSortByType}
+      actions={actionList.data}
+      actionDataSource={actionsDataSource}
+      // This will change depending on if the user actually has any available actions
+      rowSelection={actionList.data && actionList.data.length > 0}
       onConfigSave={(config) => onConfigSave({ ...config }, isLoggedIn)}
       onToggleFilterVisibility={(visible: boolean) =>
         onFilterVisibilityChange(visible, isLoggedIn)
@@ -234,7 +247,6 @@ export function BoardTable(props: PBoardTable) {
         onPageSizeChange(pageSize, isLoggedIn)
       }
       onResizeColumn={onResizeColumn}
-      rowSelection={Array.isArray(config.actions) && config.actions.length > 0}
     />
   );
 }

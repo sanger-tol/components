@@ -46,6 +46,7 @@ export function Zone(props: PZone) {
     filter,
     onZoneReorder,
     deleteZone,
+    actionsDataSource
   } = props;
 
   const { editMode, layoutMode } = useBoard();
@@ -190,6 +191,7 @@ export function Zone(props: PZone) {
           zone={z.zone}
           setZone={z.setZone}
           boardDataSource={boardDataSource}
+          actionsDataSource={actionsDataSource}
         />
       ) : (
         <div className="tol-zone-empty">

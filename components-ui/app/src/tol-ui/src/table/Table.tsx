@@ -391,16 +391,22 @@ export function Table(props: PTable) {
     />
   );
 
-  const ubc = mergeUtilityBarConfigs(utilityBarConfig, {
-    buttons: [configButton, filterButton, actionDropdown, downloadButton],
-    elements:
-      !noPagination && fieldMeta?.order?.active?.length > 0
-        ? [
-            ...(!smallBreakpoint && editMode ? [PageSizePicker] : []),
-            PaginationPicker,
-          ]
-        : [],
-  });
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      buttons: [
+        configButton,
+        filterButton,
+        actionDropdown,
+        downloadButton,
+      ],
+      elements:
+        !noPagination && fieldMeta?.order?.active?.length > 0 ? [
+          ...(!smallBreakpoint ? [PageSizePicker] : []),
+          PaginationPicker,
+        ] : [],
+    }
+  )
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>

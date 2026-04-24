@@ -114,6 +114,7 @@ export function generateVisualisations(
   zone: IZone,
   setZone: (zone: IZone) => void,
   boardDataSource: TsDataSource,
+  actionsDataSource: TsDataSource,
 ) {
   return zone.order.map((componentId) => {
     const component = zone.components[componentId].data;
@@ -132,6 +133,7 @@ export function generateVisualisations(
           boardDataSource={boardDataSource}
           boardObjectType={BOARDS.COMPONENT}
           title={component.title!}
+          actionsDataSource={actionsDataSource}
         />
       </div>
     )

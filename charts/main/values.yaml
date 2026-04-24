@@ -104,10 +104,7 @@ tolcore:
     password: "components"
     name: "components"
   schemaspy:
-    enabled: false # disable schemaspy (there is no DB to spy on)
-    image:
-      repository: ""
-      tag: ""
+    enabled: false
   api:
     fullname: "components-api"
     probe_url: "/api/v1/system/healthz"

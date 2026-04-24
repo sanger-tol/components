@@ -18,7 +18,9 @@ export const API_OPERATIONS = {
   UPSERT: ":upsert",
   CURSOR: ":cursor",
   COUNT: ":count",
+  ACTION: ":action",
   AGGREGATIONS: ":aggregations",
+  AGGREGATIONS_LEGACY: ":aggregations_legacy",
   GROUP_STATS: ":group-stats",
   STATS: ":stats",
   TO_ONE: ":to-one",
@@ -50,6 +52,7 @@ export const WEB_APP = "web_app";
 export const ACTIONS = {
   ACTION: "action",
   RUN_ACTION: "run-action",
+  ROLE_ACTION: "role_action",
 }
 
 export const VALIDATIONS = {
@@ -66,4 +69,8 @@ export const VALIDATION_ENDPOINTS = {
 export const S3_ENDPOINTS = {
   UPLOAD: "data-upload/upload",
   DOWNLOAD: "data-upload/download",
+}
+
+export const USER = {
+  ROLE: "role",
 }

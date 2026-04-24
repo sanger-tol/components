@@ -44,6 +44,7 @@ import {
   updateFieldMetaAttribute,
   IHeight,
   TFilterOrUndefined,
+  ACTIONS_DS,
   useBoard,
   IConfigDifferences,
 } from '..';
@@ -249,10 +250,7 @@ export function RemoteTable(props: PRemoteTable) {
     onToggleFilterVisibility,
     noDownload,
     noActionsFooter,
-    actionDataSource = new TsDataSource({
-      apiPath: env.API_PATH,
-      apiDataPath: ACTION_API_DATA_PATH,
-    }),
+    actionDataSource = ACTIONS_DS,
     actions,
     cellRenderers,
     contents,
@@ -261,6 +259,11 @@ export function RemoteTable(props: PRemoteTable) {
     onReset: propOnReset,
     showConfigReset,
   } = props;
+
+  const runActionDatasource = new TsDataSource({
+    apiPath: env.API_PATH,
+    apiDataPath: ACTION_API_DATA_PATH,
+  })
 
   // data and field information
   const [data, setData] = useState<any[]>([]);
@@ -463,7 +466,6 @@ export function RemoteTable(props: PRemoteTable) {
 
   const onConfigSave = ({
     fieldMeta: fm,
-    actions,
     defaultSortByAttribute,
     defaultSortByType,
     editMode,
@@ -478,7 +480,6 @@ export function RemoteTable(props: PRemoteTable) {
     if (props.onConfigSave) {
       props.onConfigSave({
         fieldMeta: fm,
-        actions,
         defaultSortByAttribute: defaultSortByAttribute,
         defaultSortByType: defaultSortByType,
         editMode,
@@ -524,7 +525,7 @@ export function RemoteTable(props: PRemoteTable) {
 
   const completeAction = async (actionName: string, ids: string[]) => {
     setLoading(true);
-    const res = await actionDataSource!
+    const res = await runActionDatasource!
       .custom({
         method: API_METHODS.POST,
         resource: ACTIONS.RUN_ACTION,
@@ -534,7 +535,7 @@ export function RemoteTable(props: PRemoteTable) {
             action_name: actionName,
             object_type: objectType,
             params: actionParams
-          },
+          }
         },
       })
       .finally(() => {

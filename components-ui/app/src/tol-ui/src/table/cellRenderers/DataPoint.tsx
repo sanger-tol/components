@@ -6,12 +6,13 @@ SPDX-License-Identifier: MIT
 
 import { useState } from "react";
 import {
-  ACTIONS,
   API_METHODS,
+  API_OPERATIONS,
   CellDisplay,
   CellEditable,
   CellEditableStatus,
   getFieldByName,
+  getUserFromLocalStorage,
   PDataPoints,
   PopUpMessage,
 } from "../..";
@@ -22,6 +23,14 @@ export interface PDataPoint extends PDataPoints {
    * Whether the data point is being rendered within a tag component. Used for styling purposes.
    */
   isMany?: boolean,
+  /**
+   * Id of the parent DataObject, used for upsert calls when saving edits to the data point.
+   */
+  parentObjectId?: string;
+  /**
+   * Object Type of the parent DataObject, used for upsert calls when saving edits to the data point.
+   */
+  parentObjectType?: string;
 }
 
 /**
@@ -36,6 +45,8 @@ export function DataPoint(props: PDataPoint) {
     editable,
     isMany,
     actsAs,
+    parentObjectId,
+    parentObjectType
   } = props;
 
   const attributeValue = getFieldByName(dataObject, field);
@@ -44,20 +55,17 @@ export function DataPoint(props: PDataPoint) {
   const [prevValue, setPrevValue] = useState(attributeValue);
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hasChanged, setHasChanged] = useState(false);
 
+  // TODO: Make sure that string and date upserts have a role binding
   const canEdit = (
-    actsAs === "status" || typeof value === "string" || value instanceof Date
+    actsAs === "status" //|| typeof value === "string" || value instanceof Date
   );
 
   const onDoubleClick = () => {
     if (!editable) return;
     if (canEdit) {
       setEditMode(true);
-    } else {
-      PopUpMessage({
-        type: "info",
-        message: "Only string & Date values are editable currently.",
-      })
     }
   }
 
@@ -67,40 +75,47 @@ export function DataPoint(props: PDataPoint) {
 
   const onCancel = () => {
     setEditMode(false);
-    setValue(prevValue);
+    if (!hasChanged) {
+      setValue(prevValue);
+    }
   };
 
   const onSaveStatus = (selectedStatusTypeId: string) => {
+
+    if (selectedStatusTypeId == value) {
+      PopUpMessage({ type: "success", message: "Status updated successfully." })
+      setEditMode(false);
+      return;
+    }
+
     if (!dataObject) return;
     setLoading(true);
-    const parentObjectType = dataObject.objectType.replace(/_status$/, "");
-    const actionBaseUrl = dataSource
-      .getBaseUrl()
-      ?.replace(/\/data(?:\/[^/]+)?$/, "");
 
+    const user = getUserFromLocalStorage();
     dataSource
       .custom({
         method: API_METHODS.POST,
-        resource: `local/${ACTIONS.RUN_ACTION}`,
+        resource: `${parentObjectType}${API_OPERATIONS.ACTION}`,
         body: {
-          data: {
-            ids: [dataObject.id],
-            action_name: "SetStatusAction",
-            object_type: parentObjectType,
-            params: { status: selectedStatusTypeId },
-          },
+          ids: [parentObjectId],
+          action_name: "SetStatusAction",
+          object_type: parentObjectType,
+          params: { status: selectedStatusTypeId, user_id: user?.id },
         },
-        options: actionBaseUrl ? { baseURL: actionBaseUrl } : undefined,
       })
       .then(() => {
         setEditMode(false);
         PopUpMessage({ type: "success", message: "Status updated successfully." });
+        setValue(selectedStatusTypeId);
+        setHasChanged(true);
       })
       .catch((error: any) => {
         PopUpMessage({ type: "error", message: `Error saving: ${error.message}` });
         setEditMode(false);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false)
+      });
   };
 
   const onSave = () => {
