@@ -213,7 +213,7 @@ export function setTableConfigLocalStorage(
   let config = getTableConfigLocalStorage(tableId);
   if (!config) config = {};
   if (Array.isArray(key)) {
-    key.forEach((k, index) => {
+    key.forEach((k: string, index: number) => {
       if (value[index] !== undefined && value[index] !== null)
         config[k] = value[index];
     });

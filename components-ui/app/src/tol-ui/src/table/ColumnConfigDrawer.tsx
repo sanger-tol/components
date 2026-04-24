@@ -21,7 +21,7 @@ import {
   Message,
   useBoard,
   PRIVILEGE,
-  TABLE_CONFIG_DIFF_LOGGED_IN_OUT_SESSIONS_NOTICE_DISMISSED_LOCAL_STORAGE_KEY,
+  TABLE_CONFIG_DIFF_AUTH_VS_NO_AUTH_NOTICE_DISMISSED_KEY,
 } from "..";
 
 
@@ -69,7 +69,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   const [warningDismissed, setWarningDismissed] = useState(
     () =>
       localStorage.getItem(
-        TABLE_CONFIG_DIFF_LOGGED_IN_OUT_SESSIONS_NOTICE_DISMISSED_LOCAL_STORAGE_KEY,
+        TABLE_CONFIG_DIFF_AUTH_VS_NO_AUTH_NOTICE_DISMISSED_KEY,
       ) === "true"
   );
 

@@ -142,7 +142,7 @@ export function BoardTable(props: PBoardTable) {
       );
       return;
     }
-    setTableConfigLocalStorage(`board_diff_${id}`, "filterVisibility", visible);
+    setTableConfigLocalStorage(`${BOARDS.BOARD_DIFF}_${id}`, "filterVisibility", visible);
     setHasDiff(true);
   };
 
@@ -205,7 +205,7 @@ export function BoardTable(props: PBoardTable) {
           },
         )
       : hasDiff
-        ? (clearTableConfigLocalStorage(`board_diff_${id}`), resetDiffState())
+        ? (clearTableConfigLocalStorage(`${BOARDS.BOARD_DIFF}_${id}`), resetDiffState())
         : null;
   };
 
