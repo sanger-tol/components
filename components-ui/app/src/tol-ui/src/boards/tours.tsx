@@ -14,6 +14,11 @@ export const tours: Record<string, ITourStep[]> = {
       testid: "object-type-picker",
       title: "TOUR STEP",
       description: "This is an Object Type picker!! wow",
+    },
+    {
+      testid: "object-type-picker",
+      title: "TWO",
+      description: "You got to the second step!"
     }
   ]
 };
@@ -38,7 +43,6 @@ export async function processTour(tourName: keyof typeof tours) {
       element: `[data-testid="${step.testid}"]`,
       popover: { title: step.title, description: step.description },
     })),
-    showButtons: ["previous", "next", "close"],
     onDestroyStarted: () => {
       // registerTourAsSeen(tourName, userID);
       console.log("YOU HAVE BEEN DESTROYED!");
