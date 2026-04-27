@@ -14,11 +14,9 @@ import {
   ITableDrawerSave,
   PVisualisation,
   updateFieldMetaAttribute,
-  TsDataSource,
   useAuth,
   useQueryData,
-  LOCAL_API_DATA_PATH,
-  fetchActions
+  fetchActions,
 } from "..";
 
 
@@ -27,19 +25,16 @@ export interface PBoardTable extends PVisualisation {
 }
 
 export function BoardTable(props: PBoardTable) {
-  const { id, boardDataSource, zone, objectType } = props;
+  const { id, boardDataSource, zone, objectType, actionsDataSource } = props;
 
   const { user } = useAuth();
   const { editMode } = useBoard();
 
   const [config, setConfig] = useState<ITableConfigSave>(props.config);
-  const localDataSource = new TsDataSource({
-    apiPath: `/api/v1/${LOCAL_API_DATA_PATH}`,
-  });
 
   const actionList = useQueryData<string[]>(
     ["actionsList", id],
-    () => fetchActions(user, localDataSource, objectType),
+    () => fetchActions(user, actionsDataSource, objectType),
     {
       enabled: !!user,
       staleTime: 0,
@@ -103,7 +98,7 @@ export function BoardTable(props: PBoardTable) {
       boardDataSource
     );
   }
-
+  console.log(actionsDataSource)
   return (
     <RemoteTable
       {...props}
@@ -123,6 +118,7 @@ export function BoardTable(props: PBoardTable) {
       onToggleFilterVisibility={onToggleFilterVisibility}
       onPageSizeChange={onPageSizeChange}
       actions={actionList.data}
+      actionDataSource={actionsDataSource}
       // This will change depending on if the user actually has any available actions
       rowSelection={actionList.data && actionList.data.length > 0}
     />

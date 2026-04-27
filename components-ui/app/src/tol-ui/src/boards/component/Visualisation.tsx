@@ -25,7 +25,8 @@ import {
   removeComponent,
   BUTTONS,
   ConfirmationModal,
-  BoardMap
+  BoardMap,
+  TsDataSource
 } from "../..";
 
 
@@ -36,6 +37,7 @@ export interface PVisualisation extends IBoardTargetAndZone {
   size: string;
   title: string;
   utilityBarConfig?: PUtilityBar;
+  actionsDataSource: TsDataSource;
 }
 
 export function Visualisation(props: PVisualisation) {
@@ -47,7 +49,7 @@ export function Visualisation(props: PVisualisation) {
     zone,
     setZone,
     dataSource,
-    utilityBarConfig,
+    utilityBarConfig
   } = props;
 
   const { editMode, layoutMode } = useBoard();

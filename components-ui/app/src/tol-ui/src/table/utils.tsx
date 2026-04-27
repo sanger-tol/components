@@ -429,12 +429,12 @@ export function updateFieldMetaAttribute(
 
 export async function fetchActions(
   user: User | null,
-  localDataSource: TsDataSource,
+  actionDataSource: TsDataSource,
   objectType: string,
 ): Promise<string[]> {
   if (!user) return [];
-  const roleids = await getRoleIdsByNames(user.roles, localDataSource);
-  return localDataSource.getListPage({
+  const roleids = await getRoleIdsByNames(user.roles, actionDataSource);
+  return actionDataSource.getListPage({
     objectType: ACTIONS.ROLE_ACTION,
     filter: {
       "and_": {
@@ -444,7 +444,8 @@ export async function fetchActions(
           },
         },
       }
-    }
+    },
+    requestedFields: ["action.name", "action.object_type"],
   }).then(async (res: TDataObjectListOrNull) => {
     const data = await Promise.all(res?.map(async (item: any) => {
       const action = await item.fetchRelationships.action;

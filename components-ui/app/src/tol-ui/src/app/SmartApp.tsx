@@ -42,6 +42,7 @@ import {
   CORE_CONFIG_DS,
   mergeAndNormaliseNavConfig,
   GlobalLoadingProvider,
+  ACTIONS_DS,
 } from "..";
 
 
@@ -55,6 +56,10 @@ export interface PSmartApp {
    * The datasource for configuring the app.
    */
   configDataSource?: TsDataSource;
+  /**
+   * The datasource for fetching actions.
+   */
+  actionsDataSource?: TsDataSource;
   /**
    * The brand to display in the navigation bar.
    */
@@ -100,6 +105,7 @@ export function SmartApp(props: PSmartApp) {
   const {
     id,
     configDataSource = CORE_CONFIG_DS,
+    actionsDataSource = ACTIONS_DS,
     brand,
     login = true,
     register = false,
@@ -171,10 +177,10 @@ export function SmartApp(props: PSmartApp) {
   const pageElements: TPageElements = {
     boardDetail: (
       <BoardContextProvider>
-        <Board boardDataSource={configDataSource} brand={brand} />
+        <Board boardDataSource={configDataSource} brand={brand} actionsDataSource={actionsDataSource} />
       </BoardContextProvider>
     ),
-    myBoards: <MyBoards boardDataSource={configDataSource} />,
+    myBoards: <MyBoards boardDataSource={configDataSource} actionsDataSource={actionsDataSource} />,
     validationResultsDetail: <ValidationResultsViewer />,
     callback: <Callback {...props} />,
     ...(props.pageElements ?? {}),
@@ -228,7 +234,8 @@ export function SmartApp(props: PSmartApp) {
                           mergedNavigation,
                           pageElements,
                           brand,
-                          configDataSource
+                          configDataSource,
+                          actionsDataSource
                         )}
                         <ReactRouter
                           path={`/page-not-found`}
