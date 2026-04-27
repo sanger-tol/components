@@ -11,7 +11,9 @@ export interface PTitleTooltip {
   objectType: string;
   dataSource: TsDataSource;
   filter?: IFilter;
-  /** The ID of the thing (e.g. Component or Zone) that this tooltip is displayed on */
+  /**
+   * The ID of the thing (e.g. Component or Zone) that this tooltip is displayed on
+   * */
   id?: any;
 }
 
