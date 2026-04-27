@@ -14,7 +14,7 @@ import {
 } from "../..";
 
 
-export function dataObjectsToViewParams(viewDataObject: IDataObject): Partial<IView> {
+export function dataObjectToViewParams(viewDataObject: IDataObject): Partial<IView> {
   return defineBoardEntity<IView>(
     {
       id: viewDataObject.id,

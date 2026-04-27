@@ -10,7 +10,6 @@ import {
   IComponent,
   IZone,
   TsDataSource,
-  Visualisation,
 } from "../..";
 
 
@@ -108,31 +107,3 @@ export function generateLayout(zone: IZone) {
   });
   return layout;
 };
-
-export function generateVisualisations(
-  zone: IZone,
-  setZone: (zone: IZone) => void,
-  boardDataSource: TsDataSource,
-) {
-  return zone.order.map((componentId) => {
-    const component = zone.components[componentId];
-
-    return (
-      <div key={component.id} className="tol-visualisation">
-        <Visualisation
-          id={component.id!}
-          size={component.size!}
-          zone={zone}
-          setZone={setZone}
-          componentType={component.type!}
-          config={component.config}
-          objectType={component.objectType!}
-          dataSource={component.dataspace!}
-          boardDataSource={boardDataSource}
-          boardObjectType={BOARDS.COMPONENT}
-          title={component.title!}
-        />
-      </div>
-    )
-  });
-}

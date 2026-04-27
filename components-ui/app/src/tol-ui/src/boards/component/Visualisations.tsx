@@ -10,10 +10,11 @@ import {
   generateLayout,
   IZone,
   TsDataSource,
-  generateVisualisations,
   updateLayout,
   useBoard,
   useEffectUpdate,
+  Visualisation,
+  BOARDS,
 } from "../..";
 
 
@@ -38,24 +39,17 @@ export function Visualisations(props: PVisualisations) {
   const [layoutsState, setLayouts] = useState<Layouts>();
   // newLayout is used to store the layout when the user is dragging widgets, and is emtptied once a user saves
   const [newLayout, setNewLayout] = useState(undefined);
-  const [elements, setElements] = useState<JSX.Element[]>([]);
   const internalLayouts = useRef(generateLayout(zone));
 
   useEffect(() => {
-    setElements(
-      generateVisualisations(
-        zone,
-        setZone,
-        boardDataSource
-      )
-    );
     const newLayout = generateLayout(zone);
     setLayouts(newLayout);
     internalLayouts.current = newLayout;
+    console.log(newLayout)
   }, [zone]);
 
-  // When layout mode is turned off, we want to update the layout of the zone with the new layout
   useEffectUpdate(() => {
+    // When layout mode is turned off, we want to update the layout of the zone with the new layout
     if (!layoutMode) {
       updateLayout(
         newLayout,
@@ -87,7 +81,26 @@ export function Visualisations(props: PVisualisations) {
         onLayoutChange={(layout: any) => setNewLayout(layout)}
         onBreakpointChange={onBreakpointChange}
       >
-        {elements.map((element) => cloneElement(element))}
+        {zone.order.map((componentId) => {
+          const component = zone.components[componentId];
+          return cloneElement(
+            <div key={component.id} className="tol-visualisation">
+              <Visualisation
+                id={component.id!}
+                size={component.size!}
+                zone={zone}
+                setZone={setZone}
+                componentType={component.type!}
+                config={component.config}
+                objectType={component.objectType!}
+                dataSource={component.dataspace!}
+                boardDataSource={boardDataSource}
+                boardObjectType={BOARDS.COMPONENT}
+                title={component.title!}
+              />
+            </div>
+          )
+        })}
       </ResponsiveReactGridLayout>
     </div>
   );

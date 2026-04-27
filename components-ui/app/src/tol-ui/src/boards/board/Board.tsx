@@ -25,7 +25,7 @@ import {
   getBoardEntity,
   IView,
   IBoard,
-  dataObjectsToViewParams,
+  dataObjectToViewParams,
   dataObjectToBoardParams,
   getUserPrivilege,
 } from "../..";
@@ -87,7 +87,7 @@ export function Board(props: PBoard) {
       id,
       BOARDS.BOARD,
       board,
-      dataObjectsToViewParams,
+      dataObjectToViewParams,
       dataObjectToBoardParams,
     ).then((b: IBoard) => {
       setBoard(b);
