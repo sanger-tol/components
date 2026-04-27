@@ -31,7 +31,7 @@ export function TitleTooltip(props: PTitleTooltip) {
           dataSource={dataSource}
         />
       </>
-      {id && <p style={{color: "var(--tol-grey)"}}><b>ID: </b> {id}</p>}
+      {id && <p><b>ID: </b> {id}</p>}
     </div>
   )
 }
