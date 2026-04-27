@@ -11,10 +11,12 @@ export interface PTitleTooltip {
   objectType: string;
   dataSource: TsDataSource;
   filter?: IFilter;
+  /** The ID of the thing (e.g. Component or Zone) that this tooltip is displayed on */
+  id?: any;
 }
 
 export function TitleTooltip(props: PTitleTooltip) {
-  const { title, objectType, dataSource, filter } = props;
+  const { title, objectType, dataSource, filter, id } = props;
 
   return (
     <div className="tol-utility-bar-title-tooltip">
@@ -29,6 +31,7 @@ export function TitleTooltip(props: PTitleTooltip) {
           dataSource={dataSource}
         />
       </>
+      {id && <p style={{color: "var(--tol-grey)"}}><b>ID: </b> {id}</p>}
     </div>
   )
 }
