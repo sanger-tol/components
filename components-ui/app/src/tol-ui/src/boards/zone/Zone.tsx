@@ -139,7 +139,7 @@ export function Zone(props: PZone) {
     visible: editMode && !layoutMode,
   };
 
-  const bar = (
+  const Bar = (
     <div className="tol-zone-bar">
       <UtilityBar
         id="zone-utility-bar"
@@ -184,7 +184,7 @@ export function Zone(props: PZone) {
 
   return (
     <div className="tol-zone">
-      {(title || editMode) && bar}
+      {(title || editMode) && Bar}
       {z.zone.order.length > 0 ? (
         <Visualisations
           id={id}
