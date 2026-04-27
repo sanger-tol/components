@@ -6,6 +6,13 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.5.2`
+
+27-04-2026
+
+- The TitleTooltip on utility bars for zones and components on boards now show the ID of said
+  zone or component.
+
 ## tol-ui `3.5.1`
 
 21-04-2026
