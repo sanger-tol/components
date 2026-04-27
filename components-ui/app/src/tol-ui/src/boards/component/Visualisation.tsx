@@ -102,6 +102,7 @@ export function Visualisation(props: PVisualisation) {
       objectType={objectType}
       dataSource={dataSource}
       filter={filter}
+      id={id}
     />
   );
 

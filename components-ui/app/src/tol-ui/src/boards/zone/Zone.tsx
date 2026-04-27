@@ -159,6 +159,7 @@ export function Zone(props: PZone) {
             objectType={objectType}
             dataSource={dataspace}
             filter={filter}
+            id={id}
           />
         }
         buttons={[
