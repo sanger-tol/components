@@ -569,7 +569,6 @@ export const getInitialDiffState = async (
   objectType: string,
   editMode?: boolean,
 ): Promise<IDiffState> => {
-  console.log("Getting initial diff state for component", componentId);
   const componentBaseConfig = await getComponentConfig(dataSource, componentId);
   // Check for a diff in the database if the user is logged in
   // Or if the user is not logged in, check local storage for a diff
