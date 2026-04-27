@@ -19,6 +19,7 @@ import {
   getFlattenedMetaData,
   getAttributeDetail,
   normaliseNumber,
+  getJsonEditorTheme
 } from "../../tol-ui/src";
 
 test("isPropDefined function", () => {
@@ -175,3 +176,25 @@ test("normaliseNumber function", () => {
   expect(normaliseNumber(0.000000000000001)).toBe("1f");
   expect(normaliseNumber(0.000000000000001234)).toBe("1.23f");
 });
+
+test("getJsonEditorTheme function", () => {
+  // Mock the window.matchMedia function to simulate dark mode
+  const mockMatchMedia = (matches: boolean) => {
+    return {
+      matches,
+      addListener: () => {},
+      removeListener: () => {},
+    };
+  };
+
+  // Test dark mode
+  window.matchMedia = vi.fn().mockImplementation(() => mockMatchMedia(true));
+  expect(getJsonEditorTheme()).toEqual([
+    expect.objectContaining({}),
+    { styles: { container: { backgroundColor: "var(--tol-bg)" } } },
+  ]);
+
+  // Test light mode
+  window.matchMedia = vi.fn().mockImplementation(() => mockMatchMedia(false));
+  expect(getJsonEditorTheme()).toEqual([expect.objectContaining({})]);
+})

@@ -10,7 +10,6 @@ import {
   generateChartFilterFromBar,
   HistogramGrouping,
   aggsToBarChartData,
-  isChartDataEmpty,
   BarChart,
   useEffectUpdate,
   normaliseCaps,
@@ -24,7 +23,8 @@ import {
   TFilterOrUndefined,
   API_METHODS,
   IHeight,
-  API_OPERATIONS
+  API_OPERATIONS,
+  NO_DATA_FOUND_MESSAGE
 } from "..";
 
 interface PRemoteBarChart extends IRemoteTargetAndZone, IHeight {
@@ -101,8 +101,8 @@ export function RemoteBarChart(props: PRemoteBarChart) {
     contents,
   } = props;
   const height = props.height !== undefined ? props.height : "100%";
-  const [labels, setLabels] = useState([]);
-  const [datasets, setDatasets] = useState([]);
+  const [datasets, setDatasets] = useState<object[]>([]);
+  const [labels, setLabels] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [warningMessage, setWarningMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -121,18 +121,19 @@ export function RemoteBarChart(props: PRemoteBarChart) {
   useEffectUpdate(() => {
     if (!contents) { // This is to stop calls being made when the bar chart is not visible
       setLoading(true);
-      const aggs = generateChartAgg(breakDownBy, xAxis, type);
+      const aggs = generateChartAgg(breakDownBy, xAxis, type, cumulative);
       dataSource
         .custom({
           method: API_METHODS.POST,
           resource: `${objectType}${API_OPERATIONS.AGGREGATIONS}`,
-          body: {...aggs, filter: filter},
+          body: {...aggs, filter: JSON.stringify(filter)},
         })
         .then((res: any) => {
-          let aggs = res.data.meta.aggregations;
+          const response = res.data;
           setErrorMessage("");
-          setWarningMessage(isChartDataEmpty(aggs));
-          aggs = aggsToBarChartData(aggs, type, shortDate, cumulative);
+          setWarningMessage(response ? "" : NO_DATA_FOUND_MESSAGE);
+
+          const aggs = aggsToBarChartData(response, type, shortDate);
           setDatasets(aggs.datasets);
           setLabels(aggs.labels);
           setLoading(false);

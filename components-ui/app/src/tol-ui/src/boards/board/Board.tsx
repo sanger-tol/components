@@ -40,6 +40,10 @@ export interface PBoard {
    */
   boardDataSource: TsDataSource;
   /**
+   * The data source for fetching actions.
+   */
+  actionsDataSource?: TsDataSource;
+  /**
    * The brand to display in the loading screen.
    */
   brand?: TNavBrand;
@@ -49,7 +53,7 @@ export interface PBoard {
  * Component to render a board based on its ID and TSDataSource.
  */
 export function Board(props: PBoard) {
-  const { boardId, boardDataSource, brand } = props;
+  const { boardId, boardDataSource, brand, actionsDataSource } = props;
 
   const { user } = useAuth();
   const {
@@ -210,6 +214,7 @@ export function Board(props: PBoard) {
         <View
           id={board?.order?.[0]}
           boardDataSource={boardDataSource}
+          actionsDataSource={actionsDataSource}
         />
       }
     </div >

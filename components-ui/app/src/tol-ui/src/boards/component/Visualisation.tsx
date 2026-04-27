@@ -25,7 +25,8 @@ import {
   BUTTONS,
   ConfirmationModal,
   BoardMap,
-  IZone
+  IZone,
+  TsDataSource
 } from "../..";
 
 
@@ -36,6 +37,7 @@ export interface PVisualisation extends IBoardTargetAndZone {
   size: string;
   title: string;
   utilityBarConfig?: PUtilityBar;
+  actionsDataSource: TsDataSource;
 }
 
 export function Visualisation(props: PVisualisation) {

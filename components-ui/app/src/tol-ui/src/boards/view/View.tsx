@@ -28,7 +28,7 @@ export interface PView extends PBoard {
 }
 
 export function View(props: PView) {
-  const { id, boardDataSource } = props;
+  const { id, boardDataSource, actionsDataSource } = props;
 
   const { editMode, layoutMode, board, setBoard } = useBoard();
 
@@ -108,6 +108,7 @@ export function View(props: PView) {
                   boardDataSource={boardDataSource}
                   view={view}
                   setView={setView}
+                  actionsDataSource={actionsDataSource}
                 />
               );
             }

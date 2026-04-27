@@ -18,6 +18,7 @@ export interface PSingleSelect {
   disabled?: boolean;
   loading?: boolean;
   testid?: string;
+  defaultValue?: string;
 }
 
 export const SingleSelect = (props: PSingleSelect) => {
