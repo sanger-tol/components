@@ -8,6 +8,16 @@ import { getUserFromLocalStorage, ITourStep, TsDataSource } from "..";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
+export const tours: Record<string, ITourStep[]> = {
+  "addZone": [
+    {
+      testid: "object-type-picker",
+      title: "TOUR STEP",
+      description: "This is an Object Type picker!! wow",
+    }
+  ]
+};
+
 /**
  * Begins a UI tour from the given config, but only if it hasn't yet been seen by the user
  * @param tourName The name to identify this tour by
@@ -15,7 +25,8 @@ import "driver.js/dist/driver.css";
  * @param tourConfig Each step forming the content of the tour. This includes which element to
  * highlight each time, and what description it's given.
  */
-export async function processTour(tourName: string, tourConfig: ITourStep[]) {
+export async function processTour(tourName: keyof typeof tours) {
+  const tourConfig = tours[tourName];
   const userID = getUserFromLocalStorage().id;
 
   const seen = await hasTourBeenSeen(tourName, userID);

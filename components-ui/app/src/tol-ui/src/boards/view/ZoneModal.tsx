@@ -68,16 +68,7 @@ export function ZoneModal(props: PZoneModal) {
 
   useEffect(() => {
     if (open) {
-      processTour(
-        "addZone",
-        [
-          {
-            testid: "object-type-picker",
-            title: "TOUR STEP",
-            description: "This is an Object Type picker!! wow",
-          }
-        ]
-      );
+      processTour("addZone");
       fetchPublishedDataspaces(boardDataSource)
         .then((dataObjects) => {
           if (dataObjects) {
