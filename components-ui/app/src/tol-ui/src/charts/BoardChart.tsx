@@ -10,7 +10,7 @@ import {
   deepCopy,
   ChartConfigDrawer,
   IChartConfig,
-  updateConfigAndUpsert,
+  updateComponentConfigAndUpsert,
   PVisualisation,
   NoAttributesPlaceholder,
   useBoard,
@@ -30,7 +30,7 @@ export function BoardChart(props: PVisualisation) {
 
   const onConfigSave = (updatedConfig: IChartConfig) => {
     setConfig({ ...updatedConfig });
-    updateConfigAndUpsert(
+    updateComponentConfigAndUpsert(
       id,
       { ...updatedConfig },
       zone,

@@ -74,8 +74,6 @@ export function Board(props: PBoard) {
   // Ability to override boardId from props over URL params
   const id = boardId ?? paramBoardId;
 
-  console.log(board);
-
   themeListener(() => {
     try {
       const backing = document.getElementById("tol-smart-app-background");

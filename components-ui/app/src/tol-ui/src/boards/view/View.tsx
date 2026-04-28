@@ -42,8 +42,6 @@ export function View(props: PView) {
   );
   const [open, setOpen] = useState(false);
 
-  const viewEmpty = view.order.length === 0;
-
   useEffect(() => {
     getBoardEntity<IView, IZone>(
       boardDataSource,
@@ -57,7 +55,7 @@ export function View(props: PView) {
         If the view is empty and the user has edit privileges,
         set edit mode to true to encourage them to add content
       */
-      if (viewEmpty && privilege === PRIVILEGE.BOARD.EDITABLE) {
+      if (v.order.length === 0 && privilege === PRIVILEGE.BOARD.EDITABLE) {
         setEditMode(true);
       }
     })
@@ -101,7 +99,7 @@ export function View(props: PView) {
   return (
     <div className="tol-view">
       {editMode && Bar}
-      {viewEmpty ? (
+      {view.order.length === 0 ? (
         <div className="tol-zone-empty">
           {editMode ? (
             <p>Click the + button to add a Zone</p>

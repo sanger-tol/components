@@ -10,10 +10,12 @@ import {
   useBoard,
   PVisualisation,
   FilterBlockConfigDrawer,
-  updateConfigAndUpsert,
+  updateComponentConfigAndUpsert,
   RemoteFilters,
   mergeUtilityBarConfigs,
-  NoAttributesPlaceholder
+  NoAttributesPlaceholder,
+  BOARDS,
+  upsertCoreBoardEntity
 } from "..";
 
 
@@ -38,7 +40,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
 
   const onConfigSave = (updatedConfig: string[]) => {
     setFilterBlockConfig({ attributes: updatedConfig });
-    updateConfigAndUpsert(
+    updateComponentConfigAndUpsert(
       id,
       { attributes: updatedConfig },
       zone,
@@ -47,10 +49,13 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
   };
 
   useEffect(() => {
-    let attributes = {
-      filter: zone.components[id].filter
-    };
-    //upsertComponent(boardDataSource, id, attributes);
+    upsertCoreBoardEntity(
+      BOARDS.COMPONENT,
+      { filter: zone.components[id].filter },
+      boardDataSource,
+      undefined,
+      id,
+    );
   }, [zone]);
 
   const Contents = () => {

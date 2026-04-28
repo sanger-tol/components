@@ -8,7 +8,7 @@ import { useState } from "react";
 import {
   UtilityBar,
   PButton,
-  updateConfigAndUpsert,
+  updateComponentConfigAndUpsert,
   useBoard,
   PVisualisation,
   mergeUtilityBarConfigs,
@@ -34,7 +34,7 @@ export function BoardMap(props: PVisualisation) {
 
   const onConfigSave = (updatedConfig: IMapConfig) => {
     setConfig({ ...updatedConfig });
-    updateConfigAndUpsert(
+    updateComponentConfigAndUpsert(
       id,
       { ...updatedConfig },
       zone,

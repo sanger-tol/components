@@ -107,9 +107,10 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
       className={"dashboard-component-modal-full"}
     >
       <>
-        <h6>
+        <h4>Add New Component</h4>
+        <p>
           Select Component <RequiredAsterisk />
-        </h6>
+        </p>
         <Row>
           {componentOptions.map((option, index) => {
             return (
@@ -145,9 +146,9 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
           })}
         </Row>
         <br />
-        <h6>
+        <p>
           Select Size <RequiredAsterisk />
-        </h6>
+        </p>
         <Row>
           {sizeOptions(componentType).map((option, index) => {
             return (

@@ -18,7 +18,15 @@ import {
 } from "../..";
 
 
-export async function updateConfigAndUpsert(
+/**
+ * Update the component state and upsert the component with the new config.
+ * @param componentId The id of the component to be updated.
+ * @param config The new config to be applied to the component.
+ * @param zone The zone the component belongs to, used to update the component state locally.
+ * @param boardDataSource The data source used to upsert the updated component to the backend.
+ * @returns The result of the upsert operation.
+ */
+export async function updateComponentConfigAndUpsert(
   componentId: string,
   config: object,
   zone: IZone,

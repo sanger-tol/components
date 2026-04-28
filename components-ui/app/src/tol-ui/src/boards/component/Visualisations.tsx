@@ -48,7 +48,6 @@ export function Visualisations(props: PVisualisations) {
     const newLayout = generateLayout(zone);
     setLayouts(newLayout);
     internalLayouts.current = newLayout;
-    console.log(newLayout)
   }, [zone]);
 
   useEffectUpdate(() => {

@@ -9,8 +9,6 @@ import { useEffect, useState } from "react";
 import {
   IconTooltip,
   IBoardTargetAndZone,
-  // upsertComponent,
-  // upsertZone,
   RemoteFilters,
   Drawer,
   generateFilter,
@@ -21,6 +19,10 @@ import {
   Icon,
   defineZoneWithComponentList,
   IZone,
+  upsertCoreBoardEntity,
+  BOARDS,
+  FILTER_ALREADY_EXISTS,
+  NO_FILTERS_APPLIED,
 } from ".."
 
 
@@ -56,16 +58,17 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   // Local state for the filter zone if this is a zone level filter, otherwise use the passed zone/setZone
   // const zoneFilterId = "filter-zone-component";
   const [filterZone, setFilterZone] = useState<IZone>(
-    defineZoneWithComponentList("dummy-object-for-remote-filters", [
-      { id: id, filter: prevFilters },
-    ]),
+    defineZoneWithComponentList(
+      "dummy-object-for-remote-filters",
+      [{ id: id, filter: prevFilters }]
+    ) as IZone,
   );
 
   const hasPendingChanges = (
     filterHasPendingChanges ||
     passThrough !== (boardObjectType === "zone"
       ? false
-      : zone.components[id]?.data?.filterPassThrough)
+      : zone.components[id]?.filterPassThrough)
   );
 
   useEffect(() => {
@@ -121,12 +124,10 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
   );
 
   const onSave = (filter: IFilter, filterPassThrough: boolean) => {
-    let upserter = upsertComponent;
     let attributes = {
       filter: filter
     };
     if (boardObjectType === "zone") {
-      upserter = upsertZone;
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
     } else {
@@ -137,7 +138,13 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     }
     resetFiltersBelow({ id: id, zone: zone });
     setZone({ ...zone });
-    upserter(boardDataSource, id, attributes);
+    upsertCoreBoardEntity(
+      boardObjectType === BOARDS.ZONE ? BOARDS.ZONE : BOARDS.COMPONENT,
+      attributes,
+      boardDataSource,
+      undefined,
+      id,
+    );
   };
 
   // Function passed to attribute selector to remove all filters
@@ -170,10 +177,6 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     <Icon icon="close" onClick={() => { removeFilter(attribute) }} className="remove-filter-button" />
   );
 
-  const PLACEHOLDER = "No filters applied, click here to add...";
-  const TOOLTIP_CONTENT =
-    "A filter already exists in the filtering system. Please remove it before adding this filter.";
-
   return (
     <div>
       <Drawer
@@ -190,16 +193,16 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           recommendedFilterAvailable
           renderSearchBySource
           disabledValues={disabledFilterValues}
-          placeholder={PLACEHOLDER}
+          placeholder={NO_FILTERS_APPLIED}
           attribute={attributes}
           setAttributes={setAttributes}
           populatedFieldType="filter"
           numPopulatedFields={
             Object.keys(
-              zone.components[id].filter?.and_ || {},
+              zone.components?.[id]?.filter?.and_ || {},
             ).length
           }
-          tooltipContent={TOOLTIP_CONTENT}
+          tooltipContent={FILTER_ALREADY_EXISTS}
           onClean={onClean}
         />
         {boardObjectType !== "zone" &&

@@ -9,10 +9,7 @@ import {
   Button,
   Modal,
   SingleSelect,
-  RSForm,
-  FormTextField,
   PBoard,
-  getNextZoneOrder,
   BUTTONS,
   RequiredAsterisk,
   getPublishedDataspaces,
@@ -21,13 +18,18 @@ import {
   normaliseCaps,
   PopUpMessage,
   IView,
+  IZone,
+  BOARD_CHILDREN_KEYS,
+  defineBoardEntityInParent,
+  BOARDS,
+  generateId,
+  getEntityPrefix,
 } from "../..";
 
 
 export interface PZoneModal extends PBoard {
   open: boolean;
   setOpen: any;
-  viewId: string;
   view: IView;
   setView: (view: IView) => void;
 }
@@ -36,7 +38,7 @@ export function ZoneModal(props: PZoneModal) {
   const {
     open,
     setOpen,
-    viewId,
+    view,
     boardDataSource,
   } = props;
 
@@ -129,36 +131,21 @@ export function ZoneModal(props: PZoneModal) {
   };
 
   const onAddZone = async () => {
-    if (validateInputs()) {
-      const nextOrder = getNextZoneOrder(zoneOrder);
-      const newZone: IUpdatedZoneIds = await upsertNewZone(
-        boardDataSource,
-        objectType,
-        title,
-        nextOrder,
-        viewId,
-        dataspace!.getDataSourceInstanceId()!,
-      );
-      setZones([
-        ...zones,
-        {
-          id: newZone.newZoneId,
-          objectType: objectType,
-          dataspace: dataspace,
-          title: title,
-        },
-      ]);
-      setZoneOrder([
-        ...zoneOrder,
-        {
-          zoneId: newZone.newZoneId,
-          order: nextOrder,
-          zoneViewId: newZone.newZoneViewId,
-        },
-      ]);
-      reset();
-      setOpen(false);
-    }
+    const id = generateId(getEntityPrefix(BOARDS.ZONE));
+    defineBoardEntityInParent<IZone, IView>(
+      {
+        id: id,
+        objectType: BOARDS.ZONE,
+        dataspace: dataspace,
+        //zoneViewId: ,
+        //zoneViewOrder: ,
+      },
+      BOARDS.ZONE,
+      view,
+      BOARD_CHILDREN_KEYS.ZONES
+    )
+    reset();
+    setOpen(false);
   };
 
   const ActionButtons = (

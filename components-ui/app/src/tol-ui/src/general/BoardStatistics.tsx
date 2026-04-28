@@ -13,7 +13,7 @@ import {
   PButton,
   useBoard,
   PVisualisation,
-  updateConfigAndUpsert,
+  updateComponentConfigAndUpsert,
   mergeUtilityBarConfigs,
 } from "..";
 
@@ -29,7 +29,7 @@ export function BoardStatistics(props: PVisualisation) {
 
   const onConfigSave = (updatedConfig: IStatisticsConfig) => {
     setConfig({ ...updatedConfig });
-    updateConfigAndUpsert(id, { ...updatedConfig }, zone, boardDataSource);
+    updateComponentConfigAndUpsert(id, { ...updatedConfig }, zone, boardDataSource);
   };
 
   const configButton: PButton = {

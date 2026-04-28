@@ -212,7 +212,7 @@ export function defineBoardEntityInParent<
   TEntity extends IView | IZone | IComponent,
   TParentEntity extends IBoard | IView | IZone,
 >(
-  entity: TEntity,
+  entity: Partial<TEntity>,
   objectType: string,
   parentEntity: TParentEntity,
   childrenKey: TChildrenKey,
@@ -279,7 +279,7 @@ export async function upsertCoreBoardEntity(
   id?: string,
 ) {
   // Generate a new ID for the board entity based on its type (e.g. 'b' for board, 'v' for view, 'z' for zone, 'c' for component)
-  const entityId = id || generateId(objectType[0]);
+  const entityId = id || generateId(getEntityPrefix(objectType));
 
   // Add the user_id to the attributes for the upsert operation
   const upsertAttributes = {
@@ -313,4 +313,8 @@ export async function upsertJoiningBoardEntity(
     attributes,
     boardDataSource,
   );
+}
+
+export function getEntityPrefix(objectType: string): string {
+  return objectType[0];
 }

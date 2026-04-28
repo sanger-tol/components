@@ -11,7 +11,7 @@ import {
   Markdown,
   UtilityBar,
   PButton,
-  updateConfigAndUpsert,
+  updateComponentConfigAndUpsert,
   useBoard,
   IMarkdownConfig,
   PVisualisation,
@@ -38,7 +38,7 @@ export function BoardMarkdown(props: PBoardMarkdown) {
 
   const onMarkdownSave = (config: IMarkdownConfig) => {
     if (!showMarkdownViewer) {
-      updateConfigAndUpsert(
+      updateComponentConfigAndUpsert(
         id,
         config,
         zone,

@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useState } from "react";
 import {
   RemoteTable,
-  updateConfigAndUpsert,
+  updateComponentConfigAndUpsert,
   useBoard,
   ITableConfigSave,
   optimiseFieldMetaForSave,
@@ -50,7 +50,7 @@ export function BoardTable(props: PBoardTable) {
     config["defaultSortByAttribute"] = defaultSortByAttribute;
     config["defaultSortByType"] = defaultSortByType;
     setConfig({ ...config });
-    updateConfigAndUpsert(
+    updateComponentConfigAndUpsert(
       id,
       config,
       zone,
@@ -61,7 +61,7 @@ export function BoardTable(props: PBoardTable) {
   const onToggleFilterVisibility = (visible: boolean) => {
     config["filterVisibility"] = visible;
     setConfig({ ...config });
-    updateConfigAndUpsert(
+    updateComponentConfigAndUpsert(
       id,
       config,
       zone,
@@ -72,7 +72,7 @@ export function BoardTable(props: PBoardTable) {
   const onPageSizeChange = (pageSize: number) => {
     config["pageSize"] = pageSize;
     setConfig({ ...config });
-    updateConfigAndUpsert(
+    updateComponentConfigAndUpsert(
       id,
       config,
       zone,
@@ -91,14 +91,14 @@ export function BoardTable(props: PBoardTable) {
       columnWidth
     );
     setConfig({ ...config });
-    updateConfigAndUpsert(
+    updateComponentConfigAndUpsert(
       id,
       config,
       zone,
       boardDataSource
     );
   }
-  console.log(actionsDataSource)
+
   return (
     <RemoteTable
       {...props}
