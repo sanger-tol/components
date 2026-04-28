@@ -11,7 +11,6 @@ export interface ITableDrawerSave {
   actions?: string[];
   defaultSortByAttribute?: string;
   defaultSortByType?: string;
-  // editMode?: boolean;
 }
 
 export interface ITableOtherSave {
