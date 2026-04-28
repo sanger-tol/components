@@ -65,7 +65,7 @@ describe("addComponentToZone function", () => {
 describe("defineZoneWithComponentList function", () => {
   test("should create a zone", () => {
     // Arrange
-    const mockComponents: IComponentData[] = [
+    const mockComponents: IComponent[] = [
       {
         id: "1",
       },

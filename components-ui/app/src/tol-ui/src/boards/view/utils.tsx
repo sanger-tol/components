@@ -6,17 +6,25 @@ SPDX-License-Identifier: MIT
 
 import {
   BOARDS,
-  generateId,
-  getUserFromLocalStorage,
   IDataObject,
   IZone,
   TDataObjectListOrNull,
   defineBoardEntity,
   BOARD_CHILDREN_KEYS,
   TsDataSource,
+  User,
+  upsertCoreBoardEntity,
+  upsertJoiningBoardEntity,
+  IZoneIds,
 } from "../..";
 
 
+/**
+ * Converts zone and zone-view data objects into zone parameters.
+ * @param zoneDataObject The zone data object.
+ * @param zoneViewDataObject The zone-view data object.
+ * @returns A partial IZone object with the combined parameters.
+ */
 export function dataObjectsToZoneParams(zoneDataObject: IDataObject, zoneViewDataObject: IDataObject): Partial<IZone> {
   const dsi = zoneDataObject?.relationships?.data_source_instance as IDataObject;
   return defineBoardEntity<IZone>(
@@ -37,97 +45,62 @@ export function dataObjectsToZoneParams(zoneDataObject: IDataObject, zoneViewDat
   );
 }
 
-// export async function upsertZoneOrder(
-//   zoneId: string,
-//   direction: TZoneReorderDirection,
-//   view: IView,
-//   boardDataSource: TsDataSource
-// ) {
-
-//   // Sort again
-//   updatedZoneOrder.sort((a, b) => a.order - b.order);
-
-//   // Get the maximum order value
-//   const orders = updatedZoneOrder.map((zone) => {
-//     return zone.order;
-//   });
-//   const maxOrder = Math.max(...orders);
-
-//   // Add the max offset value to each zone order (This avoids integrity issues in the DB)
-//   updatedZoneOrder.forEach((zone) => {
-//     zone.order += maxOrder + 1;
-//   });
-
-//   const data = updatedZoneOrder.map((zone) => ({
-//     type: BOARDS.ZONE_VIEW as string,
-//     id: zone.zoneViewId,
-//     attributes: {
-//       order: zone.order,
-//     },
-//   }));
-
-//   await boardDataSource.upsert({
-//     objectType: BOARDS.ZONE_VIEW,
-//     payload: data,
-//   })
-
-//   return Promise.resolve(view);
-// };
-
-export async function upsertNewZone(
-  boardDataSource: TsDataSource,
+/**
+ * Creates a new zone and the corresponding zone-view joining entity, associating it with the specified view.
+ * 
+ * @param objectType The zone object type.
+ * @param viewId The parent of the new zone.
+ * @param nextOrderId The order ID for the new zone within the view.
+ * @param dataSourceInstanceId The ID of the data source instance for the new zone.
+ * @param boardDataSource The data source to use for creating the zone and zone-view.
+ * @param user The user creating the zone and zone-view.
+ * @returns An object containing the IDs of the newly created zone and zone-view entities.
+ */
+export async function createNewZone(
   objectType: string,
-  title: string,
-  nextOrder: number,
   viewId: string,
+  nextOrderId: number,
   dataSourceInstanceId: string,
-) {
-  const user = getUserFromLocalStorage();
-  const newId = generateId("z");
-  await boardDataSource
-    .upsert({
-      objectType: BOARDS.ZONE,
-      payload: [
-        {
-          type: BOARDS.ZONE,
-          id: newId,
-          attributes: {
-            title: title,
-            filter: { and_: {} },
-            object_type: objectType,
-            user_id: user.id,
-            data_source_instance_id: dataSourceInstanceId,
-          },
-        },
-      ],
-    });
+  boardDataSource: TsDataSource,
+  user: User,
+): Promise<IZoneIds | undefined> {
+  const zoneObj = await upsertCoreBoardEntity(
+    BOARDS.ZONE,
+    {
+      title: "",
+      filter: { and_: {} },
+      object_type: objectType,
+      user_id: user.id,
+      data_source_instance_id: dataSourceInstanceId,
+    },
+    boardDataSource,
+    user
+  );
+  const zoneId = zoneObj?.[0]?.id;
 
-  return await boardDataSource
-    .upsert({
-      objectType: BOARDS.ZONE_VIEW,
-      payload: [
-        {
-          type: BOARDS.ZONE_VIEW,
-          attributes: {
-            order: nextOrder,
-            zone_id: newId,
-            view_id: viewId,
-          },
-        },
-      ],
-    })
-    .then((res) => {
-      if (res && res[0]) {
-        return {
-          newZoneId: newId,
-          newZoneViewId: res[0].id,
-        };
-      }
-      throw new Error("Unexpected null response for Zone View creation");
-    });
+  const zoneView = await upsertJoiningBoardEntity(
+    BOARDS.ZONE_VIEW,
+    {
+      order: nextOrderId,
+      view_id: viewId,
+      zone_id: zoneId!,
+    },
+    boardDataSource,
+  );
+  const zoneViewId = zoneView?.[0]?.id;
+
+  return {
+    zoneId: zoneId!,
+    zoneViewId: zoneViewId!,
+  };
 }
 
-export async function fetchPublishedDataspaces(
+/**
+ * Fetches the list of published dataspaces (data source instances with ui_api_details) from the board data source.
+ * @param boardDataSource The data source to query for published dataspaces.
+ * @returns A list of published dataspaces or null if none are found.
+ */
+export async function getPublishedDataspaces(
   boardDataSource: TsDataSource,
 ): Promise<TDataObjectListOrNull> {
   return await boardDataSource

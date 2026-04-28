@@ -20,6 +20,8 @@ import {
   getBoardEntity,
   BOARD_CHILDREN_KEYS,
   dataObjectsToZoneParams,
+  deleteBoardEntity,
+  PRIVILEGE,
 } from "../..";
 
 
@@ -30,7 +32,7 @@ export interface PView extends PBoard {
 export function View(props: PView) {
   const { id, boardDataSource, actionsDataSource } = props;
 
-  const { editMode, layoutMode, board, setBoard } = useBoard();
+  const { editMode, setEditMode, privilege, layoutMode, board, setBoard } = useBoard();
 
   const [view, setView] = useBoardState<IBoard, IView>(
     BOARD_CHILDREN_KEYS.VIEWS,
@@ -39,6 +41,8 @@ export function View(props: PView) {
     setBoard,
   );
   const [open, setOpen] = useState(false);
+
+  const viewEmpty = view.order.length === 0;
 
   useEffect(() => {
     getBoardEntity<IView, IZone>(
@@ -49,25 +53,28 @@ export function View(props: PView) {
       dataObjectsToZoneParams
     ).then((v: IView) => {
       setView(v);
+      /*
+        If the view is empty and the user has edit privileges,
+        set edit mode to true to encourage them to add content
+      */
+      if (viewEmpty && privilege === PRIVILEGE.BOARD.EDITABLE) {
+        setEditMode(true);
+      }
     })
   }, []);
 
   const onDeleteZone = (id: string) => {
-    // boardDataSource
-    //   .deleteByID({
-    //     objectType: BOARDS.ZONE,
-    //     id
-    //   })
-    // deleteBoardEntity<IView>("zones", id, view);
+    boardDataSource
+      .deleteByID({
+        objectType: BOARDS.ZONE,
+        id
+      })
+    // Deletes the child zone from the view parent
+    deleteBoardEntity<IView>(BOARDS.VIEW, id, view);
   };
 
   const onZoneReorder = async (id: string, orderChange: number) => {
-    // const newOrder = reorderBoardEntityItem(
-    //   id,
-    //   view.order,
-    //   orderChange,
-    // );
-    // TODO: update state
+    // TODO: reorder
   };
 
   const Bar = (
@@ -94,7 +101,15 @@ export function View(props: PView) {
   return (
     <div className="tol-view">
       {editMode && Bar}
-      {(view.order.length) > 0 ? (
+      {viewEmpty ? (
+        <div className="tol-zone-empty">
+          {editMode ? (
+            <p>Click the + button to add a Zone</p>
+          ) : (
+            <p>No zones found</p>
+          )}
+        </div>
+      ) : (
         <div className="tol-zones">
           {view.order?.map((zoneId) => {
             const zone = view.zones?.[zoneId];
@@ -113,14 +128,6 @@ export function View(props: PView) {
               );
             }
           })}
-        </div>
-      ) : (
-        <div className="tol-zone-empty">
-          {editMode ? (
-            <p>Click the + button to add a Zone</p>
-          ) : (
-            <p>No zones found</p>
-          )}
         </div>
       )}
       <ZoneModal

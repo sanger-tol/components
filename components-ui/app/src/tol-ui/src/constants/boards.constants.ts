@@ -25,3 +25,10 @@ export const BOARD_CHILDREN_KEYS = {
   ZONES: "zones",
   COMPONENTS: "components",
 } as const;
+
+export const MY_BOARDS_TITLE = "My Boards";
+export const MY_BOARDS_SUB_TITLE = (
+  `Here you can view and delete your boards, 
+  along with viewing board hierarchy and components 
+  of each zone.`
+);

@@ -6,12 +6,62 @@ SPDX-License-Identifier: MIT
 
 
 import {
+  BOARD_CHILDREN_KEYS,
   BOARDS,
+  defineBoardEntity,
   IComponent,
+  IComponents,
+  IFilter,
   IZone,
   TsDataSource,
+  upsertCoreBoardEntity,
 } from "../..";
 
+
+export async function updateConfigAndUpsert(
+  componentId: string,
+  config: object,
+  zone: IZone,
+  boardDataSource: TsDataSource,
+) {
+  if (zone.components) zone.components[componentId].config = config;
+  return await upsertCoreBoardEntity(
+    BOARDS.COMPONENT,
+    { config: config },
+    boardDataSource,
+    undefined,
+    componentId
+  );
+}
+
+/**
+ * Simplified of defineZone for when you just want to pass a list of components without needing to worry about the structure of the zone object.
+ * 
+ * @param objectType - The type of the zone object.
+ * @param components - An array of component data to be added to the zone.
+ * @param filter - An optional filter to be applied to the zone.
+ * 
+ * @returns The defined zone with the added components.
+ */
+export function defineZoneWithComponentList(
+  objectType: string,
+  components: IComponent[],
+  filter?: IFilter,
+) {
+  return defineBoardEntity<IZone>(
+    {
+      objectType: objectType,
+      filter: filter,
+      components: components.reduce((acc, component) => {
+        acc[component.id!] = component;
+        return acc;
+      }, {} as IComponents),
+      order: components.map(component => component.id!),
+    },
+    BOARDS.ZONE,
+    BOARD_CHILDREN_KEYS.COMPONENTS
+  );
+}
 
 export async function updateLayout(
   layout,

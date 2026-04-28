@@ -10,16 +10,12 @@ import {
   Modal,
   SingleSelect,
   RSForm,
-  upsertNewZone,
   FormTextField,
   PBoard,
-  IDBZoneView,
-  IUpdatedZoneIds,
-  IDBZone,
   getNextZoneOrder,
   BUTTONS,
   RequiredAsterisk,
-  fetchPublishedDataspaces,
+  getPublishedDataspaces,
   TLabelAndValueData,
   TsDataSource,
   normaliseCaps,
@@ -42,8 +38,6 @@ export function ZoneModal(props: PZoneModal) {
     setOpen,
     viewId,
     boardDataSource,
-    view,
-    setView,
   } = props;
 
   const [dataSourceInstancesLoading, setDataSourceInstancesLoading] = useState(true);
@@ -54,13 +48,9 @@ export function ZoneModal(props: PZoneModal) {
   const [objectTypesList, setObjectTypesList] = useState<TLabelAndValueData>([]);
   const [objectType, setObjectType] = useState("");
 
-  const [title, setTitle] = useState("");
-  const [titleError, setTitleError] = useState(false);
-  const [fieldError, setFieldError] = useState(false);
-
   useEffect(() => {
     if (open) {
-      fetchPublishedDataspaces(boardDataSource)
+      getPublishedDataspaces(boardDataSource)
         .then((dataObjects) => {
           if (dataObjects) {
             const dsiList = dataObjects.map((dsi) => {
@@ -136,25 +126,7 @@ export function ZoneModal(props: PZoneModal) {
 
   const reset = () => {
     setObjectType("");
-    setTitle("");
-    setTitleError(false);
-    setFieldError(false);
   };
-
-  const validateInputs = () => {
-    setTitleError(false);
-    setFieldError(false);
-
-    if (title === "") {
-      setTitleError(true);
-      return false;
-    }
-    if (objectType === "" || objectType === null) {
-      setFieldError(true);
-      return false;
-    }
-    return true;
-  }
 
   const onAddZone = async () => {
     if (validateInputs()) {
@@ -194,7 +166,7 @@ export function ZoneModal(props: PZoneModal) {
       <Button
         {...BUTTONS.ADD}
         onClick={onAddZone}
-        disabled={objectType === "" || title === ""}
+        disabled={objectType === ""}
         testid="add-zone-button"
       />
       <Button
@@ -241,29 +213,6 @@ export function ZoneModal(props: PZoneModal) {
         loading={objectTypesLoading}
         testid="object-type-picker"
       />
-      <br />
-      <p className="zone-modal-labels">
-        Enter Title <RequiredAsterisk />
-      </p>
-      <RSForm fluid>
-        <FormTextField
-          id="zone-title"
-          onChange={(value: any) => setTitle(value)}
-          name="Zone Title"
-          placeholder="Zone Title"
-          label=""
-        />
-      </RSForm>
-      <>
-        {titleError && (
-          <p className="tol-modal-error">Title cannot be blank</p>
-        )}
-        {fieldError && (
-          <p className="tol-modal-error">
-            Please ensure all mandatory fields are filled
-          </p>
-        )}
-      </>
     </Modal>
   );
 }

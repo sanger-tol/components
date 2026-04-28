@@ -12,7 +12,6 @@ import {
   FilterBlockConfigDrawer,
   updateConfigAndUpsert,
   RemoteFilters,
-  upsertComponent,
   mergeUtilityBarConfigs,
   NoAttributesPlaceholder
 } from "..";
@@ -51,7 +50,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
     let attributes = {
       filter: zone.components[id].filter
     };
-    upsertComponent(boardDataSource, id, attributes);
+    //upsertComponent(boardDataSource, id, attributes);
   }, [zone]);
 
   const Contents = () => {

@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import {
   generateId,
-  getUserFromLocalStorage,
   TsDataSource,
   BOARDS,
   IZone,
@@ -14,90 +13,22 @@ import {
   IView,
   TChildrenKey,
   IComponent,
-  TBoardEntityOrder,
   IDataObject,
   TDataObjectListOrNull,
-  IZones,
   deepCopy,
   PopUpMessage,
-  boardFetchParams
+  boardParams,
+  User,
 } from "..";
 
 
-export async function createBoardAndView(
-  boardDataSource: TsDataSource,
-  id: string,
-  title: string,
-  viewId: string,
-  viewTitle: string,
-) {
-  const user = getUserFromLocalStorage();
-  const boardId = id ?? generateId("b");
-  await boardDataSource
-    .upsert({
-      objectType: BOARDS.BOARD,
-      payload: [
-        {
-          type: BOARDS.BOARD,
-          id: boardId,
-          attributes: {
-            title: title,
-            user_id: user.id,
-          },
-        },
-      ],
-    })
-    .then(async () => {
-      return upsertNewView(boardDataSource, viewId, viewTitle);
-    })
-    .then(async () => {
-      await boardDataSource
-        .upsert({
-          objectType: BOARDS.VIEW_BOARD,
-          payload: [
-            {
-              type: BOARDS.VIEW_BOARD,
-              attributes: {
-                order: 1,
-                board_id: boardId,
-                view_id: viewId,
-              },
-            },
-          ],
-        })
-        .catch((err: any) => {
-          console.error(err);
-        });
-    });
-}
-
-export async function upsertNewView(
-  boardDataSource: TsDataSource,
-  id: string,
-  title: string = "View 1"
-) {
-  const user = getUserFromLocalStorage();
-  const viewId = id ?? generateId("v");
-  await boardDataSource
-    .upsert({
-      objectType: BOARDS.VIEW,
-      payload: [
-        {
-          type: BOARDS.VIEW,
-          id: viewId,
-          attributes: {
-            title: title,
-            filter: { and_: {} },
-            user_id: user.id,
-          },
-        },
-      ],
-    })
-    .catch((err: any) => {
-      console.error(err);
-    });
-}
-
+/**
+ * Updates the title of a board entity (board, view, zone or component) in the data source.
+ * @param title The new title to be set.
+ * @param id The identifier of the board entity.
+ * @param boardDataSource The data source used for the upsert operation.
+ * @param boardObjectType The type of the board entity (e.g. 'board', 'view', 'zone', 'component').
+ */
 export function saveTitle(
   title: string,
   id: string,
@@ -118,59 +49,6 @@ export function saveTitle(
   });
 }
 
-export async function upsertZone(
-  boardDataSource: TsDataSource,
-  zoneId: string,
-  attributes: object,
-) {
-  return await boardDataSource
-    .upsert({
-      objectType: BOARDS.ZONE,
-      payload: [
-        {
-          type: BOARDS.ZONE,
-          id: zoneId,
-          attributes: attributes
-        },
-      ],
-    });
-}
-
-export async function upsertComponent(
-  boardDataSource: TsDataSource,
-  componentId: string,
-  attributes: object,
-) {
-  return await boardDataSource
-    .upsert({
-      objectType: BOARDS.COMPONENT,
-      payload: [
-        {
-          type: BOARDS.COMPONENT,
-          id: componentId,
-          attributes: attributes
-        },
-      ],
-      params: {
-        merge_collections: false,
-      },
-    });
-}
-
-export async function updateConfigAndUpsert(
-  componentId: string,
-  config: object,
-  zone: IZone,
-  boardDataSource: TsDataSource,
-) {
-  if (zone.components) zone.components[componentId].data.config = config;
-  return await upsertComponent(
-    boardDataSource,
-    componentId,
-    { config: config }
-  );
-}
-
 /**
  * Removes a component, view, or zone from the board state and updates the order of the remaining elements accordingly.
  * 
@@ -181,50 +59,18 @@ export async function updateConfigAndUpsert(
 export function deleteBoardEntity<
   TEntity extends IBoard | IView | IZone
 >(
-  boardLevel: TChildrenKey,
+  objectType: string,
   id: string,
   boardEntity: TEntity,
 ) {
-  delete boardEntity[boardLevel][id];
+  delete boardEntity[boardParams[objectType].childrenKey][id];
   boardEntity.order = boardEntity?.order?.filter((currentId) => currentId !== id);
-}
-
-/**
- * Reorders a component, view, or zone within the board state by a specified change in order.
- * 
- * @param id The identifier of the component, view, or zone to be reordered.
- * @param order The current order array
- * @param orderChange The number of positions to move the element (positive for down, negative for up).
- * @returns void
- */
-export function reorderBoardEntityItem(
-  id: string,
-  order: TBoardEntityOrder,
-  orderChange: number,
-) {
-  // Create a copy of the current order to modify
-  const newOrder = [...order];
-
-  // Find the current index of the element to be moved
-  const currentIndex = newOrder.findIndex((currentId) => currentId === id);
-
-  // Calculate the new index based on the order change
-  const newIndex = currentIndex + orderChange;
-
-  // Bounds check
-  if (newIndex < 0 || newIndex >= newOrder.length) return order;
-
-  // Remove from current position, insert at new position
-  const [moved] = newOrder.splice(currentIndex, 1);
-  newOrder.splice(newIndex, 0, moved);
-
-  return newOrder;
 }
 
 /**
  * Retrieves the ordered IDs of related board entities from a joining table.
  * 
- * @param obj The list of data objects representing the joining table entries.
+ * @param dataObjects The list of data objects representing the joining table entries.
  * @param objectType The type of the related board entity (e.g., 'zone', 'view') to extract IDs for.
  * @returns An array of ordered IDs or undefined if the input is null.
  */
@@ -255,7 +101,7 @@ export async function getBoardEntity<
 >(
   boardDataSource: TsDataSource,
   parentId: string,
-  parentObjectType: string,
+  objectType: string,
   parentEntity: TParent,
   dataObjectToChildParams: (childDataObjects: IDataObject, joiningObject: IDataObject) => Partial<TChild>,
   dataObjectToParentParams?: (parentDataObject: IDataObject) => Partial<TParent>,
@@ -263,11 +109,11 @@ export async function getBoardEntity<
   const {
     parentIdField,
     parentRelationship,
-    childRelationship,
     joiningObjectType,
+    childRelationship,
     childrenKey,
     joiningObjectRequestedFields
-  } = boardFetchParams[parentObjectType];
+  } = boardParams[objectType];
 
   return await boardDataSource
     .getListPage({
@@ -340,16 +186,16 @@ export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
   // and an empty order array in the parent board entity
   if (objectType !== BOARDS.COMPONENT && childrenKey) {
     defaults = {
-      ...defaults,
       [childrenKey]: {},
       order: [],
+      ...defaults,
     }
   }
 
   // Return the defined board entity with defaults and necessary properties for it to be added to the parent entity
   return {
-    ...entity,
     ...defaults,
+    ...entity
   }
 }
 
@@ -375,4 +221,96 @@ export function defineBoardEntityInParent<
   parentEntity[childrenKey][entity.id] = definedEntity;
   parentEntity.order.push(entity.id!);
   return parentEntity;
+}
+
+/**
+ * Upserts a new board entity (board, view, zone, or component) into the data source with
+ * default values for required properties and handles errors with a pop-up message.
+ * 
+ * @param objectType The type of the board entity (e.g. 'board', 'view', 'zone', 'component').
+ * @param attributes The attributes of the board entity to be upserted.
+ * @param boardDataSource The data source to upsert the board entity into.
+ * @param id The ID of the board entity to be upserted (optional).
+ * @returns Data object list containing the newly created board entity or null if the operation fails.
+ */
+async function upsertNewBoardEntity(
+  objectType: string,
+  attributes: object,
+  boardDataSource: TsDataSource,
+  id?: string,
+) {
+  return await boardDataSource
+    .upsert({
+      objectType: objectType,
+      payload: [{
+        ...(id && { id }),
+        type: objectType,
+        attributes: attributes,
+      }],
+      params: {
+        merge_collections: false,
+      },
+    }).catch((e: any) => {
+      console.error(e);
+      PopUpMessage({
+        type: "error",
+        message: `Error creating ${objectType}. Please refresh and try again.`,
+      });
+      throw e;
+    });
+}
+
+/**
+ * Upserts a board entity (board, view, zone, or component) into the data source with
+ * default values for required properties and handles errors with a pop-up message.
+ * 
+ * @param objectType The type of the board entity (e.g. 'board', 'view', 'zone', 'component').
+ * @param attributes The attributes of the board entity to be upserted.
+ * @param boardDataSource The data source to upsert the board entity into.
+ * @param user The user performing the upsert operation.
+ * @param id The ID of the board entity to be upserted (optional).
+ * @returns Data object list containing the newly created board entity or null if the operation fails.
+ */
+export async function upsertCoreBoardEntity(
+  objectType: string,
+  attributes: object,
+  boardDataSource: TsDataSource,
+  user?: User,
+  id?: string,
+) {
+  // Generate a new ID for the board entity based on its type (e.g. 'b' for board, 'v' for view, 'z' for zone, 'c' for component)
+  const entityId = id || generateId(objectType[0]);
+
+  // Add the user_id to the attributes for the upsert operation
+  const upsertAttributes = {
+    ...attributes,
+    ...(user && { user_id: user.id }),
+  };
+
+  return await upsertNewBoardEntity(
+    objectType,
+    upsertAttributes,
+    boardDataSource,
+    entityId,
+  );
+}
+
+/**
+ * Joins two board entities together by upserting a joining table entry
+ * 
+ * @param objectType The type of the joining table entity (e.g. 'view_board' for joining views to boards).
+ * @param attributes The attributes of the joining table entry to be upserted (e.g. order, board_id, view_id for a view_board entry).
+ * @param boardDataSource The data source to upsert the joining table entry into.
+ * @returns Data object list containing the newly created joining table entry or null if the operation fails.
+ */
+export async function upsertJoiningBoardEntity(
+  objectType: string,
+  attributes: object,
+  boardDataSource: TsDataSource,
+) {
+  return await upsertNewBoardEntity(
+    objectType,
+    attributes,
+    boardDataSource,
+  );
 }

@@ -24,7 +24,6 @@ export function BoardChart(props: PVisualisation) {
 
   const { editMode } = useBoard();
 
-
   const [config, setConfig] = useState<IChartConfig>(props.config);
   const [openConfig, setOpenConfig] = useState(false);
   const [forceUpdate, setForceUpdate] = useState(false);

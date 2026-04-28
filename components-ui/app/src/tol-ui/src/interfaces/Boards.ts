@@ -176,9 +176,9 @@ export interface IUseZoneMeta {
 
 export type TChildrenKey = (typeof BOARD_CHILDREN_KEYS)[keyof typeof BOARD_CHILDREN_KEYS];
 
-export interface IUpdatedZoneIds {
-  newZoneId: string;
-  newZoneViewId: string;
+export interface IZoneIds {
+  zoneId: string;
+  zoneViewId: string;
 }
 
 export interface IDBDataSourceInstanceApiDetails {
@@ -188,7 +188,7 @@ export interface IDBDataSourceInstanceApiDetails {
   dataspace: string;
 }
 
-export interface IBoardFetchParam {
+export interface IBoardParam {
   /**
    * The field name in the joining table that references the parent entity (e.g. 'view_id').
    */
@@ -205,6 +205,10 @@ export interface IBoardFetchParam {
    * The type of the joining table entries (e.g. 'zone_view').
    */
   joiningObjectType: string;
+  /**
+   * The field name in the joining table that references the child entity (e.g. 'zone_id').
+   */
+  childIdField: string;
   /**
   * The object type of the child entity (e.g. 'zone').
   */
@@ -223,4 +227,4 @@ export interface IBoardFetchParam {
   joiningObjectRequestedFields: string[];
 }
 
-export type TBoardFetchParams = Record<string, IBoardFetchParam>;
+export type TBoardParams = Record<string, IBoardParam>;

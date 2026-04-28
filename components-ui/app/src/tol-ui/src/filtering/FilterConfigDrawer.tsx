@@ -9,8 +9,8 @@ import { useEffect, useState } from "react";
 import {
   IconTooltip,
   IBoardTargetAndZone,
-  upsertComponent,
-  upsertZone,
+  // upsertComponent,
+  // upsertZone,
   RemoteFilters,
   Drawer,
   generateFilter,

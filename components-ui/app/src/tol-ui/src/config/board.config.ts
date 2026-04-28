@@ -4,27 +4,30 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TBoardFetchParams } from "..";
+import { TBoardParams } from "..";
 import { BOARDS } from "../constants/api.constants";
 import { BOARD_CHILDREN_KEYS } from "../constants/boards.constants";
 
 
-export const boardFetchParams: TBoardFetchParams = {
+export const boardParams: TBoardParams = {
   [BOARDS.BOARD]: {
     parentIdField: "board_id",
     parentObjectType: BOARDS.BOARD,
     parentRelationship: BOARDS.BOARD,
     joiningObjectType: BOARDS.VIEW_BOARD,
+    childIdField: "view_id",
     childObjectType: BOARDS.VIEW,
     childRelationship: BOARDS.VIEW,
     childrenKey: BOARD_CHILDREN_KEYS.VIEWS,
     joiningObjectRequestedFields: ["board", "view", "board.user.id"],
+
   },
   [BOARDS.VIEW]: {
     parentIdField: "view_id",
     parentObjectType: BOARDS.VIEW,
     parentRelationship: BOARDS.VIEW,
     joiningObjectType: BOARDS.ZONE_VIEW,
+    childIdField: "zone_id",
     childObjectType: BOARDS.ZONE,
     childRelationship: BOARDS.ZONE,
     childrenKey: BOARD_CHILDREN_KEYS.ZONES,
@@ -35,6 +38,7 @@ export const boardFetchParams: TBoardFetchParams = {
     parentObjectType: BOARDS.ZONE,
     parentRelationship: BOARDS.ZONE,
     joiningObjectType: BOARDS.COMPONENT_ZONE,
+    childIdField: "component_id",
     childObjectType: BOARDS.COMPONENT,
     childRelationship: BOARDS.COMPONENT,
     childrenKey: BOARD_CHILDREN_KEYS.COMPONENTS,

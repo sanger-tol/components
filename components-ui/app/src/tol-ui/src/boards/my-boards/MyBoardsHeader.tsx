@@ -4,77 +4,58 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
-  NewBoardModal,
   createBoardAndView,
   BOARDS,
   Button,
   PBoard,
+  MY_BOARDS_TITLE,
+  MY_BOARDS_SUB_TITLE,
+  useAuth,
 } from "../..";
+import { useState } from "react";
 
 
 export function MyBoardsHeader(props: PBoard) {
   const { boardDataSource } = props;
-  const [newBoardModalOpen, setNewBoardModalOpen] = useState(false);
-  const [modalError, setModalError] = useState("");
+
+  const { user } = useAuth();
   const history = useHistory();
+  const [loading, setLoading] = useState(false);
 
-  const TITLE = "My Boards";
-  const SUB_TITLE = (
-    `Here you can view and delete your boards, 
-    along with viewing board hierarchy and components 
-    of each zone.`
-  );
-
-  const handleNewBoardCreate = async (
-    boardId: string,
-    viewId: string,
-    boardTitle: string,
-    viewTitle: string,
-  ) => {
-    await createBoardAndView(
+  const create = () => {
+    setLoading(true);
+    createBoardAndView(
       boardDataSource,
-      boardId,
-      boardTitle,
-      viewId,
-      viewTitle
-    ).catch((error) => {
-      console.error("Error creating board and view:", error);
-      setModalError("Failed to create board, please try again.");
-    }).finally(() => {
-      if (modalError === "") {
+      user!
+    ).then((boardId) => {
+      if (boardId) {
         setTimeout(() => {
           history.push(`/${BOARDS.BOARD}/${boardId}`);
-        }, 800);
+        }, 500);
       }
+    }).catch(() => {
+      setLoading(false);
     });
   };
 
-  const NewBoardModalContent = () => (
-    <NewBoardModal
-      setOpen={setNewBoardModalOpen}
-      open={newBoardModalOpen}
-      onConfirmClick={handleNewBoardCreate}
-    />
-  );
-
   return (
     <div className="my-boards-header">
-      <div className="my-boards-buttons" style={newBoardModalOpen ? { display: "none" } : {}}>
+      <div className="my-boards-buttons">
         <Button
           id="create-new-board-button"
           testid="create-new-board-button"
           icon="plus"
           text="New Board"
           type="success"
-          onClick={() => setNewBoardModalOpen(true)}
+          onClick={create}
+          loading={loading}
+          disabled={loading}
         />
       </div>
-      <h1>{TITLE}</h1>
-      <p>{SUB_TITLE}</p>
-      {newBoardModalOpen && NewBoardModalContent()}
+      <h1>{MY_BOARDS_TITLE}</h1>
+      <p>{MY_BOARDS_SUB_TITLE}</p>
     </div>
   );
 }

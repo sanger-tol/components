@@ -141,11 +141,11 @@ export function Zone(props: PZone) {
     visible: editMode && !layoutMode,
   };
 
-  // const translatorsButton: PButton = {
-  //   ...BUTTONS.TRANSLATORS,
-  //   visible: editMode && !layoutMode,
-  //   onClick: () => { },
-  // };
+  const translatorsButton: PButton = {
+    ...BUTTONS.TRANSLATORS,
+    visible: editMode && !layoutMode,
+    onClick: () => { },
+  };
 
   const bar = (
     <div className="tol-zone-bar">
@@ -170,7 +170,7 @@ export function Zone(props: PZone) {
           filtersButton,
           downButton,
           upButton,
-          // translatorsButton
+          translatorsButton
         ]}
       />
       <div id="component-modal">
@@ -217,7 +217,7 @@ export function Zone(props: PZone) {
         </div>
       )}
       {ConfirmModal}
-      {/* <FilterConfigDrawer
+      <FilterConfigDrawer
         id={id}
         boardObjectType={BOARDS.ZONE}
         boardDataSource={boardDataSource}
@@ -227,7 +227,7 @@ export function Zone(props: PZone) {
         setOpen={setOpenFilters}
         zone={zone}
         setZone={setZone}
-      /> */}
+      />
     </div>
   );
 }

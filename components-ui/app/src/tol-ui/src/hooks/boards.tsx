@@ -9,25 +9,24 @@ import {
   IRemoteTargetAndZone,
   IZone,
   TsDataSource,
-  IComponentData,
   IFilter,
   useEffectUpdate,
   generateFilter,
   resetAllFilters,
-  deepCopy,
   useStateFallback,
   IUseZoneMeta,
   IComponent,
   IView,
   IBoard,
   TChildrenKey,
+  defineZoneWithComponentList,
 } from "..";
 
 
 export function useZone(params: {
   objectType: string;
   dataSource: TsDataSource;
-  components: IComponentData[];
+  components: IComponent[];
   filter?: IFilter;
 }) {
   const { objectType, dataSource, components, filter } = params;
@@ -91,31 +90,6 @@ export function useTranslator(params: {
       prevFilter.current = translatedFilter;
     }
   }, [source.zone]);
-}
-
-/**
- * Simplified of defineZone for when you just want to pass a list of components without needing to worry about the structure of the zone object.
- * 
- * @param objectType - The type of the zone object.
- * @param components - An array of component data to be added to the zone.
- * @param filter - An optional filter to be applied to the zone.
- * 
- * @returns The defined zone with the added components.
- */
-export function defineZoneWithComponentList(
-  objectType: string,
-  components: IComponentData[],
-  filter?: IFilter,
-) {
-  // return defineZone({
-  //   objectType,
-  //   filter,
-  //   components: components.reduce((acc, component) => {
-  //     acc[component.id!] = { data: component };
-  //     return acc;
-  //   }, {} as { [id: string]: { data: IComponentData } }),
-  //   order: components.map(component => component.id!),
-  // });
 }
 
 /**

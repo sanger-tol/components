@@ -18,7 +18,7 @@ import {
   LoadingContent,
   InitialBoardsTourModal,
   fetchTourStepSeen,
-  PBoard
+  PBoard,
 } from "../..";
 
 
