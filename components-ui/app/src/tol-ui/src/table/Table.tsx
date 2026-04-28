@@ -32,10 +32,8 @@ import {
   DataColumn,
   mergeUtilityBarConfigs,
   NoAttributesPlaceholder,
-  Modal,
-  Button,
-  BUTTONS,
   IConfigDifferences,
+  TableResetConfirmationModal,
 } from "..";
 
 export interface PTable extends IRemoteTargetAndZone {
@@ -410,66 +408,13 @@ export function Table(props: PTable) {
 
   return (
     <div style={{ height: height }} className="tol-table" id={wrapperId}>
-      <Modal
-        hasPendingChanges
+      <TableResetConfirmationModal
         open={resetConfirmationOpen}
         setOpen={setResetConfirmationOpen}
-        size="sm"
-        closeButton={false}
-      >
-        {resetConfigDifferences ? (
-          <div className="tol-table-reset-config">
-            <h5>Reset Table Configuration</h5>
-            <p>
-              Are you sure you want to reset this table to the published
-              configuration?
-            </p>
-            {resetConfigDifferences?.remove?.length > 0 && (
-              <div>
-                <h6>
-                  This action will <strong>remove</strong> the following
-                  columns:
-                </h6>
-                {resetConfigDifferences?.remove.map(
-                  (col: React.ReactNode, idx: number) => (
-                    <span key={idx}>{col}</span>
-                  ),
-                )}
-              </div>
-            )}
-            {resetConfigDifferences?.add?.length > 0 && (
-              <div className="tol-table-reset-config-additions">
-                <h6 className="tol-table-reset-config-headings">
-                  This action will <strong>add</strong> the following columns:
-                </h6>
-                {resetConfigDifferences?.add.map(
-                  (col: React.ReactNode, idx: number) => (
-                    <span key={idx}>{col}</span>
-                  ),
-                )}
-              </div>
-            )}
-            <p className="tol-danger-colour">
-              Warning: Your current table configuration will be lost.
-            </p>
-            <Button
-              {...BUTTONS.CONFIRM}
-              onClick={() => {
-                setResetConfirmationOpen(false);
-                setOpen(false);
-                onReset?.();
-              }}
-              testid="confirm-reset-button"
-            />
-            <Button
-              {...BUTTONS.CANCEL}
-              onClick={() => setResetConfirmationOpen(false)}
-            />
-          </div>
-        ) : (
-          <p>No differences found. Please close this pop-up.</p>
-        )}
-      </Modal>
+        setConfigOpen={setOpen}
+        onReset={onReset}
+        resetConfigDifferences={resetConfigDifferences}
+      />
       <DownloadModal
         {...props}
         disabledTabs={["Image"]}

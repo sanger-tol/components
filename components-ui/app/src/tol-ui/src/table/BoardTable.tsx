@@ -19,6 +19,7 @@ import {
   useQueryData,
   getInitialDiffState,
   fetchActions,
+  ANONYMOUS_USER_QUERY_KEY,
 } from "..";
 import type {
   ITableConfigSave,
@@ -72,7 +73,7 @@ export function BoardTable(props: PBoardTable) {
       // it will change as state updates, triggering a new function call
       BOARDS.BOARD_DIFF,
       id,
-      user?.id ?? "anon",
+      user?.id ?? ANONYMOUS_USER_QUERY_KEY,
       String(editMode),
       String(isLoggedIn),
       String(reset),
@@ -81,7 +82,7 @@ export function BoardTable(props: PBoardTable) {
       getInitialDiffState(
         boardDataSource,
         id,
-        user?.id ?? "",
+        user?.id ?? ANONYMOUS_USER_QUERY_KEY,
         isLoggedIn,
         props.objectType,
         editMode,

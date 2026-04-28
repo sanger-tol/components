@@ -11,6 +11,8 @@ import {
   defineZone,
   getWidgetOrder,
   IComponentData,
+  IZone,
+  TsDataSource,
   updateConfigAndUpsert,
 } from "../../tol-ui/src";
 
@@ -144,16 +146,19 @@ describe("getWidgetOrder function", () => {
 describe("updateConfigAndUpsert function", () => {
   test("marks a component as having a diff after the config save completes", async () => {
     let resolveUpsert: (value: unknown) => void = () => {};
-    const upsertPromise = new Promise((resolve) => {
+    const upsertPromise: Promise<unknown> = new Promise((resolve) => {
       resolveUpsert = resolve;
     });
-    const boardDataSource = {
+    const boardDataSource: Pick<
+      TsDataSource,
+      "getList" | "getListPage" | "upsert"
+    > = {
       getList: vi.fn().mockResolvedValue([]),
       getListPage: vi.fn().mockResolvedValue({ data: [] }),
       upsert: vi.fn().mockReturnValue(upsertPromise),
     };
     const setHasDiff = vi.fn();
-    const zone = {
+    const zone: IZone = {
       components: {
         component1: {
           data: {
@@ -161,13 +166,14 @@ describe("updateConfigAndUpsert function", () => {
           },
         },
       },
+      order: [],
     };
 
     const savePromise = updateConfigAndUpsert(
       "component1",
       { fieldMeta: { order: { active: ["a"] } } },
-      zone as any,
-      boardDataSource as any,
+      zone,
+      boardDataSource as TsDataSource,
       false,
       setHasDiff,
       "user1",
