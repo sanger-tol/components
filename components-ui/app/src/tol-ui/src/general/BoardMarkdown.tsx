@@ -82,20 +82,17 @@ export function BoardMarkdown(props: PBoardMarkdown) {
   )
 
   const MarkdownEditor = (
-    <>
-      <span className={size !== "sm" ? "tol-hide-extra-viewer-buttons" : ""} />
-      <MDEditor
-        value={content}
-        onChange={(content?: string) => setContent(content ?? "")}
-        preview={showPreview ? "live" : "edit"}
-        previewOptions={{
-          rehypePlugins: [[rehypeSanitize]],
-        }}
-        hideToolbar={size === "sm"}
-        className="tol-markdown-viewer"
-        height="100%"
-      />
-    </>
+    <MDEditor
+      value={content}
+      onChange={(content?: string) => setContent(content ?? "")}
+      preview={showPreview ? "live" : "edit"}
+      previewOptions={{
+        rehypePlugins: [[rehypeSanitize]],
+      }}
+      hideToolbar={size === "sm"}
+      className="tol-markdown-viewer"
+      height="100%"
+    />
   );
 
   const MarkdownViewer = (
@@ -104,8 +101,8 @@ export function BoardMarkdown(props: PBoardMarkdown) {
 
   return (
     <>
-      <UtilityBar id={id} {...ubc} />
-      <div className="tol-component-contents with-offset tol-markdown">
+      <UtilityBar noLeftSide id={id} {...ubc} />
+      <div className="tol-markdown tol-component-contents">
         {(showMarkdownViewer) ? MarkdownViewer : MarkdownEditor}
       </div>
     </>

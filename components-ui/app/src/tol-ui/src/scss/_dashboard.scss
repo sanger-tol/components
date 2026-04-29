@@ -125,7 +125,7 @@
   @extend .tol-board-bar;
 }
 
-.tol-board-bar>div {
+.tol-board-bar>div div.tol-utility-bar {
   margin-bottom: 0;
 }
 

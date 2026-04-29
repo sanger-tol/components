@@ -27,10 +27,11 @@ export interface PUtilityBar {
     undefined
   )[];
   elements?: JSX.Element[];
+  noLeftSide?: boolean;
 }
 
 export function UtilityBar(props: PUtilityBar) {
-  const { id, title, description, buttons, elements } = props;
+  const { id, title, description, buttons, elements, noLeftSide } = props;
 
   const wrapperId = "tol-utility-bar-wrapper-" + id; // gets width on mount
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
@@ -53,8 +54,7 @@ export function UtilityBar(props: PUtilityBar) {
             key={index}
             {...button}
             className={
-              `tol-utility-bar-button ${
-                button && "className" in button ? button.className : ""
+              `tol-utility-bar-button ${button && "className" in button ? button.className : ""
               }`
             }
           />
@@ -88,19 +88,21 @@ export function UtilityBar(props: PUtilityBar) {
   );
 
   return (
-    <div className="tol-utility-bar" data-testid={id} id={wrapperId}>
-      {title && <EditableTitle {...title} />}
-      {description && <IconTooltip className="tol-utility-bar-tooltip" contents={description} />}
-      {elements && elements.map(
-        (element, index) => <Fragment key={index}>{element}</Fragment>
-      )}
-      <div className="tol-utility-bar-buttons">
-        {smallBreakpoint && regularButtons &&
-          regularButtons.filter((button) => button?.["visible"] !== false).length > 2
-          ? CondensedButtons
-          : ButtonsComponent
-        }
-        {DropdownButtonsComponent}
+    <div className={noLeftSide ? "tol-utility-bar-no-left-side" : ""}>
+      <div className="tol-utility-bar" data-testid={id} id={wrapperId}>
+        {!noLeftSide && title && <EditableTitle {...title} />}
+        {!noLeftSide && description && <IconTooltip className="tol-utility-bar-tooltip" contents={description} />}
+        {elements && elements.map(
+          (element, index) => <Fragment key={index}>{element}</Fragment>
+        )}
+        <div className="tol-utility-bar-buttons">
+          {smallBreakpoint && regularButtons &&
+            regularButtons.filter((button) => button?.["visible"] !== false).length > 2
+            ? CondensedButtons
+            : ButtonsComponent
+          }
+          {DropdownButtonsComponent}
+        </div>
       </div>
     </div>
   );

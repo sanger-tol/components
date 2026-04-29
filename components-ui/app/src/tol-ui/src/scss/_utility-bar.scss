@@ -15,9 +15,15 @@
   display: flex;
   flex-direction: row;
   position: relative;
-  z-index: 3;
   height: var(--tol-utility-bar-height);
   align-items: center;
+  z-index: 10;
+}
+
+.tol-utility-bar-no-left-side {
+  position: fixed;
+  width: calc(100% - 16px);
+  z-index: 10;
 }
 
 .tol-utility-bar-buttons {
@@ -30,6 +36,7 @@
   &.with-offset {
     height: calc(100% - var(--tol-utility-bar-offset));
   }
+
   &.with-overflow {
     overflow: auto;
   }

@@ -79,7 +79,7 @@ $sizes: (
 
     .icon-button-#{$type}-#{$size}-outline {
       @extend .icon-button-#{$type}-#{$size};
-      background-color: transparent !important;
+      background-color: var(--tol-bg) !important;
       color: var($color) !important;
       border-color: var(--tol-grey) !important;
       box-sizing: border-box;
