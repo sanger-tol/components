@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 
 import {
-  BOARD_CHILDREN_KEYS,
   BOARDS,
   defineBoardEntity,
   IComponent,
@@ -66,8 +65,7 @@ export function defineZoneWithComponentList(
       }, {} as IComponents),
       order: components.map(component => component.id!),
     },
-    BOARDS.ZONE,
-    BOARD_CHILDREN_KEYS.COMPONENTS
+    BOARDS.ZONE
   );
 }
 

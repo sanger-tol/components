@@ -176,11 +176,6 @@ export interface IUseZoneMeta {
 
 export type TChildrenKey = (typeof BOARD_CHILDREN_KEYS)[keyof typeof BOARD_CHILDREN_KEYS];
 
-export interface IZoneIds {
-  zoneId: string;
-  zoneViewId: string;
-}
-
 export interface IDBDataSourceInstanceApiDetails {
   url: string;
   apiPath: string;

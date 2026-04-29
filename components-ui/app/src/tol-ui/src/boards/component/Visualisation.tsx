@@ -21,7 +21,7 @@ import {
   mergeUtilityBarConfigs,
   BoardFilterBlock,
   FilterConfigDrawer,
-  deleteBoardEntity,
+  deleteBoardEntityInParent,
   BUTTONS,
   ConfirmationModal,
   BoardMap,
@@ -62,7 +62,7 @@ export function Visualisation(props: PVisualisation) {
         objectType: BOARDS.COMPONENT,
         id: id,
       })
-    deleteBoardEntity<IZone>("components", id, zone);
+    deleteBoardEntityInParent<IZone>(id, BOARDS.ZONE, zone);
     setZone({ ...zone });
   };
 

@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import {
   FilterConfigDrawer,
-  ComponentPickerModal,
+  ComponentCreationModal,
   Visualisations,
   ConfirmationModal,
   saveTitle,
@@ -26,7 +26,7 @@ import {
   IComponent,
   getBoardEntity,
   BOARD_CHILDREN_KEYS,
-  dataObjectsToComponentParams
+  dataObjectsToComponentParams,
 } from "../..";
 
 
@@ -174,7 +174,7 @@ export function Zone(props: PZone) {
         ]}
       />
       <div id="component-modal">
-        <ComponentPickerModal
+        <ComponentCreationModal
           open={open}
           setOpen={setOpen}
           zoneId={id}

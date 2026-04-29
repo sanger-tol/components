@@ -15,23 +15,26 @@ import {
   IZone,
   componentOptions,
   sizeOptions,
-  upsertNewComponent,
   PBoard,
-  getNextComponentOrder,
   RequiredAsterisk,
   BUTTONS,
+  BOARDS,
+  generateId,
+  getEntityPrefix,
+  IComponent,
+  defineBoardEntityInParent,
 } from "../..";
 
 
-export interface PComponentPickerModal extends PBoard {
+export interface PComponentCreationModal extends PBoard {
   zoneId: string;
   open: boolean;
-  setOpen: any;
+  setOpen: (open: boolean) => void;
   zone: IZone;
-  setZone: any;
+  setZone: (zone: IZone) => void;
 }
 
-export function ComponentPickerModal(props: PComponentPickerModal) {
+export function ComponentCreationModal(props: PComponentCreationModal) {
   const {
     zoneId,
     open,
@@ -49,43 +52,31 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
     }
   }, [open]);
 
-  function reset() {
+  const reset = () => {
     setComponentType("");
     setWidgetType("");
   }
 
-  const canAddComponent = componentType !== "" && widgetType !== "";
-
   const onAddComponent = async () => {
-    if (canAddComponent) {
-      const nextOrder = getNextComponentOrder(zone);
-      const newComponent = await upsertNewComponent(
-        zone.dataspace!,
-        boardDataSource,
-        zone.objectType!,
-        "",
-        nextOrder,
-        componentType,
-        widgetType,
-        zoneId,
-      );
-      addComponent({
-        id: newComponent.newComponentId,
-        size: widgetType,
-        type: componentType,
-        order: nextOrder,
-        componentZoneId: newComponent.newComponentZoneId,
-        filter: { and_: {} },
-        title: "",
-        objectType: zone.objectType,
-        dataspace: zone.dataspace,
-        config: {},
-        filterPassThrough: false,
-      }, zone);
-      setZone({ ...zone });
-      reset();
-      setOpen(false);
-    }
+    const id = generateId(getEntityPrefix(BOARDS.ZONE));
+    setZone({
+      ...defineBoardEntityInParent<IComponent, IZone>(
+        {
+          id: id,
+          objectType: BOARDS.ZONE,
+          dataspace: zone.dataspace,
+          config: {},
+          size: widgetType,
+          type: componentType,
+          filterPassThrough: false,
+        },
+        BOARDS.COMPONENT,
+        zone,
+        BOARDS.ZONE
+      )
+    });
+    reset();
+    setOpen(false);
   };
 
   const PlusButton = (
@@ -93,7 +84,7 @@ export function ComponentPickerModal(props: PComponentPickerModal) {
       {...BUTTONS.CONFIRM}
       onClick={onAddComponent}
       testid="confirm-add-component-button"
-      disabled={!canAddComponent}
+      disabled={componentType === "" || widgetType === ""}
     />
   );
 

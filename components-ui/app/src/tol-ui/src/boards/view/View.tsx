@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import {
-  ZoneModal,
+  ZoneCreationModal,
   Zone,
   BOARDS,
   PBoard,
@@ -20,7 +20,7 @@ import {
   getBoardEntity,
   BOARD_CHILDREN_KEYS,
   dataObjectsToZoneParams,
-  deleteBoardEntity,
+  deleteBoardEntityInParent,
   PRIVILEGE,
 } from "../..";
 
@@ -67,8 +67,8 @@ export function View(props: PView) {
         objectType: BOARDS.ZONE,
         id
       })
-    // Deletes the child zone from the view parent
-    deleteBoardEntity<IView>(BOARDS.VIEW, id, view);
+    deleteBoardEntityInParent<IView>(id, BOARDS.VIEW, view);
+    setView({ ...view });
   };
 
   const onZoneReorder = async (id: string, orderChange: number) => {
@@ -128,7 +128,7 @@ export function View(props: PView) {
           })}
         </div>
       )}
-      <ZoneModal
+      <ZoneCreationModal
         open={open}
         setOpen={setOpen}
         viewId={id}

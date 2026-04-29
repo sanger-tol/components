@@ -53,18 +53,18 @@ export function saveTitle(
  * Removes a component, view, or zone from the board state and updates the order of the remaining elements accordingly.
  * 
  * @param id The identifier of the component, view, or zone to be removed.
- * @param boardEntity The current state of the board entity (IBoard, IView, or IZone) from which the element will be removed.
- * @param boardLevel The level of the board entity (e.g., 'zones' for a zone, 'views' for a view) to identify which collection to update.
+ * @param parentObjectType The type of the parent entity (e.g. 'board' for a view, 'view' for a zone, 'zone' for a component).
+ * @param parentBoardEntity The current state of the parent entity from which the child entity will be removed.
  */
-export function deleteBoardEntity<
-  TEntity extends IBoard | IView | IZone
+export function deleteBoardEntityInParent<
+  TParent extends IBoard | IView | IZone
 >(
-  objectType: string,
   id: string,
-  boardEntity: TEntity,
+  parentObjectType: string,
+  parentBoardEntity: TParent,
 ) {
-  delete boardEntity[boardParams[objectType].childrenKey][id];
-  boardEntity.order = boardEntity?.order?.filter((currentId) => currentId !== id);
+  delete parentBoardEntity[boardParams[parentObjectType].childrenKey][id];
+  parentBoardEntity.order = parentBoardEntity?.order?.filter((currentId) => currentId !== id);
 }
 
 /**
@@ -169,8 +169,9 @@ export async function getBoardEntity<
 export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
   entity: Partial<TEntity>,
   objectType: string,
-  childrenKey?: TChildrenKey,
 ) {
+  // Get the children key if the objectType can have children
+  const childrenKey = boardParams?.[objectType]?.childrenKey;
   // Add default values for filter and title if the entity is a zone or component
   let defaults = {};
   if (objectType === BOARDS.COMPONENT || objectType === BOARDS.ZONE) {
@@ -205,7 +206,7 @@ export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
  * @param entity The board entity to be defined (view, zone, or component).
  * @param objectType The type of the board entity (e.g. 'view', 'zone', 'component').
  * @param parentEntity The parent entity (board, view, or zone) to which the new entity will be added.
- * @param childrenKey The key in the parent entity where the child entities are stored (e.g. 'views' for a view, 'zones' for a zone).
+ * @param parentObjectType The type of the parent entity (e.g. 'board', 'view', 'zone').
  * @returns The updated parent entity with the new board entity added.
  */
 export function defineBoardEntityInParent<
@@ -215,10 +216,11 @@ export function defineBoardEntityInParent<
   entity: Partial<TEntity>,
   objectType: string,
   parentEntity: TParentEntity,
-  childrenKey: TChildrenKey,
+  parentObjectType: string,
 ) {
-  const definedEntity = defineBoardEntity(entity, objectType, childrenKey);
-  parentEntity[childrenKey][entity.id] = definedEntity;
+  const definedEntity = defineBoardEntity(entity, objectType);
+  const parentChildrenKey = boardParams?.[parentObjectType]?.childrenKey;
+  parentEntity[parentChildrenKey][entity.id] = definedEntity;
   parentEntity.order.push(entity.id!);
   return parentEntity;
 }

@@ -9,7 +9,6 @@ import {
   IDataObject,
   IView,
   defineBoardEntity,
-  BOARD_CHILDREN_KEYS,
   IBoard,
   upsertJoiningBoardEntity,
   User,
@@ -29,8 +28,7 @@ export function dataObjectToViewParams(viewDataObject: IDataObject): Partial<IVi
       id: viewDataObject.id,
       title: viewDataObject.title,
     },
-    BOARDS.VIEW,
-    BOARD_CHILDREN_KEYS.ZONES
+    BOARDS.VIEW
   );
 }
 
@@ -47,6 +45,7 @@ export function dataObjectToBoardParams(boardDataObject: IDataObject): Partial<I
   }
 }
 
+// TODO: REMOVE WITH NEW ENDPOINTS!
 /**
  * Creates a new board and its associated view.
  * @param boardDataSource The data source to use for creating the board and view.

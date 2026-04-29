@@ -19,7 +19,6 @@ import {
   PopUpMessage,
   IView,
   IZone,
-  BOARD_CHILDREN_KEYS,
   defineBoardEntityInParent,
   BOARDS,
   generateId,
@@ -27,18 +26,20 @@ import {
 } from "../..";
 
 
-export interface PZoneModal extends PBoard {
+export interface PZoneCreationModal extends PBoard {
   open: boolean;
   setOpen: any;
+  viewId: string;
   view: IView;
   setView: (view: IView) => void;
 }
 
-export function ZoneModal(props: PZoneModal) {
+export function ZoneCreationModal(props: PZoneCreationModal) {
   const {
     open,
     setOpen,
     view,
+    setView,
     boardDataSource,
   } = props;
 
@@ -132,18 +133,19 @@ export function ZoneModal(props: PZoneModal) {
 
   const onAddZone = async () => {
     const id = generateId(getEntityPrefix(BOARDS.ZONE));
-    defineBoardEntityInParent<IZone, IView>(
-      {
-        id: id,
-        objectType: BOARDS.ZONE,
-        dataspace: dataspace,
-        //zoneViewId: ,
-        //zoneViewOrder: ,
-      },
-      BOARDS.ZONE,
-      view,
-      BOARD_CHILDREN_KEYS.ZONES
-    )
+    setView({
+      ...defineBoardEntityInParent<IZone, IView>(
+        {
+          id: id,
+          objectType: BOARDS.ZONE,
+          dataspace: dataspace,
+        },
+        BOARDS.ZONE,
+        view,
+        BOARDS.VIEW
+      )
+    });
+    // TODO: ADD TO DB
     reset();
     setOpen(false);
   };
@@ -171,7 +173,7 @@ export function ZoneModal(props: PZoneModal) {
       actionButton={ActionButtons}
       closeButton={false}
       overflow={false}
-      data-testid="zoneModal"
+      data-testid="ZoneCreationModal"
     >
       <h4>Add New Zone</h4>
       <p className="zone-modal-labels">
