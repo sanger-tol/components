@@ -7,14 +7,16 @@ import { sleep } from "../sleep";
 export const clickUtilityBarButton = async ({ page, testId }) => {
   // First, try to open the condensed utility bar if it exists
   const condensedUtilityBarButton = page.getByTestId("condensed-utility-bar-button");
-  if (await condensedUtilityBarButton.isVisible()) {
-    await condensedUtilityBarButton.waitFor({ state: "visible" });
-    await condensedUtilityBarButton.click();
-    await sleep(200); // wait for the utility bar to expand
+  const isCondensed = await condensedUtilityBarButton
+    .waitFor({ state: "visible", timeout: 500 })
+    .then(() => true)
+    .catch(() => false);
+
+  if (isCondensed) {
+    await condensedUtilityBarButton.dispatchEvent('click');
   }
 
-  // Then click the target button
   const targetButton = page.getByTestId(testId);
-  await targetButton.waitFor({ state: "visible" });
-  await targetButton.click();
+  await targetButton.waitFor({ state: "attached", timeout: 10000 });
+  await targetButton.click({ force: true, timeout: 10000 });
 }

@@ -7,6 +7,7 @@ export const enterEditMode = async (
 ) => {
   // click the add component button
   await page.getByTestId("board-enter-edit-mode-button").click();
+  await page.getByTestId("board-exit-edit-mode-button").waitFor({ state: "visible" });
 };
 
 export const exitEditMode = async (
@@ -14,4 +15,5 @@ export const exitEditMode = async (
 ) => {
   // click the exit edit mode button
   await page.getByTestId("board-exit-edit-mode-button").click();
+  await page.getByTestId("board-enter-edit-mode-button").waitFor({ state: "visible" });
 };

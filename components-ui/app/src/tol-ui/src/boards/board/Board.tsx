@@ -52,7 +52,7 @@ export interface PBoard {
 export function Board(props: PBoard) {
   const { boardDataSource, actionsDataSource, brand } = props;
 
-  const { privilege, setPrivilege, editMode, setEditMode, layoutMode, setLayoutMode } = useBoard();
+  const { privilege, setPrivilege, editMode, setEditMode, tableLoading, layoutMode, setLayoutMode } = useBoard();
 
   const { boardId: paramBoardId, viewId } = useParams<any>();
   const [user, setUser] = useState<any>(null);
@@ -149,11 +149,12 @@ export function Board(props: PBoard) {
   const editOrExitButton: PButton = {
     ...editOrExitLogic,
     visible: privilege === PRIVILEGE.BOARD.EDITABLE && !layoutMode,
+    disabled: editMode && tableLoading,
     onClick: () => {
       setEditMode(!editMode);
     },
     testid: `board-${editMode ? "exit" : "enter"}-edit-mode-button`,
-    tooltip: "",
+    tooltip: editMode && tableLoading ? "Please wait for the table to load before exiting edit mode." : "",
   }
 
   const shareButton: PButton = {

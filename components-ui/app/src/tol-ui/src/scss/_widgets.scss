@@ -55,6 +55,22 @@
     font-weight: bolder;
     color: var(--tol-emphasis);
   }
+
+  &.message-top > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &.message-top .tol-placeholder-message {
+    position: static;
+    transform: none;
+  }
+
+  &.message-top .loader {
+    top: 0;
+  }
 }
 
 .tol-placeholder-message {
