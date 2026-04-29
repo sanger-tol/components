@@ -1,4 +1,4 @@
-"""Add tour_steps_seen to user store
+"""Add tours_seen to user store
 
 Revision ID: b12581aabc35
 Revises: b39604352175
