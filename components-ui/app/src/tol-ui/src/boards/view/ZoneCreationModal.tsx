@@ -49,7 +49,7 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
   const [dataspace, setDataspace] = useState<TsDataSource>();
   const [objectTypesLoading, setObjectTypesLoading] = useState(false);
   const [objectTypesList, setObjectTypesList] = useState<TLabelAndValueData>([]);
-  const [objectType, setObjectType] = useState("");
+  const [objectType, setObjectType] = useState(null);
 
   useEffect(() => {
     if (open) {
@@ -123,12 +123,12 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
         });
     } else {
       setObjectTypesList([]);
-      setObjectType("");
+      setObjectType(null);
     }
   }, [dataspace]);
 
   const reset = () => {
-    setObjectType("");
+    setObjectType(null);
   };
 
   const onAddZone = async () => {
@@ -155,7 +155,7 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
       <Button
         {...BUTTONS.ADD}
         onClick={onAddZone}
-        disabled={objectType === ""}
+        disabled={!objectType}
         testid="add-zone-button"
       />
       <Button
