@@ -79,4 +79,11 @@ export const BUTTONS: Record<string, PButton> = {
     tooltip: "Share",
     position: "right",
   },
+  COPY: {
+    outline: true,
+    type: "primary",
+    icon: "copy",
+    tooltip: "Copy",
+    position: "right",
+  }
 };
