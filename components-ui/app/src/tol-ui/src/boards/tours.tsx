@@ -83,7 +83,7 @@ export async function hasTourBeenSeen(
   if (!user) return false;
 
   // if tours_seen is null, no tour has been started, so it must be initiated.
-  if (!user.tours_seen && tourName === "initial") {
+  if (!user.tours_seen) {
     return false;
   }
 
