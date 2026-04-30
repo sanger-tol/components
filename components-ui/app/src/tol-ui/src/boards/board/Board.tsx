@@ -27,9 +27,10 @@ import {
   Button,
   API_METHODS,
   HTTP_STATUS_CODES,
-  UTILITY_OPERATIONS,
+  API_UTILITY_OPERATIONS,
   MESSAGE_TEXT,
   MESSAGE_TYPE,
+  URL_PATHS,
 } from "../..";
 import type { TsDataSource, TBoardPrivilege, TNavBrand, PButton, IUser } from "../..";
 
@@ -132,7 +133,7 @@ export function Board(props: PBoard) {
   const userCopyEntireBoard = async (newBoardTitle: string) => {
     const newBoardId = await boardDataSource.custom({
       method: API_METHODS.POST,
-      resource: `${UTILITY_OPERATIONS.BOARD_COPY}/${boardId}`,
+      resource: `${API_UTILITY_OPERATIONS.BOARD_COPY}/${boardId}`,
       body: {
         board_title: newBoardTitle,
       },
@@ -143,7 +144,7 @@ export function Board(props: PBoard) {
         type: MESSAGE_TYPE.SUCCESS,
         message: MESSAGE_TEXT.BOARD_COPY.SUCCESS,
       });
-      history.push(`/board/${newBoardId.data.board_id}`);
+      history.push(`${URL_PATHS.BOARD}/${newBoardId.data.board_id}`);
     } else {
       PopUpMessage({
         type: MESSAGE_TYPE.ERROR,
@@ -153,7 +154,7 @@ export function Board(props: PBoard) {
   };
 
   if (error !== "") {
-    return <Redirect to="/page-not-found" />;
+    return <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />;
   }
 
   if (loading) {

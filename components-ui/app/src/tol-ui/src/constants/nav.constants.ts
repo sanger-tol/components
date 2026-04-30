@@ -18,3 +18,8 @@ export const PAGE_ACCESS = {
    */
   ROLE_REQUIRED: "role_required",
 }
+
+export const URL_PATHS = {
+  PAGE_NOT_FOUND: "/page-not-found",
+  BOARD: "/board",
+}

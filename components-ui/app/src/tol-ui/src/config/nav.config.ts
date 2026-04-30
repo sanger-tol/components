@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TNavConfig } from "..";
+import { TNavConfig, URL_PATHS } from "..";
 
 /**
  * Builds the system-default navigation configuration.
@@ -41,7 +41,7 @@ export const getSystemDefaultNavConfig = (
       access: "public",
       path: {
         pageElementReference: "boardDetail",
-        route: "/board/:boardId",
+        route: `${URL_PATHS.BOARD}/:boardId`, // Using constant for route path
       },
     }
   }

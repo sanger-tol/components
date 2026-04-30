@@ -52,7 +52,7 @@ export const BOARDS = {
   DATA_SOURCE_INSTANCE: "data_source_instance",
 } as const;
 
-export const UTILITY_OPERATIONS = {
+export const API_UTILITY_OPERATIONS = {
   BOARD_COPY: "copy/board",
   VIEW_COPY: "copy/view",
 }
