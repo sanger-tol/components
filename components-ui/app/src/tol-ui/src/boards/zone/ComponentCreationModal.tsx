@@ -58,7 +58,7 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
   }
 
   const onAddComponent = async () => {
-    const id = generateId(getEntityPrefix(BOARDS.ZONE));
+    const id = generateId(getEntityPrefix(BOARDS.COMPONENT));
     setZone({
       ...defineBoardEntityInParent<IComponent, IZone>(
         {

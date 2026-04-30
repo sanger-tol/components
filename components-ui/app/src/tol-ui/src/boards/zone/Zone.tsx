@@ -198,19 +198,9 @@ export function Zone(props: PZone) {
           actionsDataSource={actionsDataSource}
         />
       ) : (
-        <div className="tol-zone-empty">
+        <div className="tol-boards-empty">
           {editMode ? (
-            <>
-              <p>
-                Click the
-                <FontAwesomeIcon
-                  icon={faPlus}
-                  size="lg"
-                  style={{ padding: "0 8" }}
-                />
-                to add a new Component to the Zone.
-              </p>
-            </>
+            <p>Please click the 'Add Component' button to start adding tables, charts and more.</p>
           ) : (
             <p>No components found</p>
           )}

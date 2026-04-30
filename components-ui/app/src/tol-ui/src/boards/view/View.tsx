@@ -100,9 +100,9 @@ export function View(props: PView) {
     <div className="tol-view">
       {editMode && Bar}
       {view.order.length === 0 ? (
-        <div className="tol-zone-empty">
+        <div className="tol-boards-empty">
           {editMode ? (
-            <p>Click the + button to add a Zone</p>
+            <p>Please click the 'Add Zone' button to get started.</p>
           ) : (
             <p>No zones found</p>
           )}
