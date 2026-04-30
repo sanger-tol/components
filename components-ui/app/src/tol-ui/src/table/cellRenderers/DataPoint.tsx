@@ -15,6 +15,7 @@ import {
   getUserFromLocalStorage,
   PDataPoints,
   PopUpMessage,
+  TDataObjectOrNull,
 } from "../..";
 
 
@@ -24,13 +25,9 @@ export interface PDataPoint extends PDataPoints {
    */
   isMany?: boolean,
   /**
-   * Id of the parent DataObject, used for upsert calls when saving edits to the data point.
+   * The parent DataObject, used for upsert calls when saving edits to the data point.
    */
-  parentObjectId?: string;
-  /**
-   * Object Type of the parent DataObject, used for upsert calls when saving edits to the data point.
-   */
-  parentObjectType?: string;
+  parentDataObject: TDataObjectOrNull;
 }
 
 /**
@@ -44,9 +41,8 @@ export function DataPoint(props: PDataPoint) {
     dataSource,
     editable,
     isMany,
-    actsAs,
-    parentObjectId,
-    parentObjectType
+    actsAs, 
+    parentDataObject,
   } = props;
 
   const attributeValue = getFieldByName(dataObject, field);
@@ -95,11 +91,11 @@ export function DataPoint(props: PDataPoint) {
     dataSource
       .custom({
         method: API_METHODS.POST,
-        resource: `${parentObjectType}${API_OPERATIONS.ACTION}`,
+        resource: `${parentDataObject?.objectType}${API_OPERATIONS.ACTION}`,
         body: {
-          ids: [parentObjectId],
+          ids: [parentDataObject?.id],
           action_name: "SetStatusAction",
-          object_type: parentObjectType,
+          object_type: parentDataObject?.objectType,
           params: { status: selectedStatusTypeId, user_id: user?.id },
         },
       })

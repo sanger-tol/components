@@ -30,7 +30,8 @@ import {
   getRoleIdsByNames,
   PopUpMessage,
   User,
-  ACTIONS
+  ACTIONS,
+  CELL_RENDERER_PARENT_OPERATOR
 } from "..";
 
 interface Rgb {
@@ -306,23 +307,33 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
   copyToClipboard(copyList);
 }
 
-async function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, fieldName: string, dataSource: TsDataSource, objectType: string) {
+function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, fieldName: string) {
   if (typeof value !== "string" || !value.includes("${")) return;
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
 
   for (const match of matches) {
+    // Determine if the placeholder references the parent data object
+    const parentOperator = match.includes(CELL_RENDERER_PARENT_OPERATOR);
+
+    // Extract the key from the placeholder, removing operators and whitespace
     const relativeAttribute = match
       .replace("${", "")
       .replace("}", "")
       .replace(CELL_RENDERER_SPREAD_OPERATOR, "")
       .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, "")
+      .replace(CELL_RENDERER_PARENT_OPERATOR, "")
       .trim();
 
-    // Ensure we request the field for the original objectType and not the related objectType
+    /*
+      If the original fieldName is a relationship (e.g. "specimens.id"), we need to determine the
+      relationship name ("specimen") to correctly resolve the field reference in the context of the data object.
+      If the placeholder references the parent data object (indicated by the parent ~ operator),
+      we do not prefix with the relationship name, as it should be resolved from the parent context.
+    */
     const relationship = getRelationshipNameByField(fieldName);
-    const isMany = await dataSource.isManyDataPointsByName(objectType, fieldName.split(".")[0]);
-    const field = (relationship && !!isMany) ? `${relationship}.${relativeAttribute}` : relativeAttribute;
+    const prefixAttribute = relationship && !parentOperator;
+    const field = prefixAttribute ? `${relationship}.${relativeAttribute}` : relativeAttribute;
     if (field) requestedFields.add(field);
   }
 }
@@ -337,7 +348,7 @@ function addFieldsFromFilterProp(requestedFields: Set<string>, value: unknown) {
 }
 
 
-export async function amalgamateRequestedFields(fieldMeta: FieldMeta, dataSource: TsDataSource, objectType: string): Promise<string[]> {
+export async function amalgamateRequestedFields(fieldMeta: FieldMeta): Promise<string[]> {
   const requestedFields = new Set<string>(fieldMeta?.order.active || []);
 
   const dataWithDefaults = fieldMeta?.dataWithDefaults || {};
@@ -352,7 +363,7 @@ export async function amalgamateRequestedFields(fieldMeta: FieldMeta, dataSource
     const props = cellRenderer?.props || {};
 
     for (const value of Object.values(props)) {
-      await addFieldsFromStringProp(requestedFields, value, fieldName, dataSource, objectType);
+      addFieldsFromStringProp(requestedFields, value, fieldName);
       addFieldsFromFilterProp(requestedFields, value);
     }
   }
