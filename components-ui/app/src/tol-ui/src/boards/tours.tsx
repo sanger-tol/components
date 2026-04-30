@@ -120,7 +120,7 @@ export async function registerTourAsSeen(
         type: "user",
         id: userId,
         attributes: {
-          tour_steps_seen: {
+          tours_seen: {
             ...(user.tours_seen || {}),
             [stepName]: true,
           },
