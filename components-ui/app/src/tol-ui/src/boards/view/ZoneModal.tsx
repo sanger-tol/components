@@ -57,9 +57,7 @@ export function ZoneModal(props: PZoneModal) {
   const [dataSourceInstance, setDataSourceInstance] = useState<string>("");
   const [dataspace, setDataspace] = useState<TsDataSource>();
   const [objectTypesLoading, setObjectTypesLoading] = useState(false);
-  const [objectTypesList, setObjectTypesList] = useState<TLabelAndValueData>(
-    []
-  );
+  const [objectTypesList, setObjectTypesList] = useState<TLabelAndValueData>([]);
   const [objectType, setObjectType] = useState("");
 
   const [title, setTitle] = useState("");
