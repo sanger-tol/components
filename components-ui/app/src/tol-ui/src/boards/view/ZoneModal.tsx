@@ -229,7 +229,6 @@ export function ZoneModal(props: PZoneModal) {
           Select Dataspace <RequiredAsterisk />
         </p>
         <SingleSelect
-          id="step1"
           block
           data={dataSourceInstanceList}
           placeholder="Dataspace"
@@ -245,7 +244,6 @@ export function ZoneModal(props: PZoneModal) {
           Select Object Type <RequiredAsterisk />
         </p>
         <SingleSelect
-          id="step2"
           block
           data={objectTypesList}
           placeholder="Object Type"
