@@ -29,10 +29,20 @@ export const tours: Record<string, ITourStep[]> = {
  * (used to know whether the user has already seen this tour)
  * @param tourConfig Each step forming the content of the tour. This includes which element to
  * highlight each time, and what description it's given.
+ * @param storedUserID The ID of the current user. If this is not provided, the user is fetched
+ * from local storage. However, if the caller of this function already has the user ID, it can be
+ * passed in here for efficiency.
  */
-export async function processTour(tourName: keyof typeof tours) {
+export async function processTour(tourName: keyof typeof tours, storedUserID?: string) {
   const tourConfig = tours[tourName];
-  const userID = getUserFromLocalStorage().id;
+
+  // Fetch user ID if not provided
+  let userID: string;
+  if (!storedUserID) {
+    userID = getUserFromLocalStorage().id;
+  } else {
+    userID = storedUserID;
+  }
 
   const seen = await hasTourBeenSeen(tourName, userID);
   if (seen) return;
@@ -44,7 +54,7 @@ export async function processTour(tourName: keyof typeof tours) {
       popover: { title: step.title, description: step.description },
     })),
     onDestroyStarted: () => {
-      // registerTourAsSeen(tourName, userID);
+      registerTourAsSeen(tourName, userID);
       console.log("YOU HAVE BEEN DESTROYED!");
       driverObj.destroy();
     },
