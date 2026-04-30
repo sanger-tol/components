@@ -8,6 +8,7 @@ import {
   CELL_RENDERER_PARENT_OPERATOR,
   CELL_RENDERER_PROP_ATTRIBUTE,
   CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY,
+  CELL_RENDERER_PROP_TAG_START,
   CELL_RENDERER_SPREAD_OPERATOR,
   getFieldByName,
   IFilter,
@@ -153,7 +154,7 @@ export function getCellRendererPropValue(
   dataObject: TDataObjectOrNull,
   parentDataObject: TDataObjectOrNull,
 ) {
-  if (typeof propValue === "string" && propValue.includes("${")) {
+  if (typeof propValue === "string" && propValue.includes(CELL_RENDERER_PROP_TAG_START)) {
     // replace placeholders '${}' with values from a dataObject
     elementProps[prop] = propValue.replace(
       CELL_RENDERER_PROP_ATTRIBUTE,

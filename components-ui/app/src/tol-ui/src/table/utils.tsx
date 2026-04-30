@@ -31,7 +31,9 @@ import {
   PopUpMessage,
   User,
   ACTIONS,
-  CELL_RENDERER_PARENT_OPERATOR
+  CELL_RENDERER_PARENT_OPERATOR,
+  CELL_RENDERER_PROP_TAG_START,
+  CELL_RENDERER_PROP_TAG_END
 } from "..";
 
 interface Rgb {
@@ -308,7 +310,7 @@ export function copyPageColumnValues(data: any, fieldHeader: string, separator?:
 }
 
 function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, fieldName: string) {
-  if (typeof value !== "string" || !value.includes("${")) return;
+  if (typeof value !== "string" || !value.includes(CELL_RENDERER_PROP_TAG_START)) return;
 
   const matches: string[] = value.match(CELL_RENDERER_PROP_ATTRIBUTE) || [];
 
@@ -318,8 +320,8 @@ function addFieldsFromStringProp(requestedFields: Set<string>, value: unknown, f
 
     // Extract the key from the placeholder, removing operators and whitespace
     const relativeAttribute = match
-      .replace("${", "")
-      .replace("}", "")
+      .replace(CELL_RENDERER_PROP_TAG_START, "")
+      .replace(CELL_RENDERER_PROP_TAG_END, "")
       .replace(CELL_RENDERER_SPREAD_OPERATOR, "")
       .replace(CELL_RENDERER_PROP_ATTRIBUTE_OBJECT_KEY, "")
       .replace(CELL_RENDERER_PARENT_OPERATOR, "")
