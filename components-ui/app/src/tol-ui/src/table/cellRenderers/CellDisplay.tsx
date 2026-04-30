@@ -49,6 +49,7 @@ export function CellDisplay(props: PCellDisplay) {
     field,
     value,
     dataObject,
+    parentDataObject,
     renderer,
     customCellRenderers,
     isMany = false,
@@ -88,6 +89,7 @@ export function CellDisplay(props: PCellDisplay) {
             propValue,
             elementProps,
             dataObject,
+            parentDataObject,
           );
         });
       }

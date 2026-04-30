@@ -24,6 +24,7 @@ import {
   IZone,
   generateFilter,
   AttributeTitle,
+  IconTooltip,
 } from "../..";
 import { CellRendererParam } from "./CellRendererParam";
 
@@ -146,6 +147,17 @@ export function CellRendererModal(props: PCellRendererModal) {
     setConditionHasPendingChanges(false);
   }
 
+  const TooltipHelp = (
+    <ul>
+      <li>
+        {"When using text inputs, if you want to reference an attribute on the current Data Object, use the syntax ${attribute}"}
+      </li>
+      <li>
+        {"Alternatively, if you would like to access attributes on the parent, prefix the attribute with a '~'. For example, ${~attribute}"}
+      </li>
+    </ul>
+  );
+
   const Header = (
     <>
       <h5>
@@ -156,9 +168,12 @@ export function CellRendererModal(props: PCellRendererModal) {
           attributeId={attributeId}
         />
       </h5>
-      <p>
-        Please be aware that the selected Cell Renderer works on a current Data Object.
-      </p>
+      <span>
+        Please be aware that the selected Cell Renderer works on a current Data Object. Find out more:
+      </span>
+      <span className="tol-data-point-renderer-info">
+        <IconTooltip contents={TooltipHelp} />
+      </span>
     </>
   );
 

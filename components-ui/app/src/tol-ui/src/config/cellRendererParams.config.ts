@@ -52,8 +52,9 @@ export const cellRendererParams: IBoardCellRenderers = {
       text: {
         type: "string",
         rename: "Text",
+        required: true,
         description: "The text to display for the link, if empty it will default to the current field value",
-        placeholder: "This is a link",
+        placeholder: "Click here",
       },
     }
   },
