@@ -15,20 +15,23 @@ import {
   LoadingContent,
   saveTitle,
   themeListener,
-  TsDataSource,
   View,
   getUserPrivilege,
   useBoard,
   copyToClipboard,
-  TBoardPrivilege,
   PRIVILEGE,
-  TNavBrand,
   BUTTONS,
   UtilityBar,
-  PButton,
   PopUpMessage,
   Modal,
+  Button,
+  API_METHODS,
+  HTTP_STATUS_CODES,
+  UTILITY_OPERATIONS,
+  MESSAGE_TEXT,
+  MESSAGE_TYPE,
 } from "../..";
+import type { TsDataSource, TBoardPrivilege, TNavBrand, PButton, IUser } from "../..";
 
 export interface PBoard {
   /**
@@ -63,12 +66,14 @@ export function Board(props: PBoard) {
     layoutMode,
     setLayoutMode,
   } = useBoard();
+  const history = useHistory();
 
   const { boardId: paramBoardId, viewId } = useParams<{
     boardId: string;
     viewId: string;
   }>();
-  const [user, setUser] = useState<any>(null);
+
+  const [user, setUser] = useState<IUser | null>(null);
   const [boardData, setBoardData] = useState<any>({});
   const [title, setTitle] = useState<string>("");
   const [view, setView] = useState<string>(viewId);
@@ -79,7 +84,6 @@ export function Board(props: PBoard) {
 
   // Ability to override boardId from props over URL params
   const boardId = props.boardId ?? paramBoardId;
-  const history = useHistory();
 
   themeListener(() => {
     try {
@@ -91,12 +95,12 @@ export function Board(props: PBoard) {
   });
 
   useEffect(() => {
-    const u = getUserFromLocalStorage();
-    if (u) setUser(u);
+    const user: IUser = getUserFromLocalStorage();
+    if (user) setUser(user);
 
     const awaitUserPrivilege = async () => {
       const userPrivilege: TBoardPrivilege = await getUserPrivilege(
-        u,
+        user,
         boardDataSource!,
         boardId,
       );
@@ -113,6 +117,7 @@ export function Board(props: PBoard) {
           if (!view) setView(data.views[0].id);
           setBoardData(data);
           setTitle(data.boardTitle);
+          setNewBoardTitle(`${data.boardTitle} - copy`);
         })
         .catch((e: any) => {
           setError(e);
@@ -124,22 +129,25 @@ export function Board(props: PBoard) {
     }
   }, [boardId, user]);
 
-  const userCopyEntireBoard = async () => {
+  const userCopyEntireBoard = async (newBoardTitle: string) => {
     const newBoardId = await boardDataSource.custom({
-      method: "POST",
-      resource: `copy/board/${boardId}`,
+      method: API_METHODS.POST,
+      resource: `${UTILITY_OPERATIONS.BOARD_COPY}/${boardId}`,
+      body: {
+        board_title: newBoardTitle,
+      },
     });
 
-    if (newBoardId.status === 201) {
+    if (newBoardId.status === HTTP_STATUS_CODES.CREATED) {
       PopUpMessage({
-        type: "success",
-        message: "Board copied successfully! Redirecting to new board...",
+        type: MESSAGE_TYPE.SUCCESS,
+        message: MESSAGE_TEXT.BOARD_COPY.SUCCESS,
       });
       history.push(`/board/${newBoardId.data.board_id}`);
     } else {
       PopUpMessage({
-        type: "error",
-        message: "Failed to copy board. Please try again.",
+        type: MESSAGE_TYPE.ERROR,
+        message: MESSAGE_TEXT.BOARD_COPY.ERROR,
       });
     }
   };
@@ -205,13 +213,10 @@ export function Board(props: PBoard) {
   const copyButton: PButton = {
     ...BUTTONS.COPY,
     onClick: () => {
-      // await userCopyEntireBoard();
       setBoardCopyModalOpen(true);
     },
     tooltip: "Copy Board",
   };
-
-  console.log(boardData);
 
   const BoardCopyModal = (
     <Modal
@@ -223,13 +228,38 @@ export function Board(props: PBoard) {
           <h2>Save a Copy of this Board</h2>
           <p>
             You are about to create your own copy of this board, would you like
-            to edit the title before copying?
+            to rename the board before copying?
           </p>
           <Input
-            defaultValue={`${boardData.boardTitle} - copy`}
+            value={newBoardTitle}
             placeholder="Enter new title"
+            onChange={(value: string) => setNewBoardTitle(value)}
           />
         </div>
+      }
+      actionButtonInline
+      onExited={() =>
+        newBoardTitle.trim() === ""
+          ? setNewBoardTitle(`${boardData.boardTitle} - copy`)
+          : null
+      }
+      actionButton={
+        <Button
+          {...BUTTONS.CONFIRM}
+          disabledTooltip={"Please enter a title before submitting."}
+          disabled={newBoardTitle.trim() === ""}
+          onClick={() => {
+            if (newBoardTitle.trim() === "") {
+              PopUpMessage({
+                type: MESSAGE_TYPE.ERROR,
+                message: MESSAGE_TEXT.BOARD_COPY.NO_TITLE_ERROR,
+              });
+              return;
+            }
+            userCopyEntireBoard(newBoardTitle);
+            setBoardCopyModalOpen(false);
+          }}
+        />
       }
     />
   );

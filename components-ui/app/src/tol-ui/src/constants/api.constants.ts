@@ -12,6 +12,16 @@ export const API_METHODS = {
   PUT: "PUT",
 } as const;
 
+export const HTTP_STATUS_CODES = {
+  OK: 200,
+  CREATED: 201,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  INTERNAL_SERVER_ERROR: 500,
+} as const;
+
 export const API_OPERATIONS = {
   UPSERT: ":upsert",
   CURSOR: ":cursor",
@@ -41,6 +51,11 @@ export const BOARDS = {
   COMPONENT_ZONE: "component_zone",
   DATA_SOURCE_INSTANCE: "data_source_instance",
 } as const;
+
+export const UTILITY_OPERATIONS = {
+  BOARD_COPY: "copy/board",
+  VIEW_COPY: "copy/view",
+}
 
 export const WEB_APP = "web_app";
 

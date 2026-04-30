@@ -29,7 +29,7 @@ import {
   CELL_RENDERER_SPREAD_OPERATOR,
   getRoleIdsByNames,
   PopUpMessage,
-  User,
+  IUser,
   ACTIONS
 } from "..";
 
@@ -428,7 +428,7 @@ export function updateFieldMetaAttribute(
 
 
 export async function fetchActions(
-  user: User | null,
+  user: IUser | null,
   actionDataSource: TsDataSource,
   objectType: string,
 ): Promise<string[]> {

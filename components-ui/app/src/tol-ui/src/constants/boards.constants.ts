@@ -12,4 +12,4 @@ export const PRIVILEGE = {
     VIEWABLE: "viewable" as TBoardPrivilege,
     EDITABLE: "editable" as TBoardPrivilege
   }
-}
+} as const;

@@ -10,7 +10,7 @@ import { Avatar } from "rsuite";
 import {
   collectNavigationItems,
   TNavConfig,
-  User,
+  IUser,
 } from "..";
 
 
@@ -22,7 +22,7 @@ export interface PProfileDropdown {
   /**
    * The authenticated user information.
    */
-  user: User;
+  user: IUser;
   /**
    * Callback function to handle user logout.
    */
