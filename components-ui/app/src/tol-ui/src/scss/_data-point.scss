@@ -17,10 +17,6 @@
   border-top: 1px solid var(--tol-grey);
   padding-top: 16px;
 
-  .tol-param-info {
-    margin-left: 6px;
-  }
-
   .tol-param-required {
     margin-left: 2px;
     color: var(--tol-danger);
@@ -29,6 +25,10 @@
   .tol-param {
     margin: 4px 0 12px 0;
   }
+}
+
+.tol-data-point-renderer-info {
+  margin-left: 6px;
 }
 
 .tol-data-point-renderer-modal-condition-params {
