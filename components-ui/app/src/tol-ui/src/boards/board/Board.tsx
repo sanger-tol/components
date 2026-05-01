@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import {
   BOARDS,
@@ -12,23 +12,16 @@ import {
   LoadingContent,
   saveTitle,
   themeListener,
-  TsDataSource,
   View,
   useBoard,
   copyToClipboard,
   PRIVILEGE,
-  TNavBrand,
   BUTTONS,
   UtilityBar,
-  PButton,
-  useAuth,
-  getBoardEntity,
-  IView,
-  IBoard,
-  dataObjectToViewParams,
-  dataObjectToBoardParams,
-  getUserPrivilege,
+  useQueryData,
+  getBoardEntityAndChildren,
 } from "../..";
+import type { IBoard, PButton, TNavBrand, TsDataSource } from "../..";
 
 export interface PBoard {
   /**
@@ -55,7 +48,6 @@ export interface PBoard {
 export function Board(props: PBoard) {
   const { boardId, boardDataSource, brand, actionsDataSource } = props;
 
-  const { user } = useAuth();
   const {
     privilege,
     setPrivilege,
@@ -64,12 +56,10 @@ export function Board(props: PBoard) {
     layoutMode,
     setLayoutMode,
     board,
-    setBoard
+    setBoard,
   } = useBoard();
 
   const { boardId: paramBoardId } = useParams<any>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
   // Ability to override boardId from props over URL params
   const id = boardId ?? paramBoardId;
@@ -83,138 +73,135 @@ export function Board(props: PBoard) {
     }
   });
 
-  useEffect(() => {
-    getBoardEntity<IBoard, IView>(
-      boardDataSource,
-      id,
-      BOARDS.BOARD,
-      board,
-      dataObjectToViewParams,
-      dataObjectToBoardParams,
-    ).then((b: IBoard) => {
-      setBoard(b);
-      setPrivilege(
-        getUserPrivilege(user, b.ownerUserId, id)
-      );
-    }).finally(() => {
-      setLoading(false);
-    }).catch((e) => {
-      console.error("Error fetching board data:", e);
-      setError("Failed to load board.");
-    });
-  }, [id]);
+  const {
+    data: boardData,
+    isSuccess,
+    isError,
+  } = useQueryData<IBoard>(
+    [BOARDS.BOARD, id],
+    () => getBoardEntityAndChildren(boardDataSource, id, "board"),
+    { enabled: !!id },
+  );
 
-  if (error !== "") {
+  useEffect(() => {
+    if (boardData && isSuccess) {
+      console.log("setting board!!")
+      setBoard(boardData as IBoard);
+      setPrivilege(
+        boardData.write_privilege
+          ? PRIVILEGE.BOARD.WRITABLE
+          : PRIVILEGE.BOARD.VIEWABLE,
+      );
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    console.log(board);
+  }, [board])
+
+  if (isError) {
     return <Redirect to="/page-not-found" />;
   }
 
-  if (loading) {
-    return (
-      <LoadingContent
-        overlayNav
-        brand={brand}
-        text="Finding Board..."
-      />
-    );
+  if (!isSuccess && !boardData && !board) {
+    return <LoadingContent overlayNav brand={brand} text="Finding Board..." />;
   }
 
   const onLayoutModeToggle = () => {
     setLayoutMode(!layoutMode);
   };
 
-  const layoutOrExitLogic: PButton = layoutMode ? {
-    ...BUTTONS.SAVE,
-    text: "Save Layouts",
-  } : {
-    ...BUTTONS.EDIT,
-    text: "Change Layout",
-  };
+  const layoutOrExitLogic: PButton = layoutMode
+    ? {
+        ...BUTTONS.SAVE,
+        text: "Save Layouts",
+      }
+    : {
+        ...BUTTONS.EDIT,
+        text: "Change Layout",
+      };
 
   const layoutOrExitButton: PButton = {
     ...layoutOrExitLogic,
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE && editMode,
+    visible: privilege === PRIVILEGE.BOARD.WRITABLE && editMode,
     onClick: onLayoutModeToggle,
     testid: "board-layout-mode-button",
     tooltip: "",
-  }
-
-  const editOrExitLogic: PButton = editMode ? {
-    ...BUTTONS.CONFIRM,
-    type: "primary",
-    text: "Exit Edit Mode",
-  } : {
-    ...BUTTONS.EDIT,
-    text: "Edit",
   };
+
+  const editOrExitLogic: PButton = editMode
+    ? {
+        ...BUTTONS.CONFIRM,
+        type: "primary",
+        text: "Exit Edit Mode",
+      }
+    : {
+        ...BUTTONS.EDIT,
+        text: "Edit",
+      };
 
   const editOrExitButton: PButton = {
     ...editOrExitLogic,
-    visible: privilege === PRIVILEGE.BOARD.EDITABLE && !layoutMode,
+    visible: privilege === PRIVILEGE.BOARD.WRITABLE && !layoutMode,
     onClick: () => {
       setEditMode(!editMode);
     },
     testid: `board-${editMode ? "exit" : "enter"}-edit-mode-button`,
     tooltip: "",
-  }
+  };
 
   const shareButton: PButton = {
     ...BUTTONS.SHARE,
     onClick: () => {
       copyToClipboard(location.href);
     },
-  }
+  };
 
   // Different format used for the main Board title
-  const editModeTitle = editMode ? {
-    text: board.title,
-    editable: editMode,
-    onSave: (value: string) => {
-      saveTitle(value, id, boardDataSource, BOARDS.BOARD);
-      setBoard({
-        ...board,
-        title: value,
-      });
-    }
-  } : undefined;
+  const editModeTitle = editMode
+    ? {
+        text: board?.title,
+        editable: editMode,
+        onSave: (value: string) => {
+          saveTitle(value, id, boardDataSource, BOARDS.BOARD);
+          setBoard({
+            ...board,
+            title: value,
+          } as IBoard);
+        },
+      }
+    : undefined;
 
   // Large header for view mode
-  const viewModeTitle = !editMode ? [(
-    <h3>
-      {board.title}
-    </h3>
-  )] : undefined;
+  const viewModeTitle = !editMode ? [<h3>{board?.title}</h3>] : undefined;
 
   const Bar = (
     <div className="tol-board-bar">
       <UtilityBar
         id="board-utility-bar"
-        buttons={[
-          editOrExitButton,
-          layoutOrExitButton,
-          shareButton,
-        ]}
+        buttons={[editOrExitButton, layoutOrExitButton, shareButton]}
         title={editModeTitle}
         elements={viewModeTitle}
       />
     </div>
-  )
+  );
 
   const classMode = () => {
     if (editMode) return "tol-edit-mode";
     return "";
-  }
+  };
 
   // returns the first view at the moment
   return (
-    <div className={`tol-board ${classMode()}`} >
+    <div className={`tol-board ${classMode()}`}>
       {Bar}
-      {board?.order?.[0] &&
+      {board?.order?.[0] && (
         <View
           id={board?.order?.[0]}
           boardDataSource={boardDataSource}
           actionsDataSource={actionsDataSource}
         />
-      }
-    </div >
+      )}
+    </div>
   );
 }

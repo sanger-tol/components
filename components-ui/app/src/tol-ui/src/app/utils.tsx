@@ -8,8 +8,6 @@ import { ReactNode } from "react";
 import { Nav, NavDropdown } from "react-bootstrap";
 import {
   TsDataSource,
-  BOARDS,
-  TDataObjectOrNull,
   PRIVILEGE,
   TBoardPrivilege,
   env,
@@ -67,18 +65,12 @@ export const getNavBackgroundClass = (environment: string): string => {
   }
 };
 
+// When we add private boards, we can also check this to determine whether
+// the board is viewable or not
 export function getUserPrivilege(
-  user: User | null | undefined,
-  boardUserId: string | null | undefined,
-  boardId: string | null | undefined,
+  writePrivilege: boolean,
 ): TBoardPrivilege {
-  if (!user?.id || !boardUserId || !boardId) return PRIVILEGE.BOARD.VIEWABLE;
-
-  const isOwner = boardUserId === user.id.toString();
-  const isAdmin = user.roles?.includes("admin") ?? false;
-
-  if (isOwner || isAdmin) return PRIVILEGE.BOARD.EDITABLE;
-  return PRIVILEGE.BOARD.VIEWABLE;
+  return writePrivilege ? PRIVILEGE.BOARD.WRITABLE : PRIVILEGE.BOARD.VIEWABLE as TBoardPrivilege;
 }
 
 /**

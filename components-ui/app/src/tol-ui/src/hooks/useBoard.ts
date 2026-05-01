@@ -13,10 +13,7 @@ export const useBoard = () => {
 
   if (context === undefined) {
     return {
-      board: {
-        views: {},
-        order: []
-      },
+      board: null,
       setBoard: () => { },
       privilege: undefined,
       setPrivilege: () => { },

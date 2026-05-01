@@ -49,7 +49,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     deepCopy(
       boardObjectType === "zone"
         ? zone.defaultFilter
-        : zone.components[id].defaultFilter,
+        : zone.children?.[0]?.[id]?.defaultFilter,
     ),
   );
   const [attributes, setAttributes] = useState<string[]>(Object.keys(prevFilters?.and_ || {}));
@@ -68,7 +68,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     filterHasPendingChanges ||
     passThrough !== (boardObjectType === "zone"
       ? false
-      : zone.components[id]?.filterPassThrough)
+      : zone.children?.[0]?.[id]?.filterPassThrough)
   );
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       deepCopy(
         boardObjectType === "zone"
           ? zone.defaultFilter
-          : zone.components[id].defaultFilter,
+          : zone.children?.[0]?.[id]?.defaultFilter,
       ),
     );
     setDisabledFilterValues(
@@ -88,7 +88,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     setPassThrough(
       boardObjectType === "zone"
         ? false
-        : zone.components[id].filterPassThrough || false,
+        : zone.children?.[0]?.[id]?.filterPassThrough || false,
     );
   }, [open]);
 
@@ -131,9 +131,9 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       zone.filter = deepCopy(filter);
       zone.defaultFilter = deepCopy(filter);
     } else {
-      zone.components[id].filter = deepCopy(filter);
-      zone.components[id].defaultFilter = deepCopy(filter);
-      zone.components[id].filterPassThrough = filterPassThrough;
+      zone.children[0][id].filter = deepCopy(filter);
+      zone.children[0][id].defaultFilter = deepCopy(filter);
+      zone.children[0][id].filterPassThrough = filterPassThrough;
       attributes["filter_pass_through"] = filterPassThrough;
     }
     resetFiltersBelow({ id: id, zone: zone });
@@ -153,11 +153,11 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
       filterZone.filter = { and_: {} };
       filterZone.defaultFilter = { and_: {} };
     } else {
-      if (filterZone.components[id].filter) {
-        filterZone.components[id].filter.and_ = {};
+      if (filterZone.children?.[0]?.[id]?.filter) {
+        filterZone.children[0][id].filter.and_ = {};
       }
-      if (filterZone.components[id].defaultFilter) {
-        filterZone.components[id].defaultFilter.and_ = {};
+      if (filterZone.children?.[0]?.[id]?.defaultFilter) {
+        filterZone.children[0][id].defaultFilter.and_ = {};
       }
     }
   };
@@ -199,7 +199,7 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
           populatedFieldType="filter"
           numPopulatedFields={
             Object.keys(
-              zone.components?.[id]?.filter?.and_ || {},
+              zone.children?.[0]?.[id]?.filter?.and_ || {},
             ).length
           }
           tooltipContent={FILTER_ALREADY_EXISTS}

@@ -9,7 +9,6 @@ import {
   BOARDS,
   defineBoardEntity,
   IComponent,
-  IComponents,
   IFilter,
   IZone,
   TsDataSource,
@@ -31,7 +30,7 @@ export async function updateComponentConfigAndUpsert(
   zone: IZone,
   boardDataSource: TsDataSource,
 ) {
-  if (zone.components) zone.components[componentId].config = config;
+  if (zone.children[0]) zone.children[0][componentId].config = config;
   return await upsertCoreBoardEntity(
     BOARDS.COMPONENT,
     { config: config },
@@ -59,16 +58,17 @@ export function defineZoneWithComponentList(
     {
       objectType: objectType,
       filter: filter,
-      components: components.reduce((acc, component) => {
+      children: components.reduce((acc, component) => {
         acc[component.id!] = component;
         return acc;
-      }, {} as IComponents),
+      }, {} as Record<string, IComponent>),
       order: components.map(component => component.id!),
     },
     BOARDS.ZONE
   );
 }
 
+// TODO: Fix, leaving all broken things here
 export async function updateLayout(
   layout,
   zone: IZone,
@@ -79,7 +79,7 @@ export async function updateLayout(
   const order = getWidgetOrder(layout);
 
   // finds the highest order value in the current widgets, based off the db
-  const orderValues = Object.values(zone.components).map((component: IComponent) => {
+  const orderValues = Object.values(zone.children?.[0] ?? {}).map((component: IComponent) => {
     const order = component.componentZoneOrder;
     return Number(order);
   });
@@ -87,7 +87,7 @@ export async function updateLayout(
 
   // maps through the order and upserts based on the componentId
   const payloadData = order.order.map((componentId, index) => {
-    const component: IComponent = zone.components[componentId];
+    const component: IComponent = zone.children?.[0]?.[componentId];
     component!.componentZoneOrder = highestPreviousOrder + 1 + index;
     return {
       type: BOARDS.COMPONENT_ZONE,
@@ -130,9 +130,9 @@ export function generateLayout(zone: IZone) {
   const x = { lg: 0, md: 0, sm: 0 };
 
   zone.order.forEach((componentId) => {
-    const component = zone.components[componentId];
+    const component = zone.children?.[0]?.[componentId];
 
-    const size = component.size || "sm";
+    const size = component.widget_type || "sm";
     ["lg", "md", "sm"].forEach((breakpoint) => {
       let w, h;
       // filterBlock components have lg width but sm height

@@ -51,7 +51,7 @@ export function BoardFilterBlock(props: PBoardFilterBlock) {
   useEffect(() => {
     upsertCoreBoardEntity(
       BOARDS.COMPONENT,
-      { filter: zone.components[id].filter },
+      { filter: zone.children[0][id].filter },
       boardDataSource,
       undefined,
       id,

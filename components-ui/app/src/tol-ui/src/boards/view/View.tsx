@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   ZoneCreationModal,
   Zone,
@@ -15,15 +15,11 @@ import {
   BUTTONS,
   useBoardState,
   IBoard,
-  IZone,
   IView,
-  getBoardEntity,
   BOARD_CHILDREN_KEYS,
-  dataObjectsToZoneParams,
   deleteBoardEntityInParent,
   PRIVILEGE,
 } from "../..";
-
 
 export interface PView extends PBoard {
   id: string;
@@ -32,9 +28,10 @@ export interface PView extends PBoard {
 export function View(props: PView) {
   const { id, boardDataSource, actionsDataSource } = props;
 
-  const { editMode, setEditMode, privilege, layoutMode, board, setBoard } = useBoard();
+  const { editMode, setEditMode, privilege, layoutMode, board, setBoard } =
+    useBoard();
 
-  const [view, setView] = useBoardState<IBoard, IView>(
+  const [view, setView, zones] = useBoardState<IBoard, IView>(
     BOARD_CHILDREN_KEYS.VIEWS,
     id,
     board,
@@ -42,31 +39,19 @@ export function View(props: PView) {
   );
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    getBoardEntity<IView, IZone>(
-      boardDataSource,
-      id,
-      BOARDS.VIEW,
-      view,
-      dataObjectsToZoneParams
-    ).then((v: IView) => {
-      setView(v);
-      /*
-        If the view is empty and the user has edit privileges,
-        set edit mode to true to encourage them to add content
-      */
-      if (v.order.length === 0 && privilege === PRIVILEGE.BOARD.EDITABLE) {
-        setEditMode(true);
-      }
-    })
-  }, []);
+  if (
+    view.order.length === 0 &&
+    privilege === PRIVILEGE.BOARD.WRITABLE &&
+    !editMode
+  ) {
+    setEditMode(true);
+  }
 
   const onDeleteZone = (id: string) => {
-    boardDataSource
-      .deleteByID({
-        objectType: BOARDS.ZONE,
-        id
-      })
+    boardDataSource.deleteByID({
+      objectType: BOARDS.ZONE,
+      id,
+    });
     deleteBoardEntityInParent<IView>(id, BOARDS.VIEW, view);
     setView({ ...view });
   };
@@ -94,7 +79,7 @@ export function View(props: PView) {
         ]}
       />
     </div>
-  )
+  );
 
   return (
     <div className="tol-view">
@@ -110,7 +95,7 @@ export function View(props: PView) {
       ) : (
         <div className="tol-zones">
           {view.order?.map((zoneId) => {
-            const zone = view.zones?.[zoneId];
+            const zone = zones[zoneId];
             if (zone) {
               return (
                 <Zone

@@ -4,9 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
 import {
   FilterConfigDrawer,
   ComponentCreationModal,
@@ -15,20 +13,13 @@ import {
   saveTitle,
   BOARDS,
   UtilityBar,
-  PButton,
-  PBoard,
   useBoard,
   TitleTooltip,
   BUTTONS,
-  IView,
   useBoardState,
-  IZone,
-  IComponent,
-  getBoardEntity,
   BOARD_CHILDREN_KEYS,
-  dataObjectsToComponentParams,
 } from "../..";
-
+import type { IZone, IView, PButton, PBoard } from "../..";
 
 export interface PZone extends PBoard {
   id: string;
@@ -46,7 +37,7 @@ export function Zone(props: PZone) {
     onDeleteZone,
     view,
     setView,
-    actionsDataSource
+    actionsDataSource,
   } = props;
 
   const { editMode, layoutMode } = useBoard();
@@ -61,18 +52,6 @@ export function Zone(props: PZone) {
   const [open, setOpen] = useState(false);
   const [openFilters, setOpenFilters] = useState(false);
   const [title, setTitle] = useState(zone?.title);
-
-  useEffect(() => {
-    getBoardEntity<IZone, IComponent>(
-      boardDataSource,
-      id,
-      BOARDS.ZONE,
-      zone,
-      dataObjectsToComponentParams
-    ).then((z: IZone) => {
-      setZone(z);
-    })
-  }, []);
 
   const onAddComponent = () => {
     setOpen(true);
@@ -144,7 +123,7 @@ export function Zone(props: PZone) {
   const translatorsButton: PButton = {
     ...BUTTONS.TRANSLATORS,
     visible: editMode && !layoutMode,
-    onClick: () => { },
+    onClick: () => {},
   };
 
   const bar = (
@@ -159,18 +138,16 @@ export function Zone(props: PZone) {
               saveTitle(value, id, boardDataSource, BOARDS.ZONE);
               setTitle(value);
             }
-          }
+          },
         }}
-        description={
-          <TitleTooltip {...zone} />
-        }
+        description={<TitleTooltip {...zone} />}
         buttons={[
           deleteButton,
           addButton,
           filtersButton,
           downButton,
           upButton,
-          translatorsButton
+          translatorsButton,
         ]}
       />
       <div id="component-modal">
@@ -189,7 +166,7 @@ export function Zone(props: PZone) {
   return (
     <div className="tol-zone">
       {(title || editMode) && bar}
-      {(zone && zone.order && zone.order.length > 0) ? (
+      {zone && zone.order && zone.order.length > 0 ? (
         <Visualisations
           id={id}
           zone={zone}
@@ -200,7 +177,10 @@ export function Zone(props: PZone) {
       ) : (
         <div className="tol-boards-empty">
           {editMode ? (
-            <p>Please click the 'Add Component' button to start adding tables, charts and more.</p>
+            <p>
+              Please click the 'Add Component' button to start adding tables,
+              charts and more.
+            </p>
           ) : (
             <p>No components found</p>
           )}

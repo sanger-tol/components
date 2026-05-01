@@ -18,7 +18,6 @@ import {
   ACTIONS_DS,
 } from "../..";
 
-
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 export interface PVisualisations {
@@ -53,12 +52,7 @@ export function Visualisations(props: PVisualisations) {
   useEffectUpdate(() => {
     // When layout mode is turned off, we want to update the layout of the zone with the new layout
     if (!layoutMode) {
-      updateLayout(
-        newLayout,
-        zone,
-        setZone,
-        boardDataSource
-      );
+      updateLayout(newLayout, zone, setZone, boardDataSource);
     }
   }, [layoutMode]);
 
@@ -84,25 +78,30 @@ export function Visualisations(props: PVisualisations) {
         onBreakpointChange={onBreakpointChange}
       >
         {zone.order.map((componentId) => {
-          const component = zone.components[componentId];
+          const component = zone.children[0][componentId];
           return cloneElement(
             <div key={component.id} className="tol-visualisation">
               <Visualisation
-                id={component.id!}
-                size={component.size!}
+                id={component.id}
+                size={component.widget_type}
                 zone={zone}
                 setZone={setZone}
-                componentType={component.type!}
+                componentType={component.type}
                 config={component.config}
-                objectType={component.objectType!}
-                dataSource={component.dataspace!}
+                objectType={component.object_type}
+                dataSource={
+                  new TsDataSource({
+                    dataSourceInstanceId: component.data_source_instance_id,
+                    ...component.ui_api_details,
+                  })
+                }
                 boardDataSource={boardDataSource}
                 boardObjectType={BOARDS.COMPONENT}
-                title={component.title!}
+                title={component.title}
                 actionsDataSource={actionsDataSource}
               />
-            </div>
-          )
+            </div>,
+          );
         })}
       </ResponsiveReactGridLayout>
     </div>

@@ -15,6 +15,7 @@ export interface IBoardEntity {
   id?: string;
   type?: string;
   title?: string;
+
 }
 
 export interface IBoardParentEntity<TChild> extends IBoardEntity {
@@ -60,7 +61,8 @@ export interface IBoard extends IBoardParentEntity<IView> {
   /**
    * The user ID of the board owner, used to determine permissions for editing the board.
    */
-  ownerUserId?: string;
+  owner_email?: string;
+  write_privilege?: boolean;
 }
 
 /**

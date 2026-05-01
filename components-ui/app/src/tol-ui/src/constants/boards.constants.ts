@@ -4,21 +4,18 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { TBoardPrivilege } from "../interfaces";
-
 export const PRIVILEGE = {
   BOARD: {
-    HIDDEN: "hidden" as TBoardPrivilege,
-    VIEWABLE: "viewable" as TBoardPrivilege,
-    EDITABLE: "editable" as TBoardPrivilege
+    WRITABLE: "writable",
+    VIEWABLE: "viewable"
   }
-}
+} as const;
 
 export const BOARD_ID_FIELDS = {
   BOARD: "board_id",
   VIEW: "view_id",
   ZONE: "zone_id",
-}
+} as const;
 
 export const BOARD_CHILDREN_KEYS = {
   VIEWS: "views",

@@ -162,18 +162,18 @@ export function generateFilter(
     // Exclude pass throughs except self
     if (
       shouldFilterPassThrough(
-        id, currentId, zone.components[currentId].filterPassThrough
+        id, currentId, zone.children?.[0]?.[currentId].filterPassThrough
       )
     ) continue;
 
     // Get the current filter, using the default filter as a base
     let currentFilter: IFilter = mergeFilters(
-      zone.components[currentId].defaultFilter || {},
-      zone.components[currentId].filter || {},
+      zone.children?.[0]?.[currentId].defaultFilter || {},
+      zone.children?.[0]?.[currentId].filter || {},
     );
 
     // Include sub filter if required
-    const subFilter = zone.components[currentId].subFilter;
+    const subFilter = zone.children?.[0]?.[currentId].subFilter;
     if ((currentId !== id || includeOwnSubFilter) && subFilter) {
       currentFilter = mergeFilters(currentFilter, subFilter);
     }
@@ -213,7 +213,7 @@ export function addComponentBelow(id: string, newId: string, zone: IZone) {
   addComponentToZone(
     {
       id: newId,
-      filterPassThrough: zone.components[id].filterPassThrough,
+      filterPassThrough: zone.children?.[0]?.[id].filterPassThrough,
     },
     zone,
   );
@@ -237,10 +237,10 @@ export function resetFiltersBelow(params: {
   let id = params.id;
   const z = zone as IZone;
   for (const currentId of getComponentsBelow(id, z.order, indexOffset)) {
-    z.components[currentId].filter = deepCopy(
-      z.components[currentId].defaultFilter!,
+    z.children[0][currentId].filter = deepCopy(
+      z.children?.[0]?.[currentId].defaultFilter!,
     );
-    z.components[currentId].subFilter = undefined;
+    z.children[0][currentId].subFilter = undefined;
   }
 }
 
@@ -252,10 +252,10 @@ export function resetFiltersBelow(params: {
 export function resetAllFilters(zone: IZone) {
   zone.filter = deepCopy(zone.defaultFilter!);
   for (const currentId of zone.order) {
-    zone.components[currentId].filter = deepCopy(
-      zone.components[currentId].defaultFilter!,
+    zone.children[0][currentId].filter = deepCopy(
+      zone.children[0][currentId].defaultFilter!,
     );
-    zone.components[currentId].subFilter = undefined;
+    zone.children[0][currentId].subFilter = undefined;
   }
 }
 
@@ -289,7 +289,7 @@ export function setFilterInput(params: {
     valueExists,
   } = params;
   const z = zone as IZone;
-  const and_ = z.components[componentId].filter?.and_ || {};
+  const and_ = z.children?.[0]?.[componentId].filter?.and_ || {};
   resetFiltersBelow({ id: componentId, zone: z });
 
   if (valueExists || exists) {
@@ -446,11 +446,11 @@ export function filterListener(
 
     // Loop through 'above' components and perform updates based on their filters, including itself by default
     for (const currentId of aboveComponents) {
-      const componentData = zone.components[currentId];
+      const componentData = zone.children?.[0]?.[currentId];
       filterListenerUpdater({
-        filter: componentData.filter,
+        filter: componentData?.filter,
         filterPassThrough: shouldFilterPassThrough(
-          componentId, currentId, componentData.filterPassThrough
+          componentId, currentId, componentData?.filterPassThrough
         ),
         attribute,
         operators,
@@ -490,7 +490,7 @@ export function addSubFilter(params: {
   const z = zone as IZone;
   const f = filter as IFilter;
   resetFiltersBelow({ id: id, zone: z! });
-  z.components[id].subFilter = f;
+  z.children[0][id].subFilter = f;
 }
 
 /**

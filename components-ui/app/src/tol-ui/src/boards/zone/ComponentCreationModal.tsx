@@ -36,17 +36,15 @@ export interface PComponentCreationModal extends PBoard {
 
 export function ComponentCreationModal(props: PComponentCreationModal) {
   const {
-    zoneId,
     open,
     setOpen,
     zone,
     setZone,
-    boardDataSource,
   } = props;
   const [componentType, setComponentType] = useState("");
   const [widgetType, setWidgetType] = useState("");
 
-  useEffect(() => {
+  useEffect(() => { // TODO: look at removing useEffect
     if (!open) {
       reset();
     }
@@ -66,7 +64,7 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
           objectType: BOARDS.ZONE,
           dataspace: zone.dataspace,
           config: {},
-          size: widgetType,
+          size: widgetType, // TODO: Will need fixing
           type: componentType,
           filterPassThrough: false,
         },

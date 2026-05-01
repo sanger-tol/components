@@ -50,6 +50,8 @@ export function Visualisation(props: PVisualisation) {
     utilityBarConfig,
   } = props;
 
+  console.log("RENDERING A VISUALISATION: ", props);
+
   const { editMode, layoutMode } = useBoard();
 
   const [title, setTitle] = useState(props.title);

@@ -5,5 +5,4 @@ SPDX-License-Identifier: MIT
 */
 
 export * from "./ComponentCreationModal";
-export * from "./utils";
 export * from "./Zone";
