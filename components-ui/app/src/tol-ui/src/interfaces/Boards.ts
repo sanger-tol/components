@@ -11,128 +11,109 @@ import {
   BOARD_CHILDREN_KEYS,
 } from '..';
 
-export type TBoardEntityOrder = string[];
-
-export interface IComponent {
+export interface IBoardEntity {
   id?: string;
+  type?: string;
+  title?: string;
+}
+
+export interface IBoardParentEntity<TChild> extends IBoardEntity {
+  children: Record<string, TChild>;
+  order: string[];
+}
+
+export interface IBoardFilter {
   filter?: IFilter;
   defaultFilter?: IFilter;
+}
+
+export interface IComponent extends IBoardEntity, IBoardFilter {
   subFilter?: IFilter;
   filterPassThrough?: boolean;
-  /**
-   * The component type e.g. table
-   */
-  type?: string;
-  /**
-   * The size of the component e.g. sm, md, lg
-   */
-  size?: string;
+  componentType?: string;
+  componentSize?: string;
 
-  // extras required just for boards
-  title?: string;
+  /**
+   * Note: Not required for dev pages when using useZone
+   */
   objectType?: string;
   dataspace?: TsDataSource;
   config?: any;
-
-  // used for reordering in the db
-  componentZoneId?: string;
-  componentZoneOrder?: number;
 }
 
-export interface IComponents {
-  [id: string]: IComponent;
-}
-
-export interface IZone {
-  id?: string;
-  components: IComponents;
-  order: TBoardEntityOrder;
-  filter?: IFilter;
-  defaultFilter?: IFilter;
+export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
+  /**
+   * The object type of the zone
+   * All components in a zone use this object type
+   */
   objectType?: string;
-
-  // extras required just for boards
-  title?: string;
+  /**
+   * The user ID of the board owner, used to determine permissions for editing the board.
+   * Note: Not required for dev pages when using useZone
+   */
   dataspace?: TsDataSource;
-
-  // used for reordering in the db
-  zoneViewId?: string;
-  zoneViewOrder?: number;
 }
 
-export interface IZones {
-  [id: string]: IZone;
-}
+export interface IView extends IBoardParentEntity<IZone> { }
 
-export interface IView {
-  id?: string;
-  zones: IZones;
-  order: TBoardEntityOrder;
-
-  // extras required just for boards
-  title?: string;
-
-  // used for reordering in the db
-  viewBoardId?: string;
-  viewBoardOrder?: number;
-}
-
-export interface IViews {
-  [id: string]: IView;
-}
-
-export interface IBoard {
-  id?: string;
-  views: IViews;
-  order: TBoardEntityOrder;
-
-  // extras required just for boards
-  title?: string;
+export interface IBoard extends IBoardParentEntity<IView> {
+  /**
+   * The user ID of the board owner, used to determine permissions for editing the board.
+   */
   ownerUserId?: string;
 }
 
-/*
-example layout of a board:
-
-export const exampleBoard: Board = {
-  views: {
-    'viewIdOne': {
-      zones: {
-        'zoneIdOne': {
-          components: {
-            'componentIdOne': {
-              filter: {
-                and_: {
-                  'attributeId': {
-                    eq: {
-                      value: 'hello',
-                      negate: true
-                    }
-                  }
-                }
-              },
-              defaultFilter: {
-                and_: {
-                  'attributeId': {
-                    eq: {
-                      value: 'hello',
-                      negate: true
-                    }
-                  }
-                }
-              }
-            },
-          },
-          order: ['componentIdOne'],
-          type: 'species'
-        }
-      },
-      order: ['zoneIdOne']
-    }
-  },
-  order: ['viewIdOne']
-};
-*/
+/**
+ * Example of the board interface
+ * 
+ * IBoard → IView → IZone → IComponent
+ * 
+ * {
+ *   id: "b_1",
+ *   type: "board",
+ *   title: "My Board",
+ *   ownerUserId: "29",
+ *   order: ["v_1"],
+ *   children: {
+ *     "v_1": {
+ *       id: "v_1",
+ *       type: "view",
+ *       title: "Main View",
+ *       order: ["z_1"],
+ *       children: {
+ *         "z_1": {
+ *           id: "z_1",
+ *           type: "zone",
+ *           title: "Species Zone",
+ *           objectType: "species",
+ *           filter: { and_: {} },
+ *           order: ["c_1", "c_2"],
+ *           children: {
+ *             "c_1": {
+ *               id: "c_1",
+ *               type: "component",
+ *               title: "Species Table",
+ *               componentType: "table",
+ *               componentSize: "lg",
+ *               filter: { and_: {} },
+ *               config: {},
+ *             },
+ *             "c_2": {
+ *               id: "c_2",
+ *               type: "component",
+ *               title: "Species Chart",
+ *               componentType: "chart",
+ *               componentSize: "md",
+ *               filter: { and_: {} },
+ *               config: {},
+ *             },
+ *           },
+ *         },
+ *       },
+ *     },
+ *   },
+ * }
+ */
 
 export interface IRemoteTarget {
   /**
