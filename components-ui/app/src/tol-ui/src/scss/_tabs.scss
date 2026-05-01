@@ -48,3 +48,11 @@
     }
   }
 }
+
+.tol-tabs-nav {
+  display: flex;
+
+  .tol-board-view-tab.rs-btn {
+    padding: 6px 0px !important;
+  }
+}

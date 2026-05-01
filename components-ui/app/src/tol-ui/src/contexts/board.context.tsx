@@ -27,7 +27,7 @@ export function BoardContextProvider({ children }: { children: ReactNode }) {
     order: []
   });
   const [privilege, setPrivilege] = useState<TBoardPrivilegeOrUndefined>(undefined);
-  const [editMode, setEditMode] = useState<boolean>(false);
+  const [editMode, setEditMode] = useState<boolean>(true);
   const [layoutMode, setLayoutMode] = useState<boolean>(false);
 
   return (

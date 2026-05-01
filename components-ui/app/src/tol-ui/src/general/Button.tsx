@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, ReactNode } from "react";
 import { Button as RsButton } from "rsuite";
 import { TolLoader, HoverOverlay, Icon } from "..";
 
@@ -12,7 +12,7 @@ export interface PButton {
   icon?: string;
   onClick?: (...args: any[]) => void;
   className?: string;
-  text?: string;
+  text?: string | ReactNode;
   disabled?: boolean;
   size?: "md" | "lg";
   type?: string;

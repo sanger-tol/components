@@ -30,6 +30,7 @@ export * from "./RemoteGet";
 export * from "./SourceTag";
 export * from "./StatisticsConfigDrawer";
 export * from "./Tabs";
+export * from "./TabsNav";
 export * from "./Tag";
 export * from "./TolLoader";
 export * from "./utils";

@@ -28,6 +28,11 @@ import {
   dataObjectToViewParams,
   dataObjectToBoardParams,
   getUserPrivilege,
+  TabsNav,
+  EditableTitle,
+  getEntityPrefix,
+  generateId,
+  defineBoardEntityInParent,
 } from "../..";
 
 export interface PBoard {
@@ -68,6 +73,8 @@ export function Board(props: PBoard) {
   } = useBoard();
 
   const { boardId: paramBoardId } = useParams<any>();
+
+  const [currentViewId, setCurrentViewId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -93,6 +100,7 @@ export function Board(props: PBoard) {
       dataObjectToBoardParams,
     ).then((b: IBoard) => {
       setBoard(b);
+      setCurrentViewId(b.order?.[0] ?? null);
       setPrivilege(
         getUserPrivilege(user, b.ownerUserId, id)
       );
@@ -103,6 +111,31 @@ export function Board(props: PBoard) {
       setError("Failed to load board.");
     });
   }, [id]);
+
+  const onLayoutModeToggle = () => {
+    setLayoutMode(!layoutMode);
+  };
+
+  const onAddView = async () => {
+    const id = generateId(getEntityPrefix(BOARDS.VIEW));
+    const nextViewNumber = board.order.length + 1;
+    setBoard({
+      ...defineBoardEntityInParent<IView, IBoard>(
+        {
+          id: id,
+          title: `View ${nextViewNumber}`,
+        },
+        BOARDS.VIEW,
+        board,
+        BOARDS.BOARD
+      )
+    });
+  };
+
+  const onViewClick = (viewId: string) => () => {
+    setCurrentViewId(viewId);
+    console.log("View clicked:", viewId);
+  }
 
   if (error !== "") {
     return <Redirect to="/page-not-found" />;
@@ -117,10 +150,6 @@ export function Board(props: PBoard) {
       />
     );
   }
-
-  const onLayoutModeToggle = () => {
-    setLayoutMode(!layoutMode);
-  };
 
   const layoutOrExitLogic: PButton = layoutMode ? {
     ...BUTTONS.SAVE,
@@ -184,7 +213,19 @@ export function Board(props: PBoard) {
     </h3>
   )] : undefined;
 
-  const Bar = (
+  const ViewTitle = (view: IView) => {
+    return (
+      <EditableTitle
+        text={view.title}
+        editable={editMode}
+        onSave={(value: string) => {
+          // Save view title
+        }}
+      />
+    );
+  }
+
+  const BoardBar = (
     <div className="tol-board-bar">
       <UtilityBar
         id="board-utility-bar"
@@ -195,6 +236,29 @@ export function Board(props: PBoard) {
         ]}
         title={editModeTitle}
         elements={viewModeTitle}
+      />
+      <TabsNav
+        buttons={[
+          ...board.order.map((viewId) => {
+            const view = board.views?.[viewId];
+            if (view) {
+              return {
+                className: "tol-board-view-tab",
+                text: ViewTitle(view),
+                onClick: onViewClick(view.id!),
+              } as PButton;
+            }
+            return null;
+          }).filter((btn): btn is PButton => btn !== null),
+          {
+            ...BUTTONS.ADD,
+            text: "Add View",
+            visible: editMode,
+            onClick: onAddView,
+            icon: "pager",
+            testid: "board-add-view-button",
+          },
+        ]}
       />
     </div>
   )
@@ -207,14 +271,22 @@ export function Board(props: PBoard) {
   // returns the first view at the moment
   return (
     <div className={`tol-board ${classMode()}`} >
-      {Bar}
-      {board?.order?.[0] &&
-        <View
-          id={board?.order?.[0]}
-          boardDataSource={boardDataSource}
-          actionsDataSource={actionsDataSource}
-        />
-      }
+      {BoardBar}
+      <div className="tol-views">
+        {board.order?.map((viewId) => {
+          const view = board.views?.[viewId];
+          if (view) {
+            return (
+              <View
+                key={view.id}
+                id={view.id!}
+                boardDataSource={boardDataSource}
+                actionsDataSource={actionsDataSource}
+              />
+            );
+          }
+        })}
+      </div>
     </div >
   );
 }

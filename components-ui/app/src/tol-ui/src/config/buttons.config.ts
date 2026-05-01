@@ -66,7 +66,6 @@ export const BUTTONS: Record<string, PButton> = {
     position: "right",
   },
   EDIT: {
-    outline: true,
     type: "warning",
     icon: "pen-to-square",
     tooltip: "Edit",
@@ -82,7 +81,7 @@ export const BUTTONS: Record<string, PButton> = {
   TRANSLATORS: {
     outline: true,
     type: "primary",
-    icon: "arrow-down-wide-short",
+    icon: "diagram-predecessor",
     tooltip: "Translate filters from one Zone to another",
     position: "right",
   }
