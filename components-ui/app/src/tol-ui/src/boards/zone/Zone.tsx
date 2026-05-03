@@ -159,7 +159,8 @@ export function Zone(props: PZone) {
               saveTitle(value, id, boardDataSource, BOARDS.ZONE);
               setTitle(value);
             }
-          }
+          },
+          hideButtons: true
         }}
         description={
           <TitleTooltip {...zone} />

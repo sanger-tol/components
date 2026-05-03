@@ -22,15 +22,24 @@ import {
   dataObjectsToZoneParams,
   deleteBoardEntityInParent,
   PRIVILEGE,
+  PUtilityBar,
+  mergeUtilityBarConfigs,
 } from "../..";
 
 
 export interface PView extends PBoard {
+  /**
+   * The ID of the view.
+   */
   id: string;
+  /**
+   * The data source for fetching board data.
+  */
+  utilityBarConfig?: PUtilityBar;
 }
 
 export function View(props: PView) {
-  const { id, boardDataSource, actionsDataSource } = props;
+  const { id, utilityBarConfig, boardDataSource, actionsDataSource } = props;
 
   const { editMode, setEditMode, privilege, layoutMode, board, setBoard } = useBoard();
 
@@ -75,24 +84,28 @@ export function View(props: PView) {
     // TODO: reorder
   };
 
+  const ubc = mergeUtilityBarConfigs(
+    utilityBarConfig,
+    {
+      id: "view-utility-bar",
+      buttons: [
+        {
+          ...BUTTONS.ADD,
+          testid: "open-add-zone-modal-button",
+          visible: editMode && !layoutMode,
+          onClick: () => {
+            setOpen(true);
+          },
+          tooltip: "",
+          text: "Add Zone",
+          icon: "object-group",
+        },
+      ]
+    })
+
   const Bar = (
     <div className="tol-board-bar">
-      <UtilityBar
-        id="view-utility-bar"
-        buttons={[
-          {
-            ...BUTTONS.ADD,
-            testid: "open-add-zone-modal-button",
-            visible: editMode && !layoutMode,
-            onClick: () => {
-              setOpen(true);
-            },
-            tooltip: "",
-            text: "Add Zone",
-            icon: "object-group",
-          },
-        ]}
-      />
+      <UtilityBar {...ubc} />
     </div>
   )
 

@@ -21,6 +21,10 @@ export interface PEditableTitle {
    */
   placeholder?: string;
   /**
+   * Whether to hide the save and cancel buttons when editing.
+   */
+  hideButtons?: boolean;
+  /**
    * Callback function that is called when the title is saved. Receives the new title as an argument.
    */
   onSave?: (value: string) => void;
@@ -35,6 +39,7 @@ export function EditableTitle(props: PEditableTitle) {
     text = "",
     editable,
     placeholder = "Click to edit...",
+    hideButtons = false,
   } = props;
 
   const [editedText, setEditedText] = useState(text);
@@ -53,7 +58,7 @@ export function EditableTitle(props: PEditableTitle) {
 
   return (
     <RSInlineEdit
-      className="tol-editable-title"
+      className={`tol-editable-title ${hideButtons ? "tol-hide-buttons" : ""}`}
       value={editedText}
       disabled={!editable}
       onChange={onChange}

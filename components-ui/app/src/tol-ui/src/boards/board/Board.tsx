@@ -33,6 +33,8 @@ import {
   getEntityPrefix,
   generateId,
   defineBoardEntityInParent,
+  PUtilityBar,
+  PEditableTitle,
 } from "../..";
 
 export interface PBoard {
@@ -74,7 +76,7 @@ export function Board(props: PBoard) {
 
   const { boardId: paramBoardId } = useParams<any>();
 
-  const [currentViewId, setCurrentViewId] = useState<string | null>(null);
+  const [activeViewId, setActiveViewId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -100,7 +102,7 @@ export function Board(props: PBoard) {
       dataObjectToBoardParams,
     ).then((b: IBoard) => {
       setBoard(b);
-      setCurrentViewId(b.order?.[0] ?? null);
+      setActiveViewId(b.order?.[0] ?? null);
       setPrivilege(
         getUserPrivilege(user, b.ownerUserId, id)
       );
@@ -130,10 +132,11 @@ export function Board(props: PBoard) {
         BOARDS.BOARD
       )
     });
+    setActiveViewId(id);
   };
 
   const onViewClick = (viewId: string) => () => {
-    setCurrentViewId(viewId);
+    setActiveViewId(viewId);
     console.log("View clicked:", viewId);
   }
 
@@ -203,7 +206,8 @@ export function Board(props: PBoard) {
         ...board,
         title: value,
       });
-    }
+    },
+    hideButtons: true
   } : undefined;
 
   // Large header for view mode
@@ -217,18 +221,52 @@ export function Board(props: PBoard) {
     return (
       <EditableTitle
         text={view.title}
-        editable={editMode}
+        editable={editMode && activeViewId === view.id}
         onSave={(value: string) => {
           // Save view title
         }}
+        hideButtons={true}
       />
     );
+  }
+
+  const ubc: PUtilityBar = {
+    elements: [
+      <TabsNav
+        className="tol-views-nav"
+        buttons={[
+          {
+            ...BUTTONS.ADD,
+            text: "Add View",
+            tooltip: "",
+            visible: editMode,
+            onClick: onAddView,
+            icon: "pager",
+            testid: "board-add-view-button",
+            position: "left",
+          },
+          ...board.order.map((viewId) => {
+            const view = board.views?.[viewId];
+            if (view) {
+              return {
+                className: `tol-view-tab ${activeViewId === view.id ? "active" : ""}`,
+                text: ViewTitle(view),
+                onClick: onViewClick(view.id!),
+                position: "left",
+                outline: activeViewId !== view.id,
+              } as PButton;
+            }
+            return null;
+          }).filter((btn): btn is PButton => btn !== null)
+        ]}
+      />
+    ]
   }
 
   const BoardBar = (
     <div className="tol-board-bar">
       <UtilityBar
-        id="board-utility-bar"
+        id="tol-board-utility-bar"
         buttons={[
           editOrExitButton,
           layoutOrExitButton,
@@ -236,29 +274,6 @@ export function Board(props: PBoard) {
         ]}
         title={editModeTitle}
         elements={viewModeTitle}
-      />
-      <TabsNav
-        buttons={[
-          ...board.order.map((viewId) => {
-            const view = board.views?.[viewId];
-            if (view) {
-              return {
-                className: "tol-board-view-tab",
-                text: ViewTitle(view),
-                onClick: onViewClick(view.id!),
-              } as PButton;
-            }
-            return null;
-          }).filter((btn): btn is PButton => btn !== null),
-          {
-            ...BUTTONS.ADD,
-            text: "Add View",
-            visible: editMode,
-            onClick: onAddView,
-            icon: "pager",
-            testid: "board-add-view-button",
-          },
-        ]}
       />
     </div>
   )
@@ -268,25 +283,19 @@ export function Board(props: PBoard) {
     return "";
   }
 
+  const activeView = board.views?.[activeViewId!];
+
   // returns the first view at the moment
   return (
     <div className={`tol-board ${classMode()}`} >
       {BoardBar}
-      <div className="tol-views">
-        {board.order?.map((viewId) => {
-          const view = board.views?.[viewId];
-          if (view) {
-            return (
-              <View
-                key={view.id}
-                id={view.id!}
-                boardDataSource={boardDataSource}
-                actionsDataSource={actionsDataSource}
-              />
-            );
-          }
-        })}
-      </div>
+      <View
+        key={activeView.id}
+        id={activeView.id!}
+        utilityBarConfig={ubc}
+        boardDataSource={boardDataSource}
+        actionsDataSource={actionsDataSource}
+      />
     </div >
   );
 }

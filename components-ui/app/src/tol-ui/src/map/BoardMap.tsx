@@ -53,7 +53,7 @@ export function BoardMap(props: PVisualisation) {
     visible: editMode,
   }
 
-  const utilityBarConfigMerged = mergeUtilityBarConfigs(
+  const ubc = mergeUtilityBarConfigs(
     utilityBarConfig,
     {
       buttons: [
@@ -80,7 +80,7 @@ export function BoardMap(props: PVisualisation) {
         title="Map Configuration"
         config={deepCopy(config)}
       />
-      <UtilityBar id={id} {...utilityBarConfigMerged} />
+      <UtilityBar id={id} {...ubc} />
       <div className="tol-component-contents with-offset">
         <RemoteMap
           {...props}

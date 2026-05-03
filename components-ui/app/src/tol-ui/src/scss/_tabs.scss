@@ -50,9 +50,7 @@
 }
 
 .tol-tabs-nav {
+  overflow: auto;
   display: flex;
-
-  .tol-board-view-tab.rs-btn {
-    padding: 6px 0px !important;
-  }
+  border-radius: 6px;
 }

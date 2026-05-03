@@ -8,13 +8,14 @@ import { Button, PButton } from "..";
 
 export interface PTabsNav {
   buttons: PButton[]
+  className: string;
 }
 
 export function TabsNav(props: PTabsNav) {
-  const { buttons } = props;
+  const { buttons, className } = props;
 
   return (
-    <div className="tol-tabs-nav">
+    <div className={`tol-tabs-nav ${className}`}>
       {buttons.map((button, index) => (
         <Button
           key={index}
