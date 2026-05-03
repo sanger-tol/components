@@ -86,7 +86,7 @@ export function Visualisations(props: PVisualisations) {
                 size={component.widget_type}
                 zone={zone}
                 setZone={setZone}
-                componentType={component.type}
+                componentType={component.component_type}
                 config={component.config}
                 objectType={component.object_type}
                 dataSource={

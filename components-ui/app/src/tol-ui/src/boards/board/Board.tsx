@@ -79,13 +79,12 @@ export function Board(props: PBoard) {
     isError,
   } = useQueryData<IBoard>(
     [BOARDS.BOARD, id],
-    () => getBoardEntityAndChildren(boardDataSource, id, "board"),
+    () => getBoardEntityAndChildren(boardDataSource, id, BOARDS.BOARD),
     { enabled: !!id },
   );
 
   useEffect(() => {
     if (boardData && isSuccess) {
-      console.log("setting board!!")
       setBoard(boardData as IBoard);
       setPrivilege(
         boardData.write_privilege
@@ -94,10 +93,6 @@ export function Board(props: PBoard) {
       );
     }
   }, [isSuccess]);
-
-  useEffect(() => {
-    console.log(board);
-  }, [board])
 
   if (isError) {
     return <Redirect to="/page-not-found" />;

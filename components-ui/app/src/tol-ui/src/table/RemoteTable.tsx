@@ -274,10 +274,6 @@ export function RemoteTable(props: PRemoteTable) {
   const [downloadInProgress, setDownloadInProgress] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    console.log(loading);
-  }, [loading])
-
   // row selection
   const [selectedRows, setSelectedRows] = useStateFallback<string[]>(
     props.selectedRows,
