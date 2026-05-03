@@ -35,6 +35,7 @@ import {
   defineBoardEntityInParent,
   PUtilityBar,
   PEditableTitle,
+  Button,
 } from "../..";
 
 export interface PBoard {
@@ -102,7 +103,8 @@ export function Board(props: PBoard) {
       dataObjectToBoardParams,
     ).then((b: IBoard) => {
       setBoard(b);
-      setActiveViewId(b.order?.[0] ?? null);
+      console.log(id)
+      setActiveViewId(b.order?.[0]);
       setPrivilege(
         getUserPrivilege(user, b.ownerUserId, id)
       );
@@ -232,28 +234,29 @@ export function Board(props: PBoard) {
 
   const ubc: PUtilityBar = {
     elements: [
+      <Button
+        {...BUTTONS.ADD}
+        text="Add View"
+        tooltip=""
+        visible={editMode}
+        onClick={onAddView}
+        icon="pager"
+        testid="board-add-view-button"
+        position="left"
+      />,
       <TabsNav
+        activeId={activeViewId!}
         className="tol-views-nav"
         buttons={[
-          {
-            ...BUTTONS.ADD,
-            text: "Add View",
-            tooltip: "",
-            visible: editMode,
-            onClick: onAddView,
-            icon: "pager",
-            testid: "board-add-view-button",
-            position: "left",
-          },
           ...board.order.map((viewId) => {
             const view = board.views?.[viewId];
             if (view) {
               return {
-                className: `tol-view-tab ${activeViewId === view.id ? "active" : ""}`,
+                id: view.id!,
                 text: ViewTitle(view),
                 onClick: onViewClick(view.id!),
+                className: "tol-view-tab",
                 position: "left",
-                outline: activeViewId !== view.id,
               } as PButton;
             }
             return null;
@@ -283,15 +286,15 @@ export function Board(props: PBoard) {
     return "";
   }
 
-  const activeView = board.views?.[activeViewId!];
+  const viewId = board.views?.[activeViewId!]?.id!;
 
   // returns the first view at the moment
   return (
     <div className={`tol-board ${classMode()}`} >
       {BoardBar}
       <View
-        key={activeView.id}
-        id={activeView.id!}
+        key={viewId}
+        id={viewId}
         utilityBarConfig={ubc}
         boardDataSource={boardDataSource}
         actionsDataSource={actionsDataSource}

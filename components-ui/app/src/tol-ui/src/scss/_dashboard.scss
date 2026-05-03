@@ -135,24 +135,24 @@
   }
 }
 
-.tol-views-bar {
-  margin-top: 8px;
+.tol-view {
+  .tol-views-bar {
+    margin-top: 8px;
 
-  .tol-edit-mode & {
-    border-top: 1px solid var(--tol-grey);
-    padding-top: 8px;
+    .tol-edit-mode & {
+      border-top: 1px solid var(--tol-grey);
+      padding-top: 8px;
+    }
   }
-}
 
-.tol-tabs-nav {
-  margin-right: 6px;
+  .tol-tabs-nav {
 
-  .tol-view-tab.rs-btn {
-    padding: 6px 0px !important;
+    &:has(.tol-view-tab) {
+      margin-right: 6px;
+    }
 
-    // Remove the second border for the input
-    .rs-input {
-      border: unset !important;
+    .tol-view-tab.rs-btn {
+      padding: 6px 0px !important;
     }
   }
 }

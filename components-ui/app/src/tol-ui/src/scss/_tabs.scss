@@ -53,4 +53,9 @@
   overflow: auto;
   display: flex;
   border-radius: 6px;
+
+  // Remove the second border for the input
+  .rs-input {
+    border: unset !important;
+  }
 }

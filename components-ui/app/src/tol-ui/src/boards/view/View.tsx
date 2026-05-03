@@ -111,7 +111,7 @@ export function View(props: PView) {
 
   return (
     <div className="tol-view">
-      {editMode && Bar}
+      {Bar}
       {view.order.length === 0 ? (
         <div className="tol-boards-empty">
           {editMode ? (

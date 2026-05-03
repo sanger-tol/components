@@ -7,18 +7,30 @@ SPDX-License-Identifier: MIT
 import { Button, PButton } from "..";
 
 export interface PTabsNav {
-  buttons: PButton[]
+  /**
+   * The buttons to display in the tab navigation.
+   */
+  buttons: PButton[];
+  /**
+ * The ID of the active tab.
+ * IDs must be provided to the buttons in order for this to work.
+ */
+  activeId?: string;
+  /**
+   * An extra class name to apply to the tab navigation container.
+   */
   className: string;
 }
 
 export function TabsNav(props: PTabsNav) {
-  const { buttons, className } = props;
+  const { buttons, activeId, className } = props;
 
   return (
     <div className={`tol-tabs-nav ${className}`}>
-      {buttons.map((button, index) => (
+      {buttons.map((button) => (
         <Button
-          key={index}
+          key={`tol-tabs-nav-button-${button.id}`}
+          outline={button.id !== activeId}
           {...button}
         />
       ))}
