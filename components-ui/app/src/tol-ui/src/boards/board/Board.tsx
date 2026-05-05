@@ -33,13 +33,11 @@ import {
   getEntityPrefix,
   generateId,
   defineBoardEntityInParent,
-  PUtilityBar,
   Button,
   ITab,
   BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
   deleteBoardEntityInParent,
   ConfirmationModal,
-  DISABLED_VIEW_DELETE_TOOLTIP,
 } from "../..";
 
 export interface PBoard {
@@ -206,6 +204,7 @@ export function Board(props: PBoard) {
     onClick: onClickView(viewId),
     className: "tol-view-tab",
     position: "left",
+    visible: board.order.length > 1,
   });
 
   const deleteViewButton = (viewId: string): PButton => ({
@@ -214,7 +213,7 @@ export function Board(props: PBoard) {
     position: "left",
     tooltip: "Delete View",
     outline: false,
-    visible: editMode && activeViewId === viewId,
+    visible: editMode && activeViewId === viewId && board.order.length > 1,
   });
 
   const addZoneButton: PButton = {
@@ -240,28 +239,25 @@ export function Board(props: PBoard) {
       testid="board-add-view-button"
       position="left"
     />,
-    // Only show view tabs if there is more than 1 view
-    ...(board.order.length > 1 ? [
-      <TabsNav
-        activeId={activeViewId!}
-        className="tol-views-nav"
-        onReorder={editMode ? onReorderViews : undefined}
-        tabs={[
-          ...board.order.map((viewId) => {
-            const view = board.views?.[viewId];
-            if (view) {
-              return {
-                buttons: [
-                  viewTab(view.id!, view.title!),
-                  deleteViewButton(view.id!),
-                ],
-              } as ITab;
-            }
-            return null;
-          }).filter((btn): btn is ITab => btn !== null)
-        ]}
-      />
-    ] : [])
+    <TabsNav
+      activeId={activeViewId!}
+      className="tol-views-nav"
+      onReorder={editMode && board.order.length > 1 ? onReorderViews : undefined}
+      tabs={[
+        ...board.order.map((viewId) => {
+          const view = board.views?.[viewId];
+          if (view) {
+            return {
+              buttons: [
+                viewTab(view.id!, view.title!),
+                deleteViewButton(view.id!),
+              ],
+            } as ITab;
+          }
+          return null;
+        }).filter((btn): btn is ITab => btn !== null)
+      ]}
+    />
   ]
 
   const layoutOrExitLogic: PButton = layoutMode ? {
