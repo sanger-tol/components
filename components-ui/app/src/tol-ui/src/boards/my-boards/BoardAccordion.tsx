@@ -23,8 +23,8 @@ import {
   returnZoneInfo,
   returnViewInfo,
   API_METHODS,
+  PopUpMessage,
 } from "../..";
-
 
 interface AccordionBaseProps {
   id: string;
@@ -87,17 +87,32 @@ export function BoardAccordion(props: BoardsAccordionProps) {
     return <></>;
   };
 
-  const deleteBoard = () => {
+  const deleteBoard = async () => {
     if (boardIdToDelete === null) return;
     const deletedBoard = boardDetails.filter(
       (board: any) => board.id !== boardIdToDelete,
     );
     setBoardDetails(deletedBoard);
-    boardDataSource
+    await boardDataSource
       .custom({
         method: API_METHODS.DELETE,
         resource: `${BOARDS.BOARD}/${boardIdToDelete}`,
       })
+      .then((res: any) => {
+        if (res.status === 200) {
+          PopUpMessage({
+            type: "success",
+            message: "Board deleted successfully",
+          });
+        }
+      })
+      .catch((err) => {
+        PopUpMessage({
+          type: "error",
+          message: `Failed to delete board: ${err.message}`,
+        });
+        setBoardDetails(boardDetails);
+      });
     setBoardIdToDelete(null);
   };
 
@@ -165,7 +180,13 @@ export function BoardAccordion(props: BoardsAccordionProps) {
     const handleExpand = async () => {
       if (!expanded) {
         setLoading(true);
-        const ids = await fetchSubItemId(id, objectType, boardDataSource, filterKey, itemType);
+        const ids = await fetchSubItemId(
+          id,
+          objectType,
+          boardDataSource,
+          filterKey,
+          itemType,
+        );
         setChildIds(ids.map((id: any) => id.id));
         setLoading(false);
         setExpanded(true);
@@ -200,7 +221,7 @@ export function BoardAccordion(props: BoardsAccordionProps) {
     const { componentIds } = props;
     const { itemData: componentData, loading } = useItemData(
       componentIds,
-      (id: string) => returnComponentInfo(boardDataSource, id) 
+      (id: string) => returnComponentInfo(boardDataSource, id),
     );
 
     if (!componentIds?.length) return null;
@@ -243,9 +264,8 @@ export function BoardAccordion(props: BoardsAccordionProps) {
 
   const ZonesAccordion = (props: ZonesAccordionProps) => {
     const { zoneIds } = props;
-    const { itemData: zoneData, loading } = useItemData(
-      zoneIds,
-      (id: string) => returnZoneInfo(boardDataSource, id) 
+    const { itemData: zoneData, loading } = useItemData(zoneIds, (id: string) =>
+      returnZoneInfo(boardDataSource, id),
     );
 
     if (!zoneIds?.length) return null;
@@ -278,9 +298,8 @@ export function BoardAccordion(props: BoardsAccordionProps) {
 
   const ViewsAccordion = (props: ViewsAccordionProps) => {
     const { boardId, viewIds } = props;
-    const { itemData: viewData, loading } = useItemData(
-      viewIds,
-      (id: string) => returnViewInfo(boardDataSource, id) 
+    const { itemData: viewData, loading } = useItemData(viewIds, (id: string) =>
+      returnViewInfo(boardDataSource, id),
     );
 
     if (!viewIds?.length) return null;
@@ -325,7 +344,11 @@ export function BoardAccordion(props: BoardsAccordionProps) {
   return (
     <>
       {boardDetails.map((board: any) => (
-        <div data-testid={board.title} key={board.id} className="tol-board-accordion">
+        <div
+          data-testid={board.title}
+          key={board.id}
+          className="tol-board-accordion"
+        >
           <div style={{ flex: "1" }}>
             <AccordionBase
               id={board.id}

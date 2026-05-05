@@ -31,13 +31,13 @@ export interface IBoardFilter {
 export interface IComponent extends IBoardEntity, IBoardFilter {
   subFilter?: IFilter;
   filterPassThrough?: boolean;
-  componentType?: string;
+  component_type?: string;
   componentSize?: string;
 
   /**
    * Note: Not required for dev pages when using useZone
    */
-  objectType?: string;
+  object_type?: string;
   dataspace?: TsDataSource;
   config?: any;
 }
@@ -47,7 +47,7 @@ export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
    * The object type of the zone
    * All components in a zone use this object type
    */
-  objectType?: string;
+  object_type?: string;
   /**
    * The user ID of the board owner, used to determine permissions for editing the board.
    * Note: Not required for dev pages when using useZone
