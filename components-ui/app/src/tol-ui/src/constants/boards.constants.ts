@@ -32,3 +32,5 @@ export const MY_BOARDS_SUB_TITLE = (
   along with viewing board hierarchy and components 
   of each zone.`
 );
+
+export const BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE = "Board and View titles cannot be empty.";

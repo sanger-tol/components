@@ -78,15 +78,6 @@ export function Zone(props: PZone) {
     setOpen(true);
   };
 
-  const ConfirmModal = (
-    <ConfirmationModal
-      setOpen={setConfirmationModalOpen}
-      open={confirmationModalOpen}
-      onConfirmClick={() => onDeleteZone(id)}
-      itemType={BOARDS.ZONE}
-    />
-  );
-
   const deleteButton: PButton = {
     ...BUTTONS.DISCARD,
     onClick: () => setConfirmationModalOpen(true),
@@ -207,7 +198,12 @@ export function Zone(props: PZone) {
           )}
         </div>
       )}
-      {ConfirmModal}
+      <ConfirmationModal
+        setOpen={setConfirmationModalOpen}
+        open={confirmationModalOpen}
+        onConfirmClick={() => onDeleteZone(id)}
+        itemType={BOARDS.ZONE}
+      />
       <FilterConfigDrawer
         id={id}
         boardObjectType={BOARDS.ZONE}

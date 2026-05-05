@@ -4,18 +4,23 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Button, PButton } from "..";
+import { Fragment } from "react/jsx-runtime";
+import { Button, Icon, TTabs } from "..";
 
 export interface PTabsNav {
   /**
-   * The buttons to display in the tab navigation.
+   * The tabs to be displayed in the navigation, including their buttons and optional icons.
    */
-  buttons: PButton[];
+  tabs: TTabs;
   /**
- * The ID of the active tab.
- * IDs must be provided to the buttons in order for this to work.
- */
+  * The ID of the active tab.
+  * IDs must be provided to the buttons in order for this to work.
+  */
   activeId?: string;
+  /**
+   * A callback function that is called when the tabs are reordered.
+   */
+  onReorder?: (orderedIds: string[]) => void;
   /**
    * An extra class name to apply to the tab navigation container.
    */
@@ -23,16 +28,33 @@ export interface PTabsNav {
 }
 
 export function TabsNav(props: PTabsNav) {
-  const { buttons, activeId, className } = props;
+  const { tabs, activeId, className } = props;
 
   return (
     <div className={`tol-tabs-nav ${className}`}>
-      {buttons.map((button) => (
-        <Button
-          key={`tol-tabs-nav-button-${button.id}`}
-          outline={button.id !== activeId}
-          {...button}
-        />
+      {tabs.map((tab, index) => (
+        <Fragment key={`tol-tabs-nav-tab-${index}`}>
+          {tab.buttons.map((button) => (
+            <Button
+              key={`tol-tabs-nav-button-${button.id}`}
+              outline={button.id !== activeId}
+              {...button}
+            />
+          ))}
+          <div className="tol-tabs-nav-icon">
+            <Icon
+              key={`tol-tabs-nav-icon-grip`}
+              icon="grip-vertical"
+              onClick={() => { }}
+            />
+            {tab.icons && tab.icons.map((icon, index) => (
+              <Icon
+                key={`tol-tabs-nav-icon-${index}`}
+                {...icon}
+              />
+            ))}
+          </div>
+        </Fragment>
       ))}
     </div>
   );

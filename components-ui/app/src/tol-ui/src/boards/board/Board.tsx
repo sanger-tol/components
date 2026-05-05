@@ -34,8 +34,11 @@ import {
   generateId,
   defineBoardEntityInParent,
   PUtilityBar,
-  PEditableTitle,
   Button,
+  ITab,
+  BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
+  deleteBoardEntityInParent,
+  ConfirmationModal,
 } from "../..";
 
 export interface PBoard {
@@ -80,6 +83,7 @@ export function Board(props: PBoard) {
   const [activeViewId, setActiveViewId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
 
   // Ability to override boardId from props over URL params
   const id = boardId ?? paramBoardId;
@@ -137,10 +141,27 @@ export function Board(props: PBoard) {
     setActiveViewId(id);
   };
 
-  const onViewClick = (viewId: string) => () => {
+  const onClickView = (viewId: string) => () => {
     setActiveViewId(viewId);
     console.log("View clicked:", viewId);
   }
+
+  const onReorderViews = (orderedIds: string[]) => {
+    setBoard({
+      ...board,
+      order: orderedIds,
+    });
+  };
+
+  const onDeleteView = (id: string) => {
+    boardDataSource
+      .deleteByID({
+        objectType: BOARDS.VIEW,
+        id
+      })
+    deleteBoardEntityInParent<IBoard>(id, BOARDS.BOARD, board);
+    setBoard({ ...board });
+  };
 
   if (error !== "") {
     return <Redirect to="/page-not-found" />;
@@ -209,7 +230,9 @@ export function Board(props: PBoard) {
         title: value,
       });
     },
-    hideButtons: true
+    hideButtons: true,
+    emptyAllowed: false,
+    onEmptyMessage: BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
   } : undefined;
 
   // Large header for view mode
@@ -225,9 +248,21 @@ export function Board(props: PBoard) {
         text={view.title}
         editable={editMode && activeViewId === view.id}
         onSave={(value: string) => {
-          // Save view title
+          saveTitle(value, view.id!, boardDataSource, BOARDS.VIEW);
+          setBoard({
+            ...board,
+            views: {
+              ...board.views,
+              [view.id!]: {
+                ...board.views?.[view.id!],
+                title: value,
+              }
+            }
+          });
         }}
         hideButtons={true}
+        emptyAllowed={false}
+        onEmptyMessage={BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE}
       />
     );
   }
@@ -247,20 +282,33 @@ export function Board(props: PBoard) {
       <TabsNav
         activeId={activeViewId!}
         className="tol-views-nav"
-        buttons={[
+        onReorder={editMode ? onReorderViews : undefined}
+        tabs={[
           ...board.order.map((viewId) => {
             const view = board.views?.[viewId];
             if (view) {
               return {
-                id: view.id!,
-                text: ViewTitle(view),
-                onClick: onViewClick(view.id!),
-                className: "tol-view-tab",
-                position: "left",
-              } as PButton;
+                buttons: [
+                  {
+                    id: view.id!,
+                    text: ViewTitle(view),
+                    onClick: onClickView(view.id!),
+                    className: "tol-view-tab",
+                    position: "left",
+                  },
+                  ...(activeViewId === view.id ? [{
+                    ...BUTTONS.DISCARD,
+                    onClick: () => setConfirmationModalOpen(true),
+                    position: "left",
+                    // Disable delete if it's the only view left
+                    visible: board.order.length !== 1,
+                    tooltip: "Delete View",
+                  } as PButton] : [])
+                ],
+              } as ITab;
             }
             return null;
-          }).filter((btn): btn is PButton => btn !== null)
+          }).filter((btn): btn is ITab => btn !== null)
         ]}
       />
     ]
@@ -286,18 +334,22 @@ export function Board(props: PBoard) {
     return "";
   }
 
-  const viewId = board.views?.[activeViewId!]?.id!;
-
   // returns the first view at the moment
   return (
     <div className={`tol-board ${classMode()}`} >
       {BoardBar}
       <View
-        key={viewId}
-        id={viewId}
+        key={activeViewId}
+        id={activeViewId!}
         utilityBarConfig={ubc}
         boardDataSource={boardDataSource}
         actionsDataSource={actionsDataSource}
+      />
+      <ConfirmationModal
+        setOpen={setConfirmationModalOpen}
+        open={confirmationModalOpen}
+        onConfirmClick={() => onDeleteView(activeViewId!)}
+        itemType={BOARDS.ZONE}
       />
     </div >
   );

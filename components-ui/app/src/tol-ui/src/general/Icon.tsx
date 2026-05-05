@@ -18,7 +18,11 @@ export function Icon(props: PIcon) {
   const { icon, size, config = "solid", className, onClick } = props;
 
   return (
-    <span className={className} onClick={onClick}>
+    <span
+      className={className}
+      onClick={onClick}
+      style={onClick ? {cursor: "pointer"} : {}}
+      >
       {/* @ts-ignore */}
       <FontAwesomeIcon icon={`fa-${config} fa-${icon}`} size={size} />
     </span>

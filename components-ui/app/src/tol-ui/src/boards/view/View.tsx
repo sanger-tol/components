@@ -24,6 +24,8 @@ import {
   PRIVILEGE,
   PUtilityBar,
   mergeUtilityBarConfigs,
+  ConfirmationModal,
+  PButton,
 } from "../..";
 
 
@@ -84,22 +86,24 @@ export function View(props: PView) {
     // TODO: reorder
   };
 
+  const addButton: PButton = {
+    ...BUTTONS.ADD,
+    testid: "open-add-zone-modal-button",
+    visible: editMode && !layoutMode,
+    onClick: () => {
+      setOpen(true);
+    },
+    tooltip: "",
+    text: "Add Zone",
+    icon: "object-group",
+  };
+
   const ubc = mergeUtilityBarConfigs(
     utilityBarConfig,
     {
       id: "view-utility-bar",
       buttons: [
-        {
-          ...BUTTONS.ADD,
-          testid: "open-add-zone-modal-button",
-          visible: editMode && !layoutMode,
-          onClick: () => {
-            setOpen(true);
-          },
-          tooltip: "",
-          text: "Add Zone",
-          icon: "object-group",
-        },
+        addButton,
       ]
     })
 
