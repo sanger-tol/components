@@ -37,18 +37,26 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
   const [loading, setLoading] = useState(false);
   const [statsError, setStatsError] = useState<string>("");
   const [filter, setFilter] = useState<TFilterOrUndefined>({});
+  const [statsObjectType, setStatsObjectType] = useState<string>(objectType);
+  const [statsField, setStatsField] = useState<string>(field);
 
   useEffect(() => {
     setIsNumeric(false);
     setStats(null);
     setLoading(false);
     setStatsError("");
+    setStatsObjectType(objectType);
+    setStatsField(field);
 
     dataSource.getEntityMeta().then((meta) => {
       const attribute = meta.flatAttributes[objectType][field];
       if (!attribute) return;
       const pythonType = (attribute.python_type ?? "").toLowerCase();
       setIsNumeric(NUMERIC_PYTHON_TYPES.has(pythonType));
+      if (attribute.object_type && field.includes(".")) {
+        setStatsObjectType(attribute.object_type);
+        setStatsField(field.split(".").pop()!);
+      }
     });
   }, [dataSource, field, objectType]);
 
@@ -73,18 +81,18 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
     setLoading(true);
     const params: any = {
       stats: ATTRIBUTE_STATS_KEYS.join(","),
-      stats_fields: field,
+      stats_fields: statsField,
     };
     if (filter !== undefined) {
       params.filter = filter;
     }
     dataSource.custom({
       method: API_METHODS.GET,
-      resource: `${objectType}:stats`,
+      resource: `${statsObjectType}:stats`,
       params,
     })
       .then((res: any) => {
-        const statsPayload = res?.data?.meta?.stats?.[field];
+        const statsPayload = res?.data?.meta?.stats?.[statsField];
         if (!statsPayload) {
           setStatsError("No stats available.");
           return;
@@ -97,7 +105,7 @@ export function AttributeStatsBox(props: PAttributeStatsBox) {
       .finally(() => {
         setLoading(false);
       });
-  }, [dataSource, field, filter, isNumeric, objectType, stats]);
+  }, [dataSource, statsField, statsObjectType, filter, isNumeric, stats]);
 
   const statsContents = useMemo(() => {
     if (!isNumeric) return null;
