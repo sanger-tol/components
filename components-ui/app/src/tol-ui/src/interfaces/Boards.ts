@@ -32,7 +32,7 @@ export interface IComponent extends IBoardEntity, IBoardFilter {
   subFilter?: IFilter;
   filterPassThrough?: boolean;
   component_type?: string;
-  componentSize?: string;
+  widget_size?: string;
 
   /**
    * Note: Not required for dev pages when using useZone
@@ -40,6 +40,8 @@ export interface IComponent extends IBoardEntity, IBoardFilter {
   object_type?: string;
   dataspace?: TsDataSource;
   config?: any;
+  data_source_instance_id?: string;
+  ui_api_details: IDBDataSourceInstanceApiDetails;
 }
 
 export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
@@ -52,6 +54,7 @@ export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
    * The user ID of the board owner, used to determine permissions for editing the board.
    * Note: Not required for dev pages when using useZone
    */
+  data_source_instance_id?: string;
   dataspace?: TsDataSource;
 }
 
@@ -74,7 +77,7 @@ export interface IBoard extends IBoardParentEntity<IView> {
  *   id: "b_1",
  *   type: "board",
  *   title: "My Board",
- *   ownerUserId: "29",
+ *   owner_email: "example@example.com",
  *   order: ["v_1"],
  *   children: {
  *     "v_1": {
@@ -87,7 +90,7 @@ export interface IBoard extends IBoardParentEntity<IView> {
  *           id: "z_1",
  *           type: "zone",
  *           title: "Species Zone",
- *           objectType: "species",
+ *           object_type: "species",
  *           filter: { and_: {} },
  *           order: ["c_1", "c_2"],
  *           children: {
@@ -95,8 +98,8 @@ export interface IBoard extends IBoardParentEntity<IView> {
  *               id: "c_1",
  *               type: "component",
  *               title: "Species Table",
- *               componentType: "table",
- *               componentSize: "lg",
+ *               component_type: "table",
+ *               widget_size: "lg",
  *               filter: { and_: {} },
  *               config: {},
  *             },
@@ -104,8 +107,8 @@ export interface IBoard extends IBoardParentEntity<IView> {
  *               id: "c_2",
  *               type: "component",
  *               title: "Species Chart",
- *               componentType: "chart",
- *               componentSize: "md",
+ *               component_type: "chart",
+ *               widget_size: "md",
  *               filter: { and_: {} },
  *               config: {},
  *             },
