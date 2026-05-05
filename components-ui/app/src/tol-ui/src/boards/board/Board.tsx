@@ -39,6 +39,7 @@ import {
   BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
   deleteBoardEntityInParent,
   ConfirmationModal,
+  DISABLED_VIEW_DELETE_TOOLTIP,
 } from "../..";
 
 export interface PBoard {
@@ -83,7 +84,8 @@ export function Board(props: PBoard) {
   const [activeViewId, setActiveViewId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [deleteViewConfirmModal, setDeleteViewConfirmModal] = useState(false);
+  const [openAddZoneModal, setOpenAddZoneModal] = useState(false);
 
   // Ability to override boardId from props over URL params
   const id = boardId ?? paramBoardId;
@@ -107,7 +109,6 @@ export function Board(props: PBoard) {
       dataObjectToBoardParams,
     ).then((b: IBoard) => {
       setBoard(b);
-      console.log(id)
       setActiveViewId(b.order?.[0]);
       setPrivilege(
         getUserPrivilege(user, b.ownerUserId, id)
@@ -119,10 +120,6 @@ export function Board(props: PBoard) {
       setError("Failed to load board.");
     });
   }, [id]);
-
-  const onLayoutModeToggle = () => {
-    setLayoutMode(!layoutMode);
-  };
 
   const onAddView = async () => {
     const id = generateId(getEntityPrefix(BOARDS.VIEW));
@@ -154,11 +151,12 @@ export function Board(props: PBoard) {
   };
 
   const onDeleteView = (id: string) => {
-    boardDataSource
-      .deleteByID({
-        objectType: BOARDS.VIEW,
-        id
-      })
+    // TODO: add delete back
+    // boardDataSource
+    //   .deleteByID({
+    //     objectType: BOARDS.VIEW,
+    //     id
+    //   })
     deleteBoardEntityInParent<IBoard>(id, BOARDS.BOARD, board);
     setBoard({ ...board });
   };
@@ -177,6 +175,95 @@ export function Board(props: PBoard) {
     );
   }
 
+  const ViewTitle = (viewId: string, viewTitle: string) => {
+    return (
+      <EditableTitle
+        text={viewTitle}
+        editable={editMode && activeViewId === viewId}
+        onSave={(value: string) => {
+          saveTitle(value, viewId, boardDataSource, BOARDS.VIEW);
+          setBoard({
+            ...board,
+            views: {
+              ...board.views,
+              [viewId]: {
+                ...board.views?.[viewId],
+                title: value,
+              }
+            }
+          });
+        }}
+        hideButtons={true}
+        emptyAllowed={false}
+        onEmptyMessage={BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE}
+      />
+    );
+  }
+
+  const viewTab = (viewId: string, viewTitle: string): PButton => ({
+    id: viewId,
+    text: ViewTitle(viewId, viewTitle),
+    onClick: onClickView(viewId),
+    className: "tol-view-tab",
+    position: "left",
+  });
+
+  const deleteViewButton = (viewId: string): PButton => ({
+    ...BUTTONS.DISCARD,
+    onClick: () => setDeleteViewConfirmModal(true),
+    position: "left",
+    tooltip: "Delete View",
+    outline: false,
+    visible: editMode && activeViewId === viewId,
+  });
+
+  const addZoneButton: PButton = {
+    ...BUTTONS.ADD,
+    testid: "open-add-zone-modal-button",
+    visible: editMode && !layoutMode,
+    onClick: () => {
+      setOpenAddZoneModal(true);
+    },
+    tooltip: "",
+    text: "Add Zone",
+    icon: "object-group",
+  }
+
+  const ViewTabs = [
+    <Button
+      {...BUTTONS.ADD}
+      text="Add View"
+      tooltip=""
+      visible={editMode}
+      onClick={onAddView}
+      icon="pager"
+      testid="board-add-view-button"
+      position="left"
+    />,
+    // Only show view tabs if there is more than 1 view
+    ...(board.order.length > 1 ? [
+      <TabsNav
+        activeId={activeViewId!}
+        className="tol-views-nav"
+        onReorder={editMode ? onReorderViews : undefined}
+        tabs={[
+          ...board.order.map((viewId) => {
+            const view = board.views?.[viewId];
+            if (view) {
+              return {
+                buttons: [
+                  viewTab(view.id!, view.title!),
+                  deleteViewButton(view.id!),
+                ],
+              } as ITab;
+            }
+            return null;
+          }).filter((btn): btn is ITab => btn !== null)
+        ]}
+      />
+    ] : [])
+  ]
+
   const layoutOrExitLogic: PButton = layoutMode ? {
     ...BUTTONS.SAVE,
     text: "Save Layouts",
@@ -188,7 +275,7 @@ export function Board(props: PBoard) {
   const layoutOrExitButton: PButton = {
     ...layoutOrExitLogic,
     visible: privilege === PRIVILEGE.BOARD.EDITABLE && editMode,
-    onClick: onLayoutModeToggle,
+    onClick: () => setLayoutMode(!layoutMode),
     testid: "board-layout-mode-button",
     tooltip: "",
   }
@@ -236,83 +323,11 @@ export function Board(props: PBoard) {
   } : undefined;
 
   // Large header for view mode
-  const viewModeTitle = !editMode ? [(
+  const ViewModeBoardTitle = !editMode ? [(
     <h3>
       {board.title}
     </h3>
   )] : undefined;
-
-  const ViewTitle = (view: IView) => {
-    return (
-      <EditableTitle
-        text={view.title}
-        editable={editMode && activeViewId === view.id}
-        onSave={(value: string) => {
-          saveTitle(value, view.id!, boardDataSource, BOARDS.VIEW);
-          setBoard({
-            ...board,
-            views: {
-              ...board.views,
-              [view.id!]: {
-                ...board.views?.[view.id!],
-                title: value,
-              }
-            }
-          });
-        }}
-        hideButtons={true}
-        emptyAllowed={false}
-        onEmptyMessage={BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE}
-      />
-    );
-  }
-
-  const ubc: PUtilityBar = {
-    elements: [
-      <Button
-        {...BUTTONS.ADD}
-        text="Add View"
-        tooltip=""
-        visible={editMode}
-        onClick={onAddView}
-        icon="pager"
-        testid="board-add-view-button"
-        position="left"
-      />,
-      <TabsNav
-        activeId={activeViewId!}
-        className="tol-views-nav"
-        onReorder={editMode ? onReorderViews : undefined}
-        tabs={[
-          ...board.order.map((viewId) => {
-            const view = board.views?.[viewId];
-            if (view) {
-              return {
-                buttons: [
-                  {
-                    id: view.id!,
-                    text: ViewTitle(view),
-                    onClick: onClickView(view.id!),
-                    className: "tol-view-tab",
-                    position: "left",
-                  },
-                  ...(activeViewId === view.id ? [{
-                    ...BUTTONS.DISCARD,
-                    onClick: () => setConfirmationModalOpen(true),
-                    position: "left",
-                    // Disable delete if it's the only view left
-                    visible: board.order.length !== 1,
-                    tooltip: "Delete View",
-                  } as PButton] : [])
-                ],
-              } as ITab;
-            }
-            return null;
-          }).filter((btn): btn is ITab => btn !== null)
-        ]}
-      />
-    ]
-  }
 
   const BoardBar = (
     <div className="tol-board-bar">
@@ -324,32 +339,35 @@ export function Board(props: PBoard) {
           shareButton,
         ]}
         title={editModeTitle}
-        elements={viewModeTitle}
+        elements={ViewModeBoardTitle}
       />
+      {editMode || board.order.length > 1 ? (
+        <UtilityBar
+          id="tol-board-views-utility-bar"
+          className="tol-views-bar"
+          elements={ViewTabs}
+          buttons={[addZoneButton]}
+        />
+      ) : null}
     </div>
   )
 
-  const classMode = () => {
-    if (editMode) return "tol-edit-mode";
-    return "";
-  }
-
-  // returns the first view at the moment
   return (
-    <div className={`tol-board ${classMode()}`} >
+    <div className={`tol-board ${editMode ? "tol-edit-mode" : ""}`} >
       {BoardBar}
       <View
         key={activeViewId}
         id={activeViewId!}
-        utilityBarConfig={ubc}
         boardDataSource={boardDataSource}
         actionsDataSource={actionsDataSource}
+        open={openAddZoneModal}
+        setOpen={setOpenAddZoneModal}
       />
       <ConfirmationModal
-        setOpen={setConfirmationModalOpen}
-        open={confirmationModalOpen}
+        open={deleteViewConfirmModal}
+        setOpen={setDeleteViewConfirmModal}
         onConfirmClick={() => onDeleteView(activeViewId!)}
-        itemType={BOARDS.ZONE}
+        itemType={BOARDS.VIEW}
       />
     </div >
   );

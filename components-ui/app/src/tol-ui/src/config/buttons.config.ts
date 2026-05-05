@@ -48,14 +48,12 @@ export const BUTTONS: Record<string, PButton> = {
     position: "right",
   },
   CLOSE: {
-    outline: true,
     type: "error",
     icon: "xmark",
     tooltip: "Close",
     position: "right",
   },
   CANCEL: {
-    outline: true,
     type: "error",
     icon: "xmark",
     tooltip: "Cancel",

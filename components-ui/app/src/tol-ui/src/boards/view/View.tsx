@@ -11,8 +11,6 @@ import {
   BOARDS,
   PBoard,
   useBoard,
-  UtilityBar,
-  BUTTONS,
   useBoardState,
   IBoard,
   IZone,
@@ -21,11 +19,6 @@ import {
   BOARD_CHILDREN_KEYS,
   dataObjectsToZoneParams,
   deleteBoardEntityInParent,
-  PRIVILEGE,
-  PUtilityBar,
-  mergeUtilityBarConfigs,
-  ConfirmationModal,
-  PButton,
 } from "../..";
 
 
@@ -35,15 +28,19 @@ export interface PView extends PBoard {
    */
   id: string;
   /**
-   * The data source for fetching board data.
-  */
-  utilityBarConfig?: PUtilityBar;
+   * Open state for the zone creation modal.
+   */
+  open: boolean;
+  /**
+   * Function to set the open state of the zone creation modal.
+   */
+  setOpen: (open: boolean) => void;
 }
 
 export function View(props: PView) {
-  const { id, utilityBarConfig, boardDataSource, actionsDataSource } = props;
+  const { id, open, setOpen, boardDataSource, actionsDataSource } = props;
 
-  const { editMode, setEditMode, privilege, layoutMode, board, setBoard } = useBoard();
+  const { editMode, board, setBoard } = useBoard();
 
   const [view, setView] = useBoardState<IBoard, IView>(
     BOARD_CHILDREN_KEYS.VIEWS,
@@ -51,7 +48,6 @@ export function View(props: PView) {
     board,
     setBoard,
   );
-  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     getBoardEntity<IView, IZone>(
@@ -62,13 +58,6 @@ export function View(props: PView) {
       dataObjectsToZoneParams
     ).then((v: IView) => {
       setView(v);
-      /*
-        If the view is empty and the user has edit privileges,
-        set edit mode to true to encourage them to add content
-      */
-      if (v.order.length === 0 && privilege === PRIVILEGE.BOARD.EDITABLE) {
-        setEditMode(true);
-      }
     })
   }, []);
 
@@ -86,36 +75,8 @@ export function View(props: PView) {
     // TODO: reorder
   };
 
-  const addButton: PButton = {
-    ...BUTTONS.ADD,
-    testid: "open-add-zone-modal-button",
-    visible: editMode && !layoutMode,
-    onClick: () => {
-      setOpen(true);
-    },
-    tooltip: "",
-    text: "Add Zone",
-    icon: "object-group",
-  };
-
-  const ubc = mergeUtilityBarConfigs(
-    utilityBarConfig,
-    {
-      id: "view-utility-bar",
-      buttons: [
-        addButton,
-      ]
-    })
-
-  const Bar = (
-    <div className="tol-board-bar">
-      <UtilityBar {...ubc} />
-    </div>
-  )
-
   return (
     <div className="tol-view">
-      {Bar}
       {view.order.length === 0 ? (
         <div className="tol-boards-empty">
           {editMode ? (

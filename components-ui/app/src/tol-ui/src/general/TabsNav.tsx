@@ -27,8 +27,12 @@ export interface PTabsNav {
   className: string;
 }
 
+/**
+ * A component that renders a navigation bar for tabs, including buttons and optional icons for each tab.
+ * It also supports reordering of tabs if an `onReorder` callback is provided.
+ */
 export function TabsNav(props: PTabsNav) {
-  const { tabs, activeId, className } = props;
+  const { tabs, activeId, onReorder, className } = props;
 
   return (
     <div className={`tol-tabs-nav ${className}`}>
@@ -42,11 +46,13 @@ export function TabsNav(props: PTabsNav) {
             />
           ))}
           <div className="tol-tabs-nav-icon">
-            <Icon
-              key={`tol-tabs-nav-icon-grip`}
-              icon="grip-vertical"
-              onClick={() => { }}
-            />
+            {onReorder && (
+              <Icon
+                key={`tol-tabs-nav-icon-grip`}
+                icon="grip-vertical"
+                onClick={() => onReorder([])}
+              />
+            )}
             {tab.icons && tab.icons.map((icon, index) => (
               <Icon
                 key={`tol-tabs-nav-icon-${index}`}
