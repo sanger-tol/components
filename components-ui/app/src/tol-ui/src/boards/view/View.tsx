@@ -40,7 +40,7 @@ export function View(props: PView) {
   const [open, setOpen] = useState(false);
 
   if (
-    view.order.length === 0 &&
+    view?.order?.length === 0 &&
     privilege === PRIVILEGE.BOARD.WRITABLE &&
     !editMode
   ) {
@@ -84,7 +84,7 @@ export function View(props: PView) {
   return (
     <div className="tol-view">
       {editMode && Bar}
-      {view.order.length === 0 ? (
+      {view?.order?.length === 0 ? (
         <div className="tol-boards-empty">
           {editMode ? (
             <p>Please click the 'Add Zone' button to get started.</p>
@@ -94,7 +94,7 @@ export function View(props: PView) {
         </div>
       ) : (
         <div className="tol-zones">
-          {view.order?.map((zoneId) => {
+          {view?.order?.map((zoneId) => {
             const zone = zones[zoneId];
             if (zone) {
               return (
