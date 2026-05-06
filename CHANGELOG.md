@@ -5,6 +5,13 @@ SPDX-License-Identifier: MIT
 -->
 
 # Changelog
+## tol-ui `3.6.0`
+
+20-04-2026
+
+- Added personal table configuration reset controls and clearer messages for published versus user-specific table configs.
+- Fixed board table config saves so user-specific `board_diff` changes are applied immediately after saving.
+- Added notices explaining that logged-in and logged-out table configuration changes are stored separately.
 
 ## tol-ui `3.5.1`
 

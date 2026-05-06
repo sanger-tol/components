@@ -16,6 +16,7 @@ import {
   PopUpMessage,
   boardParams,
   IUser,
+  BOARD_DIFF_API_PATH,
 } from "..";
 
 /**
@@ -237,3 +238,33 @@ export async function upsertJoiningBoardEntity(
 export function getEntityPrefix(objectType: string): string {
   return objectType[0];
 }
+
+export async function deleteComponentDiff(
+  componentId: string,
+  boardDataSource: TsDataSource,
+  userId?: string,
+) {
+  if (!userId) return;
+
+  // The board_diff endpoint does not support DELETE, so we upsert with config: null.
+  // getComponentData skips the proxy when diff.config is null, restoring the original config.
+  const res = await boardDataSource.getListPage({
+    objectType: BOARDS.BOARD_DIFF,
+    filter: {
+      and_: {
+        component_id: { eq: { value: componentId } },
+        user_id: { eq: { value: userId } },
+      },
+    },
+    requestedFields: ["id"],
+  });
+  const diffId = res?.[0]?.id;
+  const localDataSource = new TsDataSource({ apiPath: BOARD_DIFF_API_PATH });
+  if (diffId) {
+    await localDataSource.deleteByID({
+      objectType: BOARDS.BOARD_DIFF,
+      id: diffId,
+    });
+  }
+}
+

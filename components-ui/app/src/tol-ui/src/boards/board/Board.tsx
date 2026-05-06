@@ -60,6 +60,7 @@ export function Board(props: PBoard) {
     setPrivilege,
     editMode,
     setEditMode,
+    tableLoading,
     layoutMode,
     setLayoutMode,
     board,
@@ -147,11 +148,12 @@ export function Board(props: PBoard) {
   const EditOrExitButton: PButton = {
     ...editOrExitLogic,
     visible: privilege === PRIVILEGE.BOARD.WRITABLE && !layoutMode,
+    disabled: editMode && tableLoading,
     onClick: () => {
       setEditMode(!editMode);
     },
     testid: `board-${editMode ? "exit" : "enter"}-edit-mode-button`,
-    tooltip: "",
+    tooltip: editMode && tableLoading ? "Please wait for the table to load before exiting edit mode." : "",
   };
 
   const ShareButton: PButton = {

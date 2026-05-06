@@ -41,4 +41,5 @@ export const setBoard = async ({ page, boardID }) => {
   const userID = JSON.parse(user).id;
   const boardId = await insertBoardToDB(userID, boardID);
   await page.goto(`${URL_PATHS.BOARD}/${boardId}`);
+  await page.getByTestId("board-enter-edit-mode-button").waitFor({ state: "visible" });
 };
