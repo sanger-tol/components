@@ -9,7 +9,7 @@ import {
   Boolean,
   Datetime,
   Float,
-  OldImage,
+  ImageRenderer,
   Integer,
   Link,
   LongText,
@@ -33,7 +33,7 @@ const preDefinedElements = {
   boolean: Boolean,
   datetime: Datetime,
   float: Float,
-  image: OldImage,
+  image: ImageRenderer,
   integer: Integer,
   link: Link,
   longText: LongText,
@@ -98,7 +98,12 @@ export function CellDisplay(props: PCellDisplay) {
     }
   }
 
-  if (value === null || value === undefined) {
+  const hasRendererValueOverride = !!renderer?.props
+    && Object.prototype.hasOwnProperty.call(renderer.props, "value")
+    && renderer.props.value !== null
+    && renderer.props.value !== undefined;
+
+  if ((value === null || value === undefined) && !hasRendererValueOverride) {
     Display = <span className="tol-display-empty">None</span>;
   }
 
