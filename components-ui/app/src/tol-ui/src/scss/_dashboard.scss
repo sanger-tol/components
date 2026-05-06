@@ -11,6 +11,23 @@
     background-color: var(--tol-primary) !important;
     border-radius: 6px !important;
   }
+
+  // Editable titles on board entities
+  .tol-editable-title.rs-inline-edit {
+    font-weight: bolder !important;
+    display: block;
+
+    .rs-plaintext {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &.tol-hide-buttons .rs-inline-edit-controls {
+      display: none;
+    }
+  }
+
 }
 
 .tol-boards-widget {
@@ -353,21 +370,6 @@
 .tol-modal-error {
   color: var(--tol-danger);
   font-size: 14px;
-}
-
-.tol-editable-title.rs-inline-edit {
-  font-weight: bolder !important;
-  display: block;
-
-  .rs-plaintext {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &.tol-hide-buttons .rs-inline-edit-controls {
-    display: none;
-  }
 }
 
 .tol-editable-title {

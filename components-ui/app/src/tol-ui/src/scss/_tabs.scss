@@ -65,4 +65,8 @@
     margin-right: 6px;
     color: var(--tol-grey);
   }
+
+  .tol-tabs-nav-button:not(.active) {
+    font-weight: 200 !important;
+  }
 }

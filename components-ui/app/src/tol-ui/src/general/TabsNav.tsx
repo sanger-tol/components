@@ -40,26 +40,32 @@ export function TabsNav(props: PTabsNav) {
         <Fragment key={`tol-tabs-nav-tab-${index}`}>
           {tab.buttons.map((button) => (
             <Button
-              key={`tol-tabs-nav-button-${button.id}`}
-              outline={button.id !== activeId}
               {...button}
+              className={
+                `${button.className || ""} tol-tabs-nav-button ${button.id === activeId ? "active" : ""}`
+              }
+              key={`tol-tabs-nav-button-${button.id}`}
+              // If any of the buttons in the tab are active, then the tab is active and should not have an outline.
+              outline={!tab.buttons.some((b) => b.id === activeId)}
             />
           ))}
-          <div className="tol-tabs-nav-icon">
-            {onReorder && (
-              <Icon
-                key={`tol-tabs-nav-icon-grip`}
-                icon="grip-vertical"
-                onClick={() => onReorder([])}
-              />
-            )}
-            {tab.icons && tab.icons.map((icon, index) => (
-              <Icon
-                key={`tol-tabs-nav-icon-${index}`}
-                {...icon}
-              />
-            ))}
-          </div>
+          {onReorder || (tab.icons && tab.icons.length > 0) ? (
+            <div className="tol-tabs-nav-icon">
+              {onReorder && (
+                <Icon
+                  key={`tol-tabs-nav-icon-grip`}
+                  icon="grip-vertical"
+                  onClick={() => onReorder([])}
+                />
+              )}
+              {tab.icons && tab.icons.map((icon, index) => (
+                <Icon
+                  key={`tol-tabs-nav-icon-${index}`}
+                  {...icon}
+                />
+              ))}
+            </div>
+          ): null}
         </Fragment>
       ))}
     </div>
