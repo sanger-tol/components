@@ -59,14 +59,24 @@
     border: unset !important;
   }
 
+  .tol-tabs-nav-tab {
+    display: flex;
+    align-items: center;
+  }
+
   .tol-tabs-nav-icon {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    align-content: center;
     margin-right: 6px;
     color: var(--tol-grey);
+
+    .tol-grip {
+      cursor: grab;
+    }
   }
 
   .tol-tabs-nav-button:not(.active) {
-    font-weight: 200 !important;
+    font-weight: 100 !important;
   }
 }

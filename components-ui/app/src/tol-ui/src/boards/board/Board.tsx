@@ -28,7 +28,7 @@ import {
   dataObjectToViewParams,
   dataObjectToBoardParams,
   getUserPrivilege,
-  TabsNav,
+  SortableTabs,
   EditableTitle,
   getEntityPrefix,
   generateId,
@@ -38,6 +38,7 @@ import {
   BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
   deleteBoardEntityInParent,
   ConfirmationModal,
+  getNextTitle,
 } from "../..";
 
 export interface PBoard {
@@ -132,12 +133,11 @@ export function Board(props: PBoard) {
 
   const onAddView = async () => {
     const id = generateId(getEntityPrefix(BOARDS.VIEW));
-    const nextViewNumber = board.order.length + 1;
     setBoard({
       ...defineBoardEntityInParent<IView, IBoard>(
         {
           id: id,
-          title: `View ${nextViewNumber}`,
+          title: getNextTitle<IBoard>(board, BOARDS.BOARD, BOARDS.VIEW),
         },
         BOARDS.VIEW,
         board,
@@ -154,10 +154,8 @@ export function Board(props: PBoard) {
   }
 
   const onReorderViews = (orderedIds: string[]) => {
-    // setBoard({
-    //   ...board,
-    //   order: orderedIds,
-    // });
+    board.order = orderedIds;
+    setBoard({ ...board });
   };
 
   const onDeleteView = (viewId: string) => {
@@ -165,10 +163,11 @@ export function Board(props: PBoard) {
     // boardDataSource
     //   .deleteByID({
     //     objectType: BOARDS.VIEW,
-    //     id
+    //     viewId
     //   })
     deleteBoardEntityInParent<IBoard>(viewId, BOARDS.BOARD, board);
     setBoard({ ...board });
+    setActiveViewId(board.order[0]);
   };
 
   if (error !== "") {
@@ -251,7 +250,7 @@ export function Board(props: PBoard) {
       testid="board-add-view-button"
       position="left"
     />,
-    <TabsNav
+    <SortableTabs
       activeId={activeViewId!}
       className="tol-views-nav"
       onReorder={editMode && board.order.length > 1 ? onReorderViews : undefined}

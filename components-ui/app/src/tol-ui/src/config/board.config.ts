@@ -20,7 +20,6 @@ export const boardParams: TBoardParams = {
     childRelationship: BOARDS.VIEW,
     childrenKey: BOARD_CHILDREN_KEYS.VIEWS,
     joiningObjectRequestedFields: ["board", "view", "board.user.id"],
-
   },
   [BOARDS.VIEW]: {
     parentIdField: "view_id",
