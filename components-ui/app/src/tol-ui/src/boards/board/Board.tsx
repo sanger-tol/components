@@ -5,7 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import { useEffect, useState } from "react";
-import { Redirect, useParams } from "react-router-dom";
+import { Redirect, useHistory, useLocation, useParams } from "react-router-dom";
 import {
   BOARDS,
   getCssVarValue,
@@ -78,6 +78,8 @@ export function Board(props: PBoard) {
   } = useBoard();
 
   const { boardId: paramBoardId } = useParams<any>();
+  const history = useHistory();
+  const location = useLocation();
 
   const [activeViewId, setActiveViewId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -107,7 +109,10 @@ export function Board(props: PBoard) {
       dataObjectToBoardParams,
     ).then((b: IBoard) => {
       setBoard(b);
-      setActiveViewId(b.order?.[0]);
+      const viewFromUrl = new URLSearchParams(location.search).get("view");
+      setActiveViewId(
+        viewFromUrl && b.order?.includes(viewFromUrl) ? viewFromUrl : b.order?.[0]
+      );
       setPrivilege(
         getUserPrivilege(user, b.ownerUserId, id)
       );
@@ -118,6 +123,12 @@ export function Board(props: PBoard) {
       setError("Failed to load board.");
     });
   }, [id]);
+
+  const updateViewInUrl = (viewId: string) => {
+    const params = new URLSearchParams(location.search);
+    params.set("view", viewId);
+    history.replace({ search: params.toString() });
+  };
 
   const onAddView = async () => {
     const id = generateId(getEntityPrefix(BOARDS.VIEW));
@@ -134,28 +145,29 @@ export function Board(props: PBoard) {
       )
     });
     setActiveViewId(id);
+    updateViewInUrl(id);
   };
 
   const onClickView = (viewId: string) => () => {
     setActiveViewId(viewId);
-    console.log("View clicked:", viewId);
+    updateViewInUrl(viewId);
   }
 
   const onReorderViews = (orderedIds: string[]) => {
-    setBoard({
-      ...board,
-      order: orderedIds,
-    });
+    // setBoard({
+    //   ...board,
+    //   order: orderedIds,
+    // });
   };
 
-  const onDeleteView = (id: string) => {
+  const onDeleteView = (viewId: string) => {
     // TODO: add delete back
     // boardDataSource
     //   .deleteByID({
     //     objectType: BOARDS.VIEW,
     //     id
     //   })
-    deleteBoardEntityInParent<IBoard>(id, BOARDS.BOARD, board);
+    deleteBoardEntityInParent<IBoard>(viewId, BOARDS.BOARD, board);
     setBoard({ ...board });
   };
 

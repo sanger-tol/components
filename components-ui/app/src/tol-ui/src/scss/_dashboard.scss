@@ -146,7 +146,11 @@
   }
 
   .tol-views-bar {
-    margin-top: 8px;
+    margin-top: 10px;
+
+    .tol-edit-mode & {
+      margin-top: 6px;
+    }
   }
 }
 

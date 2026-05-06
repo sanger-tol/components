@@ -77,7 +77,7 @@ $sizes: (
 
       &.rs-btn.rs-btn-disabled {
         background-color: var(--tol-grey-subtle) !important;
-        border-color: var(--tol-grey) !important;
+        border-color: var(--tol-grey-subtle) !important;
         color: var(--tol-bg) !important;
         fill: var(--tol-bg) !important;
         background-color: transparent;
@@ -113,7 +113,7 @@ $sizes: (
 
       &.rs-btn.rs-btn-disabled {
         background-color: var(--tol-grey-subtle) !important;
-        border-color: var(--tol-grey) !important;
+        border-color: var(--tol-grey-subtle) !important;
         color: var(--tol-bg) !important;
         fill: var(--tol-bg) !important;
         background-color: transparent;
