@@ -5,13 +5,13 @@ SPDX-License-Identifier: MIT
 */
 
 import { createContext, useContext } from "react";
-import { User } from "..";
+import { IUser } from "..";
 
 interface AuthContextValue {
   token: string;
   setToken: (token: string) => void;
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user: IUser | null;
+  setUser: (user: IUser | null) => void;
 }
 
 export const AuthContext = createContext<AuthContextValue>({

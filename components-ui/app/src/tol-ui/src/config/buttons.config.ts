@@ -85,5 +85,12 @@ export const BUTTONS: Record<string, PButton> = {
     icon: "arrow-down-wide-short",
     tooltip: "Translate filters from one Zone to another",
     position: "right",
+  },
+  COPY: {
+    outline: true,
+    type: "primary",
+    icon: "copy",
+    tooltip: "Copy",
+    position: "right",
   }
 };

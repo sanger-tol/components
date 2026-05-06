@@ -56,7 +56,7 @@ export function defineZoneWithComponentList(
 ) {
   return defineBoardEntity<IZone>(
     {
-      objectType: objectType,
+      object_type: objectType,
       filter: filter,
       children: components.reduce((acc, component) => {
         acc[component.id!] = component;

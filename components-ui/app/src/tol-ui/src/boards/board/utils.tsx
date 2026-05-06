@@ -7,9 +7,15 @@ SPDX-License-Identifier: MIT
 import {
   BOARDS,
   upsertJoiningBoardEntity,
-  User,
+  IUser,
   TsDataSource,
   upsertCoreBoardEntity,
+  IBoard,
+  API_METHODS,
+  HTTP_STATUS_CODES,
+  MESSAGE_TYPE,
+  PopUpMessage,
+  BOARD_MESSAGE_TEXT,
 } from "../..";
 
 // TODO: REMOVE WITH NEW ENDPOINTS!
@@ -20,7 +26,7 @@ import {
  */
 export async function createBoardAndView(
   boardDataSource: TsDataSource,
-  user: User,
+  user: IUser,
 ): Promise<string | undefined> {
   const boardObj = await upsertCoreBoardEntity(
     BOARDS.BOARD,
@@ -50,3 +56,44 @@ export async function createBoardAndView(
 
   return boardId;
 }
+
+export const copyBoardEntity = async (
+  boardDataSource: TsDataSource,
+  entityId: string,
+  operation: string,
+  entityType: string,
+  setBoard: (board: IBoard) => void,
+  title: string,
+) => {
+  await boardDataSource
+    .custom({
+      method: API_METHODS.POST,
+      resource: `${operation}/${entityId}`,
+      body: {
+        new_parent_entity_title: title,
+        parent_entity_type: entityType,
+      },
+    })
+    .then((res) => {
+      if (res.status === HTTP_STATUS_CODES.CREATED) {
+        PopUpMessage({
+          type: MESSAGE_TYPE.SUCCESS,
+          message: BOARD_MESSAGE_TEXT(entityType).BOARD_COPY.COPY_SUCCESS,
+        });
+        setBoard(res.data as IBoard);
+        if (entityType === BOARDS.BOARD) {
+          window.history.replaceState(
+            null,
+            "",
+            `/${BOARDS.BOARD}/${res.data.id}`,
+          );
+        }
+      }
+    })
+    .catch(() => {
+      PopUpMessage({
+        type: MESSAGE_TYPE.ERROR,
+        message: BOARD_MESSAGE_TEXT(entityType).BOARD_COPY.COPY_ERROR,
+      });
+    });
+};

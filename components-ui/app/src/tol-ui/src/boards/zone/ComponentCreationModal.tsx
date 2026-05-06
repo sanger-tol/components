@@ -61,7 +61,7 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
       ...defineBoardEntityInParent<IComponent, IZone>(
         {
           id: id,
-          objectType: BOARDS.ZONE,
+          object_type: BOARDS.ZONE,
           dataspace: zone.dataspace,
           config: {},
           size: widgetType, // TODO: Will need fixing

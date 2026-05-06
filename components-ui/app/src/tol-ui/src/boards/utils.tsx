@@ -15,7 +15,7 @@ import {
   deepCopy,
   PopUpMessage,
   boardParams,
-  User,
+  IUser,
 } from "..";
 
 /**
@@ -198,7 +198,7 @@ export async function upsertCoreBoardEntity(
   objectType: string,
   attributes: object,
   boardDataSource: TsDataSource,
-  user?: User,
+  user?: IUser,
   id?: string,
 ) {
   // Generate a new ID for the board entity based on its type (e.g. 'b' for board, 'v' for view, 'z' for zone, 'c' for component)

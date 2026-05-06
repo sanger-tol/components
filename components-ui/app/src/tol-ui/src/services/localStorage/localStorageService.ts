@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { User } from "../..";
+import { IUser } from "../..";
 
 
 export function setTokenToLocalStorage(token: string) {
@@ -15,7 +15,7 @@ export function getTokenFromLocalStorage() {
   return localStorage.getItem("token") || "";
 }
 
-export function setUserToLocalStorage(user: User | null) {
+export function setUserToLocalStorage(user: IUser | null) {
   if (user === null) {
     localStorage.setItem("user", "");
   }

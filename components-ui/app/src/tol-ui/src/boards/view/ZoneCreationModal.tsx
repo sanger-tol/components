@@ -137,7 +137,7 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
       ...defineBoardEntityInParent<IZone, IView>(
         {
           id: id,
-          objectType: BOARDS.ZONE,
+          object_type: BOARDS.ZONE,
           dataspace: dataspace,
         },
         BOARDS.ZONE,

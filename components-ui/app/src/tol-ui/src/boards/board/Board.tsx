@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Redirect, useParams } from "react-router-dom";
 import {
   BOARDS,
@@ -20,6 +20,13 @@ import {
   UtilityBar,
   useQueryData,
   getBoardEntityAndChildren,
+  URL_PATHS,
+  MESSAGE_TYPE,
+  BOARD_MESSAGE_TEXT,
+  NewTitleModal,
+  PopUpMessage,
+  copyBoardEntity,
+  API_UTILITY_OPERATIONS,
 } from "../..";
 import type { IBoard, PButton, TNavBrand, TsDataSource } from "../..";
 
@@ -60,6 +67,8 @@ export function Board(props: PBoard) {
   } = useBoard();
 
   const { boardId: paramBoardId } = useParams<any>();
+  const [boardCopyModalOpen, setBoardCopyModalOpen] = useState<boolean>(false);
+  const [newBoardCopyTitle, setNewBoardCopyTitle] = useState<string>("");
 
   // Ability to override boardId from props over URL params
   const id = boardId ?? paramBoardId;
@@ -95,7 +104,7 @@ export function Board(props: PBoard) {
   }, [isSuccess]);
 
   if (isError) {
-    return <Redirect to="/page-not-found" />;
+    return <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />;
   }
 
   if (!isSuccess && !boardData && !board) {
@@ -116,7 +125,7 @@ export function Board(props: PBoard) {
         text: "Change Layout",
       };
 
-  const layoutOrExitButton: PButton = {
+  const LayoutOrExitButton: PButton = {
     ...layoutOrExitLogic,
     visible: privilege === PRIVILEGE.BOARD.WRITABLE && editMode,
     onClick: onLayoutModeToggle,
@@ -135,7 +144,7 @@ export function Board(props: PBoard) {
         text: "Edit",
       };
 
-  const editOrExitButton: PButton = {
+  const EditOrExitButton: PButton = {
     ...editOrExitLogic,
     visible: privilege === PRIVILEGE.BOARD.WRITABLE && !layoutMode,
     onClick: () => {
@@ -145,15 +154,26 @@ export function Board(props: PBoard) {
     tooltip: "",
   };
 
-  const shareButton: PButton = {
+  const ShareButton: PButton = {
     ...BUTTONS.SHARE,
     onClick: () => {
       copyToClipboard(location.href);
     },
   };
 
+  const CopyButton: PButton = {
+    ...BUTTONS.COPY,
+    onClick: () => {
+      if(!newBoardCopyTitle.trim()) {
+        setNewBoardCopyTitle(`${board?.title} - copy`);
+      }
+      setBoardCopyModalOpen(true);
+    },
+    tooltip: "Copy Board",
+  };
+
   // Different format used for the main Board title
-  const editModeTitle = editMode
+  const EditModeTitle = editMode
     ? {
         text: board?.title,
         editable: editMode,
@@ -174,8 +194,12 @@ export function Board(props: PBoard) {
     <div className="tol-board-bar">
       <UtilityBar
         id="board-utility-bar"
-        buttons={[editOrExitButton, layoutOrExitButton, shareButton]}
-        title={editModeTitle}
+        buttons={[
+          EditOrExitButton,
+          LayoutOrExitButton,
+          ...(!editMode ? [ShareButton, CopyButton] : []),
+        ]}
+        title={EditModeTitle}
         elements={viewModeTitle}
       />
     </div>
@@ -189,9 +213,49 @@ export function Board(props: PBoard) {
   // returns the first view at the moment
   return (
     <div className={`tol-board ${classMode()}`}>
+      <NewTitleModal
+        open={boardCopyModalOpen}
+        setOpen={setBoardCopyModalOpen}
+        title={newBoardCopyTitle}
+        setTitle={setNewBoardCopyTitle}
+        itemType={BOARDS.BOARD}
+        confirmationAction={async () => {
+          if (!newBoardCopyTitle.trim()) {
+            PopUpMessage({
+              type: MESSAGE_TYPE.WARNING,
+              message: BOARD_MESSAGE_TEXT(BOARDS.BOARD).BOARD_COPY.NO_TITLE_ERROR,
+            });
+            return;
+          }
+          await copyBoardEntity(
+            boardDataSource,
+            id!,
+            API_UTILITY_OPERATIONS.BOARD_COPY,
+            BOARDS.BOARD,
+            setBoard,
+            newBoardCopyTitle,
+          );
+          setBoardCopyModalOpen(false);
+        }}
+        onExited={() => {
+          !newBoardCopyTitle.trim()
+            ? setNewBoardCopyTitle(`${board?.title} - copy`)
+            : null;
+        }}
+        userInfoHelp={
+          <>
+            <h3>Save a copy of this board</h3>
+            <p>
+              You are about to create a copy of this board, would you like to
+              rename it before copying?
+            </p>
+          </>
+        }
+      />
       {Bar}
       {board?.order?.[0] && (
         <View
+          key={board?.order?.[0]}
           id={board?.order?.[0]}
           boardDataSource={boardDataSource}
           actionsDataSource={actionsDataSource}

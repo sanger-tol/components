@@ -17,4 +17,11 @@ export const PAGE_ACCESS = {
    * Only logged in users with a role assigned, e.g. ['sanger']
    */
   ROLE_REQUIRED: "role_required",
+} as const;
+
+export const URL_PATHS = {
+  HOME: "/",
+  PAGE_NOT_FOUND: "/page-not-found",
+  BOARD: "/board",
+  MY_BOARDS: "/my-boards",
 }

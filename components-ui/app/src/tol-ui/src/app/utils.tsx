@@ -14,7 +14,7 @@ import {
   TNavConfig,
   TPageOrDropdown,
   PAGE_ACCESS,
-  User,
+  IUser,
   deepCopy,
   IPageLink,
   IPageElement,
@@ -154,7 +154,7 @@ export function generateRoutePath(
  */
 export function normaliseNavConfig(
   navigation: TNavConfig | undefined,
-  user: User | null,
+  user: IUser | null,
   routePrefix: string = ""
 ): TNavConfig {
   const source: TNavConfig = navigation ?? { data: {}, order: [] };
@@ -229,7 +229,7 @@ export function mergeNavConfigs(
 export function mergeAndNormaliseNavConfig(
   navigation: TNavConfig | undefined,
   defaultNavigation: TNavConfig,
-  user: User | null,
+  user: IUser | null,
   routePrefix: string = "",
 ): TNavConfig {
   // Combine system nav config with incoming config
@@ -369,7 +369,7 @@ export function collectNavigationItems(navigation: TNavConfig | undefined): Reac
  * 
  * @returns `true` if the user is allowed to access the page; otherwise `false`.
  */
-export function isPageAccessible(user: User | null, page: TPageOrDropdown): boolean {
+export function isPageAccessible(user: IUser | null, page: TPageOrDropdown): boolean {
   // If no auth required, allow access
   if (!page.access || page.access === PAGE_ACCESS.PUBLIC) return true;
 
