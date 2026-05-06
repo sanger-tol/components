@@ -35,3 +35,5 @@ export const MY_BOARDS_SUB_TITLE = (
 );
 
 export const BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE = "Board and View titles cannot be empty.";
+
+export const MAX_VIEWS_ALLOWED_MESSAGE = "A maximum of 10 Views are allowed per board.";

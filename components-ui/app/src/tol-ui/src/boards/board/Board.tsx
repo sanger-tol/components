@@ -39,6 +39,7 @@ import {
   deleteBoardEntityInParent,
   ConfirmationModal,
   getNextTitle,
+  MAX_VIEWS_ALLOWED_MESSAGE,
 } from "../..";
 
 export interface PBoard {
@@ -249,6 +250,9 @@ export function Board(props: PBoard) {
       icon="pager"
       testid="board-add-view-button"
       position="left"
+      // Limit of 10 views per board
+      disabled={board.order.length >= 10}
+      disabledTooltip={MAX_VIEWS_ALLOWED_MESSAGE}
     />,
     <SortableTabs
       activeId={activeViewId!}
