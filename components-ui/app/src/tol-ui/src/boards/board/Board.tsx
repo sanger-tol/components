@@ -376,6 +376,7 @@ export function Board(props: PBoard) {
       {BoardBar}
       {mountedViewIds.map(viewId => (
         <View
+          key={viewId}
           id={viewId}
           boardDataSource={boardDataSource}
           actionsDataSource={actionsDataSource}
