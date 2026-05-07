@@ -30,7 +30,7 @@ import {
 
 export interface PZone extends PBoard {
   id: string;
-  onZoneReorder?: any;
+  onReorderZone?: any;
   onDeleteZone?: any;
   view: IView;
   setView: (view: IView) => void;
@@ -40,7 +40,7 @@ export function Zone(props: PZone) {
   const {
     id,
     boardDataSource,
-    onZoneReorder,
+    onReorderZone,
     onDeleteZone,
     view,
     setView,
@@ -99,7 +99,7 @@ export function Zone(props: PZone) {
   const upButton: PButton = {
     outline: true,
     onClick: async () => {
-      await onZoneReorder(id, "up");
+      await onReorderZone(id, "up");
     },
     type: "primary",
     icon: "arrow-up",
@@ -111,7 +111,7 @@ export function Zone(props: PZone) {
   const downButton: PButton = {
     outline: true,
     onClick: async () => {
-      await onZoneReorder(id, "down");
+      await onReorderZone(id, "down");
     },
     type: "primary",
     icon: "arrow-down",

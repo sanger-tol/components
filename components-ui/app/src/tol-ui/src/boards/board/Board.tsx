@@ -84,6 +84,7 @@ export function Board(props: PBoard) {
   const location = useLocation();
 
   const [activeViewId, setActiveViewId] = useState<string | null>(null);
+  const [mountedViewIds, setMountedViewIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deleteViewConfirmModal, setDeleteViewConfirmModal] = useState(false);
@@ -125,6 +126,12 @@ export function Board(props: PBoard) {
       setError("Failed to load board.");
     });
   }, [id]);
+
+  // Preload the current and two most recently accessed views for faster loading when switching between them
+  useEffect(() => {
+    if (!activeViewId) return;
+    setMountedViewIds(prev => [...prev.filter(vid => vid !== activeViewId), activeViewId].slice(-3));
+  }, [activeViewId]);
 
   const updateViewInUrl = (viewId: string) => {
     const params = new URLSearchParams(location.search);
@@ -168,6 +175,7 @@ export function Board(props: PBoard) {
     //   })
     deleteBoardEntityInParent<IBoard>(viewId, BOARDS.BOARD, board);
     setBoard({ ...board });
+    setMountedViewIds(prev => prev.filter(vid => vid !== viewId));
     setActiveViewId(board.order[0]);
   };
 
@@ -366,14 +374,16 @@ export function Board(props: PBoard) {
   return (
     <div className={`tol-board ${editMode ? "tol-edit-mode" : ""}`} >
       {BoardBar}
-      <View
-        key={activeViewId}
-        id={activeViewId!}
-        boardDataSource={boardDataSource}
-        actionsDataSource={actionsDataSource}
-        open={openAddZoneModal}
-        setOpen={setOpenAddZoneModal}
-      />
+      {mountedViewIds.map(viewId => (
+        <View
+          id={viewId}
+          boardDataSource={boardDataSource}
+          actionsDataSource={actionsDataSource}
+          open={openAddZoneModal && viewId === activeViewId}
+          setOpen={setOpenAddZoneModal}
+          active={viewId === activeViewId}
+        />
+      ))}
       <ConfirmationModal
         open={deleteViewConfirmModal}
         setOpen={setDeleteViewConfirmModal}

@@ -35,10 +35,14 @@ export interface PView extends PBoard {
    * Function to set the open state of the zone creation modal.
    */
   setOpen: (open: boolean) => void;
+  /**
+   * Whether to show the view in the DOM.
+   */
+  active?: boolean;
 }
 
 export function View(props: PView) {
-  const { id, open, setOpen, boardDataSource, actionsDataSource } = props;
+  const { id, open, setOpen, active, boardDataSource, actionsDataSource } = props;
 
   const { editMode, board, setBoard } = useBoard();
 
@@ -58,7 +62,7 @@ export function View(props: PView) {
       dataObjectsToZoneParams
     ).then((v: IView) => {
       setView(v);
-    })
+    });
   }, []);
 
   const onDeleteZone = (id: string) => {
@@ -71,12 +75,12 @@ export function View(props: PView) {
     setView({ ...view });
   };
 
-  const onZoneReorder = async (id: string, orderChange: number) => {
+  const onReorderZone = async (id: string, orderChange: number) => {
     // TODO: reorder
   };
 
   return (
-    <div className="tol-view">
+    <div className={`tol-view ${!active ? "tol-view-cached" : ""}`}>
       {view.order.length === 0 ? (
         <div className="tol-boards-empty">
           {editMode ? (
@@ -94,7 +98,7 @@ export function View(props: PView) {
                 <Zone
                   key={zone.id}
                   id={zone.id!}
-                  onZoneReorder={onZoneReorder}
+                  onReorderZone={onReorderZone}
                   onDeleteZone={onDeleteZone}
                   boardDataSource={boardDataSource}
                   view={view}
