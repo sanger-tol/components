@@ -4,7 +4,6 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-
 import {
   BOARDS,
   defineBoardEntity,
@@ -14,7 +13,6 @@ import {
   TsDataSource,
   upsertCoreBoardEntity,
 } from "../..";
-
 
 /**
  * Update the component state and upsert the component with the new config.
@@ -29,24 +27,55 @@ export async function updateComponentConfigAndUpsert(
   config: object,
   zone: IZone,
   boardDataSource: TsDataSource,
+  editMode: boolean,
+  setHasDiff: (hasDiff: boolean) => void,
+  userId: string | undefined,
 ) {
-  if (zone.children[0]) zone.children[0][componentId].config = config;
-  return await upsertCoreBoardEntity(
-    BOARDS.COMPONENT,
-    { config: config },
-    boardDataSource,
-    undefined,
-    componentId
-  );
+  const component = zone.children?.[0]?.[componentId];
+  if (!component) return;
+  // console.log("component config:",config);
+  // component.config = config;
+
+  if (editMode) {
+    component.config = { ...config };
+    return await upsertCoreBoardEntity(
+      BOARDS.COMPONENT,
+      { config: config },
+      boardDataSource,
+      undefined,
+      componentId,
+    );
+  }
+
+  component.config_diff = { ...component.config_diff, config: config };
+  return await boardDataSource
+    .upsert({
+      objectType: BOARDS.BOARD_DIFF,
+      payload: [
+        {
+          type: BOARDS.BOARD_DIFF,
+          ...(component.config_diff.id && { id: component.config_diff.id }),
+          attributes: {
+            user_id: userId,
+            component_id: componentId,
+            config: { ...config },
+          },
+        },
+      ],
+    })
+    .then(() => setHasDiff(true))
+    .catch((error) => {
+      console.error("Error upserting board diff:", error);
+    });
 }
 
 /**
  * Simplified of defineZone for when you just want to pass a list of components without needing to worry about the structure of the zone object.
- * 
+ *
  * @param objectType - The type of the zone object.
  * @param components - An array of component data to be added to the zone.
  * @param filter - An optional filter to be applied to the zone.
- * 
+ *
  * @returns The defined zone with the added components.
  */
 export function defineZoneWithComponentList(
@@ -58,13 +87,16 @@ export function defineZoneWithComponentList(
     {
       object_type: objectType,
       filter: filter,
-      children: components.reduce((acc, component) => {
-        acc[component.id!] = component;
-        return acc;
-      }, {} as Record<string, IComponent>),
-      order: components.map(component => component.id!),
+      children: components.reduce(
+        (acc, component) => {
+          acc[component.id!] = component;
+          return acc;
+        },
+        {} as Record<string, IComponent>,
+      ),
+      order: components.map((component) => component.id!),
     },
-    BOARDS.ZONE
+    BOARDS.ZONE,
   );
 }
 
@@ -79,10 +111,12 @@ export async function updateLayout(
   const order = getWidgetOrder(layout);
 
   // finds the highest order value in the current widgets, based off the db
-  const orderValues = Object.values(zone.children?.[0] ?? {}).map((component: IComponent) => {
-    const order = component.componentZoneOrder;
-    return Number(order);
-  });
+  const orderValues = Object.values(zone.children?.[0] ?? {}).map(
+    (component: IComponent) => {
+      const order = component.componentZoneOrder;
+      return Number(order);
+    },
+  );
   const highestPreviousOrder = Math.max(...orderValues);
 
   // maps through the order and upserts based on the componentId
@@ -103,7 +137,7 @@ export async function updateLayout(
   });
   zone.order = order.order;
   setZone({ ...zone });
-};
+}
 
 export function getWidgetOrder(layout: any) {
   // Sort the layout array by the 'y' property (and 'x' property in case of a tie)
@@ -162,4 +196,4 @@ export function generateLayout(zone: IZone) {
     });
   });
   return layout;
-};
+}
