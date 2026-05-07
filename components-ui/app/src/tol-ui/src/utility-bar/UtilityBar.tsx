@@ -18,20 +18,47 @@ import {
 } from "..";
 
 export interface PUtilityBar {
+  /**
+   * An optional ID for the utility bar, which can be used for testing or other purposes.
+   */
   id?: string;
+  /**
+   * A title to be displayed on the left side of the utility bar. This can be an editable title if an `onEdit` function is provided.
+   */
   title?: PEditableTitle;
+  /**
+   * A description to be displayed as a tooltip on an info icon next to the title.
+   */
   description?: ReactNode;
+  /**
+   * An array of buttons to be displayed in the utility bar. These can be regular buttons or dropdown buttons.
+   */
   buttons?: (
     PButton |
     PDropdownButtons |
     undefined
   )[];
+  /**
+   * Additional elements to be rendered in the utility bar, after the title and description but before the buttons. This can be used to add custom content to the utility bar.
+   */
   elements?: JSX.Element[];
+  /**
+   * Whether to hide the left side of the utility bar, which includes the title and description.
+   */
   noLeftSide?: boolean;
+  /**
+   * Additional class name(s) to apply to the utility bar.
+   */
+  className?: string;
 }
 
+/**
+ * A component that can render a title, description, buttons, and additional elements.
+ * This is used as a standardised header bar for various components.
+ * The utility bar is responsive and can condense buttons into a dropdown on smaller screens.
+ */
 export function UtilityBar(props: PUtilityBar) {
-  const { id, title, description, buttons, elements, noLeftSide } = props;
+  const { id, title, description, buttons, elements, noLeftSide, className } = props;
 
   const wrapperId = "tol-utility-bar-wrapper-" + id; // gets width on mount
   const [smallBreakpoint, setSmallBreakpoint] = useState(true);
@@ -89,7 +116,7 @@ export function UtilityBar(props: PUtilityBar) {
 
   return (
     <div className={noLeftSide ? "tol-utility-bar-no-left-side" : ""}>
-      <div className="tol-utility-bar" data-testid={id} id={wrapperId}>
+      <div className={`tol-utility-bar ${className ?? ""}`} data-testid={id} id={wrapperId}>
         {!noLeftSide && title && <EditableTitle {...title} />}
         {!noLeftSide && description && <IconTooltip className="tol-utility-bar-tooltip" contents={description} />}
         {elements && elements.map(

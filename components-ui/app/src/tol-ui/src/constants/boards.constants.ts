@@ -24,8 +24,13 @@ export const BOARD_CHILDREN_KEYS = {
 } as const;
 
 export const MY_BOARDS_TITLE = "My Boards";
+
 export const MY_BOARDS_SUB_TITLE = (
   `Here you can view and delete your boards, 
   along with viewing board hierarchy and components 
   of each zone.`
 );
+
+export const BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE = "Board and View titles cannot be empty.";
+
+export const MAX_VIEWS_ALLOWED_MESSAGE = "A maximum of 10 Views are allowed per board.";

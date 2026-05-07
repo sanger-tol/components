@@ -23,7 +23,7 @@ import type { IZone, IView, PButton, PBoard } from "../..";
 
 export interface PZone extends PBoard {
   id: string;
-  onZoneReorder?: any;
+  onReorderZone?: any;
   onDeleteZone?: any;
   view: IView;
   setView: (view: IView) => void;
@@ -33,7 +33,7 @@ export function Zone(props: PZone) {
   const {
     id,
     boardDataSource,
-    onZoneReorder,
+    onReorderZone,
     onDeleteZone,
     view,
     setView,
@@ -56,15 +56,6 @@ export function Zone(props: PZone) {
   const onAddComponent = () => {
     setOpen(true);
   };
-
-  const ConfirmModal = (
-    <ConfirmationModal
-      setOpen={setConfirmationModalOpen}
-      open={confirmationModalOpen}
-      onConfirmClick={() => onDeleteZone(id)}
-      itemType={BOARDS.ZONE}
-    />
-  );
 
   const deleteButton: PButton = {
     ...BUTTONS.DISCARD,
@@ -89,7 +80,7 @@ export function Zone(props: PZone) {
   const upButton: PButton = {
     outline: true,
     onClick: async () => {
-      await onZoneReorder(id, "up");
+      await onReorderZone(id, "up");
     },
     type: "primary",
     icon: "arrow-up",
@@ -101,7 +92,7 @@ export function Zone(props: PZone) {
   const downButton: PButton = {
     outline: true,
     onClick: async () => {
-      await onZoneReorder(id, "down");
+      await onReorderZone(id, "down");
     },
     type: "primary",
     icon: "arrow-down",
@@ -139,6 +130,7 @@ export function Zone(props: PZone) {
               setTitle(value);
             }
           },
+          hideButtons: true
         }}
         description={<TitleTooltip {...zone} />}
         buttons={[
@@ -186,13 +178,18 @@ export function Zone(props: PZone) {
           )}
         </div>
       )}
-      {ConfirmModal}
+      <ConfirmationModal
+        setOpen={setConfirmationModalOpen}
+        open={confirmationModalOpen}
+        onConfirmClick={() => onDeleteZone(id)}
+        itemType={BOARDS.ZONE}
+      />
       <FilterConfigDrawer
         id={id}
         boardObjectType={BOARDS.ZONE}
         boardDataSource={boardDataSource}
         dataSource={zone.dataspace!}
-        objectType={zone.objectType!}
+        objectType={zone.object_type!}
         open={openFilters}
         setOpen={setOpenFilters}
         zone={zone}

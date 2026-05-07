@@ -4,29 +4,41 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState } from "react";
 import {
   ZoneCreationModal,
   Zone,
   BOARDS,
   PBoard,
   useBoard,
-  UtilityBar,
-  BUTTONS,
   useBoardState,
   IBoard,
   IView,
   BOARD_CHILDREN_KEYS,
   deleteBoardEntityInParent,
-  PRIVILEGE,
 } from "../..";
 
+
 export interface PView extends PBoard {
+  /**
+   * The ID of the view.
+   */
   id: string;
+  /**
+   * Open state for the zone creation modal.
+   */
+  open: boolean;
+  /**
+   * Function to set the open state of the zone creation modal.
+   */
+  setOpen: (open: boolean) => void;
+  /**
+   * Whether to show the view in the DOM.
+   */
+  active?: boolean;
 }
 
 export function View(props: PView) {
-  const { id, boardDataSource, actionsDataSource } = props;
+  const { id, open, setOpen, active, boardDataSource, actionsDataSource } = props;
 
   const { editMode, setEditMode, privilege, layoutMode, board, setBoard } =
     useBoard();
@@ -37,7 +49,6 @@ export function View(props: PView) {
     board,
     setBoard,
   );
-  const [open, setOpen] = useState(false);
 
   if (
     view?.order?.length === 0 &&
@@ -56,35 +67,13 @@ export function View(props: PView) {
     setView({ ...view });
   };
 
-  const onZoneReorder = async (id: string, orderChange: number) => {
+  const onReorderZone = async (id: string, orderChange: number) => {
     // TODO: reorder
   };
 
-  const Bar = (
-    <div className="tol-board-bar">
-      <UtilityBar
-        id="view-utility-bar"
-        buttons={[
-          {
-            ...BUTTONS.ADD,
-            testid: "open-add-zone-modal-button",
-            visible: editMode && !layoutMode,
-            onClick: () => {
-              setOpen(true);
-            },
-            tooltip: "",
-            text: "Add Zone",
-            icon: "object-group",
-          },
-        ]}
-      />
-    </div>
-  );
-
   return (
-    <div className="tol-view">
-      {editMode && Bar}
-      {view?.order?.length === 0 ? (
+    <div className={`tol-view ${!active ? "tol-view-cached" : ""}`}>
+      {view.order.length === 0 ? (
         <div className="tol-boards-empty">
           {editMode ? (
             <p>Please click the 'Add Zone' button to get started.</p>
@@ -101,7 +90,7 @@ export function View(props: PView) {
                 <Zone
                   key={zone.id}
                   id={zone.id!}
-                  onZoneReorder={onZoneReorder}
+                  onReorderZone={onReorderZone}
                   onDeleteZone={onDeleteZone}
                   boardDataSource={boardDataSource}
                   view={view}

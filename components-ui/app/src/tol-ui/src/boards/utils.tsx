@@ -16,6 +16,7 @@ import {
   PopUpMessage,
   boardParams,
   IUser,
+  normaliseCaps,
   BOARD_DIFF_API_PATH,
 } from "..";
 
@@ -130,11 +131,11 @@ export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
  */
 export function defineBoardEntityInParent<
   TEntity extends IView | IZone | IComponent,
-  TParentEntity extends IBoard | IView | IZone,
+  TParent extends IBoard | IView | IZone,
 >(
   entity: Partial<TEntity>,
   objectType: string,
-  parentEntity: TParentEntity,
+  parentEntity: TParent,
   parentObjectType: string,
 ) {
   const definedEntity = defineBoardEntity(entity, objectType);
@@ -235,8 +236,41 @@ export async function upsertJoiningBoardEntity(
   return await upsertNewBoardEntity(objectType, attributes, boardDataSource);
 }
 
+/**
+ * Returns the prefix for a given board entity type.
+ * @param objectType The type of the board entity (e.g. 'board', 'view', 'zone', 'component').
+ * @returns The prefix for the board entity type.
+ */
 export function getEntityPrefix(objectType: string): string {
   return objectType[0];
+}
+
+/**
+ * Creates a new title for a board entity (view, zone, or component) based on the existing titles.
+ * @param parentEntity The parent entity (board, view, or zone) to which the new entity will be added.
+ * @param parentObjectType The type of the parent entity (e.g. 'board', 'view', 'zone').
+ * @param childObjectType The type of the child entity (e.g. 'view', 'zone', 'component').
+ * @returns The new title for the child entity.
+ */
+export function getNextTitle<
+  TParent extends IBoard | IView | IZone,
+>(
+  parentEntity: TParent,
+  parentObjectType: string,
+  childObjectType: string
+): string {
+  const titlePrefix = normaliseCaps(childObjectType);
+  const titles = Object.values(parentEntity[boardParams[parentObjectType].childrenKey] as IViews).map(v => v.title || "")
+
+  const regex = new RegExp(`^${titlePrefix} (\\d+)$`);
+  const numbers = titles
+    .map(title => title.match(regex))
+    .filter(Boolean)
+    .map(match => parseInt(match![1], 10));
+
+  const nextNumber = numbers.length > 0 ? Math.max(...numbers) + 1 : titles.length + 1;
+
+  return `${titlePrefix} ${nextNumber}`;
 }
 
 export async function deleteComponentDiff(

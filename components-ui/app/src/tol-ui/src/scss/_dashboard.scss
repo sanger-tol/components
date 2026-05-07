@@ -5,10 +5,31 @@
  */
 
 .tol-board {
+
   // Hover colour for placeholders when dragging
   .react-grid-item.react-grid-placeholder {
     background-color: var(--tol-primary) !important;
     border-radius: 6px !important;
+  }
+
+  // Editable titles on board entities
+  .tol-editable-title.rs-inline-edit {
+    font-weight: bolder !important;
+    display: block;
+
+    .rs-plaintext {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &.tol-hide-buttons .rs-inline-edit-controls {
+      display: none;
+    }
+  }
+
+  .tol-view-cached {
+    display: none;
   }
 }
 
@@ -131,6 +152,34 @@
   // Large header for view mode
   h3 {
     margin-bottom: 0;
+  }
+
+  .tol-tabs-nav {
+
+    &:has(.tol-view-tab) {
+      margin-right: 6px;
+      padding: 6px 0;
+    }
+
+    &.tol-views-nav {
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .tol-view-tab.rs-btn {
+      padding: 6px 0px !important;
+    }
+  }
+
+  .tol-views-bar {
+    margin-top: 10px;
+
+    .tol-edit-mode & {
+      margin-top: 6px;
+    }
   }
 }
 
@@ -298,6 +347,7 @@
 .tol-zones {
   .tol-zone:not(:first-child) {
     margin-top: 20px;
+
     &:has(.tol-zone-bar) {
       margin-top: 28px !important;
     }
@@ -332,18 +382,6 @@
 .tol-modal-error {
   color: var(--tol-danger);
   font-size: 14px;
-}
-
-.tol-editable-title.rs-inline-edit {
-  font-weight: bolder !important;
-  display: block;
-
-  .rs-plaintext {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-
-  }
 }
 
 .tol-editable-title {

@@ -39,7 +39,7 @@ export function Visualisations(props: PVisualisations) {
   const { layoutMode } = useBoard();
 
   const [layoutsState, setLayouts] = useState<Layouts>();
-  // newLayout is used to store the layout when the user is dragging widgets, and is emtptied once a user saves
+  // newLayout is used to store the layout when the user is dragging widgets, and is emptied once a user saves
   const [newLayout, setNewLayout] = useState(undefined);
   const internalLayouts = useRef(generateLayout(zone));
 
