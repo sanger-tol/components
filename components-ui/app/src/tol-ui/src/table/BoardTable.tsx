@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import {
   RemoteTable,
   updateComponentConfigAndUpsert,
@@ -26,7 +26,6 @@ import type {
   ITableDrawerSave,
   PVisualisation,
   IDiffState,
-  IConfigDifferences,
 } from "..";
 
 export interface PBoardTable extends PVisualisation {
@@ -38,26 +37,9 @@ export function BoardTable(props: PBoardTable) {
 
   const { user } = useAuth();
   const { editMode } = useBoard();
-
   const isLoggedIn: boolean = !!user?.id;
 
   const componentData = zone?.children[0]?.[id];
-
-  const sourceConfig = editMode
-    ? componentData?.config
-    : componentData?.config_diff?.config || componentData?.config;
-
-  const [config, setConfig] = useState<ITableConfigSave>(
-    structuredClone(sourceConfig),
-  );
-
-  // useEffect(() => {
-  //   console.log(
-  //     `edit mode is: ${editMode} & current component config:`,
-  //     config,
-  //   );
-  //   console.log(`current component config:`, componentData?.config);
-  // }, [config]);
 
   const actionList = useQueryData<string[]>(
     ["actionsList", id],
@@ -68,34 +50,62 @@ export function BoardTable(props: PBoardTable) {
     },
   );
 
-  // Trigger a re-render of of the RemoteTable
   const [resetKey, setResetKey] = useState<number>(0);
 
-  // Trigger a new fetch query for the diff state
-  const [reset, setReset] = useState<boolean>(false);
-  const [hasDiff, setHasDiff] = useState<boolean>(
-    !!componentData?.config_diff?.config,
+  // Set initial state on mount, prioritising remote diff, 
+  // then local storage diff for anonymous users, then the base config
+  const [diffState, setDiffState] = useState<IDiffState>({
+    currentConfig: structuredClone(
+      componentData?.config_diff?.config || componentData?.config,
+    ),
+    hasDiff: !!componentData?.config_diff?.config,
+    configDifferences: { add: [], remove: [] },
+  });
+
+  const { data: remoteDiffState } = useQueryData<IDiffState>(
+    [
+      // Call the query again, if any of these parameters change
+      BOARDS.BOARD_DIFF,
+      id,
+      user?.id ?? ANONYMOUS_USER_QUERY_KEY,
+      String(editMode),
+      String(isLoggedIn),
+      String(resetKey),
+    ],
+    () =>
+      getInitialDiffState(
+        id,
+        isLoggedIn,
+        objectType,
+        componentData?.config,
+        editMode,
+        componentData?.config_diff?.config || null,
+      ),
+    { enabled: true },
   );
-  const [configDifferences, setConfigDifferences] =
-    useState<IConfigDifferences>({
-      add: [],
-      remove: [],
-    });
 
-  const initialisedRef = useRef(false);
-
-  // If the diffState changes (e.g. user logs in and there is a diff, or user logs out),
-  // update the config and hasDiff state accordingly
+  // Update the diff state when a new remote diff is fetched
+  useEffect(() => {
+    if (!remoteDiffState) return;
+    setDiffState(remoteDiffState);
+  }, [remoteDiffState]);
 
   useEffect(() => {
-    editMode
-      ? setConfig({ ...componentData?.config })
-      : setConfig({
-          ...(componentData?.config_diff?.config || componentData?.config),
-        });
-    if (initialisedRef.current) setResetKey((k) => k + 1);
-    initialisedRef.current = true;
+    const nextConfig = editMode
+      ? componentData?.config
+      : componentData?.config_diff?.config || componentData?.config;
+    setDiffState((prev) => ({
+      ...prev,
+      currentConfig: structuredClone(nextConfig),
+      hasDiff: !editMode && !!componentData?.config_diff?.config,
+    }));
+    setResetKey((k) => k + 1);
   }, [editMode]);
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
+
+  const setHasDiff = (value: boolean) =>
+    setDiffState((prev) => ({ ...prev, hasDiff: value }));
 
   // ── Handlers: persist changes ────────────────────────────────────────────
 
@@ -105,12 +115,12 @@ export function BoardTable(props: PBoardTable) {
   ) => {
     const newFieldMeta = optimiseFieldMetaForSave(fieldMeta);
     const nextConfig = {
-      ...config,
+      ...diffState.currentConfig,
       defaultSortByAttribute,
       defaultSortByType,
       fieldMeta: newFieldMeta,
     };
-    setConfig(nextConfig);
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
     if (isLoggedIn) {
       updateComponentConfigAndUpsert(
         id,
@@ -131,12 +141,15 @@ export function BoardTable(props: PBoardTable) {
     setHasDiff(true);
   };
 
-  const onFilterVisibilityChange = (visible: boolean, isLoggedIn: boolean) => {
-    config["filterVisibility"] = visible;
-    setConfig({ ...config });
+  const onFilterVisibilityChange = (visible: boolean) => {
+    const nextConfig = {
+      ...diffState.currentConfig,
+      filterVisibility: visible,
+    };
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
     updateComponentConfigAndUpsert(
       id,
-      config,
+      nextConfig,
       zone,
       boardDataSource,
       editMode,
@@ -146,16 +159,17 @@ export function BoardTable(props: PBoardTable) {
   };
 
   const onResizeColumn = (columnWidth: number, dataKey: string) => {
+    const nextConfig = { ...diffState.currentConfig };
     updateFieldMetaAttribute(
-      config["fieldMeta"]!,
+      nextConfig["fieldMeta"]!,
       dataKey,
       "width",
       columnWidth,
     );
-    setConfig({ ...config });
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
     updateComponentConfigAndUpsert(
       id,
-      config,
+      nextConfig,
       zone,
       boardDataSource,
       editMode,
@@ -165,12 +179,12 @@ export function BoardTable(props: PBoardTable) {
   };
 
   const onPageSizeChange = (pageSize: number, isLoggedIn: boolean) => {
-    config["pageSize"] = pageSize;
-    setConfig({ ...config });
+    const nextConfig = { ...diffState.currentConfig, pageSize };
+    setDiffState((prev) => ({ ...prev, currentConfig: nextConfig }));
     if (isLoggedIn) {
       updateComponentConfigAndUpsert(
         id,
-        config,
+        nextConfig,
         zone,
         boardDataSource,
         editMode,
@@ -189,20 +203,26 @@ export function BoardTable(props: PBoardTable) {
 
   // ── Reset ────────────────────────────────────────────────────────────────
 
-  const resetDiffState = () => {
-    setHasDiff(false);
-    setReset((prev: boolean) => !prev);
-    setResetKey((k) => k + 1);
-  };
-
   const onReset = async () => {
-    isLoggedIn && hasDiff
+    const resetDiffState = () => {
+      if (componentData?.config_diff) {
+        componentData.config_diff = null;
+      }
+      setDiffState({
+        currentConfig: { ...componentData.config },
+        hasDiff: false,
+        configDifferences: { add: [], remove: [] },
+      });
+      setResetKey((k: number) => k + 1);
+    };
+
+    isLoggedIn && diffState.hasDiff
       ? await deleteComponentDiff(id, boardDataSource, user?.id ?? "").then(
           () => {
             resetDiffState();
           },
         )
-      : hasDiff
+      : diffState.hasDiff
         ? (clearTableConfigLocalStorage(`${BOARDS.BOARD_DIFF}_${id}`),
           resetDiffState())
         : null;
@@ -214,22 +234,22 @@ export function BoardTable(props: PBoardTable) {
       {...props}
       resizeableColumns={editMode || false}
       onReset={onReset}
-      showConfigReset={hasDiff}
-      resetConfigDifferences={configDifferences}
+      showConfigReset={diffState.hasDiff}
+      resetConfigDifferences={diffState.configDifferences}
       advanceTab
       editableCells
       displaySource
-      fields={config.fieldMeta}
-      pageSize={config.pageSize}
-      filterVisibility={config.filterVisibility}
-      defaultSortByAttribute={config.defaultSortByAttribute}
-      defaultSortByType={config.defaultSortByType}
+      fields={diffState.currentConfig?.fieldMeta}
+      pageSize={diffState.currentConfig?.pageSize}
+      filterVisibility={diffState.currentConfig?.filterVisibility}
+      defaultSortByAttribute={diffState.currentConfig?.defaultSortByAttribute}
+      defaultSortByType={diffState.currentConfig?.defaultSortByType}
       actions={actionList.data}
       actionDataSource={actionsDataSource}
       rowSelection={actionList.data && actionList.data.length > 0}
       onConfigSave={(config) => onConfigSave({ ...config }, isLoggedIn)}
       onToggleFilterVisibility={(visible: boolean) =>
-        onFilterVisibilityChange(visible, isLoggedIn)
+        onFilterVisibilityChange(visible)
       }
       onPageSizeChange={(pageSize: number) =>
         onPageSizeChange(pageSize, isLoggedIn)

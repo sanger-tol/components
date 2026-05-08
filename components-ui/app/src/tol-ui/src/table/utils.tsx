@@ -525,20 +525,20 @@ export async function resetTableConfigToDefault(
  * @param componentId - The ID of the component whose config should be retrieved
  * @returns The component's table config, or `null` if none exists
  */
-export const getComponentConfig = async (
-  dataSource: TsDataSource,
-  componentId: string,
-): Promise<ITableConfigSave | null> => {
-  return await dataSource
-    .getOne({
-      objectType: BOARDS.COMPONENT,
-      id: componentId,
-      requestedFields: ["config"],
-    })
-    .then((res: TDataObjectOrNull) => {
-      return res?.config || null;
-    });
-};
+// export const getComponentConfig = async (
+//   dataSource: TsDataSource,
+//   componentId: string,
+// ): Promise<ITableConfigSave | null> => {
+//   return await dataSource
+//     .getOne({
+//       objectType: BOARDS.COMPONENT,
+//       id: componentId,
+//       requestedFields: ["config"],
+//     })
+//     .then((res: TDataObjectOrNull) => {
+//       return res?.config || null;
+//     });
+// };
 
 /**
  * Computes the initial diff state for a component's table configuration.
@@ -561,48 +561,37 @@ export const getComponentConfig = async (
  * @param editMode - Optional flag indicating whether the table is in edit mode
  * @returns The resolved diff state, including the current config, diff flag, and column differences
  */
-export const getInitialDiffState = async (
-  dataSource: TsDataSource,
+export async function getInitialDiffState(
   componentId: string,
-  userId: string,
   isLoggedIn: boolean,
   objectType: string,
+  baseConfig: ITableConfigSave,
   editMode?: boolean,
-): Promise<IDiffState> => {
-  const componentBaseConfig = await getComponentConfig(dataSource, componentId);
-  // Check for a diff in the database if the user is logged in
-  // Or if the user is not logged in, check local storage for a diff
-  let { hasDiff, currentConfig } = isLoggedIn
-    ? await setDiffState(dataSource, componentId, userId)
-    : {
-        hasDiff: !!getTableConfigLocalStorage(
-          `${BOARDS.BOARD_DIFF}_${componentId}`,
-        ),
-        currentConfig: null,
-      };
+  remoteDiff?: ITableConfigSave | null,
+): Promise<IDiffState> {
+  // Check for a diff in local storage for anonymous users
+  const localDiff = getTableConfigLocalStorage(
+    `${BOARDS.BOARD_DIFF}_${componentId}`,
+  ) as ITableConfigSave | null;
 
-  // If in edit mode and has a diff, fetch current config
-  // Or if there is no diff, fetch current config
-  if ((editMode && hasDiff) || !hasDiff) {
-    currentConfig = componentBaseConfig || null;
-  }
+  const switchConfigState = () => {
+    if (editMode) {
+      return baseConfig || null;
+    }
+    if (isLoggedIn) {
+      return remoteDiff || null;
+    }
+    return localDiff || null;
+  };
 
-  // If the user is not logged in and there is a diff, get the diff from local storage
-  let localConfig = null as ITableConfigSave | null;
-  if (!isLoggedIn && hasDiff) {
-    localConfig = getTableConfigLocalStorage(
-      `${BOARDS.BOARD_DIFF}_${componentId}`,
-    );
-  }
+  const configState = switchConfigState();
 
   // Calculate the config differences for the reset confirmation display
   // Return a configDifferences object with the columns to add and remove,
   // represented as AttributeTitle components to show the source colour and provide on hover tooltips
-  const getConfigDifferences = async (): Promise<IConfigDifferences> => {
-    const currentColumns = isLoggedIn
-      ? currentConfig?.fieldMeta?.order?.active || []
-      : localConfig?.fieldMeta?.order?.active || [];
-    const publishedColumns = componentBaseConfig?.fieldMeta?.order?.active || [];
+  const getConfigDifferences = (): IConfigDifferences => {
+    const currentColumns = configState?.fieldMeta?.order?.active || [];
+    const publishedColumns = baseConfig?.fieldMeta?.order?.active || [];
     return {
       remove: currentColumns
         .filter((col: string) => !publishedColumns.includes(col))
@@ -626,55 +615,11 @@ export const getInitialDiffState = async (
   };
 
   return {
-    configDifferences: await getConfigDifferences(),
-    hasDiff: hasDiff || !!localConfig,
-    currentConfig: localConfig ? localConfig : (currentConfig ?? null),
+    configDifferences: getConfigDifferences(),
+    hasDiff: editMode ? false : isLoggedIn ? !!remoteDiff : !!localDiff,
+    currentConfig: configState ?? baseConfig,
   };
-};
-
-/**
- * Checks the database for a user-specific board diff for a given component.
- *
- * Queries the `BOARD_DIFF` records filtered by `componentId` and `userId`, returning
- * whether a diff exists and the associated config if so.
- *
- * @param dataSource - The data source used to query board diff records
- * @param componentId - The ID of the component to check for a diff
- * @param userId - The ID of the user whose diff should be checked
- * @returns A partial `IDiffState` with `hasDiff` and `currentConfig`, defaulting to
- *          `{ hasDiff: false, currentConfig: null }` on error
- */
-export const setDiffState = async (
-  dataSource: TsDataSource,
-  componentId: string,
-  userId: string,
-): Promise<Partial<IDiffState>> => {
-  // Check for a diff in the database for the logged-in user
-  return await dataSource
-    .getListPage({
-      objectType: BOARDS.BOARD_DIFF,
-      filter: {
-        and_: {
-          component_id: { eq: { value: componentId } },
-          user_id: { eq: { value: userId } },
-        },
-      },
-      requestedFields: ["id", "config"],
-    })
-    // If a diff exists, set hasDiff to true and return the current config from the database
-    .then((diffs: TDataObjectListOrNull) => {
-      return {
-        hasDiff:
-          diffs?.some((diff: TDataObjectOrNull) => diff?.config != null) ??
-          false,
-        currentConfig:
-          diffs?.find((diff: TDataObjectOrNull) => diff?.config != null)
-            ?.config ?? null,
-      };
-    })
-    .catch(() => ({ hasDiff: false, currentConfig: null }));
-};
-
+}
 
 export async function fetchActions(
   user: IUser | null,
@@ -683,38 +628,43 @@ export async function fetchActions(
 ): Promise<string[]> {
   if (!user) return [];
   const roleids = await getRoleIdsByNames(user.roles, actionDataSource);
-  return actionDataSource.getListPage({
-    objectType: ACTIONS.ROLE_ACTION,
-    filter: {
-      "and_": {
-        "role_id": {
-          "in_list": {
-            "value": roleids
+  return actionDataSource
+    .getListPage({
+      objectType: ACTIONS.ROLE_ACTION,
+      filter: {
+        and_: {
+          role_id: {
+            in_list: {
+              value: roleids,
+            },
           },
         },
+      },
+      requestedFields: ["action.name", "action.object_type"],
+    })
+    .then(async (res: TDataObjectListOrNull) => {
+      const data = await Promise.all(
+        res?.map(async (item: any) => {
+          const action = await item.fetchRelationships.action;
+          return action;
+        }) || [],
+      );
+      if (data.length === 0) {
+        return [];
       }
-    },
-    requestedFields: ["action.name", "action.object_type"],
-  }).then(async (res: TDataObjectListOrNull) => {
-    const data = await Promise.all(res?.map(async (item: any) => {
-      const action = await item.fetchRelationships.action;
-      return action;
-    }) || []);
-    if (data.length === 0) {
+      const actionNames: string[] = [];
+      for (const action of data) {
+        if (action.object_type == objectType) {
+          actionNames.push(action.name);
+        }
+      }
+      return actionNames;
+    })
+    .catch((error: any) => {
+      PopUpMessage({
+        type: "error",
+        message: `Error Fetching Actions: ${error}`,
+      });
       return [];
-    }
-    const actionNames: string[] = []
-    for (const action of data) {
-      if (action.object_type == objectType) {
-        actionNames.push(action.name);
-      }
-    }
-    return actionNames;
-  }).catch((error: any) => {
-    PopUpMessage({
-      type: "error",
-      message: `Error Fetching Actions: ${error}`,
     });
-    return [];
-  })
 }
