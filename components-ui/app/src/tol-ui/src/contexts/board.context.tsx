@@ -9,7 +9,7 @@ import { IBoard, TBoardPrivilegeOrUndefined } from "..";
 
 
 export interface IBoardContextValue {
-  board: IBoard | null;
+  board: IBoard;
   setBoard: (board: IBoard) => void;
   privilege: TBoardPrivilegeOrUndefined;
   setPrivilege: (privilege: TBoardPrivilegeOrUndefined) => void;
@@ -24,7 +24,7 @@ export interface IBoardContextValue {
 export const BoardContext = createContext<IBoardContextValue | undefined>(undefined);
 
 export function BoardContextProvider({ children }: { children: ReactNode }) {
-  const [board, setBoard] = useState<IBoard | null>(null);
+  const [board, setBoard] = useState<IBoard>({} as IBoard);
   const [privilege, setPrivilege] = useState<TBoardPrivilegeOrUndefined>(undefined);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [tableLoadingById, setTableLoadingById] = useState<Record<string, boolean>>({});

@@ -120,11 +120,11 @@ export function Board(props: PBoard) {
           ? PRIVILEGE.BOARD.WRITABLE
           : PRIVILEGE.BOARD.VIEWABLE,
       );
+      const viewFromUrl = new URLSearchParams(location.search).get("view");
+      setActiveViewId(
+        viewFromUrl && boardData.order?.includes(viewFromUrl) ? viewFromUrl : boardData.order?.[0] ?? null
+      );
     }
-    const viewFromUrl = new URLSearchParams(location.search).get("view");
-    setActiveViewId(
-      viewFromUrl && boardData.order?.includes(viewFromUrl) ? viewFromUrl : boardData.order?.[0]
-    );
   }, [isSuccess]);
 
   // Preload the current and two most recently accessed views for faster loading when switching between them
@@ -145,10 +145,10 @@ export function Board(props: PBoard) {
       ...defineBoardEntityInParent<IView, IBoard>(
         {
           id: id,
-          title: getNextTitle<IBoard>(board!, BOARDS.BOARD, BOARDS.VIEW),
+          title: getNextTitle<IBoard>(board, BOARDS.BOARD, BOARDS.VIEW),
         },
         BOARDS.VIEW,
-        board!,
+        board,
         BOARDS.BOARD
       )
     });
@@ -162,8 +162,8 @@ export function Board(props: PBoard) {
   }
 
   const onReorderViews = (orderedIds: string[]) => {
-    board!.order = orderedIds;
-    setBoard({ ...board! });
+    board.order = orderedIds;
+    setBoard({ ...board });
   };
 
   const onDeleteView = (viewId: string) => {
@@ -173,17 +173,17 @@ export function Board(props: PBoard) {
     //     objectType: BOARDS.VIEW,
     //     viewId
     //   })
-    deleteBoardEntityInParent<IBoard>(viewId, BOARDS.BOARD, board!);
-    setBoard({ ...board! });
+    deleteBoardEntityInParent<IBoard>(viewId, BOARDS.BOARD, board);
+    setBoard({ ...board });
     setMountedViewIds(prev => prev.filter(vid => vid !== viewId));
-    setActiveViewId(board!.order[0]);
+    setActiveViewId(board.order[0]);
   };
 
   if (isError) {
     return <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />;
   }
 
-  if (!isSuccess && !boardData && !board) {
+  if (!board?.order) {
     return <LoadingContent overlayNav brand={brand} text="Finding Board..." />;
   }
 
@@ -195,11 +195,11 @@ export function Board(props: PBoard) {
         onSave={(value: string) => {
           saveTitle(value, viewId, boardDataSource, BOARDS.VIEW);
           setBoard({
-            ...board!,
+            ...board,
             children: {
-              ...board!.children,
+              ...board.children,
               [viewId]: {
-                ...board!.children?.[viewId],
+                ...board.children?.[viewId],
                 title: value,
               }
             }
@@ -218,7 +218,7 @@ export function Board(props: PBoard) {
     onClick: onClickView(viewId),
     className: "tol-view-tab",
     position: "left",
-    visible: board!.order.length > 1,
+    visible: board.order.length > 1,
   });
 
   const deleteViewButton = (viewId: string): PButton => ({
@@ -227,7 +227,7 @@ export function Board(props: PBoard) {
     position: "left",
     tooltip: "Delete View",
     outline: false,
-    visible: editMode && activeViewId === viewId && board!.order.length > 1,
+    visible: editMode && activeViewId === viewId && board.order.length > 1,
   });
 
   const addZoneButton: PButton = {
@@ -253,16 +253,16 @@ export function Board(props: PBoard) {
       testid="board-add-view-button"
       position="left"
       // Limit of 10 views per board
-      disabled={board!.order.length >= 10}
+      disabled={board?.order?.length >= 10}
       disabledTooltip={MAX_VIEWS_ALLOWED_MESSAGE}
     />,
     <SortableTabs
       activeId={activeViewId!}
       className="tol-views-nav"
-      onReorder={editMode && board!.order.length > 1 ? onReorderViews : undefined}
+      onReorder={editMode && board?.order?.length > 1 ? onReorderViews : undefined}
       tabs={[
-        ...board!.order.map((viewId) => {
-          const view = board!.children?.[viewId];
+        ...board?.order?.map((viewId) => {
+          const view = board?.children?.[viewId];
           if (view) {
             return {
               buttons: [
@@ -372,7 +372,7 @@ export function Board(props: PBoard) {
         title={editModeTitle}
         elements={ViewModeBoardTitle}
       />
-      {editMode || board!.order.length > 1 ? (
+      {editMode || board.order.length > 1 ? (
         <UtilityBar
           id="tol-board-views-utility-bar"
           className="tol-views-bar"
