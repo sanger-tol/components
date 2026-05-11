@@ -66,7 +66,6 @@ export function ZoneModal(props: PZoneModal) {
 
   useEffect(() => {
     if (open) {
-      processTour("addZone");
       fetchPublishedDataspaces(boardDataSource)
         .then((dataObjects) => {
           if (dataObjects) {
