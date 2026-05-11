@@ -359,7 +359,7 @@ export function RemoteTable(props: PRemoteTable) {
         pageSize,
         filter,
         sortBy: createSort(sortByAttribute, sortByType),
-        requestedFields: await amalgamateRequestedFields(fieldMeta, dataSource, objectType),
+        requestedFields: await amalgamateRequestedFields(fieldMeta),
       })
       .then((dataObjects: TDataObjectListOrNull) => {
         setError("");

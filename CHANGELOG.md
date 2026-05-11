@@ -6,6 +6,19 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.5.4`
+
+30-04-2026
+
+- Allow for DataPointRenderers to access current and parent data objects
+- Link DataPointRenderer now requires a `Text` parameter
+
+## tol-ui `3.5.3`
+
+29-04-2026
+
+- Fixed bug: Sort aggregation labels for Bar Charts.
+
 ## tol-ui `3.5.2`
 
 27-04-2026

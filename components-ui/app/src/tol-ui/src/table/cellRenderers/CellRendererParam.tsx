@@ -46,7 +46,7 @@ export function CellRendererParam(props: PCellRendererParam) {
       {meta.required &&
         <span className="tol-param-required">*</span>
       }
-      <span className="tol-param-info">
+      <span className="tol-data-point-renderer-info">
         <IconTooltip contents={meta.description} disableMarkdown />
       </span>
       <div className="tol-param">
