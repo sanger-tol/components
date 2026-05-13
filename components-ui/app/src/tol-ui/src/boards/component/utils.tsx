@@ -33,8 +33,6 @@ export async function updateComponentConfigAndUpsert(
 ) {
   const component = zone.children?.[0]?.[componentId];
   if (!component) return;
-  // console.log("component config:",config);
-  // component.config = config;
 
   if (editMode) {
     component.config = { ...config };

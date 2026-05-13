@@ -31,16 +31,29 @@ import {
   EditableTitle,
   getEntityPrefix,
   generateId,
-  defineBoardEntityInParent,
   Button,
   BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
   deleteBoardEntityInParent,
   ConfirmationModal,
   getNextTitle,
   MAX_VIEWS_ALLOWED_MESSAGE,
+  Modal,
+  PASTE_BUTTON,
 } from "../..";
-import type { IBoard, IView, PButton, TNavBrand, TsDataSource, ITab } from "../..";
+import type {
+  IBoard,
+  IView,
+  PButton,
+  TNavBrand,
+  TsDataSource,
+  ITab,
+  IZone,
+} from "../..";
+import { Input } from "rsuite";
 
+// TODO: Split into smaller components
+// TODO: onAddView is very similar to view copy logic, make them the same.
+// TODO: Fix imported view title.
 
 export interface PBoard {
   /**
@@ -89,6 +102,9 @@ export function Board(props: PBoard) {
   const [openAddZoneModal, setOpenAddZoneModal] = useState(false);
   const [boardCopyModalOpen, setBoardCopyModalOpen] = useState<boolean>(false);
   const [newBoardCopyTitle, setNewBoardCopyTitle] = useState<string>("");
+  const [viewImportModalOpen, setViewImportModalOpen] =
+    useState<boolean>(false);
+  const [viewImportId, setViewImportId] = useState<string>("");
 
   // Ability to override boardId from props over URL params
   const id = boardId ?? paramBoardId;
@@ -113,24 +129,27 @@ export function Board(props: PBoard) {
   );
 
   useEffect(() => {
-    if (boardData && isSuccess) {
-      setBoard(boardData as IBoard);
-      setPrivilege(
-        boardData.write_privilege
-          ? PRIVILEGE.BOARD.WRITABLE
-          : PRIVILEGE.BOARD.VIEWABLE,
-      );
-      const viewFromUrl = new URLSearchParams(location.search).get("view");
-      setActiveViewId(
-        viewFromUrl && boardData.order?.includes(viewFromUrl) ? viewFromUrl : boardData.order?.[0] ?? null
-      );
-    }
+    if (!boardData || !isSuccess) return;
+    setBoard(boardData as IBoard);
+    setPrivilege(
+      boardData.write_privilege
+        ? PRIVILEGE.BOARD.WRITABLE
+        : PRIVILEGE.BOARD.VIEWABLE,
+    );
+    const viewFromUrl = new URLSearchParams(location.search).get("view");
+    setActiveViewId(
+      viewFromUrl && boardData.order?.includes(viewFromUrl)
+        ? viewFromUrl
+        : boardData.order?.[0],
+    );
   }, [isSuccess]);
 
   // Preload the current and two most recently accessed views for faster loading when switching between them
   useEffect(() => {
     if (!activeViewId) return;
-    setMountedViewIds(prev => [...prev.filter(vid => vid !== activeViewId), activeViewId].slice(-3));
+    setMountedViewIds((prev) =>
+      [...prev.filter((vid) => vid !== activeViewId), activeViewId].slice(-3),
+    );
   }, [activeViewId]);
 
   const updateViewInUrl = (viewId: string) => {
@@ -139,31 +158,39 @@ export function Board(props: PBoard) {
     history.replace({ search: params.toString() });
   };
 
-  const onAddView = async () => {
-    const id = generateId(getEntityPrefix(BOARDS.VIEW));
+  const onAddView = () => {
+    const newViewId = generateId(getEntityPrefix(BOARDS.VIEW));
+    const viewsMap = (board?.children?.[0] ?? {}) as Record<string, IView>;
+    const newViewTitle = getNextTitle<IBoard>(
+      { ...board, views: viewsMap } as any,
+      BOARDS.BOARD,
+      BOARDS.VIEW,
+    );
+    const newView: IView = {
+      id: newViewId,
+      title: newViewTitle,
+      children: [{}] as Record<string, IZone>,
+      order: [],
+    };
     setBoard({
-      ...defineBoardEntityInParent<IView, IBoard>(
-        {
-          id: id,
-          title: getNextTitle<IBoard>(board, BOARDS.BOARD, BOARDS.VIEW),
-        },
-        BOARDS.VIEW,
-        board,
-        BOARDS.BOARD
-      )
+      ...board,
+      children: [{ ...viewsMap, [newViewId]: newView }],
+      order: [...(board?.order ?? []), newViewId],
     });
-    setActiveViewId(id);
-    updateViewInUrl(id);
+    setActiveViewId(newViewId);
+    updateViewInUrl(newViewId);
   };
 
   const onClickView = (viewId: string) => () => {
     setActiveViewId(viewId);
     updateViewInUrl(viewId);
-  }
+  };
 
   const onReorderViews = (orderedIds: string[]) => {
-    board.order = orderedIds;
-    setBoard({ ...board });
+    if (board) {
+      board.order = orderedIds;
+      setBoard({ ...board });
+    }
   };
 
   const onDeleteView = (viewId: string) => {
@@ -173,17 +200,36 @@ export function Board(props: PBoard) {
     //     objectType: BOARDS.VIEW,
     //     viewId
     //   })
-    deleteBoardEntityInParent<IBoard>(viewId, BOARDS.BOARD, board);
-    setBoard({ ...board });
-    setMountedViewIds(prev => prev.filter(vid => vid !== viewId));
-    setActiveViewId(board.order[0]);
+    if (board) {
+      deleteBoardEntityInParent<IBoard>(viewId, BOARDS.BOARD, board);
+      setBoard({ ...board });
+      setMountedViewIds((prev) => prev.filter((vid) => vid !== viewId));
+      setActiveViewId(board.order[0]);
+    }
+  };
+
+  const onViewImport = async () => {
+    const addedView = await copyBoardEntity(
+      boardDataSource,
+      viewImportId,
+      API_UTILITY_OPERATIONS.VIEW_COPY,
+      BOARDS.BOARD,
+      setBoard,
+      newBoardCopyTitle,
+      BOARDS.VIEW,
+      board,
+      board?.id,
+    );
+    setViewImportId("");
+    setViewImportModalOpen(false);
+    setActiveViewId(addedView?.id ?? null);
   };
 
   if (isError) {
     return <Redirect to={URL_PATHS.PAGE_NOT_FOUND} />;
   }
 
-  if (!board?.order) {
+  if (!isSuccess && !boardData && !board) {
     return <LoadingContent overlayNav brand={brand} text="Finding Board..." />;
   }
 
@@ -194,23 +240,62 @@ export function Board(props: PBoard) {
         editable={editMode && activeViewId === viewId}
         onSave={(value: string) => {
           saveTitle(value, viewId, boardDataSource, BOARDS.VIEW);
-          setBoard({
-            ...board,
-            children: {
-              ...board.children,
-              [viewId]: {
-                ...board.children?.[viewId],
-                title: value,
-              }
-            }
-          } as IBoard);
+          if (board) {
+            setBoard({
+              ...board,
+              children: {
+                ...board.children,
+                [viewId]: {
+                  ...board.children?.[viewId],
+                  title: value,
+                },
+              },
+            } as IBoard);
+          }
         }}
         hideButtons={true}
         emptyAllowed={false}
         onEmptyMessage={BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE}
       />
     );
-  }
+  };
+
+  const ImportViewModal = (
+    <Modal
+      open={viewImportModalOpen}
+      setOpen={setViewImportModalOpen}
+      size={"sm"}
+      actionButtonInline
+      children={
+        <>
+          <h3>Import View</h3>
+          <p style={{ marginBottom: "4px" }}>
+            Import a view from another board using its View ID:
+          </p>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Input
+              placeholder={"Enter or paste view ID..."}
+              value={viewImportId}
+              onChange={(value: string) => setViewImportId(value)}
+            />
+            <Button {...PASTE_BUTTON((text) => setViewImportId(text))} />
+          </div>
+        </>
+      }
+      actionButton={
+        <Button
+          {...BUTTONS.CONFIRM}
+          onClick={async () => await onViewImport()}
+          disabledTooltip="Please ensure the entered id is a valid view ID."
+          disabled={
+            !viewImportId ||
+            !viewImportId.includes("v_") ||
+            viewImportId.length !== 14
+          }
+        />
+      }
+    />
+  );
 
   const viewTab = (viewId: string, viewTitle: string): PButton => ({
     id: viewId,
@@ -218,7 +303,7 @@ export function Board(props: PBoard) {
     onClick: onClickView(viewId),
     className: "tol-view-tab",
     position: "left",
-    visible: board.order.length > 1,
+    visible: board?.order?.length > 1,
   });
 
   const deleteViewButton = (viewId: string): PButton => ({
@@ -227,7 +312,18 @@ export function Board(props: PBoard) {
     position: "left",
     tooltip: "Delete View",
     outline: false,
-    visible: editMode && activeViewId === viewId && board.order.length > 1,
+    visible: editMode && activeViewId === viewId && board?.order?.length > 1,
+  });
+
+  const copyViewIdToClipboard = (viewId: string) => ({
+    ...BUTTONS.COPY,
+    onClick: () => {
+      copyToClipboard(viewId, "View ID copied to clipboard");
+    },
+    position: "left",
+    tooltip: "Copy View ID",
+    outline: false,
+    visible: activeViewId === viewId && !editMode,
   });
 
   const addZoneButton: PButton = {
@@ -240,12 +336,12 @@ export function Board(props: PBoard) {
     tooltip: "",
     text: "Add Zone",
     icon: "object-group",
-  }
+  };
 
   const ViewTabs = [
     <Button
       {...BUTTONS.ADD}
-      text="Add View"
+      text="New View"
       tooltip=""
       visible={editMode}
       onClick={onAddView}
@@ -256,36 +352,54 @@ export function Board(props: PBoard) {
       disabled={board?.order?.length >= 10}
       disabledTooltip={MAX_VIEWS_ALLOWED_MESSAGE}
     />,
+    <Button
+      {...BUTTONS.ADD}
+      text="Import View"
+      tooltip="Import a view from another board using its View ID"
+      visible={editMode}
+      onClick={() => setViewImportModalOpen(true)}
+      icon="file-import"
+      testid="board-import-view-button"
+      position="left"
+      // Limit of 10 views per board (regardless of new or imported)
+      disabled={board?.order?.length >= 10}
+      disabledTooltip={MAX_VIEWS_ALLOWED_MESSAGE}
+    />,
     <SortableTabs
       activeId={activeViewId!}
       className="tol-views-nav"
-      onReorder={editMode && board?.order?.length > 1 ? onReorderViews : undefined}
+      onReorder={
+        editMode && board?.order?.length > 1 ? onReorderViews : undefined
+      }
       tabs={[
-        ...board?.order?.map((viewId) => {
-          const view = board?.children?.[viewId];
-          if (view) {
-            return {
-              buttons: [
-                viewTab(view.id!, view.title!),
-                deleteViewButton(view.id!),
-              ],
-            } as ITab;
-          }
-          return null;
-        }).filter((btn): btn is ITab => btn !== null)
+        ...(board?.order
+          ?.map((viewId) => {
+            const view = board?.children?.[0]?.[viewId];
+            if (view) {
+              return {
+                buttons: [
+                  viewTab(view.id!, view.title),
+                  deleteViewButton(view.id),
+                  copyViewIdToClipboard(view.id),
+                ],
+              } as ITab;
+            }
+            return null;
+          })
+          .filter((btn): btn is ITab => btn !== null) ?? []),
       ]}
-    />
-  ]
+    />,
+  ];
 
   const layoutOrExitLogic: PButton = layoutMode
     ? {
-      ...BUTTONS.SAVE,
-      text: "Save Layouts",
-    }
+        ...BUTTONS.SAVE,
+        text: "Save Layouts",
+      }
     : {
-      ...BUTTONS.EDIT,
-      text: "Change Layout",
-    };
+        ...BUTTONS.EDIT,
+        text: "Change Layout",
+      };
 
   const LayoutOrExitButton: PButton = {
     ...layoutOrExitLogic,
@@ -297,14 +411,14 @@ export function Board(props: PBoard) {
 
   const editOrExitLogic: PButton = editMode
     ? {
-      ...BUTTONS.CONFIRM,
-      type: "primary",
-      text: "Exit Edit Mode",
-    }
+        ...BUTTONS.CONFIRM,
+        type: "primary",
+        text: "Exit Edit Mode",
+      }
     : {
-      ...BUTTONS.EDIT,
-      text: "Edit",
-    };
+        ...BUTTONS.EDIT,
+        text: "Edit",
+      };
 
   const EditOrExitButton: PButton = {
     ...editOrExitLogic,
@@ -314,13 +428,16 @@ export function Board(props: PBoard) {
       setEditMode(!editMode);
     },
     testid: `board-${editMode ? "exit" : "enter"}-edit-mode-button`,
-    tooltip: editMode && tableLoading ? "Please wait for the table to load before exiting edit mode." : "",
+    tooltip:
+      editMode && tableLoading
+        ? "Please wait for the table to load before exiting edit mode."
+        : "",
   };
 
   const ShareButton: PButton = {
     ...BUTTONS.SHARE,
     onClick: () => {
-      copyToClipboard(location.href);
+      copyToClipboard(location.href, "Board URL copied to clipboard");
     },
   };
 
@@ -338,27 +455,23 @@ export function Board(props: PBoard) {
   // Different format used for the main Board title
   const editModeTitle = editMode
     ? {
-      text: board?.title,
-      editable: editMode,
-      onSave: (value: string) => {
-        saveTitle(value, id, boardDataSource, BOARDS.BOARD);
-        setBoard({
-          ...board,
-          title: value,
-        } as IBoard);
-      },
-      hideButtons: true,
-      emptyAllowed: false,
-      onEmptyMessage: BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
-    }
+        text: board?.title,
+        editable: editMode,
+        onSave: (value: string) => {
+          saveTitle(value, id, boardDataSource, BOARDS.BOARD);
+          setBoard({
+            ...board,
+            title: value,
+          } as IBoard);
+        },
+        hideButtons: true,
+        emptyAllowed: false,
+        onEmptyMessage: BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
+      }
     : undefined;
 
   // Large header for view mode
-  const ViewModeBoardTitle = !editMode ? [(
-    <h3>
-      {board?.title}
-    </h3>
-  )] : undefined;
+  const ViewModeBoardTitle = !editMode ? [<h3>{board?.title}</h3>] : undefined;
 
   const BoardBar = (
     <div className="tol-board-bar">
@@ -372,7 +485,7 @@ export function Board(props: PBoard) {
         title={editModeTitle}
         elements={ViewModeBoardTitle}
       />
-      {editMode || board.order.length > 1 ? (
+      {editMode || board?.order?.length > 1 ? (
         <UtilityBar
           id="tol-board-views-utility-bar"
           className="tol-views-bar"
@@ -383,10 +496,10 @@ export function Board(props: PBoard) {
     </div>
   );
 
-
   // returns the first view at the moment
   return (
     <div className={`tol-board ${editMode ? "tol-edit-mode" : ""}`}>
+      {ImportViewModal}
       <NewTitleModal
         open={boardCopyModalOpen}
         setOpen={setBoardCopyModalOpen}
@@ -397,18 +510,29 @@ export function Board(props: PBoard) {
           if (!newBoardCopyTitle.trim()) {
             PopUpMessage({
               type: MESSAGE_TYPE.WARNING,
-              message: BOARD_MESSAGE_TEXT(BOARDS.BOARD).BOARD_COPY.NO_TITLE_ERROR,
+              message: BOARD_MESSAGE_TEXT(BOARDS.BOARD).BOARD_COPY
+                .NO_TITLE_ERROR,
             });
             return;
           }
-          await copyBoardEntity(
+          const copiedBoard = await copyBoardEntity(
             boardDataSource,
             id!,
             API_UTILITY_OPERATIONS.BOARD_COPY,
             BOARDS.BOARD,
             setBoard,
             newBoardCopyTitle,
+            BOARDS.BOARD,
           );
+          console.log(copiedBoard);
+          if (copiedBoard) {
+            const firstViewId = copiedBoard.order?.[0];
+            console.log("copied board: ", firstViewId);
+            if (firstViewId) {
+              setActiveViewId(firstViewId);
+              setMountedViewIds([firstViewId]);
+            }
+          }
           setBoardCopyModalOpen(false);
         }}
         onExited={() => {
@@ -427,7 +551,7 @@ export function Board(props: PBoard) {
         }
       />
       {BoardBar}
-      {mountedViewIds.map(viewId => (
+      {mountedViewIds.map((viewId) => (
         <View
           key={viewId}
           id={viewId}
@@ -438,12 +562,12 @@ export function Board(props: PBoard) {
           active={viewId === activeViewId}
         />
       ))}
-        < ConfirmationModal
-        open = { deleteViewConfirmModal }
-        setOpen = { setDeleteViewConfirmModal }
-        onConfirmClick = {() => onDeleteView(activeViewId!)}
-      itemType={BOARDS.VIEW}
+      <ConfirmationModal
+        open={deleteViewConfirmModal}
+        setOpen={setDeleteViewConfirmModal}
+        onConfirmClick={() => onDeleteView(activeViewId!)}
+        itemType={BOARDS.VIEW}
       />
-    </div >
+    </div>
   );
 }

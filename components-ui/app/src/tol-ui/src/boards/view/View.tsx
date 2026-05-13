@@ -15,6 +15,7 @@ import {
   IView,
   BOARD_CHILDREN_KEYS,
   deleteBoardEntityInParent,
+  PRIVILEGE
 } from "../..";
 
 
@@ -50,13 +51,15 @@ export function View(props: PView) {
     setBoard,
   );
 
-  if (
-    view?.order?.length === 0 &&
-    privilege === PRIVILEGE.BOARD.WRITABLE &&
-    !editMode
-  ) {
-    setEditMode(true);
-  }
+  console.log("rendering view", { id });
+
+  // if (
+  //   view?.order?.length === 0 &&
+  //   privilege === PRIVILEGE.BOARD.WRITABLE &&
+  //   !editMode
+  // ) {
+  //   setEditMode(true);
+  // }
 
   const onDeleteZone = (id: string) => {
     boardDataSource.deleteByID({
@@ -73,7 +76,7 @@ export function View(props: PView) {
 
   return (
     <div className={`tol-view ${!active ? "tol-view-cached" : ""}`}>
-      {view.order.length === 0 ? (
+      {view?.order?.length === 0 ? (
         <div className="tol-boards-empty">
           {editMode ? (
             <p>Please click the 'Add Zone' button to get started.</p>

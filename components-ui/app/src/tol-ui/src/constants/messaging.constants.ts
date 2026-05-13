@@ -27,8 +27,8 @@ export const BOARD_MESSAGE_TEXT = (boardEntity: string) => {
       LINK_COPY: `${boardEntity} link copied to clipboard`,
       BOARD_COPY_SUCCESS:
         "Board copied successfully. Redirecting to new board...",
-      COPY_SUCCESS: `${boardEntity} copied successfully.`,
-      COPY_ERROR: `Error copying ${boardEntity}. Please try again.`,
+      IMPORT_SUCCESS: `${boardEntity} imported successfully.`,
+      IMPORT_ERROR: `Error importing ${boardEntity}. Please try again.`,
       NO_TITLE_ERROR: `Please provide a title for the new ${boardEntity}.`,
     },
   } as const;

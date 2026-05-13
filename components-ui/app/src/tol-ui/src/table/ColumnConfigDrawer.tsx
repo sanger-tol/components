@@ -67,7 +67,7 @@ export function ColumnConfigDrawer(props: PColumnConfigDrawer) {
   } = props;
 
   const { privilege } = useBoard();
-  const isEditable = privilege === PRIVILEGE.BOARD.EDITABLE;
+  const isEditable = privilege === PRIVILEGE.BOARD.WRITABLE;
 
   const [warningDismissed, setWarningDismissed] = useState(
     () =>

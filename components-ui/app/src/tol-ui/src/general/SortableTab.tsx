@@ -7,7 +7,6 @@ SPDX-License-Identifier: MIT
 import { useSortable } from "@dnd-kit/react/sortable";
 import { Button, Icon, ITab } from "..";
 
-
 export interface PSortableTab {
   /**
    * The unique identifier for the sortable tab.
@@ -42,14 +41,14 @@ export function SortableTab(props: PSortableTab) {
   return (
     <div ref={ref} className="tol-tabs-nav-tab">
       {tab.buttons.map((button) => (
-        <Button
-          {...button}
-          className={
-            `${button.className || ""} tol-tabs-nav-button ${button.id === activeId ? "active" : ""}`
-          }
-          key={`tol-tabs-nav-button-${button.id}`}
-          outline={!tab.buttons.some((b) => b.id === activeId)}
-        />
+        <>
+          <Button
+            {...button}
+            className={`${button.className || ""} tol-tabs-nav-button ${button.id === activeId ? "active" : ""}`}
+            key={`tol-tabs-nav-button-${button.id}`}
+            outline={!tab.buttons.some((b) => b.id === activeId)}
+          />
+        </>
       ))}
       {onReorder || (tab.icons && tab.icons.length > 0) ? (
         <div className="tol-tabs-nav-icon">
@@ -60,13 +59,14 @@ export function SortableTab(props: PSortableTab) {
               icon="grip-vertical"
             />
           )}
-          {tab.icons && tab.icons.map((icon, i) => (
-            <Icon
-              key={`tol-tabs-nav-icon-${i}`}
-              className="tol-tabs-nav-icon"
-              {...icon}
-            />
-          ))}
+          {tab.icons &&
+            tab.icons.map((icon, i) => (
+              <Icon
+                key={`tol-tabs-nav-icon-${i}`}
+                className="tol-tabs-nav-icon"
+                {...icon}
+              />
+            ))}
         </div>
       ) : null}
     </div>

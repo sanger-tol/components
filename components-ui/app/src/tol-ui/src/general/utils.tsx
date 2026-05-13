@@ -246,14 +246,17 @@ export function encodeImageSrc(url: string): string {
   return origin + path.split("/").map(s => encodeURIComponent(s)).join("/");
 }
 
-export function copyToClipboard(text: string): void {
+export function copyToClipboard(
+  copyText: string,
+  message: string = "Copied to clipboard",
+): void {
   if (navigator.clipboard) {
     navigator.clipboard
-      .writeText(text)
+      .writeText(copyText)
       .catch((err) => console.error("Failed to copy text: ", err));
     PopUpMessage({
       type: "success",
-      message: "Copied to clipboard",
+      message: message,
     });
   } else {
     console.warn("Clipboard API not available");
