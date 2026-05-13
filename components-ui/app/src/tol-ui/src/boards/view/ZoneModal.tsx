@@ -28,6 +28,7 @@ import {
   Icon,
   addZoneTour
 } from "../..";
+import { InitiateTourButton } from "src/tours";
 
 export interface PZoneModal extends PBoard {
   open: boolean;
@@ -228,9 +229,7 @@ export function ZoneModal(props: PZoneModal) {
       <div>
         <span style={{display: "flex", justifyContent: "space-between"}}>
           <h4>Add New Zone</h4>
-          <button style={{background: "none"}} onClick={() => processTour("addZone", addZoneTour, true)}>
-            <Icon icon="question" size="lg" />
-          </button>
+          <InitiateTourButton onClick={() => processTour("addZone", addZoneTour, true)} />
         </span>
         <p className="zone-modal-labels">
           Select Dataspace <RequiredAsterisk />
