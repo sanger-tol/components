@@ -51,9 +51,16 @@ import type {
 } from "../..";
 import { Input } from "rsuite";
 import {
+  AddViewButton,
   addZoneButton,
   copyBoardButton,
   copyViewIdToClipboard,
+  deleteViewButton,
+  ImportViewButton,
+  shareButton,
+  viewSelectorTab,
+  editOrExitButton,
+  layoutOrExitButton,
 } from "./components";
 
 // TODO: Split into smaller components
@@ -302,74 +309,63 @@ export function Board(props: PBoard) {
     />
   );
 
-  const viewTab = (viewId: string, viewTitle: string): PButton => ({
-    id: viewId,
-    text: ViewTitle(viewId, viewTitle),
-    onClick: onClickView(viewId),
-    className: "tol-view-tab",
-    position: "left",
-    visible: board?.order?.length > 1,
-  });
+  const utilityBarButtons = [
+    editOrExitButton(
+      editMode,
+      privilege === PRIVILEGE.BOARD.WRITABLE && !layoutMode,
+      editMode && tableLoading,
+      tableLoading,
+      () => setEditMode(!editMode),
+    ),
+    layoutOrExitButton(
+      layoutMode,
+      privilege === PRIVILEGE.BOARD.WRITABLE && editMode,
+      () => setLayoutMode(!layoutMode),
+    ),
+    ...(!editMode
+      ? [
+          shareButton,
+          copyBoardButton(() => {
+            if (!newBoardCopyTitle.trim()) {
+              setNewBoardCopyTitle(`${board?.title} - copy`);
+            }
+            setBoardCopyModalOpen(true);
+          }),
+        ]
+      : []),
+  ];
 
-  const deleteViewButton = (viewId: string): PButton => ({
-    ...BUTTONS.DISCARD,
-    onClick: () => setDeleteViewConfirmModal(true),
-    position: "left",
-    tooltip: "Delete View",
-    outline: false,
-    visible: editMode && activeViewId === viewId && board?.order?.length > 1,
-  });
+  const viewTabButtons = (viewId: string, viewTitle: string) => {
+    return [
+      viewSelectorTab(
+        viewId,
+        ViewTitle(viewId, viewTitle),
+        onClickView(viewId),
+        board?.order?.length > 1,
+      ),
+      deleteViewButton(
+        () => setDeleteViewConfirmModal(true),
+        editMode && activeViewId === viewId && board?.order?.length > 1,
+      ),
+      copyViewIdToClipboard(viewId, activeViewId === viewId && !editMode),
+    ];
+  };
 
-  // const copyViewIdToClipboard = (viewId: string) => ({
-  //   ...BUTTONS.COPY,
-  //   onClick: () => {
-  //     copyToClipboard(viewId, "View ID copied to clipboard");
-  //   },
-  //   position: "left",
-  //   tooltip: "Copy View ID",
-  //   outline: false,
-  //   visible: activeViewId === viewId && !editMode,
-  // });
-
-  // const addZoneButton: PButton = {
-  //   ...BUTTONS.ADD,
-  //   testid: "open-add-zone-modal-button",
-  //   visible: editMode && !layoutMode,
-  //   onClick: () => {
-  //     setOpenAddZoneModal(true);
-  //   },
-  //   tooltip: "",
-  //   text: "Add Zone",
-  //   icon: "object-group",
-  // };
+  const viewTabsButtons = [
+    AddViewButton(
+      editMode,
+      onAddView,
+      board?.order ? board.order.length >= 10 : false,
+    ),
+    ImportViewButton(
+      editMode,
+      () => setViewImportModalOpen(true),
+      board?.order ? board.order.length >= 10 : false,
+    ),
+  ];
 
   const ViewTabs = [
-    <Button
-      {...BUTTONS.ADD}
-      text="New View"
-      tooltip=""
-      visible={editMode}
-      onClick={onAddView}
-      icon="pager"
-      testid="board-add-view-button"
-      position="left"
-      // Limit of 10 views per board
-      disabled={board?.order?.length >= 10}
-      disabledTooltip={MAX_VIEWS_ALLOWED_MESSAGE}
-    />,
-    <Button
-      {...BUTTONS.ADD}
-      text="Import View"
-      tooltip="Import a view from another board using its View ID"
-      visible={editMode}
-      onClick={() => setViewImportModalOpen(true)}
-      icon="file-import"
-      testid="board-import-view-button"
-      position="left"
-      // Limit of 10 views per board (regardless of new or imported)
-      disabled={board?.order?.length >= 10}
-      disabledTooltip={MAX_VIEWS_ALLOWED_MESSAGE}
-    />,
+    viewTabsButtons,
     <SortableTabs
       activeId={activeViewId!}
       className="tol-views-nav"
@@ -382,14 +378,7 @@ export function Board(props: PBoard) {
             const view = board?.children?.[0]?.[viewId];
             if (view) {
               return {
-                buttons: [
-                  viewTab(view.id!, view.title),
-                  deleteViewButton(view.id),
-                  copyViewIdToClipboard(
-                    view.id,
-                    activeViewId === view.id && !editMode,
-                  ),
-                ],
+                buttons: viewTabButtons(viewId, view.title),
               } as ITab;
             }
             return null;
@@ -398,67 +387,6 @@ export function Board(props: PBoard) {
       ]}
     />,
   ];
-
-  const layoutOrExitLogic: PButton = layoutMode
-    ? {
-        ...BUTTONS.SAVE,
-        text: "Save Layouts",
-      }
-    : {
-        ...BUTTONS.EDIT,
-        text: "Change Layout",
-      };
-
-  const LayoutOrExitButton: PButton = {
-    ...layoutOrExitLogic,
-    visible: privilege === PRIVILEGE.BOARD.WRITABLE && editMode,
-    onClick: () => setLayoutMode(!layoutMode),
-    testid: "board-layout-mode-button",
-    tooltip: "",
-  };
-
-  const editOrExitLogic: PButton = editMode
-    ? {
-        ...BUTTONS.CONFIRM,
-        type: "primary",
-        text: "Exit Edit Mode",
-      }
-    : {
-        ...BUTTONS.EDIT,
-        text: "Edit",
-      };
-
-  const EditOrExitButton: PButton = {
-    ...editOrExitLogic,
-    visible: privilege === PRIVILEGE.BOARD.WRITABLE && !layoutMode,
-    disabled: editMode && tableLoading,
-    onClick: () => {
-      setEditMode(!editMode);
-    },
-    testid: `board-${editMode ? "exit" : "enter"}-edit-mode-button`,
-    tooltip:
-      editMode && tableLoading
-        ? "Please wait for the table to load before exiting edit mode."
-        : "",
-  };
-
-  const ShareButton: PButton = {
-    ...BUTTONS.SHARE,
-    onClick: () => {
-      copyToClipboard(window.location.href, "Board URL copied to clipboard");
-    },
-  };
-
-  // const CopyButton: PButton = {
-  //   ...BUTTONS.COPY,
-  //   onClick: () => {
-  //     if (!newBoardCopyTitle.trim()) {
-  //       setNewBoardCopyTitle(`${board?.title} - copy`);
-  //     }
-  //     setBoardCopyModalOpen(true);
-  //   },
-  //   tooltip: "Copy Board",
-  // };
 
   // Different format used for the main Board title
   const editModeTitle = editMode
@@ -485,21 +413,7 @@ export function Board(props: PBoard) {
     <div className="tol-board-bar">
       <UtilityBar
         id="tol-board-utility-bar"
-        buttons={[
-          EditOrExitButton,
-          LayoutOrExitButton,
-          ...(!editMode
-            ? [
-                ShareButton,
-                copyBoardButton(
-                  setNewBoardCopyTitle,
-                  setBoardCopyModalOpen,
-                  board,
-                  newBoardCopyTitle,
-                ),
-              ]
-            : []),
-        ]}
+        buttons={utilityBarButtons}
         title={editModeTitle}
         elements={ViewModeBoardTitle}
       />
@@ -509,7 +423,10 @@ export function Board(props: PBoard) {
           className="tol-views-bar"
           elements={ViewTabs}
           buttons={[
-            addZoneButton(setOpenAddZoneModal, editMode && !layoutMode),
+            addZoneButton(
+              () => setOpenAddZoneModal(true),
+              editMode && !layoutMode,
+            ),
           ]}
         />
       ) : null}
