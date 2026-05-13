@@ -25,8 +25,6 @@ import {
   BOARD_MESSAGE_TEXT,
   NewTitleModal,
   PopUpMessage,
-  copyBoardEntity,
-  API_UTILITY_OPERATIONS,
   SortableTabs,
   EditableTitle,
   getEntityPrefix,
@@ -39,6 +37,8 @@ import {
   MAX_VIEWS_ALLOWED_MESSAGE,
   Modal,
   PASTE_BUTTON,
+  copyView,
+  copyBoard,
 } from "../..";
 import type {
   IBoard,
@@ -50,6 +50,11 @@ import type {
   IZone,
 } from "../..";
 import { Input } from "rsuite";
+import {
+  addZoneButton,
+  copyBoardButton,
+  copyViewIdToClipboard,
+} from "./components";
 
 // TODO: Split into smaller components
 // TODO: onAddView is very similar to view copy logic, make them the same.
@@ -209,17 +214,17 @@ export function Board(props: PBoard) {
   };
 
   const onViewImport = async () => {
-    const addedView = await copyBoardEntity(
+    const addedView = await copyView(
       boardDataSource,
       viewImportId,
-      API_UTILITY_OPERATIONS.VIEW_COPY,
       BOARDS.BOARD,
       setBoard,
-      newBoardCopyTitle,
+      newBoardCopyTitle, // TODO: FIX
       BOARDS.VIEW,
       board,
       board?.id,
     );
+    console.log("addedView", addedView);
     setViewImportId("");
     setViewImportModalOpen(false);
     setActiveViewId(addedView?.id ?? null);
@@ -315,28 +320,28 @@ export function Board(props: PBoard) {
     visible: editMode && activeViewId === viewId && board?.order?.length > 1,
   });
 
-  const copyViewIdToClipboard = (viewId: string) => ({
-    ...BUTTONS.COPY,
-    onClick: () => {
-      copyToClipboard(viewId, "View ID copied to clipboard");
-    },
-    position: "left",
-    tooltip: "Copy View ID",
-    outline: false,
-    visible: activeViewId === viewId && !editMode,
-  });
+  // const copyViewIdToClipboard = (viewId: string) => ({
+  //   ...BUTTONS.COPY,
+  //   onClick: () => {
+  //     copyToClipboard(viewId, "View ID copied to clipboard");
+  //   },
+  //   position: "left",
+  //   tooltip: "Copy View ID",
+  //   outline: false,
+  //   visible: activeViewId === viewId && !editMode,
+  // });
 
-  const addZoneButton: PButton = {
-    ...BUTTONS.ADD,
-    testid: "open-add-zone-modal-button",
-    visible: editMode && !layoutMode,
-    onClick: () => {
-      setOpenAddZoneModal(true);
-    },
-    tooltip: "",
-    text: "Add Zone",
-    icon: "object-group",
-  };
+  // const addZoneButton: PButton = {
+  //   ...BUTTONS.ADD,
+  //   testid: "open-add-zone-modal-button",
+  //   visible: editMode && !layoutMode,
+  //   onClick: () => {
+  //     setOpenAddZoneModal(true);
+  //   },
+  //   tooltip: "",
+  //   text: "Add Zone",
+  //   icon: "object-group",
+  // };
 
   const ViewTabs = [
     <Button
@@ -380,7 +385,10 @@ export function Board(props: PBoard) {
                 buttons: [
                   viewTab(view.id!, view.title),
                   deleteViewButton(view.id),
-                  copyViewIdToClipboard(view.id),
+                  copyViewIdToClipboard(
+                    view.id,
+                    activeViewId === view.id && !editMode,
+                  ),
                 ],
               } as ITab;
             }
@@ -437,20 +445,20 @@ export function Board(props: PBoard) {
   const ShareButton: PButton = {
     ...BUTTONS.SHARE,
     onClick: () => {
-      copyToClipboard(location.href, "Board URL copied to clipboard");
+      copyToClipboard(window.location.href, "Board URL copied to clipboard");
     },
   };
 
-  const CopyButton: PButton = {
-    ...BUTTONS.COPY,
-    onClick: () => {
-      if (!newBoardCopyTitle.trim()) {
-        setNewBoardCopyTitle(`${board?.title} - copy`);
-      }
-      setBoardCopyModalOpen(true);
-    },
-    tooltip: "Copy Board",
-  };
+  // const CopyButton: PButton = {
+  //   ...BUTTONS.COPY,
+  //   onClick: () => {
+  //     if (!newBoardCopyTitle.trim()) {
+  //       setNewBoardCopyTitle(`${board?.title} - copy`);
+  //     }
+  //     setBoardCopyModalOpen(true);
+  //   },
+  //   tooltip: "Copy Board",
+  // };
 
   // Different format used for the main Board title
   const editModeTitle = editMode
@@ -480,7 +488,17 @@ export function Board(props: PBoard) {
         buttons={[
           EditOrExitButton,
           LayoutOrExitButton,
-          ...(!editMode ? [ShareButton, CopyButton] : []),
+          ...(!editMode
+            ? [
+                ShareButton,
+                copyBoardButton(
+                  setNewBoardCopyTitle,
+                  setBoardCopyModalOpen,
+                  board,
+                  newBoardCopyTitle,
+                ),
+              ]
+            : []),
         ]}
         title={editModeTitle}
         elements={ViewModeBoardTitle}
@@ -490,7 +508,9 @@ export function Board(props: PBoard) {
           id="tol-board-views-utility-bar"
           className="tol-views-bar"
           elements={ViewTabs}
-          buttons={[addZoneButton]}
+          buttons={[
+            addZoneButton(setOpenAddZoneModal, editMode && !layoutMode),
+          ]}
         />
       ) : null}
     </div>
@@ -515,10 +535,9 @@ export function Board(props: PBoard) {
             });
             return;
           }
-          const copiedBoard = await copyBoardEntity(
+          const copiedBoard = await copyBoard(
             boardDataSource,
             id!,
-            API_UTILITY_OPERATIONS.BOARD_COPY,
             BOARDS.BOARD,
             setBoard,
             newBoardCopyTitle,
