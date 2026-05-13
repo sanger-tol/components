@@ -8,22 +8,9 @@ import { getUserFromLocalStorage, ITourStep, TsDataSource } from "..";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
-export const tours: Record<string, ITourStep[]> = {
-  "addZone": [
-    {
-      testid: "object-type-picker",
-      title: "TOUR STEP",
-      description: "This is an Object Type picker!! wow",
-    },
-    {
-      testid: "object-type-picker",
-      title: "TWO",
-      description: "You got to the second step!"
-    }
-  ]
-};
-
 /**
+ * The chief function for UI tours.
+ * 
  * Begins a UI tour from the given config, but only if it hasn't yet been seen by the user
  * @param tourName The name to identify this tour by
  * (used to know whether the user has already seen this tour)
@@ -33,9 +20,7 @@ export const tours: Record<string, ITourStep[]> = {
  * from local storage. However, if the caller of this function already has the user ID, it can be
  * passed in here for efficiency.
  */
-export async function processTour(tourName: keyof typeof tours, storedUserID?: string) {
-  const tourConfig = tours[tourName];
-
+export async function processTour(tourName: string, tourSteps: ITourStep[], storedUserID?: string) {
   // Fetch user ID if not provided
   let userID: string;
   if (!storedUserID) {
@@ -49,7 +34,7 @@ export async function processTour(tourName: keyof typeof tours, storedUserID?: s
 
   const driverObj = driver({
     showProgress: true,
-    steps: tourConfig.map(step => ({
+    steps: tourSteps.map(step => ({
       element: `[data-testid="${step.testid}"]`,
       popover: { title: step.title, description: step.description },
     })),
@@ -64,7 +49,7 @@ export async function processTour(tourName: keyof typeof tours, storedUserID?: s
 }
 
 /**
- * Checks whether a dashboard tour step (by name) has yet been viewed by the user
+ * Checks whether a tour (by name) has yet been viewed by the user
  * @param tourName String name of the tour to check
  * @returns Whether the value returned from the database is `true`
  */
@@ -131,7 +116,6 @@ export async function registerTourAsSeen(
   });
 }
 
-// TODO Deprecated
-export async function disableTour(userId: string): Promise<void> {
+export async function disableAllTours(userId: string): Promise<void> {
   await registerTourAsSeen("tour_disabled", userId);
 }

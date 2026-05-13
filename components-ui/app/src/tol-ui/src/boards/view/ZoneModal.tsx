@@ -27,6 +27,32 @@ import {
   processTour,
 } from "../..";
 
+const addZoneTour = [
+  {
+    testid: "zoneModal",
+    title: "Zones",
+    description: "Zones are... (insert here a better description than I can provide)"
+  },
+  {
+    testid: "dataspace-picker",
+    title: "Dataspace",
+    description: (
+      "The set of data this zone will pull from. " + 
+      "If in doubt, use ToL Production"
+    ),
+  },
+  {
+    testid: "object-type-picker",
+    title: "Object Type",
+    description: "The kind of data contained in this zone (e.g. species)"
+  },
+  {
+    testid: "title-picker",
+    title: "Title",
+    description: "I think you know what a title is"
+  }
+]
+
 export interface PZoneModal extends PBoard {
   open: boolean;
   setOpen: any;
@@ -87,6 +113,7 @@ export function ZoneModal(props: PZoneModal) {
         })
         .finally(() => {
           setDataSourceInstancesLoading(false);
+          processTour("addZone", addZoneTour);
         });
     } else {
       reset();
@@ -258,7 +285,7 @@ export function ZoneModal(props: PZoneModal) {
         <p className="zone-modal-labels">
           Enter Title <RequiredAsterisk />
         </p>
-        <div id="step3">
+        <div id="step3" data-testid="title-picker">
           <RSForm fluid>
             <FormTextField
               id="zone-title"
