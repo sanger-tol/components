@@ -23,10 +23,10 @@ import "driver.js/dist/driver.css";
 export async function processTour(tourName: string, tourSteps: ITourStep[], storedUserID?: string) {
   // Fetch user ID if not provided
   let userID: string;
-  if (!storedUserID) {
-    userID = getUserFromLocalStorage().id;
-  } else {
+  if (storedUserID) {
     userID = storedUserID;
+  } else {
+    userID = getUserFromLocalStorage().id;
   }
 
   const seen = await hasTourBeenSeen(tourName, userID);
@@ -40,7 +40,6 @@ export async function processTour(tourName: string, tourSteps: ITourStep[], stor
     })),
     onDestroyStarted: () => {
       registerTourAsSeen(tourName, userID);
-      console.log("YOU HAVE BEEN DESTROYED!");
       driverObj.destroy();
     },
   });

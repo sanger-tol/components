@@ -51,7 +51,7 @@ const addZoneTour = [
     title: "Title",
     description: "I think you know what a title is"
   }
-]
+];
 
 export interface PZoneModal extends PBoard {
   open: boolean;
