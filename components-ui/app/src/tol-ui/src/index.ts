@@ -48,6 +48,7 @@ export * from "./services";
 export { retry } from "./services/http";
 export { clearExpiredToken } from "./services/auth";
 export * from "./table";
+export * from "./tours";
 export * from "./timeline";
 export * from "./utility-bar";
 export * from "./variables";

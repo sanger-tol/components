@@ -25,10 +25,9 @@ import {
   normaliseCaps,
   PopUpMessage,
   processTour,
-  Icon,
-  addZoneTour
+  addZoneTour,
+  InitiateTourButton
 } from "../..";
-import { InitiateTourButton } from "src/tours";
 
 export interface PZoneModal extends PBoard {
   open: boolean;
@@ -38,7 +37,6 @@ export interface PZoneModal extends PBoard {
   zoneOrder: IDBZoneView[];
   setZoneOrder: (zone: IDBZoneView[]) => void;
   viewId: string;
-  handleStartTour?: () => {};
 }
 
 export function ZoneModal(props: PZoneModal) {
