@@ -125,3 +125,28 @@ export async function registerTourAsSeen(
 export async function disableAllTours(userId: string): Promise<void> {
   await registerTourAsSeen("tour_disabled", userId);
 }
+
+// All of the tours shared across tol-ui are defined here
+export const addZoneTour: ITourStep[] = [
+  {
+    testid: "zoneModal",
+    title: "Zones",
+    description: (
+      "Zones are containers for board components (such as tables and charts) " + 
+      "that work with the same type of data (object type)."
+    )
+  },
+  {
+    testid: "dataspace-picker",
+    title: "Dataspace",
+    description: (
+      "The set of data this zone will pull from. " + 
+      "If in doubt, use ToL Production"
+    ),
+  },
+  {
+    testid: "object-type-picker",
+    title: "Object Type",
+    description: "The kind of data contained in this zone"
+  }
+];
