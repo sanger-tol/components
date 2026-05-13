@@ -228,8 +228,8 @@ export function ZoneModal(props: PZoneModal) {
       <div>
         <span style={{display: "flex", justifyContent: "space-between"}}>
           <h4>Add New Zone</h4>
-          <button style={{background: "none"}}>
-            <Icon icon="question" size="md" onClick={() => processTour("addZone", addZoneTour, true)} />
+          <button style={{background: "none"}} onClick={() => processTour("addZone", addZoneTour, true)}>
+            <Icon icon="question" size="lg" />
           </button>
         </span>
         <p className="zone-modal-labels">
