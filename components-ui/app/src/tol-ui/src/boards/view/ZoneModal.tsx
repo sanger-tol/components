@@ -25,13 +25,17 @@ import {
   normaliseCaps,
   PopUpMessage,
   processTour,
+  Icon,
 } from "../..";
 
 const addZoneTour = [
   {
     testid: "zoneModal",
     title: "Zones",
-    description: "Zones are... (insert here a better description than I can provide)"
+    description: (
+      "Zones are containers for board components (such as tables and charts) " + 
+      "that work with the same type of data (object type)."
+    )
   },
   {
     testid: "dataspace-picker",
@@ -44,12 +48,7 @@ const addZoneTour = [
   {
     testid: "object-type-picker",
     title: "Object Type",
-    description: "The kind of data contained in this zone (e.g. species)"
-  },
-  {
-    testid: "title-picker",
-    title: "Title",
-    description: "I think you know what a title is"
+    description: "The kind of data contained in this zone"
   }
 ];
 
@@ -250,7 +249,12 @@ export function ZoneModal(props: PZoneModal) {
       data-testid="zoneModal"
     >
       <div>
-        <h4>Add New Zone</h4>
+        <span style={{display: "flex", justifyContent: "space-between"}}>
+          <h4>Add New Zone</h4>
+          <button style={{background: "none"}}>
+            <Icon icon="question" size="md" onClick={() => processTour("addZone", addZoneTour, true)} />
+          </button>
+        </span>
         <p className="zone-modal-labels">
           Select Dataspace <RequiredAsterisk />
         </p>
@@ -285,7 +289,7 @@ export function ZoneModal(props: PZoneModal) {
         <p className="zone-modal-labels">
           Enter Title <RequiredAsterisk />
         </p>
-        <div id="step3" data-testid="title-picker">
+        <div id="step3">
           <RSForm fluid>
             <FormTextField
               id="zone-title"
