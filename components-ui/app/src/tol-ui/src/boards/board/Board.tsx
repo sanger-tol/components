@@ -6,6 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { useEffect, useState } from "react";
 import { Redirect, useHistory, useLocation, useParams } from "react-router-dom";
+import { Input } from "rsuite";
 import {
   BOARDS,
   getCssVarValue,
@@ -39,6 +40,7 @@ import {
   MAX_VIEWS_ALLOWED_MESSAGE,
   Modal,
   PASTE_BUTTON,
+  patchReorderBoardEntity,
 } from "../..";
 import type {
   IBoard,
@@ -49,7 +51,6 @@ import type {
   ITab,
   IZone,
 } from "../..";
-import { Input } from "rsuite";
 
 // TODO: Split into smaller components
 // TODO: onAddView is very similar to view copy logic, make them the same.
@@ -187,25 +188,21 @@ export function Board(props: PBoard) {
   };
 
   const onReorderViews = (orderedIds: string[]) => {
-    if (board) {
-      board.order = orderedIds;
-      setBoard({ ...board });
-    }
+    patchReorderBoardEntity(boardDataSource, board?.id!, orderedIds);
+    board.order = orderedIds;
+    setBoard({ ...board });
   };
 
   const onDeleteView = (viewId: string) => {
-    // TODO: add delete back
-    // boardDataSource
-    //   .deleteByID({
-    //     objectType: BOARDS.VIEW,
-    //     viewId
-    //   })
-    if (board) {
-      deleteBoardEntityInParent<IBoard>(viewId, BOARDS.BOARD, board);
-      setBoard({ ...board });
-      setMountedViewIds((prev) => prev.filter((vid) => vid !== viewId));
-      setActiveViewId(board.order[0]);
-    }
+    boardDataSource
+      .deleteByID({
+        objectType: BOARDS.VIEW,
+        id: viewId
+      })
+    deleteBoardEntityInParent<IBoard>(viewId, BOARDS.BOARD, board);
+    setBoard({ ...board });
+    setMountedViewIds((prev) => prev.filter((vid) => vid !== viewId));
+    setActiveViewId(board.order[0]);
   };
 
   const onViewImport = async () => {
@@ -393,13 +390,13 @@ export function Board(props: PBoard) {
 
   const layoutOrExitLogic: PButton = layoutMode
     ? {
-        ...BUTTONS.SAVE,
-        text: "Save Layouts",
-      }
+      ...BUTTONS.SAVE,
+      text: "Save Layouts",
+    }
     : {
-        ...BUTTONS.EDIT,
-        text: "Change Layout",
-      };
+      ...BUTTONS.EDIT,
+      text: "Change Layout",
+    };
 
   const LayoutOrExitButton: PButton = {
     ...layoutOrExitLogic,
@@ -411,14 +408,14 @@ export function Board(props: PBoard) {
 
   const editOrExitLogic: PButton = editMode
     ? {
-        ...BUTTONS.CONFIRM,
-        type: "primary",
-        text: "Exit Edit Mode",
-      }
+      ...BUTTONS.CONFIRM,
+      type: "primary",
+      text: "Exit Edit Mode",
+    }
     : {
-        ...BUTTONS.EDIT,
-        text: "Edit",
-      };
+      ...BUTTONS.EDIT,
+      text: "Edit",
+    };
 
   const EditOrExitButton: PButton = {
     ...editOrExitLogic,
@@ -455,19 +452,19 @@ export function Board(props: PBoard) {
   // Different format used for the main Board title
   const editModeTitle = editMode
     ? {
-        text: board?.title,
-        editable: editMode,
-        onSave: (value: string) => {
-          saveTitle(value, id, boardDataSource, BOARDS.BOARD);
-          setBoard({
-            ...board,
-            title: value,
-          } as IBoard);
-        },
-        hideButtons: true,
-        emptyAllowed: false,
-        onEmptyMessage: BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
-      }
+      text: board?.title,
+      editable: editMode,
+      onSave: (value: string) => {
+        saveTitle(value, id, boardDataSource, BOARDS.BOARD);
+        setBoard({
+          ...board,
+          title: value,
+        } as IBoard);
+      },
+      hideButtons: true,
+      emptyAllowed: false,
+      onEmptyMessage: BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
+    }
     : undefined;
 
   // Large header for view mode

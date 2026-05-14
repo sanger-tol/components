@@ -27,11 +27,12 @@ export const API_OPERATIONS = {
   TO_MANY: ":to-many",
 } as const;
 
-
 export const API_UTILITY_OPERATIONS = {
   BOARD_COPY: "copy/board",
   VIEW_COPY: "copy/view",
   ZONE_COPY: "copy/zone",
+  BOARD_ENTITY_REORDER: "reorder",
+  GET_BOARD_ENTITY: "get-entity"
 } as const;
 
 export const HTTP_STATUS_CODES = {

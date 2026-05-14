@@ -6,7 +6,6 @@
 
 import { useHistory } from "react-router-dom";
 import {
-  createBoardAndView,
   BOARDS,
   Button,
   PBoard,
@@ -26,18 +25,6 @@ export function MyBoardsHeader(props: PBoard) {
 
   const create = () => {
     setLoading(true);
-    createBoardAndView(
-      boardDataSource,
-      user!
-    ).then((boardId) => {
-      if (boardId) {
-        setTimeout(() => {
-          history.push(`/${BOARDS.BOARD}/${boardId}`);
-        }, 500);
-      }
-    }).catch(() => {
-      setLoading(false);
-    });
   };
 
   return (

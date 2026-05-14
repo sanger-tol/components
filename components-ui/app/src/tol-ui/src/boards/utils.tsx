@@ -5,7 +5,6 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  generateId,
   TsDataSource,
   BOARDS,
   IZone,
@@ -13,11 +12,13 @@ import {
   IView,
   IComponent,
   deepCopy,
-  PopUpMessage,
   boardParams,
-  IUser,
   normaliseCaps,
   BOARD_DIFF_API_PATH,
+  API_UTILITY_OPERATIONS,
+  API_METHODS,
+  PopUpMessage,
+  ERROR_FETCHING_BOARD_ENTITY,
 } from "..";
 
 /**
@@ -63,6 +64,14 @@ export function deleteBoardEntityInParent<
   );
 }
 
+/**
+ * Fetches a board entity and its children from the board data source.
+ *
+ * @param boardDataSource The data source used to perform the request.
+ * @param parentId The identifier of the board entity to fetch.
+ * @param objectType The type of the board entity.
+ * @returns The board entity and its children.
+ */
 export async function getBoardEntityAndChildren(
   boardDataSource: TsDataSource,
   parentId: string,
@@ -70,11 +79,17 @@ export async function getBoardEntityAndChildren(
 ) {
   return await boardDataSource
     .custom({
-      method: "GET",
-      resource: `get-entity/${objectType}/${parentId}`,
+      method: API_METHODS.GET,
+      resource: `${API_UTILITY_OPERATIONS.GET_BOARD_ENTITY}/${objectType}/${parentId}`,
     })
     .then((res) => {
       return res.data;
+    })
+    .catch(() => {
+      PopUpMessage({
+        type: "error",
+        message: ERROR_FETCHING_BOARD_ENTITY,
+      });
     });
 }
 
@@ -95,7 +110,7 @@ export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
   // Add default values for filter and title if the entity is a zone or component
   let defaults = {};
   if (objectType === BOARDS.COMPONENT || objectType === BOARDS.ZONE) {
-    const e = entity as IZone | IComponent;
+    const e = entity as Partial<IZone> | Partial<IComponent>;
     defaults = {
       filter: e.filter ? deepCopy(e.filter) : { and_: {} },
       defaultFilter: e.filter ? deepCopy(e.filter) : { and_: {} },
@@ -143,97 +158,6 @@ export function defineBoardEntityInParent<
   parentEntity[parentChildrenKey][entity.id] = definedEntity;
   parentEntity.order.push(entity.id!);
   return parentEntity;
-}
-
-/**
- * Upserts a new board entity (board, view, zone, or component) into the data source with
- * default values for required properties and handles errors with a pop-up message.
- *
- * @param objectType The type of the board entity (e.g. 'board', 'view', 'zone', 'component').
- * @param attributes The attributes of the board entity to be upserted.
- * @param boardDataSource The data source to upsert the board entity into.
- * @param id The ID of the board entity to be upserted (optional).
- * @returns Data object list containing the newly created board entity or null if the operation fails.
- */
-async function upsertNewBoardEntity(
-  objectType: string,
-  attributes: object,
-  boardDataSource: TsDataSource,
-  id?: string,
-) {
-  return await boardDataSource
-    .upsert({
-      objectType: objectType,
-      payload: [
-        {
-          ...(id && { id }),
-          type: objectType,
-          attributes: attributes,
-        },
-      ],
-      params: {
-        merge_collections: false,
-      },
-    })
-    .catch((e: any) => {
-      console.error(e);
-      PopUpMessage({
-        type: "error",
-        message: `Error creating ${objectType}. Please refresh and try again.`,
-      });
-      throw e;
-    });
-}
-
-/**
- * Upserts a board entity (board, view, zone, or component) into the data source with
- * default values for required properties and handles errors with a pop-up message.
- *
- * @param objectType The type of the board entity (e.g. 'board', 'view', 'zone', 'component').
- * @param attributes The attributes of the board entity to be upserted.
- * @param boardDataSource The data source to upsert the board entity into.
- * @param user The user performing the upsert operation.
- * @param id The ID of the board entity to be upserted (optional).
- * @returns Data object list containing the newly created board entity or null if the operation fails.
- */
-export async function upsertCoreBoardEntity(
-  objectType: string,
-  attributes: object,
-  boardDataSource: TsDataSource,
-  user?: IUser,
-  id?: string,
-) {
-  // Generate a new ID for the board entity based on its type (e.g. 'b' for board, 'v' for view, 'z' for zone, 'c' for component)
-  const entityId = id || generateId(getEntityPrefix(objectType));
-
-  // Add the user_id to the attributes for the upsert operation
-  const upsertAttributes = {
-    ...attributes,
-    ...(user && { user_id: user.id }),
-  };
-
-  return await upsertNewBoardEntity(
-    objectType,
-    upsertAttributes,
-    boardDataSource,
-    entityId,
-  );
-}
-
-/**
- * Joins two board entities together by upserting a joining table entry
- *
- * @param objectType The type of the joining table entity (e.g. 'view_board' for joining views to boards).
- * @param attributes The attributes of the joining table entry to be upserted (e.g. order, board_id, view_id for a view_board entry).
- * @param boardDataSource The data source to upsert the joining table entry into.
- * @returns Data object list containing the newly created joining table entry or null if the operation fails.
- */
-export async function upsertJoiningBoardEntity(
-  objectType: string,
-  attributes: object,
-  boardDataSource: TsDataSource,
-) {
-  return await upsertNewBoardEntity(objectType, attributes, boardDataSource);
 }
 
 /**
@@ -302,3 +226,21 @@ export async function deleteComponentDiff(
   }
 }
 
+/**
+ * Patches the order of child entities within a parent board entity.
+ *
+ * @param boardDataSource The data source used to perform the patch operation.
+ * @param parentId The identifier of the parent board entity whose children are being reordered.
+ * @param childIds The new ordered list of child entity IDs.
+ */
+export async function patchReorderBoardEntity(
+  boardDataSource: TsDataSource,
+  parentId: string,
+  childIds: string[]
+) {
+  await boardDataSource.custom({
+    method: API_METHODS.PATCH,
+    resource: `${API_UTILITY_OPERATIONS.BOARD_ENTITY_REORDER}/${parentId}`,
+    body: { order: JSON.stringify(childIds) },
+  });
+}

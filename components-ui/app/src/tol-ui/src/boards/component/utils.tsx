@@ -11,7 +11,6 @@ import {
   IFilter,
   IZone,
   TsDataSource,
-  upsertCoreBoardEntity,
 } from "../..";
 
 /**
@@ -36,13 +35,13 @@ export async function updateComponentConfigAndUpsert(
 
   if (editMode) {
     component.config = { ...config };
-    return await upsertCoreBoardEntity(
-      BOARDS.COMPONENT,
-      { config: config },
-      boardDataSource,
-      undefined,
-      componentId,
-    );
+    // return await upsertCoreBoardEntity(
+    //   BOARDS.COMPONENT,
+    //   { config: config },
+    //   boardDataSource,
+    //   undefined,
+    //   componentId,
+    // );
   }
 
   component.config_diff = { ...component.config_diff, config: config };
