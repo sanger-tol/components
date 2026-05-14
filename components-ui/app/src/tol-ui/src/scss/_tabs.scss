@@ -76,7 +76,28 @@
     }
   }
 
+  .tol-tabs-nav-button:not(.tol-copy-view-id-button) {
+    max-width: 100px !important;
+    transition: max-width 0.25s ease-in-out !important;
+
+    & > span {
+      justify-content: flex-start !important;
+      padding: 0 2px !important;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis !important;
+    }
+
+    &.active {
+      max-width: 400px !important;
+    }
+  }
+
+  .tol-tabs-nav-button:hover {
+    max-width: 400px !important;
+  }
+
   .tol-tabs-nav-button:not(.active) {
-    font-weight: 100 !important;
+    font-weight: 400 !important;
   }
 }

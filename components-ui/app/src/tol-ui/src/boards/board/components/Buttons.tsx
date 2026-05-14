@@ -55,6 +55,7 @@ export const copyViewIdToClipboard = (
   outline: false,
   visible: visible,
   testid: "copy-view-id-button",
+  className: "tol-copy-view-id-button",
 });
 
 export const addZoneButton = (

@@ -180,16 +180,25 @@ export async function onViewTitleSave(
   setBoard: (board: IBoard) => void,
   boardDataSource: TsDataSource,
 ) {
+  const viewsMap = board?.children?.[0] ?? {};
+
+  const currentTitle = viewsMap[viewId]?.title;
+  if (currentTitle === value) return;
+
+
   await saveTitle(value, viewId, boardDataSource, BOARDS.VIEW);
+
   setBoard({
     ...board,
-    children: {
-      ...board.children,
-      [viewId]: {
-        ...board.children?.[viewId],
-        title: value,
+    children: [
+      {
+        ...viewsMap,
+        [viewId]: {
+          ...viewsMap[viewId],
+          title: value,
+        },
       },
-    },
+    ] as unknown as IBoard["children"],
   } as IBoard);
 }
 
@@ -214,12 +223,14 @@ export function onAddView(
   const newView: IView = {
     id: newViewId,
     title: newViewTitle,
-    children: [{}] as Record<string, IZone>,
+    children: [{}] as unknown as Record<string, IZone>,
     order: [],
   };
   setBoard({
     ...board,
-    children: [{ ...viewsMap, [newViewId]: newView }],
+    children: [
+      { ...viewsMap, [newViewId]: newView },
+    ] as unknown as IBoard["children"],
     order: [...(board?.order ?? []), newViewId],
   });
   setActiveViewId(newViewId);

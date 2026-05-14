@@ -179,7 +179,7 @@ export function buildViewTabButtonArray(
           ?.map((viewId) => {
             const view = board?.children?.[0]?.[viewId];
             if (view) {
-              const { buttons, label } = viewTabButtons(viewId, view.title);
+              const { buttons, label } = viewTabButtons(viewId, view.title || "Untitled");
               return { buttons, label } as ITab;
             }
             return null;
