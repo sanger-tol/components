@@ -27,13 +27,13 @@ import {
  * @param boardDataSource The data source used for the upsert operation.
  * @param boardObjectType The type of the board entity (e.g. 'board', 'view', 'zone', 'component').
  */
-export function saveTitle(
+export async function saveTitle(
   title: string,
   id: string,
   boardDataSource: TsDataSource,
   boardObjectType: string,
 ) {
-  boardDataSource.upsert({
+  await boardDataSource.upsert({
     objectType: boardObjectType,
     payload: [
       {

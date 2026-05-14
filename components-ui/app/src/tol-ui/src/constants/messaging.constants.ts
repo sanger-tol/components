@@ -22,8 +22,10 @@ export const MESSAGE_TYPE = {
   ERROR: "error",
 } as const;
 
+export type TBoardEntity = (typeof BOARDS)[keyof typeof BOARDS]; // TODO: MOVE
+
 export const BOARD_MESSAGE_TEXT = (
-  boardEntity: (typeof BOARDS)[keyof typeof BOARDS],
+  boardEntity: TBoardEntity,
 ) => {
   const entityCapitalised =
     boardEntity.charAt(0).toUpperCase() + boardEntity.slice(1);

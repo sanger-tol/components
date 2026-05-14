@@ -18,6 +18,12 @@ import {
   BOARD_MESSAGE_TEXT,
   IView,
   API_UTILITY_OPERATIONS,
+  saveTitle,
+  generateId,
+  getEntityPrefix,
+  getNextTitle,
+  IZone,
+  TBoardEntity,
 } from "../..";
 
 // TODO: REMOVE WITH NEW ENDPOINTS!
@@ -65,7 +71,7 @@ export async function copyEntity<T>(
   operation: string,
   parentEntityType: string,
   title: string,
-  copyEntityType: string,
+  copyEntityType: TBoardEntity,
   parentEntityId?: string,
 ): Promise<T | undefined> {
   return (await boardDataSource
@@ -110,7 +116,7 @@ export async function copyBoard(
   parentEntityType: string,
   setBoard: (board: IBoard) => void,
   title: string,
-  copyEntityType: string,
+  copyEntityType: TBoardEntity,
 ): Promise<IBoard | undefined> {
   return await copyEntity<IBoard>(
     boardDataSource,
@@ -135,7 +141,7 @@ export async function copyView(
   parentEntityType: string,
   setBoard: (board: IBoard) => void,
   title: string,
-  copyEntityType: string,
+  copyEntityType: TBoardEntity,
   currentBoard?: IBoard,
   parentEntityId?: string,
 ): Promise<IView | undefined> {
@@ -165,4 +171,57 @@ export async function copyView(
       return newView;
     }
   });
+}
+
+export async function onViewTitleSave(
+  value: string,
+  viewId: string,
+  board: IBoard,
+  setBoard: (board: IBoard) => void,
+  boardDataSource: TsDataSource,
+) {
+  await saveTitle(value, viewId, boardDataSource, BOARDS.VIEW);
+  setBoard({
+    ...board,
+    children: {
+      ...board.children,
+      [viewId]: {
+        ...board.children?.[viewId],
+        title: value,
+      },
+    },
+  } as IBoard);
+}
+
+export function updateViewInUrl(viewId: string) {
+  const params = new URLSearchParams(location.search);
+  params.set("view", viewId);
+  window.history.replaceState(null, "", `?${params.toString()}`);
+}
+
+export function onAddView(
+  board: IBoard,
+  setBoard: (board: IBoard) => void,
+  setActiveViewId: (viewId: string) => void,
+) {
+  const newViewId = generateId(getEntityPrefix(BOARDS.VIEW));
+  const viewsMap = board?.children?.[0] ?? {};
+  const newViewTitle = getNextTitle<IBoard>(
+    { ...board, views: viewsMap } as any,
+    BOARDS.BOARD,
+    BOARDS.VIEW,
+  );
+  const newView: IView = {
+    id: newViewId,
+    title: newViewTitle,
+    children: [{}] as Record<string, IZone>,
+    order: [],
+  };
+  setBoard({
+    ...board,
+    children: [{ ...viewsMap, [newViewId]: newView }],
+    order: [...(board?.order ?? []), newViewId],
+  });
+  setActiveViewId(newViewId);
+  updateViewInUrl(newViewId);
 }
