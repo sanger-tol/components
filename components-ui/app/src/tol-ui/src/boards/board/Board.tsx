@@ -144,7 +144,10 @@ export function Board(props: PBoard) {
     <div className={`tol-board ${editMode ? "tol-edit-mode" : ""}`}>
       <ImportViewModal
         open={viewImportModalOpen}
-        setOpen={setViewImportModalOpen}
+        onClose={() => {
+          setViewImportModalOpen(false);
+          setViewImportId("");
+        }}
         boardDataSource={boardDataSource}
         viewImportId={viewImportId}
         setViewImportId={setViewImportId}
@@ -199,15 +202,15 @@ export function Board(props: PBoard) {
         }
       />
       <BoardButtonsUtilityBar
-        setBoardCopyModalOpen={setBoardCopyModalOpen}
+        onOpenBoardCopyModal={() => setBoardCopyModalOpen(true)}
         setNewBoardCopyTitle={setNewBoardCopyTitle}
-        setOpenAddZoneModal={setOpenAddZoneModal}
+        onOpenAddZone={() => setOpenAddZoneModal(true)}
         newBoardCopyTitle={newBoardCopyTitle}
         activeViewId={activeViewId || ""}
         boardDataSource={boardDataSource}
-        setDeleteViewConfirmModal={setDeleteViewConfirmModal}
+        onOpenDeleteViewModal={() => setDeleteViewConfirmModal(true)}
         setActiveViewId={setActiveViewId}
-        setViewImportModalOpen={setViewImportModalOpen}
+        onOpenViewImportModal={() => setViewImportModalOpen(true)}
       />
       {mountedViewIds.map((viewId) => (
         <View

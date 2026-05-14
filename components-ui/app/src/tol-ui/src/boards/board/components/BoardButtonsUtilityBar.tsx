@@ -19,31 +19,29 @@ import {
   editModeTitle,
   ViewModeBoardTitle,
 } from ".";
-import { Dispatch, SetStateAction } from "react";
-
 export interface IBoardButtonsUtilityBar {
-  setBoardCopyModalOpen: Dispatch<SetStateAction<boolean>>;
-  setNewBoardCopyTitle: Dispatch<SetStateAction<string>>;
-  setOpenAddZoneModal: Dispatch<SetStateAction<boolean>>;
+  onOpenBoardCopyModal: () => void;
+  setNewBoardCopyTitle: (title: string) => void;
+  onOpenAddZone: () => void;
   newBoardCopyTitle: string;
   activeViewId: string;
   boardDataSource: TsDataSource;
-  setDeleteViewConfirmModal: Dispatch<SetStateAction<boolean>>;
+  onOpenDeleteViewModal: () => void;
   setActiveViewId: (viewId: string) => void;
-  setViewImportModalOpen: Dispatch<SetStateAction<boolean>>;
+  onOpenViewImportModal: () => void;
 }
 
 export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
   const {
-    setBoardCopyModalOpen,
+    onOpenBoardCopyModal,
     setNewBoardCopyTitle,
-    setOpenAddZoneModal,
+    onOpenAddZone,
     newBoardCopyTitle,
     activeViewId,
     boardDataSource,
-    setDeleteViewConfirmModal,
+    onOpenDeleteViewModal,
     setActiveViewId,
-    setViewImportModalOpen,
+    onOpenViewImportModal,
   } = props;
 
   const {
@@ -64,7 +62,7 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
     tableLoading,
     setEditMode,
     setLayoutMode,
-    setBoardCopyModalOpen,
+    onOpenBoardCopyModal,
     newBoardCopyTitle,
     setNewBoardCopyTitle,
     board?.title || "",
@@ -74,10 +72,10 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
     activeViewId,
     editMode,
     boardDataSource,
-    setDeleteViewConfirmModal,
+    onOpenDeleteViewModal,
     setBoard,
     setActiveViewId,
-    setViewImportModalOpen,
+    onOpenViewImportModal,
     board,
   );
 
@@ -102,7 +100,7 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
           elements={viewTabButtonArray.flat()}
           buttons={[
             addZoneButton(
-              () => setOpenAddZoneModal(true),
+              onOpenAddZone,
               editMode && !layoutMode,
             ),
           ]}

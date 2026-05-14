@@ -18,7 +18,7 @@ import type { TsDataSource } from "../../../..";
 
 export interface IImportViewModalProps {
   open: boolean;
-  setOpen: (open: boolean) => void;
+  onClose: () => void;
   boardDataSource: TsDataSource;
   viewImportId: string;
   setViewImportId: (id: string) => void;
@@ -29,7 +29,7 @@ export interface IImportViewModalProps {
 export function ImportViewModal(props: IImportViewModalProps) {
   const {
     open,
-    setOpen,
+    onClose,
     boardDataSource,
     viewImportId,
     setViewImportId,
@@ -45,13 +45,12 @@ export function ImportViewModal(props: IImportViewModalProps) {
       viewImportId,
       BOARDS.BOARD,
       setBoard,
-      newViewTitle, // TODO: FIX
+      newViewTitle,
       BOARDS.VIEW,
       board,
       board?.id,
     );
-    setViewImportId("");
-    setOpen(false);
+    onClose();
     setActiveViewId(addedView?.id ?? null);
   };
 
@@ -62,7 +61,7 @@ export function ImportViewModal(props: IImportViewModalProps) {
   return (
     <Modal
       open={open}
-      setOpen={setOpen}
+      setOpen={(isOpen) => { if (!isOpen) onClose(); }}
       size={"sm"}
       actionButtonInline
       children={

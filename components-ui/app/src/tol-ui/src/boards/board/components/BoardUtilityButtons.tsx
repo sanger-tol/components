@@ -35,7 +35,7 @@ export function buildUtilityBarButtons(
   tableLoading: boolean,
   setEditMode: (value: boolean) => void,
   setLayoutMode: (value: boolean) => void,
-  setBoardCopyModalOpen: (value: boolean) => void,
+  onOpenBoardCopyModal: () => void,
   newBoardCopyTitle: string,
   setNewBoardCopyTitle: (value: string) => void,
   boardTitle: string,
@@ -60,7 +60,7 @@ export function buildUtilityBarButtons(
             if (!newBoardCopyTitle.trim()) {
               setNewBoardCopyTitle(`${boardTitle} - copy`);
             }
-            setBoardCopyModalOpen(true);
+            onOpenBoardCopyModal();
           }),
         ]
       : []),
@@ -70,7 +70,7 @@ export function buildUtilityBarButtons(
 export function buildViewCreationButtons(
   editMode: boolean,
   onAddView: () => void,
-  setViewImportModalOpen: (open: boolean) => void,
+  onOpenViewImportModal: () => void,
   board?: IBoard,
 ) {
   return [
@@ -81,7 +81,7 @@ export function buildViewCreationButtons(
     ),
     ImportViewButton(
       editMode,
-      () => setViewImportModalOpen(true),
+      onOpenViewImportModal,
       board?.order ? board.order.length >= 10 : false,
     ),
   ];
@@ -93,7 +93,7 @@ export function buildSingleViewTabButton(
   activeViewId: string | null,
   editMode: boolean,
   boardDataSource: TsDataSource,
-  setDeleteViewConfirmModal: (open: boolean) => void,
+  onOpenDeleteViewModal: () => void,
   setBoard: (board: IBoard) => void,
   setActiveViewId: (viewId: string) => void,
   board?: IBoard,
@@ -116,7 +116,7 @@ export function buildSingleViewTabButton(
         !isEditingTitle && board?.order?.length > 1,
       ),
       deleteViewButton(
-        () => setDeleteViewConfirmModal(true),
+        onOpenDeleteViewModal,
         editMode && activeViewId === viewId && board?.order?.length > 1,
       ),
       copyViewIdToClipboard(viewId, activeViewId === viewId && !editMode),
@@ -133,10 +133,10 @@ export function buildViewTabButtonArray(
   activeViewId: string | null,
   editMode: boolean,
   boardDataSource: TsDataSource,
-  setDeleteViewConfirmModal: (open: boolean) => void,
+  onOpenDeleteViewModal: () => void,
   setBoard: (board: IBoard) => void,
   setActiveViewId: (viewId: string) => void,
-  setViewImportModalOpen: (open: boolean) => void,
+  onOpenViewImportModal: () => void,
   board?: IBoard,
 ) {
   if (!board) return [];
@@ -148,7 +148,7 @@ export function buildViewTabButtonArray(
       activeViewId,
       editMode,
       boardDataSource,
-      setDeleteViewConfirmModal,
+      onOpenDeleteViewModal,
       setBoard,
       setActiveViewId,
       board,
@@ -162,7 +162,7 @@ export function buildViewTabButtonArray(
   const viewCreationButtons = buildViewCreationButtons(
     editMode,
     () => onAddView(board, setBoard, setActiveViewId),
-    setViewImportModalOpen,
+    onOpenViewImportModal,
     board,
   );
 
