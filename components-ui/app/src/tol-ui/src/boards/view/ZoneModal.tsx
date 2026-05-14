@@ -225,7 +225,7 @@ export function ZoneModal(props: PZoneModal) {
       data-testid="zoneModal"
     >
       <div>
-        <span style={{display: "flex", justifyContent: "space-between"}}>
+        <span className="tol-zone-modal-title">
           <h4>Add New Zone</h4>
           <InitiateTourButton onClick={() => processTour("addZone", addZoneTour, true)} />
         </span>
