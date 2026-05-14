@@ -40,6 +40,7 @@ export function SortableTab(props: PSortableTab) {
 
   return (
     <div ref={ref} className="tol-tabs-nav-tab">
+      {tab.label && <div className="tol-tabs-nav-label">{tab.label}</div>}
       {tab.buttons.map((button) => (
         <>
           <Button

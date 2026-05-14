@@ -28,9 +28,8 @@ import {
 import type { IBoard, TNavBrand, TsDataSource } from "../..";
 import { BoardButtonsUtilityBar, ImportViewModal } from "./components";
 
-// TODO: Split into smaller components
 // TODO: onAddView is very similar to view copy logic, make them the same.
-// TODO: Fix imported view title.
+// TODO: FIX ALL THE STYLING FOR TAB BUTTONS... THEY ARE A MESS RIGHT NOW
 
 export interface PBoard {
   /**
@@ -57,12 +56,7 @@ export interface PBoard {
 export function Board(props: PBoard) {
   const { boardId, boardDataSource, brand, actionsDataSource } = props;
 
-  const {
-    setPrivilege,
-    editMode,
-    board,
-    setBoard,
-  } = useBoard();
+  const { setPrivilege, editMode, board, setBoard } = useBoard();
 
   const { boardId: paramBoardId } = useParams<any>();
   const location = useLocation();
@@ -73,9 +67,9 @@ export function Board(props: PBoard) {
   const [openAddZoneModal, setOpenAddZoneModal] = useState(false);
   const [boardCopyModalOpen, setBoardCopyModalOpen] = useState<boolean>(false);
   const [newBoardCopyTitle, setNewBoardCopyTitle] = useState<string>("");
+  const [viewImportId, setViewImportId] = useState<string>("");
   const [viewImportModalOpen, setViewImportModalOpen] =
     useState<boolean>(false);
-  const [viewImportId, setViewImportId] = useState<string>("");
 
   // Ability to override boardId from props over URL params
   const id = boardId ?? paramBoardId;
@@ -155,7 +149,7 @@ export function Board(props: PBoard) {
         viewImportId={viewImportId}
         setViewImportId={setViewImportId}
         setActiveViewId={setActiveViewId}
-        newViewTitle={""} // TODO: FIX TITLE
+        newViewTitle={"view - copy"}
       />
       <NewTitleModal
         open={boardCopyModalOpen}

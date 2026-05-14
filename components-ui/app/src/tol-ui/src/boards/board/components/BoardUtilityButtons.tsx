@@ -4,6 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
+import { ReactNode } from "react";
 import {
   IBoard,
   ITab,
@@ -96,29 +97,36 @@ export function buildSingleViewTabButton(
   setBoard: (board: IBoard) => void,
   setActiveViewId: (viewId: string) => void,
   board?: IBoard,
-) {
-  if (!board) return [];
+): { buttons: ReturnType<typeof viewSelectorTab>[]; label: ReactNode } {
+  if (!board) return { buttons: [], label: undefined };
 
   const onClickView = (viewId: string) => () => {
     setActiveViewId(viewId);
     updateViewInUrl(viewId);
   };
 
-  return [
-    viewSelectorTab(
-      viewId,
-      ViewTitle(editMode && activeViewId === viewId, viewTitle, (value) =>
-        onViewTitleSave(value, viewId, board, setBoard, boardDataSource),
+  const isEditingTitle = editMode && activeViewId === viewId;
+
+  return {
+    buttons: [
+      viewSelectorTab(
+        viewId,
+        viewTitle,
+        onClickView(viewId),
+        !isEditingTitle && board?.order?.length > 1,
       ),
-      onClickView(viewId),
-      board?.order?.length > 1,
-    ),
-    deleteViewButton(
-      () => setDeleteViewConfirmModal(true),
-      editMode && activeViewId === viewId && board?.order?.length > 1,
-    ),
-    copyViewIdToClipboard(viewId, activeViewId === viewId && !editMode),
-  ];
+      deleteViewButton(
+        () => setDeleteViewConfirmModal(true),
+        editMode && activeViewId === viewId && board?.order?.length > 1,
+      ),
+      copyViewIdToClipboard(viewId, activeViewId === viewId && !editMode),
+    ],
+    label: isEditingTitle
+      ? ViewTitle(true, viewTitle, (value) =>
+          onViewTitleSave(value, viewId, board, setBoard, boardDataSource),
+        )
+      : undefined,
+  };
 }
 
 export function buildViewTabButtonArray(
@@ -171,9 +179,8 @@ export function buildViewTabButtonArray(
           ?.map((viewId) => {
             const view = board?.children?.[0]?.[viewId];
             if (view) {
-              return {
-                buttons: viewTabButtons(viewId, view.title),
-              } as ITab;
+              const { buttons, label } = viewTabButtons(viewId, view.title);
+              return { buttons, label } as ITab;
             }
             return null;
           })

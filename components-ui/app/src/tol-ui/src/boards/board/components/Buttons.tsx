@@ -103,7 +103,7 @@ export const deleteViewButton = (
 
 export const viewSelectorTab = (
   viewId: string,
-  viewTitle: React.ReactNode,
+  viewTitle: string,
   onClick: () => void,
   visible: boolean,
 ): PButton => ({
