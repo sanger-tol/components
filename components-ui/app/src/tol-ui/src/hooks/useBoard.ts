@@ -8,24 +8,23 @@ import { useContext } from "react";
 import { BoardContext, IBoardContextValue } from "..";
 import type { IBoard } from "..";
 
-
 export const useBoard = () => {
   const context = useContext<IBoardContextValue | undefined>(BoardContext);
 
   if (context === undefined) {
     return {
       board: {} as IBoard,
-      setBoard: () => { },
+      setBoard: () => {},
       privilege: undefined,
-      setPrivilege: () => { },
+      setPrivilege: () => {},
       editMode: false,
-      setEditMode: () => { },
+      setEditMode: () => {},
       tableLoading: false,
-      setTableLoading: () => { },
+      setTableLoading: () => {},
       layoutMode: false,
-      setLayoutMode: () => { }
+      setLayoutMode: () => {},
     };
   }
 
   return context;
-}
+};
