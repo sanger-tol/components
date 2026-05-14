@@ -40,18 +40,20 @@ export function ImportViewModal(props: IImportViewModalProps) {
   const { board, setBoard } = useBoard();
 
   const onViewImport = async () => {
-    const addedView = await copyView(
+    const result = await copyView(
       boardDataSource,
       viewImportId,
       BOARDS.BOARD,
-      setBoard,
       newViewTitle,
       BOARDS.VIEW,
       board,
       board?.id,
     );
+    if (result) {
+      setBoard(result.updatedBoard);
+      setActiveViewId(result.view.id ?? null);
+    }
     onClose();
-    setActiveViewId(addedView?.id ?? null);
   };
 
   const checkViewIdValidity = (id: string): boolean => {

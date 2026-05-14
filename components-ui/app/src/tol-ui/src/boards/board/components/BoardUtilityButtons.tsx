@@ -122,9 +122,10 @@ export function buildSingleViewTabButton(
       copyViewIdToClipboard(viewId, activeViewId === viewId && !editMode),
     ],
     label: isEditingTitle
-      ? ViewTitle(true, viewTitle, (value) =>
-          onViewTitleSave(value, viewId, board, setBoard, boardDataSource),
-        )
+      ? ViewTitle(true, viewTitle, async (value) => {
+          const updatedBoard = await onViewTitleSave(value, viewId, board, boardDataSource);
+          if (updatedBoard) setBoard(updatedBoard);
+        })
       : undefined,
   };
 }
@@ -161,7 +162,12 @@ export function buildViewTabButtonArray(
 
   const viewCreationButtons = buildViewCreationButtons(
     editMode,
-    () => onAddView(board, setBoard, setActiveViewId),
+    () => {
+      const { updatedBoard, newViewId } = onAddView(board);
+      setBoard(updatedBoard);
+      setActiveViewId(newViewId);
+      updateViewInUrl(newViewId);
+    },
     onOpenViewImportModal,
     board,
   );

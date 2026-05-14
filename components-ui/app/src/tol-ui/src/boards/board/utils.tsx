@@ -114,7 +114,6 @@ export async function copyBoard(
   boardDataSource: TsDataSource,
   entityId: string,
   parentEntityType: string,
-  setBoard: (board: IBoard) => void,
   title: string,
   copyEntityType: TBoardEntity,
 ): Promise<IBoard | undefined> {
@@ -127,7 +126,6 @@ export async function copyBoard(
     copyEntityType,
   ).then((newBoard: IBoard | undefined) => {
     if (!newBoard) return;
-    setBoard(newBoard);
     const boardId = newBoard.id;
     const firstViewId = Object.keys(newBoard.children?.[0] ?? {})[0];
     replaceURLState(boardId!, firstViewId!);
@@ -139,12 +137,11 @@ export async function copyView(
   boardDataSource: TsDataSource,
   entityId: string,
   parentEntityType: string,
-  setBoard: (board: IBoard) => void,
   title: string,
   copyEntityType: TBoardEntity,
   currentBoard?: IBoard,
   parentEntityId?: string,
-): Promise<IView | undefined> {
+): Promise<{ view: IView; updatedBoard: IBoard } | undefined> {
   return await copyEntity<IView>(
     boardDataSource,
     entityId,
@@ -154,22 +151,17 @@ export async function copyView(
     copyEntityType,
     parentEntityId,
   ).then((newView: IView | undefined) => {
-    if (!newView) return;
-    const viewsMap = (currentBoard?.children?.[0] ?? {}) as Record<
-      string,
-      IView
-    >;
-    if (currentBoard) {
-      setBoard({
-        ...currentBoard,
-        children: [
-          { ...viewsMap, [newView.id!]: newView },
-        ] as unknown as IBoard["children"],
-        order: [...(currentBoard.order ?? []), newView.id!],
-      });
-      replaceURLState(currentBoard.id!, newView.id!);
-      return newView;
-    }
+    if (!newView || !currentBoard) return;
+    const viewsMap = (currentBoard.children?.[0] ?? {}) as unknown as Record<string, IView>;
+    const updatedBoard: IBoard = {
+      ...currentBoard,
+      children: [
+        { ...viewsMap, [newView.id!]: newView },
+      ] as unknown as IBoard["children"],
+      order: [...(currentBoard.order ?? []), newView.id!],
+    };
+    replaceURLState(currentBoard.id!, newView.id!);
+    return { view: newView, updatedBoard };
   });
 }
 
@@ -177,18 +169,16 @@ export async function onViewTitleSave(
   value: string,
   viewId: string,
   board: IBoard,
-  setBoard: (board: IBoard) => void,
   boardDataSource: TsDataSource,
-) {
+): Promise<IBoard | undefined> {
   const viewsMap = board?.children?.[0] ?? {};
 
   const currentTitle = viewsMap[viewId]?.title;
   if (currentTitle === value) return;
 
-
   await saveTitle(value, viewId, boardDataSource, BOARDS.VIEW);
 
-  setBoard({
+  return {
     ...board,
     children: [
       {
@@ -199,7 +189,7 @@ export async function onViewTitleSave(
         },
       },
     ] as unknown as IBoard["children"],
-  } as IBoard);
+  } as IBoard;
 }
 
 export function updateViewInUrl(viewId: string) {
@@ -210,9 +200,7 @@ export function updateViewInUrl(viewId: string) {
 
 export function onAddView(
   board: IBoard,
-  setBoard: (board: IBoard) => void,
-  setActiveViewId: (viewId: string) => void,
-) {
+): { updatedBoard: IBoard; newViewId: string } {
   const newViewId = generateId(getEntityPrefix(BOARDS.VIEW));
   const viewsMap = board?.children?.[0] ?? {};
   const newViewTitle = getNextTitle<IBoard>(
@@ -226,13 +214,12 @@ export function onAddView(
     children: [{}] as unknown as Record<string, IZone>,
     order: [],
   };
-  setBoard({
+  const updatedBoard: IBoard = {
     ...board,
     children: [
       { ...viewsMap, [newViewId]: newView },
     ] as unknown as IBoard["children"],
     order: [...(board?.order ?? []), newViewId],
-  });
-  setActiveViewId(newViewId);
-  updateViewInUrl(newViewId);
+  };
+  return { updatedBoard, newViewId };
 }

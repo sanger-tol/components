@@ -173,11 +173,11 @@ export function Board(props: PBoard) {
             boardDataSource,
             id!,
             BOARDS.BOARD,
-            setBoard,
             newBoardCopyTitle,
             BOARDS.BOARD,
           );
           if (copiedBoard) {
+            setBoard(copiedBoard);
             const firstViewId = copiedBoard.order?.[0];
             if (firstViewId) {
               setActiveViewId(firstViewId);
