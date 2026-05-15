@@ -91,7 +91,7 @@ export function ZoneModal(props: PZoneModal) {
         })
         .finally(() => {
           setDataSourceInstancesLoading(false);
-          processTour("addZone", addZoneTour, user);
+          processTour("addZone", addZoneTour, user ? user.id : null);
         });
     } else {
       reset();
@@ -230,7 +230,9 @@ export function ZoneModal(props: PZoneModal) {
       <div>
         <span className="tol-zone-modal-title">
           <h4>Add New Zone</h4>
-          <InitiateTourButton onClick={() => processTour("addZone", addZoneTour, true)} />
+          <InitiateTourButton
+            onClick={() => processTour("addZone", addZoneTour, user ? user.id : null, true)} 
+          />
         </span>
         <p className="zone-modal-labels">
           Select Dataspace <RequiredAsterisk />

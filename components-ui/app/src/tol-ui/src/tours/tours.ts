@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ITourStep, TsDataSource, env, LOCAL_API_DATA_PATH, User } from "..";
+import { ITourStep, TsDataSource, env, LOCAL_API_DATA_PATH, pushErrorMessage, Toaster } from "..";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
@@ -16,7 +16,7 @@ import "driver.js/dist/driver.css";
  * (used to know whether the user has already seen this tour)
  * @param tourConfig Each step forming the content of the tour. This includes which element to
  * highlight each time, and what description it's given.
- * @param user The current user. `null` if not authenticated.
+ * @param userId The ID of the current user. `null` if not authenticated.
  * You can get this value with the `useAuth` hook.
  * @param showRegardless Whether to ignore whether the user has seen this tour already.
  * This also disables saving whether this tour has been seen to the database.
@@ -24,10 +24,10 @@ import "driver.js/dist/driver.css";
 export async function processTour(
   tourName: string,
   tourSteps: ITourStep[],
-  user: User | null,
+  userId: string | null,
   showRegardless: boolean = false
 ) {
-  const seen = await hasTourBeenSeen(tourName, user);
+  const seen = await hasTourBeenSeen(tourName, userId);
   if (seen && !showRegardless) return;
 
   const driverObj = driver({
@@ -37,7 +37,7 @@ export async function processTour(
       popover: { title: step.title, description: step.description },
     })),
     onDestroyStarted: () => {
-      if (!showRegardless) registerTourAsSeen(tourName, user);
+      if (!showRegardless) registerTourAsSeen(tourName, userId);
       driverObj.destroy();
     },
   });
@@ -46,36 +46,53 @@ export async function processTour(
 }
 
 /**
+ * Retrieves the tours dictionary from the user table or local storage
+ * @param userId The ID of the current user. `null` if not authenticated.
+ * You can get this value with the `useAuth` hook.
+ */
+export async function fetchToursSeen(userId: string | null): Promise<Record<string, boolean>> {
+  // Fetch toursSeen either from the database or from localStorage
+  if (userId) {
+    const localDataSource = new TsDataSource({
+      apiPath: env.API_PATH,
+      apiDataPath: LOCAL_API_DATA_PATH,
+    });
+
+    const user = await localDataSource.getOne({
+      objectType: "user",
+      id: userId,
+      requestedFields: ["tours_seen"]
+    });
+    if (!user) {
+      pushErrorMessage("Failed to fetch the logged in user", Toaster())
+      return {};
+    }
+
+    return user.tours_seen || {};
+  } else {
+    const stored = localStorage.getItem("toursSeen");
+
+    if (stored) {
+      return JSON.parse(stored)
+    } else {
+      return {};
+    }
+  }
+}
+
+/**
  * Checks whether a tour (by name) has yet been viewed by the user
  * @param tourName String name of the tour to check
- * @param user The current user. `null` if not authenticated.
+ * @param userId The ID of the current user. `null` if not authenticated.
  * You can get this value with the `useAuth` hook.
  * @returns Whether the value returned from the database is `true`
  */
 export async function hasTourBeenSeen(
   tourName: string,
-  user: User | null
+  userId: string | null
 ): Promise<boolean> {  
-  // Fetch toursSeen either from the database or from localStorage
-  let toursSeen: Record<string, boolean> | null;
-  if (user) {
-    toursSeen = user.tours_seen;
-  } else {
-    const stored = localStorage.getItem("toursSeen");
-
-    if (stored) {
-      toursSeen = JSON.parse(stored)
-    } else {
-      toursSeen = null;
-    }
-  }
-
-  // If toursSeen is null, no tours have been started at all.
-  // No key checks need to be done here. When the current tour completes,
-  // the resulting upset will create the object
-  if (!toursSeen) {
-    return false;
-  }
+  // Fetch every tour
+  const toursSeen = await fetchToursSeen(userId);
 
   // Explicitly check whether this specific tour has been seen already
   return toursSeen[tourName] == true
@@ -84,26 +101,30 @@ export async function hasTourBeenSeen(
 /**
  * Updates tours_seen in the user table to register a tour step as being viewed by the user
  * @param tourName The name of the tour to register as seen
- * @param user The current user. `null` if not authenticated.
+ * @param user The ID of the current user. `null` if not authenticated.
  * You can get this value with the `useAuth` hook.
  */
 export async function registerTourAsSeen(
   tourName: string,
-  user: User | null
+  userId: string | null
 ): Promise<void> {
-  if (user) {
-    // Upsert into the user table
-    await new TsDataSource({
+  const toursSeen = await fetchToursSeen(userId);
+
+  if (userId) {
+    const localDataSource = new TsDataSource({
       apiPath: env.API_PATH,
-      apiDataPath: LOCAL_API_DATA_PATH
-    }).upsert({
+      apiDataPath: LOCAL_API_DATA_PATH,
+    });
+
+    // Upsert into the user table
+    localDataSource.upsert({
       payload: [
         {
           type: "user",
-          id: user.id,
+          id: userId,
           attributes: {
             tours_seen: {
-              ...(user.tours_seen || {}),
+              toursSeen,
               [tourName]: true,
             },
           },
@@ -113,17 +134,7 @@ export async function registerTourAsSeen(
     });
   } else {
     // Add the new tour
-    let toursSeen = {};
     toursSeen[tourName] = true;
-
-    // Add all saved tours
-    const storedTours = localStorage.getItem("toursSeen");
-    if (storedTours) {
-      toursSeen = {
-        ...toursSeen,
-        ...JSON.parse(storedTours)
-      };
-    }
 
     // Save to localStorage
     localStorage.setItem("toursSeen", JSON.stringify(toursSeen));
