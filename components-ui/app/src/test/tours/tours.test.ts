@@ -5,8 +5,8 @@ SPDX-License-Identifier: MIT
 */
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { MockLocalStorage } from "../mocks/builtin";
-import { hasTourBeenSeen, User } from "../../tol-ui/src";
+import { MockLocalStorage } from "..";
+import { hasTourBeenSeen, registerTourAsSeen, User } from "../../tol-ui/src";
 
 describe("hasTourBeenSeen", () => {
   let mockLocalStorage: MockLocalStorage;
