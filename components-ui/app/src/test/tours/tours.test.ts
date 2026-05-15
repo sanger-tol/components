@@ -79,3 +79,50 @@ describe("hasTourBeenSeen", () => {
     expect(result).toBe(true);
   });
 });
+
+describe("registerTourAsSeen", () => {
+  let mockLocalStorage: MockLocalStorage;
+
+  beforeEach(() => {
+    mockLocalStorage = new MockLocalStorage();
+    vi.stubGlobal("localStorage", mockLocalStorage);
+  });
+
+  it("registers correctly when unauthenticated", async () => {
+    // User is `null` when unauthenticated
+    const user = null;
+
+    await registerTourAsSeen("tour", user);
+    const toursSeen = mockLocalStorage.getItem("toursSeen");
+
+    expect(toursSeen).not.toBe(null);
+    if (toursSeen != null) {
+      expect(JSON.parse(toursSeen)).toStrictEqual({
+        "tour": true
+      });
+    }
+  });
+
+  it("doesn't disrupt existing tours seen when unauthenticated", async () => {
+    // Place existing completed tours into local storage
+    mockLocalStorage.setItem("toursSeen", JSON.stringify({
+      "aTour": true,
+      "anotherTour": true
+    }));
+    
+    // User is `null` when unauthenticated
+    const user = null;
+
+    await registerTourAsSeen("tour", user);
+    const toursSeen = mockLocalStorage.getItem("toursSeen");
+    
+    expect(toursSeen).not.toBe(null);
+    if (toursSeen != null) {
+      expect(JSON.parse(toursSeen)).toStrictEqual({
+        "aTour": true,
+        "anotherTour": true,
+        "tour": true
+      });
+    }
+  });
+});
