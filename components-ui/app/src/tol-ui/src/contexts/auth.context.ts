@@ -26,4 +26,4 @@ export const AuthContext = createContext<AuthContextValue>({
 });
 
 export const AuthProvider = AuthContext.Provider;
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = (): AuthContextValue => useContext(AuthContext);

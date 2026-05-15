@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { getUserFromLocalStorage, ITourStep, TsDataSource, env, LOCAL_API_DATA_PATH } from "..";
+import { ITourStep, TsDataSource, env, LOCAL_API_DATA_PATH, useAuth } from "..";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
@@ -25,18 +25,9 @@ import "driver.js/dist/driver.css";
 export async function processTour(
   tourName: string,
   tourSteps: ITourStep[],
-  showRegardless: boolean = false,
-  storedUserId?: string,
+  showRegardless: boolean = false
 ) {
-  // Fetch user ID if not provided
-  let userId: string;
-  if (storedUserId) {
-    userId = storedUserId;
-  } else {
-    userId = getUserFromLocalStorage().id;
-  }
-
-  const seen = await hasTourBeenSeen(tourName, userId);
+  const seen = await hasTourBeenSeen(tourName);
   if (seen && !showRegardless) return;
 
   const driverObj = driver({
@@ -46,7 +37,7 @@ export async function processTour(
       popover: { title: step.title, description: step.description },
     })),
     onDestroyStarted: () => {
-      if (!showRegardless) registerTourAsSeen(tourName, userId);
+      if (!showRegardless) registerTourAsSeen(tourName);
       driverObj.destroy();
     },
   });
@@ -60,70 +51,79 @@ export async function processTour(
  * @returns Whether the value returned from the database is `true`
  */
 export async function hasTourBeenSeen(
-  tourName: string,
-  userId: string,
+  tourName: string
 ): Promise<boolean> {
-  // Fetch user details
-  const localDataSource = new TsDataSource({
-    apiPath: env.API_PATH,
-    apiDataPath: LOCAL_API_DATA_PATH
-  });
-  const user = await localDataSource.getOne({
-    objectType: "user",
-    id: userId,
-  });
-  if (!user) return false;
+  const user = useAuth().user;
+  
+  // Fetch toursSeen either from the database or from localStorage
+  let toursSeen: Record<string, boolean> | null;
+  if (user) {
+    toursSeen = user.tours_seen;
+  } else {
+    const stored = localStorage.getItem("toursSeen");
 
-  // if tours_seen is null, no tour has been started, so it must be initiated.
-  if (!user.tours_seen) {
+    if (stored) {
+      toursSeen = JSON.parse(stored)
+    } else {
+      toursSeen = null;
+    }
+  }
+
+  // If toursSeen is null, no tours have been started at all.
+  // No key checks need to be done here. When the current tour completes,
+  // the resulting upset will create the object
+  if (!toursSeen) {
     return false;
   }
 
-  // Check whether the tour is enabled and the specified step has been completed
-  return (
-    user.tours_seen?.tour_disabled == true ||
-    user.tours_seen?.[tourName] == true
-  );
+  // Explicitly check whether this specific tour has been seen already
+  return toursSeen[tourName] == true
 }
 
 /**
  * Updates tours_seen in the user table to register a tour step as being viewed by the user
- * @param stepName The name of the tour step to register as seen
- * @param userId The string id of the user to set this data on
+ * @param tourName The name of the tour to register as seen
  */
 export async function registerTourAsSeen(
-  stepName: string,
-  userId: string,
+  tourName: string
 ): Promise<void> {
-  // Fetch user details
-  const localDataSource = new TsDataSource({
-    apiPath: env.API_PATH,
-    apiDataPath: LOCAL_API_DATA_PATH
-  });
-  const user = await localDataSource.getOne({
-    objectType: "user",
-    id: userId,
-  });
-  if (!user) return;
+  const user = useAuth().user;
 
-  // Perform modification
-  await localDataSource.upsert({
-    payload: [
-      {
-        type: "user",
-        id: userId,
-        attributes: {
-          tours_seen: {
-            ...(user.tours_seen || {}),
-            [stepName]: true,
+  if (user) {
+    // Upsert into the user table
+    await new TsDataSource({
+      apiPath: env.API_PATH,
+      apiDataPath: LOCAL_API_DATA_PATH
+    }).upsert({
+      payload: [
+        {
+          type: "user",
+          id: user.id,
+          attributes: {
+            tours_seen: {
+              ...(user.tours_seen || {}),
+              [tourName]: true,
+            },
           },
         },
-      },
-    ],
-    objectType: "user",
-  });
-}
+      ],
+      objectType: "user",
+    });
+  } else {
+    // Add the new tour
+    let toursSeen = {};
+    toursSeen[tourName] = true;
 
-export async function disableAllTours(userId: string): Promise<void> {
-  await registerTourAsSeen("tour_disabled", userId);
+    // Add all saved tours
+    const storedTours = localStorage.getItem("toursSeen");
+    if (storedTours) {
+      toursSeen = {
+        ...toursSeen,
+        ...JSON.parse(storedTours)
+      };
+    }
+
+    // Save to localStorage
+    localStorage.setItem("toursSeen", JSON.stringify(toursSeen));
+  }
 }

@@ -13,4 +13,5 @@ export interface User {
   roles: string[];
   token_created_at?: string;
   token_expires_at?: string;
+  tours_seen: Record<string, boolean> | null;
 } // eslint-disable-line
