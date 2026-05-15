@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { getUserFromLocalStorage, ITourStep, TsDataSource } from "..";
+import { getUserFromLocalStorage, ITourStep, TsDataSource, env, LOCAL_API_DATA_PATH } from "..";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
@@ -65,7 +65,8 @@ export async function hasTourBeenSeen(
 ): Promise<boolean> {
   // Fetch user details
   const localDataSource = new TsDataSource({
-    apiPath: "/api/v1/local",
+    apiPath: env.API_PATH,
+    apiDataPath: LOCAL_API_DATA_PATH
   });
   const user = await localDataSource.getOne({
     objectType: "user",
@@ -96,7 +97,8 @@ export async function registerTourAsSeen(
 ): Promise<void> {
   // Fetch user details
   const localDataSource = new TsDataSource({
-    apiPath: "/api/v1/local",
+    apiPath: env.API_PATH,
+    apiDataPath: LOCAL_API_DATA_PATH
   });
   const user = await localDataSource.getOne({
     objectType: "user",
