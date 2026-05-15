@@ -127,7 +127,7 @@ export async function copyBoard(
   ).then((newBoard: IBoard | undefined) => {
     if (!newBoard) return;
     const boardId = newBoard.id;
-    const firstViewId = Object.keys(newBoard.children?.[0] ?? {})[0];
+    const firstViewId = Object.keys(newBoard.children ?? {})[0];
     replaceURLState(boardId!, firstViewId!);
     return newBoard;
   });
@@ -152,12 +152,10 @@ export async function copyView(
     parentEntityId,
   ).then((newView: IView | undefined) => {
     if (!newView || !currentBoard) return;
-    const viewsMap = (currentBoard.children?.[0] ?? {}) as unknown as Record<string, IView>;
+    const viewsMap = currentBoard.children ?? {} as Record<string, IView>;
     const updatedBoard: IBoard = {
       ...currentBoard,
-      children: [
-        { ...viewsMap, [newView.id!]: newView },
-      ] as unknown as IBoard["children"],
+      children: { ...viewsMap, [newView.id!]: newView } as IBoard["children"],
       order: [...(currentBoard.order ?? []), newView.id!],
     };
     replaceURLState(currentBoard.id!, newView.id!);
@@ -171,7 +169,7 @@ export async function onViewTitleSave(
   board: IBoard,
   boardDataSource: TsDataSource,
 ): Promise<IBoard | undefined> {
-  const viewsMap = board?.children?.[0] ?? {};
+  const viewsMap = board?.children ?? {};
 
   const currentTitle = viewsMap[viewId]?.title;
   if (currentTitle === value) return;
@@ -180,15 +178,13 @@ export async function onViewTitleSave(
 
   return {
     ...board,
-    children: [
-      {
-        ...viewsMap,
-        [viewId]: {
-          ...viewsMap[viewId],
-          title: value,
-        },
+    children: {
+      ...viewsMap,
+      [viewId]: {
+        ...viewsMap[viewId],
+        title: value,
       },
-    ] as unknown as IBoard["children"],
+    } as IBoard["children"],
   } as IBoard;
 }
 
@@ -202,7 +198,7 @@ export function onAddView(
   board: IBoard,
 ): { updatedBoard: IBoard; newViewId: string } {
   const newViewId = generateId(getEntityPrefix(BOARDS.VIEW));
-  const viewsMap = board?.children?.[0] ?? {};
+  const viewsMap = board?.children ?? {};
   const newViewTitle = getNextTitle<IBoard>(
     { ...board, views: viewsMap } as any,
     BOARDS.BOARD,
@@ -211,14 +207,12 @@ export function onAddView(
   const newView: IView = {
     id: newViewId,
     title: newViewTitle,
-    children: [{}] as unknown as Record<string, IZone>,
+    children: {} as Record<string, IZone>,
     order: [],
   };
   const updatedBoard: IBoard = {
     ...board,
-    children: [
-      { ...viewsMap, [newViewId]: newView },
-    ] as unknown as IBoard["children"],
+    children: { ...viewsMap, [newViewId]: newView } as IBoard["children"],
     order: [...(board?.order ?? []), newViewId],
   };
   return { updatedBoard, newViewId };

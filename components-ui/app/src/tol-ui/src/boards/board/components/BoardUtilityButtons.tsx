@@ -183,7 +183,7 @@ export function buildViewTabButtonArray(
       tabs={[
         ...(board?.order
           ?.map((viewId) => {
-            const view = board?.children?.[0]?.[viewId];
+            const view = board?.children?.[viewId];
             if (view) {
               const { buttons, label } = viewTabButtons(viewId, view.title || "Untitled");
               return { buttons, label } as ITab;

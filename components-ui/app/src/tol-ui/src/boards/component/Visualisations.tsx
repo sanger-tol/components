@@ -78,7 +78,7 @@ export function Visualisations(props: PVisualisations) {
         onBreakpointChange={onBreakpointChange}
       >
         {zone.order.map((componentId) => {
-          const component = zone.children[0][componentId];
+          const component = zone.children[componentId];
           return cloneElement(
             <div key={component.id} className="tol-visualisation">
               <Visualisation

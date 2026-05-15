@@ -31,7 +31,7 @@ export async function updateComponentConfigAndUpsert(
   setHasDiff: (hasDiff: boolean) => void,
   userId: string | undefined,
 ) {
-  const component = zone.children?.[0]?.[componentId];
+  const component = zone.children?.[componentId];
   if (!component) return;
 
   if (editMode) {
@@ -109,7 +109,7 @@ export async function updateLayout(
   const order = getWidgetOrder(layout);
 
   // finds the highest order value in the current widgets, based off the db
-  const orderValues = Object.values(zone.children?.[0] ?? {}).map(
+  const orderValues = Object.values(zone.children ?? {}).map(
     (component: IComponent) => {
       const order = component.componentZoneOrder;
       return Number(order);
@@ -119,7 +119,7 @@ export async function updateLayout(
 
   // maps through the order and upserts based on the componentId
   const payloadData = order.order.map((componentId, index) => {
-    const component: IComponent = zone.children?.[0]?.[componentId];
+    const component: IComponent = zone.children?.[componentId];
     component!.componentZoneOrder = highestPreviousOrder + 1 + index;
     return {
       type: BOARDS.COMPONENT_ZONE,
@@ -162,7 +162,7 @@ export function generateLayout(zone: IZone) {
   const x = { lg: 0, md: 0, sm: 0 };
 
   zone.order.forEach((componentId) => {
-    const component = zone.children?.[0]?.[componentId];
+    const component = zone.children?.[componentId];
 
     const size = component.widget_type || "sm";
     ["lg", "md", "sm"].forEach((breakpoint) => {

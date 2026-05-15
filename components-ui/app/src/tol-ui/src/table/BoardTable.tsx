@@ -39,7 +39,7 @@ export function BoardTable(props: PBoardTable) {
   const { editMode } = useBoard();
   const isLoggedIn: boolean = !!user?.id;
 
-  const componentData = zone?.children[0]?.[id];
+  const componentData = zone?.children[id];
 
   const actionList = useQueryData<string[]>(
     ["actionsList", id],

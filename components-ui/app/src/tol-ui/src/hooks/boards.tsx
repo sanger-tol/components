@@ -131,9 +131,9 @@ export function useBoardState<
   parentStateValue: TParent,
   setParentStateValue: (newValue: TParent) => void,
 ): [TChildren, (newValue: TChildren) => void, Record<string, TChildren>] {
-  const childrenMap = parentStateValue?.children?.[0] ?? {};
+  const childrenMap = parentStateValue?.children ?? {};
   const value = childrenMap[id] as TChildren;
-  const childrenOfValue = (value as any)?.children?.[0] ?? [];
+  const childrenOfValue = (value as any)?.children ?? {};
 
   const setValue = (newValue: TChildren) => {
     setParentStateValue({
