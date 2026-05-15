@@ -13,8 +13,8 @@ import {
   Modal,
   PASTE_BUTTON,
   useBoard,
-} from "../../../..";
-import type { TsDataSource } from "../../../..";
+} from "../../..";
+import type { TsDataSource } from "../../..";
 
 export interface IImportViewModalProps {
   open: boolean;
@@ -67,12 +67,12 @@ export function ImportViewModal(props: IImportViewModalProps) {
       size={"sm"}
       actionButtonInline
       children={
-        <>
+        <div className="tol-board-view-import-modal">
           <h3>Import View</h3>
-          <p style={{ marginBottom: "4px" }}>
+          <p className="tol-view-import-paragraph">
             Import a view from another board using its View ID:
           </p>
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <div className="tol-import-input-and-paste-button">
             <Input
               placeholder={"Enter or paste view ID..."}
               value={viewImportId}
@@ -80,7 +80,7 @@ export function ImportViewModal(props: IImportViewModalProps) {
             />
             <Button {...PASTE_BUTTON((text) => setViewImportId(text))} />
           </div>
-        </>
+        </div>
       }
       actionButton={
         <Button

@@ -15,7 +15,7 @@ export const editModeTitle = (
   return editable
     ? {
         text: text,
-        editable: editable,
+        editable: true,
         onSave: onSave,
         hideButtons: true,
         emptyAllowed: false,
@@ -42,4 +42,4 @@ export const ViewTitle = (
 };
 
 export const ViewModeBoardTitle = (editable: boolean, title: string) =>
-  !editable ? [<h3>{title}</h3>] : undefined;
+  !editable ? [<h3 key="board-title">{title}</h3>] : undefined;

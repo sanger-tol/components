@@ -183,6 +183,17 @@
   }
 }
 
+.tol-board-view-import-modal {
+  .tol-view-import-paragraph {
+    margin-bottom: 4px !important;
+  }
+
+  .tol-import-input-and-paste-button {
+    display: flex;
+    align-items: center;
+  }
+}
+
 .tol-zone-bar {
   @extend .tol-board-bar;
 }

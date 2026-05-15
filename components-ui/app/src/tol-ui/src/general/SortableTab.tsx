@@ -41,15 +41,13 @@ export function SortableTab(props: PSortableTab) {
   return (
     <div ref={ref} className="tol-tabs-nav-tab">
       {tab.label && <div className="tol-tabs-nav-label">{tab.label}</div>}
-      {tab.buttons.map((button) => (
-        <>
-          <Button
-            {...button}
-            className={`${button.className || ""} tol-tabs-nav-button ${button.id === activeId ? "active" : ""}`}
-            key={`tol-tabs-nav-button-${button.id}`}
-            outline={!tab.buttons.some((b) => b.id === activeId)}
-          />
-        </>
+      {tab.buttons.map((button, i) => (
+        <Button
+          {...button}
+          className={`${button.className || ""} tol-tabs-nav-button ${button.id === activeId ? "active" : ""}`}
+          key={`tol-tabs-nav-button-${button.testid ?? button.id ?? i}`}
+          outline={!tab.buttons.some((b) => b.id === activeId)}
+        />
       ))}
       {onReorder || (tab.icons && tab.icons.length > 0) ? (
         <div className="tol-tabs-nav-icon">

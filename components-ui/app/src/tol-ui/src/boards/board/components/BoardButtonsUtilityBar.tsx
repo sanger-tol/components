@@ -6,7 +6,6 @@ SPDX-License-Identifier: MIT
 
 import {
   BOARDS,
-  IBoard,
   saveTitle,
   useBoard,
   UtilityBar,
@@ -19,12 +18,13 @@ import {
   editModeTitle,
   ViewModeBoardTitle,
 } from ".";
+
 export interface IBoardButtonsUtilityBar {
   onOpenBoardCopyModal: () => void;
   setNewBoardCopyTitle: (title: string) => void;
   onOpenAddZone: () => void;
   newBoardCopyTitle: string;
-  activeViewId: string;
+  activeViewId: string | null;
   boardDataSource: TsDataSource;
   onOpenDeleteViewModal: () => void;
   setActiveViewId: (viewId: string) => void;
@@ -55,6 +55,8 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
     setBoard,
   } = useBoard();
 
+  const boardTitle = board?.title ?? "";
+
   const utilityBarButtons = buildUtilityBarButtons(
     editMode,
     layoutMode,
@@ -65,7 +67,7 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
     onOpenBoardCopyModal,
     newBoardCopyTitle,
     setNewBoardCopyTitle,
-    board?.title || "",
+    boardTitle,
   );
 
   const viewTabButtonArray = buildViewTabButtonArray(
@@ -84,20 +86,19 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
       <UtilityBar
         id="tol-board-utility-bar"
         buttons={utilityBarButtons}
-        title={editModeTitle(editMode, board?.title || "", (value) => {
-          saveTitle(value, board?.id || "", boardDataSource, BOARDS.BOARD);
-          setBoard({
-            ...board,
-            title: value,
-          } as IBoard);
+        title={editModeTitle(editMode, boardTitle, (newTitle: string) => {
+          if (board?.id) {
+            saveTitle(newTitle, board.id, boardDataSource, BOARDS.BOARD);
+            setBoard({ ...board, title: newTitle });
+          }
         })}
-        elements={ViewModeBoardTitle(editMode, board?.title || "")}
+        elements={ViewModeBoardTitle(editMode, boardTitle)}
       />
       {editMode || board?.order?.length > 1 ? (
         <UtilityBar
           id="tol-board-views-utility-bar"
           className="tol-views-bar"
-          elements={viewTabButtonArray.flat()}
+          elements={viewTabButtonArray}
           buttons={[
             addZoneButton(
               onOpenAddZone,

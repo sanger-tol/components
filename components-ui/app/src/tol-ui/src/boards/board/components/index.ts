@@ -6,6 +6,6 @@ SPDX-License-Identifier: MIT
 
 export * from "./Buttons";
 export * from "./Titles";
-export * from "./modals";
+export * from "./ImportViewModal";
 export * from "./BoardUtilityButtons";
 export * from "./BoardButtonsUtilityBar";

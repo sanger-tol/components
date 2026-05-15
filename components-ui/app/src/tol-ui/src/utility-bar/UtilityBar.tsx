@@ -41,7 +41,7 @@ export interface PUtilityBar {
   /**
    * Additional elements to be rendered in the utility bar, after the title and description but before the buttons. This can be used to add custom content to the utility bar.
    */
-  elements?: JSX.Element[];
+  elements?: ReactNode[];
   /**
    * Whether to hide the left side of the utility bar, which includes the title and description.
    */
