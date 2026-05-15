@@ -10,7 +10,7 @@ import {
   ComponentCreationModal,
   Visualisations,
   ConfirmationModal,
-  saveTitle,
+  upsertTitle,
   BOARDS,
   UtilityBar,
   useBoard,
@@ -43,7 +43,6 @@ export function Zone(props: PZone) {
   const { editMode, layoutMode } = useBoard();
 
   const [zone, setZone] = useBoardState<IView, IZone>(
-    BOARD_CHILDREN_KEYS.ZONES,
     id,
     view,
     setView,
@@ -126,7 +125,7 @@ export function Zone(props: PZone) {
           editable: editMode,
           onSave: (value: string) => {
             if (value !== title) {
-              saveTitle(value, id, boardDataSource, BOARDS.ZONE);
+              upsertTitle(value, id, boardDataSource, BOARDS.ZONE);
               setTitle(value);
             }
           },

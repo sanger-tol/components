@@ -14,7 +14,7 @@ import {
   BoardMarkdown,
   PUtilityBar,
   useBoard,
-  saveTitle,
+  upsertTitle,
   BOARDS,
   PButton,
   TitleTooltip,
@@ -105,7 +105,7 @@ export function Visualisation(props: PVisualisation) {
         text: title,
         editable: editMode,
         onSave: (value: string) => {
-          saveTitle(value, id, boardDataSource, BOARDS.COMPONENT);
+          upsertTitle(value, id, boardDataSource, BOARDS.COMPONENT);
           setTitle(value);
         }
       } : undefined,

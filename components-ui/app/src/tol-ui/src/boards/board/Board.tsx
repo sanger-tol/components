@@ -11,7 +11,7 @@ import {
   BOARDS,
   getCssVarValue,
   LoadingContent,
-  saveTitle,
+  upsertTitle,
   themeListener,
   View,
   useBoard,
@@ -41,6 +41,8 @@ import {
   Modal,
   PASTE_BUTTON,
   patchReorderBoardEntity,
+  defineBoardEntityInParent,
+  postAddBoardEntity,
 } from "../..";
 import type {
   IBoard,
@@ -159,27 +161,19 @@ export function Board(props: PBoard) {
     history.replace({ search: params.toString() });
   };
 
-  const onAddView = () => {
-    const newViewId = generateId(getEntityPrefix(BOARDS.VIEW));
-    const viewsMap = (board?.children?.[0] ?? {}) as Record<string, IView>;
-    const newViewTitle = getNextTitle<IBoard>(
-      { ...board, views: viewsMap } as any,
-      BOARDS.BOARD,
-      BOARDS.VIEW,
-    );
-    const newView: IView = {
-      id: newViewId,
-      title: newViewTitle,
-      children: [{}] as Record<string, IZone>,
-      order: [],
-    };
-    setBoard({
-      ...board,
-      children: [{ ...viewsMap, [newViewId]: newView }],
-      order: [...(board?.order ?? []), newViewId],
-    });
-    setActiveViewId(newViewId);
-    updateViewInUrl(newViewId);
+  const onAddView = async () => {
+    postAddBoardEntity(boardDataSource, BOARDS.VIEW, board?.id!,)
+      .then((res) => {
+        const view = res.data;
+        const b = defineBoardEntityInParent<IView, IBoard>(
+          view,
+          BOARDS.VIEW,
+          board
+        )
+        setBoard({ ...b });
+        setActiveViewId(view.id);
+        updateViewInUrl(view.id);
+      })
   };
 
   const onClickView = (viewId: string) => () => {
@@ -188,9 +182,11 @@ export function Board(props: PBoard) {
   };
 
   const onReorderViews = (orderedIds: string[]) => {
-    patchReorderBoardEntity(boardDataSource, board?.id!, orderedIds);
-    board.order = orderedIds;
-    setBoard({ ...board });
+    patchReorderBoardEntity(boardDataSource, board?.id!, orderedIds)
+      .then(() => {
+        board.order = orderedIds;
+        setBoard({ ...board });
+      });
   };
 
   const onDeleteView = (viewId: string) => {
@@ -236,7 +232,7 @@ export function Board(props: PBoard) {
         text={viewTitle}
         editable={editMode && activeViewId === viewId}
         onSave={(value: string) => {
-          saveTitle(value, viewId, boardDataSource, BOARDS.VIEW);
+          upsertTitle(value, viewId, boardDataSource, BOARDS.VIEW);
           if (board) {
             setBoard({
               ...board,
@@ -371,13 +367,13 @@ export function Board(props: PBoard) {
       tabs={[
         ...(board?.order
           ?.map((viewId) => {
-            const view = board?.children?.[0]?.[viewId];
+            const view = board?.children?.[viewId];
             if (view) {
               return {
                 buttons: [
-                  viewTab(view.id!, view.title),
-                  deleteViewButton(view.id),
-                  copyViewIdToClipboard(view.id),
+                  viewTab(view.id!, view.title!),
+                  deleteViewButton(view.id!),
+                  copyViewIdToClipboard(view.id!),
                 ],
               } as ITab;
             }
@@ -455,7 +451,7 @@ export function Board(props: PBoard) {
       text: board?.title,
       editable: editMode,
       onSave: (value: string) => {
-        saveTitle(value, id, boardDataSource, BOARDS.BOARD);
+        upsertTitle(value, id, boardDataSource, BOARDS.BOARD);
         setBoard({
           ...board,
           title: value,

@@ -15,7 +15,8 @@ import {
   IView,
   BOARD_CHILDREN_KEYS,
   deleteBoardEntityInParent,
-  PRIVILEGE
+  PRIVILEGE,
+  IZone
 } from "../..";
 
 
@@ -44,14 +45,11 @@ export function View(props: PView) {
   const { editMode, setEditMode, privilege, layoutMode, board, setBoard } =
     useBoard();
 
-  const [view, setView, zones] = useBoardState<IBoard, IView>(
-    BOARD_CHILDREN_KEYS.VIEWS,
+  const [view, setView] = useBoardState<IBoard, IView>(
     id,
     board,
     setBoard,
   );
-
-  console.log("rendering view", { id });
 
   // if (
   //   view?.order?.length === 0 &&
@@ -87,7 +85,7 @@ export function View(props: PView) {
       ) : (
         <div className="tol-zones">
           {view?.order?.map((zoneId) => {
-            const zone = zones[zoneId];
+            const zone = view.children?.[zoneId] as IZone;
             if (zone) {
               return (
                 <Zone

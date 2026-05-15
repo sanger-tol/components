@@ -78,17 +78,17 @@ export function Visualisations(props: PVisualisations) {
         onBreakpointChange={onBreakpointChange}
       >
         {zone.order.map((componentId) => {
-          const component = zone.children[0][componentId];
+          const component = zone.children?.[componentId];
           return cloneElement(
             <div key={component.id} className="tol-visualisation">
               <Visualisation
-                id={component.id}
-                size={component.widget_type}
+                id={component.id!}
+                size={component.widget_type!}
                 zone={zone}
                 setZone={setZone}
-                componentType={component.component_type}
+                componentType={component.component_type!}
                 config={component.config}
-                objectType={component.object_type}
+                objectType={component.object_type!}
                 dataSource={
                   new TsDataSource({
                     dataSourceInstanceId: component.data_source_instance_id,
@@ -97,7 +97,7 @@ export function Visualisations(props: PVisualisations) {
                 }
                 boardDataSource={boardDataSource}
                 boardObjectType={BOARDS.COMPONENT}
-                title={component.title}
+                title={component.title!}
                 actionsDataSource={actionsDataSource}
               />
             </div>,

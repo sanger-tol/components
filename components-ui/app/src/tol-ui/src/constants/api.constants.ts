@@ -32,7 +32,9 @@ export const API_UTILITY_OPERATIONS = {
   VIEW_COPY: "copy/view",
   ZONE_COPY: "copy/zone",
   BOARD_ENTITY_REORDER: "reorder",
-  GET_BOARD_ENTITY: "get-entity"
+  GET_BOARD_ENTITY: "get-entity",
+  CREATE_BOARD: "create-board",
+  ADD_BOARD_ENTITY: "add-entity",
 } as const;
 
 export const HTTP_STATUS_CODES = {
