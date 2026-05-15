@@ -147,7 +147,7 @@ export const editOrExitButton = (
       : "",
 });
 
-export const AddViewButton = (
+export const addViewButton = (
   visible: boolean,
   onClick: () => void,
   disabled: boolean,
@@ -165,7 +165,7 @@ export const AddViewButton = (
   />
 );
 
-export const ImportViewButton = (
+export const importViewButton = (
   visible: boolean,
   onClick: () => void,
   disabled: boolean,
