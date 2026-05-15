@@ -15,7 +15,8 @@
     "react-markdown": "10.1.0",
     "xlsx": "0.18.5",
     "@fortawesome/free-brands-svg-icons": "6.7.2",
-    "json-edit-react": "1.29.0"
+    "json-edit-react": "1.29.0",
+    "driver.js": "^1.4.0"
   },
   "devDependencies": {
     "vite": "5.3.5",
