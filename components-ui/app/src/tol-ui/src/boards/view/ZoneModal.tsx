@@ -263,17 +263,15 @@ export function ZoneModal(props: PZoneModal) {
         <p className="zone-modal-labels">
           Enter Title <RequiredAsterisk />
         </p>
-        <div id="step3">
-          <RSForm fluid>
-            <FormTextField
-              id="zone-title"
-              onChange={(value: any) => setTitle(value)}
-              name="Zone Title"
-              placeholder="Zone Title"
-              label=""
-            />
-          </RSForm>
-        </div>
+        <RSForm fluid>
+          <FormTextField
+            id="zone-title"
+            onChange={(value: any) => setTitle(value)}
+            name="Zone Title"
+            placeholder="Zone Title"
+            label=""
+          />
+        </RSForm>
       </div>
       <>
         {titleError && <p className="tol-modal-error">Title cannot be blank</p>}
