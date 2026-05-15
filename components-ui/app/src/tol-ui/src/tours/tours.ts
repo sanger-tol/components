@@ -18,7 +18,7 @@ import "driver.js/dist/driver.css";
  * highlight each time, and what description it's given.
  * @param showRegardless Whether to ignore whether the user has seen this tour already.
  * This also disables saving whether this tour has been seen to the database.
- * @param storedUserID The ID of the current user. If this is not provided, the user is fetched
+ * @param storedUserId The ID of the current user. If this is not provided, the user is fetched
  * from local storage. However, if the caller of this function already has the user ID, it can be
  * passed in here for efficiency.
  */
@@ -26,17 +26,17 @@ export async function processTour(
   tourName: string,
   tourSteps: ITourStep[],
   showRegardless: boolean = false,
-  storedUserID?: string,
+  storedUserId?: string,
 ) {
   // Fetch user ID if not provided
-  let userID: string;
-  if (storedUserID) {
-    userID = storedUserID;
+  let userId: string;
+  if (storedUserId) {
+    userId = storedUserId;
   } else {
-    userID = getUserFromLocalStorage().id;
+    userId = getUserFromLocalStorage().id;
   }
 
-  const seen = await hasTourBeenSeen(tourName, userID);
+  const seen = await hasTourBeenSeen(tourName, userId);
   if (seen && !showRegardless) return;
 
   const driverObj = driver({
@@ -46,7 +46,7 @@ export async function processTour(
       popover: { title: step.title, description: step.description },
     })),
     onDestroyStarted: () => {
-      if (!showRegardless) registerTourAsSeen(tourName, userID);
+      if (!showRegardless) registerTourAsSeen(tourName, userId);
       driverObj.destroy();
     },
   });
