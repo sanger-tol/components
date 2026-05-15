@@ -62,6 +62,10 @@
   .tol-tabs-nav-tab {
     display: flex;
     align-items: center;
+
+    .tol-editable-title {
+      min-width: max-content;
+    }
   }
 
   .tol-tabs-nav-icon {

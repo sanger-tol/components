@@ -116,8 +116,8 @@ export function buildSingleViewTabButton(
       copyViewIdToClipboard(viewId, activeViewId === viewId && !editMode),
     ],
     label: isEditingTitle
-      ? ViewTitle(true, viewTitle, async (newTitle) => {
-          const updatedBoard = await onViewTitleSave(newTitle, viewId, board, boardDataSource);
+      ? ViewTitle(true, viewTitle, async (value) => {
+          const updatedBoard = await onViewTitleSave(value, viewId, board, boardDataSource);
           if (updatedBoard) setBoard(updatedBoard);
         })
       : undefined,
@@ -180,6 +180,7 @@ export function buildViewTabButtonArray(
           ?.map((viewId) => {
             const view = board?.children?.[viewId];
             if (view) {
+              console.log(view.title);
               const { buttons, label } = viewTabButtons(viewId, view.title || "Untitled");
               return { buttons, label } as ITab;
             }

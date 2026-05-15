@@ -39,8 +39,8 @@ export function SortableTab(props: PSortableTab) {
   const { ref } = useSortable({ id, index });
 
   return (
-    <div ref={ref} className="tol-tabs-nav-tab">
-      {tab.label && <div className="tol-tabs-nav-label">{tab.label}</div>}
+    <div ref={ref} className="tol-tabs-nav-tab tol-editable-title">
+      {tab.label && <span>{tab.label}</span>}
       {tab.buttons.map((button, i) => (
         <Button
           {...button}
