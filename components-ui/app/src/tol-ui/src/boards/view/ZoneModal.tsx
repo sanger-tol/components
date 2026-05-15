@@ -26,7 +26,8 @@ import {
   PopUpMessage,
   processTour,
   addZoneTour,
-  InitiateTourButton
+  InitiateTourButton,
+  useAuth
 } from "../..";
 
 export interface PZoneModal extends PBoard {
@@ -65,6 +66,8 @@ export function ZoneModal(props: PZoneModal) {
   const [titleError, setTitleError] = useState(false);
   const [fieldError, setFieldError] = useState(false);
 
+  const user = useAuth().user;
+
   useEffect(() => {
     if (open) {
       fetchPublishedDataspaces(boardDataSource)
@@ -88,7 +91,7 @@ export function ZoneModal(props: PZoneModal) {
         })
         .finally(() => {
           setDataSourceInstancesLoading(false);
-          processTour("addZone", addZoneTour);
+          processTour("addZone", addZoneTour, user);
         });
     } else {
       reset();

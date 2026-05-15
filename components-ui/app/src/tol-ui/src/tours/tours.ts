@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ITourStep, TsDataSource, env, LOCAL_API_DATA_PATH, useAuth } from "..";
+import { ITourStep, TsDataSource, env, LOCAL_API_DATA_PATH, User } from "..";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
@@ -16,18 +16,18 @@ import "driver.js/dist/driver.css";
  * (used to know whether the user has already seen this tour)
  * @param tourConfig Each step forming the content of the tour. This includes which element to
  * highlight each time, and what description it's given.
+ * @param user The current user. `null` if not authenticated.
+ * You can get this value with the `useAuth` hook.
  * @param showRegardless Whether to ignore whether the user has seen this tour already.
  * This also disables saving whether this tour has been seen to the database.
- * @param storedUserId The ID of the current user. If this is not provided, the user is fetched
- * from local storage. However, if the caller of this function already has the user ID, it can be
- * passed in here for efficiency.
  */
 export async function processTour(
   tourName: string,
   tourSteps: ITourStep[],
+  user: User | null,
   showRegardless: boolean = false
 ) {
-  const seen = await hasTourBeenSeen(tourName);
+  const seen = await hasTourBeenSeen(tourName, user);
   if (seen && !showRegardless) return;
 
   const driverObj = driver({
@@ -37,7 +37,7 @@ export async function processTour(
       popover: { title: step.title, description: step.description },
     })),
     onDestroyStarted: () => {
-      if (!showRegardless) registerTourAsSeen(tourName);
+      if (!showRegardless) registerTourAsSeen(tourName, user);
       driverObj.destroy();
     },
   });
@@ -48,13 +48,14 @@ export async function processTour(
 /**
  * Checks whether a tour (by name) has yet been viewed by the user
  * @param tourName String name of the tour to check
+ * @param user The current user. `null` if not authenticated.
+ * You can get this value with the `useAuth` hook.
  * @returns Whether the value returned from the database is `true`
  */
 export async function hasTourBeenSeen(
-  tourName: string
-): Promise<boolean> {
-  const user = useAuth().user;
-  
+  tourName: string,
+  user: User | null
+): Promise<boolean> {  
   // Fetch toursSeen either from the database or from localStorage
   let toursSeen: Record<string, boolean> | null;
   if (user) {
@@ -83,12 +84,13 @@ export async function hasTourBeenSeen(
 /**
  * Updates tours_seen in the user table to register a tour step as being viewed by the user
  * @param tourName The name of the tour to register as seen
+ * @param user The current user. `null` if not authenticated.
+ * You can get this value with the `useAuth` hook.
  */
 export async function registerTourAsSeen(
-  tourName: string
+  tourName: string,
+  user: User | null
 ): Promise<void> {
-  const user = useAuth().user;
-
   if (user) {
     // Upsert into the user table
     await new TsDataSource({
