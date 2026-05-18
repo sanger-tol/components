@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MockLocalStorage } from "..";
-import { hasTourBeenSeen, registerTourAsSeen, User } from "../../tol-ui/src";
+import { hasTourBeenSeen, registerTourAsSeen } from "../../tol-ui/src";
 
 describe("hasTourBeenSeen", () => {
   let mockLocalStorage: MockLocalStorage;
@@ -17,38 +17,17 @@ describe("hasTourBeenSeen", () => {
   });
 
   it("returns false when tour has not been seen and user unauthenticated", async () => {
-    // User is `null` when unauthenticated
-    const user = null;
-    
-    const result = await hasTourBeenSeen("tour", user);
+    const result = await hasTourBeenSeen("tour", null);
     expect(result).toBe(false);
   });
 
   it("returns false when tour has not been been seen and user authenticated", async () => {
-    const user: User = {
-      id: "0",
-      name: "Name",
-      email: "name@example.com",
-      organisation: "Unit Test LTD",
-      roles: ["tol"],
-      tours_seen: {}
-    };
-
-    const result = await hasTourBeenSeen("tour", user);
+    const result = await hasTourBeenSeen("tour", "0");
     expect(result).toBe(false);
   });
 
   it("returns false when tours_seen is NULL and user authenticated", async () => {
-    const user: User = {
-      id: "0",
-      name: "Name",
-      email: "name@example.com",
-      organisation: "Unit Test LTD",
-      roles: ["tol"],
-      tours_seen: null
-    };
-
-    const result = await hasTourBeenSeen("tour", user);
+    const result = await hasTourBeenSeen("tour", "0");
     expect(result).toBe(false);
   });
 
@@ -56,26 +35,12 @@ describe("hasTourBeenSeen", () => {
     // Add a seen tour
     mockLocalStorage.setItem("toursSeen", JSON.stringify({ "tour": true }))
 
-    // User is `null` when unauthenticated
-    const user = null;
-
-    const result = await hasTourBeenSeen("tour", user);
+    const result = await hasTourBeenSeen("tour", null);
     expect(result).toBe(true);
   });
 
   it("returns true when tour has been seen and user authenticated", async () => {
-    const user: User = {
-      id: "0",
-      name: "Name",
-      email: "name@example.com",
-      organisation: "Unit Test LTD",
-      roles: ["tol"],
-      tours_seen: {
-        "tour": true
-      }
-    };
-
-    const result = await hasTourBeenSeen("tour", user);
+    const result = await hasTourBeenSeen("tour", "0");
     expect(result).toBe(true);
   });
 });
@@ -89,10 +54,7 @@ describe("registerTourAsSeen", () => {
   });
 
   it("registers correctly when unauthenticated", async () => {
-    // User is `null` when unauthenticated
-    const user = null;
-
-    await registerTourAsSeen("tour", user);
+    await registerTourAsSeen("tour", null);
     const toursSeen = mockLocalStorage.getItem("toursSeen");
 
     expect(toursSeen).not.toBe(null);
@@ -109,11 +71,8 @@ describe("registerTourAsSeen", () => {
       "aTour": true,
       "anotherTour": true
     }));
-    
-    // User is `null` when unauthenticated
-    const user = null;
 
-    await registerTourAsSeen("tour", user);
+    await registerTourAsSeen("tour", null);
     const toursSeen = mockLocalStorage.getItem("toursSeen");
     
     expect(toursSeen).not.toBe(null);
