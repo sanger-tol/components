@@ -6,22 +6,30 @@ SPDX-License-Identifier: MIT
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MockLocalStorage } from "..";
-import { hasTourBeenSeen, registerTourAsSeen, TsDataSource } from "../../tol-ui/src";
+import { hasTourBeenSeen, registerTourAsSeen } from "../../tol-ui/src";
+
+class MockDataSource {
+  private user;
+
+  constructor(initialValue) {
+    this.user = { tours_seen: initialValue };
+  }
+
+  getOne(..._params) {
+    return this.user;
+  }
+
+  upsert({ payload }) {
+    this.user.tours_seen = payload[0].attributes.tours_seen
+  }
+
+  get toursSeen() {
+    return this.user.tours_seen;
+  }
+}
 
 describe("hasTourBeenSeen", () => {
   let mockLocalStorage: MockLocalStorage;
-
-  class MockDataSource {
-    private returnValue;
-
-    constructor(returnValue) {
-      this.returnValue = returnValue;
-    }
-
-    getOne(..._params) {
-      return this.returnValue;
-    }
-  }
 
   beforeEach(() => {
     mockLocalStorage = new MockLocalStorage();
@@ -34,14 +42,14 @@ describe("hasTourBeenSeen", () => {
   });
 
   it("returns false when tour has not been been seen and user authenticated", async () => {
-    const mockDataSource = new MockDataSource({ tours_seen: {} })
+    const mockDataSource = new MockDataSource({})
 
     const result = await hasTourBeenSeen("tour", "0", mockDataSource as any);
     expect(result).toBe(false);
   });
 
   it("returns false when tours_seen is NULL and user authenticated", async () => {
-    const mockDataSource = new MockDataSource({ tours_seen: null })
+    const mockDataSource = new MockDataSource(null)
 
     const result = await hasTourBeenSeen("tour", "0", mockDataSource as any);
     expect(result).toBe(false);
@@ -56,7 +64,7 @@ describe("hasTourBeenSeen", () => {
   });
 
   it("returns true when tour has been seen and user authenticated", async () => {
-    const mockDataSource = new MockDataSource({ tours_seen: { "tour": true } })
+    const mockDataSource = new MockDataSource({ "tour": true })
 
     const result = await hasTourBeenSeen("tour", "0", mockDataSource as any);
     expect(result).toBe(true);
