@@ -6,10 +6,22 @@ SPDX-License-Identifier: MIT
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MockLocalStorage } from "..";
-import { hasTourBeenSeen, registerTourAsSeen } from "../../tol-ui/src";
+import { hasTourBeenSeen, registerTourAsSeen, TsDataSource } from "../../tol-ui/src";
 
 describe("hasTourBeenSeen", () => {
   let mockLocalStorage: MockLocalStorage;
+
+  class MockDataSource {
+    private returnValue;
+
+    constructor(returnValue) {
+      this.returnValue = returnValue;
+    }
+
+    getOne(..._params) {
+      return this.returnValue;
+    }
+  }
 
   beforeEach(() => {
     mockLocalStorage = new MockLocalStorage();
@@ -22,12 +34,16 @@ describe("hasTourBeenSeen", () => {
   });
 
   it("returns false when tour has not been been seen and user authenticated", async () => {
-    const result = await hasTourBeenSeen("tour", "0");
+    const mockDataSource = new MockDataSource({ tours_seen: {} })
+
+    const result = await hasTourBeenSeen("tour", "0", mockDataSource as any);
     expect(result).toBe(false);
   });
 
   it("returns false when tours_seen is NULL and user authenticated", async () => {
-    const result = await hasTourBeenSeen("tour", "0");
+    const mockDataSource = new MockDataSource({ tours_seen: null })
+
+    const result = await hasTourBeenSeen("tour", "0", mockDataSource as any);
     expect(result).toBe(false);
   });
 
@@ -40,7 +56,9 @@ describe("hasTourBeenSeen", () => {
   });
 
   it("returns true when tour has been seen and user authenticated", async () => {
-    const result = await hasTourBeenSeen("tour", "0");
+    const mockDataSource = new MockDataSource({ tours_seen: { "tour": true } })
+
+    const result = await hasTourBeenSeen("tour", "0", mockDataSource as any);
     expect(result).toBe(true);
   });
 });
