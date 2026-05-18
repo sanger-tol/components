@@ -17,26 +17,25 @@ import {
   TitleTooltip,
   BUTTONS,
   useBoardState,
-  BOARD_CHILDREN_KEYS,
 } from "../..";
 import type { IZone, IView, PButton, PBoard } from "../..";
 
 export interface PZone extends PBoard {
   id: string;
-  onReorderZone?: any;
-  onDeleteZone?: any;
   view: IView;
   setView: (view: IView) => void;
+  onReorderZone: (orderedIds: string[]) => void;
+  onDeleteZone: (id: string) => void;
 }
 
 export function Zone(props: PZone) {
   const {
     id,
+    view,
+    setView,
     boardDataSource,
     onReorderZone,
     onDeleteZone,
-    view,
-    setView,
     actionsDataSource,
   } = props;
 
@@ -79,7 +78,7 @@ export function Zone(props: PZone) {
   const upButton: PButton = {
     outline: true,
     onClick: async () => {
-      await onReorderZone(id, "up");
+      ;
     },
     type: "primary",
     icon: "arrow-up",
@@ -91,7 +90,7 @@ export function Zone(props: PZone) {
   const downButton: PButton = {
     outline: true,
     onClick: async () => {
-      await onReorderZone(id, "down");
+
     },
     type: "primary",
     icon: "arrow-down",
@@ -113,7 +112,7 @@ export function Zone(props: PZone) {
   const translatorsButton: PButton = {
     ...BUTTONS.TRANSLATORS,
     visible: editMode && !layoutMode,
-    onClick: () => {},
+    onClick: () => { },
   };
 
   const bar = (

@@ -176,11 +176,6 @@ export function Board(props: PBoard) {
       })
   };
 
-  const onClickView = (viewId: string) => () => {
-    setActiveViewId(viewId);
-    updateViewInUrl(viewId);
-  };
-
   const onReorderViews = (orderedIds: string[]) => {
     patchReorderBoardEntity(boardDataSource, board?.id!, orderedIds)
       .then(() => {
@@ -199,6 +194,11 @@ export function Board(props: PBoard) {
     setBoard({ ...board });
     setMountedViewIds((prev) => prev.filter((vid) => vid !== viewId));
     setActiveViewId(board.order[0]);
+  };
+
+  const onClickView = (viewId: string) => () => {
+    setActiveViewId(viewId);
+    updateViewInUrl(viewId);
   };
 
   const onViewImport = async () => {

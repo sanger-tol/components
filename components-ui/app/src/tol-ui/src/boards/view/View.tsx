@@ -16,7 +16,8 @@ import {
   BOARD_CHILDREN_KEYS,
   deleteBoardEntityInParent,
   PRIVILEGE,
-  IZone
+  IZone,
+  patchReorderBoardEntity
 } from "../..";
 
 
@@ -42,22 +43,13 @@ export interface PView extends PBoard {
 export function View(props: PView) {
   const { id, open, setOpen, active, boardDataSource, actionsDataSource } = props;
 
-  const { editMode, setEditMode, privilege, layoutMode, board, setBoard } =
-    useBoard();
+  const { editMode, board, setBoard } = useBoard();
 
   const [view, setView] = useBoardState<IBoard, IView>(
     id,
     board,
     setBoard,
   );
-
-  // if (
-  //   view?.order?.length === 0 &&
-  //   privilege === PRIVILEGE.BOARD.WRITABLE &&
-  //   !editMode
-  // ) {
-  //   setEditMode(true);
-  // }
 
   const onDeleteZone = (id: string) => {
     boardDataSource.deleteByID({
@@ -68,8 +60,12 @@ export function View(props: PView) {
     setView({ ...view });
   };
 
-  const onReorderZone = async (id: string, orderChange: number) => {
-    // TODO: reorder
+  const onReorderZone = (orderedIds: string[]) => {
+    patchReorderBoardEntity(boardDataSource, view.id!, orderedIds)
+      .then(() => {
+        view.order = orderedIds;
+        setView({ ...view });
+      });
   };
 
   return (

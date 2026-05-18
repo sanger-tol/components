@@ -23,6 +23,8 @@ import {
   BOARDS,
   generateId,
   getEntityPrefix,
+  postAddBoardEntity,
+  IBoard,
 } from "../..";
 
 
@@ -132,22 +134,18 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
   };
 
   const onAddZone = async () => {
-    const id = generateId(getEntityPrefix(BOARDS.ZONE));
-    setView({
-      ...defineBoardEntityInParent<IZone, IView>(
-        {
-          id: id,
-          object_type: BOARDS.ZONE,
-          dataspace: dataspace,
-        },
-        BOARDS.ZONE,
-        view,
-        BOARDS.VIEW
-      )
-    });
-    // TODO: ADD TO DB
-    reset();
-    setOpen(false);
+    postAddBoardEntity(boardDataSource, BOARDS.VIEW, view.id!)
+      .then((res) => {
+        const view = res.data;
+        const v = defineBoardEntityInParent<IZone, IView>(
+          view,
+          BOARDS.VIEW,
+          view
+        )
+        setView({ ...v });
+        reset();
+        setOpen(false);
+      })
   };
 
   const ActionButtons = (
