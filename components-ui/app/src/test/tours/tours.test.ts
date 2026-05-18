@@ -37,6 +37,8 @@ describe("hasTourBeenSeen", () => {
   });
 
   it("returns false when tour has not been seen and user unauthenticated", async () => {
+    mockLocalStorage.setItem("toursSeen", JSON.stringify({}));
+
     const result = await hasTourBeenSeen("tour", null);
     expect(result).toBe(false);
   });
@@ -45,6 +47,11 @@ describe("hasTourBeenSeen", () => {
     const mockDataSource = new MockDataSource({})
 
     const result = await hasTourBeenSeen("tour", "0", mockDataSource as any);
+    expect(result).toBe(false);
+  });
+
+  it("returns false when tours_seen is NULL and user authenticated", async () => {
+    const result = await hasTourBeenSeen("tour", null);
     expect(result).toBe(false);
   });
 
