@@ -97,7 +97,7 @@ export function defineBoardEntityInParent<
 ) {
   const definedEntity = defineBoardEntity(entity, objectType);
   console.log(definedEntity, entity)
-  parentEntity.children[entity.id!] = { ...definedEntity, order: []} as unknown as TEntity;
+  parentEntity.children[entity.id!] = { ...definedEntity, order: [] } as unknown as TEntity;
   parentEntity.order.push(entity.id!);
   return parentEntity;
 }
@@ -207,12 +207,11 @@ const normaliseEntity = (entity: any): any => {
 export async function getBoardEntityAndChildren(
   boardDataSource: TsDataSource,
   parentId: string,
-  objectType: "board" | "view" | "zone" | "component",
 ) {
   return await boardDataSource
     .custom({
       method: API_METHODS.GET,
-      resource: `${API_UTILITY_OPERATIONS.GET_BOARD_ENTITY}/${objectType}/${parentId}`,
+      resource: `${API_UTILITY_OPERATIONS.GET_BOARD_ENTITY}/${parentId}`,
     })
     .then((res) => {
       return res.data;
@@ -255,19 +254,19 @@ export async function patchReorderBoardEntity(
  * Posts a request to add a new board entity as a child of the given parent.
  *
  * @param boardDataSource The data source used to perform the request.
- * @param objectType The type of the board entity to add (e.g. 'view', 'zone', 'component').
  * @param parentId The identifier of the parent entity to which the new entity will be added.
+ * @param attributes Additional attributes to be set on the new entity.
  */
 export async function postAddBoardEntity(
   boardDataSource: TsDataSource,
-  objectType: 'view' | 'zone' | 'component',
   parentId: string,
+  attributes: Record<string, any> = {},
 ) {
   return await boardDataSource
     .custom({
       method: API_METHODS.POST,
-      resource: `${API_UTILITY_OPERATIONS.ADD_BOARD_ENTITY}/${objectType}/${parentId}`,
-      body: {},
+      resource: `${API_UTILITY_OPERATIONS.ADD_BOARD_ENTITY}/${parentId}`,
+      body: { attributes: attributes },
     })
     .catch(() => {
       PopUpMessage({

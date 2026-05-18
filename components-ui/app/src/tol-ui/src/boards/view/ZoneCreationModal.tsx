@@ -131,12 +131,12 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
   };
 
   const onAddZone = async () => {
-    postAddBoardEntity(boardDataSource, BOARDS.VIEW, view.id!)
+    postAddBoardEntity(boardDataSource, view.id!)
       .then((res) => {
-        const view = res.data;
+        const zone = res.data;
         const v = defineBoardEntityInParent<IZone, IView>(
-          view,
-          BOARDS.VIEW,
+          zone,
+          BOARDS.ZONE,
           view
         )
         setView({ ...v });

@@ -125,7 +125,7 @@ export function Board(props: PBoard) {
     isError,
   } = useQueryData<IBoard>(
     [BOARDS.BOARD, id],
-    () => getBoardEntityAndChildren(boardDataSource, id, BOARDS.BOARD),
+    () => getBoardEntityAndChildren(boardDataSource, id),
     { enabled: !!id },
   );
 
@@ -160,7 +160,7 @@ export function Board(props: PBoard) {
   };
 
   const onAddView = async () => {
-    postAddBoardEntity(boardDataSource, BOARDS.VIEW, board?.id!,)
+    postAddBoardEntity(boardDataSource, board?.id!,)
       .then((res) => {
         const view = res.data;
         const b = defineBoardEntityInParent<IView, IBoard>(

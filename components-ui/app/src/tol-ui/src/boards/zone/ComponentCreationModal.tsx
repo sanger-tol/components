@@ -23,15 +23,18 @@ import {
   getEntityPrefix,
   IComponent,
   defineBoardEntityInParent,
+  IView,
+  postAddBoardEntity,
+  TsDataSource,
 } from "../..";
 
 
 export interface PComponentCreationModal extends PBoard {
-  zoneId: string;
   open: boolean;
   setOpen: (open: boolean) => void;
   zone: IZone;
   setZone: (zone: IZone) => void;
+  boardDataSource: TsDataSource;
 }
 
 export function ComponentCreationModal(props: PComponentCreationModal) {
@@ -40,6 +43,7 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
     setOpen,
     zone,
     setZone,
+    boardDataSource,
   } = props;
   const [componentType, setComponentType] = useState("");
   const [widgetType, setWidgetType] = useState("");
@@ -56,25 +60,29 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
   }
 
   const onAddComponent = async () => {
-    const id = generateId(getEntityPrefix(BOARDS.COMPONENT));
-    setZone({
-      ...defineBoardEntityInParent<IComponent, IZone>(
-        {
-          id: id,
-          object_type: BOARDS.ZONE,
-          dataspace: zone.dataspace,
-          config: {},
-          size: widgetType, // TODO: Will need fixing
-          type: componentType,
-          filterPassThrough: false,
-        },
-        BOARDS.COMPONENT,
-        zone,
-        BOARDS.ZONE
-      )
-    });
-    reset();
-    setOpen(false);
+    postAddBoardEntity(
+      boardDataSource,
+      zone.id!,
+      {
+        object_type: zone.object_type,
+        data_source_instance_id: zone.data_source_instance_id,
+        widget_type: widgetType,
+        component_type: componentType,
+        config: {}, // TODO
+        filter_pass_through: false, // TODO
+      }
+    )
+      .then((res) => {
+        const component = res.data;
+        const z = defineBoardEntityInParent<IComponent, IZone>(
+          zone,
+          BOARDS.COMPONENT,
+          component
+        )
+        setZone({ ...z });
+        reset();
+        setOpen(false);
+      })
   };
 
   const PlusButton = (

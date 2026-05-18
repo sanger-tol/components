@@ -144,7 +144,6 @@ export function Zone(props: PZone) {
         <ComponentCreationModal
           open={open}
           setOpen={setOpen}
-          zoneId={id}
           boardDataSource={boardDataSource}
           zone={zone}
           setZone={setZone}
