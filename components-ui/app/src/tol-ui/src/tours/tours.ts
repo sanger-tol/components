@@ -114,20 +114,15 @@ export async function registerTourAsSeen(
   const toursSeen = await fetchToursSeen(userId, dataSource);
 
   if (userId) {
-    const localDataSource = new TsDataSource({
-      apiPath: env.API_PATH,
-      apiDataPath: LOCAL_API_DATA_PATH,
-    });
-
     // Upsert into the user table
-    localDataSource.upsert({
+    dataSource.upsert({
       payload: [
         {
           type: "user",
           id: userId,
           attributes: {
             tours_seen: {
-              toursSeen,
+              ...toursSeen,
               [tourName]: true,
             },
           },

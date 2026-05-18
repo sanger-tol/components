@@ -91,6 +91,15 @@ describe("registerTourAsSeen", () => {
     }
   });
 
+  it("registers correctly when authenticated", async () => {
+    const mockDataSource = new MockDataSource({});
+
+    await registerTourAsSeen("tour", "0", mockDataSource as any);
+    const toursSeen = mockDataSource.toursSeen;
+
+    expect(toursSeen).toStrictEqual({ "tour": true });
+  })
+
   it("doesn't disrupt existing tours seen when unauthenticated", async () => {
     // Place existing completed tours into local storage
     mockLocalStorage.setItem("toursSeen", JSON.stringify({
