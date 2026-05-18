@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ITourStep, TsDataSource, env, LOCAL_API_DATA_PATH, pushErrorMessage, Toaster } from "..";
+import { ITourStep, TsDataSource, env, LOCAL_API_DATA_PATH } from "..";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
@@ -64,7 +64,7 @@ export async function fetchToursSeen(userId: string | null): Promise<Record<stri
       requestedFields: ["tours_seen"]
     });
     if (!user) {
-      pushErrorMessage("Failed to fetch the logged in user", Toaster())
+      console.error("Failed to fetch the logged in user")
       return {};
     }
 
