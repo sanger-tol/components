@@ -21,10 +21,7 @@ import {
   IZone,
   defineBoardEntityInParent,
   BOARDS,
-  generateId,
-  getEntityPrefix,
   postAddBoardEntity,
-  IBoard,
 } from "../..";
 
 
@@ -129,10 +126,6 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
     }
   }, [dataspace]);
 
-  const reset = () => {
-    setObjectType(null);
-  };
-
   const onAddZone = async () => {
     postAddBoardEntity(boardDataSource, BOARDS.VIEW, view.id!)
       .then((res) => {
@@ -143,7 +136,7 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
           view
         )
         setView({ ...v });
-        reset();
+        setObjectType(null);
         setOpen(false);
       })
   };

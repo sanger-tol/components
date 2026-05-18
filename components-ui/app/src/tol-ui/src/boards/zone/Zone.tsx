@@ -24,7 +24,7 @@ export interface PZone extends PBoard {
   id: string;
   view: IView;
   setView: (view: IView) => void;
-  onReorderZone: (orderedIds: string[]) => void;
+  onReorderZone: (id: string, direction: "up" | "down") => void;
   onDeleteZone: (id: string) => void;
 }
 
@@ -77,8 +77,8 @@ export function Zone(props: PZone) {
 
   const upButton: PButton = {
     outline: true,
-    onClick: async () => {
-      ;
+    onClick: () => {
+      onReorderZone(id, "up");
     },
     type: "primary",
     icon: "arrow-up",
@@ -89,8 +89,8 @@ export function Zone(props: PZone) {
 
   const downButton: PButton = {
     outline: true,
-    onClick: async () => {
-
+    onClick: () => {
+      onReorderZone(id, "down");
     },
     type: "primary",
     icon: "arrow-down",

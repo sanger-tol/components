@@ -30,8 +30,6 @@ import {
   API_UTILITY_OPERATIONS,
   SortableTabs,
   EditableTitle,
-  getEntityPrefix,
-  generateId,
   Button,
   BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE,
   deleteBoardEntityInParent,
@@ -176,10 +174,10 @@ export function Board(props: PBoard) {
       })
   };
 
-  const onReorderViews = (orderedIds: string[]) => {
-    patchReorderBoardEntity(boardDataSource, board?.id!, orderedIds)
+  const onReorderViews = (reorderedIds: string[]) => {
+    patchReorderBoardEntity(boardDataSource, board?.id!, reorderedIds)
       .then(() => {
-        board.order = orderedIds;
+        board.order = reorderedIds;
         setBoard({ ...board });
       });
   };

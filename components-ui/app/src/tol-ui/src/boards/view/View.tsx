@@ -17,7 +17,8 @@ import {
   deleteBoardEntityInParent,
   PRIVILEGE,
   IZone,
-  patchReorderBoardEntity
+  patchReorderBoardEntity,
+  reorderViaDirection
 } from "../..";
 
 
@@ -60,7 +61,12 @@ export function View(props: PView) {
     setView({ ...view });
   };
 
-  const onReorderZone = (orderedIds: string[]) => {
+  const onReorderZone = (id: string, direction: "up" | "down") => {
+    const orderedIds = reorderViaDirection(
+      [...view.order!],
+      id,
+      direction
+    );
     patchReorderBoardEntity(boardDataSource, view.id!, orderedIds)
       .then(() => {
         view.order = orderedIds;
