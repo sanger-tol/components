@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ITourStep, TsDataSource, env, LOCAL_API_DATA_PATH } from "..";
+import { ITourStep, TsDataSource, env, LOCAL_API_DATA_PATH, LOCAL_DS } from "..";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
@@ -49,16 +49,15 @@ export async function processTour(
  * Retrieves the tours dictionary from the user table or local storage
  * @param userId The ID of the current user. `null` if not authenticated.
  * You can get this value with the `useAuth` hook.
+ * @param dataSource Allows you to override the data source used to connect to the user table
  */
-export async function fetchToursSeen(userId: string | null): Promise<Record<string, boolean>> {
+export async function fetchToursSeen(
+  userId: string | null,
+  dataSource: TsDataSource = LOCAL_DS
+): Promise<Record<string, boolean>> {
   // Fetch toursSeen either from the database or from localStorage
   if (userId) {
-    const localDataSource = new TsDataSource({
-      apiPath: env.API_PATH,
-      apiDataPath: LOCAL_API_DATA_PATH,
-    });
-
-    const user = await localDataSource.getOne({
+    const user = await dataSource.getOne({
       objectType: "user",
       id: userId,
       requestedFields: ["tours_seen"]
@@ -85,14 +84,16 @@ export async function fetchToursSeen(userId: string | null): Promise<Record<stri
  * @param tourName String name of the tour to check
  * @param userId The ID of the current user. `null` if not authenticated.
  * You can get this value with the `useAuth` hook.
+ * @param dataSource Allows you to override the data source used to connect to the user table
  * @returns Whether the value returned from the database is `true`
  */
 export async function hasTourBeenSeen(
   tourName: string,
-  userId: string | null
+  userId: string | null,
+  dataSource: TsDataSource = LOCAL_DS
 ): Promise<boolean> {  
   // Fetch every tour
-  const toursSeen = await fetchToursSeen(userId);
+  const toursSeen = await fetchToursSeen(userId, dataSource);
 
   // Explicitly check whether this specific tour has been seen already
   return toursSeen[tourName] == true
@@ -103,12 +104,14 @@ export async function hasTourBeenSeen(
  * @param tourName The name of the tour to register as seen
  * @param user The ID of the current user. `null` if not authenticated.
  * You can get this value with the `useAuth` hook.
+ * @param dataSource Allows you to override the data source used to connect to the user table
  */
 export async function registerTourAsSeen(
   tourName: string,
-  userId: string | null
+  userId: string | null,
+  dataSource: TsDataSource = LOCAL_DS
 ): Promise<void> {
-  const toursSeen = await fetchToursSeen(userId);
+  const toursSeen = await fetchToursSeen(userId, dataSource);
 
   if (userId) {
     const localDataSource = new TsDataSource({
