@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { ITourStep, TsDataSource, env, LOCAL_API_DATA_PATH, LOCAL_DS } from "..";
+import { ITourStep, TsDataSource, LOCAL_DS } from "..";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
