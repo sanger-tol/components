@@ -119,4 +119,20 @@ describe("registerTourAsSeen", () => {
       });
     }
   });
+
+  it("doesn't disrupt existing tours seen when authenticated", async () => {
+    const mockDataSource = new MockDataSource({
+      "aTour": true,
+      "anotherTour": true
+    });
+
+    await registerTourAsSeen("tour", "0", mockDataSource as any);
+    const toursSeen = mockDataSource.toursSeen;
+
+    expect(toursSeen).toStrictEqual({
+      "aTour": true,
+      "anotherTour": true,
+      "tour": true
+    });
+  });
 });
