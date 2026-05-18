@@ -20,7 +20,7 @@ class MockDataSource {
   }
 
   upsert({ payload }) {
-    this.user.tours_seen = payload[0].attributes.tours_seen
+    this.user.tours_seen = payload[0].attributes.tours_seen;
   }
 
   get toursSeen() {
@@ -44,7 +44,7 @@ describe("hasTourBeenSeen", () => {
   });
 
   it("returns false when tour has not been been seen and user authenticated", async () => {
-    const mockDataSource = new MockDataSource({})
+    const mockDataSource = new MockDataSource({});
 
     const result = await hasTourBeenSeen("tour", "0", mockDataSource as any);
     expect(result).toBe(false);
@@ -56,7 +56,7 @@ describe("hasTourBeenSeen", () => {
   });
 
   it("returns false when tours_seen is NULL and user authenticated", async () => {
-    const mockDataSource = new MockDataSource(null)
+    const mockDataSource = new MockDataSource(null);
 
     const result = await hasTourBeenSeen("tour", "0", mockDataSource as any);
     expect(result).toBe(false);
@@ -64,14 +64,14 @@ describe("hasTourBeenSeen", () => {
 
   it("returns true when tour has been seen and user unauthenticated", async () => {
     // Add a seen tour
-    mockLocalStorage.setItem("toursSeen", JSON.stringify({ "tour": true }))
+    mockLocalStorage.setItem("toursSeen", JSON.stringify({ "tour": true }));
 
     const result = await hasTourBeenSeen("tour", null);
     expect(result).toBe(true);
   });
 
   it("returns true when tour has been seen and user authenticated", async () => {
-    const mockDataSource = new MockDataSource({ "tour": true })
+    const mockDataSource = new MockDataSource({ "tour": true });
 
     const result = await hasTourBeenSeen("tour", "0", mockDataSource as any);
     expect(result).toBe(true);
