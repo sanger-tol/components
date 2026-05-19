@@ -409,6 +409,7 @@ export function Board(props: PBoard) {
     : {
       ...BUTTONS.EDIT,
       text: "Edit",
+      className: "tol-edit-mode-button",
     };
 
   const EditOrExitButton: PButton = {
