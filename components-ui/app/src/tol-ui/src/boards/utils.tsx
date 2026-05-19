@@ -96,7 +96,6 @@ export function defineBoardEntityInParent<
   parentEntity: TParent,
 ) {
   const definedEntity = defineBoardEntity(entity, objectType);
-  console.log(definedEntity, entity)
   parentEntity.children[entity.id!] = { ...definedEntity, order: [] } as unknown as TEntity;
   parentEntity.order.push(entity.id!);
   return parentEntity;

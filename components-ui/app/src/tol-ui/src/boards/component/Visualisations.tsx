@@ -10,13 +10,15 @@ import {
   generateLayout,
   IZone,
   TsDataSource,
-  updateLayout,
   useBoard,
   useEffectUpdate,
   Visualisation,
   BOARDS,
   ACTIONS_DS,
+  patchReorderBoardEntity,
+  getWidgetOrder,
 } from "../..";
+
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -38,8 +40,11 @@ export function Visualisations(props: PVisualisations) {
 
   const { layoutMode } = useBoard();
 
-  const [layoutsState, setLayouts] = useState<Layouts>();
-  // newLayout is used to store the layout when the user is dragging widgets, and is emptied once a user saves
+  const [layouts, setLayouts] = useState<Layouts>();
+  /**
+   * newLayout is used to store the layout when the user is dragging
+   * widgets, and is emptied once a user saves
+   */
   const [newLayout, setNewLayout] = useState(undefined);
   const internalLayouts = useRef(generateLayout(zone));
 
@@ -50,15 +55,25 @@ export function Visualisations(props: PVisualisations) {
   }, [zone]);
 
   useEffectUpdate(() => {
-    // When layout mode is turned off, we want to update the layout of the zone with the new layout
-    if (!layoutMode) {
-      updateLayout(newLayout, zone, setZone, boardDataSource);
-    }
+    /**
+     * When layout mode is turned off, we want to update the layout
+     * of the zone with the new layout
+     */
+    if (!layoutMode) onReorderViews();
   }, [layoutMode]);
+
+  const onReorderViews = () => {
+    const reorderedIds = getWidgetOrder(newLayout!);
+    patchReorderBoardEntity(boardDataSource, zone.id!, reorderedIds)
+      .then(() => {
+        zone.order = reorderedIds;
+        setZone({ ...zone });
+      });
+  };
 
   const onBreakpointChange = () => {
     if (
-      JSON.stringify(internalLayouts.current) !== JSON.stringify(layoutsState)
+      JSON.stringify(internalLayouts.current) !== JSON.stringify(layouts)
     ) {
       setLayouts(internalLayouts.current);
     }
@@ -67,14 +82,14 @@ export function Visualisations(props: PVisualisations) {
   return (
     <div className="tol-responsive-grid">
       <ResponsiveReactGridLayout
-        layouts={layoutsState}
+        layouts={layouts}
         breakpoints={{ lg: 992, md: 576, sm: 0 }}
         cols={{ lg: 4, md: 2, sm: 1 }}
         isDraggable={layoutMode}
         isResizable={false}
         compactType="vertical"
         rowHeight={5}
-        onLayoutChange={(layout: any) => setNewLayout(layout)}
+        onLayoutChange={(l: any) => setNewLayout(l)}
         onBreakpointChange={onBreakpointChange}
       >
         {zone.order.map((componentId) => {
