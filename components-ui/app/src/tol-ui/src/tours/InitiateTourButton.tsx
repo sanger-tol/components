@@ -8,13 +8,18 @@ import { Icon } from "..";
 
 export interface PInitiateTourButton {
   onClick: () => void;
+  testid: string;
 }
 
 export function InitiateTourButton(props: PInitiateTourButton) {
-  const { onClick } = props;
+  const { onClick, testid } = props;
 
   return (
-    <button className="InitiateTourButton" onClick={onClick}>
+    <button
+      className="InitiateTourButton"
+      onClick={onClick}
+      data-testid={testid}
+    >
       <Icon icon="circle-question" size="lg" />
     </button>
   )

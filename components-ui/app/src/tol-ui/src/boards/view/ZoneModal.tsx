@@ -232,6 +232,7 @@ export function ZoneModal(props: PZoneModal) {
           <h4>Add New Zone</h4>
           <InitiateTourButton
             onClick={() => processTour("addZone", addZoneTour, user ? user.id : null, true)} 
+            testid="start-add-zone-tour-button"
           />
         </span>
         <p className="zone-modal-labels">
