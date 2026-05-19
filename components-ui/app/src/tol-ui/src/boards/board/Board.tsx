@@ -405,10 +405,12 @@ export function Board(props: PBoard) {
       ...BUTTONS.CONFIRM,
       type: "primary",
       text: "Exit Edit Mode",
+      testid: "board-exit-edit-mode-button",
     }
     : {
       ...BUTTONS.EDIT,
       text: "Edit",
+      testid: "board-enter-edit-mode-button",
       className: "tol-edit-mode-button",
     };
 
@@ -419,7 +421,6 @@ export function Board(props: PBoard) {
     onClick: () => {
       setEditMode(!editMode);
     },
-    testid: `board-${editMode ? "exit" : "enter"}-edit-mode-button`,
     tooltip:
       editMode && tableLoading
         ? "Please wait for the table to load before exiting edit mode."
