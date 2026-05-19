@@ -17,13 +17,13 @@
   position: relative;
   height: var(--tol-utility-bar-height);
   align-items: center;
-  z-index: 10;
+  z-index: 5;
 }
 
 .tol-utility-bar-no-left-side {
   position: fixed;
   width: calc(100% - 16px);
-  z-index: 10;
+  z-index: 5;
 }
 
 .tol-utility-bar-buttons {
