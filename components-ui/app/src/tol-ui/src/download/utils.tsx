@@ -172,11 +172,22 @@ export async function dataObjectToSpreadsheetData(
   requestedFields: string[],
   fieldMeta: FieldMeta
 ) {
+  // Pre-compute headers, falling back to the field system name when two fields
+  // share the same display name so that no column is silently overwritten.
+  const fieldToHeader: Record<string, string> = {};
+  const usedHeaders = new Set<string>();
+  for (const field of requestedFields) {
+    const rename = fieldMeta.dataWithDefaults?.[field]?.rename ?? field;
+    const header = usedHeaders.has(rename) ? field : rename;
+    fieldToHeader[field] = header;
+    usedHeaders.add(header);
+  }
+
   const spreadsheetData: any[] = [];
   dataObjects?.forEach((obj) => {
     const flatData = {};
     requestedFields.forEach((field) => {
-      flatData[fieldMeta.dataWithDefaults?.[field].rename ?? field] =
+      flatData[fieldToHeader[field]] =
         Array.isArray(getFieldByName(obj, field))
           ? getFieldByName(obj, field).toString()
           : getFieldByName(obj, field);
