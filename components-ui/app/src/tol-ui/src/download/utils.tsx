@@ -167,13 +167,12 @@ export function prepareChartDataForExport(
   });
 }
 
-export async function dataObjectToSpreadsheetData(
-  dataObjects: TDataObjectListOrNull,
+function buildSpreadsheetHeaders(
   requestedFields: string[],
   fieldMeta: FieldMeta
-) {
-  // Pre-compute headers, falling back to the field system name when two fields
-  // share the same display name so that no column is silently overwritten.
+): Record<string, string> {
+  // Fall back to the system field name when duplicate display names exist,
+  // so each exported column remains unique and no data is overwritten.
   const fieldToHeader: Record<string, string> = {};
   const usedHeaders = new Set<string>();
   for (const field of requestedFields) {
@@ -182,6 +181,15 @@ export async function dataObjectToSpreadsheetData(
     fieldToHeader[field] = header;
     usedHeaders.add(header);
   }
+  return fieldToHeader;
+}
+
+export async function dataObjectToSpreadsheetData(
+  dataObjects: TDataObjectListOrNull,
+  requestedFields: string[],
+  fieldMeta: FieldMeta
+) {
+  const fieldToHeader = buildSpreadsheetHeaders(requestedFields, fieldMeta);
 
   const spreadsheetData: any[] = [];
   dataObjects?.forEach((obj) => {
