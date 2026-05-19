@@ -96,7 +96,8 @@ export function defineBoardEntityInParent<
   parentEntity: TParent,
 ) {
   const definedEntity = defineBoardEntity(entity, objectType);
-  parentEntity.children[entity.id!] = { ...definedEntity, order: [] } as unknown as TEntity;
+  const tempOrderOverride = objectType !== BOARDS.COMPONENT ? { order: [] } : {}; // TODO: backend to support
+  parentEntity.children[entity.id!] = { ...definedEntity, ...tempOrderOverride } as unknown as TEntity;
   parentEntity.order.push(entity.id!);
   return parentEntity;
 }

@@ -48,15 +48,10 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
   const [componentType, setComponentType] = useState("");
   const [widgetType, setWidgetType] = useState("");
 
-  useEffect(() => { // TODO: look at removing useEffect
-    if (!open) {
-      reset();
-    }
-  }, [open]);
-
   const reset = () => {
     setComponentType("");
     setWidgetType("");
+    setOpen(false);
   }
 
   const onAddComponent = async () => {
@@ -75,13 +70,12 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
       .then((res) => {
         const component = res.data;
         const z = defineBoardEntityInParent<IComponent, IZone>(
-          zone,
+          component,
           BOARDS.COMPONENT,
-          component
+          zone
         )
         setZone({ ...z });
         reset();
-        setOpen(false);
       })
   };
 
