@@ -9,18 +9,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export interface PIcon {
   icon?: string;
   size?: string;
+  colour?: string;
   config?: string;
   className?: string;
   onClick?: () => void;
 }
 
 export function Icon(props: PIcon) {
-  const { icon, size, config = "solid", className, onClick } = props;
+  const { icon, size, colour, config = "solid", className, onClick } = props;
 
   return (
     <span className={className} onClick={onClick}>
       {/* @ts-ignore */}
-      <FontAwesomeIcon icon={`fa-${config} fa-${icon}`} size={size} />
+      <FontAwesomeIcon icon={`fa-${config} fa-${icon}`} size={size} color={colour} />
     </span>
   );
 }
