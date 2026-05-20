@@ -43,12 +43,12 @@ export function Priority(props: PPriority) {
     ) : low ? (
       <Icon
         icon="angle-down"
-        colour="lightblue"
+        colour="blue"
       />
     ) : lowest ? (
       <Icon
         icon="angles-down"
-        colour="lightblue"
+        colour="blue"
       />
     ) : (
       <>{value}</>
