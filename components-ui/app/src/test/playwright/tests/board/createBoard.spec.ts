@@ -13,7 +13,7 @@ test.beforeEach(async ({ page }) => {
   await setAuth({ page });
 });
 
-const createBoard = async ({ page, testID }) => {
+export const createBoard = async ({ page, testID }) => {
   await page.goto('/my-boards');
 
   // click the create new board button
@@ -29,7 +29,7 @@ const createBoard = async ({ page, testID }) => {
   await page.getByRole('button', { name: 'Create' }).click();
 };
 
-const createZone = async ({ page, testID }) => {
+export const createZone = async ({ page, testID }) => {
   // enter edit mode
   await enterEditMode({ page });
 
