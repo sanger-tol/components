@@ -6,10 +6,7 @@ SPDX-License-Identifier: MIT
 
 import {
   BOARDS,
-  upsertJoiningBoardEntity,
-  IUser,
   TsDataSource,
-  upsertCoreBoardEntity,
   IBoard,
   API_METHODS,
   HTTP_STATUS_CODES,
@@ -24,48 +21,13 @@ import {
   getNextTitle,
   IZone,
   TBoardEntity,
+  IBoardChildren,
+  postAddBoardEntity,
+  defineBoardEntityInParent,
 } from "../..";
 
-// TODO: REMOVE WITH NEW ENDPOINTS!
-/**
- * Creates a new board and its associated view.
- * @param boardDataSource The data source to use for creating the board and view.
- * @param user The user creating the board and view.
- */
-export async function createBoardAndView(
-  boardDataSource: TsDataSource,
-  user: IUser,
-): Promise<string | undefined> {
-  const boardObj = await upsertCoreBoardEntity(
-    BOARDS.BOARD,
-    { title: "Untitled" },
-    boardDataSource,
-    user,
-  );
-  const boardId = boardObj?.[0]?.id;
 
-  const viewObj = await upsertCoreBoardEntity(
-    BOARDS.VIEW,
-    { title: "" },
-    boardDataSource,
-    user,
-  );
-  const viewId = viewObj?.[0]?.id;
-
-  await upsertJoiningBoardEntity(
-    BOARDS.VIEW_BOARD,
-    {
-      order: 1,
-      board_id: boardId,
-      view_id: viewId,
-    },
-    boardDataSource,
-  );
-
-  return boardId;
-}
-
-export async function copyEntity<T>(
+export async function copyBoardEntity<T>(
   boardDataSource: TsDataSource,
   entityId: string,
   operation: string,
@@ -117,7 +79,7 @@ export async function copyBoard(
   title: string,
   copyEntityType: TBoardEntity,
 ): Promise<IBoard | undefined> {
-  return await copyEntity<IBoard>(
+  return await copyBoardEntity<IBoard>(
     boardDataSource,
     entityId,
     API_UTILITY_OPERATIONS.COPY,
@@ -142,7 +104,7 @@ export async function copyView(
   currentBoard?: IBoard,
   parentEntityId?: string,
 ): Promise<{ view: IView; updatedBoard: IBoard } | undefined> {
-  return await copyEntity<IView>(
+  return await copyBoardEntity<IView>(
     boardDataSource,
     entityId,
     API_UTILITY_OPERATIONS.COPY,
@@ -184,7 +146,7 @@ export async function onViewTitleSave(
         ...viewsMap[viewId],
         title: value,
       },
-    } as IBoard["children"],
+    } as IBoardChildren<IView>,
   } as IBoard;
 }
 
@@ -194,26 +156,19 @@ export function updateViewInUrl(viewId: string) {
   window.history.replaceState(null, "", `?${params.toString()}`);
 }
 
-export function onAddView(
+export async function onAddView(
+  boardDataSource: TsDataSource,
   board: IBoard,
-): { updatedBoard: IBoard; newViewId: string } {
-  const newViewId = generateId(getEntityPrefix(BOARDS.VIEW));
-  const viewsMap = board?.children ?? {};
-  const newViewTitle = getNextTitle<IBoard>(
-    { ...board, views: viewsMap } as any,
-    BOARDS.BOARD,
-    BOARDS.VIEW,
-  );
-  const newView: IView = {
-    id: newViewId,
-    title: newViewTitle,
-    children: {} as Record<string, IZone>,
-    order: [],
-  };
-  const updatedBoard: IBoard = {
-    ...board,
-    children: { ...viewsMap, [newViewId]: newView } as IBoard["children"],
-    order: [...(board?.order ?? []), newViewId],
-  };
-  return { updatedBoard, newViewId };
-}
+) {
+  if (!board.id) return;
+  return postAddBoardEntity(boardDataSource, board.id!)
+    .then((res) => {
+      const view = res.data;
+      updateViewInUrl(view.id);
+      return defineBoardEntityInParent<IView, IBoard>(
+        view,
+        BOARDS.VIEW,
+        board
+      )
+    })
+};

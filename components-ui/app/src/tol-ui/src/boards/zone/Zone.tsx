@@ -10,40 +10,38 @@ import {
   ComponentCreationModal,
   Visualisations,
   ConfirmationModal,
-  saveTitle,
+  upsertTitle,
   BOARDS,
   UtilityBar,
   useBoard,
   TitleTooltip,
   BUTTONS,
   useBoardState,
-  BOARD_CHILDREN_KEYS,
 } from "../..";
 import type { IZone, IView, PButton, PBoard } from "../..";
 
 export interface PZone extends PBoard {
   id: string;
-  onReorderZone?: any;
-  onDeleteZone?: any;
   view: IView;
   setView: (view: IView) => void;
+  onReorderZone: (id: string, direction: "up" | "down") => void;
+  onDeleteZone: (id: string) => void;
 }
 
 export function Zone(props: PZone) {
   const {
     id,
+    view,
+    setView,
     boardDataSource,
     onReorderZone,
     onDeleteZone,
-    view,
-    setView,
     actionsDataSource,
   } = props;
 
   const { editMode, layoutMode } = useBoard();
 
   const [zone, setZone] = useBoardState<IView, IZone>(
-    BOARD_CHILDREN_KEYS.ZONES,
     id,
     view,
     setView,
@@ -79,8 +77,8 @@ export function Zone(props: PZone) {
 
   const upButton: PButton = {
     outline: true,
-    onClick: async () => {
-      await onReorderZone(id, "up");
+    onClick: () => {
+      onReorderZone(id, "up");
     },
     type: "primary",
     icon: "arrow-up",
@@ -91,8 +89,8 @@ export function Zone(props: PZone) {
 
   const downButton: PButton = {
     outline: true,
-    onClick: async () => {
-      await onReorderZone(id, "down");
+    onClick: () => {
+      onReorderZone(id, "down");
     },
     type: "primary",
     icon: "arrow-down",
@@ -114,7 +112,7 @@ export function Zone(props: PZone) {
   const translatorsButton: PButton = {
     ...BUTTONS.TRANSLATORS,
     visible: editMode && !layoutMode,
-    onClick: () => {},
+    onClick: () => { },
   };
 
   const bar = (
@@ -126,7 +124,7 @@ export function Zone(props: PZone) {
           editable: editMode,
           onSave: (value: string) => {
             if (value !== title) {
-              saveTitle(value, id, boardDataSource, BOARDS.ZONE);
+              upsertTitle(value, id, boardDataSource, BOARDS.ZONE);
               setTitle(value);
             }
           },
@@ -146,7 +144,6 @@ export function Zone(props: PZone) {
         <ComponentCreationModal
           open={open}
           setOpen={setOpen}
-          zoneId={id}
           boardDataSource={boardDataSource}
           zone={zone}
           setZone={setZone}

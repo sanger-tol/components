@@ -18,7 +18,6 @@ import {
   IComponent,
   IView,
   IBoard,
-  TChildrenKey,
   defineZoneWithComponentList,
 } from "..";
 
@@ -114,35 +113,28 @@ export function useZoneStateFallback({
 /**
  * Custom hook for managing board state at different levels (board, view, zone). It initializes state if not already set and provides a setter function to update the state.
  *
- * @param boardLevel - The level of the board to manage (e.g zone will be 'zones' so it can see its siblings).
  * @param id - The ID of the board element to manage.
  * @param parentStateValue - The current state of the board (IBoard, IView, or IZone).
  * @param setParentStateValue - The setter function to update the board state.
- * @param initialSetup - Optional initial setup for the board element if it doesn't already exist in the state.
  *
  * @returns A tuple containing the current value of the board element and a setter function to update it.
  */
 export function useBoardState<
   TParent extends IBoard | IView | IZone,
-  TChildren extends IView | IZone | IComponent,
+  TChildren extends IView | IZone | IComponent
 >(
-  boardLevel: TChildrenKey,
   id: string,
   parentStateValue: TParent,
   setParentStateValue: (newValue: TParent) => void,
-): [TChildren, (newValue: TChildren) => void, Record<string, TChildren>] {
-  const childrenMap = parentStateValue?.children ?? {};
-  const value = childrenMap[id] as TChildren;
-  const childrenOfValue = (value as any)?.children ?? {};
+): [TChildren, (newValue: TChildren) => void] {
+  const value = parentStateValue.children[id] as TChildren;
+  const setValue = (newValue: TChildren) => setParentStateValue({
+    ...parentStateValue,
+    children: {
+      ...parentStateValue.children,
+      [id]: newValue
+    },
+  } as TParent);
 
-  const setValue = (newValue: TChildren) => {
-    setParentStateValue({
-      ...parentStateValue,
-      [boardLevel]: {
-        ...parentStateValue[boardLevel],
-        [id]: newValue,
-      } as TParent,
-    });
-  };
-  return [value, setValue, childrenOfValue];
+  return [value, setValue];
 }

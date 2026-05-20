@@ -15,7 +15,10 @@ import {
   IView,
   BOARD_CHILDREN_KEYS,
   deleteBoardEntityInParent,
-  PRIVILEGE
+  PRIVILEGE,
+  IZone,
+  patchReorderBoardEntity,
+  reorderViaDirection
 } from "../..";
 
 
@@ -41,25 +44,13 @@ export interface PView extends PBoard {
 export function View(props: PView) {
   const { id, open, setOpen, active, boardDataSource, actionsDataSource } = props;
 
-  const { editMode, setEditMode, privilege, layoutMode, board, setBoard } =
-    useBoard();
+  const { editMode, board, setBoard } = useBoard();
 
-  const [view, setView, zones] = useBoardState<IBoard, IView>(
-    BOARD_CHILDREN_KEYS.VIEWS,
+  const [view, setView] = useBoardState<IBoard, IView>(
     id,
     board,
     setBoard,
   );
-
-  console.log("rendering view", { id });
-
-  // if (
-  //   view?.order?.length === 0 &&
-  //   privilege === PRIVILEGE.BOARD.WRITABLE &&
-  //   !editMode
-  // ) {
-  //   setEditMode(true);
-  // }
 
   const onDeleteZone = (id: string) => {
     boardDataSource.deleteByID({
@@ -70,8 +61,17 @@ export function View(props: PView) {
     setView({ ...view });
   };
 
-  const onReorderZone = async (id: string, orderChange: number) => {
-    // TODO: reorder
+  const onReorderZone = (id: string, direction: "up" | "down") => {
+    const orderedIds = reorderViaDirection(
+      [...view.order!],
+      id,
+      direction
+    );
+    patchReorderBoardEntity(boardDataSource, view.id!, orderedIds)
+      .then(() => {
+        view.order = orderedIds;
+        setView({ ...view });
+      });
   };
 
   return (
@@ -87,7 +87,7 @@ export function View(props: PView) {
       ) : (
         <div className="tol-zones">
           {view?.order?.map((zoneId) => {
-            const zone = zones[zoneId];
+            const zone = view.children?.[zoneId] as IZone;
             if (zone) {
               return (
                 <Zone

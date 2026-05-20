@@ -15,11 +15,12 @@ export interface IBoardEntity {
   id?: string;
   type?: string;
   title?: string;
-
 }
 
+export type IBoardChildren<TChild> = Record<string, TChild>;
+
 export interface IBoardParentEntity<TChild> extends IBoardEntity {
-  children: Record<string, TChild>;
+  children: IBoardChildren<TChild>;
   order: string[];
 }
 
@@ -32,7 +33,7 @@ export interface IComponent extends IBoardEntity, IBoardFilter {
   subFilter?: IFilter;
   filterPassThrough?: boolean;
   component_type?: string;
-  widget_size?: string;
+  widget_type?: string;
 
   /**
    * Note: Not required for dev pages when using useZone
@@ -99,7 +100,7 @@ export interface IBoard extends IBoardParentEntity<IView> {
  *               type: "component",
  *               title: "Species Table",
  *               component_type: "table",
- *               widget_size: "lg",
+ *               widget_type: "lg",
  *               filter: { and_: {} },
  *               config: {},
  *             },
@@ -108,7 +109,7 @@ export interface IBoard extends IBoardParentEntity<IView> {
  *               type: "component",
  *               title: "Species Chart",
  *               component_type: "chart",
- *               widget_size: "md",
+ *               widget_type: "md",
  *               filter: { and_: {} },
  *               config: {},
  *             },

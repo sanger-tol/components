@@ -89,7 +89,7 @@ export function Board(props: PBoard) {
     isError,
   } = useQueryData<IBoard>(
     [BOARDS.BOARD, id],
-    () => getBoardEntityAndChildren(boardDataSource, id, BOARDS.BOARD),
+    () => getBoardEntityAndChildren(boardDataSource, id!),
     { enabled: !!id },
   );
 

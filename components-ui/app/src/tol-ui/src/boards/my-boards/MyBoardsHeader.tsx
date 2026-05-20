@@ -6,13 +6,15 @@
 
 import { useHistory } from "react-router-dom";
 import {
-  createBoardAndView,
   BOARDS,
   Button,
   PBoard,
   MY_BOARDS_TITLE,
   MY_BOARDS_SUB_TITLE,
-  useAuth,
+  API_METHODS,
+  API_UTILITY_OPERATIONS,
+  PopUpMessage,
+  ERROR_CREATING_BOARD,
 } from "../..";
 import { useState } from "react";
 
@@ -20,24 +22,30 @@ import { useState } from "react";
 export function MyBoardsHeader(props: PBoard) {
   const { boardDataSource } = props;
 
-  const { user } = useAuth();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
 
-  const create = () => {
-    setLoading(true);
-    createBoardAndView(
-      boardDataSource,
-      user!
-    ).then((boardId) => {
-      if (boardId) {
+  const createBoard = () => {
+    boardDataSource
+      .custom({
+        method: API_METHODS.POST,
+        resource: API_UTILITY_OPERATIONS.CREATE_BOARD,
+        body: {}
+      })
+      .then((res) => {
+        const { id } = res.data;
         setTimeout(() => {
-          history.push(`/${BOARDS.BOARD}/${boardId}`);
+          history.push(`/${BOARDS.BOARD}/${id}`);
         }, 500);
-      }
-    }).catch(() => {
-      setLoading(false);
-    });
+      })
+      .catch(() => {
+        setLoading(false);
+        PopUpMessage({
+          type: "error",
+          message: ERROR_CREATING_BOARD,
+        });
+      });
+    setLoading(true);
   };
 
   return (
@@ -49,7 +57,7 @@ export function MyBoardsHeader(props: PBoard) {
           icon="plus"
           text="New Board"
           type="success"
-          onClick={create}
+          onClick={createBoard}
           loading={loading}
           disabled={loading}
         />

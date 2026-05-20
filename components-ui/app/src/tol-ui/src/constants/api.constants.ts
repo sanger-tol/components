@@ -27,9 +27,13 @@ export const API_OPERATIONS = {
   TO_MANY: ":to-many",
 } as const;
 
-
+// TODO: PUT INTO BOARDS AND RENAME
 export const API_UTILITY_OPERATIONS = {
   COPY: "copy",
+  BOARD_ENTITY_REORDER: "reorder",
+  GET_BOARD_ENTITY: "get-entity",
+  CREATE_BOARD: "create-board",
+  ADD_BOARD_ENTITY: "add-entity",
 } as const;
 
 export const HTTP_STATUS_CODES = {

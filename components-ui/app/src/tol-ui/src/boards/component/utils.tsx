@@ -11,9 +11,9 @@ import {
   IFilter,
   IZone,
   TsDataSource,
-  upsertCoreBoardEntity,
 } from "../..";
 
+// TODO: SORT!!!
 /**
  * Update the component state and upsert the component with the new config.
  * @param componentId The id of the component to be updated.
@@ -36,13 +36,13 @@ export async function updateComponentConfigAndUpsert(
 
   if (editMode) {
     component.config = { ...config };
-    return await upsertCoreBoardEntity(
-      BOARDS.COMPONENT,
-      { config: config },
-      boardDataSource,
-      undefined,
-      componentId,
-    );
+    // return await upsertCoreBoardEntity(
+    //   BOARDS.COMPONENT,
+    //   { config: config },
+    //   boardDataSource,
+    //   undefined,
+    //   componentId,
+    // );
   }
 
   component.config_diff = { ...component.config_diff, config: config };
@@ -98,55 +98,12 @@ export function defineZoneWithComponentList(
   );
 }
 
-// TODO: Fix, leaving all broken things here
-export async function updateLayout(
-  layout,
-  zone: IZone,
-  setZone: (zone: IZone) => void,
-  boardDataSource: TsDataSource,
-) {
-  // gets the order based off of the layout on screen
-  const order = getWidgetOrder(layout);
-
-  // finds the highest order value in the current widgets, based off the db
-  const orderValues = Object.values(zone.children ?? {}).map(
-    (component: IComponent) => {
-      const order = component.componentZoneOrder;
-      return Number(order);
-    },
-  );
-  const highestPreviousOrder = Math.max(...orderValues);
-
-  // maps through the order and upserts based on the componentId
-  const payloadData = order.order.map((componentId, index) => {
-    const component: IComponent = zone.children?.[componentId];
-    component!.componentZoneOrder = highestPreviousOrder + 1 + index;
-    return {
-      type: BOARDS.COMPONENT_ZONE,
-      id: component!.componentZoneId,
-      attributes: {
-        order: highestPreviousOrder + index + 1,
-      },
-    };
-  });
-  await boardDataSource.upsert({
-    objectType: BOARDS.COMPONENT_ZONE,
-    payload: payloadData,
-  });
-  zone.order = order.order;
-  setZone({ ...zone });
-}
-
 export function getWidgetOrder(layout: any) {
   // Sort the layout array by the 'y' property (and 'x' property in case of a tie)
   layout.sort((a, b) => a.y - b.y || a.x - b.x);
 
   // Map the sorted layout array to an array of widget objects
-  const widgetOrder = layout.map((item) => item.i);
-
-  return {
-    order: widgetOrder,
-  };
+  return layout.map((item) => item.i);
 }
 
 export function generateLayout(zone: IZone) {

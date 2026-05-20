@@ -157,8 +157,8 @@ export function buildViewTabButtonArray(
   const viewCreationButtons = buildViewCreationButtons(
     editMode,
     () => {
-      const { updatedBoard, newViewId } = onAddView(board);
-      setBoard(updatedBoard);
+      onAddView(board);
+      setBoard();
       setActiveViewId(newViewId);
       updateViewInUrl(newViewId);
     },
@@ -180,7 +180,6 @@ export function buildViewTabButtonArray(
           ?.map((viewId) => {
             const view = board?.children?.[viewId];
             if (view) {
-              console.log(view.title);
               const { buttons, label } = viewTabButtons(viewId, view.title || "Untitled");
               return { buttons, label } as ITab;
             }

@@ -19,8 +19,6 @@ import {
   Icon,
   defineZoneWithComponentList,
   IZone,
-  upsertCoreBoardEntity,
-  BOARDS,
   FILTER_ALREADY_EXISTS,
   NO_FILTERS_APPLIED,
 } from ".."
@@ -138,13 +136,13 @@ export function FilterConfigDrawer(props: PFilterConfigDrawer) {
     }
     resetFiltersBelow({ id: id, zone: zone });
     setZone({ ...zone });
-    upsertCoreBoardEntity(
-      boardObjectType === BOARDS.ZONE ? BOARDS.ZONE : BOARDS.COMPONENT,
-      attributes,
-      boardDataSource,
-      undefined,
-      id,
-    );
+    // upsertCoreBoardEntity(
+    //   boardObjectType === BOARDS.ZONE ? BOARDS.ZONE : BOARDS.COMPONENT,
+    //   attributes,
+    //   boardDataSource,
+    //   undefined,
+    //   id,
+    // );
   };
 
   // Function passed to attribute selector to remove all filters
