@@ -29,9 +29,7 @@ export const API_OPERATIONS = {
 
 
 export const API_UTILITY_OPERATIONS = {
-  BOARD_COPY: "copy/board",
-  VIEW_COPY: "copy/view",
-  ZONE_COPY: "copy/zone",
+  COPY: "copy",
 } as const;
 
 export const HTTP_STATUS_CODES = {

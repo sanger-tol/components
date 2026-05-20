@@ -71,7 +71,7 @@ export async function getBoardEntityAndChildren(
   return await boardDataSource
     .custom({
       method: "GET",
-      resource: `get-entity/${objectType}/${parentId}`,
+      resource: `get-entity/${parentId}`,
     })
     .then((res) => {
       return res.data;

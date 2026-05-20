@@ -120,7 +120,7 @@ export async function copyBoard(
   return await copyEntity<IBoard>(
     boardDataSource,
     entityId,
-    API_UTILITY_OPERATIONS.BOARD_COPY,
+    API_UTILITY_OPERATIONS.COPY,
     parentEntityType,
     title,
     copyEntityType,
@@ -145,7 +145,7 @@ export async function copyView(
   return await copyEntity<IView>(
     boardDataSource,
     entityId,
-    API_UTILITY_OPERATIONS.VIEW_COPY,
+    API_UTILITY_OPERATIONS.COPY,
     parentEntityType,
     title,
     copyEntityType,
