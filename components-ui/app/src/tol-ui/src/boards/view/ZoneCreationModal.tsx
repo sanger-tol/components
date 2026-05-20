@@ -19,7 +19,7 @@ import {
   PopUpMessage,
   IView,
   IZone,
-  defineBoardEntityInParent,
+  addBoardEntityInParentState,
   BOARDS,
   postAddBoardEntity,
 } from "../..";
@@ -141,9 +141,9 @@ export function ZoneCreationModal(props: PZoneCreationModal) {
     )
       .then((res) => {
         const zone = res.data;
-        const v = defineBoardEntityInParent<IZone, IView>(
-          zone,
+        const v = addBoardEntityInParentState<IZone, IView>(
           BOARDS.ZONE,
+          zone,
           view
         )
         setView({ ...v });

@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2024 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Button,
   Modal,
@@ -19,11 +19,8 @@ import {
   RequiredAsterisk,
   BUTTONS,
   BOARDS,
-  generateId,
-  getEntityPrefix,
   IComponent,
-  defineBoardEntityInParent,
-  IView,
+  addBoardEntityInParentState,
   postAddBoardEntity,
   TsDataSource,
 } from "../..";
@@ -69,9 +66,9 @@ export function ComponentCreationModal(props: PComponentCreationModal) {
     )
       .then((res) => {
         const component = res.data;
-        const z = defineBoardEntityInParent<IComponent, IZone>(
-          component,
+        const z = addBoardEntityInParentState<IComponent, IZone>(
           BOARDS.COMPONENT,
+          component,
           zone
         )
         setZone({ ...z });

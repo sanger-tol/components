@@ -21,12 +21,10 @@ import {
   mergeUtilityBarConfigs,
   BoardFilterBlock,
   FilterConfigDrawer,
-  deleteBoardEntityInParent,
   BUTTONS,
   ConfirmationModal,
   BoardMap,
-  IZone,
-  TsDataSource
+  TsDataSource,
 } from "../..";
 
 
@@ -38,6 +36,7 @@ export interface PVisualisation extends IBoardTargetAndZone {
   title: string;
   utilityBarConfig?: PUtilityBar;
   actionsDataSource: TsDataSource;
+  onDeleteComponent: (id: string) => void;
 }
 
 export function Visualisation(props: PVisualisation) {
@@ -46,8 +45,8 @@ export function Visualisation(props: PVisualisation) {
     componentType,
     boardDataSource,
     zone,
-    setZone,
     utilityBarConfig,
+    onDeleteComponent,
   } = props;
 
   const { editMode, layoutMode } = useBoard();
@@ -55,16 +54,6 @@ export function Visualisation(props: PVisualisation) {
   const [title, setTitle] = useState(props.title);
   const [openFilters, setOpenFilters] = useState(false);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
-
-  const onDelete = () => {
-    boardDataSource
-      .deleteByID({
-        objectType: BOARDS.COMPONENT,
-        id: id,
-      })
-    deleteBoardEntityInParent<IZone>(id, BOARDS.ZONE, zone);
-    setZone({ ...zone });
-  };
 
   const filterButton: PButton = {
     outline: true,
@@ -105,7 +94,7 @@ export function Visualisation(props: PVisualisation) {
         text: title,
         editable: editMode,
         onSave: (value: string) => {
-          upsertTitle(value, id, boardDataSource, BOARDS.COMPONENT);
+          upsertTitle(value, id, boardDataSource);
           setTitle(value);
         }
       } : undefined,
@@ -174,7 +163,7 @@ export function Visualisation(props: PVisualisation) {
       <ConfirmationModal
         setOpen={setConfirmationModalOpen}
         open={confirmationModalOpen}
-        onConfirmClick={onDelete}
+        onConfirmClick={() => onDeleteComponent(id)}
         itemType={BOARDS.COMPONENT}
       />
     </>
