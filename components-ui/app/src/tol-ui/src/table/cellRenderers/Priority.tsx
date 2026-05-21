@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2026 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { Icon, PCellDisplay } from "../..";
+import { CellTooltip, Icon, PCellDisplay } from "../..";
 
 export interface PPriority extends PCellDisplay {
   highest?: boolean;
@@ -24,31 +24,26 @@ export function Priority(props: PPriority) {
     lowest = false,
   } = props;
 
+  const [priorityName, PriorityIcon] = highest ? [
+    "Highest", <Icon icon="angles-up" colour="red" />
+  ] : high ? [
+    "High", <Icon icon="angle-up" colour="red" />
+  ] : medium ? [
+    "Medium", <Icon icon="equals" colour="orange" />
+  ] : low ? [
+    "Low", <Icon icon="angle-down" colour="blue" />
+  ] : lowest ? [
+    "Lowest", <Icon icon="angles-down" colour="blue" />
+  ] : [
+    null, null
+  ];
+
   return (
-    highest ? (
-      <Icon
-        icon="angles-up"
-        colour="red"
-      />
-    ) : high ? (
-      <Icon
-        icon="angle-up"
-        colour="red"
-      />
-    ) : medium ? (
-      <Icon
-        icon="equals"
-        colour="orange"
-      />
-    ) : low ? (
-      <Icon
-        icon="angle-down"
-        colour="blue"
-      />
-    ) : lowest ? (
-      <Icon
-        icon="angles-down"
-        colour="blue"
+    PriorityIcon ? (
+      <CellTooltip
+        followCursor
+        value={PriorityIcon}
+        contents={priorityName}
       />
     ) : (
       <>{value}</>
