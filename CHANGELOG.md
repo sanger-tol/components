@@ -6,6 +6,12 @@ SPDX-License-Identifier: MIT
 
 # Changelog
 
+## tol-ui `3.5.5`
+
+21-04-2026
+
+- Added Priority cell renderer
+
 ## tol-ui `3.5.4`
 
 30-04-2026
