@@ -15,17 +15,22 @@ import {
   useBoard,
   PRIVILEGE,
   useQueryData,
-  getBoardEntityAndChildren,
+  fetchBoardEntityAndChildren,
   URL_PATHS,
   MESSAGE_TYPE,
   BOARD_MESSAGE_TEXT,
   NewTitleModal,
   PopUpMessage,
-  deleteBoardEntityInParent,
+  deleteBoardEntityInParentState,
   ConfirmationModal,
   copyBoard,
+  deleteBoardEntity,
+  postAddBoardEntity,
+  updateViewInUrl,
+  patchReorderBoardEntity,
+  addBoardEntityInParentState,
 } from "../..";
-import type { IBoard, TNavBrand, TsDataSource } from "../..";
+import type { IBoard, IView, TNavBrand, TsDataSource } from "../..";
 import { BoardButtonsUtilityBar, ImportViewModal } from "./components";
 
 // TODO: onAddView is very similar to view copy logic, make them the same.
@@ -89,7 +94,7 @@ export function Board(props: PBoard) {
     isError,
   } = useQueryData<IBoard>(
     [BOARDS.BOARD, id],
-    () => getBoardEntityAndChildren(boardDataSource, id!),
+    () => fetchBoardEntityAndChildren(boardDataSource, id!),
     { enabled: !!id },
   );
 
@@ -117,19 +122,42 @@ export function Board(props: PBoard) {
     );
   }, [activeViewId]);
 
+  const onClickView = (viewId: string) => () => {
+    setActiveViewId(viewId);
+    updateViewInUrl(viewId);
+  };
+
+  const onAddView = async () => {
+    postAddBoardEntity(boardDataSource, board?.id!,)
+      .then((res) => {
+        const view = res.data;
+        const b = addBoardEntityInParentState<IView, IBoard>(
+          BOARDS.VIEW,
+          view,
+          board
+        )
+        setBoard({ ...b });
+        setActiveViewId(view.id);
+        updateViewInUrl(view.id);
+      })
+  };
+
+  const onReorderViews = (reorderedIds: string[]) => {
+    patchReorderBoardEntity(boardDataSource, board?.id!, reorderedIds)
+      .then(() => {
+        board.order = reorderedIds;
+        setBoard({ ...board });
+      });
+  };
+
   const onDeleteView = (viewId: string) => {
-    // TODO: add delete back
-    // boardDataSource
-    //   .deleteByID({
-    //     objectType: BOARDS.VIEW,
-    //     viewId
-    //   })
-    if (board) {
-      deleteBoardEntityInParent<IBoard>(viewId, BOARDS.BOARD, board);
-      setBoard({ ...board });
-      setMountedViewIds((prev) => prev.filter((vid) => vid !== viewId));
-      setActiveViewId(board.order[0]);
-    }
+    deleteBoardEntity(boardDataSource, viewId)
+      .then(() => {
+        deleteBoardEntityInParentState<IBoard>(viewId, board);
+        setBoard({ ...board });
+        setMountedViewIds((prev) => prev.filter((vid) => vid !== viewId));
+        setActiveViewId(board.order[0]);
+      })
   };
 
   if (isError) {
@@ -209,8 +237,10 @@ export function Board(props: PBoard) {
         activeViewId={activeViewId || ""}
         boardDataSource={boardDataSource}
         onOpenDeleteViewModal={() => setDeleteViewConfirmModal(true)}
-        setActiveViewId={setActiveViewId}
         onOpenViewImportModal={() => setViewImportModalOpen(true)}
+        onClickView={onClickView}
+        onAddView={onAddView}
+        onReorderView={onReorderViews}
       />
       {mountedViewIds.map((viewId) => (
         <View

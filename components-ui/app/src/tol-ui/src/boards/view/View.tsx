@@ -7,18 +7,16 @@ SPDX-License-Identifier: MIT
 import {
   ZoneCreationModal,
   Zone,
-  BOARDS,
   PBoard,
   useBoard,
   useBoardState,
   IBoard,
   IView,
-  BOARD_CHILDREN_KEYS,
-  deleteBoardEntityInParent,
-  PRIVILEGE,
+  deleteBoardEntityInParentState,
   IZone,
   patchReorderBoardEntity,
-  reorderViaDirection
+  reorderViaDirection,
+  deleteBoardEntity,
 } from "../..";
 
 
@@ -52,15 +50,6 @@ export function View(props: PView) {
     setBoard,
   );
 
-  const onDeleteZone = (id: string) => {
-    boardDataSource.deleteByID({
-      objectType: BOARDS.ZONE,
-      id,
-    });
-    deleteBoardEntityInParent<IView>(id, BOARDS.VIEW, view);
-    setView({ ...view });
-  };
-
   const onReorderZone = (id: string, direction: "up" | "down") => {
     const orderedIds = reorderViaDirection(
       [...view.order!],
@@ -72,6 +61,14 @@ export function View(props: PView) {
         view.order = orderedIds;
         setView({ ...view });
       });
+  }
+
+  const onDeleteZone = (zoneId: string) => {
+    deleteBoardEntity(boardDataSource, zoneId)
+      .then(() => {
+        deleteBoardEntityInParentState<IView>(zoneId, view);
+        setView({ ...view });
+      })
   };
 
   return (

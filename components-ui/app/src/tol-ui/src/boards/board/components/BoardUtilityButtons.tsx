@@ -8,6 +8,7 @@ import { ReactNode } from "react";
 import {
   IBoard,
   ITab,
+  MAX_VIEWS_ALLOWED,
   onAddView,
   onViewTitleSave,
   PButton,
@@ -56,27 +57,27 @@ export function buildUtilityBarButtons(
     ),
     ...(!editMode
       ? [
-          shareButton,
-          copyBoardButton(() => {
-            if (!newBoardCopyTitle.trim()) {
-              setNewBoardCopyTitle(`${boardTitle} - copy`);
-            }
-            onOpenBoardCopyModal();
-          }),
-        ]
+        shareButton,
+        copyBoardButton(() => {
+          if (!newBoardCopyTitle.trim()) {
+            setNewBoardCopyTitle(`${boardTitle} - copy`);
+          }
+          onOpenBoardCopyModal();
+        }),
+      ]
       : []),
   ];
 }
 
 export function buildViewCreationButtons(
   editMode: boolean,
-  onAddViewClick: () => void,
+  onAddView: () => void,
   onOpenViewImportModal: () => void,
   board?: IBoard,
 ) {
-  const isMaxViews = (board?.order?.length ?? 0) >= 10;
+  const isMaxViews = (board?.order?.length ?? 0) >= MAX_VIEWS_ALLOWED;
   return [
-    addViewButton(editMode, onAddViewClick, isMaxViews),
+    addViewButton(editMode, onAddView, isMaxViews),
     importViewButton(editMode, onOpenViewImportModal, isMaxViews),
   ];
 }
@@ -89,16 +90,10 @@ export function buildSingleViewTabButton(
   boardDataSource: TsDataSource,
   onOpenDeleteViewModal: () => void,
   setBoard: (board: IBoard) => void,
-  setActiveViewId: (viewId: string) => void,
+  onClickView: (viewId: string) => () => void,
   board?: IBoard,
 ): { buttons: PButton[]; label: ReactNode } {
   if (!board) return { buttons: [], label: undefined };
-
-  const onClickView = (viewId: string) => () => {
-    setActiveViewId(viewId);
-    updateViewInUrl(viewId);
-  };
-
   const isEditingTitle = editMode && activeViewId === viewId;
 
   return {
@@ -117,9 +112,9 @@ export function buildSingleViewTabButton(
     ],
     label: isEditingTitle
       ? ViewTitle(true, viewTitle, async (value) => {
-          const updatedBoard = await onViewTitleSave(value, viewId, board, boardDataSource);
-          if (updatedBoard) setBoard(updatedBoard);
-        })
+        const updatedBoard = await onViewTitleSave(value, viewId, board, boardDataSource);
+        if (updatedBoard) setBoard(updatedBoard);
+      })
       : undefined,
   };
 }
@@ -129,10 +124,13 @@ export function buildViewTabButtonArray(
   editMode: boolean,
   boardDataSource: TsDataSource,
   onOpenDeleteViewModal: () => void,
-  setBoard: (board: IBoard) => void,
-  setActiveViewId: (viewId: string) => void,
   onOpenViewImportModal: () => void,
-  board?: IBoard,
+  onClickView: (viewId: string) => () => void,
+  onAddView: () => void,
+  onReorderView: (reorderedIds: string[]) => void,
+  board: IBoard,
+  setBoard: (board: IBoard) => void,
+
 ): ReactNode[] {
   if (!board) return [];
 
@@ -145,23 +143,13 @@ export function buildViewTabButtonArray(
       boardDataSource,
       onOpenDeleteViewModal,
       setBoard,
-      setActiveViewId,
+      onClickView,
       board,
     );
 
-  const onReorderViews = (orderedIds: string[]) => {
-    board.order = orderedIds;
-    setBoard({ ...board });
-  };
-
   const viewCreationButtons = buildViewCreationButtons(
     editMode,
-    () => {
-      onAddView(board);
-      setBoard();
-      setActiveViewId(newViewId);
-      updateViewInUrl(newViewId);
-    },
+    onAddView,
     onOpenViewImportModal,
     board,
   );
@@ -172,9 +160,7 @@ export function buildViewTabButtonArray(
       key="views-sortable-tabs"
       activeId={activeViewId!}
       className="tol-views-nav"
-      onReorder={
-        editMode && board?.order?.length > 1 ? onReorderViews : undefined
-      }
+      onReorder={onReorderView}
       tabs={[
         ...(board?.order
           ?.map((viewId) => {

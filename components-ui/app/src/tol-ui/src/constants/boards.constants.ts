@@ -31,8 +31,9 @@ export const MY_BOARDS_SUB_TITLE = (
   of each zone.`
 );
 
+export const MAX_VIEWS_ALLOWED = 10;
+export const MAX_VIEWS_ALLOWED_MESSAGE = `A maximum of ${MAX_VIEWS_ALLOWED} Views are allowed per board.`;
 export const BOARD_AND_VIEW_TITLE_EMPTY_MESSAGE = "Board and View titles cannot be empty.";
-export const MAX_VIEWS_ALLOWED_MESSAGE = "A maximum of 10 Views are allowed per board.";
 export const ERROR_ADDING_BOARD_ENTITY = "An error occurred while adding the entity. Please try again.";
 export const ERROR_FETCHING_BOARD_ENTITY = "An error occurred while fetching the data. Please try again.";
 export const ERROR_CREATING_BOARD = "An error occurred while creating the board. Please try again.";
