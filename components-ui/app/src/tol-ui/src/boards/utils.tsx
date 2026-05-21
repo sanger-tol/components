@@ -6,21 +6,19 @@ SPDX-License-Identifier: MIT
 
 import {
   TsDataSource,
-  BOARDS,
+  BOARD_ENTITIES,
   IZone,
   IBoard,
   IView,
   IComponent,
   deepCopy,
-  normaliseCaps,
-  BOARD_DIFF_API_PATH,
-  API_UTILITY_OPERATIONS,
   API_METHODS,
   PopUpMessage,
   ERROR_FETCHING_BOARD_ENTITY,
   ERROR_UPDATING_TITLE,
   ERROR_ADDING_BOARD_ENTITY,
   ERROR_REORDERING_BOARD_ENTITY,
+  BOARDS_API,
 } from "..";
 
 
@@ -45,13 +43,13 @@ export function deriveBoardObjectType(id: string): string {
   const prefix = id.split("_")[0];
   switch (prefix) {
     case "b":
-      return BOARDS.BOARD;
+      return BOARD_ENTITIES.BOARD;
     case "v":
-      return BOARDS.VIEW;
+      return BOARD_ENTITIES.VIEW;
     case "z":
-      return BOARDS.ZONE;
+      return BOARD_ENTITIES.ZONE;
     case "c":
-      return BOARDS.COMPONENT;
+      return BOARD_ENTITIES.COMPONENT;
     default:
       throw new Error(`Unknown board entity prefix: ${prefix}`);
   }
@@ -65,13 +63,14 @@ export function deriveBoardObjectType(id: string): string {
  * @param objectType The type of the board entity (e.g. 'view', 'zone', 'component').
  * @returns The defined board entity with default values applied.
  */
+// TODO: DELETE IS NOW AT /delete-entity ENDPOINT
 export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
   entity: Partial<TEntity>,
   objectType: string,
 ): Partial<TEntity> {
   // Add default values for filter and title if the entity is a zone or component
   let defaults = {};
-  if (objectType === BOARDS.COMPONENT || objectType === BOARDS.ZONE) {
+  if (objectType === BOARD_ENTITIES.COMPONENT || objectType === BOARD_ENTITIES.ZONE) {
     const e = entity as Partial<IZone> | Partial<IComponent>;
     defaults = {
       filter: e.filter ? deepCopy(e.filter) : { and_: {} },
@@ -82,7 +81,7 @@ export function defineBoardEntity<TEntity extends IView | IZone | IComponent>(
 
   // If the objectType is not component, we need to set up an empty object for the child board level
   // and an empty order array in the parent board entity
-  if (objectType !== BOARDS.COMPONENT) {
+  if (objectType !== BOARD_ENTITIES.COMPONENT) {
     defaults = {
       children: {},
       order: [],
@@ -137,33 +136,6 @@ export function deleteBoardEntityInParentState<
   );
 }
 
-// TODO: NEEDS TO BE ADDED TO VIEWS ETC
-/**
- * Creates a new title for a board entity (view, zone, or component) based on the existing titles.
- * @param parentEntity The parent entity (board, view, or zone) to which the new entity will be added.
- * @param childObjectType The type of the child entity (e.g. 'view', 'zone', 'component').
- * @returns The new title for the child entity.
- */
-export function getNextTitle<
-  TParent extends IBoard | IView | IZone,
->(
-  parentEntity: TParent,
-  childObjectType: string
-): string {
-  const titlePrefix = normaliseCaps(childObjectType);
-  const titles = Object.values(parentEntity.children as Record<string, IView | IZone | IComponent>).map(v => v.title || "")
-
-  const regex = new RegExp(`^${titlePrefix} (\\d+)$`);
-  const numbers = titles
-    .map(title => title.match(regex))
-    .filter(Boolean)
-    .map(match => parseInt(match![1], 10));
-
-  const nextNumber = numbers.length > 0 ? Math.max(...numbers) + 1 : titles.length + 1;
-
-  return `${titlePrefix} ${nextNumber}`;
-}
-
 /**
  * Fetches a board entity and its children from the board data source.
  *
@@ -178,7 +150,7 @@ export async function fetchBoardEntityAndChildren(
   return await boardDataSource
     .custom({
       method: API_METHODS.GET,
-      resource: `${API_UTILITY_OPERATIONS.GET_BOARD_ENTITY}/${parentId}`,
+      resource: `${BOARDS_API.OPERATIONS.GET}/${parentId}`,
     })
     .then((res) => {
       return res.data;
@@ -207,7 +179,7 @@ export async function patchReorderBoardEntity(
   return await boardDataSource
     .custom({
       method: API_METHODS.PATCH,
-      resource: `${API_UTILITY_OPERATIONS.BOARD_ENTITY_REORDER}/${parentId}`,
+      resource: `${BOARDS_API.OPERATIONS.REORDER}/${parentId}`,
       body: { order: childIds },
     })
     .catch(() => {
@@ -233,7 +205,7 @@ export async function postAddBoardEntity(
   return await boardDataSource
     .custom({
       method: API_METHODS.POST,
-      resource: `${API_UTILITY_OPERATIONS.ADD_BOARD_ENTITY}/${parentId}`,
+      resource: `${BOARDS_API.OPERATIONS.ADD_NEW}/${parentId}`,
       body: { attributes: attributes },
     })
     .catch(() => {
@@ -325,7 +297,7 @@ export async function deleteComponentDiff(
   // The board_diff endpoint does not support DELETE, so we upsert with config: null.
   // getComponentData skips the proxy when diff.config is null, restoring the original config.
   const res = await boardDataSource.getListPage({
-    objectType: BOARDS.BOARD_DIFF,
+    objectType: BOARD_ENTITIES.ENTITY_DIFF,
     filter: {
       and_: {
         component_id: { eq: { value: componentId } },
@@ -335,10 +307,10 @@ export async function deleteComponentDiff(
     requestedFields: ["id"],
   });
   const diffId = res?.[0]?.id;
-  const localDataSource = new TsDataSource({ apiPath: BOARD_DIFF_API_PATH });
+  // const localDataSource = new TsDataSource({ apiPath: BOARD_DIFF_API_PATH });
   if (diffId) {
     await localDataSource.deleteByID({
-      objectType: BOARDS.BOARD_DIFF,
+      objectType: BOARD_ENTITIES.ENTITY_DIFF,
       id: diffId,
     });
   }

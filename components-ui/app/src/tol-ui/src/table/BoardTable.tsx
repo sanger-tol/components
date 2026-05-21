@@ -56,7 +56,7 @@ export function BoardTable(props: PBoardTable) {
   // then local storage diff for anonymous users, then the base config
   const [diffState, setDiffState] = useState<IDiffState>({
     currentConfig: structuredClone(
-      componentData?.config_diff?.config || componentData?.config,
+      componentData?.config_diff?.config ?? componentData?.config ?? null,
     ),
     hasDiff: !!componentData?.config_diff?.config,
     configDifferences: { add: [], remove: [] },

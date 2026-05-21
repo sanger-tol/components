@@ -6,7 +6,7 @@ SPDX-License-Identifier: MIT
 
 import { env } from "../variables";
 
-export const API_METHODS = {
+export const API_METHODS: Record<string, string> = {
   GET: "GET",
   POST: "POST",
   DELETE: "DELETE",
@@ -14,7 +14,7 @@ export const API_METHODS = {
   PUT: "PUT",
 } as const;
 
-export const API_OPERATIONS = {
+export const API_OPERATIONS: Record<string, string> = {
   UPSERT: ":upsert",
   CURSOR: ":cursor",
   COUNT: ":count",
@@ -27,16 +27,7 @@ export const API_OPERATIONS = {
   TO_MANY: ":to-many",
 } as const;
 
-// TODO: PUT INTO BOARDS AND RENAME
-export const API_UTILITY_OPERATIONS = {
-  COPY: "copy",
-  BOARD_ENTITY_REORDER: "reorder",
-  GET_BOARD_ENTITY: "get-entity",
-  CREATE_BOARD: "create-board",
-  ADD_BOARD_ENTITY: "add-entity",
-} as const;
-
-export const HTTP_STATUS_CODES = {
+export const HTTP_STATUS_CODES: Record<string, number> = {
   OK: 200,
   CREATED: 201,
   BAD_REQUEST: 400,
@@ -47,23 +38,24 @@ export const HTTP_STATUS_CODES = {
 } as const;
 
 export const AUTH_API_DATA_PATH = "/auth";
-export const BOARDS_API_DATA_PATH = "/boards";
 export const LOCAL_API_DATA_PATH = "/local";
-export const ACTION_API_DATA_PATH = LOCAL_API_DATA_PATH;
+export const ACTION_API_DATA_PATH = "/local";
 export const PREFECT_API_DATA_PATH = "/prefect";
+export const DATA_UPLOAD_API_DATA_PATH = "/data-upload";
+export const PIPELINE_API_DATA_PATH = "/run-pipeline";
+export const BOARDS_API_DATA_PATH = "/boards";
 export const API_PATH = env.API_PATH;
-export const BOARD_DIFF_API_PATH = API_PATH + LOCAL_API_DATA_PATH;
 
-export const BOARDS = {
-  BOARD: "board",
-  VIEW: "view",
-  ZONE: "zone",
-  COMPONENT: "component",
-  VIEW_BOARD: "view_board",
-  ZONE_VIEW: "zone_view",
-  COMPONENT_ZONE: "component_zone",
-  BOARD_DIFF: "board_diff",
-  DATA_SOURCE_INSTANCE: "data_source_instance",
+// TODO: Add to env variables and remove hardcoding of API paths in the above constants.
+export const API_PATHS: Record<string, string> = {
+  API_PATH: env.API_PATH,
+  AUTH: env.AUTH_API_DATA_PATH,
+  LOCAL: env.LOCAL_API_DATA_PATH,
+  ACTION: env.ACTION_API_DATA_PATH,
+  PREFECT: env.PREFECT_API_DATA_PATH,
+  DATA_UPLOAD: env.DATA_UPLOAD_API_DATA_PATH,
+  PIPELINE: env.PIPELINE_API_DATA_PATH,
+  BOARDS: env.BOARDS_API_DATA_PATH,
 } as const;
 
 export const WEB_APP = "web_app";

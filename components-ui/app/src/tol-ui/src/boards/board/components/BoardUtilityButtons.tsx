@@ -9,13 +9,11 @@ import {
   IBoard,
   ITab,
   MAX_VIEWS_ALLOWED,
-  onAddView,
   onViewTitleSave,
   PButton,
   PRIVILEGE,
   SortableTabs,
   TsDataSource,
-  updateViewInUrl,
 } from "../../..";
 import {
   addViewButton,

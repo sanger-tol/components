@@ -14,12 +14,15 @@ import {
   PopUpMessage,
   BOARD_MESSAGE_TEXT,
   IView,
-  API_UTILITY_OPERATIONS,
+  generateId,
+  getEntityPrefix,
+  IZone,
   upsertTitle,
   TBoardEntity,
-  IBoardChildren,
+  TBoardChildren,
   postAddBoardEntity,
   addBoardEntityInParentState,
+  TBoardEntityType,
 } from "../..";
 
 
@@ -73,12 +76,12 @@ export async function copyBoard(
   entityId: string,
   parentEntityType: string,
   title: string,
-  copyEntityType: TBoardEntity,
+  copyEntityType: TBoardEntityType,
 ): Promise<IBoard | undefined> {
   return await copyBoardEntity<IBoard>(
     boardDataSource,
     entityId,
-    API_UTILITY_OPERATIONS.COPY,
+    BOARDS.OPERATIONS.COPY,
     parentEntityType,
     title,
     copyEntityType,
@@ -103,7 +106,7 @@ export async function copyView(
   return await copyBoardEntity<IView>(
     boardDataSource,
     entityId,
-    API_UTILITY_OPERATIONS.COPY,
+    BOARDS.OPERATIONS.COPY,
     parentEntityType,
     title,
     copyEntityType,
@@ -142,7 +145,7 @@ export async function onViewTitleSave(
         ...viewsMap[viewId],
         title: value,
       },
-    } as IBoardChildren<IView>,
+    } as TBoardChildren<IView>,
   } as IBoard;
 }
 

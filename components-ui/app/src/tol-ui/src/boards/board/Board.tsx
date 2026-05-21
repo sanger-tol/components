@@ -7,7 +7,7 @@ SPDX-License-Identifier: MIT
 import { useEffect, useState } from "react";
 import { Redirect, useLocation, useParams } from "react-router-dom";
 import {
-  BOARDS,
+  BOARD_ENTITIES,
   getCssVarValue,
   LoadingContent,
   themeListener,
@@ -93,7 +93,7 @@ export function Board(props: PBoard) {
     isSuccess,
     isError,
   } = useQueryData<IBoard>(
-    [BOARDS.BOARD, id],
+    [BOARD_ENTITIES.BOARD, id],
     () => fetchBoardEntityAndChildren(boardDataSource, id!),
     { enabled: !!id },
   );
@@ -132,7 +132,7 @@ export function Board(props: PBoard) {
       .then((res) => {
         const view = res.data;
         const b = addBoardEntityInParentState<IView, IBoard>(
-          BOARDS.VIEW,
+          BOARD_ENTITIES.VIEW,
           view,
           board
         )
@@ -187,12 +187,12 @@ export function Board(props: PBoard) {
         setOpen={setBoardCopyModalOpen}
         title={newBoardCopyTitle}
         setTitle={setNewBoardCopyTitle}
-        itemType={BOARDS.BOARD}
+        itemType={BOARD_ENTITIES.BOARD}
         confirmationAction={async () => {
           if (!newBoardCopyTitle.trim()) {
             PopUpMessage({
               type: MESSAGE_TYPE.WARNING,
-              message: BOARD_MESSAGE_TEXT(BOARDS.BOARD).BOARD_COPY
+              message: BOARD_MESSAGE_TEXT(BOARD_ENTITIES.BOARD).BOARD_COPY
                 .NO_TITLE_ERROR,
             });
             return;
@@ -200,9 +200,9 @@ export function Board(props: PBoard) {
           const copiedBoard = await copyBoard(
             boardDataSource,
             id!,
-            BOARDS.BOARD,
+            BOARD_ENTITIES.BOARD,
             newBoardCopyTitle,
-            BOARDS.BOARD,
+            BOARD_ENTITIES.BOARD,
           );
           if (copiedBoard) {
             setBoard(copiedBoard);

@@ -6,21 +6,20 @@ SPDX-License-Identifier: MIT
 
 import {
   TsDataSource,
-  IFilter,
-  PUtilityBar,
-  BOARD_CHILDREN_KEYS,
-} from '..';
+  BOARD_ENTITIES,
+} from "..";
+import type { FieldMeta, PUtilityBar, IFilter } from "..";
 
-export interface IBoardEntity {
+export interface TBoardEntity {
   id?: string;
-  type?: string;
+  type?: TBoardEntityType;
   title?: string;
 }
 
-export type IBoardChildren<TChild> = Record<string, TChild>;
+export type TBoardChildren<TChild> = Record<string, TChild>;
 
-export interface IBoardParentEntity<TChild> extends IBoardEntity {
-  children: IBoardChildren<TChild>;
+export interface IBoardParentEntity<TChild> extends TBoardEntity {
+  children: TBoardChildren<TChild>;
   order: string[];
 }
 
@@ -29,7 +28,11 @@ export interface IBoardFilter {
   defaultFilter?: IFilter;
 }
 
-export interface IComponent extends IBoardEntity, IBoardFilter {
+export interface IComponentConfig {
+  fieldMeta: Partial<FieldMeta>;
+}
+
+export interface IComponent extends TBoardEntity, IBoardFilter {
   subFilter?: IFilter;
   filterPassThrough?: boolean;
   component_type?: string;
@@ -40,7 +43,8 @@ export interface IComponent extends IBoardEntity, IBoardFilter {
    */
   object_type?: string;
   dataspace?: TsDataSource;
-  config?: any;
+  config?: Partial<IComponentConfig>;
+  config_diff?: {id: string, config:Partial<IComponentConfig>};
   data_source_instance_id?: string;
   ui_api_details: IDBDataSourceInstanceApiDetails;
 }
@@ -59,7 +63,7 @@ export interface IZone extends IBoardParentEntity<IComponent>, IBoardFilter {
   dataspace?: TsDataSource;
 }
 
-export interface IView extends IBoardParentEntity<IZone> { }
+export interface IView extends IBoardParentEntity<IZone> {}
 
 export interface IBoard extends IBoardParentEntity<IView> {
   /**
@@ -69,11 +73,25 @@ export interface IBoard extends IBoardParentEntity<IView> {
   write_privilege?: boolean;
 }
 
+export type TBoardEntityType = (typeof BOARD_ENTITIES)[keyof typeof BOARD_ENTITIES];
+export type TBoardParentEntityType = Exclude<
+  TBoardEntityType,
+  typeof BOARD_ENTITIES.COMPONENT
+>;
+export type TBoardChildEntityType = Exclude<
+  TBoardEntityType,
+  typeof BOARD_ENTITIES.BOARD
+>;
+export type TBoardJoiningEntityType = keyof typeof BOARD_ENTITIES.JOINING_ENTITIES;
+export type TBoardAllEntityTypes =
+  | TBoardEntityType
+  | TBoardJoiningEntityType;
+
 /**
  * Example of the board interface
- * 
+ *
  * IBoard → IView → IZone → IComponent
- * 
+ *
  * {
  *   id: "b_1",
  *   type: "board",
@@ -138,19 +156,20 @@ export interface IZoneControl {
    */
   zone: IZone;
   /**
-   * Setter used to update the zone when configuration changes reset downstream filters 
+   * Setter used to update the zone when configuration changes reset downstream filters
    */
   setZone: (zone: IZone) => void;
 }
 
-export interface IRemoteTargetAndZone extends IRemoteTarget, IZoneControl { }
+export interface IRemoteTargetAndZone extends IRemoteTarget, IZoneControl {}
 
 export interface IBoardTarget {
   boardObjectType: string;
   boardDataSource: TsDataSource;
 }
 
-export interface IBoardTargetAndZone extends IRemoteTargetAndZone, IBoardTarget { }
+export interface IBoardTargetAndZone
+  extends IRemoteTargetAndZone, IBoardTarget {}
 
 export type TUtilityBarOrNull = PUtilityBar | null;
 
@@ -161,7 +180,8 @@ export interface IUseZoneMeta {
   setZone: (zone: IZone) => void;
 }
 
-export type TChildrenKey = (typeof BOARD_CHILDREN_KEYS)[keyof typeof BOARD_CHILDREN_KEYS];
+// export type TChildrenKey =
+//   (typeof BOARD_CHILDREN_KEYS)[keyof typeof BOARD_CHILDREN_KEYS];
 
 export interface IDBDataSourceInstanceApiDetails {
   url: string;
@@ -192,8 +212,8 @@ export interface IBoardParam {
    */
   childIdField: string;
   /**
-  * The object type of the child entity (e.g. 'zone').
-  */
+   * The object type of the child entity (e.g. 'zone').
+   */
   childObjectType: string;
   /**
    * The relationship name to fetch the child entity from the joining table entries (e.g. 'zone' in zone_view).

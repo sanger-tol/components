@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { FieldMeta } from "..";
+import { FieldMeta, IComponentConfig } from "..";
 
 export interface ITableDrawerSave {
   fieldMeta?: FieldMeta;
@@ -46,7 +46,7 @@ export interface IDiffState {
    * The current table configuration, used to determine what the differences are with the default configuration.
    * This is required in order to show the user what changes will be made if they choose to reset their configuration.
    */
-  currentConfig: ITableConfigSave | null;
+  currentConfig: Partial<IComponentConfig> | null;
 }
 
 export interface ITableConfigSave extends ITableDrawerSave, ITableOtherSave {}

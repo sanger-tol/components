@@ -8,8 +8,7 @@ import { createRoot } from "react-dom/client";
 import reportWebVitals from "./reportWebVitals";
 import "./scss/styling.scss";
 import {
-  BOARDS_API_DATA_PATH,
-  env,
+  API_PATHS,
   generateAutoDocNavigation,
   SmartApp,
   TsDataSource
@@ -37,8 +36,8 @@ const pageElements = {
 };
 
 const CONFIG_DS = new TsDataSource({
-  apiPath: env.API_PATH,
-  apiDataPath: BOARDS_API_DATA_PATH,
+  apiPath: API_PATHS.API_PATH,
+  apiDataPath: API_PATHS.BOARDS,
 });
 
 const root = createRoot(document.getElementById('root')!);

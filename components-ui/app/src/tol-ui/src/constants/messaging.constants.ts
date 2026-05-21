@@ -4,9 +4,9 @@ SPDX-FileCopyrightText: 2025 Genome Research Ltd.
 SPDX-License-Identifier: MIT
 */
 
-import { BOARDS } from ".";
+import type { TBoardEntityType, TMessageType } from "..";
 
-export const MESSAGE_DURATION = {
+export const MESSAGE_DURATION: { [key: string]: number } = {
   SUCCESS: 4000,
   INFO: 6000,
   WARNING: 8000,
@@ -15,18 +15,17 @@ export const MESSAGE_DURATION = {
   DEFAULT: 6000,
 } as const;
 
-export const MESSAGE_TYPE = {
+export const MESSAGE_TYPE: { [key: string]: TMessageType } = {
   SUCCESS: "success",
   INFO: "info",
   WARNING: "warning",
   ERROR: "error",
 } as const;
 
-export type TBoardEntity = (typeof BOARDS)[keyof typeof BOARDS]; // TODO: MOVE
 
 export const BOARD_MESSAGE_TEXT = (
-  boardEntity: TBoardEntity,
-) => {
+  boardEntity: TBoardEntityType,
+): { [key: string]: { [key: string]: string } } => {
   const entityCapitalised =
     boardEntity.charAt(0).toUpperCase() + boardEntity.slice(1);
 
@@ -42,5 +41,6 @@ export const BOARD_MESSAGE_TEXT = (
       ID_COPY: `${entityCapitalised} ID copied to clipboard.`,
       URL_COPY: `${entityCapitalised} URL copied to clipboard.`,
     },
+
   } as const;
 };
