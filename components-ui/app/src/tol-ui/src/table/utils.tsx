@@ -38,7 +38,6 @@ import type {
   IFilter,
   TCellHeights,
   ITableConfigSave,
-  TDataObjectOrNull,
   IDiffState,
   IConfigDifferences,
   IComponentConfig,

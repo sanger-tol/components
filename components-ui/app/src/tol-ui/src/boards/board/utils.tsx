@@ -14,15 +14,14 @@ import {
   PopUpMessage,
   BOARD_MESSAGE_TEXT,
   IView,
-  saveTitle,
   generateId,
   getEntityPrefix,
-  getNextTitle,
   IZone,
+  upsertTitle,
   TBoardEntity,
   IBoardChildren,
   postAddBoardEntity,
-  defineBoardEntityInParent,
+  addBoardEntityInParentState,
 } from "../..";
 
 
@@ -135,7 +134,7 @@ export async function onViewTitleSave(
   const currentTitle = viewsMap[viewId]?.title;
   if (currentTitle === value) return;
 
-  await saveTitle(value, viewId, boardDataSource, BOARDS.VIEW);
+  await upsertTitle(value, viewId, boardDataSource);
 
   return {
     ...board,
@@ -164,9 +163,9 @@ export async function onAddView(
     .then((res) => {
       const view = res.data;
       updateViewInUrl(view.id);
-      return defineBoardEntityInParent<IView, IBoard>(
-        view,
+      return addBoardEntityInParentState<IView, IBoard>(
         BOARDS.VIEW,
+        view,
         board
       )
     })

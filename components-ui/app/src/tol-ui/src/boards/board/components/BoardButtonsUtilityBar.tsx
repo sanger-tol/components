@@ -5,8 +5,7 @@ SPDX-License-Identifier: MIT
 */
 
 import {
-  BOARDS,
-  saveTitle,
+  upsertTitle,
   useBoard,
   UtilityBar,
   TsDataSource,
@@ -27,8 +26,10 @@ export interface IBoardButtonsUtilityBar {
   activeViewId: string | null;
   boardDataSource: TsDataSource;
   onOpenDeleteViewModal: () => void;
-  setActiveViewId: (viewId: string) => void;
   onOpenViewImportModal: () => void;
+  onClickView: (viewId: string) => () => void;
+  onAddView: () => void;
+  onReorderView: (reorderedIds: string[]) => void;
 }
 
 export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
@@ -40,8 +41,10 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
     activeViewId,
     boardDataSource,
     onOpenDeleteViewModal,
-    setActiveViewId,
     onOpenViewImportModal,
+    onClickView,
+    onAddView,
+    onReorderView,
   } = props;
 
   const {
@@ -75,10 +78,12 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
     editMode,
     boardDataSource,
     onOpenDeleteViewModal,
-    setBoard,
-    setActiveViewId,
     onOpenViewImportModal,
+    onClickView,
+    onAddView,
+    onReorderView,
     board,
+    setBoard,
   );
 
   return (
@@ -88,7 +93,7 @@ export function BoardButtonsUtilityBar(props: IBoardButtonsUtilityBar) {
         buttons={utilityBarButtons}
         title={editModeTitle(editMode, boardTitle, (newTitle: string) => {
           if (board?.id) {
-            saveTitle(newTitle, board.id, boardDataSource, BOARDS.BOARD);
+            upsertTitle(newTitle, board.id, boardDataSource);
             setBoard({ ...board, title: newTitle });
           }
         })}

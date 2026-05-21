@@ -13,7 +13,7 @@ import {
 } from "..";
 import type { FieldMeta } from "..";
 
-export interface IBoardEntity {
+export interface TBoardEntity {
   id?: string;
   type?: TBoardAllEntityTypes;
   title?: string;
@@ -21,7 +21,7 @@ export interface IBoardEntity {
 
 export type IBoardChildren<TChild> = Record<string, TChild>; // TODO: CHANGE
 
-export interface IBoardParentEntity<TChild> extends IBoardEntity {
+export interface IBoardParentEntity<TChild> extends TBoardEntity {
   children: IBoardChildren<TChild>;
   order: string[];
 }
@@ -35,7 +35,7 @@ export interface IComponentConfig {
   fieldMeta: Partial<FieldMeta>;
 }
 
-export interface IComponent extends IBoardEntity, IBoardFilter {
+export interface IComponent extends TBoardEntity, IBoardFilter {
   subFilter?: IFilter;
   filterPassThrough?: boolean;
   component_type?: string;

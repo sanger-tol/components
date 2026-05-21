@@ -17,6 +17,8 @@ import {
   ACTIONS_DS,
   patchReorderBoardEntity,
   getWidgetOrder,
+  deleteBoardEntityInParentState,
+  deleteBoardEntity,
 } from "../..";
 
 
@@ -59,11 +61,18 @@ export function Visualisations(props: PVisualisations) {
      * When layout mode is turned off, we want to update the layout
      * of the zone with the new layout
      */
-    if (!layoutMode) onReorderViews();
+    if (!layoutMode) onReorderComponents(getWidgetOrder(newLayout!));
   }, [layoutMode]);
 
-  const onReorderViews = () => {
-    const reorderedIds = getWidgetOrder(newLayout!);
+  const onDeleteComponent = (componentId: string) => {
+    deleteBoardEntity(boardDataSource, componentId)
+      .then(() => {
+        deleteBoardEntityInParentState<IZone>(componentId, zone);
+        setZone({ ...zone });
+      })
+  };
+
+  const onReorderComponents = (reorderedIds: string[]) => {
     patchReorderBoardEntity(boardDataSource, zone.id!, reorderedIds)
       .then(() => {
         zone.order = reorderedIds;
@@ -116,6 +125,7 @@ export function Visualisations(props: PVisualisations) {
                 boardObjectType={BOARDS.COMPONENT}
                 title={component.title!}
                 actionsDataSource={actionsDataSource}
+                onDeleteComponent={onDeleteComponent}
               />
             </div>,
           );
